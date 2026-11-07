@@ -1,0 +1,275 @@
+{
+  "schema": "control-frontend-verification/1",
+  "issue": 179,
+  "pr": 180,
+  "owner": "Melodydt",
+  "base": "de58b0d04446ea80134b8c541b08c209e1edaf52",
+  "pr176": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "dependencies": {
+    "pr213": "1bb43127e9e59a1bf72b2ae7e821e207343dcfc1",
+    "pr214": "33821f73c601ddec81a53264b8c62008fc665aff",
+    "qualified_bundle_sha256": "3387aa6f05f5fdd658e0ce326fce70fd694200c1882a4a5941c4fa6ddafea281",
+    "lock": "project/control_frontend_v1/upstream-lock.json",
+    "pr213_prior_tested": "3dc43486ce757245580e814a81233c299f805ba9"
+  },
+  "results": {
+    "compact_native": {
+      "passed": 17,
+      "total": 17,
+      "groups": {
+        "p": 1,
+        "u": 5,
+        "cfj": 8,
+        "duplex": 3
+      }
+    },
+    "native_initializations": {
+      "passed": 12,
+      "total": 12,
+      "e_core_comparisons_each": 257,
+      "e_core_initializations": 3
+    },
+    "native_cf_exchange": {
+      "passed": 12,
+      "total": 12
+    },
+    "native_admission": {
+      "passed": 16,
+      "total": 16,
+      "rejected": 14,
+      "accepted_execution_counts": [
+        1,
+        32
+      ]
+    },
+    "legacy": {
+      "p16_ack": 13,
+      "compact": 9,
+      "network": 10,
+      "reset_integration": 6,
+      "reset_coordinator": 11,
+      "native_u": 5,
+      "native_j": 5,
+      "native_c": 6
+    },
+    "software": {
+      "passed": 42,
+      "total": 42,
+      "r6_input_bundles": 2
+    },
+    "synthesis": {
+      "profiles": [
+        "default",
+        "p16",
+        "u",
+        "f",
+        "c",
+        "p",
+        "j"
+      ],
+      "passed": 7,
+      "scope": "Yosys RTL structure; not mapped PPA or product timing",
+      "two_local_link": "Additional standalone synth/check passed; five transport scenarios and warning-free lint."
+    },
+    "lint": {
+      "structural_pass": true,
+      "unused_signal_warnings": 13,
+      "report_sha256": "daf0ea3eafb99a986bfdf30a1d7fd7795559f664afe7c0015b8ff67732d61ad0"
+    },
+    "known_regressions_detected": [
+      "old U ignores operand count: FMA got 11 instead of 6",
+      "old C/F holds SRAM response during simultaneous TX: no forward progress"
+    ],
+    "two_local_link": {
+      "task_targets": [
+        0,
+        1
+      ],
+      "rejected_target": 2,
+      "return_buffer_messages": 1,
+      "return_packet_bits": 512,
+      "scenarios": [
+        "fixed task routing",
+        "late LC0 while LC1 return is held",
+        "simultaneous returns",
+        "reset with a pending return",
+        "post-reset return"
+      ],
+      "synthesis_structure": true,
+      "lint_warnings": 0,
+      "scope": "single-clock packet control transport",
+      "source_sha256": "50183786938d9ab95221aa765dd3d0196d5826a8b3577433b76b209e12e7989c"
+    },
+    "latest_upstream_note": "PR213 changed stage_duplex.py and tb_cfj_exchange.sv after the initial campaign; selected RTL blobs unchanged. Exact upstream blob hashes rechecked."
+  },
+  "report_sha256": {
+    "r002/results/compact/report.json": "8d173cea0ae9dfb054f23db44e9119b496326ecd24d03c02bfd22e07b3e46ac7",
+    "r002/results/legacy/network_report.json": "e9b761ebabfa442fe36ae9bdba79ebe15c437eb910b94c48b8d96298a3e5a662",
+    "r002/results/reset/reset_report.json": "0fee832ba1b8beb37a180be826d476513734e6aa94c3d852ef3ca9201c0c9b44",
+    "r002/results/old-u/report.json": "e659d5c6bc452fb7fce5277d22ff7fcdff0a83bcf645c188703dd03071a1d550",
+    "r002/results/old-j/report.json": "844b5815a44a0716711d50f18529dddf58b50020e588c6308967af6afd5582fd",
+    "r002/results/old-c/report.json": "6612c59b9cda72e44c4f8fc1217f30b565b0405570b1956aed993875dccab976",
+    "r006/results/admission/report.json": "ccac76fece6ab13326235764cd06dd2b345af6f4151c472d74bbf78a9be884d9",
+    "r006/results/router/report.json": "fbc793bdf4b0b88d4995034a1db4731b3bac1e82d83d291d039cc3d1f6d8d1df",
+    "r005/results/lint/report.json": "daf0ea3eafb99a986bfdf30a1d7fd7795559f664afe7c0015b8ff67732d61ad0",
+    "r002/results/synth/report.json": "5fd42f16908e2002afb74cca2954712ee8938bad36af503a4a7ad3f99ea1302b",
+    "r003/results/joined_wait.verify.json": "73dddcc21cc341aeb4154a43a165dad4dfd173e5f74b809020c777bc9902175c",
+    "r003/results/split_wait.verify.json": "a2181329cc716b9440f5220bc5f0896ea4838751f5d96bb001cc9fa94ade9ff9",
+    "r006/staged/source-sha256.json": "555183a56b61fb8745f29e72833a5f437b446bf874dc56668ddbf7933d2d9ba9",
+    "mutant-old-u.log": "c1a5c91dc60465fa3f5ab003116adb36c279739de53b99d4b2cb20eee9908a49",
+    "mutant-old-cf.log": "ebb7dcef8e7e988c0dc5c412561f55e1ca306fad69829210030fb84ba736c8cc",
+    "r008/staged/source-sha256.json": "a0525c076e34484488884a1c3510b26b43694efe17d546b575357ea54a077cb6"
+  },
+  "core_sha256": {
+    "lc_min_controller.sv": "0b30c35a69d409b93896f3826231eeb6794b46f52498caf51c94e901a8e69cf2",
+    "mc_min_controller.sv": "37cc9be878f3f02767da734f13fa9fd1858bafb21c1914241e8dc03651ef8761",
+    "tb_network_lc_wires.svh": "616109042e97a6d1f2e8acf5562970b5164f9a6be7d369a32ee82f272179666d",
+    "tb_network_mc_wires.svh": "275787ef8af14088cf10f4cb70814085fd6d1d25b66f9fd3161ad0fe53064468"
+  },
+  "failures_retained": [
+    "Testbench fell through after finish at a rejected configuration.",
+    "Fixed trial header assertion blocked a deliberately bad topology before hardware admission.",
+    "Padding test expected a status before reaching the corrupted final program word.",
+    "Legacy U lacked the new interface pin. A test-only unused input enabled behavioral comparison.",
+    "First latest-upstream submission was rejected before Slurm by CRLF in the shell script; corrected.",
+    "An extra trailing newline in fetched tests was found during blob audit; canonical upstream bytes were restored and affected cases rerun."
+  ],
+  "limitations": [
+    "No final two-P product top or production M11/M12 endpoint binding.",
+    "Native group deployments use a fixed single-clock trial topology.",
+    "Production reset certificate and applicable real CDC require actual integration.",
+    "No product 300 MHz timing or full physical acceptance claimed for this verification."
+  ],
+  "execution_record": "Detailed run records and artifacts retained in the authorized project environment.",
+  "source_snapshots": {
+    "r001": {
+      "snapshot": "56da74fa5874102f8f25c076ab1eaee22e2421c9",
+      "source_archive_sha256": "a848e5c583d98656083bd3c4336e8ccf26016c8178571b7cd7fad11c7e961c89"
+    },
+    "r002": {
+      "snapshot": "f97e9529a5fec243dfae24273c2e1f68f40b11d9",
+      "source_archive_sha256": "11caadfaf57660eae367d257a4d26f663724353d59f1c8adf4f4f35b29f55b5c"
+    },
+    "r003": {
+      "snapshot": "4e6797a752649ec7a13fc7d51b7dd3fc21cbcb6c",
+      "source_archive_sha256": "b6f66cdb171c3cd3675745874add084bc5f6422a679c9e197c94e0619cf6ea85"
+    },
+    "r004": {
+      "snapshot": "f59a4688e7c65a3bdf3714b475f807dcd4101d44",
+      "source_archive_sha256": "f55bde214257db3ee3c9724c0deb8ce000cf31f8ce993483fe0fc512ebfcdcfe"
+    },
+    "r005": {
+      "snapshot": "b01ba4a1602a722a5778c4db855d5bf23aa7f1f3",
+      "source_archive_sha256": "fc8aa11e0c421aa30aaf8b746baae155f3381e93eb78f4f163bd7d50440d0477"
+    },
+    "r006": {
+      "snapshot": "ce93a06abe9ee613bbd15e44d105600a23d45eb0",
+      "source_archive_sha256": "01bb98b6578866306d565855abf2617578e87f372845134d2b64031e2b2ee1cb"
+    },
+    "r008": {
+      "snapshot": "0ccdf717fcc25d1ac9150868c181b70306da89fd",
+      "source_archive_sha256": "5b09c25bf1ac31891fa961c27a41da55bcfd525efb63fe5e292801d19d132160"
+    }
+  },
+  "source_snapshots_note": "Immutable execution snapshots, separate from GitHub delivery commits; earlier failed fixture runs are retained.",
+  "verified_output_indexes": [
+    {
+      "file": "r006/results/u/result.sha256",
+      "sha256": "e476eb0736a198d47edfec16829aa7317628283b3fa88ff78cdad53fc1b0ec32"
+    },
+    {
+      "file": "r006/results/p16/result.sha256",
+      "sha256": "2df7ed224db299083389129b292df59198859d2a672fb0ef06863c6b8fd2c453"
+    },
+    {
+      "file": "r006/results/cfj/result.sha256",
+      "sha256": "d1c80aeb4ffdcd165e5cc17373b1ea7c8c5b92786ee6630cfbd135ada1c653e5"
+    },
+    {
+      "file": "r006/results/duplex/result.sha256",
+      "sha256": "d224b75a2de5e3f9c6714aa4ae7c3f2efcdf49699b547f6cd09f873127ac6742"
+    },
+    {
+      "file": "r006/results/p/result.sha256",
+      "sha256": "af71ec16f21370893e0766309e9a01cebf42da80dcdde562a8a3e022d9d2b34a"
+    },
+    {
+      "file": "r002/results/native-0/result.sha256",
+      "sha256": "c1ce4160d8f1e24ebdda9ba07a39d92a43b1874837c7aca1be08132ab1afea9b"
+    },
+    {
+      "file": "r002/results/native-1/result.sha256",
+      "sha256": "b828aaa7154d4531a6f18047e602a748f40aed4880e89505f7a28a3603faf491"
+    },
+    {
+      "file": "r002/results/native-2/result.sha256",
+      "sha256": "430f1ae5d103bf6b1802c6391b0997c60005cec29669c236f3b73333f12f710a"
+    },
+    {
+      "file": "r002/results/native-3/result.sha256",
+      "sha256": "1fbe9df9ad2e4d75fe55dbf18f28eeb886417b5df5b1b0a9711779880c85babf"
+    },
+    {
+      "file": "r003/results/exchange/result.sha256",
+      "sha256": "d941c812ddb45ee69707a4cbf69dedabb8886ff77fea0aba2c037eb68c922879"
+    },
+    {
+      "file": "r008/results/exchange/result.sha256",
+      "sha256": "7e3154c91b23820921dc09e5b517ac2bcbb962fe41bdb84311615041de0e66a5"
+    },
+    {
+      "file": "r008/results/duplex/result.sha256",
+      "sha256": "c0f29821a1c24008079b1f03bdb55dac1146e5c13fab5911f3ec23d0e7c0b2fa"
+    }
+  ],
+  "published_source_sha256": {
+    "project/control_frontend_v1/synth_check.py": "d7090290157dbf935879a05c304db263b3ed714aef87ecaccfe34c3d584f78b3",
+    "project/control_frontend_v1/tb_two_local_link.sv": "eec10bc5cf61f791677f8ee12be908dbb127c9cf9124e56babdb0e74e48abb36",
+    "project/control_frontend_v1/run.sh": "65af6b80a756c8aff4b3475f306862a3796c3202c62914e1394a53051e123d71",
+    "project/control_frontend_v1/stage.py": "cb0a7388ebd865252ee4d244fb4514891dc8d142a7dd03df1403b54b8a4d342f",
+    "project/control_frontend_v1/exchange.sh": "59bb2de9b011b63415f71837874520a91757f1f9ff062dda75109fbe0afa4c87",
+    "project/control_frontend_v1/legacy_mutant.py": "918926afbe2fc79bcee06eade1715ad909f3aeac844852f79f56195e12ab909c",
+    "project/control_frontend_v1/router_check.py": "915873822005e4f103f86b57ac0710fc9ae626e8f16d97ca517638156f545431",
+    "project/control_frontend_v1/admission.py": "c0a08c7275bc257289ef959ed75f1ec7fe508a3127d57ed982998d9e4ca20a12",
+    "project/control_frontend_v1/lint.sh": "5f3010c039622165292a5269f18c4092ae5c03f21a2e77c876b7922d904ca82a",
+    "project/control_frontend_v1/native.sh": "30b6c2d99f69203499b601a5d0f4b6f92596ab6ee47f207da3a042c23999e0f7",
+    "project/control_rtl_min_v0_1/two_local_link.sv": "50183786938d9ab95221aa765dd3d0196d5826a8b3577433b76b209e12e7989c",
+    "project/control_rtl_min_v0_1/lc_min_controller.sv": "0b30c35a69d409b93896f3826231eeb6794b46f52498caf51c94e901a8e69cf2",
+    "project/control_rtl_min_v0_1/tb_network_lc_wires.svh": "616109042e97a6d1f2e8acf5562970b5164f9a6be7d369a32ee82f272179666d",
+    "project/control_rtl_min_v0_1/tb_network_mc_wires.svh": "275787ef8af14088cf10f4cb70814085fd6d1d25b66f9fd3161ad0fe53064468",
+    "project/control_p16_native_v1/run.sh": "2f718859d39d2f5dc0c11a04536ba7ae38b3446e0b9e608a30907203958b8c9f",
+    "project/control_p16_native_v1/tb_p16_pair.sv": "55dea697d9a2dbce679b062f203921e4bba54c18b1ae7fa386f2f6bd3c8e3b09"
+  },
+  "tool_versions": {
+    "verilator": "5.042",
+    "simulation_python": "3.10.12",
+    "staging_python": "3.12",
+    "container": "orfs-26Q1.sif",
+    "yosys": "0.63+post; git sha1 UNKNOWN-dirty; g++ 11.4.0-1ubuntu1~22.04.3"
+  },
+  "latest_upstream_retest": {
+    "pr213": "1bb43127e9e59a1bf72b2ae7e821e207343dcfc1",
+    "rtl_changed": false,
+    "duplex": {
+      "passed": 3,
+      "total": 3,
+      "log_sha256": [
+        "0c8e813ef39c7efded2502e28dc262d8d6edb861f977946abc8a1b1ee26d7329",
+        "6282f9a0cbd64a1acecc4cf8e07a66b7af65c37ba5a1fa55d8fdaae81c8777a0",
+        "ab36171c47e05428f96b72fec0adceb81040ad2075e9fc28b232bc3595da0833"
+      ]
+    },
+    "exchange": {
+      "passed": 12,
+      "total": 12,
+      "log_sha256": [
+        "04f37e3b8ec18fdee4339d7af2a1881c2232e938302a26feaf23f254197dd77d"
+      ]
+    }
+  },
+  "management_check": {
+    "command": "python -B scripts/check_project.py",
+    "passed": true,
+    "scope": "management structure only"
+  }
+}

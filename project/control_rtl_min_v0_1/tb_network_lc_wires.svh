@@ -76,7 +76,9 @@ wire trace_ireg_valid_o;
 wire trace_cancel_token_retire_o;
 wire trace_cancel_object_drop_o;
 lc_min_controller #(.BLOCK_ID(BLOCK),.STALL_LIMIT(4096)
-`ifdef TB_J_LEASE
+`ifdef TB_NATIVE
+  ,.ENABLE_NATIVE(1'b1),.NATIVE_BLOCK_TYPE(KIND),.NATIVE_TOPOLOGY(TOPOLOGY_ID)
+`elsif TB_J_LEASE
   ,.EXTRA_PROFILE(BLOCK==0 ? 2'd1 : 2'd0)
 `elsif TB_C_STATE
   ,.EXTRA_PROFILE(BLOCK==0 ? 2'd2 : 2'd0)

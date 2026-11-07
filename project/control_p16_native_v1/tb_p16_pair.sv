@@ -31,18 +31,26 @@ module tb_p16_pair;
     assign local_enabled_i=2'b11;
     assign local_image_id0_i=lc_id[0];
     assign local_image_id1_i=lc_id[1];
-    assign task_ready_i=task_target_o<2 && lc_ready[task_target_o[0]];
-    assign return_valid_i=|lc_event;
-    assign return_packet_i=lc_event[0] ? lc_packet[0] : lc_packet[1];
+    wire [1:0] routed_task_valid, routed_return_ready;
+    wire routed_credit;
+    wire [511:0] routed_task_packet;
+    two_local_link control_link(.clk_i,.rst_ni,.task_valid_i(task_valid_o),
+        .task_credit_i(task_credit_o),.task_target_i(task_target_o),.task_packet_i(task_packet_o),
+        .task_ready_o(task_ready_i),.local_task_valid_o(routed_task_valid),
+        .local_task_credit_o(routed_credit),.local_task_packet_o(routed_task_packet),
+        .local_task_ready_i(lc_ready),.local_return_valid_i(lc_event),
+        .local_return_packet_i({lc_packet[1],lc_packet[0]}),
+        .local_return_ready_o(routed_return_ready),.return_valid_o(return_valid_i),
+        .return_packet_o(return_packet_i),.return_ready_i(return_ready_o));
 
     for (genvar i=0; i<2; i=i+1) begin: local_block
         localparam integer PEER=1-i;
         tb_p16_local #(.BLOCK(8'(i))) endpoint(
             .clk_i,.rst_ni,.release_epoch_i(deployment_epoch),.deploy_valid_i,.deploy_generation_i,
             .poison_o(lc_poison[i]),.image_valid_o(lc_image[i]),
-            .task_valid_i(task_valid_o && task_target_o==8'(i)),.task_packet_i(task_packet_o),
-            .task_credit_i(task_credit_o),.task_ready_o(lc_ready[i]),
-            .event_ready_i(return_ready_o && (i==0 || !lc_event[0])),
+            .task_valid_i(routed_task_valid[i]),.task_packet_i(routed_task_packet),
+            .task_credit_i(routed_credit),.task_ready_o(lc_ready[i]),
+            .event_ready_i(routed_return_ready[i]),
             .event_valid_o(lc_event[i]),.event_packet_o(lc_packet[i]),.life_o(lc_life[i]),
             .cycle_i(cycle),.image_id(lc_id[i]),.seed_valid(seed_valid[i]),.seed_addr,.seed_data,
             .seed_ready(seed_ready[i]),.seed_ack(seed_ack[i]),

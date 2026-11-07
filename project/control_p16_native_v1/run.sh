@@ -26,7 +26,7 @@ python3 --version | tee -a tool.txt
 "$verilator" --binary --timing --assert --timescale-override 1ns/1ps -Wno-fatal \
   --top-module tb_p16_pair -j "${BUILD_JOBS:-4}" --Mdir "$PWD/obj" \
   -I"$ctrl" -I"$native/native" \
-  "$ctrl"/{lc_min_controller,mc_min_controller,tb_network_pm}.sv \
+  "$ctrl"/{lc_min_controller,mc_min_controller,tb_network_pm,two_local_link}.sv \
   -I"$trial" "$repo/project/control_r4_v0_1/p_stored_ack_guard.sv" \
   "$trial"/{tb_p16_local,tb_p16_pair}.sv "$service"/{pj_native_service,ucf_native_service,stored_link}.sv \
   "$native"/native/{block_feed_loader,block_feed_s16k,block_feed_s16k_sram,block_local_s_arbiter,block_local_s_macro,p4,block_v2_g}.sv \
