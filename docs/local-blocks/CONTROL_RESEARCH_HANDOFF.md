@@ -2,7 +2,7 @@
 
 Issue179 / Draft PR180；Melodydt；2026-11-07 Asia/Shanghai；task/179-local-block-continuation。本页列当前能力、证据与接续入口。
 
-源码交付待绑定；[研究与ISA报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)原位更新。
+源码交付`b339b9fa2844f8e566803593b96cbdf9eca9b451`；[研究与ISA报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)原位更新。
 
 ## 当前进度：综合前第八步交付待审（2026-11-07，Asia/Shanghai）
 
