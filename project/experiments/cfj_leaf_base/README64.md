@@ -44,4 +44,15 @@ bash project/experiments/cfj_leaf_base/run64.sh "$SOURCE" "$QUALIFIED_ROOT" "$OU
 
 J 的后续物理 ECO 由 `resume_j64_eco.sh` 从 physical04 已修复的 post-global-route 数据库续接，真实输入阶段写入 `eco-origin.json`。`compact64_j_rx_hold_eco.tcl` 使用固定的 `rx-hold-targets.tsv`，为原提取结果低于 80 ps 的 301 个接收寄存器 D 端点各加四颗 BUF_X1；先接 PG 再设保护，重新合法化及路由，新增缓冲计入面积/功耗。该名单只适用这一固定夹具，不是通用顶层约束。优化后仍须通过同一最终门。
 
+后续候选还包含两颗现有 T 输入驱动器的原库等价尺寸调整，以及 `compact64_j_post_grt_repair.tcl` 的电气/hold 修复。上一候选 SPEF 仅作为优化提示，并单独封存；最终独立读取新 SPEF。`native_precheck.sh` 先拒绝原 PG、时序或电气限值已失败的候选，通过后仍执行完整原版 DRC，不代表预检查本身具有最终资格。
+
 合格包须同时绑定最终六文件、完整原版 GDS DRC 0、VDD/VSS、电气、TT 1.1 V / 25 °C / 300 MHz setup/hold、布线至合成参考 LEC、实际网表三初态程序及输入镜像。后制 base/high RC 是另列的研究模型，不是校准十二层工艺。`package64.py` 检查这些条件并封存实际执行源、失败记录、内部 SHA-256 和包级散列；不替换 `_128` 包。
+
+## 实际 placement 图
+
+`plot64.py` 从交付包里的 inventory 和最终 DEF 取宏位置及标准单元位置，排除填充/tap；虚线只表示独立夹具范围，不生成组合硬块边界。可传入已经验收并本地核验的一个或多个包，例如：
+
+```bash
+python -B project/experiments/cfj_leaf_base/plot64.py placement.png \
+  accepted-c_64.tar.gz accepted-f_64.tar.gz accepted-j_64.tar.gz
+```
