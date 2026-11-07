@@ -119,7 +119,7 @@ if kind != "f":
         files["execution/" + name] = root / name
     if kind == "j":
         files["execution/upper-preflight.sh"] = root.parent / "native-repair01/upper.sh"
-        files["execution/make_upper.py"] = root / "preflight16/make_upper.py"
+        files["execution/make_upper.py"] = root / "preflight17/make_upper.py"
         for name in ("resume04.sh", "preflight04.sh", "overlay04.sh", "gate04.sh",
                      "resume05.sh", "preflight05.sh", "overlay05.sh", "gate05.sh",
                      "resume06.sh", "preflight06.sh", "overlay06.sh", "gate06.sh",
@@ -133,6 +133,8 @@ if kind != "f":
                      "resume14.sh", "preflight14.sh", "overlay14.sh", "gate14.sh",
                      "resume15.sh", "preflight15.sh", "overlay15.sh", "gate15.sh",
                      "resume16.sh", "preflight16.sh", "overlay16.sh", "gate16.sh",
+                     "resume17.sh", "preflight17.sh", "overlay17.sh", "gate17.sh",
+                     "terminal-pin-diagnose.tcl", "terminal-pin-diagnose.sh",
                      "compact64_j_continue_eco.tcl",
                      "overlay10-submitted.sh", "compact64_j_post_grt_repair.tcl",
                      "resume_j64_eco.sh", "compact64_j_hold_eco.tcl", "compact64_j_rx_hold_eco.tcl",
@@ -168,7 +170,8 @@ if kind == "j":
 if kind == "j":
     patterns += ("resume14-*.log", "preflight14-*.log", "overlay14-*.log",
                  "resume15-*.log", "preflight15-*.log", "overlay15-*.log",
-                 "resume16-*.log", "preflight16-*.log", "overlay16-*.log")
+                 "resume16-*.log", "preflight16-*.log", "overlay16-*.log",
+                 "resume17-*.log", "preflight17-*.log", "overlay17-*.log", "terminal-pin-diagnose-*.log")
 if kind == "f":
     patterns += ("physical02/f-upper-*.log",)
 for pattern in patterns:
@@ -180,7 +183,7 @@ for path in root.glob(f"preflight*/slot{slot}-upper.*"):
 if kind == "j":
     for stage in ("physical02/4", "physical03/cugr/4", "physical04/cugr/4",
                   "physical06/cugr/4", "physical08/cugr/4", "physical09/cugr/4", "physical10/cugr/4",
-                  "physical12/cugr/4", "physical13/cugr/4", "physical14/cugr/4", "physical15/cugr/4"):
+                  "physical12/cugr/4", "physical13/cugr/4", "physical14/cugr/4", "physical15/cugr/4", "physical16/cugr/4"):
         previous = root / stage
         for pattern in ("*.tcl", "eco-origin.json", "config.mk",
                         "native-setup.rpt", "native-hold.rpt", "native-sta-counts.tsv",
