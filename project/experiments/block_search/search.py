@@ -50,7 +50,7 @@ def import_onnx(path, weight_names=()):
         dtypes[v.name] = onnx.TensorProto.DataType.Name(v.data_type)
         sizes[v.name] = math.prod(v.dims) * __import__('numpy').dtype(
             onnx.helper.tensor_dtype_to_np_dtype(v.data_type)).itemsize
-    tasks, producer = [], {}
+    tasks, producer, weight_transforms = [], {}, []
     for i, n in enumerate(model.graph.node):
         # Only Constant itself is unconditionally compile-time. Shape/Cast etc
         # require registered services unless an upstream optimizer folded them.
@@ -67,6 +67,16 @@ def import_onnx(path, weight_names=()):
         if missing:
             raise Unsupported(f'Unresolved output shape: node {i} {n.op_type}: {missing}')
         inputs = [v for v in n.input if v]
+        # Read-only parameter layout transforms belong to offline weight
+        # preparation. Retain the recipe; do not allocate full weight matrices
+        # in private S or silently execute these transforms on a CPU at runtime.
+        if inputs and all(v in constants for v in inputs) and n.op_type in {
+                'Transpose','Reshape','Squeeze','Unsqueeze','Identity','Cast','Slice'}:
+            constants.update(outputs)
+            weight_transforms.append({'op': n.op_type, 'inputs': inputs, 'outputs': outputs,
+                                      'attributes': {a.name:str(onnx.helper.get_attribute_value(a))
+                                                     for a in n.attribute}})
+            continue
         work = max([sizes[v] // 4 for v in outputs] + [1])
         if n.op_type in ('MatMul', 'Gemm') and inputs and inputs[0] in shapes:
             k = shapes[inputs[0]][-1]
@@ -87,6 +97,7 @@ def import_onnx(path, weight_names=()):
     return {'tasks': tasks, 'sizes': sizes, 'weights': sorted(constants),
             'inputs': [v.name for v in model.graph.input if v.name not in constants],
             'outputs': [v.name for v in model.graph.output],
+            'offline_weight_transforms': weight_transforms,
             'source': str(path), 'source_sha256': hashlib.sha256(Path(path).read_bytes()).hexdigest()}
 
 
