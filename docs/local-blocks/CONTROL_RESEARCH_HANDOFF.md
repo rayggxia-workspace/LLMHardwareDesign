@@ -2,6 +2,8 @@
 
 Issue179 / Draft PR180；Melodydt；2026-11-07 Asia/Shanghai。分支task/179-local-block-continuation。本页为当前控制合同、证据和接续入口。
 
+源码交付`9aab685283b10b56bf49ef11f24d57012925a461`；[28页研究与ISA报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)原位更新。
+
 ## 当前交付
 
 综合前第1-6步已有功能RTL与验证：规格、可综合PM、公共装载、五类统一接入、四条异构提交链、取消/故障/协调恢复。执行ISA仍v2/64 bit，母控6条、局控10条；两个目标、单时钟域、每LC一任务/一在途服务。目标周期3.333333333 ns。
