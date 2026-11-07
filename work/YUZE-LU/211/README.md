@@ -63,3 +63,12 @@ C 回放包括五种 C↔U 正常、背压、错误和复位场景，以及一�
 | `accepted-c.tar.gz` | `9dcb356250b4e10091b8c291398bde53542a0539e0177fccf3ee05c6a6a503da` |
 | `accepted-f.tar.gz` | `1aaac15aa8d433e3bb7a8c0eac71711a9b38ec99b29f302fc5bd990fa8ff4729` |
 | `accepted-j.tar.gz` | `262a836051726736eb86cb501293b4d35b7ee1fae2dbb2e421ac55db325e859c` |\n
+## C/F 同时互发修复
+
+新增一个独立 128 位 TX 保持槽。读响应进入保持槽时消费 S 响应，使本地 RX 能继续写 SRAM。保持槽仅在原生 stored_link 收到远端实际写 ACK 后释放。局控的 SEND 完成语义仍由该确认驱动。
+
+- 99344 对旧版运行同一测试，三类单向场景通过，C↔C 同时发送在有限周期断言失败，表现为两个 TX 保持、RX 无进展。
+- 99371 使用真实 compact SRAM、cfj_s_port 与 stored_link，覆盖 C↔C、C↔F、F↔F。每种组合通过单向、双向、写入背压、ACK 停顿、复位中断和不同数据的重发，并核对 SRAM 中的源及目的字。测试入口为 exchange.sh。
+- 99372 用实际母控和两份局控镜像，执行双方 RESERVE→SEND→RECEIVE，正常、背压、复位重发三种场景通过。测试先等两个发送端都 offer 再允许接收，避免程序启动偏斜掩盖并发。入口为 duplex_program.sh。
+- 99356、99357、99358 复跑原有 C↔U 程序和 C/F G→E 对照。原有 ACK、故障和复位场景通过。
+- RTL 源归档位于服务器 duplex02/input.tar，SHA-256 为 a2ce4200094e1551bee6c57ff7e53cf8d98b87532b45d9051b26f6b208f4c7b1。测试的后续改动由各作业 source-sha256.txt 绑定。99355 重新综合并布线 C/F，每个任务 10 核；99370 从同一版 C 的 CTS 复验 0.065 ns hold 与 30% slew 优化裕量。新版最终物理门正在运行。
