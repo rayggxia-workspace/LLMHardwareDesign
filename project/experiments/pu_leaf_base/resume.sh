@@ -14,6 +14,7 @@ if [[ -n ${10:-} ]]; then extra+=(--repair-extracted "${10}"); fi
 if [[ -n ${11:-} ]]; then extra+=(--resize-report "${11}"); fi
 if [[ -n ${12:-} ]]; then extra+=(--route-keepout "${12}"); fi
 if [[ -n ${13:-} ]]; then extra+=(--isolate-rows "${13}"); fi
+if [[ -n ${14:-} ]]; then extra+=(--setup-target "${14}"); fi
 cpus=${SLURM_CPUS_PER_TASK:?}
 tmp=$root/tmp-$SLURM_JOB_ID
 mkdir -p "$tmp"

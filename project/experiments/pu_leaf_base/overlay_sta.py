@@ -167,6 +167,7 @@ for variant, scale in electrical["estimate_variants"].items():
     upper_paths = text.split("=== UPPER TIMING PATHS ===", 1)[1]
     upper_nets, electrical_report = text.split("=== UPPER ROUTES ===", 1)[1].split(
         "=== ELECTRICAL VIOLATIONS ===", 1)
+    electrical_report = electrical_report.split("=== UPPER TIMING PATHS ===", 1)[0]
     wire_caps = re.findall(r"Wire capacitance:\s*([\d.]+)", upper_nets)
     variants[variant] = {
         "slack_ns": slacks,

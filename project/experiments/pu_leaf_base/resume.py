@@ -21,10 +21,13 @@ parser.add_argument("--hold-endpoints", type=Path)
 parser.add_argument("--m10-guard", type=float, choices=(0.0, 0.2))
 parser.add_argument("--from-global-route", action="store_true")
 parser.add_argument("--repair-extracted", type=Path)
+parser.add_argument("--setup-target", type=float, default=0.025)
 parser.add_argument("--resize-report", type=Path)
 parser.add_argument("--route-keepout", type=Path)
 parser.add_argument("--isolate-rows", type=Path)
 args = parser.parse_args()
+if not 0 <= args.setup_target <= 1:
+    parser.error("setup optimization target must be between 0 and 1 ns")
 if (args.repair_extracted or args.resize_report or args.isolate_rows) and not args.from_global_route:
     parser.error("extracted repair, driver sizing and row isolation require a saved global route")
 src = args.candidate.resolve()
@@ -34,7 +37,8 @@ inputs = json.loads((src / "inputs.json").read_text())
 (out / "inputs.json").write_text(json.dumps(inputs | {"route_checkpoint": str(src), "from_global_route": args.from_global_route,
     "route_mode": args.mode, "via_access_layer": args.via_access_layer,
     "m10_guard_um": args.m10_guard, "hold_endpoints": str(args.hold_endpoints or ""),
-    "repair_extracted": str(args.repair_extracted or ""), "resize_report": str(args.resize_report or ""),
+    "repair_extracted": str(args.repair_extracted or ""), "setup_target_ns": args.setup_target,
+    "resize_report": str(args.resize_report or ""),
     "route_keepout": str(args.route_keepout or ""), "isolate_rows": str(args.isolate_rows or "")}))
 for lib in src.glob("*.lib"):
     shutil.copyfile(lib, out / lib.name)
@@ -76,7 +80,7 @@ if args.m10_guard is not None:
     route_guard += f"source {{{Path(__file__).with_name('guard_m10.tcl').resolve()}}}\n"
 if args.route_keepout:
     for line in args.route_keepout.read_text().splitlines():
-        if not re.fullmatch(r"(?:via[79]|metal10)(?:[ \t]+[0-9]+){4}", line):
+        if not re.fullmatch(r"(?:via[79]|metal9|metal10)(?:[ \t]+[0-9]+){4}", line):
             raise ValueError(f"invalid observed routing keepout: {line}")
         layer, x0, y0, x1, y1 = line.split()
         if not (int(x0) < int(x1) and int(y0) < int(y1)):
@@ -115,7 +119,7 @@ if args.from_global_route:
         )
         repair = (
             "repair_design -cap_margin 5 -slew_margin 10\n"
-            "repair_timing -setup -setup_margin 0.025 -max_buffer_percent 10\n"
+            f"repair_timing -setup -setup_margin {args.setup_target} -max_buffer_percent 10\n"
             "detailed_placement\ncheck_placement -verbose\n"
         )
     if args.resize_report:
