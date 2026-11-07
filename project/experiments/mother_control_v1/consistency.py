@@ -14,7 +14,7 @@ def sha(path):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--out', type=Path, required=True)
-    p.add_argument('--kind', choices=['P', 'U', 'C', 'F', 'J', 'CF-duplex'], required=True)
+    p.add_argument('--kind', choices=['P', 'U', 'C', 'F', 'J', 'CF-duplex', 'U-duplex', 'U-fma-duplex'], required=True)
     p.add_argument('--native-audit', type=Path, required=True)
     p.add_argument('--gate-receipt', type=Path, required=True)
     p.add_argument('--cells', type=Path, required=True)
@@ -37,9 +37,21 @@ def main():
         with (out / log).open('w') as stream:
             subprocess.run(list(map(str, command)), cwd=cwd, env=env,
                            stdout=stream, stderr=subprocess.STDOUT, check=True)
-    if a.kind in ('P', 'U'):
-        pu = (a.pu_source or ROOT).resolve()
-        run([sys.executable, '-B', pu / 'project/experiments/pu_leaf_base/control_replay.py', pu, bundle, a.kind], 'stage.log')
+    u_lock = None
+    if a.kind in ('P','U','U-duplex','U-fma-duplex'):
+        if a.kind.startswith('U'):
+            assert a.pu_source, 'U requires an explicitly bound accepted #221 source'
+            pu = a.pu_source.resolve()
+            u_lock = json.loads((pu/'work/YUZE-LU/212/u-native-hardware-lock.json').read_text())
+            assert u_lock['hardware_commit']=='17ba807d69dda5415b34e531af016ab47b8e17b0'
+            for name, expected in u_lock['files'].items():
+                assert sha(pu/name)==expected, name
+            if a.kind!='U':
+                env['PU_U_NATIVE_REPLAY']=a.kind.removeprefix('U-')
+        else:
+            pu = ROOT
+        group = 'P' if a.kind=='P' else 'U'
+        run([sys.executable, '-B', pu / 'project/experiments/pu_leaf_base/control_replay.py', pu, bundle, group], 'stage.log')
     else:
         run([sys.executable, '-B', ROOT / 'project/experiments/cfj_leaf_base/stage_regression.py', prior / 'bundle.tar.gz', bundle, 'controller64'], 'stage.log')
         if a.kind == 'CF-duplex':
@@ -68,7 +80,7 @@ def main():
     pj = bundle / 'staged/pj/project/rtl'
     bank = Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v')
     assert sha(bank) == '6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7'
-    kind = dict(P=3, U=-1, C=2, F=1, J=4, **{'CF-duplex': -1})[a.kind]
+    kind = dict(P=3, U=-1, C=2, F=1, J=4, **{'CF-duplex': -1, 'U-duplex': -1, 'U-fma-duplex': -1})[a.kind]
     # Include the registered two-local link when the compact frontend uses it.
     sources = [ctrl / 'lc_min_controller.sv', ctrl / 'tb_network_pm.sv']
     link = ctrl / 'two_local_link.sv'
@@ -82,7 +94,7 @@ def main():
     cases = [('normal', 0, 0, 0)]
     if a.kind == 'U':
         cases += [('stalled', 1, 0, 0), ('fault', 0, 1, 0), ('stalled-fault', 1, 1, 0), ('reset', 1, 0, 1)]
-    if a.kind == 'CF-duplex':
+    if a.kind in ('CF-duplex','U-duplex','U-fma-duplex'):
         cases += [('stalled', 1, 0, 0), ('reset', 1, 0, 1)]
     results = []
     for name, stall, fault, reset in cases:
@@ -103,7 +115,7 @@ def main():
             assert 'PASS native' in (out / log).read_text()
             results.append(dict(case=name, reset_mode=reset_mode, seed=seed, log_sha256=sha(out / log)))
     report = dict(schema='mother-block-consistency/1', passed=True, kind=a.kind, instruction_bits=64,
-        physical_mother=True, mother_final_netlist_sha256=sha(final), actual_local_rtl=True,
+        u_hardware_lock=u_lock, physical_mother=True, mother_final_netlist_sha256=sha(final), actual_local_rtl=True,
         actual_block_rtl=True, actual_private_s_sram=True, local_program_memory='behavioral fixture',
         final_block_netlist=False, topology='two resident targets', full_isa=False, results=results,
         source_sha256={str(path.relative_to(bundle)) if path.is_relative_to(bundle) else str(path): sha(path) for path in sources})
