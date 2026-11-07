@@ -1,7 +1,8 @@
 import copy
 import unittest
 from evaluate import hardware
-from search import compile_graph, earliest, memory_ok, Unsupported, verify
+from search import compile_graph, earliest, memory_ok, Unsupported, verify, State
+from unittest.mock import patch
 
 
 def graph():
@@ -55,6 +56,14 @@ class Tests(unittest.TestCase):
         for width in [2,4,8]:
             wider=compile_graph(g,h,width,allow_estimates=True)
             self.assertLessEqual(wider['objective'],baseline['objective'])
+
+    def test_shared_history_matches_deepcopy(self):
+        g=graph(); h=hardware(4096,['MatMul','Mul'])
+        fast=compile_graph(g,h,8,allow_estimates=True)
+        with patch.object(State,'fork',lambda state:copy.deepcopy(state)):
+            original=compile_graph(g,h,8,allow_estimates=True)
+        fast.pop('seconds');original.pop('seconds')
+        self.assertEqual(fast,original)
 
     def test_cross_layer_union_and_source_lease(self):
         g=graph(); h=hardware(4096,['MatMul','Mul'])

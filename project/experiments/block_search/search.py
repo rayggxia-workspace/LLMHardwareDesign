@@ -34,6 +34,8 @@ def import_onnx(path, weight_names=()):
     import onnx
     from onnx import numpy_helper
     model = onnx.shape_inference.infer_shapes(onnx.load(str(path), load_external_data=False))
+    metadata = {v.key:v.value for v in model.metadata_props}
+    weight_names = set(weight_names) | set(json.loads(metadata.get('block_search.weight_inputs','[]')))
     sizes, shapes, dtypes = {}, {}, {}
     constants = set(weight_names) | {v.name for v in model.graph.initializer}
     for v in itertools.chain(model.graph.input, model.graph.output, model.graph.value_info):
@@ -138,6 +140,15 @@ class State:
     finish: int = 0
     wire_cost: float = 0
 
+    def fork(self):
+        # Completed operations and interval tuples are immutable history.
+        # Copy containers, not the full historical graph, at every branch.
+        return State(cal={r:list(v) for r,v in self.cal.items()},
+                     allocations={r:dict(v) for r,v in self.allocations.items()},
+                     objects={r:dict(v) for r,v in self.objects.items()},
+                     wires=self.wires,schedule=list(self.schedule),
+                     finish=self.finish,wire_cost=self.wire_cost)
+
 
 def paths(arch, src, dst):
     if src == dst:
@@ -178,7 +189,7 @@ def extend(state, task, impl, graph, arch, remaining):
                                     arch.get('route_combinations', 4))
     result = []
     for combination in combinations:
-        s = copy.deepcopy(state)
+        s = state.fork()
         cal = s.cal
         before = 0
         copies = []
@@ -215,7 +226,8 @@ def extend(state, task, impl, graph, arch, remaining):
                     c['end'] for c in copies if c['tensor'] == tensor)
                 obj['last_use'] = max(obj['last_use'], release)
                 if remaining[tensor] == 0:
-                    s.allocations[obj['owner']][tensor]['end'] = obj['last_use']
+                    s.allocations[obj['owner']][tensor] = {
+                        **s.allocations[obj['owner']][tensor], 'end':obj['last_use']}
         scratch = impl.get('workspace_bytes', 0)
         # Nonlocal activations must fit at the consumer until completion.
         incoming = sum(graph['sizes'][v] for v in set(task['inputs'])
@@ -256,6 +268,21 @@ def fingerprint(s):
 
 def compile_graph(graph, arch, width=16, penalty=1., allow_estimates=False, greedy_guard=True):
     started = time.perf_counter()
+    if width < 1 or penalty < 0:
+        raise ValueError('Positive beam width and nonnegative penalty required')
+    service_ids=[s['id'] for s in arch['services']]
+    link_ids=[e['id'] for e in arch['links']]
+    if len(set(service_ids))!=len(service_ids) or len(set(link_ids))!=len(link_ids):
+        raise Unsupported('Service/link IDs must be unique')
+    for name, instance in arch['instances'].items():
+        if instance['capacity_bytes']<=0:
+            raise Unsupported('Nonpositive capacity: '+name)
+    for impl in arch['services']:
+        if impl['instance'] not in arch['instances'] or impl['work_per_cycle']<=0:
+            raise Unsupported('Invalid service: '+impl['id'])
+    for link in arch['links']:
+        if link['bytes_per_cycle']<=0 or link['latency_cycles']<0 or link['static_cost']<0:
+            raise Unsupported('Invalid link: '+link['id'])
     if not allow_estimates and not arch.get('qualified_numeric', False):
         raise Unsupported('Hardware numeric services are analytical/unqualified; use explicit --allow-estimates')
     ids = [t['id'] for t in graph['tasks']]
@@ -384,7 +411,12 @@ def main():
     a = p.parse_args()
     if a.beam < 1 or a.penalty < 0:
         p.error('beam must be positive and penalty nonnegative')
-    graph = import_onnx(a.model) if a.model.endswith('.onnx') else load(a.model)
+    source=Path(a.model)
+    if source.is_dir():
+        receipt=load(source/'receipt.json')
+        graph=import_onnx(source/'full.onnx',receipt.get('parameters',{}))
+    else:
+        graph = import_onnx(a.model) if a.model.endswith('.onnx') else load(a.model)
     result = compile_graph(graph, load(a.hardware), a.beam, a.penalty, a.allow_estimates,
                            not a.no_greedy_guard)
     Path(a.output).write_text(json.dumps(result,indent=2))

@@ -61,6 +61,10 @@ def main():
     if not ok:
         raise ValueError('ONNX simplifier rejected graph')
     graph = onnx.shape_inference.infer_shapes(graph)
+    entry=graph.metadata_props.add()
+    entry.key='block_search.weight_inputs'
+    names=set(dict(wrapper.named_parameters())) | set(dict(wrapper.named_buffers()))
+    entry.value=json.dumps([v.name for v in graph.graph.input if v.name in names])
     onnx.save(graph, str(path))
     params = dict(wrapper.named_parameters())
     buffers = dict(wrapper.named_buffers())
