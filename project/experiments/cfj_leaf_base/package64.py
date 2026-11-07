@@ -101,6 +101,19 @@ for path in (root / "compact-check01").rglob("*"):
         files["compact-fetch/" + path.relative_to(root / "compact-check01").as_posix()] = path
 for name in ("physical02.tar", "verification.tar", "upstream.tar.gz"):
     files["execution/" + name] = root / "inputs" / name
+technology = root / "source02/project/experiments/block_v1/technology-2um-v1.json"
+assert sha(technology) == "3649589fc8ba84fb04ca8c50ed2e2ac704a3b0a73a6a750926a641778f28d050"
+files["execution/technology-2um-v1.json"] = technology
+for name in ("physical02.sh", "preflight02.sh", "overlay02.sh", "upper-only02.sh", "gate02.sh"):
+    files["execution/" + name] = root / name
+slot = {"c": 0, "f": 2, "j": 4}[kind]
+patterns = (f"physical02/{slot}-*.log", f"physical02/full-{slot}-*.log",
+            f"preflight02/{slot}-*.log", "rtl01/*.log", "rtl02/*.log")
+if kind == "f":
+    patterns += ("physical02/f-upper-*.log",)
+for pattern in patterns:
+    for path in root.glob(pattern):
+        files["job-logs/" + path.relative_to(root).as_posix()] = path
 files["execution/package64.py"] = Path(__file__)
 delivery = root / "delivery"
 delivery.mkdir(exist_ok=True)
