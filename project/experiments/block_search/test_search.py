@@ -49,6 +49,13 @@ class Tests(unittest.TestCase):
         g['tasks'][0]['op']='unregistered'
         with self.assertRaises(Unsupported):compile_graph(g,h,allow_estimates=True)
 
+    def test_greedy_incumbent(self):
+        g=graph(); h=hardware(4096,['MatMul','Mul'])
+        baseline=compile_graph(g,h,1,allow_estimates=True)
+        for width in [2,4,8]:
+            wider=compile_graph(g,h,width,allow_estimates=True)
+            self.assertLessEqual(wider['objective'],baseline['objective'])
+
     def test_cross_layer_union_and_source_lease(self):
         g=graph(); h=hardware(4096,['MatMul','Mul'])
         # Force two producers into P0 and their consumer into J0.

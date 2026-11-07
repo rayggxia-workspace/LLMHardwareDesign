@@ -243,7 +243,7 @@ def fingerprint(s):
     return json.dumps([s.cal, s.allocations, s.objects, sorted(s.wires)], sort_keys=True)
 
 
-def compile_graph(graph, arch, width=16, penalty=1., allow_estimates=False):
+def compile_graph(graph, arch, width=16, penalty=1., allow_estimates=False, greedy_guard=True):
     started = time.perf_counter()
     if not allow_estimates and not arch.get('qualified_numeric', False):
         raise Unsupported('Hardware numeric services are analytical/unqualified; use explicit --allow-estimates')
@@ -260,6 +260,7 @@ def compile_graph(graph, arch, width=16, penalty=1., allow_estimates=False):
         for v in set(t['inputs']):
             remaining[v] = remaining.get(v, 0)+1
     states = [State()]
+    guard = states[0]
     stats = {'expanded': 0, 'merged': 0, 'pruned': 0}
     for k, task in enumerate(graph['tasks']):
         for v in set(task['inputs']):
@@ -268,7 +269,7 @@ def compile_graph(graph, arch, width=16, penalty=1., allow_estimates=False):
                       task.get('dtype', 'FLOAT') in s.get('dtypes', ['FLOAT'])]
         if not candidates:
             raise Unsupported(f'No registered service: {task["id"]} {task["op"]} {task.get("dtype")}')
-        next_states = {}
+        next_states, guard_children = {}, []
         for state in states:
             for impl in candidates:
                 for child in extend(state, task, impl, graph, arch, remaining):
@@ -278,6 +279,8 @@ def compile_graph(graph, arch, width=16, penalty=1., allow_estimates=False):
                         stats['merged'] += 1
                     else:
                         next_states[key] = child
+                    if state is guard:
+                        guard_children.append(next_states[key])
         if not next_states:
             return {'status': 'search_exhausted', 'at': task['id'], 'index': k,
                     'reason': 'No feasible extension among retained candidates; not a global infeasibility proof',
@@ -293,6 +296,10 @@ def compile_graph(graph, arch, width=16, penalty=1., allow_estimates=False):
                     break
         chosen = {id(s) for s in selected}
         selected += [s for s in ordered if id(s) not in chosen][:width-len(selected)]
+        if greedy_guard and guard_children:
+            guard = min(guard_children,key=lambda s:s.finish+penalty*s.wire_cost)
+            if all(s is not guard for s in selected):
+                selected[-1] = guard
         stats['pruned'] += len(ordered)-len(selected)
         states = selected
     best = min(states, key=lambda s: s.finish+penalty*s.wire_cost)
@@ -302,6 +309,7 @@ def compile_graph(graph, arch, width=16, penalty=1., allow_estimates=False):
             'static_links': sorted(best.wires), 'schedule': best.schedule,
             'memory': best.allocations, 'statistics': stats,
             'seconds': time.perf_counter()-started, 'beam_width': width,
+            'greedy_guard': greedy_guard,
             'source_sha256': graph.get('source_sha256'),
             'qualification': arch.get('evidence', 'unspecified'),
             'limitations': ['fixed topological decision order; earliest-slot scheduling',
@@ -361,11 +369,13 @@ def main():
     p.add_argument('--beam', type=int, default=16)
     p.add_argument('--penalty', type=float, default=1.)
     p.add_argument('--allow-estimates', action='store_true')
+    p.add_argument('--no-greedy-guard', action='store_true')
     a = p.parse_args()
     if a.beam < 1 or a.penalty < 0:
         p.error('beam must be positive and penalty nonnegative')
     graph = import_onnx(a.model) if a.model.endswith('.onnx') else load(a.model)
-    result = compile_graph(graph, load(a.hardware), a.beam, a.penalty, a.allow_estimates)
+    result = compile_graph(graph, load(a.hardware), a.beam, a.penalty, a.allow_estimates,
+                           not a.no_greedy_guard)
     Path(a.output).write_text(json.dumps(result,indent=2))
 
 
