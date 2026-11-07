@@ -44,8 +44,9 @@ pair = pair[:begin] + verify + pair[end:]
 begin = pair.index("            default: begin", pair.index("task automatic configure_and_start"))
 end = pair.index("            end", begin) + len("            end")
 pair = pair[:begin] + """            default: begin
-                seed(0,40,INPUT_WORD); seed(0,41,SENTINEL);
-                seed(1,40,128'h123456789abcdef0_123456789abcdef0);
+                seed(0,40,force_no_ack ? ~INPUT_WORD : INPUT_WORD); seed(0,41,SENTINEL);
+                seed(1,40,force_no_ack ? ~128'h123456789abcdef0_123456789abcdef0 :
+                                        128'h123456789abcdef0_123456789abcdef0);
                 seed(1,41,SENTINEL);
             end""" + pair[end:]
 pair = pair.replace("(fault!=0 ? 48 : 80)", "32")

@@ -16,6 +16,7 @@ module cfj_exchange_case #(parameter integer K0=2, K1=1) (
     reg [127:0] expected[2];
     reg [1:0] needed;
     reg [1:0] completed;
+    reg [31:0] version=0;
 
     for (genvar i=0;i<2;i=i+1) begin: side
         localparam integer KIND=i==0 ? K0 : K1;
@@ -87,8 +88,9 @@ module cfj_exchange_case #(parameter integer K0=2, K1=1) (
         allow_write=3; allow_ack=delayed ? 0 : 3;
         repeat(4) tick();
         reset=0; tick();
-        expected[0]=128'h123456789abcdef0_123456789abcdef0;
-        expected[1]=128'hfedcba9876543210fedcba9876543210;
+        version=version+1;
+        expected[0]=128'h123456789abcdef0_123456789abcdef0 ^ {4{version}};
+        expected[1]=128'hfedcba9876543210fedcba9876543210 ^ {4{version}};
         seed(0,4,expected[0]); seed(1,4,expected[1]);
         seed(0,8,0); seed(1,8,0);
         seeding=0; needed=bidirectional ? 3 : 1;
