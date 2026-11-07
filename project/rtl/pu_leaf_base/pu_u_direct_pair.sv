@@ -35,7 +35,10 @@ module pu_u_direct_pair (
     assign cmd_store=2'b01;
     assign done_ready=state==EXEC ? issued & ~retired : 2'b00;
     assign cmd_meta={24'b0,n_meta,55'b0,e_meta};
-    assign cmd_sources={n_sources,2'b00};
+    // Paired descriptors always supply direct A; B/C follow opcode arity.
+    wire [1:0] e_sources = (e_meta[3:0]==3 || e_meta[3:0]==6) ? 2'd3 :
+        (e_meta[3:0]==7 || e_meta[3:0]==8 || e_meta[3:0]==10) ? 2'd1 : 2'd2;
+    assign cmd_sources={n_sources,e_sources};
     assign cmd_addresses={10'b0,n_src,e_bc,10'b0};
     assign cmd_dst={10'b0,e_dst};
     assign read_bytes=status==0 ? (({30'b0,n_sources} +

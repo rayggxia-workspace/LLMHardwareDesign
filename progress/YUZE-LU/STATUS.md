@@ -1,7 +1,7 @@
 # YUZE-LU 的进度
 ## 2026-11-07（CST）P/U 独立叶宏底座
 
-[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) · [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214) · [工程回执](../../work/YUZE-LU/212/README.md)。P/U 各一版已通过原版完整原生 GDS DRC、TT 300 MHz 提取时序、电气、供电和最终网表回放，代表 M11/M12 连接三档研究 RC 通过。六文件和回执已回收并校验。看板缺配置，独立审查待完成。
+[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) · [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214) · [工程回执](../../work/YUZE-LU/212/README.md)。P 的既有工程回执保留。U 发现 E 适配器丢失操作数个数的 P1 缺陷，已修复传递和缺项补零；257 组真实旧 E 核对照、P/U 烟测三初态及母局控回放通过。旧 U 包只证明修复前实现，改版 U 的重新物理实现和最终网表验收待执行。看板缺配置，独立审查待完成。
 
 ## 2026-11-06（CST）紧凑 SRAM S 版图图册
 

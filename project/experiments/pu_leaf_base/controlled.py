@@ -116,7 +116,7 @@ U_ENDPOINT = """
         .n_done_error(done_error[1]),.n_done_saturated(done_saturated[1]),.n_done_data(),
         .n_to_e_valid,.n_to_e_data,.n_to_e_ready,
         .e_cmd_valid(cmd_valid[0]),.e_cmd_ready(cmd_ready[0]),.e_cmd_store(cmd_store[0]),
-        .e_cmd_op(cmd_meta[3:0]),.e_cmd_shift(cmd_meta[8:4]),
+        .e_cmd_sources(cmd_sources[1:0]),.e_cmd_op(cmd_meta[3:0]),.e_cmd_shift(cmd_meta[8:4]),
         .e_cmd_src(cmd_addresses[29:0]),.e_cmd_dst(cmd_dst[9:0]),
         .e_done_valid(done_valid[0]),.e_done_ready(done_ready[0]),
         .e_done_error(done_error[0]),.e_done_saturated(done_saturated[0]),.e_done_data(),

@@ -4,6 +4,7 @@ module pu_compact_e_service (
     input wire clk, reset,
     input wire cmd_valid, cmd_store, cmd_direct_a,
     output wire cmd_ready,
+    input wire [1:0] cmd_sources, // Total A/B/C count, including direct A when selected.
     input wire [3:0] cmd_op,
     input wire [4:0] cmd_shift,
     input wire [29:0] cmd_src,
@@ -36,7 +37,7 @@ module pu_compact_e_service (
                      EXEC_RSP=4, WRITE_REQ=5, WRITE_RSP=6, DONE=7, DIRECT_A=8;
     reg [3:0] state;
     reg store_result;
-    reg [1:0] beat, last_beat;
+    reg [1:0] beat, last_beat, source_count;
     reg [29:0] source_words;
     reg [9:0] destination_word;
 
@@ -63,13 +64,16 @@ module pu_compact_e_service (
                     e_in_op <= cmd_op;
                     e_in_shift <= cmd_shift;
                     beat <= 0;
+                    source_count <= cmd_sources;
+                    e_in_data <= 0;
                     if (cmd_op == 3 || cmd_op == 6)
                         last_beat <= 2;
                     else if (cmd_op == 7 || cmd_op == 8 || cmd_op >= 10)
                         last_beat <= 0;
                     else
                         last_beat <= 1;
-                    state <= cmd_direct_a ? DIRECT_A : READ_REQ;
+                    state <= cmd_sources == 0 ? SEND :
+                             cmd_direct_a ? DIRECT_A : READ_REQ;
                 end
                 DIRECT_A: if (direct_a_abort) begin
                     done_error <= 1'b1;
@@ -82,16 +86,27 @@ module pu_compact_e_service (
                 end
                 READ_REQ: if (s_req_ready) state <= READ_RSP;
                 READ_RSP: if (s_rsp_valid) begin
-                    e_in_data <= s_rsp_data;
-                    state <= SEND;
+                    // Descriptor operands beyond the opcode arity are still read,
+                    // matching legacy S traffic, but are never sent as a new E command.
+                    if (beat > last_beat) begin
+                        beat <= beat + 1'b1;
+                        source_words <= {10'b0, source_words[29:10]};
+                        state <= {1'b0, beat} + 3'd1 < {1'b0, source_count} ? READ_REQ : EXEC_RSP;
+                    end else begin
+                        e_in_data <= s_rsp_data;
+                        state <= SEND;
+                    end
                 end
                 SEND: if (e_in_ready) begin
-                    if (beat == last_beat)
+                    if (beat == last_beat && {1'b0, beat} + 3'd1 >= {1'b0, source_count})
                         state <= EXEC_RSP;
                     else begin
                         beat <= beat + 1'b1;
                         source_words <= {10'b0, source_words[29:10]};
-                        state <= READ_REQ;
+                        // Compact E needs its opcode-defined beats even when the
+                        // descriptor omits an operand. Supply zero without reading S.
+                        e_in_data <= 0;
+                        state <= {1'b0, beat} + 3'd1 < {1'b0, source_count} ? READ_REQ : SEND;
                     end
                 end
                 EXEC_RSP: if (e_out_valid) begin

@@ -53,7 +53,7 @@ module tb_pu_u_group;
         .n_cmd_dst(service_dst[19:10]), .n_done_valid(done_valid[1]), .n_done_ready(service_take[1]),
         .n_done_error(done_error[1]), .n_done_saturated(done_saturated[1]), .n_done_data(done_data[255:128]),
         .e_cmd_valid(service_valid[0]), .e_cmd_ready(cmd_ready[0]), .e_cmd_store(service_store[0]),
-        .e_cmd_op(service_meta[3:0]), .e_cmd_shift(service_meta[8:4]), .e_cmd_src(service_addresses[29:0]),
+        .e_cmd_sources(service_sources[1:0]),.e_cmd_op(service_meta[3:0]), .e_cmd_shift(service_meta[8:4]), .e_cmd_src(service_addresses[29:0]),
         .e_cmd_dst(service_dst[9:0]), .e_done_valid(done_valid[0]), .e_done_ready(service_take[0]),
         .e_done_error(done_error[0]), .e_done_saturated(done_saturated[0]), .e_done_data(done_data[127:0]),
         .n_to_e_valid(direct_source_valid), .n_to_e_ready(direct_connect && direct_ready),
@@ -166,6 +166,11 @@ module tb_pu_u_group;
         write_word(6, {8{16'd25}});
         execute(0,0,2,{10'd0,10'd6,10'd5},1,1023,answer);
         expect_word(1023,{8{16'd42}});
+        write_word(0,{8{16'd5}});
+        write_word(7,{8{16'd2}});
+        write_word(8,{8{16'd3}});
+        execute(0,64'h3,2,{10'd0,10'd8,10'd7},1,9,answer);
+        expect_word(9,{8{16'd6}});
         if (KIND == 0) begin
             write_word(12,0);
             execute(1,0,0,0,0,0,answer);

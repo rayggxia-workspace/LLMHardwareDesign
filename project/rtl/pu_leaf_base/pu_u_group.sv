@@ -13,6 +13,7 @@ module pu_u_group (
     output wire [127:0] n_to_e_data,
     input wire e_cmd_valid, e_cmd_store, e_cmd_direct_a, e_done_ready,
     output wire e_cmd_ready, e_done_valid, e_done_error, e_done_saturated,
+    input wire [1:0] e_cmd_sources,
     input wire [3:0] e_cmd_op,
     input wire [4:0] e_cmd_shift,
     input wire [29:0] e_cmd_src,
@@ -96,7 +97,7 @@ module pu_u_group (
     wire [127:0] ea, er;
     pu_compact_e_service e_service(
         .clk, .reset, .cmd_valid(e_cmd_valid), .cmd_store(e_cmd_store), .cmd_direct_a(e_cmd_direct_a),
-        .cmd_ready(e_cmd_ready), .cmd_op(e_cmd_op), .cmd_shift(e_cmd_shift), .cmd_src(e_cmd_src), .cmd_dst(e_cmd_dst),
+        .cmd_sources(e_cmd_sources), .cmd_ready(e_cmd_ready), .cmd_op(e_cmd_op), .cmd_shift(e_cmd_shift), .cmd_src(e_cmd_src), .cmd_dst(e_cmd_dst),
         .done_valid(e_done_valid), .done_ready(e_done_ready), .done_error(e_done_error),
         .done_saturated(e_done_saturated), .done_data(e_done_data),
         .s_req_valid(request[1]), .s_req_write(write[1]), .s_req_ready(accept[1]),

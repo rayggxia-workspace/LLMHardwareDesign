@@ -31,3 +31,5 @@ sbatch -p c96 -c 12 --array=0-7%8 project/experiments/pu_leaf_base/physical.sh "
 对已详细布线的候选，repair_notches.sh 可接收额外的井区行窗口。它按站点裁切填充行，校验窗口内没有有源单元，重新填充后用原版规则和提取复核。check_native.py 可对已生成的完整原生回执独立复核，输出 DRC 数、setup/hold、电气与供电结果。
 
 父层供电过孔与信号线间距可用同一续跑入口修复。只有与记录坐标及 VDD/VSS 匹配的完整 M7–M10 过孔栈可移除，条带保持，随后检查两条供电网连通并重新提取。
+
+紧凑 E 的 `cmd_sources` 沿用普通描述符的 0–3 个操作数合同，缺项补零且不读 S。直连 A 计入总数；`0x104` 配对描述符由操作码生成总数。`tb_pu_compact_e` 使用真实旧 E 核做 257 组对照，检查数据、状态、准确 SRAM 读次数、直连和背压；`tb_pu_u_group` 另验证两源 FMA 的 SRAM 写回。修改适配器后须重新生成并验收 U 物理实现，旧 U 归档不能覆盖新的控制 RTL。
