@@ -1,45 +1,41 @@
 # 两级控制当前接续入口
 
-Issue179 / Draft PR180；Melodydt；2026-11-07 Asia/Shanghai。分支task/179-local-block-continuation。本页为当前控制合同、证据和接续入口。
+Issue179 / Draft PR180；Melodydt；2026-11-07 Asia/Shanghai；task/179-local-block-continuation。本页列当前能力、证据与接续入口。
 
-源码交付`9aab685283b10b56bf49ef11f24d57012925a461`；[28页研究与ISA报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)原位更新。
+## 当前实现
 
-## 当前交付
+综合前第1-7步已有实现和验证：规格、可综合PM、公共装载、五类统一接入、四条异构提交链、取消/故障/协调恢复、统一受限任务编译。MC/LC执行ISA保持v2/64 bit，两个目标、单时钟域，每端一任务/一在途服务。目标周期3.333333333 ns。
 
-综合前第1-6步已有功能RTL与验证：规格、可综合PM、公共装载、五类统一接入、四条异构提交链、取消/故障/协调恢复。执行ISA仍v2/64 bit，母控6条、局控10条；两个目标、单时钟域、每LC一任务/一在途服务。目标周期3.333333333 ns。
+新增control_task_compiler_v1输入命名缓冲区、端点原生操作和受限传输边，生成三端镜像、128 bit PM字、SHA/CRC及装载计划。准入五类同型five/U/F/C/P/J和四条recovery/U/F/C/J源0→P1链；无裸native字段逃逸口。两个CALL先于共同WAIT；局控串行EXEC/WAIT，异构链自动插入SEND及目的RESERVE/RECEIVE，预约服务序号从源程序计算。
 
-recovery_boot_top以目标0为U/F/C/J之一、目标1为P。固定RAW128有向链、每任务双端各CALL一次，序号历史成对，无隐式格式转换。源保持实际S响应或J输出，目的真实写响应形成commit；完整job/epoch/task/service身份及提交资格匹配后才释放源。既有36个SystemVerilog（含测试）保持不变。
+类型/拓扑、ABI/容量、16 B对齐及S范围、别名/先读后产、原生上下文和展开后16条服务容量均校验。J保留片段输入和提交输出空间及lease，不伪装普通S。独立audit不导入compiler/codec/image，构造完整规范字节并核对SHA/CRC；另有明示有限域的数值参考。旧45个SV（含测试）不变，新增的SV仅为主机回放testbench。
 
-新增外层监督FSM与排空接口：NORMAL、DRAIN、RESET、WAIT_READY、FAILED、QUARANTINE。取消/局部复位请求/组故障停止新服务，保留已接受请求和实际响应；目的已offered请求不可撤销。排空且无主机回复在途后整组内层复位，监督层保留失败结果和epoch水位。单端复位请求提升为整组协调恢复。
-
-1024拍无法排空进入隔离，不强制复位活动义务、不伪造信用或提交。结果消费后仍禁止START；底层恢复后显式RETRY_DRAIN，再以更高epoch重装及重建数据。已提交写不回滚，隔离计数仅为超时快照。有效RESULT与未就绪查询分别处理，保证回复稳定且作业终态不丢失、不重复。
+原恢复顶层继续保持实际源S响应/J输出，目的写响应形成commit，完整身份及提交资格匹配后释放源。取消/局部复位请求/故障先排空再协调整组复位；1024拍不能排空时隔离显式重试，不强制复位活动义务。已写不回滚，失败输出无效；监督层保持终态/epoch水位。
 
 | 内容 | 入口 |
 | --- | --- |
-| 研究、ISA及当前进展 | [研究报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf) |
-| 第6步顶层、恢复与管理命令15 | [recovery README](../../project/control_recovery_boot_v1/README.md) |
-| 机器可读命令、状态及有效结果位 | [recovery profiles](../../project/control_recovery_boot_v1/profiles.json) |
-| 单时钟与整组复位边界 | [clock/reset contract](../../project/control_recovery_boot_v1/clock-reset-contract.json) |
-| 同版624项、结构与源码/输出SHA | [第6步技术索引](../../work/Melodydt/179/control-recovery-validation.json) |
-| 原异构服务及提交链 | [hetero README](../../project/control_hetero_boot_v1/README.md) |
-| 五类及J专用输入输出 | [five README](../../project/control_five_boot_v1/README.md) |
-| 可综合PM及公共装载 | [boot README](../../project/control_boot_v1/README.md) |
-| 执行编码及逐文件输入锁 | [ISA](CONTROL_ISA_V0_1.md) / [lock](../../project/control_frontend_v1/upstream-lock.json) |
+| 研究与ISA及当前进展 | [共享详细报告](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf) |
+| 统一任务、服务及复现命令 | [compiler README](../../project/control_task_compiler_v1/README.md) |
+| 输入形状与实际目标 | [schema](../../project/control_task_compiler_v1/schema.json) / [targets](../../project/control_task_compiler_v1/targets.json) |
+| 可直接编译的示例 | [task](../../project/control_task_compiler_v1/example-task.json) / [inputs](../../project/control_task_compiler_v1/example-inputs.json) |
+| 独立核对与镜像导出 | [audit](../../project/control_task_compiler_v1/audit.py) / [emit](../../project/control_task_compiler_v1/emit.py) |
+| 第7步源码/输入/输出SHA | [compiler validation](../../work/Melodydt/179/control-compiler-validation.json) |
+| 第6步恢复、命令15和时钟复位 | [recovery README](../../project/control_recovery_boot_v1/README.md) |
+| 五类/J接口与可综合PM | [five](../../project/control_five_boot_v1/README.md) / [boot](../../project/control_boot_v1/README.md) |
+| 输入版本 | [upstream lock](../../project/control_frontend_v1/upstream-lock.json) |
 
-## 实测与边界
+## 实测与限制
 
-第6步同版恢复456/456（4链×2后端×19模式×3初态）、正常回归168/168（原7模式），共624/624；结构4/4，时钟/复位合同静态核对4/4。功能用实际原生组和bank数据通路；结构明示黑盒，保留12个PM bank及一源组、一P目的。实际读回验证未提交毒值保持、已提交完整128 bit写保留，以及新epoch重装后的新任务。定向通过率不是功能覆盖率。
+第7步软件1218/1218检查点：27正例、1134自洽SHA/CRC编码变异、52拒绝、3 CLI保护及2清单核对；服务器RTL回放162/162（九目标×两PM后端×三配置×三初态），每目标18。核对真实程序写/读/CRC、部署、S/T输出、结果身份、确认写字节、提交/ACK及主机背压。r001回放与r002最终软件补验的八个核心编译/参考/回放文件相同；软件重复运行只计一套。第6步624项为此前通过证据，本轮未重跑。
 
-当前单clk_i、主机同步，外层和内层均异步断言/两拍同步释放。CDC对本实例不适用；合同静态核对不等同专用CDC/RDC或物理签核。恢复包溢出/饱和诊断未采集，ACK计数含负向取消确认。新增组合映射STA、面积功耗、CTS及物理未执行。
+当前编译器只面向两个常驻任务和已绑定的原生配方，不是完整LLM/ONNX前端；无动态形状、循环/分支生成、任意规模调度、任意路由或格式转换。RAW128不证明数值兼容，initial声明是主机义务，数值参考域有限。定向通过率不是覆盖率。单clk_i、同步主机；无新多时钟CDC/RDC或物理资格。新增组合STA/面积功耗/CTS/物理未执行。
 
-PR176固定08f2ea20，PR213固定39ce9aeb、PR214固定f5fb8115；本轮选用文件blob未变。早期失败及修复保留于索引，最终以同版矩阵验收。
+PR176固定08f2ea20，PR213固定b308f416、PR214固定f5fb8115，选用blob未变。完整内部历史与原STATUS本地维护，远端当前指南/共享报告/源码/技术索引保持可接续。
 
-## 接续
+## 下一步
 
-7．统一受限任务描述到MC/LC镜像，联结能力/拓扑校验与独立参考。
+8．完整类型、状态和异常组合及覆盖；明确当前固定拓扑与有限数值域的资格边界。
 
-8．补齐完整类型、状态、异常组合与覆盖，避免把当前四链等同任意路由资格。
+9．冻结综合源码、参数、宏边界、SDC及复现交付。
 
-9．冻结综合源码、参数、宏边界、约束和交付清单。
-
-Issue179保持in_progress，PR180 Draft未合并，审查人待指定。项目登记PR5 pending；看板缺配置/工具，状态unverified、同步pending，待具备权限管理员核验。
+Issue179仍in_progress，PR180 Draft未合并，审查人待指定。登记PR5 pending；看板缺board.json/Projects能力，状态unverified、同步pending，待具备权限管理员核验。全部本轮作业已结束，无聊天外自动监控。

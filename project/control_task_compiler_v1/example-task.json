@@ -1,0 +1,133 @@
+{
+  "schema": "bounded-native-tasks/1",
+  "name": "recovery_f_0",
+  "target": "recovery/F",
+  "epoch": 1,
+  "generation": 11,
+  "job": 71,
+  "sequence": 21,
+  "image_ids": [
+    197000,
+    197001,
+    197002
+  ],
+  "tokens": [
+    2,
+    3
+  ],
+  "call_order": [
+    0,
+    1
+  ],
+  "buffers": [
+    {
+      "name": "b0_a",
+      "block": 0,
+      "base_bytes": 192,
+      "words": 1,
+      "space": "S",
+      "format": "RAW128",
+      "initial": true
+    },
+    {
+      "name": "b0_b",
+      "block": 0,
+      "base_bytes": 208,
+      "words": 1,
+      "space": "S",
+      "format": "RAW128",
+      "initial": true
+    },
+    {
+      "name": "b0_gate",
+      "block": 0,
+      "base_bytes": 224,
+      "words": 1,
+      "space": "S",
+      "format": "RAW128",
+      "initial": false
+    },
+    {
+      "name": "b0_out",
+      "block": 0,
+      "base_bytes": 240,
+      "words": 1,
+      "space": "S",
+      "format": "RAW128",
+      "initial": false
+    },
+    {
+      "name": "b1_recv",
+      "block": 1,
+      "base_bytes": 960,
+      "words": 1,
+      "space": "S",
+      "format": "RAW128",
+      "initial": false
+    },
+    {
+      "name": "b1_zero",
+      "block": 1,
+      "base_bytes": 208,
+      "words": 1,
+      "space": "S",
+      "format": "RAW128",
+      "initial": true
+    },
+    {
+      "name": "b1_out",
+      "block": 1,
+      "base_bytes": 224,
+      "words": 1,
+      "space": "S",
+      "format": "RAW128",
+      "initial": false
+    }
+  ],
+  "tasks": [
+    {
+      "block": 0,
+      "operations": [
+        {
+          "op": "ucf",
+          "lane": "G",
+          "meta": 9,
+          "src": [
+            "b0_a",
+            "b0_b"
+          ],
+          "dst": "b0_gate"
+        },
+        {
+          "op": "ucf",
+          "lane": "E",
+          "meta": 0,
+          "src": [
+            "b0_gate",
+            "b0_b"
+          ],
+          "dst": "b0_out"
+        }
+      ]
+    },
+    {
+      "block": 1,
+      "operations": [
+        {
+          "op": "p_gate",
+          "a": "b1_recv",
+          "b": "b1_zero",
+          "dst": "b1_out"
+        }
+      ]
+    }
+  ],
+  "transfers": [
+    {
+      "source": "b0_out",
+      "destination": "b1_recv",
+      "words": 1,
+      "format": "RAW128"
+    }
+  ]
+}
