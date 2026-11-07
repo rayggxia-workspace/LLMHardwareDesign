@@ -44,13 +44,18 @@ assert sha(physical / "stitched.v") == upper["stitched_netlist_sha256"]
 assert sha(physical / "combined-research.gds") == geometry["combined_sha256"]
 for pattern in ("native-*", "upper-*", "stitched*", "endpoints.tsv*", "binding.json", "geometry.json",
                 "inventory.json", "cut-links.json", "config.mk", "control64-source.json", "eco-origin.json",
-                "rx-hold-targets.tsv", "*.tcl"):
+                "rx-hold-targets.tsv", "repair-reference.*", "*.tcl"):
     for path in physical.glob(pattern):
         if path.is_file():
             files["physical/" + path.name] = path
 files["physical/combined-research.gds"] = physical / "combined-research.gds"
 files["physical/5_route_drc.rpt"] = report
 files["physical/6_final_lec_check.log"] = lec
+for pattern in ("flow/reports/nangate45/*/base/6_finish.rpt",
+                "flow/logs/nangate45/*/base/6_report.json",
+                "flow/reports/nangate45/*/base/post-grt-reference-electrical.rpt"):
+    for path in physical.glob(pattern):
+        files["physical/" + path.name] = path
 config = (physical / "config.mk").read_text()
 rtl = [Path(p) for p in re.search(r"^export VERILOG_FILES = (.*)$", config, re.M)[1].split()]
 for path in rtl:
@@ -119,6 +124,8 @@ if kind != "f":
                      "resume08.sh", "preflight08.sh", "overlay08.sh", "gate08.sh",
                      "resume09.sh", "preflight09.sh", "overlay09.sh", "gate09.sh",
                      "resume10.sh", "preflight10.sh", "overlay10.sh", "gate10.sh", "native_precheck.sh",
+                     "resume11.sh", "preflight11.sh", "overlay11.sh", "gate11.sh",
+                     "overlay10-submitted.sh", "compact64_j_post_grt_repair.tcl",
                      "resume_j64_eco.sh", "compact64_j_hold_eco.tcl", "compact64_j_rx_hold_eco.tcl",
                      "hold-diagnose.tcl", "hold-diagnose.sh", "hold-endpoints-080.tsv", "rx-hold-targets.tsv"):
             files["execution/" + name] = root / name
@@ -143,6 +150,8 @@ if kind == "j":
                  "resume09-*.log", "preflight09-*.log", "overlay09-*.log")
     patterns += ("physical10/4-*.log", "physical10/full-4-*.log", "preflight10/4-*.log",
                  "resume10-*.log", "preflight10-*.log", "overlay10-*.log")
+    patterns += ("physical11/4-*.log", "physical11/full-4-*.log", "preflight11/4-*.log",
+                 "resume11-*.log", "preflight11-*.log", "overlay11-*.log")
 if kind == "f":
     patterns += ("physical02/f-upper-*.log",)
 for pattern in patterns:
@@ -153,7 +162,7 @@ for path in root.glob(f"preflight*/slot{slot}-upper.*"):
         files["attempt-evidence/" + path.relative_to(root).as_posix()] = path
 if kind == "j":
     for stage in ("physical02/4", "physical03/cugr/4", "physical04/cugr/4",
-                  "physical06/cugr/4", "physical08/cugr/4", "physical09/cugr/4"):
+                  "physical06/cugr/4", "physical08/cugr/4", "physical09/cugr/4", "physical10/cugr/4"):
         previous = root / stage
         for pattern in ("native-setup.rpt", "native-hold.rpt", "native-sta-counts.tsv",
                         "native-electrical.rpt", "native-audit.log", "native-audit.json",

@@ -4,6 +4,7 @@ root=$1
 source_run="$root/physical04/cugr/4"
 out="$root/${2:-physical06}/cugr/4"
 eco_source=${3:-"$root/compact64_j_hold_eco.tcl"}
+repair_reference=${4:-}
 mkdir -p "$out"
 for f in inventory.json input.sdc cut-links.json control64-source.json; do
   cp "$source_run/$f" "$out/$f"
@@ -30,6 +31,14 @@ fi
 printf 'set_global_routing_layer_adjustment metal2-metal6 0.20\nset_global_routing_layer_adjustment metal7-metal10 0.0\nsource {%s/hold-eco.tcl}\n' "$out" > "$out/pre-global-route.tcl"
 sed '/^export PRE_GLOBAL_ROUTE_TCL = /d' "$source_run/config.mk" > "$out/config.mk"
 printf 'export PRE_GLOBAL_ROUTE_TCL = %s/pre-global-route.tcl\nexport SKIP_INCREMENTAL_REPAIR = 1\nexport RECOVER_POWER = 0\n' "$out" >> "$out/config.mk"
+if [[ -n "$repair_reference" ]]; then
+  [[ -s "$repair_reference" ]]
+  cp "$repair_reference" "$out/repair-reference.spef"
+  sha256sum "$repair_reference" > "$out/repair-reference.sha256"
+  cp "$root/compact64_j_post_grt_repair.tcl" "$out/"
+  printf 'set cfj_repair_reference {%s/repair-reference.spef}\nsource {%s/compact64_j_post_grt_repair.tcl}\n' "$out" "$out" > "$out/post-global-route.tcl"
+  printf 'export POST_GLOBAL_ROUTE_TCL = %s/post-global-route.tcl\n' "$out" >> "$out/config.mk"
+fi
 exec srun --exact --ntasks=1 --cpus-per-task="$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
  /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv \
  --bind /public/home/yuzelu /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif \
