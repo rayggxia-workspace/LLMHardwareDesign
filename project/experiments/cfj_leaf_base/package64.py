@@ -43,7 +43,8 @@ for name, expected in audit["sha256"].items():
 assert sha(physical / "stitched.v") == upper["stitched_netlist_sha256"]
 assert sha(physical / "combined-research.gds") == geometry["combined_sha256"]
 for pattern in ("native-*", "upper-*", "stitched*", "endpoints.tsv*", "binding.json", "geometry.json",
-                "inventory.json", "cut-links.json", "config.mk", "control64-source.json", "eco-origin.json", "*.tcl"):
+                "inventory.json", "cut-links.json", "config.mk", "control64-source.json", "eco-origin.json",
+                "rx-hold-targets.tsv", "*.tcl"):
     for path in physical.glob(pattern):
         if path.is_file():
             files["physical/" + path.name] = path
@@ -114,7 +115,10 @@ if kind != "f":
         for name in ("resume04.sh", "preflight04.sh", "overlay04.sh", "gate04.sh",
                      "resume05.sh", "preflight05.sh", "overlay05.sh", "gate05.sh",
                      "resume06.sh", "preflight06.sh", "overlay06.sh", "gate06.sh",
-                     "resume_j64_eco.sh", "compact64_j_hold_eco.tcl"):
+                     "resume07.sh", "preflight07.sh", "overlay07.sh", "gate07.sh",
+                     "resume08.sh", "preflight08.sh", "overlay08.sh", "gate08.sh",
+                     "resume_j64_eco.sh", "compact64_j_hold_eco.tcl", "compact64_j_rx_hold_eco.tcl",
+                     "hold-diagnose.tcl", "hold-diagnose.sh", "hold-endpoints-080.tsv", "rx-hold-targets.tsv"):
             files["execution/" + name] = root / name
     files["physical/source-cts.sha256"] = physical / "source-cts.sha256"
     for name in ("4_cts.odb", "4_cts.sdc"):
@@ -131,6 +135,8 @@ if kind == "j":
                  "resume05-*.log", "preflight05-*.log", "overlay05-*.log")
     patterns += ("physical06/4-*.log", "physical06/full-4-*.log", "preflight06/4-*.log",
                  "resume06-*.log", "preflight06-*.log", "overlay06-*.log")
+    patterns += ("physical08/4-*.log", "physical08/full-4-*.log", "preflight08/4-*.log",
+                 "resume07-*.log", "resume08-*.log", "preflight08-*.log", "overlay08-*.log")
 if kind == "f":
     patterns += ("physical02/f-upper-*.log",)
 for pattern in patterns:

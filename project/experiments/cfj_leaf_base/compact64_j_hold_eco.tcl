@@ -25,10 +25,12 @@ for {set i 0} {$i < 2} {incr i} {
   [$cell findITerm A] connect $previous
   [$cell findITerm Z] connect $net
   set previous $net
-  set_dont_touch [get_cells $name]
   puts "J64_HOLD_ECO $name BUF_X1 at $location"
 }
 $pin connect $previous
 global_connect
+foreach name {cfj64_hold65_0 cfj64_hold65_1} {
+  set_dont_touch [get_cells $name]
+}
 detailed_placement_helper
 check_placement -verbose

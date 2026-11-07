@@ -2,7 +2,8 @@
 set -euo pipefail
 root=$1
 source_run="$root/physical04/cugr/4"
-out="$root/physical06/cugr/4"
+out="$root/${2:-physical06}/cugr/4"
+eco_source=${3:-"$root/compact64_j_hold_eco.tcl"}
 mkdir -p "$out"
 for f in inventory.json input.sdc cut-links.json control64-source.json; do
   cp "$source_run/$f" "$out/$f"
@@ -19,8 +20,11 @@ done
 cp "$sealed/5_1_grt.odb" "$result/4_cts.odb"
 cp "$sealed/5_1_grt.sdc" "$result/4_cts.sdc"
 sha256sum "$sealed"/5_1_grt.{odb,sdc} > "$out/source-cts.sha256"
-printf '{"source_stage":"physical04 post-global-route", "source":"%s", "eco":"two BUF_X1 on rx data bit 65"}\n' "$sealed" > "$out/eco-origin.json"
-cp "$root/compact64_j_hold_eco.tcl" "$out/hold-eco.tcl"
+printf '{"source_stage":"physical04 post-global-route", "source":"%s", "eco_source":"%s"}\n' "$sealed" "$eco_source" > "$out/eco-origin.json"
+cp "$eco_source" "$out/hold-eco.tcl"
+if [[ "$eco_source" == *compact64_j_rx_hold_eco.tcl ]]; then
+  cp "$root/rx-hold-targets.tsv" "$out/"
+fi
 # Diodes and routing obstructions are already present in the source database.
 # Reapply only router capacity settings, without duplicating physical objects.
 printf 'set_global_routing_layer_adjustment metal2-metal6 0.20\nset_global_routing_layer_adjustment metal7-metal10 0.0\nsource {%s/hold-eco.tcl}\n' "$out" > "$out/pre-global-route.tcl"
