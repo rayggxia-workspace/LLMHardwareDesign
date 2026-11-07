@@ -106,9 +106,19 @@ assert sha(technology) == "3649589fc8ba84fb04ca8c50ed2e2ac704a3b0a73a6a750926a64
 files["execution/technology-2um-v1.json"] = technology
 for name in ("physical02.sh", "preflight02.sh", "overlay02.sh", "upper-only02.sh", "gate02.sh"):
     files["execution/" + name] = root / name
+if kind != "f":
+    for name in ("resume_route.sh", "compact64_native_edge_guard.tcl", "resume03.sh",
+                 "preflight03.sh", "overlay03.sh", "gate03.sh"):
+        files["execution/" + name] = root / name
+    files["physical/source-cts.sha256"] = physical / "source-cts.sha256"
+    for name in ("4_cts.odb", "4_cts.sdc"):
+        files["execution/" + name] = native / name
 slot = {"c": 0, "f": 2, "j": 4}[kind]
 patterns = (f"physical02/{slot}-*.log", f"physical02/full-{slot}-*.log",
             f"preflight02/{slot}-*.log", "rtl01/*.log", "rtl02/*.log")
+if kind != "f":
+    patterns += (f"physical03/{slot}-*.log", f"physical03/full-{slot}-*.log",
+                 f"preflight03/{slot}-*.log")
 if kind == "f":
     patterns += ("physical02/f-upper-*.log",)
 for pattern in patterns:
