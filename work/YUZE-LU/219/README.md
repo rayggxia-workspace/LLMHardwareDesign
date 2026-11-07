@@ -1,5 +1,7 @@
 # Issue #219：Block 前沿搜索原型与服务器评估
 
+**当前入口：[有约束规划器及真实来源验证](JOINT_RESULTS.md)。** 下文是历史记录；其中 0.6B、4MiB 和假设 FP32/互联结果已撤出正式证据集合，不再用于判断真实 16 KiB 底座能力。后续代码在 `project/experiments/block_synthesis/`，本轮完整模型改用真实 Qwen2.5-3B。
+
 任务：https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219
 
 执行账号 YUZE-LU；隔离分支 `task/219-general-block-search`；未修改主线程工作树或 #213/#214。源代码与合同边界见 [原型说明](../../../project/experiments/block_search/README.md)。

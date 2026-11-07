@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-07 18:50 CST：有约束规划器与真实 U 服务回放
+
+[Issue #219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) / [Draft PR #220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)，分支 `task/219-general-block-search`。新增链覆盖 DP、逐元素分片、流式初解、STORE/LOAD/spill、S 时间/地址联合约束、共享副本、跨层静态网任务组改进和独立回放。最终服务器25项测试通过；生成的4项真实 U/E/S 程序三初态均与80周期预测一致。完整 Qwen2.5-3B（30.86亿参数）HF/ORT前端验证通过，整网 lowering 明确未覆盖，未生成 MC/LC 镜像或物理验收。历史0.6B和假设架构结果撤出正式证据。图册、作业、哈希、失败和下一步见[本轮结果](../../work/YUZE-LU/219/JOINT_RESULTS.md)。后续接 M/N/G/R 数值 lowering、原生 DMA 和共同控制子集；状态保持in_progress、PR Draft、审查人待指定。登记pending，看板缺配置/权限，unverified/同步pending。
+
 ## 2026-11-07（CST）通用Block前沿搜索原型
 
 [Issue #219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) · [草稿PR #220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。服务器99698完成64组分析对照；完整Qwen3-0.6B浮点前端验证通过；23组分析计划独立重放通过，41组保留失败。输入与结果图册及哈希见[结果记录](../../work/YUZE-LU/219/README.md)。当前16 KiB场景均未完成，仍需多算子覆盖、分片/spill、原生控制镜像和pin/电气合同，不能称完整综合器或硬件通过。状态保持in_progress，PR为草稿，审查人待指定；登记pending，看板缺配置待核验。

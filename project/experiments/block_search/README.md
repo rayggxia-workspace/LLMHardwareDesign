@@ -1,5 +1,7 @@
 # 通用 Block 前沿搜索原型（Issue #219）
 
+**历史原型，停止作为正式评估入口。** 0.6B 和假设 FP32/4 MiB/互联场景不作为当前模型或硬件验收证据。后续实现改用 [有约束的 Block 规划器](../block_synthesis/README.md)，实际结果见 [本轮证据](../../../work/YUZE-LU/219/JOINT_RESULTS.md)。旧代码和失败保留用于追溯，不继续用假设补齐真实能力。
+
 输入只有模型产物、硬件清单与调用参数。`search.py` 不识别 Qwen 等模型名，不固定位宽、实例数、S 容量或 P/U/C/F/J 的数量。硬件文件可为 JSON/YAML；YAML 需要 PyYAML。ONNX 导入需要 onnx/numpy；权重可留作外部参数引用。未解析形状、未登记服务或不支持的 dtype 明确失败。
 
 ## 实际实现与边界

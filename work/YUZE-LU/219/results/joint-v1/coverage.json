@@ -1,0 +1,107 @@
+{
+  "status": "blocked_lowering",
+  "runtime_nodes": 2277,
+  "offline_weight_recipes": 253,
+  "missing": [
+    {
+      "op": "Mul",
+      "numeric": "FLOAT",
+      "nodes": 398
+    },
+    {
+      "op": "Add",
+      "numeric": "FLOAT",
+      "nodes": 361
+    },
+    {
+      "op": "MatMul",
+      "numeric": "FLOAT",
+      "nodes": 325
+    },
+    {
+      "op": "Reshape",
+      "numeric": "FLOAT",
+      "nodes": 216
+    },
+    {
+      "op": "Transpose",
+      "numeric": "FLOAT",
+      "nodes": 180
+    },
+    {
+      "op": "Slice",
+      "numeric": "FLOAT",
+      "nodes": 144
+    },
+    {
+      "op": "Pow",
+      "numeric": "FLOAT",
+      "nodes": 73
+    },
+    {
+      "op": "ReduceMean",
+      "numeric": "FLOAT",
+      "nodes": 73
+    },
+    {
+      "op": "Sqrt",
+      "numeric": "FLOAT",
+      "nodes": 73
+    },
+    {
+      "op": "Div",
+      "numeric": "FLOAT",
+      "nodes": 73
+    },
+    {
+      "op": "Neg",
+      "numeric": "FLOAT",
+      "nodes": 72
+    },
+    {
+      "op": "Concat",
+      "numeric": "FLOAT",
+      "nodes": 72
+    },
+    {
+      "op": "Unsqueeze",
+      "numeric": "FLOAT",
+      "nodes": 72
+    },
+    {
+      "op": "Expand",
+      "numeric": "FLOAT",
+      "nodes": 72
+    },
+    {
+      "op": "Softmax",
+      "numeric": "FLOAT",
+      "nodes": 36
+    },
+    {
+      "op": "Sigmoid",
+      "numeric": "FLOAT",
+      "nodes": 36
+    },
+    {
+      "op": "Gather",
+      "numeric": "FLOAT",
+      "nodes": 1
+    }
+  ],
+  "first_uncovered": {
+    "id": "/model/model/embed_tokens/Gather",
+    "op": "Gather",
+    "domain": "",
+    "inputs": [
+      "model.model.embed_tokens.weight",
+      "input_ids"
+    ],
+    "outputs": [
+      "/model/model/embed_tokens/Gather_output_0"
+    ],
+    "numeric": "FLOAT",
+    "attributes": {}
+  },
+  "scope": "compiler rule coverage, not a proof that the silicon cannot implement these operators"
+}

@@ -92,6 +92,8 @@ python project/experiments/opentpu_compare/compare.py project/experiments/opentp
 
 ## 本地阅读与验证
 
+Issue219 后续使用 [block_synthesis](../project/experiments/block_synthesis/README.md)：`python -B -m unittest discover -v -p 'test_*.py'` 在该目录或其 Slurm 冻结目录运行；`python -B project/experiments/block_synthesis/run.py model.onnx hardware.json new-output --audit-only` 检查真实覆盖。服务器 Slurm/离线安装/原生测量与生成程序复跑命令见该 README，实际证据见 [JOINT_RESULTS](../work/YUZE-LU/219/JOINT_RESULTS.md)。旧 `block_search` 的假设服务与0.6B结果保留历史，不作为正式验收；当前亦未宣称完成整网原生综合。
+
 - 阅读：从仓库根目录直接打开 `ref-project/llm-routing/总报告.html` 或 `ref-project/llm-routing/线长报告.html`；其图片和下载链接使用包内相对路径。
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
 - 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。
