@@ -1,7 +1,8 @@
 import copy
 import unittest
+import random
 from evaluate import hardware
-from search import compile_graph, earliest, memory_ok, Unsupported, verify, State
+from search import compile_graph, earliest, memory_ok, Unsupported, verify, State, reserve
 from unittest.mock import patch
 
 
@@ -17,6 +18,20 @@ class Tests(unittest.TestCase):
     def test_resource_slot(self):
         self.assertEqual(earliest({'r':[(10,20)]},['r'],0,4),0)
         self.assertEqual(earliest({'r':[(10,20)]},['r'],8,4),20)
+
+    def test_interval_index_against_bruteforce(self):
+        rng=random.Random(219)
+        calendar={}; occupied={r:set() for r in ['a','b','c']}
+        for _ in range(200):
+            resources=rng.sample(list(occupied),rng.randint(1,3))
+            after=rng.randrange(100);duration=rng.randrange(1,8)
+            expected=after
+            while any(set(range(expected,expected+duration)) & occupied[r] for r in resources):
+                expected+=1
+            actual=earliest(calendar,resources,after,duration)
+            self.assertEqual(actual,expected)
+            reserve(calendar,resources,actual,actual+duration)
+            for resource in resources:occupied[resource].update(range(actual,actual+duration))
 
     def test_temporal_capacity(self):
         a={'a':{'start':0,'end':10,'bytes':16},'b':{'start':10,'end':20,'bytes':16}}

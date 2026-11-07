@@ -5,7 +5,7 @@ Topological decision order is fixed; execution intervals may overlap. Beam
 pruning and greedy earliest-slot scheduling do not preserve optimality.
 """
 import argparse
-import copy
+import bisect
 from dataclasses import dataclass, field
 import hashlib
 import heapq
@@ -106,8 +106,14 @@ def import_onnx(path, weight_names=()):
 def earliest(cal, resources, after, duration):
     t = after
     while True:
-        conflicts = [end for r in resources for start, end in cal.get(r, ())
-                     if start < t + duration and t < end]
+        conflicts = []
+        for resource in resources:
+            intervals=cal.get(resource,())
+            index=bisect.bisect_right(intervals,(t,INF))-1
+            if index>=0 and intervals[index][1]>t:
+                conflicts.append(intervals[index][1])
+            elif index+1<len(intervals) and intervals[index+1][0]<t+duration:
+                conflicts.append(intervals[index+1][1])
         if not conflicts:
             return t
         t = max(conflicts)
@@ -115,7 +121,15 @@ def earliest(cal, resources, after, duration):
 
 def reserve(cal, resources, start, end):
     for r in resources:
-        cal.setdefault(r, []).append((start, end))
+        intervals=cal.setdefault(r,[])
+        index=bisect.bisect_left(intervals,(start,end))
+        left,right=start,end
+        if index and intervals[index-1][1]==left:
+            index-=1
+            left=intervals.pop(index)[0]
+        if index<len(intervals) and intervals[index][0]==right:
+            right=intervals.pop(index)[1]
+        intervals.insert(index,(left,right))
 
 
 def memory_ok(allocs, capacity):
