@@ -64,8 +64,9 @@ for ax, (inventory, points) in zip(axes[0], datasets):
         ax.add_patch(Rectangle((left, bottom), w, h, facecolor=colors[alias],
                                edgecolor="#354052", linewidth=1.0, zorder=3))
         label = "R256" if alias == "R" else "16 KiB S" if alias == "S" else alias
-        ax.text(left + w / 2, bottom + h / 2, f"{label}\n{w:g} × {h:g} µm",
-                ha="center", va="center", fontsize=8 if alias == "G" else 11,
+        size_label = f"{w:g}×{h:g}" if alias in ("G", "E") else f"{w:g} × {h:g} µm"
+        ax.text(left + w / 2, bottom + h / 2, f"{label}\n{size_label}",
+                ha="center", va="center", fontsize=8 if alias == "G" else 10 if alias == "E" else 11,
                 color="#17202c", zorder=4)
     ax.add_patch(Rectangle((0, 0), width, height, fill=False, linestyle="--",
                            linewidth=1, edgecolor="#75808b"))
@@ -78,7 +79,7 @@ for ax, (inventory, points) in zip(axes[0], datasets):
 
 groups = " / ".join(d[0]["kind"].upper() for d in datasets)
 fig.suptitle(f"{groups}：独立叶宏与实际标准单元摆放", fontproperties=font, fontsize=17)
-caption = "灰点：宏外局控、适配/服务逻辑及物理修复单元（不含填充/tap）；虚线仅示验收夹具范围，不是硬块封装边界。"
+caption = "宏内尺寸单位：µm。灰点：宏外局控、适配/服务逻辑及物理修复单元（不含填充/tap）；虚线仅示验收夹具范围，不是硬块封装边界。"
 if any(d[0]["kind"] == "j" for d in datasets):
     caption += "\nJ 的宏外服务逻辑包含三路汇合算术，需计入硬件资源。"
 fig.text(0.5, 0.055, caption, ha="center", fontproperties=font, fontsize=9, color="#46515e")
