@@ -10,3 +10,5 @@
 - [0004：第一版工艺与叶块/共同底座分阶段冻结](0004-block-library-base-freeze.md)（accepted，用户确认的方案与阶段边界；实现资格另行验收）
 
 - [0005：V 三宏划分与首版独立 R 保留](0005-compute-block-v-split-r.md)（accepted，用户确认的当前规划；规格/实现/物理资格另行验收）
+
+- [0006：母控双格式共享物理实现与分别验证](0006-mother-control-dual-format.md)（已实施并通过所列工程门，待代码审查）

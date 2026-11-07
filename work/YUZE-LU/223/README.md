@@ -1,6 +1,6 @@
 # Issue #223 执行记录
 
-负责人 YUZE-LU；规则 rayggxia-project-collab 1.0.0；用户授权先母控64位物理实现，再五类一致性及微调，64位通过后再128位。Issue #223，Draft PR #224；当前 in_progress。
+负责人 YUZE-LU；规则 rayggxia-project-collab 1.0.0；用户授权先母控64位物理实现，再五类一致性及微调，64位通过后再128位。Issue #223 / PR #224，工程门现已通过，进入 in_review、待独立审查；未自合并。当前结论见[正式报告](../../../docs/experiments/mother-control-dual-format.md)与[完整索引](acceptance-index.json)。下方各尝试段落为当时的历史状态，保留失败记录，不代表当前仍受阻。
 
 基线 main d7e477a978e236026177f5684c14160b386e7a95；#180 固定81663a1e6586602d2a02748db1c488d2d0ba0233。复用母控原始源码，包装为独立母控加16KiB真实四银行程序 SRAM，原生 ABI 0x01930001。当前母控支持两个驻留目标，不宣称九局控同时驻留；程序 SRAM 与各 Block 私有 S 分开计价。
 
@@ -66,3 +66,15 @@ source-23 SHA-256 83989facac5957a5bb104f0d880f9aa47a912216386a8ebe30d4677f03e241
 fresh路线原始报告保留14项小范围单网M2/M3标记；逐项同时证明其全部区域被同一原网的ODB路由线段及实际GDS铜覆盖，视为几何重叠误报，而不是删报告或豁免间距。多网间距、缺线和其余规则均不能走此证明。100284的两项反向控制分别去掉原网线段、去掉实际GDS铜，两项均正确拒绝；源和回执见 marker-negative-run.py / marker-negative-controls.json。完整原版 GDS 仍必须独立0项。
 
 100283为8类真实Block一致性数组，各4核、最多3项并发，依赖100281完整通过及100282网表通过。包括P/U/C/F/J、CF-duplex、U-duplex、U-fma-duplex，尚未执行。再次核对#221 head未变。64位全部通过之前仍不推进128位。
+
+## 最终工程验收与回收
+
+100281完成原版完整GDS规则，0项；全套独立门passed=true，六文件不变。100283的P/U及U双向/FMA双向通过；CFJ输入检查将互斥的TB_F_RECOVERY复位声明当成两份实际端口，修正的是夹具静态检查，不是电路。source-24 SHA-256 6c05baa1b42cb6b62037c7ce87d4458195b48c64f8168cdf2e0783086a0e9e91，100293的C/F/J与CF双向全部通过。另发现C单块profile只覆盖G/E，补加C-roundtrip的R状态操作及五种往返场景；source-25 SHA-256 365680f18f9baeafc7307712b2d34831a1f0125ad7633cf0610d0d9d577fb66f，100297通过15/15。64位完整组合共69次。
+
+100298封包64位，3860内部文件；回收后包级及全部文件、六文件、原规则、完整DRC、程序版本及实际日志均核验通过。回执mother64-local-verification.json。此时64位全部门通过，才启动128位。
+
+source-26 SHA-256 29d7ab39744ba4a52ab7767ab23b5821f157faa609b62f216fe74da7faef2052。原有母控取指按header版本动态支持两格式，七份硬件/锁文件逐字不变，证明见dual-format-hardware.json；128位gate强制核对已合格64位清单及同一组六文件。100299 RTL54/54、100300最终母控网表54/54通过；100301的九类128位局控/程序组合69/69通过，不沿用64位功能回执。100310封包128位，3148内部文件，本地全部核验通过，回执mother128-local-verification.json。
+
+最终两格式共用同一物理实现：TT300MHz setup/hold +374.917/+7.629ps，最小cap/slew裕量+0.237484fF/+0.045214321ns，PG/RC/时钟与完整原版GDS DRC0通过。两套格式的六文件哈希完全一致；母控物理cell名仍mother_control_64，128是其另一已验证程序格式，不是第二份独立P&R。归档SHA、逐场景次数和原始回执位置见acceptance-index.json。
+
+业务证据范围为两驻留目标的母控最终网表与实际Block/LC RTL、真实私有S；LC PM为行为夹具，C/U往返分别保留#195参考对端，不是最新C与最新U的完整联合系统。九实例控制/顶层CTS/PG/负载/后制接入与完整ISA未验收，留给独立后续任务。当前in_review，待独立审查，未自合并、未标done。规则1.0.0；project_id=llm-hardware-design；登记PR5沿用pending；缺board.json，Projects unverified/同步pending，管理员待核验。

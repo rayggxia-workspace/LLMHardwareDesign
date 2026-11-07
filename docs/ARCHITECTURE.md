@@ -158,4 +158,16 @@ bash SOURCE/project/experiments/mother_control_v1/gate.sh NEW_GATE SOURCE PHYSIC
 
 `physical.sh`需Slurm数组索引和原生银行generation.json，路径已固定在执行源。只在输入RTL散列完全相同时允许显式复用映射网表。预检不会标记完整物理通过；full使用未改原版完整GDS规则。最终网表回归与提取STA分别验收。原周期3.333333333ns经ORFS write_sdc写成3.3333ns，略严格；审计记录读回周期且不接受更慢周期，同时逐位核对I/O延迟、转换、负载及setup/hold不确定度。
 
-`consistency.py`入口强制要求full audit与最终网表功能回执均通过，再以同一物理母控连接实际P/U/C/F/J局控和服务RTL。参数见`--help`，CFJ原紧凑源需逐项满足247文件锁，P/U不得默默换成更新局控；U须绑定#221实际修订源。私有S采用真实SRAM，LC程序存储仍为原行为夹具，不能据此宣称整个系统最终门级或物理通过。当前业务门执行中，实际结果和失败尝试见`work/YUZE-LU/223/README.md`及PR #224。
+`consistency.py`入口强制要求full audit与对应格式最终网表功能回执均通过，再以同一物理母控连接实际P/U/C/F/J局控和服务RTL。CFJ原紧凑源需逐项满足247文件锁，P/U保留既有局控；U绑定#221已验收31文件源。私有S是真实SRAM，LC程序存储仍为行为夹具。64位全部通过后，128位gate再强制校验已合格64位清单和同一组六文件；核心按镜像版本动态取指，未更改有源RTL或物理实现。
+
+```bash
+# 新目录、Slurm 4核；先前64位清单必须已完整合格。
+bash SOURCE/project/experiments/mother_control_v1/regression.sh NEW_RTL128 SOURCE 128
+bash SOURCE/project/experiments/mother_control_v1/gate.sh NEW_GATE128 SOURCE CANDIDATE 128 QUALIFIED64_MANIFEST
+# KIND含C-roundtrip、CF-duplex、U-duplex和U-fma-duplex；最后一项选择镜像/局控格式。
+bash SOURCE/project/experiments/mother_control_v1/consistency.sh NEW_BIND SOURCE AUDIT_JSON GATE_JSON CELLS_SV KIND 128
+# 本机只读校验，不执行归档内容，自动识别两种格式。
+python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --receipt NEW_RECEIPT.json
+```
+
+两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。

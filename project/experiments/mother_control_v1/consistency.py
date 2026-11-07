@@ -14,17 +14,19 @@ def sha(path):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--out', type=Path, required=True)
-    p.add_argument('--kind', choices=['P', 'U', 'C', 'F', 'J', 'CF-duplex', 'U-duplex', 'U-fma-duplex'], required=True)
+    p.add_argument('--kind', choices=['P', 'U', 'C', 'F', 'J', 'C-roundtrip', 'CF-duplex', 'U-duplex', 'U-fma-duplex'], required=True)
     p.add_argument('--native-audit', type=Path, required=True)
     p.add_argument('--gate-receipt', type=Path, required=True)
     p.add_argument('--cells', type=Path, required=True)
     p.add_argument('--cfj-upstream', type=Path, required=True)
     p.add_argument('--pu-source', type=Path)
+    p.add_argument('--instruction-bits',type=int,choices=(64,128),default=64)
     a = p.parse_args()
     audit = json.loads(a.native_audit.read_text())
     gate = json.loads(a.gate_receipt.read_text())
     assert audit['passed'] and audit['full_gds_drc_performed'] and gate['passed']
     assert audit['final_sha256']['v'] == gate['final_netlist_sha256']
+    assert gate.get('instruction_bits',64)==a.instruction_bits
     final = Path(audit['candidate']) / 'flow/results/nangate45/mother_control_64/base/6_final.v'
     assert sha(final) == audit['final_sha256']['v']
     assert sha(a.cells) == gate['cells_sha256']
@@ -32,7 +34,7 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     bundle = out / 'bundle'
     prior = Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-193-local-control/acceptance-02')
-    env = dict(os.environ, CFJ_CONTROL64_SOURCE=str(a.cfj_upstream.resolve()), PU_INSTRUCTION_BITS='64')
+    env = dict(os.environ, CFJ_CONTROL64_SOURCE=str(a.cfj_upstream.resolve()), PU_INSTRUCTION_BITS=str(a.instruction_bits))
     def run(command, log, cwd=out):
         with (out / log).open('w') as stream:
             subprocess.run(list(map(str, command)), cwd=cwd, env=env,
@@ -53,7 +55,7 @@ def main():
         group = 'P' if a.kind=='P' else 'U'
         run([sys.executable, '-B', pu / 'project/experiments/pu_leaf_base/control_replay.py', pu, bundle, group], 'stage.log')
     else:
-        run([sys.executable, '-B', ROOT / 'project/experiments/cfj_leaf_base/stage_regression.py', prior / 'bundle.tar.gz', bundle, 'controller64'], 'stage.log')
+        run([sys.executable, '-B', ROOT / 'project/experiments/cfj_leaf_base/stage_regression.py', prior / 'bundle.tar.gz', bundle, 'controller64' if a.instruction_bits==64 else 'controller'], 'stage.log')
         if a.kind == 'CF-duplex':
             run([sys.executable, '-B', ROOT / 'project/experiments/cfj_leaf_base/stage_duplex.py', bundle], 'duplex-stage.log')
     design = bundle / 'design'
@@ -65,7 +67,13 @@ def main():
     wires = (ctrl / 'tb_network_mc_wires.svh').read_text().split('mc_min_controller #', 1)[0]
     for direction, width, name in ports:
         found = re.findall(r'\b(?:reg|wire)\s*(\[[^\]]+\])?\s*' + name + r'\s*;', wires)
-        assert found == [width], (name, width, found)
+        reset_guard='`ifdef TB_F_RECOVERY\nwire rst_ni;\n`else\nreg rst_ni;\n`endif'
+        if name=='rst_ni' and reset_guard in wires:
+            # Mutually exclusive preprocessor branches are one actual port.
+            # Keep both branches intact; Verilator selects the native fixture.
+            assert found==['',''],(name,width,found)
+        else:
+            assert found == [width], (name, width, found)
     wires += 'mother_control_64 dut(\n' + ',\n'.join('    .' + name + '(' + name + ')' for _, _, name in ports) + '\n);\n'
     (ctrl / 'tb_network_mc_wires.svh').write_text(wires)
     pair = design / 'tb_native_pair.sv'
@@ -80,7 +88,7 @@ def main():
     pj = bundle / 'staged/pj/project/rtl'
     bank = Path('/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v')
     assert sha(bank) == '6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7'
-    kind = dict(P=3, U=-1, C=2, F=1, J=4, **{'CF-duplex': -1, 'U-duplex': -1, 'U-fma-duplex': -1})[a.kind]
+    kind = dict(P=3, U=-1, C=2, F=1, J=4, **{'C-roundtrip':-1, 'CF-duplex': -1, 'U-duplex': -1, 'U-fma-duplex': -1})[a.kind]
     # Include the registered two-local link when the compact frontend uses it.
     sources = [ctrl / 'lc_min_controller.sv', ctrl / 'tb_network_pm.sv']
     link = ctrl / 'two_local_link.sv'
@@ -92,7 +100,7 @@ def main():
     cmd = [verilator, '--binary', '--timing', '--assert', '--timescale-override', '1ns/1ps', '--x-initial', 'unique', '--x-assign', 'unique', '-Wno-fatal', '--top-module', 'tb_native_pair', '-GSINGLE_KIND=' + str(kind), '-j', os.environ.get('SLURM_CPUS_PER_TASK', '4'), '--Mdir', str(out / 'obj'), '-I' + str(ctrl), '-I' + str(native), '-I' + str(design), str(native / 'native_r.vlt'), *map(str, sources)]
     run(cmd, 'compile.log')
     cases = [('normal', 0, 0, 0)]
-    if a.kind == 'U':
+    if a.kind in ('U','C-roundtrip'):
         cases += [('stalled', 1, 0, 0), ('fault', 0, 1, 0), ('stalled-fault', 1, 1, 0), ('reset', 1, 0, 1)]
     if a.kind in ('CF-duplex','U-duplex','U-fma-duplex'):
         cases += [('stalled', 1, 0, 0), ('reset', 1, 0, 1)]
@@ -107,14 +115,17 @@ def main():
         for index in range(3):
             image_path = image_dir / ('mother.mem' if index == 0 else 'local' + str(index - 1) + '.mem')
             word0 = int(image_path.read_text().splitlines()[0], 16)
-            assert (word0 >> 64) & 65535 == 2
+            assert (word0 >> 64) & 65535 == (2 if a.instruction_bits==64 else 1)
         for reset_mode, seed in [(1, 143), (2, 143), (2, 144)]:
             log = name + '-' + str(reset_mode) + '-' + str(seed) + '.log'
             command = [str(out / 'obj/Vtb_native_pair'), '+MOTHER=' + str(image_dir / 'mother.mem'), '+MWORDS=' + words[0], '+LOCAL0=' + str(image_dir / 'local0.mem'), '+WORDS0=' + words[1], '+LOCAL1=' + str(image_dir / 'local1.mem'), '+WORDS1=' + words[2], '+STALL=' + str(stall), '+FAULT=' + str(fault), '+RESET_TRIAL=' + str(reset), '+verilator+rand+reset+' + str(reset_mode), '+verilator+seed+' + str(seed)]
             run(command, log)
             assert 'PASS native' in (out / log).read_text()
             results.append(dict(case=name, reset_mode=reset_mode, seed=seed, log_sha256=sha(out / log)))
-    report = dict(schema='mother-block-consistency/1', passed=True, kind=a.kind, instruction_bits=64,
+    partner={'U':'C #195 reference', 'C-roundtrip':'U #195 reference', 'CF-duplex':'current C and F',
+        'U-duplex':'two #221 U instances', 'U-fma-duplex':'two #221 U instances'}.get(a.kind,'single enabled native Block')
+    report = dict(schema='mother-block-consistency/1', passed=True, kind=a.kind, instruction_bits=a.instruction_bits,participant_scope=partner,
+        instruction_version=2 if a.instruction_bits==64 else 1,physical_cell='mother_control_64',
         u_hardware_lock=u_lock, physical_mother=True, mother_final_netlist_sha256=sha(final), actual_local_rtl=True,
         actual_block_rtl=True, actual_private_s_sram=True, local_program_memory='behavioral fixture',
         final_block_netlist=False, topology='two resident targets', full_isa=False, results=results,
