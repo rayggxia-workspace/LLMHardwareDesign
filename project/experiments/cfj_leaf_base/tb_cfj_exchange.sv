@@ -87,7 +87,7 @@ module cfj_exchange_case #(parameter integer K0=2, K1=1) (
         allow_write=3; allow_ack=delayed ? 0 : 3;
         repeat(4) tick();
         reset=0; tick();
-        expected[0]=128'h123456789abcdef00123456789abcdef0;
+        expected[0]=128'h123456789abcdef0_123456789abcdef0;
         expected[1]=128'hfedcba9876543210fedcba9876543210;
         seed(0,4,expected[0]); seed(1,4,expected[1]);
         seed(0,8,0); seed(1,8,0);
