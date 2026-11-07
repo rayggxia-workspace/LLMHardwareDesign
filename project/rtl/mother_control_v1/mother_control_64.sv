@@ -1,7 +1,7 @@
 // Independent mother plus its 16 KiB program SRAM. Two-target upstream bound.
 // Local controllers and their private S remain separate physical resources.
 `timescale 1ns/1ps
-module mother_control_64 (
+module mother_control_64 #(parameter [31:0] NATIVE_ABI_ID=32'h01930001) (
   input wire clk_i,
   input wire rst_ni,
   input wire release_valid_i,
@@ -78,7 +78,7 @@ module mother_control_64 (
  wire pm_req_ready_i,pm_rsp_valid_i,pm_rsp_error_i,pm_req_valid_o,pm_req_write_o,pm_rsp_ready_o;
  wire [127:0] pm_rsp_data_i,pm_req_data_o;
  wire [13:0] pm_req_address_o;
- mc_min_controller #(.STALL_LIMIT(4096)) core (
+ mc_min_controller #(.STALL_LIMIT(4096),.NATIVE_ABI_ID(NATIVE_ABI_ID)) core (
  .clk_i(clk_i),
  .rst_ni(rst_ni),
  .release_valid_i(release_valid_i),

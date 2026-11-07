@@ -51,7 +51,15 @@ set_load 5.0 [all_outputs]
   with (out/log).open('w') as f:r=subprocess.run(list(map(str,argv)),cwd=out,stdout=f,stderr=subprocess.STDOUT)
   commands.append({'argv':list(map(str,argv)),'log':log,'returncode':r.returncode});(out/'commands.json').write_text(json.dumps(commands,indent=2));r.check_returncode()
  compact.make_native(out,top,width,height,60,60,12,.45,views,run,35,.035,True,None)
+ (out/'repair-cts.tcl').write_text('''report_checks -path_delay min -group_path_count 8
+repair_timing -setup_margin 0.030 -hold_margin 0.035 -repair_tns 100 -max_buffer_percent 50 -verbose
+detailed_placement
+check_placement -verbose
+estimate_parasitics -placement
+report_checks -path_delay min_max -group_path_count 8
+''')
  cfg=(out/'config.mk').read_text();cfg+='\nexport DONT_USE_CELLS = TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1 OAI221_X4\nexport SETUP_SLACK_MARGIN = .030\n'
+ cfg+='export CTS_ARGS = -sink_clustering_enable -repair_clock_nets -apply_ndr none -no_insertion_delay -balance_levels -root_buf BUF_X32 -buf_list {BUF_X8 BUF_X16 BUF_X32}\nexport SKIP_CTS_REPAIR_TIMING = 1\nexport POST_CTS_TCL = '+str(out/'repair-cts.tcl')+'\n'
  (out/'config.mk').write_text(cfg)
  receipt={'schema':'mother-native-candidate/1','top':top,'candidate':a.candidate,'die_um':[width,height],'job':os.environ['SLURM_JOB_ID'],'cpus':cpus,'source_commit':lock['commit'],'source_sha256':{str(f.relative_to(ROOT)):compact.sha(f) for f in rtl.iterdir() if f.is_file()},'input_rtl_sha256':compact.sha(out/'input.v'),'bank_sha256':{k:compact.sha(v) for k,v in views.items()},'external_signal_bits':len(ports),'pin_contract':'2um M10 landings in four bands; native access only, simultaneous coarse escape not qualified','qualified':False}
  (out/'inputs.json').write_text(json.dumps(receipt,indent=2)+'\n')

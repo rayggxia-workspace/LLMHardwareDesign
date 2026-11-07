@@ -4,7 +4,7 @@
 
 固定 #180 `81663a1e6586602d2a02748db1c488d2d0ba0233` 的原始 MC、紧凑取指和 PM RTL；来源散列见 `project/rtl/mother_control_v1/upstream-lock.json`。MC 限制为两个常驻目标、八 token、每端单在途任务。未扩大为九局控同时执行。五类 Block 的一致性要分别用真实原生局控及服务回放验证，有限 peer 冒烟不代替 Block 验证。U 的后续修复跟踪 #221，不覆写对方工作目录或旧验收包。
 
-`mother_control_64` 组合一份母控和它自己的 16 KiB PM（四颗 #158/#200 同源 256×128 1RW SRAM bank）。不把 PM 当作 Block 的私有 S，不推断 FF 程序存储，复位不清 SRAM。原始 MC 的 128 位 PM/内部译码接口保留，镜像 v2 的指令为 64 位。
+`mother_control_64` 组合一份母控和它自己的 16 KiB PM（四颗 #158/#200 同源 256×128 1RW SRAM bank）。不把 PM 当作 Block 的私有 S，不推断 FF 程序存储，复位不清 SRAM。母控固定原生 ABI `0x01930001`，对应五类 Block；上游通用演示 ABI `0x00010001` 不作为本物理交付默认配置。原始 MC 的 128 位 PM/内部译码接口保留，镜像 v2 的指令为 64 位。
 
 物理候选 1104×768、1160×800 µm，每项 10 核。使用原版 Nangate45、M1–M10、TT 1.1 V 25°C，周期 3.333333333 ns、I/O max/min 0.5/0.05 ns、转换 0.05 ns、输出 5 fF、setup/hold uncertainty 0.05/0.02 ns。完整 DRC 和提取后时序等必须全部通过，不用 false path 或 waiver 隐藏路径。
 

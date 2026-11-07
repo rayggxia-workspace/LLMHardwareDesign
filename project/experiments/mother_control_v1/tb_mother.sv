@@ -104,6 +104,8 @@ always @(posedge clk_i) cycle <= cycle+1;
         end
       end
       if(result_valid_o && result_ready_i) begin
+        if(prefix_max!=0 && (result_confirmed_read_bytes_o!=32'hffffffff || result_confirmed_write_bytes_o!=32'hffffffff || !result_counter_overflow_o))
+          $fatal(1,"mother confirmed prefix saturation/overflow");
         if(child_busy!=0 || child_return_valid!=0 || trace_live_tokens_o!=0 || trace_block_active_o!=0)
           $fatal(1,"global result before peer/task drain");
         if(result_job_o!=start_job_i || result_epoch_o!=start_epoch_i || result_sequence_o!=start_sequence_i ||
@@ -130,7 +132,7 @@ always @(posedge clk_i) cycle <= cycle+1;
       @(negedge clk_i); cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=1;
       cfg_req_address_i=address[13:0]; cfg_req_data_i=data; cfg_req_proof_i=1;
       cfg_req_total_bytes_i=16'(words*16); cfg_req_image_id_i=expected_image; cfg_req_topology_id_i=expected_topology;
-      cfg_req_abi_id_i=65537; cfg_req_capacity_id_i=32'h17630001;
+      cfg_req_abi_id_i=32'h01930001; cfg_req_capacity_id_i=32'h17630001;
       @(posedge clk_i); while(!cfg_req_ready_o) @(posedge clk_i);
       @(negedge clk_i); cfg_req_valid_i=0;
       while(!cfg_rsp_valid_o) @(negedge clk_i);
