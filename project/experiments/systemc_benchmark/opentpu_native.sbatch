@@ -16,6 +16,7 @@ base=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-ben
 checkpoint=/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/models/qwen25-3b-5defd279
 sha256sum *.py *.sbatch "$checkpoint/config.json" >input.sha256
 "$python" prepare_opentpu_qwen2.py "$base/peers/openTPU-91df41092f612361c5bc22f83b31d23382ffabb0" "$root/overlay" >prepare.log 2>&1
+"$python" segment_peer_memory.py "$root/overlay" >memory-segmentation.log 2>&1
 mkdir "$root/sim-tmp"
 pids=()
 for i in 0 2 4;do

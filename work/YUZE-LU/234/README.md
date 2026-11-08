@@ -188,3 +188,11 @@ M完整descriptor网格8192种×三初态通过，三份周期表SHA完全一致
 [归档](m-saturation-archive-002.json)：1024个S8 K32/N8 Execute，ready恒1、下一命令预先有效；三初态均16拍接收间隔、最终S64正确。不含装载、读回、S/LC/DMA。第一轮驱动未设b_half导致B拒收，修正并保留失败，非硬件故障。
 
 [完整线性工作量预算](linear-capacity-result-002.json)：含36层所有投影和LM head，共3,085,697,024 MAC/token。授予保持质量的S8、完美分配和全部非M开销为零，三M/300MHz的标准直接GEMV路径上限约4.66669 token/s。这不是SystemC整网成绩或任意算法的数学下界。已单独建[Issue238](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/238)处理短K发令/排空/提交瓶颈；不把改硬件或改精度计作DP收益。
+
+
+## 2026-11-09 04:10 CST：硬件分离与peer仿真限制
+
+- [硬件草稿PR239](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/239) / Issue238独立处理长K候选，保留原M。RTL驻留吞吐不是算法或整网收益。
+- 100883最终FAILED 1:0、30秒，完整六配置均在Verilator展开4GiB DRAM的单数组范围上限失败；尚无peer周期。
+- 仿真存储改为四段，保留4GiB及所有控制器/时钟/带宽逻辑。1024词实际RTL检查逻辑文件加载、双通道散布、逐词/跨分段写入通过，见[回执](peer-memory-equivalence-001.json)。原生lbeat位宽警告保留，与原模型一致，非放宽功能比较。
+- 新opentpu-004 / 100950，单节点6×10/debug 30分钟。源归档SHA b7471c269ff83823b39972b09cbcd1e07f1a6456aa7f1001230ec101b270afc3。此时仅提交成功，周期/数值/能量未通过。
