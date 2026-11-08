@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import sys
 
 os.environ['HF_HUB_OFFLINE'] = '1'
 os.environ['TRANSFORMERS_OFFLINE'] = '1'
@@ -29,7 +30,7 @@ def main():
     import onnx
     import onnxruntime as ort
     import torch
-    from transformers import AutoModelForCausalLM, DynamicCache
+    from transformers import AutoModelForCausalLM, DynamicCache, __version__ as hf_version
     torch.set_num_threads(a.threads)
     torch.set_num_interop_threads(1)
     model = AutoModelForCausalLM.from_pretrained(
@@ -38,6 +39,8 @@ def main():
     if model.config.model_type != 'qwen2' or set(model.config.layer_types) != {'full_attention'}:
         raise ValueError('first cached export qualifies dense Qwen2 only')
     count = sum(t.numel() for t in model.parameters())
+    hf_source = Path(sys.modules[type(model).__module__].__file__)
+    hf_source_sha256 = hashlib.sha256(hf_source.read_bytes()).hexdigest()
     if not 3_000_000_000 <= count <= 4_100_000_000:
         raise ValueError('complete 3-4B checkpoint required')
 
@@ -167,6 +170,9 @@ def main():
                       for name, value, ref in zip(output_names, actual, expected)]
         checks.append({'variant': variant, 'logits_maxabs_ORT_vs_wrapper': float(np.max(np.abs(actual[0] - expected[0].numpy()))),
                        'kv_outputs_checked': len(full_states), 'wrapper': wrapper_checks, 'ORT': ort_checks})
+    hf_source_unchanged = hashlib.sha256(hf_source.read_bytes()).hexdigest() == hf_source_sha256
+    if not hf_source_unchanged:
+        failures.append({'where': 'HF implementation changed during execution'})
     receipt = {'scope': 'complete Qwen2.5-3B FP32 explicit KV frontend; not integer/device timing',
                'prefix_tokens': a.prefix, 'query_tokens': a.query, 'parameter_count': count,
                'outputs': output_names, 'runtime_inputs': input_names,
@@ -177,9 +183,13 @@ def main():
                'numeric_threshold': {'atol': 5e-4, 'rtol': 5e-4},
                'baked_fixed_buffers': baked_buffers,
                'ort_optimization': a.ort_optimization,
-               'torch': torch.__version__, 'onnx': onnx.__version__, 'ort': ort.__version__}
+               'torch': torch.__version__, 'onnx': onnx.__version__, 'ort': ort.__version__,
+               'transformers': hf_version, 'HF_model_source_sha256': hf_source_sha256,
+               'HF_model_source_unchanged': hf_source_unchanged}
     (a.output / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
     print(json.dumps(receipt))
+    if not hf_source_unchanged:
+        raise ValueError('shared HF implementation changed while this run was executing')
     if failures:
         raise ValueError('cached frontend numeric checks failed; complete diagnostics retained')
 

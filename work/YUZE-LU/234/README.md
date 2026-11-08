@@ -218,3 +218,31 @@ M完整descriptor网格8192种×三初态通过，三份周期表SHA完全一致
 - 本地依赖只解包到任务raw与本人WSL任务目录；Windows无onnxsim对应wheel，源码包因Windows长路径安装失败，未改系统配置/全局包。改用同版本Linux wheel在私有目录完成专化，失败日志保留。
 
 整网SystemC decode速度、总能量与双门槛仍未完成。继续等待数值/活动结果，按实际失败修正；不因peer单步接近10而宣称本方达标。
+
+## 2026-11-09 05:48 CST：整数状态链及两种S校准
+
+- 100950最终COMPLETED 0:0，26m18s，六组原生RTL/LiteDRAM单步结束。
+  P128/P512/P2048：FP4为8.8044/8.7167/8.4044，INT8为5.1993/5.1736/5.0572 token/s，
+  声明133.33MHz。仍是零数据时序诊断，非完整权重质量、常驻生成或能量资格。
+  [完整回执](opentpu-result-004.json)的60,142字节原始归档已回收，30个清单文件逐项SHA一致。
+- [小模型空缓存整数链](tiny-chain-result-003.json)：两层、两token整数prefill→三个连续整数decode，
+  所有KV均来自实际整数程序。四检查点logits和四KV的相对L2均≤0.000151，argmax一致。
+  三个独立校准输入与评估输入分开。KV统一尺度通过显式Convert指令实现，无隐藏HF替换或缩放；
+  不能称为完整3B、设备时间或能量。初次prefill校准遇到causal mask的-inf而失败，保留002日志；
+  003按主入口相同规则仅观察有限值、拒绝NaN/+inf，未放宽质量阈值。完整源快照与结果归档SHA保留。
+- 100968最终FAILED 1:0，32秒，六个worker均在导入时缺libssl.so.1.1，尚未执行模型。
+  仅读取宿主原库，复制到本任务私有python-compat-001，SHA逐项一致；容器实测导入
+  OpenSSL1.1.1k、Torch2.10cpu和Transformers5.20.2通过，未改共享环境。
+  101035核对属于本任务且PENDING后取消，防止同一已知启动故障，未取消他人作业。
+- [101203重试](cached-integer-attempt-002.json)等待100991，带主机精确Dot与旧adapter逐位对照；
+  [101211完整形状重试](frontend-full-attempt-002.json)等待101203，含小图整数prefill链和HF实现源SHA；
+  原失败与各自冻结源版本保留，不能将最新代码套入旧回执。
+- [局部S RTL实测](s-rtl-result-001.json)：两种S×读/写/混合×三初态均通过独立数组、背压和同末态检查。
+  串行请求到响应消费均3拍，非流水吞吐结论；窗口包含518命令。使用明确零延迟功能银行视图，
+  原银行任意#DELAY不冒充300MHz表征。[101227](s-activity-attempt-001.json)等待101211，
+  校准两种真实S网表、原SRAM库及提取RC；feeder活动另验。
+- 21项单位检查、管理结构与diff检查通过。上述远端均单节点6×10，按afterany串行，
+  05:48实读100991已RUNNING，其余依赖排队。完整3B连续KV、SystemC整网时间、总J/token及双门槛仍未完成。
+
+回执：rayggxia-project-collab1.0.0；Issue234/草稿PR235，负责人YUZE-LU；登记PR5 pending，
+缺board配置/Projects条目能力，看板unverified、同步pending，沿用Issue7交接；不自审/自合并。

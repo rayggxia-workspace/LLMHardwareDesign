@@ -37,7 +37,7 @@ def main():
     import onnx
     import onnxruntime as ort
     import torch
-    from transformers import AutoModelForCausalLM
+    from transformers import AutoModelForCausalLM, __version__ as hf_version
     from frontend import import_onnx
     from canonicalize import canonicalize
     from full_integer import Interpreter, Oracle, Q
@@ -99,6 +99,8 @@ def main():
                           if isinstance(q, Q) else q)
     hf = AutoModelForCausalLM.from_pretrained(str(a.checkpoint), local_files_only=True,
         torch_dtype=torch.float32, attn_implementation='eager').eval()
+    hf_source = Path(sys.modules[type(hf).__module__].__file__)
+    hf_source_sha256 = digest(hf_source)
     if sum(t.numel() for t in hf.parameters()) != 3085938688:
         raise ValueError('not the complete pinned Qwen2.5-3B')
     def observe(name, array):
@@ -204,6 +206,7 @@ def main():
         checks.append(row)
         print('INTEGER', json.dumps({k: v for k, v in row.items() if k != 'kv_outputs'}), flush=True)
     oracle.close()
+    hf_source_unchanged = digest(hf_source) == hf_source_sha256
     receipt = {'scope': 'full 36-layer one-step old primitive replay with explicitly quantized HF past',
         'prefix': prefix, 'query': query, 'samples': checks, 'bounds': bounds,
         'runtime_state_inputs': runtime_formats, 'runtime_state_outputs': 72,
@@ -220,9 +223,13 @@ def main():
         'full_integer_sequence_qualified': False, 'systemc_time_qualified': False,
         'energy_qualified': False, 'quality_criterion': 'relative L2 <= .02 and same argmax vs original HF',
         'tools': {'torch': torch.__version__, 'onnx': onnx.__version__, 'ort': ort.__version__,
-                  'numpy': np.__version__},
-        'numeric_passed': all(c['numeric_passed'] for c in checks)}
+                  'numpy': np.__version__, 'transformers': hf_version,
+                  'HF_model_source_sha256': hf_source_sha256},
+        'HF_model_source_unchanged': hf_source_unchanged,
+        'numeric_passed': hf_source_unchanged and all(c['numeric_passed'] for c in checks)}
     (a.output / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+    if not hf_source_unchanged:
+        raise ValueError('shared HF implementation changed while this run was executing')
     if not receipt['numeric_passed']:
         raise ValueError('one-step emitted integer KV probe failed')
 

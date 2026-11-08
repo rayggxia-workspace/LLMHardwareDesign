@@ -59,6 +59,8 @@ def main():
     p.add_argument('--scope', default='dut/block_v2_m')
     p.add_argument('--sample-label', default='scalar M')
     p.add_argument('--cores', type=int, default=2)
+    p.add_argument('--extra-lib', type=Path, action='append', default=[],
+                   help='original characterized macro Liberty; loaded before ODB')
     a = p.parse_args()
     if a.cores < 1:
         raise ValueError('positive core count required')
@@ -66,15 +68,16 @@ def main():
     timing = json.loads(a.functional_receipt.read_text())['timing']
     if not timing.get('passed'):
         raise ValueError('functional receipt did not pass')
-    if any('}' in str(x) or '\n' in str(x) for x in [a.physical, a.liberty, a.vcd, a.output, a.scope]):
+    if any('}' in str(x) or '\n' in str(x) for x in [a.physical, a.liberty, a.vcd, a.output, a.scope, *a.extra_lib]):
         raise ValueError('unsupported Tcl path')
     vcd = a.output / 'normalized.vcd'
     window = normalize_vcd(a.vcd, vcd, timing['window_ps'], a.scope)
-    inputs = [a.liberty, a.vcd, a.functional_receipt, Path(__file__)]
+    inputs = [a.liberty, *a.extra_lib, a.vcd, a.functional_receipt, Path(__file__)]
     inputs += [a.physical / ('6_final.' + x) for x in ('odb', 'spef', 'sdc', 'v')]
     script = a.output / 'power.tcl'
-    script.write_text('read_liberty {%s}\nread_db {%s}\nread_sdc {%s}\nread_spef {%s}\n' %
-        (a.liberty, a.physical / '6_final.odb', a.physical / '6_final.sdc', a.physical / '6_final.spef') +
+    script.write_text(''.join('read_liberty {%s}\n' % lib for lib in [a.liberty, *a.extra_lib]) +
+        'read_db {%s}\nread_sdc {%s}\nread_spef {%s}\n' %
+        (a.physical / '6_final.odb', a.physical / '6_final.sdc', a.physical / '6_final.spef') +
         'set_propagated_clock [all_clocks]\nreport_units\n' +
         'read_vcd -scope {%s} {%s}\nreport_activity_annotation\n' % (a.scope, vcd) +
         'report_power -digits 9\nputs "ACTIVITY_ANALYSIS_COMPLETED"\n')

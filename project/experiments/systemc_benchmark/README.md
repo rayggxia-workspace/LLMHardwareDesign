@@ -156,3 +156,20 @@ ten-core steps on one node. Export and integer failures remain separate; a
 failed FP32 threshold cannot be erased by a passing integer check. Source and
 attempt receipts must be matched; this campaign is not complete generation,
 SystemC system timing, or chip energy.
+
+`tiny_chain_probe.py SPECIALIZED FROZEN NEW_OUTPUT --oracle-command '["ORACLE"]'
+checks a two-layer three-step integer state chain. `--include-prefill` starts
+from a separately traced empty-cache two-token prefill. All later KV is taken
+from emitted integer outputs through `kv_handoff`, never replaced with HF.
+Optional `compile_program(output_formats=...)` adds actual `Convert` primitives
+to maintain stable state exponents; their cost must be included downstream.
+This fixture passed all logits/KV checks but does not qualify a 3B sequence.
+
+`s_activity.cpp` / `s_activity.py` / `s_activity.sbatch` characterize ordinary
+128-bit transactions on both accepted compact S variants. The original bank
+Verilog labels its DELAY/T_HOLD arbitrary; `s_functional_bank.py` makes a
+SHA-locked task-owned zero-delay activity view. It does not change the accepted
+source or original TT Liberty, and does not qualify fmax or glitches. The power
+runner loads original bank Liberty with `analyze_activity.py --extra-lib`.
+Serialized read/write/ACK, stalled responses and memory contents are checked
+independently. Feeder traffic and whole-chip energy remain separate.

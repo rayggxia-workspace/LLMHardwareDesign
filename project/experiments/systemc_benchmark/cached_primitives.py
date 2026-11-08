@@ -71,7 +71,7 @@ class Builder:
         return self.add([self.mul(t,a,e),self.constant(int(coef[0]),e),b],[1,1,-1])
 
 
-def compile_program(model,initial,calibration,formats,runtime_formats=None):
+def compile_program(model,initial,calibration,formats,runtime_formats=None,output_formats=None):
     runtime_formats = runtime_formats or {}
     if set(runtime_formats) - set(initial):
         raise ValueError("runtime template missing from compile inputs")
@@ -124,7 +124,6 @@ def compile_program(model,initial,calibration,formats,runtime_formats=None):
                 if any(q.bits not in (16,32) for q in args):raise ValueError('integer index arithmetic needs address lowering')
                 out=b.add([b.convert(q,e) for q in args],[1,1] if op=='Add' else [1,-1])
         elif op=='Mul':out=b.mul(*args,e)
-        elif op=='Neg':out=b.mul(args[0],b.constant(-1),e)
         elif op=='Neg':out=b.mul(args[0],b.constant(-1),e)
         elif op=='MatMul':out=b.emit('Dot',args,shape,e,shift=e-args[0].exponent-args[1].exponent,
             length=args[0].shape[-1])
@@ -198,10 +197,26 @@ def compile_program(model,initial,calibration,formats,runtime_formats=None):
             out=b.emit('MaskZero',[out],out.shape,out.exponent)
         else:raise ValueError('no executable primitive program for '+op)
         values[name]=out
+    output_formats = output_formats or {}
+    if set(output_formats) - set(model['outputs']):
+        raise ValueError('output format names an undeclared graph output')
+    producers = {n: t['id'] for t in model['tasks'] for n in t['outputs']}
+    for name, meta in output_formats.items():
+        value = values[name]
+        if (tuple(meta['shape']) != value.shape or meta['bits'] not in (16,32) or
+                type(meta['exponent']) is not int or value.predicate is not None):
+            raise ValueError('invalid explicit output format: '+name)
+        if value.exponent != meta['exponent'] or value.bits != meta['bits']:
+            if name not in producers:
+                raise ValueError('output conversion has no registered producer kernel')
+            b.current = producers[name]
+            # A real existing primitive, visible to numerical replay and cost
+            # lowering. Handoff itself must not silently reinterpret scales.
+            values[name] = b.convert(value,meta['exponent'],meta['bits'])
     return {'instructions':b.nodes,'outputs':{name:values[name].name for name in model['outputs']},
         'predicates':b.predicates,
         'value_bindings':{name:q.name for name,q in values.items()},
-        'initial_formats':initial_formats,'runtime_formats':runtime_formats,
+        'initial_formats':initial_formats,'runtime_formats':runtime_formats,'output_formats':output_formats,
         'input_ids_shape':model['values']['input_ids']['shape'],'source_sha256':model['sha256'],
         'scope':'vector instructions are finite scalar native loops; no whole-vector private-S allocation'}
 

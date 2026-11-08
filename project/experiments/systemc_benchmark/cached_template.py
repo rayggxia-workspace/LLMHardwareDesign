@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import sys
 
 
 def digest(path):
@@ -36,23 +37,27 @@ def wrapper_for(model):
     return Wrapper().eval()
 
 
-def export_template(model, path):
+def export_template(model, path, initial_prefix=2, query_tokens=1):
     import onnx
     import torch
     layers = model.config.num_hidden_layers
     h = model.config.hidden_size // model.config.num_attention_heads
     nkv = model.config.num_key_value_heads
     wrapper = wrapper_for(model)
-    # A positive past keeps the Concat path in the trace. Empty-cache prefill
-    # has a distinct program and must never be simulated by this template.
-    inputs = (torch.ones((1, 1), dtype=torch.int64),
-              torch.tensor([[2]], dtype=torch.int64),
-              torch.zeros((1, 1, 1, 3))) + tuple(
-                  torch.zeros((1, nkv, 2, h)) for _ in range(layers * 2))
+    if type(initial_prefix) is not int or initial_prefix < 0 or type(query_tokens) is not int or query_tokens < 1:
+        raise ValueError('invalid template execution range')
+    # Empty-cache prefill has a distinct trace with no past inputs. A decode
+    # template must be traced with positive past to retain its Concat path.
+    q = torch.arange(initial_prefix, initial_prefix + query_tokens)
+    k = torch.arange(initial_prefix + query_tokens)
+    mask = torch.where(k[None, :] <= q[:, None], 0., float('-inf'))[None, None]
+    inputs = (torch.ones((1, query_tokens), dtype=torch.int64), q.view(1, -1), mask) + tuple(
+        torch.zeros((1, nkv, initial_prefix, h))
+        for _ in range(layers * 2 if initial_prefix else 0))
     states = ['past_%d_%s' % (i, k) for i in range(layers) for k in ('k', 'v')]
     outputs = ['logits'] + [n.replace('past_', 'next_') for n in states]
-    names = ['input_ids', 'position_ids', 'causal_mask'] + states
-    dynamic = {n: {2: 'past_length'} for n in states}
+    names = ['input_ids', 'position_ids', 'causal_mask'] + (states if initial_prefix else [])
+    dynamic = {n: {2: 'past_length'} for n in states} if initial_prefix else {}
     dynamic.update({n: {2: 'next_length'} for n in outputs[1:]})
     dynamic['causal_mask'] = {3: 'next_length'}
     torch.onnx.export(wrapper, inputs, str(path), input_names=names,
@@ -70,15 +75,20 @@ def export_template(model, path):
     return wrapper, names, outputs, params, buffers
 
 
-def specialize(template, path, prefix):
+def specialize(template, path, prefix, query=1):
     import numpy as np
     import onnx
     import onnxsim
-    if type(prefix) is not int or prefix < 1:
-        raise ValueError('cached specialization needs positive prefix')
+    if type(prefix) is not int or prefix < 0 or type(query) is not int or query < 1:
+        raise ValueError('invalid specialization range')
     graph = onnx.load(str(template))
-    constants = {'position_ids': np.array([[prefix]], dtype=np.int64),
-                 'causal_mask': np.zeros((1, 1, 1, prefix + 1), dtype=np.float32)}
+    has_past = any(v.name.startswith('past_') for v in graph.graph.input)
+    ids = next(v for v in graph.graph.input if v.name == 'input_ids')
+    if has_past != (prefix > 0) or ids.type.tensor_type.shape.dim[1].dim_value != query:
+        raise ValueError('prefill/decode template or query length mismatch')
+    q, k = np.arange(prefix, prefix + query), np.arange(prefix + query)
+    constants = {'position_ids': q[None, :].astype(np.int64),
+                 'causal_mask': np.where(k[None, :] <= q[:, None], 0., -np.inf)[None, None].astype(np.float32)}
     shapes = {}
     for value in list(graph.graph.input):
         if value.name in constants:
@@ -93,7 +103,7 @@ def specialize(template, path, prefix):
     del graph.graph.value_info[:]
     for value in graph.graph.output:
         if value.name.startswith('next_'):
-            value.type.tensor_type.shape.dim[2].dim_value = prefix + 1
+            value.type.tensor_type.shape.dim[2].dim_value = prefix + query
     graph, ok = onnxsim.simplify(graph, overwrite_input_shapes=shapes, check_n=0)
     if not ok:
         raise ValueError('cached template specialization failed')
@@ -169,7 +179,7 @@ def main():
     if bool(a.checkpoint) == a.tiny:
         raise ValueError('choose exactly one checkpoint or tiny validation model')
     import torch
-    from transformers import AutoModelForCausalLM, Qwen2Config, Qwen2ForCausalLM
+    from transformers import AutoModelForCausalLM, Qwen2Config, Qwen2ForCausalLM, __version__ as hf_version
     torch.set_num_threads(a.threads)
     torch.set_num_interop_threads(1)
     torch.manual_seed(234)
@@ -184,6 +194,8 @@ def main():
             local_files_only=True, torch_dtype=torch.float32,
             attn_implementation='eager').eval()
     a.output.mkdir(exist_ok=False)
+    hf_source = Path(sys.modules[type(model).__module__].__file__)
+    hf_source_sha256 = digest(hf_source)
     path = a.output / 'template.onnx'
     wrapper, names, outputs, params, buffers = export_template(model, path)
     prefixes = (2, 3, 7) if a.tiny else (128, 512, 2048)
@@ -196,14 +208,19 @@ def main():
             checks = check_template(model, wrapper, fixed, names, outputs, params, buffers, (prefix,))
             specialized.append({'prefix': prefix, 'onnx_sha256': digest(fixed), 'checks': checks,
                                 'passed': all(c['passed'] for c in checks)})
+    hf_source_unchanged = digest(hf_source) == hf_source_sha256
     receipt = {'scope': 'FP32 dynamic-past template, not integer/SystemC coverage',
         'tiny_model': a.tiny, 'parameter_count': sum(t.numel() for t in model.parameters()),
         'source_sha256': digest(Path(__file__)), 'template_sha256': digest(path),
         'runtime_inputs': names, 'outputs': outputs, 'checks': rows, 'specialized': specialized,
-        'passed': all(r['passed'] for r in rows + specialized),
+        'transformers': hf_version, 'HF_model_source_sha256': hf_source_sha256,
+        'HF_model_source_unchanged': hf_source_unchanged,
+        'passed': hf_source_unchanged and all(r['passed'] for r in rows + specialized),
         'full_integer_sequence_qualified': False, 'systemc_time_qualified': False}
     (a.output / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
     print(json.dumps({'passed': receipt['passed'], 'prefixes': [r['prefix'] for r in rows]}))
+    if not hf_source_unchanged:
+        raise ValueError('shared HF implementation changed while this run was executing')
     if not receipt['passed']:
         raise ValueError('template numerical checks failed; evidence retained')
 

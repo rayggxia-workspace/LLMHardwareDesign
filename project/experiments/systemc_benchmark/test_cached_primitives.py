@@ -99,6 +99,22 @@ class CachedStateTests(unittest.TestCase):
         self.assertEqual(expected.exponent, actual.exponent)
         np.testing.assert_array_equal(expected.raw, actual.raw)
 
+    def test_output_scale_change_is_an_emitted_rne_convert(self):
+        # The fixture's output is produced by Concat. Add a final conversion
+        # explicitly, including signed ties; no hidden rescale at handoff.
+        model = {'sha256': 'explicit-output-fixture', 'values': {
+            'input_ids': {'shape': [1, 1]}, 'x': {'shape': [1, 4]}, 'out': {'shape': [1, 4]}},
+            'outputs': ['out'], 'tasks': [{'id': 'view', 'op': 'Identity',
+                'inputs': ['x'], 'outputs': ['out'], 'attributes': {}}]}
+        initial = {'x': self.Q(np.array([[3, 5, -3, -5]], dtype=np.int16), -20)}
+        p = self.module.compile_program(model, initial, {}, {'out': -20}, output_formats={
+            'out': {'shape': [1, 4], 'bits': 32, 'exponent': -19}})
+        self.assertEqual(p['instructions'][-1]['op'], 'Convert')
+        self.assertEqual(p['instructions'][-1]['kernel'], 'view')
+        q = self.module.execute(p, initial, [[1]], None)['out']
+        np.testing.assert_array_equal(q.raw, [[2, 2, -2, -2]])
+        self.assertEqual(q.exponent, -19)
+
 
 if __name__ == '__main__':
     unittest.main()
