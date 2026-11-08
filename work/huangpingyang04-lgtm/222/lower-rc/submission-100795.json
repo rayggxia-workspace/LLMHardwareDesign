@@ -1,0 +1,20 @@
+{
+  "job": "100795",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-child-aliases-2kUyPCFE",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=1",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-child-aliases-2kUyPCFE",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-child-aliases-2kUyPCFE,LOWER_CONFIG=/public/home/yuzelu/PingyangHuang/issue-222-lower-child-aliases-2kUyPCFE/work/huangpingyang04-lgtm/222/lower-rc/lower-child-aliases.json",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-child-aliases-2kUyPCFE/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-child-aliases-2kUyPCFE/slurm-%A_%a.err",
+    "--array=0-5%2",
+    "--dependency=afterok:100783",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-child-aliases-2kUyPCFE/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_aliases.klayout.py"
+  ],
+  "submitted_utc": "2026-11-08T17:56:23.656205+00:00"
+}

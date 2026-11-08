@@ -1,0 +1,19 @@
+{
+  "job": "100705",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-probe-cY1iRBeg",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=2",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-probe-cY1iRBeg",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-probe-cY1iRBeg",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-probe-cY1iRBeg/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-probe-cY1iRBeg/slurm-%A_%a.err",
+    "--array=0-5%2",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-probe-cY1iRBeg/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_probe.klayout.py"
+  ],
+  "submitted_utc": "2026-11-08T16:27:43.214415+00:00"
+}

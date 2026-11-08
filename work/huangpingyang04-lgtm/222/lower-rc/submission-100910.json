@@ -1,0 +1,24 @@
+{
+  "job": "100910",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-check-dlwJHcSW",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=1",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-check-dlwJHcSW",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-check-dlwJHcSW",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-check-dlwJHcSW/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-check-dlwJHcSW/slurm-%A_%a.err",
+    "--dependency=afterok:100909",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-check-dlwJHcSW/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_native_extremes.py",
+    "compare",
+    "--prepared",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-prepare-2g0GNuYd/job-100908-0/result",
+    "--runs",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-solve-MtPTGuXw"
+  ],
+  "submitted_utc": "2026-11-08T19:18:38.532052+00:00"
+}

@@ -1,0 +1,23 @@
+{
+  "job": "100870",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-collect-QoopG60G",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=1",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-collect-QoopG60G",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-collect-QoopG60G",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-collect-QoopG60G/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-collect-QoopG60G/slurm-%A_%a.err",
+    "--dependency=afterok:100869",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-collect-QoopG60G/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_split_check.py",
+    "--main-result",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-collect-zYmAMfnG/job-100854-0/result",
+    "--subsets",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-checks-fx0IK5vn"
+  ],
+  "submitted_utc": "2026-11-08T18:48:32.486407+00:00"
+}

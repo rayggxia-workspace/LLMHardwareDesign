@@ -1,0 +1,23 @@
+{
+  "job": "100854",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-collect-zYmAMfnG",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=1",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-collect-zYmAMfnG",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-collect-zYmAMfnG",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-collect-zYmAMfnG/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-collect-zYmAMfnG/slurm-%A_%a.err",
+    "--dependency=afterok:100775",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-collect-zYmAMfnG/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_interface_compare.py",
+    "--runs",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-corrected-split-bSBuawIh",
+    "--reuse",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-before-reuse-ZyWFgOXS/job-100772-0/result/before-reuse.json"
+  ],
+  "submitted_utc": "2026-11-08T18:40:29.704592+00:00"
+}

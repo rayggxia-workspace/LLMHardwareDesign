@@ -1,0 +1,18 @@
+{
+  "job": 100775,
+  "change": "Pending task CPUs 8 to 2",
+  "reason": "Shared c64/c96 queues have small free CPU slots; preserve scene/algorithm/draw IDs, enable backfill. lower_worker takes actual SLURM_CPUS_PER_TASK.",
+  "response": "",
+  "updated_utc": "2026-11-08T17:51:57.322182+00:00",
+  "completed_update_command": [
+    "scontrol",
+    "update",
+    "JobId=100775",
+    "CPUsPerTask=2",
+    "MinCPUsNode=2",
+    "TresPerTask=cpu:2"
+  ],
+  "readback": "JobId=100775 ArrayJobId=100775 ArrayTaskId=0-3%1 ArrayTaskThrottle=1 JobName=hpy-lower222\n   UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A\n   Priority=4294576967 Nice=0 Account=yuzelu QOS=normal\n   JobState=PENDING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A\n   SubmitTime=2026-11-09T01:32:05 EligibleTime=2026-11-09T01:32:13\n   AccrueTime=2026-11-09T01:32:13\n   StartTime=2026-11-14T00:04:23 EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T01:52:41 Scheduler=Backfill:*\n   Partition=c64,c96 AllocNode:Sid=mgt01:639729\n   ReqNodeList=(null) ExcNodeList=(null)\n   NodeList=\n   NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=2,mem=1M,node=1,billing=2\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=2 MinMemoryNode=0 MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/public/home/yuzelu/PingyangHuang/issue-222-lower-corrected-split-bSBuawIh/project/experiments/m11_m12_rcx/lower_worker.sbatch\n   WorkDir=/public/home/yuzelu/PingyangHuang/issue-222-lower-corrected-split-bSBuawIh\n   StdErr=/public/home/yuzelu/PingyangHuang/issue-222-lower-corrected-split-bSBuawIh/slurm-100775_4294967294.err\n   StdIn=/dev/null\n   StdOut=/public/home/yuzelu/PingyangHuang/issue-222-lower-corrected-split-bSBuawIh/slurm-100775_4294967294.out\n   Power=\n   TresPerTask=cpu:2\n   \n\n",
+  "array_task_throttle": 1,
+  "throttle_reason": "Allow independent real-native local qualification to run alongside first interface shard in currently small shared CPU capacity."
+}

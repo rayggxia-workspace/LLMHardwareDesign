@@ -1,0 +1,23 @@
+{
+  "job": "100884",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-final-audit-fkiTesbk",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=1",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-final-audit-fkiTesbk",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-final-audit-fkiTesbk",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-final-audit-fkiTesbk/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-final-audit-fkiTesbk/slurm-%A_%a.err",
+    "--dependency=afterok:100879",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-final-audit-fkiTesbk/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_final_audit.py",
+    "--delivery",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-comparison-delivery-UvW0b3lU/job-100879-0/result",
+    "--native",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-all-final-FLQ2O4kz/job-100865-0/result"
+  ],
+  "submitted_utc": "2026-11-08T19:01:21.217757+00:00"
+}

@@ -31,6 +31,9 @@ def main():
 
     summary=read(a.comparison/'comparison.json')
     primary=read(a.primary_receipt)
+    assert primary.get('source_net_restricted_origin'), (
+        'Old source partitions are withdrawn; only original whole-matrix values remain valid. '
+        'Use the corrected lower-source comparison delivery.')
     assert primary['passed'] and primary['surface_interval_merge_fixed'] and not primary['lower_only']
     assert len(primary['masters'])==2491 and primary['minimum_native_layer']==1
     rows=read(a.comparison/'net-comparison.json')

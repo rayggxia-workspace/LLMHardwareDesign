@@ -1,0 +1,23 @@
+{
+  "job": "100747",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-tiles-5dCJz1aX",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=2",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-tiles-5dCJz1aX",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-tiles-5dCJz1aX",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-tiles-5dCJz1aX/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-tiles-5dCJz1aX/slurm-%A_%a.err",
+    "--dependency=afterok:100746",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-tiles-5dCJz1aX/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_tile_prepare.py",
+    "--scene",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-all-merged-ymRQic94/job-100746-0/result",
+    "--build",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-local-build-XIUZtcBp/job-100745-0/result"
+  ],
+  "submitted_utc": "2026-11-08T17:07:45.002430+00:00"
+}

@@ -1,0 +1,27 @@
+{
+  "job": "100879",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-comparison-delivery-UvW0b3lU",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=1",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-comparison-delivery-UvW0b3lU",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-comparison-delivery-UvW0b3lU",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-comparison-delivery-UvW0b3lU/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-comparison-delivery-UvW0b3lU/slurm-%A_%a.err",
+    "--dependency=afterok:100865:100870",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-comparison-delivery-UvW0b3lU/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_delivery.py",
+    "--native",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-all-final-FLQ2O4kz/job-100865-0/result",
+    "--interfaces",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-collect-zYmAMfnG/job-100854-0/result",
+    "--surface",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-collect-QoopG60G/job-100870-0/result",
+    "--controls",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-compare-h5n6hvgA/job-100798-0/result"
+  ],
+  "submitted_utc": "2026-11-08T18:53:44.314105+00:00"
+}

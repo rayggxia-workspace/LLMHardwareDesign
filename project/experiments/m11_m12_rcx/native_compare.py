@@ -22,6 +22,9 @@ def load_runs(paths):
         meta=json.loads((directory/'solve.json').read_text())
         assert meta['passed']
         assert meta.get('surface_interval_merge_fixed'), 'Pre-fix native owner statistics are withdrawn'
+        assert meta.get('source_net_restricted_origin'), (
+            'Nearest-quiet source attribution is withdrawn. Recompute source bins '
+            'with the source-restricted reporter; original whole matrices remain valid.')
         payload=(directory/'rows.jsonl').read_bytes()
         assert hashlib.sha256(payload).hexdigest()==meta['rows_sha256'], directory
         loaded=[]

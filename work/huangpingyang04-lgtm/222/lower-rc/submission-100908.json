@@ -1,0 +1,28 @@
+{
+  "job": "100908",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-prepare-2g0GNuYd",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=1",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-prepare-2g0GNuYd",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-prepare-2g0GNuYd",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-prepare-2g0GNuYd/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-prepare-2g0GNuYd/slurm-%A_%a.err",
+    "--dependency=afterok:100865",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-prepare-2g0GNuYd/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_native_extremes.py",
+    "prepare",
+    "--scene",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-child-relabel-PuCr4zbZ/job-100794-0/result",
+    "--tiles",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-children-tiles-yPao4MaK/job-100802-0/result",
+    "--comparison",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-all-final-FLQ2O4kz/job-100865-0/result",
+    "--reused-controls",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-compare-h5n6hvgA/job-100798-0/result/comparison.json"
+  ],
+  "submitted_utc": "2026-11-08T19:18:35.940178+00:00"
+}
