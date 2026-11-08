@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-09，[Issue #236](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/236) 将 3–4B decode 的 M 计算规模问题从算法任务 #219 独立跟踪。新增源绑定的容量必要条件工具，Qwen2.5 密集工作量与已资格化 S2 图匹配；三颗当前 M 的理想密集 S8 计算上界不足 Qwen3-4B FPGA 作者参考值。此为必要容量条件，不是实际系统 token/s 或硬件实现完成；更多实例、扩大阵列和低比特服务仍须分别通过质量、控制、存储及物理门。固定硬件算法收益单独核算，SystemC 校准衔接独立任务 #234，保持其工作树与作业独立。详见[容量说明](../project/experiments/decode_capacity/README.md)。
+
 2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 
 2026-11-08，用户授权将母控 [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 合入 main，并在[五类 Block 与母控统一入口](experiments/assets/five-leaf-bases/README.md)并列索引源码、图册及双格式验收包。工程证据不变；合并结果以 PR 在线回执为准，授权整合不冒充独立审查或九实例系统验收。
