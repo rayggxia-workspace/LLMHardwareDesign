@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-08 CST，Issue #228：按用户澄清实现通用布线算法，独立task/228-generic-router叠加#227，不按Qwen3.5定制。多源接入/路径、fanout树、拆线重布及几何检查已实现；合成测试通过，实际导出与电气时序另验。待独立审查；登记PR5 pending，缺board配置，Projects unverified/同步pending，沿用Issue7。
+
 2026-11-08 CST，Issue #226：基于PR220 f23a6d934，在独立分支task/226-route-contract实现综合到布线接口；未修改原搜索/缓存。逻辑束/预约展开、base端点绑定/固定网络冲突、分级反馈和CLI已实现；真实双U306位输出明确unbound。待独立审查，实际端点导出和布线/RC/STA另阶段。登记PR5 pending，缺board配置，Projects unverified/同步pending，沿用Issue7。
 
 ## 2026-11-08 CST：综合只读分片复用
