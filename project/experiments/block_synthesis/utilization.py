@@ -54,7 +54,10 @@ def report(ir, plan):
             columns=body['shape'][-1];lo,hi=task['columns']
             if any(v%columns for v in work.values()):raise ValueError('nonuniform column work')
             work=Counter({k:v//columns*(hi-lo) for k,v in work.items()})
-        costs = charge(work, binding, hardware)
+        if 'dot_tile' in binding:
+            from tile_accounting import charge as tile_charge
+            costs=tile_charge(binding,hardware)
+        else:costs = charge(work, binding, hardware)
         duration = row['end']-row['start']
         wait = row.get('evaluation',{}).get('channel_wait_ticks',0)
         wait_work += wait
@@ -68,7 +71,8 @@ def report(ir, plan):
         op = body['op']; by_op.setdefault(op, Counter()).update(costs)
         if 'channel_wait_ticks' not in row.get('evaluation',{}):
             for resource in binding['resources']: reservations[resource] += duration
-        for macro, group in binding['macro_binding'].items(): useful[group+'.'+macro] += work[macro+':core']
+        if 'dot_tile' not in binding:
+            for macro, group in binding['macro_binding'].items(): useful[group+'.'+macro] += work[macro+':core']
         if len(dots.get(row['id'], []))==1:
             node = dots[row['id']][0]; ca, cb = ir['native_operand_components'][node['id']]
             columns = node['shape'][-1]; rows = math.prod(node['shape'])//columns; k = node['attributes']['length']
@@ -98,7 +102,7 @@ def report(ir, plan):
                      for r,n in reservations.items()},
         'operand_preparation_hoist':{'saved_serial_cost_bound':sum(x['saved_serial_cost_bound'] for x in opportunities),
                                     'candidates':opportunities},
-        'scope':'measured native core and local IO plus virtual memory model; not chip utilization; hoist is not validated speedup'}
+        'scope':'native core/local IO plus virtual memory; tile P/E/feeder are whole service boundaries, not pure core cycles; not chip utilization; hoist is not validated speedup'}
 
 
 def main():

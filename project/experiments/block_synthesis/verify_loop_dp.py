@@ -114,6 +114,24 @@ def verify(tasks,hardware,plan,wire_budget=None):
         check(row['id'] in task_by_id,'unknown loop task')
         matches=[b for b in task_by_id[row['id']]['bindings'] if b['id']==row['binding']]
         check(len(matches)==1,'unknown/ambiguous loop binding');b=matches[0];c=b.get('read_cache')
+        if b.get('dot_tile'):
+            spec=b['dot_tile']
+            check(not c and spec.get('kind')=='prepared-s32-static-b-tile-v1' and
+                  spec.get('invalidate_read_cache')==[b['site']], 'invalid tile cache effects')
+            discarded=[]
+            for site in spec['invalidate_read_cache']:
+                old=cache.pop(site,None)
+                if old:
+                    check(old['end']<=row['start'],'tile overwrites cache before old ACK')
+                    if row['start']>old['end']:residency.append((site,old['end'],row['start'],old['words']+1))
+                    discarded.append({'site':site,'tag':old['tag'],'prefix':old['stripe'],'words':old['words']})
+            scratch=b.get('scratch_by_site',{b['site']:b['scratch_words']})
+            expected={'cost_model':'native-p-e-tile-stream-v1','retention':'invalidate',
+                'discarded_read_cache':discarded,'external_read_words':b['external_read_words'],
+                'external_write_words':b['external_write_words'],'scratch_by_site':scratch,
+                'duration':b['ticks'],'delta_makespan':max(prefix_makespan,row['end'])-prefix_makespan}
+            check(row.get('evaluation')==expected,'tile state evaluation differs')
+            evaluated[row['id']]=(b['ticks'],b['external_read_words'],scratch)
         for site,n in b.get('scratch_by_site',{b['site']:b['scratch_words']}).items():
             if site in cache and (not c or site!=c['site']):
                 check(n<=8,'active scratch overlaps retained S cache addresses')

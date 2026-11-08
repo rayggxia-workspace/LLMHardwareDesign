@@ -1,5 +1,10 @@
 # 当前状态
 
+2026-11-09，#219/PR220[迭代7](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_7.md)部分交付：
+受限tile共同候选、缓存失效、独立检查及有限S小例子数值通过，Windows/Linux各178项。
+真实FFN规划搬运减67.0961%，该计划/新整网数值仍待验；按显式实例绑定外围服务，首轮C/F/J成本试验作废留证。
+条件策略相对同池旧DP额外0，算法20%、完整KV/系统能耗/token/s与最优适配对照继续in_progress；登记pending，看板unverified/同步pending，待独立审查。
+
 2026-11-09，#219/PR220[迭代6](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_6.md)部分交付：
 不变M/E/S的347例多列及真实S32转换、184例多行和Windows/Linux各169项通过；有包含转换/外存复制的共同成本配方，
 尚未接入完整DP/缓存失效/新计划数值，不计DP20%。前轮阶段计划101213完整3B三输入逐位通过，HF误差/argmax保持；

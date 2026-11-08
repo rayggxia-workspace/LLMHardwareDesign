@@ -54,6 +54,8 @@ class DotCache:
         tasks={t['id']:t for t in ir['tasks']};self.selected={};self.resident={};self.events=[]
         self.capacity={s:v['words'] for s,v in ir['hardware']['sites'].items()}
         self.prepared=PreparedOperands(ir)
+        from tile_replay import TileReplay
+        self.tiles=TileReplay(ir);self.tile_final={}
         self.stage_map=ir.get('primitive_stages')
         for row in plan['tasks']:
             b=next(b for b in tasks[row['id']]['bindings'] if b['id']==row['binding'])
@@ -63,6 +65,16 @@ class DotCache:
         a=self.prepared.prepare(node,a)
         task_id=self.stage_map[node['id']]['execute'] if self.stage_map is not None else node['kernel']
         binding,row=self.selected[task_id];c=binding.get('read_cache')
+        if 'dot_tile' in binding:
+            site=binding['site'];old=self.resident.pop(site,None);discarded=[]
+            if old:discarded=[{'site':site,'tag':old['tag'],'prefix':old['stripe'],'words':old['packed'].size}]
+            if discarded!=row['evaluation']['discarded_read_cache']:
+                raise ValueError('numeric tile cache invalidation differs')
+            current=self.prepared.current_records
+            if current is None or current[0]!=node['id']:raise ValueError('tile prepared region not initialized')
+            raw,canonical=self.tiles.dot(node,current[1],b,binding)
+            self.tile_final[node['id']]=canonical
+            return raw
         if 'parallel_shards' in binding:
             shape=node['shape'];columns=shape[-1];covered=np.zeros(columns,dtype=bool)
             broadcast_b=np.broadcast_to(b,tuple(shape[:-2])+(node['attributes']['length'],columns))
@@ -128,10 +140,20 @@ class DotCache:
             'partial_external_reads':(c['cold_partial_external_reads']-c['rows']*ca*h) if state_cost else (c['warm_partial_external_reads'] if row['cache_hit'] else c['cold_partial_external_reads'])})
         return out
 
+    def finalize(self,node,rounded):
+        actual=self.tile_final.pop(node['id'],None)
+        if actual is None:return rounded
+        if not np.array_equal(actual,rounded):raise ValueError('native tile/scatter final differs from reference')
+        return actual
+
     def report(self):
         expected=sum('read_cache' in child for b,_ in self.selected.values() for child in leaves(b))
         if len(self.events)!=expected:raise ValueError('cache execution coverage differs')
+        expected_tiles=sum('dot_tile' in b for b,_ in self.selected.values())
+        if len(self.tiles.events)!=expected_tiles or self.tile_final:
+            raise ValueError('tile execution/finalization coverage differs')
         return {'passed':True,'calls':len(self.events),'hits':sum(e['cache_hit'] for e in self.events),
+            'tile_calls':len(self.tiles.events),'tile_events':self.tiles.events,
             'preparation':self.prepared.report(),
             'peak_retained_words':max((e['words'] for e in self.events),default=0),'events':self.events,
             'scope':'actual integer SRAM stripe contents used in Dot replay; symbolic traffic independently checked; no RTL timing claim'}

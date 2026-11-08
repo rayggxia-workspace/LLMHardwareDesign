@@ -57,7 +57,11 @@ def account(ir, plan):
             reads = binding['warm_read_words']
         writes = binding['external_write_words']
         c = binding.get('read_cache')
-        if c:
+        if 'dot_tile' in binding:
+            from tile_accounting import traffic
+            read_classes,write_classes=traffic(binding)
+            totals.update(read_classes);totals.update(write_classes)
+        elif c:
             node = nodes[c['primitive']]
             weight = node['inputs'][1] in weights
             meta = ir['model'].get('values', {}).get(node['inputs'][1], {})
@@ -89,7 +93,7 @@ def account(ir, plan):
             'logical_record_bytes':16, 'nominal_record_bytes':sum(totals.values())*16,
             'cached_Dot_services':len(services), 'services':services,
             'scope':'selected conservative scalar-record descriptors, B1/S2 no-KV qualified scope unchanged',
-            'not_proven':'physical DRAM transfers, packed tile support, arbitrary dirty residency, attainable savings or token/s',
+            'not_proven':'physical DRAM transfers, complete controller/DMA tile integration, arbitrary dirty residency or token/s',
             'comparison_warning':'unique-data counts ignore finite S and live M contexts; never subtract them from cost',
             'unchanged':'actual selected kernels, arithmetic, SSA identity, S capacity, every final STORE/ACK and wire budget'}
 

@@ -66,6 +66,7 @@ class PreparedOperands:
     """
     def __init__(self,ir):
         self.plans=ir.get('operand_preparations',{});self.events=[]
+        self.current_records=None
 
     def prepare(self,node,a):
         import numpy as np
@@ -86,6 +87,7 @@ class PreparedOperands:
         # than silently using the original A in the transformed calculation.
         restored=(records[:,:,0]+65536*(records[:,:,1]+records[:,:,2])).reshape(shape)
         if not np.array_equal(restored.reshape(source.shape),source):raise ValueError('prepared component identity failed')
+        self.current_records=(node['id'],records)
         self.events.append({'primitive':node['id'],'split_calls':source.size,
             'external_words':external.size,'base':p['external_base'],
             'last_address':address(p,p['rows']-1,p['K']-1,2)})

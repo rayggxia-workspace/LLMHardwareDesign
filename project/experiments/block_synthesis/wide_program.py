@@ -226,6 +226,8 @@ def execute(program,initial,ids,oracle,bounds=None,dot_executor=None):
         elif op=='Dot':
             product=np.matmul(data[0],data[1]) if dot_executor is None else dot_executor.dot(node,data[0],data[1])
             out=clamp(round_shift(product,a['shift']),bits);mask=None
+            if dot_executor is not None and hasattr(dot_executor,'finalize'):
+                out=dot_executor.finalize(node,out)
         elif op in ('Maximum','Minimum'):out=(np.maximum if op=='Maximum' else np.minimum)(*data)
         elif op=='Compare':out=(data[0]<=a['threshold'] if a['le'] else data[0]<a['threshold']).astype(np.int64)
         elif op=='Select':out=np.where(data[0]!=0,data[1],data[2])

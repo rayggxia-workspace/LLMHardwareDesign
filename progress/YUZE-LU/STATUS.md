@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+2026-11-09 CST：#219/PR220[迭代7](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_7.md)部分交付。
+受限tile共同候选/缓存失效/独立审计与有限S小例子数值通过，Windows/Linux各178项；真实FFN规划搬运减67.0961%。
+该计划/新整网数值仍待验，条件策略相对同池旧DP额外0，不计后端扩展为20%。外围服务显式实例资格，首次C/F/J试验作废留证。
+下一步有效FFN/整网数值、占用分析和真实驻留/调度优化；完整KV/SystemC能耗/token/s/最优适配对照继续未完成。
+Issue219 in_progress、PR待独立审查，不自合并；登记pending、看板unverified/同步pending，沿用交接。
+
 2026-11-09 CST：#219/PR220[迭代6](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_6.md)部分交付。
 347例不变RTL的多列+真实E/M标量转换、184例多行、Windows/Linux各169项通过；包含实际转换/外存复制的共同成本配方已建，
 尚未接入完整候选和新数值，不计算法20%。前轮完整3B阶段计划101213三输入逐位通过、HF保持；100972仍运行/UNLIMITED。

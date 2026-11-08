@@ -199,6 +199,9 @@ def verify(ir):
             if nets!=set(b['nets']):raise ValueError('native static endpoint omission')
             return 1
         for b in task['bindings']:
+            if 'dot_tile' in b:
+                from verify_tile_binding import verify as check_tile
+                checked+=check_tile(ir,task,b);continue
             if 'parallel_shards' not in b:
                 if 'phase_execution' in b:raise ValueError('phase protocol requires a compound')
                 checked+=check_binding(b,work,dots_by_kernel[name]);continue
@@ -283,6 +286,9 @@ def verify(ir):
     regions += [row['temporary_external_region'] for row in ir['program'] if 'temporary_external_region' in row]
     regions += ir.get('native_scratch_regions',[])
     regions += [{'address_words':p['external_base'],'words':p['external_words']} for p in preparations.values()]
+    if 'tile_constants' in ir:
+        from verify_tile_binding import check_constants
+        regions.append(check_constants(ir))
     end=0
     for r in sorted(regions,key=lambda r:r['address_words']):
         if r['address_words']<end:raise ValueError('overlapping external object regions')

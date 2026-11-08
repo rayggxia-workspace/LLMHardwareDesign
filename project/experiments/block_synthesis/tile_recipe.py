@@ -119,7 +119,9 @@ def cost(rows,columns,k,row_tile,column_tile,qualification,memory,p_meta,e_meta=
     """
     if qualification.get('kind')!='native-p-e-tile-services-v1':
         raise ValueError('native tile qualification required')
-    if type(k)!=int or not 1<=k<=(2**63-1)//(2**31*2**15):
+    # Include transient high/low/sign decomposition terms before correction,
+    # rather than bounding only the final mathematical S32 product.
+    if type(k)!=int or not 1<=k<=(2**63-1)//((2**31+131072)*2**15):
         raise ValueError('full-K worst-case S64 bound exceeded')
     if not 1<=row_tile<=8 or not 1<=column_tile<=8:
         raise ValueError('native tile dimensions outside ABI')

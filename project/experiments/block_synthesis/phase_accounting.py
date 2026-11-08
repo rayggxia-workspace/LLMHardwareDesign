@@ -16,6 +16,25 @@ from verify_primitive_cost import verify as verify_costs
 
 
 def service_parts(work, binding, row, hardware):
+    if 'dot_tile' in binding:
+        from tile_accounting import charge
+        costs=charge(binding,hardware);w=binding['tile_work'];channels={}
+        p_reads=w['external_read_words']-w.get('packed_outputs',0)
+        groups=[(binding['macro_binding']['M'],p_reads,w['canonical_outputs']+w.get('packed_outputs',0))]
+        if 'E' in binding['macro_binding']:
+            groups.append((binding['macro_binding']['E'],w['packed_outputs'],w['flag_outputs']))
+        for group,reads,writes in groups:
+            meta=hardware['leaf_inventory'][group];m=hardware['virtual_memory']
+            channel='virtual-memory.channel.'+str(meta['memory_group']%m['channels'])
+            demand=reads*descriptor_ticks(m,1,'load',meta['io_write_ticks'])
+            demand+=writes*descriptor_ticks(m,1,'store',meta['io_read_ticks'])
+            channels[channel]=channels.get(channel,0)+demand
+        service=sum(v for key,v in costs.items() if key.startswith('tile_'))
+        total=sum(channels.values())+service
+        if total!=row['end']-row['start']:raise ValueError('tile descriptor/service time does not reproduce service')
+        return {'core_ticks':0,'local_S_ticks':0,'tile_service_ticks':service,
+                'descriptor_ticks':sum(channels.values()),'channel_descriptor_ticks':channels,
+                'duration':total,'channel_wait_ticks':0}
     inventory = hardware['leaf_inventory']
     groups = binding['macro_binding']
     reads = binding['external_read_words']
@@ -73,7 +92,7 @@ def account(ir, plan):
     tasks = {t['id']: t for t in expanded_tasks}
     program = {p['id']: p for p in ir['program']}
     nodes = {n['id']: n for n in ir['primitive_program']['instructions']}
-    totals = dict(core_ticks=0, local_S_ticks=0, descriptor_ticks=0)
+    totals = dict(core_ticks=0, local_S_ticks=0, descriptor_ticks=0, tile_service_ticks=0)
     channels = {}
     for row in expanded_plan['tasks']:
         task = tasks[row['id']]
@@ -88,7 +107,7 @@ def account(ir, plan):
             work = {k: v * width // columns for k, v in work.items()}
         parts = service_parts(work, binding, row, ir['hardware'])
         for key in totals:
-            totals[key] += parts[key]
+            totals[key] += parts.get(key,0)
         for channel in {r for r in binding['resources'] if r.startswith('virtual-memory.channel.')}:
             target = channels.setdefault(channel, {'whole_service_reserved_ticks': 0, 'descriptor_demand_ticks': 0})
             if 'channel_wait_ticks' not in row.get('evaluation',{}):
@@ -107,7 +126,7 @@ def account(ir, plan):
     capacity = sum(ir['hardware']['resources'][c] for c in channels)
     return {'passed': True, 'makespan': plan['makespan'], 'serial_components': totals, 'channels': channels,
             'descriptor_pool_demand_lower_bound': (demand + capacity - 1) // capacity,
-            'scope': 'exact selected-service cost decomposition; demand bound only, no finer schedule proven',
+            'scope': 'exact selected-service cost decomposition; tile services include local adaptation/ACK, not pure core; demand bound only, no finer schedule proven',
             'unchanged': 'native arithmetic/order, local S traffic, one-word cold descriptors and final ACKs',
             'pending': 'phase calendars, channel arbitration, control/RTL calibration, physical timing and energy'}
 

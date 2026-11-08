@@ -1,0 +1,145 @@
+{
+  "passed": true,
+  "selected_source": "old-dp",
+  "selected_tile_tasks": [
+    "v202",
+    "v287",
+    "v289"
+  ],
+  "tile_scope": {
+    "eligible_tasks": 3,
+    "added_bindings": 180,
+    "rejections": {},
+    "scope": "measured full-K prepared-S32/static-S16 tile grid, real E/M scalar conversion, explicit external copies",
+    "cache": "streaming; invalidate overlapped read-only Dot prefix, no free local copy or warm hit",
+    "excluded": "dynamic B, unmeasured tails, arbitrary dirty residency, overlap, MC/LC binary and physical acceptance"
+  },
+  "plans": {
+    "old-pool-incumbent": {
+      "makespan": 11261130658,
+      "external_words": 593160141,
+      "wire_cost": 18
+    },
+    "greedy": {
+      "makespan": 5924316864,
+      "external_words": 195172656,
+      "wire_cost": 10
+    },
+    "old-dp": {
+      "makespan": 5304003776,
+      "external_words": 195172656,
+      "wire_cost": 18
+    },
+    "heft": {
+      "makespan": 5924316864,
+      "external_words": 195172656,
+      "wire_cost": 10
+    },
+    "conditional-greedy": {
+      "makespan": 5924316864,
+      "external_words": 195172656,
+      "wire_cost": 10
+    },
+    "conditional-dp": {
+      "makespan": 5304003776,
+      "external_words": 195172656,
+      "wire_cost": 18
+    }
+  },
+  "search_seconds": {
+    "greedy": 3.202999999979511,
+    "old-dp": 4.4530000002123415,
+    "heft": 0.14099999982863665,
+    "conditional-greedy": 0.2809999999590218,
+    "conditional-dp": 4.4530000002123415
+  },
+  "native_audit": {
+    "passed": true,
+    "kernels": 74,
+    "bindings": 2885,
+    "primitive_instructions": 88,
+    "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+  },
+  "plan_audits": {
+    "old-pool-incumbent": {
+      "passed": true,
+      "peak_words": {
+        "P1.S": 1023,
+        "P2.S": 1023,
+        "P0.S": 1023,
+        "U0.S": 8
+      },
+      "external_words": 593160141,
+      "static_nets": 18,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate",
+      "cooperative_phase_audit": {
+        "cooperative_compounds": 3,
+        "scope": "independent phase reconstruction plus conservative full-union reservation proof; not RTL arbitration"
+      }
+    },
+    "greedy": {
+      "passed": true,
+      "peak_words": {
+        "U0.S": 8,
+        "P0.S": 528
+      },
+      "external_words": 195172656,
+      "static_nets": 10,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+    },
+    "old-dp": {
+      "passed": true,
+      "peak_words": {
+        "C0.S": 8,
+        "P0.S": 528,
+        "U0.S": 8,
+        "P1.S": 528
+      },
+      "external_words": 195172656,
+      "static_nets": 18,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+    },
+    "heft": {
+      "passed": true,
+      "peak_words": {
+        "U0.S": 8,
+        "P0.S": 528
+      },
+      "external_words": 195172656,
+      "static_nets": 10,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+    },
+    "conditional-greedy": {
+      "passed": true,
+      "peak_words": {
+        "U0.S": 8,
+        "P0.S": 528
+      },
+      "external_words": 195172656,
+      "static_nets": 10,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+    },
+    "conditional-dp": {
+      "passed": true,
+      "peak_words": {
+        "C0.S": 8,
+        "P0.S": 528,
+        "U0.S": 8,
+        "P1.S": 528
+      },
+      "external_words": 195172656,
+      "static_nets": 18,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+    }
+  },
+  "same_pool_conditional_search_gain_fraction": 0.0,
+  "backend_gain_fraction": 0.5289990022243467,
+  "physical_hardware_sha256": "34e8b5ccc0b0c255dd162ff9e116668c99dcf2961a07a6bfe37f58d6e1db8423",
+  "scope": "qualified native tile recipe and conservative descriptors; source graph scope unchanged; no new full-model numerical/SystemC/RTL/system/energy or token/s qualification"
+}
