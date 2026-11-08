@@ -1,0 +1,27 @@
+{
+  "observed_utc": "2026-11-08T12:08:45.102026+00:00",
+  "checks": {
+    "F:/miniconda3/python.exe -B scripts/check_project.py": {
+      "exit_code": 0,
+      "output": "PASS: Project management structure is valid (schema 1).\r\nNOTE: This does not validate product behavior, permissions, or live GitHub settings."
+    },
+    "git diff --check": {
+      "exit_code": 0,
+      "output": ""
+    },
+    "git diff --cached --check": {
+      "exit_code": 2,
+      "output": "work/huangpingyang04-lgtm/222/timing/results/example-word_1599.rpt:253: new blank line at EOF."
+    },
+    "git diff --cached --check -- . :(exclude)work/huangpingyang04-lgtm/222/timing/results/example-word_1599.rpt": {
+      "exit_code": 0,
+      "output": ""
+    }
+  },
+  "timing_python_files_parsed": 14,
+  "package_files_sha256_verified": 8,
+  "boundary_rows": 4982,
+  "false_pass_signal_envelopes": 18,
+  "no_simulation_repeated": true,
+  "raw_report_whitespace_note": "The exact original report has a trailing blank line. It is preserved byte-for-byte for the verified SHA; the full staged whitespace check reports this single item. All other staged files pass."
+}

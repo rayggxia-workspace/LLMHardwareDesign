@@ -1,0 +1,80 @@
+# Qwen3.5 更新上层参数后的宏时序验证
+
+2026-11-08（北京时间）。[Issue #222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) / [Draft PR #225](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/225)。**当前这套宏抽象不能直接用于本轮条件下的时序验收。** 更新上层参数后，18 根信号出现“宏模型报通过，展开原电路报失败”；全部经明确路径复核，换两种电容位置后仍存在。
+
+这不等于原 M1–M10 寄生物理模型全部失效。详细参考仍用原内部寄生，新上层逐网 C 投影到旧电阻网络；本轮否定的是当前抽象集在明确静态上下文中的直接验收资格，没有完成新节点级上下层耦合签核。
+
+## 结果与反例
+
+2491 根原数据/握手信号各有 max/min 最差经过路径裕量，共 4982 行。多根信号可能经过同一完整路径，不能当作独立完整路径数量。下表是更新上层参数后宏抽象与详细参考的**裕量绝对差**，不是单元延迟误差或实测芯片误差。
+
+| 指标 | 中位数 | 95 分位 | 最大值 |
+| --- | ---: | ---: | ---: |
+| setup/max 裕量绝对差 | 22.745 ps | 138.129 ps | 855.600 ps |
+| hold/min 裕量绝对差 | 978.357 ps | 1357.798 ps | 3769.404 ps |
+
+本轮 hold 没有通过/失败误判，不能把较大差异写成 hold 已违例。setup 误报通过的信号，旧上层参数有 21 根，更新后有 18 根，不能把全部抽象误差归因于新增耦合。详细参考中，上层更新造成的最坏逐信号 setup 裕量变化为 −241.001 ps；宏对更新量的预测绝对差最大 143.740 ps。
+
+明确反例 `word_1599`：P1 `io_rsp_data[49]` → T0 `pj_rsp_data[177]`。
+
+| 同一更新上层参数 | setup 裕量 | 判断 |
+| --- | ---: | --- |
+| 宏模型 | +19.815 ps | 通过 |
+| 展开详细路径 | −116.194 ps | 失败 |
+| 宏模型乐观量 | 136.009 ps | — |
+
+见 [详细原报告](results/example-word_1599.rpt)。打印路径的标准单元没有 max-cap/max-slew 违例，所选转换方向最大实际 slew 为 0.189153 ns，未超原标准单元表格上限 0.198535 ns。`word_2150` 也通过同样有限检查：宏 +3.443 ps、详细 −116.598 ps。这说明不能用“全部都是过载”解释误判，但不授予所有弧、表格维度或 PVT 的完整资格。
+
+18 例中有 6 例源驱动器无上述电气违例，仅这 2 例还通过打印路径的规则及所选 slew 上限检查。其余涉及负载或 slew 外推，应单列。静态“上层 C 加接收输入 C”超过源宏全局负载表最大值的网络由 816 增至 870；此代理量不是实际有效电容，不能单独证明模型失准。原设计 300 MHz 已未闭合，T 宏原 WNS −7.74330759 ns，也不是本轮抽象误差。
+
+## 复用情况
+
+- 先核对 GitHub 和服务器，沿用 #206 版图、#216 完整基线、#222 已完成场解与逐网 C；没有重跑布局布线或三维场解。
+- P/J 完整宏 Liberty 直接复用 issue-187 的 `139-p-final-gates/gates/P-electrical/block_p16.lib` 和 `119-j-start-extraction-retry/gates/J-electrical/block_j16.lib`。原 export.tcl 证明对应同一最终 ODB/SPEF。
+- C/F/U/传输宏的同版实现与寄生存在，但匹配交付中缺完整宏 Liberty，只补四份**原内部 RC 下的基线抽象**。结论针对“旧 P/J 加四份基线抽象”的当前集合，不能说六类都是找到的旧库，或单独判定 P/J 库失效。
+- P/J 详细参考展开原验收网表、子宏及原 SPEF，其余用同版网表/SPEF；SRAM 原语仍用原 SRAM Liberty，不是晶体管仿真。
+- 原逻辑网表省略物理 ANTENNA_X1，按同版 SPEF CONN 在新分析副本精确恢复 2089 个既有二极管，原输入不改。四类原生 ODB 对照 setup/hold 读回最大差仅 0.000005 ps。
+
+## 条件与验证
+
+四主场景为详细/宏模型分别搭配旧/更新上层参数；另四场景把更新总 C 全放源端或接收端。保持原 16414 条 R 边，旧互容在两端各折为接地 C，主场景按旧安静电极节点权重投影新总 C。端点、加和与 R 指纹核对通过。源端/接收端方案是敏感性检查，不是严格物理上下界。
+
+18 个误判在三种位置方案都存在。相对主方案，详细参考源端/接收端裕量最大变化为 24.876/33.384 ps。上层更新使 4982 个详细 max/min 包络中 4979 个变化，最大 241.001 ps，证明新参数实际进入计算。
+
+夹具：共同理想 3.3333 ns 时钟、0.1 ns 不确定度、外部非时钟输入 slew 0.05 ns、IO max/min 0.8/0.2 ns、外部输出负载 2 fF；内部时钟树保留传播延迟。虽配置 `set_clock_transition 0.05`，实际传播时钟报告显示源 slew 为 0 ns，须按**理想零 slew 时钟源**解释。原六份 SDC 没有 false/multicycle/case/clock-group 等路径例外，审计在环境回执。
+
+- SPEF 先读父层，再读宏及子宏；反序会覆盖父层网络。独立双缓冲回归将上层 C 从 10 增至 100 fF，正确顺序裕量变 −47.664 ps，错误顺序为 0；生产结果均检查正确读序。
+- 层次外壳 pin 不是有效路径顶点，改查真实叶级输出驱动器。2491/2491 均只有一个边界输出、无内部时序负载。七根代表信号 max/min 显式交叉核对在 0.01 ps 内；四宏场景全部 4982 行与旧显式控制一致。
+- 用 5217 条显式零 R/零 C 父层连接补全理想刺激，没有补画缺失的时钟/复位/控制物理路由。仅合成父层外部标量端口改安全名称，原宏端口、连接、版图与寄生不变。
+- 最终详细参考边界驱动器 2491/2491 已标注、部分未标注为 0。原内部仍有 261829 个非边界未标注驱动器，报告保留，不能称每个内部节点新获资格。
+- 18 例各自明确详细路径与传播包络最大差 0.001 ps。缺失寄生引用警告立即拒绝，已知未使用边界警告单列。
+
+早期缺 LEF、漏二极管、查询外壳 pin、SPEF 反序和理想父层不全等尝试均拒绝，不参加最终统计。submission、拒绝/取消回执保留；仅操作确认错误的本任务作业，不因耗时停止任务，不改他人作业。
+
+## 数据与运行
+
+[结论](results/timing-findings.json) · [4982 行对照](results/timing-comparison.tsv) · [18 个反例与域检查](results/false-pass-cases.json) · [八场景原摘要](results/timing-summary.json) · [输入 SHA 索引](results/final-input-index.json) · [封装核验](results/package-receipt.json) · [环境/SDC 回执](results/runtime-receipt.json) · [数据说明](results/README.md)。封装核验 141 份下载文件；大模型/SPEF/完整日志保留服务器。
+
+以下目录均在 `/public/home/yuzelu/PingyangHuang/`；作业实参见 `submission-*.json`。一个根目录可能含已拒绝历史尝试，须按最终索引选取。
+
+| 成果 | 目录及作业 |
+| --- | --- |
+| 原生审计、四缺项模型 | `issue-222-timing-zav4pqmt` / 100409 数组 |
+| RC 准备、二极管恢复 | `issue-222-timing-prep-yytujrp1` / 100417；`issue-222-timing-diodes-co9nk6e0` / 100434 |
+| C/F/T/U 原生读回 | `issue-222-timing-reference-h91s1uvr` / 100437–100440 对应数组成员 |
+| 真实边界驱动证明 | `issue-222-timing-drivers-f7syapqq` / 100464 |
+| 读序控制 | `issue-222-timing-control2-9hwawffj` / 100497 |
+| 最终八场景与理想父层 | `issue-222-timing-connected-__qniqpu` / 100502–100511；详细旧/新 100506/100505，宏旧/新 100507/100504 |
+| 合格八场景汇总 | `issue-222-timing-qualified-8hlhp4s8/job-100513-0/result` |
+| 全部明确反例 | `issue-222-timing-counter-2m2vx7o5/job-100515-0/result` |
+| 环境/SDC 审计 | `issue-222-timing-receipt-qzuff4kj/job-100516-0/result` |
+
+镜像 SHA `49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a`，OpenROAD 可执行 SHA `0a4cdf08482bab2d99543e8b32b4b142e013becc7f2c1598afb39ba058193f53`。实际 help 显示该工具 write_timing_model 的 setup/hold 为标量，延迟有负载依赖但缺输入转换维度，长端口线电阻也不能完整进入 Liberty。这是抽象限制，不能当作全部反例的唯一根因。probe 与执行源码 SHA 保留，不虚构版本号。
+
+最终相关 26 个调度分配全部 `COMPLETED 0:0`，见 [调度读回](completed-timing-jobs.psv)与 [核对回执](completion-audit.json)；其中包含数组成员，不与寄生阶段十九个作业混算。[执行源码索引](runtime-code-index.json)覆盖各次提交目录中的 73 份轻量源码，不对大几何重复哈希。
+
+## 范围与后续
+
+固定库、静态安静电极条件；内部 RC 未按新场解逐节点更新，上层 C 位置为投影，旧宏和上层共同含 M10 落点的归属问题未消除。不覆盖一般切换互扰、PVT、工艺标定、真实父层系统路由或签核。应针对明确接口路径改进抽象/表征和边界合同，再以详细参考验收，不能只看金属 C 百分比直接接受整套库。
+
+交付待独立审查，Issue 开放、PR Draft，审查人待指定，不标 done、不合并。登记 management-hub PR #5 pending；缺 config/board.json，Projects 条目 unverified / 同步 pending，待维护者处理。新节点级耦合、多条件物理资格仍未完成。

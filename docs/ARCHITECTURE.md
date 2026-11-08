@@ -138,6 +138,17 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ## 数据与外部依赖
 
+Qwen3.5 #222 时序验证入口为 `project/experiments/m11_m12_rcx/timing_*.py` 和 `timing_worker.sbatch`。先复用既有提取/模型，只补缺项；确切八场景实参见 [时序报告及 submission 回执](../work/huangpingyang04-lgtm/222/timing/README.md)。Slurm 新目录须配置 `TIMING_TASK_ROOT`、本人任务名前缀及 `--time=0`。先读父层 SPEF，再读宏及子宏；查询真实叶级驱动器，检查新参数有效性、部分未标注为零、全部边界标注、原生 ODB 读回及显式路径。原内部未标注范围单列，不授予全节点资格。
+
+只封装已有下载结果的命令如下，输出目录必须全新，不重跑时序：
+
+```powershell
+python -B project/experiments/m11_m12_rcx/timing_package.py --inputs ../coupling222-timing-inputs --binding ../coupling222-final-inputs/case-binding.json --model-domain work/huangpingyang04-lgtm/222/timing/model-load-domain.json --domain-nets ../coupling222-timing-inputs/model-load-domain-nets.json --out <全新结果目录>
+python -B scripts/check_project.py
+```
+
+封装核对 141 份轻量来源文件 SHA、八场景、18 个明确反例及规则/转换表域。原内部 RC 不变，新上层 C 投影到旧 R；结果是固定静态上下文抽象验收诊断，不代替节点级耦合、一般切换或 PVT 签核。原 SPEF/Liberty/完整日志只在服务器保留。
+
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
