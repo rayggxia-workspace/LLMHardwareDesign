@@ -1,5 +1,11 @@
 # 当前状态
 
+2026-11-09，#219/PR220迭代4完成选中全图计划的逻辑搬运守恒审计：A重复读约65.8%，静态权重约23.4%。
+一般tile与跨算子有限S驻留未完成，已写入[后续合同](../project/experiments/block_synthesis/MEMORY_REUSE.md)。
+新增精确长循环阶段基础，本地145项通过，孤立候选诊断不计新算法收益；额外远程SystemC核对待终态。
+独立[硬件容量PR237](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/237)不改变固定硬件算法基线。
+实际20%、更多轮、KV decode/能耗/token/s及充分适配ASIC/FPGA对照仍未完成，继续in_progress；登记pending，看板unverified/同步pending。
+
 2026-11-09：[PR220算法迭代3](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_3.md)完成输出列分片及前沿整数分配，134项及本轮六次完整3B整数数值回放通过。同候选/预算较强基线下九组18束收益0.706898%，不将约29%动作池变化计入20%算法目标。SystemC原生命令阶段微实验及负对照通过，尚非完整系统性能；下一轮校准阶段占用与事件前沿。SystemC能耗、KV token/s及ASIC/FPGA对照未完成，Issue219继续in_progress、待独立审查；登记pending、看板unverified/同步pending。
 
 2026-11-09：[PR220算法迭代2](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_2.md)新增8,404原语/准备服务及独立工作量/依赖/容量检查，修复静态线束预算导致有解却丢失的问题；122项及完整5/9组预算复核通过。同候选/同预算DP额外执行收益仍0，阶段化与编译优化不计入20%目标；SystemC3.0.2环境已就绪，时间/能耗/KV token/s及ASIC/FPGA对照继续未完成。Issue219持续in_progress，待独立审查；登记pending、看板unverified/同步pending。

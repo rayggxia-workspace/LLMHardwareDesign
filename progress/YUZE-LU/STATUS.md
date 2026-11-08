@@ -1,5 +1,12 @@
 # YUZE-LU 的进度
 
+2026-11-09 CST：#219/PR220 [迭代4](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_4.md)部分交付，145项通过。
+选中全图逻辑搬运中A重复读65.8%、静态权重23.4%；一般tile/跨算子驻留尚未解决，后续合同已补齐。
+精确长循环/常量阶段基础和孤立候选成本守恒通过，新增SystemC作业待终态，不归因新DP收益。
+确认的M容量必要差距由独立[Issue236/草稿PR237](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/237)处理；
+#234/#235校准工作树/作业独立。算法20%、更多轮、KV/能耗/token/s/对照仍未完成，持续in_progress。
+登记PR5 pending，缺board配置，看板unverified/同步pending，独立审查人待指定，不自合并/关闭。
+
 2026-11-09 CST：Issue219/PR220算法迭代3加入完整K列分片与每前沿整数分配，134项、本轮六次完整Qwen2.5-3B B1/S2无KV数值逐位一致；独立审计及原件SHA核验通过。同池较强基线下整网九组18束0.706898%、真实FFN切片3.800989%，未达20%。官方SystemC原生命令阶段微实验及负对照通过；整服务锁通道掩盖重叠，下一轮做经校准的事件前沿，不能以微实验当算法/整网性能。见[证据及后续](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_3.md)。时间/能耗/KV token/s与充分优化3–4B对照仍未完成，持续in_progress；待独立审查，登记pending、看板unverified/同步pending。
 
 2026-11-09 CST：Issue219/PR220算法迭代2完成原语阶段化、静态线束未来可行性与已知好解保留；122项/完整5、9组工作量与预算审计通过。修复九组10束有解却被窄beam丢失的问题；同候选/同预算DP执行收益仍0，新动作族九组仅剩约2.79%重排空间，20%目标继续。SystemC3.0.2安装/FIFO环境检查通过，未有校准性能结论。[本轮证据及后续](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_2.md)。待独立审查、Issue in_progress；登记PR5 pending、看板unverified/同步pending。

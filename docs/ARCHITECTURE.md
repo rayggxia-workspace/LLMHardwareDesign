@@ -240,3 +240,12 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+# 2026-11-09：外存访问与有限S优化入口
+
+PR220新增[外存/驻留合同](../project/experiments/block_synthesis/MEMORY_REUSE.md)，
+`python project/experiments/block_synthesis/traffic_accounting.py <IR> <plan> <result.json>`
+先独立验证原成本和选中计划再分类真实逻辑记录；不代表物理DRAM流量。
+`python project/experiments/block_synthesis/phase_survey.py <IR> <新输出目录>`
+对登记的孤立Dot候选做常量阶段/循环精确模拟；`phase-survey.sbatch`另做有界派生SystemC逐事件核对。
+145项检查命令仍为本目录全部`test_*.py`；需requirements.txt中的固定依赖。
+全图阶段前沿、实际tile打包/供数、脏结果驻留及系统token/s尚未完成，见[迭代4](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_4.md)。

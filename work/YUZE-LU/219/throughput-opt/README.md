@@ -65,3 +65,10 @@ python -B -m unittest discover -s project/experiments/block_synthesis -p 'test_*
 独立检查器重推R*K与R*N*K工作量、地址范围和原生命令成本；有限S回放从实际一维外存分量恢复A。
 小例覆盖广播、数值、容量回退、伪造地址/输入/成本拒绝。本地110项通过、项目结构和diff检查通过。
 准备按相同3B模型与5/9组硬件提交完整计划、同10束对照及三输入数值复验；截至此提交未有整网收益结论。
+# 2026-11-09：迭代4部分交付，持续优化
+
+新增[外存审计与精确长循环阶段基础](ALGORITHM_ROUND_4.md)，本地145项通过；
+当前选中全图计划A重复读约65.8%、静态权重约23.4%，说明一般tile/跨算子驻留仍需实现。
+本轮没有改写全图计划或新增算法20%主张；额外远程SystemC核对仍待终态。
+[独立硬件容量PR237](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/237)保持固定硬件算法基线之外。
+规则、登记/看板及未完成总目标沿用下文，Issue219保持in_progress。
