@@ -4,7 +4,7 @@
 任务 https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/230；
 分支 `task/230-backend-router`，前置提交 `f0273848e1872d9b2d9488981eaf279a902218a5`
 （PR229，叠加PR227/220）。负责人/操作账号YUZE-LU，独立审查人待指定。
-本次源码与证据提交见分支历史，尚未获整产品验收。
+本次源码与证据提交见分支历史及[草稿PR231](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/231)，尚未获整产品验收。
 
 ## 可以继续使用的成果
 
@@ -14,12 +14,12 @@ DEF/ODB/GDS读回和几何核验入口。`work/YUZE-LU/230/README.md` 保存输�
 五类晚接接口362网实际读回、上层研究几何及全部原生层XOR通过。
 这不是#220完整静态网，也不是九组共同底座的物理资格。
 
-原版完整DRC为作业100406（五项，每项10核），收集作业100458依赖其结束。
+原版完整DRC为作业100406（五项，每项10核），收集作业100458及最终100471依赖其结束。
 精确结果以远程原始报告及任务证据索引为准；无报告不得推断通过。
 所有新增运行均在本人目录
 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-230-backend-router/`，
-attempt01–11不可覆盖。最终29项测试在attempt11；收集器早期版本采用attempt09的26项，
-应同时保留两个版本，不将26项报告改写为29项。
+attempt01–12不可覆盖。最终29项测试在attempt11；早期收集器100458采用attempt09的26项，
+最终100471采用attempt11并增加实际上层ODB/GDS。应同时保留两个版本，不改写旧报告。
 
 ## 待明确由谁提供的产品输入
 

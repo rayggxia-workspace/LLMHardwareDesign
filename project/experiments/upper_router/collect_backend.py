@@ -31,13 +31,13 @@ def collect(root,output):
     take(root/'attempt06/product-audit/readiness.json','product/readiness.json')
     take(root/'attempt06/product-audit/route-requirements.json','product/route-requirements.json')
     for name in ('handoff-check.json','tests.log','tools.sha256','openroad-version.txt','klayout-version.txt'):
-        take(root/'attempt09'/name,'checks/'+name)
+        take(root/'attempt11'/name,'checks/'+name)
     results={};artifacts={}
     for kind,count in [('P',34),('U',130),('C',34),('F',34),('J',130)]:
         base=root/'attempt05'/kind;backend=base/'backend';drc=root/'attempt07'/kind
         for name in ('spec.json','routes.json'):
             take(base/name,kind+'/'+name)
-        for name in ('bindings.json','upper.def','upper-vias.lef','upper-readback.def',
+        for name in ('bindings.json','upper.def','upper-vias.lef','upper.odb','upper.gds','upper-readback.def',
                      'odb-geometry.tsv','physical-readback.json','ingest.log','physical-readback.log'):
             take(backend/name,kind+'/backend/'+name)
         for name in ('native-full.json','native-full.lyrdb','native-full.log'):
@@ -62,7 +62,7 @@ def collect(root,output):
     snapshots=[]
     for p in sorted(root.glob('attempt*/source.tar')):
         snapshots.append({'path':str(p),'sha256':sha(p),'bytes':p.stat().st_size})
-    ids='100378,100383,100389,100394,100399,100404,100406,100408,100414'
+    ids='100378,100383,100389,100394,100399,100404,100406,100408,100414,100458,100463'
     states=subprocess.check_output(['sacct','-j',ids,'--format=JobID,JobName%20,State,ExitCode,AllocCPUS,Elapsed',
                                     '-n','-X','-P'],text=True)
     (output/'slurm.psv').write_text(states)
