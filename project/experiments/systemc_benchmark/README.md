@@ -200,3 +200,29 @@ The one-step integer probe also reports error of dequantized S16-weight FP32
 versus original HF, and integer versus that FP32 graph. These are attribution
 diagnostics; the original HF quality criterion is unchanged. Failed checks
 remain failures even when logits argmax agrees.
+
+`contraction_bounds.py` refines the old max-times-length accumulator bound with
+integer row/column L1 bounds only when needed. The unsigned norm reduction is
+itself proved safe before use. The component norm covers every signed-low16,
+signed-high16 and correction partial product; the S64 gate is not removed.
+Independent arbitrary-precision checks cover sparse long contractions and
+unsigned-reduction overflow. This changes a proof, never the emitted arithmetic
+or device timing. Full-size failures remain pending re-evaluation.
+
+`sequence_replay.py FROZEN NEW_OUTPUT --checkpoint CHECKPOINT --weights MANIFEST
+--tokens REFERENCE_TOKENS --oracle-command '["ORACLE"]'` starts with integer
+prefill, then selects every next input from its own integer logits. HF supplies
+separate calibration inputs and independent comparisons, never live KV.
+`--steps-this-run N` and `--resume PREVIOUS_OUTPUT` implement bounded batches;
+resume verifies state, calibration, template, sources, checkpoint and raw S16
+parameter identities. Reuse `--decode-template` and `--prefill-onnx` to avoid
+re-exporting unchanged graphs. Stable S32 KV scales require visible Convert
+instructions. A failed quality check is preserved and stops the batch.
+
+`sequence_replay.sbatch` reserves one node with six ten-core workers for
+P128/P512/P2048 and two frozen natural prompts. The first campaign requests
+only one generated token, not the entire D128 scope. The two largest host
+calibration jobs share a lock to limit simultaneous retained ONNX tensors;
+this has no effect on device scheduling or measured token/s. The tiny fixture
+passed first-two/resume-two versus uninterrupted-four bit-exact KV comparison,
+but neither this nor job submission qualifies full 3B generation or SystemC.

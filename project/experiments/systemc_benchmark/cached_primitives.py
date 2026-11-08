@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from collections import Counter
 import math
 import numpy as np
+from contraction_bounds import absolute_contraction_bound
 from quantization import quantize
 from sigmoid_polynomial import coefficients,exp_coefficients
 
@@ -265,6 +266,14 @@ def execute(program,initial,ids,oracle,bounds=None,dot_executor=None,runtime_val
             bound=component_norm(data[0])*component_norm(data[1] if len(data)>1 else data[0])
             if op in ('Dot','SquareSum'):bound*=a['length']
             bound<<=max(0,-a['shift'])
+            if bound>(1<<63)-1 and op in ('Dot','SquareSum'):
+                # A max*max*K bound can reject a long probability-weighted
+                # reduction even though its L1 sum is small. Prove all native
+                # component partial sums safe; never remove the S64 check.
+                right = data[1] if op == 'Dot' else data[0]
+                axis = (-2 if right.ndim > 1 else -1) if op == 'Dot' else -1
+                bound = absolute_contraction_bound(data[0], right, right_axis=axis,
+                    decomposed=True) << max(0, -a['shift'])
             if bound>(1<<63)-1:raise ValueError('native S64 partial-order bound exceeded at '+node['id'])
             if bounds is not None:
                 bounds['max_native_accumulator_bound']=max(bounds.get('max_native_accumulator_bound',0),bound)

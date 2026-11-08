@@ -1,0 +1,191 @@
+{
+  "campaign": "frontend-full-002",
+  "job_id": 101211,
+  "remote_archive": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/frontend-full-002-results-001/frontend-full-002-results.tar.gz",
+  "archive_sha256": "e5a06366c8e187cfbb386f6be5cd086daa84ea3ebc38687f854e7a0f5770e2f4",
+  "archive_bytes": 4885072,
+  "file_count": 124,
+  "slurm_terminal": "101211|FAILED|00:16:23|1:0\n101211.batch|FAILED|00:16:23|1:0\n101211.extern|COMPLETED|00:16:23|0:0\n101211.0|FAILED|00:04:00|1:0\n101211.1|FAILED|00:07:13|1:0\n101211.2|COMPLETED|00:03:26|0:0\n101211.3|FAILED|00:09:14|1:0\n101211.4|COMPLETED|00:03:17|0:0\n101211.5|FAILED|00:16:22|1:0\n",
+  "locally_verified_files": 124,
+  "local_archive": "work\\YUZE-LU\\234\\raw\\frontend-full-002-results-001\\frontend-full-002-results.tar.gz",
+  "scope": "complete36-layer fixed-prefill and HF-initialized single-step KV; not integer continuous generation",
+  "cases": [
+    {
+      "case": 0,
+      "prefix": 0,
+      "query": 128,
+      "export_numeric_passed": false,
+      "exit_status": {
+        "export": 1,
+        "integer": 1,
+        "templates": 0
+      },
+      "integer_numeric_passed": false,
+      "samples": [
+        {
+          "variant": 0,
+          "logits_relative_l2": 0.00793979055880546,
+          "top1_equal": true,
+          "KV_failed_count": 26,
+          "KV_max_relative_l2": 0.03290513494070164
+        },
+        {
+          "variant": 1,
+          "logits_relative_l2": 0.011726701852051854,
+          "top1_equal": false,
+          "KV_failed_count": 26,
+          "KV_max_relative_l2": 0.03789293548716416
+        },
+        {
+          "variant": 2,
+          "logits_relative_l2": 0.010223919007927804,
+          "top1_equal": true,
+          "KV_failed_count": 27,
+          "KV_max_relative_l2": 0.04042697279476642
+        }
+      ]
+    },
+    {
+      "case": 1,
+      "prefix": 0,
+      "query": 512,
+      "export_numeric_passed": false,
+      "exit_status": {
+        "export": 1,
+        "integer": 1,
+        "templates": 0
+      },
+      "integer_numeric_passed": false,
+      "samples": [
+        {
+          "variant": 0,
+          "logits_relative_l2": 0.009662342437610305,
+          "top1_equal": true,
+          "KV_failed_count": 20,
+          "KV_max_relative_l2": 0.032774550270424224
+        },
+        {
+          "variant": 1,
+          "logits_relative_l2": 0.00814758549057845,
+          "top1_equal": true,
+          "KV_failed_count": 25,
+          "KV_max_relative_l2": 0.03694093947457763
+        },
+        {
+          "variant": 2,
+          "logits_relative_l2": 0.007693534956791854,
+          "top1_equal": true,
+          "KV_failed_count": 21,
+          "KV_max_relative_l2": 0.034445230638928154
+        }
+      ]
+    },
+    {
+      "case": 2,
+      "prefix": 0,
+      "query": 2048,
+      "export_numeric_passed": false,
+      "exit_status": {
+        "export": 1,
+        "integer": 1,
+        "templates": 0
+      },
+      "integer_numeric_passed": false,
+      "integer_failure_tail": " initial, ids, oracle, bounds,\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/frontend-full-002/cached_primitives.py\", line 269, in execute\n    if bound>(1<<63)-1:raise ValueError('native S64 partial-order bound exceeded at '+node['id'])\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: native S64 partial-order bound exceeded at v182\n",
+      "receipt_missing": true
+    },
+    {
+      "case": 3,
+      "prefix": 128,
+      "query": 1,
+      "export_numeric_passed": true,
+      "exit_status": {
+        "export": 0,
+        "integer": 0,
+        "templates": 0
+      },
+      "integer_numeric_passed": true,
+      "samples": [
+        {
+          "variant": 0,
+          "logits_relative_l2": 0.0004464151325391069,
+          "top1_equal": true,
+          "KV_failed_count": 0,
+          "KV_max_relative_l2": 5.4002588520151506e-05
+        },
+        {
+          "variant": 1,
+          "logits_relative_l2": 0.00046346666876763117,
+          "top1_equal": true,
+          "KV_failed_count": 0,
+          "KV_max_relative_l2": 6.288340236200633e-05
+        },
+        {
+          "variant": 2,
+          "logits_relative_l2": 0.00042266593860909715,
+          "top1_equal": true,
+          "KV_failed_count": 0,
+          "KV_max_relative_l2": 5.055387302955517e-05
+        }
+      ]
+    },
+    {
+      "case": 4,
+      "prefix": 512,
+      "query": 1,
+      "export_numeric_passed": true,
+      "exit_status": {
+        "export": 0,
+        "integer": 0,
+        "templates": 0
+      },
+      "integer_numeric_passed": true,
+      "samples": [
+        {
+          "variant": 0,
+          "logits_relative_l2": 0.0004806621610621557,
+          "top1_equal": true,
+          "KV_failed_count": 0,
+          "KV_max_relative_l2": 7.495261457658129e-05
+        },
+        {
+          "variant": 1,
+          "logits_relative_l2": 0.0004640324878396827,
+          "top1_equal": true,
+          "KV_failed_count": 0,
+          "KV_max_relative_l2": 3.653909700761211e-05
+        },
+        {
+          "variant": 2,
+          "logits_relative_l2": 0.0004863045675862016,
+          "top1_equal": true,
+          "KV_failed_count": 0,
+          "KV_max_relative_l2": 2.7926527974310186e-05
+        }
+      ]
+    },
+    {
+      "case": 5,
+      "prefix": 2048,
+      "query": 1,
+      "export_numeric_passed": true,
+      "exit_status": {
+        "export": 0,
+        "integer": 1,
+        "templates": 0
+      },
+      "integer_numeric_passed": false,
+      "integer_failure_tail": " initial, ids, oracle, bounds,\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/frontend-full-002/cached_primitives.py\", line 269, in execute\n    if bound>(1<<63)-1:raise ValueError('native S64 partial-order bound exceeded at '+node['id'])\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: native S64 partial-order bound exceeded at v187\n",
+      "receipt_missing": true
+    }
+  ],
+  "template_results": {
+    "template-full": true,
+    "template-tiny": true,
+    "tiny-chain": true
+  },
+  "full_integer_sequence_qualified": false,
+  "systemc_time_qualified": false,
+  "energy_qualified": false,
+  "next": "new numerical attribution and mathematically tighter S64 contraction bound in job101480; preserve all existing failures and thresholds"
+}

@@ -133,6 +133,7 @@ def main():
                                 for v in (layer.keys, layer.values))
         by_name = dict(zip(names, arrays))
         dequantized_outputs = tuple(by_name[n] for n in model['outputs'])
+        del by_name
         samples.append((current, past_arrays, expected.logits.numpy(), expected_states, dequantized_outputs))
         print('OBSERVED', variant, len(arrays), flush=True)
     del hf, session, feed, arrays

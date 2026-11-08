@@ -7,6 +7,7 @@ Unproven cases fall back to NumPy's signed-integer matmul, with an S64 bound.
 """
 from collections import Counter
 import numpy as np
+from contraction_bounds import absolute_contraction_bound
 
 
 def magnitude(x):
@@ -25,11 +26,16 @@ class ExactReferenceDot:
         if k != y.shape[-2 if y.ndim > 1 else -1]:
             raise ValueError('dot dimensions differ')
         bound = magnitude(x) * magnitude(y) * k
+        if bound > (1 << 53):
+            bound = absolute_contraction_bound(x, y, right_axis=-2 if y.ndim > 1 else -1)
         if bound > (1 << 63) - 1:
             raise ValueError('host oracle lacks a valid S64 absolute-sum bound')
 
         def exact(a, b):
-            if magnitude(a) * magnitude(b) * k > 1 << 53:
+            estimate = magnitude(a) * magnitude(b) * k
+            if estimate > 1 << 53:
+                estimate = absolute_contraction_bound(a, b, right_axis=-2 if b.ndim > 1 else -1)
+            if estimate > 1 << 53:
                 raise ValueError('binary64 exactness proof failed')
             z = np.matmul(a.astype(np.float64), b.astype(np.float64))
             if not np.all(np.isfinite(z)) or not np.all(z == np.rint(z)):

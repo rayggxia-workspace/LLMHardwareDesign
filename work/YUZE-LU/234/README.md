@@ -276,3 +276,40 @@ M完整descriptor网格8192种×三初态通过，三份周期表SHA完全一致
 
 下一步：完成主场景数值/模板与S活动，修正具体误差并接完整整数KV序列；将N原生合同修正纳入本任务
 SystemC后端，继续补LC/MC/互联/时钟/外存。所有硬件/精度/配方变化单列，不计为DP算法收益。
+
+## 2026-11-09 07:39 CST：完整形状失败保留、S活动结束和自由生成入口
+
+- [101211终态](frontend-full-result-002.json)：FAILED 1:0、16m23s。
+  完整3B动态模板及专化通过，不能替代整数验收。P128/P512的Q1整数三样本通过；
+  空缓存P128/P512部分KV超过原2%阈值，P128有一个logits argmax不一致；
+  P0Q2048及P2048Q1分别在v182/v187被原S64部分和上界拒绝。124个归档文件回收SHA一致。
+- 新增整数L1收缩上界，先证明uint64范数求和不溢出，再约束所有原生分量部分积；
+  独立Python任意精度验证长稀疏收缩及溢出反例。不移除S64检查、不改变运算或计为DP收益。
+  [101480](cached-integer-full-attempt-003.json)用六种完整形状检查新证明，同时区分
+  S16反量化FP32/HF误差与整数/反量化FP32误差；101479仍为小形状归因实验。
+- [101347 S活动](s-activity-result-002.json)：COMPLETED 0:0、1m09s。
+  两种16KiB S的读/写/混合、RTL及门级三初态通过，普通串行服务3拍；
+  base/P有效pin为17309/47623，143/178剩余pin按ODB/原库分类为天线二极管。
+  原SRAM Liberty、提取RC和完整银行pin活动保留。用纯读/纯写预测混合访问的增量误差
+  分别3.888%/10.270%，没有事后放宽阈值当作精确通用系数；feeder尚未覆盖。
+- [RMS2048 N采样](n-activity-result-002.json)：真实2048元素统计/Finalize/ReadFactor，
+  三组捕获衍生数据，RTL/接受网表三初态、独立整数平方根和oracle一致，每服务8364拍。
+  增量约47.95/48.66/48.48nJ，持续idle另计。VCD完整定义头与既有N审计一致，
+  172438有效pin及300天线二极管分类可追溯复用。两次主机分析进程SIGSEGV在调用功耗工具前失败，
+  原日志和部分VCD保留；串行重试成功，原因未证实，未将重试参数称为已证明修复。
+  106文件、1.516GB原始归档逐文件及本地/远端包SHA核对；仍非整片能耗。
+- [自由生成入口与重启证明](sequence-tiny-result-003.json)：tiny两层102912参数，
+  真正由整数logits选出231/127/225/127，第一段两token、恢复两token与连续四token的最终四个KV
+  逐位一致，handoff记录相同，所有HF检查通过，最大相对L2约0.000136。
+  新checkpoint/原始S16参数SHA及源版本/状态/校准身份检查已纳入；150文件归档本地/远端SHA一致。
+  [旧入口冻结记录](sequence-tiny-result-001.json)保留，不用新源替代旧证据。
+- [101486](sequence-attempt-001.json)：完整3B六组自然提示P128/512/2048×两提示，先请求首token，
+  完整目标D128。先有整数prefill，再允许整数KV继续；HF输出不注入现场状态。
+  单节点6×10，afterany:101480；两组大prefill仅在主机校准阶段互斥，避免同时保留大型观察图。
+  07:32实读101479 PENDING(Resources)，101480/101486等待依赖，尚无执行通过结论。
+- 25项单位检查、管理结构与diff检查通过。完整3B连续D128、已校准SystemC全系统时间、
+  全片/DDR总J/token和FPGA双指标仍未达标；任务继续in_progress，PR235保持草稿。
+
+规则回执：rayggxia-project-collab1.0.0；llm-hardware-design，Issue234/PR235，负责人YUZE-LU。
+仅本任务分支/远端目录，无母任务改动；登记PR5 pending，缺board配置/Projects能力，
+看板unverified/同步pending，复用Issue7交接；独立审查人待指定，不自审/自合并。
