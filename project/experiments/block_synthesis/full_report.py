@@ -20,6 +20,7 @@ def main():
         'groups':ir['hardware']['leaf_inventory'],'sites':ir['hardware']['sites'],'program':[
             {k:v for k,v in row.items() if k in ('id','op','shape','exponent','body','temporary_external_region','S_layout')}
             for row in ir['program']],
+        'cache_scope':ir.get('read_cache_scope'),
         'sha256':ir['model']['sha256']}
     payload=json.dumps(data,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')
     html=r'''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -67,6 +68,9 @@ const first=Math.min(...rows.map(t=>t.start)),last=Math.max(...rows.map(t=>t.end
 rows.forEach((t,j)=>{const y=j*24+20;tag(s,'text',{x:8,y:y+13},t.id.split('/').slice(-2).join('/').slice(0,29));const rect=tag(s,'rect',{x:270+(t.start-first)*scale,y,width:Math.max(1,(t.end-t.start)*scale),height:17,fill:'#4d7faa'});tag(rect,'title',{},`${t.binding}\n${fmt(t.start)} → ${fmt(t.end)}`);});$('timeline').replaceChildren(s);}
 $('layer').addEventListener('change',draw);$('mode').addEventListener('change',draw);draw();
 </script>'''
+    if ir.get('read_cache_scope'):
+        html=html.replace('全部逐步溢出，尚未进行分片缓存复用。',
+            '已加入 M Dot 输入分量的只读分片缓存，其他结果仍写回外存。跨任务只复用相同 SSA 输入，不缓存脏结果。')
     (a.results/'report.html').write_text(html.replace('PAYLOAD',payload),encoding='utf-8')
 
 

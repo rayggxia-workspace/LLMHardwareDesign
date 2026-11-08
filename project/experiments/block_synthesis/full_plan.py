@@ -39,6 +39,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('model',type=Path);p.add_argument('hardware',type=Path)
     p.add_argument('numeric',type=Path);p.add_argument('qualification',type=Path);p.add_argument('output',type=Path)
     p.add_argument('--width',type=int,default=8);p.add_argument('--primitive-program',type=Path,required=True)
+    p.add_argument('--read-cache',action='store_true')
     a=p.parse_args();a.output.mkdir(exist_ok=False)
     m=canonicalize(import_onnx(a.model));h=json.loads(a.hardware.read_text());numeric=json.loads(a.numeric.read_text())
     if numeric['status']!='full_integer_numeric_passed' or numeric['source_sha256']!=m['sha256']:
@@ -72,6 +73,12 @@ def main():
     results=[]
     for label,arch in [('five-groups',h),('nine-groups-count-experiment',replicated_inventory(h))]:
         began=time.monotonic();ir=compile_graph(m,arch,trace,profile,primitive)
+        all_spill=search(ir['tasks'],ir['hardware'],width=1)
+        all_spill_audit=verify(ir['tasks'],ir['hardware'],all_spill)
+        if a.read_cache:
+            from dot_cache import variants
+            variants(ir)
+            ir['optimization_scope']=ir['read_cache_scope']['scope']
         ir['address_check']=check_program_addresses(m,ir['external_regions'])
         if primitive:
             ir['primitive_address_check']=check_primitive_addresses(m,primitive,ir['external_regions'],ir['primitive_regions'],
@@ -89,14 +96,19 @@ def main():
             'private_S_bytes':{s:v['words']*16 for s,v in hardware['sites'].items()},
             'zero_data_prelinks':not any(v.get('fixed') for v in hardware['nets'].values()),
             'baseline_bound':base['makespan'],'search_bound':plan['makespan'],
+            'all_spill_bound':all_spill['makespan'],'all_spill_words':all_spill['external_words'],
+            'all_spill_audit':all_spill_audit,
             'baseline_wire_cost':base['wire_cost'],'search_wire_cost':plan['wire_cost'],
             'external_transfer_words':plan['external_words'],'required_external_bytes':ir['required_external_bytes'],
             'external_capacity_qualified':ir['capacity_qualified'],'compile_seconds':time.monotonic()-began,
             'audit':audit,'baseline_audit':base_audit,'address_check':ir['address_check'],
             'primitive_address_check':ir.get('primitive_address_check'),'search_statistics':plan['search_statistics'],
             'native_cost_check':ir.get('native_cost_check'),
+            'read_cache_scope':ir.get('read_cache_scope'),
+            'read_cache_hits':plan.get('read_cache_hits',0),'read_cache_calls':plan.get('read_cache_calls',0),
             'timing_scope':ir['timing_scope'],'optimization_scope':ir['optimization_scope']}
         write(a.output/(label+'-plan.json'),plan);write(a.output/(label+'-baseline.json'),base)
+        write(a.output/(label+'-all-spill.json'),all_spill)
         results.append(row);print(json.dumps(row),flush=True)
         if label=='nine-groups-count-experiment':
             constrained=optimize(tasks,hardware,width=a.width,wire_budget=base['wire_cost'])
@@ -112,6 +124,9 @@ def main():
     from full_report import main as report_main
     import sys
     sys.argv=['full_report',str(a.output)];report_main()
+    if a.read_cache:
+        from reuse_report import generate
+        generate(a.output)
 
 
 if __name__=='__main__':main()

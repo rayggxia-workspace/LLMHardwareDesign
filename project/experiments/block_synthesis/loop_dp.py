@@ -16,6 +16,7 @@ class State:
     makespan: int
     traffic: int
     history: tuple
+    cache: dict
 
 
 def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None):
@@ -40,7 +41,7 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None):
         for p in ps:children[p].append(t['id'])
         if not t['bindings']:raise ValueError('kernel has no native binding')
         for b in t['bindings']:
-            if b['ticks']<1 or len(set(b['resources']))!=len(b['resources']):raise ValueError('invalid loop binding')
+            if b['ticks']<1 or b.get('warm_ticks',b['ticks'])<1 or len(set(b['resources']))!=len(b['resources']):raise ValueError('invalid loop binding')
             if any(r not in hardware['resources'] for r in b['resources']):raise ValueError('unknown loop resource')
             if any(n not in hardware['nets'] for n in b['nets']):raise ValueError('unknown loop net')
             scratch=b.get('scratch_by_site',{b['site']:b['scratch_words']})
@@ -52,19 +53,27 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None):
         ready=[n for n in pending if all(c in tail for c in children[n])]
         if not ready:raise ValueError('cycle in streaming graph')
         for n in ready:
-            tail[n]=min(b['ticks'] for b in tasks[ids[n]]['bindings'])+max((tail[c] for c in children[n]),default=0)
+            tail[n]=min(b.get('warm_ticks',b['ticks']) for b in tasks[ids[n]]['bindings'])+max((tail[c] for c in children[n]),default=0)
             pending.remove(n)
-    initial=State(0,{}, {r:(0,)*c for r,c in hardware['resources'].items()},frozenset(),0,0,())
+    initial=State(0,{}, {r:(0,)*c for r,c in hardware['resources'].items()},frozenset(),0,0,(),{})
     beam=[initial];expanded=0;pruned=0;merged=0;static_rejections=0
+    ready_cache={}
+    def ready_for(done):
+        # Candidate bindings of the same next task share this set. Recompute
+        # once per done mask, rather than scanning the model for every tile.
+        if done not in ready_cache:
+            ready_cache[done]=[t for t in tasks if not done&(1<<ids[t['id']]) and done&masks[t['id']]==masks[t['id']]]
+        return ready_cache[done]
     def netcost(nets):return sum(hardware['nets'][n]['cost'] for n in nets if not hardware['nets'][n].get('fixed'))
     def rank(s):
-        ready=[t for t in tasks if not s.done&(1<<ids[t['id']]) and s.done&masks[t['id']]==masks[t['id']]]
+        ready=ready_for(s.done)
         bound=max([s.makespan]+[max((s.frontier[p] for p in parents[t['id']]),default=0)+tail[t['id']] for t in ready])
         return bound,s.makespan,s.traffic,netcost(s.nets)
     for depth in range(len(tasks)):
+        ready_cache.clear()
         candidates={}
         for s in beam:
-            ready=[t for t in tasks if not s.done&(1<<ids[t['id']]) and s.done&masks[t['id']]==masks[t['id']]]
+            ready=list(ready_for(s.done))
             ready.sort(key=lambda t:(-tail[t['id']],t['id']))
             for task in ready[:ready_limit]:
                 name=task['id']
@@ -75,15 +84,27 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None):
                         static_rejections+=1
                         continue
                     if wire_budget is not None and netcost(nets)>wire_budget:continue
-                    start=max([data_ready]+[s.resources[r][0] for r in b['resources']]);end=start+b['ticks']
+                    cache=s.cache.copy();c=b.get('read_cache');hit=False
+                    if c:
+                        previous=cache.get(c['site'])
+                        hit=bool(c['stripe'] and previous and previous[0]==c['tag'] and previous[1]>=c['stripe'])
+                        if c['stripe']:cache[c['site']]=(c['tag'],c['stripe'],c['cache_words'])
+                        else:cache.pop(c['site'],None)
+                    if any((not c or site!=c['site']) and site in cache and
+                           (n>8 or n+cache[site][2]+1>hardware['sites'][site]['words'])
+                           for site,n in b.get('scratch_by_site',{b['site']:b['scratch_words']}).items()):continue
+                    start=max([data_ready]+[s.resources[r][0] for r in b['resources']])
+                    end=start+(b['warm_ticks'] if hit else b['ticks'])
                     resources=s.resources.copy()
                     for r in b['resources']:resources[r]=tuple(sorted(resources[r][1:]+(end,)))
                     done=s.done|(1<<ids[name]);frontier=s.frontier.copy();frontier[name]=end
                     frontier={n:at for n,at in frontier.items() if any(not done&(1<<ids[c]) for c in children[n])}
-                    history=s.history+({'id':name,'binding':b['id'],'start':start,'end':end,'site':b['site']},)
+                    row={'id':name,'binding':b['id'],'start':start,'end':end,'site':b['site']}
+                    if c:row['cache_hit']=hit
+                    history=s.history+(row,)
                     state=State(done,frontier,resources,nets,max(s.makespan,end),
-                        s.traffic+b['external_read_words']+b['external_write_words'],history)
-                    key=(done,tuple(sorted(frontier.items())),tuple(sorted(resources.items())),tuple(sorted(nets)))
+                        s.traffic+(b['warm_read_words'] if hit else b['external_read_words'])+b['external_write_words'],history,cache)
+                    key=(done,tuple(sorted(frontier.items())),tuple(sorted(resources.items())),tuple(sorted(nets)),tuple(sorted(cache.items())))
                     previous=candidates.get(key)
                     if previous is not None:
                         merged+=1
@@ -96,6 +117,9 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None):
     return {'status':'planned','tasks':list(best.history),'makespan':best.makespan,'external_words':best.traffic,
         'nets':sorted(best.nets),'wire_cost':netcost(best.nets),'width':width,'ready_limit':ready_limit,
         'expanded':expanded,'merged':merged,'pruned':pruned,'rejected_static_conflicts':static_rejections,
+        'read_cache_hits':sum(r.get('cache_hit',False) for r in best.history),
+        'read_cache_calls':sum('cache_hit' in r for r in best.history),
+        'final_read_cache':best.cache,
         'optimality':'bounded frontier DP with append-only resource calendars; no global optimality guarantee'}
 
 

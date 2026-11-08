@@ -1,5 +1,7 @@
 # 0010：以已登记服务、流式初解与联合约束搜索实现 Block 规划
 
+2026-11-08补充：完整3B后端加入只读Dot分片及各M.S驻留内容状态，独立核对地址、容量、冷/热搬运、资源时间和静态网。保持原算术与STORE，先证明有限读复用；一般脏缓存尚未完成，整网MC/LC和实际布线另验。见[算法](../../project/experiments/block_synthesis/DOT_CACHE.md)和[回执](../../work/YUZE-LU/219/READ_CACHE_RESULTS.md)，下文保留早期CP流程边界。
+
 - 状态：proposed；核心实现有局部验证，五类整网综合未完成。
 - 日期：2026-11-07，Asia/Shanghai。
 - 任务：[Issue #219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)；[PR #220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。

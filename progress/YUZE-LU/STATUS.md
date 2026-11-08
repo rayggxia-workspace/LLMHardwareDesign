@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-08 CST：综合只读分片复用
+
+[Issue219/PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)：新增真实Dot分片、相同SSA输入驻留和缓存感知DP状态。完整3B五组/九组各三输入逐位一致、100项服务器测试通过；搬运减25.40%，同10束无DP额外收益。见[回执与图册](../../work/YUZE-LU/219/READ_CACHE_RESULTS.md)。待独立审查，不自合并或标done；一般脏缓存、整网控制编码、实际布线另验。登记pending，看板unverified/同步pending，待有权限维护者处理。
+
 ## 2026-11-08 CST：#220 静态互斥修复与当前母控回放
 
 [Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。修复 loop DP 和独立检查器遗漏 incompatible_nets，固定／已选连接跨时间保留约束；100341 的 90 项测试含 150 个互斥小 DAG 穷举，100338 完整 3B 计划重验通过。100343 的当前独立母控含真实程序 SRAM，配两组 #221 修复后的 U_64 局控执行自动生成 Add/Mul 小图，9 次回放核对实际数值／写 ACK／源释放／连接，正常352拍、背压491拍、复位后486拍；这是固定放置控制子集，不是整网／九目标／物理覆盖。完整数值、零预连虚拟外存和同预算无整网收益结论不变。23 个最终控制输入 Git blob 对上，v1/v2 的 66/24 份输出 SHA 核对；失败环境作业100340保留后改用已有 CP 环境重提通过。见[本轮证据](../../work/YUZE-LU/219/MUTEX_CONTROL_RESULTS.md)。成果待独立审查，不自审、合并或关闭Issue；登记pending，看板unverified/同步pending。后续：任意整网计划控制编码、tile/cache及真实物理反馈。

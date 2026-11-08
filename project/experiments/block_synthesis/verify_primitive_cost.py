@@ -4,6 +4,7 @@ Does not import the compiler, DP, counts() or primitive_body(). Unknown
 primitives fail. Constants/views are offline metadata, never CPU fallback.
 """
 from collections import Counter,defaultdict
+import json
 import math
 from leaf_catalog import duration
 from memory import descriptor_ticks
@@ -37,12 +38,13 @@ def verify(ir):
         result=Counter()
         for count,term in terms:result.update({k:count*v for k,v in term.items()})
         return result
-    expected=defaultdict(Counter)
+    expected=defaultdict(Counter);dots_by_kernel=defaultdict(list)
     widths={name:1 if meta['bits']==16 else 3 for name,meta in program.get('initial_formats',{}).items()}
     def narrow_literal(x):
         return all(narrow_literal(v) for v in x) if isinstance(x,list) else isinstance(x,int) and -32768<=x<=32767
     for node in program['instructions']:
         op=node['op'];n=math.prod(node['shape']);a=node['attributes'];work=Counter()
+        if op=='Dot':dots_by_kernel[node['kernel']].append(node)
         c=[widths.get(name,3) for name in node['inputs']]
         if c!=ir['native_operand_components'][node['id']]:raise ValueError('native component specialization differs')
         widths[node['id']]=1 if node['bits']==16 or (op=='Constant' and narrow_literal(a['raw'])) else 3
@@ -93,6 +95,33 @@ def verify(ir):
                 groups.add(group);resources.update([meta['io_resource'],group+'.LC.service'])
                 ticks+=r*descriptor_ticks(hardware['virtual_memory'],1,'load',meta['io_write_ticks'])
                 ticks+=w*descriptor_ticks(hardware['virtual_memory'],1,'store',meta['io_read_ticks']);reads+=r;writes+=w
+            c=b.get('read_cache')
+            scratch={hardware['leaf_inventory'][g]['site']:8 for g in groups}
+            if c:
+                dots=dots_by_kernel[name]
+                if len(dots)!=1:raise ValueError('cache kernel must contain exactly one Dot')
+                node=dots[0];ca,cb=ir['native_operand_components'][node['id']]
+                columns=node['shape'][-1];rows=math.prod(node['shape'])//columns;k=node['attributes']['length']
+                group=b['macro_binding']['M'];meta=hardware['leaf_inventory'][group];site=meta['site']
+                t=c['stripe'];tag=json.dumps([node['inputs'][0],node['shape'][:-1],k,ca],separators=(',',':'))
+                if (type(t)!=int or not 0<=t<=k or c['tag']!=tag or c['site']!=site or
+                    c['primitive']!=node['id'] or c['components']!=[ca,cb] or
+                    (c['rows'],c['columns'],c['K'])!=(rows,columns,k) or
+                    c['cache_words']!=rows*t*ca or hardware['resources'][meta['io_resource']]!=1):
+                    raise ValueError('cache address identity/capacity/serialized port differs')
+                if c['layout']!={'scratch':[0,8],'zero':8,'A_start':9,'B_staging':[4,4+cb]}:
+                    raise ValueError('cache S address allocation differs')
+                old=rows*columns*k*ca*cb*3
+                new=rows*t*ca+rows*columns*(k-t)*ca*cb+rows*columns*k*cb+1
+                if (c['baseline_partial_external_reads'],c['cold_partial_external_reads'],c['warm_partial_external_reads'])!=(old,new,new-rows*t*ca):
+                    raise ValueError('cache transfer proof differs')
+                saved=old-new;ext=descriptor_ticks(hardware['virtual_memory'],1,'load',meta['io_write_ticks'])
+                ticks-=saved*ext;reads-=saved
+                if b['warm_ticks']!=ticks-rows*t*ca*ext or b['warm_read_words']!=reads-rows*t*ca:
+                    raise ValueError('warm cache transfer/timing differs')
+                scratch[site]=9+rows*t*ca
+            if b.get('scratch_by_site')!=scratch or any(n>hardware['sites'][s]['words'] for s,n in scratch.items()):
+                raise ValueError('cache/scratch S extent differs')
             if (max(1,ticks),reads,writes)!=(b['ticks'],b['external_read_words'],b['external_write_words']):
                 raise ValueError('native/virtual-memory cost differs '+name)
             for group in groups:resources.add('virtual-memory.channel.'+str(hardware['leaf_inventory'][group]['memory_group']%hardware['virtual_memory']['channels']))

@@ -189,7 +189,7 @@ def compile_program(model,initial,calibration,formats):
         'scope':'vector instructions are finite scalar native loops; no whole-vector private-S allocation'}
 
 
-def execute(program,initial,ids,oracle,bounds=None):
+def execute(program,initial,ids,oracle,bounds=None,dot_executor=None):
     """Only this emitted instruction stream drives numerical replay.
 
     NumPy evaluates integer primitive loops in parallel; it is a simulator,
@@ -223,7 +223,9 @@ def execute(program,initial,ids,oracle,bounds=None):
         elif op=='Convert':out=clamp(round_shift(data[0],a['shift']),bits)
         elif op=='Product':out=clamp(round_shift(data[0]*data[1],a['shift']),bits)
         elif op=='Add':out=clamp(sum(x*s for x,s in zip(data,a['signs'])),bits)
-        elif op=='Dot':out=clamp(round_shift(np.matmul(data[0],data[1]),a['shift']),bits);mask=None
+        elif op=='Dot':
+            product=np.matmul(data[0],data[1]) if dot_executor is None else dot_executor.dot(node,data[0],data[1])
+            out=clamp(round_shift(product,a['shift']),bits);mask=None
         elif op in ('Maximum','Minimum'):out=(np.maximum if op=='Maximum' else np.minimum)(*data)
         elif op=='Compare':out=(data[0]<=a['threshold'] if a['le'] else data[0]<a['threshold']).astype(np.int64)
         elif op=='Select':out=np.where(data[0]!=0,data[1],data[2])
