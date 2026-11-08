@@ -40,6 +40,7 @@ def main():
     p.add_argument('numeric',type=Path);p.add_argument('qualification',type=Path);p.add_argument('output',type=Path)
     p.add_argument('--width',type=int,default=8);p.add_argument('--primitive-program',type=Path,required=True)
     p.add_argument('--read-cache',action='store_true');p.add_argument('--state-cost',action='store_true')
+    p.add_argument('--prepare-reuse',action='store_true')
     a=p.parse_args();a.output.mkdir(exist_ok=False)
     m=canonicalize(import_onnx(a.model));h=json.loads(a.hardware.read_text());numeric=json.loads(a.numeric.read_text())
     if numeric['status']!='full_integer_numeric_passed' or numeric['source_sha256']!=m['sha256']:
@@ -75,10 +76,16 @@ def main():
         began=time.monotonic();ir=compile_graph(m,arch,trace,profile,primitive)
         all_spill=search(ir['tasks'],ir['hardware'],width=1)
         all_spill_audit=verify(ir['tasks'],ir['hardware'],all_spill)
+        if a.prepare_reuse:
+            from preparation_reuse import lower
+            ir['all_spill_reference_tasks']=deepcopy(ir['tasks'])
+            lower(ir)
         if a.read_cache:
             from dot_cache import variants
             variants(ir,state_cost=a.state_cost)
             ir['optimization_scope']=ir['read_cache_scope']['scope']
+        if a.prepare_reuse:
+            ir['optimization_scope']+='; '+ir['preparation_reuse_scope']['scope']
         ir['address_check']=check_program_addresses(m,ir['external_regions'])
         if primitive:
             ir['primitive_address_check']=check_primitive_addresses(m,primitive,ir['external_regions'],ir['primitive_regions'],
@@ -105,6 +112,7 @@ def main():
             'primitive_address_check':ir.get('primitive_address_check'),'search_statistics':plan['search_statistics'],
             'native_cost_check':ir.get('native_cost_check'),
             'read_cache_scope':ir.get('read_cache_scope'),
+            'preparation_reuse_scope':ir.get('preparation_reuse_scope'),
             'read_cache_hits':plan.get('read_cache_hits',0),'read_cache_calls':plan.get('read_cache_calls',0),
             'timing_scope':ir['timing_scope'],'optimization_scope':ir['optimization_scope']}
         write(a.output/(label+'-plan.json'),plan);write(a.output/(label+'-baseline.json'),base)

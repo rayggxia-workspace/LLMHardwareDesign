@@ -7,6 +7,7 @@ same final rounding is performed once, after prefix and streamed suffix.
 """
 from copy import deepcopy
 import numpy as np
+from preparation_reuse import PreparedOperands
 
 
 def order_program(program,plan):
@@ -36,11 +37,13 @@ class DotCache:
     def __init__(self,ir,plan):
         tasks={t['id']:t for t in ir['tasks']};self.selected={};self.resident={};self.events=[]
         self.capacity={s:v['words'] for s,v in ir['hardware']['sites'].items()}
+        self.prepared=PreparedOperands(ir)
         for row in plan['tasks']:
             b=next(b for b in tasks[row['id']]['bindings'] if b['id']==row['binding'])
             self.selected[row['id']]=(b,row)
 
     def dot(self,node,a,b):
+        a=self.prepared.prepare(node,a)
         binding,row=self.selected[node['kernel']];c=binding.get('read_cache')
         if not c:return np.matmul(a,b)
         if c['primitive']!=node['id']:raise ValueError('cache points at a different Dot')
@@ -91,5 +94,6 @@ class DotCache:
         expected=sum('read_cache' in b for b,_ in self.selected.values())
         if len(self.events)!=expected:raise ValueError('cache execution coverage differs')
         return {'passed':True,'calls':len(self.events),'hits':sum(e['cache_hit'] for e in self.events),
+            'preparation':self.prepared.report(),
             'peak_retained_words':max((e['words'] for e in self.events),default=0),'events':self.events,
             'scope':'actual integer SRAM stripe contents used in Dot replay; symbolic traffic independently checked; no RTL timing claim'}

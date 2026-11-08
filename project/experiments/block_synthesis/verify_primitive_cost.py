@@ -39,6 +39,7 @@ def verify(ir):
         for count,term in terms:result.update({k:count*v for k,v in term.items()})
         return result
     expected=defaultdict(Counter);dots_by_kernel=defaultdict(list)
+    preparations=ir.get('operand_preparations',{});seen_preparations=set()
     widths={name:1 if meta['bits']==16 else 3 for name,meta in program.get('initial_formats',{}).items()}
     def narrow_literal(x):
         return all(narrow_literal(v) for v in x) if isinstance(x,list) else isinstance(x,int) and -32768<=x<=32767
@@ -69,7 +70,24 @@ def verify(ir):
                 (1,primitive[which+'_finalize']),(1,primitive[which+'_factor']))
         elif op=='NExp':work=combine(*[(1,primitive[k]) for k in ('n_soft_begin','n_soft_stats','n_soft_finalize','n_exp')])
         else:raise ValueError('unregistered executed primitive '+op)
-        expected[node['kernel']].update({k:n*v for k,v in work.items()})
+        total=Counter({k:n*v for k,v in work.items()})
+        if node['id'] in preparations:
+            p=preparations[node['id']];seen_preparations.add(node['id'])
+            if op!='Dot' or c[0]!=3 or len(node['shape'])<2:
+                raise ValueError('inapplicable operand preparation')
+            columns=node['shape'][-1];rows=n//columns;k=a['length']
+            if (columns<=1 or p.get('kind')!='dot-A-prepare-once-v1' or
+                p.get('primitive')!=node['id'] or p.get('input')!=node['inputs'][0] or
+                (p.get('rows'),p.get('columns'),p.get('K'),p.get('components'))!=(rows,columns,k,3) or
+                p.get('layout')!='row-k-component' or
+                p.get('old_split_calls')!=n*k or p.get('new_split_calls')!=rows*k or
+                type(p.get('external_base'))!=int or p['external_base']<0 or
+                p.get('external_words')!=3*rows*k):
+                raise ValueError('prepared operand identity/extent differs')
+            removed=(n-rows)*k
+            for key,value in split.items():total[key]-=removed*value
+        expected[node['kernel']].update(total)
+    if seen_preparations!=set(preparations):raise ValueError('unknown prepared primitive')
     hardware=ir['hardware'];checked=0
     if {name for name,work in expected.items() if any(work.values())}!={t['id'] for t in ir['tasks']}:
         raise ValueError('native kernel coverage differs from executed program')
@@ -131,10 +149,14 @@ def verify(ir):
             checked+=1
     regions=list(ir['external_regions'].values())+list(ir['primitive_regions'].values())+list(ir['native_constants'].values())
     regions += [row['temporary_external_region'] for row in ir['program'] if 'temporary_external_region' in row]
+    regions += [{'address_words':p['external_base'],'words':p['external_words']} for p in preparations.values()]
     end=0
     for r in sorted(regions,key=lambda r:r['address_words']):
         if r['address_words']<end:raise ValueError('overlapping external object regions')
         end=r['address_words']+r['words']
     if end*16!=ir['required_external_bytes']:raise ValueError('external object extent differs')
+    if end*16>1<<hardware['virtual_memory']['address_bits']:raise ValueError('external address width exceeded')
+    if hardware.get('external_capacity_words') is not None and end>hardware['external_capacity_words']:
+        raise ValueError('external capacity exceeded')
     return {'passed':True,'kernels':len(ir['tasks']),'bindings':checked,'primitive_instructions':len(program['instructions']),
         'scope':'executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded'}

@@ -92,7 +92,7 @@ def native_operand_components(program):
     return result
 
 
-def primitive_body(node,components=None):
+def primitive_body(node,components=None,preparation=None):
     """Lower the *executed* vector instruction, never a separate op estimate.
 
     The three-component identity covers every S32 value. Native calls are
@@ -122,6 +122,13 @@ def primitive_body(node,components=None):
         return repeat(n,seq(repeat(length,call('split32')),repeat(3*length,call('partial')),call('dot_final'))),64
     if op=='Dot':
         length=attrs['length']
+        if preparation:
+            # A(row,k) is invariant in the output-column loop. Its existing
+            # split32 commands write the explicit external prepared region
+            # before any live output accumulator. B preparation is unchanged.
+            return seq(repeat(preparation['rows']*length,call('split32')),
+                repeat(n,seq(repeat(int(c[1]==3)*length,call('split32')),
+                    repeat(c[0]*c[1]*length,call('partial')),call('dot_final')))),sum(count for count in c if count==3)*length+64
         return repeat(n,seq(repeat(sum(count==3 for count in c)*length,call('split32')),
             repeat(c[0]*c[1]*length,call('partial')),call('dot_final'))),sum(count for count in c if count==3)*length+64
     if op in ('Maximum','Minimum'):return repeat(n,call('select_max')),64

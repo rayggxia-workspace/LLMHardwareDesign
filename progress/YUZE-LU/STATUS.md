@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+2026-11-08 CST用户追加：准备外提只作共享后端基线，不计入算法本身约20%目标；继续多轮。后续须有SystemC（若支持）的校准时间/能耗、prefill及带KV decode token/s，并与充分优化的3–4B ASIC/FPGA比较；若硬件瓶颈需关联独立PR。[验收合同](../../work/YUZE-LU/219/throughput-opt/OPTIMIZATION_CONTRACT.md)。当前持续in_progress，算法目标及系统比较未完成，不以约60%后端下降结束。
+
+2026-11-08 CST：Issue219/PR220准备复用已完成完整3B复验，五组同10束降60.5851%、九组同18束降59.9470%，搬运约降72.058%。110项和六次完整数值逐位一致，30份原件SHA核验。显式外存增加83.824MiB，实际容量未资格化；非DP单独收益、未新增RTL/物理资格。[结果与源回执](../../work/YUZE-LU/219/throughput-opt/RESULTS.md)。成果进入待独立审查，不自合并/关闭；登记pending、看板unverified/同步pending。
+
+2026-11-08 CST：Issue219/PR220继续优化，隔离分支 task/219-throughput-opt。原生工作剖析发现Dot重复准备A分量；已实现通用循环外提、显式外存地址、独立成本检查与数值接入，本地110项通过。完整3B相同范围/预算复验待运行，不宣称收益。入口[迭代记录](../../work/YUZE-LU/219/throughput-opt/README.md)；远端PR仍1d284bdc、待审，登记pending，看板unverified/同步pending。
+
 2026-11-08：PR220新增每次转移的状态求值与部分前缀命中，完整Qwen2.5-3B五组/九组各三输入及105项检查通过。五组/同10束预算结果不变，九组模型完成时间增加约0.00007686%；未取得新增性能收益。见[结果](../../work/YUZE-LU/219/STATE_COST_RESULTS.md)。成果待独立审查；登记pending、看板unverified/同步pending。
 
 ## 2026-11-08 CST：综合只读分片复用

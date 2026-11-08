@@ -1,5 +1,7 @@
 # 架构与运行
 
+2026-11-08：PR220 [Dot准备复用合同](../project/experiments/block_synthesis/PREPARATION_REUSE.md)与[完整3B结果](../work/YUZE-LU/219/throughput-opt/RESULTS.md)。`full_plan.py --prepare-reuse --read-cache --state-cost`启用通用A分量准备外提，显式外存区域与独立成本/数值检查；入口prepare-reuse-plan.sbatch、prepare-reuse-audit.sbatch，数值沿用reuse-replay.sbatch。110项及六次完整回放通过，同资源/束数模型代价下降约60%，不是DP搜索单独收益或芯片实测。
+
 2026-11-08：[PR220统一转移求值](../work/YUZE-LU/219/STATE_COST_RESULTS.md)。`full_plan.py --read-cache --state-cost`启用部分前缀命中和显式保留策略，宽度1/8共用纯函数转移。完整3B六次回放及105项测试通过；五组/同预算不变，九组模型代价略退化，详见结果。
 
 Issue219新增只读Dot分片：[算法/状态](../project/experiments/block_synthesis/DOT_CACHE.md)、[完整3B结果](../work/YUZE-LU/219/READ_CACHE_RESULTS.md)。`full_plan.py --read-cache` 从硬件清单生成候选；`dot_cache_replay.py` 使用有限S分量数组回放。服务器新attempt入口：`reuse-plan.sbatch ROOT MODEL HARDWARE NUMERIC_TRACE QUALIFICATION PROGRAM`、`reuse-replay.sbatch ROOT IR PLAN WEIGHTS CALIBRATION LOGITS HEADERS`、`reuse-audit.sbatch ROOT PLAN_DIRECTORY`、`reuse-compare.sbatch ROOT BEFORE AFTER`；由本任务launch_fix.py冻结提交Slurm，绝对依赖/SHA见回执。普通full-plan保留旧基线；整网控制编码和真实布线另阶段验收。

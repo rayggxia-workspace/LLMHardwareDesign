@@ -12,7 +12,8 @@ def main():
         ir=json.loads((a.directory/(label+'-ir.json')).read_text());checks[label]={'cost':verify_cost(ir)}
         for mode in ('plan','baseline','all-spill'):
             plan=json.loads((a.directory/(label+'-'+mode+'.json')).read_text())
-            checks[label][mode]=verify(ir['tasks'],ir['hardware'],plan)
+            tasks=ir.get('all_spill_reference_tasks',ir['tasks']) if mode=='all-spill' else ir['tasks']
+            checks[label][mode]=verify(tasks,ir['hardware'],plan)
         if label.startswith('nine'):
             budget=json.loads((a.directory/'summary.json').read_text())['results'][1]['equal_wire_budget']['budget']
             checks[label]['budget']=verify(ir['tasks'],ir['hardware'],json.loads((a.directory/'nine-groups-budget-plan.json').read_text()),budget)
