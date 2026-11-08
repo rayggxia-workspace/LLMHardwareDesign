@@ -1,5 +1,10 @@
 # YUZE-LU 的进度
 
+## 2026-11-09（CST）Qwen3B SystemC时间/能耗与充分优化对照
+
+[Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234)，独立分支`task/234-systemc-benchmark`，in_progress，PR待创建。真实SystemC六场景及六个冻结旧计划回放通过；完整36层HF三上下文各两输入、输出128的缓存/完整前缀数值参考通过。旧B1/S2无KV成本仍不具芯片时间资格，HF墙钟不作硬件性能。单节点6×10的物理功耗库存六视图完成；KV导出五形状通过、一形状数值阈值失败，新尝试保留原阈值诊断；M活动仍运行。本地2核已验证72个真实整数M标量运算及22拍Execute，最终网表活动尚待完成。[证据与作业账本](../../work/YUZE-LU/234/README.md)。整网SystemC decode token/s/J/token、对照充分适配及FPGA门槛均未完成，不标done，不修改母任务PR220。登记PR5 pending，缺board配置，Projects unverified/同步pending，沿用Issue7交接。
+
+
 ## 2026-11-08（CST）U 原生入口和双向发送修复
 
 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) → `in_review`；[PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 待独立审查。独立 TX 槽和普通三源入口修复后，两版重新综合并通过完整原版 GDS DRC 0、TT 300 MHz、电气/PG及三档代表上层 RC。U_128 setup/hold +255.014/+14.595 ps，U_64 +73.082/+0.212 ps；最终网表 48/48、78/78 全部通过。两包及全部 1,389/2,101 文件回收核验成功，31 硬件源文件与审查代码一致。[最终回执](../../work/YUZE-LU/212/u-native-fix.md)。P 不变。用户已授权将 #221 合入 main；五类图册 U 两版已绑定新验收包，P/C/F/J 图源不变。实际合并状态以 PR 在线回执为准，Issue 在线 assignee 未指定。登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，复用接入交接 Issue7。
