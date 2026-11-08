@@ -42,7 +42,7 @@ def load_library(path):
     return result
 
 
-def place(instances, library, *, gap_dbu, aspect=1.0, alignment_dbu=1):
+def place(instances, library, *, gap_dbu, aspect=1.0, alignment_dbu=1, order=None):
     """Deterministic shelf placement for native source patches; explicit baseline."""
     need(type(gap_dbu) is int and gap_dbu >= 0, 'invalid placement gap')
     need(math.isfinite(aspect) and aspect > 0, 'invalid aspect')
@@ -59,7 +59,9 @@ def place(instances, library, *, gap_dbu, aspect=1.0, alignment_dbu=1):
                  math.ceil(math.sqrt(sum((w+gap_dbu)*(h+gap_dbu) for w,h in sizes.values()) * aspect)))
     x, y, row_height, width = 0, 0, 0, 0
     positions = {}
-    for name in sorted(sizes, key=lambda n: (-sizes[n][1], -sizes[n][0], n)):
+    order=sorted(sizes, key=lambda n: (-sizes[n][1], -sizes[n][0], n)) if order is None else list(order)
+    need(len(order)==len(sizes) and set(order)==set(sizes),'placement order must cover each resource once')
+    for name in order:
         w,h = sizes[name]
         if x and x+w > target:
             x, y, row_height = 0, align(y+row_height+gap_dbu), 0

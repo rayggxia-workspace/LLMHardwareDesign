@@ -14,6 +14,12 @@ native_drc等sbatch，均10核、数组最多6项；依赖与源包见[回执](.
 
 Issue #228：[通用上层布线基线](../project/experiments/upper_router/README.md)接收独立几何或#227已绑定请求，联合搜索M10落点及M11/M12路径、多接收端树与多轮拆线重布。`python -B project/experiments/upper_router/run.py INPUT OUTPUT --rounds 8`；在该目录运行`python -B -m unittest test_router -v`。仅声明研究网格规则，不继承模型/真实底座物理资格。
 
+Issue #230在同一[后端目录](../project/experiments/upper_router/README.md)接通资源放置、平坦ODB、完整原生几何场景、分布RC、原约束STA及交付门。
+在该目录运行`python -B -m unittest test_collect_field test_assemble_spef test_assembly_sta test_router test_backend test_stage_package test_resource_base test_flow test_rc_graph test_place_search test_stitch_rc test_def_assembly -v`。
+真实后端工具在分配的Slurm计算资源内执行，使用`source_bundle.py NEW_TAR`封存源及逐文件SHA；运行器参数和不可变输入见[实际作业记录](../work/YUZE-LU/230/README.md)。
+`qualify.py MANIFEST NEW_OUTPUT --copy`仅在全部真实证据绑定同一工件后复制DEF/ODB/Verilog/GDS/SPEF/SDC；此前各单步成功不能替代最终资格。
+当前九组共同RC/STA仍在验收，研究M11/M12参数不称工厂校准签核，资源库接口验收与整模型覆盖分开。
+
 Issue #226 实现[综合到布线接口层](../project/experiments/block_synthesis/ROUTE_CONTRACT.md)。从 `project/experiments/block_synthesis` 运行 `python -B -m unittest test_route_contract test_loop_dp test_dot_cache -v`；CLI见合同。需求重构检查共享接口展开实现，不是独立ODB/GDS几何或电气检查；实际物理后端另验。
 
 Issue219新增只读Dot分片：[算法/状态](../project/experiments/block_synthesis/DOT_CACHE.md)、[完整3B结果](../work/YUZE-LU/219/READ_CACHE_RESULTS.md)。`full_plan.py --read-cache` 从硬件清单生成候选；`dot_cache_replay.py` 使用有限S分量数组回放。服务器新attempt入口：`reuse-plan.sbatch ROOT MODEL HARDWARE NUMERIC_TRACE QUALIFICATION PROGRAM`、`reuse-replay.sbatch ROOT IR PLAN WEIGHTS CALIBRATION LOGITS HEADERS`、`reuse-audit.sbatch ROOT PLAN_DIRECTORY`、`reuse-compare.sbatch ROOT BEFORE AFTER`；由本任务launch_fix.py冻结提交Slurm，绝对依赖/SHA见回执。普通full-plan保留旧基线；整网控制编码和真实布线另阶段验收。

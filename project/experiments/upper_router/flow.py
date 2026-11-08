@@ -8,7 +8,8 @@ import json
 from pathlib import Path
 
 from resource_base import assemble, instances_from_hardware, load_library, place
-from route_contract import VERSION, from_plan, verify_requirements, selected_demands, digest
+from route_contract import VERSION, from_plan, verify_requirements, selected_demands, digest, expand
+from place_search import optimize as optimize_placement
 from adapter import bind_request, failure_feedback
 from backend import emit
 from check import verify
@@ -18,12 +19,17 @@ from search import route
 def library_catalog(instances, library):
     """Instantiate resource-local signal templates, preserving {bit} expansion."""
     demands = {}
+    def instantiate(value):
+        if isinstance(value,str):return value.replace('{group}',instance)
+        if isinstance(value,list):return [instantiate(v) for v in value]
+        if isinstance(value,dict):return {instantiate(k):instantiate(v) for k,v in value.items()}
+        return value
     for instance, template in sorted(instances.items()):
         for name, definition in library[template].get('capabilities', {}).get('interfaces', {}).items():
             name = name.replace('{group}', instance)
             if name in demands:
                 raise ValueError('duplicate instantiated resource interface: '+name)
-            demands[name] = json.loads(json.dumps(definition).replace('{group}', instance))
+            demands[name] = instantiate(definition)
     return {'schema_version':VERSION, 'demands':demands}
 
 
@@ -33,9 +39,15 @@ def run(ir, plan, library, rules, output, *, catalog=None, gap_dbu=0,
     def write(name,value):
         (output/name).write_text(json.dumps(value,indent=2)+'\n',encoding='utf-8')
     instances=instances_from_hardware(ir['hardware'],library)
+    catalog=library_catalog(instances,library) if catalog is None else catalog
     positions,bounds=place(instances,library,gap_dbu=gap_dbu,alignment_dbu=alignment_dbu)
     base=assemble(instances,library,positions,bounds)
-    catalog=library_catalog(instances,library) if catalog is None else catalog
+    _,_,members,_=expand(selected_demands(ir,plan),catalog)
+    physical=[m for m in members if all(p in base['endpoints'] for p in [m['driver']]+m['sinks'])]
+    positions,bounds,placement=optimize_placement(instances,library,physical,
+        gap_dbu=gap_dbu,alignment_dbu=alignment_dbu)
+    base=assemble(instances,library,positions,bounds)
+    write('placement-search.json',placement)
     request=from_plan(ir,plan,catalog,base)
     verify_requirements(request,selected_demands(ir,plan),catalog,base,request['source'])
     write('base.json',base);write('catalog.json',catalog);write('requirements.json',request)

@@ -49,7 +49,7 @@ proc wire_shape {stream net shape} {
     rectangle $stream $net [$shape getTechLayer] wire $shape
   }
 }
-proc export {destination} {
+proc export {destination {selected {}}} {
   set block [ord::get_db_block]
   set output [open $destination w]
   puts $output "# block-v1-odb-geometry/1 dbu_per_um=[$block getDbUnitsPerMicron]"
@@ -57,6 +57,7 @@ proc export {destination} {
   set path [odb::new_dbWirePath]
   set element [odb::new_dbWirePathShape]
   foreach net [$block getNets] {
+    if {[llength $selected] && [$net getName] ni $selected} {continue}
     set alias n[$net getId]
     puts $output "# NET $alias [binary encode hex [encoding convertto utf-8 [$net getName]]]"
     set wire [$net getWire]

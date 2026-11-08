@@ -10,6 +10,9 @@ import math
 import os
 from pathlib import Path
 import pya
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from native_identity import verify as verify_native_identity
 
 
 def sha(path):
@@ -99,12 +102,17 @@ if m10index is None:raise ValueError('native M10 absent')
 m10=pya.Region(native_top.begin_shapes_rec(m10index)).transformed(pya.ICplxTrans(conversion,0,False,0,0)).merged()
 if not (regions['V10'].sized(t['via10']['lower_enclosure'])-m10).is_empty():
     raise ValueError('via10 not fully covered by real native M10')
-before={str(info):pya.Region(native_top.begin_shapes_rec(native.find_layer(info))).merged()
-        for info in native.layer_infos()}
 if any(pair in [(i.layer,i.datatype) for i in native.layer_infos()] for pair in layers.values()):
     raise ValueError('native file already has custom layers')
-native.read(str(upper))
-native_top.insert(pya.CellInstArray(native.cell('GENERIC_UPPER_INTERCONNECT').cell_index(),pya.Trans()))
+# Layout.read changes the destination DBU when merging a second GDS. Import
+# the independently read-back upper rectangles on the native integer grid
+# explicitly, rather than changing or implicitly rescaling the frozen base.
+upper_cell=native.create_cell('GENERIC_UPPER_INTERCONNECT')
+for name,rows in observed.items():
+    for layer,coords in rows:
+        box=[round(x/conversion) for x in coords]
+        upper_cell.shapes(native.layer(*layers[layer])).insert(pya.Box(*box)).set_property(1,name)
+native_top.insert(pya.CellInstArray(upper_cell.cell_index(),pya.Trans()))
 combined=run/'combined.gds';native.write(str(combined))
 joined=pya.Layout();joined.read(str(combined));joined_top=joined.top_cell()
 for layer,pair in layers.items():
@@ -112,12 +120,10 @@ for layer,pair in layers.items():
     after=pya.Region() if index is None else pya.Region(joined_top.begin_shapes_rec(index)).transformed(
         pya.ICplxTrans(joined.dbu*scale,0,False,0,0)).merged()
     if not (regions[layer]^after).is_empty():raise ValueError('combined GDS upper geometry changed')
-for label,before_region in before.items():
-    candidates=[i for i in joined.layer_infos() if str(i)==label]
-    if len(candidates)!=1:raise ValueError('native layer disappeared')
-    after=pya.Region(joined_top.begin_shapes_rec(joined.find_layer(candidates[0]))).merged()
-    if not (before_region^after).is_empty():raise ValueError('native geometry changed: '+label)
+reference=pya.Layout();reference.read(str(native_file))
+native_identity=verify_native_identity(reference,joined,'GENERIC_UPPER_INTERCONNECT')
 report={'schema_version':'upper-physical-readback/1','geometry_passed':True,'native_geometry_xor_zero':True,
+        'native_hierarchy_identity':native_identity,
         'net_count':len(actual),'sha256':{p.name:sha(p) for p in [run/'upper.def',run/'upper.odb',upper,combined,native_file]},
         'physical_qualified':False,'electrical':'not_evaluated','timing':'not_evaluated',
         'scope':'actual OpenDB/GDS roundtrip; research upper width/spacing/cuts/enclosure; full native shape XOR'}
