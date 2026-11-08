@@ -13,7 +13,11 @@
 服务器所有新增工作：
 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-230-backend-router/`。
 每项10核、最多六项同时执行；不修改其他任务、他人目录或原始验收归档。
-源包各自保留在 attempt01–11，实际执行代码以各源包为准；失败不覆盖。
+源包各自保留在 attempt01–12，实际执行代码以各源包为准；失败不覆盖。
+本次代码已提交[草稿PR231](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/231)，
+前置仍为#229/#227/#220。最终证据收集100471依赖100406结束；源包SHA
+`6810443dbb78813243f81ebfc7e350e7b3969592b57284b560d86704022901df`。
+attempt12采用最终29项测试并打包小型实际上层ODB/GDS，原生合成GDS留在服务器。
 
 ## 当前已取得的证据
 
@@ -25,8 +29,11 @@
 - 本地29项算法/后端测试通过；服务器100463同29项通过（100414为此前26项）。最终显式 RC 参数版本
   与已执行路线的 DEF/LEF 五类逐字节相同。
 - 实际 OpenDB 过孔删除、原生 GDS 哈希错误两个负对照均被独立物理读回拒绝。
+  [原始检查回执](evidence/handoff-check.json)、[29项日志](evidence/tests-29.log)及
+  `evidence/{P,U,C,F,J}-physical-readback.json` 已回收；未改写原始报告内容。
 - 100404 重新运行原检查器，#220 的1083任务通过，18个逻辑束的产品级信号映射
   尚未提供，#227需求保持 unbound。不是18束物理不可布的证明。
+  [原始产品输入审计](evidence/readiness.json)逐束列出未绑定原因。
 
 五类完整 GDS 读回与全部原生层 XOR 已由100399全部通过。原版 DRC100406仍在运行，
 最终状态见后续收集的作业和文件索引；

@@ -1,7 +1,9 @@
 """Read actual native ODB terminals; never turn a logical bundle into a guessed pin.
 
-Run using `openroad -python native_inventory.py package output.json`.  This is
-read-only with respect to the qualified package. Geometry remains integer DBU.
+Preferred: run native_inventory.tcl under OpenROAD, then this module's --tsv
+converter. The optional export() path needs an OpenDB Python-enabled build;
+the validated server build does not provide that API. This is read-only with
+respect to the qualified package. Geometry remains integer DBU.
 """
 import hashlib
 import json
