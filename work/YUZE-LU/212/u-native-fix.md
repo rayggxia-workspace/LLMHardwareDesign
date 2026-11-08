@@ -47,4 +47,4 @@ python -X utf8 work/YUZE-LU/212/verify-u-native.py <archive.tar.gz> <sha256>
 
 ## 协作回执
 
-规则 rayggxia-project-collab 1.0.0；项目 `llm-hardware-design`；负责人 YUZE-LU。PR 待独立审查，不自合并。登记沿用 management-hub PR #5，尚未合并为 pending；缺 `config/board.json`，Projects 状态 unverified / 同步 pending，复用接入交接 Issue #7，处理人待指定。历史 U 报告保留物理测量，明确其原有功能覆盖不足；本次验收不扩大为九实例系统、多 PVT 或全部 #180 指令合同。
+规则 rayggxia-project-collab 1.0.0；项目 `llm-hardware-design`；负责人 YUZE-LU。用户于 2026-11-08 明确授权将修复及五类图册整合到 main；合并状态以 PR 在线回执为准。登记沿用 management-hub PR #5，尚未合并为 pending；缺 `config/board.json`，Projects 状态 unverified / 同步 pending，复用接入交接 Issue #7，处理人待指定。历史 U 报告保留物理测量，明确其原有功能覆盖不足；本次验收不扩大为九实例系统、多 PVT 或全部 #180 指令合同。

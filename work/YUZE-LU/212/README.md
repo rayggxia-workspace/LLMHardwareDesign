@@ -1,6 +1,6 @@
 # Issue #212 P/U 工作记录
 
-2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](u-native-fix.md)和[机器索引](u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。PR 待独立审查，不自合并；登记 pending，看板 unverified/同步 pending。
+2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](u-native-fix.md)和[机器索引](u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 
 
 P_128/U_128 的原合格交付保留；新增 P_64/U_64 均已独立通过物理验收和本地回收校验，见[版本回执](compact64-physical.md)与[机器索引](compact64-acceptance.json)。工程完成，PR 待独立审查。下方旧验收数据保留原样，不作为新版本通过证据。
