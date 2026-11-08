@@ -11,7 +11,7 @@ import math
 from memory import descriptor_ticks
 
 
-def variants(ir):
+def variants(ir, *, state_cost=False):
     """Extend the existing candidate pool; no additional user input file."""
     h=ir['hardware'];by_kernel={}
     for node in ir['primitive_program']['instructions']:
@@ -61,6 +61,8 @@ def variants(ir):
                     'protocol':'LOAD completes S commit before read; all original STORE ACKs retained',
                     'loop_order':'output row, output column, K, A component, B component',
                     'arithmetic':'unchanged split32, partial and final rounding; one live M context'}
+                if state_cost:
+                    b['read_cache'].update(cost_model='dot-prefix-state-v2',load_ticks=ext)
                 task['bindings'].append(b);total+=1
     ir['read_cache_scope']={'added_bindings':total,
         'scope':'read-only M Dot stripes and within-K B/zero reuse; persistent across matching SSA inputs',

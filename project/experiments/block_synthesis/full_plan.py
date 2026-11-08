@@ -39,7 +39,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('model',type=Path);p.add_argument('hardware',type=Path)
     p.add_argument('numeric',type=Path);p.add_argument('qualification',type=Path);p.add_argument('output',type=Path)
     p.add_argument('--width',type=int,default=8);p.add_argument('--primitive-program',type=Path,required=True)
-    p.add_argument('--read-cache',action='store_true')
+    p.add_argument('--read-cache',action='store_true');p.add_argument('--state-cost',action='store_true')
     a=p.parse_args();a.output.mkdir(exist_ok=False)
     m=canonicalize(import_onnx(a.model));h=json.loads(a.hardware.read_text());numeric=json.loads(a.numeric.read_text())
     if numeric['status']!='full_integer_numeric_passed' or numeric['source_sha256']!=m['sha256']:
@@ -77,7 +77,7 @@ def main():
         all_spill_audit=verify(ir['tasks'],ir['hardware'],all_spill)
         if a.read_cache:
             from dot_cache import variants
-            variants(ir)
+            variants(ir,state_cost=a.state_cost)
             ir['optimization_scope']=ir['read_cache_scope']['scope']
         ir['address_check']=check_program_addresses(m,ir['external_regions'])
         if primitive:

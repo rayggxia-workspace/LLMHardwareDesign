@@ -119,6 +119,8 @@ def verify(ir):
                 ticks-=saved*ext;reads-=saved
                 if b['warm_ticks']!=ticks-rows*t*ca*ext or b['warm_read_words']!=reads-rows*t*ca:
                     raise ValueError('warm cache transfer/timing differs')
+                if c.get('cost_model')=='dot-prefix-state-v2' and c.get('load_ticks')!=ext:
+                    raise ValueError('state LOAD unit cost differs')
                 scratch[site]=9+rows*t*ca
             if b.get('scratch_by_site')!=scratch or any(n>hardware['sites'][s]['words'] for s,n in scratch.items()):
                 raise ValueError('cache/scratch S extent differs')

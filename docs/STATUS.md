@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-08：PR220新增每次转移的状态求值与部分前缀命中，完整Qwen2.5-3B五组/九组各三输入及105项检查通过。五组/同10束预算结果不变，九组模型完成时间增加约0.00007686%；未取得新增性能收益。见[结果](../work/YUZE-LU/219/STATE_COST_RESULTS.md)。成果待独立审查；登记pending、看板unverified/同步pending。
+
 2026-11-08 综合算法补充：[Issue219/PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 已加入有限S只读Dot分片及缓存感知DP状态；完整真实3B五组/九组各三输入与旧整数结果逐位一致，100项测试及独立地址/容量/静态互斥重验通过。复用贪心较原基线模型代价降17.16%、搬运降25.40%；九组DP另降26.14%但束数10→18，同10束无额外收益。仅覆盖只读Dot分量；整网控制编码与真实布线另验。见[本轮说明](../work/YUZE-LU/219/READ_CACHE_RESULTS.md)，下方“全部spill”系旧基线。
 
 2026-11-08 审查修复及控制接入：[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 原整网 DP 与独立检查器遗漏 incompatible_nets，现已分别修复。90 项测试（含 150 个互斥小 DAG 穷举对照）、完整 3B 计划重验通过；当前独立母控含实际程序 SRAM、两组 U_64 局控的小图自动镜像完成 9 次数值／写 ACK／源保持与释放回放。原完整清单声明互斥对为 0，不代表物理无冲突；固定放置小图不代表任意整网 DP 控制编码、九目标或物理通过。见[修复与控制证据](../work/YUZE-LU/219/MUTEX_CONTROL_RESULTS.md)，旧数值及同预算无收益结论保留。

@@ -5,6 +5,7 @@ external transfers. No whole tensor is presumed resident in S. Keeping bodies
 as loops avoids expanding billions of native commands into search nodes.
 """
 from dataclasses import dataclass
+from transition import evaluate_transition, retention_actions
 
 
 @dataclass
@@ -79,37 +80,26 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None):
                 name=task['id']
                 data_ready=max((s.frontier[p] for p in parents[name]),default=0)
                 for b in task['bindings']:
-                    expanded+=1;nets=s.nets|frozenset(b['nets'])
-                    if any(pair<=nets|fixed for pair in conflicts):
-                        static_rejections+=1
-                        continue
-                    if wire_budget is not None and netcost(nets)>wire_budget:continue
-                    cache=s.cache.copy();c=b.get('read_cache');hit=False
-                    if c:
-                        previous=cache.get(c['site'])
-                        hit=bool(c['stripe'] and previous and previous[0]==c['tag'] and previous[1]>=c['stripe'])
-                        if c['stripe']:cache[c['site']]=(c['tag'],c['stripe'],c['cache_words'])
-                        else:cache.pop(c['site'],None)
-                    if any((not c or site!=c['site']) and site in cache and
-                           (n>8 or n+cache[site][2]+1>hardware['sites'][site]['words'])
-                           for site,n in b.get('scratch_by_site',{b['site']:b['scratch_words']}).items()):continue
-                    start=max([data_ready]+[s.resources[r][0] for r in b['resources']])
-                    end=start+(b['warm_ticks'] if hit else b['ticks'])
-                    resources=s.resources.copy()
-                    for r in b['resources']:resources[r]=tuple(sorted(resources[r][1:]+(end,)))
-                    done=s.done|(1<<ids[name]);frontier=s.frontier.copy();frontier[name]=end
-                    frontier={n:at for n,at in frontier.items() if any(not done&(1<<ids[c]) for c in children[n])}
-                    row={'id':name,'binding':b['id'],'start':start,'end':end,'site':b['site']}
-                    if c:row['cache_hit']=hit
-                    history=s.history+(row,)
-                    state=State(done,frontier,resources,nets,max(s.makespan,end),
-                        s.traffic+(b['warm_read_words'] if hit else b['external_read_words'])+b['external_write_words'],history,cache)
-                    key=(done,tuple(sorted(frontier.items())),tuple(sorted(resources.items())),tuple(sorted(nets)),tuple(sorted(cache.items())))
-                    previous=candidates.get(key)
-                    if previous is not None:
-                        merged+=1
-                        if (previous.makespan,previous.traffic)<=(state.makespan,state.traffic):continue
-                    candidates[key]=state
+                    for retention in retention_actions(s, b):
+                        expanded+=1
+                        ev=evaluate_transition(s,b,hardware,data_ready,retention=retention,
+                            fixed=fixed,conflicts=conflicts,wire_budget=wire_budget)
+                        if not ev['legal']:
+                            static_rejections+=ev['reason']=='static_conflict'
+                            continue
+                        done=s.done|(1<<ids[name]);frontier=s.frontier.copy();frontier[name]=ev['end']
+                        frontier={n:at for n,at in frontier.items() if any(not done&(1<<ids[c]) for c in children[n])}
+                        row={'id':name,'binding':b['id'],'start':ev['start'],'end':ev['end'],'site':b['site']}
+                        if b.get('read_cache'):row['cache_hit']=ev['cache_hit']
+                        if ev['details']:row['evaluation']=ev['details']
+                        state=State(done,frontier,ev['resources'],ev['nets'],ev['makespan'],
+                            s.traffic+ev['traffic'],s.history+(row,),ev['cache'])
+                        key=(done,tuple(sorted(frontier.items())),tuple(sorted(state.resources.items())),tuple(sorted(state.nets)),tuple(sorted(state.cache.items())))
+                        previous=candidates.get(key)
+                        if previous is not None:
+                            merged+=1
+                            if (previous.makespan,previous.traffic)<=(state.makespan,state.traffic):continue
+                        candidates[key]=state
         ordered=sorted(candidates.values(),key=rank);pruned+=max(0,len(ordered)-width);beam=ordered[:width]
         if not beam:return {'status':'no_plan_in_bounded_search','depth':depth,'expanded':expanded,
                             'rejected_static_conflicts':static_rejections}

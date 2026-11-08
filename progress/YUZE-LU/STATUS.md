@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-08：PR220新增每次转移的状态求值与部分前缀命中，完整Qwen2.5-3B五组/九组各三输入及105项检查通过。五组/同10束预算结果不变，九组模型完成时间增加约0.00007686%；未取得新增性能收益。见[结果](../../work/YUZE-LU/219/STATE_COST_RESULTS.md)。成果待独立审查；登记pending、看板unverified/同步pending。
+
 ## 2026-11-08 CST：综合只读分片复用
 
 [Issue219/PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)：新增真实Dot分片、相同SSA输入驻留和缓存感知DP状态。完整3B五组/九组各三输入逐位一致、100项服务器测试通过；搬运减25.40%，同10束无DP额外收益。见[回执与图册](../../work/YUZE-LU/219/READ_CACHE_RESULTS.md)。待独立审查，不自合并或标done；一般脏缓存、整网控制编码、实际布线另验。登记pending，看板unverified/同步pending，待有权限维护者处理。

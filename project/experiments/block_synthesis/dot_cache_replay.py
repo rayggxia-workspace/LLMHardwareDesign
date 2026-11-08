@@ -48,7 +48,14 @@ class DotCache:
         if 9+c['cache_words']>self.capacity[site]:raise ValueError('numeric SRAM capacity exceeded')
         source=np.broadcast_to(a,tuple(shape[:-2])+(shape[-2],k)).reshape(c['rows'],k)
         old=self.resident.get(site)
-        if row['cache_hit']:
+        state_cost=c.get('cost_model')=='dot-prefix-state-v2'
+        if state_cost:
+            e=row['evaluation'];h=min(old['stripe'],t) if old and old['tag']==c['tag'] else 0
+            if h!=e['reused_prefix']:raise ValueError('uninitialized SRAM cache prefix')
+            x=source[:,h:t];low=((x+32768)%65536-32768).astype(np.int64)
+            fresh=np.stack([low,x>>16,(low<0).astype(np.int64)],axis=-1) if ca==3 else low[...,None].copy()
+            packed=np.concatenate([old['packed'][:,:h,:],fresh],axis=1) if h else fresh
+        elif row['cache_hit']:
             if not old or old['tag']!=c['tag'] or old['stripe']<t:raise ValueError('uninitialized SRAM cache read')
             packed=old['packed'][:,:t,:].copy()
         else:
@@ -60,15 +67,24 @@ class DotCache:
         # This assertion verifies immutable SSA identity and stale-data safety;
         # the actual arithmetic below consumes restored SRAM data.
         if not np.array_equal(restored,source[:,:t]):raise ValueError('cached SRAM value differs from immutable source')
-        if t:self.resident[site]={'tag':c['tag'],'stripe':t,'packed':packed}
-        else:self.resident.pop(site,None)
+        if state_cost:
+            retain=e['retained_prefix']
+            if e['retention']=='discard':self.resident.pop(site,None)
+            elif t:
+                retained=np.concatenate([packed,old['packed'][:,t:retain,:]],axis=1) if retain>t else packed.copy()
+                if 9+retained.size>self.capacity[site]:raise ValueError('retained SRAM capacity exceeded')
+                self.resident[site]={'tag':c['tag'],'stripe':retain,'packed':retained}
+            # t=0/preserve leaves a non-overwritten old cache intact.
+        else:
+            if t:self.resident[site]={'tag':c['tag'],'stripe':t,'packed':packed}
+            else:self.resident.pop(site,None)
         left=restored.reshape(tuple(shape[:-2])+(shape[-2],t))
         broadcast_b=np.broadcast_to(b,tuple(shape[:-2])+(k,shape[-1]))
         out=np.matmul(left,broadcast_b[...,:t,:]) if t else np.zeros(shape,dtype=np.int64)
         if t<k:out+=np.matmul(np.broadcast_to(a,tuple(shape[:-2])+(shape[-2],k))[...,t:],broadcast_b[...,t:,:])
         self.events.append({'primitive':node['id'],'kernel':node['kernel'],'site':site,
-            'stripe':t,'words':c['cache_words'],'cache_hit':row['cache_hit'],
-            'partial_external_reads':c['warm_partial_external_reads'] if row['cache_hit'] else c['cold_partial_external_reads']})
+            'stripe':t,'words':max(c['cache_words'],self.resident.get(site,{}).get('packed',np.empty(0)).size),'cache_hit':row['cache_hit'],
+            'partial_external_reads':(c['cold_partial_external_reads']-c['rows']*ca*h) if state_cost else (c['warm_partial_external_reads'] if row['cache_hit'] else c['cold_partial_external_reads'])})
         return out
 
     def report(self):
