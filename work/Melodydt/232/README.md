@@ -1,6 +1,6 @@
 # Issue232 审计材料
 
-负责人 Melodydt；[Issue232](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/232)。分支 `task/232-main-model-readiness`，基于 main c4d7b960599b9d292f27eb4429d5f226a7156c95。PR链接在创建并读回后补入本文。
+负责人 Melodydt；[Issue232](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/232)。分支 `task/232-main-model-readiness`，基于 main c4d7b960599b9d292f27eb4429d5f226a7156c95。[PR233](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/233) 已创建，待独立审查。报告提交 `2f345e35de321fd1134c297e4c94d84854b460d7`。
 
 用途：真实大模型仿真就绪性审计及一次基础U入口服务器冒烟。正式结论见 `docs/experiments/issue-232-main-model-readiness.md`，恢复入口见 `docs/handoffs/2026-11-08-issue-232-main-audit.md`。
 
@@ -13,3 +13,5 @@
 原始编译日志、生成入口、工具/容器身份、调度记录及构建产物留在本Issue本地和本人服务器独立目录。100554失败和提交前换行错误均保留，详见交接。没有整模型新输入、输出或物理结果。
 
 规则版本 rayggxia-project-collab1.0.0；project_id=llm-hardware-design；登记沿用management-hub PR5 pending；缺board.json及Projects条目工具，看板unverified/同步pending、管理员待指定。独立审查人待指定，尚未合并或标done。
+
+实际运行工具：Verilator5.042，容器内Python3.12.7；本地检查Python3.12.14。容器实际SHA256：`49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a`。源码、测试配置和银行模型版本固定在main输入与主干脚本中；本次job包装脚本随本目录提交。

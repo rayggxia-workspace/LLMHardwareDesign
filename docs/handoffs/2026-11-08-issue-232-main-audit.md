@@ -27,3 +27,5 @@ cat /public/home/yuzelu/Melodydt/issue232-main-audit/smoke-02/result.json
 3. 五项宏证据清单漂移需维护者定位；处理人待指定。保留历史清单和失败，不只替换SHA以取得通过。完整系统顶层、模型控制镜像和数据/状态编排仍待实现。
 4. 登记pending：复用既有management-hub PR5，未改动登记。本仓库无config/board.json，当前GitHub工具无Projects条目能力；看板事实unverified、同步pending。具备工具和权限的管理员（待指定）核验适用看板及Issue232条目，按status-mapping填写Project ID/实际Status/已确定Priority，读回条目ID、链接和时间。
 5. 本轮没有自动监测；作业已结束。未来长任务需重新提交并给出真实启动回执，不宣称聊天结束后继续监控。
+
+审计交付：[PR233](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/233)，报告提交 `2f345e35de321fd1134c297e4c94d84854b460d7`，未合并；Issue232已读回 `status:in_review`。

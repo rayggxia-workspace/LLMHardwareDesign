@@ -8,3 +8,5 @@
 - PR：以Issue232关联PR及任务README读回链接为准；审查人待指定。登记PR5 pending；缺board.json和Projects条目能力，看板unverified/同步pending、管理员待指定。
 - 本地为 `work/Melodydt/232/audit-main-c4d7b960/repo` 审计快照；服务器为本人issue232-main-audit独立目录。恢复入口：`docs/handoffs/2026-11-08-issue-232-main-audit.md`。
 - 其他本人任务继续按各自Issue/PR维护：#147/PR148协作规则、#149/PR150冒烟、#151/PR152研究、#175/PR176方案、#179/PR180控制续研。本分支未接管其工作或合并其进度；合并个人STATUS时应保留各任务实际记录。
+
+审计交付：[PR233](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/233)，报告提交 `2f345e35de321fd1134c297e4c94d84854b460d7`，未合并；Issue232已读回 `status:in_review`。
