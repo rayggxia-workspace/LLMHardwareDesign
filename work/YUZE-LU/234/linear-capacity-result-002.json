@@ -1,0 +1,144 @@
+{
+  "scope": "optimistic direct-GEMV-only work/capacity bound; not SystemC decode score",
+  "config_sha256": "27467e2fc311a7656c09a43ae9c3d408211e1f212bbddbc93c8596a06423826f",
+  "m_count": 3,
+  "assumed_frequency_hz": 300000000,
+  "linear_work": [
+    {
+      "projection": "q",
+      "k": 2048,
+      "n": 2048,
+      "instances": 36,
+      "macs": 150994944,
+      "full_k32_n8_tiles": 589824
+    },
+    {
+      "projection": "k",
+      "k": 2048,
+      "n": 256,
+      "instances": 36,
+      "macs": 18874368,
+      "full_k32_n8_tiles": 73728
+    },
+    {
+      "projection": "v",
+      "k": 2048,
+      "n": 256,
+      "instances": 36,
+      "macs": 18874368,
+      "full_k32_n8_tiles": 73728
+    },
+    {
+      "projection": "o",
+      "k": 2048,
+      "n": 2048,
+      "instances": 36,
+      "macs": 150994944,
+      "full_k32_n8_tiles": 589824
+    },
+    {
+      "projection": "gate",
+      "k": 2048,
+      "n": 11008,
+      "instances": 36,
+      "macs": 811597824,
+      "full_k32_n8_tiles": 3170304
+    },
+    {
+      "projection": "up",
+      "k": 2048,
+      "n": 11008,
+      "instances": 36,
+      "macs": 811597824,
+      "full_k32_n8_tiles": 3170304
+    },
+    {
+      "projection": "down",
+      "k": 11008,
+      "n": 2048,
+      "instances": 36,
+      "macs": 811597824,
+      "full_k32_n8_tiles": 3170304
+    },
+    {
+      "projection": "lm_head",
+      "k": 2048,
+      "n": 151936,
+      "instances": 1,
+      "macs": 311164928,
+      "full_k32_n8_tiles": 1215488
+    }
+  ],
+  "dense_linear_macs_per_token": 3085697024,
+  "native_full_tiles_per_token": 12053504,
+  "resident_command_samples": [
+    {
+      "commands": 1024,
+      "accept_to_accept_cycles": 16,
+      "first_response_cycles": 16,
+      "macs_per_command": 256,
+      "exact_s64_passed": true,
+      "full_model_qualified": false
+    },
+    {
+      "commands": 1024,
+      "accept_to_accept_cycles": 16,
+      "first_response_cycles": 16,
+      "macs_per_command": 256,
+      "exact_s64_passed": true,
+      "full_model_qualified": false
+    },
+    {
+      "commands": 1024,
+      "accept_to_accept_cycles": 16,
+      "first_response_cycles": 16,
+      "macs_per_command": 256,
+      "exact_s64_passed": true,
+      "full_model_qualified": false
+    }
+  ],
+  "aggregate_M_cycles_per_token": 192856064,
+  "optimistic_seconds_lower_bound": 0.21428451555555555,
+  "optimistic_tokens_per_second_upper_bound": 4.666692772491717,
+  "perfect_partition_min_M_counts": [
+    {
+      "target_tps": 8.74,
+      "minimum_M_instances": 6
+    },
+    {
+      "target_tps": 10.0,
+      "minimum_M_instances": 7
+    },
+    {
+      "target_tps": 37.87,
+      "minimum_M_instances": 25
+    },
+    {
+      "target_tps": 92.7,
+      "minimum_M_instances": 60
+    }
+  ],
+  "granted": [
+    "hypothetical quality-preserving S8 weights/activations",
+    "perfect work balance",
+    "resident operands, free loads and reads",
+    "free LC/S/DMA/DRAM and nonlinears/attention"
+  ],
+  "not_covered": [
+    "arbitrary transformed algorithms",
+    "new ISA/streaming modes",
+    "weight sparsity/compression arithmetic",
+    "other compute engines"
+  ],
+  "energy_j_per_token": null,
+  "full_model_qualified": false,
+  "files_sha256": {
+    "work\\YUZE-LU\\234\\raw\\qwen25-3b-config\\config.json": "27467e2fc311a7656c09a43ae9c3d408211e1f212bbddbc93c8596a06423826f",
+    "D:\\Data\\\u7535\u8def\u5b9e\u9a8c\\LLMHardwareDesign-worktrees\\issue-234-systemc-benchmark\\project\\experiments\\systemc_benchmark\\linear_capacity.py": "f5b72642d9938553c42b5e284c82ce7872399ad0b8d8449302f175cd535ad726",
+    "work\\YUZE-LU\\234\\raw\\m-saturation-results-002\\run-1-143.log": "43f9fe6706f5a109473ab4df9be56ff6fab38807f01e58b169e1da3270cdc8cd",
+    "work\\YUZE-LU\\234\\raw\\m-saturation-results-002\\run-2-143.log": "43f9fe6706f5a109473ab4df9be56ff6fab38807f01e58b169e1da3270cdc8cd",
+    "work\\YUZE-LU\\234\\raw\\m-saturation-results-002\\run-2-144.log": "43f9fe6706f5a109473ab4df9be56ff6fab38807f01e58b169e1da3270cdc8cd",
+    "work\\YUZE-LU\\234\\raw\\m-saturation-results-002\\m_saturation.cpp": "8973e04a8f8783c02c1c490d67973de5e2c5681c2ad9b86dbb07ea5310d70a69",
+    "work\\YUZE-LU\\234\\raw\\m-saturation-results-002\\m_activity.cpp": "01798b9e6dba6335b6d889ac0c1e86ab694fd26525c8b161ec4ff257c961ac4e"
+  }
+}
