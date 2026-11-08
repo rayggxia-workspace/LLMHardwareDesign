@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import os
+import math
 from pathlib import Path
 import struct
 import subprocess
@@ -38,6 +39,8 @@ def main():
     p.add_argument('--max-margin', type=float, default=256.)
     p.add_argument('--precision', type=float, default=.01)
     p.add_argument('--confidence-budget', type=float, default=.05)
+    p.add_argument('--expected-population', type=int)
+    p.add_argument('--verify-against', type=Path)
     p.add_argument('--seed', type=int, default=104729)
     a = p.parse_args()
     out = Path(os.environ['LOWER_OUT'])
@@ -103,9 +106,16 @@ def main():
                 all_selected.append((data[1], data[2], data[4], data[5], i, raw))
     assert requested is None or requested <= seen
     all_selected.sort(key=lambda r: r[:5])
+    if a.expected_population is not None:
+        assert len(all_selected) == a.expected_population, 'Legacy partition population changed'
     low = len(all_selected) * index // a.shards
     high = len(all_selected) * (index + 1) // a.shards
     selected = all_selected[low:high]
+    if build.get('cached_scene_view_exact'):
+        tile = prep['tile_metadata']['tile_size_um']
+        # Preserve legacy shard membership; reorder only within that shard.
+        selected.sort(key=lambda r: (math.floor(r[0]/tile), math.floor(r[1]/tile),
+                                    math.floor((r[2]-1e-9)/tile), math.floor((r[3]-1e-9)/tile), r[4]))
     assert selected or a.allow_empty
     with (out / 'masters.bin').open('xb') as f:
         for row in selected:
@@ -117,21 +127,37 @@ def main():
     with rows.open('xb') as stdout, (out / 'field.log').open('xb') as stderr:
         if selected:
             subprocess.run(command, stdout=stdout, stderr=stderr, check=True)
-    loaded, unqualified = [], []
+    loaded, unqualified, validation_rows = [], [], {}
     for line in rows.open():
         r = json.loads(line)
         loaded.append(r['master'])
+        if a.verify_against:
+            validation_rows[r['master']] = r
         assert r['before_ff'] > 0 and r['after_ff'] > 0
         assert abs((r['after_ff'] - r['before_ff']) - r['delta_ff']) <= 1e-8 * r['before_ff']
         if not r['qualified_precision']:
             unqualified.append(r['master'])
     assert loaded == [r[-2] for r in selected]
+    if a.verify_against:
+        previous = json.loads((a.verify_against / 'paired-solve.json').read_text())
+        assert previous['tile_preparation_sha256'] == sha(a.tiles / 'prepare.json')
+        assert sha(a.verify_against / 'native-pairs.jsonl') == previous['rows_sha256']
+        found = set()
+        for line in (a.verify_against / 'native-pairs.jsonl').open():
+            row = json.loads(line)
+            if row['master'] in validation_rows:
+                assert row == validation_rows[row['master']], ('Cached result differs', row['master'])
+                found.add(row['master'])
+        assert found == set(loaded)
     result = dict(tile_preparation=str(a.tiles), tile_preparation_sha256=sha(a.tiles / 'prepare.json'),
                   build=str(a.build), build_metadata_sha256=sha(a.build / 'build.json'),
                   binary_sha256=sha(binary), rows_sha256=sha(rows), rows_bytes=rows.stat().st_size,
                   reporter_command=command, minimum_walks=a.walks, maximum_walks=a.max_walks,
                   seed=a.seed, offset=a.offset, initial_margin_um=a.margin, maximum_margin_um=a.max_margin,
                   confidence_budget=a.confidence_budget,
+                  cached_scene_view=bool(build.get('cached_scene_view_exact')),
+                  legacy_global_shard_membership_preserved=True,
+                  exact_saved_result_validation=str(a.verify_against) if a.verify_against else None,
                   selection=str(a.selection) if a.selection else None,
                   selection_sha256=sha(a.selection) if a.selection else None,
                   excluded_selection=str(a.exclude_selection) if a.exclude_selection else None,

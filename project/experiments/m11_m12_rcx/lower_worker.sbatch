@@ -2,13 +2,19 @@
 #SBATCH --job-name=hpy-lower222
 set -euo pipefail
 cd "${LOWER_TASK_ROOT:?}"
-out="$PWD/job-${SLURM_JOB_ID:?}-${SLURM_ARRAY_TASK_ID:-0}"
+output_root="$(realpath -e -- "${LOWER_OUTPUT_ROOT:-$PWD}")"
+if [[ "$(dirname -- "$output_root")" != "/public/home/yuzelu/PingyangHuang" || "$(basename -- "$output_root")" != issue-222-lower-* ]]; then
+  echo "Output root outside this user's lower-extraction directories" >&2
+  exit 2
+fi
+out="$output_root/job-${SLURM_JOB_ID:?}-${SLURM_ARRAY_TASK_ID:-0}"
 mkdir "$out" "$out/tmp" "$out/cache"
 python3 -B - "$out/invocation.json" "$@" <<'PY'
 import datetime, hashlib, json, os, pathlib, sys
 root=pathlib.Path.cwd()
 script=root/'project/experiments/m11_m12_rcx'/sys.argv[2]
 receipt=dict(script=sys.argv[2],arguments=sys.argv[3:],source_sha256=hashlib.sha256(script.read_bytes()).hexdigest(),
+             code_root=str(root),output_root=str(pathlib.Path(sys.argv[1]).parent.parent),
              source_manifest_sha256=hashlib.sha256((root/'source.json').read_bytes()).hexdigest(),
              job_id=os.environ['SLURM_JOB_ID'],array_index=os.environ.get('SLURM_ARRAY_TASK_ID','0'),
              cpus=int(os.environ['SLURM_CPUS_PER_TASK']),utc=datetime.datetime.now(datetime.timezone.utc).isoformat())

@@ -47,7 +47,8 @@ double rectangleGap(const Box&a,const Box&b){
 // Uniform eps only. Nearest(center)+rectangle radius guarantees that every
 // possible closest box lies in the query. The minimum distance between
 // whole closed rectangles gives a lower bound on every first cube size.
-double balancedSurface(const Scene& scene,GaussianSurface<3>& gauss,
+template<class SceneType>
+double balancedSurface(const SceneType& scene,GaussianSurface<3>& gauss,
                        const CubeGreens& greens,double eps){
   std::vector<Box> source;
   const auto& g=scene.geometry();
@@ -109,7 +110,8 @@ struct PairResult{
   double delta_radius=0,bleak_upper=0,aleak_upper=0,alpha=0;
   bool precise=false;
 };
-PairResult paired(const Scene& before,const Scene& after,WorkerPool& pool,
+template<class Frame=Space,class SceneType>
+PairResult paired(const SceneType& before,const SceneType& after,WorkerPool& pool,
                   double eps,double capture,double offset,uint64_t key,
                   int64_t minimum,int64_t maximum,double tolerance,
                   bool identical,int window_attempt,double confidence_budget){
@@ -131,8 +133,8 @@ PairResult paired(const Scene& before,const Scene& after,WorkerPool& pool,
                                         at(after.dielectric(),no_tables,mutex);
   const std::vector<double> cuts;const std::vector<Vec3> nodes;
   const std::vector<std::vector<Vec3>> captures;const std::vector<int> origins;
-  auto walker=[&](const Scene&s,auto&tables){
-    return Walker<Space>(s.geometry(),s.index(),s.dielectric(),gauss,*greens,tables,
+  auto walker=[&](const SceneType&s,auto&tables){
+    return Walker<Frame>(s.geometry(),s.index(),s.dielectric(),gauss,*greens,tables,
       capture,100000,key,-1,cuts,nodes,captures,origins,0);
   };
   auto bw=walker(before,bt),aw=walker(after,at);
@@ -196,6 +198,7 @@ template<class T>T rd(std::ifstream&f){
   if(!f)throw std::runtime_error("truncated record");return v;
 }
 struct Master{uint32_t id;Box bounds;uint64_t boxes;double volume;};
+#ifndef LOWER_PAIR_LIBRARY_ONLY
 int main(int argc,char**argv){try{
   if(argc!=12)throw std::runtime_error("tiles masters threads min_walks max_walks offset margin max_margin seed precision alpha");
   std::filesystem::path root(argv[1]);std::ifstream mf(argv[2],std::ios::binary);
@@ -269,3 +272,4 @@ int main(int argc,char**argv){try{
     }
   }
 }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 1;}}
+#endif
