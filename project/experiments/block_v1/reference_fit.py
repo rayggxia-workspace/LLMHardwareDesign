@@ -21,13 +21,18 @@ def sha(path):
 def fit(root,out,run):
     base=out.parents[2]
     config=configuration(root)
+    prefix=config['reference_task_prefix']
+    folders=[base/config['reference_run']/'tasks'/('%s-%d'%(prefix,i)) for i in range(6)]
+    fit_shards(out,run,folders,receive_only=prefix=='reference-receive')
+
+
+def fit_shards(out,run,folders,*,receive_only=False):
     bindings=[];seen=set();rows={};manifest_path=None;manifest_sha=None
-    for index in range(6):
-        folder=base/config['reference_run']/('tasks/%s-%d'%(config['reference_task_prefix'],index))
+    for index,folder in enumerate(folders):
         receipt=json.loads((folder/'receipt.json').read_text());assert receipt['passed'] is True
         path=folder/'reference-shard.json';assert sha(path)==receipt['outputs'][path.name]
         record=json.loads(path.read_text());assert record['shard']==index
-        assert record['receive_only']==(config['reference_task_prefix']=='reference-receive')
+        assert record['receive_only']==receive_only
         if manifest_path is None:
             manifest_path=Path(record['manifest']);manifest_sha=record['manifest_sha256']
         assert record['manifest']==str(manifest_path)and record['manifest_sha256']==manifest_sha
