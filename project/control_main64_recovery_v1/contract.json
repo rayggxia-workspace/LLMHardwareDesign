@@ -1,0 +1,82 @@
+{
+  "schema": "main64-recovery-contract/1",
+  "version": 1,
+  "targets": 9,
+  "clock_period_ns": "3.333333333",
+  "instruction_bits": 64,
+  "route_slots": 2,
+  "max_words": 4,
+  "uu_echo": {
+    "words_per_direction": 2,
+    "service_stride": 3
+  },
+  "passive_p_destination": true,
+  "j_to_p": "committed FIFO -> held word -> destination SRAM response -> identity ACK; source terminal gated until route complete",
+  "ticket_bits": 512,
+  "ticket_fields": {
+    "source_service": [
+      0,
+      131
+    ],
+    "destination_reservation": [
+      131,
+      131
+    ],
+    "generation": [
+      262,
+      32
+    ],
+    "start_sequence": [
+      294,
+      32
+    ],
+    "topology": [
+      326,
+      32
+    ],
+    "source_image": [
+      358,
+      32
+    ],
+    "destination_image": [
+      390,
+      32
+    ],
+    "source_block": [
+      422,
+      8
+    ],
+    "destination_block": [
+      430,
+      8
+    ],
+    "address": [
+      438,
+      10
+    ],
+    "j_tag": [
+      448,
+      32
+    ],
+    "word_index": [
+      480,
+      10
+    ],
+    "reserved_zero": [
+      490,
+      22
+    ]
+  },
+  "service_identity": "{job32,epoch32,task_sequence32,service_sequence32,token3}",
+  "management": {
+    "op": 15,
+    "sub4": "route config: sub8, direction1, base10, count3, first_sequence32, stride8, tag32, zero162",
+    "sub0": "cancel active job with exact identity",
+    "sub1": "request coordinated reset; mask is diagnostic, always whole cohort",
+    "sub2": "persistent recovery status",
+    "sub3": "retry quarantined drain after consuming failure terminal"
+  },
+  "drain_policy": "Stop new native services; drain accepted native operations and irrevocable destination offers; unoffered words abort; timeout quarantines without reset; reset only when quiescent",
+  "failure_terminal": "Exactly one terminal, persistent across inner reset, epoch watermark retained; fresh epoch and complete reload required",
+  "raw_main_sources": "Unchanged; staged wrappers gain explicit native service gates and observations"
+}

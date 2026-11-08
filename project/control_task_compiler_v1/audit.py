@@ -73,6 +73,12 @@ def expected_images(task):
     return result
 
 def audit(task,bundle):
+    if type(task) is dict and task.get('schema')=='safe64-native-tasks/1':
+        from safe64_audit import audit as safe64_audit
+        return safe64_audit(task,bundle)
+    if type(task) is dict and task.get('schema')=='main64-native-tasks/1':
+        from main64_audit import audit as main64_audit
+        return main64_audit(task,bundle)
     check(bundle['schema']=='bounded-native-bundle/1','bundle version')
     check(bundle['task_sha256']==hashlib.sha256(canonical(task)).hexdigest(),'task binding')
     family,type_name=task['target'].split('/');kind={'U':0,'F':1,'C':2,'P':3,'J':4}[type_name]

@@ -6,6 +6,12 @@ def request(op,target,address=0,data=0,status=0,mask=0,value=0,mode=0):
     return dict(mode=mode,op=op,target=target,address=address,data=data,status=status,mask=mask,value=value)
 
 def load_plan(task,bundle):
+    if type(task) is dict and task.get('schema')=='safe64-native-tasks/1':
+        from safe64_host import load_plan as safe64_load_plan
+        return safe64_load_plan(task,bundle)
+    if type(task) is dict and task.get('schema')=='main64-native-tasks/1':
+        from main64_host import load_plan as main64_load_plan
+        return main64_load_plan(task,bundle)
     audit(task,bundle);gen=task['generation'];epoch=task['epoch']
     plan=[request(8,3,data=task['job']|epoch<<32|task['sequence']<<64|gen<<96,status=0x105),request(0,3,data=gen|epoch<<32)]
     for who,name in enumerate(('mother','local0','local1')):
@@ -20,6 +26,12 @@ def load_plan(task,bundle):
     plan.append(request(7,3,data=gen));return plan
 
 def replay_plan(task,bundle,inputs,reference):
+    if type(task) is dict and task.get('schema')=='safe64-native-tasks/1':
+        from safe64_host import replay_plan as safe64_replay_plan
+        return safe64_replay_plan(task,bundle,inputs,reference)
+    if type(task) is dict and task.get('schema')=='main64-native-tasks/1':
+        from main64_host import replay_plan as main64_replay_plan
+        return main64_replay_plan(task,bundle,inputs,reference)
     plan=load_plan(task,bundle);buffers={b['name']:b for b in task['buffers']};kind=task['target'].split('/')[1]
     operations={t['block']:t['operations'] for t in task['tasks']}
     seen=set()

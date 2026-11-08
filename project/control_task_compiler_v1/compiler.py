@@ -175,6 +175,12 @@ def analyze(task):
     return t,rows,buffers,states
 
 def compile_task(task):
+    if type(task) is dict and task.get('schema')=='safe64-native-tasks/1':
+        from safe64_compiler import compile_task as safe64_compile_task
+        return safe64_compile_task(task)
+    if type(task) is dict and task.get('schema')=='main64-native-tasks/1':
+        from main64_compiler import compile_task as main64_compile
+        return main64_compile(task)
     t,rows,buffers,states=analyze(task);programs=[];images={}
     mother=[dict(op='G_CALL',a=b,b=task['tokens'][b],c=0) for b in task['call_order']]
     mother.extend([dict(op='G_WAIT',x=sum(1<<x for x in task['tokens'])),dict(op='G_END')]);programs.append(mother)
