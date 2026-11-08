@@ -2,7 +2,7 @@
 
 ## 2026-11-09（CST）M短K命令瓶颈候选
 
-[Issue238](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/238)，`task/238-m-streaming`，in_progress；PR待创建，以PR235分支为依赖。独立实验RTL新增B1 K256服务，未改原M及已验收物理包。新160形状×三初态、1024驻留命令/初态S64正确，旧8192形状×三初态数值/周期表完全一致；K256驻留44拍。新增7KiB B存储和3个端点必须计价。统一脚本重跑通过；LC/Sfeeder、面积/物理/SystemC/整模型未验收。[记录](../../work/YUZE-LU/238/README.md)。登记pending、看板unverified/同步pending，复用Issue7交接，待指定审查人。
+[Issue238](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/238)，`task/238-m-streaming`，in_progress；[Draft PR239](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/239)，以PR235分支为依赖。独立实验RTL新增B1 K256服务，未改原M及已验收物理包。新160形状×三初态、1024驻留命令/初态S64正确，旧8192形状×三初态数值/周期表完全一致；K256驻留44拍。新增7KiB B存储和3个端点必须计价。统一脚本重跑通过；LC/Sfeeder、面积/物理/SystemC/整模型未验收。[记录](../../work/YUZE-LU/238/README.md)。登记pending、看板unverified/同步pending，复用Issue7交接，待指定审查人。
 
 ## 2026-11-09（CST）Qwen3B SystemC时间/能耗与充分优化对照
 

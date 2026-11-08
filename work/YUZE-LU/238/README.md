@@ -1,6 +1,6 @@
 # Issue238 M长K候选
 
-[任务](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/238)；YUZE-LU；in_progress。
+[任务](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/238)；[草稿PR239](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/239)；YUZE-LU；in_progress。
 
 这是PR235/Issue234的独立后续硬件实验分支 `task/238-m-streaming`，以PR235分支为依赖，保持原M RTL和物理包不变。
 
