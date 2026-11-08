@@ -8,6 +8,8 @@
 
 **母控与局控研究（PR #180）**  [跨分支接续指南](docs/local-blocks/CONTROL_RESEARCH_HANDOFF.md) · [研究详解与指令参考 PDF](docs/local-blocks/CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)
 
+R8.1/R8.2已形成[五类能力合同与统一三PM顶层](project/control_main64_boot_v1/README.md)，当前验证216次RTL执行及九配置结构；编译器、完整恢复、覆盖和新综合冻结仍待接续。
+
 ## 从哪里开始
 
 1. [项目说明 v1.0](预制计算底座项目说明_v1.0.md)：研究问题、已确认边界、2026-10-30 架构规划补记与待验证清单。
