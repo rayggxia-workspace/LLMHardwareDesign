@@ -103,6 +103,11 @@ def expand(users, catalog):
     unresolved = []
     for name in sorted(users):
         template = templates.get(name)
+        if template and template.get('realization'):
+            require(not template.get('signals'),'native/external realization cannot also invent bit nets')
+            require(template['realization'].get('kind') in ('native_service','external_boundary') and
+                    template['realization'].get('id'),'invalid non-routing realization')
+            continue
         if not template or not template.get('signals'):
             unresolved.append({'demand_id': name, 'reason': 'missing_interface_template'})
             continue
@@ -146,7 +151,7 @@ def validate_base(base):
             require(shape.get('layer') == 'M10' and shape.get('object') and len(r) == 4
                     and all(type(v) is int for v in r) and r[0] < r[2] and r[1] < r[3],
                     'invalid M10 conductor reference')
-    if base.get('endpoints'):
+    if base.get('endpoints') or base.get('assembly_state') == 'placed_source_views':
         require(type(base.get('dbu_per_micron')) is int and base['dbu_per_micron'] > 0,
                 'missing database units')
         if base.get('assembly_state') == 'placed_source_views':
@@ -210,6 +215,35 @@ def elaborate(users, catalog, base, source):
     validate_base(base)
     users, dependencies, members, unresolved = expand(users, catalog)
     nets, missing = bind_members(members, base)
+    realizations=[]
+    assemblies={a['id']:a for a in base.get('assemblies',[])}
+    leaves={a['instance'] for a in base.get('leaf_instances',[])}
+    for demand in sorted(users):
+        declaration=catalog.get('demands',{}).get(demand,{}).get('realization')
+        if not declaration:continue
+        provider=base.get('realizations',{}).get(declaration['id'])
+        if not provider:
+            missing.append({'demand_id':demand,'reason':'missing_native_realization'});continue
+        require(provider['kind']==declaration['kind'],'native realization kind mismatch')
+        group=provider['assembly'];require(group in assemblies,'native realization outside supplied assembly')
+        require(provider['views']==assemblies[group]['views'],'native realization uses another source view')
+        require(provider.get('inventory_sha256')==assemblies[group].get('inventory_sha256'),
+                'native realization inventory mismatch')
+        require(provider['leaf_instances'] and set(provider['leaf_instances'])<=leaves and
+                all(p.startswith(group+'/') for p in provider['leaf_instances']),'native realization leaf mismatch')
+        if provider['kind']=='external_boundary':
+            require(provider.get('boundary_pins'),'external realization without actual boundary pins')
+            for pin,meta in provider['boundary_pins'].items():
+                require(pin.startswith(group+'/') and meta['direction'] in ('INPUT','OUTPUT') and
+                        meta['shapes'],'invalid declared external physical boundary')
+                require(meta.get('native_net','').startswith(group+'/'),'external boundary native identity mismatch')
+                for shape in meta['shapes']:
+                    rect=shape.get('rect',[])
+                    require(shape.get('layer') in {'metal'+str(i) for i in range(1,11)} and
+                            len(rect)==4 and all(type(v) is int for v in rect) and
+                            rect[0]<rect[2] and rect[1]<rect[3],'invalid native boundary geometry')
+        realizations.append({'demand_id':demand,'provider_id':declaration['id'],**provider,
+                             'qualification':'supplied resource realization only; no model/controller numeric qualification'})
     result = {'schema_version': VERSION, 'source': source,
               'base_id': base['base_id'], 'base_sha256': digest(base),
               'catalog_sha256': digest(catalog), 'users': users,
@@ -218,6 +252,7 @@ def elaborate(users, catalog, base, source):
               'status': 'unbound' if unresolved or missing else 'endpoint_binding_complete',
               'physical_qualified': False,
               'scope': 'manifest binding only; no via access, geometry, RC, STA or system qualification'}
+    if realizations:result['realizations']=realizations
     return seal(result)
 
 

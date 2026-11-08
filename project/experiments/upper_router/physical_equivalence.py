@@ -10,7 +10,10 @@ import os
 from pathlib import Path
 import re
 import sqlite3
+import sys
 import pya
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from native_inventory import sha
 
 
 root=Path(os.environ['ROUTER_FLAT_OUT'])
@@ -119,7 +122,6 @@ result={'passed':True,'native_placed_instances':len(actual_instances),'physical_
         'all_native_metal_and_pin_unions_xor_zero':True,'all_upper_geometry_xor_zero':True,
         'actual_component_placements_and_models_equal':True,'source_odb_readback_reference':True,
         'scope':'flat actual ODB compared against independently decoded source ODBs and upper route; RC/STA and full GDS DRC are separate gates'}
-from native_inventory import sha
 result['artifact_sha256']={p.name:sha(p) for p in [root/'assembled.odb',root/'assembled.v',
     root/'source-proof.json',root/'actual-geometry.tsv',root/'actual-instances.tsv',root/'actual-owners.tsv']}
 result['binding_sha256']=sha(os.environ['ROUTER_FLAT_BINDING'])

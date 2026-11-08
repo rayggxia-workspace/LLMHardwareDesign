@@ -12,7 +12,26 @@ import json
 from pathlib import Path
 import re
 import struct
+from heapq import heappop,heappush
 from native_inventory import sha
+
+
+def farthest_sink(graph,driver,sinks):
+    """Largest shortest-path resistance, independent of endpoint name order."""
+    adjacency=defaultdict(list)
+    for e in graph['resistors']:
+        assert e['ohm']>0
+        adjacency[e['a']].append((e['b'],e['ohm']));adjacency[e['b']].append((e['a'],e['ohm']))
+    root=graph['ports'][driver];distance={root:0.};queue=[(0.,root)]
+    while queue:
+        value,node=heappop(queue)
+        if value!=distance[node]:continue
+        for other,r in adjacency[node]:
+            candidate=value+r
+            if candidate<distance.get(other,float('inf')):
+                distance[other]=candidate;heappush(queue,(candidate,other))
+    assert sinks and all(graph['ports'][s] in distance for s in sinks)
+    return max((graph['ports'][s] for s in sinks),key=lambda i:(distance[i],i))
 
 
 def parse(raw):
@@ -122,10 +141,12 @@ def stitch(raw,binding,graph,caps,*,coupling_scale=1,node_projection='distribute
     # Remove only joined native boundary ports from the SPEF port declaration.
     before,marker,port_header=header.partition('*PORTS\n')
     if marker:header=before+marker+''.join(s for s in port_header.splitlines(keepends=True) if not(s.split() and s.split()[0] in aliases))
+    far_nodes={name:farthest_sink(g,binding['nets'][name]['driver'],binding['nets'][name]['sinks'])
+               for name,g in graph_names.items()} if node_projection=='farthest_sink' else {}
     def project(name,index):
         g=graph_names[name]
         if node_projection=='driver':index=g['ports'][binding['nets'][name]['driver']]
-        elif node_projection=='farthest_sink':index=g['ports'][binding['nets'][name]['sinks'][-1]]
+        elif node_projection=='farthest_sink':index=far_nodes[name]
         else:assert node_projection=='distributed'
         return upper_nodes[(name,index)]
     for name,g in graph_names.items():

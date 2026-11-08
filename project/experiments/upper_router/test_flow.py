@@ -22,6 +22,21 @@ def inputs():
 
 
 class FlowTests(unittest.TestCase):
+    def test_declared_native_service_emits_no_unnecessary_upper_wire(self):
+        ir,plan,library,rules,_=inputs()
+        library['variant']['capabilities']['realizations']={
+            '{group}.service':{'kind':'native_service','leaf_instances':['leaf']}}
+        catalog={'schema_version':'route-contract/1','demands':{
+            'transfer':{'realization':{'kind':'native_service','id':'left.service'}}}}
+        with tempfile.TemporaryDirectory() as directory:
+            output=Path(directory)/'new'
+            result=run(ir,plan,library,rules,output,catalog=catalog,gap_dbu=20,via_resistance_ohm=.08)
+            self.assertEqual(result['status'],'backend_geometry_exported')
+            self.assertEqual(result['native_or_external_realizations'],1)
+            self.assertEqual(result['routed_nets'],0)
+            self.assertIn('NETS 0 ;',(output/'backend/upper.def').read_text())
+            self.assertFalse(result['physical_qualified'])
+
     def test_plan_to_real_backend_format_preserves_binding_users(self):
         ir,plan,library,rules,catalog=inputs()
         with tempfile.TemporaryDirectory() as directory:

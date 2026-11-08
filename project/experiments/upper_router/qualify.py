@@ -35,6 +35,9 @@ def qualify(manifest,out,copy=False):
     topology=read(paths['topology']/'topology.json')
     assert topology['passed'] and topology['source_gds']['sha256']==sha(paths['native_gds'])
     assert topology['database_sha256']==sha(paths['topology']/'native.l2n')
+    from native_connectivity_audit import audit
+    assert topology['inventory_sha256']==sha(paths['topology_inventory'])
+    connectivity=audit(read(paths['topology_inventory']),topology)
     ends={p for n in binding['nets'].values() for p in [n['driver']]+n['sinks']}
     assert ends<=set(topology['boundary_probes'])
     scene=read(paths['scene']/'scene.json');field=read(paths['field']/'solve.json')
@@ -75,6 +78,7 @@ def qualify(manifest,out,copy=False):
             'qualification':'declared input netlist; original TT300MHz resource constraints; explicit research M11/M12 RC stack',
             'artifacts':artifacts,'gates':gates,'timing_variants':timing['variants'],
             'manifest_sha256':digest(manifest),'native_geometry_unchanged':True,
+            'native_connectivity':connectivity,
             'field_method':'fresh joint full-native-geometry field C, exact routed R, original accepted native RC; node/Miller sensitivity',
             'not_claimed':['foundry-calibrated 12-layer signoff','unexecuted model/RTL/system qualification']}
     (out/'qualification.json').write_text(json.dumps(result,indent=2)+'\n')

@@ -1,5 +1,5 @@
 import unittest
-from stitch_rc import parse,stitch,field_capacitance
+from stitch_rc import parse,stitch,field_capacitance,farthest_sink
 
 
 NATIVE='''*SPEF "ieee 1481-1999"
@@ -37,6 +37,12 @@ b I
 
 
 class StitchTest(unittest.TestCase):
+    def test_farthest_sink_uses_resistance_instead_of_name_order(self):
+        graph={'ports':{'driver':0,'first':1,'last':2},
+               'resistors':[{'a':0,'b':1,'ohm':9.},{'a':0,'b':2,'ohm':1.}]}
+        self.assertEqual(farthest_sink(graph,'driver',['first','last']),1)
+        self.assertEqual(farthest_sink(graph,'driver',['last','first']),1)
+
     def test_asymmetric_native_capture_preserves_each_real_field_load(self):
         binding={'nets':{'A':{'logical_net':'a'},'B':{'logical_net':'b'}}}
         graph={'nets':{n:{'nodes':[0,1]} for n in ('a','b')}}

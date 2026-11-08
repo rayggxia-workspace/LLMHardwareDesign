@@ -9,7 +9,7 @@ import unittest
 
 from resource_base import assemble, instances_from_hardware, place
 from adapter import bind_request
-from route_contract import VERSION, elaborate, validate_base
+from route_contract import VERSION, elaborate, validate_base, verify_requirements
 
 
 def template():
@@ -24,6 +24,46 @@ def template():
 
 
 class ResourceBaseTests(unittest.TestCase):
+    def test_native_and_external_services_do_not_create_fictional_m10_nets(self):
+        resource=template()
+        resource['capabilities']['realizations']={
+            '{group}.compute':{'kind':'native_service','leaf_instances':['leaf']},
+            '{group}.load':{'kind':'external_boundary','leaf_instances':['leaf'],'terms':['in','out']}}
+        # A real resource boundary may reside below M10. It must retain its
+        # physical layer, rather than becoming a fictitious late-routing pin.
+        resource['inventory']['terms']['in']['shapes'][0]['layer']='metal3'
+        library={'variant':resource};instances={'resource0':'variant'}
+        positions,bounds=place(instances,library,gap_dbu=20)
+        base=assemble(instances,library,positions,bounds)
+        self.assertNotIn('resource0/in',base['endpoints'])
+        self.assertEqual(base['realizations']['resource0.load']['boundary_pins']['resource0/in']['shapes'][0]['layer'],'metal3')
+        catalog={'schema_version':VERSION,'demands':{
+            'compute':{'realization':{'kind':'native_service','id':'resource0.compute'},'requires':['load']},
+            'load':{'realization':{'kind':'external_boundary','id':'resource0.load'}}}}
+        request=elaborate({'compute':[]},catalog,base,{})
+        verify_requirements(request,{'compute':[]},catalog,base,{})
+        self.assertEqual(request['status'],'endpoint_binding_complete')
+        self.assertEqual(len(request['realizations']),2)
+        self.assertEqual(request['members'],[])
+        self.assertEqual(request['nets'],[])
+        self.assertFalse(request['physical_qualified'])
+        bad=copy.deepcopy(base);del bad['realizations']['resource0.load']
+        missing=elaborate({'compute':[]},catalog,bad,{})
+        self.assertEqual(missing['status'],'unbound')
+        self.assertEqual(missing['unresolved'][0]['reason'],'missing_native_realization')
+        bad=copy.deepcopy(base);bad['realizations']['resource0.compute']['views']={}
+        with self.assertRaisesRegex(ValueError,'another source view'):
+            elaborate({'compute':[]},catalog,bad,{})
+        bad=copy.deepcopy(base);bad['realizations']['resource0.compute']['leaf_instances']=['invented/leaf']
+        with self.assertRaisesRegex(ValueError,'leaf mismatch'):
+            elaborate({'compute':[]},catalog,bad,{})
+        bad=copy.deepcopy(base);bad['realizations']['resource0.load']['boundary_pins']={}
+        with self.assertRaisesRegex(ValueError,'actual boundary pins'):
+            elaborate({'compute':[]},catalog,bad,{})
+        invalid=copy.deepcopy(catalog);invalid['demands']['load']['signals']=[{'name':'fiction'}]
+        with self.assertRaisesRegex(ValueError,'also invent bit nets'):
+            elaborate({'compute':[]},invalid,base,{})
+
     def test_standalone_cli_checks_actual_view_bytes(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory); inv=root/'inventory.json'

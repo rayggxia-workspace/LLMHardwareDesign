@@ -14,7 +14,8 @@ def build(output):
         paths.update(p for p in (root/directory).rglob('*') if p.is_file() and '__pycache__' not in p.parts)
     for name in ('project/experiments/block_v1/technology-2um-v1.json',
                  'project/experiments/block_v1/overlay.py','project/experiments/block_v1/odb_geometry.tcl',
-                 'project/experiments/cfj_leaf_base/stitch_netlist.tcl','work/YUZE-LU/230/inputs.json'):
+                 'project/experiments/cfj_leaf_base/stitch_netlist.tcl','work/YUZE-LU/230/inputs.json',
+                 'work/YUZE-LU/230/resource-services.json'):
         p=root/name
         if not p.is_file():raise ValueError('missing worker source dependency: '+name)
         paths.add(p)

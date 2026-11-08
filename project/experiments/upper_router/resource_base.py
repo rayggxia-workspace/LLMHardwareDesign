@@ -31,6 +31,9 @@ def load_library(path):
         p = (path.parent / item['inventory']['path']).resolve()
         need(sha(p) == item['inventory']['sha256'], 'inventory hash differs: ' + key)
         inv = json.loads(p.read_text(encoding='utf-8'))
+        profile_hash=item.get('capabilities',{}).get('service_profile_inventory_sha256')
+        need(profile_hash is None or profile_hash==item['inventory']['sha256'],
+             'service profile targets a different native inventory: '+key)
         views = {}
         for kind, ref in item['views'].items():
             p = (path.parent / ref['path']).resolve()
@@ -91,7 +94,7 @@ def assemble(instances, library, positions, bounds):
     units = {library[t]['inventory']['dbu_per_micron'] for t in instances.values()}
     need(len(units)==1, 'mixed resource DBU requires an explicit conversion')
     views, assemblies, leaves, endpoints, native = {}, [], [], {}, {}
-    envelopes = []
+    envelopes = [];realizations={}
     def shifted(rect, dx, dy):
         return [rect[0]+dx,rect[1]+dy,rect[2]+dx,rect[3]+dy]
     for name, template in sorted(instances.items()):
@@ -116,6 +119,24 @@ def assemble(instances, library, positions, bounds):
         for leaf in inv['macros']:
             leaves.append({**deepcopy(leaf),'instance':name+'/'+leaf['instance'],
                            'control_group':name,'rect':shifted(leaf['rect'],dx,dy)})
+        for local,provider in resource.get('capabilities',{}).get('realizations',{}).items():
+            need(provider['kind'] in ('native_service','external_boundary'),'invalid supplied realization kind')
+            actual={m['instance'] for m in inv['macros']}
+            need(provider['leaf_instances'] and set(provider['leaf_instances'])<=actual,'unknown realization leaf')
+            record={**deepcopy(provider),'assembly':name,'views':refs,
+                    'inventory_sha256':resource['inventory_sha256'],
+                    'leaf_instances':[name+'/'+p for p in provider['leaf_instances']]}
+            if provider['kind']=='external_boundary':
+                boundary={}
+                for term in provider['terms']:
+                    need(term in inv['terms'],'external boundary is not an actual ODB terminal: '+term)
+                    meta=inv['terms'][term]
+                    need(meta['signal_type']=='SIGNAL' and meta['direction'] in ('INPUT','OUTPUT'),'invalid boundary role')
+                    boundary[name+'/'+term]={'direction':meta['direction'],'native_net':name+'/'+meta['native_net'],
+                        'shapes':[{'layer':s['layer'],'rect':shifted(s['rect'],dx,dy)} for s in meta['shapes']]}
+                record['boundary_pins']=boundary
+            key=local.replace('{group}',name);need(key not in realizations,'duplicate realization provider')
+            realizations[key]=record
         for term,meta in inv['terms'].items():
             if meta['signal_type']!='SIGNAL':continue
             shapes=[{'layer':'M10','object':name+'/'+term+'/shape/'+str(i),
@@ -132,13 +153,15 @@ def assemble(instances, library, positions, bounds):
                 need(component not in native or native[component]['driver']==physical,
                      'aliased native outputs require explicit canonical driver metadata')
                 native[component]={'driver':physical}
-    return {'schema_version':'route-contract/1','base_id':'assembled-resource-candidate',
+    result={'schema_version':'route-contract/1','base_id':'assembled-resource-candidate',
             'state':'candidate','assembly_state':'placed_source_views',
             'dbu_per_micron':next(iter(units)),'bounds_dbu':bounds,
             'views':views,'assemblies':assemblies,'leaf_instances':leaves,
             'endpoints':endpoints,'fixed_native_nets':native,
             'physical_qualified':False,
             'scope':'translated native resource views; independent leaves retained; not a stitched product ODB'}
+    if realizations:result['realizations']=realizations
+    return result
 
 
 def main():

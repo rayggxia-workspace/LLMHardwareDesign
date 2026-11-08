@@ -52,7 +52,8 @@ def run(ir, plan, library, rules, output, *, catalog=None, gap_dbu=0,
     verify_requirements(request,selected_demands(ir,plan),catalog,base,request['source'])
     write('base.json',base);write('catalog.json',catalog);write('requirements.json',request)
     common={'source':request['source'],'base_sha256':digest(base),'request_sha256':request['sha256'],
-            'physical_qualified':False,'resource_instances':sorted(instances)}
+            'physical_qualified':False,'resource_instances':sorted(instances),
+            'native_or_external_realizations':len(request.get('realizations',[]))}
     if request['unresolved']:
         result={**common,'status':'resource_binding_incomplete','diagnostics':request['unresolved'],
                 'scope':'Missing physical resource interface descriptions; no new RTL prerequisite inferred'}

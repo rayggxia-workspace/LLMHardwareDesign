@@ -1,8 +1,8 @@
-"""Recheck a real #220 plan and expose missing physical bindings, without guessing.
+"""Inspect #220 demands before supplying a resource-interface catalog.
 
-An empty catalog is intentional for this audit: accepted standalone fixtures do
-not supply a product-level correspondence for #220's logical read/write services.
-This report does not call missing input an algorithmic routing impossibility.
+This intentionally empty-catalog diagnostic is not an implementation gate.
+Use flow.py with a supplied library for native/external/new-wire realization.
+Mother-control capacity or memory implementation is outside this tool's scope.
 """
 import argparse
 import json
@@ -36,13 +36,10 @@ def audit(ir_path,plan_path,inventory_directory,output):
             'request_status':request['status'],'unresolved':request['unresolved'],
             'independent_fixture_inventory':inventory,
             'product_routing_ready':False,'physical_qualified':False,
-            'missing_inputs':['Checked logical-service to actual native-signal catalog',
-                              'Single nine-group placed native ODB/netlist/GDS and endpoint export',
-                              'Physical memory gateway replacing the virtual memory services'],
-            'integration_to_verify':['Nine-target mother/control distribution (current accepted mother has two resident targets)',
-                                     'Local PM hardware and distinct instance identities',
-                                     'Whole-product PG/CTS, actual RC, original Liberty and 300MHz constraints'],
-            'scope':'Reports missing product inputs; does not infer infeasibility or invalidate independently accepted fixtures'}
+            'missing_inputs':['Resource-interface catalog is intentionally absent from this diagnostic'],
+            'hardware_prerequisites_inferred':False,
+            'next_tool':'flow.py with hash-bound supplied resource library and native/external/bit-signal declarations',
+            'scope':'Empty-catalog inspection only; not a requirement to implement extra hardware before general routing'}
     (output/'readiness.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({'tasks':len(plan['tasks']),'bundles':len(plan['nets']),
                       'status':request['status'],'unresolved':len(request['unresolved'])}))

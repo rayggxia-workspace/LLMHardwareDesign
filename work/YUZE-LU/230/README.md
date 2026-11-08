@@ -157,3 +157,28 @@ source-230-17.tar SHA253cdeb30a45c1f3355b22a0cc016b65b313a095030fb8bdaa796673a47
 规则 rayggxia-project-collab1.0.0；负责人/操作账号YUZE-LU。登记沿用management-hub
 PR5 pending；缺board配置，Projects unverified/同步pending，复用Issue7交接。
 未自合并、批准、关闭或将Issue标done。独立审查人待指定。
+
+### 逻辑服务与物理网的区分（2026-11-09 CST）
+
+为#220后续工具补充native_service、external_boundary和逐位新连线三种显式实现声明。
+已有预连引用实际资源views/inventory/独立叶宏；外部边界保留真实原生层，不能伪造M10接点。
+resource-services.json是当前五类资源的hash绑定物理附件清单，不认证完整算子/程序语义。
+九组690条真实待接通路的物理回归和#220的18项服务绑定分开记账，不能互相替代。
+早期audit_product_input.py把母控/外存缺项列为工具前置的说法已修正，不再推导新硬件前置要求。
+
+本地49项后端、19项route-contract检查通过；扩跑119项旧综合器测试时29项因本机缺少OR-Tools未启动。
+正在本任务D盘隔离venv按原requirements补齐后重跑；首次pip下载因C盘临时目录空间不足失败，
+改为本任务D盘临时目录和no-cache，不清理他人文件或修改系统配置。
+source-230-68.tar SHA379da25bc541bab7058a03a41ac21622a642f1521c872f27bdaeddce76185491。
+100725等待100662后运行实际#220计划到通用flow；100727替代未执行的100674，等待共同场与flat通过后执行9档STA。
+新增farthest_sink使用实际R图最远端，而非端点名称排序；负例测试覆盖不一致名称/电阻距离。
+完整物理验收仍在继续，没有标记为完成。
+
+
+100662逐实例/逐网比较执行到全部678k网后，在最终回执阶段因KLayout未加载native_inventory失败。
+显式将脚本目录加入sys.path，100730（attempt70）从保留的独立源/实际快照重新比较全部网，
+没有据旧日志手填通过。100731（attempt71）接实际#220计划，100732（attempt72）接最终共同RC/STA；
+它们分别替代未执行并取消的100725/100727。source-230-70.tar SHA35c47c28cabcb03fc0359005d4bcfe8cc7eb58cb8a7dafe85d73c277ad528b10。
+隔离环境补齐原锁定依赖后，全部119项综合器回归通过（3.653s）；51项后端检查通过。
+新增native_connectivity_audit按实际ODB声明的POWER/GROUND角色检查完整终端覆盖与电源短接，
+不按网名猜PG，不把仅信号互不短路视为完整PG通过。共同拓扑/DRC/field/STA继续运行，尚无最终资格。
