@@ -22,23 +22,37 @@ from verify_primitive_cost import verify as verify_cost
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('ir',type=Path);p.add_argument('output',type=Path)
-    p.add_argument('--column-proof',type=Path,required=True);p.add_argument('--row-proof',type=Path)
-    p.add_argument('--instance-services',type=Path,required=True)
+    p.add_argument('--column-proof',type=Path);p.add_argument('--row-proof',type=Path)
+    p.add_argument('--instance-services',type=Path)
+    p.add_argument('--registered-ir',action='store_true')
     p.add_argument('--wire-budget',type=int,required=True);p.add_argument('--width',type=int,default=8)
     p.add_argument('--incumbent',type=Path);p.add_argument('--write-ir',action='store_true')
-    p.add_argument('--policies',nargs='+',choices=['greedy','old-dp','heft','conditional-greedy','conditional-dp'],
-        default=['greedy','old-dp','heft','conditional-greedy','conditional-dp'])
-    a=p.parse_args();a.output.mkdir(exist_ok=False)
+    p.add_argument('--same-pool-baseline',type=Path,action='append',default=[])
+    p.add_argument('--policies',nargs='+',choices=['greedy','old-dp','heft','conditional-greedy','conditional-dp','resource-greedy','resource-dp','price-greedy','price-dp'],
+        default=['greedy','old-dp','heft','conditional-greedy','conditional-dp','resource-greedy','resource-dp'])
+    a=p.parse_args()
+    if a.registered_ir and any(x is not None for x in (a.column_proof,a.row_proof,a.instance_services)):
+        raise ValueError('registered IR and new qualification inputs are mutually exclusive')
+    if not a.registered_ir and (a.column_proof is None or a.instance_services is None):
+        raise ValueError('proof and explicit instance service bindings required')
+    a.output.mkdir(exist_ok=False)
     def write(name,value):
         (a.output/(name+'.json')).write_text(json.dumps(value,indent=2)+'\n',encoding='utf-8')
     write('provenance',{'inputs':{str(f):hashlib.sha256(f.read_bytes()).hexdigest()
-        for f in [a.ir,a.instance_services]+([a.incumbent] if a.incumbent else [])},
+        for f in [a.ir]+([a.instance_services] if a.instance_services else [])+
+                  ([a.incumbent] if a.incumbent else [])+a.same_pool_baseline},
         'module_sha256':{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in Path(__file__).parent.glob('*.py')},
         'wire_budget':a.wire_budget,'width':a.width,'policies':a.policies})
     ir=json.loads(a.ir.read_text(encoding='utf-8'))
-    before=json.dumps(ir['hardware'],sort_keys=True,separators=(',',':'))
-    q=read_qualification(a.column_proof,a.row_proof);write('qualification',q)
-    variants_for(ir,q,service_bindings=json.loads(a.instance_services.read_text(encoding='utf-8')))
+    before=json.dumps({k:v for k,v in ir['hardware'].items() if k not in ('tile_service_profiles','tile_service_bindings')},sort_keys=True,separators=(',',':'))
+    if a.registered_ir:
+        if 'tile_scope' not in ir or 'tile_service_profiles' not in ir['hardware']:
+            raise ValueError('registered tile qualification missing')
+        q=ir['hardware']['tile_service_profiles']
+    else:
+        q=read_qualification(a.column_proof,a.row_proof)
+        variants_for(ir,q,service_bindings=json.loads(a.instance_services.read_text(encoding='utf-8')))
+    write('qualification',q)
     after=json.dumps({k:v for k,v in ir['hardware'].items() if k not in ('tile_service_profiles','tile_service_bindings')},sort_keys=True,separators=(',',':'))
     if before!=after:raise ValueError('native tile recipe changed physical hardware')
     audit=verify_cost(ir);write('native-audit',audit)
@@ -48,10 +62,18 @@ def main():
     if a.incumbent:
         plans['old-pool-incumbent']=json.loads(a.incumbent.read_text(encoding='utf-8'))
         audits['old-pool-incumbent']=verify(ir['tasks'],ir['hardware'],plans['old-pool-incumbent'],wire_budget=a.wire_budget)
+    for i,path in enumerate(a.same_pool_baseline):
+        name='same-pool-baseline-'+str(i)
+        plans[name]=json.loads(path.read_text(encoding='utf-8'))
+        audits[name]=verify(ir['tasks'],ir['hardware'],plans[name],wire_budget=a.wire_budget)
     configurations={'greedy':{'width':1},'old-dp':{'width':a.width},
         'heft':{'width':1,'ready_limit':1,'priority':'heft','rank_policy':'earliest_finish'},
         'conditional-greedy':{'width':1,'rank_policy':'net_conditioned_tail'},
-        'conditional-dp':{'width':a.width,'rank_policy':'net_conditioned_tail'}}
+        'conditional-dp':{'width':a.width,'rank_policy':'net_conditioned_tail'},
+        'resource-greedy':{'width':1,'rank_policy':'net_resource_tail'},
+        'resource-dp':{'width':a.width,'rank_policy':'net_resource_tail'},
+        'price-greedy':{'width':1,'rank_policy':'net_work_price'},
+        'price-dp':{'width':a.width,'rank_policy':'net_work_price'}}
     for policy in a.policies:
         start=time.monotonic()
         plan=search(ir['tasks'],ir['hardware'],wire_budget=a.wire_budget,**configurations[policy])
@@ -67,13 +89,14 @@ def main():
         write(label,operation(ir,selected))
     tasks={t['id']:t for t in ir['tasks']}
     chosen=[r['id'] for r in selected['tasks'] if 'dot_tile' in next(b for b in tasks[r['id']]['bindings'] if b['id']==r['binding'])]
-    baseline=min((v['makespan'] for k,v in plans.items() if k in ('greedy','old-dp','heft')),default=None)
-    proposed=min((v['makespan'] for k,v in plans.items() if k.startswith('conditional-')),default=None)
+    baseline=min((v['makespan'] for k,v in plans.items() if k in ('greedy','old-dp','heft','resource-greedy','conditional-greedy','price-greedy') or k.startswith('same-pool-baseline-')),default=None)
+    proposed=min((v['makespan'] for k,v in plans.items() if k in ('conditional-dp','resource-dp','price-dp')),default=None)
     result={'passed':True,'selected_source':name,'selected_tile_tasks':chosen,'tile_scope':ir['tile_scope'],
         'plans':{k:{f:v[f] for f in ('makespan','external_words','wire_cost')} for k,v in plans.items()},
         'search_seconds':times,'native_audit':audit,'plan_audits':audits,
-        'same_pool_conditional_search_gain_fraction':1-proposed/baseline if proposed and baseline else None,
-        'backend_gain_fraction':1-selected['makespan']/plans['old-pool-incumbent']['makespan'] if a.incumbent else None,
+        'same_pool_best_search_gain_fraction':1-proposed/baseline if proposed and baseline else None,
+        'pool_common_baseline_gain_fraction':1-baseline/plans['old-pool-incumbent']['makespan'] if a.incumbent and baseline else None,
+        'old_pool_to_new_plan_change_fraction':1-selected['makespan']/plans['old-pool-incumbent']['makespan'] if a.incumbent else None,
         'physical_hardware_sha256':hashlib.sha256(after.encode()).hexdigest(),
         'scope':'qualified native tile recipe and conservative descriptors; source graph scope unchanged; no new full-model numerical/SystemC/RTL/system/energy or token/s qualification'}
     write('summary',result);print(json.dumps(result),flush=True)

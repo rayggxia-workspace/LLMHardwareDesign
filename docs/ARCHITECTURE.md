@@ -265,3 +265,13 @@ PR220新增[外存/驻留合同](../project/experiments/block_synthesis/MEMORY_R
 成本配方`tile_recipe.py`包含实际E/M转换和显式虚拟外存复制；尚未接入完整综合候选。
 Windows与独立Linux各169项：`python -m unittest discover -s project/experiments/block_synthesis -p 'test_*.py'`。
 前轮阶段计划101213完整3B三输入数值逐位通过，具体证据和边界见[迭代6](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_6.md)。
+
+2026-11-09迭代8更新：受限tile已进入共同候选并显式处理旧S前缀失效，完整3B贪心/DP各三次整数数值通过。
+历史NExp的原生Stats模板另有语义缺口，不能由向量数值替代；现行[NExp合同](../project/experiments/block_synthesis/NEXP_CONTRACT.md)
+使用两次显式Stats，三个初态各653例N RTL与旧模板负对照通过。
+`recompile_ir.py OLD_IR NEW_DIRECTORY`从保存的同一向量程序重新生成服务并审计，所有计划需重新调度。
+`reuse_validate.py --tile-worker WORKER IR PLAN CALIBRATION ACTIVATIONS LOGITS NEW_OUTPUT ORACLE`可选用C++有限S宿主加速，
+`native_tile_probe.py WORKER NEW_OUTPUT`检查68个独立数值/计数例；不因此新增RTL、计时或能耗资格。
+当前完整检查为187项，命令同上；[价格下界](../project/experiments/block_synthesis/WORK_PRICE_BOUND.md)仅消融，
+`utilization.py`另给tile E整段预约与实际串行E段模型账，差额不是可直接回收的周期。
+范围、原件和仍未完成项见[迭代8](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_8.md)。

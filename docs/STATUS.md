@@ -1,5 +1,12 @@
 # 当前状态
 
+2026-11-09，#219/PR220[迭代8](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_8.md)部分交付：
+新tile贪心/DP各三次完整3B整数数值通过；发现历史NExp原生模板与独立参考不一致，已改两次显式Stats，
+三个初态各653例N RTL及负对照通过。旧向量数值不证明旧原生命令，重编译的整图贪心三输入数值已逐位通过，完整DP对照仍待终态。
+Windows/Linux各187项；修正后FFN较最强同池基线3.890449%，价格下界无新增收益，保持消融；一般驻留/合法阶段预约继续推进。
+100972已自然完成；算法约20%、完整KV/校准能耗/token/s与最优适配对照继续in_progress，待独立审查不自合并。
+登记pending，看板unverified/同步pending。
+
 2026-11-09，#219/PR220[迭代7](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_7.md)部分交付：
 受限tile共同候选、缓存失效、独立检查及有限S小例子数值通过，Windows/Linux各178项。
 真实FFN规划搬运减67.0961%，该计划/新整网数值仍待验；按显式实例绑定外围服务，首轮C/F/J成本试验作废留证。

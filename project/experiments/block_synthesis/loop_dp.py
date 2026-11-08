@@ -31,9 +31,9 @@ class State:
 
 
 def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahead=True,
-           priority='minimum_tail',rank_policy='critical_bound'):
+           priority='minimum_tail',rank_policy='critical_bound',work_price_rounds=12):
     if width<1 or ready_limit<1:raise ValueError('positive DP bounds required')
-    if priority not in ('minimum_tail','heft') or rank_policy not in ('critical_bound','earliest_finish','net_conditioned_tail','net_resource_tail'):
+    if priority not in ('minimum_tail','heft') or rank_policy not in ('critical_bound','earliest_finish','net_conditioned_tail','net_resource_tail','net_work_price'):
         raise ValueError('unknown loop scheduling policy')
     # These are physical alternatives, not time-shared resources. Preserve
     # the entire product's selected union even after its last user finishes.
@@ -77,10 +77,14 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
                   frozenset(n for n in ids if not parents[n]))
     completions=completion_covers(tasks,hardware,wire_budget=wire_budget) if wire_lookahead else None
     conditional=None
-    if rank_policy in ('net_conditioned_tail','net_resource_tail'):
+    if rank_policy in ('net_conditioned_tail','net_resource_tail','net_work_price'):
         from net_tail import ConditionalTail
         conditional=ConditionalTail(tasks,hardware,children,tuple(tail),fixed=fixed,
             conflicts=conflicts,wire_budget=wire_budget,completions=completions)
+    work_price=None
+    if rank_policy=='net_work_price':
+        from work_price import WorkPriceBound
+        work_price=WorkPriceBound(conditional,tasks,hardware,rounds=work_price_rounds)
     beam=[initial];expanded=0;pruned=0;merged=0;static_rejections=0;completion_rejections=0
     def ready_for(state):
         # A transition can only enable children of its selected task. The
@@ -100,11 +104,15 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
             if value is None:return float('inf'),s.makespan,s.traffic,netcost(s.nets)
             if any(type(at)!=int for at in arrivals) or type(value)!=int:
                 raise TypeError('noninteger frontier/tail '+repr((task['id'],arrivals,value)))
-            if rank_policy=='net_resource_tail':
+            if rank_policy in ('net_resource_tail','net_work_price'):
                 finish=conditional.ready_finish(task['id'],s.nets,s.resources,max(arrivals,default=0))
                 if finish is None:return float('inf'),s.makespan,s.traffic,netcost(s.nets)
                 bounds.append(finish+max((state_tail[c] for c in children[task['id']]),default=0))
             else:bounds.append(max(arrivals,default=0)+value)
+        if work_price is not None:
+            work_bound=work_price.get(s)
+            if work_bound is None:return float('inf'),s.makespan,s.traffic,netcost(s.nets)
+            bounds.append(work_bound)
         bound=max(bounds)
         return bound,s.makespan,s.traffic,netcost(s.nets)
     for depth in range(len(tasks)):
@@ -162,6 +170,7 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
         'final_read_cache':best.cache,
         'scheduling_policy':{'priority':priority,'rank':rank_policy},
         'conditional_tail_statistics':conditional.statistics() if conditional is not None else None,
+        'work_price_statistics':work_price.statistics() if work_price is not None else None,
         'optimality':'bounded frontier DP with append-only resource calendars; no global optimality guarantee'}
 
 

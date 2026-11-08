@@ -50,12 +50,16 @@ def order_program(program,plan,stage_map=None):
 
 
 class DotCache:
-    def __init__(self,ir,plan):
+    def __init__(self,ir,plan,*,tile_worker=None):
         tasks={t['id']:t for t in ir['tasks']};self.selected={};self.resident={};self.events=[]
         self.capacity={s:v['words'] for s,v in ir['hardware']['sites'].items()}
         self.prepared=PreparedOperands(ir)
         from tile_replay import TileReplay
-        self.tiles=TileReplay(ir);self.tile_final={}
+        if tile_worker:
+            from native_tile_replay import NativeTileReplay
+            self.tiles=NativeTileReplay(ir,tile_worker)
+        else:self.tiles=TileReplay(ir)
+        self.tile_final={}
         self.stage_map=ir.get('primitive_stages')
         for row in plan['tasks']:
             b=next(b for b in tasks[row['id']]['bindings'] if b['id']==row['binding'])
@@ -152,6 +156,7 @@ class DotCache:
         expected_tiles=sum('dot_tile' in b for b,_ in self.selected.values())
         if len(self.tiles.events)!=expected_tiles or self.tile_final:
             raise ValueError('tile execution/finalization coverage differs')
+        if hasattr(self.tiles,'close'):self.tiles.close()
         return {'passed':True,'calls':len(self.events),'hits':sum(e['cache_hit'] for e in self.events),
             'tile_calls':len(self.tiles.events),'tile_events':self.tiles.events,
             'preparation':self.prepared.report(),

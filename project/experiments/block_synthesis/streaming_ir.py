@@ -42,7 +42,7 @@ def templates(profile):
     read=leaf('M_READ','ReadFinal(width=32,shift=recipe_shift)',writes=1)
     partial=seq(scale,load_a,load_b,execute)
     e=lambda op,n:leaf('E','E(op='+str(op)+',shift=0)',n,1,op=op,shift=0)
-    return {
+    library = {
         'split32':seq(scale,load_a,load_b,
             leaf('M','Execute(rows=1,columns=1,last_k=2,b=[0,1],clear=1)',columns=1,k=2),
             leaf('M_READ','ReadFinal(width=16,shift=0)',writes=1),
@@ -71,6 +71,10 @@ def templates(profile):
         'n_rms_stats':leaf('N','Stats(count=1)',1,mode=1,op=1,count=1),
         'n_l2_stats':leaf('N','Stats(count=1)',1,mode=2,op=1,count=1),
         'n_soft_stats':leaf('N','Stats(count=1)',1,mode=0,op=1,count=1),
+        # A scalar S32 record does not promise a zero second S16 lane.
+        # Read the existing immutable zero packet explicitly instead of
+        # pretending Stats(count=2) can pack [x,0] without a real service.
+        'n_soft_zero_stats':leaf('N','Stats(count=1,record=constant:0)',1,mode=0,op=1,count=1),
         'n_rms_finalize':leaf('N','Finalize()',mode=1,op=2,count=0),
         'n_l2_finalize':leaf('N','Finalize()',mode=2,op=2,count=0),
         'n_rms_factor':leaf('N','ReadFactor()',writes=1,mode=1,op=11,count=0),
@@ -78,6 +82,10 @@ def templates(profile):
         'n_exp':leaf('N','Exp(count=1)',1,1,mode=0,op=3,count=1),
         'copy':{'transfer':True,'read_words':1,'write_words':1,'macro':'IO'},
     }
+    library['n_soft_stats']['operand_source']='primitive_input_0.low_s16'
+    library['n_soft_zero_stats']['operand_source']='native_constant:0.low_s16'
+    library['n_exp']['operand_source']='primitive_input_0.low_s16'
+    return library
 
 
 def native_operand_components(program):
@@ -145,7 +153,8 @@ def primitive_body(node,components=None,preparation=None):
         which='n_rms' if attrs['mode']==1 else 'n_l2'
         return repeat(n,seq(call(which+'_begin'),repeat(attrs['length'],call(which+'_stats')),
             call(which+'_finalize'),call(which+'_factor'))),64
-    if op=='NExp':return repeat(n,seq(call('n_soft_begin'),call('n_soft_stats'),call('n_soft_finalize'),call('n_exp'))),64
+    if op=='NExp':return repeat(n,seq(call('n_soft_begin'),call('n_soft_stats'),
+        call('n_soft_zero_stats'),call('n_soft_finalize'),call('n_exp'))),64
     raise ValueError('no native lowering for emitted primitive '+op)
 
 
@@ -299,6 +308,8 @@ def compile_graph(model,hardware,trace,profile,primitive_program=None):
             'commands':'Scale; LoadA; LoadB half0; LoadB half1; Execute; ReadFinal; E Min/Select; N Begin/Stats/Finalize/ReadFactor or Exp',
             'state':'prepare all components in external scratch before M accumulator; keep context until final read ACK',
             'local_slots':'read up to three input words into S[0:3]; output S[3]; staging S[4:8]; wait every STORE ACK',
+            'nexp':{'kind':'scalar-relative-exp-v2','statistics':['input.low_s16','constant:0.low_s16'],
+                'output':'U16 zero-extended low S32','packing':'two explicit count=1 Stats; no implicit zero lane'},
             'control':'coefficient signs/scale/read shift from each typed primitive; negative compare uses saturated S16 difference'},
         'external_regions':regions,'required_external_bytes':external*16,'capacity_qualified':capacity is not None,
         'timing_scope':'conservative serial native-command plus per-word PR182 virtual memory bound; not system cycles',

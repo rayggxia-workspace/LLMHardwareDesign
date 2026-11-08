@@ -44,6 +44,7 @@ def report(ir, plan):
     for node in ir['primitive_program']['instructions']:
         if node['op']=='Dot': dots.setdefault(node['kernel'], []).append(node)
     total = Counter(); reservations = Counter(); useful = Counter(); by_op = {}; opportunities = [];wait_work=0
+    tile_auxiliary=[]
     split_work = counts({'call':'split32'}, ir['native_templates'])
     for row in leaf_plan['tasks']:
         task = tasks[row['id']]
@@ -57,6 +58,18 @@ def report(ir, plan):
         if 'dot_tile' in binding:
             from tile_accounting import charge as tile_charge
             costs=tile_charge(binding,hardware)
+            if 'E' in binding['macro_binding']:
+                group=binding['macro_binding']['E'];meta=hardware['leaf_inventory'][group]
+                services=binding['tile_work']['e_sign_services']
+                descriptors=services*(descriptor_ticks(hardware['virtual_memory'],1,'load',meta['io_write_ticks'])+
+                    descriptor_ticks(hardware['virtual_memory'],1,'store',meta['io_read_ticks']))
+                segment=costs['tile_E_service']+descriptors
+                reserved=row['end']-row['start']
+                if not 0<=segment<=reserved:raise ValueError('tile E segment/reservation attribution differs')
+                tile_auxiliary.append({'task':row['id'],'resource':group+'.E','reserved_ticks':reserved,
+                    'E_service_ticks':costs['tile_E_service'],'E_descriptor_ticks':descriptors,
+                    'serial_E_segment_ticks':segment,'reservation_minus_segment_ticks':reserved-segment,
+                    'segment_fraction_of_reservation':segment/reserved})
         else:costs = charge(work, binding, hardware)
         duration = row['end']-row['start']
         wait = row.get('evaluation',{}).get('channel_wait_ticks',0)
@@ -96,6 +109,8 @@ def report(ir, plan):
     return {'audits':audits, 'makespan':plan['makespan'], 'serial_work':sum(total.values()),
         'cost_components':dict(total), 'arbitration_wait_work':wait_work,
         'by_operator':{k:dict(v) for k,v in by_op.items()},
+        'tile_auxiliary_reservations':{'services':tile_auxiliary,
+            'scope':'whole tile reservation versus serialized E service+descriptors, model ticks only; opportunity requiring explicit program/S/ACK proof, not reclaimable cycles or chip utilization'},
         'resources':{r:{'reserved_ticks':n, 'useful_core_ticks':useful[r],
                        'reserved_fraction_of_makespan':n/(plan['makespan']*hardware['resources'][r]),
                        'useful_core_fraction_of_makespan':useful[r]/(plan['makespan']*hardware['resources'][r])}

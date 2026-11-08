@@ -10,9 +10,54 @@ from leaf_catalog import duration
 from memory import descriptor_ticks
 
 
+def verify_nexp_contract(ir):
+    """Check the relative-exp program, rather than counting a wrong recipe.
+
+    The independent vector oracle packs [x,0]. Native scalar records only
+    guarantee low S32, so the compiler must issue two actual Stats reads.
+    This deliberately rejects the historical Stats(x)-only IR.
+    """
+    nodes=[n for n in ir['primitive_program']['instructions'] if n['op']=='NExp']
+    if not nodes:return
+    contract={'kind':'scalar-relative-exp-v2','statistics':['input.low_s16','constant:0.low_s16'],
+        'output':'U16 zero-extended low S32','packing':'two explicit count=1 Stats; no implicit zero lane'}
+    if ir.get('native_call_abi',{}).get('nexp')!=contract:
+        raise ValueError('NExp scalar relative-exp ABI differs')
+    zero=ir.get('native_constants',{}).get('0',{})
+    if (zero.get('low32_raw_bits'),zero.get('words'),zero.get('record_bytes'))!=(0,1,16):
+        raise ValueError('NExp immutable zero operand differs')
+    names=('n_soft_begin','n_soft_stats','n_soft_zero_stats','n_soft_finalize','n_exp')
+    expected_parameters=[{'mode':0,'op':op,'count':count} for op,count in ((0,0),(1,1),(1,1),(2,0),(3,1))]
+    for name,parameters,reads,writes,source in zip(names,expected_parameters,(0,1,1,0,1),(0,0,0,0,1),
+            (None,'primitive_input_0.low_s16','native_constant:0.low_s16',None,'primitive_input_0.low_s16')):
+        leaf=ir['native_templates'].get(name,{})
+        if (leaf.get('native'),leaf.get('macro'),leaf.get('parameters'),leaf.get('read_words'),
+                leaf.get('write_words'),leaf.get('operand_source'))!=('N','N',parameters,reads,writes,source):
+            raise ValueError('NExp native command/operand differs '+name)
+    expected=defaultdict(Counter)
+    staged='primitive_stages' in ir
+    for node in nodes:expected[node['id'] if staged else node['kernel']][math.prod(node['shape'])]+=1
+    sequence=[{'call':name} for name in names]
+    def find(body,result):
+        if 'repeat' in body and body.get('body',{}).get('sequence')==sequence:
+            if set(body)!={'repeat','body'} or set(body['body'])!={'sequence'}:
+                raise ValueError('NExp unexpected loop metadata')
+            result[body['repeat']]+=1;return
+        if body.get('call') in names:raise ValueError('NExp missing or reordered relative-exp commands')
+        if 'repeat' in body:find(body['body'],result)
+        for child in body.get('sequence',[]):find(child,result)
+    actual={}
+    for row in ir['program']:
+        if 'body' in row:
+            found=Counter();find(row['body'],found)
+            if found:actual[row['id']]=found
+    if dict(expected)!=actual:raise ValueError('NExp source loop coverage differs')
+
+
 def verify(ir):
     program=ir.get('primitive_program')
     if not program:raise ValueError('executable primitive program required')
+    verify_nexp_contract(ir)
     library=ir['native_templates'];profile=ir['hardware']['native_leaf_profiles']
     if 'phase_native_templates' in ir['hardware'] and ir['hardware']['phase_native_templates'] != library:
         raise ValueError('phase templates differ from independently checked native library')
@@ -78,7 +123,7 @@ def verify(ir):
             which='n_rms' if a['mode']==1 else 'n_l2'
             work=combine((1,primitive[which+'_begin']),(a['length'],primitive[which+'_stats']),
                 (1,primitive[which+'_finalize']),(1,primitive[which+'_factor']))
-        elif op=='NExp':work=combine(*[(1,primitive[k]) for k in ('n_soft_begin','n_soft_stats','n_soft_finalize','n_exp')])
+        elif op=='NExp':work=combine(*[(1,primitive[k]) for k in ('n_soft_begin','n_soft_stats','n_soft_zero_stats','n_soft_finalize','n_exp')])
         else:raise ValueError('unregistered executed primitive '+op)
         total=Counter({k:n*v for k,v in work.items()})
         if node['id'] in preparations:

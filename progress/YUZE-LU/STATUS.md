@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+2026-11-09 CST：#219/PR220[迭代8](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_8.md)部分交付。
+tile贪心/DP各三次完整3B整数数值逐位通过；NExp历史原生模板缺零Stats，已修并通过三初态各653例真实N及负对照。
+旧向量数值不证明旧原生命令。187项Windows/Linux通过，重编译整图贪心三输入数值逐位通过；完整DP对照待终态，修正FFN额外3.890449%，价格下界无新增收益。
+发现整tile锁E远长于实际E段，下一轮按真实数据/S/上下文/ACK边界研究释放，不直接扣时间；强基线共享新能力。
+20%、一般驻留、完整KV/SystemC能耗/token/s和最优适配对照继续未完成。Issue219 in_progress，待独立审查不自合并；登记pending，看板unverified/同步pending。
+
 2026-11-09 CST：#219/PR220[迭代7](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_7.md)部分交付。
 受限tile共同候选/缓存失效/独立审计与有限S小例子数值通过，Windows/Linux各178项；真实FFN规划搬运减67.0961%。
 该计划/新整网数值仍待验，条件策略相对同池旧DP额外0，不计后端扩展为20%。外围服务显式实例资格，首次C/F/J试验作废留证。
