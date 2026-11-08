@@ -2,63 +2,69 @@
 
 Issue179 / Draft PR180；Melodydt；2026-11-08 Asia/Shanghai；task/179-local-block-continuation。
 
-## 当前进度：R8.1、R8.2有界交付完成，待独立审查（2026-11-08，Asia/Shanghai）
+## 当前状态
 
-已形成五类main64接口/能力/身份合同，以及统一main64_boot_top候选：1母控、2局控、3个16KiB程序SRAM、12程序bank，Block私有S/T另计。每次只选两个端点，九配对是九种编译期变体，不是九局控同时驻留。main原始225份源保持一致；模块名字隔离可逆，P/U未使用close输入固定0，诊断/未用输出显式空接，J的十个未用输出绑定可逆补齐。
+R8.1/R8.2合同与实际三PM候选之后，R8.3正式任务编译/独立审计和R8.4有界传输/协调恢复已完成本轮研究验证。R8.3服务器81/81；R8.4集成279/279（81正常、198故障/恢复）、链路单元21/21、九配置控制结构9/9。最终软件main64 1301/1301、safe64 1304/1304；旧compiler1218和matrix141重跑通过。执行次数不等于独立覆盖项，尚无新覆盖率、映射STA、等价或物理签核。
 
-R8.1软件45/45，五类实际生成接口逐位核对；R8.2主矩阵189/189、同DUT部署保护补充27/27，合计216次执行，九配置完整native/control lint及通用结构综合、层次和1MC/2LC/3PM/12bank/2原生组计数9/9。无LATCH、MULTIDRIVEN、UNOPTFLAT、PINMISSING、WIDTHTRUNC控制禁项；其余警告保留。旧compiler1218、matrix141共1359软件检查重跑通过，与新45项分列，不扩大旧编译器能力。
+原始main c4d7b960225份源保持逐字锁定；CFJ247、U31和共享母控4份依赖继续校验。R8.4在生成副本的服务边界加入halt/排空/观测，保留main自身LC与native逻辑，不以旧frontend局控覆盖P/U。PR176仍08f2ea20，本轮没有新增上游更新。
 
-全部程序从主机口写入、实际读回CRC、VERIFY/PREPARE/DEPLOY后执行，DUT无network_pm；三个PM及私有S使用既有SRAM封装与OpenRAM bank功能模型，控制综合将bank作为宏边界。本轮不替代存储器或组合物理验收。普通S预部署初始化，J每次join补充片段；U以真实SEND和对端S写后再读出回送核对数值；U/F/C到P验证被动RAW128复制，J/P只验证同组独立计算，不宣称J→P提交链。
+## 实现与复现入口
 
-源码已上传PR180，提交38fc1920；实际主矩阵DUT快照36f9b9bb，保护测试快照9113b585，补充逐文件证明DUT相同。输入/镜像/日志/结果SHA已在服务器及本机核验，主矩阵与结构100472_0-8、保护100484_0-8全部结束。先前失败轮次保留为历史，不计入216。执行ISA64位、单时钟、3.333333333ns目标不变；没有新增覆盖率、映射STA或物理结果。
-
-下一步R8.3把新合同接入编译器和独立audit；R8.4完整身份/传输/取消/恢复（含J→P）；R8.5有界矩阵覆盖闭环；R8.6按新top重新冻结源/宏/SDC，再做组合时序及后端。当前为有界候选交付，不标全部前端完成。Issue179 in_progress，PR Draft未合并，独立审查待指定；登记pending、看板未核验。
-
-## 当前实现入口
-
-| 内容 | 入口 |
+| 内容 | 正式入口 |
 | --- | --- |
-| R8.1机器合同和软件核对 | [contract.json](../../project/control_main64_boot_v1/contract.json)、[contract.py](../../project/control_main64_boot_v1/contract.py)、[test_contract.py](../../project/control_main64_boot_v1/test_contract.py) |
-| R8.2顶层、主机和端点 | [README](../../project/control_main64_boot_v1/README.md)、main64_boot_top / main64_control_top / main64_host_front / main64_endpoint |
-| 原始main源和选择 | [main64来源锁](../../project/control_main64_v1/main-lock.json)、[原生基线入口](../../project/control_main64_v1/README.md) |
-| 原生生成与来源核验 | [stage.py](../../project/control_main64_boot_v1/stage.py)，五类实际端口和可逆名字隔离，补齐未用输出 |
-| 完整主机驱动回归 | [run.py](../../project/control_main64_boot_v1/run.py)、[部署保护](../../project/control_main64_boot_v1/guards.py)；手写程序，不冒充R8.3编译器 |
-| 结构及原始回执核验 | [structure.py](../../project/control_main64_boot_v1/structure.py)、[collect.py](../../project/control_main64_boot_v1/collect.py) |
-| 本轮技术验证 | [R8.1/R8.2索引](../../work/Melodydt/179/control-r81-r82-validation.json) |
-| 方案及指令详解 | [共享详细PDF](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)；完整原方案MD/PDF在本地原位维护 |
+| 原始main64源锁 | [control_main64_v1](../../project/control_main64_v1/README.md) |
+| R8.1/R8.2实际三PM与能力合同 | [control_main64_boot_v1](../../project/control_main64_boot_v1/README.md) |
+| R8.3任务、独立审计、装载计划 | [task compiler](../../project/control_task_compiler_v1/README.md)、main64_compiler.py、main64_audit.py、main64_host.py |
+| 新任务形状/目标登记 | [main64-schema.json](../../project/control_task_compiler_v1/main64-schema.json)、[main64-targets.json](../../project/control_task_compiler_v1/main64-targets.json) |
+| R8.4受监督顶层与精确管理编码 | [recovery README](../../project/control_main64_recovery_v1/README.md)、[机器合同](../../project/control_main64_recovery_v1/contract.json)、generate.py/stage.py |
+| R8.4编译/独立路由审计 | safe64_compiler.py、safe64_audit.py、[safe64-schema.json](../../project/control_task_compiler_v1/safe64-schema.json)、[safe64-targets.json](../../project/control_task_compiler_v1/safe64-targets.json) |
+| 验证索引 | [R8.3](../../work/Melodydt/179/control-r83-validation.json)、[R8.4](../../work/Melodydt/179/control-r84-validation.json) |
+| 指令与方案详解 | [共享PDF](CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)，原完整历史方案MD/PDF本地原位维护 |
 
-## 已确认的合同与取舍
+## 当前硬件合同
 
-topology为整组身份：main MC将它放入任务包[223:192]，LC要求相同才接收。故母控、两端LC、三份镜像及task记录共用0x01938000+KIND0*16+KIND1，类型单列，LC ID0/1。主机BEGIN错拓扑返回3。ABI0x01930001、capacity0x17630001；16字节对齐、128位PM口，镜像上限MC4736/LC8320字节，256指令、16 execution描述符。主机有完整CRC门，无proof旁路。
+每次是两个驻留端点，九种编译期配对：U/U、F/F、C/C、P/P、J/J、U/P、F/P、C/P、J/P；不是九局控同时驻留。1MC/2LC/3PM，每PM16KiB/4bank；MC已有内部PM，仅增加两个LC PM。Block私有S/T另计。单时钟、64位执行指令、目标3.333333333ns保持。功能bench10ns匹配bank模型，不代表修改实现周期，也不能代替新组合STA。
 
-U E三源、N两源；main U无普通主机S_READ，明确拒绝而不等待。CF未预约写受部署状态约束，因此普通S初始化在DEPLOY前完成；部署后普通S_WRITE拒绝。J片段和已提交输出独立管理，每次join消耗片段租约，重复任务重新提交片段。CF主机读采用main已有verify_read选项的新封装，不能借用旧物理资格。可选对象close输入固定0，不将对象close程序授予当前三指令局控子集资格。
+三镜像共享cohort topology=0x01938000+KIND0*16+KIND1，类型另列、LC ID0/1；ABI0x01930001、capacity0x17630001。当前准入MC4736/LC8320字节，256条指令、16 execution表项。程序由主机WRITE16、真实READ16/CRC、VERIFY/PREPARE，再完整初始化后DEPLOY/START；无proof或测试台PM旁路。64位L_EXEC引用独立128字节执行记录，新的512位传输ticket不是加长执行指令。
 
-## 实际通过率和边界
+U E允许两/三源，N最多两源；N统计8元素的归一化重放预算被普通N5与N→E配对共同消耗，禁止重复消费同一窗口。CF G→E、P M→G和J E→S保持main路径；P M→G为两S16结果打包，不能按单S32建模。U无普通S_READ，结果经真实SEND验证。J每次重新提交片段，普通J输出先消费提交FIFO再做普通S主机访问。所有ordinary S初始化写在DEPLOY前。
 
-| 检查 | 实际结果 |
+## 传输与恢复
+
+R8.3 schema main64-native-tasks/1：U/F/C→P以源任务完成后再CALL P的顺序做RAW128被动复制；J/P为独立任务。R8.4另用safe64-native-tasks/1与受监督顶层，不给J编造SEND或给P编造RESERVE/RECEIVE。
+
+R8.4每方向一个保持槽与512位ticket，绑定两端服务/预约身份、generation、START sequence、topology、两个image ID、两个Block ID、地址、tag和字索引。只有目的实际SRAM响应记commit；错误ACK不释放源。U/U双向写入后从目的S读出回送，J→P逐字检查提交FIFO身份，最多4字，源终端保持到完整路由提交/ACK，P随后启动。RAW128仍不提供数值格式转换。
+
+halt阻止新的native服务，已接受的宏命令与存储回执排空。已提出的写valid不可撤回；尚未提出的字可以显式abort但不记commit。外层主机/失败终端与epoch水位跨内层复位保留。NORMAL→DRAIN→RESET→WAIT_READY；排空超时进QUARANTINE并保留所有权，消费失败结果后重试。用户mask只作诊断，实际为完整组协调复位，随后新epoch完整重装和供数。失败终端只消费一次。
+
+op15为主机管理命令，sub0取消、sub1协调复位、sub2状态、sub3隔离重试、sub4路线配置。sub4在未运行/未部署且无待处理义务时接受：direction1、base10、count3、first_service_sequence32、stride8、tag32，完整位段见README。编译器/audit/目标登记同版绑定；没有改变执行ISA。
+
+## 实际验证
+
+| 检查 | 结果与版本 |
 | --- | --- |
-| R8.1合同 | 45/45软件，五类实际接口一致 |
-| R8.2功能主矩阵 | 9配对×7模式×3初态=189/189 |
-| 部署后保护补充 | 9配对×3初态=27/27；DUT源逐项相同，保留坏ABI/拓扑BEGIN不破坏原部署等检查 |
-| 控制结构 | 9/9；每配置1MC/2LC/3PM/12程序bank/2原生数据组；禁项为零 |
-| 旧软件回归 | compiler1218/1218、matrix141/141；不等于接入新合同 |
-| 管理结构 | check_project.py PASS；不替代硬件/物理/权限 |
+| R8.3 RTL | 81/81，快照ddfa9ae，九配对×三程序×三初态；Slurm100527_0-8均COMPLETED/0:0 |
+| R8.3软件 | 1301/1301，含后补2项目标/形状核对；原1299项及初次失败来源保留 |
+| R8.4 RTL | 279/279，快照8a42dba，Slurm100544_0-8均COMPLETED/0:0 |
+| R8.4软件 | 1304/1304，独立字节/路由变异、语义拒绝、CLI与目标元数据 |
+| R8.4结构/单元 | 9/9通用控制综合及禁项lint；链路21/21，单元目的回执由协议驱动器提供 |
+| 来源与实际存储 | 输入607/628份、镜像/日志/结构SHA在服务器和本机核验；R8.4当前31份仓库源码（含主机测试台）与运行逐字相同 |
+| 旧软件与管理 | 1359/1359，check_project.py与线上CI分别记录；不等同新硬件或物理资格 |
 
-主矩阵7模式：正常、重复任务、装载CRC期间复位、读回CRC破坏后重装、世代拒绝、ABORT恢复、非法native_op=0xffff（main返回5）后整组复位重装。三初态为(1,143)/(2,143)/(2,144)。216是执行次数，补充场景存在路径重叠；没有宣称216独立覆盖项或新的覆盖率。
+R8.4故障覆盖：精确取消/外来取消拒绝、外来native返回身份、非法native自动恢复、已接受写取消、错ACK与源保活、超时隔离及重试、未提出字取消、完整组复位和双U反方向错generation ACK。每次故障后使用不同epoch/地址/镜像/输入重新装载，验证正常执行、旧epoch拒绝、无重复终端、halt无新native接受。七类链路单元另查不可撤回offer和假ACK。
 
-U/U数值覆盖两/三源FMA、同时发送、目的S写后再次读出回送及实际写ACK；U/F/C到P仅指定被动RAW复制，不声称数值格式兼容；J/P只证明同组部署及两类独立计算。九种配对均为编译期双端点配置：U/U、F/F、C/C、P/P、J/J、U/P、F/P、C/P、J/P。
+R8.3首轮100518、R8.4预检100537/100540保留原始记录，不累加到最终通过率。R8.3修正N预算、P打包参考和J消费顺序；R8.4修正未提出字故障注入的信号别名，并在最终同版完整重跑。没有删除检查绕过失败。
 
-原始main64的123例、旧1690例及九配置旧综合回执保持各自源版本；当前候选不继承它们的物理资格。主存储器使用实际封装/已验收bank功能模型，不把功能模型里的数组视为重新完成物理验收；控制结构综合显式使用bank/native宏边界。新组合映射、WNS/TNS、等价、CTS/布线未执行。
+## 下一步
 
-## 接续顺序
+- **R8.5**：建立统一覆盖模型，扩展周期交错/回复背压/取消与结果竞态/错误身份等未覆盖清单，完成覆盖闭环；现有通过次数不是完备覆盖证明。
+- **R8.6**：按受监督新顶层重新冻结完整源码、参数、层次边界、SRAM视图、SDC及综合复现包。当前9份通用结构综合不是映射时序。
+- 随后组合映射STA、等价/网表、CTS/布线及物理验收。旧1690例、main独立时序或旧综合包不授予新组合资格。
 
-1. **R8.3**：新合同接入task compiler、独立audit及装载计划；U三源/直接通路、整组topology和预部署初始化/J租约顺序一致；拒绝不支持项。
-2. **R8.4**：补齐完整身份ACK、目的预约/所有权、取消排空、隔离/重试和协调复位，完成J→P提交链及适用的双向故障用例。
-3. **R8.5**：上述统一系统的完整有界矩阵、断言和覆盖闭环，保留未覆盖清单，核对数值域和字节计数。
-4. **R8.6**：按新top重建源/参数/宏及SRAM视图/SDC和复现包；再进入组合映射STA、网表和物理阶段。旧freeze仍属于旧top。
+完整LLM图导入、动态形状、任意规模调度/路由和数值格式转换仍是后续目标。当前Block RTL不再是这些控制侧工作的主要阻塞。
 
-完整LLM图导入、动态形状及任意规模调度/路由仍属进一步目标。本分支当前母控仍两驻留目标；不能解释为五类同时存在或九局控系统。
+## 协作状态
 
-## 状态与恢复
+本轮成果仍经Draft PR180交付，独立审查人待指定，未自合并；Issue179整体仍in_progress，R8.5/R8.6未完成。登记management-hub PR5 open未合并=pending；无board.json或Projects工具，看板unverified、同步pending，待具备权限管理员处理。完整内部历史方案、项目/个人进度、ARCHITECTURE和服务器交接只在本地维护；共享当前指南、PDF、源码和技术索引独立上传。所有本轮作业已结束，没有设置聊天外监测。
 
-PR176再次读取仍08f2ea20，main仍c4d7b960。源码38fc1920已按显式清单上传。完整内部历史方案、STATUS、个人进度、ARCHITECTURE及服务器交接保持本地；共享当前指南、PDF、代码和技术索引单独上传。独立审查待指定、PR Draft未合并，Issue179保持in_progress。登记management-hub PR5 pending；无board.json/Projects工具，看板unverified、同步pending，待具备权限管理员核验。所有本轮作业已结束，不宣称聊天外自动监测。
+本轮源提交：[eb524aa7](https://github.com/rayggxia-workspace/LLMHardwareDesign/commit/eb524aa7cbededb89df681f8ffd8a6b853f8ff52)；41个源码与接入路径逐blob读回相同。共享PDF55页、原方案PDF53页，全部页面已渲染检查。最终报告提交、管理CI与协作回执见PR180的当前说明。
