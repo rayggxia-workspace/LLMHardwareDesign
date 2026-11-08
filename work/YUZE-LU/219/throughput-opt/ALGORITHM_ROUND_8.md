@@ -18,7 +18,8 @@
 - 独立检查器新增顺序/来源/常量检查，拒绝历史NExp IR；保存的向量程序必须重编译、重新调度。
   每输出新增一次真实读和Stats成本，所有基线共用。修正后的整图贪心数值101491已COMPLETED0:0，
   三输入仍逐位一致/HF误差及argmax保持，IR/计划SHA与重编译实际输出相符；搬运8,249,969,596条逻辑记录。
-  新完整DP对照101489仍待终态，不沿用旧计划的ticks；其已完成的贪心/旧DP分别249,853,884,670 / 202,663,587,646。
+  新完整DP对照101489已COMPLETED0:0：贪心249,853,884,670，旧DP/条件DP均202,663,587,646，
+  新策略相对较强同池旧DP额外0。其选中DP计划数值由attempt269 / Slurm101493补验，尚未给出终态资格。
 - 最终源Windows与独立WSL/Linux各187项通过；服务器重编译源187项通过。项目结构检查通过。
 
 ## 算法对照：保持较强分母
@@ -58,7 +59,8 @@
 
 ## 回执与恢复
 
-[精确原件归档、源快照及SHA](results/column-tile-round8-final/manifest.json)。N配方及复跑见
+[精确原件归档、源快照及SHA](results/column-tile-round8-final/manifest.json)，
+[修正后完整DP终态补充](results/column-tile-round8-final/corrected-dp-manifest.json)。N配方及复跑见
 [NEXP_CONTRACT.md](../../../../project/experiments/block_synthesis/NEXP_CONTRACT.md)。
 首次宿主GLIBC不匹配用同容器wrapper修复；首次历史字段名失败和采集路径笔误保留，没有改硬件或删除检查。
 100972早期冻结源已COMPLETED0:0（1h38m17s），不再报告运行；其历史N边界同上。
