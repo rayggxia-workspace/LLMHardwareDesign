@@ -28,6 +28,10 @@ Issue #230在同一[后端目录](../project/experiments/upper_router/README.md)
 `delivery_index.py QUALIFIED_DELIVERY NEW_INDEX --source SOURCE_TAR --tool TOOL_ARTIFACT`
 只索引已合格且六文件未变化的交付，记录全部声明证据目录、源包及工具的路径/大小/SHA，
 不把索引生成当作验收，也不复制大型物理数据到Git。
+`package_delivery.py build QUALIFIED_DELIVERY INDEX SOURCE_TAR NEW_PACKAGE`补齐准确的技术、
+上层通孔、重命名LEF/Liberty与相对路径加载脚本。实际运行`load_odb.tcl`、`load_def.tcl`、
+`load_timing.tcl`后，`package_delivery.py verify NEW_PACKAGE`要求DEF重读计数一致、
+名义STA零违规且裕量复现原值，再生成交付归档及SHA。
 
 Issue #226 实现[综合到布线接口层](../project/experiments/block_synthesis/ROUTE_CONTRACT.md)。从 `project/experiments/block_synthesis` 运行 `python -B -m unittest test_route_contract test_loop_dp test_dot_cache -v`；CLI见合同。需求重构检查共享接口展开实现，不是独立ODB/GDS几何或电气检查；实际物理后端另验。
 

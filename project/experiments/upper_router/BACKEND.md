@@ -77,6 +77,11 @@
 
 ## RC 方法必须保留的限制
 
+便携交付由`package_delivery.py`补齐六文件所引用的技术/上层通孔LEF及全部别名LEF/Liberty，
+生成相对路径加载脚本。包内各依赖保持原始字节和SHA，源目录同名文件分别保存。
+`package_delivery.sbatch`实际重读ODB/DEF并比较计数、重跑名义STA并与原裕量核对，
+全部通过后才归档；其资格仍限于原交付声明的输入与研究RC口径。
+
 - [#202](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/202) 的查表提取
   会漏掉跨层正交互容；场解修复保留电阻图并重新求电容。路线变化必须重提取，不能
   把旧 SPEF 的电容套到新 DEF 上。
