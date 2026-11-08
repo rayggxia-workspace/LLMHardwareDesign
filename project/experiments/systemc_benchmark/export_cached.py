@@ -83,13 +83,24 @@ def main():
                       export_params=False, do_constant_folding=False)
     graph = onnx.shape_inference.infer_shapes(onnx.load(str(path)))
     onnx.checker.check_model(graph)
+    params = dict(wrapper.named_parameters())
+    buffers = dict(wrapper.named_buffers())
+    # Positions, causal mask and rotary constants are fixed for this exported
+    # shape. Bake buffers, never checkpoint parameters, into the graph. This
+    # allows the old compiler to see real constant layouts/rotary coefficients.
+    baked_buffers = {}
+    for value in list(graph.graph.input):
+        if value.name in buffers:
+            data = buffers[value.name].detach().numpy()
+            graph.graph.initializer.append(onnx.numpy_helper.from_array(data, value.name))
+            graph.graph.input.remove(value)
+            baked_buffers[value.name] = {'shape': list(data.shape),
+                'sha256': hashlib.sha256(data.tobytes()).hexdigest()}
     import onnxsim
     graph, ok = onnxsim.simplify(graph, check_n=0)
     if not ok:
         raise ValueError('ONNX simplification failed')
     graph = onnx.shape_inference.infer_shapes(graph)
-    params = dict(wrapper.named_parameters())
-    buffers = dict(wrapper.named_buffers())
     weight_names = set(params) | set(buffers)
     entry = graph.metadata_props.add()
     entry.key = 'block_search.weight_inputs'
@@ -109,44 +120,68 @@ def main():
         if tensor is None:
             raise ValueError('unbound graph input: ' + v.name)
         feed[v.name] = tensor.detach().numpy()
-    checks = []
+    checks, failures = [], []
+    def compare(actual, reference, where):
+        if actual.shape != reference.shape:
+            raise ValueError('shape mismatch: ' + where)
+        difference = np.abs(actual - reference)
+        tolerance = 5e-4 + 5e-4 * np.abs(reference)
+        bad = ~(np.isfinite(actual) & np.isfinite(reference)) | (difference > tolerance)
+        row = {'where': where, 'elements': int(actual.size),
+               'violations': int(np.count_nonzero(bad)),
+               'maxabs': float(difference.max()),
+               'relative_l2': float(np.linalg.norm(difference.astype(np.float64)) /
+                                    max(np.linalg.norm(reference.astype(np.float64)), 1e-300))}
+        if row['violations']:
+            first = tuple(int(v) for v in np.argwhere(bad)[0])
+            row.update(first_index=list(first), actual=float(actual[first]),
+                       reference=float(reference[first]))
+            failures.append(row)
+        return row
     for variant in range(3):
         full_ids, inputs = sample(variant)
         with torch.no_grad():
             expected = wrapper(*inputs)
             independent = model(input_ids=full_ids, use_cache=True, logits_to_keep=1)
-        np.testing.assert_allclose(expected[0].numpy(), independent.logits.numpy(), rtol=5e-4, atol=5e-4)
+        wrapper_checks = [compare(expected[0].numpy(), independent.logits.numpy(),
+                                  'variant-%d/wrapper/logits' % variant)]
         if not torch.equal(expected[0].argmax(-1), independent.logits.argmax(-1)):
-            raise ValueError('export wrapper changes greedy token')
+            failures.append({'where': 'variant-%d/wrapper/argmax' % variant})
         full_states = tuple(v for layer in independent.past_key_values.layers for v in (layer.keys, layer.values))
         if len(full_states) != 2 * model.config.num_hidden_layers or len(expected) != len(output_names):
             raise ValueError('incomplete KV outputs')
-        for actual, ref in zip(expected[1:], full_states):
-            np.testing.assert_allclose(actual.numpy(), ref.numpy(), rtol=5e-4, atol=5e-4)
+        for name, value, ref in zip(output_names[1:], expected[1:], full_states):
+            wrapper_checks.append(compare(value.numpy(), ref.numpy(),
+                                          'variant-%d/wrapper/%s' % (variant, name)))
         feed.update({name: value.numpy() for name, value in zip(input_names, inputs)})
         actual = session.run(None, feed)
         if len(actual) != len(expected):
             raise ValueError('ORT omitted an output')
         if not np.array_equal(actual[0].argmax(-1), expected[0].numpy().argmax(-1)):
-            raise ValueError('ORT changes greedy token')
+            failures.append({'where': 'variant-%d/ORT/argmax' % variant})
         diagnostics = {'variant': variant, 'maxabs_by_output': {
             name: float(np.max(np.abs(value - ref.numpy())))
             for name, value, ref in zip(output_names, actual, expected)}}
         print('NUMERIC_DIAGNOSTICS ' + json.dumps(diagnostics), flush=True)
-        for output, ref in zip(actual, expected):
-            np.testing.assert_allclose(output, ref.numpy(), rtol=5e-4, atol=5e-4)
+        ort_checks = [compare(value, ref.numpy(), 'variant-%d/ORT/%s' % (variant, name))
+                      for name, value, ref in zip(output_names, actual, expected)]
         checks.append({'variant': variant, 'logits_maxabs_ORT_vs_wrapper': float(np.max(np.abs(actual[0] - expected[0].numpy()))),
-                       'kv_outputs_checked': len(full_states)})
+                       'kv_outputs_checked': len(full_states), 'wrapper': wrapper_checks, 'ORT': ort_checks})
     receipt = {'scope': 'complete Qwen2.5-3B FP32 explicit KV frontend; not integer/device timing',
                'prefix_tokens': a.prefix, 'query_tokens': a.query, 'parameter_count': count,
                'outputs': output_names, 'runtime_inputs': input_names,
                'logits_scope': 'last query token only, sufficient for generation',
                'onnx_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
                'config_sha256': hashlib.sha256((a.checkpoint / 'config.json').read_bytes()).hexdigest(),
-               'checks': checks, 'ort_optimization': a.ort_optimization,
+               'checks': checks, 'failures': failures, 'numeric_passed': not failures,
+               'numeric_threshold': {'atol': 5e-4, 'rtol': 5e-4},
+               'baked_fixed_buffers': baked_buffers,
+               'ort_optimization': a.ort_optimization,
                'torch': torch.__version__, 'onnx': onnx.__version__, 'ort': ort.__version__}
     (a.output / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
     print(json.dumps(receipt))
+    if failures:
+        raise ValueError('cached frontend numeric checks failed; complete diagnostics retained')
 
 
 if __name__ == '__main__':

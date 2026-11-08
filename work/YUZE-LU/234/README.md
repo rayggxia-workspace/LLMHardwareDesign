@@ -124,3 +124,61 @@ capture-inputs-001.tar SHA256 `ea1ecf3487c3602f05e51d65c65902c454559e5f6f4594673
   003用--output-groups 0和flat网表顶层net trace重试。此为主机工具效率调整，不计算为设备或算法收益。
 - llaccel所需LLVM23.1.1官方Linux包调查中：服务器直接下载网络超时，改从本机HTTPS获取至任务raw目录。
   未执行/未验签/未完成peer编译；不降低原生工具或功能来制造对照。
+
+### 活动校准与原生对照（2026-11-09 03:05 CST）
+
+[Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，任务仍 in_progress。
+尚无合格整网 decode token/s、J/token 或 FPGA 达标证据。
+
+- 100734 最终 COMPLETED 0:0（14m07s）；最终网表与 RTL 的72个真实部分积精确、Execute22拍。
+  原功耗日志实际注入0个pin，全部作废，保留错误日志与原VCD。修正scope为`dut/block_v2_m`，
+  仅平移VCD起点，不改值/事件次序，现有631740个pin获得真实活动。
+  剩余732个由OpenDB逐项确认全为ANTENNA_X1/A，原Liberty自身internal/leakage表均为0；
+  输入负载仍在原ODB/SPEF中。[分类证据](m-activity-classification.json)。
+- [连续累加](m-streams-result-002.json)：三输入各取第0/7列，实际累加到K1000后测量16K、48个分量。
+  六对active/同末态idle均通过独立Python S32重构与S64核对，每分量27拍、Execute22拍，
+  增量约0.166–0.172 nJ/分量。不是完整Dot/整网能量系数。
+- [原生打包](m-tiles-result-003.json)：真实K32/N8，三个输入各173拍，Execute49/49/49，
+  扣同末态idle后的增量5.845/5.895/6.351 nJ。
+- [精确修正位优化](m-tiles-result-004.json)：第三分量严格0或1，使用已有S8输入模式；
+  无需改变硬件、量化精度或DP。三例均149拍、Execute49/49/25，增量5.301/5.390/5.753 nJ。
+  173→149仅使该命令体耗时降13.87%、吞吐增16.11%，不计作DP收益或整模型加速20%。
+  两组窗口包含M引脚B/A装载、Scale/Execute，**不含S32分解、真实S feeder、最终ReadRaw、
+  局控取指/发令、写S确认、DMA/互联**。目前验证服务/活动，尚未成为完整生成程序。
+- 原始source/operand/VCD/功能与功耗日志已存本人远端任务目录并回读SHA：
+  [003归档](m-calibration-archive-003.json)、[004归档](m-tiles-archive-004.json)。
+  零延迟VCD缺毛刺、样本及其他组件覆盖不足等限制保留。
+  [Q投影工作量下界](q-projection-work-bound.json)仅约束冻结标量配方，不是SystemC decode成绩或硬件根本下界。
+
+对照保持原生能力：
+
+- openTPU隔离overlay接入真实Q/K/V bias，覆盖单步、rows、tiled投影，保留原量化、KV和调度路径。
+  本地独立测试发现并修复新HF的`rope_parameters`配置差异和列bias广播错误，失败输入/日志保留。
+- [六个小模型回执](opentpu-qwen2-smoke-result.json)：三seed×int8/fp4，非零bias、GQA8，
+  与HF独立参考、原生量化仿真器交叉核对，resident decode及prefill通过。
+  仅约318万参数，非3B数值证据；fp4跟量化仿真一致不等于HF质量相同，余弦/argmax差异保留。
+- 使用`target.config('ypcb-00338:m4')`，不用会关闭可选ISA特性的`board_config()`默认值。
+  原生4GiB、PAIR/DSTEP/STREAM/SEQ_WC均启用；最终仍需核对这一版本实际PPA及频率。
+  旧co-sim便捷函数2GiB上限会排除合法3B int8，因此不把它当真实板卡能力。
+- [完整模型编译](opentpu-full-compile-result.json)：36层/H2048/V151936未缩小，三上下文×两格式；
+  int8图像3.16–3.21GB，fp4图像1.85–1.90GB，均在4GiB内。
+  以HF oracle的真实首个生成token定位embedding，现为编译证据，不是权重数值/周期/能量资格。
+
+最新尝试均单节点6×10/debug、30分钟，没有修改其他任务：
+
+| 尝试/作业 | 实际状态与范围 |
+|---|---|
+| export-002 / 100766 | FAILED 1:0，73秒；禁融合后P0Q1的一处logit、P2Q1两处KV仍超过原阈值，保留失败。 |
+| toolchain-001 / 100826 | FAILED 1:0，3m02s；clang/clang++/MLIR/llvm-config正常，generic `lld --version`按工具设计返回1；并非所有工具不可用，llaccel仍未编译。 |
+| export-003 / 100831 | FAILED 1:0，70秒；静态mask/positions常量已烘入，四形状通过，P0Q1一处logit、P2Q1两层KV仍超5e-4阈值；三样本完整诊断保留。 |
+| opentpu-001 | sbatch因CRLF拒绝，没有job；源和错误保留，后续SBATCH归档写LF。 |
+| opentpu-002 / 100852 | 核对属于本人且仍PENDING后取消；本地已定位theta/bias接入错误，避免跑已知错误源。 |
+| opentpu-003 / 100883 | PENDING；完整3B六配置，原生RTL+LiteDRAM周期实验。零数据只用于dense时序，不作质量/能量证据。 |
+
+本地仅任务raw/私有WSL工具副本。Windows原Torch2.4与现Transformers不兼容，
+从官方CPU索引取得Torch2.10私有wheel，未安装/改写全局包，版本/SHA保留。
+M完整descriptor网格8192种×三初态通过，三份周期表SHA完全一致，见[m-profile结果](m-profile-result-002.json)及[归档回执](m-profile-archive-002.json)。这是独立M及重复输入行的形状/握手验证，非完整模型数值、S/LC/DMA或能量。
+下一步为真实KV整数程序、SystemC全组件校准、完整peer周期/权重质量和能量边界。
+公开低置信度默认活动功率不能用于板级J/token通过判定。用户已确认：公开benchmark即可，无板卡复现要求；生成速度与每token能耗均须达标，约10 token/s只是预期。完整[比较合同](BENCHMARK_CONTRACT.md)和[来源/数值/SHA](public-benchmarks-001.json)已补齐。公开更强的3B FPGA结果必须保留，不靠选择较慢对手通关。
+
+2026-11-09 03:25 CST：100883仍PENDING(Resources)，未把排队写成周期实验通过；[显式KV第三轮摘要](export-result-003.json)保留失败。

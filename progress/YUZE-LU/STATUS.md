@@ -2,7 +2,7 @@
 
 ## 2026-11-09（CST）Qwen3B SystemC时间/能耗与充分优化对照
 
-[Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234)，独立分支`task/234-systemc-benchmark`，in_progress，PR待创建。真实SystemC六场景及六个冻结旧计划回放通过；完整36层HF三上下文各两输入、输出128的缓存/完整前缀数值参考通过。旧B1/S2无KV成本仍不具芯片时间资格，HF墙钟不作硬件性能。单节点6×10的物理功耗库存六视图完成；KV导出五形状通过、一形状数值阈值失败，新尝试保留原阈值诊断；M活动仍运行。本地2核已验证72个真实整数M标量运算及22拍Execute，最终网表活动尚待完成。[证据与作业账本](../../work/YUZE-LU/234/README.md)。整网SystemC decode token/s/J/token、对照充分适配及FPGA门槛均未完成，不标done，不修改母任务PR220。登记PR5 pending，缺board配置，Projects unverified/同步pending，沿用Issue7交接。
+[Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234)，独立分支`task/234-systemc-benchmark`，in_progress；[Draft PR #235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)。真实SystemC六场景/六个冻结旧计划回放和完整36层HF三上下文数值oracle通过，尚不能当芯片时间。M网表活动scope已纠正，631740个pin注入、732个物理天线二极管分类；连续累加六对、K32/N8打包与修正位窄输入均精确，173→149拍仅为M命令体配方收益，非DP/整网加速。openTPU原生QKV bias/GQA8适配六个小模型回归及完整36层3B三上下文×两格式编译通过，保留4GiB及目标可选功能。M原生8192描述符×三初态通过，周期一致；100826因generic lld版本探测返回1、100831四通过两形状数值阈值失败，保留回执；100883仍排队，单节点6×10。用户确认主场景B1/P512/D128、生成速度与J/token均达标，仅要求公开benchmark、不要求板卡。已登记openTPU及更强的RaiderChip/U280对照和EdgeCIM架构估计，功耗/工作负载缺项保留。整网SystemC decode token/s/J/token、完整peer权重质量/周期及FPGA门槛均未完成，不标done，不改母任务PR220。[证据与账本](../../work/YUZE-LU/234/README.md)。登记PR5 pending，缺board配置，Projects unverified/同步pending，沿用Issue7交接。
 
 
 ## 2026-11-08（CST）U 原生入口和双向发送修复

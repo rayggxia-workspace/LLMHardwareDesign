@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 
 
 def sha(p):
@@ -52,7 +53,8 @@ def main():
     std = a.std_lib or Path('/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib')
     # Executed inside ORFS, with a private source snapshot of the accepted RTL.
     inputs = {str(p): sha(p) for p in [gate / ('6_final.' + s) for s in ('v', 'odb', 'sdc', 'spef')] +
-              [std, root / 'm_activity.py', root / 'm_activity.cpp', root / 'block_v2_m.sv', root / 'operands/m-operands.tsv']}
+              [std, root / 'm_activity.py', root / 'analyze_activity.py', root / 'm_activity.cpp',
+               root / 'block_v2_m.sv', root / 'operands/m-operands.tsv']}
     call(['yosys', '-Q', '-p', 'read_liberty -ignore_miss_func -ignore_miss_dir %s; write_verilog -noattr cells.v' % std], root / 'cells.log')
     verilator = a.verilator or Path('/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator')
 
@@ -102,22 +104,18 @@ def main():
                     break
         if '$timescale 1ps $end' not in ''.join(header).replace('\n', ' '):
             raise ValueError('VCD timescale is not ps')
-        script = out / 'power.tcl'
-        script.write_text('read_liberty {%s}\nread_db {%s}\nread_sdc {%s}\nread_spef {%s}\n' %
-                          (std, gate / '6_final.odb', gate / '6_final.sdc', gate / '6_final.spef') +
-                          'set_propagated_clock [all_clocks]\n' +
-                          'read_vcd -scope TOP/dut {%s}\n' % vcd +
-                          'report_activity_annotation\nreport_power\nputs "ACTIVITY_POWER_COMPLETED"\n')
-        call(['openroad', '-no_init', '-threads', str(a.cores), '-exit', script], out / 'power.log')
-        text = (out / 'power.log').read_text()
-        if 'ACTIVITY_POWER_COMPLETED' not in text or re.search(r'(?m)^Error:', text):
-            raise ValueError('power command failed')
+        functional = out / 'functional.json'
+        functional.write_text(json.dumps({'timing': reports['gate']}) + '\n')
+        analysis = out / 'activity'
+        call([sys.executable, root / 'analyze_activity.py', gate, std, vcd, functional,
+              analysis, '--cores', str(a.cores)], out / 'analysis.log')
         record = {'cohort': cohort, 'mode': mode, 'timing': reports['gate'],
                   'scope': 'scalar M only; full energy needs annotation review, integration and all other components',
                   'qualified_full_model_energy': False,
                   'activity': {kind: {'sha256': sha(out / (kind + '.vcd')),
                                       'bytes': (out / (kind + '.vcd')).stat().st_size} for kind in binaries},
-                  'power_log_sha256': sha(out / 'power.log')}
+                  'power_log_sha256': sha(analysis / 'power.log'),
+                  'activity_analysis_sha256': sha(analysis / 'receipt.json')}
         (out / 'receipt.json').write_text(json.dumps(record, indent=2) + '\n')
         # Preserve compressed VCD as well as a digest of the raw analyzer input.
         for kind in binaries:

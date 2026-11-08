@@ -51,7 +51,7 @@ def main():
         model['offline_weight_recipes'] = [t for t in model['offline_weight_recipes']
             if t['outputs'] == ['/model/model/layers.0/self_attn/q_proj/Transpose_output_0']]
     interpreter = Interpreter(model, weights, json.loads(act_path.read_text()), oracle)
-    records, lines = [], []
+    records, lines, streams, tiles = [], [], [], []
 
     class Hook:
         def dot(self, node, x, w):
@@ -59,6 +59,32 @@ def main():
                 raise ValueError('first Dot differs from pinned frontend')
             if x.shape != (1, 2, 2048) or w.shape != (2048, 2048):
                 raise ValueError('unexpected first projection shape')
+            cohort = len(streams) // 2
+            tile_rows = []
+            for k in range(32):
+                value = int(x[0, 0, k])
+                low = ((value + 32768) % 65536) - 32768
+                for column in range(8):
+                    for v, shift in zip((low, value >> 16, int(low < 0)), (0, 16, 16)):
+                        tile_rows.append('%d\t%d\t%d' % (v, int(w[k, column]), shift))
+            tile = a.output / ('m-tile-%d.tsv' % cohort)
+            tile.write_text('\n'.join(tile_rows) + '\n')
+            tiles.append({'file':tile.name, 'cohort':cohort, 'k':32, 'columns':8,
+                          'sha256':hashlib.sha256(tile.read_bytes()).hexdigest()})
+            # Full K streams also allow true accumulating execution. Resetting
+            # every partial and reading it back is not the old Dot's activity.
+            for column in (0, 7):
+                rows = []
+                for k in range(2048):
+                    value = int(x[0, 0, k])
+                    low = ((value + 32768) % 65536) - 32768
+                    for v, shift in zip((low, value >> 16, int(low < 0)), (0, 16, 16)):
+                        rows.append('%d\t%d\t%d' % (v, int(w[k, column]), shift))
+                path = a.output / ('m-stream-%d-%d.tsv' % (cohort, column))
+                path.write_text('\n'.join(rows) + '\n')
+                streams.append({'file': path.name, 'cohort': cohort, 'column': column,
+                                'k': 2048, 'components_per_k': 3,
+                                'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
             # Three exact S16 components reconstruct each S32 source scalar.
             # Sample well-separated K positions and output columns, not zeros.
             for k, n in [(0, 0), (1, 7), (17, 129), (63, 2047),
@@ -99,6 +125,8 @@ def main():
     sources += sorted(a.frozen_source.glob('*.py'))
     receipt = {'scope': 'first Q projection operands from actual frozen S32 integer replay; 3 B1/S2 inputs',
                'full_model_replay': False, 'generated_operands': len(records),
+               'accumulating_streams': streams,
+               'packed_tiles': tiles,
                'inputs': {str(f): hashlib.sha256(f.read_bytes()).hexdigest() for f in sources},
                'operand_sha256': hashlib.sha256(out.read_bytes()).hexdigest(), 'records': records}
     (a.output / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
