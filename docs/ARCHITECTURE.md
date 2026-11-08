@@ -5,7 +5,11 @@ Issue230：[实际后端写出及输入审计](../project/experiments/upper_rout
 导出实际互联DEF和身份映射，`ingest.tcl`生成ODB，`physical_readback.py`读取实际OpenDB
 矩形写出/读回GDS并核对真实M10及全原生层XOR。复跑入口为同目录inventory/fixture/
 native_drc等sbatch，均10核、数组最多6项；依赖与源包见[回执](../work/YUZE-LU/230/README.md)。
-在upper_router目录运行`python -B -m unittest test_router test_backend test_stage_package -v`。
+在upper_router目录运行`python -B -m unittest test_router test_backend test_stage_package test_resource_base test_flow -v`。
+`resource_library.py`校验已有物理资源，`resource_base.py IR LIBRARY NEW_BASE --gap-dbu N`
+从#220 leaf_inventory生成候选放置；`flow.py IR PLAN LIBRARY RULES NEW_OUTPUT --gap-dbu N --via-resistance-ohm R`
+统一独立计划检查、资源装配、库接口展开、逐位绑定、路由和DEF导出。
+实例数量由IR决定，资源库是输入，不要求先有已验收共同芯片或新母控/外存RTL。
 这些是五类实际晚接接口回归，不等于九组共同产品或#220整网RC/STA已经闭合。
 
 Issue #228：[通用上层布线基线](../project/experiments/upper_router/README.md)接收独立几何或#227已绑定请求，联合搜索M10落点及M11/M12路径、多接收端树与多轮拆线重布。`python -B project/experiments/upper_router/run.py INPUT OUTPUT --rounds 8`；在该目录运行`python -B -m unittest test_router -v`。仅声明研究网格规则，不继承模型/真实底座物理资格。

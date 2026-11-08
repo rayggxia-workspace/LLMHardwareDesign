@@ -35,8 +35,8 @@ attempt12采用最终29项测试并打包小型实际上层ODB/GDS，原生合�
   尚未提供，#227需求保持 unbound。不是18束物理不可布的证明。
   [原始产品输入审计](evidence/readiness.json)逐束列出未绑定原因。
 
-五类完整 GDS 读回与全部原生层 XOR 已由100399全部通过。原版 DRC100406仍在运行，
-最终状态见后续收集的作业和文件索引；
+五类完整 GDS 读回与全部原生层 XOR 已由100399全部通过。原版 DRC100406五项均完成、
+违规数均0；实际回执见evidence/sealed13-*-drc-native-full.json及sealed13-summary.json。
 没有相应报告的项目不记通过。无新的分布耦合RC/电气/STA结果，所有几何工件保持
 `physical_qualified=false`。
 
@@ -67,18 +67,33 @@ attempt12采用最终29项测试并打包小型实际上层ODB/GDS，原生合�
 KLayout0.30.12，SHA`fee1214ef5c63033057626a9dab0deb0664fecb69184d1c3fd43dc9c0dc1eba5`；
 容器SHA`49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a`。
 
-## 完整目标剩余的实际依赖
+## 范围纠正：底座是资源输入
 
-main 的五类独立交付不包含九组共同 ODB。约2300–3000个夹具端口中，信号M10端口
-只有68或260个，其余大多在M5/M6；现有后制规则不能直接接上。局控PM仍在夹具外，
-当前独立母控只有两个驻留目标。#220 的真实整网使用虚拟外存，其逻辑 read/write
-和io.load/store尚无完整产品信号目录。少数晚接旁路不能替代这些服务。
+用户已明确纠正：本任务是#220之后的通用EDA，不是先开发一颗完整系统芯片。
+撤回此前将已验收九组共同ODB、九目标母控/局控PM/真实gateway视为算法开发前置的判断。
+#220的full_plan.py::replicated_inventory()、九组IR和计划确实存在；物理模板亦已有输入。
+没有待用户批准的新RTL范围问题，不再以这些理由中止后端开发。
 
-恢复完整产品工作的第一步：以真实叶宏视图、当前局控/适配RTL生成九组共同原生候选，
-明确局控ID、PM、母控分发、实际memory gateway及固定预连；重新落实M10端点、PG/CTS
-和原生工程验收，再导出全局base/catalog。五类分组继续是控制归属，不生成五种大硬块。
-随后用同一#220 binding生成全静态网、布线、重新提取上下层耦合并跑原库300MHz门。
-当前未建立此完整候选，不声称用户的最终目标已经完成。
+新增resource_library.py/resource_base.py读取原始IR与物理资源能力，生成共同候选放置、
+逐个独立叶宏及M10端点；源预连几何整体平移，envelope只作放置基线，不作上层禁布框。
+新增flow.py统一计划独立检查→资源装配→库接口展开→逐位绑定→通用路由→DEF导出。
+接口合同来自资源库或catalog输入，缺少条目就保留具体需求诊断，不猜接线或新增功能RTL。
+
+100559及100560均COMPLETED0:0：真实144229730B九组IR（SHA6aa273e57057dcd000e44218ec4229672f82b8b0251a51a882ef21541753395f），
+实例C0/F0/J0/J1/P0/P1/P2/U0/U1，28个独立叶宏、1380个实际M10端点；36项本地/服务器检查通过。
+原合同/DP/缓存40项回归通过。实际底座、资源库及摘要见evidence/resources17-*。
+source-230-17.tar SHA253cdeb30a45c1f3355b22a0cc016b65b313a095030fb8bdaa796673a4701e21。
+
+后续继续资源接口/原生预连到完整#220 binding的物理降低与实际路由、电气反馈；
+九组候选装配和合成端到端检查不冒称完整18束物理闭合或系统RC/STA通过。
+
+## 后续失败与修复记录
+
+- 100458/100471收集失败：宿主Python3.6不支持subprocess text参数；改兼容参数后100555通过。
+  439201B证据包SHA504e672d45770edbb2adcc761f6e4fa5cf15fb5ba4d7aaee006b9fd07abc6159已本地逐文件核验。
+- 100557：源包未纳入inputs.json；增加明确依赖后重提，不覆盖原快照。
+- 100558：独立CLI缺少同级route_contract导入路径；修复并增加新进程CLI/篡改视图负例。
+  100559/100560通过。新测试第一次误改argv索引失败，改正测试调用后36项通过。
 
 规则 rayggxia-project-collab1.0.0；负责人/操作账号YUZE-LU。登记沿用management-hub
 PR5 pending；缺board配置，Projects unverified/同步pending，复用Issue7交接。

@@ -64,7 +64,7 @@ def collect(root,output):
         snapshots.append({'path':str(p),'sha256':sha(p),'bytes':p.stat().st_size})
     ids='100378,100383,100389,100394,100399,100404,100406,100408,100414,100458,100463'
     states=subprocess.check_output(['sacct','-j',ids,'--format=JobID,JobName%20,State,ExitCode,AllocCPUS,Elapsed',
-                                    '-n','-X','-P'],text=True)
+                                    '-n','-X','-P'],universal_newlines=True)
     (output/'slurm.psv').write_text(states)
     readiness=json.loads((output/'product/readiness.json').read_text())
     summary={'schema_version':'backend-evidence/1','collected_utc':datetime.now(timezone.utc).isoformat(),

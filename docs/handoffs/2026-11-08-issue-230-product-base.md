@@ -1,44 +1,31 @@
-# Issue230：通用布线的九组产品输入交接
+# Issue230：综合后通用物理后端的范围纠正与接续
 
-仓库 https://github.com/rayggxia-workspace/LLMHardwareDesign；
-任务 https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/230；
-分支 `task/230-backend-router`，前置提交 `f0273848e1872d9b2d9488981eaf279a902218a5`
-（PR229，叠加PR227/220）。负责人/操作账号YUZE-LU，独立审查人待指定。
-本次源码与证据提交见分支历史及[草稿PR231](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/231)，尚未获整产品验收。
+仓库rayggxia-workspace/LLMHardwareDesign；[Issue230](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/230)、[草稿PR231](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/231)，分支task/230-backend-router，负责人YUZE-LU。
 
-## 可以继续使用的成果
+用户明确要求通用EDA。底座/资源库属于输入；此前“需用户先补九组已验收芯片、母控、PM、gateway硬件”的开发前提已撤回。没有待用户批准的新硬件范围问题，不要重复提出。
 
-`project/experiments/upper_router/BACKEND.md` 是真实ODB索引、通用路线输出、
-DEF/ODB/GDS读回和几何核验入口。`work/YUZE-LU/230/README.md` 保存输入版本、
-作业、失败修改、RC证据边界。29项算法/后端测试与两项实际物理负对照通过；
-五类晚接接口362网实际读回、上层研究几何及全部原生层XOR通过。
-这不是#220完整静态网，也不是九组共同底座的物理资格。
+## 九组输入与当前实际成果
 
-原版完整DRC为作业100406（五项，每项10核），收集作业100458及最终100471依赖其结束。
-精确结果以远程原始报告及任务证据索引为准；无报告不得推断通过。
-所有新增运行均在本人目录
-`/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-230-backend-router/`，
-attempt01–12不可覆盖。最终29项测试在attempt11；早期收集器100458采用attempt09的26项，
-最终100471采用attempt11并增加实际上层ODB/GDS。应同时保留两个版本，不改写旧报告。
+PR220 head f23a6d93448849b6f7b15edccce7e996d1092e7d。
+project/experiments/block_synthesis/full_plan.py::replicated_inventory()提供P×3/U×2/C/F/J×2。
+真实IR：/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-112-reuse-fast-plan/generated/nine-groups-count-experiment-ir.json，
+144229730B、SHA6aa273e57057dcd000e44218ec4229672f82b8b0251a51a882ef21541753395f；计划在同目录。
 
-## 待明确由谁提供的产品输入
+resource_base/library读取该IR并匹配物理资源模板，100559及100560均成功：9组、28独立叶宏、1380个真实M10端点。源视图SHA核对；保存组合变换，不虚构合并ODB。flow.py已接计划独立检查、资源装配、库接口展开、逐位绑定、路由、DEF导出，36项本地及服务器检查通过；原合同/DP/缓存40项通过。
 
-1. 九组共同放置的原生ODB/网表/GDS，而不是九个组合硬框。独立叶宏、局控和必要
-   适配器各自计入。固定预连逐条登记；PG/CTS及局控PM应有明确实现与验收范围。
-2. #220原生服务到真实信号的完整catalog。实际五类夹具仅部分端口在M10，不能
-   把其余M5/M6端口凭空视作可从M11接入，也不能由逻辑束名猜出数据及握手线。
-3. 当前母控两驻留目标到九组的实际分发方案，及替代虚拟外存服务的memory gateway。
-   这些是硬件集成输入，布线本身无法产生缺失的存储/控制功能。
+五类362网实际读回、研究上层几何及全原生层XOR通过。100406五项完整原版DRC均0违规。
+100555证据收集通过；包SHA504e672d45770edbb2adcc761f6e4fa5cf15fb5ba4d7aaee006b9fd07abc6159。
+这不是#220完整18束布线或九组RC/STA资格。
 
-本对话已向用户说明缺项并询问：纳入本任务补齐硬件，还是由另一任务提供底座。
-截至本交接写入时尚无答复；处理人待指定。不可将这一范围问题当作用户已批准新硬件。
+attempt14漏带inputs配置，attempt15独立CLI导入路径缺失，均保留失败；attempt16修复后通过。
+attempt17包含完整flow测试，作业100560 COMPLETED0:0，源包SHA253cdeb30a45c1f3355b22a0cc016b65b313a095030fb8bdaa796673a4701e21。
+源视图当前按固定局部布线整体平移，leaf_instances逐个登记；放置是shelf基线，尚非通信感知布局。源envelope不是上层障碍或大硬宏边界。
 
-## 恢复工作的第一步
+## 继续工作
 
-先读AGENTS和协作Skill，核对上述PR最新头与当前Issue。取得明确的产品输入归属后，
-冻结一份共同base/catalog并验证#220全部binding都能逐位展开；再生成完整静态网，
-经通用布线、原生网stitch、上下层耦合RC、原Liberty电气与TT300MHz setup/hold验收。
-路线变化须重新提取；#202/#216/#218/#225的旧版图数据不能转移为新底座资格。
+继续把资源接口/预连语义降低到#220 binding所需的逐位实际端点，推进共同物理视图、完整路由及RC/电气/时序反馈。缺资源描述时报告具体条目，不以尚无完整系统RTL资格停止EDA开发；不猜宽度/造接点，不将362网回归冒称完整18束闭合。
 
-登记沿用management-hub PR5 pending；无config/board.json，Projects unverified、
-同步pending，沿用Issue7。待有权限维护者补配置并读回，不新建或猜测看板。
+工具、证据和复现入口见project/experiments/upper_router/BACKEND.md及work/YUZE-LU/230/README.md。
+服务器所有工作在本人issue-230-backend-router目录；每项10核、最多6并发，所有attempt不可覆盖。
+不移植旧#206的物理资格；新路线重提上下层寄生。独立审查人待指定，不自合并/关闭。
+登记management-hub PR5 pending；无board配置，Projects unverified/同步pending，沿用Issue7。

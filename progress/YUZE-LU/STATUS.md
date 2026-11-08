@@ -1,10 +1,11 @@
 # YUZE-LU 的进度
 
 2026-11-08 CST，Issue230：task/230-backend-router叠加#229，实际五包重新验SHA、
-ODB端点导出及362网DEF/ODB/GDS读回/原生层XOR通过；原版完整DRC作业100406运行中。
-软件与物理负例通过，#220实际计划重验保留18束unbound。完整九组底座、全局端点目录、
-局控PM/母控九目标和实际memory gateway仍缺；已向用户确认这些硬件缺项的任务归属。
-全产品未验收，不标done；见[回执](../../work/YUZE-LU/230/README.md)。登记pending，
+ODB端点导出及362网DEF/ODB/GDS读回/原生层XOR通过；原版完整DRC五项均0违规。
+用户纠正范围后撤回“先补完整九组硬件才开发布线”的判断。已找到#220九组资源和真实IR，
+resource_base/library实际装配9组、28独立叶宏、1380个M10端点；100560服务器36项检查通过。
+flow.py接通计划→资源装配→需求展开→路由→DEF入口。继续完整端点降低/路由/RC反馈，
+不要求用户先补新RTL；完整物理尚未通过，不标done。见[回执](../../work/YUZE-LU/230/README.md)。登记pending，
 Projects unverified/同步pending，沿用Issue7。
 
 2026-11-08 CST，Issue #228：按用户澄清实现通用布线算法，独立task/228-generic-router叠加#227，不按Qwen3.5定制。多源接入/路径、fanout树、拆线重布及几何检查已实现；合成测试通过，实际导出与电气时序另验。待独立审查；登记PR5 pending，缺board配置，Projects unverified/同步pending，沿用Issue7。

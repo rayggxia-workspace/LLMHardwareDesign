@@ -5,6 +5,13 @@
   "router_parent": "f0273848e1872d9b2d9488981eaf279a902218a5",
   "instances": {"P": ["P0", "P1", "P2"], "U": ["U0", "U1"], "C": ["C0"], "F": ["F0"], "J": ["J0", "J1"]},
   "instruction_bits": 64,
+  "resource_capabilities": {
+    "P": {"macros": ["M", "G"], "private_s_words": 1024},
+    "U": {"macros": ["N", "E"], "private_s_words": 1024},
+    "C": {"macros": ["R", "G", "E"], "private_s_words": 1024},
+    "F": {"macros": ["G", "E"], "private_s_words": 1024},
+    "J": {"macros": ["E", "T"], "private_s_words": 1024}
+  },
   "note": "64 is instruction format; datapaths retain their actual 32/128-bit native ABI.",
   "packages": {
     "P": {"archive": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-212-pu-leaf-base/receipt-compact64-p-images/p64-accepted.tar.gz", "sha256": "13545e6ee575512edac07aebe553bf5d6c8666ccec3b040afde581cd4f35c390"},
