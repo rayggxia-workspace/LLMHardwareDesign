@@ -17,3 +17,5 @@ python3.12 -B project/control_main64_v1/replay.py --kind U-fma-duplex --out /res
 RTL 仿真只在获授权服务器 Slurm 分配内运行。回放需要 main 原脚本所绑定的 #193 acceptance-02 和 #155 bank，使用已安装 Verilator5.042、ORFS容器。其余 `--kind` 见 replay.py。main 的产生器原文不改；新增内容仅核验来源和替换测试夹具中的 MC+母控PM，局控程序存储仍是夹具行为模型。该回放不验证统一 boot manager、编译器、三端真实PM、完整ISA或物理组合时序。
 
 详细审查和缺项见 `docs/local-blocks/CONTROL_RESEARCH_HANDOFF.md` 的“main64合入”段。旧1690/1690、九配置综合交付和 main 独立物理回执各有源版本，不合并计为本轮新回归。
+
+37份额外物理脚本依赖见physical-dependencies.json；只核验原始main来源和模块导入，本轮不重跑物理。123例RTL源版本为f046a8c9，其后补充这些未参与RTL编译的工具文件，不把它们记为已重做物理验收。

@@ -44,6 +44,10 @@ def check():
     for name, expected in lock['files'].items():
         if blob(ROOT / name) != expected['git_blob']:
             raise ValueError('main-authoritative source mismatch: ' + name)
+    helpers = json.loads((HERE / 'physical-dependencies.json').read_text())
+    for name, expected in helpers['files'].items():
+        if blob(ROOT / name) != expected['git_blob']:
+            raise ValueError('main physical helper mismatch: ' + name)
     same = [('project/control_rtl_min_v0_1/' + n, 'project/rtl/mother_control_v1/' + n)
             for n in ('mc_min_controller.sv', 'mc_ports.svh', 'instruction_fetch.svh')]
     same += [('project/control_boot_v1/control_pm.sv', 'project/rtl/mother_control_v1/control_pm.sv')]
@@ -52,7 +56,7 @@ def check():
     u = json.loads((ROOT / 'work/YUZE-LU/212/u-native-hardware-lock.json').read_text())
     for name, expected in u['files'].items():
         assert sha(ROOT / name) == expected, name
-    return dict(main_files=len(lock['files']), cfj_frozen_files=len(locked_control()),
+    return dict(main_files=len(lock['files']), physical_helpers=len(helpers['files']), cfj_frozen_files=len(locked_control()),
                 mother_shared_files=len(same), u_hardware_files=len(u['files']),
                 instruction_bits=64, upstream_main=lock['upstream_main'])
 
