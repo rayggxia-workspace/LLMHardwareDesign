@@ -4,9 +4,14 @@ No input state or binding is mutated. Existing serial command/LOAD/STORE
 semantics are retained; no transfer/computation overlap is assumed.
 """
 from static_wiring import can_complete
+from itertools import product
+from types import SimpleNamespace
 
 
 def retention_actions(state, binding):
+    if 'parallel_shards' in binding:
+        return tuple(product(*(retention_actions(state,c['binding'])
+                               for c in binding['parallel_shards']['children'])))
     c = binding.get('read_cache')
     if not c or c.get('cost_model') != 'dot-prefix-state-v2':
         return ('legacy',)
@@ -24,12 +29,50 @@ def evaluate_transition(state, binding, hardware, data_ready, *, retention='lega
     nets = state.nets | frozenset(binding['nets'])
     if any(pair <= nets | fixed for pair in conflicts):
         return {'legal': False, 'reason': 'static_conflict'}
-    wire_cost = sum(hardware['nets'][n]['cost'] for n in nets if not hardware['nets'][n].get('fixed'))
+    wire_cost=0
+    for n in nets:
+        try:meta=hardware['nets'][n]
+        except KeyError as error:
+            raise ValueError('unknown frontier static net '+repr({'net':n,'binding':binding['id'],
+                'declared_nets':list(hardware['nets']),'selected_nets':sorted(nets)})) from error
+        if not meta.get('fixed'):wire_cost+=meta['cost']
     if wire_budget is not None and wire_cost > wire_budget:
         return {'legal': False, 'reason': 'wire_budget'}
     if wire_budget is not None and not can_complete(nets,hardware,wire_completions,wire_budget,
                                                    fixed=fixed,conflicts=conflicts):
         return {'legal':False,'reason':'wire_budget_completion'}
+    if 'parallel_shards' in binding:
+        spec=binding['parallel_shards'];children=spec['children']
+        if 'frontier_partition' in binding:
+            from dynamic_columns import resolve
+            children=resolve(binding,state,data_ready)
+        if not isinstance(retention,tuple) or len(retention)!=len(children):
+            return {'legal':False,'reason':'retention_policy'}
+        current=SimpleNamespace(resources=state.resources,cache=state.cache,nets=state.nets,
+                                makespan=state.makespan)
+        services=[];traffic=0
+        for i,(child,policy) in enumerate(zip(children,retention)):
+            b=child['binding']
+            ev=evaluate_transition(current,b,hardware,data_ready,retention=policy,
+                fixed=fixed,conflicts=conflicts,wire_budget=wire_budget,wire_completions=wire_completions)
+            if not ev['legal']:return ev
+            row={'id':spec['primitive']+'#columns-'+str(i),'binding':b['id'],
+                 'site':b['site'],'start':ev['start'],'end':ev['end']}
+            if b.get('read_cache'):row['cache_hit']=ev['cache_hit']
+            if ev['details']:row['evaluation']=ev['details']
+            services.append(row);traffic+=ev['traffic']
+            current=SimpleNamespace(resources=ev['resources'],cache=ev['cache'],
+                                    nets=ev['nets'],makespan=ev['makespan'])
+        details={'cost_model':'dot-column-shards-v1','services':services,
+                 'delta_makespan':current.makespan-state.makespan}
+        if 'frontier_partition' in binding:details['resolved_columns']=[c['columns'] for c in children]
+        return {'legal':True,'start':min(s['start'] for s in services),
+            'end':max(s['end'] for s in services),'makespan':current.makespan,
+            'delta_makespan':current.makespan-state.makespan,
+            'duration':max(s['end'] for s in services)-min(s['start'] for s in services),
+            'traffic':traffic,'cache_hit':False,'cache':current.cache,
+            'resources':current.resources,'nets':current.nets,
+            'details':details}
     cache = state.cache.copy()
     c = binding.get('read_cache')
     hit = False

@@ -1,5 +1,15 @@
 # 架构与运行
 
+2026-11-09：[列分片/前沿成本合同](../project/experiments/block_synthesis/COLUMN_SHARDS.md)与[迭代3证据](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_3.md)。
+`full_plan.py --prepare-reuse --primitive-stages --read-cache --state-cost --column-shards`生成共同候选；
+`column-plan.sbatch ROOT STAGED_IR_DIRECTORY INCUMBENT_DIRECTORY SCENARIO`比较同池贪心、HEFT式及有界DP；
+`column_slice.py SOURCE_IR NEW_OUTPUT --kernel-prefix PREFIX --wire-budget 18`复跑切片，`--full-graph`保留完整输出。
+`python -B project/experiments/block_synthesis/phase_accounting.py IR PLAN OUTPUT`先独立审计再分解实际描述符需求。
+`systemc-phase.sbatch ROOT IR GROUP0 GROUP1`在新Slurm目录编译官方SystemC3.0.2模型，逐阶段对照整服务锁/描述符释放两种模式；
+该脚本依赖任务已安装库及ORFS容器，不是完整系统或能耗验收。正式脚本经本任务launch_fix.py冻结，绝对依赖/源SHA见各receipt.json。
+本地`python -B -m unittest discover -s project/experiments/block_synthesis -p 'test_*.py' -q`现134项；完整数值沿用reuse-replay.sbatch。
+仅微实验使用符号tick=1ns，不据此换算300MHz、decode token/s或能量。
+
 2026-11-09：[阶段化及SystemC准备](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_2.md)。`full_plan.py --prepare-reuse --primitive-stages --read-cache --state-cost`使用原始原语依赖和独立准备服务，贪心/DP共用能力；`primitive-stage-plan.sbatch`生成计划，`primitive-stage-audit.sbatch ROOT BEFORE AFTER`核对工作量守恒及原始/当前连接预算，数值沿用`reuse-replay.sbatch`。122项及完整预算复核通过；`wire_lookahead=False`保留旧搜索作对照，`optimize(..., incumbents=...)`独立核验并保留已知可行方案。`systemc-environment.sbatch`只安装官方3.0.2并检查事件/FIFO，尚不提供系统时间/能耗或token/s。
 
 2026-11-09：`python -B project/experiments/block_synthesis/search_diagnostics.py IR PLAN OUTPUT`计算相同原子候选族的强制资源/依赖链乐观下界，先独立核验计划。五组/九组结果及112项回归见[算法迭代1](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_1.md)；下界不约束更细阶段、分片/驻留或硬件，不作系统性能上限。

@@ -139,7 +139,7 @@ def verify(ir):
         name=task['id'];kernel=next(row for row in ir['program'] if row['id']==name)
         work=walk(kernel['body'])
         if work!=expected[name] or Counter(kernel['primitive_counts'])!=work:raise ValueError('executed/scheduled primitive work differs '+name)
-        for b in task['bindings']:
+        def check_binding(b,work,dot_nodes):
             required={m for m in ('M','E','N') if work[m+':commands']}
             if set(b['macro_binding'])!=required:raise ValueError('missing native macro binding')
             ticks=0;reads=writes=0
@@ -160,7 +160,7 @@ def verify(ir):
             c=b.get('read_cache')
             scratch={hardware['leaf_inventory'][g]['site']:8 for g in groups}
             if c:
-                dots=dots_by_kernel[name]
+                dots=dot_nodes
                 if len(dots)!=1:raise ValueError('cache kernel must contain exactly one Dot')
                 node=dots[0];ca,cb=ir['native_operand_components'][node['id']]
                 columns=node['shape'][-1];rows=math.prod(node['shape'])//columns;k=node['attributes']['length']
@@ -190,7 +190,72 @@ def verify(ir):
                 raise ValueError('native/virtual-memory cost differs '+name)
             for group in groups:resources.add('virtual-memory.channel.'+str(hardware['leaf_inventory'][group]['memory_group']%hardware['virtual_memory']['channels']))
             if resources!=set(b['resources']):raise ValueError('native resource omission')
-            checked+=1
+            nets={group+'.'+macro+'.'+direction for macro,group in b['macro_binding'].items()
+                  for direction in ('read','write')}
+            nets.update(hardware['leaf_inventory'][group]['site']+'.io.'+direction
+                        for group in groups for direction in ('load','store'))
+            if nets!=set(b['nets']):raise ValueError('native static endpoint omission')
+            return 1
+        for b in task['bindings']:
+            if 'parallel_shards' not in b:
+                checked+=check_binding(b,work,dots_by_kernel[name]);continue
+            spec=b['parallel_shards'];dots=dots_by_kernel[name]
+            if (len(dots)!=1 or name not in preparations or
+                ir['native_operand_components'][name][1]!=1 or
+                spec.get('kind')!='dot-columns-v1' or spec.get('primitive')!=name):
+                raise ValueError('inapplicable column partition')
+            node=dots[0];columns=node['shape'][-1];children=spec['children']
+            if spec['columns']!=columns or len(children)<2:
+                raise ValueError('column partition extent differs')
+            intervals=[];groups=set();sites=set();leaves=[]
+            for child in children:
+                lo,hi=child['columns'];leaf=child['binding']
+                if type(lo)!=int or type(hi)!=int or not 0<=lo<hi<=columns:
+                    raise ValueError('invalid column range')
+                if 'parallel_shards' in leaf or set(leaf['macro_binding'])!={'M'}:
+                    raise ValueError('column child must be a serial M-only service')
+                if leaf.get('read_cache') and leaf['read_cache'].get('cost_model')!='dot-prefix-state-v2':
+                    raise ValueError('column child requires validated affine state-cost cache')
+                group=leaf['macro_binding']['M']
+                if group in groups or leaf['site'] in sites:raise ValueError('column children share an M/S')
+                groups.add(group);sites.add(leaf['site']);leaves.append(leaf);intervals.append((lo,hi))
+                projected=Counter()
+                for key,value in work.items():
+                    if value%columns:raise ValueError('nonuniform column native work')
+                    projected[key]=value//columns*(hi-lo)
+                view={**node,'shape':node['shape'][:-1]+[hi-lo]}
+                checked+=check_binding(leaf,projected,[view])
+            edge=0
+            for lo,hi in sorted(intervals):
+                if lo!=edge:raise ValueError('column partition has gap/overlap')
+                edge=hi
+            if edge!=columns:raise ValueError('column partition incomplete')
+            scratch={s:n for c in leaves for s,n in c['scratch_by_site'].items()}
+            warm=max(c.get('warm_ticks',c['ticks']) for c in leaves)
+            if 'frontier_partition' in b:
+                if b['frontier_partition']!={'kind':'disjoint-affine-waterfill-v1'}:
+                    raise ValueError('unknown frontier column rule')
+                resources=[set(c['resources']) for c in leaves]
+                if any(resources[i]&resources[j] for i in range(len(resources)) for j in range(i)):
+                    raise ValueError('frontier column children share resources')
+                slopes=[];intercepts=[]
+                for child in children:
+                    leaf=child['binding'];c=leaf.get('read_cache');width=child['columns'][1]-child['columns'][0]
+                    fixed=(c['rows']*c['components'][0]*c['stripe']+1)*c['load_ticks'] if c else 0
+                    if (leaf['ticks']-fixed)%width:raise ValueError('nonaffine frontier column work')
+                    slopes.append((leaf['ticks']-fixed)//width)
+                    intercepts.append(c['load_ticks'] if c else 0)
+                warm=(columns*min(slopes)+len(children)-1)//len(children)+min(intercepts)
+            if (b['site']!=leaves[0]['site'] or b['scratch_by_site']!=scratch or
+                b['scratch_words']!=max(scratch.values()) or b.get('macro_binding')!={} or
+                b['ticks']!=max(c['ticks'] for c in leaves) or
+                b['warm_ticks']!=warm):
+                raise ValueError('column aggregate bounds/scratch differ')
+            for field in ('external_read_words','external_write_words'):
+                if b[field]!=sum(c[field] for c in leaves):raise ValueError('column aggregate traffic differs')
+            for field in ('resources','nets'):
+                if set(b[field])!=set().union(*(set(c[field]) for c in leaves)):
+                    raise ValueError('column aggregate '+field+' differs')
     regions=list(ir['external_regions'].values())+list(ir['primitive_regions'].values())+list(ir['native_constants'].values())
     regions += [row['temporary_external_region'] for row in ir['program'] if 'temporary_external_region' in row]
     regions += ir.get('native_scratch_regions',[])

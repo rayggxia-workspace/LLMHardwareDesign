@@ -42,6 +42,7 @@ def main():
     p.add_argument('--read-cache',action='store_true');p.add_argument('--state-cost',action='store_true')
     p.add_argument('--prepare-reuse',action='store_true')
     p.add_argument('--primitive-stages',action='store_true')
+    p.add_argument('--column-shards',action='store_true')
     a=p.parse_args();a.output.mkdir(exist_ok=False)
     m=canonicalize(import_onnx(a.model));h=json.loads(a.hardware.read_text());numeric=json.loads(a.numeric.read_text())
     if numeric['status']!='full_integer_numeric_passed' or numeric['source_sha256']!=m['sha256']:
@@ -90,6 +91,10 @@ def main():
             from dot_cache import variants
             variants(ir,state_cost=a.state_cost)
             ir['optimization_scope']=ir['read_cache_scope']['scope']
+        if a.column_shards:
+            from column_shards import variants_for
+            variants_for(ir)
+            ir['optimization_scope']+='; '+ir['column_shard_scope']['scope']
         if a.prepare_reuse:
             ir['optimization_scope']+='; '+ir['preparation_reuse_scope']['scope']
         if a.primitive_stages:
@@ -123,6 +128,7 @@ def main():
             'read_cache_scope':ir.get('read_cache_scope'),
             'preparation_reuse_scope':ir.get('preparation_reuse_scope'),
             'primitive_stage_scope':ir.get('primitive_stage_scope'),
+            'column_shard_scope':ir.get('column_shard_scope'),
             'read_cache_hits':plan.get('read_cache_hits',0),'read_cache_calls':plan.get('read_cache_calls',0),
             'timing_scope':ir['timing_scope'],'optimization_scope':ir['optimization_scope']}
         write(a.output/(label+'-plan.json'),plan);write(a.output/(label+'-baseline.json'),base)

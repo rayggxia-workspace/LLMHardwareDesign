@@ -55,8 +55,11 @@ SystemC本身不会自动给出可信功耗。不以任意每MAC能量或虚拟�
 ## 初始一手资料（尚非已完成对照）
 
 - [Accellera SystemC/TLM官方实现](https://www.accellera.org/downloads/standards/systemc)：支持实现时间模型，不自动提供能量数据。
-- [TeLLMe v2](https://arxiv.org/html/2510.15926v1)：FPGA端到端prefill/decode、三值权重/INT8激活；需核对具体3–4B配置及质量。
-- [TerEffic](https://arxiv.org/html/2502.16473v1)：2.7B/HBM/三值近邻参考，不冒充相同3–4B工作负载。
+- [TeLLMe v2](https://arxiv.org/html/2510.15926v1)：已核对为0.73B，方法参考，排除3–4B主比较。
+- [TerEffic v2](https://arxiv.org/html/2502.16473v2)：2.7B/HBM/三值近邻参考，不冒充相同3–4B工作负载。
 - [Slim-Llama官方论文索引](https://pure.kaist.ac.kr/en/publications/slim-llama-a-469mw-large-language-model-processor-with-binarytern/)：ASIC候选，需取得具体模型/吞吐/功耗完整口径；摘要不足以作公平结论。
 
 当前状态：持续优化中；算法20%目标、更多轮迭代、SystemC/能耗/token/s和最终ASIC/FPGA比较均未完成。
+
+2026-11-09：已核对的实际3–4B候选、原生量化及证据缺口见[BENCHMARK_CANDIDATES.md](BENCHMARK_CANDIDATES.md)。
+SystemC已完成有独立事件对照的原生命令阶段小实验，仍缺完整系统/RTL校准和能量参数，不改变上述最终验收要求。

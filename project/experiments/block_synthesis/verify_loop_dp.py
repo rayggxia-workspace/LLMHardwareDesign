@@ -1,11 +1,93 @@
 """Independent loop schedule check; does not import the DP/search code."""
 from collections import defaultdict
+from copy import deepcopy
+
+
+def _resize_columns(child,interval):
+    """Independent affine/native-traffic reconstruction, not planner import."""
+    lo,hi=interval;old_width=child['columns'][1]-child['columns'][0];width=hi-lo
+    b=deepcopy(child['binding']);c=b.get('read_cache')
+    saved=(c['baseline_partial_external_reads']-c['cold_partial_external_reads']) if c else 0
+    ticks=b['ticks']+(saved*c['load_ticks'] if c else 0);reads=b['external_read_words']+saved
+    if any(x%old_width for x in (ticks,reads,b['external_write_words'])):
+        raise ValueError('nonuniform compound native work')
+    b['ticks']=ticks//old_width*width;b['external_read_words']=reads//old_width*width
+    b['external_write_words']=b['external_write_words']//old_width*width
+    if c:
+        ca,cb=c['components'];r=c['rows'];k=c['K'];t=c['stripe']
+        baseline=r*width*k*ca*cb*3
+        cold=r*t*ca+r*width*(k-t)*ca*cb+r*width*k*cb+1
+        b['ticks']-=(baseline-cold)*c['load_ticks'];b['external_read_words']-=baseline-cold
+        b['warm_ticks']=b['ticks']-r*t*ca*c['load_ticks'];b['warm_read_words']=b['external_read_words']-r*t*ca
+        c.update(columns=width,baseline_partial_external_reads=baseline,
+                 cold_partial_external_reads=cold,warm_partial_external_reads=cold-r*t*ca)
+    b['id']+=';frontier-width='+str(width)
+    return {'columns':[lo,hi],'binding':b}
+
+
+def _expand_compounds(tasks,plan):
+    """Independent reconstruction; do not trust the planner's flattened view."""
+    by_id={t['id']:t for t in tasks};owners={};expanded=[];rows=[]
+    peak_so_far=0
+    for row in plan['tasks']:
+        if row['id'] not in by_id or row['id'] in owners:raise ValueError('compound task coverage differs')
+        task=by_id[row['id']]
+        matches=[b for b in task['bindings'] if b['id']==row['binding']]
+        if len(matches)!=1:raise ValueError('unknown/ambiguous loop binding')
+        b=matches[0];parents=task.get('after',[])
+        if any(p not in owners for p in parents):raise ValueError('compound decision precedes dependency')
+        deps=[s for p in parents for s in owners[p]]
+        if 'parallel_shards' not in b:
+            if row.get('evaluation',{}).get('cost_model')=='dot-column-shards-v1':
+                raise ValueError('unexpected compound schedule')
+            owners[row['id']]=[row['id']]
+            expanded.append({**task,'after':deps,'bindings':[b]});rows.append(row)
+        else:
+            spec=b['parallel_shards'];e=row.get('evaluation',{});services=e.get('services',[])
+            if spec.get('kind')!='dot-columns-v1' or len(spec['children'])<2 or len(services)!=len(spec['children']):
+                raise ValueError('compound service coverage differs')
+            fields={'cost_model','services','delta_makespan'}
+            children=spec['children']
+            if 'frontier_partition' in b:
+                fields.add('resolved_columns');intervals=e.get('resolved_columns',[])
+                if len(intervals)!=len(children):raise ValueError('frontier column coverage differs')
+                edge=0
+                for interval in intervals:
+                    if (not isinstance(interval,list) or len(interval)!=2 or
+                        any(type(x)!=int for x in interval) or not edge==interval[0]<interval[1]<=spec['columns']):
+                        raise ValueError('frontier column gap/overlap/range')
+                    edge=interval[1]
+                if edge!=spec['columns']:raise ValueError('frontier column partition incomplete')
+                children=[_resize_columns(c,r) for c,r in zip(children,intervals)]
+            if set(e)!=fields or e['cost_model']!='dot-column-shards-v1':
+                raise ValueError('compound evaluation differs')
+            if (row['site']!=b['site'] or row['start']!=min(s['start'] for s in services) or
+                row['end']!=max(s['end'] for s in services) or
+                e['delta_makespan']!=max(peak_so_far,row['end'])-peak_so_far):
+                raise ValueError('compound time/site differs')
+            owners[row['id']]=[]
+            for i,(child,s) in enumerate(zip(children,services)):
+                leaf=child['binding'];name=spec['primitive']+'#columns-'+str(i)
+                if s['id']!=name or s['binding']!=leaf['id'] or 'parallel_shards' in leaf:
+                    raise ValueError('compound child identity differs')
+                owners[row['id']].append(name)
+                expanded.append({'id':name,'after':deps,'bindings':[leaf]});rows.append(s)
+            leaves=[c['binding'] for c in spec['children']]
+            for field in ('resources','nets'):
+                if set(b[field])!=set().union(*(set(c[field]) for c in leaves)):
+                    raise ValueError('compound '+field+' union differs')
+        peak_so_far=max(peak_so_far,row['end'])
+    if len(owners)!=len(tasks) or len({t['id'] for t in expanded})!=len(expanded):
+        raise ValueError('compound task identity/coverage differs')
+    return expanded,{**plan,'tasks':rows}
 
 
 def verify(tasks,hardware,plan,wire_budget=None):
     def check(ok,message):
         if not ok:raise ValueError(message)
     check(plan.get('status')=='planned','loop plan is not successful')
+    if any('parallel_shards' in b for t in tasks for b in t['bindings']):
+        tasks,plan=_expand_compounds(tasks,plan)
     # Deliberately independent from search's conflict filter. A foreign or
     # corrupted plan must fail even if its conflicting users never overlap.
     incompatible=[]

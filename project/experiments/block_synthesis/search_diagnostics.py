@@ -8,6 +8,22 @@ import json
 import math
 from pathlib import Path
 from verify_loop_dp import verify
+from column_shards import leaves
+from dynamic_columns import coefficients
+
+
+def minimum_resource_time(binding,members):
+    children=leaves(binding)
+    if 'frontier_partition' not in binding:
+        return sum(c.get('warm_ticks',c['ticks'])*len(set(c['resources'])&members) for c in children)
+    spec=binding['parallel_shards'];weighted=[];base=0
+    for child in spec['children']:
+        b=child['binding'];slope,_=coefficients(child);weight=len(set(b['resources'])&members)
+        fixed=b['read_cache']['load_ticks'] if b.get('read_cache') else 0
+        base+=weight*(slope+fixed);weighted.append(weight*slope)
+    # Every selected child has at least one column. For an optimistic bound,
+    # give all remaining columns to the cheapest resource-weighted slope.
+    return base+(spec['columns']-len(children))*min(weighted)
 
 
 def bounds(tasks,hardware,plan):
@@ -21,7 +37,7 @@ def bounds(tasks,hardware,plan):
             mandatory.setdefault(resource,[]).append(t)
     for resource,assigned in mandatory.items():
         capacity=hardware['resources'][resource]
-        work=sum(lower[t['id']] for t in assigned)
+        work=sum(min(minimum_resource_time(b,{resource}) for b in t['bindings']) for t in assigned)
         resources[resource]={'mandatory_tasks':len(assigned),'minimum_reserved_work':work,
             'capacity':capacity,'completion_lower_bound':(work+capacity-1)//capacity}
     finish={};pending={t['id']:t for t in tasks}
@@ -46,8 +62,7 @@ def bounds(tasks,hardware,plan):
     for name,members in pools.items():
         if not members or not members<=hardware['resources'].keys():raise ValueError('invalid resource pool')
         capacity=sum(hardware['resources'][r] for r in members)
-        work=sum(min(b.get('warm_ticks',b['ticks'])*len(set(b['resources'])&members)
-                     for b in t['bindings']) for t in tasks)
+        work=sum(min(minimum_resource_time(b,members) for b in t['bindings']) for t in tasks)
         pooled[name]={'resources':sorted(members),'capacity':capacity,'minimum_resource_time':work,
                       'completion_lower_bound':(work+capacity-1)//capacity}
     best=max([critical]+[r['completion_lower_bound'] for r in resources.values()]+
@@ -57,7 +72,7 @@ def bounds(tasks,hardware,plan):
         'mandatory_resource_bounds':resources,'completion_lower_bound':best,
         'resource_pool_bounds':pooled,
         'maximum_time_reduction_fraction_with_current_actions':1-best/plan['makespan'],
-        'assumptions':'same atomic service candidates, resources, optimistic all-hit cache endpoints; no finer phase/tiling or new hardware',
+        'assumptions':'same serial leaf-service / compound column candidates, optimistic all-hit endpoints; no finer phases or new hardware',
         'scope':'proof within current serial-service action family; not a physical performance or global hardware bound'}
 
 

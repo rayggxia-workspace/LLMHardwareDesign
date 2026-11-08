@@ -7,6 +7,7 @@ as loops avoids expanding billions of native commands into search nodes.
 from dataclasses import dataclass
 from transition import evaluate_transition, retention_actions
 from static_wiring import completion_covers
+from column_shards import leaf_rows
 
 
 @dataclass(frozen=True)
@@ -28,8 +29,11 @@ class State:
     ready: frozenset = frozenset()
 
 
-def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahead=True):
+def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahead=True,
+           priority='minimum_tail',rank_policy='critical_bound'):
     if width<1 or ready_limit<1:raise ValueError('positive DP bounds required')
+    if priority not in ('minimum_tail','heft') or rank_policy not in ('critical_bound','earliest_finish'):
+        raise ValueError('unknown loop scheduling policy')
     # These are physical alternatives, not time-shared resources. Preserve
     # the entire product's selected union even after its last user finishes.
     fixed=frozenset(n for n,meta in hardware['nets'].items() if meta.get('fixed'))
@@ -57,12 +61,16 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
             if any(n>hardware['sites'][site]['words'] for site,n in scratch.items()):raise ValueError('kernel scratch exceeds private S')
     # Critical-path lower bound ignores contention; it is a ranking heuristic,
     # never a proof of optimality after beam/ready pruning.
-    tail={};pending=set(ids)
+    tail={};priority_tail={};pending=set(ids)
     while pending:
         ready=[n for n in pending if all(c in tail for c in children[n])]
         if not ready:raise ValueError('cycle in streaming graph')
         for n in ready:
             tail[n]=min(b.get('warm_ticks',b['ticks']) for b in tasks[ids[n]]['bindings'])+max((tail[c] for c in children[n]),default=0)
+            options=tasks[ids[n]]['bindings']
+            mean_cold=(sum(b['ticks'] for b in options)+len(options)-1)//len(options)
+            priority_tail[n]=(mean_cold if priority=='heft' else min(b.get('warm_ticks',b['ticks']) for b in options))+max(
+                (priority_tail[c] for c in children[n]),default=0)
             pending.remove(n)
     initial=State(0,{}, {r:(0,)*c for r,c in hardware['resources'].items()},frozenset(),0,0,None,{},
                   frozenset(n for n in ids if not parents[n]))
@@ -75,14 +83,22 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
         return [tasks[ids[n]] for n in state.ready]
     def netcost(nets):return sum(hardware['nets'][n]['cost'] for n in nets if not hardware['nets'][n].get('fixed'))
     def rank(s):
+        if rank_policy=='earliest_finish':
+            return (s.history.row['end'] if s.history else 0),s.makespan,s.traffic,netcost(s.nets)
         ready=ready_for(s)
-        bound=max([s.makespan]+[max((s.frontier[p] for p in parents[t['id']]),default=0)+tail[t['id']] for t in ready])
+        bounds=[s.makespan]
+        for task in ready:
+            arrivals=[s.frontier[p] for p in parents[task['id']]]
+            if any(type(at)!=int for at in arrivals) or type(tail[task['id']])!=int:
+                raise TypeError('noninteger frontier/tail '+repr((task['id'],arrivals,tail[task['id']])))
+            bounds.append(max(arrivals,default=0)+tail[task['id']])
+        bound=max(bounds)
         return bound,s.makespan,s.traffic,netcost(s.nets)
     for depth in range(len(tasks)):
         candidates={}
         for s in beam:
             ready=ready_for(s)
-            ready.sort(key=lambda t:(-tail[t['id']],t['id']))
+            ready.sort(key=lambda t:(-priority_tail[t['id']],t['id']))
             for task in ready[:ready_limit]:
                 name=task['id']
                 data_ready=max((s.frontier[p] for p in parents[name]),default=0)
@@ -95,6 +111,8 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
                             static_rejections+=ev['reason']=='static_conflict'
                             completion_rejections+=ev['reason']=='wire_budget_completion'
                             continue
+                        if type(ev['start'])!=int or type(ev['end'])!=int:
+                            raise TypeError('noninteger service time '+repr((name,b['id'],ev['start'],ev['end'])))
                         done=s.done|(1<<ids[name]);frontier=s.frontier.copy();frontier[name]=ev['end']
                         frontier={n:at for n,at in frontier.items() if any(not done&(1<<ids[c]) for c in children[n])}
                         row={'id':name,'binding':b['id'],'start':ev['start'],'end':ev['end'],'site':b['site']}
@@ -126,9 +144,10 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
         'expanded':expanded,'merged':merged,'pruned':pruned,'rejected_static_conflicts':static_rejections,
         'rejected_wire_completions':completion_rejections,
         'wire_completion_covers':len(completions) if completions is not None else None,
-        'read_cache_hits':sum(r.get('cache_hit',False) for r in rows),
-        'read_cache_calls':sum('cache_hit' in r for r in rows),
+        'read_cache_hits':sum(s.get('cache_hit',False) for r in rows for s in leaf_rows(r)),
+        'read_cache_calls':sum('cache_hit' in s for r in rows for s in leaf_rows(r)),
         'final_read_cache':best.cache,
+        'scheduling_policy':{'priority':priority,'rank':rank_policy},
         'optimality':'bounded frontier DP with append-only resource calendars; no global optimality guarantee'}
 
 

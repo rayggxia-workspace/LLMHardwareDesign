@@ -21,5 +21,9 @@
 # SHA-bound Issue219 attempt originals retain their downloaded bytes.
 /work/YUZE-LU/219/throughput-opt/results/stage-*/** -text
 /work/YUZE-LU/219/throughput-opt/results/systemc-environment*/** -text
+/work/YUZE-LU/219/throughput-opt/results/column-*/** -text
+# Local Windows probe originals include CRLF; keep their bytes and still
+# check actual trailing spaces, blank EOF lines and space-before-tab.
+/work/YUZE-LU/219/throughput-opt/results/column-*local-ffn*/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 # The upstream configure log contains a trailing blank; do not alter evidence.
 /work/YUZE-LU/219/throughput-opt/results/systemc-environment/configure.log -whitespace

@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-09 CST：Issue219/PR220算法迭代3加入完整K列分片与每前沿整数分配，134项、本轮六次完整Qwen2.5-3B B1/S2无KV数值逐位一致；独立审计及原件SHA核验通过。同池较强基线下整网九组18束0.706898%、真实FFN切片3.800989%，未达20%。官方SystemC原生命令阶段微实验及负对照通过；整服务锁通道掩盖重叠，下一轮做经校准的事件前沿，不能以微实验当算法/整网性能。见[证据及后续](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_3.md)。时间/能耗/KV token/s与充分优化3–4B对照仍未完成，持续in_progress；待独立审查，登记pending、看板unverified/同步pending。
+
 2026-11-09 CST：Issue219/PR220算法迭代2完成原语阶段化、静态线束未来可行性与已知好解保留；122项/完整5、9组工作量与预算审计通过。修复九组10束有解却被窄beam丢失的问题；同候选/同预算DP执行收益仍0，新动作族九组仅剩约2.79%重排空间，20%目标继续。SystemC3.0.2安装/FIFO环境检查通过，未有校准性能结论。[本轮证据及后续](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_2.md)。待独立审查、Issue in_progress；登记PR5 pending、看板unverified/同步pending。
 
 2026-11-09 CST：算法迭代1为当前候选族建立强制资源/依赖链乐观下界，五组/九组现计划剩余改善上限仅0.000323%/0.765027%；112项及Slurm100652通过，6份原件SHA核验。[诊断及下一轮](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_1.md)。需改进合法分阶段/分片/驻留决策，不能只调beam；不是硬件性能上限。算法20%及SystemC/能耗/token/s/ASIC-FPGA目标持续in_progress。

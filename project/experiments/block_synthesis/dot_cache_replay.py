@@ -8,6 +8,8 @@ same final rounding is performed once, after prefix and streamed suffix.
 from copy import deepcopy
 import numpy as np
 from preparation_reuse import PreparedOperands
+from column_shards import leaves
+from dynamic_columns import resized
 
 
 def order_program(program,plan,stage_map=None):
@@ -61,6 +63,26 @@ class DotCache:
         a=self.prepared.prepare(node,a)
         task_id=self.stage_map[node['id']]['execute'] if self.stage_map is not None else node['kernel']
         binding,row=self.selected[task_id];c=binding.get('read_cache')
+        if 'parallel_shards' in binding:
+            shape=node['shape'];columns=shape[-1];covered=np.zeros(columns,dtype=bool)
+            broadcast_b=np.broadcast_to(b,tuple(shape[:-2])+(node['attributes']['length'],columns))
+            result=np.empty(shape,dtype=np.int64)
+            services=row['evaluation']['services'];children=binding['parallel_shards']['children']
+            if 'frontier_partition' in binding:
+                children=[resized(c,*r) for c,r in zip(children,row['evaluation']['resolved_columns'])]
+            if len(services)!=len(children):raise ValueError('numeric column service coverage differs')
+            for child,service in zip(children,services):
+                lo,hi=child['columns']
+                if not 0<=lo<hi<=columns or covered[lo:hi].any():raise ValueError('numeric column overlap/range')
+                covered[lo:hi]=True
+                view={**node,'shape':shape[:-1]+[hi-lo]}
+                result[...,lo:hi]=self._dot(view,a,broadcast_b[...,lo:hi],child['binding'],service)
+            if not covered.all():raise ValueError('numeric missing output columns')
+            return result
+        return self._dot(node,a,b,binding,row)
+
+    def _dot(self,node,a,b,binding,row):
+        c=binding.get('read_cache')
         if not c:return np.matmul(a,b)
         if c['primitive']!=node['id']:raise ValueError('cache points at a different Dot')
         site=c['site'];t=c['stripe'];ca=c['components'][0];shape=node['shape'];k=c['K']
@@ -107,7 +129,7 @@ class DotCache:
         return out
 
     def report(self):
-        expected=sum('read_cache' in b for b,_ in self.selected.values())
+        expected=sum('read_cache' in child for b,_ in self.selected.values() for child in leaves(b))
         if len(self.events)!=expected:raise ValueError('cache execution coverage differs')
         return {'passed':True,'calls':len(self.events),'hits':sum(e['cache_hit'] for e in self.events),
             'preparation':self.prepared.report(),
