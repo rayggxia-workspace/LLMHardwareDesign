@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-08 CST：#220 静态互斥修复与当前母控回放
+
+[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。修复 loop DP 和独立检查器遗漏 incompatible_nets，固定／已选连接跨时间保留约束；100341 的 90 项测试含 150 个互斥小 DAG 穷举，100338 完整 3B 计划重验通过。100343 的当前独立母控含真实程序 SRAM，配两组 #221 修复后的 U_64 局控执行自动生成 Add/Mul 小图，9 次回放核对实际数值／写 ACK／源释放／连接，正常352拍、背压491拍、复位后486拍；这是固定放置控制子集，不是整网／九目标／物理覆盖。完整数值、零预连虚拟外存和同预算无整网收益结论不变。23 个最终控制输入 Git blob 对上，v1/v2 的 66/24 份输出 SHA 核对；失败环境作业100340保留后改用已有 CP 环境重提通过。见[本轮证据](../../work/YUZE-LU/219/MUTEX_CONTROL_RESULTS.md)。成果待独立审查，不自审、合并或关闭Issue；登记pending，看板unverified/同步pending。后续：任意整网计划控制编码、tile/cache及真实物理反馈。
+
 ## 2026-11-08 CST：完整3B生成程序与整网有限调度
 
 [Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。本轮属于#220的软件缺口已修复：Gather、真实量化/布局、完整S32原语、数值回放与同源成本。最终100224/100233/100234/100235均COMPLETED0:0，75项测试、完整Qwen2.5-3B B1/S2三输入数值和五组/九组16KiB独立计划检查通过。同连接预算无整网收益，九组多束需求时模型代价降低2.68%，不称系统性能；全部spill后端的tile/cache优化、更多完整模型和物理反馈仍待后续研究。见[完整结果](../../work/YUZE-LU/219/FULL_RESULTS.md)及离线图册。成果待独立审查，未自审/合并/关闭Issue；审查人待指定，登记pending，看板unverified/同步pending。下方11-07的Gather阻塞为已修复历史。
@@ -19,6 +23,18 @@
 ## 2026-11-07（CST）通用Block前沿搜索原型
 
 [Issue #219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) · [草稿PR #220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。服务器99698完成64组分析对照；完整Qwen3-0.6B浮点前端验证通过；23组分析计划独立重放通过，41组保留失败。输入与结果图册及哈希见[结果记录](../../work/YUZE-LU/219/README.md)。当前16 KiB场景均未完成，仍需多算子覆盖、分片/spill、原生控制镜像和pin/电气合同，不能称完整综合器或硬件通过。状态保持in_progress，PR为草稿，审查人待指定；登记pending，看板缺配置待核验。
+
+## 2026-11-08（CST）U 原生入口和双向发送修复
+
+[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) → `in_review`；[PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 待独立审查。独立 TX 槽和普通三源入口修复后，两版重新综合并通过完整原版 GDS DRC 0、TT 300 MHz、电气/PG及三档代表上层 RC。U_128 setup/hold +255.014/+14.595 ps，U_64 +73.082/+0.212 ps；最终网表 48/48、78/78 全部通过。两包及全部 1,389/2,101 文件回收核验成功，31 硬件源文件与审查代码一致。[最终回执](../../work/YUZE-LU/212/u-native-fix.md)。P 不变。用户已授权将 #221 合入 main；五类图册 U 两版已绑定新验收包，P/C/F/J 图源不变。实际合并状态以 PR 在线回执为准，Issue 在线 assignee 未指定。登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，复用接入交接 Issue7。
+
+2026-11-08 CST：用户已授权将 #223 / PR #224 母控双格式交付合入 main。新增五类 Block 与母控的[统一索引](../../docs/experiments/assets/five-leaf-bases/README.md)，原目录及交付散列保持不变。合并状态以 PR 回执为准；独立审查未代批，登记/看板缺项继续由 Issue #7 交接。
+
+## 2026-11-08（CST）母控物理实现
+
+更新时间：2026-11-08 CST。[Issue #223](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/223) / [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 已完成先64后128的工程验收，待独立审查。两格式各54项RTL、54项母控最终网表、69项实际Block/局控RTL回归；共用未改物理六文件，TT300MHz setup/hold +374.917/+7.629ps、完整原版GDS DRC0，电气/RC/PG/SRAM时钟通过。U绑定#221已验收31文件源。两包及3860/3148内部文件本地全部核验，见[报告](../../docs/experiments/mother-control-dual-format.md)与[执行记录](../../work/YUZE-LU/223/README.md)。下一步：指定独立审查人、审查PR；九目标扩展和联合布局布线另验。本任务未自行合并或标done；登记PR5 pending，缺board配置，Projects unverified/同步pending，待管理员核验。
+
+
 ## 2026-11-07（CST）C/F/J 独立叶宏组
 
 更新时间：2026-11-07 21:40 +0800。

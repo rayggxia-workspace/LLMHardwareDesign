@@ -11,4 +11,5 @@ export PYTHONPATH="$2/deps${PYTHONPATH:+:$PYTHONPATH}"
 cd "$root"
 sha256sum *.py > input.sha256
 "$python" -m unittest discover -v -p 'test_*.py' > tests.log 2>&1
-sha256sum tests.log > output.sha256
+"$python" -B static_conflict_probe.py > static-conflict.json
+sha256sum tests.log static-conflict.json > output.sha256

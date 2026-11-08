@@ -1,10 +1,19 @@
 # 当前状态
 
+2026-11-08 审查修复及控制接入：[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 原整网 DP 与独立检查器遗漏 incompatible_nets，现已分别修复。90 项测试（含 150 个互斥小 DAG 穷举对照）、完整 3B 计划重验通过；当前独立母控含实际程序 SRAM、两组 U_64 局控的小图自动镜像完成 9 次数值／写 ACK／源保持与释放回放。原完整清单声明互斥对为 0，不代表物理无冲突；固定放置小图不代表任意整网 DP 控制编码、九目标或物理通过。见[修复与控制证据](../work/YUZE-LU/219/MUTEX_CONTROL_RESULTS.md)，旧数值及同预算无收益结论保留。
+
 2026-11-08 算法整网里程碑：[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 修复Gather、实际量化、动态矩阵/地址与完整S32原语分解。完整真实Qwen2.5-3B B1/S2三输入生成IR数值回放通过（L2 0.5265%/0.7251%/0.5592%，两位置argmax一致）；各S16KiB、预连0、#182虚拟外存，整网计划与独立检查通过。75项测试、原语三初态通过；同连接预算DP尚无整网收益，全部spill后端仍需tile/cache优化。不继承系统RTL/物理资格，其他bench未获完整整网资格。见[完整结果及回执](../work/YUZE-LU/219/FULL_RESULTS.md)，下方11-07的Gather阻塞为已修复历史。
 
 2026-11-07 算法后续：[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[Draft PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 新增M/N/E/G/R256/T原生命令配方、跨片状态保留和显式格式转换。服务器46项检查、五类混合图38任务及R256跨片三初态回放通过，私有S各16KiB、预连0、虚拟外存。完整Qwen2.5-3B仍缺Gather、量化与动态布局等软件转换，未称整网通过。[结果与回执](../work/YUZE-LU/219/LEAF_RESULTS.md)。
 
 2026-11-07 算法分支进展：[Issue #219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) / [Draft PR #220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 已修正零数据预连、虚拟外存和算法验收边界；服务器34项检查、真实N/E客户端三初态回放及5组16KiB调度对照通过。[证据与未完成项](../work/YUZE-LU/219/FIX_RESULTS.md)。完整3B模型的数值/尺度/布局等软件转换尚未完成；控制镜像、原生DMA和最终物理不作为当前算法验收前提。此进展不改写其他硬件任务的资格或状态。
+
+2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
+
+2026-11-08，用户授权将母控 [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 合入 main，并在[五类 Block 与母控统一入口](experiments/assets/five-leaf-bases/README.md)并列索引源码、图册及双格式验收包。工程证据不变；合并结果以 PR 在线回执为准，授权整合不冒充独立审查或九实例系统验收。
+
+2026-11-08，[Issue #223](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/223) / [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 的母控64位后128位工程门均通过。两格式各54项RTL、54项最终母控网表、69项实际Block/局控RTL组合回归；共用同一组六文件，TT300MHz setup/hold +374.917/+7.629ps、原版完整GDS DRC0，电气/RC/PG/SRAM时钟通过。64/128包及3860/3148个内部文件均已本地校验。范围为两驻留目标、有限原生profile；不是九实例联合物理或完整ISA验收，局控PM仍为行为夹具。详见[正式验收报告](experiments/mother-control-dual-format.md)。进入待独立审查阶段，不自合并；登记及看板缺项沿用下方交接。
+
 2026-11-07，[PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) 的 C/F/J `_128` 独立交付保留，C/F 同时发送死锁已由独立 TX 槽修复并通过真实 SRAM 和母控/双局控程序回归。新增 C/F/J `_64` 固定 #180 2a66b918，完整原版 GDS DRC 均为 0；PG、电气、LEC、TT 300 MHz 提取时序及最终网表回放全部通过。三包已回收并逐项核验全部316/273/548文件，工程交付按用户授权随 #213/#214 整合，最终合并回执以 PR 在线状态为准。后制 RC 为研究模型，九实例顶层及跨 PR 控制合同另验。详见[验收索引](../work/YUZE-LU/211/control64-acceptance.json)和[五类两版实际摆放图册](experiments/assets/five-leaf-bases/README.md)。
 
 面向 main 的六块交付：[PR #161](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/161)；已提交待独立审查，尚未合并。R 仍未完成。

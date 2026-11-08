@@ -12,3 +12,5 @@
 - [0005：V 三宏划分与首版独立 R 保留](0005-compute-block-v-split-r.md)（accepted，用户确认的当前规划；规格/实现/物理资格另行验收）
 
 - [0010：已登记服务、流式初解与联合约束搜索](0010-qualified-block-planner.md)（proposed，局部实现验证；五类整网综合未完成）
+
+- [0006：母控双格式共享物理实现与分别验证](0006-mother-control-dual-format.md)（已实施并通过所列工程门，待代码审查）

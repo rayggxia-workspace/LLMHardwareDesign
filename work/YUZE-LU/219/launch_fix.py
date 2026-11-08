@@ -32,6 +32,16 @@ def main():
             info.size = len(data)
             tar.addfile(info, io.BytesIO(data))
             manifest[file.name] = hashlib.sha256(data).hexdigest()
+        if a.script == 'control-replay.sbatch':
+            control = Path.home() / 'AppData/Local/Codex/issue219-control-source'
+            index = json.loads((control / 'index.json').read_text())
+            for name in ['index.json', *index['files']]:
+                data = (control / name).read_bytes()
+                if name != 'index.json' and hashlib.sha256(data).hexdigest() != index['files'][name]['sha256']:
+                    raise ValueError('pinned control source changed: ' + name)
+                target = 'control-source/' + name
+                info = tarfile.TarInfo(target); info.size = len(data)
+                tar.addfile(info, io.BytesIO(data)); manifest[target] = hashlib.sha256(data).hexdigest()
         if a.script in ('native-probe.sbatch', 'leaf-replay.sbatch'):
             for name in ('block_v2/block_v2_m.sv', 'block_v2/block_v2_g.sv',
                          'block_v2/block_v2_g_tables.svh', 'block_v2/block_v2_e.sv',

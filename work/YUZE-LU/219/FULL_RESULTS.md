@@ -1,5 +1,7 @@
 # 完整 3B 模型：整数程序、有限外存调度与有界 DP
 
+**审查修正（2026-11-08）：** 原整网搜索与独立检查器漏查 `incompatible_nets`，此前合法性保证不覆盖带静态互斥约束的输入。现已分别修复；90 项测试、含互斥的小 DAG 穷举对照和完整 3B 计划重跑通过。原清单的声明互斥对为 0，不代表实际物理连接没有冲突。另新增当前独立母控＋两组 U_64 局控自动生成小图程序的 9 次 RTL 回放；不等于完整 3B 控制镜像已完成。见[修复与控制证据](MUTEX_CONTROL_RESULTS.md)。下文作业及周期为原冻结批次历史记录。
+
 2026-11-08 CST；[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) / [PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)。本轮修复属于 #220 编译器，未修改硬件 RTL、其他工作树或其他作业。Gather、量化、动态矩阵与布局不再是该执行范围的阻塞。
 
 ## 验收结果

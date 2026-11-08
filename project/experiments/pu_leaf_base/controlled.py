@@ -53,6 +53,29 @@ P_ENDPOINT = """
 U_ENDPOINT = """
     wire [1:0] cmd_valid, cmd_store, done_ready, cmd_ready, done_valid, done_error, done_saturated;
     wire [127:0] cmd_meta, tx_data;
+    wire s_tx_ready, s_tx_valid, s_tx_take;
+    wire [127:0] s_tx_data;
+    localparam TX_IDLE=0, TX_READ=1, TX_HELD=2;
+    reg [1:0] tx_state;
+    reg [127:0] tx_hold;
+    // A source read retires into this independent slot. Only the remote
+    // stored ACK releases the slot and completes the native SEND service.
+    assign tx_ready = !reset && tx_state==TX_IDLE && s_tx_ready;
+    assign s_tx_take = !reset && tx_state==TX_READ;
+    assign tx_valid = !reset && tx_state==TX_HELD;
+    assign tx_data = tx_hold;
+    always @(posedge clk) begin
+        if (reset) tx_state <= TX_IDLE;
+        else case (tx_state)
+            TX_IDLE: if (tx_req && tx_ready) tx_state <= TX_READ;
+            TX_READ: if (s_tx_valid) begin
+                tx_hold <= s_tx_data;
+                tx_state <= TX_HELD;
+            end
+            TX_HELD: if (tx_take) tx_state <= TX_IDLE;
+            default: tx_state <= TX_IDLE;
+        endcase
+    end
     wire [3:0] cmd_sources;
     wire [59:0] cmd_addresses;
     wire [19:0] cmd_dst;
@@ -122,10 +145,10 @@ U_ENDPOINT = """
         .e_done_valid(done_valid[0]),.e_done_ready(done_ready[0]),
         .e_done_error(done_error[0]),.e_done_saturated(done_saturated[0]),.e_done_data(),
         .e_cmd_direct_a(pair_active),.e_direct_a_valid,.e_direct_a_abort(pair_abort),.e_direct_a_ready,.e_direct_a_data,
-        .io_req_valid({tx_req,incoming_valid}),.io_req_write(2'b01),
+        .io_req_valid({tx_req && tx_state==TX_IDLE,incoming_valid}),.io_req_write(2'b01),
         .io_req_addr({tx_addr,incoming_addr}),.io_req_data({128'b0,incoming_data}),
-        .io_req_ready({tx_ready,incoming_ready}),.io_rsp_valid({tx_valid,incoming_ack}),
-        .io_rsp_ready({tx_take,incoming_ack_ready}),.io_rsp_data({tx_data,unused_rx}));
+        .io_req_ready({s_tx_ready,incoming_ready}),.io_rsp_valid({s_tx_valid,incoming_ack}),
+        .io_rsp_ready({s_tx_take,incoming_ack_ready}),.io_rsp_data({s_tx_data,unused_rx}));
 """
 
 P_PORTS = """
@@ -234,6 +257,18 @@ def stage(out, group):
             raise ValueError(f"native P adapter anchor drift: {old}")
         adapter = adapter.replace(old, new)
     p_adapter.write_text(adapter)
+
+    if group == "U":
+        u_adapter = directory / "ucf_native_service.sv"
+        adapter = u_adapter.read_text()
+        old = "native0[3:2]>2"
+        if adapter.count(old) != 1:
+            raise ValueError("native U source-count validation anchor drift")
+        # Only U E (lane 0) has three sources. Keep N and other LANES
+        # profiles on their existing validated contracts.
+        adapter = adapter.replace(old,
+            "(native0[3:2]>2 && !(LANES==2 && native0[1:0]==0))")
+        u_adapter.write_text(adapter)
 
     ports, connections, internal, identity = [], [], [], []
     mapping = dict(CONTROL_LINK, clk_i="clk", rst_ni="local_rst_ni")

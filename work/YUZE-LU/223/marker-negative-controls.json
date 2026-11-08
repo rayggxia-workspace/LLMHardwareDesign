@@ -1,0 +1,49 @@
+{
+  "schema": "mother-filled-marker-negative-controls/1",
+  "passed": true,
+  "results": [
+    {
+      "case": "missing_same_net_route",
+      "expected_rejection": true,
+      "exit_code": 1,
+      "proof_sha256": "d38916c272d7e5d9f8c70f2e81ef65c869321506bc8502cbd9011bd97585fab7",
+      "checks": {
+        "index": 0,
+        "net": "net10276",
+        "layer": "metal2",
+        "box_dbu": [
+          37740,
+          689290,
+          37880,
+          689360
+        ],
+        "same_net_odb_route_fills_entire_marker": false,
+        "actual_gds_fills_entire_marker": true,
+        "passed": false
+      }
+    },
+    {
+      "case": "missing_actual_gds",
+      "expected_rejection": true,
+      "exit_code": 1,
+      "proof_sha256": "e0ff6782601f9eb02e9a71a24031fba9ad15281f0f720af4c5667105398a7d76",
+      "checks": {
+        "index": 0,
+        "net": "net10276",
+        "layer": "metal2",
+        "box_dbu": [
+          10037740,
+          10689290,
+          10037880,
+          10689360
+        ],
+        "same_net_odb_route_fills_entire_marker": true,
+        "actual_gds_fills_entire_marker": false,
+        "passed": false
+      }
+    }
+  ],
+  "production_script_sha256": "c8543db86f0c20c57441b9ca73feea7a179febbeca3fe142e9eb42fd527ba47c",
+  "gds_sha256": "8b64adfce23f2c35d2d8bccc4a8ee9cc5e4a8bb91486b6b82f27526f8c9f102b",
+  "scope": "Deliberately invalid isolated proof inputs; no design/database modification"
+}
