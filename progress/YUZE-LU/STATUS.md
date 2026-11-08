@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-09 CST：算法迭代1为当前候选族建立强制资源/依赖链乐观下界，五组/九组现计划剩余改善上限仅0.000323%/0.765027%；112项及Slurm100652通过，6份原件SHA核验。[诊断及下一轮](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_1.md)。需改进合法分阶段/分片/驻留决策，不能只调beam；不是硬件性能上限。算法20%及SystemC/能耗/token/s/ASIC-FPGA目标持续in_progress。
+
 2026-11-08 CST用户追加：准备外提只作共享后端基线，不计入算法本身约20%目标；继续多轮。后续须有SystemC（若支持）的校准时间/能耗、prefill及带KV decode token/s，并与充分优化的3–4B ASIC/FPGA比较；若硬件瓶颈需关联独立PR。[验收合同](../../work/YUZE-LU/219/throughput-opt/OPTIMIZATION_CONTRACT.md)。当前持续in_progress，算法目标及系统比较未完成，不以约60%后端下降结束。
 
 2026-11-08 CST：Issue219/PR220准备复用已完成完整3B复验，五组同10束降60.5851%、九组同18束降59.9470%，搬运约降72.058%。110项和六次完整数值逐位一致，30份原件SHA核验。显式外存增加83.824MiB，实际容量未资格化；非DP单独收益、未新增RTL/物理资格。[结果与源回执](../../work/YUZE-LU/219/throughput-opt/RESULTS.md)。成果进入待独立审查，不自合并/关闭；登记pending、看板unverified/同步pending。
