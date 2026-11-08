@@ -1,7 +1,7 @@
 # Issue236：decode容量的独立硬件改进入口
 
 2026-11-09 CST，负责人YUZE-LU；[Issue236](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/236)，
-独立task/236-decode-capacity，基于main c4d7b960599b9d292f27eb4429d5f226a7156c95。
+独立task/236-decode-capacity，[草稿PR237](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/237)，基于main c4d7b960599b9d292f27eb4429d5f226a7156c95。
 正式工具/选项/阶段门见[容量说明](../../../../project/experiments/decode_capacity/README.md)。
 
 已完成源绑定的容量必要条件和6项检查。结果见[capacity-result.json](capacity-result.json)：
