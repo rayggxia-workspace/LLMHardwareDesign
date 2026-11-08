@@ -1,5 +1,38 @@
 # YUZE-LU 的进度
 
+## 2026-11-09 CST：Issue230通用后端工程验收通过，待独立审查
+
+[Issue230](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/230) / [PR231](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/231)。
+九组690网共同GDS几何、原生身份、全量ODB、1380端点连通及113006927矩形共同场通过。
+完整原版DRC为0；690/690场求解、9档原约束TT300MHz和严格六文件交付门通过，最差setup/hold +73.082209/+0.211775ps。
+便携包101473完成真实DEF/ODB重读和名义STA回放，计数1698914实例/678871网/23447端口一致，违规均0；809MB包回收到本地并核验40文件和全部六文件SHA。
+修复master缺失pin、DBU、层次提取、回执、加载命令及LEF basename库身份等问题，62行数值精度不足增加采样后通过；全部失败保留。57项后端、119项综合器回归通过。
+实际#220服务降低显式区分预连服务、外部边界与新金属；不再将额外RTL作为通用EDA前置。
+详见[交付入口](../../work/YUZE-LU/230/HANDOFF.md)和[工作记录](../../work/YUZE-LU/230/README.md)。工程验收通过、待独立审查，未自审/自合并；线上状态以最终读回为准。
+下一步由待指定的独立审查人审查PR；登记PR5 pending，看板配置缺失unverified/同步pending，沿用Issue7交接。
+
+
+以下为保留的较早迭代记录，当前状态以上方摘要及工作记录末尾为准。
+
+2026-11-09 CST，Issue230/PR231继续实际闭合：九组690网共同GDS读回、上层规则、原生1293 cell全部层XOR及12402850层级实例身份通过。
+共同原版DRC与原生拓扑仍在运行。平坦ODB逐网检查抓到P0时钟网metal8差异，保留失败并导出实际ODB master视图重建，
+逐段排查pin/via/线定义来源，不跳过差异。原约束读入的转义问题已修复，实际690个新网驱动寄生拓扑预检完整；
+该预检未加新场C，不授予最终STA/物理资格。46项后端测试、30项上游合同/DP回归与管理结构检查通过。
+继续共同场提取、精度迭代和9档原约束STA；仍in_progress/Draft，未自审、合并、关闭或标done。
+
+2026-11-08 CST，Issue230继续实际闭合：五类原生拓扑和全原生上下文场提取已通过，
+精度不足行已增加样本；U/C/F/J实际电路首版9档STA通过，P投影负载不守恒已定位并修正，需重跑全部STA。
+九组690网实际GDS/ODB检查与共同原生拓扑运行中；后续重新求共同RC，不继承单类电容。
+未完成，不作阶段终点交付；失败记录见work/YUZE-LU/230/README.md。
+
+2026-11-08 CST，Issue230：task/230-backend-router叠加#229，实际五包重新验SHA、
+ODB端点导出及362网DEF/ODB/GDS读回/原生层XOR通过；原版完整DRC五项均0违规。
+用户纠正范围后撤回“先补完整九组硬件才开发布线”的判断。已找到#220九组资源和真实IR，
+resource_base/library实际装配9组、28独立叶宏、1380个M10端点；100560服务器36项检查通过。
+flow.py接通计划→资源装配→需求展开→路由→DEF入口。继续完整端点降低/路由/RC反馈，
+不要求用户先补新RTL；完整物理尚未通过，不标done。见[回执](../../work/YUZE-LU/230/README.md)。登记pending，
+Projects unverified/同步pending，沿用Issue7。
+
 2026-11-08 CST，Issue #228：按用户澄清实现通用布线算法，独立task/228-generic-router叠加#227，不按Qwen3.5定制。多源接入/路径、fanout树、拆线重布及几何检查已实现；合成测试通过，实际导出与电气时序另验。待独立审查；登记PR5 pending，缺board配置，Projects unverified/同步pending，沿用Issue7。
 
 2026-11-08 CST，Issue #226：基于PR220 f23a6d934，在独立分支task/226-route-contract实现综合到布线接口；未修改原搜索/缓存。逻辑束/预约展开、base端点绑定/固定网络冲突、分级反馈和CLI已实现；真实双U306位输出明确unbound。待独立审查，实际端点导出和布线/RC/STA另阶段。登记PR5 pending，缺board配置，Projects unverified/同步pending，沿用Issue7。

@@ -1,6 +1,39 @@
 # 架构与运行
 
+Issue230：[实际后端写出及输入审计](../project/experiments/upper_router/BACKEND.md)。
+`backend.py SPEC ROUTES NEW_OUTPUT --dbu-per-micron 2000 --via-resistance-ohm 0.08`
+导出实际互联DEF和身份映射，`ingest.tcl`生成ODB，`physical_readback.py`读取实际OpenDB
+矩形写出/读回GDS并核对真实M10及全原生层XOR。复跑入口为同目录inventory/fixture/
+native_drc等sbatch，均10核、数组最多6项；依赖与源包见[回执](../work/YUZE-LU/230/README.md)。
+在upper_router目录运行`python -B -m unittest test_router test_backend test_stage_package test_resource_base test_flow -v`。
+`resource_library.py`校验已有物理资源，`resource_base.py IR LIBRARY NEW_BASE --gap-dbu N`
+从#220 leaf_inventory生成候选放置；`flow.py IR PLAN LIBRARY RULES NEW_OUTPUT --gap-dbu N --via-resistance-ohm R`
+统一独立计划检查、资源装配、库接口展开、逐位绑定、路由和DEF导出。
+实例数量由IR决定，资源库是输入，不要求先有已验收共同芯片或新母控/外存RTL。
+九组690条实际晚接网已完成共同版图物理验收；#220整模型和控制程序语义资格单独记账。
+
 Issue #228：[通用上层布线基线](../project/experiments/upper_router/README.md)接收独立几何或#227已绑定请求，联合搜索M10落点及M11/M12路径、多接收端树与多轮拆线重布。`python -B project/experiments/upper_router/run.py INPUT OUTPUT --rounds 8`；在该目录运行`python -B -m unittest test_router -v`。仅声明研究网格规则，不继承模型/真实底座物理资格。
+
+Issue #230在同一[后端目录](../project/experiments/upper_router/README.md)接通资源放置、平坦ODB、完整原生几何场景、分布RC、原约束STA及交付门。
+在该目录运行`python -B -m unittest test_collect_field test_assemble_spef test_assembly_sta test_router test_backend test_stage_package test_resource_base test_flow test_rc_graph test_place_search test_stitch_rc test_def_assembly -v`。
+真实后端工具在分配的Slurm计算资源内执行，使用`source_bundle.py NEW_TAR`封存源及逐文件SHA；运行器参数和不可变输入见[实际作业记录](../work/YUZE-LU/230/README.md)。
+`qualify.py MANIFEST NEW_OUTPUT --copy`仅在全部真实证据绑定同一工件后复制DEF/ODB/Verilog/GDS/SPEF/SDC；此前各单步成功不能替代最终资格。
+九组共同DRC0、690/690新场RC和9档原约束TT300MHz均通过；便携包实际DEF/ODB读入与名义STA回放也通过。
+交付及复跑说明见[HANDOFF](../work/YUZE-LU/230/HANDOFF.md)。研究M11/M12参数不称工厂校准签核，资源库接口验收与整模型覆盖分开。
+当前完整后端检查：`python -m unittest discover -s project/experiments/upper_router -p 'test_*.py'`，57项。
+
+共同GDS的无几何根通过`native_topology.py`保留层次：仅在提取副本重复已有M10终端，
+先验证覆盖及金属并集XOR为0，再对实际全局L2N导出完整原生导体场景。
+`composed_topology.py`另行逐源比对实际GDS子树、摆位及严格分离的导体包围范围，
+只提供独立源身份/连通证据；最终RC不复用分源电容。
+交付门同时重验实际DEF、ODB/网表、原约束、每档SPEF来源及原始物理/电气视图SHA。
+`delivery_index.py QUALIFIED_DELIVERY NEW_INDEX --source SOURCE_TAR --tool TOOL_ARTIFACT`
+只索引已合格且六文件未变化的交付，记录全部声明证据目录、源包及工具的路径/大小/SHA，
+不把索引生成当作验收，也不复制大型物理数据到Git。
+`package_delivery.py build QUALIFIED_DELIVERY INDEX SOURCE_TAR NEW_PACKAGE`补齐准确的技术、
+上层通孔、重命名LEF/Liberty与相对路径加载脚本。实际运行`load_odb.tcl`、`load_def.tcl`、
+`load_timing.tcl`后，`package_delivery.py verify NEW_PACKAGE`要求DEF重读计数一致、
+名义STA零违规且裕量复现原值，再生成交付归档及SHA。
 
 Issue #226 实现[综合到布线接口层](../project/experiments/block_synthesis/ROUTE_CONTRACT.md)。从 `project/experiments/block_synthesis` 运行 `python -B -m unittest test_route_contract test_loop_dp test_dot_cache -v`；CLI见合同。需求重构检查共享接口展开实现，不是独立ODB/GDS几何或电气检查；实际物理后端另验。
 

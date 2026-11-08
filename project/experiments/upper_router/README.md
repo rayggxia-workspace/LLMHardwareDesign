@@ -3,6 +3,11 @@
 Issue #228，叠加 #227 的逐位接口合同。输入只有连接、端点几何和研究规则；
 算法不读模型名称、算子语义或 P/U/C/F/J 名称。不把 Qwen3.5 路线写入代码。
 
+Issue #230 已新增[实际后端写出、读回与产品输入审计](BACKEND.md)：
+通用路线可生成实际 DEF/ODB/GDS 互联视图，五类真实晚接接口用于物理回归。
+资源库、几何与端点是工具输入；控制/PM及外存实现的系统资格独立记账，
+不能用局部接口回归代替 #220 整网产品通过。原始 #228 合成几何证据与下文算法边界继续保留。
+
 ## 算法
 
 1. 从每个真实 M10 矩形枚举网格内接入候选，要求 via10 的 cut＋M10 包围完整落入
@@ -45,7 +50,8 @@ Issue #228，叠加 #227 的逐位接口合同。输入只有连接、端点几�
 
 `geometry_complete` 仅表示全部需求通过**声明的研究几何规则**；
 始终 `physical_qualified=false`，electrical/timing_status=not_evaluated。
-它不是实际芯片、foundry DRC或300MHz资格。当前没有ODB/DEF/GDS写出器或RC提取。
+它不是实际芯片、foundry DRC或300MHz资格。#230 的写出器和独立物理回归见上方链接；
+当前没有完整九组产品耦合RC/STA闭环。
 
 ## 与 #227 集成
 
@@ -81,3 +87,37 @@ python -B -m unittest test_router -v
 [OpenROAD官方说明](https://openroad.readthedocs.io/en/latest/main/src/drt/README.html)）；
 本交付是项目受限上层互联的可复查基线，不宣称这些基础方法本身是论文创新。
 #194的coupon实验用作历史失败背景，本目录没有继承其专用网名、常数或物理资格。
+
+## 实际后端闭合
+
+`flow.py`消费已校验的#220计划和资源库：实例模板按能力匹配，接口模板作为资源输入，
+`place_search.py`按真实端点通信估价搜索放置，`search.py`同时搜索M10接入与M11/M12路线。
+资源patch的包围框仅用于保持已有预连不互撞，不变成组合硬宏；导出的flat ODB保留独立叶宏和全部局控标准单元。
+
+接口可分别声明逐位新连线、`native_service`或`external_boundary`。后两者引用同一实际资源ODB/网表/GDS与独立叶宏，
+外部边界还保留真实原生层的pin形状；不能将M5等边界伪造为M10接点，也不要求EDA工具先实现外存gateway。
+`resource_library.py --services`载入显式、inventory SHA绑定的资源合同，既有预连不重复产生上层布线。
+`work/YUZE-LU/230/resource-services.json`是当前五类资源的附件声明，不构成#220完整算子数值或局控程序等价证明。
+因此#220计划的服务绑定记录与690条真实待接通路的物理算法回归分别记录，不把两者冒称同一芯片功能验收。
+
+实际后端由独立检查收口：
+
+- `def_assembly.py`/`flat_backend.py`把原生DEF与真实上层路线组成平坦ODB/网表；
+  `odb_lef.py`可从实际ODB导出master视图，避免误用随包的旧LEF。电气Liberty值不修改。
+- `physical_equivalence.py`逐实例、逐网对照原生ODB和新ODB；全部信号/PG导体及pin union要求XOR为0。
+  `physical_readback.py`另做实际上层ODB→GDS读回、规则、M10覆盖和原生层不变性检查。
+  原生层不变性通过全部native cell-layer XOR及所有层级实例/变换相等证明，不抽样。
+- `native_topology.py`提取完整原生连通性；`field_context.py`保留叶宏内部导体，将真实新路线加入共同场景。
+  `field/native_field.cpp`基于#225场求解器接口，保留其区间合并修复，并按上层R节点分箱；
+  `rc_graph.py`产生真实分支R图，`field_solve.py`/`refine_field.py`保存精度不足记录并只重算不足行。
+  分片收集必须覆盖全部新网、场景/求解器/控制实验SHA一致；不能把五个单独电容值复制成九组共同电容。
+- `stitch_rc.py`保留原生RC，加入新路由R和完整原生上下文中的上层origin电荷投影。
+  `assembly_sta.py`只namespace原约束并移除已内化端口的I/O约束；原周期、负载、false path、Liberty限值保留。
+  `timing_receipt.py`要求全部新网驱动寄生完整、无失配约束，且节点投影×Miller共9档setup/hold/cap/slew/fanout均无违规。
+- `qualify.py`只有在平坦ODB、共同GDS、完整原版DRC、新网连通、共同场提取和9档STA全部绑定相同输入产物后，
+  才给声明输入网表出具资格，并可复制DEF/ODB/Verilog/GDS/SPEF/SDC六文件交付。粗布线成功不会得到此资格。
+
+M11/M12参数沿用项目研究栈：线宽/厚度2µm、介质间隔0.8µm、eps=3.9、Rs=.0102Ω/□；
+via电阻.08Ω是显式研究假设，不是工厂标定。新增C使用共同原生导体场景，原生内部RC保留其已提取视图；
+这仍是上层origin增量投影，Miller与节点敏感性不等于完整动态SI或PVT签核。
+每个资源库/模型的映射、RTL和物理资格分别记账；资源库690网验收不自动证明任一完整模型/母控程序通过。
