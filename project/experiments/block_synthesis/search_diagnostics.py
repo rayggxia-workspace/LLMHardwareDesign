@@ -32,13 +32,33 @@ def bounds(tasks,hardware,plan):
             finish[t['id']]=lower[t['id']]+max((finish[p] for p in t.get('after',[])),default=0)
             del pending[t['id']]
     critical=max(finish.values(),default=0)
-    best=max([critical]+[r['completion_lower_bound'] for r in resources.values()])
+    # A task may require some M without requiring a particular M instance.
+    # Per-instance intersections miss this unavoidable pooled occupancy.
+    # Each bound counts resource-units*time, then divides by total capacity.
+    pools={name:set(members) for name,members in hardware.get('resource_pools',{}).items()}
+    for group,meta in hardware.get('leaf_inventory',{}).items():
+        for macro in meta['macros']:
+            resource=group+'.'+macro
+            if resource in hardware['resources']:pools.setdefault('native.'+macro,set()).add(resource)
+    channels={r for r in hardware['resources'] if r.startswith('virtual-memory.channel.')}
+    if channels:pools.setdefault('virtual-memory.channels',channels)
+    pooled={}
+    for name,members in pools.items():
+        if not members or not members<=hardware['resources'].keys():raise ValueError('invalid resource pool')
+        capacity=sum(hardware['resources'][r] for r in members)
+        work=sum(min(b.get('warm_ticks',b['ticks'])*len(set(b['resources'])&members)
+                     for b in t['bindings']) for t in tasks)
+        pooled[name]={'resources':sorted(members),'capacity':capacity,'minimum_resource_time':work,
+                      'completion_lower_bound':(work+capacity-1)//capacity}
+    best=max([critical]+[r['completion_lower_bound'] for r in resources.values()]+
+             [r['completion_lower_bound'] for r in pooled.values()])
     if best>plan['makespan']:raise ValueError('invalid lower bound exceeds verified schedule')
     return {'verified_plan_makespan':plan['makespan'],'critical_path_lower_bound':critical,
         'mandatory_resource_bounds':resources,'completion_lower_bound':best,
+        'resource_pool_bounds':pooled,
         'maximum_time_reduction_fraction_with_current_actions':1-best/plan['makespan'],
-        'assumptions':'same atomic kernel candidates, resources, optimistic all-hit cache endpoints; no finer phase/tiling or new hardware',
-        'scope':'proof within current serial-kernel action family; not a physical performance or global hardware bound'}
+        'assumptions':'same atomic service candidates, resources, optimistic all-hit cache endpoints; no finer phase/tiling or new hardware',
+        'scope':'proof within current serial-service action family; not a physical performance or global hardware bound'}
 
 
 def main():

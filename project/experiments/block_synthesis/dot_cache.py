@@ -15,7 +15,9 @@ def variants(ir, *, state_cost=False):
     """Extend the existing candidate pool; no additional user input file."""
     h=ir['hardware'];by_kernel={}
     for node in ir['primitive_program']['instructions']:
-        if node['op']=='Dot':by_kernel.setdefault(node['kernel'],[]).append(node)
+        if node['op']=='Dot':
+            task_id=ir['primitive_stages'][node['id']]['execute'] if 'primitive_stages' in ir else node['kernel']
+            by_kernel.setdefault(task_id,[]).append(node)
     total=0
     for task in ir['tasks']:
         dots=by_kernel.get(task['id'],[])

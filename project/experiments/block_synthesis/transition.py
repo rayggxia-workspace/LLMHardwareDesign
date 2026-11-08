@@ -3,6 +3,7 @@
 No input state or binding is mutated. Existing serial command/LOAD/STORE
 semantics are retained; no transfer/computation overlap is assumed.
 """
+from static_wiring import can_complete
 
 
 def retention_actions(state, binding):
@@ -19,13 +20,16 @@ def retention_actions(state, binding):
 
 
 def evaluate_transition(state, binding, hardware, data_ready, *, retention='legacy',
-                        fixed=frozenset(), conflicts=(), wire_budget=None):
+                        fixed=frozenset(), conflicts=(), wire_budget=None, wire_completions=None):
     nets = state.nets | frozenset(binding['nets'])
     if any(pair <= nets | fixed for pair in conflicts):
         return {'legal': False, 'reason': 'static_conflict'}
     wire_cost = sum(hardware['nets'][n]['cost'] for n in nets if not hardware['nets'][n].get('fixed'))
     if wire_budget is not None and wire_cost > wire_budget:
         return {'legal': False, 'reason': 'wire_budget'}
+    if wire_budget is not None and not can_complete(nets,hardware,wire_completions,wire_budget,
+                                                   fixed=fixed,conflicts=conflicts):
+        return {'legal':False,'reason':'wire_budget_completion'}
     cache = state.cache.copy()
     c = binding.get('read_cache')
     hit = False

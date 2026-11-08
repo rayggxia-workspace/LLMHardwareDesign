@@ -16,7 +16,12 @@ def main():
         match=re.search(r'layers\.(\d+)',t['id']);layer=int(match.group(1)) if match else -1
         nodes.append({'id':t['id'],'op':t['op'],'layer':layer,
             'parents':sorted({producer[n] for n in t['inputs'] if n in producer})})
-    data={'nodes':nodes,'summary':summary,'plan':plan['tasks'],'baseline':base['tasks'],
+    # Stage IDs refer to executable primitives; retain their original graph
+    # owner for layer filtering while exposing the actual service identity.
+    owners={r['id']:r.get('source_kernel',r['id']) for r in ir['program']}
+    def display_tasks(plan):
+        return [{**t,'service_id':t['id'],'id':owners.get(t['id'],t['id'])} for t in plan['tasks']]
+    data={'nodes':nodes,'summary':summary,'plan':display_tasks(plan),'baseline':display_tasks(base),
         'groups':ir['hardware']['leaf_inventory'],'sites':ir['hardware']['sites'],'program':[
             {k:v for k,v in row.items() if k in ('id','op','shape','exponent','body','temporary_external_region','S_layout')}
             for row in ir['program']],

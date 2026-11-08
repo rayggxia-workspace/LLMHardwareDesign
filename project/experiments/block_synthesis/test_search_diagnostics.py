@@ -23,5 +23,17 @@ class TestSearchDiagnostics(unittest.TestCase):
         self.assertEqual(r['completion_lower_bound'],5)
         self.assertEqual(p['makespan'],5)
 
+    def test_equivalent_pool_counts_alternative_instance_occupancy(self):
+        h={'sites':{'S':{'words':8}},'resources':{'r':1,'q':1},'nets':{},
+           'resource_pools':{'compute':['r','q']}}
+        tasks=[{'id':str(i),'bindings':[{'id':r,'site':'S','ticks':5,'resources':[r],
+            'nets':[],'scratch_words':1,'external_read_words':0,'external_write_words':0} for r in ['r','q']]}
+            for i in range(3)]
+        p=search(tasks,h,width=64);r=bounds(tasks,h,p)
+        self.assertEqual(r['mandatory_resource_bounds'],{})
+        self.assertEqual(r['resource_pool_bounds']['compute']['minimum_resource_time'],15)
+        self.assertEqual(r['completion_lower_bound'],8)
+        self.assertEqual(p['makespan'],10)
+
 
 if __name__=='__main__':unittest.main()

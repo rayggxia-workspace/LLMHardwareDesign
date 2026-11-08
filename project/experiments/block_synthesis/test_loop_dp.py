@@ -126,10 +126,28 @@ class TestLoopDP(unittest.TestCase):
         self.assertEqual(result['wire_cost'],2)
         self.assertEqual(result['baseline']['wire_cost'],3)
         self.assertTrue(verify(tasks,h,result)['passed'])
-        limited=optimize(tasks,h,width=2,wire_budget=2)
+        limited=optimize(tasks,h,width=2,wire_budget=2,wire_lookahead=False)
         self.assertEqual(limited['status'],'planned')
         self.assertNotEqual(limited['baseline']['status'],'planned')
         self.assertTrue(verify(tasks,h,limited,2)['passed'])
+        closed=optimize(tasks,h,width=1,wire_budget=2)
+        self.assertEqual(closed['baseline']['status'],'planned')
+        self.assertEqual(closed['tasks'][0]['binding'],'b')
+        self.assertGreater(closed['rejected_wire_completions'],0)
+        self.assertTrue(verify(tasks,h,closed,2)['passed'])
+
+    def test_validated_incumbent_survives_a_narrower_search(self):
+        h={'resources':{'r0':1,'r1':1,'r2':1},'sites':{'S':{'words':8}},'nets':{}}
+        tasks=[{'id':'A','bindings':[binding('a0','r0',3),binding('a1','r1',4)]},
+               {'id':'B','bindings':[binding('b0','r0',3)]},
+               {'id':'C','after':['A','B'],'bindings':[binding('c','r2',1)]}]
+        good=search(tasks,h,width=4)
+        result=optimize(tasks,h,width=1,incumbents=[good])
+        self.assertEqual(result['makespan'],5)
+        self.assertEqual(result['selected_source'],'incumbent')
+        self.assertEqual(result['baseline']['makespan'],7)
+        bad=deepcopy(good);bad['tasks'].pop()
+        with self.assertRaises(ValueError):optimize(tasks,h,width=1,incumbents=[bad])
 
     def test_independent_checker_rejects_overlap_and_unknown_binding(self):
         h={'resources':{'r':1},'sites':{'S':{'words':8}},'nets':{}}

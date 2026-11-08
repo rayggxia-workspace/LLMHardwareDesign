@@ -17,6 +17,7 @@ def main():
     p.add_argument('name')
     p.add_argument('script')
     p.add_argument('arguments', nargs='*')
+    p.add_argument('--systemc-archive',type=Path)
     a = p.parse_args()
     if not a.name.startswith('algorithm-fix-') or any(c not in '-_.abcdefghijklmnopqrstuvwxyz0123456789' for c in a.name):
         raise ValueError('task directory name rejected')
@@ -24,6 +25,13 @@ def main():
     archive = Path.home() / 'AppData/Local/Codex' / (a.name + '.tar')
     manifest = {}
     with tarfile.open(archive, 'w') as tar:
+        if a.systemc_archive is not None:
+            if a.script!='systemc-environment.sbatch':
+                raise ValueError('SystemC asset is only accepted by the environment job')
+            data=a.systemc_archive.read_bytes()
+            info=tarfile.TarInfo('systemc-3.0.2.tar.gz');info.size=len(data)
+            tar.addfile(info,io.BytesIO(data))
+            manifest[info.name]=hashlib.sha256(data).hexdigest()
         for file in sorted(src.iterdir()):
             if file.suffix not in ('.py', '.sbatch', '.cpp', '.hpp', '.vlt', '.sv'):
                 continue

@@ -1,5 +1,7 @@
 # 架构与运行
 
+2026-11-09：[阶段化及SystemC准备](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_2.md)。`full_plan.py --prepare-reuse --primitive-stages --read-cache --state-cost`使用原始原语依赖和独立准备服务，贪心/DP共用能力；`primitive-stage-plan.sbatch`生成计划，`primitive-stage-audit.sbatch ROOT BEFORE AFTER`核对工作量守恒及原始/当前连接预算，数值沿用`reuse-replay.sbatch`。122项及完整预算复核通过；`wire_lookahead=False`保留旧搜索作对照，`optimize(..., incumbents=...)`独立核验并保留已知可行方案。`systemc-environment.sbatch`只安装官方3.0.2并检查事件/FIFO，尚不提供系统时间/能耗或token/s。
+
 2026-11-09：`python -B project/experiments/block_synthesis/search_diagnostics.py IR PLAN OUTPUT`计算相同原子候选族的强制资源/依赖链乐观下界，先独立核验计划。五组/九组结果及112项回归见[算法迭代1](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_1.md)；下界不约束更细阶段、分片/驻留或硬件，不作系统性能上限。
 
 2026-11-08：PR220 [Dot准备复用合同](../project/experiments/block_synthesis/PREPARATION_REUSE.md)与[完整3B结果](../work/YUZE-LU/219/throughput-opt/RESULTS.md)。`full_plan.py --prepare-reuse --read-cache --state-cost`启用通用A分量准备外提，显式外存区域与独立成本/数值检查；入口prepare-reuse-plan.sbatch、prepare-reuse-audit.sbatch，数值沿用reuse-replay.sbatch。110项及六次完整回放通过，同资源/束数模型代价下降约60%，不是DP搜索单独收益或芯片实测。

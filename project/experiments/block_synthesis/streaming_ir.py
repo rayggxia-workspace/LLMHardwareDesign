@@ -165,6 +165,52 @@ def counts(body,library,stack=()):
     return result
 
 
+def enumerate_bindings(stats,h):
+    """Use the same native cost/resource contract for kernels or stages."""
+    inventory=h['leaf_inventory']
+    groups={m:[g for g,v in inventory.items() if m in v['macros']] for m in ('M','E','N')}
+    channel_count=h['virtual_memory']['channels']
+    macros=[m for m in ('M','E','N') if stats[m+':commands']]
+    needs_io=bool(stats['IO:read'] or stats['IO:write'])
+    candidates=[]
+    # IO-only Gather can use any supplied private S. Arithmetic binding
+    # enumerates a small local recipe combination, not whole model maps.
+    choices=[groups[m] for m in macros] or [list(inventory)]
+    for selected in product(*choices):
+        binding=dict(zip(macros,selected));io_group=selected[0]
+        sites={inventory[g]['site'] for g in selected};resources=set();nets=set();ticks=0;reads=writes=0
+        scratch={site:8 for site in sites}  # named input[0:2], output[3], four staging words
+        if any(h['sites'][site]['words']<8 for site in sites):continue
+        for macro,g in binding.items():
+            instance=g+'.'+macro;meta=inventory[g];site=meta['site']
+            resources.update([instance,meta['io_resource'],g+'.LC.service'])
+            if instance+'.context' in h['resources']:resources.add(instance+'.context')
+            for direction in ('read','write'):nets.add(instance+'.'+direction)
+            r,w=stats[macro+':read'],stats[macro+':write'];reads+=r;writes+=w
+            # Deliberately one-word descriptors: safe upper-bound model.
+            ticks+=stats[macro+':core']+r*meta['io_read_ticks']+w*meta['io_write_ticks']
+            ticks+=r*descriptor_ticks(h['virtual_memory'],1,'load',meta['io_write_ticks'])
+            ticks+=w*descriptor_ticks(h['virtual_memory'],1,'store',meta['io_read_ticks'])
+        if needs_io:
+            meta=inventory[io_group];resources.update([meta['io_resource'],io_group+'.LC.service'])
+            r,w=stats['IO:read'],stats['IO:write'];reads+=r;writes+=w
+            ticks+=r*descriptor_ticks(h['virtual_memory'],1,'load',meta['io_write_ticks'])
+            ticks+=w*descriptor_ticks(h['virtual_memory'],1,'store',meta['io_read_ticks'])
+        for g in set(selected):
+            meta=inventory[g];channel=meta['memory_group']%channel_count
+            resources.add('virtual-memory.channel.'+str(channel))
+            for direction in ('load','store'):
+                net=meta['site']+'.io.'+direction
+                h['nets'].setdefault(net,{'cost':1,'fixed':False,'unit':'logical interface bundle',
+                    'qualification':'unbound pin demand'})
+                nets.add(net)
+        bid='/'.join(m+'='+binding[m] for m in macros) or 'IO='+io_group
+        candidates.append({'id':bid,'site':inventory[io_group]['site'],'ticks':max(1,ticks),
+            'resources':sorted(resources),'nets':sorted(nets),'scratch_words':8,'scratch_by_site':scratch,
+            'external_read_words':reads,'external_write_words':writes,'macro_binding':binding})
+    return candidates
+
+
 def compile_graph(model,hardware,trace,profile,primitive_program=None):
     """No model name, Block count or S capacity is hardcoded in this compiler."""
     if not primitive_program:raise ValueError('an executable primitive program is required; op-count estimates are not accepted')
@@ -226,44 +272,7 @@ def compile_graph(model,hardware,trace,profile,primitive_program=None):
             for name in task['outputs']:producer[name]=upstream
             program.append({'id':task['id'],'op':task['op'],'address_view':deepcopy(task),'semantic_task':deepcopy(task)})
             continue
-        macros=[m for m in ('M','E','N') if stats[m+':commands']]
-        needs_io=bool(stats['IO:read'] or stats['IO:write'])
-        candidates=[]
-        # IO-only Gather can use any supplied private S. Arithmetic binding
-        # enumerates a small local recipe combination, not whole model maps.
-        choices=[groups[m] for m in macros] or [list(inventory)]
-        for selected in product(*choices):
-            binding=dict(zip(macros,selected));io_group=selected[0]
-            sites={inventory[g]['site'] for g in selected};resources=set();nets=set();ticks=0;reads=writes=0
-            scratch={site:8 for site in sites}  # named input[0:2], output[3], four staging words
-            if any(h['sites'][site]['words']<8 for site in sites):continue
-            for macro,g in binding.items():
-                instance=g+'.'+macro;meta=inventory[g];site=meta['site']
-                resources.update([instance,meta['io_resource'],g+'.LC.service'])
-                if instance+'.context' in h['resources']:resources.add(instance+'.context')
-                for direction in ('read','write'):nets.add(instance+'.'+direction)
-                r,w=stats[macro+':read'],stats[macro+':write'];reads+=r;writes+=w
-                # Deliberately one-word descriptors: safe upper-bound model.
-                ticks+=stats[macro+':core']+r*meta['io_read_ticks']+w*meta['io_write_ticks']
-                ticks+=r*descriptor_ticks(h['virtual_memory'],1,'load',meta['io_write_ticks'])
-                ticks+=w*descriptor_ticks(h['virtual_memory'],1,'store',meta['io_read_ticks'])
-            if needs_io:
-                meta=inventory[io_group];resources.update([meta['io_resource'],io_group+'.LC.service'])
-                r,w=stats['IO:read'],stats['IO:write'];reads+=r;writes+=w
-                ticks+=r*descriptor_ticks(h['virtual_memory'],1,'load',meta['io_write_ticks'])
-                ticks+=w*descriptor_ticks(h['virtual_memory'],1,'store',meta['io_read_ticks'])
-            for g in set(selected):
-                meta=inventory[g];channel=meta['memory_group']%channel_count
-                resources.add('virtual-memory.channel.'+str(channel))
-                for direction in ('load','store'):
-                    net=meta['site']+'.io.'+direction
-                    h['nets'].setdefault(net,{'cost':1,'fixed':False,'unit':'logical interface bundle',
-                        'qualification':'unbound pin demand'})
-                    nets.add(net)
-            bid='/'.join(m+'='+binding[m] for m in macros) or 'IO='+io_group
-            candidates.append({'id':bid,'site':inventory[io_group]['site'],'ticks':max(1,ticks),
-                'resources':sorted(resources),'nets':sorted(nets),'scratch_words':8,'scratch_by_site':scratch,
-                'external_read_words':reads,'external_write_words':writes,'macro_binding':binding})
+        candidates=enumerate_bindings(stats,h)
         if not candidates:raise ValueError('no inventory binding for '+task['op'])
         after=sorted(set().union(*(producer.get(n,set()) for n in task['inputs'])))
         tasks.append({'id':task['id'],'after':after,'bindings':candidates})

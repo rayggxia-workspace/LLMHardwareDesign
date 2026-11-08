@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-09：[PR220算法迭代2](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_2.md)新增8,404原语/准备服务及独立工作量/依赖/容量检查，修复静态线束预算导致有解却丢失的问题；122项及完整5/9组预算复核通过。同候选/同预算DP额外执行收益仍0，阶段化与编译优化不计入20%目标；SystemC3.0.2环境已就绪，时间/能耗/KV token/s及ASIC/FPGA对照继续未完成。Issue219持续in_progress，待独立审查；登记pending、看板unverified/同步pending。
+
 2026-11-08：PR220通用Dot准备复用通过完整Qwen2.5-3B B1/S2无KV复验，110项及五组/九组各三输入逐位一致。同10/18束模型代价分别下降60.5851%/59.9470%，搬运减约72.058%，每S仍16KiB；显式外存预留增83.824MiB，容量未资格化。收益来自循环配方，非DP单独收益；见[结果及边界](../work/YUZE-LU/219/throughput-opt/RESULTS.md)。待独立审查，登记pending、看板unverified/同步pending。
 
 2026-11-08：PR220新增每次转移的状态求值与部分前缀命中，完整Qwen2.5-3B五组/九组各三输入及105项检查通过。五组/同10束预算结果不变，九组模型完成时间增加约0.00007686%；未取得新增性能收益。见[结果](../work/YUZE-LU/219/STATE_COST_RESULTS.md)。成果待独立审查；登记pending、看板unverified/同步pending。

@@ -10,23 +10,37 @@ import numpy as np
 from preparation_reuse import PreparedOperands
 
 
-def order_program(program,plan):
+def order_program(program,plan,stage_map=None):
     """Execute each kernel in DP decision order, resolving address metadata.
 
     An arithmetic dependency absent from the kernel DAG is an error, rather
     than silently executing an extra kernel ahead of the selected schedule.
     """
     nodes={n['id']:n for n in program['instructions']};groups={};done=set();ordered=[]
-    for n in program['instructions']:groups.setdefault(n['kernel'],[]).append(n)
+    stage_for={}
+    for n in program['instructions']:
+        owner=stage_map[n['id']]['execute'] if stage_map is not None and n['id'] in stage_map else n['kernel']
+        stage_for[n['id']]=owner;groups.setdefault(owner,[]).append(n)
     def emit(n,kernel=None):
         if n['id'] in done:return
-        if n['op'] not in ('Constant','View','Mask') and n['kernel']!=kernel:
+        if n['op'] not in ('Constant','View','Mask') and stage_for[n['id']]!=kernel:
             raise ValueError('selected kernel order lacks primitive dependency '+n['id'])
         for name in n['inputs']:
             if name in nodes:emit(nodes[name],kernel)
         done.add(n['id']);ordered.append(n)
+    prepare={v['prepare']:k for k,v in (stage_map or {}).items() if 'prepare' in v}
+    completed=set()
     for row in plan['tasks']:
-        for n in groups[row['id']]:emit(n,row['id'])
+        if row['id'] in prepare:
+            n=nodes[prepare[row['id']]]
+            if n['inputs'][0] in nodes:emit(nodes[n['inputs'][0]])
+        else:
+            for n in groups[row['id']]:
+                if stage_map is not None and n['id'] in stage_map:
+                    p=stage_map[n['id']].get('prepare')
+                    if p is not None and p not in completed:raise ValueError('selected order omits operand preparation')
+                emit(n,row['id'])
+        completed.add(row['id'])
     for name in program['outputs'].values():
         if name in nodes:emit(nodes[name])
     result=deepcopy(program);result['instructions']=ordered
@@ -38,13 +52,15 @@ class DotCache:
         tasks={t['id']:t for t in ir['tasks']};self.selected={};self.resident={};self.events=[]
         self.capacity={s:v['words'] for s,v in ir['hardware']['sites'].items()}
         self.prepared=PreparedOperands(ir)
+        self.stage_map=ir.get('primitive_stages')
         for row in plan['tasks']:
             b=next(b for b in tasks[row['id']]['bindings'] if b['id']==row['binding'])
             self.selected[row['id']]=(b,row)
 
     def dot(self,node,a,b):
         a=self.prepared.prepare(node,a)
-        binding,row=self.selected[node['kernel']];c=binding.get('read_cache')
+        task_id=self.stage_map[node['id']]['execute'] if self.stage_map is not None else node['kernel']
+        binding,row=self.selected[task_id];c=binding.get('read_cache')
         if not c:return np.matmul(a,b)
         if c['primitive']!=node['id']:raise ValueError('cache points at a different Dot')
         site=c['site'];t=c['stripe'];ca=c['components'][0];shape=node['shape'];k=c['K']

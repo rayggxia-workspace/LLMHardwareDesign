@@ -39,13 +39,21 @@ def verify(ir):
         for count,term in terms:result.update({k:count*v for k,v in term.items()})
         return result
     expected=defaultdict(Counter);dots_by_kernel=defaultdict(list)
+    staged='primitive_stages' in ir; stage_map=ir.get('primitive_stages',{})
+    expected_stages={}; expected_after={}; producers={}; expected_rows={}
+    node_ids={n['id'] for n in program['instructions']}
+    if len(node_ids)!=len(program['instructions']):raise ValueError('duplicate primitive identity')
+    def upstream(names):
+        if any(n in node_ids and n not in producers for n in names):
+            raise ValueError('primitive source is not defined before use')
+        return set().union(*(producers.get(n,set()) for n in names))
     preparations=ir.get('operand_preparations',{});seen_preparations=set()
     widths={name:1 if meta['bits']==16 else 3 for name,meta in program.get('initial_formats',{}).items()}
     def narrow_literal(x):
         return all(narrow_literal(v) for v in x) if isinstance(x,list) else isinstance(x,int) and -32768<=x<=32767
     for node in program['instructions']:
         op=node['op'];n=math.prod(node['shape']);a=node['attributes'];work=Counter()
-        if op=='Dot':dots_by_kernel[node['kernel']].append(node)
+        if op=='Dot':dots_by_kernel[node['id'] if staged else node['kernel']].append(node)
         c=[widths.get(name,3) for name in node['inputs']]
         if c!=ir['native_operand_components'][node['id']]:raise ValueError('native component specialization differs')
         widths[node['id']]=1 if node['bits']==16 or (op=='Constant' and narrow_literal(a['raw'])) else 3
@@ -86,8 +94,44 @@ def verify(ir):
                 raise ValueError('prepared operand identity/extent differs')
             removed=(n-rows)*k
             for key,value in split.items():total[key]-=removed*value
-        expected[node['kernel']].update(total)
+        if staged:
+            parents=upstream(node['inputs'])
+            if any(total.values()):
+                phases={'execute':node['id']}
+                scratch=64
+                if op=='Dot':scratch+=sum(x for x in c if x==3)*a['length']
+                elif op in ('Sum','SquareSum'):scratch+=6*a['length']
+                if node['id'] in preparations:
+                    prep_id=node['id']+'#prepare-A'
+                    if prep_id in node_ids:raise ValueError('prepared stage identity collision')
+                    phases['prepare']=prep_id
+                    prep=combine((preparations[node['id']]['rows']*a['length'],split))
+                    expected[prep_id].update(prep)
+                    expected_after[prep_id]=upstream(node['inputs'][:1])
+                    expected_rows[prep_id]=(node,'prepare-A',64)
+                    for key,value in prep.items():total[key]-=value
+                    parents=upstream(node['inputs'][1:])|{prep_id}
+                expected_stages[node['id']]=phases
+                expected[node['id']].update(total)
+                expected_after[node['id']]=parents
+                expected_rows[node['id']]=(node,'execute',scratch)
+                producers[node['id']]={node['id']}
+            else:producers[node['id']]=parents
+        else:expected[node['kernel']].update(total)
     if seen_preparations!=set(preparations):raise ValueError('unknown prepared primitive')
+    if staged:
+        if stage_map!=expected_stages:raise ValueError('primitive stage coverage/identity differs')
+        if len(ir['program'])!=len(expected_rows) or {r['id'] for r in ir['program']}!=set(expected_rows):
+            raise ValueError('primitive stage program coverage differs')
+        for task in ir['tasks']:
+            if set(task.get('after',[]))!=expected_after.get(task['id']):
+                raise ValueError('primitive stage dependencies differ '+task['id'])
+        for row in ir['program']:
+            node,phase,scratch=expected_rows[row['id']]
+            if (row.get('source_primitive'),row.get('source_kernel'),row.get('phase'),row.get('shape'),
+                row.get('inputs'),row.get('exponent'),row['temporary_external_region']['words'])!=(
+                node['id'],node['kernel'],phase,node['shape'],node['inputs'],node['exponent'],scratch):
+                raise ValueError('primitive stage source/scratch differs')
     hardware=ir['hardware'];checked=0
     if {name for name,work in expected.items() if any(work.values())}!={t['id'] for t in ir['tasks']}:
         raise ValueError('native kernel coverage differs from executed program')
@@ -149,6 +193,7 @@ def verify(ir):
             checked+=1
     regions=list(ir['external_regions'].values())+list(ir['primitive_regions'].values())+list(ir['native_constants'].values())
     regions += [row['temporary_external_region'] for row in ir['program'] if 'temporary_external_region' in row]
+    regions += ir.get('native_scratch_regions',[])
     regions += [{'address_words':p['external_base'],'words':p['external_words']} for p in preparations.values()]
     end=0
     for r in sorted(regions,key=lambda r:r['address_words']):

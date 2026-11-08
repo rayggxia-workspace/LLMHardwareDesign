@@ -41,6 +41,7 @@ def main():
     p.add_argument('--width',type=int,default=8);p.add_argument('--primitive-program',type=Path,required=True)
     p.add_argument('--read-cache',action='store_true');p.add_argument('--state-cost',action='store_true')
     p.add_argument('--prepare-reuse',action='store_true')
+    p.add_argument('--primitive-stages',action='store_true')
     a=p.parse_args();a.output.mkdir(exist_ok=False)
     m=canonicalize(import_onnx(a.model));h=json.loads(a.hardware.read_text());numeric=json.loads(a.numeric.read_text())
     if numeric['status']!='full_integer_numeric_passed' or numeric['source_sha256']!=m['sha256']:
@@ -76,9 +77,14 @@ def main():
         began=time.monotonic();ir=compile_graph(m,arch,trace,profile,primitive)
         all_spill=search(ir['tasks'],ir['hardware'],width=1)
         all_spill_audit=verify(ir['tasks'],ir['hardware'],all_spill)
+        original_kernels=len(ir['tasks'])
+        if a.prepare_reuse or a.primitive_stages:
+            ir['all_spill_reference_tasks']=deepcopy(ir['tasks'])
         if a.prepare_reuse:
             from preparation_reuse import lower
-            ir['all_spill_reference_tasks']=deepcopy(ir['tasks'])
+            lower(ir)
+        if a.primitive_stages:
+            from primitive_stages import lower
             lower(ir)
         if a.read_cache:
             from dot_cache import variants
@@ -86,6 +92,8 @@ def main():
             ir['optimization_scope']=ir['read_cache_scope']['scope']
         if a.prepare_reuse:
             ir['optimization_scope']+='; '+ir['preparation_reuse_scope']['scope']
+        if a.primitive_stages:
+            ir['optimization_scope']+='; '+ir['primitive_stage_scope']['scope']
         ir['address_check']=check_program_addresses(m,ir['external_regions'])
         if primitive:
             ir['primitive_address_check']=check_primitive_addresses(m,primitive,ir['external_regions'],ir['primitive_regions'],
@@ -99,7 +107,8 @@ def main():
         base_audit=verify(tasks,hardware,base)
         plan=optimize(tasks,hardware,width=a.width);audit=verify(tasks,hardware,plan)
         row={'scenario':label,'status':'planned','total_graph_nodes':len(m['tasks']),
-            'streaming_kernels':len(tasks),'address_views':len(m['tasks'])-len(tasks),
+            'streaming_kernels':len(tasks),'original_streaming_kernels':original_kernels,
+            'address_views':len(m['tasks'])-original_kernels,
             'private_S_bytes':{s:v['words']*16 for s,v in hardware['sites'].items()},
             'zero_data_prelinks':not any(v.get('fixed') for v in hardware['nets'].values()),
             'baseline_bound':base['makespan'],'search_bound':plan['makespan'],
@@ -113,17 +122,18 @@ def main():
             'native_cost_check':ir.get('native_cost_check'),
             'read_cache_scope':ir.get('read_cache_scope'),
             'preparation_reuse_scope':ir.get('preparation_reuse_scope'),
+            'primitive_stage_scope':ir.get('primitive_stage_scope'),
             'read_cache_hits':plan.get('read_cache_hits',0),'read_cache_calls':plan.get('read_cache_calls',0),
             'timing_scope':ir['timing_scope'],'optimization_scope':ir['optimization_scope']}
         write(a.output/(label+'-plan.json'),plan);write(a.output/(label+'-baseline.json'),base)
         write(a.output/(label+'-all-spill.json'),all_spill)
         results.append(row);print(json.dumps(row),flush=True)
-        if label=='nine-groups-count-experiment':
-            constrained=optimize(tasks,hardware,width=a.width,wire_budget=base['wire_cost'])
-            constrained_audit=verify(tasks,hardware,constrained,wire_budget=base['wire_cost'])
-            write(a.output/'nine-groups-budget-plan.json',constrained)
-            row['equal_wire_budget']={'budget':base['wire_cost'],'bound':constrained['makespan'],
-                'wire_cost':constrained['wire_cost'],'audit':constrained_audit}
+        constrained=optimize(tasks,hardware,width=a.width,wire_budget=base['wire_cost'])
+        constrained_audit=verify(tasks,hardware,constrained,wire_budget=base['wire_cost'])
+        budget_name='nine-groups-budget-plan.json' if label.startswith('nine') else 'five-groups-budget-plan.json'
+        write(a.output/budget_name,constrained)
+        row['equal_wire_budget']={'budget':base['wire_cost'],'bound':constrained['makespan'],
+            'wire_cost':constrained['wire_cost'],'audit':constrained_audit}
     write(a.output/'summary.json',{'status':'complete_graph_planning_passed','results':results,
         'op_counts':dict(Counter(t['op'] for t in m['tasks'])),'numeric_checks':primitive_numeric['samples'],
         'primitive_program_sha256':primitive_numeric.get('program_sha256'),

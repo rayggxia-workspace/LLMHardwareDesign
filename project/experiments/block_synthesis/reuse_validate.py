@@ -20,7 +20,7 @@ def main():
     weights=json.loads(a.weights.read_text());weights['_root']=str(a.weights.parent.parent)
     calibration=json.loads(a.calibration.read_text());oracle=Oracle(a.oracle)
     reference=Interpreter(ir['model'],weights,calibration,oracle)
-    original=ir['primitive_program'];selected=order_program(original,plan)
+    original=ir['primitive_program'];selected=order_program(original,plan,ir.get('primitive_stages'))
     (a.output/'selected-program.json').write_text(json.dumps(selected,indent=2)+'\n')
     selected=json.loads((a.output/'selected-program.json').read_text())
     logits=np.load(a.logits);samples=[];bounds={}
