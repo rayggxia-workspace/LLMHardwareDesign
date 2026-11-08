@@ -1,5 +1,7 @@
 # 修复版 U 的物理重验收
 
+后续覆盖更正：本文 U 数据为历史测量，未覆盖双 U 同时 SEND 和普通三源 FMA 入口。新 U 硬件及独立重验收见 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 和 [修复索引](u-native-fix.json)。P 资格不变。
+
 任务：[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) · [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214)。负责人 YUZE-LU。日期 2026-11-07 CST。
 
 当前状态（2026-11-07 13:03 CST）：修复版 U 已通过物理工程验收，完整原版 GDS DRC 为 0；交付包已回收并逐项核验。独立 PR 审查与合并另行完成。

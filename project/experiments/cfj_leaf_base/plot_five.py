@@ -23,12 +23,13 @@ for item in items:
  wanted={}
  with tarfile.open(p,'r|gz') as tar:
   for m in tar:
-   if m.name in ('native/6_final.def','native/inputs.json','physical/inventory.json','SHA256SUMS'):
+   if m.name in ('native/6_final.def','native/inputs.json','physical/inventory.json','SHA256SUMS','FILES.sha256'):
     wanted[m.name]=tar.extractfile(m).read()
  assert 'native/6_final.def' in wanted
- members={n:sha(b) for n,b in wanted.items() if n!='SHA256SUMS'}
- if 'SHA256SUMS' in wanted:
-  sums={line[66:].removeprefix('./'):line[:64] for line in wanted['SHA256SUMS'].decode().splitlines() if len(line)>66}
+ members={n:sha(b) for n,b in wanted.items() if n not in ('SHA256SUMS','FILES.sha256')}
+ for manifest in ('SHA256SUMS','FILES.sha256'):
+  if manifest not in wanted: continue
+  sums={line[66:].removeprefix('./'):line[:64] for line in wanted[manifest].decode().splitlines() if len(line)>66}
   for n,h in members.items():
    assert sums.get(n)==h,(p,n,sums.get(n),h)
  data=wanted['native/6_final.def'].decode(); units=int(re.search(r'UNITS DISTANCE MICRONS (\d+)',data)[1]); die=re.search(r'DIEAREA\s+\(\s*(\d+)\s+(\d+)\s*\)\s+\(\s*(\d+)\s+(\d+)\s*\)',data)

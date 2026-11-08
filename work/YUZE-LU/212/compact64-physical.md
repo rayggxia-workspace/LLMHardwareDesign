@@ -1,5 +1,7 @@
 # P/U 的 128 位与 64 位指令版本
 
+后续覆盖更正：本文 U 数据为历史测量，未覆盖双 U 同时 SEND 和普通三源 FMA 入口。新 U 硬件及独立重验收见 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 和 [修复索引](u-native-fix.json)。P 资格不变。
+
 任务：[Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212)，交付：[PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214)。负责人 YUZE-LU。
 
 最终独立验收状态（2026-11-07 17:10 CST）：P_64/U_64 均通过原版完整 GDS DRC、原生与代表上层检查、最终网表回归及本地回收校验。[机器可读回执](compact64-acceptance.json)。工程验收完成，独立审查与 PR 合并待办，不自行合并。

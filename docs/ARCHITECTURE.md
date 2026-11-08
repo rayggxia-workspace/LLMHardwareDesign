@@ -140,6 +140,7 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 P 使用独立 M、紧凑 G、S_P。U 使用独立 N、紧凑 E、S_base。真实 SRAM、母局控控制链和 M1–M10 物理复跑见 [P/U 实验](../project/experiments/pu_leaf_base/README.md)。
 
+五类 P/U/C/F/J 的 `_128` / `_64` 当前摆放图、逐版本归档图源与验收入口集中在[五类独立叶宏组图册](experiments/assets/five-leaf-bases/README.md)。U 当前修复后的独立验收及重放范围见[最终回执](../work/YUZE-LU/212/u-native-fix.md)。
 
 ## Issue #223：母控独立实现与五类控制兼容性
 
