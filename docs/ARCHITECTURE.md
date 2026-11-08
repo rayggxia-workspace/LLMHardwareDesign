@@ -1,5 +1,7 @@
 # 架构与运行
 
+Issue #228：[通用上层布线基线](../project/experiments/upper_router/README.md)接收独立几何或#227已绑定请求，联合搜索M10落点及M11/M12路径、多接收端树与多轮拆线重布。`python -B project/experiments/upper_router/run.py INPUT OUTPUT --rounds 8`；在该目录运行`python -B -m unittest test_router -v`。仅声明研究网格规则，不继承模型/真实底座物理资格。
+
 Issue #226 实现[综合到布线接口层](../project/experiments/block_synthesis/ROUTE_CONTRACT.md)。从 `project/experiments/block_synthesis` 运行 `python -B -m unittest test_route_contract test_loop_dp test_dot_cache -v`；CLI见合同。需求重构检查共享接口展开实现，不是独立ODB/GDS几何或电气检查；实际物理后端另验。
 
 Issue219新增只读Dot分片：[算法/状态](../project/experiments/block_synthesis/DOT_CACHE.md)、[完整3B结果](../work/YUZE-LU/219/READ_CACHE_RESULTS.md)。`full_plan.py --read-cache` 从硬件清单生成候选；`dot_cache_replay.py` 使用有限S分量数组回放。服务器新attempt入口：`reuse-plan.sbatch ROOT MODEL HARDWARE NUMERIC_TRACE QUALIFICATION PROGRAM`、`reuse-replay.sbatch ROOT IR PLAN WEIGHTS CALIBRATION LOGITS HEADERS`、`reuse-audit.sbatch ROOT PLAN_DIRECTORY`、`reuse-compare.sbatch ROOT BEFORE AFTER`；由本任务launch_fix.py冻结提交Slurm，绝对依赖/SHA见回执。普通full-plan保留旧基线；整网控制编码和真实布线另阶段验收。

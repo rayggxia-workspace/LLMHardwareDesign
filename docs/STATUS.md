@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-08，Issue #228 实现通用M10接入/双层A*、多接收端树、拆线重布及独立几何/连通检查，消费#227绑定合同。21项算法测试含128位及30个独立Dijkstra对照通过，拆线重布示例两网完成；全部为合成几何，不针对Qwen3.5，不声称实际底座DRC/RC/STA。见[算法说明](../project/experiments/upper_router/README.md)。隔离分支待独立审查。
+
 2026-11-08，[Issue #226](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/226) 在PR220最新综合算法上新增逻辑束展开、协议依赖、候选底座端点绑定及分级反馈接口，自动输出路由需求。真实双U样例306个位信号仍未物理绑定；不声称实际路由或RC/STA通过。隔离分支待审查，详见[合同](../project/experiments/block_synthesis/ROUTE_CONTRACT.md)与[回执](../work/YUZE-LU/226/README.md)。
 
 2026-11-08 综合算法补充：[Issue219/PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 已加入有限S只读Dot分片及缓存感知DP状态；完整真实3B五组/九组各三输入与旧整数结果逐位一致，100项测试及独立地址/容量/静态互斥重验通过。复用贪心较原基线模型代价降17.16%、搬运降25.40%；九组DP另降26.14%但束数10→18，同10束无额外收益。仅覆盖只读Dot分量；整网控制编码与真实布线另验。见[本轮说明](../work/YUZE-LU/219/READ_CACHE_RESULTS.md)，下方“全部spill”系旧基线。
