@@ -1,0 +1,258 @@
+{
+  "audits": {
+    "native_cost": {
+      "passed": true,
+      "kernels": 8404,
+      "bindings": 261010,
+      "primitive_instructions": 8850,
+      "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+    },
+    "schedule": {
+      "passed": true,
+      "peak_words": {
+        "P0.S": 1023,
+        "P1.S": 1023,
+        "P2.S": 1023,
+        "U0.S": 8
+      },
+      "external_words": 26318566205,
+      "static_nets": 18,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate",
+      "cooperative_phase_audit": {
+        "cooperative_compounds": 253,
+        "scope": "independent phase reconstruction plus conservative full-union reservation proof; not RTL arbitration"
+      }
+    }
+  },
+  "makespan": 493235996480,
+  "serial_work": 1220301173458,
+  "cost_components": {
+    "core": 517845811338,
+    "local_io": 175161273900,
+    "external_load": 517143682900,
+    "external_store": 10150405320
+  },
+  "arbitration_wait_work": 60855219866,
+  "by_operator": {
+    "Convert": {
+      "core": 520510208,
+      "local_io": 250009344,
+      "external_load": 1348817920,
+      "external_store": 349702144
+    },
+    "Gather": {
+      "external_load": 81920,
+      "external_store": 90112
+    },
+    "NFactor": {
+      "core": 1347864,
+      "local_io": 904374,
+      "external_load": 6003200,
+      "external_store": 28556
+    },
+    "Product": {
+      "core": 7832026612,
+      "local_io": 3496788468,
+      "external_load": 19941982400,
+      "external_store": 3706934792
+    },
+    "SquareSum": {
+      "core": 99570394,
+      "local_io": 43954614,
+      "external_load": 257146880,
+      "external_store": 39472268
+    },
+    "Add": {
+      "core": 7154667556,
+      "local_io": 3418903884,
+      "external_load": 19046465440,
+      "external_store": 4120849832
+    },
+    "Dot": {
+      "core": 500147779840,
+      "local_io": 166762861824,
+      "external_load": 470179491060,
+      "external_store": 215181824
+    },
+    "Concat": {
+      "external_load": 3317760,
+      "external_store": 3649536
+    },
+    "MaskFloor": {
+      "core": 453888,
+      "local_io": 304128,
+      "external_load": 1566720,
+      "external_store": 506880
+    },
+    "Max": {
+      "core": 426240,
+      "local_io": 228096,
+      "external_load": 1244160,
+      "external_store": 304128
+    },
+    "MaskZero": {
+      "core": 1361664,
+      "local_io": 912384,
+      "external_load": 4700160,
+      "external_store": 1520640
+    },
+    "Compare": {
+      "core": 433368576,
+      "local_io": 235726848,
+      "external_load": 1269918720,
+      "external_store": 331752960
+    },
+    "Select": {
+      "core": 469774080,
+      "local_io": 314772480,
+      "external_load": 1621555200,
+      "external_store": 524620800
+    },
+    "Sum": {
+      "core": 296064,
+      "local_io": 141696,
+      "external_load": 783360,
+      "external_store": 177408
+    },
+    "Maximum": {
+      "core": 880611840,
+      "local_io": 471246336,
+      "external_load": 2570434560,
+      "external_store": 628328448
+    },
+    "Minimum": {
+      "core": 294105600,
+      "local_io": 157386240,
+      "external_load": 858470400,
+      "external_store": 209848320
+    },
+    "NExp": {
+      "core": 9510912,
+      "local_io": 7133184,
+      "external_load": 31703040,
+      "external_store": 17436672
+    }
+  },
+  "resources": {
+    "P0.LC.service": {
+      "reserved_ticks": 492145633254,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9977893681041501,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P0.M": {
+      "reserved_ticks": 492138665958,
+      "useful_core_ticks": 182665464658,
+      "reserved_fraction_of_makespan": 0.9977752424197927,
+      "useful_core_fraction_of_makespan": 0.37034090366802097
+    },
+    "P0.M.context": {
+      "reserved_ticks": 492138665958,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9977752424197927,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P0.S.IO": {
+      "reserved_ticks": 492145633254,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9977893681041501,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "virtual-memory.channel.0": {
+      "reserved_ticks": 492145633254,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9977893681041501,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P1.LC.service": {
+      "reserved_ticks": 410453104066,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.8321637248603434,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P1.M": {
+      "reserved_ticks": 410452932034,
+      "useful_core_ticks": 166832064986,
+      "reserved_fraction_of_makespan": 0.8321633760780135,
+      "useful_core_fraction_of_makespan": 0.33823984092119036
+    },
+    "P1.M.context": {
+      "reserved_ticks": 410452932034,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.8321633760780135,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P1.S.IO": {
+      "reserved_ticks": 410453104066,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.8321637248603434,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "virtual-memory.channel.1": {
+      "reserved_ticks": 493229803328,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9999874438361267,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "U0.E": {
+      "reserved_ticks": 83819909668,
+      "useful_core_ticks": 1780597924,
+      "reserved_fraction_of_makespan": 0.1699387519690055,
+      "useful_core_fraction_of_makespan": 0.0036100323916083052
+    },
+    "U0.LC.service": {
+      "reserved_ticks": 83893977470,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.17008891903411955,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "U0.S.IO": {
+      "reserved_ticks": 83893977470,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.17008891903411955,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "U0.N": {
+      "reserved_ticks": 74067802,
+      "useful_core_ticks": 10858776,
+      "reserved_fraction_of_makespan": 0.00015016706511403885,
+      "useful_core_fraction_of_makespan": 2.2015376163731205e-05
+    },
+    "U0.N.context": {
+      "reserved_ticks": 74067802,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.00015016706511403885,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P2.LC.service": {
+      "reserved_ticks": 409330105794,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.8298869277895409,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P2.M": {
+      "reserved_ticks": 409330105794,
+      "useful_core_ticks": 166556824994,
+      "reserved_fraction_of_makespan": 0.8298869277895409,
+      "useful_core_fraction_of_makespan": 0.33768181191689167
+    },
+    "P2.M.context": {
+      "reserved_ticks": 409330105794,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.8298869277895409,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P2.S.IO": {
+      "reserved_ticks": 409330105794,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.8298869277895409,
+      "useful_core_fraction_of_makespan": 0.0
+    }
+  },
+  "operand_preparation_hoist": {
+    "saved_serial_cost_bound": 0,
+    "candidates": []
+  },
+  "scope": "measured native core and local IO plus virtual memory model; not chip utilization; hoist is not validated speedup"
+}

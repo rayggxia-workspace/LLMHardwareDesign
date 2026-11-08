@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from transition import evaluate_transition, retention_actions
 from static_wiring import completion_covers
 from column_shards import leaf_rows
+from service_bounds import optimistic_ticks
 
 
 @dataclass(frozen=True)
@@ -32,7 +33,7 @@ class State:
 def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahead=True,
            priority='minimum_tail',rank_policy='critical_bound'):
     if width<1 or ready_limit<1:raise ValueError('positive DP bounds required')
-    if priority not in ('minimum_tail','heft') or rank_policy not in ('critical_bound','earliest_finish'):
+    if priority not in ('minimum_tail','heft') or rank_policy not in ('critical_bound','earliest_finish','net_conditioned_tail','net_resource_tail'):
         raise ValueError('unknown loop scheduling policy')
     # These are physical alternatives, not time-shared resources. Preserve
     # the entire product's selected union even after its last user finishes.
@@ -66,15 +67,20 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
         ready=[n for n in pending if all(c in tail for c in children[n])]
         if not ready:raise ValueError('cycle in streaming graph')
         for n in ready:
-            tail[n]=min(b.get('warm_ticks',b['ticks']) for b in tasks[ids[n]]['bindings'])+max((tail[c] for c in children[n]),default=0)
+            tail[n]=min(optimistic_ticks(b) for b in tasks[ids[n]]['bindings'])+max((tail[c] for c in children[n]),default=0)
             options=tasks[ids[n]]['bindings']
-            mean_cold=(sum(b['ticks'] for b in options)+len(options)-1)//len(options)
-            priority_tail[n]=(mean_cold if priority=='heft' else min(b.get('warm_ticks',b['ticks']) for b in options))+max(
+            mean_cold=(sum(optimistic_ticks(b,warm=False) for b in options)+len(options)-1)//len(options)
+            priority_tail[n]=(mean_cold if priority=='heft' else min(optimistic_ticks(b) for b in options))+max(
                 (priority_tail[c] for c in children[n]),default=0)
             pending.remove(n)
     initial=State(0,{}, {r:(0,)*c for r,c in hardware['resources'].items()},frozenset(),0,0,None,{},
                   frozenset(n for n in ids if not parents[n]))
     completions=completion_covers(tasks,hardware,wire_budget=wire_budget) if wire_lookahead else None
+    conditional=None
+    if rank_policy in ('net_conditioned_tail','net_resource_tail'):
+        from net_tail import ConditionalTail
+        conditional=ConditionalTail(tasks,hardware,children,tuple(tail),fixed=fixed,
+            conflicts=conflicts,wire_budget=wire_budget,completions=completions)
     beam=[initial];expanded=0;pruned=0;merged=0;static_rejections=0;completion_rejections=0
     def ready_for(state):
         # A transition can only enable children of its selected task. The
@@ -87,11 +93,18 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
             return (s.history.row['end'] if s.history else 0),s.makespan,s.traffic,netcost(s.nets)
         ready=ready_for(s)
         bounds=[s.makespan]
+        state_tail=conditional.get(s.nets) if conditional is not None else tail
         for task in ready:
             arrivals=[s.frontier[p] for p in parents[task['id']]]
-            if any(type(at)!=int for at in arrivals) or type(tail[task['id']])!=int:
-                raise TypeError('noninteger frontier/tail '+repr((task['id'],arrivals,tail[task['id']])))
-            bounds.append(max(arrivals,default=0)+tail[task['id']])
+            value=state_tail[task['id']]
+            if value is None:return float('inf'),s.makespan,s.traffic,netcost(s.nets)
+            if any(type(at)!=int for at in arrivals) or type(value)!=int:
+                raise TypeError('noninteger frontier/tail '+repr((task['id'],arrivals,value)))
+            if rank_policy=='net_resource_tail':
+                finish=conditional.ready_finish(task['id'],s.nets,s.resources,max(arrivals,default=0))
+                if finish is None:return float('inf'),s.makespan,s.traffic,netcost(s.nets)
+                bounds.append(finish+max((state_tail[c] for c in children[task['id']]),default=0))
+            else:bounds.append(max(arrivals,default=0)+value)
         bound=max(bounds)
         return bound,s.makespan,s.traffic,netcost(s.nets)
     for depth in range(len(tasks)):
@@ -148,6 +161,7 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
         'read_cache_calls':sum('cache_hit' in s for r in rows for s in leaf_rows(r)),
         'final_read_cache':best.cache,
         'scheduling_policy':{'priority':priority,'rank':rank_policy},
+        'conditional_tail_statistics':conditional.statistics() if conditional is not None else None,
         'optimality':'bounded frontier DP with append-only resource calendars; no global optimality guarantee'}
 
 

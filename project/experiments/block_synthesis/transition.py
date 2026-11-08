@@ -42,6 +42,12 @@ def evaluate_transition(state, binding, hardware, data_ready, *, retention='lega
                                                    fixed=fixed,conflicts=conflicts):
         return {'legal':False,'reason':'wire_budget_completion'}
     if 'parallel_shards' in binding:
+        if 'phase_execution' in binding:
+            from phased_compounds import evaluate
+            def leaf(current,b,h,ready,retention):
+                return evaluate_transition(current,b,h,ready,retention=retention,
+                    fixed=fixed,conflicts=conflicts)
+            return evaluate(state,binding,hardware,data_ready,retention,leaf)
         spec=binding['parallel_shards'];children=spec['children']
         if 'frontier_partition' in binding:
             from dynamic_columns import resolve

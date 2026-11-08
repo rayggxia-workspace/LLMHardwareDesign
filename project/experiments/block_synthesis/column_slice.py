@@ -23,6 +23,7 @@ def main():
     mode.add_argument('--kernel-prefix');mode.add_argument('--full-graph',action='store_true')
     p.add_argument('--wire-budget',type=int,required=True);p.add_argument('--before-plan',type=Path)
     p.add_argument('--write-ir',action='store_true')
+    p.add_argument('--phased-compounds',action='store_true')
     p.add_argument('--nine-group-count-experiment',action='store_true');a=p.parse_args()
     a.output.mkdir(exist_ok=False)
     source_sha256=hashlib.sha256(a.source.read_bytes()).hexdigest()
@@ -49,7 +50,11 @@ def main():
     before=(json.loads(a.before_plan.read_text()) if a.before_plan else
             optimize(ir['tasks'],ir['hardware'],width=8,wire_budget=a.wire_budget))
     verify(ir['tasks'],ir['hardware'],before,wire_budget=a.wire_budget)
-    variants_for(ir);cost_after=verify_cost(ir)
+    variants_for(ir)
+    if a.phased_compounds:
+        from phased_compounds import variants_for as phase_variants
+        phase_variants(ir)
+    cost_after=verify_cost(ir)
     print(json.dumps({'phase':'new-native-audit-passed','bindings':cost_after['bindings']}),flush=True)
     if a.write_ir:
         with (a.output/'ir.json').open('w',encoding='utf-8') as stream:json.dump(ir,stream,separators=(',',':'))

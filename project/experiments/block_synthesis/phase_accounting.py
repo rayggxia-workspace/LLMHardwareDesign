@@ -59,10 +59,11 @@ def service_parts(work, binding, row, hardware):
         channel = 'virtual-memory.channel.' + str(meta['memory_group'] % hardware['virtual_memory']['channels'])
         channels[channel] = channels.get(channel, 0) + dma
     total = core + local + sum(channels.values())
-    if total != row['end'] - row['start']:
+    wait = row.get('evaluation',{}).get('channel_wait_ticks',0)
+    if total+wait != row['end'] - row['start']:
         raise ValueError('descriptor/core/S decomposition does not reproduce service time')
     return {'core_ticks': core, 'local_S_ticks': local, 'descriptor_ticks': sum(channels.values()),
-            'channel_descriptor_ticks': channels, 'duration': total}
+            'channel_descriptor_ticks': channels, 'duration': total,'channel_wait_ticks':wait}
 
 
 def account(ir, plan):
@@ -90,8 +91,16 @@ def account(ir, plan):
             totals[key] += parts[key]
         for channel in {r for r in binding['resources'] if r.startswith('virtual-memory.channel.')}:
             target = channels.setdefault(channel, {'whole_service_reserved_ticks': 0, 'descriptor_demand_ticks': 0})
-            target['whole_service_reserved_ticks'] += parts['duration']
+            if 'channel_wait_ticks' not in row.get('evaluation',{}):
+                target['whole_service_reserved_ticks'] += parts['duration']
             target['descriptor_demand_ticks'] += parts['channel_descriptor_ticks'].get(channel, 0)
+    original={t['id']:t for t in ir['tasks']}
+    for row in plan['tasks']:
+        b=next(b for b in original[row['id']]['bindings'] if b['id']==row['binding'])
+        if 'phase_execution' in b:
+            for channel in b['resources']:
+                if channel.startswith('virtual-memory.channel.'):
+                    channels[channel]['whole_service_reserved_ticks']+=row['end']-row['start']
     for target in channels.values():
         target['reserved_without_descriptor_ticks'] = target['whole_service_reserved_ticks'] - target['descriptor_demand_ticks']
     demand = sum(c['descriptor_demand_ticks'] for c in channels.values())

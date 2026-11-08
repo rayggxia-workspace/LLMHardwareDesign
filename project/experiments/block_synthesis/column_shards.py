@@ -132,7 +132,8 @@ def leaves(binding):
 
 
 def leaf_rows(row):
-    return row['evaluation']['services'] if row.get('evaluation',{}).get('cost_model')=='dot-column-shards-v1' else [row]
+    return row['evaluation']['services'] if row.get('evaluation',{}).get('cost_model') in (
+        'dot-column-shards-v1','dot-phased-column-shards-v1') else [row]
 
 
 def expand_selected(tasks,plan):

@@ -10,10 +10,13 @@ from pathlib import Path
 from verify_loop_dp import verify
 from column_shards import leaves
 from dynamic_columns import coefficients
+from service_bounds import optimistic_ticks
 
 
 def minimum_resource_time(binding,members):
     children=leaves(binding)
+    if 'phase_execution' in binding:
+        return max(c.get('warm_ticks',c['ticks']) for c in children)*len(set(binding['resources'])&members)
     if 'frontier_partition' not in binding:
         return sum(c.get('warm_ticks',c['ticks'])*len(set(c['resources'])&members) for c in children)
     spec=binding['parallel_shards'];weighted=[];base=0
@@ -29,7 +32,7 @@ def minimum_resource_time(binding,members):
 def bounds(tasks,hardware,plan):
     verify(tasks,hardware,plan)
     # Prefix reuse can only reduce a binding as far as its all-hit endpoint.
-    lower={t['id']:min(b.get('warm_ticks',b['ticks']) for b in t['bindings']) for t in tasks}
+    lower={t['id']:min(optimistic_ticks(b) for b in t['bindings']) for t in tasks}
     resources={}; mandatory={}
     for t in tasks:
         required=set.intersection(*(set(b['resources']) for b in t['bindings']))
@@ -72,8 +75,8 @@ def bounds(tasks,hardware,plan):
         'mandatory_resource_bounds':resources,'completion_lower_bound':best,
         'resource_pool_bounds':pooled,
         'maximum_time_reduction_fraction_with_current_actions':1-best/plan['makespan'],
-        'assumptions':'same serial leaf-service / compound column candidates, optimistic all-hit endpoints; no finer phases or new hardware',
-        'scope':'proof within current serial-service action family; not a physical performance or global hardware bound'}
+        'assumptions':'same declared serial/cooperative column candidates, optimistic all-hit endpoints; no new hardware',
+        'scope':'proof within current declared action family; not a physical performance or global hardware bound'}
 
 
 def main():

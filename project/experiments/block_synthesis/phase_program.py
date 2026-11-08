@@ -9,6 +9,12 @@ recurs and every live loop counter decreases without crossing its boundary.
 from collections import Counter
 
 
+class PhaseEventLimit(ValueError):
+    def __init__(self,diagnostic):
+        super().__init__('exact event limit exceeded before completion')
+        self.diagnostic=diagnostic
+
+
 def compile_program(body, channels):
     if type(channels) is not int or channels < 1:
         raise ValueError('positive channel count required')
@@ -172,7 +178,11 @@ def simulate(programs, channels, *, fast_forward=True, boundary=4, event_limit=1
             counts[cursors[i].phase[3]] += 1;completed[i] += 1
             cursors[i].complete();del active[i]
         executed += len(ready)
-        if executed > event_limit:raise ValueError('exact event limit exceeded before completion')
+        if executed > event_limit:
+            raise PhaseEventLimit({'now':now,'executed_events':executed,'fast_forward_jumps':jumps,
+                'skipped_events':skipped_events,'witnesses':len(witnesses),
+                'cursors':[{'pc':c.pc,'stack':c.stack} for c in cursors],
+                'active':active,'waiting':waiting,'finished':finished})
     return {'makespan':now,'worker_completion':finished,'phase_counts':dict(counts),
             'worker_phase_counts':completed,'executed_events':executed,
             'fast_forward_jumps':jumps,'skipped_ticks':skipped_ticks,'skipped_events':skipped_events,

@@ -1,5 +1,12 @@
 # 当前状态
 
+2026-11-09，#219/PR220[迭代5](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_5.md)部分交付：
+同池条件尾部DP在完整3B额外0.0716468%、真实FFN切片0.0871689%；资源尾部消融无收益。Windows/Linux各157项通过。
+现有M/P/S/feeder不变的84个四态RTL多行场景通过，含R2/K2048；B staging减半，A不变，尚未接入全图候选，
+不计DP20%或系统性能。完整Linux成本/调度审计已过，新计划数值101213待验；额外SystemC阶段微实验100970及搬运审计100971通过，
+早期冻结源全图搜索100972仍运行。微实验不代表整机时间/能耗/token/s。
+一般驻留、完整KV decode/能耗/token/s及充分适配ASIC/FPGA对照继续in_progress；登记pending、看板unverified/同步pending。
+
 2026-11-09，#219/PR220迭代4完成选中全图计划的逻辑搬运守恒审计：A重复读约65.8%，静态权重约23.4%。
 一般tile与跨算子有限S驻留未完成，已写入[后续合同](../project/experiments/block_synthesis/MEMORY_REUSE.md)。
 新增精确长循环阶段基础，本地145项通过，孤立候选诊断不计新算法收益；额外远程SystemC核对待终态。

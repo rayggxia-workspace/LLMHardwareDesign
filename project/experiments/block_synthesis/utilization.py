@@ -43,7 +43,7 @@ def report(ir, plan):
     dots = {}
     for node in ir['primitive_program']['instructions']:
         if node['op']=='Dot': dots.setdefault(node['kernel'], []).append(node)
-    total = Counter(); reservations = Counter(); useful = Counter(); by_op = {}; opportunities = []
+    total = Counter(); reservations = Counter(); useful = Counter(); by_op = {}; opportunities = [];wait_work=0
     split_work = counts({'call':'split32'}, ir['native_templates'])
     for row in leaf_plan['tasks']:
         task = tasks[row['id']]
@@ -56,15 +56,18 @@ def report(ir, plan):
             work=Counter({k:v//columns*(hi-lo) for k,v in work.items()})
         costs = charge(work, binding, hardware)
         duration = row['end']-row['start']
+        wait = row.get('evaluation',{}).get('channel_wait_ticks',0)
+        wait_work += wait
         # Current cache recipes remove external LOADs only. Reject unexplained
         # reductions rather than silently attributing them to compute savings.
-        saving = sum(costs.values())-duration
+        saving = sum(costs.values())-(duration-wait)
         if not 0 <= saving <= costs['external_load']:
             raise ValueError('unexplained duration decomposition '+row['id'])
         costs['external_load'] -= saving
         total.update(costs)
         op = body['op']; by_op.setdefault(op, Counter()).update(costs)
-        for resource in binding['resources']: reservations[resource] += duration
+        if 'channel_wait_ticks' not in row.get('evaluation',{}):
+            for resource in binding['resources']: reservations[resource] += duration
         for macro, group in binding['macro_binding'].items(): useful[group+'.'+macro] += work[macro+':core']
         if len(dots.get(row['id'], []))==1:
             node = dots[row['id']][0]; ca, cb = ir['native_operand_components'][node['id']]
@@ -79,10 +82,16 @@ def report(ir, plan):
                     'removed_split32_calls':removed, 'saved_serial_cost_bound':sum(saved.values()),
                     'saved_components':dict(saved), 'external_prepared_words_required':rows*k*ca,
                     'qualification':'opportunity only; transformed addresses/leases/replay not yet verified'})
-    if sum(total.values()) != sum(r['end']-r['start'] for r in leaf_plan['tasks']):
+    original={t['id']:t for t in ir['tasks']}
+    for row in plan['tasks']:
+        b=next(b for b in original[row['id']]['bindings'] if b['id']==row['binding'])
+        if 'phase_execution' in b:
+            for resource in b['resources']:reservations[resource]+=row['end']-row['start']
+    if sum(total.values())+wait_work != sum(r['end']-r['start'] for r in leaf_plan['tasks']):
         raise ValueError('work decomposition not conserved')
     return {'audits':audits, 'makespan':plan['makespan'], 'serial_work':sum(total.values()),
-        'cost_components':dict(total), 'by_operator':{k:dict(v) for k,v in by_op.items()},
+        'cost_components':dict(total), 'arbitration_wait_work':wait_work,
+        'by_operator':{k:dict(v) for k,v in by_op.items()},
         'resources':{r:{'reserved_ticks':n, 'useful_core_ticks':useful[r],
                        'reserved_fraction_of_makespan':n/(plan['makespan']*hardware['resources'][r]),
                        'useful_core_fraction_of_makespan':useful[r]/(plan['makespan']*hardware['resources'][r])}

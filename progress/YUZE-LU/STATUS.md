@@ -1,5 +1,13 @@
 # YUZE-LU 的进度
 
+2026-11-09 CST：#219/PR220[迭代5](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_5.md)部分交付。
+同池条件尾部DP完整3B额外0.0716468%、真实FFN0.0871689%，资源尾部消融无收益；Windows/Linux各157项通过。
+84个原生多行RTL场景（含R2/K2048）通过，B staging4096→2048、A不变；新旧S布局尚需合法化后接入全图，
+不计为算法20%。完整Linux调度/成本已过，新选中计划数值101213待验；SystemC阶段100970和搬运100971通过，
+早期源全图100972仍运行，首次工具/依赖/运行时失败均保留。微实验不称整机时间或能耗。
+完整数值/校准SystemC/能耗/KV token/s和充分优化ASIC/FPGA对照继续，Issue in_progress，待独立审查不自合并/关闭。
+登记pending，看板unverified/同步pending，沿用Issue7交接。
+
 2026-11-09 CST：#219/PR220 [迭代4](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_4.md)部分交付，145项通过。
 选中全图逻辑搬运中A重复读65.8%、静态权重23.4%；一般tile/跨算子驻留尚未解决，后续合同已补齐。
 精确长循环/常量阶段基础和孤立候选成本守恒通过，新增SystemC作业待终态，不归因新DP收益。

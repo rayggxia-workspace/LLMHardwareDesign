@@ -86,6 +86,13 @@ def verify(tasks,hardware,plan,wire_budget=None):
     def check(ok,message):
         if not ok:raise ValueError(message)
     check(plan.get('status')=='planned','loop plan is not successful')
+    selected={(r['id'],r['binding']) for r in plan['tasks']}
+    if (any(r.get('evaluation',{}).get('cost_model') == 'dot-phased-column-shards-v1' for r in plan['tasks']) or
+        any('phase_execution' in b and (t['id'],b['id']) in selected for t in tasks for b in t['bindings'])):
+        from verify_phased_compounds import project
+        projected_tasks,projected_plan,audit = project(tasks,hardware,plan)
+        result = verify(projected_tasks,hardware,projected_plan,wire_budget=wire_budget)
+        return {**result,'cooperative_phase_audit':audit}
     if any('parallel_shards' in b for t in tasks for b in t['bindings']):
         tasks,plan=_expand_compounds(tasks,plan)
     # Deliberately independent from search's conflict filter. A foreign or

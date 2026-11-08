@@ -1,5 +1,12 @@
 # 架构与运行
 
+2026-11-09：[迭代5](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_5.md)。
+`phase_review.py IR NEW_OUTPUT --incumbent PLAN --wire-budget 18 --write-ir`比较共同阶段后端下的贪心、旧DP、
+HEFT式、条件尾部贪心/DP；[阶段协议](../project/experiments/block_synthesis/PHASE_COMPOUNDS.md)仍保守持有父服务全部资源，
+不是一般跨任务事件调度。`--policies resource-greedy resource-dp`仅用于显式资源尾部消融，负结果不默认启用。
+本地与独立Linux最终源各157项测试通过。原生多行[探针及复跑](../project/experiments/block_synthesis/ROW_TILE.md)
+验证不变M/P/S/feeder的真实供数、完整累加和ACK；尚未登记全图tile，不把测试台周期当校准系统性能。
+
 2026-11-09：[列分片/前沿成本合同](../project/experiments/block_synthesis/COLUMN_SHARDS.md)与[迭代3证据](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_3.md)。
 `full_plan.py --prepare-reuse --primitive-stages --read-cache --state-cost --column-shards`生成共同候选；
 `column-plan.sbatch ROOT STAGED_IR_DIRECTORY INCUMBENT_DIRECTORY SCENARIO`比较同池贪心、HEFT式及有界DP；

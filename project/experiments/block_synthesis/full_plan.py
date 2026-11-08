@@ -43,7 +43,9 @@ def main():
     p.add_argument('--prepare-reuse',action='store_true')
     p.add_argument('--primitive-stages',action='store_true')
     p.add_argument('--column-shards',action='store_true')
+    p.add_argument('--phased-compounds',action='store_true')
     a=p.parse_args();a.output.mkdir(exist_ok=False)
+    if a.phased_compounds and not a.column_shards:raise ValueError('phase compounds require column candidates')
     m=canonicalize(import_onnx(a.model));h=json.loads(a.hardware.read_text());numeric=json.loads(a.numeric.read_text())
     if numeric['status']!='full_integer_numeric_passed' or numeric['source_sha256']!=m['sha256']:
         raise ValueError('complete real model numerical qualification missing/mismatched')
@@ -97,6 +99,10 @@ def main():
             ir['optimization_scope']+='; '+ir['column_shard_scope']['scope']
         if a.prepare_reuse:
             ir['optimization_scope']+='; '+ir['preparation_reuse_scope']['scope']
+        if a.phased_compounds:
+            from phased_compounds import variants_for
+            variants_for(ir)
+            ir['optimization_scope']+='; '+ir['phased_compound_scope']['scope']
         if a.primitive_stages:
             ir['optimization_scope']+='; '+ir['primitive_stage_scope']['scope']
         ir['address_check']=check_program_addresses(m,ir['external_regions'])

@@ -14,6 +14,8 @@ def verify(ir):
     program=ir.get('primitive_program')
     if not program:raise ValueError('executable primitive program required')
     library=ir['native_templates'];profile=ir['hardware']['native_leaf_profiles']
+    if 'phase_native_templates' in ir['hardware'] and ir['hardware']['phase_native_templates'] != library:
+        raise ValueError('phase templates differ from independently checked native library')
     def walk(body,stack=()):
         if 'call' in body:
             key=body['call']
@@ -198,8 +200,14 @@ def verify(ir):
             return 1
         for b in task['bindings']:
             if 'parallel_shards' not in b:
+                if 'phase_execution' in b:raise ValueError('phase protocol requires a compound')
                 checked+=check_binding(b,work,dots_by_kernel[name]);continue
             spec=b['parallel_shards'];dots=dots_by_kernel[name]
+            if 'phase_execution' in b:
+                if b['phase_execution'] != {'kind':'isolated-compound-fcfs-v1',
+                        'reservation':'all-union-resources-through-final-ACK'} or 'frontier_partition' in b:
+                    raise ValueError('unknown/inapplicable phased compound protocol')
+                if 'phase_native_templates' not in hardware:raise ValueError('missing phase native contract')
             if (len(dots)!=1 or name not in preparations or
                 ir['native_operand_components'][name][1]!=1 or
                 spec.get('kind')!='dot-columns-v1' or spec.get('primitive')!=name):
@@ -225,6 +233,21 @@ def verify(ir):
                     projected[key]=value//columns*(hi-lo)
                 view={**node,'shape':node['shape'][:-1]+[hi-lo]}
                 checked+=check_binding(leaf,projected,[view])
+            if 'phase_execution' in b:
+                recipes=set();seen=set();shared=False
+                if len(leaves)>min(hardware['virtual_memory'][k] for k in ('queue','slots','credits')):
+                    raise ValueError('phase compound exceeds finite request storage')
+                for leaf in leaves:
+                    c=leaf.get('read_cache',{})
+                    if c.get('cost_model')!='dot-prefix-state-v2' or c['components'][1]!=1:
+                        raise ValueError('phase compound needs prepared A/S16 B')
+                    recipes.add((c['rows'],c['K'],tuple(c['components']),c['stripe']))
+                    rs=set(leaf['resources']);overlap=seen&rs;shared|=bool(overlap)
+                    if (any(not r.startswith('virtual-memory.channel.') for r in overlap) or
+                        any(hardware['resources'][r]!=1 for r in rs)):
+                        raise ValueError('phase compound shares private contexts')
+                    seen|=rs
+                if len(recipes)!=1 or not shared:raise ValueError('phase compound needs one shared-channel recipe')
             edge=0
             for lo,hi in sorted(intervals):
                 if lo!=edge:raise ValueError('column partition has gap/overlap')

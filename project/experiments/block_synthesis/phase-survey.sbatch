@@ -8,6 +8,7 @@ root=$(realpath "$1")
 case "$root" in /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/*) ;; *) exit 2;; esac
 cd "$root"
 python=/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python
+export PYTHONPATH=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/cp-environment-v2/deps
 prefix=/public/home/yuzelu/opt/systemc-3.0.2-issue219
 sim=(/public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu /public/home/yuzelu/opt/eda/containers/orfs-26Q1-repacked.sif)
 sha256sum *.py systemc_phase.cpp "$2" "$prefix/lib/libsystemc.so" > input.sha256
