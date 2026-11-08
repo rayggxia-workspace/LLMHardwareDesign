@@ -23,10 +23,10 @@
 - 项目登记：[管理中心 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 待审查；合并前状态为 pending
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
-- 2026-11-08：[#222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) / [PR #225](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/225) 完成旧 #206 Qwen3.5 的 2491 网上下层寄生对照，复用 #216 完整基线和十实例真实 M1–M10。上层 C 增幅中位 1.149%、95 分位 20.434%、最大 49.898%，旧上层 C 需更新。修复版求解器、独立场解、互易及抽样细化检查通过。七组宏接口近似金属总 C 误差 0.029%–1.059%，仅为复用候选证据；宏时序模型复用未验收。原负载及速度问题单独保留。[结果及范围](../work/huangpingyang04-lgtm/222/README.md)。
+- 2026-11-08：[#222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) / [PR #225](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/225) 完成旧 #206 Qwen3.5 的 2491 网历史寄生对照（以下来源百分比已撤回，不能用于复用资格），复用 #216 完整基线和十实例真实 M1–M10。上层 C 增幅中位 1.149%、95 分位 20.434%、最大 49.898%，旧上层 C 需更新。修复版求解器、独立场解、互易及抽样细化检查通过。七组宏接口近似金属总 C 误差 0.029%–1.059%，仅为复用候选证据；宏时序模型复用未验收。原负载及速度问题单独保留。[结果及范围](../work/huangpingyang04-lgtm/222/README.md)。
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
 
-- 2026-11-09（北京时间）：[#222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) 沿用原Qwen3.5补算下层。根级/子级2252983个非边界电极完成同版精确绑定；27549个近层及其余层正逐网计算，1295条有效接口基线沿用，只补1196条缺项。12个真实全场/窗口及配对控制通过，补精度/汇总依赖已接好，最终报告作业100879仍待实际结果。来源分摊误归已修复，旧整体矩阵保留，历史来源百分比撤回；历史时序数值仅对应旧输入。单线+14.545%已独立复核，不代替全量范围或宏时序资格。[当前记录](../work/huangpingyang04-lgtm/222/lower-rc/README.md)。
+- 2026-11-09（北京时间）：[#222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) 沿用旧Qwen3.5补算下层。2252983个非边界电极同版精确绑定；27549个近层已完成补精度汇总，其中27488条合格、61条待继续。合格近层p95约8.510%、最大45.637%，不是全量范围或宏速度误差。其余层和接口继续运行，1295条有效接口基线沿用，只补1196条缺项。只迁移未启动分片，原0–103及110保留；当前101188，完整冻结/取消/依赖见记录，不重跑旧整批。来源分摊已修复，历史来源百分比撤回、原总矩阵保留；宏时序资格未授予。[当前记录](../work/huangpingyang04-lgtm/222/lower-rc/README.md)。
 
 - 2026-11-08（北京时间）：[#222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) 复用原版图和场解完成时序上下文验证。当前抽象集在更新上层参数下有 18 根 setup 误报通过，全部明确路径及三种电容位置复核；setup 裕量绝对差中位 22.745 ps、最大 855.600 ps，不能直接验收。旧参数已有 21 根误判，不能全归因于耦合。内部 RC 保持原值、新上层 C 投影到旧网络，不是新节点级耦合/PVT 签核。[报告与证据](../work/huangpingyang04-lgtm/222/timing/README.md)。PR #225 交付待独立审查，未合并；登记/看板缺项沿用。
