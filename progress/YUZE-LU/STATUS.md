@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+2026-11-09 CST：#219/PR220[迭代6](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_6.md)部分交付。
+347例不变RTL的多列+真实E/M标量转换、184例多行、Windows/Linux各169项通过；包含实际转换/外存复制的共同成本配方已建，
+尚未接入完整候选和新数值，不计算法20%。前轮完整3B阶段计划101213三输入逐位通过、HF保持；100972仍运行/UNLIMITED。
+继续做合法缓存失效、候选/独立检查/有限S回放及同池对照，随后KV/能耗/token/s/最优适配ASIC-FPGA；目标未完成。
+Issue in_progress，待独立审查不自合并；登记pending，看板unverified/同步pending沿用既有交接。
+
 2026-11-09 CST：#219/PR220[迭代5](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_5.md)部分交付。
 同池条件尾部DP完整3B额外0.0716468%、真实FFN0.0871689%，资源尾部消融无收益；Windows/Linux各157项通过。
 84个原生多行RTL场景（含R2/K2048）通过，B staging4096→2048、A不变；新旧S布局尚需合法化后接入全图，

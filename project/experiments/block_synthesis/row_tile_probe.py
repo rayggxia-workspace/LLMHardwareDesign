@@ -58,7 +58,7 @@ def prepare(source_root, bank_model, output, long_k=0):
     shutil.copyfile(generator, output / generator.name)
     sources[generator.name] = sha(generator)
     words, cases, groups = [], [], []
-    shapes = [(r, k) for r in (1, 2, 4, 8) for k in (1, 3, 7, 17)]
+    shapes = [(r, k) for r in range(1, 9) for k in (1, 3, 7, 17)]
     if long_k:
         if not 1 <= long_k <= 2048:
             raise ValueError('long K outside declared probe storage')
@@ -111,7 +111,7 @@ def prepare(source_root, bank_model, output, long_k=0):
         for c in cases))
     for name in ('vectors.hex', 'vectors_size.svh', 'cases.svh'):
         sources[name] = sha(output / name)
-    manifest = {'kind': 'native-row-tile-probe-v1', 'cases': cases,
+    manifest = {'kind': 'native-row-tile-probe-v2', 'cases': cases,
                 'groups': groups, 'source_root': str(source_root),
                 'source_commit': subprocess.check_output(
                     ['git', 'rev-parse', 'HEAD'], cwd=source_root, text=True).strip(),
@@ -127,7 +127,7 @@ def prepare(source_root, bank_model, output, long_k=0):
                       'vector_words': len(words), 'output': str(output)}))
 
 
-def analyse(directory, log):
+def analyse(directory, log, *, emit=True):
     manifest = json.loads((directory / 'manifest.json').read_text())
     for name, expected in manifest['sha256'].items():
         if sha(directory / name) != expected:
@@ -163,12 +163,47 @@ def analyse(directory, log):
                        'serial_b_stage_words': sum(c['b_stage_words'] for c in serial),
                        'tile_a_stage_words': tile['a_stage_words'],
                        'serial_a_stage_words': sum(c['a_stage_words'] for c in serial)})
+    profiles = [json.loads(m[1]) for m in re.finditer(
+        r'^ROW_PROFILE (\{.*\})$', text, re.MULTILINE)]
+    if manifest['kind'] == 'native-row-tile-probe-v2':
+        expected_rows = {c['rows'] for c in manifest['cases']}
+        if {p['rows'] for p in profiles} != expected_rows:
+            raise ValueError('passive profile row coverage')
+        keys = set()
+        for profile in profiles:
+            key = (profile['boundary'], profile['rows'], profile.get('op'),
+                   profile.get('store'), profile.get('reuse_b'))
+            if key in keys or profile['samples'] < 1 or not 0 < profile['min'] <= profile['max']:
+                raise ValueError('invalid passive profile')
+            keys.add(key)
+        for r in expected_rows:
+            expected_samples = {
+                ('p-command', 4, 0, None): sum(3*c['k'] for c in manifest['cases'] if c['rows']==r),
+                ('p-command', 10, 0, None): sum(3*c['k'] for c in manifest['cases'] if c['rows']==r),
+                ('p-command', 3, 1, None): sum(r for c in manifest['cases'] if c['rows']==r),
+                ('p-command', 5, 1, None): sum(4*r for c in manifest['cases'] if c['rows']==r),
+                ('feeder', None, None, 0): sum(c['k'] for c in manifest['cases'] if c['rows']==r),
+                ('feeder', None, None, 1): sum(2*c['k'] for c in manifest['cases'] if c['rows']==r)}
+            for op in (3, 4, 5, 10):
+                expected_samples[('native-m', op, None, None)] = expected_samples[
+                    ('p-command', op, int(op in (3,5)), None)]
+            for (boundary, op, store, reuse), count in expected_samples.items():
+                matches = [p for p in profiles if (p['boundary'], p['rows'], p.get('op'),
+                    p.get('store'), p.get('reuse_b')) == (boundary, r, op, store, reuse)]
+                if len(matches)!=1 or matches[0]['samples']!=count:
+                    raise ValueError('passive profile sample conservation')
+            if len([p for p in profiles if p['rows']==r]) != len(expected_samples):
+                raise ValueError('unexpected passive profile boundary')
     result = {'manifest_sha256': sha(directory / 'manifest.json'),
               'log_sha256': sha(log), 'passed_cases': len(records), 'groups': groups,
               'scope': manifest['scope'], 'excluded': manifest['excluded'],
-              'timing_note': 'Testbench cycles include serialized host transactions and deliberate stalls; not system latency.'}
-    (directory / 'summary.json').write_text(json.dumps(result, indent=2) + '\n')
-    print(json.dumps(result, indent=2))
+              'timing_note': 'Testbench cycles include serialized host transactions and deliberate stalls; not system latency.',
+              'passive_profiles': profiles,
+              'profile_boundary': 'Rising-edge timestamp difference: accepted request to first completion; completion-take stalls excluded. Native M, P command (includes adapter/store ACK), and feeder are distinct boundaries; no DRAM/LC calibration.'}
+    if emit:
+        (directory / 'summary.json').write_text(json.dumps(result, indent=2) + '\n')
+        print(json.dumps(result, indent=2))
+    return result
 
 
 if __name__ == '__main__':

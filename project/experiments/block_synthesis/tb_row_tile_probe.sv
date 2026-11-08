@@ -4,9 +4,50 @@ module tb_row_tile_probe;
  logic clk=0,reset=1;
  always #5 clk=~clk;
  integer cycle=0,a_fires=0,b_fires=0,wide_reads=0,store_acks=0;
+ // Passive acceptance-to-first-completion profiles. Deliberate completion
+ // backpressure in the tasks below is excluded. Never drive DUT signals here.
+ integer p_count[1:8][0:31],p_min[1:8][0:31],p_max[1:8][0:31];
+ integer m_count[1:8][0:15],m_min[1:8][0:15],m_max[1:8][0:15];
+ integer f_count[1:8][0:1],f_min[1:8][0:1],f_max[1:8][0:1];
+ integer p_start=-1,p_rows,p_key,m_start=-1,m_rows,m_key;
+ integer f_start=-1,f_rows,f_key,elapsed;
  always @(posedge clk) begin
   cycle=cycle+1;
-  if(!reset)begin
+  if(reset)begin p_start=-1;m_start=-1;f_start=-1;end
+  else begin
+   if(cmd_valid && cmd_ready)begin
+    if(p_start>=0)$fatal(1,"overlapping P command profile");
+    p_start=cycle;p_rows=int'(rows);p_key=int'(cmd_op)+16*int'(cmd_store);
+   end
+   if(p_start>=0 && cmd_done)begin
+    elapsed=cycle-p_start;
+    p_count[p_rows][p_key]=p_count[p_rows][p_key]+1;
+    if(elapsed<p_min[p_rows][p_key])p_min[p_rows][p_key]=elapsed;
+    if(elapsed>p_max[p_rows][p_key])p_max[p_rows][p_key]=elapsed;
+    p_start=-1;
+   end
+   if(dut.m_dispatch && dut.m_ready)begin
+    if(m_start>=0)$fatal(1,"overlapping native M profile");
+    m_start=cycle;m_rows=int'(rows);m_key=int'(dut.m_op);
+   end
+   if(m_start>=0 && dut.m_valid && dut.m_pending && !dut.m_dispatch && !dut.m_commit)begin
+    elapsed=cycle-m_start;
+    m_count[m_rows][m_key]=m_count[m_rows][m_key]+1;
+    if(elapsed<m_min[m_rows][m_key])m_min[m_rows][m_key]=elapsed;
+    if(elapsed>m_max[m_rows][m_key])m_max[m_rows][m_key]=elapsed;
+    m_start=-1;
+   end
+   if(load_valid && load_ready)begin
+    if(f_start>=0)$fatal(1,"overlapping feeder profile");
+    f_start=cycle;f_rows=int'(rows);f_key=int'(reuse_b);
+   end
+   if(f_start>=0 && load_done)begin
+    elapsed=cycle-f_start;
+    f_count[f_rows][f_key]=f_count[f_rows][f_key]+1;
+    if(elapsed<f_min[f_rows][f_key])f_min[f_rows][f_key]=elapsed;
+    if(elapsed>f_max[f_rows][f_key])f_max[f_rows][f_key]=elapsed;
+    f_start=-1;
+   end
    if(dut.a_valid && dut.a_ready)a_fires=a_fires+1;
    if(dut.b_valid && dut.b_ready)b_fires=b_fires+1;
    if(dut.store.wide_req && dut.store.wide_ready)wide_reads=wide_reads+1;
@@ -146,8 +187,28 @@ module tb_row_tile_probe;
   end
  endtask
  initial begin
+  for(integer r=1;r<=8;r=r+1)begin
+   for(integer key=0;key<32;key=key+1)begin
+    p_count[r][key]=0;p_min[r][key]=2147483647;p_max[r][key]=0;
+   end
+   for(integer key=0;key<16;key=key+1)begin
+    m_count[r][key]=0;m_min[r][key]=2147483647;m_max[r][key]=0;
+   end
+   for(integer key=0;key<2;key=key+1)begin
+    f_count[r][key]=0;f_min[r][key]=2147483647;f_max[r][key]=0;
+   end
+  end
   $readmemh("vectors.hex",inputs_mem);
   `include "cases.svh"
+  if(p_start>=0 || m_start>=0 || f_start>=0)$fatal(1,"unfinished passive profile");
+  for(integer r=1;r<=8;r=r+1)begin
+   for(integer key=0;key<32;key=key+1)if(p_count[r][key]>0)
+    $display("ROW_PROFILE {\"boundary\":\"p-command\",\"rows\":%0d,\"op\":%0d,\"store\":%0d,\"samples\":%0d,\"min\":%0d,\"max\":%0d}",r,key%16,key/16,p_count[r][key],p_min[r][key],p_max[r][key]);
+   for(integer key=0;key<16;key=key+1)if(m_count[r][key]>0)
+    $display("ROW_PROFILE {\"boundary\":\"native-m\",\"rows\":%0d,\"op\":%0d,\"samples\":%0d,\"min\":%0d,\"max\":%0d}",r,key,m_count[r][key],m_min[r][key],m_max[r][key]);
+   for(integer key=0;key<2;key=key+1)if(f_count[r][key]>0)
+    $display("ROW_PROFILE {\"boundary\":\"feeder\",\"rows\":%0d,\"reuse_b\":%0d,\"samples\":%0d,\"min\":%0d,\"max\":%0d}",r,key,f_count[r][key],f_min[r][key],f_max[r][key]);
+  end
   $display("PASS native row tile probe");
   $finish;
  end

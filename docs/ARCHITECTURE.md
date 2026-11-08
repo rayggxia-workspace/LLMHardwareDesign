@@ -256,3 +256,12 @@ PR220新增[外存/驻留合同](../project/experiments/block_synthesis/MEMORY_R
 对登记的孤立Dot候选做常量阶段/循环精确模拟；`phase-survey.sbatch`另做有界派生SystemC逐事件核对。
 145项检查命令仍为本目录全部`test_*.py`；需requirements.txt中的固定依赖。
 全图阶段前沿、实际tile打包/供数、脏结果驻留及系统token/s尚未完成，见[迭代4](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_4.md)。
+
+2026-11-09补充：[原生多行](../project/experiments/block_synthesis/ROW_TILE.md)184例、
+[原生多列与S32转换](../project/experiments/block_synthesis/COLUMN_TILE.md)347例四态RTL通过。
+`column_tile_probe.py prepare --source-root ROOT --bank-model BANK --rtl-ref COMMIT --output NEW --long-k 2048`
+冻结不变RTL及输入；在NEW用Icarus12 `-g2012 -Irtl/block_v2 -I. -s tb_column_tile_probe -o probe.vvp -f compile.f`，
+再`vvp probe.vvp > simulate.log`，`column_tile_probe.py analyse NEW NEW/simulate.log`。
+成本配方`tile_recipe.py`包含实际E/M转换和显式虚拟外存复制；尚未接入完整综合候选。
+Windows与独立Linux各169项：`python -m unittest discover -s project/experiments/block_synthesis -p 'test_*.py'`。
+前轮阶段计划101213完整3B三输入数值逐位通过，具体证据和边界见[迭代6](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_6.md)。

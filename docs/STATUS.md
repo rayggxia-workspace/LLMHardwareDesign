@@ -1,5 +1,11 @@
 # 当前状态
 
+2026-11-09，#219/PR220[迭代6](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_6.md)部分交付：
+不变M/E/S的347例多列及真实S32转换、184例多行和Windows/Linux各169项通过；有包含转换/外存复制的共同成本配方，
+尚未接入完整DP/缓存失效/新计划数值，不计DP20%。前轮阶段计划101213完整3B三输入逐位通过，HF误差/argmax保持；
+100972早期源全图仍RUNNING/UNLIMITED。算法约20%、一般驻留、完整KV/校准时间能耗/token/s与最优适配对照继续in_progress。
+登记pending，看板unverified/同步pending，待独立审查不自合并/关闭。
+
 2026-11-09，#219/PR220[迭代5](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_5.md)部分交付：
 同池条件尾部DP在完整3B额外0.0716468%、真实FFN切片0.0871689%；资源尾部消融无收益。Windows/Linux各157项通过。
 现有M/P/S/feeder不变的84个四态RTL多行场景通过，含R2/K2048；B staging减半，A不变，尚未接入全图候选，
