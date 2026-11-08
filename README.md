@@ -8,6 +8,8 @@
 
 ## 从哪里开始
 
+[五类 Block 与母控统一交付入口](docs/experiments/assets/five-leaf-bases/README.md)：P/U/C/F/J 的 _64/_128 摆放图、源码与验收包索引，以及母控双格式实现及其 Block 一致性证据。
+
 1. [项目说明 v1.0](预制计算底座项目说明_v1.0.md)：研究问题、已确认边界、2026-10-30 架构规划补记与待验证清单。
 2. [研究资料导读](研究资料导读.md)：依据原 README 完整要点整理的阅读顺序、架构问题和 EDA 研究路线。
 3. [项目简介](docs/PROJECT_BRIEF.md)、[架构与目录](docs/ARCHITECTURE.md)、[当前状态](docs/STATUS.md)：持续更新的项目入口。

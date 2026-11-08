@@ -1,4 +1,14 @@
-# 五类独立叶宏组：_128 / _64 摆放图
+# 五类独立叶宏组与母控：交付入口及 _128 / _64 摆放图
+
+本页统一索引 P/U/C/F/J 与母控。源码仍按实际项目目录保存，大体积交付包仍在验收报告指定的授权存储，不搬移或复制原始证据。
+
+| 交付 | 源码 | 实验、回执与包位置 |
+| --- | --- | --- |
+| P / U（_64、_128） | [独立叶宏组](../../../../project/rtl/pu_leaf_base/) | [P/U 验收入口](../../../../work/YUZE-LU/212/README.md)；[U 后续修复 #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) |
+| C / F / J（_64、_128） | [独立叶宏组](../../../../project/rtl/block_cfj_v1/) | [C/F/J 验收入口](../../../../work/YUZE-LU/211/README.md) |
+| 母控（64 v2、128 v1） | [母控与真实程序 SRAM](../../../../project/rtl/mother_control_v1/) | [双格式验收报告](../../mother-control-dual-format.md)、[交付包索引及 SHA](../../../../work/YUZE-LU/223/acceptance-index.json)、[复跑说明](../../../../project/experiments/mother_control_v1/README.md) |
+
+母控由 [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 交付，用户已授权合入 main。两种程序格式分别验收，共用同一组六文件，物理 cell 名为 `mother_control_64`；并非两份不同的物理版图。当前母控为两个驻留目标，母控最终网表与五类 Block/局控 RTL 的有限组合已通过，不代表九实例系统联合布局布线。下方五类图册是 #213/#214 的冻结历史图，U 的 #221 后续资格以其回执为准，不改写旧图来源。
 
 本图册随 [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) 和 [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214) 的主线整合交付。两版分别保留，不把旧包重命名为新物理实现。
 
