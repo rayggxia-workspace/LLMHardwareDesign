@@ -1,0 +1,24 @@
+{
+  "job": "100869",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-checks-fx0IK5vn",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=2",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-checks-fx0IK5vn",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-checks-fx0IK5vn",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-checks-fx0IK5vn/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-checks-fx0IK5vn/slurm-%A_%a.err",
+    "--array=0-1%2",
+    "--dependency=afterok:100854",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-surface-checks-fx0IK5vn/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_split_subset.py",
+    "--build",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-origin-control-perms-ktefURj0/job-100765-0/result",
+    "--selection",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-interface-collect-zYmAMfnG/job-100854-0/result/check-masters.txt"
+  ],
+  "submitted_utc": "2026-11-08T18:48:31.363874+00:00"
+}

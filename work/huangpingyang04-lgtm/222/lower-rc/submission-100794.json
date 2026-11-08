@@ -1,0 +1,28 @@
+{
+  "job": "100794",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-child-relabel-PuCr4zbZ",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=1",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-child-relabel-PuCr4zbZ",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-child-relabel-PuCr4zbZ",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-child-relabel-PuCr4zbZ/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-child-relabel-PuCr4zbZ/slurm-%A_%a.err",
+    "--dependency=afterok:100783",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-child-relabel-PuCr4zbZ/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_relabel.py",
+    "--base-scene",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-header-9JDoAwPj/job-100748-0/result",
+    "--probes",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-child-probe-xsOJQ9O3/job-100784-0/result",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-child-probe-xsOJQ9O3/job-100786-1/result",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-child-probe-xsOJQ9O3/job-100788-2/result",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-child-probe-xsOJQ9O3/job-100790-3/result",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-child-probe-xsOJQ9O3/job-100791-4/result",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-child-probe-xsOJQ9O3/job-100783-5/result"
+  ],
+  "submitted_utc": "2026-11-08T17:56:22.502285+00:00"
+}

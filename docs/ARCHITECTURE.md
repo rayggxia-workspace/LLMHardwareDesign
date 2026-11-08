@@ -94,6 +94,10 @@ python project/experiments/opentpu_compare/compare.py project/experiments/opentp
 
 ## 本地阅读与验证
 
+- #222 结果打包：`python project/experiments/m11_m12_rcx/native_package.py --comparison <完整比较目录> --primary-receipt <全网solve.json> --binding <冻结case-binding.json> --drivers work/huangpingyang04-lgtm/222/original-driver-limits.tsv --macro <各宏接口结果目录...> --checks <互易/偏置/深度检查JSON...> --output <不存在的新结果目录>`。程序核验 2491 网、全层上下文、输入版本和宏诊断来源一致；输出含真实端点的精简 TSV、条件性线网金属电容复用近似和汇总。完整原始矩阵仍由服务器回执和 SHA 索引；TSV 显示取八位有效数字，不替代原始数据。
+
+- Qwen3.5 原版图真实下层耦合（#222）：来源、现有作业复用、冻结 SHA、实际试算及未验收项见[实验合同](../work/huangpingyang04-lgtm/222/README.md)。`project/experiments/m11_m12_rcx/native_worker.sbatch` 为 Slurm 入口，显式设置 `COUPLING_TASK_ROOT` 为新建授权目录；源码依次支持 `export <六类拓扑清单> <最低原生层>`、`solve --scene <准备结果> --build <已通过控制的构建> --masters <逗号分隔ID或shard:N> --offset <偏置> --walks <样本下限>`、`compare --runs <求解结果...> [--lower-runs <同场景下层单独结果...>]`、`assess --reference <主结果...> --variant <深度或偏置变体...> --drivers <原驱动JSON>`。实际完整命令在该任务的 submission JSON 中；不要在已有输出目录重跑。提交要求 `--time=0`、共享 c64/c96、无独占节点；全几何场景使用单进程保留几何，避免并发复制多份大场景。`flux-check` 与 `flux-refine` 为独立网格/偏置数值验证，不替代实际版图和时序验收。比较器核验原始行 SHA、激励清单、相同场景/偏置/求解器，细偏置统计未通过会明确保留 false。 下层比较要求 `shared-reference --scene <准备结果>` 建立共享 M10 一致归属，`shared-controls <二进制>` 检查同几何无假差异；`macro-boundary --scene <全层结果> --build <修复构建> --shared-reference <覆盖证明> --masters <ID列表>` 单独比较含 M10 的完整宏接口电荷。已知分离金属错误合并由 `build` 的双向区间回归控制防止；`baseline-check --build <构建> --masters <ID列表>` 仅抽查保存的原基线，避免整版重提取。`reciprocity --runs <全网结果...>` 核验完整物理网络矩阵互易性，不能强行对来源分区行做对称化。修复前来源统计被入口拒绝。
+
 - 阅读：从仓库根目录直接打开 `ref-project/llm-routing/总报告.html` 或 `ref-project/llm-routing/线长报告.html`；其图片和下载链接使用包内相对路径。
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
 - 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。
@@ -133,6 +137,17 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 运行器保存源 commit、工具版本与哈希、配置、Slurm 作业和实际退出码。大体积 ODB/GDS/网表/日志保留在获授权的远程实验目录；仓库只提交轻量索引、必要摘要与脚本。
 
 ## 数据与外部依赖
+
+Qwen3.5 #222 时序验证入口为 `project/experiments/m11_m12_rcx/timing_*.py` 和 `timing_worker.sbatch`。先复用既有提取/模型，只补缺项；确切八场景实参见 [时序报告及 submission 回执](../work/huangpingyang04-lgtm/222/timing/README.md)。Slurm 新目录须配置 `TIMING_TASK_ROOT`、本人任务名前缀及 `--time=0`。先读父层 SPEF，再读宏及子宏；查询真实叶级驱动器，检查新参数有效性、部分未标注为零、全部边界标注、原生 ODB 读回及显式路径。原内部未标注范围单列，不授予全节点资格。
+
+只封装已有下载结果的命令如下，输出目录必须全新，不重跑时序：
+
+```powershell
+python -B project/experiments/m11_m12_rcx/timing_package.py --inputs ../coupling222-timing-inputs --binding ../coupling222-final-inputs/case-binding.json --model-domain work/huangpingyang04-lgtm/222/timing/model-load-domain.json --domain-nets ../coupling222-timing-inputs/model-load-domain-nets.json --out <全新结果目录>
+python -B scripts/check_project.py
+```
+
+封装核对 141 份轻量来源文件 SHA、八场景、18 个明确反例及规则/转换表域。原内部 RC 不变，新上层 C 投影到旧 R；结果是固定静态上下文抽象验收诊断，不代替节点级耦合、一般切换或 PVT 签核。原 SPEF/Liberty/完整日志只在服务器保留。
 
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 

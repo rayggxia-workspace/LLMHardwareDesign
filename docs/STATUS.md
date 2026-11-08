@@ -23,4 +23,10 @@
 - 项目登记：[管理中心 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 待审查；合并前状态为 pending
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
+- 2026-11-08：[#222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) / [PR #225](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/225) 完成旧 #206 Qwen3.5 的 2491 网历史寄生对照（以下来源百分比已撤回，不能用于复用资格），复用 #216 完整基线和十实例真实 M1–M10。上层 C 增幅中位 1.149%、95 分位 20.434%、最大 49.898%，旧上层 C 需更新。修复版求解器、独立场解、互易及抽样细化检查通过。七组宏接口近似金属总 C 误差 0.029%–1.059%，仅为复用候选证据；宏时序模型复用未验收。原负载及速度问题单独保留。[结果及范围](../work/huangpingyang04-lgtm/222/README.md)。
+
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+- 2026-11-09（北京时间）：[#222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) 旧Qwen3.5下层补算和比较计算完成，提交审查。2252983条非边界网络全部达到本轮数值精度，点估计99.77%绝对变化≤1%、最大+81.899%，独立全场约+82.158%；10个极值控制全过。2491接口及17条精细复核完成。原版图/参数/有效矩阵沿用，仅补缺项及精度；超时完整行12882条保留，只续4504条。不授予原宏时序直接复用资格，旧基线误判与新增耦合分开。[报告和完整索引](../work/huangpingyang04-lgtm/222/lower-rc/README.md)。PR225待独立审查，未合并。
+
+- 2026-11-08（北京时间）：[#222](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/222) 复用原版图和场解完成时序上下文验证。当前抽象集在更新上层参数下有 18 根 setup 误报通过，全部明确路径及三种电容位置复核；setup 裕量绝对差中位 22.745 ps、最大 855.600 ps，不能直接验收。旧参数已有 21 根误判，不能全归因于耦合。内部 RC 保持原值、新上层 C 投影到旧网络，不是新节点级耦合/PVT 签核。[报告与证据](../work/huangpingyang04-lgtm/222/timing/README.md)。PR #225 交付待独立审查，未合并；登记/看板缺项沿用。

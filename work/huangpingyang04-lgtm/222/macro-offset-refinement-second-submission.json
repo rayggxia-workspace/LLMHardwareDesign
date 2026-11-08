@@ -1,0 +1,31 @@
+{
+  "job": "100273",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "-p",
+    "c64,c96",
+    "-c",
+    "8",
+    "--time=0",
+    "--dependency=afterok:100263",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-validated-mPI4CdbA",
+    "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-validated-mPI4CdbA",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-validated-mPI4CdbA/slurm-%j.log",
+    "/public/home/yuzelu/PingyangHuang/issue-222-validated-mPI4CdbA/project/experiments/m11_m12_rcx/native_worker.sbatch",
+    "macro-boundary",
+    "--scene",
+    "/public/home/yuzelu/PingyangHuang/issue-222-coupling-DuSb4uk1/job-100170/result",
+    "--build",
+    "/public/home/yuzelu/PingyangHuang/issue-222-merge-fix-OLZaDNeN/job-100237/build",
+    "--shared-reference",
+    "/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf/job-100215/result",
+    "--masters",
+    "1974,2490",
+    "--offset",
+    ".015625",
+    "--walks",
+    "8388608"
+  ],
+  "reason": "Second fine offset on two most affected sampled native interfaces, to distinguish finite-offset bias from physical charge change."
+}

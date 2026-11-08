@@ -1,0 +1,33 @@
+{
+  "job": "100838",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-remaining-production-coCTgcw0",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=1",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-remaining-production-coCTgcw0",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-remaining-production-coCTgcw0",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-remaining-production-coCTgcw0/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-remaining-production-coCTgcw0/slurm-%A_%a.err",
+    "--array=0-255%4",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-remaining-production-coCTgcw0/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_pair_run.py",
+    "--tiles",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-children-tiles-yPao4MaK/job-100802-0/result",
+    "--build",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-pair-importance-dxjWLKfG/job-100808-0/result",
+    "--exclude-selection",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-target-index-vdxsMAK5/job-100806-0/result/near-masters.txt",
+    "--reuse-native-controls",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-compare-h5n6hvgA/job-100798-0/result/comparison.json",
+    "--reuse-paired-results",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-pair-native-checked-JSZ4nNjx/job-100812-0/result",
+    "--qualification",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-pair-native-check-Gfn1SGQG/job-100814-0/result/check.json",
+    "--shards",
+    "256"
+  ],
+  "submitted_utc": "2026-11-08T18:35:18.896454+00:00"
+}

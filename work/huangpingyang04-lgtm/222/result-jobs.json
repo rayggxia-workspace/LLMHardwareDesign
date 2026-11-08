@@ -1,0 +1,94 @@
+[
+  {
+    "label": "full-comparison",
+    "job": "100254",
+    "command": [
+      "sbatch",
+      "--parsable",
+      "-p",
+      "c64,c96",
+      "-c",
+      "1",
+      "--time=0",
+      "--dependency=afterok:100247",
+      "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt",
+      "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt",
+      "--output=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt/slurm-%j.log",
+      "/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt/project/experiments/m11_m12_rcx/native_worker.sbatch",
+      "compare",
+      "--runs",
+      "/public/home/yuzelu/PingyangHuang/issue-222-validated-mPI4CdbA/job-100247/result"
+    ]
+  },
+  {
+    "label": "physical-matrix-check",
+    "job": "100255",
+    "command": [
+      "sbatch",
+      "--parsable",
+      "-p",
+      "c64,c96",
+      "-c",
+      "1",
+      "--time=0",
+      "--dependency=afterok:100247",
+      "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt",
+      "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt",
+      "--output=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt/slurm-%j.log",
+      "/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt/project/experiments/m11_m12_rcx/native_worker.sbatch",
+      "reciprocity",
+      "--runs",
+      "/public/home/yuzelu/PingyangHuang/issue-222-validated-mPI4CdbA/job-100247/result"
+    ]
+  },
+  {
+    "label": "offset-and-driver-assessment",
+    "job": "100256",
+    "command": [
+      "sbatch",
+      "--parsable",
+      "-p",
+      "c64,c96",
+      "-c",
+      "1",
+      "--time=0",
+      "--dependency=afterok:100249",
+      "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt",
+      "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt",
+      "--output=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt/slurm-%j.log",
+      "/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt/project/experiments/m11_m12_rcx/native_worker.sbatch",
+      "assess",
+      "--reference",
+      "/public/home/yuzelu/PingyangHuang/issue-222-validated-mPI4CdbA/job-100247/result",
+      "--variant",
+      "/public/home/yuzelu/PingyangHuang/issue-222-validated-mPI4CdbA/job-100249/result",
+      "--drivers",
+      "/public/home/yuzelu/PingyangHuang/issue-222-analyze-wowCTbae/job-100177/result/drivers.json"
+    ]
+  },
+  {
+    "label": "native-depth-assessment",
+    "job": "100257",
+    "command": [
+      "sbatch",
+      "--parsable",
+      "-p",
+      "c64,c96",
+      "-c",
+      "1",
+      "--time=0",
+      "--dependency=afterok:100247",
+      "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt",
+      "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt",
+      "--output=/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt/slurm-%j.log",
+      "/public/home/yuzelu/PingyangHuang/issue-222-results-j5QgG7bt/project/experiments/m11_m12_rcx/native_worker.sbatch",
+      "assess",
+      "--reference",
+      "/public/home/yuzelu/PingyangHuang/issue-222-validated-mPI4CdbA/job-100247/result",
+      "--variant",
+      "/public/home/yuzelu/PingyangHuang/issue-222-validated-mPI4CdbA/job-100243/result",
+      "--drivers",
+      "/public/home/yuzelu/PingyangHuang/issue-222-analyze-wowCTbae/job-100177/result/drivers.json"
+    ]
+  }
+]

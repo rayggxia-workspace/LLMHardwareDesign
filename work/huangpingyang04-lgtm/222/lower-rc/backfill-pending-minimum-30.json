@@ -1,0 +1,14 @@
+{
+  "command": [
+    "scontrol",
+    "update",
+    "JobId=101188",
+    "TimeMin=00:30:00"
+  ],
+  "returncode": 1,
+  "stdout": "",
+  "stderr": "101188_126,131: Job has already finished\n",
+  "pending_readback": "JobId=101188 ArrayJobId=101188 ArrayTaskId=255 ArrayTaskThrottle=32 JobName=hpy-lower222\n   UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A\n   Priority=4294576887 Nice=0 Account=yuzelu QOS=normal\n   JobState=PENDING Reason=None Dependency=(null)\n   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=00:30:00\n   SubmitTime=2026-11-09T05:06:22 EligibleTime=2026-11-09T05:06:23\n   AccrueTime=2026-11-09T05:06:23\n   StartTime=2026-11-09T05:42:50 EndTime=2026-11-09T06:12:50 Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T05:40:23 Scheduler=Main\n   Partition=c64,c96,debug AllocNode:Sid=mgt01:953764\n   ReqNodeList=(null) ExcNodeList=(null)\n   NodeList= SchedNodeList=node1\n   NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=4,mem=1M,node=1,billing=4\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=4 MinMemoryNode=0 MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null)\n   Command=/public/home/yuzelu/PingyangHuang/issue-222-lower-cached-pending-8epazfhD/project/experiments/m11_m12_rcx/lower_worker.sbatch\n   WorkDir=/public/home/yuzelu/PingyangHuang/issue-222-lower-cached-pending-8epazfhD\n   StdErr=/public/home/yuzelu/PingyangHuang/issue-222-lower-cached-pending-8epazfhD/slurm-101188_255.err\n   StdIn=/dev/null\n   StdOut=/public/home/yuzelu/PingyangHuang/issue-222-lower-cached-pending-8epazfhD/slurm-101188_255.out\n   Power=\n   TresPerTask=cpu:4\n   \n\n",
+  "utc": "2026-11-08T21:40:36.101254+00:00",
+  "reason": "Pending only needs original 30-minute maximum; prevent short backfill slots from cutting field calculations. Already running members keep actual limits."
+}

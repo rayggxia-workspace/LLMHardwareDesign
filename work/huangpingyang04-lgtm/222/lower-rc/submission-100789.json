@@ -1,0 +1,25 @@
+{
+  "job": "100789",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-local-controls-xslJPsYm",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=2",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-local-controls-xslJPsYm",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-local-controls-xslJPsYm",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-local-controls-xslJPsYm/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-local-controls-xslJPsYm/slurm-%A_%a.err",
+    "--dependency=afterok:100782",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-local-controls-xslJPsYm/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_local_run.py",
+    "--tiles",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-tiles-lru-7reYUi6k/job-100782-0/result",
+    "--build",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-local-lru-MUd9kGtR/job-100779-0/result",
+    "--masters",
+    "838274,838817,839360,839751,840142,842907,845672,852143,858614,860866,863119,863838"
+  ],
+  "submitted_utc": "2026-11-08T17:50:27.017965+00:00"
+}

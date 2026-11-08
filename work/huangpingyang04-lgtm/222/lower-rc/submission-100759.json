@@ -1,0 +1,25 @@
+{
+  "job": "100759",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-local-samples-QmGU7PMp",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=4",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-local-samples-QmGU7PMp",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-local-samples-QmGU7PMp",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-local-samples-QmGU7PMp/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-local-samples-QmGU7PMp/slurm-%A_%a.err",
+    "--dependency=afterok:100747",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-local-samples-QmGU7PMp/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_local_run.py",
+    "--tiles",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-tiles-5dCJz1aX/job-100747-0/result",
+    "--build",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-local-build-XIUZtcBp/job-100745-0/result",
+    "--masters",
+    "838274,838817,839360,839751,840142,842907,845672,852143,858614,860866,863119,863838"
+  ],
+  "submitted_utc": "2026-11-08T17:14:31.196857+00:00"
+}

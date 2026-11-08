@@ -1,0 +1,95 @@
+{
+  "jobs": [
+    {
+      "job": "100213",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "-p",
+        "c64,c96",
+        "-c",
+        "1",
+        "--time=0",
+        "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf",
+        "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf",
+        "--output=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf/slurm-%j.log",
+        "/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf/project/experiments/m11_m12_rcx/native_worker.sbatch",
+        "shared-controls",
+        "/public/home/yuzelu/PingyangHuang/issue-222-field-KYcdk1xs/job-100130/build/native_field"
+      ]
+    },
+    {
+      "job": "100214",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "-p",
+        "c64,c96",
+        "-c",
+        "1",
+        "--time=0",
+        "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf",
+        "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf",
+        "--output=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf/slurm-%j.log",
+        "/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf/project/experiments/m11_m12_rcx/native_worker.sbatch",
+        "shared-reference",
+        "--scene",
+        "/public/home/yuzelu/PingyangHuang/issue-222-coupling-DuSb4uk1/job-100169/result"
+      ]
+    },
+    {
+      "job": "100215",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "-p",
+        "c64,c96",
+        "-c",
+        "1",
+        "--time=0",
+        "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf",
+        "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf",
+        "--output=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf/slurm-%j.log",
+        "--dependency=afterok:100170:100213",
+        "/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf/project/experiments/m11_m12_rcx/native_worker.sbatch",
+        "shared-reference",
+        "--scene",
+        "/public/home/yuzelu/PingyangHuang/issue-222-coupling-DuSb4uk1/job-100170/result"
+      ]
+    },
+    {
+      "job": "100216",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "-p",
+        "c64,c96",
+        "-c",
+        "2",
+        "--time=0",
+        "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf",
+        "--export=ALL,COUPLING_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf",
+        "--output=/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf/slurm-%j.log",
+        "--dependency=afterok:100192:100215",
+        "/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf/project/experiments/m11_m12_rcx/native_worker.sbatch",
+        "solve",
+        "--scene",
+        "/public/home/yuzelu/PingyangHuang/issue-222-coupling-DuSb4uk1/job-100170/result",
+        "--build",
+        "/public/home/yuzelu/PingyangHuang/issue-222-field-KYcdk1xs/job-100130/build",
+        "--masters",
+        "0,1136,1500,1940,1960,1974,2490",
+        "--offset",
+        ".25",
+        "--walks",
+        "1048576",
+        "--lower-only",
+        "--lower-reference",
+        "/public/home/yuzelu/PingyangHuang/issue-222-shared-0MKTNGcf/job-100215/result"
+      ]
+    }
+  ],
+  "superseded_unrun_lower_reference": 100197,
+  "fine_offset_100199_dependency": "afterok:100216",
+  "reason": "Shared M10 must retain upper ownership before/after; no duplicate physical metal or source-charge subtraction across different partitions."
+}

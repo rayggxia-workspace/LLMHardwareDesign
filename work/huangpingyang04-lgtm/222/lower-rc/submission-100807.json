@@ -1,0 +1,24 @@
+{
+  "job": "100807",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-pair-native-controls-4dOuzU8Y",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=1",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-pair-native-controls-4dOuzU8Y",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-pair-native-controls-4dOuzU8Y",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-pair-native-controls-4dOuzU8Y/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-pair-native-controls-4dOuzU8Y/slurm-%A_%a.err",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-pair-native-controls-4dOuzU8Y/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_pair_run.py",
+    "--tiles",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-tiles-lru-7reYUi6k/job-100782-0/result",
+    "--build",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-pair-build-KW97uBjh/job-100803-0/result",
+    "--masters",
+    "838274,838817,839360,839751,840142,842907,845672,852143,858614,860866,863119,863838"
+  ],
+  "submitted_utc": "2026-11-08T18:13:58.992827+00:00"
+}

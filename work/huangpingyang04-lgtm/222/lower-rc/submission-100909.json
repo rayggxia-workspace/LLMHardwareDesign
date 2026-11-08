@@ -1,0 +1,25 @@
+{
+  "job": "100909",
+  "root": "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-solve-MtPTGuXw",
+  "command": [
+    "sbatch",
+    "--parsable",
+    "--partition=c64",
+    "--cpus-per-task=2",
+    "--time=0",
+    "--chdir=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-solve-MtPTGuXw",
+    "--export=ALL,LOWER_TASK_ROOT=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-solve-MtPTGuXw",
+    "--output=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-solve-MtPTGuXw/slurm-%A_%a.out",
+    "--error=/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-solve-MtPTGuXw/slurm-%A_%a.err",
+    "--array=0-1%2",
+    "--dependency=afterok:100908",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-solve-MtPTGuXw/project/experiments/m11_m12_rcx/lower_worker.sbatch",
+    "lower_native_extremes.py",
+    "solve",
+    "--prepared",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-native-extremes-prepare-2g0GNuYd/job-100908-0/result",
+    "--build",
+    "/public/home/yuzelu/PingyangHuang/issue-222-lower-origin-control-perms-ktefURj0/job-100765-0/result"
+  ],
+  "submitted_utc": "2026-11-08T19:18:37.364813+00:00"
+}
