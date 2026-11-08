@@ -25,6 +25,9 @@ Issue #230在同一[后端目录](../project/experiments/upper_router/README.md)
 `composed_topology.py`另行逐源比对实际GDS子树、摆位及严格分离的导体包围范围，
 只提供独立源身份/连通证据；最终RC不复用分源电容。
 交付门同时重验实际DEF、ODB/网表、原约束、每档SPEF来源及原始物理/电气视图SHA。
+`delivery_index.py QUALIFIED_DELIVERY NEW_INDEX --source SOURCE_TAR --tool TOOL_ARTIFACT`
+只索引已合格且六文件未变化的交付，记录全部声明证据目录、源包及工具的路径/大小/SHA，
+不把索引生成当作验收，也不复制大型物理数据到Git。
 
 Issue #226 实现[综合到布线接口层](../project/experiments/block_synthesis/ROUTE_CONTRACT.md)。从 `project/experiments/block_synthesis` 运行 `python -B -m unittest test_route_contract test_loop_dp test_dot_cache -v`；CLI见合同。需求重构检查共享接口展开实现，不是独立ODB/GDS几何或电气检查；实际物理后端另验。
 
