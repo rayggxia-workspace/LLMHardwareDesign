@@ -19,9 +19,11 @@ def sha(p):
     return h.hexdigest()
 
 
-def normalize_vcd(source, destination, expected_window_ps, scope):
+def normalize_vcd(source, destination, expected_window_ps, scope, escape_backslashes=False):
     stack, scopes = [], set()
     first = previous = None
+    changed_names = 0
+    mapping_hash = hashlib.sha256()
     with source.open() as src, destination.open('w') as dst:
         for line in src:
             fields = line.split()
@@ -32,6 +34,18 @@ def normalize_vcd(source, destination, expected_window_ps, scope):
                 stack.pop()
             elif fields[:1] == ['$timescale'] and fields != ['$timescale', '1ps', '$end']:
                 raise ValueError('expected explicit 1ps VCD')
+            # Flattened Yosys names can contain literal backslashes. STA's SDC
+            # name lookup consumes an escape, whereas Verilator emits the
+            # literal character once. Escape only scope/reference names, never
+            # identifier codes (which may themselves contain backslashes),
+            # values or events. Physical pin audit still follows this transform.
+            field = 2 if fields[:1] == ['$scope'] else 4 if fields[:1] == ['$var'] else None
+            if escape_backslashes and field is not None and '\\' in fields[field]:
+                old = line
+                fields[field] = fields[field].replace('\\', '\\\\')
+                line = ' '.join(fields) + '\n'
+                mapping_hash.update((old + line).encode())
+                changed_names += 1
             if line.startswith('#'):
                 tick = int(line[1:])
                 if first is None:
@@ -46,7 +60,10 @@ def normalize_vcd(source, destination, expected_window_ps, scope):
     if first is None or previous - first != expected_window_ps:
         raise ValueError('VCD interval differs from functional timing receipt')
     return {'source_first_ps': first, 'window_ps': previous - first,
-            'transform': 'subtract first timestamp only; every value/event/order retained'}
+            'transform': 'subtract first timestamp; optional STA escaping of literal backslashes in names only; every value/event/order retained',
+            'STA_literal_backslashes_escaped': escape_backslashes,
+            'changed_name_records': changed_names,
+            'name_mapping_sha256': mapping_hash.hexdigest() if changed_names else None}
 
 
 def main():
@@ -61,8 +78,11 @@ def main():
     p.add_argument('--cores', type=int, default=2)
     p.add_argument('--extra-lib', type=Path, action='append', default=[],
                    help='original characterized macro Liberty; loaded before ODB')
+    p.add_argument('--escape-sta-backslashes', action='store_true')
+    p.add_argument('--minimum-pin-coverage', type=float, default=.99,
+                   help='fail incomplete annotation; all remaining pins still require classification')
     a = p.parse_args()
-    if a.cores < 1:
+    if a.cores < 1 or not 0 < a.minimum_pin_coverage <= 1:
         raise ValueError('positive core count required')
     a.output.mkdir(exist_ok=False)
     timing = json.loads(a.functional_receipt.read_text())['timing']
@@ -71,7 +91,7 @@ def main():
     if any('}' in str(x) or '\n' in str(x) for x in [a.physical, a.liberty, a.vcd, a.output, a.scope, *a.extra_lib]):
         raise ValueError('unsupported Tcl path')
     vcd = a.output / 'normalized.vcd'
-    window = normalize_vcd(a.vcd, vcd, timing['window_ps'], a.scope)
+    window = normalize_vcd(a.vcd, vcd, timing['window_ps'], a.scope, a.escape_sta_backslashes)
     inputs = [a.liberty, *a.extra_lib, a.vcd, a.functional_receipt, Path(__file__)]
     inputs += [a.physical / ('6_final.' + x) for x in ('odb', 'spef', 'sdc', 'v')]
     script = a.output / 'power.tcl'
@@ -93,9 +113,13 @@ def main():
              not re.search(r'(?m)^(?:Error:|\[ERROR)', text) and len(annotated) == 1 and
              int(annotated[0]) > 0 and len(totals) == 1 and len(unannotated) == 1 and
              'Power (Watts)' in text)
+    coverage = int(annotated[0]) / (int(annotated[0]) + int(unannotated[0])) if valid else None
+    sufficient = valid and coverage >= a.minimum_pin_coverage
     result = {'tool_completed_with_real_annotation': bool(valid), 'scope': a.scope,
               'window': window, 'annotation_count': int(annotated[0]) if annotated else None,
               'unannotated_count': int(unannotated[0]) if unannotated else None,
+              'pin_coverage_fraction': coverage, 'minimum_pin_coverage': a.minimum_pin_coverage,
+              'pin_coverage_screen_passed': bool(sufficient),
               'tool_command': command, 'source_sha256': {str(x): sha(x) for x in inputs},
               'normalized_vcd_sha256': sha(vcd), 'power_log_sha256': sha(log),
               'power_w': dict(zip(['internal', 'switching', 'leakage', 'total'], map(float, totals[0]))) if valid else None,
@@ -105,8 +129,8 @@ def main():
                               'all other macros, clocks, controllers, wiring and DDR still need coverage']}
     (a.output / 'receipt.json').write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps({k: result[k] for k in ['tool_completed_with_real_annotation', 'annotation_count', 'unannotated_count', 'power_w']}))
-    if not valid:
-        raise RuntimeError('power analysis failed or annotated zero pins')
+    if not sufficient:
+        raise RuntimeError('power analysis failed or pin annotation coverage is incomplete')
 
 
 if __name__ == '__main__':

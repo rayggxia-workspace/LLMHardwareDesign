@@ -70,7 +70,7 @@ def main():
         if variant == 'p' and kind == 'rtl':
             sources.append(root / 'block_feed_loader.sv')
         out = root / ('obj-' + variant + '-' + kind)
-        call([verilator, '--cc', '--exe', '--build', '-j', '10', '--trace', '--trace-depth', '1',
+        call([verilator, '--cc', '--exe', '--build', '-j', '10', '--trace', '--trace-depth', '2',
               '--x-initial', 'unique', '--x-assign', 'unique', '--timescale', '1ps/1ps',
               '--top-module', top, '-Wno-fatal', '--output-split', '10000',
               '--output-split-cfuncs', '500', '--output-groups', '0', '--Mdir', out,
@@ -111,6 +111,7 @@ def main():
             call([sys.executable, root / 'analyze_activity.py', views[variant], lib,
                   out / ('gate-' + name + '.vcd'), out / ('gate-' + name + '.json'),
                   out / ('power-' + name), '--scope', 'dut/local_s_' + variant, '--cores', '10',
+                  '--escape-sta-backslashes',
                   '--extra-lib', bank_lib, '--sample-label', 'representative scalar S ordinary port'],
                  out / ('power-' + name + '.log'))
             reports[name] = json.loads((out / ('power-' + name) / 'receipt.json').read_text())

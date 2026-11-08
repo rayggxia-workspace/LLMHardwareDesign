@@ -131,7 +131,9 @@ def main():
             observe(name, array)
         expected_states = tuple(v.numpy() for layer in expected.past_key_values.layers
                                 for v in (layer.keys, layer.values))
-        samples.append((current, past_arrays, expected.logits.numpy(), expected_states))
+        by_name = dict(zip(names, arrays))
+        dequantized_outputs = tuple(by_name[n] for n in model['outputs'])
+        samples.append((current, past_arrays, expected.logits.numpy(), expected_states, dequantized_outputs))
         print('OBSERVED', variant, len(arrays), flush=True)
     del hf, session, feed, arrays
     for row in rows.values():
@@ -159,7 +161,7 @@ def main():
         sys.modules[spec.name] = baseline
         spec.loader.exec_module(baseline)
     checks = []
-    for variant, (ids, past_arrays, expected, expected_states) in enumerate(samples):
+    for variant, (ids, past_arrays, expected, expected_states, dequantized_outputs) in enumerate(samples):
         runtime = {}
         for name, array in zip(state_names, past_arrays):
             meta = runtime_formats[name]
@@ -184,9 +186,16 @@ def main():
         logits_sha256 = hashlib.sha256(q.raw.tobytes()).hexdigest()
         actual = q.raw.astype(np.float64) * math.ldexp(1., q.exponent)
         rel = float(np.linalg.norm(actual - expected) / np.linalg.norm(expected))
+        # Independent attribution only: this FP32 graph uses dequantized frozen
+        # S16 weights. It never replaces an emitted integer result or relaxes
+        # the original-HF quality gate.
+        def relative(x, y):
+            return float(np.linalg.norm(x - y) / max(np.linalg.norm(y), 1e-300))
+        dq_logits = dequantized_outputs[0]
         top = bool(np.array_equal(actual.argmax(-1), expected.argmax(-1)))
         state_checks = []
-        for name, expected_state in zip([n for n in model['outputs'] if n != 'logits'], expected_states):
+        for name, expected_state, dq_state in zip([n for n in model['outputs'] if n != 'logits'],
+                                                  expected_states, dequantized_outputs[1:]):
             q = outputs[name]
             if q.raw.shape != tuple(model['values'][name]['shape']):
                 raise ValueError('wrong KV output shape')
@@ -197,8 +206,12 @@ def main():
                               max(np.linalg.norm(expected_state), 1e-300))
             state_checks.append({'name': name, 'shape': list(q.raw.shape), 'exponent': q.exponent,
                                  'relative_l2_vs_HF': state_rel, 'passed': state_rel <= .02,
+                                 'dequantized_FP32_vs_HF': relative(dq_state, expected_state),
+                                 'integer_vs_dequantized_FP32': relative(actual_state, dq_state),
                                  'raw_sha256': hashlib.sha256(q.raw.tobytes()).hexdigest()})
         row = {'variant': variant, 'relative_l2_logits_vs_HF': rel, 'top1_equal': top,
+               'dequantized_FP32_logits_vs_HF': relative(dq_logits, expected),
+               'integer_logits_vs_dequantized_FP32': relative(actual, dq_logits),
                'bit_exact_before_host_optimization': bit_exact_baseline,
                'logits_raw_sha256': logits_sha256,
                'maxabs': float(np.max(np.abs(actual - expected))), 'kv_outputs': state_checks,

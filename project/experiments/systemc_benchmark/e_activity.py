@@ -41,7 +41,7 @@ def main():
         sources = ([root / 'block_v2_e_compact.sv', root / 'block_v2_e.sv'] if kind == 'rtl'
                    else [physical / '6_final.v', root / 'cells.v'])
         out = root / ('obj-' + kind)
-        call([verilator, '--cc', '--exe', '--build', '-j', '10', '--trace', '--trace-depth', '1',
+        call([verilator, '--cc', '--exe', '--build', '-j', '10', '--trace', '--trace-depth', '2',
               '--x-initial', 'unique', '--x-assign', 'unique', '--timescale', '1ps/1ps',
               '--top-module', 'block_v2_e_compact', '-Wno-fatal', '--output-split', '10000',
               '--output-split-cfuncs', '500', '--output-groups', '0', '--Mdir', out,
@@ -91,6 +91,7 @@ def main():
             call([sys.executable, root / 'analyze_activity.py', physical, lib,
                   out / ('gate-' + mode + '.vcd'), out / ('gate-' + mode + '.json'),
                   out / ('power-' + mode), '--scope', 'dut/block_v2_e_compact', '--cores', '10',
+                  '--escape-sta-backslashes',
                   '--sample-label', 'representative scalar compact E'],
                  out / ('power-' + mode + '.log'))
             reports[mode] = json.loads((out / ('power-' + mode) / 'receipt.json').read_text())

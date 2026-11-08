@@ -1,4 +1,4 @@
-"""Audit remaining M activity pins against OpenDB identities and original lib.
+"""Audit remaining diode activity pins against OpenDB and original Liberty.
 
 Does not turn a sampled zero-delay gate estimate into complete chip energy.
 The diode input load remains in the extracted circuit; no load is removed.
@@ -17,6 +17,8 @@ def main():
     p=argparse.ArgumentParser()
     for name in ('unannotated','physical_identities','db_log','liberty','output'):
         p.add_argument(name,type=Path)
+    p.add_argument('--sample-label', default='M')
+    p.add_argument('--annotated-count', type=int)
     a=p.parse_args()
     text=a.unannotated.read_text(); count=re.findall(r'(?m)^unannotated\s+(\d+)$',text)
     if len(count)!=1:raise ValueError('activity count absent')
@@ -53,10 +55,11 @@ def main():
     result={'remaining_pin_count':len(pins),'all_remaining_physical_masters':'ANTENNA_X1',
         'all_remaining_pin_names':'A','library_own_internal_and_leakage_power_zero':True,
         'input_capacitance_in_native_lib_units':float(capacitance[0]),
-        'input_load_removed':False,'scope':'only classify unannotated M diode inputs; all other 631740 pin activities already annotated',
+        'input_load_removed':False,'scope':'only classify unannotated '+a.sample_label+' diode inputs',
+        'annotated_pin_count':a.annotated_count,
         'inputs_sha256':{str(x):digest(x) for x in [a.unannotated,a.physical_identities,a.db_log,a.liberty,Path(__file__)]},
         'full_model_energy_qualified':False,
-        'limitations':['zero-delay activity lacks delay-induced glitches','only sampled M workloads','other chip and DDR energy still missing']}
+        'limitations':['zero-delay activity lacks delay-induced glitches','only sampled '+a.sample_label+' workloads','other chip and DDR energy still missing']}
     a.output.write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({'classified_pins':len(pins),'full_model_energy_qualified':False}))
 
 if __name__=='__main__':main()

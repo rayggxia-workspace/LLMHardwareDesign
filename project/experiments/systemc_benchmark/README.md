@@ -173,3 +173,30 @@ source or original TT Liberty, and does not qualify fmax or glitches. The power
 runner loads original bank Liberty with `analyze_activity.py --extra-lib`.
 Serialized read/write/ACK, stalled responses and memory contents are checked
 independently. Feeder traffic and whole-chip energy remain separate.
+
+`analyze_activity.py` rejects less than 99% pin annotation and records actual
+coverage before failing. Remaining pins still need a physical/library audit.
+`--escape-sta-backslashes` escapes literal backslashes in VCD scope/reference
+names for STA lookup, preserving identifier codes, values and event order.
+The E/S gate builds use depth two to include standard-cell pins. The original
+shallow E power coefficients are rejected, despite functional/tool completion.
+
+`n_fixture.py OPERANDS '["ORACLE"]' NEW_OUTPUT` derives three captured S16
+cohorts, cross-checks factors with independent Python integer square roots,
+and obtains factor/relative-exp answers from the frozen native reference.
+`n_activity.cpp` checks serialized commands, stalled responses, RTL/gate and
+three initializations before active/matched-idle power analysis. RMS uses
+24-element vectors; L2 and relative-exp samples are scalar. These samples
+do not qualify every N instruction distribution or whole-chip energy.
+
+The frozen old220 `n_soft_stats` template uses count one, whereas the native
+reference relative-exp semantics require `Stats(count=2, [x,0])`. Count one
+computes a different maximum on negative x. The accepted gate model reproduces
+this failure; both commands happen to take four cycles in these samples.
+No parent source is changed, and frozen symbolic native templates must not be
+called numerically qualified end-to-end. See the work234 native-gap receipt.
+
+The one-step integer probe also reports error of dequantized S16-weight FP32
+versus original HF, and integer versus that FP32 graph. These are attribution
+diagnostics; the original HF quality criterion is unchanged. Failed checks
+remain failures even when logits argmax agrees.

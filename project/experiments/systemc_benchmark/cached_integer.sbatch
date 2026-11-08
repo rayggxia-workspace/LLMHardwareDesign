@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=yzl-sc234-kv
-#SBATCH --partition=debug
+#SBATCH --partition=c64,c96,debug
 #SBATCH --nodes=1
 #SBATCH --ntasks=6
 #SBATCH --cpus-per-task=10
@@ -8,6 +8,7 @@
 set -euo pipefail
 root=$(realpath "$1")
 case "$root" in /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-*) ;; *) exit 2;; esac
+[[ ${SLURM_NNODES:-0} = 1 && ${SLURM_NTASKS:-0} = 6 && ${SLURM_CPUS_PER_TASK:-0} = 10 ]] || exit 2
 cd "$root"
 base=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark
 sha256sum *.py *.sbatch "$base/python-compat-001/"*.so.1.1 >input.sha256
