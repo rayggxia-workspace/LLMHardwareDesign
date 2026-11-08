@@ -47,3 +47,6 @@ bash project/experiments/m_streaming/probe.sh "$PWD" /fresh/output /path/m-tile-
 
 首次手动实验后，统一脚本已从全新目录完整重跑，通过相同检查；只用一核构建和顺序运行。
 实际冻结源码、构建、日志和散列见[工作记录](../../../work/YUZE-LU/238/README.md)。
+
+
+全位宽补测（formats-005）：同一未改RTL，三初态各1024驻留命令；K256/N8的S8×S8为44拍，S16×S8及S8×S16为108拍，S16×S16为300拍。旧模型使用S32×S16时还需多分量调用，不能用S8的44拍替代它。004的测试watchdog设为100拍/命令而超时，保留失败；005只放大watchdog，功能/结果判据不变。见work/YUZE-LU/238/formats-result-005.json；本次复用003已冻结的同RTL编译模型，仅重编驱动，不冒充新一轮P&R或完整统一脚本。

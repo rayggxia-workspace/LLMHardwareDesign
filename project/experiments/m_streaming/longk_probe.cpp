@@ -7,7 +7,7 @@
 int main(int argc,char**argv){
  try{
   Verilated::commandArgs(argc,argv);
-  Bench b;unsigned checked=0;uint64_t period256=0;
+  Bench b;unsigned checked=0;std::array<uint64_t,4> periods{};
   for(unsigned format=0;format<4;++format)for(unsigned tiles:{1u,4u,8u,16u,32u})
   for(unsigned tail:{1u,8u})for(unsigned columns:{1u,8u})for(unsigned bank=0;bank<2;++bank){
    b.reset();b.command(6,0,0);b.command(4,0,1);
@@ -49,12 +49,12 @@ int main(int argc,char**argv){
     if(int64_t(actual)!=expected[2*pair]||int64_t(actual>>64)!=expected[2*pair+1])
      throw std::runtime_error("long K S64 mismatch");
    }
-   if(format==0&&tiles==32&&tail==8&&columns==8&&bank==0){
-    d.cmd_op=13;d.cmd_index=0;d.cmd_data=4|(8<<4)|(8<<8)|(32<<12)|(1<<18);
+   if(tiles==32&&tail==8&&columns==8&&bank==0){
+    d.cmd_op=13;d.cmd_index=0;d.cmd_data=format|4|(8<<4)|(8<<8)|(32<<12)|(1<<18);
     d.rsp_ready=1;d.cmd_valid=1;d.eval();
     std::vector<uint64_t> accepts,responses;
     for(unsigned guard=0;responses.size()<1024;++guard){
-     if(guard>1024*100)throw std::runtime_error("saturation timeout");
+     if(guard>1024*1000)throw std::runtime_error("saturation timeout");
      if(d.cmd_valid&&d.cmd_ready)accepts.push_back(b.cycles);
      if(d.rsp_valid){
       if(d.rsp_error||d.rsp_saturated)throw std::runtime_error("saturation command error");
@@ -63,7 +63,7 @@ int main(int argc,char**argv){
      b.tick();if(accepts.size()==1024)d.cmd_valid=0;d.eval();
     }
     if(accepts.size()!=1024)throw std::runtime_error("saturation count mismatch");
-    period256=accepts[1]-accepts[0];
+    auto period256=accepts[1]-accepts[0];periods[format]=period256;
     for(unsigned j=1;j<1024;++j)
      if(accepts[j]-accepts[j-1]!=period256||responses[j]-responses[j-1]!=period256)
       throw std::runtime_error("saturation interval mismatch");
@@ -82,8 +82,11 @@ int main(int argc,char**argv){
   unsigned watchdog=0;while(!d.rsp_valid){if(++watchdog>1000)throw std::runtime_error("reject timeout");b.tick();}
   if(!d.rsp_error)throw std::runtime_error("unsupported multirow long K accepted");
   std::cout<<"LONGK {\"descriptors_checked\":"<<checked
-   <<",\"k256_s8_execute_with_response_cycles\":"<<period256+1
-   <<",\"k256_s8_measured_accept_interval_1024_commands\":"<<period256
+   <<",\"k256_s8_execute_with_response_cycles\":"<<periods[0]+1
+   <<",\"k256_s8_measured_accept_interval_1024_commands\":"<<periods[0]
+   <<",\"k256_measured_intervals_by_format\":{\"S8_S8\":"<<periods[0]
+   <<",\"S16_S8\":"<<periods[1]<<",\"S8_S16\":"<<periods[2]
+   <<",\"S16_S16\":"<<periods[3]<<"}"
    <<",\"invalid_rows_rejected\":true,\"exact_s64_passed\":true,\"physical_qualified\":false}\n";
   return 0;
  }catch(const std::exception&e){std::cerr<<e.what()<<"\n";return 1;}
