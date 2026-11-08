@@ -48,4 +48,3 @@ main64_fixtures.py / safe64_fixtures.py提供完整语义任务与数据；相�
 R8.3软件1301/1301、服务器RTL81/81；R8.4软件1304/1304、集成279/279、链路单元21/21、控制结构9/9；旧compiler1218和matrix141重跑通过。输入、镜像、日志和源SHA在服务器与本机逐项核验；元数据对照在运行后补齐，未改变DUT或程序镜像。
 
 [当前方案](../../docs/local-blocks/CONTROL_RESEARCH_HANDOFF.md)、[R8.3索引](../../work/Melodydt/179/control-r83-validation.json)、[R8.4索引](../../work/Melodydt/179/control-r84-validation.json)记录实际范围。执行次数不是完备覆盖证明；R8.5覆盖闭环、R8.6新综合冻结及后端时序仍待执行。PR未合并前不视为独立验收完成。
-
