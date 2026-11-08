@@ -1,5 +1,13 @@
 # 架构与运行
 
+Issue230：[实际后端写出及输入审计](../project/experiments/upper_router/BACKEND.md)。
+`backend.py SPEC ROUTES NEW_OUTPUT --dbu-per-micron 2000 --via-resistance-ohm 0.08`
+导出实际互联DEF和身份映射，`ingest.tcl`生成ODB，`physical_readback.py`读取实际OpenDB
+矩形写出/读回GDS并核对真实M10及全原生层XOR。复跑入口为同目录inventory/fixture/
+native_drc等sbatch，均10核、数组最多6项；依赖与源包见[回执](../work/YUZE-LU/230/README.md)。
+在upper_router目录运行`python -B -m unittest test_router test_backend test_stage_package -v`。
+这些是五类实际晚接接口回归，不等于九组共同产品或#220整网RC/STA已经闭合。
+
 Issue #228：[通用上层布线基线](../project/experiments/upper_router/README.md)接收独立几何或#227已绑定请求，联合搜索M10落点及M11/M12路径、多接收端树与多轮拆线重布。`python -B project/experiments/upper_router/run.py INPUT OUTPUT --rounds 8`；在该目录运行`python -B -m unittest test_router -v`。仅声明研究网格规则，不继承模型/真实底座物理资格。
 
 Issue #226 实现[综合到布线接口层](../project/experiments/block_synthesis/ROUTE_CONTRACT.md)。从 `project/experiments/block_synthesis` 运行 `python -B -m unittest test_route_contract test_loop_dp test_dot_cache -v`；CLI见合同。需求重构检查共享接口展开实现，不是独立ODB/GDS几何或电气检查；实际物理后端另验。
