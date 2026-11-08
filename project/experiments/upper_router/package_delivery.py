@@ -33,7 +33,9 @@ def package(delivery,index,source,out):
     for ti,(template,group) in enumerate(sorted(views.items())):
         for kind,suffix in [('lefs','.lef'),('liberties','.lib')]:
             for i,ref in enumerate(group['views'][kind]):
-                name='views/t%03d/%s/%04d%s'%(ti,kind,i,suffix)
+                # OpenDB also derives LEF library identity from the basename.
+                # Separate directories alone do not prevent library collisions.
+                name='views/t%03d/%s/t%03d_%04d%s'%(ti,kind,ti,i,suffix)
                 add(name,ref['path'],ref['sha256'])
                 (lefs if kind=='lefs' else libs).append(name)
                 dependencies.append({'template':template,'kind':kind,'relative_path':name,**ref})
@@ -54,7 +56,7 @@ def package(delivery,index,source,out):
         'puts $f "nets\t[llength [$block getNets]]"',
         'puts $f "ports\t[llength [$block getBTerms]]"','close $f']
     scripts={
-        'load_odb.tcl':prefix+['read_odb '+local('design.odb'),'set count_file reference-counts.tsv']+counts,
+        'load_odb.tcl':prefix+['read_db '+local('design.odb'),'set count_file reference-counts.tsv']+counts,
         'load_def.tcl':loads+['read_def '+local('design.def'),'set count_file physical-counts.tsv']+counts,
         'load_timing.tcl':loads+['read_liberty '+local(name) for name in libs]+[
             'read_verilog '+local('design.v'),'link_design routed_resource_assembly',

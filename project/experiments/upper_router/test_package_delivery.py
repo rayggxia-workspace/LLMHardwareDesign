@@ -40,8 +40,11 @@ class PackageDeliveryTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary);args=self.fixture(root);out=root/'package'
             result=package(*args,out)
-            self.assertNotEqual((out/'views/t000/lefs/0000.lef').read_bytes(),
-                                (out/'views/t001/lefs/0000.lef').read_bytes())
+            self.assertNotEqual((out/'views/t000/lefs/t000_0000.lef').read_bytes(),
+                                (out/'views/t001/lefs/t001_0000.lef').read_bytes())
+            for kind in ('lefs','liberties'):
+                names=[Path(r['relative_path']).name for r in result['dependencies'] if r['kind']==kind]
+                self.assertEqual(len(names),len(set(names)),'reader library basenames must be unique')
             self.assertNotIn(str(root),(out/'load_timing.tcl').read_text())
             self.assertIn('file join $handoff_root',(out/'load_def.tcl').read_text())
             self.assertEqual((out/'views/upper-vias.lef').read_text(),'fixture custom vias')

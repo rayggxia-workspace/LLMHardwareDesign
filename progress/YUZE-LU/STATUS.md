@@ -1,13 +1,15 @@
 # YUZE-LU 的进度
 
-## 2026-11-09 CST：Issue230后端继续迭代
+## 2026-11-09 CST：Issue230通用后端工程验收通过，待独立审查
 
-[Issue230](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/230) / [Draft PR231](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/231)。
-九组690网共同GDS几何读回及原生身份/几何XOR通过；全量ODB、共同1380端点连通及完整共同场几何已通过；完整DRC、共同场电容与9档最终STA尚在执行。
-修复真实ODB master缺失pin、DBU变化、层次提取、回执导入等问题，失败和源快照保留；51项后端、119项综合器回归通过。
+[Issue230](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/230) / [PR231](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/231)。
+九组690网共同GDS几何、原生身份、全量ODB、1380端点连通及113006927矩形共同场通过。
+完整原版DRC为0；690/690场求解、9档原约束TT300MHz和严格六文件交付门通过，最差setup/hold +73.082209/+0.211775ps。
+便携包101473完成真实DEF/ODB重读和名义STA回放，计数1698914实例/678871网/23447端口一致，违规均0；809MB包回收到本地并核验40文件和全部六文件SHA。
+修复master缺失pin、DBU、层次提取、回执、加载命令及LEF basename库身份等问题，62行数值精度不足增加采样后通过；全部失败保留。57项后端、119项综合器回归通过。
 实际#220服务降低显式区分预连服务、外部边界与新金属；不再将额外RTL作为通用EDA前置。
-详细作业、哈希和范围见[工作记录](../../work/YUZE-LU/230/README.md)。当前in_progress/Draft，未自审/自合并；
-登记PR5 pending，看板配置缺失unverified/同步pending，沿用Issue7交接。继续真实物理验收，未报告最终通过。
+详见[交付入口](../../work/YUZE-LU/230/HANDOFF.md)和[工作记录](../../work/YUZE-LU/230/README.md)。工程验收通过、待独立审查，未自审/自合并；线上状态以最终读回为准。
+下一步由待指定的独立审查人审查PR；登记PR5 pending，看板配置缺失unverified/同步pending，沿用Issue7交接。
 
 
 以下为保留的较早迭代记录，当前状态以上方摘要及工作记录末尾为准。

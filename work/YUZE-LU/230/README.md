@@ -2,7 +2,9 @@
 
 任务 [Issue230](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/230)。
 用户指定 main 新五类、P×3/U×2/C/F/J×2 九组 `_64`，前置 #220。
-本目录保留实际证据索引；**完整九组产品闭环未完成**。不以局部接口回归替代用户要求。
+本目录保留实际证据索引；**九组690条晚接网的通用布局布线、物理验证和便携交付全部通过**。
+当前结论、完整工件及复跑入口见[HANDOFF.md](HANDOFF.md)；下方保留历史迭代，不将其改写成成功。
+整模型/未执行控制程序不纳入本次算法物理资格。
 
 源码：`project/experiments/upper_router/`；[实现与验收边界](../../../project/experiments/upper_router/BACKEND.md)。
 父提交 `f0273848e1872d9b2d9488981eaf279a902218a5`，独立分支 `task/230-backend-router`。
@@ -14,7 +16,7 @@
 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-230-backend-router/`。
 每项10核、最多六项同时执行；不修改其他任务、他人目录或原始验收归档。
 源包各自保留在 attempt01–12，实际执行代码以各源包为准；失败不覆盖。
-本次代码已提交[草稿PR231](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/231)，
+本次代码通过[PR231](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/231)提交独立审查，
 前置仍为#229/#227/#220。最终证据收集100471依赖100406结束；源包SHA
 `6810443dbb78813243f81ebfc7e350e7b3969592b57284b560d86704022901df`。
 attempt12采用最终29项测试并打包小型实际上层ODB/GDS，原生合成GDS留在服务器。
@@ -246,3 +248,46 @@ source-230-81.tar SHA87ce384bf951af2e4c2ad4f1d61990456304df3aae6070cf5e4fdc7f61e
 通过后才生成handoff.tar.gz及SHA。source-230-82.tar SHA153f22a5e9fae3b959ccd351a4ebc5544bf5fd13e3af12ce4919547aeaef72c8。
 3项新检查通过：同名视图不互相覆盖、脚本可搬移、拒绝变更的输入视图/包内工件；实际后端重放尚未执行。
 本机两次Git HTTPS推送遇连接失败/重置，b21aedb14未据此宣称已上传；继续用本人GitHub连接核对并同步。
+
+### 2026-11-09 06:17 CST：共同版图物理门通过，继续交付包回放
+
+- 100650完整原版FreePDK45 DRC自然完成，0违规；原生层XOR与上层研究几何检查通过。
+  实际回执[evidence/nine55-native-full.json](evidence/nine55-native-full.json)，SHA416a246f1b6f4018f2361e2d33020d7f2205ac9403b237cdbb40707a11d74480。
+- 100769五个求解分片及100770全覆盖收集通过，共690/690行；场景、二进制及控制实验SHA一致。
+  最大上层相对标准误差界0.019694514258358862，保持2%上层C/.3%总C门。
+  共62行分别以16777216起步增加采样后通过；三档初始失败与逐行来源保留，没有丢弃失败网。
+  [迭代摘要](evidence/nine81-refinement-summary.json)；[实际完整收集回执](evidence/nine82-field.json)，
+  SHA c96f7429c51f364deb7efae3187035217bccd97e90d60fa1edf1bac98ff58941；rows.jsonl SHA3071b52e2cb47135aafa67606e1400b1bc99eff69a53adfcab92356cb5318d67。
+- 100773九档实际平坦电路STA通过，全部setup/hold/capacitance/slew/fanout计数为0，
+  全部新网完整寄生注入，9份日志无warning/error/loop/unconstrained行。
+  最差setup/hold +73.082209/+0.211775ps，原生TT300MHz约束与Liberty未放宽。
+  [原始回执](evidence/nine83-timing.json)，SHA231c772588d36a2e59553e600642724ff70363284b95de04e8f028b811d6c55e。
+- 100774严格交付门重新检查实际文件、原生连通、全部来源SHA及9档时序后通过并复制六文件，
+  [资格回执](evidence/nine84-qualification.json)，SHA29b5379d0ab2c8caa4237e69f116ab2399272ccee790b10da0ef2f673ee6dc94。
+  100804证据索引和100934便携包真实DEF/ODB重读、名义STA回放继续，尚不报告任务最终完成。
+- 两次普通Git HTTPS失败后，本人GitHub API建立与本地受测树完全相同的树59d6518b3d151a2f1eb2c9cda2532a966bfb7d0c，
+  以预期旧头944b281c作非强制快进，已读回远端7908044bcea80e4d26fd4c2a36154a2c8658bb14。
+  本地API提交字节重建并验证对象SHA；原本地历史保存在refs/task-backups/230-local-b1c1b9873。
+
+690网是九组资源晚接接口的实际物理验收集合；#220的18项原生服务/外部边界绑定仍单独记账，
+没有把其0条新增金属改写成690条模型连接。资格限输入网表、原生TT300MHz和明确的研究M11/M12 RC栈；
+整模型/未运行RTL、全芯片统一CTS/PG及工厂校准12层签核均不在该回执范围。
+
+### 2026-11-09 06:28 CST：便携交付及本地回收全部通过
+
+100804完整证据索引通过，原始JSON SHA290f8195b2418283c9cfee05dc084992a28d1c5d1d69017735f86986ef63fc7c。
+便携回放没有跳过实际工具错误：
+
+| 作业/源包 | 实际失败 | 修复与复跑 |
+| --- | --- | --- |
+| 100934 / attempt86 / source82 | OpenROAD没有`read_odb`命令 | 改为实际`read_db`；新源83 SHA9f0b7946edc004dc50f6b93694f1fe2ffd21e693f763721cec83d46e28cc36c0，101419重跑 |
+| 101419 / attempt87 / source83 | 不同目录内同名LEF `0000.lef`仍使OpenDB库身份冲突，缺失master，DEF读入被拒 | 文件basename全局唯一；加强现有跨库同名测试；新源84 SHAc3f58fe236892e21e1993e0f8bc75426579490a52acb7554c41c2ad42eb92c2a |
+| 101473 / attempt88 / source84 | 无失败，COMPLETED0:0，2分37秒 | ODB/DEF实例1698914、网678871、端口23447全部一致；包内名义STA复现原裕量、五项违规均0 |
+
+两轮失败源包、原始日志和未合格包均保留，未改写已通过的版图/原生几何/RC/时序约束。
+最终包808854594字节，SHA c53b79eaf89c185307d9d29472de10ec65ad6c699fbd8bc544162b948c7fda4c。
+已回收到本地并安全解包，40项包内文件、六文件与原资格SHA全部匹配。
+原始回放回执[evidence/nine88-package-replay.json](evidence/nine88-package-replay.json)，
+归档回执[evidence/nine88-archive.json](evidence/nine88-archive.json)；本地读回与执行状态见[最终交付索引](evidence/final-handoff.json)。
+物理工件、执行源、失败日志均有服务器与本地索引；大文件未加入Git。
+工程范围已验收，进入独立审查；不自审、合并、关闭Issue或标done。登记及Projects缺项沿用Issue7。
