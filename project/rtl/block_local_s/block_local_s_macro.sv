@@ -1,8 +1,9 @@
-// Private 16KiB S per Block. The accepted legacy storage and loader are reused
-// byte-for-byte. All added arbitration state belongs to this physical wrapper.
+// Private 16KiB S per Block. Either storage backend uses the same local
+// arbitration and feeder; completions come from the selected backend.
 module block_local_s_macro #(
  parameter integer CLIENTS=4,
- parameter bit WITH_FEEDER=1'b0
+ parameter bit WITH_FEEDER=1'b0,
+ parameter bit USE_SRAM=1'b0
 )(
  input wire clk,reset,
  input wire [CLIENTS-1:0] req_valid,req_write,
@@ -23,6 +24,9 @@ module block_local_s_macro #(
  output wire b_valid,input wire b_ready,output wire b_bank,
  output wire [1:0] b_tile,
  output wire b_wide,b_half,output wire [511:0] b_data
+`ifdef USE_POWER_PINS
+ ,inout wire vdd,gnd
+`endif
 );
  wire narrow_req,narrow_write,narrow_ready,narrow_valid,narrow_take,arb_busy;
  wire [9:0] narrow_addr;
@@ -49,11 +53,23 @@ module block_local_s_macro #(
   .mem_req(narrow_req),.mem_write(narrow_write),.mem_addr(narrow_addr),
   .mem_data(narrow_data),.mem_ready(narrow_ready),.mem_valid(narrow_valid),
   .mem_result(narrow_result),.mem_take(narrow_take),.busy(arb_busy));
- block_feed_s16k storage(
-  .clk(clk),.reset(reset),.req(narrow_req),.wr(narrow_write),.addr(narrow_addr),
-  .din(narrow_data),.ready(narrow_ready),.valid(narrow_valid),.take(narrow_take),
-  .dout(narrow_result),.wide_req(wide_req),.wide_addr(feed_addr),
-  .wide_ready(wide_ready),.wide_valid(feed_valid),.wide_take(feed_take),.wide_dout(feed_data));
+ generate if(USE_SRAM) begin: sram_backend
+  block_feed_s16k_sram storage(
+   .clk(clk),.reset(reset),.req(narrow_req),.wr(narrow_write),.addr(narrow_addr),
+   .din(narrow_data),.ready(narrow_ready),.valid(narrow_valid),.take(narrow_take),
+   .dout(narrow_result),.wide_req(wide_req),.wide_addr(feed_addr),
+   .wide_ready(wide_ready),.wide_valid(feed_valid),.wide_take(feed_take),.wide_dout(feed_data)
+`ifdef USE_POWER_PINS
+   ,.vdd(vdd),.gnd(gnd)
+`endif
+  );
+ end else begin: standard_cell_backend
+  block_feed_s16k storage(
+   .clk(clk),.reset(reset),.req(narrow_req),.wr(narrow_write),.addr(narrow_addr),
+   .din(narrow_data),.ready(narrow_ready),.valid(narrow_valid),.take(narrow_take),
+   .dout(narrow_result),.wide_req(wide_req),.wide_addr(feed_addr),
+   .wide_ready(wide_ready),.wide_valid(feed_valid),.wide_take(feed_take),.wide_dout(feed_data));
+ end endgenerate
  generate if(WITH_FEEDER) begin: with_feeder
   wire raw_done_valid,raw_done_error;
   // The legacy feeder clears done on a clocked reset. This public boundary
