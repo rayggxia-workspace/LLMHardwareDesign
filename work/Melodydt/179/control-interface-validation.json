@@ -1,0 +1,195 @@
+{
+  "schema": "control-interface-validation/0.1",
+  "checked_at": "2026-11-04T17:49:24.645640+08:00",
+  "passed": true,
+  "parent_commit": "df3e7a2657a96bf0e5031a958d48155010bd7380",
+  "parent_tree": "d95d5526d02bbf892f38402f35a7dc694f37d04d",
+  "publication_commit": "Recorded in PR180 receipt after upload",
+  "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+  "interpreter": {
+    "path": "D:\\EDA\\Anaconda3\\python.exe",
+    "sha256": "e89eb0525cee9dff994f39f8036cd1cd60b591dff659a32bb79459c094b5bda9"
+  },
+  "verifier": {
+    "location": "Local only: D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-interfaces-df3e7a2\\verify_interfaces.py",
+    "sha256": "b85cecaf6308d4605b26df9bd0ef9f361abe5596cdfab184ed7b3a726b574c69"
+  },
+  "commands": [
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: Project management structure is valid (schema 1).\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "project/control_isa_v0_1",
+        "-p",
+        "test_codec.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_every_opcode_against_independent_struct_byte_layout (test_codec.CodecTest) ... ok\ntest_forward_branch_and_bounded_loop_encoding_domain (test_codec.CodecTest) ... ok\ntest_full_uint64_parameter_address_is_preserved (test_codec.CodecTest) ... ok\ntest_independent_instruction_words_and_bytes (test_codec.CodecTest) ... ok\ntest_independent_object_record_bytes_and_reserved_gap (test_codec.CodecTest) ... ok\ntest_record_layouts_are_nonoverlapping_and_fit (test_codec.CodecTest) ... ok\ntest_reserved_bit_role_opcode_and_range_rejections (test_codec.CodecTest) ... ok\ntest_schema_has_unique_codes_full_width_and_examples (test_codec.CodecTest) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.002s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "project/control_contract_v0_1",
+        "-p",
+        "test_contract.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_B_reuse_needs_no_B_object_but_runtime_state (test_contract.ContractTests) ... ok\ntest_G_packet_granularity_and_gate_refs (test_contract.ContractTests) ... ok\ntest_L_EXEC_identity_and_context (test_contract.ContractTests) ... ok\ntest_M_RNE_can_preserve_S32_containers_for_G (test_contract.ContractTests) ... ok\ntest_M_reserved_bits_and_geometry_reject (test_contract.ContractTests) ... ok\ntest_all_four_G_functions (test_contract.ContractTests) ... ok\ntest_codec_reserved_and_unknown_container_fields (test_contract.ContractTests) ... ok\ntest_examples_never_claim_hardware_execution (test_contract.ContractTests) ... ok\ntest_feeder_alignment_extent_and_reserved_reject (test_contract.ContractTests) ... ok\ntest_feeder_uses_16byte_word_addresses (test_contract.ContractTests) ... ok\ntest_independent_M_wire_vectors (test_contract.ContractTests) ... ok\ntest_object_capacity_overlap_alias_and_dynamic_reject (test_contract.ContractTests) ... ok\ntest_readout_format_and_unsupported_completion_reject (test_contract.ContractTests) ... ok\ntest_topology_is_distinct_from_control_resource_mask (test_contract.ContractTests) ... ok\ntest_unknown_ABI_service_and_32KiB_profile_reject (test_contract.ContractTests) ... ok\n\n----------------------------------------------------------------------\nRan 15 tests in 0.009s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "project/control_contract_v0_1/contract.py",
+        "examples"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n  {\n    \"name\": \"M_scale_negative3_shift31\",\n    \"result\": {\n      \"static_fields_valid\": true,\n      \"deployable\": false,\n      \"service\": \"M_CFG_SCALE\",\n      \"profile\": \"P16_M_ONLY\",\n      \"proposed_wire_mapping\": {\n        \"cmd_op\": 4,\n        \"cmd_index\": 0,\n        \"cmd_data\": 2097149\n      },\n      \"required_locks\": [\n        \"M.command\",\n        \"M.result_context0\"\n      ],\n      \"context_effect\": \"sets scale; not computation\",\n      \"runtime_checks_pending\": [\n        \"M context owner must match task; reconfigure before unrelated job\"\n      ],\n      \"boundary\": \"No instruction execution, numerical computation, adapter RTL or physical connectivity is validated here\"\n    }\n  },\n  {\n    \"name\": \"M_GEMM_bank1_8xK32xN8\",\n    \"result\": {\n      \"static_fields_valid\": true,\n      \"deployable\": false,\n      \"service\": \"M_GEMM\",\n      \"profile\": \"P16_M_ONLY\",\n      \"proposed_wire_mapping\": {\n        \"cmd_op\": 10,\n        \"cmd_index\": 32,\n        \"cmd_data\": 280708\n      },\n      \"required_locks\": [\n        \"M.command\",\n        \"M.result_context0\",\n        \"M.operand_bank1\"\n      ],\n      \"context_effect\": \"retains one M result context after response\",\n      \"runtime_checks_pending\": [\n        \"A/B loaded with exact format and bank; append requires same result owner and N; inspect error/fault_rows\"\n      ],\n      \"boundary\": \"No instruction execution, numerical computation, adapter RTL or physical connectivity is validated here\"\n    }\n  },\n  {\n    \"name\": \"M_RNE_S16_raw_containers\",\n    \"result\": {\n      \"static_fields_valid\": true,\n      \"deployable\": false,\n      \"service\": \"M_READ_RNE\",\n      \"profile\": \"P16_M_ONLY\",\n      \"proposed_wire_mapping\": {\n        \"cmd_op\": 5,\n        \"cmd_index\": 57,\n        \"cmd_data\": 319,\n        \"destination_word_address\": 0\n      },\n      \"required_locks\": [\n        \"M.command\",\n        \"M.result_context0\"\n      ],\n      \"context_effect\": \"read does not release result\",\n      \"runtime_checks_pending\": [\n        \"result row valid; four32-bit containers preserve signed8/16/32 rounded values; G consumption additionally requires signed16 range and Q5.10 scale\",\n        \"dst reservation/version/owner must permit writes; data remains invalid until actual ACK\",\n        \"capture M response then consume real S client0 write ACK; native response alone cannot complete LOCAL_STORED\"\n      ],\n      \"boundary\": \"No instruction execution, numerical computation, adapter RTL or physical connectivity is validated here\"\n    }\n  },\n  {\n    \"name\": \"G_SILU_gated_S32_containers\",\n    \"result\": {\n      \"static_fields_valid\": true,\n      \"deployable\": false,\n      \"service\": \"G_SILU\",\n      \"profile\": \"P16_VIA_S\",\n      \"proposed_wire_mapping\": {\n        \"in_fn\": 0,\n        \"in_gated\": 1,\n        \"packets\": 2,\n        \"storage_container_bits\": 32,\n        \"native_value_bits\": 16,\n        \"byte_addresses\": {\n          \"source\": 0,\n          \"destination\": 64,\n          \"gate\": 128\n        }\n      },\n      \"required_locks\": [\n        \"G.stream\",\n        \"S.client1\"\n      ],\n      \"context_effect\": \"no persistent cross-task G context; finite service holds resource until pipeline drained and writes confirmed\",\n      \"runtime_checks_pending\": [\n        \"source object valid; source S32 high16 is sign extension of low16; output format/scale follows function; all packet outputs and S writes confirmed\",\n        \"src0 validity/version/owner and data contents must be checked by runtime; initial_valid=0 is not readiness\",\n        \"dst reservation/version/owner must permit writes; data remains invalid until actual ACK\",\n        \"src1 validity/version/owner and data contents must be checked by runtime; initial_valid=0 is not readiness\",\n        \"source S32 containers must be sign-extended S16; track Q5.10 input/gate and Q1.14 ungated sigmoid output; aggregate packet errors/saturation and actual S write ACKs\"\n      ],\n      \"boundary\": \"No instruction execution, numerical computation, adapter RTL or physical connectivity is validated here\"\n    }\n  },\n  {\n    \"name\": \"S_feeder_8rows_4tiles_S16\",\n    \"result\": {\n      \"static_fields_valid\": true,\n      \"deployable\": false,\n      \"service\": \"S_M_FEED\",\n      \"profile\": \"P16_M_ONLY\",\n      \"proposed_wire_mapping\": {\n        \"load_bank\": 1,\n        \"load_rows\": 8,\n        \"load_tiles\": 4,\n        \"load_a_wide\": 1,\n        \"load_b_wide\": 1,\n        \"load_reuse_b\": 0,\n        \"load_a_base\": 0,\n        \"load_b_base\": 32\n      },\n      \"required_locks\": [\n        \"S.feeder\",\n        \"M.operand_bank1\"\n      ],\n      \"context_effect\": \"updates linked M operand-bank ownership; not M result/context completion\",\n      \"runtime_checks_pending\": [\n        \"B reuse requires preloaded same bank/format/geometry; hold S source until feeder done; no concurrent invalidation\",\n        \"src0 validity/version/owner and data contents must be checked by runtime; initial_valid=0 is not readiness\",\n        \"src1 validity/version/owner and data contents must be checked by runtime; initial_valid=0 is not readiness\",\n        \"consume done_valid&&done_take and done_error after all A/B transfers retire; busy=0 is not sufficient\"\n      ],\n      \"boundary\": \"No instruction execution, numerical computation, adapter RTL or physical connectivity is validated here\"\n    }\n  }\n]\n",
+      "stderr": ""
+    }
+  ],
+  "source_bindings": 10,
+  "source_ports_checked": 149,
+  "native_modules": 6,
+  "registered_services": 12,
+  "research_profiles": 2,
+  "control_link_records_match_isa": true,
+  "contract_tests": 15,
+  "existing_codec_tests": 8,
+  "examples": 5,
+  "markdown_links": 83,
+  "upstream_sync": "verified",
+  "scope_check": "Only19file whitelist; unchanged inherited source/code snapshots preserved",
+  "git_index_check": "Not executed; partial API directory has no .git/HEAD/index",
+  "development_failures": "Initial contract test run had generated registry JSON not yet synchronized and expected exception wording mismatch; fixed and complete suite rerun without changing native RTL or weakening field rejection",
+  "not_executed": [
+    "Instruction execution / PC / queue / runtime model",
+    "complete image assembly / native lowering / loader RTL",
+    "macro or controller RTL simulation",
+    "model numerical / quality",
+    "new server jobs / physical P&R / M11-M12"
+  ],
+  "outputs": {
+    "docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md": {
+      "bytes": 33831,
+      "sha256": "91b52704504ef95a86297e55a195cbb8cbc8182285a178b7ce1393f857e785ad",
+      "git_blob_sha": "18a741d15122d68668666fca0d307b31ab48c1bd"
+    },
+    "docs/local-blocks/CONTROL_ISA_V0_1.md": {
+      "bytes": 28953,
+      "sha256": "c22bd965f8f270243e05c392b386cf707183f0d237f4342d9ee74f651f99d30b",
+      "git_blob_sha": "dd0d9eb0ee2ca429c3a417fed437b27c5ddd1a4b"
+    },
+    "docs/ARCHITECTURE.md": {
+      "bytes": 24000,
+      "sha256": "b1f75056395034638ae7278c8fdbd758c26d02889e04834e17577018539b5409",
+      "git_blob_sha": "311282bbace5e39a220508e86462439bfb6304c8"
+    },
+    "docs/decisions/2026-11-04-issue-179-two-level-control.md": {
+      "bytes": 4494,
+      "sha256": "4f3f5659c3eec61af297390acc9c83d5f2dad06c8b470ad68a98f03551bafed4",
+      "git_blob_sha": "a74b7050b88d78a72b610f1a0092d736aec0698b"
+    },
+    "progress/Melodydt/STATUS.md": {
+      "bytes": 10844,
+      "sha256": "77ddd58fbf17763dfb665ca51266d41918cec6aa6beea941c7cd2a11f3ae3fbb",
+      "git_blob_sha": "a91d96d9fcfb4f8738520ee2f7a34903eb96a61c"
+    },
+    "docs/handoffs/2026-11-04-issue-179-local-block-continuation.md": {
+      "bytes": 10899,
+      "sha256": "12ff09ea84c6fbb151019cb74ddbdfd733079095f806d0d8ab61035af626f3a1",
+      "git_blob_sha": "94d8ce13be5cbdec4153a99a36f268fcf8984d49"
+    },
+    "work/Melodydt/179/README.md": {
+      "bytes": 5020,
+      "sha256": "f32a214436c416585560bbb76c7fd39a14f12a3c8e0dbb851a7400c620c53f48",
+      "git_blob_sha": "2cb412e5b655702530378f837c6cf41d44f43c54"
+    },
+    "docs/local-blocks/CONTROL_INTERFACE_CONTRACT_V0_1.md": {
+      "bytes": 14144,
+      "sha256": "e71a2a8e87e3f67988a1f9c01a3214282fcc9d463c9398b00ae5896851c95694",
+      "git_blob_sha": "40fe48f631139a241def35330e29756ace32872b"
+    },
+    "project/control_contract_v0_1/README.md": {
+      "bytes": 2455,
+      "sha256": "81295c17f9ea279c9d6d342c246a8d5fe2786a912673e9ca04fce5dfb280526d",
+      "git_blob_sha": "0590e900297dceae753680b2e4d9d24445dad402"
+    },
+    "project/control_contract_v0_1/native_interfaces.json": {
+      "bytes": 20272,
+      "sha256": "042ad31e0b36193b5a9cfd8fdda430569b4587e9ae9bfd2cefa2725e89a28f01",
+      "git_blob_sha": "dfe5da3e6bb25849402a54c6e5ce561247d275bb"
+    },
+    "project/control_contract_v0_1/control_links.json": {
+      "bytes": 6453,
+      "sha256": "bed7a2b2d767763c22baf67a19972aa4fd0349b3d90bd8b754d4c62470713576",
+      "git_blob_sha": "850d541cb0f42b120fd16d4abfb88b34430b4af2"
+    },
+    "project/control_contract_v0_1/services.json": {
+      "bytes": 11687,
+      "sha256": "23a30507c1f4f28fe8ccd219a3f86c239d12c95405d09e199ece9014c49f3254",
+      "git_blob_sha": "d3cdd53ccd5411186420af32965c91ec325ac721"
+    },
+    "project/control_contract_v0_1/profiles.json": {
+      "bytes": 3167,
+      "sha256": "16c7bc31966dfeca688403f59570665e53adac627125aa5fb3a2f9934fede7f1",
+      "git_blob_sha": "bf9ccb6d4e796c65ebbf2b58f4bf4340d8d59acd"
+    },
+    "project/control_contract_v0_1/contract.py": {
+      "bytes": 10673,
+      "sha256": "753c4de060f2e39836d2f4e996f45a65d0af47edb8322aaa416fe18de43221f8",
+      "git_blob_sha": "9a020eacacdd986094f6320d869aeccfb91dd071"
+    },
+    "project/control_contract_v0_1/examples.json": {
+      "bytes": 3564,
+      "sha256": "e08868d5290b41cd14cefa92ef5e889bdbd747f1fe74c8f342c48ec18a45138e",
+      "git_blob_sha": "cf7abc43b20d633b8a2dba3a12ed18c7dd9b24dd"
+    },
+    "project/control_contract_v0_1/test_contract.py": {
+      "bytes": 8108,
+      "sha256": "4f366b110019c123001122b38afdcd549482479cddae7384c612a5ebfed88111",
+      "git_blob_sha": "dccf8a8ce244a01591d1b933a87479d1823bc901"
+    },
+    "work/Melodydt/179/control-interface-sources.json": {
+      "bytes": 5241,
+      "sha256": "bd86129b8b879b5c37cf39afb705cbdb081d1764efefefe561bf16dbb7f35b91",
+      "git_blob_sha": "cc050ef86b4eb00066cecfa59a35b0675fbab079"
+    },
+    "work/Melodydt/179/pr176-sync.json": {
+      "bytes": 1935,
+      "sha256": "a878320b1776b85ed42b8fe956dbda3e3739de6dd5b3bb8997ae742101851d86",
+      "git_blob_sha": "6bf375937e8f01504b4a755bd8abcb656f0d01db"
+    }
+  }
+}

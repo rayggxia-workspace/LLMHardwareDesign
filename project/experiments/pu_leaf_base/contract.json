@@ -1,0 +1,125 @@
+{
+  "schema": "pu-leaf-base/1",
+  "scope": "one P implementation and one U implementation, independent leaf masters and local standard cells",
+  "configuration": {
+    "block_id_i": {
+      "bits": 8,
+      "owner": "top-level fixed instance identity"
+    },
+    "topology_id_i": {
+      "bits": 32,
+      "owner": "top-level product configuration",
+      "zero_allowed": false
+    },
+    "late_path_enable": {
+      "bits": 1,
+      "owner": "top-level static link enable from the verified late topology"
+    }
+  },
+  "groups": {
+    "P": {
+      "leaves": {
+        "multiply": "M",
+        "gate": "G_compact",
+        "store": "S_P_16KiB"
+      },
+      "fixed_local_data": [
+        {
+          "from": "S_P.feeder",
+          "to": "M.operand_a_and_b",
+          "service": "matrix feeder"
+        },
+        {
+          "from": "M.result",
+          "to": "S_P.request_write",
+          "service": "matrix writeback"
+        },
+        {
+          "from": "S_P.response",
+          "to": "G.operands",
+          "service": "stored gate replay"
+        },
+        {
+          "from": "G.result",
+          "to": "S_P.request_write",
+          "service": "gate writeback"
+        }
+      ],
+      "external_storage": "io_req/io_rsp client request and acknowledged completion",
+      "direct": {
+        "source": "m_to_g_",
+        "sink": "g_from_m_",
+        "data_bits": 32,
+        "return": "take",
+        "source_owner": "M result holding adapter",
+        "sink_owner": "G direct operand adapter",
+        "producer": "matrix native read 0x111 with native0[22]",
+        "consumer": "gate 0x112 with native0[30]",
+        "completion": "producer holds until take; gate service completes after private S write acknowledgement"
+      }
+    },
+    "U": {
+      "leaves": {
+        "normalize": "N",
+        "elementwise": "E_compact",
+        "store": "S_base_16KiB"
+      },
+      "fixed_local_data": [
+        {
+          "from": "S_base.response",
+          "to": "N.operands",
+          "service": "stored normalization"
+        },
+        {
+          "from": "N.result",
+          "to": "S_base.request_write",
+          "service": "normalization writeback"
+        },
+        {
+          "from": "S_base.response",
+          "to": "E.operands",
+          "service": "stored elementwise replay and direct B/C operands"
+        },
+        {
+          "from": "E.result",
+          "to": "S_base.request_write",
+          "service": "elementwise writeback"
+        }
+      ],
+      "external_storage": "incoming/outgoing stored-link channels, including reservation and actual write acknowledgement",
+      "direct": {
+        "source": "n_to_e_",
+        "sink": "e_direct_a_",
+        "data_bits": 128,
+        "return": "ready",
+        "source_owner": "N result holding adapter",
+        "sink_owner": "E direct A operand adapter",
+        "producer": "paired native descriptor 0x104 starts N",
+        "consumer": "paired native descriptor 0x104 arms E",
+        "completion": "E samples valid and ready, N fault cancels the waiting consumer, and the service waits for actual S commit"
+      }
+    }
+  },
+  "physical_binding": {
+    "fixed_layers": [
+      "metal1",
+      "metal2",
+      "metal3",
+      "metal4",
+      "metal5",
+      "metal6",
+      "metal7",
+      "metal8",
+      "metal9",
+      "metal10"
+    ],
+    "candidate_layers": [
+      "metal11",
+      "metal12"
+    ],
+    "coupon_endpoint_owner": "placed local adapter driver or receiver",
+    "coupon_endpoint_geometry": "m10-pins.tsv from final ODB, joined by the exact name and bit index",
+    "routed_pair_evidence": "overlay.json from final ODB, native GDS and verified upper GDS",
+    "top_level_rule": "retain instance and native leaf pin identities when the local adapters are placed into the shared die"
+  }
+}

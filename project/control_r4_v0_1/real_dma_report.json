@@ -1,0 +1,1633 @@
+{
+  "bridge": {
+    "cases": [
+      {
+        "name": "write_full_identity",
+        "mode": 0,
+        "log_sha256": "ca0856ebf0834dda3894569d8f927fb435257b4a7bc0c4bb3d0f61b0fe90993a"
+      },
+      {
+        "name": "read_full_identity",
+        "mode": 1,
+        "log_sha256": "fd4ce0f69513e61950f3d868705e9d453083e931c3f9d3be508c1e326ecc7f75"
+      },
+      {
+        "name": "wrong_tag",
+        "mode": 2,
+        "log_sha256": "96b315b298cdbf50d55ecfba65cbd6a3d8ffd5b2c2f3782776e4768462dbcbeb"
+      },
+      {
+        "name": "wrong_words",
+        "mode": 3,
+        "log_sha256": "13fe303dd1df34501babeded4a9f3904a30b26b074b98eb127e9f84cb7972ea8"
+      },
+      {
+        "name": "external_status",
+        "mode": 4,
+        "log_sha256": "76195463710f9ac318102fd5e50ee1529cabf91811771ac958b0922e33c1c47b"
+      },
+      {
+        "name": "protocol_error",
+        "mode": 5,
+        "log_sha256": "6ef949fe3887f7dc833033b28793d1b3d3194f06b92e6a9f7f08aaa01f0e39db"
+      },
+      {
+        "name": "early_completion",
+        "mode": 6,
+        "log_sha256": "1f746ae07525dba38b81e1ddec8c1fe9cc5c57c3dfb3ee21568cf2496d990c3f"
+      },
+      {
+        "name": "duplicate_native_ACK",
+        "mode": 7,
+        "log_sha256": "b993dd07e13abb417fb3e7a53bd88554acf2835b1e6e0a37992db5bcd4c91fc5"
+      },
+      {
+        "name": "tag_exhaustion",
+        "mode": 8,
+        "log_sha256": "c0a0d33e5ac5f7455c241d52e8be13601be46d09b2d98a8816a672a57b3de601"
+      },
+      {
+        "name": "admit_gate",
+        "mode": 9,
+        "log_sha256": "c45e39b8f8cf1b23788d2f349b4c34bd8e3a7680bc400d9c248fd0ed4a296e1a"
+      }
+    ],
+    "compile_command": [
+      "/eda/verilator-5.042/bin/verilator",
+      "--binary",
+      "--timing",
+      "--top-module",
+      "tb_dma_bridge",
+      "--Mdir",
+      "/work/results/real_dma/bridge/obj_dir",
+      "-j",
+      "4",
+      "-o",
+      "sim",
+      "/work/source/project/control_r4_v0_1/raw16_dma_bridge.sv",
+      "/work/source/project/control_r4_v0_1/tb_dma_bridge.sv"
+    ],
+    "compile_log_sha256": "226514849d840e1d116740e1bfd042ef5427c49cf9fd90969ad885d2eca0dfb7",
+    "provider": "explicit bounded peers, not hbm_group_dma in this directed bench"
+  },
+  "schema": "actual-control-private-S-DMA-runs/0.1",
+  "results": [
+    {
+      "case": {
+        "name": "receiver_fast",
+        "image": "receiver",
+        "calls": 2,
+        "locals": [
+          {
+            "calls": 1,
+            "commands": 2,
+            "reports": 0
+          },
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 1
+          }
+        ],
+        "stall": 0
+      },
+      "checker": {
+        "mother": {
+          "cycles": 757,
+          "starts": 1,
+          "CALLs": 2,
+          "CANCELs": 0,
+          "READY_received": 1,
+          "results": 1,
+          "poisoned": false,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 458
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 532
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 538
+            },
+            {
+              "pc": 3,
+              "op": "G_WAIT",
+              "cycle": 745
+            },
+            {
+              "pc": 4,
+              "op": "G_END",
+              "cycle": 756
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 757,
+            "calls": 1,
+            "services": 2,
+            "READY_reports": 0,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 1,
+            "ACK_accepts": 2,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 757,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 1,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 0,
+            "ACK_accepts": 1,
+            "poisoned": false,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 2,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "descriptors": 3,
+          "physical_requests": 3,
+          "native_write_ACKs": 2,
+          "native_reads": 1,
+          "request_response_CDC_checked": true
+        }
+      },
+      "cycles": 757,
+      "log_sha256": "8a9ecaa47aaa275f5051384281a935b648b470a6f52b3d0ef3d8374e2774e5d2",
+      "input_images_sha256": {
+        "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+        "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+        "local1": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/receiver_fast-mother.mem",
+        "+WORDS=14",
+        "+CALLS=2",
+        "+STALL=0",
+        "+LOCAL0=/work/results/real_dma/receiver_fast-local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/real_dma/receiver_fast-local1.mem",
+        "+WORDS1=27"
+      ]
+    },
+    {
+      "case": {
+        "name": "receiver_stalled",
+        "image": "receiver",
+        "calls": 2,
+        "locals": [
+          {
+            "calls": 1,
+            "commands": 2,
+            "reports": 0
+          },
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 1
+          }
+        ],
+        "stall": 3
+      },
+      "checker": {
+        "mother": {
+          "cycles": 1371,
+          "starts": 1,
+          "CALLs": 2,
+          "CANCELs": 0,
+          "READY_received": 1,
+          "results": 1,
+          "poisoned": false,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 653
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 815
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 828
+            },
+            {
+              "pc": 3,
+              "op": "G_WAIT",
+              "cycle": 1343
+            },
+            {
+              "pc": 4,
+              "op": "G_END",
+              "cycle": 1370
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 1371,
+            "calls": 1,
+            "services": 2,
+            "READY_reports": 0,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 1,
+            "ACK_accepts": 2,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 1371,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 1,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 0,
+            "ACK_accepts": 1,
+            "poisoned": false,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 2,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "descriptors": 3,
+          "physical_requests": 3,
+          "native_write_ACKs": 2,
+          "native_reads": 1,
+          "request_response_CDC_checked": true
+        }
+      },
+      "cycles": 1371,
+      "log_sha256": "1903064598fa7af7b4a55de1c4cbc6f24a359d57924d0ebbce452f7f15fe3d1d",
+      "input_images_sha256": {
+        "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+        "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+        "local1": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/receiver_stalled-mother.mem",
+        "+WORDS=14",
+        "+CALLS=2",
+        "+STALL=3",
+        "+LOCAL0=/work/results/real_dma/receiver_stalled-local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/real_dma/receiver_stalled-local1.mem",
+        "+WORDS1=27"
+      ]
+    },
+    {
+      "case": {
+        "name": "receiver_two_jobs",
+        "image": "receiver",
+        "calls": 4,
+        "locals": [
+          {
+            "calls": 2,
+            "commands": 4,
+            "reports": 0
+          },
+          {
+            "calls": 2,
+            "commands": 2,
+            "reports": 2
+          }
+        ],
+        "runs": 2,
+        "stall": 2
+      },
+      "checker": {
+        "mother": {
+          "cycles": 2181,
+          "starts": 2,
+          "CALLs": 4,
+          "CANCELs": 0,
+          "READY_received": 2,
+          "results": 2,
+          "poisoned": false,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 652
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 815
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 827
+            },
+            {
+              "pc": 3,
+              "op": "G_WAIT",
+              "cycle": 1343
+            },
+            {
+              "pc": 4,
+              "op": "G_END",
+              "cycle": 1365
+            },
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 1387
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 1552
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 1562
+            },
+            {
+              "pc": 3,
+              "op": "G_WAIT",
+              "cycle": 2157
+            },
+            {
+              "pc": 4,
+              "op": "G_END",
+              "cycle": 2180
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 2181,
+            "calls": 2,
+            "services": 4,
+            "READY_reports": 0,
+            "terminals": 2,
+            "local_stores": 2,
+            "local_reads": 2,
+            "ACK_accepts": 4,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 2181,
+            "calls": 2,
+            "services": 2,
+            "READY_reports": 2,
+            "terminals": 2,
+            "local_stores": 2,
+            "local_reads": 0,
+            "ACK_accepts": 2,
+            "poisoned": false,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 4,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "descriptors": 6,
+          "physical_requests": 6,
+          "native_write_ACKs": 4,
+          "native_reads": 2,
+          "request_response_CDC_checked": true
+        }
+      },
+      "cycles": 2181,
+      "log_sha256": "29e4728d809c720957b5f0a884db0b1ff680414938c407fb60aebb4574fb8f5f",
+      "input_images_sha256": {
+        "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+        "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+        "local1": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/receiver_two_jobs-mother.mem",
+        "+WORDS=14",
+        "+CALLS=4",
+        "+STALL=2",
+        "+LOCAL0=/work/results/real_dma/receiver_two_jobs-local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/real_dma/receiver_two_jobs-local1.mem",
+        "+WORDS1=27",
+        "+RUNS=2"
+      ]
+    },
+    {
+      "case": {
+        "name": "scalar_R7",
+        "image": "scalar",
+        "calls": 2,
+        "locals": [
+          {
+            "calls": 1,
+            "commands": 2,
+            "reports": 0
+          },
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 1
+          }
+        ]
+      },
+      "checker": {
+        "mother": {
+          "cycles": 1366,
+          "starts": 1,
+          "CALLs": 2,
+          "CANCELs": 0,
+          "READY_received": 1,
+          "results": 1,
+          "poisoned": false,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 652
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 815
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 827
+            },
+            {
+              "pc": 3,
+              "op": "G_WAIT",
+              "cycle": 1343
+            },
+            {
+              "pc": 4,
+              "op": "G_END",
+              "cycle": 1365
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 1366,
+            "calls": 1,
+            "services": 2,
+            "READY_reports": 0,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 1,
+            "ACK_accepts": 2,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 1366,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 1,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 0,
+            "ACK_accepts": 1,
+            "poisoned": false,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 2,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "descriptors": 3,
+          "physical_requests": 3,
+          "native_write_ACKs": 2,
+          "native_reads": 1,
+          "request_response_CDC_checked": true
+        }
+      },
+      "cycles": 1366,
+      "log_sha256": "5964627dd217a94caad51386b50e7a10df33aa4eae5c9286b1aa07e575cf1ec5",
+      "input_images_sha256": {
+        "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+        "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+        "local1": "66e79c204af9b53e69afdba7f5bab2810c373f595a622562e5fdcbe7389402b2"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/scalar_R7-mother.mem",
+        "+WORDS=14",
+        "+CALLS=2",
+        "+STALL=2",
+        "+LOCAL0=/work/results/real_dma/scalar_R7-local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/real_dma/scalar_R7-local1.mem",
+        "+WORDS1=27"
+      ]
+    },
+    {
+      "case": {
+        "name": "return_backpressure",
+        "image": "receiver",
+        "calls": 2,
+        "locals": [
+          {
+            "calls": 1,
+            "commands": 2,
+            "reports": 0
+          },
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 1
+          }
+        ],
+        "return_delay": 40,
+        "stall": 3
+      },
+      "checker": {
+        "mother": {
+          "cycles": 1561,
+          "starts": 1,
+          "CALLs": 2,
+          "CANCELs": 0,
+          "READY_received": 1,
+          "results": 1,
+          "poisoned": false,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 653
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 859
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 868
+            },
+            {
+              "pc": 3,
+              "op": "G_WAIT",
+              "cycle": 1530
+            },
+            {
+              "pc": 4,
+              "op": "G_END",
+              "cycle": 1560
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 1561,
+            "calls": 1,
+            "services": 2,
+            "READY_reports": 0,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 1,
+            "ACK_accepts": 2,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 1561,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 1,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 0,
+            "ACK_accepts": 1,
+            "poisoned": false,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 2,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "descriptors": 3,
+          "physical_requests": 3,
+          "native_write_ACKs": 2,
+          "native_reads": 1,
+          "request_response_CDC_checked": true
+        }
+      },
+      "cycles": 1561,
+      "log_sha256": "5bfeb5dc0cf99cb929b49bf75720e77f4dea114f8eb1673afe8d2091b0863179",
+      "input_images_sha256": {
+        "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+        "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+        "local1": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/return_backpressure-mother.mem",
+        "+WORDS=14",
+        "+CALLS=2",
+        "+STALL=3",
+        "+LOCAL0=/work/results/real_dma/return_backpressure-local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/real_dma/return_backpressure-local1.mem",
+        "+WORDS1=27",
+        "+RETURN_DELAY=40"
+      ]
+    },
+    {
+      "case": {
+        "name": "held_CALL_independent_return",
+        "image": "empty",
+        "calls": 2,
+        "locals": [
+          {
+            "calls": 1,
+            "commands": 0,
+            "reports": 0
+          },
+          {
+            "calls": 1,
+            "commands": 0,
+            "reports": 0
+          }
+        ],
+        "hold_target": 0,
+        "hold_cycles": 180
+      },
+      "checker": {
+        "mother": {
+          "cycles": 551,
+          "starts": 1,
+          "CALLs": 2,
+          "CANCELs": 0,
+          "READY_received": 0,
+          "results": 1,
+          "poisoned": false,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 282
+            },
+            {
+              "pc": 1,
+              "op": "G_CALL",
+              "cycle": 472
+            },
+            {
+              "pc": 2,
+              "op": "G_WAIT",
+              "cycle": 529
+            },
+            {
+              "pc": 3,
+              "op": "G_END",
+              "cycle": 550
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 551,
+            "calls": 1,
+            "services": 0,
+            "READY_reports": 0,
+            "terminals": 1,
+            "local_stores": 0,
+            "local_reads": 0,
+            "ACK_accepts": 0,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 551,
+            "calls": 1,
+            "services": 0,
+            "READY_reports": 0,
+            "terminals": 1,
+            "local_stores": 0,
+            "local_reads": 0,
+            "ACK_accepts": 0,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 0,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "descriptors": 0,
+          "physical_requests": 0,
+          "native_write_ACKs": 0,
+          "native_reads": 0,
+          "request_response_CDC_checked": true
+        }
+      },
+      "cycles": 551,
+      "log_sha256": "a7f5451dab7396e2cd8c9355d4fcfd4d22f97eeef6834f1b2effa234c78da3f9",
+      "input_images_sha256": {
+        "mother": "b373855c035346139f087848a776b35c5a417056cd37e6907cbed85830696fc6",
+        "local0": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+        "local1": "5c84b5592845e6527429e9488abe418569ce625547bf3837624af6d45d12620a"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/held_CALL_independent_return-mother.mem",
+        "+WORDS=12",
+        "+CALLS=2",
+        "+STALL=2",
+        "+LOCAL0=/work/results/real_dma/held_CALL_independent_return-local0.mem",
+        "+WORDS0=13",
+        "+LOCAL1=/work/results/real_dma/held_CALL_independent_return-local1.mem",
+        "+WORDS1=13",
+        "+HOLD_TARGET=0",
+        "+HOLD_CYCLES=180"
+      ]
+    },
+    {
+      "case": {
+        "name": "error_before_READY",
+        "image": "receiver",
+        "calls": 1,
+        "locals": [
+          {
+            "calls": 0,
+            "commands": 0,
+            "reports": 0
+          },
+          {
+            "calls": 1,
+            "commands": 0,
+            "reports": 0,
+            "expected": 5
+          }
+        ],
+        "mode": 1,
+        "expected": 5
+      },
+      "checker": {
+        "mother": {
+          "cycles": 819,
+          "starts": 1,
+          "CALLs": 1,
+          "CANCELs": 0,
+          "READY_received": 0,
+          "results": 1,
+          "poisoned": false,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 652
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 819,
+            "calls": 0,
+            "services": 0,
+            "READY_reports": 0,
+            "terminals": 0,
+            "local_stores": 0,
+            "local_reads": 0,
+            "ACK_accepts": 0,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 819,
+            "calls": 1,
+            "services": 0,
+            "READY_reports": 0,
+            "terminals": 1,
+            "local_stores": 0,
+            "local_reads": 0,
+            "ACK_accepts": 0,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 0,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "descriptors": 0,
+          "physical_requests": 0,
+          "native_write_ACKs": 0,
+          "native_reads": 0,
+          "request_response_CDC_checked": true
+        }
+      },
+      "cycles": 819,
+      "log_sha256": "52fc4447bd4001b6ad228a1b0a00b5251e0a32bbbb85387cf77da2892a207e80",
+      "input_images_sha256": {
+        "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+        "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+        "local1": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/error_before_READY-mother.mem",
+        "+WORDS=14",
+        "+CALLS=1",
+        "+STALL=2",
+        "+LOCAL0=/work/results/real_dma/error_before_READY-local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/real_dma/error_before_READY-local1.mem",
+        "+WORDS1=27",
+        "+MODE=1",
+        "+EXPECTED=5"
+      ]
+    },
+    {
+      "case": {
+        "name": "recover_unequal_sequences",
+        "image": "receiver",
+        "calls": 3,
+        "locals": [
+          {
+            "calls": 1,
+            "commands": 2,
+            "reports": 0
+          },
+          {
+            "calls": 2,
+            "commands": 1,
+            "reports": 1
+          }
+        ],
+        "mode": 3,
+        "expected": 5,
+        "recover": 1,
+        "runs": 2
+      },
+      "checker": {
+        "mother": {
+          "cycles": 1596,
+          "starts": 2,
+          "CALLs": 3,
+          "CANCELs": 0,
+          "READY_received": 1,
+          "results": 2,
+          "poisoned": false,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 652
+            },
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 837
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 1002
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 1012
+            },
+            {
+              "pc": 3,
+              "op": "G_WAIT",
+              "cycle": 1574
+            },
+            {
+              "pc": 4,
+              "op": "G_END",
+              "cycle": 1595
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 1596,
+            "calls": 1,
+            "services": 2,
+            "READY_reports": 0,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 1,
+            "ACK_accepts": 2,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 1596,
+            "calls": 2,
+            "services": 1,
+            "READY_reports": 1,
+            "terminals": 2,
+            "local_stores": 1,
+            "local_reads": 0,
+            "ACK_accepts": 1,
+            "poisoned": false,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 2,
+        "unequal_endpoint_task_sequence_pairs": 1,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "descriptors": 3,
+          "physical_requests": 3,
+          "native_write_ACKs": 2,
+          "native_reads": 1,
+          "request_response_CDC_checked": true
+        }
+      },
+      "cycles": 1596,
+      "log_sha256": "ecd09050f59e9accdba3c87c0dd8124d95f764c4c5d784d0030f4cd58161a2ab",
+      "input_images_sha256": {
+        "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+        "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+        "local1": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/recover_unequal_sequences-mother.mem",
+        "+WORDS=14",
+        "+CALLS=3",
+        "+STALL=2",
+        "+LOCAL0=/work/results/real_dma/recover_unequal_sequences-local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/real_dma/recover_unequal_sequences-local1.mem",
+        "+WORDS1=27",
+        "+MODE=3",
+        "+RUNS=2",
+        "+EXPECTED=5"
+      ]
+    },
+    {
+      "case": {
+        "name": "missing_TX_ACK",
+        "image": "receiver",
+        "calls": 2,
+        "locals": [
+          {
+            "calls": 1,
+            "commands": 2,
+            "reports": 0,
+            "poison": 1
+          },
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 1
+          }
+        ],
+        "mode": 2,
+        "poison": 1
+      },
+      "checker": {
+        "mother": {
+          "cycles": 5233,
+          "starts": 1,
+          "CALLs": 2,
+          "CANCELs": 0,
+          "READY_received": 1,
+          "results": 0,
+          "poisoned": true,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 652
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 815
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 827
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 5233,
+            "calls": 1,
+            "services": 2,
+            "READY_reports": 0,
+            "terminals": 0,
+            "local_stores": 1,
+            "local_reads": 1,
+            "ACK_accepts": 1,
+            "poisoned": true,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 5233,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 1,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 0,
+            "ACK_accepts": 1,
+            "poisoned": false,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 2,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "descriptors": 3,
+          "physical_requests": 3,
+          "native_write_ACKs": 2,
+          "native_reads": 1,
+          "request_response_CDC_checked": true
+        }
+      },
+      "cycles": 5233,
+      "log_sha256": "aeb363174773d67dcb383997fab3b58e7338995b55e98925c245ce1d89be57fd",
+      "input_images_sha256": {
+        "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+        "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+        "local1": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/missing_TX_ACK-mother.mem",
+        "+WORDS=14",
+        "+CALLS=2",
+        "+STALL=2",
+        "+LOCAL0=/work/results/real_dma/missing_TX_ACK-local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/real_dma/missing_TX_ACK-local1.mem",
+        "+WORDS1=27",
+        "+MODE=2",
+        "+POISON=1"
+      ]
+    },
+    {
+      "case": {
+        "name": "error_cannot_close_RX",
+        "image": "receiver",
+        "calls": 2,
+        "locals": [
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 0,
+            "expected": 5
+          },
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 1,
+            "poison": 1
+          }
+        ],
+        "mode": 4,
+        "poison": 1,
+        "cancels": 1
+      },
+      "checker": {
+        "mother": {
+          "cycles": 1264,
+          "starts": 1,
+          "CALLs": 2,
+          "CANCELs": 1,
+          "READY_received": 1,
+          "results": 0,
+          "poisoned": true,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 652
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 815
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 827
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 1264,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 0,
+            "terminals": 1,
+            "local_stores": 1,
+            "local_reads": 0,
+            "ACK_accepts": 1,
+            "poisoned": false,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 1264,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 1,
+            "terminals": 0,
+            "local_stores": 0,
+            "local_reads": 0,
+            "ACK_accepts": 0,
+            "poisoned": true,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 1,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "descriptors": 1,
+          "physical_requests": 1,
+          "native_write_ACKs": 1,
+          "native_reads": 0,
+          "request_response_CDC_checked": true
+        }
+      },
+      "cycles": 1264,
+      "log_sha256": "7a5821ec4dac1307d9ccb4472bf6b6c45afb0791b05c2c3a1283bc2b0003f055",
+      "input_images_sha256": {
+        "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+        "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+        "local1": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/error_cannot_close_RX-mother.mem",
+        "+WORDS=14",
+        "+CALLS=2",
+        "+STALL=2",
+        "+LOCAL0=/work/results/real_dma/error_cannot_close_RX-local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/real_dma/error_cannot_close_RX-local1.mem",
+        "+WORDS1=27",
+        "+MODE=4",
+        "+CANCELS=1",
+        "+POISON=1"
+      ]
+    },
+    {
+      "case": {
+        "name": "external_error_poison",
+        "image": "receiver",
+        "calls": 2,
+        "locals": [
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 0,
+            "poison": 1
+          },
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 1,
+            "poison": 1
+          }
+        ],
+        "mode": 5,
+        "poison": 1
+      },
+      "checker": {
+        "mother": {
+          "cycles": 1031,
+          "starts": 1,
+          "CALLs": 2,
+          "CANCELs": 0,
+          "READY_received": 1,
+          "results": 0,
+          "poisoned": true,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 652
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 815
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 827
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 1031,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 0,
+            "terminals": 0,
+            "local_stores": 0,
+            "local_reads": 0,
+            "ACK_accepts": 0,
+            "poisoned": true,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 1031,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 1,
+            "terminals": 0,
+            "local_stores": 0,
+            "local_reads": 0,
+            "ACK_accepts": 0,
+            "poisoned": true,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 0,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "injected_external_error": 5,
+          "service_completion_fabricated": false,
+          "requires_cohort_reset": true
+        }
+      },
+      "cycles": 1031,
+      "log_sha256": "30f729c62ab2f1bd2b457411a978e929cbd6a7954aa3d30a9cd72c351fb2cce6",
+      "input_images_sha256": {
+        "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+        "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+        "local1": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/external_error_poison-mother.mem",
+        "+WORDS=14",
+        "+CALLS=2",
+        "+STALL=2",
+        "+LOCAL0=/work/results/real_dma/external_error_poison-local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/real_dma/external_error_poison-local1.mem",
+        "+WORDS1=27",
+        "+MODE=5",
+        "+POISON=1"
+      ]
+    },
+    {
+      "case": {
+        "name": "wrong_physical_ID_poison",
+        "image": "receiver",
+        "calls": 2,
+        "locals": [
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 0,
+            "poison": 1
+          },
+          {
+            "calls": 1,
+            "commands": 1,
+            "reports": 1,
+            "poison": 1
+          }
+        ],
+        "mode": 6,
+        "poison": 1
+      },
+      "checker": {
+        "mother": {
+          "cycles": 1029,
+          "starts": 1,
+          "CALLs": 2,
+          "CANCELs": 0,
+          "READY_received": 1,
+          "results": 0,
+          "poisoned": true,
+          "retired": [
+            {
+              "pc": 0,
+              "op": "G_CALL",
+              "cycle": 652
+            },
+            {
+              "pc": 1,
+              "op": "G_EVENT",
+              "cycle": 815
+            },
+            {
+              "pc": 2,
+              "op": "G_CALL",
+              "cycle": 827
+            }
+          ],
+          "actual_mother_RTL": true,
+          "actual_local_RTL": false,
+          "control_tokens": 8,
+          "targets": 2
+        },
+        "locals": [
+          {
+            "cycles": 1029,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 0,
+            "terminals": 0,
+            "local_stores": 0,
+            "local_reads": 0,
+            "ACK_accepts": 0,
+            "poisoned": true,
+            "register_value_observed": false,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          },
+          {
+            "cycles": 1029,
+            "calls": 1,
+            "services": 1,
+            "READY_reports": 1,
+            "terminals": 0,
+            "local_stores": 0,
+            "local_reads": 0,
+            "ACK_accepts": 0,
+            "poisoned": true,
+            "register_value_observed": true,
+            "finite_SRAM_bytes": 16384,
+            "native_S_tested": false
+          }
+        ],
+        "route_stores": 0,
+        "unequal_endpoint_task_sequence_pairs": 0,
+        "actual_mother_RTL": true,
+        "actual_local_RTL": 2,
+        "finite_SRAM_bytes_each": 16384,
+        "native_S_RTL": false,
+        "DMA": {
+          "injected_external_error": 6,
+          "service_completion_fabricated": false,
+          "requires_cohort_reset": true
+        }
+      },
+      "cycles": 1029,
+      "log_sha256": "ef6656a74d1d31236bc00e7fd2cd789f6aa57b5b7f2a6a1e890a4a58659d255c",
+      "input_images_sha256": {
+        "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+        "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+        "local1": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+      },
+      "command": [
+        "/work/results/real_dma/obj_dir/sim",
+        "+IMAGE=/work/results/real_dma/wrong_physical_ID_poison-mother.mem",
+        "+WORDS=14",
+        "+CALLS=2",
+        "+STALL=2",
+        "+LOCAL0=/work/results/real_dma/wrong_physical_ID_poison-local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/real_dma/wrong_physical_ID_poison-local1.mem",
+        "+WORDS1=27",
+        "+MODE=6",
+        "+POISON=1"
+      ]
+    }
+  ],
+  "mutation_checks": [
+    {
+      "name": "bad_routed_payload",
+      "rejected": true
+    },
+    {
+      "name": "broken_task_atomicity",
+      "rejected": true
+    },
+    {
+      "name": "premature_global_result",
+      "rejected": true
+    },
+    {
+      "name": "erase_TX_ACK",
+      "rejected": true
+    }
+  ],
+  "actual_mother_RTL": true,
+  "actual_local_RTL": 2,
+  "finite_SRAM_bytes_each": 16384,
+  "native_S_RTL": true,
+  "native_S_instances": 2,
+  "real_DMA": true,
+  "real_CDC_FIFOs": 2,
+  "adapter_mutations": [
+    {
+      "name": "bad_DMA_tag",
+      "rejected": true
+    },
+    {
+      "name": "lost_external_ACK",
+      "rejected": true
+    },
+    {
+      "name": "truncated_context",
+      "rejected": true
+    },
+    {
+      "name": "early_service_fact",
+      "rejected": true
+    }
+  ],
+  "full_Block_tested": false,
+  "physical_tested": false,
+  "RX_close_tested": false,
+  "compile_command": [
+    "/eda/verilator-5.042/bin/verilator",
+    "--binary",
+    "--timing",
+    "--top-module",
+    "tb_control_dma",
+    "-I/work/source/project/control_rtl_min_v0_1",
+    "--Mdir",
+    "/work/results/real_dma/obj_dir",
+    "-j",
+    "4",
+    "-o",
+    "sim",
+    "/work/source/project/control_rtl_min_v0_1/mc_min_controller.sv",
+    "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+    "/work/source/project/control_rtl_min_v0_1/tb_network_pm.sv",
+    "/work/source/project/control_r4_v0_1/lc_raw16_s_adapter.sv",
+    "/work/source/project/control_r4_v0_1/tb_dma_local.sv",
+    "/work/source/project/control_r4_v0_1/tb_control_dma.sv",
+    "/work/source/project/control_r4_v0_1/raw16_dma_bridge.sv",
+    "/work/source/project/control_r4_v0_1/finite_external_memory.sv",
+    "/work/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+    "/work/source/project/rtl/block_local_s/block_local_s_macro.sv",
+    "/work/source/project/rtl/block_feed_v1/block_feed_s16k.sv",
+    "/work/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+    "/work/source/project/rtl/hbm_feed/hbm_group_dma.sv",
+    "/work/source/project/rtl/hbm_feed/hbm_async_fifo.sv"
+  ],
+  "compile_log_sha256": "7d877f603583bc3a89abe674630e7f63817199f5ae9ff2fb11ffd691432db79a",
+  "sources_sha256": {
+    "mc_min_controller.sv": "b3b8bec07c145288ab31ea4f69e9908637b0e4b5941be973333e36ea6e585753",
+    "lc_min_controller.sv": "9168a6ad80238efa9fe6cc9e6a451ad62751aa6890b6bf6abf6318bb1bed5d33"
+  },
+  "tools": {
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]"
+  }
+}

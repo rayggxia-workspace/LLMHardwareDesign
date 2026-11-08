@@ -1,0 +1,148 @@
+{
+  "schema": "local-control-resource-profiles/0.1",
+  "upstream_pr176_head": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "profiles": [
+    {
+      "id": "P16_M_ONLY",
+      "topology_id": 393281793,
+      "kind": "P",
+      "resource_mask": 41,
+      "instances": {
+        "M": 1,
+        "G": 1,
+        "S": 1
+      },
+      "s_bytes": 16384,
+      "s_banks": 4,
+      "s_clients": 4,
+      "feeder": true,
+      "control_reachability": [
+        "M",
+        "G",
+        "S"
+      ],
+      "max_active_tasks": 1,
+      "local_tokens": 8,
+      "max_objects": 16,
+      "gpr_count": 8,
+      "context_ids": [
+        0
+      ],
+      "native_abi_id": 65537,
+      "physical_binding": "requirements only; no connected product/top-level RTL claimed",
+      "routes": [
+        "S.feeder_to_M.A",
+        "S.feeder_to_M.B",
+        "M.rsp_to_S.client0"
+      ],
+      "service_families": [
+        "M_NATIVE",
+        "M_READOUT",
+        "S_M_FEED"
+      ]
+    },
+    {
+      "id": "P16_VIA_S",
+      "topology_id": 393281794,
+      "kind": "P",
+      "resource_mask": 41,
+      "instances": {
+        "M": 1,
+        "G": 1,
+        "S": 1
+      },
+      "s_bytes": 16384,
+      "s_banks": 4,
+      "s_clients": 4,
+      "feeder": true,
+      "control_reachability": [
+        "M",
+        "G",
+        "S"
+      ],
+      "max_active_tasks": 1,
+      "local_tokens": 8,
+      "max_objects": 16,
+      "gpr_count": 8,
+      "context_ids": [
+        0
+      ],
+      "native_abi_id": 65537,
+      "physical_binding": "requirements only; no connected product/top-level RTL claimed",
+      "routes": [
+        "S.feeder_to_M.A",
+        "S.feeder_to_M.B",
+        "M.rsp_to_S.client0",
+        "S.client1_to_G.adapter",
+        "G.adapter_to_S.client1"
+      ],
+      "service_families": [
+        "M_NATIVE",
+        "M_READOUT",
+        "S_M_FEED",
+        "G_VECTOR"
+      ]
+    }
+  ],
+  "catalog": {
+    "P": {
+      "resources": [
+        "M",
+        "G",
+        "S"
+      ],
+      "mask": 41,
+      "composition": "candidate",
+      "candidate_s_bytes": 32768,
+      "native_registration": "M/G/S registered only in16KiB research profiles"
+    },
+    "U": {
+      "resources": [
+        "N",
+        "E",
+        "S"
+      ],
+      "mask": 38,
+      "candidate_s_bytes": 16384,
+      "native_registration": "pending"
+    },
+    "C": {
+      "resources": [
+        "R",
+        "G",
+        "E",
+        "S"
+      ],
+      "mask": 60,
+      "candidate_s_bytes": 16384,
+      "native_registration": "pending"
+    },
+    "F": {
+      "resources": [
+        "G",
+        "E",
+        "S"
+      ],
+      "mask": 44,
+      "candidate_s_bytes": 16384,
+      "native_registration": "pending"
+    },
+    "J": {
+      "resources": [
+        "E",
+        "S",
+        "T"
+      ],
+      "mask": 100,
+      "candidate_s_bytes": 16384,
+      "t_bytes": 6144,
+      "native_registration": "pending"
+    }
+  },
+  "rejected_profiles": [
+    "P32KiB not implemented by these source contracts",
+    "M-to-G direct chain has no registered adapter",
+    "MEM resource is absent"
+  ],
+  "topology_id_scope": "research-local requirements; not actual metal or deployment proof"
+}

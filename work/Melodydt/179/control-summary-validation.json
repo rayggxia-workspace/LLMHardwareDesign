@@ -1,0 +1,163 @@
+{
+  "schema": "block-control-summary-validation/0.2",
+  "checked_at": "2026-11-04T16:36:58.655001+08:00",
+  "passed": true,
+  "source_commit": "d6429607d5e0f607c321ab6372e78d5f53ec96ba",
+  "publication_commit": "Recorded in PR180 receipt after publication; no self-reference",
+  "python": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]",
+  "interpreter": {
+    "path": "D:\\EDA\\Anaconda3\\python.exe",
+    "sha256": "e89eb0525cee9dff994f39f8036cd1cd60b591dff659a32bb79459c094b5bda9"
+  },
+  "verifier": {
+    "location": "Local only: D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-summary-d642960\\verify_summary.py",
+    "sha256": "9b0aa182d2000381dd4e9d20ce0f30b3751345d17f260de162316280a6b26036"
+  },
+  "commands": [
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "scripts/check_project.py"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: Project management structure is valid (schema 1).\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "work/Melodydt/179/analyze_capacity.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: 8 packed-payload cases and resource-pool accounting reproduce exactly; no execution qualification.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "project/control_isa_v0_1",
+        "-p",
+        "test_codec.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_every_opcode_against_independent_struct_byte_layout (test_codec.CodecTest) ... ok\ntest_forward_branch_and_bounded_loop_encoding_domain (test_codec.CodecTest) ... ok\ntest_full_uint64_parameter_address_is_preserved (test_codec.CodecTest) ... ok\ntest_independent_instruction_words_and_bytes (test_codec.CodecTest) ... ok\ntest_independent_object_record_bytes_and_reserved_gap (test_codec.CodecTest) ... ok\ntest_record_layouts_are_nonoverlapping_and_fit (test_codec.CodecTest) ... ok\ntest_reserved_bit_role_opcode_and_range_rejections (test_codec.CodecTest) ... ok\ntest_schema_has_unique_codes_full_width_and_examples (test_codec.CodecTest) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.001s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "D:\\EDA\\Anaconda3\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "project/control_isa_v0_1/codec.py",
+        "decode",
+        "--role",
+        "mother",
+        "--word",
+        "0x10000200010000000000000000000000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"op\": \"G_CALL\",\n  \"a\": 2,\n  \"b\": 0,\n  \"c\": 1\n}\n",
+      "stderr": ""
+    }
+  ],
+  "doc_opcode_rows": 24,
+  "doc_record_sizes": 9,
+  "instruction_layout_matches": true,
+  "immutable_machine_sources": 4,
+  "source_files": 18,
+  "markdown_links_checked": 53,
+  "example_programs": 2,
+  "example_instructions": 19,
+  "example_bytes": 304,
+  "resource_inventory": {
+    "M": 3,
+    "N": 2,
+    "E": 6,
+    "G": 5,
+    "R": 1,
+    "S": 9,
+    "T": 2
+  },
+  "macro_instances": 28,
+  "local_control_static_bytes": 8192,
+  "total_control_static_KiB": 76.5,
+  "published_paths": [
+    "docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md",
+    "docs/local-blocks/CONTROL_ISA_V0_1.md",
+    "docs/decisions/2026-11-04-issue-179-two-level-control.md",
+    "docs/ARCHITECTURE.md",
+    "progress/Melodydt/STATUS.md",
+    "docs/handoffs/2026-11-04-issue-179-local-block-continuation.md",
+    "work/Melodydt/179/README.md",
+    "work/Melodydt/179/control-summary-sources.json",
+    "work/Melodydt/179/control-summary-validation.json"
+  ],
+  "scope_check": "Unchanged inherited snapshot files; only explicit whitelist is publishable",
+  "git_index_check": "Not executed; partial API snapshot has no .git/HEAD/index",
+  "not_executed": [
+    "New RTL/loader implementation",
+    "complete image assembler/compiler/native registry",
+    "binary interpreter",
+    "model execution or quality",
+    "server jobs or live server-state audit",
+    "EDA/P&R/M11-M12/300MHz"
+  ],
+  "outputs": {
+    "docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md": {
+      "bytes": 29822,
+      "sha256": "45bf96b25267a1dfdd68391d78e40534255f5c8d335bfd40827fb6aa2e1f7a3f",
+      "git_blob_sha": "75d10ff8525f36f830b2176055bcfd14fcb3e06c"
+    },
+    "docs/local-blocks/CONTROL_ISA_V0_1.md": {
+      "bytes": 28447,
+      "sha256": "677c6f01736240b6ff69b1593b8edf552818331d02297418523b9d09bcbfdc22",
+      "git_blob_sha": "e53b38ec16905100a558cf22380d727612e751cb"
+    },
+    "docs/decisions/2026-11-04-issue-179-two-level-control.md": {
+      "bytes": 2985,
+      "sha256": "0d0ad63c482dbbe716decbd845c317e348ab696bbb9b565b6954ee11de2787d9",
+      "git_blob_sha": "05d4f8c4082392d3125ae7e1b6fad6390e0f0e53"
+    },
+    "docs/ARCHITECTURE.md": {
+      "bytes": 23111,
+      "sha256": "540d7d80f4f9230fa622dd474242e9225d9f5a1fe1b098ed89ea893286fa059e",
+      "git_blob_sha": "0f8841ee3a9ad06cad2a1f2ac6218c650ce0e596"
+    },
+    "progress/Melodydt/STATUS.md": {
+      "bytes": 7095,
+      "sha256": "ed4d04f314eb1ad351de9348bd968b535d6d439455cc8f3654d5f77f977eb9f1",
+      "git_blob_sha": "2362d8645b206121f6c53d47ea919fdea6bbe528"
+    },
+    "docs/handoffs/2026-11-04-issue-179-local-block-continuation.md": {
+      "bytes": 7799,
+      "sha256": "c5483b42b723bddc9cca08a6718014f30b0169322679472ff516c236346009cc",
+      "git_blob_sha": "8d95061509d9fa535671d5010e68194d2d1ca2d7"
+    },
+    "work/Melodydt/179/README.md": {
+      "bytes": 3544,
+      "sha256": "ecaeaf21b30d9e565b979bcd737802ad04a5d482fdb8971275e9e370749642d2",
+      "git_blob_sha": "1424fce842883dee9d9b3315e57199dc88b15b16"
+    },
+    "work/Melodydt/179/control-summary-sources.json": {
+      "bytes": 36071,
+      "sha256": "15a2f2d8801c6ae3d2e7ee2a8120989942c5920558ee3a5825f83c25718bea27",
+      "git_blob_sha": "672f731fb5c694c1b182191acfb53edd5ff16784"
+    }
+  }
+}

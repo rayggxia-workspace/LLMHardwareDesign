@@ -1,0 +1,377 @@
+{
+  "schema": "control-presynth-freeze/1",
+  "issue": 179,
+  "owner": "Melodydt",
+  "source_base": "d8e443369e443568b31645df198e3ba749ec60a5",
+  "instruction_version": 2,
+  "instruction_bits": 64,
+  "byte_order": "little",
+  "clock_period_ns": "3.333333333",
+  "clock_domains": 1,
+  "mother_targets": 2,
+  "block_ids": [
+    0,
+    1
+  ],
+  "global_tokens": 8,
+  "resident_tasks_per_local": 1,
+  "inflight_services_per_local": 1,
+  "registers_each": 8,
+  "register_bits": 32,
+  "maximum_instructions": 256,
+  "image_maximum_bytes": {
+    "mother": 4736,
+    "local": 8320
+  },
+  "pm": {
+    "bytes_each": 16384,
+    "access_bits": 128,
+    "alignment_bytes": 16,
+    "outstanding": 1,
+    "reset_clears_storage": false
+  },
+  "s_bytes_each": 16384,
+  "capacity_id": "0x17630001",
+  "mother_opcodes": {
+    "G_CALL": 16,
+    "G_WAIT": 17,
+    "G_EVENT": 18,
+    "G_MOVI": 19,
+    "G_BRANCH": 21,
+    "G_END": 31
+  },
+  "local_opcodes": {
+    "L_OPEN": 64,
+    "L_EXEC": 65,
+    "L_RX": 66,
+    "L_TX": 67,
+    "L_WAIT": 68,
+    "L_MOVI": 69,
+    "L_DROP": 73,
+    "L_REPORT": 74,
+    "L_BRANCH": 75,
+    "L_END": 79
+  },
+  "unsupported_opcodes": [
+    "NOP",
+    "G_LOOP",
+    "G_PARAM",
+    "G_FAIL",
+    "L_ADDI",
+    "L_ARG",
+    "L_LOOP",
+    "L_FAIL"
+  ],
+  "native_abi": "0x01930001",
+  "native_profiles": [
+    {
+      "type": "U",
+      "native_kind": 0,
+      "topology": "0x01930011"
+    },
+    {
+      "type": "F",
+      "native_kind": 1,
+      "topology": "0x01930012"
+    },
+    {
+      "type": "C",
+      "native_kind": 2,
+      "topology": "0x01930013"
+    },
+    {
+      "type": "P",
+      "native_kind": 3,
+      "topology": "0x01930014"
+    },
+    {
+      "type": "J",
+      "native_kind": 4,
+      "topology": "0x01930015"
+    }
+  ],
+  "legacy_128": "Existing cores retain legacy regression support; new boot entry admits version 2 only.",
+  "reset": "Whole single-clock cohort; async assert, two-flop release. Storage retained but deployment invalidated; reload required.",
+  "scope": "Stage9 bounded control handoff: nine fixed five/recovery profiles, full RTL plus explicit control-boundary sources, pinned standard-cell library, SDC and reproducible structural checks. Not mapped combined timing or physical acceptance.",
+  "production_ready": false,
+  "initial_freeze_base": "b54531b3359167668f8e696c97bd5882a7bee473",
+  "legacy_dual_p_boot_profile": {
+    "abi": "0x01790160",
+    "topology": "0x01790161",
+    "route": "P0 to P1; S replay; one 128-bit word; 128-bit identity"
+  },
+  "synthesis_profiles": [
+    {
+      "name": "five/U",
+      "family": "five",
+      "kind": 0,
+      "types": [
+        "U",
+        "U"
+      ],
+      "topology": 26411025,
+      "abi": 26411009,
+      "capacity": 392364033,
+      "pm_bytes": 16384,
+      "instruction_bits": 64,
+      "image_version": 2,
+      "top": "five_boot_top",
+      "parameters": {
+        "KIND": 0,
+        "PM_USE_SRAM": 1
+      }
+    },
+    {
+      "name": "five/F",
+      "family": "five",
+      "kind": 1,
+      "types": [
+        "F",
+        "F"
+      ],
+      "topology": 26411026,
+      "abi": 26411009,
+      "capacity": 392364033,
+      "pm_bytes": 16384,
+      "instruction_bits": 64,
+      "image_version": 2,
+      "top": "five_boot_top",
+      "parameters": {
+        "KIND": 1,
+        "PM_USE_SRAM": 1
+      }
+    },
+    {
+      "name": "five/C",
+      "family": "five",
+      "kind": 2,
+      "types": [
+        "C",
+        "C"
+      ],
+      "topology": 26411027,
+      "abi": 26411009,
+      "capacity": 392364033,
+      "pm_bytes": 16384,
+      "instruction_bits": 64,
+      "image_version": 2,
+      "top": "five_boot_top",
+      "parameters": {
+        "KIND": 2,
+        "PM_USE_SRAM": 1
+      }
+    },
+    {
+      "name": "five/P",
+      "family": "five",
+      "kind": 3,
+      "types": [
+        "P",
+        "P"
+      ],
+      "topology": 26411028,
+      "abi": 26411009,
+      "capacity": 392364033,
+      "pm_bytes": 16384,
+      "instruction_bits": 64,
+      "image_version": 2,
+      "top": "five_boot_top",
+      "parameters": {
+        "KIND": 3,
+        "PM_USE_SRAM": 1
+      }
+    },
+    {
+      "name": "five/J",
+      "family": "five",
+      "kind": 4,
+      "types": [
+        "J",
+        "J"
+      ],
+      "topology": 26411029,
+      "abi": 26411009,
+      "capacity": 392364033,
+      "pm_bytes": 16384,
+      "instruction_bits": 64,
+      "image_version": 2,
+      "top": "five_boot_top",
+      "parameters": {
+        "KIND": 4,
+        "PM_USE_SRAM": 1
+      }
+    },
+    {
+      "name": "recovery/U",
+      "family": "recovery",
+      "kind": 0,
+      "types": [
+        "U",
+        "P"
+      ],
+      "topology": 26412288,
+      "abi": 26411009,
+      "capacity": 392364033,
+      "pm_bytes": 16384,
+      "instruction_bits": 64,
+      "image_version": 2,
+      "top": "recovery_boot_top",
+      "parameters": {
+        "KIND": 0,
+        "PM_USE_SRAM": 1
+      }
+    },
+    {
+      "name": "recovery/F",
+      "family": "recovery",
+      "kind": 1,
+      "types": [
+        "F",
+        "P"
+      ],
+      "topology": 26412289,
+      "abi": 26411009,
+      "capacity": 392364033,
+      "pm_bytes": 16384,
+      "instruction_bits": 64,
+      "image_version": 2,
+      "top": "recovery_boot_top",
+      "parameters": {
+        "KIND": 1,
+        "PM_USE_SRAM": 1
+      }
+    },
+    {
+      "name": "recovery/C",
+      "family": "recovery",
+      "kind": 2,
+      "types": [
+        "C",
+        "P"
+      ],
+      "topology": 26412290,
+      "abi": 26411009,
+      "capacity": 392364033,
+      "pm_bytes": 16384,
+      "instruction_bits": 64,
+      "image_version": 2,
+      "top": "recovery_boot_top",
+      "parameters": {
+        "KIND": 2,
+        "PM_USE_SRAM": 1
+      }
+    },
+    {
+      "name": "recovery/J",
+      "family": "recovery",
+      "kind": 4,
+      "types": [
+        "J",
+        "P"
+      ],
+      "topology": 26412292,
+      "abi": 26411009,
+      "capacity": 392364033,
+      "pm_bytes": 16384,
+      "instruction_bits": 64,
+      "image_version": 2,
+      "top": "recovery_boot_top",
+      "parameters": {
+        "KIND": 4,
+        "PM_USE_SRAM": 1
+      }
+    }
+  ],
+  "control_parameters": {
+    "MC_STALL_LIMIT": 4096,
+    "LC_STALL_LIMIT": 4096,
+    "LC_DRAIN_LIMIT": 128,
+    "LC_LOCAL_S_BYTES": 16384,
+    "LC_BLOCK_IDS": [
+      0,
+      1
+    ],
+    "LC_ENABLE_NATIVE": 1,
+    "recovery_supervisor_DRAIN_LIMIT": 1024
+  },
+  "synthesis_boundary": {
+    "PM_USE_SRAM": 1,
+    "pm_banks": 12,
+    "native_groups": 2,
+    "behavioral_bank_in_control": false,
+    "power_gating": false,
+    "macros": "Native groups are explicit port-only boundaries in control synthesis; full RTL sources separately retained.",
+    "physical_models": "Native-group/SRAM Liberty and LEF require later combined implementation binding; not fabricated."
+  },
+  "sdc": "constraints.sdc",
+  "qualified_control_source_sha256": {
+    "project/control_rtl_min_v0_1/c_state_desc.svh": "4fe31c2d55450dc73554a848f4723fd12bc7e21da614599131f6011d27b708b7",
+    "project/control_rtl_min_v0_1/f_store_desc.svh": "0034b89167db3a91e6d9ff448d8281d387e2dace78f1447730ff04eac9708769",
+    "project/control_rtl_min_v0_1/instruction_fetch.svh": "cf2316ebe7b6248b5bf297f508f2190dd80b7bcb1daa789cf3cd55b5fcba8c8c",
+    "project/control_rtl_min_v0_1/j_lease_desc.svh": "2b18f75b9438a23aa469d7da6e759de9159403b8258635f82da0ed1b70189441",
+    "project/control_rtl_min_v0_1/lc_m_clear_adapter.sv": "ea319d1a45ed24a209e20deb712662802b142f02914979048bcd2df237b68831",
+    "project/control_rtl_min_v0_1/lc_min_controller.sv": "0b30c35a69d409b93896f3826231eeb6794b46f52498caf51c94e901a8e69cf2",
+    "project/control_rtl_min_v0_1/m_dot_store_desc.svh": "465f124ec82c23ba6dd665ac2a414e30a5dfc38a5f9697ad29751106ca920879",
+    "project/control_rtl_min_v0_1/mc_min_controller.sv": "37cc9be878f3f02767da734f13fa9fd1858bafb21c1914241e8dc03651ef8761",
+    "project/control_rtl_min_v0_1/mc_ports.svh": "573b428bcb5f2e462dd5f62762575d54f33759a200e7b1e285791633933f5cc2",
+    "project/control_rtl_min_v0_1/ports.svh": "bbbfc288dca616e2876b4c6237f94e118aa7aa7a1f5d250cd4fd06aa1e2bc4b2",
+    "project/control_rtl_min_v0_1/tb_control_network.sv": "b48a34f2592323e8daa75022ed082d3151c025f3d65b90834b0aa18bc84aa88b",
+    "project/control_rtl_min_v0_1/tb_init.svh": "2e8d4eb466a81830b5ba3db722dc81be58af54747a5b89b4699d3a9e50df9ade",
+    "project/control_rtl_min_v0_1/tb_lc_cancel.sv": "325c3ad52dd2a3040404d9ecdd5d09d58c0c178d00d937eefb315a276651083e",
+    "project/control_rtl_min_v0_1/tb_lc_fault.sv": "07f8c91e18ac7b464435f61e60b75c241826937a002484a9c651a7ab2619679d",
+    "project/control_rtl_min_v0_1/tb_lc_min.sv": "34524748499e134c6c9ede5069e16588a312d1578bd0922d854a6fadac0faba3",
+    "project/control_rtl_min_v0_1/tb_lc_native.sv": "de68f180b7bb2339840f4006bd213ed76e3bb8d338bb5f51fd7e7609e02649ae",
+    "project/control_rtl_min_v0_1/tb_lc_object.sv": "60221b6f8f953c9eb358d288f5a86ba8ae602e4589c82b257688cda69d730137",
+    "project/control_rtl_min_v0_1/tb_lc_transfer.sv": "94e9afd2668cb7a327eea3e19d4e904d5ba799466c718b0474d44b5db14aea1d",
+    "project/control_rtl_min_v0_1/tb_m_clear_adapter.sv": "5ef13f12d421a8093fbafa5a477defe487fc107d1f978c3cb83b9c2a664c1c58",
+    "project/control_rtl_min_v0_1/tb_mc_init.svh": "a29ebdba25704fdd00041222f698be96062e83bad363cfb9ecf181018aca20ee",
+    "project/control_rtl_min_v0_1/tb_mc_min.sv": "dea23252b215e102395eb372f4f89f012eb267a04c881539085e07f5de925246",
+    "project/control_rtl_min_v0_1/tb_mc_trace.svh": "95ffbf6c271b1f2c5bca0576141998336226c6ba974637a412d64868e6164dc8",
+    "project/control_rtl_min_v0_1/tb_mc_wires.svh": "78b45273bde485d1908d4b34ca7715545c6aadfec1796753a11fa976267c2744",
+    "project/control_rtl_min_v0_1/tb_native_init.svh": "9117cfaf3127e43de47a01af0b8761c0368442c8682eadf191498923a9f9efc5",
+    "project/control_rtl_min_v0_1/tb_network_lc_init.svh": "3beb160b0bb6456b0c9b91feac0f4cfb2ba09648d87db4d9c2943e282fe2bcde",
+    "project/control_rtl_min_v0_1/tb_network_lc_ports.svh": "02956c1825ea82764bbc92175d57da7e11e45a53c27ca1260dfcf451af2df1c2",
+    "project/control_rtl_min_v0_1/tb_network_lc_trace.svh": "b5999e5a8ad259a4ce3ad9b2eb5f57aacf58864b8bd2405bf8da870440613726",
+    "project/control_rtl_min_v0_1/tb_network_lc_wires.svh": "616109042e97a6d1f2e8acf5562970b5164f9a6be7d369a32ee82f272179666d",
+    "project/control_rtl_min_v0_1/tb_network_local.sv": "8e095848491859d18b711dbf57ccab5200a0f04fd89e6629a8f9b6dbfaee22e7",
+    "project/control_rtl_min_v0_1/tb_network_mc_init.svh": "ffdfe84a776c2f1cb58bf7af820a4407c358f6c2610d80040b4bc3219ce56835",
+    "project/control_rtl_min_v0_1/tb_network_mc_wires.svh": "275787ef8af14088cf10f4cb70814085fd6d1d25b66f9fd3161ad0fe53064468",
+    "project/control_rtl_min_v0_1/tb_network_pm.sv": "9b735633c1fafd6f0ec118feb541e695eea9d0edd534045713656d83a53ce3ff",
+    "project/control_rtl_min_v0_1/tb_trace.svh": "9021821b04bffe27d8eb36a4ce874a9805603ffa96970b1a2f39ecefa7c3726b",
+    "project/control_rtl_min_v0_1/tb_transfer_wires.svh": "bcaba1b5cd45f408298af8a69ec4537cd2763c9b8562aebffb7be1c0303085fd",
+    "project/control_rtl_min_v0_1/tb_wires.svh": "b783967aa3f45e90e5848f03e2a8431e0f2bc6626641c59388c5a0e0c7118b36",
+    "project/control_rtl_min_v0_1/two_local_link.sv": "50183786938d9ab95221aa765dd3d0196d5826a8b3577433b76b209e12e7989c",
+    "project/control_rtl_min_v0_1/u_rms_desc.svh": "db5298825ad5c39707eb4540766dd159ead410ba1711bfa9c1a56d0ce0dc6a90",
+    "project/control_boot_v1/control_boot_manager.sv": "8561e9774656627b74deef6430883b829ae9f61633be364413a6c6171bec6bcc",
+    "project/control_boot_v1/control_boot_top.sv": "3c1fce3981603b848df1aa7eb548f1b810eb89a28a50451b9d822b140ac18485",
+    "project/control_boot_v1/control_pm.sv": "e81b8084b6ff202f956cdb7056aa717019d6f2a4136481a15ee3017843430c76",
+    "project/control_boot_v1/tb_control_boot.sv": "34c3cd29269a6325e48bce09b9d26fc59c59d3fc38b7cab3357541fafc5012b9",
+    "project/control_boot_v1/tb_control_pm.sv": "7503cd58bdbc25928fa97a0936ab4a5649b9d24b2b21958b1348fde05c4459ca",
+    "project/control_native_v1/pj_native_service.sv": "67feffb4ae2a9c20ab94a3c7a780b123d6b6eda64e0d80e5588162eaf3835e73",
+    "project/control_native_v1/stored_link.sv": "7a852eebeb6988b2dc448bec9f4dfd48cdad56728c7ad07633008ed614c15571",
+    "project/control_native_v1/ucf_native_service.sv": "60240e9ecc6e92576b33d528618abba46153f092d553e2295bfe4324aa04fd45",
+    "project/control_five_boot_v1/five_boot_top.sv": "d77e3c236b4656b3db8c57bab969b4f674909e5c46d4fbd4b6f4c0a01d263a05",
+    "project/control_five_boot_v1/five_control_top.sv": "fb45a7021e502567da7bc934e224644f0bbb7139fc6d0e1af39b8affd1114a12",
+    "project/control_five_boot_v1/native_control_endpoint.sv": "afc91e69b2214872612684619a17bc8a5cce87c524486c75530f9b5befa5093d",
+    "project/control_five_boot_v1/native_result_fifo.sv": "bc36edb67d61dfc739cecd8c57b1f3882c4a11808697d1c9232d0b5435f2ccdd",
+    "project/control_five_boot_v1/tb_five_boot.sv": "99731040d568a5efc73725babce9a01b5a4e91571b4612ec8c56bd376e7fa449",
+    "project/control_five_boot_v1/typed_boot_front.sv": "65c1a3c90000cef86e42d39a5fd1996b9ce7b04d3471b6c164e27f412971773e",
+    "project/control_hetero_boot_v1/hetero_boot_front.sv": "c3651a7d3df7e5bad66028d890c9097dbf4c592962d435b66c71d76cf22cedf7",
+    "project/control_hetero_boot_v1/hetero_boot_top.sv": "971f0de11ce9267fbc753899937af8063ecb4f020873195e57637221d900605a",
+    "project/control_hetero_boot_v1/hetero_control_top.sv": "281873b450f345097f9e38f460e282eb726b872ced7c435b31b4c252fb8cb885",
+    "project/control_hetero_boot_v1/hetero_endpoint.sv": "89bd51184ff7756b98078ec3031859520dede46c9403033439c39d3f2d92f1c0",
+    "project/control_hetero_boot_v1/hetero_transport.sv": "f2c71a04ca44d01c60de55da707dbb42a4d3f8968b754aae7f9e6e3c492eb31e",
+    "project/control_hetero_boot_v1/identity_word_link.sv": "f21c03e2cfc6b482c846486abc9bb88d28cfa6f25f97acf809da9674fba61c49",
+    "project/control_hetero_boot_v1/tb_hetero_boot.sv": "584b10993699ae64b6e8eb1841820a27bd7261e07acb9280c1c09be64d04df1d",
+    "project/control_recovery_boot_v1/draining_transport.sv": "20c4e601c072b1a3cc348b0a8d8d1ef1349bbe86b053a7bf1e4cb981e9e09f7c",
+    "project/control_recovery_boot_v1/draining_word_link.sv": "e36dfebeeaf50aa46faf5f241c73ae0eb8d266ea45c9516210b85a865ad24e86",
+    "project/control_recovery_boot_v1/recovery_boot_top.sv": "1b62f4e2a70ef43e92824d9dc348a509a8e762e58cc0b814459e162a602bcb20",
+    "project/control_recovery_boot_v1/recovery_control_top.sv": "34917a8b405a5352d93447c7bf979f391c877cb50e372fc6fab4109d6b6ec580",
+    "project/control_recovery_boot_v1/recovery_endpoint.sv": "1f71326aca707e4b120f179f2217336b9ee6c67e6c2de7d456605380b23b7dda",
+    "project/control_recovery_boot_v1/recovery_engine.sv": "a9fadf9b258b23774d5298667b467f4cebf436dc56075840340db733e7bf49b4",
+    "project/control_recovery_boot_v1/recovery_supervisor.sv": "0274488af46ac762e7c58696bc21a2c4bffa174ceb929ed27fe26742ac9883f4",
+    "project/control_recovery_boot_v1/tb_recovery_boot.sv": "6ad7d76cee846a847568f7bdc869df623196b672e7b4c448bd9039ce5464ce5e",
+    "project/control_recovery_boot_v1/tb_recovery_normal.sv": "75b726aa81dda7e98e1c4f9481959d82bd518cd648abd8c6bbb2541480980d13"
+  },
+  "qualification_report_sha256": "7960da8450fc799509aeb089dbc5610c29d17816c070a0583d2ed12387b8f2cb"
+}

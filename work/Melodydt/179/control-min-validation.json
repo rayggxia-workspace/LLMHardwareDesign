@@ -1,0 +1,340 @@
+{
+  "schema": "minimum-lc-rtl-validation/0.1",
+  "timestamp": "2026-11-04 23:47 CST（Asia/Shanghai，UTC+08:00）",
+  "management_check": {
+    "command": "python -X utf8 -B scripts/check_project.py",
+    "result": "PASS",
+    "product_validation": false
+  },
+  "software_contract_tests": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "suite": "test_codec.py",
+        "command": "& 'D:/EDA/Anaconda3/python.exe' -X utf8 -B -m unittest discover -s project/control_isa_v0_1 -p test_codec.py -q",
+        "chunk_id": "acbbed",
+        "wall_time_seconds": 0.686373,
+        "exit_code": 0,
+        "original_token_count": 26,
+        "output": "----------------------------------------------------------------------\r\nRan 8 tests in 0.002s\r\n\r\nOK\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "suite": "test_contract.py",
+        "command": "& 'D:/EDA/Anaconda3/python.exe' -X utf8 -B -m unittest discover -s project/control_contract_v0_1 -p test_contract.py -q",
+        "chunk_id": "270fde",
+        "wall_time_seconds": 0.7320509,
+        "exit_code": 0,
+        "original_token_count": 26,
+        "output": "----------------------------------------------------------------------\r\nRan 15 tests in 0.012s\r\n\r\nOK\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "suite": "test_oracle.py",
+        "command": "& 'D:/EDA/Anaconda3/python.exe' -X utf8 -B -m unittest discover -s project/control_cases_v0_1 -p test_oracle.py -q",
+        "chunk_id": "263af4",
+        "wall_time_seconds": 0.7167029,
+        "exit_code": 0,
+        "original_token_count": 26,
+        "output": "----------------------------------------------------------------------\r\nRan 28 tests in 0.018s\r\n\r\nOK\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "suite": "test_image.py",
+        "command": "& 'D:/EDA/Anaconda3/python.exe' -X utf8 -B -m unittest discover -s project/control_image_v0_1 -p test_image.py -q",
+        "chunk_id": "4d99a7",
+        "wall_time_seconds": 0.7680764,
+        "exit_code": 0,
+        "original_token_count": 26,
+        "output": "----------------------------------------------------------------------\r\nRan 30 tests in 0.048s\r\n\r\nOK\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "suite": "test_machine.py",
+        "command": "& 'D:/EDA/Anaconda3/python.exe' -X utf8 -B -m unittest discover -s project/control_exec_v0_1 -p test_machine.py -q",
+        "chunk_id": "874301",
+        "wall_time_seconds": 1.2258252,
+        "exit_code": 0,
+        "original_token_count": 26,
+        "output": "----------------------------------------------------------------------\r\nRan 26 tests in 0.452s\r\n\r\nOK\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "suite": "test_recovery.py",
+        "command": "& 'D:/EDA/Anaconda3/python.exe' -X utf8 -B -m unittest discover -s project/control_exec_v0_1 -p test_recovery.py -q",
+        "chunk_id": "a2a9bd",
+        "wall_time_seconds": 0.9878403,
+        "exit_code": 0,
+        "original_token_count": 26,
+        "output": "----------------------------------------------------------------------\r\nRan 30 tests in 0.216s\r\n\r\nOK\r\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "suite": "test_boundary.py",
+        "command": "& 'D:/EDA/Anaconda3/python.exe' -X utf8 -B -m unittest discover -s project/control_rtl_contract_v0_1 -p test_boundary.py -q",
+        "chunk_id": "9190db",
+        "wall_time_seconds": 1.0902542,
+        "exit_code": 0,
+        "original_token_count": 26,
+        "output": "----------------------------------------------------------------------\r\nRan 36 tests in 0.320s\r\n\r\nOK\r\n"
+      }
+    }
+  ],
+  "software_contract_test_count": 173,
+  "rtl_scenario_count": 10,
+  "actual_rtl_simulation": true,
+  "cycles": 3926,
+  "independently_checked_execution_traces": 5,
+  "execution_cycles": 3061,
+  "retired": 13,
+  "service_acceptances": 4,
+  "terminal_acceptances": 6,
+  "full_terminal_packets_checked": 6,
+  "checker": "unchanged control_rtl_contract_v0_1/check_cycles.py; five negative traces use TB assertions only",
+  "source_files_verified": 37,
+  "compile_warnings_final": 0,
+  "jobs": [
+    {
+      "job": 97211,
+      "name": "mdt-lc179",
+      "partition": "debug",
+      "cpus": 4,
+      "node": "node27",
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "finding": "14 width warnings (compile failed)",
+      "source_commit": "579f8a664be190315e6b446c50ded61d775b0db9",
+      "source_archive_sha256": "3103cfd465638d06199ad11cedff02b33f9feaeb98af5168ae63655e16a749b3",
+      "directory": "/public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/r001",
+      "launch": "sbatch --parsable job-r001.sh",
+      "log": "slurm-97211.log"
+    },
+    {
+      "job": 97212,
+      "name": "mdt-lc179",
+      "partition": "debug",
+      "cpus": 4,
+      "node": "node27",
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "finding": "TB changed credit under held CALL",
+      "source_commit": "5a54623b97e6ab2a6cdc34394da38615a170267a",
+      "source_archive_sha256": "f2f2b8fbbe93df09852913c0a1b1c3e0cef86949c1222270f63431f4618de5e3",
+      "directory": "/public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/r002",
+      "launch": "sbatch --parsable job-r002.sh",
+      "log": "slurm-97212.log"
+    },
+    {
+      "job": 97213,
+      "name": "mdt-lc179",
+      "partition": "debug",
+      "cpus": 4,
+      "node": "node27",
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "finding": "execution ABI offset 60 instead of 56",
+      "source_commit": "55d3b63d8ce79995c5a2c23091ee212f3ddbdfe9",
+      "source_archive_sha256": "75e71d2c42a7160b32d0790a73bd88649b8ec69fc5b866b41b9f182a11d492d4",
+      "directory": "/public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/r003",
+      "launch": "sbatch --parsable job-r003.sh",
+      "log": "slurm-97213.log"
+    },
+    {
+      "job": 97214,
+      "name": "mdt-lc179",
+      "partition": "debug",
+      "cpus": 4,
+      "node": "node27",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "finding": "7 cases passed",
+      "source_commit": "761fef0509833f7568adfd65159836eb2b4a32ac",
+      "source_archive_sha256": "28f6a5e45a5c0f55ea5320da35a397dfaf1992baf05cbcd11d920fc1213334e3",
+      "directory": "/public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/r004",
+      "launch": "sbatch --parsable job-r004.sh",
+      "log": "slurm-97214.log"
+    },
+    {
+      "job": 97215,
+      "name": "mdt-lc179",
+      "partition": "debug",
+      "cpus": 4,
+      "node": "node27",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "finding": "10 cases passed",
+      "source_commit": "d880b56ee06414d6f3e344b20e19ce6badc00feb",
+      "source_archive_sha256": "2b683442febe31c0872b7af5a55b3daba0af0f9423a4cd5d225bfcb2e0f56b03",
+      "directory": "/public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/r005",
+      "launch": "sbatch --parsable job-r005.sh",
+      "log": "slurm-97215.log"
+    }
+  ],
+  "server": "yuzelu@10.129.166.172",
+  "result_directory": "/public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/r005/results",
+  "output_sha256": {
+    "clear_fast.log": "1563d303315225cb0732c5b3aa76c32ea5a8b60ff46a3fd7091af9323d5f0941",
+    "clear_fast.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "clear_fast.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "clear_native_error.log": "2a0ea5b1c234c76ec1a39108cdc82d217465184dfa5daabee388dc473aa2d380",
+    "clear_native_error.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "clear_native_error.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "clear_stalled_reuse.log": "b04aaa9553b05f28c3f272db7e88c85d44f64468e34d16d9d505e9210c3321a1",
+    "clear_stalled_reuse.mem": "dc8a974d604aecd55f6ec48e621264b91fec9c9cbfa6d536ac2e6f8705f69643",
+    "clear_stalled_reuse.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "compile.log": "be826ce882b4e235684b4e70306ee87c752d02b1be1ec2d3dbf29b5984b2ef39",
+    "empty_fast.log": "c0bd6f381735724f1293f8aaff3931f82ef2f162e3e3ca3cf4d1423fd7a6f5b3",
+    "empty_fast.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "empty_fast.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "empty_stalled.log": "f691240f25f25a41e780fe742d7ce22e13a93eaedeb9f79dda78f5ebbb221135",
+    "empty_stalled.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "empty_stalled.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "idle_deploy_revoke.log": "f6395107712dd24816fc29ef92a106d394954ba5e2e59308dada3065794cdda9",
+    "idle_deploy_revoke.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "idle_deploy_revoke.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "reject_bad_load_prefix.log": "e9ff03193a108edab647e7db0168f9366f2b8a384a3ff10819b74da88c287c42",
+    "reject_bad_load_prefix.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "reject_bad_load_prefix.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "reject_begin_preserve_commit.log": "73d035e578ce20987a8a300b505f33a062e9540085426e2dc018d5251d47bb60",
+    "reject_begin_preserve_commit.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "reject_begin_preserve_commit.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "reject_header_magic.log": "50a3a119e6b7a179e892de897394749fadf81dd28c5b30d8c7d76c0b6817fe1a",
+    "reject_header_magic.mem": "3df06fbd381c4ffba39cdcfe6cb745c0d43fbdd4c13ad7c303bb6c214dedc468",
+    "reject_header_magic.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "reject_premature_verify.log": "89751a083146737abef68a43b7dd5ee726f6b5bcd87be2fb246fd7e99de9d79c",
+    "reject_premature_verify.mem": "c7277e1adf720f374bc0aec988227572df2230a37a9bacd2d76af1fe68983249",
+    "reject_premature_verify.task": "78cda0cfa55dac256f39fdfcc07968a0a1841abaaf73e6801b3ecfbc8adb2530",
+    "report.json": "60b60e9297b083516dac31678cda41274a4121039093b965b8aca6d91f5ed486"
+  },
+  "evidence_archive": "/public/home/yuzelu/Melodydt/issue179-control-rtl-41777f1/evidence-97215.tar.gz",
+  "evidence_archive_sha256": "977ed2f099e4947b0cbbcf7b2b258027f7caf5d8ffbc5030a439d07f99e1fc08",
+  "local_evidence_copy": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-rtl-min-41777f1\\server-evidence",
+  "limitations": [
+    "Windows ModelSim DLL relocation failure",
+    "Windows Icarus abnormal process exit; no PASS",
+    "host Verilator GLIBC mismatch; container required",
+    "no four-state simulation",
+    "no synthesis/formal/physical",
+    "M/PM behavioral peers; no native macro/S/full Block/mother RTL",
+    "CANCEL/RX/TX/objects/timeout not implemented"
+  ],
+  "registry": {
+    "status": "pending",
+    "pr": "https://github.com/rayggxia-workspace/management-hub/pull/5",
+    "merged": false
+  },
+  "board": {
+    "state": "unverified",
+    "sync": "pending",
+    "reason": "config/board.json 404; no Projects item/field tools",
+    "handler": "待指定"
+  },
+  "issue_state": "in_progress",
+  "pr_state": "Draft/open/unmerged",
+  "reviewer": "待指定",
+  "automatic_monitoring": false,
+  "scope_check": {
+    "changed_files": [
+      "docs/ARCHITECTURE.md",
+      "docs/STATUS.md",
+      "docs/decisions/2026-11-04-issue-179-two-level-control.md",
+      "docs/handoffs/2026-11-04-issue-179-local-block-continuation.md",
+      "docs/local-blocks/LOCAL_CONTROL_MIN_RTL_V0_1.md",
+      "docs/local-blocks/LOCAL_CONTROL_RTL_CONTRACT_V0_1.md",
+      "docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md",
+      "progress/Melodydt/STATUS.md",
+      "project/control_rtl_min_v0_1/README.md",
+      "project/control_rtl_min_v0_1/lc_min_controller.sv",
+      "project/control_rtl_min_v0_1/ports.svh",
+      "project/control_rtl_min_v0_1/run.py",
+      "project/control_rtl_min_v0_1/run_report.json",
+      "project/control_rtl_min_v0_1/tb_init.svh",
+      "project/control_rtl_min_v0_1/tb_lc_min.sv",
+      "project/control_rtl_min_v0_1/tb_trace.svh",
+      "project/control_rtl_min_v0_1/tb_wires.svh",
+      "project/control_rtl_min_v0_1/wiring.py",
+      "work/Melodydt/179/README.md",
+      "work/Melodydt/179/control-min-job-r005.sh",
+      "work/Melodydt/179/control-min-sources.json",
+      "work/Melodydt/179/control-min-validation.json",
+      "work/Melodydt/179/pr176-sync.json",
+      "work/Melodydt/179/verify_control_min.py"
+    ],
+    "exact_whitelist": true,
+    "ref_project_scanned": false,
+    "native_macro_rtl_changed": false,
+    "new_local_links_checked": 157,
+    "inherited_partial_copy_links_unverified": [
+      {
+        "file": "docs/ARCHITECTURE.md",
+        "target": "../预制计算底座项目说明_v1.0.md"
+      },
+      {
+        "file": "docs/ARCHITECTURE.md",
+        "target": "local-blocks/README.md"
+      },
+      {
+        "file": "docs/ARCHITECTURE.md",
+        "target": "BLOCK_V2_RESULTS.md"
+      },
+      {
+        "file": "docs/ARCHITECTURE.md",
+        "target": "COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md"
+      },
+      {
+        "file": "docs/ARCHITECTURE.md",
+        "target": "experiments/issue-15-opentpu-comparison.md"
+      },
+      {
+        "file": "docs/ARCHITECTURE.md",
+        "target": "experiments/openTPU-llaccel-block-plan.md"
+      },
+      {
+        "file": "docs/ARCHITECTURE.md",
+        "target": "experiments/issue-7-vector-pilot.md"
+      },
+      {
+        "file": "docs/STATUS.md",
+        "target": "BLOCK_V2_RESULTS.md"
+      },
+      {
+        "file": "docs/STATUS.md",
+        "target": "decisions/0005-compute-block-v-split-r.md"
+      },
+      {
+        "file": "docs/STATUS.md",
+        "target": "decisions/0004-block-library-base-freeze.md"
+      },
+      {
+        "file": "docs/STATUS.md",
+        "target": "experiments/issue-15-opentpu-results.html"
+      },
+      {
+        "file": "docs/STATUS.md",
+        "target": "experiments/issue-15-opentpu-comparison.md"
+      },
+      {
+        "file": "docs/STATUS.md",
+        "target": "handoffs/2026-10-23-h1-html-integration.md"
+      },
+      {
+        "file": "docs/STATUS.md",
+        "target": "handoffs/2026-10-21-issue-7-projects.md"
+      }
+    ]
+  },
+  "local_evidence_verification_command": "python -X utf8 -B work/Melodydt/179/verify_control_min.py --archive evidence-97215.tar.gz --extract <fresh task directory>",
+  "local_evidence_verification_result": "PASS: 37 source SHAs, log SHAs, 5 real-DUT cycle traces, 6 complete terminal packets"
+}

@@ -1,0 +1,262 @@
+{
+  "schema": "local-control-native-registry/0.1",
+  "status": "proposed control contract, static descriptor validation only",
+  "native_abi_id": 65537,
+  "abi_id_hex": "0x00010001",
+  "abi_id_scope": "research-local proposal; not a frozen hardware ABI or deployed image ID",
+  "isa_version": "0.1 unchanged",
+  "scope": "P resources M/G/S only",
+  "completions": {
+    "NATIVE_DONE": 0,
+    "LOCAL_STORED": 1,
+    "DRAINED": 2
+  },
+  "default_constraints": {
+    "context_id": 0,
+    "dynamic_registers": "0xFF only in this first static profile",
+    "unused_fields": "zero or0xFF per ISA defaults",
+    "parameters": "parameter_ref/bytes/index_reg unused",
+    "all_objects": "static local S, matching ABI, 16B aligned, no overlapping allocations; initial_valid_bytes0 never means ready",
+    "unknown_service": "reject including unregistered N/E/R/T/MEM and direct S read/write L_EXEC"
+  },
+  "services": [
+    {
+      "name": "M_READ_S64",
+      "resource": 0,
+      "service": 2,
+      "native_op": 3,
+      "completion": 1,
+      "source_interface": "M",
+      "native_word_layout": {
+        "native0": "cmd_index[5:0]; bits31:6=0",
+        "native1": "cmd_data[31:0]",
+        "native2": "cmd_data[63:32]",
+        "native3_7": "zero"
+      },
+      "static_rule": "one command, count1, RAW_BYTES dst16B",
+      "runtime_guards": "result row valid; retain M context until explicit release",
+      "context_effect": "read does not release result",
+      "status": "proposed controller ABI bound to observed source; no adapter RTL implemented"
+    },
+    {
+      "name": "M_CFG_SCALE",
+      "resource": 0,
+      "service": 0,
+      "native_op": 4,
+      "completion": 0,
+      "source_interface": "M",
+      "native_word_layout": {
+        "native0": "cmd_index[5:0]; bits31:6=0",
+        "native1": "cmd_data[31:0]",
+        "native2": "cmd_data[63:32]",
+        "native3_7": "zero"
+      },
+      "static_rule": "index0; data bits63:21=0; count0",
+      "runtime_guards": "M context owner must match task; reconfigure before unrelated job",
+      "context_effect": "sets scale; not computation",
+      "status": "proposed controller ABI bound to observed source; no adapter RTL implemented"
+    },
+    {
+      "name": "M_READ_RNE",
+      "resource": 0,
+      "service": 2,
+      "native_op": 5,
+      "completion": 1,
+      "source_interface": "M",
+      "native_word_layout": {
+        "native0": "cmd_index[5:0]; bits31:6=0",
+        "native1": "cmd_data[31:0]",
+        "native2": "cmd_data[63:32]",
+        "native3_7": "zero"
+      },
+      "static_rule": "index row0..7 half0..1; shift0..63; width0..2; reserved zero; RAW_BYTES or S32-container dst16B",
+      "runtime_guards": "result row valid; four32-bit containers preserve signed8/16/32 rounded values; G consumption additionally requires signed16 range and Q5.10 scale",
+      "context_effect": "read does not release result",
+      "status": "proposed controller ABI bound to observed source; no adapter RTL implemented"
+    },
+    {
+      "name": "M_CLEAR_ALL_VALID",
+      "resource": 0,
+      "service": 0,
+      "native_op": 6,
+      "completion": 0,
+      "source_interface": "M",
+      "native_word_layout": {
+        "native0": "cmd_index[5:0]; bits31:6=0",
+        "native1": "cmd_data[31:0]",
+        "native2": "cmd_data[63:32]",
+        "native3_7": "zero"
+      },
+      "static_rule": "index0 data0; count0",
+      "runtime_guards": "all readers/consumers and outstanding operations retired before invalidation",
+      "context_effect": "invalidates operands/results/partials; scale register is not reset; logical owner release only after response",
+      "status": "Strict adapter RTL implemented for isolated M clear profile; real unchanged M source tested. General shared-owner context integration remains proposed."
+    },
+    {
+      "name": "M_GEMM",
+      "resource": 0,
+      "service": 0,
+      "native_op": 10,
+      "completion": 0,
+      "source_interface": "M",
+      "native_word_layout": {
+        "native0": "cmd_index[5:0]; bits31:6=0",
+        "native1": "cmd_data[31:0]",
+        "native2": "cmd_data[63:32]",
+        "native3_7": "zero"
+      },
+      "static_rule": "index bit5 bank, bits4:0=0; data bit0 Awide/bit1 Bwide/bit2 clear; bit3=0; lastK1..8 N1..8 tiles1..4 rows1..8; bits63:19=0",
+      "runtime_guards": "A/B loaded with exact format and bank; append requires same result owner and N; inspect error/fault_rows",
+      "context_effect": "retains one M result context after response",
+      "status": "proposed controller ABI bound to observed source; no adapter RTL implemented"
+    },
+    {
+      "name": "M_CLEAR_OPERAND_BANK",
+      "resource": 0,
+      "service": 0,
+      "native_op": 11,
+      "completion": 0,
+      "source_interface": "M",
+      "native_word_layout": {
+        "native0": "cmd_index[5:0]; bits31:6=0",
+        "native1": "cmd_data[31:0]",
+        "native2": "cmd_data[63:32]",
+        "native3_7": "zero"
+      },
+      "static_rule": "index0..1 data0; count0",
+      "runtime_guards": "selected operand bank not borrowed by feeder/execution",
+      "context_effect": "invalidates selected operands, preserves complete results",
+      "status": "proposed controller ABI bound to observed source; no adapter RTL implemented"
+    },
+    {
+      "name": "M_READ_PARTIAL",
+      "resource": 0,
+      "service": 2,
+      "native_op": 12,
+      "completion": 1,
+      "source_interface": "M",
+      "native_word_layout": {
+        "native0": "cmd_index[5:0]; bits31:6=0",
+        "native1": "cmd_data[31:0]",
+        "native2": "cmd_data[63:32]",
+        "native3_7": "zero"
+      },
+      "static_rule": "index low3<4 data0; RAW_BYTES dst16B",
+      "runtime_guards": "partial_valid[index bit3] and bank_owner[index bit3]==index[5:3]; only actual retained rows",
+      "context_effect": "read does not release result",
+      "status": "proposed controller ABI bound to observed source; no adapter RTL implemented"
+    },
+    {
+      "name": "G_SILU",
+      "resource": 3,
+      "service": 3,
+      "native_op": 0,
+      "completion": 1,
+      "source_interface": "G",
+      "native_word_layout": {
+        "native0": "bit0 in_gated, bits31:1=0",
+        "native1_7": "zero",
+        "native_op": "in_fn"
+      },
+      "static_rule": "count even2..2048; stride8B/packet; src0/dst S32 containers with signed16 content; optional src1 only when gated; each128-bit S word yields2 G packets",
+      "runtime_guards": "source object valid; source S32 high16 is sign extension of low16; output format/scale follows function; all packet outputs and S writes confirmed",
+      "context_effect": "no persistent cross-task G context; finite service holds resource until pipeline drained and writes confirmed",
+      "status": "proposed controller ABI bound to observed source; no adapter RTL implemented"
+    },
+    {
+      "name": "G_SIGMOID",
+      "resource": 3,
+      "service": 3,
+      "native_op": 1,
+      "completion": 1,
+      "source_interface": "G",
+      "native_word_layout": {
+        "native0": "bit0 in_gated, bits31:1=0",
+        "native1_7": "zero",
+        "native_op": "in_fn"
+      },
+      "static_rule": "count even2..2048; stride8B/packet; src0/dst S32 containers with signed16 content; optional src1 only when gated; each128-bit S word yields2 G packets",
+      "runtime_guards": "source object valid; source S32 high16 is sign extension of low16; output format/scale follows function; all packet outputs and S writes confirmed",
+      "context_effect": "no persistent cross-task G context; finite service holds resource until pipeline drained and writes confirmed",
+      "status": "proposed controller ABI bound to observed source; no adapter RTL implemented"
+    },
+    {
+      "name": "G_GELU_TANH",
+      "resource": 3,
+      "service": 3,
+      "native_op": 2,
+      "completion": 1,
+      "source_interface": "G",
+      "native_word_layout": {
+        "native0": "bit0 in_gated, bits31:1=0",
+        "native1_7": "zero",
+        "native_op": "in_fn"
+      },
+      "static_rule": "count even2..2048; stride8B/packet; src0/dst S32 containers with signed16 content; optional src1 only when gated; each128-bit S word yields2 G packets",
+      "runtime_guards": "source object valid; source S32 high16 is sign extension of low16; output format/scale follows function; all packet outputs and S writes confirmed",
+      "context_effect": "no persistent cross-task G context; finite service holds resource until pipeline drained and writes confirmed",
+      "status": "proposed controller ABI bound to observed source; no adapter RTL implemented"
+    },
+    {
+      "name": "G_SOFTPLUS",
+      "resource": 3,
+      "service": 3,
+      "native_op": 3,
+      "completion": 1,
+      "source_interface": "G",
+      "native_word_layout": {
+        "native0": "bit0 in_gated, bits31:1=0",
+        "native1_7": "zero",
+        "native_op": "in_fn"
+      },
+      "static_rule": "count even2..2048; stride8B/packet; src0/dst S32 containers with signed16 content; optional src1 only when gated; each128-bit S word yields2 G packets",
+      "runtime_guards": "source object valid; source S32 high16 is sign extension of low16; output format/scale follows function; all packet outputs and S writes confirmed",
+      "context_effect": "no persistent cross-task G context; finite service holds resource until pipeline drained and writes confirmed",
+      "status": "proposed controller ABI bound to observed source; no adapter RTL implemented"
+    },
+    {
+      "name": "S_M_FEED",
+      "resource": 5,
+      "service": 1,
+      "native_op": 0,
+      "completion": 0,
+      "source_interface": "localS+feeder",
+      "native_word_layout": {
+        "native0": "load_bank 0..1",
+        "native1": "load_rows 1..8",
+        "native2": "load_tiles 1..4",
+        "native3": "bit0 load_a_wide; bit1 load_b_wide; bit2 load_reuse_b; other bits0",
+        "native4_7": "zero",
+        "native_op": "ABI selector0; feeder has no opcode pin"
+      },
+      "static_rule": "count1 stride0; bank0..1 rows1..8 tiles1..4 flags0..7; RAW_BYTES src0/src1; effective base64B aligned; b source absent iff reuse",
+      "runtime_guards": "B reuse requires preloaded same bank/format/geometry; hold S source until feeder done; no concurrent invalidation",
+      "context_effect": "updates linked M operand-bank ownership; not M result/context completion",
+      "status": "proposed controller ABI bound to observed source; no adapter RTL implemented"
+    }
+  ],
+  "adapter_requirements": [
+    {
+      "name": "M_response_store",
+      "implemented": false,
+      "behavior": "capture one128-bit M response; store RAW_BYTES, or S32-container format for op5; write through client0 and consume real S write response before LOCAL_STORED"
+    },
+    {
+      "name": "G_S32_container_adapter",
+      "implemented": false,
+      "behavior": "read one128-bit S word through client1, check4 S32 containers fit signed16, send2 G input packets, sign-extend4 result values into one128-bit S write, wait real response; Q5.10 input/gate and fn1 ungated Q1.14 output are type constraints"
+    },
+    {
+      "name": "S_feeder_control",
+      "implemented": false,
+      "behavior": "derive load_a_base/load_b_base from registered object byte addresses divided16, snapshot inputs at accept, consume done/error"
+    }
+  ],
+  "unresolved": [
+    "no physical endpoint or route qualification",
+    "G conversion/holding adapter is a control interface requirement, not existing Block RTL",
+    "runtime context/validity/sequence and store-ACK execution model deferred to following steps",
+    "no bounded worst-case latency under unbounded backpressure",
+    "direct M-to-G numerical/width adapter and packed-S16 M readout are unregistered and rejected"
+  ]
+}

@@ -1,0 +1,464 @@
+{
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "main64-native-tasks/1"
+    },
+    "name": {
+      "$ref": "#/$defs/name"
+    },
+    "target": {
+      "enum": [
+        "main64/U/U",
+        "main64/F/F",
+        "main64/C/C",
+        "main64/P/P",
+        "main64/J/J",
+        "main64/U/P",
+        "main64/F/P",
+        "main64/C/P",
+        "main64/J/P"
+      ]
+    },
+    "epoch": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4294967295
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4294967295
+    },
+    "job": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4294967295
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4294967295
+    },
+    "image_ids": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 4294967295
+      },
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true
+    },
+    "tokens": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 7
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true
+    },
+    "call_order": {
+      "enum": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    },
+    "buffers": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/name"
+          },
+          "block": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "base_bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 16368,
+            "multipleOf": 16
+          },
+          "words": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1024
+          },
+          "space": {
+            "enum": [
+              "S",
+              "J_FRAGMENT0",
+              "J_FRAGMENT1",
+              "J_OUTPUT"
+            ]
+          },
+          "format": {
+            "const": "RAW128"
+          },
+          "initial": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "block",
+          "base_bytes",
+          "words",
+          "space",
+          "format",
+          "initial"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "properties": {
+          "block": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "operations": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 16,
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "const": "ucf"
+                    },
+                    "lane": {
+                      "enum": [
+                        "E",
+                        "N",
+                        "G",
+                        "R"
+                      ]
+                    },
+                    "meta": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 18446744073709551615
+                    },
+                    "src": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/name"
+                      },
+                      "maxItems": 3
+                    },
+                    "dst": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/name"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "lane",
+                    "meta",
+                    "src",
+                    "dst"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "const": "p_load"
+                    },
+                    "a": {
+                      "$ref": "#/$defs/name"
+                    },
+                    "b": {
+                      "$ref": "#/$defs/name"
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "a",
+                    "b"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "const": "p_config0"
+                    }
+                  },
+                  "required": [
+                    "op"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "const": "p_config1"
+                    }
+                  },
+                  "required": [
+                    "op"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "const": "release"
+                    }
+                  },
+                  "required": [
+                    "op"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "const": "p_store"
+                    },
+                    "dst": {
+                      "$ref": "#/$defs/name"
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "dst"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "const": "p_gate"
+                    },
+                    "a": {
+                      "$ref": "#/$defs/name"
+                    },
+                    "b": {
+                      "$ref": "#/$defs/name"
+                    },
+                    "dst": {
+                      "$ref": "#/$defs/name"
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "a",
+                    "b",
+                    "dst"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "const": "join"
+                    },
+                    "left": {
+                      "$ref": "#/$defs/name"
+                    },
+                    "right": {
+                      "$ref": "#/$defs/name"
+                    },
+                    "dst": {
+                      "$ref": "#/$defs/name"
+                    },
+                    "tag": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 16777215
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "left",
+                    "right",
+                    "dst",
+                    "tag"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "const": "u_direct"
+                    },
+                    "n_src": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "items": {
+                        "$ref": "#/$defs/name"
+                      }
+                    },
+                    "n_meta": {
+                      "const": 133
+                    },
+                    "e_src": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "items": {
+                        "$ref": "#/$defs/name"
+                      }
+                    },
+                    "e_meta": {
+                      "const": 3
+                    },
+                    "dst": {
+                      "$ref": "#/$defs/name"
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "n_src",
+                    "n_meta",
+                    "e_src",
+                    "e_meta",
+                    "dst"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "const": "p_route"
+                    }
+                  },
+                  "required": [
+                    "op"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "op": {
+                      "const": "p_gate_direct"
+                    },
+                    "a": {
+                      "$ref": "#/$defs/name"
+                    },
+                    "b": {
+                      "$ref": "#/$defs/name"
+                    },
+                    "dst": {
+                      "$ref": "#/$defs/name"
+                    }
+                  },
+                  "required": [
+                    "op",
+                    "a",
+                    "b",
+                    "dst"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "block",
+          "operations"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "transfers": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "$ref": "#/$defs/name"
+          },
+          "destination": {
+            "$ref": "#/$defs/name"
+          },
+          "words": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4
+          },
+          "format": {
+            "const": "RAW128"
+          }
+        },
+        "required": [
+          "source",
+          "destination",
+          "words",
+          "format"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema",
+    "name",
+    "target",
+    "epoch",
+    "generation",
+    "job",
+    "sequence",
+    "image_ids",
+    "tokens",
+    "call_order",
+    "buffers",
+    "tasks",
+    "transfers"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,47}$"
+    }
+  },
+  "description": "Shape contract only; per-type arity/context/word validity/cohort/route admission is mandatory in compiler and independent audit."
+}

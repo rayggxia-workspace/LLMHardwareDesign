@@ -1,0 +1,118 @@
+{
+  "schema": "real-provider-control-contract/0.1",
+  "issue": 179,
+  "pr": 180,
+  "parent": "ecd6f496f2ebb4c7f38354fd3594a5ae3903ae0f",
+  "pr176": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "sources": {
+    "project/rtl/block_local_s/block_local_s_arbiter.sv": {
+      "pr": 178,
+      "commit": "cdbb3d53830f0c9e3ac6d8a582226210494f9c76",
+      "sha256": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+      "git_blob": "2e6f0a49d3fe2681d9ef9a827c56f69d323a6bfc"
+    },
+    "project/rtl/block_local_s/block_local_s_macro.sv": {
+      "pr": 178,
+      "commit": "cdbb3d53830f0c9e3ac6d8a582226210494f9c76",
+      "sha256": "01873c1ad9f7d331409cc8a14a5691374674c23cfb85037ed3e468b400d6e2b0",
+      "git_blob": "360679393477ea6a9202517290c27073dbe676b0"
+    },
+    "project/rtl/block_feed_v1/block_feed_loader.sv": {
+      "pr": 178,
+      "commit": "cdbb3d53830f0c9e3ac6d8a582226210494f9c76",
+      "sha256": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+      "git_blob": "c805132671d96f3f0ad8cfbdcf0eccfdb846a061"
+    },
+    "project/rtl/block_feed_v1/block_feed_s16k.sv": {
+      "pr": 178,
+      "commit": "cdbb3d53830f0c9e3ac6d8a582226210494f9c76",
+      "sha256": "262b193ae007d9a26f310087a6e37e0921f9468cd9884530d8f527d7190f3603",
+      "git_blob": "c83a5a3f99cc0e3dd78a94561d0d1ff3938324e9"
+    },
+    "project/rtl/hbm_feed/hbm_async_fifo.sv": {
+      "pr": 182,
+      "commit": "24e20d13a71cf65f721a182451308f1ad01ebaec",
+      "sha256": "de399591634d712080420726eab743dc5ae16f720012961613fd134231eb2dc8",
+      "git_blob": "c1ffeee39d6d45a362d5f082fd55a26b9228f2d0"
+    },
+    "project/rtl/hbm_feed/hbm_group_dma.sv": {
+      "pr": 182,
+      "commit": "24e20d13a71cf65f721a182451308f1ad01ebaec",
+      "sha256": "f59829c3db0d5d82d9ec31d355848e6f493fd9c9c061cb428599add1cae36489",
+      "git_blob": "414f6d6f2ab454e7a8cc7e2bb218ccab82d1c664"
+    }
+  },
+  "profile": {
+    "S_bytes": 16384,
+    "word_bits": 128,
+    "address_bits": 10,
+    "object_bytes": 16,
+    "max_services_per_LC": 1,
+    "LCs": 2,
+    "local_slot": 0,
+    "version": 1
+  },
+  "clients": {
+    "P": {
+      "M": 0,
+      "G": 1,
+      "RX": 2,
+      "TX": 3
+    },
+    "N4": {
+      "compute0": 0,
+      "compute1": 1,
+      "RX": 2,
+      "TX": 3
+    },
+    "N5": {
+      "compute0": 0,
+      "compute1": 1,
+      "compute2": 2,
+      "RX": 3,
+      "TX": 4
+    }
+  },
+  "S": {
+    "request": "valid/ready snapshots write/address/data; NOT a store ACK",
+    "response": "owner-only valid/ready, actual RAM result; write result equals stored data",
+    "reset": "synchronous high clears owners/responses/feeder, payload retained; objects invalid until reload and new task"
+  },
+  "DMA": {
+    "address_bits": 40,
+    "words_bits": 11,
+    "tag_bits": 16,
+    "identity": [
+      "block8",
+      "job32",
+      "epoch32",
+      "task_sequence32",
+      "service_sequence32",
+      "token3",
+      "kind2"
+    ],
+    "mapping": "one saved full identity per S; monotonic16 tag, no wrap/reuse before cohort reset and old physical queues flushed",
+    "completion": "LOAD only after real S write response; STORE only after external write response; words/status checked",
+    "error": "2 invalid descriptor; 3 external error; sticky protocol_error requires cohort reset; committed writes not rolled back"
+  },
+  "reset": {
+    "members": [
+      "MC",
+      "LC0",
+      "LC1",
+      "adapters",
+      "S arbiters and feeders",
+      "DMA",
+      "request and response CDC FIFOs",
+      "external responder queues"
+    ],
+    "provider_ack": "trusted full flush/reset plus quiet; no timeout may manufacture ACK",
+    "readmission": "all members ACK, full write/readback/VERIFY/PREPARE, new generation and epoch; old response cannot enter new context"
+  },
+  "phases": [
+    "R4.1 pinned sources and port/identity/reset contract",
+    "R4.2 LC plus real private S adapter",
+    "R4.3 MC plus two LC/private S and real DMA",
+    "R4.4 coordinated reset and full reload/readmission"
+  ]
+}

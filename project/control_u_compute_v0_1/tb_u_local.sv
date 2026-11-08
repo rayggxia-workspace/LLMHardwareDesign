@@ -1,0 +1,242 @@
+`timescale 1ns/1ps
+module tb_u_local(
+`include "tb_network_lc_ports.svh"
+  ,input wire [31:0] cycle_i,stall_i,
+  output reg [31:0] image_id,
+  input wire host_valid,host_write,input wire [9:0] host_word,input wire [127:0] host_data,
+  output wire host_ready,host_ack,output wire [127:0] host_result
+`ifdef TB_EXT_HANDOFF
+  ,output wire link_valid_o,input wire link_ready_i,output wire [1:0] link_kind_o,
+  output wire [31:0] link_job_o,link_epoch_o,link_task_o,link_sequence_o,link_edge_o,
+  output wire [7:0] link_peer_o,output wire [127:0] link_data_o,
+  input wire done_valid_i,output wire done_ready_o
+`endif
+);
+  localparam [7:0] BLOCK=0;
+`include "tb_network_lc_wires.svh"
+
+  wire s_valid,s_ready,s_write,s_take;
+  wire [9:0] s_word;
+  wire [127:0] s_data;
+`ifdef TB_MULTI_HANDOFF
+  localparam integer S_CLIENTS=4;
+`else
+  localparam integer S_CLIENTS=2;
+`endif
+  wire [S_CLIENTS-1:0] s_req_ready,s_rsp_valid;
+  wire [128*S_CLIENTS-1:0] s_rsp_data;
+  wire n_valid,n_ready,n_take,n_out_valid,n_error,n_sat;
+  wire [3:0] n_op,n_count;
+  wire [31:0] n_param;
+  wire [127:0] n_data,n_aux,n_y;
+  wire e_valid,e_ready,e_take,e_out_valid,e_error,e_sat;
+  wire [127:0] e_a,e_b,e_y;
+  int n_req_age=0,n_rsp_age=0,e_req_age=0,e_rsp_age=0,write_age=0,ack_age=0;
+  wire n_req_gate=n_req_age>=int'(stall_i)*2;
+  wire n_rsp_gate=n_rsp_age>=int'(stall_i)*3;
+  wire e_req_gate=e_req_age>=int'(stall_i)*2;
+  wire e_rsp_gate=e_rsp_age>=int'(stall_i)*3;
+  wire s_req_gate=!s_write || write_age>=int'(stall_i)*4;
+  reg expect_write_ack=0;
+  reg [1:0] write_requests=0,write_acks=0,replays=0,e_commands=0;
+  wire s_rsp_gate=!expect_write_ack || ack_age>=int'(stall_i)*5;
+  wire early=$test$plusargs("UEARLY") && n_op==2;
+  wire overcount=$test$plusargs("UCOUNT") && n_op==5 && replays==1;
+  wire [3:0] macro_n_op=early ? 4'd5 : n_op;
+  wire [3:0] macro_n_count=early ? 4'd1 : overcount ? n_count+4'd1 : n_count;
+  wire [3:0] macro_e_op=$test$plusargs("UEFAULT") && e_commands==1 ? 4'd14 : 4'd0;
+  wire corrupt_ack=$test$plusargs("UACKFAULT") && expect_write_ack && write_requests==2;
+  wire [127:0] delivered_s_rsp=s_rsp_data[0+:128] ^ {127'b0,corrupt_ack};
+
+`ifdef TB_MULTI_HANDOFF
+  typedef struct packed {
+    logic [1:0] kind;
+    logic [2:0] token;
+    logic [31:0] seq,job,epoch,task_id;
+    logic [15:0] status;
+    logic [31:0] bytes_read,bytes_written;
+    logic saturated;
+  } service_response;
+  wire service_response compute_rsp, selected_rsp;
+  wire compute_req_ready,compute_rsp_valid;
+  assign compute_rsp.kind=0;
+  assign {svc_rsp_kind_i,svc_rsp_token_i,svc_rsp_sequence_i,svc_rsp_job_i,
+          svc_rsp_epoch_i,svc_rsp_task_sequence_i,svc_rsp_status_i,svc_rsp_read_bytes_i,
+          svc_rsp_write_bytes_i,svc_rsp_saturated_i}=selected_rsp;
+  wire s_write_valid=s_valid,write_gate=s_req_gate,compute_s_write=s_write;
+  wire s_ack_ready=s_take,ack_gate=s_rsp_gate;
+  wire [9:0] s_write_word=s_word;
+  wire [127:0] s_write_data=s_data;
+`include "tb_p_handoff_tx.svh"
+`else
+  assign host_ready=s_req_ready[1];
+  assign host_ack=s_rsp_valid[1];
+  assign host_result=s_rsp_data[128+:128];
+  assign svc_rsp_kind_i=0;
+  wire [1:0] request_valid={host_valid,s_valid && s_req_gate};
+  wire [1:0] request_write={host_write,s_write};
+  wire [19:0] request_address={host_word,s_word};
+  wire [255:0] request_data={host_data,s_data};
+  wire [1:0] response_ready={1'b1,s_take && s_rsp_gate};
+`endif
+  assign s_ready=s_req_ready[0] && s_req_gate;
+  assign close_req_ready_i=0;
+  assign close_rsp_valid_i=0;
+  assign close_rsp_sequence_i=0;
+  assign close_rsp_job_i=0;
+  assign close_rsp_epoch_i=0;
+  assign close_rsp_task_sequence_i=0;
+  assign close_rsp_token_i=0;
+  assign close_rsp_status_i=0;
+
+  network_pm pm(.clk_i(clk_i),.rst_ni(rst_ni),.cycle_i(cycle_i),.stall_i(stall_i),
+    .pm_req_valid_o(pm_req_valid_o),.pm_req_write_o(pm_req_write_o),.pm_req_address_o(pm_req_address_o),
+    .pm_req_data_o(pm_req_data_o),.pm_req_ready_i(pm_req_ready_i),.pm_rsp_valid_i(pm_rsp_valid_i),
+    .pm_rsp_data_i(pm_rsp_data_i),.pm_rsp_error_i(pm_rsp_error_i),.pm_rsp_ready_o(pm_rsp_ready_o),
+    .fault_active_i(1'b0),.fault_address_i(32'b0),.fault_xor_i(128'b0));
+
+  lc_u_rms_adapter adapter(
+`ifdef TB_MULTI_HANDOFF
+    .clk(clk_i),.rst_n(rst_ni),.svc_valid(svc_req_valid_o && svc_req_kind_o==0),.svc_ready(compute_req_ready),
+    .svc_resource(svc_req_resource_o),.svc_token(svc_req_token_o),.svc_sequence(svc_req_sequence_o),
+    .svc_job(svc_req_job_o),.svc_epoch(svc_req_epoch_o),.svc_task_sequence(svc_req_task_sequence_o),
+    .svc_desc(svc_req_descriptor_o),.rsp_valid(compute_rsp_valid),.rsp_ready(svc_rsp_ready_o && compute_rsp_valid),
+    .rsp_token(compute_rsp.token),.rsp_sequence(compute_rsp.seq),.rsp_job(compute_rsp.job),
+    .rsp_epoch(compute_rsp.epoch),.rsp_task_sequence(compute_rsp.task_id),.rsp_status(compute_rsp.status),
+    .rsp_read_bytes(compute_rsp.bytes_read),.rsp_write_bytes(compute_rsp.bytes_written),.rsp_saturated(compute_rsp.saturated),
+`else
+    .clk(clk_i),.rst_n(rst_ni),.svc_valid(svc_req_valid_o && svc_req_kind_o==0),.svc_ready(svc_req_ready_i),
+    .svc_resource(svc_req_resource_o),.svc_token(svc_req_token_o),.svc_sequence(svc_req_sequence_o),
+    .svc_job(svc_req_job_o),.svc_epoch(svc_req_epoch_o),.svc_task_sequence(svc_req_task_sequence_o),
+    .svc_desc(svc_req_descriptor_o),.rsp_valid(svc_rsp_valid_i),.rsp_ready(svc_rsp_ready_o),
+    .rsp_token(svc_rsp_token_i),.rsp_sequence(svc_rsp_sequence_i),.rsp_job(svc_rsp_job_i),
+    .rsp_epoch(svc_rsp_epoch_i),.rsp_task_sequence(svc_rsp_task_sequence_i),.rsp_status(svc_rsp_status_i),
+    .rsp_read_bytes(svc_rsp_read_bytes_i),.rsp_write_bytes(svc_rsp_write_bytes_i),.rsp_saturated(svc_rsp_saturated_i),
+`endif
+    .s_valid(s_valid),.s_ready(s_ready),.s_write(s_write),.s_word(s_word),.s_data(s_data),
+    .s_rsp_valid(s_rsp_valid[0] && s_rsp_gate),.s_rsp_ready(s_take),.s_rsp_data(delivered_s_rsp),
+    .n_valid(n_valid),.n_ready(n_ready && n_req_gate),.n_op(n_op),.n_count(n_count),
+    .n_param(n_param),.n_data(n_data),.n_aux(n_aux),.n_rsp_valid(n_out_valid && n_rsp_gate),
+    .n_rsp_ready(n_take),.n_result(n_y),.n_error(n_error),.n_saturated(n_sat),
+    .e_valid(e_valid),.e_ready(e_ready && e_req_gate),.e_a(e_a),.e_b(e_b),
+    .e_rsp_valid(e_out_valid && e_rsp_gate),.e_rsp_ready(e_take),.e_result(e_y),.e_error(e_error),.e_saturated(e_sat));
+
+  block_local_s_macro #(.CLIENTS(S_CLIENTS)) private_s(
+    .clk(clk_i),.reset(!rst_ni),.req_valid(request_valid),
+    .req_write(request_write),.req_addr(request_address),.req_data(request_data),
+    .req_ready(s_req_ready),.rsp_valid(s_rsp_valid),.rsp_ready(response_ready),.rsp_data(s_rsp_data),
+    .load_valid(1'b0),.load_ready(),.load_bank(1'b0),.load_rows(4'b0),.load_tiles(3'b0),
+    .load_a_wide(1'b0),.load_b_wide(1'b0),.load_reuse_b(1'b0),.load_a_base(10'b0),.load_b_base(10'b0),
+    .done_valid(),.done_take(1'b0),.done_error(),.busy(),
+    .a_valid(),.a_ready(1'b0),.a_bank(),.a_row(),.a_tile(),.a_wide(),.a_data(),
+    .b_valid(),.b_ready(1'b0),.b_bank(),.b_tile(),.b_wide(),.b_half(),.b_data());
+  block_v2_n macro_n(.clk(clk_i),.reset(!rst_ni),
+    .cmd_valid(n_valid && n_req_gate),.cmd_ready(n_ready),.cmd_op(macro_n_op),.cmd_count(macro_n_count),
+    .cmd_param(n_param),.cmd_data(n_data),.cmd_aux(n_aux),
+    .rsp_valid(n_out_valid),.rsp_ready(n_take && n_rsp_gate),.rsp_data(n_y),.rsp_error(n_error),
+    .rsp_saturated(n_sat),.busy());
+  block_v2_e macro_e(.clk(clk_i),.reset(!rst_ni),
+    .in_valid(e_valid && e_req_gate),.in_ready(e_ready),.in_op(macro_e_op),.in_shift(5'b0),
+    .in_a(e_a),.in_b(e_b),.in_c(128'b0),.out_valid(e_out_valid),.out_ready(e_take && e_rsp_gate),
+    .out_data(e_y),.out_error(e_error),.out_saturated(e_sat));
+
+  always @(posedge clk_i) if(rst_ni) begin
+    if(trace_retire_o) $display("U73 %0d RETIRE %02h",cycle_i,trace_opcode_o);
+    if(svc_req_valid_o && svc_req_ready_i && svc_req_kind_o==0) begin
+      write_requests<=0; write_acks<=0; replays<=0; e_commands<=0;
+      $display("U73 %0d EXEC %0d %0d %0d %0d %0d %0d",cycle_i,svc_req_job_o,
+        svc_req_epoch_o,svc_req_task_sequence_o,svc_req_sequence_o,svc_req_token_o,svc_req_resource_o);
+    end
+    if(n_valid && !n_req_gate) begin
+      n_req_age<=n_req_age+1;
+      $display("U73 %0d NIN_H %0d %0d %0d %032h %032h",cycle_i,macro_n_op,macro_n_count,n_param,n_data,n_aux);
+    end
+    if(n_valid && n_ready && n_req_gate) begin
+      n_req_age<=0;
+      if(n_op==5) replays<=replays+1'b1;
+      $display("U73 %0d NIN %0d %0d %0d %032h %032h",cycle_i,macro_n_op,macro_n_count,n_param,n_data,n_aux);
+    end
+    if(n_out_valid && !n_rsp_gate) begin
+      n_rsp_age<=n_rsp_age+1; $display("U73 %0d NOUT_H %0d %0d %032h",cycle_i,n_error,n_sat,n_y);
+    end
+    if(n_out_valid && n_take && n_rsp_gate) begin
+      n_rsp_age<=0; $display("U73 %0d NOUT %0d %0d %032h",cycle_i,n_error,n_sat,n_y);
+    end
+    if(e_valid && !e_req_gate) begin
+      e_req_age<=e_req_age+1; $display("U73 %0d EIN_H %0d %032h %032h",cycle_i,macro_e_op,e_a,e_b);
+    end
+    if(e_valid && e_ready && e_req_gate) begin
+      e_req_age<=0; e_commands<=e_commands+1'b1;
+      $display("U73 %0d EIN %0d %032h %032h",cycle_i,macro_e_op,e_a,e_b);
+    end
+    if(e_out_valid && !e_rsp_gate) begin
+      e_rsp_age<=e_rsp_age+1; $display("U73 %0d EOUT_H %0d %0d %032h",cycle_i,e_error,e_sat,e_y);
+    end
+    if(e_out_valid && e_take && e_rsp_gate) begin
+      e_rsp_age<=0; $display("U73 %0d EOUT %0d %0d %032h",cycle_i,e_error,e_sat,e_y);
+    end
+    if(s_valid && s_write && !s_req_gate) begin
+      write_age<=write_age+1; $display("U73 %0d WRITE_H %0d %032h",cycle_i,s_word,s_data);
+    end
+    if(s_valid && s_ready) begin
+      if(s_write) begin
+        write_age<=0; expect_write_ack<=1; write_requests<=write_requests+1'b1;
+        $display("U73 %0d WRITE %0d %032h",cycle_i,s_word,s_data);
+      end else $display("U73 %0d READ %0d",cycle_i,s_word);
+    end
+    if(s_rsp_valid[0] && !s_rsp_gate) begin
+      ack_age<=ack_age+1; $display("U73 %0d ACK_H %032h %032h",cycle_i,s_rsp_data[0+:128],delivered_s_rsp);
+    end
+    if(s_rsp_valid[0] && s_take && s_rsp_gate) begin
+      if(expect_write_ack) begin
+        ack_age<=0; expect_write_ack<=0; write_acks<=write_acks+1'b1;
+        $display("U73 %0d ACK %032h %032h",cycle_i,s_rsp_data[0+:128],delivered_s_rsp);
+      end else $display("U73 %0d READ_RSP %032h",cycle_i,s_rsp_data[0+:128]);
+    end
+    if(svc_rsp_valid_i && svc_rsp_status_i==0 && write_acks!=2)
+      $fatal(1,"successful U completion before both real S write responses");
+    if(svc_rsp_valid_i && svc_rsp_ready_o)
+      $display("U73 %0d SERVICE %0d %0d %0d %0d %0d %0d %0d %0d %0d",cycle_i,svc_rsp_job_i,
+        svc_rsp_epoch_i,svc_rsp_task_sequence_i,svc_rsp_sequence_i,svc_rsp_token_i,svc_rsp_status_i,
+        svc_rsp_read_bytes_i,svc_rsp_write_bytes_i,svc_rsp_saturated_i);
+  end
+
+  reg [127:0] image[0:519];
+  string path;
+  integer words,n;
+  task automatic cfg(input [2:0] op,input integer address,input [127:0] data,
+                     input [31:0] abi,input [15:0] status);
+    @(negedge clk_i);
+    cfg_req_valid_i=1; cfg_req_op_i=op; cfg_req_generation_i=1; cfg_req_address_i=14'(address);
+    cfg_req_data_i=data; cfg_req_proof_i=1; cfg_req_total_bytes_i=16'(words*16);
+    cfg_req_image_id_i=image_id; cfg_req_topology_id_i=image[4][0+:32];
+    cfg_req_abi_id_i=abi; cfg_req_capacity_id_i=image[5][32+:32];
+    @(posedge clk_i); while(!cfg_req_ready_o) @(posedge clk_i);
+    @(negedge clk_i); cfg_req_valid_i=0;
+    while(!cfg_rsp_valid_o) @(negedge clk_i);
+    if(cfg_rsp_status_o!=status || (op==2 && cfg_rsp_data_o!==image[address>>4]))
+      $fatal(1,"U config/readback op=%0d expected=%0d actual=%0d",op,status,cfg_rsp_status_o);
+    cfg_rsp_ready_i=1; @(negedge clk_i); cfg_rsp_ready_i=0;
+  endtask
+  initial begin
+    release_valid_i=0; release_sequence_i=0;
+    cfg_req_valid_i=0; cfg_req_op_i=0; cfg_req_generation_i=0; cfg_req_address_i=0; cfg_req_data_i=0;
+    cfg_req_total_bytes_i=0; cfg_req_image_id_i=0; cfg_req_topology_id_i=0; cfg_req_abi_id_i=0;
+    cfg_req_capacity_id_i=0; cfg_req_proof_i=0; cfg_rsp_ready_i=0;
+    if(!$value$plusargs("LOCAL=%s",path) || !$value$plusargs("LWORDS=%d",words)) $fatal(1,"U local image");
+    $readmemh(path,image,0,words-1);
+    image_id=image[3][96+:32];
+    wait(rst_ni); @(negedge clk_i); release_valid_i=1; release_sequence_i=1;
+    @(negedge clk_i); release_valid_i=0;
+    if($test$plusargs("UBADCFG")) begin
+      cfg(0,0,0,32'h00017903,3);
+      if(life_o!=1 || image_valid_o) $fatal(1,"wrong U ABI granted");
+      $display("U73 %0d BAD_ABI_REJECTED",cycle_i);
+    end
+    cfg(0,0,0,image[4][32+:32],0);
+    for(n=0;n<words;n=n+1) cfg(1,n*16,image[n],image[4][32+:32],0);
+    for(n=0;n<words;n=n+1) cfg(2,n*16,0,image[4][32+:32],0);
+    cfg(3,0,0,image[4][32+:32],0); cfg(4,0,0,image[4][32+:32],0);
+    $display("U73 %0d CONFIG_READBACK %0d",cycle_i,words);
+  end
+endmodule

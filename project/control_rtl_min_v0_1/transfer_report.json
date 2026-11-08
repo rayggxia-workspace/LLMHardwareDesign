@@ -1,0 +1,3078 @@
+{
+  "schema": "local-RAW16-transfer-rtl-runs/0.1",
+  "evidence": "actual_SV_LC_with_bounded_16KiB_SRAM_and_link_peers",
+  "results": [
+    {
+      "case": {
+        "name": "producer",
+        "image": "producer",
+        "block": 0,
+        "commands": 2,
+        "reports": 0,
+        "read_bytes": 16,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1280,
+        "calls": 1,
+        "services": 2,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 1,
+        "ACK_accepts": 2,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1280,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 1041,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 1092,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 1147,
+            "pc": 2,
+            "opcode": 68
+          },
+          {
+            "cycle": 1197,
+            "pc": 3,
+            "opcode": 67
+          },
+          {
+            "cycle": 1251,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 1261,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 1276,
+            "pc": 6,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 1092,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000bff0000ff000000100000001000000000ffff000004000001"
+          },
+          {
+            "cycle": 1197,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 1,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000001000000100000001000000000ffff000004010001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1276,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 1,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 16,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 5,
+      "input_image_sha256": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+      "input_task_sha256": "5edba0ab99d4007543afccd1756a743f346eb494d179c36bc3492609f304e48d",
+      "log_sha256": "bfe2266c17bc8d92e07176d6a5c21ffb291604681c09240b1e799b2ac28c2627",
+      "command": [
+        "/work/results/transfer/obj_0/sim",
+        "+IMAGE=/work/results/transfer/producer.mem",
+        "+TASK=/work/results/transfer/producer.task",
+        "+WORDS=31",
+        "+STALL=2",
+        "+COMMANDS=2",
+        "+REPORTS=0",
+        "+READ_BYTES=16",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "producer_fast",
+        "image": "producer",
+        "block": 0,
+        "commands": 2,
+        "reports": 0,
+        "read_bytes": 16,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295,
+        "stall": 0
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 625,
+        "calls": 1,
+        "services": 2,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 1,
+        "ACK_accepts": 2,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 625,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 487,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 510,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 548,
+            "pc": 2,
+            "opcode": 68
+          },
+          {
+            "cycle": 571,
+            "pc": 3,
+            "opcode": 67
+          },
+          {
+            "cycle": 610,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 615,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 621,
+            "pc": 6,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 510,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000bff0000ff000000100000001000000000ffff000004000001"
+          },
+          {
+            "cycle": 571,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 1,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000001000000100000001000000000ffff000004010001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 621,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 1,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 16,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 5,
+      "input_image_sha256": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+      "input_task_sha256": "5edba0ab99d4007543afccd1756a743f346eb494d179c36bc3492609f304e48d",
+      "log_sha256": "db5261d7be45cf1fb0dfbd68affcd067164d728d3dbc6e581eb15fa5e66bf9e8",
+      "command": [
+        "/work/results/transfer/obj_0/sim",
+        "+IMAGE=/work/results/transfer/producer_fast.mem",
+        "+TASK=/work/results/transfer/producer_fast.task",
+        "+WORDS=31",
+        "+STALL=0",
+        "+COMMANDS=2",
+        "+REPORTS=0",
+        "+READ_BYTES=16",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "producer_reuse",
+        "image": "producer",
+        "block": 0,
+        "commands": 4,
+        "reports": 0,
+        "read_bytes": 16,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295,
+        "calls": 2
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1610,
+        "calls": 2,
+        "services": 4,
+        "READY_reports": 0,
+        "terminals": 2,
+        "local_stores": 2,
+        "local_reads": 2,
+        "ACK_accepts": 4,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1610,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 1041,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 1092,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 1147,
+            "pc": 2,
+            "opcode": 68
+          },
+          {
+            "cycle": 1197,
+            "pc": 3,
+            "opcode": 67
+          },
+          {
+            "cycle": 1251,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 1261,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 1276,
+            "pc": 6,
+            "opcode": 79
+          },
+          {
+            "cycle": 1371,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 1428,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 1472,
+            "pc": 2,
+            "opcode": 68
+          },
+          {
+            "cycle": 1526,
+            "pc": 3,
+            "opcode": 67
+          },
+          {
+            "cycle": 1576,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 1586,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 1606,
+            "pc": 6,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 1092,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000bff0000ff000000100000001000000000ffff000004000001"
+          },
+          {
+            "cycle": 1197,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 1,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000001000000100000001000000000ffff000004010001"
+          },
+          {
+            "cycle": 1428,
+            "job": 7,
+            "task_sequence": 2,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000bff0000ff000000100000001000000000ffff000004000001"
+          },
+          {
+            "cycle": 1526,
+            "job": 7,
+            "task_sequence": 2,
+            "token": 0,
+            "sequence": 1,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000001000000100000001000000000ffff000004010001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1276,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 1,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 16,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1606,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 2,
+              "completion_token": 1,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 16,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 10,
+      "input_image_sha256": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+      "input_task_sha256": "5edba0ab99d4007543afccd1756a743f346eb494d179c36bc3492609f304e48d",
+      "log_sha256": "8a4b6686367bfbd6e8b3388373f0fd142ffc1cf4f689fdd0e989f7282ff8dd14",
+      "command": [
+        "/work/results/transfer/obj_0/sim",
+        "+IMAGE=/work/results/transfer/producer_reuse.mem",
+        "+TASK=/work/results/transfer/producer_reuse.task",
+        "+WORDS=31",
+        "+STALL=2",
+        "+CALLS=2",
+        "+COMMANDS=4",
+        "+REPORTS=0",
+        "+READ_BYTES=16",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "consumer",
+        "image": "consumer",
+        "block": 1,
+        "commands": 1,
+        "reports": 1,
+        "read_bytes": 0,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1049,
+        "calls": 1,
+        "services": 1,
+        "READY_reports": 1,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 0,
+        "ACK_accepts": 1,
+        "poisoned": false,
+        "register_value_observed": true,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1049,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 973,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 981,
+            "pc": 2,
+            "opcode": 69
+          },
+          {
+            "cycle": 1001,
+            "pc": 3,
+            "opcode": 74
+          },
+          {
+            "cycle": 1017,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 1026,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 1045,
+            "pc": 6,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 973,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000000000000100000001000000000ffff000004000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1001,
+            "packet": {
+              "version": 1,
+              "kind": 0,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 255,
+              "event_id": 0,
+              "status": 0,
+              "scalar": 1,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 1,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1045,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 2,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "52d5541f071076545f78f36450322447e51f0dc6be5f8d93e5f7cd0efc628ebe",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/consumer.mem",
+        "+TASK=/work/results/transfer/consumer.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=1",
+        "+REPORTS=1",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "consumer_fast",
+        "image": "consumer",
+        "block": 1,
+        "commands": 1,
+        "reports": 1,
+        "read_bytes": 0,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295,
+        "stall": 0
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 507,
+        "calls": 1,
+        "services": 1,
+        "READY_reports": 1,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 0,
+        "ACK_accepts": 1,
+        "poisoned": false,
+        "register_value_observed": true,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 507,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 431,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 454,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 459,
+            "pc": 2,
+            "opcode": 69
+          },
+          {
+            "cycle": 465,
+            "pc": 3,
+            "opcode": 74
+          },
+          {
+            "cycle": 492,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 497,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 503,
+            "pc": 6,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 454,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000000000000100000001000000000ffff000004000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 465,
+            "packet": {
+              "version": 1,
+              "kind": 0,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 255,
+              "event_id": 0,
+              "status": 0,
+              "scalar": 1,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 1,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 503,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 2,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "d8fdfc211a3c90c1c83c045c610a640ee8a7a92b9e9cb2cf3927401d2a2a6260",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/consumer_fast.mem",
+        "+TASK=/work/results/transfer/consumer_fast.task",
+        "+WORDS=27",
+        "+STALL=0",
+        "+COMMANDS=1",
+        "+REPORTS=1",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "consumer_reuse",
+        "image": "consumer",
+        "block": 1,
+        "commands": 2,
+        "reports": 2,
+        "read_bytes": 0,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295,
+        "calls": 2
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1269,
+        "calls": 2,
+        "services": 2,
+        "READY_reports": 2,
+        "terminals": 2,
+        "local_stores": 2,
+        "local_reads": 0,
+        "ACK_accepts": 2,
+        "poisoned": false,
+        "register_value_observed": true,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1269,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 973,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 981,
+            "pc": 2,
+            "opcode": 69
+          },
+          {
+            "cycle": 1001,
+            "pc": 3,
+            "opcode": 74
+          },
+          {
+            "cycle": 1017,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 1026,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 1045,
+            "pc": 6,
+            "opcode": 79
+          },
+          {
+            "cycle": 1136,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 1190,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 1201,
+            "pc": 2,
+            "opcode": 69
+          },
+          {
+            "cycle": 1221,
+            "pc": 3,
+            "opcode": 74
+          },
+          {
+            "cycle": 1238,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 1246,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 1265,
+            "pc": 6,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 973,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000000000000100000001000000000ffff000004000001"
+          },
+          {
+            "cycle": 1190,
+            "job": 7,
+            "task_sequence": 2,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000000000000100000001000000000ffff000004000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1001,
+            "packet": {
+              "version": 1,
+              "kind": 0,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 255,
+              "event_id": 0,
+              "status": 0,
+              "scalar": 1,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 1,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1045,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1221,
+            "packet": {
+              "version": 1,
+              "kind": 0,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 2,
+              "completion_token": 255,
+              "event_id": 0,
+              "status": 0,
+              "scalar": 1,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 1,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1265,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 2,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 4,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "f03b1891ba794cb58701e3d14382eba6ce9e7ecbeefe92ad28d9de34d5e90166",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/consumer_reuse.mem",
+        "+TASK=/work/results/transfer/consumer_reuse.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+CALLS=2",
+        "+COMMANDS=2",
+        "+REPORTS=2",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "scalar_full",
+        "image": "scalar_full",
+        "block": 1,
+        "commands": 1,
+        "reports": 1,
+        "read_bytes": 0,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295,
+        "scalar": 4275878552
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1049,
+        "calls": 1,
+        "services": 1,
+        "READY_reports": 1,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 0,
+        "ACK_accepts": 1,
+        "poisoned": false,
+        "register_value_observed": true,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1049,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 973,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 981,
+            "pc": 2,
+            "opcode": 69
+          },
+          {
+            "cycle": 1001,
+            "pc": 3,
+            "opcode": 74
+          },
+          {
+            "cycle": 1017,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 1026,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 1045,
+            "pc": 6,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 973,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000000000000100000001000000000ffff000004000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1001,
+            "packet": {
+              "version": 1,
+              "kind": 0,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 255,
+              "event_id": 0,
+              "status": 0,
+              "scalar": 4275878552,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 1,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1045,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 2,
+      "input_image_sha256": "6a88afd966683b73f2d71c36ce5b5853b4630229ecaf261492c4aa67ffea6733",
+      "input_task_sha256": "a5ff90b77dcf5b9c16bc1264d0d3382291b42a86e117956b0b282c3f0594f900",
+      "log_sha256": "e8970b606c2d9ac5db9d33251795bcd1a351ddcb028983cbd536c66bbff95fda",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/scalar_full.mem",
+        "+TASK=/work/results/transfer/scalar_full.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=1",
+        "+REPORTS=1",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+SCALAR=4275878552",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "scalar_R7",
+        "image": "scalar_R7",
+        "block": 1,
+        "commands": 1,
+        "reports": 1,
+        "read_bytes": 0,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295,
+        "scalar": 305419896
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1049,
+        "calls": 1,
+        "services": 1,
+        "READY_reports": 1,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 0,
+        "ACK_accepts": 1,
+        "poisoned": false,
+        "register_value_observed": true,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1049,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 973,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 981,
+            "pc": 2,
+            "opcode": 69
+          },
+          {
+            "cycle": 1001,
+            "pc": 3,
+            "opcode": 74
+          },
+          {
+            "cycle": 1017,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 1026,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 1045,
+            "pc": 6,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 973,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000000000000100000001000000000ffff000004000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1001,
+            "packet": {
+              "version": 1,
+              "kind": 0,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 255,
+              "event_id": 0,
+              "status": 0,
+              "scalar": 305419896,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 1,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1045,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 2,
+      "input_image_sha256": "c31dba9725f07ff8b53400f5070169e40e4a4264a60727e974a938028d93c5f7",
+      "input_task_sha256": "2ca7c41d2ec276c60b74c3120c81964f65dcfaa3747f5e943929ba4fb60b5ddb",
+      "log_sha256": "eaf363ba45788225053a2ec6898512801f1f00c5899f19133c2dbcf5e6089217",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/scalar_R7.mem",
+        "+TASK=/work/results/transfer/scalar_R7.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=1",
+        "+REPORTS=1",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+SCALAR=305419896",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "initial_R0",
+        "image": "initial_R0",
+        "block": 1,
+        "commands": 1,
+        "reports": 1,
+        "read_bytes": 0,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295,
+        "scalar": 0
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1049,
+        "calls": 1,
+        "services": 1,
+        "READY_reports": 1,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 0,
+        "ACK_accepts": 1,
+        "poisoned": false,
+        "register_value_observed": true,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1049,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 973,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 981,
+            "pc": 2,
+            "opcode": 69
+          },
+          {
+            "cycle": 1001,
+            "pc": 3,
+            "opcode": 74
+          },
+          {
+            "cycle": 1017,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 1026,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 1045,
+            "pc": 6,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 973,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000000000000100000001000000000ffff000004000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1001,
+            "packet": {
+              "version": 1,
+              "kind": 0,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 255,
+              "event_id": 0,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 1,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1045,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 2,
+      "input_image_sha256": "9a485a150b43bdf1710e579c386a7df19839f735ef275fad20a17640166a2489",
+      "input_task_sha256": "c450fca1eeb296203b8428682d63b46b4aca69fc31b344feece84f4dc064d8e6",
+      "log_sha256": "29eea453de70ccabce8aba6c119934cfb4d07279f0bba1bdadd3ff3049207fac",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/initial_R0.mem",
+        "+TASK=/work/results/transfer/initial_R0.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=1",
+        "+REPORTS=1",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+SCALAR=0",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "last_SRAM_word",
+        "image": "consumer_last_word",
+        "block": 1,
+        "commands": 1,
+        "reports": 1,
+        "read_bytes": 0,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1049,
+        "calls": 1,
+        "services": 1,
+        "READY_reports": 1,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 0,
+        "ACK_accepts": 1,
+        "poisoned": false,
+        "register_value_observed": true,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1049,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 973,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 981,
+            "pc": 2,
+            "opcode": 69
+          },
+          {
+            "cycle": 1001,
+            "pc": 3,
+            "opcode": 74
+          },
+          {
+            "cycle": 1017,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 1026,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 1045,
+            "pc": 6,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 973,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000000000000100000001000000000ffff000004000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1001,
+            "packet": {
+              "version": 1,
+              "kind": 0,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 255,
+              "event_id": 0,
+              "status": 0,
+              "scalar": 1,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 1,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1045,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 2,
+      "input_image_sha256": "a6a1c4860af78144e09ac23072550832228e29e833374617122d74c0be9543ed",
+      "input_task_sha256": "046913726356be8fe19a56efccf8fb3cbd05119858c16a64abfe188d61d6f2f6",
+      "log_sha256": "a4b5c622a03a64a7ffe05a56bfbeccad264146dcd2dd9f808106b24edcd41412",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/last_SRAM_word.mem",
+        "+TASK=/work/results/transfer/last_SRAM_word.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=1",
+        "+REPORTS=1",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "producer_last_word",
+        "image": "producer_last_word",
+        "block": 0,
+        "commands": 2,
+        "reports": 0,
+        "read_bytes": 16,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1280,
+        "calls": 1,
+        "services": 2,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 1,
+        "ACK_accepts": 2,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1280,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 1041,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 1092,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 1147,
+            "pc": 2,
+            "opcode": 68
+          },
+          {
+            "cycle": 1197,
+            "pc": 3,
+            "opcode": 67
+          },
+          {
+            "cycle": 1251,
+            "pc": 4,
+            "opcode": 68
+          },
+          {
+            "cycle": 1261,
+            "pc": 5,
+            "opcode": 73
+          },
+          {
+            "cycle": 1276,
+            "pc": 6,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 1092,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000bff0000ff000000100000001000000000ffff000004000001"
+          },
+          {
+            "cycle": 1197,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 1,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000001000000100000001000000000ffff000004010001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1276,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 1,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 16,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 5,
+      "input_image_sha256": "38eec84b70c7a6ab882a00fd632d58c078d0e58349431c09240af74c6d019f09",
+      "input_task_sha256": "8304ce2cb349c2a5839116a4fed43fb4764fd22da7d931e87d5c258a358b01e1",
+      "log_sha256": "ec221bc89fdb85529cf7ab06a40059015f48a3dc4685b25ab6769c9809efdccb",
+      "command": [
+        "/work/results/transfer/obj_0/sim",
+        "+IMAGE=/work/results/transfer/producer_last_word.mem",
+        "+TASK=/work/results/transfer/producer_last_word.task",
+        "+WORDS=31",
+        "+STALL=2",
+        "+COMMANDS=2",
+        "+REPORTS=0",
+        "+READ_BYTES=16",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "wrong_RX_response",
+        "image": "consumer",
+        "block": 1,
+        "commands": 1,
+        "reports": 1,
+        "read_bytes": 0,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295,
+        "mode": 1,
+        "poison": 1
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1149,
+        "calls": 1,
+        "services": 1,
+        "READY_reports": 1,
+        "terminals": 0,
+        "local_stores": 1,
+        "local_reads": 0,
+        "ACK_accepts": 1,
+        "poisoned": true,
+        "register_value_observed": true,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1149,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 973,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 981,
+            "pc": 2,
+            "opcode": 69
+          },
+          {
+            "cycle": 1001,
+            "pc": 3,
+            "opcode": 74
+          }
+        ],
+        "services": [
+          {
+            "cycle": 973,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000000000000100000001000000000ffff000004000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1001,
+            "packet": {
+              "version": 1,
+              "kind": 0,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 255,
+              "event_id": 0,
+              "status": 0,
+              "scalar": 1,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 1,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 2,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "c79694a934f213d2c62653810caf302a1315347d21a9153547b5c4da4aed64ea",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/wrong_RX_response.mem",
+        "+TASK=/work/results/transfer/wrong_RX_response.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+MODE=1",
+        "+COMMANDS=1",
+        "+REPORTS=1",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+POISON=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "missing_TX_ACK",
+        "image": "producer",
+        "block": 0,
+        "commands": 2,
+        "reports": 0,
+        "read_bytes": 0,
+        "write_bytes": 16,
+        "expected": 0,
+        "error_pc": 4294967295,
+        "mode": 2,
+        "poison": 1
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1344,
+        "calls": 1,
+        "services": 2,
+        "READY_reports": 0,
+        "terminals": 0,
+        "local_stores": 1,
+        "local_reads": 1,
+        "ACK_accepts": 1,
+        "poisoned": true,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1344,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 1041,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 1092,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 1147,
+            "pc": 2,
+            "opcode": 68
+          },
+          {
+            "cycle": 1197,
+            "pc": 3,
+            "opcode": 67
+          }
+        ],
+        "services": [
+          {
+            "cycle": 1092,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000bff0000ff000000100000001000000000ffff000004000001"
+          },
+          {
+            "cycle": 1197,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 1,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000001000000100000001000000000ffff000004010001"
+          }
+        ],
+        "returns": []
+      },
+      "data_events": 4,
+      "input_image_sha256": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+      "input_task_sha256": "5edba0ab99d4007543afccd1756a743f346eb494d179c36bc3492609f304e48d",
+      "log_sha256": "73b8839f3ccf7dc68c152335425b20a192fd97674c5d2e338fa0129f6a54424b",
+      "command": [
+        "/work/results/transfer/obj_0/sim",
+        "+IMAGE=/work/results/transfer/missing_TX_ACK.mem",
+        "+TASK=/work/results/transfer/missing_TX_ACK.task",
+        "+WORDS=31",
+        "+STALL=2",
+        "+MODE=2",
+        "+COMMANDS=2",
+        "+REPORTS=0",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+POISON=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "RX_write_error",
+        "image": "consumer",
+        "block": 1,
+        "commands": 1,
+        "reports": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "expected": 9,
+        "error_pc": 1,
+        "mode": 3
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1005,
+        "calls": 1,
+        "services": 1,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 0,
+        "local_reads": 0,
+        "ACK_accepts": 0,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1005,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 973,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 981,
+            "pc": 2,
+            "opcode": 69
+          }
+        ],
+        "services": [
+          {
+            "cycle": 973,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000000000000100000001000000000ffff000004000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1001,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 9,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 0,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "7c44a72a51061caf12472eac19962492d16e7ebd4b57973117a3587b0fec0a7b",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/RX_write_error.mem",
+        "+TASK=/work/results/transfer/RX_write_error.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+MODE=3",
+        "+COMMANDS=1",
+        "+REPORTS=0",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=0",
+        "+EXPECTED=9",
+        "+ERROR_PC=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "TX_error_after_ACK",
+        "image": "producer",
+        "block": 0,
+        "commands": 2,
+        "reports": 0,
+        "read_bytes": 16,
+        "write_bytes": 16,
+        "expected": 9,
+        "error_pc": 3,
+        "mode": 5
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1258,
+        "calls": 1,
+        "services": 2,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 1,
+        "ACK_accepts": 2,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1258,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 1041,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 1092,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 1147,
+            "pc": 2,
+            "opcode": 68
+          },
+          {
+            "cycle": 1197,
+            "pc": 3,
+            "opcode": 67
+          },
+          {
+            "cycle": 1251,
+            "pc": 4,
+            "opcode": 68
+          }
+        ],
+        "services": [
+          {
+            "cycle": 1092,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000bff0000ff000000100000001000000000ffff000004000001"
+          },
+          {
+            "cycle": 1197,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 1,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000001000000100000001000000000ffff000004010001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1254,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 1,
+              "event_id": 255,
+              "status": 9,
+              "scalar": 0,
+              "confirmed_read_bytes": 16,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 3,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 5,
+      "input_image_sha256": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+      "input_task_sha256": "5edba0ab99d4007543afccd1756a743f346eb494d179c36bc3492609f304e48d",
+      "log_sha256": "8223f1dda86b4bd97e2644ebefa2e797f9ee154107fee9d70ed097fbf79c9567",
+      "command": [
+        "/work/results/transfer/obj_0/sim",
+        "+IMAGE=/work/results/transfer/TX_error_after_ACK.mem",
+        "+TASK=/work/results/transfer/TX_error_after_ACK.task",
+        "+WORDS=31",
+        "+STALL=2",
+        "+MODE=5",
+        "+COMMANDS=2",
+        "+REPORTS=0",
+        "+READ_BYTES=16",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=9",
+        "+ERROR_PC=3",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "CANCEL_held_READY",
+        "image": "consumer",
+        "block": 1,
+        "commands": 1,
+        "reports": 1,
+        "read_bytes": 0,
+        "write_bytes": 16,
+        "expected": 11,
+        "error_pc": 4,
+        "mode": 6
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1038,
+        "calls": 1,
+        "services": 1,
+        "READY_reports": 1,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 0,
+        "ACK_accepts": 1,
+        "poisoned": false,
+        "register_value_observed": true,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1038,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 973,
+            "pc": 1,
+            "opcode": 66
+          },
+          {
+            "cycle": 981,
+            "pc": 2,
+            "opcode": 69
+          },
+          {
+            "cycle": 1023,
+            "pc": 3,
+            "opcode": 74
+          }
+        ],
+        "services": [
+          {
+            "cycle": 973,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000cff000000000000100000001000000000ffff000004000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1023,
+            "packet": {
+              "version": 1,
+              "kind": 0,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 255,
+              "event_id": 0,
+              "status": 0,
+              "scalar": 1,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 1,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1034,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 2,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "3bc37e4bd2e5b24713bd2d0ec011f8d4b7f7c8489b4bee2c21edc35f3fddd0a6",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/CANCEL_held_READY.mem",
+        "+TASK=/work/results/transfer/CANCEL_held_READY.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+MODE=6",
+        "+COMMANDS=1",
+        "+REPORTS=1",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=11",
+        "+ERROR_PC=4",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_transfer_version",
+        "image": "consumer",
+        "block": 1,
+        "commands": 0,
+        "reports": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "expected": 5,
+        "error_pc": 1,
+        "fault_addr": 368,
+        "fault_xor": 1
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 983,
+        "calls": 1,
+        "services": 0,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 0,
+        "local_reads": 0,
+        "ACK_accepts": 0,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 983,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 979,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 0,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "af03ba14a5a952e1cdb964e766a9b7c1fae66b077ea8b52f2aacac3a6d5ef131",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/bad_transfer_version.mem",
+        "+TASK=/work/results/transfer/bad_transfer_version.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=0",
+        "+REPORTS=0",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=0",
+        "+EXPECTED=5",
+        "+ERROR_PC=1",
+        "+FAULT_ADDR=368",
+        "+FAULT_XOR=00000000000000000000000000000001"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_transfer_count",
+        "image": "consumer",
+        "block": 1,
+        "commands": 0,
+        "reports": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "expected": 5,
+        "error_pc": 1,
+        "fault_addr": 368,
+        "fault_xor": 3802951800684688204490109616128
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 983,
+        "calls": 1,
+        "services": 0,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 0,
+        "local_reads": 0,
+        "ACK_accepts": 0,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 983,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 979,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 0,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "e7006a7ea417c3470289113704152a6fc82a8c8c684613804384191e3b7d1681",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/bad_transfer_count.mem",
+        "+TASK=/work/results/transfer/bad_transfer_count.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=0",
+        "+REPORTS=0",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=0",
+        "+EXPECTED=5",
+        "+ERROR_PC=1",
+        "+FAULT_ADDR=368",
+        "+FAULT_XOR=00000030000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_transfer_port",
+        "image": "consumer",
+        "block": 1,
+        "commands": 0,
+        "reports": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "expected": 5,
+        "error_pc": 1,
+        "fault_addr": 368,
+        "fault_xor": 1099511627776
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 983,
+        "calls": 1,
+        "services": 0,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 0,
+        "local_reads": 0,
+        "ACK_accepts": 0,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 983,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 979,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 0,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "4b480781643804aea78f6e579db5383186e7f6ad7831d96eb250d837f654515d",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/bad_transfer_port.mem",
+        "+TASK=/work/results/transfer/bad_transfer_port.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=0",
+        "+REPORTS=0",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=0",
+        "+EXPECTED=5",
+        "+ERROR_PC=1",
+        "+FAULT_ADDR=368",
+        "+FAULT_XOR=00000000000000000000010000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_transfer_route",
+        "image": "consumer",
+        "block": 1,
+        "commands": 0,
+        "reports": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "expected": 5,
+        "error_pc": 1,
+        "fault_addr": 384,
+        "fault_xor": 12884901888
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 983,
+        "calls": 1,
+        "services": 0,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 0,
+        "local_reads": 0,
+        "ACK_accepts": 0,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 983,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 979,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 0,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "d2605ddfb6e1395f9aedd4de69147370b592ed352f79cd2a7ee14cb071fe3fe0",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/bad_transfer_route.mem",
+        "+TASK=/work/results/transfer/bad_transfer_route.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=0",
+        "+REPORTS=0",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=0",
+        "+EXPECTED=5",
+        "+ERROR_PC=1",
+        "+FAULT_ADDR=384",
+        "+FAULT_XOR=00000000000000000000000300000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_transfer_invocation",
+        "image": "consumer",
+        "block": 1,
+        "commands": 0,
+        "reports": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "expected": 5,
+        "error_pc": 1,
+        "fault_addr": 384,
+        "fault_xor": 237684487542793012780631851008
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 983,
+        "calls": 1,
+        "services": 0,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 0,
+        "local_reads": 0,
+        "ACK_accepts": 0,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 983,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 979,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 0,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "687de63888fdefe6ab2a0472142b4d278f880c35a413f0cd602b4387b3cf6e17",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/bad_transfer_invocation.mem",
+        "+TASK=/work/results/transfer/bad_transfer_invocation.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=0",
+        "+REPORTS=0",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=0",
+        "+EXPECTED=5",
+        "+ERROR_PC=1",
+        "+FAULT_ADDR=384",
+        "+FAULT_XOR=00000003000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "zero_transfer_record",
+        "image": "consumer",
+        "block": 1,
+        "commands": 0,
+        "reports": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "expected": 5,
+        "error_pc": 1,
+        "zero_begin": 368,
+        "zero_end": 432
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 983,
+        "calls": 1,
+        "services": 0,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 0,
+        "local_reads": 0,
+        "ACK_accepts": 0,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 983,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 979,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 0,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "9ba07f8f5e81b3d4bee54fb684d3bd3a049aeb84a1324f43c0b0eb7890feaf29",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/zero_transfer_record.mem",
+        "+TASK=/work/results/transfer/zero_transfer_record.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=0",
+        "+REPORTS=0",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=0",
+        "+EXPECTED=5",
+        "+ERROR_PC=1",
+        "+ZERO_BEGIN=368",
+        "+ZERO_END=432",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "TX_without_declared_output",
+        "image": "consumer",
+        "block": 1,
+        "commands": 0,
+        "reports": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "expected": 4,
+        "error_pc": 1,
+        "fault_addr": 144,
+        "fault_xor": 1329227995784915872903807060280344576
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 939,
+        "calls": 1,
+        "services": 0,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 0,
+        "local_reads": 0,
+        "ACK_accepts": 0,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 939,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 921,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 935,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 1,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 4,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 0,
+      "input_image_sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+      "input_task_sha256": "f4e576328335278cc629caad0d250e60e3ac34d626f3fcf3e9057994b851e732",
+      "log_sha256": "5c1de87d3f450528f9a13a510f6d58e6732f33e5470d4ecc4cbbcc57e0fec9e9",
+      "command": [
+        "/work/results/transfer/obj_1/sim",
+        "+IMAGE=/work/results/transfer/TX_without_declared_output.mem",
+        "+TASK=/work/results/transfer/TX_without_declared_output.task",
+        "+WORDS=27",
+        "+STALL=2",
+        "+COMMANDS=0",
+        "+REPORTS=0",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=0",
+        "+EXPECTED=4",
+        "+ERROR_PC=1",
+        "+FAULT_ADDR=144",
+        "+FAULT_XOR=01000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "TX_before_RX_valid",
+        "image": "producer",
+        "block": 0,
+        "commands": 0,
+        "reports": 0,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "expected": 7,
+        "error_pc": 1,
+        "fault_addr": 144,
+        "fault_xor": 1329227995784915872903807060280344576
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1060,
+        "calls": 1,
+        "services": 0,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 0,
+        "local_reads": 0,
+        "ACK_accepts": 0,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1060,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 1041,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 1056,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 1,
+              "event_id": 255,
+              "status": 7,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 0,
+      "input_image_sha256": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+      "input_task_sha256": "5edba0ab99d4007543afccd1756a743f346eb494d179c36bc3492609f304e48d",
+      "log_sha256": "f4f303a801c2941f8dc65119a64bb1b9fa325154096cf7732582948a4cd2da66",
+      "command": [
+        "/work/results/transfer/obj_0/sim",
+        "+IMAGE=/work/results/transfer/TX_before_RX_valid.mem",
+        "+TASK=/work/results/transfer/TX_before_RX_valid.task",
+        "+WORDS=31",
+        "+STALL=2",
+        "+COMMANDS=0",
+        "+REPORTS=0",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=0",
+        "+EXPECTED=7",
+        "+ERROR_PC=1",
+        "+FAULT_ADDR=144",
+        "+FAULT_XOR=01000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "DROP_before_ACK",
+        "image": "producer",
+        "block": 0,
+        "commands": 1,
+        "reports": 0,
+        "read_bytes": 0,
+        "write_bytes": 16,
+        "expected": 7,
+        "error_pc": 2,
+        "fault_addr": 160,
+        "fault_xor": 17279963945203906347749491787939446784
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "cycles": 1159,
+        "calls": 1,
+        "services": 1,
+        "READY_reports": 0,
+        "terminals": 1,
+        "local_stores": 1,
+        "local_reads": 0,
+        "ACK_accepts": 1,
+        "poisoned": false,
+        "register_value_observed": false,
+        "finite_SRAM_bytes": 16384,
+        "native_S_tested": false
+      },
+      "cycles": 1159,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 1041,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 1092,
+            "pc": 1,
+            "opcode": 66
+          }
+        ],
+        "services": [
+          {
+            "cycle": 1092,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x1000000001000000ff00000000000000010000000bff0000ff000000100000001000000000ffff000004000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1155,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 1,
+              "event_id": 255,
+              "status": 7,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 16,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 2,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "data_events": 2,
+      "input_image_sha256": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+      "input_task_sha256": "5edba0ab99d4007543afccd1756a743f346eb494d179c36bc3492609f304e48d",
+      "log_sha256": "c78cc57ef7369b82eae857a471c8e71bcbc26514102c278e1015a2a111ce394a",
+      "command": [
+        "/work/results/transfer/obj_0/sim",
+        "+IMAGE=/work/results/transfer/DROP_before_ACK.mem",
+        "+TASK=/work/results/transfer/DROP_before_ACK.task",
+        "+WORDS=31",
+        "+STALL=2",
+        "+COMMANDS=1",
+        "+REPORTS=0",
+        "+READ_BYTES=0",
+        "+WRITE_BYTES=16",
+        "+EXPECTED=7",
+        "+ERROR_PC=2",
+        "+FAULT_ADDR=160",
+        "+FAULT_XOR=0d000000000000000000000100000000"
+      ]
+    }
+  ],
+  "compile_reports": [
+    {
+      "block": 0,
+      "command": [
+        "/eda/verilator-5.042/bin/verilator",
+        "--binary",
+        "--timing",
+        "--top-module",
+        "tb_lc_transfer",
+        "-GBLOCK=0",
+        "-I/work/source/project/control_rtl_min_v0_1",
+        "--Mdir",
+        "/work/results/transfer/obj_0",
+        "-j",
+        "4",
+        "-o",
+        "sim",
+        "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+        "/work/source/project/control_rtl_min_v0_1/tb_lc_transfer.sv"
+      ],
+      "log_sha256": "37ca4b83d2cd35f76038dd47515ed279c603f25e238e4e84c4877ec66969b8b6"
+    },
+    {
+      "block": 1,
+      "command": [
+        "/eda/verilator-5.042/bin/verilator",
+        "--binary",
+        "--timing",
+        "--top-module",
+        "tb_lc_transfer",
+        "-GBLOCK=1",
+        "-I/work/source/project/control_rtl_min_v0_1",
+        "--Mdir",
+        "/work/results/transfer/obj_1",
+        "-j",
+        "4",
+        "-o",
+        "sim",
+        "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+        "/work/source/project/control_rtl_min_v0_1/tb_lc_transfer.sv"
+      ],
+      "log_sha256": "b6f81b89d5272a6f9b112e6ffce848552fc5845ccf3337814531c1c054a9702a"
+    }
+  ],
+  "mutation_checks": [
+    {
+      "name": "hide_READY_scalar",
+      "rejected": true
+    },
+    {
+      "name": "fabricate_TX_completion",
+      "rejected": true
+    },
+    {
+      "name": "drop_before_ACK",
+      "rejected": true
+    },
+    {
+      "name": "poison_object_cleanup",
+      "rejected": true
+    }
+  ],
+  "dut_sha256": "9168a6ad80238efa9fe6cc9e6a451ad62751aa6890b6bf6abf6318bb1bed5d33",
+  "tools": {
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]"
+  },
+  "images": {
+    "producer": {
+      "bytes": 496,
+      "sha256": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d"
+    },
+    "consumer": {
+      "bytes": 432,
+      "sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+    },
+    "scalar_full": {
+      "bytes": 432,
+      "sha256": "6a88afd966683b73f2d71c36ce5b5853b4630229ecaf261492c4aa67ffea6733"
+    },
+    "scalar_R7": {
+      "bytes": 432,
+      "sha256": "c31dba9725f07ff8b53400f5070169e40e4a4264a60727e974a938028d93c5f7"
+    },
+    "initial_R0": {
+      "bytes": 432,
+      "sha256": "9a485a150b43bdf1710e579c386a7df19839f735ef275fad20a17640166a2489"
+    },
+    "consumer_last_word": {
+      "bytes": 432,
+      "sha256": "a6a1c4860af78144e09ac23072550832228e29e833374617122d74c0be9543ed"
+    },
+    "producer_last_word": {
+      "bytes": 496,
+      "sha256": "38eec84b70c7a6ab882a00fd632d58c078d0e58349431c09240af74c6d019f09"
+    }
+  },
+  "register_value_readback_tested": true,
+  "logical_object_data_valid_tested": true,
+  "native_S_tested": false,
+  "full_Block_tested": false,
+  "mother_RTL_tested": false,
+  "physical_tested": false,
+  "RX_close_tested": false
+}

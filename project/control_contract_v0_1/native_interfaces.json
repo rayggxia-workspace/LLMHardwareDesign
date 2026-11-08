@@ -1,0 +1,868 @@
+{
+  "schema": "local-control-native-interfaces/0.1",
+  "status": "Source-observed pins; controller service mappings remain proposed",
+  "clock": "posedge clk",
+  "reset": "synchronous active-high reset; payload RAM is not cleared",
+  "interfaces": {
+    "M": {
+      "module": "block_v2_m",
+      "source_path": "project/rtl/block_v2/block_v2_m.sv",
+      "source_ref": "df3e7a2657a96bf0e5031a958d48155010bd7380",
+      "source_blob": "d91ffdf904bc77c19d5d0ecfd4cd11560b44a417",
+      "header_lines": [
+        6,
+        15
+      ],
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "a_valid",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "a_ready",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "a_bank",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "a_row",
+          "direction": "input",
+          "width": "[2:0]"
+        },
+        {
+          "name": "a_tile",
+          "direction": "input",
+          "width": "[1:0]"
+        },
+        {
+          "name": "a_wide",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "a_data",
+          "direction": "input",
+          "width": "[127:0]"
+        },
+        {
+          "name": "b_valid",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "b_ready",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "b_bank",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "b_tile",
+          "direction": "input",
+          "width": "[1:0]"
+        },
+        {
+          "name": "b_wide",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "b_half",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "b_data",
+          "direction": "input",
+          "width": "[511:0]"
+        },
+        {
+          "name": "cmd_valid",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "cmd_ready",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "cmd_op",
+          "direction": "input",
+          "width": "[3:0]"
+        },
+        {
+          "name": "cmd_index",
+          "direction": "input",
+          "width": "[5:0]"
+        },
+        {
+          "name": "cmd_data",
+          "direction": "input",
+          "width": "[63:0]"
+        },
+        {
+          "name": "rsp_valid",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "rsp_ready",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "rsp_data",
+          "direction": "output",
+          "width": "[127:0]"
+        },
+        {
+          "name": "rsp_error",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "rsp_saturated",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "busy",
+          "direction": "output",
+          "width": "1"
+        }
+      ]
+    },
+    "G": {
+      "module": "block_v2_g",
+      "source_path": "project/rtl/block_v2/block_v2_g.sv",
+      "source_ref": "df3e7a2657a96bf0e5031a958d48155010bd7380",
+      "source_blob": "5ed727f707a9ee2a7ccec8525b720c1c5294ae98",
+      "header_lines": [
+        4,
+        9
+      ],
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "in_valid",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "in_ready",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "in_fn",
+          "direction": "input",
+          "width": "[2:0]"
+        },
+        {
+          "name": "in_gated",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "in_x",
+          "direction": "input",
+          "width": "[31:0]"
+        },
+        {
+          "name": "in_gate",
+          "direction": "input",
+          "width": "[31:0]"
+        },
+        {
+          "name": "out_valid",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "out_ready",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "out_data",
+          "direction": "output",
+          "width": "[31:0]"
+        },
+        {
+          "name": "out_error",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "out_saturated",
+          "direction": "output",
+          "width": "1"
+        }
+      ]
+    },
+    "S": {
+      "module": "block_feed_s16k",
+      "source_path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "source_ref": "df3e7a2657a96bf0e5031a958d48155010bd7380",
+      "source_blob": "c83a5a3f99cc0e3dd78a94561d0d1ff3938324e9",
+      "header_lines": [
+        5,
+        10
+      ],
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "req",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "wr",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "addr",
+          "direction": "input",
+          "width": "[9:0]"
+        },
+        {
+          "name": "din",
+          "direction": "input",
+          "width": "[127:0]"
+        },
+        {
+          "name": "ready",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "valid",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "take",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "dout",
+          "direction": "output",
+          "width": "[127:0]"
+        },
+        {
+          "name": "wide_req",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "wide_addr",
+          "direction": "input",
+          "width": "[7:0]"
+        },
+        {
+          "name": "wide_ready",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "wide_valid",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "wide_take",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "wide_dout",
+          "direction": "output",
+          "width": "[511:0]"
+        }
+      ]
+    },
+    "feeder": {
+      "module": "block_feed_loader",
+      "source_path": "project/rtl/block_feed_v1/block_feed_loader.sv",
+      "source_ref": "df3e7a2657a96bf0e5031a958d48155010bd7380",
+      "source_blob": "c805132671d96f3f0ad8cfbdcf0eccfdb846a061",
+      "header_lines": [
+        7,
+        22
+      ],
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "load_valid",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "load_ready",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "load_bank",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "load_rows",
+          "direction": "input",
+          "width": "[3:0]"
+        },
+        {
+          "name": "load_tiles",
+          "direction": "input",
+          "width": "[2:0]"
+        },
+        {
+          "name": "load_a_wide",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "load_b_wide",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "load_reuse_b",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "load_a_base",
+          "direction": "input",
+          "width": "[9:0]"
+        },
+        {
+          "name": "load_b_base",
+          "direction": "input",
+          "width": "[9:0]"
+        },
+        {
+          "name": "done_valid",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "done_take",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "done_error",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "busy",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "mem_req",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "mem_addr",
+          "direction": "output",
+          "width": "[7:0]"
+        },
+        {
+          "name": "mem_ready",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "mem_valid",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "mem_take",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "mem_data",
+          "direction": "input",
+          "width": "[511:0]"
+        },
+        {
+          "name": "a_valid",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "a_ready",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "a_bank",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "a_row",
+          "direction": "output",
+          "width": "[2:0]"
+        },
+        {
+          "name": "a_tile",
+          "direction": "output",
+          "width": "[1:0]"
+        },
+        {
+          "name": "a_wide",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "a_data",
+          "direction": "output",
+          "width": "[127:0]"
+        },
+        {
+          "name": "b_valid",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "b_ready",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "b_bank",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "b_tile",
+          "direction": "output",
+          "width": "[1:0]"
+        },
+        {
+          "name": "b_wide",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "b_half",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "b_data",
+          "direction": "output",
+          "width": "[511:0]"
+        }
+      ]
+    },
+    "localS": {
+      "module": "block_local_s_macro",
+      "source_path": "project/rtl/block_local_s/block_local_s_macro.sv",
+      "source_ref": "b9dc77eb03a5833904e649ea7cc20e4577635f5b",
+      "source_blob": "360679393477ea6a9202517290c27073dbe676b0",
+      "header_lines": [
+        7,
+        26
+      ],
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "req_valid",
+          "direction": "input",
+          "width": "[CLIENTS-1:0]"
+        },
+        {
+          "name": "req_write",
+          "direction": "input",
+          "width": "[CLIENTS-1:0]"
+        },
+        {
+          "name": "req_addr",
+          "direction": "input",
+          "width": "[CLIENTS*10-1:0]"
+        },
+        {
+          "name": "req_data",
+          "direction": "input",
+          "width": "[CLIENTS*128-1:0]"
+        },
+        {
+          "name": "req_ready",
+          "direction": "output",
+          "width": "[CLIENTS-1:0]"
+        },
+        {
+          "name": "rsp_valid",
+          "direction": "output",
+          "width": "[CLIENTS-1:0]"
+        },
+        {
+          "name": "rsp_ready",
+          "direction": "input",
+          "width": "[CLIENTS-1:0]"
+        },
+        {
+          "name": "rsp_data",
+          "direction": "output",
+          "width": "[CLIENTS*128-1:0]"
+        },
+        {
+          "name": "load_valid",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "load_ready",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "load_bank",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "load_rows",
+          "direction": "input",
+          "width": "[3:0]"
+        },
+        {
+          "name": "load_tiles",
+          "direction": "input",
+          "width": "[2:0]"
+        },
+        {
+          "name": "load_a_wide",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "load_b_wide",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "load_reuse_b",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "load_a_base",
+          "direction": "input",
+          "width": "[9:0]"
+        },
+        {
+          "name": "load_b_base",
+          "direction": "input",
+          "width": "[9:0]"
+        },
+        {
+          "name": "done_valid",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "done_take",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "done_error",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "busy",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "a_valid",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "a_ready",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "a_bank",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "a_row",
+          "direction": "output",
+          "width": "[2:0]"
+        },
+        {
+          "name": "a_tile",
+          "direction": "output",
+          "width": "[1:0]"
+        },
+        {
+          "name": "a_wide",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "a_data",
+          "direction": "output",
+          "width": "[127:0]"
+        },
+        {
+          "name": "b_valid",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "b_ready",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "b_bank",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "b_tile",
+          "direction": "output",
+          "width": "[1:0]"
+        },
+        {
+          "name": "b_wide",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "b_half",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "b_data",
+          "direction": "output",
+          "width": "[511:0]"
+        }
+      ]
+    },
+    "arbiter": {
+      "module": "block_local_s_arbiter",
+      "source_path": "project/rtl/block_local_s/block_local_s_arbiter.sv",
+      "source_ref": "b9dc77eb03a5833904e649ea7cc20e4577635f5b",
+      "source_blob": "2e6f0a49d3fe2681d9ef9a827c56f69d323a6bfc",
+      "header_lines": [
+        7,
+        22
+      ],
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "reset",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "req_valid",
+          "direction": "input",
+          "width": "[CLIENTS-1:0]"
+        },
+        {
+          "name": "req_write",
+          "direction": "input",
+          "width": "[CLIENTS-1:0]"
+        },
+        {
+          "name": "req_addr",
+          "direction": "input",
+          "width": "[CLIENTS*10-1:0]"
+        },
+        {
+          "name": "req_data",
+          "direction": "input",
+          "width": "[CLIENTS*128-1:0]"
+        },
+        {
+          "name": "req_ready",
+          "direction": "output",
+          "width": "[CLIENTS-1:0]"
+        },
+        {
+          "name": "rsp_valid",
+          "direction": "output",
+          "width": "[CLIENTS-1:0]"
+        },
+        {
+          "name": "rsp_ready",
+          "direction": "input",
+          "width": "[CLIENTS-1:0]"
+        },
+        {
+          "name": "rsp_data",
+          "direction": "output",
+          "width": "[CLIENTS*128-1:0]"
+        },
+        {
+          "name": "mem_req",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "mem_write",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "mem_addr",
+          "direction": "output",
+          "width": "[9:0]"
+        },
+        {
+          "name": "mem_data",
+          "direction": "output",
+          "width": "[127:0]"
+        },
+        {
+          "name": "mem_ready",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "mem_valid",
+          "direction": "input",
+          "width": "1"
+        },
+        {
+          "name": "mem_result",
+          "direction": "input",
+          "width": "[127:0]"
+        },
+        {
+          "name": "mem_take",
+          "direction": "output",
+          "width": "1"
+        },
+        {
+          "name": "busy",
+          "direction": "output",
+          "width": "1"
+        }
+      ]
+    }
+  },
+  "handshakes": {
+    "M": {
+      "accept": "!reset && (cmd_valid && cmd_ready)",
+      "complete": "!reset && (rsp_valid && rsp_ready)",
+      "outputs": [
+        "rsp_data",
+        "rsp_error",
+        "rsp_saturated"
+      ],
+      "ordering": "one command response outstanding; no native task tag",
+      "contexts": "one complete-result context; operand bank0/1 are not two independent result contexts",
+      "busy_warning": "busy is !cmd_ready; never use busy falling as completion or context release"
+    },
+    "G": {
+      "accept": "!reset && (in_valid && in_ready per two-S16 packet)",
+      "complete": "!reset && (out_valid && out_ready per matching packet; finite service completion additionally needs count/drain/store contract)",
+      "outputs": [
+        "out_data",
+        "out_error",
+        "out_saturated"
+      ],
+      "ordering": "in-order four-stage globally stalled stream; no cmd_op/done/busy",
+      "hold": "all stages freeze when out_valid && !out_ready"
+    },
+    "localS": {
+      "accept": "!reset && (req_valid[client] && req_ready[client] reserves arbiter command)",
+      "complete": "!reset && (rsp_valid[owner] && rsp_ready[owner] after real storage response)",
+      "outputs": [
+        "rsp_data"
+      ],
+      "ordering": "one ordinary transaction for the entire private S; owner held",
+      "busy_warning": "busy can be zero while feeder done_valid remains unconsumed"
+    },
+    "feeder": {
+      "accept": "!reset && (load_valid && load_ready)",
+      "complete": "!reset && (done_valid && done_take; done_error must be sampled)",
+      "outputs": [
+        "done_error"
+      ],
+      "ordering": "one finite command; two 512-bit A queue entries and one B entry; one read outstanding",
+      "context_effect": "only operand A/B loading, not M computation or result completion"
+    }
+  }
+}

@@ -1,0 +1,1957 @@
+{
+  "schema": "local-fault-rtl-runs/0.1",
+  "evidence": "actual_SV_DUT_external_fault_injection",
+  "dut_sha256": "1ec5ed03d6f8fba867c62ea0f3e727c11c7dd583fc21eaae2efeb587fbfaebd6",
+  "testbench_sha256": "07f8c91e18ac7b464435f61e60b75c241826937a002484a9c651a7ab2619679d",
+  "checker_sha256": "ac5b104949db8667576051f7e202590260694d5cca395b4ff0de376d340e77d8",
+  "compile_command": [
+    "/eda/verilator-5.042/bin/verilator",
+    "--binary",
+    "--timing",
+    "--top-module",
+    "tb_lc_fault",
+    "-I/work/source/project/control_rtl_min_v0_1",
+    "--Mdir",
+    "/work/results/fault/obj_dir",
+    "-j",
+    "4",
+    "-o",
+    "sim",
+    "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+    "/work/source/project/control_rtl_min_v0_1/tb_lc_fault.sv"
+  ],
+  "compile_log_sha256": "3ca8a9369fc58113545f869459f9d068ecde4a645a2f428500673d7cfc458429",
+  "tools": {
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]"
+  },
+  "results": [
+    {
+      "case": {
+        "name": "bad_opcode",
+        "expected": 1,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 128,
+        "fault_xor": 253882547194918931724627148513545814016
+      },
+      "cycles": 774,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 774
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 770,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 1,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "6e0a8f8379756ae1e8fce8bb0d1e1d10b1cc74b81f42afddeb9e5eb3bce4888c",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/bad_opcode.mem",
+        "+TASK=/work/results/fault/bad_opcode.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=128",
+        "+EXPECTED=1",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_XOR=bf000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_EXEC_flags",
+        "expected": 2,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 128,
+        "fault_xor": 5192296858534827628530496329220096
+      },
+      "cycles": 774,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 774
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 770,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 2,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "2b58dbab61c012236158fe79f378350389ee32b425699c7ae566f4e7130affe6",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/bad_EXEC_flags.mem",
+        "+TASK=/work/results/fault/bad_EXEC_flags.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=128",
+        "+EXPECTED=2",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00010000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "unavailable_resource",
+        "expected": 4,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 128,
+        "fault_xor": 20282409603651670423947251286016
+      },
+      "cycles": 774,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 774
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 770,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 4,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "bbc07ffd3b5664c8aa38bf659893e18a39ed45ee5eef344d1604b4bef17897b8",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/unavailable_resource.mem",
+        "+TASK=/work/results/fault/unavailable_resource.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=128",
+        "+EXPECTED=4",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000100000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_token",
+        "expected": 2,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 128,
+        "fault_xor": 633825300114114700748351602688
+      },
+      "cycles": 774,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 774
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 770,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 2,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "04b0cd7c7761f5cc1ce8552f483701d0bec9d56c9f2681bf198ea9ac6a5951d3",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/bad_token.mem",
+        "+TASK=/work/results/fault/bad_token.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=128",
+        "+EXPECTED=2",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000008000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_descriptor_index",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 128,
+        "fault_xor": 309485009821345068724781056
+      },
+      "cycles": 774,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 774
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 770,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "1e8603e6f9745df701cf96c4ea3eaf5498dc8b5ba6d32fee4d4dcf662fd64d41",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/bad_descriptor_index.mem",
+        "+TASK=/work/results/fault/bad_descriptor_index.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=128",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000000010000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_task_entry",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 176,
+        "fault_xor": 12884901888
+      },
+      "cycles": 763,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 763
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 759,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "dd0679072d485dc808f2c345bd4107ac0d17170dfa5d9950a852a059cd2ea1d9",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/bad_task_entry.mem",
+        "+TASK=/work/results/fault/bad_task_entry.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=176",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000000000000000000000300000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_exec_version",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 240,
+        "fault_xor": 3
+      },
+      "cycles": 851,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 851
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 847,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "cbc6b0dfac3b4284aa8aa3cfa88f7d9fe651fa3934adc39543876aa2d927c0fa",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/bad_exec_version.mem",
+        "+TASK=/work/results/fault/bad_exec_version.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=240",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000000000000000000000000000003"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_exec_ABI",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 288,
+        "fault_xor": 18446744073709551616
+      },
+      "cycles": 851,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 851
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 847,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "b45bb45eb356ecb488c6cbdf81bdd51998056b9636b8ad060d80494ff2e7f714",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/bad_exec_ABI.mem",
+        "+TASK=/work/results/fault/bad_exec_ABI.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=288",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000000000000010000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_WAIT",
+        "expected": 7,
+        "error_pc": 1,
+        "commands": 1,
+        "fault_addr": 144,
+        "fault_xor": 12884901888
+      },
+      "cycles": 917,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 1,
+        "responses": 1,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 917
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 913,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 7,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "773d4093324effa3452b79c1d5bd95c7a5bcb565171b58ef2a3e3de50c398753",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/bad_WAIT.mem",
+        "+TASK=/work/results/fault/bad_WAIT.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=144",
+        "+EXPECTED=7",
+        "+ERROR_PC=1",
+        "+COMMANDS=1",
+        "+FAULT_XOR=00000000000000000000000300000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "END_with_live_token",
+        "expected": 7,
+        "error_pc": 1,
+        "commands": 1,
+        "fault_addr": 144,
+        "fault_xor": 14621507953634074601941877667378757632
+      },
+      "cycles": 917,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 1,
+        "responses": 1,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 917
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 913,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 7,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "5ee5f2a91be18094d4bb908021aafc41021f56899b0422d148325523e29d906e",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/END_with_live_token.mem",
+        "+TASK=/work/results/fault/END_with_live_token.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=144",
+        "+EXPECTED=7",
+        "+ERROR_PC=1",
+        "+COMMANDS=1",
+        "+FAULT_XOR=0b000000000000000000000100000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "PM_task_error",
+        "expected": 10,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 176,
+        "pm_error": 1
+      },
+      "cycles": 730,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 730
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 726,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 10,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "92a154eb0fe95b2253f78707348ba092096e7d308f036bbf4778d0ef682ffecb",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/PM_task_error.mem",
+        "+TASK=/work/results/fault/PM_task_error.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=176",
+        "+PM_ERROR=1",
+        "+EXPECTED=10",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "PM_instruction_error",
+        "expected": 10,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 128,
+        "pm_error": 1
+      },
+      "cycles": 774,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 774
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 770,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 10,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "22034483a2301a6013cc4074ff556edb33d84db730ee7a0fb49a111ccd041c58",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/PM_instruction_error.mem",
+        "+TASK=/work/results/fault/PM_instruction_error.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=128",
+        "+PM_ERROR=1",
+        "+EXPECTED=10",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "PM_descriptor_error",
+        "expected": 10,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 240,
+        "pm_error": 1
+      },
+      "cycles": 785,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 785
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 781,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 10,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "34a24a36c0c460433bc00adea3aa570af9e137ada05992e4de78feb625350380",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/PM_descriptor_error.mem",
+        "+TASK=/work/results/fault/PM_descriptor_error.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=240",
+        "+PM_ERROR=1",
+        "+EXPECTED=10",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_opcode_after_EXEC",
+        "expected": 1,
+        "error_pc": 1,
+        "commands": 1,
+        "fault_addr": 144,
+        "fault_xor": 247236407215994352360108113216439058432
+      },
+      "cycles": 917,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 1,
+        "responses": 1,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 917
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 913,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 1,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "cbe9ab48ad1663f1f0fdc7619adb9e06f8edef45642737050fd16e9cb7050f81",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/bad_opcode_after_EXEC.mem",
+        "+TASK=/work/results/fault/bad_opcode_after_EXEC.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=144",
+        "+EXPECTED=1",
+        "+ERROR_PC=1",
+        "+COMMANDS=1",
+        "+FAULT_XOR=ba000000000000000000000100000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "native_error_precedence",
+        "expected": 9,
+        "error_pc": 0,
+        "commands": 1,
+        "status": 9,
+        "fault_addr": 144,
+        "fault_xor": 247236407215994352360108113216439058432
+      },
+      "cycles": 917,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 1,
+        "responses": 1,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 917
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 913,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 9,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "3c1e970a5686d5c989bd9163b85ade7a92e06a5088d13e0850d3095e7d297553",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/native_error_precedence.mem",
+        "+TASK=/work/results/fault/native_error_precedence.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=9",
+        "+FAULT_ADDR=144",
+        "+EXPECTED=9",
+        "+ERROR_PC=0",
+        "+COMMANDS=1",
+        "+FAULT_XOR=ba000000000000000000000100000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "step_budget",
+        "expected": 12,
+        "error_pc": 1,
+        "commands": 1,
+        "fault_addr": 192,
+        "fault_xor": 33
+      },
+      "cycles": 917,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 1,
+        "responses": 1,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 917
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 913,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 12,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "4a8e2b3b2bace3070b0ba50c0396fbe12f9c8fe2500b1f157108bee02e958fb1",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/step_budget.mem",
+        "+TASK=/work/results/fault/step_budget.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=192",
+        "+EXPECTED=12",
+        "+ERROR_PC=1",
+        "+COMMANDS=1",
+        "+FAULT_XOR=00000000000000000000000000000021"
+      ]
+    },
+    {
+      "case": {
+        "name": "poison_PM_response",
+        "expected": 0,
+        "error_pc": 0,
+        "commands": 0,
+        "poison": 1,
+        "no_response": 1
+      },
+      "cycles": 856,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 0,
+        "services": 0,
+        "responses": 0,
+        "poisoned": true,
+        "peer_reset_reloaded": false,
+        "cycles": 856
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "log_sha256": "8d9d7665c87414cb5a5858806247b7cbed0ae47f900e73740265deafa0480ef3",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/poison_PM_response.mem",
+        "+TASK=/work/results/fault/poison_PM_response.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+POISON=1",
+        "+NO_RESPONSE=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "poison_held_PM",
+        "expected": 0,
+        "error_pc": 0,
+        "commands": 0,
+        "poison": 1,
+        "hold_pm": 1
+      },
+      "cycles": 852,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 0,
+        "services": 0,
+        "responses": 0,
+        "poisoned": true,
+        "peer_reset_reloaded": false,
+        "cycles": 852
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "log_sha256": "03e2c2df940354b2b55d43773303dec28d82fb3005886a5c1f51c503cd9d6820",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/poison_held_PM.mem",
+        "+TASK=/work/results/fault/poison_held_PM.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+POISON=1",
+        "+HOLD_PM=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "poison_held_service",
+        "expected": 0,
+        "error_pc": 0,
+        "commands": 0,
+        "poison": 1,
+        "hold_svc": 1
+      },
+      "cycles": 983,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 0,
+        "services": 0,
+        "responses": 0,
+        "poisoned": true,
+        "peer_reset_reloaded": false,
+        "cycles": 983
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "log_sha256": "c1b902869dee6cc181f4d2171fed78950b6f40204c2a27d70cdc240b55b4e8a1",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/poison_held_service.mem",
+        "+TASK=/work/results/fault/poison_held_service.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+POISON=1",
+        "+HOLD_SVC=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "poison_M_response",
+        "expected": 0,
+        "error_pc": 0,
+        "commands": 1,
+        "poison": 1,
+        "no_response": 2
+      },
+      "cycles": 996,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 0,
+        "services": 1,
+        "responses": 0,
+        "poisoned": true,
+        "peer_reset_reloaded": false,
+        "cycles": 996
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": []
+      },
+      "log_sha256": "a8fc47c17033ddf82f21716f3b0dac2bd9f48cc5dc7bdbdd0f1fac37b1d01297",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/poison_M_response.mem",
+        "+TASK=/work/results/fault/poison_M_response.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=0",
+        "+COMMANDS=1",
+        "+POISON=1",
+        "+NO_RESPONSE=2",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "poison_fault_drain",
+        "expected": 0,
+        "error_pc": 0,
+        "commands": 1,
+        "poison": 1,
+        "no_response": 2,
+        "fault_addr": 144,
+        "fault_xor": 12884901888
+      },
+      "cycles": 996,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 0,
+        "services": 1,
+        "responses": 0,
+        "poisoned": true,
+        "peer_reset_reloaded": false,
+        "cycles": 996
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": []
+      },
+      "log_sha256": "422e4106ecd8c9549218d51966b626f2e08c159085ba84cac65d54be4fa08310",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/poison_fault_drain.mem",
+        "+TASK=/work/results/fault/poison_fault_drain.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=144",
+        "+EXPECTED=0",
+        "+ERROR_PC=0",
+        "+COMMANDS=1",
+        "+POISON=1",
+        "+NO_RESPONSE=2",
+        "+FAULT_XOR=00000000000000000000000300000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "poison_reset_reload",
+        "expected": 0,
+        "error_pc": 0,
+        "commands": 2,
+        "poison": 1,
+        "no_response": 2,
+        "recovery": 2
+      },
+      "cycles": 1918,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 2,
+        "returns": 1,
+        "services": 2,
+        "responses": 1,
+        "poisoned": true,
+        "peer_reset_reloaded": true,
+        "cycles": 1918
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          },
+          {
+            "cycle": 1841,
+            "pc": 0,
+            "opcode": 65
+          },
+          {
+            "cycle": 1898,
+            "pc": 1,
+            "opcode": 68
+          },
+          {
+            "cycle": 1914,
+            "pc": 2,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          },
+          {
+            "cycle": 1841,
+            "job": 7,
+            "task_sequence": 2,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1914,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 2,
+              "task_sequence": 2,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "2506a51ef568aa284569b1151c346290430a6a0ac0ab57bc1fe1425dba0deed1",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/poison_reset_reload.mem",
+        "+TASK=/work/results/fault/poison_reset_reload.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=0",
+        "+COMMANDS=2",
+        "+POISON=1",
+        "+RECOVERY=2",
+        "+NO_RESPONSE=2",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "fault_then_reuse",
+        "expected": 1,
+        "error_pc": 0,
+        "commands": 1,
+        "recovery": 1,
+        "fault_addr": 128,
+        "fault_xor": 253882547194918931724627148513545814016
+      },
+      "cycles": 983,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 2,
+        "returns": 2,
+        "services": 1,
+        "responses": 1,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 983
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 903,
+            "pc": 0,
+            "opcode": 65
+          },
+          {
+            "cycle": 960,
+            "pc": 1,
+            "opcode": 68
+          },
+          {
+            "cycle": 979,
+            "pc": 2,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 903,
+            "job": 7,
+            "task_sequence": 2,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 770,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 1,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 979,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 2,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "e742681c56305f6cd162fc274125d9a6cd8923d9375ce662a0b52527fe84f91c",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/fault_then_reuse.mem",
+        "+TASK=/work/results/fault/fault_then_reuse.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=128",
+        "+EXPECTED=1",
+        "+ERROR_PC=0",
+        "+COMMANDS=1",
+        "+RECOVERY=1",
+        "+FAULT_XOR=bf000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "PM_error_while_M_pending",
+        "expected": 10,
+        "error_pc": 1,
+        "commands": 1,
+        "fault_addr": 144,
+        "pm_error": 1
+      },
+      "cycles": 917,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 1,
+        "responses": 1,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 917
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 913,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 10,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "c3e86d1f11c25baea6125bf8baebf000915d778fd61bbb0403cee1947e7b82f1",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/PM_error_while_M_pending.mem",
+        "+TASK=/work/results/fault/PM_error_while_M_pending.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+FAULT_ADDR=144",
+        "+PM_ERROR=1",
+        "+EXPECTED=10",
+        "+ERROR_PC=1",
+        "+COMMANDS=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "native_over_PM_error",
+        "expected": 9,
+        "error_pc": 0,
+        "commands": 1,
+        "status": 9,
+        "fault_addr": 144,
+        "pm_error": 1
+      },
+      "cycles": 917,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 1,
+        "responses": 1,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 917
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 913,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 9,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "log_sha256": "3fce35a907c6f27a06f88ab130da4dad5428d3fac526ca6be18f1f8adc5dc28d",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/native_over_PM_error.mem",
+        "+TASK=/work/results/fault/native_over_PM_error.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=9",
+        "+FAULT_ADDR=144",
+        "+PM_ERROR=1",
+        "+EXPECTED=9",
+        "+ERROR_PC=0",
+        "+COMMANDS=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "reject_CALL_target",
+        "expected": 0,
+        "error_pc": 0,
+        "commands": 0,
+        "reject": 1
+      },
+      "cycles": 723,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 0,
+        "returns": 0,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 723
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "log_sha256": "82e096995458448bb2259b37973b5a339d3e0a6d5504ec0649b938b3eb280c39",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/reject_CALL_target.mem",
+        "+TASK=/work/results/fault/reject_CALL_target.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+REJECT=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "reject_CALL_image",
+        "expected": 0,
+        "error_pc": 0,
+        "commands": 0,
+        "reject": 2
+      },
+      "cycles": 723,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 0,
+        "returns": 0,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 723
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "log_sha256": "f2c3c4a54b85bcba6be428570c6b556603558a66c7fb280bb2b85fd66d5690a0",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/reject_CALL_image.mem",
+        "+TASK=/work/results/fault/reject_CALL_image.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+REJECT=2",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "reject_CALL_epoch",
+        "expected": 0,
+        "error_pc": 0,
+        "commands": 0,
+        "reject": 3
+      },
+      "cycles": 723,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 0,
+        "returns": 0,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 723
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "log_sha256": "c361700f93dfeae4ad70becac8f0156bba2c661a61587f6c2d12f2c952b15a7b",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/reject_CALL_epoch.mem",
+        "+TASK=/work/results/fault/reject_CALL_epoch.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+REJECT=3",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "reject_CALL_sequence",
+        "expected": 0,
+        "error_pc": 0,
+        "commands": 0,
+        "reject": 4
+      },
+      "cycles": 723,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 0,
+        "returns": 0,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 723
+      },
+      "actual_rtl_simulation": true,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "log_sha256": "fb75bcb34e3cbe09518cef7d7a30c616b4db75bcd17c9dce26a4d9f3441a0db1",
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "command": [
+        "/work/results/fault/obj_dir/sim",
+        "+IMAGE=/work/results/fault/reject_CALL_sequence.mem",
+        "+TASK=/work/results/fault/reject_CALL_sequence.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+REJECT=4",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    }
+  ],
+  "mutation_checks": [
+    {
+      "name": "hide_error",
+      "rejected": true
+    },
+    {
+      "name": "early_fault_retire",
+      "rejected": true
+    },
+    {
+      "name": "erase_service_accept",
+      "rejected": true
+    },
+    {
+      "name": "withdraw_terminal",
+      "rejected": true
+    },
+    {
+      "name": "poison_credit",
+      "rejected": true
+    },
+    {
+      "name": "corrupt_error_pc",
+      "rejected": true
+    }
+  ],
+  "stall_limit_cycles": 128,
+  "provider_reset_scope": "controller + finite PM/service peers, full image reload; no real macro provider",
+  "native_macro_tested": false,
+  "full_block_tested": false,
+  "mother_rtl_tested": false,
+  "physical_tested": false
+}

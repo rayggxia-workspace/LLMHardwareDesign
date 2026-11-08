@@ -1,0 +1,59 @@
+{
+  "schema": "pu-control-variants/1",
+  "data_endpoint_contract": "contract.json",
+  "service_semantics": "pinned #195 native subset with PR214 direct P/U extensions; PR221 U ordinary E three-source validation and independent SEND holding slot",
+  "program_memory_data_bits": 128,
+  "decode_register_bits": 128,
+  "private_s_bytes": 16384,
+  "variants": {
+    "128": {
+      "selector": "PU_INSTRUCTION_BITS=128",
+      "accepted_image_versions": [
+        1
+      ],
+      "identifiers": {
+        "P": "P_128",
+        "U": "U_128"
+      },
+      "physical_tops": {
+        "P": "pu_p_controlled",
+        "U": "pu_u_controlled"
+      },
+      "legacy_artifacts_renamed": false
+    },
+    "64": {
+      "selector": "PU_INSTRUCTION_BITS=64",
+      "accepted_image_versions": [
+        1,
+        2
+      ],
+      "generated_image_version": 2,
+      "identifiers": {
+        "P": "P_64",
+        "U": "U_64"
+      },
+      "physical_tops": {
+        "P": "pu_p_controlled_64",
+        "U": "pu_u_controlled_64"
+      },
+      "fetch_source_commit": "b54531b3359167668f8e696c97bd5882a7bee473",
+      "fetch_source_path": "project/control_rtl_min_v0_1/instruction_fetch.svh",
+      "fetch_sha256": "cf2316ebe7b6248b5bf297f508f2190dd80b7bcb1daa789cf3cd55b5fcba8c8c",
+      "imports_new_control_profiles_or_branch_execution": false
+    }
+  },
+  "qualification": "Each physical variant requires its own final netlist, GDS, extraction, DRC, STA and program replay. No transfer of qualification.",
+  "current_u_acceptance_index": "../../../work/YUZE-LU/212/u-native-fix.json",
+  "u_native_resources": {
+    "ordinary_command_source_limits": {
+      "E_lane_0": 3,
+      "N_lane_1": 2
+    },
+    "tx_slots": 1,
+    "tx_slot_bits": 128,
+    "s_read_response_release": "when copied into the independent TX slot",
+    "tx_slot_and_send_completion_release": "only after the peer stored-write ACK handshake",
+    "overlap": "RX may use S while TX retains its word; no second SEND while its slot is occupied",
+    "timing_model": "one registered capture before offering TX data; use measured RTL traces for service cycles, not the historical unbuffered model"
+  }
+}

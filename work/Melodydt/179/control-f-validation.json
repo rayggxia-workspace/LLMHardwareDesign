@@ -1,0 +1,796 @@
+{
+  "schema": "control-f-r73-evidence/0.1",
+  "issue": 179,
+  "pr": 180,
+  "upstream": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "parent": "ae5c17c3df46ed7d1ecb93d550b6434d689d3649",
+  "macro_baseline": "27eaaace1bc03cb4422954d1be343de556b757e3",
+  "target_period_ns": "3.333333333",
+  "physical_timing_executed": false,
+  "admission": {
+    "static_tests": 4,
+    "accepted_images": 2,
+    "rejected_variants": 14,
+    "r4_static": 14
+  },
+  "server": {
+    "directory": "/public/home/yuzelu/Melodydt/issue179-fctrl-ae5c17c/r001",
+    "launch": "bash prepare.sh -> sbatch --parsable job.sh",
+    "job_id": 97751,
+    "job_name": "mdt-fctrl179",
+    "partition": "debug",
+    "cpus": 6,
+    "node": "node27",
+    "start_cst": "2026-11-06T11:51:02",
+    "end_cst": "2026-11-06T11:51:35",
+    "elapsed": "00:00:33",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "source_commit": "c9030a2656c669e9ef5e4545fbff09ade3461827",
+    "source_manifest_sha256": "dfc44af16f29253d43d9ea44f65f486333d8f38f6980892bd2502f821866e9f2",
+    "source_count": 238,
+    "source_archive_sha256": "3b5a77c6549ba7d3836674cc73a630052519444fb6d07d0dd34a8c11518bfb73",
+    "log": "r001/slurm-97751.log",
+    "log_sha256": "780bf423a2c00362c964a35929dc61f88586e3d0872a77d3cc45336b1f9cafec",
+    "container": "orfs-26Q1.sif",
+    "module": "singularity/4.3.4",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]"
+  },
+  "evidence_archive": {
+    "name": "evidence-r001.tar.gz",
+    "sha256": "0f06793e4d44b0621ae421f297ee97794cd17f674a118b8b179e9bce5ff8e46e",
+    "verified_files": 240
+  },
+  "reports_sha256": {
+    "f/report.json": "becc12095df01b893b876114027765dc0ba461e4f537f504a80a138d3a437a7c",
+    "p-chain/report.json": "a5d119af777b4d9973035daaa54bee377b902703c632147fc7abc2fbdd5881dc",
+    "p-silu/report.json": "d8ddeacd70cb9c9593c8fa0b52d6495ef429aa21b474461c8d6b38c31ef6c515",
+    "p-raw/report.json": "736872974c25f5879d834139fd3620269f284f007a33c4814135801dc7ac2f50",
+    "r4-static.json": "1d18408a5bdc30ad467150959a174a3cac6005413d5337fecd806d8c556de7a7",
+    "f-admission.log": "1480da4c68c5d208ccce2b48717b79fe578aba3ca87cc6a9471d2c589a0866d0"
+  },
+  "f": {
+    "passed": 11,
+    "total": 11,
+    "successful_readbacks": 7,
+    "jobs": 13,
+    "rtl": [
+      "mc_min_controller",
+      "lc_min_controller",
+      "block_local_s_macro",
+      "block_v2_g",
+      "block_v2_e"
+    ],
+    "abi": 96515,
+    "topology": 392491521,
+    "compile_command": [
+      "/eda/verilator-5.042/bin/verilator",
+      "--binary",
+      "--timing",
+      "--timescale",
+      "1ns/1ps",
+      "--top-module",
+      "tb_p_compute",
+      "-I/work/source/project/control_rtl_min_v0_1",
+      "-I/work/source/project/rtl/block_v2",
+      "-DTB_F_COMPUTE",
+      "--Mdir",
+      "/work/results/f/obj_dir",
+      "-j",
+      "3",
+      "-o",
+      "sim",
+      "/work/source/project/control_rtl_min_v0_1/mc_min_controller.sv",
+      "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+      "/work/source/project/control_rtl_min_v0_1/tb_network_pm.sv",
+      "/work/source/project/control_p_compute_v0_1/tb_p_compute.sv",
+      "/work/source/project/rtl/block_local_s/block_local_s_macro.sv",
+      "/work/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+      "/work/source/project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "/work/source/project/control_f_compute_v0_1/tb_f_local.sv",
+      "/work/source/project/control_f_compute_v0_1/lc_f_store_adapter.sv",
+      "/work/source/project/rtl/block_v2/block_v2_g.sv",
+      "/work/source/project/rtl/block_v2/block_v2_e.sv"
+    ],
+    "cases": [
+      {
+        "case": "g_only",
+        "use_add": false,
+        "expected_status": 0,
+        "jobs": [
+          {
+            "job": 7,
+            "task": 1,
+            "status": 0,
+            "actual_reads": 16,
+            "actual_writes": 16,
+            "saturated": false,
+            "result": "0000000000000000000000000a8afee9",
+            "cycles": {
+              "call": 349,
+              "gin": 409,
+              "gout": 413,
+              "write": 414,
+              "ack": 416,
+              "service": 417,
+              "terminal": 424,
+              "result": 433,
+              "readback": 437
+            },
+            "held_cycles": {
+              "gin": 0,
+              "gout": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            }
+          }
+        ],
+        "command": [
+          "/work/results/f/obj_dir/sim",
+          "+MOTHER=/work/results/f/g_only/mother.mem",
+          "+LOCAL=/work/results/f/g_only/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+SEED=/work/results/f/g_only/seed.mem",
+          "+A=5",
+          "+B=0",
+          "+DST=19",
+          "+STALL=0",
+          "+RUNS=1",
+          "+EXPECT=0"
+        ],
+        "sha256": {
+          "local.bin": "5ff48499e384121fa4f63ed3668fe1cc809b70899c9d94137d0edcfb03a1f787",
+          "local.mem": "5f34cb1ea041fa7ccfefe4690ab6a5915347bfd56acedf63ca16f06c3afa6a62",
+          "mother.bin": "439a7786391a4fd93a94b1116c241438cb11fbd442afbd53b7d55165a41aa4de",
+          "mother.mem": "6dfb482b2cc08a75beefb95b1c1b53c7ba099d6d85d5d25c7db6d68a039c1360",
+          "run.log": "37fb6d62c243d55e9480e3597373d092ccd8ceb940004baa3a8f215dc9e0aa1a",
+          "seed.bin": "fe81972b1aaa72da80b9bd301c0d31ffd4238b1aa3254fe6bdea552245d5fb65",
+          "seed.mem": "b9686fb0ea147ac05a1bc247ba11dd64f9818fa8acde68acc8852a5925576779"
+        }
+      },
+      {
+        "case": "g_only_stall",
+        "use_add": false,
+        "expected_status": 0,
+        "jobs": [
+          {
+            "job": 7,
+            "task": 1,
+            "status": 0,
+            "actual_reads": 16,
+            "actual_writes": 16,
+            "saturated": false,
+            "result": "0000000000000000000000000a8afee9",
+            "cycles": {
+              "call": 492,
+              "gin": 630,
+              "gout": 640,
+              "write": 649,
+              "ack": 661,
+              "service": 662,
+              "terminal": 682,
+              "result": 696,
+              "readback": 700
+            },
+            "held_cycles": {
+              "gin": 4,
+              "gout": 6,
+              "ein": 0,
+              "eout": 0,
+              "write": 8,
+              "ack": 10
+            }
+          },
+          {
+            "job": 8,
+            "task": 2,
+            "status": 0,
+            "actual_reads": 16,
+            "actual_writes": 16,
+            "saturated": false,
+            "result": "0000000000000000000000002328fee3",
+            "cycles": {
+              "call": 717,
+              "gin": 855,
+              "gout": 865,
+              "write": 874,
+              "ack": 886,
+              "service": 887,
+              "terminal": 907,
+              "result": 921,
+              "readback": 925
+            },
+            "held_cycles": {
+              "gin": 4,
+              "gout": 6,
+              "ein": 0,
+              "eout": 0,
+              "write": 8,
+              "ack": 10
+            }
+          }
+        ],
+        "command": [
+          "/work/results/f/obj_dir/sim",
+          "+MOTHER=/work/results/f/g_only_stall/mother.mem",
+          "+LOCAL=/work/results/f/g_only_stall/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+SEED=/work/results/f/g_only_stall/seed.mem",
+          "+A=3",
+          "+B=0",
+          "+DST=1023",
+          "+STALL=2",
+          "+RUNS=2",
+          "+EXPECT=0"
+        ],
+        "sha256": {
+          "local.bin": "5db274d609c779cbc15fa27ea4da166058f302f09d0a57c36412695020512c44",
+          "local.mem": "61c4301a8b3226d82444fdee08ce632af537fe080742b8ad2b4a80c3a2e34fc0",
+          "mother.bin": "439a7786391a4fd93a94b1116c241438cb11fbd442afbd53b7d55165a41aa4de",
+          "mother.mem": "6dfb482b2cc08a75beefb95b1c1b53c7ba099d6d85d5d25c7db6d68a039c1360",
+          "run.log": "dd0365657569d7256111d285a324416acbd2490a75f311b947534233d369dc6a",
+          "seed.bin": "bd2b94c43e4a12e98b9b27b1601f91f99e15853eeda9171b65f8d3aa2c32c4e5",
+          "seed.mem": "84b42aee7603bfda57316dfc3b371da0518fff84c275f3df34e55aca2bfe45d3"
+        }
+      },
+      {
+        "case": "g_e_add",
+        "use_add": true,
+        "expected_status": 0,
+        "jobs": [
+          {
+            "job": 7,
+            "task": 1,
+            "status": 0,
+            "actual_reads": 32,
+            "actual_writes": 16,
+            "saturated": false,
+            "result": "00000000000000000000000016bbf72e",
+            "cycles": {
+              "call": 353,
+              "gin": 413,
+              "gout": 417,
+              "ein": 421,
+              "eout": 425,
+              "write": 426,
+              "ack": 428,
+              "service": 429,
+              "terminal": 436,
+              "result": 445,
+              "readback": 449
+            },
+            "held_cycles": {
+              "gin": 0,
+              "gout": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            }
+          }
+        ],
+        "command": [
+          "/work/results/f/obj_dir/sim",
+          "+MOTHER=/work/results/f/g_e_add/mother.mem",
+          "+LOCAL=/work/results/f/g_e_add/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+SEED=/work/results/f/g_e_add/seed.mem",
+          "+A=5",
+          "+B=11",
+          "+DST=19",
+          "+STALL=0",
+          "+RUNS=1",
+          "+EXPECT=0",
+          "+FADD"
+        ],
+        "sha256": {
+          "local.bin": "6529a901c1578c002fe1217f134ca1c83ad615be159731a82a70ccb3c75456e2",
+          "local.mem": "2ab9366cebdbe9f673a949aa4f914bd0ceb68291ea6069955472b32c927d112b",
+          "mother.bin": "439a7786391a4fd93a94b1116c241438cb11fbd442afbd53b7d55165a41aa4de",
+          "mother.mem": "6dfb482b2cc08a75beefb95b1c1b53c7ba099d6d85d5d25c7db6d68a039c1360",
+          "run.log": "e5693316315b19a9013ebaec9816a81ad318e8ce15f5a428bb1730803f37b27a",
+          "seed.bin": "fe81972b1aaa72da80b9bd301c0d31ffd4238b1aa3254fe6bdea552245d5fb65",
+          "seed.mem": "b9686fb0ea147ac05a1bc247ba11dd64f9818fa8acde68acc8852a5925576779"
+        }
+      },
+      {
+        "case": "g_e_saturate_stall",
+        "use_add": true,
+        "expected_status": 0,
+        "jobs": [
+          {
+            "job": 7,
+            "task": 1,
+            "status": 0,
+            "actual_reads": 32,
+            "actual_writes": 16,
+            "saturated": true,
+            "result": "0000000000000000000000007fff8000",
+            "cycles": {
+              "call": 497,
+              "gin": 635,
+              "gout": 645,
+              "ein": 653,
+              "eout": 663,
+              "write": 672,
+              "ack": 684,
+              "service": 685,
+              "terminal": 707,
+              "result": 721,
+              "readback": 725
+            },
+            "held_cycles": {
+              "gin": 4,
+              "gout": 6,
+              "ein": 4,
+              "eout": 6,
+              "write": 8,
+              "ack": 10
+            }
+          },
+          {
+            "job": 8,
+            "task": 2,
+            "status": 0,
+            "actual_reads": 32,
+            "actual_writes": 16,
+            "saturated": false,
+            "result": "000000000000000000000000ffaf00ab",
+            "cycles": {
+              "call": 747,
+              "gin": 885,
+              "gout": 895,
+              "ein": 903,
+              "eout": 913,
+              "write": 922,
+              "ack": 934,
+              "service": 935,
+              "terminal": 957,
+              "result": 971,
+              "readback": 975
+            },
+            "held_cycles": {
+              "gin": 4,
+              "gout": 6,
+              "ein": 4,
+              "eout": 6,
+              "write": 8,
+              "ack": 10
+            }
+          }
+        ],
+        "command": [
+          "/work/results/f/obj_dir/sim",
+          "+MOTHER=/work/results/f/g_e_saturate_stall/mother.mem",
+          "+LOCAL=/work/results/f/g_e_saturate_stall/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+SEED=/work/results/f/g_e_saturate_stall/seed.mem",
+          "+A=0",
+          "+B=1022",
+          "+DST=1023",
+          "+STALL=2",
+          "+RUNS=2",
+          "+EXPECT=0",
+          "+FADD"
+        ],
+        "sha256": {
+          "local.bin": "6f7a9621f7a800964ea9441c10b98ee59700dc53c54f6cdc9dafa093060e6b03",
+          "local.mem": "03a6a62d0922c476f7379f452c498ce1e4389c4b73507ae23e4a81d6ca671117",
+          "mother.bin": "439a7786391a4fd93a94b1116c241438cb11fbd442afbd53b7d55165a41aa4de",
+          "mother.mem": "6dfb482b2cc08a75beefb95b1c1b53c7ba099d6d85d5d25c7db6d68a039c1360",
+          "run.log": "3e34ff49442eab8a8835600755d1d88aa0a0e392f585bad4a7c8e0313eb4cdb5",
+          "seed.bin": "76bfc17a9f46eff4a330e0ba87bbcd64acbd7ae857fa4a6b0ea543f518e70e44",
+          "seed.mem": "a83860feb2da64f730afb9de093c620f6f7ca7e3a453e89814814406a313a97f"
+        }
+      },
+      {
+        "case": "reject_config_then_load",
+        "use_add": true,
+        "expected_status": 0,
+        "jobs": [
+          {
+            "job": 7,
+            "task": 1,
+            "status": 0,
+            "actual_reads": 32,
+            "actual_writes": 16,
+            "saturated": false,
+            "result": "00000000000000000000000016bbf72e",
+            "cycles": {
+              "call": 496,
+              "gin": 582,
+              "gout": 589,
+              "ein": 595,
+              "eout": 602,
+              "write": 607,
+              "ack": 614,
+              "service": 615,
+              "terminal": 631,
+              "result": 644,
+              "readback": 648
+            },
+            "held_cycles": {
+              "gin": 2,
+              "gout": 3,
+              "ein": 2,
+              "eout": 3,
+              "write": 4,
+              "ack": 5
+            }
+          }
+        ],
+        "command": [
+          "/work/results/f/obj_dir/sim",
+          "+MOTHER=/work/results/f/reject_config_then_load/mother.mem",
+          "+LOCAL=/work/results/f/reject_config_then_load/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+SEED=/work/results/f/reject_config_then_load/seed.mem",
+          "+A=5",
+          "+B=11",
+          "+DST=19",
+          "+STALL=1",
+          "+RUNS=1",
+          "+EXPECT=0",
+          "+FADD",
+          "+BADCFG"
+        ],
+        "sha256": {
+          "local.bin": "6529a901c1578c002fe1217f134ca1c83ad615be159731a82a70ccb3c75456e2",
+          "local.mem": "2ab9366cebdbe9f673a949aa4f914bd0ceb68291ea6069955472b32c927d112b",
+          "mother.bin": "439a7786391a4fd93a94b1116c241438cb11fbd442afbd53b7d55165a41aa4de",
+          "mother.mem": "6dfb482b2cc08a75beefb95b1c1b53c7ba099d6d85d5d25c7db6d68a039c1360",
+          "run.log": "753b58ad24739a68de0e708b248e734bfaa4fdb353cec276a64445681890c66d",
+          "seed.bin": "fe81972b1aaa72da80b9bd301c0d31ffd4238b1aa3254fe6bdea552245d5fb65",
+          "seed.mem": "b9686fb0ea147ac05a1bc247ba11dd64f9818fa8acde68acc8852a5925576779"
+        }
+      },
+      {
+        "case": "reject_address_alias",
+        "use_add": true,
+        "expected_status": 5,
+        "jobs": [
+          {
+            "job": 7,
+            "task": 1,
+            "status": 5,
+            "actual_reads": 0,
+            "actual_writes": 0,
+            "saturated": false,
+            "result": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+            "cycles": {
+              "call": 491,
+              "terminal": 577,
+              "result": 582,
+              "readback": 586
+            },
+            "held_cycles": {
+              "gin": 0,
+              "gout": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            }
+          }
+        ],
+        "command": [
+          "/work/results/f/obj_dir/sim",
+          "+MOTHER=/work/results/f/reject_address_alias/mother.mem",
+          "+LOCAL=/work/results/f/reject_address_alias/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+SEED=/work/results/f/reject_address_alias/seed.mem",
+          "+A=5",
+          "+B=11",
+          "+DST=19",
+          "+STALL=1",
+          "+RUNS=1",
+          "+EXPECT=5",
+          "+FADD"
+        ],
+        "sha256": {
+          "local.bin": "8176bc0b9e2dc8757c53e5dd5426af057f6a32565f142787fde792c1e1774ed6",
+          "local.mem": "07c3d15ed52db94f12f6c4cc5b0074a41c0263090f9ce2cac1f908534dad2040",
+          "mother.bin": "439a7786391a4fd93a94b1116c241438cb11fbd442afbd53b7d55165a41aa4de",
+          "mother.mem": "6dfb482b2cc08a75beefb95b1c1b53c7ba099d6d85d5d25c7db6d68a039c1360",
+          "run.log": "532c8d63c74bbe3a384149ff24c9a7075036b49701cdb7b7313bb7a7bd76eed4",
+          "seed.bin": "fe81972b1aaa72da80b9bd301c0d31ffd4238b1aa3254fe6bdea552245d5fb65",
+          "seed.mem": "b9686fb0ea147ac05a1bc247ba11dd64f9818fa8acde68acc8852a5925576779"
+        }
+      },
+      {
+        "case": "reject_reserved_address",
+        "use_add": false,
+        "expected_status": 5,
+        "jobs": [
+          {
+            "job": 7,
+            "task": 1,
+            "status": 5,
+            "actual_reads": 0,
+            "actual_writes": 0,
+            "saturated": false,
+            "result": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+            "cycles": {
+              "call": 491,
+              "terminal": 577,
+              "result": 582,
+              "readback": 586
+            },
+            "held_cycles": {
+              "gin": 0,
+              "gout": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            }
+          }
+        ],
+        "command": [
+          "/work/results/f/obj_dir/sim",
+          "+MOTHER=/work/results/f/reject_reserved_address/mother.mem",
+          "+LOCAL=/work/results/f/reject_reserved_address/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+SEED=/work/results/f/reject_reserved_address/seed.mem",
+          "+A=5",
+          "+B=0",
+          "+DST=19",
+          "+STALL=1",
+          "+RUNS=1",
+          "+EXPECT=5"
+        ],
+        "sha256": {
+          "local.bin": "8f3c89c6741b502c2509260739b3ddb3306554146d8fae2eb52b2f33e0090875",
+          "local.mem": "06b507e3e67da82915e79307d43abf7731e7949c6ee8be589871819c43763a27",
+          "mother.bin": "439a7786391a4fd93a94b1116c241438cb11fbd442afbd53b7d55165a41aa4de",
+          "mother.mem": "6dfb482b2cc08a75beefb95b1c1b53c7ba099d6d85d5d25c7db6d68a039c1360",
+          "run.log": "73ae6dd7ada867dcc5c0889bc4975e48d3d987eddb7b16ca00ecb8f4725455fd",
+          "seed.bin": "fe81972b1aaa72da80b9bd301c0d31ffd4238b1aa3254fe6bdea552245d5fb65",
+          "seed.mem": "b9686fb0ea147ac05a1bc247ba11dd64f9818fa8acde68acc8852a5925576779"
+        }
+      },
+      {
+        "case": "reject_unknown_operation",
+        "use_add": true,
+        "expected_status": 5,
+        "jobs": [
+          {
+            "job": 7,
+            "task": 1,
+            "status": 5,
+            "actual_reads": 0,
+            "actual_writes": 0,
+            "saturated": false,
+            "result": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+            "cycles": {
+              "call": 491,
+              "terminal": 577,
+              "result": 582,
+              "readback": 586
+            },
+            "held_cycles": {
+              "gin": 0,
+              "gout": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            }
+          }
+        ],
+        "command": [
+          "/work/results/f/obj_dir/sim",
+          "+MOTHER=/work/results/f/reject_unknown_operation/mother.mem",
+          "+LOCAL=/work/results/f/reject_unknown_operation/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+SEED=/work/results/f/reject_unknown_operation/seed.mem",
+          "+A=5",
+          "+B=11",
+          "+DST=19",
+          "+STALL=1",
+          "+RUNS=1",
+          "+EXPECT=5",
+          "+FADD"
+        ],
+        "sha256": {
+          "local.bin": "8746117b79ea325cf5199fc2b285814f8bc347e9e60540ca7c7c4c29f7e0cdec",
+          "local.mem": "5687c1794e851c29620c514e0e11fb92978ebb924cd024e5fd28432e340ce667",
+          "mother.bin": "439a7786391a4fd93a94b1116c241438cb11fbd442afbd53b7d55165a41aa4de",
+          "mother.mem": "6dfb482b2cc08a75beefb95b1c1b53c7ba099d6d85d5d25c7db6d68a039c1360",
+          "run.log": "ffc148f313ebdcb6a978fce5e8fc9396ee2e4a43f9e650a5dbd46fa0c6d15486",
+          "seed.bin": "fe81972b1aaa72da80b9bd301c0d31ffd4238b1aa3254fe6bdea552245d5fb65",
+          "seed.mem": "b9686fb0ea147ac05a1bc247ba11dd64f9818fa8acde68acc8852a5925576779"
+        }
+      },
+      {
+        "case": "reject_wrong_resource",
+        "use_add": true,
+        "expected_status": 5,
+        "jobs": [
+          {
+            "job": 7,
+            "task": 1,
+            "status": 5,
+            "actual_reads": 0,
+            "actual_writes": 0,
+            "saturated": false,
+            "result": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+            "cycles": {
+              "call": 491,
+              "terminal": 577,
+              "result": 582,
+              "readback": 586
+            },
+            "held_cycles": {
+              "gin": 0,
+              "gout": 0,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            }
+          }
+        ],
+        "command": [
+          "/work/results/f/obj_dir/sim",
+          "+MOTHER=/work/results/f/reject_wrong_resource/mother.mem",
+          "+LOCAL=/work/results/f/reject_wrong_resource/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+SEED=/work/results/f/reject_wrong_resource/seed.mem",
+          "+A=5",
+          "+B=11",
+          "+DST=19",
+          "+STALL=1",
+          "+RUNS=1",
+          "+EXPECT=5",
+          "+FADD"
+        ],
+        "sha256": {
+          "local.bin": "dd79da2085d98b7d575ba35b8bbe2eabf0af88537c0439b7535b21e2fde5362a",
+          "local.mem": "4de2bc92bebcb2d12c2deeee0020fb7278bfe16bf539198d1688fa02223cd25e",
+          "mother.bin": "439a7786391a4fd93a94b1116c241438cb11fbd442afbd53b7d55165a41aa4de",
+          "mother.mem": "6dfb482b2cc08a75beefb95b1c1b53c7ba099d6d85d5d25c7db6d68a039c1360",
+          "run.log": "f315dfb358e59d18daaa481e5bba5211e2e907f59cc001ce205c39333c011700",
+          "seed.bin": "fe81972b1aaa72da80b9bd301c0d31ffd4238b1aa3254fe6bdea552245d5fb65",
+          "seed.mem": "b9686fb0ea147ac05a1bc247ba11dd64f9818fa8acde68acc8852a5925576779"
+        }
+      },
+      {
+        "case": "g_error_zero_write",
+        "use_add": true,
+        "expected_status": 9,
+        "jobs": [
+          {
+            "job": 7,
+            "task": 1,
+            "status": 9,
+            "actual_reads": 16,
+            "actual_writes": 0,
+            "saturated": false,
+            "result": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+            "cycles": {
+              "call": 497,
+              "gin": 635,
+              "gout": 645,
+              "service": 646,
+              "terminal": 659,
+              "result": 665,
+              "readback": 669
+            },
+            "held_cycles": {
+              "gin": 4,
+              "gout": 6,
+              "ein": 0,
+              "eout": 0,
+              "write": 0,
+              "ack": 0
+            }
+          }
+        ],
+        "command": [
+          "/work/results/f/obj_dir/sim",
+          "+MOTHER=/work/results/f/g_error_zero_write/mother.mem",
+          "+LOCAL=/work/results/f/g_error_zero_write/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+SEED=/work/results/f/g_error_zero_write/seed.mem",
+          "+A=5",
+          "+B=11",
+          "+DST=19",
+          "+STALL=2",
+          "+RUNS=1",
+          "+EXPECT=9",
+          "+FADD",
+          "+GFAULT"
+        ],
+        "sha256": {
+          "local.bin": "6529a901c1578c002fe1217f134ca1c83ad615be159731a82a70ccb3c75456e2",
+          "local.mem": "2ab9366cebdbe9f673a949aa4f914bd0ceb68291ea6069955472b32c927d112b",
+          "mother.bin": "439a7786391a4fd93a94b1116c241438cb11fbd442afbd53b7d55165a41aa4de",
+          "mother.mem": "6dfb482b2cc08a75beefb95b1c1b53c7ba099d6d85d5d25c7db6d68a039c1360",
+          "run.log": "215dee1595df960dda6785471450264813bc0a0060c6b94fb36d9967b05c0dc8",
+          "seed.bin": "fe81972b1aaa72da80b9bd301c0d31ffd4238b1aa3254fe6bdea552245d5fb65",
+          "seed.mem": "b9686fb0ea147ac05a1bc247ba11dd64f9818fa8acde68acc8852a5925576779"
+        }
+      },
+      {
+        "case": "e_error_zero_write",
+        "use_add": true,
+        "expected_status": 9,
+        "jobs": [
+          {
+            "job": 7,
+            "task": 1,
+            "status": 9,
+            "actual_reads": 32,
+            "actual_writes": 0,
+            "saturated": false,
+            "result": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+            "cycles": {
+              "call": 497,
+              "gin": 635,
+              "gout": 645,
+              "ein": 653,
+              "eout": 660,
+              "service": 661,
+              "terminal": 674,
+              "result": 680,
+              "readback": 684
+            },
+            "held_cycles": {
+              "gin": 4,
+              "gout": 6,
+              "ein": 4,
+              "eout": 6,
+              "write": 0,
+              "ack": 0
+            }
+          }
+        ],
+        "command": [
+          "/work/results/f/obj_dir/sim",
+          "+MOTHER=/work/results/f/e_error_zero_write/mother.mem",
+          "+LOCAL=/work/results/f/e_error_zero_write/local.mem",
+          "+MWORDS=11",
+          "+LWORDS=23",
+          "+SEED=/work/results/f/e_error_zero_write/seed.mem",
+          "+A=5",
+          "+B=11",
+          "+DST=19",
+          "+STALL=2",
+          "+RUNS=1",
+          "+EXPECT=9",
+          "+FADD",
+          "+EFAULT"
+        ],
+        "sha256": {
+          "local.bin": "6529a901c1578c002fe1217f134ca1c83ad615be159731a82a70ccb3c75456e2",
+          "local.mem": "2ab9366cebdbe9f673a949aa4f914bd0ceb68291ea6069955472b32c927d112b",
+          "mother.bin": "439a7786391a4fd93a94b1116c241438cb11fbd442afbd53b7d55165a41aa4de",
+          "mother.mem": "6dfb482b2cc08a75beefb95b1c1b53c7ba099d6d85d5d25c7db6d68a039c1360",
+          "run.log": "35aa41991e3850133051ae2e52b0334951e49729f669f772ca33c3f3e4b206d8",
+          "seed.bin": "fe81972b1aaa72da80b9bd301c0d31ffd4238b1aa3254fe6bdea552245d5fb65",
+          "seed.mem": "b9686fb0ea147ac05a1bc247ba11dd64f9818fa8acde68acc8852a5925576779"
+        }
+      }
+    ]
+  },
+  "p_regression": {
+    "p_handoff": 10,
+    "p_silu": 9,
+    "p_raw": 5
+  },
+  "scope": "R7.3.1 candidate U/J/C port contracts and admitted F trial; R7.3.2 real single-F fixed wiring. U/J/C adapters, F cross-block handoff, physical timing and production binding remain separate."
+}

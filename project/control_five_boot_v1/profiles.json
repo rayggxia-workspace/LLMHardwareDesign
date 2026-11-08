@@ -1,0 +1,28 @@
+{
+  "schema": "five-native-boot-profiles/1",
+  "instruction_bits": 64,
+  "image_version": 2,
+  "native_abi": "0x01930001",
+  "clock_period_ns": "3.333333333",
+  "targets": [0, 1],
+  "clock_domains": 1,
+  "pm_bytes_each": 16384,
+  "profiles": [
+    {"type": "U", "kind": 0, "topology": "0x01930011", "native_ops": [256], "data_interface": "ordinary private S", "routes": "stored N/E replay"},
+    {"type": "F", "kind": 1, "topology": "0x01930012", "native_ops": [256], "data_interface": "ordinary private S", "routes": "stored G/E replay"},
+    {"type": "C", "kind": 2, "topology": "0x01930013", "native_ops": [256], "data_interface": "ordinary private S", "routes": "stored R/G/E replay"},
+    {"type": "P", "kind": 3, "topology": "0x01930014", "native_ops": [272, 273, 274], "data_interface": "ordinary private S", "routes": "stored M/G replay"},
+    {"type": "J", "kind": 4, "topology": "0x01930015", "native_ops": [288, 289], "data_interface": "tagged fragment input and committed T output", "maximum_output_words": 4, "joins_per_task": 1, "epoch_range": [1, 255]}
+  ],
+  "typed_commands": {
+    "13": {"name": "READ_NATIVE_OUTPUT", "types": ["J"], "target": "1 or 2", "address": 0, "data": 0, "consume": "only on host response handshake"},
+    "14": {"name": "WRITE_J_FRAGMENT", "types": ["J"], "address": "16-byte-aligned S byte address", "fields": {"payload": [0,128], "tag": [128,32], "slot": [160,2], "last": [162,1]}, "reserved": [163,93]}
+  },
+  "limits": [
+    "Both active endpoints use the selected compile-time type; this is five variants of a two-target control top, not five simultaneous endpoints.",
+    "J ordinary S_READ/S_WRITE are rejected; its native tagged/lease semantics are preserved.",
+    "Cross-block transfer services and unbound direct edges are rejected; heterogeneous links remain step 5.",
+    "Native output FIFO is a committed-result transport, not an arbitrary SRAM read substitute."
+  ],
+  "production_ready": false
+}

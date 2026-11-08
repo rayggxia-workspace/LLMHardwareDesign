@@ -1,0 +1,1125 @@
+{
+  "schema": "control-reference-traces/0.1",
+  "status": "Hand-authored schedules independent of checker and future DUT",
+  "traces": [
+    {
+      "name": "empty_task",
+      "case": "empty_task",
+      "expected_outcome": "success",
+      "events": [
+        {
+          "name": "reserve_0",
+          "kind": "state",
+          "event": {
+            "kind": "reserve",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "call_0_held",
+          "kind": "sample",
+          "channel": "mother.call",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "call",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "call_0",
+          "kind": "sample",
+          "channel": "mother.call",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "call",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "terminal_0_held",
+          "kind": "sample",
+          "channel": "return.0",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "hex": "0100020007000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "terminal",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "terminal_0",
+          "kind": "sample",
+          "channel": "return.0",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "hex": "0100020007000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "terminal",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "consume_0",
+          "kind": "state",
+          "event": {
+            "kind": "consume_done",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "global_end",
+          "kind": "state",
+          "event": {
+            "kind": "global_end",
+            "job": 7,
+            "epoch": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "single_M_clear",
+      "case": "single_M_clear",
+      "expected_outcome": "success",
+      "events": [
+        {
+          "name": "reserve_0",
+          "kind": "state",
+          "event": {
+            "kind": "reserve",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "call_0_held",
+          "kind": "sample",
+          "channel": "mother.call",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "call",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "call_0",
+          "kind": "sample",
+          "channel": "mother.call",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "call",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "exec_clear",
+          "kind": "state",
+          "event": {
+            "kind": "exec",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "native_cmd_held",
+          "kind": "sample",
+          "channel": "M.command",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "cmd_op": 6,
+            "cmd_index": 0,
+            "cmd_data": 0
+          },
+          "event": {
+            "kind": "native_cmd",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "native_cmd",
+          "kind": "sample",
+          "channel": "M.command",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "cmd_op": 6,
+            "cmd_index": 0,
+            "cmd_data": 0
+          },
+          "event": {
+            "kind": "native_cmd",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "native_rsp_held",
+          "kind": "sample",
+          "channel": "M.response",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "rsp_data": 0,
+            "rsp_error": 0,
+            "rsp_saturated": 0
+          },
+          "event": {
+            "kind": "native_rsp",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "native_rsp",
+          "kind": "sample",
+          "channel": "M.response",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "rsp_data": 0,
+            "rsp_error": 0,
+            "rsp_saturated": 0
+          },
+          "event": {
+            "kind": "native_rsp",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "wait_clear",
+          "kind": "state",
+          "event": {
+            "kind": "wait",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "terminal_0_held",
+          "kind": "sample",
+          "channel": "return.0",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "hex": "0100020007000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "terminal",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "terminal_0",
+          "kind": "sample",
+          "channel": "return.0",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "hex": "0100020007000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "terminal",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "consume_0",
+          "kind": "state",
+          "event": {
+            "kind": "consume_done",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "global_end",
+          "kind": "state",
+          "event": {
+            "kind": "global_end",
+            "job": 7,
+            "epoch": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "receiver_first_16B",
+      "case": "receiver_first_16B",
+      "expected_outcome": "success",
+      "events": [
+        {
+          "name": "reserve_1",
+          "kind": "state",
+          "event": {
+            "kind": "reserve",
+            "job": 7,
+            "epoch": 1,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "call_1_held",
+          "kind": "sample",
+          "channel": "mother.call",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "hex": "010000010700000001000000010000000000000065000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "call",
+            "job": 7,
+            "epoch": 1,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "call_1",
+          "kind": "sample",
+          "channel": "mother.call",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "hex": "010000010700000001000000010000000000000065000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "call",
+            "job": 7,
+            "epoch": 1,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "open_destination",
+          "kind": "state",
+          "event": {
+            "kind": "open",
+            "job": 7,
+            "epoch": 1,
+            "object": 0,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "arm_destination",
+          "kind": "state",
+          "event": {
+            "kind": "arm_rx",
+            "job": 7,
+            "epoch": 1,
+            "operation": "destination_rx",
+            "task": "1",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "report_ready_held",
+          "kind": "sample",
+          "channel": "return.1",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "hex": "01000001070000000100000001000000ff0000000100000000000000000000000000000001000000ffffffff0000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "ready",
+            "job": 7,
+            "epoch": 1,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "report_ready",
+          "kind": "sample",
+          "channel": "return.1",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "hex": "01000001070000000100000001000000ff0000000100000000000000000000000000000001000000ffffffff0000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "ready",
+            "job": 7,
+            "epoch": 1,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "consume_ready",
+          "kind": "state",
+          "event": {
+            "kind": "consume_ready",
+            "job": 7,
+            "epoch": 1,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "reserve_0",
+          "kind": "state",
+          "event": {
+            "kind": "reserve",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "call_0_held",
+          "kind": "sample",
+          "channel": "mother.call",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "hex": "010000000700000001000000010000000001000064000000c1ce7217000000000100000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "call",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "call_0",
+          "kind": "sample",
+          "channel": "mother.call",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "hex": "010000000700000001000000010000000001000064000000c1ce7217000000000100000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "call",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "open_source",
+          "kind": "state",
+          "event": {
+            "kind": "open",
+            "job": 7,
+            "epoch": 1,
+            "object": 0,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "arm_input",
+          "kind": "state",
+          "event": {
+            "kind": "arm_rx",
+            "job": 7,
+            "epoch": 1,
+            "operation": "input_rx",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "input_data_held",
+          "kind": "sample",
+          "channel": "ingress.data",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "header_hex": "0100000107000000010000000b0000000100000000000000ff000000000004000100000010000000000000000000000000000000000000000000000000000000",
+            "data_hex": "00112233445566778899aabbccddeeff"
+          },
+          "event": {
+            "kind": "data",
+            "job": 7,
+            "epoch": 1,
+            "pair": "ingress",
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "input_data",
+          "kind": "sample",
+          "channel": "ingress.data",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "header_hex": "0100000107000000010000000b0000000100000000000000ff000000000004000100000010000000000000000000000000000000000000000000000000000000",
+            "data_hex": "00112233445566778899aabbccddeeff"
+          },
+          "event": {
+            "kind": "data",
+            "job": 7,
+            "epoch": 1,
+            "pair": "ingress",
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "input_store_ack",
+          "kind": "state",
+          "event": {
+            "kind": "store_ack",
+            "job": 7,
+            "epoch": 1,
+            "pair": "ingress",
+            "bytes": 16,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "input_ack_send",
+          "kind": "sample",
+          "channel": "ingress.ack",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "header_hex": "0100010107000000010000000b0000000100000000000000ff000000000004000100000010000000100000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "ack_send",
+            "job": 7,
+            "epoch": 1,
+            "pair": "ingress",
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "input_complete",
+          "kind": "state",
+          "event": {
+            "kind": "finish_rx",
+            "job": 7,
+            "epoch": 1,
+            "operation": "input_rx",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "wait_input",
+          "kind": "state",
+          "event": {
+            "kind": "wait",
+            "job": 7,
+            "epoch": 1,
+            "operation": "input_rx",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "arm_source_tx",
+          "kind": "state",
+          "event": {
+            "kind": "arm_tx",
+            "job": 7,
+            "epoch": 1,
+            "operation": "source_tx",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 1
+          }
+        },
+        {
+          "name": "cross_data_held",
+          "kind": "sample",
+          "channel": "cross.data",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "header_hex": "0100000107000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+            "data_hex": "00112233445566778899aabbccddeeff"
+          },
+          "event": {
+            "kind": "data",
+            "job": 7,
+            "epoch": 1,
+            "pair": "cross",
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "cross_data",
+          "kind": "sample",
+          "channel": "cross.data",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "header_hex": "0100000107000000010000000c000000010000000000000000000100000004000100000010000000000000000000000000000000000000000000000000000000",
+            "data_hex": "00112233445566778899aabbccddeeff"
+          },
+          "event": {
+            "kind": "data",
+            "job": 7,
+            "epoch": 1,
+            "pair": "cross",
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "destination_store_ack",
+          "kind": "state",
+          "event": {
+            "kind": "store_ack",
+            "job": 7,
+            "epoch": 1,
+            "pair": "cross",
+            "bytes": 16,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "cross_ack_send_held",
+          "kind": "sample",
+          "channel": "cross.ack",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "header_hex": "0100010107000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "ack_send",
+            "job": 7,
+            "epoch": 1,
+            "pair": "cross",
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "cross_ack_send",
+          "kind": "sample",
+          "channel": "cross.ack",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "header_hex": "0100010107000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "ack_send",
+            "job": 7,
+            "epoch": 1,
+            "pair": "cross",
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "destination_complete",
+          "kind": "state",
+          "event": {
+            "kind": "finish_rx",
+            "job": 7,
+            "epoch": 1,
+            "operation": "destination_rx",
+            "task": "1",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "wait_destination",
+          "kind": "state",
+          "event": {
+            "kind": "wait",
+            "job": 7,
+            "epoch": 1,
+            "operation": "destination_rx",
+            "task": "1",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "drop_destination",
+          "kind": "state",
+          "event": {
+            "kind": "drop",
+            "job": 7,
+            "epoch": 1,
+            "object": 0,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "terminal_1_held",
+          "kind": "sample",
+          "channel": "return.1",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "hex": "0100020107000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "terminal",
+            "job": 7,
+            "epoch": 1,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "terminal_1",
+          "kind": "sample",
+          "channel": "return.1",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "hex": "0100020107000000010000000100000000ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "terminal",
+            "job": 7,
+            "epoch": 1,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "cross_ack_recv",
+          "kind": "sample",
+          "channel": "source.ack",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "header_hex": "0100010107000000010000000c000000010000000000000000000100000004000100000010000000100000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "ack_recv",
+            "job": 7,
+            "epoch": 1,
+            "pair": "cross",
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "source_complete",
+          "kind": "state",
+          "event": {
+            "kind": "finish_tx",
+            "job": 7,
+            "epoch": 1,
+            "operation": "source_tx",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 1
+          }
+        },
+        {
+          "name": "wait_source",
+          "kind": "state",
+          "event": {
+            "kind": "wait",
+            "job": 7,
+            "epoch": 1,
+            "operation": "source_tx",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 1
+          }
+        },
+        {
+          "name": "drop_source",
+          "kind": "state",
+          "event": {
+            "kind": "drop",
+            "job": 7,
+            "epoch": 1,
+            "object": 0,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "terminal_0_held",
+          "kind": "sample",
+          "channel": "return.0",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "hex": "0100020007000000010000000100000001ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "terminal",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "terminal_0",
+          "kind": "sample",
+          "channel": "return.0",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "hex": "0100020007000000010000000100000001ff00000000000000000000000000000000000000000000ffffffff0000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "terminal",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "consume_1",
+          "kind": "state",
+          "event": {
+            "kind": "consume_done",
+            "job": 7,
+            "epoch": 1,
+            "task": "1",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "consume_0",
+          "kind": "state",
+          "event": {
+            "kind": "consume_done",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "global_end",
+          "kind": "state",
+          "event": {
+            "kind": "global_end",
+            "job": 7,
+            "epoch": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "single_M_clear_peer_error",
+      "case": "single_M_clear",
+      "expected_outcome": "error",
+      "events": [
+        {
+          "name": "reserve_0",
+          "kind": "state",
+          "event": {
+            "kind": "reserve",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "call_0_held",
+          "kind": "sample",
+          "channel": "mother.call",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "call",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "call_0",
+          "kind": "sample",
+          "channel": "mother.call",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "hex": "010000000700000001000000010000000000000064000000c1ce7217000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "call",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "exec_clear",
+          "kind": "state",
+          "event": {
+            "kind": "exec",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "native_cmd_held",
+          "kind": "sample",
+          "channel": "M.command",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "cmd_op": 6,
+            "cmd_index": 0,
+            "cmd_data": 0
+          },
+          "event": {
+            "kind": "native_cmd",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "native_cmd",
+          "kind": "sample",
+          "channel": "M.command",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "cmd_op": 6,
+            "cmd_index": 0,
+            "cmd_data": 0
+          },
+          "event": {
+            "kind": "native_cmd",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "native_rsp_held",
+          "kind": "sample",
+          "channel": "M.response",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "rsp_data": 0,
+            "rsp_error": 1,
+            "rsp_saturated": 0
+          },
+          "event": {
+            "kind": "native_rsp",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "native_rsp",
+          "kind": "sample",
+          "channel": "M.response",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "rsp_data": 0,
+            "rsp_error": 1,
+            "rsp_saturated": 0
+          },
+          "event": {
+            "kind": "native_rsp",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "wait_clear",
+          "kind": "state",
+          "event": {
+            "kind": "wait",
+            "job": 7,
+            "epoch": 1,
+            "operation": "clear0",
+            "task": "0",
+            "task_sequence": 1,
+            "service_sequence": 0
+          }
+        },
+        {
+          "name": "terminal_0_held",
+          "kind": "sample",
+          "channel": "return.0",
+          "valid": true,
+          "ready": false,
+          "payload": {
+            "hex": "0100030007000000010000000100000000ff09000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "terminal",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "terminal_0",
+          "kind": "sample",
+          "channel": "return.0",
+          "valid": true,
+          "ready": true,
+          "payload": {
+            "hex": "0100030007000000010000000100000000ff09000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "event": {
+            "kind": "terminal",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "consume_0",
+          "kind": "state",
+          "event": {
+            "kind": "consume_done",
+            "job": 7,
+            "epoch": 1,
+            "task": "0",
+            "task_sequence": 1
+          }
+        },
+        {
+          "name": "global_error",
+          "kind": "state",
+          "event": {
+            "kind": "global_error",
+            "job": 7,
+            "epoch": 1
+          }
+        }
+      ],
+      "injection": "Non-nominal peer fault: legal native M op6 normally responds success; not an observed RTL result"
+    }
+  ]
+}

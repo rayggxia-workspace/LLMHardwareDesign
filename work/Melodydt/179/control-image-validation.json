@@ -1,0 +1,356 @@
+{
+  "schema": "control-image-validation/0.1",
+  "recorded_at": "2026-11-04T19:19:21+08:00",
+  "parent_commit": "add63270a2faf707fac035898dd13028ceb1135f",
+  "code_commit": "final containing commit: PR180/Issue179 receipt; no self-referential SHA",
+  "python": {
+    "executable": "D:\\EDA\\Anaconda3\\python.exe",
+    "version": "3.7.0 (default, Jun 28 2018, 08:04:48) [MSC v.1912 64 bit (AMD64)]"
+  },
+  "cwd": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\delivery",
+  "checks": [
+    {
+      "command": "D:\\EDA\\Anaconda3\\python.exe -X utf8 -B scripts/check_project.py",
+      "exit_code": 0,
+      "output": "PASS: Project management structure is valid (schema 1).\r\nNOTE: This does not validate product behavior, permissions, or live GitHub settings.\r\n",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\check-00.log",
+      "log_sha256": "730947a7c3fd614468545b021d2f63cd9c8010e43c09ec792b3a49857f48c557"
+    },
+    {
+      "command": "D:\\EDA\\Anaconda3\\python.exe -X utf8 -B -m unittest discover -s project/control_isa_v0_1 -p test_codec.py -v",
+      "exit_code": 0,
+      "output": "test_every_opcode_against_independent_struct_byte_layout (test_codec.CodecTest) ... ok\r\ntest_forward_branch_and_bounded_loop_encoding_domain (test_codec.CodecTest) ... ok\r\ntest_full_uint64_parameter_address_is_preserved (test_codec.CodecTest) ... ok\r\ntest_independent_instruction_words_and_bytes (test_codec.CodecTest) ... ok\r\ntest_independent_object_record_bytes_and_reserved_gap (test_codec.CodecTest) ... ok\r\ntest_record_layouts_are_nonoverlapping_and_fit (test_codec.CodecTest) ... ok\r\ntest_reserved_bit_role_opcode_and_range_rejections (test_codec.CodecTest) ... ok\r\ntest_schema_has_unique_codes_full_width_and_examples (test_codec.CodecTest) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 8 tests in 0.002s\r\n\r\nOK\r\n",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\check-01.log",
+      "log_sha256": "9d7f1262c9fb8a8bd9fcf1539640fb9b4a668576110939db848d66fb7a402aa9"
+    },
+    {
+      "command": "D:\\EDA\\Anaconda3\\python.exe -X utf8 -B -m unittest discover -s project/control_contract_v0_1 -p test_contract.py -v",
+      "exit_code": 0,
+      "output": "test_B_reuse_needs_no_B_object_but_runtime_state (test_contract.ContractTests) ... ok\r\ntest_G_packet_granularity_and_gate_refs (test_contract.ContractTests) ... ok\r\ntest_L_EXEC_identity_and_context (test_contract.ContractTests) ... ok\r\ntest_M_RNE_can_preserve_S32_containers_for_G (test_contract.ContractTests) ... ok\r\ntest_M_reserved_bits_and_geometry_reject (test_contract.ContractTests) ... ok\r\ntest_all_four_G_functions (test_contract.ContractTests) ... ok\r\ntest_codec_reserved_and_unknown_container_fields (test_contract.ContractTests) ... ok\r\ntest_examples_never_claim_hardware_execution (test_contract.ContractTests) ... ok\r\ntest_feeder_alignment_extent_and_reserved_reject (test_contract.ContractTests) ... ok\r\ntest_feeder_uses_16byte_word_addresses (test_contract.ContractTests) ... ok\r\ntest_independent_M_wire_vectors (test_contract.ContractTests) ... ok\r\ntest_object_capacity_overlap_alias_and_dynamic_reject (test_contract.ContractTests) ... ok\r\ntest_readout_format_and_unsupported_completion_reject (test_contract.ContractTests) ... ok\r\ntest_topology_is_distinct_from_control_resource_mask (test_contract.ContractTests) ... ok\r\ntest_unknown_ABI_service_and_32KiB_profile_reject (test_contract.ContractTests) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 15 tests in 0.009s\r\n\r\nOK\r\n",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\check-02.log",
+      "log_sha256": "166cc71788d4dff3865a75aa420da585735bd190b3cc75a8d9e8b3be9d21b5cf"
+    },
+    {
+      "command": "D:\\EDA\\Anaconda3\\python.exe -X utf8 -B -m unittest discover -s project/control_cases_v0_1 -p test_oracle.py -v",
+      "exit_code": 0,
+      "output": "test_ACK_generation_needs_store_ack (test_oracle.ReferenceTests) ... ok\r\ntest_CALL_needs_reserved_terminal_credit (test_oracle.ReferenceTests) ... ok\r\ntest_CALL_snapshots_R0_after_READY_even_when_task_discards_arguments (test_oracle.ReferenceTests) ... ok\r\ntest_DROP_cannot_discard_a_second_unretired_borrow (test_oracle.ReferenceTests) ... ok\r\ntest_READY_requires_armed_receiver (test_oracle.ReferenceTests) ... ok\r\ntest_TX_cannot_finish_before_remote_ACK_received (test_oracle.ReferenceTests) ... ok\r\ntest_WAIT_is_not_command_acceptance (test_oracle.ReferenceTests) ... ok\r\ntest_duplicate_remote_ACK_reject (test_oracle.ReferenceTests) ... ok\r\ntest_duplicate_response_and_global_consume_reject (test_oracle.ReferenceTests) ... ok\r\ntest_encoding_has_independent_empty_words (test_oracle.ReferenceTests) ... ok\r\ntest_four_authored_reference_traces (test_oracle.ReferenceTests) ... ok\r\ntest_global_END_requires_both_task_results (test_oracle.ReferenceTests) ... ok\r\ntest_held_valid_cannot_be_dropped (test_oracle.ReferenceTests) ... ok\r\ntest_local_WAIT_cannot_move_before_completion (test_oracle.ReferenceTests) ... ok\r\ntest_native_payload_is_held_under_backpressure (test_oracle.ReferenceTests) ... ok\r\ntest_native_response_requires_accepted_command (test_oracle.ReferenceTests) ... ok\r\ntest_packet_payload_cannot_change_between_source_and_destination (test_oracle.ReferenceTests) ... ok\r\ntest_peer_error_must_not_be_reported_as_success (test_oracle.ReferenceTests) ... ok\r\ntest_producer_CALL_cannot_skip_READY_consumption (test_oracle.ReferenceTests) ... ok\r\ntest_receiver_task_does_not_claim_output_object (test_oracle.ReferenceTests) ... ok\r\ntest_response_cannot_be_observed_on_wrong_channel (test_oracle.ReferenceTests) ... ok\r\ntest_service_sequence_cannot_be_reused_with_recycled_token (test_oracle.ReferenceTests) ... ok\r\ntest_stale_task_tag_reject (test_oracle.ReferenceTests) ... ok\r\ntest_stall_duration_is_not_a_fixed_latency_claim (test_oracle.ReferenceTests) ... ok\r\ntest_state_record_cannot_fake_wire_handshake (test_oracle.ReferenceTests) ... ok\r\ntest_store_ack_needs_actual_data_observation (test_oracle.ReferenceTests) ... ok\r\ntest_terminal_cannot_hide_unconsumed_local_token (test_oracle.ReferenceTests) ... ok\r\ntest_wrong_ACK_identity_and_byte_count_reject (test_oracle.ReferenceTests) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 28 tests in 0.017s\r\n\r\nOK\r\n",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\check-03.log",
+      "log_sha256": "87567b4a18e16f6abf1d088a8c3ea273d24bc329a2cb18bd2629dad914685f33"
+    },
+    {
+      "command": "D:\\EDA\\Anaconda3\\python.exe -X utf8 -B -m unittest discover -s project/control_image_v0_1 -p test_image.py -v",
+      "exit_code": 0,
+      "output": "test_canonical_offsets_disallow_overlap_holes_and_empty_offsets (test_image.ImageTests) ... ok\r\ntest_capability_identity_parameters_resources (test_image.ImageTests) ... ok\r\ntest_entry_step_budget_and_task_identity (test_image.ImageTests) ... ok\r\ntest_independent_empty_mother_header_and_words (test_image.ImageTests) ... ok\r\ntest_magic_reserved_header_and_reserved_record_bytes (test_image.ImageTests) ... ok\r\ntest_manifest_cannot_mix_images_that_reuse_short_image_id (test_image.ImageTests) ... ok\r\ntest_mismatched_peer_or_route_rejected_even_with_new_digest (test_image.ImageTests) ... ok\r\ntest_native_service_and_descriptor_reference (test_image.ImageTests) ... ok\r\ntest_object_masks_transfer_bounds_and_open_obligations (test_image.ImageTests) ... ok\r\ntest_producer_call_before_READY_and_undeployed_target (test_image.ImageTests) ... ok\r\ntest_seven_complete_images_and_deterministic_artifact (test_image.ImageTests) ... ok\r\ntest_truncation_extra_bytes_and_count_overflow (test_image.ImageTests) ... ok\r\ntest_unsupported_loop_and_early_END (test_image.ImageTests) ... ok\r\ntest_wrong_role_length_and_section_ownership (test_image.ImageTests) ... ok\r\ntest_all_cohort_slots_commit_atomically_and_START_is_not_execution (test_image.LoaderTests) ... ok\r\ntest_bad_BEGIN_does_not_destroy_READY_cohort (test_image.LoaderTests) ... ok\r\ntest_commit_rechecks_RAM_and_manifest_after_verification (test_image.LoaderTests) ... ok\r\ntest_duplicate_or_post_verify_write_and_duplicate_verify_fail (test_image.LoaderTests) ... ok\r\ntest_each_drain_obligation_independently_blocks_reload (test_image.LoaderTests) ... ok\r\ntest_late_untagged_provider_in_IDLE_requires_reset (test_image.LoaderTests) ... ok\r\ntest_partial_image_cannot_verify_or_start (test_image.LoaderTests) ... ok\r\ntest_reset_reload_can_admit_again (test_image.LoaderTests) ... ok\r\ntest_reset_retains_RAM_but_requires_cohort_ack_and_full_reload (test_image.LoaderTests) ... ok\r\ntest_running_write_BEGIN_and_wrong_START_do_not_modify_committed_RAM (test_image.LoaderTests) ... ok\r\ntest_start_rechecks_RAM_and_manifest_after_commit (test_image.LoaderTests) ... ok\r\ntest_unobserved_activity_is_not_an_implicit_drain (test_image.LoaderTests) ... ok\r\ntest_valid_BEGIN_is_single_bank_cutover_without_rollback (test_image.LoaderTests) ... ok\r\ntest_verified_one_image_does_not_make_cohort_READY (test_image.LoaderTests) ... ok\r\ntest_write_order_size_target_and_generation_fail_closed (test_image.LoaderTests) ... ok\r\ntest_wrong_SHA_invalidates_whole_candidate (test_image.LoaderTests) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 30 tests in 0.041s\r\n\r\nOK\r\n",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\check-04.log",
+      "log_sha256": "231ca9741a8192692aa300ad55ade00b2f975984bf24f632b068496651a4eaef"
+    },
+    {
+      "command": "D:\\EDA\\Anaconda3\\python.exe -X utf8 -B project/control_cases_v0_1/oracle.py check --output D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\reference-check.json",
+      "exit_code": 0,
+      "output": "",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\check-05.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "D:\\EDA\\Anaconda3\\python.exe -X utf8 -B project/control_cases_v0_1/oracle.py encode --output D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\encoded-check.json",
+      "exit_code": 0,
+      "output": "",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\check-06.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "D:\\EDA\\Anaconda3\\python.exe -X utf8 -B project/control_image_v0_1/image.py build --output D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\image-bundles-check.json",
+      "exit_code": 0,
+      "output": "",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\check-07.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "D:\\EDA\\Anaconda3\\python.exe -X utf8 -B work/Melodydt/179/analyze_capacity.py --check",
+      "exit_code": 0,
+      "output": "PASS: 8 packed-payload cases and resource-pool accounting reproduce exactly; no execution qualification.\r\n",
+      "local_log": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\179\\control-images-add6327\\check-08.log",
+      "log_sha256": "8471337ab9d474c3efc1ac1f923f460b4897ea7aee6e9373265a4483b2c33bf6"
+    }
+  ],
+  "test_groups": {
+    "isa": 8,
+    "interface": 15,
+    "reference": 28,
+    "image_loader": 30,
+    "total": 81
+  },
+  "deterministic_encoded_cases": true,
+  "deterministic_complete_bundles": true,
+  "relative_links_checked": 132,
+  "source_inputs_checked": 12,
+  "inherited_links_not_checked": [
+    {
+      "file": "docs/ARCHITECTURE.md",
+      "target": "../预制计算底座项目说明_v1.0.md",
+      "reason": "unchanged inherited link; destination absent from partial API snapshot, not verified"
+    },
+    {
+      "file": "docs/ARCHITECTURE.md",
+      "target": "local-blocks/README.md",
+      "reason": "unchanged inherited link; destination absent from partial API snapshot, not verified"
+    },
+    {
+      "file": "docs/ARCHITECTURE.md",
+      "target": "BLOCK_V2_RESULTS.md",
+      "reason": "unchanged inherited link; destination absent from partial API snapshot, not verified"
+    },
+    {
+      "file": "docs/ARCHITECTURE.md",
+      "target": "COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md",
+      "reason": "unchanged inherited link; destination absent from partial API snapshot, not verified"
+    },
+    {
+      "file": "docs/ARCHITECTURE.md",
+      "target": "experiments/issue-15-opentpu-comparison.md",
+      "reason": "unchanged inherited link; destination absent from partial API snapshot, not verified"
+    },
+    {
+      "file": "docs/ARCHITECTURE.md",
+      "target": "experiments/openTPU-llaccel-block-plan.md",
+      "reason": "unchanged inherited link; destination absent from partial API snapshot, not verified"
+    },
+    {
+      "file": "docs/ARCHITECTURE.md",
+      "target": "experiments/issue-7-vector-pilot.md",
+      "reason": "unchanged inherited link; destination absent from partial API snapshot, not verified"
+    }
+  ],
+  "configuration_methods_checked": 11,
+  "bundles": [
+    {
+      "bundle": "empty_task",
+      "manifest_sha256": "119759c2170792f41087fb301e176dbdd49aa06bf27723cbc7bcc5ccb7f8383f",
+      "images": {
+        "mother": {
+          "bytes": 176,
+          "sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+          "program_image_id": 200
+        },
+        "local0": {
+          "bytes": 208,
+          "sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+          "program_image_id": 100
+        }
+      },
+      "after_commit": "READY",
+      "after_start": "RUNNING",
+      "start_result": {
+        "entry_admitted": true,
+        "generation": 1,
+        "instructions_executed": false,
+        "rtl_tested": false
+      }
+    },
+    {
+      "bundle": "single_M_clear",
+      "manifest_sha256": "ca354e0d19ac47945dc475d3190d7961710a58283f531d394ccf500f00ccc6eb",
+      "images": {
+        "mother": {
+          "bytes": 176,
+          "sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+          "program_image_id": 200
+        },
+        "local0": {
+          "bytes": 368,
+          "sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+          "program_image_id": 100
+        }
+      },
+      "after_commit": "READY",
+      "after_start": "RUNNING",
+      "start_result": {
+        "entry_admitted": true,
+        "generation": 1,
+        "instructions_executed": false,
+        "rtl_tested": false
+      }
+    },
+    {
+      "bundle": "receiver_first_16B",
+      "manifest_sha256": "d5d3fa964f5fbd7cbe48430ea688d4b827b3280235857a69cf13a1f4335d9d80",
+      "images": {
+        "mother": {
+          "bytes": 224,
+          "sha256": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+          "program_image_id": 200
+        },
+        "local0": {
+          "bytes": 496,
+          "sha256": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+          "program_image_id": 100
+        },
+        "local1": {
+          "bytes": 432,
+          "sha256": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09",
+          "program_image_id": 101
+        }
+      },
+      "after_commit": "READY",
+      "after_start": "RUNNING",
+      "start_result": {
+        "entry_admitted": true,
+        "generation": 1,
+        "instructions_executed": false,
+        "rtl_tested": false
+      }
+    }
+  ],
+  "sha256_outputs": [
+    {
+      "path": "docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md",
+      "bytes": 38681,
+      "sha256": "4826c5627557bd916cd304ae3d96ba194fcd29ae1bb328e235dad2ad8f2ff49d"
+    },
+    {
+      "path": "docs/local-blocks/CONTROL_ISA_V0_1.md",
+      "bytes": 29790,
+      "sha256": "cb336da7378d65086977d6b7447273f2497020482421f0e5140819c416992db0"
+    },
+    {
+      "path": "docs/local-blocks/CONTROL_REFERENCE_CASES_V0_1.md",
+      "bytes": 8962,
+      "sha256": "bc655c29fbb031fb260990ace4d25f222c03cb80eea2abb877ef72ab0172e2c5"
+    },
+    {
+      "path": "docs/local-blocks/CONTROL_IMAGE_LOADING_V0_1.md",
+      "bytes": 8880,
+      "sha256": "331e60671a28c7612f93a4d6c6544095a34800818263511caf934965b5619104"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "bytes": 25907,
+      "sha256": "d2e976503439904290a352effa4a8c3f0d8e8d25b476654becd0a303f41c8c9a"
+    },
+    {
+      "path": "docs/decisions/2026-11-04-issue-179-two-level-control.md",
+      "bytes": 5944,
+      "sha256": "c29d2ac4f8f1245b4905dd9154a4f3da05c1377d2a8aa07362efdd17065b2cb5"
+    },
+    {
+      "path": "progress/Melodydt/STATUS.md",
+      "bytes": 14344,
+      "sha256": "4a89bcbfbaf273c153549b064f9fa0a798c97d63eb41e777becdd82a90b16297"
+    },
+    {
+      "path": "docs/handoffs/2026-11-04-issue-179-local-block-continuation.md",
+      "bytes": 14301,
+      "sha256": "cdf004cd125b773b2231dc41854c13459c12d197de39affe54be0ccaa0cd3bba"
+    },
+    {
+      "path": "work/Melodydt/179/README.md",
+      "bytes": 6571,
+      "sha256": "780d8b5593906d827738f4e5445c343c5fa2ce041cb26cf45a704636d3f7ba98"
+    },
+    {
+      "path": "work/Melodydt/179/pr176-sync.json",
+      "bytes": 4661,
+      "sha256": "d9a79d43dd8b4437f455694c47523504f8f29f90eb9fd51d2379310ca636e0bb"
+    },
+    {
+      "path": "work/Melodydt/179/control-image-sources.json",
+      "bytes": 9080,
+      "sha256": "cb32f12281ede339f393c9128b01dcae44005a747e2d402043fb9cb3ecb993f5"
+    },
+    {
+      "path": "project/control_cases_v0_1/cases.json",
+      "bytes": 9487,
+      "sha256": "a0d80bebc4fdf900b60ae09bebebcc6b781da09ad37c38e1bb455caeeab471bb"
+    },
+    {
+      "path": "project/control_cases_v0_1/golden_traces.json",
+      "bytes": 30501,
+      "sha256": "e15a6b8cdacd48b76026506488e4c36b51034321065954d9f44f1359479d9089"
+    },
+    {
+      "path": "project/control_cases_v0_1/oracle.py",
+      "bytes": 18595,
+      "sha256": "012ad75b4d3809c6ceda154e65a33bd22a14af45201b51ac44f00afe52739bf9"
+    },
+    {
+      "path": "project/control_cases_v0_1/test_oracle.py",
+      "bytes": 9630,
+      "sha256": "0e9d20b8b4c0585a69c1df3e0293cc0597137cfea51c7d939448489dc287caec"
+    },
+    {
+      "path": "project/control_image_v0_1/image.py",
+      "bytes": 16980,
+      "sha256": "d704b7ff517b5c98b625c1acaf6a2a44084612b59f4d7b7d94d8307933602b29"
+    },
+    {
+      "path": "project/control_image_v0_1/loader.py",
+      "bytes": 8206,
+      "sha256": "9a6a500665649a20206bdd2052690eff557a04a75d91c6f23e6b64e4ad01af54"
+    },
+    {
+      "path": "project/control_image_v0_1/test_image.py",
+      "bytes": 16078,
+      "sha256": "027c2656a229161eb1a0fc6b76caf30f0175a738441a238f88e005beccc97122"
+    },
+    {
+      "path": "project/control_image_v0_1/config_contract.json",
+      "bytes": 5597,
+      "sha256": "1efdf847617c70d8dfe209a1d9d40ed2a9411436f12a006feae6e7b7e24d7507"
+    },
+    {
+      "path": "project/control_image_v0_1/bundles.json",
+      "bytes": 7086,
+      "sha256": "538d2429dc36ae457662ffa967a2aff650f4930c64e368907858c3404f2a399f"
+    },
+    {
+      "path": "project/control_image_v0_1/README.md",
+      "bytes": 2528,
+      "sha256": "876ce0848a4977bc47047fdc35dc8117c5694ac828a5e4f7603c9cac98aff165"
+    }
+  ],
+  "whitelist": [
+    "docs/local-blocks/TWO_LEVEL_CONTROL_PLAN.md",
+    "docs/local-blocks/CONTROL_ISA_V0_1.md",
+    "docs/local-blocks/CONTROL_REFERENCE_CASES_V0_1.md",
+    "docs/local-blocks/CONTROL_IMAGE_LOADING_V0_1.md",
+    "docs/ARCHITECTURE.md",
+    "docs/decisions/2026-11-04-issue-179-two-level-control.md",
+    "progress/Melodydt/STATUS.md",
+    "docs/handoffs/2026-11-04-issue-179-local-block-continuation.md",
+    "work/Melodydt/179/README.md",
+    "work/Melodydt/179/pr176-sync.json",
+    "work/Melodydt/179/control-image-sources.json",
+    "work/Melodydt/179/control-image-validation.json",
+    "project/control_cases_v0_1/cases.json",
+    "project/control_cases_v0_1/golden_traces.json",
+    "project/control_cases_v0_1/oracle.py",
+    "project/control_cases_v0_1/test_oracle.py",
+    "project/control_image_v0_1/image.py",
+    "project/control_image_v0_1/loader.py",
+    "project/control_image_v0_1/test_image.py",
+    "project/control_image_v0_1/config_contract.json",
+    "project/control_image_v0_1/bundles.json",
+    "project/control_image_v0_1/README.md"
+  ],
+  "not_executed": [
+    "PC execution model",
+    "controller or Block RTL",
+    "native macro or S simulation",
+    "LLM numerical evaluation",
+    "server/Slurm",
+    "EDA/physical flow",
+    "background monitoring"
+  ],
+  "current_status": "in_progress; Draft PR; independent review and merge pending",
+  "registration": {
+    "state": "pending",
+    "pr": "https://github.com/rayggxia-workspace/management-hub/pull/5",
+    "head": "11b65cf39b85a2d893e48544b2eb7b4183db4372",
+    "merged": false
+  },
+  "board": {
+    "state": "unverified",
+    "sync": "pending",
+    "reason": "config/board.json not configured (404); no Projects item/field tools; administrator/reviewer TBD"
+  }
+}

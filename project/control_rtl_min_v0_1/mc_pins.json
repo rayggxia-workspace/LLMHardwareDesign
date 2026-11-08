@@ -1,0 +1,410 @@
+{
+  "schema": "mother-control-boundary/0.1",
+  "pins": [
+    {
+      "name": "clk_i",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "rst_ni",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "release_valid_i",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "release_sequence_i",
+      "direction": "input",
+      "width": 32
+    },
+    {
+      "name": "release_epoch_i",
+      "direction": "input",
+      "width": 32
+    },
+    {
+      "name": "deploy_valid_i",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "deploy_generation_i",
+      "direction": "input",
+      "width": 32
+    },
+    {
+      "name": "release_ready_o",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "name": "poison_o",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "name": "image_valid_o",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "name": "cfg_req_valid_i",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "cfg_req_op_i",
+      "direction": "input",
+      "width": 3
+    },
+    {
+      "name": "cfg_req_generation_i",
+      "direction": "input",
+      "width": 32
+    },
+    {
+      "name": "cfg_req_address_i",
+      "direction": "input",
+      "width": 14
+    },
+    {
+      "name": "cfg_req_data_i",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "name": "cfg_req_total_bytes_i",
+      "direction": "input",
+      "width": 16
+    },
+    {
+      "name": "cfg_req_image_id_i",
+      "direction": "input",
+      "width": 32
+    },
+    {
+      "name": "cfg_req_topology_id_i",
+      "direction": "input",
+      "width": 32
+    },
+    {
+      "name": "cfg_req_abi_id_i",
+      "direction": "input",
+      "width": 32
+    },
+    {
+      "name": "cfg_req_capacity_id_i",
+      "direction": "input",
+      "width": 32
+    },
+    {
+      "name": "cfg_req_proof_i",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "cfg_rsp_ready_i",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "cfg_req_ready_o",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "name": "cfg_rsp_valid_o",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "name": "cfg_rsp_status_o",
+      "direction": "output",
+      "width": 16
+    },
+    {
+      "name": "cfg_rsp_data_o",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "name": "cfg_rsp_generation_o",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "name": "pm_req_ready_i",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "pm_rsp_valid_i",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "pm_rsp_data_i",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "name": "pm_rsp_error_i",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "pm_req_valid_o",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "name": "pm_req_write_o",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "name": "pm_req_address_o",
+      "direction": "output",
+      "width": 14
+    },
+    {
+      "name": "pm_req_data_o",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "name": "pm_rsp_ready_o",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "name": "life_o",
+      "direction": "output",
+      "width": 4
+    },
+    {
+      "name": "seq_o",
+      "direction": "output",
+      "width": 4
+    },
+    {
+      "name": "trace_pc_o",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "name": "trace_retire_o",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "name": "trace_opcode_o",
+      "direction": "output",
+      "width": 8
+    },
+    {
+      "name": "trace_pm_owner_o",
+      "direction": "output",
+      "width": 2
+    },
+    {
+      "name": "trace_ireg_valid_o",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "name": "start_valid_i",
+      "width": 1,
+      "direction": "input"
+    },
+    {
+      "name": "start_credit_i",
+      "width": 1,
+      "direction": "input"
+    },
+    {
+      "name": "start_job_i",
+      "width": 32,
+      "direction": "input"
+    },
+    {
+      "name": "start_epoch_i",
+      "width": 32,
+      "direction": "input"
+    },
+    {
+      "name": "start_sequence_i",
+      "width": 32,
+      "direction": "input"
+    },
+    {
+      "name": "start_generation_i",
+      "width": 32,
+      "direction": "input"
+    },
+    {
+      "name": "start_args_i",
+      "width": 256,
+      "direction": "input"
+    },
+    {
+      "name": "local_image_id0_i",
+      "width": 32,
+      "direction": "input"
+    },
+    {
+      "name": "local_image_id1_i",
+      "width": 32,
+      "direction": "input"
+    },
+    {
+      "name": "local_enabled_i",
+      "width": 2,
+      "direction": "input"
+    },
+    {
+      "name": "start_ready_o",
+      "width": 1,
+      "direction": "output"
+    },
+    {
+      "name": "task_valid_o",
+      "width": 1,
+      "direction": "output"
+    },
+    {
+      "name": "task_ready_i",
+      "width": 1,
+      "direction": "input"
+    },
+    {
+      "name": "task_target_o",
+      "width": 8,
+      "direction": "output"
+    },
+    {
+      "name": "task_credit_o",
+      "width": 1,
+      "direction": "output"
+    },
+    {
+      "name": "task_packet_o",
+      "width": 512,
+      "direction": "output"
+    },
+    {
+      "name": "return_valid_i",
+      "width": 1,
+      "direction": "input"
+    },
+    {
+      "name": "return_ready_o",
+      "width": 1,
+      "direction": "output"
+    },
+    {
+      "name": "return_packet_i",
+      "width": 512,
+      "direction": "input"
+    },
+    {
+      "name": "result_valid_o",
+      "width": 1,
+      "direction": "output"
+    },
+    {
+      "name": "result_ready_i",
+      "width": 1,
+      "direction": "input"
+    },
+    {
+      "name": "result_job_o",
+      "width": 32,
+      "direction": "output"
+    },
+    {
+      "name": "result_epoch_o",
+      "width": 32,
+      "direction": "output"
+    },
+    {
+      "name": "result_sequence_o",
+      "width": 32,
+      "direction": "output"
+    },
+    {
+      "name": "result_status_o",
+      "width": 16,
+      "direction": "output"
+    },
+    {
+      "name": "result_error_pc_o",
+      "width": 32,
+      "direction": "output"
+    },
+    {
+      "name": "result_source_o",
+      "width": 8,
+      "direction": "output"
+    },
+    {
+      "name": "result_child_error_pc_o",
+      "width": 32,
+      "direction": "output"
+    },
+    {
+      "name": "result_failed_task_sequence_o",
+      "width": 32,
+      "direction": "output"
+    },
+    {
+      "name": "result_confirmed_read_bytes_o",
+      "width": 32,
+      "direction": "output"
+    },
+    {
+      "name": "result_confirmed_write_bytes_o",
+      "width": 32,
+      "direction": "output"
+    },
+    {
+      "name": "result_counter_overflow_o",
+      "width": 1,
+      "direction": "output"
+    },
+    {
+      "name": "result_saturated_o",
+      "width": 1,
+      "direction": "output"
+    },
+    {
+      "name": "trace_live_tokens_o",
+      "width": 8,
+      "direction": "output"
+    },
+    {
+      "name": "trace_block_active_o",
+      "width": 2,
+      "direction": "output"
+    },
+    {
+      "name": "trace_terminal_full_o",
+      "width": 2,
+      "direction": "output"
+    },
+    {
+      "name": "trace_READY_full_o",
+      "width": 2,
+      "direction": "output"
+    },
+    {
+      "name": "trace_aborting_o",
+      "width": 1,
+      "direction": "output"
+    }
+  ]
+}

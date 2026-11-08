@@ -1,0 +1,1308 @@
+{
+  "schema": "mother-bounded-rtl-runs/0.1",
+  "results": [
+    {
+      "case": {
+        "name": "single_fast",
+        "image": "single",
+        "calls": 1,
+        "stall": 0
+      },
+      "checker": {
+        "cycles": 212,
+        "starts": 1,
+        "CALLs": 1,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 177
+          },
+          {
+            "pc": 1,
+            "op": "G_WAIT",
+            "cycle": 200
+          },
+          {
+            "pc": 2,
+            "op": "G_END",
+            "cycle": 211
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "729adc0a2cfd575b18f90206b6528b272a31b33530fc855862299aff64881503",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/single_fast.mem",
+        "+WORDS=11",
+        "+CALLS=1",
+        "+STALL=0",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "single_stalled",
+        "image": "single",
+        "calls": 1,
+        "stall": 2
+      },
+      "checker": {
+        "cycles": 411,
+        "starts": 1,
+        "CALLs": 1,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 364
+          },
+          {
+            "pc": 1,
+            "op": "G_WAIT",
+            "cycle": 387
+          },
+          {
+            "pc": 2,
+            "op": "G_END",
+            "cycle": 410
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "319235f8d2e63f646740627415065406e6cf9954f3322d2158947867aa28e556",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/single_stalled.mem",
+        "+WORDS=11",
+        "+CALLS=1",
+        "+STALL=2",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "single_two_jobs",
+        "image": "single",
+        "calls": 2,
+        "runs": 2,
+        "stall": 3
+      },
+      "checker": {
+        "cycles": 486,
+        "starts": 2,
+        "CALLs": 2,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 2,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 371
+          },
+          {
+            "pc": 1,
+            "op": "G_WAIT",
+            "cycle": 394
+          },
+          {
+            "pc": 2,
+            "op": "G_END",
+            "cycle": 420
+          },
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 434
+          },
+          {
+            "pc": 1,
+            "op": "G_WAIT",
+            "cycle": 457
+          },
+          {
+            "pc": 2,
+            "op": "G_END",
+            "cycle": 485
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "9cf58459f765cf0db0747ef5cdf892114c744643aa7ca3dc604f4641893c6a9e",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/single_two_jobs.mem",
+        "+WORDS=11",
+        "+CALLS=2",
+        "+STALL=3",
+        "+RUNS=2",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "receiver_first",
+        "image": "receiver",
+        "calls": 2,
+        "ready1": 1,
+        "dependency": 1,
+        "traffic": 1,
+        "stall": 2
+      },
+      "checker": {
+        "cycles": 531,
+        "starts": 1,
+        "CALLs": 2,
+        "CANCELs": 0,
+        "READY_received": 1,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 462
+          },
+          {
+            "pc": 1,
+            "op": "G_EVENT",
+            "cycle": 471
+          },
+          {
+            "pc": 2,
+            "op": "G_CALL",
+            "cycle": 483
+          },
+          {
+            "pc": 3,
+            "op": "G_WAIT",
+            "cycle": 506
+          },
+          {
+            "pc": 4,
+            "op": "G_END",
+            "cycle": 530
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+      "log_sha256": "7c6f325cea0c91d15af59c16b5e09075c7cdc92addb08fa4e0eeb21cdb7ce59f",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/receiver_first.mem",
+        "+WORDS=14",
+        "+CALLS=2",
+        "+STALL=2",
+        "+READY1=1",
+        "+DEPENDENCY=1",
+        "+TRAFFIC=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "receiver_two_jobs",
+        "image": "receiver",
+        "calls": 4,
+        "ready1": 1,
+        "dependency": 1,
+        "traffic": 1,
+        "runs": 2,
+        "stall": 3
+      },
+      "checker": {
+        "cycles": 641,
+        "starts": 2,
+        "CALLs": 4,
+        "CANCELs": 0,
+        "READY_received": 2,
+        "results": 2,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 469
+          },
+          {
+            "pc": 1,
+            "op": "G_EVENT",
+            "cycle": 478
+          },
+          {
+            "pc": 2,
+            "op": "G_CALL",
+            "cycle": 490
+          },
+          {
+            "pc": 3,
+            "op": "G_WAIT",
+            "cycle": 513
+          },
+          {
+            "pc": 4,
+            "op": "G_END",
+            "cycle": 540
+          },
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 567
+          },
+          {
+            "pc": 1,
+            "op": "G_EVENT",
+            "cycle": 577
+          },
+          {
+            "pc": 2,
+            "op": "G_CALL",
+            "cycle": 588
+          },
+          {
+            "pc": 3,
+            "op": "G_WAIT",
+            "cycle": 611
+          },
+          {
+            "pc": 4,
+            "op": "G_END",
+            "cycle": 640
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+      "log_sha256": "286c606b725d1e3ea5bbd4521a1cfbb2c1ac9e55d76ea6139783e40f85ce64bc",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/receiver_two_jobs.mem",
+        "+WORDS=14",
+        "+CALLS=4",
+        "+STALL=3",
+        "+RUNS=2",
+        "+READY1=1",
+        "+DEPENDENCY=1",
+        "+TRAFFIC=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "receiver_scalarHigh",
+        "image": "receiver",
+        "calls": 2,
+        "ready1": 1,
+        "dependency": 1,
+        "scalar": 4275878552
+      },
+      "checker": {
+        "cycles": 531,
+        "starts": 1,
+        "CALLs": 2,
+        "CANCELs": 0,
+        "READY_received": 1,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 462
+          },
+          {
+            "pc": 1,
+            "op": "G_EVENT",
+            "cycle": 471
+          },
+          {
+            "pc": 2,
+            "op": "G_CALL",
+            "cycle": 483
+          },
+          {
+            "pc": 3,
+            "op": "G_WAIT",
+            "cycle": 506
+          },
+          {
+            "pc": 4,
+            "op": "G_END",
+            "cycle": 530
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+      "log_sha256": "95431e101d263df971815d627105a0b642436bdde8f958d362011fa152c07caf",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/receiver_scalarHigh.mem",
+        "+WORDS=14",
+        "+CALLS=2",
+        "+STALL=2",
+        "+READY1=1",
+        "+DEPENDENCY=1",
+        "+SCALAR=4275878552",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "movi_args",
+        "image": "movi",
+        "calls": 1
+      },
+      "checker": {
+        "cycles": 451,
+        "starts": 1,
+        "CALLs": 1,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_MOVI",
+            "cycle": 391
+          },
+          {
+            "pc": 1,
+            "op": "G_CALL",
+            "cycle": 406
+          },
+          {
+            "pc": 2,
+            "op": "G_WAIT",
+            "cycle": 429
+          },
+          {
+            "pc": 3,
+            "op": "G_END",
+            "cycle": 450
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a00439d4c5787aed7f6ec8c0b9dd9a362ead56ea0a10998f028d0a917f66c28d",
+      "log_sha256": "0731618f7d3cdf706eaf404b7af54ece304775a3f7c6297af37fbf6b69bdc6b7",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/movi_args.mem",
+        "+WORDS=12",
+        "+CALLS=1",
+        "+STALL=2",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "held_CALL_returns_independent",
+        "image": "two",
+        "calls": 2,
+        "hold_target": 0,
+        "hold_cycles": 180,
+        "delay1": 10
+      },
+      "checker": {
+        "cycles": 636,
+        "starts": 1,
+        "CALLs": 2,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 392
+          },
+          {
+            "pc": 1,
+            "op": "G_CALL",
+            "cycle": 588
+          },
+          {
+            "pc": 2,
+            "op": "G_WAIT",
+            "cycle": 611
+          },
+          {
+            "pc": 3,
+            "op": "G_END",
+            "cycle": 635
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a6ec16f920446f22354b30bc10b07c543e3f3e7774189c89c974b61fb168e02d",
+      "log_sha256": "0d8817ed9fef9d392ff5ce27c9dfbe3e38181f1263f31d4266ee4a380a902c55",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/held_CALL_returns_independent.mem",
+        "+WORDS=12",
+        "+CALLS=2",
+        "+STALL=2",
+        "+HOLD_TARGET=0",
+        "+HOLD_CYCLES=180",
+        "+DELAY1=10",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "error_before_READY",
+        "image": "receiver",
+        "calls": 1,
+        "ready1": 1,
+        "dependency": 1,
+        "error_target": 1,
+        "expected": 9
+      },
+      "checker": {
+        "cycles": 504,
+        "starts": 1,
+        "CALLs": 1,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 462
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+      "log_sha256": "eae91e1b3b97423b9123edc2f807ee2087be65226805170f6037c2ab80270a8f",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/error_before_READY.mem",
+        "+WORDS=14",
+        "+CALLS=1",
+        "+STALL=2",
+        "+READY1=1",
+        "+DEPENDENCY=1",
+        "+ERROR_TARGET=1",
+        "+EXPECTED=9",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "error_cancels_other",
+        "image": "two",
+        "calls": 2,
+        "error_target": 0,
+        "delay0": 10,
+        "delay1": 200,
+        "cancels": 1,
+        "expected": 9
+      },
+      "checker": {
+        "cycles": 443,
+        "starts": 1,
+        "CALLs": 2,
+        "CANCELs": 1,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 392
+          },
+          {
+            "pc": 1,
+            "op": "G_CALL",
+            "cycle": 406
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a6ec16f920446f22354b30bc10b07c543e3f3e7774189c89c974b61fb168e02d",
+      "log_sha256": "b53d02d2f66c86b389ef51e710533c1a5f6884defa83f5263ee7537e93d0e165",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/error_cancels_other.mem",
+        "+WORDS=12",
+        "+CALLS=2",
+        "+STALL=2",
+        "+ERROR_TARGET=0",
+        "+DELAY0=10",
+        "+DELAY1=200",
+        "+CANCELS=1",
+        "+EXPECTED=9",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "error_held_CALL",
+        "image": "two",
+        "calls": 2,
+        "error_target": 1,
+        "delay1": 50,
+        "hold_target": 0,
+        "hold_cycles": 100,
+        "cancels": 1,
+        "expected": 9
+      },
+      "checker": {
+        "cycles": 534,
+        "starts": 1,
+        "CALLs": 2,
+        "CANCELs": 1,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 392
+          },
+          {
+            "pc": 1,
+            "op": "G_CALL",
+            "cycle": 504
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a6ec16f920446f22354b30bc10b07c543e3f3e7774189c89c974b61fb168e02d",
+      "log_sha256": "eee6fb60754fbc069d8c7804bfa058179829615148f1bf12e0d4e36e538a052f",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/error_held_CALL.mem",
+        "+WORDS=12",
+        "+CALLS=2",
+        "+STALL=2",
+        "+ERROR_TARGET=1",
+        "+HOLD_TARGET=0",
+        "+HOLD_CYCLES=100",
+        "+DELAY1=50",
+        "+CANCELS=1",
+        "+EXPECTED=9",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "recover_error_two_jobs",
+        "image": "receiver",
+        "calls": 3,
+        "ready1": 1,
+        "dependency": 1,
+        "error_target": 1,
+        "recover": 1,
+        "runs": 2,
+        "expected": 9
+      },
+      "checker": {
+        "cycles": 601,
+        "starts": 2,
+        "CALLs": 3,
+        "CANCELs": 0,
+        "READY_received": 1,
+        "results": 2,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 462
+          },
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 525
+          },
+          {
+            "pc": 1,
+            "op": "G_EVENT",
+            "cycle": 536
+          },
+          {
+            "pc": 2,
+            "op": "G_CALL",
+            "cycle": 553
+          },
+          {
+            "pc": 3,
+            "op": "G_WAIT",
+            "cycle": 576
+          },
+          {
+            "pc": 4,
+            "op": "G_END",
+            "cycle": 600
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+      "log_sha256": "81d18aa6abe27f881343275eda2d25a2920f6d874ea3f653bbc8471badb9df7b",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/recover_error_two_jobs.mem",
+        "+WORDS=14",
+        "+CALLS=3",
+        "+STALL=2",
+        "+RUNS=2",
+        "+READY1=1",
+        "+DEPENDENCY=1",
+        "+ERROR_TARGET=1",
+        "+RECOVER=1",
+        "+EXPECTED=9",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "missing_child",
+        "image": "single",
+        "calls": 1,
+        "no_terminal": 0,
+        "poison": 1
+      },
+      "checker": {
+        "cycles": 1405,
+        "starts": 1,
+        "CALLs": 1,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 0,
+        "poisoned": true,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 364
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "c7daf35ad5f3e759cf609fb76671064a19a3d5283c2fee0b6714cfe1d4d52128",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/missing_child.mem",
+        "+WORDS=11",
+        "+CALLS=1",
+        "+STALL=2",
+        "+NO_TERMINAL=0",
+        "+POISON=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "stale_return",
+        "image": "single",
+        "calls": 1,
+        "bad_return": 1,
+        "poison": 1
+      },
+      "checker": {
+        "cycles": 397,
+        "starts": 1,
+        "CALLs": 1,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 0,
+        "poisoned": true,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 364
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "11734f77086c450cdfd57e2deb5d68c362b9bf65ef97a42933976e2e7006281c",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/stale_return.mem",
+        "+WORDS=11",
+        "+CALLS=1",
+        "+STALL=2",
+        "+BAD_RETURN=1",
+        "+POISON=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "revoke_held_CALL",
+        "image": "single",
+        "calls": 0,
+        "mode": 5,
+        "hold_target": 0,
+        "hold_cycles": 2000,
+        "poison": 1
+      },
+      "checker": {
+        "cycles": 374,
+        "starts": 1,
+        "CALLs": 0,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 0,
+        "poisoned": true,
+        "retired": [],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "71d10486151297947ce8b7b4b376edaf0fdf1408da2df7bef399196963a2e93f",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/revoke_held_CALL.mem",
+        "+WORDS=11",
+        "+CALLS=0",
+        "+STALL=2",
+        "+MODE=5",
+        "+HOLD_TARGET=0",
+        "+HOLD_CYCLES=2000",
+        "+POISON=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "disabled_target",
+        "image": "target1",
+        "calls": 0,
+        "enabled": 1,
+        "expected": 4
+      },
+      "checker": {
+        "cycles": 377,
+        "starts": 1,
+        "CALLs": 0,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "2635029166d504ae3a6411817f7c397c5d7a98786dde900e63368d90a5cd578c",
+      "log_sha256": "9eedd85f4dae33caa0793652de6443c14c198d4ebcf4756721440c4a136fbe98",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/disabled_target.mem",
+        "+WORDS=11",
+        "+CALLS=0",
+        "+STALL=2",
+        "+EXPECTED=4",
+        "+ENABLED=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "duplicate_token",
+        "image": "two",
+        "calls": 1,
+        "delay1": 200,
+        "expected": 7,
+        "cancels": 1,
+        "fault_addr": 144,
+        "fault_xor": 79228162514264337593543950336
+      },
+      "checker": {
+        "cycles": 429,
+        "starts": 1,
+        "CALLs": 1,
+        "CANCELs": 1,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 392
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a6ec16f920446f22354b30bc10b07c543e3f3e7774189c89c974b61fb168e02d",
+      "log_sha256": "ae49681906997b299e4b21a11f2a04bc3709c13e6ca7ec0c45e33a4d335457ae",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/duplicate_token.mem",
+        "+WORDS=12",
+        "+CALLS=1",
+        "+STALL=2",
+        "+DELAY1=200",
+        "+CANCELS=1",
+        "+EXPECTED=7",
+        "+FAULT_ADDR=144",
+        "+FAULT_XOR=00000001000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "invalid_opcode",
+        "image": "single",
+        "calls": 1,
+        "delay0": 200,
+        "expected": 1,
+        "cancels": 1,
+        "fault_addr": 144,
+        "fault_xor": 317685490992594893624009887411297320960
+      },
+      "checker": {
+        "cycles": 401,
+        "starts": 1,
+        "CALLs": 1,
+        "CANCELs": 1,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 364
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "84ec4b329f16322ab8ade1830b7b84524ff9d0051b49123f8be062db1e2d0fab",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/invalid_opcode.mem",
+        "+WORDS=11",
+        "+CALLS=1",
+        "+STALL=2",
+        "+DELAY0=200",
+        "+CANCELS=1",
+        "+EXPECTED=1",
+        "+FAULT_ADDR=144",
+        "+FAULT_XOR=ef000000000000000000000100000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bounds",
+        "image": "single",
+        "calls": 1,
+        "expected": 6,
+        "fault_addr": 160,
+        "fault_xor": 15950735949418990474845684723364134912
+      },
+      "checker": {
+        "cycles": 413,
+        "starts": 1,
+        "CALLs": 1,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 364
+          },
+          {
+            "pc": 1,
+            "op": "G_WAIT",
+            "cycle": 387
+          },
+          {
+            "pc": 2,
+            "op": "G_MOVI",
+            "cycle": 396
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "5e5292a6e762197fa1dd6aeba3632958e9d4994efa51bd6654b02845f3567929",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/bounds.mem",
+        "+WORDS=11",
+        "+CALLS=1",
+        "+STALL=2",
+        "+EXPECTED=6",
+        "+FAULT_ADDR=160",
+        "+FAULT_XOR=0c000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "unconsumed_READY",
+        "image": "receiver",
+        "calls": 1,
+        "ready1": 1,
+        "expected": 7,
+        "fault_addr": 144,
+        "fault_xor": 3987683987354747618711421185136001024
+      },
+      "checker": {
+        "cycles": 513,
+        "starts": 1,
+        "CALLs": 1,
+        "CANCELs": 0,
+        "READY_received": 1,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 462
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+      "log_sha256": "7188586b61a51166645686576da7c7f3c78a3d42ee7a3ca5b3a5202703a573ad",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/unconsumed_READY.mem",
+        "+WORDS=14",
+        "+CALLS=1",
+        "+STALL=2",
+        "+READY1=1",
+        "+EXPECTED=7",
+        "+FAULT_ADDR=144",
+        "+FAULT_XOR=03000000000000000000000100000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "PM_error",
+        "image": "single",
+        "calls": 1,
+        "delay0": 200,
+        "expected": 10,
+        "cancels": 1,
+        "pm_error": 1,
+        "fault_addr": 144
+      },
+      "checker": {
+        "cycles": 401,
+        "starts": 1,
+        "CALLs": 1,
+        "CANCELs": 1,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 364
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "03b1c15b9678cc7af7ad5ec520f52e6e2619765fa29fc9ce7ab0289c590446ea",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/PM_error.mem",
+        "+WORDS=11",
+        "+CALLS=1",
+        "+STALL=2",
+        "+DELAY0=200",
+        "+CANCELS=1",
+        "+EXPECTED=10",
+        "+FAULT_ADDR=144",
+        "+PM_ERROR=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "prefix_overflow",
+        "image": "two",
+        "calls": 2,
+        "prefix_max": 1
+      },
+      "checker": {
+        "cycles": 451,
+        "starts": 1,
+        "CALLs": 2,
+        "CANCELs": 0,
+        "READY_received": 0,
+        "results": 1,
+        "poisoned": false,
+        "retired": [
+          {
+            "pc": 0,
+            "op": "G_CALL",
+            "cycle": 392
+          },
+          {
+            "pc": 1,
+            "op": "G_CALL",
+            "cycle": 406
+          },
+          {
+            "pc": 2,
+            "op": "G_WAIT",
+            "cycle": 429
+          },
+          {
+            "pc": 3,
+            "op": "G_END",
+            "cycle": 450
+          }
+        ],
+        "actual_mother_RTL": true,
+        "actual_local_RTL": false,
+        "control_tokens": 8,
+        "targets": 2
+      },
+      "input_image_sha256": "a6ec16f920446f22354b30bc10b07c543e3f3e7774189c89c974b61fb168e02d",
+      "log_sha256": "181a5e3a48c99e948392dcccc4548d4cac1a43a9944d465e51d17ee156de3191",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/prefix_overflow.mem",
+        "+WORDS=12",
+        "+CALLS=2",
+        "+STALL=2",
+        "+PREFIX_MAX=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "partial_load",
+        "image": "single",
+        "calls": 0,
+        "mode": 1,
+        "negative": true
+      },
+      "checker": {
+        "negative_admission_only": true,
+        "cycles": 14
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "e3bb29d14ad7ff3b954d5309aa6199bb52a4cf751ffa942c4b3554fa9804304a",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/partial_load.mem",
+        "+WORDS=11",
+        "+CALLS=0",
+        "+STALL=2",
+        "+MODE=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_header",
+        "image": "single",
+        "calls": 0,
+        "mode": 2,
+        "negative": true
+      },
+      "checker": {
+        "negative_admission_only": true,
+        "cycles": 344
+      },
+      "input_image_sha256": "869ca8b2f4d39a7b33afc55802c530cfe47617e60acc868a565881a028d087b7",
+      "log_sha256": "a2f6ac004e37ef29ffeca8b20b564be67f0e4eece43d7155f9bb70f84421f2b2",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/bad_header.mem",
+        "+WORDS=11",
+        "+CALLS=0",
+        "+STALL=2",
+        "+MODE=2",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_START_generation",
+        "image": "single",
+        "calls": 0,
+        "mode": 3,
+        "negative": true
+      },
+      "checker": {
+        "negative_admission_only": true,
+        "cycles": 359
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "91af3c62c5a92ad9be114b88f596355ad3b3359b70e55546ab309f8769d16eda",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/bad_START_generation.mem",
+        "+WORDS=11",
+        "+CALLS=0",
+        "+STALL=2",
+        "+MODE=3",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_START_args",
+        "image": "single",
+        "calls": 0,
+        "mode": 4,
+        "negative": true
+      },
+      "checker": {
+        "negative_admission_only": true,
+        "cycles": 359
+      },
+      "input_image_sha256": "a865dad617fa7b2373f54c4da36fab7c3b850d212d8ba75faea2c0aaad334c1e",
+      "log_sha256": "b9c22b532171b57fa2929584e19f8a2767afb578d1bd78cb59763f8f39a52f87",
+      "command": [
+        "/work/results/mother/obj_dir/sim",
+        "+IMAGE=/work/results/mother/bad_START_args.mem",
+        "+WORDS=11",
+        "+CALLS=0",
+        "+STALL=2",
+        "+MODE=4",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    }
+  ],
+  "mutation_checks": [
+    {
+      "name": "corrupt_CALL_arg",
+      "rejected": true
+    },
+    {
+      "name": "fake_GWAIT_retire",
+      "rejected": true
+    },
+    {
+      "name": "erase_terminal_receive",
+      "rejected": true
+    },
+    {
+      "name": "poison_start_credit",
+      "rejected": true
+    }
+  ],
+  "compile_command": [
+    "/eda/verilator-5.042/bin/verilator",
+    "--binary",
+    "--timing",
+    "--top-module",
+    "tb_mc_min",
+    "-I/work/source/project/control_rtl_min_v0_1",
+    "--Mdir",
+    "/work/results/mother/obj_dir",
+    "-j",
+    "4",
+    "-o",
+    "sim",
+    "/work/source/project/control_rtl_min_v0_1/mc_min_controller.sv",
+    "/work/source/project/control_rtl_min_v0_1/tb_mc_min.sv"
+  ],
+  "compile_log_sha256": "3cb560d7dfb580bf3ab0e8b03814c68dd655716dad7f4749a35ca8eb1fe12c0f",
+  "dut_sha256": "b3b8bec07c145288ab31ea4f69e9908637b0e4b5941be973333e36ea6e585753",
+  "tools": {
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]"
+  },
+  "actual_mother_RTL": true,
+  "actual_local_RTL": false,
+  "finite_child_peers": 2,
+  "whole_message_bits": 512,
+  "control_tokens": 8,
+  "G_PARAM_tested": false,
+  "full_Block_tested": false,
+  "physical_tested": false
+}

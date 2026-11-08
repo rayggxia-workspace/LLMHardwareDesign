@@ -1,0 +1,174 @@
+{
+  "schema": "r73-trial-bindings/0.1",
+  "issue": 179,
+  "pr": 180,
+  "upstream": {
+    "pr176": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+    "pr180": "ae5c17c3df46ed7d1ecb93d550b6434d689d3649",
+    "main": "27eaaace1bc03cb4422954d1be343de556b757e3"
+  },
+  "clock_period_ns": "3.333333333",
+  "scope": "Fixed functional RTL trial wiring; production routes and pin binding pending.",
+  "sources": {
+    "E": {
+      "path": "project/rtl/block_v2/block_v2_e.sv",
+      "ref": "27eaaace1bc03cb4422954d1be343de556b757e3",
+      "blob": "25a2d48d084d82303da3ee39b44d7ccad9a10360"
+    },
+    "N": {
+      "path": "project/rtl/block_v2/block_v2_n.sv",
+      "ref": "27eaaace1bc03cb4422954d1be343de556b757e3",
+      "blob": "f9281bb329ea4af8fa314fa15249f7aed985980b"
+    },
+    "NT": {
+      "path": "project/rtl/block_v2/block_v2_n_exp.svh",
+      "ref": "27eaaace1bc03cb4422954d1be343de556b757e3",
+      "blob": "634c46c6a8a413869c85e59f736aa25cf8fdd76b"
+    },
+    "G": {
+      "path": "project/rtl/block_v2/block_v2_g.sv",
+      "ref": "27eaaace1bc03cb4422954d1be343de556b757e3",
+      "blob": "5ed727f707a9ee2a7ccec8525b720c1c5294ae98"
+    },
+    "GT": {
+      "path": "project/rtl/block_v2/block_v2_g_tables.svh",
+      "ref": "27eaaace1bc03cb4422954d1be343de556b757e3",
+      "blob": "03eeba065134335bffc6768285ac2f12066295c9"
+    },
+    "T": {
+      "path": "project/rtl/block_v1/transaction6k.sv",
+      "ref": "27eaaace1bc03cb4422954d1be343de556b757e3",
+      "blob": "d8b05d8a3da5415cf401a3055922bdc97315e660"
+    },
+    "R": {
+      "path": "project/rtl/r_local_state/r_stream_local.sv",
+      "ref": "27eaaace1bc03cb4422954d1be343de556b757e3",
+      "blob": "30782e8db285115fd58ff698bc4877c4db02bd43"
+    },
+    "RS": {
+      "path": "project/rtl/r_local_state/r_state_store.sv",
+      "ref": "27eaaace1bc03cb4422954d1be343de556b757e3",
+      "blob": "8a894ea4149a2c7de82693aafd79bb6e92604912"
+    },
+    "SA": {
+      "path": "project/rtl/block_local_s/block_local_s_arbiter.sv",
+      "ref": "ae5c17c3df46ed7d1ecb93d550b6434d689d3649",
+      "blob": "2e6f0a49d3fe2681d9ef9a827c56f69d323a6bfc"
+    },
+    "SB": {
+      "path": "project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "ref": "ae5c17c3df46ed7d1ecb93d550b6434d689d3649",
+      "blob": "c83a5a3f99cc0e3dd78a94561d0d1ff3938324e9"
+    },
+    "S": {
+      "path": "project/rtl/block_local_s/block_local_s_macro.sv",
+      "ref": "ae5c17c3df46ed7d1ecb93d550b6434d689d3649",
+      "blob": "360679393477ea6a9202517290c27073dbe676b0"
+    },
+    "NG": {
+      "path": "project/rtl/block_v2/block_v2_n_group.sv",
+      "ref": "27eaaace1bc03cb4422954d1be343de556b757e3",
+      "blob": "cdc96ca417d2e6f5ed45ac689398023bea7c5a76"
+    }
+  },
+  "private_s": {
+    "backend": "existing standard-cell RTL from P trial",
+    "capacity_bytes": 16384,
+    "address_bits": 10,
+    "word_bits": 128,
+    "ports": "req_valid/req_ready, req_write/req_addr/req_data; rsp_valid/rsp_ready and rsp_data",
+    "completion": "matched actual S response on reserved write client"
+  },
+  "profiles": {
+    "F": {
+      "block_type": 3,
+      "resource_mask": 44,
+      "abi": 96515,
+      "topology": 392491521,
+      "capacity": 392364033,
+      "service_resource": 3,
+      "services": {
+        "0x0082": {
+          "name": "silu_store",
+          "resources": 40,
+          "reads": 1
+        },
+        "0x0083": {
+          "name": "silu_add_store",
+          "resources": 44,
+          "reads": 2
+        }
+      },
+      "layout": "native0[9:0]=input word, [19:10]=addend word (zero for bypass), [29:20]=destination word, [31:30]=0",
+      "route": [
+        "private S client0 -> G.in_x[31:0]",
+        "G.out_data[31:0] -> E.in_a[31:0] or private S client0 write",
+        "S addend[31:0] -> E.in_b[31:0]",
+        "E.out_data[31:0] -> private S client0 write"
+      ],
+      "format": "two signed Q5.10 lanes in word[31:0], word[127:32]=0 on output; E unused lanes zeroed",
+      "native_ports": [
+        "G in_valid/in_ready, in_fn=0, in_gated=0, out_valid/out_ready/out_error/out_saturated",
+        "E in_valid/in_ready, in_op=0, in_shift=0, out_valid/out_ready/out_error/out_saturated"
+      ],
+      "completion": "G/E successful response then private S write response; report 16 B written once"
+    },
+    "U": {
+      "block_type": 1,
+      "resource_mask": 38,
+      "admission": "fixed U experiment only",
+      "native_ports": [
+        "N cmd_valid/cmd_ready, cmd_op/cmd_count/cmd_param/cmd_data/cmd_aux; rsp_valid/rsp_ready/rsp_data/rsp_error/rsp_saturated",
+        "E ready/valid with 128-bit lanes"
+      ],
+      "route": "S -> N BEGIN(RMS)/STATS(0,1)/FINALIZE/REPLAY(0,1) with both source words reread -> E ADD per segment -> two S writes",
+      "completion": "both segments finish native N/E before first write; both actual S responses match before success",
+      "format": "two words of signed S16 Q5.10, counts 1..8 per word, gamma=1024, signed Q5.10 E bias only on active lanes, zero inactive result lanes",
+      "abi": 96516,
+      "topology": 392475137,
+      "capacity": 392364033,
+      "service_resource": 1,
+      "operation": "0x0084",
+      "baseline": "b58a6b197c5829b0af342e4ceefa56170ae5660f",
+      "layout": "native0 packs src0/src1/dst0 as 10-bit S word addresses, dst1=dst0+1; native1 low nibbles count0/count1, high S16 bias; native2 positive epsilon"
+    },
+    "J": {
+      "block_type": 4,
+      "resource_mask": 100,
+      "admission": "fixed J experiment only",
+      "native_ports": [
+        "T begin_valid/begin_ready, write_valid/write_ready, commit_valid/commit_ready, read_valid/read_take/read_last, release_valid/release_ready",
+        "E 8-lane S16 with ready/valid"
+      ],
+      "route": "S source -> T two-word lease -> S scratch; reread S scratch and addend -> E ADD -> S results",
+      "completion": "consume each T word after matching scratch write ACK; release after last consume; await both result write ACKs",
+      "format": "two 128-bit words, eight S16 lanes per word; saturating E ADD",
+      "abi": 96517,
+      "topology": 392487425,
+      "capacity": 392364033,
+      "service_resource": 6,
+      "operation": "0x0085",
+      "baseline": "500f630f27c1bb49cb8d2420ec14962277ddb70a",
+      "layout": "native0 packs input, addend, scratch bases in 10-bit word units; native1 low 10 bits result base; four separate even aligned pairs"
+    },
+    "C": {
+      "block_type": 2,
+      "resource_mask": 60,
+      "admission": "fixed single-consumer C experiment only",
+      "native_ports": [
+        "R256 load_valid/load_ready, cmd_valid/cmd_ready, rsp_valid/rsp_ready/rsp_error; rd_valid/rd_ready, rd_rsp_valid/rd_rsp_ready; cmd_role selects state banks",
+        "E op13 narrows four S32 to S16; G two S16 lanes"
+      ],
+      "route": "R256 active row -> opposite candidate row; native candidate reread -> E op13 -> G SiLU -> S -> actual reference consumer S",
+      "completion": "matching stored receipt after destination write; identity job/epoch/task/next generation; 96-cycle receipt deadline; commit active bank only on success",
+      "format": "eight R S32 Q16.16 in one native row; E shift 6 of low four lanes to Q5.10; G consumes low two; output low 32 bits, rest zero",
+      "abi": 96518,
+      "topology": 392479233,
+      "capacity": 392364033,
+      "service_resource": 4,
+      "operation": "0x0086",
+      "baseline": "500f630f27c1bb49cb8d2420ec14962277ddb70a",
+      "layout": "native0 low 10 bits local S result word, native1 unsigned positive decay < 0x80000000 in 31 fractional bits"
+    }
+  }
+}

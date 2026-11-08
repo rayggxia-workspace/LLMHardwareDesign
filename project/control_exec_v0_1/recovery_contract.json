@@ -1,0 +1,125 @@
+{
+  "schema": "control-recovery-peer-contract/0.1",
+  "status": "proposed software peers only; no controller/provider RTL qualification",
+  "run_isa_unchanged": true,
+  "wire_encoding": null,
+  "mmio_addresses": null,
+  "cancel_message": {
+    "record": "task_message",
+    "bytes": 64,
+    "kind": 1,
+    "preserve": [
+      "target_block",
+      "job_id",
+      "epoch",
+      "task_sequence",
+      "completion_token",
+      "program_image_id",
+      "topology_id"
+    ],
+    "task_descriptor": 0,
+    "arguments": "all eight uint32 arguments zero"
+  },
+  "states": [
+    "RUNNING",
+    "CANCELLING",
+    "DRAINED",
+    "POISONED",
+    "RESETTING",
+    "RESET_COMPLETE",
+    "RELOADED"
+  ],
+  "statuses": {
+    "native_error": 9,
+    "cancelled": 11,
+    "drain_or_reset_required": 13
+  },
+  "terminal_policy": "already offered packets immutable; native error precedes CANCELLED; no successful G_END on cancel",
+  "coordination_messages": [
+    {
+      "name": "RX_CLOSE_REQ",
+      "fields": [
+        "current job/epoch/task",
+        "local RX operation"
+      ],
+      "requires": "no DATA link or held DATA; all potential sources stopped"
+    },
+    {
+      "name": "RX_CLOSE_ACK",
+      "fields": [
+        "matching operation",
+        "source_gate_closed=true"
+      ],
+      "requires": "registered peer has physically/logically closed all relevant sources in the model"
+    },
+    {
+      "name": "RESET_REQ",
+      "fields": [
+        "reset_sequence:uint32 1..4294967295, no wrap",
+        "participant set from cohort inventory"
+      ]
+    },
+    {
+      "name": "RESET_ACK",
+      "fields": [
+        "reset_sequence",
+        "participant"
+      ],
+      "requires": "participant actually reset; duplicate, unknown, stale and unapplied ACK rejected"
+    }
+  ],
+  "model_inventory": {
+    "base": [
+      "controller.mother",
+      "transport",
+      "ingress"
+    ],
+    "per_local": [
+      "controller.localN",
+      "adapter.N",
+      "M.N",
+      "S.N"
+    ],
+    "one_local_participants": 7,
+    "two_local_participants": 11,
+    "physical_missing": [
+      "G",
+      "feeder",
+      "arbiters",
+      "any additional real implementation state"
+    ]
+  },
+  "admission_after_reset": [
+    "all required matching ACKs",
+    "provider future response queues, adapters and transport empty",
+    "all five activity counters zero",
+    "one additional modeled quiet tick; not hardware reset/CDC timing",
+    "keep response gates closed",
+    "complete BEGIN/WRITE16/VERIFY/COMMIT reload; larger generation",
+    "new epoch greater than poison epoch"
+  ],
+  "capacities": {
+    "native_source_entries_per_port": 2,
+    "drain_experiment_ticks_max": 128,
+    "reset_peer_delay_max": 64
+  },
+  "native_wire": {
+    "fields": {
+      "rsp_data": 128,
+      "rsp_error": 1,
+      "rsp_saturated": 1
+    },
+    "job_tag": false,
+    "observer_origin": "proof only; never used for routing/filtering",
+    "guarantee": "conditional on provider quiescence/reset contract; identical old response during new context is intrinsically ambiguous"
+  },
+  "numerical_provider_reset_defaults": null,
+  "not_implemented": [
+    "physical coordination encoding/MMIO",
+    "real provider RESET_ACK",
+    "CDC/reset release timing",
+    "complete Block reset inventory",
+    "full ISA/general topology",
+    "power gating"
+  ]
+}

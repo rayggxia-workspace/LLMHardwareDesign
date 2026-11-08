@@ -1,0 +1,84 @@
+{
+  "schema": "p16-production-a1-review/0.1",
+  "issue": 179,
+  "pull_request": 180,
+  "control_base": "9bed4bb197e1100017083a7a53cc59306464f7c7",
+  "design_base": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "reviewed_prs": {
+    "190": "0485ed84dd13d8711c88609668cf0a903a006773",
+    "194": "0381824a14eed0642eca1e759774eb168cab82b3",
+    "195": "cad3fa572d3cbf8515532df50868000806990b18",
+    "206": "179ca76ff35673dcb47986e3d873fc2a87dbabbb",
+    "213": "4d9bb1361f93ac0eaddb073803a79ef94843b166",
+    "214": "33821f73c601ddec81a53264b8c62008fc665aff",
+    "216": "5f055f6cd1349174ecb71ea55bc48e9acd6a618d"
+  },
+  "block_p16": {
+    "path": "project/rtl/block_pj_v1/block_p16.sv",
+    "git_blob": "c0bbd0011a4208f176e0427be09acc0448bde6ab",
+    "sha256": "847fdad6012554a88c626d434c79812c111d1e676d4b7b89a53778c2600fe71f"
+  },
+  "p_group_candidate": {
+    "path": "project/rtl/pu_leaf_base/pu_p_group.sv",
+    "ref": "33821f73c601ddec81a53264b8c62008fc665aff",
+    "git_blob": "3dd63bf7b07d7d5a10fefe3f6c557ed559aaf47b",
+    "sha256": "ab55887ac575cc3715045af4efe07032264413e3ae84ea5666a8f5ccbb9a2982"
+  },
+  "trial": {
+    "instances": [
+      "P0",
+      "P1"
+    ],
+    "abi": "0x01790160",
+    "topology": "0x01790161",
+    "capacity": "0x17630001",
+    "bytes_per_s": 16384,
+    "address_bits": 10,
+    "word_bits": 128,
+    "single_clock": true,
+    "sram_client_owner": {
+      "client_0": "host seed/read",
+      "client_1": "P0 source read or P1 sink write"
+    },
+    "link": "P0.S[14] -> P1.S[20]",
+    "stored_origin": "P1 block.io_rsp_valid[1] following the accepted destination write",
+    "stored_ack_valid_bits": 1,
+    "stored_ack_identity_bits": 0
+  },
+  "production": {
+    "integrated_top": {
+      "binding": null,
+      "required": "Select and pin a two-instance RTL or netlist and matching views; specify instance IDs and reset ownership."
+    },
+    "fixed_control": {
+      "binding": null,
+      "required": "Bind MC/LC command and return paths, LC/native adapter ports and the PM deployment interlock."
+    },
+    "private_s": {
+      "binding": null,
+      "required": "Freeze private S variant, banks, address width, host/TX/RX/write-client ownership and store commit port."
+    },
+    "intra_block_data": {
+      "binding": null,
+      "required": "Choose stored replay or direct M-to-G; pin endpoints, Q format, widths, buffering and the return handshake."
+    },
+    "cross_block_data": {
+      "binding": null,
+      "required": "Bind actual P0.TX to P1.RX, source and sink pins, framing, single writer, ready/valid, buffering and clock domains."
+    },
+    "cross_block_ack": {
+      "binding": null,
+      "required": "Bind actual P1 write-completion to P0 release, ACK identity and encoding, edge ID, backpressure, timeout and clock domains."
+    },
+    "images_and_data": {
+      "binding": null,
+      "required": "Pin production image versions, capacity ID, topology ID, native ABI, preloads and source/mirror reference hashes."
+    }
+  },
+  "production_clock_period_ns": "3.333333333",
+  "a4_required": "Production reset/quiesce certificate, epoch/generation ownership, stale response flush, and CDC behavior where used.",
+  "a5_required": "Same-version integrated netlist and views, SDC, routed M1-M12 parasitics including selected upper-metal overlay, clock/reset assumptions and signed setup/hold/electrical reports.",
+  "prior_control_base": "88b633cb44a404bcb2d8b4ba84437549ace44b97",
+  "rtl_candidate": "project/control_dual_p_top_v1/bindings.json",
+  "production_note": "RTL candidate implemented and verified separately; seven production bindings await same-version physical/PM acceptance."
+}

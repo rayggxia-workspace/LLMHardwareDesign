@@ -1,0 +1,15 @@
+{
+  "schema": "recovery-clock-reset-contract/1",
+  "clock_domains": 1,
+  "clock_ports": ["clk_i"],
+  "clock_period_ns": "3.333333333",
+  "host_signals": "synchronous to clk_i; ready/valid held until handshake",
+  "asynchronous_host_supported": false,
+  "outer_reset": "rst_ni asynchronous assertion, two-flop synchronized release for supervisor",
+  "inner_reset": "supervisor coordinated cohort assertion after data obligations drain; existing two-flop synchronized release",
+  "unilateral_endpoint_reset_exposed": false,
+  "endpoint_reset_requests": "source/destination mask requests promote to whole cohort reset",
+  "cdc_status": "not applicable to this single-clock instantiation; no asynchronous data crossing claimed",
+  "rdc_scope": "explicit common-cohort reset contract; this static inventory is not a physical RDC/CDC signoff",
+  "future_multiclock": "requires independent CDC FIFO/handshake, reset and credit-lifetime qualification"
+}

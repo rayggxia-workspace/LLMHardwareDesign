@@ -6,6 +6,10 @@
 
 **2026-11-01 六块交付：** M/N/E/G/S/T 已完成逐宏300MHz布局布线及全部适用最终门，并按源绑定SHA本地实收；R 尚未完成，不在合格清单中。原 V 已拆为 N（归约与归一化）、E（基础向量算术/RoPE）、G（激活与门控）。[实际规格](docs/BLOCK_V2.md)、[结果及文件入口](docs/BLOCK_V2_RESULTS.md)。阵列、M11/M12系统及整模型质量仍待后续验证。
 
+**母控与局控研究（PR #180）**  [跨分支接续指南](docs/local-blocks/CONTROL_RESEARCH_HANDOFF.md) · [研究详解与指令参考 PDF](docs/local-blocks/CONTROL_RESEARCH_AND_ISA_QUICK_REFERENCE.pdf)
+
+R8.3/R8.4已接通[main64任务编译](project/control_task_compiler_v1/README.md)和[完整组传输/恢复候选](project/control_main64_recovery_v1/README.md)：正式三PM编译回放81次、恢复集成279次、链路单元21次及九配置结构通过。J→P提交链和双U回送已验证；R8.5覆盖闭环、R8.6新综合冻结及后端时序仍待接续。
+
 ## 从哪里开始
 
 1. [项目说明 v1.0](预制计算底座项目说明_v1.0.md)：研究问题、已确认边界、2026-10-30 架构规划补记与待验证清单。

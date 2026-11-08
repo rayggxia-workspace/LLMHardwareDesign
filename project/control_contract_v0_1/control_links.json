@@ -1,0 +1,269 @@
+{
+  "schema": "mother-local-control-link-contract/0.1",
+  "status": "proposed control boundary; no link or controller RTL implemented",
+  "global_to_local": {
+    "transport": {
+      "candidate_data_bits": 32,
+      "packet_bytes": 64,
+      "flits_per_packet": 16,
+      "ordered": true,
+      "packet_interleaving": false
+    },
+    "wire_pins": "valid/ready/data are proposed transport signals, not observed macro pins",
+    "accept": "entire64-byte packet accepted plus local task capacity and reserved terminal-return capacity",
+    "record": "task_message",
+    "kind": {
+      "CALL": 0,
+      "CANCEL": 1
+    },
+    "fields": [
+      {
+        "name": "version",
+        "offset": 0,
+        "bits": 16,
+        "constant": 1
+      },
+      {
+        "name": "kind",
+        "offset": 2,
+        "bits": 8,
+        "max": 1
+      },
+      {
+        "name": "target_block",
+        "offset": 3,
+        "bits": 8
+      },
+      {
+        "name": "job_id",
+        "offset": 4,
+        "bits": 32
+      },
+      {
+        "name": "epoch",
+        "offset": 8,
+        "bits": 32
+      },
+      {
+        "name": "task_sequence",
+        "offset": 12,
+        "bits": 32
+      },
+      {
+        "name": "task_descriptor",
+        "offset": 16,
+        "bits": 8
+      },
+      {
+        "name": "completion_token",
+        "offset": 17,
+        "bits": 8,
+        "max": 31
+      },
+      {
+        "name": "flags",
+        "offset": 18,
+        "bits": 16,
+        "constant": 0
+      },
+      {
+        "name": "program_image_id",
+        "offset": 20,
+        "bits": 32
+      },
+      {
+        "name": "topology_id",
+        "offset": 24,
+        "bits": 32
+      },
+      {
+        "name": "arg0",
+        "offset": 32,
+        "bits": 32
+      },
+      {
+        "name": "arg1",
+        "offset": 36,
+        "bits": 32
+      },
+      {
+        "name": "arg2",
+        "offset": 40,
+        "bits": 32
+      },
+      {
+        "name": "arg3",
+        "offset": 44,
+        "bits": 32
+      },
+      {
+        "name": "arg4",
+        "offset": 48,
+        "bits": 32
+      },
+      {
+        "name": "arg5",
+        "offset": 52,
+        "bits": 32
+      },
+      {
+        "name": "arg6",
+        "offset": 56,
+        "bits": 32
+      },
+      {
+        "name": "arg7",
+        "offset": 60,
+        "bits": 32
+      }
+    ],
+    "call_effects": [
+      "snapshot R0..R7 at successful task submission",
+      "bind target/job/epoch/task_sequence/image/topology and resident task_descriptor",
+      "local entry_pc is read from resident task descriptor, not streamed instruction words"
+    ],
+    "cancel": "drain according to registered cohort policy; already visible stores do not roll back"
+  },
+  "local_to_global": {
+    "transport": {
+      "candidate_data_bits": 32,
+      "packet_bytes": 64,
+      "flits_per_packet": 16,
+      "independent_return_direction": true
+    },
+    "record": "event_message",
+    "kinds": {
+      "READY": 0,
+      "PROGRESS": 1,
+      "TASK_DONE": 2,
+      "ERROR": 3
+    },
+    "fields": [
+      {
+        "name": "version",
+        "offset": 0,
+        "bits": 16,
+        "constant": 1
+      },
+      {
+        "name": "kind",
+        "offset": 2,
+        "bits": 8,
+        "max": 3
+      },
+      {
+        "name": "source_block",
+        "offset": 3,
+        "bits": 8
+      },
+      {
+        "name": "job_id",
+        "offset": 4,
+        "bits": 32
+      },
+      {
+        "name": "epoch",
+        "offset": 8,
+        "bits": 32
+      },
+      {
+        "name": "task_sequence",
+        "offset": 12,
+        "bits": 32
+      },
+      {
+        "name": "completion_token",
+        "offset": 16,
+        "bits": 8,
+        "default": 255
+      },
+      {
+        "name": "event_id",
+        "offset": 17,
+        "bits": 8,
+        "default": 255
+      },
+      {
+        "name": "status",
+        "offset": 18,
+        "bits": 16
+      },
+      {
+        "name": "scalar",
+        "offset": 20,
+        "bits": 32
+      },
+      {
+        "name": "confirmed_read_bytes",
+        "offset": 24,
+        "bits": 32
+      },
+      {
+        "name": "confirmed_write_bytes",
+        "offset": 28,
+        "bits": 32
+      },
+      {
+        "name": "flags",
+        "offset": 32,
+        "bits": 32,
+        "max": 7
+      },
+      {
+        "name": "event_sequence",
+        "offset": 36,
+        "bits": 32
+      },
+      {
+        "name": "error_pc",
+        "offset": 40,
+        "bits": 32,
+        "default": 4294967295
+      },
+      {
+        "name": "detail",
+        "offset": 44,
+        "bits": 32
+      }
+    ],
+    "accept": "valid&&ready for each flit, event only committed after entire packet; held tuple until acceptance",
+    "identity": "current job/epoch/task_sequence plus completion_token or event binding; duplicate/old event sequence rejected",
+    "terminal": "one retained terminal result per active task; no overwrite under backpressure"
+  },
+  "local_to_adapter": {
+    "status": "interface proposal; not macro native pins",
+    "request_metadata": [
+      "resource",
+      "service",
+      "native_op",
+      "native0..7",
+      "snapshotted object windows",
+      "context_owner",
+      "local_token",
+      "service_sequence"
+    ],
+    "accept": "resource/queue/lock capacity available AND request_valid&&request_ready; allocate token only once",
+    "response_metadata": [
+      "service_sequence",
+      "local_token",
+      "completion_class",
+      "error",
+      "saturation",
+      "confirmed_bytes"
+    ],
+    "native_tag_warning": "M/G/S native ports carry no task/service_sequence. Adapter owns association; untagged delayed providers must drain/reset with cohort before epoch reuse",
+    "completion_strengths": {
+      "NATIVE_DONE": "registered native command/service handshakes",
+      "LOCAL_STORED": "all declared local S writes actually acknowledged",
+      "DRAINED": "only services explicitly registering this class may claim it; none registered in this first P subset"
+    },
+    "wait": "L_WAIT/G_WAIT stop their sequencer only; return and service engines continue",
+    "context": "busy, accepted command, consumed response, retained context and data-valid are distinct states"
+  },
+  "unresolved": [
+    "physical command-network topology and queue depths",
+    "configuration MMIO/transport format is step3, not an ISA opcode",
+    "runtime progress/timeout and cancellation FSM",
+    "whole-program object lifetime/Q-format checking"
+  ]
+}

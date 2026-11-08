@@ -1,0 +1,154 @@
+{
+  "schema": "control-recovery-experiments/0.1",
+  "status": "proposed bounded peers, no RTL/provider reset qualification",
+  "scenarios": [
+    {
+      "name": "cancel_CALL_held",
+      "bundle": 0,
+      "environment": {
+        "stalls": {
+          "mother.call": 3
+        }
+      },
+      "trigger": {
+        "kind": "call",
+        "accepted": false
+      },
+      "next_sequences": {
+        "0": 2
+      }
+    },
+    {
+      "name": "cancel_native_pending",
+      "bundle": 1,
+      "environment": {
+        "latency": {
+          "native": 7,
+          "store": 2,
+          "ack": 4
+        }
+      },
+      "trigger": {
+        "kind": "native_cmd"
+      },
+      "next_sequences": {
+        "0": 2
+      }
+    },
+    {
+      "name": "cancel_passive_RX",
+      "bundle": 2,
+      "environment": {},
+      "trigger": {
+        "kind": "arm_rx",
+        "task": 1
+      },
+      "next_sequences": {
+        "0": 1,
+        "1": 2
+      }
+    },
+    {
+      "name": "cancel_after_ingress_write",
+      "bundle": 2,
+      "environment": {},
+      "trigger": {
+        "kind": "store_ack",
+        "pair": "255:0:11"
+      },
+      "next_sequences": {
+        "0": 2,
+        "1": 2
+      }
+    },
+    {
+      "name": "cancel_DATA_held",
+      "bundle": 2,
+      "environment": {
+        "stalls": {
+          "0:1:12.data": 4
+        }
+      },
+      "trigger": {
+        "kind": "data",
+        "pair": "0:1:12",
+        "accepted": false
+      },
+      "next_sequences": {
+        "0": 2,
+        "1": 2
+      }
+    },
+    {
+      "name": "cancel_after_destination_write",
+      "bundle": 2,
+      "environment": {},
+      "trigger": {
+        "kind": "store_ack",
+        "pair": "0:1:12"
+      },
+      "next_sequences": {
+        "0": 2,
+        "1": 2
+      }
+    },
+    {
+      "name": "cancel_DONE_held",
+      "bundle": 0,
+      "environment": {
+        "stalls": {
+          "return.0": 4
+        }
+      },
+      "trigger": {
+        "kind": "terminal",
+        "accepted": false
+      },
+      "next_sequences": {
+        "0": 2
+      }
+    },
+    {
+      "name": "poison_native_response_stuck",
+      "bundle": 1,
+      "environment": {
+        "latency": {
+          "native": 20,
+          "store": 2,
+          "ack": 4
+        },
+        "blocked_channels": [
+          "M.0.response"
+        ]
+      },
+      "trigger": {
+        "kind": "native_cmd"
+      },
+      "drain_ticks": 4,
+      "reset": true,
+      "inject_future_native": true,
+      "next_sequences": {
+        "0": 2
+      }
+    },
+    {
+      "name": "poison_ACK_stuck",
+      "bundle": 2,
+      "environment": {
+        "blocked_channels": [
+          "source.ack"
+        ]
+      },
+      "trigger": {
+        "kind": "ack_send",
+        "pair": "0:1:12"
+      },
+      "drain_ticks": 4,
+      "reset": true,
+      "next_sequences": {
+        "0": 2,
+        "1": 2
+      }
+    }
+  ]
+}

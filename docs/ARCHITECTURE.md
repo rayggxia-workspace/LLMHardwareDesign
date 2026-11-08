@@ -137,3 +137,304 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+## Issue179：局部 Block 接续研究的静态容量核算
+
+设计基于未合并的PR176固定提交；[研究报告](local-blocks/CONTINUATION_RESEARCH.md)给出来源、假设及后续执行/物理门。以下命令只生成和核对紧凑payload容量下界，不运行RTL或服务器实验：
+
+```powershell
+python -X utf8 -B work/Melodydt/179/analyze_capacity.py
+python -X utf8 -B work/Melodydt/179/analyze_capacity.py --check
+```
+
+输入在work/Melodydt/179/capacity-input.json，结果在docs/local-blocks/continuation-capacity.json；结果绑定脚本及输入SHA-256。bank/握手/打包/全链调度尚未验收，不能用此核算代替硬件验证。
+
+## Issue179：母控/局控方案与控制编码参考
+
+[方案/研究步骤](local-blocks/TWO_LEVEL_CONTROL_PLAN.md)和[ISA v0.1](local-blocks/CONTROL_ISA_V0_1.md)定义proposed两级控制。机器规范、参考codec及独立编码测试位于project/control_isa_v0_1；软件检查不证明完整编译、原生执行、RTL或物理通过。
+
+```powershell
+python -X utf8 -B -m unittest discover -s project/control_isa_v0_1 -p test_codec.py -v
+python -X utf8 -B project/control_isa_v0_1/codec.py examples --output work/Melodydt/179/control-example-programs.json
+python -X utf8 -B project/control_isa_v0_1/codec.py decode --role mother --word 0x10000200010000000000000000000000
+```
+
+以上仅使用Python标准库；完整镜像装配、原生ABI注册、资源/对象/令牌语义与控制器执行仍待R1及后续阶段。
+
+### 2026-11-04：综合方案 v0.2
+
+[Block 组网与母控／局控综合方案](local-blocks/TWO_LEVEL_CONTROL_PLAN.md)集中定义五类型组成、四类连接、24 条运行指令、程序来源／存储、配置装载互锁和任务执行。ISA v0.1 的机器规范及软件保持不变。固定控制预连和主机统一装载器为候选，宏级断电暂缓；最新依赖进展和 R0–R7 退出条件在同文档记录。
+
+本轮仍运行上述管理／编码检查，并运行容量重算；来源与产物 SHA 见 [综合方案来源](../work/Melodydt/179/control-summary-sources.json)和[验证回执](../work/Melodydt/179/control-summary-validation.json)。这是文档／软件参考核验，未新增 RTL、服务器或物理执行；装载器 RTL／镜像装配／native 注册与系统业务测试尚未实现。
+
+### Issue179：控制接口与原生服务合同第1步
+
+[接口合同](local-blocks/CONTROL_INTERFACE_CONTRACT_V0_1.md)和project/control_contract_v0_1提供来源绑定的端口、12个P服务、资源／拓扑profile与静态字段检查；不实现Block或控制RTL，不执行数值。每次接续／发布先核PR176最新提交、说明、评论／review，更新work/Melodydt/179/pr176-sync.json。
+
+```powershell
+python -X utf8 -B -m unittest discover -s project/control_contract_v0_1 -p test_contract.py -v
+python -X utf8 -B project/control_contract_v0_1/contract.py examples
+```
+
+依赖同仓库control_isa_v0_1和Python标准库。检查结果始终标记deployable=false，未登记服务／路线拒绝；完整镜像、指令执行和真实物理接入另行验证。来源／验证见work/Melodydt/179/control-interface-sources.json及control-interface-validation.json。
+
+### Issue179：第2步控制用例与独立轨迹
+
+[用例与边界](local-blocks/CONTROL_REFERENCE_CASES_V0_1.md)和project/control_cases_v0_1提供3组程序／分离记录与4条人工参考轨迹。oracle仅检查输入事件事实，不执行机器码PC或RTL；未来执行器／RTL应独立产生轨迹与之对照。
+
+```powershell
+python -X utf8 -B project/control_cases_v0_1/oracle.py encode --output project/control_cases_v0_1/encoded_cases.json
+python -X utf8 -B project/control_cases_v0_1/oracle.py check
+python -X utf8 -B -m unittest discover -s project/control_cases_v0_1 -p test_oracle.py -v
+```
+
+本轮源／验证为work/Melodydt/179/control-case-sources.json、control-case-validation.json。每轮进展必须补入总方案的当前摘要与逐轮记录；上游PR176检查仍在研究开始／恢复和上传前执行。
+
+### Issue179：第3步完整镜像与配置装载参考
+
+[镜像／装载合同](local-blocks/CONTROL_IMAGE_LOADING_V0_1.md)与project/control_image_v0_1提供完整128B头＋指令／描述符、cohort manifest／SHA、有限部署准入和单bank装载／排空／复位状态模型。Python标准库；START只准入，不执行PC／RTL；配置总线编码、硬件互锁和provider复位确认未实现。
+
+```powershell
+python -X utf8 -B scripts/check_project.py
+python -X utf8 -B project/control_image_v0_1/image.py build --output image-bundles-check.json
+python -X utf8 -B -m unittest discover -s project/control_image_v0_1 -p test_image.py -v
+```
+
+生成文件应与project/control_image_v0_1/bundles.json逐字相同，临时文件不上传。同时运行上文ISA、接口、轨迹单测；轨迹现28组（本轮纠正CALL arg0快照），镜像30组，合计81组。实际回执为work/Melodydt/179/control-image-validation.json；代码commit、输入与SHA见control-image-sources.json。未使用远程服务器，无新作业或自动监测。
+
+### Issue179：第4步二进制控制执行模型
+
+[执行模型合同](local-blocks/CONTROL_EXECUTION_MODEL_V0_1.md)与project/control_exec_v0_1从已装载完整镜像按PC取指，有限宏／存储／链路peer生成实际观察，再与人工属性／golden及退休PC比较。S为有限Python bytearray，tick不是硬件周期；没有控制RTL或完整Block。
+
+```powershell
+python -X utf8 -B scripts/check_project.py
+python -X utf8 -B project/control_exec_v0_1/run_campaign.py --output binary-runs-check.json
+python -X utf8 -B -m unittest discover -s project/control_exec_v0_1 -p test_machine.py -v
+```
+
+生成文件应与project/control_exec_v0_1/run_reports.json逐字一致，临时文件不上传；上文四套单测仍须运行。第4步新增26组、累计107组通过；9实验100次退休／193观察包含背压、M非正常peer错误及不复位连续2job。来源、工具、实际命令和SHA见work/Melodydt/179/control-exec-sources.json／control-exec-validation.json。下一步运行取消、provider协同复位与旧响应隔离；尚无服务器作业或自动监测。
+
+### Issue179：第5步取消、协同复位与迟到响应
+
+[恢复研究](local-blocks/CONTROL_RECOVERY_PLAN_V0_1.md)及project/control_exec_v0_1/recovery.py增加条件化安全取消、poison、模型RESET_REQ/ACK及完整重装。新30、累计137组检查；正常9次旧报告保持字节一致。无tag隔离依赖provider静默／复位合同，观察origin不是native tag；真实硬件／完整Block未验收。
+
+```powershell
+python -X utf8 -B project/control_exec_v0_1/run_recovery.py --output recovery-runs-check.json
+python -X utf8 -B -m unittest discover -s project/control_exec_v0_1 -p test_recovery.py -v
+```
+
+新报告应与recovery_reports.json逐字相同；继续运行上文五套测试／旧campaign，临时文件不上传。来源、实际命令、工具及SHA见work/Melodydt/179/control-recovery-sources.json／control-recovery-validation.json。下一步局控RTL接口／状态机／写口互锁和真实provider复位清单；无服务器作业或自动监测。
+
+### Issue179：第6步局控RTL接口／状态机候选
+
+[局控RTL入口合同](local-blocks/LOCAL_CONTROL_RTL_CONTRACT_V0_1.md)及project/control_rtl_contract_v0_1定义92逻辑信号、状态／guard、单PM端口和部署互锁、返回信用及688B payload寄存器下界。SystemVerilog仅interface／常量声明；人工边沿样例不是DUT运行，HDL编译／lint／仿真未执行，PATH未发现iverilog/verilator/yosys。
+
+```powershell
+python -X utf8 -B project/control_rtl_contract_v0_1/generate.py --check
+python -X utf8 -B project/control_rtl_contract_v0_1/examples.py --check
+python -X utf8 -B -m unittest discover -s project/control_rtl_contract_v0_1 -p test_boundary.py -v
+```
+
+新36组、累计173组；继续运行上文六套单测及旧执行／恢复报告重建。来源／实际验证为work/Melodydt/179/control-rtl-sources.json及control-rtl-validation.json。下一步功能局控最小切片；无服务器／物理作业或自动监测。
+
+
+
+
+
+### Issue179：第7步最小功能局控RTL
+
+[实现／能力与复现](../project/control_rtl_min_v0_1/README.md)及[研究](local-blocks/LOCAL_CONTROL_MIN_RTL_V0_1.md)只覆盖空任务和M clear控制。旧七套173检查继续运行。服务器最终97215／node27／debug／4核，Verilator5.042容器内实际编译与10场景通过；M／PM为行为peer，非完整Block。
+
+```bash
+python3 -B project/control_rtl_min_v0_1/wiring.py
+python3 -B project/control_rtl_min_v0_1/run.py --simulator verilator --verilator /eda/verilator-5.042/bin/verilator --out /work/results
+python3 -B work/Melodydt/179/verify_control_min.py --archive evidence-97215.tar.gz --extract /tmp/issue179-evidence-check
+```
+
+前两条在既有ORFS26Q1容器、G++11.4／Python3.10.12中执行，bind实际任务目录到/work、EDA目录只读到/eda；完整实际脚本见work/Melodydt/179/control-min-job-r005.sh。第三条用于有原始证据包时重核SHA／实际轨迹／终态，默认仓库根由脚本位置确定；证据包在本任务服务器目录，非仓库内置文件。
+输出report.json含环境／命令／输入与日志SHA；最终确数为10场景3926边沿，5执行轨迹3061边沿。无四态／综合／物理或母控RTL验收，无后台监测。
+
+### Issue179 第8步：局控CANCEL／有界排空
+
+所有RTL与控制模型仿真在服务器的ORFS26Q1／Singularity4.3.4环境运行，4核；命令如下。173既有检查仍需逐套执行，完整实际启动脚本见work/Melodydt/179/control-cancel-job-r003.sh。
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_cancel.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/cancel
+```
+
+固定总方案Markdown及同名PDF逐步更新，PDF工具为scripts/render_control_plan.py，需要reportlab和可嵌入中文字体Deng.ttf／Dengb.ttf；渲染后使用Poppler逐页检查。文档生成不属于硬件仿真。原第7步verify_control_min.py须在其固定a54cbc4源码副本运行，不要求新功能代码匹配旧版本SHA。
+
+## 第9步故障RTL（服务器运行）
+
+当前DUT须同时通过run.py、run_cancel.py及run_fault.py；新增命令在相同容器的源码根执行：
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_fault.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/fault
+```
+
+服务器最终目录/public/home/yuzelu/Melodydt/issue179-control-fault-96b8280/r005，源码f41158211ef69bb74a9252bd1790e53572e095e0，Slurm97222／debug／4核0:0。准确容器／挂载和七套173检查见work/Melodydt/179/control-fault-job-r005.sh；61个RTL场景的输入／输出／日志摘要见control-fault-validation.json。旧报告属于旧DUT，不能用它们声称当前源码已验证。仿真不得移至本机。
+
+## 第10步M clear适配器（服务器运行）
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_adapter.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/adapter
+```
+
+同时运行旧run.py、run_cancel.py和run_fault.py；本次未改局控core，仍有实际重跑记录。真实依赖为project/rtl/block_v2/block_v2_m.sv（原始blob d91ffdf904bc77c19d5d0ecfd4cd11560b44a417），不修改宏。准确容器／挂载／七套173检查见work/Melodydt/179/control-adapter-job-r002.sh；服务器最终目录/public/home/yuzelu/Melodydt/issue179-control-adapter-af680f3/r002，实验commit944648b45efcf962091b3ca13c0d6dfd35501d5b，Slurm97224／debug／4核0:0。raw模型和RTL仿真均在服务器，PDF和SHA静态核验可在本机。
+
+## 第11步对象控制（服务器运行）
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_object.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/object
+```
+
+control-object-job-r002.sh运行七套173检查、全部旧RTL和26对象；control-object-job-r003.sh仅重跑新增场景后的27对象，除runner外源码SHA一致。最终实验commit6df461bc7b4429fb83975bdae0e3ce8337b834ba，服务器/public/home/yuzelu/Melodydt/issue179-control-object-ddac1c8/r003，Slurm97226／debug／4核0:0；准确容器及挂载见脚本。对象和寄存器的有限边界见控制目录README；不以退休轨迹宣称未观测的寄存器数值。
+
+## 第12步RAW16收发（服务器运行）
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_transfer.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/transfer
+```
+
+control-transfer-job-r001.sh运行173软件、103旧RTL后在新TB编译失败；control-transfer-job-r003.sh仅运行最终25收发用例。DUT／旧回归源SHA一致，验证索引明确关联，不能将失败作业当整体通过。最终实验commit7d8790967e46314a37e27428e5346fd209d956a9，/public/home/yuzelu/Melodydt/issue179-control-transfer-76fc765/r003，Slurm97229／debug／4核0:0。所有模拟执行均在服务器；新peer仅一个16KiB SRAM／单服务／16B接收槽，不是原生S。
+
+## 第13步母控RTL（服务器运行）
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_mother.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/mother
+```
+
+control-mother-job-r005.sh为最终准确命令；r001～r004为失败记录，均保留。最终97234／node27／debug／4核COMPLETED0:0，实验commit3b4ef844df72346271988ce33b5941cc3fa82aba，服务器/public/home/yuzelu/Melodydt/issue179-control-mother-2384c31/r005。26场景／4突变拒绝，两个子端为有限协议peer；实际LC集成下一步。母控只5指令／2目标／8token，G_PARAM不支持，不改变ISA候选宽度。
+
+## 第14步母控与实际双局控（服务器运行）
+
+```bash
+python3 -B project/control_rtl_min_v0_1/run_network.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/network
+```
+
+control-network-job-r001～r003.sh保存实际命令与回归范围。最终97243／node27／debug／4核COMPLETED0:0，实验commit738720d495eaf5ea53f123bfaacc67c19ef3ff68，/public/home/yuzelu/Melodydt/issue179-control-network-dc23b38/r003；10集成＋25局控回归通过，26母控回归来自r001已完成部分。母控与2LC为真实RTL，存储／ACK路由为有限peer，STALL4096／DRAIN128是本次参数。R4有界门满足，不扩大为完整Block／原生S／物理。
+
+## 第15步R5候选控制模型（服务器运行）
+
+```bash
+python3 -B project/control_profiles_v0_1/run_profiles.py --out /work/results/profiles
+```
+
+control-profiles-job-r001～r003.sh为准确命令。最终97246／node27／debug／1核COMPLETED0:0，实验commitca954d4294cb320667d35e9741caf90acd0a6513，服务器/public/home/yuzelu/Melodydt/issue179-control-profiles-2e6d211/r003。34二进制模型、30镜像拒绝、6组114cohort／query和4突变拒绝；model ticks不等于硬件周期。本机export_examples.py仅静态编码，逐镜像SHA与最终服务器一致。新增profile／管理帧未实现RTLserializer或真实native适配，旧控制DUT不改；不能以管理CI或软件模型替代这些门。R5有界研究交付后按用户边界停止，R6／R7未执行。
+
+
+R4真实provider合同：`python -B project/control_r4_v0_1/check_contract.py`；本机仅静态源／端口／地址和身份合同核验，RTL仿真仍须获授权服务器Slurm。
+
+R4.2服务器命令：`python3 -B project/control_r4_v0_1/run_real_s.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/real_s`，Slurm／Singularity路径及输入输出版本见control-r4-real-s-evidence.json。需同时编译冻结私有S、仲裁、feeder、S16k及现有控制DUT；不在本机运行仿真。
+
+R4.3服务器命令：`python3 -B project/control_r4_v0_1/run_real_dma.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/real_dma`；同时运行12集成及10桥接RTL边界。固定8槽／1信用、2S，实际hbm_group_dma和双向hbm_async_fifo；有限外部MEM非HBM控制器。见control-r4-dma-evidence.json。
+
+R4.4服务器命令：`python3 -B project/control_r4_v0_1/run_reset.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/reset`；6真实cohort reset／三镜像全量装载集成＋11协调器RTL边界。实际MC／LC／S／DMA／FIFO统一reset，provider ACK为可信测试wrapper证书，生产reset／CDC不由仿真授予资格。证据control-r4-reset-evidence.json，步骤原位记录TWO_LEVEL_CONTROL_PLAN.md及同名PDF。
+
+### R6.1 任务 IR 与目标合同
+
+运行 `python3 -B project/control_r6_v0_1/check_ir.py` 检查任务 IR 的固定路由、16B S 对象、READY 和信用边界。目标表和两种等待布局见 `project/control_r6_v0_1`。
+
+### R6.2 三端程序镜像生成
+
+从 IR 构建三端镜像的命令见 `project/control_r6_v0_1/README.md`。生成的 JSON 包含 reference loader 的 manifest 和精确 little-endian 二进制。构建证据见 `work/Melodydt/179/control-r6-build-index.json`。
+
+### R6.3 独立检查与服务器镜像联跑
+
+在已授权服务器的 Slurm/Singularity 环境运行 `python3 -B project/control_r6_v0_1/run_campaign.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/r6`。独立静态核对可运行 `python3 -B project/control_r6_v0_1/check_bundle.py`。作业脚本与版本及 SHA 见 `work/Melodydt/179/control-r6-validation-index.json`。
+
+### R7.1 控制成本复现
+
+镜像和轨迹资源账使用 `python3 -B project/control_r7_v0_1/inventory.py --r6-evidence /public/home/yuzelu/Melodydt/issue179-r6-13e577c/r001/evidence.tar.gz --out inventory.json`。该命令校验 R6 证据包、装载镜像与轨迹 SHA，再统计实际握手。
+
+映射与时序使用 `project/control_r7_v0_1/synthesize.py`。在获授权服务器的 Slurm/Singularity 环境执行 `work/Melodydt/179/control-r7-job-r002.sh`，其工作目录和二进制、库、LEF 输入见 `work/Melodydt/179/control-r7-validation-index.json`。典型库逐模块面积与 3.333 ns 寄存器间 setup 结果见综合报告。
+
+### R7.2 真实 Block 接入
+
+接入顺序和证据清单位于[方案第 9.1 节](local-blocks/TWO_LEVEL_CONTROL_PLAN.md#91-r72-真实-block-接入与验收清单)。静态依赖核验使用 `python -B project/control_r4_v0_1/check_contract.py`。取得生产端版本后，在服务器复用上述 R4/R6 命令作为控制回归，并加真实 P 写回和端到端 ACK 验收。LC1 整改复用 R7.1 的固定库、参数与综合脚本，另外提交实装约束和 STA。
+
+### A2 单 P 的真实 M 与 S 接入
+
+服务器容器内从仓库根运行以下两项。A2 编译实际母控、局控、私有 S、feeder 和 M，并用两份程序镜像跑固定形状的计算写回。R6 复跑用于核对原 ABI。
+
+```bash
+python3 -B project/control_p_compute_v0_1/run_a2.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/a2
+python3 -B project/control_r6_v0_1/run_campaign.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/r6
+```
+
+[A2 作业脚本](../work/Melodydt/179/control-a2-job.sh) · [LC1 原始基线复跑](../work/Melodydt/179/control-a2-job-lc1.sh) · [校验和与结果](../work/Melodydt/179/control-a2-validation.json)
+
+### 独立控制配置的 300 MHz 修复
+
+在 Slurm 容器中以项目固定的 Yosys、OpenROAD 和 Nangate45 库运行。先用 R7.1 的映射命令输出母控、LC0、LC1、RAW16、DMA 桥及双 S DMA，再调用下方脚本。六个配置可占用 6 个已分配 CPU 并发。实际容器、工具路径和原映射输入见作业脚本与验证索引。
+
+```bash
+python3 -B project/control_timing_v0_1/close.py   --yosys /usr/local/bin/yosys --openroad "$OPENROAD_EXE" --platform "$NANGATE45_PLATFORM"   --mapped /work/results/mapped --out /work/results/repair --workers 6
+```
+
+[最终作业脚本](../work/Melodydt/179/control-timing-job.sh) · [时序、原件位置与 SHA](../work/Melodydt/179/control-timing-validation.json)
+
+### A2-G 单 P 的真实 SiLU 写回
+
+在获授权的服务器 Slurm/Singularity 容器内从仓库根运行。三个配置使用相同的 3.333333333 ns 周期。
+
+```bash
+python3 -B project/control_p_compute_v0_1/run_a2.py --silu \
+  --verilator /eda/verilator-5.042/bin/verilator --out /work/results/silu
+python3 -B project/control_p_compute_v0_1/silu_mapping.py --yosys /usr/local/bin/yosys \
+  --openroad "$OPENROAD_EXE" --liberty "$NANGATE45_PLATFORM/lib/NangateOpenCellLibrary_typical.lib" --out /work/results/mapped
+python3 -B project/control_timing_v0_1/close.py --yosys /usr/local/bin/yosys \
+  --openroad "$OPENROAD_EXE" --platform "$NANGATE45_PLATFORM" --mapped /work/results/mapped \
+  --out /work/results/repair --workers 2 --modules silu_mother silu_local silu_store
+```
+
+仿真独立核对 M 舍入／饱和、G 定点 SiLU、S 内容和真实写 ACK 顺序。作业另运行原 M→S、R6 与协调复位回归。[作业脚本](../work/Melodydt/179/control-a2g-job.sh) · [输入输出校验与时序](../work/Melodydt/179/control-a2g-validation.json)
+
+### A1 生产部署预检
+
+在 A1 固定提交 e5d18b79 的仓库根执行 `python -B project/control_p_compute_v0_1/check_deployment.py`，将 12 个 A2-G 源码的 Git blob 和 SHA-256 对照服务器证据，再核对试验 ABI、S 容量与 5 笔写确认顺序。加 `--require-production` 检查生产准入，当前预检快照返回 2。退出 1 表示快照证据或字段无效。`python -B project/control_p_compute_v0_1/test_deployment.py -v` 可重放静态预检和 6 个变体。真实双 P 顶层与正反向端点的版本化绑定待实现端核对，START 互锁属于硬件接口验收。[部署清单](../project/control_p_compute_v0_1/deployment_a1.json)
+
+### R7.2 双局控写确认、复位和时序
+
+在获授权服务器的 Slurm/Singularity 容器从仓库根运行。试验启用一槽反向 ACK 校验器，身份匹配且目的私有 S 已实际写入后才把完成交给源端。原有无开关回归入口保留。
+
+```bash
+python3 -B project/control_r4_v0_1/run_real_s.py --stored-ack --verilator "$VERILATOR" --out /work/results/a3
+python3 -B project/control_r4_v0_1/run_reset.py --stored-ack --verilator "$VERILATOR" --out /work/results/a4
+```
+
+独立时序用 `stored_ack_mapping.py` 映射，`control_timing_v0_1/close.py --modules stored_ack_guard` 执行 3.333333333 ns 物理估算和网表等价。完整命令、工具与证据见[作业脚本](../work/Melodydt/179/control-r72-job.sh)和[验证索引](../work/Melodydt/179/control-r72-validation.json)。生产双 P 顶层与端点绑定另行验收。
+
+### R7.3.4 J 的 T 片段交接和 E 汇合
+
+在服务器容器执行 `python3 -B project/control_j_compute_v0_1/run_j.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/j`。真实 T 提交两字片段，各字实际 S 暂存确认后才消费；释放后再从 S 读取加数并经 E 汇合。复现命令与轨迹见[作业脚本](../work/Melodydt/179/control-j-job.sh)及[验证索引](../work/Melodydt/179/control-j-validation.json)。
+
+### R7.3.3 U 的两段 RMS 和 E 写回
+
+`python3 -B project/control_u_compute_v0_1/test_admission.py -v` 校验 N/E/S 试验源 blob 与原生服务镜像。在服务器容器运行 `python3 -B project/control_u_compute_v0_1/run_u.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/u`。测试从真实配置口装载、读回镜像，记录 N 每个命令、S 四次读取、E 两次 ADD 和两次写响应，再由独立参考校验全部结果和握手。
+
+服务器入口及证据见[作业脚本](../work/Melodydt/179/control-u-job.sh)和[验证索引](../work/Melodydt/179/control-u-validation.json)。试验限定两段，跨块与独立时序留给 R7.3.6。
+
+### R7.3.1 与 R7.3.2 四类接口和 F 控制试验
+
+`python3 -B project/control_f_compute_v0_1/test_admission.py -v` 核对固定源码 blob、F 两套镜像和非法输入。U/C/J 绑定清单记录候选服务和端口。
+
+在服务器试验容器内执行 `python3 -B project/control_f_compute_v0_1/run_f.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/f`。用真实母控、局控、G、E 和私有 S 验证直写与 ADD 两条路径。测试通过配置接口写入、读回镜像，并使用独立 S 客户端设置输入及检查输出。复现脚本与证据见[作业脚本](../work/Melodydt/179/control-f-job.sh)和[验证索引](../work/Melodydt/179/control-f-validation.json)。固定试验链路之外的跨块和物理时序列入 R7.3.6。
+
+### R7.2 单 P 真实计算到双 P 交接联跑
+
+在获授权服务器执行 `python3 -B project/control_p_compute_v0_1/run_handoff.py --verilator "$VERILATOR" --out /work/results/chain`。固定试验拓扑 0x1764A303 上，P0 发出同一任务的计算与发送，P1 先就绪后接收。独立整数参考核对 G、P0.S 重新读取、P1.S 实际写确认和读回。时序使用 `handoff_mapping.py` 与 `control_timing_v0_1/close.py --modules handoff_source handoff_sink`。原周期为 3.333333333 ns。[作业脚本](../work/Melodydt/179/control-chain-job.sh) · [验证索引](../work/Melodydt/179/control-chain-validation.json)
+
+### R7.3.5 C 的 R256 候选状态与发布
+
+在服务器容器执行 `python3 -B project/control_c_compute_v0_1/run_c.py --verilator /eda/verilator-5.042/bin/verilator --out /work/results/c`。真实 R256、E、G 和两个私有 S 通过候选状态及写确认试验，消费者为有限 RTL 夹具。完整复现见[作业脚本](../work/Melodydt/179/control-c-job.sh)及[验证索引](../work/Melodydt/179/control-c-validation.json)。
+
+### R7.3.6 固定 F→P 试验
+
+在获授权服务器容器执行 `python3 -B project/control_p_compute_v0_1/run_handoff.py --f-store --verilator "$VERILATOR" --out /work/results/f-chain`。F 使用 0x1764F303 试验拓扑和 G/E/S 服务 0x0083，P 目的端沿用 RAW16。检查器核对数值、源 S、目的 S、确认身份和对象释放。原 P→P 默认入口继续回归。
+
+独立时序通过 `project/control_f_compute_v0_1/handoff_mapping.py` 和 `project/control_timing_v0_1/close.py`，保持 3.333333333 ns。映射和修复的实际参数、结果与重跑目录见[功能作业脚本](../work/Melodydt/179/control-fchain-job.sh)及[验证索引](../work/Melodydt/179/control-fchain-validation.json)。
+
+### R7.3.6 协调复位、U/J 两字交接和 C 双局控状态发布
+
+服务器 ORFS 容器内运行 [功能及回归作业](../work/Melodydt/179/control-r736-reg-job.sh)和[独立时序作业](../work/Melodydt/179/control-r736-sta-job.sh)。F 恢复入口为 `python3 -B project/control_p_compute_v0_1/run_handoff.py --f-recovery --verilator /eda/verilator-5.042/bin/verilator --out /work/results/f-recovery`。U/J/C 通过 `python3 -B project/control_r736_v0_1/run_native_handoff.py u --verilator /eda/verilator-5.042/bin/verilator --out /work/results/u` 复现，其他两类分别替换为 `j` 或 `c`。时序先按 `u/j/c/common` 映射，再调用既有 `close.py`，周期固定 3.333333333 ns。[可复现快照、执行记录及 SHA-256](../work/Melodydt/179/control-r736-validation.json)。

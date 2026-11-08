@@ -1,0 +1,63 @@
+{
+  "schema": "control-task-ir/0.1",
+  "name": "joined_wait_banks",
+  "target": "raw16_p_r4",
+  "images": {
+    "mother": 179611,
+    "local0": 179612,
+    "local1": 179613
+  },
+  "buffers": [
+    {
+      "name": "relay",
+      "block": 0,
+      "address": 496,
+      "bytes": 16,
+      "completion_token": 4
+    },
+    {
+      "name": "destination",
+      "block": 1,
+      "address": 8192,
+      "bytes": 16,
+      "completion_token": 2
+    }
+  ],
+  "transfers": [
+    {
+      "name": "ingress",
+      "edge": 11,
+      "source": "host",
+      "sink": "relay",
+      "bytes": 16,
+      "receive_token": 2,
+      "send_token": null,
+      "after_ack": []
+    },
+    {
+      "name": "forward",
+      "edge": 12,
+      "source": "relay",
+      "sink": "destination",
+      "bytes": 16,
+      "receive_token": 6,
+      "send_token": 2,
+      "after_ack": [
+        "ingress"
+      ]
+    }
+  ],
+  "ready": {
+    "transfer": "forward",
+    "event_id": 17,
+    "local_register": 3,
+    "mother_register": 6,
+    "value": 2147483685
+  },
+  "wait_groups": [
+    [
+      "relay",
+      "destination"
+    ]
+  ]
+}

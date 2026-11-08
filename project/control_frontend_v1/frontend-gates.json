@@ -1,0 +1,47 @@
+{
+  "schema": "control-frontend-gates/1",
+  "base": "de58b0d04446ea80134b8c541b08c209e1edaf52",
+  "clock_period_ns": "3.333333333",
+  "checks": [
+    "five native profile integration",
+    "14 invalid native inputs and 1/32 count admission",
+    "simultaneous C/F transmit SRAM ownership",
+    "held ACK and source release",
+    "coordinated reset and old response flushing",
+    "default and old program regression",
+    "bounded IR compact program generation",
+    "synthesizable current control profiles",
+    "buffered synthesizable two-local task/return transport"
+  ],
+  "unresolved_production_bindings": [
+    "integrated_top",
+    "fixed_control",
+    "private_s",
+    "intra_block_data",
+    "cross_block_data",
+    "cross_block_ack",
+    "images_and_data"
+  ],
+  "acceptance": {
+    "trial": true,
+    "production": false
+  },
+  "cdc": {
+    "current_native": "single clock",
+    "legacy_regression": "existing DMA and CDC FIFOs",
+    "production": "requires actual endpoint clock domains"
+  },
+  "constraints": {
+    "synthesis_scope": "RTL structural",
+    "product_timing": "needs combined top, macro views, SDC and same-version parasitics"
+  },
+  "transport": {
+    "clock_domains": 1,
+    "targets": 2,
+    "return_slots": 1,
+    "packet_bits": 512,
+    "return_latency_cycles": 1,
+    "arbitration": "fixed LC0 priority; bounded traffic",
+    "product_binding": false
+  }
+}

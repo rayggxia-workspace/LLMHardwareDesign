@@ -1,0 +1,27 @@
+`ifndef TB_F_RECOVERY
+rst_ni=0;
+`endif
+release_valid_i=0;
+release_sequence_i=0;
+release_epoch_i=0;
+deploy_generation_i=0;
+cfg_req_valid_i=0;
+cfg_req_op_i=0;
+cfg_req_generation_i=0;
+cfg_req_address_i=0;
+cfg_req_data_i=0;
+cfg_req_total_bytes_i=0;
+cfg_req_image_id_i=0;
+cfg_req_topology_id_i=0;
+cfg_req_abi_id_i=0;
+cfg_req_capacity_id_i=0;
+cfg_req_proof_i=0;
+cfg_rsp_ready_i=0;
+start_valid_i=0;
+start_credit_i=0;
+start_job_i=0;
+start_epoch_i=0;
+start_sequence_i=0;
+start_generation_i=0;
+start_args_i=0;
+result_ready_i=0;

@@ -1,0 +1,531 @@
+{
+  "schema": "control-r7-leaf-synthesis/0.1",
+  "tools": {
+    "yosys": {
+      "version": "Yosys 0.63 (git sha1 70a11c6bf, g++ 11.4.0-1ubuntu1~22.04.3 -fPIC -O3)",
+      "path": "/usr/local/bin/yosys",
+      "executable_sha256": "a409abe03c090a72e15906082775f506ff6f5fa50106dec087900a7104c08a4c"
+    },
+    "openroad": {
+      "version": "bazel-nostamp",
+      "path": "/eda/r166-openroad-gc-cache-2eba27b2-offline01/install/bin/openroad",
+      "executable_sha256": "944848ca2b5181d570e21841fa9c54e53c062b4ebea74cd3955a6c5b30343ee0"
+    }
+  },
+  "liberty": {
+    "path": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+    "sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "corner": "Nangate45 typical"
+  },
+  "lef": [
+    {
+      "path": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef",
+      "sha256": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2"
+    },
+    {
+      "path": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef",
+      "sha256": "a43aea339f12a57a63497783e508ba16f3da2dc056d3247dec7d99707c2dedef"
+    }
+  ],
+  "report_scope": "independent modules with R4 parameters and open top ports. PM, private S, test peer, integration wiring and physical overhead are separate.",
+  "modules": [
+    {
+      "name": "mother",
+      "module": "mc_min_controller",
+      "source": "project/control_rtl_min_v0_1/mc_min_controller.sv",
+      "source_sha256": "b3b8bec07c145288ab31ea4f69e9908637b0e4b5941be973333e36ea6e585753",
+      "parameters": {
+        "STALL_LIMIT": 4096
+      },
+      "inventory_instances": 1,
+      "cell_count": 20629,
+      "cell_area_um2": 38992.674,
+      "flop_cells": 3667,
+      "mapped_cell_types": {
+        "AND2_X1": 586,
+        "AND3_X1": 258,
+        "AND4_X1": 44,
+        "AOI211_X1": 213,
+        "AOI21_X1": 2215,
+        "AOI221_X1": 129,
+        "AOI222_X1": 4,
+        "AOI22_X1": 532,
+        "DFFR_X1": 3595,
+        "DFFS_X1": 72,
+        "INV_X1": 972,
+        "MUX2_X1": 1581,
+        "NAND2_X1": 1532,
+        "NAND3_X1": 1453,
+        "NAND4_X1": 308,
+        "NOR2_X1": 1282,
+        "NOR3_X1": 445,
+        "NOR4_X1": 726,
+        "OAI211_X1": 584,
+        "OAI21_X1": 2448,
+        "OAI221_X1": 123,
+        "OAI222_X1": 8,
+        "OAI22_X1": 227,
+        "OAI33_X1": 129,
+        "OR2_X1": 359,
+        "OR3_X1": 67,
+        "OR4_X1": 37,
+        "XNOR2_X1": 433,
+        "XOR2_X1": 267
+      },
+      "timing": {
+        "clock_port": "clk_i",
+        "period_ns": 3.3333333333333335,
+        "setup_slack_ns": -13.328997,
+        "startpoint": "_37051_ (rising edge-triggered flip-flop clocked by core)",
+        "endpoint": "_37713_ (rising edge-triggered flip-flop clocked by core)",
+        "scope": "register-to-register setup at typical, ideal clock, zero wire parasitics"
+      },
+      "artifacts_sha256": {
+        "mapped.json": "4ce346193d9d12be477e4fa77fe55b7fb7e3b0e3e461128d880ab38dbc90a32d",
+        "mapped.v": "a47137e12ae4e736a147ee4ff6a25b7b9f028cd0c1803350ea2ca3ede2dd2f7b",
+        "synth.ys": "f3fc4bb5aeeca87a332016fe5a2254d7a49d14d7a2b95b84287661e5af403376",
+        "timing.log": "6b8ad2dd6702b63790a9b53b31dd9392371fcf2fbbdbd4123fc14ed0aa101447",
+        "timing.tcl": "316bf1eed0a8958520cb69248cba684a8fa368f01a68ed8780c0f0dbcb1dd393",
+        "yosys.log": "d097d57350b9c2ebafc84f618fb894a7af9e6f1a8d194c4a352e8dcd2eeef7dd"
+      }
+    },
+    {
+      "name": "local0",
+      "module": "lc_min_controller",
+      "source": "project/control_rtl_min_v0_1/lc_min_controller.sv",
+      "source_sha256": "9168a6ad80238efa9fe6cc9e6a451ad62751aa6890b6bf6abf6318bb1bed5d33",
+      "parameters": {
+        "BLOCK_ID": 0,
+        "STALL_LIMIT": 4096,
+        "DRAIN_LIMIT": 128,
+        "LOCAL_S_BYTES": 16384
+      },
+      "inventory_instances": 1,
+      "cell_count": 33465,
+      "cell_area_um2": 61659.332,
+      "flop_cells": 5761,
+      "mapped_cell_types": {
+        "AND2_X1": 1257,
+        "AND3_X1": 379,
+        "AND4_X1": 72,
+        "AOI211_X1": 344,
+        "AOI21_X1": 3465,
+        "AOI221_X1": 202,
+        "AOI222_X1": 38,
+        "AOI22_X1": 1477,
+        "DFFR_X1": 5729,
+        "DFFS_X1": 32,
+        "INV_X1": 1624,
+        "MUX2_X1": 2341,
+        "NAND2_X1": 3906,
+        "NAND3_X1": 1398,
+        "NAND4_X1": 573,
+        "NOR2_X1": 2626,
+        "NOR3_X1": 777,
+        "NOR4_X1": 1413,
+        "OAI211_X1": 302,
+        "OAI21_X1": 3176,
+        "OAI221_X1": 198,
+        "OAI222_X1": 11,
+        "OAI22_X1": 524,
+        "OAI33_X1": 12,
+        "OR2_X1": 390,
+        "OR3_X1": 63,
+        "OR4_X1": 56,
+        "XNOR2_X1": 658,
+        "XOR2_X1": 422
+      },
+      "timing": {
+        "clock_port": "clk_i",
+        "period_ns": 3.3333333333333335,
+        "setup_slack_ns": -29.664669,
+        "startpoint": "_62062_ (rising edge-triggered flip-flop clocked by core)",
+        "endpoint": "_57371_ (rising edge-triggered flip-flop clocked by core)",
+        "scope": "register-to-register setup at typical, ideal clock, zero wire parasitics"
+      },
+      "artifacts_sha256": {
+        "mapped.json": "cba393e34c16a0c1e6055a1b6cf08a5777324569489621f4afa49bc094ef95e4",
+        "mapped.v": "ac52f032d8faa799923a2f04efbd2a100f552a1f5516976bed361df932c209a2",
+        "synth.ys": "51767ef629b695f8db2c2e03278a5a1116ad6e221412be4ffe2cc1c238e56a7e",
+        "timing.log": "b3f7ed5798e452315e67f59baf153ce8ec716b19f03f1c41435e0ed46a157fa4",
+        "timing.tcl": "5f0999eed046e4951f80bfedeef2fc7b121fd6808a9007cd2a73db1f8a209ab3",
+        "yosys.log": "acd60913513e56448eba65fe7c6adb2780790879e59e3a129fba82add257d37e"
+      }
+    },
+    {
+      "name": "local1",
+      "module": "lc_min_controller",
+      "source": "project/control_rtl_min_v0_1/lc_min_controller.sv",
+      "source_sha256": "9168a6ad80238efa9fe6cc9e6a451ad62751aa6890b6bf6abf6318bb1bed5d33",
+      "parameters": {
+        "BLOCK_ID": 1,
+        "STALL_LIMIT": 4096,
+        "DRAIN_LIMIT": 128,
+        "LOCAL_S_BYTES": 16384
+      },
+      "inventory_instances": 1,
+      "cell_count": 33995,
+      "cell_area_um2": 62158.614,
+      "flop_cells": 5761,
+      "mapped_cell_types": {
+        "AND2_X1": 893,
+        "AND3_X1": 441,
+        "AND4_X1": 52,
+        "AOI211_X1": 378,
+        "AOI21_X1": 3632,
+        "AOI221_X1": 296,
+        "AOI222_X1": 47,
+        "AOI22_X1": 1260,
+        "DFFR_X1": 5729,
+        "DFFS_X1": 32,
+        "INV_X1": 2475,
+        "MUX2_X1": 2282,
+        "NAND2_X1": 3440,
+        "NAND3_X1": 1312,
+        "NAND4_X1": 578,
+        "NOR2_X1": 2784,
+        "NOR3_X1": 853,
+        "NOR4_X1": 1361,
+        "OAI211_X1": 372,
+        "OAI21_X1": 2359,
+        "OAI221_X1": 221,
+        "OAI222_X1": 21,
+        "OAI22_X1": 1443,
+        "OAI33_X1": 73,
+        "OR2_X1": 428,
+        "OR3_X1": 77,
+        "OR4_X1": 56,
+        "XNOR2_X1": 685,
+        "XOR2_X1": 415
+      },
+      "timing": {
+        "clock_port": "clk_i",
+        "period_ns": 3.3333333333333335,
+        "setup_slack_ns": -68.781052,
+        "startpoint": "_63107_ (rising edge-triggered flip-flop clocked by core)",
+        "endpoint": "_58558_ (rising edge-triggered flip-flop clocked by core)",
+        "scope": "register-to-register setup at typical, ideal clock, zero wire parasitics"
+      },
+      "artifacts_sha256": {
+        "mapped.json": "398c8d636ae5fb1bd26f89cfccf8b615529adaa44ee6de02dfd1d0f2b61b52c3",
+        "mapped.v": "ac564176dc8f7ecb62f267d425d63f551b87e7b48dca68e84ee490142d6c0169",
+        "synth.ys": "ce4956dca600b8954c2170d0be3398ccb94b2a8d488ac04d9d7df4963910371a",
+        "timing.log": "4097842920eab435d466f3e17c94cef21a9b96f7ee5852fef8e49c7ba4352a4e",
+        "timing.tcl": "5f0999eed046e4951f80bfedeef2fc7b121fd6808a9007cd2a73db1f8a209ab3",
+        "yosys.log": "f3a466a739cf9bce00d6f69a0281b109b64ee9907c154d5d0bd68c3423e26b04"
+      }
+    },
+    {
+      "name": "raw16_adapter",
+      "module": "lc_raw16_s_adapter",
+      "source": "project/control_r4_v0_1/lc_raw16_s_adapter.sv",
+      "source_sha256": "bc5aa8ac55d31046b576414dd2129e2dd7ebf6353f81c22b956171fd5f29ea3c",
+      "parameters": {},
+      "inventory_instances": 2,
+      "cell_count": 1930,
+      "cell_area_um2": 3636.22,
+      "flop_cells": 464,
+      "mapped_cell_types": {
+        "AND2_X1": 3,
+        "AND3_X1": 5,
+        "AND4_X1": 3,
+        "AOI211_X1": 206,
+        "AOI21_X1": 14,
+        "AOI221_X1": 4,
+        "AOI22_X1": 257,
+        "DFF_X1": 464,
+        "INV_X1": 223,
+        "NAND2_X1": 16,
+        "NAND3_X1": 6,
+        "NAND4_X1": 31,
+        "NOR2_X1": 470,
+        "NOR3_X1": 8,
+        "NOR4_X1": 76,
+        "OAI211_X1": 4,
+        "OAI21_X1": 8,
+        "OAI22_X1": 1,
+        "OR2_X1": 3,
+        "OR4_X1": 7,
+        "XNOR2_X1": 64,
+        "XOR2_X1": 57
+      },
+      "timing": {
+        "clock_port": "clk",
+        "period_ns": 3.3333333333333335,
+        "setup_slack_ns": -2.897049,
+        "startpoint": "_3773_ (rising edge-triggered flip-flop clocked by core)",
+        "endpoint": "_3633_ (rising edge-triggered flip-flop clocked by core)",
+        "scope": "register-to-register setup at typical, ideal clock, zero wire parasitics"
+      },
+      "artifacts_sha256": {
+        "mapped.json": "a950e0fd91e6ffa10608627577c69e8234486bb1bb511e1341d31bc0d2a4bf28",
+        "mapped.v": "becd71d27726b1938db2856a4ca0b8e277869728468f0e574f3b504a9413301a",
+        "synth.ys": "b999d0531c038dcdc9bf9b4ff9e76eb65eedd506ec44744a6e7ede87b0c4c635",
+        "timing.log": "5752a0a47c43b7b5aae3b244b708bd171b84a620b15a8b0d6b215d109ad8a2c3",
+        "timing.tcl": "52a651731df93ddfa2faed95cb481978041523d8ce0c6211c5e67073057cb0b6",
+        "yosys.log": "f04c6318d9119b6d26d987ae38cc0c48e1733f46f1235e652146162ecbba9594"
+      }
+    },
+    {
+      "name": "dma_bridge",
+      "module": "raw16_dma_bridge",
+      "source": "project/control_r4_v0_1/raw16_dma_bridge.sv",
+      "source_sha256": "155619643e636e933e7f5d513d5a3deb0149d55c753977bc0fe41c07d53cbc22",
+      "parameters": {
+        "TAG_LIMIT": 65535
+      },
+      "inventory_instances": 2,
+      "cell_count": 2358,
+      "cell_area_um2": 4108.636,
+      "flop_cells": 485,
+      "mapped_cell_types": {
+        "AND2_X1": 8,
+        "AND3_X1": 1,
+        "AND4_X1": 4,
+        "AOI211_X1": 138,
+        "AOI21_X1": 383,
+        "AOI221_X1": 20,
+        "AOI222_X1": 10,
+        "AOI22_X1": 9,
+        "DFF_X1": 485,
+        "INV_X1": 471,
+        "MUX2_X1": 128,
+        "NAND2_X1": 6,
+        "NAND3_X1": 8,
+        "NAND4_X1": 9,
+        "NOR2_X1": 188,
+        "NOR3_X1": 11,
+        "NOR4_X1": 18,
+        "OAI211_X1": 12,
+        "OAI21_X1": 349,
+        "OAI221_X1": 18,
+        "OAI222_X1": 2,
+        "OAI22_X1": 8,
+        "OR2_X1": 5,
+        "OR4_X1": 2,
+        "XNOR2_X1": 28,
+        "XOR2_X1": 37
+      },
+      "timing": {
+        "clock_port": "clk",
+        "period_ns": 3.3333333333333335,
+        "setup_slack_ns": -1.023074,
+        "startpoint": "_4570_ (rising edge-triggered flip-flop clocked by core)",
+        "endpoint": "_4513_ (rising edge-triggered flip-flop clocked by core)",
+        "scope": "register-to-register setup at typical, ideal clock, zero wire parasitics"
+      },
+      "artifacts_sha256": {
+        "mapped.json": "07226b57586ff55031706bd0893d48fdb566ada6371832d11788a6657c4c9b6f",
+        "mapped.v": "3acfea5b9244a1db068a9002ef81ef7b6e6e91009393bcf1d84559c7f6ef60a7",
+        "synth.ys": "0887cb91823a95ba6307ddf928fa0ba18415d43ff23c016eca0319521595650d",
+        "timing.log": "db8f74acc49b56cc905233d262775fed88149ed7b552e44407fd32fe488f65e7",
+        "timing.tcl": "af6887cdfc239aec837f886c2018381cc0aa672009140bdac118bacfbee1679a",
+        "yosys.log": "09af54d0147bd200774d9937ca7db56d1e0a76b6665b5d76f91d78c3cf0cdd36"
+      }
+    },
+    {
+      "name": "reset_coordinator",
+      "module": "cohort_reset_controller",
+      "source": "project/control_r4_v0_1/cohort_reset_controller.sv",
+      "source_sha256": "f385a736d1f16010372781e9938061e57bd8aa78657b97b8b89a85ea4ddce944",
+      "parameters": {
+        "MEMBERS": 8,
+        "MIN_RESET": 4,
+        "QUIET_CYCLES": 3
+      },
+      "inventory_instances": 1,
+      "cell_count": 1272,
+      "cell_area_um2": 1960.42,
+      "flop_cells": 172,
+      "mapped_cell_types": {
+        "AND2_X1": 32,
+        "AND3_X1": 14,
+        "AND4_X1": 19,
+        "AOI211_X1": 35,
+        "AOI21_X1": 161,
+        "AOI221_X1": 6,
+        "AOI222_X1": 1,
+        "AOI22_X1": 24,
+        "DFF_X1": 172,
+        "INV_X1": 145,
+        "MUX2_X1": 1,
+        "NAND2_X1": 67,
+        "NAND3_X1": 23,
+        "NAND4_X1": 34,
+        "NOR2_X1": 96,
+        "NOR3_X1": 51,
+        "NOR4_X1": 30,
+        "OAI211_X1": 33,
+        "OAI21_X1": 160,
+        "OAI221_X1": 5,
+        "OAI222_X1": 4,
+        "OAI22_X1": 24,
+        "OR2_X1": 19,
+        "OR3_X1": 10,
+        "OR4_X1": 7,
+        "XNOR2_X1": 59,
+        "XOR2_X1": 40
+      },
+      "timing": {
+        "clock_port": "clk",
+        "period_ns": 3.3333333333333335,
+        "setup_slack_ns": 1.709736,
+        "startpoint": "_2321_ (rising edge-triggered flip-flop clocked by core)",
+        "endpoint": "_2396_ (rising edge-triggered flip-flop clocked by core)",
+        "scope": "register-to-register setup at typical, ideal clock, zero wire parasitics"
+      },
+      "artifacts_sha256": {
+        "mapped.json": "c1f2af1b60a8f47df8310cb0f22d0337cc838d1cedd8f6eb7802baee333bbdda",
+        "mapped.v": "60765d4f6a4eef8c583065cb866466876b5d5dc2bc033dfcb756a46fbd217e19",
+        "synth.ys": "f4409ad07e9a00b3b63544ccd49b263c850e5da91a9dc30f3e21fd0babc17ec5",
+        "timing.log": "c54dc9c5fc0d8fcf29b87f09fb74c174a5bc0a35353e8d56ecc921e194a6f157",
+        "timing.tcl": "ed63eead4b4889019f78b83e43ba462e7c03c3793a2912c101b9e4f741364f70",
+        "yosys.log": "f74c9bb9c41a640cc38553936487cf66dd0d2cc018310f539da5fbe7159753e7"
+      }
+    },
+    {
+      "name": "group_dma",
+      "module": "hbm_group_dma",
+      "source": "project/rtl/hbm_feed/hbm_group_dma.sv",
+      "source_sha256": "f59829c3db0d5d82d9ec31d355848e6f493fd9c9c061cb428599add1cae36489",
+      "parameters": {
+        "GROUPS": 1,
+        "S_PER_GROUP": 2,
+        "SLOTS": 8,
+        "NS": 2,
+        "CHANNELS": 1
+      },
+      "inventory_instances": 1,
+      "cell_count": 22803,
+      "cell_area_um2": 36593.886,
+      "flop_cells": 3580,
+      "mapped_cell_types": {
+        "AND2_X1": 318,
+        "AND3_X1": 36,
+        "AND4_X1": 9,
+        "AOI211_X1": 413,
+        "AOI21_X1": 3811,
+        "AOI221_X1": 324,
+        "AOI222_X1": 19,
+        "AOI22_X1": 2367,
+        "DFF_X1": 3580,
+        "INV_X1": 2017,
+        "MUX2_X1": 347,
+        "NAND2_X1": 1117,
+        "NAND3_X1": 248,
+        "NAND4_X1": 24,
+        "NOR2_X1": 3056,
+        "NOR3_X1": 144,
+        "NOR4_X1": 201,
+        "OAI211_X1": 110,
+        "OAI21_X1": 2181,
+        "OAI221_X1": 264,
+        "OAI222_X1": 2,
+        "OAI22_X1": 1758,
+        "OAI33_X1": 3,
+        "OR2_X1": 39,
+        "OR3_X1": 41,
+        "OR4_X1": 24,
+        "XNOR2_X1": 219,
+        "XOR2_X1": 131
+      },
+      "timing": {
+        "clock_port": "clk",
+        "period_ns": 3.3333333333333335,
+        "setup_slack_ns": -7.181658,
+        "startpoint": "_41728_ (rising edge-triggered flip-flop clocked by core)",
+        "endpoint": "_41863_ (rising edge-triggered flip-flop clocked by core)",
+        "scope": "register-to-register setup at typical, ideal clock, zero wire parasitics"
+      },
+      "artifacts_sha256": {
+        "mapped.json": "e88ac39a796b5be75c1cea960d9e4a73e4e15f5c5fe44ce3118fd369f52fac26",
+        "mapped.v": "d24a369c761b80b84f8b1e81e5e6fc8127b45fd7704e240d3c5156c467b0e390",
+        "synth.ys": "aea1f0ffcc610fb3af8037c53f1625599c54776c87b4ceccc51d76b2c8fecfad",
+        "timing.log": "82a9aa86eb527f7ca46eb84497337c35c658a32681dd537bb452678adffff23d",
+        "timing.tcl": "ef2dbcb7dd157ed2ff40ea367bf51e143408a6f0882e9833b71ddeae1084c21c",
+        "yosys.log": "3fb51643950e6ec08b2a67e81036ca7265ad196419b401e554a21a8b5c8881ee"
+      }
+    },
+    {
+      "name": "request_fifo",
+      "module": "hbm_async_fifo",
+      "source": "project/rtl/hbm_feed/hbm_async_fifo.sv",
+      "source_sha256": "de399591634d712080420726eab743dc5ae16f720012961613fd134231eb2dc8",
+      "parameters": {
+        "WIDTH": 185,
+        "LGDEPTH": 2
+      },
+      "inventory_instances": 1,
+      "cell_count": 2123,
+      "cell_area_um2": 5936.588,
+      "flop_cells": 764,
+      "mapped_cell_types": {
+        "AND2_X1": 15,
+        "AND4_X1": 2,
+        "AOI21_X1": 5,
+        "DFF_X1": 764,
+        "INV_X1": 5,
+        "MUX2_X1": 1295,
+        "NAND3_X1": 4,
+        "NAND4_X1": 2,
+        "NOR2_X1": 10,
+        "NOR3_X1": 4,
+        "NOR4_X1": 1,
+        "OAI21_X1": 4,
+        "OR3_X1": 2,
+        "XNOR2_X1": 8,
+        "XOR2_X1": 2
+      },
+      "timing": {
+        "scope": "area-only dual-clock FIFO"
+      },
+      "artifacts_sha256": {
+        "mapped.json": "e36cffaca34226eb4f169d3fc6b003c761e901fa597ab67d2716d99ed6c2e8c4",
+        "mapped.v": "e0d3de72120593234a78e4802ae94290f8cdc37d353d3bf6c320daab3a78d694",
+        "synth.ys": "f07c56c150f8298a5f3dfb4b88ccf1fc1c6306af433528c8cba18a5b259743cf",
+        "yosys.log": "f80cceac338bc3c6baa42ff3bee0bd7a18488f195bbb60bf698ee9c628056b81"
+      }
+    },
+    {
+      "name": "response_fifo",
+      "module": "hbm_async_fifo",
+      "source": "project/rtl/hbm_feed/hbm_async_fifo.sv",
+      "source_sha256": "de399591634d712080420726eab743dc5ae16f720012961613fd134231eb2dc8",
+      "parameters": {
+        "WIDTH": 146,
+        "LGDEPTH": 2
+      },
+      "inventory_instances": 1,
+      "cell_count": 1696,
+      "cell_area_um2": 4723.894,
+      "flop_cells": 608,
+      "mapped_cell_types": {
+        "AND2_X1": 15,
+        "AND4_X1": 2,
+        "AOI21_X1": 5,
+        "DFF_X1": 608,
+        "INV_X1": 6,
+        "MUX2_X1": 1022,
+        "NAND3_X1": 4,
+        "NAND4_X1": 2,
+        "NOR2_X1": 12,
+        "NOR3_X1": 3,
+        "NOR4_X1": 1,
+        "OAI21_X1": 4,
+        "OR3_X1": 2,
+        "XNOR2_X1": 8,
+        "XOR2_X1": 2
+      },
+      "timing": {
+        "scope": "area-only dual-clock FIFO"
+      },
+      "artifacts_sha256": {
+        "mapped.json": "e217ec3fa255e5197ae75c7fcdf05f725e9083c9e4a42f0297df81f4e9347e54",
+        "mapped.v": "1ca941fc2d65cbf9629ffbddb1eea6106633f7e74bec4cb508711884229161bf",
+        "synth.ys": "9d3a07e8d2b22a241338aecd5690fe7af8e9943f972c6518a9922a2ca29343c3",
+        "yosys.log": "017fe3dc467dec01db480f0bff36d3fc391f0280bbb8bd2e736f5d0a417c199e"
+      }
+    }
+  ],
+  "area_inventory_sum_um2": 227515.12
+}

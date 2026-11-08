@@ -1,0 +1,468 @@
+{
+  "schema": "actual-control-cohort-reset/0.1",
+  "results": [
+    {
+      "name": "clean_reset_reload",
+      "scenario": 0,
+      "checker": {
+        "starts": [
+          [
+            1,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "results": [
+          [
+            1,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "full_reload_ports": 6,
+        "payload_retention_probes": 1,
+        "new_cohort_DMA": {
+          "descriptors": 6,
+          "physical_requests": 6,
+          "native_write_ACKs": 4,
+          "native_reads": 2,
+          "request_response_CDC_checked": true
+        },
+        "cycles": 3458
+      },
+      "command": [
+        "/work/results/reset/obj_dir/sim",
+        "+SCENARIO=0",
+        "+STALL=2",
+        "+IMAGE=/work/results/reset/mother.mem",
+        "+WORDS=14",
+        "+LOCAL0=/work/results/reset/local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/reset/local1.mem",
+        "+WORDS1=27"
+      ],
+      "log_sha256": "6832d643c5ccee8da34b7ed39d96f09046b6acb9dbbc07aa573e9d3d96668130"
+    },
+    {
+      "name": "held_external_STORE_flush",
+      "scenario": 1,
+      "checker": {
+        "starts": [
+          [
+            1,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "results": [
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "full_reload_ports": 6,
+        "payload_retention_probes": 1,
+        "new_cohort_DMA": {
+          "descriptors": 6,
+          "physical_requests": 6,
+          "native_write_ACKs": 4,
+          "native_reads": 2,
+          "request_response_CDC_checked": true
+        },
+        "cycles": 3228
+      },
+      "command": [
+        "/work/results/reset/obj_dir/sim",
+        "+SCENARIO=1",
+        "+STALL=2",
+        "+IMAGE=/work/results/reset/mother.mem",
+        "+WORDS=14",
+        "+LOCAL0=/work/results/reset/local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/reset/local1.mem",
+        "+WORDS1=27"
+      ],
+      "log_sha256": "bc68ab1753f29b51bef910f0ca04110b22974b97cc981c1e7bb0573ff1d6cec3"
+    },
+    {
+      "name": "old_response_FIFO_flush",
+      "scenario": 2,
+      "checker": {
+        "starts": [
+          [
+            1,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "results": [
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "full_reload_ports": 6,
+        "payload_retention_probes": 0,
+        "new_cohort_DMA": {
+          "descriptors": 6,
+          "physical_requests": 6,
+          "native_write_ACKs": 4,
+          "native_reads": 2,
+          "request_response_CDC_checked": true
+        },
+        "cycles": 3108
+      },
+      "command": [
+        "/work/results/reset/obj_dir/sim",
+        "+SCENARIO=2",
+        "+STALL=2",
+        "+IMAGE=/work/results/reset/mother.mem",
+        "+WORDS=14",
+        "+LOCAL0=/work/results/reset/local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/reset/local1.mem",
+        "+WORDS1=27"
+      ],
+      "log_sha256": "12417f989352183fb0ee02573b9f0cd5f9a65e64fb96fa0fcceae6e18d756244"
+    },
+    {
+      "name": "partial_reload_gate",
+      "scenario": 3,
+      "checker": {
+        "starts": [
+          [
+            1,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "results": [
+          [
+            1,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "full_reload_ports": 6,
+        "payload_retention_probes": 1,
+        "new_cohort_DMA": {
+          "descriptors": 6,
+          "physical_requests": 6,
+          "native_write_ACKs": 4,
+          "native_reads": 2,
+          "request_response_CDC_checked": true
+        },
+        "cycles": 3703
+      },
+      "command": [
+        "/work/results/reset/obj_dir/sim",
+        "+SCENARIO=3",
+        "+STALL=2",
+        "+IMAGE=/work/results/reset/mother.mem",
+        "+WORDS=14",
+        "+LOCAL0=/work/results/reset/local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/reset/local1.mem",
+        "+WORDS1=27"
+      ],
+      "log_sha256": "8f6daf00923ee1e13b5071061e39ff54b680b7c7173bac06999e04ad5d94013b"
+    },
+    {
+      "name": "DMA_poison_recovery",
+      "scenario": 4,
+      "checker": {
+        "starts": [
+          [
+            1,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "results": [
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "full_reload_ports": 6,
+        "payload_retention_probes": 0,
+        "new_cohort_DMA": {
+          "descriptors": 6,
+          "physical_requests": 6,
+          "native_write_ACKs": 4,
+          "native_reads": 2,
+          "request_response_CDC_checked": true
+        },
+        "cycles": 3108
+      },
+      "command": [
+        "/work/results/reset/obj_dir/sim",
+        "+SCENARIO=4",
+        "+STALL=2",
+        "+IMAGE=/work/results/reset/mother.mem",
+        "+WORDS=14",
+        "+LOCAL0=/work/results/reset/local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/reset/local1.mem",
+        "+WORDS1=27"
+      ],
+      "log_sha256": "91874d8533a97a0c64f6ca4a931823561f1a0ad964274e1c461a0dc4b22d9f89"
+    },
+    {
+      "name": "lost_TX_ACK_recovery",
+      "scenario": 5,
+      "checker": {
+        "starts": [
+          [
+            1,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "results": [
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ]
+        ],
+        "full_reload_ports": 6,
+        "payload_retention_probes": 1,
+        "new_cohort_DMA": {
+          "descriptors": 6,
+          "physical_requests": 6,
+          "native_write_ACKs": 4,
+          "native_reads": 2,
+          "request_response_CDC_checked": true
+        },
+        "cycles": 7443
+      },
+      "command": [
+        "/work/results/reset/obj_dir/sim",
+        "+SCENARIO=5",
+        "+STALL=2",
+        "+IMAGE=/work/results/reset/mother.mem",
+        "+WORDS=14",
+        "+LOCAL0=/work/results/reset/local0.mem",
+        "+WORDS0=31",
+        "+LOCAL1=/work/results/reset/local1.mem",
+        "+WORDS1=27"
+      ],
+      "log_sha256": "e761da6805c53958b670d84f4028bea0c33676638279cc4d5fcef30573842d69"
+    }
+  ],
+  "coordinator_unit_cases": [
+    {
+      "name": "complete_ACK_new_epoch",
+      "mode": 0,
+      "log_sha256": "8ecfec69d2801b93eb8a9eb31741bb115c6067133caac2c5f88a64ddadec74c7"
+    },
+    {
+      "name": "missing_ACK",
+      "mode": 1,
+      "log_sha256": "5fb802049280475e757d9af45bbf343f5aecc32906c89fe8649a242b1ee932f9"
+    },
+    {
+      "name": "stale_ACK_sequence",
+      "mode": 2,
+      "log_sha256": "2ef150da478522d96aaa6c7c71f337e4e6f55f0378d4399fff3819725e563161"
+    },
+    {
+      "name": "stale_ACK_epoch",
+      "mode": 3,
+      "log_sha256": "7e2115bd1051ec687afad4ed26a5b5aa40bbe64429246c7c0cc4c11d2d413c91"
+    },
+    {
+      "name": "duplicate_ACK",
+      "mode": 4,
+      "log_sha256": "938fe80ee7af4dd93b5b6601313e83e1862449c8117f95262ffaac546b048109"
+    },
+    {
+      "name": "not_quiet",
+      "mode": 5,
+      "log_sha256": "f1d0dba3a07ffbefb510ab43f92665735dfe89e868f28bce1f94272e259ce185"
+    },
+    {
+      "name": "partial_reload",
+      "mode": 6,
+      "log_sha256": "f6b8761423e5f358c47e92e478f097e6c4c71f448aa39084ecd3ad99f692b3e4"
+    },
+    {
+      "name": "old_reload_generation",
+      "mode": 7,
+      "log_sha256": "27ff0c83c041071bb506651803c30cf321a99c58386df221219d998ac145e4a7"
+    },
+    {
+      "name": "missing_reload",
+      "mode": 8,
+      "log_sha256": "d56be8ef686987e5f1a6b71c37ef9d04f61fa208c7ed465c279cd2a777b1094a"
+    },
+    {
+      "name": "old_reset_epoch",
+      "mode": 9,
+      "log_sha256": "2b4f6b113dc809b964c903d179b0bc83e8063d42bb122733591a7d6bc4f501c0"
+    },
+    {
+      "name": "runtime_fault",
+      "mode": 10,
+      "log_sha256": "8f507e3482c95c7a29f85e6029d4170b9505ed6da29d4cb32a7bf7c530994ad3"
+    }
+  ],
+  "mutations": [
+    {
+      "name": "missing_reset_ACK",
+      "rejected": true
+    },
+    {
+      "name": "partial_reload_admission",
+      "rejected": true
+    },
+    {
+      "name": "old_epoch_START",
+      "rejected": true
+    },
+    {
+      "name": "old_global_result",
+      "rejected": true
+    }
+  ],
+  "compile": {
+    "command": [
+      "/eda/verilator-5.042/bin/verilator",
+      "--binary",
+      "--timing",
+      "--top-module",
+      "tb_control_reset",
+      "-I/work/source/project/control_r4_v0_1",
+      "-I/work/source/project/control_rtl_min_v0_1",
+      "--Mdir",
+      "/work/results/reset/obj_dir",
+      "-j",
+      "4",
+      "-o",
+      "sim",
+      "/work/source/project/control_rtl_min_v0_1/mc_min_controller.sv",
+      "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+      "/work/source/project/control_rtl_min_v0_1/tb_network_pm.sv",
+      "/work/source/project/control_r4_v0_1/lc_raw16_s_adapter.sv",
+      "/work/source/project/control_r4_v0_1/raw16_dma_bridge.sv",
+      "/work/source/project/control_r4_v0_1/cohort_reset_controller.sv",
+      "/work/source/project/control_r4_v0_1/finite_external_memory.sv",
+      "/work/source/project/control_r4_v0_1/tb_reset_local.sv",
+      "/work/source/project/control_r4_v0_1/tb_control_reset.sv",
+      "/work/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+      "/work/source/project/rtl/block_local_s/block_local_s_macro.sv",
+      "/work/source/project/rtl/block_feed_v1/block_feed_s16k.sv",
+      "/work/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+      "/work/source/project/rtl/hbm_feed/hbm_group_dma.sv",
+      "/work/source/project/rtl/hbm_feed/hbm_async_fifo.sv"
+    ],
+    "log_sha256": "4fac50d53a233cf0047e9d47112834a837356397eba35fd6665f2bdc6cc7692a"
+  },
+  "unit_compile": {
+    "command": [
+      "/eda/verilator-5.042/bin/verilator",
+      "--binary",
+      "--timing",
+      "--top-module",
+      "tb_cohort_reset",
+      "-I/work/source/project/control_r4_v0_1",
+      "-I/work/source/project/control_rtl_min_v0_1",
+      "--Mdir",
+      "/work/results/reset/coordinator/obj_dir",
+      "-j",
+      "4",
+      "-o",
+      "sim",
+      "/work/source/project/control_r4_v0_1/cohort_reset_controller.sv",
+      "/work/source/project/control_r4_v0_1/tb_cohort_reset.sv"
+    ],
+    "log_sha256": "cf233338d41566223c364cddc414345764d8a7dff52b3c9056b0ae1a8a432f76"
+  },
+  "tools": {
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]"
+  },
+  "input_images_sha256": {
+    "mother": "56385ef5c6b32e5574171a61ed53dcc6d3e8b87273c832af0d79d8a0d9bce400",
+    "local0": "68d25c1b18831832ce4b0303b350ef0978c77387ea7f1231d39ded446369ef7d",
+    "local1": "3574124243336e52c0f286377b866a6e3c17ef01a75d048264e9cd718ff9ca09"
+  },
+  "actual_MC": true,
+  "actual_LCs": 2,
+  "actual_S": 2,
+  "actual_DMA": true,
+  "CDC_FIFOs": 2,
+  "ACK_provider": "trusted test wrapper certifies synchronous reset edges and empty public provider outputs; no production management transport or physical reset/CDC qualification"
+}

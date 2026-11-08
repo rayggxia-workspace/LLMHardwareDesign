@@ -1,0 +1,182 @@
+{
+  "schema": "local-block-capacity-input/1",
+  "source_commit": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "source_path": "docs/LOCAL_BLOCK_DESIGN.md",
+  "accounting": "Packed payload lower bounds only; storage packing, banks, adapters, holding, program and metadata costs require separate implementation evidence.",
+  "cases": [
+    {
+      "id": "qwen-p-full-gate-up-input",
+      "capacity_bytes": 32768,
+      "objects": [
+        [
+          "input",
+          2560,
+          16
+        ],
+        [
+          "gate",
+          9216,
+          16
+        ],
+        [
+          "up",
+          9216,
+          16
+        ]
+      ],
+      "assumption": "Deliberately naive simultaneous full retention; demonstrates why a tiled schedule is necessary."
+    },
+    {
+      "id": "qwen-p-retained-gate-or-mid-input",
+      "capacity_bytes": 32768,
+      "objects": [
+        [
+          "input",
+          2560,
+          16
+        ],
+        [
+          "gate_or_mid",
+          9216,
+          16
+        ]
+      ],
+      "assumption": "One full gate OR Mid plus input, excluding transient up/output windows."
+    },
+    {
+      "id": "qwen-p-retained-on-current-s16",
+      "capacity_bytes": 16384,
+      "objects": [
+        [
+          "input",
+          2560,
+          16
+        ],
+        [
+          "gate_or_mid",
+          9216,
+          16
+        ]
+      ],
+      "assumption": "Same retained objects on PR178's current 16KiB S; not a claim that all 16KiB schedules fail."
+    },
+    {
+      "id": "qwen-p-tile512-staging",
+      "capacity_bytes": 16384,
+      "objects": [
+        [
+          "input",
+          2560,
+          16
+        ],
+        [
+          "gate_tile",
+          512,
+          16
+        ],
+        [
+          "up_tile",
+          512,
+          16
+        ],
+        [
+          "mid_tile",
+          512,
+          16
+        ]
+      ],
+      "assumption": "Candidate local staging only; requires an explicit downstream down-projection schedule, not yet validated."
+    },
+    {
+      "id": "qwen-p2-full-mid-on-current-s16",
+      "capacity_bytes": 16384,
+      "objects": [
+        [
+          "mid",
+          9216,
+          16
+        ]
+      ],
+      "assumption": "Full Mid retention at the down-projection P2; excludes input/metadata and cannot fit current S."
+    },
+    {
+      "id": "qwen-f-context-gate",
+      "capacity_bytes": 16384,
+      "objects": [
+        [
+          "context",
+          4096,
+          16
+        ],
+        [
+          "gate",
+          4096,
+          16
+        ]
+      ],
+      "assumption": "Payload exactly fills F0.S; holding and safe overwrite must be explicit."
+    },
+    {
+      "id": "falcon-j-three-branches",
+      "capacity_bytes": 16384,
+      "objects": [
+        [
+          "x",
+          2560,
+          16
+        ],
+        [
+          "attention",
+          2560,
+          16
+        ],
+        [
+          "ssm",
+          2560,
+          16
+        ]
+      ],
+      "assumption": "X/A/B co-resident; excludes alignment, metadata and transient windows."
+    },
+    {
+      "id": "granite-p2-eight-returns",
+      "capacity_bytes": 32768,
+      "objects": [
+        [
+          "expert_returns",
+          12288,
+          16
+        ],
+        [
+          "weights",
+          8,
+          16
+        ]
+      ],
+      "assumption": "Common-scale S16 return candidate only; wider historical expert results require a new budget."
+    }
+  ],
+  "resource_pool": {
+    "counts": {
+      "P": 3,
+      "U": 2,
+      "C": 1,
+      "F": 1,
+      "J": 2
+    },
+    "s_bytes": {
+      "P": 32768,
+      "U": 16384,
+      "C": 16384,
+      "F": 16384,
+      "J": 16384
+    },
+    "t_instances": 2,
+    "t_bytes_per_instance": 6144,
+    "current_s_bytes_per_instance": 16384
+  },
+  "external_state_payload_bytes": {
+    "qwen_gdn_per_layer": 2097152,
+    "falcon_ssm_per_layer": 4194304
+  }
+}

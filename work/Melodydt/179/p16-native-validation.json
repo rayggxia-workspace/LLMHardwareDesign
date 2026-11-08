@@ -1,0 +1,106 @@
+{
+  "schema": "control-native-p16-trial/1",
+  "issue": 179,
+  "pull_request": 180,
+  "owner": "Melodydt",
+  "base_pr176": "08f2ea20a11dfdd09892a67599163e32b7237edb",
+  "control_base": "0549be061d65e322e9e8f5a13c24c0d620dee319",
+  "block_pr190": "0485ed84dd13d8711c88609668cf0a903a006773",
+  "service_pr195": "cad3fa572d3cbf8515532df50868000806990b18",
+  "input_lock": "project/control_p16_native_v1/upstream.sha256",
+  "abi": "0x01790160",
+  "topology": "0x01790161",
+  "capacity_profile": "0x17630001",
+  "production_binding": false,
+  "topology_scope": {
+    "blocks": [
+      "P0",
+      "P1"
+    ],
+    "local_s_bytes_each": 16384,
+    "payload_bits": 128,
+    "address_bits": 10,
+    "parallel_words": 1,
+    "clock_domains": 1,
+    "route": "P0.S[14] to P1.S[20]",
+    "link": "static SRAM ready/valid + stored ACK"
+  },
+  "tool": {
+    "verilator": "5.042",
+    "python": "3.10.12",
+    "container": "ORFS 26Q1"
+  },
+  "jobs": [
+    {
+      "id": 98766,
+      "state": "FAILED",
+      "exit": "1:0",
+      "node": "node27",
+      "snapshot": "7911e022f5696809692c622b9e16ca3a29254f69",
+      "archive_sha256": "60bc9682609f2492a16e0cd2c18acf2810ce3bbb07b8fbc152ab1b01ae24079c",
+      "note": "RTL compiled. Functional test did not run because the archive omitted a Python dependency."
+    },
+    {
+      "id": 98776,
+      "state": "COMPLETED",
+      "exit": "0:0",
+      "node": "node27",
+      "snapshot": "d81f9e593f0ae5e3842dfb2aeae4187e83537dd1",
+      "archive_sha256": "fdd331c90ed62adeb5a8de4d23b3959f6f3efd7a26f0329acc24e73d04ecc5f0",
+      "runner": "project/control_p16_native_v1/run.sh",
+      "cases": [
+        {
+          "name": "normal",
+          "request_stall": 0,
+          "ack_stall": 0
+        },
+        {
+          "name": "stalled",
+          "request_stall": 5,
+          "ack_stall": 4
+        },
+        {
+          "name": "reset",
+          "request_stall": 3,
+          "ack_stall": 4
+        }
+      ],
+      "confirmed_write_bytes": 48,
+      "readback": {
+        "P0_S8": "0x0000000000000000fffffff600000006",
+        "P0_S14": "0x00000000000000000000000000001388",
+        "P1_S20": "0x00000000000000000000000000001388"
+      },
+      "result_sha256": {
+        "images/local0.mem": "917a08900f8f3577fe13bbbeaeb43cb9310eda82d49829d21486d5850642bdde",
+        "images/local1.mem": "0b5c90800a5e04130b39d8be3811ed045fbc3a0752e2831c0aefee23388239f1",
+        "images/mother.mem": "153101bb95f60df5b3fe0e07a8e6eb7bf5d33863a655dc00adcfe8d1f93e6f0b",
+        "normal.log": "1f8887dc36fd64f81a877a2a5394badeadea0c526b846789e6467cb799d7a1e2",
+        "stalled.log": "2df28581f37228abebaf499bc94531ffbbc25a10c96e13eff4e8b2c1519f9a3c",
+        "reset.log": "dd03f4194c1601f15ff60e3211a91b6df281bc4fb92426ad8914b35644a28471",
+        "tool.txt": "ddadb39e0630704bc05af1762d7a2112ef2d22927c1812c9801ab418dfe9a790",
+        "inputs.log": "7d222752c885af80e083bea20fd8e3afd67fce3ac674901826d1a7760f27c77c"
+      }
+    },
+    {
+      "id": 98783,
+      "state": "COMPLETED",
+      "exit": "0:0",
+      "node": "node27",
+      "snapshot": "df3117bebe9dc301f1ee0a5c78bc3e76ea40fedb",
+      "archive_sha256": "30cd4b334e8f0e562a4ecc29ab55c085882d1a4623f57dcb64f783e8c6773eed",
+      "compact_rtl": 9,
+      "legacy_network_rtl": 10,
+      "rejected_legacy_network_mutations": 4,
+      "result_sha256": {
+        "compact/report.json": "a9b1ee482d86490c723228a85c8942e9473119aa838ec10498293c0c6a9cf39b",
+        "legacy/network_report.json": "54055a6015f101bc9738eabd59acb553c03bc48878395e036000b909ad505b9f"
+      }
+    }
+  ],
+  "local_checks": {
+    "compact_codec": 4,
+    "image": 30,
+    "management": "PASS"
+  }
+}

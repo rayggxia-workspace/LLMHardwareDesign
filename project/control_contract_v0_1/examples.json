@@ -1,0 +1,153 @@
+{
+  "schema": "local-control-contract-examples/0.1",
+  "status": "Static field examples; runtime preconditions remain required",
+  "cases": [
+    {
+      "name": "M_scale_negative3_shift31",
+      "request": {
+        "profile": "P16_M_ONLY",
+        "execution": {
+          "resource": 0,
+          "service": 0,
+          "native_op": 4,
+          "completion": 0,
+          "native_abi_id": 65537,
+          "native1": 2097149
+        },
+        "instruction": {
+          "op": "L_EXEC",
+          "a": 0,
+          "b": 0,
+          "c": 0
+        },
+        "descriptor_index": 0
+      }
+    },
+    {
+      "name": "M_GEMM_bank1_8xK32xN8",
+      "request": {
+        "profile": "P16_M_ONLY",
+        "execution": {
+          "resource": 0,
+          "service": 0,
+          "native_op": 10,
+          "completion": 0,
+          "native_abi_id": 65537,
+          "native0": 32,
+          "native1": 280708
+        }
+      }
+    },
+    {
+      "name": "M_RNE_S16_raw_containers",
+      "request": {
+        "profile": "P16_M_ONLY",
+        "execution": {
+          "resource": 0,
+          "service": 2,
+          "native_op": 5,
+          "completion": 1,
+          "native_abi_id": 65537,
+          "native0": 57,
+          "native1": 319,
+          "count": 1,
+          "stride_bytes": 16,
+          "dst": 0
+        },
+        "objects": [
+          {
+            "object_id": 0,
+            "base_bytes": 0,
+            "capacity_bytes": 16,
+            "length_bytes": 16,
+            "format": 4,
+            "native_abi_id": 65537
+          }
+        ]
+      }
+    },
+    {
+      "name": "G_SILU_gated_S32_containers",
+      "request": {
+        "profile": "P16_VIA_S",
+        "execution": {
+          "resource": 3,
+          "service": 3,
+          "native_op": 0,
+          "completion": 1,
+          "native_abi_id": 65537,
+          "native0": 1,
+          "count": 2,
+          "stride_bytes": 8,
+          "src0": 0,
+          "src1": 2,
+          "dst": 1
+        },
+        "objects": [
+          {
+            "object_id": 0,
+            "base_bytes": 0,
+            "capacity_bytes": 16,
+            "length_bytes": 16,
+            "format": 2,
+            "native_abi_id": 65537
+          },
+          {
+            "object_id": 1,
+            "base_bytes": 64,
+            "capacity_bytes": 16,
+            "length_bytes": 16,
+            "format": 2,
+            "native_abi_id": 65537
+          },
+          {
+            "object_id": 2,
+            "base_bytes": 128,
+            "capacity_bytes": 16,
+            "length_bytes": 16,
+            "format": 2,
+            "native_abi_id": 65537
+          }
+        ]
+      }
+    },
+    {
+      "name": "S_feeder_8rows_4tiles_S16",
+      "request": {
+        "profile": "P16_M_ONLY",
+        "execution": {
+          "resource": 5,
+          "service": 1,
+          "native_op": 0,
+          "completion": 0,
+          "native_abi_id": 65537,
+          "native0": 1,
+          "native1": 8,
+          "native2": 4,
+          "native3": 3,
+          "count": 1,
+          "src0": 0,
+          "src1": 1
+        },
+        "objects": [
+          {
+            "object_id": 0,
+            "base_bytes": 0,
+            "capacity_bytes": 512,
+            "length_bytes": 512,
+            "format": 4,
+            "native_abi_id": 65537
+          },
+          {
+            "object_id": 1,
+            "base_bytes": 512,
+            "capacity_bytes": 512,
+            "length_bytes": 512,
+            "format": 4,
+            "native_abi_id": 65537
+          }
+        ]
+      }
+    }
+  ]
+}

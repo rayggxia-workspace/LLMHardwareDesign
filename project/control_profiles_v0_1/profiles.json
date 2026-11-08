@@ -1,0 +1,136 @@
+{
+  "schema": "candidate-five-control-profiles/0.1",
+  "status": "research-only software service ABI, not a frozen native ABI or deployed hardware capability",
+  "deployable": false,
+  "isa_version": "0.1 unchanged",
+  "research_native_abi_id": 395640833,
+  "research_capacity_profile_id": 395640833,
+  "topology_id": 395640834,
+  "profiles": {
+    "P": {
+      "macros": [
+        "M",
+        "G",
+        "S"
+      ],
+      "resource_mask": 41,
+      "compute_order": [
+        "M",
+        "G"
+      ]
+    },
+    "U": {
+      "macros": [
+        "N",
+        "E",
+        "S"
+      ],
+      "resource_mask": 38,
+      "compute_order": [
+        "N",
+        "E"
+      ]
+    },
+    "C": {
+      "macros": [
+        "R",
+        "G",
+        "E",
+        "S"
+      ],
+      "resource_mask": 60,
+      "compute_order": [
+        "R",
+        "G",
+        "E"
+      ]
+    },
+    "F": {
+      "macros": [
+        "G",
+        "E",
+        "S"
+      ],
+      "resource_mask": 44,
+      "compute_order": [
+        "G",
+        "E"
+      ]
+    },
+    "J": {
+      "macros": [
+        "E",
+        "S",
+        "T"
+      ],
+      "resource_mask": 100,
+      "compute_order": [
+        "T",
+        "E"
+      ]
+    }
+  },
+  "bounds": {
+    "controllers": 3,
+    "active_global_tokens": 2,
+    "local_tokens": 1,
+    "local_scratch_objects": 1,
+    "scratch_bytes": 16,
+    "PM_outstanding_each": 1,
+    "provider_outstanding_each": 1,
+    "return_slots_each": 1,
+    "max_steps_task": 128,
+    "max_steps_mother": 256,
+    "execution_budget_ticks": 8192,
+    "S_address_limit_bytes": 16384,
+    "implemented_scratch_bytes": 16
+  },
+  "candidate_services": {
+    "compute": {
+      "service": 0,
+      "native_op": "0xF100 + ISA resource ID",
+      "completion": 1,
+      "count": 1,
+      "stride_bytes": 16,
+      "src0": "255 for versioned external input/old/next read, or 0 for private-S scratch",
+      "dst": 0,
+      "native0": "action 0 opaque scratch, 1 read old/write next, 2 consumer receipt, 4 read next for consumer",
+      "native1": "receipt bit 1 or 2 for actions2/4, otherwise0"
+    },
+    "publish": {
+      "resource": "R",
+      "service": 5,
+      "native_op": 61951,
+      "completion": 0,
+      "native0": 3,
+      "native1": 0,
+      "semantics": "idempotent atomic compare-and-publish of next handle, guarded by actual update/consumer ACK and accepted child terminals"
+    }
+  },
+  "control_parameters": {
+    "reference_bytes": 4096,
+    "size_bytes": 32,
+    "words": [
+      "old_handle",
+      "next_handle",
+      "expected_generation",
+      "required_consumer_mask",
+      "transaction_id",
+      "local_iterations",
+      "local_optional_path",
+      "mother_iterations"
+    ],
+    "immutable": "host job scalar memory immutable; G_PARAM actual responses; CALL locks all registers, state adapter checks first five state words against declared parameter_ref; words5..7 seed control loops/branches and may be transformed in GPRs",
+    "handles": "nonzero distinct uint32, model store has at most16 named handles; these are external state-store handles, not claimed R native context numbers"
+  },
+  "state_policy": {
+    "initial_committed_handle": 5,
+    "initial_generation": 7,
+    "initial_opaque_payload": 305419896,
+    "next_handle": 9,
+    "publication_linearization": "provider atomic write, before response delivery; ACK loss means COMMIT_UNKNOWN, never claim old state preserved",
+    "journal": "transaction_id plus old/next/generation; persistent across modeled cohort reset; query resolves committed outcome; no new ISA opcode",
+    "old_release": "only after publication ACK/query and all consumers finished; pending failures preserve old until a possibly already committed publication is resolved"
+  },
+  "native_boundary": "N/E/G/T/R mathematical operations and conversion/rounding/saturation are external services. IDs above denote candidate adapter operations, not actual native command values. Real adapters, parameter sideband and provider reset/CDC remain to implement; existing P RTL rejects this ABI. No physical/Block/model-quality qualification."
+}

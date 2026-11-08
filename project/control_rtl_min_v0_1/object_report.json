@@ -1,0 +1,2220 @@
+{
+  "schema": "local-object-reservation-rtl-runs/0.1",
+  "evidence": "actual_SV_DUT_PM_and_M_service_peers",
+  "results": [
+    {
+      "case": {
+        "name": "open_drop",
+        "program": "open_drop",
+        "expected": 0,
+        "error_pc": 4294967295,
+        "commands": 0
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 708,
+        "object_opens": 1,
+        "object_drops": 1,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 708,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 681,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 691,
+            "pc": 1,
+            "opcode": 73
+          },
+          {
+            "cycle": 704,
+            "pc": 2,
+            "opcode": 79
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 704,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "560db7a13c28f4495c0f9607280beb2f385a686bf9786c25ad14f47bdfb7d790",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/open_drop.mem",
+        "+TASK=/work/results/object/open_drop.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "open_M_wait_drop",
+        "program": "open_M",
+        "expected": 0,
+        "error_pc": 4294967295,
+        "commands": 1
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 1,
+        "responses": 1,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 1170,
+        "object_opens": 1,
+        "object_drops": 1,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 1170,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 981,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 1078,
+            "pc": 1,
+            "opcode": 65
+          },
+          {
+            "cycle": 1135,
+            "pc": 2,
+            "opcode": 68
+          },
+          {
+            "cycle": 1146,
+            "pc": 3,
+            "opcode": 73
+          },
+          {
+            "cycle": 1166,
+            "pc": 4,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 1078,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1166,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7cf6796b0fca299b9558a5b0c2a83692e58f66e3bc50776ae282c205b51163a5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "1c1fd0885a4b2e35999a347dc4813c9bd14348ef64f06b0c8e1ac1235bb4751a",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/open_M_wait_drop.mem",
+        "+TASK=/work/results/object/open_M_wait_drop.task",
+        "+WORDS=29",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+COMMANDS=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "reopen",
+        "program": "reopen",
+        "expected": 0,
+        "error_pc": 4294967295,
+        "commands": 0
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 829,
+        "object_opens": 2,
+        "object_drops": 2,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 829,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 741,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 751,
+            "pc": 1,
+            "opcode": 73
+          },
+          {
+            "cycle": 801,
+            "pc": 2,
+            "opcode": 64
+          },
+          {
+            "cycle": 811,
+            "pc": 3,
+            "opcode": 73
+          },
+          {
+            "cycle": 825,
+            "pc": 4,
+            "opcode": 79
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 825,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "6cc1276aed3b2ff616ae01bd4a5720925f3ad6f78fe145a9322eabda145095e1",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "7c1671a8d5912c25eb3fcfbdcc01ba8ff7e5c7ca8d8978e950df03ba2345767f",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/reopen.mem",
+        "+TASK=/work/results/object/reopen.task",
+        "+WORDS=21",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "object_reuse",
+        "program": "open_drop",
+        "expected": 0,
+        "error_pc": 4294967295,
+        "commands": 0,
+        "recovery": 1
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 2,
+        "returns": 2,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 829,
+        "object_opens": 2,
+        "object_drops": 2,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 829,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 681,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 691,
+            "pc": 1,
+            "opcode": 73
+          },
+          {
+            "cycle": 704,
+            "pc": 2,
+            "opcode": 79
+          },
+          {
+            "cycle": 796,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 806,
+            "pc": 1,
+            "opcode": 73
+          },
+          {
+            "cycle": 825,
+            "pc": 2,
+            "opcode": 79
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 704,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 825,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 2,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "c6d2f5ae5a4ef36337d350bac1d784d1b4ce94c59593c7ad2b8a9b75c60453d9",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/object_reuse.mem",
+        "+TASK=/work/results/object/object_reuse.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+COMMANDS=0",
+        "+RECOVERY=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "MOVI_retirement",
+        "program": "movi_open",
+        "expected": 0,
+        "error_pc": 4294967295,
+        "commands": 0
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 752,
+        "object_opens": 1,
+        "object_drops": 1,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 1,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 752,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 671,
+            "pc": 0,
+            "opcode": 69
+          },
+          {
+            "cycle": 721,
+            "pc": 1,
+            "opcode": 64
+          },
+          {
+            "cycle": 731,
+            "pc": 2,
+            "opcode": 73
+          },
+          {
+            "cycle": 748,
+            "pc": 3,
+            "opcode": 79
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 748,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "6a4ca799a15329bb1217e243a7192d227d89dfdd6aef6e44401171b1a5d101eb",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "a849ba806b78f7c95ba2e22e03564f92933c90cf0b501eaa2ae126cdd795bdcf",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/MOVI_retirement.mem",
+        "+TASK=/work/results/object/MOVI_retirement.task",
+        "+WORDS=20",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+COMMANDS=0",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "duplicate_OPEN",
+        "program": "open_drop",
+        "expected": 7,
+        "error_pc": 1,
+        "commands": 0,
+        "fault_addr": 144,
+        "fault_xor": 11963051962064242856134263542523101184
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 708,
+        "object_opens": 1,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 708,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 681,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 704,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 7,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "895b1fbbd39fefd9720cb05da414032adb0810f72b583e2aca16e9725d92a6c1",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/duplicate_OPEN.mem",
+        "+TASK=/work/results/object/duplicate_OPEN.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=7",
+        "+ERROR_PC=1",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=144",
+        "+FAULT_XOR=09000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "END_live_object",
+        "program": "open_drop",
+        "expected": 7,
+        "error_pc": 1,
+        "commands": 0,
+        "fault_addr": 144,
+        "fault_xor": 7975367974709495237422842361682067456
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 708,
+        "object_opens": 1,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 708,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 681,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 704,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 7,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "cd150b8907fdbf8a295606b4818141096301d8898ccff3ddd804a8a59e840d8c",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/END_live_object.mem",
+        "+TASK=/work/results/object/END_live_object.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=7",
+        "+ERROR_PC=1",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=144",
+        "+FAULT_XOR=06000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "DROP_inactive",
+        "program": "open_drop",
+        "expected": 7,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 128,
+        "fault_xor": 11963051962064242856134263542523101184
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 653,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 653,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 649,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 7,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "f567b14cc157807aae8c788dd4522445ee13e66b6494606452588ae9ba681f8a",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/DROP_inactive.mem",
+        "+TASK=/work/results/object/DROP_inactive.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=7",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=128",
+        "+FAULT_XOR=09000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "OPEN_bad_flags",
+        "program": "open_drop",
+        "expected": 2,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 128,
+        "fault_xor": 5192296858534827628530496329220096
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 653,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 653,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 649,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 2,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "1ea4795027597b55f76b9bb7a6d230b6b7e533d3116db6700a9d24bd72b492cc",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/OPEN_bad_flags.mem",
+        "+TASK=/work/results/object/OPEN_bad_flags.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=2",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=128",
+        "+FAULT_XOR=00010000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "OPEN_bad_index",
+        "program": "open_drop",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 128,
+        "fault_xor": 20282409603651670423947251286016
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 653,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 653,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 649,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "f51b435fe82d8a311dd114ee8005a14467ccdfb9db911c4a6aeccc5b2199ee32",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/OPEN_bad_index.mem",
+        "+TASK=/work/results/object/OPEN_bad_index.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=128",
+        "+FAULT_XOR=00000100000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "object_bad_opcode",
+        "program": "open_drop",
+        "expected": 1,
+        "error_pc": 1,
+        "commands": 0,
+        "fault_addr": 144,
+        "fault_xor": 243248723228639604741396692031303057408
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 708,
+        "object_opens": 1,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 708,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 681,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 704,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 1,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "32e160280d8a4ea968cc59069bc7c2eb475716dd1509cfa8af22f9afe90e96dc",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/object_bad_opcode.mem",
+        "+TASK=/work/results/object/object_bad_opcode.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=1",
+        "+ERROR_PC=1",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=144",
+        "+FAULT_XOR=b7000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_object_ABI",
+        "program": "open_drop",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 272,
+        "fault_xor": 1
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 697,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 697,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 693,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "ced2becc6eed057671a7168d19aa0d4ba48f0d934058880caaf4588ec45a9b3f",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/bad_object_ABI.mem",
+        "+TASK=/work/results/object/bad_object_ABI.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=272",
+        "+FAULT_XOR=00000000000000000000000000000001"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_object_format",
+        "program": "open_drop",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 256,
+        "fault_xor": 7
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 697,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 697,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 693,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "f2f4c03b1ee23dedbdbdd642094c5a8726db8036e20c0926c5ee6b0af17aa55c",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/bad_object_format.mem",
+        "+TASK=/work/results/object/bad_object_format.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=256",
+        "+FAULT_XOR=00000000000000000000000000000007"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_object_version",
+        "program": "open_drop",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 256,
+        "fault_xor": 4294967296
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 697,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 697,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 693,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "550be67595b5d439544d07a95f77a9b3c351585ad55b8a8a15b6402b894dfdaa",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/bad_object_version.mem",
+        "+TASK=/work/results/object/bad_object_version.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=256",
+        "+FAULT_XOR=00000000000000000000000100000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_object_dynamic_base",
+        "program": "open_drop",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 256,
+        "fault_xor": 4703919738795935662080
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 697,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 697,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 693,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "7fa384314bed3e2a19d2bfd4cc2f6177107f0d7e820f5508176723fc9b60bb63",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/bad_object_dynamic_base.mem",
+        "+TASK=/work/results/object/bad_object_dynamic_base.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=256",
+        "+FAULT_XOR=00000000000000ff0000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_object_gap",
+        "program": "open_drop",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 272,
+        "fault_xor": 4294967296
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 697,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 697,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 693,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "9ead0f5de064d5310642384f334e98fb8b63b1fe800bc14bd5d69c95ee863fec",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/bad_object_gap.mem",
+        "+TASK=/work/results/object/bad_object_gap.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=272",
+        "+FAULT_XOR=00000000000000000000000100000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_object_capacity",
+        "program": "open_drop",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 240,
+        "fault_xor": 885443715538058477568
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 697,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 697,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 693,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "397dc00a4064f0715e7482cb6153d5b68ce914b8289e8d514436d982ea61b6fb",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/bad_object_capacity.mem",
+        "+TASK=/work/results/object/bad_object_capacity.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=240",
+        "+FAULT_XOR=00000000000000300000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "bad_object_length",
+        "program": "open_drop",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 256,
+        "fault_xor": 3802951800684688204490109616128
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 697,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 697,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 693,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "180fa17dd3b092d88132f17cfe6d1baeebf12772b3f7da6d6a71ac4ea144476f",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/bad_object_length.mem",
+        "+TASK=/work/results/object/bad_object_length.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=256",
+        "+FAULT_XOR=00000030000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "object_out_of_range",
+        "program": "open_drop",
+        "expected": 6,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 240,
+        "fault_xor": 71468255805440
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 697,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 697,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 693,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 6,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "8df2b1317bc9d5e1082d35940af65ad9fa9cb3df7a5a3bd8b8f3797bf84a8522",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/object_out_of_range.mem",
+        "+TASK=/work/results/object/object_out_of_range.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=6",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=240",
+        "+FAULT_XOR=00000000000000000000410000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "object_unaligned",
+        "program": "open_drop",
+        "expected": 6,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 240,
+        "fault_xor": 4294967296
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 697,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 697,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 693,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 6,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "c59db5ba9af66ef2544590c1d137eb64c46713329e2986eb00ef5942f9e6ea68",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/object_unaligned.mem",
+        "+TASK=/work/results/object/object_unaligned.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=6",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=240",
+        "+FAULT_XOR=00000000000000000000000100000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "zero_object_record",
+        "program": "open_drop",
+        "expected": 5,
+        "error_pc": 0,
+        "commands": 0,
+        "zero_begin": 240,
+        "zero_end": 304
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 697,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 697,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 693,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "a20a7c2c62c615fd03d151b87febc33457d773077c4afe459c202e358b3b4057",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/zero_object_record.mem",
+        "+TASK=/work/results/object/zero_object_record.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=5",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+ZERO_BEGIN=240",
+        "+ZERO_END=304",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "zero_execution_record",
+        "program": "open_M",
+        "expected": 5,
+        "error_pc": 1,
+        "commands": 0,
+        "zero_begin": 336,
+        "zero_end": 464
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 1082,
+        "object_opens": 1,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 1082,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 981,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 1078,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 5,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7cf6796b0fca299b9558a5b0c2a83692e58f66e3bc50776ae282c205b51163a5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "e7b4c05cd59946c4c6e048c8e772ea526421fefde609bccd91edb43481395cd9",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/zero_execution_record.mem",
+        "+TASK=/work/results/object/zero_execution_record.task",
+        "+WORDS=29",
+        "+STALL=2",
+        "+EXPECTED=5",
+        "+ERROR_PC=1",
+        "+COMMANDS=0",
+        "+ZERO_BEGIN=336",
+        "+ZERO_END=464",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "PM_object_error",
+        "program": "open_drop",
+        "expected": 10,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 240,
+        "pm_error": 1
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 664,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 664,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 660,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 10,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "7461e5b39b4536bc477d7d38be7f48b3c709b7fb1dab83f116fca99ee2301964",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/PM_object_error.mem",
+        "+TASK=/work/results/object/PM_object_error.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=10",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=240",
+        "+PM_ERROR=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "cancel_object",
+        "program": "open_drop",
+        "expected": 11,
+        "error_pc": 1,
+        "commands": 0,
+        "cancel": 1,
+        "cancel_pc": 1
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 697,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true,
+        "object_opens": 1,
+        "object_drops": 0,
+        "cancel_object_cleanups": 1,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 697,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 681,
+            "pc": 0,
+            "opcode": 64
+          }
+        ],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 693,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "fe119200e92863166f066b7893d199cd67ce05d7f9b6d5382554cbbefc107f0d",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/cancel_object.mem",
+        "+TASK=/work/results/object/cancel_object.task",
+        "+WORDS=19",
+        "+STALL=2",
+        "+EXPECTED=11",
+        "+ERROR_PC=1",
+        "+COMMANDS=0",
+        "+CANCEL=1",
+        "+CANCEL_PC=1",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "cancel_object_M",
+        "program": "open_M",
+        "expected": 11,
+        "error_pc": 2,
+        "commands": 1,
+        "cancel": 1,
+        "cancel_pc": 2
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 1148,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 1,
+        "poisoned": false,
+        "drained": true,
+        "object_opens": 1,
+        "object_drops": 0,
+        "cancel_object_cleanups": 1,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 1148,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 981,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 1078,
+            "pc": 1,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 1078,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 1144,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 2,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7cf6796b0fca299b9558a5b0c2a83692e58f66e3bc50776ae282c205b51163a5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "082b326626192e6a8a102459bfb95b603a80dd95741f745377dcb6a753882c8c",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/cancel_object_M.mem",
+        "+TASK=/work/results/object/cancel_object_M.task",
+        "+WORDS=29",
+        "+STALL=2",
+        "+EXPECTED=11",
+        "+ERROR_PC=2",
+        "+COMMANDS=1",
+        "+CANCEL=1",
+        "+CANCEL_PC=2",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "poison_object_M",
+        "program": "open_M",
+        "expected": 0,
+        "error_pc": 4294967295,
+        "commands": 1,
+        "cancel": 1,
+        "cancel_pc": 2,
+        "poison": 1,
+        "no_response": 2
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 1220,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 0,
+        "token_cleanups": 0,
+        "poisoned": true,
+        "drained": false,
+        "object_opens": 1,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 1220,
+      "observations": {
+        "retired": [
+          {
+            "cycle": 981,
+            "pc": 0,
+            "opcode": 64
+          },
+          {
+            "cycle": 1078,
+            "pc": 1,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 1078,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": []
+      },
+      "input_image_sha256": "7cf6796b0fca299b9558a5b0c2a83692e58f66e3bc50776ae282c205b51163a5",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "07d9f2e96d752102b4c432cb29f2db016dcfb0714711baae2ecc76059bedf56f",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/poison_object_M.mem",
+        "+TASK=/work/results/object/poison_object_M.task",
+        "+WORDS=29",
+        "+STALL=2",
+        "+EXPECTED=0",
+        "+ERROR_PC=4294967295",
+        "+COMMANDS=1",
+        "+CANCEL=1",
+        "+CANCEL_PC=2",
+        "+POISON=1",
+        "+NO_RESPONSE=2",
+        "+FAULT_XOR=00000000000000000000000000000000"
+      ]
+    },
+    {
+      "case": {
+        "name": "MOVI_bad_register",
+        "program": "movi_open",
+        "expected": 2,
+        "error_pc": 0,
+        "commands": 0,
+        "fault_addr": 128,
+        "fault_xor": 162259276829213363391578010288128
+      },
+      "actual_rtl_simulation": true,
+      "checker": {
+        "actual_observed_fault": true,
+        "calls": 1,
+        "returns": 1,
+        "services": 0,
+        "responses": 0,
+        "poisoned": false,
+        "peer_reset_reloaded": false,
+        "cycles": 686,
+        "object_opens": 0,
+        "object_drops": 0,
+        "cancel_object_cleanups": 0,
+        "movi_retirements": 0,
+        "register_value_observed": false,
+        "object_data_validated": false,
+        "logical_RAW16_reservation": true
+      },
+      "cycles": 686,
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 682,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 2,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "6a4ca799a15329bb1217e243a7192d227d89dfdd6aef6e44401171b1a5d101eb",
+      "input_task_sha256": "57555b30c48229c3093a8bf96c27e703914f9ec408ad2759d83d348328431375",
+      "log_sha256": "bccdc5d22f008f8c75977135299ad75e3ecd1e4c078bdcc1b50bb4458cf49bc2",
+      "command": [
+        "/work/results/object/obj_dir/sim",
+        "+IMAGE=/work/results/object/MOVI_bad_register.mem",
+        "+TASK=/work/results/object/MOVI_bad_register.task",
+        "+WORDS=20",
+        "+STALL=2",
+        "+EXPECTED=2",
+        "+ERROR_PC=0",
+        "+COMMANDS=0",
+        "+FAULT_ADDR=128",
+        "+FAULT_XOR=00000800000000000000000000000000"
+      ]
+    }
+  ],
+  "mutation_checks": [
+    {
+      "name": "hide_cancel_object_cleanup",
+      "rejected": true
+    },
+    {
+      "name": "fake_OPEN_before_record",
+      "rejected": true
+    },
+    {
+      "name": "hide_object_fault",
+      "rejected": true
+    }
+  ],
+  "compile_command": [
+    "/eda/verilator-5.042/bin/verilator",
+    "--binary",
+    "--timing",
+    "--top-module",
+    "tb_lc_object",
+    "-I/work/source/project/control_rtl_min_v0_1",
+    "--Mdir",
+    "/work/results/object/obj_dir",
+    "-j",
+    "4",
+    "-o",
+    "sim",
+    "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+    "/work/source/project/control_rtl_min_v0_1/tb_lc_object.sv"
+  ],
+  "compile_log_sha256": "93de9f21a8206a51db5daa5dc604d1a99c74ff292260b2e6678eae40891d10de",
+  "dut_sha256": "74ff28668517e007f09e9be2f84de5387d84ad52234298c3774f17cea1dc610d",
+  "tools": {
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]"
+  },
+  "images": {
+    "open_drop": {
+      "bytes": 304,
+      "sha256": "f64cdd110e07fd294b0a5e2c1aef81165fd7619a82e7e815ded19d1c9c498ae5"
+    },
+    "open_M": {
+      "bytes": 464,
+      "sha256": "7cf6796b0fca299b9558a5b0c2a83692e58f66e3bc50776ae282c205b51163a5"
+    },
+    "reopen": {
+      "bytes": 336,
+      "sha256": "6cc1276aed3b2ff616ae01bd4a5720925f3ad6f78fe145a9322eabda145095e1"
+    },
+    "movi_open": {
+      "bytes": 320,
+      "sha256": "6a4ca799a15329bb1217e243a7192d227d89dfdd6aef6e44401171b1a5d101eb"
+    }
+  },
+  "object_slots": 1,
+  "object_bytes": 16,
+  "local_S_capacity_bound": 16384,
+  "actual_S_data_tested": false,
+  "register_value_readback_tested": false,
+  "RX_TX_tested": false,
+  "full_block_tested": false,
+  "mother_rtl_tested": false,
+  "physical_tested": false
+}

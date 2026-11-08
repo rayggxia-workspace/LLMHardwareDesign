@@ -1,0 +1,313 @@
+{
+  "schema": "main64-deployment-contract/1",
+  "issue": 179,
+  "upstream_main": "c4d7b960599b9d292f27eb4429d5f226a7156c95",
+  "branch_parent": "f087c3c863e8f6b703e94f112f734ed4f68e34f7",
+  "instruction_bits": 64,
+  "image_version": 2,
+  "pm_port_bits": 128,
+  "pm_bytes_each": 16384,
+  "pm_banks_each": 4,
+  "mother_targets": 2,
+  "global_tokens": 8,
+  "resident_tasks_per_local": 1,
+  "inflight_services_per_local": 1,
+  "maximum_image_bytes": {
+    "mother": 4736,
+    "local": 8320
+  },
+  "instruction_count_max": 256,
+  "execution_descriptors_max": 16,
+  "clock_period_ns": "3.333333333",
+  "clock_domains": 1,
+  "configuration": {
+    "request_op_bits": 3,
+    "address_bits": 14,
+    "address_unit": "byte",
+    "alignment_bytes": 16,
+    "ops": {
+      "0": "BEGIN",
+      "1": "WRITE16",
+      "2": "READ16",
+      "3": "VERIFY/proof",
+      "4": "PREPARE",
+      "5": "ABORT"
+    },
+    "host_target": {
+      "0": "mother",
+      "1": "LC0",
+      "2": "LC1",
+      "3": "cohort"
+    },
+    "pm_ownership": "mother internal; two external local PMs; no program memory in testbench",
+    "host_management_ops": {
+      "0": "RELEASE",
+      "1": "BEGIN",
+      "2": "WRITE16",
+      "3": "READ16",
+      "4": "VERIFY",
+      "5": "PREPARE",
+      "6": "ABORT",
+      "7": "DEPLOY",
+      "8": "START",
+      "9": "STATUS",
+      "10": "RESULT",
+      "11": "S_READ",
+      "12": "S_WRITE",
+      "13": "READ_J_OUTPUT",
+      "14": "WRITE_J_FRAGMENT"
+    }
+  },
+  "messages": {
+    "bits": 512,
+    "identity": [
+      "job",
+      "epoch",
+      "task_sequence",
+      "token",
+      "service_sequence"
+    ],
+    "data_bits": 128,
+    "data_address_unit": "16-byte S row",
+    "data_address_bits": 10,
+    "route": "fixed opposite endpoint; P accepts passive writes only while its LC is READY",
+    "ack": "actual destination SRAM write response; never request acceptance",
+    "recovery_qualification": "R8.4 pending; cohort reset only in this candidate"
+  },
+  "qualified_instruction_subset": {
+    "mother": [
+      "G_CALL",
+      "G_WAIT",
+      "G_END"
+    ],
+    "local": [
+      "L_EXEC",
+      "L_WAIT",
+      "L_END"
+    ]
+  },
+  "namespace": "generated LC/service module identifiers are mechanically renamed per type; main raw sources unchanged; JOIN-only unused outputs explicitly open",
+  "optional_ports": "P/U close inputs tied zero and outputs unused; CFJ trace outputs explicitly unused; object-close programs outside the admitted subset",
+  "cf_host_read": "main group_top verify_read option; held response adapter; new candidate, not old physical qualification",
+  "bounded_j": {
+    "output_fifo_words": 4,
+    "joins_per_task": 1,
+    "epoch_min": 1,
+    "epoch_max": 255
+  },
+  "pairs": [
+    {
+      "name": "U/U",
+      "kinds": [
+        0,
+        0
+      ],
+      "topology": 26443776
+    },
+    {
+      "name": "F/F",
+      "kinds": [
+        1,
+        1
+      ],
+      "topology": 26443793
+    },
+    {
+      "name": "C/C",
+      "kinds": [
+        2,
+        2
+      ],
+      "topology": 26443810
+    },
+    {
+      "name": "P/P",
+      "kinds": [
+        3,
+        3
+      ],
+      "topology": 26443827
+    },
+    {
+      "name": "J/J",
+      "kinds": [
+        4,
+        4
+      ],
+      "topology": 26443844
+    },
+    {
+      "name": "U/P",
+      "kinds": [
+        0,
+        3
+      ],
+      "topology": 26443779
+    },
+    {
+      "name": "F/P",
+      "kinds": [
+        1,
+        3
+      ],
+      "topology": 26443795
+    },
+    {
+      "name": "C/P",
+      "kinds": [
+        2,
+        3
+      ],
+      "topology": 26443811
+    },
+    {
+      "name": "J/P",
+      "kinds": [
+        4,
+        3
+      ],
+      "topology": 26443843
+    }
+  ],
+  "profiles": [
+    {
+      "name": "U",
+      "kind": 0,
+      "block_ids": [
+        0,
+        1
+      ],
+      "same_type_topology": 26443776,
+      "topology_rule": "one cohort ID, identical in mother and both locals; selected by pair",
+      "native_abi": 26411009,
+      "capacity_id": 392364033,
+      "local_module": "r82_u_pu_u_controlled_64",
+      "native_ops": [
+        256,
+        257,
+        258,
+        259,
+        260
+      ],
+      "max_lane_sources": [
+        3,
+        2
+      ],
+      "host_s_read": false,
+      "host_s_write_before_deploy": true,
+      "host_s_write_after_deploy": false,
+      "fragment_and_committed_output": false,
+      "direct_edges": "N-to-E 128-bit loop, paired native op 0x104"
+    },
+    {
+      "name": "F",
+      "kind": 1,
+      "block_ids": [
+        0,
+        1
+      ],
+      "same_type_topology": 26443793,
+      "topology_rule": "one cohort ID, identical in mother and both locals; selected by pair",
+      "native_abi": 26411009,
+      "capacity_id": 392364033,
+      "local_module": "r82_f_cfj_group_f",
+      "native_ops": [
+        256,
+        257,
+        258,
+        259
+      ],
+      "max_lane_sources": [
+        2,
+        2
+      ],
+      "host_s_read": true,
+      "host_s_write_before_deploy": true,
+      "host_s_write_after_deploy": false,
+      "fragment_and_committed_output": false,
+      "direct_edges": "G-to-E 32-bit loop"
+    },
+    {
+      "name": "C",
+      "kind": 2,
+      "block_ids": [
+        0,
+        1
+      ],
+      "same_type_topology": 26443810,
+      "topology_rule": "one cohort ID, identical in mother and both locals; selected by pair",
+      "native_abi": 26411009,
+      "capacity_id": 392364033,
+      "local_module": "r82_c_cfj_group_c",
+      "native_ops": [
+        256,
+        257,
+        258,
+        259
+      ],
+      "max_lane_sources": [
+        2,
+        2,
+        1
+      ],
+      "host_s_read": true,
+      "host_s_write_before_deploy": true,
+      "host_s_write_after_deploy": false,
+      "fragment_and_committed_output": false,
+      "direct_edges": "G-to-E 32-bit loop"
+    },
+    {
+      "name": "P",
+      "kind": 3,
+      "block_ids": [
+        0,
+        1
+      ],
+      "same_type_topology": 26443827,
+      "topology_rule": "one cohort ID, identical in mother and both locals; selected by pair",
+      "native_abi": 26411009,
+      "capacity_id": 392364033,
+      "local_module": "r82_p_pu_p_controlled_64",
+      "native_ops": [
+        272,
+        273,
+        274
+      ],
+      "max_lane_sources": null,
+      "host_s_read": true,
+      "host_s_write_before_deploy": true,
+      "host_s_write_after_deploy": false,
+      "fragment_and_committed_output": false,
+      "direct_edges": "M-to-G 32-bit loop"
+    },
+    {
+      "name": "J",
+      "kind": 4,
+      "block_ids": [
+        0,
+        1
+      ],
+      "same_type_topology": 26443844,
+      "topology_rule": "one cohort ID, identical in mother and both locals; selected by pair",
+      "native_abi": 26411009,
+      "capacity_id": 392364033,
+      "local_module": "r82_j_cfj_group_j",
+      "native_ops": [
+        288,
+        289
+      ],
+      "max_lane_sources": null,
+      "host_s_read": false,
+      "host_s_write_before_deploy": false,
+      "host_s_write_after_deploy": false,
+      "fragment_and_committed_output": true,
+      "direct_edges": "E-to-S 128-bit writeback loop"
+    }
+  ],
+  "pending": [
+    "R8.3 task compiler/audit alignment",
+    "R8.4 complete transport/recovery supervision",
+    "R8.5 complete system matrix/coverage",
+    "R8.6 presynthesis refreeze and later combined STA/physical"
+  ]
+}

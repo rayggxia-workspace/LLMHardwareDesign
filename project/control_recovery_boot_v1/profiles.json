@@ -1,0 +1,31 @@
+{
+  "schema": "two-level-recovery-host-contract/1",
+  "top": "recovery_boot_top",
+  "source_kinds": [0, 1, 2, 4],
+  "destination_kind": 3,
+  "instruction_bits": 64,
+  "instruction_version": 2,
+  "clock_domains": 1,
+  "clock_period_ns": "3.333333333",
+  "drain_limit_cycles": 1024,
+  "reset_low_cycles": 4,
+  "reset_scope": "entire inner cohort, source/destination requests are promoted",
+  "host_management_command": {
+    "opcode": 15,
+    "target": 3,
+    "address": 0,
+    "payload_fields": {"subcommand": [0, 8], "requested_mask": [8, 8], "job": [16, 32], "epoch": [48, 32], "start_sequence": [80, 32], "generation": [112, 32], "reserved_zero": [144, 112]},
+    "subcommands": {"0": "CANCEL active job, mask0, full identity", "1": "REQUEST_RESET mask1/2/3; idle identity fields zero", "2": "RECOVERY_STATUS, bits143:8 zero", "3": "RETRY_DRAIN after quarantine result consumed, bits143:8 zero"}
+  },
+  "states": {"0": "NORMAL", "1": "DRAIN", "2": "RESET", "3": "WAIT_READY", "4": "FAILED", "5": "QUARANTINE"},
+  "recovery_status_fields": {"image_valid": [0, 3], "poison": [3, 3], "run_active": [16, 1], "pending": [17, 1], "result_available": [18, 1], "quarantine": [19, 1], "phase": [20, 3], "quiescent": [23, 1], "requested_mask": [24, 8], "epoch_watermark": [32, 32], "initial_reason": [64, 16], "live_reads": [80, 32], "live_writes": [112, 32], "live_commits": [144, 32], "live_ack_handshakes": [176, 32]},
+  "failure_status": {"11": "cancel or running reset request", "512": "cohort fault observed", "513": "drain timeout, quarantined"},
+  "failure_result_fields": {"job": [0, 32], "epoch": [32, 32], "start_sequence": [64, 32], "status": [96, 16], "confirmed_reads": [216, 32], "confirmed_writes": [248, 32], "recovery_variant": [282, 1], "quarantined": [283, 1], "data_invalid_or_may_be_partial": [284, 1], "commit_words": [285, 32], "ack_handshakes": [317, 32], "requested_mask": [349, 8]},
+  "failure_diagnostics": {"error_pc": "0xffffffff unknown", "child_error_pc": "0xffffffff unknown", "source": "255 supervisor, no fabricated child attribution", "failed_task_sequence": "0 not attributed", "overflow_and_saturation_fields_valid": false},
+  "counter_contract": "native response handshakes plus actual destination commits; ACK count includes negative abort acknowledgements; quarantined counters are timeout snapshots, not final side effects",
+  "epoch_contract": "RELEASE epoch strictly above supervisor watermark after soft recovery; J1..255, no wrap",
+  "result_ownership": "valid forwarded RESULT is immutable and suppresses duplicate terminal; unsuccessful RESULT probe does not suppress later fault terminal",
+  "memory_contract": "no rollback; invalidate aborted outputs and rebuild required data after recovery",
+  "cdc_contract": "single-clock synchronous host only; no multiclock CDC or physical RDC qualification",
+  "production_ready": false
+}

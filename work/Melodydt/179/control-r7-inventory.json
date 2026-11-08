@@ -1,0 +1,230 @@
+{
+  "declared_storage": {
+    "async_fifo_entries_per_direction": 4,
+    "async_fifo_total_payload_bits": 1324,
+    "data_word_bits": 128,
+    "dma_credit_limit_per_S": 1,
+    "dma_payload_bits_per_slot": 128,
+    "dma_slots_per_S": 8,
+    "external_fixture_words": 64,
+    "fifo_request_bits": 185,
+    "fifo_response_bits": 146,
+    "lc_packet_bits": 512,
+    "lc_packet_slots_per_instance": {
+      "task": 1,
+      "terminal": 1
+    },
+    "mc_packet_bits": 512,
+    "mc_packet_slots": {
+      "context": 2,
+      "outbound": 1,
+      "ready": 2,
+      "terminal": 2
+    },
+    "private_S_bytes_each": 16384,
+    "private_S_count": 2
+  },
+  "image_bundles": {
+    "joined_wait": {
+      "bytes": 1152,
+      "images": {
+        "local0": {
+          "bytes": 496,
+          "capacity_bytes": 8320,
+          "header_bytes": 128,
+          "section_bytes": {
+            "event_binding": 0,
+            "execution": 0,
+            "instruction": 112,
+            "object": 64,
+            "task": 64,
+            "transfer": 128
+          },
+          "sha256": "1963879bd60e864ab739f9eb45338a548e122777bda1de91b1c28b53cfdda5d5"
+        },
+        "local1": {
+          "bytes": 432,
+          "capacity_bytes": 8320,
+          "header_bytes": 128,
+          "section_bytes": {
+            "event_binding": 0,
+            "execution": 0,
+            "instruction": 112,
+            "object": 64,
+            "task": 64,
+            "transfer": 64
+          },
+          "sha256": "ab07ddc25cfa5af2603d69c65e76db5a6a218a64c293bc6241ae6188225ef514"
+        },
+        "mother": {
+          "bytes": 224,
+          "capacity_bytes": 4736,
+          "header_bytes": 128,
+          "section_bytes": {
+            "event_binding": 16,
+            "execution": 0,
+            "instruction": 80,
+            "object": 0,
+            "task": 0,
+            "transfer": 0
+          },
+          "sha256": "18050840c479babaf6afc6a9655a0f52b40e63c63b53901f46c0325dbd4e8b27"
+        }
+      },
+      "pm_capacity_bytes": 21376
+    },
+    "split_wait": {
+      "bytes": 1168,
+      "images": {
+        "local0": {
+          "bytes": 496,
+          "capacity_bytes": 8320,
+          "header_bytes": 128,
+          "section_bytes": {
+            "event_binding": 0,
+            "execution": 0,
+            "instruction": 112,
+            "object": 64,
+            "task": 64,
+            "transfer": 128
+          },
+          "sha256": "0dccf7bbdc6577db346379fd2a5b515455f823d2358869bc5588af2b4675f0b7"
+        },
+        "local1": {
+          "bytes": 432,
+          "capacity_bytes": 8320,
+          "header_bytes": 128,
+          "section_bytes": {
+            "event_binding": 0,
+            "execution": 0,
+            "instruction": 112,
+            "object": 64,
+            "task": 64,
+            "transfer": 64
+          },
+          "sha256": "c25ba5326eac338384d65fab4a64c3984a0159e52545f7ecd0f0172b3720de33"
+        },
+        "mother": {
+          "bytes": 240,
+          "capacity_bytes": 4736,
+          "header_bytes": 128,
+          "section_bytes": {
+            "event_binding": 16,
+            "execution": 0,
+            "instruction": 96,
+            "object": 0,
+            "task": 0,
+            "transfer": 0
+          },
+          "sha256": "cdcaa188dd3de830f8baabc489b406b2cf5d290c5a4a724b867bead81413569b"
+        }
+      },
+      "pm_capacity_bytes": 21376
+    }
+  },
+  "interface_traffic": [
+    {
+      "active_core_cycles": 1548,
+      "control_bits_per_core_cycle": 3.3074935400516794,
+      "control_packet_bytes": 640,
+      "dma_request_flits": 6,
+      "dma_response_flits": 6,
+      "dma_transport_bits": 1986,
+      "dma_transport_bits_per_core_cycle": 1.2829457364341086,
+      "end_cycle": 2180,
+      "end_marker": "last_result_accept",
+      "name": "joined_continuous",
+      "pm": {
+        "local0": {
+          "active_read_beats": 46,
+          "load_read_beats": 31,
+          "load_write_beats": 31
+        },
+        "local1": {
+          "active_read_beats": 38,
+          "load_read_beats": 27,
+          "load_write_beats": 27
+        },
+        "mother": {
+          "active_read_beats": 12,
+          "load_read_beats": 14,
+          "load_write_beats": 14
+        }
+      },
+      "return_packets": 6,
+      "start_accept_cycle": 633,
+      "successful_jobs": 2,
+      "task_packets": 4
+    },
+    {
+      "active_core_cycles": 1872,
+      "control_bits_per_core_cycle": 2.735042735042735,
+      "control_packet_bytes": 640,
+      "dma_request_flits": 6,
+      "dma_response_flits": 6,
+      "dma_transport_bits": 1986,
+      "dma_transport_bits_per_core_cycle": 1.060897435897436,
+      "end_cycle": 2505,
+      "end_marker": "last_result_accept",
+      "name": "split_boundary_backpressure",
+      "pm": {
+        "local0": {
+          "active_read_beats": 46,
+          "load_read_beats": 31,
+          "load_write_beats": 31
+        },
+        "local1": {
+          "active_read_beats": 38,
+          "load_read_beats": 27,
+          "load_write_beats": 27
+        },
+        "mother": {
+          "active_read_beats": 14,
+          "load_read_beats": 15,
+          "load_write_beats": 15
+        }
+      },
+      "return_packets": 6,
+      "start_accept_cycle": 634,
+      "successful_jobs": 2,
+      "task_packets": 4
+    },
+    {
+      "active_core_cycles": 4600,
+      "control_bits_per_core_cycle": 0.44521739130434784,
+      "control_packet_bytes": 256,
+      "dma_request_flits": 3,
+      "dma_response_flits": 3,
+      "dma_transport_bits": 993,
+      "dma_transport_bits_per_core_cycle": 0.2158695652173913,
+      "end_cycle": 5232,
+      "end_marker": "last_trace_sample_after_poison",
+      "name": "split_missing_ack",
+      "pm": {
+        "local0": {
+          "active_read_beats": 21,
+          "load_read_beats": 31,
+          "load_write_beats": 31
+        },
+        "local1": {
+          "active_read_beats": 19,
+          "load_read_beats": 27,
+          "load_write_beats": 27
+        },
+        "mother": {
+          "active_read_beats": 5,
+          "load_read_beats": 15,
+          "load_write_beats": 15
+        }
+      },
+      "return_packets": 2,
+      "start_accept_cycle": 633,
+      "successful_jobs": 0,
+      "task_packets": 2
+    }
+  ],
+  "r6_archive_sha256": "3c0144fd5af0d2fc798fdbb708f81a7a3662cba39afec75399a8aa43dccdae0a",
+  "r6_trace_source_commit": "aed997981c52576e52524471c60db1a4bc66cb85",
+  "rate_method": "sum of accepted payload bus bits from first START through final accepted RESULT or the last poison trace sample, inclusive; excludes wire encoding and idle setup cycles",
+  "schema": "control-r7-inventory/0.1"
+}

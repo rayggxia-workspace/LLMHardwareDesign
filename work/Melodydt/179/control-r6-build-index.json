@@ -1,0 +1,116 @@
+{
+  "baseline_mother_opcodes": [
+    "G_CALL",
+    "G_EVENT",
+    "G_CALL",
+    "G_WAIT",
+    "G_END"
+  ],
+  "builds": [
+    {
+      "bundle": "project/control_r6_v0_1/generated/joined_wait.bundle.json",
+      "bundle_sha256": "8a5787d310bf0415b4e6a6408b7bdd0cbc19a6bf0b43b09959a20d9e6276f2dd",
+      "images": {
+        "local0": {
+          "bytes": 496,
+          "program_image_id": 179612,
+          "sha256": "1963879bd60e864ab739f9eb45338a548e122777bda1de91b1c28b53cfdda5d5"
+        },
+        "local1": {
+          "bytes": 432,
+          "program_image_id": 179613,
+          "sha256": "ab07ddc25cfa5af2603d69c65e76db5a6a218a64c293bc6241ae6188225ef514"
+        },
+        "mother": {
+          "bytes": 224,
+          "program_image_id": 179611,
+          "sha256": "18050840c479babaf6afc6a9655a0f52b40e63c63b53901f46c0325dbd4e8b27"
+        }
+      },
+      "input": "project/control_r6_v0_1/examples/joined_wait.json",
+      "input_sha256": "0af17bc772547dcd67c0867ba8e82cb31959bb36aacb9cf88c15be3c6a9c8eaa",
+      "manifest_sha256": "241aef98fb44c2a77bf0dbbf338c4fc9c34301a931c52980d6a6c23e48ce3373",
+      "mother_opcodes": [
+        "G_CALL",
+        "G_EVENT",
+        "G_CALL",
+        "G_WAIT",
+        "G_END"
+      ],
+      "wait_masks": [
+        20
+      ]
+    },
+    {
+      "bundle": "project/control_r6_v0_1/generated/split_wait.bundle.json",
+      "bundle_sha256": "97f771e7fe66ebbb2f55644fb099d73b2a9426c960dc72ea69c95b4b0a822e87",
+      "images": {
+        "local0": {
+          "bytes": 496,
+          "program_image_id": 179602,
+          "sha256": "0dccf7bbdc6577db346379fd2a5b515455f823d2358869bc5588af2b4675f0b7"
+        },
+        "local1": {
+          "bytes": 432,
+          "program_image_id": 179603,
+          "sha256": "c25ba5326eac338384d65fab4a64c3984a0159e52545f7ecd0f0172b3720de33"
+        },
+        "mother": {
+          "bytes": 240,
+          "program_image_id": 179601,
+          "sha256": "cdcaa188dd3de830f8baabc489b406b2cf5d290c5a4a724b867bead81413569b"
+        }
+      },
+      "input": "project/control_r6_v0_1/examples/split_wait.json",
+      "input_sha256": "09200ea59b5ba93e36b82eaad20a904a84a37508a77b0b17a6596e84320c43fd",
+      "manifest_sha256": "8c87a97c243da452995780ab2d62420d240038bdd336279f2cbfb81a2d53cf22",
+      "mother_opcodes": [
+        "G_CALL",
+        "G_EVENT",
+        "G_CALL",
+        "G_WAIT",
+        "G_WAIT",
+        "G_END"
+      ],
+      "wait_masks": [
+        64,
+        128
+      ]
+    }
+  ],
+  "controller_base": "13e577c54c3042ecd139461db03e7f4a662643c7",
+  "deterministic_regeneration": true,
+  "ir_admission": {
+    "admitted": [
+      "joined_wait_banks",
+      "split_wait_boundary"
+    ],
+    "declaration_order_independent": true,
+    "r4_storage_contract_matches": true,
+    "rejected": {
+      "bad_event": "$.ready.event_id: expected integer in [0, 31]",
+      "bad_register": "$.ready.mother_register: expected integer in [0, 7]",
+      "boolean_as_address": "$.buffers[0].address: expected integer in [0, 16368]",
+      "completion_credit_collision": "$.buffers: both active calls require distinct completion credits",
+      "completion_credit_limit": "$.buffers[0].completion_token: expected integer in [0, 7]",
+      "cyclic_ack": "$.transfers.after_ack: forward must depend on exactly the ingress store ACK",
+      "duplicate_completion": "$.wait_groups: each task completion must be consumed exactly once",
+      "extra_task": "$.buffers[1].block: only one object slot per local controller",
+      "misaligned_s": "$.buffers[0].address: RAW16 address must be 16-byte aligned",
+      "missing_ack": "$.transfers.after_ack: forward must depend on exactly the ingress store ACK",
+      "missing_completion": "$.wait_groups: each task completion must be consumed exactly once",
+      "non_raw16": "$.transfers[0].bytes: expected integer in [16, 16]",
+      "s_out_of_range": "$.buffers[0].address: expected integer in [0, 16368]",
+      "service_credit_limit": "$.transfers[1].send_token: expected integer in [0, 7]",
+      "unknown_edge": "$.transfers[1].edge: unknown or duplicate physical edge",
+      "unsupported_target": "$.target: unsupported hardware target",
+      "wrong_ready_edge": "$.ready.transfer: consumer must report READY for the forward edge",
+      "wrong_route": "$.transfers[1]: endpoints do not match the provisioned route"
+    }
+  },
+  "phase": "R6.2",
+  "reordered_declarations_preserve_image_bytes": true,
+  "runtime": "3.12.14",
+  "schema": "control-r6-build-evidence/0.1",
+  "target_sha256": "ecbe5d6f23ac8c7af7302ab6fcf710bd581176645854a711dc9cc492c1c2384c"
+}

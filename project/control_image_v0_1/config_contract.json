@@ -1,0 +1,210 @@
+{
+  "schema": "control-loader-config-api/0.1",
+  "status": "proposed software API; physical bus/MMIO encoding not frozen",
+  "native_abi_id": 65537,
+  "topology_id": 393400001,
+  "capacity_profile_id": 392364033,
+  "wire_encoding": null,
+  "mmio_addresses": null,
+  "run_isa_unchanged": true,
+  "targets": {
+    "mother": {
+      "role": 0,
+      "max_bytes": 4736
+    },
+    "local0": {
+      "role": 1,
+      "max_bytes": 8320
+    },
+    "local1": {
+      "role": 1,
+      "max_bytes": 8320
+    }
+  },
+  "write_bytes": 16,
+  "section_order": [
+    "instruction",
+    "task",
+    "object",
+    "execution",
+    "transfer",
+    "event_binding"
+  ],
+  "states": [
+    "UNLOADED",
+    "LOADING",
+    "READY",
+    "RUNNING",
+    "DRAINING",
+    "INVALID"
+  ],
+  "activity_counters": [
+    "tasks",
+    "data",
+    "returns",
+    "contexts",
+    "untagged"
+  ],
+  "counter_max": 8,
+  "manifest_hash": {
+    "algorithm": "SHA-256",
+    "canonicalization": "JSON sort_keys=true separators=(',',':') ensure_ascii=false; UTF-8; no final newline",
+    "trust": "trusted host expectation; integrity is not authentication"
+  },
+  "commands": [
+    {
+      "name": "BEGIN",
+      "method": "begin",
+      "arguments": [
+        "manifest:object",
+        "expected_manifest_sha256:hex64"
+      ],
+      "from": [
+        "UNLOADED",
+        "READY",
+        "INVALID"
+      ],
+      "guard": "quiescent; no pending reset ACK; metadata valid",
+      "effect": "increment software generation; invalidate all old slots; snapshot manifest; LOADING",
+      "error": "reject bad metadata without modifying prior READY"
+    },
+    {
+      "name": "WRITE16",
+      "method": "write16",
+      "arguments": [
+        "target:enum",
+        "offset:byte index",
+        "data:bytes[16]",
+        "generation:integer"
+      ],
+      "from": [
+        "LOADING"
+      ],
+      "guard": "generation matches; next contiguous prefix; within length; not verified",
+      "effect": "write16 bytes; advance prefix",
+      "error": "LOADING invalidates entire candidate; other states reject without modifying committed RAM"
+    },
+    {
+      "name": "VERIFY",
+      "method": "verify",
+      "arguments": [
+        "target:enum",
+        "generation:integer"
+      ],
+      "from": [
+        "LOADING"
+      ],
+      "guard": "full image received exactly once",
+      "effect": "check actual SHA and image admission; mark verified; remain LOADING",
+      "error": "LOADING invalidates entire candidate; other states reject"
+    },
+    {
+      "name": "COMMIT",
+      "method": "commit",
+      "arguments": [
+        "generation:integer"
+      ],
+      "from": [
+        "LOADING"
+      ],
+      "guard": "all targets verified; quiescent; recheck manifest/RAM/bundle",
+      "effect": "atomically mark all cohort slots valid; READY",
+      "error": "LOADING invalidates entire candidate; other states reject"
+    },
+    {
+      "name": "START",
+      "method": "start",
+      "arguments": [
+        "expected_manifest_sha256:hex64"
+      ],
+      "from": [
+        "READY"
+      ],
+      "guard": "quiescent; identity/valid slots match; recheck manifest/RAM/bundle",
+      "effect": "RUNNING bookkeeping only; entry_admitted=true; instructions_executed=false",
+      "error": "wrong state/identity rejects; integrity failure invalidates all"
+    },
+    {
+      "name": "QUIESCE",
+      "method": "quiesce",
+      "arguments": [],
+      "from": [
+        "READY",
+        "RUNNING"
+      ],
+      "guard": "valid state",
+      "effect": "DRAINING; future hardware blocks new admissions and drains old work",
+      "error": "reject"
+    },
+    {
+      "name": "OBSERVE_ACTIVITY",
+      "method": "observe_activity",
+      "arguments": [
+        "tasks:int0..8",
+        "data:int0..8",
+        "returns:int0..8",
+        "contexts:int0..8",
+        "untagged:int0..8"
+      ],
+      "from": [
+        "*"
+      ],
+      "guard": "all five external observations supplied",
+      "effect": "record facts; not a drain implementation",
+      "error": "nonzero outside RUNNING/DRAINING invalidates all; requires cohort reset ACK"
+    },
+    {
+      "name": "DRAIN_ACK",
+      "method": "drained",
+      "arguments": [],
+      "from": [
+        "DRAINING"
+      ],
+      "guard": "all five observed counters zero; no pending reset ACK",
+      "effect": "READY",
+      "error": "reject; remain DRAINING"
+    },
+    {
+      "name": "RESET",
+      "method": "reset",
+      "arguments": [],
+      "from": [
+        "*"
+      ],
+      "guard": "none",
+      "effect": "invalidate all; INVALID; require provider cohort reset ACK; retain RAM and activity",
+      "error": "none"
+    },
+    {
+      "name": "RESET_ACK",
+      "method": "ack_cohort_reset",
+      "arguments": [
+        "all_providers_reset:bool=true external fact"
+      ],
+      "from": [
+        "INVALID"
+      ],
+      "guard": "reset ACK pending",
+      "effect": "clear observed activity/reset flag; remain INVALID; full reload required",
+      "error": "reject"
+    },
+    {
+      "name": "ABORT",
+      "method": "abort",
+      "arguments": [],
+      "from": [
+        "LOADING"
+      ],
+      "guard": "valid state",
+      "effect": "invalidate candidate; INVALID; no automatic old-bank rollback",
+      "error": "reject"
+    }
+  ],
+  "limits": [
+    "bounded P fixture: one task and at most one RAW16 object per LC",
+    "no PC execution/RTL/full Block/physical topology admission/automatic provider reset",
+    "software generation is not a native hardware tag",
+    "single bank; no warm resume, crash persistence, power gating or signed-image authentication"
+  ]
+}
+

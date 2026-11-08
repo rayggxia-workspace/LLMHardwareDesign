@@ -1,0 +1,1605 @@
+{
+  "schema": "local-cancel-rtl-runs/0.1",
+  "evidence": "actual_SV_DUT_with_external_protocol_peers",
+  "dut_sha256": "314d9699f08a02afd014ddaee3d1ff11271a93505106452acfcd843afab1138c",
+  "testbench_sha256": "325c3ad52dd2a3040404d9ecdd5d09d58c0c178d00d937eefb315a276651083e",
+  "checker_sha256": "1f7dcf758ee44b38d960a76f5a089ad186f7b19c493d50c48c451a5ae2a5fc8f",
+  "compile_command": [
+    "/eda/verilator-5.042/bin/verilator",
+    "--binary",
+    "--timing",
+    "--top-module",
+    "tb_lc_cancel",
+    "-I/work/source/project/control_rtl_min_v0_1",
+    "--Mdir",
+    "/work/results/cancel/obj_dir",
+    "-j",
+    "4",
+    "-o",
+    "sim",
+    "/work/source/project/control_rtl_min_v0_1/lc_min_controller.sv",
+    "/work/source/project/control_rtl_min_v0_1/tb_lc_cancel.sv"
+  ],
+  "compile_log_sha256": "80696c44acab4bcc5d8291b5d962dc536b5e1a39aa43094ec013b81c1bc4fbb5",
+  "tools": {
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "python": "3.10.12 (main, Mar  3 2026, 11:56:32) [GCC 11.4.0]"
+  },
+  "output_directory": "/work/results/cancel",
+  "results": [
+    {
+      "name": "before_task_fetch",
+      "point": 1,
+      "status": 0,
+      "calls": 1,
+      "cycles": 730,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 730,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 726,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "d8bb7f926172397e6570eef3bb633d6a125094da1313a64b49c353e90a35cafc",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/before_task_fetch.mem",
+        "+TASK=/work/results/cancel/before_task_fetch.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=1",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "held_task_request",
+      "point": 2,
+      "status": 0,
+      "calls": 1,
+      "cycles": 741,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 741,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 737,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "5ec24d8bb8a7af7afa116a5df1f607dd7ccf0a67b2782115ea4eee714ddce783",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/held_task_request.mem",
+        "+TASK=/work/results/cancel/held_task_request.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=2",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "task_response_pending",
+      "point": 3,
+      "status": 0,
+      "calls": 1,
+      "cycles": 741,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 741,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 737,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "55723d1714cf39f31b45156daf0e23e86e4c9afec36d4b1b59fbf23169ef285a",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/task_response_pending.mem",
+        "+TASK=/work/results/cancel/task_response_pending.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=3",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "instruction_response_pending",
+      "point": 4,
+      "status": 0,
+      "calls": 1,
+      "cycles": 774,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 774,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 770,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "74ead03d4fd2752fba0afdc91d05b1f48962889b747379e43dda03026d1dc15c",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/instruction_response_pending.mem",
+        "+TASK=/work/results/cancel/instruction_response_pending.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=4",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "descriptor_response_pending",
+      "point": 5,
+      "status": 0,
+      "calls": 1,
+      "cycles": 785,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 785,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 781,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "69fda2208ae6fd4c76fef60fc0aeb1f3cac4ca1041233ab58f193cfc6c15c473",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/descriptor_response_pending.mem",
+        "+TASK=/work/results/cancel/descriptor_response_pending.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=5",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "held_service",
+      "point": 6,
+      "status": 0,
+      "calls": 1,
+      "cycles": 906,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 906,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 1,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 854,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 854,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 902,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "96291bd1245560aaac8f9903557125ca866ceb810585cde14b2ebac6640bfee2",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/held_service.mem",
+        "+TASK=/work/results/cancel/held_service.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=6",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "wait_service",
+      "point": 7,
+      "status": 0,
+      "calls": 1,
+      "cycles": 895,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 895,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 1,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 891,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "6d06bf50f4b693570c37c9c662d34ceed4243b0d1e12bae851926d669714fe0e",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/wait_service.mem",
+        "+TASK=/work/results/cancel/wait_service.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=7",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "response_same_edge",
+      "point": 8,
+      "status": 0,
+      "calls": 1,
+      "cycles": 895,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 895,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 1,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 891,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "acc174f4eb9dfde890726371cc78bfe7487eaa83f3ea194303483a89f12ab7f2",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/response_same_edge.mem",
+        "+TASK=/work/results/cancel/response_same_edge.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=8",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "locked_DONE",
+      "point": 9,
+      "status": 0,
+      "calls": 1,
+      "cycles": 906,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 906,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          },
+          {
+            "cycle": 888,
+            "pc": 1,
+            "opcode": 68
+          },
+          {
+            "cycle": 902,
+            "pc": 2,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 902,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "de89ee7970fd5ca645ed802ca208d316a0670346d803c5931bdbd43f547c0645",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/locked_DONE.mem",
+        "+TASK=/work/results/cancel/locked_DONE.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=9",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "poison_missing_response",
+      "point": 10,
+      "status": 0,
+      "calls": 1,
+      "cycles": 998,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 998,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 0,
+        "token_cleanups": 0,
+        "poisoned": true,
+        "drained": false
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": []
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "c18d565afa2d0670339f48a26a813e60edac071d542292feb81d2d910780fcd0",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/poison_missing_response.mem",
+        "+TASK=/work/results/cancel/poison_missing_response.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=10",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "duplicate_CANCEL",
+      "point": 11,
+      "status": 0,
+      "calls": 1,
+      "cycles": 895,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 895,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 2,
+        "accepted_terminals": 1,
+        "token_cleanups": 1,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 891,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "8827c0c5b1cc94dd401fa639068ff812be5cb268bb61e4654814d9476746eb2a",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/duplicate_CANCEL.mem",
+        "+TASK=/work/results/cancel/duplicate_CANCEL.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=11",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "poison_held_PM",
+      "point": 12,
+      "status": 0,
+      "calls": 1,
+      "cycles": 860,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 860,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 0,
+        "token_cleanups": 0,
+        "poisoned": true,
+        "drained": false
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": []
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "e664a3d65e3042a9907dce5556e49a4510d6fbc30beac6583656055c7426f36a",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/poison_held_PM.mem",
+        "+TASK=/work/results/cancel/poison_held_PM.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=12",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "wrong_CANCEL_identity",
+      "point": 13,
+      "status": 0,
+      "calls": 1,
+      "cycles": 908,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 908,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 0,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          },
+          {
+            "cycle": 888,
+            "pc": 1,
+            "opcode": 68
+          },
+          {
+            "cycle": 902,
+            "pc": 2,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 902,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "635b9aa4e50c4eeb36b9af6a94dbfe4deb966eed1f6fc6724341bb20227c7d01",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/wrong_CANCEL_identity.mem",
+        "+TASK=/work/results/cancel/wrong_CANCEL_identity.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=13",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "END_decode_priority",
+      "point": 14,
+      "status": 0,
+      "calls": 1,
+      "cycles": 477,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 477,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 473,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "c29109b128ea47031f0c2762e3dceaa6a00b93877f016829f18d4f03c7f95542",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "4d7a9a60d3235fb0cf1b18b90004873a1d3e3ec32c13aab1a7e28c060bf31146",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/END_decode_priority.mem",
+        "+TASK=/work/results/cancel/END_decode_priority.task",
+        "+WORDS=13",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=14",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "cancel_then_reuse",
+      "point": 15,
+      "status": 0,
+      "calls": 2,
+      "cycles": 1093,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 1093,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 2,
+        "accepted_cancels": 1,
+        "accepted_terminals": 2,
+        "token_cleanups": 1,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          },
+          {
+            "cycle": 1029,
+            "pc": 0,
+            "opcode": 65
+          },
+          {
+            "cycle": 1070,
+            "pc": 1,
+            "opcode": 68
+          },
+          {
+            "cycle": 1089,
+            "pc": 2,
+            "opcode": 79
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          },
+          {
+            "cycle": 1029,
+            "job": 7,
+            "task_sequence": 2,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 891,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          },
+          {
+            "cycle": 1089,
+            "packet": {
+              "version": 1,
+              "kind": 2,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 2,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 0,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 4294967295,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "a92a17e5cc4cd7edc3d38f3760576d116e23dcfa1c9c359dd2786c2f943df82b",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/cancel_then_reuse.mem",
+        "+TASK=/work/results/cancel/cancel_then_reuse.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=15",
+        "+CALLS=2"
+      ]
+    },
+    {
+      "name": "native_error_same_edge",
+      "point": 16,
+      "status": 9,
+      "calls": 1,
+      "cycles": 895,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 895,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 1,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 891,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 9,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "49997ba909d09af09b23111f5b741ad5a26342a00b7bd8d9375f103d7bc88633",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/native_error_same_edge.mem",
+        "+TASK=/work/results/cancel/native_error_same_edge.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=9",
+        "+POINT=16",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "completed_token_priority",
+      "point": 17,
+      "status": 0,
+      "calls": 1,
+      "cycles": 895,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 895,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 1,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 891,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "e4a4de9954f11ea2550f36a4fd1846d1c760f779a5160fb0771ecd48267165d3",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/completed_token_priority.mem",
+        "+TASK=/work/results/cancel/completed_token_priority.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=17",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "held_instruction_request",
+      "point": 18,
+      "status": 0,
+      "calls": 1,
+      "cycles": 895,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 895,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 1,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": [
+          {
+            "cycle": 891,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 1,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "77e2479b3d711ee08058c4d9e9722f86b7dd8a8900c4765596e9c888d41856b9",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/held_instruction_request.mem",
+        "+TASK=/work/results/cancel/held_instruction_request.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=18",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "held_descriptor_request",
+      "point": 19,
+      "status": 0,
+      "calls": 1,
+      "cycles": 796,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 796,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 792,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "6c950190314345798ae17a5c7d1f0f26a8755729dc942a3ae2905f4a62431d82",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/held_descriptor_request.mem",
+        "+TASK=/work/results/cancel/held_descriptor_request.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=19",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "instruction_response_same_edge",
+      "point": 20,
+      "status": 0,
+      "calls": 1,
+      "cycles": 774,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 774,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 770,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "360be2059cfa905d9dffe00f00281ae4c4887ecadb0c6296c2b91efaabd9681c",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/instruction_response_same_edge.mem",
+        "+TASK=/work/results/cancel/instruction_response_same_edge.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=20",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "new_service_priority",
+      "point": 21,
+      "status": 0,
+      "calls": 1,
+      "cycles": 862,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 862,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 1,
+        "token_cleanups": 0,
+        "poisoned": false,
+        "drained": true
+      },
+      "observations": {
+        "retired": [],
+        "services": [],
+        "returns": [
+          {
+            "cycle": 858,
+            "packet": {
+              "version": 1,
+              "kind": 3,
+              "source_block": 0,
+              "job_id": 7,
+              "epoch": 1,
+              "task_sequence": 1,
+              "completion_token": 0,
+              "event_id": 255,
+              "status": 11,
+              "scalar": 0,
+              "confirmed_read_bytes": 0,
+              "confirmed_write_bytes": 0,
+              "flags": 0,
+              "event_sequence": 0,
+              "error_pc": 0,
+              "detail": 0
+            }
+          }
+        ]
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "740e556dba9b2800a6afa8fc75e79ab513b33c3d557ac42a32f157cceec19d52",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/new_service_priority.mem",
+        "+TASK=/work/results/cancel/new_service_priority.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=21",
+        "+CALLS=1"
+      ]
+    },
+    {
+      "name": "poison_wrong_response_identity",
+      "point": 22,
+      "status": 0,
+      "calls": 1,
+      "cycles": 998,
+      "actual_rtl_simulation": true,
+      "checker": {
+        "boundary_valid": true,
+        "cycles": 998,
+        "rtl_tested": false,
+        "evidence": "observed_SV_DUT",
+        "full_controller_semantics": false,
+        "actual_observed_cancellation": true,
+        "accepted_calls": 1,
+        "accepted_cancels": 1,
+        "accepted_terminals": 0,
+        "token_cleanups": 0,
+        "poisoned": true,
+        "drained": false
+      },
+      "observations": {
+        "retired": [
+          {
+            "cycle": 847,
+            "pc": 0,
+            "opcode": 65
+          }
+        ],
+        "services": [
+          {
+            "cycle": 847,
+            "job": 7,
+            "task_sequence": 1,
+            "token": 0,
+            "sequence": 0,
+            "descriptor": "0x10001000000000000000000000000000000000000000000000000000000000000ffffffffffff0000000000000000ffffffff0000000600000001"
+          }
+        ],
+        "returns": []
+      },
+      "input_image_sha256": "7abf62ad052d15b880a63c61ddf818f25fc5cd3bbeb17ae35d0f6b841e3603de",
+      "input_task_sha256": "cc15d92b56c9ed4959517a9b537840b912ff6aa50e50ca720940b03b85ae807a",
+      "log_sha256": "4ad23fc87933aa2185fddada9318dda8a21cf11e9350da5d52a7a64d255b09ee",
+      "command": [
+        "/work/results/cancel/obj_dir/sim",
+        "+IMAGE=/work/results/cancel/poison_wrong_response_identity.mem",
+        "+TASK=/work/results/cancel/poison_wrong_response_identity.task",
+        "+WORDS=23",
+        "+STALL=2",
+        "+STATUS=0",
+        "+POINT=22",
+        "+CALLS=1"
+      ]
+    }
+  ],
+  "mutation_checks": [
+    {
+      "name": "withdraw_held_service",
+      "rejected": true
+    },
+    {
+      "name": "withdraw_held_PM",
+      "rejected": true
+    },
+    {
+      "name": "fabricate_WAIT_retirement",
+      "rejected": true
+    },
+    {
+      "name": "premature_token_cleanup",
+      "rejected": true
+    },
+    {
+      "name": "erase_accepted_CANCEL",
+      "rejected": true
+    },
+    {
+      "name": "hide_native_error",
+      "rejected": true
+    }
+  ],
+  "drain_limit_cycles": 128,
+  "full_provider_reset_tested": false,
+  "native_macro_tested": false,
+  "full_block_tested": false,
+  "mother_rtl_tested": false,
+  "physical_tested": false
+}
