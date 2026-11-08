@@ -1,6 +1,6 @@
 # 母控双格式实现与五类 Block 一致性验收
 
-[Issue #223](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/223) · [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224)。负责人 YUZE-LU，2026-11-08 CST。工程门已通过，独立代码审查待指定，未自行合并。
+[Issue #223](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/223) · [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224)。负责人 YUZE-LU，2026-11-08 CST。工程门已通过，用户已明确授权合入 main；最终合并状态以 PR 在线回执为准，未代替独立审查人提交批准。与五类 Block 同处的[统一交付入口](assets/five-leaf-bases/README.md)。
 
 母控采用 #180 的 `81663a1e6586602d2a02748db1c488d2d0ba0233`，负责派发任务、等待局控的真实完成、追踪 token 和处理取消/错误；不接管功能宏计算。新增母控自己的 16 KiB 程序 SRAM，使用四颗真实 256×128 bank，与各 Block 的私有 S 分开计价。没有把五类控制分组重新定义成组合硬宏。
 

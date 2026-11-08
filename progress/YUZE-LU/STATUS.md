@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-08 CST：用户已授权将 #223 / PR #224 母控双格式交付合入 main。新增五类 Block 与母控的[统一索引](../../docs/experiments/assets/five-leaf-bases/README.md)，原目录及交付散列保持不变。合并状态以 PR 回执为准；独立审查未代批，登记/看板缺项继续由 Issue #7 交接。
+
 ## 2026-11-08（CST）母控物理实现
 
 更新时间：2026-11-08 CST。[Issue #223](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/223) / [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 已完成先64后128的工程验收，待独立审查。两格式各54项RTL、54项母控最终网表、69项实际Block/局控RTL回归；共用未改物理六文件，TT300MHz setup/hold +374.917/+7.629ps、完整原版GDS DRC0，电气/RC/PG/SRAM时钟通过。U绑定#221已验收31文件源。两包及3860/3148内部文件本地全部核验，见[报告](../../docs/experiments/mother-control-dual-format.md)与[执行记录](../../work/YUZE-LU/223/README.md)。下一步：指定独立审查人、审查PR；九目标扩展和联合布局布线另验。本任务未自行合并或标done；登记PR5 pending，缺board配置，Projects unverified/同步pending，待管理员核验。
