@@ -57,6 +57,7 @@ def main():
     p.add_argument('functional_receipt', type=Path)
     p.add_argument('output', type=Path)
     p.add_argument('--scope', default='dut/block_v2_m')
+    p.add_argument('--sample-label', default='scalar M')
     p.add_argument('--cores', type=int, default=2)
     a = p.parse_args()
     if a.cores < 1:
@@ -96,7 +97,7 @@ def main():
               'normalized_vcd_sha256': sha(vcd), 'power_log_sha256': sha(log),
               'power_w': dict(zip(['internal', 'switching', 'leakage', 'total'], map(float, totals[0]))) if valid else None,
               'energy_qualified': False, 'full_model_energy_qualified': False,
-              'limitations': ['unannotated pins need classification', 'sampled scalar M only',
+              'limitations': ['unannotated pins need classification', 'sampled ' + a.sample_label + ' only',
                               'zero-delay gate VCD omits delay-induced glitches',
                               'all other macros, clocks, controllers, wiring and DDR still need coverage']}
     (a.output / 'receipt.json').write_text(json.dumps(result, indent=2) + '\n')

@@ -109,3 +109,30 @@ or PPA evidence. Detailed job/source receipts are in the work234 ledger.
 `m_profile.py DIRECTORY CACHE_RECEIPT OUTPUT` validates all 8192 native descriptor rows and three agreeing initialization runs; exact lookup has no unmeasured extrapolation. Frozen drivers and input operands are archived. Measured load/Execute/readout still exclude S/LC/DMA.
 
 The user-confirmed public benchmark contract and source snapshots are indexed in [BENCHMARK_CONTRACT](../../../work/YUZE-LU/234/BENCHMARK_CONTRACT.md). No FPGA board reproduction is required. Public cross-model figures are context, not falsified common-checkpoint acceptance evidence. Speed and J/token must both pass; ~10 token/s is not a substitute for the actual peer result.
+
+
+## Runtime-state frontend probes (not full generation coverage)
+
+`cached_primitives.py` preserves the pinned old220 integer recipes and adds
+explicit runtime S16/S32 state inputs, token/state shape checks and exact Neg
+lowering. KV is never labeled a checkpoint weight. Host last-use release and
+`exact_reference_dot.py` only accelerate numerical validation; they do not
+change generated service costs, memory traffic, or silicon performance.
+The accelerated oracle proves all binary64 integer partial sums exact and
+all S64 reconstruction bounds, otherwise falls back to signed integer matmul.
+
+`cached_integer_probe.py FROZEN EXPORT WEIGHTS CHECKPOINT ORACLE NEW_OUTPUT`
+checks three full-size one-step samples and every KV output against HF.
+Input KV originates in HF, explicitly quantized; it does not qualify an
+integer-generated sequence. Optional `--compare-baseline` checks all output
+bits against the frozen adapter before host optimizations. `cached_integer.sbatch`
+is six tasks by ten cores. The first submitted campaign is an older frozen
+snapshot; source/attempt/results must be matched before drawing conclusions.
+
+`e_activity.cpp` / `e_activity.py` / `e_activity.sbatch` pair scalar compact-E
+Min/Select activity with matched-state idle. RTL/netlist and three initialization
+runs must agree before extracted-RC activity analysis. The captured-derived
+operand patterns are representative samples, not an entire compiled E trace.
+Unclassified pins/glitches and all other chip/DDR components remain missing.
+`memory_budget.py` gives conditional weight-traffic floors with declared cache
+capacity; none of its hypothetical packed formats qualifies accuracy or hardware.
