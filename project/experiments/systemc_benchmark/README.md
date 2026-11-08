@@ -97,7 +97,10 @@ seeds/two formats are separate from full-3B quality. HF differences are kept.
 `opentpu_native_timing.py PEER CHECKPOINT HF_REFERENCE NEW_OUTPUT --format int8`
 compiles all 36 layers using resolved native m4 features and four-GiB capacity.
 `--compile-only` never runs a model. Otherwise zero-data RTL/LiteDRAM cycles
-qualify dense timing only. Do not let the two-GiB convenience co-sim helper
+are single-step timing diagnostics, not a qualified best continuous decode
+score. `compile_step`, resident decode and native generation use the same
+`qwen3_step` kernel, but the resident loop, token selection and host overhead
+are absent from this probe. Do not let the two-GiB convenience co-sim helper
 exclude a legal int8 candidate. Build parallelism alone is capped to allocation.
 Candidate frequency requires physical evidence; zero data cannot qualify
 accuracy or workload energy. `opentpu_native.sbatch` runs six full-size cases.
@@ -136,3 +139,20 @@ operand patterns are representative samples, not an entire compiled E trace.
 Unclassified pins/glitches and all other chip/DDR components remain missing.
 `memory_budget.py` gives conditional weight-traffic floors with declared cache
 capacity; none of its hypothetical packed formats qualifies accuracy or hardware.
+
+`cached_template.py NEW_OUTPUT --tiny --check-specializations` validates a
+dynamic-past FP32 template and three fixed-position specializations. With
+`--checkpoint PATH`, it checks the complete model at 128/512/2048 prefixes.
+Parameters remain external; a position's mask/rotary constants are folded only
+when specializing that position. This saves host tracing, not device time.
+`kv_handoff.py` accepts every layer's signed S32 output directly as the next
+program's runtime input, rejecting missing states, length/scale/range changes
+and accidental weight contracts. Format conversion requires an explicit device
+service. Unit tests are not evidence of a continuous 3B integer sequence.
+
+`frontend_full.sbatch` runs six full-size fixed prefill/decode shapes, the
+latest exact host replay, and reusable-template checks, in six exclusive
+ten-core steps on one node. Export and integer failures remain separate; a
+failed FP32 threshold cannot be erased by a passing integer check. Source and
+attempt receipts must be matched; this campaign is not complete generation,
+SystemC system timing, or chip energy.
