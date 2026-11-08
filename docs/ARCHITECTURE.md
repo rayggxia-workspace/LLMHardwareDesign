@@ -1,5 +1,7 @@
 # 架构与运行
 
+Issue #226 实现[综合到布线接口层](../project/experiments/block_synthesis/ROUTE_CONTRACT.md)。从 `project/experiments/block_synthesis` 运行 `python -B -m unittest test_route_contract test_loop_dp test_dot_cache -v`；CLI见合同。需求重构检查共享接口展开实现，不是独立ODB/GDS几何或电气检查；实际物理后端另验。
+
 Issue219新增只读Dot分片：[算法/状态](../project/experiments/block_synthesis/DOT_CACHE.md)、[完整3B结果](../work/YUZE-LU/219/READ_CACHE_RESULTS.md)。`full_plan.py --read-cache` 从硬件清单生成候选；`dot_cache_replay.py` 使用有限S分量数组回放。服务器新attempt入口：`reuse-plan.sbatch ROOT MODEL HARDWARE NUMERIC_TRACE QUALIFICATION PROGRAM`、`reuse-replay.sbatch ROOT IR PLAN WEIGHTS CALIBRATION LOGITS HEADERS`、`reuse-audit.sbatch ROOT PLAN_DIRECTORY`、`reuse-compare.sbatch ROOT BEFORE AFTER`；由本任务launch_fix.py冻结提交Slurm，绝对依赖/SHA见回执。普通full-plan保留旧基线；整网控制编码和真实布线另阶段验收。
 
 Issue219审查修复／控制后端：[范围、来源和回执](../work/YUZE-LU/219/MUTEX_CONTROL_RESULTS.md)。`loop_dp.py` 与独立检查器核对完整静态连接互斥；`static_conflict_probe.py` 复现串行任务也不能使用互斥金属。`control_backend.py` 登记实际 U_64 控制子集并使用官方汇编器生成镜像，`control_replay_plan.py`／`control_verify.py` 在当前母控与两组局控回放数值、实际 S ACK 和源释放。服务器新 attempt 入口：`test.sbatch ROOT CP_ENV_ROOT`、`control-replay.sbatch ROOT NATIVE_QUALIFICATION current`；均经 `work/YUZE-LU/219/launch_fix.py` 冻结。控制源缓存按固定 commit/SHA 恢复，见结果索引；局控 PM 沿用验收夹具模型，当前母控 PM 和局部数据 S 用实际 SRAM RTL。固定放置小图不等于任意整网 DP 已能编码或物理闭合。

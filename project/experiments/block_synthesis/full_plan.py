@@ -15,6 +15,7 @@ from streaming_ir import compile_graph
 from verify_loop_dp import verify
 from stream_addresses import check_program_addresses,check_primitive_addresses
 from verify_primitive_cost import verify as verify_native_cost
+from route_contract import VERSION, from_plan, read_base
 
 
 def write(path,value):path.write_text(json.dumps(value,indent=2)+'\n')
@@ -40,7 +41,12 @@ def main():
     p.add_argument('numeric',type=Path);p.add_argument('qualification',type=Path);p.add_argument('output',type=Path)
     p.add_argument('--width',type=int,default=8);p.add_argument('--primitive-program',type=Path,required=True)
     p.add_argument('--read-cache',action='store_true')
+    p.add_argument('--route-catalog',type=Path)
+    p.add_argument('--route-base',type=Path)
     a=p.parse_args();a.output.mkdir(exist_ok=False)
+    route_catalog=json.loads(a.route_catalog.read_text()) if a.route_catalog else {'schema_version':VERSION,'demands':{}}
+    route_base=read_base(a.route_base) if a.route_base else {
+        'schema_version':VERSION,'base_id':'unbound','state':'candidate','endpoints':{}}
     m=canonicalize(import_onnx(a.model));h=json.loads(a.hardware.read_text());numeric=json.loads(a.numeric.read_text())
     if numeric['status']!='full_integer_numeric_passed' or numeric['source_sha256']!=m['sha256']:
         raise ValueError('complete real model numerical qualification missing/mismatched')
@@ -108,12 +114,14 @@ def main():
             'read_cache_hits':plan.get('read_cache_hits',0),'read_cache_calls':plan.get('read_cache_calls',0),
             'timing_scope':ir['timing_scope'],'optimization_scope':ir['optimization_scope']}
         write(a.output/(label+'-plan.json'),plan);write(a.output/(label+'-baseline.json'),base)
+        write(a.output/(label+'-route-requirements.json'),from_plan(ir,plan,route_catalog,route_base))
         write(a.output/(label+'-all-spill.json'),all_spill)
         results.append(row);print(json.dumps(row),flush=True)
         if label=='nine-groups-count-experiment':
             constrained=optimize(tasks,hardware,width=a.width,wire_budget=base['wire_cost'])
             constrained_audit=verify(tasks,hardware,constrained,wire_budget=base['wire_cost'])
             write(a.output/'nine-groups-budget-plan.json',constrained)
+            write(a.output/'nine-groups-budget-route-requirements.json',from_plan(ir,constrained,route_catalog,route_base))
             row['equal_wire_budget']={'budget':base['wire_cost'],'bound':constrained['makespan'],
                 'wire_cost':constrained['wire_cost'],'audit':constrained_audit}
     write(a.output/'summary.json',{'status':'complete_graph_planning_passed','results':results,

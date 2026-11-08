@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-08 CST，Issue #226：基于PR220 f23a6d934，在独立分支task/226-route-contract实现综合到布线接口；未修改原搜索/缓存。逻辑束/预约展开、base端点绑定/固定网络冲突、分级反馈和CLI已实现；真实双U306位输出明确unbound。待独立审查，实际端点导出和布线/RC/STA另阶段。登记PR5 pending，缺board配置，Projects unverified/同步pending，沿用Issue7。
+
 ## 2026-11-08 CST：综合只读分片复用
 
 [Issue219/PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220)：新增真实Dot分片、相同SSA输入驻留和缓存感知DP状态。完整3B五组/九组各三输入逐位一致、100项服务器测试通过；搬运减25.40%，同10束无DP额外收益。见[回执与图册](../../work/YUZE-LU/219/READ_CACHE_RESULTS.md)。待独立审查，不自合并或标done；一般脏缓存、整网控制编码、实际布线另验。登记pending，看板unverified/同步pending，待有权限维护者处理。

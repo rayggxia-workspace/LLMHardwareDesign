@@ -1,5 +1,7 @@
 # 有约束的 Block 综合规划器（Issue #219）
 
+Issue #226：[综合到布线合同](ROUTE_CONTRACT.md)提供逻辑束逐位展开、协议依赖、候选底座端点绑定和分级反馈。`full_plan.py` 自动生成 `*-route-requirements.json`；无端点目录时明确 unbound，不改变综合算法或授予物理资格。
+
 **2026-11-08 只读分片复用入口：** [算法与状态](DOT_CACHE.md)、[完整3B回执](../../../work/YUZE-LU/219/READ_CACHE_RESULTS.md)。`full_plan.py --read-cache` / `reuse-plan.sbatch` 生成实际Dot的有限S前缀、B/零包候选，DP将各M.S内容纳入状态并独立核对驻留与静态互斥。完整五组/九组各三输入与旧整数结果逐位一致，100项测试通过；复用贪心模型代价减少17.16%，九组DP另降26.14%伴随10→18束，同预算无额外收益。下文“全部spill”描述此前基线；本版仍不搜索一般跨层脏结果，整网控制编码与真实布线另验。
 
 **2026-11-08 审查后入口：** [静态互斥修复与生成控制程序](../../../work/YUZE-LU/219/MUTEX_CONTROL_RESULTS.md)。`loop_dp.py` 和独立 `verify_loop_dp.py` 均检查整个产品的已选／固定静态连接互斥；90 项测试及完整 3B 计划重验通过。`control_backend.py` 登记实际 U_64 共同控制子集，生成官方编码的母控／局控镜像；`control_replay_plan.py` 在当前独立母控、真实母控程序 SRAM、两组 U_64 及实际数据 SRAM 上执行，`control_verify.py` 独立核对数值／写 ACK／源释放。当前控制后端只覆盖固定放置的小图，不是通用整网 DP→控制程序编码器。
