@@ -26,12 +26,38 @@ def main():
     assert sha(source)==inv['files']['native/6_final.gds']['sha256']
     out=Path(os.environ['ROUTER_TOPOLOGY_OUT']);out.mkdir()
     layout=pya.Layout();layout.read(str(source));top=layout.top_cell()
-    # A geometry-free root is omitted from KLayout's extracted netlist. This
-    # loses the instance identity of repeated templates during global probes.
-    # Promote one hierarchy level in the *extraction copy*, retaining all leaf
-    # cells and every conductor; never alter the immutable input GDS.
-    promoted=not any(not top.shapes(i).is_empty() for i in layout.layer_indices())
-    if promoted:top.flatten(1)
+    # A geometry-free root is omitted from the extracted netlist, losing the
+    # identity of repeated template instances. Keep the hierarchy by giving
+    # the extraction root a duplicate of an EXISTING real conductor. Prove its
+    # union is unchanged; no dummy conductor or physical source edit is made.
+    empty_root=not any(not top.shapes(i).is_empty() for i in layout.layer_indices())
+    mode=os.environ.get('ROUTER_TOPOLOGY_ROOT_MODE','duplicate_conductor')
+    assert mode in ('duplicate_conductor','promote')
+    promoted=False;root_attachment=None
+    if empty_root and mode=='promote':
+        top.flatten(1);promoted=True
+    elif empty_root:
+        layer=layout.find_layer(29,0);assert layer is not None
+        candidates=[(name,s['rect']) for name,t in sorted(inv['terms'].items())
+                    for s in t['shapes'] if s['layer']=='metal10']
+        assert candidates,'empty extraction root requires a declared real conductor'
+        factor=inv['dbu_per_micron']*layout.dbu
+        boxes=[];attachment=pya.Region()
+        # Attach every declared M10 terminal, so repeated source instances
+        # cannot disappear as floating subcircuits of an otherwise empty root.
+        for name,rect in candidates:
+            points=[v/factor for v in rect]
+            assert all(abs(v-round(v))<1e-8 for v in points),'root attachment would round'
+            box=pya.Box(*map(round,points));boxes.append(box);attachment.insert(box)
+        before=pya.Region(top.begin_shapes_rec(layer))
+        assert (attachment-before).is_empty(),'root attachment is not actual native metal'
+        for box in boxes:top.shapes(layer).insert(box)
+        after=pya.Region(top.begin_shapes_rec(layer))
+        assert (before^after).is_empty(),'extraction root attachment changes conductor union'
+        root_attachment={'terminals':sorted({name for name,rect in candidates}),
+                         'rectangles':len(boxes),'layer':'metal10',
+                         'native_metal_union_xor_zero':True}
+        print('ROOT_REAL_CONDUCTOR_ATTACHMENT',len(boxes),flush=True)
     l2n=pya.LayoutToNetlist(top.begin_shapes_rec(layout.layer(11,0)))
     l2n.threads=int(os.environ.get('OMP_NUM_THREADS','1'))
     regions={};counts={}
@@ -44,7 +70,8 @@ def main():
         l2n.connect(regions['metal'+str(i)],regions['via'+str(i)])
         l2n.connect(regions['via'+str(i)],regions['metal'+str(i+1)])
     print('EXTRACT_CONNECTIVITY',source,flush=True)
-    l2n.extract_netlist();l2n.write(str(out/'native.l2n'))
+    l2n.extract_netlist();print('CONNECTIVITY_EXTRACTED',time.monotonic()-started,flush=True)
+    l2n.write(str(out/'native.l2n'));print('CONNECTIVITY_SAVED',flush=True)
     assert [c.name for c in l2n.netlist().top_circuits()]==[top.name], 'ambiguous extraction root'
     def probe(layer,point):
         hierarchy=[];net=l2n.probe_net(regions[layer],point,hierarchy)
@@ -93,6 +120,7 @@ def main():
             'inventory_sha256':sha(inventory_path),'dbu':layout.dbu,'top':top.name,
             'database_sha256':sha(out/'native.l2n'),'shape_counts':counts,
             'extraction_only_promoted_root_children':promoted,
+            'extraction_only_root_attachment':root_attachment,
             'boundary_probes':probes,'power_probes':power,'passed':True,
             'elapsed_seconds':time.monotonic()-started,
             'scope':'exact frozen M1--M10/via1--9 connectivity, including nested macros; no device/poly extraction'}

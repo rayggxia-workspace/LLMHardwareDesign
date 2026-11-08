@@ -20,6 +20,12 @@ Issue #230在同一[后端目录](../project/experiments/upper_router/README.md)
 `qualify.py MANIFEST NEW_OUTPUT --copy`仅在全部真实证据绑定同一工件后复制DEF/ODB/Verilog/GDS/SPEF/SDC；此前各单步成功不能替代最终资格。
 当前九组共同RC/STA仍在验收，研究M11/M12参数不称工厂校准签核，资源库接口验收与整模型覆盖分开。
 
+共同GDS的无几何根通过`native_topology.py`保留层次：仅在提取副本重复已有M10终端，
+先验证覆盖及金属并集XOR为0，再对实际全局L2N导出完整原生导体场景。
+`composed_topology.py`另行逐源比对实际GDS子树、摆位及严格分离的导体包围范围，
+只提供独立源身份/连通证据；最终RC不复用分源电容。
+交付门同时重验实际DEF、ODB/网表、原约束、每档SPEF来源及原始物理/电气视图SHA。
+
 Issue #226 实现[综合到布线接口层](../project/experiments/block_synthesis/ROUTE_CONTRACT.md)。从 `project/experiments/block_synthesis` 运行 `python -B -m unittest test_route_contract test_loop_dp test_dot_cache -v`；CLI见合同。需求重构检查共享接口展开实现，不是独立ODB/GDS几何或电气检查；实际物理后端另验。
 
 Issue219新增只读Dot分片：[算法/状态](../project/experiments/block_synthesis/DOT_CACHE.md)、[完整3B结果](../work/YUZE-LU/219/READ_CACHE_RESULTS.md)。`full_plan.py --read-cache` 从硬件清单生成候选；`dot_cache_replay.py` 使用有限S分量数组回放。服务器新attempt入口：`reuse-plan.sbatch ROOT MODEL HARDWARE NUMERIC_TRACE QUALIFICATION PROGRAM`、`reuse-replay.sbatch ROOT IR PLAN WEIGHTS CALIBRATION LOGITS HEADERS`、`reuse-audit.sbatch ROOT PLAN_DIRECTORY`、`reuse-compare.sbatch ROOT BEFORE AFTER`；由本任务launch_fix.py冻结提交Slurm，绝对依赖/SHA见回执。普通full-plan保留旧基线；整网控制编码和真实布线另阶段验收。

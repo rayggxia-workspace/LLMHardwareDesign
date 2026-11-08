@@ -29,12 +29,28 @@ def qualify(manifest,out,copy=False):
     assert physical['upper_nets_compared']==len(binding['nets']) and physical['binding_sha256']==sha(paths['binding'])
     for key,label in [('flat_odb','assembled.odb'),('flat_verilog','assembled.v')]:
         assert physical['artifact_sha256'][label]==sha(paths[key]),('changed flat artifact',key)
+    proof_path=paths['flat_odb'].parent/'source-proof.json'
+    assert physical['artifact_sha256']['source-proof.json']==sha(proof_path)
+    proof=read(proof_path)
+    assert proof['definition']['assembled_def_sha256']==sha(paths['flat_def']),'changed flat DEF'
     drc=read(paths['drc_receipt'])
     assert drc['passed'] and drc['full_original_native_deck_items']==0
     assert drc['combined_gds_sha256']==sha(paths['combined_gds'])
     topology=read(paths['topology']/'topology.json')
     assert topology['passed'] and topology['source_gds']['sha256']==sha(paths['native_gds'])
     assert topology['database_sha256']==sha(paths['topology']/'native.l2n')
+    if 'source_composition' in paths:
+        composition=read(paths['source_composition'])
+        assert composition['passed'] and composition['native_components_strictly_disjoint']
+        assert composition['source_gds']['sha256']==sha(paths['native_gds'])
+        assert composition['base_sha256']==sha(paths['base'])
+        assert set(composition['sources'])==set(composition['source_hierarchy_identity'])
+        assert all(v['passed'] for v in composition['source_hierarchy_identity'].values())
+        for source in composition['sources'].values():
+            assert source['sha256']==sha(source['path'])
+            original=read(source['path']);assert original['passed']
+            assert original['database_sha256']==source['database_sha256']==sha(source['database'])
+            assert original['source_gds']['sha256']==source['source_gds']['sha256']==sha(source['source_gds']['path'])
     from native_connectivity_audit import audit
     assert topology['inventory_sha256']==sha(paths['topology_inventory'])
     connectivity=audit(read(paths['topology_inventory']),topology)
@@ -59,10 +75,29 @@ def qualify(manifest,out,copy=False):
     # Recompute the final timing gate; a stale passed timing.json is not enough.
     from timing_receipt import collect
     timing=collect(paths['sta']);assert timing['passed'] and len(timing['variants'])==9
+    constraints=read(paths['sta']/'constraints.json')
+    assert constraints['sdc_sha256']==sha(paths['sta']/'input.sdc')
+    assert constraints['netlist_sha256']==sha(paths['flat_verilog'])
+    for source in constraints['sources']:
+        assert source['source']['sha256']==sha(source['source']['path'])
+    native=paths['sta'].parent/'native.spef'
+    native_sources=read(native.with_suffix('.sources.json'))
+    assert native_sources['native_spef_sha256']==sha(native)
+    for source in native_sources['sources']:assert source['sha256']==sha(source['source'])
+    rc_inputs={'native_spef_sha256':sha(native),'binding_sha256':sha(paths['binding']),
+        'graph_sha256':sha(paths['graph']),'scene_json_sha256':sha(paths['scene']/'scene.json'),
+        'field_rows_sha256':field['rows_sha256']}
+    for row in timing['variants']:
+        name=row['variant'];projection,scale=name.rsplit('-coupling-',1)
+        provenance=read(paths['sta']/(name+'.projection.json'))['provenance']
+        assert provenance=={**rc_inputs,'spef_sha256':row['spef_sha256'],
+            'node_projection':projection,'coupling_scale':float(scale)},'stale RC/STA provenance'
     views=read(paths['flat_views'])
     for template,v in views.items():
         for kind,refs in v['views'].items():
-            for ref in refs:assert ref['sha256']==sha(ref['path']),('changed physical/electrical view',template,kind)
+            for ref in refs:
+                assert ref['sha256']==sha(ref['path']),('changed physical/electrical view',template,kind)
+                assert ref['source']['sha256']==sha(ref['source']['path']),('changed original view',template,kind)
     delivery={'design.def':paths['flat_def'],'design.odb':paths['flat_odb'],
               'design.v':paths['flat_verilog'],'design.gds':paths['combined_gds'],
               'design.spef':paths['sta']/'distributed-coupling-1.spef','design.sdc':paths['sta']/'input.sdc'}

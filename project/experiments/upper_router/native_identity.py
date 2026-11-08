@@ -17,7 +17,7 @@ def verify(reference,joined,upper_cell):
     for cell in reference.each_cell():
         actual=joined.cell(cell.name);assert actual is not None,('native cell missing',cell.name)
         before=references(cell);after=references(actual)
-        if cell.name==original_top:
+        if cell.name==original_top and upper_cell is not None:
             addition=(upper_cell,str(pya.ICplxTrans()),0,0,str(pya.Vector()),str(pya.Vector()))
             # KLayout reports scalar instance arrays as 0x0 arrays.
             assert after.count(addition)==1,('missing/duplicated upper reference',after[-3:],addition)

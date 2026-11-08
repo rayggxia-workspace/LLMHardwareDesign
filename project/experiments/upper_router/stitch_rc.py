@@ -197,4 +197,7 @@ if __name__=='__main__':
     caps=field_capacitance(binding,scene,[json.loads(s) for s in a.rows.read_text().splitlines()],graph)
     out=stitch(a.native_spef.read_text(),binding,graph,caps,coupling_scale=a.coupling_scale,node_projection=a.node_projection)
     with a.output.open('x') as f:f.write(out)
+    caps['provenance']={'native_spef_sha256':sha(a.native_spef),'binding_sha256':sha(a.binding),
+        'graph_sha256':sha(a.graph),'scene_json_sha256':sha(a.scene),'field_rows_sha256':sha(a.rows),
+        'spef_sha256':sha(a.output),'node_projection':a.node_projection,'coupling_scale':a.coupling_scale}
     a.output.with_suffix('.projection.json').write_text(json.dumps(caps,indent=2)+'\n')

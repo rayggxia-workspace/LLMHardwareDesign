@@ -3,12 +3,14 @@
 ## 2026-11-09 CST：Issue230后端继续迭代
 
 [Issue230](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/230) / [Draft PR231](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/231)。
-九组690网共同GDS几何读回及原生身份/几何XOR通过；完整DRC、共同连通/场RC与9档最终STA尚在执行。
+九组690网共同GDS几何读回及原生身份/几何XOR通过；全量ODB与共同1380端点连通已通过；完整DRC、共同场RC与9档最终STA尚在执行。
 修复真实ODB master缺失pin、DBU变化、层次提取、回执导入等问题，失败和源快照保留；51项后端、119项综合器回归通过。
 实际#220服务降低显式区分预连服务、外部边界与新金属；不再将额外RTL作为通用EDA前置。
 详细作业、哈希和范围见[工作记录](../../work/YUZE-LU/230/README.md)。当前in_progress/Draft，未自审/自合并；
 登记PR5 pending，看板配置缺失unverified/同步pending，沿用Issue7交接。继续真实物理验收，未报告最终通过。
 
+
+以下为保留的较早迭代记录，当前状态以上方摘要及工作记录末尾为准。
 
 2026-11-09 CST，Issue230/PR231继续实际闭合：九组690网共同GDS读回、上层规则、原生1293 cell全部层XOR及12402850层级实例身份通过。
 共同原版DRC与原生拓扑仍在运行。平坦ODB逐网检查抓到P0时钟网metal8差异，保留失败并导出实际ODB master视图重建，
