@@ -18,11 +18,18 @@ a workload projection, not a numerically qualified KV generation program.
 `work/YUZE-LU/240/inputs`, with additional context2 trace from the preceding
 local run. All generated files and binaries belong in a new run directory.
 
-`nexp_batch_adapter.sv` is a candidate local adapter that instantiates the
-unchanged native N. Its four-command zero-statistics batch must be compared
+`nexp_batch_adapter.sv` is a candidate local adapter exposing the command
+interface of an independent, unchanged native N. Its zero-statistics batch must be compared
 against the original five-command scalar relative-exp sequence before its
 latency may be used as calibrated evidence. The adapter requires exclusive
 N ownership and a shared-client arbiter at integration time.
+
+`m_s32_stream_candidate.sv` is a new independent leaf candidate, not an
+implementation of the accepted M ABI. K16/K32 issue 128/256 S32-by-byte
+products per cycle. Wider B values require two/four explicit byte planes,
+96-bit row contexts and one final RNE/S32 saturation. `byte_m=1` charges
+these passes in the timing model. The historical baseline retains its
+previous abstract native-wide-multiply assumption for traceability.
 
 RTL, complete-model numerical, routing/STA and energy coverage are separate
 gates. A timing-model target crossing does not satisfy those gates.

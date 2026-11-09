@@ -22,7 +22,15 @@ DESIGNS={
  'b68_balanced_m4_e8':{'bw':68.4,'beat':128,'swidth':128,'pcount':3,'mscale':4,'elanes':8,'batch_exp':1,'channel_balance':1},
  'b136_balanced_m4_e8_w16':{'bw':136.8,'beat':256,'swidth':256,'pcount':3,'mscale':4,'elanes':8,'batch_exp':1,'channel_balance':1,'weight_bits':16},
  'b85_balanced_m2_e8':{'bw':85.5,'beat':256,'swidth':128,'pcount':3,'mscale':2,'elanes':8,'batch_exp':1,'channel_balance':1},
+ 'b85_p3_m2_e8':{'bw':85.5,'beat':256,'swidth':128,'pcount':3,'mscale':2,'elanes':8,'batch_exp':1},
+ 'b85_p3_m4_e8':{'bw':85.5,'beat':256,'swidth':128,'pcount':3,'mscale':4,'elanes':8,'batch_exp':1},
+ 'b102_p2_m2_e8':{'bw':102.4,'beat':256,'swidth':128,'pcount':2,'mscale':2,'elanes':8,'batch_exp':1},
+ 'b102_p3_m2_e8':{'bw':102.4,'beat':256,'swidth':128,'pcount':3,'mscale':2,'elanes':8,'batch_exp':1},
 }
+# All resource candidates now use the independently testable byte-plane M
+# ABI. Preserve prior17 as the explicitly historical abstraction.
+for name, cfg in DESIGNS.items():
+ if name!='prior17':cfg['byte_m']=1
 def run(case):
  workload,design=case;cfg=DESIGNS[design];start=time.monotonic()
  exe=Path(os.environ.get('TEN_TOKEN_MODEL','model.exe')).resolve()

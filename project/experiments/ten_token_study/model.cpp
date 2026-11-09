@@ -27,7 +27,7 @@ void require(bool v,const char* s){if(!v)throw std::runtime_error(s);}
 
 struct Config {
  std::string name;int k=32,credits=4,beat=16,swidth=16,slat=3,ewise=6,m_mode=0,weight_bits=16,mcount=2;
- int mscale=1,elanes=4,pbytes=16384;bool batch_exp=false,head8=false,channel_balance=false;
+ int mscale=1,elanes=4,pbytes=16384;bool batch_exp=false,head8=false,channel_balance=false,byte_m=false;
  bool fuse=true,stream=false,resident=false,queued=false,vecpipe=false,coalesce=false,partial=false,bypass=false,packet=false,scoreboard=false;double bandwidth=16e9;
 };
 struct Tensor{U elements,base;int bits;bool initial;};
@@ -222,7 +222,10 @@ struct Study:sc_module {
    // Each of Stats and Exp runs ceil(n/2) CALC/ACCUM pairs.
    U service=9+4*ceildiv(n,2);cycles(service);e_work+=service*C;
    write_range(o.out,off*(tensors[o.out].bits/8),n*(tensors[o.out].bits/8));
-   if(last_use[input]==static_cast<int>(index))discard_range(input,off*width,n*width);
+   // A cache line may contain later packets; release only after its last
+   // byte has been consumed, rather than dropping it after the first 8.
+   if(last_use[input]==static_cast<int>(index)&&(((off+n)*width)%64==0||off+n==o.elements))
+    discard_range(input,(off*width/64)*64,64);
   }
  }
  void matrix_worker(const Op& o,int worker,sc_event& done){
@@ -352,7 +355,10 @@ struct Study:sc_module {
      send=mac_at;
     }else send=store[worker].reserve(start,ceildiv(p->abytes+p->bbytes,cfg.swidth)*cfg.slat*C);
     U adapt=std::max(ceildiv(p->abytes,U(32)*cfg.mscale),ceildiv(p->bbytes,U(64)*cfg.mscale));
-    U compute=U(p->r)*ceildiv(p->k,U(8)*cfg.mscale);
+    // The new RTL multiplies S32 by one byte plane per issue. S16/S32 B
+    // need two/four explicit passes; do not price them as one S8 issue.
+    U planes=cfg.byte_m?std::max<U>(1,ceildiv(bbits,8)):1;
+    U compute=U(p->r)*ceildiv(p->k,U(8)*cfg.mscale)*planes;
     U tail=4+(p->ki==0?14:0)+(p->last?8+ceildiv(U(p->r)*p->n,cfg.elanes)*2:0);
     adapter_work+=adapt*C;m_work+=(compute+tail)*C;++m_tiles;++m_commands;
     pause_until(std::max(send,start+std::max(adapt,compute)*C)+tail*C);
@@ -505,6 +511,7 @@ int sc_main(int argc,char** argv){
    else if(key=="batch_exp")c.batch_exp=std::stoi(v)!=0;
    else if(key=="head8")c.head8=std::stoi(v)!=0;
    else if(key=="channel_balance")c.channel_balance=std::stoi(v)!=0;
+   else if(key=="byte_m")c.byte_m=std::stoi(v)!=0;
    else throw std::runtime_error("unknown override "+key);
   }
   require(c.mcount>=2&&c.mcount<=3,"only two or three physical P instances");
