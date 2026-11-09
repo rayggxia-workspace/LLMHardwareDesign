@@ -328,3 +328,12 @@ python3 -B source/project/experiments/iterative_speed/round02/run.py --root "$RU
 仅Slurm分配节点执行归档job.sh；批处理入口分别为python3 -B source/project/experiments/rtl_iterations/round3/run.py --root RUN及python3 -B source/project/experiments/iterative_speed/round03/run.py --root RUN。源/输入必须与归档manifest SHA一致，新目录复跑，不覆盖原run20/21。
 
 离线证据python work/Melodydt/247/speed-iterations/verify.py；显式--current-run run20 --current-run run21可校验当前源，否则核验各自不可变源快照。retention.json记录未放入Git的大raw，离线验证不会假装重新读取服务器内容。完整原生P/DMA/生成与物理资格另验。
+
+
+### Issue247第四轮：可选四通道op12
+
+见[第四轮实施报告](experiments/issue-247-speed-round4.md)。只扩新stateless op12的EXP通道，NEXP_DIRECT_LANES默认2，可选4；需NEXP_BATCH=1及NEXP_DIRECT=1。原普通N仍两通道，S16/S32容器合同不变，SRAM16KiB。
+
+run22真实RTL校准、run23旧体系16case通过。仅Slurm分配节点按归档job.sh执行；入口python3 -B source/project/experiments/rtl_iterations/round4/run.py --root RUN与python3 -B source/project/experiments/iterative_speed/round04/run.py --root RUN。run18-observed输入的原日志SHA派生可用冻结make_prior.py重建，不能无来源替换基线。
+
+离线python work/Melodydt/247/speed-iterations/verify.py；选择--current-run run22 --current-run run23检查当前源，否则逐轮冻结source-snapshot核验。R1/R2生产源与R4不同，不能改旧SHA转移资格。大raw的retention索引不等于Git保存全部原始文件。此项没有综合/300MHz STA/物理或完整原生生成资格。

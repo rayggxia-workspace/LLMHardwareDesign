@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "scope": "Actual W8 decode512 same-framework four-round results; candidates and retained best are separate; no prefill substitution",
+  "metric_contract": {
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 8,
+    "P_KiB": 16,
+    "P_count": 2,
+    "P_port_quarters": 4,
+    "switch_cycles": 1,
+    "reuse_A": true,
+    "policy_KiB": 0,
+    "core_Hz": 300000000,
+    "aggregate_DDR_bytes_s": 17100000000
+  },
+  "layers": {
+    "shared": {
+      "initial": {
+        "configuration": "R0",
+        "tokens_per_second": 3.23081074122,
+        "seconds": 0.309519832667
+      },
+      "rounds": [
+        {
+          "iteration": 1,
+          "reference_iteration": 0,
+          "source_commit": "e6d72113a14c5a0772f01ff5851d630d5d6687fa",
+          "result_sha256": "bc27f6b66c63b7356a4ead76e800c539efb1499322f91c45114e6df79595d076",
+          "candidates": [
+            {
+              "configuration": "R1",
+              "tokens_per_second": 3.35052563236,
+              "seconds": 0.298460632667,
+              "speedup_vs_own_same_layer_baseline_pct": 3.705413307335248
+            }
+          ],
+          "best_so_far": {
+            "configuration": "R1",
+            "tokens_per_second": 3.35052563236,
+            "seconds": 0.298460632667,
+            "speedup_vs_own_same_layer_baseline_pct": 3.705413307335248,
+            "iteration": 1
+          },
+          "best_so_far_gain_vs_initial_pct": 3.705413307335248
+        },
+        {
+          "iteration": 2,
+          "reference_iteration": 1,
+          "source_commit": "863492081f0f512fc64fb73c787fcdcaf145a6b4",
+          "result_sha256": "b16ff9a0209add1227177d1899bbf9928ae7e83d724a0c113469e7c860c97098",
+          "candidates": [
+            {
+              "configuration": "R2",
+              "tokens_per_second": 3.37834376557,
+              "seconds": 0.296003032667,
+              "speedup_vs_own_same_layer_baseline_pct": 0.8302617638261678
+            }
+          ],
+          "best_so_far": {
+            "configuration": "R2",
+            "tokens_per_second": 3.37834376557,
+            "seconds": 0.296003032667,
+            "speedup_vs_own_same_layer_baseline_pct": 0.8302617638261678,
+            "iteration": 2
+          },
+          "best_so_far_gain_vs_initial_pct": 4.566439701043956
+        },
+        {
+          "iteration": 3,
+          "reference_iteration": 2,
+          "source_commit": "010ae8d0d8839967f96b94227d2224fade0edf37",
+          "result_sha256": "bccd917afba10bb9c3f65f62b26b1eab588a85d73c364a4b4d54962b5197afb8",
+          "candidates": [
+            {
+              "configuration": "R3_BUF1",
+              "tokens_per_second": 2.19774235407,
+              "seconds": 0.455012389487,
+              "speedup_vs_own_same_layer_baseline_pct": -34.946159817598335
+            },
+            {
+              "configuration": "R3_BUF2",
+              "tokens_per_second": 2.75864978939,
+              "seconds": 0.362496176153,
+              "speedup_vs_own_same_layer_baseline_pct": -18.343129627368814
+            }
+          ],
+          "best_so_far": {
+            "configuration": "R2",
+            "tokens_per_second": 3.37834376557,
+            "seconds": 0.296003032667,
+            "speedup_vs_own_same_layer_baseline_pct": 0.8302617638261678,
+            "iteration": 2
+          },
+          "best_so_far_gain_vs_initial_pct": 4.566439701043956
+        },
+        {
+          "iteration": 4,
+          "reference_iteration": 2,
+          "source_commit": "e6209544086f2460662bf7edfc91cbfb2c63cd9b",
+          "result_sha256": "52c5faaad4d67a30577a5b4bc6d564866627105d492ea37aabc31d5b5b5372ff",
+          "candidates": [
+            {
+              "configuration": "R4",
+              "tokens_per_second": 3.38396291561,
+              "seconds": 0.295511512667,
+              "speedup_vs_own_same_layer_baseline_pct": 0.16632854522791174
+            }
+          ],
+          "best_so_far": {
+            "configuration": "R4",
+            "tokens_per_second": 3.38396291561,
+            "seconds": 0.295511512667,
+            "speedup_vs_own_same_layer_baseline_pct": 0.16632854522791174,
+            "iteration": 4
+          },
+          "best_so_far_gain_vs_initial_pct": 4.740363538995318
+        }
+      ],
+      "final_best": {
+        "configuration": "R4",
+        "tokens_per_second": 3.38396291561,
+        "seconds": 0.295511512667,
+        "speedup_vs_own_same_layer_baseline_pct": 0.16632854522791174,
+        "iteration": 4
+      }
+    },
+    "idealdual": {
+      "initial": {
+        "configuration": "R0",
+        "tokens_per_second": 3.49616888299,
+        "seconds": 0.286027372667
+      },
+      "rounds": [
+        {
+          "iteration": 1,
+          "reference_iteration": 0,
+          "source_commit": "e6d72113a14c5a0772f01ff5851d630d5d6687fa",
+          "result_sha256": "bc27f6b66c63b7356a4ead76e800c539efb1499322f91c45114e6df79595d076",
+          "candidates": [
+            {
+              "configuration": "R1",
+              "tokens_per_second": 3.63678454238,
+              "seconds": 0.274968172667,
+              "speedup_vs_own_same_layer_baseline_pct": 4.021992761101556
+            }
+          ],
+          "best_so_far": {
+            "configuration": "R1",
+            "tokens_per_second": 3.63678454238,
+            "seconds": 0.274968172667,
+            "speedup_vs_own_same_layer_baseline_pct": 4.021992761101556,
+            "iteration": 1
+          },
+          "best_so_far_gain_vs_initial_pct": 4.021992761101556
+        },
+        {
+          "iteration": 2,
+          "reference_iteration": 1,
+          "source_commit": "863492081f0f512fc64fb73c787fcdcaf145a6b4",
+          "result_sha256": "b16ff9a0209add1227177d1899bbf9928ae7e83d724a0c113469e7c860c97098",
+          "candidates": [
+            {
+              "configuration": "R2",
+              "tokens_per_second": 3.66958239533,
+              "seconds": 0.272510572667,
+              "speedup_vs_own_same_layer_baseline_pct": 0.9018365694761998
+            }
+          ],
+          "best_so_far": {
+            "configuration": "R2",
+            "tokens_per_second": 3.66958239533,
+            "seconds": 0.272510572667,
+            "speedup_vs_own_same_layer_baseline_pct": 0.9018365694761998,
+            "iteration": 2
+          },
+          "best_so_far_gain_vs_initial_pct": 4.960101132119066
+        },
+        {
+          "iteration": 3,
+          "reference_iteration": 2,
+          "source_commit": "010ae8d0d8839967f96b94227d2224fade0edf37",
+          "result_sha256": "bccd917afba10bb9c3f65f62b26b1eab588a85d73c364a4b4d54962b5197afb8",
+          "candidates": [
+            {
+              "configuration": "R3_BUF1",
+              "tokens_per_second": 3.18560531668,
+              "seconds": 0.31391208282,
+              "speedup_vs_own_same_layer_baseline_pct": -13.188887086178191
+            },
+            {
+              "configuration": "R3_BUF2",
+              "tokens_per_second": 3.66041657326,
+              "seconds": 0.273192949487,
+              "speedup_vs_own_same_layer_baseline_pct": -0.24977834211364902
+            }
+          ],
+          "best_so_far": {
+            "configuration": "R2",
+            "tokens_per_second": 3.66958239533,
+            "seconds": 0.272510572667,
+            "speedup_vs_own_same_layer_baseline_pct": 0.9018365694761998,
+            "iteration": 2
+          },
+          "best_so_far_gain_vs_initial_pct": 4.960101132119066
+        },
+        {
+          "iteration": 4,
+          "reference_iteration": 2,
+          "source_commit": "e6209544086f2460662bf7edfc91cbfb2c63cd9b",
+          "result_sha256": "52c5faaad4d67a30577a5b4bc6d564866627105d492ea37aabc31d5b5b5372ff",
+          "candidates": [
+            {
+              "configuration": "R4",
+              "tokens_per_second": 3.67621308212,
+              "seconds": 0.272019052667,
+              "speedup_vs_own_same_layer_baseline_pct": 0.18069322541232058
+            }
+          ],
+          "best_so_far": {
+            "configuration": "R4",
+            "tokens_per_second": 3.67621308212,
+            "seconds": 0.272019052667,
+            "speedup_vs_own_same_layer_baseline_pct": 0.18069322541232058,
+            "iteration": 4
+          },
+          "best_so_far_gain_vs_initial_pct": 5.1497569242507035
+        }
+      ],
+      "final_best": {
+        "configuration": "R4",
+        "tokens_per_second": 3.67621308212,
+        "seconds": 0.272019052667,
+        "speedup_vs_own_same_layer_baseline_pct": 0.18069322541232058,
+        "iteration": 4
+      }
+    }
+  },
+  "performance_rounds_complete": 4,
+  "authorized_maximum_rounds": 4,
+  "conditional_target_tokens_s": 5,
+  "conditional_target_reached": false,
+  "performance_stop_reason": "four_authorized_iterations_complete",
+  "actual_four_1RW_full_system_throughput_proven": false,
+  "caveats": [
+    "idealdual remains the old conditional evaluation layer.",
+    "R3 local finite-service candidate is retained as a negative result; it is not enabled in R4.",
+    "Percentages are recomputed from actual endpoints; local or per-round percentages are never summed.",
+    "Project review/PDF/publication completion is separate from the performance stop criterion."
+  ]
+}

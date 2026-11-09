@@ -1,5 +1,15 @@
 # Issue247速度迭代接续
 
+## 第四轮验证通过，等待最后PDF交付（2026-11-10 Asia/Shanghai）
+
+Issue247/PR243，Melodydt，in_progress。四轮研究/RTL/评估已完成，当前完整PDF交付3/4；第四轮PDF及逐页QA待完成。最终主W8 decode512 ideal 3.67621308212/shared 3.38396291561 token/s，未达5；完成第四份PDF后按四轮上限停止。R4采用best R2基础仅op12四EXP lane，默认2，普通N保留；生产启用需BATCH1/DIRECT1/LANES4。R3双buffer退化独立保留，SRAM没有扩容，物理时钟/完整原生生成未验收。
+
+run22/101884源7048c35ed2912e80e62bd7827deaec480d4a7e1a，5:45；run23/101888源e6209544086f2460662bf7edfc91cbfb2c63cd9b，00:02:55；均c64/node1/4核COMPLETED0:0。21build/63run（3预期非法lane拒绝）及11门通过，fee[7,7,7,7,14,14,14,14]；旧模型16case、8精确回归/2fallback、128篡改及原测试通过，独立审计完成。run22结果SHA5abb31227f0c7b2c7ac9ff7eb8f80687569fab0b64bf74eb1a9ea6ccb54b518d，run23结果SHA52c5faaad4d67a30577a5b4bc6d564866627105d492ea37aabc31d5b5b5372ff。
+
+所有源码、日志、结果持久保存在yuzelu@10.129.166.172本人/public/home/yuzelu/Melodydt/issue247-area-speed/run16至run23；全部作业终态，无自动监测。R3/R4共92大raw由retention索引明确服务器/本地归档保存，仓库核验内容和远端索引不混称。扩通道备份task/247-nexp4-area-r4@7048c35ed2912e80e62bd7827deaec480d4a7e1a及R2/R3备份均读回。追踪sacct -j 101884,101888 -X --format=JobID,State,ExitCode,Elapsed,NodeList。
+
+非Git本地快照work/Melodydt/242/r-load-bounds/repo，远端task/242-r-load-bounds供PR243审查，未合并main。恢复第一步核对最新PR head及本轮报告/PDF，完成最后PDF交付后交正式审查；不自动增加第五轮。登记management-hub PR5 pending；缺board.json/Projects能力，看板unverified、同步pending，处理管理员/正式审查人待指定；GitHub CI以最终PR回执为准，不冒称通过。
+
 ## 第四轮RTL通过，实测费用接入旧体系（2026-11-10 Asia/Shanghai）
 
 Issue247/PR243，Melodydt，in_progress；3/4轮完整交付。run22/101884/mdt-r4-nexp-rtl，源7048c35ed2912e80e62bd7827deaec480d4a7e1a，c64/node1/4核，5:45 COMPLETED0:0。21编译/63运行完成，85命令中82成功、3个LANES3定向拒绝；11门全通过，实测费用[7,7,7,7,14,14,14,14]。NX32四元素间隔9→7，完整U18→16，S仍5+5拍；n8仍两个真实n4。main SHA5abb31227f0c7b2c7ac9ff7eb8f80687569fab0b64bf74eb1a9ea6ccb54b518d，1122输出全哈希，106选中结果本地验。原日志和source在/public/home/yuzelu/Melodydt/issue247-area-speed/run22，30大raw由retention SHA索引另存；无活动作业/自动监测。
