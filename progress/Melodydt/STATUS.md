@@ -1,5 +1,13 @@
 # Melodydt 进度
 
+## 第四轮RTL通过，实测费用接入旧体系（2026-11-10 Asia/Shanghai）
+
+Issue247/PR243，Melodydt，in_progress；3/4轮完整交付。run22/101884/mdt-r4-nexp-rtl，源7048c35ed2912e80e62bd7827deaec480d4a7e1a，c64/node1/4核，5:45 COMPLETED0:0。21编译/63运行完成，85命令中82成功、3个LANES3定向拒绝；11门全通过，实测费用[7,7,7,7,14,14,14,14]。NX32四元素间隔9→7，完整U18→16，S仍5+5拍；n8仍两个真实n4。main SHA5abb31227f0c7b2c7ac9ff7eb8f80687569fab0b64bf74eb1a9ea6ccb54b518d，1122输出全哈希，106选中结果本地验。原日志和source在/public/home/yuzelu/Melodydt/issue247-area-speed/run22，30大raw由retention SHA索引另存；无活动作业/自动监测。
+
+默认两lane完整事件、DIRECT0四lane与普通N兼容，外层全部65536 S16输入及状态/reset通过；实际native经clamp唯一32769值（全部负值+0），不冒称native65536唯一。扩通道备份task/247-nexp4-area-r4@7048c35ed2912e80e62bd7827deaec480d4a7e1a已读回；R2前态/R3大面积备份保留，SRAM未扩容。
+
+round04模型六源已用真实profile审计、85日志SHA及9个篡改拒绝通过，冻结R2九生成源精确复现；正式SystemC尚未运行，不预填token/s。下一步提交/读回本模型源，在新run23进行16场景旧体系复评；第四轮PDF完整交付后按四轮上限停止。最高仍R2 ideal3.66958239533/shared3.37834376557，未到5。非Git快照work/Melodydt/242/r-load-bounds/repo仅根整合，远端task/242-r-load-bounds未合并main；登记pending、看板unverified/同步pending、正式审查人待指定，新物理资格/原生生成未验收。
+
 ## 第四轮RTL已集成，服务器校准待启动（2026-11-10 Asia/Shanghai）
 
 Issue247/PR243，Melodydt，in_progress；3/4轮PDF及证据已完整交付。R4从best R2增加op12可选四EXP lane，N/U两个生产源已集成，NEXP_DIRECT_LANES默认2，普通N不扩；router/adapter保持R2逐字相同，S仍16KiB。新显式状态34bit加两套EXP组合路径，不声称综合面积/300MHz通过。前态R2备份与R3大面积独立分支均保留。
