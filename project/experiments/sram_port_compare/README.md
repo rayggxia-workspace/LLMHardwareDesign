@@ -23,4 +23,16 @@ python3 -B source/project/experiments/sram_port_compare/run.py \
 
 独立compare_audit从trace重推分片、驻留、A/B流量及每个P的本地读/写服务；另核对真实旧U状态与工作不变。模型不执行真实张量数据，既有数值oracle不等于新RTL/宏资格。含U的私有S预算分别48/112/144KiB；16KiB路线的8组单行部分和另加672B/P数据寄存器及控制，不能把不同资源当同面积比较。
 
-首次服务器执行结果待真实回执补充。任务入口[Issue247](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247)，沿[PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)交付；负责人Melodydt，未审查合并不done。
+首轮run04/101665已COMPLETED0:0，8分02秒，57完整trace＋6尾块＋4非法CLI通过，149回收输出SHA一致。W8/context512默认策略B为3.496169，A48/64为3.412179/3.413514；prefill2大容量路线更快。完整结果SHA966729e962ecde76f755a9da873f3fb7ac566e4dd454f45e7d4b6f8f76c73cce。
+
+发现adaptive判定随容量切换，新增独立policy扩展作控制实验；已测run.py/generate_compare.py/compare_audit.py及source.json保持。generate_policy.py仅改变adaptive预取判定阈值，实际驻留/容量/分片仍保持。新增第11参数ADAPT_POLICY_KIB取0（按实际容量）或16（固定16KiB判定），默认去policy_study后必须完整回归run04。source-policy.json锁该扩展及真实run04-result.json/run04-inputs.json；policy_audit要求相同硬件的流量、M工作、每端口服务/预约与U实际工作不变，只允许时序/等待变化。计划30完整case，尚未提交补测，不把假设写成结果。
+
+```bash
+# 另建全新run；根内放真实run04-result.json/run04-inputs.json。
+sbatch --parsable job_policy.sh
+python3 -B source/project/experiments/sram_port_compare/run_policy.py \
+  --inputs /absolute/new-policy-run/inputs --out /absolute/new-policy-run/results \
+  --prior /absolute/new-policy-run/run04-result.json
+```
+
+任务入口[Issue247](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247)，沿[PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)交付；负责人Melodydt，未审查合并不done。
