@@ -14,17 +14,24 @@ import subprocess
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('attempt');parser.add_argument('destination');parser.add_argument('files',nargs='+')
+    parser.add_argument('--receipt',type=Path)
     args=parser.parse_args()
     if not args.attempt.startswith('algorithm-fix-') or any(c not in '-_.abcdefghijklmnopqrstuvwxyz0123456789' for c in args.attempt):
         raise ValueError('invalid attempt')
     destination=PurePosixPath(args.destination)
     if destination.is_absolute() or '..' in destination.parts:raise ValueError('invalid output path')
-    receipt=json.loads((Path.home()/'AppData/Local/Codex'/(args.attempt+'.json')).read_text())
+    receipt_path=args.receipt or Path.home()/'AppData/Local/Codex'/(args.attempt+'.json')
+    receipt=json.loads(receipt_path.read_text(encoding='utf-8'))
     root=receipt['directory'];host='yuzelu@10.129.166.172'
     if root!='/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/'+args.attempt:
         raise ValueError('unexpected remote evidence directory')
     out=Path(__file__).resolve().parent/'results'/args.destination;out.mkdir(parents=True,exist_ok=True)
-    recovered={}
+    recovered={};previous=out/'receipt.json'
+    if previous.exists():
+        old=json.loads(previous.read_text(encoding='utf-8'))
+        if any(old.get(k)!=receipt.get(k) for k in ('directory','job','source_sha256')):
+            raise ValueError('existing evidence receipt belongs to a different frozen job')
+        recovered.update(old.get('recovered',{}))
     for name in args.files:
         relative=PurePosixPath(name)
         if relative.is_absolute() or '..' in relative.parts:raise ValueError('invalid evidence path')

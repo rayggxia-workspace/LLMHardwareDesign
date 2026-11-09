@@ -5,11 +5,20 @@ Every runtime operand comes from actual finite SRAM or a loaded M B bank.
 """
 
 
-def replay(graph,plan,inputs):
+def replay(graph,plan,inputs,*,session=None,return_session=False):
     if plan.get('status')!='planned':raise ValueError('resident plan required')
     actors=plan['actors'];memory={name:[None]*a['words'] for name,a in actors.items()}
     tags={name:{} for name in actors};external={plan['zero_address']:0};external_tags={}
     observed={};banks={};pending={};position=0;copy_ticks=loads=stores=0
+    if session is not None:
+        if (session.get('actors')!=actors or not plan.get('initial_continuation') or
+            set(session.get('memory',{}))!=set(actors) or
+            any(len(session['memory'][n])!=a['words'] for n,a in actors.items())):
+            raise ValueError('resident continuation needs a matching physical SRAM session')
+        memory={n:list(words) for n,words in session['memory'].items()}
+        tags={n:dict(row) for n,row in session['tags'].items()};banks=dict(session['banks'])
+    elif plan.get('initial_continuation') is not None:
+        raise ValueError('resident warm program has no physical predecessor')
     def s16(value,i=0):
         v=(value>>(16*i))&65535
         return v-65536 if v>=32768 else v
@@ -33,6 +42,45 @@ def replay(graph,plan,inputs):
         word=raw&0xffffffff;address=obj['external_address']
         if address in external and external[address]!=word:raise ValueError('conflicting initial external records')
         external[address]=word;external_tags.setdefault(address,set()).add(key)
+    identities={key:('constant',o['literal'],o['external_address']) if o['kind']=='constant' else
+                ('external',o['tensor'],o['index'],o['external_address'],o['bits'])
+                for key,o in graph['objects'].items() if o['kind']!='produced'}
+    persistent=set(plan.get('persistent_records',()))
+    if not persistent<=identities.keys():raise ValueError('resident persistent identity is not read-only')
+    def check_continuation(contract,previous=False):
+        if contract.get('kind')!='resident-readonly-continuation-v1' or set(contract.get('actors',{}))!=set(actors):
+            raise ValueError('resident continuation actor contract differs')
+        for name,a in actors.items():
+            row=contract['actors'][name]
+            if len(row['slots'])!=a['words']//a['stride']:raise ValueError('resident continuation cell extent differs')
+            for at,key in enumerate(row['slots']):
+                if key is None:continue
+                if key not in persistent or key not in identities:raise ValueError('resident continuation has a transient record')
+                if previous and session['identities'].get(key)!=identities[key]:
+                    raise ValueError('resident persistent source identity changed across iterations')
+                word=require_record(name,at*a['stride'],key)
+                if word!=external[graph['objects'][key]['external_address']]:
+                    raise ValueError('resident persistent SRAM value changed')
+            for cell in row['padding']:
+                if a['kind']!='M' or type(cell)!=int or not 0<=cell<len(row['slots']):
+                    raise ValueError('resident continuation padding extent differs')
+                if any(read(name,8*cell+i)!=0 for i in range(1,8)):
+                    raise ValueError('resident persistent padding changed')
+            key=row['bank']
+            if key is not None:
+                if (a['kind']!='M' or key not in persistent or key not in identities or name not in banks or
+                    banks[name]!=(key,external[graph['objects'][key]['external_address']])):
+                    raise ValueError('resident persistent B bank differs')
+                if previous and session['identities'].get(key)!=identities[key]:
+                    raise ValueError('resident B source identity changed across iterations')
+    if session is not None:
+        check_continuation(plan['initial_continuation'],previous=True)
+        # Stale transient labels from a prior element are not current SSA
+        # values, even if their numeric slot IDs happen to have the same text.
+        for name,a in actors.items():
+            row=plan['initial_continuation']['actors'][name]
+            tags[name]={i*a['stride']:key for i,key in enumerate(row['slots']) if key is not None}
+        banks={name:banks[name] for name in actors if plan['initial_continuation']['actors'][name]['bank'] is not None}
     for event in plan['events']:
         kind=event['op'];actor=event['actor'];a=actors[actor]
         if kind in ('LOAD','LOAD_ZERO'):
@@ -112,6 +160,10 @@ def replay(graph,plan,inputs):
             raise ValueError('resident live output not externally committed')
     if (copy_ticks,loads,stores,loads+stores)!=(plan['copy_ticks'],plan['external_load_words'],
             plan['external_store_words'],plan['external_words']):raise ValueError('resident copy accounting differs')
-    return {'passed':True,'observed_native_outputs':observed,'copy_ticks':copy_ticks,
+    if 'continuation' in plan:check_continuation(plan['continuation'])
+    result={'passed':True,'observed_native_outputs':observed,'copy_ticks':copy_ticks,
             'external_words':loads+stores,'native_operations':position,
             'scope':'independent finite-S and external ACK interpreter; not RTL/SystemC/time or energy qualification'}
+    if return_session:
+        result['session']={'actors':actors,'memory':memory,'tags':tags,'banks':banks,'identities':identities}
+    return result

@@ -26,7 +26,8 @@ class State:
     service_ticks:int=0
 
 
-def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_cost',service_timing=None):
+def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_cost',service_timing=None,
+         persistent=(),initial=None):
     """Choose placement/replacement from each current state, never fixed ticks.
 
     Actors explicitly supply kind, finite words, LOAD/STORE copy ticks and
@@ -61,6 +62,9 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
         for x in n['inputs']:last[x]=i
     produced={n['output'] for n in ops}
     if len(produced)!=len(ops):raise ValueError('native SSA output identity repeated')
+    persistent=frozenset(persistent)
+    if not persistent<=obj.keys() or persistent&produced:
+        raise ValueError('only identified read-only input records may persist across iterations')
     def event(s,*events,cost=0,loads=0,stores=0):
         service=sum(event_ticks(e,service_timing) for e in events)
         return replace(s,cost=s.cost+cost+service,service_ticks=s.service_ticks+service,
@@ -127,11 +131,28 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
             if old is None or (s.cost,s.loads+s.stores)<(old.cost,old.loads+old.stores):unique[key]=s
         result=sorted(unique.values(),key=lambda s:(score(s),s.cost,s.loads+s.stores,s.stores,repr(s.slots),repr(s.banks)))
         return result if width is None else result[:width]
-    initial=State(tuple((None,)*(a['words']//a['stride']) for a in meta),frozenset(),
-                  tuple(frozenset() for _ in names),tuple(None for _ in names))
-    states=[initial];expanded=0
+    initial_contract=initial
+    if initial is None:
+        initial_state=State(tuple((None,)*(a['words']//a['stride']) for a in meta),frozenset(),
+                      tuple(frozenset() for _ in names),tuple(None for _ in names))
+    else:
+        if initial.get('kind')!='resident-readonly-continuation-v1' or set(initial.get('actors',{}))!=set(names):
+            raise ValueError('resident initial continuation actors differ')
+        slots=[];padding=[];banks=[]
+        for name,a in zip(names,meta):
+            row=initial['actors'][name];values=row['slots'];pads=row['padding'];bank=row['bank']
+            live=[x for x in values if x is not None]
+            if (len(values)!=a['words']//a['stride'] or len(live)!=len(set(live)) or
+                not set(live)<=persistent or len(pads)!=len(set(pads)) or
+                any(type(i)!=int or not 0<=i<len(values) for i in pads) or
+                (a['kind']=='E' and (pads or bank is not None)) or
+                bank is not None and bank not in persistent):
+                raise ValueError('invalid resident initial read-only cells/padding/bank')
+            slots.append(tuple(values));padding.append(frozenset(pads));banks.append(bank)
+        initial_state=State(tuple(slots),frozenset(),tuple(padding),tuple(banks))
+    states=[initial_state];expanded=0
     for index,n in enumerate(ops):
-        future={x for x,i in last.items() if i>index}|live_out
+        future={x for x,i in last.items() if i>index}|live_out|persistent
         all_states=[]
         for actor,a in enumerate(meta):
             if a['kind']!=n['kind']:continue
@@ -197,10 +218,15 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
     best=min(final,key=lambda s:(s.cost,s.loads+s.stores,s.stores));events=[];h=best.history
     while h is not None:events.append(h.events);h=h.previous
     result=[e for chunk in reversed(events) for e in chunk]
+    continuation={'kind':'resident-readonly-continuation-v1','actors':{
+        name:{'slots':[x if x in persistent else None for x in best.slots[i]],
+              'padding':sorted(best.padding[i]),'bank':best.banks[i] if best.banks[i] in persistent else None}
+        for i,name in enumerate(names)}}
     return {'status':'planned','copy_ticks':best.cost-best.service_ticks,
             'native_service_ticks':best.service_ticks,'total_ticks':best.cost,'service_timing':service_timing,
             'external_load_words':best.loads,
             'external_store_words':best.stores,'external_words':best.loads+best.stores,
             'events':result,'actors':actors,'zero_address':zero_address,'expanded':expanded,'width':width,
+            'persistent_records':sorted(persistent),'initial_continuation':initial_contract,'continuation':continuation,
             'spill_all':spill_all,'rank_policy':rank_policy,'bound_calls':bound.calls if bound else 0,
             'scope':'serial native region with optional measured P/E/feeder slots and explicit copy model; not full scheduler, MC/LC/DMA/system or energy qualification'}

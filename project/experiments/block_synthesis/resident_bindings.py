@@ -85,7 +85,7 @@ def region_choices(program,lengths=()):
     return result
 
 
-def variants_for(ir,timing,*,width=8,names_list=None,cover_lengths=()):
+def variants_for(ir,timing,*,width=8,names_list=None,cover_lengths=(),continuation=False):
     if 'resident_actions' in ir:raise ValueError('resident covers already registered')
     canonical=build_actors(ir,timing);h=ir['hardware'];declared=h['tile_service_bindings']
     actions=[];recipes={};rejected=[]
@@ -107,14 +107,28 @@ def variants_for(ir,timing,*,width=8,names_list=None,cover_lengths=()):
                 candidate=plan(graph,canonical,zero,width=width if w is None else w,
                     spill_all=spill,rank_policy=rank,service_timing=timing)
                 if candidate['status']!='planned':raise ValueError('resident native program has no legal allocation')
-                audit(candidate,timing);options.append((strategy,candidate))
+                audit(candidate,timing);options.append((strategy,candidate,None))
+                if continuation:
+                    from resident_continuation import compile_loop
+                    try:
+                        sequence=compile_loop(graph,loop,canonical,zero,width=width if w is None else w,
+                            spill_all=spill,rank_policy=rank,service_timing=timing)
+                    except ValueError as error:
+                        rejected.append({'primitives':names,'strategy':strategy+'_continue','reason':str(error)})
+                    else:options.append((strategy+'_continue',sequence['programs'][0],sequence))
         except ValueError as error:
             # Unqualified shapes/commands stay on the unchanged original path.
             rejected.append({'primitives':names,'reason':str(error)});continue
         bindings=[]
-        for strategy,candidate in options:
+        for strategy,candidate,sequence in options:
             recipe={'kind':'serial-native-resident-loop-v1','source_program_sha256':source,
                 'primitives':names,'loop':loop,'graph':graph,'plan':candidate,'strategy':strategy}
+            if sequence is not None:
+                recipe['loop']={**loop,'iteration_order':'ascending, serial; verified read-only continuation; all live-outs STORE-ACKed'}
+                recipe['continuation_loop']=sequence
+            total=sequence['totals'] if sequence is not None else {
+                field:loop['elements']*candidate[field] for field in
+                ('total_ticks','external_load_words','external_store_words')}
             key=digest(recipe);recipes[key]=recipe
             for pg in declared['P']:
                 for eg in declared['E']:
@@ -130,10 +144,10 @@ def variants_for(ir,timing,*,width=8,names_list=None,cover_lengths=()):
                         actors[new]={**a,'site':m['site']}
                     resources,nets,scratch=requirements(h,actors);count=loop['elements']
                     bindings.append({'id':'resident:'+strategy+':M='+pg+'/E='+eg,'site':h['leaf_inventory'][pg]['site'],
-                        'ticks':count*candidate['total_ticks'],'resources':resources,'nets':nets,
+                        'ticks':total['total_ticks'],'resources':resources,'nets':nets,
                         'scratch_words':actors[pg]['words'],'scratch_by_site':scratch,
-                        'external_read_words':count*candidate['external_load_words'],
-                        'external_write_words':count*candidate['external_store_words'],
+                        'external_read_words':total['external_load_words'],
+                        'external_write_words':total['external_store_words'],
                         'macro_binding':{'M':pg,'E':eg},'resident_region':{
                             'kind':'serial-native-resident-loop-v1','recipe':key,'elements':count,
                             'actor_map':actor_map,

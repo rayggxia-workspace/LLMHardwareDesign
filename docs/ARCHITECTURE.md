@@ -1,5 +1,11 @@
 # 架构与运行
 
+2026-11-09迭代16：[跨元素只读连续合同](../project/experiments/block_synthesis/RESIDENT_CONTINUATION.md)。
+`resident_cover_survey.py CLOSED_IR FROZEN_PROFILE_PROOF FRESH_OUTPUT --width 8 --wire-budget 18 --cover-lengths 2 4 8 --continuation`
+保留冷候选，新增实际冷/过渡/周期程序，独立核验有限S前序和整循环成本。`resident_cover_compare.py REGISTERED_IR FRESH_OUTPUT`复用冻结池独立比较策略。
+`resident_continuation_probe.py prepare FROZEN_RESIDENT_PROOF FRESH_OUTPUT`生成连续RTL链，任务助手`run_continuation_probe.py`在固定WSL工具运行三初态及负对照。
+Windows/Linux各269项；FFN新共同方式少3.47246%，同池DP额外0。实际权重连续方案/系统性能范围见迭代16，不继承未终态资格。
+
 2026-11-09迭代15（本地阶段）：[凸覆盖驻留与实测成本](../project/experiments/block_synthesis/RESIDENT_COVERS.md)。
 `resident_cover_survey.py CLOSED_IR FROZEN_PROFILE_PROOF FRESH_OUTPUT --width 8 --wire-budget 18 --cover-lengths 2 4 8`
 将原子与多task驻留实现放在同一完成集合前沿，独立核对覆盖、成本、有限S、缓存失效和静态并集。

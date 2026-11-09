@@ -26,12 +26,16 @@ def element(recipe,index):
     # Object keys are symbolic slots in this serial loop body. Their source
     # identities are the explicit (tensor,index) fields above, not the text of
     # the template key. Native/scratch slots are overwritten before reuse.
+    body=recipe['plan']
+    if recipe.get('continuation_loop'):
+        from resident_continuation import program_index
+        sequence=recipe['continuation_loop'];body=sequence['programs'][program_index(sequence,index)]
     events=[]
-    for e in recipe['plan']['events']:
+    for e in body['events']:
         d=deltas.get(e.get('record'),0)
         events.append({**e,'external_address':e['external_address']+d}
                       if d and e['op'] in ('LOAD','STORE') else e)
-    return graph,{**recipe['plan'],'events':events}
+    return graph,{**body,'events':events}
 
 
 class Execution:
@@ -59,11 +63,15 @@ class Execution:
                     q=values[o['tensor']]
                     if not isinstance(q,Q) or q.mask is not None:raise ValueError('resident source needs an unmasked integer tensor')
                     sources[o['tensor']]=q.raw.reshape(-1)
+            session=None;traffic=0
             for index in range(count):
                 graph,plan=element(r,index)
                 inputs={(o['tensor'],o['index']):int(sources[o['tensor']][o['index']])
                     for o in graph['objects'].values() if o['kind']=='external' and 'literal' not in o}
-                result=replay(graph,plan,inputs)['observed_native_outputs']
+                continued=bool(r.get('continuation_loop'))
+                observed=replay(graph,plan,inputs,session=session,return_session=continued)
+                session=observed.get('session');traffic+=observed['external_words']
+                result=observed['observed_native_outputs']
                 for primitive,key in graph['primitive_outputs'].items():
                     word=result[key]&0xffffffff
                     outputs[primitive][index]=word-(1<<32) if word&(1<<31) else word
@@ -71,7 +79,7 @@ class Execution:
                 n=self.nodes[primitive];self.pending[primitive]=Q(raw.reshape(n['shape']),n['exponent'])
             self.rows.append({'primitives':r['primitives'],'elements':count,
                 'native_operations':count*len(r['graph']['operations']),
-                'external_words':count*r['plan']['external_words']})
+                'external_words':traffic,'continued':bool(r.get('continuation_loop'))})
         if name not in self.pending:raise ValueError('resident result requested before loop completion')
         return self.pending.pop(name)
 

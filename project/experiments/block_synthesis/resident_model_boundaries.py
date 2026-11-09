@@ -19,6 +19,18 @@ from verify_primitive_cost import verify
 from wide_program import execute
 
 
+def boundary_program(row,strategy,actors,zero,timing):
+    """Use the actual generated program, not a lossy metrics reconstruction."""
+    program=row.get('programs',{}).get(strategy)
+    if (program is None or program.get('status')!='planned' or program.get('actors')!=actors or
+        program.get('zero_address')!=zero or program.get('service_timing')!=timing or
+        program.get('events')!=row['events'][strategy] or
+        any(program.get(k)!=v for k,v in row['plans'][strategy].items())):
+        raise ValueError('resident boundary needs the complete original generated program')
+    audit(program,timing)
+    return program
+
+
 def main():
     p=argparse.ArgumentParser()
     for name in ('full_ir','cut_ir','regions','proof','weights','calibration','logits','output'):
@@ -69,10 +81,9 @@ def main():
                 word=gold[key]&0xffffffff;actual=word-(1<<32) if word&(1<<31) else word
                 expected=int(outputs['resident-boundary:'+name].raw.reshape(-1)[graph['index']])
                 if actual!=expected:raise ValueError('resident primitive differs from real enclosing model '+name)
-            for strategy,metrics in row['plans'].items():
-                plan={**metrics,'events':row['events'][strategy],'actors':survey['actors'],
-                      'zero_address':cut['native_constants']['0']['address_words'],'service_timing':timing}
-                audit(plan,timing);observed=replay(graph,plan,inputs)['observed_native_outputs']
+            for strategy in row['plans']:
+                plan=boundary_program(row,strategy,survey['actors'],cut['native_constants']['0']['address_words'],timing)
+                observed=replay(graph,plan,inputs)['observed_native_outputs']
                 if observed!={n['output']:gold[n['output']] for n in graph['operations']}:
                     raise ValueError('real model finite-S resident program differs')
             native_count+=len(graph['operations'])

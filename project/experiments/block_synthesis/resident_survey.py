@@ -96,8 +96,8 @@ def run(ir,region_rows,*,width=8,cases=12,service_timing=None):
                 'strongest_greedy':greedy_name,'selected':selected,
                 'selected_vs_strongest_greedy_copy_gain_fraction':1-plans[selected]['copy_ticks']/plans[greedy_name]['copy_ticks'],
                 'objective':objective,'selected_vs_strongest_greedy_total_gain_fraction':1-plans[selected]['total_ticks']/plans[greedy_name]['total_ticks'],
-                'events':{name:v['events'] for name,v in plans.items()}})
-            print(json.dumps({k:v for k,v in rows[-1].items() if k not in ('events','primitives')}),flush=True)
+                'events':{name:v['events'] for name,v in plans.items()},'programs':plans})
+            print(json.dumps({k:v for k,v in rows[-1].items() if k not in ('events','primitives','programs')}),flush=True)
     return {'passed':True,'actors':actors,'rows':rows,'numerical_cases':sum(r['numerical_cases'] for r in rows),
         'service_timing':service_timing,
         'scope':'native SSA serial copy/service-model DP and finite-S synthetic boundary fixtures; not actual-weight/full-model residency, calibrated LC/DMA/system, physical or energy qualification',
