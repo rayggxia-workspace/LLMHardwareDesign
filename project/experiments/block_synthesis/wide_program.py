@@ -189,7 +189,7 @@ def compile_program(model,initial,calibration,formats):
         'scope':'vector instructions are finite scalar native loops; no whole-vector private-S allocation'}
 
 
-def execute(program,initial,ids,oracle,bounds=None,dot_executor=None):
+def execute(program,initial,ids,oracle,bounds=None,dot_executor=None,region_executor=None):
     """Only this emitted instruction stream drives numerical replay.
 
     NumPy evaluates integer primitive loops in parallel; it is a simulator,
@@ -204,6 +204,16 @@ def execute(program,initial,ids,oracle,bounds=None,dot_executor=None):
         high=magnitude(x)
         return high+131072 if high else 0
     for node in program['instructions']:
+        if region_executor is not None:
+            replacement=region_executor.step(node,values)
+            if replacement is not None:
+                if (not isinstance(replacement,Q) or replacement.exponent!=node['exponent'] or
+                    replacement.mask is not None or tuple(replacement.raw.shape)!=tuple(node['shape']) or
+                    replacement.raw.dtype.kind not in 'iu' or
+                    np.any(replacement.raw<-(1<<(node['bits']-1))) or np.any(replacement.raw>=(1<<(node['bits']-1)))):
+                    raise ValueError('resident primitive replacement format differs')
+                values[node['id']]=replacement
+                continue
         op=node['op'];args=[values[n] for n in node['inputs']];a=node['attributes'];e=node['exponent'];bits=node['bits']
         data=[np.asarray(raw(q),dtype=np.int64) for q in args] if op not in ('Mask','View','Gather') else []
         mask=None

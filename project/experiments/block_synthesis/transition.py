@@ -12,7 +12,7 @@ def retention_actions(state, binding):
     if 'parallel_shards' in binding:
         return tuple(product(*(retention_actions(state,c['binding'])
                                for c in binding['parallel_shards']['children'])))
-    if binding.get('dot_tile'):
+    if binding.get('dot_tile') or binding.get('resident_region'):
         return ('invalidate',)
     c = binding.get('read_cache')
     if not c or c.get('cost_model') != 'dot-prefix-state-v2':
@@ -92,6 +92,18 @@ def evaluate_transition(state, binding, hardware, data_ready, *, retention='lega
     reads = binding['external_read_words']
     scratch = dict(binding.get('scratch_by_site', {binding['site']: binding['scratch_words']}))
     details = {}
+    if binding.get('resident_region'):
+        spec=binding['resident_region']
+        if (retention!='invalidate' or spec.get('kind')!='serial-native-resident-loop-v1' or c or
+                set(spec.get('invalidate_read_cache',()))!=set(scratch)):
+            return {'legal':False,'reason':'resident_cache_policy'}
+        discarded=[]
+        for site in sorted(scratch):
+            old=cache.pop(site,None)
+            if old:discarded.append({'site':site,'tag':old[0],'prefix':old[1],'words':old[2]})
+        details={'cost_model':'serial-native-resident-loop-v1','retention':'invalidate',
+            'discarded_read_cache':discarded,'external_read_words':reads,
+            'external_write_words':binding['external_write_words'],'scratch_by_site':scratch}
     if binding.get('dot_tile'):
         spec=binding['dot_tile']
         if (retention!='invalidate' or spec.get('kind')!='prepared-s32-static-b-tile-v1' or

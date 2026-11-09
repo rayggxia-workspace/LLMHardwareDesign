@@ -144,7 +144,7 @@ def prepare(root,bank,irfile,regionfile,out,*,cases=8,width=8):
     (out/'manifest.json').write_text(json.dumps(manifest,separators=(',',':'))+'\n',newline='\n')
 
 
-def analyse(directory,log):
+def analyse(directory,log,*,write_summary=True):
     # Icarus emits ASCII JSON. Parse those bytes directly, preserving the raw
     # log hash even when WSL also writes a non-UTF8 launcher diagnostic.
     manifest=json.loads((directory/'manifest.json').read_text());content=log.read_bytes()
@@ -160,10 +160,31 @@ def analyse(directory,log):
     for actual,case in zip(rows,manifest['cases']):
         if actual['id']!=case['id'] or actual['cycles']<1 or any(actual[k]!=v for k,v in case['expected'].items()):
             raise ValueError('resident native event counts differ')
+    profile_prefix=b'RESIDENT_PROFILE '
+    profiles=[json.loads(line.lstrip(b'\0')[len(profile_prefix):]) for line in content.split(b'\n')
+              if line.lstrip(b'\0').startswith(profile_prefix)]
+    expected=Counter()
+    for case in manifest['cases']:
+        for event in case.get('plan',{}).get('events',[]):
+            if event['op']=='M_TERM':
+                expected[('P',0)]+=1;expected[('P',1+event['k'])]+=1
+                expected[('feeder',int(event['reuse_b']))]+=1
+            elif event['op']=='M_FINAL':expected[('P',16+64*(1 if event['width']==16 else 2)+event['shift'])]+=1
+            elif event['op']=='E':expected[('E',event['opcode']+16*len(event['inputs'])+64*event['shift'])]+=1
+    observed={}
+    for row in profiles:
+        key=(row['boundary'],row['key'])
+        if key in observed or not 0<row['min']<=row['max']:raise ValueError('invalid resident passive profile')
+        observed[key]=row['samples']
+    # Old protocol-only evidence has no profiles; it remains readable but
+    # cannot be used to construct the new measured-time service contract.
+    if profiles and observed!=dict(expected):raise ValueError('resident profile sample coverage differs')
     result={'passed':True,'cases':len(rows),'records':rows,'manifest_sha256':sha(directory/'manifest.json'),
-        'log_sha256':sha(log),'scope':manifest['scope'],'excluded':manifest['excluded'],'cycles':manifest['cycles']}
-    (directory/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
-    print(json.dumps({k:v for k,v in result.items() if k!='records'}))
+        'log_sha256':sha(log),'passive_profiles':profiles,
+        'scope':manifest['scope'],'excluded':manifest['excluded'],'cycles':manifest['cycles']}
+    if write_summary:
+        (directory/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
+        print(json.dumps({k:v for k,v in result.items() if k!='records'}))
     return result
 
 

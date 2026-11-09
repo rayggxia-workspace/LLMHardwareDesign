@@ -54,6 +54,50 @@ module tb_resident_probe;
   .in_op(eo),.in_shift(es),.in_data(ed),.out_valid(ov),.out_ready(ot),
   .out_data(od),.out_error(oe),.out_saturated(os));
  integer e_acks=0,loads=0,stores=0,native_m=0,native_e=0,case_id,begin_cycle,case_count=0;
+ // Passive acceptance-to-first-completion, excluding deliberate response
+ // holding and observer reads. Never drive DUT signals from these monitors.
+ integer rp_count[0:511],rp_min[0:511],rp_max[0:511],rp_start=-1,rp_key;
+ integer re_count[0:2047],re_min[0:2047],re_max[0:2047],re_start=-1,re_key;
+ integer rf_count[0:1],rf_min[0:1],rf_max[0:1],rf_start=-1,rf_key,r_elapsed,r_cycle=0;
+ always @(posedge clk)begin
+  // Keep this counter in the monitor's own process. Reading the original
+  // bench's blocking counter here races its separate posedge process.
+  r_cycle=r_cycle+1;
+  if(reset)begin rp_start=-1;re_start=-1;rf_start=-1;end
+  else begin
+   if(cmd_valid && cmd_ready)begin
+    if(rp_start>=0)$fatal(1,"overlapping resident P profile");
+    rp_start=r_cycle;
+    if(cmd_op==4)rp_key=0;
+    else if(cmd_op==10)rp_key=1+int'(cmd_data[7:4]);
+    else if(cmd_op==5)rp_key=16+64*int'(cmd_data[9:8])+int'(cmd_data[5:0]);
+    else $fatal(1,"unexpected resident P profile command");
+   end
+   if(rp_start>=0 && cmd_done)begin
+    r_elapsed=r_cycle-rp_start;rp_count[rp_key]=rp_count[rp_key]+1;
+    if(r_elapsed<rp_min[rp_key])rp_min[rp_key]=r_elapsed;
+    if(r_elapsed>rp_max[rp_key])rp_max[rp_key]=r_elapsed;rp_start=-1;
+   end
+   if(e_cmd && e_ready)begin
+    if(re_start>=0)$fatal(1,"overlapping resident E profile");
+    re_start=r_cycle;re_key=int'(e_opcode)+16*int'(e_sources)+64*int'(e_shift);
+   end
+   if(re_start>=0 && e_done)begin
+    r_elapsed=r_cycle-re_start;re_count[re_key]=re_count[re_key]+1;
+    if(r_elapsed<re_min[re_key])re_min[re_key]=r_elapsed;
+    if(r_elapsed>re_max[re_key])re_max[re_key]=r_elapsed;re_start=-1;
+   end
+   if(load_valid && load_ready)begin
+    if(rf_start>=0)$fatal(1,"overlapping resident feeder profile");
+    rf_start=r_cycle;rf_key=int'(reuse_b);
+   end
+   if(rf_start>=0 && load_done)begin
+    r_elapsed=r_cycle-rf_start;rf_count[rf_key]=rf_count[rf_key]+1;
+    if(r_elapsed<rf_min[rf_key])rf_min[rf_key]=r_elapsed;
+    if(r_elapsed>rf_max[rf_key])rf_max[rf_key]=r_elapsed;rf_start=-1;
+   end
+  end
+ end
  reg e_write_pending=0;
  always @(posedge clk)begin
   if(reset)e_write_pending<=0;
@@ -146,6 +190,9 @@ module tb_resident_probe;
   case_count=case_count+1;
  endtask
  initial begin
+  for(integer key=0;key<512;key=key+1)begin rp_count[key]=0;rp_min[key]=2147483647;rp_max[key]=0;end
+  for(integer key=0;key<2048;key=key+1)begin re_count[key]=0;re_min[key]=2147483647;re_max[key]=0;end
+  for(integer key=0;key<2;key=key+1)begin rf_count[key]=0;rf_min[key]=2147483647;rf_max[key]=0;end
   for(integer r=1;r<=8;r=r+1)begin
    for(integer key=0;key<32;key=key+1)begin p_count[r][key]=0;p_min[r][key]=2147483647;p_max[r][key]=0;end
    for(integer key=0;key<16;key=key+1)begin m_count[r][key]=0;m_min[r][key]=2147483647;m_max[r][key]=0;end
@@ -154,6 +201,13 @@ module tb_resident_probe;
   $readmemh("vectors.hex",fixture);
   `include "cases.svh"
   if(case_count!=CASE_COUNT)$fatal(1,"resident case count differs");
+  if(rp_start>=0 || re_start>=0 || rf_start>=0)$fatal(1,"unfinished resident profile");
+  for(integer key=0;key<512;key=key+1)if(rp_count[key]>0)
+   $display("RESIDENT_PROFILE {\"boundary\":\"P\",\"key\":%0d,\"samples\":%0d,\"min\":%0d,\"max\":%0d}",key,rp_count[key],rp_min[key],rp_max[key]);
+  for(integer key=0;key<2048;key=key+1)if(re_count[key]>0)
+   $display("RESIDENT_PROFILE {\"boundary\":\"E\",\"key\":%0d,\"samples\":%0d,\"min\":%0d,\"max\":%0d}",key,re_count[key],re_min[key],re_max[key]);
+  for(integer key=0;key<2;key=key+1)if(rf_count[key]>0)
+   $display("RESIDENT_PROFILE {\"boundary\":\"feeder\",\"key\":%0d,\"samples\":%0d,\"min\":%0d,\"max\":%0d}",key,rf_count[key],rf_min[key],rf_max[key]);
   $display("PASS native resident record programs");$finish;
  end
 endmodule

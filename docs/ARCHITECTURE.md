@@ -1,5 +1,11 @@
 # 架构与运行
 
+2026-11-09迭代15（本地阶段）：[凸覆盖驻留与实测成本](../project/experiments/block_synthesis/RESIDENT_COVERS.md)。
+`resident_cover_survey.py CLOSED_IR FROZEN_PROFILE_PROOF FRESH_OUTPUT --width 8 --wire-budget 18 --cover-lengths 2 4 8`
+将原子与多task驻留实现放在同一完成集合前沿，独立核对覆盖、成本、有限S、缓存失效和静态并集。
+`resident_model_loops.py`将每个选中元素的有限S事件回放接入完整整数图；实际3B资格待服务器终态，不继承系统RTL/时间能耗。
+Windows/Linux各261项通过；同池FFN排序5.39681367%，新DP额外0。
+
 2026-11-09迭代14：[原生SSA/有限S驻留](../project/experiments/block_synthesis/RESIDENT_RECORDS.md)，
 [证据与边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_14.md)。
 `resident_survey.py CLOSED_IR NATIVE_REGIONS OUTPUT`比较同池复制成本和有限S回放；

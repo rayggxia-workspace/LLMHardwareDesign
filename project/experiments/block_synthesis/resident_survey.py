@@ -1,4 +1,4 @@
-"""Copy-only residency experiments on actual source-closed pointwise regions.
+"""Residency experiments on actual source-closed pointwise regions.
 
 Numerics use declared synthetic boundary fixtures, not model weights/tokens.
 The exact original integer pointwise program is an independent reference.
@@ -16,6 +16,7 @@ from native_pointwise import execute
 from resident_records import plan
 from resident_replay import replay
 from verify_primitive_cost import verify
+from resident_timing import audit as time_audit,validate as validate_timing
 
 
 def reference(program,graph,values):
@@ -32,8 +33,16 @@ def reference(program,graph,values):
     return {name:int(v.raw) for name,v in original(scalar,initial,[],None).items()}
 
 
-def run(ir,region_rows,*,width=8,cases=12):
-    verify(ir);h=ir['hardware'];groups=h['tile_service_bindings']
+def build_actors(ir,service_timing=None):
+    h=ir['hardware'];groups=h['tile_service_bindings']
+    if service_timing is not None:
+        validate_timing(service_timing)
+        digest=hashlib.sha256(json.dumps(h['tile_service_profiles'],sort_keys=True,separators=(',',':')).encode()).hexdigest()
+        if (groups.get('kind')!='native-tile-instance-services-v1' or groups.get('qualification_sha256')!=digest or
+                not groups.get('evidence')):raise ValueError('resident timing requires declared qualified service instances')
+        approved=h['tile_service_profiles']['rtl_sha256']
+        if any(approved.get(k)!=v for k,v in service_timing['rtl_sha256'].items()):
+            raise ValueError('resident service RTL differs from declared instance services')
     # Explicitly use an already declared P and E service instance. Do not
     # infer its surrounding SRAM/adapter capability from a macro letter.
     actors={}
@@ -43,6 +52,11 @@ def run(ir,region_rows,*,width=8,cases=12):
             'stride':8 if kind=='M' else 1,
             'load_ticks':descriptor_ticks(h['virtual_memory'],1,'load',m['io_write_ticks']),
             'store_ticks':descriptor_ticks(h['virtual_memory'],1,'store',m['io_read_ticks'])}
+    return actors
+
+
+def run(ir,region_rows,*,width=8,cases=12,service_timing=None):
+    verify(ir);actors=build_actors(ir,service_timing)
     zero=ir['native_constants']['0']['address_words']
     rows=[];rng=random.Random(220142)
     for rr in region_rows:
@@ -53,9 +67,10 @@ def run(ir,region_rows,*,width=8,cases=12):
                 ('dp',width,False,'copy_cost'),('future_greedy',1,False,'future_copies'),
                 ('future_dp',width,False,'future_copies'))
             for name,w,spill,rank in strategies:
-                began=time.monotonic();plans[name]=plan(graph,actors,zero,width=w,spill_all=spill,rank_policy=rank)
+                began=time.monotonic();plans[name]=plan(graph,actors,zero,width=w,spill_all=spill,rank_policy=rank,service_timing=service_timing)
                 seconds[name]=time.monotonic()-began
                 if plans[name]['status']!='planned':raise ValueError('no resident region candidate')
+                if service_timing is not None:time_audit(plans[name],service_timing)
             for trial in range(cases):
                 values={}
                 for o in graph['objects'].values():
@@ -71,28 +86,32 @@ def run(ir,region_rows,*,width=8,cases=12):
                     actual=replay(graph,candidate,values)['observed_native_outputs']
                     if actual!={n['output']:gold[n['output']] for n in graph['operations']}:
                         raise ValueError('finite-S native execution differs')
-            greedy_name=min(('greedy','future_greedy'),key=lambda name:plans[name]['copy_ticks'])
-            selected=min(plans,key=lambda name:plans[name]['copy_ticks'])
+            objective='total_ticks' if service_timing is not None else 'copy_ticks'
+            greedy_name=min(('greedy','future_greedy'),key=lambda name:plans[name][objective])
+            selected=min(plans,key=lambda name:plans[name][objective])
             rows.append({'primitives':graph['primitives'],'index':graph['index'],'numerical_cases':cases,
-                'plans':{name:{k:v[k] for k in ('copy_ticks','external_words','external_load_words','external_store_words','expanded','bound_calls')}
+                'plans':{name:{k:v[k] for k in ('copy_ticks','native_service_ticks','total_ticks','external_words','external_load_words','external_store_words','expanded','bound_calls')}
                          for name,v in plans.items()},'search_seconds':seconds,
                 'same_pool_copy_gain_fraction':1-plans['dp']['copy_ticks']/plans['greedy']['copy_ticks'],
                 'strongest_greedy':greedy_name,'selected':selected,
                 'selected_vs_strongest_greedy_copy_gain_fraction':1-plans[selected]['copy_ticks']/plans[greedy_name]['copy_ticks'],
+                'objective':objective,'selected_vs_strongest_greedy_total_gain_fraction':1-plans[selected]['total_ticks']/plans[greedy_name]['total_ticks'],
                 'events':{name:v['events'] for name,v in plans.items()}})
             print(json.dumps({k:v for k,v in rows[-1].items() if k not in ('events','primitives')}),flush=True)
     return {'passed':True,'actors':actors,'rows':rows,'numerical_cases':sum(r['numerical_cases'] for r in rows),
-        'scope':'native SSA copy-model DP and finite-S synthetic boundary fixtures; not actual-weight/full-model numerics, whole-region runtime, RTL, SystemC or energy qualification',
-        'qualification_gap':'new K2 M feeds/width16 finals and E Min/Select residency require unchanged-RTL execution of emitted events before registering candidates'}
+        'service_timing':service_timing,
+        'scope':'native SSA serial copy/service-model DP and finite-S synthetic boundary fixtures; not actual-weight/full-model residency, calibrated LC/DMA/system, physical or energy qualification',
+        'qualification_gap':'full candidate registration, actual model boundary/full graph replay, controller/DMA/system timing remain separate'}
 
 
 def main():
     p=argparse.ArgumentParser();p.add_argument('ir',type=Path);p.add_argument('regions',type=Path)
     p.add_argument('output',type=Path);p.add_argument('--width',type=int,default=8)
-    p.add_argument('--cases',type=int,default=12);a=p.parse_args()
+    p.add_argument('--cases',type=int,default=12);p.add_argument('--timing',type=Path);a=p.parse_args()
     if a.cases<1:raise ValueError('positive fixture count required')
-    result=run(json.loads(a.ir.read_text()),json.loads(a.regions.read_text()),width=a.width,cases=a.cases)
-    result['inputs_sha256']={str(f):hashlib.sha256(f.read_bytes()).hexdigest() for f in (a.ir,a.regions)}
+    result=run(json.loads(a.ir.read_text()),json.loads(a.regions.read_text()),width=a.width,cases=a.cases,
+        service_timing=json.loads(a.timing.read_text()) if a.timing else None)
+    result['inputs_sha256']={str(f):hashlib.sha256(f.read_bytes()).hexdigest() for f in [a.ir,a.regions]+([a.timing] if a.timing else [])}
     a.output.write_text(json.dumps(result,separators=(',',':'))+'\n')
 
 

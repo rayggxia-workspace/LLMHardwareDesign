@@ -119,6 +119,23 @@ def verify(tasks,hardware,plan,wire_budget=None,*,_window_checked=False):
         check(row['id'] in task_by_id,'unknown loop task')
         matches=[b for b in task_by_id[row['id']]['bindings'] if b['id']==row['binding']]
         check(len(matches)==1,'unknown/ambiguous loop binding');b=matches[0];c=b.get('read_cache')
+        if b.get('resident_region'):
+            spec=b['resident_region'];scratch=b.get('scratch_by_site',{b['site']:b['scratch_words']})
+            check(not c and not b.get('dot_tile') and spec.get('kind')=='serial-native-resident-loop-v1' and
+                set(spec.get('invalidate_read_cache',()))==set(scratch),'invalid resident cache effects')
+            discarded=[]
+            for site in sorted(scratch):
+                old=cache.pop(site,None)
+                if old:
+                    check(old['end']<=row['start'],'resident loop overwrites cache before old ACK')
+                    if row['start']>old['end']:residency.append((site,old['end'],row['start'],old['words']+1))
+                    discarded.append({'site':site,'tag':old['tag'],'prefix':old['stripe'],'words':old['words']})
+            expected={'cost_model':'serial-native-resident-loop-v1','retention':'invalidate',
+                'discarded_read_cache':discarded,'external_read_words':b['external_read_words'],
+                'external_write_words':b['external_write_words'],'scratch_by_site':scratch,
+                'duration':b['ticks'],'delta_makespan':max(prefix_makespan,row['end'])-prefix_makespan}
+            check(row.get('evaluation')==expected,'resident loop state evaluation differs')
+            evaluated[row['id']]=(b['ticks'],b['external_read_words'],scratch)
         if b.get('dot_tile'):
             spec=b['dot_tile']
             check(not c and spec.get('kind')=='prepared-s32-static-b-tile-v1' and

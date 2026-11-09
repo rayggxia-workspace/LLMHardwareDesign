@@ -1,6 +1,6 @@
 """Bounded DP over whole-record residency for a native SSA region.
 
-Only copy cost is optimized here. Compute order remains the supplied native
+Copy cost, plus optional measured services, is optimized here. Compute order remains the supplied native
 order, each M operation owns its entire accumulator, and all actions serialize.
 This is not registered in the full-model scheduler or qualified as RTL yet.
 """
@@ -23,9 +23,10 @@ class State:
     loads:int=0
     stores:int=0
     history:object=None
+    service_ticks:int=0
 
 
-def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_cost'):
+def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_cost',service_timing=None):
     """Choose placement/replacement from each current state, never fixed ticks.
 
     Actors explicitly supply kind, finite words, LOAD/STORE copy ticks and
@@ -36,6 +37,8 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
     """
     if width is not None and (type(width)!=int or width<1):raise ValueError('positive residency width required')
     if rank_policy not in ('copy_cost','future_copies'):raise ValueError('unknown resident rank policy')
+    from resident_timing import event_ticks,validate
+    if service_timing is not None:validate(service_timing)
     if type(zero_address)!=int or zero_address<0:raise ValueError('explicit external zero record required')
     if not actors:raise ValueError('native actors required')
     names=tuple(sorted(actors));meta=[actors[x] for x in names]
@@ -59,7 +62,9 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
     produced={n['output'] for n in ops}
     if len(produced)!=len(ops):raise ValueError('native SSA output identity repeated')
     def event(s,*events,cost=0,loads=0,stores=0):
-        return replace(s,cost=s.cost+cost,loads=s.loads+loads,stores=s.stores+stores,
+        service=sum(event_ticks(e,service_timing) for e in events)
+        return replace(s,cost=s.cost+cost+service,service_ticks=s.service_ticks+service,
+                       loads=s.loads+loads,stores=s.stores+stores,
                        history=History(s.history,events))
     def slot(s,actor,at,value):
         rows=list(s.slots);row=list(rows[actor]);row[at]=value;rows[actor]=tuple(row)
@@ -192,8 +197,10 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
     best=min(final,key=lambda s:(s.cost,s.loads+s.stores,s.stores));events=[];h=best.history
     while h is not None:events.append(h.events);h=h.previous
     result=[e for chunk in reversed(events) for e in chunk]
-    return {'status':'planned','copy_ticks':best.cost,'external_load_words':best.loads,
+    return {'status':'planned','copy_ticks':best.cost-best.service_ticks,
+            'native_service_ticks':best.service_ticks,'total_ticks':best.cost,'service_timing':service_timing,
+            'external_load_words':best.loads,
             'external_store_words':best.stores,'external_words':best.loads+best.stores,
             'events':result,'actors':actors,'zero_address':zero_address,'expanded':expanded,'width':width,
             'spill_all':spill_all,'rank_policy':rank_policy,'bound_calls':bound.calls if bound else 0,
-            'scope':'serial native region copy-cost planning only; no compute latency, main DP/MC/LC, RTL or system timing qualification'}
+            'scope':'serial native region with optional measured P/E/feeder slots and explicit copy model; not full scheduler, MC/LC/DMA/system or energy qualification'}
