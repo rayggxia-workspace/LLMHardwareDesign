@@ -4,6 +4,7 @@
 
 ## 当前研究：结合 PR220/241 提高 token/s
 
+- Issue247新增用户授权：比较48/64KiB＋P读写并发，与16KiB＋读写并发＋8组部分和。沿PR243继续，状态in_progress；基线a7a80de，旧259个PR文件blob核验一致。新隔离研究目录sram_port_compare，服务器计划run04、4核mdt-sram-rw，尚未提交作业。先完整旧结果回归，再测W8/W16/context2048/prefill2和端口占用敏感性；SRAM扩容不实装，生产RTL不变。[本轮接续](../../docs/handoffs/2026-11-09-issue-247-capacity-port-compare.md)。
 - [Issue247：固定SRAM的面积换速度研究](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247) 已按顺序完成五方向首轮研究，沿task/242-r-load-bounds / PR243交付待审查；在线实际状态以Issue回执为准。仅隔离模型/实验RTL；生产RTL未改，SRAM扩容保持不实装。每P16KiB；第三P额外活跃私有S预算明确单列。[正式报告](../../docs/experiments/issue-247-area-speed.md)。
 - 第一阶段源码9015effa13879bf8b5779905a4c83f53af8f2085，Slurm101631/mdt-area-speed、c64/node1/4核，4分57秒COMPLETED0:0；35完整trace、480数值配置/120生命周期/20错误注入、原225kernels/4validation/5smoke通过，92回收输出SHA一致。W8旧组合ctx8/16分别3.230811/3.243464（增量+5.46/+5.87%），原调度和W16退化；switch3/8退化，prefill不触发。结果/public/home/yuzelu/Melodydt/issue247-area-speed/run01/results/result.json，SHA62c787396bd331cb2c6d8a0a4352a4ebb83456616eb141bc50c33655d84f3fc3。
 - 第二阶段源be603f4d7661dfc3a42c17d797e1ce74772284c3，Slurm101635/mdt-area-feed、c64/node1/4核、24秒COMPLETED0:0。空P审计修正后，实际C++21候选/6基线/5非法参数通过；阶段1生成C++逐文件SHA保持。独立link三种随机初始化各四例和提前完成负例通过，256拍128→256beat；原P程序两版本各三例均288拍，没有程序级改善。Nangate配对link映射面积4178.328→9085.762（2.1745倍，仅link综合，无P&R/STA）。85回收SHA通过，结果SHA cc7a4aceeef4b1d53c19229c686a8beb909f22b4ce66390ce8db6a5f3cddfba0。
