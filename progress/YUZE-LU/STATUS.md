@@ -1,5 +1,15 @@
 # YUZE-LU 的进度
 
+## 2026-11-09 11:29 CST：Issue234组件校准继续
+
+[Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [草稿PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，仍in_progress。
+固定九组/3M和现有外存预算先优化，扩容另评。M Execute真实SystemC双银行/缩放流水8192描述符与原生三初态一致、五非法描述符拒绝。
+P_64原程序在RTL/最终父层网表三初态及匹配idle共12次通过、窗口363拍；原Lib/RC六份父层功耗采样及1427天线输入逐项核对。
+父层增量0.451–0.782nJ/该程序，初态差异保留，未包含M/G/S内部能量，不作整块或通用调用系数。两个新包约92MB、513文件成员/本地/远端SHA一致。
+41项单位检查及管理结构检查通过。精度候选101535等待资源，链101535→101486、单节点6×10；后者仍只请求首token，不冒充D128。
+完整3B连续D128、校准整网SystemC时间/总J/token和公开FPGA双指标尚未达标，继续开发，不关闭任务。
+详见[账本](../../work/YUZE-LU/234/README.md)；登记PR5 pending，看板无配置/Projects能力，unverified/同步pending，独立审查人待指定。
+
 ## 2026-11-09（CST）Qwen3B SystemC时间/能耗与充分优化对照
 
 [Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234)，独立	ask/234-systemc-benchmark，in_progress；[Draft PR #235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)。10:42 CST：用户确认先固定九组/3M和外存预算，优化后再评估扩容，约束及旧IR SHA已记录。母控SystemC五场景408次执行/4008事件与RTL/最终网表三初态一致，含完整CALL参数及返回仲裁，仍仅双目标组件。串行有限地址分配六个完整形状通过独立存活/重叠检查，516434个冻结原地址抽查通过；64GiB仅容量诊断，不选定物理预算，未完成DP并行/数值RAM整程。两个新包33MB已逐文件及远端SHA核对。41项检查通过。101514已失败原质量门，18次与旧adapter逐位一致；定位FFN小值行门乘舍入经down投影放大，新更细S32格式候选待远程验证，不计DP收益；tiny诊断四token恢复通过。101486首token仍PENDING。完整3B D128、整系统SystemC时间/总J/token和FPGA双指标尚未达标，继续开发；算法/后端/配方/硬件收益分列。硬件Issue238/PR239独立，扩容暂缓。见[证据账本](../../work/YUZE-LU/234/README.md)。登记PR5 pending，无board配置/Projects能力，看板unverified/同步pending，沿用Issue7交接。

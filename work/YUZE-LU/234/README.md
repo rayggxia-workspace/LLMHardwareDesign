@@ -444,3 +444,23 @@ SystemC后端，继续补LC/MC/互联/时钟/外存。所有硬件/精度/配方
   tiny通过不代表完整3B。原质量失败祖先资格规则不变，禁止诊断退出0洗白数值。
 - 原observer的零参考整体范数会发出NaN诊断警告，旧日志保留；新observer使用float64范数和null相对误差，
   不改执行/质量门。101486仍PENDING(Resources)，未修改其冻结源。
+
+## 2026-11-09 11:29 CST：M Execute SystemC与P_64真实联动
+
+- [M Execute模型](m-execute-timing-result-001.json)：实际SystemC双partial bank、乘积/归约流水、两lane串行缩放及atomic commit，
+  不读入已测总延迟。8192个合法resident描述符的load/Execute/read周期与真实原生三初态完全一致，五个非法描述符被拒。
+  原生证据完整SHA链已核验；首次编译类型推断错误和修复源保留。仍未覆盖load争用、输出背压、LC/S/DMA或整网。
+  48文件232KB包、本地成员与远端local-results-009的包SHA一致。
+- [P_64局控联动采样](p-control-activity-result-001.json)：复用已验收的独立M/G/S与父层局控/适配电路，
+  原有程序、SRAM最终值和全部断言不变，RTL/最终父层网表各三初态及匹配idle共12次通过；运行窗口363拍、1.21us。
+  六份父层活动分析218852个pin获得活动，1427个剩余天线输入逐项经同ODB和原Lib审计，输入负载保留。
+  父层idle约43.44–43.46mW，增量每次该程序0.451–0.782nJ，初态差异保留，不取单一通用调用系数。
+  M/G/S在父层只用时序抽象，**内部能量没有计入**，不能把这个父层数值当整块P或整模型能耗。
+  首次缺失R-only lint文件、其次OpenRAM任意3ns行为延迟造成的功能失败均保留；后者不证明300MHz硬件失败。
+  第三版明确复用零延迟活动视图，原Lib/物理验收约束不变。465文件91.697MB包完整成员SHA及远端local-results-010核验完成。
+- [数值候选008](cached-integer-attempt-008.json)已排队101535，RMS仍1，只对静态S16权重Dot前的Mul保留额外6位小数；
+  同S32宽度/同资源，不计DP收益，尚无完整结果。[资源回执](resource-update-005.json)只修改本人PENDING101486的依赖，
+  链101535→101486、单节点6×10，最多一个本任务远程作业运行；101486仍是冻结源的首token实验，非D128。
+
+完整3B连续D128、已校准整网SystemC时间/总J/token和FPGA双指标仍未达标。固定九组/3M与原外存预算先优化，扩容另评。
+继续in_progress、PR235草稿，不关闭任务。登记PR5 pending；缺board配置/Projects能力，看板unverified/同步pending，审查人待指定。

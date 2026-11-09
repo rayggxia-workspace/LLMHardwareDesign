@@ -386,3 +386,34 @@ this policy, but lowering cost must still follow the changed operand values.
 The recipe and each exponent change are recorded. A two-row outlier test checks
 the projected result against exact independent integers; it does not establish
 full-model accuracy or device speed. The frozen baseline remains separate.
+
+## Native M timing and integrated P_64 activity
+
+`systemc_m_execute.cpp` independently models the two partial banks, product/
+reduction stages, serialized two-lane scale fetches and atomic commits. Build
+with SystemC3.0.1/C++17, `-O2 -Wall -Wextra -Werror`, then run
+`m_execute_timing_probe.py EXE NATIVE_GRID_DIRECTORY NEW_OUTPUT
+--native-receipt NATIVE_RECEIPT`. The directory contains the three native grid
+files and other evidence named by the receipt; a referenced compiled-model
+manifest may reside in its parent directory.
+The 8192 valid resident descriptors match all three native initializations;
+five unsupported descriptors are rejected. Native evidence and every input
+hash are checked. Load arbitration, stalled replies, LC/S/DMA, payload math
+and full-model timing/energy are outside this Execute model.
+
+`p_control_activity.py ACCEPTED ACCEPTED_RECEIPT NEW_SOURCE --bank-source
+ORIGINAL_BANK` instruments the existing P_64 public-port fixture. All original
+data/ACK/assertions remain enabled. Its explicitly zero-delay SRAM activity
+view removes arbitrary behavioral delay decoration, not characterized timing
+constraints. Build RTL and final-parent-netlist binaries with
+`p_control_activity.cpp`, Verilator5.042 and `--trace-underscore --trace-depth99`.
+Then run `p_control_probe.py ACCEPTED ACCEPTED_RECEIPT BINARIES ORIGINAL_STD_LIB
+NEW_OUTPUT --power` with OpenROAD available on PATH.
+
+One deployed native program takes363 cycles in RTL and the accepted parent
+netlist across three initializations. Matched idle is measured separately.
+Parent M/G/S Liberty views are timing abstracts; their internal energy is
+excluded. The sampled parent increment varies0.451..0.782nJ by initialization,
+and must remain a range rather than a generic LC service coefficient. All
+six parent power analyses retain original Liberty/RC and audit1427 remaining
+diode inputs individually. This does not qualify Qwen timing or total energy.
