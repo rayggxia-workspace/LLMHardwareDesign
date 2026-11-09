@@ -1,5 +1,11 @@
 # Melodydt 进度
 
+## 旧评价体系复评（2026-11-10）
+
+更新时间2026-11-10T00:50+08:00，Asia/Shanghai；Issue247/PR243，in_review，待独立审查，不done。run15/101800，源3e62b85c8da19caca31784cb380c40d323295157，c64/node1/4核、00:03:22、COMPLETED0:0。固定旧S32/S96/K256模型、输入与资源，21完整场景历史字段、5生成文件SHA精确复现；225kernel/4validation/5smoke、7回执篡改/2非法CLI/源与历史SHA漂移拒绝通过。63回收结果SHA、63当前源和16输入绑定通过。
+
+W8 decode512 3.063655→共享ctx8 3.230811（+5.46%），理想端口ctx8 3.496169（+14.12%）；W16共享ctx8略慢；48/64KiB prefill2 4.467001/4.547434。原生4×1RW不冒领理想端口结果，生产RTL未变、S不扩容。[报告](../../docs/experiments/issue-247-legacy-metric-evaluation.md)/[接续](../../docs/handoffs/2026-11-10-issue-247-legacy-metric.md)。本地非Git快照经本人租约上传，最终head/CI以PR为准；无活动作业/自动监测。下一步独立审查（待指定）；登记PR5 pending、看板unverified/同步pending，由管理员处理。
+
 更新时间：2026-11-09（Asia/Shanghai）。Issue 是状态与验收的事实来源；本文件为当前任务分支摘要，不表示其他未合并分支已进入 main。
 
 ## 实施PDF与新版吞吐复核（2026-11-09 23:57，Asia/Shanghai）

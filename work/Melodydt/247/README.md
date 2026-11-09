@@ -1,5 +1,7 @@
 # Issue247 实验入口
 
+新增[旧评价体系21场景复评](legacy-metric-eval/README.md)及[正式报告](../../../docs/experiments/issue-247-legacy-metric-evaluation.md)。run15/101800全部历史字段复现；主W8 decode512 3.063655→共享口ctx8 3.230811 /理想端口ctx8 3.496169。48/64KiB prefill2 4.467001/4.547434保留为未实装参考。
+
 新增[实施PDF和新版吞吐证据](token-throughput/README.md)、[详细核验报告](../../../docs/experiments/issue-247-native-token-throughput.md)。原生准入、历史重现、实际P周期和候选整图token/s分别说明；本轮未再修改生产RTL或扩容S。
 
 最新为[原生P前三项实现与服务器证据](native-p/README.md)及[详细实施文档](../../../docs/experiments/issue-247-p-native-optimizations.md)：run10/101756、run11/101758全部通过，已新增可选生产RTL，默认行为兼容，SRAM16KiB不扩容。完整P含释放：K59 2112→2032、K11 672→676；真实DMA/物理/整模型未验收。以下生产RTL不变的描述仅对应此前研究阶段。

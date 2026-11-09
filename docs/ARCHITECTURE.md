@@ -282,3 +282,10 @@ python -B work/Melodydt/247/token-throughput/verify.py
 ```
 
 复现需要锁定的四份Qwen trace、原m-profile、run05历史完整结果、run13实测校准回执和`inputs.json`部署清单；位置和SHA见证据索引。2P/1U、300MHz、17.1GB/s均为条件参数，S固定16KiB；S32/S96适配器额外2712B/P明确列账。token/s不由局部周期比例外推，真实原生生成/新物理验收仍未完成。
+
+
+## Issue247 旧评价体系复评（2026-11-10）
+
+`project/experiments/legacy_metric_eval/` 固定旧PR241/Issue247生成器和原输入，按plan.json运行21场景。参考[运行准备](../project/experiments/legacy_metric_eval/README.md)；服务器独立run含source/、inputs/、4份旧result/input及SHA部署清单，目录内 `sbatch --parsable job.sh`，4核、既有SystemC容器。禁止在登录节点或Windows运行EDA。
+
+本地回收验证：`python -B work/Melodydt/247/legacy-metric-eval/verify.py`；分析重建：`python -B work/Melodydt/247/legacy-metric-eval/analyse.py <原始result.json> --out <新分析目录>`。只读后处理不是仿真。实际run15通过，范围和SHA见[报告](experiments/issue-247-legacy-metric-evaluation.md)。旧S32/S96与理想1R1W只用于条件模型评价，不授予当前4×1RW/S64或完整原生模型资格。
