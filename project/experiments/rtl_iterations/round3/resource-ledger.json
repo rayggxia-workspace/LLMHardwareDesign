@@ -1,0 +1,66 @@
+{
+  "scope": "Source-level sequential declarations, before synthesis; no area/STA/power qualification",
+  "existing_P_S_bytes": 16384,
+  "existing_S_macros": 4,
+  "existing_macro_mode": "256x128 1RW",
+  "wrapper_per_packet_bits": {
+    "payload_A_bits": 512,
+    "payload_B_gather_bits": 1536,
+    "state_and_metadata_bits": 110
+  },
+  "wrapper_fixed_bits": {
+    "context_session_bits": 848,
+    "completion_fields_bits": 440,
+    "completion_pointers_count_bits": 10,
+    "writer_payload_control_bits": 283,
+    "next_packet_sequence_bits": 32,
+    "S_read_response_metadata_bits": 10,
+    "leaf_commit_and_result_tags_bits": 55
+  },
+  "original_K16_leaf_bits": {
+    "products_bits": 5248,
+    "partial_contexts_bits": 6144,
+    "sums_bits": 384,
+    "quantize_input_bits": 768,
+    "other_registered_control_output_bits": 368
+  },
+  "choices": [
+    {
+      "BUFFERS": 1,
+      "source_packet_payload_bytes": 256,
+      "wrapper_register_bits": 3836,
+      "wrapper_register_bytes": 479.5,
+      "leaf_plus_wrapper_register_bits": 16748,
+      "leaf_plus_wrapper_register_bytes": 2093.5
+    },
+    {
+      "BUFFERS": 2,
+      "source_packet_payload_bytes": 512,
+      "wrapper_register_bits": 5994,
+      "wrapper_register_bytes": 749.25,
+      "leaf_plus_wrapper_register_bits": 18906,
+      "leaf_plus_wrapper_register_bytes": 2363.25
+    }
+  ],
+  "new_arithmetic": {
+    "signed32_by_signed9_multipliers": 128,
+    "reduction_trees": 8,
+    "reduction_tree_leaves_per_tree": 16,
+    "full96_contexts": 8,
+    "outputs_per_context": 8
+  },
+  "not_included_in_bit_sum": [
+    "combinational multiplier/reduction/transpose/mux/RNE logic",
+    "existing SRAM macro payload and controller response FIFOs",
+    "external integration, DMA, DDR or shared-port arbiter",
+    "physical clock/reset buffers/routing/hold fixes"
+  ],
+  "backup_files": [
+    "r3_m_finite.sv",
+    "m_s32_stream_candidate.sv",
+    "generate.py",
+    "README.md",
+    "resource-ledger.json"
+  ],
+  "production_integration": false
+}

@@ -1,5 +1,13 @@
 # Melodydt 进度
 
+## 第三轮候选已准备（2026-11-10，Asia/Shanghai）
+
+Issue247 / PR243，负责人Melodydt，in_progress，已完成2/4轮。R3独立K16 S32/W8/S96有限供数、单/双buffer、8条完成预约、2条读metadata已实现，仍四1RW/16KiB；原生产P和R1/R2不变。基线额外备份task/247-pre-m-area-r2-ed9f5ee6@ed9f5ee63ceaeb260eb611f10d569ec8904a81c6已读回，初版七源归档SHA9150111291360ce468c336549a70c4a4b9b3eb901fa33a4fce302bd0ef1137e2另存。大面积128个32×9乘法器与寄存账本见docs/decisions/issue-247-r3-large-area.md；不是综合面积或完整P/DMA集成。
+
+66个数值/边界/背压场景、完整K2048/11008和八ctx、20复位点测试及有限控制逐周期重放器准备完成；目前仅源/AST/生成输入/静态交叉审查通过，尚未执行R3服务器RTL。下一步提交源码、创建候选独立远端备份，随后在本人父目录新run20、Slurm4核校准。必须先真实数值/控制/ACK延迟通过再运行旧模型24case，不预填性能。当前最快仍R2 ideal3.66958239533/shared3.37834376557，未达5；无活动作业或自动监测。
+
+R3正式实验目录project/experiments/rtl_iterations/round3；子代理的feed/rtl/model独立目录保留，只有根整合正式源。模型将在iterative_speed/round03独立实现，关闭新开关须完整复现run19；R2冻结目录不改。登记pending、Projects unverified/同步pending、审查人待指定；R2 GitHub CI无steps且日志404，未绕过。
+
 ## 第二轮RTL与评估通过（2026-11-10，Asia/Shanghai）
 
 Issue247 / PR243，负责人Melodydt，in_progress。R2源码863492081f0f512fc64fb73c787fcdcaf145a6b4，31文件blob读回通过。run18/101852/mdt-r2-nexp-rtl，2:37；run19/101854/mdt-iter2-nexp，2:53；均c64/node1/4核COMPLETED0:0。R2实际费用[7,7,9,9,16,16,18,18]，默认/DIRECT0兼容、数值、持久状态及完整U通过。16旧体系case/8默认精确回归、2prefill fallback、128篡改及profile/CLI负例通过；独立复核完成。
