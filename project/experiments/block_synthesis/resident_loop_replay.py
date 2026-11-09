@@ -13,7 +13,7 @@ from resident_replay import replay
 def element(recipe,index):
     base=recipe['graph'];count=recipe['loop']['elements']
     if type(index)!=int or not 0<=index<count:raise ValueError('resident loop element outside extent')
-    objects={};deltas={};final=set(base['primitive_outputs'].values())
+    objects={};deltas={};final=set(base.get('reuse_proof',{}).get('source_graph',base)['primitive_outputs'].values())
     for key,o in base['objects'].items():
         delta=(index if o['kind']=='external' and recipe['loop']['sources'][o['tensor']]=='element'
                or key in final else 0)
@@ -23,6 +23,9 @@ def element(recipe,index):
             if o['kind']=='external':updated['index']=index
         objects[key]=updated;deltas[key]=delta
     graph={**base,'objects':objects,'index':index}
+    if 'external_commits' in base:
+        graph['external_commits']=[{**c,'external_address':c['external_address']+deltas[c['original_record']]}
+                                  for c in base['external_commits']]
     # Object keys are symbolic slots in this serial loop body. Their source
     # identities are the explicit (tensor,index) fields above, not the text of
     # the template key. Native/scratch slots are overwritten before reuse.
@@ -32,9 +35,9 @@ def element(recipe,index):
         sequence=recipe['continuation_loop'];body=sequence['programs'][program_index(sequence,index)]
     events=[]
     for e in body['events']:
-        d=deltas.get(e.get('record'),0)
+        d=deltas.get(e.get('commit_for') if e['op']=='STORE_COMMIT' else e.get('record'),0)
         events.append({**e,'external_address':e['external_address']+d}
-                      if d and e['op'] in ('LOAD','STORE') else e)
+                      if d and (e['op'] in ('LOAD','STORE','STORE_COMMIT') or e['op']=='REUSE' and e.get('where')=='external') else e)
     return graph,{**body,'events':events}
 
 

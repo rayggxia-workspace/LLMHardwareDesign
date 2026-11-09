@@ -50,7 +50,7 @@ def event_ticks(event,timing):
         if op=='M_TERM':return p['P']['0']+p['P'][str(1+event['k'])]+p['feeder'][str(int(event['reuse_b']))]
         if op=='M_FINAL':return p['P'][str(16+64*(1 if event['width']==16 else 2)+event['shift'])]
         if op=='E':return p['E'][str(event['opcode']+16*len(event['inputs'])+64*event['shift'])]
-        if op in ('LOAD','LOAD_ZERO','STORE','TRANSFER'):return 0
+        if op in ('LOAD','LOAD_ZERO','STORE','STORE_COMMIT','TRANSFER','REUSE','DISCARD'):return 0
         raise ValueError('unknown resident timing event')
     except KeyError as exc:raise ValueError('unmeasured native resident command') from exc
 
@@ -66,7 +66,7 @@ def audit(plan,timing):
     for event in plan['events']:
         actor=plan['actors'][event['actor']];kind=event['op']
         if kind in ('LOAD','LOAD_ZERO'):copies+=actor['load_ticks'];loads+=1
-        elif kind=='STORE':copies+=actor['store_ticks'];stores+=1
+        elif kind in ('STORE','STORE_COMMIT'):copies+=actor['store_ticks'];stores+=1
         elif kind=='TRANSFER':
             p=event_contract(event,paths,plan['actors']);copies+=p['ticks'];transfers+=1;transfer_ticks+=p['ticks'];nets.update(p['nets'])
         else:services+=event_ticks(event,timing)

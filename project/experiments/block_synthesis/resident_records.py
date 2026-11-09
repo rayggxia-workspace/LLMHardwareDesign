@@ -56,14 +56,20 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
             any(type(a.get(k))!=int or a[k]<1 for k in ('load_ticks','store_ticks'))):
             raise ValueError('finite actor/copy contract required')
     obj=graph['objects'];ops=graph['operations'];live_out=set(graph['live_out'].values())
+    from native_reuse import KIND,Liveness,verify
+    reuse_graph=graph.get('kind')==KIND
+    liveness=None
+    if reuse_graph:verify(graph);liveness=Liveness(graph)
     from resident_transports import catalog
     paths=catalog(transports,actors)
     if transport_net_budget is not None and (type(transport_net_budget)!=int or transport_net_budget<0):
         raise ValueError('nonnegative static transport net budget required')
     allowed_nets=frozenset(n for p in paths.values() for n in p['nets'])
-    from resident_bounds import FutureCopies
-    bound=FutureCopies(graph,actors,transports=tuple(paths.values()),
-                       transport_net_budget=transport_net_budget) if rank_policy=='future_copies' else None
+    from resident_bounds import FutureCopies,FutureReuseCopies
+    bound_class=FutureReuseCopies if reuse_graph and any(n.get('reuse_of') for n in ops) else FutureCopies
+    bound=bound_class(graph,actors,transports=tuple(paths.values()),
+                       transport_net_budget=transport_net_budget,
+                       **({'service_timing':service_timing} if bound_class is FutureReuseCopies else {})) if rank_policy=='future_copies' else None
     bound_position=(0,None)
     def score(s):return s.cost+(bound.bound(s,*bound_position) if bound else 0)
     if any(type(v.get('external_address'))!=int or v['external_address']<0 for v in obj.values()):
@@ -71,8 +77,9 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
     last={}
     for i,n in enumerate(ops):
         for x in n['inputs']:last[x]=i
+        if n.get('reuse_of'):last[n['output']]=max(last.get(n['output'],-1),i)
     produced={n['output'] for n in ops}
-    if len(produced)!=len(ops):raise ValueError('native SSA output identity repeated')
+    if not reuse_graph and len(produced)!=len(ops):raise ValueError('native SSA output identity repeated')
     persistent=frozenset(persistent)
     if not persistent<=obj.keys() or persistent&produced:
         raise ValueError('only identified read-only input records may persist across iterations')
@@ -99,8 +106,13 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
         # A remote acknowledged replica can preserve a dirty value. Do not
         # force it to external memory while another actual S still owns it.
         elsewhere=any(value in row for ai,row in enumerate(s.slots) if ai!=actor)
-        if value is not None and value in needed and not elsewhere:s=store(s,actor,at)
-        return slot(s,actor,at,None)
+        if value is not None and value in needed and not elsewhere:
+            if value in produced and value not in s.backed and liveness and liveness.may_discard(index,value):
+                e={'op':'DISCARD','actor':names[actor],'address':at*meta[actor]['stride'],
+                   'record':value,'reason':'recompute-before-next-use'}
+                yield slot(event(s,e),actor,at,None)
+            s=store(s,actor,at)
+        yield slot(s,actor,at,None)
     def allocations(s,actor,protected,needed):
         free=[i for i,x in enumerate(s.slots[actor]) if x is None]
         # Empty cells within the same padding class are symmetric. Keep both
@@ -117,7 +129,8 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
             # route/bank costs would require a different contract and proof.
             yield s,empty[0];return
         candidates=empty+[i for i,x in enumerate(s.slots[actor]) if x is not None and i not in protected]
-        for at in candidates:yield evict(s,actor,at,needed),at
+        for at in candidates:
+            for ns in evict(s,actor,at,needed):yield ns,at
     def pad(s,actor,at):
         if meta[actor]['kind']!='M' or at in s.padding[actor]:return s
         pads=list(s.padding);pads[actor]=pads[actor]|{at};s=replace(s,padding=tuple(pads))
@@ -187,6 +200,23 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
     for index,n in enumerate(ops):
         future={x for x,i in last.items() if i>index}|live_out|persistent
         all_states=[]
+        if n.get('reuse_of'):
+            for s in states:
+                owner=next(((ai,locate(s,ai,n['output'])) for ai in range(len(names))
+                            if locate(s,ai,n['output']) is not None),None)
+                if owner is not None:
+                    ai,at=owner
+                    e={'op':'REUSE','actor':names[ai],'native':n['id'],'record':n['output'],
+                       'where':'S','address':at*meta[ai]['stride']}
+                elif n['output'] in s.backed:
+                    ai=next(i for i,a in enumerate(meta) if a['kind']==n['kind'])
+                    e={'op':'REUSE','actor':names[ai],'native':n['id'],'record':n['output'],
+                       'where':'external','external_address':obj[n['output']]['external_address']}
+                else:continue
+                ns=event(s,e)
+                ns=replace(ns,slots=tuple(tuple(x if x in future else None for x in row) for row in ns.slots),
+                           backed=ns.backed&future,banks=tuple(x if x in future else None for x in ns.banks))
+                all_states.append(ns);expanded+=1
         for actor,a in enumerate(meta):
             if a['kind']!=n['kind']:continue
             bound_position=(index,None)
@@ -240,8 +270,32 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
                     all_states.append(ns)
         bound_position=(index+1,None);states=trim(all_states)
         if not states:return {'status':'no_plan','at_native':n['id'],'expanded':expanded}
+    # All recomputation positions are consumed during output commitment.
+    # A final LOAD must not discard a different last dirty output by treating
+    # the already executed last operation as a future recomputation point.
+    index=len(ops)
     final=[]
     for s in states:
+        if reuse_graph:
+            endings=[s]
+            for commit in graph['external_commits']:
+                more=[];value=commit['record'];target=commit['external_address']
+                for ns in endings:
+                    if value in ns.backed and target==obj[value]['external_address']:
+                        more.append(ns);continue
+                    owners=[(ns,ai,locate(ns,ai,value)) for ai in range(len(names)) if locate(ns,ai,value) is not None]
+                    if not owners:
+                        if value not in ns.backed:raise ValueError('lost canonical live output')
+                        owners=[(loaded,ai,at) for ai in range(len(names)) for loaded,at in ensure(ns,ai,value,set(),live_out)]
+                    for loaded,ai,at in owners:
+                        if target==obj[value]['external_address']:more.append(store(loaded,ai,at))
+                        else:
+                            e={'op':'STORE_COMMIT','actor':names[ai],'address':at*meta[ai]['stride'],
+                               'record':value,'commit_for':commit['original_record'],
+                               'external_address':target,'wait_ack':True}
+                            more.append(event(loaded,e,cost=meta[ai]['store_ticks'],stores=1))
+                endings=trim(more)
+            final.extend(endings);continue
         for value in sorted(live_out):
             if value in s.backed:continue
             owner=next(((ai,locate(s,ai,value)) for ai in range(len(names)) if locate(s,ai,value) is not None),None)
@@ -269,4 +323,9 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
                       transport_words=best.transport_words,transport_ticks=best.transport_ticks,
                       transport_nets=sorted(best.transport_nets))
         result['scope']+='; candidate-only transport actions require separate controller/path/physical qualification'
+    if reuse_graph:
+        result['value_reuse']='conditional-native-expressions-v1'
+        result['reused_operations']=sum(e['op']=='REUSE' for e in result['events'])
+        result['recomputed_duplicate_operations']=sum(e['op'] in ('M_FINAL','E') and e['native'] in
+            {n['id'] for n in ops if n.get('reuse_of')} for e in result['events'])
     return result

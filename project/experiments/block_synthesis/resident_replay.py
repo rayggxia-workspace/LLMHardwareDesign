@@ -7,9 +7,14 @@ Every runtime operand comes from actual finite SRAM or a loaded M B bank.
 
 def replay(graph,plan,inputs,*,session=None,return_session=False):
     if plan.get('status')!='planned':raise ValueError('resident plan required')
+    from native_reuse import KIND,Liveness,verify
+    reuse_graph=graph.get('kind')==KIND
+    liveness=None
+    if reuse_graph:verify(graph);liveness=Liveness(graph)
+    if bool(plan.get('value_reuse'))!=reuse_graph:raise ValueError('resident expression reuse contract differs')
     actors=plan['actors'];memory={name:[None]*a['words'] for name,a in actors.items()}
     tags={name:{} for name in actors};external={plan['zero_address']:0};external_tags={}
-    observed={};banks={};pending={};position=0;copy_ticks=loads=stores=0
+    observed={};logical_outputs={};banks={};pending={};position=0;copy_ticks=loads=stores=0;reused=0;recomputed=0
     from resident_transports import catalog,event_contract
     paths=catalog(plan.get('transports',()),actors);transfers=transfer_ticks=0;transport_nets=set()
     allowed_nets={n for p in paths.values() for n in p['nets']}
@@ -99,10 +104,14 @@ def replay(graph,plan,inputs,*,session=None,return_session=False):
             elif record not in external_tags.get(at,set()):raise ValueError('resident external object identity differs')
             write(actor,event['address'],external[at],record)
             copy_ticks+=a['load_ticks'];loads+=1
-        elif kind=='STORE':
+        elif kind in ('STORE','STORE_COMMIT'):
             if event.get('wait_ack') is not True:raise ValueError('resident STORE missing ACK')
             record=event['record'];word=require_record(actor,event['address'],record)
             at=graph['objects'][record]['external_address']
+            if kind=='STORE_COMMIT':
+                candidates=[c for c in graph.get('external_commits',()) if c['original_record']==event.get('commit_for') and c['record']==record]
+                if not reuse_graph or len(candidates)!=1:raise ValueError('resident original output commit differs')
+                at=candidates[0]['external_address']
             if at!=event['external_address']:raise ValueError('resident STORE external address differs')
             external[at]=word;external_tags[at]={record};copy_ticks+=a['store_ticks'];stores+=1
         elif kind=='TRANSFER':
@@ -112,11 +121,28 @@ def replay(graph,plan,inputs,*,session=None,return_session=False):
             # The serial event finishes only after the destination write ACK;
             # no external backing is created and the source remains intact.
             copy_ticks+=p['ticks'];transfers+=1;transfer_ticks+=p['ticks'];transport_nets.update(p['nets'])
+        elif kind=='DISCARD':
+            if (not liveness or pending and graph['operations'][position]['kind']!='M' or
+                event.get('reason')!='recompute-before-next-use' or not liveness.may_discard(position,event['record'])):
+                raise ValueError('unsafe native recomputation discard')
+            require_record(actor,event['address'],event['record']);tags[actor].pop(event['address'])
         else:
             if position>=len(graph['operations']):raise ValueError('extra resident native operation')
             n=graph['operations'][position]
-            if event['native']!=n['id'] or a['kind']!=n['kind']:raise ValueError('resident native order/actor differs')
-            if kind=='M_TERM':
+            if event['native']!=n['id'] or kind!='REUSE' and a['kind']!=n['kind']:raise ValueError('resident native order/actor differs')
+            if kind=='REUSE':
+                if not reuse_graph or pending or n.get('reuse_of')!=event['record'] or event['record']!=n['output']:
+                    raise ValueError('resident reuse point/record differs')
+                if event.get('where')=='S':word=require_record(actor,event['address'],n['output'])
+                elif event.get('where')=='external':
+                    at=graph['objects'][n['output']]['external_address']
+                    if event.get('external_address')!=at or n['output'] not in external_tags.get(at,set()):
+                        raise ValueError('resident reuse has no acknowledged external backing')
+                    word=external[at]
+                else:raise ValueError('resident reuse source differs')
+                if n['output'] not in observed or word!=observed[n['output']]:raise ValueError('resident reused value differs')
+                logical_outputs[n['id']]=word;position+=1;reused+=1
+            elif kind=='M_TERM':
                 old=pending.get(actor);ti=old[1] if old else 0
                 if ti>=len(n['terms']):raise ValueError('too many native M terms')
                 t=n['terms'][ti]
@@ -148,7 +174,11 @@ def replay(graph,plan,inputs,*,session=None,return_session=False):
                 acc=max(-(1<<(n['width']-1)),min((1<<(n['width']-1))-1,acc));word=acc&0xffffffff
                 if event.get('wait_s_ack') is not True:raise ValueError('native final missing SRAM ACK')
                 if event['record']!=n['output']:raise ValueError('native final output differs')
-                write(actor,event['address'],word,n['output']);observed[n['output']]=word;position+=1
+                if n.get('reuse_of'):
+                    if word!=observed[n['output']]:raise ValueError('native recomputed expression differs')
+                    recomputed+=1
+                write(actor,event['address'],word,n['output']);observed[n['output']]=word
+                logical_outputs[n['id']]=word;position+=1
             elif kind=='E':
                 if pending or event['opcode']!=n['opcode'] or event['shift']!=n['shift']:
                     raise ValueError('native E command/context differs')
@@ -164,11 +194,17 @@ def replay(graph,plan,inputs,*,session=None,return_session=False):
                     word|=(value&65535)<<(16*i)
                 if event.get('wait_s_ack') is not True or event['record']!=n['output']:
                     raise ValueError('native E output/ACK differs')
-                write(actor,event['address'],word,n['output']);observed[n['output']]=word;position+=1
+                if n.get('reuse_of'):
+                    if word!=observed[n['output']]:raise ValueError('native recomputed expression differs')
+                    recomputed+=1
+                write(actor,event['address'],word,n['output']);observed[n['output']]=word
+                logical_outputs[n['id']]=word;position+=1
             else:raise ValueError('unknown resident event')
     if position!=len(graph['operations']) or pending:raise ValueError('resident native program incomplete')
-    for record in graph['live_out'].values():
-        address=graph['objects'][record]['external_address']
+    commits=graph['external_commits'] if reuse_graph else [
+        {'record':r,'external_address':graph['objects'][r]['external_address']} for r in graph['live_out'].values()]
+    for commit in commits:
+        record=commit['record'];address=commit['external_address']
         if record not in external_tags.get(address,set()) or external[address]!=observed[record]:
             raise ValueError('resident live output not externally committed')
     if (copy_ticks,loads,stores,loads+stores)!=(plan['copy_ticks'],plan['external_load_words'],
@@ -183,6 +219,10 @@ def replay(graph,plan,inputs,*,session=None,return_session=False):
     result={'passed':True,'observed_native_outputs':observed,'copy_ticks':copy_ticks,
             'external_words':loads+stores,'native_operations':position,
             'scope':'independent finite-S and external ACK interpreter; not RTL/SystemC/time or energy qualification'}
+    if reuse_graph:
+        if (reused,recomputed)!=(plan.get('reused_operations'),plan.get('recomputed_duplicate_operations')):
+            raise ValueError('resident executed/reused work accounting differs')
+        result.update(logical_native_outputs=logical_outputs,reused_operations=reused,recomputed_duplicate_operations=recomputed)
     if return_session:
         result['session']={'actors':actors,'memory':memory,'tags':tags,'banks':banks,'identities':identities,
                            'transport_nets':sorted(transport_nets)}

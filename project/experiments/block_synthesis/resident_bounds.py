@@ -74,3 +74,66 @@ class FutureCopies:
             # feed. Ignore the second B cell and every later initialization.
             result+=7*min(self.meta[a]['load_ticks'] for a in self.by_kind['M'])
         return result
+
+
+class FutureReuseCopies(FutureCopies):
+    """Safe, deliberately weaker bound for optional repeated definitions.
+
+    Only first-definition read-only arrivals and original output commits are
+    compulsory. A repeated expression can run or be reused, so its operand
+    copies and all transient spills are omitted from the optimistic bound.
+    """
+    def __init__(self,graph,actors,*,service_timing=None,**options):
+        super().__init__(graph,actors,**options)
+        self.timing=service_timing;self.first={};self.native_costs={}
+        for i,n in enumerate(graph['operations']):self.first.setdefault(n['output'],i)
+
+    def native_cost(self,n,term=None):
+        from resident_timing import event_ticks
+        key=n['id'],term
+        if key not in self.native_costs:
+            if n['kind']=='E':
+                cost=event_ticks({'op':'E','opcode':n['opcode'],'shift':n['shift'],'inputs':n['inputs']},self.timing)
+            else:
+                cost=event_ticks({'op':'M_FINAL','width':n['width'],'shift':n['shift']},self.timing)
+                cost+=max(0,len(n['terms'])-(term or 0))*min(event_ticks(
+                    {'op':'M_TERM','k':n['k'],'reuse_b':reuse},self.timing) for reuse in (False,True))
+            self.native_costs[key]=cost
+        return self.native_costs[key]
+
+    def profile(self,index,term=None):
+        key=index,term
+        if key in self.profiles:return self.profiles[key]
+        uses={};pending_m=False
+        for i,n in enumerate(self.graph['operations'][index:],index):
+            if n.get('reuse_of'):continue
+            if n['kind']=='M':
+                terms=n['terms'][(term or 0):] if i==index else n['terms'];pending_m|=bool(terms)
+                for t in terms:
+                    for mode in ('a','b'):
+                        if self.graph['objects'][t[mode]]['kind']!='produced':
+                            uses.setdefault(t[mode],set()).add(('M',mode.upper()))
+            else:
+                for x in n['inputs']:
+                    if self.graph['objects'][x]['kind']!='produced':uses.setdefault(x,set()).add(('E','input'))
+        result=(tuple((x,frozenset(modes)) for x,modes in sorted(uses.items())),pending_m)
+        self.profiles[key]=result;return result
+
+    def bound(self,state,index,term=None):
+        # The parent sees only read-only profile records, hence charges no
+        # transient stores or optional-operation operands.
+        result=super().bound(state,index,term)
+        for commit in self.graph['external_commits']:
+            value=commit['record']
+            if commit['external_address']==self.graph['objects'][value]['external_address'] and value in state.backed:continue
+            result+=min(a['store_ticks'] for a in self.meta)
+        available=set(state.backed).union(*(set(row) for row in state.slots));charged=set()
+        for i,n in enumerate(self.graph['operations'][index:],index):
+            value=n['output']
+            if not n.get('reuse_of') or value in charged or value in available or self.first[value]>=index:continue
+            # No physical copy survives a previous definition. At least one
+            # future repeated definition must execute its original command.
+            # Do not recursively re-enter an open M accumulator; its consumed
+            # terms are already paid and only its remaining service is due.
+            result+=self.native_cost(n,term if i==index else None);charged.add(value)
+        return result

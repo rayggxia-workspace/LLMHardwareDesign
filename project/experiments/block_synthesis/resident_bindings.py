@@ -85,7 +85,7 @@ def region_choices(program,lengths=()):
     return result
 
 
-def variants_for(ir,timing,*,width=8,names_list=None,cover_lengths=(),continuation=False):
+def variants_for(ir,timing,*,width=8,names_list=None,cover_lengths=(),continuation=False,value_reuse=False):
     if 'resident_actions' in ir:raise ValueError('resident covers already registered')
     canonical=build_actors(ir,timing);h=ir['hardware'];declared=h['tile_service_bindings']
     actions=[];recipes={};rejected=[]
@@ -102,27 +102,33 @@ def variants_for(ir,timing,*,width=8,names_list=None,cover_lengths=(),continuati
                     event_ticks({'op':'M_FINAL','width':op['width'],'shift':op['shift']},timing)
                     for reuse in (False,True):event_ticks({'op':'M_TERM','k':op['k'],'reuse_b':reuse},timing)
                 else:event_ticks({'op':'E','opcode':op['opcode'],'shift':op['shift'],'inputs':op['inputs']},timing)
-            options=[]
-            for strategy,w,spill,rank in STRATEGIES:
-                candidate=plan(graph,canonical,zero,width=width if w is None else w,
-                    spill_all=spill,rank_policy=rank,service_timing=timing)
-                if candidate['status']!='planned':raise ValueError('resident native program has no legal allocation')
-                audit(candidate,timing);options.append((strategy,candidate,None))
-                if continuation:
-                    from resident_continuation import compile_loop
-                    try:
-                        sequence=compile_loop(graph,loop,canonical,zero,width=width if w is None else w,
-                            spill_all=spill,rank_policy=rank,service_timing=timing)
-                    except ValueError as error:
-                        rejected.append({'primitives':names,'strategy':strategy+'_continue','reason':str(error)})
-                    else:options.append((strategy+'_continue',sequence['programs'][0],sequence))
+            options=[];graphs=[('',graph)]
+            if value_reuse:
+                from native_reuse import rewrite
+                shared=rewrite(graph)
+                if any(n.get('reuse_of') for n in shared['operations']):graphs.append(('reuse_',shared))
+            for prefix,body_graph in graphs:
+                for strategy,w,spill,rank in STRATEGIES:
+                    candidate=plan(body_graph,canonical,zero,width=width if w is None else w,
+                        spill_all=spill,rank_policy=rank,service_timing=timing)
+                    if candidate['status']!='planned':raise ValueError('resident native program has no legal allocation')
+                    audit(candidate,timing);options.append((prefix+strategy,candidate,None,body_graph))
+                    if continuation:
+                        from resident_continuation import compile_loop
+                        try:
+                            sequence=compile_loop(body_graph,loop,canonical,zero,width=width if w is None else w,
+                                spill_all=spill,rank_policy=rank,service_timing=timing)
+                        except ValueError as error:
+                            rejected.append({'primitives':names,'strategy':prefix+strategy+'_continue','reason':str(error)})
+                        else:options.append((prefix+strategy+'_continue',sequence['programs'][0],sequence,body_graph))
         except ValueError as error:
             # Unqualified shapes/commands stay on the unchanged original path.
             rejected.append({'primitives':names,'reason':str(error)});continue
         bindings=[]
-        for strategy,candidate,sequence in options:
+        for strategy,candidate,sequence,body_graph in options:
             recipe={'kind':'serial-native-resident-loop-v1','source_program_sha256':source,
-                'primitives':names,'loop':loop,'graph':graph,'plan':candidate,'strategy':strategy}
+                'primitives':names,'loop':loop,'graph':body_graph,'plan':candidate,'strategy':strategy}
+            if candidate.get('value_reuse'):recipe['value_reuse']=candidate['value_reuse']
             if sequence is not None:
                 recipe['loop']={**loop,'iteration_order':'ascending, serial; verified read-only continuation; all live-outs STORE-ACKed'}
                 recipe['continuation_loop']=sequence

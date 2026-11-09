@@ -34,6 +34,17 @@ def fixture():
 
 
 class TestResidentBindings(unittest.TestCase):
+    def test_conditional_reuse_adds_choices_and_keeps_exact_source_and_commit_checks(self):
+        ir,q=fixture();old=deepcopy(ir['tasks']);variants_for(ir,q,width=4,value_reuse=True,continuation=True)
+        self.assertEqual(ir['tasks'],old);self.assertTrue(verify(ir)['passed'])
+        shared=[r for r in ir['resident_recipes'].values() if r.get('value_reuse')]
+        self.assertEqual(len(shared),10)
+        self.assertTrue(any(r['plan']['reused_operations'] for r in shared))
+        bad=deepcopy(ir);key=next(k for k,r in bad['resident_recipes'].items() if r.get('value_reuse'))
+        r=deepcopy(bad['resident_recipes'].pop(key));r['graph']['reuse_proof']['source_graph']['operations'][0]['shift']+=1
+        bad['resident_recipes'][digest(r)]=r
+        with self.assertRaisesRegex(ValueError,'source binding'):verify(bad,numeric=False)
+
     def test_candidate_transports_cannot_be_promoted_to_qualified_bindings(self):
         ir,q=fixture();variants_for(ir,q,width=4)
         key=next(iter(ir['resident_recipes']));recipe=ir['resident_recipes'].pop(key)

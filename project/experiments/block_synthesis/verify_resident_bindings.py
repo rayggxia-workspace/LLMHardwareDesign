@@ -28,7 +28,11 @@ def verify(ir,*,numeric=True):
         if _digest(r)!=key or r['source_program_sha256']!=source:raise ValueError('resident recipe/source digest differs')
         names=r['primitives'];shape=nodes[names[0]]['shape'];count=math.prod(shape)
         graph=bind_external(lower(p,names,0),ir)
-        if graph!=r['graph']:raise ValueError('resident recipe native graph differs from source')
+        if r.get('value_reuse'):
+            from native_reuse import verify as verify_reuse
+            if r['value_reuse']!='conditional-native-expressions-v1':raise ValueError('unknown resident expression reuse contract')
+            verify_reuse(r['graph'],graph);graph=r['graph']
+        elif graph!=r['graph']:raise ValueError('resident recipe native graph differs from source')
         if r['plan']['actors']!=actors or r['plan']['zero_address']!=ir['native_constants']['0']['address_words']:
             raise ValueError('resident allocator/zero source differs')
         bodies=[r['plan'],*r.get('continuation_loop',{}).get('programs',[])]

@@ -14,11 +14,11 @@ from verify_primitive_cost import verify as verify_original
 from verify_resident_bindings import verify as verify_native
 
 
-def run(ir,timing,output,*,width=8,wire_budget=18,backbone=None,cover_lengths=(),continuation=False):
+def run(ir,timing,output,*,width=8,wire_budget=18,backbone=None,cover_lengths=(),continuation=False,value_reuse=False):
     output=Path(output);output.mkdir(exist_ok=False)
     def save(name,value):(output/(name+'.json')).write_text(json.dumps(value,separators=(',',':'))+'\n')
     original_tasks=deepcopy(ir['tasks']);native=verify_original(ir)
-    variants_for(ir,timing,width=width,cover_lengths=cover_lengths,continuation=continuation)
+    variants_for(ir,timing,width=width,cover_lengths=cover_lengths,continuation=continuation,value_reuse=value_reuse)
     if ir['tasks']!=original_tasks:raise ValueError('resident registration modified original action pool')
     qualifier=verify_native(ir);save('ir',ir);save('native-audit',qualifier)
     plans={};seconds={};audits={}
@@ -55,10 +55,11 @@ def main():
     for name in ('ir','proof','output'):p.add_argument(name,type=Path)
     p.add_argument('--width',type=int,default=8);p.add_argument('--wire-budget',type=int,default=18)
     p.add_argument('--backbone',type=Path);p.add_argument('--cover-lengths',type=int,nargs='*',default=[])
-    p.add_argument('--continuation',action='store_true');a=p.parse_args()
+    p.add_argument('--continuation',action='store_true');p.add_argument('--value-reuse',action='store_true');a=p.parse_args()
     timing=read_qualification(a.proof,[a.proof/('simulate-'+str(i)+'.log') for i in range(3)])
     summary=run(json.loads(a.ir.read_text()),timing,a.output,width=a.width,wire_budget=a.wire_budget,
-                backbone=json.loads(a.backbone.read_text()) if a.backbone else None,cover_lengths=a.cover_lengths,continuation=a.continuation)
+                backbone=json.loads(a.backbone.read_text()) if a.backbone else None,cover_lengths=a.cover_lengths,
+                continuation=a.continuation,value_reuse=a.value_reuse)
     summary['inputs_sha256']={str(f):hashlib.sha256(f.read_bytes()).hexdigest() for f in (a.ir,*([a.backbone] if a.backbone else []))}
     (a.output/'summary.json').write_text(json.dumps(summary,separators=(',',':'))+'\n')
 
