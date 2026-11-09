@@ -3,10 +3,12 @@
 #SBATCH --partition=c64
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=16G
 #SBATCH --time=0
 #SBATCH --output=slurm-%j.log
 set -euo pipefail
+# c64 advertises RealMemory=1 MiB; memory is not schedulable on this cluster.
+# Bound this analysis process tree to 12 GiB instead of requesting fictitious TRES.
+ulimit -v 12582912
 root=$SLURM_SUBMIT_DIR
 cd "$root/source"
 sha256sum -c "$root/source-files.sha256"
