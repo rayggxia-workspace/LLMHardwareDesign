@@ -1,0 +1,47 @@
+{
+  "issue": 245,
+  "upstream_commit": "e7aeed2097f57a5f910cae70eb51a220c49a8a14",
+  "pr220_context_commit": "3a9f98a926134ad4ee0d57f4a2c3545ee8df8c7d",
+  "original_model_sha256": "84aa752da4afaece43947f9ba86e2ab3665b5b8e72dc0a4bbca208b85cffd6e5",
+  "traces": {
+    "decode128.trace": {
+      "raw_sha256": "7af1edc40638938c11be651dfb8805ce35918f6020d62c574ed9f4081e6baa4e",
+      "lf_sha256": "c7d410e14a8bec74fe3ed0fd8522292ad2906393c442c432a167dfd8e54b6a0e"
+    },
+    "decode2048.trace": {
+      "raw_sha256": "962f3d3944493b52aeba9525c28aa404c8091878e42d3fe0481f4ce420483890",
+      "lf_sha256": "ba4157469188fbc1602e3324fa747847d78d39e392c4674cf92d9aabbce9339f"
+    },
+    "decode512.trace": {
+      "raw_sha256": "ca6d3be0b4003236d1c7f91f57a8e68d5293902c87087c554b379cb09a00a1d3",
+      "lf_sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d"
+    },
+    "prefill2.trace": {
+      "raw_sha256": "e7b4807eddbf4a31e5cb576920860b278a8e2f0021332b524c16ca63c60f99ff",
+      "lf_sha256": "be2f0c96b7042674680a3ee51d99389a89813318034c29098cdb344d131441b7"
+    }
+  },
+  "model_scope": "conditional architecture study; native S32/96bit M, E32, 512bit ports not implemented RTL",
+  "fixed_budget": {
+    "mcount": 2,
+    "private_S_bytes": 16384,
+    "aggregate_BW_bytes_per_s": 17100000000,
+    "channels": 2,
+    "beat_bytes": 64,
+    "beat_credit_per_channel": 32,
+    "descriptor_credit_per_channel": 32
+  },
+  "extra_inputs_sha256": {
+    "manifest.json": "d13bb74bdff3ccc6b5b81428c8957c53dbf41726bbef04910870024433b63c7a",
+    "m-profile.log": "00868657995ca77b7e87a07ef0ec69155893e566c72b665d8f4b071ba63f5b3c",
+    "baseline-results.json": "4a6e7ed77cf4e8ad83ff0d2511216dbc903a82baf54872df79eef4f1e1c16dbe"
+  },
+  "candidate_control_budgets": {
+    "prefix_metadata_bytes_per_P": 16,
+    "write_combiner_metadata_bytes_per_P": 128,
+    "write_combiner_data_bytes_in_S": 512,
+    "bookkeeping_core_cycles": 1,
+    "bookkeeping_sensitivity_core_cycles": 3,
+    "qualification": "architectural budgets; no new RTL or physical qualification"
+  }
+}
