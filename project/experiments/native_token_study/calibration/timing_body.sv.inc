@@ -36,7 +36,7 @@
   while(!cmd_done)begin @(posedge clk);#1;end
   if(cmd_error)$fatal(1,"command error op=%0d index=%0d",op,index);
   result=cmd_result;
-  $display("CAL {\"kind\":\"command\",\"case\":%0d,\"op\":%0d,\"index\":%0d,\"K\":%0d,\"N\":%0d,\"rows\":%0d,\"Awide\":%0d,\"Bwide\":%0d,\"store\":%0d,\"accepted\":%0d,\"done\":%0d,\"latency\":%0d,\"leaf_latency\":%0d,\"previous_accept\":%0d,\"stores\":%0d}",case_id,op,index,k,n,rows,aw,bw,writes,accepted,cycle,cycle-accepted,leaf_response-leaf_accept,prior_cmd_accept,store_count-before_stores);
+  $display("CAL {\"kind\":\"command\",\"case\":%0d,\"op\":%0d,\"index\":%0d,\"data_hex\":\"%016h\",\"scale_shift\":%0d,\"K\":%0d,\"N\":%0d,\"rows\":%0d,\"Awide\":%0d,\"Bwide\":%0d,\"store\":%0d,\"accepted\":%0d,\"done\":%0d,\"latency\":%0d,\"leaf_latency\":%0d,\"previous_accept\":%0d,\"stores\":%0d}",case_id,op,index,data,dut.context_mode.multiply.scale_shift,k,n,rows,aw,bw,writes,accepted,cycle,cycle-accepted,leaf_response-leaf_accept,prior_cmd_accept,store_count-before_stores);
   prior_cmd_accept=accepted;
  endtask
  task automatic load(input integer rows,tiles,input bit bw);

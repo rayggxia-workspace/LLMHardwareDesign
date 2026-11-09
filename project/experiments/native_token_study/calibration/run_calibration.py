@@ -46,6 +46,14 @@ def audit(rows):
             assert r['leaf_latency'] == leaf, ('leaf', r, leaf)
             assert r['latency'] == command_done_latency(leaf, bool(r['store'])), ('wrapper', r)
             assert r['stores'] == r['store'], ('write ACK count', r)
+            data = int(r['data_hex'],16)
+            if op == 4:
+                assert (data & 65535) == 1 and r['scale_shift'] == (data >> 16) and r['scale_shift'] in (0,15,30)
+            if op == 13:
+                limb = (data >> 15) & 7
+                assert limb < 3 and r['scale_shift'] == 15 * limb
+                assert ((data >> 18) & 65535) == limb * r['K']
+                assert ((data >> 2) & 1) == (limb == 0) and ((data >> 3) & 1) == (limb == 2)
             if ix and rows[ix-1]['kind'] == 'command' and rows[ix-1]['case'] == r['case']:
                 prev = rows[ix-1]
                 assert r['accepted'] - prev['accepted'] == prev['latency'] + 2, ('accept interval', prev, r)
