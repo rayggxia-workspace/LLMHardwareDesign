@@ -235,3 +235,17 @@ python -B work/Melodydt/247/compare/policy/verify.py
 ```
 
 两P各48/64KiB＋读写并发，与各16KiB＋并发＋8组部分和在同一候选模型比较。固定预取判定后大容量decode仅多约1%至2%、prefill2多约21%至23%；实际S总量分别112/144/48KiB，最后者另计寄存器。端口占用敏感性不等于全芯片降频；同址冲突、真实1R1W宏/前端、面积/时序与真实生成仍未验收。生产RTL和SRAM容量未实装变更。
+
+## U连续融合与有限流水研究（Issue247）
+
+[报告](experiments/issue-247-u-fusion.md)、[源码](../project/experiments/u_fusion_study/README.md)、[证据](../work/Melodydt/247/fusion/README.md)。run07/101720原生单N/E有限FIFO108测量、run09/101728实际条件SystemC22完整case通过；并发整图数字仅冻结阶段费用的条件重放。生产RTL不改、SRAM扩容不实装；run06/08失败证据保留。
+
+```sh
+# 在独立Slurm目录，先核验source-files/input-files SHA；job.sh与job_overlap.sh均4核。
+python3 -B source/project/experiments/u_fusion_study/run.py --inputs inputs --out results --prior run05-result.json
+python3 -B source/project/experiments/u_fusion_study/run_overlap.py --repo source --out results --workers 4 --manifest inputs.json
+# 本机只读证据核验，不运行RTL/SystemC。
+python -B work/Melodydt/247/fusion/verify.py --repo . --index work/Melodydt/247/fusion/index.json
+```
+
+各out必须为新目录，真实40位源码commit在inputs.json；原生依赖、外部SRAM和工具SHA固定。完整事件保留服务器，部分日志/完整模型结果通过.gz.b64无损发布并验证原SHA。无实际大模型生成、完整张量数值或新物理资格。

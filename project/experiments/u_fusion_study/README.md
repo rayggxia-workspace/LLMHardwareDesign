@@ -1,5 +1,11 @@
 # U连续算子融合与有限缓冲重叠
 
+本轮实际完成run07/101720原生FIFO RTL与run09/101728完整融合/重放研究；结果和边界见[详细报告](../../../docs/experiments/issue-247-u-fusion.md)与[证据](../../../work/Melodydt/247/fusion/README.md)。22完整case、9默认回归、12小trace、3非法CLI通过；原生FIFO108测量通过。run06/08失败现场保留。以下为冻结设计/运行合同，所有计划项的实际状态以上述回执为准。
+
+新增`overlap_control.sv`/`prepare_overlap.py`/`run_overlap.py`由`source-overlap.json`独立锁定。用`job_overlap.sh`申请4核，执行`python3 -B source/project/experiments/u_fusion_study/run_overlap.py --repo source --out results --workers 4 --manifest inputs.json`。它使用单个原N/E/S和136位/项FIFO，既有生产RTL不改；实际17/34/68B数据标签预算不等于综合面积。
+
+重放输入768B/输出256B、4输入描述符；实际顺序模型不受候选FIFO槽限制。超预算的36个prefill region/148608packet整段保持串行，仍记录全部输入、事件与真实融合，不能删去第四输入或扩大免费缓冲。92重放调度/15负例覆盖这一边界。
+
 Issue247 / PR243，负责人Melodydt。冻结前轮分支2f875d2f5cdd76c6eb17187bf6d836de1248b466及run05真实结果，研究连续算子中间量旁路、单E执行资源下的供数/执行/写回重叠，并独立测量现有原生N→E通路。只新增隔离研究，生产RTL与SRAM容量不变。
 
 两层证据分开：条件架构模型沿用PR241原生S32/96位M与流水E32假设；原生RTL使用已有S16宏、真实SRAM功能模型和现有直连合同。不得将二者性能或物理资格相互转移。旧模型已有canonical寄存器复用和P DMA重叠，本研究不重复计算这些收益。
@@ -20,4 +26,4 @@ Issue247 / PR243，负责人Melodydt。冻结前轮分支2f875d2f5cdd76c6eb17187
 python3 -B source/project/experiments/u_fusion_study/run.py --inputs inputs --out results --prior run05-result.json
 ```
 
-以`job.sh`申请4核c64/c96、UNLIMITED，在固定ORFS容器和SystemC3.0.2/Verilator5.042环境执行。原225 kernels、4 validation、5 smoke及独立oracle保留；计划22完整trace，先9个默认回归，再13个实际融合/控制代价对照。输入SHA、前置完整回执/manifest与source.json全部绑定，P源码生成文件必须与run05逐字节一致。实际运行结果以完成后的回执为准，管理结构检查不替代业务或物理验收。
+以`job.sh`申请4核c64/c96、UNLIMITED，在固定ORFS容器和SystemC3.0.2/Verilator5.042环境执行。原225 kernels、4 validation、5 smoke及独立oracle保留；实际运行22完整trace，先9个默认回归，再13个实际融合/控制代价对照。输入SHA、前置完整回执/manifest与source.json全部绑定，P源码生成文件必须与run05逐字节一致。实际运行结果以完成后的回执为准，管理结构检查不替代业务或物理验收。
