@@ -26,6 +26,8 @@ DESIGNS={
  'b85_p3_m4_e8':{'bw':85.5,'beat':256,'swidth':128,'pcount':3,'mscale':4,'elanes':8,'batch_exp':1},
  'b102_p2_m2_e8':{'bw':102.4,'beat':256,'swidth':128,'pcount':2,'mscale':2,'elanes':8,'batch_exp':1},
  'b102_p3_m2_e8':{'bw':102.4,'beat':256,'swidth':128,'pcount':3,'mscale':2,'elanes':8,'batch_exp':1},
+ 'b17_p3_m2_e8':{'pcount':3,'mscale':2,'elanes':8,'batch_exp':1},
+ 'b34_p3_m2_e8':{'bw':34.2,'beat':128,'swidth':128,'pcount':3,'mscale':2,'elanes':8,'batch_exp':1},
 }
 # All resource candidates now use the independently testable byte-plane M
 # ABI. Preserve prior17 as the explicitly historical abstraction.

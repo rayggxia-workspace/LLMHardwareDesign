@@ -1,6 +1,6 @@
 # Qwen2.5-3B：与用户已有 openTPU / LLAccel 实验对照及三轮改进
 
-关联 Issue #240 / PR #241。本地独立实验；没有更新 GitHub PR、主线程分支或原实验。
+关联 Issue #240 / PR #241。此文件为先前独立实验的历史说明，后续十token研究见同目录RESULTS.md。文中“未上传”、本地路径和旧generated路径均是当时状态；其JSON已归档至evidence/prior-rounds，不代表当前PR发布状态。
 基线源：PR241 e7aeed2097f57a5f910cae70eb51a220c49a8a14，model.cpp SHA-256 为
 84aa752da4afaece43947f9ba86e2ab3665b5b8e72dc0a4bbca208b85cffd6e5。
 

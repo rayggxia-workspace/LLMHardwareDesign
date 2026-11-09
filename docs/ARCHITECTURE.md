@@ -176,4 +176,6 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 
 ## 独立 SystemC Block 性能研究（Issue240）
 
+追加的[十token双路线及原生M/N验证](../project/experiments/ten_token_study/README.md)使用独立目录、显式资源覆盖和`check_candidates.py`审计。`m_native.sbatch`/`native.sbatch`为原生RTL入口，`m_vectors.py`使用Python无界整数对照，`verify_delivery.py`核验已回收日志和SHA。具体24项计时、61项边界检查、源版本和未完成联合RTL/数值/物理范围见[新报告](../work/YUZE-LU/240/ten-token/RESULTS.md)。这些候选不替换既有验收宏，不改变独立叶宏和顶层后制连接的方法。
+
 [源码与复现](../project/experiments/systemc_block_study/README.md)使用SystemC3.0.2/C++17；[结果与范围](../work/YUZE-LU/240/RESULTS.md)区分真实prefill整数DAG计时与配置派生decode预测。新增服务只属于架构候选，不能继承既有宏的功能/物理资格；不改变顶层后制互联方法。运行`sweep.py`后用`audit_results.py`独立核对34项矩阵工作量、权重流量下界和容量；具体编译、输入和资源/数值小例命令在源码README。

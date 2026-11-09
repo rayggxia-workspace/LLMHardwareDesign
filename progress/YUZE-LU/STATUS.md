@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-09（CST）10 token/s 双路线继续研究
+
+[Issue240](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/240) 当前in_progress，沿用draft [PR241](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/241)。新SystemC候选102.4 GB/s、3P/K16/E8在context512/640预测10.7298/10.1907，context2048仅6.6501；固定17.1 GB/s压缩路线未达10且量化未验收。24项独立审计及61项边界/负向检查通过；Slurm101746的独立N批处理66440值和101753的新M K16/K32共242个响应逐位通过，连续31拍II1通过。源、日志、SHA和资源成本见[新回执](../../work/YUZE-LU/240/ten-token/RESULTS.md)。下一步：真实权重量化/KV数值合同，E32/scoreboard、B银行/DMA/局控的联合RTL，最后物理/能耗；没有宣称现有底座已达10，未改#220或其他工作树。登记PR5 pending，缺board配置，看板unverified/同步pending，审查人待指定。初版交付记录保留如下。
+
 ## 2026-11-09（CST）独立 SystemC Block 研究
 
 [Issue #240](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/240) / [PR #241](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/241)：34计时场景及独立审计、225算术、4资源/ACK、5冒烟、原M RTL九例通过。context512候选decode W16 1.6821 / W8 2.7146 token/s，属于未校准的新硬件假设，未改#220/其他任务；没有申领DP约20%收益。现有M1–M10/M11–M12定制方法与16KiB私有S不变。完整KV数值、能耗、新RTL/物理及同条件FPGA目标未完成；下一步为P供数/累加、E32/S/MEM服务合同的独立审查和RTL校准，见[报告](../../work/YUZE-LU/240/RESULTS.md)。登记PR5 pending；本分支缺board配置，看板unverified/同步pending，沿用Issue7交接。当前任务在线状态已读回为 `in_review`，成果待独立审查。

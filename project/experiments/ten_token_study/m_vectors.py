@@ -44,16 +44,16 @@ def generate(root,lanes):
  (root/'oracle.json').write_text(json.dumps(report,indent=2)+'\n')
  print('VECTORS_READY',lanes,len(lines),len(expected))
 
-def verify(root):
+def verify(root,write=True):
  root=Path(root);expected=json.loads((root/'oracle.json').read_text());actual=[]
  for line in (root/'rtl.log').read_text().splitlines():
   if line.startswith('M_RESULT '):
    _,index,row,error,sat,data=line.split();assert int(index)==len(actual)
    actual.append(dict(row=int(row),error=int(error),sat=int(sat,16),data=f'{int(data,16):064x}'))
  assert actual==expected['expected'],next(((i,a,e) for i,(a,e) in enumerate(zip(actual,expected['expected'])) if a!=e),('length mismatch',len(actual),len(expected['expected'])))
- (root/'verification.json').write_text(json.dumps(dict(passed=True,k_lanes=expected['k_lanes'],responses=len(actual),packets=expected['packets'],scope=expected['scope']),indent=2)+'\n')
+ if write:(root/'verification.json').write_text(json.dumps(dict(passed=True,k_lanes=expected['k_lanes'],responses=len(actual),packets=expected['packets'],scope=expected['scope']),indent=2)+'\n')
  print('M_ORACLE_PASS',expected['k_lanes'],len(actual))
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('mode',choices=['generate','verify']);p.add_argument('root');p.add_argument('--lanes',type=int,default=16);a=p.parse_args()
- generate(a.root,a.lanes) if a.mode=='generate' else verify(a.root)
+ p=argparse.ArgumentParser();p.add_argument('mode',choices=['generate','verify']);p.add_argument('root');p.add_argument('--lanes',type=int,default=16);p.add_argument('--check-only',action='store_true');a=p.parse_args()
+ generate(a.root,a.lanes) if a.mode=='generate' else verify(a.root,not a.check_only)
