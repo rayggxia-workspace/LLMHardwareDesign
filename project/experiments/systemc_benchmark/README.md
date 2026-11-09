@@ -417,3 +417,27 @@ excluded. The sampled parent increment varies0.451..0.782nJ by initialization,
 and must remain a range rather than a generic LC service coefficient. All
 six parent power analyses retain original Liberty/RC and audit1427 remaining
 diode inputs individually. This does not qualify Qwen timing or total energy.
+
+`systemc_n_service.cpp` models paired statistics plus the shared64-step divider
+and32-step square root, including group handshakes and parent observation.
+`n_command_profile.cpp` reuses the public-port driver/assertions in
+`n_activity.cpp`; it can link the previously qualified RTL/gate object libraries.
+Run `n_service_timing_probe.py SOURCE RUNS CACHED_NATIVE_OBJECTS FROZEN NEW_OUTPUT`
+with the matching SystemC library on LD_LIBRARY_PATH. It audits all fixture
+hashes, independent factor answers, six native logs and the SystemC log, and
+executes eight invalid-descriptor rejection checks.246 services cover RMS/L2
+lengths1..2048 with packet counts1..8, Exp and the legacy Exp counterexample.
+All1476 native executions match; this is resident timing, not S/LC integration.
+
+The old native Exp template is semantically wrong for negative inputs: one
+Stats value makes its maximum equal to itself and returns exp(0). The corrected
+leaf recipe is Begin softmax, Stats(count2,[x,0]), Finalize, Exp(count1,x).
+The experiment proves seven negative-input mismatches, not a qualified packet
+formatter or deployed LC lowering. No parent compiler source is changed.
+
+`recipe_matrix.sbatch NEW_OWN_ROOT` is an explicit numerical experiment:
+P128/P512 prefill and P512 decode, each with RMS1/2, all with six finer weighted-
+product fractional bits. It freezes the same checkpoint/weights/quality gate,
+uses six10-core workers on one node and bounds this experiment to30 minutes.
+It changes emitted numerical recipes, never the fixed macro count or claimed
+DP-only gain. A timeout or failed quality gate remains an incomplete result.

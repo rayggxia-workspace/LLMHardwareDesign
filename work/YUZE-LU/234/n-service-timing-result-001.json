@@ -1,0 +1,222 @@
+{
+  "scope": "Audit actual N service RTL/gate responses against a clocked SystemC model.\n\nThe experiment covers serialized resident commands only. Group arithmetic\nanswers are checked independently with integer isqrt; Exp answers come from\nthe frozen native reference. Neither S packet construction nor LC/DMA timing,\nfull-model quality, power or system performance is qualified here.\n",
+  "passed": true,
+  "services": 246,
+  "native_comparisons": [
+    {
+      "kind": "rtl",
+      "initial_seed": "1-143",
+      "services": 246,
+      "passed": true
+    },
+    {
+      "kind": "rtl",
+      "initial_seed": "2-143",
+      "services": 246,
+      "passed": true
+    },
+    {
+      "kind": "rtl",
+      "initial_seed": "2-144",
+      "services": 246,
+      "passed": true
+    },
+    {
+      "kind": "gate",
+      "initial_seed": "1-143",
+      "services": 246,
+      "passed": true
+    },
+    {
+      "kind": "gate",
+      "initial_seed": "2-143",
+      "services": 246,
+      "passed": true
+    },
+    {
+      "kind": "gate",
+      "initial_seed": "2-144",
+      "services": 246,
+      "passed": true
+    }
+  ],
+  "native_service_executions": 1476,
+  "SystemC_version": "3.0.1",
+  "clock_hz": 300000000,
+  "SystemC_input_contains_no_measured_service_latency": true,
+  "different_timings": 0,
+  "exp_semantic_comparison": [
+    {
+      "input_raw_Q10": -32768,
+      "legacy_Stats1_result": 32768,
+      "correct_Stats2_x_zero_result": 0,
+      "different": true
+    },
+    {
+      "input_raw_Q10": -16385,
+      "legacy_Stats1_result": 32768,
+      "correct_Stats2_x_zero_result": 0,
+      "different": true
+    },
+    {
+      "input_raw_Q10": -16384,
+      "legacy_Stats1_result": 32768,
+      "correct_Stats2_x_zero_result": 0,
+      "different": true
+    },
+    {
+      "input_raw_Q10": -8192,
+      "legacy_Stats1_result": 32768,
+      "correct_Stats2_x_zero_result": 11,
+      "different": true
+    },
+    {
+      "input_raw_Q10": -4096,
+      "legacy_Stats1_result": 32768,
+      "correct_Stats2_x_zero_result": 600,
+      "different": true
+    },
+    {
+      "input_raw_Q10": -1024,
+      "legacy_Stats1_result": 32768,
+      "correct_Stats2_x_zero_result": 12055,
+      "different": true
+    },
+    {
+      "input_raw_Q10": -1,
+      "legacy_Stats1_result": 32768,
+      "correct_Stats2_x_zero_result": 32736,
+      "different": true
+    },
+    {
+      "input_raw_Q10": 0,
+      "legacy_Stats1_result": 32768,
+      "correct_Stats2_x_zero_result": 32768,
+      "different": false
+    },
+    {
+      "input_raw_Q10": 1,
+      "legacy_Stats1_result": 32768,
+      "correct_Stats2_x_zero_result": 32768,
+      "different": false
+    },
+    {
+      "input_raw_Q10": 16384,
+      "legacy_Stats1_result": 32768,
+      "correct_Stats2_x_zero_result": 32768,
+      "different": false
+    },
+    {
+      "input_raw_Q10": 32767,
+      "legacy_Stats1_result": 32768,
+      "correct_Stats2_x_zero_result": 32768,
+      "different": false
+    }
+  ],
+  "invalid_descriptors": [
+    {
+      "descriptor_text": "4 1 1\n",
+      "rejected": true
+    },
+    {
+      "descriptor_text": "1 0 1\n",
+      "rejected": true
+    },
+    {
+      "descriptor_text": "1 9 1\n",
+      "rejected": true
+    },
+    {
+      "descriptor_text": "1 1 0\n",
+      "rejected": true
+    },
+    {
+      "descriptor_text": "1 1 65536\n",
+      "rejected": true
+    },
+    {
+      "descriptor_text": "0 1 2\n",
+      "rejected": true
+    },
+    {
+      "descriptor_text": "1 1 1\n1\n",
+      "rejected": true
+    },
+    {
+      "descriptor_text": "1 1 1 extra\n",
+      "rejected": true
+    }
+  ],
+  "legacy_native_lowering_valid_for_NExp": false,
+  "corrected_native_NExp_recipe": "Begin softmax; Stats(count2, packed [x,0]); Finalize; Exp(count1,x)",
+  "packet_formatter_and_LC_lowering_qualified": false,
+  "DP_gain_claimed": false,
+  "hardware_modified": false,
+  "full_model_quality_qualified": false,
+  "system_timing_qualified": false,
+  "total_energy_qualified": false,
+  "inputs_sha256": {
+    "/home/lululu/llhd-issue234-225e4a762/raw/n-service-source-004/descriptors.tsv": "380becfb018beab535af66041bb5c95ea8d68d93a30b4d9122592b4f86ce43fb",
+    "/home/lululu/llhd-issue234-225e4a762/raw/n-service-source-004/fixtures.tsv": "f2b456fdcb537d8cf770467af41a7c486621148c8d86c20fc9b7db3720d66a9b",
+    "/home/lululu/llhd-issue234-225e4a762/raw/n-service-source-004/n_activity.cpp": "e8cdea76a1979f669685895b6f228ce24967e5d796ff20a4feb12c844e2df0ff",
+    "/home/lululu/llhd-issue234-225e4a762/raw/n-service-source-004/n_command_profile.cpp": "a5f56a0b80e69d5a3dd6b1be6d9fc6d33baad474db3ecfc9752549d3f1631d76",
+    "/home/lululu/llhd-issue234-225e4a762/raw/n-service-source-004/oracle.stderr": "b280c454d6f559e56eb3f5ed39f3ba084b8d1744a3ff7fe016b21ff86dea1aca",
+    "/home/lululu/llhd-issue234-225e4a762/raw/n-service-source-004/systemc_n_service.cpp": "f35f40fd772b667a9eac70ecb24c8391f2951794de3244ab84e7b22813bc0b90",
+    "/home/lululu/llhd-issue234-225e4a762/raw/n-service-source-004/generation.json": "d300f86d31f394d6eac162bb182f245f27095e426b9dd31c8ca4048951cff5db",
+    "/home/lululu/llhd-issue234-225e4a762/raw/frozen220/project/experiments/block_synthesis/streaming_ir.py": "aa3fb94e01fbee872ffe5ab20ab5bf8d3cd7d7bb43053bb76792387bfb7116be",
+    "/home/lululu/llhd-issue234-225e4a762/raw/frozen220/project/experiments/block_synthesis/wide_program.py": "03d68c3a02a73bf2787d05c1222439b0a412a83f8fa8b5178e69631e0f4d95d5",
+    "/home/lululu/llhd-issue234-225e4a762/raw/n-service-audit-source-002/n_service_timing_probe.py": "9b0a44e3a75b7b01911abd623148c78f3dcc14e13a2cd962f7ad27e8948c8c4a",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/rtl-1-143.log": "615d1caf9baa306130f7b0a0e41cfdc9fbc631e2615be4b812866707eec1c927",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/rtl-2-143.log": "615d1caf9baa306130f7b0a0e41cfdc9fbc631e2615be4b812866707eec1c927",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/rtl-2-144.log": "615d1caf9baa306130f7b0a0e41cfdc9fbc631e2615be4b812866707eec1c927",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/n-rtl": "412404d1217b763c3c04e5782d3b6277775e124ee820ea618be00535939dc1e0",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/build-rtl.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/lululu/llhd-issue234-225e4a762/n-rtl-001/obj-rtl/Vblock_v2_n__ALL.a": "de1748741eb15532fe2d4c4d4fa93d10b9973c622450c7014fbf5d62fb533c54",
+    "/home/lululu/llhd-issue234-225e4a762/n-rtl-001/obj-rtl/verilated.o": "88f2dd7ad96c291a1b28d712da630cffbb5aa134d9d9b96ad6e8b23ec10635ef",
+    "/home/lululu/llhd-issue234-225e4a762/n-rtl-001/obj-rtl/verilated_vcd_c.o": "a13af88b1c3eb27ba99fe1f7600a81a22b139e299c5571ece39192b80db4f676",
+    "/home/lululu/llhd-issue234-225e4a762/n-rtl-001/obj-rtl/verilated_threads.o": "f1199ef2e73a47a6eea08182ec8f8f9ac3d9badf76e6448987dd3d6cc401b786",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/gate-1-143.log": "615d1caf9baa306130f7b0a0e41cfdc9fbc631e2615be4b812866707eec1c927",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/gate-2-143.log": "615d1caf9baa306130f7b0a0e41cfdc9fbc631e2615be4b812866707eec1c927",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/gate-2-144.log": "615d1caf9baa306130f7b0a0e41cfdc9fbc631e2615be4b812866707eec1c927",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/n-gate": "7bb3b60a30ea1f48819ac89209996250efc823bd8e4daf86b98a6bea0b12abd8",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/build-gate.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/lululu/llhd-issue234-225e4a762/n-rtl-001/obj-gate/Vblock_v2_n__ALL.a": "26b8e72e914eb2fcb6185a33fecbfffb642bedcf9ed3b8a527d582c464d48d19",
+    "/home/lululu/llhd-issue234-225e4a762/n-rtl-001/obj-gate/verilated.o": "88f2dd7ad96c291a1b28d712da630cffbb5aa134d9d9b96ad6e8b23ec10635ef",
+    "/home/lululu/llhd-issue234-225e4a762/n-rtl-001/obj-gate/verilated_vcd_c.o": "a13af88b1c3eb27ba99fe1f7600a81a22b139e299c5571ece39192b80db4f676",
+    "/home/lululu/llhd-issue234-225e4a762/n-rtl-001/obj-gate/verilated_threads.o": "f1199ef2e73a47a6eea08182ec8f8f9ac3d9badf76e6448987dd3d6cc401b786",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/systemc.log": "6ace96523253ffe0a22a64941503cee9230c40b2508c709a522885911e0c282f",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/systemc-n-service": "2524d91b22162bfd88d7b0f3f51dce230e0f2ec077c115c59100f04affd2c94f",
+    "/home/lululu/llhd-issue234-225e4a762/n-service-004/build-systemc.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "archive": {
+    "path": "/home/lululu/llhd-issue234-225e4a762/raw/n-service-results-001.tar.gz",
+    "sha256": "4e9eb22067aee417eb0941f5971481b980b620f19e73b73e30e7c82be8812be7",
+    "bytes": 24115763,
+    "files": 107,
+    "all_member_sha256_verified": true
+  },
+  "preserved_failures": [
+    "001 source preparation failed before build because new files were initially in own worktree root. Paths corrected; partial source kept.",
+    "002 mixed RMS/L2 fixtures exposed that old activity-helper command timing keys omit mode. New driver resets only this per-mode timing dictionary per fixture; all hardware/data assertions retained.",
+    "004 audit first invalid-descriptor subprocess lacked SystemC runtime library search path. Failure log retained; identical frozen binary/audit pass with explicit LD_LIBRARY_PATH in audit-002."
+  ],
+  "original_N_physical_provenance": {
+    "gate_binary_sha256": "062da30af662046f6a006dc2086e3081cd07e8a5d811078502445ccdfcfb0b47",
+    "physical_sha256": {
+      "6_final.odb": "e195082cfb79bed9f73cd9bdeb90eca15715f2489f161c52d0ab0d66710409ba",
+      "6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+      "6_final.spef": "06cf41284e681a81fd1a0876408988f8c21de926bb7c446d7e1e8f7c51400090",
+      "6_final.v": "54fe72a4ad3b00381fd52cb03118e8c7b7458988fc13898c384727a7231ab02e"
+    },
+    "original_liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "oracle_sha256": "6c6b1a0b99ed3ae2f194459d133c9aadc584aa7e080a3737cc8d4c0286fd853f",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "gcc": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+    "original_physical_archive_sha256": "81077733877a58d0fa80ebc40951fc229b70e94666d04c50a5387a2ae8e7457c",
+    "execution_scope": "local WSL accepted gate/RTL activity with original Nangate Liberty and extracted RC; zero-delay no glitches",
+    "whole_chip_qualified": false
+  },
+  "remote_archive": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/local-results-011/n-service-results-001.tar.gz",
+  "remote_archive_sha256_verified": true,
+  "recorded_at": "2026-11-09T11:51:50.527232+08:00"
+}

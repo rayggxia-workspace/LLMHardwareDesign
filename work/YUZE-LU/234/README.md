@@ -464,3 +464,23 @@ SystemC后端，继续补LC/MC/互联/时钟/外存。所有硬件/精度/配方
 
 完整3B连续D128、已校准整网SystemC时间/总J/token和FPGA双指标仍未达标。固定九组/3M与原外存预算先优化，扩容另评。
 继续in_progress、PR235草稿，不关闭任务。登记PR5 pending；缺board配置/Projects能力，看板unverified/同步pending，审查人待指定。
+
+## 2026-11-09 11:53 CST：数值候选008终态与N服务SystemC
+
+- [101535终态](cached-integer-result-008.json)：FAILED1:0、2m59s。六形状18次与执行**同一候选程序**的旧adapter逐位一致，非默认程序逐位一致。
+  P0Q2三样本由失败转通过，其他四个既有通过形状保持通过；P0Q1仍失败原HF门，未放宽。
+  Q2 layer2低值行down误差从3.18–4.73%降到0.081–0.104%，Add后从0.915–1.313%降到0.038–0.043%，
+  后续RMS约从1.31–1.76%降到0.066–0.099%。这支持FFN门乘粗格式误差被后续投影放大的归因。
+  Q1晚层V的2.06–3.97%误差已几乎全部存在于S16权重DQ-FP32；细化激活不能宣称修复权重误差。
+  这是精度配方修正，DP收益仍为零，不是整模型生成或速度结果。60文件5.147MB包逐项、本地/远端SHA均核验。
+- [N服务SystemC](n-service-timing-result-001.json)：两lane统计、64步除法/32步平方根及group握手，246个配置与RTL/最终网表三初态共1476次服务一致；
+  覆盖RMS/L2长度1..2048、Stats包长1..8及Exp，八个非法/截断描述符拒绝。
+  原生因子用独立整数isqrt核对。旧NExp只Stats(x)的错误被7个负输入实测证明；正确Stats([x,0])仍需完整包构造/LC lowering验收。
+  源准备路径错误、夹具跨模式Finalize错误比较、首次缺SystemC动态库环境的失败均保留；无硬件或断言放宽。
+  107文件24.116MB归档完整成员及远端local-results-011的SHA一致。仍非S/LC/DMA耦合或整网时间/能量。
+- 新增明确数值实验脚本recipe_matrix.sbatch：P128/P512 prefill与P512 decode，各RMS1/2且weighted product+6小数位；
+  保持checkpoint/权重/质量门和九组资源，六任务×十核、30分钟。下一轮先验证数值修复能否进入完整主场景，不把配方新增指令计作DP收益。
+  101486等待Priority，仅首token实验，未更改其冻结源。新矩阵尚未提交作业，不预报完成时间。
+
+41项单位检查、原生/SystemC实际校准与管理结构检查继续分列。任务仍in_progress：完整3B连续D128、整网SystemC token/s和总J/token、公开FPGA双门槛均未达标。
+规则rayggxia-project-collab1.0.0；登记PR5 pending，看板unverified/同步pending，审查人待指定。

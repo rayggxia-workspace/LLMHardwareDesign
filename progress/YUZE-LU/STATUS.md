@@ -1,5 +1,15 @@
 # YUZE-LU 的进度
 
+## 2026-11-09 11:53 CST：Issue234数值候选与N模型
+
+[Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，in_progress。
+候选101535 FAILED1:0/2m59s；P0Q2三样本修复通过、P0Q1仍失败原门，其他四形状通过保持。FFN低行down误差3.18–4.73%降至0.081–0.104%，
+这是数值配方修复，DP收益零；18次同候选程序与旧adapter逐位一致，不冒充默认程序等价。60文件5.147MB已完整SHA回收。
+N SystemC246服务与真实RTL/最终网表三初态共1476次时序一致，独立isqrt核对因子，八非法描述符拒绝；7个负输入证实旧Exp Stats1语义错误，Stats2仍需包构造/LC lowering验收。
+107文件24.116MB包已完整成员/远端SHA核验。41项单位检查、管理结构、语法及diff检查通过；原生校准独立记录。
+新增完整主场景数值矩阵脚本（P128/P512 prefill、P512 decode，RMS1/2且门乘细6位），尚未提交作业；101486仍等Priority、源未改。
+完整3B D128、整网SystemC token/s/总J/token、FPGA双门槛仍未达标，固定九组/原预算继续优化。登记PR5 pending，看板unverified/同步pending，审查人待指定；见[账本](../../work/YUZE-LU/234/README.md)。
+
 ## 2026-11-09 11:29 CST：Issue234组件校准继续
 
 [Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [草稿PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，仍in_progress。
