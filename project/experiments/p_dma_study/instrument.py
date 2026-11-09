@@ -55,7 +55,7 @@ def generate():
     change('row_misses+=miss;row[bank]=r;',
            'dc.bank_wait+=command-issue;dc.row_misses+=miss;row_misses+=miss;row[bank]=r;')
     change('last_direction=b->write;',
-           'if(last_direction!=-1&&last_direction!=static_cast<int>(b->write))++dc.turns;last_direction=b->write;')
+           'if(last_direction!=-1&&last_direction!=static_cast<int>(b->write)){++dc.turns;}\n    last_direction=b->write;')
     change('U response=std::max(bus_free,due)+beat_time;',
            'dc.bus_wait+=std::max(bus_free,due)-due;dc.bus_work+=beat_time;'
            'U response=std::max(bus_free,due)+beat_time;')
