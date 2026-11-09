@@ -20,6 +20,17 @@ def replay(tile,program,inputs):
             raise ValueError('invalid row actor geometry')
         memory[name]=[None]*a['words'];tags[name]={}
     row_timing=program['row_timing'];scalar=program['scalar_timing']
+    contract=program.get('operand_contract');masked=contract is not None
+    if masked:
+        mask=contract.get('operand_mask',{});proof=contract.get('proof',{});shas=[proof.get('manifest_sha256',''),*proof.get('logs_sha256',[])]
+        if (contract.get('kind')!='native-resident-services-active-prefix-v1' or mask.get('kind')!='native-M-active-prefix-v1' or
+            mask.get('padding_writes') is not False or mask.get('initializations')!=['zero','ones','mixed','unknown'] or
+            mask.get('rows')!=[1,8] or mask.get('k')!=[1,2] or mask.get('columns')!=1 or
+            contract.get('rtl_sha256')!=row_timing['rtl_sha256'] or contract.get('profile')!=row_timing['profile'] or
+            len(shas)!=5 or len(set(shas[1:]))!=4 or
+            any(not isinstance(s,str) or len(s)!=64 or any(c not in '0123456789abcdef' for c in s) for s in shas) or
+            len(proof.get('cases_per_initialization',[]))!=4 or any(type(n)!=int or n<1 for n in proof['cases_per_initialization'])):
+            raise ValueError('independent active-prefix proof differs')
     from resident_timing import validate
     validate(scalar)
     if (row_timing.get('kind')!='native-resident-row-services-v1' or
@@ -110,17 +121,20 @@ def replay(tile,program,inputs):
                     n['terms'][ti]['scale_shift']!=t['scale_shift'] for n in ns)):
                 raise ValueError('row M changed scalar native semantics')
             if e['a']%4 or e['k'] not in (1,2):raise ValueError('row feeder alignment/segment differs')
-            for j in range(4*((r+3)//4)):
-                word=read(actor,e['a']+j)
-                if j>=r and word!=0:raise ValueError('row A guard changed')
+            if e['a']+4*((r+3)//4)>a['words']:raise ValueError('row A wide read crosses SRAM boundary')
+            if not masked:
+                for j in range(4*((r+3)//4)):
+                    word=read(actor,e['a']+j)
+                    if j>=r and word!=0:raise ValueError('row A guard changed')
             av=[read(actor,e['a']+j,record) for j,record in enumerate(e['a_records'])]
             if e['reuse_b']:
                 if actor not in bank or bank[actor][0]!=t['b'] or e['b'] is not None:raise ValueError('row B reuse lacks real matching bank')
                 bv=bank[actor][1]
             else:
                 if e['b']%4:raise ValueError('row B feeder address is unaligned')
+                if e['b']+8>a['words']:raise ValueError('row B wide read crosses SRAM boundary')
                 bv=read(actor,e['b'],t['b'])
-                if any(read(actor,e['b']+j)!=0 for j in range(1,8)):raise ValueError('row B guard changed')
+                if not masked and any(read(actor,e['b']+j)!=0 for j in range(1,8)):raise ValueError('row B guard changed')
                 bank[actor]=(t['b'],bv)
             for j,word in enumerate(av):
                 old['acc'][j]+=sum(s16(word,k)*s16(bv,k) for k in range(e['k']))*t['coefficient']*(1<<t['scale_shift'])

@@ -322,6 +322,14 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
 # 2026-11-09：外存访问与有限S优化入口
 
+迭代22：[有效字合同](../project/experiments/block_synthesis/RESIDENT_OPERAND_MASK.md)限定未改动RTL的N1/K1,K2多行读范围。
+`resident_mask_survey.py IMMUTABLE_TILE IR MASK_QUALIFICATION NEW_OUTPUT --width 8`保留旧模式，比较启用相同能力的强贪心与DP；合同缺失时不放宽读约束。
+`run_mask_services.py PREPARED_PROBE`核对四态各288服务；`run_batch_programs.py PREPARED_COMPLETE_PROGRAMS`核对完整程序四态及实际错行故障。
+上述两个执行器位于`work/YUZE-LU/219/throughput-opt/`；探针准备入口在`resident_mask_probe.py`及`resident_batch_probe.py`。
+`python work/YUZE-LU/219/throughput-opt/analyse_resident_traffic.py PROGRAMS_JSON FRESH_RESULT`先执行所有输入的独立有限S回放，再分类已有副本、地址变化、后备存储和边界提交。
+现行完整算法测试命令仍为`python -m unittest discover -s project/experiments/block_synthesis -p 'test_*.py'`，Windows/Linux及冻结服务器各312通过。
+Windows测试需可写临时目录；真实SRAM服务证据、冷tile结果与未完成系统范围见[迭代22](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_22.md)。
+
 2026-11-09迭代18：[条件原生表达式复用合同](../project/experiments/block_synthesis/NATIVE_REUSE.md)
 和[结果/证据边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_18.md)。
 `resident_cover_survey.py IR QUALIFIED_PROOF NEW_OUTPUT --continuation --value-reuse`保留旧候选，并增加条件复用/重算。

@@ -39,7 +39,8 @@ def main():
             for key in ('total_ticks','copy_ticks','native_service_ticks','external_words','expanded'):
                 if row['plans'][name][key]!=program[key]:raise ValueError('survey summary differs')
         strongest=min((p for n,p in programs.items() if 'greedy' in n),key=lambda p:p['total_ticks'])
-        dp=programs['batch_dp'];gain=1-dp['total_ticks']/strongest['total_ticks']
+        dp=min((p for n,p in programs.items() if 'dp' in n),key=lambda p:p['total_ticks'])
+        gain=1-dp['total_ticks']/strongest['total_ticks']
         if abs(gain-row['dp_vs_strongest_greedy_fraction'])>1e-15:raise ValueError('wrong comparison denominator')
         rows.append({'region':row['primitives'][0],'rows':row['rows'],'dp_gain_fraction':gain,
                      'file_sha256':hashlib.sha256(file.read_bytes()).hexdigest()})

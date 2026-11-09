@@ -57,8 +57,10 @@ def event_ticks(event,row_timing,scalar_timing):
 
 
 def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch=True,rank_policy='future_copies',
-         schedule='fixed',grouping_policy='windows'):
+         schedule='fixed',grouping_policy='windows',operand_contract=None):
     verify(tile);validate_timing(row_timing,scalar_timing)
+    from resident_operand_contract import validate as validate_operands
+    masked=validate_operands(operand_contract,row_timing)
     if width is not None and (type(width)!=int or width<1):raise ValueError('positive batch frontier width required')
     if rank_policy not in ('copy_cost','future_copies','future_layout'):raise ValueError('unknown batch frontier ranking')
     if schedule not in ('fixed','ready'):raise ValueError('unknown native scheduling family')
@@ -133,30 +135,36 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
         if commit_for is not None:e['commit_for']=commit_for
         s=emit(s,[e],copy=meta[ai]['store_ticks'],stores=1)
         return replace(s,backed=s.backed|{value}) if target==canonical else s
-    def evict(s,ai,at,needed):
-        for value in dict.fromkeys(s.cells[ai][at]):
+    def evict(s,ai,at,needed,overwrite=None):
+        count=len(s.cells[ai][at]) if overwrite is None else overwrite
+        for value in dict.fromkeys(s.cells[ai][at][:count]):
             if value in (None,ZERO) or value not in needed or value not in produced or value in s.backed:continue
             owners=locations(s,value)
-            if not any(a!=ai or c!=at for a,c,j in owners):
+            if not any(a!=ai or c!=at or j>=count for a,c,j in owners):
                 j=s.cells[ai][at].index(value);s=store(s,ai,at,j)
-        return cell(s,ai,at,[x if x==ZERO else None for x in s.cells[ai][at]])
-    def allocations(s,ai,protected,needed):
+        return cell(s,ai,at,[x if j>=count or x==ZERO else None for j,x in enumerate(s.cells[ai][at])])
+    def allocations(s,ai,protected,needed,overwrite=None):
         # Empty cells are symmetric only within the same written-zero class.
         free={};occupied=[]
         for at,entry in enumerate(s.cells[ai]):
             if at in protected:continue
-            if all(x in (None,ZERO) for x in entry):free.setdefault(tuple(x==ZERO for x in entry),at)
+            if overwrite is not None:
+                if all(x in (None,ZERO) for x in entry[:overwrite]):free.setdefault(entry[overwrite:],at)
+                else:occupied.append(at)
+            elif all(x in (None,ZERO) for x in entry):free.setdefault(tuple(x==ZERO for x in entry),at)
             else:occupied.append(at)
         fullzero=(True,)*meta[ai]['stride']
-        choices=[free[fullzero]] if fullzero in free else [*free.values(),*occupied]
-        for at in choices:yield evict(s,ai,at,needed),at
+        choices=[free[fullzero]] if overwrite is None and fullzero in free else [*free.values(),*occupied]
+        for at in choices:yield evict(s,ai,at,needed,overwrite),at
     def ensure(s,ai,records,protected,needed):
         stride=meta[ai]['stride']
         if not records or len(records)>stride or any(x not in objects for x in records):raise ValueError('invalid batch operand layout')
         pattern=tuple(records)+(ZERO,)*(stride-len(records))
+        active_prefix=masked and meta[ai]['kind']=='M'
         for at,entry in enumerate(s.cells[ai]):
+            if active_prefix and entry[:len(records)]==tuple(records):yield s,at;return
             if entry==pattern:yield s,at;return
-            if entry[:len(records)]==tuple(records) and all(x in (None,ZERO) for x in entry[len(records):]):
+            if not active_prefix and entry[:len(records)]==tuple(records) and all(x in (None,ZERO) for x in entry[len(records):]):
                 events=[{'op':'LOAD_ZERO','actor':names[ai],'address':at*stride+j,
                          'external_address':zero_address,'wait_ack':True} for j in range(len(records),stride) if entry[j]!=ZERO]
                 ns=emit(s,events,copy=len(events)*meta[ai]['load_ticks'],loads=len(events)) if events else s
@@ -166,9 +174,10 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
                 owners=locations(s,value)
                 if not owners:raise ValueError('batch lost a dirty native value')
                 s=store(s,*owners[0])
-        for ns,at in allocations(s,ai,protected,needed):
+        overwrite=len(records) if active_prefix else None
+        for ns,at in allocations(s,ai,protected,needed,overwrite):
             events=[];entry=ns.cells[ai][at]
-            for j,value in enumerate(pattern):
+            for j,value in enumerate(tuple(records) if active_prefix else pattern):
                 if value==ZERO:
                     if entry[j]==ZERO:continue
                     e={'op':'LOAD_ZERO','actor':names[ai],'address':at*stride+j,'external_address':zero_address,'wait_ack':True}
@@ -176,7 +185,7 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
                         'external_address':objects[value]['external_address'],'wait_ack':True}
                 events.append(e)
             ns=emit(ns,events,copy=len(events)*meta[ai]['load_ticks'],loads=len(events))
-            yield cell(ns,ai,at,pattern),at
+            yield cell(ns,ai,at,tuple(records)+entry[len(records):] if active_prefix else pattern),at
     def bound(s):
         if rank_policy=='copy_cost':return 0
         # At most one first future consumption per record is charged. Layout
@@ -242,7 +251,7 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
             active=trim(more)
         more=[]
         for s in active:
-            for ns,at in allocations(s,ai,set(),needed):
+            for ns,at in allocations(s,ai,set(),needed,r if masked else None):
                 records=[n['output'] for n in [nodes[x] for x in members]]
                 # Final writes are scalar SRAM transactions, one per row. The
                 # same M accumulator is held until every row has its write ACK.
@@ -352,6 +361,7 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
     events=[event for chunk in reversed(events) for event in chunk]
     return {'status':'planned','kind':'native-resident-row-program-v1','tile_sha256':digest(tile),
         'actors':actors,'zero_address':zero_address,'row_timing':row_timing,'scalar_timing':scalar_timing,
+        'operand_contract':operand_contract,
         'events':events,'total_ticks':best.cost,'copy_ticks':best.copies,'native_service_ticks':best.cost-best.copies,
         'external_load_words':best.loads,'external_store_words':best.stores,'external_words':best.loads+best.stores,
         'width':width,'rank_policy':rank_policy,'allow_batch':allow_batch,'schedule':schedule,'grouping_policy':grouping_policy,
