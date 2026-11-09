@@ -5,7 +5,8 @@
 ## 当前研究：结合 PR220/241 提高 token/s
 
 - [Issue247：固定SRAM的面积换速度研究](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247) 已获用户授权按顺序开展，状态in_progress，沿task/242-r-load-bounds / PR243。先验证多组96位部分和与K块A复用，再验证P输入弹性缓冲/完成协议，随后研究S端口并发、M/P规模、U流水。仅隔离模型/实验RTL；生产RTL未改。新增面积预算单列，SRAM容量保持16KiB。
-- 开始检查：本人GitHub账号Melodydt、PR243 head7e4fe6980c9d126b6a4152ddec5806a3d0966ba2及无新评论；本地管理结构、Issue245/246全部既有轻量证据及功能源SHA验证通过。源码仍为本人非Git快照；新服务器仿真尚未提交，提交后登记作业、源码与SHA，不把准备描述成已执行。登记pending，看板unverified/同步pending，独立审查人与管理员待指定。
+- 第一阶段源码9015effa13879bf8b5779905a4c83f53af8f2085，Slurm101631/mdt-area-speed、c64/node1/4核，4分57秒COMPLETED0:0；35完整trace、480数值配置/120生命周期/20错误注入、原225kernels/4validation/5smoke通过，92回收输出SHA一致。W8旧组合ctx8/16分别3.230811/3.243464（增量+5.46/+5.87%），原调度和W16退化；switch3/8退化，prefill不触发。结果/public/home/yuzelu/Melodydt/issue247-area-speed/run01/results/result.json，SHA62c787396bd331cb2c6d8a0a4352a4ebb83456616eb141bc50c33655d84f3fc3。
+- 独立复核发现空列P的调用审计应计入enabled_calls，已修审计并准备实际C++空P/尾N/K边界补测；模型功能源保持首轮SHA。第二阶段隔离两槽RTL、显式empty完成合同与原P组计时bench已准备，尚未启动。不改变生产RTL。登记pending，看板unverified/同步pending，独立审查人与管理员待指定。
 - 用户当前决定：**SRAM扩容研究保留，暂不实装**；Issue246既有结论与证据保持。下一步是Issue247固定容量研究，不启动48/64KiB生产S实现。
 
 - [Issue246：P私有S容量](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/246) 沿PR243待审交付。[报告](../../docs/experiments/issue-246-sram-capacity.md)：W8/context512两P从16→64KiB，原调度+7.13%，前轮组合上容量增量+11.05%；48KiB已近64，128KiB该decode无新增收益。prefill2+21–23%，端口吞吐成本可能抵消容量收益。43KiB只是A，保K256至少W8 48.09375KiB/W16 52.09375KiB；真实S地址/描述符/1RW仲裁及新物理资格待实现，不改生产RTL。

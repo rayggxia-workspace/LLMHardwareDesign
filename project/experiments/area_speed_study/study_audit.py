@@ -36,6 +36,7 @@ def expected_context(path, bits, variant, count, reuse):
         footprint = 2*(math.ceil(limit*abyte/64)*64 + math.ceil(8*limit*bbyte/64)*64) + 128 + workspace
         prefix_k = min(op['k'], max(0, (16384-footprint)//abyte)//limit*limit) if prefix else 0
         for worker, e in enumerate(expected):
+            e['calls'] += 1  # The worker is invoked even when this P owns no columns.
             cols = ([c for g in range(worker*16, op['n'], 32)
                      for c in range(g, min(g+16, op['n']), 8)] if pair
                     else list(range(worker*8, op['n'], 16)))
@@ -44,7 +45,6 @@ def expected_context(path, bits, variant, count, reuse):
             groups = math.ceil(len(cols)/count)
             chunks = math.ceil(op['k']/limit)
             factor = op['batches']
-            e['calls'] += 1
             e['groups'] += groups*factor
             e['commands'] += len(cols)*chunks*factor
             e['outputs'] += len(cols)*factor
