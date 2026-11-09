@@ -32,6 +32,7 @@ def verify(graph,loop,sequence,actors,zero,timing):
         turns,tail=divmod(count-start,len(programs)-start)
         multipliers=[1 if i<start else turns+int(i-start<tail) for i in range(len(programs))]
     fields=('copy_ticks','native_service_ticks','total_ticks','external_load_words','external_store_words','external_words')
+    if any(p.get('transports') for p in programs):fields+=('transport_words','transport_ticks')
     total={f:sum(n*p[f] for n,p in zip(multipliers,programs)) for f in fields}
     if sequence['totals']!=total:raise ValueError('resident continuation finite-loop totals differ')
     return {'passed':True,'programs':len(programs),'program_visits':multipliers,'totals':total,

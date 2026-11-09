@@ -31,6 +31,9 @@ def verify(ir,*,numeric=True):
         if graph!=r['graph']:raise ValueError('resident recipe native graph differs from source')
         if r['plan']['actors']!=actors or r['plan']['zero_address']!=ir['native_constants']['0']['address_words']:
             raise ValueError('resident allocator/zero source differs')
+        bodies=[r['plan'],*r.get('continuation_loop',{}).get('programs',[])]
+        if any(body.get('transports') or any(e['op']=='TRANSFER' for e in body['events']) for body in bodies):
+            raise ValueError('candidate transport has no qualified full-scheduler path/resource binding')
         loop=r['loop'];sources=set().union(*(set(nodes[n]['inputs']) for n in names))-set(names)
         formats={**p.get('initial_formats',{}),**nodes};alloc={**ir['external_regions'],**ir['primitive_regions']}
         expected={}

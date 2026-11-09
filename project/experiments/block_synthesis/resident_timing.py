@@ -50,7 +50,7 @@ def event_ticks(event,timing):
         if op=='M_TERM':return p['P']['0']+p['P'][str(1+event['k'])]+p['feeder'][str(int(event['reuse_b']))]
         if op=='M_FINAL':return p['P'][str(16+64*(1 if event['width']==16 else 2)+event['shift'])]
         if op=='E':return p['E'][str(event['opcode']+16*len(event['inputs'])+64*event['shift'])]
-        if op in ('LOAD','LOAD_ZERO','STORE'):return 0
+        if op in ('LOAD','LOAD_ZERO','STORE','TRANSFER'):return 0
         raise ValueError('unknown resident timing event')
     except KeyError as exc:raise ValueError('unmeasured native resident command') from exc
 
@@ -59,14 +59,23 @@ def audit(plan,timing):
     """Recount all emitted service/copy events, independent of planner state."""
     validate(timing)
     if plan.get('service_timing')!=timing:raise ValueError('resident plan timing provenance differs')
-    copies=services=0;loads=stores=0
+    from resident_transports import catalog,event_contract
+    paths=catalog(plan.get('transports',()),plan['actors'])
+    copies=services=0;loads=stores=0;transfers=transfer_ticks=0
+    nets=set((plan.get('initial_continuation') or {}).get('transport_nets',()))
     for event in plan['events']:
         actor=plan['actors'][event['actor']];kind=event['op']
         if kind in ('LOAD','LOAD_ZERO'):copies+=actor['load_ticks'];loads+=1
         elif kind=='STORE':copies+=actor['store_ticks'];stores+=1
+        elif kind=='TRANSFER':
+            p=event_contract(event,paths,plan['actors']);copies+=p['ticks'];transfers+=1;transfer_ticks+=p['ticks'];nets.update(p['nets'])
         else:services+=event_ticks(event,timing)
     if (copies,services,copies+services,loads,stores)!=(plan['copy_ticks'],plan['native_service_ticks'],
             plan['total_ticks'],plan['external_load_words'],plan['external_store_words']):
         raise ValueError('resident service/copy accounting differs')
+    if paths and ((transfers,transfer_ticks,sorted(nets))!=(plan['transport_words'],plan['transport_ticks'],plan['transport_nets']) or
+                  not nets<={n for p in paths.values() for n in p['nets']} or
+                  plan.get('transport_net_budget') is not None and len(nets)>plan['transport_net_budget']):
+        raise ValueError('resident transport/static net accounting differs')
     return {'passed':True,'copy_ticks':copies,'native_service_ticks':services,'total_ticks':copies+services,
             'scope':'serialized event/profile accounting; finite-S numeric and full graph proof are separate'}

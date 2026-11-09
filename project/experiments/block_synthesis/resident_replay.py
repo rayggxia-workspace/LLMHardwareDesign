@@ -10,6 +10,9 @@ def replay(graph,plan,inputs,*,session=None,return_session=False):
     actors=plan['actors'];memory={name:[None]*a['words'] for name,a in actors.items()}
     tags={name:{} for name in actors};external={plan['zero_address']:0};external_tags={}
     observed={};banks={};pending={};position=0;copy_ticks=loads=stores=0
+    from resident_transports import catalog,event_contract
+    paths=catalog(plan.get('transports',()),actors);transfers=transfer_ticks=0;transport_nets=set()
+    allowed_nets={n for p in paths.values() for n in p['nets']}
     if session is not None:
         if (session.get('actors')!=actors or not plan.get('initial_continuation') or
             set(session.get('memory',{}))!=set(actors) or
@@ -17,6 +20,9 @@ def replay(graph,plan,inputs,*,session=None,return_session=False):
             raise ValueError('resident continuation needs a matching physical SRAM session')
         memory={n:list(words) for n,words in session['memory'].items()}
         tags={n:dict(row) for n,row in session['tags'].items()};banks=dict(session['banks'])
+        transport_nets=set(session.get('transport_nets',()))
+        if transport_nets!=set(plan['initial_continuation'].get('transport_nets',())):
+            raise ValueError('resident transport nets have no matching predecessor')
     elif plan.get('initial_continuation') is not None:
         raise ValueError('resident warm program has no physical predecessor')
     def s16(value,i=0):
@@ -99,6 +105,13 @@ def replay(graph,plan,inputs,*,session=None,return_session=False):
             at=graph['objects'][record]['external_address']
             if at!=event['external_address']:raise ValueError('resident STORE external address differs')
             external[at]=word;external_tags[at]={record};copy_ticks+=a['store_ticks'];stores+=1
+        elif kind=='TRANSFER':
+            p=event_contract(event,paths,actors)
+            word=require_record(p['source'],event['source_address'],event['record'])
+            write(actor,event['address'],word,event['record'])
+            # The serial event finishes only after the destination write ACK;
+            # no external backing is created and the source remains intact.
+            copy_ticks+=p['ticks'];transfers+=1;transfer_ticks+=p['ticks'];transport_nets.update(p['nets'])
         else:
             if position>=len(graph['operations']):raise ValueError('extra resident native operation')
             n=graph['operations'][position]
@@ -161,9 +174,16 @@ def replay(graph,plan,inputs,*,session=None,return_session=False):
     if (copy_ticks,loads,stores,loads+stores)!=(plan['copy_ticks'],plan['external_load_words'],
             plan['external_store_words'],plan['external_words']):raise ValueError('resident copy accounting differs')
     if 'continuation' in plan:check_continuation(plan['continuation'])
+    if paths and ((transfers,transfer_ticks,sorted(transport_nets))!=(
+            plan['transport_words'],plan['transport_ticks'],plan['transport_nets']) or
+            not transport_nets<=allowed_nets or
+            plan.get('transport_net_budget') is not None and len(transport_nets)>plan['transport_net_budget'] or
+            plan.get('continuation',{}).get('transport_nets')!=sorted(transport_nets)):
+        raise ValueError('resident transport/static net accounting differs')
     result={'passed':True,'observed_native_outputs':observed,'copy_ticks':copy_ticks,
             'external_words':loads+stores,'native_operations':position,
             'scope':'independent finite-S and external ACK interpreter; not RTL/SystemC/time or energy qualification'}
     if return_session:
-        result['session']={'actors':actors,'memory':memory,'tags':tags,'banks':banks,'identities':identities}
+        result['session']={'actors':actors,'memory':memory,'tags':tags,'banks':banks,'identities':identities,
+                           'transport_nets':sorted(transport_nets)}
     return result

@@ -34,6 +34,13 @@ def fixture():
 
 
 class TestResidentBindings(unittest.TestCase):
+    def test_candidate_transports_cannot_be_promoted_to_qualified_bindings(self):
+        ir,q=fixture();variants_for(ir,q,width=4)
+        key=next(iter(ir['resident_recipes']));recipe=ir['resident_recipes'].pop(key)
+        recipe['plan']['transports']=[{'id':'unqualified'}]
+        ir['resident_recipes'][digest(recipe)]=recipe
+        with self.assertRaisesRegex(ValueError,'no qualified full-scheduler'):verify(ir,numeric=False)
+
     def test_actual_source_rules_preserve_old_pool_and_reject_forged_work(self):
         ir,q=fixture();old=deepcopy(ir['tasks']);variants_for(ir,q,width=4)
         self.assertEqual(ir['tasks'],old);self.assertEqual(len(ir['resident_actions']),1)

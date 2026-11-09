@@ -24,16 +24,21 @@ class State:
     stores:int=0
     history:object=None
     service_ticks:int=0
+    transport_words:int=0
+    transport_ticks:int=0
+    transport_nets:frozenset=frozenset()
 
 
 def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_cost',service_timing=None,
-         persistent=(),initial=None):
+         persistent=(),initial=None,transports=(),transport_net_budget=None):
     """Choose placement/replacement from each current state, never fixed ticks.
 
     Actors explicitly supply kind, finite words, LOAD/STORE copy ticks and
     stride. M needs an eight-record guarded cell for actual wide B reads;
     E uses one whole word. No cross-S path is assumed: dirty remote data is
-    first STORE-ACKed, then LOAD-ACKed. All initial records must have addresses.
+    first STORE-ACKed, then LOAD-ACKed. Explicit candidate transports opt in to
+    paid, reserved-destination/source-held-until-ACK copies instead; this does
+    not qualify a new hardware path. All initial records need addresses.
     width=None is exhaustive for finite small cases; bounded runs are heuristic.
     """
     if width is not None and (type(width)!=int or width<1):raise ValueError('positive residency width required')
@@ -51,8 +56,14 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
             any(type(a.get(k))!=int or a[k]<1 for k in ('load_ticks','store_ticks'))):
             raise ValueError('finite actor/copy contract required')
     obj=graph['objects'];ops=graph['operations'];live_out=set(graph['live_out'].values())
+    from resident_transports import catalog
+    paths=catalog(transports,actors)
+    if transport_net_budget is not None and (type(transport_net_budget)!=int or transport_net_budget<0):
+        raise ValueError('nonnegative static transport net budget required')
+    allowed_nets=frozenset(n for p in paths.values() for n in p['nets'])
     from resident_bounds import FutureCopies
-    bound=FutureCopies(graph,actors) if rank_policy=='future_copies' else None
+    bound=FutureCopies(graph,actors,transports=tuple(paths.values()),
+                       transport_net_budget=transport_net_budget) if rank_policy=='future_copies' else None
     bound_position=(0,None)
     def score(s):return s.cost+(bound.bound(s,*bound_position) if bound else 0)
     if any(type(v.get('external_address'))!=int or v['external_address']<0 for v in obj.values()):
@@ -85,7 +96,10 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
         return event(replace(s,backed=s.backed|{value}),e,cost=meta[actor]['store_ticks'],stores=1)
     def evict(s,actor,at,needed):
         value=s.slots[actor][at]
-        if value is not None and value in needed:s=store(s,actor,at)
+        # A remote acknowledged replica can preserve a dirty value. Do not
+        # force it to external memory while another actual S still owns it.
+        elsewhere=any(value in row for ai,row in enumerate(s.slots) if ai!=actor)
+        if value is not None and value in needed and not elsewhere:s=store(s,actor,at)
         return slot(s,actor,at,None)
     def allocations(s,actor,protected,needed):
         free=[i for i,x in enumerate(s.slots[actor]) if x is None]
@@ -114,6 +128,20 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
         at=locate(s,actor,value)
         if at is not None:
             yield pad(s,actor,at),at;return
+        for p in paths.values():
+            if p['destination']!=names[actor]:continue
+            source=names.index(p['source']);source_at=locate(s,source,value)
+            if source_at is None:continue
+            nets=s.transport_nets|frozenset(p['nets'])
+            if transport_net_budget is not None and len(nets)>transport_net_budget:continue
+            for ns,at in allocations(s,actor,protected,needed):
+                ns=slot(ns,actor,at,value);ns=pad(ns,actor,at)
+                e={'op':'TRANSFER','actor':names[actor],'source_actor':p['source'],
+                   'source_address':source_at*meta[source]['stride'],'address':at*meta[actor]['stride'],
+                   'record':value,'path':p['id'],'wait_ack':True,'source_hold_until_ack':True,'sink_reserved':True}
+                ns=event(ns,e,cost=p['ticks'])
+                yield replace(ns,transport_words=ns.transport_words+1,transport_ticks=ns.transport_ticks+p['ticks'],
+                              transport_nets=nets),at
         if value in produced and value not in s.backed:
             owner=next(((ai,locate(s,ai,value)) for ai in range(len(names)) if locate(s,ai,value) is not None),None)
             if owner is None:raise ValueError('lost dirty SSA record '+value)
@@ -126,7 +154,7 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
     def trim(states):
         unique={}
         for s in states:
-            key=(s.slots,s.backed,s.padding,s.banks)
+            key=(s.slots,s.backed,s.padding,s.banks,s.transport_nets)
             old=unique.get(key)
             if old is None or (s.cost,s.loads+s.stores)<(old.cost,old.loads+old.stores):unique[key]=s
         result=sorted(unique.values(),key=lambda s:(score(s),s.cost,s.loads+s.stores,s.stores,repr(s.slots),repr(s.banks)))
@@ -150,6 +178,11 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
                 raise ValueError('invalid resident initial read-only cells/padding/bank')
             slots.append(tuple(values));padding.append(frozenset(pads));banks.append(bank)
         initial_state=State(tuple(slots),frozenset(),tuple(padding),tuple(banks))
+        nets=initial.get('transport_nets',[])
+        if (len(nets)!=len(set(nets)) or not set(nets)<=allowed_nets or
+            transport_net_budget is not None and len(nets)>transport_net_budget):
+            raise ValueError('resident initial static transport nets differ')
+        initial_state=replace(initial_state,transport_nets=frozenset(nets))
     states=[initial_state];expanded=0
     for index,n in enumerate(ops):
         future={x for x,i in last.items() if i>index}|live_out|persistent
@@ -222,7 +255,8 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
         name:{'slots':[x if x in persistent else None for x in best.slots[i]],
               'padding':sorted(best.padding[i]),'bank':best.banks[i] if best.banks[i] in persistent else None}
         for i,name in enumerate(names)}}
-    return {'status':'planned','copy_ticks':best.cost-best.service_ticks,
+    if paths:continuation['transport_nets']=sorted(best.transport_nets)
+    result={'status':'planned','copy_ticks':best.cost-best.service_ticks,
             'native_service_ticks':best.service_ticks,'total_ticks':best.cost,'service_timing':service_timing,
             'external_load_words':best.loads,
             'external_store_words':best.stores,'external_words':best.loads+best.stores,
@@ -230,3 +264,9 @@ def plan(graph,actors,zero_address,*,width=8,spill_all=False,rank_policy='copy_c
             'persistent_records':sorted(persistent),'initial_continuation':initial_contract,'continuation':continuation,
             'spill_all':spill_all,'rank_policy':rank_policy,'bound_calls':bound.calls if bound else 0,
             'scope':'serial native region with optional measured P/E/feeder slots and explicit copy model; not full scheduler, MC/LC/DMA/system or energy qualification'}
+    if paths:
+        result.update(transports=list(paths.values()),transport_net_budget=transport_net_budget,
+                      transport_words=best.transport_words,transport_ticks=best.transport_ticks,
+                      transport_nets=sorted(best.transport_nets))
+        result['scope']+='; candidate-only transport actions require separate controller/path/physical qualification'
+    return result

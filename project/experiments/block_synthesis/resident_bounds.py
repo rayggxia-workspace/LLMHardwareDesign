@@ -7,11 +7,13 @@ This is only a copy-cost bound for the serial resident-record action family.
 
 
 class FutureCopies:
-    def __init__(self,graph,actors):
+    def __init__(self,graph,actors,*,transports=(),transport_net_budget=None):
         self.graph=graph;self.names=tuple(sorted(actors));self.meta=[actors[n] for n in self.names]
         self.by_kind={k:[i for i,m in enumerate(self.meta) if m['kind']==k] for k in ('M','E')}
         self.producer={n['output']:(i,n['kind']) for i,n in enumerate(graph['operations'])}
         self.external=set(graph['live_out'].values());self.profiles={};self.calls=0
+        self.transports=tuple(transports)
+        self.transport_net_budget=transport_net_budget
 
     def profile(self,index,term=None):
         key=index,term
@@ -31,6 +33,8 @@ class FutureCopies:
 
     def bound(self,state,index,term=None):
         self.calls+=1;profile,pending_m=self.profile(index,term)
+        transports=tuple(p for p in self.transports if self.transport_net_budget is None or
+                         len(state.transport_nets|frozenset(p['nets']))<=self.transport_net_budget)
         resident=[set(x for x in row if x is not None) for row in state.slots]
         result=0
         for record,uses in profile:
@@ -44,12 +48,22 @@ class FutureCopies:
                 if unproduced and owner[1]==kind:continue
                 missing.add(kind)
             for kind in missing:
-                result+=min(self.meta[a]['load_ticks'] for a in self.by_kind[kind])
+                arrival=[self.meta[a]['load_ticks'] for a in self.by_kind[kind]]
+                # A compulsory kind arrival may now use a declared SRAM
+                # transport. Ignore source availability and static capacity
+                # only in this optimistic lower bound, never in transitions.
+                arrival.extend(p['ticks'] for p in transports
+                               if self.meta[self.names.index(p['destination'])]['kind']==kind)
+                result+=min(arrival)
             # Initial external records already have a backing. A future
             # producer must create one if a different-kind consumer or live
             # output needs it. Existing dirty owners pay at most one STORE.
             if owner is None or record in state.backed:continue
             must_store=record in self.external or bool(missing)
+            if transports and record not in self.external:
+                # Not all remote consumers imply an external backing now.
+                # Charge no speculative STORE; actual spills remain explicit.
+                must_store=False
             if must_store:
                 if unproduced:sites=self.by_kind[owner[1]]
                 else:sites=[a for a,row in enumerate(resident) if record in row]

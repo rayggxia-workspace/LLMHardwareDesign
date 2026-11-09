@@ -57,6 +57,8 @@ def visits(sequence):
 
 
 def totals(sequence):
+    fields=('copy_ticks','native_service_ticks','total_ticks',
+            'external_load_words','external_store_words','external_words')
+    if any(p.get('transports') for p in sequence['programs']):fields+=('transport_words','transport_ticks')
     return {field:sum(n*p[field] for n,p in zip(visits(sequence),sequence['programs']))
-            for field in ('copy_ticks','native_service_ticks','total_ticks',
-                          'external_load_words','external_store_words','external_words')}
+            for field in fields}
