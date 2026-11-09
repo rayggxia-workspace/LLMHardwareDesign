@@ -88,6 +88,9 @@ def generate():
   else if(c.variant=="pair_combine"){c.paircols=true;c.combine=true;}
   else if(c.variant=="prefix_pair_combine"){c.prefix_cache=true;c.paircols=true;c.combine=true;}
   else if(c.variant=="queue_off")c.queued=false;
+  else if(c.variant=="queue_off_prefix"){c.queued=false;c.prefix_cache=true;}
+  else if(c.variant=="queue_off_pair_combine"){c.queued=false;c.paircols=true;c.combine=true;}
+  else if(c.variant=="queue_off_prefix_pair_combine"){c.queued=false;c.prefix_cache=true;c.paircols=true;c.combine=true;}
   else if(c.variant=="buffer1")c.buffer_count=1;
   else if(c.variant=="credits8")c.credits=8;
   else if(c.variant=="k64")c.k=64;
