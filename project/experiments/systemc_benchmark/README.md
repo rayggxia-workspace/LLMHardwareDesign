@@ -453,3 +453,17 @@ recipe, not a generated LC program or new DP performance gain. An integer1ps
 clock verifies3333/3334ps positive-edge spacing at rational300MHz; fractional
 real-time conversion failures are retained. Bank activity behavior is explicitly
 zero-delay, so this functional timing experiment is not physical STA acceptance.
+
+`systemc_u_packet.cpp` independently advances the shared private-S arbiter,
+registered bank response, E/N service read/execute/write/ACK states and resident
+pipelines. It reads no measured service latency or precomputed starts. Build
+with SystemC3.0.1/C++17 and `-O2 -Wall -Wextra -Werror`; run the resulting binary
+without arguments. Generate RTL with `n_exp_packet_fixture.py --timing-trace`,
+then run `u_packet_timing_probe.py SOURCE RTL_RUN SYSTEMC_RUN NEW_OUTPUT
+--bank-source QUALIFIED_ACTIVITY_BANK --systemc-library MATCHING_RUNTIME`.
+The audit checks source/runtime/reference hashes and every command, S request/
+response and completion/ACK event against three actual RTL initializations.
+341 events per initialization match exactly. This packet recipe remains serial:
+two-client simultaneous S contention, LC/PM/deployment, full Qwen and energy
+are unqualified. The fixture's artificial holds/readbacks are modeled explicitly
+and its total time must never be used as a generic per-Exp service coefficient.

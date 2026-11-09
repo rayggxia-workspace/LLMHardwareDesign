@@ -1,5 +1,14 @@
 # YUZE-LU 的进度
 
+## 2026-11-09 12:26 CST：Issue234共享S服务的SystemC联动
+
+[Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，in_progress。
+新增真实SystemC U包服务模型：S仲裁/注册返回、E/N服务FSM及叶流水独立推进，不读取已测总时长或预计算开始时间。
+每初态341个命令/S请求返回/完成ACK事件与真实RTL完全一致，三初态共1023；原数据/保持/背压断言保留，未知输入拒绝。
+49文件200783字节包完整成员/远端SHA核验；仍只验串行服务链，未验同时E/N争用、LC镜像/部署、整网或能量。
+41项单位检查及管理结构检查通过。101543仍PENDING(Resources)，12:24队列预报12:47:20但不承诺，链101543→101486保持6×10单节点。
+固定九组/3M/原预算继续；完整3B D128与整网SystemC token/s/总J/token、公开FPGA双门仍未达标。登记/看板/审查缺项见账本。
+
 ## 2026-11-09 12:12 CST：Issue234现有E/N/S服务与完整形状矩阵
 
 [Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，in_progress。

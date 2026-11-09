@@ -366,6 +366,22 @@ SystemC后端，继续补LC/MC/互联/时钟/外存。所有硬件/精度/配方
 任务未完成；完整3B连续D128、整网SystemC token/s/总J/token与公开FPGA双门尚未通过，PR235保持draft、Issue234 in_progress。
 规则rayggxia-project-collab1.0.0；登记PR5 pending，看板unverified/同步pending、复用Issue7；审查人待指定。
 
+## 2026-11-09 12:26 CST：共享私有S服务SystemC联动
+
+[U包服务模型回执](u-packet-timing-result-001.json)推进真实S仲裁、注册返回、E/N适配服务FSM和原生流水；
+输入没有已测整服务延迟或开始时间。夹具仅从相同命令顺序和背压条件推进，逐事件比较原生RTL。
+每个初态341事件（88请求、88返回、55命令、55完成、55消费），三初态共1023事件完全一致，
+11个输入的完整数据和S读回仍由真实RTL/独立原生参考检查；整数1ps/300MHz逐沿时钟检查保留。
+不允许输入延迟表/额外参数，原程序退出1正确拒绝。-Wall/-Wextra/-Werror编译通过；原生数据断言不放宽。
+归档49文件200783字节，SHA ce6e0a39232eaef0cba0ae1e643ed4ef951b744492355cfc3edf3d152fb68cd9，
+所有成员和远端local-results-013的SHA核验一致，两个审计源版本、源快照、生成夹具、二进制及日志均保留。
+
+此证据只覆盖串行包服务，未验同时E/N争用、两entry响应队列满载、LC程序/PM/装载、组合STA或整网能量；
+测试总时长包含人工保持和读回，不能直接当作每Exp调用时间。物理库和硬件均未变，也没有DP收益主张。
+41项单位检查、管理结构及diff检查通过。101543仍等Resources，101486仍等Dependency；队列预报不等于开始/成功。
+固定九组/3M/原外存预算继续；完整3B连续D128、校准整网时间/总J/token和公开FPGA双门仍未通过。
+继续Issue234 in_progress、PR235 draft，不自审/合并/关闭。登记PR5 pending，看板unverified/同步pending，审查待指定。
+
 
 ## 2026-11-09 09:00 CST：S feeder实际SystemC/活动校准与RMS误差定位
 

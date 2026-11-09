@@ -18,6 +18,7 @@ def main():
     p = argparse.ArgumentParser()
     for name in ('repository', 'native_fixtures', 'output'):
         p.add_argument(name, type=Path)
+    p.add_argument('--timing-trace', action='store_true')
     a = p.parse_args()
     a.output.mkdir(exist_ok=False)
     original = a.repository/'project/experiments/pu_leaf_base/tb_pu_u_group.sv'
@@ -88,6 +89,32 @@ endmodule
                 $fatal(1,"unstable packet service completion under backpressure");
         end
         done_ready[lane]=1;''')
+    if a.timing_trace:
+        monitor = '''
+    integer trace_cycle;
+    reg [1:0] trace_seen;
+    reg trace_io_seen;
+    always @(posedge clk) begin
+        if(reset) begin trace_seen<=0;trace_io_seen<=0;end
+        else begin
+            trace_cycle=($time*3-5000)/10000;
+            for(integer i=0;i<4;i=i+1) begin
+                if(dut.request[i] && dut.accept[i]) $display("EV %0d S_REQ %0d",trace_cycle,i);
+                if(dut.response[i] && dut.take[i]) $display("EV %0d S_RSP %0d",trace_cycle,i);
+            end
+            for(integer i=0;i<2;i=i+1) begin
+                if(cmd_valid[i] && cmd_ready[i]) begin
+                    $display("EV %0d CMD %0d",trace_cycle,i);trace_seen[i]<=0;
+                end
+                if(done_valid[i] && !trace_seen[i]) begin
+                    $display("EV %0d DONE %0d",trace_cycle,i);trace_seen[i]<=1;
+                end
+                if(done_valid[i] && done_ready[i]) $display("EV %0d TAKE %0d",trace_cycle,i);
+            end
+        end
+    end
+'''
+        text=text.replace('endmodule\n',monitor+'endmodule\n')
     (a.output/'tb_n_exp_packet.sv').write_text('`timescale 1ps/1ps\n'+text)
     fixtures = []
     for line in a.native_fixtures.read_text().splitlines():
@@ -105,6 +132,7 @@ endmodule
         'instrumented_fixture_sha256': sha(a.output/'tb_n_exp_packet.sv'),
         'packet_fixtures_sha256': sha(a.output/'packet-fixtures.tsv'),
         'hardware_changed': False, 'LC_program_generated': False,
+        'timing_trace': a.timing_trace,
         'service_recipe': 'canonical S32 S[8] -> E13 shift0 -> packed [x,0] S[9] -> N Begin/Stats2/Finalize/Exp1 -> S[10]'},indent=2)+'\n')
 
 
