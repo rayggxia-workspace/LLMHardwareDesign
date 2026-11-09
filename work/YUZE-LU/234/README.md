@@ -537,3 +537,7 @@ SystemC后端，继续补LC/MC/互联/时钟/外存。所有硬件/精度/配方
 
 41项单位检查、原生/SystemC实际校准与管理结构检查继续分列。任务仍in_progress：完整3B连续D128、整网SystemC token/s和总J/token、公开FPGA双门槛均未达标。
 规则rayggxia-project-collab1.0.0；登记PR5 pending，看板unverified/同步pending，审查人待指定。
+
+2026-11-09 CST：完整整数KV候选已冻结提交101602，链101486→101602，单节点6×10、c64/c96 UNLIMITED，旧基线源/资源不变。
+源码0aecf173f，主B1/P512/D128、补P128/P2048、各两提示；各先跑tiny四token控制。当前PENDING(Dependency)，未把提交当执行。
+见[部署](sequence-recipe-attempt-001.json)和[资源回执](resource-update-007.json)。
