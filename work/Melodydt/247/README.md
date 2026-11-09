@@ -1,6 +1,6 @@
 # Issue247 实验入口
 
-当前进入[最多四轮提速迭代](../../../docs/experiments/issue-247-speed-iterations.md)，1/4轮完成、in_progress；每轮研究/RTL/旧体系评估/PDF。主目标W8 decode512 5 token/s，保留SRAM不扩容和所有历史研究边界。[恢复入口](../../../docs/handoffs/2026-11-10-issue-247-speed-iterations.md)。
+当前进入[最多四轮提速迭代](../../../docs/experiments/issue-247-speed-iterations.md)，2/4轮完成、in_progress；每轮研究/RTL/旧体系评估/PDF。主目标W8 decode512 5 token/s，保留SRAM不扩容和所有历史研究边界。[恢复入口](../../../docs/handoffs/2026-11-10-issue-247-speed-iterations.md)。
 
 新增[旧评价体系21场景复评](legacy-metric-eval/README.md)及[正式报告](../../../docs/experiments/issue-247-legacy-metric-evaluation.md)。run15/101800全部历史字段复现；主W8 decode512 3.063655→共享口ctx8 3.230811 /理想端口ctx8 3.496169。48/64KiB prefill2 4.467001/4.547434保留为未实装参考。
 
