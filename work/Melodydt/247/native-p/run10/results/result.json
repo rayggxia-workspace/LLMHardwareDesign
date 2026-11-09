@@ -1,0 +1,618 @@
+{
+  "passed": true,
+  "source_commit": "c2359bdeeea83270ab632861eebe6ffc8dcc510e",
+  "scope": "actual native S16/S64 P RTL, fixed four 1RW banks; no physical/full-model token/s qualification",
+  "manifest_sha256": "67970fdb9601de0ec81ee1a9413e8ac577f0c732b5392c351f299cd975d0064f",
+  "bank_sha256": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7",
+  "versions": {
+    "python": "3.10.12",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "gcc": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+  },
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "seconds": 0.12056404631584883,
+      "log": "verilator-version.log",
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "command": [
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "seconds": 0.012355760671198368,
+      "log": "gcc-version.log",
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/run_policy_rtl.py",
+        "--repo",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source",
+        "--out",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy",
+        "--workers",
+        "4"
+      ],
+      "exit_code": 0,
+      "seconds": 15.552060889080167,
+      "log": "policy-runner.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/run_memory.py",
+        "--repo",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source",
+        "--out",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory",
+        "--workers",
+        "4",
+        "--manifest",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/inputs.json"
+      ],
+      "exit_code": 0,
+      "seconds": 15.410937843844295,
+      "log": "memory-runner.log",
+      "sha256": "ff8e9834c665f3ec536f51550ac914d16f580dada2adf89cfedcb100fbb9b9b6"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/run_context.py",
+        "--repo",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source",
+        "--out",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/context",
+        "--cpus",
+        "4",
+        "--verilator",
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator"
+      ],
+      "exit_code": 0,
+      "seconds": 21.913869816809893,
+      "log": "context-runner.log",
+      "sha256": "8983a820bf4906fc1584ef1967dd21063b7a5b28f2a11c6e2abb5b51179cd9c8"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_popt_group",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-legacy",
+        "-GOPT=0",
+        "-GBANK_RW=0",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/tb_popt_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "seconds": 5.200528780929744,
+      "log": "legacy-group-build.log",
+      "sha256": "a53dfa5e4371e27b43e517d90198930530baf86c31b2c20e1afbbe28b0bfc381"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-legacy/Vtb_popt_group",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.009799860417842865,
+      "log": "legacy-group-1-143.log",
+      "sha256": "0feae7a3d31da39a8d0582116dcb7d702af41782e97f9b6a4491ab0c61757571"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-legacy/Vtb_popt_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.008651071228086948,
+      "log": "legacy-group-2-143.log",
+      "sha256": "c5d7e905c12378fcb4006e6aa62125436dac89b8828854a71c9c5e6734b3697b"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-legacy/Vtb_popt_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "seconds": 0.008864658884704113,
+      "log": "legacy-group-2-144.log",
+      "sha256": "7794ca0c96fb16fb64a7d6826734b6bee24efd64c9c0a541ff0d54d826b91a66"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_popt_group",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-context",
+        "-GOPT=1",
+        "-GBANK_RW=0",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/tb_popt_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "seconds": 5.311013386584818,
+      "log": "context-group-build.log",
+      "sha256": "f4057680223c495f2f4c2b64fa4fad727095774745eb459d6f8c3ec13238169f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-context/Vtb_popt_group",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.009282787330448627,
+      "log": "context-group-1-143.log",
+      "sha256": "e98f45136398929ccfe63ae59872a97bb956ebd9993b1df2300b15f4da0552fe"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-context/Vtb_popt_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.008958964608609676,
+      "log": "context-group-2-143.log",
+      "sha256": "d2549e49821d2511d08443c518dce0b29f467133ddd4103f56f78736cf7abeec"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-context/Vtb_popt_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "seconds": 0.009508414193987846,
+      "log": "context-group-2-144.log",
+      "sha256": "4c7b1c918ba563f13ebb85a842ce7e2df03cdca8ae3b20154a318c0629b837fc"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_popt_group",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-combined",
+        "-GOPT=1",
+        "-GBANK_RW=1",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/tb_popt_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "seconds": 5.195215540938079,
+      "log": "combined-group-build.log",
+      "sha256": "04c282d87a81889b36f6d3b91f651abb605280cd9fd6ae7bbc466b5430ab2b42"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-combined/Vtb_popt_group",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.009225229732692242,
+      "log": "combined-group-1-143.log",
+      "sha256": "b194101e1b1197173727891b7da6dcac99b03d6896e64b495689b41ca4b62d07"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-combined/Vtb_popt_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.008851589635014534,
+      "log": "combined-group-2-143.log",
+      "sha256": "53b8c700639fe5217bc71cc1a580474263384f47917faf7e7cdb6c80922fd900"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-group-combined/Vtb_popt_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "seconds": 0.00896409247070551,
+      "log": "combined-group-2-144.log",
+      "sha256": "28fca1936c8528ba74177afbe94bc32b415ccfd1a880a3d961ae7abc386d587d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_pu_p_group",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-legacy-default",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/legacy-default.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "seconds": 4.891219319775701,
+      "log": "default-legacy-build.log",
+      "sha256": "cb78c74ec43835f38d0d22da74790cb4d2406fc3c6fb31f46449da5465875dac"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-legacy-default/Vtb_pu_p_group",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0049285888671875,
+      "log": "default-legacy-1-143.log",
+      "sha256": "89dc22d67e739e963cd75a52439b0d6f7f2bd24066ccea4900f71b87b3d74069"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-legacy-default/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.003922531381249428,
+      "log": "default-legacy-2-143.log",
+      "sha256": "1c9088bc47cd3bd651986e346cad320d770809ada33fe32053c7d89295defb0a"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-legacy-default/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "seconds": 0.004103994928300381,
+      "log": "default-legacy-2-144.log",
+      "sha256": "8260b6450d55222eb664920df068c5cecd106a336de3d9afe9777d00afd29bb6"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_pu_p_group",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-legacy-enabled",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/legacy-enabled.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "seconds": 4.932086725719273,
+      "log": "enabled-legacy-build.log",
+      "sha256": "3eace0b9d69710b44fe30de1dd40231089677b5fd3bdd57ee46e69cbc40dfee1"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-legacy-enabled/Vtb_pu_p_group",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.005142803303897381,
+      "log": "enabled-legacy-1-143.log",
+      "sha256": "ac529f4d8377521820fdaeb2eac7415ba5afec169cfd7a3e36afec77a59bfd7e"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-legacy-enabled/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.004222838208079338,
+      "log": "enabled-legacy-2-143.log",
+      "sha256": "800295935dc2718b8c82c71abdbb1f4d4053148d59d3bf6b55004aa61c95ce54"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/obj-legacy-enabled/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "seconds": 0.004691538400948048,
+      "log": "enabled-legacy-2-144.log",
+      "sha256": "9dfcd2d3250d5c365837b127bbfc46986224c1ab66c74077f11e7fa1d79fc959"
+    }
+  ],
+  "components": {
+    "policy": {
+      "passed": true,
+      "result": "policy/result.json",
+      "sha256": "05eff5f7beb73577bce16ecde1caa7fe1dbf42b0e702006467e5a563c1dd9677"
+    },
+    "memory": {
+      "passed": true,
+      "result": "memory/result.json",
+      "sha256": "b34dbd2ba0a9cc2f8d0c70364be7ff456dd8f5a761b9a3fb73b98f8860d3259f"
+    },
+    "context": {
+      "passed": true,
+      "result": "context/result.json",
+      "sha256": "06c60ae2eb13a4195ca3ff6fc93c9b60d00bd60b068ffef7706f4a57cfaa0073"
+    },
+    "group": {
+      "passed": true,
+      "measurements": [
+        {
+          "label": "legacy",
+          "mode": 1,
+          "seed": 143,
+          "opt": 0,
+          "bank_rw": 0,
+          "cycles": 672,
+          "A": 16,
+          "B": 16,
+          "wide": 32,
+          "stores": 16
+        },
+        {
+          "label": "legacy",
+          "mode": 2,
+          "seed": 143,
+          "opt": 0,
+          "bank_rw": 0,
+          "cycles": 672,
+          "A": 16,
+          "B": 16,
+          "wide": 32,
+          "stores": 16
+        },
+        {
+          "label": "legacy",
+          "mode": 2,
+          "seed": 144,
+          "opt": 0,
+          "bank_rw": 0,
+          "cycles": 672,
+          "A": 16,
+          "B": 16,
+          "wide": 32,
+          "stores": 16
+        },
+        {
+          "label": "context",
+          "mode": 1,
+          "seed": 143,
+          "opt": 1,
+          "bank_rw": 0,
+          "cycles": 644,
+          "A": 2,
+          "B": 16,
+          "wide": 18,
+          "stores": 16
+        },
+        {
+          "label": "context",
+          "mode": 2,
+          "seed": 143,
+          "opt": 1,
+          "bank_rw": 0,
+          "cycles": 644,
+          "A": 2,
+          "B": 16,
+          "wide": 18,
+          "stores": 16
+        },
+        {
+          "label": "context",
+          "mode": 2,
+          "seed": 144,
+          "opt": 1,
+          "bank_rw": 0,
+          "cycles": 644,
+          "A": 2,
+          "B": 16,
+          "wide": 18,
+          "stores": 16
+        },
+        {
+          "label": "combined",
+          "mode": 1,
+          "seed": 143,
+          "opt": 1,
+          "bank_rw": 1,
+          "cycles": 644,
+          "A": 2,
+          "B": 16,
+          "wide": 18,
+          "stores": 16
+        },
+        {
+          "label": "combined",
+          "mode": 2,
+          "seed": 143,
+          "opt": 1,
+          "bank_rw": 1,
+          "cycles": 644,
+          "A": 2,
+          "B": 16,
+          "wide": 18,
+          "stores": 16
+        },
+        {
+          "label": "combined",
+          "mode": 2,
+          "seed": 144,
+          "opt": 1,
+          "bank_rw": 1,
+          "cycles": 644,
+          "A": 2,
+          "B": 16,
+          "wide": 18,
+          "stores": 16
+        }
+      ],
+      "logs": [
+        "legacy-group-1-143.log",
+        "legacy-group-2-143.log",
+        "legacy-group-2-144.log",
+        "context-group-1-143.log",
+        "context-group-2-143.log",
+        "context-group-2-144.log",
+        "combined-group-1-143.log",
+        "combined-group-2-143.log",
+        "combined-group-2-144.log",
+        "default-legacy-1-143.log",
+        "default-legacy-2-143.log",
+        "default-legacy-2-144.log",
+        "enabled-legacy-1-143.log",
+        "enabled-legacy-2-143.log",
+        "enabled-legacy-2-144.log"
+      ]
+    }
+  },
+  "errors": []
+}

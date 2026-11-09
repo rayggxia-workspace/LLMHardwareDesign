@@ -249,3 +249,20 @@ python -B work/Melodydt/247/fusion/verify.py --repo . --index work/Melodydt/247/
 ```
 
 各out必须为新目录，真实40位源码commit在inputs.json；原生依赖、外部SRAM和工具SHA固定。完整事件保留服务器，部分日志/完整模型结果通过.gz.b64无损发布并验证原SHA。无实际大模型生成、完整张量数值或新物理资格。
+
+
+## Issue247 原生P仲裁、bank并发和A复用
+
+默认兼容的三个参数与命令合同见[详细实施文档](experiments/issue-247-p-native-optimizations.md)，源和运行器见[实验入口](../project/experiments/p_native_opt/README.md)，精确run10/11源码/工具/SHA见[证据](../work/Melodydt/247/native-p/README.md)。数据S保持16KiB，四1RW的机会并发不等于真正1R1W；新的生产候选未继承旧物理资格。
+
+```sh
+# 仅在本人独立Slurm目录及固定容器内执行EDA，先核对已上传source commit和SHA。
+python3 -B source/project/experiments/p_native_opt/run.py --repo source --out results --manifest inputs.json --workers 4 --components all
+# 补验scope须与inputs.json一致；integration只测local S和完整P。
+python3 -B source/project/experiments/p_native_opt/run.py --repo source --out results --manifest inputs.json --workers 4 --components integration
+# 本地只核验证据与管理结构。
+python -B work/Melodydt/247/native-p/verify.py
+python scripts/check_project.py
+```
+
+所有out为新目录；提交`job.sh`时4核、mdt-p-native、UNLIMITED，并立即读回job/节点/日志。最终性能必须计入context release；局部95→71拍及P长K2112→2032不能换算成整模型token/s，短K672→676退化保留。旧研究冻结源检查仍保留，不能通过更新旧SHA掩盖本轮新生产源码；旧物理/模型资格继续绑定其原commit。

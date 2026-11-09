@@ -12,7 +12,7 @@
 
 `local_s_p_candidate.sv` 是交给root合并的local候选，名字避免与生产冲突。root负责将其内容接入正式 `local_s_p`，保留 `wide_req/ready/valid/take/wide_data` 等信号名供整体P测试追踪。参数为 `ENABLE_BANK_RW=0` 和 `ENABLE_REUSE_A=0`。后者只传给root负责修改的 `block_feed_loader`，开启后rows0是显式B-only，且reuseB必须为0。默认rows0仍非法。
 
-local在接受LOAD前仍等待普通响应全部退休，新LOAD在空闲边界优先。LOAD活动后bank模式可恢复普通请求，但**整个LOAD输入范围均租用保护到done ACK**：A保护tiles×(rows>4?8:4)个128位word，B保护tiles×(b_wide?8:4)word；保护范围含512位布局的填充。rows0时A为空；reuseB时B为空。同范围ordinary WRITE保持ready=0直到LOAD完成确认，其余普通读写可继续。不能由policy把LOAD当前或后续输入槽当成可覆盖空间。
+local在接受LOAD前仍等待普通响应全部退休，新LOAD在空闲边界优先。LOAD活动后bank模式可恢复普通请求，但**整个LOAD输入范围均租用保护到done ACK**：A保护tiles×(rows>4?8:4)个128位word，B保护tiles×(b_wide?8:4)word；保护范围含512位布局的填充。rows0时A为空；reuseB时B为空。同范围ordinary WRITE保持ready=0直到LOAD完成确认，其余普通读写在被调度后可继续；若受保护写已经占住上层唯一ordinary owner，它会等到LOAD done ACK，其后的无冲突请求也受队头阻塞。不能由policy把LOAD当前或后续输入槽当成可覆盖空间。
 
 root拥有 `pu_p_store_control` / `pu_p_group` / `block_feed_loader` 的正式修改；policy agent拥有新的普通请求arbiter。两者仍须保留：LOAD边界先drain先前ordinary，活动LOAD可接收新ordinary；完成依赖feeder done与A/B真实hold empty；最终事务写ACK后才释放输出槽。此目录不重复实现上述上层策略，不改变ACK定义。
 
@@ -38,3 +38,6 @@ B-only功能矩阵位于主计时之后，覆盖rows0×tiles1..4×bwide0/1×load
 backend bench以逐事务参考内存和两套响应scoreboard检查随机/有向顺序、整行快照、独立响应背压、reservation满、同时物理bank操作、同bank公平、复位无陈旧响应；计时比较相同64窄事务+32宽读，共192物理bank操作。local bench检查A/B数据与metadata、整LOAD A/B范围保护、默认rows0拒绝和显式B-only、done持有/ACK、持有数据复位；计时比较同一LOAD与64个不相交普通写，给出LOAD owned期间实际写接受数。
 
 本地仅准备源码、AST和静态审查；**没有执行EDA lint/编译/仿真/综合/STA**。容量固定与结构可核对，性能结论必须等待真实服务器回执。bank模式可能因冲突补拍增加某些LOAD延迟；不能预设每种工作负载都加速。整体P与第1/3项的组合周期由root的同输入同结果native测试另行验收，不能拿后端局部数字替代token/s或物理资格。
+
+
+实际已集成到正式RTL；run10/11服务器证据与最终口径见[总报告](../../../docs/experiments/issue-247-p-native-optimizations.md)。本文件前面的交接/计划措辞描述模块分工，不表示服务器验证仍未执行。物理验收、真正DMA预取仍未完成。

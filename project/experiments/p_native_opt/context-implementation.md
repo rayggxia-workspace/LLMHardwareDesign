@@ -52,10 +52,9 @@ completed. The main P integration needs an actual B-only feeder operation;
 root supplies that separately. A direct native-M result does not prove SRAM
 or DDR speedup, and physical clock effects are not modeled.
 
-`generate.py --repo ROOT --out NEW_DIRECTORY` emits unchanged original RTL/test,
+`generate_m_context.py --repo ROOT --out NEW_DIRECTORY` emits unchanged original RTL/test,
 the context RTL, the renamed legacy compatibility test, the new context test,
-and SHA receipts. Root may rename the generator `generate_m_context.py` when
-integrating it alongside `context_tests.cpp.inc` in `p_native_opt`.
+and SHA receipts. The generator and `context_tests.cpp.inc` are integrated in `p_native_opt`.
 
 `run_context.py --repo ROOT --out NEW_RESULTS --cpus 4 --verilator PATH` performs
 server builds only when explicitly invoked there. It compares the exact full
@@ -72,5 +71,4 @@ handshakes differ by the context count. Measurements include all configuration,
 execution, output and release commands; reset and assertion-only negative
 commands are excluded from the three measured schedules.
 
-Local generation/static checks are not RTL execution. Server RTL, integration,
-synthesis and physical results are pending until root supplies real receipts.
+Run10 completed the real server RTL tests; run11 supplemented full-P retirement timing. See the main Chinese report and native-p receipts. Synthesis and physical qualification remain unperformed.

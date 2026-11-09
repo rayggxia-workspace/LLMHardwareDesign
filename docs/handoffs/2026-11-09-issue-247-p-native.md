@@ -2,6 +2,29 @@
 
 2026-11-09，Asia/Shanghai；负责人 Melodydt，独立审查人/优先级待指定。
 
+## 当前终态与交付
+
+本轮源码及验证已完成，交付PR243待审，Issue247为in_review，不done。run10/101756（源码c2359bdeeea83270ab632861eebe6ffc8dcc510e）1:21，run11/101758（源码24f720a788328bd8d73e2bf1a3b0502ded9b937b）1:05，均COMPLETED0:0。四组件通过来自run10；run11补local与完整P。全部作业终态，无活动仿真，未配置自动监测。源、工具、版本及185份轻量证据见[native-p入口](../../work/Melodydt/247/native-p/README.md)。最终上传commit在PR回执记录，不将最终文档head当作运行源码。
+
+无背压local95→71；完整P含释放K59 2112→2032、K11 672→676。15生产RTL两轮SHA相同，29当前功能源核验通过；管理/Python/JSON/链接及163策展结果SHA通过。800+629项全部输出哈希，104+66项回收结果逐项匹配。主结果SHA为97de764fffa64b9eb151204af74f94e4d53ea4cabd1f5b5e96c292a0e75bdec0与0061270c92a28004e87c0eb3dd69dcd3e0bfd0da6ba97d8bec69d89588fd71f2。
+
+下一步由实施方接入真实DMA预取/描述符/信用、控制镜像和整模型数值，并做综合/STA/P&R；审查人待指定。SRAM扩容未实装；功能通过不代表物理或大模型部署验收。登记PR5本次实读open/unmerged，pending；无board.json/Projects能力，看板unverified/同步pending，管理员待指定。源码24f720a7的CI42636841207 failure，无可用step结果，原因待核实；最终head CI以PR回执为准，未改workflow绕过。
+
+run11实际启动：`cd /public/home/yuzelu/Melodydt/issue247-area-speed/run11 && sbatch --parsable --export=ALL,POPT_COMPONENTS=integration job.sh`，mdt-p-native/c64/node1/4核/UNLIMITED。源码source，日志slurm-101758.log，结果results/result.json。可复制查询：
+
+```sh
+squeue -j 101756,101758
+sacct -j 101756,101758 -X --format=JobID,JobName,State,ExitCode,Elapsed,NodeList
+tail -n 40 /public/home/yuzelu/Melodydt/issue247-area-speed/run11/slurm-101758.log
+cat /public/home/yuzelu/Melodydt/issue247-area-speed/run11/results/result.json
+```
+
+恢复第一步：读PR最新head/审查意见和本文终态，运行离线verify核对当前源；无需重复提交已完成作业。本地非Git快照位置见下，工作文件已纳入本次显式交付白名单，无ref-project改动；服务器原件保持独立不可覆盖。
+
+## 以下为启动前及启动时的历史记录
+
+
+
 - 仓库 https://github.com/rayggxia-workspace/LLMHardwareDesign ，[Issue247](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247)，[PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)。继续 `task/242-r-load-bounds`，实施起点 `3a66f8de0889925846e9d737690e2d9e297bb173`。
 - 本地正式源是非Git快照 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/242/r-load-bounds/repo`。通过本人 GitHub tree/commit/ref 租约上传，未宣称本地 checkout/pull。并行工作隔离在外层 `work/Melodydt/247/popt-policy`、`popt-memory`、`popt-context`；仅根整合正式文件。
 - 起点458个PR文件Git blob与本地逐项一致，无无关变更；保留既有R修复及研究，不操作ref-project。

@@ -1,0 +1,651 @@
+{
+  "passed": true,
+  "scope": "fixed 16KiB four real1RW macros; bank-mask partial wide gather and independent narrow access; no 1R1W/SRAM expansion/STA qualification",
+  "versions": {
+    "python": "3.10.12",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "gcc": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+  },
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.05381184257566929,
+      "log": "verilator-version.log",
+      "log_sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "command": [
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.004444120451807976,
+      "log": "gcc-version.log",
+      "log_sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--lint-only",
+        "--timing",
+        "--timescale",
+        "1ns/1ps",
+        "--top-module",
+        "block_feed_s16k_bank_rw",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.072549301199615,
+      "log": "bank-rw-strict-lint.log",
+      "log_sha256": "e7c0663174953b0164720b4ee1f236a1e9e00dfe06bba920b272dd5a2e8a442f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_popt_memory",
+        "-GBANK_RW=0",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-backend-0-0",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/tb_popt_memory.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.9968661572784185,
+      "log": "build-backend-0-0.log",
+      "log_sha256": "bdaea902c40709b3f0758394c9ac1ccb23ba82cbd0fad63bc8016c3670bedbaa"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-backend-0-0/Vtb_popt_memory",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.009848280809819698,
+      "log": "run-backend-0-0-1-143.log",
+      "log_sha256": "81a0bf44c654d251a481ca7f51cc52b336718e747a069b9d10ed338df9d33ef2"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-backend-0-0/Vtb_popt_memory",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.009910522028803825,
+      "log": "run-backend-0-0-2-143.log",
+      "log_sha256": "0efd7f45c6f18ce6a7083384e89cc7366b452e68a64a5dd89e760330e836961c"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-backend-0-0/Vtb_popt_memory",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.009218295104801655,
+      "log": "run-backend-0-0-2-144.log",
+      "log_sha256": "2f9041d88e78c63ffbb8b0f658b9876e22602b92727317b404cc1923f1d1717a"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_popt_memory",
+        "-GBANK_RW=1",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-backend-1-0",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/tb_popt_memory.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.037147855386138,
+      "log": "build-backend-1-0.log",
+      "log_sha256": "0a904706e3a9aa30b0bcf7ef638a8c99be5b32c16c750c01f210c3d3abe81a91"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-backend-1-0/Vtb_popt_memory",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.00953091960400343,
+      "log": "run-backend-1-0-1-143.log",
+      "log_sha256": "c9b045464c2ef08e396b9ac3c7ccd12fb001032d833d077e80eb824a85299710"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-backend-1-0/Vtb_popt_memory",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.00898063089698553,
+      "log": "run-backend-1-0-2-143.log",
+      "log_sha256": "b4bc24044910272b58b3c1a9b00af56f1703a244c988817b2dacb26fc52f013d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-backend-1-0/Vtb_popt_memory",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.009049677290022373,
+      "log": "run-backend-1-0-2-144.log",
+      "log_sha256": "63e90c17b26ce69f0c5d856da4f1deb1fb242151ab0ba28847c43c9da4a51bb8"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_popt_local",
+        "-GBANK_RW=0",
+        "-GREUSE_A=0",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-0-0",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/tb_popt_local.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.0020396020263433,
+      "log": "build-local-0-0.log",
+      "log_sha256": "89eb2c1fe9a03ca10caf2e84fa604d838c161549362650d1430e8e4c114a000d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-0-0/Vtb_popt_local",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.009204594418406487,
+      "log": "run-local-0-0-1-143.log",
+      "log_sha256": "0fff4b54f1e60f6111a3ebf8331dfe207837795815482ab78fe15b2cabdcc8e8"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-0-0/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.009006192907691002,
+      "log": "run-local-0-0-2-143.log",
+      "log_sha256": "2c07dadc1cc81712ebfa8bbca2ce8f1568b5c3d1c1fc89d4b247494bdda6edec"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-0-0/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.008694583550095558,
+      "log": "run-local-0-0-2-144.log",
+      "log_sha256": "49bfca758ee390a7e4b73b8a9e33601b04e46c0f8fcf11c3f8abc972d0069332"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_popt_local",
+        "-GBANK_RW=1",
+        "-GREUSE_A=0",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-1-0",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/tb_popt_local.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.0065793385729194,
+      "log": "build-local-1-0.log",
+      "log_sha256": "de31d3af8083e6e45980e5c6bd640476d715389ef4a69d8108f88586f77f6937"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-1-0/Vtb_popt_local",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.009312114678323269,
+      "log": "run-local-1-0-1-143.log",
+      "log_sha256": "f004263274653315a289a83d4af3c540cb4aa048e1b98c591c0df04b4b2fa1fd"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-1-0/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.009198049083352089,
+      "log": "run-local-1-0-2-143.log",
+      "log_sha256": "89cec4dba1e1a710dbbcd2d3821b0ba934606ccce1b28e1cbcfab55f02ab7203"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-1-0/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.00860208086669445,
+      "log": "run-local-1-0-2-144.log",
+      "log_sha256": "1aec24224f67a4839f4a1b9a475e19968abd5bacba4923d12b1002c0dc9ee0d0"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_popt_local",
+        "-GBANK_RW=1",
+        "-GREUSE_A=1",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-1-1",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/tb_popt_local.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.007893979549408,
+      "log": "build-local-1-1.log",
+      "log_sha256": "7acc9d78a8a9b5e620109a35832b44bd69260f3a259b54e43ac009dc004b6985"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-1-1/Vtb_popt_local",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.009356128983199596,
+      "log": "run-local-1-1-1-143.log",
+      "log_sha256": "0781ebc92b0595b4cdc826c2c8942a27c05424d2e254018a4dbe5dac1d0b8e1e"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-1-1/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.008749419823288918,
+      "log": "run-local-1-1-2-143.log",
+      "log_sha256": "3dec476825e3b81630f068b3a09fe69c3badee75f64a9acfdd5046369711032d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/memory/obj-local-1-1/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.0085144629701972,
+      "log": "run-local-1-1-2-144.log",
+      "log_sha256": "790ca00983e0ea6ade209a7b4b5dc2d254c5d594f9ec77dc322603d95140d32b"
+    }
+  ],
+  "source_commit": "c2359bdeeea83270ab632861eebe6ffc8dcc510e",
+  "deployment_manifest": {
+    "path": "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/inputs.json",
+    "sha256": "67970fdb9601de0ec81ee1a9413e8ac577f0c732b5392c351f299cd975d0064f"
+  },
+  "source_sha256": {
+    "project/rtl/s_sram/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+    "project/rtl/s_sram/block_feed_s16k_bank_rw.sv": "8de334eb02abbf65cacff9691e7d5e4b20da20ca15961d31dd6c62071db0180c",
+    "project/rtl/s_sram/local_s_p.sv": "c2bb51e272acad7c18fc096ce3cd44ef411f05080942b1fa79b060eefd5975d4",
+    "project/rtl/block_feed_v1/block_feed_loader.sv": "86479daad012c028d4ebc9a6613001e07abec33af2fe0764fd8e0fb71732dd31"
+  },
+  "study_sha256": {
+    "run_policy_rtl.py": "a0cc9113a3865932b2d6335d737a4d5ccc5e7c1f31ffcd1d4f6f2eb7b6723cec",
+    "run.py": "c315006731e70c78fe373b5992de82d721edc31ecc68322c0947d214e2688650",
+    "generate_m_context.py": "8b2ce5ca5f113575d64522ca10aab5cbc1219f670c3ea0b5c5b364158956ade4",
+    "tb_popt_memory.sv": "9df199ed1a52b00b25dbf98e3e779570aac2a0933e1284c22efc75485f91cd89",
+    "tb_popt_group.sv": "4919b2c5ca29bfaf16e1d6b0aa2544cf6868c7ce04117e54d1097744bdb2bedf",
+    "run_memory.py": "f32aa264882c12dcdcb8a1ab45ca0ea16a96bd997319fcffa4f04268bb14f174",
+    "tb_popt_local.sv": "4e707c84579283335284fa17f78de7eccf731d519bfe5c2c7585125e43241ecf",
+    "policy_top.sv": "5768b6a74f1aa16a98c90ce2dbebc3398e5a26d2358d7628cf9207eecd696ffc",
+    "run_context.py": "43c135fac6fbf94949a4b8463b84f6f590ec68359636b5a87cc353e0c1d0c1c8"
+  },
+  "bank": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v",
+    "sha256": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7"
+  },
+  "verilator_binary_sha256": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+  "runs": [
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "kind": "backend",
+        "bank_rw": 0,
+        "cycles": 99,
+        "narrow_commands": 64,
+        "wide_commands": 32,
+        "physical_bank_operations": 192,
+        "parallel_physical_cycles": 0,
+        "max_narrow_wait": 32,
+        "max_wide_wait": 0
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 143,
+      "checks": {
+        "kind": "backend",
+        "bank_rw": 0,
+        "cycles": 99,
+        "narrow_commands": 64,
+        "wide_commands": 32,
+        "physical_bank_operations": 192,
+        "parallel_physical_cycles": 0,
+        "max_narrow_wait": 32,
+        "max_wide_wait": 0
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 144,
+      "checks": {
+        "kind": "backend",
+        "bank_rw": 0,
+        "cycles": 99,
+        "narrow_commands": 64,
+        "wide_commands": 32,
+        "physical_bank_operations": 192,
+        "parallel_physical_cycles": 0,
+        "max_narrow_wait": 32,
+        "max_wide_wait": 0
+      }
+    },
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "kind": "backend",
+        "bank_rw": 1,
+        "cycles": 99,
+        "narrow_commands": 64,
+        "wide_commands": 32,
+        "physical_bank_operations": 192,
+        "parallel_physical_cycles": 32,
+        "max_narrow_wait": 1,
+        "max_wide_wait": 2
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 143,
+      "checks": {
+        "kind": "backend",
+        "bank_rw": 1,
+        "cycles": 99,
+        "narrow_commands": 64,
+        "wide_commands": 32,
+        "physical_bank_operations": 192,
+        "parallel_physical_cycles": 32,
+        "max_narrow_wait": 1,
+        "max_wide_wait": 2
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 144,
+      "checks": {
+        "kind": "backend",
+        "bank_rw": 1,
+        "cycles": 99,
+        "narrow_commands": 64,
+        "wide_commands": 32,
+        "physical_bank_operations": 192,
+        "parallel_physical_cycles": 32,
+        "max_narrow_wait": 1,
+        "max_wide_wait": 2
+      }
+    },
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 0,
+        "reuse_a": 0,
+        "cycles": 122,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 0
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 0,
+        "reuse_a": 0,
+        "cycles": 122,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 0
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 144,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 0,
+        "reuse_a": 0,
+        "cycles": 122,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 0
+      }
+    },
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 1,
+        "reuse_a": 0,
+        "cycles": 71,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 51
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 1,
+        "reuse_a": 0,
+        "cycles": 71,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 51
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 144,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 1,
+        "reuse_a": 0,
+        "cycles": 71,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 51
+      }
+    },
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 1,
+        "reuse_a": 1,
+        "cycles": 71,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 51
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 1,
+        "reuse_a": 1,
+        "cycles": 71,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 51
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 144,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 1,
+        "reuse_a": 1,
+        "cycles": 71,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 51
+      }
+    }
+  ],
+  "output_sha256": {
+    "run-backend-1-0-2-144.log": "63e90c17b26ce69f0c5d856da4f1deb1fb242151ab0ba28847c43c9da4a51bb8",
+    "run-local-1-1-1-143.log": "0781ebc92b0595b4cdc826c2c8942a27c05424d2e254018a4dbe5dac1d0b8e1e",
+    "run-local-1-0-2-143.log": "89cec4dba1e1a710dbbcd2d3821b0ba934606ccce1b28e1cbcfab55f02ab7203",
+    "run-backend-0-0-1-143.log": "81a0bf44c654d251a481ca7f51cc52b336718e747a069b9d10ed338df9d33ef2",
+    "run-local-1-0-2-144.log": "1aec24224f67a4839f4a1b9a475e19968abd5bacba4923d12b1002c0dc9ee0d0",
+    "gcc-version.log": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+    "run-local-0-0-1-143.log": "0fff4b54f1e60f6111a3ebf8331dfe207837795815482ab78fe15b2cabdcc8e8",
+    "run-local-1-1-2-144.log": "790ca00983e0ea6ade209a7b4b5dc2d254c5d594f9ec77dc322603d95140d32b",
+    "run-backend-1-0-2-143.log": "b4bc24044910272b58b3c1a9b00af56f1703a244c988817b2dacb26fc52f013d",
+    "run-local-0-0-2-143.log": "2c07dadc1cc81712ebfa8bbca2ce8f1568b5c3d1c1fc89d4b247494bdda6edec",
+    "run-local-1-0-1-143.log": "f004263274653315a289a83d4af3c540cb4aa048e1b98c591c0df04b4b2fa1fd",
+    "verilator-version.log": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+    "run-backend-1-0-1-143.log": "c9b045464c2ef08e396b9ac3c7ccd12fb001032d833d077e80eb824a85299710",
+    "run-local-1-1-2-143.log": "3dec476825e3b81630f068b3a09fe69c3badee75f64a9acfdd5046369711032d",
+    "run-local-0-0-2-144.log": "49bfca758ee390a7e4b73b8a9e33601b04e46c0f8fcf11c3f8abc972d0069332",
+    "run-backend-0-0-2-144.log": "2f9041d88e78c63ffbb8b0f658b9876e22602b92727317b404cc1923f1d1717a",
+    "build-backend-1-0.log": "0a904706e3a9aa30b0bcf7ef638a8c99be5b32c16c750c01f210c3d3abe81a91",
+    "run-backend-0-0-2-143.log": "0efd7f45c6f18ce6a7083384e89cc7366b452e68a64a5dd89e760330e836961c",
+    "bank-rw-strict-lint.log": "e7c0663174953b0164720b4ee1f236a1e9e00dfe06bba920b272dd5a2e8a442f",
+    "build-local-1-1.log": "7acc9d78a8a9b5e620109a35832b44bd69260f3a259b54e43ac009dc004b6985",
+    "build-local-0-0.log": "89eb2c1fe9a03ca10caf2e84fa604d838c161549362650d1430e8e4c114a000d",
+    "build-local-1-0.log": "de31d3af8083e6e45980e5c6bd640476d715389ef4a69d8108f88586f77f6937",
+    "build-backend-0-0.log": "bdaea902c40709b3f0758394c9ac1ccb23ba82cbd0fad63bc8016c3670bedbaa"
+  }
+}

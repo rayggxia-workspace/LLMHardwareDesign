@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-09，[Issue247/PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)由性能研究进入原生P可选RTL实现：消费者仲裁、固定16KiB四1RW bank并发、八组S64上下文与A复用，两轮服务器回归通过，待独立审查。默认参数关闭新功能；未实装SRAM扩容，未获得新物理或整模型token/s资格。[实施方案、局部收益及短K退化](experiments/issue-247-p-native-optimizations.md)。登记pending，看板unverified/同步pending，CI失败原因待管理员核实；未自合并。
+
 2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 
 2026-11-08，用户授权将母控 [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 合入 main，并在[五类 Block 与母控统一入口](experiments/assets/five-leaf-bases/README.md)并列索引源码、图册及双格式验收包。工程证据不变；合并结果以 PR 在线回执为准，授权整合不冒充独立审查或九实例系统验收。

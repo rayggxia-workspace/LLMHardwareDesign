@@ -4,7 +4,11 @@
 
 ## 原生P前三项实施（2026-11-09，Asia/Shanghai）
 
-Issue247已恢复in_progress，继续PR243/task/242-r-load-bounds；消费者仲裁、16KiB bank并发、八组S64上下文与B-only供数已进入RTL首版集成。[详细方案](../../docs/experiments/issue-247-p-native-optimizations.md)与[接续](../../docs/handoffs/2026-11-09-issue-247-p-native.md)。本地管理检查通过，服务器仿真待提交；不把旧模型收益当本轮实测，SRAM扩容仍不实装。默认参数保持旧行为，新功能物理/整模型尚未验收。负责人Melodydt；审查人待指定，登记pending，看板unverified/同步pending，未配置自动监测。
+Issue247本轮RTL与详细文档已通过验证，交付PR243待独立审查（in_review），不done。仲裁、固定16KiB bank并发、八组S64上下文+B-only已接入可选P参数，默认0；扩容未实装。run10/101756源码c2359bde、1:21，run11/101758源码24f720a7、1:05，均c64/node1/4核/COMPLETED0:0。15份生产RTL两轮相同；185轻量原件、163策展结果SHA与29当前功能源核验通过。管理结构/Python/JSON/链接检查通过仅在各自范围。
+
+无背压local95→71拍；完整P含32拍释放，K59 2112→2032，K11 672→676退化。仲裁516→516、backend99→99总周期不变。run10的644拍仅输出前缀，不再冒领完整任务加速。[详细方案](../../docs/experiments/issue-247-p-native-optimizations.md)、[证据](../../work/Melodydt/247/native-p/README.md)、[恢复与作业命令](../../docs/handoffs/2026-11-09-issue-247-p-native.md)。真实DMA预取、控制镜像、整模型、面积/STA/P&R未完成。全部作业已终态，无活动仿真，未配置自动监测。
+
+负责人Melodydt，独立审查人/优先级待指定；登记PR5已读回open/unmerged，pending；缺board.json/Projects能力，看板unverified/同步pending。源码head24f720a7的CI42636841207失败、无可用step结果，原因待管理员核实；最终head状态以PR实时回执为准。本地非Git快照，经本人tree/commit/ref租约上传，未自合并。
 
 ## 当前研究：结合 PR220/241 提高 token/s
 
