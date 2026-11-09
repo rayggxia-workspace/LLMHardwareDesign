@@ -4,8 +4,12 @@
 
 ## 当前研究：结合 PR220/241 提高 token/s
 
+- [Issue247：固定SRAM的面积换速度研究](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247) 已获用户授权按顺序开展，状态in_progress，沿task/242-r-load-bounds / PR243。先验证多组96位部分和与K块A复用，再验证P输入弹性缓冲/完成协议，随后研究S端口并发、M/P规模、U流水。仅隔离模型/实验RTL；生产RTL未改。新增面积预算单列，SRAM容量保持16KiB。
+- 开始检查：本人GitHub账号Melodydt、PR243 head7e4fe6980c9d126b6a4152ddec5806a3d0966ba2及无新评论；本地管理结构、Issue245/246全部既有轻量证据及功能源SHA验证通过。源码仍为本人非Git快照；新服务器仿真尚未提交，提交后登记作业、源码与SHA，不把准备描述成已执行。登记pending，看板unverified/同步pending，独立审查人与管理员待指定。
+- 用户当前决定：**SRAM扩容研究保留，暂不实装**；Issue246既有结论与证据保持。下一步是Issue247固定容量研究，不启动48/64KiB生产S实现。
+
 - [Issue246：P私有S容量](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/246) 沿PR243待审交付。[报告](../../docs/experiments/issue-246-sram-capacity.md)：W8/context512两P从16→64KiB，原调度+7.13%，前轮组合上容量增量+11.05%；48KiB已近64，128KiB该decode无新增收益。prefill2+21–23%，端口吞吐成本可能抵消容量收益。43KiB只是A，保K256至少W8 48.09375KiB/W16 52.09375KiB；真实S地址/描述符/1RW仲裁及新物理资格待实现，不改生产RTL。
-- 246已测源8b18e0cb3efd3e8558d9930132282fbe551caf4e，Slurm101620/mdt-sram-cap、c64/node1/4核/UNLIMITED、4分02秒COMPLETED0:0，28case/16KiB完整结果回归/225kernels/4validation/5smoke/负例通过；35回收输出SHA匹配，四源码/15依赖保持。负责人Melodydt；待独立审查合并、不done，CI以PR回执为准，登记pending/看板unverified与同步pending。下一步比较48/64KiB真实S_P实现成本，负责人待指定；[恢复入口](../../docs/handoffs/2026-11-09-issue-246-sram-capacity.md)，无活动作业、无自动监测。
+- 246已测源8b18e0cb3efd3e8558d9930132282fbe551caf4e，Slurm101620/mdt-sram-cap、c64/node1/4核/UNLIMITED、4分02秒COMPLETED0:0，28case/16KiB完整结果回归/225kernels/4validation/5smoke/负例通过；35回收输出SHA匹配，四源码/15依赖保持。负责人Melodydt；待独立审查合并、不done，CI以PR回执为准，登记pending/看板unverified与同步pending。48/64KiB真实S_P实装按用户决定暂缓，保留研究候选；[恢复入口](../../docs/handoffs/2026-11-09-issue-246-sram-capacity.md)，无活动作业、无自动监测。
 
 - 详细P/DMA专项 [Issue #245](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/245) 沿本PR243交付待审查，负责人Melodydt；原#242/#244独立待审范围保留。来源241@e7aeed20、220最新只读3a9f98a9；[详细报告](../../docs/experiments/issue-245-p-dma-study.md)。
 - 已完成服务器26+18+18次完整trace执行（含重复基线），101612/101614/101615均c64/node1/4核/UNLIMITED/COMPLETED0:0。原版与仪表所有原指标、上游W8/W16基线精确一致；每轮225 kernels、4 validation、5 smoke、软件oracle及独立守恒审计通过，后两轮7个篡改拒绝通过。91份回收输出SHA通过，15份最终功能源与已测727f297cd0ec3436e108e351aad5799c013c0338一致；101611编译失败保留，-Werror未弱化。
