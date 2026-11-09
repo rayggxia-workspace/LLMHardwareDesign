@@ -1,6 +1,6 @@
 # Melodydt / Issue #242 轻量验证证据
 
-[Issue #242](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/242)，用途：保存 R 原始 LOAD 边界修复的实际输入、日志、Slurm 终态和校验索引。正式代码在 `project/rtl/r_local_state`、回归在 `project/experiments/r_load_bounds`；[正式实验报告](../../../docs/experiments/issue-242-r-load-bounds.md)。
+[Issue #242](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/242) / [PR #243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)，用途：保存 R 原始 LOAD 边界修复的实际输入、日志、Slurm 终态和校验索引。正式代码在 `project/rtl/r_local_state`、回归在 `project/experiments/r_load_bounds`；[正式实验报告](../../../docs/experiments/issue-242-r-load-bounds.md)。
 
 源码 commit `f034be2b7c87137b92f7bfce274a5485647e512d`，分支 `task/242-r-load-bounds`；基线 main `c4d7b960599b9d292f27eb4429d5f226a7156c95`。本目录后续仅补文档/证据，不改变已测源码。
 
@@ -19,4 +19,4 @@
 
 九次修复版通过，三次旧源负控制检出预期缺陷；四个包装作业全部 COMPLETED 0:0。此结果仅覆盖 RTL/接口行为，未重新取得物理资格、未执行原 192 项最终网表回归，也未启动整模型仿真。
 
-规则版本 rayggxia-project-collab 1.0.0。登记复用 [management-hub PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) pending；看板 unverified / 同步 pending（无 board.json 和 Projects 条目工具；处理人待指定）。独立审查人待指定，任务提交 PR 后进入 in_review，不标 done。[交接入口](../../../docs/handoffs/2026-11-09-issue-242-r-load-bounds.md)。
+规则版本 rayggxia-project-collab 1.0.0。登记复用 [management-hub PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) pending；看板 unverified / 同步 pending（无 board.json 和 Projects 条目工具；处理人待指定）。独立审查人待指定，任务 in_review，未验收/未合并，不标 done。[交接入口](../../../docs/handoffs/2026-11-09-issue-242-r-load-bounds.md)。

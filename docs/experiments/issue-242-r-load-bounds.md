@@ -1,6 +1,6 @@
 # Issue #242：R 原始 LOAD 地址边界修复
 
-日期：2026-11-09，Asia/Shanghai。负责人 Melodydt；[任务](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/242)。规则版本 rayggxia-project-collab 1.0.0。
+日期：2026-11-09，Asia/Shanghai。负责人 Melodydt；[任务 #242](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/242) / [PR #243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)。规则版本 rayggxia-project-collab 1.0.0。
 
 ## 问题与实现
 
