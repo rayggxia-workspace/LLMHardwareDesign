@@ -4,6 +4,33 @@ Issue [#234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234)
 This is an incomplete calibration campaign. No complete device decode token/s
 or J/token has passed acceptance. CPU oracle wall time is not device time.
 
+`n_exp_lc_fixture.py ACCEPTED_U64_SOURCE NEW_OUTPUT` stages corrected E13/S/N
+as actual compact MC/LC images, validating accepted source hashes and changing
+only image generation and testbench. `n_exp_lc_probe.py EXPERIMENT ORACLE OUTPUT`
+independently audits every image byte and rejects four corruptions, then runs
+eleven inputs/two stall modes/three initializations on RTL and accepted U64
+parent netlist: 132 runs. It builds `[x,0]` using E13, executes N Stats2/Exp1
+through private S, and verifies packet/result through SEND/RECEIVE/stored ACK.
+No testbench data is injected between services. Reads80B/writes64B are checked.
+
+Actual SystemC replay uses Verilator5.042 `--sc --exe --build --timing --assert`,
+`systemc_lc_native_main.cpp`, SystemC3.0.1 and 1ps resolution. The probe's
+`--systemc --native-reference RECEIPT` requires all132 times/results and images
+to match the native run. The driver advances the kernel in bounded slices to
+honor Verilog finish; the initial watchdog failure is preserved. Fixture runtime
+1.300/1.370us includes behavioral PM/control, not a universal Exp coefficient
+or token time. The zero-delay SRAM view supplies no new STA qualification.
+See [program evidence](../../../work/YUZE-LU/234/n-exp-lc-result-001.json).
+
+`sequence_replay.py` accepts `--rms-refinements` and
+`--weighted-product-fraction-bits`, both in resume identity. Defaults preserve
+old arithmetic. `sequence_recipe.sbatch` requests six tiny four-token controls
+and full3B P128/P512/P2048 with two prompts each, D128, one node6x10. It retains
+.02/argmax/all-KV checks and only integer-generated live KV, stopping on failure.
+RMS1/product+6 is a numerical candidate, not a DP gain. Its eighteen one-step
+samples passed; continuous generation and the separate prior FP32 export gate
+are not thereby qualified.
+
 ## Reproduce each evidence level
 
 Lightweight checks, from repository root:

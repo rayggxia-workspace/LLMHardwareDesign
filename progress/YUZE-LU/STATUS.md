@@ -1,5 +1,15 @@
 # YUZE-LU 的进度
 
+## 2026-11-09 13:22 CST：Issue234程序级SystemC
+
+[Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，in_progress。
+真实compact64母控/局控驱动E13/S/N Stats2/Exp1，原生132次、SystemC内核132次，数值/镜像/时间一致；四损坏镜像拒绝。
+1.300/1.370us含行为PM，不作通用服务系数/整网时间。810文件7.769MB已全成员/远端SHA核验；驱动首次watchdog失败留档，无硬件改动。
+101543 COMPLETED0:0/15m40s，十八样本的logits/.02/argmax/全部72KV通过；是单列配方修复，非DP收益，非连续生成，未覆盖先前导图严格门。
+连续驱动已接候选与resume身份，D128六场景待冻结提交。41项检查及结构/语法/diff通过。
+固定九组/3M/位宽/原预算，完整D128、整网SystemC时间/总J/token和FPGA双门未完成；下一步整数KV与模型组装。
+登记PR5 pending，看板unverified/同步pending，审查待指定；见[账本](../../work/YUZE-LU/234/README.md)。
+
 ## 2026-11-09 12:26 CST：Issue234共享S服务的SystemC联动
 
 [Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，in_progress。

@@ -34,6 +34,10 @@ def main():
     p.add_argument('--generated-tokens', type=int, default=128)
     p.add_argument('--steps-this-run', type=int, default=16)
     p.add_argument('--threads', type=int, default=10)
+    p.add_argument('--rms-refinements', type=int, choices=range(1, 9), default=1,
+        help='numerical recipe candidate; default preserves the frozen recipe')
+    p.add_argument('--weighted-product-fraction-bits', type=int, choices=range(7), default=0,
+        help='explicit S32 exponent recipe change before S16-weight Dot; not a DP gain')
     p.add_argument('--decode-template', type=Path)
     p.add_argument('--prefill-onnx', type=Path)
     p.add_argument('--resume', type=Path)
@@ -145,6 +149,9 @@ def main():
         'weights_manifest_sha256': sha(weights_path), 'HF_model_source_sha256': hf_source_sha,
         'cached_primitives_sha256': sha(Path(__file__).with_name('cached_primitives.py')),
         'sequence_source_sha256': sha(Path(__file__)), 'kv_exponent': -20,
+        'rms_refinements': a.rms_refinements,
+        'weighted_product_fraction_bits': a.weighted_product_fraction_bits,
+        'recipe_change_is_not_DP_gain': True,
         'sequence_policy_sha256': sha(Path(__file__).with_name('sequence_policy.py')),
         'diagnostic_continue_after_quality_failure': a.diagnostic_continue_after_quality_failure,
         'source_artifacts_sha256': sha(a.output/'source-artifacts.json'),
@@ -272,7 +279,9 @@ def main():
                 initial[name] = Q(np.zeros(meta['shape'], dtype=np.int32), -20)
             output_formats = {n: {'shape': model['values'][n]['shape'], 'bits': 32, 'exponent': -20}
                               for n in model['outputs'] if n != 'logits'}
-            program = compile_program(model, initial, calibration, formats, runtime, output_formats=output_formats)
+            program = compile_program(model, initial, calibration, formats, runtime, output_formats=output_formats,
+                rms_refinements=a.rms_refinements,
+                weighted_product_fraction_bits=a.weighted_product_fraction_bits)
             program_path = directory/'program.json'
             program_path.write_text(json.dumps(program, separators=(',', ':'))+'\n')
             states, transfer = handoff(previous, program, layers) if number else ({}, {'origin': 'empty-cache integer prefill'})

@@ -1,5 +1,10 @@
 # 架构与运行
 
+Issue234新增程序级SystemC复现见[benchmark说明](../project/experiments/systemc_benchmark/README.md)：
+`n_exp_lc_fixture.py`生成真实compact64镜像，`n_exp_lc_probe.py`独立字节审计及回放，
+`systemc_lc_native_main.cpp`在SystemC3.0.1中执行同一RTL/父层网表，原生/SystemC各132次一致。
+范围仅两U目标组件，行为PM和零延迟活动SRAM不提供物理PM、整模型时间或能耗资格。
+
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
 
 ## 研究系统边界
