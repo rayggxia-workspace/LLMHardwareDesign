@@ -1,5 +1,10 @@
 # 架构与运行
 
+2026-11-09迭代21：[就绪DAG合同](../project/experiments/block_synthesis/RESIDENT_READY.md)。
+`resident_ready_survey.py IMMUTABLE_TILE_JSON REGISTERED_IR FRESH_OUTPUT --width 8` 使用同一有限S转移比较严格贪心与就绪DP。
+`audit_batch_terminal.py TERMINAL_BATCH_DIRECTORY REGISTERED_IR FRESH_AUDIT` 在任务助手目录，核对终态SHA和全部原整数算子输出。
+Windows/Linux及独立服务器各309项通过；完整新程序RTL/权重批循环/全图注册/系统资格未完成，不能外推token/s。
+
 2026-11-09迭代19/20：[事件重叠合同](../project/experiments/block_synthesis/RESIDENT_OVERLAP.md)、[多行布局合同](../project/experiments/block_synthesis/RESIDENT_BATCH.md)。
 
 ```text

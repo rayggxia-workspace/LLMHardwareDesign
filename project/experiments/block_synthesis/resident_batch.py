@@ -22,6 +22,7 @@ class State:
     loads:int=0
     stores:int=0
     history:int=-1
+    completed:frozenset=frozenset()
 
 
 def validate_timing(rows,scalar):
@@ -55,10 +56,13 @@ def event_ticks(event,row_timing,scalar_timing):
     except KeyError as exc:raise ValueError('unmeasured row service shape or format') from exc
 
 
-def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch=True,rank_policy='future_copies'):
+def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch=True,rank_policy='future_copies',
+         schedule='fixed',grouping_policy='windows'):
     verify(tile);validate_timing(row_timing,scalar_timing)
     if width is not None and (type(width)!=int or width<1):raise ValueError('positive batch frontier width required')
     if rank_policy not in ('copy_cost','future_copies','future_layout'):raise ValueError('unknown batch frontier ranking')
+    if schedule not in ('fixed','ready'):raise ValueError('unknown native scheduling family')
+    if grouping_policy not in ('windows','all'):raise ValueError('unknown ready grouping policy')
     if type(zero_address)!=int or not 0<=zero_address<tile['scratch_start']:raise ValueError('explicit external zero address required')
     names=tuple(sorted(actors));meta=[actors[n] for n in names]
     if (not names or {a['kind'] for a in meta}!={'M','E'} or
@@ -68,6 +72,24 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
         if (type(a['words'])!=int or a['words']<stride or a['words']%stride or a['stride']!=stride or
             any(type(a[t])!=int or a[t]<1 for t in ('load_ticks','store_ticks'))):raise ValueError('finite batch actor/copy contract required')
     graph=tile['graph'];objects=graph['objects'];groups=units(tile);nodes={n['id']:n for n in graph['operations']}
+    from resident_ready import ReadyGraph
+    ready_graph=ReadyGraph(tile,max(int(r) for r in row_timing['profile']['P']))
+    remaining_service={}
+    if schedule=='ready':
+        for name,n in ready_graph.nodes.items():
+            if n['kind']=='E':remaining_service[name]=event_ticks({'op':'E','opcode':n['opcode'],
+                'shift':n['shift'],'inputs':n['inputs']},row_timing,scalar_timing)
+            else:
+                choices=[]
+                for r in range(1,(ready_graph.max_rows if allow_batch else 1)+1):
+                    try:
+                        term=min(event_ticks({'op':'ROW_M_TERM','rows':r,'k':n['k'],'reuse_b':b},row_timing,scalar_timing) for b in (False,True))
+                        final=event_ticks({'op':'ROW_M_FINAL','rows':r,'width':n['width'],'shift':n['shift']},row_timing,scalar_timing)
+                        choices.append(len(n['terms'])*term//r+final)
+                    except ValueError as exc:
+                        if str(exc)!='unmeasured row service shape or format':raise
+                if not choices:raise ValueError('native operation has no measured row service')
+                remaining_service[name]=min(choices)
     produced={n['output'] for n in graph['operations']};live={c['record'] for c in graph['external_commits']}
     last={};writer={}
     for i,u in enumerate(groups):
@@ -159,15 +181,28 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
         if rank_policy=='copy_cost':return 0
         # At most one first future consumption per record is charged. Layout
         # changes and storage conflicts are relaxed, so this is optimistic.
-        first={value:request for value,request in first_needs[position].items() if value not in writer or writer[value]<position}
+        if schedule=='ready':
+            requests={}
+            for name,n in ready_graph.nodes.items():
+                if name in s.completed:continue
+                for value in n['inputs']:
+                    if value not in ready_graph.writers or ready_graph.writers[value] in s.completed:
+                        requests.setdefault(value,set()).add(n['kind'])
+            # Unknown future order relaxes the consumer kind and row offset.
+            first={v:(kinds,frozenset(range(8))) for v,kinds in requests.items()}
+        else:first={value:request for value,request in first_needs[position].items() if value not in writer or writer[value]<position}
         owners_by_value={}
         for ai,row in enumerate(s.cells):
             for entry in row:
                 for offset,value in enumerate(entry):
                     if value not in (None,ZERO):owners_by_value.setdefault(value,set()).add((ai,offset))
-        cost=0
+        # A relaxed per-node share of measured services prevents a frontier
+        # from favoring histories merely because they postpone expensive
+        # arithmetic. Sharing and B reuse are assumed optimistically here;
+        # actual transitions still pay every native command and final ACK.
+        cost=sum(v for name,v in remaining_service.items() if name not in s.completed) if schedule=='ready' else 0
         for value,(kind,offsets) in first.items():
-            ais=[i for i,a in enumerate(meta) if a['kind']==kind]
+            ais=[i for i,a in enumerate(meta) if a['kind'] in kind] if schedule=='ready' else [i for i,a in enumerate(meta) if a['kind']==kind]
             owners=owners_by_value.get(value,set())
             local=any(ai in ais and (rank_policy!='future_layout' or kind=='E' or offset in offsets) for ai,offset in owners)
             if local or any(meta[i]['kind']=='M' and s.banks[i]==value for i in ais):continue
@@ -180,7 +215,7 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
         nonlocal merged,pruned
         unique={}
         for s in candidates:
-            k=(s.cells,s.backed,s.banks);old=unique.get(k)
+            k=(s.completed,s.cells,s.backed,s.banks);old=unique.get(k)
             if old is None or (s.cost,s.loads+s.stores)<(old.cost,old.loads+old.stores):unique[k]=s
         merged+=len(candidates)-len(unique)
         ranked=sorted(unique.values(),key=lambda s:(s.cost+bound(s),s.cost,s.loads+s.stores,repr(s.cells),repr(s.banks)))
@@ -219,21 +254,17 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
                 except ValueError as exc:
                     if str(exc)!='unmeasured row service shape or format':raise
         return trim(more)
-    initial=State(tuple(tuple((None,)*a['stride'] for _ in range(a['words']//a['stride'])) for a in meta),banks=(None,)*len(meta))
-    states=[initial]
-    for index,u in enumerate(groups):
-        position=index;more=[];members=u['members'];first=nodes[members[0]]
-        future={value for value,at in last.items() if at>index}|live
-        inputs={value for member in members for value in nodes[member]['inputs']}
-        needed=future|inputs|{nodes[member]['output'] for member in members}
+    def execute_unit(states,members,batchable,needed,*,serial_alternative):
+        nonlocal expanded
+        more=[];first=nodes[members[0]]
         for ai,a in enumerate(meta):
             if a['kind']!=first['kind']:continue
             if first['kind']=='M':
-                if allow_batch and u['batchable'] and len(members)>1:more.extend(matrix(states,ai,members,needed))
-                serial=states
-                for member in members:
-                    serial=matrix(serial,ai,[member],needed)
-                more.extend(serial)
+                if allow_batch and batchable and len(members)>1:more.extend(matrix(states,ai,members,needed))
+                if serial_alternative or len(members)==1:
+                    serial=states
+                    for member in members:serial=matrix(serial,ai,[member],needed)
+                    more.extend(serial)
             else:
                 active=states
                 for member in members:
@@ -255,12 +286,54 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
                             endings.append(cell(emit(ns,[e]),ai,at,[n['output']]));expanded+=1
                     active=trim(endings)
                 more.extend(active)
-        released=[]
-        for s in more:
-            cells=tuple(tuple(tuple(x if x in future or x==ZERO else None for x in entry) for entry in row) for row in s.cells)
-            released.append(replace(s,cells=cells,backed=s.backed&future,banks=tuple(x if x in future else None for x in s.banks)))
-        position=index+1;states=trim(released)
-        if not states:return {'status':'no_plan','unit':u['id'],'expanded':expanded}
+        return more
+    def release(s,future):
+        cells=tuple(tuple(tuple(x if x in future or x==ZERO else None for x in entry) for entry in row) for row in s.cells)
+        return replace(s,cells=cells,backed=s.backed&future,banks=tuple(x if x in future else None for x in s.banks))
+    initial=State(tuple(tuple((None,)*a['stride'] for _ in range(a['words']//a['stride'])) for a in meta),banks=(None,)*len(meta))
+    states=[initial]
+    if schedule=='fixed':
+        for index,u in enumerate(groups):
+            position=index;members=u['members'];future={value for value,at in last.items() if at>index}|live
+            inputs={value for member in members for value in nodes[member]['inputs']}
+            needed=future|inputs|{nodes[member]['output'] for member in members}
+            more=execute_unit(states,members,u['batchable'],needed,serial_alternative=True)
+            position=index+1;states=trim([release(s,future) for s in more])
+            if not states:return {'status':'no_plan','unit':u['id'],'expanded':expanded}
+    elif width==1:
+        # Strict greedy makes ONE decision from its current physical state.
+        # A width-one beam per completion-count layer would retain several
+        # different-sized actions and is not this greedy control.
+        while len(states[0].completed)<len(ready_graph.nodes):
+            s=states[0];more=[]
+            for members in ready_graph.actions(s.completed,allow_batch=allow_batch,policy=grouping_policy):
+                done=s.completed|frozenset(members);future=ready_graph.future(done,live)
+                inputs={value for member in members for value in nodes[member]['inputs']}
+                needed=future|inputs|{nodes[member]['output'] for member in members}
+                outcomes=execute_unit([s],list(members),len(members)>1,needed,serial_alternative=False)
+                more.extend(release(replace(ns,completed=done),future) for ns in outcomes)
+            states=trim(more)
+            if not states:return {'status':'no_plan','expanded':expanded,'schedule':schedule}
+    else:
+        # Layers count completed native nodes, rather than command groups.
+        # An r-row action advances by r and can meet a serial history at the
+        # same layer only when the complete physical state also agrees.
+        total=len(ready_graph.nodes);layers={0:states}
+        for count in range(total):
+            active=trim(layers.pop(count,[]))
+            for s in active:
+                for members in ready_graph.actions(s.completed,allow_batch=allow_batch,policy=grouping_policy):
+                    done=s.completed|frozenset(members);future=ready_graph.future(done,live)
+                    inputs={value for member in members for value in nodes[member]['inputs']}
+                    needed=future|inputs|{nodes[member]['output'] for member in members}
+                    more=execute_unit([s],list(members),len(members)>1,needed,serial_alternative=False)
+                    for ns in more:layers.setdefault(len(done),[]).append(release(replace(ns,completed=done),future))
+            # Trim once per destination layer after all histories at this
+            # source count have contributed. This bounds retained memory,
+            # while preserving distinct completed sets in the merge key.
+            for dest in sorted(layers):layers[dest]=trim(layers[dest])
+        states=trim(layers.get(total,[]))
+        if not states:return {'status':'no_plan','expanded':expanded,'schedule':schedule}
     position=len(groups)
     for commit in graph['external_commits']:
         more=[];value=commit['record'];target=commit['external_address']
@@ -281,5 +354,7 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
         'actors':actors,'zero_address':zero_address,'row_timing':row_timing,'scalar_timing':scalar_timing,
         'events':events,'total_ticks':best.cost,'copy_ticks':best.copies,'native_service_ticks':best.cost-best.copies,
         'external_load_words':best.loads,'external_store_words':best.stores,'external_words':best.loads+best.stores,
-        'width':width,'rank_policy':rank_policy,'allow_batch':allow_batch,'expanded':expanded,'merged':merged,'pruned':pruned,
+        'width':width,'rank_policy':rank_policy,'allow_batch':allow_batch,'schedule':schedule,'grouping_policy':grouping_policy,
+        'search_method':('strict_greedy' if width==1 else 'completion_layer_dp') if schedule=='ready' else 'fixed_order_frontier',
+        'expanded':expanded,'merged':merged,'pruned':pruned,
         'scope':'bounded finite-S placement and paid layout search, serial native row services; no free cross-S gather, system or performance qualification'}
