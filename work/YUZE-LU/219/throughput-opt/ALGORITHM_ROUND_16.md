@@ -63,9 +63,14 @@ v2修改未使用A保护区没有改变被选结果，故原算术负对照没�
 - **101590/attempt285已FAILED1:0，3:02。** 边界工具仅传成本/事件重建计划，遗漏status，被回放器拒绝。
   完整失败日志、12文件核验回执、冻结source.tar已回收。改为保存/传递原完整程序，并核对指标/事件/硬件合同；
   新回归覆盖真实survey到数值回放接口，缺完整程序必须拒绝，未绕过检查。修复作业**101605/attempt289**已提交。
-- **101604/attempt288**验证新连续循环选中计划的每个元素接回完整整数图，实际权重三输入；检查点RUNNING，未预记通过。
+- **101604/attempt288已COMPLETED0:0，10:46。** 新12段连续循环各22016元素全部接回完整36层整数图，
+  三输入最终原始整数logits SHA与上述原结果完全一致，HF误差及top1保持。不是全36层硬件/控制执行。
+  原报告SHA256 `a1caf6a533a61d7ba2f9ef7a6a44124d5cb68d95e77e3eed6e92bd4fbfaa6628`。
+- **101605/attempt289已COMPLETED0:0，3:48。** 修复后的54个真实权重边界案例、五种完整原程序均通过，
+  三次完整原图HF/原始logits保持；原报告SHA256 `2d9786fcddce5d42ad1b21e06e31a510dad30a002d8450cfa7ea57565150d572`。
 - 101591旧最大区域全图搜索、101525拓扑诊断继续RUNNING；不是新连续池的完整模型结果。
-- 最后状态快照2026-11-09 05:54 UTC，101605 PENDING。所有新作业4核、c64/c96、UNLIMITED；未因观测超时重启活作业。
+- 主包保留2026-11-09 05:54 UTC当时的运行/排队快照；06:02 UTC已核验上述两项终态，另附终态原件包。
+  所有新作业4核、c64/c96、UNLIMITED；未因观测超时重启活作业。
 
 ## 验证、后续与边界
 
@@ -81,6 +86,10 @@ C盘仍满，Windows临时文件显式放D盘；未删除既有结果。`check_p
 算法约20%及达标后多轮、完整KV decode、校准SystemC时间/能耗/token/s、充分适配的3–4B ASIC/FPGA对照仍未完成。
 资料包见[452原件索引](results/resident-round16/manifest.json)，归档17944404字节，SHA256
 `29bfb08c861ddbf8bd425987724a969f7768bcd0bc7722fcf5a972cb2a467f15`。发布回执另行读回核实。
+新增两项终态的[原件补包](results/resident-terminal-round16/manifest.json)保存各自冻结源、输入/输出SHA、原报告及日志，未改写主包。
+补包24原件、1296186字节，SHA256 `07f5d143a1d08f4ddabd7fff5cdefb41d19b9b2b2fd68f48e80f1291f285de98`。
+另用`audit_terminal16.py`独立关联12段选中程序的全部元素/搬运计数与三输入SHA，
+回放54组实际输入的270个原生程序，并核对当前18项关键执行源与终态冻结源一致；[独立审计](results/resident-terminal-round16/qualification-audit.json)通过。
 
 规则rayggxia-project-collab1.0.0；负责人/身份YUZE-LU；Issue219保持in_progress；PR220待独立审查、不自合并。
 登记management-hub#5仍open/unmerged、pending；无board.json/Projects能力，看板unverified/同步pending，沿用既有交接。
