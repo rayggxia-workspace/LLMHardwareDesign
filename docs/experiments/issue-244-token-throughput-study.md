@@ -57,7 +57,18 @@
 
 源码、完整图输入 SHA、方法与复跑见[工具说明](../../project/experiments/token_throughput_study/README.md)。分析重建实际 IR 依赖及所有独占资源的顺序，完整任务图须与 PR241 原件逐字节一致；情景会重新求最长路径，允许关键链切换。
 
-作业101601目前PENDING，允许c64/c96、4核、UNLIMITED，完整旧图结果待回收；不预记成功，也不将它描述为最新241的34场景复跑。现有本地校验为900个情景与独立全路径穷举一致，四个非法图及一次SHA篡改均拒绝。
+完整旧图复算已完成：**作业101608，c96/node13、4核、22秒、COMPLETED 0:0**。源码commit `81dfbd0e6e6d1432447750d5b2d4a106e2d786b7`，运行目录 `/public/home/yuzelu/Melodydt/issue244-token-throughput/run03`，实际启动 `sbatch --partition=c64,c96 --parsable job.sh`。实际Python3.10.12；六个源码SHA、六个已下载输出SHA核验一致。900个独立路径校验情景和五个非法/篡改拒绝在服务器通过。完整任务图序列化与PR241原件逐字节一致，复现167,410,840,866ticks；它不是最新241的34场景复跑。
+
+| 旧图固定绑定/资源顺序下的成本假设 | 重算模型ticks | 对原DP模型提速 |
+| --- | ---: | ---: |
+| Dot整个服务减半 | 125,160,811,136 | 1.33757× |
+| Product/Add整个服务减半 | 133,101,463,662 | 1.25777× |
+| 两组同时减半 | 90,851,433,932 | 1.84269× |
+| 将旧FFN的Add比率假设推广到全部Add | 157,349,497,014 | 1.06394× |
+
+这是完整DAG对假设服务时长的敏感性，未实现新配方、未验证真实命令成本；不能称为已获得的token/s。结果 [server-result.json](../../work/Melodydt/244/server-result.json)，核验 [server-verification.json](../../work/Melodydt/244/server-verification.json)。完整graph.json保留服务器，SHA `daeca8137b507182cf77f623a571176b2c42879b47f405ffde606072929495a3`；轻量结果SHA `840e167cccbda790a28dd870036f0d09d3e4f0e0f0389a5ba9bf430043366bc2`。
+
+失败原件保留：首轮16G请求未被受理、无JobID；101601在node1因Windows生成的SHA清单为CRLF而在读取源码前失败1:0。修正清单为LF，保持六个源码不变，在新run03先逐项校验再提交101608，全部通过；未删除或放宽校验。运行时镜像SHA未额外记录，标待核实，不把此前容器SHA当作本次启动实测。
 
 不依赖排队作业的旧关键链必要上限已复算：[preview-bounds.json](../../work/Melodydt/244/preview-bounds.json)。保持固定图，把Dot整个服务减半，完成时间最多提速1.33757×；Product/Add减半最多1.25777×；两组均减半最多1.84269×。即使将FFN的Add比率推广至全部Add，最多约1.06394×。新关键链可能更慢，所以它们是提速上限，不是已达到的结果。
 

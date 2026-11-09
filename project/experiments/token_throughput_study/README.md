@@ -31,7 +31,7 @@ python -B project/experiments/token_throughput_study/assess_systemc.py --results
 完整 707 MiB IR 的计算只在获授权的服务器 Slurm 资源内执行。先读 [REMOTE_RULES](../../../docs/REMOTE_RULES.md)，使用本人目录和全新尝试名。以下从具有已提交源码的 checkout 打包；代码 commit 及真实命令以[证据索引](../../../work/Melodydt/244/README.md)为准：
 
 ```bash
-run=/public/home/yuzelu/Melodydt/issue244-token-throughput/run03
+run=/public/home/yuzelu/Melodydt/issue244-token-throughput/run04
 mkdir "$run"
 mkdir "$run/source"
 git archive --format=tar 81dfbd0e6e6d1432447750d5b2d4a106e2d786b7 \
@@ -45,6 +45,10 @@ cd "$run"
 sbatch --parsable job.sh
 ```
 
-c64配置 `RealMemory=1 MiB`，不能据此请求真实GB内存；脚本分配4核，并以 `ulimit -v` 将每个分析进程的虚拟内存限制为12GiB。首轮16G请求未被受理、没有JobID，输入保留。作业101601提交后仅将允许分区更新为c64,c96，没有取消/重提。容器此前核验SHA为 `49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a`、Python3.10.12；本轮尚未运行，运行时版本/容器SHA待核实。本研究没有新增SystemC、RTL、物理或能耗验收。
+c64配置 `RealMemory=1 MiB`，不能据此请求真实GB内存；脚本分配4核，并以 `ulimit -v` 将每个分析进程的虚拟内存限制为12GiB。首轮16G请求未被受理、无JobID；101601随后因Windows清单CRLF导致文件名含回车，读取源码前失败。保持六个源码不变，生成LF清单并在新run03先执行 `sha256sum -c` 后提交101608，已在c96/node13用22秒COMPLETED0:0，实际Python3.10.12。失败原件保留，未取消在跑作业或跳过检查。
+
+Windows打包时必须将source-files.sha256写成ASCII/LF字节，不能使用默认CRLF的文本写入。上面的Linux命令自然生成LF；提交前应在source目录运行 `sha256sum -c ../source-files.sha256`，全部通过后再sbatch。
+
+容器此前核验SHA为 `49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a`；本作业未额外记录运行时镜像哈希，待核实。研究结果记录真实Python版本与输入/输出SHA，没有新增SystemC、RTL、物理或能耗验收。
 
 运行器对原共享目录只读，不使用其他成员的 Python 环境；输出 graph.json/result.json 留在本人目录。graph.json 是完整可审计 DAG，仓库保存轻量结果、来源及 SHA 索引。若输入不可访问或 SHA 不符，先恢复对应冻结版本，不删校验。

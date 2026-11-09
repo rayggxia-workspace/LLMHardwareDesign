@@ -46,7 +46,7 @@ python -B project/experiments/token_throughput_study/preview.py --out /全新目
 python -B project/experiments/token_throughput_study/assess_systemc.py --results work/Melodydt/244/upstream241-results.json --out /全新目录/assessment.json
 ```
 
-这些命令不运行生产RTL或新增SystemC。完整旧图复算通过个人Slurm作业101601执行，目前排队；最新241的34组结果是上游条件预测，本分支只核验记录与推导边界，未重跑其sweep。新量化/KV数值、服务与控制RTL、物理和能量未验收。
+这些命令不运行生产RTL或新增SystemC。完整旧图复算由个人Slurm作业101608完成，c96/node13、4核、22秒、COMPLETED0:0，任务图逐字节匹配且基线复现；此前101601的CRLF清单失败原件保留。最新241的34组结果是上游条件预测，本分支只核验记录与推导边界，未重跑其sweep。新量化/KV数值、服务与控制RTL、物理和能量未验收。
 
 ## 目录约定
 
