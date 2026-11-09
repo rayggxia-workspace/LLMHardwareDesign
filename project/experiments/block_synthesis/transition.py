@@ -104,6 +104,13 @@ def evaluate_transition(state, binding, hardware, data_ready, *, retention='lega
         details={'cost_model':'serial-native-resident-loop-v1','retention':'invalidate',
             'discarded_read_cache':discarded,'external_read_words':reads,
             'external_write_words':binding['external_write_words'],'scratch_by_site':scratch}
+        if binding.get('resident_overlap'):
+            overlap=binding['resident_overlap']
+            if (overlap.get('kind')!='commuting-native-actors-v1' or
+                overlap.get('reservation')!='all-union-resources-through-final-ACK'):
+                return {'legal':False,'reason':'resident_overlap_reservation'}
+            details.update(cost_model='commuting-native-resident-loop-v1',overlap_proof=overlap['proof'],
+                           reservation=overlap['reservation'])
     if binding.get('dot_tile'):
         spec=binding['dot_tile']
         if (retention!='invalidate' or spec.get('kind')!='prepared-s32-static-b-tile-v1' or

@@ -23,6 +23,8 @@ def verify(ir,*,numeric=True):
     p=ir['primitive_program'];nodes={n['id']:n for n in p['instructions']}
     timing=ir['resident_timing'];actors=build_actors(ir,timing);h=ir['hardware']
     source=_digest(p);recipes=ir['resident_recipes'];declared=h['tile_service_bindings']
+    from verify_resident_overlap_bindings import certificates
+    overlap_audits=certificates(ir)
     checked=cases=0
     for key,r in recipes.items():
         if _digest(r)!=key or r['source_program_sha256']!=source:raise ValueError('resident recipe/source digest differs')
@@ -131,6 +133,8 @@ def verify(ir,*,numeric=True):
                 if b['macro_binding'].get(kind)!=new:raise ValueError('resident macro binding differs')
             total=r['continuation_loop']['totals'] if r.get('continuation_loop') else {
                 f:count*plan[f] for f in ('total_ticks','external_load_words','external_store_words')}
+            if b.get('resident_overlap'):
+                total={**total,'total_ticks':overlap_audits[b['resident_overlap']['proof']]['total_ticks']}
             if (b['ticks']!=total['total_ticks'] or b['external_read_words']!=total['external_load_words'] or
                 b['external_write_words']!=total['external_store_words'] or b['scratch_by_site']!=scratch or
                 set(b['resources'])!=resources or set(b['nets'])!=nets or

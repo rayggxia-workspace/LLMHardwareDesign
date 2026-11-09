@@ -1,5 +1,20 @@
 # 架构与运行
 
+2026-11-09迭代19/20：[事件重叠合同](../project/experiments/block_synthesis/RESIDENT_OVERLAP.md)、[多行布局合同](../project/experiments/block_synthesis/RESIDENT_BATCH.md)。
+
+```text
+python -B -m unittest discover -s project/experiments/block_synthesis -p "test_*.py" -q
+python -B project/experiments/block_synthesis/resident_overlap_survey.py REGISTERED_IR FRESH_OUTPUT --mode dp --width 8 --wire-budget 18 --backbone OLD_SELECTED
+python -B project/experiments/block_synthesis/resident_batch_survey.py REGISTERED_IR OLD_SELECTED ROW_QUALIFICATION FRESH_OUTPUT --rows 2 4 8 --width 8
+python -B work/YUZE-LU/219/throughput-opt/audit_round19.py RUNTIME19 FRESH_AUDIT --dp-directory FINAL_DP_POOL --greedy-directory FINAL_GREEDY_POOL
+python -B work/YUZE-LU/219/throughput-opt/audit_round20.py RUNTIME20 FRESH_AUDIT --tiles RECOVERED_TILE_DIRECTORY --ir REGISTERED_IR
+```
+
+`resident_row_probe.prepare`从冻结原生探针/银行和明确输出格式产生新服务验证，`run_row_services.py`在固定WSL Icarus12运行三初态及错行负对照。
+双平台305项通过；完整批程序RTL、实际权重批循环、SystemC/系统时间能耗仍未完成。
+事件重叠完整FFN少4.43044%模型时间而流量不变；冷tile多行目前有负结果，见迭代19/20报告，不计算法20%。
+
+
 2026-11-09迭代16：[跨元素只读连续合同](../project/experiments/block_synthesis/RESIDENT_CONTINUATION.md)。
 `resident_cover_survey.py CLOSED_IR FROZEN_PROFILE_PROOF FRESH_OUTPUT --width 8 --wire-budget 18 --cover-lengths 2 4 8 --continuation`
 保留冷候选，新增实际冷/过渡/周期程序，独立核验有限S前序和整循环成本。`resident_cover_compare.py REGISTERED_IR FRESH_OUTPUT`复用冻结池独立比较策略。

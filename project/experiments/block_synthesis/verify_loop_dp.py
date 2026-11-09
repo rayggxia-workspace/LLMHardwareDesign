@@ -134,6 +134,12 @@ def verify(tasks,hardware,plan,wire_budget=None,*,_window_checked=False):
                 'discarded_read_cache':discarded,'external_read_words':b['external_read_words'],
                 'external_write_words':b['external_write_words'],'scratch_by_site':scratch,
                 'duration':b['ticks'],'delta_makespan':max(prefix_makespan,row['end'])-prefix_makespan}
+            if b.get('resident_overlap'):
+                overlap=b['resident_overlap']
+                check(overlap.get('kind')=='commuting-native-actors-v1' and
+                    overlap.get('reservation')=='all-union-resources-through-final-ACK','invalid resident overlap reservation')
+                expected.update(cost_model='commuting-native-resident-loop-v1',overlap_proof=overlap['proof'],
+                                reservation=overlap['reservation'])
             check(row.get('evaluation')==expected,'resident loop state evaluation differs')
             evaluated[row['id']]=(b['ticks'],b['external_read_words'],scratch)
         if b.get('dot_tile'):
