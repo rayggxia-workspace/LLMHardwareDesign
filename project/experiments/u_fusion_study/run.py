@@ -112,6 +112,7 @@ def main():
     workers=min(4,int(os.environ.get('SLURM_CPUS_PER_TASK','0')))
     if workers<1:raise ValueError('requires allocated Slurm CPUs')
     out.mkdir(parents=True,exist_ok=False)
+    (out/'generated').mkdir()
     (out/'m-profile.log').write_bytes((inputs/'m-profile.log').read_bytes())
     generate(out)
     for name in ('matrix.inc','context_worker.inc','context_detail.hpp','detail.hpp'):
@@ -128,6 +129,10 @@ def main():
              '-Wl,-rpath,'+str(prefix/'lib'),'-lsystemc','-o',out/'model'],out/'build.log',out)
     execute(['g++',*flags,BASE/'upstream/kernel_probe.cpp','-o',out/'kernel_probe'],out/'kernel-build.log',out)
     env=dict(os.environ,BLOCK_STUDY_MODEL=str(out/'model'))
+    # Legacy helpers generate their own traces. They must not inherit a
+    # full-case event filename or its trace identity from the caller.
+    env.pop('U_FUSION_EVENTS',None)
+    env.pop('U_FUSION_TRACE_SHA256',None)
     for script in ('check_kernels.py','validate.py','smoke.py'):
         execute([sys.executable,'-B',BASE/'upstream'/script],out/(script+'.log'),out,env)
     oracle=fusion_oracle.run();(out/'oracle.json').write_bytes((json.dumps(oracle,indent=2)+'\n').encode())

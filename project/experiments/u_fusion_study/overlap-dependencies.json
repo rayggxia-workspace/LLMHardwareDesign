@@ -1,0 +1,27 @@
+{
+  "experiment": "Issue247 isolated one-N one-E FIFO overlap",
+  "new_files": ["overlap_control.sv", "prepare_overlap.py", "run_overlap.py", "overlap_parser_selftest.py"],
+  "production_rtl": [
+    "project/rtl/s_sram/local_s_base.sv",
+    "project/rtl/s_sram/local_s_p.sv",
+    "project/rtl/s_sram/block_feed_s16k_sram.sv",
+    "project/rtl/block_feed_v1/block_feed_loader.sv",
+    "project/rtl/block_local_s/block_local_s_arbiter.sv",
+    "project/rtl/block_v2/block_v2_n.sv",
+    "project/rtl/block_v2/block_v2_n_group.sv",
+    "project/rtl/block_v2/block_v2_e.sv",
+    "project/rtl/block_v2/block_v2_e_compact.sv",
+    "project/rtl/pu_leaf_base/pu_u_group.sv",
+    "project/rtl/pu_leaf_base/pu_compact_e_service.sv",
+    "project/rtl/pu_leaf_base/pu_u_direct_pair.sv",
+    "project/rtl/pu_leaf_base/ucf_s_compute_client.sv"
+  ],
+  "production_includes": ["project/rtl/block_v2/block_v2_n_exp.svh"],
+  "frozen_generation_inputs": ["project/experiments/pu_leaf_base/smoke.sh", "project/experiments/pu_leaf_base/tb_pu_u_group.sv"],
+  "external_bank": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v",
+    "sha256": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7"
+  },
+  "verilator": "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+  "execution": "Parent supplies immutable source lock, real source_commit manifest, Slurm allocation <=4 CPUs, and existing approved container; this preparation did not launch remote jobs."
+}
