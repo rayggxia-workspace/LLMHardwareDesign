@@ -83,6 +83,7 @@ class DotCache:
             shape=node['shape'];columns=shape[-1];covered=np.zeros(columns,dtype=bool)
             broadcast_b=np.broadcast_to(b,tuple(shape[:-2])+(node['attributes']['length'],columns))
             result=np.empty(shape,dtype=np.int64)
+            canonical=np.empty(shape,dtype=np.int64) if 'tile_partition' in binding else None
             services=row['evaluation']['services'];children=binding['parallel_shards']['children']
             if 'frontier_partition' in binding:
                 children=[resized(c,*r) for c,r in zip(children,row['evaluation']['resolved_columns'])]
@@ -92,8 +93,19 @@ class DotCache:
                 if not 0<=lo<hi<=columns or covered[lo:hi].any():raise ValueError('numeric column overlap/range')
                 covered[lo:hi]=True
                 view={**node,'shape':shape[:-1]+[hi-lo]}
-                result[...,lo:hi]=self._dot(view,a,broadcast_b[...,lo:hi],child['binding'],service)
+                leaf=child['binding']
+                if 'tile_partition' in binding:
+                    site=leaf['site'];old=self.resident.pop(site,None);discarded=[]
+                    if old:discarded=[{'site':site,'tag':old['tag'],'prefix':old['stripe'],'words':old['packed'].size}]
+                    if discarded!=service['evaluation']['discarded_read_cache']:
+                        raise ValueError('numeric tile partition cache invalidation differs')
+                    current=self.prepared.current_records
+                    if current is None or current[0]!=node['id']:raise ValueError('tile partition input not prepared')
+                    raw,final=self.tiles.dot(view,current[1],broadcast_b[...,lo:hi],leaf)
+                    result[...,lo:hi]=raw;canonical[...,lo:hi]=final
+                else:result[...,lo:hi]=self._dot(view,a,broadcast_b[...,lo:hi],leaf,service)
             if not covered.all():raise ValueError('numeric missing output columns')
+            if canonical is not None:self.tile_final[node['id']]=canonical
             return result
         return self._dot(node,a,b,binding,row)
 
@@ -153,7 +165,7 @@ class DotCache:
     def report(self):
         expected=sum('read_cache' in child for b,_ in self.selected.values() for child in leaves(b))
         if len(self.events)!=expected:raise ValueError('cache execution coverage differs')
-        expected_tiles=sum('dot_tile' in b for b,_ in self.selected.values())
+        expected_tiles=sum('dot_tile' in child for b,_ in self.selected.values() for child in leaves(b))
         if len(self.tiles.events)!=expected_tiles or self.tile_final:
             raise ValueError('tile execution/finalization coverage differs')
         if hasattr(self.tiles,'close'):self.tiles.close()

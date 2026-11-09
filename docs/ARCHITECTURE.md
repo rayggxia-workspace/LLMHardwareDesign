@@ -1,5 +1,12 @@
 # 架构与运行
 
+2026-11-09迭代10：[多M原生tile/关键链诊断](../project/experiments/block_synthesis/TILE_PARTITIONS.md)及
+[结果/范围](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_10.md)。
+`tile_review.py IR NEW_OUTPUT --registered-ir --tile-partitions --incumbent STRONG_PLAN --wire-budget 18 --width 8 --write-ir`
+向全部基线提供相同有界分片池；`selected_order_profile.py IR PLAN OUTPUT`解释已选资源顺序关键链，
+`search_diagnostics.py IR PLAN OUTPUT`另给候选族下界。两者范围不同，均非实测硬件性能。
+Windows/Linux各214项，4个literal/native有限S双回放及负对照；真实FFN额外0，全图101506仍待验。
+
 2026-11-09迭代9：[阶段窗口/前沿状态合同](../project/experiments/block_synthesis/WINDOW_CALENDAR.md)及
 [真实正负结果和复跑入口](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_9.md)。
 `tile_review.py --registered-ir --materialized-windows --incumbent BEST_PLAN --incumbent-order`

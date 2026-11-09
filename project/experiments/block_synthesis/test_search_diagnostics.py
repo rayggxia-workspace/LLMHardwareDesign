@@ -1,6 +1,6 @@
 import unittest
 from loop_dp import search
-from search_diagnostics import bounds
+from search_diagnostics import bounds,minimum_resource_time
 
 
 class TestSearchDiagnostics(unittest.TestCase):
@@ -34,6 +34,25 @@ class TestSearchDiagnostics(unittest.TestCase):
         self.assertEqual(r['resource_pool_bounds']['compute']['minimum_resource_time'],15)
         self.assertEqual(r['completion_lower_bound'],8)
         self.assertEqual(p['makespan'],10)
+
+    def test_materialized_auxiliary_work_is_phase_length_not_service_length(self):
+        from test_materialized_tiles import TestMaterializedTiles
+        ir=TestMaterializedTiles().fixture(columns=11)
+        task=next(t for t in ir['tasks'] if any('materialized_tile' in b for b in t['bindings']))
+        b=next(b for b in task['bindings'] if 'materialized_tile' in b)
+        offsets=b['materialized_tile']['resource_offsets'];aux=set(offsets)
+        expected=sum(hi-lo for lo,hi in offsets.values())
+        self.assertLess(expected,b['ticks']*len(aux))
+        self.assertEqual(minimum_resource_time(b,aux),expected)
+        primary=set(b['resources'])-aux
+        self.assertEqual(minimum_resource_time(b,primary),b['ticks']*len(primary))
+        # The certified per-resource bound must also use that short phase.
+        selected={**task,'after':[],'bindings':[b]}
+        p=search([selected],ir['hardware'],width=8)
+        r=bounds([selected],ir['hardware'],p)
+        self.assertEqual(r['completion_lower_bound'],p['makespan'])
+        for resource,(lo,hi) in offsets.items():
+            self.assertEqual(r['mandatory_resource_bounds'][resource]['minimum_reserved_work'],hi-lo)
 
 
 if __name__=='__main__':unittest.main()

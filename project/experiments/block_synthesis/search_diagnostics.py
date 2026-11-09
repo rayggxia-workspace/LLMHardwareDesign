@@ -18,7 +18,19 @@ def minimum_resource_time(binding,members):
     if 'phase_execution' in binding:
         return max(c.get('warm_ticks',c['ticks']) for c in children)*len(set(binding['resources'])&members)
     if 'frontier_partition' not in binding:
-        return sum(c.get('warm_ticks',c['ticks'])*len(set(c['resources'])&members) for c in children)
+        # A materialized service holds its primary resources throughout, but
+        # the auxiliary resources only for their actual fixed-offset phase.
+        # Charging every resource for the whole service is not a lower bound.
+        work=0
+        for child in children:
+            duration=optimistic_ticks(child)
+            offsets=child.get('materialized_tile',{}).get('resource_offsets',{})
+            if set(offsets)-set(child['resources']):raise ValueError('unknown diagnostic window resource')
+            for resource in set(child['resources'])&members:
+                lo,hi=offsets.get(resource,(0,duration))
+                if not 0<=lo<hi<=duration:raise ValueError('invalid diagnostic resource window')
+                work+=hi-lo
+        return work
     spec=binding['parallel_shards'];weighted=[];base=0
     for child in spec['children']:
         b=child['binding'];slope,_=coefficients(child);weight=len(set(b['resources'])&members)
@@ -75,7 +87,7 @@ def bounds(tasks,hardware,plan):
         'mandatory_resource_bounds':resources,'completion_lower_bound':best,
         'resource_pool_bounds':pooled,
         'maximum_time_reduction_fraction_with_current_actions':1-best/plan['makespan'],
-        'assumptions':'same declared serial/cooperative column candidates, optimistic all-hit endpoints; no new hardware',
+        'assumptions':'same declared serial/cooperative/native-tile candidates and fixed auxiliary windows, optimistic all-hit endpoints; no new hardware',
         'scope':'proof within current declared action family; not a physical performance or global hardware bound'}
 
 

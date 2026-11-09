@@ -25,6 +25,7 @@ def main():
     p.add_argument('--column-proof',type=Path);p.add_argument('--row-proof',type=Path)
     p.add_argument('--instance-services',type=Path)
     p.add_argument('--registered-ir',action='store_true')
+    p.add_argument('--tile-partitions',action='store_true',help='common independent full-K native tile column partitions')
     p.add_argument('--materialized-windows',action='store_true',
         help='experimental packed/flag external materialization and actual auxiliary interval calendars')
     p.add_argument('--wire-budget',type=int,required=True);p.add_argument('--width',type=int,default=8)
@@ -61,6 +62,9 @@ def main():
     write('qualification',q)
     after=json.dumps({k:v for k,v in ir['hardware'].items() if k not in ('tile_service_profiles','tile_service_bindings')},sort_keys=True,separators=(',',':'))
     if before!=after:raise ValueError('native tile recipe changed physical hardware')
+    if a.tile_partitions:
+        from tile_partitions import variants_for as register_partitions
+        register_partitions(ir)
     if a.materialized_windows:
         from materialized_tiles import variants_for as register_windows
         register_windows(ir)
@@ -104,11 +108,14 @@ def main():
     for label,operation in [('traffic',traffic_account),('utilization',utilization),('descriptor-demand',phase_account)]:
         write(label,operation(ir,selected))
     tasks={t['id']:t for t in ir['tasks']}
-    chosen=[r['id'] for r in selected['tasks'] if 'dot_tile' in next(b for b in tasks[r['id']]['bindings'] if b['id']==r['binding'])]
+    from column_shards import leaves
+    chosen=[r['id'] for r in selected['tasks'] if any('dot_tile' in c for c in leaves(
+        next(b for b in tasks[r['id']]['bindings'] if b['id']==r['binding'])))]
     baseline=min((v['makespan'] for k,v in plans.items() if k.removeprefix('ordered-') in ('old-pool-incumbent','greedy','old-dp','heft','resource-greedy','conditional-greedy','price-greedy') or k.startswith('same-pool-baseline-')),default=None)
     proposed=min((v['makespan'] for k,v in plans.items() if k.startswith('backbone-') or k.removeprefix('ordered-') in ('conditional-dp','resource-dp','price-dp')),default=None)
     result={'passed':True,'selected_source':name,'selected_tile_tasks':chosen,'tile_scope':ir['tile_scope'],
         'materialized_tile_scope':ir.get('materialized_tile_scope'),
+        'tile_partition_scope':ir.get('tile_partition_scope'),
         'plans':{k:{f:v[f] for f in ('makespan','external_words','wire_cost')} for k,v in plans.items()},
         'search_seconds':times,'native_audit':audit,'plan_audits':audits,
         'same_pool_best_search_gain_fraction':1-proposed/baseline if proposed and baseline else None,

@@ -250,6 +250,9 @@ def verify(ir):
             if 'dot_tile' in b:
                 from verify_tile_binding import verify as check_tile
                 checked+=check_tile(ir,task,b);continue
+            if 'tile_partition' in b:
+                from verify_tile_partition import verify as check_partition
+                checked+=check_partition(ir,task,b);continue
             if 'parallel_shards' not in b:
                 if 'phase_execution' in b:raise ValueError('phase protocol requires a compound')
                 checked+=check_binding(b,work,dots_by_kernel[name]);continue

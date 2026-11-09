@@ -24,7 +24,7 @@ def check_constants(ir):
     return {'address_words':c['address_words'],'words':9}
 
 
-def verify(ir, task, binding):
+def verify(ir, task, binding, *, column_range=None, temporary=None):
     h=ir['hardware'];q=h.get('tile_service_profiles',{})
     if q.get('kind')!='native-p-e-tile-services-v1':
         raise ValueError('missing native tile service qualification')
@@ -47,6 +47,14 @@ def verify(ir, task, binding):
     if (b_format.get('bits')!=16 or len(shape)<2 or shape[-2:]!=[k,cols] or
         any(x!=1 for x in shape[:-2]) or not (b_format.get('source_file') or 'literal' in b_format)):
         raise ValueError('tile B is not proved static and shared across rows')
+    if column_range is not None:
+        lo,hi=column_range
+        if (type(lo)!=int or type(hi)!=int or not 0<=lo<hi<=cols or
+            binding.get('tile_column_view')!={'columns':[lo,hi],'source_columns':cols,
+                                            'external_row_stride_words':cols}):
+            raise ValueError('tile column address view differs')
+        cols=hi-lo
+    elif 'tile_column_view' in binding:raise ValueError('unexpected tile column address view')
     if (type(k)!=int or not 0<k<=(2**63-1)//((2**31+131072)*2**15) or
         type(attrs.get('shift'))!=int or not 0<=attrs['shift']<=63):
         raise ValueError('tile accumulator/final shift outside native bound')
@@ -69,7 +77,14 @@ def verify(ir, task, binding):
     program=[x for x in ir['program'] if x['id']==node['id']]
     if len(program)!=1:
         raise ValueError('tile primitive stage program is ambiguous')
-    temporary=program[0]['temporary_external_region']
+    source_temporary=program[0]['temporary_external_region']
+    if temporary is None:temporary=source_temporary
+    elif (column_range is None or set(temporary)!=set(source_temporary) or
+          temporary.get('record_bytes')!=source_temporary.get('record_bytes') or
+          type(temporary.get('address_words'))!=int or type(temporary.get('words'))!=int or
+          not source_temporary['address_words']<=temporary['address_words'] or temporary['words']<1 or
+          temporary['address_words']+temporary['words']>source_temporary['address_words']+source_temporary['words']):
+        raise ValueError('tile column temporary outside owned stage region')
     expected_spec={'kind':'prepared-s32-static-b-tile-v1','primitive':node['id'],
         'rows':rows,'columns':cols,'K':k,'tile':tile,'components':[3,1],
         'final_shift':attrs['shift'],'B':node['inputs'][1],
