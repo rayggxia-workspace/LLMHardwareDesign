@@ -22,7 +22,7 @@ module tb_popt_group #(parameter integer OPT=1, BANK_RW=0);
   .gate_done(),.gate_take(1'b1),.gate_error(),.gate_saturated(),
   .m_to_g_valid(),.m_to_g_data(),.m_to_g_take(1'b1),
   .g_from_m_valid(1'b0),.g_from_m_data(32'd0),.g_from_m_take());
- integer cycle=0,a_count=0,b_count=0,wide_count=0,write_count=0;
+ integer cycle=0,a_count=0,b_count=0,wide_count=0,write_count=0,overlap_writes=0;
  always @(posedge clk) begin
   cycle<=cycle+1;
   if(!reset) begin
@@ -30,6 +30,8 @@ module tb_popt_group #(parameter integer OPT=1, BANK_RW=0);
    if(dut.b_valid&&dut.b_ready)b_count<=b_count+1;
    if(dut.store.wide_req&&dut.store.wide_ready)wide_count<=wide_count+1;
    if(dut.store_req&&dut.store_ready&&dut.store_write)write_count<=write_count+1;
+   if(dut.store_req&&dut.store_ready&&dut.store_write&&dut.store_control.feeder_active)
+    overlap_writes<=overlap_writes+1;
   end
   if(cycle>50000)$fatal(1,"group watchdog");
  end
@@ -88,7 +90,7 @@ module tb_popt_group #(parameter integer OPT=1, BANK_RW=0);
   end
  endtask
  logic [127:0] word_data,got;
- integer start_cycle,start_writes;
+ integer start_cycle,start_writes,overlap_before;
  task automatic output_group(input integer g);
   for(integer half=0;half<2;half++)begin
    cmd_dst=10'(512+g*2+half);
@@ -138,6 +140,31 @@ module tb_popt_group #(parameter integer OPT=1, BANK_RW=0);
    load(0,0,1,1); // Optional B-only encoding remains illegal by default.
    command(13,0,0,0,1);
   end
+  // Verify the outer P/store-control wiring, separately from the matched
+  // arithmetic timing above. Use eight A rows to sustain the feeder lease.
+  overlap_before=overlap_writes;
+  fork
+   begin
+    @(negedge clk);load_rows=8;load_a_base=0;load_b_base=64;load_valid=1;
+    do @(posedge clk);while(!load_ready);
+    @(negedge clk);load_valid=0;
+    do @(posedge clk);while(!load_done);
+    if(load_error)$fatal(1,"overlap probe LOAD failed");
+    @(negedge clk);load_take=1;
+    @(negedge clk);load_take=0;
+   end
+   begin
+    wait(dut.store_control.feeder_active);
+    for(integer q=0;q<8;q++)access(1,700+q,128'(1000+q),got);
+   end
+  join
+  if((BANK_RW&&overlap_writes==overlap_before)||(!BANK_RW&&overlap_writes!=overlap_before))
+   $fatal(1,"outer P concurrent admission mismatch");
+  for(integer q=0;q<8;q++)begin
+   access(0,700+q,0,got);
+   if(got!==128'(1000+q))$fatal(1,"overlap probe readback");
+  end
+  $display("P_GROUP_OVERLAP bank_rw=%0d accepted_while_feeder_active=%0d",BANK_RW,overlap_writes-overlap_before);
   @(negedge clk);reset=1;repeat(4)@(negedge clk);reset=0;repeat(8)@(negedge clk);
   if(io_rsp_valid||load_done||cmd_done)$fatal(1,"stale event after reset");
   command(3,0,0,0,1);

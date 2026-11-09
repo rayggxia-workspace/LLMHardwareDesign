@@ -36,7 +36,7 @@ def main():
  p.add_argument('--out',type=Path,required=True);p.add_argument('--manifest',type=Path,required=True)
  p.add_argument('--workers',type=int,default=4);a=p.parse_args()
  a.repo=a.repo.resolve();a.out=a.out.resolve();a.manifest=a.manifest.resolve()
- if not 1<=a.workers<=int(os.environ.get('SLURM_CPUS_PER_TASK','0')):raise ValueError('Slurm CPU allocation required')
+ if not 1<=a.workers<=min(4,int(os.environ.get('SLURM_CPUS_PER_TASK','0'))):raise ValueError('Slurm CPU allocation required, at most four workers')
  if sha(BANK)!=BANK_SHA:raise ValueError('SRAM macro identity drift')
  manifest=json.loads(a.manifest.read_text());commit=manifest['source_commit']
  if not re.fullmatch('[0-9a-f]{40}',commit):raise ValueError('real source commit required')
@@ -77,7 +77,9 @@ def main():
     log=f'{label}-group-{mode}-{seed}.log'
     output=execute([obj/('V'+top),f'+verilator+rand+reset+{mode}',f'+verilator+seed+{seed}'],log)
     found=re.findall(r'^METRIC P_GROUP opt=(\d+) bank_rw=(\d+) cycles=(\d+) A=(\d+) B=(\d+) wide=(\d+) stores=(\d+)$',output,re.M)
-    if len(found)!=1 or 'PASS P_GROUP native S' not in output:raise ValueError('group receipt incomplete')
+    overlap=re.findall(r'^P_GROUP_OVERLAP bank_rw=(\d+) accepted_while_feeder_active=(\d+)$',output,re.M)
+    if len(found)!=1 or len(overlap)!=1 or 'PASS P_GROUP native S' not in output:raise ValueError('group receipt incomplete')
+    if int(overlap[0][0])!=bank_rw or bool(int(overlap[0][1]))!=bool(bank_rw):raise ValueError('outer group overlap receipt')
     row=dict(zip(('opt','bank_rw','cycles','A','B','wide','stores'),map(int,found[0])))
     if (row['opt'],row['bank_rw'],row['A'],row['B'],row['wide'],row['stores'])!=(opt,bank_rw,2 if opt else 16,16,18 if opt else 32,16):
      raise ValueError('group work conservation')
