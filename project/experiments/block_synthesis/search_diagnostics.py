@@ -41,8 +41,8 @@ def minimum_resource_time(binding,members):
     return base+(spec['columns']-len(children))*min(weighted)
 
 
-def bounds(tasks,hardware,plan):
-    verify(tasks,hardware,plan)
+def relaxation(tasks,hardware):
+    """Lower bound for a supplied action pool, without assuming a schedule."""
     # Prefix reuse can only reduce a binding as far as its all-hit endpoint.
     lower={t['id']:min(optimistic_ticks(b) for b in t['bindings']) for t in tasks}
     resources={}; mandatory={}
@@ -82,13 +82,19 @@ def bounds(tasks,hardware,plan):
                       'completion_lower_bound':(work+capacity-1)//capacity}
     best=max([critical]+[r['completion_lower_bound'] for r in resources.values()]+
              [r['completion_lower_bound'] for r in pooled.values()])
-    if best>plan['makespan']:raise ValueError('invalid lower bound exceeds verified schedule')
-    return {'verified_plan_makespan':plan['makespan'],'critical_path_lower_bound':critical,
+    return {'critical_path_lower_bound':critical,
         'mandatory_resource_bounds':resources,'completion_lower_bound':best,
         'resource_pool_bounds':pooled,
-        'maximum_time_reduction_fraction_with_current_actions':1-best/plan['makespan'],
         'assumptions':'same declared serial/cooperative/native-tile candidates and fixed auxiliary windows, optimistic all-hit endpoints; no new hardware',
         'scope':'proof within current declared action family; not a physical performance or global hardware bound'}
+
+
+def bounds(tasks,hardware,plan):
+    verify(tasks,hardware,plan)
+    result=relaxation(tasks,hardware);best=result['completion_lower_bound']
+    if best>plan['makespan']:raise ValueError('invalid lower bound exceeds verified schedule')
+    return {'verified_plan_makespan':plan['makespan'],**result,
+        'maximum_time_reduction_fraction_with_current_actions':1-best/plan['makespan']}
 
 
 def main():

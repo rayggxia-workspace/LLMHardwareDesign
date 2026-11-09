@@ -1,5 +1,12 @@
 # 架构与运行
 
+2026-11-09迭代12：[未就绪任务资源下界与单金属诊断](../project/experiments/block_synthesis/FUTURE_RESOURCE_TAIL.md)，
+[结果/边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_12.md)。
+`tile_review.py IR NEW_OUTPUT --registered-ir --incumbent BEST_PLAN --same-pool-baseline STRONG_BASELINE --incumbent-backbone --wire-budget 18 --width 8 --policies future-greedy future-dp`
+`topology_diagnostics.py IR PLAN OUTPUT --wire-budget 18`完整枚举静态并集后给条件下界，截断只回退原下界。
+Windows/Linux各231项；真实FFN额外0，完整新greedy更差；101509完整phase池终态、条件DP额外0.0000192676%，101526其自身三输入数值逐位通过。
+101516新搜索/101525诊断继续核验，不改动作池/硬件。
+
 2026-11-09迭代11：[原生tile阶段协作](../project/experiments/block_synthesis/TILE_PHASES.md)及
 [结果/失败/待验范围](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_11.md)。
 `tile_review.py REGISTERED_IR NEW_OUTPUT --registered-ir --tile-phase-partitions --incumbent STRONG_PLAN --wire-budget 18 --width 8 --write-ir`

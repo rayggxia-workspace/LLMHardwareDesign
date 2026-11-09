@@ -42,7 +42,7 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
         if decision_order is not None:raise ValueError('choose supplied order or incumbent backbone')
         from verify_loop_dp import verify
         verify(tasks,hardware,backbone,wire_budget=wire_budget)
-    if priority not in ('minimum_tail','heft') or rank_policy not in ('critical_bound','earliest_finish','net_conditioned_tail','net_resource_tail','net_work_price'):
+    if priority not in ('minimum_tail','heft') or rank_policy not in ('critical_bound','earliest_finish','net_conditioned_tail','net_resource_tail','net_work_price','net_future_resource_tail'):
         raise ValueError('unknown loop scheduling policy')
     # These are physical alternatives, not time-shared resources. Preserve
     # the entire product's selected union even after its last user finishes.
@@ -88,7 +88,7 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
                   frozenset(n for n in ids if not parents[n]))
     completions=completion_covers(tasks,hardware,wire_budget=wire_budget) if wire_lookahead else None
     conditional=None
-    if rank_policy in ('net_conditioned_tail','net_resource_tail','net_work_price'):
+    if rank_policy in ('net_conditioned_tail','net_resource_tail','net_work_price','net_future_resource_tail'):
         from net_tail import ConditionalTail
         conditional=ConditionalTail(tasks,hardware,children,tuple(tail),fixed=fixed,
             conflicts=conflicts,wire_budget=wire_budget,completions=completions)
@@ -96,6 +96,10 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
     if rank_policy=='net_work_price':
         from work_price import WorkPriceBound
         work_price=WorkPriceBound(conditional,tasks,hardware,rounds=work_price_rounds)
+    future=None
+    if rank_policy=='net_future_resource_tail':
+        from future_resource_tail import FutureResourceTail
+        future=FutureResourceTail(conditional,tasks,hardware)
     beam=[initial];seed_state=initial;seed_rows=backbone['tasks'] if backbone is not None else None
     expanded=0;pruned=0;merged=0;static_rejections=0;completion_rejections=0;seed_kept=0
     def ready_for(state):
@@ -141,7 +145,7 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
             if value is None:return float('inf'),s.makespan,s.traffic,netcost(s.nets)
             if any(type(at)!=int for at in arrivals) or type(value)!=int:
                 raise TypeError('noninteger frontier/tail '+repr((task['id'],arrivals,value)))
-            if rank_policy in ('net_resource_tail','net_work_price'):
+            if rank_policy in ('net_resource_tail','net_work_price','net_future_resource_tail'):
                 finish=conditional.ready_finish(task['id'],s.nets,s.resources,max(arrivals,default=0),windows=s.windows)
                 if finish is None:return float('inf'),s.makespan,s.traffic,netcost(s.nets)
                 bounds.append(finish+max((state_tail[c] for c in children[task['id']]),default=0))
@@ -150,6 +154,10 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
             work_bound=work_price.get(s)
             if work_bound is None:return float('inf'),s.makespan,s.traffic,netcost(s.nets)
             bounds.append(work_bound)
+        if future is not None:
+            value=future.get(s,max(bounds))
+            if value is None:return float('inf'),s.makespan,s.traffic,netcost(s.nets)
+            bounds.append(value)
         bound=max(bounds)
         return bound,s.makespan,s.traffic,netcost(s.nets)
     for depth in range(len(tasks)):
@@ -210,6 +218,7 @@ def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahe
             'slot_budget':width,'scope':'one incumbent prefix inside the same beam budget; actual state/cost replay, no frozen timestamps'},
         'conditional_tail_statistics':conditional.statistics() if conditional is not None else None,
         'work_price_statistics':work_price.statistics() if work_price is not None else None,
+        **({'future_resource_tail_statistics':future.statistics()} if future is not None else {}),
         'calendar_kind':'fixed-offset-calendar-v1' if calendar else 'append-only',
         'optimality':'bounded frontier DP; append-only primary calendars and explicit optional auxiliary windows; no global optimality guarantee'}
 

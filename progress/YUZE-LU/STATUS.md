@@ -1,5 +1,13 @@
 # YUZE-LU 的进度
 
+2026-11-09 CST：#219/PR220[迭代12](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_12.md)部分交付。
+新增未就绪长链资源下界/单金属诊断，独立DAG和合法拓扑穷举；Windows/Linux各231项通过。
+真实FFN额外0，125个最大并集未加强切片下界；完整新greedy更差，强计划保留，不替换默认策略。
+101509完整phase池终态，最强条件DP仅额外0.0000192676%；101526其自身三输入数值终态逐位通过。
+101516完整同池搜索、101525拓扑诊断继续核验，4核/UNLIMITED。
+外存频繁往返仅部分解决；一般驻留/算法20%及后续多轮/KV/SystemC能耗/token/s/最优适配对照未完成。
+Issue219 in_progress，待独立审查不自合并；登记pending，看板unverified/同步pending。
+
 2026-11-09 CST：#219/PR220[迭代11](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_11.md)部分交付。
 原生tile描述符阶段协作及独立工作/等待/有限S/全资源预约检查，Windows/Linux各221项、4个literal/native双回放通过。
 真实FFN101508终态，共同后端少3.07596%但同池搜索额外0，流量多48；普通分片全图101506终态仍额外0。

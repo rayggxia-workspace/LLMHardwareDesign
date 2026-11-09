@@ -34,7 +34,7 @@ def main():
     p.add_argument('--incumbent-order',action='store_true',help='also search bindings on the checked incumbent order, for every baseline and DP policy')
     p.add_argument('--incumbent-backbone',action='store_true',help='also keep one replayed incumbent prefix inside the same DP beam budget')
     p.add_argument('--same-pool-baseline',type=Path,action='append',default=[])
-    p.add_argument('--policies',nargs='+',choices=['greedy','old-dp','heft','conditional-greedy','conditional-dp','resource-greedy','resource-dp','price-greedy','price-dp'],
+    p.add_argument('--policies',nargs='+',choices=['greedy','old-dp','heft','conditional-greedy','conditional-dp','resource-greedy','resource-dp','price-greedy','price-dp','future-greedy','future-dp'],
         default=['greedy','old-dp','heft','conditional-greedy','conditional-dp','resource-greedy','resource-dp'])
     a=p.parse_args()
     if a.registered_ir and any(x is not None for x in (a.column_proof,a.row_proof,a.instance_services)):
@@ -87,7 +87,9 @@ def main():
         'resource-greedy':{'width':1,'rank_policy':'net_resource_tail'},
         'resource-dp':{'width':a.width,'rank_policy':'net_resource_tail'},
         'price-greedy':{'width':1,'rank_policy':'net_work_price'},
-        'price-dp':{'width':a.width,'rank_policy':'net_work_price'}}
+        'price-dp':{'width':a.width,'rank_policy':'net_work_price'},
+        'future-greedy':{'width':1,'rank_policy':'net_future_resource_tail'},
+        'future-dp':{'width':a.width,'rank_policy':'net_future_resource_tail'}}
     runs=[(policy,configurations[policy]) for policy in a.policies]
     if a.incumbent_order:
         order=[r['id'] for r in plans['old-pool-incumbent']['tasks']]
@@ -112,8 +114,8 @@ def main():
     from column_shards import leaves
     chosen=[r['id'] for r in selected['tasks'] if any('dot_tile' in c for c in leaves(
         next(b for b in tasks[r['id']]['bindings'] if b['id']==r['binding'])))]
-    baseline=min((v['makespan'] for k,v in plans.items() if k.removeprefix('ordered-') in ('old-pool-incumbent','greedy','old-dp','heft','resource-greedy','conditional-greedy','price-greedy') or k.startswith('same-pool-baseline-')),default=None)
-    proposed=min((v['makespan'] for k,v in plans.items() if k.startswith('backbone-') or k.removeprefix('ordered-') in ('conditional-dp','resource-dp','price-dp')),default=None)
+    baseline=min((v['makespan'] for k,v in plans.items() if k.removeprefix('ordered-').removeprefix('backbone-') in ('old-pool-incumbent','greedy','old-dp','heft','resource-greedy','conditional-greedy','price-greedy','future-greedy') or k.startswith('same-pool-baseline-')),default=None)
+    proposed=min((v['makespan'] for k,v in plans.items() if k.startswith('backbone-') or k.removeprefix('ordered-') in ('conditional-dp','resource-dp','price-dp','future-dp')),default=None)
     result={'passed':True,'selected_source':name,'selected_tile_tasks':chosen,'tile_scope':ir['tile_scope'],
         'materialized_tile_scope':ir.get('materialized_tile_scope'),
         'tile_partition_scope':ir.get('tile_partition_scope'),

@@ -1,5 +1,10 @@
 # 当前状态
 
+2026-11-09：[Issue219/PR220迭代12](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_12.md)新增未就绪长链下界与单金属诊断，Windows/Linux各231项通过。
+真实FFN同池新greedy/DP/backbone-DP额外0，125个最大静态并集也未加强切片下界；完整新greedy更差，保留强计划及负结果。
+101509完整phase池终态，条件DP仅额外0.0000192676%；101526其自身三输入数值终态逐位通过。101516新搜索、101525拓扑继续核验。
+一般脏驻留/算法20%/完整KV/SystemC能耗/token/s/最优适配对照未完成，in_progress。
+
 2026-11-09，#219/PR220[迭代11](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_11.md)部分交付：
 新增原生tile描述符阶段协作、独立重建/预约检查；Windows/Linux各221项、4个literal/native有限S双回放通过。
 真实FFN101508终态：共同后端少3.07596%，同池搜索额外0，流量多48条；普通分片全图101506终态仍额外0。
