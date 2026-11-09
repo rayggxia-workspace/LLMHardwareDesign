@@ -2,11 +2,15 @@ module tb_nexp_batch;
  reg clk=0,reset=1;always #5 clk=~clk;
  reg v=0,rr=0;reg [3:0] count=0;reg [127:0] data=0;
  wire ready,ov,oe;wire [127:0] out;
- nexp_batch_adapter dut(clk,reset,v,ready,count,data,ov,rr,out,oe);
+ wire nv,nready,nvalid,nrr,ne,ns,nb;wire [3:0] nop,ncount;wire [127:0] nd,ndout;
+ nexp_batch_adapter dut(clk,reset,v,ready,count,data,ov,rr,out,oe,nv,nready,nop,ncount,nd,nvalid,nrr,ndout,ne);
+ // Native N is an independent sibling, mirroring the physical boundary.
+ block_v2_n batch_n(clk,reset,nv,nready,nop,ncount,32'd0,nd,128'd0,nvalid,nrr,ndout,ne,ns,nb);
  reg rv=0,rrr=0;reg [3:0] rop=0,rc=0;reg [127:0] rd=0;
  wire rready,rov,re,rsat,rb;wire [127:0] rout;
  block_v2_n reference_n(clk,reset,rv,rready,rop,rc,32'd0,rd,128'd0,rov,rrr,rout,re,rsat,rb);
  integer ticks=0,values=0,frames=0,min_cycles=100000,max_cycles=0,scalar_cycles=0;
+ integer legal_min[1:8],legal_max[1:8];
  always @(posedge clk)ticks=ticks+1;
  task automatic command(input [3:0] op,input [3:0] n,input [127:0] x,output [127:0] y);
   integer guard;
@@ -39,6 +43,10 @@ module tb_nexp_batch;
    do begin @(negedge clk);guard++;if(guard>256)$fatal(1,"batch response timeout");end while(!ov);
    elapsed=ticks-start;
    if(elapsed<min_cycles)min_cycles=elapsed;if(elapsed>max_cycles)max_cycles=elapsed;
+   if(!invalid)begin
+    if(elapsed<legal_min[n])legal_min[n]=elapsed;
+    if(elapsed>legal_max[n])legal_max[n]=elapsed;
+   end
    if(oe!=invalid)$fatal(1,"wrong batch error");
    if(!invalid&&out!==expected)$fatal(1,"EXP mismatch n=%0d x=%h got=%h expected=%h",n,x,out,expected);
    held=out;
@@ -49,6 +57,7 @@ module tb_nexp_batch;
  endtask
  reg [127:0] x;reg [31:0] rng=32'h2401024;
  initial begin
+  for(integer i=1;i<=8;i++)begin legal_min[i]=100000;legal_max[i]=0;end
   repeat(4)@(negedge clk);reset=0;
   // Exhaust every S16 input, including saturation and interpolation ties.
   for(integer base=-32768;base<32768;base+=8)begin
@@ -66,6 +75,7 @@ module tb_nexp_batch;
   repeat(4)@(negedge clk);if(ov||!ready)$fatal(1,"reset left a stale response");
   check(8,~128'd0,4,0);
   $display("NEXP_BATCH_PASS values=%0d frames=%0d min_cycles=%0d max_cycles=%0d scalar_reference_cycles=%0d",values,frames,min_cycles,max_cycles,scalar_cycles);
+  for(integer i=1;i<=8;i++)$display("NEXP_COUNT count=%0d min=%0d max=%0d",i,legal_min[i],legal_max[i]);
   $finish;
  end
  initial begin #1000000000;$fatal(1,"watchdog");end

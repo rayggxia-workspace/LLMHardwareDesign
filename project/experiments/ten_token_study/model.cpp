@@ -27,7 +27,7 @@ void require(bool v,const char* s){if(!v)throw std::runtime_error(s);}
 
 struct Config {
  std::string name;int k=32,credits=4,beat=16,swidth=16,slat=3,ewise=6,m_mode=0,weight_bits=16,mcount=2;
- int mscale=1,elanes=4,pbytes=16384;bool batch_exp=false,head8=false;
+ int mscale=1,elanes=4,pbytes=16384;bool batch_exp=false,head8=false,channel_balance=false;
  bool fuse=true,stream=false,resident=false,queued=false,vecpipe=false,coalesce=false,partial=false,bypass=false,packet=false,scoreboard=false;double bandwidth=16e9;
 };
 struct Tensor{U elements,base;int bits;bool initial;};
@@ -211,10 +211,33 @@ struct Study:sc_module {
   }
   U tail=o.elements*(o.kind=="NFactor"?64:3);e_work+=tail*C;cycles(tail);write_range(o.out,0,size(o.out));
  }
+ void relative_exp_batch(const Op& o,size_t index){
+  require(o.in.size()==1,"NExp input contract");int input=o.in[0];
+  for(U off=0;off<o.elements;off+=8){U n=std::min<U>(8,o.elements-off),width=tensors[input].bits/8;
+   read_range(input,off*width,n*width);
+   // One E packet operation clamps the low signed S16 to <=0; packing and
+   // U16-to-S32 zero extension are explicit adapter wiring, not new math.
+   U pack=ceildiv(n,cfg.elanes)+5;cycles(pack);e_work+=pack*C;
+   // Measured native N + four-command adapter, without downstream stalls.
+   // Each of Stats and Exp runs ceil(n/2) CALC/ACCUM pairs.
+   U service=9+4*ceildiv(n,2);cycles(service);e_work+=service*C;
+   write_range(o.out,off*(tensors[o.out].bits/8),n*(tensors[o.out].bits/8));
+   if(last_use[input]==static_cast<int>(index))discard_range(input,off*width,n*width);
+  }
+ }
  void matrix_worker(const Op& o,int worker,sc_event& done){
   auto& buffer=*buffers[worker];
   const int row_limit=8;
-  auto column=[&](int ci){return cfg.coalesce?(ci/2*cfg.mcount*16+worker*16+(ci%2)*8):worker*8+ci*cfg.mcount*8;};
+  auto column=[&](int ci){
+   // P0/P2 share channel0; P1 owns channel1. Allocate dense static
+   // weight columns 1:2:1 while preserving N8 compute commands and N16
+   // output windows. Dynamic attention keeps the original compute split.
+   if(cfg.channel_balance&&cfg.mcount==3&&o.layout==0){
+    if(cfg.coalesce)return worker==1?(ci/2*32+16+(ci%2)*8):(ci/2*64+(worker==2?32:0)+(ci%2)*8);
+    return worker==1?ci*16+8:ci*32+(worker==2?16:0);
+   }
+   return cfg.coalesce?(ci/2*cfg.mcount*16+worker*16+(ci%2)*8):worker*8+ci*cfg.mcount*8;
+  };
   // At most one 64-byte row window per active output row. Charged to S.
   int held_batch=-1,held_row=-1,held_col=-1,held_n=0,held_r=0;
   auto store_output=[&](int batch,int row,int col,int n){
@@ -407,12 +430,9 @@ struct Study:sc_module {
     }else if(o.kind=="NFactor"||o.kind=="SquareSum"||o.kind=="Sum"||o.kind=="Max"){reduce(o,i);++i;family="reduce";}
     else if(o.kind=="NExp"){
      // Existing scalar N service with explicit packed-input adapter. No free FP32 exp.
-     vector_region(i,i+1);
-     // Native relative-exp batching: clamp low S16 to <=0, initialize,
-     // Stats(n zeros), Finalize, Exp(n clamped values). No approximate LUT.
-     // Initial timing is conservative; replace only with measured RTL data.
-     U cost=cfg.batch_exp?ceildiv(o.elements,8)*32:o.elements*16;
-     e_work+=cost*C;cycles(cost);++i;family="NExp";
+     if(cfg.batch_exp)relative_exp_batch(o,i);
+     else{vector_region(i,i+1);e_work+=o.elements*16*C;cycles(o.elements*16);}
+     ++i;family="NExp";
     }else{copy(o,i);++i;family="copy";}
     spans[family]+=now()-start;
    }
@@ -484,6 +504,7 @@ int sc_main(int argc,char** argv){
    else if(key=="weight_bits")c.weight_bits=std::stoi(v);
    else if(key=="batch_exp")c.batch_exp=std::stoi(v)!=0;
    else if(key=="head8")c.head8=std::stoi(v)!=0;
+   else if(key=="channel_balance")c.channel_balance=std::stoi(v)!=0;
    else throw std::runtime_error("unknown override "+key);
   }
   require(c.mcount>=2&&c.mcount<=3,"only two or three physical P instances");

@@ -18,6 +18,10 @@ DESIGNS={
  'fixed17_w4_head8':{'pcount':3,'mscale':2,'elanes':8,'batch_exp':1,'weight_bits':4,'head8':1},
  'fixed17_w4':{'pcount':3,'mscale':2,'elanes':8,'batch_exp':1,'weight_bits':4},
  'fixed17_w2_head8':{'pcount':3,'mscale':2,'elanes':8,'batch_exp':1,'weight_bits':2,'head8':1},
+ 'b68_balanced_m2_e8':{'bw':68.4,'beat':128,'swidth':128,'pcount':3,'mscale':2,'elanes':8,'batch_exp':1,'channel_balance':1},
+ 'b68_balanced_m4_e8':{'bw':68.4,'beat':128,'swidth':128,'pcount':3,'mscale':4,'elanes':8,'batch_exp':1,'channel_balance':1},
+ 'b136_balanced_m4_e8_w16':{'bw':136.8,'beat':256,'swidth':256,'pcount':3,'mscale':4,'elanes':8,'batch_exp':1,'channel_balance':1,'weight_bits':16},
+ 'b85_balanced_m2_e8':{'bw':85.5,'beat':256,'swidth':128,'pcount':3,'mscale':2,'elanes':8,'batch_exp':1,'channel_balance':1},
 }
 def run(case):
  workload,design=case;cfg=DESIGNS[design];start=time.monotonic()

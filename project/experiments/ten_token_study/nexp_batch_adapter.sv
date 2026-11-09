@@ -7,12 +7,13 @@ module nexp_batch_adapter(
  input wire in_valid,output wire in_ready,input wire [3:0] in_count,
  input wire [127:0] in_data,
  output reg out_valid,input wire out_ready,output reg [127:0] out_data,
- output reg out_error
+ output reg out_error,
+ output wire n_cmd_valid,input wire n_ready,
+ output wire [3:0] n_cmd_op,n_cmd_count,output wire [127:0] n_cmd_data,
+ input wire n_valid,output wire n_rsp_ready,input wire [127:0] n_data,input wire n_error
 );
  reg active,waiting;reg [1:0] step;reg [3:0] count;
  reg [127:0] clamped;
- wire n_ready,n_valid,n_error,n_sat,n_busy;
- wire [127:0] n_data;
  reg [3:0] op,ncount;reg [127:0] operand;
  assign in_ready=!reset&&!active&&!out_valid;
  always @* begin
@@ -24,11 +25,9 @@ module nexp_batch_adapter(
    3:begin op=3;ncount=count;operand=clamped;end
   endcase
  end
- block_v2_n native_n(.clk(clk),.reset(reset),.cmd_valid(active&&!waiting),
-  .cmd_ready(n_ready),.cmd_op(op),.cmd_count(ncount),.cmd_param(32'd0),
-  .cmd_data(operand),.cmd_aux(128'd0),.rsp_valid(n_valid),
-  .rsp_ready(active&&waiting),.rsp_data(n_data),.rsp_error(n_error),
-  .rsp_saturated(n_sat),.busy(n_busy));
+ assign n_cmd_valid=active&&!waiting;
+ assign n_cmd_op=op;assign n_cmd_count=ncount;assign n_cmd_data=operand;
+ assign n_rsp_ready=active&&waiting;
  always @(posedge clk)begin
   if(reset)begin active<=0;waiting<=0;step<=0;count<=0;clamped<=0;out_valid<=0;out_data<=0;out_error<=0;end
   else begin
