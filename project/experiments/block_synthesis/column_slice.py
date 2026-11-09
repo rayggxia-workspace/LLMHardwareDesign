@@ -32,12 +32,12 @@ def main():
                                  for f in Path(__file__).parent.glob('*.py')}}
     (a.output/'provenance.json').write_text(json.dumps(provenance,indent=2)+'\n',encoding='utf-8')
     print(json.dumps({'phase':'loading'}),flush=True)
-    old=json.loads(a.source.read_text());primitive=deepcopy(old['primitive_program'])
-    primitive['instructions']=[n for n in primitive['instructions'] if a.full_graph or n['kernel'].startswith(a.kernel_prefix)]
-    if not primitive['instructions']:raise ValueError('empty diagnostic subgraph')
-    kernels={n['kernel'] for n in primitive['instructions']}
-    if not a.full_graph:primitive['outputs']={'last':primitive['instructions'][-1]['id']}
-    model=deepcopy(old['model']);model['tasks']=[t for t in model['tasks'] if t['id'] in kernels]
+    old=json.loads(a.source.read_text())
+    if a.full_graph:model=deepcopy(old['model']);primitive=deepcopy(old['primitive_program'])
+    else:
+        from primitive_slice import select
+        names=[n['id'] for n in old['primitive_program']['instructions'] if n['kernel'].startswith(a.kernel_prefix)]
+        model,primitive,_=select(old['model'],old['primitive_program'],names,source_sha256)
     rows={r['id']:r for r in old['program']}
     trace=[{'id':t['id'],'shape':rows[t['id']].get('shape',model['values'][t['outputs'][0]]['shape']),
             'exponent':rows[t['id']].get('exponent',0)} for t in model['tasks']]

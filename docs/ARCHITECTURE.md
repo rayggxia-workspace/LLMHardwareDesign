@@ -1,5 +1,11 @@
 # 架构与运行
 
+2026-11-09迭代14：[原生SSA/有限S驻留](../project/experiments/block_synthesis/RESIDENT_RECORDS.md)，
+[证据与边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_14.md)。
+`resident_survey.py CLOSED_IR NATIVE_REGIONS OUTPUT`比较同池复制成本和有限S回放；
+`resident_probe.py prepare FROZEN_COLUMN_PROOF BANK CLOSED_IR NATIVE_REGIONS FRESH_OUTPUT`生成实际M/E/S指令探针。
+Windows/Linux各248项；三初态各168程序及负对照通过。它尚未注册完整调度器，不是整模型驻留/校准时间/能耗或算法20%。
+
 2026-11-09迭代13：[原生S32加法聚合原型](../project/experiments/block_synthesis/S32_ADD_AGGREGATE.md)，
 [结果与边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_13.md)。
 `add_tile_survey.py CHECKED_IR CHECKED_PLAN ADD_PROOF NEW_REPORT`仅调查含完整准备的成本，不生成调度。

@@ -10,6 +10,26 @@ from leaf_catalog import duration
 from memory import descriptor_ticks
 
 
+def verify_source_closure(ir):
+    """Unknown operands are not implicit external S32 records.
+
+    A diagnostic cut must explicitly declare its boundary values. Looking up
+    a missing component proof with a default width is not source closure.
+    Existing semantic inputs may be declared in model.values; SSA outputs
+    must still be defined before use even if their name occurs elsewhere.
+    """
+    program=ir.get('primitive_program',{});nodes=program.get('instructions',[])
+    ids={n['id'] for n in nodes};seen=set()
+    if len(ids)!=len(nodes):raise ValueError('duplicate primitive identity')
+    declared=set(program.get('initial_formats',{}))|set(ir.get('model',{}).get('values',{}))
+    for node in nodes:
+        for name in node['inputs']:
+            if name in ids and name not in seen:raise ValueError('primitive source is not defined before use')
+            if name not in seen and name not in declared:
+                raise ValueError('undeclared primitive operand '+name+' at '+node['id'])
+        seen.add(node['id'])
+
+
 def verify_nexp_contract(ir):
     """Check the relative-exp program, rather than counting a wrong recipe.
 
@@ -57,6 +77,7 @@ def verify_nexp_contract(ir):
 def verify(ir):
     program=ir.get('primitive_program')
     if not program:raise ValueError('executable primitive program required')
+    verify_source_closure(ir)
     verify_nexp_contract(ir)
     library=ir['native_templates'];profile=ir['hardware']['native_leaf_profiles']
     if 'phase_native_templates' in ir['hardware'] and ir['hardware']['phase_native_templates'] != library:
