@@ -1,4 +1,4 @@
-module tb_popt_local #(parameter bit BANK_RW=1'b1,REUSE_A=1'b0);
+module tb_popt_local #(parameter bit BANK_RW=1'b1,REUSE_A=1'b0,parameter integer HOLD_CYCLES=32);
  reg clk=0;always #5 clk=~clk;
  reg reset=1,req_valid=0,req_write=0,rsp_ready=1;
  reg [9:0] req_addr=0;reg [127:0] req_data=0;
@@ -95,6 +95,15 @@ module tb_popt_local #(parameter bit BANK_RW=1'b1,REUSE_A=1'b0);
   end
   done_take=1;tick();done_take=0;a_ready=0;b_ready=0;
  endtask
+ integer bonly_legal=0,bonly_rejected=0;
+ task automatic check_bonly(input integer tiles,input bit bw,input bit bank,
+                            input integer abase,bbase,input bit error);
+  integer before_reads;
+  load_bank=bank;load_a_base=10'(abase);load_b_base=10'(bbase);
+  configure(0,tiles,bw,0,error);before_reads=wide_commands;load_job(0);
+  if(ac!=0||wide_commands-before_reads!=(error?0:tiles*(bw?2:1)))$fatal(1,"BONLY_NO_A_OR_READ_ACCOUNTING");
+  if(error)bonly_rejected=bonly_rejected+1;else bonly_legal=bonly_legal+1;
+ endtask
  integer c0,n0,w0,o0;
  initial begin
   reset_group();
@@ -102,12 +111,12 @@ module tb_popt_local #(parameter bit BANK_RW=1'b1,REUSE_A=1'b0);
   drain();configure(8,2,0,0,0);
   c0=cycles;n0=np;w0=wide_commands;o0=write_owned;
   fork
-   load_job(32);
+   load_job(HOLD_CYCLES);
    begin for(integer i=0;i<64;i=i+1)write_word(10'(256+i),128'(9000+i));end
   join
   drain();
   if(np-n0!=64||wide_commands-w0!=6||(BANK_RW&&write_owned-o0==0)||(!BANK_RW&&write_owned-o0!=0))$fatal(1,"LOCAL_CONCURRENT_ACCOUNTING");
-  $display("POPT_LOCAL_MEASURE bank_rw=%0d reuse_a=%0d cycles=%0d narrow_writes=64 wide_reads=6 A_beats=16 B_beats=2 writes_while_load_owned=%0d",BANK_RW,REUSE_A,cycles-c0,write_owned-o0);
+  $display("POPT_LOCAL_MEASURE bank_rw=%0d reuse_a=%0d hold=%0d cycles=%0d narrow_writes=64 wide_reads=6 A_beats=16 B_beats=2 writes_while_load_owned=%0d",BANK_RW,REUSE_A,HOLD_CYCLES,cycles-c0,write_owned-o0);
   // The whole LOAD range, not merely the currently gathered line, is leased.
   configure(8,2,1,0,0);
   fork load_job(12);write_word(10'd7,128'h7654);join drain();
@@ -119,6 +128,25 @@ module tb_popt_local #(parameter bit BANK_RW=1'b1,REUSE_A=1'b0);
   fork load_job(24);write_word(10'd0,128'h4321);join drain();
   if(BANK_RW&&REUSE_A&&write_owned-o0==0)$fatal(1,"BONLY_A_RANGE_NOT_EMPTY");
   configure(0,1,0,1,1);load_job(0);
+  // Functional-only B-only matrix. The primary H0/H32 measurement above is
+  // unchanged. Bounds are expressed in 128-bit words, with four-word alignment.
+  w0=wide_commands;
+  for(integer bank=0;bank<2;bank=bank+1)
+   for(integer tiles=1;tiles<=4;tiles=tiles+1)
+    for(integer bw=0;bw<2;bw=bw+1)begin
+     check_bonly(tiles,1'(bw),1'(bank),0,64,!REUSE_A);
+     check_bonly(tiles,1'(bw),1'(bank),1020,1024-tiles*(bw?8:4),!REUSE_A);
+     // A single 4-word B tile has no aligned, representable start above1020;
+     // all other shapes have a distinct aligned cross-boundary negative case.
+     if(1024-tiles*(bw?8:4)+4<1024)
+      check_bonly(tiles,1'(bw),1'(bank),0,1024-tiles*(bw?8:4)+4,1);
+     check_bonly(tiles,1'(bw),1'(bank),0,65,1); // Misaligned B, away from end.
+     check_bonly(tiles,1'(bw),1'(bank),1,64,1); // A still requires alignment.
+    end
+  if(bonly_legal!=(REUSE_A?32:0)||bonly_rejected!=(REUSE_A?46:78)||
+     wide_commands-w0!=(REUSE_A?120:0))$fatal(1,"BONLY_MATRIX_INCOMPLETE");
+  $display("POPT_LOCAL_BONLY_PASS bank_rw=%0d reuse_a=%0d hold=%0d shapes=16 boundaries=16 cross=14 unaligned_a=16 unaligned_b=16 legal=%0d rejected=%0d A_beats=0 B_reads=%0d",BANK_RW,REUSE_A,HOLD_CYCLES,bonly_legal,bonly_rejected,wide_commands-w0);
+  load_bank=1;load_a_base=0;load_b_base=64;
   // Held feeder data plus held ordinary ACK are cancelled by whole reset.
   configure(8,2,0,0,0);load_valid=1;
   do @(posedge clk);while(!load_ready);@(negedge clk);load_valid=0;
@@ -127,7 +155,7 @@ module tb_popt_local #(parameter bit BANK_RW=1'b1,REUSE_A=1'b0);
   end
   while(!a_valid&&!b_valid)tick();repeat(5)tick();reset_group();
   read_word(10'd7);drain();configure(4,1,0,0,0);load_job(0);
-  $display("POPT_LOCAL_PASS bank_rw=%0d reuse_a=%0d load_range_guard=1 rows0_contract=1 feeder_scoreboard=1 done_ack=1 reset=1",BANK_RW,REUSE_A);
+  $display("POPT_LOCAL_PASS bank_rw=%0d reuse_a=%0d hold=%0d load_range_guard=1 rows0_contract=1 feeder_scoreboard=1 done_ack=1 reset=1",BANK_RW,REUSE_A,HOLD_CYCLES);
   $finish;
  end
  initial begin #3000000;$fatal(1,"LOCAL_TIMEOUT");end

@@ -13,3 +13,18 @@
 - 状态in_progress，未done。登记management-hub PR5 pending；缺board.json/Projects能力，unverified/同步pending，处理人待指定；历史CI无step失败原因待管理员核实。未配置自动监测。
 
 恢复第一步：核对PR实时head与本轮实际源码commit，检查本交接追加的run受理/终态回执；若已提交不得重复提交。随后查看结果JSON及所有失败组件日志，保留失败现场，在新run修复复跑。成功判据为主作业COMPLETED0:0、四组件通过、真实数值/回写ACK/守恒与负例证据齐备，并通过SHA复核；这不等于物理或整模型验收。
+
+## run10 启动回执
+
+源码 `c2359bdeeea83270ab632861eebe6ffc8dcc510e`，25交付文件读回Git blob一致，PR共482文件。payload SHA-256 `697271b9d6de01729b44f44b40839072a1942bd6e85a4f384c56e6e7b5af88de`，32源文件在服务器逐项通过SHA核验；固定输入在测试源中，无外部权重数据。
+
+登录 `yuzelu@10.129.166.172`，工作目录 `/public/home/yuzelu/Melodydt/issue247-area-speed/run10`，源码子目录 `source`；实际启动 `cd /public/home/yuzelu/Melodydt/issue247-area-speed/run10 && sbatch --parsable job.sh`。作业 `101756 / mdt-p-native`，分区c64、4核、UNLIMITED，node1，受理后实读RUNNING，处于原生RTL编译/四组件回归阶段。日志 `slurm-101756.log`，结果 `results/result.json`，均持久保存。本次启动回执不代表测试通过。
+
+```sh
+squeue -j 101756
+sacct -j 101756 -X --format=JobID,JobName,State,ExitCode,Elapsed,NodeList
+tail -n 40 /public/home/yuzelu/Melodydt/issue247-area-speed/run10/slurm-101756.log
+cat /public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/result.json
+```
+
+未配置聊天结束后的自动监测。若本轮中断，由Melodydt再次唤起，先查询该job终态并核对结果，禁止不检查就重复提交。

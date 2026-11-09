@@ -106,7 +106,9 @@ M 的两套 A/B operand bank、A/B 实际握手和乘法器数量不增加。八
 | op13 | [33:18] Koffset，[49:34] group tag | offset 单位为 K 元素，连续性及代次检查 |
 | op14 | index[2:0] context；data[0] abort，[16:1] expected tag | 完成后 release，或显式 abort；避免释放错误代次 |
 | op3/op5 | 保留旧 raw/RNE 读接口，以行号选择 context | context 只有 COMPLETE 后可读，禁止读取中间结果 |
-| op6/reset | 原全清 | 清除输入有效性、上下文及未完成响应 |
+| op12 | 保留原 S40 部分结果诊断 | ACTIVE 时仍可按原条件读取诊断值；不得作为最终结果 |
+| op6 | 就绪边界接受的全清命令 | 清除输入有效性与上下文，产生自己的响应；不取消执行中的命令 |
+| reset | 整组复位 | 清除在途执行、上下文和未退休响应 |
 
 每个 context 保存 FREE/ACTIVE/COMPLETE、nextK、group tag、格式，N 复用原 result_n。first 必须 offset0；续段必须匹配 tag、nextK、格式和 N，nextK 不得 16bit 回绕。计算错误/溢出不得推进生命周期或 nextK，旧 S64 和原有效性保持，允许修正后重试。活动 context 存在时拒绝旧 op10，避免旧八行执行覆盖新槽。
 
@@ -114,7 +116,7 @@ M 的两套 A/B operand bank、A/B 实际握手和乘法器数量不增加。八
 
 开启 context 后，feeder 参数 `ENABLE_REUSE_A=1`。`load_rows=0` 且 `load_reuse_b=0` 表示只装 B，tiles 仍为 1..4。feeder 不发送任何 A beat，也不清除 M 已有 A；B 仍走实际 S 读、缓冲与 M 握手。默认未开启此功能时 rows0 仍非法。
 
-这条命令不凭空制造 A 有效性：随后 op13 必须检查所选 operand bank、A row/tile 的有效位与格式。调用者必须按 K 外层顺序使用同一 A 分段，不能在其他 context 尚需它时覆盖。B-only 不允许与 reuse_b 同时开启，避免“什么都没装却报告成功”。
+这条命令不凭空制造 A 有效性：随后 op13 必须检查所选 operand bank、A row/tile 的有效位与格式。调用者必须按 K 外层顺序使用同一 A 分段，不能在其他 context 尚需它时覆盖。本轮没有跨命令 A 引用计数或代次保护；M 的 bank 锁只保护当前执行。B-only 不允许与 reuse_b 同时开启，避免“什么都没装却报告成功”。
 
 ### 数值与存储成本
 

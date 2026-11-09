@@ -19,4 +19,5 @@ exec srun --exact -n1 -c "$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
  /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu \
  --env SLURM_CPUS_PER_TASK="$SLURM_CPUS_PER_TASK" "$image" \
  python3 -B "$root/source/project/experiments/p_native_opt/run.py" \
- --repo "$root/source" --out "$root/results" --manifest "$root/inputs.json" --workers "$SLURM_CPUS_PER_TASK"
+ --repo "$root/source" --out "$root/results" --manifest "$root/inputs.json" --workers "$SLURM_CPUS_PER_TASK" \
+ --components "${POPT_COMPONENTS:-all}"

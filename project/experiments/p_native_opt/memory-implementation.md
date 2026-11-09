@@ -27,7 +27,11 @@ python3 source/project/experiments/p_native_opt/run_memory.py \
   --repo source --out results/memory --workers 4 --manifest inputs.json
 ```
 
-要求实际Slurm核数，最多4核；5个variant逐个构建：backend模式0/1，local参数(0,0)/(1,0)/(1,1)，各运行1:143、2:143、2:144三种rand配置。`--only backend`或`--only local`可作独立阶段，完整验收使用默认all。输入manifest必须包含真实source_commit和实际源SHA；结果持久保存命令、退出码、工具/宏/源/脚本/日志SHA及每case cycles。
+要求实际Slurm核数，最多4核；8个variant逐个构建：backend模式0/1，以及local参数(0,0)/(1,0)/(1,1)各自的H0/H32；各运行1:143、2:143、2:144三种rand配置。`--only backend`或`--only local`可作独立阶段，完整验收使用默认all。新增H0对照可单独使用 `--only local`，只运行6个local variant、18个case，不重复不受影响的backend/group/context。输入manifest必须包含真实source_commit和实际源SHA；结果持久保存命令、退出码、工具/宏/源/脚本/日志SHA及每case cycles。
+
+主测量的 `HOLD_CYCLES` 默认32，保留run10的人工下游停顿回归；H0显式设为0，A/B不增加该停顿。两个hold条件的LOAD、64个普通写和全部结果检查相同。日志、对象目录、结果JSON均带hold，parser要求与实际编译配置精确一致；只在相同hold、随机配置下比较baseline与bankRW，避免将H32的隐藏等待收益写成无人工停顿的常态收益。其他功能用例中的有向背压保持不变，不计入主测量。
+
+B-only功能矩阵位于主计时之后，覆盖rows0×tiles1..4×bwide0/1×load_bank0/1全部16形状，普通B地址和最后合法B地址各一遍；A仍要求对齐，即使不读取。另有14个可独立表达的对齐跨界负例、16个A未对齐及16个B未对齐负例。单个4-word B块在10位地址内没有超过1020的对齐起点，不能伪造1024然后截断成0，因此该形状不算独立对齐跨界用例。REUSE_A开启时共32个合法/46个非法，全部逐beat核对B数据、tile、half、bank、位宽及零A拍，合法总计120次真实wide读；关闭时78个rows0请求全部拒绝且不发内存读。既有rows0+reuseB非法及A为空范围保护用例继续保留。parser必须读取完整矩阵回执，不把单形状通过视为全部覆盖。
 
 真实bank固定为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v`，SHA `6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7`。Verilator固定5.042路径，同既有实验。
 

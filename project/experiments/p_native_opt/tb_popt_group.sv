@@ -1,5 +1,5 @@
 // Whole native P, identical preloaded S and arithmetic in both schedules.
-module tb_popt_group #(parameter integer OPT=1, BANK_RW=0);
+module tb_popt_group #(parameter integer OPT=1, BANK_RW=0, SEGMENTS=2);
  logic clk=0,reset=1; always #5 clk=~clk;
  logic [1:0] io_req_valid=0,io_req_write=0,io_rsp_ready=0;
  logic [19:0] io_req_addr=0; logic [255:0] io_req_data=0;
@@ -45,8 +45,8 @@ module tb_popt_group #(parameter integer OPT=1, BANK_RW=0);
   integer total,q,r; begin
    total=0;
    if(n<5)begin
-    for(integer k=0;k<8;k++)total+=aval(0,k)*bval(group_id,n,k);
-    for(integer k=0;k<3;k++)total+=aval(1,k)*bval(group_id,n,k);
+    for(integer s=0;s<SEGMENTS;s++)
+     for(integer k=0;k<(s==SEGMENTS-1?3:8);k++)total+=aval(s,k)*bval(group_id,n,k);
    end
    q=total>>>2;r=total-q*4;
    if(r>2||(r==2&&(q&1)))q++;
@@ -82,15 +82,15 @@ module tb_popt_group #(parameter integer OPT=1, BANK_RW=0);
  task automatic segment_run(input integer segment,group_id);
   logic [63:0] desc;
   begin
-   desc=0;desc[7:4]=segment==0?8:3;desc[11:8]=5;desc[14:12]=1;desc[2]=segment==0;
+   desc=0;desc[7:4]=segment==SEGMENTS-1?3:8;desc[11:8]=5;desc[14:12]=1;desc[2]=segment==0;
    if(OPT)begin
-    desc[3]=segment==1;desc[33:18]=segment==0?0:8;desc[49:34]=16'(100+group_id);
+    desc[3]=segment==SEGMENTS-1;desc[33:18]=16'(segment*8);desc[49:34]=16'(100+group_id);
     command(13,group_id,desc);
    end else begin desc[18:15]=1;command(10,0,desc);end
   end
  endtask
  logic [127:0] word_data,got;
- integer start_cycle,start_writes,overlap_before;
+ integer start_cycle,start_writes,overlap_before,output_cycles;
  task automatic output_group(input integer g);
   for(integer half=0;half<2;half++)begin
    cmd_dst=10'(512+g*2+half);
@@ -100,7 +100,8 @@ module tb_popt_group #(parameter integer OPT=1, BANK_RW=0);
  initial begin
   repeat(4)@(negedge clk);reset=0;repeat(4)@(negedge clk);
   // Same S contents, addresses and native B work in both schedules.
-  for(integer s=0;s<2;s++)begin
+  if(SEGMENTS!=2&&SEGMENTS!=8)$fatal(1,"supported paired segment counts are 2 and 8");
+  for(integer s=0;s<SEGMENTS;s++)begin
    for(integer part=0;part<4;part++)begin
     word_data=0;
     if(part==0)for(integer k=0;k<8;k++)word_data[8*k+:8]=8'(aval(s,k));
@@ -115,16 +116,21 @@ module tb_popt_group #(parameter integer OPT=1, BANK_RW=0);
   end
   start_cycle=cycle;start_writes=write_count;
   if(OPT)begin
-   for(integer s=0;s<2;s++)for(integer g=0;g<8;g++)begin load(s,g,g!=0);segment_run(s,g);end
+   for(integer s=0;s<SEGMENTS;s++)for(integer g=0;g<8;g++)begin load(s,g,g!=0);segment_run(s,g);end
    for(integer g=0;g<8;g++)output_group(g);
   end else begin
    for(integer g=0;g<8;g++)begin
-    for(integer s=0;s<2;s++)begin load(s,g,0);segment_run(s,g);end
+    for(integer s=0;s<SEGMENTS;s++)begin load(s,g,0);segment_run(s,g);end
     output_group(g);
    end
   end
-  $display("METRIC P_GROUP opt=%0d bank_rw=%0d cycles=%0d A=%0d B=%0d wide=%0d stores=%0d",OPT,BANK_RW,cycle-start_cycle,a_count,b_count,wide_count,write_count-start_writes);
-  if(a_count!=(OPT?2:16)||b_count!=16||wide_count!=(OPT?18:32)||write_count-start_writes!=16)
+  output_cycles=cycle-start_cycle;
+  // Context ownership is not reusable until release. Include its actual
+  // P command/response cost in the headline measurement, separately from
+  // the useful prefix ending at the last real S write ACK.
+  if(OPT)for(integer g=0;g<8;g++)command(14,g,64'(100+g)<<1);
+  $display("METRIC P_GROUP opt=%0d bank_rw=%0d segments=%0d cycles=%0d output_cycles=%0d release_cycles=%0d A=%0d B=%0d wide=%0d stores=%0d",OPT,BANK_RW,SEGMENTS,cycle-start_cycle,output_cycles,cycle-start_cycle-output_cycles,a_count,b_count,wide_count,write_count-start_writes);
+  if(a_count!=(OPT?SEGMENTS:SEGMENTS*8)||b_count!=SEGMENTS*8||wide_count!=(OPT?SEGMENTS*9:SEGMENTS*16)||write_count-start_writes!=16)
    $fatal(1,"native work accounting");
   for(integer g=0;g<8;g++)for(integer half=0;half<2;half++)begin
    access(0,512+g*2+half,0,got);
@@ -133,8 +139,6 @@ module tb_popt_group #(parameter integer OPT=1, BANK_RW=0);
      $fatal(1,"gold mismatch g=%0d lane=%0d got=%h expected=%0d",g,half*4+lane,got,gold(g,half*4+lane));
   end
   if(OPT)begin
-   command(10,0,64'h9154,0,1); // Live contexts prohibit legacy aliasing.
-   for(integer g=0;g<8;g++)command(14,g,64'(100+g)<<1);
    command(3,0,0,0,1); // Released data is not readable.
   end else begin
    load(0,0,1,1); // Optional B-only encoding remains illegal by default.

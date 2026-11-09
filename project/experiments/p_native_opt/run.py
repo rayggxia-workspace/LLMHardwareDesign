@@ -34,17 +34,19 @@ def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def main():
  p=argparse.ArgumentParser();p.add_argument('--repo',type=Path,required=True)
  p.add_argument('--out',type=Path,required=True);p.add_argument('--manifest',type=Path,required=True)
- p.add_argument('--workers',type=int,default=4);a=p.parse_args()
+ p.add_argument('--workers',type=int,default=4)
+ p.add_argument('--components',choices=('all','memory','integration'),default='all');a=p.parse_args()
  a.repo=a.repo.resolve();a.out=a.out.resolve();a.manifest=a.manifest.resolve()
  if not 1<=a.workers<=min(4,int(os.environ.get('SLURM_CPUS_PER_TASK','0'))):raise ValueError('Slurm CPU allocation required, at most four workers')
  if sha(BANK)!=BANK_SHA:raise ValueError('SRAM macro identity drift')
  manifest=json.loads(a.manifest.read_text());commit=manifest['source_commit']
+ if manifest.get('components','all')!=a.components:raise ValueError('requested component scope differs from run manifest')
  if not re.fullmatch('[0-9a-f]{40}',commit):raise ValueError('real source commit required')
  for name,digest in manifest['code_sha256'].items():
   if sha(a.repo/name)!=digest:raise ValueError('source deployment drift '+name)
  a.out.mkdir(parents=True,exist_ok=False)
  report=dict(passed=False,source_commit=commit,scope='actual native S16/S64 P RTL, fixed four 1RW banks; no physical/full-model token/s qualification',
-  manifest_sha256=sha(a.manifest),bank_sha256=sha(BANK),versions={'python':platform.python_version()},commands=[],components={},errors=[])
+  manifest_sha256=sha(a.manifest),bank_sha256=sha(BANK),requested_components=a.components,versions={'python':platform.python_version()},commands=[],components={},errors=[])
  def execute(command,log):
   command=list(map(str,command));start=time.monotonic()
   result=subprocess.run(command,cwd=a.repo,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
@@ -66,23 +68,25 @@ def main():
   return dict(passed=True,result=name+'/result.json',sha256=sha(a.out/name/'result.json'))
  def group():
   measurements=[];runs=[]
-  configurations=[('legacy',0,0),('context',1,0),('combined',1,1)]
-  for label,opt,bank_rw in configurations:
+  configurations=[(name+'-s'+str(s),opt,b,s) for name,opt,b in
+   [('legacy',0,0),('context',1,0),('combined',1,1)] for s in (2,8)]
+  for label,opt,bank_rw,segments in configurations:
    top='tb_popt_group';obj=a.out/('obj-group-'+label)
    execute([V,'--binary','--timing','--assert','--timescale','1ns/1ps','-Wno-fatal',
     '--x-initial','unique','--x-assign','unique','-j',a.workers,
     '-I'+str(a.repo/'project/rtl/block_v2'),'--top-module',top,'--Mdir',obj,
-    '-GOPT='+str(opt),'-GBANK_RW='+str(bank_rw),HERE/(top+'.sv'),*[a.repo/s for s in SOURCES],BANK],label+'-group-build.log')
+    '-GOPT='+str(opt),'-GBANK_RW='+str(bank_rw),'-GSEGMENTS='+str(segments),HERE/(top+'.sv'),*[a.repo/s for s in SOURCES],BANK],label+'-group-build.log')
    for mode,seed in ((1,143),(2,143),(2,144)):
     log=f'{label}-group-{mode}-{seed}.log'
     output=execute([obj/('V'+top),f'+verilator+rand+reset+{mode}',f'+verilator+seed+{seed}'],log)
-    found=re.findall(r'^METRIC P_GROUP opt=(\d+) bank_rw=(\d+) cycles=(\d+) A=(\d+) B=(\d+) wide=(\d+) stores=(\d+)$',output,re.M)
+    found=re.findall(r'^METRIC P_GROUP opt=(\d+) bank_rw=(\d+) segments=(\d+) cycles=(\d+) output_cycles=(\d+) release_cycles=(\d+) A=(\d+) B=(\d+) wide=(\d+) stores=(\d+)$',output,re.M)
     overlap=re.findall(r'^P_GROUP_OVERLAP bank_rw=(\d+) accepted_while_feeder_active=(\d+)$',output,re.M)
     if len(found)!=1 or len(overlap)!=1 or 'PASS P_GROUP native S' not in output:raise ValueError('group receipt incomplete')
     if int(overlap[0][0])!=bank_rw or bool(int(overlap[0][1]))!=bool(bank_rw):raise ValueError('outer group overlap receipt')
-    row=dict(zip(('opt','bank_rw','cycles','A','B','wide','stores'),map(int,found[0])))
-    if (row['opt'],row['bank_rw'],row['A'],row['B'],row['wide'],row['stores'])!=(opt,bank_rw,2 if opt else 16,16,18 if opt else 32,16):
+    row=dict(zip(('opt','bank_rw','segments','cycles','output_cycles','release_cycles','A','B','wide','stores'),map(int,found[0])))
+    if (row['opt'],row['bank_rw'],row['segments'],row['A'],row['B'],row['wide'],row['stores'])!=(opt,bank_rw,segments,segments if opt else segments*8,segments*8,segments*(9 if opt else 16),16):
      raise ValueError('group work conservation')
+    if row['cycles']!=row['output_cycles']+row['release_cycles'] or bool(row['release_cycles'])!=bool(opt):raise ValueError('context release cost omitted')
     measurements.append(dict(label=label,mode=mode,seed=seed,**row));runs.append(log)
   for label,opt,bank_rw in (('default',0,0),('enabled',1,1)):
    # Unchanged original full-P program, including M->G routing and errors.
@@ -105,11 +109,14 @@ def main():
   return dict(passed=True,measurements=measurements,logs=runs)
  report['versions']['verilator']=execute([V,'--version'],'verilator-version.log').strip()
  report['versions']['gcc']=execute(['g++','--version'],'gcc-version.log').splitlines()[0]
- component('policy',lambda:subrunner('policy','run_policy_rtl.py',['--workers',a.workers]))
- component('memory',lambda:subrunner('memory','run_memory.py',['--workers',a.workers,'--manifest',a.manifest]))
- component('context',lambda:subrunner('context','run_context.py',['--cpus',a.workers,'--verilator',V]))
- component('group',group)
- report['passed']=not report['errors'] and len(report['components'])==4
+ if a.components=='all':component('policy',lambda:subrunner('policy','run_policy_rtl.py',['--workers',a.workers]))
+ component('memory',lambda:subrunner('memory','run_memory.py',
+  ['--workers',a.workers,'--manifest',a.manifest]+(['--only','local'] if a.components!='all' else [])))
+ if a.components=='all':
+  component('context',lambda:subrunner('context','run_context.py',['--cpus',a.workers,'--verilator',V]))
+ if a.components in ('all','integration'):
+  component('group',group)
+ report['passed']=not report['errors'] and len(report['components'])=={'all':4,'memory':1,'integration':2}[a.components]
  (a.out/'result.json').write_text(json.dumps(report,indent=2)+'\n')
  print(json.dumps(dict(passed=report['passed'],source_commit=commit,errors=report['errors'],result=str(a.out/'result.json'))),flush=True)
  if not report['passed']:raise SystemExit(1)
