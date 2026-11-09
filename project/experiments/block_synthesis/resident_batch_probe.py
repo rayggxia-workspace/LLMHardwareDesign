@@ -39,6 +39,9 @@ def prepare(origin,programfile,output,strategies):
   logic[127:0] got;
   rows=4'(nr);load_a_address=10'(abase);load_b_address=10'(bbase);feed(reuse_weight);
   command(4,0,64'(coefficient&65535)|(64'(shift)<<16),0,0,got);
+  if($test$plusargs("badk") && k==2)begin
+   $display("BATCH_K_FAULT nr=%0d old=2 applied=1",nr);k=1;
+  end
   command(10,0,(64'(nr)<<15)|64'h1103|(64'(k)<<4)|(clear?64'd4:64'd0),0,0,got);
  endtask
  task automatic m_final_row(input integer nr,input integer rr,input integer dst,input integer width,input integer shift,input integer expected);

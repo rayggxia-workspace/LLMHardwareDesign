@@ -10,6 +10,24 @@ from loop_dp import optimize
 
 
 class TestTrafficAccounting(unittest.TestCase):
+    def test_cover_decisions_are_checked_before_compound_traffic_expansion(self):
+        from cover_frontier import search
+        ir = fixture()
+        ir['resident_actions'] = []
+        ir['model']['weights'] = ['b']
+        next(t for t in ir['tasks'] if t['id']=='v')['bindings'] = [compound(ir)]
+        plan = search(ir['tasks'], ir['hardware'], width=2)
+        # No resident actions are registered in this compound-only fixture.
+        with patch('verify_primitive_cost.duration', return_value=1), patch(
+                'verify_resident_bindings.verify', return_value={'passed':True}):
+            result = account(ir, plan)
+            self.assertEqual(result['total_logical_words'], plan['external_words'])
+            self.assertEqual(result['cached_Dot_services'], 2)
+            self.assertTrue(result['cover_audit']['passed'])
+            bad = deepcopy(plan);bad['tasks'][0]['covers'] = []
+            with self.assertRaisesRegex(ValueError, 'membership'):
+                account(ir, bad)
+
     def test_operand_counts_against_explicit_access_trace(self):
         for seed in range(150):
             rng = random.Random(seed)

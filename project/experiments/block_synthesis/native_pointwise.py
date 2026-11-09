@@ -222,7 +222,7 @@ def execute(graph,external):
             acc=0
             for t in n['terms']:
                 a,b=records[t['a']],records[t['b']]
-                partial=sum(s16(a,i)*s16(b,i) for i in range(n['k']))
+                partial=sum(s16(a,i)*s16(b,i) for i in range(t.get('k',n['k'])))
                 acc+=partial*t['coefficient']*(1<<t['scale_shift'])
                 if not -(1<<63)<=acc<(1<<63):raise ValueError('native pointwise S64 partial overflow')
             value=rounded(acc,n['shift']);bits=n['width']

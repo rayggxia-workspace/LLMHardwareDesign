@@ -41,8 +41,20 @@ def cached_reads(cache, row, *, immutable_weight=False):
 
 def account(ir, plan):
     verify_cost(ir)
-    verify(ir['tasks'], ir['hardware'], plan)
-    tasks, flat = expand_selected(ir['tasks'], plan)
+    source_tasks = ir['tasks']
+    cover_audit = None
+    if plan.get('kind') == 'convex-cover-frontier-v1':
+        from verify_cover_frontier import project, verify as verify_cover
+        from verify_resident_bindings import verify as verify_resident
+        # Keep the registered native-source proof and the complete schedule
+        # checks before diagnostic flattening. A cover is not an atomic task.
+        verify_resident(ir, numeric=False)
+        cover_audit = verify_cover(source_tasks, ir['hardware'], ir.get('resident_actions', []), plan)
+        source_tasks, projected = project(source_tasks, ir.get('resident_actions', []), plan)
+    else:
+        verify(source_tasks, ir['hardware'], plan)
+        projected = plan
+    tasks, flat = expand_selected(source_tasks, projected)
     tasks = {t['id']:t for t in tasks}
     nodes = {n['id']:n for n in ir['primitive_program']['instructions']}
     weights = ir['model'].get('weights', {})
@@ -83,6 +95,9 @@ def account(ir, plan):
                 'reads':classified, 'comparison_only':comparison})
             totals.update(classified)
             totals['cached_Dot_writes'] += writes
+        elif binding.get('resident_region'):
+            totals['resident_region_reads'] += reads
+            totals['resident_region_writes'] += writes
         else:
             totals['other_service_reads'] += reads
             totals['other_service_writes'] += writes
@@ -92,6 +107,7 @@ def account(ir, plan):
             'total_logical_words':sum(totals.values()),
             'logical_record_bytes':16, 'nominal_record_bytes':sum(totals.values())*16,
             'cached_Dot_services':len(services), 'services':services,
+            'cover_audit':cover_audit,
             'scope':'selected conservative scalar-record descriptors, B1/S2 no-KV qualified scope unchanged',
             'not_proven':'physical DRAM transfers, complete controller/DMA tile integration, arbitrary dirty residency or token/s',
             'comparison_warning':'unique-data counts ignore finite S and live M contexts; never subtract them from cost',

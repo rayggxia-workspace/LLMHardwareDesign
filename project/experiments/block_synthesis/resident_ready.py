@@ -19,7 +19,7 @@ class ReadyGraph:
         for name,n in self.nodes.items():
             if n['kind']=='M':
                 self.signatures[name]=(n['k'],n['width'],n['shift'],json.dumps(graph['objects'][n['output']]['abi'],sort_keys=True),
-                    tuple((t['b'],t['coefficient'],t['scale_shift']) for t in n['terms']))
+                    tuple((t['b'],t['coefficient'],t['scale_shift'],t.get('k',n['k'])) for t in n['terms']))
 
     def actions(self,completed,*,allow_batch=True,policy='windows'):
         if policy not in ('windows','all'):raise ValueError('unknown ready grouping policy')

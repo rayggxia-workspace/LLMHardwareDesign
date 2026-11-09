@@ -330,6 +330,13 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 现行完整算法测试命令仍为`python -m unittest discover -s project/experiments/block_synthesis -p 'test_*.py'`，Windows/Linux及冻结服务器各312通过。
 Windows测试需可写临时目录；真实SRAM服务证据、冷tile结果与未完成系统范围见[迭代22](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_22.md)。
 
+迭代23/24：[逐行地址](../project/experiments/block_synthesis/RESIDENT_SCATTER.md)与[动态high16原生覆盖](../project/experiments/block_synthesis/NATIVE_LANE_COVER.md)。
+`native_lane_survey.py IMMUTABLE_PROGRAM_POOL SOURCE_IR FRESH_OUTPUT --width 2` 保留原池，比较相同硬件服务的强贪心/DP。
+`python -m unittest test_native_lane_cover test_resident_scatter test_traffic_accounting -q` 核对来源、混合K、原生地址选择与流量守恒。
+独立证据复核器位于`work/YUZE-LU/219/throughput-opt/`：`audit_lane_round.py --help`、`audit_actual_lane.py --help`；输入/路径清单见[报告24](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_24.md)和归档manifest。
+`traffic_accounting.py REGISTERED_IR SELECTED_PLAN NEW_JSON`先执行原生成本、驻留覆盖、完整依赖/调度检查，再展开实际子服务分类；未证明物理DRAM访问。
+最终双平台319测试；完整程序RTL由`resident_batch_probe.py`与`run_batch_programs.py`生成/执行，`run_native_k_fault.py`补实际错K负对照。
+
 2026-11-09迭代18：[条件原生表达式复用合同](../project/experiments/block_synthesis/NATIVE_REUSE.md)
 和[结果/证据边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_18.md)。
 `resident_cover_survey.py IR QUALIFIED_PROOF NEW_OUTPUT --continuation --value-reuse`保留旧候选，并增加条件复用/重算。

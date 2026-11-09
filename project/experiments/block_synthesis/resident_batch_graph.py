@@ -66,6 +66,9 @@ def build(graphs,*,scratch_start,external_capacity_words,max_rows):
 
 def verify(tile):
     """Reconstruct each row independently; does not call the merger/rewrite."""
+    if 'operand_cover' in tile:
+        from native_lane_cover import verify as verify_cover
+        return verify_cover(tile)
     if tile.get('kind')!='native-pointwise-row-tile-v1':raise ValueError('wrong row tile graph kind')
     graphs=tile['graphs'];maps=tile['maps'];batch=tile['graph'];source=batch['reuse_proof']['source_graph']
     from native_reuse import verify as verify_reuse
@@ -130,7 +133,7 @@ def units(tile):
         for n in live[1:]:
             if n['kind']!='M' or (n['k'],n['width'],n['shift'],len(n['terms']))!=(first['k'],first['width'],first['shift'],len(first['terms'])):
                 batchable=False;break
-            if any((t['b'],t['coefficient'],t['scale_shift'])!=(u['b'],u['coefficient'],u['scale_shift']) for t,u in zip(n['terms'],first['terms'])):
+            if any((t['b'],t['coefficient'],t['scale_shift'],t.get('k',n['k']))!=(u['b'],u['coefficient'],u['scale_shift'],u.get('k',first['k'])) for t,u in zip(n['terms'],first['terms'])):
                 batchable=False;break
         result.append({'id':first['id'],'members':[n['id'] for n in live],'batchable':batchable})
     return result

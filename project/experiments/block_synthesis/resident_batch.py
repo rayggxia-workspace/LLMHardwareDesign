@@ -57,7 +57,7 @@ def event_ticks(event,row_timing,scalar_timing):
 
 
 def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch=True,rank_policy='future_copies',
-         schedule='fixed',grouping_policy='windows',operand_contract=None):
+         schedule='fixed',grouping_policy='windows',operand_contract=None,final_layout='contiguous'):
     verify(tile);validate_timing(row_timing,scalar_timing)
     from resident_operand_contract import validate as validate_operands
     masked=validate_operands(operand_contract,row_timing)
@@ -65,6 +65,8 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
     if rank_policy not in ('copy_cost','future_copies','future_layout'):raise ValueError('unknown batch frontier ranking')
     if schedule not in ('fixed','ready'):raise ValueError('unknown native scheduling family')
     if grouping_policy not in ('windows','all'):raise ValueError('unknown ready grouping policy')
+    if final_layout not in ('contiguous','scatter','choice'):raise ValueError('unknown row final layout policy')
+    if final_layout!='contiguous' and not masked:raise ValueError('address alternatives require active-prefix qualification')
     if type(zero_address)!=int or not 0<=zero_address<tile['scratch_start']:raise ValueError('explicit external zero address required')
     names=tuple(sorted(actors));meta=[actors[n] for n in names]
     if (not names or {a['kind'] for a in meta}!={'M','E'} or
@@ -85,9 +87,9 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
                 choices=[]
                 for r in range(1,(ready_graph.max_rows if allow_batch else 1)+1):
                     try:
-                        term=min(event_ticks({'op':'ROW_M_TERM','rows':r,'k':n['k'],'reuse_b':b},row_timing,scalar_timing) for b in (False,True))
+                        terms=sum(min(event_ticks({'op':'ROW_M_TERM','rows':r,'k':t.get('k',n['k']),'reuse_b':b},row_timing,scalar_timing) for b in (False,True)) for t in n['terms'])
                         final=event_ticks({'op':'ROW_M_FINAL','rows':r,'width':n['width'],'shift':n['shift']},row_timing,scalar_timing)
-                        choices.append(len(n['terms'])*term//r+final)
+                        choices.append(terms//r+final)
                     except ValueError as exc:
                         if str(exc)!='unmeasured row service shape or format':raise
                 if not choices:raise ValueError('native operation has no measured row service')
@@ -244,13 +246,13 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
                         banks=list(sb.banks);banks[ai]=bv;sb=replace(sb,banks=tuple(banks))
                         e={'op':'ROW_M_TERM','actor':names[ai],'native':members,'rows':r,'a':aa*8,
                            'b':None if reuse else bb*8,'a_records':av,'b_record':bv,'reuse_b':reuse,
-                           'term':ti,'k':first['k'],'coefficient':term['coefficient'],'scale_shift':term['scale_shift'],'clear':ti==0}
+                           'term':ti,'k':term.get('k',first['k']),'coefficient':term['coefficient'],'scale_shift':term['scale_shift'],'clear':ti==0}
                         try:more.append(emit(sb,[e]));expanded+=1
                         except ValueError as exc:
                             if str(exc)!='unmeasured row service shape or format':raise
             active=trim(more)
         more=[]
-        for s in active:
+        for s in (active if final_layout!='scatter' or r==1 else ()):
             for ns,at in allocations(s,ai,set(),needed,r if masked else None):
                 records=[n['output'] for n in [nodes[x] for x in members]]
                 # Final writes are scalar SRAM transactions, one per row. The
@@ -262,6 +264,24 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
                 try:more.append(cell(emit(ns,events),ai,at,entry));expanded+=1
                 except ValueError as exc:
                     if str(exc)!='unmeasured row service shape or format':raise
+        if final_layout!='contiguous' and masked and r>1:
+            # The existing final command selects both accumulator row and S
+            # address. Keep the contiguous alternative, and place scalar row
+            # results independently without a packing/copy operation. The
+            # accumulator remains held until all original row ACKs complete.
+            scattered=active
+            for rr,member in enumerate(members):
+                endings=[];value=nodes[member]['output']
+                for s in scattered:
+                    for ns,at in allocations(s,ai,set(),needed,1):
+                        e={'op':'ROW_M_FINAL','actor':names[ai],'native':members,'rows':r,'row':rr,
+                            'address':at*8,'record':value,'width':first['width'],'shift':first['shift'],'wait_s_ack':True}
+                        entry=list(ns.cells[ai][at]);entry[0]=value
+                        try:endings.append(cell(emit(ns,[e]),ai,at,entry));expanded+=1
+                        except ValueError as exc:
+                            if str(exc)!='unmeasured row service shape or format':raise
+                scattered=trim(endings)
+            more.extend(scattered)
         return trim(more)
     def execute_unit(states,members,batchable,needed,*,serial_alternative):
         nonlocal expanded
@@ -365,6 +385,7 @@ def plan(tile,actors,zero_address,row_timing,scalar_timing,*,width=8,allow_batch
         'events':events,'total_ticks':best.cost,'copy_ticks':best.copies,'native_service_ticks':best.cost-best.copies,
         'external_load_words':best.loads,'external_store_words':best.stores,'external_words':best.loads+best.stores,
         'width':width,'rank_policy':rank_policy,'allow_batch':allow_batch,'schedule':schedule,'grouping_policy':grouping_policy,
+        'final_layout':final_layout,
         'search_method':('strict_greedy' if width==1 else 'completion_layer_dp') if schedule=='ready' else 'fixed_order_frontier',
         'expanded':expanded,'merged':merged,'pruned':pruned,
         'scope':'bounded finite-S placement and paid layout search, serial native row services; no free cross-S gather, system or performance qualification'}

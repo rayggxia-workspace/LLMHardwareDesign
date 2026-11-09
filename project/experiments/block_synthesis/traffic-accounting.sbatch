@@ -8,7 +8,7 @@ root=$(realpath "$1")
 case "$root" in /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/*) ;; *) exit 2;; esac
 cd "$root"
 python=/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python
-export PYTHONPATH=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/cp-environment-v2/deps
+export PYTHONPATH=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/cp-environment-v2/deps:/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/deps
 sha256sum *.py "$2" "$3" > input.sha256
 "$python" -B -m unittest discover -p 'test_*.py' -q > tests.log 2>&1
 "$python" -B -u traffic_accounting.py "$2" "$3" traffic-accounting.json > traffic.log 2>&1

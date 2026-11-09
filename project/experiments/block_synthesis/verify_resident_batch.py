@@ -114,11 +114,11 @@ def replay(tile,program,inputs):
                 raise ValueError('row M context overwritten or term reordered')
             if ti>=len(first['terms']):raise ValueError('extra row M term')
             t=first['terms'][ti]
-            if ((e['k'],e['coefficient'],e['scale_shift'],e['clear'])!=(first['k'],t['coefficient'],t['scale_shift'],ti==0) or
+            if ((e['k'],e['coefficient'],e['scale_shift'],e['clear'])!=(t.get('k',first['k']),t['coefficient'],t['scale_shift'],ti==0) or
                 e['a_records']!=[n['terms'][ti]['a'] for n in ns] or e['b_record']!=t['b'] or
                 any((n['k'],n['width'],n['shift'],len(n['terms']))!=(first['k'],first['width'],first['shift'],len(first['terms'])) or
                     n['terms'][ti]['b']!=t['b'] or n['terms'][ti]['coefficient']!=t['coefficient'] or
-                    n['terms'][ti]['scale_shift']!=t['scale_shift'] for n in ns)):
+                    n['terms'][ti]['scale_shift']!=t['scale_shift'] or n['terms'][ti].get('k',n['k'])!=t.get('k',first['k']) for n in ns)):
                 raise ValueError('row M changed scalar native semantics')
             if e['a']%4 or e['k'] not in (1,2):raise ValueError('row feeder alignment/segment differs')
             if e['a']+4*((r+3)//4)>a['words']:raise ValueError('row A wide read crosses SRAM boundary')
