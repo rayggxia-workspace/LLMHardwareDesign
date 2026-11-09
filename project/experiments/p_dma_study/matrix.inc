@@ -118,6 +118,17 @@
  }
  void matrix(const Op& o){
   U before=now(),tiles=m_tiles,commands=m_commands;auto previous=detail::flow_totals();
+  const bool previous_queued=cfg.queued;
+  // Restrain prefetch only for static one-row work whose complete A can reside
+  // with minimum legal double-B buffers. Long-A, dynamic attention and multi-row
+  // prefill retain queuing. This uses capacity/shape, never workload IDs.
+  const U policy_a=U(o.k)*(tensors[o.in[0]].bits/8);
+  const U policy_workspace=1024+(cfg.combine?512:0);
+  const U policy_min_b=2*ceildiv(U(8)*8*cfg.weight_bits/8,cfg.beat)*cfg.beat;
+  if(cfg.adaptive&&o.rows==1&&o.layout==0&&policy_a+policy_min_b+96+policy_workspace<=16384){
+   require(mem.outstanding[0]==0&&mem.outstanding[1]==0,"queue policy switch before ACK");
+   cfg.queued=false;mem.cfg.queued=false;
+  }
   for(int t:o.in)flush(t);
   std::vector<std::unique_ptr<sc_event>> done;std::vector<sc_process_handle> workers;
   for(int w=0;w<cfg.mcount;++w){done.emplace_back(new sc_event);workers.push_back(sc_spawn([&,w,this]{matrix_worker(o,w,*done[w]);}));}
@@ -126,4 +137,6 @@
   std::string key=std::to_string(o.rows)+"x"+std::to_string(o.cols)+"x"+std::to_string(o.k)+"b"+std::to_string(o.batches)+"l"+std::to_string(o.layout);
   auto& sh=detail::data.shapes[key];++sh.calls;sh.wall+=now()-before;sh.tiles+=m_tiles-tiles;sh.commands+=m_commands-commands;
   auto current=detail::flow_totals();for(int f=0;f<detail::FLOWS;++f)detail::accumulate(sh.flows[f],detail::difference(current[f],previous[f]));
+  require(mem.outstanding[0]==0&&mem.outstanding[1]==0,"queue policy restore before ACK");
+  cfg.queued=previous_queued;mem.cfg.queued=previous_queued;
  }

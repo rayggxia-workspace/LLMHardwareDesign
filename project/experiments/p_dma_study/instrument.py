@@ -21,7 +21,7 @@ def generate():
 
     change('struct Config {', '#include "detail.hpp"\nstruct Config {')
     change('std::string name;int k=32',
-           'std::string name,variant="observe";bool prefix_cache=false,paircols=false,combine=false;'
+           'std::string name,variant="observe";bool prefix_cache=false,paircols=false,combine=false,adaptive=false;'
            'int buffer_count=2,book_cycles=1;int k=32')
     change('std::vector<std::pair<U,U>> slots;U busy=0;',
            'std::vector<std::pair<U,U>> slots;U busy=0,queue_wait=0,calls=0;')
@@ -91,6 +91,9 @@ def generate():
   else if(c.variant=="queue_off_prefix"){c.queued=false;c.prefix_cache=true;}
   else if(c.variant=="queue_off_pair_combine"){c.queued=false;c.paircols=true;c.combine=true;}
   else if(c.variant=="queue_off_prefix_pair_combine"){c.queued=false;c.prefix_cache=true;c.paircols=true;c.combine=true;}
+  else if(c.variant=="adaptive")c.adaptive=true;
+  else if(c.variant=="adaptive_prefix"){c.adaptive=true;c.prefix_cache=true;}
+  else if(c.variant=="adaptive_prefix_pair_combine"){c.adaptive=true;c.prefix_cache=true;c.paircols=true;c.combine=true;}
   else if(c.variant=="buffer1")c.buffer_count=1;
   else if(c.variant=="credits8")c.credits=8;
   else if(c.variant=="k64")c.k=64;

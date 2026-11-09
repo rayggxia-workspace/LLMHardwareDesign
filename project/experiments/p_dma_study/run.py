@@ -29,7 +29,7 @@ def main():
     parser.add_argument('--inputs',type=Path,required=True)
     parser.add_argument('--out',type=Path,required=True)
     parser.add_argument('--workers',type=int,default=4)
-    parser.add_argument('--phase',choices=('main','followup'),default='main')
+    parser.add_argument('--phase',choices=('main','followup','adaptive'),default='main')
     a=parser.parse_args();a.out.mkdir(parents=True,exist_ok=False)
     a.out=a.out.resolve();a.inputs=a.inputs.resolve()
     if not 1<=a.workers<=int(os.environ.get('SLURM_CPUS_PER_TASK','4')):raise ValueError('worker allocation')
@@ -88,9 +88,13 @@ def main():
               'queue_off','buffer1','credits8','k64','k128','prefix_k64','prefix_k128']
     if a.phase=='followup':
         variants=['prefix','queue_off','queue_off_prefix','queue_off_pair_combine','queue_off_prefix_pair_combine']
+    if a.phase=='adaptive':
+        variants=['prefix','queue_off','adaptive','adaptive_prefix','adaptive_prefix_pair_combine']
     cases=[('decode512','queued_pipe_w8',v,'model') for v in variants]
     cases += [('decode512','queued_pipe_w16',v,'model') for v in
-              (('prefix','pair_combine','prefix_pair_combine') if a.phase=='main' else ('prefix','queue_off','queue_off_prefix_pair_combine'))]
+              (('prefix','pair_combine','prefix_pair_combine') if a.phase=='main' else
+               ('prefix','adaptive','adaptive_prefix_pair_combine') if a.phase=='adaptive' else
+               ('prefix','queue_off','queue_off_prefix_pair_combine'))]
     with ThreadPoolExecutor(max_workers=a.workers) as pool:records+=list(pool.map(case,cases))
     best=min((r for r in records if r['binary']=='model' and r['profile']=='queued_pipe_w8'),key=lambda r:r['result']['seconds'])['variant']
     supplement=[(w,'queued_pipe_w8',v,'model') for w in ('decode128','decode2048','prefill2') for v in sorted({'observe',best})]
