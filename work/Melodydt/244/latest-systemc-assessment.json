@@ -1,0 +1,133 @@
+{
+  "kind": "arithmetic assessment of upstream conditional SystemC records",
+  "upstream_scenarios_checked": 34,
+  "latest_pr220": "bf31827f7e039038ca2547046a13d29c4bf46901",
+  "latest_pr241": "e7aeed2097f57a5f910cae70eb51a220c49a8a14",
+  "baseline": {
+    "profile": "queued_pipe_w8",
+    "tokens": 1,
+    "ticks": 110512497,
+    "seconds": 0.368374988033,
+    "tokens_per_second": 2.7146251306,
+    "read_bus_bytes": 3583993856,
+    "write_bus_bytes": 20734208,
+    "logical_read_bytes": 3565119488,
+    "logical_write_bytes": 14523136,
+    "dma_descriptors": 3136982,
+    "max_outstanding_beats": 32,
+    "max_descriptor_queue": 1,
+    "max_outstanding_descriptors": 32,
+    "U_cache_peak_bytes": 12288,
+    "P_scratch_peak_bytes": 16128,
+    "cache_hits": 66180,
+    "cache_misses": 200800,
+    "dirty_evictions": 128724,
+    "dead_lines_discarded": 172213,
+    "M_commands": 1521664,
+    "M_tiles": 1521664,
+    "KV_state_write_bytes": 73728,
+    "resident_A_saved_bytes": 1151778816,
+    "M_work_ticks": 59639776,
+    "vector_work_ticks": 12578800,
+    "adapter_work_ticks": 49393664,
+    "spans_ticks": {
+      "Dot": 91934745,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    },
+    "workload": "decode512",
+    "host_seconds": 27.880699634552002
+  },
+  "dot_wall_fraction": 0.8318945638419606,
+  "other_wall_seconds": 0.061925838033,
+  "total_bus_bytes_per_token": 3604728064,
+  "aggregate_traffic_token_s_ceiling": 4.743769764708665,
+  "achieved_average_GB_s": 9.785485391524679,
+  "reference_peak_utilization": 0.5722506076915017,
+  "weight_stream_token_s_ceiling": 5.541697667333914,
+  "s32_KV_read_bytes_ideal_gqa": 37748736,
+  "s32_KV_write_bytes": 73728,
+  "excess_bus_bytes_over_single_weight_stream_and_ideal_KV": 481208576,
+  "target_conditions": [
+    {
+      "target_token_s": 4,
+      "max_bus_bytes_at_reference_peak": 4275000000.0,
+      "minimum_byte_reduction": 0,
+      "minimum_byte_reduction_percent": 0.0,
+      "minimum_peak_GB_s_if_current_traffic_unchanged": 14.418912256,
+      "dot_time_budget_if_other_phases_unchanged": 0.188074161967,
+      "minimum_dot_service_speedup_if_other_phases_unchanged": 1.6294059045376494
+    },
+    {
+      "target_token_s": 5,
+      "max_bus_bytes_at_reference_peak": 3420000000.0,
+      "minimum_byte_reduction": 184728064.0,
+      "minimum_byte_reduction_percent": 5.124604705826708,
+      "minimum_peak_GB_s_if_current_traffic_unchanged": 18.02364032,
+      "dot_time_budget_if_other_phases_unchanged": 0.138074161967,
+      "minimum_dot_service_speedup_if_other_phases_unchanged": 2.219453267970889
+    },
+    {
+      "target_token_s": 10,
+      "max_bus_bytes_at_reference_peak": 1710000000.0,
+      "minimum_byte_reduction": 1894728064.0,
+      "minimum_byte_reduction_percent": 52.562302352913356,
+      "minimum_peak_GB_s_if_current_traffic_unchanged": 36.04728064,
+      "dot_time_budget_if_other_phases_unchanged": 0.038074161967,
+      "minimum_dot_service_speedup_if_other_phases_unchanged": 8.048743141493397
+    }
+  ],
+  "half_dot_time_upper_bound_token_s": 4.647911132973837,
+  "W4_weight_only_contraction_traffic": 2061879552.0,
+  "W4_weight_only_contraction_traffic_token_s_ceiling": 8.293403939824318,
+  "isolated_ablation_comparisons": [
+    {
+      "label": "input residency, same precision",
+      "before": "stream_p_w8",
+      "after": "stream_p_w8_resident",
+      "time_reduction_percent": 21.591504377331137,
+      "before_token_s": 1.78299414043,
+      "after_token_s": 2.27398080561,
+      "before_bus_bytes": 4756506880,
+      "after_bus_bytes": 3604728064
+    },
+    {
+      "label": "queued descriptors, same precision",
+      "before": "stream_p_w8_resident",
+      "after": "queued_p_w8",
+      "time_reduction_percent": -2.4278242982671485,
+      "before_token_s": 2.27398080561,
+      "after_token_s": 2.22008113634,
+      "before_bus_bytes": 3604728064,
+      "after_bus_bytes": 3604728064
+    },
+    {
+      "label": "vector pipeline, same precision",
+      "before": "queued_p_w8",
+      "after": "queued_pipe_w8",
+      "time_reduction_percent": 18.217763796720448,
+      "before_token_s": 2.22008113634,
+      "after_token_s": 2.7146251306,
+      "before_bus_bytes": 3604728064,
+      "after_bus_bytes": 3604728064
+    },
+    {
+      "label": "weight-precision hypothesis, not quality-qualified",
+      "before": "queued_pipe_w16",
+      "after": "queued_pipe_w8",
+      "time_reduction_percent": 38.03633354535444,
+      "before_token_s": 1.68208126142,
+      "after_token_s": 2.7146251306,
+      "before_bus_bytes": 6690425088,
+      "after_bus_bytes": 3604728064
+    }
+  ],
+  "scope": "necessary conditions/isolated hypotheses only; not achieved speedups or new scheduled/quantized/RTL results",
+  "input_sha256": "4a6e7ed77cf4e8ad83ff0d2511216dbc903a82baf54872df79eef4f1e1c16dbe",
+  "analysis_source_sha256": "7ea91a95b366d28f9f428741b1d8de2847f4bba46aab5d75fa46e6653accbaee"
+}

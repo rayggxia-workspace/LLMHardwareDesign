@@ -36,6 +36,18 @@ python3 -B project/experiments/r_load_bounds/run.py --case raw256 --out /全新�
 
 [实际实验记录](experiments/issue-242-r-load-bounds.md)绑定测试 commit、工具、源码与日志 SHA。九次修复版执行通过、三次旧源码反例被检出。该修复仅经过 RTL 回归，原冻结宏的物理资格不自动转移；原 192 项最终网表回归及物理重新验收未执行。
 
+## token/s 研究与结果边界（Issue #244）
+
+`project/experiments/token_throughput_study/`固定PR220/241的历史基线与最新架构结果，分别计算旧资源图敏感性、原M/长K候选的配置边界，以及最新241达到4/5/10 token/s的必要条件。[正式研究报告](experiments/issue-244-token-throughput-study.md) · [输入、方法和服务器命令](../project/experiments/token_throughput_study/README.md)。
+
+```powershell
+python -B project/experiments/token_throughput_study/check.py
+python -B project/experiments/token_throughput_study/preview.py --out /全新目录/preview.json
+python -B project/experiments/token_throughput_study/assess_systemc.py --results work/Melodydt/244/upstream241-results.json --out /全新目录/assessment.json
+```
+
+这些命令不运行生产RTL或新增SystemC。完整旧图复算通过个人Slurm作业101601执行，目前排队；最新241的34组结果是上游条件预测，本分支只核验记录与推导边界，未重跑其sweep。新量化/KV数值、服务与控制RTL、物理和能量未验收。
+
 ## 目录约定
 
 | 路径 | 用途 |

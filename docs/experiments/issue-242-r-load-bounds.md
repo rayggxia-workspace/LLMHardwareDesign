@@ -10,7 +10,7 @@
 
 ## 源码、配置与结果
 
-实际测试 commit：[`f034be2b7c87137b92f7bfce274a5485647e512d`](https://github.com/rayggxia-workspace/LLMHardwareDesign/commit/f034be2b7c87137b92f7bfce274a5485647e512d)，包含 RTL、两个 testbench、run.py 和 Slurm 脚本。后续提交仅追加文档与轻量证据。
+实际测试 commit：[`f034be2b7c87137b92f7bfce274a5485647e512d`](https://github.com/rayggxia-workspace/LLMHardwareDesign/commit/f034be2b7c87137b92f7bfce274a5485647e512d)，包含 RTL、两个 testbench、run.py 和 Slurm 脚本。本修复的后续提交只补文档与轻量证据，五个已测代码文件保留；用户随后在同分支授权的[Issue244吞吐研究](issue-244-token-throughput-study.md)独立增加分析工具，不修改本修复源码或验收条件。
 
 | 输入 | SHA-256 |
 | --- | --- |

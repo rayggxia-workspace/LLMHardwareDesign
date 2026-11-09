@@ -2,7 +2,17 @@
 
 更新时间：2026-11-09（Asia/Shanghai）。Issue 是状态与验收的事实来源；本文件为当前任务分支摘要，不表示其他未合并分支已进入 main。
 
-## 当前任务：R 原始 LOAD 边界修复
+## 当前研究：结合 PR220/241 提高 token/s
+
+- [Issue #244](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/244)，负责人Melodydt，in_progress；用户指定复用 `task/242-r-load-bounds` / [PR #243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)，研究阶段性Refs244，不关闭任务。
+- 已读取最新PR220 `bf31827f7e039038ca2547046a13d29c4bf46901` 与PR241 `e7aeed2097f57a5f910cae70eb51a220c49a8a14`。形成[提速研究](../../docs/experiments/issue-244-token-throughput-study.md)：既有硬件改配方/有限S跨元素状态；新候选优先P/DMA流量、通道计数、2P/3P同带宽消融，后端/硬件/算法收益分账。
+- 实际验证：900个图情景与独立路径穷举一致、关键链切换、五个非法/篡改输入拒绝；34组上游结果的算术/容量/阶段核验通过。本轮没有重跑这34组SystemC，没有修改生产RTL，也不转移物理/量化资格。
+- 核心条件：241候选W8/context512约2.7146条件token/s；现流量/17.1GB/s下上限4.7438。达到5至少需减184.728MB/token，且其他阶段不变时Dot服务至少提速2.2195倍；不是已实现收益。
+- 服务器作业 **101601 / mdt-tps-study**，代码 `81dfbd0e6e6d1432447750d5b2d4a106e2d786b7`，4核、c64/c96、UNLIMITED，最新仍PENDING/Priority，节点待分配；`/public/home/yuzelu/Melodydt/issue244-token-throughput/run02`。它复算旧attempt277图，不是最新架构sweep。
+- 下一步：读取同一作业终态、节点及输入/输出SHA，完成完整旧图复算，再按报告验证可执行候选及真实KV质量。审查人/跨任务实现负责人待指定；登记pending，看板unverified/同步pending，CI以PR实时失败及待核实记录为准。
+- [可执行交接与squeue/sacct/tail命令](../../docs/handoffs/2026-11-09-issue-244-token-throughput-study.md)。未配置自动监测；需成员再次唤起检查，不因结束聊天取消作业。
+
+## R 原始 LOAD 边界修复（独立验收）
 
 - [Issue #242](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/242) / [PR #243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)；主要负责人 Melodydt；当前 in_review，待独立审查及合并。
 - 分支 `task/242-r-load-bounds`，基线 main `c4d7b960599b9d292f27eb4429d5f226a7156c95`；已测源码 commit `f034be2b7c87137b92f7bfce274a5485647e512d`。
