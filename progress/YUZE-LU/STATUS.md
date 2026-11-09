@@ -1,5 +1,13 @@
 # YUZE-LU 的进度
 
+## 2026-11-09 12:12 CST：Issue234现有E/N/S服务与完整形状矩阵
+
+[Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，in_progress。
+固定九组/3M及原外存预算；E13将规范S32转成[x,0]后经S供N Stats2，11输入×三初态真实RTL通过，全部写确认/读保持/完成背压断言保留。
+整数ps时钟检查通过；旧测试台时基、实数时间换算和启动路径错误完整留档。160文件0.732MB包成员/远端SHA已核验；无硬件变化，无LC程序/整网时间或能量主张。
+101543完整形状数值矩阵已冻结提交（P128/P512 prefill、P512 decode，RMS1/2且门乘细6位），12:12仍PENDING(Resources)；链101543→101486，单节点6×10、至多一个本人benchmark运行。
+101486仍首token且源不变。完整3B D128、整网SystemC token/s/总J/token与FPGA双门仍未完成。登记PR5 pending，看板unverified/同步pending，审查待指定。
+
 ## 2026-11-09 11:53 CST：Issue234数值候选与N模型
 
 [Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，in_progress。

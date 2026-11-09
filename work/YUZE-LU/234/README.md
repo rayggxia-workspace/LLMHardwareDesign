@@ -347,6 +347,25 @@ SystemC后端，继续补LC/MC/互联/时钟/外存。所有硬件/精度/配方
 全系统token/s/总J/token、公开FPGA双指标达标。继续in_progress；PR235草稿，不关闭任务。
 规则rayggxia-project-collab1.0.0；登记PR5 pending，看板unverified/同步pending，审查人待指定。
 
+## 2026-11-09 12:12 CST：固定资源的指数包构造与矩阵部署
+
+- [真实E/N/S包构造](n-exp-packet-result-001.json)：规范S32位于S8，现有E op13缩成完整128位[x,0]包写S9，
+  N依次Begin/Stats2/Finalize/Exp1后写S10；11原生参考输入×三初态通过全部结果与读回。
+  原SRAM写确认/源保持断言及新增三拍完成背压稳定断言都保留。五个命令/输入的整个测试耗时2796667ps，
+  **这是测试台时间（含人工背压和读回），不是可直接外推的每Exp服务系数**。
+  最终夹具使用整数1ps时基，逐个正沿检查3333/3334ps间隔；早期未声明时基、实数时间截断及错误银行输入路径均留档，
+  不把失败的时间结果计入300MHz资格。160文件732356字节包SHA439b1f56c0af9aaea0e45ca9af20fe66fd146aed5d5e8078362c813f0fb1562b，
+  所有成员及远端local-results-012完整核验。没有硬件改动；仍缺LC程序生成/实际局控接入、组合物理时序、全模型时间与能量。
+- [完整形状数值矩阵](recipe-matrix-attempt-001.json)已提交101543，冻结源5de0ae18与六文件SHA，
+  P128/P512 prefill、P512 decode，各RMS1/2且门乘细6位。原相对误差/argmax/全部KV门不变。
+  [资源更新006](resource-update-006.json)保留完整命令日志SHA：仅本人PENDING101486的hold/依赖/release，
+  链101543→101486，单节点6×10、至多一个本人benchmark运行。12:12矩阵仍PENDING(Resources)，无结果不预报成功。
+  101486冻结源不变、仍只请求首token，不冒充D128。数值配方收益不计DP20%。
+
+41项单位测试及管理结构检查通过，原生数据/握手/时钟回放独立记录。固定九组/3M和原外存预算继续优化，扩容以后另评。
+任务未完成；完整3B连续D128、整网SystemC token/s/总J/token与公开FPGA双门尚未通过，PR235保持draft、Issue234 in_progress。
+规则rayggxia-project-collab1.0.0；登记PR5 pending，看板unverified/同步pending、复用Issue7；审查人待指定。
+
 
 ## 2026-11-09 09:00 CST：S feeder实际SystemC/活动校准与RMS误差定位
 

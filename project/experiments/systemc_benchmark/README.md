@@ -432,8 +432,9 @@ All1476 native executions match; this is resident timing, not S/LC integration.
 The old native Exp template is semantically wrong for negative inputs: one
 Stats value makes its maximum equal to itself and returns exp(0). The corrected
 leaf recipe is Begin softmax, Stats(count2,[x,0]), Finalize, Exp(count1,x).
-The experiment proves seven negative-input mismatches, not a qualified packet
-formatter or deployed LC lowering. No parent compiler source is changed.
+The experiment proves seven negative-input mismatches. No parent compiler source
+is changed. Packet construction has a separate public-service qualification below;
+deployed LC lowering remains outside both experiments.
 
 `recipe_matrix.sbatch NEW_OWN_ROOT` is an explicit numerical experiment:
 P128/P512 prefill and P512 decode, each with RMS1/2, all with six finer weighted-
@@ -441,3 +442,14 @@ product fractional bits. It freezes the same checkpoint/weights/quality gate,
 uses six10-core workers on one node and bounds this experiment to30 minutes.
 It changes emitted numerical recipes, never the fixed macro count or claimed
 DP-only gain. A timeout or failed quality gate remains an incomplete result.
+
+`n_exp_packet_fixture.py REPOSITORY NATIVE_FIXTURES NEW_OUTPUT` reuses the U-group
+public-port fixture and its original private-S/ACK assertions. Existing E13
+narrows canonical S32 to a complete128-bit `[x,0]` packet, stores/reads it in S,
+then executes N Begin/Stats2/Finalize/Exp1 and stores/reads the answer. Eleven
+native reference values, including negative extrema, pass three initializations
+and three-cycle held-completion checks. This is an existing-hardware service
+recipe, not a generated LC program or new DP performance gain. An integer1ps
+clock verifies3333/3334ps positive-edge spacing at rational300MHz; fractional
+real-time conversion failures are retained. Bank activity behavior is explicitly
+zero-delay, so this functional timing experiment is not physical STA acceptance.
