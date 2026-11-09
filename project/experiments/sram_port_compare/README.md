@@ -25,11 +25,14 @@ python3 -B source/project/experiments/sram_port_compare/run.py \
 
 首轮run04/101665已COMPLETED0:0，8分02秒，57完整trace＋6尾块＋4非法CLI通过，149回收输出SHA一致。W8/context512默认策略B为3.496169，A48/64为3.412179/3.413514；prefill2大容量路线更快。完整结果SHA966729e962ecde76f755a9da873f3fb7ac566e4dd454f45e7d4b6f8f76c73cce。
 
-发现adaptive判定随容量切换，新增独立policy扩展作控制实验；已测run.py/generate_compare.py/compare_audit.py及source.json保持。generate_policy.py仅改变adaptive预取判定阈值，实际驻留/容量/分片仍保持。新增第11参数ADAPT_POLICY_KIB取0（按实际容量）或16（固定16KiB判定），默认去policy_study后必须完整回归run04。source-policy.json锁该扩展及真实run04-result.json/run04-inputs.json；policy_audit要求相同硬件的流量、M工作、每端口服务/预约与U实际工作不变，只允许时序/等待变化。计划30完整case，尚未提交补测，不把假设写成结果。
+发现adaptive判定随容量切换，新增独立policy扩展作控制实验；已测run.py/generate_compare.py/compare_audit.py及source.json保持。generate_policy.py仅改变adaptive预取判定阈值，实际驻留/容量/分片仍保持。新增第11参数ADAPT_POLICY_KIB取0（按实际容量）或16（固定16KiB判定），默认去policy_study后必须完整回归run04。source-policy.json锁该扩展及真实run04-result.json/run04-inputs.json；policy_audit要求相同硬件的流量、M工作、每端口服务/预约与U实际工作不变，只允许时序/等待变化。
+
+run05/101672源49b3938ce8b55734520c56a79a7d5d7933af9cdc，3:58 COMPLETED0:0，30完整case（先12默认回放）及2非法CLI通过，81回收SHA一致。固定判定后A48/A64 W8/context512为3.541567/3.543921，比B3.496169仅高1.30%/1.37%；prefill2分别高20.84%/23.01%。完整结果SHA4dcb0f01357e2f71fcf9f90deeab1d1dd50101b3d928b3e9866473c91c133777。[报告](../../../docs/experiments/issue-247-capacity-port-compare.md)和[证据](../../../work/Melodydt/247/compare/README.md)列出所有退化、端口代价与资格边界。两轮无活动作业、未配置自动监测。
 
 ```bash
-# 另建全新run；根内放真实run04-result.json/run04-inputs.json。
-sbatch --parsable job_policy.sh
+# 另建全新run；根内放真实run04-result.json/run04-inputs.json及冻结清单。
+# 将源目录的job_policy.sh复制为该run根的job.sh，再从run根提交：
+sbatch --parsable job.sh
 python3 -B source/project/experiments/sram_port_compare/run_policy.py \
   --inputs /absolute/new-policy-run/inputs --out /absolute/new-policy-run/results \
   --prior /absolute/new-policy-run/run04-result.json

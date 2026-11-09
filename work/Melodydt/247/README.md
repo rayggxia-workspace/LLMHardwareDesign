@@ -1,5 +1,7 @@
 # Issue247 实验入口
 
+后续容量/读写并发两路线及调度交互比较已完成run04/101665和run05/101672，见[新增证据](compare/README.md)与[对比报告](../../../docs/experiments/issue-247-capacity-port-compare.md)。新增两轮87完整trace、6尾块、6非法CLI及230回收SHA；下文保留首三轮证据，不重复改写旧索引。
+
 负责人 Melodydt；2026-11-09 Asia/Shanghai。[Issue247](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247) / [PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)。用户授权按顺序研究，允许增加一定面积；SRAM扩容保留但不实装。
 
 正式研究工具位于 `project/experiments/area_speed_study/`。复用Issue245的完整冻结输入，保留全部原功能源。此目录只放轻量证据与索引；大原始输入/输出和生成二进制保留本人服务器目录。来源不是物理或真实模型生成验收。

@@ -215,3 +215,23 @@ python -B work/Melodydt/247/verify.py
 ```
 
 原生S32/96位M/E32、1R1W和宽向量为条件合同，未取得真实生成或新物理资格。link吞吐翻倍未改善原P程序的288拍，不能直接乘到token/s；三P均分在原两通道下退化。每P私有S仍16KiB，第三P活跃配置额外计一份16KiB，不宣称总存储预算相同。
+
+## 容量/端口两路线及预取交互（Issue247）
+
+[报告](experiments/issue-247-capacity-port-compare.md)、[源码](../project/experiments/sram_port_compare/README.md)、[证据](../work/Melodydt/247/compare/README.md)、[取舍](decisions/issue-247-capacity-port-routes.md)。run04/101665与run05/101672均c64/node1/4核/COMPLETED0:0，分别8:02与3:58；87完整trace、6尾块、6非法CLI、230回收输出SHA通过，含默认/历史回放。
+
+以下在获授权的Slurm节点与全新冻结目录执行。run04的job.sh和run05的job_policy.sh均复制成各run根的job.sh后提交；根目录有inputs.json真实source_commit、source-files.sha256和input-files.sha256，source/与inputs/来自同次封存。第二轮还需真实run04-result.json/run04-inputs.json并满足SHA门控；不得覆盖旧结果。
+
+```bash
+python3 -B SOURCE/project/experiments/sram_port_compare/run.py \
+ --inputs NEW_RUN/inputs --out NEW_RUN/results \
+ --capacity NEW_RUN/capacity-result.json --stage1 NEW_RUN/stage1-result.json \
+ --stage2 NEW_RUN/stage2-result.json --stage3 NEW_RUN/stage3-result.json
+python3 -B SOURCE/project/experiments/sram_port_compare/run_policy.py \
+ --inputs NEW_POLICY_RUN/inputs --out NEW_POLICY_RUN/results --prior NEW_POLICY_RUN/run04-result.json
+# 本地只核对源/回执，不重跑仿真。
+python -B work/Melodydt/247/compare/verify.py
+python -B work/Melodydt/247/compare/policy/verify.py
+```
+
+两P各48/64KiB＋读写并发，与各16KiB＋并发＋8组部分和在同一候选模型比较。固定预取判定后大容量decode仅多约1%至2%、prefill2多约21%至23%；实际S总量分别112/144/48KiB，最后者另计寄存器。端口占用敏感性不等于全芯片降频；同址冲突、真实1R1W宏/前端、面积/时序与真实生成仍未验收。生产RTL和SRAM容量未实装变更。
