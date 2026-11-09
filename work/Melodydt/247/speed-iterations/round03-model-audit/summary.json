@@ -1,0 +1,4655 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "scope": "Independent read-only audit of actual R3 SystemC results, using actual native service calibration; no new simulation",
+  "result_sha256": "bccd917afba10bb9c3f65f62b26b1eab588a85d73c364a4b4d54962b5197afb8",
+  "source_commit": "010ae8d0d8839967f96b94227d2224fade0edf37",
+  "prior_run19_sha256": "b16ff9a0209add1227177d1899bbf9928ae7e83d724a0c113469e7c860c97098",
+  "native_calibration_sha256": "87842b59e42fb0773eedb82dce4981614432868fa12218c3aa15166b0b839eff",
+  "control_source_sha256": {
+    "finite_control.hpp": "1e8bec30e3ae7b28ca130ddce9bc1f08604ed39c261cf4d05ad37ea3100fc662",
+    "control_probe.cpp": "2b03434413ca02bb51bf8bc432143be767fa8bd46553f71c557279e0bcb42d86"
+  },
+  "frozen_delivery_sha256": "f765af7f4ffa045699b1339c033e684a10c8b0874cfb8ba50b6689227e3d3512",
+  "checked": {
+    "main_cases": 24,
+    "default_full_RESULT_regressions": 8,
+    "candidate_fallback_full_RESULT_regressions": 8,
+    "main_actual_logs_SHA_and_RESULT": 24,
+    "smalltrace_candidate_audits": 20,
+    "reexecuted_result_mutations_rejected": 192,
+    "smalltrace_audits_using_SHA_verified_reconstruction": 20,
+    "R2_generated_SHA_exact": 9
+  },
+  "comparisons": [
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "shared",
+      "buffers": 0,
+      "R2_tokens_s": 3.37834376557,
+      "candidate_tokens_s": 3.37834376557,
+      "R2_ms": 296.003032667,
+      "candidate_ms": 296.003032667,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 296.003032667,
+        "spans_ms": {
+          "Dot": 247.59399666666667,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 83.6457635031081,
+        "non_Dot_ms": 48.409036000333344,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 66076672,
+            "bus_write": 0,
+            "logical_read": 64897024,
+            "logical_write": 0,
+            "descriptors": 87050
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 58982400,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 6211072,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 97048
+          }
+        },
+        "P_bus_bytes": 3216967168,
+        "P_bus_only_serial_service_ms": 188.12673497076025,
+        "fixed_non_Dot_plus_P_bus_ms": 236.5357709710936,
+        "fixed_non_Dot_plus_P_bus_token_s": 4.227690365370603,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 58.20445706666667,
+              "input_ACK_wait_subcycles": 12.50008176,
+              "service_subcycles": 167.29831701333333,
+              "output_subcycles": 8.25652136,
+              "elapsed_subcycles": 246.2593772
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 58.20445706666667,
+              "input_ACK_wait_subcycles": 12.50008176,
+              "service_subcycles": 167.29831701333333,
+              "output_subcycles": 8.25652136,
+              "elapsed_subcycles": 246.2593772
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "idealdual",
+      "buffers": 0,
+      "R2_tokens_s": 3.66958239533,
+      "candidate_tokens_s": 3.66958239533,
+      "R2_ms": 272.510572667,
+      "candidate_ms": 272.510572667,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 272.510572667,
+        "spans_ms": {
+          "Dot": 224.10153666666668,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 82.23590537183019,
+        "non_Dot_ms": 48.409036000333344,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 66076672,
+            "bus_write": 0,
+            "logical_read": 64897024,
+            "logical_write": 0,
+            "descriptors": 87050
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 58982400,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 6211072,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 97048
+          }
+        },
+        "P_bus_bytes": 3216967168,
+        "P_bus_only_serial_service_ms": 188.12673497076025,
+        "fixed_non_Dot_plus_P_bus_ms": 236.5357709710936,
+        "fixed_non_Dot_plus_P_bus_token_s": 4.227690365370603,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 60.209278133333335,
+              "input_ACK_wait_subcycles": 15.3255408,
+              "service_subcycles": 140.23845333333333,
+              "output_subcycles": 6.990332933333334,
+              "elapsed_subcycles": 222.7636052
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 60.209278133333335,
+              "input_ACK_wait_subcycles": 15.3255408,
+              "service_subcycles": 140.23845333333333,
+              "output_subcycles": 6.993644933333333,
+              "elapsed_subcycles": 222.7669172
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "variant": "adaptive",
+      "layer": "shared",
+      "buffers": 0,
+      "R2_tokens_s": 1.8822804746,
+      "candidate_tokens_s": 1.8822804746,
+      "R2_ms": 531.2704527799999,
+      "candidate_ms": 531.2704527799999,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 531.2704527799999,
+        "spans_ms": {
+          "Dot": 482.8614166666667,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 90.88806165296388,
+        "non_Dot_ms": 48.40903611333323,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 73744384,
+            "bus_write": 0,
+            "logical_read": 73744384,
+            "logical_write": 0,
+            "descriptors": 96194
+          },
+          "weight": {
+            "bus_read": 6171394048,
+            "bus_write": 0,
+            "logical_read": 6171394048,
+            "logical_write": 0,
+            "descriptors": 1784288
+          },
+          "dynamic_B": {
+            "bus_read": 56623104,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 12422144,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 194096
+          }
+        },
+        "P_bus_bytes": 6314183680,
+        "P_bus_only_serial_service_ms": 369.2505076023392,
+        "fixed_non_Dot_plus_P_bus_ms": 417.65954371567244,
+        "fixed_non_Dot_plus_P_bus_token_s": 2.3942946235672853,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 120.54712946,
+              "input_ACK_wait_subcycles": 0.55039584,
+              "service_subcycles": 333.06076896,
+              "output_subcycles": 27.368503053333335,
+              "elapsed_subcycles": 481.52679731333336
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 120.54712946,
+              "input_ACK_wait_subcycles": 0.55039584,
+              "service_subcycles": 333.06076896,
+              "output_subcycles": 27.368503053333335,
+              "elapsed_subcycles": 481.52679731333336
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "variant": "adaptive",
+      "layer": "idealdual",
+      "buffers": 0,
+      "R2_tokens_s": 2.17900079544,
+      "candidate_tokens_s": 2.17900079544,
+      "R2_ms": 458.925945367,
+      "candidate_ms": 458.925945367,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 458.925945367,
+        "spans_ms": {
+          "Dot": 410.51691,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 89.45166734291136,
+        "non_Dot_ms": 48.409035367,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 73744384,
+            "bus_write": 0,
+            "logical_read": 73744384,
+            "logical_write": 0,
+            "descriptors": 96194
+          },
+          "weight": {
+            "bus_read": 6171394048,
+            "bus_write": 0,
+            "logical_read": 6171394048,
+            "logical_write": 0,
+            "descriptors": 1784288
+          },
+          "dynamic_B": {
+            "bus_read": 56623104,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 12422144,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 194096
+          }
+        },
+        "P_bus_bytes": 6314183680,
+        "P_bus_only_serial_service_ms": 369.2505076023392,
+        "fixed_non_Dot_plus_P_bus_ms": 417.6595429693392,
+        "fixed_non_Dot_plus_P_bus_token_s": 2.39429462784575,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 115.93790172666667,
+              "input_ACK_wait_subcycles": 41.2365984,
+              "service_subcycles": 223.60248,
+              "output_subcycles": 28.405309773333332,
+              "elapsed_subcycles": 409.1822899
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 115.93790172666667,
+              "input_ACK_wait_subcycles": 41.2365984,
+              "service_subcycles": 223.60248,
+              "output_subcycles": 28.405309773333332,
+              "elapsed_subcycles": 409.1822899
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "shared",
+      "buffers": 0,
+      "R2_tokens_s": 2.7582838139,
+      "candidate_tokens_s": 2.7582838139,
+      "R2_ms": 362.544272987,
+      "candidate_ms": 362.544272987,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 362.544272987,
+        "spans_ms": {
+          "Dot": 267.29620666666665,
+          "KV_store": 0.05316333333333333,
+          "NExp": 19.889613333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 23.793373333333335,
+          "vector": 30.00572
+        },
+        "Dot_percent": 73.72788003639249,
+        "non_Dot_ms": 95.24806632033335,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 127418368,
+            "bus_write": 0,
+            "logical_read": 121520128,
+            "logical_write": 0,
+            "descriptors": 225290
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 235929600,
+            "bus_write": 0,
+            "logical_read": 150994944,
+            "logical_write": 0,
+            "descriptors": 2654208
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 9750016,
+            "logical_read": 0,
+            "logical_write": 9750016,
+            "descriptors": 152344
+          }
+        },
+        "P_bus_bytes": 3458795008,
+        "P_bus_only_serial_service_ms": 202.26871391812864,
+        "fixed_non_Dot_plus_P_bus_ms": 297.516780238462,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.3611549546835384,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 59.585013866666664,
+              "input_ACK_wait_subcycles": 14.51257968,
+              "service_subcycles": 179.88052245333333,
+              "output_subcycles": 11.98347176,
+              "elapsed_subcycles": 265.96158776
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 59.585013866666664,
+              "input_ACK_wait_subcycles": 14.51257968,
+              "service_subcycles": 179.88052245333333,
+              "output_subcycles": 11.98347176,
+              "elapsed_subcycles": 265.96158776
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "idealdual",
+      "buffers": 0,
+      "R2_tokens_s": 2.96156894073,
+      "candidate_tokens_s": 2.96156894073,
+      "R2_ms": 337.658862587,
+      "candidate_ms": 337.658862587,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 337.658862587,
+        "spans_ms": {
+          "Dot": 242.41079666666667,
+          "KV_store": 0.05316333333333333,
+          "NExp": 19.889613333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 23.793373333333335,
+          "vector": 30.00572
+        },
+        "Dot_percent": 71.79162863057029,
+        "non_Dot_ms": 95.24806592033332,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 127418368,
+            "bus_write": 0,
+            "logical_read": 121520128,
+            "logical_write": 0,
+            "descriptors": 225290
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 235929600,
+            "bus_write": 0,
+            "logical_read": 150994944,
+            "logical_write": 0,
+            "descriptors": 2654208
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 9750016,
+            "logical_read": 0,
+            "logical_write": 9750016,
+            "descriptors": 152344
+          }
+        },
+        "P_bus_bytes": 3458795008,
+        "P_bus_only_serial_service_ms": 202.26871391812864,
+        "fixed_non_Dot_plus_P_bus_ms": 297.51677983846196,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.3611549592024836,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 65.25563141333333,
+              "input_ACK_wait_subcycles": 17.3954544,
+              "service_subcycles": 147.68037333333334,
+              "output_subcycles": 10.743614213333334,
+              "elapsed_subcycles": 241.07507336
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 65.25563141333333,
+              "input_ACK_wait_subcycles": 17.3954544,
+              "service_subcycles": 147.68037333333334,
+              "output_subcycles": 10.744718213333334,
+              "elapsed_subcycles": 241.07617736
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "shared",
+      "buffers": 0,
+      "R2_tokens_s": 3.10725416366,
+      "candidate_tokens_s": 3.10725416366,
+      "R2_ms": 643.6551034,
+      "candidate_ms": 643.6551034,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "NExp": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 643.6551034,
+        "spans_ms": {
+          "Dot": 429.34037666666666,
+          "NExp": 47.73011,
+          "copy": 13.57683,
+          "final_flush": 0.0,
+          "reduce": 9.7199,
+          "vector": 143.28789333333333
+        },
+        "Dot_percent": 66.7034836512207,
+        "non_Dot_ms": 214.31472673333337,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 2180059136,
+            "bus_write": 0,
+            "logical_read": 2180003840,
+            "logical_write": 0,
+            "descriptors": 2128020
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 1769472,
+            "bus_write": 0,
+            "logical_read": 1179648,
+            "logical_write": 0,
+            "descriptors": 19584
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 10136576,
+            "logical_read": 0,
+            "logical_write": 10072064,
+            "descriptors": 158384
+          }
+        },
+        "P_bus_bytes": 5277662208,
+        "P_bus_only_serial_service_ms": 308.63521684210525,
+        "fixed_non_Dot_plus_P_bus_ms": 522.9499435754386,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.824457817751897,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.3451396,
+              "input_ACK_wait_subcycles": 97.06998445333333,
+              "service_subcycles": 324.74418405333336,
+              "output_subcycles": 5.95807376,
+              "elapsed_subcycles": 428.1173818666667
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.24340648,
+              "input_ACK_wait_subcycles": 96.96911533333333,
+              "service_subcycles": 324.62898405333334,
+              "output_subcycles": 5.88728912,
+              "elapsed_subcycles": 427.7287949866667
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "idealdual",
+      "buffers": 0,
+      "R2_tokens_s": 3.69669737899,
+      "candidate_tokens_s": 3.69669737899,
+      "R2_ms": 541.023458227,
+      "candidate_ms": 541.023458227,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "NExp": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 541.023458227,
+        "spans_ms": {
+          "Dot": 326.70873,
+          "NExp": 47.73011,
+          "copy": 13.57683,
+          "final_flush": 0.0,
+          "reduce": 9.7199,
+          "vector": 143.28789333333333
+        },
+        "Dot_percent": 60.38716529421191,
+        "non_Dot_ms": 214.314728227,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 2180059136,
+            "bus_write": 0,
+            "logical_read": 2180003840,
+            "logical_write": 0,
+            "descriptors": 2128020
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 1769472,
+            "bus_write": 0,
+            "logical_read": 1179648,
+            "logical_write": 0,
+            "descriptors": 19584
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 10136576,
+            "logical_read": 0,
+            "logical_write": 10072064,
+            "descriptors": 158384
+          }
+        },
+        "P_bus_bytes": 5277662208,
+        "P_bus_only_serial_service_ms": 308.63521684210525,
+        "fixed_non_Dot_plus_P_bus_ms": 522.9499450691053,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.8244578068283563,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.3451396,
+              "input_ACK_wait_subcycles": 140.54571,
+              "service_subcycles": 178.82693333333333,
+              "output_subcycles": 5.76795376,
+              "elapsed_subcycles": 325.4857366933333
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.24340648,
+              "input_ACK_wait_subcycles": 140.44484088,
+              "service_subcycles": 178.71173333333334,
+              "output_subcycles": 5.69716912,
+              "elapsed_subcycles": 325.0971498133333
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "shared",
+      "buffers": 1,
+      "R2_tokens_s": 3.37834376557,
+      "candidate_tokens_s": 2.19774235407,
+      "R2_ms": 296.003032667,
+      "candidate_ms": 455.012389487,
+      "speedup_pct": -34.946159817598335,
+      "delta_ms": 159.00935682,
+      "active": true,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 159.00935666666666,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 1506688,
+        "old_adapter_cycles": 48214016,
+        "old_M_cycles": 58089184,
+        "commands": 24107008,
+        "core_active_cycles": 72617056,
+        "read_requests": 72321024
+      },
+      "diagnostic": {
+        "total_ms": 455.012389487,
+        "spans_ms": {
+          "Dot": 406.60335333333336,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 89.36094109256123,
+        "non_Dot_ms": 48.40903615366665,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 66076672,
+            "bus_write": 0,
+            "logical_read": 64897024,
+            "logical_write": 0,
+            "descriptors": 87050
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 58982400,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 6211072,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 97048
+          }
+        },
+        "P_bus_bytes": 3216967168,
+        "P_bus_only_serial_service_ms": 188.12673497076025,
+        "fixed_non_Dot_plus_P_bus_ms": 236.5357711244269,
+        "fixed_non_Dot_plus_P_bus_token_s": 4.227690362630021,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 1.0554077333333334,
+              "input_ACK_wait_subcycles": 0.60550368,
+              "service_subcycles": 399.53735063333335,
+              "output_subcycles": 4.070471973333333,
+              "elapsed_subcycles": 405.26873402
+            },
+            "native_service_ms": 394.91901333333334,
+            "native_clock_alignment_ms": 0.01946882,
+            "native_read_calendar_blocked_ms": 142.32418666666666,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 1,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 2,
+            "native_peak_calendar_table_intervals": 64
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 1.0554077333333334,
+              "input_ACK_wait_subcycles": 0.60550368,
+              "service_subcycles": 399.53735063333335,
+              "output_subcycles": 4.070471973333333,
+              "elapsed_subcycles": 405.26873402
+            },
+            "native_service_ms": 394.91901333333334,
+            "native_clock_alignment_ms": 0.01946882,
+            "native_read_calendar_blocked_ms": 142.32418666666666,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 1,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 2,
+            "native_peak_calendar_table_intervals": 64
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "idealdual",
+      "buffers": 1,
+      "R2_tokens_s": 3.66958239533,
+      "candidate_tokens_s": 3.18560531668,
+      "R2_ms": 272.510572667,
+      "candidate_ms": 313.91208281999997,
+      "speedup_pct": -13.188887086178191,
+      "delta_ms": 41.401510152999975,
+      "active": true,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 41.40151,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 1506688,
+        "old_adapter_cycles": 48214016,
+        "old_M_cycles": 58089184,
+        "commands": 24107008,
+        "core_active_cycles": 72617056,
+        "read_requests": 72321024
+      },
+      "diagnostic": {
+        "total_ms": 313.91208281999997,
+        "spans_ms": {
+          "Dot": 265.50304666666665,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 84.57879170548159,
+        "non_Dot_ms": 48.40903615333332,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 66076672,
+            "bus_write": 0,
+            "logical_read": 64897024,
+            "logical_write": 0,
+            "descriptors": 87050
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 58982400,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 6211072,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 97048
+          }
+        },
+        "P_bus_bytes": 3216967168,
+        "P_bus_only_serial_service_ms": 188.12673497076025,
+        "fixed_non_Dot_plus_P_bus_ms": 236.53577112409357,
+        "fixed_non_Dot_plus_P_bus_token_s": 4.227690362635979,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 1.7883581333333334,
+              "input_ACK_wait_subcycles": 2.32322784,
+              "service_subcycles": 255.89877468666666,
+              "output_subcycles": 4.1547546933333335,
+              "elapsed_subcycles": 264.1651153533333
+            },
+            "native_service_ms": 252.59482666666668,
+            "native_clock_alignment_ms": 0.05914802,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 1,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 2,
+            "native_peak_calendar_table_intervals": 65
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 1.7883581333333334,
+              "input_ACK_wait_subcycles": 2.32322784,
+              "service_subcycles": 255.89877468666666,
+              "output_subcycles": 4.158066693333334,
+              "elapsed_subcycles": 264.16842735333336
+            },
+            "native_service_ms": 252.59482666666668,
+            "native_clock_alignment_ms": 0.05914802,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 1,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 2,
+            "native_peak_calendar_table_intervals": 65
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "variant": "adaptive",
+      "layer": "shared",
+      "buffers": 1,
+      "R2_tokens_s": 1.8822804746,
+      "candidate_tokens_s": 1.8822804746,
+      "R2_ms": 531.2704527799999,
+      "candidate_ms": 531.2704527799999,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": true,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 531.2704527799999,
+        "spans_ms": {
+          "Dot": 482.8614166666667,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 90.88806165296388,
+        "non_Dot_ms": 48.40903611333323,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 73744384,
+            "bus_write": 0,
+            "logical_read": 73744384,
+            "logical_write": 0,
+            "descriptors": 96194
+          },
+          "weight": {
+            "bus_read": 6171394048,
+            "bus_write": 0,
+            "logical_read": 6171394048,
+            "logical_write": 0,
+            "descriptors": 1784288
+          },
+          "dynamic_B": {
+            "bus_read": 56623104,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 12422144,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 194096
+          }
+        },
+        "P_bus_bytes": 6314183680,
+        "P_bus_only_serial_service_ms": 369.2505076023392,
+        "fixed_non_Dot_plus_P_bus_ms": 417.65954371567244,
+        "fixed_non_Dot_plus_P_bus_token_s": 2.3942946235672853,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 120.54712946,
+              "input_ACK_wait_subcycles": 0.55039584,
+              "service_subcycles": 333.06076896,
+              "output_subcycles": 27.368503053333335,
+              "elapsed_subcycles": 481.52679731333336
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 120.54712946,
+              "input_ACK_wait_subcycles": 0.55039584,
+              "service_subcycles": 333.06076896,
+              "output_subcycles": 27.368503053333335,
+              "elapsed_subcycles": 481.52679731333336
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "variant": "adaptive",
+      "layer": "idealdual",
+      "buffers": 1,
+      "R2_tokens_s": 2.17900079544,
+      "candidate_tokens_s": 2.17900079544,
+      "R2_ms": 458.925945367,
+      "candidate_ms": 458.925945367,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": true,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 458.925945367,
+        "spans_ms": {
+          "Dot": 410.51691,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 89.45166734291136,
+        "non_Dot_ms": 48.409035367,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 73744384,
+            "bus_write": 0,
+            "logical_read": 73744384,
+            "logical_write": 0,
+            "descriptors": 96194
+          },
+          "weight": {
+            "bus_read": 6171394048,
+            "bus_write": 0,
+            "logical_read": 6171394048,
+            "logical_write": 0,
+            "descriptors": 1784288
+          },
+          "dynamic_B": {
+            "bus_read": 56623104,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 12422144,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 194096
+          }
+        },
+        "P_bus_bytes": 6314183680,
+        "P_bus_only_serial_service_ms": 369.2505076023392,
+        "fixed_non_Dot_plus_P_bus_ms": 417.6595429693392,
+        "fixed_non_Dot_plus_P_bus_token_s": 2.39429462784575,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 115.93790172666667,
+              "input_ACK_wait_subcycles": 41.2365984,
+              "service_subcycles": 223.60248,
+              "output_subcycles": 28.405309773333332,
+              "elapsed_subcycles": 409.1822899
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 115.93790172666667,
+              "input_ACK_wait_subcycles": 41.2365984,
+              "service_subcycles": 223.60248,
+              "output_subcycles": 28.405309773333332,
+              "elapsed_subcycles": 409.1822899
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "shared",
+      "buffers": 1,
+      "R2_tokens_s": 2.7582838139,
+      "candidate_tokens_s": 1.91734851443,
+      "R2_ms": 362.544272987,
+      "candidate_ms": 521.5535894870001,
+      "speedup_pct": -30.48762767722518,
+      "delta_ms": 159.00931650000004,
+      "active": true,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 159.00931666666668,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 1506688,
+        "old_adapter_cycles": 48214016,
+        "old_M_cycles": 58089184,
+        "commands": 24107008,
+        "core_active_cycles": 72617056,
+        "read_requests": 72321024
+      },
+      "diagnostic": {
+        "total_ms": 521.5535894870001,
+        "spans_ms": {
+          "Dot": 426.3055233333333,
+          "KV_store": 0.05316333333333333,
+          "NExp": 19.889613333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 23.793373333333335,
+          "vector": 30.00572
+        },
+        "Dot_percent": 81.73762618576689,
+        "non_Dot_ms": 95.24806615366674,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 127418368,
+            "bus_write": 0,
+            "logical_read": 121520128,
+            "logical_write": 0,
+            "descriptors": 225290
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 235929600,
+            "bus_write": 0,
+            "logical_read": 150994944,
+            "logical_write": 0,
+            "descriptors": 2654208
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 9750016,
+            "logical_read": 0,
+            "logical_write": 9750016,
+            "descriptors": 152344
+          }
+        },
+        "P_bus_bytes": 3458795008,
+        "P_bus_only_serial_service_ms": 202.26871391812864,
+        "fixed_non_Dot_plus_P_bus_ms": 297.5167800717954,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.361154956566432,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 2.4359645333333333,
+              "input_ACK_wait_subcycles": 2.6180016,
+              "service_subcycles": 412.11951575333336,
+              "output_subcycles": 7.797422373333333,
+              "elapsed_subcycles": 424.97090426
+            },
+            "native_service_ms": 394.91901333333334,
+            "native_clock_alignment_ms": 0.0194285,
+            "native_read_calendar_blocked_ms": 142.32418666666666,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 1,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 2,
+            "native_peak_calendar_table_intervals": 64
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 2.4359645333333333,
+              "input_ACK_wait_subcycles": 2.6180016,
+              "service_subcycles": 412.11951575333336,
+              "output_subcycles": 7.797422373333333,
+              "elapsed_subcycles": 424.97090426
+            },
+            "native_service_ms": 394.91901333333334,
+            "native_clock_alignment_ms": 0.0194285,
+            "native_read_calendar_blocked_ms": 142.32418666666666,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 1,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 2,
+            "native_peak_calendar_table_intervals": 64
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "idealdual",
+      "buffers": 1,
+      "R2_tokens_s": 2.96156894073,
+      "candidate_tokens_s": 2.63810170368,
+      "R2_ms": 337.658862587,
+      "candidate_ms": 379.06044282,
+      "speedup_pct": -10.922157934759735,
+      "delta_ms": 41.401580233000004,
+      "active": true,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 41.40158,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 1506688,
+        "old_adapter_cycles": 48214016,
+        "old_M_cycles": 58089184,
+        "commands": 24107008,
+        "core_active_cycles": 72617056,
+        "read_requests": 72321024
+      },
+      "diagnostic": {
+        "total_ms": 379.06044282,
+        "spans_ms": {
+          "Dot": 283.8123766666667,
+          "KV_store": 0.05316333333333333,
+          "NExp": 19.889613333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 23.793373333333335,
+          "vector": 30.00572
+        },
+        "Dot_percent": 74.87259144089519,
+        "non_Dot_ms": 95.2480661533333,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 127418368,
+            "bus_write": 0,
+            "logical_read": 121520128,
+            "logical_write": 0,
+            "descriptors": 225290
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 235929600,
+            "bus_write": 0,
+            "logical_read": 150994944,
+            "logical_write": 0,
+            "descriptors": 2654208
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 9750016,
+            "logical_read": 0,
+            "logical_write": 9750016,
+            "descriptors": 152344
+          }
+        },
+        "P_bus_bytes": 3458795008,
+        "P_bus_only_serial_service_ms": 202.26871391812864,
+        "fixed_non_Dot_plus_P_bus_ms": 297.51678007146194,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.3611549565701986,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 6.834711413333333,
+              "input_ACK_wait_subcycles": 4.39314144,
+              "service_subcycles": 263.34076476666667,
+              "output_subcycles": 7.908035973333333,
+              "elapsed_subcycles": 282.4766535933333
+            },
+            "native_service_ms": 252.59482666666668,
+            "native_clock_alignment_ms": 0.0592181,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 1,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 2,
+            "native_peak_calendar_table_intervals": 65
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 6.834711413333333,
+              "input_ACK_wait_subcycles": 4.39314144,
+              "service_subcycles": 263.34076476666667,
+              "output_subcycles": 7.909139973333334,
+              "elapsed_subcycles": 282.4777575933333
+            },
+            "native_service_ms": 252.59482666666668,
+            "native_clock_alignment_ms": 0.0592181,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 1,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 2,
+            "native_peak_calendar_table_intervals": 65
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "shared",
+      "buffers": 1,
+      "R2_tokens_s": 3.10725416366,
+      "candidate_tokens_s": 3.10725416366,
+      "R2_ms": 643.6551034,
+      "candidate_ms": 643.6551034,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": true,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "NExp": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 643.6551034,
+        "spans_ms": {
+          "Dot": 429.34037666666666,
+          "NExp": 47.73011,
+          "copy": 13.57683,
+          "final_flush": 0.0,
+          "reduce": 9.7199,
+          "vector": 143.28789333333333
+        },
+        "Dot_percent": 66.7034836512207,
+        "non_Dot_ms": 214.31472673333337,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 2180059136,
+            "bus_write": 0,
+            "logical_read": 2180003840,
+            "logical_write": 0,
+            "descriptors": 2128020
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 1769472,
+            "bus_write": 0,
+            "logical_read": 1179648,
+            "logical_write": 0,
+            "descriptors": 19584
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 10136576,
+            "logical_read": 0,
+            "logical_write": 10072064,
+            "descriptors": 158384
+          }
+        },
+        "P_bus_bytes": 5277662208,
+        "P_bus_only_serial_service_ms": 308.63521684210525,
+        "fixed_non_Dot_plus_P_bus_ms": 522.9499435754386,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.824457817751897,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.3451396,
+              "input_ACK_wait_subcycles": 97.06998445333333,
+              "service_subcycles": 324.74418405333336,
+              "output_subcycles": 5.95807376,
+              "elapsed_subcycles": 428.1173818666667
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.24340648,
+              "input_ACK_wait_subcycles": 96.96911533333333,
+              "service_subcycles": 324.62898405333334,
+              "output_subcycles": 5.88728912,
+              "elapsed_subcycles": 427.7287949866667
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "idealdual",
+      "buffers": 1,
+      "R2_tokens_s": 3.69669737899,
+      "candidate_tokens_s": 3.69669737899,
+      "R2_ms": 541.023458227,
+      "candidate_ms": 541.023458227,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": true,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "NExp": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 541.023458227,
+        "spans_ms": {
+          "Dot": 326.70873,
+          "NExp": 47.73011,
+          "copy": 13.57683,
+          "final_flush": 0.0,
+          "reduce": 9.7199,
+          "vector": 143.28789333333333
+        },
+        "Dot_percent": 60.38716529421191,
+        "non_Dot_ms": 214.314728227,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 2180059136,
+            "bus_write": 0,
+            "logical_read": 2180003840,
+            "logical_write": 0,
+            "descriptors": 2128020
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 1769472,
+            "bus_write": 0,
+            "logical_read": 1179648,
+            "logical_write": 0,
+            "descriptors": 19584
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 10136576,
+            "logical_read": 0,
+            "logical_write": 10072064,
+            "descriptors": 158384
+          }
+        },
+        "P_bus_bytes": 5277662208,
+        "P_bus_only_serial_service_ms": 308.63521684210525,
+        "fixed_non_Dot_plus_P_bus_ms": 522.9499450691053,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.8244578068283563,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.3451396,
+              "input_ACK_wait_subcycles": 140.54571,
+              "service_subcycles": 178.82693333333333,
+              "output_subcycles": 5.76795376,
+              "elapsed_subcycles": 325.4857366933333
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.24340648,
+              "input_ACK_wait_subcycles": 140.44484088,
+              "service_subcycles": 178.71173333333334,
+              "output_subcycles": 5.69716912,
+              "elapsed_subcycles": 325.0971498133333
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "shared",
+      "buffers": 2,
+      "R2_tokens_s": 3.37834376557,
+      "candidate_tokens_s": 2.75864978939,
+      "R2_ms": 296.003032667,
+      "candidate_ms": 362.496176153,
+      "speedup_pct": -18.343129627368814,
+      "delta_ms": 66.493143486,
+      "active": true,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 66.49314333333334,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 1506688,
+        "old_adapter_cycles": 48214016,
+        "old_M_cycles": 58089184,
+        "commands": 24107008,
+        "core_active_cycles": 72617056,
+        "read_requests": 72321024
+      },
+      "diagnostic": {
+        "total_ms": 362.496176153,
+        "spans_ms": {
+          "Dot": 314.08714,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 86.64564226118405,
+        "non_Dot_ms": 48.409036153000045,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 66076672,
+            "bus_write": 0,
+            "logical_read": 64897024,
+            "logical_write": 0,
+            "descriptors": 87050
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 58982400,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 6211072,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 97048
+          }
+        },
+        "P_bus_bytes": 3216967168,
+        "P_bus_only_serial_service_ms": 188.12673497076025,
+        "fixed_non_Dot_plus_P_bus_ms": 236.5357711237603,
+        "fixed_non_Dot_plus_P_bus_token_s": 4.227690362641936,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 1.0554077333333334,
+              "input_ACK_wait_subcycles": 0.60550368,
+              "service_subcycles": 307.0211373,
+              "output_subcycles": 4.070471973333333,
+              "elapsed_subcycles": 312.7525206866667
+            },
+            "native_service_ms": 302.4028,
+            "native_clock_alignment_ms": 0.01946882,
+            "native_read_calendar_blocked_ms": 162.80957333333333,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 2,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 3,
+            "native_peak_calendar_table_intervals": 64
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 1.0554077333333334,
+              "input_ACK_wait_subcycles": 0.60550368,
+              "service_subcycles": 307.0211373,
+              "output_subcycles": 4.070471973333333,
+              "elapsed_subcycles": 312.7525206866667
+            },
+            "native_service_ms": 302.4028,
+            "native_clock_alignment_ms": 0.01946882,
+            "native_read_calendar_blocked_ms": 162.80957333333333,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 2,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 3,
+            "native_peak_calendar_table_intervals": 64
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "idealdual",
+      "buffers": 2,
+      "R2_tokens_s": 3.66958239533,
+      "candidate_tokens_s": 3.66041657326,
+      "R2_ms": 272.510572667,
+      "candidate_ms": 273.192949487,
+      "speedup_pct": -0.24977834211364902,
+      "delta_ms": 0.6823768199999969,
+      "active": true,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 0.6823766666666666,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 1506688,
+        "old_adapter_cycles": 48214016,
+        "old_M_cycles": 58089184,
+        "commands": 24107008,
+        "core_active_cycles": 72617056,
+        "read_requests": 72321024
+      },
+      "diagnostic": {
+        "total_ms": 273.192949487,
+        "spans_ms": {
+          "Dot": 224.78391333333335,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 82.28027617675754,
+        "non_Dot_ms": 48.409036153666676,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 66076672,
+            "bus_write": 0,
+            "logical_read": 64897024,
+            "logical_write": 0,
+            "descriptors": 87050
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 58982400,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 6211072,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 97048
+          }
+        },
+        "P_bus_bytes": 3216967168,
+        "P_bus_only_serial_service_ms": 188.12673497076025,
+        "fixed_non_Dot_plus_P_bus_ms": 236.53577112442693,
+        "fixed_non_Dot_plus_P_bus_token_s": 4.22769036263002,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 56.78211193333333,
+              "input_ACK_wait_subcycles": 13.83956976,
+              "service_subcycles": 147.07899810666666,
+              "output_subcycles": 5.74530222,
+              "elapsed_subcycles": 223.44598202
+            },
+            "native_service_ms": 142.54724,
+            "native_clock_alignment_ms": 1.2869581066666667,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 2.954013333333333,
+            "native_peak_source_buffers": 2,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 3,
+            "native_peak_calendar_table_intervals": 65
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 56.78211193333333,
+              "input_ACK_wait_subcycles": 13.83956976,
+              "service_subcycles": 147.07899810666666,
+              "output_subcycles": 5.74861422,
+              "elapsed_subcycles": 223.44929402
+            },
+            "native_service_ms": 142.54724,
+            "native_clock_alignment_ms": 1.2869581066666667,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 2.954013333333333,
+            "native_peak_source_buffers": 2,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 3,
+            "native_peak_calendar_table_intervals": 65
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "variant": "adaptive",
+      "layer": "shared",
+      "buffers": 2,
+      "R2_tokens_s": 1.8822804746,
+      "candidate_tokens_s": 1.8822804746,
+      "R2_ms": 531.2704527799999,
+      "candidate_ms": 531.2704527799999,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": true,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 531.2704527799999,
+        "spans_ms": {
+          "Dot": 482.8614166666667,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 90.88806165296388,
+        "non_Dot_ms": 48.40903611333323,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 73744384,
+            "bus_write": 0,
+            "logical_read": 73744384,
+            "logical_write": 0,
+            "descriptors": 96194
+          },
+          "weight": {
+            "bus_read": 6171394048,
+            "bus_write": 0,
+            "logical_read": 6171394048,
+            "logical_write": 0,
+            "descriptors": 1784288
+          },
+          "dynamic_B": {
+            "bus_read": 56623104,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 12422144,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 194096
+          }
+        },
+        "P_bus_bytes": 6314183680,
+        "P_bus_only_serial_service_ms": 369.2505076023392,
+        "fixed_non_Dot_plus_P_bus_ms": 417.65954371567244,
+        "fixed_non_Dot_plus_P_bus_token_s": 2.3942946235672853,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 120.54712946,
+              "input_ACK_wait_subcycles": 0.55039584,
+              "service_subcycles": 333.06076896,
+              "output_subcycles": 27.368503053333335,
+              "elapsed_subcycles": 481.52679731333336
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 120.54712946,
+              "input_ACK_wait_subcycles": 0.55039584,
+              "service_subcycles": 333.06076896,
+              "output_subcycles": 27.368503053333335,
+              "elapsed_subcycles": 481.52679731333336
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "variant": "adaptive",
+      "layer": "idealdual",
+      "buffers": 2,
+      "R2_tokens_s": 2.17900079544,
+      "candidate_tokens_s": 2.17900079544,
+      "R2_ms": 458.925945367,
+      "candidate_ms": 458.925945367,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": true,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 458.925945367,
+        "spans_ms": {
+          "Dot": 410.51691,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 89.45166734291136,
+        "non_Dot_ms": 48.409035367,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 73744384,
+            "bus_write": 0,
+            "logical_read": 73744384,
+            "logical_write": 0,
+            "descriptors": 96194
+          },
+          "weight": {
+            "bus_read": 6171394048,
+            "bus_write": 0,
+            "logical_read": 6171394048,
+            "logical_write": 0,
+            "descriptors": 1784288
+          },
+          "dynamic_B": {
+            "bus_read": 56623104,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 12422144,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 194096
+          }
+        },
+        "P_bus_bytes": 6314183680,
+        "P_bus_only_serial_service_ms": 369.2505076023392,
+        "fixed_non_Dot_plus_P_bus_ms": 417.6595429693392,
+        "fixed_non_Dot_plus_P_bus_token_s": 2.39429462784575,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 115.93790172666667,
+              "input_ACK_wait_subcycles": 41.2365984,
+              "service_subcycles": 223.60248,
+              "output_subcycles": 28.405309773333332,
+              "elapsed_subcycles": 409.1822899
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 115.93790172666667,
+              "input_ACK_wait_subcycles": 41.2365984,
+              "service_subcycles": 223.60248,
+              "output_subcycles": 28.405309773333332,
+              "elapsed_subcycles": 409.1822899
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "shared",
+      "buffers": 2,
+      "R2_tokens_s": 2.7582838139,
+      "candidate_tokens_s": 2.33079926268,
+      "R2_ms": 362.544272987,
+      "candidate_ms": 429.037376153,
+      "speedup_pct": -15.498207583268409,
+      "delta_ms": 66.49310316600004,
+      "active": true,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 66.49310333333334,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 1506688,
+        "old_adapter_cycles": 48214016,
+        "old_M_cycles": 58089184,
+        "commands": 24107008,
+        "core_active_cycles": 72617056,
+        "read_requests": 72321024
+      },
+      "diagnostic": {
+        "total_ms": 429.037376153,
+        "spans_ms": {
+          "Dot": 333.78931,
+          "KV_store": 0.05316333333333333,
+          "NExp": 19.889613333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 23.793373333333335,
+          "vector": 30.00572
+        },
+        "Dot_percent": 77.79958776387971,
+        "non_Dot_ms": 95.24806615300002,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 127418368,
+            "bus_write": 0,
+            "logical_read": 121520128,
+            "logical_write": 0,
+            "descriptors": 225290
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 235929600,
+            "bus_write": 0,
+            "logical_read": 150994944,
+            "logical_write": 0,
+            "descriptors": 2654208
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 9750016,
+            "logical_read": 0,
+            "logical_write": 9750016,
+            "descriptors": 152344
+          }
+        },
+        "P_bus_bytes": 3458795008,
+        "P_bus_only_serial_service_ms": 202.26871391812864,
+        "fixed_non_Dot_plus_P_bus_ms": 297.51678007112866,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.361154956573964,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 2.4359645333333333,
+              "input_ACK_wait_subcycles": 2.6180016,
+              "service_subcycles": 319.60330242,
+              "output_subcycles": 7.797422373333333,
+              "elapsed_subcycles": 332.4546909266667
+            },
+            "native_service_ms": 302.4028,
+            "native_clock_alignment_ms": 0.0194285,
+            "native_read_calendar_blocked_ms": 162.80957333333333,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 2,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 3,
+            "native_peak_calendar_table_intervals": 64
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 2.4359645333333333,
+              "input_ACK_wait_subcycles": 2.6180016,
+              "service_subcycles": 319.60330242,
+              "output_subcycles": 7.797422373333333,
+              "elapsed_subcycles": 332.4546909266667
+            },
+            "native_service_ms": 302.4028,
+            "native_clock_alignment_ms": 0.0194285,
+            "native_read_calendar_blocked_ms": 162.80957333333333,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 2,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 3,
+            "native_peak_calendar_table_intervals": 64
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "idealdual",
+      "buffers": 2,
+      "R2_tokens_s": 2.96156894073,
+      "candidate_tokens_s": 2.95559639522,
+      "R2_ms": 337.658862587,
+      "candidate_ms": 338.341189487,
+      "speedup_pct": -0.20166829259971042,
+      "delta_ms": 0.6823268999999743,
+      "active": true,
+      "fallback_exact": false,
+      "spans_delta_ms": {
+        "Dot": 0.6823266666666666,
+        "KV_store": 0.0,
+        "NExp": 0.0,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 1506688,
+        "old_adapter_cycles": 48214016,
+        "old_M_cycles": 58089184,
+        "commands": 24107008,
+        "core_active_cycles": 72617056,
+        "read_requests": 72321024
+      },
+      "diagnostic": {
+        "total_ms": 338.341189487,
+        "spans_ms": {
+          "Dot": 243.09312333333332,
+          "KV_store": 0.05316333333333333,
+          "NExp": 19.889613333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 23.793373333333335,
+          "vector": 30.00572
+        },
+        "Dot_percent": 71.84851590251728,
+        "non_Dot_ms": 95.24806615366668,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 127418368,
+            "bus_write": 0,
+            "logical_read": 121520128,
+            "logical_write": 0,
+            "descriptors": 225290
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 235929600,
+            "bus_write": 0,
+            "logical_read": 150994944,
+            "logical_write": 0,
+            "descriptors": 2654208
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 9750016,
+            "logical_read": 0,
+            "logical_write": 9750016,
+            "descriptors": 152344
+          }
+        },
+        "P_bus_bytes": 3458795008,
+        "P_bus_only_serial_service_ms": 202.26871391812864,
+        "fixed_non_Dot_plus_P_bus_ms": 297.5167800717953,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.3611549565664323,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 61.827068413333336,
+              "input_ACK_wait_subcycles": 15.90948336,
+              "service_subcycles": 154.52524002666667,
+              "output_subcycles": 9.49560846,
+              "elapsed_subcycles": 241.75740026
+            },
+            "native_service_ms": 142.55156,
+            "native_clock_alignment_ms": 1.2869600266666668,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 2.9583333333333335,
+            "native_peak_source_buffers": 2,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 3,
+            "native_peak_calendar_table_intervals": 65
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 61.827068413333336,
+              "input_ACK_wait_subcycles": 15.90948336,
+              "service_subcycles": 154.52524002666667,
+              "output_subcycles": 9.49671246,
+              "elapsed_subcycles": 241.75850426
+            },
+            "native_service_ms": 142.55156,
+            "native_clock_alignment_ms": 1.2869600266666668,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 2.9583333333333335,
+            "native_peak_source_buffers": 2,
+            "native_peak_read_metadata": 2,
+            "native_peak_completions": 3,
+            "native_peak_calendar_table_intervals": 65
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "shared",
+      "buffers": 2,
+      "R2_tokens_s": 3.10725416366,
+      "candidate_tokens_s": 3.10725416366,
+      "R2_ms": 643.6551034,
+      "candidate_ms": 643.6551034,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": true,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "NExp": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 643.6551034,
+        "spans_ms": {
+          "Dot": 429.34037666666666,
+          "NExp": 47.73011,
+          "copy": 13.57683,
+          "final_flush": 0.0,
+          "reduce": 9.7199,
+          "vector": 143.28789333333333
+        },
+        "Dot_percent": 66.7034836512207,
+        "non_Dot_ms": 214.31472673333337,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 2180059136,
+            "bus_write": 0,
+            "logical_read": 2180003840,
+            "logical_write": 0,
+            "descriptors": 2128020
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 1769472,
+            "bus_write": 0,
+            "logical_read": 1179648,
+            "logical_write": 0,
+            "descriptors": 19584
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 10136576,
+            "logical_read": 0,
+            "logical_write": 10072064,
+            "descriptors": 158384
+          }
+        },
+        "P_bus_bytes": 5277662208,
+        "P_bus_only_serial_service_ms": 308.63521684210525,
+        "fixed_non_Dot_plus_P_bus_ms": 522.9499435754386,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.824457817751897,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.3451396,
+              "input_ACK_wait_subcycles": 97.06998445333333,
+              "service_subcycles": 324.74418405333336,
+              "output_subcycles": 5.95807376,
+              "elapsed_subcycles": 428.1173818666667
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.24340648,
+              "input_ACK_wait_subcycles": 96.96911533333333,
+              "service_subcycles": 324.62898405333334,
+              "output_subcycles": 5.88728912,
+              "elapsed_subcycles": 427.7287949866667
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "layer": "idealdual",
+      "buffers": 2,
+      "R2_tokens_s": 3.69669737899,
+      "candidate_tokens_s": 3.69669737899,
+      "R2_ms": 541.023458227,
+      "candidate_ms": 541.023458227,
+      "speedup_pct": 0.0,
+      "delta_ms": 0.0,
+      "active": false,
+      "fallback_exact": true,
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "NExp": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "native_ledger": {
+        "old_tiles": 0,
+        "old_adapter_cycles": 0,
+        "old_M_cycles": 0,
+        "commands": 0,
+        "core_active_cycles": 0,
+        "read_requests": 0
+      },
+      "diagnostic": {
+        "total_ms": 541.023458227,
+        "spans_ms": {
+          "Dot": 326.70873,
+          "NExp": 47.73011,
+          "copy": 13.57683,
+          "final_flush": 0.0,
+          "reduce": 9.7199,
+          "vector": 143.28789333333333
+        },
+        "Dot_percent": 60.38716529421191,
+        "non_Dot_ms": 214.314728227,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 2180059136,
+            "bus_write": 0,
+            "logical_read": 2180003840,
+            "logical_write": 0,
+            "descriptors": 2128020
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 1769472,
+            "bus_write": 0,
+            "logical_read": 1179648,
+            "logical_write": 0,
+            "descriptors": 19584
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 10136576,
+            "logical_read": 0,
+            "logical_write": 10072064,
+            "descriptors": 158384
+          }
+        },
+        "P_bus_bytes": 5277662208,
+        "P_bus_only_serial_service_ms": 308.63521684210525,
+        "fixed_non_Dot_plus_P_bus_ms": 522.9499450691053,
+        "fixed_non_Dot_plus_P_bus_token_s": 3.8244578068283563,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.3451396,
+              "input_ACK_wait_subcycles": 140.54571,
+              "service_subcycles": 178.82693333333333,
+              "output_subcycles": 5.76795376,
+              "elapsed_subcycles": 325.4857366933333
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 0.24340648,
+              "input_ACK_wait_subcycles": 140.44484088,
+              "service_subcycles": 178.71173333333334,
+              "output_subcycles": 5.69716912,
+              "elapsed_subcycles": 325.0971498133333
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    }
+  ],
+  "best_measured_including_R2": {
+    "shared": {
+      "buffers": 0,
+      "tokens_per_second": 3.37834376557,
+      "speedup_vs_R2_pct": 0.0,
+      "diagnostic": {
+        "total_ms": 296.003032667,
+        "spans_ms": {
+          "Dot": 247.59399666666667,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 83.6457635031081,
+        "non_Dot_ms": 48.409036000333344,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 66076672,
+            "bus_write": 0,
+            "logical_read": 64897024,
+            "logical_write": 0,
+            "descriptors": 87050
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 58982400,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 6211072,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 97048
+          }
+        },
+        "P_bus_bytes": 3216967168,
+        "P_bus_only_serial_service_ms": 188.12673497076025,
+        "fixed_non_Dot_plus_P_bus_ms": 236.5357709710936,
+        "fixed_non_Dot_plus_P_bus_token_s": 4.227690365370603,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 58.20445706666667,
+              "input_ACK_wait_subcycles": 12.50008176,
+              "service_subcycles": 167.29831701333333,
+              "output_subcycles": 8.25652136,
+              "elapsed_subcycles": 246.2593772
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 58.20445706666667,
+              "input_ACK_wait_subcycles": 12.50008176,
+              "service_subcycles": 167.29831701333333,
+              "output_subcycles": 8.25652136,
+              "elapsed_subcycles": 246.2593772
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    },
+    "idealdual": {
+      "buffers": 0,
+      "tokens_per_second": 3.66958239533,
+      "speedup_vs_R2_pct": 0.0,
+      "diagnostic": {
+        "total_ms": 272.510572667,
+        "spans_ms": {
+          "Dot": 224.10153666666668,
+          "KV_store": 0.05316333333333333,
+          "NExp": 4.970383333333333,
+          "canonical": 21.49358,
+          "copy": 0.01263,
+          "final_flush": 0.0,
+          "reduce": 8.625313333333333,
+          "vector": 13.25398
+        },
+        "Dot_percent": 82.23590537183019,
+        "non_Dot_ms": 48.409036000333344,
+        "P_flow_totals": {
+          "A": {
+            "bus_read": 66076672,
+            "bus_write": 0,
+            "logical_read": 64897024,
+            "logical_write": 0,
+            "descriptors": 87050
+          },
+          "weight": {
+            "bus_read": 3085697024,
+            "bus_write": 0,
+            "logical_read": 3085697024,
+            "logical_write": 0,
+            "descriptors": 1506688
+          },
+          "dynamic_B": {
+            "bus_read": 58982400,
+            "bus_write": 0,
+            "logical_read": 37748736,
+            "logical_write": 0,
+            "descriptors": 663552
+          },
+          "dot_output": {
+            "bus_read": 0,
+            "bus_write": 6211072,
+            "logical_read": 0,
+            "logical_write": 6211072,
+            "descriptors": 97048
+          }
+        },
+        "P_bus_bytes": 3216967168,
+        "P_bus_only_serial_service_ms": 188.12673497076025,
+        "fixed_non_Dot_plus_P_bus_ms": 236.5357709710936,
+        "fixed_non_Dot_plus_P_bus_token_s": 4.227690365370603,
+        "byte_diagnostic_scope": "Necessary byte service plus measured non-Dot time only under retained serialized schedule; not an actual speed prediction or a bound for redesigned overlap/traffic",
+        "native_per_P": [
+          {
+            "worker": 0,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 60.209278133333335,
+              "input_ACK_wait_subcycles": 15.3255408,
+              "service_subcycles": 140.23845333333333,
+              "output_subcycles": 6.990332933333334,
+              "elapsed_subcycles": 222.7636052
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          },
+          {
+            "worker": 1,
+            "outer_stage_ms": {
+              "consumer_ready_wait_subcycles": 60.209278133333335,
+              "input_ACK_wait_subcycles": 15.3255408,
+              "service_subcycles": 140.23845333333333,
+              "output_subcycles": 6.993644933333333,
+              "elapsed_subcycles": 222.7669172
+            },
+            "native_service_ms": 0.0,
+            "native_clock_alignment_ms": 0.0,
+            "native_read_calendar_blocked_ms": 0.0,
+            "native_write_calendar_blocked_ms": 0.0,
+            "native_peak_source_buffers": 0,
+            "native_peak_read_metadata": 0,
+            "native_peak_completions": 0,
+            "native_peak_calendar_table_intervals": 0
+          }
+        ],
+        "local_occupancy_scope": "Each P has its own elapsed stages; cross-P occupancies/waits overlap and must not be added or subtracted from end-to-end time"
+      }
+    }
+  },
+  "checks": [
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        false,
+        0
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 0,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w8-shared-buf0.log",
+      "log_sha256": "74e1053ccc11eed8a804f24761658d172fe27576e8c7b0a1cb6ca4f4a6324347"
+    },
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        true,
+        0
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 0,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w8-idealdual-buf0.log",
+      "log_sha256": "a4ec3ad431241a73ee2f5b4c6c2762f9f79e45d5a32cbe562ee4b9226da49153"
+    },
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w16",
+        "adaptive",
+        false,
+        0
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 0,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w16-shared-buf0.log",
+      "log_sha256": "97365aab33700ed7c2897bcd17739670d8f2156bdaf60efeb733ed88e49fc5ab"
+    },
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w16",
+        "adaptive",
+        true,
+        0
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 0,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w16-idealdual-buf0.log",
+      "log_sha256": "a7c22a7034acf337b6b1ef74d510cb5fe6523547aa08cece37c908f3afd96e16"
+    },
+    {
+      "key": [
+        "decode2048",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        false,
+        0
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 0,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 1,
+          "sha256": "ba4157469188fbc1602e3324fa747847d78d39e392c4674cf92d9aabbce9339f",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode2048-queued_pipe_w8-shared-buf0.log",
+      "log_sha256": "21d67fbd27c0ea7f03f0c5606a726cc405a3d5a07f73f77563811258de5c2979"
+    },
+    {
+      "key": [
+        "decode2048",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        true,
+        0
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 0,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 1,
+          "sha256": "ba4157469188fbc1602e3324fa747847d78d39e392c4674cf92d9aabbce9339f",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode2048-queued_pipe_w8-idealdual-buf0.log",
+      "log_sha256": "d98d4e2dee4564537aa79327a8e08e8f50671822fc3784e3b4b21e56a84d552d"
+    },
+    {
+      "key": [
+        "prefill2",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        false,
+        0
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 0,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 2,
+          "sha256": "be2f0c96b7042674680a3ee51d99389a89813318034c29098cdb344d131441b7",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "prefill2-queued_pipe_w8-shared-buf0.log",
+      "log_sha256": "8b9f4115d1617be3ad1edc35c654a61ee28e98b4adb47232fcbe0c38330469ee"
+    },
+    {
+      "key": [
+        "prefill2",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        true,
+        0
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 0,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 2,
+          "sha256": "be2f0c96b7042674680a3ee51d99389a89813318034c29098cdb344d131441b7",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "prefill2-queued_pipe_w8-idealdual-buf0.log",
+      "log_sha256": "881116b833674455f5e183abd1f3d38a900bd2404b078b64c0f2bd880b966146"
+    },
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        false,
+        1
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 1,
+        "active": true,
+        "default_or_fallback_complete_R2_result_equal": false,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 1506688,
+          "old_adapter_cycles": 48214016,
+          "old_M_cycles": 58089184,
+          "commands": 24107008,
+          "core_active_cycles": 72617056,
+          "read_requests": 72321024
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 0.6505384018240167,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w8-shared-buf1.log",
+      "log_sha256": "42c20d6be3390d2119f731b7ba07a4d2ed74cdd9e5bc26c045b37bc099754e53"
+    },
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        true,
+        1
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 1,
+        "active": true,
+        "default_or_fallback_complete_R2_result_equal": false,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 1506688,
+          "old_adapter_cycles": 48214016,
+          "old_M_cycles": 58089184,
+          "commands": 24107008,
+          "core_active_cycles": 72617056,
+          "read_requests": 72321024
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 0.8681111291382181,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w8-idealdual-buf1.log",
+      "log_sha256": "2e210424f82ff055b6b1c051b0c4147408d639db10c77981f8e6cbecd29e00a3"
+    },
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w16",
+        "adaptive",
+        false,
+        1
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 1,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w16-shared-buf1.log",
+      "log_sha256": "7a37b08daa2f90db1480ee6accf223b7b4595ec315b445ebe869cf4bbf2e354f"
+    },
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w16",
+        "adaptive",
+        true,
+        1
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 1,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w16-idealdual-buf1.log",
+      "log_sha256": "3ffb4cf5bfe0038446e4623851e6fb96804273c3a0227414f9b0336974a9dc77"
+    },
+    {
+      "key": [
+        "decode2048",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        false,
+        1
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 1,
+        "active": true,
+        "default_or_fallback_complete_R2_result_equal": false,
+        "trace": {
+          "tokens": 1,
+          "sha256": "ba4157469188fbc1602e3324fa747847d78d39e392c4674cf92d9aabbce9339f",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 1506688,
+          "old_adapter_cycles": 48214016,
+          "old_M_cycles": 58089184,
+          "commands": 24107008,
+          "core_active_cycles": 72617056,
+          "read_requests": 72321024
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 0.6951237232277482,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode2048-queued_pipe_w8-shared-buf1.log",
+      "log_sha256": "e5177d00fbe005c81763bb9535cb9a3d8ba4fb73fbafc5976552e25ed07f4be6"
+    },
+    {
+      "key": [
+        "decode2048",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        true,
+        1
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 1,
+        "active": true,
+        "default_or_fallback_complete_R2_result_equal": false,
+        "trace": {
+          "tokens": 1,
+          "sha256": "ba4157469188fbc1602e3324fa747847d78d39e392c4674cf92d9aabbce9339f",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 1506688,
+          "old_adapter_cycles": 48214016,
+          "old_M_cycles": 58089184,
+          "commands": 24107008,
+          "core_active_cycles": 72617056,
+          "read_requests": 72321024
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 0.8907784206524026,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode2048-queued_pipe_w8-idealdual-buf1.log",
+      "log_sha256": "4c4e1701ac742daf3064031f4c5448516c410f74ceb2259613bbebc9ccdcd130"
+    },
+    {
+      "key": [
+        "prefill2",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        false,
+        1
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 1,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 2,
+          "sha256": "be2f0c96b7042674680a3ee51d99389a89813318034c29098cdb344d131441b7",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "prefill2-queued_pipe_w8-shared-buf1.log",
+      "log_sha256": "2d52921d918a1d1ea37abaeebe94e8488b18993780fc131c6493fadb8c0bb722"
+    },
+    {
+      "key": [
+        "prefill2",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        true,
+        1
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 1,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 2,
+          "sha256": "be2f0c96b7042674680a3ee51d99389a89813318034c29098cdb344d131441b7",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "prefill2-queued_pipe_w8-idealdual-buf1.log",
+      "log_sha256": "42ec7e0abad7cbd69192f45f6d9e1c141d140b11ad01896ebb7e65dd2b7b8b34"
+    },
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        false,
+        2
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 2,
+        "active": true,
+        "default_or_fallback_complete_R2_result_equal": false,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 1506688,
+          "old_adapter_cycles": 48214016,
+          "old_M_cycles": 58089184,
+          "commands": 24107008,
+          "core_active_cycles": 72617056,
+          "read_requests": 72321024
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 0.8165687037263119,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w8-shared-buf2.log",
+      "log_sha256": "dd4c96e09c08960e62e30eb8567fbac47a3efaa60821234a9e410a16e2255b12"
+    },
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        true,
+        2
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 2,
+        "active": true,
+        "default_or_fallback_complete_R2_result_equal": false,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 1506688,
+          "old_adapter_cycles": 48214016,
+          "old_M_cycles": 58089184,
+          "commands": 24107008,
+          "core_active_cycles": 72617056,
+          "read_requests": 72321024
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 0.9975022165788635,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w8-idealdual-buf2.log",
+      "log_sha256": "3afdc2046560544f8c88f778268d7b7f033d2758e99e6b3cf7efca786e6b9f0e"
+    },
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w16",
+        "adaptive",
+        false,
+        2
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 2,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w16-shared-buf2.log",
+      "log_sha256": "eef847d3eacb7376cba1436f87d615824a8b0ef6f7d7fb5279456ff55c9c771a"
+    },
+    {
+      "key": [
+        "decode512",
+        "queued_pipe_w16",
+        "adaptive",
+        true,
+        2
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 2,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 1,
+          "sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode512-queued_pipe_w16-idealdual-buf2.log",
+      "log_sha256": "fcb8a9f09a71647819b608c952f0bf1ac9f8ba616413a24ea2b42beba833ebad"
+    },
+    {
+      "key": [
+        "decode2048",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        false,
+        2
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 2,
+        "active": true,
+        "default_or_fallback_complete_R2_result_equal": false,
+        "trace": {
+          "tokens": 1,
+          "sha256": "ba4157469188fbc1602e3324fa747847d78d39e392c4674cf92d9aabbce9339f",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 1506688,
+          "old_adapter_cycles": 48214016,
+          "old_M_cycles": 58089184,
+          "commands": 24107008,
+          "core_active_cycles": 72617056,
+          "read_requests": 72321024
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 0.8450179241673159,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode2048-queued_pipe_w8-shared-buf2.log",
+      "log_sha256": "93e3c814d50ffb18bc145b77d7b305f340487f75ac7a8da642d451116a4a2b8b"
+    },
+    {
+      "key": [
+        "decode2048",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        true,
+        2
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 2,
+        "active": true,
+        "default_or_fallback_complete_R2_result_equal": false,
+        "trace": {
+          "tokens": 1,
+          "sha256": "ba4157469188fbc1602e3324fa747847d78d39e392c4674cf92d9aabbce9339f",
+          "qualified_operations": 253,
+          "workers": [
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            },
+            {
+              "old_tiles": 753344,
+              "final_outputs": 74008,
+              "old_adapter_cycles": 24107008,
+              "old_M_cycles": 29044592
+            }
+          ],
+          "shape_old_tiles": {
+            "1x2048x2048b1l0": 147456,
+            "1x256x2048b1l0": 18432,
+            "1x11008x2048b1l0": 792576,
+            "1x2048x11008b1l0": 396288,
+            "1x151936x2048b1l0": 151936
+          }
+        },
+        "ledger": {
+          "old_tiles": 1506688,
+          "old_adapter_cycles": 48214016,
+          "old_M_cycles": 58089184,
+          "commands": 24107008,
+          "core_active_cycles": 72617056,
+          "read_requests": 72321024
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 0.9979833170740029,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "decode2048-queued_pipe_w8-idealdual-buf2.log",
+      "log_sha256": "3f948bfdaa0bb5c6341b1beee9b36a3b2e111992434de82e9cc61ede2c664444"
+    },
+    {
+      "key": [
+        "prefill2",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        false,
+        2
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 2,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 2,
+          "sha256": "be2f0c96b7042674680a3ee51d99389a89813318034c29098cdb344d131441b7",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "prefill2-queued_pipe_w8-shared-buf2.log",
+      "log_sha256": "0d8a507edf82f565029bcdd9139ba33419ebc75a74d2b96950547fc68d529c39"
+    },
+    {
+      "key": [
+        "prefill2",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        true,
+        2
+      ],
+      "audit": {
+        "passed": true,
+        "buffers": 2,
+        "active": false,
+        "default_or_fallback_complete_R2_result_equal": true,
+        "trace": {
+          "tokens": 2,
+          "sha256": "be2f0c96b7042674680a3ee51d99389a89813318034c29098cdb344d131441b7",
+          "qualified_operations": 0,
+          "workers": [
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            },
+            {
+              "old_tiles": 0,
+              "final_outputs": 0,
+              "old_adapter_cycles": 0,
+              "old_M_cycles": 0
+            }
+          ],
+          "shape_old_tiles": {}
+        },
+        "ledger": {
+          "old_tiles": 0,
+          "old_adapter_cycles": 0,
+          "old_M_cycles": 0,
+          "commands": 0,
+          "core_active_cycles": 0,
+          "read_requests": 0
+        },
+        "DDR_and_U_work_unchanged": true,
+        "actual_S_narrow_write_difference_accounted": true,
+        "speedup_vs_same_layer_R2": 1.0,
+        "counter_definitions_not_direct_speedup": true
+      },
+      "negative_checks": [
+        "profile_identity",
+        "missing_ack",
+        "free_output_S",
+        "hidden_command",
+        "changed_DDR",
+        "changed_U",
+        "free_A_RF",
+        "false_physical"
+      ],
+      "log": "prefill2-queued_pipe_w8-idealdual-buf2.log",
+      "log_sha256": "63f8115c5731d38f52c6ee2de1c492cb6df4b3aa830567dfcb548b1dad530602"
+    }
+  ],
+  "R4_diagnostic": {
+    "primary_layer": "idealdual conditional old framework",
+    "remaining_ms_to_5_tokens_s": 72.51057266700002,
+    "measured_non_Dot_hotspots_ms": [
+      {
+        "family": "canonical",
+        "ms": 21.49358
+      },
+      {
+        "family": "vector",
+        "ms": 13.25398
+      },
+      {
+        "family": "reduce",
+        "ms": 8.625313333333333
+      },
+      {
+        "family": "NExp",
+        "ms": 4.970383333333333
+      },
+      {
+        "family": "KV_store",
+        "ms": 0.05316333333333333
+      },
+      {
+        "family": "copy",
+        "ms": 0.01263
+      },
+      {
+        "family": "final_flush",
+        "ms": 0.0
+      }
+    ],
+    "notes": [
+      "先保留同层实际最快配置，含 R2 基线；不能为了完成优化轮次默认启用更慢的 BUF1/2。",
+      "R3 用真实有限 S 请求替换整个本地 M 窗口；原生连续 fullK wall 不直接乘入整图，旧 K256 边界排空仍收费。",
+      "P DDR 字节与带宽没有减少。局部 M 计算/缓存改进必须从整图实测确认，不能把局部 speedup 乘到 token/s。",
+      "下一轮需以实际最高 U 热点或可落实的数据重用/依赖重叠为候选；先确认格式、数值、有限缓冲及既有旁路已计收益。",
+      "现有 packet 保留/融合收益不能重复计入；同一 E/N/M 资源不得复制为免费并行。",
+      "shared 与 idealdual 分表，预填与 decode 分表；idealdual 仍是旧体系条件层，不是现有四个1RW SRAM的整机 RTL 吞吐。"
+    ]
+  },
+  "physical_qualified": false,
+  "full_P_DMA_integration": false,
+  "full_LLM_RTL_numerical_proof": false
+}

@@ -319,3 +319,12 @@ python3 -B source/project/experiments/iterative_speed/round02/run.py --root "$RU
 ```
 
 离线证据：`python work/Melodydt/247/speed-iterations/verify.py`。R2源不同于R1，旧资格应核对归档source-snapshot，不要改历史SHA适配当前文件。
+
+
+### Issue247第三轮：有限矩阵供数
+
+见[第三轮实施报告](experiments/issue-247-speed-round3.md)。独立RTL实验round3与旧模型round03，真实四bank16KiB、单/双输入buffer、8完成预约、2读metadata；run20校准与run21旧体系24case通过，候选主项低于R2，保留负结果与大面积备份。
+
+仅Slurm分配节点执行归档job.sh；批处理入口分别为python3 -B source/project/experiments/rtl_iterations/round3/run.py --root RUN及python3 -B source/project/experiments/iterative_speed/round03/run.py --root RUN。源/输入必须与归档manifest SHA一致，新目录复跑，不覆盖原run20/21。
+
+离线证据python work/Melodydt/247/speed-iterations/verify.py；显式--current-run run20 --current-run run21可校验当前源，否则核验各自不可变源快照。retention.json记录未放入Git的大raw，离线验证不会假装重新读取服务器内容。完整原生P/DMA/生成与物理资格另验。

@@ -45,7 +45,7 @@ def main():
             raw = stored
         require(len(raw) == row['raw_bytes'] and sha(raw) == row['raw_sha256'], 'original SHA drift ' + name)
         artifacts[name] = (row, raw)
-    counts = dict(artifacts=len(artifacts), source_members=0, inputs=0, selected_results=0, current_sources=0)
+    counts = dict(artifacts=len(artifacts), source_members=0, inputs=0, selected_results=0, current_sources=0, indexed_remote_only=0)
     statuses = []
     for run, record in index['runs'].items():
         rows = {r['source_path']: raw for r, raw in artifacts.values() if r['run'] == run}
@@ -78,6 +78,20 @@ def main():
             require(sha(rows['frozen-inputs/' + name]) == digest, 'frozen input drift ' + name)
             counts['inputs'] += 1
         outputs = {name: digest for digest, name in (line.split('  ', 1) for line in rows['output-files.sha256'].decode().splitlines())}
+        if 'retention.json' in rows:
+            retention = json.loads(rows['retention.json'])
+            require(retention['run'] == run and retention['source_commit'] == record['source_commit'], 'retention identity mismatch')
+            require(retention['local_receipt_archive_sha256'] == summary['receipts_sha256'], 'retention archive mismatch')
+            indexed = {entry['path']: entry for entry in retention['files']}
+            require(len(indexed) == len(retention['files']), 'duplicate retention path')
+            require(set(indexed) == set(collection['collected_files']) | {'collection.json'}, 'retention coverage mismatch')
+            for name, entry in indexed.items():
+                require(entry['server_path'] == collection['run_root'] + '/' + name, 'retention location drift')
+                if name in rows:
+                    require(entry['retention'] == 'repository' and sha(rows[name]) == entry['sha256'] and len(rows[name]) == entry['bytes'], 'retained content drift ' + name)
+                else:
+                    require(entry['retention'] == 'server_and_local_archive' and name in outputs and outputs[name] == entry['sha256'] and entry['bytes'] > 100000, 'remote-only hash index drift ' + name)
+                    counts['indexed_remote_only'] += 1
         selected = {name: raw for name, raw in rows.items() if name.startswith('results/')}
         for name, raw in selected.items():
             require(sha(raw) == outputs[name], 'server output SHA drift ' + name)
