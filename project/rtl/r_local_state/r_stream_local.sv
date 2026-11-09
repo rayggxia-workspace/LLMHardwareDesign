@@ -31,6 +31,20 @@ module r_stream_local #(parameter WORDS=256)(
  wire [255:0] sr0,sr1;wire srvalid,write_pending;
  wire host_fire=rd_valid&&rd_ready;
  wire compute_read=(phase==PASS)&&(op!=6)&&(issue_row<rows);
+ // Validate the full host index before state_store truncates it to a row.
+ // Raw invalid loads are not accepted. Service adapters must terminate such
+ // requests with an address error, as ucf_r256_service already does.
+ reg load_address_ok;
+ always @*begin
+  case(load_target)
+   0,1:load_address_ok=int'(load_index)<WORDS/4;
+   2,3:load_address_ok=int'(load_index)<WORDS/64;
+   4,6:load_address_ok=load_index<10'd6;
+   5:load_address_ok=load_index==0;
+   7:load_address_ok=load_index<10'd4;
+   default:load_address_ok=0;
+  endcase
+ end
  wire load_fire=load_valid&&load_ready;
  wire state_load=load_fire&&(load_target<2);
  wire compute_write=(phase==PASS)&&product_valid&&(op==0||op==2);
@@ -63,7 +77,7 @@ module r_stream_local #(parameter WORDS=256)(
  assign rd_ready=!reset&&(phase==IDLE)&&!cmd_valid&&!load_valid&&!write_pending&&(outstanding<4)&&(rd_index<WORDS/4);
  // Command wins simultaneous command/read requests; read_ready already masks cmd_valid.
  assign cmd_ready=!reset&&phase==IDLE&&(!rsp_valid||rsp_ready)&&!write_pending&&(outstanding==0);
- assign load_ready=cmd_ready&&!cmd_valid;
+ assign load_ready=cmd_ready&&!cmd_valid&&load_address_ok;
  always @(posedge clk)begin
   if(reset)begin ct<=0;ht<=0;hbank<=0;hhalf<=0;rp<=0;wp<=0;outstanding<=0;available<=0;end
   else begin
