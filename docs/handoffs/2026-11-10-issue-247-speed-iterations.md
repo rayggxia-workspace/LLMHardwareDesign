@@ -1,5 +1,13 @@
 # Issue247速度迭代接续
 
+## 第三轮RTL校准通过，旧体系整图评估待运行（2026-11-10，Asia/Shanghai）
+
+Issue247/PR243，Melodydt，in_progress；已完整交付2/4轮。run20/101872/mdt-r3-finite-m，源码a3149d69a23f52efb808dbbb46b5558dffce4df7，c64/node1/4核，41秒COMPLETED0:0。六次各66场景7638检查20复位点，数值/S96前缀/生命周期/有限资源/真实S/源身份/单双缓冲公平性与299064周期控制比对通过。实际读写ACK均2拍。结果SHA87842b59e42fb0773eedb82dce4981614432868fa12218c3aa15166b0b839eff。完整raw在/public/home/yuzelu/Melodydt/issue247-area-speed/run20/results及本地run20/receipts；62大原始文件留服务器和本地归档，仓库retention索引明确，不冒充Git内含全部raw。
+
+大型K16候选独立备份task/247-m-k16-area-initial@a3149d69a23f52efb808dbbb46b5558dffce4df7已创建读回；前态task/247-pre-m-area-r2-ed9f5ee6和本地初版归档保留。S仍16KiB四1RW。正式round03模型已独立审查及真实profile静态核验，待服务器24场景运行；不能由局部周期比预填token/s。最快仍R2条件ideal3.66958239533/shared3.37834376557，未到5。
+
+源模型位于project/experiments/iterative_speed/round03，关闭优化须精确复现run19，所有DDR/缓存/原tile调度成本保留；当前R3尚无完整P/DMA联调或物理验收。无活动作业/自动监测。恢复第一步读最新PR head，提交/核验本模型源后创建新run21，仅Slurm节点运行。登记pending、看板unverified/同步pending、审查人待指定；CI旧失败未绕过。源码快照目录work/Melodydt/242/r-load-bounds/repo为非Git本地副本；远端任务分支未合并main。
+
 ## 第三轮候选已准备（2026-11-10，Asia/Shanghai）
 
 Issue247 / PR243，负责人Melodydt，in_progress，已完成2/4轮。R3独立K16 S32/W8/S96有限供数、单/双buffer、8条完成预约、2条读metadata已实现，仍四1RW/16KiB；原生产P和R1/R2不变。基线额外备份task/247-pre-m-area-r2-ed9f5ee6@ed9f5ee63ceaeb260eb611f10d569ec8904a81c6已读回，初版七源归档SHA9150111291360ce468c336549a70c4a4b9b3eb901fa33a4fce302bd0ef1137e2另存。大面积128个32×9乘法器与寄存账本见docs/decisions/issue-247-r3-large-area.md；不是综合面积或完整P/DMA集成。

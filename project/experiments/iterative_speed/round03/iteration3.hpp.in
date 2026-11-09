@@ -1,0 +1,35 @@
+#pragma once
+#include <array>
+namespace iteration3 {
+constexpr bool profile_available=@AVAILABLE@;
+constexpr unsigned read_ack_cycles=@READ_ACK@,write_ack_cycles=@WRITE_ACK@;
+constexpr const char* result_sha256="@RESULT_SHA@";
+constexpr const char* source_commit="@COMMIT@";
+struct Counters {
+ U old_tiles=0,final_outputs=0,old_adapter_cycles=0,old_M_cycles=0;
+ U commands=0,leaf_accepts=0,commits=0,completions=0;
+ U read_requests=0,read_acks=0,write_requests=0,write_acks=0;
+ U core_active_cycles=0,control_cycles=0,wall_subcycles=0,alignment_subcycles=0;
+ U read_calendar_stalls=0,write_calendar_stalls=0,peak_buffers=0,peak_reads=0,peak_completions=0,peak_calendar_intervals=0;
+};
+void emit(std::ostream& out,int buffers,const std::array<Counters,3>& stats,int count){
+ out<<",\"iteration3_study\":{\"buffers\":"<<buffers<<",\"enabled\":"<<(buffers?"true":"false")
+    <<",\"scope\":\"@SCOPE@\",\"profile_available\":"<<(profile_available?"true":"false")
+    <<",\"calibration_result_sha256\":\""<<result_sha256<<"\",\"calibration_source_commit\":\""<<source_commit<<"\""
+    <<",\"rtl_sha256\":\""<<finite_m::rtl_sha256<<"\",\"read_ack_cycles\":"<<read_ack_cycles
+    <<",\"write_ack_cycles\":"<<write_ack_cycles
+    <<",\"source_slot_bytes\":256,\"read_metadata\":2,\"completion_reservations\":8"
+    <<",\"old_tile_boundary_drain\":true,\"same_edge_double_accept\":false"
+    <<",\"S_bytes\":16384,\"A_RF_reuse\":false,\"full_P_DMA_integration\":false"
+    <<",\"physical_clock_qualified\":false,\"full_LLM_RTL_numeric_proof\":false"
+    <<",\"counter_scope\":\"M work counts active advancing core edges; adapter work counts accepted64B reads; occupancy is not additive wall\""
+    <<",\"workers\":[";
+ for(int worker=0;worker<count;++worker){
+  if(worker){out<<",";}const auto& s=stats[worker];
+  out<<"{\"worker\":"<<worker;
+@FIELDS@
+  out<<"}";
+ }
+ out<<"]}";
+}
+}
