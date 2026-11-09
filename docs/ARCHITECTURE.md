@@ -266,3 +266,19 @@ python scripts/check_project.py
 ```
 
 所有out为新目录；提交`job.sh`时4核、mdt-p-native、UNLIMITED，并立即读回job/节点/日志。最终性能必须计入context release；局部95→71拍及P长K2112→2032不能换算成整模型token/s，短K672→676退化保留。旧研究冻结源检查仍保留，不能通过更新旧SHA掩盖本轮新生产源码；旧物理/模型资格继续绑定其原commit。
+
+
+## Issue247 实施PDF与原生接口约束下的token/s
+
+[完整PDF](experiments/pdf/issue-247-p-native-optimizations.pdf)、[新版吞吐核验报告](experiments/issue-247-native-token-throughput.md)、[运行入口](../project/experiments/native_token_study/README.md)、[回执](../work/Melodydt/247/token-throughput/README.md)。旧S32/S96理想端口模型、实际P RTL命令校准和新条件图模型分别记录；原始trace原生准入必须拒绝，不能将条件适配器当已实现硬件。
+
+```bash
+# 各项使用独立的新run，固定容器、Slurm4核，并先校验源码commit/输入SHA。
+python3 -B source/project/experiments/native_token_study/run_legacy.py --root "$PWD"
+python3 -B source/project/experiments/native_token_study/calibration/run_calibration.py --repo source --out results --manifest inputs.json --workers 4
+python3 -B source/project/experiments/native_token_study/run.py --root "$PWD"
+# 本地只读证据检查，不运行RTL/SystemC。
+python -B work/Melodydt/247/token-throughput/verify.py
+```
+
+复现需要锁定的四份Qwen trace、原m-profile、run05历史完整结果、run13实测校准回执和`inputs.json`部署清单；位置和SHA见证据索引。2P/1U、300MHz、17.1GB/s均为条件参数，S固定16KiB；S32/S96适配器额外2712B/P明确列账。token/s不由局部周期比例外推，真实原生生成/新物理验收仍未完成。

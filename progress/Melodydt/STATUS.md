@@ -2,6 +2,16 @@
 
 更新时间：2026-11-09（Asia/Shanghai）。Issue 是状态与验收的事实来源；本文件为当前任务分支摘要，不表示其他未合并分支已进入 main。
 
+## 实施PDF与新版吞吐复核（2026-11-09 23:57，Asia/Shanghai）
+
+本轮交付沿Issue247/PR243待独立审查（in_review），不done。完整7页[PDF](../../docs/experiments/pdf/issue-247-p-native-optimizations.pdf)固定源cf570ea69ff05b009c076b79414629b44a86d346，171内容单元和逐页视觉QA通过。源码、模型及证据已/待随最终提交读回，最终head以PR为准；未合并main。
+
+三轮服务器测试均COMPLETED0:0，c64/node1/4核：run12/101767源e2b8c9f9，1:03，旧4场景全RESULT精确重现；run13/101769源eb8a40bc，0:14，实际P校准2后端×3初态共9336事件；run14/101777源b5ff1f708b1b1809bb78d5849d1f025dc5f3b6d1，10:34，9完整图case/4配对/4原生准入拒绝、168数值组/40884源乘积、6数值负例/6回执篡改拒绝全部通过。88策展原件、55回收输出SHA、164当前冻结功能源核验通过。全部作业终态，无活动作业、无自动监测。
+
+固定300MHz/2P/1U/17.1GB/s的新条件模型：W8 decode512 0.06758220→0.08174053 token/s（+20.95%），W16 0.04491781→0.05052530（+12.48%），W8 decode2048 0.04826512→0.05507842（+14.12%），prefill2 0.07723904→同值。相同新接口ctx1→8增26.60%；ctx1比legacy退化4.46%。当前串行程序的仲裁/bank并发收益为0，不能把未实施调度收益叠加。
+
+这些是条件时序仿真，不是完整原生RTL生成。原始trace仍需未实装的S32/S96适配器、图编译/DDR控制及候选U；每P额外2712B候选寄存器明确列账，S仍16KiB。原生整网token/s未取得。[报告](../../docs/experiments/issue-247-native-token-throughput.md)、[证据](../../work/Melodydt/247/token-throughput/README.md)、[恢复](../../docs/handoffs/2026-11-09-issue-247-token-native.md)。下一步独立审查与决定完整原生路径实施范围；负责人Melodydt，审查人待指定，登记PR5已读回open/unmerged为pending，看板无配置/能力为unverified/同步pending。CI以最终head实际回执为准，未改workflow绕过。
+
 ## 原生P前三项实施（2026-11-09，Asia/Shanghai）
 
 Issue247本轮RTL与详细文档已通过验证，交付PR243待独立审查（in_review），不done。仲裁、固定16KiB bank并发、八组S64上下文+B-only已接入可选P参数，默认0；扩容未实装。run10/101756源码c2359bde、1:21，run11/101758源码24f720a7、1:05，均c64/node1/4核/COMPLETED0:0。15份生产RTL两轮相同；185轻量原件、163策展结果SHA与29当前功能源核验通过。管理结构/Python/JSON/链接检查通过仅在各自范围。
