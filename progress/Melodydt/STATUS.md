@@ -4,6 +4,8 @@
 
 ## 当前研究：结合 PR220/241 提高 token/s
 
+- Issue247继续研究U连续算子融合与有限缓冲重叠，沿PR243，基线2f875d2f；负责人Melodydt，状态in_progress。条件架构模型与原生N→E RTL对照分别验收，生产RTL保持不变、SRAM扩容不实装。当前准备源码/独立审计，尚未提交新仿真；[接续](../../docs/handoffs/2026-11-09-issue-247-u-fusion.md)。
+
 - Issue247两路线比较已完成，沿PR243提交待审查，在线状态以Issue回执为准。run04源c597a7d0、101665/mdt-sram-rw、c64/node1/4核、8:02 COMPLETED0:0；57完整/6尾块/4非法CLI、先20历史回归通过，149回收SHA。run05源49b3938c、101672/mdt-sram-policy、同节点4核、3:58 COMPLETED0:0；30完整/先12默认回放/2非法CLI/每case6负例通过，81回收SHA。两轮45轻量证据、run04/05各44/49功能源一致性通过。没有活动作业、没有自动监测。
 - 容量联动的默认预取使A48/64 decode慢于B；只固定预取判定后W8/context512 A48/A64=3.541567/3.543921，B=3.496169，增量1.30%/1.37%；W16/长context约1%至2%，prefill2 A48/A64=4.467001/4.547434，对B+20.84/+23.01%。若只有大容量端口升至1.25拍，A64=3.490348低于B1拍；真实端口/面积/频率待验。decode且保持S预算优先16KiB路线，prefill保留48/64KiB候选。SRAM扩容不实装，生产RTL不变。[报告](../../docs/experiments/issue-247-capacity-port-compare.md)/[接续](../../docs/handoffs/2026-11-09-issue-247-capacity-port-compare.md)。
 - [Issue247：固定SRAM的面积换速度研究](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247) 已按顺序完成五方向首轮研究，沿task/242-r-load-bounds / PR243交付待审查；在线实际状态以Issue回执为准。仅隔离模型/实验RTL；生产RTL未改，SRAM扩容保持不实装。每P16KiB；第三P额外活跃私有S预算明确单列。[正式报告](../../docs/experiments/issue-247-area-speed.md)。
