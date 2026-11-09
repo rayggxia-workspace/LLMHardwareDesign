@@ -26,7 +26,15 @@ module m_s32_stream_candidate #(
  reg signed [47:0] sums[0:N-1];
  reg signed [95:0] accum[0:ROWS-1][0:N-1],total2[0:N-1];
  reg [ROWS-1:0] context_valid;reg [3:0] context_n[0:ROWS-1];
- reg signed [47:0] reduction;
+ wire signed [47:0] reduction_tree[0:N-1][1:2*K-1];
+ for(genvar nn=0;nn<N;nn=nn+1)begin: dot_tree
+  for(genvar kk=0;kk<K;kk=kk+1)begin: leaf
+   assign reduction_tree[nn][K+kk]={{7{products[nn][kk][40]}},products[nn][kk]};
+  end
+  for(genvar node=1;node<K;node=node+1)begin: branch
+   assign reduction_tree[nn][node]=reduction_tree[nn][2*node]+reduction_tree[nn][2*node+1];
+  end
+ end
  reg signed [95:0] term,total;
  reg fault;reg [32:0] converted;
  function automatic signed [40:0] byte_product;
@@ -73,10 +81,7 @@ module m_s32_stream_candidate #(
     end else begin context_valid[row1]<=0;for(integer n=0;n<N;n=n+1)total2[n]<=0;end
    end
    v1<=v0;row1<=row0;first1<=first0;last1<=last0;bad1<=bad0;n1<=n0;round1<=round0;bshift1<=bshift0;
-   if(v0)for(integer n=0;n<N;n=n+1)begin
-    reduction=0;for(integer k=0;k<K;k=k+1)reduction=reduction+{{7{products[n][k][40]}},products[n][k]};
-    sums[n]<=reduction;
-   end
+   if(v0)for(integer n=0;n<N;n=n+1)sums[n]<=reduction_tree[n][1];
    v0<=in_valid;
    if(in_valid)begin
     row0<=in_row;first0<=in_first;last0<=in_last;n0<=in_n;round0<=in_round_shift;bshift0<=in_b_shift;
