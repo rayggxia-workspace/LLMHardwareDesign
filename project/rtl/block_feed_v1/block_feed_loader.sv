@@ -3,7 +3,7 @@
 // Two512-bit A entries plus one512-bit B entry; one memory read outstanding.
 // A/B may retire together. Four A containers share a wide read. No serialized
 // B128 path and no unbounded software FIFO.
-module block_feed_loader (
+module block_feed_loader #(parameter integer ENABLE_REUSE_A = 0) (
  input wire clk,reset,
  input wire load_valid,output wire load_ready,
  input wire load_bank,input wire [3:0] load_rows,input wire [2:0] load_tiles,
@@ -53,9 +53,12 @@ module block_feed_loader (
  assign mem_take=!reset&&busy&&pending&&(p_is_b?weight_space:space);
  assign received=mem_valid&&mem_take;
  wire push=received&&!p_is_b;
- wire legal=load_rows>0&&load_rows<=8&&load_tiles>0&&load_tiles<=4&&
+ // Optional rows=0 is an explicit B-only transfer. It never invents A validity;
+ // the M command still checks the retained operand bank and format.
+ wire b_only=ENABLE_REUSE_A!=0 && load_rows==0 && !load_reuse_b;
+ wire legal=((load_rows>0&&load_rows<=8)||b_only)&&load_tiles>0&&load_tiles<=4&&
      load_a_base[1:0]==0&&load_b_base[1:0]==0&&
-     int'(load_a_base)+int'(load_tiles)*(load_rows>4?8:4)<=1024&&
+     (b_only||int'(load_a_base)+int'(load_tiles)*(load_rows>4?8:4)<=1024)&&
      (load_reuse_b||int'(load_b_base)+int'(load_tiles)*(load_b_wide?8:4)<=1024);
  always @(posedge clk)begin
   if(reset)begin
@@ -81,7 +84,13 @@ module block_feed_loader (
     pending<=1;p_is_b<=!phase_a;p_half<=half_b;p_tile<=tile;p_row<=group_a?4:0;
     if(!phase_a)begin
      if(bw&&!half_b)half_b<=1;
-     else begin half_b<=0;phase_a<=1;end
+     else begin
+      half_b<=0;
+      if(rows==0)begin
+       if({1'b0,tile}+1==tiles)requests_done<=1;
+       else tile<=tile+1'b1;
+      end else phase_a<=1;
+     end
     end else if(rows>4&&!group_a)group_a<=1;
     else begin
      group_a<=0;

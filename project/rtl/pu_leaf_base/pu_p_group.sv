@@ -1,5 +1,9 @@
 // P16 accepts native M commands and a two-lane gated SiLU service.
-module pu_p_group (
+module pu_p_group #(
+ parameter integer S_CONSUMER_PRIORITY = 0,
+ parameter integer S_BANK_RW = 0,
+ parameter integer M_CONTEXTS = 0
+) (
  input wire clk, reset,
  input wire [1:0] io_req_valid, io_req_write,
  input wire [19:0] io_req_addr, input wire [255:0] io_req_data,
@@ -110,7 +114,8 @@ module pu_p_group (
  wire [9:0] store_addr;
  wire [127:0] store_data,store_result;
  wire store_load_valid,store_load_ready,store_done_valid,store_done_error,store_done_take;
- pu_p_store_control #(.CLIENTS(4)) store_control(
+ pu_p_store_control #(.CLIENTS(4), .ENABLE_BANK_RW(S_BANK_RW),
+  .CONSUMER_PRIORITY(S_CONSUMER_PRIORITY), .CONSUMER_MASK(4'b1100)) store_control(
   .clk(clk),.reset(reset_q),.req_valid({local_req,mem_req}),
   .req_write({local_write,mem_write}),.req_addr({local_addr,mem_addr}),
   .req_data({local_data,mem_data}),.req_ready({local_ready,mem_ready}),
@@ -122,7 +127,7 @@ module pu_p_group (
   .store_load_valid(store_load_valid),.store_load_ready(store_load_ready),
   .store_done_valid(store_done_valid),.store_done_error(store_done_error),.store_done_take(store_done_take),
   .load_done_valid(s_load_done),.load_done_error(s_load_error),.load_done_take(s_load_take));
- local_s_p store(
+ local_s_p #(.ENABLE_BANK_RW(S_BANK_RW), .ENABLE_REUSE_A(M_CONTEXTS != 0)) store(
   .clk(clk),.reset(reset_q),.req_valid(store_req),.req_write(store_write),
   .req_addr(store_addr),.req_data(store_data),.req_ready(store_ready),
   .rsp_valid(store_rsp),.rsp_ready(store_take),.rsp_data(store_result),
@@ -133,6 +138,15 @@ module pu_p_group (
   .done_valid(store_done_valid),.done_take(store_done_take),.done_error(store_done_error),
   .a_valid(sa_valid),.a_ready(sa_ready),.a_bank(sa_bank),.a_row(sa_row),.a_tile(sa_tile),.a_wide(sa_wide),.a_data(sa_data),
   .b_valid(sb_valid),.b_ready(sb_ready),.b_bank(sb_bank),.b_tile(sb_tile),.b_wide(sb_wide),.b_half(sb_half),.b_data(sb_data));
+ generate if(M_CONTEXTS != 0) begin: context_mode
+ block_v2_m_context #(.CONTEXTS(M_CONTEXTS)) multiply(
+  .clk(clk),.reset(reset_q),.a_valid(a_valid),.a_ready(a_ready),.a_bank(a_bank),.a_row(a_row),
+  .a_tile(a_tile),.a_wide(a_wide),.a_data(a_data),.b_valid(b_valid),.b_ready(b_ready),
+  .b_bank(b_bank),.b_tile(b_tile),.b_wide(b_wide),.b_half(b_half),.b_data(b_data),
+  .cmd_valid(m_dispatch),.cmd_ready(m_ready),.cmd_op(m_op),
+  .cmd_index(m_index),.cmd_data(m_data),.rsp_valid(m_valid),.rsp_ready(m_pending && !m_dispatch && !m_commit),
+  .rsp_data(m_result),.rsp_error(m_error),.rsp_saturated(m_sat),.busy());
+ end else begin: legacy_mode
  block_v2_m multiply(
   .clk(clk),.reset(reset_q),.a_valid(a_valid),.a_ready(a_ready),.a_bank(a_bank),.a_row(a_row),
   .a_tile(a_tile),.a_wide(a_wide),.a_data(a_data),.b_valid(b_valid),.b_ready(b_ready),
@@ -140,6 +154,7 @@ module pu_p_group (
   .cmd_valid(m_dispatch),.cmd_ready(m_ready),.cmd_op(m_op),
   .cmd_index(m_index),.cmd_data(m_data),.rsp_valid(m_valid),.rsp_ready(m_pending && !m_dispatch && !m_commit),
   .rsp_data(m_result),.rsp_error(m_error),.rsp_saturated(m_sat),.busy());
+ end endgenerate
  block_v2_g gate(
   .clk(clk),.reset(reset_q),.in_valid(g_state==G_RUN),.in_ready(g_ready),
   .in_fn(3'd0),.in_gated(1'b1),.in_x(g_x),.in_gate(g_other),

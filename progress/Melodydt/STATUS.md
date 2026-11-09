@@ -2,6 +2,10 @@
 
 更新时间：2026-11-09（Asia/Shanghai）。Issue 是状态与验收的事实来源；本文件为当前任务分支摘要，不表示其他未合并分支已进入 main。
 
+## 原生P前三项实施（2026-11-09，Asia/Shanghai）
+
+Issue247已恢复in_progress，继续PR243/task/242-r-load-bounds；消费者仲裁、16KiB bank并发、八组S64上下文与B-only供数已进入RTL首版集成。[详细方案](../../docs/experiments/issue-247-p-native-optimizations.md)与[接续](../../docs/handoffs/2026-11-09-issue-247-p-native.md)。本地管理检查通过，服务器仿真待提交；不把旧模型收益当本轮实测，SRAM扩容仍不实装。默认参数保持旧行为，新功能物理/整模型尚未验收。负责人Melodydt；审查人待指定，登记pending，看板unverified/同步pending，未配置自动监测。
+
 ## 当前研究：结合 PR220/241 提高 token/s
 
 - Issue247本轮融合/流水研究已交付PR243待审（in_review），负责人Melodydt。run09/101728源af9e43282c82ed8bc43cdaf3c2ec3c1ce8fc53b2，9:56 COMPLETED0:0，22完整trace/9默认全字段回归/12小trace/3非法CLI及原生24测量通过；run07/101720源1e6e10a7，21秒COMPLETED0:0，108项FIFO测量通过。B路线decode512融合+0.0214%、prefill2+2.2776%；原生32tile直连串行1440→FIFO1071拍。有限流水整图仅条件预测，生产RTL不改、SRAM不实装。run06/08失败保留。下一步独立审查与决定最小生产接入范围；异常取消/完整并发DDR模型/面积时序尚未验收，处理人待指定。登记pending、看板unverified/同步pending、CI见PR真实回执。无活动作业/自动监测。[报告](../../docs/experiments/issue-247-u-fusion.md) / [接续](../../docs/handoffs/2026-11-09-issue-247-u-fusion.md)。
