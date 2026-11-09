@@ -172,3 +172,8 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+
+
+## 独立 SystemC Block 性能研究（Issue240）
+
+[源码与复现](../project/experiments/systemc_block_study/README.md)使用SystemC3.0.2/C++17；[结果与范围](../work/YUZE-LU/240/RESULTS.md)区分真实prefill整数DAG计时与配置派生decode预测。新增服务只属于架构候选，不能继承既有宏的功能/物理资格；不改变顶层后制互联方法。运行`sweep.py`后用`audit_results.py`独立核对34项矩阵工作量、权重流量下界和容量；具体编译、输入和资源/数值小例命令在源码README。
