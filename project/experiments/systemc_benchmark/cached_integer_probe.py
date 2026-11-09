@@ -215,8 +215,25 @@ def main():
                     valid = valid & np.broadcast_to(value.mask, actual.shape)
                 relative = float(np.linalg.norm((actual-ref)[valid]) /
                     max(np.linalg.norm(ref[valid]), 1e-300)) if valid.any() else None
+                # A large outlier row can hide percent-level error in another
+                # token. RMS normalization can subsequently expose that error.
+                # Keep last-axis rows separate; masked lanes never become data.
+                row_errors = []
+                if actual.ndim:
+                    for row_index, (u, v, keep) in enumerate(zip(
+                            actual.reshape(-1, actual.shape[-1]),
+                            ref.reshape(-1, ref.shape[-1]),
+                            np.broadcast_to(valid, actual.shape).reshape(-1, actual.shape[-1]))):
+                        if not keep.any():
+                            continue
+                        error = float(np.linalg.norm((u-v)[keep]))
+                        norm = float(np.linalg.norm(v[keep]))
+                        row_errors.append({'last_axis_row': row_index,
+                            'reference_l2': norm, 'absolute_error_l2': error,
+                            'relative_l2': error/norm if norm else None})
                 observed.append({'value': name, 'kernel': node['kernel'],
                     'primitive': node['id'], 'relative_l2_vs_dequantized_FP32': relative,
+                    'last_axis_rows': row_errors,
                     'finite_unmasked_elements': int(valid.sum()), 'shape': list(actual.shape)})
         outputs = execute(program, initial, ids, oracle, bounds,
                           dot_executor=host_dot, runtime_values=runtime,

@@ -311,3 +311,31 @@ compiler remains instruction-identical to frozen220; explicit extra iterations
 are an accuracy-repair candidate and never counted as DP gains.
 `nonlinear_probe.py` supplies independent FP64 comparisons on conventional
 quantized distributions; those successes cannot qualify the full checkpoint.
+
+
+## Mother activity and diagnostic continuation
+
+`mother_activity.py ACCEPTED NEW_SOURCE` instruments only the accepted public-port
+fixture: observation ports, rational300MHz clock, and deployed-program idle branch.
+Build RTL/gate with `mother_activity.cpp`, Verilator5.042 `--trace-underscore
+--trace-depth99 --timing --trace`, then run `mother_probe.py ACCEPTED BINARIES
+ORIGINAL_STD_LIB NEW_OUTPUT --power`. All existing assertions remain enabled.
+The three finite-peer fixtures qualify neither Qwen service latency nor nine
+resident targets. Idle PM/clock energy remains separate from activity increments.
+
+`analyze_activity.py --audit-unannotated-diodes` reports raw coverage unchanged.
+It permits exclusion from the functional-pin denominator only after **every**
+remaining pin is matched to this ODB and the original ANTENNA_X1/A zero-own-power
+Liberty tables. Input capacitance remains in the circuit. Any ordinary cell or
+incomplete identity/count proof fails. No generic waiver or lowered threshold is used.
+
+`sequence_replay.py --diagnostic-continue-after-quality-failure` preserves all
+failed checks while collecting further integer-generated tokens. Resume hashes
+include the policy/source identity; failed ancestry can never qualify a sequence.
+It still rejects changed sources/states, overflow and invalid KV. Diagnostic
+process completion is not numerical, timing or energy acceptance.
+
+Real capture replay demonstrated that additional RMS iterations fix an isolated
+seed error but leave upstream low-amplitude-token error. The observer now reports
+last-axis rows as well as a tensor norm so outlier rows cannot hide that error.
+The original default recipe remains in use.

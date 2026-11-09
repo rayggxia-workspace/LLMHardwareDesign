@@ -76,6 +76,7 @@ def main():
         gamma, epsilon = [captured(n) for n in task['inputs'][1:]]
         old_output = captured(meta['output_primitive'])
         dq_input, dq_output = arrays['FP32_input'].copy(), arrays['FP32_output'].copy()
+        seed = captured(factor_node['id']) if factor_node['id'] in meta['arrays'] else None
     initial = {'x': x, 'gamma': gamma, 'epsilon': epsilon}
     shape = list(x.raw.shape)
     model = {'sha256': 'isolated-verified-real-rms',
@@ -89,6 +90,27 @@ def main():
     eps_real = float(epsilon.raw)*math.ldexp(1., epsilon.exponent)
     ideal = data/np.sqrt(np.mean(data*data, axis=-1, keepdims=True)+eps_real)*weight
     old_real = old_output.raw.astype(np.float64)*math.ldexp(1., old_output.exponent)
+    seed_diagnostics = []
+    if seed is not None:
+        norm = np.sqrt(np.mean(data*data, axis=-1, keepdims=True)+eps_real)
+        ratios = seed.raw.astype(np.float64)*math.ldexp(1., seed.exponent)*norm
+        for row, ratio in enumerate(ratios.reshape(-1)):
+            r = float(ratio)
+            convergent = 0 < r < math.sqrt(3.)
+            predictions = []
+            required = None
+            if convergent:
+                for iteration in range(1, 65):
+                    r = r*(3.-r*r)/2
+                    if iteration in (1, 2, 3, 4, 8):
+                        predictions.append({'iterations': iteration, 'relative_factor_error': abs(1.-r)})
+                    if required is None and abs(1.-r) <= 1e-4:
+                        required = iteration
+            seed_diagnostics.append({'row': row, 'initial_factor_over_ideal': float(ratio),
+                'inside_real_Newton_convergence_interval': convergent,
+                'ideal_real_iterations_to_factor_relative_error_1e_minus4': required,
+                'predictions_without_fixed_point_rounding': predictions,
+                'boundary': 'diagnostic mathematical recurrence only; not a fixed-point or model qualification'})
     checks = []
     for refinements in (1, 2, 3, 4, 8):
         program = compile_program(model, initial, calibration, {'out': old_output.exponent},
@@ -116,6 +138,7 @@ def main():
         'true_epsilon_real': eps_real,
         'input_relative_l2_vs_DQ_FP32': relative(data, dq_input),
         'original_output_relative_l2_vs_DQ_FP32': relative(old_real, dq_output),
+        'native_seed_diagnostics': seed_diagnostics,
         'baseline_reproduces_captured_integer_output_bit_exact': True, 'checks': checks,
         'native_factor_calls_independently_checked': audited.calls,
         'sources_sha256': {n: sha(Path(__file__).with_name(n)) for n in

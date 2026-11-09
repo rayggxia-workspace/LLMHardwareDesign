@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 
 
 def sha(p):
@@ -79,6 +80,8 @@ def main():
     p.add_argument('--extra-lib', type=Path, action='append', default=[],
                    help='original characterized macro Liberty; loaded before ODB')
     p.add_argument('--escape-sta-backslashes', action='store_true')
+    p.add_argument('--audit-unannotated-diodes', action='store_true',
+                   help='classify every missing pin against this ODB and the original diode Liberty')
     p.add_argument('--minimum-pin-coverage', type=float, default=.99,
                    help='fail incomplete annotation; all remaining pins still require classification')
     a = p.parse_args()
@@ -94,12 +97,18 @@ def main():
     window = normalize_vcd(a.vcd, vcd, timing['window_ps'], a.scope, a.escape_sta_backslashes)
     inputs = [a.liberty, *a.extra_lib, a.vcd, a.functional_receipt, Path(__file__)]
     inputs += [a.physical / ('6_final.' + x) for x in ('odb', 'spef', 'sdc', 'v')]
+    # Check all physical/library inputs before spending time running the tool.
+    for path in inputs:
+        if not path.is_file():
+            raise FileNotFoundError(path)
     script = a.output / 'power.tcl'
     script.write_text(''.join('read_liberty {%s}\n' % lib for lib in [a.liberty, *a.extra_lib]) +
         'read_db {%s}\nread_sdc {%s}\nread_spef {%s}\n' %
         (a.physical / '6_final.odb', a.physical / '6_final.sdc', a.physical / '6_final.spef') +
         'set_propagated_clock [all_clocks]\nreport_units\n' +
-        'read_vcd -scope {%s} {%s}\nreport_activity_annotation\n' % (a.scope, vcd) +
+        'read_vcd -scope {%s} {%s}\n' % (a.scope, vcd) +
+        ('report_activity_annotation -report_unannotated > {%s}\n' % (a.output/'unannotated.txt')
+         if a.audit_unannotated_diodes else 'report_activity_annotation\n') +
         'report_power -digits 9\nputs "ACTIVITY_ANALYSIS_COMPLETED"\n')
     log = a.output / 'power.log'
     command = ['openroad', '-no_init', '-threads', str(a.cores), '-exit', str(script)]
@@ -107,18 +116,44 @@ def main():
         run = subprocess.run(command, stdout=f, stderr=subprocess.STDOUT)
     text = log.read_text()
     annotated = re.findall(r'Annotated (\d+) pin activities\.', text)
-    unannotated = re.findall(r'(?m)^unannotated\s+(\d+)', text)
+    annotation_text = (a.output/'unannotated.txt').read_text() if a.audit_unannotated_diodes and (a.output/'unannotated.txt').is_file() else text
+    unannotated = re.findall(r'(?m)^unannotated\s+(\d+)', annotation_text)
     totals = re.findall(r'(?m)^Total\s+([\d.eE+-]+)\s+([\d.eE+-]+)\s+([\d.eE+-]+)\s+([\d.eE+-]+)', text)
     valid = (run.returncode == 0 and 'ACTIVITY_ANALYSIS_COMPLETED' in text and
              not re.search(r'(?m)^(?:Error:|\[ERROR)', text) and len(annotated) == 1 and
              int(annotated[0]) > 0 and len(totals) == 1 and len(unannotated) == 1 and
              'Power (Watts)' in text)
     coverage = int(annotated[0]) / (int(annotated[0]) + int(unannotated[0])) if valid else None
-    sufficient = valid and coverage >= a.minimum_pin_coverage
+    diode_audit = None
+    if valid and a.audit_unannotated_diodes and int(unannotated[0]):
+        audit_source = Path(__file__).with_name('audit_unannotated.tcl')
+        classifier = Path(__file__).with_name('classify_m_activity.py')
+        audit_script = a.output/'audit-diodes.tcl'
+        audit_script.write_text('source {%s}\naudit_unannotated {%s} {%s} {%s}\n' %
+            (audit_source, a.physical/'6_final.odb', a.output/'unannotated.txt', a.output/'diode-identities.txt'))
+        audit_log = a.output/'audit-diodes.log'
+        with audit_log.open('w') as f:
+            subprocess.run(['openroad', '-no_init', '-threads', str(a.cores), '-exit', str(audit_script)],
+                           stdout=f, stderr=subprocess.STDOUT, check=True)
+        audit_receipt = a.output/'diode-audit.json'
+        with (a.output/'classify-diodes.log').open('w') as f:
+            subprocess.run([sys.executable, classifier, a.output/'unannotated.txt',
+                a.output/'diode-identities.txt', audit_log, a.liberty, audit_receipt,
+                '--sample-label', a.sample_label, '--annotated-count', annotated[0]],
+                stdout=f, stderr=subprocess.STDOUT, check=True)
+        diode_audit = json.loads(audit_receipt.read_text())
+        if diode_audit['remaining_pin_count'] != int(unannotated[0]):
+            raise ValueError('diode audit did not classify every missing pin')
+        inputs += [audit_source, classifier, audit_script, audit_log, audit_receipt,
+                   a.output/'unannotated.txt', a.output/'diode-identities.txt']
+    effective_coverage = 1. if diode_audit is not None else coverage
+    sufficient = valid and effective_coverage >= a.minimum_pin_coverage
     result = {'tool_completed_with_real_annotation': bool(valid), 'scope': a.scope,
               'window': window, 'annotation_count': int(annotated[0]) if annotated else None,
               'unannotated_count': int(unannotated[0]) if unannotated else None,
               'pin_coverage_fraction': coverage, 'minimum_pin_coverage': a.minimum_pin_coverage,
+              'functional_pin_coverage_fraction_after_physical_diode_audit': effective_coverage,
+              'unannotated_diode_audit': diode_audit,
               'pin_coverage_screen_passed': bool(sufficient),
               'tool_command': command, 'source_sha256': {str(x): sha(x) for x in inputs},
               'normalized_vcd_sha256': sha(vcd), 'power_log_sha256': sha(log),

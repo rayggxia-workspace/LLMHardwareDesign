@@ -37,6 +37,8 @@ def main():
     p.add_argument('--decode-template', type=Path)
     p.add_argument('--prefill-onnx', type=Path)
     p.add_argument('--resume', type=Path)
+    p.add_argument('--diagnostic-continue-after-quality-failure', action='store_true',
+        help='keep failed checks and continue integer generation; never qualifies a failed sequence')
     p.add_argument('--oracle-command', type=json.loads, required=True)
     a = p.parse_args()
     if bool(a.checkpoint) == a.tiny or min(a.generated_tokens, a.steps_this_run, a.threads) < 1:
@@ -62,6 +64,7 @@ def main():
     from cached_template import export_template, specialize
     from exact_reference_dot import ExactReferenceDot
     from kv_handoff import handoff
+    from sequence_policy import validate_resume, sequence_passed
 
     torch.set_num_threads(a.threads)
     torch.set_num_interop_threads(1)
@@ -142,21 +145,22 @@ def main():
         'weights_manifest_sha256': sha(weights_path), 'HF_model_source_sha256': hf_source_sha,
         'cached_primitives_sha256': sha(Path(__file__).with_name('cached_primitives.py')),
         'sequence_source_sha256': sha(Path(__file__)), 'kv_exponent': -20,
+        'sequence_policy_sha256': sha(Path(__file__).with_name('sequence_policy.py')),
+        'diagnostic_continue_after_quality_failure': a.diagnostic_continue_after_quality_failure,
         'source_artifacts_sha256': sha(a.output/'source-artifacts.json'),
         'checkpoint_config_sha256': sha(a.checkpoint / 'config.json') if a.checkpoint else None}
     generated, previous, ancestry = [], None, []
     if a.resume:
         old = json.loads((a.resume / 'receipt.json').read_text())
-        base_identity = {k: v for k, v in old['identity'].items() if k != 'decode_template_sha256'}
-        if not old['batch_numeric_passed'] or base_identity != identity:
-            raise ValueError('resume identity changed or previous batch failed')
+        validate_resume(old, identity, a.diagnostic_continue_after_quality_failure)
         if sha(a.resume / 'state.npz') != old['state_sha256']:
             raise ValueError('resume state drift')
         generated = old['generated_tokens']
         with np.load(a.resume / 'state.npz', allow_pickle=False) as saved:
             previous = {n: Q(saved[n].copy(), -20) for n in saved.files}
         ancestry = old['ancestry'] + [{'receipt_sha256': sha(a.resume / 'receipt.json'),
-            'accepted_generated_tokens': len(generated), 'numeric_passed': True}]
+            'accepted_generated_tokens': len(generated),
+            'numeric_passed': old.get('sequence_numeric_passed', old['batch_numeric_passed'])}]
     if len(generated) >= a.generated_tokens:
         raise ValueError('sequence is already complete')
     template = a.decode_template or a.output / 'decode-template.onnx'
@@ -301,7 +305,7 @@ def main():
             checks.append(row)
             (directory/'receipt.json').write_text(json.dumps(row, indent=2)+'\n')
             print(json.dumps({'step': number, 'passed': row['passed'], 'token': token}), flush=True)
-            if not row['passed']:
+            if not row['passed'] and not a.diagnostic_continue_after_quality_failure:
                 break
     except Exception as error:
         (a.output/'failure.json').write_text(json.dumps({'error_type': type(error).__name__,
@@ -324,8 +328,10 @@ def main():
     sources_unchanged = all((Path(n).stat().st_size, Path(n).stat().st_mtime_ns) == stat
                             for n, stat in source_stats.items())
     passed = sources_unchanged and sha(hf_source) == hf_source_sha and all(c['passed'] for c in checks)
+    lineage_passed = sequence_passed(passed, ancestry)
     result = {'scope': __doc__, 'identity': identity, 'ancestry': ancestry, 'checks': checks,
         'generated_tokens': generated, 'batch_numeric_passed': passed,
+        'sequence_numeric_passed': lineage_passed,
         'generation_complete': len(generated) == a.generated_tokens,
         'state_sha256': sha(a.output/'state.npz'), 'state_count': len(state),
         'calibrations_sha256': {k: sha(a.output/('calibration-'+k+'.json')) for k in calibrations},
@@ -336,10 +342,10 @@ def main():
                   'onnxruntime': ort.__version__},
         'EOS_policy': 'fixed generation count, as in reference benchmark; no early stop',
         'live_integer_state_origin': 'empty-cache emitted integer prefill, then only emitted integer outputs',
-        'full_integer_sequence_qualified': passed and not a.tiny and len(generated) == a.generated_tokens,
+        'full_integer_sequence_qualified': lineage_passed and not a.tiny and len(generated) == a.generated_tokens,
         'systemc_time_qualified': False, 'energy_qualified': False}
     (a.output/'receipt.json').write_text(json.dumps(result, indent=2)+'\n')
-    if not passed:
+    if not lineage_passed and not a.diagnostic_continue_after_quality_failure:
         raise ValueError('sequence quality check failed; evidence preserved')
 
 

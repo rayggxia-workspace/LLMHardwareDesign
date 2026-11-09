@@ -378,3 +378,24 @@ SystemC后端，继续补LC/MC/互联/时钟/外存。所有硬件/精度/配方
 
 当前完整3B自由生成D128、SystemC整系统时间/能量、总J/token与公开FPGA双指标仍未达标，继续in_progress和草稿PR235。
 精度/配方/分配/硬件变化均与DP20%分列。登记PR5 pending，看板unverified/同步pending，独立审查人待指定。
+
+
+## 2026-11-09 09:53 CST：母控活动完成，真实RMS归因修正
+
+- [母控采样](mother-activity-result-001.json)：接受的双目标母控、程序SRAM、原Lib和提取RC，单目标/双目标并行/背压三组，RTL/最终网表各三初态全部一致。
+  窗口分别688/800/920拍；持续idle约67.715mW，增量约70.36/98.94/78.40pJ每fixture任务，不能替代Qwen指令的通用系数。
+  Verilator必须导出underscore内部网络；仅提高trace深度的失败保留。115563个pin获得实际活动，1391个剩余pin在18份分析中各自经ODB和原Lib逐项证明为零自身功耗天线二极管输入，输入负载保留。
+  原98.81%覆盖不冒充99%；新增明确的物理分类路径，功能pin覆盖才为100%，未降低原阈值。仍只验收2个resident target，非9目标或整片能耗。
+- [101503终态](cached-integer-result-006.json)：FAILED 1:0、2m33s；18份输出仍逐位等于旧adapter，P0Q1/P0Q2未过原HF门，其他四形状通过。
+  18份真实layer3 RMS整数输入/中间值/gamma/epsilon和DQ-FP32参考全部回收；81文件包、成员SHA与本地/远端包SHA核验一致。
+- [18份真实RMS重放](rms-real-replay-result-001.json)：先逐位复现旧输出，再对相同整数输入比较1/2/3/4/8迭代，105次原生N因子经独立isqrt核对。
+  **修正此前归因**：P0Q2 variant0局部误差从0.06896%降至两迭代0.000663%，但相对DQ-FP32整图的1.681%仍为1.680%。
+  上游低幅值token行输入已经差1.163%，另一行大outlier使整张输入误差看起来仅0.00948%；不能靠额外RMS迭代宣布整模型修复。
+  新observer按最后一维逐行记录误差，下一次默认配方诊断用于定位真正起点。额外迭代保持候选，不全局开启、不计DP收益。
+- 新增显式诊断续跑模式，质量失败仍记录false，可继续整数生成；恢复身份包含此策略和源SHA，历史任一步失败永久阻止sequence资格。
+  模式不允许源漂移、状态漂移、非整数KV或替换HF现场输入。它只用于收集失败轨迹，不放宽原质量门。
+- 两个局部包共91MB、704文件，逐文件/本地/远端SHA核对完成，存放本任务local-results-006。
+  36项单位检查及管理结构检查通过。101486仍PENDING(Priority)，原冻结源只请求自然提示首token，远程6×10、c64/c96无限时；不将排队/首token写成D128完成。
+
+仍缺完整3B自由生成D128、整系统SystemC时间和能量、总J/token以及公开FPGA双指标达标。继续in_progress、PR235草稿；不关闭任务。
+登记PR5 pending；无board配置/Projects能力，看板unverified、同步pending；独立审查人待指定。
