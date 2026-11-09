@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "case": "raw256",
+  "negative_control": false,
+  "source_sha256": {
+    "project/experiments/r_load_bounds/tb_load_bounds.sv": "cc045f390570898feb25deb43c42e29d8bb102151ee2246fd3051352dafee139",
+    "project/rtl/r_local_state/r_stream_local.sv": "48a93b2f4d4a5777eb4ef59f36cf635541498c660562353d430ec70470c04d84",
+    "project/rtl/r_local_state/r_state_store.sv": "7b50c3abae20587ac49726fed375da6390fc1d4a260ae299939fc6725dae1d40"
+  },
+  "runner_sha256": "104f8aca9b56df087702046b2714b3da056e2aab85023af102e8fabbfb728b14",
+  "runs": [
+    {
+      "mode": 1,
+      "seed": 143,
+      "exit_code": 0,
+      "log_sha256": "8b5e62941896c44adbb18733eaef4a23d6f3b58b0f8b9d4055e0f28beee4d90e",
+      "outcome": "passed"
+    },
+    {
+      "mode": 2,
+      "seed": 143,
+      "exit_code": 0,
+      "log_sha256": "3ef7894a5e2d18234389964c6636abd8bd55c7cdbbeebc90f045dfd1b29f0bef",
+      "outcome": "passed"
+    },
+    {
+      "mode": 2,
+      "seed": 144,
+      "exit_code": 0,
+      "log_sha256": "9d0fa474b4155eda5c0c5f95f9901578f97c05bf60c39839a5ca40e40ce808cd",
+      "outcome": "passed"
+    }
+  ],
+  "verilator_version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "compile_command": [
+    "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+    "--binary",
+    "--timing",
+    "--assert",
+    "-Wno-fatal",
+    "--x-initial",
+    "unique",
+    "--x-assign",
+    "unique",
+    "-j",
+    "4",
+    "--top-module",
+    "tb_load_bounds",
+    "--Mdir",
+    "/public/home/yuzelu/Melodydt/issue242-r-load-bounds/run01/results-raw256/obj",
+    "-GWORDS=256",
+    "/public/home/yuzelu/Melodydt/issue242-r-load-bounds/run01/source/project/experiments/r_load_bounds/tb_load_bounds.sv",
+    "/public/home/yuzelu/Melodydt/issue242-r-load-bounds/run01/source/project/rtl/r_local_state/r_stream_local.sv",
+    "/public/home/yuzelu/Melodydt/issue242-r-load-bounds/run01/source/project/rtl/r_local_state/r_state_store.sv"
+  ],
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3
+  ]
+}

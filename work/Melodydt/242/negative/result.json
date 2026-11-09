@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "case": "negative",
+  "negative_control": true,
+  "source_sha256": {
+    "project/experiments/r_load_bounds/tb_load_bounds.sv": "cc045f390570898feb25deb43c42e29d8bb102151ee2246fd3051352dafee139",
+    "old-main/r_stream_local.sv": "dc41d52eb88efe6cc592683b788d09da980c1c01e779ab54db9fb647d730363d",
+    "project/rtl/r_local_state/r_state_store.sv": "7b50c3abae20587ac49726fed375da6390fc1d4a260ae299939fc6725dae1d40"
+  },
+  "runner_sha256": "104f8aca9b56df087702046b2714b3da056e2aab85023af102e8fabbfb728b14",
+  "runs": [
+    {
+      "mode": 1,
+      "seed": 143,
+      "exit_code": 1,
+      "log_sha256": "d68d43847dae8bfab737f5b16cb1b1e27c7a6488bf14c6cd7085b4686d320388",
+      "outcome": "expected old-source defect"
+    },
+    {
+      "mode": 2,
+      "seed": 143,
+      "exit_code": 1,
+      "log_sha256": "d68d43847dae8bfab737f5b16cb1b1e27c7a6488bf14c6cd7085b4686d320388",
+      "outcome": "expected old-source defect"
+    },
+    {
+      "mode": 2,
+      "seed": 144,
+      "exit_code": 1,
+      "log_sha256": "d68d43847dae8bfab737f5b16cb1b1e27c7a6488bf14c6cd7085b4686d320388",
+      "outcome": "expected old-source defect"
+    }
+  ],
+  "verilator_version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "compile_command": [
+    "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+    "--binary",
+    "--timing",
+    "--assert",
+    "-Wno-fatal",
+    "--x-initial",
+    "unique",
+    "--x-assign",
+    "unique",
+    "-j",
+    "4",
+    "--top-module",
+    "tb_load_bounds",
+    "--Mdir",
+    "/public/home/yuzelu/Melodydt/issue242-r-load-bounds/run01/results-negative/obj",
+    "-GWORDS=256",
+    "/public/home/yuzelu/Melodydt/issue242-r-load-bounds/run01/source/project/experiments/r_load_bounds/tb_load_bounds.sv",
+    "/public/home/yuzelu/Melodydt/issue242-r-load-bounds/run01/old-main/r_stream_local.sv",
+    "/public/home/yuzelu/Melodydt/issue242-r-load-bounds/run01/source/project/rtl/r_local_state/r_state_store.sv"
+  ],
+  "cpu_affinity": [
+    4,
+    5,
+    6,
+    7
+  ]
+}

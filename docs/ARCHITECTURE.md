@@ -25,6 +25,17 @@ python -X utf8 project/experiments/block_v2/check_release.py --local-artifacts
 
 上面检查不重跑 EDA。需要重跑时，在固定Linux/ORFS/Slurm环境依次使用 `run_rtl.py --model <m|n|e|g> --out <新目录>`、`map.py --help`、`physical.py --help`、`qualify.py --help`；原始参数、工具/库SHA和候选选择以每宏原始回执为准，禁止将单阶段完成写成宏合格。此次整合未重新执行 RTL 仿真/综合/P&R。具体输入输出及限制见结果入口。
 
+## R 原始 LOAD 地址边界回归（Issue #242）
+
+`project/experiments/r_load_bounds/` 使用真实 R256/R1024 RTL 和既有 C 适配器，检查完整 10 位索引在状态行地址截位前得到验证。原始非法装载保持 `load_ready=0`；直接调用者须预校验或撤回，C 适配器返回显式地址错误。[目标范围、准备步骤及 Slurm 复跑命令](../project/experiments/r_load_bounds/README.md)。在已分配的 Slurm 资源和指定容器中可单独执行：
+
+```bash
+python3 -B project/experiments/r_load_bounds/run.py --case raw256 --out /全新输出目录
+# 其他案例：raw1024、service256、negative（需 --old-rtl /旧源/r_stream_local.sv）
+```
+
+[实际实验记录](experiments/issue-242-r-load-bounds.md)绑定测试 commit、工具、源码与日志 SHA。九次修复版执行通过、三次旧源码反例被检出。该修复仅经过 RTL 回归，原冻结宏的物理资格不自动转移；原 192 项最终网表回归及物理重新验收未执行。
+
 ## 目录约定
 
 | 路径 | 用途 |
