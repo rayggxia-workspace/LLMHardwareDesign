@@ -304,4 +304,4 @@ python3 -B source/project/experiments/iterative_speed/round01/run.py --root "$PW
 python -B work/Melodydt/247/speed-iterations/verify.py
 ```
 
-上两条使用不同新run目录，执行 `sbatch --parsable job.sh`，不覆盖旧结果。源快照单独保存，后续轮次修改当前RTL不改写旧资格。旧模型保留vector_region全额费用，S32 NExp采用实际NX32计算服务周期；S16 prefill保留旧路径。首轮实际结果尚待服务器回执，不把命令存在描述成已执行通过。
+上两条使用不同新run目录，执行 `sbatch --parsable job.sh`，不覆盖旧结果。源快照单独保存，后续轮次修改当前RTL不改写旧资格。旧模型保留vector_region全额费用，S32 NExp采用实际NX32计算服务周期；S16 prefill保留旧路径。首轮run16/101835与run17/101838实际通过，报告与源/输入/输出SHA见迭代入口；这不等于原生完整LLM或物理资格。

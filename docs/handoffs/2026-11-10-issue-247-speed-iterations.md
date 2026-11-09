@@ -1,5 +1,21 @@
 # Issue247速度迭代接续
 
+## 最新阶段：R1已通过，R2隔离实施中
+
+R1源e6d72113a14c5a0772f01ff5851d630d5d6687fa；run16/101835已COMPLETED0:0、40秒，结果SHA78c57febe43f2a114a8a21ca9b5992b465d7b7589f05c83eb68e5f97923d4ef7。run17/101838已COMPLETED0:0、2:52，结果SHAbc27f6b66c63b7356a4ead76e800c539efb1499322f91c45114e6df79595d076。均c64/node1/4核，源码/日志/结果在上述本人父目录run16、run17。133策展原件和完整源/输入SHA已核验，见work/Melodydt/247/speed-iterations/index.json；主条件3.63678454238、shared3.35052563236，未到5。无活动作业、无自动监测。
+
+R1 PDF正在由docs/experiments/issue-247-speed-round1.md生成。R2新方向是复用原N两lane的stateless relative-exp保留op12，把四命令收敛单命令，新增参数默认0；这是小幅增量，不承诺到5。子代理在外层iterations-research/{feed,rtl,model}/round2独立实现，根尚未集成R2生产源。恢复第一步：先读最新远程head，再完成R1 PDF/证据提交和R2候选审查；不能跳过真实RTL周期而使用预估9拍。
+
+以下运行启动块为历史回执，当前状态以上述终态为准。
+
+## 最新运行回执：R1 RTL
+
+2026-11-10，Asia/Shanghai，源码e6d72113a14c5a0772f01ff5851d630d5d6687fa已上传并读回27文件Git blob一致。run16 / 101835 / mdt-r1-nexp-rtl，c64 / node1 / 4核，已读回RUNNING。服务器yuzelu@10.129.166.172，本人目录/public/home/yuzelu/Melodydt/issue247-area-speed/run16，源码source/、日志slurm-101835.log、结果results/result.json。payload SHA256 37f16a1a9c833b52459a242e5fbe50c94d1febe6da17740c160c94b51e4402ca；25源文件和1份上游版本索引随清单绑定。
+
+实际启动：目录内 `sbatch --parsable job.sh`。追踪：`squeue -j 101835`；`sacct -j 101835 --format=JobID,JobName,State,ExitCode,Elapsed,NodeList`；`tail -n 60 /public/home/yuzelu/Melodydt/issue247-area-speed/run16/slurm-101835.log`；`cat /public/home/yuzelu/Melodydt/issue247-area-speed/run16/results/result.json`。
+
+成功判据：终态COMPLETED0:0、完整RTL result.passed、所有数值/生命周期/兼容性gate、实际count1..4服务校准及源/输出SHA通过。当前尚未通过，0/4轮完成。下一步根会话回收并核验，随后运行旧模型16case；未配置聊天结束后的自动监测，恢复由Melodydt唤起此交接。以下为开始时背景记录，当前运行以上述最新块为准。
+
 2026-11-10，Asia/Shanghai；负责人Melodydt；状态in_progress。
 
 - 仓库：rayggxia-workspace/LLMHardwareDesign；[Issue247](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247) / [PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)，现有分支 `task/242-r-load-bounds`。PR未合并，不宣称已进入main。

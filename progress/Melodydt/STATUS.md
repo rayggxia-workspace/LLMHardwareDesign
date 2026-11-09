@@ -2,9 +2,9 @@
 
 ## 新一轮提速迭代（2026-11-10，Asia/Shanghai）
 
-Issue247/PR243恢复in_progress。用户授权最多四轮，每轮瓶颈研究、RTL、旧评价体系服务器评估及详细PDF；主目标W8 decode512达到5 token/s。当前0/4轮完成，R1实现复用单N的NExp批处理和正式U入口，decode S32容器受测适配；prefill S16输入保留原路径。源起点a22e199c1dce7d1037995a26f71f8b1358d038e0，远程备份task/247-speed-base-a22e199c已读回。SRAM不扩容，巨大面积候选另备份。固定旧输入、2P/1U、300MHz/17.1GB/s，共享口/理想端口分列；不改旧冻结评价工具。
+Issue247/PR243，in_progress。R1正式U共享单N批处理已服务器通过，源e6d72113a14c5a0772f01ff5851d630d5d6687fa已上传/27文件Git blob一致。run16/101835 40秒、run17/101838 2:52，均c64/node1/4核COMPLETED0:0。16场景：主ideal3.63678454238(+4.0220%)、shared3.35052563236(+3.7054%)；prefill保留。133原件、89源成员、11输入、96回收输出SHA核验通过。首轮PDF正排版，第二轮复用N的单命令stateless relative-exp路径已选定，隔离实施中；正式R2代码尚未集成/运行。
 
-当前本地实施与审计并行，尚未提交本轮仿真，无活动新作业。正式修改仅根会话负责非Git快照 `work/Melodydt/242/r-load-bounds/repo`；三个子代理只写独立 `work/Melodydt/247/iterations-research/`。后续提交与运行回执以[迭代入口](../../docs/experiments/issue-247-speed-iterations.md)及[接续记录](../../docs/handoffs/2026-11-10-issue-247-speed-iterations.md)为准。下一步R1源码提交、RTL数值/背压/U读写校准、旧模型配对评估与PDF。登记pending，看板unverified/同步pending；审查人待指定，不done。
+目标仍主decode旧体系理想端口5 token/s或满四轮，SRAM不扩容；巨大面积另备份。原物理/完整模型资格不转移。当前无活动作业、无聊天结束后自动监测。下一步完成R1 PDF并提交证据，然后R2 RTL校准与旧模型配对。[R1报告](../../docs/experiments/issue-247-speed-round1.md) / [机器证据](../../work/Melodydt/247/speed-iterations/README.md) / [接续](../../docs/handoffs/2026-11-10-issue-247-speed-iterations.md)。登记pending、Projects unverified/同步pending，审查人待指定，不done。
 
 ## 旧评价体系复评（2026-11-10）
 
