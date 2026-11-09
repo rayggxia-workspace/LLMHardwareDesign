@@ -4,7 +4,7 @@
 
 R1源e6d72113a14c5a0772f01ff5851d630d5d6687fa；run16/101835已COMPLETED0:0、40秒，结果SHA78c57febe43f2a114a8a21ca9b5992b465d7b7589f05c83eb68e5f97923d4ef7。run17/101838已COMPLETED0:0、2:52，结果SHAbc27f6b66c63b7356a4ead76e800c539efb1499322f91c45114e6df79595d076。均c64/node1/4核，源码/日志/结果在上述本人父目录run16、run17。133策展原件和完整源/输入SHA已核验，见work/Melodydt/247/speed-iterations/index.json；主条件3.63678454238、shared3.35052563236，未到5。无活动作业、无自动监测。
 
-R1 PDF正在由docs/experiments/issue-247-speed-round1.md生成。R2新方向是复用原N两lane的stateless relative-exp保留op12，把四命令收敛单命令，新增参数默认0；这是小幅增量，不承诺到5。子代理在外层iterations-research/{feed,rtl,model}/round2独立实现，根尚未集成R2生产源。恢复第一步：先读最新远程head，再完成R1 PDF/证据提交和R2候选审查；不能跳过真实RTL周期而使用预估9拍。
+R1 PDF已完成5页/125内容单元/全部页面视觉QA，源码文档固定1b3bdd623b7a85e2d7a4daac158b281e0b12dd92。PDF SHA f4618d877fee2072744aa9af8f7cefba86c4bd859d9a512d21b7996276fbf7b6，当前1/4轮完成。R2新方向是复用原N两lane的stateless relative-exp保留op12，把四命令收敛单命令，新增参数默认0；这是小幅增量，不承诺到5。子代理在外层iterations-research/{feed,rtl,model}/round2独立实现，根尚未集成R2生产源。恢复第一步：先读最新远程head，再完成R1 PDF/证据提交和R2候选审查；不能跳过真实RTL周期而使用预估9拍。
 
 以下运行启动块为历史回执，当前状态以上述终态为准。
 

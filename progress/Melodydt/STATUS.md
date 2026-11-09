@@ -2,9 +2,9 @@
 
 ## 新一轮提速迭代（2026-11-10，Asia/Shanghai）
 
-Issue247/PR243，in_progress。R1正式U共享单N批处理已服务器通过，源e6d72113a14c5a0772f01ff5851d630d5d6687fa已上传/27文件Git blob一致。run16/101835 40秒、run17/101838 2:52，均c64/node1/4核COMPLETED0:0。16场景：主ideal3.63678454238(+4.0220%)、shared3.35052563236(+3.7054%)；prefill保留。133原件、89源成员、11输入、96回收输出SHA核验通过。首轮PDF正排版，第二轮复用N的单命令stateless relative-exp路径已选定，隔离实施中；正式R2代码尚未集成/运行。
+Issue247/PR243，in_progress。R1正式U共享单N批处理已服务器通过，源e6d72113a14c5a0772f01ff5851d630d5d6687fa已上传/27文件Git blob一致。run16/101835 40秒、run17/101838 2:52，均c64/node1/4核COMPLETED0:0。16场景：主ideal3.63678454238(+4.0220%)、shared3.35052563236(+3.7054%)；prefill保留。133原件、89源成员、11输入、96回收输出SHA核验通过。首轮5页PDF及125内容单元/逐页视觉QA通过，1/4轮完成，第二轮复用N的单命令stateless relative-exp路径已选定，隔离实施中；正式R2代码尚未集成/运行。
 
-目标仍主decode旧体系理想端口5 token/s或满四轮，SRAM不扩容；巨大面积另备份。原物理/完整模型资格不转移。当前无活动作业、无聊天结束后自动监测。下一步完成R1 PDF并提交证据，然后R2 RTL校准与旧模型配对。[R1报告](../../docs/experiments/issue-247-speed-round1.md) / [机器证据](../../work/Melodydt/247/speed-iterations/README.md) / [接续](../../docs/handoffs/2026-11-10-issue-247-speed-iterations.md)。登记pending、Projects unverified/同步pending，审查人待指定，不done。
+目标仍主decode旧体系理想端口5 token/s或满四轮，SRAM不扩容；巨大面积另备份。原物理/完整模型资格不转移。当前无活动作业、无聊天结束后自动监测。下一步完成R2 RTL校准与旧模型配对，按目标继续迭代。[R1报告](../../docs/experiments/issue-247-speed-round1.md) / [机器证据](../../work/Melodydt/247/speed-iterations/README.md) / [接续](../../docs/handoffs/2026-11-10-issue-247-speed-iterations.md)。登记pending、Projects unverified/同步pending，审查人待指定，不done。
 
 ## 旧评价体系复评（2026-11-10）
 

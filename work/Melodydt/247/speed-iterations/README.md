@@ -20,4 +20,4 @@ python -B work/Melodydt/247/speed-iterations/verify.py --current-run run16
 
 查看：登录yuzelu@10.129.166.172，根目录/public/home/yuzelu/Melodydt/issue247-area-speed；`sacct -j 101835,101838 --format=JobID,State,ExitCode,Elapsed,NodeList`；各run内 `cat results/result.json` 与 `tail -n 60 slurm-<job>.log`。两作业已终态，无自动监测。
 
-本轮PDF由正式报告生成，排版/逐页视觉QA后提供；后续轮次继续按实际瓶颈和回执推进。登记PR5 pending、Projects unverified/同步pending、独立审查人待指定，未标done。
+本轮[5页PDF](../../../../docs/experiments/pdf/issue-247-speed-round1.pdf)已由正式报告完整生成，125内容单元及5页视觉QA通过；后续轮次继续按实际瓶颈和回执推进。登记PR5 pending、Projects unverified/同步pending、独立审查人待指定，未标done。
