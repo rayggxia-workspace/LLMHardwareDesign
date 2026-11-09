@@ -1,5 +1,11 @@
 # Melodydt 进度
 
+## 新一轮提速迭代（2026-11-10，Asia/Shanghai）
+
+Issue247/PR243恢复in_progress。用户授权最多四轮，每轮瓶颈研究、RTL、旧评价体系服务器评估及详细PDF；主目标W8 decode512达到5 token/s。当前0/4轮完成，R1实现复用单N的NExp批处理和正式U入口，decode S32容器受测适配；prefill S16输入保留原路径。源起点a22e199c1dce7d1037995a26f71f8b1358d038e0，远程备份task/247-speed-base-a22e199c已读回。SRAM不扩容，巨大面积候选另备份。固定旧输入、2P/1U、300MHz/17.1GB/s，共享口/理想端口分列；不改旧冻结评价工具。
+
+当前本地实施与审计并行，尚未提交本轮仿真，无活动新作业。正式修改仅根会话负责非Git快照 `work/Melodydt/242/r-load-bounds/repo`；三个子代理只写独立 `work/Melodydt/247/iterations-research/`。后续提交与运行回执以[迭代入口](../../docs/experiments/issue-247-speed-iterations.md)及[接续记录](../../docs/handoffs/2026-11-10-issue-247-speed-iterations.md)为准。下一步R1源码提交、RTL数值/背压/U读写校准、旧模型配对评估与PDF。登记pending，看板unverified/同步pending；审查人待指定，不done。
+
 ## 旧评价体系复评（2026-11-10）
 
 更新时间2026-11-10T00:50+08:00，Asia/Shanghai；Issue247/PR243，in_review，待独立审查，不done。run15/101800，源3e62b85c8da19caca31784cb380c40d323295157，c64/node1/4核、00:03:22、COMPLETED0:0。固定旧S32/S96/K256模型、输入与资源，21完整场景历史字段、5生成文件SHA精确复现；225kernel/4validation/5smoke、7回执篡改/2非法CLI/源与历史SHA漂移拒绝通过。63回收结果SHA、63当前源和16输入绑定通过。

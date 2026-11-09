@@ -1,5 +1,5 @@
 // U groups independent N, compact E and S_base leaves under local services.
-module pu_u_group (
+module pu_u_group #(parameter integer NEXP_BATCH=0) (
     input wire clk, reset,
     input wire n_cmd_valid, n_cmd_store, n_cmd_direct, n_done_ready,
     output wire n_cmd_ready, n_done_valid, n_done_error, n_done_saturated,
@@ -56,11 +56,30 @@ module pu_u_group (
     wire n_valid, n_ready, nr_valid, nr_ready, nr_error, nr_sat;
     wire [63:0] n_meta;
     wire [127:0] na, nb, nr;
-    wire n_complete;
+    wire n_complete,n_service_ready;
+    wire [127:0] n_service_data;
+    wire n_service_error,n_service_saturated;
+    reg n_rejected;
+    wire n_is_batch=NEXP_BATCH!=0&&n_cmd_meta[3:0]==15;
+    wire n_is_32=n_cmd_meta[39:8]==32'h4e583332;
+    wire n_batch_bad=n_is_batch&&(
+        (n_cmd_meta[39:8]!=32'h4e455850&&!n_is_32)||n_cmd_meta[7:4]==0||
+        n_cmd_meta[7:4]>(n_is_32?4:8)||n_cmd_sources!=1||n_cmd_src[19:10]!=0||n_cmd_direct);
+    assign n_cmd_ready=n_service_ready&&!n_rejected;
+    assign n_done_data=n_rejected?128'd0:n_service_data;
+    assign n_done_error=n_rejected||n_service_error;
+    assign n_done_saturated=!n_rejected&&n_service_saturated;
+    always @(posedge clk)begin
+        if(reset)n_rejected<=0;
+        else begin
+            if(n_rejected&&n_done_ready)n_rejected<=0;
+            if(n_cmd_valid&&n_cmd_ready&&n_batch_bad)n_rejected<=1;
+        end
+    end
     reg n_direct, n_sent;
     assign n_to_e_valid = n_complete && n_direct && !n_done_error && !n_sent;
     assign n_to_e_data = n_done_data;
-    assign n_done_valid = n_complete && (!n_direct || n_done_error || n_sent);
+    assign n_done_valid = !reset && (n_rejected || (n_complete && (!n_direct || n_done_error || n_sent)));
     always @(posedge clk) begin
         if (reset) begin
             n_direct <= 1'b0;
@@ -73,10 +92,10 @@ module pu_u_group (
         end
     end
     ucf_s_compute_client n_service(
-        .clk, .reset, .cmd_valid(n_cmd_valid), .cmd_ready(n_cmd_ready), .cmd_meta({24'b0,n_cmd_meta}),
+        .clk, .reset, .cmd_valid(n_cmd_valid&&!n_rejected&&!n_batch_bad), .cmd_ready(n_service_ready), .cmd_meta({24'b0,n_cmd_meta}),
         .cmd_sources(n_cmd_sources), .cmd_addresses({10'b0,n_cmd_src}), .cmd_store(n_cmd_store), .cmd_dst(n_cmd_dst),
-        .done_valid(n_complete), .done_ready(n_done_ready && n_done_valid), .done_data(n_done_data),
-        .done_error(n_done_error), .done_saturated(n_done_saturated),
+        .done_valid(n_complete), .done_ready(n_done_ready && n_done_valid), .done_data(n_service_data),
+        .done_error(n_service_error), .done_saturated(n_service_saturated),
         .s_req_valid(request[0]), .s_req_ready(accept[0]), .s_req_write(write[0]),
         .s_req_addr(addr[9:0]), .s_req_data(data[127:0]), .s_rsp_valid(response[0]),
         .s_rsp_ready(take[0]), .s_rsp_data(result[127:0]), .exec_valid(n_valid), .exec_ready(n_ready),
@@ -84,11 +103,28 @@ module pu_u_group (
         .result_valid(nr_valid), .result_ready(nr_ready), .result_data(nr),
         .result_error(nr_error), .result_saturated(nr_sat)
     );
+    wire core_valid,core_ready,core_result_valid,core_result_ready,core_error,core_saturated;
+    wire [63:0] core_meta;
+    wire [127:0] core_a,core_b,core_result;
+    generate if(NEXP_BATCH!=0)begin: batch_route
+        pu_nexp_shared dispatch(
+            .clk,.reset,.exec_valid(n_valid),.exec_ready(n_ready),.exec_meta(n_meta),.exec_a(na),.exec_b(nb),
+            .result_valid(nr_valid),.result_ready(nr_ready),.result_data(nr),.result_error(nr_error),.result_saturated(nr_sat),
+            .n_valid(core_valid),.n_ready(core_ready),.n_meta(core_meta),.n_a(core_a),.n_b(core_b),
+            .n_result_valid(core_result_valid),.n_result_ready(core_result_ready),.n_result(core_result),
+            .n_error(core_error),.n_saturated(core_saturated)
+        );
+    end else begin: legacy_route
+        assign core_valid=n_valid;assign n_ready=core_ready;assign core_meta=n_meta;assign core_a=na;assign core_b=nb;
+        assign nr_valid=core_result_valid;assign core_result_ready=nr_ready;assign nr=core_result;
+        assign nr_error=core_error;assign nr_sat=core_saturated;
+    end endgenerate
+    // Exactly one native N, unchanged source and arithmetic resources.
     block_v2_n normalize(
-        .clk, .reset, .cmd_valid(n_valid), .cmd_ready(n_ready),
-        .cmd_op(n_meta[3:0]), .cmd_count(n_meta[7:4]), .cmd_param(n_meta[39:8]),
-        .cmd_data(na), .cmd_aux(nb), .rsp_valid(nr_valid), .rsp_ready(nr_ready),
-        .rsp_data(nr), .rsp_error(nr_error), .rsp_saturated(nr_sat), .busy()
+        .clk, .reset, .cmd_valid(core_valid), .cmd_ready(core_ready),
+        .cmd_op(core_meta[3:0]), .cmd_count(core_meta[7:4]), .cmd_param(core_meta[39:8]),
+        .cmd_data(core_a), .cmd_aux(core_b), .rsp_valid(core_result_valid), .rsp_ready(core_result_ready),
+        .rsp_data(core_result), .rsp_error(core_error), .rsp_saturated(core_saturated), .busy()
     );
 
     wire e_valid, e_ready, er_valid, er_ready, er_error, er_sat;

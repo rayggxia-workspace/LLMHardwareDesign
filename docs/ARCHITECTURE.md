@@ -289,3 +289,19 @@ python -B work/Melodydt/247/token-throughput/verify.py
 `project/experiments/legacy_metric_eval/` 固定旧PR241/Issue247生成器和原输入，按plan.json运行21场景。参考[运行准备](../project/experiments/legacy_metric_eval/README.md)；服务器独立run含source/、inputs/、4份旧result/input及SHA部署清单，目录内 `sbatch --parsable job.sh`，4核、既有SystemC容器。禁止在登录节点或Windows运行EDA。
 
 本地回收验证：`python -B work/Melodydt/247/legacy-metric-eval/verify.py`；分析重建：`python -B work/Melodydt/247/legacy-metric-eval/analyse.py <原始result.json> --out <新分析目录>`。只读后处理不是仿真。实际run15通过，范围和SHA见[报告](experiments/issue-247-legacy-metric-evaluation.md)。旧S32/S96与理想1R1W只用于条件模型评价，不授予当前4×1RW/S64或完整原生模型资格。
+
+
+## Issue247 新周期速度迭代
+
+[迭代合同与状态](experiments/issue-247-speed-iterations.md)。R1的正式RTL使用 `pu_u_group.NEXP_BATCH=1`，默认0保留原路径。新op15显式clobber原N统计会话，PACKED16/NX32精确magic、arity/count及未用lane零值合同由实验README定义；原N与S容量不变。
+
+```bash
+# 本人独立Slurm目录，已提交源码和input/source SHA先验一致，4核固定容器。
+python3 -B source/project/experiments/rtl_iterations/round1/run.py --root "$PWD"
+# 只有上述完整RTL通过且actual profile已SHA绑定后，才执行模型。
+python3 -B source/project/experiments/iterative_speed/round01/run.py --root "$PWD"
+# 本机仅验证回收证据；指数算术和SystemC均不在本机执行。
+python -B work/Melodydt/247/speed-iterations/verify.py
+```
+
+上两条使用不同新run目录，执行 `sbatch --parsable job.sh`，不覆盖旧结果。源快照单独保存，后续轮次修改当前RTL不改写旧资格。旧模型保留vector_region全额费用，S32 NExp采用实际NX32计算服务周期；S16 prefill保留旧路径。首轮实际结果尚待服务器回执，不把命令存在描述成已执行通过。

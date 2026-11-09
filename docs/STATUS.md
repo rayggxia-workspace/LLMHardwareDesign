@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-10，[Issue247/PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)按用户新授权开始[最多四轮RTL提速迭代](experiments/issue-247-speed-iterations.md)，恢复in_progress。主W8 decode512沿旧评价体系，目标5 token/s或满四轮，每轮详细PDF；起点3.230811共享口/3.496169理想端口为条件估计。R1单N批处理与U接入正在实现，SRAM不扩容，当前0/4轮完成；备份分支已读回。尚无本轮仿真结果，不继承历史物理资格。
+
 2026-11-10，[Issue247/PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)新增[旧评价体系复评](experiments/issue-247-legacy-metric-evaluation.md)：run15/101800的21场景全历史字段及5生成源SHA一致，旧W8 decode基线3.063655、共享口ctx8 3.230811、理想端口ctx8 3.496169；48/64KiB的4.467001/4.547434属于prefill参考。未修改生产RTL或扩容，不作为原生实测。待独立审查，登记pending、看板unverified/同步pending。
 
 2026-11-09，[Issue247/PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)新增[实施PDF](experiments/pdf/issue-247-p-native-optimizations.pdf)与[新版吞吐核验](experiments/issue-247-native-token-throughput.md)。run12历史重现、run13实际P校准、run14九场景条件模型均通过；W8 decode512条件速率0.06758→0.08174（+20.95%），prefill保持相同。原始S32整图仍被原生准入拒绝，不把条件数值当实际生成；本轮生产RTL不再变更，S不扩容。成果待独立审查，登记pending、看板unverified/同步pending，最终CI以PR回执为准。
