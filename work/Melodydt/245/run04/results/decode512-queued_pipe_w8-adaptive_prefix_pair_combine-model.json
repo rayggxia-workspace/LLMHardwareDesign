@@ -1,0 +1,790 @@
+{
+  "workload": "decode512",
+  "profile": "queued_pipe_w8",
+  "variant": "adaptive_prefix_pair_combine",
+  "binary": "model",
+  "result": {
+    "profile": "queued_pipe_w8",
+    "tokens": 1,
+    "ticks": 97922248,
+    "seconds": 0.326407492667,
+    "tokens_per_second": 3.06365516254,
+    "read_bus_bytes": 3512625152,
+    "write_bus_bytes": 14523136,
+    "logical_read_bytes": 3490211840,
+    "logical_write_bytes": 14523136,
+    "dma_descriptors": 2966278,
+    "max_outstanding_beats": 32,
+    "max_descriptor_queue": 1,
+    "max_outstanding_descriptors": 32,
+    "U_cache_peak_bytes": 12288,
+    "P_scratch_peak_bytes": 16000,
+    "cache_hits": 66180,
+    "cache_misses": 200800,
+    "dirty_evictions": 128724,
+    "dead_lines_discarded": 172213,
+    "M_commands": 1521664,
+    "M_tiles": 1521664,
+    "KV_state_write_bytes": 73728,
+    "resident_A_saved_bytes": 1151778816,
+    "M_work_ticks": 59639776,
+    "vector_work_ticks": 12578800,
+    "adapter_work_ticks": 49393664,
+    "spans_ticks": {
+      "Dot": 79344497,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    },
+    "detail": {
+      "variant": "adaptive_prefix_pair_combine",
+      "subcycles_per_core_cycle": 1000,
+      "end_subcycles": 97922247800,
+      "wait_scope": "memory waits overlap; only each P consumer stages sum to its own elapsed time",
+      "channels": [
+        {
+          "channel": 0,
+          "traffic": {
+            "logical_read": 1738678272,
+            "logical_write": 3105536,
+            "bus_read": 1749884928,
+            "bus_write": 3105536,
+            "descriptors": 1318289
+          },
+          "flows": {
+            "other": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "A": {
+              "logical_read": 176955392,
+              "logical_write": 0,
+              "bus_read": 177545216,
+              "bus_write": 0,
+              "descriptors": 184645
+            },
+            "weight": {
+              "logical_read": 1542848512,
+              "logical_write": 0,
+              "bus_read": 1542848512,
+              "bus_write": 0,
+              "descriptors": 753344
+            },
+            "dynamic_B": {
+              "logical_read": 18874368,
+              "logical_write": 0,
+              "bus_read": 29491200,
+              "bus_write": 0,
+              "descriptors": 331776
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 3105536,
+              "bus_read": 0,
+              "bus_write": 3105536,
+              "descriptors": 48524
+            },
+            "U_read": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            }
+          },
+          "bus_work_subcycles": 61519009096,
+          "credit_wait_subcycles": 5696054736,
+          "submit_credit_wait_subcycles": 1108163520,
+          "queue_wait_subcycles": 395726908,
+          "submit_queue_wait_subcycles": 0,
+          "bank_wait_subcycles": 487672992,
+          "bus_wait_subcycles": 768668247180,
+          "direction_changes": 76887,
+          "row_misses": 7037228,
+          "beats": 27390476
+        },
+        {
+          "channel": 1,
+          "traffic": {
+            "logical_read": 1751533568,
+            "logical_write": 11417600,
+            "bus_read": 1762740224,
+            "bus_write": 11417600,
+            "descriptors": 1647989
+          },
+          "flows": {
+            "other": {
+              "logical_read": 4096,
+              "logical_write": 0,
+              "bus_read": 4096,
+              "bus_write": 0,
+              "descriptors": 32
+            },
+            "A": {
+              "logical_read": 176955392,
+              "logical_write": 0,
+              "bus_read": 177545216,
+              "bus_write": 0,
+              "descriptors": 184645
+            },
+            "weight": {
+              "logical_read": 1542848512,
+              "logical_write": 0,
+              "bus_read": 1542848512,
+              "bus_write": 0,
+              "descriptors": 753344
+            },
+            "dynamic_B": {
+              "logical_read": 18874368,
+              "logical_write": 0,
+              "bus_read": 29491200,
+              "bus_write": 0,
+              "descriptors": 331776
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 3105536,
+              "bus_read": 0,
+              "bus_write": 3105536,
+              "descriptors": 48524
+            },
+            "U_read": {
+              "logical_read": 12851200,
+              "logical_write": 0,
+              "bus_read": 12851200,
+              "bus_write": 0,
+              "descriptors": 200800
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 8238336,
+              "bus_read": 0,
+              "bus_write": 8238336,
+              "descriptors": 128724
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 73728,
+              "bus_read": 0,
+              "bus_write": 73728,
+              "descriptors": 144
+            }
+          },
+          "bus_work_subcycles": 62261851136,
+          "credit_wait_subcycles": 5696054736,
+          "submit_credit_wait_subcycles": 1108163520,
+          "queue_wait_subcycles": 395726908,
+          "submit_queue_wait_subcycles": 0,
+          "bank_wait_subcycles": 485482608,
+          "bus_wait_subcycles": 768673542908,
+          "direction_changes": 143419,
+          "row_misses": 7303624,
+          "beats": 27721216
+        }
+      ],
+      "P": [
+        {
+          "worker": 0,
+          "consumer_ready_wait_subcycles": 17461337120,
+          "input_ACK_wait_subcycles": 6704486136,
+          "service_subcycles": 52304202280,
+          "output_subcycles": 2474085624,
+          "elapsed_subcycles": 78944111160,
+          "producer_free_wait_subcycles": 28378216746,
+          "tiles": 760832,
+          "prefix_A_loaded_bytes": 294912,
+          "prefix_A_saved_bytes": 37453824,
+          "prefix_peak_bytes": 8192,
+          "write_buffer_peak_bytes": 512
+        },
+        {
+          "worker": 1,
+          "consumer_ready_wait_subcycles": 17461337120,
+          "input_ACK_wait_subcycles": 6704486136,
+          "service_subcycles": 52304202280,
+          "output_subcycles": 2474085624,
+          "elapsed_subcycles": 78944111160,
+          "producer_free_wait_subcycles": 28378216746,
+          "tiles": 760832,
+          "prefix_A_loaded_bytes": 294912,
+          "prefix_A_saved_bytes": 37453824,
+          "prefix_peak_bytes": 8192,
+          "write_buffer_peak_bytes": 512
+        }
+      ],
+      "S_calendars": [
+        {
+          "group": 0,
+          "service_subcycles": 64226340000,
+          "scheduled_wait_subcycles": 267710991898,
+          "reservations": 28228196
+        },
+        {
+          "group": 1,
+          "service_subcycles": 64226340000,
+          "scheduled_wait_subcycles": 267710991898,
+          "reservations": 28228196
+        },
+        {
+          "group": 2,
+          "service_subcycles": 0,
+          "scheduled_wait_subcycles": 0,
+          "reservations": 0
+        },
+        {
+          "group": 3,
+          "service_subcycles": 740621000,
+          "scheduled_wait_subcycles": 0,
+          "reservations": 455405
+        }
+      ],
+      "matrix_shapes": [
+        {
+          "key": "1x11008x2048b1l0",
+          "calls": 72,
+          "wall_subcycles": 35608259664,
+          "tiles": 792576,
+          "commands": 792576,
+          "flows": {
+            "other": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "A": {
+              "logical_read": 1179648,
+              "logical_write": 0,
+              "bus_read": 1179648,
+              "bus_write": 0,
+              "descriptors": 144
+            },
+            "weight": {
+              "logical_read": 1623195648,
+              "logical_write": 0,
+              "bus_read": 1623195648,
+              "bus_write": 0,
+              "descriptors": 792576
+            },
+            "dynamic_B": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 3170304,
+              "bus_read": 0,
+              "bus_write": 3170304,
+              "descriptors": 49536
+            },
+            "U_read": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 216576,
+              "bus_read": 0,
+              "bus_write": 216576,
+              "descriptors": 3384
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            }
+          }
+        },
+        {
+          "key": "1x151936x2048b1l0",
+          "calls": 1,
+          "wall_subcycles": 6812958480,
+          "tiles": 151936,
+          "commands": 151936,
+          "flows": {
+            "other": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "A": {
+              "logical_read": 16384,
+              "logical_write": 0,
+              "bus_read": 16384,
+              "bus_write": 0,
+              "descriptors": 2
+            },
+            "weight": {
+              "logical_read": 311164928,
+              "logical_write": 0,
+              "bus_read": 311164928,
+              "bus_write": 0,
+              "descriptors": 151936
+            },
+            "dynamic_B": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 607744,
+              "bus_read": 0,
+              "bus_write": 607744,
+              "descriptors": 9496
+            },
+            "U_read": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 8192,
+              "bus_read": 0,
+              "bus_write": 8192,
+              "descriptors": 128
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            }
+          }
+        },
+        {
+          "key": "1x2048x11008b1l0",
+          "calls": 36,
+          "wall_subcycles": 27166690872,
+          "tiles": 396288,
+          "commands": 396288,
+          "flows": {
+            "other": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "A": {
+              "logical_read": 330891264,
+              "logical_write": 0,
+              "bus_read": 330891264,
+              "bus_write": 0,
+              "descriptors": 322632
+            },
+            "weight": {
+              "logical_read": 811597824,
+              "logical_write": 0,
+              "bus_read": 811597824,
+              "bus_write": 0,
+              "descriptors": 396288
+            },
+            "dynamic_B": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 294912,
+              "bus_read": 0,
+              "bus_write": 294912,
+              "descriptors": 4608
+            },
+            "U_read": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 423936,
+              "bus_read": 0,
+              "bus_write": 423936,
+              "descriptors": 6624
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            }
+          }
+        },
+        {
+          "key": "1x2048x2048b1l0",
+          "calls": 72,
+          "wall_subcycles": 6690795984,
+          "tiles": 147456,
+          "commands": 147456,
+          "flows": {
+            "other": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "A": {
+              "logical_read": 1179648,
+              "logical_write": 0,
+              "bus_read": 1179648,
+              "bus_write": 0,
+              "descriptors": 144
+            },
+            "weight": {
+              "logical_read": 301989888,
+              "logical_write": 0,
+              "bus_read": 301989888,
+              "bus_write": 0,
+              "descriptors": 147456
+            },
+            "dynamic_B": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 589824,
+              "bus_read": 0,
+              "bus_write": 589824,
+              "descriptors": 9216
+            },
+            "U_read": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 216576,
+              "bus_read": 0,
+              "bus_write": 216576,
+              "descriptors": 3384
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            }
+          }
+        },
+        {
+          "key": "1x256x2048b1l0",
+          "calls": 72,
+          "wall_subcycles": 852859584,
+          "tiles": 18432,
+          "commands": 18432,
+          "flows": {
+            "other": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "A": {
+              "logical_read": 1179648,
+              "logical_write": 0,
+              "bus_read": 1179648,
+              "bus_write": 0,
+              "descriptors": 144
+            },
+            "weight": {
+              "logical_read": 37748736,
+              "logical_write": 0,
+              "bus_read": 37748736,
+              "bus_write": 0,
+              "descriptors": 18432
+            },
+            "dynamic_B": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 73728,
+              "bus_read": 0,
+              "bus_write": 73728,
+              "descriptors": 1152
+            },
+            "U_read": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            }
+          }
+        },
+        {
+          "key": "8x128x512b2l2",
+          "calls": 36,
+          "wall_subcycles": 1309047768,
+          "tiles": 5760,
+          "commands": 5760,
+          "flows": {
+            "other": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "A": {
+              "logical_read": 18874368,
+              "logical_write": 0,
+              "bus_read": 20054016,
+              "bus_write": 0,
+              "descriptors": 46080
+            },
+            "weight": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "dynamic_B": {
+              "logical_read": 18874368,
+              "logical_write": 0,
+              "bus_read": 37748736,
+              "bus_write": 0,
+              "descriptors": 589824
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 294912,
+              "bus_read": 0,
+              "bus_write": 294912,
+              "descriptors": 4608
+            },
+            "U_read": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 430848,
+              "bus_read": 0,
+              "bus_write": 430848,
+              "descriptors": 6732
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            }
+          }
+        },
+        {
+          "key": "8x512x128b2l1",
+          "calls": 36,
+          "wall_subcycles": 903883968,
+          "tiles": 9216,
+          "commands": 9216,
+          "flows": {
+            "other": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "A": {
+              "logical_read": 589824,
+              "logical_write": 0,
+              "bus_read": 589824,
+              "bus_write": 0,
+              "descriptors": 144
+            },
+            "weight": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "dynamic_B": {
+              "logical_read": 18874368,
+              "logical_write": 0,
+              "bus_read": 21233664,
+              "bus_write": 0,
+              "descriptors": 73728
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 1179648,
+              "bus_read": 0,
+              "bus_write": 1179648,
+              "descriptors": 18432
+            },
+            "U_read": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 294912,
+              "bus_read": 0,
+              "bus_write": 294912,
+              "descriptors": 4608
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            }
+          }
+        }
+      ]
+    }
+  },
+  "audit": {
+    "passed": true,
+    "shape_count": 7,
+    "matrix_MACs": 3161194496,
+    "minimum_static_weight_payload": 3085697024,
+    "dynamic_B_payload": 37748736,
+    "dot_output_payload": 6211072,
+    "flow_totals": {
+      "other": {
+        "logical_read": 4096,
+        "logical_write": 0,
+        "bus_read": 4096,
+        "bus_write": 0,
+        "descriptors": 32
+      },
+      "A": {
+        "logical_read": 353910784,
+        "logical_write": 0,
+        "bus_read": 355090432,
+        "bus_write": 0,
+        "descriptors": 369290
+      },
+      "weight": {
+        "logical_read": 3085697024,
+        "logical_write": 0,
+        "bus_read": 3085697024,
+        "bus_write": 0,
+        "descriptors": 1506688
+      },
+      "dynamic_B": {
+        "logical_read": 37748736,
+        "logical_write": 0,
+        "bus_read": 58982400,
+        "bus_write": 0,
+        "descriptors": 663552
+      },
+      "dot_output": {
+        "logical_read": 0,
+        "logical_write": 6211072,
+        "bus_read": 0,
+        "bus_write": 6211072,
+        "descriptors": 97048
+      },
+      "U_read": {
+        "logical_read": 12851200,
+        "logical_write": 0,
+        "bus_read": 12851200,
+        "bus_write": 0,
+        "descriptors": 200800
+      },
+      "U_write": {
+        "logical_read": 0,
+        "logical_write": 8238336,
+        "bus_read": 0,
+        "bus_write": 8238336,
+        "descriptors": 128724
+      },
+      "KV_write": {
+        "logical_read": 0,
+        "logical_write": 73728,
+        "bus_read": 0,
+        "bus_write": 73728,
+        "descriptors": 144
+      }
+    },
+    "scope": "bytes/work/private-S/credit/P-consumer-phase conservation, not numeric/RTL/DDR qualification"
+  },
+  "systemc_banner": "SystemC 3.0.2-Accellera --- Nov  9 2026 00:34:07",
+  "log_sha256": "462ca79420b21722e3d93e7e1521663f57cad8a4e35eeb6e6fb5477fda228ae1"
+}

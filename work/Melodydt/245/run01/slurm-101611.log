@@ -1,0 +1,33 @@
+project/experiments/p_dma_study/.gitattributes: OK
+project/experiments/p_dma_study/audit.py: OK
+project/experiments/p_dma_study/detail.hpp: OK
+project/experiments/p_dma_study/instrument.py: OK
+project/experiments/p_dma_study/job.sh: OK
+project/experiments/p_dma_study/matrix.inc: OK
+project/experiments/p_dma_study/oracle.py: OK
+project/experiments/p_dma_study/README.md: OK
+project/experiments/p_dma_study/run.py: OK
+project/experiments/p_dma_study/source.json: OK
+project/experiments/p_dma_study/upstream/check_kernels.py: OK
+project/experiments/p_dma_study/upstream/kernel_probe.cpp: OK
+project/experiments/p_dma_study/upstream/model.cpp: OK
+project/experiments/p_dma_study/upstream/smoke.py: OK
+project/experiments/p_dma_study/upstream/sweep.py: OK
+project/experiments/p_dma_study/upstream/validate.py: OK
+Traceback (most recent call last):
+  File "/public/home/yuzelu/Melodydt/issue245-pdma/run01/source/project/experiments/p_dma_study/run.py", line 111, in <module>
+    if __name__=='__main__':main()
+  File "/public/home/yuzelu/Melodydt/issue245-pdma/run01/source/project/experiments/p_dma_study/run.py", line 47, in main
+    execute(['g++',*flags,src,'-I'+str(HERE),'-I'+str(prefix/'include'),'-L'+str(prefix/'lib'),
+  File "/public/home/yuzelu/Melodydt/issue245-pdma/run01/source/project/experiments/p_dma_study/run.py", line 22, in execute
+    if p.returncode:raise RuntimeError(str(command)+' exit '+str(p.returncode)+' '+p.stdout.decode(errors='replace')[-2400:])
+RuntimeError: ['g++', '-std=c++17', '-O2', '-Wall', '-Wextra', '-Werror', PosixPath('/public/home/yuzelu/Melodydt/issue245-pdma/run01/results/instrumented.cpp'), '-I/public/home/yuzelu/Melodydt/issue245-pdma/run01/source/project/experiments/p_dma_study', '-I/public/home/yuzelu/opt/systemc-3.0.2-issue219/include', '-L/public/home/yuzelu/opt/systemc-3.0.2-issue219/lib', '-Wl,-rpath,/public/home/yuzelu/opt/systemc-3.0.2-issue219/lib', '-lsystemc', '-o', PosixPath('/public/home/yuzelu/Melodydt/issue245-pdma/run01/results/model')] exit 1 /public/home/yuzelu/Melodydt/issue245-pdma/run01/results/instrumented.cpp: In member function ‘void Memory::serve(sc_core::sc_fifo<Burst*>&)’:
+/public/home/yuzelu/Melodydt/issue245-pdma/run01/results/instrumented.cpp:94:5: error: this ‘if’ clause does not guard... [-Werror=misleading-indentation]
+   94 |     if(last_direction!=-1&&last_direction!=static_cast<int>(b->write))++dc.turns;last_direction=b->write;
+      |     ^~
+/public/home/yuzelu/Melodydt/issue245-pdma/run01/results/instrumented.cpp:94:82: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   94 |     if(last_direction!=-1&&last_direction!=static_cast<int>(b->write))++dc.turns;last_direction=b->write;
+      |                                                                                  ^~~~~~~~~~~~~~
+cc1plus: all warnings being treated as errors
+
+srun: error: node1: task 0: Exited with exit code 1
