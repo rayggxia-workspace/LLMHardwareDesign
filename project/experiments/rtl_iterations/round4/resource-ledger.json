@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "scope": "Source-level R4 delta from R2; not measured synthesis or physical area",
+  "native_N_instances": 1,
+  "legacy_lanes": 2,
+  "direct_lanes_default": 2,
+  "direct_lanes_choices": [2, 4],
+  "extra_state_when_direct4_bits": {
+    "EXP_results": 32,
+    "EXP_valid": 2
+  },
+  "extra_state_total_bits": 34,
+  "additional_EXP_lanes": 2,
+  "additional_simultaneous_table_endpoint_queries": 4,
+  "additional_logic": [
+    "two EXP lookup and interpolation datapaths with identical RNE",
+    "two input element selects and final result write selects",
+    "opcode-qualified ACCUM step and configuration guard"
+  ],
+  "unchanged_resources": [
+    "two-lane stateful sum/square/normalization/replay datapaths",
+    "single divide/root group unit and top selection",
+    "original128bit result and shared-service buffers",
+    "R2 shared router and batch adapter",
+    "16KiB private S and four real1RW SRAM banks"
+  ],
+  "SRAM_expansion": false,
+  "physical_qualified": false,
+  "area_STA_power_routing": "not executed",
+  "backup": "R3 remains a separate candidate; R4 continues exact R2 baseline sources"
+}

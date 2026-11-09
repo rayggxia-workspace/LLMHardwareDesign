@@ -1,6 +1,6 @@
-// Full reductions/normalizations, with explicit S-backed replay and two lanes.
+// Stateful operations retain two lanes; stateless op12 optionally uses four EXP lanes.
 // No calls to E/G; local square, EXP, divide/root and scaling resources.
-module block_v2_n #(parameter integer NEXP_DIRECT=0) (
+module block_v2_n #(parameter integer NEXP_DIRECT=0, NEXP_DIRECT_LANES=2) (
  input wire clk,reset,cmd_valid,output wire cmd_ready,
  input wire [3:0] cmd_op,cmd_count,input wire [31:0] cmd_param,
  input wire [127:0] cmd_data,cmd_aux,
@@ -28,6 +28,10 @@ module block_v2_n #(parameter integer NEXP_DIRECT=0) (
  end
  reg [1:0] enabled;
  reg [31:0] square[0:1];reg [15:0] ex[0:1];
+ // Only op12 may select a four-element step. Legacy pair arithmetic is intact.
+ localparam integer DIRECT_LANES=NEXP_DIRECT!=0?NEXP_DIRECT_LANES:2;
+ wire [3:0] accum_step=operation==12&&DIRECT_LANES==4?4'd4:4'd2;
+ wire [15:0] direct_extra_exp[0:1];wire [1:0] direct_extra_enabled;
  reg signed [47:0] norm_product[0:1];
  reg signed [63:0] gate_product[0:1];
  wire signed [63:0] normalized_gate[0:1];
@@ -73,6 +77,30 @@ module block_v2_n #(parameter integer NEXP_DIRECT=0) (
   input signed [63:0] value;
   begin rne30=(value>>>30)+$signed({63'd0,(value[29:0]>30'h20000000)||((value[29:0]==30'h20000000)&&value[30])});end
  endfunction
+
+ // Extra arithmetic exists only in the selected direct configuration. It
+ // neither reads nor writes any statistics, factor, replay or top state.
+ generate if(DIRECT_LANES==4)begin: direct_exp4
+  reg [15:0] extra_exp[0:1];reg [1:0] extra_enabled;
+  wire signed [15:0] extra_fetch[0:1];
+  for(genvar lane=0;lane<2;lane=lane+1)begin: extra_lane
+   assign extra_fetch[lane]=operation==12?$signed(16'(data>>(16*(position+4'd2+4'(lane))))):16'sd0;
+   assign direct_extra_exp[lane]=extra_exp[lane];
+  end
+  assign direct_extra_enabled=extra_enabled;
+  always @(posedge clk)begin
+   if(reset)begin extra_exp[0]<=0;extra_exp[1]<=0;extra_enabled<=0;end
+   else if(phase==CALC&&operation==12)begin
+    for(integer lane=0;lane<2;lane=lane+1)begin
+     extra_enabled[lane]<=position+4'd2+4'(lane)<n;
+     extra_exp[lane]<=exponential($signed({extra_fetch[lane][15],extra_fetch[lane]}));
+    end
+   end
+  end
+ end else begin: direct_exp2
+  assign direct_extra_exp[0]=16'd0;assign direct_extra_exp[1]=16'd0;
+  assign direct_extra_enabled=2'd0;
+ end endgenerate
 
  reg command_ok;
  reg signed [31:0] pair_sum;
@@ -194,13 +222,21 @@ module block_v2_n #(parameter integer NEXP_DIRECT=0) (
        exp_sum<=exp_sum+{15'd0,pair_exp};exp_count<=exp_count+{15'd0,enabled[0]}+{15'd0,enabled[1]};
       end
       for(integer l=0;l<2;l=l+1)if(enabled[l])result[16*(position+4'(l))+:16]<=ex[l];
+      if(operation==12&&DIRECT_LANES==4)
+       for(integer l=0;l<2;l=l+1)if(direct_extra_enabled[l])
+        result[16*(position+4'd2+4'(l))+:16]<=direct_extra_exp[l];
      end
-     if(position+2>=n)begin phase<=IDLE;rsp_valid<=1;
+     if({1'b0,position}+{1'b0,accum_step}>={1'b0,n})begin phase<=IDLE;rsp_valid<=1;
       if(operation==3||operation==12)begin
        rsp_data<=result;
        for(integer l=0;l<2;l=l+1)if(enabled[l])rsp_data[16*(position+4'(l))+:16]<=ex[l];
+       // The current result registers update on this same edge, so also
+       // override the final two lanes in rsp_data directly.
+       if(operation==12&&DIRECT_LANES==4)
+        for(integer l=0;l<2;l=l+1)if(direct_extra_enabled[l])
+         rsp_data[16*(position+4'd2+4'(l))+:16]<=direct_extra_exp[l];
       end
-     end else begin position<=position+2;phase<=CALC;end
+     end else begin position<=position+accum_step;phase<=CALC;end
     end
     MEAN_START:if(group_ready)phase<=MEAN_WAIT;
     MEAN_WAIT:if(group_valid)begin group_n<=group_q+{16'd0,epsilon,16'd0};phase<=ROOT_START;end
@@ -248,6 +284,11 @@ module block_v2_n #(parameter integer NEXP_DIRECT=0) (
     default:begin phase<=IDLE;rsp_valid<=1;rsp_error<=1;end
    endcase
   end
+ end
+ // A static configuration error must fail before any command is accepted.
+ initial begin
+  if(NEXP_DIRECT_LANES!=2&&NEXP_DIRECT_LANES!=4)
+   $fatal(1,"NEXP_DIRECT_LANES must be exactly 2 or 4");
  end
  // Remainder is an internal diagnostic of the shared exact arithmetic unit.
  wire unused_remainder=^group_r;

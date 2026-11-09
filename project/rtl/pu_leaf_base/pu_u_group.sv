@@ -1,5 +1,5 @@
 // U groups independent N, compact E and S_base leaves under local services.
-module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0) (
+module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_LANES=2) (
     input wire clk, reset,
     input wire n_cmd_valid, n_cmd_store, n_cmd_direct, n_done_ready,
     output wire n_cmd_ready, n_done_valid, n_done_error, n_done_saturated,
@@ -119,9 +119,10 @@ module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0) (
         assign nr_valid=core_result_valid;assign core_result_ready=nr_ready;assign nr=core_result;
         assign nr_error=core_error;assign nr_sat=core_saturated;
     end endgenerate
-    // Exactly one native N, with the same arithmetic resources.
+    // Exactly one native N; optional direct EXP widening is explicit below.
     // DIRECT without BATCH does not expose a new ordinary native ABI.
-    block_v2_n #(.NEXP_DIRECT((NEXP_BATCH!=0)&&(NEXP_DIRECT!=0))) normalize(
+    block_v2_n #(.NEXP_DIRECT((NEXP_BATCH!=0)&&(NEXP_DIRECT!=0)),
+        .NEXP_DIRECT_LANES((NEXP_BATCH!=0&&NEXP_DIRECT!=0)?NEXP_DIRECT_LANES:2)) normalize(
         .clk, .reset, .cmd_valid(core_valid), .cmd_ready(core_ready),
         .cmd_op(core_meta[3:0]), .cmd_count(core_meta[7:4]), .cmd_param(core_meta[39:8]),
         .cmd_data(core_a), .cmd_aux(core_b), .rsp_valid(core_result_valid), .rsp_ready(core_result_ready),
@@ -148,4 +149,8 @@ module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0) (
         .clk, .reset, .in_valid(e_valid), .in_ready(e_ready), .in_op(op), .in_shift(shift), .in_data(ea),
         .out_valid(er_valid), .out_ready(er_ready), .out_data(er), .out_error(er_error), .out_saturated(er_sat)
     );
+    initial begin
+        if(NEXP_DIRECT_LANES!=2&&NEXP_DIRECT_LANES!=4)
+            $fatal(1,"NEXP_DIRECT_LANES must be exactly 2 or 4");
+    end
 endmodule

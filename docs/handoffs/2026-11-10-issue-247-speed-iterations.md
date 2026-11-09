@@ -1,5 +1,13 @@
 # Issue247速度迭代接续
 
+## 第四轮RTL已集成，服务器校准待启动（2026-11-10 Asia/Shanghai）
+
+Issue247/PR243，Melodydt，in_progress；3/4轮PDF及证据已完整交付。R4从best R2增加op12可选四EXP lane，N/U两个生产源已集成，NEXP_DIRECT_LANES默认2，普通N不扩；router/adapter保持R2逐字相同，S仍16KiB。新显式状态34bit加两套EXP组合路径，不声称综合面积/300MHz通过。前态R2备份与R3大面积独立分支均保留。
+
+21顺序build/63运行（三seed，含非法LANES3预期拒绝）已准备。原run18的21份真实日志与输出SHA派生1.16MB observed输入，run18-observed SHA cc5e13093dd5269e8fcd473e56a524e7a3b4e21d426e064b48ed0fab1f080296；新默认完整可观察事件须精确复现，另逐命令实数CALC次数。AST/纯生成/原回执解析/独立源码与测试审阅通过，未执行新RTL或填入周期。
+
+下一步提交源并读回，创建扩通道独立备份，在本人服务器新run22经Slurm四核执行，随后用真实profile运行旧体系16case，出第四轮详细PDF；主达5或完整第四轮后停止。当前最高仍R2 ideal3.66958239533/shared3.37834376557，未到5。无活动作业/自动监测。目录project/experiments/rtl_iterations/round4；非Git本地快照work/Melodydt/242/r-load-bounds/repo仅根整合；远端task/242-r-load-bounds未合并main。登记pending、看板unverified/同步pending、正式审查人待指定，CI未声称通过。
+
 ## 第三轮RTL与旧体系评估通过，候选未超第二轮（2026-11-10，Asia/Shanghai）
 
 Issue247/PR243，Melodydt，in_progress。run20/101872（源a3149d69a23f52efb808dbbb46b5558dffce4df7）41秒；run21/101878（源010ae8d0d8839967f96b94227d2224fade0edf37）6:06，均c64/node1/4核COMPLETED0:0。RTL六run×66场景、有限控制299064周期比对及实际S数值通过；模型24case/8精确回归/8fallback、192篡改及原测试通过。R3双buffer主ideal3.66041657326/shared2.75864978939，低于第二轮；当前最快仍3.66958239533/3.37834376557，未到5。
