@@ -222,7 +222,9 @@ def compile_program(model,initial,calibration,formats,runtime_formats=None,outpu
             # A real existing primitive, visible to numerical replay and cost
             # lowering. Handoff itself must not silently reinterpret scales.
             values[name] = b.convert(value,meta['exponent'],meta['bits'])
-    return {'instructions':b.nodes,'outputs':{name:values[name].name for name in model['outputs']},
+    return {**({'numeric_recipe': {'rms_refinements': rms_refinements,
+                'class': 'extra emitted accuracy-repair instructions, not DP gain'}} if rms_refinements != 1 else {}),
+          'instructions':b.nodes,'outputs':{name:values[name].name for name in model['outputs']},
         'predicates':b.predicates,
         'value_bindings':{name:q.name for name,q in values.items()},
         'initial_formats':initial_formats,'runtime_formats':runtime_formats,'output_formats':output_formats,

@@ -339,3 +339,40 @@ Real capture replay demonstrated that additional RMS iterations fix an isolated
 seed error but leave upstream low-amplitude-token error. The observer now reports
 last-axis rows as well as a tensor norm so outlier rows cannot hide that error.
 The original default recipe remains in use.
+
+## Clocked mother runtime and finite backing allocation
+
+`systemc_mother.cpp` independently executes deployed compact CALL/WAIT/MOVI/END
+images, PM bank/pending responses, finite credits and return arbitration. Build
+with SystemC3.0.1 and C++17, `-O2 -Wall -Wextra -Werror`, then run
+`mother_timing_probe.py EXE ACTIVITY_OUTPUT ACCEPTED_TREE NEW_OUTPUT
+--binaries RTL_GATE_BINARIES`.
+All eight CALL argument words, retirement, return, done and ACK are compared
+against pre-edge actual RTL/gate VCD. The five fixtures cover MOVI and concurrent
+returns as well as held calls. They cover two resident targets, not deployment,
+EVENT/fault behavior, nine-target integration or Qwen timing/energy.
+
+`bounded_memory.py PROGRAM NEW_PLAN --capacity-bytes N --scratch-records N`
+implements finite best-fit addresses and last-consumer reuse in **serial**
+primitive order. Views retain whole backing allocations; immutable complete
+dense permutations share their proven file storage with explicit strides.
+Constants and predicates are actually reserved/preloaded; scratch is explicit.
+An independent address/time interval audit rejects live overlap. Tests cover
+OOM, stale generations, alias lifetime, transposed values and late constants.
+
+`bounded_addresses.py FROZEN PROGRAM PLAN OBSERVED_ONNX NEW_AUDIT` additionally
+checks original frozen view/Dot/broadcast/Gather index programs, including
+allocation lifetime and physical-file strides. The six full-shape address
+audits sample boundaries/midpoints of every primitive; they are not exhaustive
+numerical RAM replay or parallel-DP qualification. ONNX1.17.0 is a private graph
+parser dependency; its installation is not a device performance result.
+
+The 64GiB diagnostic plans include unpacked128-bit scalar records and explicit
+native scratch; they exclude full control/program-image storage. They do not
+select a physical external-memory capacity or increase the frozen memory budget.
+Actual peak/high-water values and sources are recorded in the Issue234 ledger.
+No timing/energy speedup is attributed to this allocator before integration.
+
+`cached_integer_probe.py --rms-refinements 1..8` explicitly labels a nondefault
+numerical-recipe candidate in both program and receipt. The default remains1.
+This option has not established a full-model quality fix or DP-only gain.

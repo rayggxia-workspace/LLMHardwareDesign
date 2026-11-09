@@ -25,6 +25,8 @@ def main():
     for name in ('frozen', 'export', 'weights', 'checkpoint', 'oracle', 'output'):
         p.add_argument(name, type=Path)
     p.add_argument('--threads', type=int, default=10)
+    p.add_argument('--rms-refinements', type=int, choices=range(1, 9), default=1,
+        help='explicit accuracy-repair candidate; default1 retains the old recipe')
     p.add_argument('--capture-kernel', default='',
                    help='host-only exact integer input/intermediate/output capture for one canonical kernel')
     p.add_argument('--compare-baseline', type=Path,
@@ -169,7 +171,8 @@ def main():
         meta = {'shape': model['values'][name]['shape'], 'bits': 32, 'exponent': formats[name]}
         runtime_formats[name] = meta
         initial[name] = Q(np.zeros(meta['shape'], dtype=np.int32), meta['exponent'])
-    program = compile_program(model, initial, calibration, formats, runtime_formats)
+    program = compile_program(model, initial, calibration, formats, runtime_formats,
+                              rms_refinements=a.rms_refinements)
     program_path = a.output / 'program.json'
     program_path.write_text(json.dumps(program, separators=(',', ':')) + '\n')
     program = json.loads(program_path.read_text())
@@ -311,6 +314,9 @@ def main():
     oracle.close()
     hf_source_unchanged = digest(hf_source) == hf_source_sha256
     receipt = {'scope': 'full 36-layer one-step old primitive replay with explicitly quantized HF past',
+        'rms_refinements': a.rms_refinements,
+        'arithmetic_recipe': 'frozen default' if a.rms_refinements == 1 else 'extra emitted RMS instructions; accuracy-repair candidate, not DP gain',
+        'baseline_comparison_contract': 'same emitted instruction stream executed by frozen old runtime adapter; not a comparison to the default recipe when refinements>1',
         'prefix': prefix, 'query': query, 'samples': checks, 'bounds': bounds,
         'runtime_state_inputs': runtime_formats, 'runtime_state_outputs': 72,
         'primitive_counts': dict(Counter(n['op'] for n in program['instructions'])),

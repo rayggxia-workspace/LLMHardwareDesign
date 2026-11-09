@@ -2,7 +2,7 @@
 
 ## 2026-11-09（CST）Qwen3B SystemC时间/能耗与充分优化对照
 
-[Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234)，独立`task/234-systemc-benchmark`，in_progress；[Draft PR #235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)。09:53 CST：母控PM SRAM真实活动采样三组RTL/最终网表三初态通过；idle约67.715mW，115563个有效pin与1391天线二极管均逐项核对，未降低99%功能覆盖门，不是整机J/token。101503终态FAILED，18份真实RMS捕获重放逐位复现旧输出；额外迭代修复局部误差却未消除整图1.68%偏差，根因需继续追溯上游低幅值token行（此前总张量范数掩盖）。默认配方不变，新observer逐行归因；诊断续跑保留失败历史，不能洗白sequence资格。两包91MB/704文件本地远端SHA一致。36项检查通过。101486仍等待资源，仅请求首token；完整3B D128、已校准整网token/s与总J/token和FPGA双门槛仍未达标，继续in_progress/草稿。硬件Issue238/PR239独立。见[证据账本](../../work/YUZE-LU/234/README.md)。登记PR5 pending，无board配置/Projects能力，看板unverified/同步pending，沿用Issue7交接。
+[Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234)，独立	ask/234-systemc-benchmark，in_progress；[Draft PR #235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)。10:42 CST：用户确认先固定九组/3M和外存预算，优化后再评估扩容，约束及旧IR SHA已记录。母控SystemC五场景408次执行/4008事件与RTL/最终网表三初态一致，含完整CALL参数及返回仲裁，仍仅双目标组件。串行有限地址分配六个完整形状通过独立存活/重叠检查，516434个冻结原地址抽查通过；64GiB仅容量诊断，不选定物理预算，未完成DP并行/数值RAM整程。两个新包33MB已逐文件及远端SHA核对。40项检查通过。101514逐行归因、101486首token仍按单节点6×10依赖排队。完整3B D128、整系统SystemC时间/总J/token和FPGA双指标尚未达标，继续开发；算法/后端/配方/硬件收益分列。硬件Issue238/PR239独立，扩容暂缓。见[证据账本](../../work/YUZE-LU/234/README.md)。登记PR5 pending，无board配置/Projects能力，看板unverified/同步pending，沿用Issue7交接。
 
 
 ## 2026-11-08（CST）U 原生入口和双向发送修复
