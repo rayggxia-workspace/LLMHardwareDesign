@@ -12,3 +12,5 @@ python3 -B project/experiments/sram_capacity_study/run.py --inputs FROZEN_INPUTS
 ```
 
 job.sh申请c64/c96、4核、UNLIMITED，工具来自授权安装/容器；实际作业/结果与SHA在Issue246回执及正式报告中记录。容量满足全A不代表保持原K；48KiB边界可能迫使K变小，必须一起检查命令数。生产S的地址/描述符/真实1RW仲裁及新叶宏时序另验。
+
+已执行：源码8b18e0cb3efd3e8558d9930132282fbe551caf4e，Slurm101620/c64/node1/4核/UNLIMITED，4分02秒COMPLETED0:0，28case通过；16KiB完整结果复现前轮，225 kernels/4 validation/5 smoke、软件oracle和负例通过。W8原调度16→64KiB为+7.13%，既有组合上容量增量+11.05%；48性能已近64，128该decode无新收益，端口占用加倍会退化。[正式报告](../../../docs/experiments/issue-246-sram-capacity.md) · [证据/验证](../../../work/Melodydt/246/README.md) · [恢复交接](../../../docs/handoffs/2026-11-09-issue-246-sram-capacity.md)。大输入/全结果留本人issue246-sram/run01，四功能源及15依赖未改；无活动任务、无自动监测。

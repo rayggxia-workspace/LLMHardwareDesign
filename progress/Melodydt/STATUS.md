@@ -4,6 +4,9 @@
 
 ## 当前研究：结合 PR220/241 提高 token/s
 
+- [Issue246：P私有S容量](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/246) 沿PR243待审交付。[报告](../../docs/experiments/issue-246-sram-capacity.md)：W8/context512两P从16→64KiB，原调度+7.13%，前轮组合上容量增量+11.05%；48KiB已近64，128KiB该decode无新增收益。prefill2+21–23%，端口吞吐成本可能抵消容量收益。43KiB只是A，保K256至少W8 48.09375KiB/W16 52.09375KiB；真实S地址/描述符/1RW仲裁及新物理资格待实现，不改生产RTL。
+- 246已测源8b18e0cb3efd3e8558d9930132282fbe551caf4e，Slurm101620/mdt-sram-cap、c64/node1/4核/UNLIMITED、4分02秒COMPLETED0:0，28case/16KiB完整结果回归/225kernels/4validation/5smoke/负例通过；35回收输出SHA匹配，四源码/15依赖保持。负责人Melodydt；待独立审查合并、不done，CI以PR回执为准，登记pending/看板unverified与同步pending。下一步比较48/64KiB真实S_P实现成本，负责人待指定；[恢复入口](../../docs/handoffs/2026-11-09-issue-246-sram-capacity.md)，无活动作业、无自动监测。
+
 - 详细P/DMA专项 [Issue #245](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/245) 沿本PR243交付待审查，负责人Melodydt；原#242/#244独立待审范围保留。来源241@e7aeed20、220最新只读3a9f98a9；[详细报告](../../docs/experiments/issue-245-p-dma-study.md)。
 - 已完成服务器26+18+18次完整trace执行（含重复基线），101612/101614/101615均c64/node1/4核/UNLIMITED/COMPLETED0:0。原版与仪表所有原指标、上游W8/W16基线精确一致；每轮225 kernels、4 validation、5 smoke、软件oracle及独立守恒审计通过，后两轮7个篡改拒绝通过。91份回收输出SHA通过，15份最终功能源与已测727f297cd0ec3436e108e351aad5799c013c0338一致；101611编译失败保留，-Werror未弱化。
 - 发现W8权重占总线85.60%，A占11.90%，A的94.63%来自FFN下投影；原有驻留不重复记收益。有限前缀+1.10%；真正主要改善是按完整A驻留容量选择预取策略，单独+10.74%，叠加前缀/列组/512B写合并到3.063655条件token/s（+12.86%）。同组合context128/2048为+13.96%/+10.08%，prefill2吞吐+8.27%。W16仅容量策略1.871684、+11.27%，优于组合。全局关排队/减信用/单缓冲/小K负结果保留。

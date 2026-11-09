@@ -155,6 +155,8 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ## 数据与外部依赖
 
+P私有S容量扫描：`python3 -B project/experiments/sram_capacity_study/run.py --inputs FROZEN_INPUTS --out NEW_RESULTS`仅在本人Slurm新目录及既有SystemC/容器环境执行，4核UNLIMITED；参数化P容量与P端口占用，U固定16KiB，源/输入身份锁及完整16KiB回归是接收前提。[容量报告](experiments/issue-246-sram-capacity.md)给出28case和真实RTL扩容边界；本地`python -B work/Melodydt/246/verify.py`只核对回执/功能源，不替代RTL或物理验证。
+
 P/DMA供数研究采用[Issue245隔离实验](../project/experiments/p_dma_study/README.md)：在本人Slurm新目录、固定SystemC3.0.2环境运行`python3 -B project/experiments/p_dma_study/run.py --inputs FROZEN_INPUTS --out NEW_RESULTS --workers 4 --phase adaptive`，main/followup为另两组消融。必须先验证冻结PR241输入SHA和原版/观测版/上游基线完全一致；当前是原生S32等条件架构模型，不是生产RTL或真实生成。`python -B work/Melodydt/245/verify.py`仅核对轻量证据与15功能源SHA；三轮Slurm及负结果见[正式报告](experiments/issue-245-p-dma-study.md)。运行依赖服务器授权输入/容器，仓库本身不含全部依赖。
 
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
