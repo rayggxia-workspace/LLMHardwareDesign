@@ -4,4 +4,6 @@
 
 正式研究工具位于 `project/experiments/area_speed_study/`。复用Issue245的完整冻结输入，保留全部原功能源。此目录只放轻量证据与索引；大原始输入/输出和生成二进制保留本人服务器目录。来源不是物理或真实模型生成验收。
 
-准备阶段：本人GitHub与当前分支核验，管理结构及前两轮SHA一致性检查通过；本轮服务器作业尚未提交，结果待执行。规则rayggxia-project-collab1.0.0，登记pending、看板unverified/同步pending，未合并、不done。
+三轮实际完成：101631（4:57）、101635（0:24）、101638（4:42），均c64/node1/4核/COMPLETED0:0。56次完整trace、32次小模型/非法CLI、独立oracle及隔离RTL/P程序对照通过；分别回收核验92/85/65份输出SHA。`index.json`记录三个源码commit、完整结果SHA、63份轻量文件SHA和服务器位置；各run的summary给全部主结果，selected results保留可复核原始case。完整结果/生成源码/二进制仅在本人服务器run01–03保存。
+
+`python -B work/Melodydt/247/verify.py`核对轻量证据、最新已测功能源、摘要与原始case，不重跑仿真。正式结论见[报告](../../../docs/experiments/issue-247-area-speed.md)，恢复见[交接](../../../docs/handoffs/2026-11-09-issue-247-area-speed.md)。无活动作业、无自动监测。规则rayggxia-project-collab1.0.0，登记pending、看板unverified/同步pending；研究交付待独立审查/合并，不done。

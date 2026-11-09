@@ -4,11 +4,12 @@
 
 ## 当前研究：结合 PR220/241 提高 token/s
 
-- [Issue247：固定SRAM的面积换速度研究](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247) 已获用户授权按顺序开展，状态in_progress，沿task/242-r-load-bounds / PR243。先验证多组96位部分和与K块A复用，再验证P输入弹性缓冲/完成协议，随后研究S端口并发、M/P规模、U流水。仅隔离模型/实验RTL；生产RTL未改。新增面积预算单列，SRAM容量保持16KiB。
+- [Issue247：固定SRAM的面积换速度研究](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247) 已按顺序完成五方向首轮研究，沿task/242-r-load-bounds / PR243交付待审查；在线实际状态以Issue回执为准。仅隔离模型/实验RTL；生产RTL未改，SRAM扩容保持不实装。每P16KiB；第三P额外活跃私有S预算明确单列。[正式报告](../../docs/experiments/issue-247-area-speed.md)。
 - 第一阶段源码9015effa13879bf8b5779905a4c83f53af8f2085，Slurm101631/mdt-area-speed、c64/node1/4核，4分57秒COMPLETED0:0；35完整trace、480数值配置/120生命周期/20错误注入、原225kernels/4validation/5smoke通过，92回收输出SHA一致。W8旧组合ctx8/16分别3.230811/3.243464（增量+5.46/+5.87%），原调度和W16退化；switch3/8退化，prefill不触发。结果/public/home/yuzelu/Melodydt/issue247-area-speed/run01/results/result.json，SHA62c787396bd331cb2c6d8a0a4352a4ebb83456616eb141bc50c33655d84f3fc3。
 - 第二阶段源be603f4d7661dfc3a42c17d797e1ce74772284c3，Slurm101635/mdt-area-feed、c64/node1/4核、24秒COMPLETED0:0。空P审计修正后，实际C++21候选/6基线/5非法参数通过；阶段1生成C++逐文件SHA保持。独立link三种随机初始化各四例和提前完成负例通过，256拍128→256beat；原P程序两版本各三例均288拍，没有程序级改善。Nangate配对link映射面积4178.328→9085.762（2.1745倍，仅link综合，无P&R/STA）。85回收SHA通过，结果SHA cc7a4aceeef4b1d53c19229c686a8beb909f22b4ce66390ce8db6a5f3cddfba0。
-- 下一步按顺序运行P同容量1R1W、第三P、向量lane敏感性，均为独立架构候选；先前两阶段真实通过回执作为门。生产RTL保持，SRAM扩容不实装。登记pending，看板unverified/同步pending，独立审查人与管理员待指定。
-- 用户当前决定：**SRAM扩容研究保留，暂不实装**；Issue246既有结论与证据保持。下一步是Issue247固定容量研究，不启动48/64KiB生产S实现。
+- 第三轮源45e45bf75f35ebf35111f525de655076f7e122be，101638/mdt-area-hw、c64/node1/4核、4:42 COMPLETED0:0；21完整case按端口→第三P→向量顺序通过，默认结果完全回归、读写端口工作守恒/负例通过，65回收输出SHA一致。W8同容量1R1W+7.75%，组合8contexts为3.496169（对前轮最佳+14.12%）；W16单双端口+8.33%，context2048+6.09%、prefill2+18.97%。三P原均分W8−14.46%，vector8/16单独+2.41/+3.66%；不叠加未测组合。
+- 56完整trace（含基线）+32边界调用及RTL研究交付，63轻量证据/50最新功能源SHA核验，三轮242回收SHA一致；[索引](../../work/Melodydt/247/index.json)/[交接](../../docs/handoffs/2026-11-09-issue-247-area-speed.md)。无活动作业、无自动监测。下一步独立审查研究并评估实际P同容量读写并发合同/面积/时序，负责人待指定；新S32、真实权重/KV/DDR/物理/能耗未验收。登记pending，看板unverified/同步pending，管理员和独立审查人待指定；CI以PR实际失败/待核实回执为准。
+- 用户当前决定：**SRAM扩容研究保留，暂不实装**；Issue246既有结论与证据保持。Issue247首轮研究已交付，后续优先验证同容量P读写并发，不启动48/64KiB生产S实现。
 
 - [Issue246：P私有S容量](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/246) 沿PR243待审交付。[报告](../../docs/experiments/issue-246-sram-capacity.md)：W8/context512两P从16→64KiB，原调度+7.13%，前轮组合上容量增量+11.05%；48KiB已近64，128KiB该decode无新增收益。prefill2+21–23%，端口吞吐成本可能抵消容量收益。43KiB只是A，保K256至少W8 48.09375KiB/W16 52.09375KiB；真实S地址/描述符/1RW仲裁及新物理资格待实现，不改生产RTL。
 - 246已测源8b18e0cb3efd3e8558d9930132282fbe551caf4e，Slurm101620/mdt-sram-cap、c64/node1/4核/UNLIMITED、4分02秒COMPLETED0:0，28case/16KiB完整结果回归/225kernels/4validation/5smoke/负例通过；35回收输出SHA匹配，四源码/15依赖保持。负责人Melodydt；待独立审查合并、不done，CI以PR回执为准，登记pending/看板unverified与同步pending。48/64KiB真实S_P实装按用户决定暂缓，保留研究候选；[恢复入口](../../docs/handoffs/2026-11-09-issue-246-sram-capacity.md)，无活动作业、无自动监测。

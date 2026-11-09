@@ -1,0 +1,688 @@
+{
+  "passed": true,
+  "scope": "stage2 finite feeder RTL; no whole-model token/s, P&R or STA qualification",
+  "versions": {
+    "python": "3.10.12",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "gcc": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+    "yosys": "Yosys 0.63 (git sha1 70a11c6bf, g++ 11.4.0-1ubuntu1~22.04.3 -fPIC -O3)"
+  },
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.11684942990541458,
+      "log": "verilator-version.log",
+      "log_sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "command": [
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.0043554650619626045,
+      "log": "gcc-version.log",
+      "log_sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "bench_compare",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-link",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/staged/baseline/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/experiments/area_speed_study/elastic/pj_feed_elastic.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/experiments/area_speed_study/elastic/bench_compare.sv"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 4.259541560895741,
+      "log": "link-build.log",
+      "log_sha256": "5cd89390a76fb14e5f57676a4b2ff07f8bff557b1f41e02b4b27df8e8de1b46d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-link/Vbench_compare",
+        "+NEGATIVE_READY_EMPTY"
+      ],
+      "exit_code": 1,
+      "elapsed_wall_seconds": 0.005176050588488579,
+      "log": "link-negative.log",
+      "log_sha256": "a7a8ca7c5a7161524e22e75e954dded31cdeceec2524c4972280bc13fad864a1"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-link/Vbench_compare",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.022076371125876904,
+      "log": "link-positive-1-143.log",
+      "log_sha256": "d5634640af1712729b41fd5cbe5bbfa5b95f2aaa5b3a59dd3041199774d9c48f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-link/Vbench_compare",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.02152542769908905,
+      "log": "link-positive-2-143.log",
+      "log_sha256": "71f403a610aeb64435ce2d4060d6495a8ca0a0f7293db4799492bd82eb4e0073"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-link/Vbench_compare",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.022483807057142258,
+      "log": "link-positive-2-144.log",
+      "log_sha256": "99f4e99f20a3ff54fac23907bc73bdf1dd56418806cd2d7466000b63a221af0a"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-Wno-fatal",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_pu_p_group",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-p-baseline",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/staged/tb_pu_p_group_timed.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/s_sram/local_s_base.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/staged/baseline/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/staged/baseline/pj_feed_hold.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 4.894487979821861,
+      "log": "baseline-p-build.log",
+      "log_sha256": "b2e052a2531d5a656a54a601be7beb18cd641790f0ba1dc0c8239d5f76ca8adb"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-p-baseline/Vtb_pu_p_group",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.005981534719467163,
+      "log": "p-baseline-1-143.log",
+      "log_sha256": "4ed337ee7f55257684c87e7680fd68e4e637d65f5ca35b7c9322cfd48ab9b697"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-p-baseline/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.0054311444982886314,
+      "log": "p-baseline-2-143.log",
+      "log_sha256": "6220000b93ae9a57e8eaf06e8c917dac62e858d1b77b1b3fa6f20e91efc16e09"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-p-baseline/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.005204296670854092,
+      "log": "p-baseline-2-144.log",
+      "log_sha256": "3b61ba5c36cc50c936c9f1cf4302fbc73fa20c681087932e32803a59021202c1"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-Wno-fatal",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_pu_p_group",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-p-candidate",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/staged/tb_pu_p_group_timed.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/s_sram/local_s_base.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/staged/candidate/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/staged/candidate/pj_feed_elastic.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 5.009603241458535,
+      "log": "candidate-p-build.log",
+      "log_sha256": "8a851f4bd7876ec377064debd293ecbe3ad516400927e844f3db8a51dbd71c83"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-p-candidate/Vtb_pu_p_group",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.00597971398383379,
+      "log": "p-candidate-1-143.log",
+      "log_sha256": "b43a8d1151a58f7fae037678bd460ec6cca377d29e973512856832b899f931e3"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-p-candidate/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.0056734876707196236,
+      "log": "p-candidate-2-143.log",
+      "log_sha256": "af4e3138b3ed338ce4063e8b5a5b63ebc01bb115806568473e9b708a1fd234a2"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/obj-p-candidate/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.005515712313354015,
+      "log": "p-candidate-2-144.log",
+      "log_sha256": "0efdeff2c00b894d8e3a4c2d1c153714c1e97b69f300530f05a403b1a9c33f0b"
+    },
+    {
+      "command": [
+        "/usr/local/bin/yosys",
+        "-V"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.13014502357691526,
+      "log": "yosys-version.log",
+      "log_sha256": "c1d2e07190cfd386c85f01f6c3821db1201b7d4cd6b65716da5d431f2dcd29ac"
+    },
+    {
+      "command": [
+        "/usr/local/bin/yosys",
+        "-Q",
+        "-s",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/synth-baseline/synth.ys"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 0.5167529778555036,
+      "log": "synth-baseline/synthesis.log",
+      "log_sha256": "7b2f390f336dd58bf0bb2d186888442176d052c2b316b2409639633a19eb7b25"
+    },
+    {
+      "command": [
+        "/usr/local/bin/yosys",
+        "-Q",
+        "-s",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/elastic/synth-candidate/synth.ys"
+      ],
+      "exit_code": 0,
+      "elapsed_wall_seconds": 1.2919479813426733,
+      "log": "synth-candidate/synthesis.log",
+      "log_sha256": "ce303ba0ee5efd8302adee1ce34e17cf14f0fafec07ef2a9ef56ecd1f8f38b47"
+    }
+  ],
+  "stage1_prerequisite": {
+    "path": "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/stage1-result.json",
+    "sha256": "62c787396bd331cb2c6d8a0a4352a4ebb83456616eb141bc50c33655d84f3fc3",
+    "passed": true
+  },
+  "source_commit": "be603f4d7661dfc3a42c17d797e1ce74772284c3",
+  "deployment_inputs_sha256": "06e4c0be3b6383671accdfcba5bd82f9518dddda9768387c5dde18bc6436d191",
+  "bank": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v",
+    "sha256": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7"
+  },
+  "upstream_inputs_sha256": {
+    "project/rtl/s_sram/local_s_base.sv": "084a4c63e4fbe0a5e56c6319e542c5a7c6561e9ec5af0a07ed98ef0bd5aa21f4",
+    "project/rtl/s_sram/local_s_p.sv": "08780f5d99b9b816c0250b74595fc68354b360a225a4be526dab28afbdb69112",
+    "project/rtl/s_sram/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+    "project/rtl/block_feed_v1/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+    "project/rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+    "project/rtl/block_v2/block_v2_m.sv": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+    "project/rtl/block_v2/block_v2_g.sv": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+    "project/rtl/pu_leaf_base/pu_p_group.sv": "ab55887ac575cc3715045af4efe07032264413e3ae84ea5666a8f5ccbb9a2982",
+    "project/rtl/pu_leaf_base/pu_p_store_control.sv": "bcb998114aad27bddedabbe86e81014e66f539821fa573e531cbac2679e41a24",
+    "project/rtl/pu_leaf_base/pj_feed_hold.sv": "ed4ee4b4f4875f88c6108a911b82661b581f7786a556ca83cabeece7b2b51061",
+    "project/rtl/pu_leaf_base/pj_mem_port.sv": "66e76fcfb708b2edbe89ce981b3217c30367aa797553c3ec9e199b6e2a003237",
+    "project/rtl/pu_leaf_base/pj_sram_client.sv": "58942675b4ca11cb4c6ab5e7b0d91672ca46a2a9f0deedb3fd360bfde6af4247",
+    "project/rtl/block_v2/block_v2_g_tables.svh": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14",
+    "project/experiments/pu_leaf_base/smoke.sh": "c5f0328e0bb13d9c074212aeb0ddad165b19b0c7cf0374b3cb6964f50ddf28b7"
+  },
+  "study_source_sha256": {
+    "bench_compare.sv": "8e9abfe3fd8514e238787a6086de1bf12d2998c2e290d3210adda2b13d8a95e6",
+    "check_logs.py": "fd67a9f53e0a15d3c72be8db222c9a0921973ec2088e418e378c7800a7553580",
+    "job_elastic.sh": "c2674f6eaadf1828b5e578034ed23d97bc85c6185cace89c3a2303532fd44af1",
+    "pj_feed_elastic.sv": "cafbf764de5159881690b6a426122a06137beb8fa27f9331ac01c2bc9642278b",
+    "render_group.py": "42b77f8752d89421be65ce561f241f4505c38a0b6c88225c93d42532f535469e",
+    "run_elastic.py": "21dfcf436dbf3c3bf483993093624841cf30ab41ba687b210e8fa3f3d0a9de13"
+  },
+  "verilator_binary_sha256": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+  "fork": {
+    "upstream_sha256": {
+      "project/rtl/pu_leaf_base/pj_feed_hold.sv": "ed4ee4b4f4875f88c6108a911b82661b581f7786a556ca83cabeece7b2b51061",
+      "project/rtl/pu_leaf_base/pu_p_group.sv": "ab55887ac575cc3715045af4efe07032264413e3ae84ea5666a8f5ccbb9a2982",
+      "project/experiments/pu_leaf_base/tb_pu_p_group.sv": "f69c47af18a1ebb45506df31f091f6c430a3bcc90eb66caa6501179d06aa8334"
+    },
+    "generated_files_sha256": {
+      "baseline/pj_feed_hold.sv": "ed4ee4b4f4875f88c6108a911b82661b581f7786a556ca83cabeece7b2b51061",
+      "baseline/pu_p_group.sv": "ab55887ac575cc3715045af4efe07032264413e3ae84ea5666a8f5ccbb9a2982",
+      "candidate/pj_feed_elastic.sv": "cafbf764de5159881690b6a426122a06137beb8fa27f9331ac01c2bc9642278b",
+      "candidate/pu_p_group.sv": "b57b7f8b87f6e5876333e5e550ee9aa65d67ef36de47bd92fee644ebdf5886ce",
+      "tb_pu_p_group.sv": "f69c47af18a1ebb45506df31f091f6c430a3bcc90eb66caa6501179d06aa8334",
+      "tb_pu_p_group_timed.sv": "6ff3296ae99c3126444e38e5d3b18a154212b22fc84cecc9dbf267bbdc6d7607"
+    },
+    "changes": "only two feeder links plus explicit-empty completion predicate; original module name retained in separately compiled variants",
+    "timed_bench": "optional cycle counter/final display only; all original checks retained; exact original bench also copied",
+    "no_changes": "SRAM capacity/ports, M arithmetic, external handshake ports, ACK retirement and controller code",
+    "qualification": "candidate only; prepare does not run simulation or grant physical qualification"
+  },
+  "link": [
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "passed": true,
+        "cases": [
+          {
+            "width": 135,
+            "old": 1,
+            "cycles": 256,
+            "throughput_beats": 128,
+            "sent": 967,
+            "received": 966,
+            "reset_discarded": 1,
+            "stalls": 288,
+            "full_cycles": 0,
+            "simultaneous": 0
+          },
+          {
+            "width": 135,
+            "old": 0,
+            "cycles": 256,
+            "throughput_beats": 256,
+            "sent": 1569,
+            "received": 1566,
+            "reset_discarded": 3,
+            "stalls": 437,
+            "full_cycles": 364,
+            "simultaneous": 1100
+          },
+          {
+            "width": 517,
+            "old": 1,
+            "cycles": 256,
+            "throughput_beats": 128,
+            "sent": 972,
+            "received": 969,
+            "reset_discarded": 3,
+            "stalls": 278,
+            "full_cycles": 0,
+            "simultaneous": 0
+          },
+          {
+            "width": 517,
+            "old": 0,
+            "cycles": 256,
+            "throughput_beats": 256,
+            "sent": 1571,
+            "received": 1567,
+            "reset_discarded": 4,
+            "stalls": 413,
+            "full_cycles": 347,
+            "simultaneous": 1088
+          }
+        ],
+        "negative_exit": 1,
+        "negative": "using not-full/ready as empty rejected before output retirement",
+        "scope": "isolated link throughput and functional protocol only; not whole-P or token/s/physical acceptance"
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 143,
+      "checks": {
+        "passed": true,
+        "cases": [
+          {
+            "width": 135,
+            "old": 1,
+            "cycles": 256,
+            "throughput_beats": 128,
+            "sent": 967,
+            "received": 966,
+            "reset_discarded": 1,
+            "stalls": 288,
+            "full_cycles": 0,
+            "simultaneous": 0
+          },
+          {
+            "width": 135,
+            "old": 0,
+            "cycles": 256,
+            "throughput_beats": 256,
+            "sent": 1569,
+            "received": 1566,
+            "reset_discarded": 3,
+            "stalls": 437,
+            "full_cycles": 364,
+            "simultaneous": 1100
+          },
+          {
+            "width": 517,
+            "old": 1,
+            "cycles": 256,
+            "throughput_beats": 128,
+            "sent": 972,
+            "received": 969,
+            "reset_discarded": 3,
+            "stalls": 278,
+            "full_cycles": 0,
+            "simultaneous": 0
+          },
+          {
+            "width": 517,
+            "old": 0,
+            "cycles": 256,
+            "throughput_beats": 256,
+            "sent": 1571,
+            "received": 1567,
+            "reset_discarded": 4,
+            "stalls": 413,
+            "full_cycles": 347,
+            "simultaneous": 1088
+          }
+        ],
+        "negative_exit": 1,
+        "negative": "using not-full/ready as empty rejected before output retirement",
+        "scope": "isolated link throughput and functional protocol only; not whole-P or token/s/physical acceptance"
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 144,
+      "checks": {
+        "passed": true,
+        "cases": [
+          {
+            "width": 135,
+            "old": 1,
+            "cycles": 256,
+            "throughput_beats": 128,
+            "sent": 967,
+            "received": 966,
+            "reset_discarded": 1,
+            "stalls": 288,
+            "full_cycles": 0,
+            "simultaneous": 0
+          },
+          {
+            "width": 135,
+            "old": 0,
+            "cycles": 256,
+            "throughput_beats": 256,
+            "sent": 1569,
+            "received": 1566,
+            "reset_discarded": 3,
+            "stalls": 437,
+            "full_cycles": 364,
+            "simultaneous": 1100
+          },
+          {
+            "width": 517,
+            "old": 1,
+            "cycles": 256,
+            "throughput_beats": 128,
+            "sent": 972,
+            "received": 969,
+            "reset_discarded": 3,
+            "stalls": 278,
+            "full_cycles": 0,
+            "simultaneous": 0
+          },
+          {
+            "width": 517,
+            "old": 0,
+            "cycles": 256,
+            "throughput_beats": 256,
+            "sent": 1571,
+            "received": 1567,
+            "reset_discarded": 4,
+            "stalls": 413,
+            "full_cycles": 347,
+            "simultaneous": 1088
+          }
+        ],
+        "negative_exit": 1,
+        "negative": "using not-full/ready as empty rejected before output retirement",
+        "scope": "isolated link throughput and functional protocol only; not whole-P or token/s/physical acceptance"
+      }
+    }
+  ],
+  "P_group": [
+    {
+      "variant": "baseline",
+      "reset_mode": 1,
+      "seed": 143,
+      "cycles": 288,
+      "original_functional_pass": true,
+      "log": "p-baseline-1-143.log",
+      "log_sha256": "4ed337ee7f55257684c87e7680fd68e4e637d65f5ca35b7c9322cfd48ab9b697"
+    },
+    {
+      "variant": "baseline",
+      "reset_mode": 2,
+      "seed": 143,
+      "cycles": 288,
+      "original_functional_pass": true,
+      "log": "p-baseline-2-143.log",
+      "log_sha256": "6220000b93ae9a57e8eaf06e8c917dac62e858d1b77b1b3fa6f20e91efc16e09"
+    },
+    {
+      "variant": "baseline",
+      "reset_mode": 2,
+      "seed": 144,
+      "cycles": 288,
+      "original_functional_pass": true,
+      "log": "p-baseline-2-144.log",
+      "log_sha256": "3b61ba5c36cc50c936c9f1cf4302fbc73fa20c681087932e32803a59021202c1"
+    },
+    {
+      "variant": "candidate",
+      "reset_mode": 1,
+      "seed": 143,
+      "cycles": 288,
+      "original_functional_pass": true,
+      "log": "p-candidate-1-143.log",
+      "log_sha256": "b43a8d1151a58f7fae037678bd460ec6cca377d29e973512856832b899f931e3"
+    },
+    {
+      "variant": "candidate",
+      "reset_mode": 2,
+      "seed": 143,
+      "cycles": 288,
+      "original_functional_pass": true,
+      "log": "p-candidate-2-143.log",
+      "log_sha256": "af4e3138b3ed338ce4063e8b5a5b63ebc01bb115806568473e9b708a1fd234a2"
+    },
+    {
+      "variant": "candidate",
+      "reset_mode": 2,
+      "seed": 144,
+      "cycles": 288,
+      "original_functional_pass": true,
+      "log": "p-candidate-2-144.log",
+      "log_sha256": "0efdeff2c00b894d8e3a4c2d1c153714c1e97b69f300530f05a403b1a9c33f0b"
+    }
+  ],
+  "P_cycle_comparisons": [
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "baseline_cycles": 288,
+      "candidate_cycles": 288,
+      "saved_cycles": 0,
+      "speedup": 1.0
+    },
+    {
+      "reset_mode": 2,
+      "seed": 143,
+      "baseline_cycles": 288,
+      "candidate_cycles": 288,
+      "saved_cycles": 0,
+      "speedup": 1.0
+    },
+    {
+      "reset_mode": 2,
+      "seed": 144,
+      "baseline_cycles": 288,
+      "candidate_cycles": 288,
+      "saved_cycles": 0,
+      "speedup": 1.0
+    }
+  ],
+  "functional_passed": true,
+  "mapped_area": {
+    "status": "passed",
+    "liberty": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "yosys_binary_sha256": "a409abe03c090a72e15906082775f506ff6f5fa50106dec087900a7104c08a4c",
+    "scope": "technology-mapped paired-link synthesis only; no placement, routing, STA or mm2 claim",
+    "variants": {
+      "baseline": {
+        "area_liberty_units": 4178.328,
+        "num_cells": 1316,
+        "cell_types": {
+          "$scopeinfo": 2,
+          "AND2_X1": 2,
+          "AOI21_X1": 2,
+          "DFF_X1": 654,
+          "INV_X1": 2,
+          "MUX2_X1": 652,
+          "NOR2_X1": 2
+        },
+        "stat_sha256": "56d2d2a8bafce5c6a77f77f05bb58ae51b6b75ee1c4e0304542eba74c78cf6a8",
+        "netlist_sha256": "9473097915feda68ede61980ccfeef87fe73d36ba897911a5e30f77a4e9c836e"
+      },
+      "candidate": {
+        "area_liberty_units": 9085.762,
+        "num_cells": 3965,
+        "cell_types": {
+          "$scopeinfo": 2,
+          "AND2_X1": 3,
+          "AND3_X1": 2,
+          "AOI211_X1": 2,
+          "AOI21_X1": 5,
+          "AOI22_X1": 653,
+          "DFF_X1": 1308,
+          "INV_X1": 658,
+          "MUX2_X1": 653,
+          "NAND2_X1": 1,
+          "NAND3_X1": 5,
+          "NOR2_X1": 7,
+          "NOR3_X1": 2,
+          "NOR4_X1": 1,
+          "OAI21_X1": 655,
+          "OAI22_X1": 1,
+          "OR2_X1": 3,
+          "OR3_X1": 1,
+          "XNOR2_X1": 1,
+          "XOR2_X1": 2
+        },
+        "stat_sha256": "dc04783d5a16e999e322f6caf68c561711cdf062b8cbde1d6d92d81b0b3d9152",
+        "netlist_sha256": "3c84aae86641e486671c2dd314a4e5cb8703ee1583e37fc4d563a771eaa5b8d5"
+      }
+    },
+    "area_ratio": 2.174497071555895
+  },
+  "output_files_sha256": {
+    "baseline-p-build.log": "b2e052a2531d5a656a54a601be7beb18cd641790f0ba1dc0c8239d5f76ca8adb",
+    "candidate-p-build.log": "8a851f4bd7876ec377064debd293ecbe3ad516400927e844f3db8a51dbd71c83",
+    "gcc-version.log": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+    "link-build.log": "5cd89390a76fb14e5f57676a4b2ff07f8bff557b1f41e02b4b27df8e8de1b46d",
+    "link-negative.log": "a7a8ca7c5a7161524e22e75e954dded31cdeceec2524c4972280bc13fad864a1",
+    "link-positive-1-143.log": "d5634640af1712729b41fd5cbe5bbfa5b95f2aaa5b3a59dd3041199774d9c48f",
+    "link-positive-2-143.log": "71f403a610aeb64435ce2d4060d6495a8ca0a0f7293db4799492bd82eb4e0073",
+    "link-positive-2-144.log": "99f4e99f20a3ff54fac23907bc73bdf1dd56418806cd2d7466000b63a221af0a",
+    "p-baseline-1-143.log": "4ed337ee7f55257684c87e7680fd68e4e637d65f5ca35b7c9322cfd48ab9b697",
+    "p-baseline-2-143.log": "6220000b93ae9a57e8eaf06e8c917dac62e858d1b77b1b3fa6f20e91efc16e09",
+    "p-baseline-2-144.log": "3b61ba5c36cc50c936c9f1cf4302fbc73fa20c681087932e32803a59021202c1",
+    "p-candidate-1-143.log": "b43a8d1151a58f7fae037678bd460ec6cca377d29e973512856832b899f931e3",
+    "p-candidate-2-143.log": "af4e3138b3ed338ce4063e8b5a5b63ebc01bb115806568473e9b708a1fd234a2",
+    "p-candidate-2-144.log": "0efdeff2c00b894d8e3a4c2d1c153714c1e97b69f300530f05a403b1a9c33f0b",
+    "staged/baseline/pj_feed_hold.sv": "ed4ee4b4f4875f88c6108a911b82661b581f7786a556ca83cabeece7b2b51061",
+    "staged/baseline/pu_p_group.sv": "ab55887ac575cc3715045af4efe07032264413e3ae84ea5666a8f5ccbb9a2982",
+    "staged/candidate/pj_feed_elastic.sv": "cafbf764de5159881690b6a426122a06137beb8fa27f9331ac01c2bc9642278b",
+    "staged/candidate/pu_p_group.sv": "b57b7f8b87f6e5876333e5e550ee9aa65d67ef36de47bd92fee644ebdf5886ce",
+    "staged/source.json": "0dacbe7153843dd06c675c68c5caee660fb63cc0c5455d20bbea67fd0d4140fc",
+    "staged/tb_pu_p_group.sv": "f69c47af18a1ebb45506df31f091f6c430a3bcc90eb66caa6501179d06aa8334",
+    "staged/tb_pu_p_group_timed.sv": "6ff3296ae99c3126444e38e5d3b18a154212b22fc84cecc9dbf267bbdc6d7607",
+    "synth-baseline/pair_links.sv": "031e021b2e8d0534785e8c048a81d718490fc36dc30207fdcdd8b990b80e3256",
+    "synth-baseline/stat.json": "56d2d2a8bafce5c6a77f77f05bb58ae51b6b75ee1c4e0304542eba74c78cf6a8",
+    "synth-baseline/synth.ys": "f41dd40b448b56b953680ab4159e5de6d3f771377d21d2e14d647ae7d1d37856",
+    "synth-baseline/synthesis.log": "7b2f390f336dd58bf0bb2d186888442176d052c2b316b2409639633a19eb7b25",
+    "synth-candidate/pair_links.sv": "020927c41aee09c5148e1907bb78cb80ae76c075dd73e5ea1d38477c9fa04047",
+    "synth-candidate/stat.json": "dc04783d5a16e999e322f6caf68c561711cdf062b8cbde1d6d92d81b0b3d9152",
+    "synth-candidate/synth.ys": "2d3651f421a80bfc2751af655919efd388597d4800ac7248dd976a3227fb723a",
+    "synth-candidate/synthesis.log": "ce303ba0ee5efd8302adee1ce34e17cf14f0fafec07ef2a9ef56ecd1f8f38b47",
+    "verilator-version.log": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+    "yosys-version.log": "c1d2e07190cfd386c85f01f6c3821db1201b7d4cd6b65716da5d431f2dcd29ac"
+  }
+}

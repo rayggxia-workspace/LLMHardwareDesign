@@ -1,0 +1,479 @@
+{
+  "command": [
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/context/model",
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run02/results/edge-cases/n257-k4353-w8-observe.trace",
+    "queued_pipe_w8",
+    "observe",
+    "16",
+    "1",
+    "1"
+  ],
+  "returncode": 0,
+  "log": "n257-k4353-w8-observe-c16-s1-a1.log",
+  "log_sha256": "732da7d0afa15d80eb9309ce046b22083aa53428fdcfe2526d28d2cbb4ddac4f",
+  "N": 257,
+  "K": 4353,
+  "bits": 8,
+  "profile": "queued_pipe_w8",
+  "variant": "observe",
+  "contexts": 16,
+  "switch_cycles": 1,
+  "reuse_A": true,
+  "trace": "n257-k4353-w8-observe.trace",
+  "trace_sha256": "bc4168fa58623a7391f9536299b2764e0410f3a1cb5811cb5f53eda016b16426",
+  "result": {
+    "profile": "queued_pipe_w8",
+    "tokens": 1,
+    "ticks": 41594,
+    "seconds": 0.00013864392,
+    "tokens_per_second": 7212.7216253,
+    "read_bus_bytes": 1203456,
+    "write_bus_bytes": 2112,
+    "logical_read_bytes": 1170957,
+    "logical_write_bytes": 1028,
+    "dma_descriptors": 681,
+    "max_outstanding_beats": 32,
+    "max_descriptor_queue": 1,
+    "max_outstanding_descriptors": 3,
+    "U_cache_peak_bytes": 0,
+    "P_scratch_peak_bytes": 7264,
+    "cache_hits": 0,
+    "cache_misses": 0,
+    "dirty_evictions": 0,
+    "dead_lines_discarded": 0,
+    "M_commands": 594,
+    "M_tiles": 594,
+    "KV_state_write_bytes": 0,
+    "resident_A_saved_bytes": 0,
+    "M_work_ticks": 21217,
+    "vector_work_ticks": 0,
+    "adapter_work_ticks": 17985,
+    "spans_ticks": {
+      "Dot": 41594,
+      "final_flush": 0
+    },
+    "detail": {
+      "variant": "observe",
+      "subcycles_per_core_cycle": 1000,
+      "end_subcycles": 41593176,
+      "wait_scope": "memory waits overlap; only each P consumer stages sum to its own elapsed time",
+      "channels": [
+        {
+          "channel": 0,
+          "traffic": {
+            "logical_read": 596361,
+            "logical_write": 516,
+            "bus_read": 610496,
+            "bus_write": 1088,
+            "descriptors": 359
+          },
+          "flows": {
+            "other": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "A": {
+              "logical_read": 34824,
+              "logical_write": 0,
+              "bus_read": 34944,
+              "bus_write": 0,
+              "descriptors": 36
+            },
+            "weight": {
+              "logical_read": 561537,
+              "logical_write": 0,
+              "bus_read": 575552,
+              "bus_write": 0,
+              "descriptors": 306
+            },
+            "dynamic_B": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 516,
+              "bus_read": 0,
+              "bus_write": 1088,
+              "descriptors": 17
+            },
+            "U_read": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            }
+          },
+          "bus_work_subcycles": 21462776,
+          "credit_wait_subcycles": 135230,
+          "submit_credit_wait_subcycles": 0,
+          "queue_wait_subcycles": 0,
+          "submit_queue_wait_subcycles": 0,
+          "bank_wait_subcycles": 400,
+          "bus_wait_subcycles": 218007194,
+          "direction_changes": 33,
+          "row_misses": 3022,
+          "beats": 9556
+        },
+        {
+          "channel": 1,
+          "traffic": {
+            "logical_read": 574596,
+            "logical_write": 512,
+            "bus_read": 592960,
+            "bus_write": 1024,
+            "descriptors": 322
+          },
+          "flows": {
+            "other": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "A": {
+              "logical_read": 17412,
+              "logical_write": 0,
+              "bus_read": 17472,
+              "bus_write": 0,
+              "descriptors": 18
+            },
+            "weight": {
+              "logical_read": 557184,
+              "logical_write": 0,
+              "bus_read": 575488,
+              "bus_write": 0,
+              "descriptors": 288
+            },
+            "dynamic_B": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 512,
+              "bus_read": 0,
+              "bus_write": 1024,
+              "descriptors": 16
+            },
+            "U_read": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            }
+          },
+          "bus_work_subcycles": 20845126,
+          "credit_wait_subcycles": 156412,
+          "submit_credit_wait_subcycles": 0,
+          "queue_wait_subcycles": 0,
+          "submit_queue_wait_subcycles": 0,
+          "bank_wait_subcycles": 200,
+          "bus_wait_subcycles": 216156854,
+          "direction_changes": 29,
+          "row_misses": 2951,
+          "beats": 9281
+        }
+      ],
+      "P": [
+        {
+          "worker": 0,
+          "consumer_ready_wait_subcycles": 0,
+          "input_ACK_wait_subcycles": 124408,
+          "service_subcycles": 41112976,
+          "output_subcycles": 355792,
+          "elapsed_subcycles": 41593176,
+          "producer_free_wait_subcycles": 41512238,
+          "tiles": 306,
+          "prefix_A_loaded_bytes": 0,
+          "prefix_A_saved_bytes": 0,
+          "prefix_peak_bytes": 0,
+          "write_buffer_peak_bytes": 0
+        },
+        {
+          "worker": 1,
+          "consumer_ready_wait_subcycles": 0,
+          "input_ACK_wait_subcycles": 126654,
+          "service_subcycles": 39820046,
+          "output_subcycles": 308626,
+          "elapsed_subcycles": 40255326,
+          "producer_free_wait_subcycles": 40182388,
+          "tiles": 288,
+          "prefix_A_loaded_bytes": 0,
+          "prefix_A_saved_bytes": 0,
+          "prefix_peak_bytes": 0,
+          "write_buffer_peak_bytes": 0
+        }
+      ],
+      "S_calendars": [
+        {
+          "group": 0,
+          "service_subcycles": 22986000,
+          "scheduled_wait_subcycles": 25744604,
+          "reservations": 9879
+        },
+        {
+          "group": 1,
+          "service_subcycles": 22369000,
+          "scheduled_wait_subcycles": 24904736,
+          "reservations": 9585
+        },
+        {
+          "group": 2,
+          "service_subcycles": 0,
+          "scheduled_wait_subcycles": 0,
+          "reservations": 0
+        },
+        {
+          "group": 3,
+          "service_subcycles": 0,
+          "scheduled_wait_subcycles": 0,
+          "reservations": 0
+        }
+      ],
+      "matrix_shapes": [
+        {
+          "key": "1x257x4353b1l0",
+          "calls": 1,
+          "wall_subcycles": 41593176,
+          "tiles": 594,
+          "commands": 594,
+          "flows": {
+            "other": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "A": {
+              "logical_read": 52236,
+              "logical_write": 0,
+              "bus_read": 52416,
+              "bus_write": 0,
+              "descriptors": 54
+            },
+            "weight": {
+              "logical_read": 1118721,
+              "logical_write": 0,
+              "bus_read": 1151040,
+              "bus_write": 0,
+              "descriptors": 594
+            },
+            "dynamic_B": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "dot_output": {
+              "logical_read": 0,
+              "logical_write": 1028,
+              "bus_read": 0,
+              "bus_write": 2112,
+              "descriptors": 33
+            },
+            "U_read": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "U_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            },
+            "KV_write": {
+              "logical_read": 0,
+              "logical_write": 0,
+              "bus_read": 0,
+              "bus_write": 0,
+              "descriptors": 0
+            }
+          }
+        }
+      ]
+    },
+    "context_study": {
+      "contexts": 16,
+      "switch_cycles": 1,
+      "reuse_A": true,
+      "scope": "additional 96-bit register contexts; P S remains 16KiB; context selection charged per M command; local S reads retained",
+      "P": [
+        {
+          "worker": 0,
+          "enabled_calls": 1,
+          "groups": 2,
+          "A_groups": 36,
+          "A_loaded_bytes": 34824,
+          "A_saved_bytes": 261180,
+          "context_switches": 306,
+          "switch_subcycles": 306000,
+          "psum_register_bytes_peak": 1536,
+          "A_bank_peak": 2,
+          "B_bank_peak": 2,
+          "completed_contexts": 17
+        },
+        {
+          "worker": 1,
+          "enabled_calls": 1,
+          "groups": 1,
+          "A_groups": 18,
+          "A_loaded_bytes": 17412,
+          "A_saved_bytes": 261180,
+          "context_switches": 288,
+          "switch_subcycles": 288000,
+          "psum_register_bytes_peak": 1536,
+          "A_bank_peak": 2,
+          "B_bank_peak": 2,
+          "completed_contexts": 16
+        }
+      ]
+    }
+  },
+  "audit": {
+    "passed": true,
+    "shape_count": 1,
+    "matrix_MACs": 1118721,
+    "minimum_static_weight_payload": 1118721,
+    "dynamic_B_payload": 0,
+    "dot_output_payload": 1028,
+    "flow_totals": {
+      "other": {
+        "logical_read": 0,
+        "logical_write": 0,
+        "bus_read": 0,
+        "bus_write": 0,
+        "descriptors": 0
+      },
+      "A": {
+        "logical_read": 52236,
+        "logical_write": 0,
+        "bus_read": 52416,
+        "bus_write": 0,
+        "descriptors": 54
+      },
+      "weight": {
+        "logical_read": 1118721,
+        "logical_write": 0,
+        "bus_read": 1151040,
+        "bus_write": 0,
+        "descriptors": 594
+      },
+      "dynamic_B": {
+        "logical_read": 0,
+        "logical_write": 0,
+        "bus_read": 0,
+        "bus_write": 0,
+        "descriptors": 0
+      },
+      "dot_output": {
+        "logical_read": 0,
+        "logical_write": 1028,
+        "bus_read": 0,
+        "bus_write": 2112,
+        "descriptors": 33
+      },
+      "U_read": {
+        "logical_read": 0,
+        "logical_write": 0,
+        "bus_read": 0,
+        "bus_write": 0,
+        "descriptors": 0
+      },
+      "U_write": {
+        "logical_read": 0,
+        "logical_write": 0,
+        "bus_read": 0,
+        "bus_write": 0,
+        "descriptors": 0
+      },
+      "KV_write": {
+        "logical_read": 0,
+        "logical_write": 0,
+        "bus_read": 0,
+        "bus_write": 0,
+        "descriptors": 0
+      }
+    },
+    "scope": "bytes/work/private-S/credit/P-consumer-phase conservation, not numeric/RTL/DDR qualification",
+    "contexts_checked": true,
+    "expected_context": [
+      {
+        "calls": 1,
+        "groups": 2,
+        "commands": 306,
+        "outputs": 17,
+        "a_bytes": 34824,
+        "a_saved": 261180,
+        "a_groups": 36,
+        "psum_peak": 1536
+      },
+      {
+        "calls": 1,
+        "groups": 1,
+        "commands": 288,
+        "outputs": 16,
+        "a_bytes": 17412,
+        "a_saved": 261180,
+        "a_groups": 18,
+        "psum_peak": 1536
+      }
+    ],
+    "extra_psum_payload_bytes_per_P": 1440,
+    "metadata_area": "not physically measured"
+  },
+  "negative_checks": [
+    "A-load",
+    "A-bank-capacity",
+    "B-bank-capacity",
+    "context-switch-cost",
+    "psum-capacity",
+    "work-conservation"
+  ]
+}

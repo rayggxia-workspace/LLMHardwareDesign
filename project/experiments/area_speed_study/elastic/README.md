@@ -1,6 +1,6 @@
-# Issue247 / 阶段2：两槽弹性馈入候选（尚未执行）
+# Issue247 / 阶段2：两槽弹性馈入候选
 
-本目录仅为父代理准备阶段2。父代理须先完成阶段1，再把冻结源码提交到自己的Slurm新目录运行；本代理没有运行仿真、SSH、在线操作或改生产文件。不要把以下期望写成已取得结果。
+本目录是隔离研究候选，生产文件保持。阶段1通过后已在Slurm101635执行：12个link正例、定向负例及6个P group程序通过，持续link吞吐翻倍；原P程序两版均288拍，没有程序级改善。配对link映射面积2.174497倍，无P&R/STA资格。实际源码、命令、工具和SHA见[正式报告](../../../../docs/experiments/issue-247-area-speed.md)及[证据](../../../../work/Melodydt/247/README.md)。下文说明可复跑合同及断言。
 
 ## 设计合同
 
@@ -29,7 +29,7 @@ set -e
 python3 -B check_logs.py --positive positive.log --negative negative.log --negative-exit "$negative_exit"
 ```
 
-负例必须非0退出，且同时含`EXPECTED_NEGATIVE_READY_AS_EMPTY_DETECTED`及`LOAD_COMPLETION_BEFORE_OUTPUT_RETIREMENT`；不能接受任意崩溃当负例通过。正向须四个case及LOAD门控完成回执齐全。父运行器另外记录正向真实退出码、工具版本、源码/日志SHA及分配资源。脚本命令未执行。
+负例必须非0退出，且同时含`EXPECTED_NEGATIVE_READY_AS_EMPTY_DETECTED`及`LOAD_COMPLETION_BEFORE_OUTPUT_RETIREMENT`；不能接受任意崩溃当负例通过。正向须四个case及LOAD门控完成回执齐全。运行器已记录实际退出码、工具版本、源码/日志SHA及分配资源；上面命令是对应复跑示例。
 
 ## 端到端P组
 

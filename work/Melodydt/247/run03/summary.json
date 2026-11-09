@@ -1,0 +1,1477 @@
+[
+  {
+    "stage": "baseline",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 3.06365516254,
+    "seconds": 0.326407492667,
+    "speedup_vs_same_context": 1.0,
+    "speedup_vs_old_best_ctx1": 1.0,
+    "bus_bytes": 3527148288,
+    "M_commands": 1521664,
+    "vector_work_ticks": 12578800,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 64226340000,
+          "read_or_unified_wait_subcycles": 267710991898,
+          "read_or_unified_reservations": 28228196,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 64226340000,
+          "read_or_unified_wait_subcycles": 267710991898,
+          "read_or_unified_reservations": 28228196,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 79344497,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    }
+  },
+  {
+    "stage": "baseline",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 8,
+    "switch_cycles": 1,
+    "tokens_s": 3.23081074122,
+    "seconds": 0.309519832667,
+    "speedup_vs_same_context": 1.0,
+    "speedup_vs_old_best_ctx1": 1.054560833322008,
+    "bus_bytes": 3238134528,
+    "M_commands": 1521664,
+    "vector_work_ticks": 12578800,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 61968420000,
+          "read_or_unified_wait_subcycles": 267803507506,
+          "read_or_unified_reservations": 25970276,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 61968420000,
+          "read_or_unified_wait_subcycles": 267803507506,
+          "read_or_unified_reservations": 25970276,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 74278199,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    }
+  },
+  {
+    "stage": "baseline",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w16",
+    "variant": "adaptive",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 1.87168390625,
+    "seconds": 0.53427824894,
+    "speedup_vs_same_context": 1.0,
+    "speedup_vs_old_best_ctx1": 1.0,
+    "bus_bytes": 6690425088,
+    "M_commands": 1799264,
+    "vector_work_ticks": 12578800,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 113393448000,
+          "read_or_unified_wait_subcycles": 878994472492,
+          "read_or_unified_reservations": 53080096,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 113393448000,
+          "read_or_unified_wait_subcycles": 878994472492,
+          "read_or_unified_reservations": 53080096,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 141705724,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    }
+  },
+  {
+    "stage": "baseline",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 8,
+    "switch_cycles": 3,
+    "tokens_s": 3.00596945518,
+    "seconds": 0.332671377707,
+    "speedup_vs_same_context": 1.0,
+    "speedup_vs_old_best_ctx1": 0.9811709528989989,
+    "bus_bytes": 3238134528,
+    "M_commands": 1521664,
+    "vector_work_ticks": 12578800,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 61968420000,
+          "read_or_unified_wait_subcycles": 240268742842,
+          "read_or_unified_reservations": 25970276,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 61968420000,
+          "read_or_unified_wait_subcycles": 240268742842,
+          "read_or_unified_reservations": 25970276,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 81223662,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    }
+  },
+  {
+    "stage": "stage3-P-1R1W",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 3.30109946649,
+    "seconds": 0.302929375547,
+    "speedup_vs_same_context": 1.0775035998988394,
+    "speedup_vs_old_best_ctx1": 1.0775035998988394,
+    "bus_bytes": 3527148288,
+    "M_commands": 1521664,
+    "vector_work_ticks": 12578800,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 36798860000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 809356,
+          "write_service_subcycles": 27427480000,
+          "write_wait_subcycles": 209318472,
+          "write_reservations": 27418840
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 36798860000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 809356,
+          "write_service_subcycles": 27427480000,
+          "write_wait_subcycles": 209318472,
+          "write_reservations": 27418840
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 72301062,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    }
+  },
+  {
+    "stage": "stage3-P-1R1W",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 8,
+    "switch_cycles": 1,
+    "tokens_s": 3.49616888299,
+    "seconds": 0.286027372667,
+    "speedup_vs_same_context": 1.0821336076367436,
+    "speedup_vs_old_best_ctx1": 1.141175719035155,
+    "bus_bytes": 3238134528,
+    "M_commands": 1521664,
+    "vector_work_ticks": 12578800,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 36798860000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 809356,
+          "write_service_subcycles": 25169560000,
+          "write_wait_subcycles": 205454952,
+          "write_reservations": 25160920
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 36798860000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 809356,
+          "write_service_subcycles": 25169560000,
+          "write_wait_subcycles": 205454952,
+          "write_reservations": 25160920
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 67230461,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    }
+  },
+  {
+    "stage": "stage3-P-1R1W",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w16",
+    "variant": "adaptive",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 2.02752260361,
+    "seconds": 0.493212750487,
+    "speedup_vs_same_context": 1.0832612263418815,
+    "speedup_vs_old_best_ctx1": 1.0832612263418815,
+    "bus_bytes": 6690425088,
+    "M_commands": 1799264,
+    "vector_work_ticks": 12578800,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 61301392000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 996680,
+          "write_service_subcycles": 52092056000,
+          "write_wait_subcycles": 320950638,
+          "write_reservations": 52083416
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 61301392000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 996680,
+          "write_service_subcycles": 52092056000,
+          "write_wait_subcycles": 320950638,
+          "write_reservations": 52083416
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 129386074,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    }
+  },
+  {
+    "stage": "stage3-P-1R1W",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 8,
+    "switch_cycles": 3,
+    "tokens_s": 3.49298761313,
+    "seconds": 0.286287874667,
+    "speedup_vs_same_context": 1.162017001572112,
+    "speedup_vs_old_best_ctx1": 1.1401373287173469,
+    "bus_bytes": 3238134528,
+    "M_commands": 1521664,
+    "vector_work_ticks": 12578800,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 36798860000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 809356,
+          "write_service_subcycles": 25169560000,
+          "write_wait_subcycles": 205016400,
+          "write_reservations": 25160920
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 36798860000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 809356,
+          "write_service_subcycles": 25169560000,
+          "write_wait_subcycles": 205016400,
+          "write_reservations": 25160920
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 67308611,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    }
+  },
+  {
+    "stage": "stage4-third-P",
+    "contract": {
+      "P_count": 3,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 2.62056926882,
+    "seconds": 0.381596476727,
+    "speedup_vs_same_context": 0.8553734443950775,
+    "speedup_vs_old_best_ctx1": 0.8553734443950775,
+    "bus_bytes": 3529515776,
+    "M_commands": 1521664,
+    "vector_work_ticks": 12578800,
+    "hardware_study": {
+      "P_count": 3,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 65536,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 43153318000,
+          "read_or_unified_wait_subcycles": 15826396330,
+          "read_or_unified_reservations": 18984638,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 42967283000,
+          "read_or_unified_wait_subcycles": 179175630514,
+          "read_or_unified_reservations": 18907643,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 2,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 42369071000,
+          "read_or_unified_wait_subcycles": 11081651040,
+          "read_or_unified_reservations": 18601103,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 95901192,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    }
+  },
+  {
+    "stage": "stage4-third-P",
+    "contract": {
+      "P_count": 3,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 8,
+    "switch_cycles": 1,
+    "tokens_s": 2.78354601684,
+    "seconds": 0.359253985367,
+    "speedup_vs_same_context": 0.8615626973513084,
+    "speedup_vs_old_best_ctx1": 0.9085702760779527,
+    "bus_bytes": 3241792256,
+    "M_commands": 1521664,
+    "vector_work_ticks": 12578800,
+    "hardware_study": {
+      "P_count": 3,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 65536,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 41641318000,
+          "read_or_unified_wait_subcycles": 9317340298,
+          "read_or_unified_reservations": 17472638,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 41455283000,
+          "read_or_unified_wait_subcycles": 179234164930,
+          "read_or_unified_reservations": 17395643,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 2,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 40897391000,
+          "read_or_unified_wait_subcycles": 5617400400,
+          "read_or_unified_reservations": 17129423,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 89198445,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    }
+  },
+  {
+    "stage": "stage4-third-P",
+    "contract": {
+      "P_count": 3,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w16",
+    "variant": "adaptive",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 1.55636780348,
+    "seconds": 0.642521644153,
+    "speedup_vs_same_context": 0.8315334647509173,
+    "speedup_vs_old_best_ctx1": 0.8315334647509173,
+    "bus_bytes": 6692497664,
+    "M_commands": 1799264,
+    "vector_work_ticks": 12578800,
+    "hardware_study": {
+      "P_count": 3,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 65536,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 75955053000,
+          "read_or_unified_wait_subcycles": 21754762388,
+          "read_or_unified_reservations": 35572780,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 75516141000,
+          "read_or_unified_wait_subcycles": 585377038320,
+          "read_or_unified_reservations": 35347888,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 2,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 75348086000,
+          "read_or_unified_wait_subcycles": 16707719520,
+          "read_or_unified_reservations": 35271908,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 174178742,
+      "KV_store": 15949,
+      "NExp": 5546155,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3976194
+    }
+  },
+  {
+    "stage": "stage5-vector-lanes",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 8
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 3.13753944439,
+    "seconds": 0.318721092667,
+    "speedup_vs_same_context": 1.024116383185316,
+    "speedup_vs_old_best_ctx1": 1.024116383185316,
+    "bus_bytes": 3527148288,
+    "M_commands": 1521664,
+    "vector_work_ticks": 10272880,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 8,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 64226340000,
+          "read_or_unified_wait_subcycles": 267710991898,
+          "read_or_unified_reservations": 28228196,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 64226340000,
+          "read_or_unified_wait_subcycles": 267710991898,
+          "read_or_unified_reservations": 28228196,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 79344497,
+      "KV_store": 15949,
+      "NExp": 5509291,
+      "canonical": 4376778,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3778434
+    }
+  },
+  {
+    "stage": "stage5-vector-lanes",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 8
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 8,
+    "switch_cycles": 1,
+    "tokens_s": 3.3130856021,
+    "seconds": 0.301833432667,
+    "speedup_vs_same_context": 1.0254657011719444,
+    "speedup_vs_old_best_ctx1": 1.0814159643710226,
+    "bus_bytes": 3238134528,
+    "M_commands": 1521664,
+    "vector_work_ticks": 10272880,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 8,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 61968420000,
+          "read_or_unified_wait_subcycles": 267803507506,
+          "read_or_unified_reservations": 25970276,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 61968420000,
+          "read_or_unified_wait_subcycles": 267803507506,
+          "read_or_unified_reservations": 25970276,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 74278199,
+      "KV_store": 15949,
+      "NExp": 5509291,
+      "canonical": 4376778,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3778434
+    }
+  },
+  {
+    "stage": "stage5-vector-lanes",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 8
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w16",
+    "variant": "adaptive",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 1.89900394777,
+    "seconds": 0.52659184894,
+    "speedup_vs_same_context": 1.0145965039441311,
+    "speedup_vs_old_best_ctx1": 1.0145965039441311,
+    "bus_bytes": 6690425088,
+    "M_commands": 1799264,
+    "vector_work_ticks": 10272880,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 8,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 113393448000,
+          "read_or_unified_wait_subcycles": 878994472492,
+          "read_or_unified_reservations": 53080096,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 113393448000,
+          "read_or_unified_wait_subcycles": 878994472492,
+          "read_or_unified_reservations": 53080096,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 141705724,
+      "KV_store": 15949,
+      "NExp": 5509291,
+      "canonical": 4376778,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3778434
+    }
+  },
+  {
+    "stage": "stage5-vector-lanes",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 16
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 3.17583426239,
+    "seconds": 0.314877892667,
+    "speedup_vs_same_context": 1.0366160987116144,
+    "speedup_vs_old_best_ctx1": 1.0366160987116144,
+    "bus_bytes": 3527148288,
+    "M_commands": 1521664,
+    "vector_work_ticks": 9119920,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 16,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 64226340000,
+          "read_or_unified_wait_subcycles": 267710991898,
+          "read_or_unified_reservations": 28228196,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 64226340000,
+          "read_or_unified_wait_subcycles": 267710991898,
+          "read_or_unified_reservations": 28228196,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 79344497,
+      "KV_store": 15949,
+      "NExp": 5490859,
+      "canonical": 3341130,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3679554
+    }
+  },
+  {
+    "stage": "stage5-vector-lanes",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 16
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 8,
+    "switch_cycles": 1,
+    "tokens_s": 3.35581468913,
+    "seconds": 0.297990232667,
+    "speedup_vs_same_context": 1.0386912010397475,
+    "speedup_vs_old_best_ctx1": 1.0953630585327134,
+    "bus_bytes": 3238134528,
+    "M_commands": 1521664,
+    "vector_work_ticks": 9119920,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 16,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 61968420000,
+          "read_or_unified_wait_subcycles": 267803507506,
+          "read_or_unified_reservations": 25970276,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 61968420000,
+          "read_or_unified_wait_subcycles": 267803507506,
+          "read_or_unified_reservations": 25970276,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 74278199,
+      "KV_store": 15949,
+      "NExp": 5490859,
+      "canonical": 3341130,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3679554
+    }
+  },
+  {
+    "stage": "stage5-vector-lanes",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 16
+    },
+    "workload": "decode512",
+    "profile": "queued_pipe_w16",
+    "variant": "adaptive",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 1.91296525018,
+    "seconds": 0.52274864894,
+    "speedup_vs_same_context": 1.0220557241484585,
+    "speedup_vs_old_best_ctx1": 1.0220557241484585,
+    "bus_bytes": 6690425088,
+    "M_commands": 1799264,
+    "vector_work_ticks": 9119920,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 16,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 113393448000,
+          "read_or_unified_wait_subcycles": 878994472492,
+          "read_or_unified_reservations": 53080096,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 113393448000,
+          "read_or_unified_wait_subcycles": 878994472492,
+          "read_or_unified_reservations": 53080096,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 740621000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 455405
+    },
+    "spans_ticks": {
+      "Dot": 141705724,
+      "KV_store": 15949,
+      "NExp": 5490859,
+      "canonical": 3341130,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 2587594,
+      "vector": 3679554
+    }
+  },
+  {
+    "stage": "supplement",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4
+    },
+    "workload": "decode2048",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 2.30680968866,
+    "seconds": 0.433499132987,
+    "speedup_vs_same_context": 1.0,
+    "speedup_vs_old_best_ctx1": 1.0,
+    "bus_bytes": 3797287680,
+    "M_commands": 1566592,
+    "vector_work_ticks": 30259696,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 67912740000,
+          "read_or_unified_wait_subcycles": 301728936730,
+          "read_or_unified_reservations": 30146852,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 67912740000,
+          "read_or_unified_wait_subcycles": 301728936730,
+          "read_or_unified_reservations": 30146852,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 1680653000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 1063661
+    },
+    "spans_ticks": {
+      "Dot": 85255160,
+      "KV_store": 15949,
+      "NExp": 22187044,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 7138012,
+      "vector": 9001716
+    }
+  },
+  {
+    "stage": "supplement",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4
+    },
+    "workload": "prefill2",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 3.10725416366,
+    "seconds": 0.6436551034,
+    "speedup_vs_same_context": 1.0,
+    "speedup_vs_old_best_ctx1": 1.0,
+    "bus_bytes": 5345477248,
+    "M_commands": 1516480,
+    "vector_work_ticks": 34064162,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": false,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 89562384000,
+          "read_or_unified_wait_subcycles": 361342999864,
+          "read_or_unified_reservations": 42079248,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 89523792000,
+          "read_or_unified_wait_subcycles": 361342999864,
+          "read_or_unified_reservations": 42058512,
+          "write_service_subcycles": 0,
+          "write_wait_subcycles": 0,
+          "write_reservations": 0
+        }
+      ],
+      "U_service_subcycles": 11500498000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 4070338
+    },
+    "spans_ticks": {
+      "Dot": 128802113,
+      "NExp": 14319033,
+      "copy": 4073049,
+      "final_flush": 0,
+      "reduce": 2915970,
+      "vector": 42986368
+    }
+  },
+  {
+    "stage": "supplement",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4
+    },
+    "workload": "decode2048",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 2.44721321052,
+    "seconds": 0.408628065467,
+    "speedup_vs_same_context": 1.0608648049946745,
+    "speedup_vs_old_best_ctx1": 1.0608648049946745,
+    "bus_bytes": 3797287680,
+    "M_commands": 1566592,
+    "vector_work_ticks": 30259696,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 38595980000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 859468,
+          "write_service_subcycles": 29316760000,
+          "write_wait_subcycles": 727577496,
+          "write_reservations": 29287384
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 38595980000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 859468,
+          "write_service_subcycles": 29316760000,
+          "write_wait_subcycles": 727577496,
+          "write_reservations": 29287384
+        }
+      ],
+      "U_service_subcycles": 1680653000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 1063661
+    },
+    "spans_ticks": {
+      "Dot": 77793840,
+      "KV_store": 15949,
+      "NExp": 22187044,
+      "canonical": 6448074,
+      "copy": 3789,
+      "final_flush": 0,
+      "reduce": 7138012,
+      "vector": 9001716
+    }
+  },
+  {
+    "stage": "supplement",
+    "contract": {
+      "P_count": 2,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4
+    },
+    "workload": "prefill2",
+    "profile": "queued_pipe_w8",
+    "variant": "adaptive_prefix_pair_combine",
+    "contexts": 1,
+    "switch_cycles": 1,
+    "tokens_s": 3.69669737899,
+    "seconds": 0.541023458227,
+    "speedup_vs_same_context": 1.189699066856244,
+    "speedup_vs_old_best_ctx1": 1.189699066856244,
+    "bus_bytes": 5345477248,
+    "M_commands": 1516480,
+    "vector_work_ticks": 34064162,
+    "hardware_study": {
+      "P_count": 2,
+      "P_S_bytes": 16384,
+      "U_S_bytes": 16384,
+      "total_private_S_bytes": 49152,
+      "aggregate_bandwidth_B_s": 17100000000,
+      "S_port_bytes": 64,
+      "S_port_cycles": 1,
+      "DDR_beat_bytes": 64,
+      "split_P_read_write_ports": true,
+      "vector_lanes": 4,
+      "scope": "conditional extra P 1R1W port / third native-S32 P / wider vector pipe; no physical or numeric qualification",
+      "port_contract": "P store is read-or-unified; split P DMA input and M-result writes use write_store; DMA output reads and M supply keep store; U3 stays unified; each port retains original width and latency",
+      "P_ports": [
+        {
+          "worker": 0,
+          "DDR_channel": 0,
+          "read_or_unified_service_subcycles": 48321432000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 838296,
+          "write_service_subcycles": 41240952000,
+          "write_wait_subcycles": 0,
+          "write_reservations": 41240952
+        },
+        {
+          "worker": 1,
+          "DDR_channel": 1,
+          "read_or_unified_service_subcycles": 48301848000,
+          "read_or_unified_wait_subcycles": 0,
+          "read_or_unified_reservations": 836568,
+          "write_service_subcycles": 41221944000,
+          "write_wait_subcycles": 0,
+          "write_reservations": 41221944
+        }
+      ],
+      "U_service_subcycles": 11500498000,
+      "U_wait_subcycles": 0,
+      "U_reservations": 4070338
+    },
+    "spans_ticks": {
+      "Dot": 98012619,
+      "NExp": 14319033,
+      "copy": 4073049,
+      "final_flush": 0,
+      "reduce": 2915970,
+      "vector": 42986368
+    }
+  }
+]

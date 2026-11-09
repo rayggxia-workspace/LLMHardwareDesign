@@ -199,3 +199,19 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+
+## 固定SRAM的面积换速度研究（Issue247）
+
+[报告](experiments/issue-247-area-speed.md)、[源码与运行说明](../project/experiments/area_speed_study/README.md)、[轻量证据](../work/Melodydt/247/README.md)。用户保留SRAM扩容候选、暂不实装；隔离模型与弹性RTL不修改生产RTL。先多部分和，后实际C++边界/弹性链路，再依次评估P读写端口、第三P、向量lane。三轮101631/101635/101638均COMPLETED0:0；56次完整trace、32次小模型/非法参数及原P组对照，范围以报告为准。
+
+以下入口在已分配的Slurm节点运行，路径取该run冻结源码和输入；先核验source-files/input-files SHA。job.sh、job_stage2.sh、job_hardware.sh提供4核封装，第二/三轮必须携带真实前置结果及inputs.json源码commit；不能把相对示例路径当成可覆盖旧结果的命令。
+
+```bash
+python3 -B project/experiments/area_speed_study/run.py --inputs /absolute/frozen-inputs --out /absolute/new-run/results
+python3 -B project/experiments/area_speed_study/stage2_runner.py --root /absolute/new-stage2-run
+python3 -B project/experiments/area_speed_study/run_hardware.py --inputs /absolute/frozen-inputs --out /absolute/new-stage3-run/results --stage1 /absolute/stage1-result.json --stage2 /absolute/stage2-result.json
+# 本地证据一致性检查，不重新运行仿真。
+python -B work/Melodydt/247/verify.py
+```
+
+原生S32/96位M/E32、1R1W和宽向量为条件合同，未取得真实生成或新物理资格。link吞吐翻倍未改善原P程序的288拍，不能直接乘到token/s；三P均分在原两通道下退化。每P私有S仍16KiB，第三P活跃配置额外计一份16KiB，不宣称总存储预算相同。

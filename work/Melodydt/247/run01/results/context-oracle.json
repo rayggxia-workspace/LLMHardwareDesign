@@ -1,0 +1,58 @@
+{
+  "passed": true,
+  "seed": 247,
+  "numeric_matrix_cases": 480,
+  "candidate_multiply_terms": 17727000,
+  "output_comparisons": 32160,
+  "independent_rounding_cases": 115,
+  "lifetime_matrix_cases": 120,
+  "lifetime_events": 45650,
+  "lifetime_trace_sha256": "358613086b1d233ec6b300931d77ffdd53861040bb0d36ad3488db936bbe44c3",
+  "peak_A_banks": 2,
+  "peak_B_slots": 2,
+  "negative_controls": [
+    "A_overwrite_live_users",
+    "stale_A_generation",
+    "B_overwrite_before_retirement",
+    "missing_A_input_ACK",
+    "missing_B_input_ACK",
+    "wrong_consumer_context",
+    "invalid_tail_mask",
+    "early_B_retirement",
+    "duplicate_consumption",
+    "missing_output_ACK",
+    "premature_group_end",
+    "early_output_ACK",
+    "reuse_context_before_drain",
+    "out_of_order_K",
+    "wrong_partial_context",
+    "partial_truncated_to_48_bits",
+    "intermediate_RNE",
+    "intermediate_saturation",
+    "positive_96_bit_overflow",
+    "negative_96_bit_overflow"
+  ],
+  "candidate_rows": 1,
+  "contexts": [
+    1,
+    2,
+    4,
+    8,
+    16
+  ],
+  "worker_counts": [
+    1,
+    2,
+    3
+  ],
+  "operand_bits": {
+    "A": 32,
+    "B": [
+      8,
+      16
+    ],
+    "partial": 96,
+    "output": 32
+  },
+  "scope": "Independent software arithmetic and bounded-lifetime preconditions; not execution of the SystemC scheduler, RTL, real tensors or model quality"
+}
