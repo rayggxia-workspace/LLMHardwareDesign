@@ -64,7 +64,8 @@ def report(ir, plan):
                 descriptors=services*(descriptor_ticks(hardware['virtual_memory'],1,'load',meta['io_write_ticks'])+
                     descriptor_ticks(hardware['virtual_memory'],1,'store',meta['io_read_ticks']))
                 segment=costs['tile_E_service']+descriptors
-                reserved=row['end']-row['start']
+                offset=binding.get('materialized_tile',{}).get('resource_offsets',{}).get(group+'.E')
+                reserved=offset[1]-offset[0] if offset else row['end']-row['start']
                 if not 0<=segment<=reserved:raise ValueError('tile E segment/reservation attribution differs')
                 tile_auxiliary.append({'task':row['id'],'resource':group+'.E','reserved_ticks':reserved,
                     'E_service_ticks':costs['tile_E_service'],'E_descriptor_ticks':descriptors,
@@ -83,7 +84,9 @@ def report(ir, plan):
         total.update(costs)
         op = body['op']; by_op.setdefault(op, Counter()).update(costs)
         if 'channel_wait_ticks' not in row.get('evaluation',{}):
-            for resource in binding['resources']: reservations[resource] += duration
+            for resource in binding['resources']:
+                offsets=binding.get('materialized_tile',{}).get('resource_offsets',{}).get(resource)
+                reservations[resource] += offsets[1]-offsets[0] if offsets else duration
         if 'dot_tile' not in binding:
             for macro, group in binding['macro_binding'].items(): useful[group+'.'+macro] += work[macro+':core']
         if len(dots.get(row['id'], []))==1:

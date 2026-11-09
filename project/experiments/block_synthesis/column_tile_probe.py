@@ -195,6 +195,16 @@ def analyse(directory, log, *, emit=True):
               'timing_note':'Testbench cycles include serialized host word transport and intentional stalls; not product time or algorithm20.',
               'passive_profiles':profiles,
               'profile_boundary':'Rising-edge timestamp difference: acceptance to first completion, excludes completion-take stalls. P/E service includes actual private S ACK; not LC/DMA timing.'}
+    phase_rows=[tuple(map(int,m)) for m in re.findall(
+        r'^MATERIALIZED_PHASE id=(\d+) packed=(\d+) flags=(\d+) refill=(\d+)$',text,re.MULTILINE)]
+    if manifest.get('execution_order')=='packed-external-three-phase-v1' and not phase_rows:
+        raise ValueError('missing materialized native phase coverage')
+    if phase_rows:
+        expected=[(c['id'],4*c['rows']*((c['columns']+3)//4),
+                   4*c['rows']*((c['columns']+3)//4),16) for c in manifest['cases']]
+        if phase_rows!=expected:raise ValueError('materialized native phase coverage/ACK refill differs')
+        result['materialized_order']={'cases':len(phase_rows),'local_packed_poisoned':True,
+            'scope':'all packed captured before E, full-word external flag objects, actual zero refill before native scatter; serialized host transport, not controller/DMA/system timing'}
     if emit:
         (directory/'summary.json').write_text(json.dumps(result,indent=2)+'\n',newline='\n')
         print(json.dumps(result,indent=2))

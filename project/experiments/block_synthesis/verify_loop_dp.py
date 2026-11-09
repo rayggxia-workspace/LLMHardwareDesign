@@ -82,17 +82,22 @@ def _expand_compounds(tasks,plan):
     return expanded,{**plan,'tasks':rows}
 
 
-def verify(tasks,hardware,plan,wire_budget=None):
+def verify(tasks,hardware,plan,wire_budget=None,*,_window_checked=False):
     def check(ok,message):
         if not ok:raise ValueError(message)
     check(plan.get('status')=='planned','loop plan is not successful')
+    calendar=set(hardware.get('window_calendar',{}).get('resources',[]))
+    window_audit=None
+    if calendar and not _window_checked:
+        from verify_window_schedule import audit
+        window_audit=audit(tasks,hardware,plan)
     selected={(r['id'],r['binding']) for r in plan['tasks']}
     if (any(r.get('evaluation',{}).get('cost_model') == 'dot-phased-column-shards-v1' for r in plan['tasks']) or
         any('phase_execution' in b and (t['id'],b['id']) in selected for t in tasks for b in t['bindings'])):
         from verify_phased_compounds import project
         projected_tasks,projected_plan,audit = project(tasks,hardware,plan)
-        result = verify(projected_tasks,hardware,projected_plan,wire_budget=wire_budget)
-        return {**result,'cooperative_phase_audit':audit}
+        result = verify(projected_tasks,hardware,projected_plan,wire_budget=wire_budget,_window_checked=True)
+        return {**result,'cooperative_phase_audit':audit,'window_audit':window_audit}
     if any('parallel_shards' in b for t in tasks for b in t['bindings']):
         tasks,plan=_expand_compounds(tasks,plan)
     # Deliberately independent from search's conflict filter. A foreign or
@@ -181,9 +186,15 @@ def verify(tasks,hardware,plan,wire_budget=None):
         duration,reads,scratch=evaluated.get(t['id'],((b['warm_ticks'] if hit else b['ticks']),(b['warm_read_words'] if hit else b['external_read_words']),b.get('scratch_by_site',{b['site']:b['scratch_words']})))
         check(row['site']==b['site'] and row['start']>=0 and row['end']-row['start']==duration,'loop time/site mismatch')
         check(all(rows[p]['end']<=row['start'] for p in t.get('after',[])),'loop read before producer commit')
-        for r in b['resources']:claims[r].append((row['start'],row['end'],1))
+        for r in b['resources']:
+            if r not in calendar:claims[r].append((row['start'],row['end'],1))
         for site,n in scratch.items():
-            storage[site].append((row['start'],row['end'],n))
+            offset=None
+            if 'materialized_tile' in b:
+                meta=next(m for m in hardware['leaf_inventory'].values() if m['site']==site)
+                offset=b['materialized_tile']['resource_offsets'].get(meta['io_resource'])
+            start,end=(row['start']+offset[0],row['start']+offset[1]) if offset else (row['start'],row['end'])
+            storage[site].append((start,end,n))
         check(all(n in hardware['nets'] for n in b['nets']),'unknown static connection demand')
         nets.update(b['nets']);traffic+=reads+b['external_write_words']
     def peak(intervals):
@@ -205,5 +216,6 @@ def verify(tasks,hardware,plan,wire_budget=None):
     if 'read_cache_hits' in plan:check(sum(cache_flags.values())==plan['read_cache_hits'],'read cache hit total differs')
     check(max((r['end'] for r in rows.values()),default=0)==plan['makespan'],'loop makespan differs')
     return {'passed':True,'peak_words':peaks,'external_words':traffic,'static_nets':len(nets),
+            'window_audit':window_audit,
             'checked_static_conflict_pairs':len(incompatible),
             'scope':'independent streaming-loop schedule/resource check; kernel program proof is separate'}

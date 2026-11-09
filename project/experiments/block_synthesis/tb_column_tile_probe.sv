@@ -100,6 +100,24 @@ module tb_column_tile_probe;
   e_take=1;@(posedge clk);@(negedge clk);e_take=0;e_commands=e_commands+1;
  endtask
  logic[63:0] inputs_mem[0:VECTOR_WORDS-1];
+ // Explicit external full-word objects for the optional three-phase order.
+ // The host transports words; E/M still perform every sign/scatter operation.
+ logic[127:0] external_packed[0:127],external_flags[0:127];
+ for(genvar bank=0;bank<4;bank=bank+1)begin: controlled_sram_initial_state
+  initial begin
+   integer pattern;logic[127:0] seed;
+   if($value$plusargs("sinit=%d",pattern))begin
+    if(pattern<0 || pattern>2)$fatal(1,"invalid SRAM initial state");
+    for(integer word_index=0;word_index<256;word_index=word_index+1)begin
+     seed=pattern==0?128'd0:pattern==1?{128{1'b1}}:
+       {32'h9e3779b9 ^ 32'(word_index),32'h85ebca6b ^ 32'(bank),
+        32'hc2b2ae35 ^ 32'(word_index*17+bank),32'h27d4eb2f ^ 32'(word_index*97+bank)};
+     dut.store.storage.banks[bank].memory.mem[word_index]=seed;
+     u_store.storage.banks[bank].memory.mem[word_index]=~seed;
+    end
+   end
+  end
+ end
  task automatic run_matrix(input integer id,input integer nrows,input integer ncols,input integer kval,
    input integer abase,input integer bbase,input integer goldbase,input integer finalbase);
   integer begin_cycle,begin_a,begin_b,begin_wide,begin_ack,begin_eack,begin_ecmd;
@@ -150,14 +168,33 @@ module tb_column_tile_probe;
       expected[lane*32+:32]=inputs_mem[finalbase+(rr*ncols+4*half+lane)*4+part][31:0];
      if(result!==expected)$fatal(1,"column final packed mismatch id=%0d row=%0d half=%0d shift=%0d got=%h expected=%h",id,rr,half,part*8,result,expected);
      access(0,slot,0,got);if(got!==expected)$fatal(1,"column final packed SRAM mismatch");
+     if($test$plusargs("materialized"))external_packed[slot-96]=got;
     end
    end
    rows=1;
+   if($test$plusargs("materialized"))begin
+    // All packed writes/reads have completed before the E lease starts.
+    // Destroy the old local copies to catch accidental dependence on them.
+    for(part=0;part<4;part=part+1)for(rr=0;rr<nrows;rr=rr+1)
+     for(half=0;half<(ncols+3)/4;half=half+1)begin
+      slot=part*16+rr*2+half;access(1,96+slot,128'hdeadbeef,got);
+      u_access(1,external_packed[slot],got);flags();u_access(0,0,flag_value);
+      external_flags[slot]=flag_value;
+     end
+    // Actual extra sixteen LOAD/ACKs, not an assumed reset/zero SRAM value.
+    for(rr=0;rr<8;rr=rr+1)begin access(1,rr,0,got);access(1,16+rr,0,got);end
+    $display("MATERIALIZED_PHASE id=%0d packed=%0d flags=%0d refill=16",id,
+       4*nrows*((ncols+3)/4),4*nrows*((ncols+3)/4));
+   end
    for(part=0;part<4;part=part+1)for(rr=0;rr<nrows;rr=rr+1)begin
     for(half=0;half<(ncols+3)/4;half=half+1)begin
      slot=part*16+rr*2+half;
-     access(0,96+slot,0,packed_value);
-     u_access(1,packed_value,got);flags();u_access(0,0,flag_value);
+     if($test$plusargs("materialized"))begin
+      packed_value=external_packed[slot];flag_value=external_flags[slot];
+     end else begin
+      access(0,96+slot,0,packed_value);
+      u_access(1,packed_value,got);flags();u_access(0,0,flag_value);
+     end
      // Complete word transport only: testbench does not split or shift data.
      access(1,192+slot,flag_value,got);
      for(cc=4*half;cc<ncols && cc<4*half+4;cc=cc+1)begin

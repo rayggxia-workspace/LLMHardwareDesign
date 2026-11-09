@@ -19,16 +19,21 @@ class ConditionalTail:
         self.children=children;self.order=tuple(reverse_order)
         self.alternatives=[];self.profile_for={};self.profiles=[]
         self.resource_profiles=[];self.resource_profile_for={}
+        self.window_profiles=[];self.window_profile_for={};window_profiles={}
         alternatives={};profiles={};resource_profiles={}
         for task in tasks:
-            choices={};resource_choices=set()
+            choices={};resource_choices=set();window_choices=set()
             for b in task['bindings']:
                 nets=frozenset(b['nets'])
                 if nets not in alternatives:
                     alternatives[nets]=len(self.alternatives);self.alternatives.append(nets)
                 i=alternatives[nets];cost=optimistic_ticks(b)
                 choices[i]=min(choices.get(i,cost),cost)
-                if 'phase_execution' in b or 'parallel_shards' not in b:
+                if 'materialized_tile' in b:
+                    offsets=b['materialized_tile']['resource_offsets']
+                    terms=((tuple(sorted(set(b['resources'])-set(offsets))),cost),)+tuple(
+                        ((r,),hi-lo) for r,(lo,hi) in sorted(offsets.items()))
+                elif 'phase_execution' in b or 'parallel_shards' not in b:
                     terms=((tuple(sorted(b['resources'])),cost),)
                 elif 'frontier_partition' in b:
                     # Dynamic widths have not been chosen. Keep the declared
@@ -38,6 +43,10 @@ class ConditionalTail:
                     terms=tuple(sorted((tuple(sorted(c['binding']['resources'])),
                                         optimistic_ticks(c['binding'])) for c in b['parallel_shards']['children']))
                 resource_choices.add((i,terms))
+                if hardware.get('window_calendar'):
+                    offsets=b.get('materialized_tile',{}).get('resource_offsets',{})
+                    signature=tuple((r,*offsets.get(r,(0,cost))) for r in sorted(b['resources']))
+                    window_choices.add((i,cost,signature,terms,'parallel_shards' in b))
             signature=tuple(sorted(choices.items()))
             if signature not in profiles:
                 profiles[signature]=len(self.profiles);self.profiles.append(signature)
@@ -46,6 +55,10 @@ class ConditionalTail:
             if signature not in resource_profiles:
                 resource_profiles[signature]=len(self.resource_profiles);self.resource_profiles.append(signature)
             self.resource_profile_for[task['id']]=resource_profiles[signature]
+            signature=tuple(sorted(window_choices))
+            if signature not in window_profiles:
+                window_profiles[signature]=len(self.window_profiles);self.window_profiles.append(signature)
+            self.window_profile_for[task['id']]=window_profiles[signature]
         self.cache={};self.feasible_cache={};self.hits=0;self.misses=0
 
     def possible(self,nets):
@@ -83,7 +96,7 @@ class ConditionalTail:
                 'candidate_net_sets':len(self.alternatives),'cost_profiles':len(self.profiles),
                 'feasibility_unions':len(self.feasible_cache),'resource_profiles':len(self.resource_profiles)}
 
-    def ready_finish(self,name,nets,resources,data_ready):
+    def ready_finish(self,name,nets,resources,data_ready,*,windows=None):
         """Earliest optimistic ready-task completion on append-only calendars.
 
         Future operations cannot move today's committed reservations earlier.
@@ -91,6 +104,20 @@ class ConditionalTail:
         protocol has an all-union start barrier. Contention among future tasks,
         cold cache and serial child arbitration remain relaxed.
         """
+        if self.hardware.get('window_calendar') and windows is not None:
+            from window_calendar import earliest
+            calendar=set(self.hardware['window_calendar']['resources']);choices=[]
+            for alternative,cost,claims,terms,compound in self.window_profiles[self.window_profile_for[name]]:
+                if not self.possible(nets|self.alternatives[alternative]):continue
+                if compound:
+                    # The actual internal arbitration/cache timing is not yet
+                    # resolved; retain the old safe compound relaxation.
+                    choices.append(max(max([data_ready]+[min(resources[r]) for r in group])+ticks
+                                       for group,ticks in terms));continue
+                start=max([data_ready]+[min(resources[r]) for r,_,_ in claims if r not in calendar])
+                start=earliest(windows,{r:(a,b) for r,a,b in claims if r in calendar},start)
+                choices.append(start+cost)
+            return min(choices) if choices else None
         choices=[]
         for alternative,terms in self.resource_profiles[self.resource_profile_for[name]]:
             if not self.possible(nets|self.alternatives[alternative]):continue

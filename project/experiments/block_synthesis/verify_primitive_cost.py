@@ -244,6 +244,9 @@ def verify(ir):
             if nets!=set(b['nets']):raise ValueError('native static endpoint omission')
             return 1
         for b in task['bindings']:
+            if 'materialized_tile' in b:
+                from verify_materialized_tile import verify as check_materialized
+                checked+=check_materialized(ir,task,b);continue
             if 'dot_tile' in b:
                 from verify_tile_binding import verify as check_tile
                 checked+=check_tile(ir,task,b);continue
@@ -330,6 +333,7 @@ def verify(ir):
     regions=list(ir['external_regions'].values())+list(ir['primitive_regions'].values())+list(ir['native_constants'].values())
     regions += [row['temporary_external_region'] for row in ir['program'] if 'temporary_external_region' in row]
     regions += ir.get('native_scratch_regions',[])
+    regions += list(ir.get('materialized_external_regions',{}).values())
     regions += [{'address_words':p['external_base'],'words':p['external_words']} for p in preparations.values()]
     if 'tile_constants' in ir:
         from verify_tile_binding import check_constants

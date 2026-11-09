@@ -79,6 +79,8 @@ class WorkPriceBound:
         if not self.resources:return state.makespan
         remaining=self._remaining(state.done);best=state.makespan
         calendars={r:sum(state.resources[r]) for r in self.resources}
+        for r,intervals in getattr(state,'windows',{}).items():
+            if r in calendars:calendars[r]=sum(b-a for a,b in intervals)
         for weights,denominator,profile_costs in zip(self.prices,self.denominators,self.table(state.nets)):
             numerator=sum(weight*calendars[r] for r,weight in weights)
             for count,cost in zip(remaining,profile_costs):

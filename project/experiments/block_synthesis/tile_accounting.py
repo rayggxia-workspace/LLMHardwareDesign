@@ -16,7 +16,7 @@ def charge(binding,hardware):
     pw=descriptor_ticks(memory,1,'store',pm['io_read_ticks'])
     el=descriptor_ticks(memory,1,'load',em['io_write_ticks']) if em else 0
     ew=descriptor_ticks(memory,1,'store',em['io_read_ticks']) if em else 0
-    result['external_load']=16*pl
+    result['external_load']=binding['tile_work']['initial_zero_loads']*pl
     rt,ct=s['tile'];rows,columns,k=s['rows'],s['columns'],s['K']
     def groups(total,size):
         n,r=divmod(total,size)

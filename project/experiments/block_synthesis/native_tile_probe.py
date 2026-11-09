@@ -4,6 +4,7 @@ Service durations here are explicitly synthetic: this qualifies the numerical
 simulator/protocol, never a new hardware timing table or system performance.
 """
 import argparse
+from copy import deepcopy
 import hashlib
 import json
 from pathlib import Path
@@ -20,6 +21,7 @@ from tile_replay import TileReplay
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('worker',type=Path);parser.add_argument('output',type=Path)
+    parser.add_argument('--materialized',action='store_true')
     a=parser.parse_args();a.worker=a.worker.resolve();a.output.mkdir(exist_ok=False)
     hardware,q=fixture()
     for site in hardware['sites'].values():site['words']=1024
@@ -44,12 +46,23 @@ def main():
             'dot_tile':{'rows':rows,'columns':columns,'K':k,'tile':[rt,ct],'final_shift':shift},
             'tile_work':cost(rows,columns,k,rt,ct,q,hardware['virtual_memory'],p,e)}
         raw,canonical=literal.dot(node,records,weights,binding)
+        lhs=deepcopy(literal.events[-1])
+        if a.materialized and ct>1:
+            # Independent count transformation; actual worker executes the
+            # reordered LOAD/STORE/S reads, not a reference matmul shortcut.
+            binding['materialized_tile']={'kind':'packed-external-three-phase-v1'}
+            binding['tile_work']['initial_zero_loads']+=16
+            binding['tile_work']['external_read_words']+=16
+            binding['tile_work']['temporary_external_words']=2*binding['tile_work']['packed_outputs']
+            lhs['counts']['initial_zero_loads']+=16;lhs['counts']['external_read_words']+=16
+            lhs['peak_external_tmp']=2*binding['tile_work']['packed_outputs']
+            lhs['execution']='packed-external-three-phase-v1'
         native_raw,native_final=native.dot(node,records,weights,binding)
         gold=source@weights
         expected=np.clip(round_shift(gold,shift),-(1<<31),(1<<31)-1)
         for actual,wanted in ((raw,gold),(native_raw,gold),(canonical,expected),(native_final,expected)):
             np.testing.assert_array_equal(actual,wanted)
-        lhs=literal.events[-1];rhs=native.events[-1]
+        rhs=native.events[-1]
         if lhs!=rhs:raise ValueError('literal/native finite-S event counts differ')
         cases.append({'case':case,'rows':rows,'columns':columns,'K':k,'tile':[rt,ct],'shift':shift,
             'raw_sha256':hashlib.sha256(native_raw.tobytes()).hexdigest(),
@@ -67,6 +80,7 @@ def main():
     expected=np.clip(round_shift(source@weights,16),-(1<<31),(1<<31)-1)
     if np.array_equal(bad,expected):raise ValueError('corrupt-basis negative was not observable')
     result={'passed':True,'cases':cases,'case_count':len(cases),'corrupt_basis_observed':True,
+        'materialized_cases':sum(c['event'].get('execution')=='packed-external-three-phase-v1' for c in cases),
         'seconds':time.monotonic()-began,'worker_sha256':hashlib.sha256(a.worker.read_bytes()).hexdigest(),
         'source_sha256':{name:hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
             for name in ('native_tile_probe.py','native_tile_replay.cpp','native_tile_replay.py','tile_replay.py')},

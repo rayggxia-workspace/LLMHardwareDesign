@@ -1,5 +1,13 @@
 # 架构与运行
 
+2026-11-09迭代9：[阶段窗口/前沿状态合同](../project/experiments/block_synthesis/WINDOW_CALENDAR.md)及
+[真实正负结果和复跑入口](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_9.md)。
+`tile_review.py --registered-ir --materialized-windows --incumbent BEST_PLAN --incumbent-order`
+向全部基线开放新配方/给定顺序，`--incumbent-backbone`另做同宽度前缀保留消融；
+额外外存临时区/16次LOAD、完整区间日历、独立原生成本/S/资源/静态网检查保留，非理想重叠。
+当前Windows/Linux各204项；三组指定SRAM初态各347例原生重排及负对照、68例有限S数值通过。
+真实FFN额外0，完整图两份冻结作业仍待终态；未增加系统、KV、能耗或token/s资格。
+
 2026-11-09：[迭代5](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_5.md)。
 `phase_review.py IR NEW_OUTPUT --incumbent PLAN --wire-budget 18 --write-ir`比较共同阶段后端下的贪心、旧DP、
 HEFT式、条件尾部贪心/DP；[阶段协议](../project/experiments/block_synthesis/PHASE_COMPOUNDS.md)仍保守持有父服务全部资源，

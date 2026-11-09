@@ -44,6 +44,8 @@ class TileReplay:
         self.hardware=ir['hardware'];self.constants=ir.get('tile_constants',{});self.events=[]
 
     def dot(self,node,records,b,binding):
+        if 'materialized_tile' in binding:
+            raise ValueError('three-phase materialized tile requires the explicit native numeric worker')
         spec=binding['dot_tile'];rows,columns,k=spec['rows'],spec['columns'],spec['K']
         rt,ct=spec['tile'];pm=self.hardware['leaf_inventory'][binding['macro_binding']['M']]
         ps=SRAM(self.hardware['sites'][pm['site']]['words'])

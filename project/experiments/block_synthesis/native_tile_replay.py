@@ -40,7 +40,7 @@ class NativeTileReplay:
         weights=np.asarray(b,dtype=np.int64).reshape(-1,k,n)
         if weights.shape[0]!=1 or weights.min()<-32768 or weights.max()>32767:
             raise ValueError('native tile needs row-shared S16 B')
-        header=(0x54494c45,1,r,n,k,rt,ct,s['final_shift'],self.hardware['sites'][p['site']]['words'],
+        header=(0x54494c45,2 if 'materialized_tile' in binding else 1,r,n,k,rt,ct,s['final_shift'],self.hardware['sites'][p['site']]['words'],
                 self.hardware['sites'][em['site']]['words'] if em else 0,binding['tile_work']['temporary_external_words'])
         self.process.stdin.write(struct.pack('<11I',*header))
         for array in (self.constants['records'],records,weights[0]):
@@ -61,6 +61,7 @@ class NativeTileReplay:
             metrics['peak_external_tmp']>expected['temporary_external_words']):
             raise ValueError('native tile replay allocation exceeds plan')
         self.events.append({'primitive':node['id'],'tile':[rt,ct],'counts':counts,
+            **({'execution':'packed-external-three-phase-v1'} if 'materialized_tile' in binding else {}),
             **{key:metrics[key] for key in METRICS[-3:]}})
         return raw,final
 

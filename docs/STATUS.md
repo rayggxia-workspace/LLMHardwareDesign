@@ -1,5 +1,12 @@
 # 当前状态
 
+2026-11-09，#219/PR220[迭代9](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_9.md)部分交付：
+实际辅助窗口/三段外存物化、独立S/资源/成本审计及同宽度好前缀消融；Windows/Linux各204项，
+三组指定SRAM初态各347例原生重排/ACK及负对照、68例有限S数值通过。新动作额外16条LOAD，非外存减少成果。
+真实FFN最终仍选此前最强计划，额外0；保留退化和错误分母诊断，不凑20%。修正N后的完整旧DP三个输入数值已终态逐位通过。
+完整窗口/好前缀消融101500/101501继续运行UNLIMITED；一般驻留、KV/SystemC能耗/token/s及最优适配对照未完成，Issue in_progress。
+登记pending，看板unverified/同步pending，待独立审查不自合并。
+
 2026-11-09，#219/PR220[迭代8](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_8.md)部分交付：
 新tile贪心/DP各三次完整3B整数数值通过；发现历史NExp原生模板与独立参考不一致，已改两次显式Stats，
 三个初态各653例N RTL及负对照通过。旧向量数值不证明旧原生命令，重编译整图贪心三输入数值逐位通过；完整旧DP/条件DP均202,663,587,646模型ticks，新策略额外0，选中DP数值补验中。

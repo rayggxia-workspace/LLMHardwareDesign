@@ -62,7 +62,7 @@ int32_t get32(const Word& word) {
 
 void run(const std::array<uint32_t,11>& h) {
     const uint32_t rows=h[2],cols=h[3],k=h[4],rt=h[5],ct=h[6],shift=h[7];
-    if(h[0]!=0x54494c45||h[1]!=1||!rows||!cols||!k||!rt||!ct||rt>8||ct>8||shift>63||
+    if(h[0]!=0x54494c45||(h[1]!=1&&h[1]!=2)||!rows||!cols||!k||!rt||!ct||rt>8||ct>8||shift>63||
        rt>rows||ct>cols||k>uint64_t(INT64_MAX)/((uint64_t(1)<<31)+131072)/(uint64_t(1)<<15))
         throw std::runtime_error("invalid tile protocol/shape/accumulator bound");
     std::array<Word,9> constants{};input(constants.data(),constants.size());
@@ -76,11 +76,43 @@ void run(const std::array<uint32_t,11>& h) {
             throw std::runtime_error("invalid prepared S32 component identity");
     }
     SRAM p(h[8]),e(h[9]);Counts counts{};
+    const bool materialized=h[1]==2;
+    if(materialized&&ct<=1)throw std::runtime_error("materialized protocol needs E conversion");
     auto load=[&](SRAM& s,size_t a,const Word& w){s.write_ack(a,w);++counts[READS];};
     auto store=[&](const SRAM& s,size_t a){++counts[WRITES];return s.read(a);};
     for(unsigned i=0;i<8;++i) {load(p,i,constants[0]);load(p,16+i,constants[0]);}
     counts[ZEROS]=16;
     std::vector<int64_t> raw(extent(rows,cols));std::vector<int32_t> result(raw.size());
+    struct Pending {uint32_t rr,cc;unsigned r,n;size_t offset;};
+    std::vector<Pending> pending;
+    std::vector<Word> all_packed,all_flags;
+    auto signs=[&](const std::vector<Word>& packed) {
+        std::vector<Word> flags;
+        for(const Word& word:packed) {
+            load(e,0,word);Word flag{};
+            for(unsigned j=0;j<8;++j)flag[j]=e.read(0)[j]<0?-1:0;
+            e.write_ack(1,flag);flags.push_back(store(e,1));++counts[ESIGN];
+        }
+        counts[TMPHIGH]=std::max<uint64_t>(counts[TMPHIGH],packed.size()+flags.size());
+        if(counts[TMPHIGH]>h[10])throw std::runtime_error("external temporary region overflow");
+        counts[FLAGS]+=flags.size();return flags;
+    };
+    auto scatter=[&](const Pending& grid,const std::vector<Word>& packed,const std::vector<Word>& flags) {
+        const unsigned stride=(grid.n+3)/4;
+        for(unsigned i=0;i<grid.r;++i)for(unsigned j=0;j<grid.n;++j) {
+            const size_t index=grid.offset+i*stride+j/4;const unsigned lane=2*(j%4);int64_t sum=0;
+            for(unsigned component=0;component<3;++component) {
+                load(p,0,component==2?flags.at(index):packed.at(index));
+                load(p,16,constants[1+lane+(component==1)]);
+                int64_t partial=0;
+                for(unsigned v=0;v<8;++v)partial+=int64_t(p.read(0)[v])*p.read(16)[v];
+                sum+=partial*(component==0?1:component==1?65536:-65536);
+                ++counts[SI];++counts[SB];++counts[SX];++counts[SF];++counts[SS];
+            }
+            Word word{};put32(word,0,final32(sum,0));p.write_ack(512+i*8+j,word);
+            result[size_t(grid.rr+i)*cols+grid.cc+j]=get32(store(p,512+i*8+j));++counts[FINAL];++counts[CANON];
+        }
+    };
     for(uint32_t rr=0;rr<rows;rr+=rt) for(uint32_t cc=0;cc<cols;cc+=ct) {
         const unsigned r=std::min(rt,rows-rr),n=std::min(ct,cols-cc);++counts[TILES];
         std::array<int64_t,64> acc{};std::array<int16_t,8> bbank{};
@@ -106,34 +138,25 @@ void run(const std::array<uint32_t,11>& h) {
             }
             counts[FINAL]+=r;counts[CANON]+=r;continue;
         }
-        const unsigned stride=(n+3)/4;
-        std::vector<Word> packed,flags; // Explicit external temporary objects.
+        std::vector<Word> packed; // Explicit external temporary objects.
         for(unsigned i=0;i<r;++i)for(unsigned first=0;first<n;first+=4) {
             Word word{};
             for(unsigned j=first;j<std::min(n,first+4);++j)put32(word,j-first,final32(acc[i*8+j],shift));
             p.write_ack(96+packed.size(),word);packed.push_back(store(p,96+packed.size()));++counts[FINAL];
         }
-        for(const Word& word:packed) {
-            load(e,0,word);Word flag{};
-            for(unsigned j=0;j<8;++j)flag[j]=e.read(0)[j]<0?-1:0;
-            e.write_ack(1,flag);flags.push_back(store(e,1));++counts[ESIGN];
+        counts[PACKED]+=packed.size();
+        if(materialized) {
+            pending.push_back({rr,cc,r,n,all_packed.size()});
+            all_packed.insert(all_packed.end(),packed.begin(),packed.end());
+        } else {
+            const auto flags=signs(packed);scatter({rr,cc,r,n,0},packed,flags);
         }
-        counts[TMPHIGH]=std::max<uint64_t>(counts[TMPHIGH],packed.size()+flags.size());
-        if(counts[TMPHIGH]>h[10])throw std::runtime_error("external temporary region overflow");
-        counts[PACKED]+=packed.size();counts[FLAGS]+=flags.size();
-        for(unsigned i=0;i<r;++i)for(unsigned j=0;j<n;++j) {
-            const unsigned index=i*stride+j/4,lane=2*(j%4);int64_t scatter=0;
-            for(unsigned component=0;component<3;++component) {
-                load(p,0,component==2?flags[index]:packed[index]);
-                load(p,16,constants[1+lane+(component==1)]);
-                int64_t partial=0;
-                for(unsigned v=0;v<8;++v)partial+=int64_t(p.read(0)[v])*p.read(16)[v];
-                scatter+=partial*(component==0?1:component==1?65536:-65536);
-                ++counts[SI];++counts[SB];++counts[SX];++counts[SF];++counts[SS];
-            }
-            Word word{};put32(word,0,final32(scatter,0));p.write_ack(512+i*8+j,word);
-            result[size_t(rr+i)*cols+cc+j]=get32(store(p,512+i*8+j));++counts[FINAL];++counts[CANON];
-        }
+    }
+    if(materialized) {
+        all_flags=signs(all_packed);
+        for(unsigned i=0;i<8;++i){load(p,i,constants[0]);load(p,16+i,constants[0]);}
+        counts[ZEROS]+=16;
+        for(const auto& grid:pending)scatter(grid,all_packed,all_flags);
     }
     counts[PHIGH]=p.high;counts[EHIGH]=e.high;
     const std::array<uint32_t,2> reply{{0,METRICS}};

@@ -31,8 +31,9 @@ def fixture():
 
 
 class TestColumnTileEvidence(unittest.TestCase):
-    def run_fixture(self,record,profiles,*,complete=True,extra=''):
+    def run_fixture(self,record,profiles,*,complete=True,extra='',materialized=False):
         manifest=fixture()[0]
+        if materialized:manifest['execution_order']='packed-external-three-phase-v1'
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
             (root/'manifest.json').write_text(json.dumps(manifest))
@@ -62,3 +63,13 @@ class TestColumnTileEvidence(unittest.TestCase):
         _,r,p=fixture()
         with self.assertRaises(ValueError):self.run_fixture(r,p,complete=False)
         with self.assertRaises(ValueError):self.run_fixture(r,p,extra='FATAL: numeric mismatch\n')
+
+    def test_explicit_materialized_phase_receipt(self):
+        _,r,p=fixture()
+        result=self.run_fixture(r,p,extra='MATERIALIZED_PHASE id=0 packed=16 flags=16 refill=16\n')
+        self.assertEqual(result['materialized_order']['cases'],1)
+        for changed in ('packed=15 flags=16 refill=16','packed=16 flags=15 refill=16','packed=16 flags=16 refill=0'):
+            with self.assertRaisesRegex(ValueError,'phase coverage'):
+                self.run_fixture(r,p,extra='MATERIALIZED_PHASE id=0 '+changed+'\n')
+        with self.assertRaisesRegex(ValueError,'missing materialized'):
+            self.run_fixture(r,p,materialized=True)

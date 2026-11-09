@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+2026-11-09 CST：#219/PR220[迭代9](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_9.md)部分交付。
+实际阶段窗口/独立检查、额外外存成本及同宽度好前缀消融；Windows/Linux各204项，原生重排三组SRAM初态各347例及负对照通过。
+有限S数值68例，其中60例新顺序；真实FFN仍不胜此前强计划，额外0，保存负结果与作废分母。修正N后完整DP三输入数值已逐位通过。
+101500/101501为两份独立冻结的完整图消融，4核/UNLIMITED继续运行。下一步终态、有效新计划数值和一般有限S驻留；
+20%、完整KV/校准系统能耗/token/s及最优适配对照仍未完成。Issue219 in_progress，待独立审查不自合并；登记pending，看板unverified/同步pending。
+
 2026-11-09 CST：#219/PR220[迭代8](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_8.md)部分交付。
 tile贪心/DP各三次完整3B整数数值逐位通过；NExp历史原生模板缺零Stats，已修并通过三初态各653例真实N及负对照。
 旧向量数值不证明旧原生命令。187项Windows/Linux通过，重编译整图贪心三输入数值逐位通过；完整旧DP/条件DP持平、额外0，选中DP数值补验中。修正FFN额外3.890449%，价格下界无新增收益。

@@ -83,7 +83,10 @@ def project(tasks,hardware,plan):
                 for child,s in zip(binding['parallel_shards']['children'],services):
                     for resource in child['binding']['resources']:claims[resource].append((s['start'],s['end']))
             else:
-                for resource in binding['resources']:claims[resource].append((row['start'],row['end']))
+                for resource in binding['resources']:
+                    offsets=binding.get('materialized_tile',{}).get('resource_offsets',{})
+                    a,b=offsets.get(resource,(0,row['end']-row['start']))
+                    claims[resource].append((row['start']+a,row['start']+b))
             rows.append(row);peak = max(peak,row['end']);continue
         if (binding['phase_execution'] != {'kind':'isolated-compound-fcfs-v1',
                  'reservation':'all-union-resources-through-final-ACK'} or 'frontier_partition' in binding):
