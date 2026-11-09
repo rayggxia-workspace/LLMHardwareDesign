@@ -1,5 +1,15 @@
 # Issue247速度迭代接续
 
+## 第二轮RTL与评估通过（2026-11-10，Asia/Shanghai）
+
+Issue247 / PR243，负责人Melodydt，in_progress。R2源码863492081f0f512fc64fb73c787fcdcaf145a6b4，31文件blob读回通过。run18/101852/mdt-r2-nexp-rtl，2:37；run19/101854/mdt-iter2-nexp，2:53；均c64/node1/4核COMPLETED0:0。R2实际费用[7,7,9,9,16,16,18,18]，默认/DIRECT0兼容、数值、持久状态及完整U通过。16旧体系case/8默认精确回归、2prefill fallback、128篡改及profile/CLI负例通过；独立复核完成。
+
+主W8 decode512 ideal3.66958239533（比R1+0.90184%）、shared3.37834376557（+0.83026%）；Dot224.101536667ms占82.2359%，未达5。run18结果SHAfb0b4d0d1251140655feea5bd671c196e5ae13b1fd47066dc22d6e1e1a2eac78，run19结果SHAb16ff9a0209add1227177d1899bbf9928ae7e83d724a0c113469e7c860c97098。两run在/public/home/yuzelu/Melodydt/issue247-area-speed/，源码、日志和结果持久保存；追踪`sacct -j 101852,101854 -X --format=JobID,State,ExitCode,Elapsed,NodeList`，查看各目录results/result.json。所有作业终态，无自动监测。
+
+第二轮详细报告已完成，PDF生成/逐页QA待完成，当前仍1/4轮完整交付。第三轮在隔离目录研究/实施S32/S96 M有限供数；正式生产未改R3。恢复第一步核对PR最新head，完成R2 PDF后审查R3真实buffer/nextK/commit/ACK与旧模型收费边界。SRAM不扩容；大面积候选另备份。登记pending、看板unverified/同步pending、审查人待指定，未合并main。
+
+以下为历史阶段回执；当前以最上方记录为准。
+
 ## 最新阶段：R1已通过，R2隔离实施中
 
 R1源e6d72113a14c5a0772f01ff5851d630d5d6687fa；run16/101835已COMPLETED0:0、40秒，结果SHA78c57febe43f2a114a8a21ca9b5992b465d7b7589f05c83eb68e5f97923d4ef7。run17/101838已COMPLETED0:0、2:52，结果SHAbc27f6b66c63b7356a4ead76e800c539efb1499322f91c45114e6df79595d076。均c64/node1/4核，源码/日志/结果在上述本人父目录run16、run17。133策展原件和完整源/输入SHA已核验，见work/Melodydt/247/speed-iterations/index.json；主条件3.63678454238、shared3.35052563236，未到5。无活动作业、无自动监测。

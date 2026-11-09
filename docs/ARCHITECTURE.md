@@ -305,3 +305,17 @@ python -B work/Melodydt/247/speed-iterations/verify.py
 ```
 
 上两条使用不同新run目录，执行 `sbatch --parsable job.sh`，不覆盖旧结果。源快照单独保存，后续轮次修改当前RTL不改写旧资格。旧模型保留vector_region全额费用，S32 NExp采用实际NX32计算服务周期；S16 prefill保留旧路径。首轮run16/101835与run17/101838实际通过，报告与源/输入/输出SHA见迭代入口；这不等于原生完整LLM或物理资格。
+
+
+### Issue247第二轮：单命令stateless NExp
+
+实现与结果见[第二轮报告](experiments/issue-247-speed-round2.md)。源码863492081f0f512fc64fb73c787fcdcaf145a6b4；run18 RTL、run19旧模型均通过，真实费用与结果SHA在speed-iterations索引。正式U的NEXP_BATCH/NEXP_DIRECT默认关闭；不新增S容量。
+
+在本人服务器独立RUN目录，按归档payload/inputs/source SHA准备后通过对应job.sh提交Slurm；不要在登录节点或本机执行EDA。批处理入口：
+
+```sh
+python3 -B source/project/experiments/rtl_iterations/round2/run.py --root "$RUN"
+python3 -B source/project/experiments/iterative_speed/round02/run.py --root "$RUN"
+```
+
+离线证据：`python work/Melodydt/247/speed-iterations/verify.py`。R2源不同于R1，旧资格应核对归档source-snapshot，不要改历史SHA适配当前文件。

@@ -1,5 +1,13 @@
 # 当前状态
 
+## 第二轮RTL与评估通过（2026-11-10，Asia/Shanghai）
+
+Issue247 / PR243，负责人Melodydt，in_progress。R2源码863492081f0f512fc64fb73c787fcdcaf145a6b4，31文件blob读回通过。run18/101852/mdt-r2-nexp-rtl，2:37；run19/101854/mdt-iter2-nexp，2:53；均c64/node1/4核COMPLETED0:0。R2实际费用[7,7,9,9,16,16,18,18]，默认/DIRECT0兼容、数值、持久状态及完整U通过。16旧体系case/8默认精确回归、2prefill fallback、128篡改及profile/CLI负例通过；独立复核完成。
+
+主W8 decode512 ideal3.66958239533（比R1+0.90184%）、shared3.37834376557（+0.83026%）；Dot224.101536667ms占82.2359%，未达5。run18结果SHAfb0b4d0d1251140655feea5bd671c196e5ae13b1fd47066dc22d6e1e1a2eac78，run19结果SHAb16ff9a0209add1227177d1899bbf9928ae7e83d724a0c113469e7c860c97098。两run在/public/home/yuzelu/Melodydt/issue247-area-speed/，源码、日志和结果持久保存；追踪`sacct -j 101852,101854 -X --format=JobID,State,ExitCode,Elapsed,NodeList`，查看各目录results/result.json。所有作业终态，无自动监测。
+
+第二轮详细报告已完成，PDF生成/逐页QA待完成，当前仍1/4轮完整交付。第三轮在隔离目录研究/实施S32/S96 M有限供数；正式生产未改R3。恢复第一步核对PR最新head，完成R2 PDF后审查R3真实buffer/nextK/commit/ACK与旧模型收费边界。SRAM不扩容；大面积候选另备份。登记pending、看板unverified/同步pending、审查人待指定，未合并main。
+
 2026-11-10，[Issue247/PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)按用户新授权开始[最多四轮RTL提速迭代](experiments/issue-247-speed-iterations.md)，恢复in_progress。主W8 decode512沿旧评价体系，目标5 token/s或满四轮，每轮详细PDF；起点3.230811共享口/3.496169理想端口为条件估计。R1单N批处理与U接入通过服务器RTL/16场景评估，主条件值3.636785、共享口3.350526；首轮5页PDF已通过内容与逐页视觉QA，1/4轮完成；R2单命令relative-exp隔离实施中。SRAM不扩容、备份分支已读回，不继承历史物理资格。
 
 2026-11-10，[Issue247/PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)新增[旧评价体系复评](experiments/issue-247-legacy-metric-evaluation.md)：run15/101800的21场景全历史字段及5生成源SHA一致，旧W8 decode基线3.063655、共享口ctx8 3.230811、理想端口ctx8 3.496169；48/64KiB的4.467001/4.547434属于prefill参考。未修改生产RTL或扩容，不作为原生实测。待独立审查，登记pending、看板unverified/同步pending。
