@@ -9,7 +9,8 @@ import hashlib
 import json
 from pathlib import Path
 
-from fusion_contract import ELEMENTWISE, read_trace, require, vector_regions
+from fusion_contract import (ELEMENTWISE, read_trace, region_replay_contract,
+                             require, vector_regions)
 
 
 COLUMNS = ['id', 'region', 'op_index', 'offset', 'n', 'forward_input_tensor',
@@ -31,6 +32,7 @@ def event_header(path):
             and header['output_slot_bytes'] == 256, 'changed finite data budget')
     require(header['forward_register_read_bytes_per_cycle'] == 16 and
             header['forward_register_write_bytes_per_cycle'] == 16, 'forward RF bandwidth')
+    require(header['input_operand_descriptor_capacity'] == 4, 'FIFO input descriptor contract')
     return header
 
 
@@ -64,6 +66,7 @@ def inspect_events(path, trace, fusion, fee):
     digest = hashlib.sha256()
     node_id = count_regions = phase_wall = arithmetic = control = 0
     S_service = DDR_read = DDR_write = forward_packets = forward_bytes = 0
+    serial_regions = serial_packets = 0
     previous_end = 0
     for region, nodes in iter_regions(path):
         require(count_regions < len(expected_regions), 'extra region')
@@ -72,6 +75,12 @@ def inspect_events(path, trace, fusion, fee):
         count = trace.ops[begin].elements
         require((region['id'], region['begin'], region['end_exclusive'], region['elements']) ==
                 (count_regions, begin, stop, count), 'region identity/coverage')
+        contract = region_replay_contract(trace, begin, stop)
+        for key, expected in contract.items():
+            require(region[key] == expected, 'region FIFO budget metadata: ' + key)
+        if not contract['replay_eligible']:
+            serial_regions += 1
+            serial_packets += len(nodes)
         require(previous_end <= region['start_subcycles'] <= region['end_subcycles'],
                 'overlapping/out-of-order source regions')
         previous_end = region['end_subcycles']
@@ -115,7 +124,9 @@ def inspect_events(path, trace, fusion, fee):
                 E_arithmetic_subcycles=arithmetic, control_subcycles=control,
                 phase_S_service_subcycles=S_service, phase_DDR_read_bus=DDR_read,
                 phase_DDR_write_bus=DDR_write, forwarded_packets=forward_packets,
-                forwarded_bytes=forward_bytes)
+                forwarded_bytes=forward_bytes,
+                replay_eligible_regions=count_regions - serial_regions,
+                replay_serial_regions=serial_regions, replay_serial_packets=serial_packets)
 
 
 def dependencies(region, nodes, trace):
@@ -166,6 +177,23 @@ def replay_region(region, nodes, trace, depth):
                 node[9] >= node[12] + node[13] >= 0, 'replay lost shared S service')
     require(sum(sum(node[7:10]) for node in nodes) ==
             region['end_subcycles'] - region['start_subcycles'], 'source phase total mismatch')
+    contract = region_replay_contract(trace, region['begin'], region['end_exclusive'])
+    if 'replay_eligible' in region:
+        for key, expected in contract.items():
+            require(region[key] == expected, 'source region budget/eligibility mismatch')
+    measured = region['end_subcycles'] - region['start_subcycles']
+    E_work = sum(node[8] for node in nodes)
+    controller_work = sum(node[7] + node[9] for node in nodes)
+    if not contract['replay_eligible']:
+        # Actual sequential model already handled these inputs. Do not retrofit
+        # a free wider FIFO or change fusion: retain every measured phase.
+        return dict(source_subcycles=measured, replay_subcycles=measured,
+                    E_service_subcycles=E_work, controller_service_subcycles=controller_work,
+                    E_controller_overlap_subcycles=0, peak_live_slots=0,
+                    peak_forward_bytes=0, peak_packet_input_bytes=0,
+                    peak_packet_output_bytes=0, output_ACKs=len(nodes),
+                    serial_fallback=True, source_contract=contract)
+    require(contract['max_input_operands'] <= 4, 'input operand descriptor capacity exceeded')
     deps, peak_input, peak_output = dependencies(region, nodes, trace)
     size = len(nodes)
     require(size > 0, 'empty vector region')
@@ -265,9 +293,6 @@ def replay_region(region, nodes, trace, depth):
         ranges.sort()
         require(all(a[1] <= b[0] for a, b in zip(ranges, ranges[1:])),
                 'resource duplication/overlap')
-    measured = region['end_subcycles'] - region['start_subcycles']
-    E_work = sum(node[8] for node in nodes)
-    controller_work = sum(node[7] + node[9] for node in nodes)
     require(max(E_work, controller_work) <= time <= measured, 'pipeline work/runtime bounds')
     if depth == 1:
         require(time == measured, 'depth1 did not reproduce full sequential region')
@@ -276,7 +301,7 @@ def replay_region(region, nodes, trace, depth):
                 E_controller_overlap_subcycles=E_work + controller_work - time,
                 peak_live_slots=peak_live, peak_forward_bytes=peak_forward,
                 peak_packet_input_bytes=peak_input, peak_packet_output_bytes=peak_output,
-                output_ACKs=size)
+                output_ACKs=size, serial_fallback=False, source_contract=contract)
 
 
 def replay_events(events, row, depth, trace=None):
@@ -285,12 +310,17 @@ def replay_events(events, row, depth, trace=None):
     require(header['trace_sha256'] == trace.sha256, 'replay trace SHA mismatch')
     expected_regions = vector_regions(trace)
     source = candidate = E_work = controller_work = count = nodes = 0
+    serial_regions = serial_packets = serial_subcycles = 0
+    source_input_peak = source_output_peak = source_operand_peak = 0
     peaks = dict(peak_live_slots=0, peak_forward_bytes=0,
                  peak_packet_input_bytes=0, peak_packet_output_bytes=0)
     for region, packets in iter_regions(events):
         require(count < len(expected_regions) and
                 (region['begin'], region['end_exclusive']) == expected_regions[count],
                 'replay region source identity')
+        contract = region_replay_contract(trace, region['begin'], region['end_exclusive'])
+        for key, expected in contract.items():
+            require(region[key] == expected, 'replay region budget metadata: ' + key)
         receipt = replay_region(region, packets, trace, depth)
         source += receipt['source_subcycles']
         candidate += receipt['replay_subcycles']
@@ -298,6 +328,13 @@ def replay_events(events, row, depth, trace=None):
         controller_work += receipt['controller_service_subcycles']
         count += 1
         nodes += receipt['output_ACKs']
+        source_input_peak = max(source_input_peak, contract['max_input_bytes'])
+        source_output_peak = max(source_output_peak, contract['max_output_bytes'])
+        source_operand_peak = max(source_operand_peak, contract['max_input_operands'])
+        if receipt['serial_fallback']:
+            serial_regions += 1
+            serial_packets += receipt['output_ACKs']
+            serial_subcycles += receipt['source_subcycles']
         for key in peaks:
             peaks[key] = max(peaks[key], receipt[key])
     require(count == len(expected_regions), 'replay missing region')
@@ -319,7 +356,14 @@ def replay_events(events, row, depth, trace=None):
                 frozen_controller_service_subcycles=controller_work,
                 pipeline_overlap_subcycles=source - candidate,
                 regions=count, packet_output_ACKs=nodes, **peaks,
+                replay_eligible_regions=count - serial_regions,
+                replay_serial_regions=serial_regions, replay_serial_packets=serial_packets,
+                serial_fallback_subcycles=serial_subcycles,
+                max_observed_source_input_bytes=source_input_peak,
+                max_observed_source_output_bytes=source_output_peak,
+                max_observed_source_input_operands=source_operand_peak,
                 FIFO_data_capacity_bytes=depth * (768 + 256),
+                FIFO_input_operand_descriptor_capacity=4,
                 independent_forward_capacity_bytes=256,
                 forward_metadata_bytes=header['forward_metadata_bytes'],
                 total_declared_data_bytes=depth * 1024 + 256,
@@ -327,4 +371,5 @@ def replay_events(events, row, depth, trace=None):
                 unchanged_physical_U_S_bytes=16384,
                 phase_DDR_and_cache_costs='frozen, not recomputed under concurrency',
                 scope='conditional finite one-E/one-shared-controller replay with fixed '
-                      'per-phase DDR/cache times; not a new full-system simulation or RTL result')
+                      'per-phase DDR/cache times; oversized whole regions remain serial '
+                      'outside FIFO; not a new full-system simulation or RTL result')

@@ -18,6 +18,7 @@ ELEMENTWISE = frozenset(('Add', 'Sub', 'Product', 'Convert', 'Compare', 'Select'
                         'Maximum', 'Minimum', 'MaskZero', 'MaskFloor', 'Mask'))
 REDUCTIONS = frozenset(('NFactor', 'SquareSum', 'Sum', 'Max'))
 CANONICAL = frozenset(('SiLU', 'RoPE', 'Reciprocal'))
+_REPLAY_CONTRACTS = {}
 
 
 def require(condition, message):
@@ -110,6 +111,50 @@ def vector_regions(trace: Trace):
     return regions
 
 
+def region_replay_contract(trace: Trace, begin, stop):
+    """Budget hypothetical FIFO payloads without altering actual vector work.
+
+    Four small logical inputs can fit the same 768B data budget. No operand is
+    deleted or truncated. A whole oversized region remains measured serial
+    source time outside the FIFO replay; its actual fusion/ledger stays intact.
+    """
+    key = trace.sha256, begin, stop
+    cacheable = len(trace.sha256) == 64
+    if cacheable and key in _REPLAY_CONTRACTS:
+        return dict(_REPLAY_CONTRACTS[key])
+    count = trace.ops[begin].elements
+    max_operands = max_input = max_output = 0
+    for offset in range(0, count, 64):
+        n = min(64, count - offset)
+        for index in range(begin, stop):
+            op = trace.ops[index]
+            if op.kind == 'Constant':
+                continue
+            max_operands = max(max_operands, len(op.inputs))
+            size = 0
+            for tid in op.inputs:
+                tensor = trace.tensors[tid]
+                width = tensor.bits // 8
+                start = 0 if tensor.elements == 1 else offset % tensor.elements
+                take = min(n, tensor.elements - start)
+                size += take * width
+                if take < n and tensor.elements > 1:
+                    size += min(n - take, tensor.elements) * width
+            max_input = max(max_input, size)
+            max_output = max(max_output, n * (trace.tensors[op.out].bits // 8))
+    reasons = []
+    if max_input > 768:
+        reasons.append('input_payload_exceeds_768')
+    if max_output > 256:
+        reasons.append('output_payload_exceeds_256')
+    result = dict(replay_eligible=not reasons, replay_excluded_reasons=reasons,
+                  max_input_operands=max_operands, max_input_bytes=max_input,
+                  max_output_bytes=max_output)
+    if cacheable:
+        _REPLAY_CONTRACTS[key] = result
+    return dict(result)
+
+
 def legal_edges(trace: Trace, adjacent=True):
     """Single input occurrence, S32, exact tile extent; retain op boundaries.
 
@@ -165,6 +210,11 @@ def analyse(path: Path):
     inventory, _ = legal_edges(trace, False)
     kinds = Counter(op.kind for op in trace.ops)
     regions = vector_regions(trace)
+    contracts = [region_replay_contract(trace, begin, stop) for begin, stop in regions]
+    serial_packets = sum(((trace.ops[begin].elements + 63) // 64) *
+                         sum(trace.ops[i].kind in ELEMENTWISE for i in range(begin, stop))
+                         for (begin, stop), contract in zip(regions, contracts)
+                         if not contract['replay_eligible'])
     def ledger(edges):
         return dict(edges=len(edges),
                     kind_pairs=dict(sorted(Counter(e['producer_kind'] + '->' +
@@ -182,7 +232,15 @@ def analyse(path: Path):
                 full_input_reduction_barriers={k: kinds[k] for k in sorted(REDUCTIONS)},
                 canonical_already_register_retained={k: kinds[k] for k in sorted(CANONICAL)},
                 NExp_elements=sum(op.elements for op in trace.ops if op.kind == 'NExp'),
+                replay_eligible_regions=sum(contract['replay_eligible'] for contract in contracts),
+                replay_serial_regions=sum(not contract['replay_eligible'] for contract in contracts),
+                replay_serial_packets=serial_packets,
+                max_source_input_operands=max(c['max_input_operands'] for c in contracts),
+                max_source_input_bytes=max(c['max_input_bytes'] for c in contracts),
                 contract=dict(E_instances=1, tile_elements=64, temporary_bytes=256,
+                              FIFO_input_bytes=768, FIFO_output_bytes=256,
+                              FIFO_input_operand_descriptors=4,
+                              FIFO_descriptor_control_area='unknown, not implemented',
                               per_operator_arithmetic_and_quantization_preserved=True,
                               unmodelled_command_cycles_saved=0,
                               existing_canonical_register_savings_claimed=0,

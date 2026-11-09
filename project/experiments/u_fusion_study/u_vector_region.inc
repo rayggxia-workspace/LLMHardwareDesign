@@ -7,6 +7,7 @@
   U saved_S_read_reservations=0,saved_S_write_reservations=0;
   U forward_control_subcycles=0,forward_peak_bytes=0,E_arithmetic_subcycles=0;
   U packet_count=0,region_count=0,register_read_packet_cycles=0,register_write_packet_cycles=0;
+  U replay_eligible_regions=0,replay_serial_regions=0,replay_serial_packets=0;
  } u_stats;
  struct UPhaseSnapshot {U at,service,read,write;};
  struct UForwardSlot {bool valid=false;int tensor=-1;U offset=0,n=0,bytes=0;};
@@ -24,6 +25,8 @@
    <<",\"fusion\":"<<(cfg.u_fusion?"true":"false")<<",\"fee_cycles\":"<<cfg.u_forward_fee
    <<",\"forward_capacity_bytes\":256,\"forward_metadata_bytes\":32"
    <<",\"input_slot_bytes\":768,\"output_slot_bytes\":256"
+   <<",\"input_operand_descriptor_capacity\":4,\"descriptor_control_area\":\"not implemented or measured\""
+   <<",\"packet_buffer_scope\":\"counterfactual replay only; actual SystemC preserves sequential reads of every original operand\""
    <<",\"forward_register_read_bytes_per_cycle\":16,\"forward_register_write_bytes_per_cycle\":16"
    <<",\"forward_register_timing\":\"within original single-E packet service; added mux/control fee separate\""
    <<",\"layout_contract\":\"original flattened vector_region; no additional stride/physical-layout qualification\""
@@ -42,6 +45,8 @@
  void vector_region(size_t begin,size_t end){
   if(!elementwise(ops[begin])){vector_region_legacy(begin,end);return;}
   const U count=ops[begin].elements,region=++u_stats.region_count,region_start=now();
+  const U region_packet_start=u_stats.packet_count;
+  U max_input_operands=0,max_input_bytes=0,max_output_bytes=0;
   // Observation text is buffered for one region only so metadata precedes its
   // packets on disk. This host logger is not a claimed hardware data FIFO.
   std::ostringstream region_events;
@@ -51,7 +56,7 @@
   }
   for(U offset=0;offset<count;offset+=64){const U n=std::min<U>(64,count-offset);UForwardSlot forward;
    for(size_t index=begin;index<end;++index){const auto& op=ops[index];if(op.kind=="Constant")continue;
-    require(op.in.size()<=3,"E packet exceeds declared three-input FIFO contract");
+    max_input_operands=std::max(max_input_operands,U(op.in.size()));
     const auto input_before=u_snapshot();U input_direct=0,input_bytes=0;int forwarded_input=-1;
     auto read=[&](int tensor,U at,U bytes){read_range(tensor,at,bytes);
      input_direct+=ceildiv(bytes,cfg.swidth)*cfg.slat*C;input_bytes+=bytes;
@@ -70,7 +75,7 @@
      }
     }
     if(forward.valid)require(forwarded_input==forward.tensor,"forwarded value not consumed by unique adjacent E");
-    require(input_bytes<=768,"E packet input FIFO byte budget");
+    max_input_bytes=std::max(max_input_bytes,input_bytes);
     const auto input_after=u_snapshot();const U input_read_bus=input_after.read-input_before.read;
     const U input_write_bus=input_after.write-input_before.write;
     const U beat_service=ceildiv(cfg.beat,cfg.swidth)*cfg.slat*C;
@@ -89,7 +94,7 @@
     if(forward.valid)forward.valid=false;
     const auto output_before=u_snapshot();
     const U output_bytes=n*(tensors[op.out].bits/8);U output_direct=0;
-    require(output_bytes<=256,"E packet output FIFO byte budget");
+    max_output_bytes=std::max(max_output_bytes,output_bytes);
     if(forwarded_output){
      require(!forward.valid&&output_bytes==n*4&&output_bytes<=256,"forward output register budget");
      require(cost>=ceildiv(output_bytes,16),"forward register throughput exceeds E packet service");
@@ -121,9 +126,19 @@
    }
    require(!forward.valid,"forward register survives region chunk boundary");
   }
+  const bool replay_eligible=max_input_bytes<=768&&max_output_bytes<=256;
+  if(replay_eligible)++u_stats.replay_eligible_regions;
+  else{++u_stats.replay_serial_regions;u_stats.replay_serial_packets+=u_stats.packet_count-region_packet_start;}
   if(u_events.is_open()){
    u_events<<"{\"type\":\"region\",\"id\":"<<region<<",\"begin\":"<<begin<<",\"end_exclusive\":"<<end
-    <<",\"elements\":"<<count<<",\"start_subcycles\":"<<region_start<<",\"end_subcycles\":"<<now()<<"}\n";
+    <<",\"elements\":"<<count<<",\"start_subcycles\":"<<region_start<<",\"end_subcycles\":"<<now()
+    <<",\"replay_eligible\":"<<(replay_eligible?"true":"false")
+    <<",\"max_input_operands\":"<<max_input_operands<<",\"max_input_bytes\":"<<max_input_bytes
+    <<",\"max_output_bytes\":"<<max_output_bytes<<",\"replay_excluded_reasons\":[";
+   bool reason=false;
+   if(max_input_bytes>768){u_events<<"\"input_payload_exceeds_768\"";reason=true;}
+   if(max_output_bytes>256){if(reason)u_events<<",";u_events<<"\"output_payload_exceeds_256\"";}
+   u_events<<"]}\n";
    u_events<<region_events.str();
   }
  }
@@ -143,6 +158,8 @@
    <<",\"forward_control_subcycles\":"<<u_stats.forward_control_subcycles<<",\"forward_peak_bytes\":"<<u_stats.forward_peak_bytes
    <<",\"E_arithmetic_subcycles\":"<<u_stats.E_arithmetic_subcycles<<",\"packet_count\":"<<u_stats.packet_count<<",\"region_count\":"<<u_stats.region_count
    <<",\"register_read_packet_cycles\":"<<u_stats.register_read_packet_cycles<<",\"register_write_packet_cycles\":"<<u_stats.register_write_packet_cycles
+   <<",\"replay_eligible_regions\":"<<u_stats.replay_eligible_regions
+   <<",\"replay_serial_regions\":"<<u_stats.replay_serial_regions<<",\"replay_serial_packets\":"<<u_stats.replay_serial_packets
    <<",\"event_log_enabled\":"<<(u_events.is_open()?"true":"false")<<",\"event_schema_version\":1"
    <<",\"scope\":\"actual sequential adjacent-E single-consumer forwarding; saved service counts direct SIO only; real cache/DDR effects retained; one E and per-op arithmetic unchanged; overlap only in separate frozen-cost replay\"}";
  }

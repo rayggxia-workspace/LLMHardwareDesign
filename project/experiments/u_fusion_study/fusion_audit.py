@@ -2,7 +2,8 @@
 from copy import deepcopy
 from pathlib import Path
 
-from fusion_contract import ELEMENTWISE, legal_edges, read_trace, require, vector_regions
+from fusion_contract import (ELEMENTWISE, legal_edges, read_trace, region_replay_contract,
+                             require, vector_regions)
 from u_ledger import Ledger, check as check_U_ledger
 from replay import inspect_events
 
@@ -26,13 +27,16 @@ def metadata_expected(trace, fusion, fee):
     direction_service = sum(edge['S_cycles_saved'] // 2 for edge in enabled) * 1000
     RF_cycles = sum((edge['elements'] + 3) // 4 for edge in enabled)
     regions = vector_regions(trace)
-    E_work = node_count = 0
+    E_work = node_count = serial_regions = serial_packets = 0
     for begin, stop in regions:
         count = trace.ops[begin].elements
         active = sum(trace.ops[i].kind in ELEMENTWISE for i in range(begin, stop))
         chunks, tail = divmod(count, 64)
         node_count += (chunks + bool(tail)) * active
         E_work += (chunks * 21 + (((tail + 3) // 4 + 5) if tail else 0)) * active * 1000
+        if not region_replay_contract(trace, begin, stop)['replay_eligible']:
+            serial_regions += 1
+            serial_packets += (chunks + bool(tail)) * active
     return dict(fusion_enabled=bool(fusion), forward_control_cycles=fee,
                 forward_capacity_bytes=256, forward_metadata_bytes=32,
                 eligible_graph_edges=len(edges), forwarded_packets=packets,
@@ -45,7 +49,9 @@ def metadata_expected(trace, fusion, fee):
                 forward_peak_bytes=max((edge['register_bytes'] for edge in enabled), default=0),
                 E_arithmetic_subcycles=E_work, packet_count=node_count, region_count=len(regions),
                 register_read_packet_cycles=RF_cycles, register_write_packet_cycles=RF_cycles,
-                event_log_enabled=True, event_schema_version=1)
+                event_log_enabled=True, event_schema_version=1,
+                replay_eligible_regions=len(regions) - serial_regions,
+                replay_serial_regions=serial_regions, replay_serial_packets=serial_packets)
 
 
 def audit_case(row, old, trace, events, fusion, fee):
@@ -131,6 +137,8 @@ def audit_case(row, old, trace, events, fusion, fee):
             observed['forwarded_packets'] == meta['forwarded_packets'], 'event forwarding count')
     require(observed['E_arithmetic_subcycles'] == meta['E_arithmetic_subcycles'] and
             observed['control_subcycles'] == meta['forward_control_subcycles'], 'event fee/work')
+    for key in ('replay_eligible_regions', 'replay_serial_regions', 'replay_serial_packets'):
+        require(observed[key] == meta[key], 'event/summary FIFO coverage: ' + key)
     return dict(passed=True, exact_prior_regression=not bool(fusion),
                 independent_U_cache_and_flow_replay=True, per_packet_work_and_dependencies_audited=True,
                 E_instances=1, U_S_bytes=16384, preserved_per_operator_quantization_required=True,

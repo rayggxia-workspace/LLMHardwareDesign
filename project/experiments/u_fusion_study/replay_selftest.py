@@ -2,7 +2,7 @@
 from copy import deepcopy
 import json
 
-from fusion_contract import Op, Tensor, Trace, require
+from fusion_contract import Op, Tensor, Trace, region_replay_contract, require
 from replay import replay_region
 from fusion_oracle import check_ownership, check_schedule, make_schedule, rejected
 
@@ -34,6 +34,64 @@ def fixture(length, fusion):
     region = dict(type='region', id=1, begin=0, end_exclusive=3, elements=length,
                   start_subcycles=5000, end_subcycles=5000 + duration)
     return region, nodes, trace
+
+
+def budget_checks():
+    """Actual source packets can exceed the hypothetical FIFO budget.
+
+    Such packets retain every measured input/output/E phase in a whole-region
+    serial fallback. Four small operands remain legal when their bytes fit.
+    """
+    specs = [
+        ('four_full_inputs', [(64, 32)] * 4, 32, False, 1024),
+        ('four_small_inputs', [(64, 32)] + [(1, 32)] * 3, 32, True, 268),
+        ('wide_output', [(64, 32)] + [(1, 32)] * 3, 64, False, 268),
+        ('exact_768', [(64, 32)] * 3, 32, True, 768),
+        ('byte_769', [(64, 32)] * 3 + [(1, 8)], 32, False, 769),
+    ]
+    count = 0
+    negatives = []
+    for label, inputs, output_bits, eligible, input_bytes in specs:
+        tensors = tuple([Tensor(n, bits, True) for n, bits in inputs] +
+                        [Tensor(64, output_bits, False)])
+        out = len(inputs)
+        trace = Trace(tensors, (Op(out, 'Add', 64, 1, 64, 1, 1, 0, 1,
+                                  tuple(range(out))),), 1, 'synthetic-budget')
+        contract = region_replay_contract(trace, 0, 1)
+        require(contract['replay_eligible'] == eligible and
+                contract['max_input_bytes'] == input_bytes, 'independent payload boundary')
+        input_S = sum((n * (bits // 8) + 63) // 64 for n, bits in inputs) * 1000
+        output_S = ((64 * (output_bits // 8) + 63) // 64) * 1000
+        node = [1, 1, 0, 0, 64, -1, -1, input_S + 17000, 21000,
+                output_S + 11000, input_S, 0, 0, output_S, 0, 0, 0, 0, 21000, 0]
+        duration = sum(node[7:10])
+        region = dict(type='region', id=1, begin=0, end_exclusive=1, elements=64,
+                      start_subcycles=5000, end_subcycles=5000 + duration, **contract)
+        saved_region, saved_node = deepcopy(region), deepcopy(node)
+        for depth in (1, 2, 4, 8):
+            receipt = replay_region(region, [node], trace, depth)
+            require(receipt['replay_subcycles'] == receipt['source_subcycles'] == duration,
+                    'single-packet source time changed')
+            require(receipt['E_service_subcycles'] == 21000 and
+                    receipt['controller_service_subcycles'] == node[7] + node[9],
+                    'unsupported actual input/output work disappeared')
+            require(receipt['serial_fallback'] == (not eligible), 'wrong fallback route')
+            require(receipt['peak_live_slots'] == (1 if eligible else 0),
+                    'oversized source packet was placed in FIFO')
+            require(receipt['peak_packet_input_bytes'] == (input_bytes if eligible else 0),
+                    'FIFO observed payload hid an overrun')
+            require(receipt['source_contract']['max_input_bytes'] == input_bytes,
+                    'oversized source payload was hidden')
+            require(region == saved_region and node == saved_node, 'source phases mutated')
+            count += 1
+        bad = dict(region, replay_eligible=not eligible)
+        negatives.append(rejected('false_eligibility_' + label,
+                                  lambda: replay_region(bad, [node], trace, 2)))
+        if label == 'four_full_inputs':
+            bad_bytes = dict(region, max_input_bytes=768)
+            negatives.append(rejected('underreported_actual_input_bytes',
+                                      lambda: replay_region(bad_bytes, [node], trace, 2)))
+    return count, negatives
 
 
 def run():
@@ -82,7 +140,11 @@ def run():
         second['start'], second['end'] = first['start'], first['end']
         check_schedule(bad, 4, 2, costs)
     negatives.append(rejected('same_E_two_consumers', duplicate_E))
-    return dict(passed=True, replay_cases=cases, exercised_overlap_cases=len(gains),
+    budget_cases, budget_negatives = budget_checks()
+    negatives.extend(budget_negatives)
+    return dict(passed=True, replay_cases=cases + budget_cases,
+                original_replay_cases=cases, FIFO_budget_cases=budget_cases,
+                exercised_overlap_cases=len(gains),
                 depths=[1, 2, 4, 8], negative_controls=negatives,
                 scope='synthetic finite one-E/one-controller replay validation only')
 
