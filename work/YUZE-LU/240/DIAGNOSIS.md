@@ -61,3 +61,5 @@ Slurm 101533，SystemC 3.0.2，COMPLETED 0:0。工作负载为 Qwen2.5-3B 全36�
 
 协作规则rayggxia-project-collab v1.0.0；Issue240 in_progress；PR为draft，不关闭Issue、不自合并。
 沿用项目登记management-hub PR5 pending；Projects缺配置/权限的既有记录需在本任务再次核验，当前不宣称已同步。
+
+后续更新：初版诊断完成后，实际实现与34组对照见[RESULTS.md](RESULTS.md)，当前提交/审查状态见[RECEIPT.md](RECEIPT.md)；上文in_progress保留为初版阶段记录。

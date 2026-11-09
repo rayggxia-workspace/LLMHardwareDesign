@@ -2,7 +2,7 @@
 
 ## 2026-11-09（CST）独立 SystemC Block 研究
 
-[Issue #240](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/240) / [PR #241](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/241)：34计时场景及独立审计、225算术、4资源/ACK、5冒烟、原M RTL九例通过。context512候选decode W16 1.6821 / W8 2.7146 token/s，属于未校准的新硬件假设，未改#220/其他任务；没有申领DP约20%收益。现有M1–M10/M11–M12定制方法与16KiB私有S不变。完整KV数值、能耗、新RTL/物理及同条件FPGA目标未完成；下一步为P供数/累加、E32/S/MEM服务合同的独立审查和RTL校准，见[报告](../../work/YUZE-LU/240/RESULTS.md)。登记PR5 pending；本分支缺board配置，看板unverified/同步pending，沿用Issue7交接。
+[Issue #240](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/240) / [PR #241](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/241)：34计时场景及独立审计、225算术、4资源/ACK、5冒烟、原M RTL九例通过。context512候选decode W16 1.6821 / W8 2.7146 token/s，属于未校准的新硬件假设，未改#220/其他任务；没有申领DP约20%收益。现有M1–M10/M11–M12定制方法与16KiB私有S不变。完整KV数值、能耗、新RTL/物理及同条件FPGA目标未完成；下一步为P供数/累加、E32/S/MEM服务合同的独立审查和RTL校准，见[报告](../../work/YUZE-LU/240/RESULTS.md)。登记PR5 pending；本分支缺board配置，看板unverified/同步pending，沿用Issue7交接。当前任务在线状态已读回为 `in_review`，成果待独立审查。
 
 ## 2026-11-08（CST）U 原生入口和双向发送修复
 
