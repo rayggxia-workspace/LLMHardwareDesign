@@ -1,0 +1,113 @@
+{
+  "scope": "Only owned PENDING jobs were held/redirected/released; one node6x10; capture101503 then sequence101486; no running or foreign job changed",
+  "source": "cached-integer-006/submission.json",
+  "remote_submission_sha256": "607bc0a18eaf95d3a94ba6cd7304b92ea6312747a5d5218496089f026b2f1e1e",
+  "journal": {
+    "events": [
+      {
+        "command": [
+          "scontrol",
+          "show",
+          "job",
+          "-o",
+          "101486"
+        ],
+        "output": "JobId=101486 JobName=yzl-sc234-seq UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294576869 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-09T07:30:56 EligibleTime=2026-11-09T08:39:16 AccrueTime=2026-11-09T08:39:16 StartTime=2026-11-10T01:30:28 EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T08:48:43 Scheduler=Backfill:* Partition=c64,c96 AllocNode:Sid=mgt01:1153759 ReqNodeList=(null) ExcNodeList=(null) NodeList= SchedNodeList=node12 NumNodes=1-1 NumCPUs=60 NumTasks=6 CPUs/Task=10 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=60,mem=1M,node=1,billing=60 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=10 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/sequence_replay.sbatch WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out Power= TresPerTask=cpu:10 \n"
+      },
+      {
+        "command": [
+          "scontrol",
+          "hold",
+          "101486"
+        ],
+        "output": ""
+      },
+      {
+        "command": [
+          "scontrol",
+          "show",
+          "job",
+          "-o",
+          "101486"
+        ],
+        "output": "JobId=101486 JobName=yzl-sc234-seq UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=0 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=JobHeldUser Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-09T07:30:56 EligibleTime=Unknown AccrueTime=Unknown StartTime=2026-11-10T01:30:28 EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T08:48:43 Scheduler=Backfill:* Partition=c64,c96 AllocNode:Sid=mgt01:1153759 ReqNodeList=(null) ExcNodeList=(null) NodeList= SchedNodeList=node12 NumNodes=1-1 NumCPUs=60 NumTasks=6 CPUs/Task=10 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=60,mem=1M,node=1,billing=60 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=10 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/sequence_replay.sbatch WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out Power= TresPerTask=cpu:10 \n"
+      },
+      {
+        "command": [
+          "sbatch",
+          "--parsable",
+          "--hold",
+          "--dependency=afterany:101492",
+          "--chdir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006",
+          "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006/slurm-%j.out",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006/cached_integer.sbatch",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/export-003",
+          "5",
+          "/model/model/layers.3/input_layernorm/Mul_1"
+        ],
+        "output": "101503\n"
+      },
+      {
+        "command": [
+          "scontrol",
+          "update",
+          "JobId=101486",
+          "Dependency=afterany:101503"
+        ],
+        "output": ""
+      },
+      {
+        "command": [
+          "scontrol",
+          "show",
+          "job",
+          "-o",
+          "101486"
+        ],
+        "output": "JobId=101486 JobName=yzl-sc234-seq UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=0 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=JobHeldUser Dependency=afterany:101503(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-09T07:30:56 EligibleTime=Unknown AccrueTime=Unknown StartTime=2026-11-10T01:30:28 EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T08:48:43 Scheduler=Backfill:* Partition=c64,c96 AllocNode:Sid=mgt01:1153759 ReqNodeList=(null) ExcNodeList=(null) NodeList= SchedNodeList=node12 NumNodes=1-1 NumCPUs=60 NumTasks=6 CPUs/Task=10 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=60,mem=1M,node=1,billing=60 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=10 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/sequence_replay.sbatch WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out Power= TresPerTask=cpu:10 \n"
+      },
+      {
+        "command": [
+          "scontrol",
+          "release",
+          "101503"
+        ],
+        "output": ""
+      },
+      {
+        "command": [
+          "scontrol",
+          "release",
+          "101486"
+        ],
+        "output": ""
+      },
+      {
+        "command": [
+          "scontrol",
+          "show",
+          "job",
+          "-o",
+          "101503"
+        ],
+        "output": "JobId=101503 JobName=yzl-sc234-kv UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294576852 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=afterany:101492(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-11-09T08:49:03 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T08:49:03 Scheduler=Main Partition=c64,c96,debug AllocNode:Sid=mgt01:1379307 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=60 NumTasks=6 CPUs/Task=10 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=60,mem=1M,node=1,billing=60 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=10 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006/cached_integer.sbatch WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006/slurm-101503.out StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006/slurm-101503.out Power= TresPerTask=cpu:10 \n"
+      },
+      {
+        "command": [
+          "scontrol",
+          "show",
+          "job",
+          "-o",
+          "101486"
+        ],
+        "output": "JobId=101486 JobName=yzl-sc234-seq UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294576851 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=afterany:101503(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-09T07:30:56 EligibleTime=Unknown AccrueTime=Unknown StartTime=2026-11-10T01:30:28 EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T08:48:43 Scheduler=Backfill:* Partition=c64,c96 AllocNode:Sid=mgt01:1153759 ReqNodeList=(null) ExcNodeList=(null) NodeList= SchedNodeList=node12 NumNodes=1-1 NumCPUs=60 NumTasks=6 CPUs/Task=10 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=60,mem=1M,node=1,billing=60 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=10 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/sequence_replay.sbatch WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out Power= TresPerTask=cpu:10 \n"
+      }
+    ],
+    "scope": "exact old-default layer3 RMSNorm capture, no arithmetic/quality change",
+    "job_id": 101503,
+    "capture_after": "JobId=101503 JobName=yzl-sc234-kv UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294576852 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=afterany:101492(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-11-09T08:49:03 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T08:49:03 Scheduler=Main Partition=c64,c96,debug AllocNode:Sid=mgt01:1379307 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=60 NumTasks=6 CPUs/Task=10 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=60,mem=1M,node=1,billing=60 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=10 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006/cached_integer.sbatch WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006/slurm-101503.out StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-006/slurm-101503.out Power= TresPerTask=cpu:10 \n",
+    "sequence_after": "JobId=101486 JobName=yzl-sc234-seq UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294576851 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=afterany:101503(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-09T07:30:56 EligibleTime=Unknown AccrueTime=Unknown StartTime=2026-11-10T01:30:28 EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T08:48:43 Scheduler=Backfill:* Partition=c64,c96 AllocNode:Sid=mgt01:1153759 ReqNodeList=(null) ExcNodeList=(null) NodeList= SchedNodeList=node12 NumNodes=1-1 NumCPUs=60 NumTasks=6 CPUs/Task=10 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=60,mem=1M,node=1,billing=60 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=10 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/sequence_replay.sbatch WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out Power= TresPerTask=cpu:10 \n"
+  },
+  "full_model_pass": false
+}

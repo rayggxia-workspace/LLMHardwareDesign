@@ -345,3 +345,36 @@ SystemC后端，继续补LC/MC/互联/时钟/外存。所有硬件/精度/配方
 当前仍缺：完整3B整数自由生成D128、原生LC/MC/S feeder/互联/时钟与DDR的系统耦合校准、
 全系统token/s/总J/token、公开FPGA双指标达标。继续in_progress；PR235草稿，不关闭任务。
 规则rayggxia-project-collab1.0.0；登记PR5 pending，看板unverified/同步pending，审查人待指定。
+
+
+## 2026-11-09 09:00 CST：S feeder实际SystemC/活动校准与RMS误差定位
+
+- [S feeder活动](s-feeder-activity-result-001.json)：真实P-S接受网表、原SRAM Liberty与提取RC，六配置（B1/B8、B复用、背压）×三初态。
+  全部数据/元数据、持续有效、ACK、独占和最终数组由独立参考核对；36份原始门级VCD功耗分析，
+  47623个pin注入、178天线二极管分类沿用同ODB原Lib审计。只在波形比较时忽略经网表证明没有任何单元引用的7位，
+  未屏蔽其余连接位；功耗仍用未改原VCD，各初态功率一致。
+  B1/B8普通完成可见为28/41拍，复用为12/37拍，背压为33/64拍；另有3拍故意保持done和1拍确认。
+  增量约0.207–0.869nJ/任务，包含每32任务摊销的6条quiesce命令，不冒充纯传输系数；持续idle约56.67mW另计。
+  背压降低增量不表示降低总能量。前期主机Python SIGSEGV、trace差异和失败日志均保留；重试机制没有证明其根因。
+- [真实时钟SystemC feeder](s-feeder-timing-result-001.json)：有限两项A队列、一项B保持、单在途请求，
+  并非查表返回整体延迟。32任务×六配置×RTL/最终网表共384组的所有包、完成和确认逐拍一致。
+  VCD采样使用时钟前ready/valid，防止下降的post-edge valid漏计；300MHz按有理数边界取整到1ps。
+  仍只是S feeder子系统，没有M/局控/母控/互联耦合，不是整模型token/s。
+- [101492终态归因](cached-integer-result-004.json)：FAILED 1:0、2m59s，原HF质量门未放宽。
+  P0Q2的v782与反量化FP32差约0.00948%，紧接layer3 RMS输出v795差约1.681%。
+  共享S16尺度-3使原生最小epsilon实际为0.015625，目标约1e-6；不能把配方问题归为DP。
+  全18次仍逐位等于旧adapter，57文件归档及逐文件SHA本地/远端核对。
+- [独立非线性诊断](nonlinear-diagnostic-result-001.json)：13组量化输入对FP64参考，7组Softmax、3组SiLU、3组RMS，
+  所选分布总体相对L2最高约3e-6。常规分布正确不能排除真实异质行误差。
+- [额外RMS迭代候选](rms-refinement-result-001.json)：独立整数平方根核对70次原生N因子，
+  相同量化输入和权重，七个异质样本×1/2/3/4/8迭代。2516.5/.2样本从2.59%降至三迭代约5.56e-6，
+  但2516.5/.002极端样本八迭代仍约37.5%，因此没有全局开启。默认一迭代指令流与冻结源完全一致。
+  这属于增加真实M指令的精度修复候选，不算DP算法收益，不冒充整模型通过。
+- [101503捕获](cached-integer-attempt-006.json)等待资源：冻结默认配方，捕获真实layer3 RMS输入/所有中间值及FP32参考；
+  后续逐位复现旧输出后再比较候选。[资源修改回执](resource-update-003.json)：只hold/redirect/release本人PENDING任务，
+  101503→101486，均单节点6×10，至多一个本任务远程作业运行；101486仍为c64/c96无限时、首token实验。
+  [005部署预检失败](cached-integer-attempt-005.json)因Windows换行被bash-n拒绝，未提交作业或改变依赖；006源快照归一LF后通过。
+- 四个新局部归档共223MB已上传本任务远端local-results-005，包SHA读回一致；详细原始清单见各JSON。
+
+当前完整3B自由生成D128、SystemC整系统时间/能量、总J/token与公开FPGA双指标仍未达标，继续in_progress和草稿PR235。
+精度/配方/分配/硬件变化均与DP20%分列。登记PR5 pending，看板unverified/同步pending，独立审查人待指定。

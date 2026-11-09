@@ -64,6 +64,55 @@ class CachedStateTests(unittest.TestCase):
             self.module.execute(p, initial, [[1, 2]], None,
                 runtime_values={'past': initial['past']})
 
+    def test_default_rms_program_keeps_the_frozen_recipe_instruction_for_instruction(self):
+        raw = np.arange(-16, 16, dtype=np.int16).reshape(1, 32)
+        initial = {'x': self.Q(raw, -10), 'gamma': self.Q(np.ones(32, dtype=np.int16), 0),
+                   'eps': self.Q(np.array(1, dtype=np.int16), -20)}
+        model = {'sha256': 'rms-default', 'values': {'input_ids': {'shape': [1, 1]},
+            'x': {'shape': [1, 32]}, 'out': {'shape': [1, 32]}}, 'outputs': ['out'],
+            'tasks': [{'id': 'rms', 'op': 'RMSNorm', 'inputs': ['x', 'gamma', 'eps'],
+                       'outputs': ['out'], 'attributes': {}}]}
+        calibration = {'values': {'x': {'symmetric_s16_exponent': -10}}}
+        old = self.old.compile_program(model, initial, calibration, {'out': -20})
+        current = self.module.compile_program(model, initial, calibration, {'out': -20})
+        for field in ('instructions', 'outputs', 'predicates', 'value_bindings', 'initial_formats'):
+            self.assertEqual(old[field], current[field], field)
+
+    def test_heterogeneous_row_scale_exposes_single_refinement_error(self):
+        import math
+        class IndependentFactor:
+            def factor(self, x, epsilon, l2=False):
+                values = [int(v) for v in np.asarray(x).reshape(-1)]
+                total = sum(v*v for v in values) << 16
+                if not l2:
+                    total //= len(values)
+                return (1 << 38)//math.isqrt(total+(epsilon << 16))
+        rng = np.random.default_rng(234)
+        x = rng.normal(0, .2, (1, 2, 2048))
+        x[0, 0, 0] = 2516.5
+        raw = np.rint(x*2048).astype(np.int32)
+        initial = {'x': self.Q(raw, -11), 'gamma': self.Q(np.full(2048, 32767, dtype=np.int16), -15),
+                   'eps': self.Q(np.array(17180, dtype=np.int16), -34)}
+        model = {'sha256': 'rms-heterogeneous', 'values': {'input_ids': {'shape': [1, 1]},
+            'x': {'shape': list(raw.shape)}, 'out': {'shape': list(raw.shape)}}, 'outputs': ['out'],
+            'tasks': [{'id': 'rms', 'op': 'RMSNorm', 'inputs': ['x', 'gamma', 'eps'],
+                       'outputs': ['out'], 'attributes': {}}]}
+        calibration = {'values': {'x': {'symmetric_s16_exponent': -3}}}
+        runtime = {'x': {'shape': list(raw.shape), 'bits': 32, 'exponent': -11}}
+        data = raw.astype(np.float64)/2048
+        target = data/np.sqrt(np.mean(data*data, axis=-1, keepdims=True)+17180*2.**-34)*(32767/32768)
+        errors, sizes = [], []
+        for refinements in (1, 3):
+            program = self.module.compile_program(model, initial, calibration, {'out': -20},
+                runtime_formats=runtime, rms_refinements=refinements)
+            out = self.module.execute(program, initial, [[0]], IndependentFactor(), runtime_values={'x': initial['x']})['out']
+            result = out.raw.astype(np.float64)*2.**out.exponent
+            errors.append(np.linalg.norm(result-target)/np.linalg.norm(target))
+            sizes.append(len(program['instructions']))
+        self.assertGreater(errors[0], .01)
+        self.assertLess(errors[1], .001)
+        self.assertGreater(sizes[1], sizes[0])
+
     def test_host_observer_sees_emitted_values_without_changing_results(self):
         p, initial = self.build()
         runtime = {'past': self.Q(np.array([[100000, -200000]], dtype=np.int32), -20)}

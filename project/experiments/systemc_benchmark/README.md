@@ -280,3 +280,34 @@ outputs of the first N layers against a dequantized-S16-weight FP32 graph,
 before last-use release. The observer changes no arithmetic and the original
 HF quality checks remain intact. The six small full-3B shapes are localization
 experiments, not full-generation timing evidence.
+
+
+## Clocked S feeder calibration and RMS diagnostics
+
+`systemc_feeder.cpp` models the real finite A/B queues, one outstanding SRAM
+request and held completion. Build with SystemC3.0.1, C++17, `-Wall -Wextra
+-Werror`, then run `feeder_timing_probe.py EXE RTL_GATE_BINARIES OPERANDS
+NEW_OUTPUT`. The probe samples pre-edge handshakes and compares every packet,
+completion and ACK against32 actual jobs in each of six RTL/gate configurations.
+It does not replace M/LC/MC or calibrate whole-system time.
+
+`s_feeder_activity.cpp` checks data against an independent complete SRAM array.
+`s_feeder_activity.py` uses accepted physical views and the original bank lib,
+including full pin activity and explicit idle power. Exactly seven disconnected
+trace bits are excluded from cross-initialization trace comparison after proving
+that no netlist cell references them; original VCD power input remains unchanged.
+The negative proof fixtures reject connected bits. Activity includes amortized
+quiesce commands, so these coefficients are not claimed as pure transfer energy.
+Host SIGSEGV failures and bounded same-input retries are preserved separately.
+
+`cached_integer_probe.py --capture-kernel CANONICAL_RMS_ID` optionally captures
+real integer input, all emitted intermediates, gamma/epsilon and DQ-FP32 input/
+output, with source/program/array SHAs. The old quality gates remain unchanged.
+`rms_capture_replay.py FROZEN CAPTURE_NPZ PROGRAM NEW_OUTPUT --oracle-command
+'["ORACLE"]' requires baseline output bit equality before testing extra iterations.
+`rms_refinement_probe.py` retains extreme heterogeneous-row failures, including
+an eight-iteration case still37.5% away from FP64. The default one-refinement
+compiler remains instruction-identical to frozen220; explicit extra iterations
+are an accuracy-repair candidate and never counted as DP gains.
+`nonlinear_probe.py` supplies independent FP64 comparisons on conventional
+quantized distributions; those successes cannot qualify the full checkpoint.

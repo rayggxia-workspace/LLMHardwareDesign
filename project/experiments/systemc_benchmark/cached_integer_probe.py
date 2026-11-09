@@ -25,6 +25,8 @@ def main():
     for name in ('frozen', 'export', 'weights', 'checkpoint', 'oracle', 'output'):
         p.add_argument(name, type=Path)
     p.add_argument('--threads', type=int, default=10)
+    p.add_argument('--capture-kernel', default='',
+                   help='host-only exact integer input/intermediate/output capture for one canonical kernel')
     p.add_argument('--compare-baseline', type=Path,
                    help='frozen runtime adapter before host acceleration/liveness')
     p.add_argument('--trace-first-layers', type=int, default=0,
@@ -71,6 +73,11 @@ def main():
         if name in model['values']:
             model['values'][name]['constant'] = data.tolist()
     model = canonicalize(model)
+    capture_task = None
+    if a.capture_kernel:
+        capture_task, = [t for t in model['tasks'] if t['id'] == a.capture_kernel]
+        if capture_task['op'] != 'RMSNorm':
+            raise ValueError('first exact capture ABI is limited to RMSNorm')
     weights = json.loads(a.weights.read_text())
     weights['_root'] = str(a.weights.parent.parent)
     oracle = Oracle([str(a.oracle)])
@@ -87,6 +94,8 @@ def main():
         match = re.search(r'/layers\.(\d+)/', task['id'])
         if match and int(match.group(1)) < a.trace_first_layers:
             diagnostic_names.extend(task['outputs'])
+    if capture_task:
+        diagnostic_names.extend([capture_task['inputs'][0], capture_task['outputs'][0]])
     names = list(dict.fromkeys(n for t in model['tasks'] for n in t['outputs']))
     infos = {v.name: v for v in list(source.graph.input) + list(source.graph.value_info) + list(source.graph.output)}
     del source.graph.output[:]
@@ -183,9 +192,17 @@ def main():
                 raise ValueError('clipped input KV state')
             runtime[name] = Q(raw, meta['exponent'])
         observed, diagnostic_bindings = [], {}
+        captured, captured_metadata = {}, {}
+        capture_ids = ({n['id'] for n in program['instructions'] if n['kernel'] == a.capture_kernel}
+                       | {program['value_bindings'][capture_task['inputs'][0]]}) if capture_task else set()
         for name in diagnostics:
             diagnostic_bindings.setdefault(program['value_bindings'][name], []).append(name)
         def observer(node, value):
+            if node['id'] in capture_ids:
+                if value.mask is not None:
+                    raise ValueError('RMS capture unexpectedly masked')
+                captured['integer_'+node['id']] = value.raw.copy()
+                captured_metadata[node['id']] = {'exponent': value.exponent, 'shape': list(value.raw.shape)}
             for name in diagnostic_bindings.get(node['id'], []):
                 ref = diagnostics[name]
                 actual = value.raw.astype(np.float64)*math.ldexp(1., value.exponent)
@@ -204,6 +221,23 @@ def main():
         outputs = execute(program, initial, ids, oracle, bounds,
                           dot_executor=host_dot, runtime_values=runtime,
                           observer=observer if diagnostics else None)
+        if capture_task:
+            if set(captured_metadata) != capture_ids:
+                raise ValueError('exact RMS capture omitted an emitted input/intermediate')
+            for index, name in enumerate(capture_task['inputs'][1:]):
+                q = initial[name]
+                captured['initial_%d' % index] = np.asarray(q.raw).copy()
+                captured_metadata[name] = {'exponent': q.exponent, 'array_key': 'initial_%d' % index}
+            captured['FP32_input'] = diagnostics[capture_task['inputs'][0]]
+            captured['FP32_output'] = diagnostics[capture_task['outputs'][0]]
+            capture_file = a.output/('capture-variant-%d.npz' % variant)
+            np.savez(capture_file, **captured)
+            (a.output/('capture-variant-%d.json' % variant)).write_text(json.dumps({
+                'kernel': capture_task, 'arrays': captured_metadata,
+                'input_primitive': program['value_bindings'][capture_task['inputs'][0]],
+                'output_primitive': program['value_bindings'][capture_task['outputs'][0]],
+                'array_archive_sha256': digest(capture_file), 'program_sha256': digest(program_path),
+                'scope': 'host-only exact emitted integer capture; not a relaxed accuracy gate or performance result'}, indent=2)+'\n')
         if diagnostics:
             if set(r['value'] for r in observed) != set(diagnostics):
                 raise ValueError('diagnostic output binding was not observed')

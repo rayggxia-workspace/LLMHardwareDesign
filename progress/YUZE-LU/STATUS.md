@@ -2,7 +2,7 @@
 
 ## 2026-11-09（CST）Qwen3B SystemC时间/能耗与充分优化对照
 
-[Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234)，独立`task/234-systemc-benchmark`，in_progress；[Draft PR #235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)。08:08 CST：29项单位检查通过。SystemC/DRAMsim3六种transport夹具与独立直接重放的全部回调/计数器一致，IDD能量单位独立复算；保留写回调已返回但4笔写未发出的反例，尚非整模型时间/总能耗。完整程序工作量与独立36层MAC公式一致；P512旧append-only中间地址409.325GiB，拟议串行存储释放峰值864MiB，但尚无真实分配器/并行DP生命周期证明，这类后端收益不计DP。101479十八次旧适配器逐位等价，分开定位S16权重误差与整数配方误差；101492待前五层定位。101480在debug30m06s TIMEOUT，P2048Q1已通过新L1证明及三样本，P0Q2048未完，原prefill质量失败保留。101486已确认c64/c96、UNLIMITED、6×10、等待101492，仍只请求首token而非完成D128。DRAM/清单260文件归档本地远端SHA核对。N/E/M/S活动证据及tiny四token重启证明保留；完整3B连续KV、SystemC整网时间/总J/token及FPGA双门槛仍未达标，继续。硬件Issue238/草稿PR239独立；精度/配方/硬件不计DP收益。见[证据账本](../../work/YUZE-LU/234/README.md)。登记PR5 pending，无board配置/Projects能力，看板unverified/同步pending，沿用Issue7交接。
+[Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234)，独立`task/234-systemc-benchmark`，in_progress；[Draft PR #235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)。09:00 CST：新增S feeder真实SystemC有限队列模型，六配置×32任务×RTL/门级共384组包/完成/确认逐拍一致；原Lib/RC下36份活动功耗分析通过，约56.67mW持续idle与0.207–0.869nJ任务增量分列，不是全系统J/token。7个忽略trace位均由网表证明无单元引用，原功耗VCD未改；主机SIGSEGV等失败保留。101492定位layer3 RMS共享尺度导致最小epsilon膨胀，原质量失败未放宽；隔离候选增加迭代但极端样本仍失败，默认指令流与冻结源一致，不计DP收益。101503捕获真实RMS，当前PENDING；101486等待其结束，单节点6×10、c64/c96无限时，仍只请求自然提示首token。四个新局部包本地/远端SHA一致。既有SystemC/DRAMsim3与MAC/存储清单保留；完整3B连续D128、已校准整网token/s与总J/token及FPGA双门槛仍未达标，继续。硬件Issue238/草稿PR239独立。见[证据账本](../../work/YUZE-LU/234/README.md)。登记PR5 pending，无board配置/Projects能力，看板unverified/同步pending，沿用Issue7交接。
 
 
 ## 2026-11-08（CST）U 原生入口和双向发送修复

@@ -1,6 +1,7 @@
 # Adapted from old PR220 wide_program.py, pinned SHA256 03d68c3a02a73bf2787d05c1222439b0a412a83f8fa8b5178e69631e0f4d95d5.
 # Adds explicit runtime-state contracts, exact Neg lowering and host liveness.
-# Other numerical recipes are retained. Not complete-model qualification.
+# Default numerical recipes are retained. Extra RMS refinement is an explicit
+# candidate accuracy repair with additional emitted instructions, never DP gain.
 """Executable vector-loop IR: integer semantics and native-cost lowering share
 the same instructions. No source-ONNX operator is executed during replay.
 """
@@ -72,7 +73,9 @@ class Builder:
         return self.add([self.mul(t,a,e),self.constant(int(coef[0]),e),b],[1,1,-1])
 
 
-def compile_program(model,initial,calibration,formats,runtime_formats=None,output_formats=None):
+def compile_program(model,initial,calibration,formats,runtime_formats=None,output_formats=None,*,rms_refinements=1):
+    if type(rms_refinements) is not int or not 1 <= rms_refinements <= 8:
+        raise ValueError('RMS refinement count must be a concrete integer1..8')
     runtime_formats = runtime_formats or {}
     if set(runtime_formats) - set(initial):
         raise ValueError("runtime template missing from compile inputs")
@@ -139,12 +142,17 @@ def compile_program(model,initial,calibration,formats,runtime_formats=None,outpu
             root,receipt=quantize([math.sqrt(eps)],lanes=1)
             eps_z=b.mul(b.constant(int(root[0]),receipt['format']['exponent']),factor,norm_exp)
             sum_exp=math.ceil(math.log2((length+1)/((1<<29)-1)))
-            total=b.reduce('SquareSum',z,sum_exp)
-            reciprocal=b.constant(1) if length==1 else b.constant(round((1<<31)/length),-31)
-            mean=b.add([b.mul(total,reciprocal,-30),b.mul(eps_z,eps_z,-30)])
-            correction=b.mul(b.add([b.constant(1<<30,-30),mean],[1,-1]),b.constant(1,-1),-30)
-            refined=b.add([z,b.mul(z,correction,norm_exp)])
-            out=b.mul(refined,gamma,e)
+            for refinement in range(rms_refinements):
+                total=b.reduce('SquareSum',z,sum_exp)
+                reciprocal=b.constant(1) if length==1 else b.constant(round((1<<31)/length),-31)
+                mean=b.add([b.mul(total,reciprocal,-30),b.mul(eps_z,eps_z,-30)])
+                correction=b.mul(b.add([b.constant(1<<30,-30),mean],[1,-1]),b.constant(1,-1),-30)
+                z=b.add([z,b.mul(z,correction,norm_exp)])
+                if refinement+1 < rms_refinements:
+                    # The epsilon component shares the same multiplicative
+                    # factor. Refining z alone would change the target norm.
+                    eps_z=b.add([eps_z,b.mul(eps_z,correction,norm_exp)])
+            out=b.mul(z,gamma,e)
         elif op=='SiLU':
             x=args[0];absolute=b.absolute(x)
             # Threshold is a power-of-two integer in x's format. If it is
