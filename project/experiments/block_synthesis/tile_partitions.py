@@ -11,16 +11,24 @@ from itertools import combinations,product
 from tile_recipe import cost
 
 
-def variants_for(ir, *, max_shards=3,max_bindings=64):
+def variants_for(ir, *, max_shards=3,max_bindings=64,phased=False):
     if 'tile_partition_scope' in ir:raise ValueError('tile partitions already registered')
     if max_shards<2 or max_bindings<1:raise ValueError('invalid tile partition search bounds')
+    previous=None
+    if phased:
+        # A new bounded family must not crowd older legal choices out of
+        # enumeration before any search policy even sees them.
+        variants_for(ir,max_shards=max_shards,max_bindings=max_bindings)
+        previous=ir.pop('tile_partition_scope')
     h=ir['hardware'];q=h['tile_service_profiles'];program={n['id']:n for n in ir['program']}
     total=eligible=truncated=0
     for task in ir['tasks']:
         bases=[b for b in task['bindings'] if 'dot_tile' in b and 'materialized_tile' not in b]
         if not bases:continue
         columns=bases[0]['dot_tile']['columns'];groups=sorted({b['macro_binding']['M'] for b in bases})
-        original=program[task['id']]['temporary_external_region'];generated=[];seen=set()
+        original=program[task['id']]['temporary_external_region'];generated=[]
+        seen={tuple(c['binding']['id'] for c in b['parallel_shards']['children'])
+              for b in task['bindings'] if 'tile_partition' in b}
         if len(groups)<2 or columns<2:continue
         eligible+=1
         for count in range(2,min(max_shards,len(groups),columns)+1):
@@ -58,13 +66,26 @@ def variants_for(ir, *, max_shards=3,max_bindings=64):
                             scratch={p['site']:w['P_words']}
                             if e:scratch[e['site']]=w['E_words']
                             b['scratch_by_site']=scratch;b['scratch_words']=max(scratch.values())
-                            key=(tuple(b['resources']),tuple(b['nets']))
+                            # A slightly slower isolated grid can be the only
+                            # compatible cooperative recipe for its neighbor.
+                            # Do not merge those before phase evaluation.
+                            key=(tuple(b['resources']),tuple(b['nets']),tuple(b['dot_tile']['tile']) if phased else ())
                             if key not in best or (b['ticks'],b['external_read_words'],b['id'])<(
                                 best[key]['ticks'],best[key]['external_read_words'],best[key]['id']):best[key]=b
-                        choices.append([{'columns':[lo,lo+width],'binding':b} for b in best.values()]);lo+=width
+                        ordered=sorted(best.values(),key=lambda b:(b['ticks'],b['external_read_words'],b['id'])) if phased else best.values()
+                        choices.append([{'columns':[lo,lo+width],'binding':b} for b in ordered]);lo+=width
                     for children in product(*choices):
                         leaves=[c['binding'] for c in children];resources=[set(b['resources']) for b in leaves]
-                        if any(resources[i]&resources[j] for i in range(count) for j in range(i)):continue
+                        overlap=set().union(*(resources[i]&resources[j] for i in range(count) for j in range(i)))
+                        if phased and not overlap:continue  # Ordinary pool was preserved by the first pass.
+                        if overlap and (not phased or any(not r.startswith('virtual-memory.channel.') for r in overlap)):continue
+                        phase_protocol=None
+                        if overlap:
+                            from tile_phases import PROTOCOL,eligible as phase_eligible
+                            phase_protocol=PROTOCOL
+                            probe={'tile_partition':{},'phase_execution':PROTOCOL,
+                                   'parallel_shards':{'children':list(children)}}
+                            if not phase_eligible(probe,h):continue
                         key=tuple(b['id'] for b in leaves)
                         if key in seen:continue
                         seen.add(key)
@@ -81,9 +102,15 @@ def variants_for(ir, *, max_shards=3,max_bindings=64):
                                                'columns':columns,'children':deepcopy(list(children))},
                             'tile_partition':{'kind':'native-tile-columns-v1',
                                 'temporary':'disjoint-slices-of-original-stage-region'}})
+                        if phase_protocol:
+                            generated[-1]['id']+=';phases=tile-fcfs'
+                            generated[-1]['phase_execution']=dict(phase_protocol)
         task['bindings'].extend(generated);total+=len(generated)
-    ir['tile_partition_scope']={'eligible_tasks':eligible,'added_bindings':total,'truncated_bindings':truncated,
+    ir['tile_partition_scope']={'eligible_tasks':eligible,'added_bindings':total+(previous['added_bindings'] if previous else 0),
+        'phased_added_bindings':total if phased else 0,
+        'truncated_bindings':truncated+(previous['truncated_bindings'] if previous else 0),
         'max_shards':max_shards,'max_bindings_per_task':max_bindings,
         'scope':'independent native full-K output-column tile grids, real duplicate input LOADs and disjoint external scratch',
-        'excluded':'K sharding, shared-resource overlap, materialized child windows, general dirty residency or system qualification'}
+        'phased':phased,'limit_scope':'per task per ordinary/phase family; older candidates preserved',
+        'excluded':'K sharding, shared-private-resource overlap, materialized child windows, general dirty residency or system qualification'}
     return ir

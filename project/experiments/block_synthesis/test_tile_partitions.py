@@ -18,8 +18,8 @@ from verify_primitive_cost import verify as verify_cost
 from wide_program import execute
 
 
-def example(columns=17,*,two_e=False,k=5):
-    ir,q=fixture(columns=columns,k=k)
+def example(columns=17,*,two_e=False,k=5,phased=False,shared=False):
+    ir,q=fixture(columns=columns,k=k,shared=shared)
     if two_e:
         h=ir['hardware'];meta=deepcopy(h['leaf_inventory']['vector'])
         meta.update(site='second_vector.S',io_resource='second_vector.S.IO',memory_group=1)
@@ -27,7 +27,7 @@ def example(columns=17,*,two_e=False,k=5):
         for field in ('resources','nets'):
             for name,value in list(h[field].items()):
                 if name.startswith('vector.'):h[field]['second_vector'+name[len('vector'):]]=deepcopy(value)
-    register_tiles(ir,q);variants_for(ir)
+    register_tiles(ir,q);variants_for(ir,phased=phased)
     return ir
 
 

@@ -18,12 +18,13 @@ from verify_loop_dp import verify
 from wide_program import execute
 
 
-def run(worker,output):
+def run(worker,output,*,phased=False):
     output.mkdir(exist_ok=False);rng=np.random.default_rng(2201010);cases=[]
     for columns,k,shift in ((17,5,0),(19,7,8),(24,17,24),(32,2048,16)):
-        ir=example(columns,two_e=True,k=k);node=ir['primitive_program']['instructions'][0]
+        ir=example(columns,two_e=True,k=k,phased=phased,shared=phased);node=ir['primitive_program']['instructions'][0]
         choices=[b for b in ir['tasks'][-1]['bindings'] if 'tile_partition' in b and
-                 all(c['binding']['dot_tile']['tile'][1]>1 for c in b['parallel_shards']['children'])]
+                 all(c['binding']['dot_tile']['tile'][1]>1 for c in b['parallel_shards']['children']) and
+                 ('phase_execution' in b)==phased]
         b=min(choices,key=lambda b:b['ticks']);ir['tasks'][-1]['bindings']=[b]
         node['attributes']['shift']=shift
         for child in b['parallel_shards']['children']:child['binding']['dot_tile']['final_shift']=shift
@@ -46,8 +47,9 @@ def run(worker,output):
             'input_sha256':hashlib.sha256(a.tobytes()+weights.tobytes()).hexdigest(),
             'output_sha256':hashlib.sha256(expected.tobytes()).hexdigest()})
     # A damaged deployed basis must affect an actual multi-column child.
-    ir=example(17,two_e=True);b=next(b for b in ir['tasks'][-1]['bindings'] if 'tile_partition' in b and
-        all(c['binding']['dot_tile']['tile'][1]>1 for c in b['parallel_shards']['children']))
+    ir=example(17,two_e=True,phased=phased,shared=phased)
+    b=next(b for b in ir['tasks'][-1]['bindings'] if 'tile_partition' in b and
+        ('phase_execution' in b)==phased and all(c['binding']['dot_tile']['tile'][1]>1 for c in b['parallel_shards']['children']))
     ir['tasks'][-1]['bindings']=[b];plan=search(ir['tasks'],ir['hardware'],width=1)
     ir['tile_constants']['records'][1][0]=0;cache=DotCache(ir,plan,tile_worker=[str(worker.resolve())])
     rejected=False
@@ -56,7 +58,7 @@ def run(worker,output):
     except ValueError:rejected=True
     finally:cache.tiles.close()
     if not rejected:raise ValueError('corrupted deployed basis was accepted')
-    result={'passed':True,'cases':cases,'corrupted_basis_rejected':True,
+    result={'passed':True,'cases':cases,'phased':phased,'corrupted_basis_rejected':True,
         'worker_sha256':hashlib.sha256(worker.read_bytes()).hexdigest(),
         'scope':'finite-S native/literal arithmetic and transfer counts for tile partitions; no cycle/energy or system qualification'}
     (output/'report.json').write_text(json.dumps(result,indent=2)+'\n')
@@ -65,4 +67,5 @@ def run(worker,output):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('worker',type=Path);p.add_argument('output',type=Path)
-    a=p.parse_args();run(a.worker,a.output)
+    p.add_argument('--phased',action='store_true')
+    a=p.parse_args();run(a.worker,a.output,phased=a.phased)

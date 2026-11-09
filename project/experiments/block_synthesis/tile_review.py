@@ -26,6 +26,7 @@ def main():
     p.add_argument('--instance-services',type=Path)
     p.add_argument('--registered-ir',action='store_true')
     p.add_argument('--tile-partitions',action='store_true',help='common independent full-K native tile column partitions')
+    p.add_argument('--tile-phase-partitions',action='store_true',help='also allow exact FCFS sharing among private-context tile children')
     p.add_argument('--materialized-windows',action='store_true',
         help='experimental packed/flag external materialization and actual auxiliary interval calendars')
     p.add_argument('--wire-budget',type=int,required=True);p.add_argument('--width',type=int,default=8)
@@ -62,9 +63,9 @@ def main():
     write('qualification',q)
     after=json.dumps({k:v for k,v in ir['hardware'].items() if k not in ('tile_service_profiles','tile_service_bindings')},sort_keys=True,separators=(',',':'))
     if before!=after:raise ValueError('native tile recipe changed physical hardware')
-    if a.tile_partitions:
+    if a.tile_partitions or a.tile_phase_partitions:
         from tile_partitions import variants_for as register_partitions
-        register_partitions(ir)
+        register_partitions(ir,phased=a.tile_phase_partitions)
     if a.materialized_windows:
         from materialized_tiles import variants_for as register_windows
         register_windows(ir)

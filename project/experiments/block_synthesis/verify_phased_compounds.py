@@ -88,8 +88,10 @@ def project(tasks,hardware,plan):
                     a,b=offsets.get(resource,(0,row['end']-row['start']))
                     claims[resource].append((row['start']+a,row['start']+b))
             rows.append(row);peak = max(peak,row['end']);continue
-        if (binding['phase_execution'] != {'kind':'isolated-compound-fcfs-v1',
-                 'reservation':'all-union-resources-through-final-ACK'} or 'frontier_partition' in binding):
+        tile=binding['phase_execution'].get('kind')=='native-tile-compound-fcfs-v1'
+        if (binding['phase_execution'] != {'kind':'native-tile-compound-fcfs-v1' if tile else 'isolated-compound-fcfs-v1',
+                 'reservation':'all-union-resources-through-final-ACK'} or 'frontier_partition' in binding or
+            (tile and 'tile_partition' not in binding)):
             raise ValueError('unknown cooperative reservation protocol')
         for resource in binding['resources']:
             if hardware['resources'][resource] != 1:raise ValueError('cooperative reservation needs exclusive resources')
@@ -103,15 +105,22 @@ def project(tasks,hardware,plan):
         seen = set();seen_sites = set();programs = [];recipes=set()
         for child,s in zip(children,services):
             leaf = child['binding'];resources = set(leaf['resources'])
-            if leaf['site'] in seen_sites or set(leaf['macro_binding']) != {'M'}:
+            if leaf['site'] in seen_sites or (set(leaf['macro_binding']) not in ({'M'},{'M','E'}) if tile
+                                            else set(leaf['macro_binding']) != {'M'}):
                 raise ValueError('cooperative children share private storage or non-M operation')
             if any(not r.startswith('virtual-memory.channel.') for r in seen & resources):
                 raise ValueError('cooperative children share a private context/port/controller')
             seen |= resources;seen_sites.add(leaf['site'])
-            program = _program(leaf,s,hardware);ticks,counts = _measure(program)
-            c = leaf['read_cache'];h = s['evaluation']['reused_prefix']
-            recipes.add((c['rows'],c['K'],tuple(c['components']),c['stripe']))
-            solo = leaf['ticks']-h*c['rows']*c['components'][0]*c['load_ticks']
+            if tile:
+                from verify_tile_phases import program as reconstruct_tile
+                program=reconstruct_tile(leaf,hardware);solo=leaf['ticks'];spec=leaf['dot_tile']
+                recipes.add((spec['rows'],spec['K'],tuple(spec['tile'])))
+            else:
+                program = _program(leaf,s,hardware)
+                c = leaf['read_cache'];h = s['evaluation']['reused_prefix']
+                recipes.add((c['rows'],c['K'],tuple(c['components']),c['stripe']))
+                solo = leaf['ticks']-h*c['rows']*c['components'][0]*c['load_ticks']
+            ticks,counts = _measure(program)
             if (ticks != solo or counts['external-load-until-S-commit'] != s['evaluation']['external_read_words'] or
                 counts['external-store-until-ACK'] != leaf['external_write_words']):
                 raise ValueError('independent cooperative native work/traffic differs')
@@ -129,8 +138,11 @@ def project(tasks,hardware,plan):
         converted['evaluation']['cost_model'] = 'dot-column-shards-v1'
         prefix = peak
         for i,(child,s) in enumerate(zip(clone['parallel_shards']['children'],converted['evaluation']['services'])):
-            leaf = child['binding'];c = leaf['read_cache'];ev = s['evaluation']
-            solo = leaf['ticks']-ev['reused_prefix']*c['rows']*c['components'][0]*c['load_ticks']
+            leaf = child['binding'];ev = s['evaluation']
+            if tile:solo=leaf['ticks']
+            else:
+                c = leaf['read_cache']
+                solo = leaf['ticks']-ev['reused_prefix']*c['rows']*c['components'][0]*c['load_ticks']
             wait = expected['worker_completion_ticks'][i]-solo
             if (s['start'] != row['start'] or s['end'] != row['start']+expected['worker_completion_ticks'][i] or
                 ev.get('channel_wait_ticks') != wait or wait < 0 or ev['duration'] != s['end']-s['start'] or
@@ -138,7 +150,8 @@ def project(tasks,hardware,plan):
                 raise ValueError('cooperative child wait/time/causality differs')
             prefix = max(prefix,s['end'])
             ev.pop('channel_wait_ticks')
-            leaf['ticks'] += wait;leaf['warm_ticks'] += wait
+            leaf['ticks'] += wait
+            if 'warm_ticks' in leaf:leaf['warm_ticks'] += wait
             leaf['resources'] = [r for r in leaf['resources'] if not r.startswith('virtual-memory.channel.')]
         # This synthetic child exists only in this checker projection, never
         # in executable arithmetic or in the original candidate/action pool.

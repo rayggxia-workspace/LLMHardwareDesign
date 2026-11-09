@@ -1,5 +1,13 @@
 # YUZE-LU 的进度
 
+2026-11-09 CST：#219/PR220[迭代11](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_11.md)部分交付。
+原生tile描述符阶段协作及独立工作/等待/有限S/全资源预约检查，Windows/Linux各221项、4个literal/native双回放通过。
+真实FFN101508终态，共同后端少3.07596%但同池搜索额外0，流量多48；普通分片全图101506终态仍额外0。
+新整网贪心167,410,873,122 ticks，少17.39470%属于共同后端、流量多4048，不能充当算法20%。
+101511新贪心三输入逐位数值终态通过，HF/argmax/SHA保持；101509策略/101513同池好前缀及101500/101501仍运行，4核/UNLIMITED。
+后续回收终态、按新池关键链/至多25.0392%机会及精确驻留/搬运合同继续算法迭代。
+完整KV/校准SystemC能耗/token/s/最优适配对照未完成。Issue219 in_progress，待独立审查不自合并；登记pending，看板unverified/同步pending。
+
 2026-11-09 CST：#219/PR220[迭代10](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_10.md)部分交付。
 完整已验计划关键链/动作族下界诊断101504完成：分片前动作族最多余8.6111%，仅调排序不足20%。
 多M原生tile共同候选、独立地址/临时区/资源审计，Windows/Linux各214项、4个literal/native有限S双回放及负对照通过。

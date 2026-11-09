@@ -1,5 +1,13 @@
 # 架构与运行
 
+2026-11-09迭代11：[原生tile阶段协作](../project/experiments/block_synthesis/TILE_PHASES.md)及
+[结果/失败/待验范围](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_11.md)。
+`tile_review.py REGISTERED_IR NEW_OUTPUT --registered-ir --tile-phase-partitions --incumbent STRONG_PLAN --wire-budget 18 --width 8 --write-ir`
+保留全部旧候选后，向所有基线提供相同描述符FCFS协作；孩子独立M/S/局控/可选E，父服务全程持有资源并集。
+`tile_partition_probe.py QUALIFIED_NATIVE_HOST_WORKER NEW_OUTPUT --phased`做literal/native有限S子服务数值。
+Windows/Linux各221项；FFN共同后端改善3.07596%但同池搜索额外0，流量多48；新整网贪心少17.39470%但流量多4048，
+不能算算法20%或访存减少。101511新贪心三输入逐位数值已终态通过；101509策略/101513同池好前缀仍核验，普通池101506终态额外0。
+
 2026-11-09迭代10：[多M原生tile/关键链诊断](../project/experiments/block_synthesis/TILE_PARTITIONS.md)及
 [结果/范围](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_10.md)。
 `tile_review.py IR NEW_OUTPUT --registered-ir --tile-partitions --incumbent STRONG_PLAN --wire-budget 18 --width 8 --write-ir`

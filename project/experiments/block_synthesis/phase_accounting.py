@@ -31,10 +31,11 @@ def service_parts(work, binding, row, hardware):
             channels[channel]=channels.get(channel,0)+demand
         service=sum(v for key,v in costs.items() if key.startswith('tile_'))
         total=sum(channels.values())+service
-        if total!=row['end']-row['start']:raise ValueError('tile descriptor/service time does not reproduce service')
+        wait=row.get('evaluation',{}).get('channel_wait_ticks',0)
+        if total+wait!=row['end']-row['start']:raise ValueError('tile descriptor/service time does not reproduce service')
         return {'core_ticks':0,'local_S_ticks':0,'tile_service_ticks':service,
                 'descriptor_ticks':sum(channels.values()),'channel_descriptor_ticks':channels,
-                'duration':total,'channel_wait_ticks':0}
+                'duration':total+wait,'channel_wait_ticks':wait}
     inventory = hardware['leaf_inventory']
     groups = binding['macro_binding']
     reads = binding['external_read_words']
