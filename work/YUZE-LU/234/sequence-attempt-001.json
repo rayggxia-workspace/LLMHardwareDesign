@@ -1,7 +1,7 @@
 {
   "job_id": "101486",
   "status_at_submission": "PENDING; no result claim",
-  "dependency": "afterany:101480; at most one issue234 job running",
+  "dependency": "afterany:101492 (which waits101480); at most one issue234 job running",
   "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001",
   "source_archive_sha256": "41cff3c973ca18846ced650d630bc146284fbd598b24adbc4615bd529deca4dc",
   "source_sha256": {
@@ -24,5 +24,7 @@
     "first-token probe only; successful receipt not full128tokens",
     "all6GB raw S16 parameter payloads SHA-checked against frozen manifest per worker",
     "ONNX and host simulation runtimes never device timing"
-  ]
+  ],
+  "pending_scheduling_override": "c64,c96 and UNLIMITED; excludes debug30minute limit for long host prefill",
+  "override_receipt": "resource-update-002.json"
 }

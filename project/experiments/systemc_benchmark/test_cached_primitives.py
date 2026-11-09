@@ -64,6 +64,18 @@ class CachedStateTests(unittest.TestCase):
             self.module.execute(p, initial, [[1, 2]], None,
                 runtime_values={'past': initial['past']})
 
+    def test_host_observer_sees_emitted_values_without_changing_results(self):
+        p, initial = self.build()
+        runtime = {'past': self.Q(np.array([[100000, -200000]], dtype=np.int32), -20)}
+        plain = self.module.execute(p, initial, [[1]], None, runtime_values=runtime)
+        seen = []
+        traced = self.module.execute(p, initial, [[1]], None, runtime_values=runtime,
+            observer=lambda node, q: seen.append((node['id'], q.exponent, q.raw.copy())))
+        self.assertEqual([n['id'] for n in p['instructions']], [n for n, _, _ in seen])
+        for name, value in plain.items():
+            self.assertEqual(value.exponent, traced[name].exponent)
+            np.testing.assert_array_equal(value.raw, traced[name].raw)
+
     def test_neg_and_retained_shared_output(self):
         p, initial = self.build()
         # A declared output must survive even when another instruction consumes it.

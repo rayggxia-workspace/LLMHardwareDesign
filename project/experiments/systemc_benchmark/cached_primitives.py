@@ -222,7 +222,7 @@ def compile_program(model,initial,calibration,formats,runtime_formats=None,outpu
         'scope':'vector instructions are finite scalar native loops; no whole-vector private-S allocation'}
 
 
-def execute(program,initial,ids,oracle,bounds=None,dot_executor=None,runtime_values=None):
+def execute(program,initial,ids,oracle,bounds=None,dot_executor=None,runtime_values=None,observer=None):
     """Only this emitted instruction stream drives numerical replay.
 
     NumPy evaluates integer primitive loops in parallel; it is a simulator,
@@ -326,6 +326,8 @@ def execute(program,initial,ids,oracle,bounds=None,dot_executor=None,runtime_val
         else:raise ValueError('unregistered primitive '+op)
         if tuple(np.asarray(out).shape)!=tuple(node['shape']):raise ValueError('primitive output shape '+op)
         values[node['id']]=Q(np.asarray(out),e,mask)
+        if observer is not None:
+            observer(node,values[node['id']])
         # Host simulation storage only: the emitted hardware program, memory
         # traffic and service costs are unchanged. Retain every declared output.
         for name in node['inputs']:

@@ -313,3 +313,35 @@ SystemC后端，继续补LC/MC/互联/时钟/外存。所有硬件/精度/配方
 规则回执：rayggxia-project-collab1.0.0；llm-hardware-design，Issue234/PR235，负责人YUZE-LU。
 仅本任务分支/远端目录，无母任务改动；登记PR5 pending，缺board配置/Projects能力，
 看板unverified/同步pending，复用Issue7交接；独立审查人待指定，不自审/自合并。
+
+
+## 2026-11-09 08:08 CST：SystemC内存校验、后端容量与误差归因
+
+- [101479归因结果](cached-integer-result-003.json)：六种小形状、三输入，18次输出与旧适配器逐位一致。
+  P0Q1部分KV误差主要已存在于S16权重反量化的FP32结果；P0Q2另有整数配方误差，
+  例如next_4_v的整数/反量化FP32相对误差约2.62%而该FP32/HF仅约0.064%。
+  两者不能混为DP调度问题；不更改原2%质量门。101492新增前五层逐算子定位，算术不变。
+- [101480完整形状重试](cached-integer-full-result-003.json)：debug节点30m06s TIMEOUT。
+  P2048Q1在新L1安全证明下三样本通过；P128/P512Q1仍通过。
+  P0Q128/P0Q512原整数KV质量失败仍保留；P0Q2048没有完成整数输出，不能称通过。
+  38文件、2.727MB包本地/远端与逐文件SHA核对。后续长形状改用c64/c96无限时资源。
+- [SystemC/DRAMsim3校验](systemc-dram-result-001.json)：真实SystemC时钟/依赖/队列背压，
+  六种配置/输入的回调及全部DRAM计数器与独立直接重放一致。固定上游29817593，
+  独立IDD复算发现其total_energy标注pJ但实际单位V*mA*cycles，需要乘tCK_ns。
+  保留原版分离队列读→写反例：全部回调返回时仍有4笔写未发出，能量窗不完整；
+  unified_queue候选单独标注可排空，不冒充现有控制器。原首次严格检查失败保留。
+  无controller/PHY/VPP/终端/板级能量；这只是transport校验，尚非整模型SystemC。
+- [完整程序工作量/存储清单](program-inventory-001.json)：六种形状Dot MAC均与独立36层公式一致。
+  旧append-only中间结果P0Q512累计409.325GiB；拟议串行最后使用释放的峰值864MiB，
+  P0Q2048为6784MiB，均另加权重/谓词/原生分量scratch。该释放模型尚未实现为分配器，
+  也未对并行DP调度证明；视图保留整个backing，不把小切片当成完整释放。
+  后端存储复用/原生分块改进必须与DP算法收益分列，不用这些结果报token/s。
+- DRAM及清单原始包共260个文件的散列已核对，并上传本任务远端local-results-004。
+- [资源修订](resource-update-002.json)：只改101486的PENDING配置，排除debug，
+  c64/c96、6×10、明确读回TimeLimit=UNLIMITED；先保持101492 held，
+  确认101486改为等待101492后才释放。至多一个本任务远程作业运行，链101480→101492→101486。
+  101486仍只请求六组自然提示首token，不能把目标D128写成已经执行128token。
+
+当前仍缺：完整3B整数自由生成D128、原生LC/MC/S feeder/互联/时钟与DDR的系统耦合校准、
+全系统token/s/总J/token、公开FPGA双指标达标。继续in_progress；PR235草稿，不关闭任务。
+规则rayggxia-project-collab1.0.0；登记PR5 pending，看板unverified/同步pending，审查人待指定。

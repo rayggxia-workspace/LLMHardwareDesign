@@ -12,6 +12,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import sys
 
 
@@ -26,7 +27,11 @@ def main():
     p.add_argument('--threads', type=int, default=10)
     p.add_argument('--compare-baseline', type=Path,
                    help='frozen runtime adapter before host acceleration/liveness')
+    p.add_argument('--trace-first-layers', type=int, default=0,
+                   help='host-only kernel output attribution; retains selected FP32 references')
     a = p.parse_args()
+    if not 0 <= a.trace_first_layers <= 36:
+        raise ValueError('trace layer count must be between zero and 36')
     a.output.mkdir(exist_ok=False)
     if digest(a.frozen / 'wide_program.py') != '03d68c3a02a73bf2787d05c1222439b0a412a83f8fa8b5178e69631e0f4d95d5':
         raise ValueError('the required old220 primitive source has changed')
@@ -77,6 +82,11 @@ def main():
         raise ValueError('incomplete 36-layer KV inputs')
     rows = {}
     samples = []
+    diagnostic_names = []
+    for task in model['tasks']:
+        match = re.search(r'/layers\.(\d+)/', task['id'])
+        if match and int(match.group(1)) < a.trace_first_layers:
+            diagnostic_names.extend(task['outputs'])
     names = list(dict.fromkeys(n for t in model['tasks'] for n in t['outputs']))
     infos = {v.name: v for v in list(source.graph.input) + list(source.graph.value_info) + list(source.graph.output)}
     del source.graph.output[:]
@@ -133,8 +143,10 @@ def main():
                                 for v in (layer.keys, layer.values))
         by_name = dict(zip(names, arrays))
         dequantized_outputs = tuple(by_name[n] for n in model['outputs'])
+        diagnostics = {n: by_name[n] for n in diagnostic_names}
         del by_name
-        samples.append((current, past_arrays, expected.logits.numpy(), expected_states, dequantized_outputs))
+        samples.append((current, past_arrays, expected.logits.numpy(), expected_states,
+                        dequantized_outputs, diagnostics))
         print('OBSERVED', variant, len(arrays), flush=True)
     del hf, session, feed, arrays
     for row in rows.values():
@@ -162,7 +174,7 @@ def main():
         sys.modules[spec.name] = baseline
         spec.loader.exec_module(baseline)
     checks = []
-    for variant, (ids, past_arrays, expected, expected_states, dequantized_outputs) in enumerate(samples):
+    for variant, (ids, past_arrays, expected, expected_states, dequantized_outputs, diagnostics) in enumerate(samples):
         runtime = {}
         for name, array in zip(state_names, past_arrays):
             meta = runtime_formats[name]
@@ -170,8 +182,34 @@ def main():
             if quant['clipped_elements']:
                 raise ValueError('clipped input KV state')
             runtime[name] = Q(raw, meta['exponent'])
+        observed, diagnostic_bindings = [], {}
+        for name in diagnostics:
+            diagnostic_bindings.setdefault(program['value_bindings'][name], []).append(name)
+        def observer(node, value):
+            for name in diagnostic_bindings.get(node['id'], []):
+                ref = diagnostics[name]
+                actual = value.raw.astype(np.float64)*math.ldexp(1., value.exponent)
+                valid = np.isfinite(ref)
+                if actual.shape != ref.shape:
+                    raise ValueError('diagnostic kernel shape mismatch')
+                # A separate mask predicate represents -inf lanes; these
+                # payload bits are not a floating value to compare directly.
+                if value.mask is not None:
+                    valid = valid & np.broadcast_to(value.mask, actual.shape)
+                relative = float(np.linalg.norm((actual-ref)[valid]) /
+                    max(np.linalg.norm(ref[valid]), 1e-300)) if valid.any() else None
+                observed.append({'value': name, 'kernel': node['kernel'],
+                    'primitive': node['id'], 'relative_l2_vs_dequantized_FP32': relative,
+                    'finite_unmasked_elements': int(valid.sum()), 'shape': list(actual.shape)})
         outputs = execute(program, initial, ids, oracle, bounds,
-                          dot_executor=host_dot, runtime_values=runtime)
+                          dot_executor=host_dot, runtime_values=runtime,
+                          observer=observer if diagnostics else None)
+        if diagnostics:
+            if set(r['value'] for r in observed) != set(diagnostics):
+                raise ValueError('diagnostic output binding was not observed')
+            (a.output/('attribution-variant-%d.json' % variant)).write_text(
+                json.dumps({'scope': 'host-only localization, not a relaxed quality gate',
+                    'first_layers': a.trace_first_layers, 'rows': observed}, indent=2)+'\n')
         bit_exact_baseline = None
         if baseline:
             old_outputs = baseline.execute(program, initial, ids, oracle, runtime_values=runtime)

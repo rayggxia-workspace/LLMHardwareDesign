@@ -226,3 +226,57 @@ calibration jobs share a lock to limit simultaneous retained ONNX tensors;
 this has no effect on device scheduling or measured token/s. The tiny fixture
 passed first-two/resume-two versus uninterrupted-four bit-exact KV comparison,
 but neither this nor job submission qualifies full 3B generation or SystemC.
+
+
+## SystemC/DRAMsim3 transport audit and program inventory
+
+`systemc_dram.cpp` is a clocked SystemC queue/dependency bridge to DRAMsim3,
+not an extension of the old DP makespan. `dram_probe.py` checks six synthetic
+cases against a separate direct DRAMsim3 replay of accepted transactions,
+including complete callback and counter equality. Build the pinned upstream
+DRAMsim3 `29817593b3389f1337235d63cac515024ab8fd6e` and use SystemC 3.0.1:
+
+```bash
+g++ -std=c++17 -O2 -Wall -Wextra -Werror -I"$systemc/include" \
+  -isystem "$dram/src" -isystem "$dram/ext/headers" systemc_dram.cpp \
+  -L"$systemc/lib64" -L"$dram" -Wl,-rpath,"$systemc/lib64:$dram" \
+  -lsystemc -ldramsim3 -pthread -o systemc-dram
+python3 -B dram_probe.py ./systemc-dram "$dram" NEW_OUTPUT
+```
+
+The upstream includes are system headers; warnings in our code remain errors.
+The bridge requires explicit 64-byte bursts and a 1-ps-representable clock.
+Write callbacks mean buffer acceptance. The stock separate-queue read-to-write
+fixture returns every callback while leaving four write commands unissued;
+its incomplete window is a preserved negative example. A separately labeled
+`unified_queue=true` candidate drains that fixture; it is no claim of an
+implemented hardware memory controller. Configuration differences are retained.
+
+In this pinned upstream version, `total_energy` is V*mA*cycles despite its pJ
+label. The driver independently reconstructs IDD command/background accounting
+and multiplies by `tCK_ns*1e-12` for joules. A twofold clock-period fixture
+checks these units; that fixture is never a physical candidate. Generic DRAM
+parameters do not qualify a selected part. PHY/controller/termination/VPP and
+board overhead are excluded, so these runs cannot produce total J/token.
+
+`program_inventory.py PROGRAM NEW_JSON` independently counts full-shape Dot
+work and the existing append-only primitive allocation subtotal. It also gives
+an abstract full-buffer liveness estimate in emitted sequential primitive order:
+views retain their entire backing allocation, results are allocated before
+last-use sources are freed, and returned KV remains retained. This is **not an
+implemented allocator or a valid parallel-DP lifetime schedule**. Immutable
+weights, predicates and component scratch are additional. Neither storage
+figure is CPU peak memory. Three alias/runtime-input fixtures check this model.
+
+The full 36-layer programs agree with an independent Qwen MAC formula. For
+P0Q512, append-only primitive addresses total 409.325 GiB, whereas the proposed
+serial lifetime model peaks at 864 MiB plus excluded storage. This exposes a
+backend allocation problem, not a required model capacity or DP search gain.
+Changing allocation or native arithmetic recipes requires its own validation
+and must be separated from an algorithm-only speedup.
+
+`cached_integer_probe.py --trace-first-layers N` optionally records canonical
+outputs of the first N layers against a dequantized-S16-weight FP32 graph,
+before last-use release. The observer changes no arithmetic and the original
+HF quality checks remain intact. The six small full-3B shapes are localization
+experiments, not full-generation timing evidence.
