@@ -176,6 +176,45 @@ class CachedStateTests(unittest.TestCase):
         np.testing.assert_array_equal(q.raw, [[2, 2, -2, -2]])
         self.assertEqual(q.exponent, -19)
 
+    def test_finer_product_preserves_small_row_before_weighted_projection(self):
+        # Outlier row needs a large range; another row's values are smaller
+        # than one old output quantum. Compare with exact integer arithmetic,
+        # not another invocation of the compiler's rounding implementation.
+        from exact_reference_dot import ExactReferenceDot
+        initial = {'a': self.Q(np.ones((2, 8), dtype=np.int32), 0),
+            'b': self.Q(np.array([[4096*65536]*8, [40]*8], dtype=np.int32), -16),
+            'w': self.Q(np.ones((8, 1), dtype=np.int16), 0)}
+        runtime = {n: {'shape': list(initial[n].raw.shape), 'bits': 32,
+                       'exponent': initial[n].exponent} for n in ('a', 'b')}
+        model = {'sha256': 'outlier-product-projection', 'values': {
+            'input_ids': {'shape': [1, 1]}, 'a': {'shape': [2, 8]},
+            'b': {'shape': [2, 8]}, 'w': {'shape': [8, 1]},
+            'mid': {'shape': [2, 8]}, 'out': {'shape': [2, 1]}},
+            'outputs': ['mid', 'out'], 'tasks': [
+                {'id': 'product', 'op': 'Mul', 'inputs': ['a', 'b'], 'outputs': ['mid']},
+                {'id': 'projection', 'op': 'MatMul', 'inputs': ['mid', 'w'], 'outputs': ['out']}]}
+        calibration = {'values': {'mid': {'max_abs': 4096}}}
+        formats = {'mid': -10, 'out': -15}
+        old = self.module.compile_program(model, initial, calibration, formats, runtime)
+        new = self.module.compile_program(model, initial, calibration, formats, runtime,
+            weighted_product_fraction_bits=6)
+        self.assertNotIn('numeric_recipe', old)
+        self.assertEqual(len(old['instructions']), len(new['instructions']))
+        run = lambda p: self.module.execute(p, initial, [[1]], None,
+            runtime_values={n: initial[n] for n in runtime}, dot_executor=ExactReferenceDot())
+        x, y = run(old), run(new)
+        np.testing.assert_array_equal(y['mid'].raw, initial['b'].raw)
+        self.assertEqual(y['mid'].exponent, -16)
+        np.testing.assert_array_equal(y['out'].raw, [[1<<30], [160]])
+        self.assertEqual(x['out'].raw[1, 0], 256)
+        # A dynamic RHS is not an immutable S16 weight. Attention cannot be
+        # silently admitted to this narrower change of numerical policy.
+        dynamic = dict(runtime, w={'shape': [8, 1], 'bits': 32, 'exponent': 0})
+        guard = self.module.compile_program(model, initial, calibration, formats, dynamic,
+            weighted_product_fraction_bits=6)
+        self.assertEqual(guard['instructions'], old['instructions'])
+        self.assertEqual(guard['numeric_recipe']['weighted_product_adjustments'], [])
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -376,3 +376,13 @@ No timing/energy speedup is attributed to this allocator before integration.
 `cached_integer_probe.py --rms-refinements 1..8` explicitly labels a nondefault
 numerical-recipe candidate in both program and receipt. The default remains1.
 This option has not established a full-model quality fix or DP-only gain.
+
+`--weighted-product-fraction-bits 0..6` is another explicit numerical candidate,
+default0. It retains finer S32 output only for a canonical Mul directly feeding
+a Dot with an immutable S16 RHS. Calibration reserves S32 range; existing exact
+S64 accumulator/component checks remain mandatory. Runtime S32xS32 contractions
+are excluded. Neither operation count nor physical storage width is changed by
+this policy, but lowering cost must still follow the changed operand values.
+The recipe and each exponent change are recorded. A two-row outlier test checks
+the projected result against exact independent integers; it does not establish
+full-model accuracy or device speed. The frozen baseline remains separate.

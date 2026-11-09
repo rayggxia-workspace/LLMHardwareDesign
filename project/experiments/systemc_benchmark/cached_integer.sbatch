@@ -15,8 +15,10 @@ exports=${2:-"$base/export-003"}
 trace_layers=${3:-0}
 capture_kernel=${4:-}
 rms_refinements=${5:-1}
+product_fraction_bits=${6:-0}
 [[ "$trace_layers" =~ ^[0-9]+$ ]] || exit 2
 [[ "$rms_refinements" =~ ^[1-8]$ ]] || exit 2
+[[ "$product_fraction_bits" =~ ^[0-6]$ ]] || exit 2
 case "$exports" in "$base/export-003"|"$base"/frontend-full-*) ;; *) exit 2;; esac
 sha256sum *.py *.sbatch "$base/python-compat-001/"*.so.1.1 >input.sha256
 pids=()
@@ -24,7 +26,7 @@ for i in 0 1 2 3 4 5;do
  srun --exact --exclusive -N1 -n1 -c10 --cpu-bind=cores /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif bash -c '
   set -euo pipefail
   source /OpenROAD-flow-scripts/env.sh
-  root=$1;base=$2;i=$3;exports=$4;trace_layers=$5;capture_kernel=$6;rms_refinements=$7
+  root=$1;base=$2;i=$3;exports=$4;trace_layers=$5;capture_kernel=$6;rms_refinements=$7;product_fraction_bits=$8
   export LD_LIBRARY_PATH="$base/python-compat-001:${LD_LIBRARY_PATH:-}"
   export OMP_NUM_THREADS=10 OPENBLAS_NUM_THREADS=10 MKL_NUM_THREADS=10 PYTHONDONTWRITEBYTECODE=1
   export PYTHONPATH=/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/deps
@@ -39,8 +41,8 @@ for i in 0 1 2 3 4 5;do
   "$python" -u "$root/cached_integer_probe.py" "$base/frozen220/project/experiments/block_synthesis" \
    "$exports/$stem-$i" "$old/algorithm-fix-43-calibration/generated/calibration.json" \
    /public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/models/qwen25-3b-5defd279 \
-   "$old/algorithm-fix-93-qualified/native-reference" "$root/case-$i" --trace-first-layers "$trace_layers" --capture-kernel "$capture_kernel" --rms-refinements "$rms_refinements" "${baseline[@]}"
- ' kv "$root" "$base" "$i" "$exports" "$trace_layers" "$capture_kernel" "$rms_refinements" >"case-$i.log" 2>&1 &
+   "$old/algorithm-fix-93-qualified/native-reference" "$root/case-$i" --trace-first-layers "$trace_layers" --capture-kernel "$capture_kernel" --rms-refinements "$rms_refinements" --weighted-product-fraction-bits "$product_fraction_bits" "${baseline[@]}"
+ ' kv "$root" "$base" "$i" "$exports" "$trace_layers" "$capture_kernel" "$rms_refinements" "$product_fraction_bits" >"case-$i.log" 2>&1 &
  pids+=("$!")
 done
 failed=0

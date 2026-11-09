@@ -1,0 +1,431 @@
+{
+  "recorded_at": "2026-11-09T10:54:00+08:00",
+  "scope": "Default old recipe, six small query/prefix shapes of full36-layer3B; per-row localization and separate tiny diagnostic continuation/resume.",
+  "job": 101514,
+  "state": "FAILED",
+  "exit_code": "1:0",
+  "elapsed": "00:02:30",
+  "allocation": "one node, six workers x ten cores",
+  "source_commit": "6cbcea205f18a0a6db33b433760cc2bb8c760535",
+  "all18_old_adapter_bit_exact": true,
+  "rows": [
+    {
+      "case": 0,
+      "prefix": 0,
+      "query": 1,
+      "numeric_passed": false,
+      "three_variants_old_adapter_bit_exact": true,
+      "program_sha256": "7ed392ee58e1cb6278b0b9ee5b7ab51eaf095758bff95ab16a5d6a8f480b2a30",
+      "receipt_sha256": "1c694dda32220824b16a471ba54061b685b09b04905b1d1a06fd2ac1996c3366",
+      "failed_KV_per_variant": [
+        [
+          "next_32_v",
+          "next_33_v",
+          "next_35_v"
+        ],
+        [
+          "next_32_v",
+          "next_33_v"
+        ],
+        [
+          "next_32_v"
+        ]
+      ]
+    },
+    {
+      "case": 1,
+      "prefix": 0,
+      "query": 2,
+      "numeric_passed": false,
+      "three_variants_old_adapter_bit_exact": true,
+      "program_sha256": "3b514154c6761d11664c02ce41800573d222a0f256a8499223e49bab61d7946d",
+      "receipt_sha256": "2c7ef9d5314564ff86ea7550bd8102637aa3f4b72c36d888b82505bb9f2e4c1a",
+      "failed_KV_per_variant": [
+        [
+          "next_4_v",
+          "next_8_v",
+          "next_9_v"
+        ],
+        [],
+        [
+          "next_4_v",
+          "next_5_v",
+          "next_6_v",
+          "next_7_v",
+          "next_9_v",
+          "next_32_v",
+          "next_33_v"
+        ]
+      ]
+    },
+    {
+      "case": 2,
+      "prefix": 1,
+      "query": 1,
+      "numeric_passed": true,
+      "three_variants_old_adapter_bit_exact": true,
+      "program_sha256": "0621fbaf576e746a571d1b39643a150ec3ef2c91b3ceb5ad10fa4454339ca54a",
+      "receipt_sha256": "194325022b36b54899611bd70263202133ce74bd26ebf35bc7dbe8d7098d9086",
+      "failed_KV_per_variant": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "case": 3,
+      "prefix": 2,
+      "query": 1,
+      "numeric_passed": true,
+      "three_variants_old_adapter_bit_exact": true,
+      "program_sha256": "c49adbb456c053e94f4e1ee466630b69000190f965be257034731d3b94b9e37f",
+      "receipt_sha256": "3754eea7ca2b9d1e9a16e5f298c0cf28bc90d3689710428475419f55aefec388",
+      "failed_KV_per_variant": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "case": 4,
+      "prefix": 16,
+      "query": 1,
+      "numeric_passed": true,
+      "three_variants_old_adapter_bit_exact": true,
+      "program_sha256": "e29b5ec75e5424f9df689f792762f75224e8f08fc525f7337389dff79bce84d5",
+      "receipt_sha256": "0752c30dac44589692cde324b142399f3304c1bba6004957ffda8f79ce6a3bc4",
+      "failed_KV_per_variant": [
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "case": 5,
+      "prefix": 32,
+      "query": 1,
+      "numeric_passed": true,
+      "three_variants_old_adapter_bit_exact": true,
+      "program_sha256": "967ebe3aadaf177c3f5101d19a69ea18d0c0eec9bd3431469cbc5696a3418b2b",
+      "receipt_sha256": "90dbb06d55303158093651152ee01cf824fdaacf7f66f2bb38d33c16203869a2",
+      "failed_KV_per_variant": [
+        [],
+        [],
+        []
+      ]
+    }
+  ],
+  "Q2_row_localization": [
+    {
+      "variant": 0,
+      "stages": [
+        {
+          "primitive": "v707",
+          "kernel": "/model/model/layers.2/post_attention_layernorm/Mul_1",
+          "tensor_relative_l2": 6.81799497424539e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 144.08367919921875,
+            "absolute_error_l2": 0.016933707838670917,
+            "relative_l2": 0.00011752689779150736
+          }
+        },
+        {
+          "primitive": "v708",
+          "kernel": "/model/model/layers.2/mlp/gate_proj/MatMul",
+          "tensor_relative_l2": 2.240185981439507e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 1107.5108642578125,
+            "absolute_error_l2": 0.03185615965053724,
+            "relative_l2": 2.8763744608397434e-05
+          }
+        },
+        {
+          "primitive": "v776",
+          "kernel": "/model/model/layers.2/mlp/act_fn/Mul",
+          "tensor_relative_l2": 1.5823695938490735e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 1.932076096534729,
+            "absolute_error_l2": 0.0004920124751302347,
+            "relative_l2": 0.00025465481199870064
+          }
+        },
+        {
+          "primitive": "v777",
+          "kernel": "/model/model/layers.2/mlp/up_proj/MatMul",
+          "tensor_relative_l2": 5.8867755457024015e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 342.9700927734375,
+            "absolute_error_l2": 0.028500579158626867,
+            "relative_l2": 8.309931320295631e-05
+          }
+        },
+        {
+          "primitive": "v778",
+          "kernel": "/model/model/layers.2/mlp/Mul",
+          "tensor_relative_l2": 9.930339607411193e-06,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 4.535367965698242,
+            "absolute_error_l2": 0.028396131657986125,
+            "relative_l2": 0.006261042515789433
+          }
+        },
+        {
+          "primitive": "v779",
+          "kernel": "/model/model/layers.2/mlp/down_proj/MatMul",
+          "tensor_relative_l2": 9.696707929839127e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 6.616846084594727,
+            "absolute_error_l2": 0.3127871448515633,
+            "relative_l2": 0.04727133453803484
+          }
+        },
+        {
+          "primitive": "v782",
+          "kernel": "/model/model/layers.2/Add_1",
+          "tensor_relative_l2": 9.47990833789654e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 26.961210250854492,
+            "absolute_error_l2": 0.3135949995464498,
+            "relative_l2": 0.011631339863035672
+          }
+        },
+        {
+          "primitive": "v795",
+          "kernel": "/model/model/layers.3/input_layernorm/Mul_1",
+          "tensor_relative_l2": 0.01681267680803797,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 20.872783660888672,
+            "absolute_error_l2": 0.3667689999919536,
+            "relative_l2": 0.017571638069492558
+          }
+        }
+      ],
+      "attribution_sha256": "ea1317b92df803080fa59df65dcda1cd64db980f8dcae639d979ae2f39f80e6c"
+    },
+    {
+      "variant": 1,
+      "stages": [
+        {
+          "primitive": "v707",
+          "kernel": "/model/model/layers.2/post_attention_layernorm/Mul_1",
+          "tensor_relative_l2": 6.562364212017672e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 150.53250122070312,
+            "absolute_error_l2": 0.017303489514833025,
+            "relative_l2": 0.00011494852855373423
+          }
+        },
+        {
+          "primitive": "v708",
+          "kernel": "/model/model/layers.2/mlp/gate_proj/MatMul",
+          "tensor_relative_l2": 2.7095585461414016e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 1117.5501708984375,
+            "absolute_error_l2": 0.03925420918602352,
+            "relative_l2": 3.512523214458076e-05
+          }
+        },
+        {
+          "primitive": "v776",
+          "kernel": "/model/model/layers.2/mlp/act_fn/Mul",
+          "tensor_relative_l2": 1.8103470261818238e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 2.1750571727752686,
+            "absolute_error_l2": 0.0006242734848360781,
+            "relative_l2": 0.0002870147473133017
+          }
+        },
+        {
+          "primitive": "v777",
+          "kernel": "/model/model/layers.2/mlp/up_proj/MatMul",
+          "tensor_relative_l2": 5.663309486043416e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 343.4382629394531,
+            "absolute_error_l2": 0.027011180648153246,
+            "relative_l2": 7.864930487642029e-05
+          }
+        },
+        {
+          "primitive": "v778",
+          "kernel": "/model/model/layers.2/mlp/Mul",
+          "tensor_relative_l2": 1.0907660887133311e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 5.826905250549316,
+            "absolute_error_l2": 0.024133615803563786,
+            "relative_l2": 0.00414175531707653
+          }
+        },
+        {
+          "primitive": "v779",
+          "kernel": "/model/model/layers.2/mlp/down_proj/MatMul",
+          "tensor_relative_l2": 9.629085414821195e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 8.687365531921387,
+            "absolute_error_l2": 0.2765768709287097,
+            "relative_l2": 0.03183667936066909
+          }
+        },
+        {
+          "primitive": "v782",
+          "kernel": "/model/model/layers.2/Add_1",
+          "tensor_relative_l2": 9.258029528482819e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 30.3535213470459,
+            "absolute_error_l2": 0.277650238933878,
+            "relative_l2": 0.009147216751538444
+          }
+        },
+        {
+          "primitive": "v795",
+          "kernel": "/model/model/layers.3/input_layernorm/Mul_1",
+          "tensor_relative_l2": 0.012596258529675745,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 22.117919921875,
+            "absolute_error_l2": 0.289910094096664,
+            "relative_l2": 0.013107475527567037
+          }
+        }
+      ],
+      "attribution_sha256": "a3445b62ee86b7d0ef8c2ebe999c550a1b74e0e152ede241cf3e757c487283e9"
+    },
+    {
+      "variant": 2,
+      "stages": [
+        {
+          "primitive": "v707",
+          "kernel": "/model/model/layers.2/post_attention_layernorm/Mul_1",
+          "tensor_relative_l2": 5.2541950393376794e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 143.91140747070312,
+            "absolute_error_l2": 0.013327195038749996,
+            "relative_l2": 9.260693973452445e-05
+          }
+        },
+        {
+          "primitive": "v708",
+          "kernel": "/model/model/layers.2/mlp/gate_proj/MatMul",
+          "tensor_relative_l2": 3.242263583109651e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 1079.7503662109375,
+            "absolute_error_l2": 0.04589948548244855,
+            "relative_l2": 4.250934930776558e-05
+          }
+        },
+        {
+          "primitive": "v776",
+          "kernel": "/model/model/layers.2/mlp/act_fn/Mul",
+          "tensor_relative_l2": 2.001430046193044e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 2.1296656131744385,
+            "absolute_error_l2": 0.000735216632287189,
+            "relative_l2": 0.00034522632461125635
+          }
+        },
+        {
+          "primitive": "v777",
+          "kernel": "/model/model/layers.2/mlp/up_proj/MatMul",
+          "tensor_relative_l2": 6.923701862146573e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 346.9302062988281,
+            "absolute_error_l2": 0.03334151482568638,
+            "relative_l2": 9.610438705059798e-05
+          }
+        },
+        {
+          "primitive": "v778",
+          "kernel": "/model/model/layers.2/mlp/Mul",
+          "tensor_relative_l2": 1.2286134924228397e-05,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 5.940127849578857,
+            "absolute_error_l2": 0.03556198504897875,
+            "relative_l2": 0.005986737314332387
+          }
+        },
+        {
+          "primitive": "v779",
+          "kernel": "/model/model/layers.2/mlp/down_proj/MatMul",
+          "tensor_relative_l2": 0.00012353062761521482,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 8.639638900756836,
+            "absolute_error_l2": 0.35292378817042847,
+            "relative_l2": 0.04084936792202186
+          }
+        },
+        {
+          "primitive": "v782",
+          "kernel": "/model/model/layers.2/Add_1",
+          "tensor_relative_l2": 0.00011947965003532431,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 26.919633865356445,
+            "absolute_error_l2": 0.35349609571703816,
+            "relative_l2": 0.013131534310054684
+          }
+        },
+        {
+          "primitive": "v795",
+          "kernel": "/model/model/layers.3/input_layernorm/Mul_1",
+          "tensor_relative_l2": 0.016791631973031514,
+          "last_axis_row_1": {
+            "last_axis_row": 1,
+            "reference_l2": 23.909088134765625,
+            "absolute_error_l2": 0.41545658410907804,
+            "relative_l2": 0.017376513138741275
+          }
+        }
+      ],
+      "attribution_sha256": "1103a2f300d2ab4d02bcca751f8aa25e593edd2101ab4f728958a443b95f3983"
+    }
+  ],
+  "hypothesis": "Coarse S32 FFN product format (layer2 exponent -10) loses small-token precision before a weighted Dot; row error is amplified by projection, hidden by the tensor outlier, then exposed by RMS. Finer product format requires a separately labeled numerical-recipe experiment, not a DP gain.",
+  "S16_weights_limit": "Q1 late V-state error is already present in dequantized-weight FP32. A product-format candidate cannot be assumed to repair this separate error.",
+  "tiny_continuation": {
+    "scope": "tiny102912-parameter execution/resume only, not full3B or performance",
+    "generated_tokens": [
+      231,
+      127,
+      225,
+      127
+    ],
+    "identical_final_KV_archive_sha256": "8fee946f36bfa8d3831672dbff1b068a12fda823d23ea6f6669f4468da2dac08",
+    "source_sha256": "f331438ed645354fdaa2d8ee831db59a50875cc29f331cdec2724ddc15832789",
+    "passed": true,
+    "full_model_numeric_qualified": false,
+    "system_timing_qualified": false,
+    "total_energy_qualified": false
+  },
+  "observer_warning": "Original tensor-level zero-reference norm may emit NaN diagnostics. Raw logs retained. Next observer uses float64 norms and undefined relative-error null, without arithmetic/quality changes.",
+  "archive": {
+    "archive": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-007-results-001.tar.gz",
+    "sha256": "94e43cee7805a0cfaa6ee10a9c51de1d7ebe4c8774f066751aff6b50b48b5738",
+    "bytes": 7084136,
+    "files": 239,
+    "state": "101514|yuzelu|FAILED|1:0|00:02:30|60|1|node27\n101514.batch||FAILED|1:0|00:02:30|60|1|node27\n101514.extern||COMPLETED|0:0|00:02:30|60|1|node27\n101514.0||COMPLETED|0:0|00:02:30|10|1|node27\n101514.1||FAILED|1:0|00:02:30|10|1|node27\n101514.2||FAILED|1:0|00:02:28|10|1|node27\n101514.3||COMPLETED|0:0|00:02:24|10|1|node27\n101514.4||COMPLETED|0:0|00:02:30|10|1|node27\n101514.5||COMPLETED|0:0|00:02:21|10|1|node27\n"
+  },
+  "all_archive_member_sha256_verified": true,
+  "full_integer_sequence_qualified": false,
+  "system_timing_qualified": false,
+  "total_energy_qualified": false
+}

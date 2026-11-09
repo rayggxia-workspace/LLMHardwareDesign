@@ -73,9 +73,12 @@ class Builder:
         return self.add([self.mul(t,a,e),self.constant(int(coef[0]),e),b],[1,1,-1])
 
 
-def compile_program(model,initial,calibration,formats,runtime_formats=None,output_formats=None,*,rms_refinements=1):
+def compile_program(model,initial,calibration,formats,runtime_formats=None,output_formats=None,*,rms_refinements=1,
+                    weighted_product_fraction_bits=0):
     if type(rms_refinements) is not int or not 1 <= rms_refinements <= 8:
         raise ValueError('RMS refinement count must be a concrete integer1..8')
+    if type(weighted_product_fraction_bits) is not int or not 0 <= weighted_product_fraction_bits <= 6:
+        raise ValueError('weighted product extra fractional bits must be between0 and6')
     runtime_formats = runtime_formats or {}
     if set(runtime_formats) - set(initial):
         raise ValueError("runtime template missing from compile inputs")
@@ -100,6 +103,10 @@ def compile_program(model,initial,calibration,formats,runtime_formats=None,outpu
         else:
             values[name]=Value(name,tuple(q.shape),0,64 if q.dtype.kind in 'iu' else 0)
     values['input_ids']=Value('input_ids',tuple(model['values']['input_ids']['shape']),0,64)
+    weighted_inputs = {t['inputs'][0] for t in model['tasks'] if t['op'] == 'MatMul' and
+        len(t['inputs']) == 2 and t['inputs'][1] in initial_formats and
+        initial_formats[t['inputs'][1]]['bits'] == 16 and t['inputs'][1] not in runtime_formats}
+    product_adjustments = []
     for t in model['tasks']:
         b.current=t['id'];op=t['op'];name=t['outputs'][0];args=[values[n] for n in t['inputs']]
         e=formats[name];shape=tuple(model['values'][name]['shape']);attrs=t.get('attributes',{})
@@ -127,7 +134,19 @@ def compile_program(model,initial,calibration,formats,runtime_formats=None,outpu
             else:
                 if any(q.bits not in (16,32) for q in args):raise ValueError('integer index arithmetic needs address lowering')
                 out=b.add([b.convert(q,e) for q in args],[1,1] if op=='Add' else [1,-1])
-        elif op=='Mul':out=b.mul(*args,e)
+        elif op=='Mul':
+            if weighted_product_fraction_bits and name in weighted_inputs:
+                # Keep the same S32 storage/operations, but explicitly change
+                # this numerical recipe. Do not globally widen attention's
+                # runtime S32xS32 contractions. Existing S64 bound checks still
+                # reject an unsafe candidate at execution, without fallback.
+                maximum = calibration['values'][name]['max_abs']
+                if not math.isfinite(maximum) or maximum < 0:
+                    raise ValueError('invalid product calibration range')
+                safe = math.ceil(math.log2(maximum/((1<<30)-1))) if maximum else e-weighted_product_fraction_bits
+                old_e, e = e, max(e-weighted_product_fraction_bits, safe)
+                product_adjustments.append({'value': name, 'old_exponent': old_e, 'exponent': e})
+            out=b.mul(*args,e)
         elif op=='Neg':out=b.mul(args[0],b.constant(-1),e)
         elif op=='MatMul':out=b.emit('Dot',args,shape,e,shift=e-args[0].exponent-args[1].exponent,
             length=args[0].shape[-1])
@@ -223,7 +242,10 @@ def compile_program(model,initial,calibration,formats,runtime_formats=None,outpu
             # lowering. Handoff itself must not silently reinterpret scales.
             values[name] = b.convert(value,meta['exponent'],meta['bits'])
     return {**({'numeric_recipe': {'rms_refinements': rms_refinements,
-                'class': 'extra emitted accuracy-repair instructions, not DP gain'}} if rms_refinements != 1 else {}),
+                'weighted_product_fraction_bits': weighted_product_fraction_bits,
+                'weighted_product_adjustments': product_adjustments,
+                'class': 'explicit numerical-recipe repair, not DP gain'}}
+               if rms_refinements != 1 or weighted_product_fraction_bits else {}),
           'instructions':b.nodes,'outputs':{name:values[name].name for name in model['outputs']},
         'predicates':b.predicates,
         'value_bindings':{name:q.name for name,q in values.items()},

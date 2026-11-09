@@ -27,6 +27,8 @@ def main():
     p.add_argument('--threads', type=int, default=10)
     p.add_argument('--rms-refinements', type=int, choices=range(1, 9), default=1,
         help='explicit accuracy-repair candidate; default1 retains the old recipe')
+    p.add_argument('--weighted-product-fraction-bits', type=int, choices=range(7), default=0,
+        help='explicit finer S32 product recipe before immutable S16-weight Dot; not a DP gain')
     p.add_argument('--capture-kernel', default='',
                    help='host-only exact integer input/intermediate/output capture for one canonical kernel')
     p.add_argument('--compare-baseline', type=Path,
@@ -172,7 +174,8 @@ def main():
         runtime_formats[name] = meta
         initial[name] = Q(np.zeros(meta['shape'], dtype=np.int32), meta['exponent'])
     program = compile_program(model, initial, calibration, formats, runtime_formats,
-                              rms_refinements=a.rms_refinements)
+                              rms_refinements=a.rms_refinements,
+                              weighted_product_fraction_bits=a.weighted_product_fraction_bits)
     program_path = a.output / 'program.json'
     program_path.write_text(json.dumps(program, separators=(',', ':')) + '\n')
     program = json.loads(program_path.read_text())
@@ -216,8 +219,11 @@ def main():
                 # payload bits are not a floating value to compare directly.
                 if value.mask is not None:
                     valid = valid & np.broadcast_to(value.mask, actual.shape)
-                relative = float(np.linalg.norm((actual-ref)[valid]) /
-                    max(np.linalg.norm(ref[valid]), 1e-300)) if valid.any() else None
+                # Float32 zero norms must not cast the floor back to zero and
+                # emit NaN. A zero-reference relative error is undefined.
+                reference_norm = float(np.linalg.norm(ref[valid].astype(np.float64)))
+                error_norm = float(np.linalg.norm((actual-ref)[valid]))
+                relative = error_norm/reference_norm if reference_norm else None
                 # A large outlier row can hide percent-level error in another
                 # token. RMS normalization can subsequently expose that error.
                 # Keep last-axis rows separate; masked lanes never become data.
@@ -236,6 +242,7 @@ def main():
                             'relative_l2': error/norm if norm else None})
                 observed.append({'value': name, 'kernel': node['kernel'],
                     'primitive': node['id'], 'relative_l2_vs_dequantized_FP32': relative,
+                    'absolute_error_l2': error_norm, 'reference_l2': reference_norm,
                     'last_axis_rows': row_errors,
                     'finite_unmasked_elements': int(valid.sum()), 'shape': list(actual.shape)})
         outputs = execute(program, initial, ids, oracle, bounds,
@@ -315,7 +322,8 @@ def main():
     hf_source_unchanged = digest(hf_source) == hf_source_sha256
     receipt = {'scope': 'full 36-layer one-step old primitive replay with explicitly quantized HF past',
         'rms_refinements': a.rms_refinements,
-        'arithmetic_recipe': 'frozen default' if a.rms_refinements == 1 else 'extra emitted RMS instructions; accuracy-repair candidate, not DP gain',
+        'weighted_product_fraction_bits': a.weighted_product_fraction_bits,
+        'arithmetic_recipe': 'frozen default' if a.rms_refinements == 1 and not a.weighted_product_fraction_bits else 'explicit numerical-recipe repair candidate, not DP gain',
         'baseline_comparison_contract': 'same emitted instruction stream executed by frozen old runtime adapter; not a comparison to the default recipe when refinements>1',
         'prefix': prefix, 'query': query, 'samples': checks, 'bounds': bounds,
         'runtime_state_inputs': runtime_formats, 'runtime_state_outputs': 72,
