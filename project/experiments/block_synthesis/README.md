@@ -1,5 +1,9 @@
 # 有约束的 Block 综合规划器（Issue #219）
 
+2026-11-09：[原生S32 Add聚合](S32_ADD_AGGREGATE.md)。三初态各384例及独立负对照、Windows/Linux各234项通过；
+有限S与实际P/feeder服务已验证，仍需完整split32准备、共同候选/缓存失效/独立审计/整网数值接入。
+`add_tile_survey.py CHECKED_IR CHECKED_PLAN ADD_PROOF NEW_REPORT`仅调查机会，不宣称生成新计划或算法20%。
+
 2026-11-08：[Dot准备复用](PREPARATION_REUSE.md)，`full_plan.py --prepare-reuse --read-cache --state-cost`。完整3B五组/九组同束数模型代价约降60%，110项及六次逐位回放通过；[结果、实际代价与证据](../../../work/YUZE-LU/219/throughput-opt/RESULTS.md)。该收益来自通用循环外提，非DP搜索本身；原状态成本/缓存/全部写回模式保留供对照。
 
 2026-11-08：[状态相关成本v2](../../../work/YUZE-LU/219/STATE_COST_RESULTS.md)。`full_plan.py --read-cache --state-cost`启用部分前缀命中和显式保留策略，宽度1/8共用纯函数转移。完整3B六次回放及105项测试通过；五组/同预算不变，九组模型代价略退化，详见结果。

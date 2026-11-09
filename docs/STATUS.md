@@ -1,5 +1,10 @@
 # 当前状态
 
+2026-11-09：[Issue219/PR220迭代13](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_13.md)验证未修改P/M/S上的多行S32 Add聚合：
+三初态各384例、独立负对照及Windows/Linux各234项通过。23个真实FFN Add含原准备的串行成本机会少29.8194%、逻辑记录少29.4998%；
+尚未注册共同候选/生成新调度，不是整模型或算法收益。一般脏驻留仍未实现。101500历史池终态更慢于当前强计划，保留负结果；四项旧作业仍运行。
+算法20%/KV/SystemC能耗/token/s/最优适配对照未完成，继续in_progress。
+
 2026-11-09：[Issue219/PR220迭代12](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_12.md)新增未就绪长链下界与单金属诊断，Windows/Linux各231项通过。
 真实FFN同池新greedy/DP/backbone-DP额外0，125个最大静态并集也未加强切片下界；完整新greedy更差，保留强计划及负结果。
 101509完整phase池终态，条件DP仅额外0.0000192676%；101526其自身三输入数值终态逐位通过。101516新搜索、101525拓扑继续核验。

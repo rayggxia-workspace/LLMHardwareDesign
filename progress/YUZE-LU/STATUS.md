@@ -1,5 +1,12 @@
 # YUZE-LU 的进度
 
+2026-11-09 CST：#219/PR220[迭代13](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_13.md)部分交付。
+未修改P/M/S/feeder多行S32 Add/Sub聚合三初态各384例、实际负对照、两环境各234项通过。
+23个真实FFN Add含相同准备的串行成本机会少29.8194%、记录少29.4998%，未注册动作池/生成新计划，不能算算法或整网收益。
+101500历史池终态189,861,695,398 ticks，慢于当前167,410,840,866；101501/101513/101516/101525归档时仍运行。
+一般脏驻留、算法20%及后续多轮/KV/校准SystemC能耗/token/s/最优适配对照未完成。
+Issue in_progress；PR待独立审查、不自合并；登记pending，看板unverified/同步pending。
+
 2026-11-09 CST：#219/PR220[迭代12](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_12.md)部分交付。
 新增未就绪长链资源下界/单金属诊断，独立DAG和合法拓扑穷举；Windows/Linux各231项通过。
 真实FFN额外0，125个最大并集未加强切片下界；完整新greedy更差，强计划保留，不替换默认策略。

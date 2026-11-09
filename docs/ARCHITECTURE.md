@@ -1,5 +1,10 @@
 # 架构与运行
 
+2026-11-09迭代13：[原生S32加法聚合原型](../project/experiments/block_synthesis/S32_ADD_AGGREGATE.md)，
+[结果与边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_13.md)。
+`add_tile_survey.py CHECKED_IR CHECKED_PLAN ADD_PROOF NEW_REPORT`仅调查含完整准备的成本，不生成调度。
+原P/M/S/feeder三初态各384例及负对照、Windows/Linux各234项通过；尚未注册综合候选，也非一般驻留/算法20%。
+
 2026-11-09迭代12：[未就绪任务资源下界与单金属诊断](../project/experiments/block_synthesis/FUTURE_RESOURCE_TAIL.md)，
 [结果/边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_12.md)。
 `tile_review.py IR NEW_OUTPUT --registered-ir --incumbent BEST_PLAN --same-pool-baseline STRONG_BASELINE --incumbent-backbone --wire-budget 18 --width 8 --policies future-greedy future-dp`
