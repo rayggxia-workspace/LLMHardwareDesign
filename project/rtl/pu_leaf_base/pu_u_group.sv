@@ -1,5 +1,5 @@
 // U groups independent N, compact E and S_base leaves under local services.
-module pu_u_group #(parameter integer NEXP_BATCH=0) (
+module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0) (
     input wire clk, reset,
     input wire n_cmd_valid, n_cmd_store, n_cmd_direct, n_done_ready,
     output wire n_cmd_ready, n_done_valid, n_done_error, n_done_saturated,
@@ -107,7 +107,7 @@ module pu_u_group #(parameter integer NEXP_BATCH=0) (
     wire [63:0] core_meta;
     wire [127:0] core_a,core_b,core_result;
     generate if(NEXP_BATCH!=0)begin: batch_route
-        pu_nexp_shared dispatch(
+        pu_nexp_shared #(.NEXP_DIRECT(NEXP_DIRECT)) dispatch(
             .clk,.reset,.exec_valid(n_valid),.exec_ready(n_ready),.exec_meta(n_meta),.exec_a(na),.exec_b(nb),
             .result_valid(nr_valid),.result_ready(nr_ready),.result_data(nr),.result_error(nr_error),.result_saturated(nr_sat),
             .n_valid(core_valid),.n_ready(core_ready),.n_meta(core_meta),.n_a(core_a),.n_b(core_b),
@@ -119,8 +119,9 @@ module pu_u_group #(parameter integer NEXP_BATCH=0) (
         assign nr_valid=core_result_valid;assign core_result_ready=nr_ready;assign nr=core_result;
         assign nr_error=core_error;assign nr_sat=core_saturated;
     end endgenerate
-    // Exactly one native N, unchanged source and arithmetic resources.
-    block_v2_n normalize(
+    // Exactly one native N, with the same arithmetic resources.
+    // DIRECT without BATCH does not expose a new ordinary native ABI.
+    block_v2_n #(.NEXP_DIRECT((NEXP_BATCH!=0)&&(NEXP_DIRECT!=0))) normalize(
         .clk, .reset, .cmd_valid(core_valid), .cmd_ready(core_ready),
         .cmd_op(core_meta[3:0]), .cmd_count(core_meta[7:4]), .cmd_param(core_meta[39:8]),
         .cmd_data(core_a), .cmd_aux(core_b), .rsp_valid(core_result_valid), .rsp_ready(core_result_ready),

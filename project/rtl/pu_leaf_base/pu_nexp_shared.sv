@@ -1,8 +1,8 @@
-// Issue247 round1. One unchanged native N is shared with ordinary commands.
-// op15 is an explicit destructive/clobber ABI. It starts a fresh N context;
-// normal multi-command statistics must not be resumed without a new op0.
+// Issue247 R2. One native N is shared with ordinary commands.
+// NEXP_DIRECT=0 preserves R1's destructive/clobber op15 ABI. When enabled,
+// op15 uses stateless native op12 and preserves all native session state.
 // No second N, EXP table, reduction lane or private S is instantiated here.
-module pu_nexp_shared (
+module pu_nexp_shared #(parameter integer NEXP_DIRECT=0) (
  input wire clk,reset,
  input wire exec_valid,output wire exec_ready,input wire [63:0] exec_meta,
  input wire [127:0] exec_a,exec_b,
@@ -52,7 +52,7 @@ module pu_nexp_shared (
     if(i<count)mapped_result[32*i+:32]={16'd0,batch_data[16*i+:16]};
   end
  end
- nexp_batch_adapter batch(
+ nexp_batch_adapter #(.NEXP_DIRECT(NEXP_DIRECT)) batch(
   .clk,.reset,.in_valid(phase==SEND),.in_ready(batch_ready),.in_count(count),.in_data(packed_data),
   .out_valid(batch_valid),.out_ready(phase==WAIT_RESULT&&result_ready),.out_data(batch_data),.out_error(batch_error),
   .n_cmd_valid(b_cmd_valid),.n_ready,.n_cmd_op(b_cmd_op),.n_cmd_count(b_cmd_count),.n_cmd_data(b_cmd_data),

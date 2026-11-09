@@ -1,6 +1,6 @@
 // Full reductions/normalizations, with explicit S-backed replay and two lanes.
 // No calls to E/G; local square, EXP, divide/root and scaling resources.
-module block_v2_n(
+module block_v2_n #(parameter integer NEXP_DIRECT=0) (
  input wire clk,reset,cmd_valid,output wire cmd_ready,
  input wire [3:0] cmd_op,cmd_count,input wire [31:0] cmd_param,
  input wire [127:0] cmd_data,cmd_aux,
@@ -97,6 +97,13 @@ module block_v2_n(
   else if(cmd_op==9)command_ok=top_loading&&cmd_count>0&&cmd_count<=4&&({1'b0,top_count}+{3'd0,cmd_count}<=40);
   else if(cmd_op==10)command_ok=top_loading&&top_count>0&&{2'd0,top_k}<=top_count;
   else if(cmd_op==11)command_ok=factor_valid;
+  // Optional stateless relative EXP. No context is required or modified.
+  // Used operands are signed S16; unused complete lanes and aux must be zero.
+  else if(cmd_op==12)begin
+   command_ok=NEXP_DIRECT!=0&&cmd_param==0&&cmd_aux==0&&cmd_count>0&&cmd_count<=8;
+   for(integer i=0;i<8;i=i+1)
+    if(i>=cmd_count&&cmd_data[16*i+:16]!=0)command_ok=0;
+  end
   else command_ok=0;
   pair_sum=0;pair_square=0;pair_exp=0;pair_max=raw[0];pair_min=raw[0];
   for(integer l=0;l<2;l=l+1)begin
@@ -139,7 +146,7 @@ module block_v2_n(
        mode<=cmd_param[1:0];epsilon<=cmd_data[31:0];context_valid<=1;statistics_final<=0;factor_valid<=0;
        count<=0;sum<=0;sumsq<=0;maximum<=-32768;minimum<=32767;exp_sum<=0;exp_count<=0;replayed<=0;rsp_valid<=1;
       end
-      1,3,5,6:begin
+      1,3,5,6,12:begin
        operation<=cmd_op;data<=cmd_data;aux<=cmd_aux;n<=cmd_count;position<=0;result<=0;saturated<=0;phase<=CALC;
       end
       2:begin
@@ -169,7 +176,10 @@ module block_v2_n(
       enabled[l]<=position+4'(l)<n;
       raw[l]<=fetch[l];gamma[l]<=16'(aux>>(16*(position+4'(l))));
       square[l]<=fetch[l]*fetch[l];
-      ex[l]<=exponential($signed({fetch[l][15],fetch[l]})-$signed({maximum[15],maximum}));
+      // The existing exponential returns32768 for every nonnegative
+      // difference, exactly exp(min(x,0)); op12 never reads maximum.
+      ex[l]<=exponential(operation==12?$signed({fetch[l][15],fetch[l]}):
+       $signed({fetch[l][15],fetch[l]})-$signed({maximum[15],maximum}));
      end
      phase<=operation==5||operation==6?NORM_MUL:ACCUM;
     end
@@ -178,11 +188,15 @@ module block_v2_n(
       sum<=sum+pair_sum;sumsq<=sumsq+{15'd0,pair_square};count<=count+{15'd0,enabled[0]}+{15'd0,enabled[1]};
       if(pair_max>maximum)maximum<=pair_max;if(pair_min<minimum)minimum<=pair_min;
      end else begin
-      exp_sum<=exp_sum+{15'd0,pair_exp};exp_count<=exp_count+{15'd0,enabled[0]}+{15'd0,enabled[1]};
+      // Only the legacy exp-accumulate command owns persistent statistics.
+      // op12 shares the result lanes without changing exp_count or exp_sum.
+      if(operation==3)begin
+       exp_sum<=exp_sum+{15'd0,pair_exp};exp_count<=exp_count+{15'd0,enabled[0]}+{15'd0,enabled[1]};
+      end
       for(integer l=0;l<2;l=l+1)if(enabled[l])result[16*(position+4'(l))+:16]<=ex[l];
      end
      if(position+2>=n)begin phase<=IDLE;rsp_valid<=1;
-      if(operation==3)begin
+      if(operation==3||operation==12)begin
        rsp_data<=result;
        for(integer l=0;l<2;l=l+1)if(enabled[l])rsp_data[16*(position+4'(l))+:16]<=ex[l];
       end

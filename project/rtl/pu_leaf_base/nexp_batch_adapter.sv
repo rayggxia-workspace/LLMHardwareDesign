@@ -1,8 +1,7 @@
-// Candidate local U adapter; native N source is instantiated unchanged.
-// f(x)=exp(x-max(x,0)) = exp(min(x,0)-0), for every signed S16 x.
-// A transaction owns N until all four responses arrive. The caller must
-// arbitrate this adapter with other N services before bottom-base freeze.
-module nexp_batch_adapter(
+// Issue247 R2. Default keeps R1's four-command destructive sequence.
+// Optional direct mode issues one stateless native op12 with identical values.
+// Both modes own the same single N until the final response is retired.
+module nexp_batch_adapter #(parameter integer NEXP_DIRECT=0) (
  input wire clk,reset,
  input wire in_valid,output wire in_ready,input wire [3:0] in_count,
  input wire [127:0] in_data,
@@ -18,12 +17,15 @@ module nexp_batch_adapter(
  assign in_ready=!reset&&!active&&!out_valid;
  always @* begin
   op=0;ncount=0;operand=0;
-  case(step)
-   0:op=0;
-   1:begin op=1;ncount=count;end // n explicit zero operands establish max=0/count=n
-   2:op=2;
-   3:begin op=3;ncount=count;operand=clamped;end
-  endcase
+  if(NEXP_DIRECT!=0)begin op=12;ncount=count;operand=clamped;end
+  else begin
+   case(step)
+    0:op=0;
+    1:begin op=1;ncount=count;end // n explicit zeros establish max=0/count=n
+    2:op=2;
+    3:begin op=3;ncount=count;operand=clamped;end
+   endcase
+  end
  end
  assign n_cmd_valid=active&&!waiting;
  assign n_cmd_op=op;assign n_cmd_count=ncount;assign n_cmd_data=operand;
@@ -44,7 +46,7 @@ module nexp_batch_adapter(
    if(active&&!waiting&&n_ready)waiting<=1;
    if(active&&waiting&&n_valid)begin
     waiting<=0;
-    if(n_error||step==3)begin
+    if(n_error||NEXP_DIRECT!=0||step==3)begin
      active<=0;out_valid<=1;out_error<=n_error;
      for(integer i=0;i<8;i=i+1)out_data[16*i+:16]<=i<count?n_data[16*i+:16]:16'd0;
     end else step<=step+1'b1;
