@@ -69,6 +69,11 @@ def main(root,stage):
                      HERE/'closure_partial128.sv',HERE/'tb_closure_partial.sv'],out/'partial-build.log',out,env)
             text=execute([obj/'Vtb_closure_partial'],out/'partial.log',out,env);assert f'checks={count}' in text
             report['partial']=dict(checks=count,log=text);save()
+            obj=out/'obj-controller'
+            execute([VERILATOR,'--binary','--timing','--assert','--top-module','tb_closure_controller','-Wall','-Wno-BLKSEQ','-j','4','--Mdir',obj,
+                     HERE/'closure_partial128.sv',HERE/'closure_psum_controller.sv',HERE/'tb_closure_controller.sv'],out/'controller-build.log',out,env)
+            text=execute([obj/'Vtb_closure_controller'],out/'controller.log',out,env)
+            assert f'checks={count}' in text;report['controller']=dict(checks=count,log=text);save()
         if stage=='rtl':
             report['passed']=True;return
         model=extend(bank_extend(generate(restore(root/'restored'),root/'restored/candidate')))
