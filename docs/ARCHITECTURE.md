@@ -402,3 +402,16 @@ python scripts/check_project.py
 ```
 
 最后一个命令只检查管理结构，不代替192条件场景或原生RTL。新M/向量/NExp宽度与S16桥接均为未实现候选服务合同。
+
+## Issue247：S16桥接与E流水复现（2026-11-10）
+
+先读REMOTE_RULES，在授权个人全新RUN目录部署锁定source/、inputs.json及SHA清单，然后在该RUN执行 `sbatch --parsable job.sh`。原生job来源project/experiments/s16_vector_native/job.sh；模型job来源project/experiments/s16_vector_model/job.sh。它们强制Slurm1至4核、容器执行并校验部署SHA，不在登录节点/本机运行EDA。
+原生脚本run.py产生7配置×3组运行及4个同库面积；生成bench保留历史断言，加入NX16尾部/ACK/reset、独立E整数oracle及完整U自然/额外源比较。最终run43/source commit78c57285，结果位于授权个人目录/public/home/yuzelu/Melodydt/issue247-area-speed/run43/results。模型run42使用冻结run35生成源/输入、run41原生校准；生产RTL字节与run43相同，32例包括8完整基线控制与160负控。
+本地仅处理已下载证据，可执行（RUNS_DIR为含run35/41/42/43回收目录的本任务路径）：
+
+```text
+python scripts/check_project.py
+python project/experiments/s16_vector_native/analyze.py --runs RUNS_DIR --out work/Melodydt/247/s16-vector-native
+```
+
+每个run需receipts.tar与解出的receipts/。完整argv、输入/输出SHA、工具版本、失败尝试与状态见[阶段交接](handoffs/2026-11-10-issue-247-s16-vector-native.md)。管理检查不是RTL/物理验收，模型结果不是原生完整模型token/s。

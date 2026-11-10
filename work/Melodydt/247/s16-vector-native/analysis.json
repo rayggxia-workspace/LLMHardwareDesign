@@ -1,0 +1,3355 @@
+{
+  "passed": true,
+  "verified_received_files": 209,
+  "model_cases": 32,
+  "baseline_exact": 8,
+  "negative_checks": 160,
+  "model_scope": "old conditional model with measured local S16 fees; no native full graph proof",
+  "calibration": {
+    "source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+    "result_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+    "frame_compute_cycles": [
+      0,
+      7,
+      7,
+      7,
+      7,
+      9,
+      9,
+      9,
+      9
+    ],
+    "frame_full_U_cycles": [
+      0,
+      17,
+      17,
+      17,
+      17,
+      23,
+      23,
+      23,
+      23
+    ],
+    "numeric_gate": true,
+    "scope": "packed signed16 NExp compute-wrapper measured; old vector-region E/S/cache/DDR retained",
+    "full_U_bound": "whole native U frame plus retirement, conservatively charged in addition to old E/S accounting; not an exact total-model calibration",
+    "vector8_scope": "unimplemented complete-U 8-value/cycle service target; standalone E II=1 is insufficient"
+  },
+  "native": {
+    "source_commit": "78c57285d206355cbcb5ae9f5cd51249964306cc",
+    "calibration_identical_production_files": 14,
+    "default_exact_pairs": 3,
+    "tests": {
+      "old-u": [
+        {
+          "seed": 247,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 661,
+              "S_reads": 409,
+              "S_writes": 43
+            },
+            "E_U_PASS": {
+              "checks": 128
+            }
+          },
+          "log": "old-u-1-247.log",
+          "log_sha256": "10cd253f96e4dd9be9d429fba1bb72e20693711f1f1e97ad3e0e891c49ec6e96",
+          "measurements_count": 140,
+          "selected_measurements": []
+        },
+        {
+          "seed": 247,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 661,
+              "S_reads": 409,
+              "S_writes": 43
+            },
+            "E_U_PASS": {
+              "checks": 128
+            }
+          },
+          "log": "old-u-2-247.log",
+          "log_sha256": "0476e84b91d3cf459610852e2c0c548142be7181a4a7a9537284f2f4cec05ef9",
+          "measurements_count": 140
+        },
+        {
+          "seed": 248,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 661,
+              "S_reads": 409,
+              "S_writes": 43
+            },
+            "E_U_PASS": {
+              "checks": 128
+            }
+          },
+          "log": "old-u-2-248.log",
+          "log_sha256": "974c4397ba1d299f31db91623818633450af225a92c3e9fd46004984a9cac08c",
+          "measurements_count": 140
+        }
+      ],
+      "default-u": [
+        {
+          "seed": 247,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 661,
+              "S_reads": 409,
+              "S_writes": 43
+            },
+            "E_U_PASS": {
+              "checks": 128
+            }
+          },
+          "log": "default-u-1-247.log",
+          "log_sha256": "b3fbb005cad1d50d087b9496d14489bfef744fe0785ba2a567f6c8e84004bf72",
+          "measurements_count": 140,
+          "selected_measurements": []
+        },
+        {
+          "seed": 247,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 661,
+              "S_reads": 409,
+              "S_writes": 43
+            },
+            "E_U_PASS": {
+              "checks": 128
+            }
+          },
+          "log": "default-u-2-247.log",
+          "log_sha256": "f3a8093020934a07338435c4e4d116b748b600ae40c6786d93f2f8e382c5acdf",
+          "measurements_count": 140
+        },
+        {
+          "seed": 248,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 661,
+              "S_reads": 409,
+              "S_writes": 43
+            },
+            "E_U_PASS": {
+              "checks": 128
+            }
+          },
+          "log": "default-u-2-248.log",
+          "log_sha256": "36be5aa7f86f093b2793f7f763485ae2efd0a42f6e256db404c04a725ffc5f26",
+          "measurements_count": 140
+        }
+      ],
+      "bridge-u": [
+        {
+          "seed": 247,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 1146,
+              "S_reads": 710,
+              "S_writes": 84
+            },
+            "E_U_PASS": {
+              "checks": 128
+            },
+            "BRIDGE_PASS": {
+              "checks": 21,
+              "invalid": 5,
+              "contention": 1,
+              "reset": 1
+            }
+          },
+          "log": "bridge-u-1-247.log",
+          "log_sha256": "1295ee19b2828bbd337d918a3325a0cdd820c90192f9bf7bf9a229ce2d614b68",
+          "measurements_count": 148,
+          "selected_measurements": [
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 1,
+              "accepted_to_done_cycles": 16,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 6,
+              "output_stage_cycles": 5,
+              "S_reads": 1,
+              "S_writes": 1
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 2,
+              "accepted_to_done_cycles": 16,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 6,
+              "output_stage_cycles": 5,
+              "S_reads": 1,
+              "S_writes": 1
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 3,
+              "accepted_to_done_cycles": 16,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 6,
+              "output_stage_cycles": 5,
+              "S_reads": 1,
+              "S_writes": 1
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 4,
+              "accepted_to_done_cycles": 16,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 6,
+              "output_stage_cycles": 5,
+              "S_reads": 1,
+              "S_writes": 1
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 5,
+              "accepted_to_done_cycles": 22,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 8,
+              "output_stage_cycles": 9,
+              "S_reads": 1,
+              "S_writes": 2
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 6,
+              "accepted_to_done_cycles": 22,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 8,
+              "output_stage_cycles": 9,
+              "S_reads": 1,
+              "S_writes": 2
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 7,
+              "accepted_to_done_cycles": 22,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 8,
+              "output_stage_cycles": 9,
+              "S_reads": 1,
+              "S_writes": 2
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 8,
+              "accepted_to_done_cycles": 22,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 8,
+              "output_stage_cycles": 9,
+              "S_reads": 1,
+              "S_writes": 2
+            }
+          ]
+        },
+        {
+          "seed": 247,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 1146,
+              "S_reads": 710,
+              "S_writes": 84
+            },
+            "E_U_PASS": {
+              "checks": 128
+            },
+            "BRIDGE_PASS": {
+              "checks": 21,
+              "invalid": 5,
+              "contention": 1,
+              "reset": 1
+            }
+          },
+          "log": "bridge-u-2-247.log",
+          "log_sha256": "b9941a01c7b5ce725fae06154a6c6aac38ca2b9beee6782cadc1fd1c921167f0",
+          "measurements_count": 148
+        },
+        {
+          "seed": 248,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 1146,
+              "S_reads": 710,
+              "S_writes": 84
+            },
+            "E_U_PASS": {
+              "checks": 128
+            },
+            "BRIDGE_PASS": {
+              "checks": 21,
+              "invalid": 5,
+              "contention": 1,
+              "reset": 1
+            }
+          },
+          "log": "bridge-u-2-248.log",
+          "log_sha256": "f2980dc629737798f255d151c58692a8806e09d9b4fb81dbe38a700e45efb169",
+          "measurements_count": 148
+        }
+      ],
+      "bridge-pipeline-u": [
+        {
+          "seed": 247,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 1146,
+              "S_reads": 710,
+              "S_writes": 84
+            },
+            "E_U_PASS": {
+              "checks": 128
+            },
+            "BRIDGE_PASS": {
+              "checks": 21,
+              "invalid": 5,
+              "contention": 1,
+              "reset": 1
+            }
+          },
+          "log": "bridge-pipeline-u-1-247.log",
+          "log_sha256": "b86e6de0ae0aa0424ff307de9cc24f4316fefd4e0273c9f2c9fd169463b9de61",
+          "measurements_count": 148,
+          "selected_measurements": [
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 1,
+              "accepted_to_done_cycles": 16,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 6,
+              "output_stage_cycles": 5,
+              "S_reads": 1,
+              "S_writes": 1
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 2,
+              "accepted_to_done_cycles": 16,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 6,
+              "output_stage_cycles": 5,
+              "S_reads": 1,
+              "S_writes": 1
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 3,
+              "accepted_to_done_cycles": 16,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 6,
+              "output_stage_cycles": 5,
+              "S_reads": 1,
+              "S_writes": 1
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 4,
+              "accepted_to_done_cycles": 16,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 6,
+              "output_stage_cycles": 5,
+              "S_reads": 1,
+              "S_writes": 1
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 5,
+              "accepted_to_done_cycles": 22,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 8,
+              "output_stage_cycles": 9,
+              "S_reads": 1,
+              "S_writes": 2
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 6,
+              "accepted_to_done_cycles": 22,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 8,
+              "output_stage_cycles": 9,
+              "S_reads": 1,
+              "S_writes": 2
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 7,
+              "accepted_to_done_cycles": 22,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 8,
+              "output_stage_cycles": 9,
+              "S_reads": 1,
+              "S_writes": 2
+            },
+            {
+              "prefix": "NEXP_FULL_U",
+              "tag": 1314402614,
+              "mode32": 0,
+              "count": 8,
+              "accepted_to_done_cycles": 22,
+              "input_stage_cycles": 5,
+              "compute_stage_cycles": 8,
+              "output_stage_cycles": 9,
+              "S_reads": 1,
+              "S_writes": 2
+            }
+          ]
+        },
+        {
+          "seed": 247,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 1146,
+              "S_reads": 710,
+              "S_writes": 84
+            },
+            "E_U_PASS": {
+              "checks": 128
+            },
+            "BRIDGE_PASS": {
+              "checks": 21,
+              "invalid": 5,
+              "contention": 1,
+              "reset": 1
+            }
+          },
+          "log": "bridge-pipeline-u-2-247.log",
+          "log_sha256": "18c95ffcee30843467697f42e91c4759ebedd873ad9fc454d90387ace90c49e8",
+          "measurements_count": 148
+        },
+        {
+          "seed": 248,
+          "checks": {
+            "NEXP_U_PASS": {
+              "checks": 1146,
+              "S_reads": 710,
+              "S_writes": 84
+            },
+            "E_U_PASS": {
+              "checks": 128
+            },
+            "BRIDGE_PASS": {
+              "checks": 21,
+              "invalid": 5,
+              "contention": 1,
+              "reset": 1
+            }
+          },
+          "log": "bridge-pipeline-u-2-248.log",
+          "log_sha256": "58130e5e24758f5e85739d4af29325c2f7191c37fc32b165043e819c0c2a6b76",
+          "measurements_count": 148
+        }
+      ],
+      "compute": [
+        {
+          "seed": 247,
+          "checks": {
+            "NEXP_COMPUTE_PASS": {
+              "checks": 8588,
+              "values": 66524,
+              "frames": 8588
+            }
+          },
+          "log": "compute-1-247.log",
+          "log_sha256": "339ba00e5289942b9097cd90d656a9494ef64641789d09e09a31983a695142f0",
+          "measurements_count": 12,
+          "selected_measurements": [
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 0,
+              "count": 1,
+              "accepted_to_done_cycles": 6,
+              "accepted_to_next_accept_cycles": 7
+            },
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 0,
+              "count": 2,
+              "accepted_to_done_cycles": 6,
+              "accepted_to_next_accept_cycles": 7
+            },
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 0,
+              "count": 3,
+              "accepted_to_done_cycles": 6,
+              "accepted_to_next_accept_cycles": 7
+            },
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 0,
+              "count": 4,
+              "accepted_to_done_cycles": 6,
+              "accepted_to_next_accept_cycles": 7
+            },
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 0,
+              "count": 5,
+              "accepted_to_done_cycles": 8,
+              "accepted_to_next_accept_cycles": 9
+            },
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 0,
+              "count": 6,
+              "accepted_to_done_cycles": 8,
+              "accepted_to_next_accept_cycles": 9
+            },
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 0,
+              "count": 7,
+              "accepted_to_done_cycles": 8,
+              "accepted_to_next_accept_cycles": 9
+            },
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 0,
+              "count": 8,
+              "accepted_to_done_cycles": 8,
+              "accepted_to_next_accept_cycles": 9
+            },
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 1,
+              "count": 1,
+              "accepted_to_done_cycles": 6,
+              "accepted_to_next_accept_cycles": 7
+            },
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 1,
+              "count": 2,
+              "accepted_to_done_cycles": 6,
+              "accepted_to_next_accept_cycles": 7
+            },
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 1,
+              "count": 3,
+              "accepted_to_done_cycles": 6,
+              "accepted_to_next_accept_cycles": 7
+            },
+            {
+              "prefix": "NEXP_COMPUTE",
+              "mode32": 1,
+              "count": 4,
+              "accepted_to_done_cycles": 6,
+              "accepted_to_next_accept_cycles": 7
+            }
+          ]
+        },
+        {
+          "seed": 247,
+          "checks": {
+            "NEXP_COMPUTE_PASS": {
+              "checks": 8588,
+              "values": 66524,
+              "frames": 8588
+            }
+          },
+          "log": "compute-2-247.log",
+          "log_sha256": "6450d96a4e170f431f9c0d98c96a707225b1854fab79824defeda72d1f0f0bb1",
+          "measurements_count": 12
+        },
+        {
+          "seed": 248,
+          "checks": {
+            "NEXP_COMPUTE_PASS": {
+              "checks": 8588,
+              "values": 66524,
+              "frames": 8588
+            }
+          },
+          "log": "compute-2-248.log",
+          "log_sha256": "e3d164c2df9429d373356caf593039d92f4b0e6b297a6706d21fd3b1205bb452",
+          "measurements_count": 12
+        }
+      ],
+      "e0": [
+        {
+          "seed": 247,
+          "checks": {
+            "E_PIPE_PASS": {
+              "commands": 8192,
+              "values": 65536,
+              "reset": 1
+            }
+          },
+          "log": "e0-1-247.log",
+          "log_sha256": "f4e238b3581da6b95ab8035f4280ba7edec90dd861a4c4536d20aec5c6033a19",
+          "measurements_count": 2,
+          "selected_measurements": [
+            {
+              "prefix": "E_PIPE_MEASURE",
+              "pipe": 0,
+              "epoch": 0,
+              "commands": 4096,
+              "values": 32768,
+              "cycles": 15105,
+              "consecutive": 511,
+              "peak": 1,
+              "stalls": 0
+            },
+            {
+              "prefix": "E_PIPE_MEASURE",
+              "pipe": 0,
+              "epoch": 1,
+              "commands": 4096,
+              "values": 32768,
+              "cycles": 20608,
+              "consecutive": 361,
+              "peak": 1,
+              "stalls": 5434
+            }
+          ]
+        },
+        {
+          "seed": 247,
+          "checks": {
+            "E_PIPE_PASS": {
+              "commands": 8192,
+              "values": 65536,
+              "reset": 1
+            }
+          },
+          "log": "e0-2-247.log",
+          "log_sha256": "eec0c2065e7c24da0c6efe9c08c4c26ace136959e3e7d906ebb5f439ff8c9958",
+          "measurements_count": 2
+        },
+        {
+          "seed": 248,
+          "checks": {
+            "E_PIPE_PASS": {
+              "commands": 8192,
+              "values": 65536,
+              "reset": 1
+            }
+          },
+          "log": "e0-2-248.log",
+          "log_sha256": "8ab124b07eaa282a16d3a5671d12820fb83c4057407b41d4438bb9ca5ad704d1",
+          "measurements_count": 2
+        }
+      ],
+      "e1": [
+        {
+          "seed": 247,
+          "checks": {
+            "E_PIPE_PASS": {
+              "commands": 8192,
+              "values": 65536,
+              "reset": 1
+            }
+          },
+          "log": "e1-1-247.log",
+          "log_sha256": "8ea704796d076623052bc2339ec9d76d69617bd91b2d1a5570336a604f9fff4e",
+          "measurements_count": 2,
+          "selected_measurements": [
+            {
+              "prefix": "E_PIPE_MEASURE",
+              "pipe": 1,
+              "epoch": 0,
+              "commands": 4096,
+              "values": 32768,
+              "cycles": 4100,
+              "consecutive": 4095,
+              "peak": 4,
+              "stalls": 0
+            },
+            {
+              "prefix": "E_PIPE_MEASURE",
+              "pipe": 1,
+              "epoch": 1,
+              "commands": 4096,
+              "values": 32768,
+              "cycles": 7172,
+              "consecutive": 2978,
+              "peak": 4,
+              "stalls": 2513
+            }
+          ]
+        },
+        {
+          "seed": 247,
+          "checks": {
+            "E_PIPE_PASS": {
+              "commands": 8192,
+              "values": 65536,
+              "reset": 1
+            }
+          },
+          "log": "e1-2-247.log",
+          "log_sha256": "d33afa9cee64e212e98011d61266bcfc31e263967f30f878db955cfd33cd4a73",
+          "measurements_count": 2
+        },
+        {
+          "seed": 248,
+          "checks": {
+            "E_PIPE_PASS": {
+              "commands": 8192,
+              "values": 65536,
+              "reset": 1
+            }
+          },
+          "log": "e1-2-248.log",
+          "log_sha256": "6c8148290814d5543ac6b9727da9bdf0688ca211d36de822e6e71e58ee602088",
+          "measurements_count": 2
+        }
+      ]
+    },
+    "area": {
+      "status": "passed",
+      "scope": "standalone E core and N service frontend; no SRAM/N core/U glue/STA/P&R",
+      "library_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+      "tools": {
+        "yosys": "a409abe03c090a72e15906082775f506ff6f5fa50106dec087900a7104c08a4c",
+        "abc": "aaf9d6b7812c86bb33ca01a0d5aab59887eb8fa439a23c9299c508f4aa868dc9"
+      },
+      "modules": {
+        "e_legacy": {
+          "standard_cell_um2": 56905.38,
+          "cells": {
+            "INV_X1": 3220,
+            "OAI21_X1": 3583,
+            "NOR2_X1": 4742,
+            "NAND2_X1": 6838,
+            "NAND3_X1": 1241,
+            "MUX2_X1": 2386,
+            "AND2_X1": 1817,
+            "NOR3_X1": 1018,
+            "OR2_X1": 1264,
+            "AOI21_X1": 4373,
+            "AOI222_X1": 96,
+            "AOI22_X1": 953,
+            "AND3_X1": 981,
+            "NAND4_X1": 251,
+            "AND4_X1": 293,
+            "NOR4_X1": 237,
+            "OR4_X1": 77,
+            "AOI211_X1": 268,
+            "XNOR2_X1": 4703,
+            "XOR2_X1": 3712,
+            "OAI33_X1": 68,
+            "OR3_X1": 807,
+            "OAI22_X1": 450,
+            "OAI211_X1": 336,
+            "AOI221_X1": 468,
+            "OAI222_X1": 3,
+            "OAI221_X1": 73,
+            "DFF_X1": 1425
+          },
+          "source_sha256": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+          "SRAM_macros": 0
+        },
+        "e_pipeline": {
+          "standard_cell_um2": 59758.23,
+          "cells": {
+            "INV_X1": 2950,
+            "NOR2_X1": 4813,
+            "OR2_X1": 1428,
+            "NAND2_X1": 7121,
+            "NOR4_X1": 237,
+            "MUX2_X1": 2709,
+            "AND4_X1": 413,
+            "AOI22_X1": 1000,
+            "NOR3_X1": 933,
+            "XNOR2_X1": 4541,
+            "XOR2_X1": 3768,
+            "NAND3_X1": 1340,
+            "AOI21_X1": 4372,
+            "OAI21_X1": 3852,
+            "AND3_X1": 867,
+            "OR3_X1": 750,
+            "OAI22_X1": 312,
+            "AND2_X1": 1982,
+            "NAND4_X1": 247,
+            "OAI211_X1": 380,
+            "OR4_X1": 93,
+            "AOI211_X1": 252,
+            "AOI221_X1": 413,
+            "OAI221_X1": 99,
+            "AOI222_X1": 102,
+            "OAI33_X1": 42,
+            "OAI222_X1": 5,
+            "DFF_X1": 1825
+          },
+          "source_sha256": "04f329246642820ae23622332a60aa84e356bbfccb20eb88ae944cc5d650e201",
+          "SRAM_macros": 0
+        },
+        "n_front_old": {
+          "standard_cell_um2": 4274.088,
+          "cells": {
+            "INV_X1": 27,
+            "MUX2_X1": 643,
+            "AOI21_X1": 19,
+            "NOR2_X1": 6,
+            "OR4_X1": 2,
+            "NOR4_X1": 1,
+            "NAND2_X1": 6,
+            "AND2_X1": 132,
+            "OAI21_X1": 13,
+            "NOR3_X1": 1,
+            "OAI22_X1": 3,
+            "NAND3_X1": 2,
+            "OR2_X1": 1,
+            "OAI221_X1": 2,
+            "XOR2_X1": 1,
+            "AOI22_X1": 3,
+            "OAI33_X1": 1,
+            "XNOR2_X1": 1,
+            "DFF_X1": 631
+          },
+          "source_sha256": "7a72f9831b64e1b8569a30894bb167f1adaddd2dde7657ff86a2aeeac1e31d2a",
+          "SRAM_macros": 0
+        },
+        "n_front_bridge": {
+          "standard_cell_um2": 5420.548,
+          "cells": {
+            "INV_X1": 83,
+            "NAND2_X1": 505,
+            "AND2_X1": 157,
+            "MUX2_X1": 395,
+            "OAI21_X1": 375,
+            "NOR2_X1": 242,
+            "AOI211_X1": 34,
+            "AND3_X1": 3,
+            "AOI21_X1": 105,
+            "AND4_X1": 2,
+            "NAND4_X1": 28,
+            "OAI222_X1": 2,
+            "NAND3_X1": 25,
+            "NOR3_X1": 23,
+            "AOI22_X1": 8,
+            "XOR2_X1": 1,
+            "NOR4_X1": 15,
+            "OR4_X1": 1,
+            "OAI22_X1": 4,
+            "AOI221_X1": 1,
+            "XNOR2_X1": 2,
+            "OR2_X1": 1,
+            "OAI211_X1": 2,
+            "OAI221_X1": 2,
+            "OR3_X1": 1,
+            "DFF_X1": 701
+          },
+          "source_sha256": "7a72f9831b64e1b8569a30894bb167f1adaddd2dde7657ff86a2aeeac1e31d2a",
+          "SRAM_macros": 0
+        }
+      },
+      "versions": {
+        "yosys": "Yosys 0.63 (git sha1 70a11c6bf, g++ 11.4.0-1ubuntu1~22.04.3 -fPIC -O3)"
+      },
+      "delta_e_um2": 2852.850000000006,
+      "delta_bridge_front_um2": 1146.46
+    },
+    "native_full_model_tokens_per_second": null,
+    "physical_clock_qualified": false,
+    "full_U_totals": [
+      {
+        "extra": 0,
+        "legal": true,
+        "count": 56,
+        "before": 988,
+        "after": 984,
+        "speedup_percent": 0.40650406504065817
+      },
+      {
+        "extra": 0,
+        "legal": false,
+        "count": 8,
+        "before": 56,
+        "after": 80,
+        "speedup_percent": -30.000000000000004
+      },
+      {
+        "extra": 1,
+        "legal": true,
+        "count": 56,
+        "before": 1128,
+        "after": 1128,
+        "speedup_percent": 0.0
+      },
+      {
+        "extra": 1,
+        "legal": false,
+        "count": 8,
+        "before": 120,
+        "after": 120,
+        "speedup_percent": 0.0
+      }
+    ],
+    "changed_U_cases": [
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 2304,
+          "op": 9,
+          "extra": 0,
+          "sources": 2,
+          "cycles": 20
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 2304,
+          "op": 9,
+          "extra": 0,
+          "sources": 2,
+          "cycles": 19
+        }
+      },
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 2369,
+          "op": 9,
+          "extra": 0,
+          "sources": 2,
+          "cycles": 20
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 2369,
+          "op": 9,
+          "extra": 0,
+          "sources": 2,
+          "cycles": 19
+        }
+      },
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 2434,
+          "op": 9,
+          "extra": 0,
+          "sources": 2,
+          "cycles": 20
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 2434,
+          "op": 9,
+          "extra": 0,
+          "sources": 2,
+          "cycles": 19
+        }
+      },
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 2499,
+          "op": 9,
+          "extra": 0,
+          "sources": 2,
+          "cycles": 20
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 2499,
+          "op": 9,
+          "extra": 0,
+          "sources": 2,
+          "cycles": 19
+        }
+      },
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 3584,
+          "op": 14,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 7
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 3584,
+          "op": 14,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 10
+        }
+      },
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 3649,
+          "op": 14,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 7
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 3649,
+          "op": 14,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 10
+        }
+      },
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 3714,
+          "op": 14,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 7
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 3714,
+          "op": 14,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 10
+        }
+      },
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 3779,
+          "op": 14,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 7
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 3779,
+          "op": 14,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 10
+        }
+      },
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 3840,
+          "op": 15,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 7
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 3840,
+          "op": 15,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 10
+        }
+      },
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 3905,
+          "op": 15,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 7
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 3905,
+          "op": 15,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 10
+        }
+      },
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 3970,
+          "op": 15,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 7
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 3970,
+          "op": 15,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 10
+        }
+      },
+      {
+        "before": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 0,
+          "index": 4035,
+          "op": 15,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 7
+        },
+        "after": {
+          "prefix": "E_U_MEASURE",
+          "pipe": 1,
+          "index": 4035,
+          "op": 15,
+          "extra": 0,
+          "sources": 1,
+          "cycles": 10
+        }
+      }
+    ],
+    "full_U_operation_cycles": [
+      {
+        "op": 0,
+        "extra": 0,
+        "sources": 2,
+        "before": 19,
+        "after": 19
+      },
+      {
+        "op": 0,
+        "extra": 1,
+        "sources": 3,
+        "before": 20,
+        "after": 20
+      },
+      {
+        "op": 1,
+        "extra": 0,
+        "sources": 2,
+        "before": 19,
+        "after": 19
+      },
+      {
+        "op": 1,
+        "extra": 1,
+        "sources": 3,
+        "before": 20,
+        "after": 20
+      },
+      {
+        "op": 2,
+        "extra": 0,
+        "sources": 2,
+        "before": 19,
+        "after": 19
+      },
+      {
+        "op": 2,
+        "extra": 1,
+        "sources": 3,
+        "before": 20,
+        "after": 20
+      },
+      {
+        "op": 3,
+        "extra": 0,
+        "sources": 3,
+        "before": 24,
+        "after": 24
+      },
+      {
+        "op": 3,
+        "extra": 1,
+        "sources": 3,
+        "before": 24,
+        "after": 24
+      },
+      {
+        "op": 4,
+        "extra": 0,
+        "sources": 2,
+        "before": 19,
+        "after": 19
+      },
+      {
+        "op": 4,
+        "extra": 1,
+        "sources": 3,
+        "before": 20,
+        "after": 20
+      },
+      {
+        "op": 5,
+        "extra": 0,
+        "sources": 2,
+        "before": 19,
+        "after": 19
+      },
+      {
+        "op": 5,
+        "extra": 1,
+        "sources": 3,
+        "before": 20,
+        "after": 20
+      },
+      {
+        "op": 6,
+        "extra": 0,
+        "sources": 3,
+        "before": 24,
+        "after": 24
+      },
+      {
+        "op": 6,
+        "extra": 1,
+        "sources": 3,
+        "before": 24,
+        "after": 24
+      },
+      {
+        "op": 7,
+        "extra": 0,
+        "sources": 1,
+        "before": 14,
+        "after": 14
+      },
+      {
+        "op": 7,
+        "extra": 1,
+        "sources": 3,
+        "before": 19,
+        "after": 19
+      },
+      {
+        "op": 8,
+        "extra": 0,
+        "sources": 1,
+        "before": 14,
+        "after": 14
+      },
+      {
+        "op": 8,
+        "extra": 1,
+        "sources": 3,
+        "before": 19,
+        "after": 19
+      },
+      {
+        "op": 9,
+        "extra": 0,
+        "sources": 2,
+        "before": 20,
+        "after": 19
+      },
+      {
+        "op": 9,
+        "extra": 1,
+        "sources": 3,
+        "before": 20,
+        "after": 20
+      },
+      {
+        "op": 10,
+        "extra": 0,
+        "sources": 1,
+        "before": 14,
+        "after": 14
+      },
+      {
+        "op": 10,
+        "extra": 1,
+        "sources": 3,
+        "before": 19,
+        "after": 19
+      },
+      {
+        "op": 11,
+        "extra": 0,
+        "sources": 1,
+        "before": 14,
+        "after": 14
+      },
+      {
+        "op": 11,
+        "extra": 1,
+        "sources": 3,
+        "before": 19,
+        "after": 19
+      },
+      {
+        "op": 12,
+        "extra": 0,
+        "sources": 1,
+        "before": 14,
+        "after": 14
+      },
+      {
+        "op": 12,
+        "extra": 1,
+        "sources": 3,
+        "before": 19,
+        "after": 19
+      },
+      {
+        "op": 13,
+        "extra": 0,
+        "sources": 1,
+        "before": 14,
+        "after": 14
+      },
+      {
+        "op": 13,
+        "extra": 1,
+        "sources": 3,
+        "before": 19,
+        "after": 19
+      },
+      {
+        "op": 14,
+        "extra": 0,
+        "sources": 1,
+        "before": 7,
+        "after": 10
+      },
+      {
+        "op": 14,
+        "extra": 1,
+        "sources": 3,
+        "before": 15,
+        "after": 15
+      },
+      {
+        "op": 15,
+        "extra": 0,
+        "sources": 1,
+        "before": 7,
+        "after": 10
+      },
+      {
+        "op": 15,
+        "extra": 1,
+        "sources": 3,
+        "before": 15,
+        "after": 15
+      }
+    ]
+  },
+  "model": [
+    {
+      "case": "base",
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "base-decode512-queued_pipe_w8-shared.log",
+      "log_sha256": "1e173cf293601a95141c74983a294da940eb8afea3b2c5b061ab8fdc4d7c4d12",
+      "tokens_per_second": 3.44932242392,
+      "ticks": 86973604,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 72598348,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 0,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 3194112000,
+      "write_bus_bytes": 14523136
+    },
+    {
+      "case": "base",
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "base-decode512-queued_pipe_w8-idealdual.log",
+      "log_sha256": "508009ee2eb1f9f93452942bf55573afd279fc74741f320a5d24bd4dba5d6557",
+      "tokens_per_second": 3.70022091143,
+      "ticks": 81076241,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 66700985,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 0,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 3194112000,
+      "write_bus_bytes": 14523136
+    },
+    {
+      "case": "base",
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w16",
+        "adaptive",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "base-decode512-queued_pipe_w16-shared.log",
+      "log_sha256": "b1095a21d12023fd67ac69cdc4a1e1d1ef2a0e4ba2038e62463beffd56168924",
+      "tokens_per_second": 1.9323793431,
+      "ticks": 155249021,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 140873765,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 0,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 6276270080,
+      "write_bus_bytes": 20734208
+    },
+    {
+      "case": "base",
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w16",
+        "adaptive",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "base-decode512-queued_pipe_w16-idealdual.log",
+      "log_sha256": "008211618f3b9637cb1d7f3c1896e68fdd7070943a3cc68515184d7e87627721",
+      "tokens_per_second": 2.19242719277,
+      "ticks": 136834647,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 122459392,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 0,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 6276270080,
+      "write_bus_bytes": 20734208
+    },
+    {
+      "case": "base",
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode2048.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "base-decode2048-queued_pipe_w8-shared.log",
+      "log_sha256": "82d296917239f37047c8bc668d2af0520b89313bc1b11e064870ffb25e550aaf",
+      "tokens_per_second": 2.81707050272,
+      "ticks": 106493608,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 78509011,
+        "KV_store": 15949,
+        "NExp": 5377060,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 7138012,
+        "vector": 9001716
+      },
+      "vector_work_ticks": 13449712,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 0,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6941232,
+        "vector_new": 6941232,
+        "nexp_old": 2064384,
+        "nexp_new": 2064384
+      },
+      "read_bus_bytes": 3450095616,
+      "write_bus_bytes": 28678912
+    },
+    {
+      "case": "base",
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode2048.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "base-decode2048-queued_pipe_w8-idealdual.log",
+      "log_sha256": "ca66c9d89cb2170c22e22b631c81d1b2af9e1383c0f55434e59efc4da45923f4",
+      "tokens_per_second": 2.99465874654,
+      "ticks": 100178360,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 72193763,
+        "KV_store": 15949,
+        "NExp": 5377060,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 7138012,
+        "vector": 9001716
+      },
+      "vector_work_ticks": 13449712,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 0,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6941232,
+        "vector_new": 6941232,
+        "nexp_old": 2064384,
+        "nexp_new": 2064384
+      },
+      "read_bus_bytes": 3450095616,
+      "write_bus_bytes": 28678912
+    },
+    {
+      "case": "base",
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/prefill2.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "base-prefill2-queued_pipe_w8-shared.log",
+      "log_sha256": "9ef7031dc76689bb48bfda8ff7304d9b5b8aeb271835df417689be9688954971",
+      "tokens_per_second": 3.89419693927,
+      "ticks": 154075413,
+      "tokens": 2,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 89780994,
+        "NExp": 14319033,
+        "copy": 4073049,
+        "final_flush": 0,
+        "reduce": 2915970,
+        "vector": 42986368
+      },
+      "vector_work_ticks": 34064162,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 0,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 19036140,
+        "vector_new": 19036140,
+        "nexp_old": 12681216,
+        "nexp_new": 12681216
+      },
+      "read_bus_bytes": 3640801088,
+      "write_bus_bytes": 39623488
+    },
+    {
+      "case": "base",
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/prefill2.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "base-prefill2-queued_pipe_w8-idealdual.log",
+      "log_sha256": "05bf2da2e4a634cd21d626e50d5a674254ff2462469430c016524ac392cc9dd8",
+      "tokens_per_second": 4.39891251536,
+      "ticks": 136397348,
+      "tokens": 2,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 72102929,
+        "NExp": 14319033,
+        "copy": 4073049,
+        "final_flush": 0,
+        "reduce": 2915970,
+        "vector": 42986368
+      },
+      "vector_work_ticks": 34064162,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 0,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 19036140,
+        "vector_new": 19036140,
+        "nexp_old": 12681216,
+        "nexp_new": 12681216
+      },
+      "read_bus_bytes": 3640801088,
+      "write_bus_bytes": 39623488
+    },
+    {
+      "case": "s16_measured",
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_measured-decode512-queued_pipe_w8-shared.log",
+      "log_sha256": "eea91886553178536103f1c3a560ff188e376d1204d8a84e21ceee31a3ab2800",
+      "tokens_per_second": 3.44932242392,
+      "ticks": 86973604,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 72598348,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 3194112000,
+      "write_bus_bytes": 14523136
+    },
+    {
+      "case": "s16_measured",
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_measured-decode512-queued_pipe_w8-idealdual.log",
+      "log_sha256": "bc05743574e38487376b40ff40a0c5e2f74edae5f68eb4aa13d944f205842d65",
+      "tokens_per_second": 3.70022091143,
+      "ticks": 81076241,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 66700985,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 3194112000,
+      "write_bus_bytes": 14523136
+    },
+    {
+      "case": "s16_measured",
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w16",
+        "adaptive",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_measured-decode512-queued_pipe_w16-shared.log",
+      "log_sha256": "6b6f31dd996fa987a29e64bfc897dd150fbafd079dff6ede2d577bcd5f063856",
+      "tokens_per_second": 1.9323793431,
+      "ticks": 155249021,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 140873765,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 6276270080,
+      "write_bus_bytes": 20734208
+    },
+    {
+      "case": "s16_measured",
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w16",
+        "adaptive",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_measured-decode512-queued_pipe_w16-idealdual.log",
+      "log_sha256": "10e4ec4a1d8621b96d18e6eb103b30b28904179a8e4ab46cc910e60f3a0913f3",
+      "tokens_per_second": 2.19242719277,
+      "ticks": 136834647,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 122459392,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 6276270080,
+      "write_bus_bytes": 20734208
+    },
+    {
+      "case": "s16_measured",
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode2048.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_measured-decode2048-queued_pipe_w8-shared.log",
+      "log_sha256": "37f79ef9b9fa4e7f840ed62359b428f3e7fb19ac7b13bd193eab12bed2d4a0f8",
+      "tokens_per_second": 2.81707050272,
+      "ticks": 106493608,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 78509011,
+        "KV_store": 15949,
+        "NExp": 5377060,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 7138012,
+        "vector": 9001716
+      },
+      "vector_work_ticks": 13449712,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6941232,
+        "vector_new": 6941232,
+        "nexp_old": 2064384,
+        "nexp_new": 2064384
+      },
+      "read_bus_bytes": 3450095616,
+      "write_bus_bytes": 28678912
+    },
+    {
+      "case": "s16_measured",
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode2048.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_measured-decode2048-queued_pipe_w8-idealdual.log",
+      "log_sha256": "1bbebcc1a1823be1dc82a729c549385dbb80b134545d98c5d23bedf7c4ba48f3",
+      "tokens_per_second": 2.99465874654,
+      "ticks": 100178360,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 72193763,
+        "KV_store": 15949,
+        "NExp": 5377060,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 7138012,
+        "vector": 9001716
+      },
+      "vector_work_ticks": 13449712,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6941232,
+        "vector_new": 6941232,
+        "nexp_old": 2064384,
+        "nexp_new": 2064384
+      },
+      "read_bus_bytes": 3450095616,
+      "write_bus_bytes": 28678912
+    },
+    {
+      "case": "s16_measured",
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/prefill2.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_measured-prefill2-queued_pipe_w8-shared.log",
+      "log_sha256": "cc0aa3e5632ab0af44f57f1eacee049295d188878092451a0bbb1e5adcc08051",
+      "tokens_per_second": 4.21686360905,
+      "ticks": 142285845,
+      "tokens": 2,
+      "speedup_percent": 8.285833377509832,
+      "spans_ticks": {
+        "Dot": 89780994,
+        "NExp": 2529465,
+        "copy": 4073049,
+        "final_flush": 0,
+        "reduce": 2915970,
+        "vector": 42986368
+      },
+      "vector_work_ticks": 22274594,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 792576,
+          "frames": 99072,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 19036140,
+        "vector_new": 19036140,
+        "nexp_old": 12681216,
+        "nexp_new": 891648
+      },
+      "read_bus_bytes": 3640801088,
+      "write_bus_bytes": 39623488
+    },
+    {
+      "case": "s16_measured",
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/prefill2.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_measured-prefill2-queued_pipe_w8-idealdual.log",
+      "log_sha256": "0bba5a1b4d26c5a661a0efec0abd9ac95bfce57403eb9a51be5a23d7c68b8df1",
+      "tokens_per_second": 4.81510866569,
+      "ticks": 124607780,
+      "tokens": 2,
+      "speedup_percent": 9.461341840210235,
+      "spans_ticks": {
+        "Dot": 72102929,
+        "NExp": 2529465,
+        "copy": 4073049,
+        "final_flush": 0,
+        "reduce": 2915970,
+        "vector": 42986368
+      },
+      "vector_work_ticks": 22274594,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 792576,
+          "frames": 99072,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 19036140,
+        "vector_new": 19036140,
+        "nexp_old": 12681216,
+        "nexp_new": 891648
+      },
+      "read_bus_bytes": 3640801088,
+      "write_bus_bytes": 39623488
+    },
+    {
+      "case": "s16_full_u_bound",
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_full_u_bound-decode512-queued_pipe_w8-shared.log",
+      "log_sha256": "57e4396e25e4cd8494a53f330e40e5a2dd8eb5b4e416f53001cb78d5f97b25ad",
+      "tokens_per_second": 3.44932242392,
+      "ticks": 86973604,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 72598348,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 2,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 3194112000,
+      "write_bus_bytes": 14523136
+    },
+    {
+      "case": "s16_full_u_bound",
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_full_u_bound-decode512-queued_pipe_w8-idealdual.log",
+      "log_sha256": "8294d495c7981a9ee7909dcc8078bc2c3aedea479567cc6616dda56c47efebfe",
+      "tokens_per_second": 3.70022091143,
+      "ticks": 81076241,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 66700985,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 2,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 3194112000,
+      "write_bus_bytes": 14523136
+    },
+    {
+      "case": "s16_full_u_bound",
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w16",
+        "adaptive",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_full_u_bound-decode512-queued_pipe_w16-shared.log",
+      "log_sha256": "adbcb828ed8ae9897472af7ac9f0e016750881edaf8e31cdfe8c7433cc9611d4",
+      "tokens_per_second": 1.9323793431,
+      "ticks": 155249021,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 140873765,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 2,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 6276270080,
+      "write_bus_bytes": 20734208
+    },
+    {
+      "case": "s16_full_u_bound",
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w16",
+        "adaptive",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_full_u_bound-decode512-queued_pipe_w16-idealdual.log",
+      "log_sha256": "7724305106f5d8cc422637609781b9859cefbcb224cb3853f4e4a0d9a527eb64",
+      "tokens_per_second": 2.19242719277,
+      "ticks": 136834647,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 122459392,
+        "KV_store": 15949,
+        "NExp": 1343659,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3976194
+      },
+      "vector_work_ticks": 8376304,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 2,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6070320,
+        "vector_new": 6070320,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 6276270080,
+      "write_bus_bytes": 20734208
+    },
+    {
+      "case": "s16_full_u_bound",
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode2048.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_full_u_bound-decode2048-queued_pipe_w8-shared.log",
+      "log_sha256": "4ef8ddb9f9e21925daf12cba9fe483d0fcc2e69261f827a3de949d9a6d2eb5a9",
+      "tokens_per_second": 2.81707050272,
+      "ticks": 106493608,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 78509011,
+        "KV_store": 15949,
+        "NExp": 5377060,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 7138012,
+        "vector": 9001716
+      },
+      "vector_work_ticks": 13449712,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 2,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6941232,
+        "vector_new": 6941232,
+        "nexp_old": 2064384,
+        "nexp_new": 2064384
+      },
+      "read_bus_bytes": 3450095616,
+      "write_bus_bytes": 28678912
+    },
+    {
+      "case": "s16_full_u_bound",
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode2048.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_full_u_bound-decode2048-queued_pipe_w8-idealdual.log",
+      "log_sha256": "bb68d59c66e525f310396b48a90efd32fe2b517dadaefd98dc4a2a1be30409dd",
+      "tokens_per_second": 2.99465874654,
+      "ticks": 100178360,
+      "tokens": 1,
+      "speedup_percent": 0.0,
+      "spans_ticks": {
+        "Dot": 72193763,
+        "KV_store": 15949,
+        "NExp": 5377060,
+        "canonical": 6448074,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 7138012,
+        "vector": 9001716
+      },
+      "vector_work_ticks": 13449712,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 2,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 6941232,
+        "vector_new": 6941232,
+        "nexp_old": 2064384,
+        "nexp_new": 2064384
+      },
+      "read_bus_bytes": 3450095616,
+      "write_bus_bytes": 28678912
+    },
+    {
+      "case": "s16_full_u_bound",
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/prefill2.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_full_u_bound-prefill2-queued_pipe_w8-shared.log",
+      "log_sha256": "fe727a528c12e89d56d11f6a85481613af944f71a3c27d0ad154832666c72eb9",
+      "tokens_per_second": 4.17615429302,
+      "ticks": 143672853,
+      "tokens": 2,
+      "speedup_percent": 7.2404492671306775,
+      "spans_ticks": {
+        "Dot": 89780994,
+        "NExp": 3916473,
+        "copy": 4073049,
+        "final_flush": 0,
+        "reduce": 2915970,
+        "vector": 42986368
+      },
+      "vector_work_ticks": 23661602,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 2,
+          "values": 792576,
+          "frames": 99072,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 19036140,
+        "vector_new": 19036140,
+        "nexp_old": 12681216,
+        "nexp_new": 2278656
+      },
+      "read_bus_bytes": 3640801088,
+      "write_bus_bytes": 39623488
+    },
+    {
+      "case": "s16_full_u_bound",
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/prefill2.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_full_u_bound-prefill2-queued_pipe_w8-idealdual.log",
+      "log_sha256": "36a553fa184cc17b4ff282db38cc4482dbe1a8d12021ee2dff7b6f401feb9d89",
+      "tokens_per_second": 4.76210175675,
+      "ticks": 125994788,
+      "tokens": 2,
+      "speedup_percent": 8.256341541729363,
+      "spans_ticks": {
+        "Dot": 72102929,
+        "NExp": 3916473,
+        "copy": 4073049,
+        "final_flush": 0,
+        "reduce": 2915970,
+        "vector": 42986368
+      },
+      "vector_work_ticks": 23661602,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 2,
+          "values": 792576,
+          "frames": 99072,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": false
+        },
+        "vector_lanes": 4,
+        "vector_old": 19036140,
+        "vector_new": 19036140,
+        "nexp_old": 12681216,
+        "nexp_new": 2278656
+      },
+      "read_bus_bytes": 3640801088,
+      "write_bus_bytes": 39623488
+    },
+    {
+      "case": "s16_vector8_target",
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_vector8_target-decode512-queued_pipe_w8-shared.log",
+      "log_sha256": "af430f0984ddad1228761294797d22c31f7f4b71b7f9cc2044f6a46b94872de0",
+      "tokens_per_second": 3.54326454278,
+      "ticks": 84667684,
+      "tokens": 1,
+      "speedup_percent": 2.7234948582521623,
+      "spans_ticks": {
+        "Dot": 72598348,
+        "KV_store": 15949,
+        "NExp": 1306795,
+        "canonical": 4376778,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3778434
+      },
+      "vector_work_ticks": 6070384,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": true
+        },
+        "vector_lanes": 8,
+        "vector_old": 6070320,
+        "vector_new": 3764400,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 3194112000,
+      "write_bus_bytes": 14523136
+    },
+    {
+      "case": "s16_vector8_target",
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_vector8_target-decode512-queued_pipe_w8-idealdual.log",
+      "log_sha256": "c3c1aa9af4e8b120fe2f81f072161e2e9a402367893508cdcf44c8dbe4ef0231",
+      "tokens_per_second": 3.80854106761,
+      "ticks": 78770321,
+      "tokens": 1,
+      "speedup_percent": 2.927397006092214,
+      "spans_ticks": {
+        "Dot": 66700985,
+        "KV_store": 15949,
+        "NExp": 1306795,
+        "canonical": 4376778,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3778434
+      },
+      "vector_work_ticks": 6070384,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": true
+        },
+        "vector_lanes": 8,
+        "vector_old": 6070320,
+        "vector_new": 3764400,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 3194112000,
+      "write_bus_bytes": 14523136
+    },
+    {
+      "case": "s16_vector8_target",
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w16",
+        "adaptive",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_vector8_target-decode512-queued_pipe_w16-shared.log",
+      "log_sha256": "34226fc32b052e03260ba96b8f519b81ff117a90aa050b2534d288439db383c3",
+      "tokens_per_second": 1.96151378699,
+      "ticks": 152943101,
+      "tokens": 1,
+      "speedup_percent": 1.507697957651577,
+      "spans_ticks": {
+        "Dot": 140873765,
+        "KV_store": 15949,
+        "NExp": 1306795,
+        "canonical": 4376778,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3778434
+      },
+      "vector_work_ticks": 6070384,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": true
+        },
+        "vector_lanes": 8,
+        "vector_old": 6070320,
+        "vector_new": 3764400,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 6276270080,
+      "write_bus_bytes": 20734208
+    },
+    {
+      "case": "s16_vector8_target",
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode512.trace",
+        "queued_pipe_w16",
+        "adaptive",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_vector8_target-decode512-queued_pipe_w16-idealdual.log",
+      "log_sha256": "e4bdd900dd33f1b8347992fe6aa8cfeb5216466ba1c7fd86562fa35b3fda6bea",
+      "tokens_per_second": 2.23000698589,
+      "ticks": 134528727,
+      "tokens": 1,
+      "speedup_percent": 1.7140725696126902,
+      "spans_ticks": {
+        "Dot": 122459392,
+        "KV_store": 15949,
+        "NExp": 1306795,
+        "canonical": 4376778,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 2587594,
+        "vector": 3778434
+      },
+      "vector_work_ticks": 6070384,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": true
+        },
+        "vector_lanes": 8,
+        "vector_old": 6070320,
+        "vector_new": 3764400,
+        "nexp_old": 516096,
+        "nexp_new": 516096
+      },
+      "read_bus_bytes": 6276270080,
+      "write_bus_bytes": 20734208
+    },
+    {
+      "case": "s16_vector8_target",
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode2048.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_vector8_target-decode2048-queued_pipe_w8-shared.log",
+      "log_sha256": "b7b1949d13d0e959fe0c376fd2b06511597c88341bd1b3c94b0ea45f9e9ac2cb",
+      "tokens_per_second": 2.88861747102,
+      "ticks": 103855912,
+      "tokens": 1,
+      "speedup_percent": 2.539764916459064,
+      "spans_ticks": {
+        "Dot": 78509011,
+        "KV_store": 15949,
+        "NExp": 5229604,
+        "canonical": 4376778,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 7138012,
+        "vector": 8582772
+      },
+      "vector_work_ticks": 10812016,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": true
+        },
+        "vector_lanes": 8,
+        "vector_old": 6941232,
+        "vector_new": 4303536,
+        "nexp_old": 2064384,
+        "nexp_new": 2064384
+      },
+      "read_bus_bytes": 3450095616,
+      "write_bus_bytes": 28678912
+    },
+    {
+      "case": "s16_vector8_target",
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/decode2048.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_vector8_target-decode2048-queued_pipe_w8-idealdual.log",
+      "log_sha256": "0d4423adc95bd969296d78ad2e51491114434bfc9e09893d0d65b427a6ad1628",
+      "tokens_per_second": 3.0756403508,
+      "ticks": 97540664,
+      "tokens": 1,
+      "speedup_percent": 2.7042014170584716,
+      "spans_ticks": {
+        "Dot": 72193763,
+        "KV_store": 15949,
+        "NExp": 5229604,
+        "canonical": 4376778,
+        "copy": 3789,
+        "final_flush": 0,
+        "reduce": 7138012,
+        "vector": 8582772
+      },
+      "vector_work_ticks": 10812016,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 0,
+          "frames": 0,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": true
+        },
+        "vector_lanes": 8,
+        "vector_old": 6941232,
+        "vector_new": 4303536,
+        "nexp_old": 2064384,
+        "nexp_new": 2064384
+      },
+      "read_bus_bytes": 3450095616,
+      "write_bus_bytes": 28678912
+    },
+    {
+      "case": "s16_vector8_target",
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/prefill2.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "0",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_vector8_target-prefill2-queued_pipe_w8-shared.log",
+      "log_sha256": "b8832ff8ab8344661711041a32fd44295276a3f75ed5d3e73b8380873eab6e2d",
+      "tokens_per_second": 4.44328627528,
+      "ticks": 135035189,
+      "tokens": 2,
+      "speedup_percent": 14.100194329486882,
+      "spans_ticks": {
+        "Dot": 89780994,
+        "NExp": 2430393,
+        "copy": 4073049,
+        "final_flush": 0,
+        "reduce": 2915970,
+        "vector": 35834784
+      },
+      "vector_work_ticks": 15023938,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 792576,
+          "frames": 99072,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": true
+        },
+        "vector_lanes": 8,
+        "vector_old": 19036140,
+        "vector_new": 11785484,
+        "nexp_old": 12681216,
+        "nexp_new": 891648
+      },
+      "read_bus_bytes": 3640801088,
+      "write_bus_bytes": 39623488
+    },
+    {
+      "case": "s16_vector8_target",
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/results/model",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run42/inputs/prefill2.trace",
+        "queued_pipe_w8",
+        "adaptive_prefix_pair_combine",
+        "8",
+        "1",
+        "1",
+        "16",
+        "1",
+        "4",
+        "0",
+        "1",
+        "1",
+        "1",
+        "32",
+        "4",
+        "2",
+        "1"
+      ],
+      "log": "s16_vector8_target-prefill2-queued_pipe_w8-idealdual.log",
+      "log_sha256": "ca64b4c03064b0490437f1113a416e746a3890a4e6dfa6427fe9f6e73fd94cf5",
+      "tokens_per_second": 5.11259973762,
+      "ticks": 117357124,
+      "tokens": 2,
+      "speedup_percent": 16.224174037741523,
+      "spans_ticks": {
+        "Dot": 72102929,
+        "NExp": 2430393,
+        "copy": 4073049,
+        "final_flush": 0,
+        "reduce": 2915970,
+        "vector": 35834784
+      },
+      "vector_work_ticks": 15023938,
+      "optimization": {
+        "native_S16": {
+          "scope": "local_frame_only",
+          "full_model_RTL_calibrated": false,
+          "mode": 1,
+          "values": 792576,
+          "frames": 99072,
+          "profile_sha256": "413de7cbc6ad326bd88fc55b1f80ea3100c6cb974b1b636ddac16328999446d1",
+          "RTL_source_commit": "f5e8ce54884a45b1a816c7be238ba6f6d218d3c5",
+          "vector8_target_only": true
+        },
+        "vector_lanes": 8,
+        "vector_old": 19036140,
+        "vector_new": 11785484,
+        "nexp_old": 12681216,
+        "nexp_new": 891648
+      },
+      "read_bus_bytes": 3640801088,
+      "write_bus_bytes": 39623488
+    }
+  ]
+}

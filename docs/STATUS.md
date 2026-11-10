@@ -1,3 +1,11 @@
+## 2026-11-10 Asia/Shanghai：S16桥接与E流水原生研究交付待审
+
+Issue247 / PR243，Melodydt，task/242-r-load-bounds。源码78c57285；run43/102054原生21运行＋4面积通过，run42/102053模型32例、8基线精确、160负控通过；run41校准与最终生产RTL字节相同，209回收文件SHA复核通过。均c64/node1/4核COMPLETED0:0。
+新增默认关闭的NX16桥接和E流水；完整U合法自然参数988到984拍，仅+0.4065%，下一步优先U供数/命令重叠。原条件模型S16局部校准prefill4.216864/4.815109；5.112600仍依赖未闭合完整U8值/拍，非原生整图实测。已测局部标准单元增量0.00399931mm²，SRAM宏增量0；未执行全U面积/STA/整图RTL。
+详细实施/PDF和复现见[报告](../docs/experiments/issue-247-s16-vector-native.md)及[交接](../docs/handoffs/2026-11-10-issue-247-s16-vector-native.md)。当前交付待审，PR未合并/not done；登记PR5 pending，看板无配置/工具而unverified/pending。源码CI42841550005 failure且validate无steps/logs，待管理员核实；管理结构检查通过。无活动作业或自动监测。正式审查人待指定，下一步由Melodydt按审查结果推进集成。
+
+<!-- s16-vector-native-end -->
+
 ## 2026-11-10 Asia/Shanghai：后续优化192场景完成，待审查
 
 Issue247 / PR243，负责人Melodydt；task/242-r-load-bounds。run35/102040、run36/102041、run37/102043
