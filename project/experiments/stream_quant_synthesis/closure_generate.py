@@ -8,6 +8,7 @@ def extend(folder):
     s=once(s,' int bn_release=0;',' int cl_mode=0,cl_issue=1,cl_banks=2;\n int bn_release=0;')
     s=once(s,'std::array<Calendar,6> weight_store','std::array<Calendar,24> weight_store')
     s=s.replace('weight_store[2*b->group+b->operand_bank]','weight_store[(cfg.cl_mode>=5?8:2)*b->group+b->operand_bank]')
+    s=once(s,'b->operand_bank>=0&&b->operand_bank<2','b->operand_bank>=0&&b->operand_bank<cfg.cl_banks')
     s=s.replace('weight_store[2*worker+p->bank]','weight_store[(cfg.cl_mode>=5?8:2)*worker+p->bank]')
     s=once(s,'issue_free=issue+C;','issue_free=issue+C/U(cfg.cl_issue);')
     s=once(s,' void run(){','#include "closure_service.inc"\n void run(){')
