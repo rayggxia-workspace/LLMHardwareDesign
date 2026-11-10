@@ -44,11 +44,11 @@ module shared_a_pool32 (
  assign fill_ready=!reset&&state==FILL&&(fill_reserved<3'd2||fill_pop);
  wire fill_fire=fill_valid&&fill_ready;
  wire [11:0] fill_remaining=words_q-accepted_words;
- wire [2:0] fill_words=fill_remaining>=12'd4?3'd4:fill_remaining[2:0];
- wire [3:0] expected_mask=fill_words==3'd4?4'b1111:
-                          fill_words==3'd3?4'b0111:
-                          fill_words==3'd2?4'b0011:
-                          fill_words==3'd1?4'b0001:4'b0000;
+ wire [2:0] fill_words=fill_remaining>=12'd4 ? 3'd4 : fill_remaining[2:0];
+ wire [3:0] expected_mask=fill_words==3'd4 ? 4'b1111 :
+                          fill_words==3'd3 ? 4'b0111 :
+                          fill_words==3'd2 ? 4'b0011 :
+                          fill_words==3'd1 ? 4'b0001 : 4'b0000;
  wire fill_legal=accepted_words<words_q&&{1'b0,fill_addr}==next_fill_line&&fill_mask==expected_mask;
  wire write_fire=fill_fire&&fill_legal;
 

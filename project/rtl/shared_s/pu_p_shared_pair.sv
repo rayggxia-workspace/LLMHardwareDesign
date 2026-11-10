@@ -78,6 +78,23 @@ module pu_p_shared_pair #(
  input wire [63:0] g_from_m_data,
  output wire [1:0] g_from_m_take
 );
+ wire pair_reset=reset||cold_reset;
+ wire [1:0] group_load_ready;
+ wire pool_cfg_ready;
+ wire [1:0] permit_load;
+ reg release_inflight;
+ wire release_requested=cfg_valid&&cfg_op==2;
+ wire block_new_load=release_requested||release_inflight;
+ wire allow_cfg=!release_requested||(&group_load_ready);
+ assign cfg_ready=pool_cfg_ready&&allow_cfg;
+ assign load_ready=group_load_ready&permit_load;
+ always @(posedge clk)begin
+  if(pair_reset)release_inflight<=0;
+  else begin
+   if(cfg_valid&&cfg_ready&&cfg_op==2)release_inflight<=1;
+   if(cfg_done&&cfg_take)release_inflight<=0;
+  end
+ end
  wire [1:0] pool_load_valid;
  wire [1:0] pool_load_ready;
  wire [21:0] pool_load_base;
@@ -97,7 +114,8 @@ module pu_p_shared_pair #(
  wire [3:0] pool_a_tile;
  wire [255:0] pool_a_data;
  shared_a_pool32 pool(
-  .clk,.reset(reset||cold_reset),.cfg_valid,.cfg_op,.cfg_epoch,.cfg_words,.cfg_take,.cfg_ready,.cfg_done,.cfg_error,
+  .clk,.reset(pair_reset),.cfg_valid(cfg_valid&&allow_cfg),.cfg_op,.cfg_epoch,.cfg_words,.cfg_take,
+  .cfg_ready(pool_cfg_ready),.cfg_done,.cfg_error,
   .fill_valid,.fill_addr,.fill_data,.fill_mask,.fill_take,.fill_ready,.fill_done,.fill_error,
   .object_valid,.object_epoch,.object_words,
   .p_cmd_valid(pool_load_valid),.p_cmd_ready(pool_load_ready),.p_cmd_bank(pool_load_bank),
@@ -108,10 +126,11 @@ module pu_p_shared_pair #(
   .a_row(pool_a_row),.a_tile(pool_a_tile),.a_data(pool_a_data)
  );
  for(genvar p=0;p<2;p=p+1)begin: groups
+  assign permit_load[p]=!block_new_load&&(!(ENABLE_SHARED&&load_a_shared[p])||object_valid);
   pu_p_group #(.SHARED_A(ENABLE_SHARED),.S_TRUE_RW(ENABLE_LOCAL_RW),
    .S_BANK_RW(S_BANK_RW),.S_CONSUMER_PRIORITY(S_CONSUMER_PRIORITY),.M_CONTEXTS(M_CONTEXTS)) block_p(
    .clk(clk),
-   .reset(reset),
+   .reset(pair_reset),
    .s_cold_reset(cold_reset),
    .wide_write_req(wide_write_req[p]),
    .wide_write_addr(wide_write_addr[p*8+:8]),
@@ -149,8 +168,8 @@ module pu_p_shared_pair #(
    .io_rsp_valid(io_rsp_valid[p*2+:2]),
    .io_rsp_ready(io_rsp_ready[p*2+:2]),
    .io_rsp_data(io_rsp_data[p*256+:256]),
-   .load_valid(load_valid[p]),
-   .load_ready(load_ready[p]),
+   .load_valid(load_valid[p]&&permit_load[p]),
+   .load_ready(group_load_ready[p]),
    .load_bank(load_bank[p]),
    .load_rows(load_rows[p*4+:4]),
    .load_tiles(load_tiles[p*3+:3]),
