@@ -11,6 +11,41 @@ def once(text, old, new):
 
 SERVICE = r'''
  U sq_weight_read_bytes=0,sq_weight_write_bytes=0,sq_quant_values=0;
+ int sq_cache_tensor=-1,sq_keep=0,sq_saved_k=0,sq_saved_contexts=0;
+ U sq_cache_bytes=0,sq_saved_pbytes=0,sq_cache_hit_bytes=0,sq_plan_ops=0;
+ bool sq_plan_initialized=false,sq_planned=false;std::ifstream sq_plan;
+ bool sq_A_skip(const Op& o,U address,U bytes){
+  if(o.in[0]!=sq_cache_tensor)return false;
+  const auto& t=tensors[o.in[0]];
+  if(address<t.base||bytes>sq_cache_bytes||address-t.base>sq_cache_bytes-bytes)return false;
+  sq_cache_hit_bytes+=bytes;return true;
+ }
+ void sq_begin(const Op& o){
+  if(!sq_plan_initialized){
+   sq_plan_initialized=true;const char* path=std::getenv("SQ_PLAN");
+   if(path){sq_plan.open(path);require(bool(sq_plan),"missing SQ plan");sq_planned=true;}
+  }
+  if(!sq_planned)return;
+  int k,ctx,keep;sq_plan>>k>>ctx>>keep;
+  require(bool(sq_plan)&&(k==64||k==128||k==256)&&(ctx==1||ctx==8)&&keep>=0&&keep<=2,"invalid SQ plan action");
+  sq_saved_k=cfg.k;sq_saved_contexts=cfg.contexts;sq_saved_pbytes=cfg.pbytes;
+  cfg.k=k;cfg.contexts=ctx;sq_keep=keep;
+  if(sq_cache_tensor!=o.in[0]){
+   require(sq_cache_bytes<cfg.pbytes,"persistent cache exceeds S");cfg.pbytes-=sq_cache_bytes;
+  }
+  ++sq_plan_ops;
+ }
+ void sq_end(const Op& o){
+  if(!sq_planned)return;
+  if(sq_keep==0){sq_cache_tensor=-1;sq_cache_bytes=0;}
+  if(sq_keep==2){
+   const U bytes=size(o.in[0]);
+   require(o.layout==0&&o.rows==1&&o.batches==1&&bytes+2*ceildiv(U(8)*cfg.k,64)*64+1632<=cfg.pbytes,"cannot retain nonresident A");
+   sq_cache_tensor=o.in[0];sq_cache_bytes=bytes;
+  }
+  if(sq_keep)cycles(1); // explicit retention descriptor service
+  cfg.k=sq_saved_k;cfg.contexts=sq_saved_contexts;cfg.pbytes=sq_saved_pbytes;
+ }
  void sq_service(const Op& o,Tile* p,int worker){
   const bool weight=o.layout==0;
   const bool direct=cfg.sq_direct&&weight;
@@ -47,12 +82,12 @@ ENV = r'''
  try{
   c.sq_direct=sq_integer("SQ_DIRECT",0);c.sq_abits=sq_integer("SQ_ABITS",0);
   c.sq_bread=sq_integer("SQ_BREAD",64);c.sq_core_k=sq_integer("SQ_CORE_K",16);
-  const int bw=sq_integer("SQ_BW_MB",17100),pc=sq_integer("SQ_PCOUNT",2);
+  const int bw=sq_integer("SQ_BW_MB",17100),pc=sq_integer("SQ_PCOUNT",2),beat=sq_integer("SQ_BEAT",64);
   if((c.sq_direct!=0&&c.sq_direct!=1)||(c.sq_abits!=0&&c.sq_abits!=8&&c.sq_abits!=16)||
     (c.sq_bread!=64&&c.sq_bread!=128)||(c.sq_core_k!=8&&c.sq_core_k!=16)||
-    (bw!=17100&&bw!=51200&&bw!=102400)||(pc!=2&&pc!=3)||c.weight_bits!=8)
+    (bw!=17100&&bw!=51200&&bw!=102400)||(pc!=2&&pc!=3)||(beat!=64&&beat!=256)||c.weight_bits!=8)
     throw std::invalid_argument("unsupported SQ resource or precision contract");
-  c.bandwidth=double(bw)*1e6;c.mcount=pc;
+  c.bandwidth=double(bw)*1e6;c.mcount=pc;c.beat=beat;
  }catch(const std::exception& e){std::cerr<<"invalid SQ configuration "<<e.what()<<"\n";return 2;}
 '''
 
@@ -89,13 +124,22 @@ def generate(baseline, out):
     std::cout<<",\"sq_study\":{\"direct\":"<<cfg.sq_direct<<",\"activation_bits\":"<<cfg.sq_abits
       <<",\"weight_read_B_cycle\":"<<cfg.sq_bread<<",\"core_K\":"<<cfg.sq_core_k
       <<",\"direct_weight_bus_bytes\":"<<mem.sq_direct_bytes<<",\"weight_bank_read_bytes\":"<<sq_weight_read_bytes
-      <<",\"requantized_values\":"<<sq_quant_values
+      <<",\"requantized_values\":"<<sq_quant_values<<",\"persistent_A_hit_bytes\":"<<sq_cache_hit_bytes<<",\"plan_operations\":"<<sq_plan_ops
       <<",\"conversion_register_bytes_per_P\":"<<(cfg.sq_abits?16*cfg.sq_abits/8:0)
       <<",\"native_full_model_tokens_per_second\":null,\"quality_verified\":false}";''')
     (out / 'model.cpp').write_bytes(model.encode())
     for name in ('matrix.inc', 'context_worker.inc'):
         text = (out / name).read_text(encoding='utf8')
         if name == 'matrix.inc':
+            text = once(text, 'const auto& a=tensors[o.in[0]];const auto& b=', 'const auto& a=tensors[o.in[0]];const auto& b=')
+            text = once(text, 'auto load=[&](U address,U bytes,detail::Flow flow){',
+                        'auto load=[&](U address,U bytes,detail::Flow flow){\n      if(flow==detail::A&&sq_A_skip(o,address,bytes))return;')
+            text = once(text, 'mem.transfer(worker,a.base+(U(batch)*o.rows+rr)*o.k*(a.bits/8),full_a,false,detail::A);',
+                        'if(!sq_A_skip(o,a.base+(U(batch)*o.rows+rr)*o.k*(a.bits/8),full_a))mem.transfer(worker,a.base+(U(batch)*o.rows+rr)*o.k*(a.bits/8),full_a,false,detail::A);')
+            text = once(text, 'for(int row=0;row<r;++row)mem.transfer(worker,', 'for(int row=0;row<r;++row)if(!sq_A_skip(o,a.base+(U(batch)*o.rows+rr+row)*o.k*(a.bits/8),U(cache_k)*(a.bits/8)))mem.transfer(worker,')
+            text = once(text, ' void matrix(const Op& o){', ' void matrix(const Op& o){\n  sq_begin(o);')
+            text = once(text, 'cfg.queued=previous_queued;mem.cfg.queued=previous_queued;',
+                        'cfg.queued=previous_queued;mem.cfg.queued=previous_queued;sq_end(o);')
             text = once(text, 'mem.submit(worker,address,bytes,false,flow)',
                         'mem.submit(worker,address,bytes,false,flow,flow==detail::WEIGHT?seq%2:-1)')
             text = once(text, 'mem.transfer(worker,address,bytes,false,flow)',

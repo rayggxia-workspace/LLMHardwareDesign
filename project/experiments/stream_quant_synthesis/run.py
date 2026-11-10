@@ -13,8 +13,10 @@ import traceback
 from prepare import restore, sha, REPO, BASE
 from generate import generate
 import numeric
+import planner
 
 HERE=Path(__file__).resolve().parent
+VERILATOR=Path('/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator')
 
 
 def execute(command, log, cwd, env=None, expected=0):
@@ -37,20 +39,21 @@ def main(root):
         env=dict(os.environ,VERILATOR_ROOT='/opt/verilator')
         # ORFS image provides verilator in PATH. Its compiled root is authoritative.
         env.pop('VERILATOR_ROOT',None)
-        report['tools']['verilator']=execute(['verilator','--version'],out/'verilator-version.log',out,env)
+        report['tools']['verilator']=execute([VERILATOR,'--version'],out/'verilator-version.log',out,env)
         report['tools']['gcc']=execute(['g++','--version'],out/'gcc-version.log',out).splitlines()[0]
         rtl=[]
         for bits in (8,16):
             vectors=out/('vectors'+str(bits)+'.txt');meta=numeric.vectors(vectors,bits)
             obj=out/('obj'+str(bits))
-            cmd=['verilator','--cc','--exe','--build','-j','4','--top-module','w8_dot_candidate','-Wall',
+            cmd=[VERILATOR,'--cc','--exe','--build','-j','4','--top-module','w8_dot_candidate','-Wall',
                  '-GABITS='+str(bits),'-Mdir',obj,'-CFLAGS','-DABITS='+str(bits),
                  HERE/'w8_stream_mac.sv',HERE/'w8_weight_buffer.sv',HERE/'w8_dot_candidate.sv',HERE/'tb_w8.cpp']
             execute(cmd,out/('rtl-build'+str(bits)+'.log'),out,env)
             text=execute([obj/'Vw8_dot_candidate',vectors],out/('rtl'+str(bits)+'.log'),out,env)
             assert 'W8_RTL_PASS' in text
             rtl.append(dict(**meta,log=text.strip(),vectors_sha256=sha(vectors)))
-        report['rounds']['RTL']=rtl;report['rounds']['numeric_contract']=numeric.check_contract();save()
+        report['rounds']['RTL']=rtl;report['rounds']['numeric_contract']=numeric.check_contract()
+        report['rounds']['DP_checks']=planner.test();save()
         frozen=root/'restored';baseline=restore(frozen);candidate=generate(baseline,frozen/'candidate')
         (out/'m-profile.log').write_bytes((frozen/'inputs/m-profile.log').read_bytes())
         prefix=Path('/public/home/yuzelu/opt/systemc-3.0.2-issue219')
@@ -96,6 +99,16 @@ def main(root):
                   for a in (8,16) for k,b in ((8,64),(16,64),(16,128))]
         plans += [(f'r3-a{a}-bw{bw}-p{p}','decode512',False,dict(SQ_DIRECT=1,SQ_ABITS=a,SQ_BREAD=128,SQ_BW_MB=bw,SQ_PCOUNT=p))
                   for a in (8,16) for bw in (17100,51200,102400) for p in (2,3)]
+        plans += [(f'r3-wide-bw{bw}-p{p}','decode512',False,dict(SQ_DIRECT=1,SQ_ABITS=8,SQ_BREAD=128,SQ_BW_MB=bw,SQ_PCOUNT=p,SQ_BEAT=256))
+                  for bw in (51200,102400) for p in (2,3)]
+        report['compiler_plans']=[]
+        for workload in work:
+            for method in ('greedy','dp'):
+                plan=planner.compile_plan(planner.graph(frozen/'inputs'/(workload+'.trace')),method)
+                path=out/('plan-'+workload+'-'+method+'.txt');planner.emit(plan,path)
+                (out/('plan-'+workload+'-'+method+'.json')).write_text(json.dumps(plan,indent=2)+'\n')
+                report['compiler_plans'].append(dict(workload=workload,method=method,estimated_cycles=plan['estimated_cycles'],peak_frontier=plan['peak_frontier'],plan_sha256=sha(path)))
+                plans.append(('r4-'+method,workload,False,dict(SQ_DIRECT=1,SQ_PLAN=str(path))))
         for batch in range(0,len(plans),4):
             with ThreadPoolExecutor(max_workers=4) as pool:
                 report['cases'].extend(pool.map(case,plans[batch:batch+4]))
