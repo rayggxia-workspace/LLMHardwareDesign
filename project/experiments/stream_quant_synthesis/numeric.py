@@ -16,7 +16,9 @@ def rne(value, shift, bits):
 
 
 def pack(values, bits):
-    return format(sum((v & ((1 << bits)-1)) << (bits*i) for i,v in enumerate(values)), 'x')
+    # NumPy 2 rejects an int8 scalar masked with Python 255. Convert each lane
+    # to an unbounded integer before bit packing; payload bits are unchanged.
+    return format(sum((int(v) & ((1 << bits)-1)) << (bits*i) for i,v in enumerate(values)), 'x')
 
 
 def vectors(out, abits):
