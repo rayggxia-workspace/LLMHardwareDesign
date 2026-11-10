@@ -50,7 +50,7 @@ def check_contract():
                 expected=max(-(1<<(bits-1)),min((1<<(bits-1))-1,round(Fraction(x,1<<s))))
                 assert rne(x,s,bits)==expected;checks+=1
     return dict(passed=True,checks=checks,quality_verified=False,
-                contract='W8; symmetric signed A8/A16; per-input-tile power-of-two activation scale; common full-K scale; final per-output-channel scale and RNE; scales cannot change silently across K')
+                contract='W8; symmetric signed A8/A16; common full-K activation scale; final positive S16 multiplier/right-shift per output channel and RNE/clamp; scales cannot change silently across K')
 
 
 def requant_vectors(path,bits):
