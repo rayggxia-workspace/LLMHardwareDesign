@@ -1,8 +1,11 @@
 """Offline integrity, baseline, RTL receipts, and metadata sanity checks only."""
 import hashlib
+import base64
+import io
 import json
 from pathlib import Path
 import sys
+import tarfile
 
 ROOT=Path(__file__).resolve().parent
 REPO=ROOT.parents[2]
@@ -25,9 +28,14 @@ def main():
     assert all(x['exact_prior_RESULT_except_labels'] for x in audit['cases'])
     assert result['model_cases']==65 and result['exact_baseline_checks']==12
     assert result['native_full_model_tokens_s'] is None and result['energy_J_per_token'] is None
+    with tarfile.open(fileobj=io.BytesIO(base64.b64decode((ROOT/'operand-requirements.tar.gz.b64').read_bytes())),mode='r:gz') as tar:
+        members=tar.getmembers()
+        assert len(members)==len(result['reemitted_operand_requirements'])
+        bundles={m.name:tar.extractfile(m).read() for m in members}
+    assert set(bundles)==set(result['reemitted_operand_requirements'])
     for name,digest in result['reemitted_operand_requirements'].items():
-        path=ROOT/name;assert hashlib.sha256(path.read_bytes()).hexdigest()==digest
-        bundle=json.loads(path.read_text())
+        assert hashlib.sha256(bundles[name]).hexdigest()==digest
+        bundle=json.loads(bundles[name])
         assert not bundle['deployment_qualified'] and not bundle['complete_static_net_set']
         for net in bundle['connections']:
             assert net['physical_pin_binding'] is None

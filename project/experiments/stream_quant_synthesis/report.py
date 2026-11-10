@@ -1,6 +1,7 @@
 """Derive compact comparisons from verified receipts, never hand-edit timings."""
 import argparse
 import base64
+import gzip
 import hashlib
 import io
 import json
@@ -52,6 +53,12 @@ def report(root,tag,quality_tag):
              quality_job=quality['job'],quality_scope=quality['scope'],quality_screening=screening,
              cases=cases,reemitted_operand_requirements=bundles,
              energy_J_per_token=None,native_full_model_tokens_s=None,physical_frequency_qualified=False)
+    packed=io.BytesIO()
+    with tarfile.open(fileobj=packed,mode='w') as tar:
+        for name in sorted(bundles):
+            data=(root/name).read_bytes();info=tarfile.TarInfo(name);info.size=len(data);info.mode=0o644
+            tar.addfile(info,io.BytesIO(data))
+    (root/'operand-requirements.tar.gz.b64').write_bytes(base64.b64encode(gzip.compress(packed.getvalue(),mtime=0)))
     (root/'summary.json').write_text(json.dumps(out,indent=2)+'\n')
     return out
 
