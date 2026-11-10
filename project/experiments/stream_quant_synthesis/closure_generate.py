@@ -21,7 +21,7 @@ def extend(folder):
            '   if(cl_g){cl_G_values+=n;cl_G_cycles+=cost;}')
     s=once(s,'  c.bn_release=sq_integer(',
            '  c.cl_mode=sq_integer("CL_MODE",0);c.cl_issue=sq_integer("CL_ISSUE",1);\n'
-           '  if(c.cl_mode<0||c.cl_mode>3||(c.cl_issue!=1&&c.cl_issue!=2&&c.cl_issue!=4))throw std::invalid_argument("CL mode/ports");\n'
+           '  if(c.cl_mode<0||c.cl_mode>4||(c.cl_issue!=1&&c.cl_issue!=2&&c.cl_issue!=4))throw std::invalid_argument("CL mode/ports");\n'
            '  c.bn_release=sq_integer(')
     s=once(s,' Study s("study",c,argv[1]);',
            ' if(c.cl_mode){if(c.sq_abits!=16||c.mcount!=3||c.beat!=64)throw std::invalid_argument("closure requires A16/3P/64B");c.k=128;}\n Study s("study",c,argv[1]);')
@@ -41,17 +41,32 @@ def extend(folder):
     newbegin=s.index('   // Finite per128');newend=s.index('   flush(target);',newbegin)
     s=s[:newbegin]+'   if(cfg.cl_mode){\n'+s[newbegin:newend]+'   }else{\n'+original[a:b]+'   }\n'+s[newend:]
     s=once(s,'  U start=now();\n  U send=',
-           '  if(cfg.cl_mode&&weight){\n'
+           '  if(cfg.cl_mode&&weight&&cfg.cl_mode<4){\n'
            '   CLJob j{o.in[1],p->col,p->ki,o.k,false,false};\n'
            '   for(int offset=0;offset<p->k;offset+=128){j.kk=p->ki+offset;mem.transfer(worker,cl_meta_address(j),16,false,detail::WEIGHT,p->bank);cl_metadata+=16;}\n'
            '   cycles(2);adapter_work+=2*C;\n'
-           '  }\n  U start=now();\n  U send=')
+           '  }\n  if(cfg.cl_mode>=4&&weight){cycles(2);adapter_work+=2*C;cl_metadata+=16;}\n  U start=now();\n  U send=')
+    # Carry scales in the same finite queued record, not a serial 16B DRAM
+    # transaction on the consumer's critical path. Old modes remain unchanged.
+    for name in ('matrix.inc','context_worker.inc'):
+        path=folder/name;text=path.read_text()
+        if name=='matrix.inc':
+            text=once(text,'      load(addr,bbytes,detail::WEIGHT);',
+                      '      if(cfg.cl_mode>=4){require(k==128&&n==8,"CL packed shape");load(cl_packed_address(o.in[1],col,kk,o.k),1088,detail::WEIGHT);}else load(addr,bbytes,detail::WEIGHT);')
+        else:
+            old='       if(cfg.queued)pending.push_back(mem.submit(worker,address,bbytes,false,detail::WEIGHT,bbank));'
+            text=once(text,old,
+                      '       if(cfg.cl_mode>=4){require(k==128&&n==8,"CL packed context shape");pending.push_back(mem.submit(worker,cl_packed_address(o.in[1],col,kk,o.k),1088,false,detail::WEIGHT,bbank));}\n'
+                      '       else if(cfg.queued)pending.push_back(mem.submit(worker,address,bbytes,false,detail::WEIGHT,bbank));')
+        path.write_bytes(text.encode())
     emit=r'''std::cout<<",\"closure\":{\"mode\":"<<cfg.cl_mode<<",\"issue_lanes_per_channel\":"<<cfg.cl_issue
       <<",\"FFNs\":"<<cl_ffns<<",\"scale_metadata_bytes\":"<<cl_metadata
       <<",\"partial_read_bytes\":"<<cl_partial_read<<",\"partial_write_bytes\":"<<cl_partial_write
       <<",\"link_payload_bytes\":"<<cl_link_bytes<<",\"G_values\":"<<cl_G_values<<",\"G_cycles\":"<<cl_G_cycles
       <<",\"bank_peak\":"<<cl_peak_b<<",\"S_peak\":"<<cl_peak_s<<",\"waves\":"<<cl_wave_count
       <<",\"A_tile_register_bytes_per_P\":"<<(cfg.cl_mode>=3?256:0)
+      <<",\"projection_partial_register_bytes_per_P\":"<<(cfg.cl_mode>=4?2048:0)
+      <<",\"packed_weight_scales\":"<<(cfg.cl_mode>=4?"true":"false")
       <<",\"quality_profile\":\"W8A16-g128-G32\",\"physical_qualified\":false,\"energy_J_token\":null}";
     std::cout<<"}\n";'''
     s=once(s,'std::cout<<"}\\n";',emit)

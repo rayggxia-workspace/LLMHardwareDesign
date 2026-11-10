@@ -8,9 +8,16 @@
  };
  std::vector<std::unique_ptr<CLBuffer>> cl_buffers;
  Calendar cl_links[3];
+ std::map<std::pair<int,int>,int> cl_contexts[3];
  U cl_ffns=0,cl_metadata=0,cl_partial_read=0,cl_partial_write=0,cl_link_bytes=0,cl_G_values=0;
  U cl_G_cycles=0,cl_peak_b=0,cl_peak_s=0,cl_wave_count=0;
  bool cl_active=false;
+ U cl_packed_address(int weight,int col,int kk,int full_k)const{
+  require(col%8==0&&kk%128==0&&full_k%128==0,"packed W8 tile alignment");
+  // A deployment image packs 1024 W8 bytes + 16 FP16 scale bytes + 48 pad
+  // bytes. A single DMA owns the whole 1088B record in the same finite bank.
+  return (U(1)<<42)+U(weight)*(U(1)<<31)+(U(col/8)*(full_k/128)+U(kk/128))*1088;
+ }
  U cl_meta_address(const CLJob& j)const{
   return (U(1)<<37)+U(j.weight)*(U(1)<<26)+(U(j.col)*(j.full_k/128)+U(j.kk/128)*8)*2;
  }
@@ -29,9 +36,13 @@
     b.live[bank]=true;++b.generation[bank];cl_peak_b=std::max<U>(cl_peak_b,U(b.live[0])+U(b.live[1]));
     auto* t=new CLTask{j,bank,b.generation[bank],now(),{}};
     U address=tensors[j.weight].base+U(j.col)*j.full_k+U(j.kk)*8;
-    t->dma.push_back(mem.submit(worker,address,1024,false,detail::WEIGHT,bank));
-    t->dma.push_back(mem.submit(worker,cl_meta_address(j),16,false,detail::WEIGHT,bank));cl_metadata+=16;
-    if((j.down||cfg.cl_mode>=3)&&j.kk){t->prior=store[worker].reserve(now(),s_port_duration(cfg,worker,128));cl_partial_read+=128;}
+    if(cfg.cl_mode>=4){t->dma.push_back(mem.submit(worker,cl_packed_address(j.weight,j.col,j.kk,j.full_k),1088,false,detail::WEIGHT,bank));}
+    else{
+     t->dma.push_back(mem.submit(worker,address,1024,false,detail::WEIGHT,bank));
+     t->dma.push_back(mem.submit(worker,cl_meta_address(j),16,false,detail::WEIGHT,bank));
+    }
+    cl_metadata+=16;
+    if((j.down||(cfg.cl_mode>=3&&cfg.cl_mode<4))&&j.kk){t->prior=store[worker].reserve(now(),s_port_duration(cfg,worker,128));cl_partial_read+=128;}
     b.ready.write(t);
    }
    b.ready.write(nullptr);
@@ -40,6 +51,12 @@
    CLTask* t=b.ready.read();if(!t)break;
    require(b.live[t->bank]&&b.generation[t->bank]==t->generation,"CL generation mismatch");
    for(auto& d:t->dma){mem.await(d);}pause_until(t->prior);
+   if(cfg.cl_mode>=4&&!t->job.down){
+    auto key=std::make_pair(t->job.weight,t->job.col);auto& contexts=cl_contexts[worker];
+    if(!t->job.kk){require(contexts.count(key)==0&&contexts.size()<16,"CL RF context capacity/overwrite");contexts[key]=0;}
+    require(contexts.count(key)&&contexts.at(key)==t->job.kk,"CL RF context identity/K order");
+    contexts[key]+=128;if(t->job.final){require(contexts[key]==t->job.full_k,"CL RF incomplete final");contexts.erase(key);}
+   }
    // A comes from U's finite source window or a declared 256B feeder register.
    if(cfg.cl_mode<3){cl_link(worker,256,t->job.down?0:3);}
    const U start=now();U consumed=mem.weight_store[2*worker+t->bank].reserve(start,8*C);
@@ -47,7 +64,7 @@
    ++m_tiles;++m_commands;m_work+=11*C;adapter_work+=2*C;cycles(2);
    if(t->job.final){cycles(3);adapter_work+=3*C;}
    U ack=now();
-   if(t->job.down||cfg.cl_mode>=3){
+   if(t->job.down||(cfg.cl_mode>=3&&cfg.cl_mode<4)){
     const U bytes=t->job.final?32:128;
     ack=store[worker].reserve(now(),s_port_duration(cfg,worker,bytes));
     if(!t->job.final){cl_partial_write+=128;}
@@ -102,6 +119,7 @@
     cl_wave(project);
    }
    // Gather two projections to G beside P0, retaining a finite 128-value tile.
+   for(int p=0;p<3;++p){require(cl_contexts[p].empty(),"CL projection contexts not committed");}
    for(int p=0;p<3;++p){
     U columns=0;for(int col=first;col<first+128;col+=8){if((col/8)%3==p)columns+=8;}
     const U bytes=columns*8;sio(p,bytes);
