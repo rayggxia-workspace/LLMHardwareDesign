@@ -1,5 +1,6 @@
 module tb_closure_partial;
- reg clk=0,reset=1,in_valid=0,out_ready=0;
+ reg clk; initial clk=0;
+ reg reset=1,in_valid=0,out_ready=0;
  wire in_ready,out_valid,out_error;
  reg [3:0] in_count=0;
  reg [319:0] in_partial=0;reg [87:0] in_mantissa=0;reg [55:0] in_shift=0;
@@ -14,12 +15,12 @@ module tb_closure_partial;
   fd=$fopen("partial-vectors.txt","r");if(fd==0)$fatal(1,"vectors");
   while(!$feof(fd))begin
    rc=$fscanf(fd,"%d %h %h %h %h %h %d\n",count,partial,mantissa,shift,previous,expected,error);
-   if(rc!=7)$fatal(1,"format");
+   if(rc!=7||count<1||count>8||(error!=0&&error!=1))$fatal(1,"format");
    @(negedge clk);in_valid=1;in_count=4'(count);in_partial=partial;in_mantissa=mantissa;in_shift=shift;in_previous=previous;
    do @(posedge clk);while(!in_ready);
    @(negedge clk);in_valid=0;
    repeat(checks%5+1)begin
-    if(!out_valid||out_error!==1'(error)||(!error&&out_data!==expected))$fatal(1,"partial mismatch %0d",checks);
+    if(!out_valid||out_error!==1'(error)||(error==0&&out_data!==expected))$fatal(1,"partial mismatch %0d",checks);
     @(negedge clk);
    end
    out_ready=1;@(posedge clk);@(negedge clk);out_ready=0;checks=checks+1;
