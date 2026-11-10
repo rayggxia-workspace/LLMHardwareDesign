@@ -89,6 +89,12 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
  integer release_cases=0,release_blocked_cycles=0,cold_cancelled_loads=0,lifecycle_numeric[0:1];
  wire [1:0] lease_active;
  bit aw=0,bw=0,prefix=0;
+ // Persistent simulation processes avoid nested automatic-task fork frames.
+ // Dispatch still starts both P workers together; hardware handshakes and all
+ // acceptance/completion checks remain in the same per-P driver tasks.
+ logic [1:0] worker_request=0,worker_done=0;
+ integer worker_operation=0;
+ logic refill_load_request=0,refill_load_done=0;
  always @(posedge clk)begin
   cycle<=cycle+1;
   if(cycle>300000)$fatal(1,"pair watchdog");
@@ -103,7 +109,51 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
    if(wide_write_req[p]&&wide_write_ready[p]&&dut.groups[p].block_p.store.wide_req&&dut.groups[p].block_p.store.wide_ready)
     simultaneous_rw[p]<=simultaneous_rw[p]+1;
   end
+  initial begin
+   forever begin
+    wait(worker_request[p]);
+    case(worker_operation)
+     0:initialize_local(p);
+     1:compute(p);
+     2:cold_numeric(p,1);
+     3:cold_numeric(p,0);
+     4:lease_probe(p);
+     default:$fatal(1,"unknown P worker operation");
+    endcase
+    worker_done[p]=1;
+    wait(!worker_request[p]);
+    worker_done[p]=0;
+   end
+  end
  end
+ initial begin
+  forever begin
+   wait(refill_load_request);
+   accept_both_loads();retire_both_loads();
+   refill_load_done=1;
+   wait(!refill_load_request);
+   refill_load_done=0;
+  end
+ end
+ task automatic run_both(input integer operation);
+  begin
+   if(worker_request!=0||worker_done!=0)$fatal(1,"P worker dispatcher already busy");
+   @(negedge clk);worker_operation=operation;worker_request=2'b11;
+   wait(worker_done==2'b11);
+   @(negedge clk);worker_request=0;
+   wait(worker_done==0);
+  end
+ endtask
+ task automatic refill_with_pending_loads;
+  begin
+   if(refill_load_request||refill_load_done)$fatal(1,"refill LOAD dispatcher already busy");
+   @(negedge clk);refill_load_request=1;
+   initialize_pool();
+   wait(refill_load_done);
+   @(negedge clk);refill_load_request=0;
+   wait(!refill_load_done);
+  end
+ endtask
  function automatic integer aval(input integer s,r,k);
   return ((s*5+r*7+k)%13-6)*(aw?31:1);
  endfunction
@@ -178,9 +228,7 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
    for(integer protected_test=0;protected_test<2;protected_test++)begin
     address=protected_test!=0?local_b(1,0):700;
     data={4{128'(32'h76540000+p*16+protected_test)}};
-    fork
-     load(p,1,0,0);
-     begin
+    start_load(p,1,0,0);
       wait(lease_active[p]);
       @(negedge clk);wide_write_req[p]=1;wide_write_addr[p*8+:8]=8'(address/4);
       wide_write_data[p*512+:512]=data;wide_write_mask[p*4+:4]=4'hf;
@@ -194,8 +242,7 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
       @(negedge clk);wide_write_req[p]=0;
       do @(posedge clk);while(!wide_write_valid[p]);
       @(negedge clk);wide_write_take[p]=1;@(negedge clk);wide_write_take[p]=0;
-     end
-    join
+    finish_load(p,1,0,0);
     for(integer lane=0;lane<4;lane++)begin
      access(p,0,address+lane,0,got);
      if(got!==data[128*lane+:128])$fatal(1,"lease probe post-ACK SRAM mismatch");
@@ -267,10 +314,10 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
    end
   end
  endtask
- task automatic load(input integer p,s,g,input bit reuse_a,input integer bad=0);
-  bit selected,expected_error;
+ task automatic start_load(input integer p,s,g,input bit reuse_a,input integer bad=0);
+  bit selected;
   begin
-   selected=SHARED&&!reuse_a&&!(prefix&&s==1);expected_error=bad!=0;
+   selected=SHARED&&!reuse_a&&!(prefix&&s==1);
    @(negedge clk);load_bank[p]=0;load_rows[p*4+:4]=reuse_a?4'd0:4'd3;load_tiles[p*3+:3]=3'd2;
    load_a_wide[p]=aw;load_b_wide[p]=bw;load_reuse_b[p]=0;
    load_a_base[p*10+:10]=10'(s*16);load_b_base[p*10+:10]=10'(local_b(s,g));
@@ -280,11 +327,23 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
    load_valid[p]=1;
    do @(posedge clk);while(!load_ready[p]);
    @(negedge clk);load_valid[p]=0;
+  end
+ endtask
+ task automatic finish_load(input integer p,s,g,input integer bad=0);
+  bit expected_error;
+  begin
+   expected_error=bad!=0;
    do @(posedge clk);while(!load_done[p]);
    if(load_error[p]!==expected_error)$fatal(1,"LOAD result p=%0d s=%0d g=%0d bad=%0d",p,s,g,bad);
    repeat(3)begin @(negedge clk);if(!load_done[p]||load_error[p]!==expected_error)$fatal(1,"LOAD completion unstable");end
    load_take[p]=1;@(negedge clk);load_take[p]=0;
    loads[p]++;if(expected_error)errors[p]++;
+  end
+ endtask
+ task automatic load(input integer p,s,g,input bit reuse_a,input integer bad=0);
+  begin
+   start_load(p,s,g,reuse_a,bad);
+   finish_load(p,s,g,bad);
   end
  endtask
  task automatic command(input integer p,op,index,input logic [63:0] data,input bit writes,input bit expect_error,output logic [127:0] result);
@@ -416,10 +475,7 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
     @(negedge clk);if(load_ready!=0||load_done!=0||object_valid)$fatal(1,"shared LOAD admitted while pool EMPTY");
     release_blocked_cycles++;
    end
-   fork
-    initialize_pool();
-    begin accept_both_loads();retire_both_loads();end
-   join
+   refill_with_pending_loads();
    release_cases++;
    // The descriptor is still pending inside P when RELEASE arrives one cycle
    // after the public LOAD handshake. Pool RELEASE must not prevent its issue.
@@ -483,17 +539,17 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
      $fatal(1,"stale P/pool event survived cold reset");
    end
    aw=0;bw=0;prefix=0;
-   fork cold_numeric(0,1);cold_numeric(1,1);join
+   run_both(2);
    // Cold-reset memory is invalid, so rewrite B and any local A before use.
-   fork initialize_local(0);initialize_local(1);join
+   run_both(0);
    if(SHARED)begin
     prepare_both_loads();
     repeat(4)begin @(negedge clk);if(load_ready!=0)$fatal(1,"post-reset LOAD admitted before SEAL");end
-    fork initialize_pool();begin accept_both_loads();retire_both_loads();end join
+    refill_with_pending_loads();
    end else begin
     initialize_pool();prepare_both_loads();accept_both_loads();retire_both_loads();
    end
-   fork cold_numeric(0,0);cold_numeric(1,0);join
+   run_both(3);
    pool_config(2,0);
   end
  endtask
@@ -512,9 +568,9 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
    aw=scenario!=0;bw=scenario==2;prefix=scenario==1;
    wall_start=cycle;a_before=a_count[0]+a_count[1];b_before=b_count[0]+b_count[1];shared_before=shared_count[0]+shared_count[1];
    if(SHARED)initialize_pool();
-   fork initialize_local(0);initialize_local(1);join
+   run_both(0);
    compute_start=cycle;
-   fork compute(0);compute(1);join
+   run_both(1);
    compute_cycles=cycle-compute_start;
    if(SHARED)begin pool_config(2,0);if(object_valid)$fatal(1,"pool release did not invalidate");end
    if(a_count[0]+a_count[1]-a_before!=72)$fatal(1,"A work conservation");
@@ -531,16 +587,16 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
    if(SHARED)begin
     // The full-shared last case intentionally never initialized local A.
     // Populate only the suffix before a local lease probe.
-    fork initialize_local(0);initialize_local(1);join
+    run_both(0);
    end
    compute_start=cycle;
-   fork lease_probe(0);lease_probe(1);join
+   run_both(4);
    $display("SHARED_PAIR_MEASURE scenario=lease shared=%0d true_rw=%0d cycles=%0d protected_stalls=%0d concurrent_writes=%0d simultaneous_rw=%0d",
     SHARED,TRUE_RW,cycle-compute_start,lease_stalls[0]+lease_stalls[1],concurrent_writes[0]+concurrent_writes[1],simultaneous_rw[0]+simultaneous_rw[1]);
   end
   // Invalid LOADs may have changed part of an operand bank; no arithmetic is
   // attempted until a complete valid reload. Atomic rollback is not promised.
-  prefix=0;fork initialize_local(0);initialize_local(1);join
+  prefix=0;run_both(0);
   compute_start=cycle;
   if(SHARED)release_races();
   cold_reset_refill();

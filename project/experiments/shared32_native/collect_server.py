@@ -76,7 +76,7 @@ def main():
         terminal_state=rows[0][2], exit_code=rows[0][3], node=rows[0][5], elapsed=rows[0][4],
         collection_succeeded=True,
         whole_run_passed=rows[0][2]=='COMPLETED' and rows[0][3]=='0:0' and result.get('passed') is True,
-        functional_passed=result.get('functional_passed', False),
+        functional_passed=result.get('functional_passed'),
         total_result_files_hashed=len(outputs), result_files_selected=len(selected),
         source_files_verified=len(manifest['code_sha256']), input_files_verified=len(manifest['input_sha256']),
         classification='native_RTL_microbench',
