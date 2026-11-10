@@ -9,7 +9,7 @@ import time
 @contextmanager
 def slot(base):
     base=Path(base).resolve()
-    assert re.fullmatch(r"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-\d{8}-\d{2}",str(base))
+    assert re.fullmatch(r"/public/home/yuzelu/project-circuit/(?:LLMHardwareDesign/issue-250-g-physical-|issue250-ephys-)\d{8}-\d{2}",str(base))
     selected=None
     while selected is None:
         for number in range(2):

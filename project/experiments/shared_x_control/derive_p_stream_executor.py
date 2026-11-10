@@ -101,5 +101,10 @@ s = s.replace('       CANCEL_FLUSH:if(af_flush)begin', '''
        EARLY_DRAIN_WAIT:if(early_drain_seen)begin failed<=1;state<=CANCEL_FLUSH;end
        CANCEL_FLUSH:if(af_flush)begin''')
 s = s.replace('       COMPLETE:if(complete_valid&&complete_ready)state<=IDLE;', '       COMPLETE:if(complete_valid&&complete_ready)begin early_cancel_live<=0;state<=IDLE;end')
+# RX metadata owns staging only until true LOAD proof. The A lease captures
+# shift, so released or replaced RX metadata cannot govern an existing use.
+s = s.replace('tx_payload[88:83]=scale_lookup_shift;', 'tx_payload[88:83]=current_load_shift;')
+s = s.replace('!scale_lookup_valid||af_shift!=scale_lookup_shift', 'af_shift!=current_load_shift')
+s = s.replace('fill_seen&&A_loaded[selected_A_slot]&&scale_lookup_valid&&scale_lookup_shift<=17', 'fill_seen&&A_loaded[selected_A_slot]&&current_load_shift<=17')
 s = s.replace('// First registration is full LOCAL_CONTIG_RANGE and zero bias.', '// Candidate fixed staging input for unregistered streamed service2, zero bias.')
 (root / 'p_native_stream_record_executor.sv').write_text(s)

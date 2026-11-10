@@ -263,7 +263,7 @@ module p_native_stream_record_executor #(
        tx_cmd_valid=g_native_valid;tx_opcode=3;
        tx_payload[1:0]=W_bank;tx_payload[17:2]=W_generation;tx_payload[33:18]=current_use;
        tx_payload[49:34]=k;tx_payload[65:50]=selected_kk;tx_payload[66]=selected_A_slot;
-       tx_payload[82:67]=current_A_generation;tx_payload[88:83]=scale_lookup_shift;tx_payload[120:89]=next_session;
+       tx_payload[82:67]=current_A_generation;tx_payload[88:83]=current_load_shift;tx_payload[120:89]=next_session;
      end
 
      EARLY_CANCEL_SEND:begin tx_cmd_valid=1;tx_opcode=6;end
@@ -314,7 +314,7 @@ module p_native_stream_record_executor #(
  wire fatal_operand=a_valid&&a_ready&&
      (af_a_key!=input_key||af_a_slot!=selected_A_slot||af_a_gen!=current_A_generation||
       af_a_kk!=selected_kk||af_a_use!=current_use||af_a_record!=seq_id||
-      !scale_lookup_valid||af_shift!=scale_lookup_shift);
+      af_shift!=current_load_shift);
  always_ff @(posedge clk)begin
    if(reset)begin
      early_cancel_live<=0;early_cancel_session<=0;early_drain_session<=0;early_cancel_seen<=0;early_drain_seen<=0;current_window_generation<=0;current_window_session<=0;current_window_ticket<=0;current_load_shift<=0;state<=IDLE;scope_live<=0;cancelled<=0;owner<=0;seq_id<=0;col<=0;address<=0;full_k<=0;k<=0;
@@ -413,7 +413,7 @@ module p_native_stream_record_executor #(
        ALLOC_WAIT:if(allocation_seen)state<=FILL_WAIT;
 
        FILL_WAIT:if(cancelled||scope_cancel)begin load_pending<=0;early_cancel_live<=1;early_cancel_seen<=0;early_drain_seen<=0;state<=EARLY_HALT;end
-         else if(fill_seen&&A_loaded[selected_A_slot]&&scale_lookup_valid&&scale_lookup_shift<=17)state<=W_JOIN;
+         else if(fill_seen&&A_loaded[selected_A_slot]&&current_load_shift<=17)state<=W_JOIN;
 
        W_JOIN:if(cancelled||scope_cancel)begin load_pending<=0;early_cancel_live<=1;early_cancel_seen<=0;early_drain_seen<=0;state<=EARLY_HALT;end
          else if(af_w_ready)state<=EXEC_PUSH;

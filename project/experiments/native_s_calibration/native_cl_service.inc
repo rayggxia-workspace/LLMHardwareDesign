@@ -8,6 +8,8 @@
   sx_local_use_plan[worker].clear();
   for(const auto& j:jobs)if(!j.down)++sx_local_use_plan[worker][j.kk];
   U results=0;sc_event terminal;
+  const bool m2=nv_int("NS_M2_SHORT_GUARD",0)!=0;
+  U m2_core_last=0,m2_EOP_last=0;bool m2_issued=false;
   std::vector<sc_process_handle> children;
   auto keep=[&](sc_process_handle child){
    children.erase(std::remove_if(children.begin(),children.end(),[](const sc_process_handle& p){return p.terminated();}),children.end());
@@ -33,6 +35,9 @@
    if(!t->job.down)sx_local_await(t->sx,worker);
    ns_buffers[worker]->command_free.wait();++results;
    ns_result_peak=std::max(ns_result_peak,results);require(results<=2,"product CL result ownership");
+   const auto scope_key=std::make_pair(t->job.weight,t->job.col);
+   const bool manual=!t->job.kk||t->job.down||!ns_scope_cache[worker].count(scope_key);
+   if(m2&&manual&&m2_issued)pause_until(m2_EOP_last+C);
    ns_scope_ensure(worker,t->job.weight,t->job.col);
    auto key=std::make_pair(t->job.weight,t->job.col);auto& contexts=cl_contexts[worker];
    if(!t->job.down){
@@ -44,22 +49,39 @@
     for(int word=0;word<2;++word){auto reply=ns_S_request(worker,now());pause_until(reply.ack);if(!word)cycles(1);}
     cl_partial_read+=32;cycles(14); //8flit RESTORE LC->terminal13, next accept+1
    }
-   cycles(U(nv_int("NS_EXEC_GAP",1))); //+1 candidate preparse versus current realguard+EXEC +5
+   if(m2){
+    cycles(m2_issued&&!manual?4:5);
+    if(m2_issued)pause_until(m2_core_last+15*C);
+   }else cycles(U(nv_int("NS_EXEC_GAP",1)));
    const U start=now();pause_until(mem.weight_store[8*worker+t->bank].reserve(start,8*C));cycles(1);
    if(!t->job.down)sx_local_release(t->sx,worker);
    keep(sc_spawn([&,t,this]{cycles(2); // actual INPUT EOP, coreexec+11
     require(b.live[t->bank]&&b.generation[t->bank]==t->generation,"product CL INPUT EOP identity");
     b.live[t->bank]=false;b.free.post();b.released.notify(SC_ZERO_TIME);
    }));
-   cycles(3); // core RF result at exec+12
-   cycles(U(nv_int("NS_ORDINARY_PIPE_EXTRA",0))); // explicit prospective3stage scale sensitivity
-   cycles(t->job.final?4:2); // product RF FINAL4flit/CONTINUE2flit EOP16/14
+   const U result_extra=U(nv_int("NS_ORDINARY_PIPE_EXTRA",0));
+   U actual_EOP=0;
+   if(m2){
+    require(result_extra==2,"M2 actual ordinary RF profile");
+    actual_EOP=now()+(3+result_extra+(t->job.final?4:2))*C;
+    cycles(2); // measured INPUT EOP; weight/A can now release
+    m2_core_last=start;m2_EOP_last=actual_EOP;m2_issued=true;++ns_m2_candidate_EXECs;
+   }else{
+    cycles(3);
+    cycles(result_extra);
+    cycles(t->job.final?4:2);
+   }
    ++m_tiles;++m_commands;m_work+=12*C;
    if(!t->job.down)contexts[key]+=128;
-   if(t->job.down&&!t->job.final)cycles(7); // nextaccept1 + independentSPILL LC->RF EOP6
+   if(t->job.down&&!t->job.final){
+    if(actual_EOP)pause_until(actual_EOP);
+    cycles(7); // nextaccept1 + independentSPILL LC->RF EOP6
+    if(m2){actual_EOP=now();m2_EOP_last=actual_EOP;}
+   }
    const bool writes=t->job.down||t->job.final;
    if(t->job.down&&!t->job.final)cl_partial_write+=32;
-   keep(sc_spawn([&,t,key,writes,this]{
+   keep(sc_spawn([&,t,key,writes,actual_EOP,this]{
+    if(actual_EOP)pause_until(actual_EOP);
     if(writes&&!t->job.down&&ns_ring_active)ns_ring_claim(t->job.col);
     cycles(2); // RF EOP->guard C_REQUEST; CONTINUE zeroS terminal+2
     if(writes){

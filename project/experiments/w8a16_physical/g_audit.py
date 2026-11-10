@@ -1,4 +1,4 @@
-"""Original independent STA/electrical/PG/DRC plus compact density for G32."""
+"""Original independent STA/electrical/PG/DRC plus compact density for native G32 or E32 AP64."""
 import argparse
 import json
 import os
@@ -20,6 +20,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--top", choices=("g_s32", "e_s32_ap64"), default="g_s32")
     args = parser.parse_args()
     native = check_native()
     cpus = len(os.sched_getaffinity(0))
@@ -54,24 +55,25 @@ def main():
     assert stage("sealed", lambda out, run: qualify.seal(args.source, out)), stage_results
     sealed = args.out/"sealed"
     selected = lambda target, kind: qualify.source(sealed)
-    stage("physical", lambda out, run: physical(ROOT, out, cpus, run, "g32", selected=selected))
     _, _, flow, results = qualify.source(sealed)
+    assert flow["top"] == args.top
+    stage("physical", lambda out, run: physical(ROOT, out, cpus, run, args.top, selected=selected))
     def density(out, run):
         target = out/"occupancy.json"
         run(["python3", ROOT/"project/experiments/block_v2/compact_occupancy.py", results/"6_final.odb", target], "occupancy.log")
         record = json.loads(target.read_text())
-        base = json.loads(Path(__file__).with_name("baseline.json").read_text())["macros"]["G"]
+        base = json.loads(Path(__file__).with_name("baseline.json").read_text())["macros"][args.top[0].upper()]
         assert record["active_outline_ratio"] >= base["occupied_outline_ratio"]
         assert record["active_core_ratio"] >= base["occupied_core_ratio"]
     stage("density", density)
     def drc(out, run):
         script = out/"native-drc.tcl"
         script.write_text(f"set_thread_count {cpus}\nread_db {{{results/'6_final.odb'}}}\nwrite_def before.def\n"
-            "drt::check_drc_cmd native-whole-drc.rpt 0 0 0 0 g32_whole_drc\nwrite_def after.def\n")
+            "drt::check_drc_cmd native-whole-drc.rpt 0 0 0 0 native_whole_drc\nwrite_def after.def\n")
         run(["openroad", "-no_init", "-exit", script], "native-drc.log")
         assert sha(out/"before.def") == sha(out/"after.def")
         native_text = (out/"native-whole-drc.rpt").read_text()
-        raw_results = args.source/"flow/results/nangate45/bv1_g_s32/base"
+        raw_results = args.source/"flow/results/nangate45"/("bv1_"+args.top)/"base"
         gds = raw_results/"6_final.gds"
         if not gds.exists():
             run(["make", "-C", "/OpenROAD-flow-scripts/flow", "DESIGN_CONFIG="+str(args.source/"config.mk"),

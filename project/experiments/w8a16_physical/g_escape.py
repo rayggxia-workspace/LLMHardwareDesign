@@ -14,8 +14,8 @@ def implement(root,out,cpus,run,kind,delivery,geometry_folder,source_folder):
     from g_pins import generate
     from revision300_geometry import verify,u
     from overlay import generate as technology_overlay
-    assert cpus in (10,12) and kind=='g'
-    index=accepted(delivery)
+    assert cpus in (10,12) and kind in ('g','e')
+    index=accepted(delivery,'g_s32' if kind=='g' else 'e_s32_ap64')
     odb=Path(index['final_files']['6_final.odb']['path'])
     provenance=dict(delivery_receipt_path=str(delivery/'receipt.json'),delivery_receipt_sha256=file_sha(delivery/'receipt.json'),delivery_report_sha256=file_sha(delivery/'delivery.json'))
     count=index['pins']['signal_bits'];die=index['die_um']

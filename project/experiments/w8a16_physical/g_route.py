@@ -1,4 +1,4 @@
-"""Route fresh G32 with the existing native M1-M10 physical engine unchanged."""
+"""Route explicitly qualified leaf mappings using the native M1-M10 engine."""
 import argparse
 import hashlib
 import json
@@ -27,6 +27,7 @@ def sha(path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--top", choices=("g_s32", "e_s32_ap64"), default="g_s32")
     parser.add_argument("--mapping", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--side", type=int, required=True)
@@ -45,7 +46,7 @@ def main():
         # It retains the same planner API and independent complete rule checks.
         pins.generate = edge_pins
     parsed.out.mkdir(parents=True, exist_ok=False)
-    args = argparse.Namespace(top="g_s32", mapping=parsed.mapping, out=parsed.out,
+    args = argparse.Namespace(top=parsed.top, mapping=parsed.mapping, out=parsed.out,
         side=parsed.side, pin_bands=parsed.bands, core_margin=parsed.margin, density=parsed.density,
         cpus=cpus, grow_to_fit=False, upper_adjustment=parsed.upper_adjustment,
         r_compact_floorplan=False, r_strong_clock=False, remove_abc_buffers=False,

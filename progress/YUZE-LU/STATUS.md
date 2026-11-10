@@ -1,5 +1,10 @@
 # YUZE-LU 的进度
 
+2026-11-11更新：E32 AP64（234×234 µm）独立原 TT 300MHz、两种 DRC、最终网表/严格等价和 158 个研究 M10 接入通过；三P动态回传真实落地通过。已回校时间模型7.187736 token/s，AV未实现候选7.792632，均低于同条件9.215647。整层M/Down、系统物理、能耗和DP待验收。见[回执与范围](../../docs/experiments/issue-250-native-progress-06.md)。
+
+2026-11-11更新：原生S32完整decode512时间回放最佳候选7.098255 token/s，尚低于同条件9.215647；同16lane单slot驻留策略吞吐+16.74%，DP算法和部署未验收。真三P.S/G/量化86 Mid tile通过、上游M仍需接入。64-bit E真S通过，独立M/E和整系统原300MHz继续迭代。见[范围与回执](../../docs/experiments/issue-250-native-progress-05.md)。
+
+
 2026-11-11更新：完整scope动态15-pass实费诊断仅0.498712694 token/s，旧8.136179仍含动态占位，性能门未过；硬件#252独立处理。真量化/COPY/M/S与取消已测；三P86 Mid tile/六轮供数36PASS，同S预取死锁已修，S不扩容。typed2范围通过但实际outer未资格，M最终TT300MHz持续迭代。见[最新回执](../../docs/experiments/issue-250-native-progress-04.md)。
 
 2026-11-11补充：RF head II1/实际M回归、MC→LC真实PM/取参/range已测；M最终TT300MHz仍在迭代。已测guard费用回校条件结果8.136179，未达9.215647，dynamic/E/N与整系统仍未资格。详见[补充进展](../../docs/experiments/issue-250-native-progress-02.md)。

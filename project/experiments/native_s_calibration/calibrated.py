@@ -16,18 +16,55 @@ def apply(destination):
     root = destination / 'candidate'
     model = root / 'model.cpp'
     text = model.read_text()
-    text = replace(text, '#include "detail.hpp"', '#include "native_quantizer_profile.hpp"\n#include "detail.hpp"')
-    text = replace(text, '#include "matrix.inc"', '#include "native_s128_service.inc"\n#include "native_projection.inc"\n#include "native_stripe.inc"\n#include "native_dynamic.inc"\n#include "matrix.inc"')
+    text = replace(text, '#include "detail.hpp"', '#include "native_quantizer_profile.hpp"\n#include "native_dot_profile.hpp"\n#include "detail.hpp"')
+    text = replace(text, '#include "matrix.inc"', '#include "native_s128_service.inc"\n#include "native_projection.inc"\n#include "native_stripe.inc"\n#include "native_dynamic.inc"\n#include "native_s32_dot.inc"\n#include "matrix.inc"')
     text = replace(text, 'read(trace);SC_THREAD(run);', 'ns_initialize();read(trace);SC_THREAD(run);')
+    text = replace(text, 'U outstanding[2]={0,0},max_descriptors=0;',
+        '''U outstanding[2]={0,0},max_descriptors=0;
+ U ns_dot_landing_free[2][3]={},ns_dot_raw_client_free[3]={};
+ U ns_dot_landing_peak[2]={},ns_dot_landing_wait=0,ns_dot_landing_bytes=0;''')
+    text = replace(text, 'cfg.sq_stripe&&flow==detail::WEIGHT?int((address/2048)%2):channel(g)',
+        '(cfg.sq_stripe&&flow==detail::WEIGHT)||(operand_bank==-2&&nv_int("NS_DOT_STAGE64",0))?int((address/2048)%2):channel(g)')
+    text = replace(text, 'U issue=std::max(now(),issue_free);',
+        '''const U first_offer=now()+((w==0&&b->flow==detail::WEIGHT&&nv_int("NS_M2_FIRST_W_OFFER",0))?C:0);
+    U issue=std::max(first_offer,issue_free);''')
     text = replace(text, '}else ack=input_store.reserve(response,s_port_duration(cfg,b->group,cfg.beat));',
         '''}else if(b->operand_bank==-2){
       require(b->flow==detail::A||b->flow==detail::DYNAMIC_B,"typed raw-S staging source");
       require(b->bytes==32||b->bytes==64,"one finite raw64B return slot");
-      // The existing MC return slot retains this64B beat until serialized
-      // native S writes ACK. No second common S reservation or free512B FIFO.
-      // Registered first request; each16B request/RTT2/next-request edge=3cyc.
-      ack=input_store.reserve(response+C,ceildiv(b->bytes,U(16))*3*C);
+      if(nv_int("NS_DOT_STAGE64",0)){
+       // Real stage102473, one held MC aperture/P. Model uses three landing
+       // slots/channel and does not release the physical beat credit on capture.
+       // Registered capture -> client visible +1, two true S owners with II1.
+       // Delayed ACK holds a slot and constrains later same-client dispatch.
+       const int ch=b->channel_id,g=b->group;
+       require(ch==int((b->address/2048)%2)&&g>=0&&g<3,"typed DMA channel and P ownership");
+       auto& slots=ns_dot_landing_free[ch];
+       auto at=std::min_element(std::begin(slots),std::end(slots));
+       const U captured=std::max(response,*at);
+       ns_dot_landing_wait+=captured-response;
+       bus_free=std::max(bus_free,captured); // bounded backend-return hold
+       const U visible=std::max(captured+C,ns_dot_raw_client_free[g]);
+       const bool pressure=nv_int("NS_DOT_STAGE_PRESSURE",0);
+       const U fee=ns_dot_profile::stage_release[pressure][b->bytes==64];
+       ack=input_store.reserve(visible,fee*C);
+       ns_dot_raw_client_free[g]=ack+C;
+       *at=ack+C;
+       U live=0;for(U available:slots)live+=available>captured;
+       ns_dot_landing_peak[ch]=std::max(ns_dot_landing_peak[ch],live);
+       ns_dot_landing_bytes+=64;
+      }else{
+       // Old serial-per-word diagnostic; kept for exact comparison.
+       ack=input_store.reserve(response+C,ceildiv(b->bytes,U(16))*3*C);
+      }
      }else ack=input_store.reserve(response,s_port_duration(cfg,b->group,cfg.beat));''')
+    text = replace(text, 'if(b->write)issue=store[b->group].reserve(issue,s_port_duration(cfg,b->group,cfg.beat));',
+        '''if(b->write){
+     if(b->operand_bank==-3){
+      require(b->flow==detail::DOT_OUTPUT&&b->bytes==32&&beats==1,"typed native S32 export beat");
+      issue=store[b->group].reserve(issue+C,6*C); // two true S128 reads, ACK then next request
+     }else issue=store[b->group].reserve(issue,s_port_duration(cfg,b->group,cfg.beat));
+    }''')
     text = replace(text, 'sx_emit();std::cout<<"}\\n";', 'sx_emit();ns_emit();std::cout<<"}\\n";')
     text = replace(text, 'try{\n   for(size_t i=0;i<ops.size();)', 'try{\n   if(nv_int("NS_CHECK_QUANT",0)){ns_check_quantizer();passed=true;sc_stop();return;}\n   for(size_t i=0;i<ops.size();)')
     text = replace(text,
@@ -46,6 +83,25 @@ def apply(destination):
     (root / 'native_stripe.inc').write_bytes(Path(__file__).with_name('native_stripe.inc').read_bytes())
     (root / 'native_cl_service.inc').write_bytes(Path(__file__).with_name('native_cl_service.inc').read_bytes())
     (root / 'native_dynamic.inc').write_bytes(Path(__file__).with_name('native_dynamic.inc').read_bytes())
+    (root / 'native_s32_dot.inc').write_bytes(Path(__file__).with_name('native_s32_dot.inc').read_bytes())
+    dot = json.loads(Path(__file__).with_name('fixtures').joinpath('native-s32-fees-102419.json').read_text())
+    assert dot['source_job']=='102419' and len(dot['profiles'])==12
+    newer = json.loads(Path(__file__).with_name('fixtures').joinpath('native-s32-fees-102444.json').read_text())
+    stage = json.loads(Path(__file__).with_name('fixtures').joinpath('native-s32-stage64-102473.json').read_text())
+    assert newer['source_job']=='102444' and len(newer['profiles'])==12
+    assert stage['job']=='102473' and stage['raw_release_cycles'][0]==[5,7]
+    def dot_profile(profile,pressure,layout,rows):
+        return next(p for p in profile['profiles'] if (p['pressure'],p['layout'],p['rows'])==(pressure,layout,rows))
+    def c_array(values):
+        return '{'+','.join(c_array(v) if isinstance(v,list) else str(v) for v in values)+'}'
+    def table(profile,field):
+        return [[[dot_profile(profile,pressure,layout,rows)[field] if field=='begin_cycles' else
+                  [f['cycles'] for f in dot_profile(profile,pressure,layout,rows)['frames']]
+                  for rows in (1,2,4)] for layout in ('N-major','K-major')] for pressure in (False,True)]
+    (root / 'native_dot_profile.hpp').write_text('#pragma once\nnamespace ns_dot_profile {\n'
+        +'constexpr int begin[2][2][2][3]='+c_array([table(p,'begin_cycles') for p in (dot,newer)])+';\n'
+        +'constexpr int chunks[2][2][2][3][5]='+c_array([table(p,'frames') for p in (dot,newer)])+';\n'
+        +'constexpr int stage_release[2][2]='+c_array(stage['raw_release_cycles'])+';\n}\n',newline='\n')
     quant = json.loads(Path(__file__).with_name('fixtures').joinpath('quantizer-102168.json').read_text())
     header = '#pragma once\n#include <vector>\nnamespace ns_quant_profile {\n'
     for frame in quant['frames']:
@@ -57,7 +113,7 @@ def apply(destination):
     text = matrix.read_text()
     text = replace(text,
                    'if(context_target(o)){context_matrix_worker(o,w,*done[w]);}else{matrix_worker(o,w,*done[w]);}',
-                   'if(ns_dynamic_target(o)){ns_dynamic_worker(o,w,*done[w]);}else if(ns_target(o)){ns_matrix_worker(o,w,*done[w]);}else if(context_target(o)){context_matrix_worker(o,w,*done[w]);}else{matrix_worker(o,w,*done[w]);}')
+                   'if(ns_dot_target(o)){ns_dot_worker(o,w,*done[w]);}else if(ns_dynamic_target(o)){ns_dynamic_worker(o,w,*done[w]);}else if(ns_target(o)){ns_matrix_worker(o,w,*done[w]);}else if(context_target(o)){context_matrix_worker(o,w,*done[w]);}else{matrix_worker(o,w,*done[w]);}')
     matrix.write_text(text, newline='\n')
     closure = root / 'closure_service.inc'
     text = closure.read_text()

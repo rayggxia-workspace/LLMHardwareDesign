@@ -1,4 +1,4 @@
-"""Join exact-source independent gates and deliver one native P-only G32 leaf."""
+"""Join exact-source independent gates and deliver one independently qualified native G32 or E32 AP64 leaf."""
 import argparse
 import json
 import os
@@ -16,12 +16,12 @@ from qualify import source
 from pin_contract import rectangles
 
 
-def accepted(folder):
+def accepted(folder, top="g_s32"):
     receipt = json.loads((folder/"receipt.json").read_text())
     assert receipt["passed"]
     report = json.loads((folder/"delivery.json").read_text())
     assert sha(folder/"delivery.json") == receipt["outputs"]["delivery.json"]
-    assert report["passed"] and report["native_leaf_accepted"] and report["top"] == "g_s32"
+    assert report["passed"] and report["native_leaf_accepted"] and report["top"] == top
     for row in report["final_files"].values():
         assert sha(row["path"]) == row["sha256"]
     for row in report["gate_receipts"].values():
@@ -37,11 +37,14 @@ def main():
     parser.add_argument("--function", type=Path, required=True)
     parser.add_argument("--formal", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--top", choices=("g_s32", "e_s32_ap64"), default="g_s32")
     args = parser.parse_args()
     native = check_native()
     assert len(os.sched_getaffinity(0)) in {10,12}
     folder, _, flow, results = source(args.source)
-    assert flow["top"] == "g_s32"
+    assert flow["top"] == args.top
+    g = args.top == "g_s32"
+    kind, provider, bits = ("G", "G32_SILU", 204) if g else ("E", "E32_POINTWISE_AP64", 158)
     summary = json.loads((args.audit/"audit-summary.json").read_text())
     assert summary["passed"] and Path(summary["sealed_source"]) == folder
     assert summary["final_odb_sha256"] == sha(results/"6_final.odb")
@@ -76,10 +79,14 @@ def main():
         assert proofs["drc"]["final_odb_sha256"] == sha(results/"6_final.odb")
         assert proofs["function"]["final_odb_sha256"] == sha(results/"6_final.odb")
         assert proofs["formal"]["final_odb_sha256"] == sha(results/"6_final.odb")
-        assert len(proofs["function"]["runs"]) == 9 and proofs["function"]["oracle"]["actual_model_packets"] == 2048
+        if g:
+            assert len(proofs["function"]["runs"]) == 9 and proofs["function"]["oracle"]["actual_model_packets"] == 2048
+        else:
+            assert len(proofs["function"]["runs"]) == 6 and proofs["function"]["bank_sha256"] == (
+                "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7")
         assert proofs["formal"]["strict_native_lec"]["passed"] and all(proofs["formal"]["strict_native_lec"]["checks"].values())
         assert proofs["formal"]["function_receipt_sha256"] == gates["function"]["sha256"]
-        baseline = json.loads(Path(__file__).with_name("baseline.json").read_text())["macros"]["G"]
+        baseline = json.loads(Path(__file__).with_name("baseline.json").read_text())["macros"][kind]
         density = proofs["density"]
         assert density["active_outline_ratio"] >= baseline["occupied_outline_ratio"]
         assert density["active_core_ratio"] >= baseline["occupied_core_ratio"]
@@ -90,7 +97,7 @@ def main():
             name,layer,*coords=line.split("\t")
             assert name not in observed
             observed[name]=(layer,list(map(int,coords)))
-        assert expected == observed and len(observed) == 204
+        assert expected == observed and len(observed) == bits
         pins = [dict(pin=name,layer=layer,box_dbu=box) for name,(layer,box) in observed.items()]
         assert all(row["layer"] == "metal10" and row["box_dbu"][2]-row["box_dbu"][0] ==
                    row["box_dbu"][3]-row["box_dbu"][1] == 4000 for row in pins)
@@ -107,9 +114,9 @@ def main():
         (args.out/"render.py").write_text(render)
         run(["env","QT_QPA_PLATFORM=offscreen","klayout","-z","-r",args.out/"render.py"],"render.log")
         assert (args.out/"layout.png").stat().st_size>1000
-        report = dict(passed=True,native_leaf_accepted=True,top="g_s32",macro="G",provider="G32_SILU",
+        report = dict(passed=True,native_leaf_accepted=True,top=args.top,macro=kind,provider=provider,
             implementation_count=1,source_receipt_sha256=source_sha,gate_receipts=gates,
-            final_files=files,pins=dict(path=str(args.out/"pins.json"),sha256=sha(args.out/"pins.json"),signal_bits=204),
+            final_files=files,pins=dict(path=str(args.out/"pins.json"),sha256=sha(args.out/"pins.json"),signal_bits=bits),
             image=dict(path=str(args.out/"layout.png"),sha256=sha(args.out/"layout.png")),
             die_um=flow["die_um"],density=density,active_area_um2=density["active_area_um2"],
             active_area_including_antenna_um2=proofs["physical"]["active_area_um2"],
@@ -118,7 +125,8 @@ def main():
             native_routing_layers=["metal"+str(i) for i in range(1,11)],
             finite_full_escape_qualified=False,hierarchical_lib_qualified=False,m11_m12_system_qualified=False,
             frontend_physically_qualified=False,
-            scope="P-only S32/Q16 SiLU/gated-SiLU native TT300MHz M1-M10 leaf, all exact-source physical/density/full DRC/function/strict LEC gates. LC frontend, hierarchical timing model and product M11/M12 routes remain separate.")
+            scope=("P-only S32/Q16 SiLU/gated-SiLU" if g else "E32 pointwise AP64, without legacy E service replacement")+
+            " native TT300MHz M1-M10 leaf, exact-source physical/density/full DRC/function/strict LEC gates. LC frontend, hierarchical timing model and product M11/M12 routes remain separate.")
         (args.out/"delivery.json").write_text(json.dumps(report,indent=2)+"\n")
         receipt["passed"]=True
     finally:

@@ -13,3 +13,40 @@ Refs #250; parent owns PR251/integration/online status. This is not final system
 Compact source/receipt packages and SHA audits live in dma01..13/run36..40. Large physical archives remain authorized remote and are recovered via each remote-index command. C: extraction paths are audit caches; their SHA-bound archives are retained.
 
 Next: complete shared-fabric/P executor joint, add real mid-flight reset/purge isolation test, cut M leaf transport/control critical paths without relaxing original constraints, then repeat actual product vectors/map/P&R/final functional/formal/DRC/electrical/density gates. Any added latency/storage is reported to the native service model.
+
+
+## 2026-11-11 continuation: actual finite M2 and zero-cycle physical cuts
+
+- f08 original physical13/14 remain running; CTS13 is **not** qualified (WNS-1.22ns,
+fmax219.86MHz); reply-only CTS12 WNS-1.54ns. These original reports are retained.
+- Original exact placement probe102358/physical15 ties original ODB/SDC/Lib SHAs to
+4.626ns scope-validation¡úcontrol_context-gate¡úRF read/prefix path, and3.734ns
+mc_rsp_tag¡úfill validation¡úgood cancellation¡úraw/RF¡úa_ready path.
+- Good matching CANCEL can accept with unrelated malformed FILL, whose fault remains
+solely FILL-owned. No state or cycle added. Canonical f334 source102365/102367:
+W18+native18+leaf18 PASS. Actual map726068.280um2/1330pins vs f08 726065.354;
+physical16/job102375 at originalTT300MHz/side1390 is running.
+- Minimal control address fix41a5: n_control_context=handle even when invalid, instead
+of zero-gating through command validation. This changes no sampling or handshake.
+102377 actual18 products PASS and independent audit125files PASS; all costs and work
+unchanged. Source-bound map102379 is running. RF/scale source is unchanged.
+- Independent C worktree task/250-dual-record-experiment: two finite M owners add
+121.625B logical metadata, no payload SRAM; W4/RF16/one raw array remain unchanged.
+Actual old+overlap18run passes, samectx head and cancelled second prefix preserved.
+Leaf aperture no-stall II14; old single-active production guard remains II21.
+M2 map735299.278um2/1330pins (+1.272% vs f08), physical17/job102376 running.
+M2 source7542825c4 merges both zero-cycle cuts,10238018PASS + independent audit;
+source-bound map102384 is running. Controller agent owns real guard2/executor2 joint;
+its guard2 real4bankS unit10238118PASS does not alone establish the M2 system rate.
+- New raw mapping/physical packages remain remote with SHA/byte indexes. No large
+ODB/GDS/map archives added to Git. New RTL test receipts recover into own C caches.
+Own physical02 expanded cache805995335B moved normally from D to
+C:/Users/wine10/.codex/issue250-cache/m-physical02-original-receipts with all422file
+bytes/SHA unchanged; C physical02-move-manifest.json retains exact relocation proof.
+No deletion or denied-cleanup retry, no Git/history/other-owner changes.
+
+Parent root continues to own PR251/Issue250 online status, shared docs and final
+hardware selection. All new gains are hardware candidates, not DP20% algorithm gains.
+Continue physical18/19 after newest exact maps, final original timing/electrical,
+full originalGDS DRC/connectivity, actual netlist function/formal/density/delivery,
+true guard2/COPY/MC/globalDMA/S integration and native full-model time/energy.

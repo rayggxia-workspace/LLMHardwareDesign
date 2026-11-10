@@ -5,7 +5,10 @@
 module p_scope_range_service #(
  // The old iterator/control fixture remains generic. A real native provider
  // must opt into its actually registered numeric/restore coverage.
- parameter logic NATIVE_LOCAL_CONTIG=1'b0
+ parameter logic NATIVE_LOCAL_CONTIG=1'b0,
+ parameter logic NATIVE_STREAM_A16=1'b0,
+ parameter logic NATIVE_RESIDENT_X_K2048=1'b0,
+ parameter logic NATIVE_DUAL_A16=1'b0
 )(
  input logic clk,reset,
  input logic service_valid,output logic service_ready,
@@ -52,12 +55,16 @@ module p_scope_range_service #(
  wire foreign_input=input_key[127:96]!=service_owner[95:64]||input_key[95:64]!=service_owner[63:32];
  wire nonzero_bias=bias_address0!=0||(ways==2&&bias_address1!=0);
  wire ticket_bad=service_ticket!=service_owner[31:0];
- wire unsupported_native=NATIVE_LOCAL_CONTIG&&
-     ((full_k!=128&&full_k!=256)||k_begin!=0||k_end!=full_k);
+ wire unsupported_native=(NATIVE_LOCAL_CONTIG&&
+     ((full_k!=128&&full_k!=256)||k_begin!=0||k_end!=full_k))||
+     (NATIVE_STREAM_A16&&(NATIVE_LOCAL_CONTIG||NATIVE_RESIDENT_X_K2048||NATIVE_DUAL_A16||service_descriptor[48+:16]!=16'd2||k_begin!=0||k_end!=full_k))||
+     (NATIVE_RESIDENT_X_K2048&&(NATIVE_LOCAL_CONTIG||NATIVE_DUAL_A16||service_descriptor[48+:16]!=16'd1||full_k!=2048||k_begin!=0||k_end!=full_k))||
+     (NATIVE_DUAL_A16&&(NATIVE_LOCAL_CONTIG||NATIVE_STREAM_A16||NATIVE_RESIDENT_X_K2048||
+       (service_descriptor[48+:16]==16'd1&&full_k!=2048)||k_begin!=0||k_end!=full_k));
  wire provider_bad=foreign_input||nonzero_bias||ticket_bad||unsupported_native;
  assign typed_job_ready=job_ready&&!provider_bad&&!reject_live;
  assign service_ready=!reset&&!reject_live&&((job_valid&&provider_bad)?reject_ready:decode_ready);
- p_scope128_decode decode(
+ p_scope128_decode #(.ALLOW_STREAM_A16((NATIVE_STREAM_A16||NATIVE_DUAL_A16)&&!NATIVE_LOCAL_CONTIG)) decode(
    .scope_valid(service_valid&&!reject_live),.scope_ready(decode_ready),.scope_data(service_descriptor),.scope_crc_ok(1'b1),
    .expected_topology,.job_valid,.job_ready(typed_job_ready),.reject_valid,.reject_ready,.reject_code,
    .input_key,.rf_object_base0,.rf_object_base1,.output_version,.sequence_base,.weight_base0,.weight_base1,

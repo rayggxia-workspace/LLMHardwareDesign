@@ -1,4 +1,4 @@
-"""Compute-job-only quantizer -> shared link -> actual private S -> A replay."""
+"""Compute-job-only actual private S32 stripe copy and ring lifetime fixture."""
 import argparse
 import hashlib
 import json
@@ -28,7 +28,7 @@ def main():
         'project/experiments/block_local_native/test_s32_stripe_joint.sv',
         'project/rtl/block_local_native/s32_stripe_copy.sv',
         'project/experiments/shared_x_control/rtl/early_copy_3p.sv',
-        'project/experiments/shared_x_control/rtl/native_s128_mux2.sv',
+        'project/experiments/shared_x_control/rtl/native_s128_mux3.sv',
         'project/rtl/s_sram/local_s_base.sv',
         'project/rtl/s_sram/block_feed_s16k_sram.sv')
     build = [a.verilator, '--binary', '--timing', '--assert', '-Wall',
@@ -38,21 +38,22 @@ def main():
     with (a.out / 'build.log').open('w') as log:
         subprocess.run(build, env=env, cwd=a.out, stdout=log, stderr=subprocess.STDOUT, check=True)
     results = []
-    for initial in (0, 1, 2):
-        for mode in (0, 1):
-            name = f'mode-{mode}-initial-{initial}.log'
-            with (a.out / name).open('w') as log:
-                subprocess.run([str(a.out / 'obj/Vtest_s32_stripe_joint'),
-                    f'+mode={mode}', f'+seed={a.seed}', f'+verilator+rand+reset+{initial}',
-                    f'+verilator+seed+{a.seed}'], env=env, cwd=a.out, stdin=subprocess.DEVNULL,
-                    stdout=log, stderr=subprocess.STDOUT, check=True)
-            text = (a.out / name).read_text()
-            assert 'PASS s32_stripe_joint legal=28 bad=2 actual_banks=8 extra_SRAM=0' in text
-            assert text.count('STRIPE_REAL_S case=') == 28
-            results.append(dict(initial=initial, mode=mode, log=name))
+    for same_s in (0, 1):
+        for initial in (0, 1, 2):
+            for mode in (0, 1):
+                name = f'same-{same_s}-mode-{mode}-initial-{initial}.log'
+                with (a.out / name).open('w') as log:
+                    subprocess.run([str(a.out / 'obj/Vtest_s32_stripe_joint'),
+                        f'+same_s={same_s}', f'+mode={mode}', f'+seed={a.seed}', f'+verilator+rand+reset+{initial}',
+                        f'+verilator+seed+{a.seed}'], env=env, cwd=a.out, stdin=subprocess.DEVNULL,
+                        stdout=log, stderr=subprocess.STDOUT, check=True)
+                text = (a.out / name).read_text()
+                assert f'PASS s32_stripe_joint legal=28 bad=2 actual_banks={4 if same_s else 8} extra_SRAM=0' in text
+                assert text.count('STRIPE_REAL_S case=') == 28
+                results.append(dict(initial=initial, mode=mode, same_s=same_s, log=name))
     report = dict(seed=a.seed, results=results,
         hashes={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in a.out.iterdir() if p.is_file()},
-        qualification='True eight-bank S32 stripe copy; no MC/LC/M arithmetic or 300MHz timing qualification')
+        qualification='True same-S four-bank and cross-S eight-bank S32 stripe copy; no MC/LC/M arithmetic or 300MHz timing qualification')
     (a.out / 'result.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report))
 

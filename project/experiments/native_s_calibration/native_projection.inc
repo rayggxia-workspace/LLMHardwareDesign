@@ -11,7 +11,7 @@
  std::vector<std::unique_ptr<NSBuffer>> ns_buffers;
  void ns_initialize(){for(int p=0;p<cfg.mcount;++p)ns_buffers.emplace_back(new NSBuffer);ns_copy_lock.reset(new sc_semaphore(1));ns_G_jobs.reset(new sc_fifo<int>(2));}
  U ns_static_calls=0,ns_static_tiles=0,ns_A_load_B=0,ns_A_reuse=0;
- U ns_raw_groups=0,ns_RF_groups=0,ns_W_peak=0,ns_A_peak=0,ns_result_peak=0;
+ U ns_raw_groups=0,ns_RF_groups=0,ns_W_peak=0,ns_A_peak=0,ns_result_peak=0,ns_m2_candidate_EXECs=0;
  std::array<U,3> ns_cl_results{};sc_event ns_cl_drain[3];
  std::array<U,3> ns_record_live{};U ns_record_peak=0;
  std::array<std::map<std::pair<int,int>,U>,3> ns_scope_cache;
@@ -104,6 +104,8 @@
    tasks.write(nullptr);
   });
   std::map<int,int> next_k;
+  const bool m2=nv_int("NS_M2_SHORT_GUARD",0)!=0;
+  U m2_core_last=0,m2_EOP_last=0;bool m2_issued=false;
   while(true){
    before=now();auto* t=tasks.read();stats.ready+=now()-before;if(!t)break;
    before=now();
@@ -115,12 +117,18 @@
    ++live_command;ns_result_peak=std::max(ns_result_peak,live_command);before=now();
    require(live_command<=2,"native command/result capacity");
    const bool product=nv_int("NS_PRODUCT",0)!=0;
+   require(!m2||product,"M2 needs actual short framed product path");
+   const bool manual=t->kk==0;
+   if(m2&&manual&&m2_issued)pause_until(m2_EOP_last+C);
    if(!t->kk){require(next_k.count(t->col)==0&&next_k.size()<16,"native RF allocation");
     ns_scope_ensure(worker,o.in[1],t->col);
     cycles(U(product?5:nv_int("NS_CONTEXT_CYCLES",3))); // CREATE LC->EOP4, next native accept+1
     next_k[t->col]=0;}
    require(next_k.count(t->col)&&next_k[t->col]==t->kk,"native RF owner/K order");
-   cycles(U(product?nv_int("NS_EXEC_GAP",1):nv_int("NS_GUARD_CYCLES",3))); //+1 requires preparse; actual current guard+EXEC is+5
+   if(m2){
+    cycles(m2_issued&&!manual?4:5);
+    if(m2_issued)pause_until(m2_core_last+15*C); // actual real two-owner short issuer/guard II
+   }else cycles(U(product?nv_int("NS_EXEC_GAP",1):nv_int("NS_GUARD_CYCLES",3)));
    const bool head=cl_record_size(o.cols,o.k)==1152;
    ns_raw_groups+=head?8:1;ns_RF_groups+=head?8:1; // head retains eight separate RNEs
    const U start=now();
@@ -140,16 +148,26 @@
      W_live[bank]=false;W_free.post();W_released.notify(SC_ZERO_TIME);
     }));
    }else{W_live[t->bank]=false;W_free.post();W_released.notify(SC_ZERO_TIME);}
-   cycles(3); // both ordinary and head measured result capture exec+12
    const U result_extra=U(nv_int(head?"NS_HEAD_PIPE_EXTRA":"NS_ORDINARY_PIPE_EXTRA",0));
-   require(result_extra>=input_extra,"head result precedes operands");cycles(result_extra-input_extra);
-   if(product)cycles(final?4:2); // actual 4/2-flit RF response EOP, NOT pure core completion
+   require(result_extra>=input_extra,"head result precedes operands");
+   U actual_EOP=0;
+   if(m2){
+    require(input_extra==0&&result_extra==2,"M2 measured RNE/INPUT/RF profile");
+    actual_EOP=now()+(3+result_extra+(final?4:2))*C;
+    cycles(2); // foreground may prepare next command only after INPUT EOP
+    m2_core_last=start;m2_EOP_last=actual_EOP;m2_issued=true;++ns_m2_candidate_EXECs;
+   }else{
+    cycles(3); // both ordinary and head measured result capture exec+12
+    cycles(result_extra-input_extra);
+    if(product)cycles(final?4:2);
+   }
    next_k[t->col]+=128;
    ++m_tiles;++m_commands;++ns_static_tiles;m_work+=12*C;
    stats.service+=now()-before;++stats.tiles;
    // Command slots are distinct from early-released W storage. A final RF
    // context remains owned through output acknowledgement, not merely compute.
-   auto result=sc_spawn([&,t,final,product,this]{
+   auto result=sc_spawn([&,t,final,product,actual_EOP,this]{
+    if(actual_EOP)pause_until(actual_EOP);
     cycles(2); // guard result capture -> commit decision
     if(final){
      for(int word=0;word<2;++word){
@@ -183,6 +201,23 @@
    <<",\"dynamic_S_read_B\":"<<ns_dynamic_S_read_B<<",\"dynamic_staged_write_B\":"<<ns_dynamic_staging_B
    <<",\"dynamic_local_return_B\":"<<ns_dynamic_local_return_B<<",\"dynamic_service_cycles_sum\":"<<ns_dynamic_service_cycles
    <<",\"dynamic_15pass_schedule\":"<<(nv_int("NS_DYNAMIC",0)?"true":"false")
+   <<",\"dynamic_s32_enabled\":"<<(nv_int("NS_NATIVE_DOT",0)?"true":"false")
+   <<",\"dynamic_s32_rows\":"<<nv_int("NS_DOT_ROWS",1)<<",\"dynamic_s32_RTL_job\":"<<(nv_int("NS_DOT_STAGE64",0)?102444:102419)
+   <<",\"dynamic_s32_calls\":"<<ns_dot_calls<<",\"dynamic_s32_begins\":"<<ns_dot_begins
+   <<",\"dynamic_s32_chunks\":"<<ns_dot_chunks<<",\"dynamic_s32_MACs\":"<<ns_dot_macs
+   <<",\"dynamic_s32_A_staging_B\":"<<ns_dot_A_staged<<",\"dynamic_s32_B_staging_B\":"<<ns_dot_B_staged
+   <<",\"dynamic_s32_read_bus_B\":"<<ns_dot_bus_read<<",\"dynamic_s32_S_read_words\":"<<ns_dot_S_reads
+   <<",\"dynamic_s32_result_write_ACKs\":"<<ns_dot_S_result_writes<<",\"dynamic_s32_export_read_words\":"<<ns_dot_S_export_reads
+   <<",\"dynamic_s32_service_cycles_sum\":"<<ns_dot_service_cycles<<",\"dynamic_s32_S_peak_B\":"<<ns_dot_s_peak
+   <<",\"dynamic_s32_peak_raw_slots\":"<<ns_dot_raw_peak<<",\"dynamic_s32_qk_B_reuse\":"<<ns_dot_qk_reuse
+   <<",\"dynamic_s32_stage_RTL_job\":"<<(nv_int("NS_DOT_STAGE64",0)?102473:0)
+   <<",\"dynamic_s32_landing_peak_by_channel\":["<<mem.ns_dot_landing_peak[0]<<","<<mem.ns_dot_landing_peak[1]<<"]"
+   <<",\"dynamic_s32_landing_wait_ticks\":"<<mem.ns_dot_landing_wait<<",\"dynamic_s32_landing_B\":"<<mem.ns_dot_landing_bytes
+   <<",\"dynamic_s32_AV_checkpoint_candidate\":"<<(nv_int("NS_DOT_AV_CKPT_PAIRS",0)?"true":"false")
+   <<",\"dynamic_s32_AV_checkpoint_RTL_qualified\":false"
+   <<",\"dynamic_s32_AV_S80_saves\":"<<ns_dot_av_saves<<",\"dynamic_s32_AV_S80_restores\":"<<ns_dot_av_restores
+   <<",\"dynamic_s32_AV_S80_snapshot_S_words\":"<<ns_dot_av_snapshot_S_words<<",\"dynamic_s32_AV_paired_DDR_beats\":"<<ns_dot_av_pair_beats
+   <<",\"dynamic_s32_production_source_and_LC_qualified\":false,\"dynamic_s32_physical_qualified\":false"
    <<",\"A_S_read_B\":"<<ns_A_load_B<<",\"A_reused_commands\":"<<ns_A_reuse
    <<",\"RAW_groups\":"<<ns_raw_groups<<",\"RF_RNE_groups\":"<<ns_RF_groups
    <<",\"max_W_banks\":"<<ns_W_peak<<",\"max_A_tiles\":"<<ns_A_peak
@@ -200,6 +235,7 @@
    <<",\"G_next_projection_overlap_candidate\":"<<(nv_int("NS_G_OVERLAP",0)?"true":"false")
    <<",\"G_ring_peak_values\":"<<ns_ring_peak*8<<",\"G_pending_group_limit\":2,\"G_overlap_RTL_qualified\":false"
    <<",\"M_profile_job\":"<<nv_int("NS_M_PROFILE_JOB",nv_int("NS_HEAD_INPUT_EXTRA",0)==8?102202:nv_int("NS_PRODUCT",0)?102172:102118)
+   <<",\"M2_short_guard_candidate_EXECs\":"<<ns_m2_candidate_EXECs<<",\"M2_short_guard_P2_qualified\":false"
    <<",\"M_next_EXEC_gap_cycles\":"<<nv_int("NS_EXEC_GAP",1)
    <<",\"M_next_EXEC_preparse_RTL_verified\":false"
    <<",\"M_profile_300MHz_qualified\":false"

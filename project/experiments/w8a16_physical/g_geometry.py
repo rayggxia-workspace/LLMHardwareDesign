@@ -81,7 +81,7 @@ def accepted(root,out,kind):
 def export(root,out,cpus,run,kind,selected=None,technology_name='technology.json',allow_zero_enclosure=False):
     from io_slots import file_sha
     from g_slots import slot
-    assert cpus in (10,12) and kind=='g'
+    assert cpus in (10,12) and (kind=='g' or (kind=='e' and selected is not None))
     receive=accepted if selected is None else selected
     index,odb,provenance,count,die=receive(root,out,kind)
     before=file_sha(odb)

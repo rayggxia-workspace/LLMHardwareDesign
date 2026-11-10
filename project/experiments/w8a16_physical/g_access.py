@@ -18,16 +18,19 @@ def main():
     parser.add_argument("--delivery",type=Path,required=True)
     parser.add_argument("--source",type=Path,required=True)
     parser.add_argument("--out",type=Path,required=True)
+    parser.add_argument("--top",choices=("g_s32","e_s32_ap64"),default="g_s32")
     args=parser.parse_args()
     native=check_native()
-    profiles=verify()
+    g=args.top=="g_s32"
+    kind,provider,bits=("g","G32_SILU",204) if g else ("e","E32_POINTWISE_AP64",158)
+    profiles=verify() if g else {"profile":"E32 pointwise AP64, exact independent delivery receipts"}
     cpus=len(os.sched_getaffinity(0))
     assert cpus in (10,12)
     # The old geometry helper takes an own-root advisory lock at parents[2].
     # Require this nesting rather than writing a lock into a shared parent.
-    assert args.out.parent.name=="tasks" and args.out.parent.parent.name.startswith("issue-250-g-physical-")
+    assert args.out.parent.name=="tasks" and args.out.parent.parent.name.startswith("issue-250-g-physical-" if g else "issue250-ephys-")
     args.out.mkdir(parents=True,exist_ok=False)
-    index=accepted(args.delivery)
+    index=accepted(args.delivery,args.top)
     original={str(row["path"]):row["sha256"] for row in index["final_files"].values()}
     receipts={}
     def stage(name,operation):
@@ -52,28 +55,28 @@ def main():
             (out/"receipt.json").write_text(json.dumps(receipt,indent=2)+"\n")
             receipts[name]=dict(path=str(out/"receipt.json"),sha256=sha(out/"receipt.json"),passed=receipt["passed"])
     def geometry(out,run):
-        def selected(root,target,kind):
-            assert kind=="g"
-            fresh=accepted(args.delivery)
+        def selected(root,target,requested):
+            assert requested==kind
+            fresh=accepted(args.delivery,args.top)
             return fresh,Path(fresh["final_files"]["6_final.odb"]["path"]),dict(
                 delivery_receipt_path=str(args.delivery/"receipt.json"),delivery_receipt_sha256=sha(args.delivery/"receipt.json"),
                 delivery_report_sha256=sha(args.delivery/"delivery.json")),fresh["pins"]["signal_bits"],fresh["die_um"]
-        g_geometry.export(ROOT,out,cpus,run,"g",selected=selected,
+        g_geometry.export(ROOT,out,cpus,run,kind,selected=selected,
             technology_name="technology-2um-v1.json",allow_zero_enclosure=True)
     stage("geometry",geometry)
-    stage("escape",lambda out,run:g_escape.implement(ROOT,out,cpus,run,"g",args.delivery,args.out/"geometry",args.source))
+    stage("escape",lambda out,run:g_escape.implement(ROOT,out,cpus,run,kind,args.delivery,args.out/"geometry",args.source))
     assert all(sha(path)==digest for path,digest in original.items())
     escape=json.loads((args.out/"escape/revision300-escape.json").read_text())
-    assert escape["passed"] and escape["all_signal_bits"]==escape["simultaneous_connected_bits"]==204
-    report=dict(passed=True,top="g_s32",provider="G32_SILU",finite_full_escape_qualified=True,
+    assert escape["passed"] and escape["all_signal_bits"]==escape["simultaneous_connected_bits"]==bits
+    report=dict(passed=True,top=args.top,provider=provider,finite_full_escape_qualified=True,
         source_delivery_receipt_sha256=sha(args.delivery/"receipt.json"),native_final_files=original,
-        stages=receipts,all_signal_bits=204,simultaneous_connected_bits=204,
+        stages=receipts,all_signal_bits=bits,simultaneous_connected_bits=bits,
         native_m10_same_net_intersections=escape["native_m10_same_net_intersections"],
         native_m10_obstruction_intersections=escape["native_m10_obstruction_intersections"],
         native_die_um=index["die_um"],test_footprint_um=escape["test_footprint_um"],charged_halo_um=40,
         early_rc_qualified=False,combined_300mhz_interface_timing_qualified=False,
         hierarchical_lib_qualified=False,m11_m12_system_qualified=False,
-        scope="All 204 actual final ODB M10 bits, complete native geometry/OBS/PG, three DEF/ODB readbacks and joined unchanged native GDS. Same uncalibrated 2um demo rules, full footprint charged; no product route/RC or manufacturing claim.")
+        scope=f"All {bits} actual final ODB M10 bits, complete native geometry/OBS/PG, three DEF/ODB readbacks and joined unchanged native GDS. Same uncalibrated 2um demo rules, full footprint charged; no product route/RC or manufacturing claim.")
     (args.out/"access.json").write_text(json.dumps(report,indent=2)+"\n")
     print(json.dumps(report))
 

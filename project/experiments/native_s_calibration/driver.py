@@ -65,6 +65,28 @@ if os.environ.get('NS_ROUND')=='dynamic15-1':
         'historical-dynamic-placeholder-reference','measured15-ideal-3P','measured15-observedstress-3P',
         'measured15-ideal-2P','measured15-observedstress-2P','measured15-ideal-1P',
         'measured15-observedstress-1P','measured15-ideal-3P-repeat')]
+if os.environ.get('NS_ROUND')=='native-dot-1':
+    PLANS=[(name,4,2,1,0,1) for name in (
+        'native32-placeholder-reference','native32-4lane-staged','native32-8lane-staged','native32-16lane-staged',
+        'native32-16lane-A-resident','native32-16lane-AB-resident','native32-16lane-AB-two-raw-slots',
+        'native32-16lane-AB-two-raw-slots-pressure')]
+if os.environ.get('NS_ROUND')=='native-dot-stage64':
+    PLANS=[(name,4,2,1,0,1) for name in (
+        'old-stage-16lane-AB-two-slots','stage64-16lane-cold-two-slots',
+        'stage64-16lane-A-two-slots','stage64-16lane-AB-two-slots',
+        'stage64-16lane-AB-one-slot','stage64-16lane-AB-two-slots-source-pressure',
+        'stage64-16lane-AB-two-slots-all-pressure','stage64-8lane-AB-two-slots')]
+if os.environ.get('NS_ROUND')=='native-dot-av-wave':
+    PLANS=[(name,4,2,1,0,1) for name in (
+        'stage64-serial-AV-reference','AV-S80-pair-wave1','AV-S80-pair-wave2',
+        'AV-S80-pair-wave1-serial-checkpoint','AV-S80-pair-wave2-serial-checkpoint',
+        'AV-S80-pair-wave2-one-source-slot','AV-S80-pair-wave2-source-pressure',
+        'AV-S80-pair-wave2-all-pressure')]
+if os.environ.get('NS_ROUND')=='native-dot-M2':
+    PLANS=[(name,4,2,1,0,1) for name in (
+        'single-M-serial-AV-reference','single-M-wave-AV-reference','M2-guard15-serial-AV',
+        'M2-guard15-wave-AV','M2-guard15-wave-AV-stage-pressure','M2-guard15-wave-AV-all-pressure',
+        'M2-guard15-wave-AV-serial-checkpoint','M2-guard15-wave-AV-first-DDR-offer')]
 name, mode, scope, word_cycles, response_cycles, ack = PLANS[int(os.environ["SLURM_PROCID"])]
 # Singularity on this host resets inherited CPU affinity. Restore the exact
 # srun allocation captured outside the container, then assert it again inside.
@@ -135,7 +157,7 @@ if os.environ.get('NS_ROUND') == 'G-overlap-1':
                NS_EARLY_STRIPE=str(int(rank != 2)), NS_G_OVERLAP=str(int(rank not in (0, 5))),
                NS_ORDINARY_PIPE_EXTRA=str(2 if new_pipeline else 0), NS_HEAD_PIPE_EXTRA=str(16 if new_pipeline else 0),
                NS_HEAD_INPUT_EXTRA=str(8 if new_pipeline else 0))
-if os.environ.get('NS_ROUND') in ('rf-II1-1','dynamic15-1'):
+if os.environ.get('NS_ROUND') in ('rf-II1-1','dynamic15-1','native-dot-1','native-dot-stage64','native-dot-av-wave','native-dot-M2'):
     rank = int(os.environ['SLURM_PROCID'])
     env.update(NS_NATIVE='4', NS_GUARD_CYCLES='3', NS_CONTEXT_CYCLES='3',
                NS_RF_CONTEXTS='16', NS_PROJECT_COLS='192', NS_SPILL='0',
@@ -151,6 +173,35 @@ if os.environ.get('NS_ROUND')=='dynamic15-1':
                NS_G_OVERLAP='1',NS_A_PREFETCH='1',NS_RECORD_CREDITS='6',
                NS_DYNAMIC=str(int(rank!=0)),NS_DYNAMIC_PCOUNT=str(2 if rank in (3,4) else 1 if rank in (5,6) else 3),
                NS_DYNAMIC_RECORD_CYCLES=str(1483 if rank in (2,4,6) else 1256))
+if os.environ.get('NS_ROUND')=='native-dot-1':
+    rank=int(os.environ['SLURM_PROCID'])
+    env.update(NS_HEAD_PIPE_EXTRA='2',NS_HEAD_INPUT_EXTRA='0',NS_M_PROFILE_JOB='102228',NS_EXEC_GAP='5',
+               NS_G_OVERLAP='1',NS_A_PREFETCH='1',NS_RECORD_CREDITS='6',NS_NATIVE_DOT=str(int(rank!=0)),
+               NS_DOT_ROWS=str([1,1,2,4,4,4,4,4][rank]),NS_DOT_REUSE=str(2 if rank>=5 else 1 if rank==4 else 0),
+               NS_DOT_RAW_SLOTS=str(2 if rank>=6 else 1),NS_DOT_PRESSURE=str(int(rank==7)))
+if os.environ.get('NS_ROUND')=='native-dot-stage64':
+    rank=int(os.environ['SLURM_PROCID'])
+    env.update(NS_HEAD_PIPE_EXTRA='2',NS_HEAD_INPUT_EXTRA='0',NS_M_PROFILE_JOB='102228',NS_EXEC_GAP='5',
+               NS_G_OVERLAP='1',NS_A_PREFETCH='1',NS_RECORD_CREDITS='6',NS_NATIVE_DOT='1',
+               NS_DOT_ROWS=str(2 if rank==7 else 4),NS_DOT_REUSE=str(0 if rank==1 else 1 if rank==2 else 2),
+               NS_DOT_RAW_SLOTS=str(1 if rank==4 else 2),NS_DOT_PRESSURE=str(int(rank==6)),
+               NS_DOT_STAGE64=str(int(rank!=0)),NS_DOT_STAGE_PRESSURE=str(int(rank in (5,6))))
+if os.environ.get('NS_ROUND')=='native-dot-av-wave':
+    rank=int(os.environ['SLURM_PROCID'])
+    env.update(NS_HEAD_PIPE_EXTRA='2',NS_HEAD_INPUT_EXTRA='0',NS_M_PROFILE_JOB='102228',NS_EXEC_GAP='5',
+               NS_G_OVERLAP='1',NS_A_PREFETCH='1',NS_RECORD_CREDITS='6',NS_NATIVE_DOT='1',
+               NS_DOT_ROWS='4',NS_DOT_REUSE='2',NS_DOT_STAGE64='1',
+               NS_DOT_RAW_SLOTS=str(1 if rank==5 else 2),NS_DOT_PRESSURE=str(int(rank==7)),
+               NS_DOT_AV_CKPT_PAIRS=str(0 if rank==0 else 1 if rank in (1,3) else 2),
+               NS_DOT_CKPT_REQ_GAP=str(3 if rank in (3,4) else 1),NS_DOT_STAGE_PRESSURE=str(int(rank in (6,7))))
+if os.environ.get('NS_ROUND')=='native-dot-M2':
+    rank=int(os.environ['SLURM_PROCID'])
+    env.update(NS_HEAD_PIPE_EXTRA='2',NS_HEAD_INPUT_EXTRA='0',NS_M_PROFILE_JOB=str(102480 if rank>=2 else 102228),NS_EXEC_GAP='5',
+               NS_G_OVERLAP='1',NS_A_PREFETCH='1',NS_RECORD_CREDITS='6',NS_NATIVE_DOT='1',
+               NS_DOT_ROWS='4',NS_DOT_REUSE='2',NS_DOT_STAGE64='1',NS_DOT_RAW_SLOTS='2',
+               NS_DOT_PRESSURE=str(int(rank==5)),NS_DOT_AV_CKPT_PAIRS=str(0 if rank in (0,2) else 2),
+               NS_DOT_CKPT_REQ_GAP=str(3 if rank==6 else 1),NS_DOT_STAGE_PRESSURE=str(int(rank in (4,5))),
+               NS_M2_SHORT_GUARD=str(int(rank>=2)),NS_M2_FIRST_W_OFFER=str(int(rank==7)))
 args = ["queued_pipe_w8", "prefix_pair_combine", "8", "1", "1", "16", "0", "4", "0", "1", "1", "1"]
 trace = Path("/public/home/yuzelu/project-circuit/issue248-stream-quant-20261110-40/restored/inputs/decode512.trace")
 report = dict(plan=name, passed=False, source_env={k: v for k, v in env.items() if k.startswith(("SQ_", "BN_", "CL_", "NV_", "SX_", "NS_"))},
@@ -158,6 +209,8 @@ report = dict(plan=name, passed=False, source_env={k: v for k, v in env.items() 
               affinity=affinity, allocated_cpus_per_task=12,
               qualification="S128 sensitivity; operator/control pipelines and energy NOT fully calibrated")
 report['round'] = os.environ.get('NS_ROUND', 'reproduce')
+if report['round'] in ('native-dot-1','native-dot-stage64','native-dot-av-wave','native-dot-M2'):
+    report['qualification']='Full-scope timing diagnostic; exact native S32 service RTL fees, bounded source candidates, conditional E/N/LC/physical/energy.'
 
 
 def save():
@@ -178,6 +231,20 @@ try:
                            stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, check=True)
         result = [json.loads(line[7:]) for line in (out / (label + ".log")).read_text().splitlines() if line.startswith("RESULT ")]
         assert len(result) == 1
+        if report['round'] in ('native-dot-1','native-dot-stage64','native-dot-av-wave','native-dot-M2') and label=='decode512' and env['NS_NATIVE_DOT']=='1':
+            native=result[0]['native_service']
+            assert native['dynamic_s32_MACs']==73728*128*8 and native['dynamic_s32_calls']==72*3
+            assert native['dynamic_s32_S_peak_B']<=16384 and native['dynamic_s32_peak_raw_slots']<=3*int(env['NS_DOT_RAW_SLOTS'])
+            if env.get('NS_DOT_STAGE64')=='1':
+                assert max(native['dynamic_s32_landing_peak_by_channel'])<=3
+                assert native['dynamic_s32_landing_B']==native['dynamic_s32_read_bus_B']
+            if int(env.get('NS_DOT_AV_CKPT_PAIRS','0')):
+                assert native['dynamic_s32_AV_checkpoint_candidate'] and not native['dynamic_s32_AV_checkpoint_RTL_qualified']
+                assert native['dynamic_s32_AV_S80_saves']==native['dynamic_s32_AV_S80_restores']==36*2*16*2*3
+                assert native['dynamic_s32_AV_S80_snapshot_S_words']==2*22*native['dynamic_s32_AV_S80_saves']
+                assert native['dynamic_s32_AV_paired_DDR_beats']==36*2*8*512
+            if env.get('NS_M2_SHORT_GUARD')=='1':
+                assert native['M2_short_guard_candidate_EXECs']>0 and not native['M2_short_guard_P2_qualified']
         report["results"].append(dict(label=label, result=result[0]))
         save()
         print("CASE_PASS", name, label, result[0]["tokens_per_second"], flush=True)

@@ -4,6 +4,7 @@
 // write acknowledgements; only address translation/lease metadata are new.
 // start_first_col is a GLOBAL S32 element column, never a byte address.
 // The caller must reserve the entire destination span against G consumers.
+// When using one S for both sides, reserve a disjoint source scratch span.
 module s32_stripe_copy(
  input wire clk,reset,halt,start_valid,output wire start_ready,
  input wire [127:0] start_key,input wire [15:0] start_generation,
@@ -47,7 +48,9 @@ module s32_stripe_copy(
  // Upper lanes never issue. Their replicated outputs are pruned with the
  // constant destination mask; they are not additional physical ports.
  wire unused_ports=|{p_valid[2:1],p_address[29:10],p_tag[95:32],p_data[383:128],prefixes[32:11],p_ack_ready[2:1]};
- early_copy_3p core(.clk,.reset,.halt,.start_valid,.start_ready,.start_key,.start_generation,
+ // On a shared ordered S response port a prefetched read can block
+ // the outstanding write ACK that would otherwise free the copy hold.
+ early_copy_3p #(.PREFETCH_NEXT_WORD(1'b0)) core(.clk,.reset,.halt,.start_valid,.start_ready,.start_key,.start_generation,
   .start_U_base(start_source_base),.start_P_bases(30'd0),
   .start_words(shape?{6'd0,start_words}:11'd0),.start_P_mask(3'b001),.destination_window_released,
   .u_valid(source_valid),.u_ready(source_ready),.u_address(source_address),.u_tag(source_tag),

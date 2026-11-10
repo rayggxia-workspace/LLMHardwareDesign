@@ -25,3 +25,76 @@ LOAD证明由真实16次S响应形成，携带完整key、COPY gen16/session/tic
 仍未覆盖：typed service2与完整outer、fullK11008流式执行、三P吞吐、流式输入与真实MC/全局DMA同次联合、五类provider、COPY16bit通用rearm、紧急raw ABORT恢复、布局布线、能耗/token/s。COPY wire generation仍是16bit，不能靠改名32bit掩盖ABA；耗尽须先真实namespace协调排空与rearm。
 
 后续固定 stream COPY 为不预取下一源字的配置（源737784597，root a424fd244 等价）：P也是COPY源时，原预取会让下一源读响应堵住旧目的写ACK，形成同S有序响应环。现在只有16B hold空闲才offer下一源读，无新增payload。旧单元参数默认1保持历史资格，stream epoch wrapper显式0。102370实际量化/Header/COPY/M/S 18 PASS（9s，22.586 CPU-s），102371实际中途halt/取消/复用18 PASS（9s，22.026 CPU-s）。seed1正例4997→5285周期，取消1055→1103，费用如实保留。run69–70完整源/日志/CSV/向量以原SHA≤1MiB分片保留；没有将原配置的吞吐或物理资格移交给新配置。
+
+后续 typed2 与真实程序（run71–85）：`NATIVE_STREAM_A16` 只接受service2，使用root已验收的 decoder `ALLOW_STREAM_A16` 明确选择；默认及contig仍拒绝2。102385八个K128/256范围通过真实量化/Header/COPY/A/M/四银行S。102390及修复后102395各18 PASS，从真MC16KiB SRAM PM（400B/33条）到真LC1KiB PM（352B/3条），实际128B DDR取参、内联CRC、typed2、真源数据链和同一global DMA（6个64B返路槽）联合。每trial8 scope/18 record、315个W64+16个取参64=331个真实外存请求与返回、24个结果S ACK、seed1 7618周期。外存器件由有限peer模拟，源S32由显式fixture写入，只有1P；不把这条回执外推为模型吞吐或五类全覆盖。
+
+真实长K功能：102391发现executor会在S staging已凭真实LOAD证明释放后再次查询已释放的RX shift，旧持久目录短测未暴露。195575ee7让已有6bit LOAD shift随A lease保留，JOIN、EXEC和A replay校验不依赖旧RX窗口。102392 18 PASS：单scope K11008/N8、同256B staging复用86次、真实quant/Header/COPY/LOAD/M/S，目的只消费当前匹配RX metadata、无86项目录。每trial有86量化、172 Header flit、1376 COPY源读与目标ACK、86 LOAD证明、1376覆写字、1376 A读、1462 W64请求与返回、2最终S ACK；独立合成W8/F16/RNE oracle一致（seed1 32381周期）。这一项不是完整checkpoint、三P流水、整FFN外层或目标性能。
+
+M2候选独立于旧串行：102405 18 PASS实际四银行S，响应为M peer；INPUT EOP后可发第二条，仍持两完成身份/原2×32B结果。RF2先到可保留但按首命令顺序写S；只取消第二条不阻第一条FINAL双SACK；early RF error保留owner直到真实INPUT或ABORT+drain；error ABORT只有零cursor、不能恢复。`m_dual_exec_issue.sv`从两份guard metadata直接形成真实2-flit EXEC，侧命令仲裁保留已offer帧，无新增payload。102407 18 PASS已接实际M2 V2（21fac77）与真实P/COPY/S，8范围/18 record/315W64/24S ACK，seed1 5281周期；该P fixture仍只有一份准备中的record，没有测出双发收益。双prep与三P外层仍未完成。
+
+run71–85保留首轮严格width/launcher错误、长K metadata寿命失败、实际MC mixed-reset fixture原策略以及所有后续通过源和波形文本，按远端原SHA分片；完整作业accounting见 `sacct-71-85.txt`。功能10ns，不是300MHz物理、能耗或token/s结论。
+
+## 两份有界准备与 K2048 Gate/Up（run86–92）
+
+| Slurm | 实际功能证据 | 结果 / c64 6×10分配的实耗 |
+|---|---|---|
+| 102412 | 同一 K128 tile 的两个真实W准备、M2独立完成、量化/COPY/四银行S | 18 PASS；10s，23.265 CPU-s |
+| 102417 | 两W已满、未EXEC即取消；首INPUT后只取消第二条；同owner数值重做 | 36 PASS；12s，25.660 CPU-s |
+| 102423 | 连续K128、两上下文前缀和FINAL、实际S ACK | 18 PASS；11s，23.319 CPU-s |
+| 102424 | 第二K tile取消、保留已成功K进度，真实drain后同owner复用 | 36 PASS；12s，26.036 CPU-s |
+| 102429 | 实际MC/LC PM、scope DDR/CRC、全局DMA、M2与真数据通路 | 18 PASS；20s，64.834 CPU-s |
+| 102431 | 首版K2048测试的Verilog字面量分词错误，未运行仿真 | FAILED；3s，0.415 CPU-s |
+| 102433 | 合成K2048 Gate/Up、2RF、16个实际流式输入tile | 18 PASS；11s，23.743 CPU-s |
+
+连续K候选只提前准备两条同tile记录。首条INPUT EOP后可独立发第二条，首条仍持完成身份/结果槽直到自身RF响应、若FINAL则真实双S128 ACK。102423 seed1两条head EXEC间距17拍，第二条早于首RF帧结束1拍。首条CONTINUE只更新真实RF，不伪造S写；在第二tile取消时未执行记录按原K游标终结。额外local控制状态355bit，另计M2/guard metadata，不增加W/A/结果payload或SRAM。取消前若已接受W仍等有界FILL和真实CANCEL/DRAIN，不假造传输取消。
+
+102429在上述实现上真取指、真取参、真DDR credit及S；8范围/18记录/315个W64+16个scope64/24个结果S ACK。seed1范围总fixture为7386拍，旧单记录程序fixture为7618拍；两个版本的输入metadata接线也不同，差值不能全归于M2。当前仍一个P、实际global fabric及有限DDR peer，不作整模型吞吐推论。
+
+102433用ordinary W8让独立Gate/Up owner各跨满16个K128分片。每trial 32个记录、544次真实64B W请求和返回、16次真实量化和LOAD、32个Header flit、256次COPY读和目标写ACK、256次A读，及stage释放后256次真实覆写；两路结果共4次S128 ACK后分别回读并与独立Fraction/RNE整数oracle逐位比对。每tile均实际detach一次，峰值2 RF。范围端到端6077–6085拍：U fixture真实源写1536、量化1520、Header128、COPY1840、COPY后剩余LOAD等待48–56拍。各阶段和W可能重叠，不能从总延迟直接扣除所有阶段。测试用合成数据及有限DDR peer、仅一P、未接MC PM；覆盖Gate/Up投影，不覆盖门乘、Down、整FFN或checkpoint质量。
+
+因此为同一token上多输出条带复用X，值得独立验收把4096B A16放入**已有**16KiB S的常驻窗口。它仍要支付真实首次写入/量化、S128重读及租约，须核对其他live窗口不重叠；不增私有SRAM，也不恢复独立4KiB寄存器。102433没有测出该方案的净速度。所有源、日志、CSV、向量、真银行模型和失败记录见原SHA的run86–92 exact parts与完整sacct。功能10ns，不是300MHz物理。
+
+
+## 同一 X 两条带的常驻对照（run93–99）
+
+102461 在相同 K2048、两条不同的 N8 Gate + N8 Up 输出条带和相同 M2 资源下测三种模式，各 6 seed × 3 初态。各模式均使用真实 U/P 四银行 S、实际动态量化、128bit Header/COPY、A lease、实际 M2 和有限 DDR peer；均完成 64 ordinary records、1088 W64 请求及返回、512 次 A 的真实 S 读取、8 个结果 S128 ACK，并逐位回读独立整数oracle。
+
+| 输入寿命 | 首次独立准备拍数 | 两条带总拍数（含首次准备） | COPY 目标真 ACK |
+|---|---:|---:|---:|
+| 每条带重新源写/量化/搬运 | 0，随各范围执行 | 10454–10488 | 512 |
+| 首次放入已有 P.S 的 4096B 窗口 | 5075 | 10438–10899 | 256 |
+| 首次量化，放在已有 U.S，再按条带 COPY | 3073 | 8581–8987 | 512 |
+
+P 常驻只增加 240 bit 的有界目录状态（128b对象key、10b基址、16×6b shift、5b计数、1b有效），另有2个错误脉冲寄存器。原16KiB S内部占4096B，不加SRAM，也不恢复4KiB X寄存器。目标只有 Header/COPY完全一致的 key/gen/K/session/ticket、正确的 S基址和16个真实写ACK 才接受下一tile；第16个才封存并允许 P 调用。错误ticket不能提前封存；活跃范围和未排空时拒绝重配。测试中的其它 S 写遵守范围隔离；完整外层仍须实现该所有权，不能拿软件约定代替。
+
+与实际较强的U常驻对照逐seed/初态比较，P常驻稳态每个小条带省45–72.5拍，但独立首次准备多2002拍。把同一对照每次的稳态差线性外推，估计约28–45个同宽条带才摊平。这是估计，实测只有2个条带和每P N8/way；真实每P N64/way可能更容易把 COPY 藏在 W 服务里，需要更宽条带的实际对照。当前两次复用优先 U.S 常驻；P.S 常驻留作有足够长寿命和空间时的候选。该样本的 S32 起点来自fixture写，不声称真实Norm producer、全FFN或整机速度。
+
+服务接线：scope采用独立 NATIVE_RESIDENT_X_K2048，service1、K2048、完整K、zero bias；p_native_resident_x_candidate 和 resident_x16_directory 接现有 M2 与普通 S128。已有typed2流式资格保持独立。真实 scope 元数据在接收后保留至 terminal 被接受；最后一次 INPUT 不能代替所有结果写 ACK。硬件合成时不应同时复制两个完整的 P 执行器以支持两种输入寿命；组合时只增加输入地址/租约选择，共用后续状态。
+
+run93–97保留 launcher、严格lint、索引和错误脉冲testbench缺陷的原记录；run98 36 PASS，run99 54 PASS。全部严格源、日志、CSV、向量、银行模型、原SHA和实耗完整保留；102461 26s elapsed、73.491 CPU-s（c64 6×10）。paired JSON保留18对逐次时序。不作目标300MHz、能耗或token/s结论。
+
+
+## 宽条带与同一 P 两种输入寿命（run100–102）
+
+102470 对每P的实际64列Gate +64列Up运行K2048，连续两条带。每trial 512 ordinary records、8704实际64B DDR W请求和返回、512次A真实S128读、64结果写ACK、256次pair detach，峰值16RF。独立整数参考逐位匹配。三种原模式及单执行器依次跑resident/stream都通过，共72次。NATIVE_DUAL_A16 provider 使用一套M/A/guard/RF票据，依据当前持有的typed scope选地址和来源；两种profile各自的底层S路径仍独立计费。Service1限定封存的完整K2048、零bias；service2全K stream、零bias，目录与Header匹配由各自真实来源提供。不能用该试验宣称三P、整体G/Down或者全模型。
+
+| 模式 | 两条真实宽条带总拍数（包含首次准备） |
+|---|---:|
+| 逐条带流水量化及传输 | 39398–40983 |
+| 预先封存P.S常驻4096B | 43977–45575 |
+| 预先完整量化到U.S，再逐条带传输 | 42087–43672 |
+| 首条带逐片量化并在U.S保留，第二条带复用 | 39207–40792 |
+
+最后一项由102474另18次证明；相比同seed/初态的逐条带量化，只省191–196拍（0.466–0.487%）。P.S常驻的稳态第二条带仅再省43–56拍，首次准备多约五千拍。W和P执行已覆盖了大部分输入工作，不宜按COPY次数推算等比例加速。U常驻4KiB在已有16KiB U.S内，目录为已存在的有界格式；P无需新加X存储。全FFN和三P路径需要真实层级调度验证，不能直接套用本fixture的拍数。
+
+实际双profile入口是 project/experiments/shared_x_control/rtl/p_native_a16_dual_profile.sv 与 NATIVE_DUAL_A16=1；外层须只在共享执行器scope_ready时送同一份已验CRC descriptor/owner，保留到service_done_valid && service_done_ready；该terminal已包含自身真实FINAL的全部S ACK。外层跨P汇合还须独立等待每组scatter完成。目录/当前RX的shift选择见同目录的tb_p_resident_x_compare.sv模式3。run100脚本失败保留；102470 36s /118.636 CPU-s，102474 12s /29.634 CPU-s，c64各6×10。
+
+
+## 三个P动态S32准备口共用DMA（run103–105）
+
+typed P候选不改旧 mc_dma_fabric.sv。P0–2 每个客户端默认128B scope，可在自身所有已接收描述符、beat、skid和局控terminal全部排空后选择单64B native；其它scope和W的类型不变。native地址64B对齐、通道按地址bit11、tag最低位0；同客户端native serial31单调，mode切换不重置，只有精确本客户端真实FENCE回执或全局复位后的实际transport purge才可重新开始。坏请求的同拍 p_req_rejected 明确表示没有保留资源、不会返回数据；stage据此给自己的匹配terminal。每通道32 beat/32 descriptor、总6×64B skid及任意3拍每通道最多4次真实DDR issue均保留。fabric新增99 bit控制状态，0 payload；联合命令准入还需要每P 1bit已注册标记和2bit本地owner数，合法源保持地址和身份至握手；没有另加96bit地址缓冲或512bit本地payload。实际独立stage有2份元数据owner，见其原证据。
+
+102475独立fabric 18 PASS；102487实际typed fabric +三份精确 b37acf762 stage +三份真实四银行S也18 PASS（c64 6×10，19s elapsed /48.753 CPU-s）。每trial 435实际动态64B返回，其中1个早取消仍真排空但不写S；5个真fabric拒绝不产生raw或写ACK；共440真实stage terminal，三个P均达到两owner。6次真实SRAM读取验证最终写回。旧128B、W17/18、跨通道重复identity、真实启动purge、保留VALID、reserved取消和实际FENCE回归仍跑。stage真实DONE背压时，即使fabric已空也不允许切换mode。独立读trace证明 5542合法reserve=5541真DDR return+1真实reserved取消。
+
+同一pressure测试2/4个S128字的最短真实时间：DDR landing到可见raw1拍，raw到首S请求1拍，raw到末S ACK4/6拍，末ACK后1拍才释放raw，再至少1拍消费DONE。两种路径raw到末S ACK中位数5/8拍；完整分位数见 dma-stage-three-p-audit-102487.json。三P的432个混合压力动态请求跨2081–2135拍，包含同一fabric上的W/legacy竞争、真实S反压和有限DDR peer，不能当整个动态Dot或整模型速度。联合fixture不是已部署的动态运算完整程序。run104定时模型初次构建错误完整保留，102487严格检查未豁免这些错误。
+

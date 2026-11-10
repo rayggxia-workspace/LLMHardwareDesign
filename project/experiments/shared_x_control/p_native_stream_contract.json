@@ -2,7 +2,7 @@
   "schema": "P-native-fixed-staging-input/1",
   "module": "p_native_stream_record_executor",
   "source_baseline": "24541625c",
-  "status": "native candidate; typed service2 and whole outer not registered",
+  "status": "typed service2 one-P real RTL candidate; complete projection/FFN outer is not qualified",
   "M_ABI": "0x02504d02",
   "input_window": {
     "bytes": 256,
@@ -40,7 +40,8 @@
     "valid": "actual16 source S128 responses complete for success, or genuine cancelled partial LOAD invalidation; matching full identity and true source read drain",
     "ready": "outer accepts matching receipt explicitly; no A_loaded/EXEC before success receipt handshake",
     "success_S_reuse": "error0 receipt plus COPY/link/destination-write/source-read drain permits RX release even while A's internal payload/use lease remains live",
-    "error": "error1 is a cancelled invalid LOAD terminal, never a success consumer proof. RX cancellation additionally requires explicit release_cancel and actual COPY/S/A drain."
+    "error": "error1 is a cancelled invalid LOAD terminal, never a success consumer proof. RX cancellation additionally requires explicit release_cancel and actual COPY/S/A drain.",
+    "post_release_shift": "capture existing 6bit shift on matching LOAD admission; then use captured shift for W JOIN/EXEC and exact A replay check. No released RX lookup or destination86-entry directory."
   },
   "normal_early_cancel": {
     "when": "COPY may stop before A's16 words arrive; no EXEC has been issued",
@@ -65,19 +66,25 @@
     "actual_quant_header_COPY_M_S": "102353 eighteen trials; real U/P ordinary S, fallback S32-to-A16 shift0,128bit header/data wires, actual COPY ACK prefix and true LOAD receipt, staging overwrite while A live, integer oracle",
     "actual_COPY_halt_cancel_reuse": "102359 eighteen trials; real COPY halt at partial prefix, source/link/S/A and M owners drain, then same owner/context reused numerically",
     "not_qualified": [
-      "typed service2 admission",
       "complete projection/FFN outer",
-      "MC program and global DMA joined to streamed input",
-      "fullK11008 streamed execution",
       "three-P throughput",
-      "two-native-active guard",
       "whole model",
       "five providers",
       "COPY generation general rearm",
       "emergency raw ABORT recovery",
       "physical300MHz",
-      "energy/token_s"
-    ]
+      "energy/token_s",
+      "checkpoint-backed fullK11008 stream",
+      "whole-model M2 timing",
+      "resident X reuse and its end-to-end cost"
+    ],
+    "typed_service2_program": "102390 and 102395 each18; oneP bounded K128/256 true MC/LC PM, DDR fetch/CRC, actual globalDMA and quant/Header/COPY/A/M/S",
+    "synthetic_fullK11008": "102392 eighteen, 86 real stages with current matching RX metadata and captured A shift,1462 W64 requests and returns, independent synthetic S32 oracle; no checkpoint claim",
+    "M2_serial_and_compatibility": "102405 trueS peer-frame two-owner guard2 error/cancel,102407 actual M2 V2 and P stream/S numerical compatibility at one prepared record; no dual issue P throughput",
+    "M2_bounded_P_pair": "102412 and 102423 eighteen each, actual M2 V2 + real COPY/S and two W preparations. Same-tile consecutive K, true INPUT EOP releases issue, independent true RF/S completion.",
+    "M2_bounded_cancel": "102417 and 102424 thirty-six each, pre-EXEC and after-first-INPUT exact cancel/drain/reuse, including unadvanced second tile K.",
+    "M2_actual_program": "102429 eighteen, one P, actual MC/LC PM and global DMA, 8 scopes, 18 records, 331 DDR beats, 24 result ACK. Seed1 7386 cycles.",
+    "synthetic_Gate_Up_K2048": "102433 eighteen, two RF owners, ordinary W8, sixteen true quant/Header/COPY/LOAD tiles, 544 W64 req/return, 4 result ACK, 6077-6085 cycles incl fixture source writes. One P, no full FFN or checkpoint quality."
   },
   "COPY_ordered_S_safety": {
     "stream_PREFETCH_NEXT_WORD": 0,
@@ -89,5 +96,13 @@
       "positive": 288,
       "cancel": 48
     }
+  },
+  "M2_bounded_resource_accounting": {
+    "extra_local_control_bits": 355,
+    "additional_data_payload_bytes": 0,
+    "additional_private_SRAM_bytes": 0,
+    "prepared_W_records": 2,
+    "guarded_result_slots": 2,
+    "separately_counted": "M2 leaf122.125B and guard metadata"
   }
 }

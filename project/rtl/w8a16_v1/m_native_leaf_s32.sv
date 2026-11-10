@@ -596,6 +596,11 @@ module m_native_leaf_s32 (
   n_restore_commit_full_k=0;
   n_restore_commit_group_k=0;
   n_restore_commit_n=0;
+  // Control context is an address, sampled only when n_control_valid
+  // handshakes. Keep it stable even while invalid: zero-gating it through
+  // full command validation creates a false data dependence from scope
+  // contents -> valid -> RF read-address mux -> prefix arithmetic.
+  n_control_context=handle;
   if(command_pending&&!command_reply_valid&&!command_bad)case(op)
    ALLOC:if(!alloc_hold)begin n_alloc_valid=1;n_alloc_key=scope_key[handle];n_alloc_record=record_id;n_alloc_n=scope_n[handle];n_alloc_head16=scope_head[handle];end
    EXEC:begin
@@ -605,7 +610,7 @@ module m_native_leaf_s32 (
     n_exec_kk=word1[65:50];n_exec_a_slot=word1[66];n_exec_a_generation=word1[82:67];n_exec_a_shifts={8{runtime_shift}};n_exec_bias=scope_bias[handle];
    end
    CONTEXT,RESTORE:begin
-    n_control_valid=1;n_control_kind=op==RESTORE?3'd1:context_kind;n_control_context=handle;n_control_owner=scope_owner[handle];
+    n_control_valid=1;n_control_kind=op==RESTORE?3'd1:context_kind;n_control_owner=scope_owner[handle];
     n_control_ticket=session;n_control_full_k=scope_full_k[handle];n_control_k_offset=op==RESTORE?word3[15:0]:16'd0;
     n_control_group_k=scope_head[handle]?8'd16:8'd128;n_control_n=scope_n[handle];n_control_previous=payload;
     if(op==RESTORE)begin

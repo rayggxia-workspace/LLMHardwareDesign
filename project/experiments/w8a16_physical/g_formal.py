@@ -1,4 +1,4 @@
-"""Strict native synthesis-to-actual-ODB G32 equivalence under original limits."""
+"""Strict native synthesis-to-actual-ODB G32 or E32 AP64 equivalence under original limits."""
 import argparse
 import json
 import os
@@ -22,11 +22,12 @@ def main():
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--function", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--top", choices=("g_s32", "e_s32_ap64"), default="g_s32")
     args = parser.parse_args()
     check_native()
     assert len(os.sched_getaffinity(0)) in {10, 12}
     folder, _, flow, results = source(args.source)
-    assert flow["top"] == "g_s32"
+    assert flow["top"] == args.top
     function_receipt = json.loads((args.function/"receipt.json").read_text())
     assert function_receipt["passed"]
     function = json.loads((args.function/"final-function.json").read_text())
@@ -54,8 +55,8 @@ def main():
             target.mkdir()
             verify(ROOT, target, 1, lambda command, log: run(command, f"control-{polarity}-"+log), polarity)
         before, before_proof = export(ROOT, args.out, run, results/"1_synth_lec.v", LIB,
-            "g_s32", "before", constant_functions=True)
-        after, after_proof = export(ROOT, args.out, run, actual, LIB, "g_s32", "after", constant_functions=True)
+            args.top, "before", constant_functions=True)
+        after, after_proof = export(ROOT, args.out, run, actual, LIB, args.top, "after", constant_functions=True)
         assert before_proof["removed_count"] == 0 and after_proof["removed_count"] > 0
         config = "format: verilog\ninput_paths:\n  - "+str(before)+"\n  - "+str(after)+"\nliberty_files:\n - "+str(LIB)+"\nlog_file: "+str(args.out/"kepler.log")+"\n"
         (args.out/"kepler.yml").write_text(config)

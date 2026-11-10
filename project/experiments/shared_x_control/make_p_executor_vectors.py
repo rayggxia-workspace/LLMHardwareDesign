@@ -33,6 +33,7 @@ def main():
     p.add_argument('--records', type=Path, required=True)
     p.add_argument('--out', type=Path, required=True)
     p.add_argument('--mc-assembler', type=Path)
+    p.add_argument('--stream-a16', action='store_true', help='typed service2 descriptors; numeric oracle unchanged')
     a = p.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     raw = a.records.read_bytes()
@@ -57,7 +58,7 @@ def main():
                 inputs += inwords + [bytes(16)] * (32 - len(inwords))
                 base = 0x100000 + cid * 0x10000
                 descriptor = bytearray(128)
-                struct.pack_into('<IHHII', descriptor, 0, 0x02505001, 128, 1, 0x02504d02, 25001)
+                struct.pack_into('<IHHII', descriptor, 0, 0x02505001, 128, (2 if a.stream_a16 else 1), 0x02504d02, 25001)
                 struct.pack_into('<IIII', descriptor, 16, 1, 9 + cid, 8, 7)
                 struct.pack_into('<IIII', descriptor, 32, 1000 + cid * 32, 2000 + cid * 32, 1, 100 + cid * 16)
                 struct.pack_into('<QQIIHBBHHHBBHHHHH', descriptor, 48,
@@ -124,7 +125,7 @@ def main():
     (a.out / 'manifest.json').write_text(json.dumps(dict(schema='P-real-serialized-range-numeric/1',
         public_records_sha256=hashlib.sha256(raw).hexdigest(), cases=manifest,
         **program_manifest,
-        admission='LOCAL_CONTIG_RANGE preloaded A16, explicit committed shift8; not lazy quantization, dynamic Attention, whole model, energy, performance or physical qualification'), indent=2) + '\n')
+        admission=('STREAM_A16 typed current256B stage with separately real quant/header/COPY producer' if a.stream_a16 else 'LOCAL_CONTIG_RANGE preloaded A16, explicit committed shift8; not lazy quantization, dynamic Attention, whole model, energy, performance or physical qualification')), indent=2) + '\n')
 
 
 if __name__ == '__main__':

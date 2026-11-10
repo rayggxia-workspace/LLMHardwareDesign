@@ -1,0 +1,30 @@
+{
+  "schema": "real-native-control-global-evidence/1",
+  "run": 76,
+  "job": 102387,
+  "source": "69c55839d",
+  "state": "FAILED",
+  "note": "known mixed asynchronous MC and synchronous LC reset fixture policy not yet scoped to new test top; strict build failed",
+  "allocation_CPUs": 60,
+  "elapsed_seconds": 3.0,
+  "TotalCPU_seconds": 2.129,
+  "package": "runs/run76.tar.gz",
+  "package_sha256": "b7ab31cee8281d0035f0200dc90a379ff34d0c08b431e63b14976489b926f7cb",
+  "package_transport_manifest": "runs/run76.tar.gz.manifest.json",
+  "package_transport_manifest_sha256": "a5b2a9496847a5c0d388b455e891a43a61d884d74a662f1462935e7f61d77dbd",
+  "package_members": 196,
+  "functional_clock_ns": 10,
+  "not_300MHz_STA": true,
+  "qualification": "LOCAL_CONTIG K128/256 static W8A16, explicit shift8/zero bias. Actual MC/LC PM, true four-bank S, M and global DMA only in named global fixtures. FENCE/cancel/admission fixtures retain their explicitly pinned backend. No streamed whole projection, whole FFN/model, five-provider, physical, energy or token/s qualification.",
+  "logs": [],
+  "failures": [
+    {
+      "path": "./results/build-p-fabric.log",
+      "errors": [
+        "%Warning-SYNCASYNCNET: project/rtl/mother_control_native/mother_control_native64_transport128.sv:5:14: Signal flopped as both synchronous and async: 'tb_p_stream_program.__Vcellinp__mother__rst_ni'",
+        "%Error: Exiting due to 1 warning(s)"
+      ]
+    }
+  ],
+  "timing_from_real_RTL": []
+}

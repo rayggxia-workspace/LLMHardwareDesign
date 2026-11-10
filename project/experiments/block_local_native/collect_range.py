@@ -16,7 +16,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument('--package-dir', type=Path, required=True)
     p.add_argument('--out', type=Path, required=True)
-    p.add_argument('--family', choices=('range', 'quant', 'gscale', 'scaledir', 'context', 'scope', 'scopestream', 'copymeta', 'copy-a', 'scatter', 'gcopy-a', 'copywin', 'copylook', 'distmid'), default='range')
+    p.add_argument('--family', choices=('range', 'quant', 'gscale', 'scaledir', 'context', 'scope', 'scopestream', 'copymeta', 'copy-a', 'scatter', 'gcopy-a', 'copywin', 'copylook', 'distmid', 'e32', 'ejoint', 'ffnmid'), default='range')
     p.add_argument('--receipt-cache', type=Path, help='Keep large raw receipts in owned remote storage and this exact local mirror; commit index/source only')
     a = p.parse_args()
     submission = json.loads((a.package_dir / 'submission.json').read_text(encoding='utf-8'))
