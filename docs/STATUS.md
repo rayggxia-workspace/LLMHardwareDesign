@@ -1,5 +1,9 @@
 # 当前状态
 
+## 2026-11-10：共享X/S32底座联合实现启动
+
+[Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) / [PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251) 的[合同](plans/w8a16-next-base-contract.md)替代旧S128草稿，结合PR249的窄持续状态/有限供数和PR243共享A32。首门为相同51.2GB/s、3P、S32/Mid32条件下不低于9.21564723269 token/s；未通过前不冻结资源或声称新300 MHz验收。私有S不扩容、不默认LVT复制；共享池/权重/附属寄存器独立记面积，main紧凑宏为最终占地和端点比较基点。联合评估、物理基线和控制合同并行准备；宏RTL/物理、五类组/LC/MC/指令与DP适配全部仍待实际完成。详见[执行入口](../work/YUZE-LU/250/README.md)，登记/看板缺项继续交接。
+
 2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 
 2026-11-08，用户授权将母控 [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 合入 main，并在[五类 Block 与母控统一入口](experiments/assets/five-leaf-bases/README.md)并列索引源码、图册及双格式验收包。工程证据不变；合并结果以 PR 在线回执为准，授权整合不冒充独立审查或九实例系统验收。

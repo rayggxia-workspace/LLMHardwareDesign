@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-10（CST）共享X/S32底座联合实现
+
+[Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) / [PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)：已在隔离分支修订旧S128合同，明确51.2GB/s同条件9.21564723269 token/s性能门、私有S16 KiB不扩容/无LVT、共享池/权重单独面积、main紧凑最终利用率/端点和300 MHz验收。三个准备分支分别做联合性能、物理基线、控制服务；不是新宏已实现。已执行管理检查PASS，业务仿真/新EDA未完成。下一步先复现基线并评估共享X与S内X，再冻结资源推进RTL/物理和控制，最终DP适配。详见[工作索引](../../work/YUZE-LU/250/README.md)；未完成不done、不自合并。登记PR5 pending，缺board/Projects能力，状态unverified/同步pending，审查与管理员待指定。
+
 ## 2026-11-08（CST）U 原生入口和双向发送修复
 
 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) → `in_review`；[PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 待独立审查。独立 TX 槽和普通三源入口修复后，两版重新综合并通过完整原版 GDS DRC 0、TT 300 MHz、电气/PG及三档代表上层 RC。U_128 setup/hold +255.014/+14.595 ps，U_64 +73.082/+0.212 ps；最终网表 48/48、78/78 全部通过。两包及全部 1,389/2,101 文件回收核验成功，31 硬件源文件与审查代码一致。[最终回执](../../work/YUZE-LU/212/u-native-fix.md)。P 不变。用户已授权将 #221 合入 main；五类图册 U 两版已绑定新验收包，P/C/F/J 图源不变。实际合并状态以 PR 在线回执为准，Issue 在线 assignee 未指定。登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，复用接入交接 Issue7。
