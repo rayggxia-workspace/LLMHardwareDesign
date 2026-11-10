@@ -2,7 +2,12 @@
 // One ordinary U S128 read in flight; one 16B holding register per P.
 // A prefetched source response may backpressure at the existing U provider
 // while old destination ACKs drain. No private wide port or extra data FIFO.
-module early_copy_3p(
+module early_copy_3p #(
+  // A source that also receives this COPY shares one ordered S response
+  // stream. Prefetching its next read can block the old write ACK behind
+  // that response while all payload holds still wait for those ACKs.
+  parameter logic PREFETCH_NEXT_WORD=1'b1
+)(
   input logic clk,reset,halt,
   input logic start_valid,output logic start_ready,
   input logic [127:0] start_key,
@@ -95,7 +100,8 @@ module early_copy_3p(
           for(integer i=0;i<3;i=i+1) begin P_base[i]<=start_P_bases[10*i+:10];committed[i]<=0;end
         end
       end
-      if(active&&!done_valid&&!halt&&!failed&&!request_pending&&!inflight&&issued<words) begin
+      if(active&&!done_valid&&!halt&&!failed&&!request_pending&&!inflight&&issued<words&&
+         (PREFETCH_NEXT_WORD||hold_full==0)) begin
         request_pending<=1;request_index<=issued[9:0];request_tag<={generation_q,5'd0,issued};
       end
       // Proposed source valid survives cancellation. Its response is then

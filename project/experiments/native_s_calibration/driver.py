@@ -60,6 +60,11 @@ if os.environ.get('NS_ROUND') == 'rf-II1-1':
         'oldRF-II3-reference', 'RFII1-preparse-gap1-candidate', 'RFII1-measured-guard-gap5',
         'RFII1-fast-guard-gap3-candidate', 'RFII1-gap5-no-G-overlap', 'RFII1-gap5-credit4',
         'RFII1-gap5-no-Alookahead', 'RFII1-gap1-no-G-overlap-candidate')]
+if os.environ.get('NS_ROUND')=='dynamic15-1':
+    PLANS=[(name,4,2,1,0,1) for name in (
+        'historical-dynamic-placeholder-reference','measured15-ideal-3P','measured15-observedstress-3P',
+        'measured15-ideal-2P','measured15-observedstress-2P','measured15-ideal-1P',
+        'measured15-observedstress-1P','measured15-ideal-3P-repeat')]
 name, mode, scope, word_cycles, response_cycles, ack = PLANS[int(os.environ["SLURM_PROCID"])]
 # Singularity on this host resets inherited CPU affinity. Restore the exact
 # srun allocation captured outside the container, then assert it again inside.
@@ -130,7 +135,7 @@ if os.environ.get('NS_ROUND') == 'G-overlap-1':
                NS_EARLY_STRIPE=str(int(rank != 2)), NS_G_OVERLAP=str(int(rank not in (0, 5))),
                NS_ORDINARY_PIPE_EXTRA=str(2 if new_pipeline else 0), NS_HEAD_PIPE_EXTRA=str(16 if new_pipeline else 0),
                NS_HEAD_INPUT_EXTRA=str(8 if new_pipeline else 0))
-if os.environ.get('NS_ROUND') == 'rf-II1-1':
+if os.environ.get('NS_ROUND') in ('rf-II1-1','dynamic15-1'):
     rank = int(os.environ['SLURM_PROCID'])
     env.update(NS_NATIVE='4', NS_GUARD_CYCLES='3', NS_CONTEXT_CYCLES='3',
                NS_RF_CONTEXTS='16', NS_PROJECT_COLS='192', NS_SPILL='0',
@@ -140,6 +145,12 @@ if os.environ.get('NS_ROUND') == 'rf-II1-1':
                NS_ORDINARY_PIPE_EXTRA='2', NS_HEAD_PIPE_EXTRA=str(16 if rank == 0 else 2),
                NS_HEAD_INPUT_EXTRA=str(8 if rank == 0 else 0), NS_M_PROFILE_JOB=str(102202 if rank == 0 else 102228),
                NS_EXEC_GAP=str(1 if rank in (0, 1, 7) else 3 if rank == 3 else 5))
+if os.environ.get('NS_ROUND')=='dynamic15-1':
+    rank=int(os.environ['SLURM_PROCID'])
+    env.update(NS_HEAD_PIPE_EXTRA='2',NS_HEAD_INPUT_EXTRA='0',NS_M_PROFILE_JOB='102228',NS_EXEC_GAP='5',
+               NS_G_OVERLAP='1',NS_A_PREFETCH='1',NS_RECORD_CREDITS='6',
+               NS_DYNAMIC=str(int(rank!=0)),NS_DYNAMIC_PCOUNT=str(2 if rank in (3,4) else 1 if rank in (5,6) else 3),
+               NS_DYNAMIC_RECORD_CYCLES=str(1483 if rank in (2,4,6) else 1256))
 args = ["queued_pipe_w8", "prefix_pair_combine", "8", "1", "1", "16", "0", "4", "0", "1", "1", "1"]
 trace = Path("/public/home/yuzelu/project-circuit/issue248-stream-quant-20261110-40/restored/inputs/decode512.trace")
 report = dict(plan=name, passed=False, source_env={k: v for k, v in env.items() if k.startswith(("SQ_", "BN_", "CL_", "NV_", "SX_", "NS_"))},

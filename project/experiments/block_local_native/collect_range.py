@@ -3,6 +3,7 @@ import argparse
 import base64
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import shlex
@@ -15,7 +16,8 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument('--package-dir', type=Path, required=True)
     p.add_argument('--out', type=Path, required=True)
-    p.add_argument('--family', choices=('range', 'quant', 'gscale', 'scaledir', 'context', 'scope', 'copymeta'), default='range')
+    p.add_argument('--family', choices=('range', 'quant', 'gscale', 'scaledir', 'context', 'scope', 'scopestream', 'copymeta', 'copy-a', 'scatter', 'gcopy-a', 'copywin', 'copylook', 'distmid'), default='range')
+    p.add_argument('--receipt-cache', type=Path, help='Keep large raw receipts in owned remote storage and this exact local mirror; commit index/source only')
     a = p.parse_args()
     submission = json.loads((a.package_dir / 'submission.json').read_text(encoding='utf-8'))
     root = submission['remote_root']
@@ -45,6 +47,15 @@ print(hashlib.sha256((root/'receipts.tar.gz').read_bytes()).hexdigest())
     a.out.mkdir(parents=True, exist_ok=True)
     files = {}
     for kind, data in [('source', source.read_bytes()), ('receipts', receipt.read_bytes())]:
+        if kind == 'receipts' and a.receipt_cache is not None:
+            a.receipt_cache.mkdir(parents=True, exist_ok=True)
+            mirror = a.receipt_cache / (str(job) + '-receipts.tar.gz')
+            if not mirror.exists():
+                os.link(receipt, mirror)
+            assert hashlib.sha256(mirror.read_bytes()).hexdigest() == expected
+            files['receipts_external'] = dict(uri=HOST + ':' + root + '/receipts.tar.gz', bytes=len(data))
+            files['receipts_sha256'] = expected
+            continue
         name = str(job) + '-' + kind + '.tar.gz.b64'
         (a.out / name).write_bytes(base64.b64encode(data))
         files[kind + '_archive'] = name

@@ -179,6 +179,10 @@
  void ns_emit(){
   std::cout<<",\"native_service\":{\"level\":"<<nv_int("NS_NATIVE",0)
    <<",\"static_calls\":"<<ns_static_calls<<",\"static_M_records\":"<<ns_static_tiles
+   <<",\"dynamic_partials\":"<<ns_dynamic_partials<<",\"dynamic_worker_calls\":"<<ns_dynamic_calls
+   <<",\"dynamic_S_read_B\":"<<ns_dynamic_S_read_B<<",\"dynamic_staged_write_B\":"<<ns_dynamic_staging_B
+   <<",\"dynamic_local_return_B\":"<<ns_dynamic_local_return_B<<",\"dynamic_service_cycles_sum\":"<<ns_dynamic_service_cycles
+   <<",\"dynamic_15pass_schedule\":"<<(nv_int("NS_DYNAMIC",0)?"true":"false")
    <<",\"A_S_read_B\":"<<ns_A_load_B<<",\"A_reused_commands\":"<<ns_A_reuse
    <<",\"RAW_groups\":"<<ns_raw_groups<<",\"RF_RNE_groups\":"<<ns_RF_groups
    <<",\"max_W_banks\":"<<ns_W_peak<<",\"max_A_tiles\":"<<ns_A_peak

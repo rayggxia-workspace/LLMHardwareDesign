@@ -163,6 +163,13 @@ int main(int argc,char** argv){
   drain_cancelled(cancelled);need(cancel_peer.issued[0],"unrelated MC issue blocked by drain");need(t.free_mask&(1<<cancelled.bank),"cancel did not free");
   fill_group({&cancel_peer});wait_ack(cancel_peer);begin_read(cancel_peer);wait_for([&]{return cancel_peer.read==8;},"cancel peer read");release(cancel_peer);reading=nullptr;wait_for([]{return expected.empty();},"cancel peer raw");
   before=faults;fill_ok=false;IDENT(fill,cancelled);t.fill_beat=0;t.fill_last=0;t.fill_valid=1;do{tick();}while(!fire_fill);t.fill_valid=0;fill_ok=true;fault_drain(before);
+  // A true matching CANCEL and an unrelated malformed return can both be
+  // accepted: only the latter owns the fault slot, and no DMA credit is
+  // removed for its bad identity. This is the actual ready-chain cut.
+  auto concurrent_cancel=clone(rows[0],1203);allocation(concurrent_cancel);
+  before=faults;fill_ok=false;IDENT(fill,cancelled);t.fill_beat=0;t.fill_last=0;t.fill_valid=1;
+  t.cancel_valid=1;IDENT(cancel,concurrent_cancel);tick();need(fire_fill&&fire_cancel,"good cancel serialized behind bad fill");
+  t.fill_valid=0;t.cancel_valid=0;fill_ok=true;fault_drain(before);drain_cancelled(concurrent_cancel);
   // Last actual DMA return and cancellation in one cycle must not publish
   // a ready record or fabricate a FILLACK that could reauthorize the owner.
   auto final_cancel=clone(rows[0],1202);allocation(final_cancel);

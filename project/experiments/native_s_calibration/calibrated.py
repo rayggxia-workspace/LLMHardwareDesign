@@ -17,8 +17,17 @@ def apply(destination):
     model = root / 'model.cpp'
     text = model.read_text()
     text = replace(text, '#include "detail.hpp"', '#include "native_quantizer_profile.hpp"\n#include "detail.hpp"')
-    text = replace(text, '#include "matrix.inc"', '#include "native_s128_service.inc"\n#include "native_projection.inc"\n#include "native_stripe.inc"\n#include "matrix.inc"')
+    text = replace(text, '#include "matrix.inc"', '#include "native_s128_service.inc"\n#include "native_projection.inc"\n#include "native_stripe.inc"\n#include "native_dynamic.inc"\n#include "matrix.inc"')
     text = replace(text, 'read(trace);SC_THREAD(run);', 'ns_initialize();read(trace);SC_THREAD(run);')
+    text = replace(text, '}else ack=input_store.reserve(response,s_port_duration(cfg,b->group,cfg.beat));',
+        '''}else if(b->operand_bank==-2){
+      require(b->flow==detail::A||b->flow==detail::DYNAMIC_B,"typed raw-S staging source");
+      require(b->bytes==32||b->bytes==64,"one finite raw64B return slot");
+      // The existing MC return slot retains this64B beat until serialized
+      // native S writes ACK. No second common S reservation or free512B FIFO.
+      // Registered first request; each16B request/RTT2/next-request edge=3cyc.
+      ack=input_store.reserve(response+C,ceildiv(b->bytes,U(16))*3*C);
+     }else ack=input_store.reserve(response,s_port_duration(cfg,b->group,cfg.beat));''')
     text = replace(text, 'sx_emit();std::cout<<"}\\n";', 'sx_emit();ns_emit();std::cout<<"}\\n";')
     text = replace(text, 'try{\n   for(size_t i=0;i<ops.size();)', 'try{\n   if(nv_int("NS_CHECK_QUANT",0)){ns_check_quantizer();passed=true;sc_stop();return;}\n   for(size_t i=0;i<ops.size();)')
     text = replace(text,
@@ -36,6 +45,7 @@ def apply(destination):
     (root / 'native_projection.inc').write_bytes(Path(__file__).with_name('native_projection.inc').read_bytes())
     (root / 'native_stripe.inc').write_bytes(Path(__file__).with_name('native_stripe.inc').read_bytes())
     (root / 'native_cl_service.inc').write_bytes(Path(__file__).with_name('native_cl_service.inc').read_bytes())
+    (root / 'native_dynamic.inc').write_bytes(Path(__file__).with_name('native_dynamic.inc').read_bytes())
     quant = json.loads(Path(__file__).with_name('fixtures').joinpath('quantizer-102168.json').read_text())
     header = '#pragma once\n#include <vector>\nnamespace ns_quant_profile {\n'
     for frame in quant['frames']:
@@ -47,7 +57,7 @@ def apply(destination):
     text = matrix.read_text()
     text = replace(text,
                    'if(context_target(o)){context_matrix_worker(o,w,*done[w]);}else{matrix_worker(o,w,*done[w]);}',
-                   'if(ns_target(o)){ns_matrix_worker(o,w,*done[w]);}else if(context_target(o)){context_matrix_worker(o,w,*done[w]);}else{matrix_worker(o,w,*done[w]);}')
+                   'if(ns_dynamic_target(o)){ns_dynamic_worker(o,w,*done[w]);}else if(ns_target(o)){ns_matrix_worker(o,w,*done[w]);}else if(context_target(o)){context_matrix_worker(o,w,*done[w]);}else{matrix_worker(o,w,*done[w]);}')
     matrix.write_text(text, newline='\n')
     closure = root / 'closure_service.inc'
     text = closure.read_text()

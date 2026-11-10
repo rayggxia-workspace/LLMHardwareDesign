@@ -261,7 +261,8 @@
         "word0": "short_header; only session nonzero, record/scope/scope_generation/bank/high16 all zero; matching real MC purge then response"
       }
     },
-    "identity": "BEGIN key128 names input X/state job-object version; owner128 names distinct output projection/RF owner. gate/up can share key while having different owner. EXEC session maps cached key plus record, A_slot/generation,kk,use and shift; same X tile may be replayed under different gate/up sessions without aliasing RF owners."
+    "identity": "BEGIN key128 names input X/state job-object version; owner128 names distinct output projection/RF owner. gate/up can share key while having different owner. EXEC session maps cached key plus record, A_slot/generation,kk,use and shift; same X tile may be replayed under different gate/up sessions without aliasing RF owners.",
+    "bounded_reply": "One additional kind2/status8/valid1 command reply holds the existing128B command_frame until TX EOP. It shares no diagnostic payload slot. New LC frames cannot overwrite the held frame; native command dispatch does not depend on current malformed MC/A/fence traffic."
   },
   "response": {
     "beat_bits": 128,
@@ -472,7 +473,8 @@
       "cancel": "after all held requests accepted, no more requests permitted, and at least one issued beat: stable CLOSE until MC ready atomically registers no-more-issue",
       "drain": "last issued return alone cannot retire; wait actual CLOSE accept and all issued returns; zero-issued cancel has no global descriptor to close",
       "charged_state": "table_closed4 + close_locked1 + locked_close_bank2 and decode; three real physical port signals (34bits)"
-    }
+    },
+    "registered_request_offer": "One actual registered VALID/address64 plus existingbank2/beat5; address held until real MC ready. Same-cycle refill supports II1, with outstanding+current_accept<32 before another offer. Per-bank former base register reused as next-address cursor; four original-channel bits preserve record stripe across2KiB crossings. First request has one additional preparation cycle versus oldcombinational aperture. CANCEL waits a held offer and CLOSE/true issued returns."
   },
   "finite_state_budget": {
     "native_W_data_B": 4608,
@@ -493,12 +495,32 @@
     "scope_register_bits": 8800,
     "scope_fields": "per RF context: valid1,generation16,key128,owner128,fullK16,n4,head1,bias256 =550 bits; BEGIN_SCOPE is amortized across that output projection K128 records",
     "scope_next_k_register_bytes": 32,
-    "global_range_credits": "Independent LC range6 issued-ticket metadata candidate; W4, RF16, M1exec and external guard2 capacities stay distinct. An INPUT ACK releases a W bank only; it does not retire a FINAL/SPILL range ticket before true S ACK."
+    "global_range_credits": "Independent LC range6 issued-ticket metadata candidate; W4, RF16, M1exec and external guard2 capacities stay distinct. An INPUT ACK releases a W bank only; it does not retire a FINAL/SPILL range ticket before true S ACK.",
+    "command_reply_bits": 11,
+    "request_registered_address_bits": 64,
+    "record_original_channel_bits": 4,
+    "request_cursor_extra_bytes": 0,
+    "reply_and_request_extra_bits": 79
   },
   "capabilities": {
     "W8A16_static_projection": "candidate product profile",
     "dynamic_S32xS32_QK_AV": "unsupported; no inherited old M coverage",
     "attention_decomposition_candidate": "UNIMPLEMENTED/UNREGISTERED: signed32 A can use three balanced signed16 digits at radix 2^15; signed32 W can use five balanced signed8 digits at radix 2^7. This gives 15 A16xW8 partial dot passes, followed by exact shifted recombination. Worst-case K128 S32xS32 sum needs 71 signed bits, so current S32 RF alone cannot implement exact recombination; wider accumulator/format or a separately verified quantized numeric profile is necessary. No old dynamic32 timing/physical claim transfers."
   },
-  "history_note": "ABI 0x02504d01 fixed8 sketch was never a product implementation and is intentionally absent from this machine contract"
+  "history_note": "ABI 0x02504d01 fixed8 sketch was never a product implementation and is intentionally absent from this machine contract",
+  "measured_candidate_timing": {
+    "source": "f08aefb93df071535f461da24b6829c5949bf5bf",
+    "job": 102307,
+    "scope": "18strict product-interface unit runs, actualguard withhostS RTT2/random3..9, no300MHz/systemqualification",
+    "core_to_INPUT_EOP_cycles": 11,
+    "core_to_CONTINUE_EOP_cycles": 16,
+    "core_to_FINAL_EOP_cycles": 18,
+    "actual_head_consecutive_guard_EXEC_II": 21,
+    "first_DMA_request_extra_cycles": 1,
+    "metadata_only_reply_source": "441df71b33bde41018e7ddb5568938af9117b182",
+    "metadata_only_job": 102303,
+    "normal_execution_prepare_extra_cycles": 0,
+    "faults_per_run": 10,
+    "quality_boundary": "34declared real-weight/source-slice records includingdirectheadderivation andNtail; nowhole-modelnewMid32qualification"
+  }
 }

@@ -1,0 +1,93 @@
+{
+  "schema": "P-native-fixed-staging-input/1",
+  "module": "p_native_stream_record_executor",
+  "source_baseline": "24541625c",
+  "status": "native candidate; typed service2 and whole outer not registered",
+  "M_ABI": "0x02504d02",
+  "input_window": {
+    "bytes": 256,
+    "S_address": "input_s_base + word0..15, independent of global K",
+    "header_identity": {
+      "key": 128,
+      "COPY_generation": 16,
+      "K_elements": 16,
+      "COPY_session": 32,
+      "COPY_ticket": 32
+    },
+    "new_record_admission": "A_first requires actual published header window with matching full key/global K and nonzero wire generation; cancelled held records error-retire without requiring nonexistent data",
+    "A_internal_kk": "global K_elements/128",
+    "scale_directory_lookup": "global K_elements"
+  },
+  "COPY_progress": {
+    "source": "early_copy_epoch_3p real accepted start, key/gen16/K_elements/session32/ticket32 plus actual destination S128 write ACK prefix",
+    "A_effective_prefix": "prefix only when current header and captured first-record identity and actual COPY progress all match every field; otherwise zero",
+    "same_key": "neither same tensor key nor a new header can relabel a stale nonzero prefix",
+    "generation_lifetime": "16bit remains16bit; producer must reject wrap until real coordinated link/S/header drain and namespace rearm. Current upstream epoch wrapper only has reset rearm; no general lifetime qualification claimed."
+  },
+  "LOAD_receipt": {
+    "fields": [
+      "key128",
+      "COPY_generation16",
+      "COPY_session32",
+      "COPY_ticket32",
+      "global_K_elements16",
+      "A_slot1",
+      "A_generation16",
+      "shift6",
+      "error1"
+    ],
+    "storage": "existing frontend one held LOAD receipt plus current-record metadata, no added data or receipt FIFO",
+    "valid": "actual16 source S128 responses complete for success, or genuine cancelled partial LOAD invalidation; matching full identity and true source read drain",
+    "ready": "outer accepts matching receipt explicitly; no A_loaded/EXEC before success receipt handshake",
+    "success_S_reuse": "error0 receipt plus COPY/link/destination-write/source-read drain permits RX release even while A's internal payload/use lease remains live",
+    "error": "error1 is a cancelled invalid LOAD terminal, never a success consumer proof. RX cancellation additionally requires explicit release_cancel and actual COPY/S/A drain."
+  },
+  "normal_early_cancel": {
+    "when": "COPY may stop before A's16 words arrive; no EXEC has been issued",
+    "A": "halt new reads, preserve held VALID, drain actual accepted source responses, hold exact error LOAD receipt until ACK, then flush invalid/planned references",
+    "M": "receive real ALLOC bank/gen; finish one bounded1088/1152B W FILL for exact existing byte accounting, then fresh-session CANCEL_INPUT op6 event9, DRAIN_INPUT op7 event6, and actual CTX_DROP kind4 RF control response",
+    "range": "error/abandon current and already offered unissued records with honest unadvanced K, no fabricated EXEC/INPUT/ABORT/RF-data/S-write ACK",
+    "cost": "normal cancellation may still fetch remaining bytes of the one current W record; partial W truncation and its byte counters are not registered by this profile",
+    "namespace_reserve": "default SESSION_LIMIT0xffffffe0 reserves32 IDs for bounded cleanup, distinct from COPY's16bit namespace"
+  },
+  "resource_accounting": {
+    "new_private_SRAM_bytes": 0,
+    "A_payload": "existing2x256B registers",
+    "results": "existing2x32B independent guard FIFO",
+    "extra_current_window_metadata_bits": 86,
+    "extra_early_cancel_metadata_bits": 67,
+    "bus_boundary": "full proof identities are internal LC/adapter metadata, not proposed wide leaf or mother-control pins",
+    "separate_upstream_cost": "real quantizer, header TX/RX, epoch COPY113bit state, existing per-P16B hold and S arbitration are separately counted; not included free in153bit executor delta"
+  },
+  "qualification": {
+    "native_stream_M_S": "102346 eighteen trials, eight K128/256 staticW8A16 scopes, explicit shift8",
+    "partial_LOAD_cancel_reuse": "102347 eighteen trials, four source words then real M CANCEL/DRAIN/DROP and same RF-context K256 reuse",
+    "actual_quant_header_COPY_M_S": "102353 eighteen trials; real U/P ordinary S, fallback S32-to-A16 shift0,128bit header/data wires, actual COPY ACK prefix and true LOAD receipt, staging overwrite while A live, integer oracle",
+    "actual_COPY_halt_cancel_reuse": "102359 eighteen trials; real COPY halt at partial prefix, source/link/S/A and M owners drain, then same owner/context reused numerically",
+    "not_qualified": [
+      "typed service2 admission",
+      "complete projection/FFN outer",
+      "MC program and global DMA joined to streamed input",
+      "fullK11008 streamed execution",
+      "three-P throughput",
+      "two-native-active guard",
+      "whole model",
+      "five providers",
+      "COPY generation general rearm",
+      "emergency raw ABORT recovery",
+      "physical300MHz",
+      "energy/token_s"
+    ]
+  },
+  "COPY_ordered_S_safety": {
+    "stream_PREFETCH_NEXT_WORD": 0,
+    "legacy_default": 1,
+    "reason": "same source/destination ordered S response HOL: next source response cannot block old destination ACK",
+    "extra_payload_bytes": 0,
+    "qualification": "102370/102371 actual UP numeric/cancel eighteen trials each; PP full86tile/six sweep validated separately by root102366; no throughput inheritance",
+    "actual_cycle_delta_seed1": {
+      "positive": 288,
+      "cancel": 48
+    }
+  }
+}

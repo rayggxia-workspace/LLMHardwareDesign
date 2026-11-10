@@ -123,7 +123,13 @@ module weight_records #(
  // Cancellation has priority over malformed issue traffic; good issues on
  // other banks remain independent. No ready->valid->cancel_ready loop.
  wire controls=base_controls&&!(issue_valid&&!issue_good&&!cancel_valid);
- assign cancel_ready=controls;
+ // A matching CANCEL is a state transition, not a fault producer. It can
+ // rendezvous with one malformed return, whose sole fault receipt stays
+ // owned by FILL. Keeping the good-CANCEL acceptance independent of the
+ // return tag cuts return validation -> cancel -> RF/raw/A ready without
+ // speculatively acknowledging cancellation or adding a payload buffer.
+ // A malformed CANCEL still serializes behind malformed FILL exactly once.
+ assign cancel_ready=!reset&&fault_space&&(cancel_good||!(fill_valid&&!fill_good));
  assign drain_ready=controls&&!cancel_valid&&drain_space;
  assign consumed_ready=controls&&!cancel_valid&&!drain_valid;
  assign start_ready=controls&&!cancel_valid&&!drain_valid&&!consumed_valid&&!stream_active;

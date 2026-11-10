@@ -21,10 +21,12 @@ def main():
     p.add_argument('--map-leaf', action='store_true')
     p.add_argument('--leaf-lint', action='store_true')
     p.add_argument('--leaf', action='store_true')
+    p.add_argument('--source-commit', help='immutable tested ancestor for a retained candidate')
     a = p.parse_args()
     assert re.fullmatch(r'/public/home/yuzelu/project-circuit/issue250-weight-20261111-[0-9]+', a.root)
     a.package_dir.mkdir(parents=True, exist_ok=False)
-    commit = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode().strip()
+    commit = subprocess.check_output(['git', 'rev-parse', a.source_commit or 'HEAD']).decode().strip()
+    subprocess.run(['git','merge-base','--is-ancestor',commit,'HEAD'],check=True)
     paths = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', commit, '--',
         'project/rtl/w8a16_v1/weight_records.sv', 'project/rtl/w8a16_v1/m_group_s32.sv',
         'project/rtl/w8a16_v1/m_native_s32.sv', 'project/rtl/w8a16_v1/projection_context_s32.sv',

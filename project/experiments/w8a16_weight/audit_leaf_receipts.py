@@ -4,7 +4,7 @@ from pathlib import Path
 
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
- p=argparse.ArgumentParser();p.add_argument('--run',type=Path,required=True);p.add_argument('--scale-stages',type=int,choices=(1,3),default=1);p.add_argument('--head-ii1',action='store_true');a=p.parse_args();r=a.run/'receipts'
+ p=argparse.ArgumentParser();p.add_argument('--run',type=Path,required=True);p.add_argument('--receipts',type=Path);p.add_argument('--scale-stages',type=int,choices=(1,3),default=1);p.add_argument('--head-ii1',action='store_true');p.add_argument('--dispatch-prepare',type=int,choices=(0,1),default=0);p.add_argument('--expected-faults',type=int,default=6);a=p.parse_args();r=a.receipts if a.receipts is not None else a.run/'receipts'
  assert not a.head_ii1 or a.scale_stages==3
  manifest=json.loads((r/'receipts-manifest.json').read_text())
  for name,digest in manifest.items():assert sha(r/name)==digest,name
@@ -25,8 +25,13 @@ def main():
    writes=collections.Counter((int(e[2]),int(e[3]))for e in events if e[0]=='S_REQ')
    assert writes==collections.Counter({(ticket,word):1 for ticket in snapshots for word in(0,1)}),'RF-only record wrote S / snapshot missed word'
    assert sum(e[0]=='S_ACK'for e in events)==len(writes)
-   assert sum(e[2]=='7'for e in responses)==6
-   a_by_record=collections.Counter(int(e[2])for e in events if e[0]=='A');assert all(v==8 for v in a_by_record.values())
+   assert sum(e[2]=='7'for e in responses)==a.expected_faults
+   a_by_record=collections.Counter(int(e[2])for e in events if e[0]=='A')
+   aborted={int(e[2]):int(e[3])for e in events if e[0]=='ABORT_PARTIAL'}
+   for rid,v in a_by_record.items():assert v==aborted.get(rid,8)
+   for rid,count in aborted.items():
+    assert count==3 and a_by_record[rid]==3 and any(e[2]=='5'and int(e[4])==rid for e in responses)
+    assert not any(e[2]in('3','4')and int(e[4])==rid for e in responses), 'abort fabricated normal completion'
    core={int(e[2]):int(e[1])for e in events if e[0]=='CORE_EXEC'}
    input_eop={int(e[3]):int(e[1])for e in responses if e[2]=='3'}
    rf_eop={int(e[3]):int(e[1])for e in responses if e[2]=='4'}
@@ -44,8 +49,8 @@ def main():
      er=next(e for e in responses if e[2]=='4'and int(e[4])==rid);sid=int(er[3]);head_sessions.append(sid)
      costs[rid]=dict(core_to_input_EOP=input_eop[sid]-core[sid],core_to_RF_EOP=rf_eop[sid]-core[sid],RF_flits=int(er[6]))
      assert costs[rid]['core_to_input_EOP']==(11 if a.head_ii1 else 19)and costs[rid]['core_to_RF_EOP']==rf_cost
-    assert core[head_sessions[1]]-core[head_sessions[0]]==(21 if a.head_ii1 else 35),'actual guard and product framing initiation interval'
-   rows.append(dict(seed=seed,initial=initial,MC64beats=len(req),A32beats=sum(a_by_record.values()),RF_snapshots=len(snapshots),S128ACKs=len(writes),faults=6,isolated_product_costs=costs))
- summary=dict(passed=True,scale_pipeline_stages=a.scale_stages,head_STEP_II1=a.head_ii1,source_commit=(r/'source/source-commit.txt').read_text().strip(),files_checked=len(manifest),model_SHA256=oracle['model_SHA256'],fixture_SHA256=oracle['fixture_SHA256'],runs=rows,scope='Recovered artifact hash/event audit only; verifies physical-port test receipt work conservation, no local execution of RTL or new numerical experiment. S provider host RTT2 ideal / random3..9, actual guard RTL; not complete system or postroute acceptance.')
+    assert core[head_sessions[1]]-core[head_sessions[0]]==(21 if a.head_ii1 else 35)+a.dispatch_prepare,'actual guard and product framing initiation interval'
+   rows.append(dict(seed=seed,initial=initial,MC64beats=len(req),A32beats=sum(a_by_record.values()),RF_snapshots=len(snapshots),S128ACKs=len(writes),faults=a.expected_faults,isolated_product_costs=costs))
+ summary=dict(passed=True,dispatch_prepare_cycles=a.dispatch_prepare,scale_pipeline_stages=a.scale_stages,head_STEP_II1=a.head_ii1,source_commit=(r/'source/source-commit.txt').read_text().strip(),files_checked=len(manifest),model_SHA256=oracle['model_SHA256'],fixture_SHA256=oracle['fixture_SHA256'],runs=rows,scope='Recovered artifact hash/event audit only; verifies physical-port test receipt work conservation, no local execution of RTL or new numerical experiment. S provider host RTT2 ideal / random3..9, actual guard RTL; not complete system or postroute acceptance.')
  (a.run/'audit.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps(dict(passed=True,runs=len(rows),files_checked=len(manifest),isolated_costs=rows[0]['isolated_product_costs'])))
 if __name__=='__main__':main()

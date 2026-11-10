@@ -1,7 +1,11 @@
 // A combinational view of the fetcher's existing 128B scope register.
 // No duplicate descriptor storage. CRC success must come from the real fetch.
 // Rejected descriptors have no job_valid, so they cannot issue M/S traffic.
-module p_scope128_decode (
+module p_scope128_decode #(
+ // Opt-in belongs to an actual STREAM provider. Existing contiguous/native
+ // profiles must keep rejecting service2; this decoder alone registers none.
+ parameter logic ALLOW_STREAM_A16=1'b0
+)(
  input wire scope_valid, output wire scope_ready,
  input wire [1023:0] scope_data,
  input wire scope_crc_ok,
@@ -40,6 +44,8 @@ module p_scope128_decode (
  assign snapshot_s_base=scope_data[736+:10];
  assign bias_address0=scope_data[768+:64]; assign bias_address1=scope_data[832+:64];
  wire [63:0] last_col={32'd0,first_column}+({59'd0,groups}-64'd1)*{48'd0,column_stride};
+ wire stream_scope=scope_data[48+:16]==16'd2;
+ wire service_bad=scope_data[48+:16]!=16'd1 && !(ALLOW_STREAM_A16&&stream_scope);
  wire [6:0] contexts={2'd0,groups}*{5'd0,ways};
  wire [63:0] records={57'd0,contexts}*(({48'd0,k_end}-{48'd0,k_begin})>>7);
  wire [63:0] record_bytes=head16 ? 64'd1152 : 64'd1088;
@@ -63,11 +69,13 @@ module p_scope128_decode (
  wire [10:0] out_words={6'd0,groups}<<1;
  wire [10:0] out_end0={1'b0,output_s_base0}+out_words;
  wire [10:0] out_end1={1'b0,output_s_base1}+out_words;
- // Service1 is an explicitly contiguous A16 image starting at K=0.
- // A streamed single-tile window belongs to the later outer service2.
- wire [13:0] input_end={4'd0,input_s_base}+{1'b0,full_k[15:3]};
+ // Service1 owns a full contiguous A16 image. Service2 owns just one K128
+ // staging tile, whose current key/K/generation/session/ticket and LOAD proof
+ // must come from the real window/transport provider, never this decoder.
+ wire [13:0] input_end={4'd0,input_s_base}+(stream_scope?14'd16:{1'b0,full_k[15:3]});
  wire [10:0] snapshot_end={1'b0,snapshot_s_base}+({4'd0,contexts}<<1);
  wire partial_scope=k_begin!=0 || k_end!=full_k;
+ wire stream_bad=stream_scope&&(partial_scope||bias_address0!=0||(ways==2&&bias_address1!=0));
  wire [15:0] raw_input_s=scope_data[672+:16],raw_out0=scope_data[688+:16],
     raw_out1=scope_data[704+:16],raw_scratch=scope_data[720+:16],
     raw_snapshot=scope_data[736+:16];
@@ -92,8 +100,8 @@ module p_scope128_decode (
     (scope_data[0+:32]!=32'h02505001 || scope_data[32+:16]!=16'd128 ||
      scope_data[64+:32]!=32'h02504d02 || reserved_bad) ? 8'd2 :
     scope_data[96+:32]!=expected_topology ? 8'd3 :
-    scope_data[48+:16]!=16'd1 ? 8'd4 :
-    (range_bad || bias_bad) ? 8'd5 : identity_bad ? 8'd6 : memory_bad ? 8'd7 : 8'd0;
+    service_bad ? 8'd4 :
+    (range_bad || bias_bad || stream_bad) ? 8'd5 : identity_bad ? 8'd6 : memory_bad ? 8'd7 : 8'd0;
  assign job_valid=scope_valid && reject_code==0;
  assign reject_valid=scope_valid && reject_code!=0;
  assign scope_ready=reject_code==0 ? job_ready : reject_ready;

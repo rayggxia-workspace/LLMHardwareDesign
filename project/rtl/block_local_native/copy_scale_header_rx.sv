@@ -44,8 +44,11 @@ module copy_scale_header_rx(
  assign metadata_kk=kk_q;assign metadata_session=session_q;assign metadata_ticket=ticket_q;
  assign metadata_shift=shift_q;
  assign data_enabled=bound&&published;
- // Normal release waits for the actual load admission AND its window/use
- // drains. Explicit coordinated cancellation may discard unconsumed metadata
+ // consumer_drained proves the matching LOAD completed and its S reads drained.
+ // A's internal payload/shift lease may continue serving M independently;
+ // command admission alone is insufficient to reuse the S window. A controller
+ // may conservatively wait for all A uses too, but that loses lookahead.
+ // Explicit coordinated cancellation may discard unconsumed metadata
  // only once both the link/S traffic and A consumers really drained.
  assign release_ready=!reset&&matching_release&&!ack_valid&&!frame_valid&&data_drained&&consumer_drained&&
     (release_cancel || (published&&consumed));

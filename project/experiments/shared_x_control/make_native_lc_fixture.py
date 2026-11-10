@@ -20,7 +20,8 @@ def scope(service=1, head=False):
         (84, 'H', 0), (86, 'H', 256), (88, 'H', 320), (90, 'H', 512), (92, 'H', 768),
     ]:
         struct.pack_into('<' + fmt, b, offset, value)
-    struct.pack_into('<IIII', b, 16, 7, 8, 9, 1)
+    # LE128 integer is {job,epoch,tensor,version}, from MSB to LSB.
+    struct.pack_into('<IIII', b, 16, 1, 9, 8, 7)
     struct.pack_into('<I', b, 124, zlib.crc32(b[:124]))
     return b
 
@@ -42,8 +43,11 @@ def main():
     # interpreter's real metadata reads. Boot CRC is not semantic validation.
     bad = bytearray(k); bad[228] ^= 1
     (a.out/'bad-table.mem').write_text(''.join(f'{int.from_bytes(bad[i:i+16],"little"):032x}\n' for i in range(0,len(bad),16)), encoding='ascii')
-    scopes = [scope(), scope(service=2), scope(), scope(head=True)]
+    scopes = [scope(), scope(service=2), scope(), scope(head=True), scope(), scope()]
     scopes[2][0] ^= 1
+    struct.pack_into('<I',scopes[4],28,8)  # foreign input job, CRC remains good.
+    struct.pack_into('<Q',scopes[5],96,64)  # nonzero bias is not registered yet.
+    for i in (4,5):struct.pack_into('<I',scopes[i],124,zlib.crc32(scopes[i][:124]))
     (a.out/'scopes.mem').write_text(''.join(f'{int.from_bytes(b[i:i+64],"little"):0128x}\n' for b in scopes for i in (0,64)), encoding='ascii')
     (a.out/'fixture.json').write_text(json.dumps({'kernel_crc':f'{zlib.crc32(k):08x}', 'bad_table_crc':f'{zlib.crc32(bad):08x}', 'record_count':8, 'input_key_fields':[7,8,9,1], 'not_native_M_numeric':True},indent=2)+'\n',encoding='utf8')
 

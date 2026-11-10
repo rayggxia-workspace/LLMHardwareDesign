@@ -339,16 +339,21 @@ module m_native_leaf_s32 (
  reg scope_head[0:15];reg [255:0] scope_bias[0:15];
  reg [3:0] table_valid,table_cancel,table_closed;
  reg [127:0] table_key[0:3];reg [31:0] table_record[0:3],table_session[0:3];
- reg [15:0] table_generation[0:3];reg [8:0] table_epoch[0:3];reg [63:0] table_base[0:3];
+ reg [15:0] table_generation[0:3];reg [8:0] table_epoch[0:3];
+ // Cursor replaces the former base register, not an additional record cache.
+ reg [63:0] table_base[0:3];reg [3:0] table_channel;
  reg [3:0] table_scope[0:3];reg [15:0] table_scope_generation[0:3];
  reg table_head[0:3];reg [4:0] table_next[0:3];reg [17:0] table_issued[0:3],table_received[0:3];
  reg [1:0] issue_cursor,allocation_cursor;
- reg request_locked;reg [1:0] locked_bank;reg [4:0] locked_beat;
+ reg request_locked;reg [1:0] locked_bank;reg [4:0] locked_beat;reg [63:0] locked_address;
  reg close_locked;reg [1:0] locked_close_bank;
  reg [8:0] transport_epoch;
  reg [1023:0] command_frame;reg command_pending,rx_active;reg [2:0] rx_index;reg [3:0] rx_length;
  reg [31:0] last_session;
  reg local_valid;reg [511:0] local_frame;reg [2:0] local_length;
+ // One bounded command reply retains the existing command_frame until TX
+ // EOP; no duplicated payload frame or speculative diagnostic capacity.
+ reg command_reply_valid;reg [1:0] command_reply_kind;reg [7:0] command_reply_status;
  reg tx_valid;reg [511:0] tx_frame;reg [2:0] tx_index,tx_length;reg [3:0] tx_source;
  reg fence_wait,fence_offered,fence_reply;reg [31:0] fence_cookie;reg [8:0] fence_epoch;
  reg alloc_hold,alloc_installed;reg [63:0] alloc_base;
@@ -392,24 +397,36 @@ module m_native_leaf_s32 (
  wire exec_owner=table_valid[exec_bank]&&table_generation[exec_bank]==exec_generation&&
   table_record[exec_bank]==record_id&&table_scope[exec_bank]==handle&&table_scope_generation[exec_bank]==handle_generation;
  wire cancel_pending=command_pending&&op==CANCEL&&same_scope&&bank_owner;
- reg request_found;reg [1:0] request_bank;reg [4:0] request_beat;
+ // One real registered request offer. It is refilled on acceptance, so
+ // the native interface remains II1. Its credit is reserved by the single
+ // held offer; same-bank CANCEL waits until that offer is truly accepted.
+ wire [1:0] request_bank=locked_bank;wire [4:0] request_beat=locked_beat;
+ assign mc_req_valid=request_locked;
+ assign mc_req_address=locked_address;
+ assign mc_req_tag={table_epoch[request_bank],request_bank,table_generation[request_bank],request_beat};
+ assign mc_req_channel=table_channel[request_bank];
+ assign mc_req_record_beats=table_head[request_bank]?5'd18:5'd17;
+ wire request_fire=mc_req_valid&&mc_req_ready;
+ reg request_found;reg [1:0] candidate_bank;reg [4:0] candidate_beat;reg [63:0] candidate_address;
+ reg [1:0] candidate_index;integer candidate_next;
+ wire [63:0] address_after_issue[0:3];
+ for(genvar ab=0;ab<4;ab=ab+1)begin: next_address
+  assign address_after_issue[ab]=table_base[ab]+64'd64;
+ end
  always @*begin
-  request_found=0;request_bank=0;request_beat=0;
-  if(request_locked)begin request_found=1;request_bank=locked_bank;request_beat=locked_beat;end
-  else for(integer i=0;i<4;i=i+1)begin
-   if(!request_found&&table_valid[(int'(issue_cursor)+i)%4]&&!table_cancel[(int'(issue_cursor)+i)%4]&&
-     !(cancel_pending&&command_bank==2'((int'(issue_cursor)+i)%4))&&
-     table_next[(int'(issue_cursor)+i)%4]<(table_head[(int'(issue_cursor)+i)%4]?18:17))begin
-    request_found=1;request_bank=2'((int'(issue_cursor)+i)%4);request_beat=table_next[(int'(issue_cursor)+i)%4];
+  request_found=0;candidate_bank=0;candidate_beat=0;candidate_address=0;candidate_index=0;candidate_next=0;
+  if((!request_locked||request_fire)&&n_issue_ready&&int'(n_outstanding)+(request_fire?1:0)<32)begin
+   for(integer i=0;i<4;i=i+1)begin
+    candidate_index=2'(((request_fire?int'(request_bank)+1:int'(issue_cursor))+i)%4);
+    candidate_next=int'(table_next[candidate_index])+((request_fire&&request_bank==2'(candidate_index))?1:0);
+    if(!request_found&&table_valid[candidate_index]&&!table_cancel[candidate_index]&&
+      !(cancel_pending&&command_bank==2'(candidate_index))&&candidate_next<(table_head[candidate_index]?18:17))begin
+     request_found=1;candidate_bank=2'(candidate_index);candidate_beat=5'(candidate_next);
+     candidate_address=(request_fire&&request_bank==2'(candidate_index))?address_after_issue[candidate_index]:table_base[candidate_index];
+    end
    end
   end
  end
- assign mc_req_valid=request_found&&(request_locked||n_issue_ready);
- assign mc_req_address=table_base[request_bank]+{53'd0,request_beat,6'd0};
- assign mc_req_tag={table_epoch[request_bank],request_bank,table_generation[request_bank],request_beat};
- assign mc_req_channel=table_base[request_bank][11];
- assign mc_req_record_beats=table_head[request_bank]?5'd18:5'd17;
- wire request_fire=mc_req_valid&&mc_req_ready;
  reg close_found;reg [1:0] close_bank;
  always @*begin
   close_found=0;close_bank=0;
@@ -431,16 +448,18 @@ module m_native_leaf_s32 (
  wire bad_A=a_valid&&!A_wait_bind&&(!A_live||a_session!=exec_session);
  wire local_space=!local_valid;
  wire event_port_free=local_space&&!bad_return&&!bad_fence&&!bad_A;
- assign mc_rsp_ready=return_good?n_fill_ready:local_space;
+ assign mc_rsp_ready=return_good?n_fill_ready:(local_space&&!bad_A);
  assign mc_fence_req_valid=fence_wait&&!fence_offered;
  assign mc_fence_req_cookie=fence_cookie;assign mc_fence_req_epoch=fence_epoch;
- assign mc_fence_done_ready=local_space&&!bad_return;
- assign a_ready=A_wait_bind?1'b0:(bad_A?(local_space&&!bad_return&&!bad_fence):n_a_ready);
- assign lc_ready=!command_pending&&!fence_wait&&!fence_reply&&event_port_free;
+ assign mc_fence_done_ready=local_space&&!bad_A&&!bad_return;
+ // A diagnostic has priority over other malformed transports. Good data
+ // channels stay independent; only the lower-priority bad sender waits.
+ assign a_ready=A_wait_bind?1'b0:(bad_A?local_space:n_a_ready);
+ assign lc_ready=!command_pending&&!command_reply_valid&&!fence_wait&&!fence_reply&&event_port_free;
  assign lr_valid=tx_valid;assign lr_sop=tx_valid&&tx_index==0;
  assign lr_eop=tx_valid&&tx_index==tx_length-1'b1;assign lr_data=tx_frame[int'(tx_index)*128+:128];
  wire tx_end=lr_valid&&lr_ready&&lr_eop;
- assign fault_interrupt=(local_valid&&local_frame[47:40]!=0)||n_fault_valid||n_native_fault_valid;
+ assign fault_interrupt=(local_valid&&local_frame[47:40]!=0)||(command_reply_valid&&command_reply_kind==0)||n_fault_valid||n_native_fault_valid;
  wire common_bad=session<=last_session||command_frame[15:0]!=16'h4d02||command_frame[31:30]!=0||
   command_frame[23:20]!=command_length(op)||
   ((op!=CANCEL&&op!=DRAIN)&&command_bank!=0)||
@@ -476,6 +495,12 @@ module m_native_leaf_s32 (
   selected_source=0;selected_frame=0;selected_length=2;
   if(n_fault_valid)begin selected_source=7;selected_length=3;selected_frame[127:0]=header(7,{4'd0,n_fault_op},0,n_fault_record,3,0);selected_frame[129:128]=n_fault_bank;selected_frame[145:130]=n_fault_generation;selected_frame[383:256]=n_fault_key;end
   else if(n_native_fault_valid)begin selected_source=8;selected_length=3;selected_frame[127:0]=header(7,{5'd0,n_native_fault_kind},exec_session,n_native_fault_record,3,0);selected_frame[383:256]=n_native_fault_key;end
+  else if(command_reply_valid)begin
+   selected_source=11;selected_length=command_reply_kind==0?3'd3:3'd2;
+   selected_frame[127:0]=header(command_reply_kind==0?8'd7:command_reply_kind==1?8'd10:8'd9,
+    command_reply_status,session,command_reply_kind==1?32'd0:record_id,selected_length,0);
+   if(command_reply_kind==0)selected_frame[383:256]=same_scope?scope_key[handle]:128'd0;
+  end
   else if(local_valid)begin selected_source=9;selected_frame=local_frame;selected_length=local_length;end
   else if(n_input_done_valid)begin
    selected_source=3;selected_frame[127:0]=header(3,{7'd0,n_input_done_key!=A_key},exec_session,n_input_done_record,2,0);
@@ -571,7 +596,7 @@ module m_native_leaf_s32 (
   n_restore_commit_full_k=0;
   n_restore_commit_group_k=0;
   n_restore_commit_n=0;
-  if(command_pending&&event_port_free&&!command_bad)case(op)
+  if(command_pending&&!command_reply_valid&&!command_bad)case(op)
    ALLOC:if(!alloc_hold)begin n_alloc_valid=1;n_alloc_key=scope_key[handle];n_alloc_record=record_id;n_alloc_n=scope_n[handle];n_alloc_head16=scope_head[handle];end
    EXEC:begin
     n_exec_valid=1;n_exec_key=scope_key[handle];n_exec_record=record_id;n_exec_bank=exec_bank;n_exec_generation=exec_generation;
@@ -607,10 +632,10 @@ module m_native_leaf_s32 (
  always @(posedge clk)begin
   if(reset)begin
    scope_valid<=0;scope_live<=0;table_valid<=0;table_cancel<=0;table_closed<=0;issue_cursor<=0;allocation_cursor<=0;
-   request_locked<=0;locked_bank<=0;locked_beat<=0;transport_epoch<=0;
+   request_locked<=0;locked_bank<=0;locked_beat<=0;locked_address<=0;table_channel<=0;transport_epoch<=0;
    close_locked<=0;locked_close_bank<=0;
    command_pending<=0;rx_active<=0;rx_index<=0;rx_length<=0;last_session<=0;
-   local_valid<=0;local_frame<=0;local_length<=0;tx_valid<=0;tx_frame<=0;tx_index<=0;tx_length<=0;tx_source<=0;
+   local_valid<=0;local_frame<=0;local_length<=0;command_reply_valid<=0;command_reply_kind<=0;command_reply_status<=0;tx_valid<=0;tx_frame<=0;tx_index<=0;tx_length<=0;tx_source<=0;
    fence_wait<=0;fence_offered<=0;fence_reply<=0;fence_cookie<=0;fence_epoch<=0;
    alloc_hold<=0;alloc_installed<=0;alloc_base<=0;alloc_session<=0;alloc_scope<=0;alloc_scope_generation<=0;
    drain_hold<=0;drain_session<=0;drain_key<=0;exec_session<=0;exec_ticket<=0;control_session<=0;
@@ -637,14 +662,14 @@ module m_native_leaf_s32 (
      if(lc_eop)begin command_pending<=1;rx_active<=0;rx_index<=0;end else rx_index<=rx_index+1'b1;
     end
    end
-   if(command_pending&&event_port_free)begin
-    if(command_bad)begin local_reply(7,command_error,session,record_id,same_scope?scope_key[handle]:128'd0);command_pending<=0;last_session<=session;end
+   if(command_pending&&!command_reply_valid)begin
+    if(command_bad)begin command_reply_valid<=1;command_reply_kind<=0;command_reply_status<=command_error;command_pending<=0;last_session<=session;end
     else case(op)
      BEGIN_SCOPE:begin
       scope_valid[handle]<=1;scope_generation[handle]<=handle_generation;scope_epoch[handle]<=transport_epoch;
       scope_key[handle]<=word1;scope_owner[handle]<=word2;scope_full_k[handle]<=word3[15:0];scope_n[handle]<=word3[19:16];
       scope_head[handle]<=word3[20];scope_bias[handle]<=payload;
-      local_reply(10,0,session,0,0);command_pending<=0;last_session<=session;
+      command_reply_valid<=1;command_reply_kind<=1;command_reply_status<=0;command_pending<=0;last_session<=session;
      end
      ALLOC:if(n_alloc_valid&&n_alloc_ready)begin
       alloc_hold<=1;alloc_installed<=0;alloc_base<=word1[63:0];alloc_session<=session;alloc_scope<=handle;alloc_scope_generation<=handle_generation;
@@ -655,7 +680,7 @@ module m_native_leaf_s32 (
       A_slot<=word1[66];A_generation<=word1[82:67];A_kk<=word1[65:50];A_use<=word1[33:18];command_pending<=0;last_session<=session;
      end
      CONTEXT,RESTORE:if(n_control_valid&&n_control_ready)begin control_session<=session;command_pending<=0;last_session<=session;end
-     CANCEL:if(n_cancel_valid&&n_cancel_ready)begin table_cancel[command_bank]<=1;if(table_issued[command_bank]==0)table_closed[command_bank]<=1;local_reply(9,0,session,record_id,0);command_pending<=0;last_session<=session;end
+     CANCEL:if(n_cancel_valid&&n_cancel_ready)begin table_cancel[command_bank]<=1;if(table_issued[command_bank]==0)table_closed[command_bank]<=1;command_reply_valid<=1;command_reply_kind<=2;command_reply_status<=0;command_pending<=0;last_session<=session;end
      DRAIN:if(n_drain_valid&&n_drain_ready)begin drain_hold<=1;drain_session<=session;drain_key<=table_key[command_bank];command_pending<=0;last_session<=session;end
      FENCE:if(n_free_mask==15&&n_outstanding==0&&!n_busy&&!tx_valid&&!A_live&&!request_locked&&!close_locked&&
        n_scale_count==0&&!n_rsp_valid&&!n_alloc_ack_valid&&!n_fill_ack_valid&&!n_input_done_valid&&!n_abort_done_valid&&!n_drain_done_valid)begin
@@ -670,18 +695,18 @@ module m_native_leaf_s32 (
      table_valid[n_alloc_ack_bank]<=1;table_cancel[n_alloc_ack_bank]<=0;table_closed[n_alloc_ack_bank]<=0;table_key[n_alloc_ack_bank]<=n_alloc_ack_key;
      table_record[n_alloc_ack_bank]<=n_alloc_ack_record;table_session[n_alloc_ack_bank]<=alloc_session;
      table_generation[n_alloc_ack_bank]<=n_alloc_ack_generation;table_epoch[n_alloc_ack_bank]<=transport_epoch;
-     table_base[n_alloc_ack_bank]<=alloc_base;table_scope[n_alloc_ack_bank]<=alloc_scope;
+     table_base[n_alloc_ack_bank]<=alloc_base;table_channel[n_alloc_ack_bank]<=alloc_base[11];table_scope[n_alloc_ack_bank]<=alloc_scope;
      table_scope_generation[n_alloc_ack_bank]<=alloc_scope_generation;table_head[n_alloc_ack_bank]<=scope_head[alloc_scope];
      table_next[n_alloc_ack_bank]<=0;table_issued[n_alloc_ack_bank]<=0;table_received[n_alloc_ack_bank]<=0;
      allocation_cursor<=n_alloc_ack_bank+1'b1;
     end
    end
    for(integer b=0;b<4;b=b+1)if(table_valid[b]&&n_free_mask[b])table_valid[b]<=0;
-   if(mc_req_valid&&!mc_req_ready&&!request_locked)begin request_locked<=1;locked_bank<=request_bank;locked_beat<=request_beat;end
    if(request_fire)begin
-    request_locked<=0;table_issued[request_bank][request_beat]<=1;table_next[request_bank]<=request_beat+1'b1;issue_cursor<=request_bank+1'b1;
+    request_locked<=0;table_base[request_bank]<=address_after_issue[request_bank];table_issued[request_bank][request_beat]<=1;table_next[request_bank]<=request_beat+1'b1;issue_cursor<=request_bank+1'b1;
     if(request_beat==(table_head[request_bank]?17:16))table_closed[request_bank]<=1;
    end
+   if(request_found)begin request_locked<=1;locked_bank<=candidate_bank;locked_beat<=candidate_beat;locked_address<=candidate_address;end
    if(mc_close_valid&&!mc_close_ready&&!close_locked)begin close_locked<=1;locked_close_bank<=close_bank;end
    if(mc_close_valid&&mc_close_ready)begin close_locked<=0;table_closed[close_bank]<=1;end
    if(mc_rsp_valid&&mc_rsp_ready)begin
@@ -714,6 +739,7 @@ module m_native_leaf_s32 (
       6:drain_hold<=0;
       9:local_valid<=0;
       10:fence_reply<=0;
+      11:command_reply_valid<=0;
       default:begin end
      endcase
     end else tx_index<=tx_index+1'b1;

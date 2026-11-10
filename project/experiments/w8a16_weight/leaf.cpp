@@ -150,11 +150,35 @@ int main(int argc,char**argv){try{need(argc==6,"usage records leaf seed initial 
  auto&old=rs[0];returning={&old,0,uint32_t((old.epoch<<23)|(old.observed_bank<<21)|(old.observed_generation<<5)),cycle};return_live=true;duplicate_return=true;wait([&]{return faults==fault_goal+1;},"duplicate DMA fault");++fault_goal;
  returning={&old,0,uint32_t(((old.epoch^1)<<23)|(old.observed_bank<<21)|(old.observed_generation<<5)),cycle};return_live=true;duplicate_return=true;wait([&]{return faults==fault_goal+1;},"stale epoch DMA fault");++fault_goal;
  old.read=0;reading=&old;inject_bad_A=true;tick();reading=nullptr;inject_bad_A=false;wait([&]{return faults==fault_goal+1;},"unknown A session fault");++fault_goal;
+ // Two malformed transports share one diagnostic slot: bad A wins,
+ // bad MC remains VALID until its own real acceptance and response.
+ returning={&old,0,uint32_t((old.epoch<<23)|(old.observed_bank<<21)|(old.observed_generation<<5)),cycle};return_live=true;duplicate_return=true;
+ old.read=0;reading=&old;inject_bad_A=true;tick();need(return_live,"bad MC consumed alongside the sole A diagnostic");reading=nullptr;inject_bad_A=false;
+ wait([&]{return faults==fault_goal+2;},"concurrent bad A and MC bounded diagnostics");fault_goal+=2;
+ // A complete stale command and a bad MC return can each own their separate
+ // finite reply slot without overwriting either frame or stalling dispatch.
+ uint32_t both=sequence++;send(frame(3,2,12,scope_gen[12]-1,both,5000),2);
+ returning={&old,0,uint32_t((old.epoch<<23)|(old.observed_bank<<21)|(old.observed_generation<<5)),cycle};return_live=true;duplicate_return=true;
+ wait([&]{return faults==fault_goal+2;},"command reply and transport diagnostic coexist");wait_event(both,7);fault_goal+=2;
  uint32_t bad=sequence++;send(frame(15,1,0,0,bad),1);wait_event(bad,7);need(faults==fault_goal+1,"bad opcode frame fault");++fault_goal;
  bad=sequence++;send(frame(3,2,12,scope_gen[12]-1,bad,5000),2);wait_event(bad,7);need(faults==fault_goal+1,"stale scope generation fault");
  // Cancellation cannot withdraw a held MC request. Its one already offered
  // beat still returns; DRAIN completes only after this true return.
  extras.push_back(rs[0]);auto&cancel=extras.back();cancel.id=6000;cancel.issued.fill(false);cancel.returned.fill(false);cancel.fill=false;cancel.descriptor_live=false;cancel.alloc_session=0;cancel.read=0;begin_scope(cancel,15,950);pause_CLOSE=true;force_MC=true;allocate(cancel);wait_event(cancel.alloc_session,1);wait([]{return bool(t.mc_req_valid);},"held cancellation DMA");tick();uint32_t cs=sequence++;send(frame(6,1,cancel.scope,cancel.sg,cs,cancel.id,cancel.bank,cancel.gen),1);for(int k=0;k<3;++k)tick();need(received.count({cs,9})==0,"cancel withdrew offered DMA");force_MC=false;wait_event(cs,9);wait([]{return pending.empty()&&!return_live;},"canceled offered beat returned");need(std::count(cancel.issued.begin(),cancel.issued.end(),true)==1,"cancel issued unoffered suffix");uint32_t ds=sequence++;send(frame(7,1,cancel.scope,cancel.sg,ds,cancel.id,cancel.bank,cancel.gen),1);for(int k=0;k<5;++k)tick();need(received.count({ds,6})==0&&cancel.descriptor_live,"last return falsely implied global CLOSE");pause_CLOSE=false;wait_event(ds,6);
+ // Product cancellation after three real head K16 operands. This EXEC
+ // is an abort control service, not a normal RF4 guard command. ABORT5
+ // returns its actual prefix cursor; a later ordinary SPILL uses the real
+ // guard and two true S ACKs to verify the independent third RNE prefix.
+ extras.push_back(rs[24]);auto&partial=extras.back();partial.id=7000;partial.issued.fill(false);partial.returned.fill(false);partial.fill=false;partial.descriptor_live=false;partial.alloc_session=0;partial.read=0;partial.input=false;partial.complete=false;
+ begin_scope(partial,6,970);context(partial,970,0);wait([]{return t.gu_count==0;},"partial CREATE guard drain");allocate(partial);wait([&]{return partial.fill;},"partial real W fill");
+ partial.exec_session=sequence++;partial.ticket=partial.exec_session;
+ auto pf=frame(3,2,partial.scope,partial.sg,partial.exec_session,partial.id);bits(pf[1],0,2,partial.bank);bits(pf[1],2,16,partial.gen);bits(pf[1],18,16,partial.id+17);bits(pf[1],67,16,partial.id+3);bits(pf[1],83,6,8);bits(pf[1],89,32,partial.ticket);send(pf,2);reading=&partial;
+ wait([&]{return partial.read==3;},"three real partial operands");force_A=true;
+ uint32_t pcs=sequence++;send(frame(6,1,partial.scope,partial.sg,pcs,partial.id,partial.bank,partial.gen),1);wait_event(pcs,9);wait_event(partial.exec_session,5);
+ auto abort_frame=received.at({partial.exec_session,5});need(field(abort_frame,128,4)==uint64_t(partial.scope)&&field(abort_frame,144,16)==48,"actual abort prefix cursor/context");auto pk=key(),po=owner(970);for(int i=0;i<4;++i)need(abort_frame[size_t(8+i)]==pk[size_t(i)]&&abort_frame[size_t(12+i)]==po[size_t(i)],"actual abort full key/owner");
+ need(partial.read==3&&!partial.input&&!partial.complete,"partial cancellation fabricated full input/result completion");trace<<"ABORT_PARTIAL,"<<cycle<<","<<partial.id<<",3,48\n";reading=nullptr;force_A=false;
+ uint32_t pds=sequence++;send(frame(7,1,partial.scope,partial.sg,pds,partial.id,partial.bank,partial.gen),1);wait_event(pds,6);
+ context(partial,970,3,128,48,partial.prefix[2]);uint32_t pspill=sequence-1;wait([&]{return committed.count(pspill)!=0&&t.gu_count==0;},"partial exact prefix SPILL true S ACK");
  wait([]{return t.gu_count==0&&pending.empty()&&!return_live&&!ack.live;},"fence preconditions");uint32_t sid=sequence++;send(frame(8,1,0,0,sid),1);wait_event(sid,8);
  need(mc_accepted==mc_returned&&outstanding[0]==0&&outstanding[1]==0&&descriptors[0]==0&&descriptors[1]==0,"real DDR conservation");need(t.gu_rejected==0&&rf_expected.empty(),"guard/response ownership leak");
  std::cout<<"PASS leaf public_records=34 MC64requests="<<mc_accepted<<" MC64returns="<<mc_returned<<" Abeats="<<Aaccepted<<" RFcompletions="<<RFcomplete<<" responses="<<responses<<" S128ACKs="<<Sacks<<" peak_guard_results="<<peak_results<<" peak_private_credit="<<peak_credit<<" faults="<<faults<<" cycles="<<cycle<<"\n";t.final();top.reset();return 0;

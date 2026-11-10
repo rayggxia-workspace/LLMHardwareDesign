@@ -45,7 +45,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--suffix', required=True)
     parser.add_argument('--out', type=Path, required=True)
-    parser.add_argument('--round', default='reproduce', choices=['reproduce', 'native-1', 'stripe-1', 'tile-1', 'lookahead-1', 'product-1', 'consumer-1', 'G-overlap-1', 'rf-II1-1'])
+    parser.add_argument('--round', default='reproduce', choices=['reproduce', 'native-1', 'stripe-1', 'tile-1', 'lookahead-1', 'product-1', 'consumer-1', 'G-overlap-1', 'rf-II1-1','dynamic15-1'])
     args = parser.parse_args()
     assert args.suffix.replace('-', '').isalnum()
     commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip()

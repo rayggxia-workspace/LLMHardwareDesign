@@ -65,7 +65,7 @@ module tb_lc_native_scope;
    .complete_context,.complete_next_k,.complete_error,.rejected_complete
  );
  logic [127:0] image[22],bad_image[22];
- logic [511:0] scope_images[8];
+ logic [511:0] scope_images[12];
  logic [511:0] active_packet;
  logic request_enable,close_enable,record_enable,inject_record_error;
  integer desc_mode,seed,cycle,pm_reads,requests,records,completed;
@@ -185,7 +185,7 @@ module tb_lc_native_scope;
        assert(record_owner==service_owner&&record_full_k==256&&record_n==8&&record_context<4&&record_col<16);
        assert(record_bytes==(record_head16?1152:1088)&&record_create==(record_k==0)&&record_final==(record_k==128));
        assert(!record_restore&&!record_spill&&record_A_uses==4);
-       assert(input_key==128'h00000001000000090000000800000007&&rf_object_base0==4096&&rf_object_base1==8192&&output_version==1);
+       assert(input_key==128'h00000007000000080000000900000001&&rf_object_base0==4096&&rf_object_base1==8192&&output_version==1);
        assert(bias_address0==0&&bias_address1==0&&input_s_base==0&&output_s_base0==256&&output_s_base1==320&&scratch_s_base==512&&snapshot_s_base==768);
        pending_records[free_record_slot]<=1;record_keys[free_record_slot]<=record_owner;record_ids[free_record_slot]<=record_sequence;
        record_contexts[free_record_slot]<=record_context;record_next[free_record_slot]<=record_k+128;
@@ -241,9 +241,11 @@ module tb_lc_native_scope;
    while(!mc_close_valid)@(negedge clk);pause(8);assert(!tx_valid&&mc_close_tag_base=={pending_tags[0][31:1],1'b0});
    close_enable=1;terminal(3);assert(records==0);
    call(7,0,32'h00010040);terminal(2);assert(records==0);
-   boot(2,1);configure_session(2);call(8);terminal(5);assert(records==0); // CRC-valid bad native-op table.
-   boot(3);configure_session(3);call(9);terminal(0,1);
-   inject_record_error=1;call(10);terminal(1);inject_record_error=0;
+   call(8,4);terminal(40);assert(records==0); // foreign input job cannot borrow this CALL.
+   call(9,5);terminal(41);assert(records==0); // no free implicit zero bias.
+   boot(2,1);configure_session(2);call(10);terminal(5);assert(records==0); // CRC-valid bad native-op table.
+   boot(3);configure_session(3);call(11);terminal(0,1);
+   inject_record_error=1;call(12);terminal(1);inject_record_error=0;
    assert(protocol_fault_cycles>=3&&pending_records==0&&pending_reads==0);
    $display("PASS native_lc seed=%0d PMreads=%0d DDRbeats=%0d cycles=%0d faults=%0d",seed,pm_reads,requests,cycle,protocol_fault_cycles);
    $fclose(trace_fd);$finish;

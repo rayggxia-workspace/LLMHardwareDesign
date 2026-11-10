@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-11更新：完整scope动态15-pass实费诊断仅0.498712694 token/s，旧8.136179仍含动态占位，性能门未过；硬件#252独立处理。真量化/COPY/M/S与取消已测；三P86 Mid tile/六轮供数36PASS，同S预取死锁已修，S不扩容。typed2范围通过但实际outer未资格，M最终TT300MHz持续迭代。见[最新回执](experiments/issue-250-native-progress-04.md)。
+
 2026-11-11补充：RF head II1/实际M回归、MC→LC真实PM/取参/range已测；M最终TT300MHz仍在迭代。已测guard费用回校条件结果8.136179，未达9.215647，dynamic/E/N与整系统仍未资格。详见[补充进展](experiments/issue-250-native-progress-02.md)。
 
 ## 2026-11-11：原生数据、scale与控制边界联合推进

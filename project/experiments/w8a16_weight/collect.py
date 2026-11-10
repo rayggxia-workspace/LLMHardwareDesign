@@ -16,6 +16,7 @@ def main():
     p.add_argument('--root', required=True)
     p.add_argument('--dest', required=True, type=Path)
     p.add_argument('--job', required=True, type=int)
+    p.add_argument('--extract-dir', type=Path, help='explicit own cache directory; preserve archive and hashes in the receipt directory')
     p.add_argument('--index-only', action='store_true', help='retain large raw archive on authorized storage')
     a = p.parse_args()
     assert re.fullmatch(r'/public/home/yuzelu/project-circuit/issue250-weight-20261111-[0-9]+', a.root)
@@ -56,7 +57,7 @@ print(json.dumps(dict(files=len(paths),SHA256=hashlib.sha256((root/'receipts.tar
         return
     subprocess.run(['scp', '-q', HOST + ':' + a.root + '/receipts.tar.gz', str(archive)], check=True)
     assert hashlib.sha256(archive.read_bytes()).hexdigest() == record['SHA256']
-    extracted = a.dest / 'receipts'
+    extracted = a.extract_dir if a.extract_dir is not None else a.dest / 'receipts'
     extracted.mkdir(exist_ok=False)
     with tarfile.open(archive, 'r:gz') as package:
         for item in package.getmembers():
@@ -68,7 +69,7 @@ print(json.dumps(dict(files=len(paths),SHA256=hashlib.sha256((root/'receipts.tar
     accounting = subprocess.check_output(['ssh', '-o', 'BatchMode=yes', HOST,
         f'sacct -j {a.job} --format=JobID,JobName,State,Elapsed,ExitCode,AllocCPUS,NodeList -P']).decode()
     (a.dest / 'accounting.txt').write_text(accounting)
-    record.update(remote_root=a.root, job=a.job, files_checked=len(manifest))
+    record.update(remote_root=a.root, job=a.job, files_checked=len(manifest), extract_dir=str(extracted))
     (a.dest / 'collection.json').write_text(json.dumps(record, indent=2) + '\n')
     print(json.dumps(record))
 
