@@ -104,3 +104,5 @@ python -B project/experiments/stream_quant_synthesis/deploy.py <新tag> --out <�
 ```
 
 原13包、DMA/bank/G三包与本轮证据分别保留；正式复现入口 `precision_explore.py`、`precision_oracle.py`、`ffn_storage.py`、`precision_rtl.py`。用户实际INT8工件位置仍待确认，不能以自量化工件替代该验收。
+
+协作回执：rayggxia-project-collab1.0.0；project_id llm-hardware-design；Issue248/YUZE-LU；PR249待独立审查、不done。登记management-hub PR5仍OPEN未合并，pending；缺board配置与Projects能力，看板unverified/同步pending，管理员及审查人待指定。已核对head f3649aafd 的[GitHub CI](https://github.com/rayggxia-workspace/LLMHardwareDesign/actions/runs/42787619668/job/129732708792)：job因付款/spending limit未启动而failure；本地管理、原13包、DMA三包和本轮三包检查通过。由管理员恢复额度后补跑，不改账单/工作流、不绕过检查。逐项回执见 precision/delivery-validation.json。
