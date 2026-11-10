@@ -32,7 +32,7 @@ for p in sorted((r/'source').rglob('*')):
  if p.is_file():rows.append(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.relative_to(r/'source').as_posix())
 (r/'source-files.sha256').write_text('\\n'.join(rows)+'\\n')
 (r/'job.sh').write_bytes((r/'source/project/experiments/stream_quant_synthesis/job.sh').read_bytes())
-job=subprocess.check_output(['sbatch','--parsable','job.sh'],cwd=r,text=True).strip()
+job=subprocess.check_output(['sbatch','--parsable','job.sh'],cwd=r,universal_newlines=True).strip()
 print(json.dumps(dict(root=str(r),job=job,source_commit=COMMIT,archive_sha256=DIGEST)))
 '''.replace('ROOT',repr(root)).replace('COMMIT',repr(commit)).replace('DIGEST',repr(digest))
     result=subprocess.check_output(command,input=payload,text=True)
