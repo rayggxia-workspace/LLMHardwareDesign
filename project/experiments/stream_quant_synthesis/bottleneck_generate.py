@@ -1,7 +1,7 @@
 """State/timing ablations only; never change the frozen generator or RTL.
 
 Release 0: original output-ACK/input-bank coupling. 1: after M service.
-Release 2: after the last reserved S/B input read, while compute/tail continues.
+Release 2: after S/B reads AND adapter/core input consumption, before fixed tail.
 Accumulator/result ownership is deliberately not released by these callbacks.
 """
 from pathlib import Path
@@ -18,8 +18,9 @@ def extend(folder):
     s = once(s, 'void sq_service(const Op& o,Tile* p,int worker){',
              'void sq_service(const Op& o,Tile* p,int worker,const std::function<void()>& release={}){')
     s = once(s, 'pause_until(std::max(send,start+std::max(adapt,compute)*C)+tail*C);',
-             'const U finish=std::max(send,start+std::max(adapt,compute)*C)+tail*C;\n'
-             '  if(cfg.bn_release==2){require(bool(release),"missing input release");pause_until(send);release();}\n'
+             'const U consumed=std::max(send,start+std::max(adapt,compute)*C);\n'
+             '  const U finish=consumed+tail*C;\n'
+             '  if(cfg.bn_release==2){require(bool(release),"missing input release");pause_until(consumed);release();}\n'
              '  pause_until(finish);')
     p.write_bytes(s.encode())
     p = folder/'matrix.inc';s = p.read_text()
