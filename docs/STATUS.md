@@ -1,3 +1,9 @@
+# 当前补充：prefill扩宽条件评估（2026-11-10）
+
+Issue247 / PR243新增24场景服务器评估及独立复核完成待审。共享32KiB固定，最高4.429583 token/s（原条件SystemC），64/128双组交错相同；32→64仅+0.1450%/+0.6972%，生产RTL未扩宽。详见[评估报告](experiments/issue-247-prefill-width-evaluation.md)。run33/job102011已COMPLETED0:0，无活动作业；任务in_review、未合并、不done。
+
+---
+
 # 当前状态
 
 本阶段六页实施PDF已生成，全部237内容单元、8表/45行、两代码块、链接、嵌入字体及六页视觉QA通过。报告固定commit3e8dffdc9dce89cf7f04ff77b2b1cf711dae0039，64个新交付文件Git blob已读回；PDF SHA2630163765d8b0f6a0f97875ecd70749e18d83e4e925d3865da2456549984e32。PDF及QA由本次交付提交保留，原始报告来源保持冻结。本阶段转in_review；未合并、不done。

@@ -355,3 +355,12 @@ sbatch --parsable job.sh
 ```
 
 原始通过：run32/102006完整RTL+ECHO0面积；run29/102003兼容；run30/102004旧体系端口敏感性。后处理可本地执行：python project/experiments/shared32_native/analyze.py --result RESULT_JSON --out ANALYSIS_JSON。仅后处理脚本修正了重复seed合并，不改变服务器原始结果。原生S8/S16与旧S32/S96分列，无完整原生大模型token/s、STA/P&R资格。
+
+
+## 共享32KiB A入口与双组带宽评估（Issue247）
+
+源码project/experiments/shared_width_study，报告docs/experiments/issue-247-prefill-width-evaluation.md。严格复用原prefill2/W8条件体系，只扩消费者/存储组调度；生产RTL不改。
+
+复现：按run33的inputs.json和source-files.sha256准备新的授权个人run目录，使用已记录源码commit ffa5410be225037c7f13c3092c2ee3487fa07ec0，在该目录执行sbatch --parsable job.sh。所有SystemC编译/运行只能在Slurm分配内；job.sh明确4核与容器。24场景须包含8个原16/32控制完整RESULT一致，并通过数值/有限FIFO/组冲突/实际双行消费检查。
+
+终态后在run目录执行python3 source/project/experiments/shared_width_study/collect_server.py <jobid>，回收后核验归档SHA，再执行python project/experiments/shared_width_study/analyze.py --receipts <回收目录> --out <新的分析目录>。后处理是JSON/日志核验，不运行EDA。完整原始事件留在服务器，仓库索引不代表全原始包已上传。

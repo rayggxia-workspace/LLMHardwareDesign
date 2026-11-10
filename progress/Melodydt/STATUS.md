@@ -1,3 +1,13 @@
+# 当前：prefill扩宽评估完成待审（2026-11-10，Asia/Shanghai）
+
+Issue247 / PR243，负责人Melodydt。生产RTL未改，实际条件模型源码ffa5410be225037c7f13c3092c2ee3487fa07ec0。run33/job102011/mdt-prefill-width，c64/node1/4核，10:33 COMPLETED0:0。24场景、8旧控制、7250+120数值、100生命周期负例、80事件负控、360主场景负控通过；99源/18输入/392输出索引核验及172回收输出SHA、独立复核通过。
+
+原prefill2/W8条件最高4.429583 token/s，未达5；双组交错32→64B增益shared0.1450%/ideal0.6972%，64→128无整图增益；ideal服务已达到原M计算工作量，不能把旧5.0507外推当实测。报告[扩宽评估](../../docs/experiments/issue-247-prefill-width-evaluation.md)，[证据索引](../../work/Melodydt/247/shared-width/evidence-index.json)。
+
+当前in_review，PR未合并/not done；没有活动作业或自动监测。下一步独立审查并依据结果决定后续M服务/输入ACK/非Dot优化，32B入口生产RTL仍待实施。登记PR5 pending，Projects无工具/board配置，看板unverified/同步pending；当前GitHub CI资格另查。
+
+---
+
 # Melodydt 进度
 
 本阶段六页实施PDF已生成，全部237内容单元、8表/45行、两代码块、链接、嵌入字体及六页视觉QA通过。报告固定commit3e8dffdc9dce89cf7f04ff77b2b1cf711dae0039，64个新交付文件Git blob已读回；PDF SHA2630163765d8b0f6a0f97875ecd70749e18d83e4e925d3865da2456549984e32。PDF及QA由本次交付提交保留，原始报告来源保持冻结。本阶段转in_review；未合并、不done。
