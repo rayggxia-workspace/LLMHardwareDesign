@@ -37,18 +37,19 @@ BRIDGE_TASK=r'''
  reg ev=0,estore=0,edirect=0,etake=0;reg [1:0] esources=0;reg [3:0] eop=0;
  reg [4:0] eshift=0;reg [29:0] esrc=0;reg [9:0] edst=80;
  wire eready,edone,eerror,esat;wire [127:0] edata;
- task automatic e_case(input integer index);
+ task automatic e_case(input integer index,input bit extra_sources);
   integer start,guard,pr,pw;reg [127:0] unused,readback,held_e;
   begin
    access(1,64,evectors[index][513:386],unused);access(1,65,evectors[index][385:258],unused);
    access(1,66,evectors[index][257:130],unused);
-   @(negedge clk);ev=1;estore=1;edirect=0;etake=0;esources=3;
+   @(negedge clk);ev=1;estore=1;edirect=0;etake=0;
    eop=evectors[index][517:514];eshift=evectors[index][522:518];esrc={10'd66,10'd65,10'd64};
+   esources=extra_sources?3:((eop==3||eop==6)?3:((eop==7||eop==8||eop>=10)?1:2));
    guard=0;do begin @(posedge clk);guard++;if(guard>512)$fatal(1,"E U accept timeout");end while(!eready);
    start=ticks;@(negedge clk);ev=0;guard=0;
    do begin @(posedge clk);guard++;if(guard>2048)$fatal(1,"E U completion timeout");end while(!edone);
    if({eerror,esat,edata}!==evectors[index][129:0])$fatal(1,"full U E numerical idx=%0d",index);
-   $display("E_U_MEASURE pipe=%0d index=%0d op=%0d cycles=%0d",PIPE,index,eop,ticks-start);
+   $display("E_U_MEASURE pipe=%0d index=%0d op=%0d extra=%0d sources=%0d cycles=%0d",PIPE,index,eop,extra_sources,esources,ticks-start);
    held_e=edata;repeat(3)begin @(negedge clk);if(!edone||edata!==held_e||eready)$fatal(1,"E U backpressure");end
    etake=1;@(posedge clk);@(negedge clk);etake=0;
    if(!eerror)begin access(0,80,0,readback);if(readback!==held_e)$fatal(1,"E U store ACK");end
@@ -100,8 +101,10 @@ BRIDGE_TESTS=r'''
   end
   if(!$value$plusargs("VECTORS=%s",vector_path))$fatal(1,"E U missing vectors");
   $readmemh(vector_path,evectors);
-  for(integer operation=0;operation<16;operation++)for(integer sample=0;sample<4;sample++)e_case(operation*256+sample*65);
-  $display("E_U_PASS checks=64");
+  for(integer operation=0;operation<16;operation++)for(integer sample=0;sample<4;sample++)begin
+   e_case(operation*256+sample*65,0);e_case(operation*256+sample*65,1);
+  end
+  $display("E_U_PASS checks=128");
 '''
 
 def prepare(repo,out):

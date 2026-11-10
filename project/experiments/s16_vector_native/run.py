@@ -65,6 +65,7 @@ def main():
                 require(len(lines)==1 and fields(lines[0])==dict(checks=21,invalid=5,contention=1,reset=1),'bridge coverage missing')
                 checks['BRIDGE_PASS']=fields(lines[0])
             if kind=='e':require(checks['E_PIPE_PASS']['values']==65536,'vector coverage missing')
+            if kind=='u':require(checks['E_U_PASS']['checks']==128,'natural/extra-source U coverage missing')
             if kind=='compute':require(checks['NEXP_COMPUTE_PASS']['values']>=65536,'entire S16 domain missing')
             measures=[dict(prefix=s.split()[0],**fields(s)) for s in text.splitlines() if s.startswith(('E_PIPE_MEASURE ','E_U_MEASURE ','NEXP_FULL_U ','NEXP_COMPUTE '))]
             observations=[s for s in text.splitlines() if re.match(r'^\s*\d+ (Reading|Writing) ',s) or s.startswith(('E_U_MEASURE ','NEXP_FULL_U ','NEXP_U_PASS ','NEXP_NATIVE_PATH ','E_U_PASS '))]
