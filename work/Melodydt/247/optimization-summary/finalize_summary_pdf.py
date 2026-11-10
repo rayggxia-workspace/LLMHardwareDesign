@@ -47,7 +47,7 @@ def main():
         assert fonts[name]["embedded"], ("Unembedded used font", name)
     pngs = []
     for number in range(1, qa["pages"] + 1):
-        path = HERE / ("page-%d.png" % number)
+        path = HERE / ("page-" + str(number).zfill(len(str(qa["pages"]))) + ".png")
         with Image.open(path) as im:
             assert im.width >= 990 and im.height >= 1400
             dims = [im.width, im.height]

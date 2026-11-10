@@ -27,6 +27,7 @@ PARSER.add_argument('--output', type=Path, required=True)
 PARSER.add_argument('--qa-dir', type=Path, required=True)
 PARSER.add_argument('--source-url', required=True)
 PARSER.add_argument('--source-commit', required=True)
+PARSER.add_argument('--artifact-marker', default='ee740f')
 PARSER.add_argument('--title', default='LLMHardwareDesign | Issue247 优化总览与性能')
 ARGS = PARSER.parse_args()
 SOURCE = ARGS.source.resolve()
@@ -293,7 +294,7 @@ def main():
         'all_source_links_preserved':True,'page_character_bounds':bounds,
         'unsupported_characters':unsupported,'font_files_sha256':{str(p):digest(p) for p in [FONT,BOLD,CODE]},
         'ascii_dash_normalization':'Unicode hyphens/minus to ASCII hyphen; code box lines/corners to -/+; arrows unchanged',
-        'artifact_marker':{'successful_executions':1,'exec_chunk_id':'ee740f','exit_code':0},
+        'artifact_marker':{'successful_executions':1,'exec_chunk_id':ARGS.artifact_marker,'exit_code':0},
         'visual_review':'pending; render every page before delivery'}
     (HERE/'extracted-text.txt').write_text('\n\n'.join(extracted),encoding='utf-8')
     (HERE/'qa.json').write_text(json.dumps(qa,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
