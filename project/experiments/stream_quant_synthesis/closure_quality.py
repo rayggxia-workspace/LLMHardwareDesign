@@ -157,11 +157,25 @@ def main(root):
                         loss+=float(torch.nn.functional.cross_entropy(result[:,:-1].reshape(-1,result.shape[-1]),b[:,1:].reshape(-1),reduction='sum'))
                         positions+=b.shape[-1]-1
             return values,dict(NLL=loss,positions=positions,perplexity=math.exp(loss/positions))
+        def decode(forced=None):
+            # Same 512-token prompt and the same teacher-forced continuation
+            # on both models. KV remains FP32 and is explicitly not RTL proof.
+            b=ids[:512][None,:];past=None;values=[];tokens=[]
+            with torch.no_grad():
+                for step in range(16):
+                    result=model(input_ids=b,past_key_values=past,use_cache=True)
+                    value=result.logits[0,-1].float().clone();values.append(value)
+                    token=int(value.argmax());tokens.append(token);past=result.past_key_values
+                    b=torch.tensor([[forced[step] if forced is not None else token]])
+            return torch.stack(values),tokens
         official,loss=forward();report['official_GPTQ_FP32_reference']=loss;save()
+        official_decode,official_tokens=decode()
+        report['decode_reference']=dict(context=512,steps=16,input_ids=ids[:512].tolist(),tokens=official_tokens,
+            scope='teacher-forced public GPTQ reference; FP32 KV/attention; not integer-KV qualification')
         report['head']=quantize_head(model,payload)
         capture_enabled=True;reference,loss=forward();capture_enabled=False
         report['W8_head_reference']=dict(loss=loss,vs_official=[metrics(a,b) for a,b in zip(reference,official)])
-        del official;save()
+        save()
         lut=torch.tensor(num.G_LUT,dtype=torch.int64)
         # Admission gates fixed before results: a study gate, not production QA.
         report['admission_thresholds']=dict(PPL_ratio=1.01,min_sequence_cosine=.999,mean_KL=.01,top1_fraction=.99,no_S32_clipping=True)
@@ -190,6 +204,14 @@ def main(root):
             record=dict(name=f'W8A{bits}-g{group}-G32',bits=bits,group=group,loss=loss,rows=rows,mean_KL=kl,
                 top1_fraction=top,PPL_ratio=ratio,clipped=clipped,G=gstats,linear_stats=linear_stats,
                 numerical_study_admitted=admitted,full_integer_LLM=False,physical_qualified=False)
+            public_rows=[metrics(a,b) for a,b in zip(actual,official)]
+            record['vs_official']=dict(rows=public_rows,PPL_ratio=loss['perplexity']/report['official_GPTQ_FP32_reference']['perplexity'],
+                mean_KL=sum(v['mean_KL']*v['positions'] for v in public_rows)/positions,
+                top1_fraction=sum(v['top1_fraction']*v['positions'] for v in public_rows)/positions)
+            if bits==16:
+                decoded,tokens=decode(official_tokens);record['decode512']=dict(metrics=metrics(decoded,official_decode),tokens=tokens)
+            public=record['vs_official']
+            record['public_reference_study_admitted']=admitted and public['PPL_ratio']<=1.01 and public['top1_fraction']>=.99 and public['mean_KL']<=.01 and min(v['cosine'] for v in public_rows)>=.999
             report['profiles'].append(record);save();print('CLOSURE_QUALITY '+record['name']+' '+json.dumps({k:record[k] for k in ('PPL_ratio','mean_KL','top1_fraction','numerical_study_admitted')}),flush=True)
             for name,module in modules.items():module.forward=original[name]
             for i,layer in enumerate(model.model.layers):layer.mlp.forward=original_mlp[i]
