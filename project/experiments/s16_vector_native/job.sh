@@ -6,7 +6,8 @@
 #SBATCH --time=02:00:00
 #SBATCH --output=slurm-%j.log
 set -euo pipefail
-root=$SLURM_SUBMIT_DIR
+# sbatch --chdir defines the execution directory even when submitted elsewhere.
+root=$PWD
 cd "$root/source"
 sha256sum -c "$root/source-files.sha256"
 cd "$root"
