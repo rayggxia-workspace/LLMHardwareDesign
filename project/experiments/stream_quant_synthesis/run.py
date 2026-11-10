@@ -108,12 +108,12 @@ def main(root):
         plans += [(f'r2-a{a}-k{k}-b{b}','decode512',False,dict(SQ_DIRECT=1,SQ_ABITS=a,SQ_CORE_K=k,SQ_BREAD=b))
                   for a in (8,16) for k,b in ((8,64),(16,64),(16,128))]
         plans += [(f'r3-a{a}-bw{bw}-p{p}','decode512',False,dict(SQ_DIRECT=1,SQ_ABITS=a,SQ_BREAD=128,SQ_BW_MB=bw,SQ_PCOUNT=p))
-                  for a in (8,16) for bw in (17100,51200,102400) for p in (2,3)]
+                  for a in (0,8,16) for bw in (17100,51200,102400) for p in (2,3)]
         plans += [(f'r3-wide-bw{bw}-p{p}','decode512',False,dict(SQ_DIRECT=1,SQ_ABITS=8,SQ_BREAD=128,SQ_BW_MB=bw,SQ_PCOUNT=p,SQ_BEAT=256))
                   for bw in (51200,102400) for p in (2,3)]
         plans += [(f'r3-striped-a{a}-bw{bw}-beat{beat}','decode512',False,
                    dict(SQ_DIRECT=1,SQ_ABITS=a,SQ_BREAD=128,SQ_BW_MB=bw,SQ_PCOUNT=3,SQ_BEAT=beat,SQ_STRIPE=1))
-                  for a in (8,16) for bw in (51200,102400) for beat in (64,256)]
+                  for a in (0,8,16) for bw in (51200,102400) for beat in (64,256)]
         report['compiler_plans']=[]
         for workload in work:
             for method in ('greedy','dp'):
@@ -130,7 +130,7 @@ def main(root):
                 planner.bundle(plan,out/(f'bundle-coupled-a{bits}-{method}.json'),3,bits,256)
                 (out/(f'plan-coupled-a{bits}-{method}.json')).write_text(json.dumps(plan,indent=2)+'\n')
                 plans.append((f'r4-coupled-a{bits}-{method}','decode512',False,
-                              dict(SQ_DIRECT=1,SQ_ABITS=bits,SQ_BREAD=128,SQ_BW_MB=102400,SQ_PCOUNT=3,SQ_BEAT=256,SQ_PLAN=str(path))))
+                              dict(SQ_DIRECT=1,SQ_ABITS=bits,SQ_BREAD=128,SQ_BW_MB=102400,SQ_PCOUNT=3,SQ_BEAT=64,SQ_STRIPE=1,SQ_PLAN=str(path))))
         for batch in range(0,len(plans),4):
             with ThreadPoolExecutor(max_workers=4) as pool:
                 report['cases'].extend(pool.map(case,plans[batch:batch+4]))
