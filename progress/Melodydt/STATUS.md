@@ -1,5 +1,30 @@
 # Melodydt 进度
 
+## 共享32KiB直供与本地1R1W实施（2026-11-10 Asia/Shanghai）
+
+负责人/认证Melodydt，Issue247 / PR243 / task/242-r-load-bounds。两项可选RTL与真实双P包装层已完成本阶段验证，提交独立审查，未合并、不done。稳定测试源a7a36cbb76fa76f6162b666d1f5683cda2a8f7ec；修改前备份task/247-before-shared32-rtl@a8e793e4，候选备份task/247-shared32-native-a7a36cbb，均已读回。
+
+run32/102006在c64/node1/4核1:16 COMPLETED0:0：单元3+4runs、双P四配置各三组、RELEASE/cold/lease、41472主数值+192重填数值及ECHO0生产面积通过。run29/10200340秒COMPLETED0:0：12组默认逐事件/周期精确比较+3组cold。run30/1020045:45 COMPLETED0:0：原评价体系32例端口宽度敏感性；16B共享A约束最高3.640199，prefill ideal3.496459，明确不是原生全图token/s。三路独立审计和完整本地SHA复核通过。
+
+逻辑容量80KiB/物理112KiB/28宏；相对48KiB原配置新增64KiB物理SRAM。宏代理+1.4793928004mm²，池与两P后端标准单元净增0.07256081mm²（同ECHO0实际bank_rw基线），不含P外围和物理实现。完整DDR桥、母控/SoC接入、S32转换及真实模型生成仍未实现。
+
+[实施报告](../../docs/experiments/issue-247-shared32-native.md)；证据work/Melodydt/247/shared32-native/evidence-index.json。服务器yuzelu@10.129.166.172，个人/public/home/yuzelu/Melodydt/issue247-area-speed/run26至run32；source/、slurm日志、results/、receipts.tar持久保存，全部终态，无活动作业，无自动监测。失败run26/28/31及修复经过保留。
+
+本地完整快照python scripts/check_project.py通过，仅管理结构；GitHub validate在a7a36cbb仍failure且steps为空，原因未核实，未绕过。登记management-hub PR5 pending；缺board配置/Projects能力，看板unverified/同步pending；正式审查人和管理员待指定。下一步独立审查本阶段RTL/报告，确认A16B端口与实际DMA后续范围；管理员处理CI、登记和看板。此前run24/25研究报告证据包上传阻塞仍保留，本阶段不重传该包。
+
+## 本地交付与上传阻塞（2026-11-10 Asia/Shanghai）
+
+本次32/48/96KiB共享S条件研究及两路独立复核已完成；报告、run24/25结果证据及PDF留在本地，尚未上传GitHub。此前模型源码a8e793e4c6f97e9dca5b0cc203797dcd3b0e0e78已上传并用于run25，生产RTL未扩容。自动审批拒绝本次研究证据包上传rayggxia-workspace/LLMHardwareDesign，理由为内部路径及压缩实验资料的特定外传授权不足。没有通过拆包或其他通道规避；线上Issue/PR结果状态尚未同步。本地研究完成不等于在线交付或正式验收，以下in_review指拟提交状态。需用户确认这批资料上传到现有task/242-r-load-bounds / PR243；负责人Melodydt。
+
+恢复第一步：读取本地work/Melodydt/247/shared-pool/README.md及此阻塞记录，确认授权后重新核对远端head和文件清单，按lease上传、逐blob读回，再同步Issue/PR。不要重复运行已成功的run25。登记PR5 pending，看板unverified/同步pending。
+
+## 共享 S 直供研究已完成服务器评估（2026-11-10 Asia/Shanghai）
+Issue247 / PR243，Melodydt，研究交付in_review，不done。保留各Block本地16KiB，共享32/48/96KiB经每P有限FIFO直供A；32main+10敏感例与8旧基线全字段回归、12数值地址case/725输出/107471事件/10生命周期负控/14非法CLI通过，两路独立后处理通过。prefill理想层4.398913/4.475230/4.668451，较R4+19.00%/+21.06%/+26.29%；shared层3.894197/3.977429/4.189147。三个decode的48/96完全同速，W8主ideal3.711253（+0.953%）。未达5；生产RTL未扩容，不计第五轮RTL迭代。
+run25/101993/mdt-shared-pool，源a8e793e4c6f97e9dca5b0cc203797dcd3b0e0e78，c64/node1/4核，7:05 COMPLETED0:0；result SHAb56095b29aac658af899db495d5b44a07246c3ad04fa93a7b8945def87cfbd03。run24/101992 FAILED1:0的过时API编译失败已保留并修复，未弱化-Werror。244策展原件、两run各89源/15输入已SHA核验，3大输出由retention索引留在本人服务器和本地归档。
+原服务器/public/home/yuzelu/Melodydt/issue247-area-speed/run24、run25持久保存source/、slurm日志、results/；本地work/Melodydt/242/r-load-bounds/repo为非Git快照，远端task/242-r-load-bounds未合并main。当前没有活动作业和自动监测。成果/复跑见docs/experiments/issue-247-shared-pool-study.md及work/Melodydt/247/shared-pool/README.md；原生RTL、物理面积/时序与真实生成仍未验收。独立审查人待指定，登记PR5 pending、看板unverified/同步pending；GitHub CI以最新PR回执为准。
+
+[正式报告](../../docs/experiments/issue-247-shared-pool-study.md)。恢复第一步读取最新PR head与run25/index.json，再按verify.py核验；下一步正式审查并决定共享池RTL实施范围，负责人Melodydt。
+
 ## 顶层共享 S 直供研究（2026-11-10 Asia/Shanghai）
 Issue247 / PR243，Melodydt，in_progress。用户选择共享 S→每 P 独立有限 FIFO→A feeder，比较共享32/48/96KiB；各Block本地16KiB保留。正式实验project/experiments/shared_pool_study，根独占当前非Git快照；子代理只在外层shared-pool-research独立目录开发。关闭新功能须精确复现run23八个R4场景，新增池计入填充/端口/延迟/背压；新性能尚未测量，不实装生产RTL，不属于第五轮迭代。
 已核对Melodydt认证、远端head00a138bae558ccafa23514a7c1a8013dcc61b27f、Issue/PR与服务器本人目录；管理结构检查通过。下一步完成模型、独立审计、源上传后启动新Slurm run24；尚无本研究作业或自动监测。登记pending；缺board.json与Projects能力，看板unverified/同步pending，管理员与正式审查人待指定。[接续](../../docs/handoffs/2026-11-10-issue-247-shared-pool.md)。

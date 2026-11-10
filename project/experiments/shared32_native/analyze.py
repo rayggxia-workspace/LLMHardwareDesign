@@ -7,6 +7,18 @@ from pathlib import Path
 MACRO_AREA_MM2 = 0.092462050025
 
 
+def bind_measurement(run, measure):
+    """Retain run identity without silently overwriting conflicting receipts."""
+    identity = dict(reset_mode=run['reset_mode'], seed=run['seed'],
+                    variant=run.get('variant', 'default'))
+    for key in identity.keys() & measure.keys():
+        if type(identity[key]) is not type(measure[key]) or identity[key] != measure[key]:
+            raise ValueError('measurement/run identity mismatch: ' + key)
+    merged = dict(identity)
+    merged.update(measure)
+    return merged
+
+
 def analyze(path):
     report = json.loads(path.read_text(encoding='utf-8'))
     result = dict(result_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
@@ -18,9 +30,9 @@ def analyze(path):
         for run in component['runs']:
             for index, measure in enumerate(run['measurements']):
                 key = run.get('variant', 'default') + ':' + str(measure.get('scenario', measure.get('case', index)))
-                grouped.setdefault(key, []).append(dict(reset_mode=run['reset_mode'], seed=run['seed'], **measure))
+                grouped.setdefault(key, []).append(bind_measurement(run, measure))
         result['components'][name] = dict(passed=component['passed'], scenarios=grouped,
-            throughput=[dict(reset_mode=run['reset_mode'], seed=run['seed'], **run['throughput'])
+            throughput=[bind_measurement(run, run['throughput'])
                         for run in component['runs'] if 'throughput' in run])
     area = report['mapped_area']
     result['area']['mapped'] = area

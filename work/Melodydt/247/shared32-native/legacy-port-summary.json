@@ -1,0 +1,102 @@
+{
+  "scope": "OLD R4/shared-pool conditional metric: shared A consumer width only, 32 -> 16 B/clock; unchanged S32/K256/S96 arithmetic and existing overlap. Not measured native full-model RTL throughput or physical qualification.",
+  "limitations": [
+    "No native S32-to-three-S16-limb conversion, native packed-capacity or K32 command lowering.",
+    "No measured descriptor/BEGIN/SEAL/RELEASE or P LOAD join overhead added.",
+    "Original byte-masked fill bridge and its two 1024B DDR descriptors remain conditional.",
+    "Only shared consumer width changes; local A suffix, B, M and aggregate overlap remain frozen.",
+    "Shared and ideal-dual LOCAL port layers are old conditional contracts, not qualification of the new local SRAM RTL.",
+    "300MHz remains an assumption; no physical closure or real model-weight/token generation proof."
+  ],
+  "cases": [
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "shared_pool_KiB": 32,
+      "R4_tokens_per_second": 3.38396291561,
+      "shared32B_tokens_per_second": 3.44932242392,
+      "shared16B_tokens_per_second": 3.44738905761,
+      "rate_change_vs_32B": -0.000560506114648085,
+      "speedup_vs_R4": 1.0187431551659336
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "shared_pool_KiB": 32,
+      "R4_tokens_per_second": 3.67621308212,
+      "shared32B_tokens_per_second": 3.70022091143,
+      "shared16B_tokens_per_second": 3.64019895316,
+      "rate_change_vs_32B": -0.01622118238524406,
+      "speedup_vs_R4": 0.9902034707573311
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "dual_ports": false,
+      "shared_pool_KiB": 32,
+      "R4_tokens_per_second": 1.88402353266,
+      "shared32B_tokens_per_second": 1.9323793431,
+      "shared16B_tokens_per_second": 1.9323685392,
+      "rate_change_vs_32B": -5.590982970593572e-06,
+      "speedup_vs_R4": 1.025660510972514
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "dual_ports": true,
+      "shared_pool_KiB": 32,
+      "R4_tokens_per_second": 2.18133705644,
+      "shared32B_tokens_per_second": 2.19242719277,
+      "shared16B_tokens_per_second": 2.19241328536,
+      "rate_change_vs_32B": -6.3433851057448365e-06,
+      "speedup_vs_R4": 1.0050777246419198
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "shared_pool_KiB": 32,
+      "R4_tokens_per_second": 2.77332356601,
+      "shared32B_tokens_per_second": 2.81707050272,
+      "shared16B_tokens_per_second": 2.81578080891,
+      "rate_change_vs_32B": -0.0004578138206887683,
+      "speedup_vs_R4": 1.0153091559242964
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "shared_pool_KiB": 32,
+      "R4_tokens_per_second": 2.97891420928,
+      "shared32B_tokens_per_second": 2.99465874654,
+      "shared16B_tokens_per_second": 2.95522255928,
+      "rate_change_vs_32B": -0.013168841793931962,
+      "speedup_vs_R4": 0.9920468840870841
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "dual_ports": false,
+      "shared_pool_KiB": 32,
+      "R4_tokens_per_second": 3.10725416366,
+      "shared32B_tokens_per_second": 3.89419693927,
+      "shared16B_tokens_per_second": 3.38865940547,
+      "rate_change_vs_32B": -0.1298181734729542,
+      "speedup_vs_R4": 1.0905639600088735
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "dual_ports": true,
+      "shared_pool_KiB": 32,
+      "R4_tokens_per_second": 3.69669737899,
+      "shared32B_tokens_per_second": 4.39891251536,
+      "shared16B_tokens_per_second": 3.49645863547,
+      "rate_change_vs_32B": -0.2051538594456782,
+      "speedup_vs_R4": 0.9458330712554023
+    }
+  ],
+  "native_full_model_tokens_per_second": null
+}

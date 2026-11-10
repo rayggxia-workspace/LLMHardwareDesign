@@ -337,3 +337,21 @@ python3 -B source/project/experiments/iterative_speed/round02/run.py --root "$RU
 run22真实RTL校准、run23旧体系16case通过。仅Slurm分配节点按归档job.sh执行；入口python3 -B source/project/experiments/rtl_iterations/round4/run.py --root RUN与python3 -B source/project/experiments/iterative_speed/round04/run.py --root RUN。run18-observed输入的原日志SHA派生可用冻结make_prior.py重建，不能无来源替换基线。
 
 离线python work/Melodydt/247/speed-iterations/verify.py；选择--current-run run22 --current-run run23检查当前源，否则逐轮冻结source-snapshot核验。R1/R2生产源与R4不同，不能改旧SHA转移资格。大raw的retention索引不等于Git保存全部原始文件。此项没有综合/300MHz STA/物理或完整原生生成资格。
+
+## 顶层共享 S 直供 A 条件研究
+[实验入口](../project/experiments/shared_pool_study/README.md)在原R4上比较pool0/32/48/96KiB，保持每Block本地16KiB。按归档部署SHA准备本人服务器全新RUN，执行sbatch --parsable job.sh；批处理入口python3 -B source/project/experiments/shared_pool_study/run.py --root RUN。仅Slurm4核及既有SystemC3.0.2容器执行，禁止本机/登录节点编译或仿真。run25/101993完整32主例+10敏感例通过。只读本地证据验证：python -B work/Melodydt/247/shared-pool/verify.py；输入源码、实际状态及限制见[报告](experiments/issue-247-shared-pool-study.md)。共享池未实装生产RTL，不继承旧物理资格。
+
+## Issue247：共享32KiB原生双P与本地并发
+
+新RTL为project/rtl/shared_s/shared_a_pool32.sv、pu_p_shared_pair.sv及s_sram/block_feed_s16k_1r1w.sv。旧P参数默认关闭；新双P包装层显式选择共享A直供及逻辑1R1W。详见[实施报告](experiments/issue-247-shared32-native.md)与[决策](decisions/2026-11-10-issue-247-shared32-native.md)。
+
+在授权服务器个人新run目录部署source/、SHA锁定inputs.json、source/input-files.sha256后，仅Slurm执行：
+
+```sh
+# 从project/experiments/shared32_native/job.sh复制为run根job.sh
+sbatch --parsable job.sh
+# 默认旧模式精确回归：compat_job.sh复制为另一个run根job.sh
+# 原评价端口宽度：legacy_port_probe/job.sh，保留其README要求的全部冻结输入
+```
+
+原始通过：run32/102006完整RTL+ECHO0面积；run29/102003兼容；run30/102004旧体系端口敏感性。后处理可本地执行：python project/experiments/shared32_native/analyze.py --result RESULT_JSON --out ANALYSIS_JSON。仅后处理脚本修正了重复seed合并，不改变服务器原始结果。原生S8/S16与旧S32/S96分列，无完整原生大模型token/s、STA/P&R资格。
