@@ -64,8 +64,8 @@ def extend(folder):
                       '       if(cfg.cl_mode>=4){require(k==128&&n==8,"CL packed context shape");pending.push_back(mem.submit(worker,cl_packed_address(o.in[1],col,kk,o.k,cl_record_size(o.cols,o.k)),cl_record_size(o.cols,o.k),false,detail::WEIGHT,bbank));}\n'
                       '       else if(cfg.queued)pending.push_back(mem.submit(worker,address,bbytes,false,detail::WEIGHT,bbank));')
         path.write_bytes(text.encode())
-    s=once(s,'<<scratch_peak<<",\\\"M_commands',
-           '<<(scratch_peak+(cfg.cl_mode>=4?2*(cl_record_size(151936,2048)-1024):0))<<",\\\"M_commands')
+    s=once(s,'<<scratch_peak\n',
+           '<<(scratch_peak+(cfg.cl_mode>=4?2*(cl_record_size(151936,2048)-1024):0))\n')
     emit=r'''std::cout<<",\"closure\":{\"mode\":"<<cfg.cl_mode<<",\"issue_lanes_per_channel\":"<<cfg.cl_issue
       <<",\"FFNs\":"<<cl_ffns<<",\"scale_metadata_bytes\":"<<cl_metadata
       <<",\"partial_read_bytes\":"<<cl_partial_read<<",\"partial_write_bytes\":"<<cl_partial_write
