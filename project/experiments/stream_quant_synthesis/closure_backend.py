@@ -137,7 +137,7 @@ def main(root,stage):
             workload,mode,issue,bw,banks=item;name=f'{workload}-mode{mode}-issue{issue}-bw{bw}-banks{banks}'
             env={k:v for k,v in os.environ.items() if not k.startswith(('SQ_','BN_','CL_'))}
             knobs=dict(SQ_DIRECT=1,SQ_ABITS=16 if mode else 0,SQ_BREAD=128,SQ_BW_MB=bw,SQ_PCOUNT=3,SQ_BEAT=64,
-                       SQ_STRIPE=1,BN_RELEASE=2,CL_MODE=mode,CL_ISSUE=issue,CL_BANKS=banks,CL_HEAD_GROUP=32)
+                       SQ_STRIPE=1,BN_RELEASE=2,CL_MODE=mode,CL_ISSUE=issue,CL_BANKS=banks,CL_HEAD_GROUP=16)
             env.update({k:str(v) for k,v in knobs.items()})
             command=[out/'candidate',root/'restored/inputs'/(workload+'.trace'),'queued_pipe_w8','prefix_pair_combine',8,1,1,16,0,4,0,1,1,1]
             text=execute(command,out/(name+'.log'),out,env)

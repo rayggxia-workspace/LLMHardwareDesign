@@ -16,4 +16,4 @@ sha256sum "$image" /public/home/yuzelu/opt/systemc-3.0.2-issue219/lib/libsystemc
 exec srun --exact -n1 -c4 --cpu-bind=cores \
  /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu \
  --env SLURM_CPUS_PER_TASK=4 --env SLURM_JOB_ID="$SLURM_JOB_ID" "$image" \
- python3 -B "$root/source/project/experiments/stream_quant_synthesis/closure_backend.py" --root "$root" --stage rtl
+ python3 -B "$root/source/project/experiments/stream_quant_synthesis/closure_backend.py" --root "$root" --stage timing

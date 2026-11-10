@@ -12,11 +12,12 @@
  U cl_ffns=0,cl_metadata=0,cl_partial_read=0,cl_partial_write=0,cl_link_bytes=0,cl_G_values=0;
  U cl_G_cycles=0,cl_peak_b=0,cl_peak_s=0,cl_wave_count=0;
  bool cl_active=false;
- U cl_packed_address(int weight,int col,int kk,int full_k)const{
+ U cl_record_size(int cols,int full_k)const{return cfg.cl_head_group==16&&cols==151936&&full_k==2048?1152:1088;}
+ U cl_packed_address(int weight,int col,int kk,int full_k,U record_bytes=1088)const{
   require(col%8==0&&kk%128==0&&full_k%128==0,"packed W8 tile alignment");
   // A deployment image packs 1024 W8 bytes + 16 FP16 scale bytes + 48 pad
   // bytes. A single DMA owns the whole 1088B record in the same finite bank.
-  return (U(1)<<42)+U(weight)*(U(1)<<31)+(U(col/8)*(full_k/128)+U(kk/128))*1088;
+  return (U(1)<<42)+U(weight)*(U(1)<<31)+(U(col/8)*(full_k/128)+U(kk/128))*record_bytes;
  }
  U cl_meta_address(const CLJob& j)const{
   return (U(1)<<37)+U(j.weight)*(U(1)<<26)+(U(j.col)*(j.full_k/128)+U(j.kk/128)*8)*2;
@@ -97,7 +98,7 @@
   for(U off=0;off<2048;off+=128){read_range(gate.in[0],off*4,512);cycles(66);sio(3,256);}
   if(last_use[gate.in[0]]<=int(i+1)){discard_range(gate.in[0],0,size(gate.in[0]));}
   // S128 output state + two padded B/scale slots + double A + gate/up + Mid + control.
-  cl_peak_s=std::max<U>(cl_peak_s,11008+2176+512+1024+1024+512);
+  cl_peak_s=std::max<U>(cl_peak_s,11008+2*cl_record_size(151936,2048)+512+1024+1024+512);
   require(cl_peak_s<=16384,"CL complete S lifetime reservation");
   if(cfg.cl_mode>=5){for(int p=0;p<3;++p){cl_link(p,4096,3,true);}}
   for(int first=0;first<11008;first+=128){
