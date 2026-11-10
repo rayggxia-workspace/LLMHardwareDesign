@@ -5,7 +5,7 @@ from generate import once
 
 def extend(folder):
     folder=Path(folder);p=folder/'model.cpp';s=p.read_text()
-    s=once(s,' int bn_release=0;',' int cl_mode=0,cl_issue=1,cl_banks=2;\n int bn_release=0;')
+    s=once(s,' int bn_release=0;',' int cl_mode=0,cl_issue=1,cl_banks=2,cl_head_group=128;\n int bn_release=0;')
     s=once(s,'std::array<Calendar,6> weight_store','std::array<Calendar,24> weight_store')
     s=s.replace('weight_store[2*b->group+b->operand_bank]','weight_store[(cfg.cl_mode>=5?8:2)*b->group+b->operand_bank]')
     s=once(s,'b->operand_bank>=0&&b->operand_bank<2','b->operand_bank>=0&&b->operand_bank<cfg.cl_banks')
@@ -24,7 +24,8 @@ def extend(folder):
            'U cost=cl_g?ceildiv(n,2)+3+ceildiv(n,4)+1:(cfg.vecpipe?(ceildiv(n,cfg.vector_lanes)+5)*micro:ceildiv(n,4)*cfg.ewise*micro);\n'
            '   if(cl_g){cl_G_values+=n;cl_G_cycles+=cost;}')
     s=once(s,'  c.bn_release=sq_integer(',
-           '  c.cl_mode=sq_integer("CL_MODE",0);c.cl_issue=sq_integer("CL_ISSUE",1);c.cl_banks=sq_integer("CL_BANKS",2);\n'
+           '  c.cl_mode=sq_integer("CL_MODE",0);c.cl_issue=sq_integer("CL_ISSUE",1);c.cl_banks=sq_integer("CL_BANKS",2);c.cl_head_group=sq_integer("CL_HEAD_GROUP",128);\n'
+           '  if(c.cl_head_group!=32&&c.cl_head_group!=128)throw std::invalid_argument("head group");\n'
            '  if(c.cl_mode<0||c.cl_mode>6||(c.cl_issue!=1&&c.cl_issue!=2&&c.cl_issue!=4)||(c.cl_banks!=2&&c.cl_banks!=4&&c.cl_banks!=8)||(c.cl_mode<5&&c.cl_banks!=2))throw std::invalid_argument("CL mode/ports/banks");\n'
            '  c.bn_release=sq_integer(')
     s=once(s,' Study s("study",c,argv[1]);',
@@ -49,7 +50,7 @@ def extend(folder):
            '   CLJob j{o.in[1],p->col,p->ki,o.k,false,false};\n'
            '   for(int offset=0;offset<p->k;offset+=128){j.kk=p->ki+offset;mem.transfer(worker,cl_meta_address(j),16,false,detail::WEIGHT,p->bank);cl_metadata+=16;}\n'
            '   cycles(2);adapter_work+=2*C;\n'
-           '  }\n  if(cfg.cl_mode>=4&&weight){cycles(2);adapter_work+=2*C;cl_metadata+=16;}\n  U start=now();\n  U send=')
+           '  }\n  if(cfg.cl_mode>=4&&weight){const bool head32=cfg.cl_head_group==32&&o.cols==151936&&o.k==2048;const U extra=head32?4:0;cycles(2+extra);adapter_work+=(2+extra)*C;cl_metadata+=head32?64:16;}\n  U start=now();\n  U send=')
     # Carry scales in the same finite queued record, not a serial 16B DRAM
     # transaction on the consumer's critical path. Old modes remain unchanged.
     for name in ('matrix.inc','context_worker.inc'):
@@ -74,6 +75,7 @@ def extend(folder):
       <<",\"full_A_register_bytes_per_P\":"<<(cfg.cl_mode>=5?4096:0)
       <<",\"weight_banks_per_P\":"<<cfg.cl_banks
       <<",\"extra_B_and_result_bytes_per_P\":"<<((cfg.cl_banks-2)*(1088+128))
+      <<",\"head_weight_group\":"<<cfg.cl_head_group
       <<",\"quality_profile\":\"W8A16-g128-G32\",\"physical_qualified\":false,\"energy_J_token\":null}";
     std::cout<<"}\n";'''
     s=once(s,'std::cout<<"}\\n";',emit)
