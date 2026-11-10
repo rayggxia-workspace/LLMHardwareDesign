@@ -56,10 +56,11 @@ def quantize_head(model,payload):
     # Dense lm_head becomes W8; FP16 public embedding lookup remains a separate
     # declared table. Never silently describe this as a fully W8 checkpoint.
     original=model.lm_head.weight.detach();H,K=original.shape
-    q=np.empty((H,K),dtype=np.int8);scales=np.empty((H,K//128),dtype=np.float16)
+    group=32
+    q=np.empty((H,K),dtype=np.int8);scales=np.empty((H,K//group),dtype=np.float16)
     replacement=torch.empty_like(original)
     for n in range(0,H,2048):
-        w=original[n:n+2048].reshape(-1,K//128,128)
+        w=original[n:n+2048].reshape(-1,K//group,group)
         s=(w.abs().amax(-1).clamp_min(1e-8)/127).half().float()
         z=torch.round(w/s[...,None]).clamp(-128,127)
         q[n:n+len(w)]=z.reshape(-1,K).to(torch.int8).numpy()
@@ -68,7 +69,7 @@ def quantize_head(model,payload):
     model.lm_head.weight=torch.nn.Parameter(replacement,requires_grad=False)
     m,e=num.fp16_fields(scales);payload['lm_head']=(q,m,e)
     return dict(elements=q.size,scale_bytes=scales.nbytes,embedding_lookup_bits=16,
-                policy='symmetric per128 W8 head; original GPTQ embedding table retained')
+                weight_group=group,policy='symmetric per32 W8 head; original GPTQ embedding table retained')
 
 
 def rshift(value,shift):
@@ -201,7 +202,7 @@ def main(root):
             top=sum(v['top1_fraction']*v['positions'] for v in rows)/positions
             ratio=loss['perplexity']/report['W8_head_reference']['loss']['perplexity']
             admitted=ratio<=1.01 and min(v['cosine'] for v in rows)>=.999 and kl<=.01 and top>=.99 and clipped==0
-            record=dict(name=f'W8A{bits}-g{group}-G32',bits=bits,group=group,loss=loss,rows=rows,mean_KL=kl,
+            record=dict(name=f'W8A{bits}-g{group}-G32-head32',bits=bits,group=group,loss=loss,rows=rows,mean_KL=kl,
                 top1_fraction=top,PPL_ratio=ratio,clipped=clipped,G=gstats,linear_stats=linear_stats,
                 numerical_study_admitted=admitted,full_integer_LLM=False,physical_qualified=False)
             public_rows=[metrics(a,b) for a,b in zip(actual,official)]
