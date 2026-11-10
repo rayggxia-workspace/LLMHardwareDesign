@@ -39,10 +39,16 @@ def study(H=2048,F=11008,P=3,S=16384,contexts=8,N=8,Ktile=128,activation_bytes=4
         gate_up_weight_bytes=2*H*F*replay_passes,down_weight_bytes=H*F,
         additional_gate_up_weight_bytes=2*H*F*(replay_passes-1),Mid_DRAM_bytes=0,
         qualifier='Mathematical replay candidate; generator/down LC interleaving and transport not implemented')
+    mid_shard=math.ceil(math.ceil(F/P)*activation_bytes/64)*64
+    distributed=dict(name='distributed_Mid_in_private_S',Mid_S_bytes_per_P=mid_shard,
+        S_peak_per_P=mid_shard+workspace+double_B+double_A,
+        capacity_pass=mid_shard+workspace+double_B+double_A<=S,
+        current_context_protocol_sufficient=True,
+        qualifier='Alternative, not exhausted optimum: each output group reads all Mid shards over legal inter-P links; scratch reservation fixed here, no proven overlap or routed endpoint qualification')
     assert sum(outputs)==H and material['scratch_peak_per_P']<=S
     return dict(scope='capacity and payload lower bounds; excludes padding/descriptors/endpoint wires and is not token/s',
         H=H,F=F,P=P,S_bytes_per_P=S,activation_bytes=activation_bytes,psum_bytes=psum_bytes,
-        outputs_per_P=outputs,Ktile=Ktile,profiles=[material,spilled,replay])
+        outputs_per_P=outputs,Ktile=Ktile,profiles=[material,spilled,replay,distributed])
 
 
 def all_studies():
