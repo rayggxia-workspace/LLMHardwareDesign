@@ -1,5 +1,9 @@
 # 当前状态
 
+## 2026-11-11：原生存储与有限流水回校
+
+[Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)持续实施。首版方向为私有S内X、双256B A槽、同K复用和早复制，无新增共享池或4KiB X寄存器。历史NoPool9.223787已复现；公共S128诊断7.595433，同原生Xreg7.585591，尚低于旧条件目标9.215647，不宣称系统达标。真实四W银行、16×8 S32上下文/scale、G32及有限A/copy/双结果槽已有独立RTL测试；G紧凑物理和真实S流适配继续迭代。联合数值/程序、完整宏及LC/MC物理、系统计时能耗与DP仍待完成，失败/低性能结果全部保留。详见工作索引和合同。
+
 ## 2026-11-10：共享X/S32底座联合实现启动
 
 [Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) / [PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251) 的[合同](plans/w8a16-next-base-contract.md)替代旧S128草稿，结合PR249的窄持续状态/有限供数和PR243共享A32。首门为相同51.2GB/s、3P、S32/Mid32条件下不低于9.21564723269 token/s；未通过前不冻结资源或声称新300 MHz验收。私有S不扩容、不默认LVT复制；共享池/权重/附属寄存器独立记面积，main紧凑宏为最终占地和端点比较基点。联合评估、物理基线和控制合同并行准备；宏RTL/物理、五类组/LC/MC/指令与DP适配全部仍待实际完成。详见[执行入口](../work/YUZE-LU/250/README.md)，登记/看板缺项继续交接。

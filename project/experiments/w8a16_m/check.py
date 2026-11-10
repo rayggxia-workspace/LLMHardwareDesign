@@ -96,7 +96,7 @@ def generate_scale(rng, root):
     return len(rows), sum(not (row & 1) for row in rows)
 
 
-def generate_m(rng, root):
+def generate_m(rng, root, model_file):
     inputs, outputs = [], []
     serial = 0
     def beat(first, last, tag, group, offset, k, n, a, w):
@@ -133,9 +133,39 @@ def generate_m(rng, root):
                                              (16, 9, 0), (16, 8, 16)]:
                 beat(1, 1, serial + 30000, 16, bad_offset, bad_k, bad_n, [0] * 16, [0] * 128)
                 response(serial + 30000, bad_n, [0] * 8, 1)
+    # Historical actual-checkpoint A16/W8 groups from four FFNs. Recompute
+    # every old 40-bit prefix independently, then check new raw S32 output.
+    # Down A came from the historical Mid64 profile: this is real arithmetic
+    # data, not a claim that new Mid32/small-G deployment has been verified.
+    model_bytes = model_file.read_bytes()
+    assert hashlib.sha256(model_bytes).hexdigest() == "e2767a3007e4dcd2249171616ec027c17067d9daac5c2af34a19404185663c83"
+    def unpack_signed(text, width, count):
+        bits = int(text, 16)
+        result = [(bits >> (width * i)) & ((1 << width) - 1) for i in range(count)]
+        return [v - (1 << width) if v & (1 << (width - 1)) else v for v in result]
+    model_groups = 0
+    partial = [0] * 8
+    for line in model_bytes.decode("ascii").splitlines():
+        ctx, first, last, k, n, offset, a_hex, w_hex, old_hex = line.split()
+        first, last, k, n, offset = map(int, [first, last, k, n, offset])
+        assert int(ctx) == 0 and n == 8 and k == 16
+        if first:
+            assert offset == 0
+            partial = [0] * 8
+        a, w = unpack_signed(a_hex, 16, 16), unpack_signed(w_hex, 8, 128)
+        for lane in range(n):
+            partial[lane] += sum(a[i] * w[lane * 16 + i] for i in range(k))
+            s32(partial[lane])
+        assert partial == unpack_signed(old_hex, 40, 8), "historical prefix/layout mismatch"
+        beat(first, last, 50000 + model_groups, 128, offset, k, n, a, w)
+        if last:
+            assert offset == 112
+            response(50000 + model_groups, n, partial, 0)
+            model_groups += 1
+    assert model_groups == 24
     write_vectors(root / "m-in.hex", inputs, 1339)
     write_vectors(root / "m-out.hex", outputs, 293)
-    return len(inputs), len(outputs)
+    return len(inputs), len(outputs), model_groups
 
 
 def main():
@@ -151,7 +181,8 @@ def main():
     args.out.mkdir(parents=True, exist_ok=False)
     rng = random.Random(args.seed)
     count, valid = generate_scale(rng, args.out)
-    mi, mo = generate_m(rng, args.out)
+    mi, mo, model_groups = generate_m(rng, args.out,
+        args.source / "project/experiments/w8a16_m/vectors/closure-m-run38.txt")
     (args.out / "counts.vh").write_text(f"`define SCALE_COUNT {count}\n`define M_IN_COUNT {mi}\n`define M_OUT_COUNT {mo}\n", encoding="ascii")
     results = {}
     for unit, rtl in [("scale", "scale_group_s32"), ("m", "m_group_s32")]:
@@ -176,6 +207,7 @@ def main():
     hashes = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in args.out.iterdir() if p.is_file()}
     report = dict(seed=args.seed, scale_vectors=count, scale_success_vectors=valid,
                   scale_fault_vectors=count-valid, m_beats=mi, m_responses=mo,
+                  actual_checkpoint_raw_groups=model_groups,
                   results=results, sha256=hashes, qualification="candidate arithmetic units only; not physical, model, context-controller, or combined-program evidence")
     (args.out / "result.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report))

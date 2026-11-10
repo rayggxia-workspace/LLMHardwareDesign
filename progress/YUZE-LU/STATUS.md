@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+## 2026-11-11：原生存储与有限流水回校
+
+[Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)持续实施。首版方向为私有S内X、双256B A槽、同K复用和早复制，无新增共享池或4KiB X寄存器。历史NoPool9.223787已复现；公共S128诊断7.595433，同原生Xreg7.585591，尚低于旧条件目标9.215647，不宣称系统达标。真实四W银行、16×8 S32上下文/scale、G32及有限A/copy/双结果槽已有独立RTL测试；G紧凑物理和真实S流适配继续迭代。联合数值/程序、完整宏及LC/MC物理、系统计时能耗与DP仍待完成，失败/低性能结果全部保留。详见工作索引和合同。
+
+[工作索引](../../work/YUZE-LU/250/README.md)。登记PR5 pending，Projects unverified/同步pending，PR251 draft，Issue in_progress，独立审查人待指定。
+
 ## 2026-11-11（CST）联合模型与S32算术推进
 
 Issue250仍实施中：已精确复现基线9.21564723269，有限队列共享X候选模型9.22603374894，继续原生S供数/有限双tile复用对照，不冻结额外共享池。main M/G/E/S紧凑物理基线14回执与5项预检通过；新组M/scale-RNE六seed两轮Slurm102063/102065通过并回收，102060编译失败及修复保留。仍缺实际模型向量、投影上下文/LC/MC、最终宏与300 MHz、系统与DP验收。按用户要求持续解决-迭代，不以部分PR或测试结束目标。[本轮入口](../../work/YUZE-LU/250/README.md)。

@@ -32,3 +32,12 @@
 本地 `python scripts/check_project.py` PASS（仅管理结构）。Git直接HTTPS fetch两次因connection reset失败；使用已认证GitHub connector核验PR251原tree/commit，从本地main与原文件精确恢复同SHA对象后在隔离分支修改。没有改main、强推或自合并。
 
 项目登记沿用management-hub PR5 pending；`config/board.json`不存在，Projects实际字段unverified/同步pending，沿用Issue7交接；审查人/管理员待指定。在线状态以更新后的Issue/PR读回为准。本工作未完成，不关闭Issue250。
+
+## 2026-11-11 原生服务校准与继续实施
+
+- [native-s](native-s/README.md)：公共S128诊断16条trace，同工作量7.595433尚未达旧9.215647；不将历史9.223当最终性能。
+- [weights](weights/HANDOFF.md)：四1152B W记录银行、独立MC issue、34实际记录/head16，六seed三初态通过。
+- [m](m/README.md)：追加24组实际历史raw通过，新Mid32端到端仍待验证。有限16×8 S32上下文已有Slurm102099六seed通过，回执回收中。
+- [control](control/README.md)：有限A/copy及双结果槽初轮通过，真实S/MC/LC迭代中。G物理与S128流适配并行推进。
+
+持续解决—迭代至完整验收。未完成保持Issue in_progress/PR draft；登记PR5 pending，缺board/Projects能力，状态unverified、同步pending；不自合并、不代独立审查。

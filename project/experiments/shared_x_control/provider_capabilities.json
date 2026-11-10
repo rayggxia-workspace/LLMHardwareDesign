@@ -1,0 +1,18 @@
+{
+  "schema": "issue250-provider-capabilities-candidate/1",
+  "status": "candidate_IDs_not_allocated_or_deployed",
+  "one_implementation_per_kind": true,
+  "P": {
+    "provider_id_candidate": 1,
+    "M": {"contract": "W8A16_K16N8_group128_S32", "state": "new_RTL_joint_gate"},
+    "G": {"contract": "G32_SILU", "input": "S32_Q16", "output": "S32_Q16", "functions": ["SiLU", "gated_SiLU"], "other_G_functions_registered": false},
+    "old_S16_G_service_compatible": false
+  },
+  "C": {"G_provider_id_candidate": 2, "G_contract": "G16_MULTI_MAIN", "functions": ["SiLU", "Sigmoid", "GELU_tanh", "Softplus"], "numeric": "existing_native_Q5.10_Q1.14_contract", "new_S32_activation_registered": false},
+  "F": {"G_provider_id_candidate": 2, "G_contract": "G16_MULTI_MAIN", "functions": ["SiLU", "Sigmoid", "GELU_tanh", "Softplus"], "numeric": "existing_native_Q5.10_Q1.14_contract", "new_S32_activation_registered": false},
+  "U_C_F_J_other_macros": {"contract": "existing_per_macro_native_contract_only", "E_N_R_are_not_automatically_S32": true, "qualified_adapters_are_separate_typed_services": true},
+  "implicit_S32_to_S16_conversion": false,
+  "admission_requires": ["group_kind", "provider_ID", "service_ID", "function_ID", "numeric_profile", "layout_ID", "capability_version"],
+  "guard_RTL_scope": "P_S32_only; does_not_replace_C_F_existing_control_or_G16",
+  "unregistered_operation": "reject_before_provider_request"
+}

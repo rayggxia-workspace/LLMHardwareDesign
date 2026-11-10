@@ -52,6 +52,9 @@ class PreflightTest(unittest.TestCase):
         self.assertEqual(r["down_mid_s32"]["bytes"], 7616)
         self.assertEqual(r["weight_replaces_double_b"]["with_x_bytes"], 14528)
         self.assertEqual(r["g_table"]["logical_bytes"], 1028)
+        self.assertEqual(r["g_table"]["lanes"], 2)
+        self.assertEqual(r["g_table"]["lookups_per_lane"], 2)
+        self.assertEqual(r["g_table"]["simultaneous_lookups"], 4)
         self.assertEqual(r["shared_pool"]["physical_bytes_minimum"], 32768)
 
 

@@ -1,0 +1,146 @@
+{
+  "schema": "issue250-native-control-rtl-evidence/1",
+  "issue": 250,
+  "scope": "experiment_RTL_unit_native_handshake_only_not_MC_LC_programs_real_SRAM_DDR_full_numeric_physical_or_token_performance",
+  "tool": "Verilator 5.042 strict --Wall --timing --assert",
+  "runtime": "/public/software/singularity-ce-4.3.4/bin/singularity",
+  "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+  "policy": "c64 6x10 allocation; one compiler task up to10cores then six independent seed tasks, no artificial load",
+  "execution_source_and_tools_sha": "inside each package results/; build/ intentionally excluded",
+  "package_remote_local_sha256_verified": true,
+  "runs": [
+    {
+      "run": 5,
+      "source": "655216c6d67538c0f5a5ab14aa6ec9b316dd5779",
+      "jobs": [
+        {
+          "job": 102076,
+          "state": "COMPLETED",
+          "scope": "abstract_protocol",
+          "cases": 47,
+          "elapsed_seconds": 2,
+          "TotalCPU_seconds": 0.331
+        },
+        {
+          "job": 102077,
+          "state": "FAILED",
+          "scope": "RTL_not_started",
+          "reason": "/usr/bin/singularity absent on compute node",
+          "elapsed_seconds": 3,
+          "TotalCPU_seconds": 1.364
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-05.pack.tar.gz",
+      "package_sha256": "5735fee254c23d02c35b7e1ee7fb24fefada5e9bee17f505a7197c66e6c18ad4",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-05"
+    },
+    {
+      "run": 6,
+      "source": "b97aa590e6916f6a8449a3a958d77bf9aca93081",
+      "jobs": [
+        {
+          "job": 102080,
+          "state": "FAILED",
+          "scope": "strict_guard_compile",
+          "reason": "testbench PROCASSINIT and unused-width warnings; no functional simulations",
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 2.008
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-06.pack.tar.gz",
+      "package_sha256": "375e07b11cf7e86eb2bf8ab3769d1ae6841ba96eb01be9a55128b138f20d3bbf",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-06"
+    },
+    {
+      "run": 7,
+      "source": "083f8c13dc46cef068da06c43e8b3a7edc36e358",
+      "jobs": [
+        {
+          "job": 102082,
+          "state": "COMPLETED",
+          "scope": "old_one_result_guard_only",
+          "seeds": 6,
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 13.942
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-07.pack.tar.gz",
+      "package_sha256": "58baf2258b42605bbf4805f295ab588d41594164db47169bd7f76666c40c8fe1",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-07"
+    },
+    {
+      "run": 8,
+      "source": "ca77df68e539a03ad2a4aace008abf89d2072b1c",
+      "jobs": [
+        {
+          "job": 102085,
+          "state": "FAILED",
+          "scope": "two_result_guard_passed_6_seeds_private_copy_compile_failed",
+          "reason": "private-copy testbench unused upper-width warnings",
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 14.342
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-08.pack.tar.gz",
+      "package_sha256": "c9bf51db96ad7a753901266787766403f993ce3737f4218e7ceeec34d655eef5",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-08"
+    },
+    {
+      "run": 9,
+      "source": "e863eaf0e3d9a1979bdcb69975074f45f3ae2822",
+      "jobs": [
+        {
+          "job": 102086,
+          "state": "COMPLETED",
+          "scope": "private_A_earlycopy_only_before_extended_late_return_tests",
+          "seeds": 6,
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 9.674
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-09.pack.tar.gz",
+      "package_sha256": "06e4e074f65bf88eb3fd51eb80aaa6b92ba9a00804d121953c7dec1d3eb99bb2",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-09"
+    },
+    {
+      "run": 10,
+      "source": "94fc02211cee1f82788b785f5ed7e43db189fa23",
+      "jobs": [
+        {
+          "job": 102089,
+          "state": "COMPLETED",
+          "scope": "two_result_guard_AND_private_A_earlycopy",
+          "benches": 2,
+          "seeds_per_bench": 6,
+          "elapsed_seconds": 11,
+          "TotalCPU_seconds": 22.478
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-10.pack.tar.gz",
+      "package_sha256": "feadc3ce8482406e94f6992e388b4ee1277a7f160f35c23d96d6b051132dc655",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-10"
+    }
+  ],
+  "latest_admission": {
+    "job": 102089,
+    "guard": "two metadata slots plus independent real 2x32B result FIFO; second native/result overlaps first destination ACK",
+    "private_A": "2x256B, repeated same-kk M use, END_USE, native S128, no old feeder",
+    "copy": "U one read inflight, each P16B hold, actual destination ACK updates prefix",
+    "negative": "cancel drain, new epoch reload, late old copy ACK and old S response during new generation, no implicit atomic rollback"
+  },
+  "not_done": [
+    "true_SRAM_integration",
+    "MC_resident_slot_expansion",
+    "LC_program_range_iterator",
+    "M_G_weight_joint_numeric",
+    "actual_controller_cycles_per_model",
+    "physical_area_timing",
+    "energy_token_s"
+  ]
+}

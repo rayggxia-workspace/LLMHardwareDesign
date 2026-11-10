@@ -26,7 +26,8 @@ class PrivateA:
             require(e["generation"] > self.slot_generation[slot], "stale A slot generation")
             require(self.issued < self.planned and 0 <= e["source_base"] <= 1008, "A plan/source range")
             self.slot_generation[slot] = e["generation"]
-            self.slots[slot] = {"tag": e["tag"], "generation": e["generation"], "state": "PREPARED", "returned": 0, "consumed": 0, "W": False}
+            require(1 <= e.get("planned_M_uses", 1) <= 65535, "M use count")
+            self.slots[slot] = {"tag": e["tag"], "generation": e["generation"], "state": "PREPARED", "returned": 0, "consumed": 0, "W": False, "planned_uses": e.get("planned_M_uses", 1), "issued_uses": 0, "completed_uses": 0, "closed": False}
         elif op == "A_LOAD_ACCEPT":
             require(not self.halted, "new A load after halt")
             s = self.slots[e["slot"]]
@@ -58,12 +59,16 @@ class PrivateA:
         elif op == "W_READY":
             s = self.slots[e["slot"]]
             require(e["tag"] == s["tag"] and e["generation"] == s["generation"], "W/A identity mismatch")
+            require(e.get("use_sequence", 1) == s["issued_uses"] + 1 <= s["planned_uses"] and not s["closed"] and not s["W"], "W record/use sequence mismatch")
             s["W"] = True
         elif op == "M_JOIN":
             s = self.slots[e["slot"]]
             require(s["state"] == "READY" and s["W"], "M started before tagged A/W join")
             require(not any(x["state"] == "CONSUMING" for x in self.slots.values()), "M operand consumer already busy")
             s["state"] = "CONSUMING"
+            s["issued_uses"] += 1
+            s["consumed"] = 0
+            s["W"] = False
         elif op == "M_A_ACCEPT":
             s = self.slots[e["slot"]]
             require(e.get("actual_handshake") is True and s["state"] == "CONSUMING", "no real M operand acceptance")
@@ -71,9 +76,14 @@ class PrivateA:
             require(e["K16_step"] == s["consumed"], "M K16 pairing order")
             s["consumed"] += 1
             if s["consumed"] == 8:
-                s["state"] = "DRAINED"
+                s["completed_uses"] += 1
+                s["state"] = "DRAINED" if s["completed_uses"] == s["planned_uses"] else "READY"
+        elif op == "A_END_USE":
+            s = self.slots[e["slot"]]
+            require(s["issued_uses"] == s["planned_uses"], "END_USE hides unissued M consumer")
+            s["closed"] = True
         elif op == "A_RELEASE":
-            require(self.slots[e["slot"]]["state"] == "DRAINED", "A release before last actual M consumption")
+            require(self.slots[e["slot"]]["state"] == "DRAINED" and self.slots[e["slot"]]["closed"], "A release before last actual M consumption")
             del self.slots[e["slot"]]
         elif op == "X_END_READ":
             require(self.issued == self.planned and self.pending is None and all(s["state"] not in ("PREPARED", "LOADING") for s in self.slots.values()), "X close before all planned real S reads")
@@ -102,7 +112,7 @@ def private_cases():
     start += reads(1, tag1)
     start += [{"op": "X_END_READ"}, {"op": "W_READY", "slot": 0, "generation": 1, "tag": tag0}, {"op": "M_JOIN", "slot": 0}]
     consume = [{"op": "M_A_ACCEPT", "slot": 0, "generation": 1, "tag": tag0, "K16_step": step, "actual_handshake": True} for step in range(8)]
-    good = start + consume + [{"op": "A_RELEASE", "slot": 0}]
+    good = start + consume + [{"op": "A_END_USE", "slot": 0}, {"op": "A_RELEASE", "slot": 0}]
     yield "private_A_prefetch_before_W_and_shared_S_phase", good, None
     yield "private_no_third_A_slot", [prep(0, tag0), prep(1, tag1), prep(0, tag0)], "two A slots exhausted"
     yield "private_A_READY_without_W_not_M_ready", [prep(0, tag0), load(0)] + reads(0, tag0) + [{"op": "M_JOIN", "slot": 0}], "M started before tagged A/W join"
@@ -113,6 +123,11 @@ def private_cases():
     yield "private_X_source_close_not_only_first_tile", [prep(0, tag0), load(0)] + reads(0, tag0) + [{"op": "X_END_READ"}], "X close before all planned real S reads"
     yield "private_cancel_keeps_pending_S_read", first_read + [{"op": "CANCEL"}, {"op": "RESET"}], "reset discards accepted S/M obligation"
     yield "private_cancel_drains_then_invalidates_partial_A", first_read + [{"op": "CANCEL"}, {"op": "S_RETURN", "request_id": 0}, {"op": "RESET"}], None
+    reuse = [dict(start[0], planned_M_uses=2)] + start[1:] + consume
+    yield "private_one_consumer_does_not_release_reusable_A", reuse + [{"op": "A_RELEASE", "slot": 0}], "A release before last actual M consumption"
+    yield "private_same_kk_A_replay_needs_new_W_identity", reuse + [{"op": "W_READY", "slot": 0, "generation": 1, "tag": tag0, "use_sequence": 1}], "W record/use sequence mismatch"
+    reuse += [{"op": "W_READY", "slot": 0, "generation": 1, "tag": tag0, "use_sequence": 2}, {"op": "M_JOIN", "slot": 0}, {"op": "A_END_USE", "slot": 0}]
+    yield "private_replay_A_for_two_Ms_then_last_consumer_release", reuse + consume + [{"op": "A_RELEASE", "slot": 0}], None
 
 
 def replay_private(events):

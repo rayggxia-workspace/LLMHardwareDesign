@@ -3,6 +3,8 @@
 Refs [Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)。
 本目录是**不可部署的候选服务合同与独立事务轨迹检查器**，不是生产控制RTL、整数计算模型、SystemC周期模型或物理验收。生产RTL没有修改。新增适配器、池监督器、端点和控制线都须实现并验收，不能由JSON字段推导“已有硬件支持”。
 
+**当前产品候选选择NoPool**：`private_s_candidate.json`描述普通S128、两份256B A tile及每P16B earlycopy hold。`contract.json`的共享池及SYS_X是保留的对照合同，不能同时装进唯一首版底座。以下共享池章节用于解释对照和历史准备；选NoPool后删去32KiB共享池及其FIFO/系统服务端点，私有S不扩。
+
 ## 输入事实与候选选择
 
 - 数值依据：[PR249 S32台账](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/85fe7989b11a95725c9b1bc6daee085f74a500b8/docs/experiments/issue-248-followup-design-ledger.md)。W8A16、K16×N8、每128项应用FP16 scale并RNE到持续S32/Q16；Mid为S32；必要暂态宽乘积另推导，不保留S128/S64状态。旧PR251的S128部分和合同不能直接执行。
@@ -82,6 +84,27 @@ PR243旧M的原生op13/14表示另一种累加context协议，不能当新K16/FP
 先通过数值/接口与性能gate，再实现生产服务及控制回放；通过取消/背压/错身份/重复ACK/二字提交测试后进入真实SRAM联合RTL；之后综合、P&R、300MHz和端点验收。协议检查器通过不是这些gate通过。
 
 ## 本目录检查器的边界与复跑
+
+### 已有可执行候选RTL
+
+- `rtl/bounded_service_guard.sv`：LC内部的两份command metadata与**独立2×32B result FIFO**、并行native/目的提交FSM。首结果等待S两字ACK时，第二native及结果可以进入；满则背压。完整512bit ticket仅用于内部保护/验证，原生宏仍用真实既有窄接口和有限owner寄存器，不是建议给每颗宏新增512bit pin。
+- `rtl/private_a_tile_frontend.sv`：真实2×256B寄存器、同kk多M只读重放、planned/issued/completed与END_USE、W_READY/A_READY JOIN、一个S128读在途。copy-prefix只由真实目的写ACK推进，允许逐片生产消费，但不足16个返回字不能宣称A_READY。W可提前完成，错误kk/slot generation/use sequence被拒绝；A槽在最后实际M消费且关闭后释放。取消后已提出S读保持，回执排空后部分A失效；重试须新generation并重装。
+- `rtl/early_copy_3p.sv`：一个U普通S128读在途、每P一个16B保持槽，P写真实ACK后更新各自prefix；U预取可与旧P ACK等待并行，但响应只能在有限保持容量允许时接收。没有无限返回缓冲或普通口双端口。32bit tag是本地适配器保存的请求身份，S宏不因此新增tag管脚。
+- 两个testbench用保守单事务普通S模型检查共享P0端口读写仲裁、背压、signed A容器逐位重放、早释放/错误身份/取消/新epoch和迟到ACK；它们**没有接入真实SRAM宏、LC程序、DDR、M/G算术或物理库**。
+
+P新服务不需要旧`FEED_*`端口：A从普通S128读入外部tile寄存器，再以32B供新M。故可候选使用main已验收`local_s_base`，不自动继承旧P/M profile或旧feeder程序。实际多客户仲裁、地址窗、读写响应容量/RTT与物理仍要重验。
+
+`provider_capabilities.json`将P的G32_SILU与C/F的原G16_MULTI分开；C/F保留SiLU/Sigmoid/GELU_tanh/Softplus原数值合同。P guard只登记P_S32 provider，拒绝C/F provider、旧S16、非SiLU新S32函数。R/E/N也不能自动升级S32，未登记的转换和函数不得通过。
+
+### 尚需集成的控制与费用
+
+MC仍只有两resident slots。NoPool的九compute group索引不等于九个可并发resident；至少3P+U复制的四方并发需要真正扩活动任务、terminal、credit/event表和派发回压。新增service guard不代替这些修改。
+
+完整decode约三百万M group不能依赖MC逐group派发大描述符。需要任务级模板和LC/native有限range FSM生成kk/col、W record、context地址及A lease。当前有界ISA准入子集没有提供已联合验证的通用loop；可保留L_EXEC/L_WAIT框架，由新注册service FSM实现循环，但其寄存器/PM取参、准备周期和端口必须实测。**本目录尚无投影/FFN range iterator或真实LC程序接入。**
+
+W input-consumed与result-stored是两种独立ACK。前者须匹配W bank/gen/record/use并在最后真实M操作数消费后释放输入；后者必须用独立结果身份，目的ACK不能误用已复用的W bank generation。旧性能模型曾将Bbank live/free绑结果ACK；提前释放是实现/模型变化，需要重新校准，不能把旧9.223 token/s照搬。其余G/向量S服务的旧64B费用也尚未全部校准为原生128bit路径。
+
+Slurm102089源`94fc02211`的两套bench、各六seed严格`--Wall --assert`通过，包含两结果并行、晚到旧copy ACK/旧S响应在复用槽时被拒绝、新epoch重装。结果和此前所有失败见`work/YUZE-LU/250/control/rtl-run-index.json`。这不是最终集成物理验收；实际周期时间线仍在补充，用于下一轮native性能校准，不补造token/s或能耗。
 
 `private_s_candidate.json`是性能gate中的**替代研究候选**，不表示冻结两套底座：以原预算两个K128/A256B slot从既有S原128bit口预取X，不增加共享池、不复制4KiB X，不开启true_private_RW。A_LOAD可在W_READY前接受，独立W填充与A槽准备并行；M仅在相同job/epoch/kk/slot generation的A_READY/W_READY JOIN后读取。A槽直到第八次32B真实M握手才可释放。X源S窗口仍有容量和寿命，全部计划A片段实际读回后才可关闭；S普通客户与A片段读共用一个calendar，转向代价不免费。若最终选择此候选，则SYS_X和共享32KiB/FIFO一并从硬件清单删除。
 

@@ -1,0 +1,21 @@
+# Candidate two-lane S32/Q16 G — Refs #250
+
+`project/rtl/w8a16_v1/g_s32.sv` implements the exact small-G numerical recipe used by the PR249 `LUT257` experiment. This is candidate RTL, not an accepted physical G and not an end-to-end integer LLM claim.
+
+The frozen table contains 257 signed 32-bit values: every eighth point of the old 2,049-point SiLU table over [-16,+16], in Q16. It occupies 1,028 logical bytes. For an interior input, use adjacent points at a raw interval of 8,192 and signed round-to-nearest-even after interpolation. At or below -16 return zero; at or above +16 return the input. In gated mode, multiply SiLU Q16 by up Q16 and apply signed RNE16 to form Mid S32/Q16. Pure activation mode bypasses this multiplication numerically. [reference_source/provenance.json](reference_source/provenance.json) binds five exact members from the recovered historical experiment and distinguishes its execution source from the later publication commit.
+
+Two lanes each require **two adjacent-point lookups**. The RTL has one frozen logical constant definition called four times; the implementation may duplicate combinational ROM logic. Neither four physical memory ports nor a single physical table is promised. Synthesis must report table/read logic copies, interpolators, two 32×32 multipliers, registers and native pins as real resources.
+
+The interface carries two gate/up S32 values, a two-bit active-lane mask and one gated-mode bit per valid/ready packet. Four elastic register stages split constant lookup, interpolation, multiplication and final RNE. A zero mask or overflow in either active lane produces one **atomic packet fault**: `out_valid=1`, `out_error=1`, zero for the entire 64-bit payload and the original mask. The consumer must not write any lane to S on this event. There is no saturation or unnoticed narrowing. Reset drops every in-flight packet, and output data/mask/error must remain stable while backpressured.
+
+```powershell
+python project/experiments/w8a16_g/make_vectors.py --out <new-local-output>
+```
+
+The standard-library oracle checks archived source hashes, exact frozen RTL table contents, negative and positive RNE ties, every mask and boundary cases, then emits 8,048 expected packets. The first 64 packets are a complete frame of 128 active values; the last 2,048 are actual historical model gate/up packets from four FFNs (layers/batches 0/0, 2/0, 17/3, 35/5). Their old LUT2049 S64 products are independently reconstructed and checked before the new LUT257/RNE16 expectations are computed. All these model packets fit Mid S32. This is actual tensor replay, not a new complete model or complete FFN run. [The model provenance](reference_source/model-provenance.json) binds the checkpoint/source report and exact vector bytes.
+
+RTL regression runs three initial-state/seed pairs in each of continuous traffic, backpressure and reset-while-busy modes. Continuous traffic must show four rising edges from input acceptance to output consumption and initiation interval one. The 128-value frame occupies 68 cycles inclusive of first input and last output; final product-to-Mid RNE16 is already included, replacing the older separate `NV_MID1` RNE service. Mid-to-Down A16 group maximum/normalization and real S write/ACK remain outside G. Any later change to the pipeline or table service must update the performance model explicitly. See [provider coverage](PROVIDERS.md) before replacing any legacy G service.
+
+`simulate.sh <fresh-task-root>` runs only inside a 10/12-CPU Slurm allocation. It first performs strict `--Wall` production-RTL lint, then Verilator regressions. It also traces the exact pinned-main S_P feeder with the real SHA-checked OpenRAM bank model, so internal 512-bit reads cannot be confused with the exposed 128-bit A output. Logs and source hashes must be kept for failed runs as well as successful runs. This script does not run synthesis, P&R, power or product acceptance.
+
+The corresponding physical density floor is the accepted compact G's 47.136409% occupied/outline and 61.983812% occupied/core, excluding filler/tap/endcap/antenna. The old 220×220 µm outline is not a fixed limit for a changed arithmetic datapath. Original TT 300 MHz timing, electrical, PG, full native GDS DRC and all-pin access gates still require a fresh implementation after the joint performance gate.
