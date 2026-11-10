@@ -2,6 +2,8 @@
 
 ## 接续247的独立四轮研究（2026-11-10 Asia/Shanghai）
 
+追加[DMA/bank/G评估](experiments/issue-248-dma-bank-g-evaluation.md)：run16/101997正式16场景通过；3P/16KiB同资源context512条件SystemC 5.953188→7.171451token/s（+20.46%），主要为DMA排队策略，非可布线路径DP。G与16B有限输入交接RTL通过；S32→S16数值、完整FFN部分和调度、联合RTL/物理尚未准入，prefill2有退化，未达10token/s。保留编译失败和过早释放反例，3包185成员SHA核验通过。生产RTL/peer任务不改。PR249待独立审查，登记/看板缺项保留；CI额度未启动见报告。
+
 [Issue248 / PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)由 YUZE-LU 在冻结 PR243@9d987151 上另开研究分支，评估有限权重直供、W8A8/A16、新增外存资源与状态相关贪心/DP，原生产 RTL/底座及 Melodydt 四轮任务不改。[报告](experiments/issue-248-stream-quant-synthesis.md)分别记录条件模型、独立 RTL 和真实权重量化筛查；未达10 token/s、未证明20%纯算法收益，也不转移300MHz物理资格。细节与实际Slurm终态见回执；待独立审查、未合并，登记PR5 pending，看板unverified/同步pending。
 
 ## 停止场景澄清（2026-11-10 Asia/Shanghai）

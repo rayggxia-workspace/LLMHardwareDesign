@@ -83,3 +83,5 @@ python -B project/experiments/stream_quant_synthesis/deploy.py <新tag> --out <�
 正式源码入口 `bottleneck.py` / `bottleneck_generate.py` / `bn_g_bridge.sv` / `tb_bn_g.cpp`；旧四轮生成器、生产RTL与13份原证据不改。先确认新run的源提交，再运行，不能复用或覆盖已有root。
 
 协作：规则rayggxia-project-collab1.0.0；project_id llm-hardware-design；成果待独立审查，PR249不自合并，Issue248回到in_review、不done。登记management-hub PR5 pending；缺board配置及Projects能力，看板unverified/同步pending，管理员/审查人待指定。GitHub CI此前因付款/spending limit未启动，缺CI通过资格；本次按实际在线回执更新，不绕过检查。
+
+在线复核：head `3eeece3963033b85857d3f0769263de91cfd1207` 的 [validate](https://github.com/rayggxia-workspace/LLMHardwareDesign/actions/runs/42777878633/job/129700561045) 为failure，注释明确job因付款失败或spending limit未启动；不是产品检查运行后失败。本地管理检查与两套证据核验通过。由管理员（待指定）恢复额度后补跑，不改工作流/账单配置、不绕过检查。
