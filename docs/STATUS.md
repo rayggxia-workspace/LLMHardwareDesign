@@ -1,5 +1,9 @@
 # 当前状态
 
+## 停止场景澄清（2026-11-10 Asia/Shanghai）
+
+Issue247/PR243：用户确认任一原评估场景（包括prefill）达5 token/s或完成4轮即停止。已复核72条本轮及21条历史完整场景，本次16KiB最高3.69669737899；原64KiB未实装参考4.54743400007，均未达5，仍按4轮停止。[口径补充](experiments/issue-247-speed-iterations.md)覆盖冻结PDF中的临时decode-only停止假设。本次无新仿真；管理结构检查通过。下一步独立审查，状态in_review、未合并；登记pending、看板unverified/同步pending、CI限制见PR，处理人待指定。
+
 ## 四轮迭代交付完成，进入独立审查（2026-11-10 Asia/Shanghai）
 
 Issue247/PR243，Melodydt，in_review（待正式审查/合并，不done）。四轮研究、方案、RTL和旧体系评估已完成；四份PDF均已完成内容和逐页视觉QA，4/4轮完整交付，按轮数上限停止。第四份5页/141内容单元，报告固定f4be5c50507fec202551e45e39fb2215fc18876c，PDF SHA85ae41e4c79712710e078af3f1bcf033d17a8fd35e7896cb90a705b46dc5a741。最终主W8 decode512 ideal 3.67621308212/shared 3.38396291561 token/s，未达5；本次不再增加第五轮。R4采用best R2基础仅op12四EXP lane，默认2，普通N保留；生产启用需BATCH1/DIRECT1/LANES4。R3双buffer退化独立保留，SRAM没有扩容，物理时钟/完整原生生成未验收。
