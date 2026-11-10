@@ -101,7 +101,16 @@
   require(cl_peak_s<=16384,"CL complete S lifetime reservation");
   if(cfg.cl_mode>=5){for(int p=0;p<3;++p){cl_link(p,4096,3,true);}}
   for(int first=0;first<11008;first+=128){
-   if(cfg.cl_mode>=3){
+   if(cfg.cl_mode>=6){
+    // Full X is held in the declared 4KiB feeder. Each P advances its own
+    // K stream; there is no data dependency requiring a three-P barrier
+    // after every K128 group. Keep the same sixteen tagged contexts.
+    std::vector<CLJob> project[3];
+    for(int k=0;k<2048;k+=128)for(int w:{gate.in[1],up.in[1]})for(int col=first;col<first+128;col+=8){
+     project[(col/8)%3].push_back(CLJob{w,col,k,2048,false,k+128==2048});
+    }
+    cl_wave(project);
+   }else if(cfg.cl_mode>=3){
     // Gate/up partials alias the not-yet-live Mid workspace. X's K tile is
     // broadcast once, then reused across this chunk's output groups.
     for(int k=0;k<2048;k+=128){

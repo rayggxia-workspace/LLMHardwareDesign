@@ -25,7 +25,7 @@ def extend(folder):
            '   if(cl_g){cl_G_values+=n;cl_G_cycles+=cost;}')
     s=once(s,'  c.bn_release=sq_integer(',
            '  c.cl_mode=sq_integer("CL_MODE",0);c.cl_issue=sq_integer("CL_ISSUE",1);c.cl_banks=sq_integer("CL_BANKS",2);\n'
-           '  if(c.cl_mode<0||c.cl_mode>5||(c.cl_issue!=1&&c.cl_issue!=2&&c.cl_issue!=4)||(c.cl_banks!=2&&c.cl_banks!=4&&c.cl_banks!=8)||(c.cl_mode<5&&c.cl_banks!=2))throw std::invalid_argument("CL mode/ports/banks");\n'
+           '  if(c.cl_mode<0||c.cl_mode>6||(c.cl_issue!=1&&c.cl_issue!=2&&c.cl_issue!=4)||(c.cl_banks!=2&&c.cl_banks!=4&&c.cl_banks!=8)||(c.cl_mode<5&&c.cl_banks!=2))throw std::invalid_argument("CL mode/ports/banks");\n'
            '  c.bn_release=sq_integer(')
     s=once(s,' Study s("study",c,argv[1]);',
            ' if(c.cl_mode){if(c.sq_abits!=16||c.mcount!=3||c.beat!=64)throw std::invalid_argument("closure requires A16/3P/64B");c.k=128;}\n Study s("study",c,argv[1]);')

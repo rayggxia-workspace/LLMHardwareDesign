@@ -107,8 +107,8 @@ def main(root,stage):
         prefix=Path('/public/home/yuzelu/opt/systemc-3.0.2-issue219')
         execute(['g++','-std=c++17','-O2','-Wall','-Wextra','-Werror',model/'model.cpp','-I'+str(model),
                  '-I'+str(prefix/'include'),'-L'+str(prefix/'lib'),'-Wl,-rpath,'+str(prefix/'lib'),'-lsystemc','-o',out/'candidate'],out/'build.log',out)
-        plans=[('decode512',5,issue,bw,banks) for bw in (102400,51200) for issue,banks in ((1,2),(2,2),(2,4),(2,8))]
-        plans += [('decode512',4,2,102400,2),('decode2048',5,2,102400,8)]
+        plans=[('decode512',mode,issue,bw,4) for bw in (102400,51200) for mode in (5,6) for issue in (1,2)]
+        plans += [('decode2048',6,2,102400,4)]
         def run(item):
             workload,mode,issue,bw,banks=item;name=f'{workload}-mode{mode}-issue{issue}-bw{bw}-banks{banks}'
             env={k:v for k,v in os.environ.items() if not k.startswith(('SQ_','BN_','CL_'))}
