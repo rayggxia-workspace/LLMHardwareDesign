@@ -60,7 +60,11 @@ int main(int argc,char** argv){
     if(expected==packets.size())throw std::runtime_error("unexpected response");
     const auto& x=packets[expected++];auto ref=words(x.result,8*AW/32);
     if(d.out_error||d.out_ctx!=x.ctx)throw std::runtime_error("response error/tag");
-    for(size_t j=0;j<ref.size();++j)if(d.out_data[j]!=ref[j])throw std::runtime_error("integer mismatch");
+    for(size_t j=0;j<ref.size();++j)if(d.out_data[j]!=ref[j]){
+     std::cerr<<"INTEGER_MISMATCH frame="<<outputs<<" packet="<<(expected-1)<<" ctx="<<x.ctx<<" k="<<x.k<<" offset="<<x.offset<<" word="<<j
+       <<" actual="<<std::hex<<d.out_data[j]<<" expected="<<ref[j]<<std::dec<<" ticks="<<ticks<<"\n";
+     throw std::runtime_error("integer mismatch");
+    }
     ++outputs;
    }
    const bool cmd=d.cmd_valid&&d.cmd_ready,dma=d.dma_valid&&d.dma_ready;
