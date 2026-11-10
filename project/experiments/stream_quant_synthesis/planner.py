@@ -136,7 +136,7 @@ def bundle(plan,path,pcount=2,abits=0,beat_bytes=64):
                 connections_scope='operand-path research requirements only; result, clock, control and ACK lowering pending',
                 hardware_note='wide DDR needs a prefabricated beat adapter; role names are not physical pins',
                 missing=['new leaf pin/LEF/Liberty/ODB','native LC/MC binary lowering','whole S/DMA/ACK RTL integration','physical acceptance'])
-    Path(path).write_text(json.dumps(result,indent=2)+'\n')
+    Path(path).write_bytes((json.dumps(result,indent=2)+'\n').encode('utf8'))
     return result
 
 
