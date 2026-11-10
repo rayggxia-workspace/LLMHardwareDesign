@@ -155,7 +155,8 @@ def generate(baseline, out):
     model = once(model, 'iteration4::emit_all(std::cout,cfg.iteration1_nexp,cfg.iteration2_nexp,cfg.iteration4_nexp);',
                  r'''iteration4::emit_all(std::cout,cfg.iteration1_nexp,cfg.iteration2_nexp,cfg.iteration4_nexp);
     std::cout<<",\"sq_study\":{\"direct\":"<<cfg.sq_direct<<",\"activation_bits\":"<<cfg.sq_abits
-      <<",\"weight_read_B_cycle\":"<<cfg.sq_bread<<",\"core_K\":"<<cfg.sq_core_k<<",\"weight_channel_striping\":"<<cfg.sq_stripe
+      <<",\"weight_read_B_cycle\":"<<cfg.sq_bread<<",\"configured_candidate_core_K\":"<<cfg.sq_core_k
+      <<",\"static_weight_Dot_core_K\":"<<(cfg.sq_abits?cfg.sq_core_k:8)<<",\"weight_channel_striping\":"<<cfg.sq_stripe
       <<",\"direct_weight_bus_bytes\":"<<mem.sq_direct_bytes<<",\"weight_bank_read_bytes\":"<<sq_weight_read_bytes
       <<",\"requantized_values\":"<<sq_quant_values<<",\"lowered_activation_objects\":"<<sq_quantized.size()<<",\"persistent_A_hit_bytes\":"<<sq_cache_hit_bytes<<",\"plan_operations\":"<<sq_plan_ops
       <<",\"conversion_register_bytes_per_P\":"<<(cfg.sq_abits?16*cfg.sq_abits/8:0)

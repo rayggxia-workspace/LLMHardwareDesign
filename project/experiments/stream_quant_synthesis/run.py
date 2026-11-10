@@ -127,7 +127,7 @@ def main(root):
             for method in ('greedy','dp'):
                 plan=planner.compile_plan(planner.graph(frozen/'inputs/decode512.trace'),method,102400,3,bits)
                 path=out/(f'plan-coupled-a{bits}-{method}.txt');planner.emit(plan,path)
-                planner.bundle(plan,out/(f'bundle-coupled-a{bits}-{method}.json'),3,bits,256)
+                planner.bundle(plan,out/(f'bundle-coupled-a{bits}-{method}.json'),3,bits,64)
                 (out/(f'plan-coupled-a{bits}-{method}.json')).write_text(json.dumps(plan,indent=2)+'\n')
                 plans.append((f'r4-coupled-a{bits}-{method}','decode512',False,
                               dict(SQ_DIRECT=1,SQ_ABITS=bits,SQ_BREAD=128,SQ_BW_MB=102400,SQ_PCOUNT=3,SQ_BEAT=64,SQ_STRIPE=1,SQ_PLAN=str(path))))

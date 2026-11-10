@@ -7,7 +7,8 @@ import subprocess
 from prepare import REPO
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('tag');p.add_argument('--out',type=Path,required=True);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('tag');p.add_argument('--out',type=Path,required=True)
+    p.add_argument('--metadata-audit',action='store_true');a=p.parse_args()
     if not a.tag.isdigit():raise ValueError('numeric run tag required')
     a.out.mkdir(parents=True,exist_ok=True)
     commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()
@@ -31,9 +32,11 @@ rows=[]
 for p in sorted((r/'source').rglob('*')):
  if p.is_file():rows.append(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.relative_to(r/'source').as_posix())
 (r/'source-files.sha256').write_text('\\n'.join(rows)+'\\n')
-(r/'job.sh').write_bytes((r/'source/project/experiments/stream_quant_synthesis/job.sh').read_bytes())
+job_script=(r/'source/project/experiments/stream_quant_synthesis/job.sh').read_bytes()
+if AUDIT:job_script=job_script.replace(b'/run.py"',b'/audit.py"')
+(r/'job.sh').write_bytes(job_script)
 job=subprocess.check_output(['sbatch','--parsable','job.sh'],cwd=r,universal_newlines=True).strip()
-print(json.dumps(dict(root=str(r),job=job,source_commit=COMMIT,archive_sha256=DIGEST)))
-'''.replace('ROOT',repr(root)).replace('COMMIT',repr(commit)).replace('DIGEST',repr(digest))
+print(json.dumps(dict(root=str(r),job=job,source_commit=COMMIT,archive_sha256=DIGEST,metadata_audit=AUDIT)))
+'''.replace('ROOT',repr(root)).replace('COMMIT',repr(commit)).replace('DIGEST',repr(digest)).replace('AUDIT',repr(a.metadata_audit))
     result=subprocess.check_output(command,input=payload,text=True)
     (a.out/('submission-'+a.tag+'.json')).write_text(result,encoding='utf8');print(result)
