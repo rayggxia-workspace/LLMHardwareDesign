@@ -94,6 +94,13 @@ def main(root,stage):
                      HERE/'closure_partial128.sv',HERE/'closure_context16.sv',HERE/'tb_closure_context.sv'],out/'context-build.log',out,env)
             text=execute([obj/'Vtb_closure_context'],out/'context.log',out,env)
             assert f'checks={count}' in text;report['context']=dict(checks=count,log=text);save()
+            report['weight_banks']=[]
+            for banks in (2,4,8):
+                obj=out/f'obj-banks{banks}'
+                execute([VERILATOR,'--binary','--timing','--assert','--top-module','tb_closure_banks','-Wall',f'-GBANKS={banks}','-j','4','--Mdir',obj,
+                         HERE/'closure_weight_banks.sv',HERE/'tb_closure_banks.sv'],out/f'banks{banks}-build.log',out,env)
+                text=execute([obj/'Vtb_closure_banks'],out/f'banks{banks}.log',out,env)
+                assert f'checks={banks*24}' in text;report['weight_banks'].append(dict(banks=banks,checks=banks*24,log=text));save()
         if stage=='rtl':
             report['passed']=True;return
         model=extend(bank_extend(generate(restore(root/'restored'),root/'restored/candidate')))
