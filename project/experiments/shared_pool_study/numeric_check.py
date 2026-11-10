@@ -60,7 +60,6 @@ struct Tile {
 };
 struct Probe:sc_module {
  std::vector<Case> inputs;std::ofstream events,results;std::map<std::pair<int,int>,std::unique_ptr<shared_pool::Pool>> pools;bool passed=false;
- SC_HAS_PROCESS(Probe);
  Probe(sc_module_name n,const char* input,const char* event_path,const char* result_path):sc_module(n),events(event_path),results(result_path){
   std::ifstream f(input);int count;f>>count;
   for(int i=0;i<count;++i){Case c;f>>c.id>>c.rows>>c.k>>c.cols>>c.bits>>c.cap>>c.fifo>>c.contexts>>c.shift>>c.tile_k;

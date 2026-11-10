@@ -12,7 +12,7 @@ if root.parent != Path('/public/home/yuzelu/Melodydt/issue247-area-speed') or no
     raise ValueError('outside the authorized run directory')
 job = int(sys.argv[1])
 status = subprocess.check_output(['sacct', '-j', str(job), '-X', '--noheader', '--parsable2',
-    '--format=JobID,JobName,State,ExitCode,Elapsed,NodeList'], text=True)
+    '--format=JobID,JobName,State,ExitCode,Elapsed,NodeList'], universal_newlines=True)
 rows = [line.split('|') for line in status.splitlines() if line.split('|')[0] == str(job)]
 if len(rows) != 1 or rows[0][2] not in ('COMPLETED', 'FAILED', 'TIMEOUT', 'OUT_OF_MEMORY', 'CANCELLED'):
     raise ValueError('job is not in an inspected terminal state: ' + status)
