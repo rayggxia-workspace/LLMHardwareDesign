@@ -34,7 +34,7 @@ def extend(folder):
     begin = s.index('   require(as.live&&as.generation==task->ageneration&&as.remaining>0,"A release tag mismatch");')
     end = s.index('delete task;', begin)
     release = s[begin:end]
-    s = s[:begin]+'   if(cfg.bn_release==0)release();require(released,"context input leak");'+s[end:]
+    s = s[:begin]+'   if(cfg.bn_release==0){release();}\n   require(released,"context input leak");'+s[end:]
     s = once(s, '   before=now();++extra.context_switches;',
              '   bool released=false;auto release=[&]{require(!released,"duplicate context input release");released=true;\n'+release+'\n   };\n'
              '   before=now();++extra.context_switches;')

@@ -74,8 +74,10 @@ def main(root):
         report['work_invariants']=list(invariant)
         report['native_G_whole_model_admission']=dict(accepted=False,reason='S32 SiLU input is not native S16/Q5.10; conversion/scales not numerically qualified')
         report['full_FFN_one_pass_admission']=dict(accepted=False,mid_S32_bytes=11008*4,
-            mid_S16_bytes=11008*2,down_full_K_psum_bytes=2048*12,S_bytes=16384,
-            reason='Mid and full-K down accumulator state each exceed S; finite replay/spill or another numeric/storage contract is needed')
+            mid_S16_bytes=11008*2,down_full_K_psum_bytes=2048*12,S_bytes_per_P=16384,
+            max_down_psum_bytes_if_partitioned_over_3P=688*12,
+            existing_live_outputs_per_P=8*8,required_live_outputs_per_P=688,
+            reason='Whole Mid exceeds one S; partitioned down state could fit in 3P S, but exceeds the existing 8x8 register contexts. A finite SRAM-context/replay/spill schedule and service validation are missing; this is not a proof that every tiling is impossible')
         report['passed']=True
     except Exception as e:
         report['error']=repr(e);report['traceback']=traceback.format_exc();raise
