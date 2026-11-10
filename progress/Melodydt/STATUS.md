@@ -1,3 +1,11 @@
+## 2026-11-11 Asia/Shanghai：U 有限队列及 NExp 区域交付待审
+
+Issue247 / PR243，Melodydt，task/242-r-load-bounds。原生源 0109de8555cda51ee73498f9966df69cb550ba19；run45/102084 COMPLETED0:0，195运行、27对默认观测、6面积通过。run44因NX32尾部正例构造错误失败，修正并全量重跑，失败记录保留。
+模型源 e6b2c31f1a593ee9393be0088f90c9d762622e94；run46/102092 COMPLETED0:0，40场景、16完整历史控制、200负控通过；356份回收文件SHA/日志复核。两槽一元960→578拍，四槽516拍；新增SRAM宏0。原图纯S16 E直接映射为0，队列不给未验证整图收益；本轮prefill条件校准4.184811/4.773362，非原生全模型token/s。
+详细实施/PDF/证据见本轮报告和交接；两槽优先，默认仍关闭。下一步S32语义/真实量化及本地S请求吞吐。in_review，未合并/not done；登记PR5 pending，看板无配置/工具unverified/pending。源码CI42858846633 failure且无steps/logs，待管理员核实；管理结构检查通过。无活动作业或自动监测。
+
+---
+
 本阶段五页PDF已导出并逐页视觉核验，189内容单元、8表/33行、字体/边界和全部链接检查通过。报告源固定dfd7a7932cf7e9934a17e3d1b5a167ed804f2a72；PDF SHA3f94f8ac05fdb187430456d1400d09b8bcb97a3d4f76804bf367d9e6c979463e。28份报告/证据文件Git blob已读回一致；PDF与QA随交付提交上传。研究成果in_review，未合并/not done。
 
 ## 2026-11-10 Asia/Shanghai：S16桥接与E流水原生研究交付待审

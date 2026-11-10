@@ -415,3 +415,16 @@ python project/experiments/s16_vector_native/analyze.py --runs RUNS_DIR --out wo
 ```
 
 每个run需receipts.tar与解出的receipts/。完整argv、输入/输出SHA、工具版本、失败尝试与状态见[阶段交接](handoffs/2026-11-10-issue-247-s16-vector-native.md)。管理检查不是RTL/物理验收，模型结果不是原生完整模型token/s。
+
+
+## U finite queue / staged NExp (Issue247)
+
+Production: `pu_queued_e_service.sv`, `pu_nexp_region.sv`, optional `pu_u_group.E_QUEUE_DEPTH=0/2/4` (default0).
+Use independent Slurm run directories with source/input SHA manifests; server rules in REMOTE_RULES.md apply.
+In the supplied EDA container, native runner: `python3 -B source/project/experiments/u_queue_native/run.py --root "$PWD"`.
+Model runner: `python3 -B source/project/experiments/u_queue_model/run.py --root "$PWD"`.
+Submit each prepared job from its root with `sbatch --parsable job.sh` (4 allocated cores, c64/c96).
+Model inputs freeze run42 generated files/results and run45 native receipts; 40 cases include 16 exact controls.
+Postprocess: `python project/experiments/u_queue_model/analyze.py --native <run45-receipts> --model <run46-receipts> --prior <run42-result.json> --output analysis.json`.
+Management only: `python scripts/check_project.py`. Never substitute this for EDA tests.
+Full reproduction, tail/scale/reset contracts, input hashes, test counts and area limits are in [the report](experiments/issue-247-u-queue-native.md).
