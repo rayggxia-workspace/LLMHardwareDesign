@@ -54,6 +54,16 @@ def main(root):
             rtl.append(dict(**meta,log=text.strip(),vectors_sha256=sha(vectors)))
         report['rounds']['RTL']=rtl;report['rounds']['numeric_contract']=numeric.check_contract()
         report['rounds']['DP_checks']=planner.test();save()
+        requant=[]
+        for bits in (8,16,32):
+            folder=out/('requant'+str(bits));folder.mkdir()
+            count=numeric.requant_vectors(folder/'requant-vectors.txt',bits);obj=folder/'obj'
+            execute([VERILATOR,'--binary','--timing','--assert','--top-module','tb_requant4','-GQBITS='+str(bits),
+                     '-Wall','-j','4','--Mdir',obj,HERE/'w8_requantize4.sv',HERE/'tb_requant4.sv'],folder/'build.log',folder,env)
+            log=execute([obj/'Vtb_requant4'],folder/'rtl.log',folder,env)
+            assert 'REQUANT_RTL_PASS' in log
+            requant.append(dict(bits=bits,vectors=count,log=log,vectors_sha256=sha(folder/'requant-vectors.txt')))
+        report['rounds']['requant_RTL']=requant;save()
         frozen=root/'restored';baseline=restore(frozen);candidate=generate(baseline,frozen/'candidate')
         (out/'m-profile.log').write_bytes((frozen/'inputs/m-profile.log').read_bytes())
         prefix=Path('/public/home/yuzelu/opt/systemc-3.0.2-issue219')

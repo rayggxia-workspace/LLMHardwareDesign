@@ -53,5 +53,23 @@ def check_contract():
                 contract='W8; symmetric signed A8/A16; per-input-tile power-of-two activation scale; common full-K scale; final per-output-channel scale and RNE; scales cannot change silently across K')
 
 
+def requant_vectors(path,bits):
+    rng=random.Random(24800+bits);rows=[]
+    from fractions import Fraction
+    for i in range(512):
+        n=i%6;data=[rng.randrange(-(1<<63),1<<63) for _ in range(4)]
+        scales=[rng.randrange(1,32768) for _ in range(4)]
+        shifts=[rng.choice([0,1,3,15,31,47,63]) for _ in range(4)]
+        if i<32:data=[-7,-5,5,7];scales=[1]*4;shifts=[1]*4
+        if i%17==0:scales[0]=0
+        error=n==0 or n>4 or any(s<=0 for s in scales[:n]);result=[0]*4;sat=0
+        if not error:
+            for j in range(n):
+                q=round(Fraction(data[j]*scales[j],1<<shifts[j]));result[j]=rne(data[j]*scales[j],shifts[j],bits)
+                sat|=int(q!=result[j])<<j
+        rows.append(f'{pack(data,64)} {pack(scales,16)} {pack(shifts,6)} {n} {pack(result,bits)} {sat:x} {int(error)}')
+    Path(path).write_text('\n'.join(rows)+'\n');return len(rows)
+
+
 if __name__=='__main__':
     print(json.dumps(check_contract()))
