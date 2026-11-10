@@ -41,7 +41,7 @@ def main():
             wide_request_cycles=reads, wide_request_gaps=gaps, A_cycles=a, A_gaps=a_gaps,
             minimum_wide_request_gap=min(gaps), sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
     services = []
-    for mode in range(4):
+    for mode in range(5):
         for pair in ["1-143", "2-143", "2-144"]:
             path = out/f"frontend-mode{mode}-{pair}.log"
             text = path.read_text()
@@ -50,11 +50,15 @@ def main():
                                map(int, row))) for row in re.findall(
                 r"G_S128_FRAME mode=(\d+) words=(\d+) first_request=(-?\d+) last_ack=(-?\d+) occupied_cycles=(-?\d+) requests=(\d+) writes=(\d+) ACK=(\d+) G_in=(\d+) G_out=(\d+) fault=(\d+)", text)]
             assert records
+            done_events = [dict(assert_cycle=int(cycle), after_ack_delta=int(delta), earliest_clocked_take=int(take))
+                for cycle, delta, take in re.findall(r"G_S128_DONE_ASSERT cycle=(\d+) valid_after_ack_delta=(-?\d+) earliest_clocked_take=(\d+)", text)]
+            assert len(done_events) == len(records)
             if mode == 0:
                 normal = next(row for row in records if row["words"] == 32 and row["fault"] == 0)
                 assert normal["occupied_cycles"] == 107 and normal["requests"] == 96 and normal["ACK"] == 32
+                assert done_events[0]["after_ack_delta"] == 0
             services.append(dict(mode=mode, init_seed=pair, frames=records, payload_hold_bytes=96,
-                added_sram_bytes=0, log=path.name, sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
+                done_events=done_events, added_sram_bytes=0, log=path.name, sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
     report = dict(passed=True, G_tests=tests, feeder_traces=traces, G_frame_128=frames, G_S128_services=services,
         oracle=json.loads((out/"oracle.json").read_text()),
         scope="Candidate G RTL only and exact main S_P RTL with real OpenRAM bank model. No synthesis, physical timing, energy or full-system acceptance.")

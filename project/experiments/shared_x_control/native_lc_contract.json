@@ -1,0 +1,47 @@
+{
+  "schema": "native-LC-scope/1",
+  "status": "new_independent_profile_pending_actual_numeric_provider_and_physical_join",
+  "old_LC_ABI_upgraded_implicitly": false,
+  "modules": ["rtl/lc_native_scope_controller.sv", "rtl/lc_program_store_1k.sv", "rtl/lc_scope_fetch128.sv", "rtl/p_scope_range_service.sv"],
+  "packet_ABI": "MC v2, 0x02500002; actual4x128bit request and return frames",
+  "program": {
+    "mutable_PM_bytes": 1024,
+    "implemented_kernel_bytes": 352,
+    "capacity_ID": "0x02510001",
+    "image_ID": 25001,
+    "instruction_bits": 64,
+    "registered_sequence": ["L_EXEC resource0 token0 exec_record0", "L_WAIT mask1", "L_END"],
+    "native_service_ID": "0x0250; actual PM table/header words are read and checked before use",
+    "current_scope_of_interpreter": "The explicitly registered single-scope three-instruction kernel, not the full old LC ISA or an arbitrary old PM image",
+    "runtime_reads_per_successful_scope": {"actual_header_and_table_128bit_words": 20, "actual_instruction_fetches": 3, "free_program_cache": false},
+    "boot": "BEGIN/sequential WRITE128/SEAL performs352 actual byte CRC readbacks for this kernel; every config write has a real receipt. Rejected config does not revoke deployment. Accepted revocation requires new drained session before calls resume.",
+    "PREPARE": "prepared is derived from actual PM certification AND accepted strictly newer native session; it is not a host constant",
+    "reserved_loop_diagnostic": "CALL r7 low16 is an ignored bounded diagnostic, high16 must be zero; it is not an implicit LC iteration command"
+  },
+  "storage": {
+    "PM_payload_bits": 8192,
+    "PM_response_bits": 128,
+    "scope_parameter_bits": 1024,
+    "input_frame_bits": 512,
+    "retained_pointer_and_length_bits": 80,
+    "native_result_payload_bits_here": 0,
+    "extra_scope_response_FIFO_bits": 0,
+    "terminal_packet": "composed from retained owner/counters while held, no separate64B response array",
+    "physical_cost": "owner/token/sequence/counters/FSM/comparators/config and clocks/reset are additional real logic, not covered by this payload inventory; P&R pending"
+  },
+  "scope": {
+    "CALL_arguments": {"r0_r1": "64bit128-aligned DDR pointer", "r2": "0x00010080: short-schema1/128bytes", "r3": "LC capacity02510001", "r4": "actual topology", "r5": "MC native ABI02500002", "r6": "zero", "r7": "bounded loop diagnostic"},
+    "owner128_MSB_to_LSB": ["controller_generation32", "job32", "epoch32", "target_task_sequence32"],
+    "ticket32": "target_task_sequence, equal to owner low32",
+    "input_key_and_RFowner": "independent typed identities; never replace with the CALL scope owner",
+    "transport": "two real64B DDR requests, each competes with W for actual global descriptor/beat/channel credits; one live scope remains leased through terminal service drain and explicit fetch release",
+    "integrity": "124 sequential CRC cycles against inline tailCRC, then root typed decoder reads these same scope registers without copying",
+    "confirmed_read_bytes": "only matching accepted DDR returns, plus actual native provider counters; CRC failure/cancel never invents a full128B read",
+    "provider": "P schema02505001/provider02504d02: service1 RANGE, <=16contexts; services2 projection outer and3 wholeFFN rejected until separately implemented",
+    "root_source": "db8d39cf1: project/rtl/block_local_native/p_scope128_decode.sv and record_range_iterator.sv"
+  },
+  "native_completion": "L_EXEC launches actual native service; L_WAIT waits matching full owner/ticket. Only actual provider completion, including FINAL/SPILL S128 ACKs, can satisfy it. INPUT-consumed does not satisfy L_WAIT or free the scope.",
+  "cancel": "Full v2 owner and zero argument payload required. Preserve held PM requests, source DDR offers and held service offer. Stop new issue, partial CLOSE/no-more-issue plus all issued returns drain, then native service must report actual full drain. CANCEL acceptance alone never fabricates completion. Held terminal is immutable.",
+  "session": "PM must already be certified; accepted session init is atomic with the fetcher init, strictly newer generation and real transport_drained. A pre-boot attempt cannot burn the fetch generation. No automatic reset/rearm drain proof.",
+  "admission_boundaries": ["one actual P LC control/typed range fixture", "record provider is currently a finite peer in this LC test, not numerical M or actual S ACK coverage", "global DMA fabric must still be connected to actual requests/returns/CLOSE", "five native provider registrations and wholeFFN outer are separate", "300MHz/area/PG/DRC and full-model time/energy pending"]
+}

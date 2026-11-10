@@ -26,7 +26,14 @@
   "W_READY_requires_distinct_use_sequence": true,
   "X_source_release_requires": "all_planned_A_loads_issued_and_all_actual_S_reads_returned",
   "S_port": "one_native_128bit_port_calendar_shared_with_other_clients_phase_switch_cost_not_free",
-  "S_response_outstanding_per_P_candidate": 1,
+  "S_native_response_capacity_per_P": 2,
+  "S_owner_metadata_records_per_P_candidate": 2,
+  "A_read_outstanding_per_P_candidate": 1,
+  "copy_write_outstanding_per_P_candidate": 1,
+  "S_leaf_response_has_native_tag_pin": false,
+  "owner_tags_are_local_controller_metadata": true,
+  "selected_S_provider_candidate": "local_s_base_compact_no_feeder",
+  "old_M_FEED_services_accepted_in_new_P_profile": false,
   "A_load_state_machine": "FREE_PREPARED_LOADING_READY_CONSUMING_DRAINED_FREE",
   "A_load_metadata_slots_per_P": 2,
   "weight_metadata_slots_per_P": 4,
@@ -34,9 +41,11 @@
   "parameter_fields": ["source_selector", "X_object_version", "X_S_base128", "X_S_length128", "K128_group", "A_slot", "slot_generation", "A_layout_id", "projection_context", "weight_record_id", "planned_A_load_count", "planned_M_uses", "M_use_sequence"],
   "services": ["A_PREPARE_PRIVATE_S128", "A_LOAD_PRIVATE_S128", "W_FILL", "M_JOIN_A_W_GROUP128", "A_END_USE", "A_SLOT_RELEASE", "X_END_READ"],
   "registered_service_adapter_exists": false,
+  "experimental_native_service_RTL_exists": true,
+  "experimental_native_RTL_scope": "A tilelease, U-to-3P ordinary-S128 copy, two-owner tagged S mux and two-result guarded service; not production LC/program integration",
   "new_A_load_frontend_FSM_required": true,
   "new_high_level_execution_opcode_required": false,
   "cancel_reset": "stop_new_service_keep_accepted_S_valid_until_response_then_invalidate_partial_slots_coordinated_reset_no_PC_resume",
   "physical_boundary": "independent_leaf_macros_plus_local_standard_cell_FSM_no_hard_Block_frame",
-  "qualified_evidence": {"abstract_protocol_only": true, "production_RTL": false, "numeric": false, "performance": false, "area_or_physical": false}
+  "qualified_evidence": {"abstract_protocol": true, "experimental_native_RTL": true, "actual_SRAM_RTL_integration": true, "actual_SRAM_scope": "source initialize plus U-to-3P copy and signed A-container replay, six seeds x three reset initial states", "production_RTL": false, "full_M_G_numeric": false, "whole_model_performance": false, "area_or_physical": false}
 }

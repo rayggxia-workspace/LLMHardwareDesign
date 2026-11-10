@@ -1,0 +1,188 @@
+{
+  "schema": "issue250-P-scope128/1",
+  "schema_abi": "0x02505001",
+  "provider_abi": "0x02504d02",
+  "byte_order": "little",
+  "length": 128,
+  "fields": [
+    {
+      "name": "schema_abi",
+      "offset": 0,
+      "bytes": 4
+    },
+    {
+      "name": "length",
+      "offset": 4,
+      "bytes": 2
+    },
+    {
+      "name": "service",
+      "offset": 6,
+      "bytes": 2
+    },
+    {
+      "name": "provider_abi",
+      "offset": 8,
+      "bytes": 4
+    },
+    {
+      "name": "topology",
+      "offset": 12,
+      "bytes": 4
+    },
+    {
+      "name": "input_key",
+      "offset": 16,
+      "bytes": 16
+    },
+    {
+      "name": "rf_object_base0",
+      "offset": 32,
+      "bytes": 4
+    },
+    {
+      "name": "rf_object_base1",
+      "offset": 36,
+      "bytes": 4
+    },
+    {
+      "name": "output_version",
+      "offset": 40,
+      "bytes": 4
+    },
+    {
+      "name": "record_sequence_base",
+      "offset": 44,
+      "bytes": 4
+    },
+    {
+      "name": "weight_base0",
+      "offset": 48,
+      "bytes": 8
+    },
+    {
+      "name": "weight_base1",
+      "offset": 56,
+      "bytes": 8
+    },
+    {
+      "name": "columns",
+      "offset": 64,
+      "bytes": 4
+    },
+    {
+      "name": "first_column",
+      "offset": 68,
+      "bytes": 4
+    },
+    {
+      "name": "column_stride",
+      "offset": 72,
+      "bytes": 2
+    },
+    {
+      "name": "groups",
+      "offset": 74,
+      "bytes": 1
+    },
+    {
+      "name": "first_context",
+      "offset": 75,
+      "bytes": 1
+    },
+    {
+      "name": "full_k",
+      "offset": 76,
+      "bytes": 2
+    },
+    {
+      "name": "k_begin",
+      "offset": 78,
+      "bytes": 2
+    },
+    {
+      "name": "k_end",
+      "offset": 80,
+      "bytes": 2
+    },
+    {
+      "name": "ways",
+      "offset": 82,
+      "bytes": 1
+    },
+    {
+      "name": "flags",
+      "offset": 83,
+      "bytes": 1
+    },
+    {
+      "name": "input_s_base",
+      "offset": 84,
+      "bytes": 2
+    },
+    {
+      "name": "output_s_base0",
+      "offset": 86,
+      "bytes": 2
+    },
+    {
+      "name": "output_s_base1",
+      "offset": 88,
+      "bytes": 2
+    },
+    {
+      "name": "scratch_s_base",
+      "offset": 90,
+      "bytes": 2
+    },
+    {
+      "name": "snapshot_s_base",
+      "offset": 92,
+      "bytes": 2
+    },
+    {
+      "name": "reserved0",
+      "offset": 94,
+      "bytes": 2
+    },
+    {
+      "name": "bias_address0",
+      "offset": 96,
+      "bytes": 8
+    },
+    {
+      "name": "bias_address1",
+      "offset": 104,
+      "bytes": 8
+    },
+    {
+      "name": "reserved1",
+      "offset": 112,
+      "bytes": 12
+    },
+    {
+      "name": "crc32",
+      "offset": 124,
+      "bytes": 4
+    }
+  ],
+  "services": {
+    "1": "LOCAL_CONTIG_RANGE: existing range iterator, <=16 contexts; input_s_base names K=0 contiguous A16 image of full_k/8 S128 words. Native numeric provider currently qualifies only implemented K128/256 full-range bias0; other capabilities need actual registration.",
+    "2": "STREAM_PROJECT_ITER: candidate outer N chunks with a current K128 tile window and explicit copy/scale/A leases; reject until registered actual outer executor",
+    "3": "FFN: reserved, reject until whole FFN outer and three-P data/scale lifetimes are implemented"
+  },
+  "flags": {
+    "0": "head16: eight separately rounded K16 groups per K128 record",
+    "7:1": "reserved zero"
+  },
+  "crc": "IEEE reflected CRC32 of bytes [0,124), stored at [124,128), checked by actual scope fetch",
+  "identity": {
+    "scope_owner": "Actual CALL job/epoch/task-sequence/controller-generation; not input_key",
+    "input_key": "Input object identity; no alias with output RF ownership",
+    "rf_owner": "{input_key.job32,input_key.epoch32,rf_object_base[way]+global_col/8,output_version32}; checked no wrap or cross-way overlap",
+    "input_key_bits": "{job[127:96],epoch[95:64],tensor[63:32],version[31:0]}, encoded as LE128 bytes",
+    "scope_owner_bits": "MC native profile {generation[127:96],job[95:64],epoch[63:32],taskseq[31:0]}; different field positions from input_key; native provider checks job/epoch explicitly"
+  },
+  "memory": "All S bases use 128-bit words in [0,1024). Service1 full contiguous A16 input must fit and must not overlap output/snapshot windows. Outputs use 2 words per N8 group and way, snapshots 2 words per context. Bias address0 means exact zero bias; nonzero requires a registered actual DDR bias provider, never an implicit free read.",
+  "support": "Layout frozen; no implication that service2/3, actual LC joining, DMA, numerical profile or physical backend is qualified."
+}

@@ -23,7 +23,8 @@ def main():
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
     paths = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", commit, "--",
         "project/rtl/w8a16_v1/projection_context_s32.sv", "project/rtl/w8a16_v1/scale_group_s32.sv",
-        "project/experiments/w8a16_context", "project/experiments/w8a16_m/check.py"]).decode().splitlines()
+        "project/experiments/w8a16_context", "project/experiments/w8a16_m/check.py",
+        "project/experiments/w8a16_m/tb_scale.sv"]).decode().splitlines()
     items = {p: subprocess.check_output(["git", "show", commit + ":" + p]) for p in paths}
     items["source-commit.txt"] = (commit + "\n").encode()
     manifest = "".join(hashlib.sha256(v).hexdigest() + "  " + p + "\n" for p, v in sorted(items.items()))

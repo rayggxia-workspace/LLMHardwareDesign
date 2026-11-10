@@ -45,6 +45,11 @@ def prepare(destination):
 """
     assert text.count(old) == 1
     path.write_text(text.replace(old, new), newline="\n")
+    from calibrated import apply
+    apply(destination)
+    for changed in destination.joinpath('candidate').iterdir():
+        if changed.is_file():
+            generated[changed.relative_to(destination).as_posix()] = hashlib.sha256(changed.read_bytes()).hexdigest()
     generated["candidate/model.cpp"] = hashlib.sha256(path.read_bytes()).hexdigest()
     (destination / "generation.json").write_text(json.dumps(dict(
         source_archive_sha256=digest, source_members=receipt["members_SHA256"],

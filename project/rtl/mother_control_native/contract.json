@@ -1,0 +1,294 @@
+{
+  "schema": "mother-native64-contract/1",
+  "status": "candidate_RTL_not_joint_LC_or_physical_admission",
+  "native_ABI_ID": "0x02500002",
+  "capacity_ID": "0x02590003",
+  "packet_version": 2,
+  "execution_instruction_bits": 64,
+  "instruction_image_version": 3,
+  "instruction_128_version1": "explicitly_rejected_not_covered",
+  "registered_instructions": {
+    "G_CALL": "0x10",
+    "G_WAIT": "0x11",
+    "G_EVENT": "0x12",
+    "G_MOVI": "0x13",
+    "forward_G_JNZ": "0x15",
+    "G_END": "0x1f",
+    "G_ADDI64": "0x16",
+    "G_LOOP": "0x17"
+  },
+  "G_CALL_entry_field_c": "must_be_zero_first_registered_LC_entry",
+  "scope": "G_CALL launches projection/FFN-range service; LC finite iterator expands records, never MC dispatch per raw group",
+  "targets": {
+    "IDs": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "compute_groups": 9,
+    "actual_resident_slots": 9,
+    "active_per_target": 1,
+    "tokens": 16,
+    "G_WAIT_mask_bits": 32,
+    "allocated_token_mask_bits": 16,
+    "terminal_slots_per_target": 1,
+    "READY_slots_per_target": 1,
+    "static_event_bindings": 9,
+    "event_per_source_in_image_max": 1
+  },
+  "existing_old_two_target_profile_changed": false,
+  "program_store": {
+    "capacity_bytes": 16384,
+    "provider": "unchanged_control_pm_with_real_four_bank_SRAM",
+    "instruction_limit": 2032,
+    "maximum_declared_image_bytes": 16384,
+    "header_bytes": 128,
+    "parameter_words": 0,
+    "runtime_fetch_each_instruction": true,
+    "no_free_MC_program_cache": true,
+    "instruction_limit_with_all9_event_bindings": 2014,
+    "bounds": "instruction_end=128+16*ceil(inst_count/2); total=instruction_end+16*binding_count<=16384; all address arithmetic uses full32bit instruction counts"
+  },
+  "CALL_fields_bits": {
+    "version": [
+      0,
+      16
+    ],
+    "kind_CALL0_CANCEL1": [
+      16,
+      8
+    ],
+    "target": [
+      24,
+      8
+    ],
+    "job": [
+      32,
+      32
+    ],
+    "epoch": [
+      64,
+      32
+    ],
+    "target_task_sequence": [
+      96,
+      32
+    ],
+    "entry_zero": [
+      128,
+      8
+    ],
+    "token": [
+      136,
+      8
+    ],
+    "reserved_zero": [
+      144,
+      16
+    ],
+    "LC_image_ID": [
+      160,
+      32
+    ],
+    "topology_ID": [
+      192,
+      32
+    ],
+    "generation": [
+      224,
+      32
+    ],
+    "eight_GPR_argument_words": [
+      256,
+      256
+    ]
+  },
+  "RETURN_fields_bits": {
+    "version": [
+      0,
+      16
+    ],
+    "kind_READY0_DONE2_ERROR3": [
+      16,
+      8
+    ],
+    "source": [
+      24,
+      8
+    ],
+    "job": [
+      32,
+      32
+    ],
+    "epoch": [
+      64,
+      32
+    ],
+    "target_task_sequence": [
+      96,
+      32
+    ],
+    "terminal_token_or_READY_255": [
+      128,
+      8
+    ],
+    "READY_event_or_terminal_255": [
+      136,
+      8
+    ],
+    "status": [
+      144,
+      16
+    ],
+    "READY_scalar_or_terminal_zero": [
+      160,
+      32
+    ],
+    "confirmed_read_bytes": [
+      192,
+      32
+    ],
+    "confirmed_write_bytes": [
+      224,
+      32
+    ],
+    "flags_bits0_to2_other_bits_zero": [
+      256,
+      32
+    ],
+    "READY_count1_or_terminal0": [
+      288,
+      32
+    ],
+    "error_PC_or_success_0xffffffff": [
+      320,
+      32
+    ],
+    "generation": [
+      352,
+      32
+    ],
+    "topology_ID": [
+      384,
+      32
+    ],
+    "reserved_zero_tail": [
+      416,
+      96
+    ]
+  },
+  "return_admission": "full generation/job/epoch/target-task-sequence/source/token/topology; invalid packets consumed and counted without retiring ownership; active-job protocol error aborts/drains",
+  "return_during_held_result": "reject_and_count_bad_packet_without_mutating_held_global_result",
+  "cancel": "stop_new_CALL; keep already offered CALL/CANCEL valid; send matching CANCEL to every accepted live target; result only after terminal/drain of every owner and PM request",
+  "timeout": "quarantine keeps all credits/context, still permits held task and true return drain; recover only when all owners terminal and no PM/held packet, then INVALID requiring fresh deployment, no PC resume",
+  "source_and_numeric_commit": "LC native FINAL/SPILL result is terminal COMMITTED only after every real destination S128 ACK; continue record completion may mean exact RF update, not an implicit snapshot store",
+  "G_CALL_arguments": {
+    "body_semantics_owner": "LC registered scope bridge; MC snapshots eight GPR words without inventing descriptor fields",
+    "range_descriptor_candidate": "reference plus byte length to immutable/versioned scope descriptor; root ways1/2 range needs two weight bases and >=80B, so actual validated size and ceil(bytes/16) LC fetches must be charged",
+    "complete_owner": "MC generation/job/epoch plus explicit object_version in validated LC descriptor",
+    "not_assumed": [
+      "all range fields fit in 256 immediate bits",
+      "scope descriptor still only64B",
+      "free parameter fetch",
+      "compile-time activation a_shift",
+      "X data ACK implies a_shift ACK"
+    ]
+  },
+  "register_payload_inventory_bits": {
+    "nine_CALL_contexts_for_cancellation": 4608,
+    "nine_READY_scalars": 288,
+    "nine_event_bindings": 1152,
+    "nine_image_IDs": 288,
+    "nine_task_sequence_counters": 288,
+    "nine_token_bindings": 36,
+    "seven_nine_bit_group_maps_including_event_consumption": 63,
+    "live_token_mask": 16,
+    "eight_GPRs": 256,
+    "image_header_copy": 1024,
+    "expanded_decode_register": 128,
+    "one_held_task_packet": 512,
+    "not_total_synthesized_area": "lifecycle/cfg/counters/arbitration/PM wrapper and clock/reset also present; no unused 512bit terminal/READY packet arrays"
+  },
+  "DDR_global_credits": {
+    "owner": "MC_owned_adapter_separate_from_LC_four_W_banks_and_MC_task_tokens",
+    "separate_credit_classes": [
+      "64B_beat",
+      "record_descriptor"
+    ],
+    "channels": 2,
+    "limit_each_channel_each_class": 32,
+    "per_target_limit_each_class": 32,
+    "reservation_lanes_per_cycle": 3,
+    "no_bandwidth_guarantee_from_credit_ready": true,
+    "weight_record_channel": "(record_start_byte_address / 2048) % 2, entire record uses this channel",
+    "other_flows": "must use same frozen deployment group/channel mapping; not silently striped by beat",
+    "state": [
+      "FREE",
+      "RESERVED",
+      "OFFERED",
+      "ISSUED"
+    ],
+    "release": "real return after ISSUED or explicit cancellation before ever OFFERED",
+    "descriptor_return": "all DDR record beats actually returned, not last M or result S ACK",
+    "ticket_bits": {
+      "session_generation": [
+        32,
+        32
+      ],
+      "slot_generation": [
+        16,
+        16
+      ],
+      "global_slot_channel_bit5": [
+        10,
+        6
+      ],
+      "owner_target": [
+        6,
+        4
+      ],
+      "class_ID": [
+        0,
+        6
+      ]
+    },
+    "slot_generation_wrap": "slot quarantined at65535 until new drained session; no silent reuse",
+    "new_session": "strictly newer generation and actual transport_drained; coordinated reset must drain/discard every old external transaction before rearm",
+    "not_yet_joint_admission": "credit bank must be wired to actual W/DDR reservation, offer, issue and return events; unit test is not whole-top DDR integration"
+  },
+  "MC_LC_transport": {
+    "candidate_top": "mother_control_native64_transport128",
+    "physical_payload_bits": 128,
+    "task_flits": 4,
+    "return_flits": 4,
+    "TX_accept": "actual fourth/EOP handshake; original held512bit core record reused, no hidden transmit frame queue",
+    "RX_capacity_bytes": 64,
+    "RX_records": 1,
+    "RX_accept": "four correct SOP/EOP/source-consistent flits, then held internal packet valid until core accept",
+    "malformed": "drain to EOP then submit guaranteed invalid version0, never retire source or token from corrupt payload",
+    "recovery": "core owner drain AND framing adapter empty AND actual external transport_drained before explicit quarantine recover",
+    "start_args": "always zero in compact top; inherited nonzero argument path was never admitted",
+    "separate_from_M_native_protocol": "MC launches scope once; M BEGIN_SCOPE/ALLOC/EXEC/CTX/RESTORE framing and their measured sizes belong to separately versioned LC-native provider contract"
+  },
+  "LC_program_storage_status": {
+    "current_P_U_physical": "PM req/rsp exposed, no PM SRAM inside accepted controlled groups; controlled.py build docstring",
+    "current_C_F_J_physical": "README64 explicitly external fixture PM, no synthesizable PM or boot manager integration",
+    "private_16KiB_S_is_program_memory": false,
+    "nine_LC_PM_capacity_and_physical_cost": "not_yet_frozen_or_implemented; size from actual microprogram+scope/descriptor bytes, no automatic nine16KiB expansion",
+    "whole36layer_MC_program_fits_256_instructions": "not_established; actual compiler program size and any loop/reload mechanism must be counted"
+  },
+  "physical_interface_scope": "512bit task word and credit tickets are internal control records; compact128bit framing is implemented separately and must be physically charged, not copied into leaf macro pin lists",
+  "loops": {
+    "G_ADDI64": "even GPR pair0/2/4/6 plus unsigned32 immediate, full65bit overflow check; fault18; updates pair atomically",
+    "G_LOOP": "independent GPR2..7, count1..65535, decrement then backward absolutePC while nonzero; target within entry..PC-1; fault19",
+    "runtime_bound": "every fetch/decode counts actual steps; header max_steps remains finite and exhaustion faults12",
+    "scope_pointer": "new CALL args r0/r1 pointer; r7 may carry bounded loop_remaining diagnostic, not forcedzero",
+    "READY": "static source binding rearmed only at new CALL; full tasksequence validates each READY, no previous-call reuse"
+  }
+}

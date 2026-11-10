@@ -1,8 +1,10 @@
 # Issue250：联合底座实现入口
 
-2026-11-10，Asia/Shanghai；负责人/实际GitHub身份 YUZE-LU。关联 [Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) / [PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)。
+2026-11-11，Asia/Shanghai；负责人/实际GitHub身份 YUZE-LU。关联 [Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) / [PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)。
 
 用户已授权：先形成并验证不低于PR249同条件token/s的方案，再修改宏RTL及物理、五类控制分组/LC/MC/指令，完成紧凑利用率、接口与300 MHz验收，最终让通用DP适配新资源/费用；可并行agent，c96采用8×12、c64采用6×10。此工作不是仅提交研究计划。
+
+当前证据入口：[原生联合闭环台账](../../../../docs/experiments/issue-250-native-integration.md)。G叶资格与M/控制/适配器各自验收；整机性能仍未过门，持续迭代，不提前关闭Issue或合并PR。
 
 用户2026-11-11补充：不得擅自停滞目标，遇到阻碍须持续定位、修改和重跑直到验收通过；子agent同样按解决/迭代执行。跨模块依赖由根agent协调，不把失败记录、局部测试通过或PR上传当作完整验收。
 

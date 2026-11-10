@@ -32,6 +32,7 @@ module private_a_tile_frontend(
   output logic [255:0] a_data,
   output logic [2:0] a_step,
   output logic [31:0] a_weight_record,
+  output logic [127:0] a_key,
   output logic a_slot,
   output logic [15:0] a_generation, a_kk, a_use_sequence,
   input logic close_valid, output logic close_ready,
@@ -109,6 +110,7 @@ module private_a_tile_frontend(
   assign a_data = {A[active_slot][{step_q,1'b1}], A[active_slot][{step_q,1'b0}]};
   assign a_step = step_q;
   assign a_weight_record = active_record;
+  assign a_key = key[active_slot];
   assign a_slot = active_slot;
   assign a_generation = generation[active_slot];
   assign a_kk = kk[active_slot];

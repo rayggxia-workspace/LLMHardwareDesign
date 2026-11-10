@@ -16,12 +16,20 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument('--root', required=True)
     p.add_argument('--package-dir', required=True, type=Path)
+    p.add_argument('--joint', action='store_true')
+    p.add_argument('--map-rtl-run')
+    p.add_argument('--map-leaf', action='store_true')
+    p.add_argument('--leaf-lint', action='store_true')
+    p.add_argument('--leaf', action='store_true')
     a = p.parse_args()
     assert re.fullmatch(r'/public/home/yuzelu/project-circuit/issue250-weight-20261111-[0-9]+', a.root)
     a.package_dir.mkdir(parents=True, exist_ok=False)
     commit = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode().strip()
     paths = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', commit, '--',
         'project/rtl/w8a16_v1/weight_records.sv', 'project/rtl/w8a16_v1/m_group_s32.sv',
+        'project/rtl/w8a16_v1/m_native_s32.sv', 'project/rtl/w8a16_v1/projection_context_s32.sv',
+        'project/rtl/w8a16_v1/m_native_leaf_s32.sv',
+        'project/rtl/w8a16_v1/scale_group_s32.sv',
         'project/experiments/w8a16_m/vectors/closure-m-run38.txt',
         'project/experiments/w8a16_weight']).decode().splitlines()
     data = {name: subprocess.check_output(['git', 'show', commit + ':' + name]) for name in paths}
@@ -42,7 +50,8 @@ def main():
     subprocess.run(['scp', '-q', str(package), HOST + ':' + a.root + '/source.tar.gz'], check=True)
     submitted = subprocess.check_output(['ssh', '-o', 'BatchMode=yes', HOST,
         'cd ' + shlex.quote(a.root) + ' && tar xzf source.tar.gz && sbatch --output=' +
-        shlex.quote(a.root + '/slurm-%j.log') + ' source/project/experiments/w8a16_weight/job.sh']).decode().strip()
+        shlex.quote(a.root + '/slurm-%j.log') + ' source/project/experiments/w8a16_weight/' +
+        ('m_map_job.sh ' + shlex.quote(a.map_rtl_run) + (' m_native_leaf_s32' if a.map_leaf else '') if a.map_rtl_run else 'leaf_job.sh' if a.leaf else 'leaf_lint_job.sh' if a.leaf_lint else 'joint_job.sh' if a.joint else 'job.sh')]).decode().strip()
     receipt = dict(source_commit=commit, remote_root=a.root, source_files=len(data),
                    package_SHA256=hashlib.sha256(package.read_bytes()).hexdigest(), submit=submitted)
     (a.package_dir / 'submission.json').write_text(json.dumps(receipt, indent=2) + '\n')

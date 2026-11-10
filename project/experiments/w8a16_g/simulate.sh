@@ -38,7 +38,7 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
       project/experiments/w8a16_g/test_g_s128_frontend.sv project/rtl/w8a16_v1/{g_s32,g_s128_frontend}.sv \
       project/rtl/s_sram/{local_s_p,block_feed_s16k_sram}.sv \
       project/rtl/block_feed_v1/block_feed_loader.sv "$bank" > "$out/frontend-build.log" 2>&1
-    for mode in 0 1 2 3; do
+    for mode in 0 1 2 3 4; do
       for pair in 1:143 2:143 2:144; do
         "$out/frontend/Vtest_g_s128_frontend" "+vectors=$out/vectors.txt" "+mode=$mode" \
           "+verilator+rand+reset+${pair%:*}" "+verilator+seed+${pair#*:}" > "$out/frontend-mode$mode-${pair/:/-}.log" 2>&1

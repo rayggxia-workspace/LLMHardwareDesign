@@ -58,7 +58,13 @@ The read-only remote recovery changed no old directories and submitted no EDA jo
 
 Remote evidence root is `/public/home/yuzelu/project-circuit/LLMHardwareDesign/` except the explicitly indexed historical M delivery. New work must stay under an issue250-owned fresh root, freeze a source snapshot, preserve all failure/cancelled cases, and use `yzl-*` Slurm names with actual CPU affinity checks. c96 may run eight 12-core tasks and c64 six 10-core tasks within the allocation. No long simulation or P&R runs on login nodes. The tools above are source entry points, not an assertion that an arbitrary new top already works unchanged.
 
-## Next execution gates
+## New P-only G32 result
+
+After the original preparation baseline, the P-only G32 leaf completed the full source-bound native TT300MHz M1–M10 gates and all-204-bit finite escape. The actual final G is 240×240 µm, with 28,461.734 µm² useful standard-cell area, 49.412733% occupied/outline, 66.145125% occupied/core, setup +81.264 ps, hold +19.733 ps and zero original full native GDS DRC items. Actual final-ODB nine-case model-tensor replay and strict all-boundary LEC also pass. See [G32_RESULTS.md](G32_RESULTS.md) and [g32-results.json](g32-results.json) for exact scopes, paths and SHA bindings.
+
+The separate G–S128 frontend has 96 B payload holds plus control/metadata registers, no new SRAM, 107 measured cycles from first request through final ACK for 128 values, and 7,506.254 µm² mapped gate area. It is not physically or integrated-LC qualified. Pure-G 68-cycle arithmetic and full S128 service remain separate quantities. Native G leaf acceptance does not transfer to this frontend or to a product upper-metal route.
+
+## Execution gates for the remaining new hardware
 
 1. Joint numerical/performance result selects a resource candidate; no unmeasured A32/64 B feeder assumption is frozen.
 2. New M/G/feeder RTL and reference math agree; backpressure, write ACK, reset, finite contexts and two-lane ROM service are explicit. Report synthesized storage copies, bits, arithmetic and active cell area.
@@ -66,4 +72,4 @@ Remote evidence root is `/public/home/yuzelu/project-circuit/LLMHardwareDesign/`
 4. Run source-bound fresh M1–M10 P&R; preserve failed candidates and modify RTL/pins/placement/repair parameters until original 300 MHz TT setup/hold, max cap/slew/fanout, native connectivity/PG, OpenROAD DRC and original complete native GDS DRC all pass. Do not loosen SDC, Liberty or rule decks.
 5. Run final ODB netlist in all three declared initial states, strict real-bank boundary equivalence where applicable, exact pin readback and release SHA checks. Product M11/M12 routes and full-system timing/function remain additional gates.
 
-Current checks: `scripts/check_project.py` passed; baseline reproduction passed; five focused preflight tests passed. No new full-macro synthesis, P&R or product route was run in this preparation commit. Root owns shared project/Issue/progress updates and integration; this branch deliberately modifies only its two assigned directories.
+Initial preparation checks: `scripts/check_project.py` passed; baseline reproduction passed; five focused preflight tests passed. That preparation commit ran no new P&R; the later G result above is separately evidenced. Product routing and the other new macro/control implementations remain separate. Root owns shared project/Issue/progress updates and integration; this branch modifies only the parent-assigned physical/G/frontend paths.

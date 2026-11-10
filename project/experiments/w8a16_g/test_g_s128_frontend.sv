@@ -28,8 +28,8 @@ module test_g_s128_frontend;
     wire [127:0] unused_a_data;
     wire [511:0] unused_b_data;
     integer cycle=0,mode=0;
-    wire request_enable=mode!=1 || cycle%7!=2;
-    wire response_enable=mode!=1 || cycle%11>=4;
+    wire request_enable=(mode!=1 && mode!=4) || cycle%7!=2;
+    wire response_enable=(mode!=1 && mode!=4) || cycle%11>=4;
     assign s_req_ready=!host && mem_ready && request_enable;
     assign s_rsp_valid=!host && mem_valid && response_enable;
     assign s_rsp_data=mem_data;
@@ -50,6 +50,7 @@ module test_g_s128_frontend;
     integer fd,scan,count,file_gated,file_error;
     string vector_file;
     reg measure=0, expect_fault=0;
+    integer fault_word=0;
     integer first_request=-1,last_ack=-1,requests=0,writes=0,acks=0,inputs=0,outputs=0;
     reg tags[0:1];
     integer th=0,tt=0,tc=0;
@@ -83,10 +84,13 @@ module test_g_s128_frontend;
         if(!expect_fault && (done_words!==cmd_words || requests!=3*int'(cmd_words) ||
             writes!=int'(cmd_words) || acks!=int'(cmd_words) || inputs!=2*int'(cmd_words) ||
             outputs!=2*int'(cmd_words)))$fatal(1,"frontend service counts %0d %0d %0d %0d %0d %0d",done_words,requests,writes,acks,inputs,outputs);
-        if(expect_fault && (writes!=0 || done_words!=0))$fatal(1,"fault committed a packet");
+        if(expect_fault && (writes>fault_word || done_words!==6'(acks) || writes!=acks))
+            $fatal(1,"fault corrupted/failed to drain committed prefix");
+        if(mode==4 && cmd_words!=0 && writes==0)$fatal(1,"late fault did not exercise committed prefix");
         if(mode==0 && cmd_words==32 && !expect_fault && last_ack-first_request+1!=107)
             $fatal(1,"continuous service changed: first=%0d lastACK=%0d inclusive=%0d",first_request,last_ack,last_ack-first_request+1);
-        $display("G_S128_FRAME mode=%0d words=%0d first_request=%0d last_ack=%0d occupied_cycles=%0d requests=%0d writes=%0d ACK=%0d G_in=%0d G_out=%0d fault=%0d",mode,cmd_words,first_request,last_ack,last_ack-first_request+1,requests,writes,acks,inputs,outputs,expect_fault);
+        $display("G_S128_FRAME mode=%0d words=%0d first_request=%0d last_ack=%0d occupied_cycles=%0d requests=%0d writes=%0d ACK=%0d G_in=%0d G_out=%0d fault=%0d",mode,cmd_words,first_request,last_ack,last_ack<0?0:last_ack-first_request+1,requests,writes,acks,inputs,outputs,expect_fault);
+        $display("G_S128_DONE_ASSERT cycle=%0d valid_after_ack_delta=%0d earliest_clocked_take=%0d",cycle,last_ack<0?-1:cycle-last_ack,cycle+1);
         repeat(5)begin
             @(negedge clk);
             if(!done_valid || done_error!==expect_fault || cmd_ready || s_req_valid)
@@ -117,9 +121,10 @@ module test_g_s128_frontend;
             access(1,64+i,{ups[2*i+1],ups[2*i]},scratch);
             access(1,128+i,128'h1234,scratch);
         end
-        if(mode==3)begin
-            access(1,0,128'h7fffffff7fffffff7fffffff7fffffff,scratch);
-            access(1,64,128'h7fffffff7fffffff7fffffff7fffffff,scratch);
+        if(mode==3 || mode==4)begin
+            fault_word=mode==3?0:3;
+            access(1,fault_word,128'h7fffffff7fffffff7fffffff7fffffff,scratch);
+            access(1,64+fault_word,128'h7fffffff7fffffff7fffffff7fffffff,scratch);
             expect_fault=1;
         end
         start_frame();
@@ -131,7 +136,7 @@ module test_g_s128_frontend;
             start_frame();
         end
         finish_frame();
-        if(mode!=3)begin
+        if(mode!=3 && mode!=4)begin
             for(integer i=0;i<32;i=i+1)begin
                 access(0,128+i,0,scratch);
                 if(scratch!=={expected[2*i+1],expected[2*i]})$fatal(1,"actual SRAM Mid mismatch %0d",i);
@@ -139,9 +144,14 @@ module test_g_s128_frontend;
             cmd_words=1;start_frame();finish_frame();
             access(0,128,0,scratch);
             if(scratch!=={expected[1],expected[0]})$fatal(1,"single word SRAM mismatch");
+            cmd_words=7;start_frame();finish_frame();
+            for(integer i=0;i<7;i=i+1)begin
+                access(0,128+i,0,scratch);
+                if(scratch!=={expected[2*i+1],expected[2*i]})$fatal(1,"odd word count SRAM mismatch");
+            end
         end
         // An invalid command must finish with no request, then retain done.
-        expect_fault=1;cmd_words=0;start_frame();finish_frame();
+        expect_fault=1;fault_word=0;cmd_words=0;start_frame();finish_frame();
         $display("G_S128_PASS mode=%0d payload_hold_bytes=96 added_SRAM_bytes=0 actual_model_values=128",mode);
         $finish;
     end
@@ -170,7 +180,7 @@ module test_g_s128_frontend;
             if(s_req_valid&&s_req_ready)begin
                 if(first_request<0)first_request=cycle;
                 if(s_req_write)begin
-                    if(expect_fault || s_req_addr!==10'(128+writes) || s_req_data!=={expected[2*writes+1],expected[2*writes]})
+                    if((expect_fault && writes>=fault_word) || s_req_addr!==10'(128+writes) || s_req_data!=={expected[2*writes+1],expected[2*writes]})
                         $fatal(1,"wrong/premature SRAM write %0d",writes);
                     writes=writes+1;
                 end

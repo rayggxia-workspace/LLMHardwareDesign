@@ -30,6 +30,8 @@ module weight_records #(
  input wire [1:0] start_bank, input wire [15:0] start_generation,
  input wire [KEY_W-1:0] start_key, input wire [31:0] start_record,
  input wire [15:0] start_use, input wire [31:0] start_raw_tag,
+ // Internal M bridge acknowledgement and immutable bank configuration.
+ output wire start_accepted, start_head16, output wire [3:0] start_n,
  output wire w_valid, input wire w_ready,
  output wire [KEY_W-1:0] w_key, output wire [31:0] w_record,
  output wire [1:0] w_bank, output wire [15:0] w_generation, w_use,
@@ -46,6 +48,7 @@ module weight_records #(
  input wire cancel_valid, output wire cancel_ready,
  input wire [1:0] cancel_bank, input wire [15:0] cancel_generation,
  input wire [KEY_W-1:0] cancel_key, input wire [31:0] cancel_record,
+ output wire cancel_accepted,
  // Strong external statement: raw/A owner cancellation is drained. The
  // module additionally requires every DMA it issued to have actually returned.
  input wire drain_valid, output wire drain_ready,
@@ -106,6 +109,8 @@ module weight_records #(
   !cancelled[issue_bank]&&issue_beat<(head[issue_bank]?18:17)&&!issued[issue_bank][issue_beat];
  wire start_good=match_owner(start_bank,start_generation,start_key,start_record)&&state[start_bank]==READY&&
   (!head[start_bank]||start_raw_tag[2:0]==0);
+ assign start_accepted=start_valid&&start_ready&&start_good;
+ assign start_head16=head[start_bank];assign start_n=lanes[start_bank];
  wire consumed_good=match_owner(consumed_bank,consumed_generation,consumed_key,consumed_record)&&
   state[consumed_bank]==WAIT_CONSUMED&&use_id[consumed_bank]==consumed_use;
  wire cancel_good=match_owner(cancel_bank,cancel_generation,cancel_key,cancel_record)&&!cancelled[cancel_bank];
@@ -115,18 +120,21 @@ module weight_records #(
  // its own one-beat/cycle credit port; it does not consume an LC command.
  // Malformed traffic serializes through the single bounded fault slot.
  wire base_controls=!reset&&fault_space&&!(fill_valid&&!fill_good);
- wire controls=base_controls&&!(issue_valid&&!issue_good);
+ // Cancellation has priority over malformed issue traffic; good issues on
+ // other banks remain independent. No ready->valid->cancel_ready loop.
+ wire controls=base_controls&&!(issue_valid&&!issue_good&&!cancel_valid);
  assign cancel_ready=controls;
  assign drain_ready=controls&&!cancel_valid&&drain_space;
  assign consumed_ready=controls&&!cancel_valid&&!drain_valid;
  assign start_ready=controls&&!cancel_valid&&!drain_valid&&!consumed_valid&&!stream_active;
- assign issue_ready=base_controls&&!(cancel_valid&&cancel_ready&&cancel_bank==issue_bank)&&
+ assign issue_ready=base_controls&&!(cancel_valid&&(!issue_good||(cancel_good&&cancel_bank==issue_bank)))&&
   (!issue_good||int'(outstanding)<MC_CREDITS);
  assign alloc_ready=controls&&!cancel_valid&&!drain_valid&&!consumed_valid&&!start_valid&&alloc_space;
  assign fill_ready=!reset&&(fill_good||fault_space);
  wire fire_issue=issue_valid&&issue_ready&&issue_good;
  wire fire_fill=fill_valid&&fill_ready&&fill_good;
  wire fire_cancel=cancel_valid&&cancel_ready&&cancel_good;
+ assign cancel_accepted=fire_cancel;
  wire stop_current=fire_cancel&&cancel_bank==stream_bank;
  assign w_valid=!reset&&stream_active&&!cancelled[stream_bank]&&!stop_current;
  assign w_bank=stream_bank;assign w_generation=generation[stream_bank];assign w_use=use_id[stream_bank];

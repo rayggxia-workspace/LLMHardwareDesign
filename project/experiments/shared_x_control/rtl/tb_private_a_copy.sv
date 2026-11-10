@@ -44,6 +44,7 @@ module tb_private_a_copy;
   logic [255:0] a_data;
   logic [2:0] a_step;
   logic [31:0] a_weight_record;
+  logic [127:0] a_key;
   logic [15:0] a_generation,a_kk,a_use_sequence;
   logic close_valid,close_ready,close_slot,release_valid,release_ready,release_slot;
   logic [15:0] close_generation,release_generation;
@@ -71,6 +72,8 @@ module tb_private_a_copy;
   logic [31:0] Utag;
   logic [127:0] Udata;
   integer seed,source_epoch;
+  integer trace_file,cycle;
+  string trace_path;
   logic [10:0] prefix_before_late_ACK;
   logic old_s,old_sr,old_a,old_ar;
   logic [41:0] old_s_payload;
@@ -103,8 +106,27 @@ module tb_private_a_copy;
       Upending<=0;Udelay<=0;Utag<=0;Udata<=0;
       u_response_valid<=0;u_response_tag<=0;u_response_data<=0;u_response_error<=0;
       old_s<=0;old_sr<=0;old_a<=0;old_ar<=0;old_s_payload<=0;old_a_payload<=0;
+      cycle<=0;
       for(integer i=0;i<3;i=i+1) begin Paddress[i]<=0;Pdata[i]<=0;Ptag[i]<=0;Pdelay[i]<=0;end
     end else begin
+      cycle<=cycle+1;
+      if(cmd_valid&&cmd_ready) $fwrite(trace_file,"%0d,CMD,%0d,%0d,%0d,%0d,%0d,0,1,%032x\n",cycle,cmd_slot,cmd_generation,cmd_kk,cmd_planned_uses,cmd_S_base,cmd_key);
+      if(u_valid&&u_ready) $fwrite(trace_file,"%0d,UREQ,-1,%0d,0,0,%0d,%0d,1,%032x\n",cycle,u_tag[31:16],u_address,u_tag,copy_key);
+      if(u_response_valid&&u_response_ready) $fwrite(trace_file,"%0d,URSP,-1,%0d,0,0,0,%0d,%0d,%032x\n",cycle,u_response_tag[31:16],u_response_tag,copy.matching_u,copy_key);
+      for(integer p=0;p<3;p=p+1) begin
+        if(p_valid[p]&&p_ready[p]) $fwrite(trace_file,"%0d,PWRITE,%0d,%0d,0,0,%0d,%0d,1,%032x\n",cycle,p,p_tag[32*p+16+:16],p_address[10*p+:10],p_tag[32*p+:32],copy_key);
+        if(p_ack_valid[p]&&p_ack_ready[p]) $fwrite(trace_file,"%0d,PACK,%0d,%0d,0,0,0,%0d,%0d,%032x\n",cycle,p,p_ack_tag[32*p+16+:16],p_ack_tag[32*p+:32],copy.ack_match[p],copy_key);
+      end
+      if(s_valid&&s_ready) $fwrite(trace_file,"%0d,SREQ,%0d,%0d,%0d,0,%0d,%0d,1,%032x\n",cycle,s_tag[15],s_tag[31:16],front.kk[s_tag[15]],s_address,s_tag,front.key[s_tag[15]]);
+      if(response_valid&&response_ready) $fwrite(trace_file,"%0d,SRSP,%0d,%0d,0,0,0,%0d,%0d,%032x\n",cycle,response_tag[15],response_tag[31:16],response_tag,front.response_match,front.key[response_tag[15]]);
+      if(load_done_valid&&load_done_ready) $fwrite(trace_file,"%0d,LOAD_DONE,%0d,%0d,0,0,%0d,0,1,%032x\n",cycle,load_done_slot,load_done_generation,load_done_error,load_done_key);
+      if(w_valid&&w_ready) $fwrite(trace_file,"%0d,WREADY,%0d,%0d,%0d,%0d,%0d,0,1,%032x\n",cycle,w_slot,w_generation,w_kk,w_use_sequence,w_record,w_key);
+      if(use_valid&&use_ready) $fwrite(trace_file,"%0d,MUSE,%0d,%0d,%0d,%0d,0,0,1,%032x\n",cycle,use_slot,use_generation,use_kk,use_sequence,use_key);
+      if(a_valid&&!old_a) $fwrite(trace_file,"%0d,AVALID,%0d,%0d,%0d,%0d,0,0,1,%032x\n",cycle,a_slot,a_generation,a_kk,a_use_sequence,front.key[a_slot]);
+      if(a_valid&&a_ready) $fwrite(trace_file,"%0d,ASTEP,%0d,%0d,%0d,%0d,%0d,0,1,%032x\n",cycle,a_slot,a_generation,a_kk,a_use_sequence,a_step,front.key[a_slot]);
+      if(close_valid&&close_ready) $fwrite(trace_file,"%0d,CLOSE,%0d,%0d,0,0,0,0,1,%032x\n",cycle,close_slot,close_generation,front.key[close_slot]);
+      if(release_valid&&release_ready) $fwrite(trace_file,"%0d,RELEASE,%0d,%0d,0,0,0,0,1,%032x\n",cycle,release_slot,release_generation,front.key[release_slot]);
+      if(done_valid&&done_ready) $fwrite(trace_file,"%0d,COPY_DONE,-1,%0d,0,0,%0d,0,1,%032x\n",cycle,start_generation,done_error,copy_key);
       ack_actual<=0;response_actual<=0;
       if(old_s&&!old_sr) assert(s_valid&&{s_address,s_tag}==old_s_payload) else $fatal(1,"A read withdrew valid");
       if(old_a&&!old_ar) assert(a_valid&&{a_data,a_step,a_weight_record,a_slot,a_generation,a_kk,a_use_sequence}==old_a_payload) else $fatal(1,"A changed under M backpressure");
@@ -161,7 +183,7 @@ module tb_private_a_copy;
   task automatic consume(input bit slot,input logic [15:0] gen,input int k,input int seq);
     for(integer step=0;step<8;step=step+1) begin
       while(!a_valid) @(negedge clk);
-      assert(a_slot==slot&&a_generation==16'(gen)&&a_kk==16'(k)&&a_use_sequence==16'(seq)&&a_step==3'(step)&&a_weight_record==32'(1000+k*100+seq)) else $fatal(1,"M JOIN tag");
+      assert(a_key==start_key&&a_slot==slot&&a_generation==16'(gen)&&a_kk==16'(k)&&a_use_sequence==16'(seq)&&a_step==3'(step)&&a_weight_record==32'(1000+k*100+seq)) else $fatal(1,"M JOIN tag");
       assert(a_data=={source_word(k*16+step*2+1,source_epoch),source_word(k*16+step*2,source_epoch)}) else $fatal(1,"A K128 signed container replay mismatch");
       pause(seed%3+1);a_ready=1;pause();a_ready=0;
     end
@@ -187,6 +209,10 @@ module tb_private_a_copy;
     close_valid=0;close_slot=0;close_generation=0;release_valid=0;release_slot=0;release_generation=0;
     inject_ack=0;inject_ack_tag=0;inject_response=0;inject_response_tag=0;
     if($value$plusargs("SEED=%d",seed)) begin end
+    trace_path=$sformatf("private-a-%0d.csv",seed);
+    if($value$plusargs("TRACE=%s",trace_path)) begin end
+    trace_file=$fopen(trace_path,"w");assert(trace_file!=0) else $fatal(1,"cannot open trace");
+    $fwrite(trace_file,"cycle,event,slot,generation,kk,use,detail,tag,match,object_key\n");
     pause(3);reset=0;pause();
     inject_ack=1;inject_ack_tag=96'hdead;pause();inject_ack=0;
     assert(copy_committed_prefix==0) else $fatal(1,"foreign ACK advanced prefix");
@@ -232,6 +258,7 @@ module tb_private_a_copy;
     while(!done_valid) @(negedge clk);assert(!done_error) else $fatal(1,"fresh epoch failed");
     assert(fault_cycles>=5&&copy_faults>=2&&source_reads_drained&&response_ready&&p_ack_ready==7&&copy_quiescent==0) else $fatal(1,"negative-case accounting");
     $display("PASS private-A-copy seed=%0d nativeS128 multiuse earlycopy retry faults=%0d copyfaults=%0d",seed,fault_cycles,copy_faults);
+    $fclose(trace_file);
     $finish;
   end
   initial begin #100000; $fatal(1,"private A/copy timeout");end

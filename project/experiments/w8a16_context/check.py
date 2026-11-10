@@ -142,19 +142,44 @@ def main():
         raise RuntimeError('RTL simulation requires Slurm compute')
     args.out.mkdir(parents=True, exist_ok=False)
     counts, count = generate(args.source, args.out, args.seed)
+    # Also exercise the standalone elastic scaler with independent commands
+    # at II=1. RF recurrence stalls must not hide stage ordering/hold bugs.
+    scale_spec = importlib.util.spec_from_file_location("scale_oracle", args.source / "project/experiments/w8a16_m/check.py")
+    scale_oracle = importlib.util.module_from_spec(scale_spec)
+    scale_spec.loader.exec_module(scale_oracle)
+    scale_count, scale_good = scale_oracle.generate_scale(random.Random(args.seed), args.out)
+    with (args.out / 'counts.vh').open('a', encoding='utf-8') as log:
+        log.write(f'`define SCALE_COUNT {scale_count}\n')
     environment = dict(os.environ)
     environment.pop('VERILATOR_ROOT', None)
-    build = [args.verilator, '--binary', '--timing', '--assert', '-Wall', '-Wno-BLKSEQ', '-Wno-TIMESCALEMOD',
+    build = [args.verilator, '--binary', '--timing', '--assert', '--x-initial', 'unique', '--x-assign', 'unique', '-Wall', '-Wno-BLKSEQ', '-Wno-TIMESCALEMOD',
              '--top-module', 'tb_context', '-j', '10', '-I' + str(args.out), '--Mdir', str(args.out / 'obj')]
     build += [str(args.source / path) for path in ('project/rtl/w8a16_v1/scale_group_s32.sv',
               'project/rtl/w8a16_v1/projection_context_s32.sv', 'project/experiments/w8a16_context/tb_context.sv')]
     with (args.out / 'build.log').open('w') as log:
         subprocess.run(build, cwd=args.out, env=environment, stdout=log, stderr=subprocess.STDOUT, check=True)
-    with (args.out / 'simulation.log').open('w') as log:
-        subprocess.run([str(args.out / 'obj/Vtb_context')], cwd=args.out, env=environment,
-                       stdout=log, stderr=subprocess.STDOUT, check=True)
-    assert 'PASS context ' in (args.out / 'simulation.log').read_text()
-    report = dict(seed=args.seed, vectors=count, counts=counts,
+    for initial in range(3):
+        name = 'simulation.log' if initial == 0 else f'simulation-{initial}.log'
+        with (args.out / name).open('w') as log:
+            subprocess.run([str(args.out / 'obj/Vtb_context'), f'+verilator+seed+{args.seed}', f'+verilator+rand+reset+{initial}'],
+                           cwd=args.out, env=environment, stdout=log, stderr=subprocess.STDOUT, check=True)
+        assert 'PASS context ' in (args.out / name).read_text()
+        assert 'peak_head_run=8 peak_inflight=3' in (args.out / name).read_text()
+        (args.out / 'context-timing.csv').rename(args.out / f'context-timing-{initial}.csv')
+    scale_build = [args.verilator, '--binary', '--timing', '--assert', '--x-initial', 'unique', '--x-assign', 'unique', '-Wall', '-Wno-BLKSEQ', '-Wno-TIMESCALEMOD',
+                   '--top-module', 'tb_scale', '-j', '10', '-I' + str(args.out), '--Mdir', str(args.out / 'obj-scale'),
+                   str(args.source / 'project/rtl/w8a16_v1/scale_group_s32.sv'),
+                   str(args.source / 'project/experiments/w8a16_m/tb_scale.sv')]
+    with (args.out / 'scale-build.log').open('w') as log:
+        subprocess.run(scale_build, cwd=args.out, env=environment, stdout=log, stderr=subprocess.STDOUT, check=True)
+    for initial in range(3):
+        name = 'scale-simulation.log' if initial == 0 else f'scale-simulation-{initial}.log'
+        with (args.out / name).open('w') as log:
+            subprocess.run([str(args.out / 'obj-scale/Vtb_scale'), f'+verilator+seed+{args.seed}', f'+verilator+rand+reset+{initial}'],
+                           cwd=args.out, env=environment, stdout=log, stderr=subprocess.STDOUT, check=True)
+        assert 'PASS scale ' in (args.out / name).read_text()
+    report = dict(seed=args.seed, vectors=count, initializations=3, finite_pipeline_owners=3, same_owner_head_II=1,
+                  metadata_pipeline_bits=930, counts=counts, scale_vectors=scale_count, scale_good=scale_good,
                   hashes={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in args.out.iterdir() if p.is_file()},
                   qualification='finite projection RF unit, not full M/control/memory/physical acceptance')
     (args.out / 'result.json').write_text(json.dumps(report, indent=2) + '\n')

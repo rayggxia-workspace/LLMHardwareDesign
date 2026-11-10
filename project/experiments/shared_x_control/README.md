@@ -73,12 +73,12 @@ PR243旧M的原生op13/14表示另一种累加context协议，不能当新K16/FP
 
 | 改动位置 | 所需改动及验收 |
 |---|---|
-| `project/rtl/mother_control_v1/mc_ports.svh`, `mc_min_controller.sv` | 当前2目标的image/task/terminal/token事件表扩为获批容量；增加SYS_X注册路由与终端身份，保持G_WAIT精确匹配；回归旧两目标 |
+| 新`project/rtl/mother_control_native/` | 保留旧两resident模块；新profile为九group索引及真实至少四resident任务/terminal/token/event容量，保持G_WAIT精确匹配与派发回压。NoPool不增加SYS_X路由 |
 | PR180 native服务适配/任务编译器 | 注册新ABI/service，解析参数，拒绝旧ABI/数值/布局，生成BEGIN至END_READ/RELEASE与context顺序；LC实际源closure须先固定，不能改一个文档就宣布接入 |
-| `project/rtl/shared_s/shared_a_pool32.sv`, `pu_p_shared_pair.sv` | 三reader参数化、第三组有限FIFO、公平仲裁、完整会话计数/END_READ、反向控制与全组reset；不能仅复制reader端口 |
+| 共享池对照：`project/rtl/shared_s/shared_a_pool32.sv`, `pu_p_shared_pair.sv` | 三reader、公平仲裁、会话计数与全组reset只属于反事实pool实验；NoPool首版不装共享池及其FIFO |
 | `project/rtl/pu_leaf_base/pu_p_group.sv`, `pu_p_store_control.sv` | 新M格式LOADjoin、B reuse身份、ACK和部分失败失效；保持true_private_RW=0真实端口争用 |
 | 新M group128/scale/RNE/G适配器 | 数值向量、部分前缀、first/continue/final、context持有和第二字ACK；不继承旧M/G资格 |
-| DDR至池前端与监督器 | 有限返回预约、顺序fill/真实ACK、源lease、cancel/reset；不隐藏无限MC缓冲，不假定32KiB可边fill边读 |
+| DDR及X普通S128前端 | 有限W返回预约、U→3P逐片真实写ACK、X/A lease、cancel/reset；NoPool没有共享池监督器 |
 | 顶层资源/端点合同 | 独立宏、LC标准单元和新增主动逻辑计账；真实宏旁pin、静态数据/握手/ACK网并集，P&R与300MHz另验 |
 
 先通过数值/接口与性能gate，再实现生产服务及控制回放；通过取消/背压/错身份/重复ACK/二字提交测试后进入真实SRAM联合RTL；之后综合、P&R、300MHz和端点验收。协议检查器通过不是这些gate通过。
@@ -90,7 +90,8 @@ PR243旧M的原生op13/14表示另一种累加context协议，不能当新K16/FP
 - `rtl/bounded_service_guard.sv`：LC内部的两份command metadata与**独立2×32B result FIFO**、并行native/目的提交FSM。首结果等待S两字ACK时，第二native及结果可以进入；满则背压。完整512bit ticket仅用于内部保护/验证，原生宏仍用真实既有窄接口和有限owner寄存器，不是建议给每颗宏新增512bit pin。
 - `rtl/private_a_tile_frontend.sv`：真实2×256B寄存器、同kk多M只读重放、planned/issued/completed与END_USE、W_READY/A_READY JOIN、一个S128读在途。copy-prefix只由真实目的写ACK推进，允许逐片生产消费，但不足16个返回字不能宣称A_READY。W可提前完成，错误kk/slot generation/use sequence被拒绝；A槽在最后实际M消费且关闭后释放。取消后已提出S读保持，回执排空后部分A失效；重试须新generation并重装。
 - `rtl/early_copy_3p.sv`：一个U普通S128读在途、每P一个16B保持槽，P写真实ACK后更新各自prefix；U预取可与旧P ACK等待并行，但响应只能在有限保持容量允许时接收。没有无限返回缓冲或普通口双端口。32bit tag是本地适配器保存的请求身份，S宏不因此新增tag管脚。
-- 两个testbench用保守单事务普通S模型检查共享P0端口读写仲裁、背压、signed A容器逐位重放、早释放/错误身份/取消/新epoch和迟到ACK；它们**没有接入真实SRAM宏、LC程序、DDR、M/G算术或物理库**。
+- `rtl/native_s128_mux2.sv`：copy写和A读共用一个真实普通S128口，只有两份owner/tag元数据，无新增data FIFO。使用原S两响应容量，请求被反压时保持选择和载荷，按真实顺序应答恢复本地tag，S不新增tag管脚。
+- 原两个testbench仍用保守单事务S模型检查错误身份/取消/迟到ACK。`rtl/tb_native_s_a_copy.sv`另接**原local_s_base及每实例四颗真实bank行为视图**，从U普通口初始化，完成三P复制、逐片ACK放行A读、同kk复用与双owner占用。没有LC程序、DDR、M/G算术或新物理实现。
 
 P新服务不需要旧`FEED_*`端口：A从普通S128读入外部tile寄存器，再以32B供新M。故可候选使用main已验收`local_s_base`，不自动继承旧P/M profile或旧feeder程序。实际多客户仲裁、地址窗、读写响应容量/RTT与物理仍要重验。
 
@@ -98,13 +99,19 @@ P新服务不需要旧`FEED_*`端口：A从普通S128读入外部tile寄存器�
 
 ### 尚需集成的控制与费用
 
-MC仍只有两resident slots。NoPool的九compute group索引不等于九个可并发resident；至少3P+U复制的四方并发需要真正扩活动任务、terminal、credit/event表和派发回压。新增service guard不代替这些修改。
+`bounded_serial_m_guard.sv`是原guard的独立stream候选，原guard端口不变。其RF SOP绑定既有command，在原2×32B结果FIFO预留位置，两个128bit数据flit直接写该位置，末拍捕获与发布同拍；没有额外32B应答装配FIFO。INPUT EOP单独确认，不完成range；CONTINUE无S数据，FINAL/SPILL等待两次真实S写ACK。其它control帧直通native调度FSM，本模块不冒充完整ABORT/全DMA取消协调。`serial_guard_contract.json`固定内部256bit期望metadata、ABI和未覆盖边界。Slurm102169十八次真实local_s_base/原bank测试通过，含INPUT末拍背压、错session/metadata、短帧/缺EOP、错S ACK、取消和SPILL。逐flit/SACK/terminal时间线见`serial-guard-102169.json`。M在该bench中是帧peer，尚非实际M数值或局控程序联合覆盖。
 
-完整decode约三百万M group不能依赖MC逐group派发大描述符。需要任务级模板和LC/native有限range FSM生成kk/col、W record、context地址及A lease。当前有界ISA准入子集没有提供已联合验证的通用loop；可保留L_EXEC/L_WAIT框架，由新注册service FSM实现循环，但其寄存器/PM取参、准备周期和端口必须实测。**本目录尚无投影/FFN range iterator或真实LC程序接入。**
+`early_copy_source_router.sv`将一次copy的源绑定到U/P0/P1/P2之一，直到该copy真实ACK排空后才允许释放/换源。`native_s128_mux3.sv`令P的copy源读、copy目的写和A读共用同一个普通S128口，仍只保存两份owner/tag，不增加数据FIFO或S端口。Slurm102150以原四个local_s_base和共十六个SRAM行为bank验证全部四源×六seed×三初态72次；102155以18次检查held offer、错tag、错release key和换源后的旧ACK。逐拍记录和失败史见`generic-source-102150.json`及run-index。这里不包括动态a_shift的提交目录，不能把data ACK当作scale ACK。
+
+旧profile的MC只有两resident slots。新`project/rtl/mother_control_native/`已实现独立九resident/十六token/九event候选及真实128bit传输，程序单测见`work/YUZE-LU/250/control/mc-native/`；母控与新局控的真实PM/128bit程序控制已联合通过102226，尚未联合实际数值native provider/全局DDR队列，新增service guard不代替这些集成。
+
+完整decode约三百万M group不能依赖MC逐group派发大描述符。需要任务级模板和LC/native有限range FSM生成kk/col、W record、context地址及A lease。新MC image-v3已增加有界G_ADDI64/G_LOOP并逐项验证942scope控制展开；LC仍以新注册service FSM运行范围，不免费生成整段FFN；可保留L_EXEC/L_WAIT框架，由新注册service FSM实现循环，但其寄存器/PM取参、准备周期和端口必须实测。**现已用真实新LC程序接入typed P RANGE和root六票record迭代器；整投影/FFN outer仍未实现，不能混称同一服务。**
 
 W input-consumed与result-stored是两种独立ACK。前者须匹配W bank/gen/record/use并在最后真实M操作数消费后释放输入；后者必须用独立结果身份，目的ACK不能误用已复用的W bank generation。旧性能模型曾将Bbank live/free绑结果ACK；提前释放是实现/模型变化，需要重新校准，不能把旧9.223 token/s照搬。其余G/向量S服务的旧64B费用也尚未全部校准为原生128bit路径。
 
-Slurm102089源`94fc02211`的两套bench、各六seed严格`--Wall --assert`通过，包含两结果并行、晚到旧copy ACK/旧S响应在复用槽时被拒绝、新epoch重装。结果和此前所有失败见`work/YUZE-LU/250/control/rtl-run-index.json`。这不是最终集成物理验收；实际周期时间线仍在补充，用于下一轮native性能校准，不补造token/s或能耗。
+Slurm102100源`20769643f`两套bench各六seed严格`--Wall --assert`通过，补全CMD/请求/ACK/A消费周期CSV。Slurm102110源`057a301f1`实际SRAM集成六seed×三初态18/18通过，完整源、CSV及失败史见`work/YUZE-LU/250/control/rtl-run-index.json`。bank原DELAY=3ns保留，功能时钟10ns；这不是新300MHz STA证据。仅对导入base有意空wide输出和原bank行为blocking赋值使用精确文件级lint例外，候选警告仍fatal。
+
+`native-s-102110.json`记录512B源到三P复制首U请求至最后目的ACK164–169拍，包含有意5+seed拍响应背压；每tile实际16笔S128读，同kk第二次M使用无新读，三次M共24个32B容器。正常native S请求至响应2拍。slot0命令至终端89–94拍、slot1为167–172拍包含prefix/前tile等待，不能当固定计算费。时间线只供native性能重新校准，不外推token/s或能耗。
 
 `private_s_candidate.json`是性能gate中的**替代研究候选**，不表示冻结两套底座：以原预算两个K128/A256B slot从既有S原128bit口预取X，不增加共享池、不复制4KiB X，不开启true_private_RW。A_LOAD可在W_READY前接受，独立W填充与A槽准备并行；M仅在相同job/epoch/kk/slot generation的A_READY/W_READY JOIN后读取。A槽直到第八次32B真实M握手才可释放。X源S窗口仍有容量和寿命，全部计划A片段实际读回后才可关闭；S普通客户与A片段读共用一个calendar，转向代价不免费。若最终选择此候选，则SYS_X和共享32KiB/FIFO一并从硬件清单删除。
 
@@ -113,3 +120,9 @@ Slurm102089源`94fc02211`的两套bench、各六seed严格`--Wall --assert`通�
 `audit_protocol.py`独立检查接受/提交/关闭/排空顺序，不引用生产编译器。它保守地把每P抽象成一个操作数bank，不模拟两bank重叠；GROUP_RNE/B_COMMITTED等事件的真实性需未来RTL监视器证明。部分失败失效及字节codec是待实现项，不能把本检查器正例当已有错误恢复覆盖。
 
 按项目规则在Slurm执行：复制本目录到授权远端目录后`sbatch --export=ALL,CONTROL_SOURCE_DIR=/absolute/source/directory slurm.sbatch`。采用c64 6×10分配，六个独立协议case分片；每片只有一Python进程，报告实际CPU秒，不人为填满核。输出包含每例接纳/拒绝原因、source/contract SHA和Slurm身份。它不产生token/s、功耗或面积。
+
+`native_lc_contract.json`规定独立的新LC profile。Slurm102217六seed×三初态18PASS：真实1KiB mutable PM、352字节boot CRC、20次header/table128bit读取和3次64bit取指、实际两64B DDR fetch/124cycle CRC、零复制typed P decoder和六票range。已修复并增加pre-boot session提前烧版本、无效config误撤认证、非零CANCEL参数负例。services2/3明确拒绝，INPUT不满足L_WAIT。
+
+Slurm102226又将实际16KiB SRAM母控PM及真实四flit128bit CALL/return接入上述局控，18PASS。每trial四CALL/一CANCEL/四真实LC terminal，验证普通/head范围、service2拒绝，以及错误源返回触发MC真实CANCEL而不是释放P owner；held range offer与其完成未排空时不能全局结束。LC91次PM读取，MC56次PM读取含14次host readback。首成功scope CALL EOP到return EOP224–229拍含有限record peer，不是M执行时间。完整周期/包SHA/失败史见`work/YUZE-LU/250/control/native-lc-control-102226.json`及run-index。
+
+此联合仍用finite record-completion peer，未声称真实M/G/量化/SACK数值路径、wholeFFN outer、全局DDR调度、五类provider、物理300MHz或整模型token/s已经通过。实际`bounded_serial_m_guard`只有一个native active，第二command可以预存且第二计算可重叠首SACK；它尚不能在首RF EOP前提前发第二EXEC，不能套用leaf裸pending理论II。

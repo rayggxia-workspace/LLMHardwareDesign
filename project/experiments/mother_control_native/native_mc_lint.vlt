@@ -1,0 +1,13 @@
+`verilator_config
+// Only imported intentional open wide outputs and behavioral SRAM assignment.
+lint_off -rule PINCONNECTEMPTY -file "*/mother_control_v1/control_pm.sv"
+lint_off -rule BLKSEQ -file "*/s_sram_256x128_freepdk45.v"
+// Finite peer fixture uses blocking integer monitors, explicit initial values
+// and a full top-level output inventory; these are not candidate RTL waivers.
+lint_off -rule BLKSEQ -file "*/mother_control_native/tb_mc_native.sv"
+lint_off -rule PROCASSINIT -file "*/mother_control_native/tb_mc_native.sv"
+lint_off -rule UNUSEDSIGNAL -file "*/mother_control_native/tb_mc_native.sv"
+lint_off -rule UNUSEDSIGNAL -file "*/mother_control_native/tb_native_wires.svh"
+// Reset intentionally clears core asynchronously and SRAM/finite peer state
+// synchronously. Fixture holds it through complete clock edges.
+lint_off -rule SYNCASYNCNET -file "*/mother_control_native/tb_native_wires.svh"

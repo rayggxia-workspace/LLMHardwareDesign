@@ -44,6 +44,8 @@ module tb_bounded_service_guard;
   logic [31:0] rejected_protocol_events,committed_words;
   bounded_service_guard dut(.*);
   int seed=1, native_accepts;
+  int trace_file,cycle;
+  string trace_path;
   logic prev_native, prev_native_ready, prev_s,prev_s_ready;
   logic prev_terminal,prev_terminal_ready;
   logic [783:0] old_native;
@@ -52,10 +54,19 @@ module tb_bounded_service_guard;
   always @(posedge clk) begin
     if (reset) begin
       native_accepts<=0;
+      cycle<=0;
       prev_native<=0;prev_native_ready<=0;prev_s<=0;prev_s_ready<=0;
       prev_terminal<=0;prev_terminal_ready<=0;
       old_native<=0;old_s<=0;old_terminal<=0;
     end else begin
+      cycle<=cycle+1;
+      $fwrite(trace_file,"%0d,RESULT_OCC,0,0,0,0,%0d,0,1,0\n",cycle,result_slots_occupied);
+      if(cmd_valid&&cmd_ready) $fwrite(trace_file,"%0d,CMD,0,0,0,0,%0d,%0d,1,%032x\n",cycle,cmd_store_words,cmd_ticket[31:0],cmd_job_key);
+      if(native_valid&&native_ready) $fwrite(trace_file,"%0d,NREQ,0,0,0,0,0,%0d,1,%032x\n",cycle,native_ticket[31:0],native_ticket[511:384]);
+      if(result_valid&&result_ready) $fwrite(trace_file,"%0d,NRSP,0,0,0,0,0,%0d,%0d,%032x\n",cycle,result_ticket[31:0],dut.matching_result,result_ticket[511:384]);
+      if(s_valid&&s_ready) $fwrite(trace_file,"%0d,SWRITE,0,0,0,0,%0d,%0d,1,%032x\n",cycle,s_word,s_ticket[31:0],s_ticket[511:384]);
+      if(ack_valid&&ack_ready) $fwrite(trace_file,"%0d,SACK,0,0,0,0,%0d,%0d,%0d,%032x\n",cycle,ack_word,ack_ticket[31:0],dut.matching_ACK,ack_ticket[511:384]);
+      if(terminal_valid&&terminal_ready) $fwrite(trace_file,"%0d,TERMINAL,0,0,0,0,%0d,%0d,1,%032x\n",cycle,terminal_error,terminal_ticket[31:0],terminal_ticket[511:384]);
       if (prev_native && !prev_native_ready)
         assert(native_valid && {native_ticket,native_resource,native_service,native_payload}==old_native) else $fatal(1,"native valid/payload withdrawn");
       if (prev_s && !prev_s_ready)
@@ -124,6 +135,10 @@ module tb_bounded_service_guard;
   endtask
   initial begin
     if($value$plusargs("SEED=%d",seed)) begin end
+    trace_path=$sformatf("service-guard-%0d.csv",seed);
+    if($value$plusargs("TRACE=%s",trace_path)) begin end
+    trace_file=$fopen(trace_path,"w");assert(trace_file!=0) else $fatal(1,"cannot open trace");
+    $fwrite(trace_file,"cycle,event,slot,generation,kk,use,detail,tag,match,object_key\n");
     pause(3);reset=0;pause();
     enqueue(1,1);enqueue(2,0);
     assert(!cmd_ready && occupied_slots==2) else $fatal(1,"third slot admitted");
@@ -168,6 +183,7 @@ module tb_bounded_service_guard;
     enqueue(9,0);take_terminal(9,1,0);
     assert(committed_words==3 && native_accepts==5 && rejected_protocol_events>=3) else $fatal(1,"accounting mismatch");
     $display("PASS bounded-service-guard seed=%0d commits=%0d rejected=%0d native=%0d",seed,committed_words,rejected_protocol_events,native_accepts);
+    $fclose(trace_file);
     $finish;
   end
   initial begin #20000; $fatal(1,"test timeout"); end

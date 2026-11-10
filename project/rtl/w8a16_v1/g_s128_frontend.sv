@@ -66,6 +66,8 @@ module g_s128_frontend (
     wire g_input_fire=g_in_valid && g_in_ready;
     wire g_output_fire=g_out_valid && g_out_ready;
     wire packet_fault=g_out_error || g_out_mask!=2'b11;
+    wire final_write_ack=response_fire && tag_kind[tag_head]==WRITE_MID &&
+        committed+6'd1==words;
 
     always @* begin
         s_req_valid=0; s_req_write=0; s_req_addr=0; s_req_data=0;
@@ -171,8 +173,9 @@ module g_s128_frontend (
                         output_half<=!output_half;
                     end
                 end
-                if((!fault && committed==words) || (fault && tag_count==0 && g_pending==0 && !s_req_valid)) begin
-                    busy<=0; done_valid<=1; done_error<=fault; done_words<=committed;
+                if((!fault && final_write_ack) || (fault && tag_count==0 && g_pending==0 && !s_req_valid)) begin
+                    busy<=0; done_valid<=1; done_error<=fault;
+                    done_words<=fault ? committed : committed+6'd1;
                     input_busy<=0; gate_returned<=0; up_returned<=0;
                     output_busy<=0; output_ready<=0; output_pending<=0;
                 end

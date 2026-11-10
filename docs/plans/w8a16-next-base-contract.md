@@ -1,8 +1,10 @@
 # 下一版独立叶宏底座：S内X、有限tile复用与S32持续状态合同
 
-更新时间：2026-11-10，Asia/Shanghai。关联 [Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)、[PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)。
+更新时间：2026-11-11，Asia/Shanghai。关联 [Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)、[PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)。
 
 **本版替代 PR251 的 S128/S64 历史草稿。2026-11-11选择唯一首版实施方向NoPool；最终物理实现与原生全系统性能仍未验收。** 不沿用旧宏的物理资格，不把不同配置的最佳结果拼成联合成绩。历史草稿保留在 `a237a6fa366fda7c48d7b4fda56c555d469a7d29`。
+
+当前源、分项资格、原生计时及未完成耦合以[联合闭环台账](../experiments/issue-250-native-integration.md)为准。G叶验收、M产品接口、动态scale和控制程序容量已有新证据；条件性能门和整机验收仍未通过。
 
 ## 0. 首版实施决定与证据限制
 

@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+2026-11-11补充：RF head II1/实际M回归、MC→LC真实PM/取参/range已测；M最终TT300MHz仍在迭代。已测guard费用回校条件结果8.136179，未达9.215647，dynamic/E/N与整系统仍未资格。详见[补充进展](../../docs/experiments/issue-250-native-progress-02.md)。
+
+## 2026-11-11：原生数据、scale与控制边界联合推进
+
+[Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) / [PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)继续实施。G32叶原TT300MHz、DRC0、最终ODB/等价及204端点研究接入通过；M完整短帧/DMA/有限RF已回归，产品P&R继续迭代。原生S128量化已从323/194降至95/60拍，真实scale目录与两A use联合回放通过；不增私有SRAM，新增寄存器和程序存储单列面积。九resident MC、真实128位传输、小LC PM及scope取参已有独立证据，但真实whole-FFN outer、控制循环、动态QK/AV/数值profile、联合物理和系统性能仍未验收。8.64697仍为待完整费用回校的条件迭代，低于旧9.21565目标；不将硬件改进记作DP收益。 详见[联合闭环台账](../../docs/experiments/issue-250-native-integration.md)。
+
 ## 2026-11-11：原生存储与有限流水回校
 
 [Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)持续实施。首版方向为私有S内X、双256B A槽、同K复用和早复制，无新增共享池或4KiB X寄存器。历史NoPool9.223787已复现；公共S128诊断7.595433，同原生Xreg7.585591，尚低于旧条件目标9.215647，不宣称系统达标。真实四W银行、16×8 S32上下文/scale、G32及有限A/copy/双结果槽已有独立RTL测试；G紧凑物理和真实S流适配继续迭代。联合数值/程序、完整宏及LC/MC物理、系统计时能耗与DP仍待完成，失败/低性能结果全部保留。详见工作索引和合同。

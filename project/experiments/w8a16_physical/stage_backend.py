@@ -23,7 +23,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--remote-root", required=True)
     parser.add_argument("--receipt-dir", type=Path, required=True)
-    parser.add_argument("--phase", choices=["map", "route", "audit", "function", "formal", "deliver"], required=True)
+    parser.add_argument("--phase", choices=["map", "route", "audit", "function", "formal", "deliver", "access", "frontend"], required=True)
     parser.add_argument("--partition", choices=["c64", "c96"], default="c64")
     parser.add_argument("phase_args", nargs=argparse.REMAINDER)
     args = parser.parse_args()

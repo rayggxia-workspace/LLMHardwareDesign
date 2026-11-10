@@ -25,7 +25,7 @@ module tb_scale;
   in_a_shift=0; in_partial=0; in_scale_fp16={8{16'h3c00}};
   in_previous=0; in_bias=0;
   @(posedge clk); @(negedge clk); in_valid=0;
-  repeat(2) @(negedge clk);
+  repeat(4) @(negedge clk);
   if(!out_valid) $fatal(1,"scale reset setup did not produce held response");
   reset=1; repeat(2) @(negedge clk); reset=0;
   if(out_valid) $fatal(1,"scale reset did not flush output");
