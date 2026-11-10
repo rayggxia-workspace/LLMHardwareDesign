@@ -122,7 +122,7 @@ def main(checkpoint,root):
         def round_shift(v,s):
             q=torch.div(v,1<<s,rounding_mode='floor');r=v-q*(1<<s)
             return q+((r>(1<<(s-1)))|((r==(1<<(s-1)))&(q%2!=0))).long()
-        def g_native(g,u,gated,name):
+        def g_native(g,u,gated,name,bypass=False):
             a=torch.round(g.double()*1024);b=torch.round(u.double()*1024)
             row=g_stats.setdefault(name,dict(values=0,input_gate_clipped=0,input_up_clipped=0,output_clipped=0))
             row['values']+=g.numel();row['input_gate_clipped']+=int(((a< -32768)|(a>32767)).sum())
@@ -135,21 +135,29 @@ def main(checkpoint,root):
             if gated:y=round_shift(y*uq,10)
             row['output_clipped']+=int(((y< -32768)|(y>32767)).sum())
             actual=y.clamp(-32768,32767).float()/1024
+            # Candidate active comparator/mux: bypass only where SiLU(x) ~= x.
+            # This does not exist in the accepted leaf or the frozen base.
+            if bypass:actual=torch.where(g>8,g,actual)
             return actual if gated else actual*u
         original_forward={i:layer.mlp.forward for i,layer in enumerate(model.model.layers)}
         profiles=[('A8_static',8,'static'),('A8_dynamic_fullK',8,'dynamic'),
                   ('A8_dynamic_group32',8,'group32'),('A16_dynamic_fullK',16,'dynamic'),
-                  ('G_native_ungated_wide_mul',0,'g'),('G_native_gated',0,'gated')]
+                  ('A8_down_A16',8,'down16'),('A8_down_group32',8,'down32'),
+                  ('G_native_ungated_wide_mul',0,'g'),('G_native_gated',0,'gated'),
+                  ('G_ungated_wide_mul_gate_bypass',0,'bypass')]
         for label,bits,policy in profiles:
             handles=[];linear_stats={};g_stats={}
             if bits:
                 def quant_hook(name):
                     def hook(m,inputs):
-                        x=inputs[0];a=x.reshape(*x.shape[:-1],-1,32) if policy=='group32' else x
+                        x=inputs[0]
+                        grouped=policy=='group32' or policy=='down32' and name.endswith('.mlp.down_proj')
+                        local_bits=16 if policy=='down16' and name.endswith('.mlp.down_proj') else bits
+                        a=x.reshape(*x.shape[:-1],-1,32) if grouped else x
                         if policy=='static':scale=max(maxima[name],1e-30)/((1<<(bits-1))-1)
-                        else:scale=a.abs().amax(-1,keepdim=True).clamp_min(1e-30)/((1<<(bits-1))-1)
-                        q=torch.round(a/scale);clipped=(q< -(1<<(bits-1)))|(q>(1<<(bits-1))-1)
-                        q=q.clamp(-(1<<(bits-1)),(1<<(bits-1))-1);y=(q*scale).reshape_as(x)
+                        else:scale=a.abs().amax(-1,keepdim=True).clamp_min(1e-30)/((1<<(local_bits-1))-1)
+                        q=torch.round(a/scale);clipped=(q< -(1<<(local_bits-1)))|(q>(1<<(local_bits-1))-1)
+                        q=q.clamp(-(1<<(local_bits-1)),(1<<(local_bits-1))-1);y=(q*scale).reshape_as(x)
                         row=linear_stats.setdefault(name,dict(values=0,signal2=0.,error2=0.,clipped=0,nonzero_to_zero=0,max_abs=0.))
                         row['values']+=x.numel();row['signal2']+=float((x.double()**2).sum());row['error2']+=float(((y-x).double()**2).sum())
                         row['clipped']+=int(clipped.sum());row['nonzero_to_zero']+=int(((x!=0)&(y==0)).sum());row['max_abs']=max(row['max_abs'],float(x.abs().max()))
@@ -158,9 +166,9 @@ def main(checkpoint,root):
                 for name,m in modules.items():handles.append(m.register_forward_pre_hook(quant_hook(name)))
             else:
                 for i,layer in enumerate(model.model.layers):
-                    def patched(self,x,name=str(i),gated=policy=='gated'):
+                    def patched(self,x,name=str(i),gated=policy=='gated',bypass=policy=='bypass'):
                         gate=self.gate_proj(x);up=self.up_proj(x)
-                        return self.down_proj(g_native(gate,up,gated,name))
+                        return self.down_proj(g_native(gate,up,gated,name,bypass))
                     layer.mlp.forward=types.MethodType(patched,layer.mlp)
             actual,h,loss=forward()
             for handle in handles:handle.remove()
@@ -173,11 +181,16 @@ def main(checkpoint,root):
             record=dict(name=label,loss=loss,metrics_vs_W8=[metric(a,b) for a,b in zip(actual,wref)],
                 metrics_vs_FP32=[metric(a,b) for a,b in zip(actual,fp)],layers=layer_metrics,
                 linear_stats=linear_stats,G_stats=g_stats,whole_model_integer_RTL=False,
-                hardware_profile_available=False if policy in ('group32','g','gated') else 'independent MAC only; full graph unqualified')
+                hardware_profile_available=False if policy in ('group32','down32','g','gated','bypass') else 'independent MAC only; full graph unqualified')
             report['profiles'].append(record);save()
             print('PRECISION_PROFILE '+label+' '+json.dumps(dict(loss=loss,last_top1=[v['top1_fraction'] for v in record['metrics_vs_W8']]),ensure_ascii=True),flush=True)
         rq=[];gv=[]
-        for i,text_index in ((0,0),(17,3),(35,5)):
+        # Include early outlier layer 2, not only representative depth samples.
+        # Capture the actual post-attention normalized MLP input in another
+        # unmodified W8 pass; a residual hidden state cannot substitute for it.
+        handle=model.model.layers[2].mlp.gate_proj.register_forward_pre_hook(capture(2))
+        capture_enabled=True;forward();capture_enabled=False;handle.remove()
+        for i,text_index in ((0,0),(2,0),(17,3),(35,5)):
             mlp=model.model.layers[i].mlp;weights={};scales={}
             for key,mod in [('gate',mlp.gate_proj),('up',mlp.up_proj),('down',mlp.down_proj)]:
                 scale=weight_scales[f'model.layers.{i}.mlp.{key}_proj'];scales[key]=scale.astype(np.float64)
