@@ -16,3 +16,5 @@ run44/job102083 FAILED1:0，原因见 failed-run44.json；run45/job102084、run4
 未做：全图 RTL、真实模型推理质量、全 U/芯片综合面积、STA/P&R、300MHz物理验收、正式审查合并。队列参数默认0；NExp需要caller暂存和尺度声明。
 CI42858846633 failure、validate无steps/logs，具体原因待管理员核实；不绕过。登记PR5 open/unmerged pending；无board配置及Projects工具，看板unverified/同步pending，处理人待指定。
 本地实现/服务器验证完成，远端交付经PR待审；Issue in_review，未合并/not done。没有活动作业或自动监测，需用户再次唤起检查。
+
+PDF 5页视觉核验通过，源报告 51661c100a68c43f2673424c758d6ddf4c20fdb3，SHA 026675c58044793bcba2f31de3301a6ed3a726e5dd3071b6f08ec180af9c6c71；输出副本 D:/Study_material/Study_material/LLMHardwareDesign/output/pdf/issue-247-u-queue-native.pdf。PDF 与 QA 随最终交付提交，实际远端 head 以 PR 读回为准。

@@ -1,3 +1,5 @@
+本轮五页 [PDF](../../docs/experiments/pdf/issue-247-u-queue-native.pdf) 与 [实施报告](../../docs/experiments/issue-247-u-queue-native.md) 已完成；160 内容单元、5 表/32 行、字体/边界/全部链接及全页视觉核验通过。报告源 51661c100a68c43f2673424c758d6ddf4c20fdb3；PDF SHA 026675c58044793bcba2f31de3301a6ed3a726e5dd3071b6f08ec180af9c6c71。
+
 ## 2026-11-11 Asia/Shanghai：U 有限队列及 NExp 区域交付待审
 
 Issue247 / PR243，Melodydt，task/242-r-load-bounds。原生源 0109de8555cda51ee73498f9966df69cb550ba19；run45/102084 COMPLETED0:0，195运行、27对默认观测、6面积通过。run44因NX32尾部正例构造错误失败，修正并全量重跑，失败记录保留。
