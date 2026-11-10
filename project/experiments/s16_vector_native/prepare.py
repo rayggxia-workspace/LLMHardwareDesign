@@ -74,7 +74,7 @@ BRIDGE_TESTS=r'''
      if(got!=={4{32'd32768}})$fatal(1,"bridge contention value");
     end
     begin
-     wait(dut.request[0]&&dut.accept[0]&&dut.write[0]);
+     do @(posedge clk);while(!(dut.request[0]&&dut.accept[0]&&dut.write[0]));
      @(negedge clk);io_v=1;io_w=0;io_addr=16;io_take=0;
      do @(posedge clk);while(!io_ready[0]);@(negedge clk);io_v=0;
      do @(negedge clk);while(!io_rsp[0]);
