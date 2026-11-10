@@ -24,7 +24,7 @@ python -B -X utf8 work/Melodydt/247/optimization-summary/extract_metrics.py --re
 
 `export_summary_pdf.py` 从固定 commit 的正式 Markdown 完整生成 PDF，保留表格、链接和全部内容单元，嵌入中文字体；`finalize_summary_pdf.py` 仅在全部渲染页实际查看后记录视觉 QA。Windows 需要 reportlab、pypdf、pdfplumber、Pillow、微软雅黑/宋体及 Poppler；依赖来自 Codex bundled runtime。实际 artifact marker 为 ee740f，仅成功执行一次，期望输出一个 PDF。
 
-PDF/源 SHA、页数、内容核验、字体、页面边界和逐页 PNG SHA 将记录于 `pdf/qa.json`；最终 PDF 位于正式 docs/experiments/pdf 与用户 output/pdf。先核验最终 QA，再将 PDF 作为已交付成果。
+已完成7页PDF、244内容单元、9表/52行、2代码块、全部链接和逐页视觉QA，中文字体全部嵌入。PDF SHA-256：4625c72b6b472a048fdc6f0fc7e29d38309b82b0f05b085654f376c34ec23ef1。固定报告源commit：c60106201c232742c701da6b3861df575208f8e3。完整核验见 `pdf/qa.json`，PNG在本地留存并有SHA索引；正式PDF位于 [docs/experiments/pdf](../../../../docs/experiments/pdf/issue-247-implemented-optimizations-summary.pdf)，用户副本位于项目 output/pdf。
 
 ## 限制与接续
 

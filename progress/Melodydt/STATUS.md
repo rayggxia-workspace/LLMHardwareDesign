@@ -1,5 +1,11 @@
 # Melodydt 进度
 
+## 优化总览与全场景性能PDF（2026-11-10 Asia/Shanghai）
+
+Issue247/PR243：已汇总6类生产可选RTL、继承直连与独立实验候选；最新run23八场景和原run15矩阵/容量参考分列。7页PDF已完成244内容单元、9表/52行与全部页面视觉QA，报告固定c60106201c232742c701da6b3861df575208f8e3；PDF SHA 4625c72b6b472a048fdc6f0fc7e29d38309b82b0f05b085654f376c34ec23ef1。主W8 decode512共享3.38396291561/理想3.67621308212，最新16KiB最高prefill3.69669737899；历史大容量/融合不混入最新值。93条完整结果SHA复核与派生重现通过，无新仿真/第五轮。
+
+[总览报告](../../docs/experiments/issue-247-implemented-optimizations-summary.md)。仍in_review、PR未合并；登记pending、Projects unverified/同步pending，CI以最终PR回执为准。审查人/管理员待指定。恢复第一步核对最新PR与总览/QA，再进行独立审查。
+
 ## 停止场景澄清（2026-11-10 Asia/Shanghai）
 
 Issue247/PR243：用户确认任一原评估场景（包括prefill）达5 token/s或完成4轮即停止。已复核72条本轮及21条历史完整场景，本次16KiB最高3.69669737899；原64KiB未实装参考4.54743400007，均未达5，仍按4轮停止。[口径补充](../../docs/experiments/issue-247-speed-iterations.md)覆盖冻结PDF中的临时decode-only停止假设。本次无新仿真；管理结构检查通过。下一步独立审查，状态in_review、未合并；登记pending、看板unverified/同步pending、CI限制见PR，处理人待指定。
