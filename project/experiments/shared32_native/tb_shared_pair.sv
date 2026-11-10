@@ -480,7 +480,9 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
    // The descriptor is still pending inside P when RELEASE arrives one cycle
    // after the public LOAD handshake. Pool RELEASE must not prevent its issue.
    prepare_both_loads();accept_both_loads();request_release();
-   if(cfg_ready)$fatal(1,"RELEASE accepted before admitted LOAD completed");
+   // Sample the actual handshake edge, after the request's combinational
+   // ready path has settled; the preceding task drives it on the falling edge.
+   @(posedge clk);if(cfg_ready)$fatal(1,"RELEASE accepted before admitted LOAD completed");
    wait_both_loads();
    repeat(5)begin
     @(negedge clk);
