@@ -57,7 +57,8 @@ def finalize_vectors(path):
         bias=[rng.randrange(-4096,4096) for _ in range(8)]
         if c%11==0:values[0]=(1<<127)-1;bias[0]=(1<<31)-1
         if c%13==0:values[1]=-(1<<127);bias[1]=-(1<<31)
-        if c%17==0 and s:values[0]=3*(1<<s)+(1<<(s-1))
+        if c%17==0 and 0<s<125:values[0]=3*(1<<s)+(1<<(s-1))
+        assert all(-(1<<127)<=v<(1<<127) for v in values)
         expected=[rne(v,s)+b if i<n else 0 for i,(v,b) in enumerate(zip(values,bias))]
         bad=any(not -(1<<31)<=v<(1<<31) for v in expected)
         rows.append(f'{n} {s} {pack(values,128)} {pack(bias,32)} {pack(expected,32)} {int(bad)}')
