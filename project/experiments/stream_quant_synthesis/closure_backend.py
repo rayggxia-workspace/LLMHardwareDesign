@@ -100,21 +100,20 @@ def main(root,stage):
         prefix=Path('/public/home/yuzelu/opt/systemc-3.0.2-issue219')
         execute(['g++','-std=c++17','-O2','-Wall','-Wextra','-Werror',model/'model.cpp','-I'+str(model),
                  '-I'+str(prefix/'include'),'-L'+str(prefix/'lib'),'-Wl,-rpath,'+str(prefix/'lib'),'-lsystemc','-o',out/'candidate'],out/'build.log',out)
-        plans=[('decode512',mode,issue,bw) for bw in (51200,102400) for mode in (2,3,4) for issue in (1,2)]
-        plans += [('decode512',4,4,102400)]
-        plans += [(w,mode,1,102400) for w in ('decode2048','prefill2') for mode in (0,4)]
+        plans=[('decode512',5,issue,bw,banks) for bw in (102400,51200) for issue,banks in ((1,2),(2,2),(2,4),(2,8))]
+        plans += [('decode512',4,2,102400,2),('decode2048',5,2,102400,8)]
         def run(item):
-            workload,mode,issue,bw=item;name=f'{workload}-mode{mode}-issue{issue}-bw{bw}'
+            workload,mode,issue,bw,banks=item;name=f'{workload}-mode{mode}-issue{issue}-bw{bw}-banks{banks}'
             env={k:v for k,v in os.environ.items() if not k.startswith(('SQ_','BN_','CL_'))}
             knobs=dict(SQ_DIRECT=1,SQ_ABITS=16 if mode else 0,SQ_BREAD=128,SQ_BW_MB=bw,SQ_PCOUNT=3,SQ_BEAT=64,
-                       SQ_STRIPE=1,BN_RELEASE=2,CL_MODE=mode,CL_ISSUE=issue)
+                       SQ_STRIPE=1,BN_RELEASE=2,CL_MODE=mode,CL_ISSUE=issue,CL_BANKS=banks)
             env.update({k:str(v) for k,v in knobs.items()})
             command=[out/'candidate',root/'restored/inputs'/(workload+'.trace'),'queued_pipe_w8','prefix_pair_combine',8,1,1,16,0,4,0,1,1,1]
             text=execute(command,out/(name+'.log'),out,env)
             lines=[json.loads(x[7:]) for x in text.splitlines() if x.startswith('RESULT ')]
             assert len(lines)==1 and 'MODEL_FAILURE' not in text
             value=lines[0];assert value['max_outstanding_beats']<=32 and value['P_scratch_peak_bytes']<=16384
-            assert value['closure']['bank_peak']<=2 and value['closure']['S_peak']<=16384
+            assert value['closure']['bank_peak']<=banks and value['closure']['S_peak']<=16384
             if mode>=2 and workload.startswith('decode'):assert value['closure']['FFNs']==36
             print('CLOSURE_TIMING '+name+' '+str(value['tokens_per_second']),flush=True)
             return dict(name=name,knobs=knobs,workload=workload,result=value,log_sha256=sha(out/(name+'.log')))

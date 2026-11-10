@@ -3,8 +3,8 @@
  struct CLTask{CLJob job;int bank;U generation,prior;std::vector<std::shared_ptr<Burst>> dma;};
  struct CLBuffer{
   sc_semaphore free;sc_fifo<CLTask*> ready;sc_event released;
-  std::array<bool,2> live{};std::array<U,2> generation{};
-  CLBuffer():free(2),ready(2){}
+  std::array<bool,8> live{};std::array<U,8> generation{};
+  CLBuffer(int banks):free(banks),ready(banks){}
  };
  std::vector<std::unique_ptr<CLBuffer>> cl_buffers;
  Calendar cl_links[3];
@@ -29,11 +29,11 @@
  }
  void cl_wave_worker(const std::vector<CLJob>& jobs,int worker){
   auto& b=*cl_buffers[worker];++cl_wave_count;
-  require(b.ready.num_available()==0&&!b.live[0]&&!b.live[1],"CL wave not drained");
+  require(b.ready.num_available()==0,"CL wave not drained");for(bool v:b.live){require(!v,"CL bank leak");}
   auto producer=sc_spawn([&,this]{
    for(const auto& j:jobs){
-    b.free.wait();int bank=!b.live[0]?0:1;require(!b.live[bank],"CL input overwrite");
-    b.live[bank]=true;++b.generation[bank];cl_peak_b=std::max<U>(cl_peak_b,U(b.live[0])+U(b.live[1]));
+    b.free.wait();int bank=0;while(bank<cfg.cl_banks&&b.live[bank]){++bank;}require(bank<cfg.cl_banks,"CL input overwrite");
+    b.live[bank]=true;++b.generation[bank];U live=0;for(bool v:b.live){live+=v;}cl_peak_b=std::max(cl_peak_b,live);
     auto* t=new CLTask{j,bank,b.generation[bank],now(),{}};
     U address=tensors[j.weight].base+U(j.col)*j.full_k+U(j.kk)*8;
     if(cfg.cl_mode>=4){t->dma.push_back(mem.submit(worker,cl_packed_address(j.weight,j.col,j.kk,j.full_k),1088,false,detail::WEIGHT,bank));}
@@ -59,7 +59,7 @@
    }
    // A comes from U's finite source window or a declared 256B feeder register.
    if(cfg.cl_mode<3){cl_link(worker,256,t->job.down?0:3);}
-   const U start=now();U consumed=mem.weight_store[2*worker+t->bank].reserve(start,8*C);
+   const U start=now();U consumed=mem.weight_store[(cfg.cl_mode>=5?8:2)*worker+t->bank].reserve(start,8*C);
    consumed=std::max(consumed,start+8*C);pause_until(consumed+3*C);
    ++m_tiles;++m_commands;m_work+=11*C;adapter_work+=2*C;cycles(2);
    if(t->job.final){cycles(3);adapter_work+=3*C;}
@@ -73,7 +73,7 @@
    sc_spawn([&,t,ack,this]{pause_until(ack);require(b.live[t->bank]&&b.generation[t->bank]==t->generation,"CL output ownership");
     b.live[t->bank]=false;b.free.post();b.released.notify(SC_ZERO_TIME);delete t;});
   }
-  while(b.live[0]||b.live[1]){wait(b.released);}
+  while(std::any_of(b.live.begin(),b.live.end(),[](bool v){return v;})){wait(b.released);}
   require(producer.terminated(),"CL producer incomplete");
  }
  void cl_wave(const std::vector<CLJob> jobs[3]){
@@ -99,12 +99,13 @@
   // S128 output state + two padded B/scale slots + double A + gate/up + Mid + control.
   cl_peak_s=std::max<U>(cl_peak_s,11008+2176+512+1024+1024+512);
   require(cl_peak_s<=16384,"CL complete S lifetime reservation");
+  if(cfg.cl_mode>=5){for(int p=0;p<3;++p){cl_link(p,4096,3,true);}}
   for(int first=0;first<11008;first+=128){
    if(cfg.cl_mode>=3){
     // Gate/up partials alias the not-yet-live Mid workspace. X's K tile is
     // broadcast once, then reused across this chunk's output groups.
     for(int k=0;k<2048;k+=128){
-     for(int p=0;p<3;++p){cl_link(p,256,3,true);}
+     if(cfg.cl_mode<5){for(int p=0;p<3;++p){cl_link(p,256,3,true);}}
      std::vector<CLJob> project[3];
      for(int w:{gate.in[1],up.in[1]})for(int col=first;col<first+128;col+=8){
       project[(col/8)%3].push_back(CLJob{w,col,k,2048,false,k+128==2048});
