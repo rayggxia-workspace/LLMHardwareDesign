@@ -14,14 +14,14 @@ module w8_weight_buffer #(parameter integer ABITS=8)(
  output wire [4:0] m_k,output wire [3:0] m_n,output wire [15:0] m_offset,
  output wire [16*ABITS-1:0] m_a,output wire [1023:0] m_b
 );
- reg head,tail,fill_slot,filling,half;
+ reg head,tail,fill_slot,half;
  reg [1:0] count;
- reg [1:0] full;
+ reg [1:0] full,reserved;
  reg [16*ABITS-1:0] av[0:1];reg [1023:0] bv[0:1];
  reg [2:0] cv[0:1];reg fv[0:1],lv[0:1];
  reg [4:0] kv[0:1];reg [3:0] nv[0:1];reg [15:0] ov[0:1];
- assign cmd_ready=!reset&&!filling&&count<2;
- assign dma_ready=!reset&&filling;
+ assign cmd_ready=!reset&&count<2;
+ assign dma_ready=!reset&&reserved[fill_slot]&&!full[fill_slot];
  assign fill_ack=dma_valid&&dma_ready&&half;
  assign m_valid=!reset&&count!=0&&full[head];
  assign m_ctx=cv[head];assign m_first=fv[head];assign m_last=lv[head];
@@ -29,18 +29,18 @@ module w8_weight_buffer #(parameter integer ABITS=8)(
  assign m_a=av[head];assign m_b=bv[head];
  wire push=cmd_valid&&cmd_ready,pop=m_valid&&m_ready;
  always @(posedge clk)begin
-  if(reset)begin head<=0;tail<=0;count<=0;full<=0;filling<=0;half<=0;fill_slot<=0;end
+  if(reset)begin head<=0;tail<=0;count<=0;full<=0;reserved<=0;half<=0;fill_slot<=0;end
   else begin
    case({push,pop})2'b10:count<=count+1'b1;2'b01:count<=count-1'b1;default:begin end endcase
    if(push)begin
     cv[tail]<=cmd_ctx;fv[tail]<=cmd_first;lv[tail]<=cmd_last;kv[tail]<=cmd_k;nv[tail]<=cmd_n;ov[tail]<=cmd_offset;av[tail]<=cmd_a;
-    fill_slot<=tail;filling<=1;half<=0;tail<=!tail;
+    reserved[tail]<=1;tail<=!tail;
    end
    if(dma_valid&&dma_ready)begin
     if(!half)begin bv[fill_slot][511:0]<=dma_data;half<=1;end
-    else begin bv[fill_slot][1023:512]<=dma_data;full[fill_slot]<=1;filling<=0;half<=0;end
+    else begin bv[fill_slot][1023:512]<=dma_data;full[fill_slot]<=1;fill_slot<=!fill_slot;half<=0;end
    end
-   if(pop)begin full[head]<=0;head<=!head;end
+   if(pop)begin full[head]<=0;reserved[head]<=0;head<=!head;end
   end
  end
 endmodule

@@ -55,14 +55,18 @@ def main(checkpoint,out):
             m.weight.copy_(torch.round(m.weight/scale).clamp(-127,127)*scale)
             weight_metadata[name]=dict(channels=m.out_features,K=m.in_features,min_exponent=int(exponents.min()),max_exponent=int(exponents.max()))
     rows=[]
-    for bits in (32,8,16):
+    for bits,policy in ((32,'none'),(8,'calibrated'),(16,'calibrated'),(8,'dynamic'),(16,'dynamic')):
         handles=[]
         if bits!=32:
             for name,m in modules.items():
                 exponent=int(torch.ceil(torch.log2(torch.tensor(max(maxima[name],1e-30)/((1<<(bits-1))-1)))))
                 scale=2.0**exponent
-                def hook(_module,inputs,scale=scale,bits=bits):
-                    x=inputs[0];q=torch.round(x/scale).clamp(-(1<<(bits-1)),(1<<(bits-1))-1)
+                def hook(_module,inputs,scale=scale,bits=bits,policy=policy):
+                    x=inputs[0]
+                    if policy=='dynamic':
+                        maximum=x.abs().amax(dim=-1,keepdim=True).clamp_min(1e-30)
+                        scale=torch.pow(2.0,torch.ceil(torch.log2(maximum/((1<<(bits-1))-1))))
+                    q=torch.round(x/scale).clamp(-(1<<(bits-1)),(1<<(bits-1))-1)
                     return (q*scale,)+inputs[1:]
                 handles.append(m.register_forward_pre_hook(hook))
         actual=forward()
@@ -72,7 +76,7 @@ def main(checkpoint,out):
             metrics.append(dict(prompt=prompt,cosine=float(torch.dot(a,r)/(a.norm()*r.norm())),
                                 top1_match=bool(a.argmax()==r.argmax()),reference_top1=int(r.argmax()),candidate_top1=int(a.argmax()),
                                 normalized_RMSE=float((a-r).square().mean().sqrt()/r.square().mean().sqrt())))
-        rows.append(dict(weight_bits=8,activation_bits=bits,metrics=metrics))
+        rows.append(dict(weight_bits=8,activation_bits=bits,activation_policy=policy,metrics=metrics))
     result=dict(passed=True,scope='real Qwen2.5-3B teacher-forced last-logit quantization screen; floating nonlinear/KV path, no RTL equivalence or perplexity',
                 calibration_prompts=calibrate,evaluation_prompts=prompts,rows=rows,weight_metadata=weight_metadata,
                 activation_maxima=maxima,seconds=time.time()-t,job=os.environ['SLURM_JOB_ID'],

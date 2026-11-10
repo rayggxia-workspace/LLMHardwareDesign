@@ -11,6 +11,31 @@ def once(text, old, new):
 
 SERVICE = r'''
  U sq_weight_read_bytes=0,sq_weight_write_bytes=0,sq_quant_values=0;
+ std::map<int,int> sq_quantized;U sq_quant_base=U(1)<<39;
+ Op sq_lower(const Op& original){
+  Op lowered=original;
+  if(!cfg.sq_abits||!cfg.sq_alower||original.layout!=0||original.rows!=1)return lowered;
+  const int source=original.in[0];auto found=sq_quantized.find(source);
+  if(found==sq_quantized.end()){
+   const Tensor input=tensors[source];const int target=static_cast<int>(tensors.size());
+   const U nbytes=ceildiv(input.elements*cfg.sq_abits,8);
+   tensors.push_back(Tensor{input.elements,sq_quant_base,cfg.sq_abits,false});last_use.push_back(-1);
+   sq_quant_base+=ceildiv(nbytes,1024)*1024+4096;
+   // Two passes establish one common activation scale over the whole K row.
+   // Reduction and conversion use the same finite U cache/port and E candidate.
+   for(U offset=0;offset<input.elements;offset+=64){
+    const U n=std::min<U>(64,input.elements-offset);read_range(source,offset*(input.bits/8),n*(input.bits/8));
+    const U cost=ceildiv(n,4)+5;e_work+=cost*C;cycles(cost);
+   }
+   for(U offset=0;offset<input.elements;offset+=64){
+    const U n=std::min<U>(64,input.elements-offset);read_range(source,offset*(input.bits/8),n*(input.bits/8));
+    const U cost=ceildiv(n,4)*3+5;e_work+=cost*C;cycles(cost);sq_quant_values+=n;
+    write_range(target,offset*(cfg.sq_abits/8),n*(cfg.sq_abits/8));
+   }
+   flush(target);matrix_backed.insert(target);sq_quantized[source]=target;found=sq_quantized.find(source);
+  }
+  lowered.in[0]=found->second;return lowered;
+ }
  int sq_cache_tensor=-1,sq_keep=0,sq_saved_k=0,sq_saved_contexts=0;
  U sq_cache_bytes=0,sq_saved_pbytes=0,sq_cache_hit_bytes=0,sq_plan_ops=0;
  bool sq_plan_initialized=false,sq_planned=false;std::ifstream sq_plan;
@@ -49,8 +74,8 @@ SERVICE = r'''
  void sq_service(const Op& o,Tile* p,int worker){
   const bool weight=o.layout==0;
   const bool direct=cfg.sq_direct&&weight;
-  const bool quant=cfg.sq_abits&&weight;
-  if(quant){
+  const bool quant=cfg.sq_abits&&weight&&o.rows==1;
+  if(quant&&!cfg.sq_alower){
    // Requantization is an explicit candidate, NOT bitwise legacy S32 semantics.
    // Raw A remains S32 in DDR/S. A finite 16-element conversion register feeds M.
    const U count=U(p->r)*p->k;
@@ -80,11 +105,11 @@ ENV = r'''
   return std::stoi(s);
  };
  try{
-  c.sq_direct=sq_integer("SQ_DIRECT",0);c.sq_abits=sq_integer("SQ_ABITS",0);
+  c.sq_direct=sq_integer("SQ_DIRECT",0);c.sq_abits=sq_integer("SQ_ABITS",0);c.sq_alower=sq_integer("SQ_ALOWER",1);
   c.sq_bread=sq_integer("SQ_BREAD",64);c.sq_core_k=sq_integer("SQ_CORE_K",16);
   const int bw=sq_integer("SQ_BW_MB",17100),pc=sq_integer("SQ_PCOUNT",2),beat=sq_integer("SQ_BEAT",64);
   if((c.sq_direct!=0&&c.sq_direct!=1)||(c.sq_abits!=0&&c.sq_abits!=8&&c.sq_abits!=16)||
-    (c.sq_bread!=64&&c.sq_bread!=128)||(c.sq_core_k!=8&&c.sq_core_k!=16)||
+    (c.sq_bread!=64&&c.sq_bread!=128)||(c.sq_core_k!=8&&c.sq_core_k!=16)||(c.sq_alower!=0&&c.sq_alower!=1)||
     (bw!=17100&&bw!=51200&&bw!=102400)||(pc!=2&&pc!=3)||(beat!=64&&beat!=256)||c.weight_bits!=8)
     throw std::invalid_argument("unsupported SQ resource or precision contract");
   c.bandwidth=double(bw)*1e6;c.mcount=pc;c.beat=beat;
@@ -97,7 +122,7 @@ def generate(baseline, out):
     shutil.copytree(baseline, out)
     model = (out / 'model.cpp').read_text(encoding='utf8')
     model = once(model, '#include <systemc>', '#include <systemc>\n#include <cstdlib>')
-    model = once(model, 'struct Config {', 'struct Config {\n int sq_direct=0,sq_abits=0,sq_bread=64,sq_core_k=16;')
+    model = once(model, 'struct Config {', 'struct Config {\n int sq_direct=0,sq_abits=0,sq_bread=64,sq_core_k=16,sq_alower=1;')
     model = once(model, 'int group;U address,bytes;', 'int group;int operand_bank=-1;U address,bytes;')
     model = once(model, 'U max_live=0,max_queue=0,bus_work=0;',
                  'U max_live=0,max_queue=0,bus_work=0,sq_direct_bytes=0;std::array<Calendar,6> weight_store;')
@@ -118,13 +143,15 @@ def generate(baseline, out):
      }else ack=input_store.reserve(response,s_port_duration(cfg,b->group,cfg.beat));
     }''')
     model = once(model, ' void run(){', SERVICE + '\n void run(){')
+    model = once(model, 'if(o.kind=="Dot"){matrix(o);++i;}',
+                 'if(o.kind=="Dot"){const Op lowered=sq_lower(o);matrix(lowered);++i;}')
     model = once(model, 'Study s("study",c,argv[1]);', ENV + '\n Study s("study",c,argv[1]);')
     model = once(model, 'iteration4::emit_all(std::cout,cfg.iteration1_nexp,cfg.iteration2_nexp,cfg.iteration4_nexp);',
                  r'''iteration4::emit_all(std::cout,cfg.iteration1_nexp,cfg.iteration2_nexp,cfg.iteration4_nexp);
     std::cout<<",\"sq_study\":{\"direct\":"<<cfg.sq_direct<<",\"activation_bits\":"<<cfg.sq_abits
       <<",\"weight_read_B_cycle\":"<<cfg.sq_bread<<",\"core_K\":"<<cfg.sq_core_k
       <<",\"direct_weight_bus_bytes\":"<<mem.sq_direct_bytes<<",\"weight_bank_read_bytes\":"<<sq_weight_read_bytes
-      <<",\"requantized_values\":"<<sq_quant_values<<",\"persistent_A_hit_bytes\":"<<sq_cache_hit_bytes<<",\"plan_operations\":"<<sq_plan_ops
+      <<",\"requantized_values\":"<<sq_quant_values<<",\"lowered_activation_objects\":"<<sq_quantized.size()<<",\"persistent_A_hit_bytes\":"<<sq_cache_hit_bytes<<",\"plan_operations\":"<<sq_plan_ops
       <<",\"conversion_register_bytes_per_P\":"<<(cfg.sq_abits?16*cfg.sq_abits/8:0)
       <<",\"native_full_model_tokens_per_second\":null,\"quality_verified\":false}";''')
     (out / 'model.cpp').write_bytes(model.encode())

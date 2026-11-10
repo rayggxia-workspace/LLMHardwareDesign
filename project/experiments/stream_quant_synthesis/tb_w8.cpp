@@ -33,21 +33,20 @@ int main(int argc,char** argv){
   d.reset=1;d.cmd_valid=0;d.dma_valid=0;d.out_ready=0;
   for(int i=0;i<3;++i)tick();d.reset=0;
   uint64_t expected_frames=0;for(const auto& x:packets)expected_frames+=x.last;
-  size_t issued=0,expected=0;int phase=0;bool holding_cmd=false,holding_dma=false;
+  size_t issued=0,commanded=0,expected=0;int half=0;bool holding_cmd=false,holding_dma=false;
   std::vector<uint32_t> held;int held_ctx=0,held_error=0;bool stalled=false;
   for(;ticks<2000000&&(issued<packets.size()||outputs<expected_frames);){
    d.clk=0;d.eval();d.out_ready=(rng()%5)!=0;
-   if(issued<packets.size()){
-    const auto& x=packets[issued];auto a=words(x.a,16*ABITS/32);auto b=words(x.b,32);
-    if(phase==0){
-     holding_cmd=holding_cmd||rng()%4!=0;d.cmd_valid=holding_cmd;d.dma_valid=0;
+   if(commanded<packets.size()){
+    const auto& x=packets[commanded];auto a=words(x.a,16*ABITS/32);
+     holding_cmd=holding_cmd||rng()%4!=0;d.cmd_valid=holding_cmd;
      d.cmd_ctx=x.ctx;d.cmd_first=x.first;d.cmd_last=x.last;d.cmd_k=x.k;d.cmd_n=x.n;d.cmd_offset=x.offset;
      for(size_t j=0;j<a.size();++j)d.cmd_a[j]=a[j];
-    }else{
-     d.cmd_valid=0;holding_dma=holding_dma||rng()%4!=0;d.dma_valid=holding_dma;
-     for(int j=0;j<16;++j)d.dma_data[j]=b[(phase-1)*16+j];
-    }
-   }else{d.cmd_valid=0;d.dma_valid=0;}
+   }else d.cmd_valid=0;
+   if(issued<commanded){
+    auto b=words(packets[issued].b,32);holding_dma=holding_dma||rng()%4!=0;d.dma_valid=holding_dma;
+    for(int j=0;j<16;++j)d.dma_data[j]=b[half*16+j];
+   }else d.dma_valid=0;
    d.eval();
    if(stalled){
     if(!d.out_valid||int(d.out_ctx)!=held_ctx||int(d.out_error)!=held_error)throw std::runtime_error("stalled output metadata changed");
@@ -70,8 +69,8 @@ int main(int argc,char** argv){
    const bool cmd=d.cmd_valid&&d.cmd_ready,dma=d.dma_valid&&d.dma_ready;
    if(d.fill_ack)++acks;
    tick();
-   if(cmd){phase=1;holding_cmd=false;}
-   if(dma){holding_dma=false;if(phase==2){phase=0;++issued;}else ++phase;}
+   if(cmd){++commanded;holding_cmd=false;}
+   if(dma){holding_dma=false;if(half){half=0;++issued;}else half=1;}
   }
   if(issued!=packets.size()||outputs!=expected_frames||acks!=packets.size())throw std::runtime_error("missing completions/ACK");
   // Invalid N and missing FIRST both return errors; invalid FIRST must not reserve ctx.
