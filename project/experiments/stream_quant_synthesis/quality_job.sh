@@ -17,4 +17,4 @@ exec srun --exact -n1 -c4 --cpu-bind=cores \
  /public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -B \
  "$root/source/project/experiments/stream_quant_synthesis/quality.py" \
  --checkpoint /public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/models/qwen25-3b-5defd279 \
- --out "$root/quality"
+ --out "$root/quality" --weight-policy linear

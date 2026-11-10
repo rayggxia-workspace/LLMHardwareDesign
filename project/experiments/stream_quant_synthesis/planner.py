@@ -43,15 +43,16 @@ def transition(state, op, action, tensors, bw_mb=17100,pcount=2):
     reserved=prior_bytes if state.cache!=op['aid'] else 0
     capacity=16384-reserved
     workspace=1536+96
-    a=op['k']*4
+    abytes=op.get('abits',32)//8
+    a=op['k']*abytes
     b=2*kt*8
-    if capacity<workspace+2*kt*4+b:return None
+    if capacity<workspace+2*kt*abytes+b:return None
     resident=eligible and a+b+workspace<=capacity
     groups=div(div(op['cols'],8),pcount)
     blocks=div(op['k'],kt)
     # Context reuse is selected only when full A cannot reside, as in #247.
     repeats=1 if resident else div(groups,ctx)
-    aload=0 if hit else op['k']*4*repeats*op['rows']*op['batches']
+    aload=0 if hit else op['k']*abytes*repeats*op['rows']*op['batches']
     weights=op['k']*op['cols']*op['batches'] if op['layout']==0 else op['k']*op['cols']*4*op['batches']
     dma=div((weights+aload*pcount)*300,bw_mb)
     mac=div(op['k'],8)*groups*op['rows']*op['batches']
@@ -69,8 +70,13 @@ def transition(state, op, action, tensors, bw_mb=17100,pcount=2):
                                  reserved_bytes=reserved,estimated_cycles=cost)
 
 
-def compile_plan(ops,method='dp',bw_mb=17100,pcount=2):
+def compile_plan(ops,method='dp',bw_mb=17100,pcount=2,abits=0):
     if method not in ('dp','greedy'):raise ValueError('bad method')
+    ops=[dict(o) for o in ops]
+    if abits:
+        for o in ops:
+            if o['layout']==0 and o['rows']==1:
+                o['abytes']=div(o['abytes']*abits,32);o['abits']=abits
     tensors={o['aid']:o['abytes'] for o in ops}
     last={o['aid']:i for i,o in enumerate(ops)}
     frontier={State():(0,[])};peaks=[]
@@ -100,6 +106,34 @@ def compile_plan(ops,method='dp',bw_mb=17100,pcount=2):
 
 def emit(plan,path):
     Path(path).write_text(''.join(f"{r['action'][0]} {r['action'][1]} {r['action'][2]}\n" for r in plan['rows']))
+
+
+def bundle(plan,path,pcount=2,abits=0):
+    """Same binding IDs in executable research IR and endpoint requirements.
+
+    These are logical endpoint roles, not invented LEF pins or #180 binary ISA.
+    Deployment is explicitly rejected until real views and lowering exist.
+    """
+    programs=[]
+    for i,row in enumerate(plan['rows']):
+        programs.append(dict(binding_id='dot-'+str(i),graph_op_index=row['op_index'],
+                             opcode='DOT_SERVICE',P_instances=list(range(pcount)),
+                             K_tile=row['action'][0],contexts=row['action'][1],cache_action=row['action'][2],
+                             completion='final local S write ACK and output DMA ACK',depends_on=[] if not i else ['dot-'+str(i-1)]))
+    nets=[]
+    for p in range(pcount):
+        for driver,sink,width in [(f'DMA.P{p}.rx',f'P{p}.Bbuffer.fill',512),
+                                  (f'P{p}.Bbuffer.out',f'P{p}.M.B',1024),
+                                  (f'P{p}.S.A',f'P{p}.Aadapter.in',128),
+                                  (f'P{p}.Aadapter.out',f'P{p}.M.A',16*(abits or 32))]:
+            nets.append(dict(driver=driver,sink=sink,data_width=width,protocol_signals=['VALID','READY'],
+                             physical_pin_binding=None,prewire=False,binding_ids=[r['binding_id'] for r in programs]))
+    result=dict(schema_version=1,program_ir=programs,connections=nets,
+                private_S_bytes_per_P=16384,control_group_is_hard_box=False,
+                deployment_qualified=False,binary_ISA_lowered=False,
+                missing=['new leaf pin/LEF/Liberty/ODB','native LC/MC binary lowering','whole S/DMA/ACK RTL integration','physical acceptance'])
+    Path(path).write_text(json.dumps(result,indent=2)+'\n')
+    return result
 
 
 def test():

@@ -101,14 +101,26 @@ def main(root):
                   for a in (8,16) for bw in (17100,51200,102400) for p in (2,3)]
         plans += [(f'r3-wide-bw{bw}-p{p}','decode512',False,dict(SQ_DIRECT=1,SQ_ABITS=8,SQ_BREAD=128,SQ_BW_MB=bw,SQ_PCOUNT=p,SQ_BEAT=256))
                   for bw in (51200,102400) for p in (2,3)]
+        plans += [(f'r3-striped-a{a}-bw{bw}-beat{beat}','decode512',False,
+                   dict(SQ_DIRECT=1,SQ_ABITS=a,SQ_BREAD=128,SQ_BW_MB=bw,SQ_PCOUNT=3,SQ_BEAT=beat,SQ_STRIPE=1))
+                  for a in (8,16) for bw in (51200,102400) for beat in (64,256)]
         report['compiler_plans']=[]
         for workload in work:
             for method in ('greedy','dp'):
                 plan=planner.compile_plan(planner.graph(frozen/'inputs'/(workload+'.trace')),method)
                 path=out/('plan-'+workload+'-'+method+'.txt');planner.emit(plan,path)
+                planner.bundle(plan,out/('bundle-'+workload+'-'+method+'.json'))
                 (out/('plan-'+workload+'-'+method+'.json')).write_text(json.dumps(plan,indent=2)+'\n')
                 report['compiler_plans'].append(dict(workload=workload,method=method,estimated_cycles=plan['estimated_cycles'],peak_frontier=plan['peak_frontier'],plan_sha256=sha(path)))
                 plans.append(('r4-'+method,workload,False,dict(SQ_DIRECT=1,SQ_PLAN=str(path))))
+        for bits in (8,16):
+            for method in ('greedy','dp'):
+                plan=planner.compile_plan(planner.graph(frozen/'inputs/decode512.trace'),method,102400,3,bits)
+                path=out/(f'plan-coupled-a{bits}-{method}.txt');planner.emit(plan,path)
+                planner.bundle(plan,out/(f'bundle-coupled-a{bits}-{method}.json'),3,bits)
+                (out/(f'plan-coupled-a{bits}-{method}.json')).write_text(json.dumps(plan,indent=2)+'\n')
+                plans.append((f'r4-coupled-a{bits}-{method}','decode512',False,
+                              dict(SQ_DIRECT=1,SQ_ABITS=bits,SQ_BREAD=128,SQ_BW_MB=102400,SQ_PCOUNT=3,SQ_BEAT=256,SQ_PLAN=str(path))))
         for batch in range(0,len(plans),4):
             with ThreadPoolExecutor(max_workers=4) as pool:
                 report['cases'].extend(pool.map(case,plans[batch:batch+4]))

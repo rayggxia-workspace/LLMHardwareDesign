@@ -22,7 +22,7 @@ def digest(path):
     return h.hexdigest()
 
 
-def main(checkpoint,out):
+def main(checkpoint,out,weight_policy='pow2'):
     assert os.environ.get('SLURM_JOB_ID')
     out.mkdir(exist_ok=False);torch.set_num_threads(4)
     t=time.time()
@@ -51,7 +51,7 @@ def main(checkpoint,out):
         for name,m in modules.items():
             maximum=m.weight.abs().amax(dim=1,keepdim=True).clamp_min(1e-30)
             exponents=torch.ceil(torch.log2(maximum/127))
-            scale=torch.pow(2.0,exponents)
+            scale=torch.pow(2.0,exponents) if weight_policy=='pow2' else maximum/127
             m.weight.copy_(torch.round(m.weight/scale).clamp(-127,127)*scale)
             weight_metadata[name]=dict(channels=m.out_features,K=m.in_features,min_exponent=int(exponents.min()),max_exponent=int(exponents.max()))
     rows=[]
@@ -59,13 +59,14 @@ def main(checkpoint,out):
         handles=[]
         if bits!=32:
             for name,m in modules.items():
-                exponent=int(torch.ceil(torch.log2(torch.tensor(max(maxima[name],1e-30)/((1<<(bits-1))-1)))))
-                scale=2.0**exponent
+                bound=max(maxima[name],1e-30)/((1<<(bits-1))-1)
+                exponent=int(torch.ceil(torch.log2(torch.tensor(bound))))
+                scale=2.0**exponent if weight_policy=='pow2' else bound
                 def hook(_module,inputs,scale=scale,bits=bits,policy=policy):
                     x=inputs[0]
                     if policy=='dynamic':
                         maximum=x.abs().amax(dim=-1,keepdim=True).clamp_min(1e-30)
-                        scale=torch.pow(2.0,torch.ceil(torch.log2(maximum/((1<<(bits-1))-1))))
+                        scale=torch.pow(2.0,torch.ceil(torch.log2(maximum/((1<<(bits-1))-1)))) if weight_policy=='pow2' else maximum/((1<<(bits-1))-1)
                     q=torch.round(x/scale).clamp(-(1<<(bits-1)),(1<<(bits-1))-1)
                     return (q*scale,)+inputs[1:]
                 handles.append(m.register_forward_pre_hook(hook))
@@ -76,7 +77,7 @@ def main(checkpoint,out):
             metrics.append(dict(prompt=prompt,cosine=float(torch.dot(a,r)/(a.norm()*r.norm())),
                                 top1_match=bool(a.argmax()==r.argmax()),reference_top1=int(r.argmax()),candidate_top1=int(a.argmax()),
                                 normalized_RMSE=float((a-r).square().mean().sqrt()/r.square().mean().sqrt())))
-        rows.append(dict(weight_bits=8,activation_bits=bits,activation_policy=policy,metrics=metrics))
+        rows.append(dict(weight_bits=8,weight_scale_policy=weight_policy,activation_bits=bits,activation_policy=policy,metrics=metrics))
     result=dict(passed=True,scope='real Qwen2.5-3B teacher-forced last-logit quantization screen; floating nonlinear/KV path, no RTL equivalence or perplexity',
                 calibration_prompts=calibrate,evaluation_prompts=prompts,rows=rows,weight_metadata=weight_metadata,
                 activation_maxima=maxima,seconds=time.time()-t,job=os.environ['SLURM_JOB_ID'],
@@ -88,4 +89,5 @@ def main(checkpoint,out):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--checkpoint',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
-    a=p.parse_args();main(a.checkpoint,a.out)
+    p.add_argument('--weight-policy',choices=('pow2','linear'),default='pow2')
+    a=p.parse_args();main(a.checkpoint,a.out,a.weight_policy)
