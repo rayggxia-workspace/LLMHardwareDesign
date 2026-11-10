@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "source_commit": "d9afc95a9b649b096c8a7930d99d56d065d78047",
+  "scope": "OLD 300MHz/2P1U/S32-K256-S96 conditional model timing sensitivities; no production RTL change",
+  "native_full_model_tokens_per_second": null,
+  "physical_clock_qualified": false,
+  "plan": [
+    "base",
+    "s16_n4",
+    "s16_n8",
+    "vector16_s16_n4",
+    "read128",
+    "m16_feed2_read128",
+    "balanced"
+  ],
+  "baseline_phase_passed": true,
+  "versions": {
+    "python": "3.10.12",
+    "SystemC": "3.0.2",
+    "gcc": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+  },
+  "manifest_sha256": "65872071fc3a12654979dcbc0753c8c8bf60b0bd6df3c31270a6d0ae70d1e27a",
+  "slurm": {
+    "job": "102041",
+    "cpus": 4
+  },
+  "compile_command": [
+    "g++",
+    "-std=c++17",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run36/results/generated/model.cpp",
+    "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run36/results/generated",
+    "-I/public/home/yuzelu/opt/systemc-3.0.2-issue219/include",
+    "-L/public/home/yuzelu/opt/systemc-3.0.2-issue219/lib",
+    "-Wl,-rpath,/public/home/yuzelu/opt/systemc-3.0.2-issue219/lib",
+    "-lsystemc",
+    "-o",
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run36/results/model"
+  ],
+  "binary_sha256": "2545927189cb817471e4d67510e730594cfaef27c1d745cdf9fe431f093c9132",
+  "invalid_case_rejected": true
+}

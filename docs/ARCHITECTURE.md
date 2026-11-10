@@ -376,3 +376,29 @@ python3 -B source/project/experiments/shared_a32_native/run.py --repo source --o
 ```
 
 run34/102033实际72run、12默认精确比较与六项面积全部通过。终态后从RUN执行python3 source/project/experiments/shared_a32_native/collect_server.py JOBID；回收先核归档/输出SHA。仅纯数据分析可本地执行：python work/Melodydt/247/shared-a32-native/analysis/analysis.py --input 原始result.json --historical run33原始result.json --out 新目录。完整命令/位置/证据见[交接](handoffs/2026-11-10-issue-247-shared-a32.md)。原生微基准不外推token/s，完整LLM/物理资格未完成。
+
+
+## 后续优化条件扫描（Issue247）
+
+生产RTL不变；源码在project/experiments/optimization_sweep、optimization_followup、optimization_bridge_study。
+各自冻结源码和输入见[研究交接](handoffs/2026-11-10-issue-247-optimization-sweep.md)。按相应inputs.json和source-files.sha256
+准备新的授权个人RUN目录，复制对应job.sh至RUN根，仅在Slurm执行sbatch --parsable job.sh；不可在本机或登录节点编译仿真。
+run35/36/37已完成，不覆盖旧run。批处理内部入口分别是：
+
+```sh
+python3 -B source/project/experiments/optimization_sweep/run.py --root RUN
+python3 -B source/project/experiments/optimization_followup/run.py --root RUN
+python3 -B source/project/experiments/optimization_bridge_study/run.py --root RUN
+```
+
+纯数据后处理可本地执行（RUNS_ROOT包含run35/36/37回收目录及冻结run25对照，REPO为正式仓库根）：
+
+```sh
+python work/Melodydt/247/optimization-sweep/analyze.py run35 --runs-root RUNS_ROOT --repo REPO
+python work/Melodydt/247/optimization-sweep/analyze.py run36 --runs-root RUNS_ROOT --repo REPO
+python work/Melodydt/247/optimization-sweep/analyze.py run37 --runs-root RUNS_ROOT --repo REPO
+python work/Melodydt/247/optimization-sweep/build_report.py --runs-root RUNS_ROOT --repo REPO
+python scripts/check_project.py
+```
+
+最后一个命令只检查管理结构，不代替192条件场景或原生RTL。新M/向量/NExp宽度与S16桥接均为未实现候选服务合同。

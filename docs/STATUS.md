@@ -1,3 +1,18 @@
+## 2026-11-10 Asia/Shanghai：后续优化192场景完成，待审查
+
+Issue247 / PR243，负责人Melodydt；task/242-r-load-bounds。run35/102040、run36/102041、run37/102043
+均c64/node1/4核COMPLETED 0:0，192例、40完整历史控制、960结果负控及519回收文件SHA核验通过。
+本轮生产RTL未改。原条件体系下，优先S16桥接＋8路向量：prefill shared/idealdual为
+4.423812/5.086834 token/s；桥接8拍敏感性仍4.401308/5.057101。固定17.1GB/s最高组合5.508124，
+需要更多M/供数资源；均不是原生RTL整图实测。详细表与源码版本见[研究报告](experiments/issue-247-optimization-sweep.md)及[交接](handoffs/2026-11-10-issue-247-optimization-sweep.md)。
+下一步由Melodydt按审查结果安排桥接数值/背压验证及向量8路RTL实现，原生整图、综合和STA待做。
+当前in_review，PR未合并/not done；登记management-hub PR5 pending；无board配置/Projects工具，
+看板unverified/同步pending。GitHub结构CI run42828692493 failure，validate无steps，具体原因待管理员核实。
+没有活动作业或自动监测。旧run24/25原包上传阻塞保留，本轮未重传。
+
+<!-- optimization-sweep-end -->
+
+
 ## 2026-11-10 Asia/Shanghai：共享 A 32B 已验证，待审查
 
 Issue247 / PR243；源码e7e8becca866e8257e026fddfc6e6215169e4015。run34/job102033在c64/node1/4核10:01 COMPLETED0:0，72run、12对430008周期事件、六项面积与全部回收SHA核验通过。原生同工作处理增益普通M2.0432%/8-context1.4344%，已计标准单元+0.033507222mm²、SRAM宏0。旧条件token/s单列，不作原生全模型测量。报告/证据见共享A32交接；下一步正式审查及连续负载瓶颈定位。in_review，未合并/not done；登记pending、看板unverified/pending、CI限制保留；无活动作业或自动监测。
