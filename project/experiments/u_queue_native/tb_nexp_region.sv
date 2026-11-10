@@ -44,7 +44,9 @@ module tb_nexp_region #(parameter integer FORMAT16=1,DEPTH=0,PIPE=0);
   begin
    perword=FORMAT16?8:4;
    for(integer w=0;w<(n+perword-1)/perword;w++)begin
-    word_data='1;
+    // NX32's existing ABI requires unused S32 containers to be zero;
+    // NX16 explicitly masks dirty unused packed inputs in its service.
+    word_data=FORMAT16?'1:0;
     for(integer j=0;j<perword;j++)begin
      index=w*perword+j;
      if(index<n)begin
@@ -73,6 +75,16 @@ module tb_nexp_region #(parameter integer FORMAT16=1,DEPTH=0,PIPE=0);
   scale_ok=0;invoke(8,2,1,elapsed);scale_ok=1;
   outbase=0;invoke(8,2,1,elapsed);outbase=1023;invoke(8,2,1,elapsed);outbase=512;
   inbase=1023;invoke(16,2,1,elapsed);inbase=0;
+  if(!FORMAT16)begin
+   integer old_r,old_w;
+   access(0,1,0,'1,0,ignored);old_r=sr;old_w=sw;
+   @(negedge clk);count=1;start=1;finish=0;
+   do @(posedge clk);while(!start_ready);@(negedge clk);start=0;
+   do @(posedge clk);while(!region_done);
+   if(!region_error||completed!=0||frames!=0||sr!=old_r+1||sw!=old_w)$fatal(1,"NX32 payload error not propagated");
+   @(negedge clk);finish=1;@(posedge clk);@(negedge clk);finish=0;
+   $display("REGION_PAYLOAD_ERROR_PASS checks=1");
+  end
   // Reset during an accepted memory transaction, then reload and reissue.
   access(0,1,0,0,0,ignored);@(negedge clk);count=8;start=1;
   do @(posedge clk);while(!start_ready);@(negedge clk);start=0;

@@ -74,6 +74,7 @@ def main():
                 lines=[s for s in text.splitlines() if s.startswith(('REGION_TILE ','REGION_MEASURE ','REGION_PASS '))]
                 ms=[fields(s) for s in lines if s.startswith('REGION_MEASURE ')];cs=[fields(s) for s in lines if s.startswith('REGION_PASS ')]
                 require(len(ms)==len(cs)==1 and cs[0]==dict(valid_cases=365,invalid_cases=6,values=24409,reset_cuts=1),'region coverage')
+                if format16==0:require(text.count('REGION_PAYLOAD_ERROR_PASS checks=1')==1,'NX32 error propagation proof missing')
                 require(ms[0]['reads']==(2752 if format16 else 5504) and ms[0]['writes']==5504,'region traffic')
                 summary=key+'.summary.log';(out/summary).write_text('\n'.join(lines)+'\n')
                 runs.append(dict(mode=mode,seed=seed,measurements=ms[0],checks=cs[0],tiles=[fields(s) for s in lines if s.startswith('REGION_TILE ')],log=log,log_sha256=sha(out/log),summary=summary,summary_sha256=sha(out/summary)));save()

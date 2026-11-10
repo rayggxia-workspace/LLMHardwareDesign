@@ -1,6 +1,7 @@
 // Staged, contiguous NExp region -> actual U descriptors. Caller supplies
 // signed Q5.10 values; S32 mode uses the existing low16-in-S32 ABI. No DMA.
 // Input/output ranges must not overlap. Completion follows every U write ACK.
+// NX32 caller must zero unused containers in its final input word.
 module pu_nexp_region(
  input wire clk,reset,start_valid,output wire start_ready,
  input wire input_s16,input_q5_10,input wire [11:0] elements,
