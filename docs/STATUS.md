@@ -1,5 +1,9 @@
 # 当前状态
 
+## 接续247的独立四轮研究（2026-11-10 Asia/Shanghai）
+
+[Issue248 / PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)由 YUZE-LU 在冻结 PR243@9d987151 上另开研究分支，评估有限权重直供、W8A8/A16、新增外存资源与状态相关贪心/DP，原生产 RTL/底座及 Melodydt 四轮任务不改。[报告](experiments/issue-248-stream-quant-synthesis.md)分别记录条件模型、独立 RTL 和真实权重量化筛查；未达10 token/s、未证明20%纯算法收益，也不转移300MHz物理资格。细节与实际Slurm终态见回执；待独立审查、未合并，登记PR5 pending，看板unverified/同步pending。
+
 ## 停止场景澄清（2026-11-10 Asia/Shanghai）
 
 Issue247/PR243：用户确认任一原评估场景（包括prefill）达5 token/s或完成4轮即停止。已复核72条本轮及21条历史完整场景，本次16KiB最高3.69669737899；原64KiB未实装参考4.54743400007，均未达5，仍按4轮停止。[口径补充](experiments/issue-247-speed-iterations.md)覆盖冻结PDF中的临时decode-only停止假设。本次无新仿真；管理结构检查通过。下一步独立审查，状态in_review、未合并；登记pending、看板unverified/同步pending、CI限制见PR，处理人待指定。

@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+## 2026-11-10（Asia/Shanghai）接续247的四轮独立研究
+
+[Issue248](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/248) / [PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)，分支 `task/248-stream-quant-synthesis`，冻结 PR243@9d987151。独立新增有限权重 bank、W8A8/A16 K16×N8 叶核、四路定点转换、带宽/资源消融、共享状态转移的贪心/DP 和 SystemC 计划回放。研究与失败回执见[四轮报告](../../docs/experiments/issue-248-stream-quant-synthesis.md)及[离线核验](../../work/YUZE-LU/248/README.md)。原生产底座和 peer 工作树/作业不改。
+
+下一步：指定独立审查人，统一完整原生 P/DMA 的 tile/packet、局控与真实 pin，再校准模型；A8精度不合格、缓存DP收益很小且弱于固定配方，10token/s与20%纯算法收益未取得。新有源硬件需要新的M1–M10物理验收。Issue按实际交付进入in_review，未自合并/标done。登记management-hub PR5 pending；缺board配置和Projects能力，看板unverified/同步pending，管理员待指定。
+
 ## 2026-11-08（CST）U 原生入口和双向发送修复
 
 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) → `in_review`；[PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 待独立审查。独立 TX 槽和普通三源入口修复后，两版重新综合并通过完整原版 GDS DRC 0、TT 300 MHz、电气/PG及三档代表上层 RC。U_128 setup/hold +255.014/+14.595 ps，U_64 +73.082/+0.212 ps；最终网表 48/48、78/78 全部通过。两包及全部 1,389/2,101 文件回收核验成功，31 硬件源文件与审查代码一致。[最终回执](../../work/YUZE-LU/212/u-native-fix.md)。P 不变。用户已授权将 #221 合入 main；五类图册 U 两版已绑定新验收包，P/C/F/J 图源不变。实际合并状态以 PR 在线回执为准，Issue 在线 assignee 未指定。登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，复用接入交接 Issue7。

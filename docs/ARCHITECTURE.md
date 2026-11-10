@@ -337,3 +337,26 @@ python3 -B source/project/experiments/iterative_speed/round02/run.py --root "$RU
 run22真实RTL校准、run23旧体系16case通过。仅Slurm分配节点按归档job.sh执行；入口python3 -B source/project/experiments/rtl_iterations/round4/run.py --root RUN与python3 -B source/project/experiments/iterative_speed/round04/run.py --root RUN。run18-observed输入的原日志SHA派生可用冻结make_prior.py重建，不能无来源替换基线。
 
 离线python work/Melodydt/247/speed-iterations/verify.py；选择--current-run run22 --current-run run23检查当前源，否则逐轮冻结source-snapshot核验。R1/R2生产源与R4不同，不能改旧SHA转移资格。大raw的retention索引不等于Git保存全部原始文件。此项没有综合/300MHz STA/物理或完整原生生成资格。
+
+### Issue248：有限权重直供、W8A8/A16、带宽与状态相关服务选择
+
+[四轮报告](experiments/issue-248-stream-quant-synthesis.md)与[原始回执](../work/YUZE-LU/248/README.md)。隔离研究目录 `project/experiments/stream_quant_synthesis/`；不替换生产 P/U/C/F/J 或已验收叶宏。
+
+本地纯标准库核验：
+
+```sh
+python -B scripts/check_project.py
+python -B work/YUZE-LU/248/verify.py
+python -B project/experiments/stream_quant_synthesis/planner.py
+python -B project/experiments/stream_quant_synthesis/numeric.py
+```
+
+重新评估先提交新源 commit，再选择从未存在的数字 tag，通过部署器创建本人独立服务器 root：
+
+```sh
+python -B project/experiments/stream_quant_synthesis/deploy.py 13 --out <新的本地提交回执目录>
+```
+
+部署器使用 LF Git archive，恢复父 run23 冻结输入并核对 SHA，通过 Slurm 分配4核运行 `run.py --root RUN`，原生 RTL/转换 RTL/65个 SystemC case 均在计算节点执行。本机或登录节点不跑 EDA。脚本中的 Verilator/SystemC/容器路径须匹配回执，不能借改旧 SHA 适配别的工具。真实权重量化筛查另在该 root 提交 `source/project/experiments/stream_quant_synthesis/quality_job.sh`；checkpoint 与 venv 只读。
+
+作业完成后 `collect.py <tag> --jobs <真实作业号>` 回收；`report.py --root work/YUZE-LU/248 --run <tag> --quality-run 08` 只读计时证据并输出本任务摘要/部分端点需求。后者不是完整局控程序或物理网表。大 build/raw 留远端，离线检查只验证已归档成员。没有新物理资格、全模型整数生成或合格能耗结果。
