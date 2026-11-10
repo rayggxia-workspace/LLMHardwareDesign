@@ -48,6 +48,22 @@ def context_vectors(path):
     path.write_text('\n'.join(rows)+'\n');return len(rows)
 
 
+def finalize_vectors(path):
+    from precision_oracle import rne
+    rng=random.Random(24832);rows=[]
+    for c in range(1200):
+        n=c%8+1;s=(0,1,10,16,24,39,63,95,127)[c%9]
+        values=[rng.randrange(-(1<<min(127,s+28)),1<<min(127,s+28)) for _ in range(8)]
+        bias=[rng.randrange(-4096,4096) for _ in range(8)]
+        if c%11==0:values[0]=(1<<127)-1;bias[0]=(1<<31)-1
+        if c%13==0:values[1]=-(1<<127);bias[1]=-(1<<31)
+        if c%17==0 and s:values[0]=3*(1<<s)+(1<<(s-1))
+        expected=[rne(v,s)+b if i<n else 0 for i,(v,b) in enumerate(zip(values,bias))]
+        bad=any(not -(1<<31)<=v<(1<<31) for v in expected)
+        rows.append(f'{n} {s} {pack(values,128)} {pack(bias,32)} {pack(expected,32)} {int(bad)}')
+    path.write_text('\n'.join(rows)+'\n');return len(rows)
+
+
 def main(root,stage):
     assert os.environ.get('SLURM_JOB_ID')
     out=root/'results';out.mkdir(exist_ok=False)
@@ -55,6 +71,8 @@ def main(root,stage):
     def save():(out/'closure-backend.json').write_text(json.dumps(report,indent=2)+'\n')
     try:
         if stage!='timing':
+            from closure_contract import audit
+            report['contract']=audit();save()
             qroot=QUALITY_ROOT/'quality';quality=json.loads((qroot/'closure-quality.json').read_text())
             assert quality['passed'],'quality experiment incomplete'
             selected=next(p for p in quality['profiles'] if p['bits']==16)
@@ -94,6 +112,11 @@ def main(root,stage):
                      HERE/'closure_partial128.sv',HERE/'closure_context16.sv',HERE/'tb_closure_context.sv'],out/'context-build.log',out,env)
             text=execute([obj/'Vtb_closure_context'],out/'context.log',out,env)
             assert f'checks={count}' in text;report['context']=dict(checks=count,log=text);save()
+            count=finalize_vectors(out/'finalize-vectors.txt');obj=out/'obj-finalize'
+            execute([VERILATOR,'--binary','--timing','--assert','--top-module','tb_closure_finalize','-Wall','-j','4','--Mdir',obj,
+                     HERE/'closure_finalize128.sv',HERE/'tb_closure_finalize.sv'],out/'finalize-build.log',out,env)
+            text=execute([obj/'Vtb_closure_finalize'],out/'finalize.log',out,env)
+            assert f'checks={count}' in text;report['finalize']=dict(checks=count,log=text);save()
             report['weight_banks']=[]
             for banks in (2,4,8):
                 obj=out/f'obj-banks{banks}'

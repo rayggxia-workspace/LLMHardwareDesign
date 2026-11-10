@@ -8,7 +8,7 @@ module closure_weight_banks #(parameter integer BANKS=4)(
  input wire read_valid,input wire [2:0] read_bank,input wire [15:0] read_generation,
  input wire [2:0] read_index,output wire read_ready,
  output reg out_valid,input wire out_ready,output reg [1023:0] out_data,
- output reg [127:0] out_scales,output reg [2:0] out_bank,out_index,
+ output reg [511:0] out_scales,output reg [2:0] out_bank,out_index,
  output reg [15:0] out_generation,output reg fault
 );
  localparam integer IDBITS=$clog2(BANKS);
@@ -42,7 +42,7 @@ module closure_weight_banks #(parameter integer BANKS=4)(
     else if(!live[read_id]||generation[read_id]!=read_generation||filled[read_id]!=17'h1ffff)fault<=1;
     else begin
      out_valid<=1;out_data<={data[read_id][{1'b0,read_index,1'b1}],data[read_id][{1'b0,read_index,1'b0}]};
-     out_scales<=data[read_id][16][127:0];out_bank<=read_bank;out_index<=read_index;out_generation<=read_generation;
+     out_scales<=data[read_id][16];out_bank<=read_bank;out_index<=read_index;out_generation<=read_generation;
     end
    end
   end

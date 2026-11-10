@@ -5,7 +5,7 @@ module tb_closure_banks #(parameter integer BANKS=4);
  reg [15:0] cmd_generation=0,fill_generation=0,read_generation=0;
  reg [4:0] fill_index=0;reg [511:0] fill_data=0;
  wire cmd_ready,fill_ready,read_ready,out_valid,fault;
- wire [1023:0] out_data;wire [127:0] out_scales;wire [2:0] out_bank,out_index;wire [15:0] out_generation;
+ wire [1023:0] out_data;wire [511:0] out_scales;wire [2:0] out_bank,out_index;wire [15:0] out_generation;
  closure_weight_banks #(.BANKS(BANKS)) dut(.*);
  function automatic [511:0] pattern(input integer bank_id,beat_id,gen);
   for(integer w=0;w<16;w=w+1)pattern[w*32+:32]=32'(gen*100000+bank_id*1000+beat_id*16+w);
@@ -29,7 +29,7 @@ module tb_closure_banks #(parameter integer BANKS=4);
     @(posedge clk);if(!read_ready)$fatal(1,"read");@(negedge clk);read_valid=0;
     repeat((i+b)%4+1)begin
      if(!out_valid||out_data!=={pattern(b,2*i+1,gen),pattern(b,2*i,gen)}||
-        out_scales!==128'(pattern(b,16,gen))||out_bank!==3'(b)||out_index!==3'(i)||out_generation!==16'(gen)||fault)$fatal(1,"read payload/hold");
+        out_scales!==pattern(b,16,gen)||out_bank!==3'(b)||out_index!==3'(i)||out_generation!==16'(gen)||fault)$fatal(1,"read payload/hold");
      @(negedge clk);
     end
     out_ready=1;@(posedge clk);@(negedge clk);out_ready=0;checks=checks+1;
