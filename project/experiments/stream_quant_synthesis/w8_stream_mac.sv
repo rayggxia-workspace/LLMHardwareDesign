@@ -67,8 +67,10 @@ module w8_stream_mac #(
    if(in_valid)begin
     c0<=in_ctx;f0<=in_first;l0<=in_last;n0<=in_n;k0<=in_k;off0<=in_offset;
     bad0<=in_k==0||in_k>16||in_n==0||in_n>8;
-    for(integer n=0;n<8;n=n+1)for(integer k=0;k<16;k=k+1)
-     product[n][k]<=k<in_k&&n<in_n?$signed(in_a[k*ABITS+:ABITS])*$signed(in_b[(n*16+k)*8+:8]):{PW{1'b0}};
+    for(integer n=0;n<8;n=n+1)for(integer k=0;k<16;k=k+1)begin
+     if(k<in_k&&n<in_n)product[n][k]<=$signed(in_a[k*ABITS+:ABITS])*$signed(in_b[(n*16+k)*8+:8]);
+     else product[n][k]<={PW{1'b0}};
+    end
    end
   end
  end
