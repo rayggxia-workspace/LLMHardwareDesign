@@ -1,12 +1,13 @@
 // Two production P groups share one physical 32KiB A object pool.
-// Tight 128-bit A containers retain the native S8/S16 arithmetic contract.
+// One or two 128-bit A containers per P retain the native S8/S16 contract.
 // P0 occupies the low slice of every packed interface.
 module pu_p_shared_pair #(
  parameter integer ENABLE_SHARED = 1,
  parameter integer ENABLE_LOCAL_RW = 1,
  parameter integer S_BANK_RW = 1,
  parameter integer S_CONSUMER_PRIORITY = 1,
- parameter integer M_CONTEXTS = 8
+ parameter integer M_CONTEXTS = 8,
+ parameter integer A_WORDS_PER_BEAT = 2
 ) (
  input wire clk,reset,cold_reset,
  input wire cfg_valid,input wire [1:0] cfg_op,input wire [7:0] cfg_epoch,
@@ -106,14 +107,14 @@ module pu_p_shared_pair #(
  wire [1:0] pool_done_valid;
  wire [1:0] pool_done_error;
  wire [1:0] pool_done_take;
- wire [1:0] pool_a_valid;
+ wire [2*A_WORDS_PER_BEAT-1:0] pool_a_valid;
  wire [1:0] pool_a_ready;
  wire [1:0] pool_a_bank;
  wire [1:0] pool_a_wide;
- wire [5:0] pool_a_row;
- wire [3:0] pool_a_tile;
- wire [255:0] pool_a_data;
- shared_a_pool32 pool(
+ wire [6*A_WORDS_PER_BEAT-1:0] pool_a_row;
+ wire [4*A_WORDS_PER_BEAT-1:0] pool_a_tile;
+ wire [256*A_WORDS_PER_BEAT-1:0] pool_a_data;
+ shared_a_pool32 #(.A_WORDS_PER_BEAT(A_WORDS_PER_BEAT)) pool(
   .clk,.reset(pair_reset),.cfg_valid(cfg_valid&&allow_cfg),.cfg_op,.cfg_epoch,.cfg_words,.cfg_take,
   .cfg_ready(pool_cfg_ready),.cfg_done,.cfg_error,
   .fill_valid,.fill_addr,.fill_data,.fill_mask,.fill_take,.fill_ready,.fill_done,.fill_error,
@@ -127,7 +128,7 @@ module pu_p_shared_pair #(
  );
  for(genvar p=0;p<2;p=p+1)begin: groups
   assign permit_load[p]=!block_new_load&&(!(ENABLE_SHARED&&load_a_shared[p])||object_valid);
-  pu_p_group #(.SHARED_A(ENABLE_SHARED),.S_TRUE_RW(ENABLE_LOCAL_RW),
+  pu_p_group #(.SHARED_A(ENABLE_SHARED),.SHARED_A_WORDS(A_WORDS_PER_BEAT),.S_TRUE_RW(ENABLE_LOCAL_RW),
    .S_BANK_RW(S_BANK_RW),.S_CONSUMER_PRIORITY(S_CONSUMER_PRIORITY),.M_CONTEXTS(M_CONTEXTS)) block_p(
    .clk(clk),
    .reset(pair_reset),
@@ -153,13 +154,13 @@ module pu_p_shared_pair #(
    .pool_done_valid(pool_done_valid[p]),
    .pool_done_error(pool_done_error[p]),
    .pool_done_take(pool_done_take[p]),
-   .pool_a_valid(pool_a_valid[p]),
+   .pool_a_valid(pool_a_valid[p*A_WORDS_PER_BEAT+:A_WORDS_PER_BEAT]),
    .pool_a_ready(pool_a_ready[p]),
    .pool_a_bank(pool_a_bank[p]),
    .pool_a_wide(pool_a_wide[p]),
-   .pool_a_row(pool_a_row[p*3+:3]),
-   .pool_a_tile(pool_a_tile[p*2+:2]),
-   .pool_a_data(pool_a_data[p*128+:128]),
+   .pool_a_row(pool_a_row[p*3*A_WORDS_PER_BEAT+:3*A_WORDS_PER_BEAT]),
+   .pool_a_tile(pool_a_tile[p*2*A_WORDS_PER_BEAT+:2*A_WORDS_PER_BEAT]),
+   .pool_a_data(pool_a_data[p*128*A_WORDS_PER_BEAT+:128*A_WORDS_PER_BEAT]),
    .io_req_valid(io_req_valid[p*2+:2]),
    .io_req_write(io_req_write[p*2+:2]),
    .io_req_addr(io_req_addr[p*20+:20]),

@@ -3,10 +3,11 @@
 // Two scale lanes sustain one pair/cycle, with S64 per-row atomic commit.
 // Segments are scaled without rounding; a shared quantization scale therefore
 // distributes exactly across K segments. RNE occurs only at final readout.
-module block_v2_m_context #(parameter integer CONTEXTS=8)(
+module block_v2_m_context #(parameter integer CONTEXTS=8,parameter integer A_WORDS_PER_BEAT=1)(
  input wire clk,reset,
- input wire a_valid,output wire a_ready,input wire a_bank,
- input wire [2:0] a_row,input wire [1:0] a_tile,input wire a_wide,input wire [127:0] a_data,
+ input wire [A_WORDS_PER_BEAT-1:0] a_valid,output wire a_ready,input wire a_bank,
+ input wire [3*A_WORDS_PER_BEAT-1:0] a_row,input wire [2*A_WORDS_PER_BEAT-1:0] a_tile,
+ input wire a_wide,input wire [128*A_WORDS_PER_BEAT-1:0] a_data,
  input wire b_valid,output wire b_ready,input wire b_bank,input wire [1:0] b_tile,
  input wire b_wide,b_half,input wire [511:0] b_data,
  input wire cmd_valid,output wire cmd_ready,input wire [3:0] cmd_op,
@@ -33,6 +34,7 @@ module block_v2_m_context #(parameter integer CONTEXTS=8)(
  wire [2:0] operand_row=context_execution?context_source_row:issue_row;
  initial begin
   if(CONTEXTS!=1&&CONTEXTS!=2&&CONTEXTS!=8)$fatal(1,"CONTEXTS must be 1, 2, or 8");
+  if(A_WORDS_PER_BEAT!=1&&A_WORDS_PER_BEAT!=2)$fatal(1,"A_WORDS_PER_BEAT must be 1 or 2");
  end
  reg execution_bank,fmt_a,fmt_b,clear_result;
  reg [3:0] rows,tiles,last_k,active_n;
@@ -56,9 +58,17 @@ module block_v2_m_context #(parameter integer CONTEXTS=8)(
  wire clear_bank=cmd_valid&&cmd_ready&&cmd_op==11;
  wire start=cmd_valid&&cmd_ready&&(cmd_op==10||cmd_op==13);
  wire locked=state==ISSUE||state==WAIT_BANK||state==DRAIN;
+ // One atomic handshake accepts a prefix of lanes sharing bank and format.
+ // A sparse mask or duplicate {row,tile} rejects the whole beat until corrected.
+ wire a_shape_ok;
+ generate if(A_WORDS_PER_BEAT==2)begin: dual_a_shape
+  assign a_shape_ok=!a_valid[1]||(a_valid[0]&&{a_row[5:3],a_tile[3:2]}!={a_row[2:0],a_tile[1:0]});
+ end else begin: single_a_shape
+  assign a_shape_ok=1'b1;
+ end endgenerate
  assign cmd_ready=!reset&&state==IDLE&&(!rsp_valid||rsp_ready);
  assign busy=!cmd_ready;
- assign a_ready=!reset&&!clear_banks&&!(clear_bank&&cmd_index[0]==a_bank)&&!(locked&&execution_bank==a_bank)&&!(start&&cmd_index[5]==a_bank);
+ assign a_ready=a_shape_ok&&!reset&&!clear_banks&&!(clear_bank&&cmd_index[0]==a_bank)&&!(locked&&execution_bank==a_bank)&&!(start&&cmd_index[5]==a_bank);
  assign b_ready=!reset&&!clear_banks&&!(clear_bank&&cmd_index[0]==b_bank)&&!(locked&&execution_bank==b_bank)&&!(start&&cmd_index[5]==b_bank)&&
   ((!b_wide&&!b_half)||(b_wide&&(!b_half||(bv[{b_bank,b_tile}][0]&&bf[{b_bank,b_tile}]))));
 
@@ -183,9 +193,13 @@ module block_v2_m_context #(parameter integer CONTEXTS=8)(
    end
   end else begin
    if(rsp_valid&&rsp_ready)rsp_valid<=0;
-   if(a_valid&&a_ready)begin
-    av[{a_bank,a_row,a_tile}]<=1;af[{a_bank,a_row,a_tile}]<=a_wide;
-    for(i=0;i<8;i=i+1)aa[32'({a_bank,a_row,a_tile})*8+i]<=a_wide?$signed(a_data[16*i+:16]):$signed({{8{a_data[8*i+7]}},a_data[8*i+:8]});
+   if((|a_valid)&&a_ready)begin
+    for(integer a_lane=0;a_lane<A_WORDS_PER_BEAT;a_lane=a_lane+1)if(a_valid[a_lane])begin
+     av[{a_bank,a_row[3*a_lane+:3],a_tile[2*a_lane+:2]}]<=1;
+     af[{a_bank,a_row[3*a_lane+:3],a_tile[2*a_lane+:2]}]<=a_wide;
+     for(i=0;i<8;i=i+1)aa[32'({a_bank,a_row[3*a_lane+:3],a_tile[2*a_lane+:2]})*8+i]<=
+      a_wide?$signed(a_data[128*a_lane+16*i+:16]):$signed({{8{a_data[128*a_lane+8*i+7]}},a_data[128*a_lane+8*i+:8]});
+    end
    end
    if(b_valid&&b_ready)begin
     bf[{b_bank,b_tile}]<=b_wide;

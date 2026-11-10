@@ -4,7 +4,8 @@ module pu_p_group #(
  parameter integer S_BANK_RW = 0,
  parameter integer M_CONTEXTS = 0,
  parameter integer SHARED_A = 0,
- parameter integer S_TRUE_RW = 0
+ parameter integer S_TRUE_RW = 0,
+ parameter integer SHARED_A_WORDS = 1
 ) (
  input wire clk, reset,
  // Cold reset invalidates migrated local-S contents; assert with group reset
@@ -19,8 +20,9 @@ module pu_p_group #(
  output wire pool_load_bank,pool_load_wide,output wire [3:0] pool_load_rows,
  output wire [2:0] pool_load_tiles,
  input wire pool_done_valid,pool_done_error,output wire pool_done_take,
- input wire pool_a_valid,output wire pool_a_ready,input wire pool_a_bank,pool_a_wide,
- input wire [2:0] pool_a_row,input wire [1:0] pool_a_tile,input wire [127:0] pool_a_data,
+ input wire [SHARED_A_WORDS-1:0] pool_a_valid,output wire pool_a_ready,input wire pool_a_bank,pool_a_wide,
+ input wire [3*SHARED_A_WORDS-1:0] pool_a_row,input wire [2*SHARED_A_WORDS-1:0] pool_a_tile,
+ input wire [128*SHARED_A_WORDS-1:0] pool_a_data,
  input wire [1:0] io_req_valid, io_req_write,
  input wire [19:0] io_req_addr, input wire [255:0] io_req_data,
  output wire [1:0] io_req_ready, io_rsp_valid,
@@ -41,12 +43,18 @@ module pu_p_group #(
  output reg m_to_g_valid, output reg [31:0] m_to_g_data, input wire m_to_g_take,
  input wire g_from_m_valid, input wire [31:0] g_from_m_data, output wire g_from_m_take
 );
+ initial begin
+  if(SHARED_A_WORDS!=1&&SHARED_A_WORDS!=2)$fatal(1,"SHARED_A_WORDS must be 1 or 2");
+ end
  reg reset_q;
  always @(posedge clk) reset_q<=reset||(S_TRUE_RW!=0&&s_cold_reset);
- wire a_valid,a_ready,a_bank,a_wide,b_valid,b_ready,b_bank,b_wide,b_half;
- wire [2:0] a_row;
- wire [1:0] a_tile,b_tile;
- wire [127:0] a_data,m_s_unused;
+ wire [SHARED_A_WORDS-1:0] a_valid;
+ wire a_ready,a_bank,a_wide,b_valid,b_ready,b_bank,b_wide,b_half;
+ wire [3*SHARED_A_WORDS-1:0] a_row;
+ wire [2*SHARED_A_WORDS-1:0] a_tile;
+ wire [128*SHARED_A_WORDS-1:0] a_data;
+ wire [1:0] b_tile;
+ wire [127:0] m_s_unused;
  wire [511:0] b_data;
  wire sa_valid,sa_ready,sa_bank,sa_wide,sb_valid,sb_ready,sb_bank,sb_wide,sb_half;
  wire [2:0] sa_row;
@@ -57,7 +65,7 @@ module pu_p_group #(
  reg load_inflight,load_send,shared_load,pool_send;
  reg [10:0] pool_base_q;reg [7:0] pool_epoch_q;
  reg [30:0] load_config;
- wire feed_empty=(shared_load ? !pool_a_valid : sa_ready) && sb_ready;
+ wire feed_empty=(shared_load ? !(|pool_a_valid) : sa_ready) && sb_ready;
  wire s_load_take=s_load_done && feed_empty && (!shared_load||pool_done_valid);
  assign pool_load_valid=SHARED_A!=0&&!reset_q&&pool_send;
  assign pool_load_base=pool_base_q;assign pool_load_epoch=pool_epoch_q;
@@ -88,10 +96,15 @@ module pu_p_group #(
  wire [2:0] local_a_row;wire [1:0] local_a_tile;wire [127:0] local_a_data;
  assign local_a_ready=a_ready&&!shared_load;
  assign pool_a_ready=SHARED_A!=0&&!reset_q&&shared_load&&load_inflight&&a_ready;
- assign a_valid=shared_load ? (pool_a_valid&&load_inflight) : local_a_valid;
- assign {a_bank,a_row,a_tile,a_wide,a_data}=shared_load ?
-       {pool_a_bank,pool_a_row,pool_a_tile,pool_a_wide,pool_a_data} :
-       {local_a_bank,local_a_row,local_a_tile,local_a_wide,local_a_data};
+ // Shared lanes handshake atomically. The unchanged local hold drives lane 0;
+ // all additional local lanes are invalid and carry zero payload and tags.
+ assign a_valid=shared_load ? (pool_a_valid&{SHARED_A_WORDS{load_inflight}}) :
+       {{(SHARED_A_WORDS-1){1'b0}},local_a_valid};
+ assign a_bank=shared_load ? pool_a_bank : local_a_bank;
+ assign a_wide=shared_load ? pool_a_wide : local_a_wide;
+ assign a_row=shared_load ? pool_a_row : {{(3*(SHARED_A_WORDS-1)){1'b0}},local_a_row};
+ assign a_tile=shared_load ? pool_a_tile : {{(2*(SHARED_A_WORDS-1)){1'b0}},local_a_tile};
+ assign a_data=shared_load ? pool_a_data : {{(128*(SHARED_A_WORDS-1)){1'b0}},local_a_data};
  pj_feed_hold #(.WIDTH(135)) hold_a(
   .clk(clk),.reset(reset_q),.src_valid(sa_valid),.src_ready(sa_ready),
   .src_data({sa_bank,sa_row,sa_tile,sa_wide,sa_data}),
@@ -176,7 +189,7 @@ module pu_p_group #(
   .a_valid(sa_valid),.a_ready(sa_ready),.a_bank(sa_bank),.a_row(sa_row),.a_tile(sa_tile),.a_wide(sa_wide),.a_data(sa_data),
   .b_valid(sb_valid),.b_ready(sb_ready),.b_bank(sb_bank),.b_tile(sb_tile),.b_wide(sb_wide),.b_half(sb_half),.b_data(sb_data));
  generate if(M_CONTEXTS != 0) begin: context_mode
- block_v2_m_context #(.CONTEXTS(M_CONTEXTS)) multiply(
+ block_v2_m_context #(.CONTEXTS(M_CONTEXTS),.A_WORDS_PER_BEAT(SHARED_A_WORDS)) multiply(
   .clk(clk),.reset(reset_q),.a_valid(a_valid),.a_ready(a_ready),.a_bank(a_bank),.a_row(a_row),
   .a_tile(a_tile),.a_wide(a_wide),.a_data(a_data),.b_valid(b_valid),.b_ready(b_ready),
   .b_bank(b_bank),.b_tile(b_tile),.b_wide(b_wide),.b_half(b_half),.b_data(b_data),
@@ -184,7 +197,7 @@ module pu_p_group #(
   .cmd_index(m_index),.cmd_data(m_data),.rsp_valid(m_valid),.rsp_ready(m_pending && !m_dispatch && !m_commit),
   .rsp_data(m_result),.rsp_error(m_error),.rsp_saturated(m_sat),.busy());
  end else begin: legacy_mode
- block_v2_m multiply(
+ block_v2_m #(.A_WORDS_PER_BEAT(SHARED_A_WORDS)) multiply(
   .clk(clk),.reset(reset_q),.a_valid(a_valid),.a_ready(a_ready),.a_bank(a_bank),.a_row(a_row),
   .a_tile(a_tile),.a_wide(a_wide),.a_data(a_data),.b_valid(b_valid),.b_ready(b_ready),
   .b_bank(b_bank),.b_tile(b_tile),.b_wide(b_wide),.b_half(b_half),.b_data(b_data),

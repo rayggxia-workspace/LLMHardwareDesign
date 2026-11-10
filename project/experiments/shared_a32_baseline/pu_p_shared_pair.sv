@@ -1,0 +1,216 @@
+// Two production P groups share one physical 32KiB A object pool.
+// Tight 128-bit A containers retain the native S8/S16 arithmetic contract.
+// P0 occupies the low slice of every packed interface.
+module pu_p_shared_pair #(
+ parameter integer ENABLE_SHARED = 1,
+ parameter integer ENABLE_LOCAL_RW = 1,
+ parameter integer S_BANK_RW = 1,
+ parameter integer S_CONSUMER_PRIORITY = 1,
+ parameter integer M_CONTEXTS = 8
+) (
+ input wire clk,reset,cold_reset,
+ input wire cfg_valid,input wire [1:0] cfg_op,input wire [7:0] cfg_epoch,
+ input wire [11:0] cfg_words,input wire cfg_take,
+ output wire cfg_ready,cfg_done,cfg_error,
+ input wire fill_valid,input wire [8:0] fill_addr,input wire [511:0] fill_data,
+ input wire [3:0] fill_mask,input wire fill_take,
+ output wire fill_ready,fill_done,fill_error,
+ output wire object_valid,output wire [7:0] object_epoch,output wire [11:0] object_words,
+ input wire [1:0] wide_write_req,
+ input wire [15:0] wide_write_addr,
+ input wire [1023:0] wide_write_data,
+ input wire [7:0] wide_write_mask,
+ output wire [1:0] wide_write_ready,
+ output wire [1:0] wide_write_valid,
+ input wire [1:0] wide_write_take,
+ input wire [1:0] load_a_shared,
+ input wire [21:0] load_pool_base,
+ input wire [15:0] load_pool_epoch,
+ input wire [3:0] io_req_valid,
+ input wire [3:0] io_req_write,
+ input wire [39:0] io_req_addr,
+ input wire [511:0] io_req_data,
+ output wire [3:0] io_req_ready,
+ output wire [3:0] io_rsp_valid,
+ input wire [3:0] io_rsp_ready,
+ output wire [511:0] io_rsp_data,
+ input wire [1:0] load_valid,
+ output wire [1:0] load_ready,
+ input wire [1:0] load_bank,
+ input wire [7:0] load_rows,
+ input wire [5:0] load_tiles,
+ input wire [1:0] load_a_wide,
+ input wire [1:0] load_b_wide,
+ input wire [1:0] load_reuse_b,
+ input wire [19:0] load_a_base,
+ input wire [19:0] load_b_base,
+ output wire [1:0] load_done,
+ input wire [1:0] load_take,
+ output wire [1:0] load_error,
+ input wire [1:0] cmd_valid,
+ output wire [1:0] cmd_ready,
+ input wire [7:0] cmd_op,
+ input wire [11:0] cmd_index,
+ input wire [127:0] cmd_data,
+ input wire [1:0] cmd_store,
+ input wire [1:0] cmd_route,
+ input wire [1:0] cmd_pack16,
+ input wire [19:0] cmd_dst,
+ output wire [1:0] cmd_done,
+ input wire [1:0] cmd_take,
+ output wire [1:0] cmd_error,
+ output wire [1:0] cmd_saturated,
+ output wire [255:0] cmd_result,
+ input wire [1:0] gate_valid,
+ input wire [1:0] gate_route,
+ output wire [1:0] gate_ready,
+ input wire [19:0] gate_a,
+ input wire [19:0] gate_b,
+ input wire [19:0] gate_dst,
+ output wire [1:0] gate_done,
+ input wire [1:0] gate_take,
+ output wire [1:0] gate_error,
+ output wire [1:0] gate_saturated,
+ output wire [1:0] m_to_g_valid,
+ output wire [63:0] m_to_g_data,
+ input wire [1:0] m_to_g_take,
+ input wire [1:0] g_from_m_valid,
+ input wire [63:0] g_from_m_data,
+ output wire [1:0] g_from_m_take
+);
+ wire pair_reset=reset||cold_reset;
+ wire [1:0] group_load_ready;
+ wire pool_cfg_ready;
+ wire [1:0] permit_load;
+ reg release_inflight;
+ wire release_requested=cfg_valid&&cfg_op==2;
+ wire block_new_load=release_requested||release_inflight;
+ wire allow_cfg=!release_requested||(&group_load_ready);
+ assign cfg_ready=pool_cfg_ready&&allow_cfg;
+ assign load_ready=group_load_ready&permit_load;
+ always @(posedge clk)begin
+  if(pair_reset)release_inflight<=0;
+  else begin
+   if(cfg_valid&&cfg_ready&&cfg_op==2)release_inflight<=1;
+   if(cfg_done&&cfg_take)release_inflight<=0;
+  end
+ end
+ wire [1:0] pool_load_valid;
+ wire [1:0] pool_load_ready;
+ wire [21:0] pool_load_base;
+ wire [15:0] pool_load_epoch;
+ wire [1:0] pool_load_bank;
+ wire [1:0] pool_load_wide;
+ wire [7:0] pool_load_rows;
+ wire [5:0] pool_load_tiles;
+ wire [1:0] pool_done_valid;
+ wire [1:0] pool_done_error;
+ wire [1:0] pool_done_take;
+ wire [1:0] pool_a_valid;
+ wire [1:0] pool_a_ready;
+ wire [1:0] pool_a_bank;
+ wire [1:0] pool_a_wide;
+ wire [5:0] pool_a_row;
+ wire [3:0] pool_a_tile;
+ wire [255:0] pool_a_data;
+ shared_a_pool32 pool(
+  .clk,.reset(pair_reset),.cfg_valid(cfg_valid&&allow_cfg),.cfg_op,.cfg_epoch,.cfg_words,.cfg_take,
+  .cfg_ready(pool_cfg_ready),.cfg_done,.cfg_error,
+  .fill_valid,.fill_addr,.fill_data,.fill_mask,.fill_take,.fill_ready,.fill_done,.fill_error,
+  .object_valid,.object_epoch,.object_words,
+  .p_cmd_valid(pool_load_valid),.p_cmd_ready(pool_load_ready),.p_cmd_bank(pool_load_bank),
+  .p_cmd_awide(pool_load_wide),.p_cmd_rows(pool_load_rows),.p_cmd_tiles(pool_load_tiles),
+  .p_cmd_base(pool_load_base),.p_cmd_epoch(pool_load_epoch),
+  .p_done(pool_done_valid),.p_error(pool_done_error),.p_done_take(pool_done_take),
+  .a_valid(pool_a_valid),.a_ready(pool_a_ready),.a_bank(pool_a_bank),.a_wide(pool_a_wide),
+  .a_row(pool_a_row),.a_tile(pool_a_tile),.a_data(pool_a_data)
+ );
+ for(genvar p=0;p<2;p=p+1)begin: groups
+  assign permit_load[p]=!block_new_load&&(!(ENABLE_SHARED&&load_a_shared[p])||object_valid);
+  pu_p_group #(.SHARED_A(ENABLE_SHARED),.S_TRUE_RW(ENABLE_LOCAL_RW),
+   .S_BANK_RW(S_BANK_RW),.S_CONSUMER_PRIORITY(S_CONSUMER_PRIORITY),.M_CONTEXTS(M_CONTEXTS)) block_p(
+   .clk(clk),
+   .reset(pair_reset),
+   .s_cold_reset(cold_reset),
+   .wide_write_req(wide_write_req[p]),
+   .wide_write_addr(wide_write_addr[p*8+:8]),
+   .wide_write_data(wide_write_data[p*512+:512]),
+   .wide_write_mask(wide_write_mask[p*4+:4]),
+   .wide_write_ready(wide_write_ready[p]),
+   .wide_write_valid(wide_write_valid[p]),
+   .wide_write_take(wide_write_take[p]),
+   .load_a_shared(load_a_shared[p]),
+   .load_pool_base(load_pool_base[p*11+:11]),
+   .load_pool_epoch(load_pool_epoch[p*8+:8]),
+   .pool_load_valid(pool_load_valid[p]),
+   .pool_load_ready(pool_load_ready[p]),
+   .pool_load_base(pool_load_base[p*11+:11]),
+   .pool_load_epoch(pool_load_epoch[p*8+:8]),
+   .pool_load_bank(pool_load_bank[p]),
+   .pool_load_wide(pool_load_wide[p]),
+   .pool_load_rows(pool_load_rows[p*4+:4]),
+   .pool_load_tiles(pool_load_tiles[p*3+:3]),
+   .pool_done_valid(pool_done_valid[p]),
+   .pool_done_error(pool_done_error[p]),
+   .pool_done_take(pool_done_take[p]),
+   .pool_a_valid(pool_a_valid[p]),
+   .pool_a_ready(pool_a_ready[p]),
+   .pool_a_bank(pool_a_bank[p]),
+   .pool_a_wide(pool_a_wide[p]),
+   .pool_a_row(pool_a_row[p*3+:3]),
+   .pool_a_tile(pool_a_tile[p*2+:2]),
+   .pool_a_data(pool_a_data[p*128+:128]),
+   .io_req_valid(io_req_valid[p*2+:2]),
+   .io_req_write(io_req_write[p*2+:2]),
+   .io_req_addr(io_req_addr[p*20+:20]),
+   .io_req_data(io_req_data[p*256+:256]),
+   .io_req_ready(io_req_ready[p*2+:2]),
+   .io_rsp_valid(io_rsp_valid[p*2+:2]),
+   .io_rsp_ready(io_rsp_ready[p*2+:2]),
+   .io_rsp_data(io_rsp_data[p*256+:256]),
+   .load_valid(load_valid[p]&&permit_load[p]),
+   .load_ready(group_load_ready[p]),
+   .load_bank(load_bank[p]),
+   .load_rows(load_rows[p*4+:4]),
+   .load_tiles(load_tiles[p*3+:3]),
+   .load_a_wide(load_a_wide[p]),
+   .load_b_wide(load_b_wide[p]),
+   .load_reuse_b(load_reuse_b[p]),
+   .load_a_base(load_a_base[p*10+:10]),
+   .load_b_base(load_b_base[p*10+:10]),
+   .load_done(load_done[p]),
+   .load_take(load_take[p]),
+   .load_error(load_error[p]),
+   .cmd_valid(cmd_valid[p]),
+   .cmd_ready(cmd_ready[p]),
+   .cmd_op(cmd_op[p*4+:4]),
+   .cmd_index(cmd_index[p*6+:6]),
+   .cmd_data(cmd_data[p*64+:64]),
+   .cmd_store(cmd_store[p]),
+   .cmd_route(cmd_route[p]),
+   .cmd_pack16(cmd_pack16[p]),
+   .cmd_dst(cmd_dst[p*10+:10]),
+   .cmd_done(cmd_done[p]),
+   .cmd_take(cmd_take[p]),
+   .cmd_error(cmd_error[p]),
+   .cmd_saturated(cmd_saturated[p]),
+   .cmd_result(cmd_result[p*128+:128]),
+   .gate_valid(gate_valid[p]),
+   .gate_route(gate_route[p]),
+   .gate_ready(gate_ready[p]),
+   .gate_a(gate_a[p*10+:10]),
+   .gate_b(gate_b[p*10+:10]),
+   .gate_dst(gate_dst[p*10+:10]),
+   .gate_done(gate_done[p]),
+   .gate_take(gate_take[p]),
+   .gate_error(gate_error[p]),
+   .gate_saturated(gate_saturated[p]),
+   .m_to_g_valid(m_to_g_valid[p]),
+   .m_to_g_data(m_to_g_data[p*32+:32]),
+   .m_to_g_take(m_to_g_take[p]),
+   .g_from_m_valid(g_from_m_valid[p]),
+   .g_from_m_data(g_from_m_data[p*32+:32]),
+   .g_from_m_take(g_from_m_take[p])
+  );
+ end
+endmodule

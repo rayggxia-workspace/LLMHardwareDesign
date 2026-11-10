@@ -1,6 +1,8 @@
 // Native S8/S16 A-container pool. Eight actual 4KiB 1RW SRAM macros.
 // One immutable object, two independent readers, no broadcast or local-S copy.
-module shared_a_pool32 (
+// Each P accepts one or two consecutive 128-bit containers from one FIFO head.
+// Packed output index is P*A_WORDS_PER_BEAT+word; word zero is always first.
+module shared_a_pool32 #(parameter integer A_WORDS_PER_BEAT = 1) (
  input wire clk,reset,
  input wire cfg_valid,input wire [1:0] cfg_op,
  input wire [7:0] cfg_epoch,input wire [11:0] cfg_words,
@@ -13,15 +15,21 @@ module shared_a_pool32 (
  input wire [21:0] p_cmd_base,input wire [15:0] p_cmd_epoch,
  output wire [1:0] p_cmd_ready,output reg [1:0] p_done,p_error,
  input wire [1:0] p_done_take,
- output wire [1:0] a_valid,a_bank,a_wide,input wire [1:0] a_ready,
- output wire [5:0] a_row,output wire [3:0] a_tile,
- output wire [255:0] a_data,
+ output wire [2*A_WORDS_PER_BEAT-1:0] a_valid,
+ output wire [1:0] a_bank,a_wide,input wire [1:0] a_ready,
+ output wire [6*A_WORDS_PER_BEAT-1:0] a_row,
+ output wire [4*A_WORDS_PER_BEAT-1:0] a_tile,
+ output wire [256*A_WORDS_PER_BEAT-1:0] a_data,
  output wire object_valid,output wire [7:0] object_epoch,
  output wire [11:0] object_words
 `ifdef USE_POWER_PINS
  ,inout wire vdd,gnd
 `endif
 );
+ initial begin
+  if(A_WORDS_PER_BEAT!=1&&A_WORDS_PER_BEAT!=2)
+   $fatal(1,"A_WORDS_PER_BEAT must be 1 or 2");
+ end
  localparam [1:0] EMPTY=2'd0,FILL=2'd1,SEALED=2'd2;
  reg [1:0] state;
  reg [7:0] epoch_q;
@@ -83,6 +91,9 @@ module shared_a_pool32 (
  wire [6:0] command_words[0:1];
  wire [12:0] command_end[0:1];
  wire [1:0] command_legal;
+ wire [1:0] offered_words[0:1];
+ wire [2:0] row_after_one[0:1],row_after_two[0:1];
+ wire [1:0] tile_after_one[0:1],tile_after_two[0:1];
  genvar client;
  generate for(client=0;client<2;client=client+1)begin: consumers
   assign p_cmd_ready[client]=!reset&&state==SEALED&&!active[client]&&!p_done[client]&&!release_requested;
@@ -92,16 +103,37 @@ module shared_a_pool32 (
    p_cmd_rows[client*4+:4]>=4'd1&&p_cmd_rows[client*4+:4]<=4'd8&&
    p_cmd_tiles[client*3+:3]>=3'd1&&p_cmd_tiles[client*3+:3]<=3'd4&&
    command_end[client]<={1'b0,words_q};
-  assign a_valid[client]=!reset&&active[client]&&fifo_count[client]!=0;
-  assign a_fire[client]=a_valid[client]&&a_ready[client];
+  wire head_valid=!reset&&active[client]&&fifo_count[client]!=0;
+  wire [1:0] head_cursor=fifo_cursor[client][fifo_head[client]];
+  wire [2:0] head_words=fifo_limit[client][fifo_head[client]]-{1'b0,head_cursor};
+  // Both containers must already reside in the same 64B head. A start at
+  // cursor one may pair one/two; cursor three or an odd tail is one word.
+  assign offered_words[client]=(A_WORDS_PER_BEAT==2&&head_words>=3'd2)?2'd2:2'd1;
+  assign a_valid[client*A_WORDS_PER_BEAT]=head_valid;
+  assign a_fire[client]=head_valid&&a_ready[client];
   assign a_bank[client]=bank_q[client];
   assign a_wide[client]=wide_q[client];
-  assign a_row[client*3+:3]=row_q[client];
-  assign a_tile[client*2+:2]=tile_q[client];
-  assign a_data[client*128+:128]=a_valid[client]?
-   fifo_data[client][fifo_head[client]][128*int'(fifo_cursor[client][fifo_head[client]])+:128]:128'b0;
+  assign a_row[client*A_WORDS_PER_BEAT*3+:3]=row_q[client];
+  assign a_tile[client*A_WORDS_PER_BEAT*2+:2]=tile_q[client];
+  assign a_data[client*A_WORDS_PER_BEAT*128+:128]=head_valid?
+   fifo_data[client][fifo_head[client]][128*int'(head_cursor)+:128]:128'b0;
+  wire wrap_one={1'b0,row_q[client]}+4'd1==rows_q[client];
+  assign row_after_one[client]=wrap_one?3'd0:row_q[client]+3'd1;
+  assign tile_after_one[client]=wrap_one?tile_q[client]+2'd1:tile_q[client];
+  wire wrap_two={1'b0,row_after_one[client]}+4'd1==rows_q[client];
+  assign row_after_two[client]=wrap_two?3'd0:row_after_one[client]+3'd1;
+  assign tile_after_two[client]=wrap_two?tile_after_one[client]+2'd1:tile_after_one[client];
+  if(A_WORDS_PER_BEAT==2)begin: second_word
+   wire second_valid=head_valid&&offered_words[client]==2'd2;
+   wire [1:0] second_cursor=head_cursor+2'd1;
+   assign a_valid[client*A_WORDS_PER_BEAT+1]=second_valid;
+   assign a_row[(client*A_WORDS_PER_BEAT+1)*3+:3]=row_after_one[client];
+   assign a_tile[(client*A_WORDS_PER_BEAT+1)*2+:2]=tile_after_one[client];
+   assign a_data[(client*A_WORDS_PER_BEAT+1)*128+:128]=second_valid?
+    fifo_data[client][fifo_head[client]][128*int'(second_cursor)+:128]:128'b0;
+  end
   assign fifo_pop[client]=a_fire[client]&&
-   ({1'b0,fifo_cursor[client][fifo_head[client]]}+3'd1==fifo_limit[client][fifo_head[client]]);
+   ({1'b0,head_cursor}+{1'b0,offered_words[client]}==fifo_limit[client][fifo_head[client]]);
   wire [3:0] reserved={1'b0,fifo_count[client]}+
    ((pending_read&&pending_owner==1'(client))?4'd1:4'd0);
   assign read_request[client]=!reset&&state==SEALED&&active[client]&&next_word[client]<end_word[client]&&
@@ -214,11 +246,11 @@ module shared_a_pool32 (
      fifo_tail[i]<=fifo_tail[i]+1'b1;
     end
     if(a_fire[i])begin
-     sent_words[i]<=sent_words[i]+1'b1;
-     if({1'b0,row_q[i]}+4'd1==rows_q[i])begin row_q[i]<=0;tile_q[i]<=tile_q[i]+1'b1;end
-     else row_q[i]<=row_q[i]+1'b1;
-     if(sent_words[i]+6'd1==total_words[i])begin active[i]<=0;p_done[i]<=1;end
-     if(!fifo_pop[i])fifo_cursor[i][fifo_head[i]]<=fifo_cursor[i][fifo_head[i]]+1'b1;
+     sent_words[i]<=sent_words[i]+{4'b0,offered_words[i]};
+     if(offered_words[i]==2'd2)begin row_q[i]<=row_after_two[i];tile_q[i]<=tile_after_two[i];end
+     else begin row_q[i]<=row_after_one[i];tile_q[i]<=tile_after_one[i];end
+     if(sent_words[i]+{4'b0,offered_words[i]}==total_words[i])begin active[i]<=0;p_done[i]<=1;end
+     if(!fifo_pop[i])fifo_cursor[i][fifo_head[i]]<=fifo_cursor[i][fifo_head[i]]+offered_words[i];
     end
     if(fifo_pop[i])fifo_head[i]<=fifo_head[i]+1'b1;
     case({(pending_read&&pending_owner==1'(i)),fifo_pop[i]})
