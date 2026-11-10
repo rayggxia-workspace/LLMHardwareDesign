@@ -364,3 +364,15 @@ sbatch --parsable job.sh
 复现：按run33的inputs.json和source-files.sha256准备新的授权个人run目录，使用已记录源码commit ffa5410be225037c7f13c3092c2ee3487fa07ec0，在该目录执行sbatch --parsable job.sh。所有SystemC编译/运行只能在Slurm分配内；job.sh明确4核与容器。24场景须包含8个原16/32控制完整RESULT一致，并通过数值/有限FIFO/组冲突/实际双行消费检查。
 
 终态后在run目录执行python3 source/project/experiments/shared_width_study/collect_server.py <jobid>，回收后核验归档SHA，再执行python project/experiments/shared_width_study/analyze.py --receipts <回收目录> --out <新的分析目录>。后处理是JSON/日志核验，不运行EDA。完整原始事件留在服务器，仓库索引不代表全原始包已上传。
+
+## 原生共享A单片/双片入口（Issue247）
+
+当前pair默认A_WORDS_PER_BEAT=2；standalone pool/M/P参数默认1。接口及取舍见project/rtl/shared_s/README.md、[实施报告](experiments/issue-247-shared-a32-native.md)。旧shared32_native runner原样复现使用a7a36cbb固定源；当前版本测试使用shared_a32_native严格派生bench，保留旧检查。
+
+复跑按源码e7e8becca866e8257e026fddfc6e6215169e4015及run34部署manifest准备新的授权个人RUN目录，复制project/experiments/shared_a32_native/job.sh为job.sh，仅Slurm执行sbatch --parsable job.sh。容器入口：
+
+```sh
+python3 -B source/project/experiments/shared_a32_native/run.py --repo source --out results --manifest inputs.json --workers 4 --components all --area
+```
+
+run34/102033实际72run、12默认精确比较与六项面积全部通过。终态后从RUN执行python3 source/project/experiments/shared_a32_native/collect_server.py JOBID；回收先核归档/输出SHA。仅纯数据分析可本地执行：python work/Melodydt/247/shared-a32-native/analysis/analysis.py --input 原始result.json --historical run33原始result.json --out 新目录。完整命令/位置/证据见[交接](handoffs/2026-11-10-issue-247-shared-a32.md)。原生微基准不外推token/s，完整LLM/物理资格未完成。

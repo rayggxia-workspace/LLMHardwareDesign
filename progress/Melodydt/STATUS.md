@@ -1,3 +1,7 @@
+## 2026-11-10 Asia/Shanghai：共享 A 32B 已验证，待审查
+
+Issue247 / PR243；源码e7e8becca866e8257e026fddfc6e6215169e4015。run34/job102033在c64/node1/4核10:01 COMPLETED0:0，72run、12对430008周期事件、六项面积与全部回收SHA核验通过。原生同工作处理增益普通M2.0432%/8-context1.4344%，已计标准单元+0.033507222mm²、SRAM宏0。旧条件token/s单列，不作原生全模型测量。报告/证据见共享A32交接；下一步正式审查及连续负载瓶颈定位。in_review，未合并/not done；登记pending、看板unverified/pending、CI限制保留；无活动作业或自动监测。
+
 # 当前：prefill扩宽评估完成待审（2026-11-10，Asia/Shanghai）
 
 Issue247 / PR243，负责人Melodydt。生产RTL未改，实际条件模型源码ffa5410be225037c7f13c3092c2ee3487fa07ec0。run33/job102011/mdt-prefill-width，c64/node1/4核，10:33 COMPLETED0:0。24场景、8旧控制、7250+120数值、100生命周期负例、80事件负控、360主场景负控通过；99源/18输入/392输出索引核验及172回收输出SHA、独立复核通过。

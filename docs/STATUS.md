@@ -1,3 +1,7 @@
+## 2026-11-10 Asia/Shanghai：共享 A 32B 已验证，待审查
+
+Issue247 / PR243；源码e7e8becca866e8257e026fddfc6e6215169e4015。run34/job102033在c64/node1/4核10:01 COMPLETED0:0，72run、12对430008周期事件、六项面积与全部回收SHA核验通过。原生同工作处理增益普通M2.0432%/8-context1.4344%，已计标准单元+0.033507222mm²、SRAM宏0。旧条件token/s单列，不作原生全模型测量。报告/证据见共享A32交接；下一步正式审查及连续负载瓶颈定位。in_review，未合并/not done；登记pending、看板unverified/pending、CI限制保留；无活动作业或自动监测。
+
 # 当前补充：prefill扩宽条件评估（2026-11-10）
 
 Issue247 / PR243新增24场景服务器评估及独立复核完成待审。共享32KiB固定，最高4.429583 token/s（原条件SystemC），64/128双组交错相同；32→64仅+0.1450%/+0.6972%，生产RTL未扩宽。详见[评估报告](experiments/issue-247-prefill-width-evaluation.md)。run33/job102011已COMPLETED0:0，无活动作业；任务in_review、未合并、不done。
