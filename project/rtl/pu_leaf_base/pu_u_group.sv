@@ -1,5 +1,5 @@
 // U groups independent N, compact E and S_base leaves under local services.
-module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_LANES=2) (
+module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_LANES=2, NEXP_S16=0, E_PIPELINE=0) (
     input wire clk, reset,
     input wire n_cmd_valid, n_cmd_store, n_cmd_direct, n_done_ready,
     output wire n_cmd_ready, n_done_valid, n_done_error, n_done_saturated,
@@ -62,9 +62,11 @@ module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_L
     reg n_rejected;
     wire n_is_batch=NEXP_BATCH!=0&&n_cmd_meta[3:0]==15;
     wire n_is_32=n_cmd_meta[39:8]==32'h4e583332;
+    wire n_is_s16=NEXP_S16!=0 && NEXP_DIRECT!=0 && n_cmd_meta[39:8]==32'h4e583136;
     wire n_batch_bad=n_is_batch&&(
-        (n_cmd_meta[39:8]!=32'h4e455850&&!n_is_32)||n_cmd_meta[7:4]==0||
-        n_cmd_meta[7:4]>(n_is_32?4:8)||n_cmd_sources!=1||n_cmd_src[19:10]!=0||n_cmd_direct);
+        (n_cmd_meta[39:8]!=32'h4e455850&&!n_is_32&&!n_is_s16)||n_cmd_meta[7:4]==0||
+        n_cmd_meta[7:4]>(n_is_32?4:8)||n_cmd_sources!=1||n_cmd_src[19:10]!=0||n_cmd_direct||
+        (n_is_s16 && n_cmd_meta[7:4]>4 && (!n_cmd_store || n_cmd_dst==1023)));
     assign n_cmd_ready=n_service_ready&&!n_rejected;
     assign n_done_data=n_rejected?128'd0:n_service_data;
     assign n_done_error=n_rejected||n_service_error;
@@ -91,7 +93,7 @@ module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_L
             n_sent <= 1'b1;
         end
     end
-    ucf_s_compute_client n_service(
+    ucf_s_compute_client #(.NEXP_S16(NEXP_BATCH!=0 && NEXP_DIRECT!=0 && NEXP_S16!=0)) n_service(
         .clk, .reset, .cmd_valid(n_cmd_valid&&!n_rejected&&!n_batch_bad), .cmd_ready(n_service_ready), .cmd_meta({24'b0,n_cmd_meta}),
         .cmd_sources(n_cmd_sources), .cmd_addresses({10'b0,n_cmd_src}), .cmd_store(n_cmd_store), .cmd_dst(n_cmd_dst),
         .done_valid(n_complete), .done_ready(n_done_ready && n_done_valid), .done_data(n_service_data),
@@ -145,7 +147,7 @@ module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_L
         .e_in_valid(e_valid), .e_in_ready(e_ready), .e_in_op(op), .e_in_shift(shift), .e_in_data(ea),
         .e_out_valid(er_valid), .e_out_ready(er_ready), .e_out_data(er), .e_out_error(er_error), .e_out_saturated(er_sat)
     );
-    block_v2_e_compact elementwise(
+    block_v2_e_compact #(.PIPELINED(E_PIPELINE)) elementwise(
         .clk, .reset, .in_valid(e_valid), .in_ready(e_ready), .in_op(op), .in_shift(shift), .in_data(ea),
         .out_valid(er_valid), .out_ready(er_ready), .out_data(er), .out_error(er_error), .out_saturated(er_sat)
     );
