@@ -1,0 +1,262 @@
+{
+  "candidate": 0,
+  "top": "local_s_base",
+  "die_um": [
+    880,
+    520
+  ],
+  "affinity": [
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59
+  ],
+  "cpus": 12,
+  "node": "node18",
+  "job": "98316",
+  "paired_rows": false,
+  "commands": [
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/map.ys"
+      ],
+      "log": "map.log",
+      "returncode": 0,
+      "sha256": "ee7ed118e82aa8e2f468c662c89e322eb924cbe1a640c8b04d278c11dff02343"
+    },
+    {
+      "argv": [
+        "yosys",
+        "-s",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/structural.ys"
+      ],
+      "log": "structural.log",
+      "returncode": 0,
+      "sha256": "bbf0f85f0a5591b675ce9b643b35627dca2eb9f92024da6f394cfc3e4cbca10a"
+    },
+    {
+      "argv": [
+        "klayout",
+        "-b",
+        "-r",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/escape-check.py"
+      ],
+      "log": "escape-check.log",
+      "returncode": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "klayout",
+        "-b",
+        "-r",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08/source/project/experiments/compact_local_s/normalize_gds.py",
+        "-rd",
+        "SOURCE=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.gds",
+        "-rd",
+        "OUTPUT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/bank-stream.gds",
+        "-rd",
+        "RECEIPT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/bank-stream.json"
+      ],
+      "log": "bank-stream.log",
+      "returncode": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "klayout",
+        "-b",
+        "-r",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08/source/project/experiments/compact_local_s/landing_patches.py",
+        "-rd",
+        "GDS=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.gds",
+        "-rd",
+        "LEF=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.lef",
+        "-rd",
+        "OUTPUT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/landing-patches-data.tcl",
+        "-rd",
+        "RECEIPT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/landing-patches.json"
+      ],
+      "log": "landing-patches.log",
+      "returncode": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/flow",
+        "NUM_CORES=12",
+        "do-1_synth"
+      ],
+      "log": "do-1_synth.log",
+      "returncode": 0,
+      "sha256": "b73d0509ee75d540191016093ce127bb606728a6475cc3be3431d34082e504bb"
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/flow",
+        "NUM_CORES=12",
+        "do-floorplan"
+      ],
+      "log": "do-floorplan.log",
+      "returncode": 0,
+      "sha256": "68c2f579fd4b66abb93c4858b57b9625136299beeeab1826b1d3cd0192295e64"
+    },
+    {
+      "argv": [
+        "env",
+        "COMPACT_ODB=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/flow/results/nangate45/local_s_base/base/2_floorplan.odb",
+        "COMPACT_OUT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/2_floorplan-inventory",
+        "openroad",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08/source/project/experiments/compact_local_s/inventory.tcl"
+      ],
+      "log": "2_floorplan-inventory.log",
+      "returncode": 0,
+      "sha256": "0b1c50d3109caea8fad057dc89e413bd211df9e5daaff0f5a7a8012fb13f1968"
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/flow",
+        "NUM_CORES=12",
+        "do-place"
+      ],
+      "log": "do-place.log",
+      "returncode": 0,
+      "sha256": "476a41b28883d6d195655ec151597ab2de4ad2151ec05bee08bb043249177084"
+    },
+    {
+      "argv": [
+        "env",
+        "COMPACT_ODB=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/flow/results/nangate45/local_s_base/base/3_place.odb",
+        "COMPACT_OUT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/3_place-inventory",
+        "openroad",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08/source/project/experiments/compact_local_s/inventory.tcl"
+      ],
+      "log": "3_place-inventory.log",
+      "returncode": 0,
+      "sha256": "0b1c50d3109caea8fad057dc89e413bd211df9e5daaff0f5a7a8012fb13f1968"
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/flow",
+        "NUM_CORES=12",
+        "do-cts"
+      ],
+      "log": "do-cts.log",
+      "returncode": 0,
+      "sha256": "2401833cf3967add83c689431ecfc051b8450d2679a7009ae83535ec5c1522f5"
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/flow",
+        "NUM_CORES=12",
+        "do-route"
+      ],
+      "log": "do-route.log",
+      "returncode": 0,
+      "sha256": "e0aab65bafb11810993428aa806bf94fd3aaed669cad355e1fe007c43b9ea500"
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/flow",
+        "NUM_CORES=12",
+        "do-finish"
+      ],
+      "log": "do-finish.log",
+      "returncode": 0,
+      "sha256": "d39702115554cc5bcacafe21c923f8a890f721bab54dfd10eaed3c0a02bc4148"
+    },
+    {
+      "argv": [
+        "env",
+        "COMPACT_ODB=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/flow/results/nangate45/local_s_base/base/6_final.odb",
+        "COMPACT_OUT=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/6_final-inventory",
+        "openroad",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08/source/project/experiments/compact_local_s/inventory.tcl"
+      ],
+      "log": "6_final-inventory.log",
+      "returncode": 0,
+      "sha256": "0b1c50d3109caea8fad057dc89e413bd211df9e5daaff0f5a7a8012fb13f1968"
+    },
+    {
+      "argv": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/flow",
+        "NUM_CORES=12",
+        "do-gds"
+      ],
+      "log": "do-gds.log",
+      "returncode": 0,
+      "sha256": "1660a855af94eb95c4d525345888c84a67a91129238ab24c158a2e8fd355ea58"
+    },
+    {
+      "argv": [
+        "klayout",
+        "-b",
+        "-r",
+        "/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc",
+        "-rd",
+        "in_gds=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/flow/results/nangate45/local_s_base/base/6_final.gds",
+        "-rd",
+        "report_file=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-200-compact-local-s/run08-base0/results/0/native-drc.lyrdb"
+      ],
+      "log": "native-drc.log",
+      "returncode": 0,
+      "sha256": "55db5b411ab0cfc3f702ea4d64753cb44fe919e31b73896e82bde1ee1ccfac7b"
+    }
+  ],
+  "qualified": false,
+  "source_sha256": {
+    "project/rtl/s_sram/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+    "project/rtl/s_sram/local_s_base.sv": "084a4c63e4fbe0a5e56c6319e542c5a7c6561e9ec5af0a07ed98ef0bd5aa21f4"
+  },
+  "native_gds_drc_items": 0,
+  "final_sha256": {
+    "6_final.v": "add5e99b97b471d35ef6c1eb3161821968172a96af4feb130fd4ca45217254fc",
+    "6_final.def": "ed81f7dbbaebf001cd3d640569bd6e40b33e001de261946d6acb7b5f613267a1",
+    "6_final.sdc": "e40d8eb6dfe9bbc5027b03cafb81a02233f56f4350eac1199e91f7c6f9a0fefc",
+    "6_final.spef": "7e611b64686e05d0981641daca71f40e9912b94cf3d4fcbbfe79c67b08c5a726",
+    "6_final.gds": "cf461409aaa047ee385a068ad90ff5cacbc88165dfd846f4d0febd696a72af3d",
+    "6_final.odb": "634b808ec827ca17fc5be66a6d109ee4ba181f8ddc288a0fc731156fcf1974af"
+  },
+  "pipeline_completed": true
+}

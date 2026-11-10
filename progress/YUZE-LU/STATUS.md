@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-11（CST）联合模型与S32算术推进
+
+Issue250仍实施中：已精确复现基线9.21564723269，有限队列共享X候选模型9.22603374894，继续原生S供数/有限双tile复用对照，不冻结额外共享池。main M/G/E/S紧凑物理基线14回执与5项预检通过；新组M/scale-RNE六seed两轮Slurm102063/102065通过并回收，102060编译失败及修复保留。仍缺实际模型向量、投影上下文/LC/MC、最终宏与300 MHz、系统与DP验收。按用户要求持续解决-迭代，不以部分PR或测试结束目标。[本轮入口](../../work/YUZE-LU/250/README.md)。
+
 ## 2026-11-10（CST）共享X/S32底座联合实现
 
 [Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) / [PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)：已在隔离分支修订旧S128合同，明确51.2GB/s同条件9.21564723269 token/s性能门、私有S16 KiB不扩容/无LVT、共享池/权重单独面积、main紧凑最终利用率/端点和300 MHz验收。三个准备分支分别做联合性能、物理基线、控制服务；不是新宏已实现。已执行管理检查PASS，业务仿真/新EDA未完成。下一步先复现基线并评估共享X与S内X，再冻结资源推进RTL/物理和控制，最终DP适配。详见[工作索引](../../work/YUZE-LU/250/README.md)；未完成不done、不自合并。登记PR5 pending，缺board/Projects能力，状态unverified/同步pending，审查与管理员待指定。

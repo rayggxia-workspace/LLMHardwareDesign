@@ -1,0 +1,91 @@
+{
+  "schema": "shared-x-control-audit/1",
+  "passed": true,
+  "coverage": "abstract_transaction_protocol_only_not_RTL_numeric_timing_or_physical",
+  "slurm_job_id": "102066",
+  "slurm_cpus_per_task": "10",
+  "slurm_node": "node10",
+  "shard": 1,
+  "shards": 6,
+  "python": "3.11.7",
+  "elapsed_seconds": 0.006791147403419018,
+  "process_CPU_seconds": 0.005951739999999997,
+  "source_sha256": {
+    "audit_protocol.py": "c50b04a1bd3176a0bf634e7a491c48845cd6127017337243f82e0ad570549d5e",
+    "private_a_protocol.py": "a71e925468b6d5f74f09f86629ba043449b7bea98c96245200ec261af6e0bf0a",
+    "run_audit.py": "0e10098eb81048d07d036913e369ccc14b5141692abeb3dc8ee8dc25553f6c2b"
+  },
+  "contract_sha256": "2f9ba9fc7da38b43214d42c8274aeebd4d6b6f72c1b128e621ccd2587464d012",
+  "cases": [
+    {
+      "name": "reject_header_native_abi_id",
+      "passed": true,
+      "actual_rejection": "ABI/topology/capacity/numeric/layout mismatch",
+      "scope": "candidate_header_admission_not_binary_codec"
+    },
+    {
+      "name": "pool_refill_may_overlap_old_M_and_result_ACKs",
+      "passed": true,
+      "expected_rejection": null,
+      "actual_rejection": null,
+      "trace_sha256": "1b2c070c6dea3cecc6c47a05ca2b4b055fc3f176f1d65dc393ef5b649375be5f",
+      "counters_if_admitted": {
+        "fill_commits": 20,
+        "A_words_copied": 64,
+        "S_commits": 2,
+        "events": 115
+      }
+    },
+    {
+      "name": "release_must_wait_held_LOAD_terminal",
+      "passed": true,
+      "expected_rejection": "RELEASE before source-read/FIFO/terminal drain",
+      "actual_rejection": "event 96 RELEASE_DONE: RELEASE before source-read/FIFO/terminal drain",
+      "trace_sha256": "ea2caacf4b8d379648756ad776f47f7a9e80467a9545fb7c0d3d45f03d0619f3",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "no_third_command_slot",
+      "passed": true,
+      "expected_rejection": "prepared command slot exceeded",
+      "actual_rejection": "event 13 LOAD_PREPARE: prepared command slot exceeded",
+      "trace_sha256": "47cd8176ccdbb002ae95de5c268807d05fddab7265c1ddd3d69d81c7383c5204",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "M_done_requires_per_group_RNE",
+      "passed": true,
+      "expected_rejection": "M done before group scale/RNE",
+      "actual_rejection": "event 100 M_DONE: M done before group scale/RNE",
+      "trace_sha256": "3052dc74d57143dd1de75741bf2bfb5bbfa9ce9fe7a57cbadc83f32328f3baf4",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "timeout_cannot_force_reset",
+      "passed": true,
+      "expected_rejection": "reset before complete transport drain",
+      "actual_rejection": "event 5 RESET: reset before complete transport drain",
+      "trace_sha256": "a622231ce48e426bfdec09a5e6e73604e4b81a5d23925f341505832e736fa6eb",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "private_no_third_A_slot",
+      "passed": true,
+      "expected_rejection": "two A slots exhausted",
+      "actual_rejection": "event 2 A_PREPARE: two A slots exhausted",
+      "trace_sha256": "cce8c8704b6590fbb73bb48bd374c596b079ae02212306f5e49fa7842bc75a9b",
+      "counters_if_admitted": null,
+      "scope": "private_S128_A256x2_alternative_protocol"
+    },
+    {
+      "name": "private_cancel_keeps_pending_S_read",
+      "passed": true,
+      "expected_rejection": "reset discards accepted S/M obligation",
+      "actual_rejection": "event 4 RESET: reset discards accepted S/M obligation",
+      "trace_sha256": "1d95ab966f1abde0ecb62bbe83596576dea8cd98390387b80b498cbaca2e2baf",
+      "counters_if_admitted": null,
+      "scope": "private_S128_A256x2_alternative_protocol"
+    }
+  ],
+  "private_candidate_sha256": "4fea9b4351960be3b669cb9e6f668c7e54c1ef6c1b4bca3fc4b973f246381dc4"
+}
