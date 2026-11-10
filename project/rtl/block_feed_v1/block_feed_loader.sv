@@ -3,11 +3,13 @@
 // Two512-bit A entries plus one512-bit B entry; one memory read outstanding.
 // A/B may retire together. Four A containers share a wide read. No serialized
 // B128 path and no unbounded software FIFO.
-module block_feed_loader #(parameter integer ENABLE_REUSE_A = 0) (
+module block_feed_loader #(parameter integer ENABLE_REUSE_A = 0,
+ parameter integer ENABLE_SKIP_A = 0) (
  input wire clk,reset,
  input wire load_valid,output wire load_ready,
  input wire load_bank,input wire [3:0] load_rows,input wire [2:0] load_tiles,
  input wire load_a_wide,load_b_wide,load_reuse_b,
+ input wire load_skip_a,
  input wire [9:0] load_a_base,load_b_base,
  output reg done_valid,input wire done_take,output reg done_error,
  output reg busy,
@@ -20,7 +22,8 @@ module block_feed_loader #(parameter integer ENABLE_REUSE_A = 0) (
  output wire [1:0] b_tile,output wire b_wide,b_half,
  output wire [511:0] b_data
 );
- reg bank,aw,bw,reuse_b;reg [3:0] rows;reg [2:0] tiles;
+ reg bank,aw,bw,reuse_b,skip_a;reg [3:0] rows;reg [2:0] tiles;
+ wire requested_skip_a=ENABLE_SKIP_A!=0 && load_skip_a;
  reg [7:0] abase,bbase;
  reg [1:0] tile;reg phase_a,group_a,half_b,requests_done,pending;
  reg p_is_b,p_half;reg [1:0] p_tile;reg [2:0] p_row;
@@ -57,13 +60,13 @@ module block_feed_loader #(parameter integer ENABLE_REUSE_A = 0) (
  // the M command still checks the retained operand bank and format.
  wire b_only=ENABLE_REUSE_A!=0 && load_rows==0 && !load_reuse_b;
  wire legal=((load_rows>0&&load_rows<=8)||b_only)&&load_tiles>0&&load_tiles<=4&&
-     load_a_base[1:0]==0&&load_b_base[1:0]==0&&
-     (b_only||int'(load_a_base)+int'(load_tiles)*(load_rows>4?8:4)<=1024)&&
+     (requested_skip_a||load_a_base[1:0]==0)&&load_b_base[1:0]==0&&
+     (requested_skip_a||b_only||int'(load_a_base)+int'(load_tiles)*(load_rows>4?8:4)<=1024)&&
      (load_reuse_b||int'(load_b_base)+int'(load_tiles)*(load_b_wide?8:4)<=1024);
  always @(posedge clk)begin
   if(reset)begin
    busy<=0;done_valid<=0;done_error<=0;bank<=0;aw<=0;bw<=0;reuse_b<=0;
-   rows<=0;tiles<=0;abase<=0;bbase<=0;tile<=0;phase_a<=0;group_a<=0;half_b<=0;
+   rows<=0;tiles<=0;abase<=0;bbase<=0;tile<=0;phase_a<=0;group_a<=0;half_b<=0;skip_a<=0;
    requests_done<=0;pending<=0;head<=0;tail<=0;count<=0;a_word<=0;
    p_is_b<=0;p_half<=0;p_tile<=0;p_row<=0;weight_valid<=0;weight_half<=0;weight_tile<=0;
   end else begin
@@ -73,10 +76,10 @@ module block_feed_loader #(parameter integer ENABLE_REUSE_A = 0) (
     if(!legal)done_valid<=1;
     else begin
      busy<=1;bank<=load_bank;rows<=load_rows;tiles<=load_tiles;
-     aw<=load_a_wide;bw<=load_b_wide;reuse_b<=load_reuse_b;
+     aw<=load_a_wide;bw<=load_b_wide;reuse_b<=load_reuse_b;skip_a<=requested_skip_a;
      abase<=load_a_base[9:2];bbase<=load_b_base[9:2];
-     tile<=0;phase_a<=load_reuse_b;group_a<=0;half_b<=0;
-     requests_done<=0;pending<=0;head<=0;tail<=0;count<=0;a_word<=0;weight_valid<=0;
+     tile<=0;phase_a<=load_reuse_b&&!requested_skip_a;group_a<=0;half_b<=0;
+     requests_done<=requested_skip_a&&load_reuse_b;pending<=0;head<=0;tail<=0;count<=0;a_word<=0;weight_valid<=0;
     end
    end
    if(received)pending<=0;
@@ -86,7 +89,7 @@ module block_feed_loader #(parameter integer ENABLE_REUSE_A = 0) (
      if(bw&&!half_b)half_b<=1;
      else begin
       half_b<=0;
-      if(rows==0)begin
+      if(rows==0||skip_a)begin
        if({1'b0,tile}+1==tiles)requests_done<=1;
        else tile<=tile+1'b1;
       end else phase_a<=1;
