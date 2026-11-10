@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+## 2026-11-10（Asia/Shanghai）Issue248 全部追加实验与未决项归档
+
+[PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)：已将9.24 W8A16起点之后的[完整设计/实验台账D01–D24](../../docs/experiments/issue-248-followup-design-ledger.md)、[所有配置](../../docs/experiments/issue-248-followup-all-cases.md)及[11包584成员](../../work/YUZE-LU/248/followup/README.md)归档；旧41个run不改写。追加覆盖28个FFN对照、六组窄状态质量、24种计时、六种G表、20组配置/41次完整trace；53个服务器根的覆盖索引、失败与取消材料齐备。
+
+仅带宽51.2GB/s、新设计不用S128/尽量避免持续S64为确定方向。S32/Mid32筛查通过，+1拍RNE条件模型9.215647；G表/FIFO/银行/X驻留/上下文数/S组织/重算/仲裁仍待独立决策。原S128研究RTL保留作历史参考，不代表新profile通过。下一步先按台账选择需补的消融并修订PR251旧合同，再实现/联合验证窄RNE、G、真实S/地址窗、请求/重排/ACK与局控。10token/s、能耗、物理和公平FPGA对照未完成。此次无新ML/EDA执行或生产RTL修改；待独立审查，Issue in_review、不done。登记PR5 pending；无board配置/Issue Project条目，看板unverified/同步pending，管理员和审查人待指定。
+
 ## 2026-11-10（Asia/Shanghai）公开GPTQ与有限FFN联合研究
 
 [Issue248/PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)新增[联合报告](../../docs/experiments/issue-248-integrated-closure.md)：公开Instruct GPTQ工件、W8A16/group128、head W8/group16、G32和S128有限部分和。部分语料对原公开参考PPL+0.0602%、top1一致99.51%，context512的16步全部一致；A8仍拒绝。最终条件SystemC：102.4GB/s为10.10283、51.2GB/s为9.24067、context2048为6.41255token/s。同资源流式调度仅+3.876%，不冒称20%DP收益。22包1537成员、独立M/G/scale/控制/context/RNE/B-bank RTL与旧回执核验通过。

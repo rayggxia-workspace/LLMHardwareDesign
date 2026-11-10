@@ -1,5 +1,11 @@
 # 当前状态
 
+## Issue248 后续全实验与未决方案（2026-11-10 Asia/Shanghai）
+
+[PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)补齐[完整台账D01–D24](experiments/issue-248-followup-design-ledger.md)及[全部配置](experiments/issue-248-followup-all-cases.md)：旧41个run继续保留，新11包584成员、四FFN的28组对照、6组窄状态质量、24组RNE/Mid计时、6种G表和20组方案的41次完整decode trace均有索引；失败/取消及未测组合保留。核对服务器53个相关根目录，不只归档最佳结果。
+
+用户确定总51.2GB/s、新设计不用S128并尽量避免持续S64。S32/Q16持续状态和Mid通过本轮含浮点路径的质量筛查，每组多1拍RNE的条件SystemC为9.215647token/s；257项G表通过但仍是建议。FIFO/四银行、X位置、上下文数量、端口/仲裁、SRAM组织、Mid重算等均未决，不能自动捆绑为已定实现。新流式未胜四银行，10目标未达；新RTL/物理/能耗/FPGA对照未完成。原PR251宽格式合同待同步，不直接作为新profile执行依据；本次只更新PR249。Issue248保持in_review，未合并/不done；登记/看板缺项和历史合并冲突继续记录。
+
 ## 公开GPTQ与有限FFN联合研究（2026-11-10 Asia/Shanghai）
 
 [Issue248/PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)新增[联合报告](experiments/issue-248-integrated-closure.md)：公开Instruct GPTQ工件、W8A16/group128、head W8/group16、G32和S128有限部分和。部分语料对原公开参考PPL+0.0602%、top1一致99.51%，context512的16步全部一致；A8仍拒绝。最终条件SystemC：102.4GB/s为10.10283、51.2GB/s为9.24067、context2048为6.41255token/s。同资源流式调度仅+3.876%，不冒称20%DP收益。22包1537成员、独立M/G/scale/控制/context/RNE/B-bank RTL与旧回执核验通过。

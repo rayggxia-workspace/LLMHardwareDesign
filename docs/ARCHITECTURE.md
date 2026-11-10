@@ -377,3 +377,13 @@ python -B project/experiments/stream_quant_synthesis/deploy.py 13 --out <新的�
 离线标准库：`python -B project/experiments/stream_quant_synthesis/closure_report.py --root work/YUZE-LU/248/closure`，22个不可变包1537成员。源提交后用全新tag分别`deploy.py <tag> --out <本地回执目录> --closure` / `--closure-backend`；backend job.sh的stage必须对应所选历史commit，不能覆盖旧root或修改旧SHA。最终质量run38/102029、计时run40/102031、RTL run41/102032。独立RTL的M/G向量绑定run22，并与run38的SHA复核一致；没有完整head/Attention联合RTL或物理资格。
 
 后续硬件合同由[Issue250/草稿PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)独立交付，生产主线不在本轮替换。
+
+## Issue248 全部追加实验与未决设计的离线核验
+
+正式入口见[台账D01–D24](experiments/issue-248-followup-design-ledger.md)、[全部配置](experiments/issue-248-followup-all-cases.md)、[证据索引](../work/YUZE-LU/248/followup/README.md)。11个追加不可变包/584成员、28个FFN对照、6组窄化质量、24组时间、6种G表、20组配置/41次trace均保留；目录metadata清单还对应原41个run及公开工件根。不是新生产RTL实现或EDA/模型重跑。
+
+```sh
+python -B project/experiments/stream_quant_synthesis/followup_report.py --root work/YUZE-LU/248/followup
+```
+
+该命令以Python标准库读取base64压缩包、核对全部成员和原source/collection SHA、Slurm成功/失败/取消状态、质量准入、FIFO有限性及同工作量，并核对已生成摘要/配置附表。`--write-summary`仅重建派生摘要和附表。实际重跑按包内真正执行源在全新Slurm根进行，用户策略6×10或8×12，不能直接运行已有输出目录中的driver或回填旧执行commit。新G表/FIFO/X/S窗口/仲裁与联合RTL、物理、能耗、FPGA比较仍待独立验证。

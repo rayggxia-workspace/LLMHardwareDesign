@@ -1,5 +1,11 @@
 # Issue248 联合研究交接
 
+## 最新恢复入口：全实验与未决方案（2026-11-10 Asia/Shanghai）
+
+先读[主台账D01–D24](../experiments/issue-248-followup-design-ledger.md)、[完整配置](../experiments/issue-248-followup-all-cases.md)和[followup证据](../../work/YUZE-LU/248/followup/README.md)。旧41个run仍在原处；新11包584成员涵盖窄化、小表、四银行/流式/FIFO、X位置/读口、负例、取消及所有未测组合说明。服务器53根覆盖清单在followup/inventory.json。以下旧交接中的S128/S64与102.4GB/s是历史基线，不是当前选定设计。
+
+当前用户只确定51.2GB/s、新设计不用S128并尽量避免持续S64；S32持续状态和Mid已通过本轮部分语料筛查。G表项数/实现、权重供数/FIFO/信用窗/仲裁、X位置、上下文数、额外SRAM、Mid保存/重算等仍未决，不得默认捆绑选定。所有新RTL、实际S地址/端口和M lane排列、联合控制/MC、物理与能耗/FPGA对照仍待做。PR251旧合同须先按新profile修订；本请求仅更新PR249，不修改该PR。恢复时先核对在线head和台账，按需运行followup_report.py只读核验；重跑必须新root且6×10或8×12。发布commit不是历史未提交脚本的执行commit，准确字节看原source.sha256。
+
 入口：[报告](../experiments/issue-248-integrated-closure.md)、[PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)、[硬件合同草稿PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)。负责人YUZE-LU；审查人与后续实现安排待指定。Issue248/250为in_review，不done；PR249父分支已前进并有合并冲突，不能把当前研究上传视为可直接合并主线。
 
 ## 已完成与准确口径

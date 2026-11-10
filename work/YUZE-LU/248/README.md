@@ -1,5 +1,11 @@
 # Issue248 执行与证据索引
 
+## W8A16起点之后全部追加实验与未决项
+
+[主台账D01–D24](../../../docs/experiments/issue-248-followup-design-ledger.md) · [完整配置附表](../../../docs/experiments/issue-248-followup-all-cases.md) · [followup证据与核验](followup/README.md)。旧41个run不改写；新增11包584成员、28个FFN对照、六组窄化质量、24组时间、六种G表、20组配置/41次完整trace；53个服务器根逐一有入口。失败/取消/未决方案保留，不只记录带宽和精度选择。
+
+当前确定51.2GB/s、新设计不用S128并尽量避免持续S64；其余G表、权重缓冲/X/上下文/端口/仲裁/SRAM/重算未定。新S32/小表/流式联合RTL和物理资格尚无，不把原宽格式独立RTL转移为新能力。`python -B project/experiments/stream_quant_synthesis/followup_report.py --root work/YUZE-LU/248/followup`只读验证所有新增包和结果。
+
 追加[精度与有限FFN探索](../../../docs/experiments/issue-248-precision-ffn-exploration.md)：`precision/`独立保存run17/102007、run18/102008、run19/102009，共3包138成员。整行A8失败而分组A8小样本改善；G接入存在真实范围/饱和问题。4实际FFN×2路径的有限down部分和数值一致；最终G4138包、四阶段转换4112帧逐位通过。未修改生产RTL，未准入新整图计时/能耗。核验：`python -B project/experiments/stream_quant_synthesis/precision_report.py --root work/YUZE-LU/248/precision`。
 
 [Issue248](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/248) · [PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)，负责人/执行身份 YUZE-LU。

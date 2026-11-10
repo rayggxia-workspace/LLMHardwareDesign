@@ -1,5 +1,7 @@
 # Issue248：公开 W8 权重、宽范围 G 与有限 FFN 的联合研究
 
+> **后续更新（2026-11-10）**：本页记录的是原S128/S64、大表、四银行候选的历史证据，以下数字不改写。9.24起点之后所有讨论、实验和未决项已集中到[完整台账D01–D24](issue-248-followup-design-ledger.md)及[全部配置](issue-248-followup-all-cases.md)。用户现确定总51.2GB/s、新设计不用S128并尽量避免持续S64；S32/Mid32筛查通过。G表、FIFO/银行、X位置、上下文和仲裁等仍未定案，不能把本页旧合同当成已确认的新生产设计。
+
 关联 [Issue248](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/248) / [PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)。实验源码位于 `project/experiments/stream_quant_synthesis/`，不可变回执位于 `work/YUZE-LU/248/closure/`。生产 `project/rtl/`、其他成员的工作树和作业未修改。
 
 **这是下一版底座候选的研究，不是当前 main 的整机验收。** 条件 SystemC、浮点 Attention 的模型质量筛查、四个 FFN 的精确整数参考和若干独立 RTL 服务分别记录。完整整数模型、联合 P/局控/DMA、300MHz 物理资格和能耗仍未完成。
