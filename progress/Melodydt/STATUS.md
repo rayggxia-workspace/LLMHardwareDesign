@@ -4,7 +4,7 @@ Issue247 / PR243，负责人Melodydt。生产RTL未改，实际条件模型源�
 
 原prefill2/W8条件最高4.429583 token/s，未达5；双组交错32→64B增益shared0.1450%/ideal0.6972%，64→128无整图增益；ideal服务已达到原M计算工作量，不能把旧5.0507外推当实测。报告[扩宽评估](../../docs/experiments/issue-247-prefill-width-evaluation.md)，[证据索引](../../work/Melodydt/247/shared-width/evidence-index.json)。
 
-当前in_review，PR未合并/not done；没有活动作业或自动监测。下一步独立审查并依据结果决定后续M服务/输入ACK/非Dot优化，32B入口生产RTL仍待实施。登记PR5 pending，Projects无工具/board配置，看板unverified/同步pending；当前GitHub CI资格另查。
+当前in_review，PR未合并/not done；没有活动作业或自动监测。下一步独立审查并依据结果决定后续M服务/输入ACK/非Dot优化，32B入口生产RTL仍待实施。登记PR5 pending，Projects无工具/board配置，看板unverified/同步pending；a2e8dd0上的GitHub结构CI仍failure且validate无steps/runner，原因待管理员核实；本地管理检查通过。
 
 ---
 

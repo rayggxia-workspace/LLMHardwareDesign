@@ -35,3 +35,6 @@ cat /public/home/yuzelu/Melodydt/issue247-area-speed/run33/results/result.json
 本地独立Git worktree在work/Melodydt/247/shared32-rtl/width-{runner,model,tests,audit}，正式完整副本为work/Melodydt/242/r-load-bounds/repo（非Git）；独立source-subset基线160a3de不作为上游commit。新正式源码位于project/experiments/shared_width_study。原生RTL及旧run原件保留。run33本地payload SHA a88a462d2f4be22f7bc2263665b5f35d8d6656f6c88cf55dd2a8281b9df99fc9，99源/18输入。
 
 下一步负责人Melodydt：先读回作业终态；成功则运行collect_server.py回收并SHA核验，再用analyze.py和独立复核汇总token/s；失败保留原run，修复后另建run目录。不在本机或登录节点运行EDA。当前任务in_progress，未审查/合并，不done。登记PR5 pending；无Projects工具和board配置，看板unverified/同步pending。未配置聊天结束后的自动监控。
+
+
+最新已核验的GitHub结构CI：报告提交a2e8dd0上的run42798032710与42798022115均failure；validate job129768121194 steps为空、runner_name为空，未取得CI通过证据，原因仍待仓库管理员核实。正式快照本地python scripts/check_project.py通过；它不代替CI或业务验证，也未绕过workflow。该限制不改变服务器run33已完成的独立结果。
