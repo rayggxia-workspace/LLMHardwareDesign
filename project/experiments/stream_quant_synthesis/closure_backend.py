@@ -33,6 +33,21 @@ def partial_vectors(path):
     path.write_text('\n'.join(rows)+'\n');return len(rows)
 
 
+def context_vectors(path):
+    rng=random.Random(24816);rows=[];state=[[0]*8 for _ in range(16)]
+    for wave in range(4):
+        for k in range(16):
+            for c in range(16):
+                p=[rng.randrange(-(1<<28),1<<28) for _ in range(8)]
+                m=[rng.randrange(1,2048) for _ in range(8)];s=[rng.randrange(0,45) for _ in range(8)]
+                if k==0:state[c]=[0]*8
+                state[c]=[a+((b*d)<<e) for a,b,d,e in zip(state[c],p,m,s)]
+                rows.append(f'{c} {int(k==0)} {int(k==15)} {wave+1} {pack(p,40)} {pack(m,11)} {pack(s,7)} {pack(state[c],128)} 0')
+    # Continuing an inactive context must fault rather than invent prior data.
+    rows.append(f'0 0 1 99 {pack([1]*8,40)} {pack([1]*8,11)} {pack([0]*8,7)} 0 1')
+    path.write_text('\n'.join(rows)+'\n');return len(rows)
+
+
 def main(root,stage):
     assert os.environ.get('SLURM_JOB_ID')
     out=root/'results';out.mkdir(exist_ok=False)
@@ -74,6 +89,11 @@ def main(root,stage):
                      HERE/'closure_partial128.sv',HERE/'closure_psum_controller.sv',HERE/'tb_closure_controller.sv'],out/'controller-build.log',out,env)
             text=execute([obj/'Vtb_closure_controller'],out/'controller.log',out,env)
             assert f'checks={count}' in text;report['controller']=dict(checks=count,log=text);save()
+            count=context_vectors(out/'context-vectors.txt');obj=out/'obj-context'
+            execute([VERILATOR,'--binary','--timing','--assert','--top-module','tb_closure_context','-Wall','-j','4','--Mdir',obj,
+                     HERE/'closure_partial128.sv',HERE/'closure_context16.sv',HERE/'tb_closure_context.sv'],out/'context-build.log',out,env)
+            text=execute([obj/'Vtb_closure_context'],out/'context.log',out,env)
+            assert f'checks={count}' in text;report['context']=dict(checks=count,log=text);save()
         if stage=='rtl':
             report['passed']=True;return
         model=extend(bank_extend(generate(restore(root/'restored'),root/'restored/candidate')))
