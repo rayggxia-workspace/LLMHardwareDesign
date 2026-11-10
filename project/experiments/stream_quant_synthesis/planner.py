@@ -108,7 +108,7 @@ def emit(plan,path):
     Path(path).write_text(''.join(f"{r['action'][0]} {r['action'][1]} {r['action'][2]}\n" for r in plan['rows']))
 
 
-def bundle(plan,path,pcount=2,abits=0):
+def bundle(plan,path,pcount=2,abits=0,beat_bytes=64):
     """Same binding IDs in executable research IR and endpoint requirements.
 
     These are logical endpoint roles, not invented LEF pins or #180 binary ISA.
@@ -119,18 +119,22 @@ def bundle(plan,path,pcount=2,abits=0):
         programs.append(dict(binding_id='dot-'+str(i),graph_op_index=row['op_index'],
                              opcode='DOT_SERVICE',P_instances=list(range(pcount)),
                              K_tile=row['action'][0],contexts=row['action'][1],cache_action=row['action'][2],
+                             matrix_service='candidate_W8_K16_N8' if abits else 'legacy_S32_W8_K8_N8',
                              completion='final local S write ACK and output DMA ACK',depends_on=[] if not i else ['dot-'+str(i-1)]))
     nets=[]
     for p in range(pcount):
-        for driver,sink,width in [(f'DMA.P{p}.rx',f'P{p}.Bbuffer.fill',512),
-                                  (f'P{p}.Bbuffer.out',f'P{p}.M.B',1024),
+        for driver,sink,width in [(f'DMA.P{p}.rx',f'P{p}.Bfill_adapter.in',8*beat_bytes),
+                                  (f'P{p}.Bfill_adapter.out',f'P{p}.Bbuffer.fill',512),
+                                  (f'P{p}.Bbuffer.out',f'P{p}.M.B',1024 if abits else 512),
                                   (f'P{p}.S.A',f'P{p}.Aadapter.in',128),
-                                  (f'P{p}.Aadapter.out',f'P{p}.M.A',16*(abits or 32))]:
+                                  (f'P{p}.Aadapter.out',f'P{p}.M.A',(16 if abits else 8)*(abits or 32))]:
             nets.append(dict(driver=driver,sink=sink,data_width=width,protocol_signals=['VALID','READY'],
                              physical_pin_binding=None,prewire=False,binding_ids=[r['binding_id'] for r in programs]))
     result=dict(schema_version=1,program_ir=programs,connections=nets,
                 private_S_bytes_per_P=16384,control_group_is_hard_box=False,
-                deployment_qualified=False,binary_ISA_lowered=False,
+                deployment_qualified=False,binary_ISA_lowered=False,complete_static_net_set=False,
+                connections_scope='operand-path research requirements only; result, clock, control and ACK lowering pending',
+                hardware_note='wide DDR needs a prefabricated beat adapter; role names are not physical pins',
                 missing=['new leaf pin/LEF/Liberty/ODB','native LC/MC binary lowering','whole S/DMA/ACK RTL integration','physical acceptance'])
     Path(path).write_text(json.dumps(result,indent=2)+'\n')
     return result

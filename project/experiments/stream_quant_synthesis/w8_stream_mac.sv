@@ -32,6 +32,7 @@ module w8_stream_mac #(
  wire signed [AW-1:0] total[0:7];
  initial begin
   if(ABITS!=8&&ABITS!=16)$fatal(1,"ABITS must be 8 or 16");
+  if(AW!=(ABITS==8?32:40))$fatal(1,"invalid accumulator contract");
  end
  for(genvar n=0;n<8;n=n+1)begin: cols
   for(genvar k=0;k<8;k=k+1)begin: level1

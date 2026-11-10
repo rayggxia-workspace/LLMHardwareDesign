@@ -31,11 +31,23 @@ def vectors(out, abits):
                 b=[[rng.randrange(-128,128) for _ in range(16)] for _ in range(8)]
                 # include exact signed extrema, not merely small random values
                 if case%2==0:a[0]=-(1<<(abits-1));b[0][0]=-128
+                if k_total==16384:a=[-(1<<(abits-1))]*16;b=[[-128]*16 for _ in range(8)]
                 for j in range(n):acc[j]+=sum(a[t]*b[j][t] for t in range(k))
                 last=start+k==k_total;frames+=int(last)
                 aw=32 if abits==8 else 40
                 assert all(-(1<<(aw-1))<=v<1<<(aw-1) for v in acc)
                 rows.append(f'{ctx} {int(start==0)} {int(last)} {k} {n} {start} '+pack(a,abits)+' '+pack(sum(b,[]),8)+' '+pack(acc,aw))
+    # Eight simultaneously live contexts, alternating K tails and output widths.
+    totals=[17,33,65,127,128,255,257,511];accums=[[0]*8 for _ in totals]
+    for start in range(0,max(totals),16):
+        for ctx,total in enumerate(totals):
+            if start>=total:continue
+            k=min(16,total-start);n=1+ctx;last=start+k==total;frames+=int(last)
+            a=[rng.randrange(-(1<<(abits-1)),1<<(abits-1)) for _ in range(16)]
+            b=[[rng.randrange(-128,128) for _ in range(16)] for _ in range(8)]
+            for j in range(n):accums[ctx][j]+=sum(a[t]*b[j][t] for t in range(k))
+            aw=32 if abits==8 else 40
+            rows.append(f'{ctx} {int(start==0)} {int(last)} {k} {n} {start} '+pack(a,abits)+' '+pack(sum(b,[]),8)+' '+pack(accums[ctx],aw))
     out.write_text('\n'.join(rows)+'\n',encoding='utf8')
     return dict(packets=len(rows),frames=frames,ABITS=abits,accumulator_bits=32 if abits==8 else 40)
 
