@@ -1,5 +1,21 @@
 # Issue247速度迭代接续
 
+## 大容量模型与面积预算补充（2026-11-10 Asia/Shanghai）
+
+Issue247 / PR243，负责人 Melodydt。汇总 PDF 已修订为10页，包含48/64KiB四场景、端口敏感性、负结果和面积预算；404内容单元、16表/85行、2代码块、全部链接/字体及10页逐页视觉核验通过。固定报告源 commit 9d987151ee687322c0ce52d69a0a14f2275bd52b；PDF SHA-256 3e70437bac53997fc7f4471dc00bd261268b34dedd27661188d001239b2ec9d1。本次未修改 RTL、未启动服务器仿真或 EDA，不计第五轮。
+
+历史policy16/理想1R1W模型：A48/A64 prefill2为4.467001/4.547434 token/s，较B16＋ctx8为+20.84%/+23.01%；三个decode场景增幅约1.30%至1.66%。同现有1RW bank复制，2P＋U的bank外框之和B16/A48/A64为1.109545/2.588937/3.328634mm²，A路线增量1.479393/2.219089mm²（+133.33%/+200%）。这是容量复制代理，不是目标1R1W、新布局、整个P/U或系统面积。q端口溢价与f系统占比均未测；新外围/布线/时序和实际面积待后续实现与EDA。
+
+新增两份派生JSON均由独立计算与主代理重算逐字节一致；冻结原结果SHA、工作守恒、配置匹配和面积来源检查通过，独立性能/面积复核无阻断。本地管理结构检查通过。PDF保留旧版本已实施RTL的最新八场景；当前最高16KiB prefill仍3.69669737899，历史大容量/融合不得与R4叠加。
+
+任务仍 in_review、PR243 open/unmerged，审查人待指定。登记management-hub PR5 pending；config/board.json缺失且无Projects工具，看板unverified、同步pending，管理员待指定。GitHub CI的最终head状态见PR本次回执，不宣称已通过。下一步独立审查报告及证据，管理员核实CI、登记和看板；不自动开始第五轮或实装扩容。
+
+[最新报告](../experiments/issue-247-implemented-optimizations-summary.md)；[固定来源](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9d987151ee687322c0ce52d69a0a14f2275bd52b/docs/experiments/issue-247-implemented-optimizations-summary.md)。
+
+本地任务目录：D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/242/r-load-bounds/repo（独立非Git快照）；远端task/242-r-load-bounds / PR243，main未合并。此阶段显式交付清单只含汇总文档、派生数据/脚本、PDF/QA和本人进度。服务器无新增作业；旧run16至23状态沿下方终态记录。本节所属提交为PDF交付版本，报告正文另绑定上述固定commit。用户副本为 D:/Study_material/Study_material/LLMHardwareDesign/output/pdf/issue-247-optimizations-capacity-area-summary.pdf；正式副本沿docs/experiments/pdf既有路径。
+
+恢复第一步：读取当前PR243 head、最新本节及work/Melodydt/247/optimization-summary/pdf-capacity/qa.json，确认新PDF与SHA；再按capacity/README.md复核。未提交外层辅助文件仅为本次构建/传输工具与渲染图，不包含新RTL。处理人Melodydt；正式审查与管理员待指定。
+
 ## 优化总览与全场景性能PDF（2026-11-10 Asia/Shanghai）
 
 Issue247/PR243：已汇总6类生产可选RTL、继承直连与独立实验候选；最新run23八场景和原run15矩阵/容量参考分列。7页PDF已完成244内容单元、9表/52行与全部页面视觉QA，报告固定c60106201c232742c701da6b3861df575208f8e3；PDF SHA 4625c72b6b472a048fdc6f0fc7e29d38309b82b0f05b085654f376c34ec23ef1。主W8 decode512共享3.38396291561/理想3.67621308212，最新16KiB最高prefill3.69669737899；历史大容量/融合不混入最新值。93条完整结果SHA复核与派生重现通过，无新仿真/第五轮。

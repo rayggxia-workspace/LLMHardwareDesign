@@ -20,11 +20,19 @@ python -B -X utf8 work/Melodydt/247/optimization-summary/extract_metrics.py --re
 
 本次实际复核由 bundled Python 在非 Git 快照内读取上述原件，输出在隔离目录 `work/Melodydt/247/summary-research/root-verify`。两次 summary SHA 完全一致：61c031815a9497721e882cb9eeb1a5c0aa06d8a19102bc79e51acff5ce923ff4；notes SHA fb4d60a1eb5a103b7fc5b4610aa97be73783a452f36adfa89754a59f8a4f20cb。
 
+## 大容量条件模型与面积预算
+
+新增[capacity/README.md](capacity/README.md)记录run04/run05/run09的完整结果、8个面积来源SHA及两份可复算脚本。逐字节复核JSON一致：性能5f8e2e6b77ccecb96ab3cf8d456922a05d92ca2f9b2c30ac8b953b9824accdbb；面积6812b9e5f3d49a782a8b6fd3140585881dff7dffef16e963f219a9853e99b8d4。历史完整trace109条包含重复回放，不与前述93条相加当独立配置数。A48/A64未实装，面积属于相同1RW宏的容量复制代理。
+
 ## PDF 生成与核验
 
-`export_summary_pdf.py` 从固定 commit 的正式 Markdown 完整生成 PDF，保留表格、链接和全部内容单元，嵌入中文字体；`finalize_summary_pdf.py` 仅在全部渲染页实际查看后记录视觉 QA。Windows 需要 reportlab、pypdf、pdfplumber、Pillow、微软雅黑/宋体及 Poppler；依赖来自 Codex bundled runtime。实际 artifact marker 为 ee740f，仅成功执行一次，期望输出一个 PDF。
+本次10页修订版绑定报告源commit 9d987151ee687322c0ce52d69a0a14f2275bd52b，源SHA e5a6b28d672d089d63b5526d4834114b7908b91ee686a7e6e2ed938942abb80d。PDF SHA-256：3e70437bac53997fc7f4471dc00bd261268b34dedd27661188d001239b2ec9d1。404内容单元、16表/85行、2代码块、全部链接与嵌入中文字体及10页逐页视觉QA通过；完整证据为[pdf-capacity/qa.json](pdf-capacity/qa.json)。artifact edit marker e93afc成功执行一次。PNG本地保留并在QA中索引，不上传大图。
 
-已完成7页PDF、244内容单元、9表/52行、2代码块、全部链接和逐页视觉QA，中文字体全部嵌入。PDF SHA-256：4625c72b6b472a048fdc6f0fc7e29d38309b82b0f05b085654f376c34ec23ef1。固定报告源commit：c60106201c232742c701da6b3861df575208f8e3。完整核验见 `pdf/qa.json`，PNG在本地留存并有SHA索引；正式PDF位于 [docs/experiments/pdf](../../../../docs/experiments/pdf/issue-247-implemented-optimizations-summary.pdf)，用户副本位于项目 output/pdf。
+`export_summary_pdf.py`从固定commit的Markdown导出全文，`finalize_summary_pdf.py`在全部PNG实际查看后记录QA。Windows依赖reportlab、pypdf、pdfplumber、Pillow、微软雅黑/宋体和Poppler，来自Codex bundled runtime。导出参数包含`--artifact-marker e93afc --compact-table-sections 7`，第7节压缩表格留白，字体大小不变；Poppler `-r 120 -png`，最终render回执4ce39b，finalize回执8a3f33。
+
+正式PDF位于[docs/experiments/pdf](../../../../docs/experiments/pdf/issue-247-implemented-optimizations-summary.pdf)。旧用户副本被打开占用，首次覆盖返回PermissionError；因此新用户副本保存为`output/pdf/issue-247-optimizations-capacity-area-summary.pdf`，没有强制关闭查看器。首轮11页排版含短尾页，已调整后重导出为10页并重新检查全部页面。
+
+旧7页版本保留在[原提交9925300](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9925300dc32c18b786bff7a3fe14a2c07ce5746f/docs/experiments/pdf/issue-247-implemented-optimizations-summary.pdf)，旧[pdf/qa.json](pdf/qa.json)仍对应该历史PDF，不能用于校验当前10页文件。旧报告固定c60106201c232742c701da6b3861df575208f8e3、旧PDF SHA4625c72b6b472a048fdc6f0fc7e29d38309b82b0f05b085654f376c34ec23ef1。
 
 ## 限制与接续
 

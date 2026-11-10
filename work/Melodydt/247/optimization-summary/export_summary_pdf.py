@@ -28,6 +28,7 @@ PARSER.add_argument('--qa-dir', type=Path, required=True)
 PARSER.add_argument('--source-url', required=True)
 PARSER.add_argument('--source-commit', required=True)
 PARSER.add_argument('--artifact-marker', default='ee740f')
+PARSER.add_argument('--compact-table-sections', type=int, nargs='*', default=[])
 PARSER.add_argument('--title', default='LLMHardwareDesign | Issue247 优化总览与性能')
 ARGS = PARSER.parse_args()
 SOURCE = ARGS.source.resolve()
@@ -215,10 +216,13 @@ def main():
             for n,row in enumerate(rows):
                 table.append([paragraph(cell,'head' if n==0 else 'cell') for cell in row])
             t=Table(table,colWidths=widths,repeatRows=1,hAlign='LEFT')
+            # Compact data tables preserve readable text size and keep their
+            # interpretation on the same page in dense comparison sections.
+            padding = 3 if stats['h2'] in ARGS.compact_table_sections else 6
             commands=[('BACKGROUND',(0,0),(-1,0),BLUE),('VALIGN',(0,0),(-1,-1),'TOP'),
                 ('GRID',(0,0),(-1,-1),0.35,LINE),('LEFTPADDING',(0,0),(-1,-1),7),
-                ('RIGHTPADDING',(0,0),(-1,-1),7),('TOPPADDING',(0,0),(-1,-1),6),
-                ('BOTTOMPADDING',(0,0),(-1,-1),6)]
+                ('RIGHTPADDING',(0,0),(-1,-1),7),('TOPPADDING',(0,0),(-1,-1),padding),
+                ('BOTTOMPADDING',(0,0),(-1,-1),padding)]
             for n in range(1,len(rows)):
                 if n%2==0:commands.append(('BACKGROUND',(0,n),(-1,n),colors.HexColor('#F5F8FA')))
             t.setStyle(TableStyle(commands));story.extend([t,Spacer(1,11)])
