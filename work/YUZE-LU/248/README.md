@@ -1,5 +1,7 @@
 # Issue248 执行与证据索引
 
+追加[精度与有限FFN探索](../../../docs/experiments/issue-248-precision-ffn-exploration.md)：`precision/`独立保存run17/102007、run18/102008、run19/102009，共3包138成员。整行A8失败而分组A8小样本改善；G接入存在真实范围/饱和问题。4实际FFN×2路径的有限down部分和数值一致；最终G4138包、四阶段转换4112帧逐位通过。未修改生产RTL，未准入新整图计时/能耗。核验：`python -B project/experiments/stream_quant_synthesis/precision_report.py --root work/YUZE-LU/248/precision`。
+
 [Issue248](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/248) · [PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)，负责人/执行身份 YUZE-LU。
 
 正式实现：`project/experiments/stream_quant_synthesis/`；[研究报告](../../../docs/experiments/issue-248-stream-quant-synthesis.md)。冻结父 PR243@9d987151ee687322c0ce52d69a0a14f2275bd52b；只读复用其 run23 冻结输入与原生成链，不修改 Melodydt 的目录/分支/作业。

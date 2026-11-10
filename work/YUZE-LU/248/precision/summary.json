@@ -1,0 +1,604 @@
+{
+  "passed": true,
+  "packages": 3,
+  "verified_members": 138,
+  "source_commit": "2ee93902256f970d315033ff6f80aa8b6399ba7d",
+  "Slurm_job": "102009",
+  "quality_scope": "diagnostic screen, not full integer LLM or accuracy benchmark",
+  "texts": 8,
+  "loss_tokens": 92,
+  "selected_positions": 29,
+  "FP32_short_text_PPL": 37.97876473308446,
+  "W8_short_text_PPL": 39.217205819470486,
+  "profiles": [
+    {
+      "name": "A8_static",
+      "short_text_PPL_diagnostic": 98.16378835072564,
+      "min_logit_cosine_vs_W8": 0.5927854647614075,
+      "top1_matches_vs_W8": 17,
+      "selected_positions": 29,
+      "hardware_profile_available": "independent MAC only; full graph unqualified",
+      "G_observed_counts": {}
+    },
+    {
+      "name": "A8_dynamic_fullK",
+      "short_text_PPL_diagnostic": 78.48763196471347,
+      "min_logit_cosine_vs_W8": 0.03421924115280769,
+      "top1_matches_vs_W8": 28,
+      "selected_positions": 29,
+      "hardware_profile_available": "independent MAC only; full graph unqualified",
+      "G_observed_counts": {}
+    },
+    {
+      "name": "A8_dynamic_group32",
+      "short_text_PPL_diagnostic": 39.09380775932366,
+      "min_logit_cosine_vs_W8": 0.9990739114261216,
+      "top1_matches_vs_W8": 29,
+      "selected_positions": 29,
+      "hardware_profile_available": false,
+      "G_observed_counts": {}
+    },
+    {
+      "name": "A16_dynamic_fullK",
+      "short_text_PPL_diagnostic": 39.418127809904526,
+      "min_logit_cosine_vs_W8": 0.9997051981139766,
+      "top1_matches_vs_W8": 29,
+      "selected_positions": 29,
+      "hardware_profile_available": "independent MAC only; full graph unqualified",
+      "G_observed_counts": {}
+    },
+    {
+      "name": "A8_down_A16",
+      "short_text_PPL_diagnostic": 89.49322576916376,
+      "min_logit_cosine_vs_W8": 0.37013606573642593,
+      "top1_matches_vs_W8": 27,
+      "selected_positions": 29,
+      "hardware_profile_available": "independent MAC only; full graph unqualified",
+      "G_observed_counts": {}
+    },
+    {
+      "name": "A8_down_group32",
+      "short_text_PPL_diagnostic": 85.97039760170709,
+      "min_logit_cosine_vs_W8": 0.3238554919453144,
+      "top1_matches_vs_W8": 26,
+      "selected_positions": 29,
+      "hardware_profile_available": false,
+      "G_observed_counts": {}
+    },
+    {
+      "name": "G_native_ungated_wide_mul",
+      "short_text_PPL_diagnostic": 36.26817222293325,
+      "min_logit_cosine_vs_W8": 0.9370679592867168,
+      "top1_matches_vs_W8": 27,
+      "selected_positions": 29,
+      "hardware_profile_available": false,
+      "G_observed_counts": {
+        "values": 39628800,
+        "input_gate_clipped": 26,
+        "input_up_clipped": 0,
+        "output_clipped": 0
+      }
+    },
+    {
+      "name": "G_native_gated",
+      "short_text_PPL_diagnostic": 36.334535852112126,
+      "min_logit_cosine_vs_W8": 0.8131439239715297,
+      "top1_matches_vs_W8": 23,
+      "selected_positions": 29,
+      "hardware_profile_available": false,
+      "G_observed_counts": {
+        "values": 39628800,
+        "input_gate_clipped": 10,
+        "input_up_clipped": 73044,
+        "output_clipped": 778
+      }
+    },
+    {
+      "name": "G_ungated_wide_mul_gate_bypass",
+      "short_text_PPL_diagnostic": 37.51371618827931,
+      "min_logit_cosine_vs_W8": 0.9921738403082673,
+      "top1_matches_vs_W8": 28,
+      "selected_positions": 29,
+      "hardware_profile_available": false,
+      "G_observed_counts": {
+        "values": 39628800,
+        "input_gate_clipped": 28,
+        "input_up_clipped": 0,
+        "output_clipped": 0
+      }
+    }
+  ],
+  "FFN": [
+    {
+      "tag": "layer0-text0",
+      "gate_saturations": 0,
+      "up_saturations": 0,
+      "product_saturations": 0,
+      "rows": [
+        {
+          "profile": "native_gated",
+          "output_relative_L2": 0.0021940496148372063,
+          "output_cosine": 0.9999975931333377,
+          "Mid_convert": {
+            "saturated": 0,
+            "max_coefficient_relative_error": 1.4290649700943924e-05
+          },
+          "down_accum_max_abs": 13474698,
+          "K128_tiling_bit_exact": true,
+          "bounded_partial_schedule": {
+            "bit_exact": true,
+            "max_active_outputs_per_P": 64,
+            "Mid_buffer_values": 128,
+            "psum_read_bytes": 870400,
+            "psum_write_bytes": 870400,
+            "partial_bits": 40,
+            "requires_new_context_save_reload_service": true,
+            "cycle_timing_qualified": false
+          },
+          "hardware_qualified": false,
+          "scale_discovery": "host float64; integer payload thereafter"
+        },
+        {
+          "profile": "ungated_G_wide_product",
+          "output_relative_L2": 0.0009893976451439892,
+          "output_cosine": 0.9999995122341274,
+          "Mid_convert": {
+            "saturated": 0,
+            "max_coefficient_relative_error": 2.8314160057953426e-05
+          },
+          "down_accum_max_abs": 13472618,
+          "K128_tiling_bit_exact": true,
+          "bounded_partial_schedule": {
+            "bit_exact": true,
+            "max_active_outputs_per_P": 64,
+            "Mid_buffer_values": 128,
+            "psum_read_bytes": 870400,
+            "psum_write_bytes": 870400,
+            "partial_bits": 40,
+            "requires_new_context_save_reload_service": true,
+            "cycle_timing_qualified": false
+          },
+          "hardware_qualified": false,
+          "scale_discovery": "host float64; integer payload thereafter"
+        }
+      ],
+      "RTL_conversion_coverage": {
+        "gate_to_G": {
+          "values": 1024,
+          "saturated": 0
+        },
+        "up_to_G": {
+          "values": 1024,
+          "saturated": 0
+        },
+        "native_gated_Mid_to_down": {
+          "values": 1024,
+          "saturated": 0
+        },
+        "ungated_G_wide_product_Mid_to_down": {
+          "values": 1024,
+          "saturated": 0
+        }
+      }
+    },
+    {
+      "tag": "layer2-text0",
+      "gate_saturations": 1,
+      "up_saturations": 17,
+      "product_saturations": 2,
+      "rows": [
+        {
+          "profile": "native_gated",
+          "output_relative_L2": 0.9693338537924931,
+          "output_cosine": 0.9734135365206263,
+          "Mid_convert": {
+            "saturated": 0,
+            "max_coefficient_relative_error": 0.0
+          },
+          "down_accum_max_abs": 15830083,
+          "K128_tiling_bit_exact": true,
+          "bounded_partial_schedule": {
+            "bit_exact": true,
+            "max_active_outputs_per_P": 64,
+            "Mid_buffer_values": 128,
+            "psum_read_bytes": 870400,
+            "psum_write_bytes": 870400,
+            "partial_bits": 40,
+            "requires_new_context_save_reload_service": true,
+            "cycle_timing_qualified": false
+          },
+          "hardware_qualified": false,
+          "scale_discovery": "host float64; integer payload thereafter"
+        },
+        {
+          "profile": "ungated_G_wide_product",
+          "output_relative_L2": 0.3458588898482741,
+          "output_cosine": 0.999963647034932,
+          "Mid_convert": {
+            "saturated": 0,
+            "max_coefficient_relative_error": 2.873883170012159e-05
+          },
+          "down_accum_max_abs": 4125128,
+          "K128_tiling_bit_exact": true,
+          "bounded_partial_schedule": {
+            "bit_exact": true,
+            "max_active_outputs_per_P": 64,
+            "Mid_buffer_values": 128,
+            "psum_read_bytes": 870400,
+            "psum_write_bytes": 870400,
+            "partial_bits": 40,
+            "requires_new_context_save_reload_service": true,
+            "cycle_timing_qualified": false
+          },
+          "hardware_qualified": false,
+          "scale_discovery": "host float64; integer payload thereafter"
+        }
+      ],
+      "RTL_conversion_coverage": {
+        "gate_to_G": {
+          "values": 1026,
+          "saturated": 1
+        },
+        "up_to_G": {
+          "values": 1041,
+          "saturated": 17
+        },
+        "native_gated_Mid_to_down": {
+          "values": 1025,
+          "saturated": 0
+        },
+        "ungated_G_wide_product_Mid_to_down": {
+          "values": 1025,
+          "saturated": 0
+        }
+      }
+    },
+    {
+      "tag": "layer17-text3",
+      "gate_saturations": 0,
+      "up_saturations": 0,
+      "product_saturations": 0,
+      "rows": [
+        {
+          "profile": "native_gated",
+          "output_relative_L2": 0.002851847979848162,
+          "output_cosine": 0.999995957448508,
+          "Mid_convert": {
+            "saturated": 0,
+            "max_coefficient_relative_error": 1.2398144474574418e-05
+          },
+          "down_accum_max_abs": 17417255,
+          "K128_tiling_bit_exact": true,
+          "bounded_partial_schedule": {
+            "bit_exact": true,
+            "max_active_outputs_per_P": 64,
+            "Mid_buffer_values": 128,
+            "psum_read_bytes": 870400,
+            "psum_write_bytes": 870400,
+            "partial_bits": 40,
+            "requires_new_context_save_reload_service": true,
+            "cycle_timing_qualified": false
+          },
+          "hardware_qualified": false,
+          "scale_discovery": "host float64; integer payload thereafter"
+        },
+        {
+          "profile": "ungated_G_wide_product",
+          "output_relative_L2": 0.0015252278521901087,
+          "output_cosine": 0.9999988512610579,
+          "Mid_convert": {
+            "saturated": 0,
+            "max_coefficient_relative_error": 2.3941437002568918e-05
+          },
+          "down_accum_max_abs": 17409535,
+          "K128_tiling_bit_exact": true,
+          "bounded_partial_schedule": {
+            "bit_exact": true,
+            "max_active_outputs_per_P": 64,
+            "Mid_buffer_values": 128,
+            "psum_read_bytes": 870400,
+            "psum_write_bytes": 870400,
+            "partial_bits": 40,
+            "requires_new_context_save_reload_service": true,
+            "cycle_timing_qualified": false
+          },
+          "hardware_qualified": false,
+          "scale_discovery": "host float64; integer payload thereafter"
+        }
+      ],
+      "RTL_conversion_coverage": {
+        "gate_to_G": {
+          "values": 1025,
+          "saturated": 0
+        },
+        "up_to_G": {
+          "values": 1025,
+          "saturated": 0
+        },
+        "native_gated_Mid_to_down": {
+          "values": 1025,
+          "saturated": 0
+        },
+        "ungated_G_wide_product_Mid_to_down": {
+          "values": 1025,
+          "saturated": 0
+        }
+      }
+    },
+    {
+      "tag": "layer35-text5",
+      "gate_saturations": 0,
+      "up_saturations": 1,
+      "product_saturations": 3,
+      "rows": [
+        {
+          "profile": "native_gated",
+          "output_relative_L2": 0.13342180548803084,
+          "output_cosine": 0.9928026247121675,
+          "Mid_convert": {
+            "saturated": 0,
+            "max_coefficient_relative_error": 0.0
+          },
+          "down_accum_max_abs": 24579921,
+          "K128_tiling_bit_exact": true,
+          "bounded_partial_schedule": {
+            "bit_exact": true,
+            "max_active_outputs_per_P": 64,
+            "Mid_buffer_values": 128,
+            "psum_read_bytes": 870400,
+            "psum_write_bytes": 870400,
+            "partial_bits": 40,
+            "requires_new_context_save_reload_service": true,
+            "cycle_timing_qualified": false
+          },
+          "hardware_qualified": false,
+          "scale_discovery": "host float64; integer payload thereafter"
+        },
+        {
+          "profile": "ungated_G_wide_product",
+          "output_relative_L2": 0.0004459701714420884,
+          "output_cosine": 0.9999999016263125,
+          "Mid_convert": {
+            "saturated": 0,
+            "max_coefficient_relative_error": 2.927898129331001e-05
+          },
+          "down_accum_max_abs": 15418302,
+          "K128_tiling_bit_exact": true,
+          "bounded_partial_schedule": {
+            "bit_exact": true,
+            "max_active_outputs_per_P": 64,
+            "Mid_buffer_values": 128,
+            "psum_read_bytes": 870400,
+            "psum_write_bytes": 870400,
+            "partial_bits": 40,
+            "requires_new_context_save_reload_service": true,
+            "cycle_timing_qualified": false
+          },
+          "hardware_qualified": false,
+          "scale_discovery": "host float64; integer payload thereafter"
+        }
+      ],
+      "RTL_conversion_coverage": {
+        "gate_to_G": {
+          "values": 1025,
+          "saturated": 0
+        },
+        "up_to_G": {
+          "values": 1026,
+          "saturated": 1
+        },
+        "native_gated_Mid_to_down": {
+          "values": 1025,
+          "saturated": 0
+        },
+        "ungated_G_wide_product_Mid_to_down": {
+          "values": 1025,
+          "saturated": 0
+        }
+      }
+    }
+  ],
+  "storage": [
+    {
+      "scope": "capacity and payload lower bounds; excludes padding/descriptors/endpoint wires and is not token/s",
+      "H": 2048,
+      "F": 11008,
+      "P": 3,
+      "S_bytes_per_P": 16384,
+      "activation_bytes": 4,
+      "psum_bytes": 12,
+      "outputs_per_P": [
+        688,
+        680,
+        680
+      ],
+      "Ktile": 128,
+      "profiles": [
+        {
+          "name": "materialize_Mid_in_DRAM",
+          "current_context_protocol_sufficient": true,
+          "full_graph_G_and_DMA_qualified": false,
+          "Mid_write_bytes": 44032,
+          "Mid_read_bytes": 1453056,
+          "gate_up_weight_bytes": 45088768,
+          "down_weight_bytes": 22544384,
+          "mid_full_single_S_fits": false,
+          "scratch_peak_per_P": 4608,
+          "context_bytes_per_P": 768,
+          "note": "Private register contexts remain separate active resources; inter-block transport still needs legal endpoints"
+        },
+        {
+          "name": "stream_Mid_once_with_SRAM_partials",
+          "capacity": [
+            {
+              "outputs": 688,
+              "psum_S_bytes": 8256,
+              "S_peak": 12864,
+              "capacity_pass": true
+            },
+            {
+              "outputs": 680,
+              "psum_S_bytes": 8192,
+              "S_peak": 12800,
+              "capacity_pass": true
+            },
+            {
+              "outputs": 680,
+              "psum_S_bytes": 8192,
+              "S_peak": 12800,
+              "capacity_pass": true
+            }
+          ],
+          "Mid_intergroup_payload_bytes": 132096,
+          "local_psum_read_bytes": 2088960,
+          "local_psum_write_bytes": 2088960,
+          "gate_up_weight_bytes": 45088768,
+          "down_weight_bytes": 22544384,
+          "current_context_protocol_sufficient": false,
+          "missing_service": "Partial context save/reload or exact wide external accumulation plus generation/ACK sequencing; not provided by a metal connection"
+        },
+        {
+          "name": "regenerate_Mid_for_each_output_group",
+          "passes": 13,
+          "generator_reserved_contexts": [
+            1,
+            0,
+            0
+          ],
+          "down_contexts": [
+            7,
+            8,
+            8
+          ],
+          "gate_up_weight_bytes": 586153984,
+          "down_weight_bytes": 22544384,
+          "additional_gate_up_weight_bytes": 541065216,
+          "Mid_DRAM_bytes": 0,
+          "qualifier": "Mathematical replay candidate; generator/down LC interleaving and transport not implemented"
+        },
+        {
+          "name": "distributed_Mid_in_private_S",
+          "Mid_S_bytes_per_P": 14720,
+          "S_peak_per_P": 19328,
+          "capacity_pass": false,
+          "current_context_protocol_sufficient": true,
+          "qualifier": "Alternative, not exhausted optimum: each output group reads all Mid shards over legal inter-P links; scratch reservation fixed here, no proven overlap or routed endpoint qualification"
+        }
+      ]
+    },
+    {
+      "scope": "capacity and payload lower bounds; excludes padding/descriptors/endpoint wires and is not token/s",
+      "H": 2048,
+      "F": 11008,
+      "P": 3,
+      "S_bytes_per_P": 16384,
+      "activation_bytes": 2,
+      "psum_bytes": 5,
+      "outputs_per_P": [
+        688,
+        680,
+        680
+      ],
+      "Ktile": 128,
+      "profiles": [
+        {
+          "name": "materialize_Mid_in_DRAM",
+          "current_context_protocol_sufficient": true,
+          "full_graph_G_and_DMA_qualified": false,
+          "Mid_write_bytes": 22016,
+          "Mid_read_bytes": 726528,
+          "gate_up_weight_bytes": 45088768,
+          "down_weight_bytes": 22544384,
+          "mid_full_single_S_fits": false,
+          "scratch_peak_per_P": 4096,
+          "context_bytes_per_P": 320,
+          "note": "Private register contexts remain separate active resources; inter-block transport still needs legal endpoints"
+        },
+        {
+          "name": "stream_Mid_once_with_SRAM_partials",
+          "capacity": [
+            {
+              "outputs": 688,
+              "psum_S_bytes": 3456,
+              "S_peak": 7552,
+              "capacity_pass": true
+            },
+            {
+              "outputs": 680,
+              "psum_S_bytes": 3456,
+              "S_peak": 7552,
+              "capacity_pass": true
+            },
+            {
+              "outputs": 680,
+              "psum_S_bytes": 3456,
+              "S_peak": 7552,
+              "capacity_pass": true
+            }
+          ],
+          "Mid_intergroup_payload_bytes": 66048,
+          "local_psum_read_bytes": 870400,
+          "local_psum_write_bytes": 870400,
+          "gate_up_weight_bytes": 45088768,
+          "down_weight_bytes": 22544384,
+          "current_context_protocol_sufficient": false,
+          "missing_service": "Partial context save/reload or exact wide external accumulation plus generation/ACK sequencing; not provided by a metal connection"
+        },
+        {
+          "name": "regenerate_Mid_for_each_output_group",
+          "passes": 13,
+          "generator_reserved_contexts": [
+            1,
+            0,
+            0
+          ],
+          "down_contexts": [
+            7,
+            8,
+            8
+          ],
+          "gate_up_weight_bytes": 586153984,
+          "down_weight_bytes": 22544384,
+          "additional_gate_up_weight_bytes": 541065216,
+          "Mid_DRAM_bytes": 0,
+          "qualifier": "Mathematical replay candidate; generator/down LC interleaving and transport not implemented"
+        },
+        {
+          "name": "distributed_Mid_in_private_S",
+          "Mid_S_bytes_per_P": 7360,
+          "S_peak_per_P": 11456,
+          "capacity_pass": true,
+          "current_context_protocol_sufficient": true,
+          "qualifier": "Alternative, not exhausted optimum: each output group reads all Mid shards over legal inter-P links; scratch reservation fixed here, no proven overlap or routed endpoint qualification"
+        }
+      ]
+    }
+  ],
+  "RTL": {
+    "passed": true,
+    "source_commit": "2ee93902256f970d315033ff6f80aa8b6399ba7d",
+    "job": "102009",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV\n",
+    "G": {
+      "passed": true,
+      "packets": 4138,
+      "cycles": 7701,
+      "backpressure": true
+    },
+    "requant": {
+      "passed": true,
+      "frames": 4112,
+      "log": "REQUANT_RTL_PASS bits=16 checks=4112\n- /public/home/yuzelu/project-circuit/issue248-stream-quant-20261110-19/source/project/experiments/stream_quant_synthesis/tb_requant4.sv:28: Verilog $finish\n- S i m u l a t i o n   R e p o r t: Verilator 5.042 2025-11-02\n- Verilator: $finish at 226ns; walltime 0.086 s; speed 2.636 us/s\n- Verilator: cpu 0.086 s on 1 threads; alloced 12 MB\n"
+    },
+    "input_sha256": {
+      "precision.json": "4a4b9ae5aba5b1cde81ab0a0989a16713173f20bc5dbc6a483bbdb523ff09f10",
+      "g-real-vectors.txt": "9e64ad6c34360aff53d619dda1cead62e8a8dce9abc464ff5c0c05dceca6c2d0",
+      "requant-vectors.txt": "c298a884dac1bf004572f34fd7239f3ebcd4ea8c5ecbffa583b220c93b5d7490"
+    }
+  },
+  "native_full_model_tokens_s": null,
+  "energy_J_token": null,
+  "full_integer_LLM": false,
+  "production_RTL_modified": false,
+  "SystemC_new_precision_profile_admitted": false
+}

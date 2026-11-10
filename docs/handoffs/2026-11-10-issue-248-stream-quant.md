@@ -1,5 +1,7 @@
 # Issue248 接续247四轮研究交接
 
+最新追加：先读[精度与FFN报告](../experiments/issue-248-precision-ffn-exploration.md)，运行 `precision_report.py --root work/YUZE-LU/248/precision`。源2ee939022、正式run19/102009；3包138成员、9策略与上轮精确回归、G4138包/转换4112帧、四FFN两路径有限down数值通过。用户实际INT8工件待确认，目前为浮点checkpoint自生成W8。整行A8不合格；分组A8需要真实组尺度对齐硬件；G需范围旁路/宽位门乘或经验证回退。下一步执行者待指定：先固定数值合同，再接上下文save/reload、局控/搬运与SystemC完整费用；不能凭容量可行就宣称硬件已支持，不能以新数值筛查修改既有7.171451条件吞吐。生产宏/peer任务不改，新有源底座物理验收另PR。
+
 追加评估入口：[DMA/bank/G报告](../experiments/issue-248-dma-bank-g-evaluation.md)，源014b34818，run16/101997正式16场景；先运行 `python -B project/experiments/stream_quant_synthesis/bottleneck_report.py --root work/YUZE-LU/248/bottleneck`。只读包14/15/16共185成员通过；run14严格编译失败、run15的release2早于适配器/M消费而被拒绝，不能用其更快数字。正式context512 7.171451token/s仍是条件SystemC，非原生整机；prefill2有负收益。生产RTL不改。
 
 下一步先统一K256 tile与K16 packet的真实输入消费、fill/输出ACK和上下文合同；G为固定S16/Q5.10，不能截S32低位套用；3P可分摊down部分和但已有8×8上下文不够，需有限SRAM换入/重放方案及真实端口费用。评估桥的gated为整burst固定配置，待两个FIFO/G排空后才能改变；若要逐包模式，必须把模式元数据入队。完整数值与物理资格仍缺。在线状态以PR最新head及回执为准。

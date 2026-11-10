@@ -1,5 +1,9 @@
 # 当前状态
 
+## 数值与有限FFN追加探索（2026-11-10 Asia/Shanghai）
+
+[Issue248/PR249精度报告](experiments/issue-248-precision-ffn-exploration.md)：3个Slurm包/138成员通过。分组A8小样本改善、G固定范围/门乘饱和被真实FFN证实；四个FFN整数参考、有限down部分和与单元RTL通过，未证明完整模型质量、联合RTL或新token/s。现为自生成W8，用户实际INT8工件待确认。新有源适配与上下文协议需后续底座/物理验收，不改既有生产实现；交付待独立审查。
+
 ## 接续247的独立四轮研究（2026-11-10 Asia/Shanghai）
 
 追加[DMA/bank/G评估](experiments/issue-248-dma-bank-g-evaluation.md)：run16/101997正式16场景通过；3P/16KiB同资源context512条件SystemC 5.953188→7.171451token/s（+20.46%），主要为DMA排队策略，非可布线路径DP。G与16B有限输入交接RTL通过；S32→S16数值、完整FFN部分和调度、联合RTL/物理尚未准入，prefill2有退化，未达10token/s。保留编译失败和过早释放反例，3包185成员SHA核验通过。生产RTL/peer任务不改。PR249待独立审查，登记/看板缺项保留；CI额度未启动见报告。

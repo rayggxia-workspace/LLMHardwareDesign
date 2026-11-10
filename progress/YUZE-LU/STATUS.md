@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+## 2026-11-10（Asia/Shanghai）数值与有限FFN追加探索
+
+Issue248/PR249：[报告](../../docs/experiments/issue-248-precision-ffn-exploration.md)。源2ee939022，run17/18/19与Slurm102007/102008/102009均COMPLETED0:0；3包138成员SHA通过。9策略对照：整行A8存在明显误差，分组32小样本恢复；仅down提高精度不足。G固定Q5.10存在输入/门乘饱和，第2层FFN gated误差96.93%，宽位门乘仍34.59%，另需处理gate范围；旁路候选不算现有宏能力。四个实际FFN整数参考、有限down部分和、G4138包及四阶段转换4112帧通过。用户原生INT8工件未确定，目前自生成W8，尚无完整整数LLM、联合RTL/局控、整图新计时或物理资格。
+
+下一步先固定分组尺度及G接入合同，再做真实有限上下文save/reload与完整费用校准；生产宏/其他成员工作不改。成果待独立审查，Issue交付后in_review、不done；登记PR5 pending，看板unverified/同步pending，CI额度限制按最新回执。
+
 ## 2026-11-10（Asia/Shanghai）DMA/bank/G追加评估
 
 沿用Issue248/PR249，独立研究源014b34818，正式run16/Slurm101997的16场景与原RESULT精确回归通过。[报告](../../docs/experiments/issue-248-dma-bank-g-evaluation.md)：同资源context512条件模型5.953188→7.171451token/s（+20.46%），DMA排队贡献27.98ms、输入消费后释放再省0.55ms；不是DP建链收益。G与两路各2槽16B交接RTL通过，但S32→S16数值转换、完整FFN有限部分和调度、联合RTL和物理缺资格；prefill2退化1.52%，10token/s仍差39.44ms。保留run14严格编译失败和run15过早释放反例，3包185成员核验通过。未改生产RTL/peer任务。

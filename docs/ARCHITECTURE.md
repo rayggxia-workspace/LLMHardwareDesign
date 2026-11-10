@@ -363,3 +363,9 @@ python -B project/experiments/stream_quant_synthesis/deploy.py 13 --out <新的�
 ## Issue248 追加 DMA/bank/G 评估入口
 
 见 [正式评估](experiments/issue-248-dma-bank-g-evaluation.md)。离线 `python -B project/experiments/stream_quant_synthesis/bottleneck_report.py --root work/YUZE-LU/248/bottleneck` 核验3个不可变包185成员、正式16场景并重建摘要。服务器复现用 `deploy.py <新数字tag> --out <本地回执目录> --bottleneck`，只在Slurm4CPU容器运行EDA；输入与工具锁定沿用原研究，不能覆盖历史root。此模型吞吐和独立G交接RTL不代表完整P/DMA/局控、数值或物理验收。
+
+## Issue248 数值与有限FFN探索
+
+见[精度/FFN报告](experiments/issue-248-precision-ffn-exploration.md)。`precision_explore.py` 对自生成W8做9策略短文本筛查；`precision_oracle.py` 提供显式尺度/RNE/饱和和四个实际FFN的整数参考、有限down部分和回放；`precision_rtl.py` 对实际转换/G向量逐位核验。`ffn_storage.py` 比较外存Mid、SRAM部分和、重算和分布式Mid，容量不能替代上下文协议。新路径尚未准入整图SystemC。
+
+离线：`python -B project/experiments/stream_quant_synthesis/precision_report.py --root work/YUZE-LU/248/precision`，3包138成员。Slurm复现：源提交后 `deploy.py <新数字tag> --out <本地回执目录> --precision`，依赖已授权checkpoint/ML环境/容器，只读既有模型，不覆盖root。该checkpoint不是已确认的用户原生INT8工件；无整机token/s、能耗或新物理资格。
