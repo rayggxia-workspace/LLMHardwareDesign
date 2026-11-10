@@ -1,5 +1,9 @@
 # Melodydt 进度
 
+## 顶层共享 S 直供研究（2026-11-10 Asia/Shanghai）
+Issue247 / PR243，Melodydt，in_progress。用户选择共享 S→每 P 独立有限 FIFO→A feeder，比较共享32/48/96KiB；各Block本地16KiB保留。正式实验project/experiments/shared_pool_study，根独占当前非Git快照；子代理只在外层shared-pool-research独立目录开发。关闭新功能须精确复现run23八个R4场景，新增池计入填充/端口/延迟/背压；新性能尚未测量，不实装生产RTL，不属于第五轮迭代。
+已核对Melodydt认证、远端head00a138bae558ccafa23514a7c1a8013dcc61b27f、Issue/PR与服务器本人目录；管理结构检查通过。下一步完成模型、独立审计、源上传后启动新Slurm run24；尚无本研究作业或自动监测。登记pending；缺board.json与Projects能力，看板unverified/同步pending，管理员与正式审查人待指定。[接续](../../docs/handoffs/2026-11-10-issue-247-shared-pool.md)。
+
 ## 大容量模型与面积预算补充（2026-11-10 Asia/Shanghai）
 
 Issue247 / PR243，负责人 Melodydt。汇总 PDF 已修订为10页，包含48/64KiB四场景、端口敏感性、负结果和面积预算；404内容单元、16表/85行、2代码块、全部链接/字体及10页逐页视觉核验通过。固定报告源 commit 9d987151ee687322c0ce52d69a0a14f2275bd52b；PDF SHA-256 3e70437bac53997fc7f4471dc00bd261268b34dedd27661188d001239b2ec9d1。本次未修改 RTL、未启动服务器仿真或 EDA，不计第五轮。

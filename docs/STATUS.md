@@ -1,5 +1,8 @@
 # 当前状态
 
+## 共享 SRAM 池独立性能研究启动（2026-11-10 Asia/Shanghai）
+Issue247/PR243按用户新指令恢复in_progress：比较保留本地16KiB、共享32/48/96KiB经有限FIFO直供A的条件性能。既有四轮RTL迭代已经停止，本次为新共享池研究，生产RTL未扩容。模型尚未执行，无新token/s；沿旧四场景及两个本地端口层固定R4基线。负责人Melodydt，[接续](handoffs/2026-11-10-issue-247-shared-pool.md)。登记pending、看板unverified/同步pending；待独立审查，不done。
+
 ## 停止场景澄清（2026-11-10 Asia/Shanghai）
 
 Issue247/PR243：用户确认任一原评估场景（包括prefill）达5 token/s或完成4轮即停止。已复核72条本轮及21条历史完整场景，本次16KiB最高3.69669737899；原64KiB未实装参考4.54743400007，均未达5，仍按4轮停止。[口径补充](experiments/issue-247-speed-iterations.md)覆盖冻结PDF中的临时decode-only停止假设。本次无新仿真；管理结构检查通过。下一步独立审查，状态in_review、未合并；登记pending、看板unverified/同步pending、CI限制见PR，处理人待指定。
