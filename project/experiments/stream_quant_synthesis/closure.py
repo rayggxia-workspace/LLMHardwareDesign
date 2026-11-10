@@ -27,7 +27,8 @@ def fetch(root):
     out=root/'quality';out.mkdir(exist_ok=False)
     model=root/'official-model';model.mkdir(exist_ok=False)
     report=dict(passed=False,source_commit=(root/'source-commit.txt').read_text().strip(),
-                job=os.environ['SLURM_JOB_ID'],model=MODEL,revision=REVISION,files={})
+                job=os.environ.get('SLURM_JOB_ID'),acquisition_only=True,
+                model=MODEL,revision=REVISION,files={})
     def save():(out/'closure-fetch.json').write_text(json.dumps(report,indent=2)+'\n')
     try:
         for name in FILES:
@@ -47,4 +48,7 @@ def fetch(root):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--root',type=Path,required=True)
-    a=p.parse_args();assert os.environ.get('SLURM_JOB_ID');fetch(a.root)
+    p.add_argument('--fetch-local',action='store_true')
+    a=p.parse_args()
+    if not a.fetch_local:assert os.environ.get('SLURM_JOB_ID')
+    fetch(a.root) # Only network/file I/O, no model execution or EDA.

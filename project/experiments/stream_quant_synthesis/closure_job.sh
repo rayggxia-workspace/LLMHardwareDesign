@@ -12,5 +12,7 @@ sha256sum -c "$root/source-files.sha256" > "$root/source-check.log"
 cd "$root"
 scontrol show job "$SLURM_JOB_ID" > allocation.txt
 export PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
-exec srun --exact -n1 -c4 --cpu-bind=cores python3 -B \
- "$root/source/project/experiments/stream_quant_synthesis/closure.py" --root "$root"
+export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+exec srun --exact -n1 -c4 --cpu-bind=cores \
+ /public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python -B \
+ "$root/source/project/experiments/stream_quant_synthesis/closure_quality.py" --root "$root"
