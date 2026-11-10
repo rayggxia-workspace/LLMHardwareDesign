@@ -1,5 +1,6 @@
 // Evaluation-only two-stream rendezvous. Two 32-bit slots per input (16 B total).
 // No arithmetic or scale conversion is added. Both inputs are native S16/Q5.10.
+// gated is a burst configuration: hold it until input FIFOs and G are drained.
 module bn_g_bridge(
  input wire clk,reset,gated,
  input wire x_valid,output wire x_ready,input wire [31:0] x_data,

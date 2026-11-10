@@ -4,6 +4,8 @@
 
 正式实现：`project/experiments/stream_quant_synthesis/`；[研究报告](../../../docs/experiments/issue-248-stream-quant-synthesis.md)。冻结父 PR243@9d987151ee687322c0ce52d69a0a14f2275bd52b；只读复用其 run23 冻结输入与原生成链，不修改 Melodydt 的目录/分支/作业。
 
+追加[DMA/bank/G评估](../../../docs/experiments/issue-248-dma-bank-g-evaluation.md)：正式run16/101997@014b34818cd1620340b7d2e3ab7f03c76149e698，16场景通过；context512同资源条件SystemC 5.953188→7.171451token/s（+20.46%），主要为DMA排队策略，不是可布线路径DP。context2048改善、prefill2退化，原生G尚缺S32数值转换资格。`bottleneck/`独立保存run14失败、run15过早释放反例、run16正式回执，3包185成员SHA通过，不改以下13份旧证据。核验：`python -B project/experiments/stream_quant_synthesis/bottleneck_report.py --root work/YUZE-LU/248/bottleneck`。没有整图数值RTL、物理或能耗资格。
+
 服务器根目录 `yuzelu@10.129.166.172:/public/home/yuzelu/project-circuit/issue248-stream-quant-20261110-<tag>`，每次新目录。Slurm partition c64/c96，4 CPU，任务 `yl-sq-four-rounds` / `yl-sq-quality`。作业实际节点、用时、CPU、终态在每包的 `collection-sacct.txt` 与 allocation 文件；未操作其他任务。
 
 | run | Slurm | 用途与结果 |

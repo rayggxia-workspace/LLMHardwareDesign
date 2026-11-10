@@ -1,5 +1,9 @@
 # Issue248 接续247四轮研究交接
 
+追加评估入口：[DMA/bank/G报告](../experiments/issue-248-dma-bank-g-evaluation.md)，源014b34818，run16/101997正式16场景；先运行 `python -B project/experiments/stream_quant_synthesis/bottleneck_report.py --root work/YUZE-LU/248/bottleneck`。只读包14/15/16共185成员通过；run14严格编译失败、run15的release2早于适配器/M消费而被拒绝，不能用其更快数字。正式context512 7.171451token/s仍是条件SystemC，非原生整机；prefill2有负收益。生产RTL不改。
+
+下一步先统一K256 tile与K16 packet的真实输入消费、fill/输出ACK和上下文合同；G为固定S16/Q5.10，不能截S32低位套用；3P可分摊down部分和但已有8×8上下文不够，需有限SRAM换入/重放方案及真实端口费用。评估桥的gated为整burst固定配置，待两个FIFO/G排空后才能改变；若要逐包模式，必须把模式元数据入队。完整数值与物理资格仍缺。在线状态以PR最新head及回执为准。
+
 仓库 `rayggxia-workspace/LLMHardwareDesign`，project_id `llm-hardware-design`；[Issue248](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/248)、[PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)。负责人/执行身份 YUZE-LU，审查人待指定；规则 rayggxia-project-collab 1.0.0。分支 `task/248-stream-quant-synthesis`，源 commit 以各不可变 run 回执为准，正式完整矩阵 run12@a76a402589ea4a907084246f2e265a8f55de1385。PR最终文档提交以在线head为准。
 
 本次起点 PR243@9d987151ee687322c0ce52d69a0a14f2275bd52b，叠在 peer 分支 `task/242-r-load-bounds`，不得强推他的分支或改他的运行记录。新代码在 `project/experiments/stream_quant_synthesis/`，报告在 `docs/experiments/issue-248-stream-quant-synthesis.md`，结果/失败/源码快照与每文件 SHA 在 `work/YUZE-LU/248/`。

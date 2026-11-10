@@ -2,6 +2,8 @@
 
 [Issue248](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/248) · [PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)；YUZE-LU，2026-11-10 Asia/Shanghai。研究代码在 `project/experiments/stream_quant_synthesis/`，结果、失败记录与离线核验在 [工作索引](../../work/YUZE-LU/248/README.md)。
 
+本页保留原四轮快照；后续同资源DMA/bank评估到7.171451token/s，最新范围、负例和数值准入见[追加报告](issue-248-dma-bank-g-evaluation.md)，不把旧65case改写为新结果。
+
 研究起点为 Melodydt 的 PR243@`9d987151ee687322c0ce52d69a0a14f2275bd52b`；#247 是 Issue，不是 PR。父分支后续修改不覆盖本次冻结来源。PR249 叠在 `task/242-r-load-bounds` 上，仅提交本轮增量，不合并或改写他的分支。本轮另有四个方向，不延长他原任务“四轮即停止”的范围。
 
 ## 结果口径
@@ -105,3 +107,6 @@ run01 是工具 PATH 失败；run02 严格 lint；run03 是 C++ VlWide 接口；
 下一步优先统一 bank tile/packet 和真实 DMA/局控程序，测完整原生 P 的服务，再回填 SystemC；其次用每算子实测等待修正 DP 估计器，和固定配方同资源比。A8 需要另做数值方案，不能把简单截位当加速。更高带宽下若仍受 S/命令约束，先出有源硬件变更的独立 PR 再取物理资格。与 openTPU/LLAccel 的 FPGA 实测不能直接排名：需统一模型、上下文、精度/质量、总缓存、外存与真实执行范围。
 
 本次为四轮研究交付，待独立审查；没有自行合并，也没有把 Issue 标 done。10 token/s、20% 纯算法收益、完整原生整数模型与物理验收均未达成。
+## 追加评估索引
+
+原四轮结果保留。2026-11-10新增[DMA并发、输入bank生命周期、原生G和有限交接评估](issue-248-dma-bank-g-evaluation.md)：同资源context512条件模型由5.953188到7.171451token/s，主要为DMA排队策略；不是可布线路径DP的收益，也不是原生整机10token/s。长context改善、prefill2有负收益；G全图数值准入仍被拒绝。原65case与13份证据不改写。

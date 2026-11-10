@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+## 2026-11-10（Asia/Shanghai）DMA/bank/G追加评估
+
+沿用Issue248/PR249，独立研究源014b34818，正式run16/Slurm101997的16场景与原RESULT精确回归通过。[报告](../../docs/experiments/issue-248-dma-bank-g-evaluation.md)：同资源context512条件模型5.953188→7.171451token/s（+20.46%），DMA排队贡献27.98ms、输入消费后释放再省0.55ms；不是DP建链收益。G与两路各2槽16B交接RTL通过，但S32→S16数值转换、完整FFN有限部分和调度、联合RTL和物理缺资格；prefill2退化1.52%，10token/s仍差39.44ms。保留run14严格编译失败和run15过早释放反例，3包185成员核验通过。未改生产RTL/peer任务。
+
+下一步：先审查DMA/输入bank与结果/上下文分离合同，再补G数值准入及局控取写、SRAM上下文或Mid重放调度，做真实P/DMA联合RTL校准。待独立审查、不自合并或done；登记PR5 pending，看板unverified/同步pending，审查人/管理员待指定；CI额度阻塞另核。
+
 ## 2026-11-10（Asia/Shanghai）接续247的四轮独立研究
 
 [Issue248](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/248) / [PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)，分支 `task/248-stream-quant-synthesis`，冻结 PR243@9d987151。独立新增有限权重 bank、W8A8/A16 K16×N8 叶核、四路定点转换、带宽/资源消融、共享状态转移的贪心/DP 和 SystemC 计划回放。研究与失败回执见[四轮报告](../../docs/experiments/issue-248-stream-quant-synthesis.md)及[离线核验](../../work/YUZE-LU/248/README.md)。原生产底座和 peer 工作树/作业不改。

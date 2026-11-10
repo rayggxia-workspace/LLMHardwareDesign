@@ -360,3 +360,6 @@ python -B project/experiments/stream_quant_synthesis/deploy.py 13 --out <新的�
 部署器使用 LF Git archive，恢复父 run23 冻结输入并核对 SHA，通过 Slurm 分配4核运行 `run.py --root RUN`，原生 RTL/转换 RTL/65个 SystemC case 均在计算节点执行。本机或登录节点不跑 EDA。脚本中的 Verilator/SystemC/容器路径须匹配回执，不能借改旧 SHA 适配别的工具。真实权重量化筛查另在该 root 提交 `source/project/experiments/stream_quant_synthesis/quality_job.sh`；checkpoint 与 venv 只读。
 
 作业完成后 `collect.py <tag> --jobs <真实作业号>` 回收；`report.py --root work/YUZE-LU/248 --run <tag> --quality-run 08` 只读计时证据并输出本任务摘要/部分端点需求。后者不是完整局控程序或物理网表。大 build/raw 留远端，离线检查只验证已归档成员。没有新物理资格、全模型整数生成或合格能耗结果。
+## Issue248 追加 DMA/bank/G 评估入口
+
+见 [正式评估](experiments/issue-248-dma-bank-g-evaluation.md)。离线 `python -B project/experiments/stream_quant_synthesis/bottleneck_report.py --root work/YUZE-LU/248/bottleneck` 核验3个不可变包185成员、正式16场景并重建摘要。服务器复现用 `deploy.py <新数字tag> --out <本地回执目录> --bottleneck`，只在Slurm4CPU容器运行EDA；输入与工具锁定沿用原研究，不能覆盖历史root。此模型吞吐和独立G交接RTL不代表完整P/DMA/局控、数值或物理验收。
