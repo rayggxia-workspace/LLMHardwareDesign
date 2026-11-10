@@ -1,5 +1,11 @@
 # YUZE-LU 的进度
 
+## 2026-11-10（Asia/Shanghai）公开GPTQ与有限FFN联合研究
+
+[Issue248/PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)新增[联合报告](../../docs/experiments/issue-248-integrated-closure.md)：公开Instruct GPTQ工件、W8A16/group128、head W8/group16、G32和S128有限部分和。部分语料对原公开参考PPL+0.0602%、top1一致99.51%，context512的16步全部一致；A8仍拒绝。最终条件SystemC：102.4GB/s为10.10283、51.2GB/s为9.24067、context2048为6.41255token/s。同资源流式调度仅+3.876%，不冒称20%DP收益。22包1537成员、独立M/G/scale/控制/context/RNE/B-bank RTL与旧回执核验通过。
+
+完整整数归一化/Attention/KV、联合P/局控/真实S/DMA、能耗与物理未完成；新增M/G/feeder/bank属于新有源底座，不是main实测或M11/M12金属升级。[Issue250/草稿PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)单列硬件合同与阶段验收；只交付合同、生产实现待做。PR249父分支前进造成合并冲突仍待整理，未合并/不done。登记PR5 pending，看板unverified/同步pending；审查人/管理员待指定，CI额度阻塞另按最新头核验。
+
 ## 2026-11-10（Asia/Shanghai）数值与有限FFN追加探索
 
 Issue248/PR249：[报告](../../docs/experiments/issue-248-precision-ffn-exploration.md)。源2ee939022，run17/18/19与Slurm102007/102008/102009均COMPLETED0:0；3包138成员SHA通过。9策略对照：整行A8存在明显误差，分组32小样本恢复；仅down提高精度不足。G固定Q5.10存在输入/门乘饱和，第2层FFN gated误差96.93%，宽位门乘仍34.59%，另需处理gate范围；旁路候选不算现有宏能力。四个实际FFN整数参考、有限down部分和、G4138包及四阶段转换4112帧通过。用户原生INT8工件未确定，目前自生成W8，尚无完整整数LLM、联合RTL/局控、整图新计时或物理资格。

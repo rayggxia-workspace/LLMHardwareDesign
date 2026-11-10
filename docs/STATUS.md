@@ -1,5 +1,11 @@
 # 当前状态
 
+## 公开GPTQ与有限FFN联合研究（2026-11-10 Asia/Shanghai）
+
+[Issue248/PR249](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/249)新增[联合报告](experiments/issue-248-integrated-closure.md)：公开Instruct GPTQ工件、W8A16/group128、head W8/group16、G32和S128有限部分和。部分语料对原公开参考PPL+0.0602%、top1一致99.51%，context512的16步全部一致；A8仍拒绝。最终条件SystemC：102.4GB/s为10.10283、51.2GB/s为9.24067、context2048为6.41255token/s。同资源流式调度仅+3.876%，不冒称20%DP收益。22包1537成员、独立M/G/scale/控制/context/RNE/B-bank RTL与旧回执核验通过。
+
+完整整数归一化/Attention/KV、联合P/局控/真实S/DMA、能耗与物理未完成；新增M/G/feeder/bank属于新有源底座，不是main实测或M11/M12金属升级。[Issue250/草稿PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)单列硬件合同与阶段验收；只交付合同、生产实现待做。PR249父分支前进造成合并冲突仍待整理，未合并/不done。登记PR5 pending，看板unverified/同步pending；审查人/管理员待指定，CI额度阻塞另按最新头核验。
+
 ## 数值与有限FFN追加探索（2026-11-10 Asia/Shanghai）
 
 [Issue248/PR249精度报告](experiments/issue-248-precision-ffn-exploration.md)：3个Slurm包/138成员通过。分组A8小样本改善、G固定范围/门乘饱和被真实FFN证实；四个FFN整数参考、有限down部分和与单元RTL通过，未证明完整模型质量、联合RTL或新token/s。现为自生成W8，用户实际INT8工件待确认。新有源适配与上下文协议需后续底座/物理验收，不改既有生产实现；交付待独立审查。

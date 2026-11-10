@@ -1,5 +1,5 @@
-// One finite transaction slot. Instantiate two slots per P in the timed
-// candidate. SRAM interface is a 128-byte transaction, not a physical port.
+// One finite transaction slot. The timed candidate declares a finite
+// number of slots per P. SRAM interface is a 128-byte transaction, not a physical port.
 module closure_psum_controller(
  input wire clk,reset,
  input wire cmd_valid,output wire cmd_ready,input wire [13:0] cmd_address,

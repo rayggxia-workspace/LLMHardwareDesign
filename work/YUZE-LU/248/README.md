@@ -44,3 +44,9 @@ python -B project/experiments/stream_quant_synthesis/report.py --root work/YUZE-
 生产 RTL/已有底座未替换，新候选没有综合、STA、P&R、完整局控/DMA 集成、全整数生成和能耗资格。10 token/s 与20%纯算法收益未取得。审查人待指定；本 PR 不自行合并，Issue 不标 done。
 
 协作接入：rayggxia-project-collab 1.0.0；project_id `llm-hardware-design`。登记沿用 management-hub PR5 pending；缺 `config/board.json` 与 Projects 条目能力，看板 unverified/同步 pending，管理员待指定。
+
+## 公开GPTQ与有限FFN联合研究
+
+[报告](../../../docs/experiments/issue-248-integrated-closure.md)，`closure/summary.json`及22个不可变`run20`至`run41`包。离线`python -B project/experiments/stream_quant_synthesis/closure_report.py --root work/YUZE-LU/248/closure`验证1537成员、真实终态、最终质量/RTL输入SHA与费用/容量。失败包保留；实际模型/向量/build在回执服务器root，不能把索引当作已归档大raw。
+
+最终W8A16/head16通过部分语料预设筛查，完整整数LLM/联合RTL/物理仍未完成；10.10283是新资源下的条件SystemC。硬件合同草稿PR251及commit见`hardware-followup-receipt.json`。

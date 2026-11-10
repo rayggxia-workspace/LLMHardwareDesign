@@ -369,3 +369,11 @@ python -B project/experiments/stream_quant_synthesis/deploy.py 13 --out <新的�
 见[精度/FFN报告](experiments/issue-248-precision-ffn-exploration.md)。`precision_explore.py` 对自生成W8做9策略短文本筛查；`precision_oracle.py` 提供显式尺度/RNE/饱和和四个实际FFN的整数参考、有限down部分和回放；`precision_rtl.py` 对实际转换/G向量逐位核验。`ffn_storage.py` 比较外存Mid、SRAM部分和、重算和分布式Mid，容量不能替代上下文协议。新路径尚未准入整图SystemC。
 
 离线：`python -B project/experiments/stream_quant_synthesis/precision_report.py --root work/YUZE-LU/248/precision`，3包138成员。Slurm复现：源提交后 `deploy.py <新数字tag> --out <本地回执目录> --precision`，依赖已授权checkpoint/ML环境/容器，只读既有模型，不覆盖root。该checkpoint不是已确认的用户原生INT8工件；无整机token/s、能耗或新物理资格。
+
+## Issue248 公开GPTQ与有限FFN联合研究
+
+[联合报告](experiments/issue-248-integrated-closure.md)。`closure_numeric.py`负责公开GPTQ解包、A16分组移位、宽G、精确scale合并及有限Down参考；`closure_quality.py`保留浮点Attention/RMS筛查边界。`closure_contract.py`核验真实权重记录和算术包络。`closure_backend.py`在Slurm容器分别运行独立RTL与有限资源SystemC；`closure_generate.py`/`closure_service.inc`保持关闭模式，并显式登记新增寄存器、bank、端口和元数据。
+
+离线标准库：`python -B project/experiments/stream_quant_synthesis/closure_report.py --root work/YUZE-LU/248/closure`，22个不可变包1537成员。源提交后用全新tag分别`deploy.py <tag> --out <本地回执目录> --closure` / `--closure-backend`；backend job.sh的stage必须对应所选历史commit，不能覆盖旧root或修改旧SHA。最终质量run38/102029、计时run40/102031、RTL run41/102032。独立RTL的M/G向量绑定run22，并与run38的SHA复核一致；没有完整head/Attention联合RTL或物理资格。
+
+后续硬件合同由[Issue250/草稿PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)独立交付，生产主线不在本轮替换。

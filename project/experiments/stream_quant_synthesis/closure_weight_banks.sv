@@ -1,4 +1,4 @@
-// Candidate 1088-byte W8+FP16-scale records; M1--M10 active storage.
+// Candidate 1088/1152-byte W8+FP16-scale records; M1--M10 active storage.
 // 512-bit fill, 1024-bit M read, two-bank-word gather. No timing/area claim.
 module closure_weight_banks #(parameter integer BANKS=4)(
  input wire clk,reset,cmd_valid,input wire cmd_release,cmd_long,input wire [2:0] cmd_bank,
