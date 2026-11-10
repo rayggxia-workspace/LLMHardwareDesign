@@ -35,10 +35,24 @@ def analyze(path):
         delta=dict(physical_KiB=64, banks=16, macro_mm2=16*MACRO_AREA_MM2))
     if area.get('status') == 'passed':
         modules = area['modules']
-        old = modules['block_feed_s16k_sram']['standard_cell_area_um2']
         new = modules['block_feed_s16k_1r1w']['standard_cell_area_um2']
         shared = modules['shared_a_pool32']['standard_cell_area_um2']
-        result['area']['new_module_standard_cell_delta_um2'] = shared + 2*(new-old)
+        candidate_config = modules['block_feed_s16k_1r1w'].get('configuration', {})
+        baseline = modules.get('block_feed_s16k_bank_rw')
+        if baseline is not None and baseline.get('configuration', {}).get('ECHO_WRITE_DATA') == 0 and candidate_config.get('ECHO_WRITE_DATA') == 0:
+            old = baseline['standard_cell_area_um2']
+            result['area']['new_module_standard_cell_delta_um2'] = shared + 2*(new-old)
+            result['area']['standard_cell_delta_baseline'] = dict(module='block_feed_s16k_bank_rw', configuration=dict(ECHO_WRITE_DATA=0))
+            result['area']['production_baseline_comparison'] = dict(status='available', local_backend_delta_each_um2=new-old)
+        else:
+            result['area']['production_baseline_comparison'] = dict(status='not_available', reason='Requires actual bank_rw baseline and candidate both mapped with explicit ECHO_WRITE_DATA=0; historical default-echo/plain-only mapping is not that comparison.')
+        plain = modules.get('block_feed_s16k_sram')
+        if plain is not None:
+            result['area']['plain_reference'] = dict(
+                module='block_feed_s16k_sram', configuration=plain.get('configuration', 'not_recorded'),
+                candidate_configuration=candidate_config or 'not_recorded',
+                delta_um2=shared+2*(new-plain['standard_cell_area_um2']),
+                scope='Reference only; this is not the R4 P local bank_rw baseline.')
         result['area']['standard_cell_delta_scope'] = 'Shared pool plus two local-memory backend replacements only; excludes any modified P integration logic.'
     result['token_s'] = dict(status='not_evaluated', reason='Native RTL microbench cycles do not establish the legacy S32/S96 model throughput. A separately validated calibration is required.')
     return result

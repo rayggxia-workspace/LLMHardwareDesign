@@ -108,7 +108,7 @@ def parse_receipts(output, component):
         if shared not in (0, 1) or rw not in (0, 1) or checks.get('numeric') != 3456 or checks.get('contexts') != 288:
             raise ValueError('pair native numeric/context coverage mismatch')
         scenarios = {row.get('scenario'): row for row in result['measurements']}
-        if set(scenarios) != ({0, 1, 2, 'lease'} if rw else {0, 1, 2}):
+        if set(scenarios) != ({0, 1, 2, 'lease', 'lifecycle'} if rw else {0, 1, 2, 'lifecycle'}):
             raise ValueError('pair scenario coverage mismatch')
         for case in range(3):
             row = scenarios[case]
@@ -121,6 +121,11 @@ def parse_receipts(output, component):
             for key in ('protected_stalls', 'concurrent_writes', 'simultaneous_rw'):
                 if scenarios['lease'].get(key, 0) <= 0:
                     raise ValueError('pair lease/concurrency coverage missing: ' + key)
+        lifecycle = scenarios['lifecycle']
+        if lifecycle.get('release_cases') != (3 if shared else 0) or lifecycle.get('cold_cancelled_loads') != 2 or lifecycle.get('refill_numeric') != 16:
+            raise ValueError('pair RELEASE/cold-reset/refill coverage mismatch')
+        if shared and lifecycle.get('release_blocked_cycles', 0) < 18:
+            raise ValueError('pair held LOAD/RELEASE ownership stalls not observed')
     return result
 
 
@@ -238,19 +243,24 @@ def main():
         if sha(bank_lib) != BANK_LIB_SHA:
             raise ValueError('SRAM liberty identity drift')
         report['versions']['yosys'] = execute([yosys, '-V'], 'yosys-version.log', 30).strip()
-        result = dict(status='running', scope='New-module standard-cell synthesis; SRAM blackboxes reported separately. No placement, routing, timing or chip-area qualification.',
+        result = dict(status='running', scope='New-module and matched production-baseline standard-cell synthesis; SRAM blackboxes reported separately. No placement, routing, timing or chip-area qualification.',
+                      comparison_baseline='block_feed_s16k_bank_rw',
+                      local_memory_configuration=dict(ECHO_WRITE_DATA=0),
                       yosys_binary_sha256=sha(yosys), standard_liberty=dict(path=str(LIBERTY), sha256=sha(LIBERTY)),
                       bank_liberty=dict(path=str(bank_lib), sha256=sha(bank_lib)), modules={})
         report['mapped_area'] = result; save()
         def q(path):
             return '"' + str(path).replace('\\', '/').replace('"', '\\"') + '"'
         for source, top, expected_banks in ((POOL, 'shared_a_pool32', 8), (MEMORY, 'block_feed_s16k_1r1w', 8),
-                                            ('project/rtl/s_sram/block_feed_s16k_sram.sv', 'block_feed_s16k_sram', 4)):
+                                            ('project/rtl/s_sram/block_feed_s16k_sram.sv', 'block_feed_s16k_sram', 4),
+                                            ('project/rtl/s_sram/block_feed_s16k_bank_rw.sv', 'block_feed_s16k_bank_rw', 4)):
             directory = args.out / ('synth-' + top); directory.mkdir()
             flow = directory / 'synth.ys'
+            configuration = {} if top == 'shared_a_pool32' else dict(ECHO_WRITE_DATA=0)
+            parameter_commands = [] if not configuration else ['chparam -set ECHO_WRITE_DATA 0 ' + top]
             flow.write_text('\n'.join([
                 'read_liberty -lib ' + q(LIBERTY), 'read_liberty -lib ' + q(bank_lib),
-                'read_verilog -sv ' + q(args.repo/source), 'hierarchy -check -top ' + top,
+                'read_verilog -sv ' + q(args.repo/source), *parameter_commands, 'hierarchy -check -top ' + top,
                 'synth -top ' + top + ' -flatten -noabc', 'dfflibmap -liberty ' + q(LIBERTY),
                 'abc -liberty ' + q(LIBERTY), 'clean', 'check -assert',
                 'tee -o ' + q(directory/'stat.json') + ' stat -json -liberty ' + q(LIBERTY),
@@ -269,6 +279,9 @@ def main():
             if not isinstance(area, (int, float)) or area <= 0:
                 raise ValueError(top + ' missing positive mapped standard-cell area')
             result['modules'][top] = dict(standard_cell_area_um2=area, physical_4KiB_banks=expected_banks,
+                configuration=configuration,
+                comparison_role=('actual_R4_P_local_baseline' if top=='block_feed_s16k_bank_rw' else
+                                 'plain_reference_only' if top=='block_feed_s16k_sram' else 'candidate'),
                 macro_area_proxy_mm2=expected_banks * MACRO_AREA_MM2, physical_KiB=4*expected_banks,
                 logical_KiB=32 if top=='shared_a_pool32' else 16, cell_types=counts,
                 stat_sha256=sha(directory/'stat.json'), netlist_sha256=sha(directory/'mapped.v'))
@@ -283,6 +296,7 @@ def main():
             required.add(str(HERE.relative_to(args.repo)/(top+'.sv')))
         if args.area:
             required.add('project/rtl/s_sram/block_feed_s16k_sram.sv')
+            required.add('project/rtl/s_sram/block_feed_s16k_bank_rw.sv')
         # All path keys use the package's POSIX convention.
         required = {name.replace('\\', '/') for name in required}
         report['source_commit'] = validate_manifest(args.repo, manifest, required)

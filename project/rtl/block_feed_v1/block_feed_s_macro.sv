@@ -20,7 +20,7 @@ module block_feed_s_macro (
  block_feed_s16k storage(.clk(clk),.reset(reset),.req(req),.wr(wr),.addr(addr),.din(din),
    .ready(ready),.valid(valid),.take(take),.dout(dout),.wide_req(mem_req),.wide_addr(mem_addr),
    .wide_ready(mem_ready),.wide_valid(mem_valid),.wide_take(mem_take),.wide_dout(mem_data));
- block_feed_loader feeder(.clk(clk),.reset(reset),.load_valid(load_valid),.load_ready(load_ready),
+ block_feed_loader feeder(.load_skip_a(1'b0),.clk(clk),.reset(reset),.load_valid(load_valid),.load_ready(load_ready),
    .load_bank(load_bank),.load_rows(load_rows),.load_tiles(load_tiles),.load_a_wide(load_a_wide),
    .load_b_wide(load_b_wide),.load_reuse_b(load_reuse_b),.load_a_base(load_a_base),.load_b_base(load_b_base),
    .done_valid(done_valid),.done_take(done_take),.done_error(done_error),.busy(busy),

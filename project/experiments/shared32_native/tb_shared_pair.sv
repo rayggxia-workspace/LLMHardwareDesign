@@ -86,6 +86,7 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
  integer a_count[0:1],b_count[0:1],shared_count[0:1],numeric_checks[0:1];
  integer loads[0:1],contexts[0:1],errors[0:1],io_words[0:1],wide_lines[0:1];
  integer lease_stalls[0:1],concurrent_writes[0:1],simultaneous_rw[0:1];
+ integer release_cases=0,release_blocked_cycles=0,cold_cancelled_loads=0,lifecycle_numeric[0:1];
  wire [1:0] lease_active;
  bit aw=0,bw=0,prefix=0;
  always @(posedge clk)begin
@@ -348,6 +349,154 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
    end
   end
  endtask
+ task automatic prepare_both_loads;
+  begin
+   @(negedge clk);load_valid=2'b11;load_take=0;load_bank=0;
+   load_rows=8'h33;load_tiles={3'd2,3'd2};load_a_wide={2{aw}};load_b_wide={2{bw}};
+   load_reuse_b=0;load_a_base=0;load_b_base={10'(local_b(0,0)),10'(local_b(0,0))};
+   load_a_shared={2{SHARED!=0}};load_pool_base={11'(pool_base(0)),11'(pool_base(0))};
+   load_pool_epoch={2{8'(scenario+17)}};
+  end
+ endtask
+ task automatic accept_both_loads;
+  logic [1:0] accepted;
+  begin
+   while(load_valid!=0)begin
+    @(posedge clk);accepted=load_valid&load_ready;
+    @(negedge clk);load_valid=load_valid&~accepted;
+   end
+  end
+ endtask
+ task automatic wait_both_loads;
+  begin
+   while(load_done!=2'b11)@(negedge clk);
+   if(load_error!=0)$fatal(1,"lifecycle reload failed");
+  end
+ endtask
+ task automatic retire_both_loads;
+  begin
+   wait_both_loads();
+   @(negedge clk);load_take=2'b11;@(negedge clk);load_take=0;
+  end
+ endtask
+ task automatic request_release;
+  begin
+   cfg_valid=1;cfg_op=2;cfg_epoch=8'(scenario+17);cfg_words=0;cfg_take=0;
+  end
+ endtask
+ task automatic finish_release;
+  begin
+   do @(posedge clk);while(!cfg_ready);
+   @(negedge clk);cfg_valid=0;
+   while(!cfg_done)@(negedge clk);
+   if(cfg_error)$fatal(1,"lifecycle RELEASE error");
+   repeat(3)begin
+    @(negedge clk);
+    if(!cfg_done||cfg_error||load_ready!=0)$fatal(1,"held RELEASE must block new LOAD");
+   end
+   cfg_take=1;@(negedge clk);cfg_take=0;
+   if(object_valid)$fatal(1,"RELEASE retained object validity");
+  end
+ endtask
+ task automatic release_races;
+  begin
+   initialize_pool();
+   // RELEASE wins when the two valid requests first appear on the same edge.
+   // The producer holds LOAD valid until it is accepted after a complete refill.
+   prepare_both_loads();request_release();
+   @(posedge clk);if(load_ready!=0||!cfg_ready)$fatal(1,"same-edge RELEASE did not take priority");
+   @(negedge clk);cfg_valid=0;
+   while(!cfg_done)@(negedge clk);
+   repeat(4)begin
+    @(negedge clk);if(load_ready!=0||load_done!=0||cfg_error)$fatal(1,"new LOAD escaped held RELEASE");
+    release_blocked_cycles++;
+   end
+   cfg_take=1;@(negedge clk);cfg_take=0;
+   repeat(4)begin
+    @(negedge clk);if(load_ready!=0||load_done!=0||object_valid)$fatal(1,"shared LOAD admitted while pool EMPTY");
+    release_blocked_cycles++;
+   end
+   fork
+    initialize_pool();
+    begin accept_both_loads();retire_both_loads();end
+   join
+   release_cases++;
+   // The descriptor is still pending inside P when RELEASE arrives one cycle
+   // after the public LOAD handshake. Pool RELEASE must not prevent its issue.
+   prepare_both_loads();accept_both_loads();request_release();
+   if(cfg_ready)$fatal(1,"RELEASE accepted before admitted LOAD completed");
+   wait_both_loads();
+   repeat(5)begin
+    @(negedge clk);
+    if(cfg_ready||!object_valid||load_done!=2'b11||load_error!=0)$fatal(1,"RELEASE overtook held LOAD completion");
+    release_blocked_cycles++;
+   end
+   retire_both_loads();finish_release();release_cases++;
+   // Distinct case: request RELEASE only after both public completions exist.
+   initialize_pool();prepare_both_loads();accept_both_loads();wait_both_loads();
+   @(negedge clk);request_release();
+   repeat(5)begin
+    @(negedge clk);
+    if(cfg_ready||!object_valid||load_done!=2'b11)$fatal(1,"held LOAD completion lost ownership");
+    release_blocked_cycles++;
+   end
+   retire_both_loads();finish_release();release_cases++;
+  end
+ endtask
+ task automatic cold_numeric(input integer p,input bit expect_empty);
+  logic [63:0] descriptor;
+  logic [127:0] got;
+  longint signed expected;
+  integer column;
+  begin
+   descriptor=0;descriptor[2]=1;descriptor[3]=1;descriptor[7:4]=8;
+   descriptor[11:8]=5;descriptor[14:12]=2;descriptor[49:34]=400;
+   command(p,13,0,descriptor,0,expect_empty,got);
+   if(!expect_empty)begin
+    for(integer pair_id=0;pair_id<4;pair_id++)begin
+     command(p,3,pair_id,0,0,0,got);
+     for(integer lane=0;lane<2;lane++)begin
+      column=pair_id*2+lane;expected=0;
+      if(column<5)for(integer k=0;k<16;k++)expected+=64'(aval(0,0,k))*64'(bval(p,0,0,column,k));
+      if($signed(got[64*lane+:64])!==expected)$fatal(1,"post-cold-reset native numeric mismatch");
+      lifecycle_numeric[p]++;
+     end
+    end
+    command(p,14,0,64'd400<<1,0,0,got);
+   end
+  end
+ endtask
+ task automatic cold_reset_refill;
+  begin
+   // Cancel two admitted P operations and the common pool object together.
+   // No outstanding protocol producer task survives the deliberate reset.
+   initialize_pool();prepare_both_loads();accept_both_loads();
+   if(SHARED)wait(dut.pool.active==2'b11);
+   else wait(lease_active==2'b11);
+   @(negedge clk);
+   if(load_done!=0)$fatal(1,"cold-reset fixture completed too early");
+   cold_cancelled_loads=2;cold_reset=1;load_valid=0;load_take=0;
+   repeat(4)@(negedge clk);cold_reset=0;
+   repeat(8)begin
+    @(negedge clk);
+    if(object_valid||cfg_done||fill_done||load_done||cmd_done||io_rsp_valid||dut.pool_a_valid)
+     $fatal(1,"stale P/pool event survived cold reset");
+   end
+   aw=0;bw=0;prefix=0;
+   fork cold_numeric(0,1);cold_numeric(1,1);join
+   // Cold-reset memory is invalid, so rewrite B and any local A before use.
+   fork initialize_local(0);initialize_local(1);join
+   if(SHARED)begin
+    prepare_both_loads();
+    repeat(4)begin @(negedge clk);if(load_ready!=0)$fatal(1,"post-reset LOAD admitted before SEAL");end
+    fork initialize_pool();begin accept_both_loads();retire_both_loads();end join
+   end else begin
+    initialize_pool();prepare_both_loads();accept_both_loads();retire_both_loads();
+   end
+   fork cold_numeric(0,0);cold_numeric(1,0);join
+   pool_config(2,0);
+  end
+ endtask
  integer wall_start,compute_start,compute_cycles,a_before,b_before,shared_before;
  initial begin
   if(!$value$plusargs("SEED=%d",seed))seed=247;
@@ -355,6 +504,7 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
    a_count[p]=0;b_count[p]=0;shared_count[p]=0;numeric_checks[p]=0;
    loads[p]=0;contexts[p]=0;errors[p]=0;io_words[p]=0;wide_lines[p]=0;
    lease_stalls[p]=0;concurrent_writes[p]=0;simultaneous_rw[p]=0;
+   lifecycle_numeric[p]=0;
   end
   gate_take=2'b11;m_to_g_take=2'b11;
   repeat(4)@(negedge clk);reset=0;cold_reset=0;repeat(5)@(negedge clk);
@@ -388,6 +538,16 @@ module tb_shared_pair #(parameter integer SHARED=1, TRUE_RW=1);
    $display("SHARED_PAIR_MEASURE scenario=lease shared=%0d true_rw=%0d cycles=%0d protected_stalls=%0d concurrent_writes=%0d simultaneous_rw=%0d",
     SHARED,TRUE_RW,cycle-compute_start,lease_stalls[0]+lease_stalls[1],concurrent_writes[0]+concurrent_writes[1],simultaneous_rw[0]+simultaneous_rw[1]);
   end
+  // Invalid LOADs may have changed part of an operand bank; no arithmetic is
+  // attempted until a complete valid reload. Atomic rollback is not promised.
+  prefix=0;fork initialize_local(0);initialize_local(1);join
+  compute_start=cycle;
+  if(SHARED)release_races();
+  cold_reset_refill();
+  if(release_cases!=(SHARED?3:0)||cold_cancelled_loads!=2||lifecycle_numeric[0]+lifecycle_numeric[1]!=16)
+   $fatal(1,"lifecycle coverage missing");
+  $display("SHARED_PAIR_MEASURE scenario=lifecycle shared=%0d true_rw=%0d cycles=%0d release_cases=%0d release_blocked_cycles=%0d cold_cancelled_loads=%0d refill_numeric=%0d",
+   SHARED,TRUE_RW,cycle-compute_start,release_cases,release_blocked_cycles,cold_cancelled_loads,lifecycle_numeric[0]+lifecycle_numeric[1]);
   @(negedge clk);reset=1;repeat(4)@(negedge clk);reset=0;repeat(8)@(negedge clk);
   if(io_rsp_valid||load_done||cmd_done||object_valid||fill_done||cfg_done)$fatal(1,"stale completion after reset");
   $display("SHARED_PAIR_PASS shared=%0d true_rw=%0d numeric=%0d contexts=%0d errors=%0d loads=%0d",

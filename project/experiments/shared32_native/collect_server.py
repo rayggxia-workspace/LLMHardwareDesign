@@ -34,7 +34,7 @@ def main():
         raise ValueError('usage: collect_server.py SLURM_JOB_ID')
     job = int(sys.argv[1])
     status = subprocess.check_output(['sacct', '-j', str(job), '-X', '--noheader', '--parsable2',
-        '--format=JobID,JobName,State,ExitCode,Elapsed,NodeList'], text=True, timeout=30)
+        '--format=JobID,JobName,State,ExitCode,Elapsed,NodeList'], universal_newlines=True, timeout=30)
     rows = [line.split('|') for line in status.splitlines() if line.split('|')[0] == str(job)]
     terminal = ('COMPLETED', 'FAILED', 'TIMEOUT', 'OUT_OF_MEMORY', 'CANCELLED', 'NODE_FAIL', 'PREEMPTED', 'BOOT_FAIL', 'DEADLINE')
     if len(rows) != 1 or rows[0][2].split()[0] not in terminal:
@@ -67,8 +67,9 @@ def main():
     result = json.loads(result_path.read_text(encoding='utf-8')) if result_path.is_file() else {}
     if result.get('source_commit') not in (None, manifest['source_commit']):
         raise ValueError('result source commit differs from deployment')
-    if 'job' in result and str(result['job']) != str(job):
-        raise ValueError('result job differs from requested Slurm job')
+    for job_field in ('job', 'slurm_job_id'):
+        if job_field in result and str(result[job_field]) != str(job):
+            raise ValueError('result ' + job_field + ' differs from requested Slurm job')
     (root/'sacct.txt').write_text(status, encoding='utf-8')
     (root/'output-files.sha256').write_text(''.join(sha(path)+'  '+path.relative_to(root).as_posix()+'\n' for path in outputs), encoding='utf-8')
     record = dict(run=root.name, job=job, run_root=str(root), source_commit=manifest['source_commit'],

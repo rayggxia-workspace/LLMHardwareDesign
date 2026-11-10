@@ -54,6 +54,16 @@ a separate probe requires simultaneous physical wide read/write admission,
 blocks writes into an owned B range, and checks the post-ACK SRAM contents.
 The existing G/gated-SiLU program is not part of this new pair bench.
 
+Lifecycle probes cover same-edge RELEASE/new shared LOAD, RELEASE one cycle
+after a LOAD handshake, and RELEASE requested while both LOAD completions are
+held. The new LOAD stays valid through RELEASE and EMPTY, and is accepted only
+after refill and SEAL. RELEASE must await the old LOAD completion acknowledgments.
+A common cold reset cancels two admitted P loads and the pool object; all
+contents are reinitialized, operands are reloaded and 16 independent native
+numeric checks confirm recovery. A rejected LOAD may already have changed part
+of the operand bank; valid data must be fully reloaded before computation.
+The interface does not promise atomic rollback of invalid LOADs.
+
 Pair cycle counts include setup/fill, computed output ACKs, numeric readback,
 context release and shared-object release. `compute_cycles` is separately
 reported. The sparse boundary fixture deliberately fills unused prefix words;
@@ -62,9 +72,9 @@ these microbench numbers must not be used as a transformer speedup estimate.
 ## Area accounting
 
 Only after all requested functional tests pass, `--area` synthesizes the shared
-pool, the new local memory backend, and the original local SRAM backend using
+pool, the new local memory backend, the original plain backend, and actual R4 bank_rw backend using
 Yosys and the same Nangate45 typical standard-cell library. Actual SRAM Liberty
-cells are blackboxes. The mapped netlist must contain eight, eight and four SRAM
+cells are blackboxes. All three local backends use production ECHO_WRITE_DATA=0. The mapped netlist must contain eight, eight, four and four SRAM
 instances respectively, with no remaining generic logic cells. Standard-cell
 area and macro footprints remain separate. This is not placement, routing, STA,
 power or chip-area qualification.
