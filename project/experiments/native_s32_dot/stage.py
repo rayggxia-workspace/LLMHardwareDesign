@@ -23,14 +23,19 @@ UPSTREAM={
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--suffix',required=True);p.add_argument('--out',type=Path,required=True)
-    p.add_argument('--kind',choices=('core','s128','s128-real'),default='core')
+    p.add_argument('--kind',choices=('core','s128-real','stage64-real','map','route'),default='core')
+    p.add_argument('--proof-run',default='20261111-07')
+    p.add_argument('--map-top',choices=('both','service'),default='both')
+    p.add_argument('--map-run',default='20261111-map02');p.add_argument('--rows',type=int,choices=(1,2,4),default=4)
+    p.add_argument('--side',type=int,default=0);p.add_argument('--density',type=float,default=.48)
     args=p.parse_args();assert args.suffix.replace('-','').isalnum()
     assert not subprocess.check_output(['git','status','--porcelain','--','project/rtl/native_s32_dot','project/experiments/native_s32_dot'],cwd=ROOT)
     commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip()
-    paths=subprocess.check_output(['git','ls-tree','-r','--name-only',commit,'--',
-        'project/rtl/native_s32_dot','project/experiments/native_s32_dot'],cwd=ROOT).decode().splitlines()
+    prefixes=['project/rtl/native_s32_dot','project/experiments/native_s32_dot']
+    if args.kind=='route':prefixes += ['project/experiments/'+p for p in ('block_v1','block_v2','block_feed_v1')]
+    paths=subprocess.check_output(['git','ls-tree','-r','--name-only',commit,'--',*prefixes],cwd=ROOT).decode().splitlines()
     files={'source/'+path:subprocess.check_output(['git','show',commit+':'+path],cwd=ROOT) for path in paths}
-    if args.kind=='s128-real':
+    if args.kind in ('s128-real','stage64-real'):
         for name,(path,digest) in UPSTREAM.items():
             data=subprocess.check_output(['ssh',HOST,shlex.join(['cat',path])],stdin=subprocess.DEVNULL)
             assert hashlib.sha256(data).hexdigest()==digest
@@ -46,10 +51,15 @@ if __name__=='__main__':
     remote=PREFIX+args.suffix
     subprocess.run(['ssh',HOST,shlex.join(['mkdir',remote])],check=True,stdin=subprocess.DEVNULL)
     subprocess.run(['scp',str(package),HOST+':'+remote+'/source.tar.gz'],check=True,stdin=subprocess.DEVNULL)
+    assert args.proof_run.replace('-','').isalnum() and args.map_run.replace('-','').isalnum()
+    if args.kind=='map':
+        job_script='map_job.sh';options='NATIVE32_PROOF='+PREFIX+args.proof_run+',NATIVE32_MAP_TOP='+args.map_top
+    elif args.kind=='route':
+        job_script='route_job.sh';options=f'NATIVE32_MAPPING={PREFIX}{args.map_run},NATIVE32_ROWS={args.rows},NATIVE32_SIDE={args.side},NATIVE32_DENSITY={args.density}'
+    else:
+        job_script='job.sh';options='NATIVE32_CHECK='+{'core':'check.py','s128-real':'check_s128.py','stage64-real':'check_stage64.py'}[args.kind]
     command=' && '.join(['cd '+shlex.quote(remote),'tar -xzf source.tar.gz',
-        shlex.join(['sbatch','--parsable','--export=ALL,NATIVE32_CHECK='+('check.py' if args.kind=='core' else 'check_s128.py')+
-                    ',NATIVE32_REAL_S='+str(int(args.kind=='s128-real')),
-                    'source/project/experiments/native_s32_dot/job.sh'])])
+        shlex.join(['sbatch','--parsable','--export=ALL,'+options,'source/project/experiments/native_s32_dot/'+job_script])])
     job=subprocess.check_output(['ssh',HOST,command],stdin=subprocess.DEVNULL).decode().strip()
     report=dict(source_commit=commit,job=job,remote=remote,source_archive_sha256=hashlib.sha256(package.read_bytes()).hexdigest(),
                 allocation='c64 nodes1 tasks6 cores10',base='c4d7b960599b9d292f27eb4429d5f226a7156c95',issue=252,kind=args.kind)

@@ -29,10 +29,12 @@ def read_run(directory):
     for line in sources['source.sha256'].decode().splitlines():
         digest,name=line.split('  ',1);assert hashlib.sha256(sources[name]).hexdigest()==digest
     assert sources['source-commit.txt'].decode().strip()==receipt['source_commit']
+    assert files['source.sha256']==sources['source.sha256']
     inventory=json.loads(files['remote-inventory.json'])
     for name,digest in inventory.items():
         if name in files:assert hashlib.sha256(files[name]).hexdigest()==digest
         else:assert receipt.get('index_generated') and (name.endswith(('core.txt','service.txt','.csv')) or
+                                                        Path(name).name in ('mapped.json','operators.json','unsigned.json','structural.json','reparsed.json') or
                                                         (name.endswith('.log') and name+'.tail' in files))
     return receipt,files,inventory
 

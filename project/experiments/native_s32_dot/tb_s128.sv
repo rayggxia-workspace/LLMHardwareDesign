@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-module tb_s128 #(parameter integer ROWS=1,parameter bit REAL_S=0);
+module tb_s128 #(parameter integer ROWS=1);
  reg clk;initial begin clk=0;forever #5 clk=~clk;end
  reg reset=1;
  reg cmd_valid=0;wire cmd_ready;reg [1:0] cmd_kind;reg [127:0] cmd_key;reg [31:0] cmd_tag;
@@ -14,7 +14,7 @@ module tb_s128 #(parameter integer ROWS=1,parameter bit REAL_S=0);
  dot_s32_s128 #(.ROWS(ROWS)) dut(.*);
  reg [127:0] memory[0:1023];
  reg [127:0] response_data[0:1];reg response_error[0:1],response_write[0:1];
- reg [9:0] response_address[0:1];integer response_due[0:1];
+ reg [9:0] response_address[0:1];
  integer read_pointer,write_pointer,count,cycle,requests,acks,write_acks,peak,held,aborts,mode;
  integer command_requests,current_abort_mode,forced_hold;reg injected,command_live;
  reg [ROWS*2-1:0] written;
@@ -25,45 +25,38 @@ module tb_s128 #(parameter integer ROWS=1,parameter bit REAL_S=0);
  wire [138:0] offer={s_req_write,s_req_address,s_req_wdata};
  wire [164+ROWS*2:0] terminal={rsp_kind,rsp_key,rsp_tag,rsp_error,rsp_aborted,rsp_done,rsp_written_mask};
  integer trace_fd;
- reg peer_req_ready,peer_rsp_valid,req_enable,rsp_enable,rsp_error_offer;
- reg [127:0] peer_rsp_data;
+ reg req_enable,rsp_enable,rsp_error_offer;
  reg boot_busy,boot_valid,boot_write;reg [9:0] boot_address;reg [127:0] boot_data;
  wire real_req_ready,real_rsp_valid;wire [127:0] real_rsp_data;
- assign s_req_ready=REAL_S ? real_req_ready&&req_enable&&!boot_busy : peer_req_ready;
- assign s_rsp_valid=REAL_S ? real_rsp_valid&&rsp_enable&&!boot_busy : peer_rsp_valid;
- assign s_rsp_data=REAL_S ? real_rsp_data : peer_rsp_data;
+ assign s_req_ready=real_req_ready&&req_enable&&!boot_busy;
+ assign s_rsp_valid=real_rsp_valid&&rsp_enable&&!boot_busy;
+ assign s_rsp_data=real_rsp_data;
  assign s_rsp_error=rsp_error_offer;
- generate if(REAL_S)begin: actual_s
-  local_s_base storage(.clk(clk),.reset(reset),
+ local_s_base storage(.clk(clk),.reset(reset),
    .req_valid(boot_valid||(!boot_busy&&s_req_valid&&req_enable)),.req_write(boot_busy?boot_write:s_req_write),
    .req_addr(boot_busy?boot_address:s_req_address),.req_data(boot_busy?boot_data:s_req_wdata),
    .req_ready(real_req_ready),.rsp_valid(real_rsp_valid),
    .rsp_ready(boot_busy||(!boot_busy&&s_rsp_ready&&rsp_enable)),.rsp_data(real_rsp_data));
- end else begin: peer_only
-  assign real_req_ready=0;assign real_rsp_valid=0;assign real_rsp_data=0;
- end endgenerate
- integer boot_writes,readback_words;
+ integer boot_writes,readback_words,reset_flushed,stale_abort;
  initial begin
   read_pointer=0;write_pointer=0;count=0;cycle=0;requests=0;acks=0;write_acks=0;peak=0;held=0;aborts=0;
   command_requests=0;current_abort_mode=0;forced_hold=0;injected=0;command_live=0;written=0;golden=0;
   current_result_base=0;current_rows=0;prior_held=0;prior_offer=0;prior_response_held=0;prior_response=0;abort_valid=0;
-  boot_busy=0;boot_valid=0;boot_write=0;boot_address=0;boot_data=0;boot_writes=0;readback_words=0;
+  boot_busy=0;boot_valid=0;boot_write=0;boot_address=0;boot_data=0;boot_writes=0;readback_words=0;reset_flushed=0;stale_abort=0;
   for(integer i=0;i<1024;i=i+1)memory[i]={4{32'h12345678}};
  end
  always @(negedge clk)begin
   rsp_ready=!reset&&(mode==0||$urandom_range(0,3)!=0);
-  peer_rsp_valid=!reset&&count!=0&&response_due[read_pointer]<=cycle;
-  peer_rsp_data=count!=0?response_data[read_pointer]:128'd0;
   rsp_error_offer=count!=0&&response_error[read_pointer];
   req_enable=!reset&&(mode==0||$urandom_range(0,3)!=0);
   rsp_enable=!reset&&(mode==0||$urandom_range(0,3)!=0);
   abort_valid=0;
   if(command_live&&!injected&&current_abort_mode==1&&command_requests>=10)abort_valid=1;
+  if(command_live&&current_abort_mode==4&&command_requests>=10)abort_valid=1;
   if(command_live&&!injected&&current_abort_mode==2&&s_req_valid&&s_req_write)begin
    abort_valid=1;req_enable=0;forced_hold=3;
   end
   if(forced_hold>0)begin req_enable=0;forced_hold=forced_hold-1;end
-  peer_req_ready=req_enable&&(count<2||(peer_rsp_valid&&s_rsp_ready));
  end
  always @(posedge clk)begin
   cycle=cycle+1;
@@ -74,6 +67,9 @@ module tb_s128 #(parameter integer ROWS=1,parameter bit REAL_S=0);
    prior_held=s_req_valid&&!s_req_ready;prior_offer=offer;if(prior_held)held=held+1;
    prior_response_held=rsp_valid&&!rsp_ready;prior_response=terminal;
    if(abort_valid&&abort_ready)begin injected=1;aborts=aborts+1;end
+   if(abort_valid&&current_abort_mode==4)begin
+    if(abort_ready)$fatal(1,"stale abort acquired active owner");stale_abort=stale_abort+1;
+   end
    if(s_rsp_valid&&s_rsp_ready)begin
     if(count==0)$fatal(1,"orphan S ACK");
     if(!response_write[read_pointer]&&s_rsp_data!==response_data[read_pointer])$fatal(1,"S read response differs from independently staged word");
@@ -94,7 +90,6 @@ module tb_s128 #(parameter integer ROWS=1,parameter bit REAL_S=0);
     response_error[write_pointer]=current_abort_mode==3&&!injected&&command_requests==10;
     if(response_error[write_pointer])injected=1;
     response_address[write_pointer]=s_req_address;response_write[write_pointer]=s_req_write;
-    response_due[write_pointer]=cycle+1+(mode==0?0:int'($urandom_range(0,4)));
     $fdisplay(trace_fd,"%0d,SREQ,%0d,%0d,%0d,%0d",cycle,s_req_write,s_req_address,count,command_requests);
     write_pointer=1-write_pointer;count=count+1;requests=requests+1;command_requests=command_requests+1;
     if(count>peak)peak=count;
@@ -105,14 +100,12 @@ module tb_s128 #(parameter integer ROWS=1,parameter bit REAL_S=0);
  end
  task automatic fixture(input bit write_word,input [9:0] address,input [127:0] data);
   begin
-   if(REAL_S)begin
-    if(count!=0||s_req_valid||boot_busy)$fatal(1,"fixture touched S before drain");
-    boot_busy=1;boot_valid=1;boot_write=write_word;boot_address=address;boot_data=data;
-    do @(posedge clk);while(!real_req_ready);#1;boot_valid=0;
-    do @(posedge clk);while(!real_rsp_valid);
-    if(!write_word&&real_rsp_data!==data)$fatal(1,"true SRAM result readback mismatch at %0d",address);
-    #1;boot_busy=0;
-   end
+   if(count!=0||s_req_valid||boot_busy)$fatal(1,"fixture touched S before drain");
+   boot_busy=1;boot_valid=1;boot_write=write_word;boot_address=address;boot_data=data;
+   do @(posedge clk);while(!real_req_ready);#1;boot_valid=0;
+   do @(posedge clk);while(!real_rsp_valid);
+   if(!write_word&&real_rsp_data!==data)$fatal(1,"true SRAM result readback mismatch at %0d",address);
+   #1;boot_busy=0;
    if(write_word)begin memory[address]=data;boot_writes=boot_writes+1;end
    else begin if(memory[address]!==data)$fatal(1,"mirrored result readback mismatch");readback_words=readback_words+1;end
   end
@@ -129,17 +122,25 @@ module tb_s128 #(parameter integer ROWS=1,parameter bit REAL_S=0);
    got=$fscanf(fd,"%h %h %h %h %h %h %h %h %h %h %h %h %h %h %h %h %h %h %h\n",
     action,key,tag,full,offset,chunk,n,rows,shift,layout,abase,bbase,resultbase,committed,error,aborted,done,abort_mode,result);
    if(got!=19)$fatal(1,"service vector format");
-   if(full>65535||offset>65535||chunk>255||n>15||rows>7||shift>63||layout>1||abase>1023||bbase>1023||resultbase>1023||committed>1||error>1||aborted>1||done>1||abort_mode>3)$fatal(1,"vector width");
+   if(full>65535||offset>65535||chunk>255||n>15||rows>7||shift>63||layout>1||abase>1023||bbase>1023||resultbase>1023||committed>1||error>1||aborted>1||done>1||abort_mode>4)$fatal(1,"vector width");
    if(action==3)begin
     if(count!=0||s_req_valid)$fatal(1,"fixture wrote before S drain");fixture(1,abase[9:0],result[127:0]);
    end else begin
     golden=result;current_result_base=resultbase[9:0];current_rows=rows[2:0];
     command_requests=0;current_abort_mode=int'(abort_mode);injected=0;written=0;command_live=1;
-    cmd_kind=2'(action);cmd_key=key;cmd_tag=tag;cmd_full_k=full[15:0];cmd_k_offset=offset[15:0];
+    cmd_kind=action==4?2'd1:2'(action);cmd_key=key;cmd_tag=tag;cmd_full_k=full[15:0];cmd_k_offset=offset[15:0];
     cmd_chunk_k=chunk[7:0];cmd_n=n[3:0];cmd_rows=rows[2:0];cmd_shift=shift[5:0];cmd_layout=layout[0];
     cmd_a_base=abase[9:0];cmd_b_base=bbase[9:0];cmd_result_base=resultbase[9:0];cmd_sources_committed=committed[0];
-    abort_key=key;cmd_valid=1;do @(posedge clk);while(!cmd_ready);#1;begin_cycle=cycle;cmd_valid=0;
+    abort_key=abort_mode==4?key^128'd1:key;cmd_valid=1;do @(posedge clk);while(!cmd_ready);#1;begin_cycle=cycle;cmd_valid=0;
     $fdisplay(trace_fd,"%0d,CMD,%0d,%0d,%0d,%0d",begin_cycle,action,offset,chunk,tag);
+    if(action==4)begin
+     do @(negedge clk);while(command_requests<10||count==0||dut.core_pending==0);
+     $fdisplay(trace_fd,"%0d,RESET,%0d,%0d,%0d,%0d",cycle,count,command_requests,dut.core_pending,tag);
+     reset_flushed=reset_flushed+count;reset=1;command_live=0;
+     repeat(3)@(posedge clk);#1;reset=0;
+     repeat(4)@(posedge clk);#1;
+     if(s_req_valid||s_rsp_valid||rsp_valid||count!=0)$fatal(1,"stale post-reset request/response");
+    end else begin
     do @(posedge clk);while(!(rsp_valid&&rsp_ready));
     if(rsp_kind!==2'(action)||rsp_key!==key||rsp_tag!==tag||rsp_error!==error[0]||rsp_aborted!==aborted[0]||rsp_done!==done[0])
      $fatal(1,"terminal mismatch kind=%0d tag=%0d error=%0d aborted=%0d done=%0d expected %0d/%0d/%0d",rsp_kind,rsp_tag,rsp_error,rsp_aborted,rsp_done,error,aborted,done);
@@ -150,12 +151,13 @@ module tb_s128 #(parameter integer ROWS=1,parameter bit REAL_S=0);
     command_count=command_count+1;#1;command_live=0;
     for(integer word_index=0;word_index<ROWS*2;word_index=word_index+1)
      if(written[word_index])fixture(0,current_result_base+10'(word_index),golden[word_index*128+:128]);
+    end
    end
   end
-  if(requests!=acks||peak!=2||aborts!=4||write_acks!=readback_words)$fatal(1,"service conservation/abort/two-owner coverage");
+  if(requests!=acks+reset_flushed||reset_flushed==0||stale_abort==0||peak!=2||aborts!=4||write_acks!=readback_words)$fatal(1,"service conservation/abort/reset/two-owner coverage");
   if(mode!=0&&held==0)$fatal(1,"held S request not exercised");
-  $display("PASS native32 S128 rows=%0d lanes=%0d mode=%0d commands=%0d req=%0d ack=%0d write_ack=%0d peak=%0d held=%0d aborts=%0d cycles=%0d real=%0d boot=%0d readback=%0d",
-   ROWS,ROWS*4,mode,command_count,requests,acks,write_acks,peak,held,aborts,cycle,REAL_S,boot_writes,readback_words);$fclose(trace_fd);$finish;
+  $display("PASS native32 S128 rows=%0d lanes=%0d mode=%0d commands=%0d req=%0d ack=%0d write_ack=%0d peak=%0d held=%0d aborts=%0d cycles=%0d real=1 boot=%0d readback=%0d flush=%0d stale_abort=%0d",
+   ROWS,ROWS*4,mode,command_count,requests,acks,write_acks,peak,held,aborts,cycle,boot_writes,readback_words,reset_flushed,stale_abort);$fclose(trace_fd);$finish;
  end
  initial begin #1000000000;$fatal(1,"S128 watchdog");end
 endmodule

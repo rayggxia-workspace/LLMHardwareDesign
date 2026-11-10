@@ -22,7 +22,13 @@ for p in root.rglob('*'):
  if not p.is_file():continue
  r=p.relative_to(root).as_posix()
  if r.startswith('source/') or '/obj-' in r or r.endswith('.tar.gz'):continue
- if p.suffix in ('.log','.json','.txt','.csv') or p.name in ('source.sha256',):
+ if p.suffix in ('.log','.json','.txt','.csv','.ys','.script') or p.name in ('source.sha256',):
+  if index_generated and p.name in ('mapped.json','operators.json','unsigned.json','structural.json','reparsed.json'):
+   with p.open('rb') as f:
+    digest=hashlib.sha256()
+    for block in iter(lambda:f.read(1048576),b''):digest.update(block)
+   inventory[r]=digest.hexdigest()
+   continue
   if index_generated and p.suffix=='.log' and p.stat().st_size>262144:
    with p.open('rb') as f:
     digest=hashlib.sha256()

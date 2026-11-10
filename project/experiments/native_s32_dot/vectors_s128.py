@@ -14,17 +14,19 @@ def generate(out,seed,witness,capacity):
         fields=(kind,key,tag,full,offset,chunk,n,rows,shift,layout,abase,bbase,resultbase,committed,error,aborted,done,abort_mode,pack(result,32))
         lines.append(' '.join(format(v,'x') for v in fields));tag+=1
     def word(address,values):emit(3,abase=address,result=values)
-    def stage(a,b,offset,length,layout):
+    def stage(a,b,offset,length,layout,abase=0,bbase=128,load_a=True,load_b=True):
         n=len(b[0])
-        for row,data in enumerate(a):
-            for kk in range(0,128,4):word(row*32+kk//4,[data[offset+kk+j] if kk+j<length else 0 for j in range(4)])
+        if load_a:
+            for row,data in enumerate(a):
+                for kk in range(0,128,4):word(abase+row*32+kk//4,[data[offset+kk+j] if kk+j<length else 0 for j in range(4)])
+        if not load_b:return
         if layout==0:
             for c in range(n):
-                for kk in range(0,128,4):word(128+c*32+kk//4,[b[offset+kk+j][c] if kk+j<length else 0 for j in range(4)])
+                for kk in range(0,128,4):word(bbase+c*32+kk//4,[b[offset+kk+j][c] if kk+j<length else 0 for j in range(4)])
         else:
             for kk in range(128):
                 data=b[offset+kk] if kk<length else [0]*n
-                for group in range(2):word(128+kk*2+group,(data+[0]*(8-n))[group*4:group*4+4])
+                for group in range(2):word(bbase+kk*2+group,(data+[0]*(8-n))[group*4:group*4+4])
     samples=[]
     edges=(S32_MIN,S32_MAX,-1,0,1,-32769,32768)
     for layout in (0,1):
@@ -34,6 +36,13 @@ def generate(out,seed,witness,capacity):
                 a=[[rng.choice(edges) for _ in range(k)] for _ in range(rows)]
                 b=[[rng.choice(edges) for _ in range(n)] for _ in range(k)]
                 samples.append(dict(a=a,b=b,layout=layout,shift=rng.randrange(64),role='boundary'))
+    # Same full N8 work and all physical rows active in every capacity;
+    # K512 carries the exact sum across four different S chunk leases.
+    for layout in (0,1):
+        for k in (128,512):
+            a=[[rng.choice(edges) for _ in range(k)] for _ in range(capacity)]
+            b=[[rng.choice(edges) for _ in range(8)] for _ in range(k)]
+            samples.append(dict(a=a,b=b,layout=layout,shift=24,role='timing',abort_mode=4 if layout==0 and k==128 else 0))
     for item in json.loads(witness.read_text()):
         samples.append(dict(a=[item['A']],b=item['B'],layout=0 if item['role']=='QK' else 1,
                             shift=item.get('shift',item.get('node',{}).get('attributes',{}).get('shift',0)),role='real-witness'))
@@ -50,7 +59,32 @@ def generate(out,seed,witness,capacity):
         for offset in range(0,k,128):
             length=min(128,k-offset);stage(a,b,offset,length,layout)
             final=offset+length==k
-            emit(1,key=key,offset=offset,chunk=length,rows=rows,done=int(final),result=result if final else None)
+            emit(1,key=key,offset=offset,chunk=length,rows=rows,done=int(final),result=result if final else None,
+                 abort_mode=sample.get('abort_mode',0))
+        cases+=1
+    # A residence: keep four K128 chunks (up to8KiB) once while processing
+    # two separate B owners. B is overwritten only after the prior CHUNK
+    # terminal. Each command reads the correct chunk's real S base.
+    a=[[rng.choice(edges) for _ in range(512)] for _ in range(capacity)]
+    pair=[[[rng.choice(edges) for _ in range(8)] for _ in range(512)] for _ in range(2)]
+    for kk in range(0,512,128):stage(a,pair[0],kk,128,1,abase=kk//128*capacity*32,load_b=False)
+    for b in pair:
+        key+=1;expected=[v for values in a for v in dot(values,b,24)]
+        emit(0,key=key,full=512,n=8,rows=capacity,shift=24,layout=1)
+        for kk in range(0,512,128):
+            abase=kk//128*capacity*32;stage(a,b,kk,128,1,bbase=512,load_a=False)
+            emit(1,key=key,offset=kk,chunk=128,rows=capacity,abase=abase,bbase=512,
+                 done=int(kk==384),result=expected if kk==384 else None)
+        cases+=1
+    # Same K128 B resident across two sequential independent query groups.
+    # This avoids rewriting B but does not skip its real S128 reads.
+    queries=[[[rng.choice(edges) for _ in range(128)] for _ in range(capacity)] for _ in range(2)]
+    b=[[rng.choice(edges) for _ in range(8)] for _ in range(128)]
+    for i,a in enumerate(queries):stage(a,b,0,128,0,abase=i*capacity*32,bbase=256,load_b=i==0)
+    for i,a in enumerate(queries):
+        key+=1;expected=[v for values in a for v in dot(values,b,24)]
+        emit(0,key=key,full=128,n=8,rows=capacity,shift=24,layout=0)
+        emit(1,key=key,chunk=128,rows=capacity,abase=i*capacity*32,bbase=256,done=1,result=expected)
         cases+=1
     # Live abort while reads are outstanding, while a write offer is held,
     # and an actual returned read-error. Partial final writes are reported,
@@ -68,8 +102,15 @@ def generate(out,seed,witness,capacity):
     emit(2,key=key+1,error=1);emit(2,key=key,done=1,aborted=1)
     emit(1,key=key,chunk=128,error=1);emit(3,abase=1023,result=[0x12345678]*4)
     emit(0,key=key+1,full=0,n=1,error=1)
+    key+=2;k=128;n=8;a=[[rng.choice(edges) for _ in range(k)] for _ in range(capacity)]
+    b=[[rng.choice(edges) for _ in range(n)] for _ in range(k)]
+    emit(0,key=key,full=k,n=n,rows=capacity,shift=24,layout=0);stage(a,b,0,k,0)
+    emit(4,key=key,chunk=k,rows=capacity) # fixture coherent reset, sends CHUNK first
+    emit(2,key=key,error=1)
+    key+=1;emit(0,key=key,full=1,n=1,rows=1,shift=1,layout=0);stage([[3]],[[1]],0,1,0)
+    emit(1,key=key,chunk=1,rows=1,done=1,result=[2]);cases+=2
     path=out/'service.txt';path.write_text('\n'.join(lines)+'\n')
     return dict(cases=cases,seed=seed,rows_capacity=capacity,multiplier_lanes=capacity*4,
                 vectors_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
                 witness_sha256=hashlib.sha256(witness.read_bytes()).hexdigest(),
-                scope='Single logical S128 RTL service with bounded RTT2+stall provider; upstream staged writes are explicit fixture actions, not DDR qualification.')
+                scope='Single ordinary S128 RTL service with original four-bank SRAM model; source staged writes are explicit fixture actions, not DDR qualification.')

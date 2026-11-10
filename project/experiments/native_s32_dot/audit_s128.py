@@ -17,7 +17,7 @@ def audit_trace(trace,stimulus,mode):
     for line in stimulus.decode().splitlines():
         cmd=dict(zip(FIELDS,(int(v,16) for v in line.split()),strict=True))
         if cmd['kind']!=3:commands[cmd['tag']]=cmd
-    frame=None;owner=None;results=[];retired=set()
+    frame=None;owner=None;results=[];retired=set();begin_cycles=[]
     queue=deque();rt=[]
     for cycle,kind,a,b,c,d in csv.reader(io.StringIO(trace.decode())):
         cycle,a,b,c,d=map(int,(cycle,a,b,c,d))
@@ -37,11 +37,15 @@ def audit_trace(trace,stimulus,mode):
             rt.append(latency);frame['rt'].append(latency);frame['acks'].append((a,b,cycle))
         elif kind=='CORE_IN' and a==1:frame['input_steps'].append((b,c,cycle))
         elif kind=='CORE_OUT' and b:frame['core_done'].append((a,cycle))
+        elif kind=='RESET':
+            assert frame['cmd']['kind']==4 and d==frame['cmd']['tag'] and a==len(queue)>0 and c>0
+            assert b==len(frame['reads']) and not frame['writes']
+            queue.clear();owner=None;retired.add(d);frame=None
         elif kind=='RSP':
             cmd=frame['cmd'];assert not queue and a==cmd['kind'] and b==cycle-frame['start']
             assert c==len(frame['reads'])+len(frame['writes'])==len(frame['acks'])
             if cmd['kind']==0 and not cmd['error']:
-                assert owner is None;owner=cmd
+                assert owner is None;owner=cmd;begin_cycles.append(b)
             if cmd['kind']==1 and not cmd['error']:
                 assert owner is not None and owner['key']==cmd['key']
                 rows=owner['rows'];n=owner['n'];layout=owner['layout'];groups=(n+3)//4;length=cmd['length']
@@ -82,7 +86,7 @@ def audit_trace(trace,stimulus,mode):
                 assert c==0 and d==0
             retired.add(cmd['tag']);frame=None
     assert frame is None and not queue and owner is None and retired==set(commands)
-    return dict(frames=results,largest_observed_S_RTT=max(rt),min_S_RTT=min(rt))
+    return dict(frames=results,begin_cycles=sorted(set(begin_cycles)),largest_observed_S_RTT=max(rt),min_S_RTT=min(rt))
 
 
 def audit(directory):
@@ -106,14 +110,17 @@ def audit(directory):
                     m=re.search(r'PASS native32 S128 rows=(\d+) lanes=(\d+) mode=(\d+) commands=(\d+) req=(\d+) ack=(\d+) write_ack=(\d+) peak=(\d+) held=(\d+) aborts=(\d+) cycles=(\d+)',log)
                     assert m and 'Error' not in log
                     r,lanes,md,commands,req,ack,wr,peak,held,aborts,cycles=map(int,m.groups())
-                    assert (r,lanes,md)==(rows,rows*4,mode) and req==ack and peak<=2 and aborts==4
+                    reset=re.search(r'flush=(\d+) stale_abort=(\d+)',log)
+                    flushed=int(reset[1]) if reset else 0
+                    if reset:assert flushed>0 and int(reset[2])>0
+                    assert (r,lanes,md)==(rows,rows*4,mode) and req==ack+flushed and peak<=2 and aborts==4
                     assert wr>0 and held>0
                     if real:
                         cap=re.search(r'real=1 boot=(\d+) readback=(\d+)',log)
                         assert cap and int(cap[1])>0 and int(cap[2])==wr and peak==2
                     result['rows'].append(dict(seed=seed,rows=rows,lanes=lanes,mode=mode,initial=init,commands=commands,
                         s_requests=req,s_acks=ack,result_write_acks=wr,max_owner=peak,held_request_cycles=held,
-                        aborted_live_requests=aborts,fixture_total_cycles=cycles))
+                        aborted_live_requests=aborts,reset_flushed_s_requests=flushed,fixture_total_cycles=cycles))
                 trace_name=p+f'timing-{mode}-0.csv'
                 if trace_name in files:
                     checked=audit_trace(files[trace_name],files[p+'service.txt'],mode)

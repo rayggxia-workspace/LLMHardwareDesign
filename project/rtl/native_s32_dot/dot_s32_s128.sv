@@ -113,19 +113,27 @@ module dot_s32_s128 #(parameter integer ROWS=1) (
   ({3'd0,cmd_a_base}<b_end&&{3'd0,cmd_b_base}<a_end)||
   ({3'd0,cmd_a_base}<r_end&&{3'd0,result_base}<a_end)||
   ({3'd0,cmd_b_base}<r_end&&{3'd0,result_base}<b_end);
- integer bword,cache_index,address_value;
+ wire [3:0] bword=read_offer_index-{1'b0,rows};
+ wire [3:0] local_b_k=n>4?{1'b0,bword[3:1]}:bword;
+ wire local_b_group=n>4&&bword[0];
+ wire [7:0] remaining_k=chunk_k-tile_cursor;
+ reg [3:0] cache_index;
+ reg [9:0] address_value;
  reg [2:0] allocate_length;
  reg [3:0] allocate_total;
  always @*begin
-  allocate_length=chunk_k-tile_cursor>=4?3'd4:3'(chunk_k-tile_cursor);
-  allocate_total=4'(int'(rows)+(layout?int'(allocate_length)*(n>4?2:1):int'(n)));
-  bword=int'(read_offer_index)-int'(rows);cache_index=int'(read_offer_index);address_value=0;
-  if(read_offer_index<{1'b0,rows})address_value=int'(a_base)+int'(read_offer_index)*32+(int'(slot_first[fill_slot])/4);
+  allocate_length=remaining_k>=8'd4 ? 3'd4 : remaining_k[2:0];
+  allocate_total={1'b0,rows}+(layout?(n>4?{allocate_length,1'b0}:{1'b0,allocate_length}):n);
+  cache_index=read_offer_index;address_value=0;
+  // The admitted raw window bounds and finite fill count prove all these
+  // addresses. Use the actual 1/2-group bit decomposition, not a dynamic
+  // divider or 32-bit software-style address arithmetic.
+  if(read_offer_index<{1'b0,rows})address_value=a_base+{1'b0,read_offer_index,5'd0}+{4'd0,slot_first[fill_slot][7:2]};
   else if(layout)begin
-   cache_index=ROWS+(bword/(n>4?2:1))*2+(bword%(n>4?2:1));
-   address_value=int'(b_base)+(int'(slot_first[fill_slot])+bword/(n>4?2:1))*2+bword%(n>4?2:1);
+   cache_index=4'(ROWS)+{local_b_k[2:0],local_b_group};
+   address_value=b_base+(({2'd0,slot_first[fill_slot]}+{6'd0,local_b_k})<<1)+{9'd0,local_b_group};
   end else begin
-   cache_index=ROWS+bword;address_value=int'(b_base)+bword*32+(int'(slot_first[fill_slot])/4);
+   cache_index=4'(ROWS)+bword;address_value=b_base+{1'b0,bword,5'd0}+{4'd0,slot_first[fill_slot][7:2]};
   end
  end
  task automatic respond(input fault,aborted,done);
@@ -145,7 +153,6 @@ module dot_s32_s128 #(parameter integer ROWS=1) (
    for(integer slot=0;slot<2;slot=slot+1)begin
     slot_state[slot]<=FREE;slot_first[slot]<=0;slot_length[slot]<=0;slot_total[slot]<=0;slot_returned[slot]<=0;
     q_is_write[slot]<=0;q_slot[slot]<=0;q_index[slot]<=0;
-    for(integer word_index=0;word_index<WORDS;word_index=word_index+1)cache[slot][word_index]<=0;
    end
   end else begin
    if(rsp_valid&&rsp_ready)rsp_valid<=0;
@@ -232,9 +239,9 @@ module dot_s32_s128 #(parameter integer ROWS=1) (
      if(final_packet&&write_offer_index<({1'b0,rows}<<1))begin
       offer_valid<=1;s_req_write<=1;s_req_address<=result_base+{6'd0,write_offer_index};
       s_req_wdata<=c_out_data[write_offer_index*128+:128];offer_slot<=0;offer_index<=write_offer_index;
-     end else if(fill_active&&read_offer_index<slot_total[fill_slot]&&address_value>=0&&address_value<1024&&cache_index>=0&&cache_index<WORDS)begin
-      offer_valid<=1;s_req_write<=0;s_req_address<=10'(address_value);s_req_wdata<=0;
-      offer_slot<=fill_slot;offer_index<=4'(cache_index);
+     end else if(fill_active&&read_offer_index<slot_total[fill_slot]&&int'(cache_index)<WORDS)begin
+      offer_valid<=1;s_req_write<=0;s_req_address<=address_value;
+      offer_slot<=fill_slot;offer_index<=cache_index;
      end
     end
     if(!stop&&!fill_active&&tile_cursor<chunk_k&&(slot_state[0]==FREE||slot_state[1]==FREE))begin
@@ -242,7 +249,6 @@ module dot_s32_s128 #(parameter integer ROWS=1) (
      slot_state[slot_state[0]!=FREE]<=FILL;slot_first[slot_state[0]!=FREE]<=tile_cursor;
      slot_length[slot_state[0]!=FREE]<=allocate_length;slot_total[slot_state[0]!=FREE]<=allocate_total;
      slot_returned[slot_state[0]!=FREE]<=0;tile_cursor<=tile_cursor+{5'd0,allocate_length};
-     for(integer word_index=0;word_index<WORDS;word_index=word_index+1)cache[slot_state[0]!=FREE][word_index]<=0;
     end
     if(!stop&&!consume_active)begin
      if(slot_state[0]==READY&&slot_first[0]==next_consume)begin consume_slot<=0;consume_active<=1;consume_k<=0;consume_group<=0;end
