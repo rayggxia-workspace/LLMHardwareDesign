@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-11更新：E32/G32 均完成最终 ODB 活动估算。G32 256 个 Qwen 双 lane 包的增量约 44.23 pJ/包。三 P 12 组全 FFN 探针显示 M 在供数期连续接收，主要耗时位于记录之间的发令、交接和等待。U.S 可选前读经 36 组完整及 48 组回绕验证，未扩大私有 S。整 token 能耗和系统物理仍在验收。见 [G32 回执](../../work/YUZE-LU/250/physical/g-energy-01/summary.json) 与 [FFN 回执](../../docs/experiments/issue-250-three-p-ffn.md)。
+
 2026-11-11更新：三P完整FFN真母控/局控/双通道DMA/16个原S bank两版各36项通过，合成整数权重与Qwen2.5-3B同尺寸。早发EXEC首个无背压样本860,202→849,914拍，36组节省0.52%–1.20%，搬运量相同。编程FFN与S80实测费用回校的SystemC估计5.999543 token/s，低于9.215647。整token实测、能耗、联合物理与DP待验收。见[回执](../../docs/experiments/issue-250-three-p-ffn.md)。
 
 2026-11-11更新：E32 AP64（234×234 µm）独立原 TT 300MHz、两种 DRC、最终网表/严格等价和 158 个研究 M10 接入通过；三P动态回传真实落地通过。已回校时间模型7.187736 token/s，AV未实现候选7.792632，均低于同条件9.215647。整层M/Down、系统物理、能耗和DP待验收。见[回执与范围](../../docs/experiments/issue-250-native-progress-06.md)。

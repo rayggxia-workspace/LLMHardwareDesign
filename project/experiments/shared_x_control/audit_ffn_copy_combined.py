@@ -15,7 +15,7 @@ PASS = ("PASS ffn_copy_combined scopes=2 copy_fences=1 blocked_ack_cycles=7 "
         "M_fences=22,22,22 first_purges=34 purges=67 W64=52224 COPY=3072 scatter=384")
 
 
-def audit(receipt, archive_sha, candidate_commit, candidate_sha):
+def audit(receipt, archive_sha, candidate_commit, candidate_sha, lookahead=False):
     with receipt.open("rb") as stream:
         assert hashlib.file_digest(stream, "sha256").hexdigest() == archive_sha
     hashes, manifests, trials, oracles = {}, {}, {}, {}
@@ -44,6 +44,8 @@ def audit(receipt, archive_sha, candidate_commit, candidate_sha):
                 assert b"%Error" not in raw and b"%Fatal" not in raw
                 lines = raw.decode().splitlines()
                 assert [s for s in lines if s.startswith("PASS ffn_copy_combined")] == [PASS]
+                witness = "COPY_NEAR_WRAP held_prefetched_U=1 and_old_P_ACK=1"
+                assert (witness in lines) == lookahead
                 profiles = [s for s in lines if s.startswith("FFN_PROFILE ")]
                 assert len(profiles) == 2
                 cycles = []
@@ -66,6 +68,9 @@ def audit(receipt, archive_sha, candidate_commit, candidate_sha):
             assert hashes[name] == digest
     for name, digest in json.loads(manifests["generated/generated.json"]).items():
         assert hashes["generated/" + name] == digest
+    if lookahead:
+        assert hashes["test/early_copy_3p_rearm_lookahead.sv"] == "fb6f9d4d24a7a662fd90cd915802223f5d19b41810f21f6acb431659c50ddf23"
+        assert hashes["test/early_copy_epoch_3p_rearm_lookahead.sv"] == "96d5d9542d3dde0b6c895a1bc9aaa3744fd069e04a420d64dfca459571123bbc"
     assert set(oracles) == {f"seed-{seed}" for seed in range(25001, 25009)}
     for directory, oracle in oracles.items():
         assert oracle["mid_tiles"] == 3 and oracle["descriptor_count"] == 6 and oracle["split_up_channel"]
@@ -86,8 +91,10 @@ def main():
     parser.add_argument("--sha256", required=True)
     parser.add_argument("--candidate-commit", required=True)
     parser.add_argument("--candidate-sha256", required=True)
+    parser.add_argument("--lookahead", action="store_true")
     args = parser.parse_args()
-    print(json.dumps(audit(args.archive, args.sha256, args.candidate_commit, args.candidate_sha256), indent=2))
+    print(json.dumps(audit(args.archive, args.sha256, args.candidate_commit, args.candidate_sha256,
+                           args.lookahead), indent=2))
 
 
 if __name__ == "__main__":

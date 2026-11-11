@@ -26,6 +26,9 @@ threads=${SLURM_CPUS_PER_TASK:-12}
 seeds=(25001 25002 25003 25004 25005 25006 25007 25008)
 srun --exact -n1 -c "$threads" --cpu-bind=cores python3 -B "$EXP/derive_copy_epoch_rearm.py" --root . --out "$root/generated" --source-lock "$EXP/FFN_COPY_REARM_SOURCE_LOCK.json"
 srun --exact -n1 -c "$threads" --cpu-bind=cores python3 -B "$EXP/derive_ffn_copy_combined_test.py" --root . --generated "$root/generated" --out "$root/test" --source-lock "$EXP/FFN_COPY_COMBINED_SOURCE_LOCK.json"
+if [[ ${1:-serial} == lookahead ]]; then
+ srun --exact -n1 -c "$threads" --cpu-bind=cores python3 -B "$EXP/derive_combined_copy_lookahead_test.py" --test "$root/test" --generated "$root/generated" --source-lock "$EXP/FFN_COPY_LOOKAHEAD_SOURCE_LOCK.json"
+fi
 sha256sum "$root"/{generated,test}/*.sv > "$root/derived.sha256"
 top=test_ffn_copy_combined
 srun --exact -n1 -c "$threads" --cpu-bind=cores \

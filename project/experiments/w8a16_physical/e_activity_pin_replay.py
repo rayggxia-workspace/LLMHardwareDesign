@@ -65,9 +65,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--scope", default="test_e_s128_joint/dut/narrow_leaf/arithmetic")
+    parser.add_argument("--provider", choices=("E", "G"), default="E")
+    parser.add_argument("--minimum-gate-pins", type=int, default=80000)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    scope = ["test_e_s128_joint", "dut", "narrow_leaf", "arithmetic"]
+    scope = args.scope.split("/")
     for mode in ("active", "idle", "active-clock-only"):
         waveform = "active" if mode == "active-clock-only" else mode
         table = args.output / f"{waveform}-gate-pin-activity.tsv"
@@ -77,7 +80,8 @@ def main():
         source = (args.input / f"{waveform}-power.tcl").read_text()
         start = source.index("report_activity_annotation")
         source = (source[:start] + f"set port_table [open {{{table.resolve()}}} r]\n"
-                  + f"set clocks_only {int(mode == 'active-clock-only')}\n") + r"""
+                  + f"set clocks_only {int(mode == 'active-clock-only')}\n"
+                  + f"set provider {args.provider}\nset minimum_gate_pins {args.minimum_gate_pins}\n") + r"""
 set gates_set 0
 set pins_missing 0
 set active_clock_pins 0
@@ -119,8 +123,8 @@ while {[gets $port_table line] >= 0} {
   incr gates_set
 }
 close $port_table
-puts "E_GATE_PIN_ACTIVITY matched=$gates_set trace_only=$pins_missing active_clock=$active_clock_pins clocks_only=$clocks_only"
-if {$gates_set < 80000 || $active_clock_pins == 0} { error "insufficient exact gate-pin activity coverage" }
+puts "${provider}_GATE_PIN_ACTIVITY matched=$gates_set trace_only=$pins_missing active_clock=$active_clock_pins clocks_only=$clocks_only"
+if {$gates_set < $minimum_gate_pins || $active_clock_pins == 0} { error "insufficient exact gate-pin activity coverage" }
 report_activity_annotation
 report_power -digits 12
 """

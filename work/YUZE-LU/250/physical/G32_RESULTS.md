@@ -44,6 +44,10 @@ The three-phase ordinary-S128 calendar issues one gate read, one up read and one
 
 [Job 102114 mapping](g-frontend-01/evidence/frontend/receipt.json) prices the adapter rather than calling the holds free: **7,506.254 µm²**, 874 DFF_X1 (768 payload bits plus 106 metadata/control state bits), 1,179 MUX2_X1, zero memory/hard-macro instances. This is mapped standard-cell area, not a routed area or 300 MHz result. It belongs in the P LC/adapter cost and physical implementation, outside the accepted G hard macro. Descriptor registration, actual LC integration, combined standard-cell placement/timing and full-system verification remain parent-task work.
 
+## Activity-based energy
+
+[Job 102639](g-energy-01/summary.json) replays 256 historical Qwen Gate/Up two-lane packets against the accepted G32 netlist. The exact ODB and SPEF activity audit accounts for all 77,354 internal pins and 204 signal ports. At TT 1.1 V and 25 C with a 3.333 ns period, active power is 14.8369 mW and the matched clock-and-duty reference is 2.2556 mW. Their difference integrated over 270 cycles is 44.23 pJ per observed packet. Applying that sample to the 198,144 FFN packets of the pinned decode gives a conditional G-only estimate of 8.763 uJ per token. It covers G switching and internal energy above the clock-and-duty reference. The estimate excludes the SRAM, DDR, controller and other macros.
+
 ## Reproduction and artifact boundary
 
 Run `python project/experiments/w8a16_physical/results.py` from the repository root to rejoin local exact-byte receipts, six-file SHA bindings, final ODB identity, density floors, model coverage and S128 traces. [g32-results.json](g32-results.json) is the generated machine-readable result. Large native data remain in the authorized project store at the exact paths and SHA-256 values in [delivery.json](g-deliver-01/evidence/delivery/delivery.json); the repository keeps bounded original reports and [the native layout preview](g-deliver-01/layout.png).
