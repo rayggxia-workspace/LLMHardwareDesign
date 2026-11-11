@@ -1,5 +1,8 @@
 # YUZE-LU 的进度
 
+2026-11-11更新：公共 S 的位宽复核确认旧 NoPool 9.223787 token/s 按 64 B/拍计费，仅改为 P/U 16 B/拍后同工作量为 7.595433。DDR 一直是 64 B beat。产品位宽先验证 P 的四银行对齐落地和 Dot 供数，保留现有 16 KiB 容量和窄口回归。见[位宽合同和同工作量回执](../../docs/experiments/issue-250-local-s-width.md)。
+
+
 2026-11-11更新：E32/G32 均完成最终 ODB 活动估算。G32 256 个 Qwen 双 lane 包的增量约 44.23 pJ/包。三 P 12 组全 FFN 探针显示 M 在供数期连续接收，主要耗时位于记录之间的发令、交接和等待。U.S 可选前读经 36 组完整及 48 组回绕验证，未扩大私有 S。整 token 能耗和系统物理仍在验收。见 [G32 回执](../../work/YUZE-LU/250/physical/g-energy-01/summary.json) 与 [FFN 回执](../../docs/experiments/issue-250-three-p-ffn.md)。
 
 2026-11-11更新：三P完整FFN真母控/局控/双通道DMA/16个原S bank两版各36项通过，合成整数权重与Qwen2.5-3B同尺寸。早发EXEC首个无背压样本860,202→849,914拍，36组节省0.52%–1.20%，搬运量相同。编程FFN与S80实测费用回校的SystemC估计5.999543 token/s，低于9.215647。整token实测、能耗、联合物理与DP待验收。见[回执](../../docs/experiments/issue-250-three-p-ffn.md)。
