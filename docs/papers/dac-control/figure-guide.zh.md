@@ -1,61 +1,71 @@
 # 控制章节图解
 
-[可编辑的 diagrams.net 源图](control-figures.drawio)包含两个页面。方框、文字和连线均可单独选择，带端点的连线可拖动或重新连接。两张 SVG 也保留独立的矢量对象和文字，适合在矢量编辑器中微调或放入论文。
+[双页 diagrams.net 源图](control-figures.drawio)中，方框、文字和连线可单独编辑。两张 SVG 同样保留独立矢量对象和文字。
 
 ## 图 1　整体底座与 P Block 控制
 
 ![图 1 NoPool 底座和单个 P Block](control-architecture.svg)
 
-**图 1(a) 从全局看。** 横排的 `P0、P1、P2、U0、U1、C0、F0、J0、J1` 是 NoPool 候选中的九个 Block 实例，字母表示 Block 类型，数字区分同类实例。图上的序号是示意标签，实际目标 ID 由部署配置绑定。母控在上方，按全局程序向某个实例发任务，并用 token 跟踪该任务的终态。蓝线把调用与返回的逻辑关系画在一起。下方的橙色带表示由产品映射绑定的数据路径，跨 Block 的张量搬运和片外 DDR 访问都需要相应路径。实际路径由合法端点和连线决定，图上用虚线表达这层依赖。
+**图 1(a) 从全局看。** 横排的 `P0、P1、P2、U0、U1、C0、F0、J0、J1` 是 NoPool 候选中的九个实例。字母区分 Block 类型，序号用于读图，实际目标 ID 由部署配置绑定。母控对各实例发任务并收终态。共享 DMA 接片外 DDR。下方橙色虚线表示产品映射要绑定的跨 Block 数据边，所需端点和路径由产品连线确定。
 
-**图 1(b) 顺着一条调用读。** 母控端口把调用送进 P 局控。局控从独立的程序存储取指，并通过 Scope DMA 获取这次任务的描述符。描述符告诉服务逻辑要处理哪个范围、从哪里取操作数以及将结果写到哪里。程序存储用于取指，图下方的私有 S 用来保存数据和中间结果。
+**图 1(b) 的画线规则。** 颜色回答“传什么”，线型回答“图中连接的依据是什么”。两项规则独立。实线的依据是固定源码中已有的 RTL 接口，整底座物理连线与时序另行验收。
 
-**三个叶宏如何接在局控下面。** 局控向 scope/service 逻辑发出任务并接收完成返回。服务逻辑给 M 发计算命令，跟踪 S 的读写与写确认。M 承担矩阵计算，S 保存输入片段、临时结果和写回数据，G 承担 SiLU 与门乘。图中的 G 是 NoPool 为 P 选择的 G32 服务，其局部接入用虚线标出。已有三 P FFN 夹具用一个共享 G32 服务，并由夹具协调外层阶段。对已验证的 P 范围任务，服务逻辑收到所需写确认后才能上报成功，局控释放描述符后再回送终态。
-
-**二级控制解决的问题。** 母控只需判断目标 Block 是否可以启动、哪些任务必须等齐。权重到达、局部 SRAM 仲裁、计算命令和写回背压由局控与服务逻辑处理。这样，一个全局调用可以覆盖一段局部工作。只要描述符与完成语义保持一致，调整 P 内部供数或提前发令时，同一母控程序仍能使用。原三 P RTL 对照中，固定程序镜像和搬运量，仅改变供数侧提前发令，就使匹配案例的 FFN 周期减少 0.52–1.20%。[三 P RTL 实验记录](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/experiments/issue-250-three-p-ffn.md)
-
-## 图 2　指令用途与两种 FFN 映射
-
-![图 2 ISA 分类及门控 FFN 两种映射](instruction-topologies.svg)
-
-### 每条指令的用途
-
-图 2(a) 按派发、同步、参数准备、程序流归类。母控栏覆盖 native MC v3，局控栏覆盖 native P scope 内核。U、C、F、J 有各自的局控 profile。
-
-| 类别 | 指令 | 读图时怎样理解 |
+| 线 | 读法 | 图中例子 |
 | --- | --- | --- |
-| 派发 | `G_CALL` | 指定目标 Block 和本次调用的 token，快照八个参数寄存器。图中的 `G_CALL B,t1` 表示给 B 所绑定的 P0 派发 Gate 投影，并用 t1 追踪这次调用。当前 native MC 每个目标同时只允许一个活动调用。 |
-| 派发 | `L_EXEC` | P 局控开始执行已注册的本地服务。该内核先读程序元数据和描述符，再向服务逻辑提交请求。实际访存、子宏执行和结果写回由服务逻辑推进。 |
-| 同步 | `G_WAIT` | 等掩码选中的活动 token 都收到对应终态，然后释放这些 token 及对应目标槽。位 0 代表 t0，位 1 代表 t1。例中 `0x06` 同时选 t1 和 t2，因此两路都结束后才能派发 D。 |
-| 同步 | `G_EVENT` | 消费镜像中事先绑定的 READY 事件，将该事件携带的标量写入指定寄存器。它适用于已注册的阶段就绪通知。图中门控汇合需要完整终态，因此使用 `G_WAIT`。 |
-| 同步 | `L_WAIT` | 局控等待与本地调用的 owner、ticket 匹配的服务结果。对于已验证的 P 范围，成功结果包含必要的目的写确认。 |
-| 参数准备 | `G_MOVI` | 把一个 32 位立即数写入寄存器。例中先用两条分别写地址低、高字，建立描述符指针。其余参数按部署 ABI 初始化。 |
-| 参数准备 | `G_ADDI64` | 向一个偶数索引开头的寄存器对加无符号立即数并检查溢出。例中每次调用前将指针推进到对应描述符，第一条调用使用已初始化的首地址。 |
-| 程序流 | `G_JNZ` | 检查寄存器是否非零，在镜像明确给出的两个前向目标 PC 中选择其一。可用于条件选择后续工作。本例固定采用一种部署映射，程序中无需条件分支。 |
-| 程序流 | `G_LOOP` | 递减有界计数器。仍有迭代时跳回指定的较早 PC，最后一轮退出。可用于重复一段层或分片控制程序。本图展开单个门控 FFN 的一次调度。 |
-| 程序流 | `G_END` | 结束母控程序并报告终态。示例先用 `G_WAIT 0x20` 等最后的残差加法结束，再执行 `G_END`。 |
-| 程序流 | `L_END` | 在匹配的本地完成后释放描述符 scope，并返回终态。母控收到并核对这次返回后，后续 `G_WAIT` 才能释放对应 token。 |
+| 蓝色实线 | 已有控制或指令接口。传调用、取指、请求、命令、确认或状态。 | 母控端口和局控之间的 Call / reply，局控和程序存储之间的 Fetch，服务逻辑向 S 发请求并接收写 ACK。 |
+| 橙色实线 | 已有负载数据接口。传描述符本体、操作数、读写数据或计算结果。 | DMA 将描述符送回局控，局控将描述符交给服务逻辑，M 的操作数和结果，S 的读写数据。 |
+| 蓝色虚线 | 候选的控制绑定。 | 单个 P 的服务逻辑向本地 G 发命令并接收完成。 |
+| 橙色虚线 | 候选或由产品绑定的数据边。 | P 私有 S 与本地 G 之间经适配器交换操作数和结果。 |
 
-[母控原生解码和状态机](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/mother_control_native/mc_native_controller.sv#L327-L396) · [G_JNZ 取指与目标选择](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/mother_control_native/native_instruction_fetch.svh) · [P 局控执行顺序](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/shared_x_control/rtl/lc_native_scope_controller.sv#L233-L276)
+**按箭头读一条调用。** 母控把调用和 token 交给局控。局控从程序存储取指，向 Scope DMA 发蓝色读请求，接收橙色描述符。描述符交给服务逻辑后，服务逻辑给 M 发命令并组织供数，同时追踪 S 写回。M 和 S 都同时涉及控制与数据，所以各画一蓝一橙，表示逻辑职责。端口实现可以将这些信息打包或复用。对已验证的 P 范围任务，服务逻辑等所需的目的写 ACK 后才回报成功，局控释放 scope 后再向母控返回终态。图中的候选 G32 归属来自 NoPool 合同。已有三 P FFN 夹具使用一个共享 G32 服务。
 
-### A–F 代表什么
+**二级控制的价值。** 母控决定何时调用某个 Block、在哪些点等齐，局控和服务逻辑负责局部供数、宏执行和写回背压。只要描述符和完成语义一致，P 内部可以换一种供数顺序，母控程序仍然可用。既有三 P FFN 对照中，固定程序和搬运量时，提前发 EXEC 的供数实现减少了 0.52–1.20% 的 FFN 周期。[P 范围 RTL](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_local_native/p_stream_scope_node.sv) · [三 P 实验记录](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/experiments/issue-250-three-p-ffn.md)
 
-这是一个带前置归一化和残差的门控 FFN。原始输入 `x` 一路进入归一化，另一路保留给残差加法。A–F 是算子或服务的名字，方框中的 U0、P0 等是示意的 Block 实例。同一个物理 Block 可以在不同时间执行不同字母对应的服务。
+## 图 2　五类 Block 的局控指令与 FMA 拓扑
 
-| 任务 | 输入与输出 | 图中的部署 |
+![图 2 统一局控子集和 U 的两种 FMA 输入连接](instruction-topologies.svg)
+
+### 图 2(a) 五类 Block 共用哪些指令
+
+P、U、C、F、J 的有界原生程序都用 `L_EXEC → L_WAIT` 执行并等待一个服务，局部任务最后执行 `L_END`。三条共用指令的 opcode 分别是 `0x41`、`0x44`、`0x4F`。同一条 `L_EXEC` 根据执行描述符调用本 Block 注册的服务。图中的母控栏采用 PR #251 的 native MC v3，局控栏采用五类原生程序的公共子集。各 Block 仍按各自的镜像、描述符和传输 profile 装载。
+
+| Block | `L_EXEC` 选择的服务 | 程序示意 |
 | --- | --- | --- |
-| A 归一化 | 输入 `x`，输出归一化向量 `n`。 | U0，两图相同 |
-| B Gate 投影 | `n → g`，计算 Gate 分支。 | P0，两图相同 |
-| C Up 投影 | `n → u`，计算 Up 分支。 | 左图 P1，右图复用 P0 |
-| D 激活与门乘 | 等 B 和 C 的输出可用后，计算 `m = SiLU(g) ⊙ u`。 | P0 的候选 G 服务 |
-| E Down 投影 | 把中间向量 `m` 投影回残差宽度，输出 `y`。 | P2 |
-| F 残差加法 | 读取 `y` 和保留的原始 `x`，写出 `y + x`。 | J0 的两路汇合服务 |
+| P | 叶宏 profile 中有装载、M 计算和门控。较新的 native P profile 执行有界 range 服务。 | `EXEC[装载] → WAIT → EXEC[M] → WAIT → END`，或 native P 的单 scope 内核 |
+| U | N 归一化、E 向量运算，以及接收预约、发送、接收。 | `EXEC[E/FMA] → WAIT → END` |
+| C | R 状态服务、G 激活、E 运算，以及接收预约、发送、接收。 | `EXEC[预约] → WAIT → EXEC[接收] → WAIT → EXEC[R/G/E 服务] → WAIT → END`，按任务选择其中的具体服务 |
+| F | G 激活、E 运算，以及接收预约、发送、接收。 | `EXEC[G] → WAIT → EXEC[E] → WAIT → END` |
+| J | JOIN 汇合和 RELEASE 租约释放。 | `EXEC[JOIN] → WAIT → EXEC[RELEASE] → WAIT → END` |
+ 
+表中 `EXEC[发送]` 等写法表示 `L_EXEC` 的描述符服务。早期通用控制研究另有 `L_RX/L_TX` 等编码，其准入由对应 profile 决定。五类叶宏程序的公共子集使用上述三条指令。[五类程序生成器](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/cad3fa572d3cbf8515532df50868000806990b18/project/control_native_v1/images.py#L17-L62) · [U/C/F 服务适配](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/2a66b918df883853b6f276d40fd8490a8b5cdca0/project/control_native_v1/ucf_native_service.sv) · [P/J 服务适配](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/2a66b918df883853b6f276d40fd8490a8b5cdca0/project/control_native_v1/pj_native_service.sv) · [五类 64 位 profile 的版本边界](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/experiments/assets/five-leaf-bases/README.md)
 
-### 顺着两段母控程序读
+### 每条指令在做什么
 
-1. **共同入口。** 准备 A 至 F 的描述符和兼容的部署参数。示例按调用顺序摆放描述符，母控用 `G_MOVI` 建立指针，随后用 `G_ADDI64` 在各调用之间前进。母控发 A（t0），用 `0x01` 等归一化结果。
-2. **左图，归一化结果扇出到 P0 与 P1。** B 和 C 都依赖 A，但分别占用不同目标，母控可以先后发 B（t1）和 C（t2），让两路计算重叠。到 D 前执行 `G_WAIT 0x06`，释放两个终态 token。D 随后才能在 P0 使用两路结果。
-3. **右图，归一化结果只需送到 P0，两个投影复用同一目标。** B 完成并经 `G_WAIT 0x02` 释放 P0 后，母控才能把 C 发给 P0。随后 `G_WAIT 0x04` 等 Up 结果。B 的结果必须在 P0 中保留到 D 消费，B 与 C 使用的目的位置由描述符及数据寿命约束保证。图中 B 到 C 的灰虚线代表同一目标的资源顺序。C 的计算输入仍来自 A。
-4. **共同收尾。** 两路投影结果都可用后发 D，依次等待 `0x08`、`0x10`、`0x20`，使门控中间值、Down 结果和最终残差结果分别在下一步使用前完成。最后执行 `G_END`。橙色残差边表示 F 还需要原始 `x`，它由数据路径和缓冲寿命保证。
+| 类别 | 指令 | 用途 |
+| --- | --- | --- |
+| 派发 | `G_CALL` | 选择目标 Block 和完成 token，并快照参数寄存器。例中的 `G_CALL C,t2` 让生产者 C 执行，同时用 t2 跟踪它。 |
+| 派发 | `L_EXEC` | 按执行描述符启动一项本地服务。U 的例子中选择 E 的 FMA 以及读几个 S 源地址。 |
+| 同步 | `G_WAIT` | 等掩码选中的活动 token 都收到匹配终态，再释放这些 token 和对应目标槽。掩码 `0x03` 等 t0、t1，`0x07` 还等 t2。 |
+| 同步 | `G_EVENT` | 消费镜像中事先绑定的 READY 事件，把携带的标量写入目标寄存器，用于已注册的阶段就绪通知。 |
+| 同步 | `L_WAIT` | 等匹配的本地服务结果。服务描述符规定完成条件，涉及数据写入时按服务约定等对应写确认。 |
+| 参数准备 | `G_MOVI` | 将一个 32 位立即数写入参数寄存器。例如用两条初始化描述符地址的低、高字。 |
+| 参数准备 | `G_ADDI64` | 向一个偶数索引开头的 64 位寄存器对加无符号立即数，检查溢出。native P 的连续描述符可用它推进指针。 |
+| 程序流 | `G_JNZ` | 检查寄存器是否非零，在镜像编码的两个前向目标 PC 中选择其一。 |
+| 程序流 | `G_LOOP` | 递减有界计数器。还有迭代时跳回较早的 PC，最后一轮退出。 |
+| 程序流 | `G_END` | 在全局任务义务关闭后返回母控程序终态。 |
+| 程序流 | `L_END` | 在局部义务关闭后向母控返回任务终态。native P 会释放 descriptor scope。J 的租约释放则是可由 `L_EXEC` 显式调用的服务。 |
 
-两种部署保持相同的数学依赖。左图需要归一化结果到两个 P 的可用路径，右图复用一个目标并增加串行等待。母控通过改变 C 的目标 ID 和等待位置适配部署，描述符与可用端点必须一起重新绑定。这里核对的是 ISA、依赖及目标复用规则。六阶段端到端图以及 P 内 G 服务属于候选映射，实际准入取决于各服务、数据路径和写回保证。
+### 图 2(b) 连线和指令一起改变计算结果
+
+**A、B、C 是生产者任务。** A 示意绑定到 P0，交付乘数 `a=2`。B 绑定到 P1，交付乘数 `b=3`。可选的 C 示意绑定到 U1，交付加数 `c=5`。U0 是消费者。它从私有 S 的已绑定地址读入操作数，再交给 E 宏。图中生产者标签与 Block 实例标签分开书写，例如任务 C 位于 U1。
+
+| | 左图，两条输入路径 | 右图，新增第三条输入路径 |
+| --- | --- | --- |
+| 产品绑定 | A、B 的结果送到 U0.S 的两个输入位置。 | 额外绑定 U1 → U0.S，给 `c` 保留第三个位置。 |
+| 母控指令 | 先发 A（t0）、B（t1），用 `G_WAIT 0x03` 等两路。 | 在等待之前插入 `G_CALL C,t2`，把掩码改为 `0x07`。 |
+| U 局控指令 | `L_EXEC` 选用两源 FMA 描述符，E 的第三操作数补零。 | `L_EXEC` 选用三源描述符，E 实际读取第三个 S 地址。两边随后都执行 `L_WAIT → L_END`。 |
+| 结果 | `2 × 3 = 6`。 | `2 × 3 + 5 = 11`。 |
+
+两段母控程序在输入写确认后才调用 U0（t3），然后用 `G_WAIT 0x08` 等 U0，最后 `G_END`。图中省略了传输控制细节。若生产者的终态已包含写入 U0 的确认，所示等待就能保证输入可用。若生产者只确认本地结果，部署程序还需要显式安排传输和目的写确认。新增连线由产品绑定，运行时按已绑定的路径发任务。第三条路径提供 `c`，母控等待它到位，U 局控再把它选进计算，这三步共同实现 `a × b + c`。
+
+本项目已有独立 U 原生入口测试用实际 SRAM 检查了两源和三源的读取次数及写回结果，分别得到 6 和 11。图中的生产者绑定、跨 Block 路径与母控片段是部署示例，联合拓扑仍需验证。[两源／三源测试源码](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/pu_leaf_base/tb_u_native_entry.sv#L76-L94) · [U 原生入口回执](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/212/u-native-fix.md#L12-L19)

@@ -121,7 +121,7 @@ class Diagram:
 
 
 def architecture():
-    d = Diagram("1 - Base and P control", "control-architecture", 1200, 742)
+    d = Diagram("1 - Base and P control", "control-architecture", 1200, 823)
     d.text("base-heading", 38, 36, "(a)  NoPool base candidate", size=27, bold=True, width=600)
     d.box("mother", 40, 73, 317, 62, "Mother controller", "Program memory and task tokens")
     d.box("shared-dma", 728, 73, 214, 62, "Shared DMA")
@@ -146,7 +146,7 @@ def architecture():
            source="shared-dma", target="product-data-paths", color=OCHRE, dashed=True, direction="none")
 
     d.text("p-detail-heading", 38, 385, "(b)  Control inside one P Block", size=27, bold=True, width=800)
-    d.box("p-detail-frame", 40, 416, 1120, 291, stroke=LINE, fill=PANEL)
+    d.box("p-detail-frame", 40, 416, 1120, 334, stroke=LINE, fill=PANEL)
     d.box("mc-port", 61, 442, 175, 54, "MC port")
     d.box("p-lc", 354, 442, 246, 54, "P local controller")
     d.box("p-program", 831, 442, 280, 54, "Program memory")
@@ -154,23 +154,45 @@ def architecture():
     d.text("p-call-return-label", 295, 453, "Call / reply", color=BLUE, size=14, align="center", width=107)
     d.edge("p-pm-fetch", [(600, 469), (831, 469)], source="p-lc", target="p-program", direction="both")
     d.text("p-pm-fetch-label", 714, 453, "Fetch", color=BLUE, size=14, align="center", width=90)
-    d.box("p-descriptor-dma", 61, 531, 175, 54, "Scope DMA", stroke=OCHRE, fill=OCHRE_BG)
-    d.edge("p-descriptor-fetch", [(236, 558), (298, 558), (298, 486), (354, 486)],
-           source="p-descriptor-dma", target="p-lc", color=OCHRE, direction="both")
-    d.box("p-service", 354, 531, 444, 54, "Scope and service logic")
-    d.edge("p-scope-service", [(477, 496), (477, 531)], source="p-lc", target="p-service", direction="both")
-    d.text("p-scope-service-label", 494, 515, "Scope / done", color=BLUE, size=14, width=125)
+    d.box("p-descriptor-dma", 61, 543, 175, 55, "Scope DMA", stroke=OCHRE, fill=OCHRE_BG)
+    d.edge("p-descriptor-request", [(354, 476), (274, 476), (274, 557), (236, 557)],
+           source="p-lc", target="p-descriptor-dma")
+    d.edge("p-descriptor-fetch", [(236, 584), (305, 584), (305, 489), (354, 489)],
+           source="p-descriptor-dma", target="p-lc", color=OCHRE)
+    d.box("p-service", 337, 543, 513, 55, "Scope and service logic")
+    d.edge("p-scope-service", [(458, 496), (458, 543)], source="p-lc", target="p-service", direction="both")
+    d.text("p-scope-service-label", 337, 519, "Dispatch / done", color=BLUE, size=14, width=115)
+    d.edge("p-scope-data", [(530, 496), (530, 543)], source="p-lc", target="p-service", color=OCHRE)
+    d.text("p-scope-data-label", 550, 519, "Descriptor", color=OCHRE, size=14, width=115)
 
-    d.box("macro-m", 61, 632, 244, 55, "M", "Matrix compute", stroke=OCHRE, fill=OCHRE_BG)
-    d.box("macro-s", 454, 632, 244, 55, "S", "Private SRAM", stroke=OCHRE, fill=OCHRE_BG)
-    d.box("macro-g", 867, 632, 244, 55, "G", "Activation and gate", stroke=OCHRE, fill=OCHRE_BG)
-    d.edge("p-m-service", [(403, 585), (183, 632)], source="p-service", target="macro-m", direction="both")
-    d.edge("p-s-service", [(576, 585), (576, 632)], source="p-service", target="macro-s",
+    d.box("macro-m", 60, 680, 245, 55, "M", "Matrix compute", stroke=OCHRE, fill=OCHRE_BG)
+    d.box("macro-s", 471, 680, 246, 55, "S", "Private SRAM", stroke=OCHRE, fill=OCHRE_BG)
+    d.box("macro-g", 862, 680, 245, 55, "G", "Activation and gate", stroke=OCHRE, fill=OCHRE_BG)
+    d.edge("p-m-service", [(394, 598), (155, 680)], source="p-service", target="macro-m", direction="both")
+    d.text("p-m-control-label", 91, 644, "Command / done", size=14, color=BLUE, width=140)
+    d.edge("p-m-data", [(431, 598), (202, 680)], source="p-service", target="macro-m",
            color=OCHRE, direction="both")
-    d.edge("p-g-service", [(748, 585), (989, 632)], source="p-service", target="macro-g",
+    d.text("p-m-data-label", 337, 648, "Operands / result", size=14, color=OCHRE, width=132)
+    d.edge("p-s-service", [(545, 598), (545, 680)], source="p-service", target="macro-s", direction="both")
+    d.text("p-s-control-label", 435, 623, "Request / ACK", size=14, color=BLUE, width=105)
+    d.edge("p-s-data", [(624, 598), (624, 680)], source="p-service", target="macro-s",
+           color=OCHRE, direction="both")
+    d.text("p-s-data-label", 644, 648, "Read / write data", size=14, color=OCHRE, width=132)
+    d.edge("p-g-service", [(783, 598), (980, 680)], source="p-service", target="macro-g",
            dashed=True, direction="both")
-    d.edge("p-g-private-data", [(698, 659), (867, 659)], source="macro-s", target="macro-g",
+    d.text("p-g-control-label", 945, 633, "Candidate G control", size=14, color=BLUE, width=156)
+    d.edge("p-g-private-data", [(717, 708), (862, 708)], source="macro-s", target="macro-g",
            color=OCHRE, dashed=True, direction="both")
+    d.text("p-g-data-label", 789, 694, "via adapter", size=13, color=OCHRE, align="center", width=100)
+
+    for key, x, color, dashed, caption in (
+        ("blue", 40, BLUE, False, "Blue: control / instructions"),
+        ("orange", 326, OCHRE, False, "Orange: descriptor / data"),
+        ("solid", 607, GRAY, False, "Solid: RTL interface"),
+        ("dashed", 859, GRAY, True, "Dashed: candidate binding"),
+    ):
+        d.edge("key-" + key, [(x, 783), (x + 31, 783)], color=color, dashed=dashed, direction="none")
+        d.text("key-" + key + "-label", x + 40, 783, caption, size=14, color=color, width=234)
     return d
 
 
@@ -185,14 +207,14 @@ ISA_ROWS = (
     ("Program flow", (("G_JNZ", "Select one of two forward PCs"),
                       ("G_LOOP", "Repeat with a bounded counter"),
                       ("G_END", "Finish the MC program")),
-     (("L_END", "Release scope and reply"),)),
+     (("L_END", "Return task terminal status"),)),
 )
 
 
 def isa_table(d):
     d.text("isa-heading", 36, 36, "(a)  Four instruction classes", size=28, bold=True, width=760)
     d.text("mc-column", 243, 73, "Native MC v3 · 8 opcodes", size=20, bold=True, width=410)
-    d.text("lc-column", 885, 73, "Native P LC · 3 opcodes", size=20, bold=True, width=390)
+    d.text("lc-column", 885, 73, "Common LC · P / U / C / F / J", size=20, bold=True, width=420)
     top = 97
     for index, ((category, mc, lc), height) in enumerate(zip(ISA_ROWS, (42, 62, 62, 82))):
         d.box(f"class-{index}", 36, top, 1328, height - 4, stroke=LINE, fill=PANEL)
@@ -206,81 +228,81 @@ def isa_table(d):
         top += height
 
 
-STAGES = (
-    ("A", "Norm", "U0"),
-    ("B", "Gate proj.", "P0"),
-    ("C", "Up proj.", "P1"),
-    ("D", "SiLU × Up", "P0"),
-    ("E", "Down proj.", "P2"),
-    ("F", "Add residual", "J0"),
-)
-PARALLEL = (
-    "G_CALL A,t0  →  G_WAIT 0x01",
-    "G_CALL B,t1  →  G_CALL C,t2  →  G_WAIT 0x06",
-    "G_CALL D,t3  →  G_WAIT 0x08",
-    "G_CALL E,t4  →  G_WAIT 0x10",
-    "G_CALL F,t5  →  G_WAIT 0x20  →  G_END",
-)
-SERIAL = (
-    "G_CALL A,t0  →  G_WAIT 0x01",
-    "G_CALL B,t1  →  G_WAIT 0x02",
-    "G_CALL C,t2  →  G_WAIT 0x04",
-    "G_CALL D,t3  →  G_WAIT 0x08",
-    "G_CALL E,t4  →  G_WAIT 0x10",
-    "G_CALL F,t5  →  G_WAIT 0x20  →  G_END",
+LC_SERVICES = (
+    ("P", "Load / M compute / gate · native P range in the newer profile"),
+    ("U", "N normalization / E arithmetic · reserve, send and receive"),
+    ("C", "R state / G activation / E arithmetic · reserve, send and receive"),
+    ("F", "G activation / E arithmetic · reserve, send and receive"),
+    ("J", "Join / lease release"),
 )
 
 
-def graph(d, prefix, x, shared):
-    positions = {"X": (0, 478, 60), "A": (83, 478, 75),
-                 "B": (184, 422, 102), "C": (184, 534, 102),
-                 "D": (315, 478, 91), "E": (433, 478, 95), "F": (554, 478, 101)}
-    for stage, name, target in STAGES:
-        dx, y, width = positions[stage]
-        if shared and stage == "C":
-            target = "P0"
-        d.box(prefix + stage, x + dx, y, width, 55, stage + " · " + target, name, size=19)
-    d.box(prefix + "X", x, 478, 60, 55, "x", "Input", size=18, stroke=OCHRE, fill=OCHRE_BG)
-    for src, dst, ys, yd in (
-        ("X", "A", 506, 506), ("A", "B", 493, 450), ("A", "C", 518, 562),
-        ("B", "D", 450, 493), ("C", "D", 562, 518),
-        ("D", "E", 506, 506), ("E", "F", 506, 506),
-    ):
-        sx, _, sw = positions[src]
-        tx, _, _ = positions[dst]
-        d.edge(prefix + src + "-to-" + dst, [(x + sx + sw, ys), (x + tx, yd)],
-               source=prefix + src, target=prefix + dst)
-    d.edge(prefix + "residual", [(x + 30, 533), (x + 30, 619), (x + 606, 619), (x + 606, 533)],
-           source=prefix + "X", target=prefix + "F", color=OCHRE, dashed=True)
-    d.text(prefix + "residual-label", x + 350, 604, "Residual x", size=15, color=OCHRE,
-           align="center", width=135)
-    if shared:
-        d.edge(prefix + "same-target", [(x + 235, 477), (x + 235, 534)],
-               source=prefix + "B", target=prefix + "C", color=GRAY, dashed=True)
-        d.text(prefix + "same-target-label", x + 247, 507, "Reuse P0", size=14, color=GRAY, width=80)
+def lc_bindings(d):
+    d.text("lc-services-heading", 36, 369, "Services selected by L_EXEC", size=21, bold=True, width=440)
+    for index, (kind, services) in enumerate(LC_SERVICES):
+        y = 403 + 28 * index
+        d.text("service-" + kind, 49, y, kind, color=BLUE, size=18, bold=True, width=42)
+        d.text("service-" + kind + "-description", 103, y, services, size=18, width=1160)
+
+
+TWO_SOURCE = (
+    "G_CALL A,t0 → G_CALL B,t1",
+    "G_WAIT 0x03",
+    "G_CALL U0,t3 → G_WAIT 0x08 → G_END",
+)
+THREE_SOURCE = (
+    "G_CALL A,t0 → G_CALL B,t1 → G_CALL C,t2",
+    "G_WAIT 0x07",
+    "G_CALL U0,t3 → G_WAIT 0x08 → G_END",
+)
+
+
+def fma_mapping(d, prefix, x, with_third):
+    title = "Three input paths · add c" if with_third else "Two input paths"
+    d.text(prefix + "heading", x, 612, title, size=22, bold=True, width=600)
+    producers = (("A", "P0", "a = 2"), ("B", "P1", "b = 3"), ("C", "U1", "c = 5"))
+    count = 3 if with_third else 2
+    for index, (stage, target, data) in enumerate(producers[:count]):
+        y = 648 + 61 * index
+        d.box(prefix + stage, x, y, 137, 48, stage + " · " + target, data, size=18)
+    d.box(prefix + "sram", x + 218, 648, 176, 170, "U0 private S",
+          "a, b, c" if with_third else "a, b", stroke=OCHRE, fill=OCHRE_BG)
+    d.box(prefix + "fma", x + 468, 687, 185, 91, "E · FMA",
+          f"{count} SRAM sources", stroke=OCHRE, fill=OCHRE_BG)
+    for index, (stage, _, _) in enumerate(producers[:count]):
+        y = 672 + 61 * index
+        d.edge(prefix + stage + "-input", [(x + 137, y), (x + 218, y)],
+               source=prefix + stage, target=prefix + "sram", color=OCHRE, dashed=True)
+    if with_third:
+        d.text(prefix + "new-path", x + 177, 778, "New route", size=12, color=OCHRE,
+               align="center", width=78)
+    d.edge(prefix + "sram-to-e", [(x + 394, 733), (x + 468, 733)],
+           source=prefix + "sram", target=prefix + "fma", color=OCHRE)
+    d.text(prefix + "result", x + 326, 852, "a × b + c = 11" if with_third else "a × b = 6",
+           size=23, align="center", bold=True, width=530)
+
+    d.box(prefix + "program", x, 887, 655, 177, stroke=LINE, fill=PANEL)
+    d.text(prefix + "program-title", x + 20, 910, "MC issue order", size=18, bold=True, width=400)
+    for index, text in enumerate(THREE_SOURCE if with_third else TWO_SOURCE):
+        d.text(prefix + f"step-{index}", x + 20, 940 + 27 * index, text,
+               size=18, mono=True, width=610)
+    d.text(prefix + "local-flow", x + 20, 1042,
+           f"L_EXEC FMA[{count} sources] → L_WAIT → L_END",
+           size=17, mono=True, color=BLUE, width=610)
 
 
 def instruction_topologies():
-    d = Diagram("2 - ISA and FFN mappings", "instruction-topologies", 1400, 989)
+    d = Diagram("2 - ISA and FMA mappings", "instruction-topologies", 1400, 1150)
     isa_table(d)
-    d.text("mapping-heading", 36, 377, "(b)  Gated FFN with residual · two Block mappings",
-           size=28, bold=True, width=1000)
-    for prefix, x, title, program, shared in (
-        ("dual-", 37, "Separate projection targets", PARALLEL, False),
-        ("shared-", 709, "Shared projection target", SERIAL, True),
-    ):
-        d.text(prefix + "heading", x, 410, title, size=22, bold=True, width=500)
-        graph(d, prefix, x, shared)
-        d.box(prefix + "program", x, 644, 655, 235, stroke=LINE, fill=PANEL)
-        d.text(prefix + "program-title", x + 21, 668, "MC issue order", size=19, bold=True, width=400)
-        for index, line in enumerate(program):
-            d.text(prefix + f"step-{index}", x + 22, 704 + 29 * index, line,
-                   size=18, mono=True, width=610)
-    d.text("descriptor-setup", 700, 914,
-           "G_MOVI loads the first descriptor address · G_ADDI64 advances it before each later call",
-           size=18, align="center", width=1300, color=GRAY)
-    d.text("local-flow", 700, 947, "Native P scope: L_EXEC → L_WAIT → L_END",
-           size=18, align="center", width=800, color=BLUE)
+    lc_bindings(d)
+    d.text("mapping-heading", 36, 565, "(b)  Add an input route to change the computed function",
+           size=28, bold=True, width=1260)
+    fma_mapping(d, "two-", 37, False)
+    fma_mapping(d, "three-", 709, True)
+    d.text("route-note", 700, 1100, "Dashed input routes are illustrative product bindings",
+           size=18, align="center", width=1280, color=OCHRE)
+    d.text("delivery-note", 700, 1126, "U0 can start after its input writes are acknowledged",
+           size=18, align="center", width=1280, color=BLUE)
     return d
 
 
