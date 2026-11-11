@@ -1,6 +1,6 @@
 # YUZE-LU 的进度
 
-2026-11-11 CST：#219 的[事件前沿](../../project/experiments/block_synthesis/EVENT_FRONTIER.md)独立叠加到 #220，使用 #251 三 P FFN 的 12 组冻结 RTL 日志核对事件、容量、ACK、周期和流量。
+2026-11-11 CST：#219 的[事件前沿](../../project/experiments/block_synthesis/EVENT_FRONTIER.md)在 [#257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 独立叠加到 #220，使用 #251 三 P FFN 的 12 组冻结 RTL 日志核对事件、容量、ACK、周期和流量。
 固定 scope 回放的 DP 与贪心持平。可重排原生候选、整模型和系统性能留待后续独立验收。
 
 2026-11-09 CST：#219/PR220[迭代23/24](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_24.md)继续in_progress。

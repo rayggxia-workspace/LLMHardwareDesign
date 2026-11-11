@@ -33,9 +33,12 @@ def load_case(archive, job, seed, mode, initial):
     profile, = [p for p in frozen['profiles'] if p['job'] == job]
     trial, = [t for t in profile['trials']
               if (t['seed'], t['mode'], t['initial']) == (seed, mode, initial)]
+    digest = hashlib.sha256()
     with archive.open('rb') as source:
-        require(hashlib.file_digest(source, 'sha256').hexdigest() == profile['receipt_sha256'],
-                'RTL receipt archive differs from pinned SHA-256')
+        for chunk in iter(lambda: source.read(1024*1024), b''):
+            digest.update(chunk)
+    require(digest.hexdigest() == profile['receipt_sha256'],
+            'RTL receipt archive differs from pinned SHA-256')
     prefix = f'seed-{seed}/'
     log = f'{prefix}mode-{mode}-initial-{initial}.log'
     rows, summary, oracle = [], {}, None
