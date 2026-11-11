@@ -3,12 +3,12 @@
 - 日期 2026-11-11（Asia/Shanghai，UTC+08:00）。仓库 `rayggxia-workspace/LLMHardwareDesign`，项目 ID `llm-hardware-design`。[Issue #255](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/255) 负责人 Melodydt。
 - [任务分支](https://github.com/rayggxia-workspace/LLMHardwareDesign/tree/task/255-dac-control-paper) 基于 [PR #251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251) 的 `9abd46f5cbb4534bcfc614571ccd6d402ad11882`。以 `task/250-w8a16-base-contract` 为堆叠 PR 的基分支。最新提交与审查状态见 [草稿 PR #256](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/256)。
 - 本地独立目录 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/255/authoring` 为文稿目录。线上分支是完整 Git 历史，本地文稿经 GitHub 连接器发布。PNG 预览及生成器检查副本保存在本任务本地目录。
-- [论文控制图文与固定版本证据](../papers/dac-control/README.md)。基线中三 P FFN 的实现和 PR #180 的覆盖证据各有独立出处。
+- [论文控制图文与固定版本证据](../papers/dac-control/README.md)。五类九实例是 NoPool 候选合同清单。图 2 局控栏限于 native P 的三指令内核。基线三 P FFN 的实现和 PR #180 的覆盖证据各有独立出处。
 
 ## 已执行检查
 
 - 在本地管理副本执行 `python -X utf8 scripts/check_project.py`，通过。
-- 四个固定版本汇编、循环展开、LC 内核和 FFN 镜像生成文件的 Git blob 与远端一致。用 Python 3.12 运行本地 `verification/check_paper.py`，回查 FFN 镜像、192 次调用和两个逻辑拓扑例子的指令编码、依赖与 wait 掩码。两张 SVG 已渲染并目视核验。
+- 四个固定版本汇编、循环展开、LC 内核和 FFN 镜像生成文件的 Git blob 与远端一致。用 Python 3.12 运行本地 `verification/check_paper.py`，核对实例清单、ISA 分类、FFN 镜像与 192 次调用，并汇编验证两种逻辑拓扑例子的指令编码、描述符地址、依赖与 wait 掩码。两张 SVG 已渲染并目视核验。
 - 本轮无新增服务器作业，未执行 RTL 仿真、SystemC 或物理测试。
 
 ## 恢复步骤
