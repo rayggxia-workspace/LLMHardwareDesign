@@ -428,3 +428,15 @@ Model inputs freeze run42 generated files/results and run45 native receipts; 40 
 Postprocess: `python project/experiments/u_queue_model/analyze.py --native <run45-receipts> --model <run46-receipts> --prior <run42-result.json> --output analysis.json`.
 Management only: `python scripts/check_project.py`. Never substitute this for EDA tests.
 Full reproduction, tail/scale/reset contracts, input hashes, test counts and area limits are in [the report](experiments/issue-247-u-queue-native.md).
+
+
+## Native S32 vector / partial timing calibration (Issue247)
+
+Optional `pu_u_group.E_S32=1`: four S32 lanes, signed7 shift, with finite `E_QUEUE_DEPTH=0/2/4`; defaults remain S16/serial.
+Use new Slurm run directories and locked source/input manifests, respecting REMOTE_RULES.md.
+Native: `python3 -B source/project/experiments/s32_vector_native/run.py --root "$PWD"` inside the fixed EDA image.
+Model: `python3 -B source/project/experiments/s32_vector_model/run.py --root "$PWD"` (freezes run46 sources/results and run49 native receipts).
+Submit prepared `job.sh` via `sbatch --parsable job.sh`; 4 allocated cores, c64/c96, no local EDA.
+Recheck: `python project/experiments/s32_vector_model/analyze.py --native <run49-receipts> --model <run50-receipts> --prior <run46-result.json> --output analysis.json`.
+The passed run49/run50 evidence covers 186 native tests, 27 exact default pairs, 8 local mappings, 32 model cases, 8 controls and 160 negative checks.
+This does not implement a complete mixed-width graph dispatcher or physical frequency signoff; see [the implementation report](experiments/issue-247-s32-vector.md).

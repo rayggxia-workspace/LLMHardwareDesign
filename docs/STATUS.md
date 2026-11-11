@@ -1,3 +1,13 @@
+## 2026-11-11 Asia/Shanghai：原生 S32 向量及两槽校准待审
+
+[Issue247](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247) / [PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)，Melodydt；task/242-r-load-bounds。
+新增默认关闭的 E_S32 四 lane/signed7 shift；run49/102642 源 a49537ee55dae2003c19fa3d44b5817f9d616db8，186运行/27默认对/8面积通过；run50/102656 源 68ed552f6291e2d5023ac032e6607ed56aae3222，32模型/8完整控制/160负控通过，371份正式回收文件SHA复核。
+64值一/二输入 208/288→两槽138/198拍；四槽131/198拍。两槽prefill条件 2.940530/3.219458；与同口径S32串行比提升 16.38%/17.94%，旧上轮4.184811/4.773362完整复现，校准范围不同。
+S32核0.084061852 mm²（比旧核+47.72%），新增SRAM宏0；无整图RTL/真实激活/STA/P&R验收。下一步两槽本地S连续请求、混合位宽调度。见[报告](experiments/issue-247-s32-vector.md)与交接。
+in_review；PR未合并/not done。源码CI42953113735 failure且无steps/logs，原因待管理员核实；登记PR5 pending；无board配置/Projects工具，看板unverified/同步pending。无活动作业、无自动监测。
+
+---
+
 本轮五页 [PDF](experiments/pdf/issue-247-u-queue-native.pdf) 与 [实施报告](experiments/issue-247-u-queue-native.md) 已完成；160 内容单元、5 表/32 行、字体/边界/全部链接及全页视觉核验通过。报告源 51661c100a68c43f2673424c758d6ddf4c20fdb3；PDF SHA 026675c58044793bcba2f31de3301a6ed3a726e5dd3071b6f08ec180af9c6c71。
 
 ## 2026-11-11 Asia/Shanghai：U 有限队列及 NExp 区域交付待审
