@@ -3,9 +3,10 @@
 基线为 [PR #251 的 `9abd46f5`](https://github.com/rayggxia-workspace/LLMHardwareDesign/commit/9abd46f5cbb4534bcfc614571ccd6d402ad11882)，任务见 [Issue #255](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/255) 和 [草稿 PR #256](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/256)。
 
 - [英文正文与图注](control-section.md)解释为什么需要二级控制，以及如何用同一套指令描述不同模型的依赖关系。
-- [图 1 底座与 P 局控](control-architecture.svg)画出 NoPool 候选的 P×3、U×2、C×1、F×1、J×2，展开每个 P 内的 M、G32、四银行私有 S，以及母控和局控之间的消息连接。虚线标示产品数据路径及候选的 P 内 G32 服务绑定。
-- [图 2 指令分类与拓扑映射](instruction-topologies.svg)按派发、同步、参数准备、程序流四类列出 native MC v3 的八条指令和 native P 局控内核的三条指令，展示描述符指针和等待掩码如何随两种依赖顺序推进。
-- [出图脚本](draw_control.py)依赖 Matplotlib。在当前目录执行 `python draw_control.py` 可重建两张 SVG 及 PNG 预览。SVG 保留可编辑文本。
+- [逐图中文说明](figure-guide.zh.md)在每张图后解释架构、指令用途、A–F 的输入输出与两个映射的调度顺序。
+- [图 1 底座与 P 局控](control-architecture.svg)逐个排列九个候选 Block，展开母控端口、局控、取指、取参及 M/S/G 的连接。
+- [图 2 指令分类与拓扑映射](instruction-topologies.svg)将指令分为派发、同步、参数准备、程序流，以带残差的门控 FFN 比较分离投影目标与共享投影目标。
+- [可编辑源图](control-figures.drawio)含两个页面，在 diagrams.net 打开即可移动形状、改文字、重新连接箭头。两张 SVG 保留矢量元素和可编辑文本。用 [出图脚本](draw_control.py)可重建 SVG、PNG 和 diagrams.net 源图。手工微调请直接保存源图并从编辑器导出。
 
 ## 固定版本证据
 
