@@ -1,3 +1,5 @@
+本轮五页 [S32实施PDF](../../docs/experiments/pdf/issue-247-s32-vector.pdf) 已完成；203内容单元、5表/42行、字体/边界/全部链接及全页视觉核验通过。报告源 72ce19af3fd1a21dd19f1197bd5a3e34e1f08219；PDF SHA 3314cd7c86131954c7732b1ff2a5d70825045e373e43c14caa322ee2f27c3419。
+
 ## 2026-11-11 Asia/Shanghai：原生 S32 向量及两槽校准待审
 
 [Issue247](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247) / [PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)，Melodydt；task/242-r-load-bounds。
