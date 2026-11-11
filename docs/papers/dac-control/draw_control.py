@@ -58,7 +58,10 @@ class Diagram:
         self.vertex(key, escape(content), style, (left, y - size, width, 2 * size))
 
     def box(self, key, x, y, width, height, title="", detail="", *, stroke=BLUE, fill=BLUE_BG,
-            size=20, bold=True):
+            size=20, bold=True, ink=INK):
+        detail_ink = GRAY if stroke == LINE else stroke
+        if ink != INK:
+            detail_ink = "#DEEAF2"
         rect = FancyBboxPatch((x, y), width, height, boxstyle="round,pad=0,rounding_size=8",
                               edgecolor=stroke, facecolor=fill, linewidth=0.82, zorder=1)
         self.ax.add_patch(rect)
@@ -66,15 +69,15 @@ class Diagram:
         self.boxes[key] = (x, y, width, height)
         if title:
             self.print_text(key + "-title", x + width / 2, y + height * (0.35 if detail else 0.5),
-                            title, size=size, color=INK, align="center", bold=bold)
+                            title, size=size, color=ink, align="center", bold=bold)
         if detail:
             self.print_text(key + "-detail", x + width / 2, y + height * 0.71, detail,
-                            size=size * 0.79, color=stroke, align="center", bold=False)
+                            size=size * 0.79, color=detail_ink, align="center", bold=False)
         value = f"<b>{escape(title)}</b>" if bold else escape(title)
         if detail:
-            value += f'<br><span style="font-size:{size * 0.79:g}px;color:{stroke}">{escape(detail)}</span>'
+            value += f'<br><span style="font-size:{size * 0.79:g}px;color:{detail_ink}">{escape(detail)}</span>'
         style = (f"rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;"
-                 f"strokeColor={stroke};fillColor={fill};fontColor={INK};fontFamily=DejaVu Sans;"
+                 f"strokeColor={stroke};fillColor={fill};fontColor={ink};fontFamily=DejaVu Sans;"
                  f"fontSize={size};spacing=0;")
         self.vertex(key, value, style, (x, y, width, height))
 
@@ -121,78 +124,65 @@ class Diagram:
 
 
 def architecture():
-    d = Diagram("1 - Base and P control", "control-architecture", 1200, 823)
+    d = Diagram("1 - Base and C control", "control-architecture", 1200, 818)
     d.text("base-heading", 38, 36, "(a)  NoPool base candidate", size=27, bold=True, width=600)
-    d.box("mother", 40, 73, 317, 62, "Mother controller", "Program memory and task tokens")
-    d.box("shared-dma", 728, 73, 214, 62, "Shared DMA")
-    d.box("external-ddr", 1000, 73, 160, 62, "Off-chip DDR")
-    d.edge("memory-link", [(942, 104), (1000, 104)], source="shared-dma", target="external-ddr",
-           color=OCHRE, direction="both")
-    d.text("calls-label", 451, 151, "Calls and terminal replies", color=BLUE)
-    d.edge("mc-control-trunk", [(198, 135), (198, 178)], source="mother", direction="none")
+    d.box("mother", 397, 67, 385, 78, "Mother controller", "Program memory and task tokens",
+          fill=BLUE, ink="#FFFFFF", size=26)
+    d.box("shared-dma", 832, 77, 175, 59, "Shared DMA", stroke=LINE, fill=PANEL)
+    d.box("external-ddr", 1040, 77, 120, 59, "DDR", "Off-chip", stroke=LINE, fill=PANEL)
+    d.edge("memory-link", [(1007, 106), (1040, 106)], source="shared-dma", target="external-ddr",
+           direction="both")
+    d.text("calls-label", 93, 158, "Calls and terminal replies", color=BLUE)
+    d.edge("mc-control-trunk", [(590, 145), (590, 178)], source="mother", direction="none")
     d.edge("control-trunk", [(96, 178), (1096, 178)], direction="none")
     d.box("product-data-paths", 40, 291, 1120, 45, "Product-bound data paths",
           stroke=OCHRE, fill=OCHRE_BG)
     for index, name in enumerate(("P0", "P1", "P2", "U0", "U1", "C0", "F0", "J0", "J1")):
         x = 42 + 125 * index
         center = x + 54
-        is_p = name.startswith("P")
-        d.box(name, x, 205, 108, 49, name, stroke=BLUE if is_p else LINE,
-              fill=BLUE_BG if is_p else PANEL)
+        selected = name == "C0"
+        d.box(name, x, 205, 108, 49, name, stroke=BLUE if selected else LINE,
+              fill=BLUE_BG if selected else PANEL)
         d.edge("control-" + name, [(center, 178), (center, 205)], target=name, direction="both")
         d.edge("data-" + name, [(center, 254), (center, 291)], source=name,
                target="product-data-paths", color=OCHRE, dashed=True, direction="none")
-    d.edge("dma-data-path", [(835, 135), (835, 151), (1179, 151), (1179, 313), (1160, 313)],
+    d.edge("dma-data-path", [(920, 136), (920, 153), (1179, 153), (1179, 313), (1160, 313)],
            source="shared-dma", target="product-data-paths", color=OCHRE, dashed=True, direction="none")
 
-    d.text("p-detail-heading", 38, 385, "(b)  Control inside one P Block", size=27, bold=True, width=800)
-    d.box("p-detail-frame", 40, 416, 1120, 334, stroke=LINE, fill=PANEL)
-    d.box("mc-port", 61, 442, 175, 54, "MC port")
-    d.box("p-lc", 354, 442, 246, 54, "P local controller")
-    d.box("p-program", 831, 442, 280, 54, "Program memory")
-    d.edge("p-call-return", [(236, 469), (354, 469)], source="mc-port", target="p-lc", direction="both")
-    d.text("p-call-return-label", 295, 453, "Call / reply", color=BLUE, size=14, align="center", width=107)
-    d.edge("p-pm-fetch", [(600, 469), (831, 469)], source="p-lc", target="p-program", direction="both")
-    d.text("p-pm-fetch-label", 714, 453, "Fetch", color=BLUE, size=14, align="center", width=90)
-    d.box("p-descriptor-dma", 61, 543, 175, 55, "Scope DMA", stroke=OCHRE, fill=OCHRE_BG)
-    d.edge("p-descriptor-request", [(354, 476), (274, 476), (274, 557), (236, 557)],
-           source="p-lc", target="p-descriptor-dma")
-    d.edge("p-descriptor-fetch", [(236, 584), (305, 584), (305, 489), (354, 489)],
-           source="p-descriptor-dma", target="p-lc", color=OCHRE)
-    d.box("p-service", 337, 543, 513, 55, "Scope and service logic")
-    d.edge("p-scope-service", [(458, 496), (458, 543)], source="p-lc", target="p-service", direction="both")
-    d.text("p-scope-service-label", 337, 519, "Dispatch / done", color=BLUE, size=14, width=115)
-    d.edge("p-scope-data", [(530, 496), (530, 543)], source="p-lc", target="p-service", color=OCHRE)
-    d.text("p-scope-data-label", 550, 519, "Descriptor", color=OCHRE, size=14, width=115)
+    d.text("c-detail-heading", 38, 381, "(b)  Local controller and physical links inside C",
+           size=27, bold=True, width=1020)
+    d.box("c-detail-frame", 40, 410, 1120, 345, stroke=LINE, fill=PANEL)
+    d.box("mc-port", 66, 452, 182, 57, "MC interface", stroke=BLUE, fill=BLUE_BG)
+    d.box("c-lc", 373, 435, 417, 91, "C local controller", "Dispatch services · track completion",
+          fill=BLUE, ink="#FFFFFF", size=28)
+    d.box("c-program", 910, 452, 212, 57, "Program memory", stroke=LINE, fill="white", size=18)
+    d.edge("c-call-return", [(248, 481), (373, 481)], source="mc-port", target="c-lc", direction="both")
+    d.edge("c-pm-fetch", [(790, 481), (910, 481)], source="c-lc", target="c-program", direction="both")
+    d.text("c-call-label", 310, 463, "Call / reply", color=BLUE, size=14, align="center", width=100)
+    d.text("c-fetch-label", 850, 463, "Fetch", color=BLUE, size=14, align="center", width=95)
+    d.box("c-service", 347, 562, 468, 53, "Local services and adapters",
+          stroke=BLUE, fill=BLUE_BG)
+    d.edge("c-lc-service", [(581, 526), (581, 562)], source="c-lc", target="c-service", direction="both")
 
-    d.box("macro-m", 60, 680, 245, 55, "M", "Matrix compute", stroke=OCHRE, fill=OCHRE_BG)
-    d.box("macro-s", 471, 680, 246, 55, "S", "Private SRAM", stroke=OCHRE, fill=OCHRE_BG)
-    d.box("macro-g", 862, 680, 245, 55, "G", "Activation and gate", stroke=OCHRE, fill=OCHRE_BG)
-    d.edge("p-m-service", [(394, 598), (155, 680)], source="p-service", target="macro-m", direction="both")
-    d.text("p-m-control-label", 91, 644, "Command / done", size=14, color=BLUE, width=140)
-    d.edge("p-m-data", [(431, 598), (202, 680)], source="p-service", target="macro-m",
-           color=OCHRE, direction="both")
-    d.text("p-m-data-label", 337, 648, "Operands / result", size=14, color=OCHRE, width=132)
-    d.edge("p-s-service", [(545, 598), (545, 680)], source="p-service", target="macro-s", direction="both")
-    d.text("p-s-control-label", 435, 623, "Request / ACK", size=14, color=BLUE, width=105)
-    d.edge("p-s-data", [(624, 598), (624, 680)], source="p-service", target="macro-s",
-           color=OCHRE, direction="both")
-    d.text("p-s-data-label", 644, 648, "Read / write data", size=14, color=OCHRE, width=132)
-    d.edge("p-g-service", [(783, 598), (980, 680)], source="p-service", target="macro-g",
-           dashed=True, direction="both")
-    d.text("p-g-control-label", 945, 633, "Candidate G control", size=14, color=BLUE, width=156)
-    d.edge("p-g-private-data", [(717, 708), (862, 708)], source="macro-s", target="macro-g",
-           color=OCHRE, dashed=True, direction="both")
-    d.text("p-g-data-label", 789, 694, "via adapter", size=13, color=OCHRE, align="center", width=100)
-
-    for key, x, color, dashed, caption in (
-        ("blue", 40, BLUE, False, "Blue: control / instructions"),
-        ("orange", 326, OCHRE, False, "Orange: descriptor / data"),
-        ("solid", 607, GRAY, False, "Solid: RTL interface"),
-        ("dashed", 859, GRAY, True, "Dashed: candidate binding"),
+    for key, title, detail, x, port in (
+        ("s", "S", "Private SRAM", 67, 403),
+        ("r", "R", "State service", 344, 526),
+        ("g", "G", "Activation", 621, 648),
+        ("e", "E", "Vector arithmetic", 898, 760),
     ):
-        d.edge("key-" + key, [(x, 783), (x + 31, 783)], color=color, dashed=dashed, direction="none")
-        d.text("key-" + key + "-label", x + 40, 783, caption, size=14, color=color, width=234)
+        d.box("macro-" + key, x, 668, 221, 55, title, detail, stroke=LINE, fill="white")
+        d.edge("c-service-" + key, [(port, 615), (x + 110, 668)],
+               source="c-service", target="macro-" + key, direction="both")
+    d.edge("c-g-to-e-product", [(842, 696), (898, 696)], source="macro-g", target="macro-e",
+           color=OCHRE, dashed=True)
+    d.text("c-g-to-e-label", 870, 737, "Product-wired G → E bypass", size=15,
+           color=OCHRE, align="center", width=320)
+    for key, x, color, dashed, caption in (
+        ("exchange", 60, BLUE, False, "Control and data exchange"),
+        ("physical", 623, OCHRE, True, "Product-specific physical wiring"),
+    ):
+        d.edge("key-" + key, [(x, 787), (x + 42, 787)], color=color, dashed=dashed, direction="none")
+        d.text("key-" + key + "-label", x + 54, 787, caption, size=16, color=color, width=470)
     return d
 
 
@@ -228,80 +218,73 @@ def isa_table(d):
         top += height
 
 
-LC_SERVICES = (
-    ("P", "Load / M compute / gate · native P range in the newer profile"),
-    ("U", "N normalization / E arithmetic · reserve, send and receive"),
-    ("C", "R state / G activation / E arithmetic · reserve, send and receive"),
-    ("F", "G activation / E arithmetic · reserve, send and receive"),
-    ("J", "Join / lease release"),
+QWEN_PROGRAM = (
+    "G_CALL A,t0 → G_CALL B,t1 → G_WAIT 0x03",
+    "G_CALL C,t2 → G_WAIT 0x04",
+    "G_CALL D,t3 → G_WAIT 0x08 → G_END",
+)
+GPT_PROGRAM = (
+    "G_CALL A,t0 → G_WAIT 0x01",
+    "G_CALL B,t1 → G_WAIT 0x02",
+    "G_CALL C,t2 → G_WAIT 0x04 → G_END",
 )
 
 
-def lc_bindings(d):
-    d.text("lc-services-heading", 36, 369, "Services selected by L_EXEC", size=21, bold=True, width=440)
-    for index, (kind, services) in enumerate(LC_SERVICES):
-        y = 403 + 28 * index
-        d.text("service-" + kind, 49, y, kind, color=BLUE, size=18, bold=True, width=42)
-        d.text("service-" + kind + "-description", 103, y, services, size=18, width=1160)
-
-
-TWO_SOURCE = (
-    "G_CALL A,t0 → G_CALL B,t1",
-    "G_WAIT 0x03",
-    "G_CALL U0,t3 → G_WAIT 0x08 → G_END",
-)
-THREE_SOURCE = (
-    "G_CALL A,t0 → G_CALL B,t1 → G_CALL C,t2",
-    "G_WAIT 0x07",
-    "G_CALL U0,t3 → G_WAIT 0x08 → G_END",
-)
-
-
-def fma_mapping(d, prefix, x, with_third):
-    title = "Three input paths · add c" if with_third else "Two input paths"
-    d.text(prefix + "heading", x, 612, title, size=22, bold=True, width=600)
-    producers = (("A", "P0", "a = 2"), ("B", "P1", "b = 3"), ("C", "U1", "c = 5"))
-    count = 3 if with_third else 2
-    for index, (stage, target, data) in enumerate(producers[:count]):
-        y = 648 + 61 * index
-        d.box(prefix + stage, x, y, 137, 48, stage + " · " + target, data, size=18)
-    d.box(prefix + "sram", x + 218, 648, 176, 170, "U0 private S",
-          "a, b, c" if with_third else "a, b", stroke=OCHRE, fill=OCHRE_BG)
-    d.box(prefix + "fma", x + 468, 687, 185, 91, "E · FMA",
-          f"{count} SRAM sources", stroke=OCHRE, fill=OCHRE_BG)
-    for index, (stage, _, _) in enumerate(producers[:count]):
-        y = 672 + 61 * index
-        d.edge(prefix + stage + "-input", [(x + 137, y), (x + 218, y)],
-               source=prefix + stage, target=prefix + "sram", color=OCHRE, dashed=True)
-    if with_third:
-        d.text(prefix + "new-path", x + 177, 778, "New route", size=12, color=OCHRE,
-               align="center", width=78)
-    d.edge(prefix + "sram-to-e", [(x + 394, 733), (x + 468, 733)],
-           source=prefix + "sram", target=prefix + "fma", color=OCHRE)
-    d.text(prefix + "result", x + 326, 852, "a × b + c = 11" if with_third else "a × b = 6",
-           size=23, align="center", bold=True, width=530)
-
-    d.box(prefix + "program", x, 887, 655, 177, stroke=LINE, fill=PANEL)
-    d.text(prefix + "program-title", x + 20, 910, "MC issue order", size=18, bold=True, width=400)
-    for index, text in enumerate(THREE_SOURCE if with_third else TWO_SOURCE):
-        d.text(prefix + f"step-{index}", x + 20, 940 + 27 * index, text,
+def model_program(d, prefix, x, lines):
+    d.box(prefix + "program", x, 651, 655, 156, stroke=LINE, fill=PANEL)
+    d.text(prefix + "program-title", x + 20, 676, "MC issue order", size=18, bold=True, width=400)
+    for index, text in enumerate(lines):
+        d.text(prefix + f"step-{index}", x + 20, 708 + 30 * index, text,
                size=18, mono=True, width=610)
-    d.text(prefix + "local-flow", x + 20, 1042,
-           f"L_EXEC FMA[{count} sources] → L_WAIT → L_END",
-           size=17, mono=True, color=BLUE, width=610)
+
+
+def qwen_graph(d, x):
+    d.box("q-x", x, 493, 55, 61, "x", stroke=LINE, fill=PANEL)
+    d.box("q-A", x + 120, 447, 151, 61, "A · P0", "Gate projection")
+    d.box("q-B", x + 120, 539, 151, 61, "B · P1", "Up projection")
+    d.box("q-C", x + 338, 493, 142, 61, "C · P0.G32", "SiLU × Up")
+    d.box("q-D", x + 513, 493, 142, 61, "D · P2", "Down projection")
+    for source, target, start, end in (
+        ("x", "A", (55, 508), (120, 477)), ("x", "B", (55, 538), (120, 568)),
+        ("A", "C", (271, 477), (338, 508)), ("B", "C", (271, 568), (338, 538)),
+        ("C", "D", (480, 523), (513, 523)),
+    ):
+        d.edge("q-" + source + "-to-" + target, [(x + start[0], start[1]), (x + end[0], end[1])],
+               source="q-" + source, target="q-" + target, color=OCHRE, dashed=True)
+    d.text("q-formula", x + 325, 621, "Down(SiLU(Gate(x)) ⊙ Up(x))", size=22,
+           align="center", bold=True, width=600)
+
+
+def gpt_graph(d, x):
+    d.box("g-x", x, 493, 55, 61, "x", stroke=LINE, fill=PANEL)
+    d.box("g-A", x + 82, 493, 158, 61, "A · P0", "c_fc affine")
+    d.box("g-B", x + 269, 493, 155, 61, "B · F0.G16", "GELU (tanh)")
+    d.box("g-C", x + 454, 493, 201, 61, "C · P2", "c_proj affine")
+    for source, target, left, right in (
+        ("x", "A", 55, 82), ("A", "B", 240, 269), ("B", "C", 424, 454),
+    ):
+        d.edge("g-" + source + "-to-" + target, [(x + left, 523), (x + right, 523)],
+               source="g-" + source, target="g-" + target, color=OCHRE, dashed=True)
+    d.text("g-formula", x + 325, 621, "c_proj(GELU(c_fc(x)))", size=22,
+           align="center", bold=True, width=600)
 
 
 def instruction_topologies():
-    d = Diagram("2 - ISA and FMA mappings", "instruction-topologies", 1400, 1150)
+    d = Diagram("2 - ISA and model FFN mappings", "instruction-topologies", 1400, 920)
     isa_table(d)
-    lc_bindings(d)
-    d.text("mapping-heading", 36, 565, "(b)  Add an input route to change the computed function",
+    d.text("mapping-heading", 36, 381, "(b)  Two model FFNs on the same Block inventory",
            size=28, bold=True, width=1260)
-    fma_mapping(d, "two-", 37, False)
-    fma_mapping(d, "three-", 709, True)
-    d.text("route-note", 700, 1100, "Dashed input routes are illustrative product bindings",
+    d.text("q-heading", 37, 421, "Qwen2.5-3B-Instruct · gated FFN",
+           size=22, bold=True, width=610)
+    d.text("g-heading", 709, 421, "GPT-2 · GELU MLP",
+           size=22, bold=True, width=610)
+    qwen_graph(d, 37)
+    gpt_graph(d, 709)
+    model_program(d, "q-", 37, QWEN_PROGRAM)
+    model_program(d, "g-", 709, GPT_PROGRAM)
+    d.text("route-note", 700, 844, "Dashed tensor routes and Block assignments are illustrative",
            size=18, align="center", width=1280, color=OCHRE)
-    d.text("delivery-note", 700, 1126, "U0 can start after its input writes are acknowledged",
+    d.text("local-note", 700, 873, "Common local sequence: L_EXEC → L_WAIT → L_END",
            size=18, align="center", width=1280, color=BLUE)
     return d
 
