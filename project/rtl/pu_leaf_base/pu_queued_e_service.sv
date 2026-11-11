@@ -1,9 +1,9 @@
 // Optional finite descriptor queue. One unchanged local-S request port, one
 // compact E core, ordered writes/completions; independent reads may overlap E.
 // Cross-client N/IO dependencies remain the caller's synchronization contract.
-module pu_queued_e_service #(parameter integer DEPTH=2)(
+module pu_queued_e_service #(parameter integer DEPTH=2, SHIFT_WIDTH=5)(
  input wire clk,reset,cmd_valid,cmd_store,cmd_direct_a,output wire cmd_ready,
- input wire [1:0] cmd_sources,input wire [3:0] cmd_op,input wire [4:0] cmd_shift,
+ input wire [1:0] cmd_sources,input wire [3:0] cmd_op,input wire [SHIFT_WIDTH-1:0] cmd_shift,
  input wire [29:0] cmd_src,input wire [9:0] cmd_dst,
  output wire done_valid,input wire done_ready,output wire done_error,done_saturated,
  output wire [127:0] done_data,
@@ -12,7 +12,7 @@ module pu_queued_e_service #(parameter integer DEPTH=2)(
  input wire s_rsp_valid,output wire s_rsp_ready,input wire [127:0] s_rsp_data,
  input wire direct_a_valid,direct_a_abort,output wire direct_a_ready,input wire [127:0] direct_a_data,
  output wire e_in_valid,input wire e_in_ready,output wire [3:0] e_in_op,
- output wire [4:0] e_in_shift,output wire [127:0] e_in_data,
+ output wire [SHIFT_WIDTH-1:0] e_in_shift,output wire [127:0] e_in_data,
  input wire e_out_valid,output wire e_out_ready,input wire [127:0] e_out_data,
  input wire e_out_error,e_out_saturated
 );
@@ -21,7 +21,7 @@ module pu_queued_e_service #(parameter integer DEPTH=2)(
  reg [2:0] state[0:DEPTH-1];
  reg [PTR-1:0] head,tail;
  reg [CNT-1:0] count;
- reg [3:0] ops[0:DEPTH-1];reg [4:0] shifts[0:DEPTH-1];
+ reg [3:0] ops[0:DEPTH-1];reg [SHIFT_WIDTH-1:0] shifts[0:DEPTH-1];
  reg stores[0:DEPTH-1],directs[0:DEPTH-1],errors[0:DEPTH-1],saturated[0:DEPTH-1];
  reg [1:0] sources[0:DEPTH-1],read_count[0:DEPTH-1],sent_count[0:DEPTH-1];
  reg [29:0] addresses[0:DEPTH-1];reg [9:0] destinations[0:DEPTH-1];

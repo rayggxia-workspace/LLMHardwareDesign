@@ -1,5 +1,5 @@
 // U groups independent N, compact E and S_base leaves under local services.
-module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_LANES=2, NEXP_S16=0, E_PIPELINE=0, E_QUEUE_DEPTH=0) (
+module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_LANES=2, NEXP_S16=0, E_PIPELINE=0, E_QUEUE_DEPTH=0, E_S32=0) (
     input wire clk, reset,
     input wire n_cmd_valid, n_cmd_store, n_cmd_direct, n_done_ready,
     output wire n_cmd_ready, n_done_valid, n_done_error, n_done_saturated,
@@ -15,7 +15,7 @@ module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_L
     output wire e_cmd_ready, e_done_valid, e_done_error, e_done_saturated,
     input wire [1:0] e_cmd_sources,
     input wire [3:0] e_cmd_op,
-    input wire [4:0] e_cmd_shift,
+    input wire [(E_S32!=0?7:5)-1:0] e_cmd_shift,
     input wire [29:0] e_cmd_src,
     input wire [9:0] e_cmd_dst,
     output wire [127:0] e_done_data,
@@ -133,10 +133,10 @@ module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_L
 
     wire e_valid, e_ready, er_valid, er_ready, er_error, er_sat;
     wire [3:0] op;
-    wire [4:0] shift;
+    wire [(E_S32!=0?7:5)-1:0] shift;
     wire [127:0] ea, er;
     generate if(E_QUEUE_DEPTH==0)begin: serial_e
-    pu_compact_e_service e_service(
+    pu_compact_e_service #(.SHIFT_WIDTH(E_S32!=0?7:5)) e_service(
         .clk, .reset, .cmd_valid(e_cmd_valid), .cmd_store(e_cmd_store), .cmd_direct_a(e_cmd_direct_a),
         .cmd_sources(e_cmd_sources), .cmd_ready(e_cmd_ready), .cmd_op(e_cmd_op), .cmd_shift(e_cmd_shift), .cmd_src(e_cmd_src), .cmd_dst(e_cmd_dst),
         .done_valid(e_done_valid), .done_ready(e_done_ready), .done_error(e_done_error),
@@ -149,7 +149,7 @@ module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_L
         .e_out_valid(er_valid), .e_out_ready(er_ready), .e_out_data(er), .e_out_error(er_error), .e_out_saturated(er_sat)
     );
     end else begin: queued_e
-    pu_queued_e_service #(.DEPTH(E_QUEUE_DEPTH)) e_service(
+    pu_queued_e_service #(.DEPTH(E_QUEUE_DEPTH),.SHIFT_WIDTH(E_S32!=0?7:5)) e_service(
         .clk, .reset, .cmd_valid(e_cmd_valid), .cmd_store(e_cmd_store), .cmd_direct_a(e_cmd_direct_a),
         .cmd_sources(e_cmd_sources), .cmd_ready(e_cmd_ready), .cmd_op(e_cmd_op), .cmd_shift(e_cmd_shift), .cmd_src(e_cmd_src), .cmd_dst(e_cmd_dst),
         .done_valid(e_done_valid), .done_ready(e_done_ready), .done_error(e_done_error),
@@ -162,7 +162,7 @@ module pu_u_group #(parameter integer NEXP_BATCH=0, NEXP_DIRECT=0, NEXP_DIRECT_L
         .e_out_valid(er_valid), .e_out_ready(er_ready), .e_out_data(er), .e_out_error(er_error), .e_out_saturated(er_sat)
     );
     end endgenerate
-    block_v2_e_compact #(.PIPELINED(E_PIPELINE)) elementwise(
+    block_v2_e_compact #(.PIPELINED(E_PIPELINE),.S32(E_S32)) elementwise(
         .clk, .reset, .in_valid(e_valid), .in_ready(e_ready), .in_op(op), .in_shift(shift), .in_data(ea),
         .out_valid(er_valid), .out_ready(er_ready), .out_data(er), .out_error(er_error), .out_saturated(er_sat)
     );

@@ -1,12 +1,12 @@
 // Translate one local execution descriptor into compact E operand beats.
 // The memory and E interfaces remain separate physical binding points.
-module pu_compact_e_service (
+module pu_compact_e_service #(parameter integer SHIFT_WIDTH=5) (
     input wire clk, reset,
     input wire cmd_valid, cmd_store, cmd_direct_a,
     output wire cmd_ready,
     input wire [1:0] cmd_sources, // Total A/B/C count, including direct A when selected.
     input wire [3:0] cmd_op,
-    input wire [4:0] cmd_shift,
+    input wire [SHIFT_WIDTH-1:0] cmd_shift,
     input wire [29:0] cmd_src,
     input wire [9:0] cmd_dst,
     output wire done_valid,
@@ -26,7 +26,7 @@ module pu_compact_e_service (
     output wire e_in_valid,
     input wire e_in_ready,
     output reg [3:0] e_in_op,
-    output reg [4:0] e_in_shift,
+    output reg [SHIFT_WIDTH-1:0] e_in_shift,
     output reg [127:0] e_in_data,
     input wire e_out_valid,
     output wire e_out_ready,
