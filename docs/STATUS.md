@@ -1,4 +1,131 @@
+本轮五页 [S32实施PDF](experiments/pdf/issue-247-s32-vector.pdf) 已完成；203内容单元、5表/42行、字体/边界/全部链接及全页视觉核验通过。报告源 72ce19af3fd1a21dd19f1197bd5a3e34e1f08219；PDF SHA 3314cd7c86131954c7732b1ff2a5d70825045e373e43c14caa322ee2f27c3419。
+
+## 2026-11-11 Asia/Shanghai：原生 S32 向量及两槽校准待审
+
+[Issue247](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/247) / [PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)，Melodydt；task/242-r-load-bounds。
+新增默认关闭的 E_S32 四 lane/signed7 shift；run49/102642 源 a49537ee55dae2003c19fa3d44b5817f9d616db8，186运行/27默认对/8面积通过；run50/102656 源 68ed552f6291e2d5023ac032e6607ed56aae3222，32模型/8完整控制/160负控通过，371份正式回收文件SHA复核。
+64值一/二输入 208/288→两槽138/198拍；四槽131/198拍。两槽prefill条件 2.940530/3.219458；与同口径S32串行比提升 16.38%/17.94%，旧上轮4.184811/4.773362完整复现，校准范围不同。
+S32核0.084061852 mm²（比旧核+47.72%），新增SRAM宏0；无整图RTL/真实激活/STA/P&R验收。下一步两槽本地S连续请求、混合位宽调度。见[报告](experiments/issue-247-s32-vector.md)与交接。
+in_review；PR未合并/not done。源码CI42953113735 failure且无steps/logs，原因待管理员核实；登记PR5 pending；无board配置/Projects工具，看板unverified/同步pending。无活动作业、无自动监测。
+
+---
+
+本轮五页 [PDF](experiments/pdf/issue-247-u-queue-native.pdf) 与 [实施报告](experiments/issue-247-u-queue-native.md) 已完成；160 内容单元、5 表/32 行、字体/边界/全部链接及全页视觉核验通过。报告源 51661c100a68c43f2673424c758d6ddf4c20fdb3；PDF SHA 026675c58044793bcba2f31de3301a6ed3a726e5dd3071b6f08ec180af9c6c71。
+
+## 2026-11-11 Asia/Shanghai：U 有限队列及 NExp 区域交付待审
+
+Issue247 / PR243，Melodydt，task/242-r-load-bounds。原生源 0109de8555cda51ee73498f9966df69cb550ba19；run45/102084 COMPLETED0:0，195运行、27对默认观测、6面积通过。run44因NX32尾部正例构造错误失败，修正并全量重跑，失败记录保留。
+模型源 e6b2c31f1a593ee9393be0088f90c9d762622e94；run46/102092 COMPLETED0:0，40场景、16完整历史控制、200负控通过；356份回收文件SHA/日志复核。两槽一元960→578拍，四槽516拍；新增SRAM宏0。原图纯S16 E直接映射为0，队列不给未验证整图收益；本轮prefill条件校准4.184811/4.773362，非原生全模型token/s。
+详细实施/PDF/证据见本轮报告和交接；两槽优先，默认仍关闭。下一步S32语义/真实量化及本地S请求吞吐。in_review，未合并/not done；登记PR5 pending，看板无配置/工具unverified/pending。源码CI42858846633 failure且无steps/logs，待管理员核实；管理结构检查通过。无活动作业或自动监测。
+
+---
+
+本阶段五页PDF已导出并逐页视觉核验，189内容单元、8表/33行、字体/边界和全部链接检查通过。报告源固定dfd7a7932cf7e9934a17e3d1b5a167ed804f2a72；PDF SHA3f94f8ac05fdb187430456d1400d09b8bcb97a3d4f76804bf367d9e6c979463e。28份报告/证据文件Git blob已读回一致；PDF与QA随交付提交上传。研究成果in_review，未合并/not done。
+
+## 2026-11-10 Asia/Shanghai：S16桥接与E流水原生研究交付待审
+
+Issue247 / PR243，Melodydt，task/242-r-load-bounds。源码78c57285；run43/102054原生21运行＋4面积通过，run42/102053模型32例、8基线精确、160负控通过；run41校准与最终生产RTL字节相同，209回收文件SHA复核通过。均c64/node1/4核COMPLETED0:0。
+新增默认关闭的NX16桥接和E流水；完整U合法自然参数988到984拍，仅+0.4065%，下一步优先U供数/命令重叠。原条件模型S16局部校准prefill4.216864/4.815109；5.112600仍依赖未闭合完整U8值/拍，非原生整图实测。已测局部标准单元增量0.00399931mm²，SRAM宏增量0；未执行全U面积/STA/整图RTL。
+详细实施/PDF和复现见[报告](../docs/experiments/issue-247-s16-vector-native.md)及[交接](../docs/handoffs/2026-11-10-issue-247-s16-vector-native.md)。当前交付待审，PR未合并/not done；登记PR5 pending，看板无配置/工具而unverified/pending。源码CI42841550005 failure且validate无steps/logs，待管理员核实；管理结构检查通过。无活动作业或自动监测。正式审查人待指定，下一步由Melodydt按审查结果推进集成。
+
+<!-- s16-vector-native-end -->
+
+## 2026-11-10 Asia/Shanghai：后续优化192场景完成，待审查
+
+Issue247 / PR243，负责人Melodydt；task/242-r-load-bounds。run35/102040、run36/102041、run37/102043
+均c64/node1/4核COMPLETED 0:0，192例、40完整历史控制、960结果负控及519回收文件SHA核验通过。
+本轮生产RTL未改。原条件体系下，优先S16桥接＋8路向量：prefill shared/idealdual为
+4.423812/5.086834 token/s；桥接8拍敏感性仍4.401308/5.057101。固定17.1GB/s最高组合5.508124，
+需要更多M/供数资源；均不是原生RTL整图实测。详细表与源码版本见[研究报告](experiments/issue-247-optimization-sweep.md)及[交接](handoffs/2026-11-10-issue-247-optimization-sweep.md)。
+下一步由Melodydt按审查结果安排桥接数值/背压验证及向量8路RTL实现，原生整图、综合和STA待做。
+当前in_review，PR未合并/not done；登记management-hub PR5 pending；无board配置/Projects工具，
+看板unverified/同步pending。GitHub结构CI run42828692493 failure，validate无steps，具体原因待管理员核实。
+没有活动作业或自动监测。旧run24/25原包上传阻塞保留，本轮未重传。
+
+<!-- optimization-sweep-end -->
+
+
+## 2026-11-10 Asia/Shanghai：共享 A 32B 已验证，待审查
+
+Issue247 / PR243；源码e7e8becca866e8257e026fddfc6e6215169e4015。run34/job102033在c64/node1/4核10:01 COMPLETED0:0，72run、12对430008周期事件、六项面积与全部回收SHA核验通过。原生同工作处理增益普通M2.0432%/8-context1.4344%，已计标准单元+0.033507222mm²、SRAM宏0。旧条件token/s单列，不作原生全模型测量。报告/证据见共享A32交接；下一步正式审查及连续负载瓶颈定位。in_review，未合并/not done；登记pending、看板unverified/pending、CI限制保留；无活动作业或自动监测。
+
+# 当前补充：prefill扩宽条件评估（2026-11-10）
+
+Issue247 / PR243新增24场景服务器评估及独立复核完成待审。共享32KiB固定，最高4.429583 token/s（原条件SystemC），64/128双组交错相同；32→64仅+0.1450%/+0.6972%，生产RTL未扩宽。详见[评估报告](experiments/issue-247-prefill-width-evaluation.md)。run33/job102011已COMPLETED0:0，无活动作业；任务in_review、未合并、不done。
+
+---
+
 # 当前状态
+
+本阶段六页实施PDF已生成，全部237内容单元、8表/45行、两代码块、链接、嵌入字体及六页视觉QA通过。报告固定commit3e8dffdc9dce89cf7f04ff77b2b1cf711dae0039，64个新交付文件Git blob已读回；PDF SHA2630163765d8b0f6a0f97875ecd70749e18d83e4e925d3865da2456549984e32。PDF及QA由本次交付提交保留，原始报告来源保持冻结。本阶段转in_review；未合并、不done。
+
+## 共享32KiB直供与本地1R1W实施（2026-11-10 Asia/Shanghai）
+
+负责人/认证Melodydt，Issue247 / PR243 / task/242-r-load-bounds。两项可选RTL与真实双P包装层已完成本阶段验证，提交独立审查，未合并、不done。稳定测试源a7a36cbb76fa76f6162b666d1f5683cda2a8f7ec；修改前备份task/247-before-shared32-rtl@a8e793e4，候选备份task/247-shared32-native-a7a36cbb，均已读回。
+
+run32/102006在c64/node1/4核1:16 COMPLETED0:0：单元3+4runs、双P四配置各三组、RELEASE/cold/lease、41472主数值+192重填数值及ECHO0生产面积通过。run29/10200340秒COMPLETED0:0：12组默认逐事件/周期精确比较+3组cold。run30/1020045:45 COMPLETED0:0：原评价体系32例端口宽度敏感性；16B共享A约束最高3.640199，prefill ideal3.496459，明确不是原生全图token/s。三路独立审计和完整本地SHA复核通过。
+
+逻辑容量80KiB/物理112KiB/28宏；相对48KiB原配置新增64KiB物理SRAM。宏代理+1.4793928004mm²，池与两P后端标准单元净增0.07256081mm²（同ECHO0实际bank_rw基线），不含P外围和物理实现。完整DDR桥、母控/SoC接入、S32转换及真实模型生成仍未实现。
+
+[实施报告](experiments/issue-247-shared32-native.md)；证据work/Melodydt/247/shared32-native/evidence-index.json。服务器yuzelu@10.129.166.172，个人/public/home/yuzelu/Melodydt/issue247-area-speed/run26至run32；source/、slurm日志、results/、receipts.tar持久保存，全部终态，无活动作业，无自动监测。失败run26/28/31及修复经过保留。
+
+本地完整快照python scripts/check_project.py通过，仅管理结构；GitHub validate在a7a36cbb仍failure且steps为空，原因未核实，未绕过。登记management-hub PR5 pending；缺board配置/Projects能力，看板unverified/同步pending；正式审查人和管理员待指定。下一步独立审查本阶段RTL/报告，确认A16B端口与实际DMA后续范围；管理员处理CI、登记和看板。此前run24/25研究报告证据包上传阻塞仍保留，本阶段不重传该包。
+
+## 本地交付与上传阻塞（2026-11-10 Asia/Shanghai）
+
+本次32/48/96KiB共享S条件研究及两路独立复核已完成；报告、run24/25结果证据及PDF留在本地，尚未上传GitHub。此前模型源码a8e793e4c6f97e9dca5b0cc203797dcd3b0e0e78已上传并用于run25，生产RTL未扩容。自动审批拒绝本次研究证据包上传rayggxia-workspace/LLMHardwareDesign，理由为内部路径及压缩实验资料的特定外传授权不足。没有通过拆包或其他通道规避；线上Issue/PR结果状态尚未同步。本地研究完成不等于在线交付或正式验收，以下in_review指拟提交状态。需用户确认这批资料上传到现有task/242-r-load-bounds / PR243；负责人Melodydt。
+
+恢复第一步：读取本地work/Melodydt/247/shared-pool/README.md及此阻塞记录，确认授权后重新核对远端head和文件清单，按lease上传、逐blob读回，再同步Issue/PR。不要重复运行已成功的run25。登记PR5 pending，看板unverified/同步pending。
+
+## 共享 S 直供研究已完成服务器评估（2026-11-10 Asia/Shanghai）
+Issue247 / PR243，Melodydt，研究交付in_review，不done。保留各Block本地16KiB，共享32/48/96KiB经每P有限FIFO直供A；32main+10敏感例与8旧基线全字段回归、12数值地址case/725输出/107471事件/10生命周期负控/14非法CLI通过，两路独立后处理通过。prefill理想层4.398913/4.475230/4.668451，较R4+19.00%/+21.06%/+26.29%；shared层3.894197/3.977429/4.189147。三个decode的48/96完全同速，W8主ideal3.711253（+0.953%）。未达5；生产RTL未扩容，不计第五轮RTL迭代。
+run25/101993/mdt-shared-pool，源a8e793e4c6f97e9dca5b0cc203797dcd3b0e0e78，c64/node1/4核，7:05 COMPLETED0:0；result SHAb56095b29aac658af899db495d5b44a07246c3ad04fa93a7b8945def87cfbd03。run24/101992 FAILED1:0的过时API编译失败已保留并修复，未弱化-Werror。244策展原件、两run各89源/15输入已SHA核验，3大输出由retention索引留在本人服务器和本地归档。
+原服务器/public/home/yuzelu/Melodydt/issue247-area-speed/run24、run25持久保存source/、slurm日志、results/；本地work/Melodydt/242/r-load-bounds/repo为非Git快照，远端task/242-r-load-bounds未合并main。当前没有活动作业和自动监测。成果/复跑见docs/experiments/issue-247-shared-pool-study.md及work/Melodydt/247/shared-pool/README.md；原生RTL、物理面积/时序与真实生成仍未验收。独立审查人待指定，登记PR5 pending、看板unverified/同步pending；GitHub CI以最新PR回执为准。
+
+[正式报告](experiments/issue-247-shared-pool-study.md)。恢复第一步读取最新PR head与run25/index.json，再按verify.py核验；下一步正式审查并决定共享池RTL实施范围，负责人Melodydt。
+
+## 共享 SRAM 池独立性能研究启动（2026-11-10 Asia/Shanghai）
+Issue247/PR243按用户新指令恢复in_progress：比较保留本地16KiB、共享32/48/96KiB经有限FIFO直供A的条件性能。既有四轮RTL迭代已经停止，本次为新共享池研究，生产RTL未扩容。模型尚未执行，无新token/s；沿旧四场景及两个本地端口层固定R4基线。负责人Melodydt，[接续](handoffs/2026-11-10-issue-247-shared-pool.md)。登记pending、看板unverified/同步pending；待独立审查，不done。
+
+## 停止场景澄清（2026-11-10 Asia/Shanghai）
+
+Issue247/PR243：用户确认任一原评估场景（包括prefill）达5 token/s或完成4轮即停止。已复核72条本轮及21条历史完整场景，本次16KiB最高3.69669737899；原64KiB未实装参考4.54743400007，均未达5，仍按4轮停止。[口径补充](experiments/issue-247-speed-iterations.md)覆盖冻结PDF中的临时decode-only停止假设。本次无新仿真；管理结构检查通过。下一步独立审查，状态in_review、未合并；登记pending、看板unverified/同步pending、CI限制见PR，处理人待指定。
+
+## 四轮迭代交付完成，进入独立审查（2026-11-10 Asia/Shanghai）
+
+Issue247/PR243，Melodydt，in_review（待正式审查/合并，不done）。四轮研究、方案、RTL和旧体系评估已完成；四份PDF均已完成内容和逐页视觉QA，4/4轮完整交付，按轮数上限停止。第四份5页/141内容单元，报告固定f4be5c50507fec202551e45e39fb2215fc18876c，PDF SHA85ae41e4c79712710e078af3f1bcf033d17a8fd35e7896cb90a705b46dc5a741。最终主W8 decode512 ideal 3.67621308212/shared 3.38396291561 token/s，未达5；本次不再增加第五轮。R4采用best R2基础仅op12四EXP lane，默认2，普通N保留；生产启用需BATCH1/DIRECT1/LANES4。R3双buffer退化独立保留，SRAM没有扩容，物理时钟/完整原生生成未验收。
+
+run22/101884源7048c35ed2912e80e62bd7827deaec480d4a7e1a，5:45；run23/101888源e6209544086f2460662bf7edfc91cbfb2c63cd9b，00:02:55；均c64/node1/4核COMPLETED0:0。21build/63run（3预期非法lane拒绝）及11门通过，fee[7,7,7,7,14,14,14,14]；旧模型16case、8精确回归/2fallback、128篡改及原测试通过，独立审计完成。run22结果SHA5abb31227f0c7b2c7ac9ff7eb8f80687569fab0b64bf74eb1a9ea6ccb54b518d，run23结果SHA52c5faaad4d67a30577a5b4bc6d564866627105d492ea37aabc31d5b5b5372ff。
+
+所有源码、日志、结果持久保存在yuzelu@10.129.166.172本人/public/home/yuzelu/Melodydt/issue247-area-speed/run16至run23；全部作业终态，无自动监测。R3/R4共92大raw由retention索引明确服务器/本地归档保存，仓库核验内容和远端索引不混称。扩通道备份task/247-nexp4-area-r4@7048c35ed2912e80e62bd7827deaec480d4a7e1a及R2/R3备份均读回。追踪sacct -j 101884,101888 -X --format=JobID,State,ExitCode,Elapsed,NodeList。
+
+非Git本地快照work/Melodydt/242/r-load-bounds/repo，远端task/242-r-load-bounds供PR243审查，未合并main。恢复第一步核对最新PR head、四轮报告/PDF及正式审查意见；已达到四轮停止条件，不自动增加第五轮。登记management-hub PR5 pending；缺board.json/Projects能力，看板unverified、同步pending，处理管理员/正式审查人待指定；GitHub CI以最终PR回执为准，不冒称通过。
+
+## 第三轮RTL与旧体系评估通过，候选未超第二轮（2026-11-10，Asia/Shanghai）
+
+Issue247/PR243，Melodydt，in_progress。run20/101872（源a3149d69a23f52efb808dbbb46b5558dffce4df7）41秒；run21/101878（源010ae8d0d8839967f96b94227d2224fade0edf37）6:06，均c64/node1/4核COMPLETED0:0。RTL六run×66场景、有限控制299064周期比对及实际S数值通过；模型24case/8精确回归/8fallback、192篡改及原测试通过。R3双buffer主ideal3.66041657326/shared2.75864978939，低于第二轮；当前最快仍3.66958239533/3.37834376557，未到5。
+
+第三轮5页PDF、134内容单元及全部页面视觉QA通过，当前完整交付3/4轮。报告固定809f9820cc13157077e4399a789779aac52925db，PDF SHA00b0b6c2d6c44829808d316cb3e6658c378d8bf51e5cb7632320e790e969940d。大面积候选独立备份task/247-m-k16-area-initial@a3149d69a23f52efb808dbbb46b5558dffce4df7与前态备份均读回；S仍16KiB。run20结果SHA87842b59e42fb0773eedb82dce4981614432868fa12218c3aa15166b0b839eff，run21结果SHAbccd917afba10bb9c3f65f62b26b1eab588a85d73c364a4b4d54962b5197afb8。
+
+服务器本人/public/home/yuzelu/Melodydt/issue247-area-speed/run20、run21持久保存source/、slurm-job.log与results/；62大raw另有retention SHA索引，不声称Git内含所有raw。追踪sacct -j 101872,101878 -X --format=JobID,State,ExitCode,Elapsed,NodeList。全部终态，无自动监测。第四轮在隔离目录实施R2基础op12四EXP lane；1KiB A缓存受DDR上限约束，仅保留方案。恢复第一步核对最新PR head/本轮报告，继续第四轮源审查、Slurm实测和旧体系复评。非Git本地快照work/Melodydt/242/r-load-bounds/repo仅根整合，R4子任务各隔离目录；远端task/242-r-load-bounds未合并main。
+
+登记pending、Projects unverified/同步pending（缺board.json及工具能力）、审查人/管理员待指定；GitHub CI此前失败原因未核实，未绕过。当前候选不具备完整P/DMA、原生整图生成或新物理资格。
+
+## 第二轮RTL与评估通过（2026-11-10，Asia/Shanghai）
+
+Issue247 / PR243，负责人Melodydt，in_progress。R2源码863492081f0f512fc64fb73c787fcdcaf145a6b4，31文件blob读回通过。run18/101852/mdt-r2-nexp-rtl，2:37；run19/101854/mdt-iter2-nexp，2:53；均c64/node1/4核COMPLETED0:0。R2实际费用[7,7,9,9,16,16,18,18]，默认/DIRECT0兼容、数值、持久状态及完整U通过。16旧体系case/8默认精确回归、2prefill fallback、128篡改及profile/CLI负例通过；独立复核完成。
+
+主W8 decode512 ideal3.66958239533（比R1+0.90184%）、shared3.37834376557（+0.83026%）；Dot224.101536667ms占82.2359%，未达5。run18结果SHAfb0b4d0d1251140655feea5bd671c196e5ae13b1fd47066dc22d6e1e1a2eac78，run19结果SHAb16ff9a0209add1227177d1899bbf9928ae7e83d724a0c113469e7c860c97098。两run在/public/home/yuzelu/Melodydt/issue247-area-speed/，源码、日志和结果持久保存；追踪`sacct -j 101852,101854 -X --format=JobID,State,ExitCode,Elapsed,NodeList`，查看各目录results/result.json。所有作业终态，无自动监测。
+
+第二轮4页PDF及110内容单元、全部页面视觉QA完成，当前2/4轮完整交付。PDF源文档固定e531a9944ff1ae4bc55e3b6e204be48f425af1a3，PDF SHA1c28b2f2ee7a736b92d4e84308e6a067a6ec761976e78d547310248ac9850a66。第三轮在隔离目录研究/实施S32/S96 M有限供数；正式生产未改R3。恢复第一步核对PR最新head，审查R3真实buffer/nextK/commit/ACK与旧模型收费边界，并在新增大面积候选前创建独立备份。SRAM不扩容；大面积候选另备份。登记pending、看板unverified/同步pending、审查人待指定，未合并main。
+
+2026-11-10，[Issue247/PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)按用户新授权开始[最多四轮RTL提速迭代](experiments/issue-247-speed-iterations.md)，恢复in_progress。主W8 decode512沿旧评价体系，目标5 token/s或满四轮，每轮详细PDF；起点3.230811共享口/3.496169理想端口为条件估计。R1单N批处理与U接入通过服务器RTL/16场景评估，主条件值3.636785、共享口3.350526；首轮5页PDF已通过内容与逐页视觉QA，1/4轮完成；R2单命令relative-exp隔离实施中。SRAM不扩容、备份分支已读回，不继承历史物理资格。
+
+2026-11-10，[Issue247/PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)新增[旧评价体系复评](experiments/issue-247-legacy-metric-evaluation.md)：run15/101800的21场景全历史字段及5生成源SHA一致，旧W8 decode基线3.063655、共享口ctx8 3.230811、理想端口ctx8 3.496169；48/64KiB的4.467001/4.547434属于prefill参考。未修改生产RTL或扩容，不作为原生实测。待独立审查，登记pending、看板unverified/同步pending。
+
+2026-11-09，[Issue247/PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)新增[实施PDF](experiments/pdf/issue-247-p-native-optimizations.pdf)与[新版吞吐核验](experiments/issue-247-native-token-throughput.md)。run12历史重现、run13实际P校准、run14九场景条件模型均通过；W8 decode512条件速率0.06758→0.08174（+20.95%），prefill保持相同。原始S32整图仍被原生准入拒绝，不把条件数值当实际生成；本轮生产RTL不再变更，S不扩容。成果待独立审查，登记pending、看板unverified/同步pending，最终CI以PR回执为准。
+
+2026-11-09，[Issue247/PR243](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/243)由性能研究进入原生P可选RTL实现：消费者仲裁、固定16KiB四1RW bank并发、八组S64上下文与A复用，两轮服务器回归通过，待独立审查。默认参数关闭新功能；未实装SRAM扩容，未获得新物理或整模型token/s资格。[实施方案、局部收益及短K退化](experiments/issue-247-p-native-optimizations.md)。登记pending，看板unverified/同步pending，CI失败原因待管理员核实；未自合并。
 
 2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 

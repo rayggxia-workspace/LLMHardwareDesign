@@ -1,0 +1,3697 @@
+{
+  "schema_version": 1,
+  "actual_fusion": {
+    "passed": true,
+    "source": {
+      "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\242\\r-load-bounds\\repo\\work\\Melodydt\\247\\fusion\\run09\\results\\result.json.gz.b64",
+      "sha256": "f65520c819194e07af2d2d8764cde506406913d5d4818c78bc1cb48bcd202919",
+      "transport_sha256": "d19a6c89979d731bb0810996472cf63d9e56d5cf69c97f207eff6288ad2c9733"
+    },
+    "source_commit": "af9e43282c82ed8bc43cdaf3c2ec3c1ce8fc53b2",
+    "prior_run05": {
+      "source_commit": "49b3938ce8b55734520c56a79a7d5d7933af9cdc",
+      "result_sha256": "4dcb0f01357e2f71fcf9f90deeab1d1dd50101b3d928b3e9866473c91c133777",
+      "inputs_sha256": "a4a650c02fdd36627d145d905017a93030a17e8b4104d427c75defe38aaafad3"
+    },
+    "full_trace_cases": 22,
+    "actual_baselines": 9,
+    "actual_fused_cases": 13,
+    "small_trace_cases": 12,
+    "default_phase_passed": true,
+    "invalid_CLI": [
+      "unsupported-fusion",
+      "unsupported-fee",
+      "numeric-tail"
+    ],
+    "rows": [
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w8",
+        "route": "B16ctx8",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": false,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.286027372667,
+        "baseline_tokens_per_second": 3.49616888299,
+        "actual_seconds": 0.286027372667,
+        "actual_tokens_per_second": 3.49616888299,
+        "actual_change_percent": 0.0,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 740621000,
+          "U_S_service_ms": 2.4687366666666666,
+          "U_S_service_saved_subcycles": 0,
+          "U_S_service_saved_ms": 0.0,
+          "U_S_reservations": 455405,
+          "U_S_reservations_saved": 0,
+          "U_DDR_read_bus": 12851200,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 0,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 66180,
+          "cache_misses": 200800,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 0,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 0,
+          "direct_saved_S_write_bytes": 0,
+          "forwarded_packets": 0,
+          "forwarded_bytes": 0,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 0
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.28602737266666667,
+            "tokens_per_second": 3.4961688829879565,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 1.1655121312514893e-10,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.28457454266666665,
+            "tokens_per_second": 3.5140177706315048,
+            "change_vs_same_actual_case_percent": 0.5105270437706588,
+            "change_vs_actual_baseline_percent": 0.5105270438878096,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.28457454266666665,
+            "tokens_per_second": 3.5140177706315048,
+            "change_vs_same_actual_case_percent": 0.5105270437706588,
+            "change_vs_actual_baseline_percent": 0.5105270438878096,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.28457454266666665,
+            "tokens_per_second": 3.5140177706315048,
+            "change_vs_same_actual_case_percent": 0.5105270437706588,
+            "change_vs_actual_baseline_percent": 0.5105270438878096,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w8-B16ctx8-f0-c0.jsonl",
+        "event_sha256": "f8615e5c3ab3010db45ec039119c0f19910f803ea295ed96fdfddc16468bc620",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w8",
+        "route": "A64",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 64,
+        "contexts": 1,
+        "fusion": false,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.282173295227,
+        "baseline_tokens_per_second": 3.54392147278,
+        "actual_seconds": 0.282173295227,
+        "actual_tokens_per_second": 3.54392147278,
+        "actual_change_percent": 0.0,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 740621000,
+          "U_S_service_ms": 2.4687366666666666,
+          "U_S_service_saved_subcycles": 0,
+          "U_S_service_saved_ms": 0.0,
+          "U_S_reservations": 455405,
+          "U_S_reservations_saved": 0,
+          "U_DDR_read_bus": 12851200,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 0,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 66180,
+          "cache_misses": 200800,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 0,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 0,
+          "direct_saved_S_write_bytes": 0,
+          "forwarded_packets": 0,
+          "forwarded_bytes": 0,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 0
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.2821732952266667,
+            "tokens_per_second": 3.5439214727839894,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 1.1812772982011666e-10,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.28072046522666666,
+            "tokens_per_second": 3.5622625489472375,
+            "change_vs_same_actual_case_percent": 0.5175361898987152,
+            "change_vs_actual_baseline_percent": 0.5175361900174424,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.28072046522666666,
+            "tokens_per_second": 3.5622625489472375,
+            "change_vs_same_actual_case_percent": 0.5175361898987152,
+            "change_vs_actual_baseline_percent": 0.5175361900174424,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.28072046522666666,
+            "tokens_per_second": 3.5622625489472375,
+            "change_vs_same_actual_case_percent": 0.5175361898987152,
+            "change_vs_actual_baseline_percent": 0.5175361900174424,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w8-A64-f0-c0.jsonl",
+        "event_sha256": "6bf33464dce266ec33626750dc3ab9e3dcac25056d2f527efcc99d9919e1deb4",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w16",
+        "route": "B16ctx8",
+        "variant": "adaptive",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": false,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.472442745367,
+        "baseline_tokens_per_second": 2.11665860003,
+        "actual_seconds": 0.472442745367,
+        "actual_tokens_per_second": 2.11665860003,
+        "actual_change_percent": 0.0,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 740621000,
+          "U_S_service_ms": 2.4687366666666666,
+          "U_S_service_saved_subcycles": 0,
+          "U_S_service_saved_ms": 0.0,
+          "U_S_reservations": 455405,
+          "U_S_reservations_saved": 0,
+          "U_DDR_read_bus": 12851200,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 0,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 66180,
+          "cache_misses": 200800,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 0,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 0,
+          "direct_saved_S_write_bytes": 0,
+          "forwarded_packets": 0,
+          "forwarded_bytes": 0,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 0
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.4724427453666667,
+            "tokens_per_second": 2.1166586000254735,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 7.054357098468245e-11,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.4709899153666667,
+            "tokens_per_second": 2.1231877103387613,
+            "change_vs_same_actual_case_percent": 0.3084630801211574,
+            "change_vs_actual_baseline_percent": 0.30846308019192303,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.4709899153666667,
+            "tokens_per_second": 2.1231877103387613,
+            "change_vs_same_actual_case_percent": 0.3084630801211574,
+            "change_vs_actual_baseline_percent": 0.30846308019192303,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.4709899153666667,
+            "tokens_per_second": 2.1231877103387613,
+            "change_vs_same_actual_case_percent": 0.3084630801211574,
+            "change_vs_actual_baseline_percent": 0.30846308019192303,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w16-B16ctx8-f0-c0.jsonl",
+        "event_sha256": "2591309d2ee65572f20a0dcba940f5d111360670dc684663988722d5b892d931",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w16",
+        "route": "A64",
+        "variant": "adaptive",
+        "P_KiB": 64,
+        "contexts": 1,
+        "fusion": false,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.465490553227,
+        "baseline_tokens_per_second": 2.14827130877,
+        "actual_seconds": 0.465490553227,
+        "actual_tokens_per_second": 2.14827130877,
+        "actual_change_percent": 0.0,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 740621000,
+          "U_S_service_ms": 2.4687366666666666,
+          "U_S_service_saved_subcycles": 0,
+          "U_S_service_saved_ms": 0.0,
+          "U_S_reservations": 455405,
+          "U_S_reservations_saved": 0,
+          "U_DDR_read_bus": 12851200,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 0,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 66180,
+          "cache_misses": 200800,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 0,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 0,
+          "direct_saved_S_write_bytes": 0,
+          "forwarded_packets": 0,
+          "forwarded_bytes": 0,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 0
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.46549055322666666,
+            "tokens_per_second": 2.1482713087693073,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 7.16093850883226e-11,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.46403772322666664,
+            "tokens_per_second": 2.154997212395885,
+            "change_vs_same_actual_case_percent": 0.31308446000850587,
+            "change_vs_actual_baseline_percent": 0.3130844600803595,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.46403772322666664,
+            "tokens_per_second": 2.154997212395885,
+            "change_vs_same_actual_case_percent": 0.31308446000850587,
+            "change_vs_actual_baseline_percent": 0.3130844600803595,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.46403772322666664,
+            "tokens_per_second": 2.154997212395885,
+            "change_vs_same_actual_case_percent": 0.31308446000850587,
+            "change_vs_actual_baseline_percent": 0.3130844600803595,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w16-A64-f0-c0.jsonl",
+        "event_sha256": "79bc9dc8f74c0a73b097e8c38ec9f0a97c9e0004d96af477b382cbaa75b60a7d",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode2048",
+        "profile": "queued_pipe_w8",
+        "route": "B16ctx8",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": false,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.391726062587,
+        "baseline_tokens_per_second": 2.55280435873,
+        "actual_seconds": 0.391726062587,
+        "actual_tokens_per_second": 2.55280435873,
+        "actual_change_percent": 0.0,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 1680653000,
+          "U_S_service_ms": 5.602176666666667,
+          "U_S_service_saved_subcycles": 0,
+          "U_S_service_saved_ms": 0.0,
+          "U_S_reservations": 1063661,
+          "U_S_reservations_saved": 0,
+          "U_DDR_read_bus": 30545920,
+          "U_DDR_write_bus": 18855168,
+          "U_DDR_read_saved": 0,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 121476,
+          "cache_misses": 477280,
+          "dirty_evictions": 294612,
+          "cache_misses_saved": 0,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 0,
+          "direct_saved_S_write_bytes": 0,
+          "forwarded_packets": 0,
+          "forwarded_bytes": 0,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 0
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.39172606258666665,
+            "tokens_per_second": 2.552804358731574,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 8.5087492607272e-11,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.3883378725866667,
+            "tokens_per_second": 2.575077195894219,
+            "change_vs_same_actual_case_percent": 0.8724850804356699,
+            "change_vs_actual_baseline_percent": 0.8724850805215123,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.3883378725866667,
+            "tokens_per_second": 2.575077195894219,
+            "change_vs_same_actual_case_percent": 0.8724850804356699,
+            "change_vs_actual_baseline_percent": 0.8724850805215123,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.3883378725866667,
+            "tokens_per_second": 2.575077195894219,
+            "change_vs_same_actual_case_percent": 0.8724850804356699,
+            "change_vs_actual_baseline_percent": 0.8724850805215123,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode2048-queued_pipe_w8-B16ctx8-f0-c0.jsonl",
+        "event_sha256": "f0c2ec4f669fa8cc80c71d219684ff7bb3ddad640bcfac84e951f09984edb7a0",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode2048",
+        "profile": "queued_pipe_w8",
+        "route": "A64",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 64,
+        "contexts": 1,
+        "fusion": false,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.385345153787,
+        "baseline_tokens_per_second": 2.595076103,
+        "actual_seconds": 0.385345153787,
+        "actual_tokens_per_second": 2.595076103,
+        "actual_change_percent": 0.0,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 1680653000,
+          "U_S_service_ms": 5.602176666666667,
+          "U_S_service_saved_subcycles": 0,
+          "U_S_service_saved_ms": 0.0,
+          "U_S_reservations": 1063661,
+          "U_S_reservations_saved": 0,
+          "U_DDR_read_bus": 30545920,
+          "U_DDR_write_bus": 18855168,
+          "U_DDR_read_saved": 0,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 121476,
+          "cache_misses": 477280,
+          "dirty_evictions": 294612,
+          "cache_misses_saved": 0,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 0,
+          "direct_saved_S_write_bytes": 0,
+          "forwarded_packets": 0,
+          "forwarded_bytes": 0,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 0
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.38534515378666667,
+            "tokens_per_second": 2.595076103003533,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 8.65085780787922e-11,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.38195696378666666,
+            "tokens_per_second": 2.61809600245573,
+            "change_vs_same_actual_case_percent": 0.8870606694560523,
+            "change_vs_actual_baseline_percent": 0.8870606695433159,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.38195696378666666,
+            "tokens_per_second": 2.61809600245573,
+            "change_vs_same_actual_case_percent": 0.8870606694560523,
+            "change_vs_actual_baseline_percent": 0.8870606695433159,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.38195696378666666,
+            "tokens_per_second": 2.61809600245573,
+            "change_vs_same_actual_case_percent": 0.8870606694560523,
+            "change_vs_actual_baseline_percent": 0.8870606695433159,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode2048-queued_pipe_w8-A64-f0-c0.jsonl",
+        "event_sha256": "94c4c91848322526ec6080aac1668af0964bb6b66eae4c872578d4be9f859905",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "prefill2",
+        "profile": "queued_pipe_w8",
+        "route": "B16ctx8",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": false,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.541023458227,
+        "baseline_tokens_per_second": 3.69669737899,
+        "actual_seconds": 0.541023458227,
+        "actual_tokens_per_second": 3.69669737899,
+        "actual_change_percent": 0.0,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 11500498000,
+          "U_S_service_ms": 38.33499333333334,
+          "U_S_service_saved_subcycles": 0,
+          "U_S_service_saved_ms": 0.0,
+          "U_S_reservations": 4070338,
+          "U_S_reservations_saved": 0,
+          "U_DDR_read_bus": 38319936,
+          "U_DDR_write_bus": 29486912,
+          "U_DDR_read_saved": 0,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 6213687,
+          "cache_misses": 598749,
+          "dirty_evictions": 460733,
+          "cache_misses_saved": 0,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 0,
+          "direct_saved_S_write_bytes": 0,
+          "forwarded_packets": 0,
+          "forwarded_bytes": 0,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 0
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.5410234582266666,
+            "tokens_per_second": 3.6966973789925426,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 6.161737786669619e-11,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.03022184838,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.5359618548933334,
+            "tokens_per_second": 3.731608848167074,
+            "change_vs_same_actual_case_percent": 0.9443961892289243,
+            "change_vs_actual_baseline_percent": 0.944396189291119,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.03022184838,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.5359618548933334,
+            "tokens_per_second": 3.731608848167074,
+            "change_vs_same_actual_case_percent": 0.9443961892289243,
+            "change_vs_actual_baseline_percent": 0.944396189291119,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.03022184838,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.5359618548933334,
+            "tokens_per_second": 3.731608848167074,
+            "change_vs_same_actual_case_percent": 0.9443961892289243,
+            "change_vs_actual_baseline_percent": 0.944396189291119,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.03022184838,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "prefill2-queued_pipe_w8-B16ctx8-f0-c0.jsonl",
+        "event_sha256": "f8410c16b7af3550f035da75d7729fd4d4b99dc274fcb079c0556532e6fab495",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "prefill2",
+        "profile": "queued_pipe_w8",
+        "route": "A64",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 64,
+        "contexts": 1,
+        "fusion": false,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.4398084722,
+        "baseline_tokens_per_second": 4.54743400007,
+        "actual_seconds": 0.4398084722,
+        "actual_tokens_per_second": 4.54743400007,
+        "actual_change_percent": 0.0,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 11500498000,
+          "U_S_service_ms": 38.33499333333334,
+          "U_S_service_saved_subcycles": 0,
+          "U_S_service_saved_ms": 0.0,
+          "U_S_reservations": 4070338,
+          "U_S_reservations_saved": 0,
+          "U_DDR_read_bus": 38319936,
+          "U_DDR_write_bus": 29486912,
+          "U_DDR_read_saved": 0,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 6213687,
+          "cache_misses": 598749,
+          "dirty_evictions": 460733,
+          "cache_misses_saved": 0,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 0,
+          "direct_saved_S_write_bytes": 0,
+          "forwarded_packets": 0,
+          "forwarded_bytes": 0,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 0
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.4398084722,
+            "tokens_per_second": 4.54743400006745,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 0.0,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.03022184838,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.4347468688666667,
+            "tokens_per_second": 4.600378158475901,
+            "change_vs_same_actual_case_percent": 1.1642644710767813,
+            "change_vs_actual_baseline_percent": 1.1642644710767813,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.03022184838,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.4347468688666667,
+            "tokens_per_second": 4.600378158475901,
+            "change_vs_same_actual_case_percent": 1.1642644710767813,
+            "change_vs_actual_baseline_percent": 1.1642644710767813,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.03022184838,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.4347468688666667,
+            "tokens_per_second": 4.600378158475901,
+            "change_vs_same_actual_case_percent": 1.1642644710767813,
+            "change_vs_actual_baseline_percent": 1.1642644710767813,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.03022184838,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "prefill2-queued_pipe_w8-A64-f0-c0.jsonl",
+        "event_sha256": "0eb33fe5fc0756215ddd9347df9e377af853171445861f2b4b2474e94a5e9e77",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w8",
+        "route": "A48",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 48,
+        "contexts": 1,
+        "fusion": false,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.282360849467,
+        "baseline_tokens_per_second": 3.54156747258,
+        "actual_seconds": 0.282360849467,
+        "actual_tokens_per_second": 3.54156747258,
+        "actual_change_percent": 0.0,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 740621000,
+          "U_S_service_ms": 2.4687366666666666,
+          "U_S_service_saved_subcycles": 0,
+          "U_S_service_saved_ms": 0.0,
+          "U_S_reservations": 455405,
+          "U_S_reservations_saved": 0,
+          "U_DDR_read_bus": 12851200,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 0,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 66180,
+          "cache_misses": 200800,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 0,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 0,
+          "direct_saved_S_write_bytes": 0,
+          "forwarded_packets": 0,
+          "forwarded_bytes": 0,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 0
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.2823608494666667,
+            "tokens_per_second": 3.5415674725757342,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 1.1806111643863915e-10,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.28090801946666666,
+            "tokens_per_second": 3.5598841282587976,
+            "change_vs_same_actual_case_percent": 0.5171906458058206,
+            "change_vs_actual_baseline_percent": 0.5171906459245035,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.28090801946666666,
+            "tokens_per_second": 3.5598841282587976,
+            "change_vs_same_actual_case_percent": 0.5171906458058206,
+            "change_vs_actual_baseline_percent": 0.5171906459245035,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.28090801946666666,
+            "tokens_per_second": 3.5598841282587976,
+            "change_vs_same_actual_case_percent": 0.5171906458058206,
+            "change_vs_actual_baseline_percent": 0.5171906459245035,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w8-A48-f0-c0.jsonl",
+        "event_sha256": "f3ff1479316af9dec7f1dcdcf9ff4a5ea96a64903395da07893f0dd7c6d253a8",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w8",
+        "route": "B16ctx8",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": true,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.286027372667,
+        "baseline_tokens_per_second": 3.49616888299,
+        "actual_seconds": 0.285966198213,
+        "actual_tokens_per_second": 3.49691679033,
+        "actual_change_percent": 0.02139219753323207,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 721717000,
+          "U_S_service_ms": 2.4057233333333334,
+          "U_S_service_saved_subcycles": 18904000,
+          "U_S_service_saved_ms": 0.06301333333333334,
+          "U_S_reservations": 450517,
+          "U_S_reservations_saved": 4888,
+          "U_DDR_read_bus": 12837376,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 13824,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 57052,
+          "cache_misses": 200584,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 216,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 598016,
+          "direct_saved_S_write_bytes": 598016,
+          "forwarded_packets": 2336,
+          "forwarded_bytes": 598016,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.28596619821333336,
+            "tokens_per_second": 3.4969167903333496,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 0.02139219741663645,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.28452128821333333,
+            "tokens_per_second": 3.5146754967951734,
+            "change_vs_same_actual_case_percent": 0.507838977207431,
+            "change_vs_actual_baseline_percent": 0.5293398125406412,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.28452128821333333,
+            "tokens_per_second": 3.5146754967951734,
+            "change_vs_same_actual_case_percent": 0.507838977207431,
+            "change_vs_actual_baseline_percent": 0.5293398125406412,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.28452128821333333,
+            "tokens_per_second": 3.5146754967951734,
+            "change_vs_same_actual_case_percent": 0.507838977207431,
+            "change_vs_actual_baseline_percent": 0.5293398125406412,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w8-B16ctx8-f1-c0.jsonl",
+        "event_sha256": "721ea969ea13c1a18980b9bbd48c280fb27144e724c0cd889c3f57d64b7ae24e",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w8",
+        "route": "A64",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 64,
+        "contexts": 1,
+        "fusion": true,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.282173295227,
+        "baseline_tokens_per_second": 3.54392147278,
+        "actual_seconds": 0.282112120773,
+        "actual_tokens_per_second": 3.54468995256,
+        "actual_change_percent": 0.021684447244729732,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 721717000,
+          "U_S_service_ms": 2.4057233333333334,
+          "U_S_service_saved_subcycles": 18904000,
+          "U_S_service_saved_ms": 0.06301333333333334,
+          "U_S_reservations": 450517,
+          "U_S_reservations_saved": 4888,
+          "U_DDR_read_bus": 12837376,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 13824,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 57052,
+          "cache_misses": 200584,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 216,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 598016,
+          "direct_saved_S_write_bytes": 598016,
+          "forwarded_packets": 2336,
+          "forwarded_bytes": 598016,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.2821121207733333,
+            "tokens_per_second": 3.5446899525577744,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 0.021684447126557593,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.28066721077333334,
+            "tokens_per_second": 3.5629384609789683,
+            "change_vs_same_actual_case_percent": 0.5148125411652993,
+            "change_vs_actual_baseline_percent": 0.5366086225451427,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.28066721077333334,
+            "tokens_per_second": 3.5629384609789683,
+            "change_vs_same_actual_case_percent": 0.5148125411652993,
+            "change_vs_actual_baseline_percent": 0.5366086225451427,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.28066721077333334,
+            "tokens_per_second": 3.5629384609789683,
+            "change_vs_same_actual_case_percent": 0.5148125411652993,
+            "change_vs_actual_baseline_percent": 0.5366086225451427,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w8-A64-f1-c0.jsonl",
+        "event_sha256": "a419969862748f9a2857e7c8ab06dc162d42acbb1f3862fae422b8b619f7d1bb",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w16",
+        "route": "B16ctx8",
+        "variant": "adaptive",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": true,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.472442745367,
+        "baseline_tokens_per_second": 2.11665860003,
+        "actual_seconds": 0.472381570913,
+        "actual_tokens_per_second": 2.11693271197,
+        "actual_change_percent": 0.012950220280982805,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 721717000,
+          "U_S_service_ms": 2.4057233333333334,
+          "U_S_service_saved_subcycles": 18904000,
+          "U_S_service_saved_ms": 0.06301333333333334,
+          "U_S_reservations": 450517,
+          "U_S_reservations_saved": 4888,
+          "U_DDR_read_bus": 12837376,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 13824,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 57052,
+          "cache_misses": 200584,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 216,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 598016,
+          "direct_saved_S_write_bytes": 598016,
+          "forwarded_packets": 2336,
+          "forwarded_bytes": 598016,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.4723815709133333,
+            "tokens_per_second": 2.116932711973786,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 0.01295022021041703,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.47093666091333336,
+            "tokens_per_second": 2.1234278046236676,
+            "change_vs_same_actual_case_percent": 0.3068162069178815,
+            "change_vs_actual_baseline_percent": 0.3198061605027114,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.47093666091333336,
+            "tokens_per_second": 2.1234278046236676,
+            "change_vs_same_actual_case_percent": 0.3068162069178815,
+            "change_vs_actual_baseline_percent": 0.3198061605027114,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.47093666091333336,
+            "tokens_per_second": 2.1234278046236676,
+            "change_vs_same_actual_case_percent": 0.3068162069178815,
+            "change_vs_actual_baseline_percent": 0.3198061605027114,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w16-B16ctx8-f1-c0.jsonl",
+        "event_sha256": "f2259a965798494e5e9670b4d5cb20490c0fd9b9e4742915454cb7f14b6f9566",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w16",
+        "route": "A64",
+        "variant": "adaptive",
+        "P_KiB": 64,
+        "contexts": 1,
+        "fusion": true,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.465490553227,
+        "baseline_tokens_per_second": 2.14827130877,
+        "actual_seconds": 0.465429378773,
+        "actual_tokens_per_second": 2.14855367024,
+        "actual_change_percent": 0.013143659766656768,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 721717000,
+          "U_S_service_ms": 2.4057233333333334,
+          "U_S_service_saved_subcycles": 18904000,
+          "U_S_service_saved_ms": 0.06301333333333334,
+          "U_S_reservations": 450517,
+          "U_S_reservations_saved": 4888,
+          "U_DDR_read_bus": 12837376,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 13824,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 57052,
+          "cache_misses": 200584,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 216,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 598016,
+          "direct_saved_S_write_bytes": 598016,
+          "forwarded_packets": 2336,
+          "forwarded_bytes": 598016,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.46542937877333335,
+            "tokens_per_second": 2.148553670237919,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 0.013143659695025178,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.4639844687733333,
+            "tokens_per_second": 2.1552445551545434,
+            "change_vs_same_actual_case_percent": 0.3114134410188374,
+            "change_vs_actual_baseline_percent": 0.32459803183679803,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.4639844687733333,
+            "tokens_per_second": 2.1552445551545434,
+            "change_vs_same_actual_case_percent": 0.3114134410188374,
+            "change_vs_actual_baseline_percent": 0.32459803183679803,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.4639844687733333,
+            "tokens_per_second": 2.1552445551545434,
+            "change_vs_same_actual_case_percent": 0.3114134410188374,
+            "change_vs_actual_baseline_percent": 0.32459803183679803,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w16-A64-f1-c0.jsonl",
+        "event_sha256": "ff23e14301e6178296bb1e5fac12ebe987ce5783a5c39c07ffaaf0391d6c2ca0",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode2048",
+        "profile": "queued_pipe_w8",
+        "route": "B16ctx8",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": true,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.391726062587,
+        "baseline_tokens_per_second": 2.55280435873,
+        "actual_seconds": 0.391664888133,
+        "actual_tokens_per_second": 2.55320308329,
+        "actual_change_percent": 0.015619080457174306,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 1661749000,
+          "U_S_service_ms": 5.539163333333334,
+          "U_S_service_saved_subcycles": 18904000,
+          "U_S_service_saved_ms": 0.06301333333333334,
+          "U_S_reservations": 1058773,
+          "U_S_reservations_saved": 4888,
+          "U_DDR_read_bus": 30532096,
+          "U_DDR_write_bus": 18855168,
+          "U_DDR_read_saved": 13824,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 112348,
+          "cache_misses": 477064,
+          "dirty_evictions": 294612,
+          "cache_misses_saved": 216,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 598016,
+          "direct_saved_S_write_bytes": 598016,
+          "forwarded_packets": 2336,
+          "forwarded_bytes": 598016,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.39166488813333333,
+            "tokens_per_second": 2.553203083293933,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 0.015619080372042404,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.3882846181333333,
+            "tokens_per_second": 2.5754303758090393,
+            "change_vs_same_actual_case_percent": 0.8705650036435975,
+            "change_vs_actual_baseline_percent": 0.8863200582632791,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.3882846181333333,
+            "tokens_per_second": 2.5754303758090393,
+            "change_vs_same_actual_case_percent": 0.8705650036435975,
+            "change_vs_actual_baseline_percent": 0.8863200582632791,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.3882846181333333,
+            "tokens_per_second": 2.5754303758090393,
+            "change_vs_same_actual_case_percent": 0.8705650036435975,
+            "change_vs_actual_baseline_percent": 0.8863200582632791,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode2048-queued_pipe_w8-B16ctx8-f1-c0.jsonl",
+        "event_sha256": "b60679c650b9b15931fdd7170ecd9642d9213608a906039c4d028131c153d2c1",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode2048",
+        "profile": "queued_pipe_w8",
+        "route": "A64",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 64,
+        "contexts": 1,
+        "fusion": true,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.385345153787,
+        "baseline_tokens_per_second": 2.595076103,
+        "actual_seconds": 0.385283979333,
+        "actual_tokens_per_second": 2.59548814288,
+        "actual_change_percent": 0.01587775700040428,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 1661749000,
+          "U_S_service_ms": 5.539163333333334,
+          "U_S_service_saved_subcycles": 18904000,
+          "U_S_service_saved_ms": 0.06301333333333334,
+          "U_S_reservations": 1058773,
+          "U_S_reservations_saved": 4888,
+          "U_DDR_read_bus": 30532096,
+          "U_DDR_write_bus": 18855168,
+          "U_DDR_read_saved": 13824,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 112348,
+          "cache_misses": 477064,
+          "dirty_evictions": 294612,
+          "cache_misses_saved": 216,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 598016,
+          "direct_saved_S_write_bytes": 598016,
+          "forwarded_packets": 2336,
+          "forwarded_bytes": 598016,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.38528397933333336,
+            "tokens_per_second": 2.5954881428766527,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 0.015877756913873498,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.38190370933333334,
+            "tokens_per_second": 2.618461082102713,
+            "change_vs_same_actual_case_percent": 0.8851105441999296,
+            "change_vs_actual_baseline_percent": 0.9011288368144355,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.38190370933333334,
+            "tokens_per_second": 2.618461082102713,
+            "change_vs_same_actual_case_percent": 0.8851105441999296,
+            "change_vs_actual_baseline_percent": 0.9011288368144355,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.38190370933333334,
+            "tokens_per_second": 2.618461082102713,
+            "change_vs_same_actual_case_percent": 0.8851105441999296,
+            "change_vs_actual_baseline_percent": 0.9011288368144355,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode2048-queued_pipe_w8-A64-f1-c0.jsonl",
+        "event_sha256": "4417621798d9eca8ce8e9580e199d2fbfc834b707ae21492182aa51245ee80d9",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "prefill2",
+        "profile": "queued_pipe_w8",
+        "route": "B16ctx8",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": true,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.541023458227,
+        "baseline_tokens_per_second": 3.69669737899,
+        "actual_seconds": 0.528975614653,
+        "actual_tokens_per_second": 3.78089262453,
+        "actual_change_percent": 2.2775801455239497,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 7895280000,
+          "U_S_service_ms": 26.3176,
+          "U_S_service_saved_subcycles": 3605218000,
+          "U_S_service_saved_ms": 12.017393333333333,
+          "U_S_reservations": 3168276,
+          "U_S_reservations_saved": 902062,
+          "U_DDR_read_bus": 38301504,
+          "U_DDR_write_bus": 29477696,
+          "U_DDR_read_saved": 18432,
+          "U_DDR_write_saved": 9216,
+          "cache_hits": 4411582,
+          "cache_misses": 598461,
+          "dirty_evictions": 460589,
+          "cache_misses_saved": 288,
+          "dirty_evictions_saved": 144,
+          "direct_saved_S_read_bytes": 115341000,
+          "direct_saved_S_write_bytes": 115341000,
+          "forwarded_packets": 450815,
+          "forwarded_bytes": 115341000,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.5289756146533333,
+            "tokens_per_second": 3.780892624531869,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 2.2775801454595124,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0288922743,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.5237372946533333,
+            "tokens_per_second": 3.818708387616007,
+            "change_vs_same_actual_case_percent": 1.000180826050845,
+            "change_vs_actual_baseline_percent": 3.300540891423176,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0288922743,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.5237372946533333,
+            "tokens_per_second": 3.818708387616007,
+            "change_vs_same_actual_case_percent": 1.000180826050845,
+            "change_vs_actual_baseline_percent": 3.300540891423176,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0288922743,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.5237372946533333,
+            "tokens_per_second": 3.818708387616007,
+            "change_vs_same_actual_case_percent": 1.000180826050845,
+            "change_vs_actual_baseline_percent": 3.300540891423176,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0288922743,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "prefill2-queued_pipe_w8-B16ctx8-f1-c0.jsonl",
+        "event_sha256": "ddb3d3a796e0c93baa620313580001b092cd1cc1ab3c4c52105ea9543ad8db4c",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "prefill2",
+        "profile": "queued_pipe_w8",
+        "route": "A64",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 64,
+        "contexts": 1,
+        "fusion": true,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.4398084722,
+        "baseline_tokens_per_second": 4.54743400007,
+        "actual_seconds": 0.427760628627,
+        "actual_tokens_per_second": 4.67551211158,
+        "actual_change_percent": 2.8164919271954636,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 7895280000,
+          "U_S_service_ms": 26.3176,
+          "U_S_service_saved_subcycles": 3605218000,
+          "U_S_service_saved_ms": 12.017393333333333,
+          "U_S_reservations": 3168276,
+          "U_S_reservations_saved": 902062,
+          "U_DDR_read_bus": 38301504,
+          "U_DDR_write_bus": 29477696,
+          "U_DDR_read_saved": 18432,
+          "U_DDR_write_saved": 9216,
+          "cache_hits": 4411582,
+          "cache_misses": 598461,
+          "dirty_evictions": 460589,
+          "cache_misses_saved": 288,
+          "dirty_evictions_saved": 144,
+          "direct_saved_S_read_bytes": 115341000,
+          "direct_saved_S_write_bytes": 115341000,
+          "forwarded_packets": 450815,
+          "forwarded_bytes": 115341000,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.42776062862666664,
+            "tokens_per_second": 4.675512111577535,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 2.8164919272755995,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0288922743,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.4225223086266667,
+            "tokens_per_second": 4.733477875998176,
+            "change_vs_same_actual_case_percent": 1.2397735913699304,
+            "change_vs_actual_baseline_percent": 4.091183641762952,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0288922743,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.4225223086266667,
+            "tokens_per_second": 4.733477875998176,
+            "change_vs_same_actual_case_percent": 1.2397735913699304,
+            "change_vs_actual_baseline_percent": 4.091183641762952,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0288922743,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.4225223086266667,
+            "tokens_per_second": 4.733477875998176,
+            "change_vs_same_actual_case_percent": 1.2397735913699304,
+            "change_vs_actual_baseline_percent": 4.091183641762952,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0288922743,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "prefill2-queued_pipe_w8-A64-f1-c0.jsonl",
+        "event_sha256": "f0f7a30c788e3c97a2f085ddd269258b0ae1711598ad298b550ac6dfeb7228b8",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w8",
+        "route": "A48",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 48,
+        "contexts": 1,
+        "fusion": true,
+        "fee_cycles": 0,
+        "baseline_seconds": 0.282360849467,
+        "baseline_tokens_per_second": 3.54156747258,
+        "actual_seconds": 0.282299675013,
+        "actual_tokens_per_second": 3.54233493167,
+        "actual_change_percent": 0.021670040533061652,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 721717000,
+          "U_S_service_ms": 2.4057233333333334,
+          "U_S_service_saved_subcycles": 18904000,
+          "U_S_service_saved_ms": 0.06301333333333334,
+          "U_S_reservations": 450517,
+          "U_S_reservations_saved": 4888,
+          "U_DDR_read_bus": 12837376,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 13824,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 57052,
+          "cache_misses": 200584,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 216,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 598016,
+          "direct_saved_S_write_bytes": 598016,
+          "forwarded_packets": 2336,
+          "forwarded_bytes": 598016,
+          "forward_control_subcycles": 0,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.2822996750133333,
+            "tokens_per_second": 3.542334931674182,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 0.02167004041497833,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.28085476501333334,
+            "tokens_per_second": 3.560559137932112,
+            "change_vs_same_actual_case_percent": 0.5144687503989331,
+            "change_vs_actual_baseline_percent": 0.5362502764000299,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.28085476501333334,
+            "tokens_per_second": 3.560559137932112,
+            "change_vs_same_actual_case_percent": 0.5144687503989331,
+            "change_vs_actual_baseline_percent": 0.5362502764000299,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.28085476501333334,
+            "tokens_per_second": 3.560559137932112,
+            "change_vs_same_actual_case_percent": 0.5144687503989331,
+            "change_vs_actual_baseline_percent": 0.5362502764000299,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w8-A48-f1-c0.jsonl",
+        "event_sha256": "0a44a9e3973e38ca232c86e8f1ba357ea9ec5e20f202ebfd40eca50007f022e3",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w8",
+        "route": "B16ctx8",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": true,
+        "fee_cycles": 1,
+        "baseline_seconds": 0.286027372667,
+        "baseline_tokens_per_second": 3.49616888299,
+        "actual_seconds": 0.28597398488,
+        "actual_tokens_per_second": 3.49682157424,
+        "actual_change_percent": 0.01866875653826483,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 721717000,
+          "U_S_service_ms": 2.4057233333333334,
+          "U_S_service_saved_subcycles": 18904000,
+          "U_S_service_saved_ms": 0.06301333333333334,
+          "U_S_reservations": 450517,
+          "U_S_reservations_saved": 4888,
+          "U_DDR_read_bus": 12837376,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 13824,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 57052,
+          "cache_misses": 200584,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 216,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 598016,
+          "direct_saved_S_write_bytes": 598016,
+          "forwarded_packets": 2336,
+          "forwarded_bytes": 598016,
+          "forward_control_subcycles": 2336000,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.28597398488,
+            "tokens_per_second": 3.496821574240813,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 0.01866875653826483,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.28452523488,
+            "tokens_per_second": 3.5146267445197092,
+            "change_vs_same_actual_case_percent": 0.5091815496123031,
+            "change_vs_actual_baseline_percent": 0.5279453640143927,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.28452523488,
+            "tokens_per_second": 3.5146267445197092,
+            "change_vs_same_actual_case_percent": 0.5091815496123031,
+            "change_vs_actual_baseline_percent": 0.5279453640143927,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.28452523488,
+            "tokens_per_second": 3.5146267445197092,
+            "change_vs_same_actual_case_percent": 0.5091815496123031,
+            "change_vs_actual_baseline_percent": 0.5279453640143927,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w8-B16ctx8-f1-c1.jsonl",
+        "event_sha256": "e78dfdc12f052552ead3ff84cf8c96d101ac6e998d1d81973e54ef22fba716a1",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "decode512",
+        "profile": "queued_pipe_w8",
+        "route": "B16ctx8",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": true,
+        "fee_cycles": 3,
+        "baseline_seconds": 0.286027372667,
+        "baseline_tokens_per_second": 3.49616888299,
+        "actual_seconds": 0.285989558213,
+        "actual_tokens_per_second": 3.49663115761,
+        "actual_change_percent": 0.013222319806471816,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 721717000,
+          "U_S_service_ms": 2.4057233333333334,
+          "U_S_service_saved_subcycles": 18904000,
+          "U_S_service_saved_ms": 0.06301333333333334,
+          "U_S_reservations": 450517,
+          "U_S_reservations_saved": 4888,
+          "U_DDR_read_bus": 12837376,
+          "U_DDR_write_bus": 8238336,
+          "U_DDR_read_saved": 13824,
+          "U_DDR_write_saved": 0,
+          "cache_hits": 57052,
+          "cache_misses": 200584,
+          "dirty_evictions": 128724,
+          "cache_misses_saved": 216,
+          "dirty_evictions_saved": 0,
+          "direct_saved_S_read_bytes": 598016,
+          "direct_saved_S_write_bytes": 598016,
+          "forwarded_packets": 2336,
+          "forwarded_bytes": 598016,
+          "forward_control_subcycles": 7008000,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.28598955821333333,
+            "tokens_per_second": 3.496631157610489,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 0.013222319689898399,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.28453340132666666,
+            "tokens_per_second": 3.514525870556482,
+            "change_vs_same_actual_case_percent": 0.5117701049778933,
+            "change_vs_actual_baseline_percent": 0.5250600925471582,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.28453340132666666,
+            "tokens_per_second": 3.514525870556482,
+            "change_vs_same_actual_case_percent": 0.5117701049778933,
+            "change_vs_actual_baseline_percent": 0.5250600925471582,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 4,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.28453340132666666,
+            "tokens_per_second": 3.514525870556482,
+            "change_vs_same_actual_case_percent": 0.5117701049778933,
+            "change_vs_actual_baseline_percent": 0.5250600925471582,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 8,
+            "replay_eligible_regions": 254,
+            "replay_serial_regions": 0,
+            "replay_serial_packets": 0,
+            "serial_fallback_seconds": 0.0,
+            "max_observed_source_input_bytes": 512,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "decode512-queued_pipe_w8-B16ctx8-f1-c3.jsonl",
+        "event_sha256": "3fce4b4535e0d8fe865b132ac39e2421a56866fffba0fbfe5084a0efe62c2687",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "prefill2",
+        "profile": "queued_pipe_w8",
+        "route": "B16ctx8",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": true,
+        "fee_cycles": 1,
+        "baseline_seconds": 0.541023458227,
+        "baseline_tokens_per_second": 3.69669737899,
+        "actual_seconds": 0.53047833132,
+        "actual_tokens_per_second": 3.7701822712,
+        "actual_change_percent": 1.9878525256178392,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 7895280000,
+          "U_S_service_ms": 26.3176,
+          "U_S_service_saved_subcycles": 3605218000,
+          "U_S_service_saved_ms": 12.017393333333333,
+          "U_S_reservations": 3168276,
+          "U_S_reservations_saved": 902062,
+          "U_DDR_read_bus": 38301504,
+          "U_DDR_write_bus": 29477696,
+          "U_DDR_read_saved": 18432,
+          "U_DDR_write_saved": 9216,
+          "cache_hits": 4411582,
+          "cache_misses": 598461,
+          "dirty_evictions": 460589,
+          "cache_misses_saved": 288,
+          "dirty_evictions_saved": 144,
+          "direct_saved_S_read_bytes": 115341000,
+          "direct_saved_S_write_bytes": 115341000,
+          "forwarded_packets": 450815,
+          "forwarded_bytes": 115341000,
+          "forward_control_subcycles": 450815000,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.53047833132,
+            "tokens_per_second": 3.7701822712029713,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 1.9878525256178392,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0290573943,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.5252078679866666,
+            "tokens_per_second": 3.8080160673654904,
+            "change_vs_same_actual_case_percent": 1.0035004527896962,
+            "change_vs_actual_baseline_percent": 3.0113010875029156,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0290573943,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.5252078679866666,
+            "tokens_per_second": 3.8080160673654904,
+            "change_vs_same_actual_case_percent": 1.0035004527896962,
+            "change_vs_actual_baseline_percent": 3.0113010875029156,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0290573943,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.5252078679866666,
+            "tokens_per_second": 3.8080160673654904,
+            "change_vs_same_actual_case_percent": 1.0035004527896962,
+            "change_vs_actual_baseline_percent": 3.0113010875029156,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0290573943,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "prefill2-queued_pipe_w8-B16ctx8-f1-c1.jsonl",
+        "event_sha256": "400a59b308ea898cf6b78b8384d1bc5ee41aecfd59915f6c52eb2b36a0c576e4",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      },
+      {
+        "workload": "prefill2",
+        "profile": "queued_pipe_w8",
+        "route": "B16ctx8",
+        "variant": "adaptive_prefix_pair_combine",
+        "P_KiB": 16,
+        "contexts": 8,
+        "fusion": true,
+        "fee_cycles": 3,
+        "baseline_seconds": 0.541023458227,
+        "baseline_tokens_per_second": 3.69669737899,
+        "actual_seconds": 0.533483764653,
+        "actual_tokens_per_second": 3.74894257804,
+        "actual_change_percent": 1.4132939132466715,
+        "actual_fusion_audit_passed": true,
+        "metrics": {
+          "U_S_service_subcycles": 7895280000,
+          "U_S_service_ms": 26.3176,
+          "U_S_service_saved_subcycles": 3605218000,
+          "U_S_service_saved_ms": 12.017393333333333,
+          "U_S_reservations": 3168276,
+          "U_S_reservations_saved": 902062,
+          "U_DDR_read_bus": 38301504,
+          "U_DDR_write_bus": 29477696,
+          "U_DDR_read_saved": 18432,
+          "U_DDR_write_saved": 9216,
+          "cache_hits": 4411582,
+          "cache_misses": 598461,
+          "dirty_evictions": 460589,
+          "cache_misses_saved": 288,
+          "dirty_evictions_saved": 144,
+          "direct_saved_S_read_bytes": 115341000,
+          "direct_saved_S_write_bytes": 115341000,
+          "forwarded_packets": 450815,
+          "forwarded_bytes": 115341000,
+          "forward_control_subcycles": 1352445000,
+          "forward_peak_bytes": 256
+        },
+        "pipeline_counterfactual": [
+          {
+            "depth": 1,
+            "seconds": 0.5334837646533334,
+            "tokens_per_second": 3.748942578036341,
+            "change_vs_same_actual_case_percent": 0.0,
+            "change_vs_actual_baseline_percent": 1.4132939131833,
+            "data_capacity_bytes": 1280,
+            "peak_live_slots": 1,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0293876343,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 2,
+            "seconds": 0.5281609047,
+            "tokens_per_second": 3.7867248071608355,
+            "change_vs_same_actual_case_percent": 1.007810291516531,
+            "change_vs_actual_baseline_percent": 2.4353475262062663,
+            "data_capacity_bytes": 2304,
+            "peak_live_slots": 2,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0293876343,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 4,
+            "seconds": 0.5281609047,
+            "tokens_per_second": 3.7867248071608355,
+            "change_vs_same_actual_case_percent": 1.007810291516531,
+            "change_vs_actual_baseline_percent": 2.4353475262062663,
+            "data_capacity_bytes": 4352,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0293876343,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          },
+          {
+            "depth": 8,
+            "seconds": 0.5281609047,
+            "tokens_per_second": 3.7867248071608355,
+            "change_vs_same_actual_case_percent": 1.007810291516531,
+            "change_vs_actual_baseline_percent": 2.4353475262062663,
+            "data_capacity_bytes": 8448,
+            "peak_live_slots": 3,
+            "replay_eligible_regions": 1049,
+            "replay_serial_regions": 36,
+            "replay_serial_packets": 148608,
+            "serial_fallback_seconds": 0.0293876343,
+            "max_observed_source_input_bytes": 1024,
+            "FIFO_input_operand_descriptor_capacity": 4,
+            "E_instances": 1,
+            "shared_input_output_controllers": 1,
+            "scope": "conditional finite one-E/one-shared-controller replay with fixed per-phase DDR/cache times; oversized whole regions remain serial outside FIFO; not a new full-system simulation or RTL result"
+          }
+        ],
+        "event_file": "prefill2-queued_pipe_w8-B16ctx8-f1-c3.jsonl",
+        "event_sha256": "1fa5c4dbc167837cc3ccf42f9051f7369d8de9ff3333c4c82f27bfd5c141e88f",
+        "scope": "actual sequential SystemC architecture model, not RTL/physical or generated model tokens"
+      }
+    ]
+  },
+  "conditional_replay_scope": "fixed measured DDR/cache phase costs and all nonregion time; finite resources, not a new system simulation",
+  "native_direct_pairs": [
+    {
+      "passed": true,
+      "source_commit": "af9e43282c82ed8bc43cdaf3c2ec3c1ce8fc53b2",
+      "runs": 3,
+      "raw_measurements": 24,
+      "comparisons": [
+        {
+          "depth": null,
+          "tiles": 1,
+          "handoff_delay": 0,
+          "samples": 3,
+          "comparator_cycles": {
+            "min": 52,
+            "max": 52,
+            "all_identical": true
+          },
+          "candidate_cycles": {
+            "min": 45,
+            "max": 45,
+            "all_identical": true
+          },
+          "change_percent": {
+            "min": 15.555555555555545,
+            "max": 15.555555555555545,
+            "all_identical": true
+          },
+          "saved_cycles": {
+            "min": 7,
+            "max": 7,
+            "all_identical": true
+          },
+          "max_inflight": null,
+          "extra_FIFO_data_and_tag_bits": 0,
+          "S_transaction_relation": "one read plus one write removed per tile",
+          "reset_seed_pairs": [
+            [
+              1,
+              143
+            ],
+            [
+              2,
+              143
+            ],
+            [
+              2,
+              144
+            ]
+          ]
+        },
+        {
+          "depth": null,
+          "tiles": 1,
+          "handoff_delay": 4,
+          "samples": 3,
+          "comparator_cycles": {
+            "min": 56,
+            "max": 56,
+            "all_identical": true
+          },
+          "candidate_cycles": {
+            "min": 49,
+            "max": 49,
+            "all_identical": true
+          },
+          "change_percent": {
+            "min": 14.28571428571428,
+            "max": 14.28571428571428,
+            "all_identical": true
+          },
+          "saved_cycles": {
+            "min": 7,
+            "max": 7,
+            "all_identical": true
+          },
+          "max_inflight": null,
+          "extra_FIFO_data_and_tag_bits": 0,
+          "S_transaction_relation": "one read plus one write removed per tile",
+          "reset_seed_pairs": [
+            [
+              1,
+              143
+            ],
+            [
+              2,
+              143
+            ],
+            [
+              2,
+              144
+            ]
+          ]
+        },
+        {
+          "depth": null,
+          "tiles": 16,
+          "handoff_delay": 0,
+          "samples": 3,
+          "comparator_cycles": {
+            "min": 832,
+            "max": 832,
+            "all_identical": true
+          },
+          "candidate_cycles": {
+            "min": 720,
+            "max": 720,
+            "all_identical": true
+          },
+          "change_percent": {
+            "min": 15.555555555555545,
+            "max": 15.555555555555545,
+            "all_identical": true
+          },
+          "saved_cycles": {
+            "min": 112,
+            "max": 112,
+            "all_identical": true
+          },
+          "max_inflight": null,
+          "extra_FIFO_data_and_tag_bits": 0,
+          "S_transaction_relation": "one read plus one write removed per tile",
+          "reset_seed_pairs": [
+            [
+              1,
+              143
+            ],
+            [
+              2,
+              143
+            ],
+            [
+              2,
+              144
+            ]
+          ]
+        },
+        {
+          "depth": null,
+          "tiles": 16,
+          "handoff_delay": 4,
+          "samples": 3,
+          "comparator_cycles": {
+            "min": 896,
+            "max": 896,
+            "all_identical": true
+          },
+          "candidate_cycles": {
+            "min": 784,
+            "max": 784,
+            "all_identical": true
+          },
+          "change_percent": {
+            "min": 14.28571428571428,
+            "max": 14.28571428571428,
+            "all_identical": true
+          },
+          "saved_cycles": {
+            "min": 112,
+            "max": 112,
+            "all_identical": true
+          },
+          "max_inflight": null,
+          "extra_FIFO_data_and_tag_bits": 0,
+          "S_transaction_relation": "one read plus one write removed per tile",
+          "reset_seed_pairs": [
+            [
+              1,
+              143
+            ],
+            [
+              2,
+              143
+            ],
+            [
+              2,
+              144
+            ]
+          ]
+        }
+      ],
+      "error": null,
+      "scope": "actual unchanged production S16 stored/direct-pair RTL cycles; serial pair control",
+      "source": {
+        "embedded_in": {
+          "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\242\\r-load-bounds\\repo\\work\\Melodydt\\247\\fusion\\run09\\results\\result.json.gz.b64",
+          "sha256": "f65520c819194e07af2d2d8764cde506406913d5d4818c78bc1cb48bcd202919",
+          "transport_sha256": "d19a6c89979d731bb0810996472cf63d9e56d5cf69c97f207eff6288ad2c9733"
+        },
+        "declared_result_sha256": "04029d2c023453f560f763c4c72a84a2737e86c3aa18798792eae1a2925179bb"
+      }
+    }
+  ],
+  "native_FIFO_overlap": {
+    "passed": true,
+    "source_commit": "1e6e10a7618f3d37542d1f22dd51af6ad1958eb8",
+    "runs": 9,
+    "raw_measurements": 108,
+    "comparisons": [
+      {
+        "depth": 1,
+        "tiles": 1,
+        "handoff_delay": 0,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 45,
+          "max": 45,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 48,
+          "max": 48,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": -6.25,
+          "max": -6.25,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": -3,
+          "max": -3,
+          "all_identical": true
+        },
+        "max_inflight": 1,
+        "extra_FIFO_data_and_tag_bits": 136,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 1,
+        "tiles": 1,
+        "handoff_delay": 4,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 49,
+          "max": 49,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 52,
+          "max": 52,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": -5.769230769230771,
+          "max": -5.769230769230771,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": -3,
+          "max": -3,
+          "all_identical": true
+        },
+        "max_inflight": 1,
+        "extra_FIFO_data_and_tag_bits": 136,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 1,
+        "tiles": 16,
+        "handoff_delay": 0,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 720,
+          "max": 720,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 543,
+          "max": 543,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 32.59668508287292,
+          "max": 32.59668508287292,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 177,
+          "max": 177,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 136,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 1,
+        "tiles": 16,
+        "handoff_delay": 4,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 784,
+          "max": 784,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 487,
+          "max": 487,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 60.985626283367566,
+          "max": 60.985626283367566,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 297,
+          "max": 297,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 136,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 1,
+        "tiles": 32,
+        "handoff_delay": 0,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 1440,
+          "max": 1440,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 1071,
+          "max": 1071,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 34.453781512605055,
+          "max": 34.453781512605055,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 369,
+          "max": 369,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 136,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 1,
+        "tiles": 32,
+        "handoff_delay": 4,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 1568,
+          "max": 1568,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 951,
+          "max": 951,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 64.87907465825447,
+          "max": 64.87907465825447,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 617,
+          "max": 617,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 136,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 2,
+        "tiles": 1,
+        "handoff_delay": 0,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 45,
+          "max": 45,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 48,
+          "max": 48,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": -6.25,
+          "max": -6.25,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": -3,
+          "max": -3,
+          "all_identical": true
+        },
+        "max_inflight": 1,
+        "extra_FIFO_data_and_tag_bits": 272,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 2,
+        "tiles": 1,
+        "handoff_delay": 4,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 49,
+          "max": 49,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 52,
+          "max": 52,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": -5.769230769230771,
+          "max": -5.769230769230771,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": -3,
+          "max": -3,
+          "all_identical": true
+        },
+        "max_inflight": 1,
+        "extra_FIFO_data_and_tag_bits": 272,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 2,
+        "tiles": 16,
+        "handoff_delay": 0,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 720,
+          "max": 720,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 543,
+          "max": 543,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 32.59668508287292,
+          "max": 32.59668508287292,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 177,
+          "max": 177,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 272,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 2,
+        "tiles": 16,
+        "handoff_delay": 4,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 784,
+          "max": 784,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 487,
+          "max": 487,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 60.985626283367566,
+          "max": 60.985626283367566,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 297,
+          "max": 297,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 272,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 2,
+        "tiles": 32,
+        "handoff_delay": 0,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 1440,
+          "max": 1440,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 1071,
+          "max": 1071,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 34.453781512605055,
+          "max": 34.453781512605055,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 369,
+          "max": 369,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 272,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 2,
+        "tiles": 32,
+        "handoff_delay": 4,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 1568,
+          "max": 1568,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 951,
+          "max": 951,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 64.87907465825447,
+          "max": 64.87907465825447,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 617,
+          "max": 617,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 272,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 4,
+        "tiles": 1,
+        "handoff_delay": 0,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 45,
+          "max": 45,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 48,
+          "max": 48,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": -6.25,
+          "max": -6.25,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": -3,
+          "max": -3,
+          "all_identical": true
+        },
+        "max_inflight": 1,
+        "extra_FIFO_data_and_tag_bits": 544,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 4,
+        "tiles": 1,
+        "handoff_delay": 4,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 49,
+          "max": 49,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 52,
+          "max": 52,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": -5.769230769230771,
+          "max": -5.769230769230771,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": -3,
+          "max": -3,
+          "all_identical": true
+        },
+        "max_inflight": 1,
+        "extra_FIFO_data_and_tag_bits": 544,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 4,
+        "tiles": 16,
+        "handoff_delay": 0,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 720,
+          "max": 720,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 543,
+          "max": 543,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 32.59668508287292,
+          "max": 32.59668508287292,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 177,
+          "max": 177,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 544,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 4,
+        "tiles": 16,
+        "handoff_delay": 4,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 784,
+          "max": 784,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 487,
+          "max": 487,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 60.985626283367566,
+          "max": 60.985626283367566,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 297,
+          "max": 297,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 544,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 4,
+        "tiles": 32,
+        "handoff_delay": 0,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 1440,
+          "max": 1440,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 1071,
+          "max": 1071,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 34.453781512605055,
+          "max": 34.453781512605055,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 369,
+          "max": 369,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 544,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      },
+      {
+        "depth": 4,
+        "tiles": 32,
+        "handoff_delay": 4,
+        "samples": 3,
+        "comparator_cycles": {
+          "min": 1568,
+          "max": 1568,
+          "all_identical": true
+        },
+        "candidate_cycles": {
+          "min": 951,
+          "max": 951,
+          "all_identical": true
+        },
+        "change_percent": {
+          "min": 64.87907465825447,
+          "max": 64.87907465825447,
+          "all_identical": true
+        },
+        "saved_cycles": {
+          "min": 617,
+          "max": 617,
+          "all_identical": true
+        },
+        "max_inflight": 2,
+        "extra_FIFO_data_and_tag_bits": 544,
+        "S_transaction_relation": "identical",
+        "reset_seed_pairs": [
+          [
+            1,
+            143
+          ],
+          [
+            2,
+            143
+          ],
+          [
+            2,
+            144
+          ]
+        ]
+      }
+    ],
+    "error": null,
+    "scope": "actual isolated S16 single-N/single-E FIFO RTL cycles; no S32/token/s/physical qualification",
+    "source": {
+      "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\242\\r-load-bounds\\repo\\work\\Melodydt\\247\\fusion\\run07\\results\\result.json",
+      "sha256": "e8aa9c641b299ed4c43b6dcea6583cfb77fad7220c1de783190fe2150f37d860",
+      "transport_sha256": "e8aa9c641b299ed4c43b6dcea6583cfb77fad7220c1de783190fe2150f37d860"
+    }
+  },
+  "collections": [
+    {
+      "source": {
+        "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\242\\r-load-bounds\\repo\\work\\Melodydt\\247\\fusion\\run06\\collection.json",
+        "sha256": "57217a9ac1fc0f7e8ff46209b5a2f29167207a5c38b352e5d8ac445678b695d2",
+        "transport_sha256": "57217a9ac1fc0f7e8ff46209b5a2f29167207a5c38b352e5d8ac445678b695d2"
+      },
+      "run": "run06",
+      "job": {
+        "job_id": "101712",
+        "job_name": "mdt-u-fusion",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "elapsed": "00:00:22",
+        "nodes": "node1"
+      },
+      "whole_run_passed": false,
+      "classification": "partial_or_failed_run",
+      "source_commit": "31bbc96bc71b735967aebc4dbe2ff069aca2225b",
+      "component_receipts": [
+        {
+          "path": "results/native/result.json",
+          "sha256": "b0428f36cbe5b1068640a4752934cdb52ed619fbefbfb5308e913bce5fb7e923",
+          "passed": true,
+          "source_commit": "31bbc96bc71b735967aebc4dbe2ff069aca2225b",
+          "scope": "unchanged production S16 RTL, fair RMS->ADD S/direct comparison; no S32 model/physical/whole-LLM qualification",
+          "error": null
+        }
+      ],
+      "omitted_file_count": 58,
+      "total_result_files_hashed": 73
+    },
+    {
+      "source": {
+        "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\242\\r-load-bounds\\repo\\work\\Melodydt\\247\\fusion\\run07\\collection.json",
+        "sha256": "9d941c5c291633d586f1522a4a3cd585262ecd6667c6447a33cf3b3f095c2c85",
+        "transport_sha256": "9d941c5c291633d586f1522a4a3cd585262ecd6667c6447a33cf3b3f095c2c85"
+      },
+      "run": "run07",
+      "job": {
+        "job_id": "101720",
+        "job_name": "mdt-u-overlap",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:00:21",
+        "nodes": "node1"
+      },
+      "whole_run_passed": true,
+      "classification": "complete_pass",
+      "source_commit": "1e6e10a7618f3d37542d1f22dd51af6ad1958eb8",
+      "component_receipts": [
+        {
+          "path": "results/result.json",
+          "sha256": "e8aa9c641b299ed4c43b6dcea6583cfb77fad7220c1de783190fe2150f37d860",
+          "passed": true,
+          "source_commit": "1e6e10a7618f3d37542d1f22dd51af6ad1958eb8",
+          "scope": "isolated FIFO/scheduler candidate, unchanged S16 N/E/S; no production, S32, token/s, P&R or timing qualification",
+          "error": null
+        }
+      ],
+      "omitted_file_count": 141,
+      "total_result_files_hashed": 161
+    },
+    {
+      "source": {
+        "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\242\\r-load-bounds\\repo\\work\\Melodydt\\247\\fusion\\run08\\collection.json",
+        "sha256": "895b8777d5e6510cdeee06703327f01d00da5311ba6981cfc140191c74758fd4",
+        "transport_sha256": "895b8777d5e6510cdeee06703327f01d00da5311ba6981cfc140191c74758fd4"
+      },
+      "run": "run08",
+      "job": {
+        "job_id": "101721",
+        "job_name": "mdt-u-fusion",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "elapsed": "00:01:31",
+        "nodes": "node1"
+      },
+      "whole_run_passed": false,
+      "classification": "partial_or_failed_run",
+      "source_commit": "1e6e10a7618f3d37542d1f22dd51af6ad1958eb8",
+      "component_receipts": [
+        {
+          "path": "results/native/result.json",
+          "sha256": "42c3d0f3f8494347f288bfc943cc27a59fcbc150f796eab5408b04020fc4a469",
+          "passed": true,
+          "source_commit": "1e6e10a7618f3d37542d1f22dd51af6ad1958eb8",
+          "scope": "unchanged production S16 RTL, fair RMS->ADD S/direct comparison; no S32 model/physical/whole-LLM qualification",
+          "error": null
+        }
+      ],
+      "omitted_file_count": 72,
+      "total_result_files_hashed": 120
+    },
+    {
+      "source": {
+        "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\242\\r-load-bounds\\repo\\work\\Melodydt\\247\\fusion\\run09\\collection.json",
+        "sha256": "579f465d24d89df3d1bf56ce53302a9e50d047800196deffa97b60391f78aaf0",
+        "transport_sha256": "579f465d24d89df3d1bf56ce53302a9e50d047800196deffa97b60391f78aaf0"
+      },
+      "run": "run09",
+      "job": {
+        "job_id": "101728",
+        "job_name": "mdt-u-fusion",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:09:56",
+        "nodes": "node1"
+      },
+      "whole_run_passed": true,
+      "classification": "complete_pass",
+      "source_commit": "af9e43282c82ed8bc43cdaf3c2ec3c1ce8fc53b2",
+      "component_receipts": [
+        {
+          "path": "results/native/result.json",
+          "sha256": "04029d2c023453f560f763c4c72a84a2737e86c3aa18798792eae1a2925179bb",
+          "passed": true,
+          "source_commit": "af9e43282c82ed8bc43cdaf3c2ec3c1ce8fc53b2",
+          "scope": "unchanged production S16 RTL, fair RMS->ADD S/direct comparison; no S32 model/physical/whole-LLM qualification",
+          "error": null
+        },
+        {
+          "path": "results/result.json",
+          "sha256": "f65520c819194e07af2d2d8764cde506406913d5d4818c78bc1cb48bcd202919",
+          "passed": true,
+          "source_commit": "af9e43282c82ed8bc43cdaf3c2ec3c1ce8fc53b2",
+          "scope": "actual single-E adjacent fusion SystemC; separately labelled finite-stage pipeline counterfactual; production-S16 pair RTL measured separately",
+          "error": null
+        }
+      ],
+      "omitted_file_count": 103,
+      "total_result_files_hashed": 207
+    }
+  ]
+}

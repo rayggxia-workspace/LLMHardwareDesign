@@ -1,0 +1,762 @@
+[
+  {
+    "kind": "title",
+    "text": "共享32KiB A入口16→32B：RTL实施、性能与面积"
+  },
+  {
+    "kind": "body",
+    "text": "已实现每P最多两个128bit A容器/拍，保持共享32KiB、全局64B读服务和每P四槽。服务器72次功能仿真、12对逐拍兼容与六项模块面积验证全部通过。原生等工作微基准的处理吞吐提升约2.0432%（普通M）或1.4344%（8-context M）；已计标准单元增量0.033507222 mm²，SRAM宏增量为0。"
+  },
+  {
+    "kind": "body",
+    "text": "Issue247 / PR243，负责人 Melodydt，2026-11-10 Asia/Shanghai。分支 task/242-r-load-bounds。实际测试源码 e7e8becca866e8257e026fddfc6e6215169e4015；基线2fc03de589e65f28d362128f9d988034429fd50c。源码和结果已上传供审查，未合并，不表示完成原生大模型部署或物理验收。"
+  },
+  {
+    "kind": "section",
+    "text": "1. 出发点：先兑现32B能力"
+  },
+  {
+    "kind": "body",
+    "text": "此前真实共享池RTL每P只能送一个128bit容器/拍；旧条件模型中4.398913 token/s的prefill结果使用32B入口。run33具体评估确认，32B以上的最佳整图增益只有0.1450%（shared）或0.6972%（idealdual），64→128B双组交错完全同速。因此优先扩原生入口，不继续增加共享容量、读取组或FIFO深度。"
+  },
+  {
+    "kind": "body",
+    "text": "这里的目标是减少实际A握手和搬运周期。旧条件模型的百分比是研究依据，不能直接当作新RTL速度承诺。本轮同时安排同输入、同命令、同数值结果的原生周期对照，避免用不等负载或纯带宽倍数外推token/s。"
+  },
+  {
+    "kind": "section",
+    "text": "2. 五个模块的具体改动"
+  },
+  {
+    "kind": "head",
+    "text": "模块"
+  },
+  {
+    "kind": "head",
+    "text": "具体做法"
+  },
+  {
+    "kind": "head",
+    "text": "保持的资源/合同"
+  },
+  {
+    "kind": "cell",
+    "text": "shared_a_pool32"
+  },
+  {
+    "kind": "cell",
+    "text": "A_WORDS_PER_BEAT支持1/2；同一FIFO头最多取两个连续容器"
+  },
+  {
+    "kind": "cell",
+    "text": "8颗4KiB宏、全局一次64B读、每P四个64B信用"
+  },
+  {
+    "kind": "cell",
+    "text": "block_v2_m"
+  },
+  {
+    "kind": "cell",
+    "text": "独立row/tile的双片原子写入；非法形状整拍阻塞"
+  },
+  {
+    "kind": "cell",
+    "text": "操作数数组、64个S8乘法器及计算调度"
+  },
+  {
+    "kind": "cell",
+    "text": "block_v2_m_context"
+  },
+  {
+    "kind": "cell",
+    "text": "同样的双片写入与bank锁；不改变context算术"
+  },
+  {
+    "kind": "cell",
+    "text": "既有8组结果/部分和语义，无新增算术槽"
+  },
+  {
+    "kind": "cell",
+    "text": "pu_p_group"
+  },
+  {
+    "kind": "cell",
+    "text": "SHARED_A_WORDS参数贯穿共享接口；本地A只驱动低片，其余清零"
+  },
+  {
+    "kind": "cell",
+    "text": "B保持寄存器、本地SRAM和LOAD完成汇合"
+  },
+  {
+    "kind": "cell",
+    "text": "pu_p_shared_pair"
+  },
+  {
+    "kind": "cell",
+    "text": "默认A_WORDS_PER_BEAT=2，接通两P与池"
+  },
+  {
+    "kind": "cell",
+    "text": "两P独立消费、不广播；RELEASE/复位所有权"
+  },
+  {
+    "kind": "body",
+    "text": "standalone pool/M和P仍默认单片；P的SHARED_A默认关闭。pair包装层默认双片，因此旧pair逐周期比较显式选择A_WORDS_PER_BEAT=1。不能说所有无参数顶层行为都未变化。旧实验源保持冻结，新suite通过严格文本派生保留旧断言；历史shared32_native runner原样复现须使用历史固定commit。"
+  },
+  {
+    "kind": "body",
+    "text": "S8每容器只有低64bit有效，S16使用全部128bit。因此32B是容器带宽；S8模式每P有效数据带宽为16B/拍。这次没有引入S32精度、扩展K上限或改变算术拆分。"
+  },
+  {
+    "kind": "section",
+    "text": "3. 握手、边界和生命周期"
+  },
+  {
+    "kind": "body",
+    "text": "每P两个有效位只接受01或11，共用ready、bank和format；每片有独立row/tile。一次valid[0]与ready握手原子接受整拍。M遇到10或两片目的row/tile重复时，将ready置低且不写任何片；生产者须修正输入，该操作数通道没有新增错误回执。"
+  },
+  {
+    "kind": "body",
+    "text": "池按P优先、低片在前打包。两个容器只能来自同一64B FIFO头，不跨头拼接。头游标1可以送第1、2片；游标3或一片尾部只送01。row先递增、到边界后tile递增；rows=1时一次双片能跨两个tile。sent、done与FIFO弹出均使用本拍实际接受片数。"
+  },
+  {
+    "kind": "body",
+    "text": "背压时FIFO头、有效mask、数据和标签保持稳定；新返回行不升级已呈现的beat。信用仍统计排队行及在途读，不增加隐藏缓冲。clear-all、clear-bank、START和执行bank锁对双片整体生效；另一bank仍可接受合法双写。"
+  },
+  {
+    "kind": "body",
+    "text": "BEGIN、真实fill ACK、SEAL、epoch、对象边界、LOAD的A/B完成汇合、RELEASE等待外层LOAD结果消费以及cold-reset取消保持原合同。失败LOAD仍可能部分更新操作数，必须完整重装后再计算；本次没有增加失败回滚。"
+  },
+  {
+    "kind": "section",
+    "text": "4. 服务器验证"
+  },
+  {
+    "kind": "body",
+    "text": "run34 / job102033 / mdt-a32-native，c64/node1/4核，10分01秒，COMPLETED 0:0；result.passed与functional_passed均为true。Verilator5.042、g++11.4.0、Python3.10.12；Yosys0.63+post及ABC二进制、容器、SRAM行为和库SHA均记录在回执。全部EDA在Slurm运行，本机只做文本生成、管理检查与JSON/日志后处理。"
+  },
+  {
+    "kind": "head",
+    "text": "验证组"
+  },
+  {
+    "kind": "head",
+    "text": "构建 / 运行数"
+  },
+  {
+    "kind": "head",
+    "text": "证据范围"
+  },
+  {
+    "kind": "cell",
+    "text": "pool单/双片"
+  },
+  {
+    "kind": "cell",
+    "text": "2 / 6"
+  },
+  {
+    "kind": "cell",
+    "text": "原生命周期、真实宏、随机背压及64组rows/tile/起点矩阵"
+  },
+  {
+    "kind": "cell",
+    "text": "普通/8-context M × 单/双片"
+  },
+  {
+    "kind": "cell",
+    "text": "4 / 12"
+  },
+  {
+    "kind": "cell",
+    "text": "29,184次数值核对，S8/S16含S16极值，格式/尾K/context释放"
+  },
+  {
+    "kind": "cell",
+    "text": "双片控制竞争"
+  },
+  {
+    "kind": "cell",
+    "text": "2 / 6"
+  },
+  {
+    "kind": "cell",
+    "text": "clear/start/busy另一bank/无效高片/reset等七类边界"
+  },
+  {
+    "kind": "cell",
+    "text": "旧基线/新版单片/新版双片 × 四share/rw配置"
+  },
+  {
+    "kind": "cell",
+    "text": "12 / 36"
+  },
+  {
+    "kind": "cell",
+    "text": "全部原数值、lease、RELEASE、cold/refill断言"
+  },
+  {
+    "kind": "cell",
+    "text": "等工作双P × 两种M × 两种宽度"
+  },
+  {
+    "kind": "cell",
+    "text": "4 / 12"
+  },
+  {
+    "kind": "cell",
+    "text": "同64场景、输入/命令/输出及初始化和M计算成本核对"
+  },
+  {
+    "kind": "body",
+    "text": "三组reset/seed为(1,247)、(2,247)、(2,248)。总计211,968次主数值检查，另576次重填检查。非法mask和重复tag分别384个负例通过；控制七类别各六次。12对单片兼容比较430,008条实际周期事件，周期、接口状态和有效数据精确一致，不能把两边事件总数翻倍当比较数。"
+  },
+  {
+    "kind": "body",
+    "text": "73个部署源、0个额外输入文件已核验；输入数据版本由冻结测试源码、上述seed及真实宏SHA共同定义。服务器对1,790个输出留SHA索引，回收151个结果文件与10份元数据。大mapped.json/mapped.v留服务器；没有宣称本地已重读这些未下载的网表。独立审计从原始日志重新提取72份PASS/MEASURE和430,008条比较事件，另对1,536个等工作场景输出校验和独立标量重算，全部通过。"
+  },
+  {
+    "kind": "section",
+    "text": "5. 原生等工作量性能"
+  },
+  {
+    "kind": "body",
+    "text": "每个模式使用同一组64场景：四种A/B格式、rows=1/3/7/8、tiles=1..4，覆盖起点0..3和尾K。两P合计1,520个A容器、4,864个数值结果。三个seed组合周期一致，下面只计一次64场景，避免重复累计。"
+  },
+  {
+    "kind": "body",
+    "text": "processing包含LOAD、M算术、结果读回、固定ACK等待及context释放；排除池/B初始化和最后池RELEASE。含初始化列也排除最后池RELEASE。这是既定微基准，不能称完整模型或完整生命周期token/s。"
+  },
+  {
+    "kind": "head",
+    "text": "M模式"
+  },
+  {
+    "kind": "head",
+    "text": "处理拍数16→32B"
+  },
+  {
+    "kind": "head",
+    "text": "处理吞吐提升"
+  },
+  {
+    "kind": "head",
+    "text": "含初始化拍数16→32B"
+  },
+  {
+    "kind": "head",
+    "text": "含初始化提升"
+  },
+  {
+    "kind": "cell",
+    "text": "普通M"
+  },
+  {
+    "kind": "cell",
+    "text": "14,683→14,389"
+  },
+  {
+    "kind": "cell",
+    "text": "+2.0432%"
+  },
+  {
+    "kind": "cell",
+    "text": "17,099→16,805"
+  },
+  {
+    "kind": "cell",
+    "text": "+1.7495%"
+  },
+  {
+    "kind": "cell",
+    "text": "8-context M"
+  },
+  {
+    "kind": "cell",
+    "text": "20,790→20,496"
+  },
+  {
+    "kind": "cell",
+    "text": "+1.4344%"
+  },
+  {
+    "kind": "cell",
+    "text": "23,206→22,912"
+  },
+  {
+    "kind": "cell",
+    "text": "+1.2832%"
+  },
+  {
+    "kind": "body",
+    "text": "比较仅在同一种M模式内进行。两模式的命令调度不同，不能据该表判断8-context优化本身退化。每模式40个场景改善、24个不变、0个退化；最大单场景相对收益出现在A8/B8、rows8、K32、起点3：普通M329→314拍（+4.7771%），8-context501→486拍（+3.0864%）。"
+  },
+  {
+    "kind": "head",
+    "text": "观测量"
+  },
+  {
+    "kind": "head",
+    "text": "单片"
+  },
+  {
+    "kind": "head",
+    "text": "双片"
+  },
+  {
+    "kind": "head",
+    "text": "含义"
+  },
+  {
+    "kind": "cell",
+    "text": "A容器数"
+  },
+  {
+    "kind": "cell",
+    "text": "1,520"
+  },
+  {
+    "kind": "cell",
+    "text": "1,520"
+  },
+  {
+    "kind": "cell",
+    "text": "工作量不变"
+  },
+  {
+    "kind": "cell",
+    "text": "A握手次数"
+  },
+  {
+    "kind": "cell",
+    "text": "1,520"
+  },
+  {
+    "kind": "cell",
+    "text": "840"
+  },
+  {
+    "kind": "cell",
+    "text": "减少44.74%，尾部/行边界仍有单片"
+  },
+  {
+    "kind": "cell",
+    "text": "两P供数跨度之和"
+  },
+  {
+    "kind": "cell",
+    "text": "1,552"
+  },
+  {
+    "kind": "cell",
+    "text": "904"
+  },
+  {
+    "kind": "cell",
+    "text": "减少41.75%"
+  },
+  {
+    "kind": "cell",
+    "text": "两P LOAD区间之和"
+  },
+  {
+    "kind": "cell",
+    "text": "2,468"
+  },
+  {
+    "kind": "cell",
+    "text": "1,898"
+  },
+  {
+    "kind": "cell",
+    "text": "减少23.10%"
+  },
+  {
+    "kind": "cell",
+    "text": "普通M计算区间之和"
+  },
+  {
+    "kind": "cell",
+    "text": "8,426"
+  },
+  {
+    "kind": "cell",
+    "text": "8,426"
+  },
+  {
+    "kind": "cell",
+    "text": "算术未改"
+  },
+  {
+    "kind": "cell",
+    "text": "8-context计算区间之和"
+  },
+  {
+    "kind": "cell",
+    "text": "13,984"
+  },
+  {
+    "kind": "cell",
+    "text": "13,984"
+  },
+  {
+    "kind": "cell",
+    "text": "算术未改"
+  },
+  {
+    "kind": "cell",
+    "text": "初始化墙钟拍数"
+  },
+  {
+    "kind": "cell",
+    "text": "2,416"
+  },
+  {
+    "kind": "cell",
+    "text": "2,416"
+  },
+  {
+    "kind": "cell",
+    "text": "初始化未优化"
+  },
+  {
+    "kind": "body",
+    "text": "供数、LOAD及M区间是两P各自时间之和，存在并行或包含关系，不能相加当墙钟分解。单片到双片每模式实际处理墙钟累计节省294拍。"
+  },
+  {
+    "kind": "body",
+    "text": "所有rows1场景及B16/rows3场景处理时间不变。例scenario23，A供数区间和26→16拍，但LOAD仍44拍、处理时间不变，说明A缩短已被其他就绪或控制等待覆盖；仅凭汇总计数不能把每一拍唯一归因给B或ACK。"
+  },
+  {
+    "kind": "section",
+    "text": "6. 沿用原评价体系的全部场景"
+  },
+  {
+    "kind": "body",
+    "text": "以下复用run30、并由run33控制复核的原条件结果；本轮没有重新执行或重新校准完整模型。固定300MHz、2P/1U、17.1GB/s、共享32KiB、S32/K256/S96及原重叠合同；shared/idealdual是原本地端口两层，不代表新本地1R1W已经完成系统校准。"
+  },
+  {
+    "kind": "head",
+    "text": "场景"
+  },
+  {
+    "kind": "head",
+    "text": "原本地端口层"
+  },
+  {
+    "kind": "head",
+    "text": "16B token/s"
+  },
+  {
+    "kind": "head",
+    "text": "32B token/s"
+  },
+  {
+    "kind": "head",
+    "text": "条件增益"
+  },
+  {
+    "kind": "cell",
+    "text": "W8 decode512"
+  },
+  {
+    "kind": "cell",
+    "text": "shared"
+  },
+  {
+    "kind": "cell",
+    "text": "3.447389"
+  },
+  {
+    "kind": "cell",
+    "text": "3.449322"
+  },
+  {
+    "kind": "cell",
+    "text": "+0.0561%"
+  },
+  {
+    "kind": "cell",
+    "text": "W8 decode512"
+  },
+  {
+    "kind": "cell",
+    "text": "idealdual"
+  },
+  {
+    "kind": "cell",
+    "text": "3.640199"
+  },
+  {
+    "kind": "cell",
+    "text": "3.700221"
+  },
+  {
+    "kind": "cell",
+    "text": "+1.6489%"
+  },
+  {
+    "kind": "cell",
+    "text": "W16 decode512"
+  },
+  {
+    "kind": "cell",
+    "text": "shared"
+  },
+  {
+    "kind": "cell",
+    "text": "1.932369"
+  },
+  {
+    "kind": "cell",
+    "text": "1.932379"
+  },
+  {
+    "kind": "cell",
+    "text": "+0.0006%"
+  },
+  {
+    "kind": "cell",
+    "text": "W16 decode512"
+  },
+  {
+    "kind": "cell",
+    "text": "idealdual"
+  },
+  {
+    "kind": "cell",
+    "text": "2.192413"
+  },
+  {
+    "kind": "cell",
+    "text": "2.192427"
+  },
+  {
+    "kind": "cell",
+    "text": "+0.0006%"
+  },
+  {
+    "kind": "cell",
+    "text": "W8 decode2048"
+  },
+  {
+    "kind": "cell",
+    "text": "shared"
+  },
+  {
+    "kind": "cell",
+    "text": "2.815781"
+  },
+  {
+    "kind": "cell",
+    "text": "2.817071"
+  },
+  {
+    "kind": "cell",
+    "text": "+0.0458%"
+  },
+  {
+    "kind": "cell",
+    "text": "W8 decode2048"
+  },
+  {
+    "kind": "cell",
+    "text": "idealdual"
+  },
+  {
+    "kind": "cell",
+    "text": "2.955223"
+  },
+  {
+    "kind": "cell",
+    "text": "2.994659"
+  },
+  {
+    "kind": "cell",
+    "text": "+1.3345%"
+  },
+  {
+    "kind": "cell",
+    "text": "W8 prefill2"
+  },
+  {
+    "kind": "cell",
+    "text": "shared"
+  },
+  {
+    "kind": "cell",
+    "text": "3.388659"
+  },
+  {
+    "kind": "cell",
+    "text": "3.894197"
+  },
+  {
+    "kind": "cell",
+    "text": "+14.9185%"
+  },
+  {
+    "kind": "cell",
+    "text": "W8 prefill2"
+  },
+  {
+    "kind": "cell",
+    "text": "idealdual"
+  },
+  {
+    "kind": "cell",
+    "text": "3.496459"
+  },
+  {
+    "kind": "cell",
+    "text": "4.398913"
+  },
+  {
+    "kind": "cell",
+    "text": "+25.8105%"
+  },
+  {
+    "kind": "body",
+    "text": "32B条件最高仍为4.398913 token/s，未达5。已测但未实施的64B双组行交错条件最高4.429583；128B不再提高。不能把本次微基准1.4344%或旧条件25.8105%乘到另一套速度上。"
+  },
+  {
+    "kind": "body",
+    "text": "两种百分比不同，是因为原生测试是短K、小批量S8/S16，显式LOAD后计算和读回；旧模型是完整图条件调度，A重读、适配和重叠费用不同。原生S32拆分/合并、K32真实命令、DMA桥、完整权重/KV及token生成尚未闭合，所以目前没有可信的原生全模型token/s。"
+  },
+  {
+    "kind": "section",
+    "text": "7. 面积开销"
+  },
+  {
+    "kind": "body",
+    "text": "同一Yosys/ABC、Nangate45库和配置，映射完整standalone模块；SRAM作真实库黑盒另计。下表单位均为µm²标准单元面积，不含SRAM宏。"
+  },
+  {
+    "kind": "head",
+    "text": "模块"
+  },
+  {
+    "kind": "head",
+    "text": "单片"
+  },
+  {
+    "kind": "head",
+    "text": "双片"
+  },
+  {
+    "kind": "head",
+    "text": "增量"
+  },
+  {
+    "kind": "head",
+    "text": "相对增量"
+  },
+  {
+    "kind": "cell",
+    "text": "共享池"
+  },
+  {
+    "kind": "cell",
+    "text": "35901.754"
+  },
+  {
+    "kind": "cell",
+    "text": "37654.960"
+  },
+  {
+    "kind": "cell",
+    "text": "+1753.206"
+  },
+  {
+    "kind": "cell",
+    "text": "+4.883%"
+  },
+  {
+    "kind": "cell",
+    "text": "普通 M"
+  },
+  {
+    "kind": "cell",
+    "text": "261339.414"
+  },
+  {
+    "kind": "cell",
+    "text": "276453.534"
+  },
+  {
+    "kind": "cell",
+    "text": "+15114.120"
+  },
+  {
+    "kind": "cell",
+    "text": "+5.783%"
+  },
+  {
+    "kind": "cell",
+    "text": "8-context M"
+  },
+  {
+    "kind": "cell",
+    "text": "261880.458"
+  },
+  {
+    "kind": "cell",
+    "text": "277757.466"
+  },
+  {
+    "kind": "cell",
+    "text": "+15877.008"
+  },
+  {
+    "kind": "cell",
+    "text": "+6.063%"
+  },
+  {
+    "kind": "body",
+    "text": "默认pair使用两颗8-context M。已计增量为共享池差值加2倍8-context M差值，即33,507.222 µm² = 0.033507222 mm²。普通M与context M是替代配置，不重复相加；新增SRAM宏为0。两P+U+池的逻辑/物理容量保持上一版，物理112KiB、28颗4KiB宏；本次没有再扩每个block的S。"
+  },
+  {
+    "kind": "body",
+    "text": "这部分没有巨大存储面积开销。旧五模块已字节冻结在shared_a32_baseline并绑定2fc03de，之前完整提交也保留。面积没有包括P/pair外围新增连线、布线缓冲、STA或功耗；300MHz仍是假设，未因逻辑综合通过而取得物理频率资格。不能把0.03351 mm²当作完整芯片最终增量。"
+  },
+  {
+    "kind": "section",
+    "text": "8. 下一步瓶颈与实施边界"
+  },
+  {
+    "kind": "body",
+    "text": "当前证据支持先停止继续扩A端口。原生测试的供数明显变快，但部分LOAD与M/命令阶段未变；后续优先记录A完成、B完成、LOAD join、命令接受/完成、结果读回的真实时间，分别研究M服务和输入ACK流水。应在真实目标形状上比较，避免只优化微程序固定等待。"
+  },
+  {
+    "kind": "body",
+    "text": "原完整图条件模型的最佳ideal服务已达到M_work成本，非Dot阶段约占47.47%；因此M计算服务、输入完成流水及非Dot算子是后续方向。输入ACK等待包含重叠与调度，不能直接等同DDR总带宽饱和。本轮只完成A32 RTL及上述瓶颈定位，没有改这些后续模块。"
+  },
+  {
+    "kind": "section",
+    "text": "9. 复现、证据与交付状态"
+  },
+  {
+    "kind": "body",
+    "text": "登录yuzelu@10.129.166.172；运行目录/public/home/yuzelu/Melodydt/issue247-area-speed/run34。source/、slurm-102033.log、results/、receipts.tar持久保存，作业已终态，无自动监测。源码e7e8becca866e8257e026fddfc6e6215169e4015。"
+  },
+  {
+    "kind": "body",
+    "text": "实际启动为在run34执行sbatch --parsable job.sh；复跑须按同commit与inputs.json/source-files.sha256部署新的个人run目录，禁止覆盖run34或在登录节点/本机执行EDA。入口project/experiments/shared_a32_native/run.py要求真实Slurm分配，job.sh固定四核容器。"
+  },
+  {
+    "kind": "body",
+    "text": "结果SHA-256：dfd2271bccfd9c13e846fcc190e5fd0b2b321752c0c890e07e3ff3eb7957bce1。"
+  },
+  {
+    "kind": "body",
+    "text": "回收归档SHA-256：685d99fb6a271ea597afe1b92f97d5d309beb7d028b64beb9a957a1804cc8993。"
+  },
+  {
+    "kind": "body",
+    "text": "详细回执与分析位于work/Melodydt/247/shared-a32-native；完整本地回收位于外层work/Melodydt/247/run34/receipts。轻量索引上传不等于全部原始网表已上传GitHub。本地scripts/check_project.py通过，它不代替业务或在线CI。"
+  },
+  {
+    "kind": "body",
+    "text": "本阶段交付供独立审查，PR未合并，Issue保持in_review/not done。登记management-hub PR5 pending；缺Projects工具/board配置，看板unverified、同步pending。GitHub此前validate无步骤/runner的失败原因待管理员核实，未绕过workflow；正式审查人/管理员待指定。"
+  }
+]

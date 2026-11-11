@@ -1,0 +1,2189 @@
+{
+  "passed": true,
+  "functional_passed": true,
+  "source_commit": "a7a36cbb76fa76f6162b666d1f5683cda2a8f7ec",
+  "scope": "Native S8/S16 A128, B512 and S40/S64 arithmetic. RTL microbench cycles only; no full-model token/s, STA or physical qualification.",
+  "job": "102006",
+  "node": "node1",
+  "workers": 4,
+  "affinity": [
+    8,
+    9,
+    10,
+    11
+  ],
+  "requested_components": [
+    "pool",
+    "memory",
+    "pair"
+  ],
+  "manifest_sha256": "0167b3d6a23fdf6a2b43726051bace3e576c412f94175133e2b2f0586abb407f",
+  "versions": {
+    "python": "3.10.12",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "gcc": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+    "yosys": "Yosys 0.63+post (git sha1 UNKNOWN-dirty, g++ 11.4.0-1ubuntu1~22.04.3 -fPIC -O3)"
+  },
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.11773503292351961,
+      "log": "verilator-version.log",
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "command": [
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.017831912264227867,
+      "log": "gcc-version.log",
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--lint-only",
+        "--timing",
+        "--timescale",
+        "1ns/1ps",
+        "--top-module",
+        "shared_a_pool32",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/shared_s/shared_a_pool32.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.11562267690896988,
+      "log": "pool-strict-lint.log",
+      "sha256": "4733c9939ff501e2f403cdd9966dd9b85f80a2569478aca05456c27f8472cf1e"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_shared_pool",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pool-default",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/experiments/shared32_native/tb_shared_pool.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/shared_s/shared_a_pool32.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 5.851584235206246,
+      "log": "pool-default-build.log",
+      "sha256": "9a86f07ff95b6217d1a17b6c50305102ae32b3273817003d45b5181c72b39407"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pool-default/Vtb_shared_pool",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.01802879013121128,
+      "log": "pool-default-run-1-247.log",
+      "sha256": "3dbcfe53451844a6a51cd04e1ecb3c1b94042369b2097cd80c7aaa2f6a44975f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pool-default/Vtb_shared_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.017383599653840065,
+      "log": "pool-default-run-2-247.log",
+      "sha256": "e377c1a088913f6f26b188abe64fd9f62a9268e4d72dad25f6c637b03cec1d44"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pool-default/Vtb_shared_pool",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+248",
+        "+SEED=248"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.01723964512348175,
+      "log": "pool-default-run-2-248.log",
+      "sha256": "0740d29c6313e074285e4eb878ea036eaef13002951952458907f49ddee6d68d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--lint-only",
+        "--timing",
+        "--timescale",
+        "1ns/1ps",
+        "--top-module",
+        "block_feed_s16k_1r1w",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.11567246168851852,
+      "log": "memory-strict-lint.log",
+      "sha256": "95fa1d62cf6f84bcbd48be032744bee6860c0b79d2240aae5b22dee1a98399e7"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_s16k_1r1w",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-memory-echo1",
+        "-GECHO_WRITE_DATA=1",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/experiments/shared32_native/tb_s16k_1r1w.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 3.0837218472734094,
+      "log": "memory-echo1-build.log",
+      "sha256": "1f6f0d301490b62e3dfa72b99321d40063a87b4f942cc9b5372e2d3fcf448518"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-memory-echo1/Vtb_s16k_1r1w",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.06601591408252716,
+      "log": "memory-echo1-run-1-247.log",
+      "sha256": "fc1e41f00d9c7c3df6e72c1424fbce27cbea6c9e2074103adc00d55410963aaa"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-memory-echo1/Vtb_s16k_1r1w",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.06600784696638584,
+      "log": "memory-echo1-run-2-247.log",
+      "sha256": "4c18dfb418b835cf68b0b26634b6169fb8a686b73c5b8afcc065ffff6ac4199e"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-memory-echo1/Vtb_s16k_1r1w",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+248",
+        "+SEED=248"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.06552393268793821,
+      "log": "memory-echo1-run-2-248.log",
+      "sha256": "9c0098eb2c0b54dc5cf7319b16f01494d20c22fb4b3762526189dbbdb383b12d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_s16k_1r1w",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-memory-echo0",
+        "-GECHO_WRITE_DATA=0",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/experiments/shared32_native/tb_s16k_1r1w.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 3.093506632372737,
+      "log": "memory-echo0-build.log",
+      "sha256": "bb771e534f1480382839546c11086a6247a20ce74ed5e04c517020ee886ff91a"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-memory-echo0/Vtb_s16k_1r1w",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.06601809523999691,
+      "log": "memory-echo0-run-1-247.log",
+      "sha256": "abf6b8d060b4b683cf1565440a1a5dbef41b5832727a4ed6d4e58c17a41bbb62"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_shared_pair",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share0-rw0",
+        "-GSHARED=0",
+        "-GTRUE_RW=0",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/experiments/shared32_native/tb_shared_pair.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/shared_s/pu_p_shared_pair.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/shared_s/shared_a_pool32.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 9.888542572036386,
+      "log": "pair-share0-rw0-build.log",
+      "sha256": "33c5b73fa6f936bb2479a9dbbe5843d5f9a9cf41618d15b7ded08ec19398d21f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share0-rw0/Vtb_shared_pair",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.21640679892152548,
+      "log": "pair-share0-rw0-run-1-247.log",
+      "sha256": "8f9724683406689c4c82d7ddd47e11ce01c91af1a4e88ec1a4f26c817fcfd194"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share0-rw0/Vtb_shared_pair",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.21603929717093706,
+      "log": "pair-share0-rw0-run-2-247.log",
+      "sha256": "b5bc8e573ac8337a13b77b261c13d64e3db54165e7fe99bf7ef8750e7d43b959"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share0-rw0/Vtb_shared_pair",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+248",
+        "+SEED=248"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.21609472390264273,
+      "log": "pair-share0-rw0-run-2-248.log",
+      "sha256": "c89bc3e88cc1ae2531c338d322670cae9db78cd8fb7196a352787d9cfee49a05"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_shared_pair",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share1-rw0",
+        "-GSHARED=1",
+        "-GTRUE_RW=0",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/experiments/shared32_native/tb_shared_pair.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/shared_s/pu_p_shared_pair.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/shared_s/shared_a_pool32.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 10.797162824310362,
+      "log": "pair-share1-rw0-build.log",
+      "sha256": "5b33bd197412259b1481f8ce3c11cea3e8ec55f25c7bb8c970c7e0eeeba87f13"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share1-rw0/Vtb_shared_pair",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.26631482783704996,
+      "log": "pair-share1-rw0-run-1-247.log",
+      "sha256": "f471420cacfba307e58dc2b51231586862fa738bd92da34b941fa8cfce60f1a5"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share1-rw0/Vtb_shared_pair",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.26646518986672163,
+      "log": "pair-share1-rw0-run-2-247.log",
+      "sha256": "14d8ce55c656a161e4831616635572750b95e59dae6890c98ba3cfe06a479966"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share1-rw0/Vtb_shared_pair",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+248",
+        "+SEED=248"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.2661570133641362,
+      "log": "pair-share1-rw0-run-2-248.log",
+      "sha256": "c0e72b37b71bfe5cc0636fa094bfe47c58fc9a86b908c78158e3c8e6d306f7a2"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_shared_pair",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share0-rw1",
+        "-GSHARED=0",
+        "-GTRUE_RW=1",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/experiments/shared32_native/tb_shared_pair.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/shared_s/pu_p_shared_pair.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/shared_s/shared_a_pool32.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 10.038359044119716,
+      "log": "pair-share0-rw1-build.log",
+      "sha256": "26e4aa0bba534136ed8071d3226dccbc0604ae9a5a2a2617946c216b7e904686"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share0-rw1/Vtb_shared_pair",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.21620722953230143,
+      "log": "pair-share0-rw1-run-1-247.log",
+      "sha256": "e339de78ac3d789b97c3ebf5fed24efdfb3c30645c7b9858bd559a71af758d2d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share0-rw1/Vtb_shared_pair",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.2161951782181859,
+      "log": "pair-share0-rw1-run-2-247.log",
+      "sha256": "ce2f2cc3c19564271f703db985ffb86ad343c040cf08903f5570f09de75d0006"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share0-rw1/Vtb_shared_pair",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+248",
+        "+SEED=248"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.21629397757351398,
+      "log": "pair-share0-rw1-run-2-248.log",
+      "sha256": "fec269b43ae2fdf3218ba9abd867ec1de79b5fbbedd11dd97696279b21e25fec"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "tb_shared_pair",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share1-rw1",
+        "-GSHARED=1",
+        "-GTRUE_RW=1",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/experiments/shared32_native/tb_shared_pair.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/shared_s/pu_p_shared_pair.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/shared_s/shared_a_pool32.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 11.107628989964724,
+      "log": "pair-share1-rw1-build.log",
+      "sha256": "2ff5374d1e33832a7084ae76a076c5f7811b836cc7de51bd4c3de38ae1047ca2"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share1-rw1/Vtb_shared_pair",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.26665810495615005,
+      "log": "pair-share1-rw1-run-1-247.log",
+      "sha256": "aaa19635978795fd00a5a0f039b3e99dca1682335cbf716e1d1189af9ffd4578"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share1-rw1/Vtb_shared_pair",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+247",
+        "+SEED=247"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.26593129988759756,
+      "log": "pair-share1-rw1-run-2-247.log",
+      "sha256": "f6b083ebb6012984d31d421b7d7ad2c3c369698d74d6821480a7cff0f78339c8"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/obj-pair-share1-rw1/Vtb_shared_pair",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+248",
+        "+SEED=248"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.2662122221663594,
+      "log": "pair-share1-rw1-run-2-248.log",
+      "sha256": "d8fba7fad2a68cf95e349bbf677ce7770db99c5a96bbbefb5ea099637cd0b0e9"
+    },
+    {
+      "command": [
+        "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys",
+        "-V"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.16677400097250938,
+      "log": "yosys-version.log",
+      "sha256": "99f8bcc7bf6e578db94ca0c9512c61ff1e55df9da6b8a60da95223b84f3d6c9b"
+    },
+    {
+      "command": [
+        "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys",
+        "-Q",
+        "-s",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/synth-shared_a_pool32/synth.ys"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 5.025142190977931,
+      "log": "synth-shared_a_pool32/synthesis.log",
+      "sha256": "5b6b1d36ba23aacab0b40ca51bd305e5d51e0ed8f164fd77bd83e9c03f7bc7af"
+    },
+    {
+      "command": [
+        "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys",
+        "-Q",
+        "-s",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/synth-block_feed_s16k_1r1w/synth.ys"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 6.678137023001909,
+      "log": "synth-block_feed_s16k_1r1w/synthesis.log",
+      "sha256": "c2350dff1897edbd8cafb29cb33c7600cf0b59dcd3db254a0ecf7d5dcec34346"
+    },
+    {
+      "command": [
+        "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys",
+        "-Q",
+        "-s",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/synth-block_feed_s16k_sram/synth.ys"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 1.2182866791263223,
+      "log": "synth-block_feed_s16k_sram/synthesis.log",
+      "sha256": "6a0a29804487fc11b4b21a23725378330f166803ff399071605541932ab00689"
+    },
+    {
+      "command": [
+        "/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys",
+        "-Q",
+        "-s",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run32/results/synth-block_feed_s16k_bank_rw/synth.ys"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 1.0676244869828224,
+      "log": "synth-block_feed_s16k_bank_rw/synthesis.log",
+      "sha256": "ec4af6aced52b045924e98cade1e16cd23eb62e0bc6f8267ea8ca8d3c45539e1"
+    }
+  ],
+  "components": {
+    "pool": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "default",
+          "reset_mode": 1,
+          "seed": 247,
+          "log": "pool-default-run-1-247.log",
+          "checks": {
+            "checks": 4886,
+            "reads": 46,
+            "writes": 525,
+            "a_words": 139,
+            "errors": 15,
+            "descriptors": 18,
+            "completions": 16,
+            "fifo0_peak": 4,
+            "fifo1_peak": 4,
+            "fill_cancelled": 1,
+            "cycles": 897
+          },
+          "measurements": [
+            {
+              "scenario": "fill",
+              "cycles": 519,
+              "writes": 512,
+              "words": 2048,
+              "credit_stall": 1
+            },
+            {
+              "scenario": "simultaneous",
+              "cycles": 64,
+              "reads": 16,
+              "a_words": 64
+            },
+            {
+              "scenario": "boundary",
+              "cycles": 68,
+              "reads": 12,
+              "a_words": 37
+            },
+            {
+              "scenario": "invalid",
+              "cycles": 12,
+              "reads": 0,
+              "a_words": 0
+            },
+            {
+              "scenario": "release_hold",
+              "cycles": 63
+            },
+            {
+              "scenario": "fill",
+              "cycles": 12,
+              "writes": 9,
+              "words": 35,
+              "credit_stall": 0
+            },
+            {
+              "scenario": "fill",
+              "cycles": 5,
+              "writes": 2,
+              "words": 5,
+              "credit_stall": 0
+            },
+            {
+              "scenario": "fill",
+              "cycles": 4,
+              "writes": 1,
+              "words": 1,
+              "credit_stall": 0
+            },
+            {
+              "scenario": "reset_refill",
+              "cycles": 77
+            }
+          ]
+        },
+        {
+          "variant": "default",
+          "reset_mode": 2,
+          "seed": 247,
+          "log": "pool-default-run-2-247.log",
+          "checks": {
+            "checks": 4886,
+            "reads": 46,
+            "writes": 525,
+            "a_words": 139,
+            "errors": 15,
+            "descriptors": 18,
+            "completions": 16,
+            "fifo0_peak": 4,
+            "fifo1_peak": 4,
+            "fill_cancelled": 1,
+            "cycles": 897
+          },
+          "measurements": [
+            {
+              "scenario": "fill",
+              "cycles": 519,
+              "writes": 512,
+              "words": 2048,
+              "credit_stall": 1
+            },
+            {
+              "scenario": "simultaneous",
+              "cycles": 64,
+              "reads": 16,
+              "a_words": 64
+            },
+            {
+              "scenario": "boundary",
+              "cycles": 68,
+              "reads": 12,
+              "a_words": 37
+            },
+            {
+              "scenario": "invalid",
+              "cycles": 12,
+              "reads": 0,
+              "a_words": 0
+            },
+            {
+              "scenario": "release_hold",
+              "cycles": 63
+            },
+            {
+              "scenario": "fill",
+              "cycles": 12,
+              "writes": 9,
+              "words": 35,
+              "credit_stall": 0
+            },
+            {
+              "scenario": "fill",
+              "cycles": 5,
+              "writes": 2,
+              "words": 5,
+              "credit_stall": 0
+            },
+            {
+              "scenario": "fill",
+              "cycles": 4,
+              "writes": 1,
+              "words": 1,
+              "credit_stall": 0
+            },
+            {
+              "scenario": "reset_refill",
+              "cycles": 77
+            }
+          ]
+        },
+        {
+          "variant": "default",
+          "reset_mode": 2,
+          "seed": 248,
+          "log": "pool-default-run-2-248.log",
+          "checks": {
+            "checks": 4853,
+            "reads": 46,
+            "writes": 525,
+            "a_words": 139,
+            "errors": 15,
+            "descriptors": 18,
+            "completions": 16,
+            "fifo0_peak": 4,
+            "fifo1_peak": 4,
+            "fill_cancelled": 1,
+            "cycles": 898
+          },
+          "measurements": [
+            {
+              "scenario": "fill",
+              "cycles": 519,
+              "writes": 512,
+              "words": 2048,
+              "credit_stall": 1
+            },
+            {
+              "scenario": "simultaneous",
+              "cycles": 64,
+              "reads": 16,
+              "a_words": 64
+            },
+            {
+              "scenario": "boundary",
+              "cycles": 54,
+              "reads": 12,
+              "a_words": 37
+            },
+            {
+              "scenario": "invalid",
+              "cycles": 12,
+              "reads": 0,
+              "a_words": 0
+            },
+            {
+              "scenario": "release_hold",
+              "cycles": 77
+            },
+            {
+              "scenario": "fill",
+              "cycles": 12,
+              "writes": 9,
+              "words": 35,
+              "credit_stall": 0
+            },
+            {
+              "scenario": "fill",
+              "cycles": 5,
+              "writes": 2,
+              "words": 5,
+              "credit_stall": 0
+            },
+            {
+              "scenario": "fill",
+              "cycles": 4,
+              "writes": 1,
+              "words": 1,
+              "credit_stall": 0
+            },
+            {
+              "scenario": "reset_refill",
+              "cycles": 78
+            }
+          ]
+        }
+      ]
+    },
+    "memory": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "echo1",
+          "reset_mode": 1,
+          "seed": 247,
+          "log": "memory-echo1-run-1-247.log",
+          "checks": {},
+          "measurements": [
+            {
+              "seed": 247,
+              "cycles": 4053,
+              "simultaneous_rw": 2333,
+              "same_line": 519,
+              "reads": 3012,
+              "writes": 3229,
+              "narrow_responses": 1578,
+              "wide_read_responses": 2275,
+              "wide_write_responses": 2379,
+              "canceled": 9,
+              "cold_resets": 2,
+              "warm_resets": 2,
+              "logical_bytes": 16384,
+              "physical_bytes": 32768,
+              "macros": 8,
+              "live_bits": 1024
+            }
+          ],
+          "throughput": {
+            "cycles": 256,
+            "reads": 256,
+            "writes": 256,
+            "simultaneous_rw": 256,
+            "read_bytes": 16384,
+            "write_bytes": 16384
+          }
+        },
+        {
+          "variant": "echo1",
+          "reset_mode": 2,
+          "seed": 247,
+          "log": "memory-echo1-run-2-247.log",
+          "checks": {},
+          "measurements": [
+            {
+              "seed": 247,
+              "cycles": 4053,
+              "simultaneous_rw": 2333,
+              "same_line": 519,
+              "reads": 3012,
+              "writes": 3229,
+              "narrow_responses": 1578,
+              "wide_read_responses": 2275,
+              "wide_write_responses": 2379,
+              "canceled": 9,
+              "cold_resets": 2,
+              "warm_resets": 2,
+              "logical_bytes": 16384,
+              "physical_bytes": 32768,
+              "macros": 8,
+              "live_bits": 1024
+            }
+          ],
+          "throughput": {
+            "cycles": 256,
+            "reads": 256,
+            "writes": 256,
+            "simultaneous_rw": 256,
+            "read_bytes": 16384,
+            "write_bytes": 16384
+          }
+        },
+        {
+          "variant": "echo1",
+          "reset_mode": 2,
+          "seed": 248,
+          "log": "memory-echo1-run-2-248.log",
+          "checks": {},
+          "measurements": [
+            {
+              "seed": 248,
+              "cycles": 4054,
+              "simultaneous_rw": 2349,
+              "same_line": 518,
+              "reads": 2990,
+              "writes": 3268,
+              "narrow_responses": 1610,
+              "wide_read_responses": 2257,
+              "wide_write_responses": 2382,
+              "canceled": 9,
+              "cold_resets": 2,
+              "warm_resets": 2,
+              "logical_bytes": 16384,
+              "physical_bytes": 32768,
+              "macros": 8,
+              "live_bits": 1024
+            }
+          ],
+          "throughput": {
+            "cycles": 256,
+            "reads": 256,
+            "writes": 256,
+            "simultaneous_rw": 256,
+            "read_bytes": 16384,
+            "write_bytes": 16384
+          }
+        },
+        {
+          "variant": "echo0",
+          "reset_mode": 1,
+          "seed": 247,
+          "log": "memory-echo0-run-1-247.log",
+          "checks": {},
+          "measurements": [
+            {
+              "seed": 247,
+              "cycles": 4053,
+              "simultaneous_rw": 2333,
+              "same_line": 519,
+              "reads": 3012,
+              "writes": 3229,
+              "narrow_responses": 1578,
+              "wide_read_responses": 2275,
+              "wide_write_responses": 2379,
+              "canceled": 9,
+              "cold_resets": 2,
+              "warm_resets": 2,
+              "logical_bytes": 16384,
+              "physical_bytes": 32768,
+              "macros": 8,
+              "live_bits": 1024
+            }
+          ],
+          "throughput": {
+            "cycles": 256,
+            "reads": 256,
+            "writes": 256,
+            "simultaneous_rw": 256,
+            "read_bytes": 16384,
+            "write_bytes": 16384
+          }
+        }
+      ]
+    },
+    "pair": {
+      "passed": true,
+      "runs": [
+        {
+          "variant": "share0-rw0",
+          "reset_mode": 1,
+          "seed": 247,
+          "log": "pair-share0-rw0-run-1-247.log",
+          "checks": {
+            "shared": 0,
+            "true_rw": 0,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 20,
+            "loads": 288
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 0,
+              "true_rw": 0,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 5053,
+              "compute_cycles": 3755,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 0,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 5245,
+              "compute_cycles": 3947,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 0,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 7153,
+              "compute_cycles": 4703,
+              "A": 72,
+              "B": 384,
+              "shared_A": 0,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 0,
+              "true_rw": 0,
+              "cycles": 4158,
+              "release_cases": 0,
+              "release_blocked_cycles": 0,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        },
+        {
+          "variant": "share0-rw0",
+          "reset_mode": 2,
+          "seed": 247,
+          "log": "pair-share0-rw0-run-2-247.log",
+          "checks": {
+            "shared": 0,
+            "true_rw": 0,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 20,
+            "loads": 288
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 0,
+              "true_rw": 0,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 5053,
+              "compute_cycles": 3755,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 0,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 5245,
+              "compute_cycles": 3947,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 0,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 7153,
+              "compute_cycles": 4703,
+              "A": 72,
+              "B": 384,
+              "shared_A": 0,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 0,
+              "true_rw": 0,
+              "cycles": 4158,
+              "release_cases": 0,
+              "release_blocked_cycles": 0,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        },
+        {
+          "variant": "share0-rw0",
+          "reset_mode": 2,
+          "seed": 248,
+          "log": "pair-share0-rw0-run-2-248.log",
+          "checks": {
+            "shared": 0,
+            "true_rw": 0,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 20,
+            "loads": 288
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 0,
+              "true_rw": 0,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 5053,
+              "compute_cycles": 3755,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 0,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 5245,
+              "compute_cycles": 3947,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 0,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 7153,
+              "compute_cycles": 4703,
+              "A": 72,
+              "B": 384,
+              "shared_A": 0,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 0,
+              "true_rw": 0,
+              "cycles": 4158,
+              "release_cases": 0,
+              "release_blocked_cycles": 0,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        },
+        {
+          "variant": "share1-rw0",
+          "reset_mode": 1,
+          "seed": 247,
+          "log": "pair-share1-rw0-run-1-247.log",
+          "checks": {
+            "shared": 1,
+            "true_rw": 0,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 26,
+            "loads": 294
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 1,
+              "true_rw": 0,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 6237,
+              "compute_cycles": 3702,
+              "A": 72,
+              "B": 192,
+              "shared_A": 72,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 1,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 6528,
+              "compute_cycles": 3921,
+              "A": 72,
+              "B": 192,
+              "shared_A": 36,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 1,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 8388,
+              "compute_cycles": 4701,
+              "A": 72,
+              "B": 400,
+              "shared_A": 72,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 1,
+              "true_rw": 0,
+              "cycles": 8213,
+              "release_cases": 3,
+              "release_blocked_cycles": 18,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        },
+        {
+          "variant": "share1-rw0",
+          "reset_mode": 2,
+          "seed": 247,
+          "log": "pair-share1-rw0-run-2-247.log",
+          "checks": {
+            "shared": 1,
+            "true_rw": 0,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 26,
+            "loads": 294
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 1,
+              "true_rw": 0,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 6237,
+              "compute_cycles": 3702,
+              "A": 72,
+              "B": 192,
+              "shared_A": 72,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 1,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 6528,
+              "compute_cycles": 3921,
+              "A": 72,
+              "B": 192,
+              "shared_A": 36,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 1,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 8388,
+              "compute_cycles": 4701,
+              "A": 72,
+              "B": 400,
+              "shared_A": 72,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 1,
+              "true_rw": 0,
+              "cycles": 8213,
+              "release_cases": 3,
+              "release_blocked_cycles": 18,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        },
+        {
+          "variant": "share1-rw0",
+          "reset_mode": 2,
+          "seed": 248,
+          "log": "pair-share1-rw0-run-2-248.log",
+          "checks": {
+            "shared": 1,
+            "true_rw": 0,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 26,
+            "loads": 294
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 1,
+              "true_rw": 0,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 6237,
+              "compute_cycles": 3702,
+              "A": 72,
+              "B": 192,
+              "shared_A": 72,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 1,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 6528,
+              "compute_cycles": 3921,
+              "A": 72,
+              "B": 192,
+              "shared_A": 36,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 1,
+              "true_rw": 0,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 8388,
+              "compute_cycles": 4701,
+              "A": 72,
+              "B": 400,
+              "shared_A": 72,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 1,
+              "true_rw": 0,
+              "cycles": 8213,
+              "release_cases": 3,
+              "release_blocked_cycles": 18,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        },
+        {
+          "variant": "share0-rw1",
+          "reset_mode": 1,
+          "seed": 247,
+          "log": "pair-share0-rw1-run-1-247.log",
+          "checks": {
+            "shared": 0,
+            "true_rw": 1,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 20,
+            "loads": 292
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 0,
+              "true_rw": 1,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 3973,
+              "compute_cycles": 3755,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 0,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 4165,
+              "compute_cycles": 3947,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 0,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 5113,
+              "compute_cycles": 4703,
+              "A": 72,
+              "B": 384,
+              "shared_A": 0,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lease",
+              "shared": 0,
+              "true_rw": 1,
+              "cycles": 132,
+              "protected_stalls": 40,
+              "concurrent_writes": 2,
+              "simultaneous_rw": 2
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 0,
+              "true_rw": 1,
+              "cycles": 3078,
+              "release_cases": 0,
+              "release_blocked_cycles": 0,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        },
+        {
+          "variant": "share0-rw1",
+          "reset_mode": 2,
+          "seed": 247,
+          "log": "pair-share0-rw1-run-2-247.log",
+          "checks": {
+            "shared": 0,
+            "true_rw": 1,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 20,
+            "loads": 292
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 0,
+              "true_rw": 1,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 3973,
+              "compute_cycles": 3755,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 0,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 4165,
+              "compute_cycles": 3947,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 0,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 5113,
+              "compute_cycles": 4703,
+              "A": 72,
+              "B": 384,
+              "shared_A": 0,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lease",
+              "shared": 0,
+              "true_rw": 1,
+              "cycles": 132,
+              "protected_stalls": 40,
+              "concurrent_writes": 2,
+              "simultaneous_rw": 2
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 0,
+              "true_rw": 1,
+              "cycles": 3078,
+              "release_cases": 0,
+              "release_blocked_cycles": 0,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        },
+        {
+          "variant": "share0-rw1",
+          "reset_mode": 2,
+          "seed": 248,
+          "log": "pair-share0-rw1-run-2-248.log",
+          "checks": {
+            "shared": 0,
+            "true_rw": 1,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 20,
+            "loads": 292
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 0,
+              "true_rw": 1,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 3973,
+              "compute_cycles": 3755,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 0,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 4165,
+              "compute_cycles": 3947,
+              "A": 72,
+              "B": 192,
+              "shared_A": 0,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 0,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 5113,
+              "compute_cycles": 4703,
+              "A": 72,
+              "B": 384,
+              "shared_A": 0,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lease",
+              "shared": 0,
+              "true_rw": 1,
+              "cycles": 132,
+              "protected_stalls": 40,
+              "concurrent_writes": 2,
+              "simultaneous_rw": 2
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 0,
+              "true_rw": 1,
+              "cycles": 3078,
+              "release_cases": 0,
+              "release_blocked_cycles": 0,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        },
+        {
+          "variant": "share1-rw1",
+          "reset_mode": 1,
+          "seed": 247,
+          "log": "pair-share1-rw1-run-1-247.log",
+          "checks": {
+            "shared": 1,
+            "true_rw": 1,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 26,
+            "loads": 298
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 1,
+              "true_rw": 1,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 5277,
+              "compute_cycles": 3702,
+              "A": 72,
+              "B": 192,
+              "shared_A": 72,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 1,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 5508,
+              "compute_cycles": 3921,
+              "A": 72,
+              "B": 192,
+              "shared_A": 36,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 1,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 6468,
+              "compute_cycles": 4701,
+              "A": 72,
+              "B": 400,
+              "shared_A": 72,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lease",
+              "shared": 1,
+              "true_rw": 1,
+              "cycles": 132,
+              "protected_stalls": 40,
+              "concurrent_writes": 2,
+              "simultaneous_rw": 2
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 1,
+              "true_rw": 1,
+              "cycles": 7253,
+              "release_cases": 3,
+              "release_blocked_cycles": 18,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        },
+        {
+          "variant": "share1-rw1",
+          "reset_mode": 2,
+          "seed": 247,
+          "log": "pair-share1-rw1-run-2-247.log",
+          "checks": {
+            "shared": 1,
+            "true_rw": 1,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 26,
+            "loads": 298
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 1,
+              "true_rw": 1,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 5277,
+              "compute_cycles": 3702,
+              "A": 72,
+              "B": 192,
+              "shared_A": 72,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 1,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 5508,
+              "compute_cycles": 3921,
+              "A": 72,
+              "B": 192,
+              "shared_A": 36,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 1,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 6468,
+              "compute_cycles": 4701,
+              "A": 72,
+              "B": 400,
+              "shared_A": 72,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lease",
+              "shared": 1,
+              "true_rw": 1,
+              "cycles": 132,
+              "protected_stalls": 40,
+              "concurrent_writes": 2,
+              "simultaneous_rw": 2
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 1,
+              "true_rw": 1,
+              "cycles": 7253,
+              "release_cases": 3,
+              "release_blocked_cycles": 18,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        },
+        {
+          "variant": "share1-rw1",
+          "reset_mode": 2,
+          "seed": 248,
+          "log": "pair-share1-rw1-run-2-248.log",
+          "checks": {
+            "shared": 1,
+            "true_rw": 1,
+            "numeric": 3456,
+            "contexts": 288,
+            "errors": 26,
+            "loads": 298
+          },
+          "measurements": [
+            {
+              "scenario": 0,
+              "shared": 1,
+              "true_rw": 1,
+              "Awide": 0,
+              "Bwide": 0,
+              "prefix": 0,
+              "cycles": 5277,
+              "compute_cycles": 3702,
+              "A": 72,
+              "B": 192,
+              "shared_A": 72,
+              "numeric": 1152
+            },
+            {
+              "scenario": 1,
+              "shared": 1,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 0,
+              "prefix": 1,
+              "cycles": 5508,
+              "compute_cycles": 3921,
+              "A": 72,
+              "B": 192,
+              "shared_A": 36,
+              "numeric": 2304
+            },
+            {
+              "scenario": 2,
+              "shared": 1,
+              "true_rw": 1,
+              "Awide": 1,
+              "Bwide": 1,
+              "prefix": 0,
+              "cycles": 6468,
+              "compute_cycles": 4701,
+              "A": 72,
+              "B": 400,
+              "shared_A": 72,
+              "numeric": 3456
+            },
+            {
+              "scenario": "lease",
+              "shared": 1,
+              "true_rw": 1,
+              "cycles": 132,
+              "protected_stalls": 40,
+              "concurrent_writes": 2,
+              "simultaneous_rw": 2
+            },
+            {
+              "scenario": "lifecycle",
+              "shared": 1,
+              "true_rw": 1,
+              "cycles": 7253,
+              "release_cases": 3,
+              "release_blocked_cycles": 18,
+              "cold_cancelled_loads": 2,
+              "refill_numeric": 16
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "mapped_area": {
+    "status": "passed",
+    "scope": "New-module and matched production-baseline standard-cell synthesis; SRAM blackboxes reported separately. No placement, routing, timing or chip-area qualification.",
+    "comparison_baseline": "block_feed_s16k_bank_rw",
+    "local_memory_configuration": {
+      "ECHO_WRITE_DATA": 0
+    },
+    "yosys_binary_sha256": "82d6e93803e865fa8ee4651f22e9dd9b806adf242475c9c065c25a89c07f345f",
+    "standard_liberty": {
+      "path": "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+      "sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+    },
+    "bank_liberty": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45_TT_1p1V_25C.lib",
+      "sha256": "47f8de1c22d27beb51982c73ab745e1f3f2b5a7819e53bcb6da73980ce077189"
+    },
+    "modules": {
+      "shared_a_pool32": {
+        "standard_cell_area_um2": 35924.098,
+        "physical_4KiB_banks": 8,
+        "configuration": {},
+        "comparison_role": "candidate",
+        "macro_area_proxy_mm2": 0.7396964002,
+        "physical_KiB": 32,
+        "logical_KiB": 32,
+        "cell_types": {
+          "INV_X1": 689,
+          "AOI22_X1": 51,
+          "NOR2_X1": 963,
+          "AND2_X1": 68,
+          "NAND2_X1": 155,
+          "OAI211_X1": 284,
+          "AOI211_X1": 45,
+          "OAI22_X1": 272,
+          "NOR4_X1": 28,
+          "OAI21_X1": 1510,
+          "AOI21_X1": 837,
+          "XNOR2_X1": 83,
+          "MUX2_X1": 4967,
+          "XOR2_X1": 67,
+          "OR2_X1": 286,
+          "NOR3_X1": 56,
+          "OR3_X1": 16,
+          "AND4_X1": 12,
+          "OR4_X1": 4,
+          "AND3_X1": 25,
+          "NAND3_X1": 217,
+          "AOI222_X1": 257,
+          "OAI33_X1": 3,
+          "NAND4_X1": 17,
+          "AOI221_X1": 273,
+          "OAI221_X1": 270,
+          "OAI222_X1": 1,
+          "DFF_X1": 4331,
+          "s_sram_256x128_freepdk45": 8
+        },
+        "stat_sha256": "8e61ce93613fb924e2cdb7eee1dedab2d92687e7f0cd597641491185c9655324",
+        "netlist_sha256": "4fdf3d7c3551d747a5538e3e5880ad061a435bf062aef3d445f97729d5a8f141"
+      },
+      "block_feed_s16k_1r1w": {
+        "standard_cell_area_um2": 24787.21,
+        "physical_4KiB_banks": 8,
+        "configuration": {
+          "ECHO_WRITE_DATA": 0
+        },
+        "comparison_role": "candidate",
+        "macro_area_proxy_mm2": 0.7396964002,
+        "physical_KiB": 32,
+        "logical_KiB": 16,
+        "cell_types": {
+          "INV_X1": 582,
+          "MUX2_X1": 2280,
+          "NOR2_X1": 1071,
+          "OR2_X1": 67,
+          "AOI21_X1": 1308,
+          "OAI211_X1": 233,
+          "NAND2_X1": 531,
+          "NOR3_X1": 229,
+          "OR3_X1": 17,
+          "AND2_X1": 44,
+          "AOI211_X1": 35,
+          "AND3_X1": 20,
+          "NAND3_X1": 692,
+          "OAI21_X1": 2806,
+          "OAI22_X1": 226,
+          "OAI221_X1": 269,
+          "AOI22_X1": 306,
+          "AOI221_X1": 139,
+          "AOI222_X1": 71,
+          "AND4_X1": 9,
+          "NOR4_X1": 126,
+          "XNOR2_X1": 10,
+          "NAND4_X1": 617,
+          "OR4_X1": 8,
+          "DFF_X1": 2329,
+          "s_sram_256x128_freepdk45": 8
+        },
+        "stat_sha256": "8f42f59e13cacc61e0c10e046ad35f7a5ac5cabe8db4b209e34502c6904fd4cb",
+        "netlist_sha256": "df37b3e55c33e2f5da20120b1e1560e0883b72b856d11aded35dbbc43f5c96cc"
+      },
+      "block_feed_s16k_sram": {
+        "standard_cell_area_um2": 10345.538,
+        "physical_4KiB_banks": 4,
+        "configuration": {
+          "ECHO_WRITE_DATA": 0
+        },
+        "comparison_role": "plain_reference_only",
+        "macro_area_proxy_mm2": 0.3698482001,
+        "physical_KiB": 16,
+        "logical_KiB": 16,
+        "cell_types": {
+          "MUX2_X1": 2056,
+          "NOR2_X1": 267,
+          "AOI211_X1": 133,
+          "AOI21_X1": 142,
+          "NAND3_X1": 4,
+          "OAI21_X1": 11,
+          "AND3_X1": 5,
+          "NOR3_X1": 6,
+          "NAND2_X1": 4,
+          "OR2_X1": 2,
+          "NAND4_X1": 1,
+          "OAI211_X1": 3,
+          "INV_X1": 139,
+          "AND2_X1": 2,
+          "OR3_X1": 1,
+          "XNOR2_X1": 2,
+          "DFF_X1": 1295,
+          "s_sram_256x128_freepdk45": 4
+        },
+        "stat_sha256": "3f89f5c1e7b35b74ce284548461d52967c64b7b305d6ec1eee72a07fc695979e",
+        "netlist_sha256": "4c9fd24ff54afc8d2b898d25ef72da92e28be7c8f29b5554a59b4cd9d313e9a7"
+      },
+      "block_feed_s16k_bank_rw": {
+        "standard_cell_area_um2": 6468.854,
+        "physical_4KiB_banks": 4,
+        "configuration": {
+          "ECHO_WRITE_DATA": 0
+        },
+        "comparison_role": "actual_R4_P_local_baseline",
+        "macro_area_proxy_mm2": 0.3698482001,
+        "physical_KiB": 16,
+        "logical_KiB": 16,
+        "cell_types": {
+          "AOI211_X1": 132,
+          "AOI21_X1": 142,
+          "OR2_X1": 129,
+          "OAI21_X1": 261,
+          "NAND2_X1": 274,
+          "MUX2_X1": 302,
+          "NOR2_X1": 656,
+          "AOI22_X1": 517,
+          "NOR4_X1": 1,
+          "OR3_X1": 3,
+          "NOR3_X1": 2,
+          "AND2_X1": 16,
+          "NAND3_X1": 9,
+          "INV_X1": 154,
+          "OAI211_X1": 2,
+          "XOR2_X1": 4,
+          "AOI222_X1": 1,
+          "OR4_X1": 1,
+          "OAI221_X1": 1,
+          "AND3_X1": 3,
+          "NAND4_X1": 1,
+          "DFF_X1": 796,
+          "s_sram_256x128_freepdk45": 4
+        },
+        "stat_sha256": "d5603c0eb26ab8a4fee87565e7dbf39dc33bbca0f005a2fae36f71db3e46272a",
+        "netlist_sha256": "8bb05b367eef39402ce40c19d3934f2285766de8f89c8be5dba556e3d128e44a"
+      }
+    }
+  },
+  "errors": [],
+  "source_sha256": {
+    "project/experiments/shared32_native/analyze.py": "b8c9d004edc1a55f97f592d5a2bcec79228a16faec9db94d35cdfdb112e4083c",
+    "project/experiments/shared32_native/job.sh": "4dcb8157977b07ca7edd9bd4930075e7da363ee60ab9ff621f28f28666737367",
+    "project/experiments/shared32_native/run.py": "d3bcefb47fe0287691362cde68ccd49b2cb9d83f20d3ea814a97a190769d3432",
+    "project/experiments/shared32_native/tb_s16k_1r1w.sv": "1e50607d705f8e7f6073c1fab84db60dc1ba4787129d0e7a931876a32177682f",
+    "project/experiments/shared32_native/tb_shared_pair.sv": "3287f9bae8035fb70c96242dfd7d6de4dcb41d083d886b81c06feefcf33f3923",
+    "project/experiments/shared32_native/tb_shared_pool.sv": "4000f1afe59aa18f2b03ad37040b3faccecf1cc58f701f94689eff0a38301e60",
+    "project/rtl/block_feed_v1/block_feed_loader.sv": "1b875b0484dbc91a5ace6c58998956992acb0f8f521fbae527bc6fcc0358d2bf",
+    "project/rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+    "project/rtl/block_local_s/popt_s_policy_arbiter.sv": "2290458fea43112043e49134b0c5cd76b540a109a3dc03cd807bc950887a0d76",
+    "project/rtl/block_v2/block_v2_g.sv": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+    "project/rtl/block_v2/block_v2_m.sv": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+    "project/rtl/block_v2/block_v2_m_context.sv": "ba85544d48c4850029b026b7d9d827328502c350c3a603c96a07138dfffcd0c3",
+    "project/rtl/pu_leaf_base/pj_feed_hold.sv": "ed4ee4b4f4875f88c6108a911b82661b581f7786a556ca83cabeece7b2b51061",
+    "project/rtl/pu_leaf_base/pj_mem_port.sv": "66e76fcfb708b2edbe89ce981b3217c30367aa797553c3ec9e199b6e2a003237",
+    "project/rtl/pu_leaf_base/pj_sram_client.sv": "58942675b4ca11cb4c6ab5e7b0d91672ca46a2a9f0deedb3fd360bfde6af4247",
+    "project/rtl/pu_leaf_base/pu_p_group.sv": "113367bfa3b36bf5e57fa5785365c20f33918b9dac2efb5e43b643e2ccf5a1c8",
+    "project/rtl/pu_leaf_base/pu_p_store_control.sv": "0e4bd93216797f2992a969a1c2f0cfa55f2ed4be0f5320f9cf80db572d7b01fc",
+    "project/rtl/s_sram/block_feed_s16k_1r1w.sv": "1a809ae51361fd4f98bcccc26b1b057e57cc8f3babca1bc630f9b7c8ce957400",
+    "project/rtl/s_sram/block_feed_s16k_bank_rw.sv": "8de334eb02abbf65cacff9691e7d5e4b20da20ca15961d31dd6c62071db0180c",
+    "project/rtl/s_sram/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+    "project/rtl/s_sram/local_s_p.sv": "117985a8037bf1d061f6436ce0bd1f5b419e3441fc145557bd1a3d2d0673ae7b",
+    "project/rtl/shared_s/pu_p_shared_pair.sv": "feaecbe8e64f30bb00374a219705e09f383cda3a50cebe1fd79827454f7a57e4",
+    "project/rtl/shared_s/shared_a_pool32.sv": "635710c74ab12b8a8662c415a511fdf6f2ed40faa215fcc2c81a623e3b28cb5c"
+  },
+  "bank": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v",
+    "sha256": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7"
+  },
+  "verilator_binary_sha256": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+  "output_files_sha256": {
+    "gcc-version.log": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+    "memory-echo0-build.log": "bb771e534f1480382839546c11086a6247a20ce74ed5e04c517020ee886ff91a",
+    "memory-echo0-run-1-247.log": "abf6b8d060b4b683cf1565440a1a5dbef41b5832727a4ed6d4e58c17a41bbb62",
+    "memory-echo1-build.log": "1f6f0d301490b62e3dfa72b99321d40063a87b4f942cc9b5372e2d3fcf448518",
+    "memory-echo1-run-1-247.log": "fc1e41f00d9c7c3df6e72c1424fbce27cbea6c9e2074103adc00d55410963aaa",
+    "memory-echo1-run-2-247.log": "4c18dfb418b835cf68b0b26634b6169fb8a686b73c5b8afcc065ffff6ac4199e",
+    "memory-echo1-run-2-248.log": "9c0098eb2c0b54dc5cf7319b16f01494d20c22fb4b3762526189dbbdb383b12d",
+    "memory-strict-lint.log": "95fa1d62cf6f84bcbd48be032744bee6860c0b79d2240aae5b22dee1a98399e7",
+    "pair-share0-rw0-build.log": "33c5b73fa6f936bb2479a9dbbe5843d5f9a9cf41618d15b7ded08ec19398d21f",
+    "pair-share0-rw0-run-1-247.log": "8f9724683406689c4c82d7ddd47e11ce01c91af1a4e88ec1a4f26c817fcfd194",
+    "pair-share0-rw0-run-2-247.log": "b5bc8e573ac8337a13b77b261c13d64e3db54165e7fe99bf7ef8750e7d43b959",
+    "pair-share0-rw0-run-2-248.log": "c89bc3e88cc1ae2531c338d322670cae9db78cd8fb7196a352787d9cfee49a05",
+    "pair-share0-rw1-build.log": "26e4aa0bba534136ed8071d3226dccbc0604ae9a5a2a2617946c216b7e904686",
+    "pair-share0-rw1-run-1-247.log": "e339de78ac3d789b97c3ebf5fed24efdfb3c30645c7b9858bd559a71af758d2d",
+    "pair-share0-rw1-run-2-247.log": "ce2f2cc3c19564271f703db985ffb86ad343c040cf08903f5570f09de75d0006",
+    "pair-share0-rw1-run-2-248.log": "fec269b43ae2fdf3218ba9abd867ec1de79b5fbbedd11dd97696279b21e25fec",
+    "pair-share1-rw0-build.log": "5b33bd197412259b1481f8ce3c11cea3e8ec55f25c7bb8c970c7e0eeeba87f13",
+    "pair-share1-rw0-run-1-247.log": "f471420cacfba307e58dc2b51231586862fa738bd92da34b941fa8cfce60f1a5",
+    "pair-share1-rw0-run-2-247.log": "14d8ce55c656a161e4831616635572750b95e59dae6890c98ba3cfe06a479966",
+    "pair-share1-rw0-run-2-248.log": "c0e72b37b71bfe5cc0636fa094bfe47c58fc9a86b908c78158e3c8e6d306f7a2",
+    "pair-share1-rw1-build.log": "2ff5374d1e33832a7084ae76a076c5f7811b836cc7de51bd4c3de38ae1047ca2",
+    "pair-share1-rw1-run-1-247.log": "aaa19635978795fd00a5a0f039b3e99dca1682335cbf716e1d1189af9ffd4578",
+    "pair-share1-rw1-run-2-247.log": "f6b083ebb6012984d31d421b7d7ad2c3c369698d74d6821480a7cff0f78339c8",
+    "pair-share1-rw1-run-2-248.log": "d8fba7fad2a68cf95e349bbf677ce7770db99c5a96bbbefb5ea099637cd0b0e9",
+    "pool-default-build.log": "9a86f07ff95b6217d1a17b6c50305102ae32b3273817003d45b5181c72b39407",
+    "pool-default-run-1-247.log": "3dbcfe53451844a6a51cd04e1ecb3c1b94042369b2097cd80c7aaa2f6a44975f",
+    "pool-default-run-2-247.log": "e377c1a088913f6f26b188abe64fd9f62a9268e4d72dad25f6c637b03cec1d44",
+    "pool-default-run-2-248.log": "0740d29c6313e074285e4eb878ea036eaef13002951952458907f49ddee6d68d",
+    "pool-strict-lint.log": "4733c9939ff501e2f403cdd9966dd9b85f80a2569478aca05456c27f8472cf1e",
+    "synth-block_feed_s16k_1r1w/mapped.json": "6cc1c37a81131d87223c276daca2763fe517505a8bed97163cc028cad1b806b1",
+    "synth-block_feed_s16k_1r1w/mapped.v": "df37b3e55c33e2f5da20120b1e1560e0883b72b856d11aded35dbbc43f5c96cc",
+    "synth-block_feed_s16k_1r1w/stat.json": "8f42f59e13cacc61e0c10e046ad35f7a5ac5cabe8db4b209e34502c6904fd4cb",
+    "synth-block_feed_s16k_1r1w/synth.ys": "058d5548d3b9e95daa3f89e1b91ba06cf58a938df46af52eff2c815037b387cb",
+    "synth-block_feed_s16k_1r1w/synthesis.log": "c2350dff1897edbd8cafb29cb33c7600cf0b59dcd3db254a0ecf7d5dcec34346",
+    "synth-block_feed_s16k_bank_rw/mapped.json": "07492804182c43511a4ac3be1cfc06e7a6db5064f2bc8d4478f7d40f4bfb28ab",
+    "synth-block_feed_s16k_bank_rw/mapped.v": "8bb05b367eef39402ce40c19d3934f2285766de8f89c8be5dba556e3d128e44a",
+    "synth-block_feed_s16k_bank_rw/stat.json": "d5603c0eb26ab8a4fee87565e7dbf39dc33bbca0f005a2fae36f71db3e46272a",
+    "synth-block_feed_s16k_bank_rw/synth.ys": "4796c2480e57df768096bd8e99b6d883e6a5adaf660239851fbcc89f700d4211",
+    "synth-block_feed_s16k_bank_rw/synthesis.log": "ec4af6aced52b045924e98cade1e16cd23eb62e0bc6f8267ea8ca8d3c45539e1",
+    "synth-block_feed_s16k_sram/mapped.json": "f22e605f6d45b4d627f5c0af36544af0fa2469ec848dd34df478c40e7974b362",
+    "synth-block_feed_s16k_sram/mapped.v": "4c9fd24ff54afc8d2b898d25ef72da92e28be7c8f29b5554a59b4cd9d313e9a7",
+    "synth-block_feed_s16k_sram/stat.json": "3f89f5c1e7b35b74ce284548461d52967c64b7b305d6ec1eee72a07fc695979e",
+    "synth-block_feed_s16k_sram/synth.ys": "7b82c726b317c07b8beb9c6dfeeb2d8cfbce5137fa7bfd04028f75fb40792134",
+    "synth-block_feed_s16k_sram/synthesis.log": "6a0a29804487fc11b4b21a23725378330f166803ff399071605541932ab00689",
+    "synth-shared_a_pool32/mapped.json": "340e534272134abe61ffc527dca8e1a1badceefaa42d7db29455325d6b023840",
+    "synth-shared_a_pool32/mapped.v": "4fdf3d7c3551d747a5538e3e5880ad061a435bf062aef3d445f97729d5a8f141",
+    "synth-shared_a_pool32/stat.json": "8e61ce93613fb924e2cdb7eee1dedab2d92687e7f0cd597641491185c9655324",
+    "synth-shared_a_pool32/synth.ys": "a8a5de3821af0e2213d6999b4e5552f2f0aa6f6a0a0a7016f6a6819aee0a806e",
+    "synth-shared_a_pool32/synthesis.log": "5b6b1d36ba23aacab0b40ca51bd305e5d51e0ed8f164fd77bd83e9c03f7bc7af",
+    "verilator-version.log": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+    "yosys-version.log": "99f8bcc7bf6e578db94ca0c9512c61ff1e55df9da6b8a60da95223b84f3d6c9b"
+  }
+}

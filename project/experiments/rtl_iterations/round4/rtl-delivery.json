@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "issue": 247,
+  "rule_version": "rayggxia-project-collab 1.0.0",
+  "scope": "R4 optional four EXP lanes for stateless op12, exact R2 default baseline; no production edits locally",
+  "files": [
+    {
+      "path": "generate.py",
+      "bytes": 7367,
+      "sha256": "4d85d33370aad5db8e166cc80d89eb37de16d0c49269704327b87b8ff35fb2ae"
+    },
+    {
+      "path": "README.md",
+      "bytes": 5308,
+      "sha256": "3ff7de92f900e8a765a3412c4921113e7d75788f290b94bc9ac0c4343244732f"
+    },
+    {
+      "path": "resource-ledger.json",
+      "bytes": 1133,
+      "sha256": "a95aaf0f05e2f4ff35923863fc855c87e06f9aeacd84f2a663768e5af42de647"
+    },
+    {
+      "path": "block_v2_n.sv",
+      "bytes": 13897,
+      "sha256": "6efe29ed1121085d59bf072e2c3a062c9c18d67fa0f69a30da16f3b2b56f03ec"
+    },
+    {
+      "path": "pu_u_group.sv",
+      "bytes": 8393,
+      "sha256": "f5e30680ab32cc0a96e25e60268549265fac92373966a449e447cf28df33b413"
+    },
+    {
+      "path": "baseline/source.json",
+      "bytes": 507,
+      "sha256": "6118d104b325cc514ef02b2d107a9cf2ed3daaa480f99fd75d7358c5e40a65be"
+    },
+    {
+      "path": "baseline/block_v2_n.sv",
+      "bytes": 11819,
+      "sha256": "6f6531e6da3c987ed5dae4f6fb98fbf69f64edee194649110855c99ef9cfee4d"
+    },
+    {
+      "path": "baseline/pu_u_group.sv",
+      "bytes": 8132,
+      "sha256": "d6d2ac3fa23ba6debb179ce1f49580e1ddc04d786d32a18b890e40020f6960cd"
+    }
+  ],
+  "production_map": [
+    {
+      "path": "block_v2_n.sv",
+      "destination": "project/rtl/block_v2/block_v2_n.sv",
+      "sha256": "6efe29ed1121085d59bf072e2c3a062c9c18d67fa0f69a30da16f3b2b56f03ec"
+    },
+    {
+      "path": "pu_u_group.sv",
+      "destination": "project/rtl/pu_leaf_base/pu_u_group.sv",
+      "sha256": "f5e30680ab32cc0a96e25e60268549265fac92373966a449e447cf28df33b413"
+    }
+  ],
+  "unchanged_dependencies": {
+    "project/rtl/pu_leaf_base/pu_nexp_shared.sv": "c0a4c727a128fdb06fb4f90f035a618ba400805d936c5290c0a8215f4a036ed5",
+    "project/rtl/pu_leaf_base/nexp_batch_adapter.sv": "a975365f97ac8608760d2922e3843433624bd4db775441a8b48e0b2fb08679ca"
+  },
+  "baseline_receipts": {
+    "run18_result_sha256": "fb0b4d0d1251140655feea5bd671c196e5ae13b1fd47066dc22d6e1e1a2eac78",
+    "run19_result_sha256": "b16ff9a0209add1227177d1899bbf9928ae7e83d724a0c113469e7c860c97098"
+  },
+  "local_checks": {
+    "management_structure": "passed",
+    "Python_AST": "passed",
+    "fixed_R2_baseline_SHA": "passed",
+    "candidate_exact_reconstruction": "passed",
+    "unchanged_R2_router_adapter_SHA": "passed",
+    "legacy_EMIT_step_and_single_N_static_checks": "passed"
+  },
+  "independent_review": "passed sram_rtl_contract read-only source review; actual RTL tests pending",
+  "not_executed": [
+    "RTL compilation/simulation",
+    "new cycle calibration",
+    "SystemC score",
+    "synthesis",
+    "300MHz STA/physical checks"
+  ],
+  "tests_owner": "sram_rtl_contract, iterations-research/rtl/round4",
+  "model_owner": "context_oracle, iterations-research/model/round4",
+  "integration_owner": "root",
+  "physical_qualified": false,
+  "notes": [
+    "NEXP_DIRECT_LANES default2, choices2/4; only active direct op12 widens.",
+    "R2 shared/adapter bytes remain unchanged; S32 frame remains at most4 elements.",
+    "source payload extra34bits is not total area; two EXP datapaths and table reads are explicit.",
+    "Temporary prepare-generated is excluded.",
+    "R3 remains independent backup; headline denominator is same-layer R2."
+  ]
+}

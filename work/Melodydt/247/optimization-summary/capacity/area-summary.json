@@ -1,0 +1,361 @@
+{
+  "schema_version": 1,
+  "scope": "Conditional area budget for large-capacity SRAM direction; no new RTL, EDA or remote jobs",
+  "source_snapshot_commit": "9925300dc32c18b786bff7a3fe14a2c07ce5746f",
+  "sources": [
+    {
+      "path": "project/experiments/compact_local_s/README.md",
+      "sha256": "ed28dd81a727c6b924196b735dbfddfd41789c74a472a26c77d09a38bda366cf"
+    },
+    {
+      "path": "project/experiments/compact_local_s/physical.py",
+      "sha256": "c290ff088014c64260b8185a9a4b6533c0c347d9dfb13c968bd4ab1c26f6506c"
+    },
+    {
+      "path": "project/experiments/compact_local_s/occupancy.py",
+      "sha256": "dbe627abdc3705c54a762c123ad37a796554894cfc5cb1ca429a6a8df00335b0"
+    },
+    {
+      "path": "project/rtl/s_sram/block_feed_s16k_sram.sv",
+      "sha256": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef"
+    },
+    {
+      "path": "work/Melodydt/247/compare/policy/summary.json",
+      "sha256": "9548a9c862d32d81812ab5868d435cb8d65018da22cdea942816b44b64dae358"
+    },
+    {
+      "path": "docs/experiments/issue-247-u-fusion.md",
+      "sha256": "7a8501272ade2328affd47c023848e6d5dbe2f8c6e9f44e2e1ac82cb866c4b5e"
+    },
+    {
+      "path": "docs/experiments/issue-247-p-native-optimizations.md",
+      "sha256": "88ed0dd1c610a81734b666c614bf140c29635a0fa97fed7a16d75bfb8aeab2e6"
+    },
+    {
+      "path": "docs/experiments/issue-247-capacity-port-compare.md",
+      "sha256": "fc5a617e4b46574eb2d49ebda3f2f53b78b961b583654bedda82189b35d39758"
+    }
+  ],
+  "bank_reference": {
+    "name": "s_sram_256x128_freepdk45",
+    "bits": 32768,
+    "KiB": 4,
+    "port_type": "1RW",
+    "four_bank_report_area_um2": 369848.2001,
+    "per_bank_derived_area_um2": 92462.050025,
+    "per_bank_derived_area_mm2": 0.092462050025,
+    "provenance": "Committed Issue200 report says sum of final ODB bank instance rectangles; original ODB and LEF not locally read in this evaluation",
+    "expected_view_sha256": {
+      "v": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7",
+      "lib": "47f8de1c22d27beb51982c73ab745e1f3f2b5a7819e53bcb6da73980ce077189",
+      "lef": "d18426af718292b9d88e7ebd88b5002f238bfa0b295a5102b24814d1c4bed2eb",
+      "gds": "3b731cffa2994ae0df0f288657aece96f239f40e23f6b2c03c3941b463a33dd8"
+    },
+    "physical_dimensions_um": null,
+    "physical_dimensions_status": "not present in locally read bank view; no LEF width/height invented",
+    "bitcell_only_area_um2": null,
+    "bitcell_status": "unknown; hard-bank footprint includes bank-local periphery"
+  },
+  "historical_16KiB_wrapper_reference": {
+    "S_P_die_um": [
+      900,
+      540
+    ],
+    "S_P_die_area_mm2": 0.486,
+    "S_base_die_um": [
+      880,
+      520
+    ],
+    "S_base_die_area_mm2": 0.4576,
+    "S_P_functional_stdcell_area_um2": 29210.258,
+    "S_base_functional_stdcell_area_um2": 7441.616,
+    "warning": "Historical wrapper rectangles only, not complete P/U or new R4; do not multiply whole wrapper area by 3 or 4"
+  },
+  "capacity_replication": [
+    {
+      "route": "B16ctx8",
+      "P_count": 2,
+      "U_count": 1,
+      "P_KiB": 16,
+      "U_KiB": 16,
+      "contexts": 8,
+      "banks_per_P": 4,
+      "banks_U": 4,
+      "active_banks": 12,
+      "active_S_KiB": 48,
+      "active_S_bits": 393216,
+      "added_active_S_KiB_vs_B": 0,
+      "added_banks_vs_B": 0,
+      "active_bank_area_um2": 1109544.6003,
+      "active_bank_area_mm2": 1.1095446003,
+      "bank_area_per_P_mm2": 0.3698482001,
+      "added_bank_area_mm2_vs_B": 0.0,
+      "bank_area_ratio_vs_B": 1.0,
+      "bank_area_growth_pct_vs_B": 0.0,
+      "status": "Conditional replication of existing 1RW hard-bank footprint only; not target 1R1W area"
+    },
+    {
+      "route": "A48",
+      "P_count": 2,
+      "U_count": 1,
+      "P_KiB": 48,
+      "U_KiB": 16,
+      "contexts": 1,
+      "banks_per_P": 12,
+      "banks_U": 4,
+      "active_banks": 28,
+      "active_S_KiB": 112,
+      "active_S_bits": 917504,
+      "added_active_S_KiB_vs_B": 64,
+      "added_banks_vs_B": 16,
+      "active_bank_area_um2": 2588937.4007,
+      "active_bank_area_mm2": 2.5889374007,
+      "bank_area_per_P_mm2": 1.1095446003,
+      "added_bank_area_mm2_vs_B": 1.4793928004,
+      "bank_area_ratio_vs_B": 2.3333333333333335,
+      "bank_area_growth_pct_vs_B": 133.33333333333334,
+      "status": "Conditional replication of existing 1RW hard-bank footprint only; not target 1R1W area"
+    },
+    {
+      "route": "A64",
+      "P_count": 2,
+      "U_count": 1,
+      "P_KiB": 64,
+      "U_KiB": 16,
+      "contexts": 1,
+      "banks_per_P": 16,
+      "banks_U": 4,
+      "active_banks": 36,
+      "active_S_KiB": 144,
+      "active_S_bits": 1179648,
+      "added_active_S_KiB_vs_B": 96,
+      "added_banks_vs_B": 24,
+      "active_bank_area_um2": 3328633.8009,
+      "active_bank_area_mm2": 3.3286338009,
+      "bank_area_per_P_mm2": 1.4793928004,
+      "added_bank_area_mm2_vs_B": 2.2190892006,
+      "bank_area_ratio_vs_B": 3.0,
+      "bank_area_growth_pct_vs_B": 200.0,
+      "status": "Conditional replication of existing 1RW hard-bank footprint only; not target 1R1W area"
+    }
+  ],
+  "performance_source": {
+    "path": "work/Melodydt/247/compare/policy/summary.json",
+    "source_commit": "49b3938ce8b55734520c56a79a7d5d7933af9cdc",
+    "result_sha256": "4dcb0f01357e2f71fcf9f90deeab1d1dd50101b3d928b3e9866473c91c133777",
+    "clock_hz": 300000000,
+    "DDR_B_s": 17100000000,
+    "policy_KiB": 16,
+    "P_port_quarters": 4,
+    "warning": "Speed uses ideal 1R1W SystemC while footprint is existing 1RW replication, so no physical area-efficiency qualification"
+  },
+  "conditional_resource_proxies": [
+    {
+      "workload": "W8 decode512",
+      "route": "A48",
+      "B_token_s": 3.49616888299,
+      "A_token_s": 3.54156747258,
+      "speed_gain_pct": 1.2985239303192397,
+      "active_bank_area_ratio_vs_B": 2.3333333333333335,
+      "throughput_per_stored_bit_relative_to_B": 0.43413653112993955,
+      "f_critical_no_periphery": 0.009738929477394296,
+      "interpretation": "Sensitivity/proxy only; not measured system token/s/mm2"
+    },
+    {
+      "workload": "W8 decode512",
+      "route": "A64",
+      "B_token_s": 3.49616888299,
+      "A_token_s": 3.54392147278,
+      "speed_gain_pct": 1.3658547795654785,
+      "active_bank_area_ratio_vs_B": 3.0,
+      "throughput_per_stored_bit_relative_to_B": 0.3378861825985516,
+      "f_critical_no_periphery": 0.006829273897827393,
+      "interpretation": "Sensitivity/proxy only; not measured system token/s/mm2"
+    },
+    {
+      "workload": "W16 decode512",
+      "route": "A48",
+      "B_token_s": 2.11665860003,
+      "A_token_s": 2.14776282153,
+      "speed_gain_pct": 1.4694963797921456,
+      "active_bank_area_ratio_vs_B": 2.3333333333333335,
+      "throughput_per_stored_bit_relative_to_B": 0.43486927019910915,
+      "f_critical_no_periphery": 0.01102122284844109,
+      "interpretation": "Sensitivity/proxy only; not measured system token/s/mm2"
+    },
+    {
+      "workload": "W16 decode512",
+      "route": "A64",
+      "B_token_s": 2.11665860003,
+      "A_token_s": 2.14827130877,
+      "speed_gain_pct": 1.4935194905570492,
+      "active_bank_area_ratio_vs_B": 3.0,
+      "throughput_per_stored_bit_relative_to_B": 0.3383117316351902,
+      "f_critical_no_periphery": 0.007467597452785246,
+      "interpretation": "Sensitivity/proxy only; not measured system token/s/mm2"
+    },
+    {
+      "workload": "W8 decode2048",
+      "route": "A48",
+      "B_token_s": 2.55280435873,
+      "A_token_s": 2.58733104032,
+      "speed_gain_pct": 1.3525001033442674,
+      "active_bank_area_ratio_vs_B": 2.3333333333333335,
+      "throughput_per_stored_bit_relative_to_B": 0.43436785758576113,
+      "f_critical_no_periphery": 0.010143750775082004,
+      "interpretation": "Sensitivity/proxy only; not measured system token/s/mm2"
+    },
+    {
+      "workload": "W8 decode2048",
+      "route": "A64",
+      "B_token_s": 2.55280435873,
+      "A_token_s": 2.595076103,
+      "speed_gain_pct": 1.655894394156765,
+      "active_bank_area_ratio_vs_B": 3.0,
+      "throughput_per_stored_bit_relative_to_B": 0.3388529813138559,
+      "f_critical_no_periphery": 0.008279471970783825,
+      "interpretation": "Sensitivity/proxy only; not measured system token/s/mm2"
+    },
+    {
+      "workload": "W8 prefill2",
+      "route": "A48",
+      "B_token_s": 3.69669737899,
+      "A_token_s": 4.46700123106,
+      "speed_gain_pct": 20.837622696626035,
+      "active_bank_area_ratio_vs_B": 2.3333333333333335,
+      "throughput_per_stored_bit_relative_to_B": 0.5178755258426829,
+      "f_critical_no_periphery": 0.15628217022469523,
+      "interpretation": "Sensitivity/proxy only; not measured system token/s/mm2"
+    },
+    {
+      "workload": "W8 prefill2",
+      "route": "A64",
+      "B_token_s": 3.69669737899,
+      "A_token_s": 4.54743400007,
+      "speed_gain_pct": 23.013423438854375,
+      "active_bank_area_ratio_vs_B": 3.0,
+      "throughput_per_stored_bit_relative_to_B": 0.41004474479618125,
+      "f_critical_no_periphery": 0.11506711719427187,
+      "interpretation": "Sensitivity/proxy only; not measured system token/s/mm2"
+    }
+  ],
+  "marginal_64_over_48": [
+    {
+      "workload": "W8 decode512",
+      "A64_over_A48_speed_gain_pct": 0.0664677496115873,
+      "added_active_S_KiB": 32,
+      "added_banks": 8,
+      "added_same_1RW_bank_area_mm2": 0.7396964002,
+      "active_bank_area_growth_pct": 28.57142857142858
+    },
+    {
+      "workload": "W16 decode512",
+      "A64_over_A48_speed_gain_pct": 0.023675204491979684,
+      "added_active_S_KiB": 32,
+      "added_banks": 8,
+      "added_same_1RW_bank_area_mm2": 0.7396964002,
+      "active_bank_area_growth_pct": 28.57142857142858
+    },
+    {
+      "workload": "W8 decode2048",
+      "A64_over_A48_speed_gain_pct": 0.2993456407125228,
+      "added_active_S_KiB": 32,
+      "added_banks": 8,
+      "added_same_1RW_bank_area_mm2": 0.7396964002,
+      "active_bank_area_growth_pct": 28.57142857142858
+    },
+    {
+      "workload": "W8 prefill2",
+      "A64_over_A48_speed_gain_pct": 1.8005987652462085,
+      "added_active_S_KiB": 32,
+      "added_banks": 8,
+      "added_same_1RW_bank_area_mm2": 0.7396964002,
+      "active_bank_area_growth_pct": 28.57142857142858
+    }
+  ],
+  "total_area_sensitivity": {
+    "definition_f": "Baseline three active S bank hard-macro footprint divided by complete baseline area",
+    "formula_A48": "A_A48/A_B = 1 + (4/3)*f + Delta_other/A_B",
+    "formula_A64": "A_A64/A_B = 1 + 2*f + Delta_other/A_B",
+    "ignored_in_example": "Delta_other=0; address decode, crossbar, routing/halo, timing repair, true1R1W premium and context-register differences excluded",
+    "f_is_measured": false,
+    "examples": [
+      {
+        "baseline_bank_fraction_f": 0.1,
+        "A48_total_area_ratio_ignoring_extra_periphery": 1.1333333333333333,
+        "A64_total_area_ratio_ignoring_extra_periphery": 1.2
+      },
+      {
+        "baseline_bank_fraction_f": 0.25,
+        "A48_total_area_ratio_ignoring_extra_periphery": 1.3333333333333333,
+        "A64_total_area_ratio_ignoring_extra_periphery": 1.5
+      },
+      {
+        "baseline_bank_fraction_f": 0.5,
+        "A48_total_area_ratio_ignoring_extra_periphery": 1.6666666666666665,
+        "A64_total_area_ratio_ignoring_extra_periphery": 2.0
+      }
+    ]
+  },
+  "true_1R1W_area": {
+    "premium_q": null,
+    "q_definition": "area of an equivalent 4KiB 1R1W bank divided by known 4KiB 1RW bank area; no measured q",
+    "bank_area_B": "(8*q + 4) * a",
+    "bank_area_A48": "(24*q + 4) * a",
+    "bank_area_A64": "(32*q + 4) * a",
+    "warning": "a is same 1RW bank footprint; q is unknown, organization may not be simple replication"
+  },
+  "extra_storage_budgets": [
+    {
+      "item": "Old conditional B16ctx8 extra S96 psums",
+      "per_P_bytes": 672,
+      "two_P_bytes": 1344,
+      "formula": "2 * (8-1) * 8 * 96 / 8",
+      "control_area": "unknown"
+    },
+    {
+      "item": "Production S64 context implementation",
+      "new_metadata_bits_per_P": 325,
+      "two_P_new_metadata_bits": 650,
+      "existing_result_bits_per_P": 4096,
+      "new_psum_data_bits": 0,
+      "warning": "Reuses existing result slots; not same arithmetic or budget as S96 model"
+    },
+    {
+      "item": "E-to-E forwarding only",
+      "data_bytes": 256,
+      "metadata_bytes": 32,
+      "total_known_bytes": 288,
+      "RTL_area_mm2": null,
+      "implementation": "SystemC candidate, not production"
+    },
+    {
+      "item": "D2 full-trace overlap candidate including forwarding",
+      "data_bytes": 2304,
+      "forwarding_metadata_bytes": 32,
+      "total_known_bytes": 2336,
+      "data_formula": "2*(768 input + 256 output) + 256 forwarding",
+      "warning": "2304 already includes 256 forwarding; do not add 288 again; extra FIFO/descriptors/control unknown"
+    },
+    {
+      "item": "Native S16 isolated overlap FIFO D2",
+      "data_tag_bits": 272,
+      "data_tag_bytes": 34,
+      "warning": "Different RTL-local experiment, not the 2304B full-trace model buffer"
+    }
+  ],
+  "unmeasured": [
+    "New 48/64KiB wrapper floorplan",
+    "True1R1W macro area/power",
+    "System die area",
+    "Added address/selection/controller/ports area",
+    "Post-route frequency and timing fixes",
+    "New whole-model physical token/s/mm2"
+  ],
+  "local_calculation": {
+    "python": "3.12.14",
+    "script_sha256": "a716b78705c18781efee8d15223e3c6afb647475d4956fd653de29e27f6c7c9e",
+    "new_EDA_runs": 0,
+    "remote_access": false
+  }
+}

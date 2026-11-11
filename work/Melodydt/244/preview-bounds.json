@@ -1,0 +1,179 @@
+{
+  "kind": "local configuration arithmetic and old-chain necessary bounds; no full-graph execution",
+  "source_pr241_commit": "047da9029ec23e4974961cb4f579207d8bcaff3c",
+  "greedy_chain": {
+    "Dot": 84500059460,
+    "Product": 34877867696,
+    "Add": 33740886712,
+    "Other": 14292059254
+  },
+  "greedy_chain_ticks": 167410873122,
+  "dp_plan_ticks": 167410840866,
+  "chain_sensitivity_upper_bounds": [
+    {
+      "name": "dot_half",
+      "factors": {
+        "Dot": "1/2"
+      },
+      "surviving_old_chain_ticks_lower_bound": 125160843392.0,
+      "fixed_graph_speedup_upper_bound": 1.3375658759159539,
+      "exact_speedup_bound": [
+        83705436561,
+        62580421696
+      ]
+    },
+    {
+      "name": "pointwise_half",
+      "factors": {
+        "Product": "1/2",
+        "Add": "1/2"
+      },
+      "surviving_old_chain_ticks_lower_bound": 133101495918.0,
+      "fixed_graph_speedup_upper_bound": 1.257768531956523,
+      "exact_speedup_bound": [
+        27901812187,
+        22183582653
+      ]
+    },
+    {
+      "name": "both_half",
+      "factors": {
+        "Dot": "1/2",
+        "Product": "1/2",
+        "Add": "1/2"
+      },
+      "surviving_old_chain_ticks_lower_bound": 90851466188.0,
+      "fixed_graph_speedup_upper_bound": 1.8426876323115657,
+      "exact_speedup_bound": [
+        83705436561,
+        45425733094
+      ]
+    },
+    {
+      "name": "add_ffn_ratio_hypothesis",
+      "factors": {
+        "Add": "158163661/225366784"
+      },
+      "surviving_old_chain_ticks_lower_bound": 157349528146.5328,
+      "fixed_graph_speedup_upper_bound": 1.0639426447221214,
+      "exact_speedup_bound": [
+        36558963257884864,
+        34361780157268971
+      ]
+    }
+  ],
+  "decode": {
+    "dense_linear_macs_per_token": 3085697024,
+    "per_layer_macs": 77070336,
+    "ceilings": [
+      {
+        "name": "existing_S8_K32",
+        "k": 32,
+        "n": 8,
+        "interval": 16,
+        "status": "upstream measured resident microtest; #238",
+        "optimistic_linear_token_s_ceiling": 4.666692772491717,
+        "exact_ceiling": [
+          3515625,
+          753344
+        ],
+        "scope": "dense linear work only; operands already resident; not decode simulation"
+      },
+      {
+        "name": "candidate_S8_K256",
+        "k": 256,
+        "n": 8,
+        "interval": 44,
+        "status": "upstream experimental RTL microtest; PR239",
+        "optimistic_linear_token_s_ceiling": 13.575833519975903,
+        "exact_ceiling": [
+          3515625,
+          258962
+        ],
+        "scope": "dense linear work only; operands already resident; not decode simulation"
+      },
+      {
+        "name": "candidate_S16_S8_K256",
+        "k": 256,
+        "n": 8,
+        "interval": 108,
+        "status": "upstream experimental RTL microtest; PR239",
+        "optimistic_linear_token_s_ceiling": 5.530895137767961,
+        "exact_ceiling": [
+          390625,
+          70626
+        ],
+        "scope": "dense linear work only; operands already resident; not decode simulation"
+      },
+      {
+        "name": "candidate_S16_S16_K256",
+        "k": 256,
+        "n": 8,
+        "interval": 300,
+        "status": "upstream experimental RTL microtest; PR239",
+        "optimistic_linear_token_s_ceiling": 1.991122249596466,
+        "exact_ceiling": [
+          46875,
+          23542
+        ],
+        "scope": "dense linear work only; operands already resident; not decode simulation"
+      }
+    ],
+    "ideal_weight_stream_payload": [
+      {
+        "bits": 16,
+        "weight_stream_bytes_per_token": 6171394048.0,
+        "required_GB_s_at_5_token_s": 30.85697024,
+        "required_GB_s_at_10_token_s": 61.71394048
+      },
+      {
+        "bits": 8,
+        "weight_stream_bytes_per_token": 3085697024.0,
+        "required_GB_s_at_5_token_s": 15.42848512,
+        "required_GB_s_at_10_token_s": 30.85697024
+      },
+      {
+        "bits": 4,
+        "weight_stream_bytes_per_token": 1542848512.0,
+        "required_GB_s_at_5_token_s": 7.71424256,
+        "required_GB_s_at_10_token_s": 15.42848512
+      }
+    ],
+    "kv": [
+      {
+        "context": 128,
+        "s16_kv_read_bytes_ideal_gqa_reuse": 4718592,
+        "attention_macs": 18874368
+      },
+      {
+        "context": 512,
+        "s16_kv_read_bytes_ideal_gqa_reuse": 18874368,
+        "attention_macs": 75497472
+      },
+      {
+        "context": 2048,
+        "s16_kv_read_bytes_ideal_gqa_reuse": 75497472,
+        "attention_macs": 301989888
+      }
+    ],
+    "low_bit_quality_qualified": false,
+    "physical_memory_bandwidth_known": false,
+    "scope": "configuration-derived necessary/opportunity bounds, not token generation"
+  },
+  "descriptor": {
+    "single_64_total_ticks": 1280,
+    "contiguous_64_ticks": 287,
+    "isolated_speedup": 4.45993031358885,
+    "saved_ticks": 993,
+    "basis": "PR241 S-access=3 cold-descriptor endpoints",
+    "scope": "isolated abstract transfer example; contiguity and command support must be proven"
+  },
+  "python": "3.12.14",
+  "source_sha256": {
+    "analyse.py": "a3a24a426272571b78f0917ddbdb57fd3d806523b119dba04f8bdefc4c473dfc",
+    "preview.py": "651cbbceca34129c6f70b0dacef728f43572b50d5dcec216f8b5da6fca087bf2",
+    "study.json": "69b13f109584336fd4d6dcdf379bb15366b08aedd8f86ef730f611d0fadab5b6",
+    "qwen2.5-3b-config.json": "27467e2fc311a7656c09a43ae9c3d408211e1f212bbddbc93c8596a06423826f"
+  },
+  "scope": "whole-service hypothetical factors; not calibrated token/s or demonstrated improvement"
+}

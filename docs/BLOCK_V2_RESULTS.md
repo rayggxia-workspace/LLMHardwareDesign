@@ -2,7 +2,7 @@
 
 ## R 局部状态宏的两个容量版本
 
-[PR #167 最终报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/c97353cfc5ffc222ffa5fddcf9a85499719f9348/work/YUZE-LU/166/FINAL_REPORT.md)绑定两版的独立宏 300 MHz 验收、六文件、版图和冻结源。两版使用相同的 [r_stream_local](../project/rtl/r_local_state/r_stream_local.sv) 和 [r_state_store](../project/rtl/r_local_state/r_state_store.sv)，用参数 `WORDS` 选择容量。
+[PR #167 最终报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/c97353cfc5ffc222ffa5fddcf9a85499719f9348/work/YUZE-LU/166/FINAL_REPORT.md)绑定两版的独立宏 300 MHz 验收、六文件、版图和冻结源。原物理结果使用相同的冻结 [r_stream_local](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/c97353cfc5ffc222ffa5fddcf9a85499719f9348/project/rtl/r_local_state/r_stream_local.sv) 和 [r_state_store](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/c97353cfc5ffc222ffa5fddcf9a85499719f9348/project/rtl/r_local_state/r_state_store.sv)，用参数 `WORDS` 选择容量。
 
 | 宏 | WORDS | 双版本 S32 状态 | die µm | setup 裕量 ps | hold 裕量 ps |
 | --- | ---: | ---: | --- | ---: | ---: |
@@ -10,6 +10,8 @@
 | R1024 | 1024 | 8 KiB | 1800 × 1800 | +67.4889 | +0.210554 |
 
 两版各通过 16 项独立物理门和 192 项最终单元网表功能用例，范围为 Nangate45 M1–M10、原工艺角及 I/O 合同。状态用标准单元 DFF 实现。局部选择、数据与汇合流水改变了延迟，调用方按 valid/ready 和响应事务接入。C/D 适配、M11/M12 组合及层级时序分别验收。
+
+2026-11-09，[Issue #242](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/242)在当前 RTL 中增加原始 LOAD 全索引边界保护。修复版源码 SHA-256 为 `48a93b2f4d4a5777eb4ef59f36cf635541498c660562353d430ec70470c04d84`，R256/R1024 及 C 适配器九次 RTL 回归通过，旧源三次负控制检出缺陷，详见[实验记录](experiments/issue-242-r-load-bounds.md)。此版本未执行原 192 项最终网表回归和物理重新验收；上表物理结果继续只属于原冻结源，不代表新增保护逻辑已经取得宏资格。历史数据、六文件及原资格清单保留。
 
 ## 局部 SRAM S 的三个配置
 

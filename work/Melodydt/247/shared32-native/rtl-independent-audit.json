@@ -1,0 +1,132 @@
+{
+  "passed": true,
+  "source_commit": "a7a36cbb76fa76f6162b666d1f5683cda2a8f7ec",
+  "result_sha256": "42a6fa657cd1d7febc603bac824050702edd30f1cccd7ff73f5e9c57298e1000",
+  "postprocessor_sha256": "a06ce2902f827ebf934a8937d8588a5edf37fcdf122aa092f2695bc20653720d",
+  "verified_result_files": 51,
+  "verified_command_logs": 35,
+  "pair_runs": 12,
+  "main_numeric_checks": 41472,
+  "refill_numeric_checks": 192,
+  "pair_metrics": [
+    {
+      "variant": "share0-rw0",
+      "cycles": [
+        5053,
+        5245,
+        7153
+      ],
+      "compute_cycles": [
+        3755,
+        3947,
+        4703
+      ],
+      "lifecycle": {
+        "scenario": "lifecycle",
+        "shared": 0,
+        "true_rw": 0,
+        "cycles": 4158,
+        "release_cases": 0,
+        "release_blocked_cycles": 0,
+        "cold_cancelled_loads": 2,
+        "refill_numeric": 16
+      },
+      "lease": null
+    },
+    {
+      "variant": "share1-rw0",
+      "cycles": [
+        6237,
+        6528,
+        8388
+      ],
+      "compute_cycles": [
+        3702,
+        3921,
+        4701
+      ],
+      "lifecycle": {
+        "scenario": "lifecycle",
+        "shared": 1,
+        "true_rw": 0,
+        "cycles": 8213,
+        "release_cases": 3,
+        "release_blocked_cycles": 18,
+        "cold_cancelled_loads": 2,
+        "refill_numeric": 16
+      },
+      "lease": null
+    },
+    {
+      "variant": "share0-rw1",
+      "cycles": [
+        3973,
+        4165,
+        5113
+      ],
+      "compute_cycles": [
+        3755,
+        3947,
+        4703
+      ],
+      "lifecycle": {
+        "scenario": "lifecycle",
+        "shared": 0,
+        "true_rw": 1,
+        "cycles": 3078,
+        "release_cases": 0,
+        "release_blocked_cycles": 0,
+        "cold_cancelled_loads": 2,
+        "refill_numeric": 16
+      },
+      "lease": {
+        "scenario": "lease",
+        "shared": 0,
+        "true_rw": 1,
+        "cycles": 132,
+        "protected_stalls": 40,
+        "concurrent_writes": 2,
+        "simultaneous_rw": 2
+      }
+    },
+    {
+      "variant": "share1-rw1",
+      "cycles": [
+        5277,
+        5508,
+        6468
+      ],
+      "compute_cycles": [
+        3702,
+        3921,
+        4701
+      ],
+      "lifecycle": {
+        "scenario": "lifecycle",
+        "shared": 1,
+        "true_rw": 1,
+        "cycles": 7253,
+        "release_cases": 3,
+        "release_blocked_cycles": 18,
+        "cold_cancelled_loads": 2,
+        "refill_numeric": 16
+      },
+      "lease": {
+        "scenario": "lease",
+        "shared": 1,
+        "true_rw": 1,
+        "cycles": 132,
+        "protected_stalls": 40,
+        "concurrent_writes": 2,
+        "simultaneous_rw": 2
+      }
+    }
+  ],
+  "standard_cell_delta_um2": 72560.81,
+  "macro_delta_mm2": 1.4793928004,
+  "limitations": [
+    "Cycle fixtures contain protocol stalls, numeric readback and sparse pool boundary padding; not transformer throughput.",
+    "Case2 shared builds include 16 extra B beats from invalid-LOAD negative controls; compute timing is not equal-work against unshared.",
+    "ECHO0 mapped backend comparison excludes changes to P/group/loader control and all physical implementation."
+  ]
+}

@@ -1,0 +1,323 @@
+{
+  "source": "frozen-ir.json",
+  "source_sha256": "e8a30117ab627b23d642e0e8bd3051c1721c22e758cbfb8eefcbb0c7637324b5",
+  "hardware": {
+    "leaf_inventory": {
+      "P0": {
+        "site": "P0.S",
+        "words": 1024,
+        "macros": [
+          "M",
+          "G"
+        ],
+        "memory_group": 0,
+        "io_resource": "P0.S.IO",
+        "io_read_ticks": 3,
+        "io_write_ticks": 3,
+        "operations": {
+          "G": [
+            "GatedSiLU"
+          ]
+        }
+      },
+      "U0": {
+        "site": "U0.S",
+        "words": 1024,
+        "macros": [
+          "N",
+          "E"
+        ],
+        "memory_group": 1,
+        "io_resource": "U0.S.IO",
+        "io_read_ticks": 3,
+        "io_write_ticks": 3
+      },
+      "C0": {
+        "site": "C0.S",
+        "words": 1024,
+        "macros": [
+          "R",
+          "G",
+          "E"
+        ],
+        "memory_group": 2,
+        "io_resource": "C0.S.IO",
+        "io_read_ticks": 3,
+        "io_write_ticks": 3
+      },
+      "F0": {
+        "site": "F0.S",
+        "words": 1024,
+        "macros": [
+          "G",
+          "E"
+        ],
+        "memory_group": 3,
+        "io_resource": "F0.S.IO",
+        "io_read_ticks": 3,
+        "io_write_ticks": 3
+      },
+      "J0": {
+        "site": "J0.S",
+        "words": 1024,
+        "macros": [
+          "E",
+          "T"
+        ],
+        "memory_group": 4,
+        "io_resource": "J0.S.IO",
+        "io_read_ticks": 3,
+        "io_write_ticks": 3
+      },
+      "P1": {
+        "site": "P1.S",
+        "words": 1024,
+        "macros": [
+          "M",
+          "G"
+        ],
+        "memory_group": 5,
+        "io_resource": "P1.S.IO",
+        "io_read_ticks": 3,
+        "io_write_ticks": 3,
+        "operations": {
+          "G": [
+            "GatedSiLU"
+          ]
+        }
+      },
+      "P2": {
+        "site": "P2.S",
+        "words": 1024,
+        "macros": [
+          "M",
+          "G"
+        ],
+        "memory_group": 6,
+        "io_resource": "P2.S.IO",
+        "io_read_ticks": 3,
+        "io_write_ticks": 3,
+        "operations": {
+          "G": [
+            "GatedSiLU"
+          ]
+        }
+      },
+      "U1": {
+        "site": "U1.S",
+        "words": 1024,
+        "macros": [
+          "N",
+          "E"
+        ],
+        "memory_group": 7,
+        "io_resource": "U1.S.IO",
+        "io_read_ticks": 3,
+        "io_write_ticks": 3
+      },
+      "J1": {
+        "site": "J1.S",
+        "words": 1024,
+        "macros": [
+          "E",
+          "T"
+        ],
+        "memory_group": 8,
+        "io_resource": "J1.S.IO",
+        "io_read_ticks": 3,
+        "io_write_ticks": 3
+      }
+    },
+    "virtual_memory": {
+      "channels": 2,
+      "credits": 4,
+      "queue": 32,
+      "period": 6,
+      "phase": 1,
+      "latency": 20,
+      "seed": 181,
+      "kind": "pr182-bounded-v1",
+      "source_commit": "24e20d13a71cf65f721a182451308f1ad01ebaec",
+      "word_bytes": 16,
+      "core_period": 10,
+      "address_bits": 40,
+      "slots": 8,
+      "bank_count": 4,
+      "bank_interleave_bytes": 64,
+      "row_bytes": 1024,
+      "bank_issue_cycles": 2,
+      "row_miss_cycles": 6,
+      "turnaround_cycles": 4,
+      "scope": "deterministic compiler abstraction; not RTL/VIP or device calibration",
+      "randomness": "disabled explicitly; no reuse of PR182 measured throughput"
+    }
+  },
+  "traces": {
+    "prefill2": {
+      "scope": "actual frozen S32/S16 integer DAG; shape controls specialized, runtime views explicitly materialized; B1/S2 no KV",
+      "tokens": 2,
+      "tensors": 9545,
+      "nodes": 8850,
+      "ops": {
+        "Gather": 1,
+        "Convert": 901,
+        "NFactor": 109,
+        "Product": 3211,
+        "Constant": 51,
+        "SquareSum": 73,
+        "Add": 2595,
+        "Dot": 325,
+        "View": 684,
+        "Concat": 72,
+        "Mask": 36,
+        "MaskFloor": 36,
+        "Max": 36,
+        "MaskZero": 108,
+        "Compare": 108,
+        "Select": 216,
+        "Sum": 36,
+        "Maximum": 144,
+        "Minimum": 72,
+        "NExp": 36
+      },
+      "trace_sha256": "e7b4807eddbf4a31e5cb576920860b278a8e2f0021332b524c16ca63c60f99ff"
+    },
+    "decode128": {
+      "scope": "configuration-derived decode work/traffic projection; NOT numeric-qualified KV graph",
+      "tokens": 1,
+      "tensors": 1488,
+      "nodes": 1086,
+      "ops": {
+        "Gather": 1,
+        "Convert": 73,
+        "NFactor": 73,
+        "Product": 218,
+        "Dot": 325,
+        "RoPE": 72,
+        "KVWrite": 36,
+        "Max": 36,
+        "Sub": 36,
+        "NExp": 36,
+        "Sum": 36,
+        "Reciprocal": 36,
+        "Add": 72,
+        "SiLU": 36
+      },
+      "trace_sha256": "7af1edc40638938c11be651dfb8805ce35918f6020d62c574ed9f4081e6baa4e"
+    },
+    "decode512": {
+      "scope": "configuration-derived decode work/traffic projection; NOT numeric-qualified KV graph",
+      "tokens": 1,
+      "tensors": 1488,
+      "nodes": 1086,
+      "ops": {
+        "Gather": 1,
+        "Convert": 73,
+        "NFactor": 73,
+        "Product": 218,
+        "Dot": 325,
+        "RoPE": 72,
+        "KVWrite": 36,
+        "Max": 36,
+        "Sub": 36,
+        "NExp": 36,
+        "Sum": 36,
+        "Reciprocal": 36,
+        "Add": 72,
+        "SiLU": 36
+      },
+      "trace_sha256": "ca6d3be0b4003236d1c7f91f57a8e68d5293902c87087c554b379cb09a00a1d3"
+    },
+    "decode2048": {
+      "scope": "configuration-derived decode work/traffic projection; NOT numeric-qualified KV graph",
+      "tokens": 1,
+      "tensors": 1488,
+      "nodes": 1086,
+      "ops": {
+        "Gather": 1,
+        "Convert": 73,
+        "NFactor": 73,
+        "Product": 218,
+        "Dot": 325,
+        "RoPE": 72,
+        "KVWrite": 36,
+        "Max": 36,
+        "Sub": 36,
+        "NExp": 36,
+        "Sum": 36,
+        "Reciprocal": 36,
+        "Add": 72,
+        "SiLU": 36
+      },
+      "trace_sha256": "962f3d3944493b52aeba9525c28aa404c8091878e42d3fe0481f4ce420483890"
+    }
+  },
+  "native_N_profile": {
+    "N:{\"count\":0,\"mode\":0,\"op\":0}": 2,
+    "N:{\"count\":1,\"mode\":0,\"op\":1}": 4,
+    "N:{\"count\":2,\"mode\":0,\"op\":1}": 4,
+    "N:{\"count\":3,\"mode\":0,\"op\":1}": 6,
+    "N:{\"count\":4,\"mode\":0,\"op\":1}": 6,
+    "N:{\"count\":5,\"mode\":0,\"op\":1}": 8,
+    "N:{\"count\":6,\"mode\":0,\"op\":1}": 8,
+    "N:{\"count\":7,\"mode\":0,\"op\":1}": 10,
+    "N:{\"count\":8,\"mode\":0,\"op\":1}": 10,
+    "N:{\"count\":0,\"mode\":0,\"op\":2}": 2,
+    "N:{\"count\":1,\"mode\":0,\"op\":3}": 4,
+    "N:{\"count\":2,\"mode\":0,\"op\":3}": 4,
+    "N:{\"count\":3,\"mode\":0,\"op\":3}": 6,
+    "N:{\"count\":4,\"mode\":0,\"op\":3}": 6,
+    "N:{\"count\":5,\"mode\":0,\"op\":3}": 8,
+    "N:{\"count\":6,\"mode\":0,\"op\":3}": 8,
+    "N:{\"count\":7,\"mode\":0,\"op\":3}": 10,
+    "N:{\"count\":8,\"mode\":0,\"op\":3}": 10,
+    "N:{\"count\":0,\"mode\":0,\"op\":4}": 68,
+    "N:{\"count\":0,\"mode\":0,\"op\":11}": 2,
+    "N:{\"count\":1,\"mode\":0,\"op\":6}": 6,
+    "N:{\"count\":2,\"mode\":0,\"op\":6}": 6,
+    "N:{\"count\":3,\"mode\":0,\"op\":6}": 10,
+    "N:{\"count\":4,\"mode\":0,\"op\":6}": 10,
+    "N:{\"count\":5,\"mode\":0,\"op\":6}": 14,
+    "N:{\"count\":6,\"mode\":0,\"op\":6}": 14,
+    "N:{\"count\":7,\"mode\":0,\"op\":6}": 18,
+    "N:{\"count\":8,\"mode\":0,\"op\":6}": 18,
+    "N:{\"count\":0,\"mode\":1,\"op\":0}": 2,
+    "N:{\"count\":1,\"mode\":1,\"op\":1}": 4,
+    "N:{\"count\":2,\"mode\":1,\"op\":1}": 4,
+    "N:{\"count\":3,\"mode\":1,\"op\":1}": 6,
+    "N:{\"count\":4,\"mode\":1,\"op\":1}": 6,
+    "N:{\"count\":5,\"mode\":1,\"op\":1}": 8,
+    "N:{\"count\":6,\"mode\":1,\"op\":1}": 8,
+    "N:{\"count\":7,\"mode\":1,\"op\":1}": 10,
+    "N:{\"count\":8,\"mode\":1,\"op\":1}": 10,
+    "N:{\"count\":0,\"mode\":1,\"op\":2}": 168,
+    "N:{\"count\":0,\"mode\":1,\"op\":11}": 2,
+    "N:{\"count\":1,\"mode\":1,\"op\":5}": 6,
+    "N:{\"count\":2,\"mode\":1,\"op\":5}": 6,
+    "N:{\"count\":3,\"mode\":1,\"op\":5}": 10,
+    "N:{\"count\":4,\"mode\":1,\"op\":5}": 10,
+    "N:{\"count\":5,\"mode\":1,\"op\":5}": 14,
+    "N:{\"count\":6,\"mode\":1,\"op\":5}": 14,
+    "N:{\"count\":7,\"mode\":1,\"op\":5}": 18,
+    "N:{\"count\":8,\"mode\":1,\"op\":5}": 18,
+    "N:{\"count\":0,\"mode\":2,\"op\":0}": 2,
+    "N:{\"count\":1,\"mode\":2,\"op\":1}": 4,
+    "N:{\"count\":2,\"mode\":2,\"op\":1}": 4,
+    "N:{\"count\":3,\"mode\":2,\"op\":1}": 6,
+    "N:{\"count\":4,\"mode\":2,\"op\":1}": 6,
+    "N:{\"count\":5,\"mode\":2,\"op\":1}": 8,
+    "N:{\"count\":6,\"mode\":2,\"op\":1}": 8,
+    "N:{\"count\":7,\"mode\":2,\"op\":1}": 10,
+    "N:{\"count\":8,\"mode\":2,\"op\":1}": 10,
+    "N:{\"count\":0,\"mode\":2,\"op\":2}": 102,
+    "N:{\"count\":0,\"mode\":2,\"op\":11}": 2,
+    "N:{\"count\":1,\"mode\":2,\"op\":5}": 6,
+    "N:{\"count\":2,\"mode\":2,\"op\":5}": 6,
+    "N:{\"count\":3,\"mode\":2,\"op\":5}": 10,
+    "N:{\"count\":4,\"mode\":2,\"op\":5}": 10,
+    "N:{\"count\":5,\"mode\":2,\"op\":5}": 14,
+    "N:{\"count\":6,\"mode\":2,\"op\":5}": 14,
+    "N:{\"count\":7,\"mode\":2,\"op\":5}": 18,
+    "N:{\"count\":8,\"mode\":2,\"op\":5}": 18
+  }
+}

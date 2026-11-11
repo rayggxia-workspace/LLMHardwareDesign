@@ -1,0 +1,37 @@
+{
+  "decision": "R4 NEXP_DIRECT_LANES4 on best R2; do not implement 1KiB A cache in this round",
+  "R2_result_sha256": "b16ff9a0209add1227177d1899bbf9928ae7e83d724a0c113469e7c860c97098",
+  "R3_result_sha256": "bccd917afba10bb9c3f65f62b26b1eab588a85d73c364a4b4d54962b5197afb8",
+  "cache_screening": {
+    "qualified_shape": "1x2048x11008b1l0",
+    "operations": 36,
+    "old_tiles": 396288,
+    "actual_R3_shape_ms": 51.31636584,
+    "actual_R3_shape_share_pct": 18.78392760002099,
+    "P_bus_bytes": 853770240,
+    "P_bus_service_ms": 49.928084210526315,
+    "maximum_same_shape_time_space_ms": 1.3882816294736866,
+    "conditional_best_total_ms": 271.80466785752634,
+    "conditional_best_tokens_s": 3.679112680008044,
+    "conditional_gain_vs_R2_pct": 0.2597103335413298,
+    "skipped_A_read_lines": 5548032,
+    "skipped_A_bytes": 355074048,
+    "extra_cache_payload_bytes_per_P": 1024,
+    "scope": "Optimistic necessary-byte diagnostic with unchanged non-target spans and DDR traffic; not cache simulation, not general mathematical upper bound. New tag/copy/snoop/stale-fill costs excluded."
+  },
+  "N4_screening": {
+    "actual_R2_n8_fee": 18,
+    "illustrative_unmeasured_n8_fee": 14,
+    "frames": 36864,
+    "illustrative_saved_ms": 0.49152,
+    "illustrative_tokens_s": 3.6762130821188435,
+    "illustrative_gain_pct": 0.18069322541232058,
+    "scope": "Design screening only. Requires actual lane4 NX32 wrapper initiation-interval calibration; no fee is entered into model before measurement."
+  },
+  "reasons": [
+    "Cache payoff over bestR2 limited under unchanged trace/DMA, despite material cumulative S work reduction.",
+    "Cache needs physical tag invalidation at accepted writes, pending miss kill semantics, and actual old-DMA local destination/timing mapping.",
+    "N4 retains current S32 frame ABI and numeric contract, existing S/cache/DDR services, default2 and DIRECT0 compatibility.",
+    "Keep measured negative result if actual costs do not improve; no gain presumed."
+  ]
+}

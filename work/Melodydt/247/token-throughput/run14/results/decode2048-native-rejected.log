@@ -1,0 +1,121 @@
+{
+  "trace_name": "decode2048.trace",
+  "trace_sha256": "ba4157469188fbc1602e3324fa747847d78d39e392c4674cf92d9aabbce9339f",
+  "tensors": 1488,
+  "ops": 1086,
+  "tokens": 1,
+  "S32_tensor_count": 1088,
+  "tensor_width_counts": {
+    "16": 400,
+    "32": 1088
+  },
+  "kind_counts": {
+    "Gather": 1,
+    "Convert": 73,
+    "NFactor": 73,
+    "Product": 218,
+    "Dot": 325,
+    "RoPE": 72,
+    "KVWrite": 36,
+    "Max": 36,
+    "Sub": 36,
+    "NExp": 36,
+    "Sum": 36,
+    "Reciprocal": 36,
+    "Add": 72,
+    "SiLU": 36
+  },
+  "all_Dot_calls": 325,
+  "S32_Dot_calls": 325,
+  "S32_Dot_input_occurrences": 397,
+  "non_Dot_candidate_ops": 761,
+  "original_useful_MACs": 3387686912,
+  "static_context_eligible_calls": 253,
+  "max_K": 11008,
+  "native_admitted": false,
+  "native_rejection_reasons": [
+    "full_graph_instruction_and_DDR_bridge_compiler_not_implemented",
+    "lossless_S32_digit_adapter_and_S96_merge_are_conditional_unimplemented_hardware",
+    "U_graph_retains_frozen_S32_candidate_services"
+  ],
+  "static_shapes": [
+    {
+      "rows": 1,
+      "cols": 256,
+      "K": 2048,
+      "batches": 1,
+      "layout": 0,
+      "A_bits": 32,
+      "B_trace_bits": 16,
+      "output_shift": 16,
+      "calls": 72
+    },
+    {
+      "rows": 1,
+      "cols": 2048,
+      "K": 2048,
+      "batches": 1,
+      "layout": 0,
+      "A_bits": 32,
+      "B_trace_bits": 16,
+      "output_shift": 16,
+      "calls": 72
+    },
+    {
+      "rows": 1,
+      "cols": 2048,
+      "K": 11008,
+      "batches": 1,
+      "layout": 0,
+      "A_bits": 32,
+      "B_trace_bits": 16,
+      "output_shift": 16,
+      "calls": 36
+    },
+    {
+      "rows": 1,
+      "cols": 11008,
+      "K": 2048,
+      "batches": 1,
+      "layout": 0,
+      "A_bits": 32,
+      "B_trace_bits": 16,
+      "output_shift": 16,
+      "calls": 72
+    },
+    {
+      "rows": 1,
+      "cols": 151936,
+      "K": 2048,
+      "batches": 1,
+      "layout": 0,
+      "A_bits": 32,
+      "B_trace_bits": 16,
+      "output_shift": 16,
+      "calls": 1
+    },
+    {
+      "rows": 8,
+      "cols": 128,
+      "K": 2048,
+      "batches": 2,
+      "layout": 2,
+      "A_bits": 32,
+      "B_trace_bits": 32,
+      "output_shift": 24,
+      "calls": 36
+    },
+    {
+      "rows": 8,
+      "cols": 2048,
+      "K": 128,
+      "batches": 2,
+      "layout": 1,
+      "A_bits": 32,
+      "B_trace_bits": 32,
+      "output_shift": 24,
+      "calls": 36
+    }
+  ],
+  "qualification": "Conditional timing lowering inventory only; tensor payloads, per-tensor numeric scales and full native instruction stream are absent"
+}

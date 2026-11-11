@@ -77,6 +77,7 @@ module block_local_s_macro #(
   assign done_valid=!reset && raw_done_valid;
   assign done_error=!reset && raw_done_error;
   block_feed_loader feeder(
+   .load_skip_a(1'b0),
    .clk(clk),.reset(reset),.load_valid(load_valid),.load_ready(load_ready),
    .load_bank(load_bank),.load_rows(load_rows),.load_tiles(load_tiles),
    .load_a_wide(load_a_wide),.load_b_wide(load_b_wide),.load_reuse_b(load_reuse_b),

@@ -1,0 +1,113 @@
+{
+  "passed": true,
+  "source_commit": "b5ff1f708b1b1809bb78d5849d1f025dc5f3b6d1",
+  "scope": "conditional whole-graph timing with actual native-P command calibration; no native LLM generation/weights/quality/physical qualification",
+  "native_full_model_tokens_per_second": null,
+  "calibration": {
+    "passed": true,
+    "checks": 9336,
+    "source_commit": "eb8a40bc8de0cf6659701188cb5f2225e3320c23",
+    "result_sha256": "fa7674d19f36f8b743d8101664a0b3f40aa35aa5f2ea233a77447374a204beb9",
+    "scope": "actual RTL zero-stall leaf/load/control/IO timing; optional controller gaps and conditional adapter are separate"
+  },
+  "pairs": [
+    {
+      "workload": "decode512",
+      "weight": "w8",
+      "audit": {
+        "passed": true,
+        "before": "native_legacy_w8",
+        "after": "native_ctx8_w8",
+        "trace_sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+        "source_B_and_output_exactly_conserved": true,
+        "scalar_work_exactly_conserved": true,
+        "before_conditional_tokens_per_second": 0.06758220057279295,
+        "after_conditional_tokens_per_second": 0.08174052950505634,
+        "speedup": 1.2094978975568194
+      },
+      "before_conditional_tokens_s": 0.0675822005728,
+      "after_conditional_tokens_s": 0.0817405295051,
+      "speedup": 1.2094978975554127
+    },
+    {
+      "workload": "decode512",
+      "weight": "w16",
+      "audit": {
+        "passed": true,
+        "before": "native_legacy_w16",
+        "after": "native_ctx8_w16",
+        "trace_sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+        "source_B_and_output_exactly_conserved": true,
+        "scalar_work_exactly_conserved": true,
+        "before_conditional_tokens_per_second": 0.0449178140006305,
+        "after_conditional_tokens_per_second": 0.05052530350838472,
+        "speedup": 1.124838878126961
+      },
+      "before_conditional_tokens_s": 0.0449178140006,
+      "after_conditional_tokens_s": 0.0505253035084,
+      "speedup": 1.1248388781259926
+    },
+    {
+      "workload": "decode2048",
+      "weight": "w8",
+      "audit": {
+        "passed": true,
+        "before": "native_legacy_w8",
+        "after": "native_ctx8_w8",
+        "trace_sha256": "ba4157469188fbc1602e3324fa747847d78d39e392c4674cf92d9aabbce9339f",
+        "source_B_and_output_exactly_conserved": true,
+        "scalar_work_exactly_conserved": true,
+        "before_conditional_tokens_per_second": 0.0482651240409024,
+        "after_conditional_tokens_per_second": 0.05507841763455205,
+        "speedup": 1.141163909324582
+      },
+      "before_conditional_tokens_s": 0.0482651240409,
+      "after_conditional_tokens_s": 0.0550784176346,
+      "speedup": 1.1411639093231174
+    },
+    {
+      "workload": "prefill2",
+      "weight": "w8",
+      "audit": {
+        "passed": true,
+        "before": "native_legacy_w8",
+        "after": "native_ctx8_w8",
+        "trace_sha256": "be2f0c96b7042674680a3ee51d99389a89813318034c29098cdb344d131441b7",
+        "source_B_and_output_exactly_conserved": true,
+        "scalar_work_exactly_conserved": true,
+        "before_conditional_tokens_per_second": 0.0772390445638134,
+        "after_conditional_tokens_per_second": 0.0772390445638134,
+        "speedup": 1.0
+      },
+      "before_conditional_tokens_s": 0.0772390445638,
+      "after_conditional_tokens_s": 0.0772390445638,
+      "speedup": 1.0
+    }
+  ],
+  "audit_negative_rejections": [
+    "unearned_native_admission",
+    "hidden_S_expansion",
+    "dropped_release",
+    "missing_weight_work",
+    "missing_bank_transaction",
+    "inflated_rate"
+  ],
+  "job": {
+    "id": 101777,
+    "name": "mdt-token-native",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:10:34",
+    "partition": "c64",
+    "node": "node1",
+    "cpus": 4
+  },
+  "result_sha256": "afa8c326958295957c912f6f0a7836bb98ea235670cd8192cdbcdd64583f480f",
+  "context1_isolation": {
+    "before_conditional_tokens_s": 0.0645666565905,
+    "after_conditional_tokens_s": 0.0817405295051,
+    "rate_change_pct": 26.598671545781837
+  },
+  "analysis_sha256": "15e94cfae07280190aa1bbaee9d4496f8da40f1100ad5b3d4ff8d7ca4e8ac14d",
+  "PDF_sha256": "b6469f2fd6c6f8ec646c1bc36beb9e3746859ac9d73d219b12c3d0032b635b3c"
+}

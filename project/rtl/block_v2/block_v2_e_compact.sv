@@ -1,10 +1,10 @@
 // A command starts with operand A. Subsequent beats supply B and C as needed.
 // Opcode and shift are sampled only on the first beat.
-module block_v2_e_compact (
+module block_v2_e_compact #(parameter integer PIPELINED=0, S32=0) (
  input wire clk, reset, in_valid,
  output wire in_ready,
  input wire [3:0] in_op,
- input wire [4:0] in_shift,
+ input wire [(S32!=0?7:5)-1:0] in_shift,
  input wire [127:0] in_data,
  output wire out_valid,
  input wire out_ready,
@@ -14,7 +14,7 @@ module block_v2_e_compact (
  localparam FIRST=2'd0, SECOND=2'd1, THIRD=2'd2;
  reg [1:0] beat;
  reg [3:0] op;
- reg [4:0] shift;
+ reg [(S32!=0?7:5)-1:0] shift;
  reg [127:0] a, b;
  wire first_is_last = in_op == 7 || in_op == 8 || in_op >= 10;
  wire needs_c = op == 3 || op == 6;
@@ -39,6 +39,27 @@ module block_v2_e_compact (
   end
  end
 
+ generate if(S32!=0)begin: signed32
+ block_v2_e_s32 core (
+  .clk(clk), .reset(reset), .in_valid(in_valid && last), .in_ready(exec_ready),
+  .in_op(beat == FIRST ? in_op : op), .in_shift(beat == FIRST ? in_shift : shift),
+  .in_a(beat == FIRST ? in_data : a),
+  .in_b(beat == SECOND ? in_data : beat == THIRD ? b : 128'b0),
+  .in_c(beat == THIRD ? in_data : 128'b0),
+  .out_valid(out_valid), .out_ready(out_ready), .out_data(out_data),
+  .out_error(out_error), .out_saturated(out_saturated)
+ );
+ end else if(PIPELINED!=0)begin: pipelined
+ block_v2_e_pipeline core (
+  .clk(clk), .reset(reset), .in_valid(in_valid && last), .in_ready(exec_ready),
+  .in_op(beat == FIRST ? in_op : op), .in_shift(beat == FIRST ? in_shift : shift),
+  .in_a(beat == FIRST ? in_data : a),
+  .in_b(beat == SECOND ? in_data : beat == THIRD ? b : 128'b0),
+  .in_c(beat == THIRD ? in_data : 128'b0),
+  .out_valid(out_valid), .out_ready(out_ready), .out_data(out_data),
+  .out_error(out_error), .out_saturated(out_saturated)
+ );
+ end else begin: legacy
  block_v2_e core (
   .clk(clk), .reset(reset), .in_valid(in_valid && last), .in_ready(exec_ready),
   .in_op(beat == FIRST ? in_op : op), .in_shift(beat == FIRST ? in_shift : shift),
@@ -48,4 +69,5 @@ module block_v2_e_compact (
   .out_valid(out_valid), .out_ready(out_ready), .out_data(out_data),
   .out_error(out_error), .out_saturated(out_saturated)
  );
+ end endgenerate
 endmodule

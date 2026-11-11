@@ -1,6 +1,6 @@
-// Full reductions/normalizations, with explicit S-backed replay and two lanes.
+// Stateful operations retain two lanes; stateless op12 optionally uses four EXP lanes.
 // No calls to E/G; local square, EXP, divide/root and scaling resources.
-module block_v2_n(
+module block_v2_n #(parameter integer NEXP_DIRECT=0, NEXP_DIRECT_LANES=2) (
  input wire clk,reset,cmd_valid,output wire cmd_ready,
  input wire [3:0] cmd_op,cmd_count,input wire [31:0] cmd_param,
  input wire [127:0] cmd_data,cmd_aux,
@@ -28,6 +28,10 @@ module block_v2_n(
  end
  reg [1:0] enabled;
  reg [31:0] square[0:1];reg [15:0] ex[0:1];
+ // Only op12 may select a four-element step. Legacy pair arithmetic is intact.
+ localparam integer DIRECT_LANES=NEXP_DIRECT!=0?NEXP_DIRECT_LANES:2;
+ wire [3:0] accum_step=operation==12&&DIRECT_LANES==4?4'd4:4'd2;
+ wire [15:0] direct_extra_exp[0:1];wire [1:0] direct_extra_enabled;
  reg signed [47:0] norm_product[0:1];
  reg signed [63:0] gate_product[0:1];
  wire signed [63:0] normalized_gate[0:1];
@@ -74,6 +78,30 @@ module block_v2_n(
   begin rne30=(value>>>30)+$signed({63'd0,(value[29:0]>30'h20000000)||((value[29:0]==30'h20000000)&&value[30])});end
  endfunction
 
+ // Extra arithmetic exists only in the selected direct configuration. It
+ // neither reads nor writes any statistics, factor, replay or top state.
+ generate if(DIRECT_LANES==4)begin: direct_exp4
+  reg [15:0] extra_exp[0:1];reg [1:0] extra_enabled;
+  wire signed [15:0] extra_fetch[0:1];
+  for(genvar lane=0;lane<2;lane=lane+1)begin: extra_lane
+   assign extra_fetch[lane]=operation==12?$signed(16'(data>>(16*(position+4'd2+4'(lane))))):16'sd0;
+   assign direct_extra_exp[lane]=extra_exp[lane];
+  end
+  assign direct_extra_enabled=extra_enabled;
+  always @(posedge clk)begin
+   if(reset)begin extra_exp[0]<=0;extra_exp[1]<=0;extra_enabled<=0;end
+   else if(phase==CALC&&operation==12)begin
+    for(integer lane=0;lane<2;lane=lane+1)begin
+     extra_enabled[lane]<=position+4'd2+4'(lane)<n;
+     extra_exp[lane]<=exponential($signed({extra_fetch[lane][15],extra_fetch[lane]}));
+    end
+   end
+  end
+ end else begin: direct_exp2
+  assign direct_extra_exp[0]=16'd0;assign direct_extra_exp[1]=16'd0;
+  assign direct_extra_enabled=2'd0;
+ end endgenerate
+
  reg command_ok;
  reg signed [31:0] pair_sum;
  reg [32:0] pair_square;reg [16:0] pair_exp;
@@ -97,6 +125,13 @@ module block_v2_n(
   else if(cmd_op==9)command_ok=top_loading&&cmd_count>0&&cmd_count<=4&&({1'b0,top_count}+{3'd0,cmd_count}<=40);
   else if(cmd_op==10)command_ok=top_loading&&top_count>0&&{2'd0,top_k}<=top_count;
   else if(cmd_op==11)command_ok=factor_valid;
+  // Optional stateless relative EXP. No context is required or modified.
+  // Used operands are signed S16; unused complete lanes and aux must be zero.
+  else if(cmd_op==12)begin
+   command_ok=NEXP_DIRECT!=0&&cmd_param==0&&cmd_aux==0&&cmd_count>0&&cmd_count<=8;
+   for(integer i=0;i<8;i=i+1)
+    if(i>=cmd_count&&cmd_data[16*i+:16]!=0)command_ok=0;
+  end
   else command_ok=0;
   pair_sum=0;pair_square=0;pair_exp=0;pair_max=raw[0];pair_min=raw[0];
   for(integer l=0;l<2;l=l+1)begin
@@ -139,7 +174,7 @@ module block_v2_n(
        mode<=cmd_param[1:0];epsilon<=cmd_data[31:0];context_valid<=1;statistics_final<=0;factor_valid<=0;
        count<=0;sum<=0;sumsq<=0;maximum<=-32768;minimum<=32767;exp_sum<=0;exp_count<=0;replayed<=0;rsp_valid<=1;
       end
-      1,3,5,6:begin
+      1,3,5,6,12:begin
        operation<=cmd_op;data<=cmd_data;aux<=cmd_aux;n<=cmd_count;position<=0;result<=0;saturated<=0;phase<=CALC;
       end
       2:begin
@@ -169,7 +204,10 @@ module block_v2_n(
       enabled[l]<=position+4'(l)<n;
       raw[l]<=fetch[l];gamma[l]<=16'(aux>>(16*(position+4'(l))));
       square[l]<=fetch[l]*fetch[l];
-      ex[l]<=exponential($signed({fetch[l][15],fetch[l]})-$signed({maximum[15],maximum}));
+      // The existing exponential returns32768 for every nonnegative
+      // difference, exactly exp(min(x,0)); op12 never reads maximum.
+      ex[l]<=exponential(operation==12?$signed({fetch[l][15],fetch[l]}):
+       $signed({fetch[l][15],fetch[l]})-$signed({maximum[15],maximum}));
      end
      phase<=operation==5||operation==6?NORM_MUL:ACCUM;
     end
@@ -178,15 +216,27 @@ module block_v2_n(
       sum<=sum+pair_sum;sumsq<=sumsq+{15'd0,pair_square};count<=count+{15'd0,enabled[0]}+{15'd0,enabled[1]};
       if(pair_max>maximum)maximum<=pair_max;if(pair_min<minimum)minimum<=pair_min;
      end else begin
-      exp_sum<=exp_sum+{15'd0,pair_exp};exp_count<=exp_count+{15'd0,enabled[0]}+{15'd0,enabled[1]};
-      for(integer l=0;l<2;l=l+1)if(enabled[l])result[16*(position+4'(l))+:16]<=ex[l];
-     end
-     if(position+2>=n)begin phase<=IDLE;rsp_valid<=1;
+      // Only the legacy exp-accumulate command owns persistent statistics.
+      // op12 shares the result lanes without changing exp_count or exp_sum.
       if(operation==3)begin
+       exp_sum<=exp_sum+{15'd0,pair_exp};exp_count<=exp_count+{15'd0,enabled[0]}+{15'd0,enabled[1]};
+      end
+      for(integer l=0;l<2;l=l+1)if(enabled[l])result[16*(position+4'(l))+:16]<=ex[l];
+      if(operation==12&&DIRECT_LANES==4)
+       for(integer l=0;l<2;l=l+1)if(direct_extra_enabled[l])
+        result[16*(position+4'd2+4'(l))+:16]<=direct_extra_exp[l];
+     end
+     if({1'b0,position}+{1'b0,accum_step}>={1'b0,n})begin phase<=IDLE;rsp_valid<=1;
+      if(operation==3||operation==12)begin
        rsp_data<=result;
        for(integer l=0;l<2;l=l+1)if(enabled[l])rsp_data[16*(position+4'(l))+:16]<=ex[l];
+       // The current result registers update on this same edge, so also
+       // override the final two lanes in rsp_data directly.
+       if(operation==12&&DIRECT_LANES==4)
+        for(integer l=0;l<2;l=l+1)if(direct_extra_enabled[l])
+         rsp_data[16*(position+4'd2+4'(l))+:16]<=direct_extra_exp[l];
       end
-     end else begin position<=position+2;phase<=CALC;end
+     end else begin position<=position+accum_step;phase<=CALC;end
     end
     MEAN_START:if(group_ready)phase<=MEAN_WAIT;
     MEAN_WAIT:if(group_valid)begin group_n<=group_q+{16'd0,epsilon,16'd0};phase<=ROOT_START;end
@@ -234,6 +284,11 @@ module block_v2_n(
     default:begin phase<=IDLE;rsp_valid<=1;rsp_error<=1;end
    endcase
   end
+ end
+ // A static configuration error must fail before any command is accepted.
+ initial begin
+  if(NEXP_DIRECT_LANES!=2&&NEXP_DIRECT_LANES!=4)
+   $fatal(1,"NEXP_DIRECT_LANES must be exactly 2 or 4");
  end
  // Remainder is an internal diagnostic of the shared exact arithmetic unit.
  wire unused_remainder=^group_r;

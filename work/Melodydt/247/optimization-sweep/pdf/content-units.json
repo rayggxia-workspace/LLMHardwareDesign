@@ -1,0 +1,1202 @@
+[
+  {
+    "kind": "title",
+    "text": "当前共享32KiB方案的后续优化评估"
+  },
+  {
+    "kind": "body",
+    "text": "Issue247 / PR243；负责人Melodydt。2026-11-10，Asia/Shanghai。三批服务器SystemC运行共192场景，生产RTL未修改。"
+  },
+  {
+    "kind": "body",
+    "text": "结论：保持共享32KiB和17.1GB/s，向量8路＋S16桥接＋4路NExp的prefill条件结果为4.423812/5.086834 token/s（shared/idealdual）。这是本轮优先建议。 桥接额外费用从1提高到8拍/8值，idealdual仍为5.057101。固定外存带宽的最高组合为5.508124 token/s，包含更多M/供数资源，面积代价更大。所有数值均为旧条件模型结果，原生RTL整图速度仍未测得。"
+  },
+  {
+    "kind": "section",
+    "text": "1. 评价口径与当前实现边界"
+  },
+  {
+    "kind": "body",
+    "text": "保留原四种工作负载：W8 decode context512、W16 decode context512、W8 decode context2048、W8 prefill2。频率300MHz、2P/1U，默认外存17.1GB/s、共享32KiB、每P四槽、共享A32B/拍、全局池服务64B/拍；保留原S32/K256/S96及R1/R2/R4调度合同。prefill2按两个输入token除以完整trace时间，不能与decode的单token延迟混用。"
+  },
+  {
+    "kind": "body",
+    "text": "shared表示P本地读写共用服务预算；idealdual表示P本地各64B/拍读、写日历独立，U仍共用端口。当前P后端逻辑1R1W已验证，但M写回及普通IO仍128bit，独立wide_write才是512bit；不能把后端峰值当作整条访问路径已经兑现模型合同。"
+  },
+  {
+    "kind": "body",
+    "text": "DDR25.6/34.2GB/s两行显式改变外存条件，其他行仍17.1GB/s。新计算/端口宽度和S16桥接只是待实现服务目标；没有新的RTL校准、完整权重生成验证或300MHz物理验收。现有真实RTL的格式转换、K32命令展开、DMA/LOAD汇合与队列费用仍须进一步校准。"
+  },
+  {
+    "kind": "section",
+    "text": "2. 基线瓶颈证据"
+  },
+  {
+    "kind": "body",
+    "text": "W8 decode512的idealdual基线中，Dot占完整trace时间82.27%，权重占外存总线字节96.17%；平均有效外存流量11.873GB/s。两通道总线忙占比分别68.98%/69.90%，并非全程100%占满；带宽敏感性仍证明外存服务是decode的重要限制。不能把可重叠的等待计数相加当作总耗时。"
+  },
+  {
+    "kind": "body",
+    "text": "W8 prefill2的idealdual基线中，Dot占52.86%，向量阶段占31.52%，NExp占10.50%。36个NExp操作、792576个值全部是S16输入回退，原S32快路径没有覆盖它们。这说明优化U及格式覆盖比单独继续加MAC更直接。"
+  },
+  {
+    "kind": "section",
+    "text": "3. 各方向方案、结果与实施含义"
+  },
+  {
+    "kind": "sub",
+    "text": "3.1 优先补齐S16 NExp快路径"
+  },
+  {
+    "kind": "body",
+    "text": "保留4路NExp服务，只增加显式S16到既有低16位数值合同的打包桥接。模型每8值另收1拍，保留全部S读写、vector_region、缓存与DDR费用。prefill达到4.199320/4.792248 token/s，较同层基线+7.84%/+8.94%；三个decode不变。"
+  },
+  {
+    "kind": "body",
+    "text": "继续增加到8路只到4.818940（idealdual），较4路桥接方案再提高0.56%。因此先做格式桥接和资格验证，再决定是否复制NExp单元。桥接的1拍/8值是假设目标，不能称为已测RTL延迟；必须检查符号、缩放、饱和、尾包和背压。"
+  },
+  {
+    "kind": "sub",
+    "text": "3.2 扩宽U向量流水"
+  },
+  {
+    "kind": "body",
+    "text": "既有4路向量扩为8/16路，保留每包5拍固定开销及所有存储访问。prefill idealdual分别4.645880/4.780063，增幅5.61%/8.66%；W8 decode512的16路为3.865115（+4.46%）。只扩两处向量流水，未把归约、拷贝或整个U费用同比缩小。"
+  },
+  {
+    "kind": "body",
+    "text": "16路向量与S16桥接4路NExp实际联合仿真得到4.545307/5.248140，相对基线+16.72%/+19.31%。没有扩共享容量，也没有增加M乘法并行度；作为性能优先的候选保留。"
+  },
+  {
+    "kind": "body",
+    "text": "进一步测试较小的8路向量＋S16桥接组合，prefill为4.423812/5.086834（+13.60%/+15.64%）。桥接成本放宽到8拍/8值时仍为4.401308/5.057101。因此若以面积与达到条件5 token/s兼顾，先实施8路，再决定是否升到16路；这不是原生RTL吞吐保证。"
+  },
+  {
+    "kind": "sub",
+    "text": "3.3 M计算与A/B供数必须配套"
+  },
+  {
+    "kind": "body",
+    "text": "单独将M主体的K并行8→16，保留启动、尾部及结果读回费用，本轮四场景两端口层均没有提速。单独将A32→64B、B适配64→128B也收益很小，因为本地S总读服务仍64B、池全局服务仍64B。"
+  },
+  {
+    "kind": "body",
+    "text": "M16与A/B扩宽联合后，prefill idealdual为4.575113（+4.01%）。继续把M本地取数扩到128B仅到4.580113，较前者增0.109%。供数、存储、计算的收益不能相乘。"
+  },
+  {
+    "kind": "body",
+    "text": "加入向量16路和S16桥接4路NExp的完整组合达到4.831646/5.508124；相对较小的向量＋S16方案，idealdual再增4.95%。需要更大面积及新端口组织，应保留为备选，不能优先假设单独加MAC就有效。"
+  },
+  {
+    "kind": "sub",
+    "text": "3.4 外存带宽主要帮助decode"
+  },
+  {
+    "kind": "body",
+    "text": "总带宽17.1→25.6→34.2GB/s，W8 decode512 idealdual从3.700221→4.706094→5.404502，后者+46.06%；W16 decode512达到3.510143（+60.10%）。保留原两通道、信用、延迟、行切换及S服务，没有免费消除所有DMA成本。"
+  },
+  {
+    "kind": "body",
+    "text": "prefill的idealdual仅升至4.910906（+11.64%），说明其U与计算限制更明显。外存接口、封装和控制器是否能提供该带宽须另行确认；这两行不是17.1GB/s下的优化结果。"
+  },
+  {
+    "kind": "sub",
+    "text": "3.5 共享池继续扩容"
+  },
+  {
+    "kind": "body",
+    "text": "共享48/96KiB的prefill idealdual为4.475230/4.668451，较32KiB增加1.73%/6.13%。三个decode在48和96之间完全同速，不能期待容量不断翻倍产生同等收益。当前更建议保留32KiB，先实施格式与向量路径优化。"
+  },
+  {
+    "kind": "sub",
+    "text": "3.6 补齐M写回通路，收益须如实计量"
+  },
+  {
+    "kind": "body",
+    "text": "旧模型已按64B/拍计M结果写入。把它收紧为实际普通写通路的16B/拍，prefill idealdual变成4.391319；从该修正对照补到64B恢复4.398913，增幅0.173%。W8 decode512对应增幅0.369%。这只是带宽敏感性，不含真实命令/ACK/打包成本；不能把已包含在旧基线里的64B收益重复添加。"
+  },
+  {
+    "kind": "sub",
+    "text": "3.7 NExp单纯加路数的负结果"
+  },
+  {
+    "kind": "body",
+    "text": "仅将已合格S32路径从4路变8路，W8 decode512 idealdual从3.700221到3.712036；prefill完全不变，因为没有命中该格式路径。它应排在S16桥接之后，不能用局部两倍吞吐代替整图收益。"
+  },
+  {
+    "kind": "section",
+    "text": "4. 面积与实施顺序"
+  },
+  {
+    "kind": "head",
+    "text": "方向"
+  },
+  {
+    "kind": "head",
+    "text": "面积/资源判断"
+  },
+  {
+    "kind": "head",
+    "text": "建议"
+  },
+  {
+    "kind": "cell",
+    "text": "S16桥接＋原4路NExp"
+  },
+  {
+    "kind": "cell",
+    "text": "增加打包、控制和有限缓存；没有要求增加NExp算术路数，具体面积未综合"
+  },
+  {
+    "kind": "cell",
+    "text": "第一优先，先做格式/数值/背压验证"
+  },
+  {
+    "kind": "cell",
+    "text": "向量8/16路"
+  },
+  {
+    "kind": "cell",
+    "text": "对所扩向量算术部分约2/4倍路数，不能等同整个U面积倍数"
+  },
+  {
+    "kind": "cell",
+    "text": "第二优先；优先8路＋S16桥接，16路保留余量"
+  },
+  {
+    "kind": "cell",
+    "text": "NExp8路"
+  },
+  {
+    "kind": "cell",
+    "text": "相对4路约增加一倍该算术通路，整图额外收益有限"
+  },
+  {
+    "kind": "cell",
+    "text": "暂缓"
+  },
+  {
+    "kind": "cell",
+    "text": "M16＋宽供数＋128B本地读"
+  },
+  {
+    "kind": "cell",
+    "text": "MAC主体约2倍K并行度，新增互连/端口/FIFO费用；不是已实现"
+  },
+  {
+    "kind": "cell",
+    "text": "大面积备选，实施前独立备份与综合"
+  },
+  {
+    "kind": "cell",
+    "text": "DDR25.6/34.2GB/s"
+  },
+  {
+    "kind": "cell",
+    "text": "控制器、接口和封装代价未测"
+  },
+  {
+    "kind": "cell",
+    "text": "decode目标且外部系统允许时优先"
+  },
+  {
+    "kind": "cell",
+    "text": "共享48KiB"
+  },
+  {
+    "kind": "cell",
+    "text": "比32KiB增加4颗4KiB宏，宏外框代理+0.369848mm²"
+  },
+  {
+    "kind": "cell",
+    "text": "不优先于桥接/向量"
+  },
+  {
+    "kind": "cell",
+    "text": "共享96KiB"
+  },
+  {
+    "kind": "cell",
+    "text": "比32KiB增加16颗4KiB宏，宏外框代理+1.479393mm²"
+  },
+  {
+    "kind": "cell",
+    "text": "保留为容量备选"
+  },
+  {
+    "kind": "body",
+    "text": "宏代理使用既有4KiB宏0.092462050025mm²，只计宏外框，不含控制/布线/STA。128B读取若沿用同类宏并采用8lane×双位置，每P需要16宏、物理64KiB，相比当前8宏/P再增加32KiB/P；两P额外宏代理约1.479393mm²，逻辑16KiB可保留但需使用半深度。这只是一个组织选项，其他宏/端口方案需重新评估，不能作为已测面积或最小面积。"
+  },
+  {
+    "kind": "body",
+    "text": "建议顺序：S16 NExp桥接验证 → U向量8路联合实现 → 原生整图/连续负载校准 → 视余量再升16路。若decode为首要目标且可调整系统，则推进外存带宽可行性；M/128B本地读和大容量共享池作为后续备选。当前分支和三个模型commit已保留全部方案；本轮没有实装这些新增候选。"
+  },
+  {
+    "kind": "section",
+    "text": "5. 全场景速度表"
+  },
+  {
+    "kind": "body",
+    "text": "单位均为条件token/s。每一行是独立实际SystemC运行或实际联合运行，不是Amdahl外推。write16为修正对照；其余默认比较共享32KiB、17.1GB/s基线，容量和外存变化按名称显式标出。"
+  },
+  {
+    "kind": "sub",
+    "text": "shared：读写共用日历"
+  },
+  {
+    "kind": "head",
+    "text": "方案"
+  },
+  {
+    "kind": "head",
+    "text": "W8 decode512"
+  },
+  {
+    "kind": "head",
+    "text": "W16 decode512"
+  },
+  {
+    "kind": "head",
+    "text": "W8 decode2048"
+  },
+  {
+    "kind": "head",
+    "text": "W8 prefill2"
+  },
+  {
+    "kind": "cell",
+    "text": "当前条件基线"
+  },
+  {
+    "kind": "cell",
+    "text": "3.449322"
+  },
+  {
+    "kind": "cell",
+    "text": "1.932379"
+  },
+  {
+    "kind": "cell",
+    "text": "2.817071"
+  },
+  {
+    "kind": "cell",
+    "text": "3.894197"
+  },
+  {
+    "kind": "cell",
+    "text": "U向量8路"
+  },
+  {
+    "kind": "cell",
+    "text": "3.543265"
+  },
+  {
+    "kind": "cell",
+    "text": "1.961514"
+  },
+  {
+    "kind": "cell",
+    "text": "2.888617"
+  },
+  {
+    "kind": "cell",
+    "text": "4.086504"
+  },
+  {
+    "kind": "cell",
+    "text": "U向量16路"
+  },
+  {
+    "kind": "cell",
+    "text": "3.592181"
+  },
+  {
+    "kind": "cell",
+    "text": "1.976413"
+  },
+  {
+    "kind": "cell",
+    "text": "2.925771"
+  },
+  {
+    "kind": "cell",
+    "text": "4.189961"
+  },
+  {
+    "kind": "cell",
+    "text": "NExp 8路"
+  },
+  {
+    "kind": "cell",
+    "text": "3.459587"
+  },
+  {
+    "kind": "cell",
+    "text": "1.935597"
+  },
+  {
+    "kind": "cell",
+    "text": "2.844642"
+  },
+  {
+    "kind": "cell",
+    "text": "3.894197"
+  },
+  {
+    "kind": "cell",
+    "text": "M的K并行8→16"
+  },
+  {
+    "kind": "cell",
+    "text": "3.449322"
+  },
+  {
+    "kind": "cell",
+    "text": "1.932379"
+  },
+  {
+    "kind": "cell",
+    "text": "2.817071"
+  },
+  {
+    "kind": "cell",
+    "text": "3.894197"
+  },
+  {
+    "kind": "cell",
+    "text": "A64B＋B128B适配"
+  },
+  {
+    "kind": "cell",
+    "text": "3.449331"
+  },
+  {
+    "kind": "cell",
+    "text": "1.932379"
+  },
+  {
+    "kind": "cell",
+    "text": "2.817076"
+  },
+  {
+    "kind": "cell",
+    "text": "3.899795"
+  },
+  {
+    "kind": "cell",
+    "text": "DDR 25.6GB/s"
+  },
+  {
+    "kind": "cell",
+    "text": "4.381208"
+  },
+  {
+    "kind": "cell",
+    "text": "2.362039"
+  },
+  {
+    "kind": "cell",
+    "text": "3.466442"
+  },
+  {
+    "kind": "cell",
+    "text": "4.575910"
+  },
+  {
+    "kind": "cell",
+    "text": "DDR 34.2GB/s"
+  },
+  {
+    "kind": "cell",
+    "text": "4.516442"
+  },
+  {
+    "kind": "cell",
+    "text": "2.486919"
+  },
+  {
+    "kind": "cell",
+    "text": "3.580178"
+  },
+  {
+    "kind": "cell",
+    "text": "4.669152"
+  },
+  {
+    "kind": "cell",
+    "text": "共享48KiB"
+  },
+  {
+    "kind": "cell",
+    "text": "3.474714"
+  },
+  {
+    "kind": "cell",
+    "text": "1.945252"
+  },
+  {
+    "kind": "cell",
+    "text": "2.833984"
+  },
+  {
+    "kind": "cell",
+    "text": "3.977429"
+  },
+  {
+    "kind": "cell",
+    "text": "共享96KiB"
+  },
+  {
+    "kind": "cell",
+    "text": "3.474714"
+  },
+  {
+    "kind": "cell",
+    "text": "1.945252"
+  },
+  {
+    "kind": "cell",
+    "text": "2.833984"
+  },
+  {
+    "kind": "cell",
+    "text": "4.189147"
+  },
+  {
+    "kind": "cell",
+    "text": "M写回16B修正对照"
+  },
+  {
+    "kind": "cell",
+    "text": "3.443988"
+  },
+  {
+    "kind": "cell",
+    "text": "1.930149"
+  },
+  {
+    "kind": "cell",
+    "text": "2.811324"
+  },
+  {
+    "kind": "cell",
+    "text": "3.888233"
+  },
+  {
+    "kind": "cell",
+    "text": "M16＋A/B扩宽"
+  },
+  {
+    "kind": "cell",
+    "text": "3.449331"
+  },
+  {
+    "kind": "cell",
+    "text": "1.932379"
+  },
+  {
+    "kind": "cell",
+    "text": "2.817076"
+  },
+  {
+    "kind": "cell",
+    "text": "3.917924"
+  },
+  {
+    "kind": "cell",
+    "text": "向量16＋NExp8"
+  },
+  {
+    "kind": "cell",
+    "text": "3.603315"
+  },
+  {
+    "kind": "cell",
+    "text": "1.979779"
+  },
+  {
+    "kind": "cell",
+    "text": "2.955523"
+  },
+  {
+    "kind": "cell",
+    "text": "4.189961"
+  },
+  {
+    "kind": "cell",
+    "text": "M16＋供数＋向量16＋NExp8"
+  },
+  {
+    "kind": "cell",
+    "text": "3.603324"
+  },
+  {
+    "kind": "cell",
+    "text": "1.979779"
+  },
+  {
+    "kind": "cell",
+    "text": "2.955529"
+  },
+  {
+    "kind": "cell",
+    "text": "4.217442"
+  },
+  {
+    "kind": "cell",
+    "text": "S16桥接＋NExp4路"
+  },
+  {
+    "kind": "cell",
+    "text": "3.449322"
+  },
+  {
+    "kind": "cell",
+    "text": "1.932379"
+  },
+  {
+    "kind": "cell",
+    "text": "2.817071"
+  },
+  {
+    "kind": "cell",
+    "text": "4.199320"
+  },
+  {
+    "kind": "cell",
+    "text": "S16桥接＋NExp8路"
+  },
+  {
+    "kind": "cell",
+    "text": "3.459587"
+  },
+  {
+    "kind": "cell",
+    "text": "1.935597"
+  },
+  {
+    "kind": "cell",
+    "text": "2.844642"
+  },
+  {
+    "kind": "cell",
+    "text": "4.219802"
+  },
+  {
+    "kind": "cell",
+    "text": "向量16＋S16桥接N4"
+  },
+  {
+    "kind": "cell",
+    "text": "3.592181"
+  },
+  {
+    "kind": "cell",
+    "text": "1.976413"
+  },
+  {
+    "kind": "cell",
+    "text": "2.925771"
+  },
+  {
+    "kind": "cell",
+    "text": "4.545307"
+  },
+  {
+    "kind": "cell",
+    "text": "M本地取数128B"
+  },
+  {
+    "kind": "cell",
+    "text": "3.527720"
+  },
+  {
+    "kind": "cell",
+    "text": "2.030034"
+  },
+  {
+    "kind": "cell",
+    "text": "2.880770"
+  },
+  {
+    "kind": "cell",
+    "text": "4.079372"
+  },
+  {
+    "kind": "cell",
+    "text": "M16＋供数＋本地取数128B"
+  },
+  {
+    "kind": "cell",
+    "text": "3.532406"
+  },
+  {
+    "kind": "cell",
+    "text": "2.031869"
+  },
+  {
+    "kind": "cell",
+    "text": "2.893090"
+  },
+  {
+    "kind": "cell",
+    "text": "4.102497"
+  },
+  {
+    "kind": "cell",
+    "text": "上述M组合＋向量16＋S16桥接N4"
+  },
+  {
+    "kind": "cell",
+    "text": "3.682380"
+  },
+  {
+    "kind": "cell",
+    "text": "2.080611"
+  },
+  {
+    "kind": "cell",
+    "text": "3.007856"
+  },
+  {
+    "kind": "cell",
+    "text": "4.831646"
+  },
+  {
+    "kind": "cell",
+    "text": "向量8＋S16桥接N4"
+  },
+  {
+    "kind": "cell",
+    "text": "3.543265"
+  },
+  {
+    "kind": "cell",
+    "text": "1.961514"
+  },
+  {
+    "kind": "cell",
+    "text": "2.888617"
+  },
+  {
+    "kind": "cell",
+    "text": "4.423812"
+  },
+  {
+    "kind": "cell",
+    "text": "向量8＋S16桥接N4，桥接8拍"
+  },
+  {
+    "kind": "cell",
+    "text": "3.543265"
+  },
+  {
+    "kind": "cell",
+    "text": "1.961514"
+  },
+  {
+    "kind": "cell",
+    "text": "2.888617"
+  },
+  {
+    "kind": "cell",
+    "text": "4.401308"
+  },
+  {
+    "kind": "sub",
+    "text": "idealdual：独立读写日历"
+  },
+  {
+    "kind": "head",
+    "text": "方案"
+  },
+  {
+    "kind": "head",
+    "text": "W8 decode512"
+  },
+  {
+    "kind": "head",
+    "text": "W16 decode512"
+  },
+  {
+    "kind": "head",
+    "text": "W8 decode2048"
+  },
+  {
+    "kind": "head",
+    "text": "W8 prefill2"
+  },
+  {
+    "kind": "cell",
+    "text": "当前条件基线"
+  },
+  {
+    "kind": "cell",
+    "text": "3.700221"
+  },
+  {
+    "kind": "cell",
+    "text": "2.192427"
+  },
+  {
+    "kind": "cell",
+    "text": "2.994659"
+  },
+  {
+    "kind": "cell",
+    "text": "4.398913"
+  },
+  {
+    "kind": "cell",
+    "text": "U向量8路"
+  },
+  {
+    "kind": "cell",
+    "text": "3.808541"
+  },
+  {
+    "kind": "cell",
+    "text": "2.230007"
+  },
+  {
+    "kind": "cell",
+    "text": "3.075640"
+  },
+  {
+    "kind": "cell",
+    "text": "4.645880"
+  },
+  {
+    "kind": "cell",
+    "text": "U向量16路"
+  },
+  {
+    "kind": "cell",
+    "text": "3.865115"
+  },
+  {
+    "kind": "cell",
+    "text": "2.249284"
+  },
+  {
+    "kind": "cell",
+    "text": "3.117796"
+  },
+  {
+    "kind": "cell",
+    "text": "4.780063"
+  },
+  {
+    "kind": "cell",
+    "text": "NExp 8路"
+  },
+  {
+    "kind": "cell",
+    "text": "3.712036"
+  },
+  {
+    "kind": "cell",
+    "text": "2.196570"
+  },
+  {
+    "kind": "cell",
+    "text": "3.025836"
+  },
+  {
+    "kind": "cell",
+    "text": "4.398913"
+  },
+  {
+    "kind": "cell",
+    "text": "M的K并行8→16"
+  },
+  {
+    "kind": "cell",
+    "text": "3.700221"
+  },
+  {
+    "kind": "cell",
+    "text": "2.192427"
+  },
+  {
+    "kind": "cell",
+    "text": "2.994659"
+  },
+  {
+    "kind": "cell",
+    "text": "4.398913"
+  },
+  {
+    "kind": "cell",
+    "text": "A64B＋B128B适配"
+  },
+  {
+    "kind": "cell",
+    "text": "3.700233"
+  },
+  {
+    "kind": "cell",
+    "text": "2.192427"
+  },
+  {
+    "kind": "cell",
+    "text": "2.994667"
+  },
+  {
+    "kind": "cell",
+    "text": "4.429533"
+  },
+  {
+    "kind": "cell",
+    "text": "DDR 25.6GB/s"
+  },
+  {
+    "kind": "cell",
+    "text": "4.706094"
+  },
+  {
+    "kind": "cell",
+    "text": "2.968587"
+  },
+  {
+    "kind": "cell",
+    "text": "3.694922"
+  },
+  {
+    "kind": "cell",
+    "text": "4.807278"
+  },
+  {
+    "kind": "cell",
+    "text": "DDR 34.2GB/s"
+  },
+  {
+    "kind": "cell",
+    "text": "5.404502"
+  },
+  {
+    "kind": "cell",
+    "text": "3.510143"
+  },
+  {
+    "kind": "cell",
+    "text": "4.160466"
+  },
+  {
+    "kind": "cell",
+    "text": "4.910906"
+  },
+  {
+    "kind": "cell",
+    "text": "共享48KiB"
+  },
+  {
+    "kind": "cell",
+    "text": "3.711253"
+  },
+  {
+    "kind": "cell",
+    "text": "2.195909"
+  },
+  {
+    "kind": "cell",
+    "text": "3.001881"
+  },
+  {
+    "kind": "cell",
+    "text": "4.475230"
+  },
+  {
+    "kind": "cell",
+    "text": "共享96KiB"
+  },
+  {
+    "kind": "cell",
+    "text": "3.711253"
+  },
+  {
+    "kind": "cell",
+    "text": "2.195909"
+  },
+  {
+    "kind": "cell",
+    "text": "3.001881"
+  },
+  {
+    "kind": "cell",
+    "text": "4.668451"
+  },
+  {
+    "kind": "cell",
+    "text": "M写回16B修正对照"
+  },
+  {
+    "kind": "cell",
+    "text": "3.686626"
+  },
+  {
+    "kind": "cell",
+    "text": "2.188496"
+  },
+  {
+    "kind": "cell",
+    "text": "2.983256"
+  },
+  {
+    "kind": "cell",
+    "text": "4.391319"
+  },
+  {
+    "kind": "cell",
+    "text": "M16＋A/B扩宽"
+  },
+  {
+    "kind": "cell",
+    "text": "3.700233"
+  },
+  {
+    "kind": "cell",
+    "text": "2.192427"
+  },
+  {
+    "kind": "cell",
+    "text": "2.994667"
+  },
+  {
+    "kind": "cell",
+    "text": "4.575113"
+  },
+  {
+    "kind": "cell",
+    "text": "向量16＋NExp8"
+  },
+  {
+    "kind": "cell",
+    "text": "3.878008"
+  },
+  {
+    "kind": "cell",
+    "text": "2.253644"
+  },
+  {
+    "kind": "cell",
+    "text": "3.151604"
+  },
+  {
+    "kind": "cell",
+    "text": "4.780063"
+  },
+  {
+    "kind": "cell",
+    "text": "M16＋供数＋向量16＋NExp8"
+  },
+  {
+    "kind": "cell",
+    "text": "3.878021"
+  },
+  {
+    "kind": "cell",
+    "text": "2.253644"
+  },
+  {
+    "kind": "cell",
+    "text": "3.151613"
+  },
+  {
+    "kind": "cell",
+    "text": "4.988845"
+  },
+  {
+    "kind": "cell",
+    "text": "S16桥接＋NExp4路"
+  },
+  {
+    "kind": "cell",
+    "text": "3.700221"
+  },
+  {
+    "kind": "cell",
+    "text": "2.192427"
+  },
+  {
+    "kind": "cell",
+    "text": "2.994659"
+  },
+  {
+    "kind": "cell",
+    "text": "4.792248"
+  },
+  {
+    "kind": "cell",
+    "text": "S16桥接＋NExp8路"
+  },
+  {
+    "kind": "cell",
+    "text": "3.712036"
+  },
+  {
+    "kind": "cell",
+    "text": "2.196570"
+  },
+  {
+    "kind": "cell",
+    "text": "3.025836"
+  },
+  {
+    "kind": "cell",
+    "text": "4.818940"
+  },
+  {
+    "kind": "cell",
+    "text": "向量16＋S16桥接N4"
+  },
+  {
+    "kind": "cell",
+    "text": "3.865115"
+  },
+  {
+    "kind": "cell",
+    "text": "2.249284"
+  },
+  {
+    "kind": "cell",
+    "text": "3.117796"
+  },
+  {
+    "kind": "cell",
+    "text": "5.248140"
+  },
+  {
+    "kind": "cell",
+    "text": "M本地取数128B"
+  },
+  {
+    "kind": "cell",
+    "text": "3.701394"
+  },
+  {
+    "kind": "cell",
+    "text": "2.192436"
+  },
+  {
+    "kind": "cell",
+    "text": "2.995427"
+  },
+  {
+    "kind": "cell",
+    "text": "4.398913"
+  },
+  {
+    "kind": "cell",
+    "text": "M16＋供数＋本地取数128B"
+  },
+  {
+    "kind": "cell",
+    "text": "3.706661"
+  },
+  {
+    "kind": "cell",
+    "text": "2.194597"
+  },
+  {
+    "kind": "cell",
+    "text": "3.008810"
+  },
+  {
+    "kind": "cell",
+    "text": "4.580113"
+  },
+  {
+    "kind": "cell",
+    "text": "上述M组合＋向量16＋S16桥接N4"
+  },
+  {
+    "kind": "cell",
+    "text": "3.872142"
+  },
+  {
+    "kind": "cell",
+    "text": "2.251568"
+  },
+  {
+    "kind": "cell",
+    "text": "3.133138"
+  },
+  {
+    "kind": "cell",
+    "text": "5.508124"
+  },
+  {
+    "kind": "cell",
+    "text": "向量8＋S16桥接N4"
+  },
+  {
+    "kind": "cell",
+    "text": "3.808541"
+  },
+  {
+    "kind": "cell",
+    "text": "2.230007"
+  },
+  {
+    "kind": "cell",
+    "text": "3.075640"
+  },
+  {
+    "kind": "cell",
+    "text": "5.086834"
+  },
+  {
+    "kind": "cell",
+    "text": "向量8＋S16桥接N4，桥接8拍"
+  },
+  {
+    "kind": "cell",
+    "text": "3.808541"
+  },
+  {
+    "kind": "cell",
+    "text": "2.230007"
+  },
+  {
+    "kind": "cell",
+    "text": "3.075640"
+  },
+  {
+    "kind": "cell",
+    "text": "5.057101"
+  },
+  {
+    "kind": "section",
+    "text": "6. 验证、来源及复跑"
+  },
+  {
+    "kind": "body",
+    "text": "run35/job102040（源码e2f91b346f57e872610b0e416290901f5d5e666e）、run36/job102041（源码d9afc95a9b649b096c8a7930d99d56d065d78047）和run37/job102043（源码f1700f031d629e5af33ad8b36ff9523a6393d90b）均在服务器c64/node1/4核Slurm中执行。三个作业均COMPLETED 0:0，合计192例通过；40次历史全RESULT控制一致，960个篡改结果负控拒绝。"
+  },
+  {
+    "kind": "body",
+    "text": "实际生成的共享池A32/A64两设置合计4350个独立数值输出比较、60个生命周期负控和18个事件篡改检查通过；这仅验证共享池的地址/数据/FIFO模型，不是新NExp8/M16/S16桥接RTL数值验收。各例保持外存字节/描述符与M命令/tiles守恒，并核验逐类工作差额、有限队列和token换算。"
+  },
+  {
+    "kind": "body",
+    "text": "本地逐SHA核验519个回收文件，并重新从逐例日志解析RESULT与主回执比对；完整事件和结果保存在个人服务器run35/run36/run37及本地receipts，仓库仅存轻量分析和索引。收集脚本初次因登录节点Python3.6不支持text参数失败，改用universal_newlines后成功；未重跑或修改已成功仿真。"
+  },
+  {
+    "kind": "body",
+    "text": "run35 result SHA-256：2a5a21953b1be5f607d0c3ab1dd459415e9f29c215a7e4398410280c8f8e8f75；run36 result SHA-256：6ff313e48da5ec4ad4eb4ee6eab1702e7019615d09e1fa8282ff1260b651e70c；run37 result SHA-256：a465a266c485eeb30640f567e47cfbe3fa7c4602575d45a41e3a1164e081aa9d。工具版本及容器/SystemC库SHA见证据目录，所有输入版本沿用冻结manifest。"
+  },
+  {
+    "kind": "body",
+    "text": "主扫描源码、补充扫描源码、桥接敏感性源码、完整派生比较与瓶颈、接续记录。"
+  },
+  {
+    "kind": "body",
+    "text": "复跑必须在Slurm分配中，按各目录job.sh执行并携带冻结输入manifest。只做本地后处理时使用证据目录analyze.py，明确传入--runs-root与--repo；管理检查python scripts/check_project.py不代替业务仿真。"
+  },
+  {
+    "kind": "body",
+    "text": "交付状态：研究结果待正式审查，PR243未合并，不标done；登记PR5 pending、看板unverified/同步pending，CI既有无steps/runner限制待管理员核实。没有活动仿真或自动监测。此前run24/25原包上传阻塞保留，本轮未重传旧包。"
+  }
+]

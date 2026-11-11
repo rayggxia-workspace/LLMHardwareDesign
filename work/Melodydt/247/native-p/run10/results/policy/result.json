@@ -1,0 +1,637 @@
+{
+  "passed": true,
+  "scope": "real isolated arbitration RTL with finite memory responder; no DMA engine, SRAM throughput or token/s claim",
+  "versions": {
+    "python": "3.10.12",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "g++": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+  },
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "seconds": 0.05462285876274109,
+      "log": "verilator-version.log",
+      "log_sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "command": [
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "seconds": 0.004540717229247093,
+      "log": "g++-version.log",
+      "log_sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "--assert",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "policy_top",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled0-burst2",
+        "-GPOLICY_ENABLE=0",
+        "-GMAX_CONSUMER_BURST=2",
+        "-CFLAGS",
+        "-std=c++17 -Wall -Wextra -Werror",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_top.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_test.cpp"
+      ],
+      "exit_code": 0,
+      "seconds": 3.342195683158934,
+      "log": "enabled0-burst2-build.log",
+      "log_sha256": "00de3e8295740d115deb1f36ccdf0075cb9e51e95200357c36cf2cfbc9325331"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled0-burst2/Vpolicy_top",
+        "--burst",
+        "2",
+        "--seed",
+        "143",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.008313879370689392,
+      "log": "enabled0-burst2-seed143.log",
+      "log_sha256": "69f6226e9e50b4a3f8e24ba65860d3185b075a406cc121ab69adb717573f346f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled0-burst2/Vpolicy_top",
+        "--burst",
+        "2",
+        "--seed",
+        "144",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "seconds": 0.004425177350640297,
+      "log": "enabled0-burst2-seed144.log",
+      "log_sha256": "3234cacb326ea12df580b90fc613d9b7eeedc5c366d280545c40d9715d11daeb"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled0-burst2/Vpolicy_top",
+        "--burst",
+        "2",
+        "--seed",
+        "7143",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+7143"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0054571377113461494,
+      "log": "enabled0-burst2-seed7143.log",
+      "log_sha256": "ad2e146d8606b518d637e2444d929076e5a18f40d748d5760d7634fe1fd8c5a1"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "--assert",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "policy_top",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst1",
+        "-GPOLICY_ENABLE=1",
+        "-GMAX_CONSUMER_BURST=1",
+        "-CFLAGS",
+        "-std=c++17 -Wall -Wextra -Werror",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_top.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_test.cpp"
+      ],
+      "exit_code": 0,
+      "seconds": 3.003507890738547,
+      "log": "enabled1-burst1-build.log",
+      "log_sha256": "be5af8c56a506e7f04f35c577e5954fc6b791a0ba622355c37ec8681e578ca35"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst1/Vpolicy_top",
+        "--burst",
+        "1",
+        "--seed",
+        "143",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143",
+        "--enabled"
+      ],
+      "exit_code": 0,
+      "seconds": 0.006087819114327431,
+      "log": "enabled1-burst1-seed143.log",
+      "log_sha256": "d6b772aac06aa2285c5dc30ebec1a1df8506d8ef77910bfeb82233b4289886da"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst1/Vpolicy_top",
+        "--burst",
+        "1",
+        "--seed",
+        "144",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144",
+        "--enabled"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0057728486135602,
+      "log": "enabled1-burst1-seed144.log",
+      "log_sha256": "68e78ed49d9fbeceac537b753521b9d930ae47e7966a7c16bc10e5bfd6c3a9e5"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst1/Vpolicy_top",
+        "--burst",
+        "1",
+        "--seed",
+        "7143",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+7143",
+        "--enabled"
+      ],
+      "exit_code": 0,
+      "seconds": 0.005306209437549114,
+      "log": "enabled1-burst1-seed7143.log",
+      "log_sha256": "3d6cf168eff91c7336090df7bf456f30653cc8f2a3f86bb256dad4844138f7b5"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "--assert",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "policy_top",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst2",
+        "-GPOLICY_ENABLE=1",
+        "-GMAX_CONSUMER_BURST=2",
+        "-CFLAGS",
+        "-std=c++17 -Wall -Wextra -Werror",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_top.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_test.cpp"
+      ],
+      "exit_code": 0,
+      "seconds": 3.00677908398211,
+      "log": "enabled1-burst2-build.log",
+      "log_sha256": "746bc1ef619326862b0d06ee80e5c90de703ce33d69f6e8f63c1e6a93d05e35c"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst2/Vpolicy_top",
+        "--burst",
+        "2",
+        "--seed",
+        "143",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143",
+        "--enabled"
+      ],
+      "exit_code": 0,
+      "seconds": 0.006634588353335857,
+      "log": "enabled1-burst2-seed143.log",
+      "log_sha256": "40c8d40001bb7f34281f67519608ea05cdd914cca99424635bbb41f34ac2bf9b"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst2/Vpolicy_top",
+        "--burst",
+        "2",
+        "--seed",
+        "144",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144",
+        "--enabled"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0057444386184215546,
+      "log": "enabled1-burst2-seed144.log",
+      "log_sha256": "0968ca3b72a318073f9cf3d7625efcdf273e41e5ec2e92b4f5583c1377092eac"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst2/Vpolicy_top",
+        "--burst",
+        "2",
+        "--seed",
+        "7143",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+7143",
+        "--enabled"
+      ],
+      "exit_code": 0,
+      "seconds": 0.005123326554894447,
+      "log": "enabled1-burst2-seed7143.log",
+      "log_sha256": "428f17aeb16ce4ef78eca4257df36c6bc3f0fdbaf1022a2297fd2c84bfe18dfe"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "--assert",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "policy_top",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst4",
+        "-GPOLICY_ENABLE=1",
+        "-GMAX_CONSUMER_BURST=4",
+        "-CFLAGS",
+        "-std=c++17 -Wall -Wextra -Werror",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_top.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_test.cpp"
+      ],
+      "exit_code": 0,
+      "seconds": 3.0005219439044595,
+      "log": "enabled1-burst4-build.log",
+      "log_sha256": "fd46d0a7b3d82975b11ecc8d34f8fc463ee1c06cff9e1e273e9b51843e2dc487"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst4/Vpolicy_top",
+        "--burst",
+        "4",
+        "--seed",
+        "143",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143",
+        "--enabled"
+      ],
+      "exit_code": 0,
+      "seconds": 0.00646959338337183,
+      "log": "enabled1-burst4-seed143.log",
+      "log_sha256": "e6f4316dca20486cad3503848ae4902cd44c0310c0d6ba9434a43e6d1a159ed9"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst4/Vpolicy_top",
+        "--burst",
+        "4",
+        "--seed",
+        "144",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144",
+        "--enabled"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0056989435106515884,
+      "log": "enabled1-burst4-seed144.log",
+      "log_sha256": "8947e09ce14346dd457a806dbf29c781176636991c7100b808beea2c3963ae66"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst4/Vpolicy_top",
+        "--burst",
+        "4",
+        "--seed",
+        "7143",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+7143",
+        "--enabled"
+      ],
+      "exit_code": 0,
+      "seconds": 0.005520348437130451,
+      "log": "enabled1-burst4-seed7143.log",
+      "log_sha256": "1267f6ec1a20c01e109033add92918087f1bf12d4d46dc103a25235f5aea3ae8"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-enabled1-burst2/Vpolicy_top",
+        "--enabled",
+        "--burst",
+        "2",
+        "--negative-response"
+      ],
+      "exit_code": 1,
+      "seconds": 0.005082623101770878,
+      "log": "negative-response.log",
+      "log_sha256": "aabb664d289fa1ee4e30f94b13870f160750a6d99e01a16b1e04512c1d0671ed"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--cc",
+        "--exe",
+        "--build",
+        "--assert",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "--top-module",
+        "policy_top",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-negative-stuck-consumer-cursor",
+        "-GPOLICY_ENABLE=1",
+        "-GMAX_CONSUMER_BURST=2",
+        "-CFLAGS",
+        "-std=c++17 -Wall -Wextra -Werror",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_top.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/popt_s_policy_arbiter_bad.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_test.cpp"
+      ],
+      "exit_code": 0,
+      "seconds": 2.9990888480097055,
+      "log": "negative-stuck-consumer-cursor-build.log",
+      "log_sha256": "c5ad02c1ca49e7a4fcbd15b51286f3604285f8ede82bf462ec7f34c36ae626eb"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/results/policy/obj-negative-stuck-consumer-cursor/Vpolicy_top",
+        "--enabled",
+        "--burst",
+        "2"
+      ],
+      "exit_code": 1,
+      "seconds": 0.004458720795810223,
+      "log": "negative-starvation.log",
+      "log_sha256": "0f5b3187c136f890a4ce5b66b1c6018164eded0558397bd2322ddf3e9b4f26a1"
+    }
+  ],
+  "measurements": [
+    {
+      "enabled": 0,
+      "burst": 2,
+      "seed": 143,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 764,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 12,
+      "consumer_response_latency_sum": 956,
+      "max_external_skipped_grants": 3,
+      "default_compared_cycles": 3598,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    },
+    {
+      "enabled": 0,
+      "burst": 2,
+      "seed": 144,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 764,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 12,
+      "consumer_response_latency_sum": 956,
+      "max_external_skipped_grants": 3,
+      "default_compared_cycles": 3637,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    },
+    {
+      "enabled": 0,
+      "burst": 2,
+      "seed": 7143,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 764,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 12,
+      "consumer_response_latency_sum": 956,
+      "max_external_skipped_grants": 3,
+      "default_compared_cycles": 3630,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    },
+    {
+      "enabled": 1,
+      "burst": 1,
+      "seed": 143,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 752,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 12,
+      "consumer_response_latency_sum": 944,
+      "max_external_skipped_grants": 3,
+      "default_compared_cycles": 0,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    },
+    {
+      "enabled": 1,
+      "burst": 1,
+      "seed": 144,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 752,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 12,
+      "consumer_response_latency_sum": 944,
+      "max_external_skipped_grants": 3,
+      "default_compared_cycles": 0,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    },
+    {
+      "enabled": 1,
+      "burst": 1,
+      "seed": 7143,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 752,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 12,
+      "consumer_response_latency_sum": 944,
+      "max_external_skipped_grants": 3,
+      "default_compared_cycles": 0,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    },
+    {
+      "enabled": 1,
+      "burst": 2,
+      "seed": 143,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 500,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 20,
+      "consumer_response_latency_sum": 692,
+      "max_external_skipped_grants": 5,
+      "default_compared_cycles": 0,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    },
+    {
+      "enabled": 1,
+      "burst": 2,
+      "seed": 144,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 500,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 20,
+      "consumer_response_latency_sum": 692,
+      "max_external_skipped_grants": 5,
+      "default_compared_cycles": 0,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    },
+    {
+      "enabled": 1,
+      "burst": 2,
+      "seed": 7143,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 500,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 20,
+      "consumer_response_latency_sum": 692,
+      "max_external_skipped_grants": 5,
+      "default_compared_cycles": 0,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    },
+    {
+      "enabled": 1,
+      "burst": 4,
+      "seed": 143,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 372,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 36,
+      "consumer_response_latency_sum": 564,
+      "max_external_skipped_grants": 9,
+      "default_compared_cycles": 0,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    },
+    {
+      "enabled": 1,
+      "burst": 4,
+      "seed": 144,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 372,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 36,
+      "consumer_response_latency_sum": 564,
+      "max_external_skipped_grants": 9,
+      "default_compared_cycles": 0,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    },
+    {
+      "enabled": 1,
+      "burst": 4,
+      "seed": 7143,
+      "steady_cycles": 516,
+      "consumer_admission_wait_sum": 372,
+      "consumer_responses": 64,
+      "max_external_admission_wait": 36,
+      "consumer_response_latency_sum": 564,
+      "max_external_skipped_grants": 9,
+      "default_compared_cycles": 0,
+      "accepts": 546,
+      "memory_requests": 545,
+      "response_ACKs": 544,
+      "reset_discarded_commands": 2
+    }
+  ],
+  "input_sha256": {
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv": "2290458fea43112043e49134b0c5cd76b540a109a3dc03cd807bc950887a0d76",
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_top.sv": "5768b6a74f1aa16a98c90ce2dbebc3398e5a26d2358d7628cf9207eecd696ffc",
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run10/source/project/experiments/p_native_opt/policy_test.cpp": "613be4632417200360b39ed958e1f7db559b788d956023c4e09dd7f6f274d4ef"
+  },
+  "verilator_binary_sha256": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+  "negative_controls": [
+    "corrupt-read-response",
+    "faulty-RTL-consumer-round-robin"
+  ],
+  "comparisons": [
+    {
+      "burst": 1,
+      "steady_cycles": 516,
+      "baseline_steady_cycles": 516,
+      "baseline_consumer_mean_response_cycles": 14.9375,
+      "consumer_mean_response_cycles": 14.75,
+      "external_max_admission_cycles": 12,
+      "external_max_skipped_grants": 3,
+      "external_skipped_grant_bound": 3
+    },
+    {
+      "burst": 2,
+      "steady_cycles": 516,
+      "baseline_steady_cycles": 516,
+      "baseline_consumer_mean_response_cycles": 14.9375,
+      "consumer_mean_response_cycles": 10.8125,
+      "external_max_admission_cycles": 20,
+      "external_max_skipped_grants": 5,
+      "external_skipped_grant_bound": 5
+    },
+    {
+      "burst": 4,
+      "steady_cycles": 516,
+      "baseline_steady_cycles": 516,
+      "baseline_consumer_mean_response_cycles": 14.9375,
+      "consumer_mean_response_cycles": 8.8125,
+      "external_max_admission_cycles": 36,
+      "external_max_skipped_grants": 9,
+      "external_skipped_grant_bound": 9
+    }
+  ]
+}

@@ -1,0 +1,579 @@
+{
+  "passed": true,
+  "scope": "unchanged production S16 RTL, fair RMS->ADD S/direct comparison; no S32 model/physical/whole-LLM qualification",
+  "versions": {
+    "python": "3.10.12",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "gcc": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+  },
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.1153681306168437,
+      "log": "verilator-version.log",
+      "log_sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "command": [
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.012486042454838753,
+      "log": "gcc-version.log",
+      "log_sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_fusion_native",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/results/native/obj",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/results/native/prepared/bench.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/s_sram/local_s_base.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/block_v2/block_v2_n.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/block_v2/block_v2_n_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/block_v2/block_v2_e.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/block_v2/block_v2_e_compact.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/pu_leaf_base/pu_u_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/pu_leaf_base/pu_compact_e_service.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/pu_leaf_base/pu_u_direct_pair.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/source/project/rtl/pu_leaf_base/ucf_s_compute_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 10.490193977952003,
+      "log": "native-build.log",
+      "log_sha256": "bc6c9d414c1bf19672ce62fb4649d4d21466e6001d36fab0c4df018ebf7b84ff"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/results/native/obj/Vtb_fusion_native",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.020970355719327927,
+      "log": "native-1-143.log",
+      "log_sha256": "1675c2833860586c5c2d546a8333fad3f68bc8e9102c2a6ffeee47dd67c9a700"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/results/native/obj/Vtb_fusion_native",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.019201706163585186,
+      "log": "native-2-143.log",
+      "log_sha256": "6d9be223af79cd8cb7a31abcb83535df496492e872ab2febcbba8fe0281ec6cd"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/results/native/obj/Vtb_fusion_native",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.018371903337538242,
+      "log": "native-2-144.log",
+      "log_sha256": "0d8e2e0caa0531d080788cd2dba6ff8db8712cb67a006ba5f7bcaf84eceafd74"
+    }
+  ],
+  "source_sha256": {
+    "project/rtl/s_sram/local_s_base.sv": "084a4c63e4fbe0a5e56c6319e542c5a7c6561e9ec5af0a07ed98ef0bd5aa21f4",
+    "project/rtl/s_sram/local_s_p.sv": "08780f5d99b9b816c0250b74595fc68354b360a225a4be526dab28afbdb69112",
+    "project/rtl/s_sram/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+    "project/rtl/block_feed_v1/block_feed_loader.sv": "3b8d4643519141232a7297afcf966899cfae3de67be0eba069d54116e66de356",
+    "project/rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+    "project/rtl/block_v2/block_v2_n.sv": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+    "project/rtl/block_v2/block_v2_n_group.sv": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+    "project/rtl/block_v2/block_v2_e.sv": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+    "project/rtl/block_v2/block_v2_e_compact.sv": "03e6c806007c7d97a30f3793580a107e7d5beb9c4a3d1e8d0d278d33256ca230",
+    "project/rtl/pu_leaf_base/pu_u_group.sv": "f2136115a15aa34260f598770b5576970dfadea407879d897e5571630989bd59",
+    "project/rtl/pu_leaf_base/pu_compact_e_service.sv": "850b4a6a185ffcbb97816fa7dd69baae583d237c28bb56b3b5340694de8f71ba",
+    "project/rtl/pu_leaf_base/pu_u_direct_pair.sv": "d70c8e5699cf4492ad43288e9395d1f6ef842ddf63ba03fef4c548ac072f85f3",
+    "project/rtl/pu_leaf_base/ucf_s_compute_client.sv": "8757f22b6cc03c11d2ac7aafe873c2c2121d00e130bfab90ab6de7eca1e258cc",
+    "project/rtl/block_v2/block_v2_n_exp.svh": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+    "project/experiments/pu_leaf_base/smoke.sh": "c5f0328e0bb13d9c074212aeb0ddad165b19b0c7cf0374b3cb6964f50ddf28b7"
+  },
+  "study_sha256": {
+    "run.py": "523ee8412a07c8fd299ec2cce9323fe574a2f2728980aa07dbf5be2cf7b00479",
+    "fusion_audit.py": "391603195c619529fa5ce3cda37851fec7475dfa478a5b6751e03852aa1d07b8",
+    "generate_fusion.py": "eaba4e98245f674a9340a0198e4ac59d755dca9d0466fe3c9b5db45e1144f1c2",
+    "fusion_contract.py": "f0ad0d3b9e51fd10cbca9d7d771c2d6c63cbb92db38da1f910683b349c42b1ce",
+    "prepare_overlap.py": "390f1e8b4a1c32428ec4ed32cba7ee0e1831ce0e45d247b1abed24e9a16df6b7",
+    "replay.py": "c509cf83c8c6526aa7994820aaeed0bab83a62e638d29e050302103a98ab01f8",
+    "u_ledger.py": "68703cd20c450befe984e7630178700c5a7d23ea8a1017617f7a6cdf87735b2e",
+    "source.json": "595c774cfade61f82f1f76ea0133006e6052d0e0ef8a90f9a5a2a056f6e1cd93",
+    "run_overlap.py": "ed49a5ca7d64573c60b7dde1762289048f94fca03199d61dbb8c125c46362c49",
+    "fusion_oracle.py": "e0bb7e2dc32d2a8ca21d03bfb302a252c0451611ec01d656c5863339156d6ff6",
+    "replay_selftest.py": "6f0caccc92c07bc7cf53f1b17cbca2084e95f3a752ece59914c4f612fae656b9",
+    "source-overlap.json": "e1a4d7f64bcf5ede20dbb005f94ac708688d616852ed2aab3b37d74fa9c71227",
+    "run_native.py": "1e1228a66cf93543417b742763a81caf8ac53178f0c26ee04a474a28934d0c22",
+    "parser_selftest.py": "00582d9debca356e6aa7a87c451b8996685ef4ba3753d093ac6085d592c95022",
+    "overlap-dependencies.json": "9a46f1ac7a074032964d3c4e9aa2ff36f214b27449ba146f6d29d4c661c2e948",
+    "prepare_native.py": "f51eecc081516c9e40739cb5c426c46cba041ea211677452fac98f68ed495f9c",
+    "overlap_parser_selftest.py": "7636fad082088c050623cc12dd97b6b2163a2d7e221ded2cb683831a30e9101d",
+    "overlap_control.sv": "564f46f289ddf64ede7fd3c620369b48c5d91fe514d033362b07bc329ebdedc9"
+  },
+  "bank": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v",
+    "sha256": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7"
+  },
+  "verilator_binary_sha256": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+  "source_commit": "1e6e10a7618f3d37542d1f22dd51af6ad1958eb8",
+  "deployment_manifest": {
+    "path": "/public/home/yuzelu/Melodydt/issue247-area-speed/run08/inputs.json",
+    "sha256": "4460850a8fff1274d8963b0da08f30e953da2c3529e386303438b67a652ca94c"
+  },
+  "bench": {
+    "upstream_bench": "project/experiments/pu_leaf_base/tb_pu_u_group.sv",
+    "upstream_sha256": "ac7a3949f79d5b27d984f3b9516de119388a2ca01d7d0ad3d868e35f9585cb3a",
+    "generated_bench_sha256": "7302c5ebd918e449b8e0662d6f42ba33385da602bacb21fe844f8a403b0330b1",
+    "change": "reuse frozen production U wiring and original helper tasks; replace test program with matched RMS->ADD routes and passive counters",
+    "scope": "S16 production RTL finite pair latency and serialized repeated-tile program; not native S32 model or multi-pair inflight pipeline"
+  },
+  "runs": [
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "passed": true,
+        "cases": [
+          {
+            "direct": 0,
+            "tiles": 1,
+            "delay": 0,
+            "cycles": 52,
+            "S_reads": 4,
+            "S_writes": 2,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 1,
+            "delay": 0,
+            "cycles": 45,
+            "S_reads": 3,
+            "S_writes": 1,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 1
+          },
+          {
+            "direct": 0,
+            "tiles": 16,
+            "delay": 0,
+            "cycles": 832,
+            "S_reads": 64,
+            "S_writes": 32,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 16,
+            "delay": 0,
+            "cycles": 720,
+            "S_reads": 48,
+            "S_writes": 16,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 16
+          },
+          {
+            "direct": 0,
+            "tiles": 1,
+            "delay": 4,
+            "cycles": 56,
+            "S_reads": 4,
+            "S_writes": 2,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 1,
+            "delay": 4,
+            "cycles": 49,
+            "S_reads": 3,
+            "S_writes": 1,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 1
+          },
+          {
+            "direct": 0,
+            "tiles": 16,
+            "delay": 4,
+            "cycles": 896,
+            "S_reads": 64,
+            "S_writes": 32,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 16,
+            "delay": 4,
+            "cycles": 784,
+            "S_reads": 48,
+            "S_writes": 16,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 16
+          }
+        ],
+        "comparisons": [
+          {
+            "tiles": 1,
+            "handoff_delay": 0,
+            "stored_cycles": 52,
+            "direct_cycles": 45,
+            "saved_cycles": 7,
+            "speedup": 1.1555555555555554,
+            "saved_S_payload_bytes": 32
+          },
+          {
+            "tiles": 1,
+            "handoff_delay": 4,
+            "stored_cycles": 56,
+            "direct_cycles": 49,
+            "saved_cycles": 7,
+            "speedup": 1.1428571428571428,
+            "saved_S_payload_bytes": 32
+          },
+          {
+            "tiles": 16,
+            "handoff_delay": 0,
+            "stored_cycles": 832,
+            "direct_cycles": 720,
+            "saved_cycles": 112,
+            "speedup": 1.1555555555555554,
+            "saved_S_payload_bytes": 512
+          },
+          {
+            "tiles": 16,
+            "handoff_delay": 4,
+            "stored_cycles": 896,
+            "direct_cycles": 784,
+            "saved_cycles": 112,
+            "speedup": 1.1428571428571428,
+            "saved_S_payload_bytes": 512
+          }
+        ],
+        "scope": "single existing N/E pair; repeated tiles remain serialized by native pair control; no max(N,E) or token/s claim"
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 143,
+      "checks": {
+        "passed": true,
+        "cases": [
+          {
+            "direct": 0,
+            "tiles": 1,
+            "delay": 0,
+            "cycles": 52,
+            "S_reads": 4,
+            "S_writes": 2,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 1,
+            "delay": 0,
+            "cycles": 45,
+            "S_reads": 3,
+            "S_writes": 1,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 1
+          },
+          {
+            "direct": 0,
+            "tiles": 16,
+            "delay": 0,
+            "cycles": 832,
+            "S_reads": 64,
+            "S_writes": 32,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 16,
+            "delay": 0,
+            "cycles": 720,
+            "S_reads": 48,
+            "S_writes": 16,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 16
+          },
+          {
+            "direct": 0,
+            "tiles": 1,
+            "delay": 4,
+            "cycles": 56,
+            "S_reads": 4,
+            "S_writes": 2,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 1,
+            "delay": 4,
+            "cycles": 49,
+            "S_reads": 3,
+            "S_writes": 1,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 1
+          },
+          {
+            "direct": 0,
+            "tiles": 16,
+            "delay": 4,
+            "cycles": 896,
+            "S_reads": 64,
+            "S_writes": 32,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 16,
+            "delay": 4,
+            "cycles": 784,
+            "S_reads": 48,
+            "S_writes": 16,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 16
+          }
+        ],
+        "comparisons": [
+          {
+            "tiles": 1,
+            "handoff_delay": 0,
+            "stored_cycles": 52,
+            "direct_cycles": 45,
+            "saved_cycles": 7,
+            "speedup": 1.1555555555555554,
+            "saved_S_payload_bytes": 32
+          },
+          {
+            "tiles": 1,
+            "handoff_delay": 4,
+            "stored_cycles": 56,
+            "direct_cycles": 49,
+            "saved_cycles": 7,
+            "speedup": 1.1428571428571428,
+            "saved_S_payload_bytes": 32
+          },
+          {
+            "tiles": 16,
+            "handoff_delay": 0,
+            "stored_cycles": 832,
+            "direct_cycles": 720,
+            "saved_cycles": 112,
+            "speedup": 1.1555555555555554,
+            "saved_S_payload_bytes": 512
+          },
+          {
+            "tiles": 16,
+            "handoff_delay": 4,
+            "stored_cycles": 896,
+            "direct_cycles": 784,
+            "saved_cycles": 112,
+            "speedup": 1.1428571428571428,
+            "saved_S_payload_bytes": 512
+          }
+        ],
+        "scope": "single existing N/E pair; repeated tiles remain serialized by native pair control; no max(N,E) or token/s claim"
+      }
+    },
+    {
+      "reset_mode": 2,
+      "seed": 144,
+      "checks": {
+        "passed": true,
+        "cases": [
+          {
+            "direct": 0,
+            "tiles": 1,
+            "delay": 0,
+            "cycles": 52,
+            "S_reads": 4,
+            "S_writes": 2,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 1,
+            "delay": 0,
+            "cycles": 45,
+            "S_reads": 3,
+            "S_writes": 1,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 1
+          },
+          {
+            "direct": 0,
+            "tiles": 16,
+            "delay": 0,
+            "cycles": 832,
+            "S_reads": 64,
+            "S_writes": 32,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 16,
+            "delay": 0,
+            "cycles": 720,
+            "S_reads": 48,
+            "S_writes": 16,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 16
+          },
+          {
+            "direct": 0,
+            "tiles": 1,
+            "delay": 4,
+            "cycles": 56,
+            "S_reads": 4,
+            "S_writes": 2,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 1,
+            "delay": 4,
+            "cycles": 49,
+            "S_reads": 3,
+            "S_writes": 1,
+            "N_commands": 1,
+            "E_commands": 1,
+            "direct_beats": 1
+          },
+          {
+            "direct": 0,
+            "tiles": 16,
+            "delay": 4,
+            "cycles": 896,
+            "S_reads": 64,
+            "S_writes": 32,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 0
+          },
+          {
+            "direct": 1,
+            "tiles": 16,
+            "delay": 4,
+            "cycles": 784,
+            "S_reads": 48,
+            "S_writes": 16,
+            "N_commands": 16,
+            "E_commands": 16,
+            "direct_beats": 16
+          }
+        ],
+        "comparisons": [
+          {
+            "tiles": 1,
+            "handoff_delay": 0,
+            "stored_cycles": 52,
+            "direct_cycles": 45,
+            "saved_cycles": 7,
+            "speedup": 1.1555555555555554,
+            "saved_S_payload_bytes": 32
+          },
+          {
+            "tiles": 1,
+            "handoff_delay": 4,
+            "stored_cycles": 56,
+            "direct_cycles": 49,
+            "saved_cycles": 7,
+            "speedup": 1.1428571428571428,
+            "saved_S_payload_bytes": 32
+          },
+          {
+            "tiles": 16,
+            "handoff_delay": 0,
+            "stored_cycles": 832,
+            "direct_cycles": 720,
+            "saved_cycles": 112,
+            "speedup": 1.1555555555555554,
+            "saved_S_payload_bytes": 512
+          },
+          {
+            "tiles": 16,
+            "handoff_delay": 4,
+            "stored_cycles": 896,
+            "direct_cycles": 784,
+            "saved_cycles": 112,
+            "speedup": 1.1428571428571428,
+            "saved_S_payload_bytes": 512
+          }
+        ],
+        "scope": "single existing N/E pair; repeated tiles remain serialized by native pair control; no max(N,E) or token/s claim"
+      }
+    }
+  ],
+  "output_sha256": {
+    "native-1-143.log": "1675c2833860586c5c2d546a8333fad3f68bc8e9102c2a6ffeee47dd67c9a700",
+    "native-2-143.log": "6d9be223af79cd8cb7a31abcb83535df496492e872ab2febcbba8fe0281ec6cd",
+    "native-build.log": "bc6c9d414c1bf19672ce62fb4649d4d21466e6001d36fab0c4df018ebf7b84ff",
+    "gcc-version.log": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+    "verilator-version.log": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+    "native-2-144.log": "0d8e2e0caa0531d080788cd2dba6ff8db8712cb67a006ba5f7bcaf84eceafd74",
+    "prepared/bench-source.json": "687ac44a72cce04c9a3d6cdd04496640fd965656c8f7f2cd01aacfc12dc3bf8a",
+    "prepared/bench.sv": "7302c5ebd918e449b8e0662d6f42ba33385da602bacb21fe844f8a403b0330b1"
+  }
+}

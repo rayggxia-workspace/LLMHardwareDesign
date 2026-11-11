@@ -1,0 +1,502 @@
+[
+  {
+    "kind": "title",
+    "text": "第一轮：NExp批处理接入U"
+  },
+  {
+    "kind": "body",
+    "text": "Issue247 / PR243；负责人Melodydt；2026-11-10，Asia/Shanghai。本文属于本次最多四轮提速迭代的第1轮。本轮RTL与旧体系服务器评估均通过，未达到5 token/s；本文是实施与结果报告，PDF由本文完整生成并单独保留排版核验回执。"
+  },
+  {
+    "kind": "section",
+    "text": "1. 出发点：先减少已知的逐元素重复工作"
+  },
+  {
+    "kind": "body",
+    "text": "主比较是旧PR241/Issue247体系的W8 decode、context512、八组上下文、16KiB。保持2P/1U、300MHz、17.1GB/s以及原trace。共享口起点3.23081074122 token/s；理想1R1W条件参考起点3.49616888299 token/s。目标5 token/s沿此理想端口参考层判定，两个端口层始终并列，不称当前四1RW硬件已达到该数字。"
+  },
+  {
+    "kind": "body",
+    "text": "起点run15的主参考层总耗时286.0273867ms，其中Dot224.1015367ms，其他算子合计61.92585ms。NExp占18.4871833ms，canonical占21.49358ms，reduce占8.6253133ms，vector占13.25398ms。M工作与adapter工作包含重叠，不能再加到墙钟上，也不能把它们当可独立删去的延迟。"
+  },
+  {
+    "kind": "body",
+    "text": "本轮36个NExp操作共294,912个元素。旧模型在完整 vector_region 后额外收取16拍/元素，合计4,718,592拍，即15.72864ms。因此本轮最多能替换的是这段额外计算费用，不能删除NExp的全部18.487ms，也不能免去原E包、S读写、cache或DDR。"
+  },
+  {
+    "kind": "body",
+    "text": "固定Dot流量和现有串行关系，仅优化P/M而不改变其余阶段不能达到5 token/s；即使Dot达到字节/带宽下限，仍约为4.0 token/s。这使有明确逐元素重复开销的NExp成为首轮可验证对象。canonical的SiLU41步和Reciprocal128步缺少完整数值配方，本轮不靠调小这些系数申领收益。"
+  },
+  {
+    "kind": "section",
+    "text": "2. 方案与复用来源"
+  },
+  {
+    "kind": "body",
+    "text": "本轮复用PR241在 189e43c77a6277955c1be54281b0d6b0b0d55c1f 的 nexp_batch_adapter 候选。原作者已有独立批处理思路；本轮新增的是正式U接入、共享N所有权、明确S32容器适配、S读写/ACK与错误保护，以及和旧评价模型相接的实测校准。"
+  },
+  {
+    "kind": "body",
+    "text": "旧标量参考每个值需要五条原N命令：清状态、统计输入x、统计0、结束统计、指数回放。其结果为 exp(x-max(x,0))。批处理先把正值变为0，然后以四条N命令处理一帧：清状态、统计n个0、结束统计、对n个截断后输入做指数回放。对每个S16输入，两者调用同一原生指数表和舍入规则，数学表达式相同。这里的exp指原N固定点查表/插值函数，不表示IEEE浮点指数；结果的原始整数编码保持。"
+  },
+  {
+    "kind": "body",
+    "text": "保留一个原N核。新控制器在批处理内部四条命令及最终响应被接收前保持所有权，普通N命令不能插入。外层原 ucf_s_compute_client 继续持有事务直到实际S写ACK和DONE消费，不提前释放或把结果有效当作已经写入存储。"
+  },
+  {
+    "kind": "code",
+    "text": "N命令入口 -> 描述符检查 -> 原S计算客户端\n                            | 读S的128bit操作数\n                            v\n                    pu_nexp_shared\n                       | 普通N直通\n                       | 批处理四命令\n                       v\n                    唯一原生N\n                       | 结果/错误\n                       v\n                 原S写回 -> 实际ACK -> DONE"
+  },
+  {
+    "kind": "section",
+    "text": "3. 新接口合同与兼容性"
+  },
+  {
+    "kind": "body",
+    "text": "pu_u_group 新增参数 NEXP_BATCH，默认0。默认模式保留原N路径，不启用新opcode语义；测试比较原源码与参数默认0版本的命令、S活动、结果和周期轨迹。"
+  },
+  {
+    "kind": "body",
+    "text": "开启后使用保留opcode15，并要求精确magic、一个S源、禁止direct转E。描述符错误在读取S前返回；数据未用lane不为零等错误在发出原N清状态命令前返回。错误不写目的S，不消耗原N统计状态。"
+  },
+  {
+    "kind": "head",
+    "text": "模式"
+  },
+  {
+    "kind": "head",
+    "text": "输入/输出"
+  },
+  {
+    "kind": "head",
+    "text": "count与标识"
+  },
+  {
+    "kind": "cell",
+    "text": "PACKED16"
+  },
+  {
+    "kind": "cell",
+    "text": "一拍128bit中最多8个S16，输出对应U16"
+  },
+  {
+    "kind": "cell",
+    "text": "count1..8；0x4E455850"
+  },
+  {
+    "kind": "cell",
+    "text": "NX32"
+  },
+  {
+    "kind": "cell",
+    "text": "最多4个S32容器，各取有符号低16；输出U16零扩展为S32"
+  },
+  {
+    "kind": "cell",
+    "text": "count1..4；0x4E583332"
+  },
+  {
+    "kind": "body",
+    "text": "NX32不进行免费S32饱和转换，也不是任意S32指数函数。已用容器的高16位按继承的旧packed假设忽略，因此0x00010000与0在该入口产生同一输入值。未用S32容器整项必须为0。报告和测试保留这种有损别名边界，不能把局部等价扩写为完整模型的精度证明。"
+  },
+  {
+    "kind": "body",
+    "text": "opcode15明确为clobber操作：它会新建并覆盖原N统计会话。调用者不能在批处理之后继续此前尚未结束的normal统计流程，恢复普通统计必须先发新的op0。这里采用明确新ABI，避免复制第二个N来掩盖共享状态问题。"
+  },
+  {
+    "kind": "body",
+    "text": "有效/就绪遵循背压合同。数据、count、模式在接受时锁存，不读取随后变化的输入元数据。结果被阻塞时保持稳定，复位丢弃未完成事务，不产生幽灵响应或写回。新opcode的非法描述符可以比旧保留opcode错误更早返回；默认0的兼容性与启用后的普通命令兼容性分别验证。"
+  },
+  {
+    "kind": "section",
+    "text": "4. 具体修改及面积账本"
+  },
+  {
+    "kind": "head",
+    "text": "文件/模块"
+  },
+  {
+    "kind": "head",
+    "text": "本轮修改"
+  },
+  {
+    "kind": "head",
+    "text": "作用"
+  },
+  {
+    "kind": "cell",
+    "text": "pu_u_group"
+  },
+  {
+    "kind": "cell",
+    "text": "默认关闭参数、新opcode前置拒绝、N路径选择"
+  },
+  {
+    "kind": "cell",
+    "text": "正式U接入并保留实际S事务"
+  },
+  {
+    "kind": "cell",
+    "text": "pu_nexp_shared"
+  },
+  {
+    "kind": "cell",
+    "text": "共享核所有权、容器拆装和结果保持"
+  },
+  {
+    "kind": "cell",
+    "text": "普通N与批处理互斥；明确输入格式"
+  },
+  {
+    "kind": "cell",
+    "text": "nexp_batch_adapter"
+  },
+  {
+    "kind": "cell",
+    "text": "复用固定版本上游四命令控制器"
+  },
+  {
+    "kind": "cell",
+    "text": "合并逐元素重复统计工作"
+  },
+  {
+    "kind": "cell",
+    "text": "rtl_iterations/round1"
+  },
+  {
+    "kind": "cell",
+    "text": "基线源码、生成校验、RTL测试、Slurm运行器"
+  },
+  {
+    "kind": "cell",
+    "text": "数值、生命周期、完整U和周期证据"
+  },
+  {
+    "kind": "cell",
+    "text": "iterative_speed/round01"
+  },
+  {
+    "kind": "cell",
+    "text": "独立生成扩展、profile审计与16场景计划"
+  },
+  {
+    "kind": "cell",
+    "text": "保持旧评价体系和可复现基线"
+  },
+  {
+    "kind": "body",
+    "text": "生产RTL没有修改原N指数表、归约运算器、E算术或16KiB SRAM。按显式状态声明，新增状态约402bit，其中384bit为三份128bit数据保持，约18bit为模式、count和控制；这是结构账本，综合可能共享或删除状态，不能把位数换算成已测面积。"
+  },
+  {
+    "kind": "body",
+    "text": "没有新增乘法器、指数查表副本或第二个N。本轮属于增加少量控制/暂存的方案。迭代前完整源已备份到 task/247-speed-base-a22e199c，固定 a22e199c1dce7d1037995a26f71f8b1358d038e0。综合面积、布局布线、功耗与300MHz时序尚未执行，新候选不继承历史物理资格。"
+  },
+  {
+    "kind": "section",
+    "text": "5. 验证设计"
+  },
+  {
+    "kind": "body",
+    "text": "计算单元测试以未改原N的五命令序列为数值参考，覆盖全部65,536个S16值、PACKED16 count1..8、NX32 count1..4及INT32极值/高位别名/随机值。测试包括非法count、未用lane、响应背压、内部所有权、复位及恢复。"
+  },
+  {
+    "kind": "body",
+    "text": "完整U测试使用实际S bank模型。正常结果必须在实际写ACK后完成并读回一致；错误目的地址的哨兵保持，非法描述符不产生S读写。覆盖原统计会话被显式clobber及新op0恢复、普通N/E程序、S响应被另一客户端占用、结果阻塞和中途复位。"
+  },
+  {
+    "kind": "body",
+    "text": "每个配置使用既有三组初始化/seed。默认0的完整事件轨迹与冻结原U比较；启用模式的普通合法事务与新opcode时延分别处理，不强求有意提前拒绝的错误事务仍占旧周期。"
+  },
+  {
+    "kind": "body",
+    "text": "周期分两类记录：compute-wrapper的接受到下一次可接受间隔用于模型的NExp额外费用；完整U同时记录输入S、计算、输出S/ACK三段，用于实际接入检查。模型不能把完整U的S开销和保留的vector_region重复收取，也不能把单独S16批处理响应延迟当作NX32服务间隔。"
+  },
+  {
+    "kind": "section",
+    "text": "6. 旧体系评价方法"
+  },
+  {
+    "kind": "body",
+    "text": "旧生成器、矩阵调度、cache和DDR实现不变，新扩展关闭时删除唯一新增 iteration_study 元数据后，整份RESULT须逐字段等于run15。W8/W16 decode512、W8 decode2048、W8 prefill2各取共享口和理想端口；先8个基线，再8个候选。"
+  },
+  {
+    "kind": "body",
+    "text": "S32输入/S32输出的NExp按1..8元素分组。NX32真实帧最多4个S32，故n8收费为两次实测n4的接受间隔之和。费用由完整通过的RTL回执生成并锁定源码commit、日志SHA、命令与实际测量，禁止手填加速倍率。"
+  },
+  {
+    "kind": "body",
+    "text": "独立解析发现prefill2的NExp是S16输入/S32输出，共36个操作、792,576元素。它不满足NX32输入合同，本轮保留完整旧路径及16拍/元素费用；不能把packed S16 n8的128bit输出当成原图需要的256bit S32输出。prefill候选整份旧RESULT应保持相同。"
+  },
+  {
+    "kind": "body",
+    "text": "审计核对NExp元素/帧数、收费差额、非NExp算术、M工作、逻辑与总线字节、描述符、S服务/预约、cache、容量和端口设置。等待时序允许随真实计算延迟变化。另执行原kernel/validation/smoke，保留错误profile、缺测量、漏wrapper成本及非法CLI拒绝。"
+  },
+  {
+    "kind": "section",
+    "text": "7. 服务器实际结果"
+  },
+  {
+    "kind": "body",
+    "text": "两项测试使用同一已上传源码 e6d72113a14c5a0772f01ff5851d630d5d6687fa，提交前27项修改的远程Git blob逐项读回一致。本人服务器目录为 /public/home/yuzelu/Melodydt/issue247-area-speed，登录目标yuzelu@10.129.166.172。"
+  },
+  {
+    "kind": "head",
+    "text": "阶段"
+  },
+  {
+    "kind": "head",
+    "text": "作业与目录"
+  },
+  {
+    "kind": "head",
+    "text": "实际终态"
+  },
+  {
+    "kind": "cell",
+    "text": "RTL及校准"
+  },
+  {
+    "kind": "cell",
+    "text": "101835 / mdt-r1-nexp-rtl / run16"
+  },
+  {
+    "kind": "cell",
+    "text": "c64、node1、4核；00:00:40；COMPLETED 0:0"
+  },
+  {
+    "kind": "cell",
+    "text": "旧体系评估"
+  },
+  {
+    "kind": "cell",
+    "text": "101838 / mdt-iter1-nexp / run17"
+  },
+  {
+    "kind": "cell",
+    "text": "c64、node1、4核；00:02:52；COMPLETED 0:0"
+  },
+  {
+    "kind": "body",
+    "text": "工具为Verilator5.042、GCC11.4.0、Python3.10.12和SystemC3.0.2。Slurm固定既有容器，工具与bank SHA随回执保存。没有在Windows或登录节点运行EDA。"
+  },
+  {
+    "kind": "body",
+    "text": "每组初始化的计算测试为66,524个值、8,588帧，包含整个S16域；完整U为667项检查。三组均通过。默认0每组89项完整事件与原U同值同周期；启用后每组26个普通N事务的元数据、相对周期及结果一致。真实S响应占用导致写ACK等待的用例通过。新共享路由严格lint通过；已有原N/E/S沿原警告策略编译，未为本轮删除检查。"
+  },
+  {
+    "kind": "head",
+    "text": "NX32元素数"
+  },
+  {
+    "kind": "head",
+    "text": "接受到下一可接受"
+  },
+  {
+    "kind": "head",
+    "text": "完整U至DONE"
+  },
+  {
+    "kind": "head",
+    "text": "完整U分段"
+  },
+  {
+    "kind": "cell",
+    "text": "1或2"
+  },
+  {
+    "kind": "cell",
+    "text": "15拍"
+  },
+  {
+    "kind": "cell",
+    "text": "24拍"
+  },
+  {
+    "kind": "cell",
+    "text": "输入5 + 计算14 + 输出5"
+  },
+  {
+    "kind": "cell",
+    "text": "3或4"
+  },
+  {
+    "kind": "cell",
+    "text": "19拍"
+  },
+  {
+    "kind": "cell",
+    "text": "28拍"
+  },
+  {
+    "kind": "cell",
+    "text": "输入5 + 计算18 + 输出5"
+  },
+  {
+    "kind": "body",
+    "text": "供旧模型使用的n1..8费用为15、15、19、19、34、34、38、38拍。n8是两个NX32 n4帧；没有使用PACKED16 n8的27拍充当S32容器费用。表内接受间隔含最终响应退休与下一请求接纳，完整U分段含真实S读写ACK，二者用途不同。"
+  },
+  {
+    "kind": "section",
+    "text": "8. 吞吐与剩余瓶颈"
+  },
+  {
+    "kind": "body",
+    "text": "下表为实际运行的旧体系条件模型结果，单位token/s。它没有获得完整原生LLM运行或物理300MHz资格；理想端口仍是原条件参考。"
+  },
+  {
+    "kind": "head",
+    "text": "场景"
+  },
+  {
+    "kind": "head",
+    "text": "共享口旧值"
+  },
+  {
+    "kind": "head",
+    "text": "共享口本轮"
+  },
+  {
+    "kind": "head",
+    "text": "理想端口旧值"
+  },
+  {
+    "kind": "head",
+    "text": "理想端口本轮"
+  },
+  {
+    "kind": "cell",
+    "text": "W8 decode512"
+  },
+  {
+    "kind": "cell",
+    "text": "3.230811"
+  },
+  {
+    "kind": "cell",
+    "text": "3.350526"
+  },
+  {
+    "kind": "cell",
+    "text": "3.496169"
+  },
+  {
+    "kind": "cell",
+    "text": "3.636785"
+  },
+  {
+    "kind": "cell",
+    "text": "W16 decode512"
+  },
+  {
+    "kind": "cell",
+    "text": "1.835579"
+  },
+  {
+    "kind": "cell",
+    "text": "1.873613"
+  },
+  {
+    "kind": "cell",
+    "text": "2.116659"
+  },
+  {
+    "kind": "cell",
+    "text": "2.167394"
+  },
+  {
+    "kind": "cell",
+    "text": "W8 decode2048"
+  },
+  {
+    "kind": "cell",
+    "text": "2.400318"
+  },
+  {
+    "kind": "cell",
+    "text": "2.685467"
+  },
+  {
+    "kind": "cell",
+    "text": "2.552804"
+  },
+  {
+    "kind": "cell",
+    "text": "2.877787"
+  },
+  {
+    "kind": "cell",
+    "text": "W8 prefill2"
+  },
+  {
+    "kind": "cell",
+    "text": "3.107254"
+  },
+  {
+    "kind": "cell",
+    "text": "3.107254"
+  },
+  {
+    "kind": "cell",
+    "text": "3.696697"
+  },
+  {
+    "kind": "cell",
+    "text": "3.696697"
+  },
+  {
+    "kind": "body",
+    "text": "主W8 decode512的共享口提升3.7054%，理想端口提升4.0220%；W16分别提升2.0721%和2.3970%；W8 context2048分别提升11.8796%和12.7304%。prefill按S16 fallback合同保持整份旧RESULT相同，未计入加速。"
+  },
+  {
+    "kind": "body",
+    "text": "主参考层总时间由286.0273867ms降到274.9681727ms。变化全部来自NExp额外费用减少3,317,760拍，即11.0592ms；NExp阶段18.4871833ms降到7.4279833ms。context2048对应减少44.2368ms。Dot、非NExp算术、字节流量、S服务/预约、cache和策略工作量不变，没有把其他历史收益再计一次。"
+  },
+  {
+    "kind": "body",
+    "text": "本轮之后Dot仍为224.1015367ms，占主时间81.5009%；canonical为21.49358ms，vector13.25398ms，reduce8.6253133ms，NExp7.4279833ms。达到5 token/s还需把主时间降到200ms，即再减少74.9681727ms；不能把接下来单项局部倍率直接乘到全图。"
+  },
+  {
+    "kind": "body",
+    "text": "8个关闭开关的基线完整复现run15全部旧字段和5份生成源SHA。8个候选通过独立trace/费用/工作守恒审计，16场景各8项篡改拒绝共128项；6种错误profile、3种非法flag以及真实无profile二进制的启用拒绝通过。原225 kernel、validation和smoke也实际执行通过。"
+  },
+  {
+    "kind": "section",
+    "text": "9. 证据、复跑与交付边界"
+  },
+  {
+    "kind": "body",
+    "text": "run16主结果SHA-256：78c57febe43f2a114a8a21ca9b5992b465d7b7589f05c83eb68e5f97923d4ef7。"
+  },
+  {
+    "kind": "body",
+    "text": "run17主结果SHA-256：bc27f6b66c63b7356a4ead76e800c539efb1499322f91c45114e6df79595d076。"
+  },
+  {
+    "kind": "body",
+    "text": "回收共133份策展原件；96项选定服务器输出SHA、89项源快照成员和11项输入SHA均核验通过。run16的全部273项输出、run17的全部87项输出各有SHA清单；对象文件/二进制等大原件保留本人服务器，未用未下载原件冒充本地持有。源快照按run单独保存，后续修改当前RTL不改写历史资格。"
+  },
+  {
+    "kind": "body",
+    "text": "机器证据索引保留作业、工具、输入与输出位置；RTL运行说明和模型运行说明给出完整准备合同。每次复跑使用独立新目录和相同SHA输入，先提交代码，再打包执行。"
+  },
+  {
+    "kind": "code",
+    "text": "# 在已准备的独立run根目录提交，job.sh内部核验SHA。\nsbatch --parsable job.sh\nsacct -j 101835,101838 --format=JobID,State,ExitCode,Elapsed\n# 本地只读核验证据；不是重新执行RTL或SystemC。\npython -B work/Melodydt/247/speed-iterations/verify.py"
+  },
+  {
+    "kind": "body",
+    "text": "本轮所有作业已终态，未配置聊天结束后的自动监测。新native NExp合同只证明局部固定点数值等价及U接入，S32低16映射、其他S32/S96候选、LC/DMA编译、实际权重/KV及完整文本生成均保持原证据边界。面积/布局布线/时序未执行，PR待独立审查，不自行合并，Issue不标done。登记pending、Projects实际状态unverified/同步pending。"
+  },
+  {
+    "kind": "section",
+    "text": "10. 本轮结论与下一轮入口"
+  },
+  {
+    "kind": "body",
+    "text": "本轮主参考层为3.63678454238 token/s，尚未达到5；应继续下一轮重新研究瓶颈。Dot已占81.5%，下一轮首先核对可替换的M固定服务开销与真实供数限制；同时比较复用原N的进一步命令合并是否值得实施。"
+  },
+  {
+    "kind": "body",
+    "text": "新S32/S96矩阵叶的II=1仍受64B/拍供数、byte-plane次数、有限暂存和最终ACK约束。W32动态attention可能比旧抽象宽乘法假设更慢；不能只降低compute常数、把含S周期再与旧send免费取max，或隐藏负结果。巨大面积候选必须独立备份后再纳入评估。"
+  }
+]

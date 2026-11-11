@@ -1,0 +1,550 @@
+{
+  "round2_generated_sha256": {
+    "detail.hpp": "224a027b652add702ef6b3560d0e63db66159cba17886fd15cb4c24d231789ac",
+    "iteration2.hpp": "b42573aa9417207987adc10ac4f480e679980f92c4f48db65f21d8a50b78a166",
+    "matrix.inc": "1d4e404059bfff8530f215d7bb59219f60bd043c0e4025cbddd2118457d56f84",
+    "frozen-model.cpp": "86ae8e0450fb5c78c14dd165344bdda1cf07a45d66d8e0e2d0ad4052d6f8ef37",
+    "context_worker.inc": "e2200df1f2b58ab62513f3fb1fe4bb6b344b707bec4aec37e5d5522032f88893",
+    "context_detail.hpp": "703ea6b8ba8a3497bc332626b2aeef787b9a1ec9efe60a80d156c3afe160dda6",
+    "round1-model.cpp": "ef99a13223607b551062e0ad2f0551cfb261e563b55fa798b3931346970d2912",
+    "iteration1.hpp": "d1a25d9a2008bdf1bee4693915c665108a8e3695638c1d1f914e4e54b11b4bc9",
+    "model.cpp": "ef888a60d6ecdc1684a65ace28a1d1b20679d8ef19062fb253d50548b35d94e6"
+  },
+  "unchanged_generated_sha256": {
+    "detail.hpp": "224a027b652add702ef6b3560d0e63db66159cba17886fd15cb4c24d231789ac",
+    "iteration2.hpp": "b42573aa9417207987adc10ac4f480e679980f92c4f48db65f21d8a50b78a166",
+    "matrix.inc": "1d4e404059bfff8530f215d7bb59219f60bd043c0e4025cbddd2118457d56f84",
+    "frozen-model.cpp": "86ae8e0450fb5c78c14dd165344bdda1cf07a45d66d8e0e2d0ad4052d6f8ef37",
+    "context_worker.inc": "e2200df1f2b58ab62513f3fb1fe4bb6b344b707bec4aec37e5d5522032f88893",
+    "context_detail.hpp": "703ea6b8ba8a3497bc332626b2aeef787b9a1ec9efe60a80d156c3afe160dda6",
+    "round1-model.cpp": "ef99a13223607b551062e0ad2f0551cfb261e563b55fa798b3931346970d2912",
+    "iteration1.hpp": "d1a25d9a2008bdf1bee4693915c665108a8e3695638c1d1f914e4e54b11b4bc9"
+  },
+  "R1_calibration": {
+    "result_sha256": "78c57febe43f2a114a8a21ca9b5992b465d7b7589f05c83eb68e5f97923d4ef7",
+    "source_commit": "e6d72113a14c5a0772f01ff5851d630d5d6687fa",
+    "rtl_source_sha256": {
+      "project/rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+      "project/rtl/s_sram/local_s_base.sv": "084a4c63e4fbe0a5e56c6319e542c5a7c6561e9ec5af0a07ed98ef0bd5aa21f4",
+      "project/rtl/s_sram/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+      "project/rtl/block_v2/block_v2_n.sv": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+      "project/rtl/block_v2/block_v2_n_group.sv": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+      "project/rtl/block_v2/block_v2_n_exp.svh": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+      "project/rtl/block_v2/block_v2_e.sv": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+      "project/rtl/block_v2/block_v2_e_compact.sv": "03e6c806007c7d97a30f3793580a107e7d5beb9c4a3d1e8d0d278d33256ca230",
+      "project/rtl/pu_leaf_base/pu_u_group.sv": "9180587e04c7159b45d284715d514e58379b272a760c3ad57b01c7aeff8ee22b",
+      "project/rtl/pu_leaf_base/ucf_s_compute_client.sv": "8757f22b6cc03c11d2ac7aafe873c2c2121d00e130bfab90ab6de7eca1e258cc",
+      "project/rtl/pu_leaf_base/pu_compact_e_service.sv": "850b4a6a185ffcbb97816fa7dd69baae583d237c28bb56b3b5340694de8f71ba",
+      "project/rtl/pu_leaf_base/pu_u_direct_pair.sv": "d70c8e5699cf4492ad43288e9395d1f6ef842ddf63ba03fef4c548ac072f85f3",
+      "project/rtl/pu_leaf_base/pu_nexp_shared.sv": "36fb329538243884843817af53d21b5dd38da67cb6d0804b6fbdaf232d04a913",
+      "project/rtl/pu_leaf_base/nexp_batch_adapter.sv": "600746dc8a0ae59493c1fabe6404cb09bffb926977add091f385d1010f3fc29a"
+    },
+    "scope": "NExp supplemental compute wrapper service only; old vector_region unchanged",
+    "payload_contract": "signed low16 of each S32 container, U16 zeroextend to S32",
+    "rows": [
+      {
+        "count": 1,
+        "charge_cycles": 15,
+        "subcounts": [
+          1
+        ],
+        "mode": "legacy_s32_low16_zeroextend",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; one real128bit S32 frame holds at most4values; excludes private-S stages"
+      },
+      {
+        "count": 2,
+        "charge_cycles": 15,
+        "subcounts": [
+          2
+        ],
+        "mode": "legacy_s32_low16_zeroextend",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; one real128bit S32 frame holds at most4values; excludes private-S stages"
+      },
+      {
+        "count": 3,
+        "charge_cycles": 19,
+        "subcounts": [
+          3
+        ],
+        "mode": "legacy_s32_low16_zeroextend",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; one real128bit S32 frame holds at most4values; excludes private-S stages"
+      },
+      {
+        "count": 4,
+        "charge_cycles": 19,
+        "subcounts": [
+          4
+        ],
+        "mode": "legacy_s32_low16_zeroextend",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; one real128bit S32 frame holds at most4values; excludes private-S stages"
+      },
+      {
+        "count": 5,
+        "charge_cycles": 34,
+        "subcounts": [
+          4,
+          1
+        ],
+        "mode": "legacy_s32_low16_zeroextend",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; one real128bit S32 frame holds at most4values; excludes private-S stages"
+      },
+      {
+        "count": 6,
+        "charge_cycles": 34,
+        "subcounts": [
+          4,
+          2
+        ],
+        "mode": "legacy_s32_low16_zeroextend",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; one real128bit S32 frame holds at most4values; excludes private-S stages"
+      },
+      {
+        "count": 7,
+        "charge_cycles": 38,
+        "subcounts": [
+          4,
+          3
+        ],
+        "mode": "legacy_s32_low16_zeroextend",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; one real128bit S32 frame holds at most4values; excludes private-S stages"
+      },
+      {
+        "count": 8,
+        "charge_cycles": 38,
+        "subcounts": [
+          4,
+          4
+        ],
+        "mode": "legacy_s32_low16_zeroextend",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; one real128bit S32 frame holds at most4values; excludes private-S stages"
+      }
+    ],
+    "compute_s32_intervals": {
+      "1": 15,
+      "2": 15,
+      "3": 19,
+      "4": 19
+    },
+    "required_gates": {
+      "compute_s32": true,
+      "full_U": true,
+      "numeric": true,
+      "lifecycle": true,
+      "default_compatibility": true,
+      "enabled_ordinary": true
+    },
+    "measurement_sources": {
+      "compute-1-143.log": {
+        "log_sha256": "2b79cd812b91fc8fcc52b7674a1ec48bc8a196ac43e329b9ae839c5645f80242",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run16/results/obj-compute/Vtb_nexp_compute",
+          "+verilator+rand+reset+1",
+          "+verilator+seed+143"
+        ],
+        "label": "compute",
+        "mode": 1,
+        "seed": 143
+      },
+      "compute-2-143.log": {
+        "log_sha256": "d9c9d902600d81f45c7f41976e34f9b6e9a5fcc5141c3bda8b16faffbc780a36",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run16/results/obj-compute/Vtb_nexp_compute",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+143"
+        ],
+        "label": "compute",
+        "mode": 2,
+        "seed": 143
+      },
+      "compute-2-144.log": {
+        "log_sha256": "aed0000b638a54ff15e27e6abc64d0e553cbf37d8a8dc74354a0882dbbcaad1c",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run16/results/obj-compute/Vtb_nexp_compute",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+144"
+        ],
+        "label": "compute",
+        "mode": 2,
+        "seed": 144
+      },
+      "full_U-1-143.log": {
+        "log_sha256": "8622783dc0be618eff072abe6d7d8856b92dc8431dc44b0ce3a48dcf727b20a7",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run16/results/obj-full_U/Vtb_nexp_u",
+          "+verilator+rand+reset+1",
+          "+verilator+seed+143"
+        ],
+        "label": "full_U",
+        "mode": 1,
+        "seed": 143
+      },
+      "full_U-2-143.log": {
+        "log_sha256": "a0f624a8db237e4f8e393b8c502a353d099eeab1d5ff51624584856dcee1b5a4",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run16/results/obj-full_U/Vtb_nexp_u",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+143"
+        ],
+        "label": "full_U",
+        "mode": 2,
+        "seed": 143
+      },
+      "full_U-2-144.log": {
+        "log_sha256": "3d7750a2520336ed2742092c6cabc044a93455ebea4c4b5f0b59892d1ac274b4",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run16/results/obj-full_U/Vtb_nexp_u",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+144"
+        ],
+        "label": "full_U",
+        "mode": 2,
+        "seed": 144
+      }
+    }
+  },
+  "R2_calibration": {
+    "result_sha256": "fb0b4d0d1251140655feea5bd671c196e5ae13b1fd47066dc22d6e1e1a2eac78",
+    "source_commit": "863492081f0f512fc64fb73c787fcdcaf145a6b4",
+    "rtl_source_sha256": {
+      "project/rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+      "project/rtl/s_sram/local_s_base.sv": "084a4c63e4fbe0a5e56c6319e542c5a7c6561e9ec5af0a07ed98ef0bd5aa21f4",
+      "project/rtl/s_sram/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+      "project/rtl/block_v2/block_v2_n.sv": "6f6531e6da3c987ed5dae4f6fb98fbf69f64edee194649110855c99ef9cfee4d",
+      "project/rtl/block_v2/block_v2_n_group.sv": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+      "project/rtl/block_v2/block_v2_n_exp.svh": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+      "project/rtl/block_v2/block_v2_e.sv": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+      "project/rtl/block_v2/block_v2_e_compact.sv": "03e6c806007c7d97a30f3793580a107e7d5beb9c4a3d1e8d0d278d33256ca230",
+      "project/rtl/pu_leaf_base/pu_u_group.sv": "d6d2ac3fa23ba6debb179ce1f49580e1ddc04d786d32a18b890e40020f6960cd",
+      "project/rtl/pu_leaf_base/ucf_s_compute_client.sv": "8757f22b6cc03c11d2ac7aafe873c2c2121d00e130bfab90ab6de7eca1e258cc",
+      "project/rtl/pu_leaf_base/pu_compact_e_service.sv": "850b4a6a185ffcbb97816fa7dd69baae583d237c28bb56b3b5340694de8f71ba",
+      "project/rtl/pu_leaf_base/pu_u_direct_pair.sv": "d70c8e5699cf4492ad43288e9395d1f6ef842ddf63ba03fef4c548ac072f85f3",
+      "project/rtl/pu_leaf_base/pu_nexp_shared.sv": "c0a4c727a128fdb06fb4f90f035a618ba400805d936c5290c0a8215f4a036ed5",
+      "project/rtl/pu_leaf_base/nexp_batch_adapter.sv": "a975365f97ac8608760d2922e3843433624bd4db775441a8b48e0b2fb08679ca"
+    },
+    "scope": "NExp supplemental compute wrapper service only; old vector_region unchanged",
+    "payload_contract": "signed low16 of each S32 container, U16 zeroextend to S32",
+    "implementation": "native_stateless_relative_exp_op12",
+    "rows": [
+      {
+        "count": 1,
+        "charge_cycles": 7,
+        "subcounts": [
+          1
+        ],
+        "mode": "legacy_s32_low16_zeroextend_stateless_op12",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; excludes private-S stages"
+      },
+      {
+        "count": 2,
+        "charge_cycles": 7,
+        "subcounts": [
+          2
+        ],
+        "mode": "legacy_s32_low16_zeroextend_stateless_op12",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; excludes private-S stages"
+      },
+      {
+        "count": 3,
+        "charge_cycles": 9,
+        "subcounts": [
+          3
+        ],
+        "mode": "legacy_s32_low16_zeroextend_stateless_op12",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; excludes private-S stages"
+      },
+      {
+        "count": 4,
+        "charge_cycles": 9,
+        "subcounts": [
+          4
+        ],
+        "mode": "legacy_s32_low16_zeroextend_stateless_op12",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; excludes private-S stages"
+      },
+      {
+        "count": 5,
+        "charge_cycles": 16,
+        "subcounts": [
+          4,
+          1
+        ],
+        "mode": "legacy_s32_low16_zeroextend_stateless_op12",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; excludes private-S stages"
+      },
+      {
+        "count": 6,
+        "charge_cycles": 16,
+        "subcounts": [
+          4,
+          2
+        ],
+        "mode": "legacy_s32_low16_zeroextend_stateless_op12",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; excludes private-S stages"
+      },
+      {
+        "count": 7,
+        "charge_cycles": 18,
+        "subcounts": [
+          4,
+          3
+        ],
+        "mode": "legacy_s32_low16_zeroextend_stateless_op12",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; excludes private-S stages"
+      },
+      {
+        "count": 8,
+        "charge_cycles": 18,
+        "subcounts": [
+          4,
+          4
+        ],
+        "mode": "legacy_s32_low16_zeroextend_stateless_op12",
+        "derivation": "sum of actual compute_s32 accepted_to_next_accept_cycles; excludes private-S stages"
+      }
+    ],
+    "compute_s32_intervals": {
+      "1": 7,
+      "2": 7,
+      "3": 9,
+      "4": 9
+    },
+    "required_gates": {
+      "compute_s32": true,
+      "full_U": true,
+      "numeric": true,
+      "lifecycle": true,
+      "default_compatibility": true,
+      "enabled_ordinary": true,
+      "stateless_context_preservation": true,
+      "old_batch_compatibility": true
+    },
+    "measurement_sources": {
+      "stateless-1-143.log": {
+        "log_sha256": "8511f6e79a6f3ed7c8050dc1d4a2fa155021f518f11efd2de5346ee798785731",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-stateless/Vtb_nexp_stateless",
+          "+verilator+rand+reset+1",
+          "+verilator+seed+143"
+        ],
+        "label": "stateless",
+        "mode": 1,
+        "seed": 143
+      },
+      "stateless-2-143.log": {
+        "log_sha256": "98aa87bc451a0160f451068c64de34e8ee944c0b608b01733a7473bd86dac056",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-stateless/Vtb_nexp_stateless",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+143"
+        ],
+        "label": "stateless",
+        "mode": 2,
+        "seed": 143
+      },
+      "stateless-2-144.log": {
+        "log_sha256": "a12a214974cd0fdb5aa284ac546fcc07fa2891328b692ac3381c75bec3a3c71c",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-stateless/Vtb_nexp_stateless",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+144"
+        ],
+        "label": "stateless",
+        "mode": 2,
+        "seed": 144
+      },
+      "disabled_batch-1-143.log": {
+        "log_sha256": "464dcbc22afdae78f89a1465c7d7c40a213983221526b22c875b127f533adefa",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-disabled_batch/Vtb_pu_u_group",
+          "+verilator+rand+reset+1",
+          "+verilator+seed+143"
+        ],
+        "label": "disabled_batch",
+        "mode": 1,
+        "seed": 143
+      },
+      "disabled_batch-2-143.log": {
+        "log_sha256": "9cffca46a795f49b3e558fb8491af639792cae38d325d355036a229615ae2165",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-disabled_batch/Vtb_pu_u_group",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+143"
+        ],
+        "label": "disabled_batch",
+        "mode": 2,
+        "seed": 143
+      },
+      "disabled_batch-2-144.log": {
+        "log_sha256": "a8420a3c9fc1cd8bcd2135f321e483700cb08f4af5ca27cfc11fb11df012e63e",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-disabled_batch/Vtb_pu_u_group",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+144"
+        ],
+        "label": "disabled_batch",
+        "mode": 2,
+        "seed": 144
+      },
+      "disabled_compute-1-143.log": {
+        "log_sha256": "6a1301283d3bd4f28c9664991dab89e19f4cbda50afdcfeffcad4d748c43c78c",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-disabled_compute/Vtb_nexp_compute",
+          "+verilator+rand+reset+1",
+          "+verilator+seed+143"
+        ],
+        "label": "disabled_compute",
+        "mode": 1,
+        "seed": 143
+      },
+      "disabled_compute-2-143.log": {
+        "log_sha256": "28bc83cf6e0fec5995d3aa04083bf63a81bfd671f0708eec8641fb3910898c18",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-disabled_compute/Vtb_nexp_compute",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+143"
+        ],
+        "label": "disabled_compute",
+        "mode": 2,
+        "seed": 143
+      },
+      "disabled_compute-2-144.log": {
+        "log_sha256": "1d45e9d5295f8c6daacb5139464bda568d490327e3df892bfd794075b5c04290",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-disabled_compute/Vtb_nexp_compute",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+144"
+        ],
+        "label": "disabled_compute",
+        "mode": 2,
+        "seed": 144
+      },
+      "disabled_full_U-1-143.log": {
+        "log_sha256": "ac8c58e179c049309f14df04fb80b029b3d48368a6fe5434085b1b6e77705816",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-disabled_full_U/Vtb_nexp_u",
+          "+verilator+rand+reset+1",
+          "+verilator+seed+143"
+        ],
+        "label": "disabled_full_U",
+        "mode": 1,
+        "seed": 143
+      },
+      "disabled_full_U-2-143.log": {
+        "log_sha256": "f0b6e59bede378f329d575d650c7b97a8139f2d0a92a7dbdce042ebeca8012de",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-disabled_full_U/Vtb_nexp_u",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+143"
+        ],
+        "label": "disabled_full_U",
+        "mode": 2,
+        "seed": 143
+      },
+      "disabled_full_U-2-144.log": {
+        "log_sha256": "b729f069ccafaf2bf7a6f7c5f0e9e03a566b633a922912efbc81e524104c717e",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-disabled_full_U/Vtb_nexp_u",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+144"
+        ],
+        "label": "disabled_full_U",
+        "mode": 2,
+        "seed": 144
+      },
+      "compute-1-143.log": {
+        "log_sha256": "3e0acebb5e12c5ed738e07ee0c9c29a4702670751baaf38205504274ea53e1a1",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-compute/Vtb_nexp_compute",
+          "+verilator+rand+reset+1",
+          "+verilator+seed+143"
+        ],
+        "label": "compute",
+        "mode": 1,
+        "seed": 143
+      },
+      "compute-2-143.log": {
+        "log_sha256": "c84f3836e44a898f786fc4a9877681f4030b39f24b4ef18dc1e9f27b21118db7",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-compute/Vtb_nexp_compute",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+143"
+        ],
+        "label": "compute",
+        "mode": 2,
+        "seed": 143
+      },
+      "compute-2-144.log": {
+        "log_sha256": "e097b356785e33b1b283ea327535e4d166a95c60d09837da4352f5680596f2f6",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-compute/Vtb_nexp_compute",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+144"
+        ],
+        "label": "compute",
+        "mode": 2,
+        "seed": 144
+      },
+      "full_U-1-143.log": {
+        "log_sha256": "eb520552deb0db1453a2f3bb2f9abc6dbabc12209804f18f91c5aa2c44306067",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-full_U/Vtb_nexp_u",
+          "+verilator+rand+reset+1",
+          "+verilator+seed+143"
+        ],
+        "label": "full_U",
+        "mode": 1,
+        "seed": 143
+      },
+      "full_U-2-143.log": {
+        "log_sha256": "744984f03dbd14d3547561c43c6a4d63b021c23fb74b4b080186f9010bdb03c8",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-full_U/Vtb_nexp_u",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+143"
+        ],
+        "label": "full_U",
+        "mode": 2,
+        "seed": 143
+      },
+      "full_U-2-144.log": {
+        "log_sha256": "6b39871d2f9294b1a64e3679435eb4d84660a7611dab3678b945587af611a2b7",
+        "command": [
+          "/public/home/yuzelu/Melodydt/issue247-area-speed/run18/results/obj-full_U/Vtb_nexp_u",
+          "+verilator+rand+reset+2",
+          "+verilator+seed+144"
+        ],
+        "label": "full_U",
+        "mode": 2,
+        "seed": 144
+      }
+    }
+  },
+  "R4_calibration": null,
+  "generated_sha256": {
+    "detail.hpp": "224a027b652add702ef6b3560d0e63db66159cba17886fd15cb4c24d231789ac",
+    "iteration2.hpp": "b42573aa9417207987adc10ac4f480e679980f92c4f48db65f21d8a50b78a166",
+    "matrix.inc": "1d4e404059bfff8530f215d7bb59219f60bd043c0e4025cbddd2118457d56f84",
+    "round2-model.cpp": "ef888a60d6ecdc1684a65ace28a1d1b20679d8ef19062fb253d50548b35d94e6",
+    "frozen-model.cpp": "86ae8e0450fb5c78c14dd165344bdda1cf07a45d66d8e0e2d0ad4052d6f8ef37",
+    "context_worker.inc": "e2200df1f2b58ab62513f3fb1fe4bb6b344b707bec4aec37e5d5522032f88893",
+    "context_detail.hpp": "703ea6b8ba8a3497bc332626b2aeef787b9a1ec9efe60a80d156c3afe160dda6",
+    "round1-model.cpp": "ef99a13223607b551062e0ad2f0551cfb261e563b55fa798b3931346970d2912",
+    "iteration4.hpp": "4eadd34721e1d8d9f583fa8c8f372f39b2a3d2d201eb6256070f14863b525776",
+    "iteration1.hpp": "d1a25d9a2008bdf1bee4693915c665108a8e3695638c1d1f914e4e54b11b4bc9",
+    "model.cpp": "5a8252d1a8b7772d823948cda451114d7332f3effd6b78d456d5f4874d2e8407"
+  },
+  "scope": "replace best-R2 supplementary NExp service with measured four-lane op12 wrapper service; original vector_region S/cache/DDR/E retained",
+  "frozen_generator_command": [
+    "/usr/bin/python3",
+    "-B",
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run23/source/project/experiments/iterative_speed/round02/generate_round2.py",
+    "--repo",
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run23/source",
+    "--out",
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run23/results/no-new-profile",
+    "--r1-calibration",
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run23/r1-calibration-result.json",
+    "--calibration",
+    "/public/home/yuzelu/Melodydt/issue247-area-speed/run23/r2-calibration-result.json"
+  ]
+}

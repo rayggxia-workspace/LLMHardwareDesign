@@ -1,0 +1,348 @@
+{
+  "passed": true,
+  "curated_artifacts": 185,
+  "returned_output_sha_checks": 163,
+  "current_functional_source_sha_checks": 29,
+  "runs": [
+    {
+      "run": "run10",
+      "source_commit": "c2359bdeeea83270ab632861eebe6ffc8dcc510e",
+      "job": {
+        "job_id": "101756",
+        "job_name": "mdt-p-native",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:01:21",
+        "nodes": "node1"
+      },
+      "whole_run_passed": true,
+      "hashed_outputs": 800
+    },
+    {
+      "run": "run11",
+      "source_commit": "24f720a788328bd8d73e2bf1a3b0502ded9b937b",
+      "job": {
+        "job_id": "101758",
+        "job_name": "mdt-p-native",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:01:05",
+        "nodes": "node1"
+      },
+      "whole_run_passed": true,
+      "hashed_outputs": 629
+    }
+  ],
+  "context_cases": [
+    {
+      "contexts": 1,
+      "cases": 44,
+      "improved": 0,
+      "equal": 0,
+      "regressed": 44
+    },
+    {
+      "contexts": 2,
+      "cases": 44,
+      "improved": 20,
+      "equal": 8,
+      "regressed": 16
+    },
+    {
+      "contexts": 8,
+      "cases": 44,
+      "improved": 28,
+      "equal": 0,
+      "regressed": 16
+    }
+  ],
+  "group": [
+    {
+      "label": "legacy-s2",
+      "mode": 1,
+      "seed": 143,
+      "opt": 0,
+      "bank_rw": 0,
+      "segments": 2,
+      "cycles": 672,
+      "output_cycles": 672,
+      "release_cycles": 0,
+      "A": 16,
+      "B": 16,
+      "wide": 32,
+      "stores": 16
+    },
+    {
+      "label": "legacy-s8",
+      "mode": 1,
+      "seed": 143,
+      "opt": 0,
+      "bank_rw": 0,
+      "segments": 8,
+      "cycles": 2112,
+      "output_cycles": 2112,
+      "release_cycles": 0,
+      "A": 64,
+      "B": 64,
+      "wide": 128,
+      "stores": 16
+    },
+    {
+      "label": "context-s2",
+      "mode": 1,
+      "seed": 143,
+      "opt": 1,
+      "bank_rw": 0,
+      "segments": 2,
+      "cycles": 676,
+      "output_cycles": 644,
+      "release_cycles": 32,
+      "A": 2,
+      "B": 16,
+      "wide": 18,
+      "stores": 16
+    },
+    {
+      "label": "context-s8",
+      "mode": 1,
+      "seed": 143,
+      "opt": 1,
+      "bank_rw": 0,
+      "segments": 8,
+      "cycles": 2032,
+      "output_cycles": 2000,
+      "release_cycles": 32,
+      "A": 8,
+      "B": 64,
+      "wide": 72,
+      "stores": 16
+    },
+    {
+      "label": "combined-s2",
+      "mode": 1,
+      "seed": 143,
+      "opt": 1,
+      "bank_rw": 1,
+      "segments": 2,
+      "cycles": 676,
+      "output_cycles": 644,
+      "release_cycles": 32,
+      "A": 2,
+      "B": 16,
+      "wide": 18,
+      "stores": 16
+    },
+    {
+      "label": "combined-s8",
+      "mode": 1,
+      "seed": 143,
+      "opt": 1,
+      "bank_rw": 1,
+      "segments": 8,
+      "cycles": 2032,
+      "output_cycles": 2000,
+      "release_cycles": 32,
+      "A": 8,
+      "B": 64,
+      "wide": 72,
+      "stores": 16
+    }
+  ],
+  "policy": [
+    {
+      "burst": 1,
+      "steady_cycles": 516,
+      "baseline_steady_cycles": 516,
+      "baseline_consumer_mean_response_cycles": 14.9375,
+      "consumer_mean_response_cycles": 14.75,
+      "external_max_admission_cycles": 12,
+      "external_max_skipped_grants": 3,
+      "external_skipped_grant_bound": 3
+    },
+    {
+      "burst": 2,
+      "steady_cycles": 516,
+      "baseline_steady_cycles": 516,
+      "baseline_consumer_mean_response_cycles": 14.9375,
+      "consumer_mean_response_cycles": 10.8125,
+      "external_max_admission_cycles": 20,
+      "external_max_skipped_grants": 5,
+      "external_skipped_grant_bound": 5
+    },
+    {
+      "burst": 4,
+      "steady_cycles": 516,
+      "baseline_steady_cycles": 516,
+      "baseline_consumer_mean_response_cycles": 14.9375,
+      "consumer_mean_response_cycles": 8.8125,
+      "external_max_admission_cycles": 36,
+      "external_max_skipped_grants": 9,
+      "external_skipped_grant_bound": 9
+    }
+  ],
+  "memory": [
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 0,
+        "reuse_a": 0,
+        "hold_cycles": 0,
+        "cycles": 95,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 0,
+        "bonly_functional": {
+          "shapes": 16,
+          "boundaries": 16,
+          "aligned_cross": 14,
+          "unaligned_a": 16,
+          "unaligned_b": 16,
+          "legal": 0,
+          "rejected": 78,
+          "A_beats": 0,
+          "B_reads": 0
+        }
+      }
+    },
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 1,
+        "reuse_a": 0,
+        "hold_cycles": 0,
+        "cycles": 71,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 25,
+        "bonly_functional": {
+          "shapes": 16,
+          "boundaries": 16,
+          "aligned_cross": 14,
+          "unaligned_a": 16,
+          "unaligned_b": 16,
+          "legal": 0,
+          "rejected": 78,
+          "A_beats": 0,
+          "B_reads": 0
+        }
+      }
+    },
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 1,
+        "reuse_a": 1,
+        "hold_cycles": 0,
+        "cycles": 71,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 25,
+        "bonly_functional": {
+          "shapes": 16,
+          "boundaries": 16,
+          "aligned_cross": 14,
+          "unaligned_a": 16,
+          "unaligned_b": 16,
+          "legal": 32,
+          "rejected": 46,
+          "A_beats": 0,
+          "B_reads": 120
+        }
+      }
+    },
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 0,
+        "reuse_a": 0,
+        "hold_cycles": 32,
+        "cycles": 122,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 0,
+        "bonly_functional": {
+          "shapes": 16,
+          "boundaries": 16,
+          "aligned_cross": 14,
+          "unaligned_a": 16,
+          "unaligned_b": 16,
+          "legal": 0,
+          "rejected": 78,
+          "A_beats": 0,
+          "B_reads": 0
+        }
+      }
+    },
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 1,
+        "reuse_a": 0,
+        "hold_cycles": 32,
+        "cycles": 71,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 51,
+        "bonly_functional": {
+          "shapes": 16,
+          "boundaries": 16,
+          "aligned_cross": 14,
+          "unaligned_a": 16,
+          "unaligned_b": 16,
+          "legal": 0,
+          "rejected": 78,
+          "A_beats": 0,
+          "B_reads": 0
+        }
+      }
+    },
+    {
+      "reset_mode": 1,
+      "seed": 143,
+      "checks": {
+        "kind": "local",
+        "bank_rw": 1,
+        "reuse_a": 1,
+        "hold_cycles": 32,
+        "cycles": 71,
+        "narrow_writes": 64,
+        "wide_reads": 6,
+        "A_beats": 16,
+        "B_beats": 2,
+        "writes_while_load_owned": 51,
+        "bonly_functional": {
+          "shapes": 16,
+          "boundaries": 16,
+          "aligned_cross": 14,
+          "unaligned_a": 16,
+          "unaligned_b": 16,
+          "legal": 32,
+          "rejected": 46,
+          "A_beats": 0,
+          "B_reads": 120
+        }
+      }
+    }
+  ],
+  "scope": "offline provenance/work/cycle audit; complements actual server RTL, not new RTL/physical execution"
+}

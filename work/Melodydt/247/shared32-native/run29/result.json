@@ -1,0 +1,1052 @@
+{
+  "passed": true,
+  "source_commit": "05d0c73071bb1d8acfaeffaf6b1883b407f56b80",
+  "manifest_sha256": "a54b950fea4cd71c618af06fd52e67cd240ff865414bdc78b84764b79bf84a7c",
+  "bank_sha256": "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7",
+  "slurm_job_id": "102003",
+  "commands": [
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--version"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1498750,
+      "elapsed_seconds": 0.11237235926091671,
+      "log": "verilator-version.log",
+      "sha256": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f"
+    },
+    {
+      "command": [
+        "g++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1498754,
+      "elapsed_seconds": 0.01381143182516098,
+      "log": "gcc-version.log",
+      "sha256": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_popt_group",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-group-default-s2-original",
+        "-GOPT=0",
+        "-GBANK_RW=0",
+        "-GSEGMENTS=2",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/generated/group-original.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/experiments/shared32_native/compat_baseline/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/experiments/shared32_native/compat_baseline/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/experiments/shared32_native/compat_baseline/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 240,
+      "process_group": 1498755,
+      "elapsed_seconds": 6.137288493104279,
+      "log": "group-default-s2-original-build.log",
+      "sha256": "a7b36432a54cf2683c747448bf21b5ee154d7d19b8fb5ea88d009f24a9cb5fb7"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-group-default-s2-original/Vtb_popt_group",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1498915,
+      "elapsed_seconds": 0.013780931010842323,
+      "log": "group-default-s2-original-1-143.log",
+      "sha256": "f9ed368b0ce73ba99679e1a925d9cfc1a2fce05e02bcfadd4590834f5937ce86"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-group-default-s2-original/Vtb_popt_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1498919,
+      "elapsed_seconds": 0.010080525651574135,
+      "log": "group-default-s2-original-2-143.log",
+      "sha256": "6aa12b68068d79502a5ab8f5c6ad2a340fade46411a644aa190ac401521b8e4d"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-group-default-s2-original/Vtb_popt_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1498923,
+      "elapsed_seconds": 0.010128715075552464,
+      "log": "group-default-s2-original-2-144.log",
+      "sha256": "a722a7ee50ffb4b329676cc6f96841827bfa52624d377a89abfbd1eb32ba6316"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_popt_group",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-group-default-s2-candidate",
+        "-GOPT=0",
+        "-GBANK_RW=0",
+        "-GSEGMENTS=2",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/generated/group-candidate.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 240,
+      "process_group": 1498927,
+      "elapsed_seconds": 5.443538719788194,
+      "log": "group-default-s2-candidate-build.log",
+      "sha256": "1eba462a2bbd6246d8e2e7c8e739e265c06c08c13acea6009693a2eb7a0f923b"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-group-default-s2-candidate/Vtb_popt_group",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499080,
+      "elapsed_seconds": 0.009343225508928299,
+      "log": "group-default-s2-candidate-1-143.log",
+      "sha256": "d58f9a05cc5ab9ae6162aada9399aa9aa544a0691094dbde2bd8dfbec80126f7"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-group-default-s2-candidate/Vtb_popt_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499084,
+      "elapsed_seconds": 0.00899328850209713,
+      "log": "group-default-s2-candidate-2-143.log",
+      "sha256": "52ab9678b6b5aa9b47f7dc53891c72683993d7fe0e5d631ec274fdd14f26062f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-group-default-s2-candidate/Vtb_popt_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499088,
+      "elapsed_seconds": 0.009455889463424683,
+      "log": "group-default-s2-candidate-2-144.log",
+      "sha256": "0fe3d4789352a1b504d29d3fc4983638c107fef9e854a51cc77a0ff2efb581eb"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_pu_p_group",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-original-P-program-original",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/generated/program-original.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/experiments/shared32_native/compat_baseline/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/experiments/shared32_native/compat_baseline/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/experiments/shared32_native/compat_baseline/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 240,
+      "process_group": 1499092,
+      "elapsed_seconds": 5.324727636761963,
+      "log": "original-P-program-original-build.log",
+      "sha256": "a86cf26f99b77a8ca5b9688e32916cce55fe2b108c57e9bd6a7a075cc79db5b3"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-original-P-program-original/Vtb_pu_p_group",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499187,
+      "elapsed_seconds": 0.006316957995295525,
+      "log": "original-P-program-original-1-143.log",
+      "sha256": "3049a953832f256024fd49f15e499516961aa9fd9d6c861a3d357cbe4bbf2f34"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-original-P-program-original/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499191,
+      "elapsed_seconds": 0.0059232451021671295,
+      "log": "original-P-program-original-2-143.log",
+      "sha256": "a1d1c45005e285dc3b33d405b093c7c81ef87fe99f7922086d19de0f800643e7"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-original-P-program-original/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499195,
+      "elapsed_seconds": 0.005467805080115795,
+      "log": "original-P-program-original-2-144.log",
+      "sha256": "17400745d44fe573ca4eedd2a6426809acca03d414dc4323931338d310a53f92"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_pu_p_group",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-original-P-program-candidate",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/generated/program-candidate.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_local_s/block_local_s_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_local_s/popt_s_policy_arbiter.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_m.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_m_context.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2/block_v2_g.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pu_p_group.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pu_p_store_control.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_feed_hold.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_mem_port.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/pu_leaf_base/pj_sram_client.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 240,
+      "process_group": 1499199,
+      "elapsed_seconds": 5.175856616348028,
+      "log": "original-P-program-candidate-build.log",
+      "sha256": "5b652e52d7ceea4013a5b7fec1540d39675842d4559b33bad2f3899fc545b240"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-original-P-program-candidate/Vtb_pu_p_group",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499289,
+      "elapsed_seconds": 0.005978904664516449,
+      "log": "original-P-program-candidate-1-143.log",
+      "sha256": "2dd2b4756cbb983819e7ea27ca3260daf98567c6a0cbbf3ed200c70462f32dde"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-original-P-program-candidate/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499293,
+      "elapsed_seconds": 0.005746322683990002,
+      "log": "original-P-program-candidate-2-143.log",
+      "sha256": "74f014c35f82f4eaa740561c95b7c9f00f92d30f14ebd97024d961b43456e385"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-original-P-program-candidate/Vtb_pu_p_group",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499297,
+      "elapsed_seconds": 0.005766700953245163,
+      "log": "original-P-program-candidate-2-144.log",
+      "sha256": "afc8f47e79fb9b2c4ab73fa6cb7c70c2d99dd6efd5191d7e553bef8059de686b"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_popt_local",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h0-original",
+        "-GBANK_RW=0",
+        "-GREUSE_A=0",
+        "-GHOLD_CYCLES=0",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/generated/local-original.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/experiments/shared32_native/compat_baseline/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/experiments/shared32_native/compat_baseline/block_feed_loader.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 240,
+      "process_group": 1499301,
+      "elapsed_seconds": 3.0615879204124212,
+      "log": "local-h0-original-build.log",
+      "sha256": "819e34312ccf6125f4b07e0bdaf177854615ef49488298c6211aeb6bb0b6c016"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h0-original/Vtb_popt_local",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499346,
+      "elapsed_seconds": 0.01435097772628069,
+      "log": "local-h0-original-1-143.log",
+      "sha256": "80c822c44bdd5299cc992be41cb349311bfabe77f2cedb27c24b67ab93cbdd59"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h0-original/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499350,
+      "elapsed_seconds": 0.013427997939288616,
+      "log": "local-h0-original-2-143.log",
+      "sha256": "9597abafd205ecca03aca33327dd5b6a05aa56b440c2f9b7cae2de67594588de"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h0-original/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499354,
+      "elapsed_seconds": 0.012353552505373955,
+      "log": "local-h0-original-2-144.log",
+      "sha256": "e36326f97f3fc9f77b3b0c2a2afdda5cc4dfa4dd4cb33074c4d38b1950003c44"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_popt_local",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h0-candidate",
+        "-GBANK_RW=0",
+        "-GREUSE_A=0",
+        "-GHOLD_CYCLES=0",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/generated/local-candidate.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 240,
+      "process_group": 1499358,
+      "elapsed_seconds": 3.05637467186898,
+      "log": "local-h0-candidate-build.log",
+      "sha256": "240cf2afb38dca83cc71701422d55799acf656f11f9df05d862c9dd44969f3e6"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h0-candidate/Vtb_popt_local",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499397,
+      "elapsed_seconds": 0.013676423579454422,
+      "log": "local-h0-candidate-1-143.log",
+      "sha256": "3d5271c5356e1cb2670cdae01a3765b7dfa4c8722c86860fb9ff9886ebbb56af"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h0-candidate/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499401,
+      "elapsed_seconds": 0.013230529613792896,
+      "log": "local-h0-candidate-2-143.log",
+      "sha256": "07fbfb3eb56130d90dac15aef72b3ba2396cf4ac81f3d58d48359485dd6be267"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h0-candidate/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499405,
+      "elapsed_seconds": 0.01297860499471426,
+      "log": "local-h0-candidate-2-144.log",
+      "sha256": "3e513361d414ca7403e4836a3d51213a845d12e4dfe631e6bbaf9196423e575b"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_popt_local",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h32-original",
+        "-GBANK_RW=0",
+        "-GREUSE_A=0",
+        "-GHOLD_CYCLES=32",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/generated/local-original.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/experiments/shared32_native/compat_baseline/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/experiments/shared32_native/compat_baseline/block_feed_loader.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 240,
+      "process_group": 1499409,
+      "elapsed_seconds": 3.0645715668797493,
+      "log": "local-h32-original-build.log",
+      "sha256": "8100dcda35f4a9baf3fed60a35095777eefaba6712a7fadf10baeb21ab3eb44e"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h32-original/Vtb_popt_local",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499446,
+      "elapsed_seconds": 0.014099403284490108,
+      "log": "local-h32-original-1-143.log",
+      "sha256": "68f138390994768057cb04e7bbde3eed3928135360220b67ce4295f1616f9b9f"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h32-original/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499450,
+      "elapsed_seconds": 0.012484503909945488,
+      "log": "local-h32-original-2-143.log",
+      "sha256": "6aff6fea0e0a6b2dc9a9e348ea7259193026fb5cb136b20bbd3acae7c386e525"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h32-original/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499454,
+      "elapsed_seconds": 0.012304593808948994,
+      "log": "local-h32-original-2-144.log",
+      "sha256": "4e57874723c409fab5bfbd04311194031efef0aedd6b8981b79be047e7360828"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2",
+        "--top-module",
+        "tb_popt_local",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h32-candidate",
+        "-GBANK_RW=0",
+        "-GREUSE_A=0",
+        "-GHOLD_CYCLES=32",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/generated/local-candidate.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 240,
+      "process_group": 1499458,
+      "elapsed_seconds": 3.0640463354066014,
+      "log": "local-h32-candidate-build.log",
+      "sha256": "9e2cb2edc3f122a63293b9d79ce865749b4f7505abac3f06567bd904600f6110"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h32-candidate/Vtb_popt_local",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499495,
+      "elapsed_seconds": 0.013361219316720963,
+      "log": "local-h32-candidate-1-143.log",
+      "sha256": "85b7ded367848bb37773ec129a8883d4fce19a445ee90a192ac2587e7d050cfa"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h32-candidate/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499499,
+      "elapsed_seconds": 0.013137434609234333,
+      "log": "local-h32-candidate-2-143.log",
+      "sha256": "320ba0cac8654d6f5e01fb6267c1b6bb6151f0a55f7379e806db16e5dafc5f49"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-local-h32-candidate/Vtb_popt_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499503,
+      "elapsed_seconds": 0.012537367641925812,
+      "log": "local-h32-candidate-2-144.log",
+      "sha256": "7c4f486f6efbdad91424d12603160e7f9bc8a65d83e6eb7d063b0c9b2b643ba1"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "-Wno-fatal",
+        "--x-initial",
+        "unique",
+        "--x-assign",
+        "unique",
+        "-j",
+        "4",
+        "-I/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_v2",
+        "--top-module",
+        "compat_cold_local",
+        "--Mdir",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-cold-local",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/experiments/shared32_native/compat_cold_local.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_sram.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_bank_rw.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/local_s_p.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/block_feed_v1/block_feed_loader.sv",
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/source/project/rtl/s_sram/block_feed_s16k_1r1w.sv",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 240,
+      "process_group": 1499507,
+      "elapsed_seconds": 3.071430000476539,
+      "log": "cold-local-build.log",
+      "sha256": "9131cf17946a2c76bf74f55751c88feb5ddd4b8f83136f59f3fe9d46b38c0722"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-cold-local/Vcompat_cold_local",
+        "+verilator+rand+reset+1",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499546,
+      "elapsed_seconds": 0.0061745718121528625,
+      "log": "cold-local-1-143.log",
+      "sha256": "1f6707e5e0b60dfc10630e093d9820b466ade1bcda7aa1d22c283da108601bd0"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-cold-local/Vcompat_cold_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+143"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499550,
+      "elapsed_seconds": 0.0055578723549842834,
+      "log": "cold-local-2-143.log",
+      "sha256": "682952edea5135226718d2b1400bd9a199f6ef08dbefc58f22d1bb7a2e7432c4"
+    },
+    {
+      "command": [
+        "/public/home/yuzelu/Melodydt/issue247-area-speed/run29/results/obj-cold-local/Vcompat_cold_local",
+        "+verilator+rand+reset+2",
+        "+verilator+seed+144"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "timeout_seconds": 60,
+      "process_group": 1499554,
+      "elapsed_seconds": 0.00543905608355999,
+      "log": "cold-local-2-144.log",
+      "sha256": "de570c71254f3f96340351fe02778dbcbc47030e868f22ba77f3e2b48c04720f"
+    }
+  ],
+  "comparisons": [
+    {
+      "label": "group-default-s2",
+      "mode": 1,
+      "seed": 143,
+      "exact_events_and_original_receipts": true,
+      "lines": 356,
+      "sha256": "473fbf827535504eee10236e70115ad0a41421cc1b4098a86072db2a47951768",
+      "original_log": "group-default-s2-original-1-143.log",
+      "candidate_log": "group-default-s2-candidate-1-143.log"
+    },
+    {
+      "label": "group-default-s2",
+      "mode": 2,
+      "seed": 143,
+      "exact_events_and_original_receipts": true,
+      "lines": 356,
+      "sha256": "473fbf827535504eee10236e70115ad0a41421cc1b4098a86072db2a47951768",
+      "original_log": "group-default-s2-original-2-143.log",
+      "candidate_log": "group-default-s2-candidate-2-143.log"
+    },
+    {
+      "label": "group-default-s2",
+      "mode": 2,
+      "seed": 144,
+      "exact_events_and_original_receipts": true,
+      "lines": 356,
+      "sha256": "473fbf827535504eee10236e70115ad0a41421cc1b4098a86072db2a47951768",
+      "original_log": "group-default-s2-original-2-144.log",
+      "candidate_log": "group-default-s2-candidate-2-144.log"
+    },
+    {
+      "label": "original-P-program",
+      "mode": 1,
+      "seed": 143,
+      "exact_events_and_original_receipts": true,
+      "lines": 58,
+      "sha256": "dd0c1cc5d63cdcc9d6ee76a221bf41bcee23d528e45e489c58d52934c791c957",
+      "original_log": "original-P-program-original-1-143.log",
+      "candidate_log": "original-P-program-candidate-1-143.log"
+    },
+    {
+      "label": "original-P-program",
+      "mode": 2,
+      "seed": 143,
+      "exact_events_and_original_receipts": true,
+      "lines": 58,
+      "sha256": "dd0c1cc5d63cdcc9d6ee76a221bf41bcee23d528e45e489c58d52934c791c957",
+      "original_log": "original-P-program-original-2-143.log",
+      "candidate_log": "original-P-program-candidate-2-143.log"
+    },
+    {
+      "label": "original-P-program",
+      "mode": 2,
+      "seed": 144,
+      "exact_events_and_original_receipts": true,
+      "lines": 58,
+      "sha256": "dd0c1cc5d63cdcc9d6ee76a221bf41bcee23d528e45e489c58d52934c791c957",
+      "original_log": "original-P-program-original-2-144.log",
+      "candidate_log": "original-P-program-candidate-2-144.log"
+    },
+    {
+      "label": "local-h0",
+      "mode": 1,
+      "seed": 143,
+      "exact_events_and_original_receipts": true,
+      "lines": 2404,
+      "sha256": "01349dc0f7e4b38c00e07b3d70cbfa057a7c6ec0da7e71a6b001f4bd4618f3a6",
+      "original_log": "local-h0-original-1-143.log",
+      "candidate_log": "local-h0-candidate-1-143.log"
+    },
+    {
+      "label": "local-h0",
+      "mode": 2,
+      "seed": 143,
+      "exact_events_and_original_receipts": true,
+      "lines": 2404,
+      "sha256": "01349dc0f7e4b38c00e07b3d70cbfa057a7c6ec0da7e71a6b001f4bd4618f3a6",
+      "original_log": "local-h0-original-2-143.log",
+      "candidate_log": "local-h0-candidate-2-143.log"
+    },
+    {
+      "label": "local-h0",
+      "mode": 2,
+      "seed": 144,
+      "exact_events_and_original_receipts": true,
+      "lines": 2404,
+      "sha256": "01349dc0f7e4b38c00e07b3d70cbfa057a7c6ec0da7e71a6b001f4bd4618f3a6",
+      "original_log": "local-h0-original-2-144.log",
+      "candidate_log": "local-h0-candidate-2-144.log"
+    },
+    {
+      "label": "local-h32",
+      "mode": 1,
+      "seed": 143,
+      "exact_events_and_original_receipts": true,
+      "lines": 2404,
+      "sha256": "e3910acd6416cbde0926e663430f5d253e307258a7a62c34edd37db67b931355",
+      "original_log": "local-h32-original-1-143.log",
+      "candidate_log": "local-h32-candidate-1-143.log"
+    },
+    {
+      "label": "local-h32",
+      "mode": 2,
+      "seed": 143,
+      "exact_events_and_original_receipts": true,
+      "lines": 2404,
+      "sha256": "e3910acd6416cbde0926e663430f5d253e307258a7a62c34edd37db67b931355",
+      "original_log": "local-h32-original-2-143.log",
+      "candidate_log": "local-h32-candidate-2-143.log"
+    },
+    {
+      "label": "local-h32",
+      "mode": 2,
+      "seed": 144,
+      "exact_events_and_original_receipts": true,
+      "lines": 2404,
+      "sha256": "e3910acd6416cbde0926e663430f5d253e307258a7a62c34edd37db67b931355",
+      "original_log": "local-h32-original-2-144.log",
+      "candidate_log": "local-h32-candidate-2-144.log"
+    }
+  ],
+  "cold_reset_runs": [
+    {
+      "mode": 1,
+      "seed": 143,
+      "log": "cold-local-1-143.log",
+      "sha256": "1f6707e5e0b60dfc10630e093d9820b466ade1bcda7aa1d22c283da108601bd0"
+    },
+    {
+      "mode": 2,
+      "seed": 143,
+      "log": "cold-local-2-143.log",
+      "sha256": "682952edea5135226718d2b1400bd9a199f6ef08dbefc58f22d1bb7a2e7432c4"
+    },
+    {
+      "mode": 2,
+      "seed": 144,
+      "log": "cold-local-2-144.log",
+      "sha256": "de570c71254f3f96340351fe02778dbcbc47030e868f22ba77f3e2b48c04720f"
+    }
+  ],
+  "pin_diagnostic_checks": [
+    {
+      "label": "group-default-s2",
+      "original": [],
+      "candidate": [],
+      "new_candidate_diagnostics": {}
+    },
+    {
+      "label": "original-P-program",
+      "original": [],
+      "candidate": [],
+      "new_candidate_diagnostics": {}
+    },
+    {
+      "label": "local-h0",
+      "original": [],
+      "candidate": [],
+      "new_candidate_diagnostics": {}
+    },
+    {
+      "label": "local-h32",
+      "original": [],
+      "candidate": [],
+      "new_candidate_diagnostics": {}
+    },
+    {
+      "label": "cold-local",
+      "candidate": []
+    }
+  ],
+  "required_code_sha256": {
+    "project/experiments/p_native_opt/tb_popt_group.sv": "e942462f6e6bf58ad5fa0fb175e2c52209c0de172fcc26b45bc79c0778b47e5e",
+    "project/experiments/p_native_opt/tb_popt_local.sv": "5bb0ca29d98d9c1d2406205589711a2779a6c413fdaafe7e6e5cb8bb463e14d2",
+    "project/experiments/pu_leaf_base/tb_pu_p_group.sv": "f69c47af18a1ebb45506df31f091f6c430a3bcc90eb66caa6501179d06aa8334",
+    "project/experiments/shared32_native/compat_baseline/block_feed_loader.sv": "86479daad012c028d4ebc9a6613001e07abec33af2fe0764fd8e0fb71732dd31",
+    "project/experiments/shared32_native/compat_baseline/local_s_p.sv": "c2bb51e272acad7c18fc096ce3cd44ef411f05080942b1fa79b060eefd5975d4",
+    "project/experiments/shared32_native/compat_baseline/pu_p_group.sv": "79371ed5aed4f761b35022e683afd5898e5d234cd0f5a8e053e38f9162d0de28",
+    "project/experiments/shared32_native/compat_baseline/source.json": "35fc21449a1df16a11e048e986e732710811476ef25af97a6771f75301b65fa0",
+    "project/experiments/shared32_native/compat_cold_local.sv": "3e76eef7d18273ab7fd6939c946106ccd83d3de119e5f19e04aa1fa3461703bb",
+    "project/experiments/shared32_native/compat_generate.py": "e5ae6d7055c8dd6810742da3a9de6b7a24c007424498c66116dab36b61ca5f1c",
+    "project/experiments/shared32_native/compat_job.sh": "801edea7235d9096ff1ab2217ab3e910c73511563cd2a21cdf2007e52a337a40",
+    "project/experiments/shared32_native/compat_run.py": "c744ee99e9d57f21b9388a0cabf7d09bc523022ad63b3f9a2cc0a411e6edb53f",
+    "project/rtl/block_feed_v1/block_feed_loader.sv": "1b875b0484dbc91a5ace6c58998956992acb0f8f521fbae527bc6fcc0358d2bf",
+    "project/rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+    "project/rtl/block_local_s/popt_s_policy_arbiter.sv": "2290458fea43112043e49134b0c5cd76b540a109a3dc03cd807bc950887a0d76",
+    "project/rtl/block_v2/block_v2_g.sv": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+    "project/rtl/block_v2/block_v2_g_tables.svh": "d4e1e5d11b845f44e9c5674b4e12c1ad8e9afaec6e524a1866c95c17b3e80d14",
+    "project/rtl/block_v2/block_v2_m.sv": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+    "project/rtl/block_v2/block_v2_m_context.sv": "ba85544d48c4850029b026b7d9d827328502c350c3a603c96a07138dfffcd0c3",
+    "project/rtl/pu_leaf_base/pj_feed_hold.sv": "ed4ee4b4f4875f88c6108a911b82661b581f7786a556ca83cabeece7b2b51061",
+    "project/rtl/pu_leaf_base/pj_mem_port.sv": "66e76fcfb708b2edbe89ce981b3217c30367aa797553c3ec9e199b6e2a003237",
+    "project/rtl/pu_leaf_base/pj_sram_client.sv": "58942675b4ca11cb4c6ab5e7b0d91672ca46a2a9f0deedb3fd360bfde6af4247",
+    "project/rtl/pu_leaf_base/pu_p_group.sv": "113367bfa3b36bf5e57fa5785365c20f33918b9dac2efb5e43b643e2ccf5a1c8",
+    "project/rtl/pu_leaf_base/pu_p_store_control.sv": "0e4bd93216797f2992a969a1c2f0cfa55f2ed4be0f5320f9cf80db572d7b01fc",
+    "project/rtl/s_sram/block_feed_s16k_1r1w.sv": "1a809ae51361fd4f98bcccc26b1b057e57cc8f3babca1bc630f9b7c8ce957400",
+    "project/rtl/s_sram/block_feed_s16k_bank_rw.sv": "8de334eb02abbf65cacff9691e7d5e4b20da20ca15961d31dd6c62071db0180c",
+    "project/rtl/s_sram/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+    "project/rtl/s_sram/local_s_p.sv": "117985a8037bf1d061f6436ce0bd1f5b419e3441fc145557bd1a3d2d0673ae7b"
+  },
+  "allocation_receipt_sha256": "f8c1466c36dcc3b5f81acd208eacff517a7181fa9e0a5725d56487b7a3afff1d",
+  "tools_receipt_sha256": "ae0394d5198cfbe8e1b3ea782cb512c4b02b6476b36f0f941a32c33685b9f85e",
+  "versions": {
+    "python": "3.10.12",
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "gcc": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+  },
+  "scope": "default production RTL numerical/cycle compatibility only; no full-model token/s or physical qualification",
+  "generation": {
+    "baseline": {
+      "schema": 1,
+      "upstream_commit": "a8e793e4c6f97e9dca5b0cc203797dcd3b0e0e78",
+      "local_baseline_commit_prefix": "160a3de",
+      "scope": "Original three RTL modules before shared32 production integration; snapshots only, no source modification",
+      "files": {
+        "project/rtl/s_sram/local_s_p.sv": {
+          "snapshot": "local_s_p.sv",
+          "sha256": "c2bb51e272acad7c18fc096ce3cd44ef411f05080942b1fa79b060eefd5975d4",
+          "checkout_sha256": "4eff183f898d5bb716a68d98b679e524113962fd486bf3aa04c7ee1bac6e908a"
+        },
+        "project/rtl/block_feed_v1/block_feed_loader.sv": {
+          "snapshot": "block_feed_loader.sv",
+          "sha256": "86479daad012c028d4ebc9a6613001e07abec33af2fe0764fd8e0fb71732dd31",
+          "checkout_sha256": "3b53faa68300a98fd2262cfd81268ea7aa19a9beadac8fdd0dcea87301c9681f"
+        },
+        "project/rtl/pu_leaf_base/pu_p_group.sv": {
+          "snapshot": "pu_p_group.sv",
+          "sha256": "79371ed5aed4f761b35022e683afd5898e5d234cd0f5a8e053e38f9162d0de28",
+          "checkout_sha256": "1b8dbcc57068160dc806fcd79a593b51073f33d93d39dc590b4dc124bff0ca57"
+        }
+      },
+      "normalization": "Snapshot source copies normalize CRLF to LF only; checkout SHA retained; original repository files untouched."
+    },
+    "unchanged_bench_sha256": {
+      "project/experiments/p_native_opt/tb_popt_group.sv": "e942462f6e6bf58ad5fa0fb175e2c52209c0de172fcc26b45bc79c0778b47e5e",
+      "project/experiments/pu_leaf_base/tb_pu_p_group.sv": "f69c47af18a1ebb45506df31f091f6c430a3bcc90eb66caa6501179d06aa8334",
+      "project/experiments/p_native_opt/tb_popt_local.sv": "5bb0ca29d98d9c1d2406205589711a2779a6c413fdaafe7e6e5cb8bb463e14d2"
+    },
+    "generated_sha256": {
+      "group-original.sv": "7e8a5c95d144f5bfdbe8d053cc114745513f1cbbe747cad10f73f0ec1cee790a",
+      "group-candidate.sv": "fcf4fb82fd0fb0f4601f306f53f64490e5e0797b86637a602b4ca6df01b25f03",
+      "program-original.sv": "cdbe3e45c01d5f67a38feb8a58d0c48d5bb3377e95514dd3afcd57a849920e2b",
+      "program-candidate.sv": "ada9c4e75256f58f2fb2b86bdfb039c1471c40dc2b6350660de3212da60a1291",
+      "local-original.sv": "967cf70460845785a0572a5d50882d2dbe514238614c10e1ecd1a8fd7bddaf85",
+      "local-candidate.sv": "badba874ed694dbbfd0bfb16321a12bd12e162aad3182763b24350d63c0b067d"
+    }
+  },
+  "common_source_sha256": {
+    "project/rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+    "project/rtl/block_local_s/popt_s_policy_arbiter.sv": "2290458fea43112043e49134b0c5cd76b540a109a3dc03cd807bc950887a0d76",
+    "project/rtl/s_sram/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+    "project/rtl/s_sram/block_feed_s16k_bank_rw.sv": "8de334eb02abbf65cacff9691e7d5e4b20da20ca15961d31dd6c62071db0180c",
+    "project/rtl/block_v2/block_v2_m.sv": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+    "project/rtl/block_v2/block_v2_m_context.sv": "ba85544d48c4850029b026b7d9d827328502c350c3a603c96a07138dfffcd0c3",
+    "project/rtl/block_v2/block_v2_g.sv": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
+    "project/rtl/pu_leaf_base/pu_p_store_control.sv": "0e4bd93216797f2992a969a1c2f0cfa55f2ed4be0f5320f9cf80db572d7b01fc",
+    "project/rtl/pu_leaf_base/pj_feed_hold.sv": "ed4ee4b4f4875f88c6108a911b82661b581f7786a556ca83cabeece7b2b51061",
+    "project/rtl/pu_leaf_base/pj_mem_port.sv": "66e76fcfb708b2edbe89ce981b3217c30367aa797553c3ec9e199b6e2a003237",
+    "project/rtl/pu_leaf_base/pj_sram_client.sv": "58942675b4ca11cb4c6ab5e7b0d91672ca46a2a9f0deedb3fd360bfde6af4247"
+  }
+}

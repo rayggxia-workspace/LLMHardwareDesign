@@ -1,0 +1,1389 @@
+{
+  "schema_version": 1,
+  "analysis_kind": "legacy_21case_same_system_paired_ratios",
+  "source": {
+    "path": "D:\\Study_material\\Study_material\\LLMHardwareDesign\\work\\Melodydt\\247\\run15\\receipts\\results\\result.json",
+    "sha256": "31213ac812866f463c8bd6e32a97d41e74e570b5310b6689f15e1e8fc6727cbc",
+    "decoded_json_sha256": "31213ac812866f463c8bd6e32a97d41e74e570b5310b6689f15e1e8fc6727cbc"
+  },
+  "source_commit": "3e62b85c8da19caca31784cb380c40d323295157",
+  "manifest_sha256": "f9f138c284be12ccd99416f95f253b5d3fd4bd44ce891a392ce716186d3d1244",
+  "input_sha256": {
+    "baseline-results.json": "4a6e7ed77cf4e8ad83ff0d2511216dbc903a82baf54872df79eef4f1e1c16dbe",
+    "decode128.trace": "c7d410e14a8bec74fe3ed0fd8522292ad2906393c442c432a167dfd8e54b6a0e",
+    "decode2048.trace": "ba4157469188fbc1602e3324fa747847d78d39e392c4674cf92d9aabbce9339f",
+    "decode512.trace": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d",
+    "m-profile.log": "00868657995ca77b7e87a07ef0ec69155893e566c72b665d8f4b071ba63f5b3c",
+    "manifest.json": "d13bb74bdff3ccc6b5b81428c8957c53dbf41726bbef04910870024433b63c7a",
+    "prefill2.trace": "be2f0c96b7042674680a3ee51d99389a89813318034c29098cdb344d131441b7",
+    "prior-results.json": "731750fd59aa705f7a07f5c359fba6c829b091faefbecc861b8da0bdf0915eb5"
+  },
+  "prior_sha256": {
+    "run01": "62c787396bd331cb2c6d8a0a4352a4ebb83456616eb141bc50c33655d84f3fc3",
+    "run04": "966729e962ecde76f755a9da873f3fb7ac566e4dd454f45e7d4b6f8f76c73cce",
+    "run05": "4dcb0f01357e2f71fcf9f90deeab1d1dd50101b3d928b3e9866473c91c133777",
+    "run12": "e8c72c436d52969f35eb6c623b8fbedbcdbd48d35c8a4fc69f5cc2ad94ec6c41"
+  },
+  "generated_sha256": {
+    "detail.hpp": "224a027b652add702ef6b3560d0e63db66159cba17886fd15cb4c24d231789ac",
+    "matrix.inc": "1d4e404059bfff8530f215d7bb59219f60bd043c0e4025cbddd2118457d56f84",
+    "context_worker.inc": "e2200df1f2b58ab62513f3fb1fe4bb6b344b707bec4aec37e5d5522032f88893",
+    "context_detail.hpp": "703ea6b8ba8a3497bc332626b2aeef787b9a1ec9efe60a80d156c3afe160dda6",
+    "model.cpp": "86ae8e0450fb5c78c14dd165344bdda1cf07a45d66d8e0e2d0ad4052d6f8ef37"
+  },
+  "versions": {
+    "python": "3.10.12",
+    "SystemC": "3.0.2",
+    "gcc": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+  },
+  "receipt_checks": {
+    "passed": true,
+    "completed_cases": 21,
+    "historical_fields_equal": true,
+    "run12_generated_exact": true,
+    "completed_independent_work_resource_audit": true
+  },
+  "evaluation": {
+    "core_clock_hz": 300000000,
+    "P_count": 2,
+    "U_count": 1,
+    "aggregate_DDR_bytes_s": 17100000000,
+    "arithmetic": "frozen PR241/Issue247 S32/S96 conditional model",
+    "actual_rtl_tokens_per_second": false,
+    "ideal_port_result_is_mathematical_bound": false,
+    "SRAM_expansion_implemented": false,
+    "capacity_percentages_are_route_labeled": true
+  },
+  "evidence_levels": {
+    "baseline": "旧体系基线：每P 16KiB、共享端口日历、1 context",
+    "contexts_only": "机制投影：每P 16KiB、共享端口日历、旧S32/S96模型的8 contexts",
+    "ideal_1R1W_only": "理想端口目标：每P 16KiB、独立64B/拍读与64B/拍写、1 context",
+    "contexts_plus_ideal_1R1W": "联合目标：每P 16KiB、理想独立读写端口、旧S32/S96模型的8 contexts",
+    "unimplemented_capacity_reference": "容量参考：每P 48/64KiB、理想独立读写端口、1 context、预取判断固定16KiB；未实装",
+    "original_PR241_reference": "旧PR241 observe参考：每P 16KiB、共享端口日历、1 context"
+  },
+  "workloads": [
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "label": "Decode context512 / W8",
+      "cases": {
+        "baseline": {
+          "id": "decode512:queued_pipe_w8:baseline:16KiB",
+          "configuration": {
+            "workload": "decode512",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 1,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": false,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "baseline"
+          },
+          "evidence_level": "旧体系基线：每P 16KiB、共享端口日历、1 context",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 97922248,
+            "seconds": 0.326407492667,
+            "tokens_per_second": 3.06365516254,
+            "read_bus_bytes": 3512625152,
+            "write_bus_bytes": 14523136,
+            "logical_read_bytes": 3490211840,
+            "logical_write_bytes": 14523136,
+            "dma_descriptors": 2966278,
+            "M_commands": 1521664,
+            "M_work_ticks": 59639776,
+            "resident_A_saved_bytes": 1151778816,
+            "P_scratch_peak_bytes": 16000,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            },
+            {
+              "prior": "run01",
+              "full_old_fields_equal": true,
+              "mode": "recursive_all_old_fields"
+            }
+          ],
+          "log_sha256": "d2331a02c1aa2e2e8beb2e95a513c884f29fde9865083474231dfbad2cad3ac8"
+        },
+        "contexts_only": {
+          "id": "decode512:queued_pipe_w8:contexts_only:16KiB",
+          "configuration": {
+            "workload": "decode512",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 8,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": false,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "contexts_only"
+          },
+          "evidence_level": "机制投影：每P 16KiB、共享端口日历、旧S32/S96模型的8 contexts",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 92855950,
+            "seconds": 0.309519832667,
+            "tokens_per_second": 3.23081074122,
+            "read_bus_bytes": 3223611392,
+            "write_bus_bytes": 14523136,
+            "logical_read_bytes": 3201198080,
+            "logical_write_bytes": 14523136,
+            "dma_descriptors": 2684038,
+            "M_commands": 1521664,
+            "M_work_ticks": 59639776,
+            "resident_A_saved_bytes": 1151778816,
+            "P_scratch_peak_bytes": 16000,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            },
+            {
+              "prior": "run01",
+              "full_old_fields_equal": true,
+              "mode": "recursive_all_old_fields"
+            }
+          ],
+          "log_sha256": "a9745d39637e8e6524ca5ff455032e97f8ff8c996edb69606aa0bc15ef3c3537"
+        },
+        "ideal_1R1W_only": {
+          "id": "decode512:queued_pipe_w8:ideal_1R1W_only:16KiB",
+          "configuration": {
+            "workload": "decode512",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 1,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": true,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "ideal_1R1W_only"
+          },
+          "evidence_level": "理想端口目标：每P 16KiB、独立64B/拍读与64B/拍写、1 context",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 90878813,
+            "seconds": 0.302929375547,
+            "tokens_per_second": 3.30109946649,
+            "read_bus_bytes": 3512625152,
+            "write_bus_bytes": 14523136,
+            "logical_read_bytes": 3490211840,
+            "logical_write_bytes": 14523136,
+            "dma_descriptors": 2966278,
+            "M_commands": 1521664,
+            "M_work_ticks": 59639776,
+            "resident_A_saved_bytes": 1151778816,
+            "P_scratch_peak_bytes": 16000,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            }
+          ],
+          "log_sha256": "3a29893988c7e32ad1b1ea3a12094cc7bfe2d058ca490a919d1bf48f6a80fc9d"
+        },
+        "contexts_plus_ideal_1R1W": {
+          "id": "decode512:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "configuration": {
+            "workload": "decode512",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 8,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": true,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "contexts_plus_ideal_1R1W"
+          },
+          "evidence_level": "联合目标：每P 16KiB、理想独立读写端口、旧S32/S96模型的8 contexts",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 85808212,
+            "seconds": 0.286027372667,
+            "tokens_per_second": 3.49616888299,
+            "read_bus_bytes": 3223611392,
+            "write_bus_bytes": 14523136,
+            "logical_read_bytes": 3201198080,
+            "logical_write_bytes": 14523136,
+            "dma_descriptors": 2684038,
+            "M_commands": 1521664,
+            "M_work_ticks": 59639776,
+            "resident_A_saved_bytes": 1151778816,
+            "P_scratch_peak_bytes": 16000,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run05",
+              "full_old_fields_equal": true,
+              "mode": "exact_full_result"
+            },
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            },
+            {
+              "prior": "run12",
+              "full_old_fields_equal": true,
+              "mode": "exact_full_result"
+            }
+          ],
+          "log_sha256": "e1665d445ccfc6402411c644ca7655b54e90df743464dc136f481ec5dd576ffb"
+        }
+      },
+      "comparisons": {
+        "contexts_on_shared_port": {
+          "description": "共享端口内：8 contexts 对1 context",
+          "candidate": "decode512:queued_pipe_w8:contexts_only:16KiB",
+          "baseline": "decode512:queued_pipe_w8:baseline:16KiB",
+          "candidate_tokens_per_second": 3.23081074122,
+          "baseline_tokens_per_second": 3.06365516254,
+          "throughput_ratio": 1.054560833322008,
+          "throughput_change_percent": 5.456083332200801,
+          "elapsed_time_change_percent": -5.173796674216891,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "ideal_dual_at_one_context": {
+          "description": "ctx1内：理想独立读写端口对共享端口",
+          "candidate": "decode512:queued_pipe_w8:ideal_1R1W_only:16KiB",
+          "baseline": "decode512:queued_pipe_w8:baseline:16KiB",
+          "candidate_tokens_per_second": 3.30109946649,
+          "baseline_tokens_per_second": 3.06365516254,
+          "throughput_ratio": 1.0775035998988394,
+          "throughput_change_percent": 7.750359989883937,
+          "elapsed_time_change_percent": -7.192885472133526,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "joint_target_vs_baseline": {
+          "description": "8 contexts与理想独立读写联合目标对旧体系基线",
+          "candidate": "decode512:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "decode512:queued_pipe_w8:baseline:16KiB",
+          "candidate_tokens_per_second": 3.49616888299,
+          "baseline_tokens_per_second": 3.06365516254,
+          "throughput_ratio": 1.141175719035155,
+          "throughput_change_percent": 14.117571903515502,
+          "elapsed_time_change_percent": -12.37107631018619,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "contexts_on_ideal_dual": {
+          "description": "理想独立读写内：8 contexts 对1 context",
+          "candidate": "decode512:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "decode512:queued_pipe_w8:ideal_1R1W_only:16KiB",
+          "candidate_tokens_per_second": 3.49616888299,
+          "baseline_tokens_per_second": 3.30109946649,
+          "throughput_ratio": 1.0590922565291598,
+          "throughput_change_percent": 5.909225652915984,
+          "elapsed_time_change_percent": -5.5795192689649165,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "ideal_dual_at_eight_contexts": {
+          "description": "ctx8内：理想独立读写端口对共享端口",
+          "candidate": "decode512:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "decode512:queued_pipe_w8:contexts_only:16KiB",
+          "candidate_tokens_per_second": 3.49616888299,
+          "baseline_tokens_per_second": 3.23081074122,
+          "throughput_ratio": 1.0821336076367436,
+          "throughput_change_percent": 8.213360763674359,
+          "elapsed_time_change_percent": -7.589969210559322,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        }
+      }
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "variant": "adaptive",
+      "label": "Decode context512 / W16",
+      "cases": {
+        "baseline": {
+          "id": "decode512:queued_pipe_w16:baseline:16KiB",
+          "configuration": {
+            "workload": "decode512",
+            "profile": "queued_pipe_w16",
+            "variant": "adaptive",
+            "contexts": 1,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": false,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "baseline"
+          },
+          "evidence_level": "旧体系基线：每P 16KiB、共享端口日历、1 context",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 160283475,
+            "seconds": 0.53427824894,
+            "tokens_per_second": 1.87168390625,
+            "read_bus_bytes": 6669690880,
+            "write_bus_bytes": 20734208,
+            "logical_read_bytes": 6650816512,
+            "logical_write_bytes": 14523136,
+            "dma_descriptors": 3414582,
+            "M_commands": 1799264,
+            "M_work_ticks": 60750176,
+            "resident_A_saved_bytes": 1151778816,
+            "P_scratch_peak_bytes": 16224,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            },
+            {
+              "prior": "run01",
+              "full_old_fields_equal": true,
+              "mode": "recursive_all_old_fields"
+            }
+          ],
+          "log_sha256": "5ee66d8cd300f4e3b3b1b1ebb2cbcf87f1ba35b489b3e186a94e9ed538402685"
+        },
+        "contexts_only": {
+          "id": "decode512:queued_pipe_w16:contexts_only:16KiB",
+          "configuration": {
+            "workload": "decode512",
+            "profile": "queued_pipe_w16",
+            "variant": "adaptive",
+            "contexts": 8,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": false,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "contexts_only"
+          },
+          "evidence_level": "机制投影：每P 16KiB、共享端口日历、旧S32/S96模型的8 contexts",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 163436176,
+            "seconds": 0.54478725278,
+            "tokens_per_second": 1.83557892535,
+            "read_bus_bytes": 6314616832,
+            "write_bus_bytes": 20734208,
+            "logical_read_bytes": 6295742464,
+            "logical_write_bytes": 14523136,
+            "dma_descriptors": 3067830,
+            "M_commands": 1799264,
+            "M_work_ticks": 60750176,
+            "resident_A_saved_bytes": 1151778816,
+            "P_scratch_peak_bytes": 16224,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run01",
+              "full_old_fields_equal": true,
+              "mode": "recursive_all_old_fields"
+            }
+          ],
+          "log_sha256": "f7c752905480d0b66208bb487f23548c48d7bff8820c760be22b1fd02a524487"
+        },
+        "ideal_1R1W_only": {
+          "id": "decode512:queued_pipe_w16:ideal_1R1W_only:16KiB",
+          "configuration": {
+            "workload": "decode512",
+            "profile": "queued_pipe_w16",
+            "variant": "adaptive",
+            "contexts": 1,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": true,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "ideal_1R1W_only"
+          },
+          "evidence_level": "理想端口目标：每P 16KiB、独立64B/拍读与64B/拍写、1 context",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 147963826,
+            "seconds": 0.493212750487,
+            "tokens_per_second": 2.02752260361,
+            "read_bus_bytes": 6669690880,
+            "write_bus_bytes": 20734208,
+            "logical_read_bytes": 6650816512,
+            "logical_write_bytes": 14523136,
+            "dma_descriptors": 3414582,
+            "M_commands": 1799264,
+            "M_work_ticks": 60750176,
+            "resident_A_saved_bytes": 1151778816,
+            "P_scratch_peak_bytes": 16224,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            }
+          ],
+          "log_sha256": "4157d736e00857a6c3826ca5e2f5aef927456db4179fd2f2a1f0be4f8db4fdf4"
+        },
+        "contexts_plus_ideal_1R1W": {
+          "id": "decode512:queued_pipe_w16:contexts_plus_ideal_1R1W:16KiB",
+          "configuration": {
+            "workload": "decode512",
+            "profile": "queued_pipe_w16",
+            "variant": "adaptive",
+            "contexts": 8,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": true,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "contexts_plus_ideal_1R1W"
+          },
+          "evidence_level": "联合目标：每P 16KiB、理想独立读写端口、旧S32/S96模型的8 contexts",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 141732824,
+            "seconds": 0.472442745367,
+            "tokens_per_second": 2.11665860003,
+            "read_bus_bytes": 6314616832,
+            "write_bus_bytes": 20734208,
+            "logical_read_bytes": 6295742464,
+            "logical_write_bytes": 14523136,
+            "dma_descriptors": 3067830,
+            "M_commands": 1799264,
+            "M_work_ticks": 60750176,
+            "resident_A_saved_bytes": 1151778816,
+            "P_scratch_peak_bytes": 16224,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run05",
+              "full_old_fields_equal": true,
+              "mode": "exact_full_result"
+            },
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            },
+            {
+              "prior": "run12",
+              "full_old_fields_equal": true,
+              "mode": "exact_full_result"
+            }
+          ],
+          "log_sha256": "7bc181bfeaf3787ecef3eb1ce306aba82ed6b1057c4897001ff551f41c7efd03"
+        }
+      },
+      "comparisons": {
+        "contexts_on_shared_port": {
+          "description": "共享端口内：8 contexts 对1 context",
+          "candidate": "decode512:queued_pipe_w16:contexts_only:16KiB",
+          "baseline": "decode512:queued_pipe_w16:baseline:16KiB",
+          "candidate_tokens_per_second": 1.83557892535,
+          "baseline_tokens_per_second": 1.87168390625,
+          "throughput_ratio": 0.980709894024918,
+          "throughput_change_percent": -1.9290105975081961,
+          "elapsed_time_change_percent": 1.9669533358039004,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "ideal_dual_at_one_context": {
+          "description": "ctx1内：理想独立读写端口对共享端口",
+          "candidate": "decode512:queued_pipe_w16:ideal_1R1W_only:16KiB",
+          "baseline": "decode512:queued_pipe_w16:baseline:16KiB",
+          "candidate_tokens_per_second": 2.02752260361,
+          "baseline_tokens_per_second": 1.87168390625,
+          "throughput_ratio": 1.0832612263418815,
+          "throughput_change_percent": 8.326122634188149,
+          "elapsed_time_change_percent": -7.6861632556581405,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "joint_target_vs_baseline": {
+          "description": "8 contexts与理想独立读写联合目标对旧体系基线",
+          "candidate": "decode512:queued_pipe_w16:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "decode512:queued_pipe_w16:baseline:16KiB",
+          "candidate_tokens_per_second": 2.11665860003,
+          "baseline_tokens_per_second": 1.87168390625,
+          "throughput_ratio": 1.130884650424604,
+          "throughput_change_percent": 13.088465042460395,
+          "elapsed_time_change_percent": -11.573651687239872,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "contexts_on_ideal_dual": {
+          "description": "理想独立读写内：8 contexts 对1 context",
+          "candidate": "decode512:queued_pipe_w16:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "decode512:queued_pipe_w16:ideal_1R1W_only:16KiB",
+          "candidate_tokens_per_second": 2.11665860003,
+          "baseline_tokens_per_second": 2.02752260361,
+          "throughput_ratio": 1.04396300995979,
+          "throughput_change_percent": 4.396300995979008,
+          "elapsed_time_change_percent": -4.211165485785118,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "ideal_dual_at_eight_contexts": {
+          "description": "ctx8内：理想独立读写端口对共享端口",
+          "candidate": "decode512:queued_pipe_w16:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "decode512:queued_pipe_w16:contexts_only:16KiB",
+          "candidate_tokens_per_second": 2.11665860003,
+          "baseline_tokens_per_second": 1.83557892535,
+          "throughput_ratio": 1.153128623780225,
+          "throughput_change_percent": 15.312862378022496,
+          "elapsed_time_change_percent": -13.279405317182535,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        }
+      }
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "label": "Decode context2048 / W8",
+      "cases": {
+        "baseline": {
+          "id": "decode2048:queued_pipe_w8:baseline:16KiB",
+          "configuration": {
+            "workload": "decode2048",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 1,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": false,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "baseline"
+          },
+          "evidence_level": "旧体系基线：每P 16KiB、共享端口日历、1 context",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 130049740,
+            "seconds": 0.433499132987,
+            "tokens_per_second": 2.30680968866,
+            "read_bus_bytes": 3768608768,
+            "write_bus_bytes": 28678912,
+            "logical_read_bytes": 3677775872,
+            "logical_write_bytes": 28678912,
+            "dma_descriptors": 5592838,
+            "M_commands": 1566592,
+            "M_work_ticks": 64104928,
+            "resident_A_saved_bytes": 1208401920,
+            "P_scratch_peak_bytes": 16000,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            },
+            {
+              "prior": "run01",
+              "full_old_fields_equal": true,
+              "mode": "recursive_all_old_fields"
+            }
+          ],
+          "log_sha256": "dae618f6fd3d89aa81ccb214b3c301503327aceed47bbd96a5c368b0562dd070"
+        },
+        "contexts_only": {
+          "id": "decode2048:queued_pipe_w8:contexts_only:16KiB",
+          "configuration": {
+            "workload": "decode2048",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 8,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": false,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "contexts_only"
+          },
+          "evidence_level": "机制投影：每P 16KiB、共享端口日历、旧S32/S96模型的8 contexts",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 124983442,
+            "seconds": 0.416611472987,
+            "tokens_per_second": 2.40031795772,
+            "read_bus_bytes": 3479595008,
+            "write_bus_bytes": 28678912,
+            "logical_read_bytes": 3388762112,
+            "logical_write_bytes": 28678912,
+            "dma_descriptors": 5310598,
+            "M_commands": 1566592,
+            "M_work_ticks": 64104928,
+            "resident_A_saved_bytes": 1208401920,
+            "P_scratch_peak_bytes": 16000,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run01",
+              "full_old_fields_equal": true,
+              "mode": "recursive_all_old_fields"
+            }
+          ],
+          "log_sha256": "e1439afe3c3d04400ffb2337bc265c14f4fde870e752a2f06de5226a5af21817"
+        },
+        "ideal_1R1W_only": {
+          "id": "decode2048:queued_pipe_w8:ideal_1R1W_only:16KiB",
+          "configuration": {
+            "workload": "decode2048",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 1,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": true,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "ideal_1R1W_only"
+          },
+          "evidence_level": "理想端口目标：每P 16KiB、独立64B/拍读与64B/拍写、1 context",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 122588420,
+            "seconds": 0.408628065467,
+            "tokens_per_second": 2.44721321052,
+            "read_bus_bytes": 3768608768,
+            "write_bus_bytes": 28678912,
+            "logical_read_bytes": 3677775872,
+            "logical_write_bytes": 28678912,
+            "dma_descriptors": 5592838,
+            "M_commands": 1566592,
+            "M_work_ticks": 64104928,
+            "resident_A_saved_bytes": 1208401920,
+            "P_scratch_peak_bytes": 16000,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            }
+          ],
+          "log_sha256": "e4b81c06b90430d6c99d924f10a098b18fcd4d4b565aa50a5e376994f20fb982"
+        },
+        "contexts_plus_ideal_1R1W": {
+          "id": "decode2048:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "configuration": {
+            "workload": "decode2048",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 8,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": true,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "contexts_plus_ideal_1R1W"
+          },
+          "evidence_level": "联合目标：每P 16KiB、理想独立读写端口、旧S32/S96模型的8 contexts",
+          "metrics": {
+            "tokens": 1,
+            "ticks": 117517819,
+            "seconds": 0.391726062587,
+            "tokens_per_second": 2.55280435873,
+            "read_bus_bytes": 3479595008,
+            "write_bus_bytes": 28678912,
+            "logical_read_bytes": 3388762112,
+            "logical_write_bytes": 28678912,
+            "dma_descriptors": 5310598,
+            "M_commands": 1566592,
+            "M_work_ticks": 64104928,
+            "resident_A_saved_bytes": 1208401920,
+            "P_scratch_peak_bytes": 16000,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run05",
+              "full_old_fields_equal": true,
+              "mode": "exact_full_result"
+            },
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            },
+            {
+              "prior": "run12",
+              "full_old_fields_equal": true,
+              "mode": "exact_full_result"
+            }
+          ],
+          "log_sha256": "664040cacc834f021222c2708c12766ce357d748db365006d65e0ea13ad9e61e"
+        }
+      },
+      "comparisons": {
+        "contexts_on_shared_port": {
+          "description": "共享端口内：8 contexts 对1 context",
+          "candidate": "decode2048:queued_pipe_w8:contexts_only:16KiB",
+          "baseline": "decode2048:queued_pipe_w8:baseline:16KiB",
+          "candidate_tokens_per_second": 2.40031795772,
+          "baseline_tokens_per_second": 2.30680968866,
+          "throughput_ratio": 1.040535753561753,
+          "throughput_change_percent": 4.0535753561752985,
+          "elapsed_time_change_percent": -3.895661770679104,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "ideal_dual_at_one_context": {
+          "description": "ctx1内：理想独立读写端口对共享端口",
+          "candidate": "decode2048:queued_pipe_w8:ideal_1R1W_only:16KiB",
+          "baseline": "decode2048:queued_pipe_w8:baseline:16KiB",
+          "candidate_tokens_per_second": 2.44721321052,
+          "baseline_tokens_per_second": 2.30680968866,
+          "throughput_ratio": 1.0608648049946745,
+          "throughput_change_percent": 6.08648049946745,
+          "elapsed_time_change_percent": -5.737281952244622,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "joint_target_vs_baseline": {
+          "description": "8 contexts与理想独立读写联合目标对旧体系基线",
+          "candidate": "decode2048:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "decode2048:queued_pipe_w8:baseline:16KiB",
+          "candidate_tokens_per_second": 2.55280435873,
+          "baseline_tokens_per_second": 2.30680968866,
+          "throughput_ratio": 1.1066384761946302,
+          "throughput_change_percent": 10.663847619463018,
+          "elapsed_time_change_percent": -9.63625235237846,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "contexts_on_ideal_dual": {
+          "description": "理想独立读写内：8 contexts 对1 context",
+          "candidate": "decode2048:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "decode2048:queued_pipe_w8:ideal_1R1W_only:16KiB",
+          "candidate_tokens_per_second": 2.55280435873,
+          "baseline_tokens_per_second": 2.44721321052,
+          "throughput_ratio": 1.043147506623321,
+          "throughput_change_percent": 4.31475066233209,
+          "elapsed_time_change_percent": -4.136280473218001,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "ideal_dual_at_eight_contexts": {
+          "description": "ctx8内：理想独立读写端口对共享端口",
+          "candidate": "decode2048:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "decode2048:queued_pipe_w8:contexts_only:16KiB",
+          "candidate_tokens_per_second": 2.55280435873,
+          "baseline_tokens_per_second": 2.40031795772,
+          "throughput_ratio": 1.0635275841378902,
+          "throughput_change_percent": 6.352758413789017,
+          "elapsed_time_change_percent": -5.9732897468180335,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        }
+      }
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "variant": "adaptive_prefix_pair_combine",
+      "label": "Prefill 2 tokens / W8",
+      "cases": {
+        "baseline": {
+          "id": "prefill2:queued_pipe_w8:baseline:16KiB",
+          "configuration": {
+            "workload": "prefill2",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 1,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": false,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "baseline"
+          },
+          "evidence_level": "旧体系基线：每P 16KiB、共享端口日历、1 context",
+          "metrics": {
+            "tokens": 2,
+            "ticks": 193096532,
+            "seconds": 0.6436551034,
+            "tokens_per_second": 3.10725416366,
+            "read_bus_bytes": 5305853760,
+            "write_bus_bytes": 39623488,
+            "logical_read_bytes": 5305208640,
+            "logical_write_bytes": 39558976,
+            "dma_descriptors": 4872222,
+            "M_commands": 1516480,
+            "M_work_ticks": 107261600,
+            "resident_A_saved_bytes": 129024,
+            "P_scratch_peak_bytes": 16064,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            },
+            {
+              "prior": "run01",
+              "full_old_fields_equal": true,
+              "mode": "recursive_all_old_fields"
+            }
+          ],
+          "log_sha256": "609e7f9e30d4362e2d2b615b4632ce23f4c73ac8fe560653078377aefe67acca"
+        },
+        "contexts_only": {
+          "id": "prefill2:queued_pipe_w8:contexts_only:16KiB",
+          "configuration": {
+            "workload": "prefill2",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 8,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": false,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "contexts_only"
+          },
+          "evidence_level": "机制投影：每P 16KiB、共享端口日历、旧S32/S96模型的8 contexts",
+          "metrics": {
+            "tokens": 2,
+            "ticks": 193096532,
+            "seconds": 0.6436551034,
+            "tokens_per_second": 3.10725416366,
+            "read_bus_bytes": 5305853760,
+            "write_bus_bytes": 39623488,
+            "logical_read_bytes": 5305208640,
+            "logical_write_bytes": 39558976,
+            "dma_descriptors": 4872222,
+            "M_commands": 1516480,
+            "M_work_ticks": 107261600,
+            "resident_A_saved_bytes": 129024,
+            "P_scratch_peak_bytes": 16064,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run01",
+              "full_old_fields_equal": true,
+              "mode": "recursive_all_old_fields"
+            }
+          ],
+          "log_sha256": "12033591f355016e32b10677d1f239609cf2488c4f13415ba01f91c2f2174d74"
+        },
+        "ideal_1R1W_only": {
+          "id": "prefill2:queued_pipe_w8:ideal_1R1W_only:16KiB",
+          "configuration": {
+            "workload": "prefill2",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 1,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": true,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "ideal_1R1W_only"
+          },
+          "evidence_level": "理想端口目标：每P 16KiB、独立64B/拍读与64B/拍写、1 context",
+          "metrics": {
+            "tokens": 2,
+            "ticks": 162307038,
+            "seconds": 0.541023458227,
+            "tokens_per_second": 3.69669737899,
+            "read_bus_bytes": 5305853760,
+            "write_bus_bytes": 39623488,
+            "logical_read_bytes": 5305208640,
+            "logical_write_bytes": 39558976,
+            "dma_descriptors": 4872222,
+            "M_commands": 1516480,
+            "M_work_ticks": 107261600,
+            "resident_A_saved_bytes": 129024,
+            "P_scratch_peak_bytes": 16064,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            }
+          ],
+          "log_sha256": "9736905b48c918d32fbf230ace39c6b28b8ab0f9f16bcaf2bad5fd13a54acabe"
+        },
+        "contexts_plus_ideal_1R1W": {
+          "id": "prefill2:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "configuration": {
+            "workload": "prefill2",
+            "profile": "queued_pipe_w8",
+            "variant": "adaptive_prefix_pair_combine",
+            "contexts": 8,
+            "switch_cycles": 1,
+            "reuse_A": true,
+            "P_KiB": 16,
+            "dual_ports": true,
+            "P_port_quarters": 4,
+            "policy_KiB": 0,
+            "role": "contexts_plus_ideal_1R1W"
+          },
+          "evidence_level": "联合目标：每P 16KiB、理想独立读写端口、旧S32/S96模型的8 contexts",
+          "metrics": {
+            "tokens": 2,
+            "ticks": 162307038,
+            "seconds": 0.541023458227,
+            "tokens_per_second": 3.69669737899,
+            "read_bus_bytes": 5305853760,
+            "write_bus_bytes": 39623488,
+            "logical_read_bytes": 5305208640,
+            "logical_write_bytes": 39558976,
+            "dma_descriptors": 4872222,
+            "M_commands": 1516480,
+            "M_work_ticks": 107261600,
+            "resident_A_saved_bytes": 129024,
+            "P_scratch_peak_bytes": 16064,
+            "U_cache_peak_bytes": 12288
+          },
+          "reference_matches": [
+            {
+              "prior": "run05",
+              "full_old_fields_equal": true,
+              "mode": "exact_full_result"
+            },
+            {
+              "prior": "run04",
+              "full_old_fields_equal": true,
+              "mode": "only_new_policy_metadata"
+            },
+            {
+              "prior": "run12",
+              "full_old_fields_equal": true,
+              "mode": "exact_full_result"
+            }
+          ],
+          "log_sha256": "629018394de13e7126d35a65faeb5982ecf7f7daf60f869877a88c6df4e445dc"
+        }
+      },
+      "comparisons": {
+        "contexts_on_shared_port": {
+          "description": "共享端口内：8 contexts 对1 context",
+          "candidate": "prefill2:queued_pipe_w8:contexts_only:16KiB",
+          "baseline": "prefill2:queued_pipe_w8:baseline:16KiB",
+          "candidate_tokens_per_second": 3.10725416366,
+          "baseline_tokens_per_second": 3.10725416366,
+          "throughput_ratio": 1.0,
+          "throughput_change_percent": 0.0,
+          "elapsed_time_change_percent": 0.0,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "ideal_dual_at_one_context": {
+          "description": "ctx1内：理想独立读写端口对共享端口",
+          "candidate": "prefill2:queued_pipe_w8:ideal_1R1W_only:16KiB",
+          "baseline": "prefill2:queued_pipe_w8:baseline:16KiB",
+          "candidate_tokens_per_second": 3.69669737899,
+          "baseline_tokens_per_second": 3.10725416366,
+          "throughput_ratio": 1.189699066856244,
+          "throughput_change_percent": 18.969906685624395,
+          "elapsed_time_change_percent": -15.945130339348756,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "joint_target_vs_baseline": {
+          "description": "8 contexts与理想独立读写联合目标对旧体系基线",
+          "candidate": "prefill2:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "prefill2:queued_pipe_w8:baseline:16KiB",
+          "candidate_tokens_per_second": 3.69669737899,
+          "baseline_tokens_per_second": 3.10725416366,
+          "throughput_ratio": 1.189699066856244,
+          "throughput_change_percent": 18.969906685624395,
+          "elapsed_time_change_percent": -15.945130339348756,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "contexts_on_ideal_dual": {
+          "description": "理想独立读写内：8 contexts 对1 context",
+          "candidate": "prefill2:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "prefill2:queued_pipe_w8:ideal_1R1W_only:16KiB",
+          "candidate_tokens_per_second": 3.69669737899,
+          "baseline_tokens_per_second": 3.69669737899,
+          "throughput_ratio": 1.0,
+          "throughput_change_percent": 0.0,
+          "elapsed_time_change_percent": 0.0,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        },
+        "ideal_dual_at_eight_contexts": {
+          "description": "ctx8内：理想独立读写端口对共享端口",
+          "candidate": "prefill2:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+          "baseline": "prefill2:queued_pipe_w8:contexts_only:16KiB",
+          "candidate_tokens_per_second": 3.69669737899,
+          "baseline_tokens_per_second": 3.10725416366,
+          "throughput_ratio": 1.189699066856244,
+          "throughput_change_percent": 18.969906685624395,
+          "elapsed_time_change_percent": -15.945130339348756,
+          "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+        }
+      }
+    }
+  ],
+  "capacity_references": [
+    {
+      "case": {
+        "id": "decode512:queued_pipe_w8:unimplemented_capacity_reference:48KiB",
+        "configuration": {
+          "workload": "decode512",
+          "profile": "queued_pipe_w8",
+          "variant": "adaptive_prefix_pair_combine",
+          "contexts": 1,
+          "switch_cycles": 1,
+          "reuse_A": true,
+          "P_KiB": 48,
+          "dual_ports": true,
+          "P_port_quarters": 4,
+          "policy_KiB": 16,
+          "role": "unimplemented_capacity_reference"
+        },
+        "evidence_level": "容量参考：每P 48/64KiB、理想独立读写端口、1 context、预取判断固定16KiB；未实装",
+        "metrics": {
+          "tokens": 1,
+          "ticks": 84708255,
+          "seconds": 0.282360849467,
+          "tokens_per_second": 3.54156747258,
+          "read_bus_bytes": 3164850176,
+          "write_bus_bytes": 14523136,
+          "logical_read_bytes": 3145975808,
+          "logical_write_bytes": 14523136,
+          "dma_descriptors": 2634646,
+          "M_commands": 1587328,
+          "M_work_ticks": 59902432,
+          "resident_A_saved_bytes": 1570922496,
+          "P_scratch_peak_bytes": 49120,
+          "U_cache_peak_bytes": 12288
+        },
+        "reference_matches": [
+          {
+            "prior": "run05",
+            "full_old_fields_equal": true,
+            "mode": "exact_full_result"
+          }
+        ],
+        "log_sha256": "b707fc8c619765f027edf3e8daaa75302841e7e9109e3ad43d12ac4c2d547a3b"
+      },
+      "vs_16KiB_ideal_dual_ctx1": {
+        "description": "同ctx1/理想独立读写/有效16KiB预取阈值：容量参考对16KiB",
+        "candidate": "decode512:queued_pipe_w8:unimplemented_capacity_reference:48KiB",
+        "baseline": "decode512:queued_pipe_w8:ideal_1R1W_only:16KiB",
+        "candidate_tokens_per_second": 3.54156747258,
+        "baseline_tokens_per_second": 3.30109946649,
+        "throughput_ratio": 1.0728448229236676,
+        "throughput_change_percent": 7.284482292366756,
+        "elapsed_time_change_percent": -6.789875046901395,
+        "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+      },
+      "vs_16KiB_ideal_dual_ctx8": {
+        "description": "整路线比较：48/64KiB ctx1参考对16KiB ctx8理想端口联合目标；不是纯容量消融",
+        "candidate": "decode512:queued_pipe_w8:unimplemented_capacity_reference:48KiB",
+        "baseline": "decode512:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+        "candidate_tokens_per_second": 3.54156747258,
+        "baseline_tokens_per_second": 3.49616888299,
+        "throughput_ratio": 1.012985239302549,
+        "throughput_change_percent": 1.2985239302548912,
+        "elapsed_time_change_percent": -1.281878432057848,
+        "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+      }
+    },
+    {
+      "case": {
+        "id": "decode512:queued_pipe_w8:unimplemented_capacity_reference:64KiB",
+        "configuration": {
+          "workload": "decode512",
+          "profile": "queued_pipe_w8",
+          "variant": "adaptive_prefix_pair_combine",
+          "contexts": 1,
+          "switch_cycles": 1,
+          "reuse_A": true,
+          "P_KiB": 64,
+          "dual_ports": true,
+          "P_port_quarters": 4,
+          "policy_KiB": 16,
+          "role": "unimplemented_capacity_reference"
+        },
+        "evidence_level": "容量参考：每P 48/64KiB、理想独立读写端口、1 context、预取判断固定16KiB；未实装",
+        "metrics": {
+          "tokens": 1,
+          "ticks": 84651989,
+          "seconds": 0.282173295227,
+          "tokens_per_second": 3.54392147278,
+          "read_bus_bytes": 3164850176,
+          "write_bus_bytes": 14523136,
+          "logical_read_bytes": 3145975808,
+          "logical_write_bytes": 14523136,
+          "dma_descriptors": 2560918,
+          "M_commands": 1513600,
+          "M_work_ticks": 59607520,
+          "resident_A_saved_bytes": 1570922496,
+          "P_scratch_peak_bytes": 49760,
+          "U_cache_peak_bytes": 12288
+        },
+        "reference_matches": [
+          {
+            "prior": "run05",
+            "full_old_fields_equal": true,
+            "mode": "exact_full_result"
+          }
+        ],
+        "log_sha256": "bb625713241b7143fcca9c5a4eaa2243519e5327a6eda412b099c650c6a9110c"
+      },
+      "vs_16KiB_ideal_dual_ctx1": {
+        "description": "同ctx1/理想独立读写/有效16KiB预取阈值：容量参考对16KiB",
+        "candidate": "decode512:queued_pipe_w8:unimplemented_capacity_reference:64KiB",
+        "baseline": "decode512:queued_pipe_w8:ideal_1R1W_only:16KiB",
+        "candidate_tokens_per_second": 3.54392147278,
+        "baseline_tokens_per_second": 3.30109946649,
+        "throughput_ratio": 1.0735579187367903,
+        "throughput_change_percent": 7.3557918736790295,
+        "elapsed_time_change_percent": -6.8517885670614564,
+        "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+      },
+      "vs_16KiB_ideal_dual_ctx8": {
+        "description": "整路线比较：48/64KiB ctx1参考对16KiB ctx8理想端口联合目标；不是纯容量消融",
+        "candidate": "decode512:queued_pipe_w8:unimplemented_capacity_reference:64KiB",
+        "baseline": "decode512:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+        "candidate_tokens_per_second": 3.54392147278,
+        "baseline_tokens_per_second": 3.49616888299,
+        "throughput_ratio": 1.013658547797372,
+        "throughput_change_percent": 1.3658547797372078,
+        "elapsed_time_change_percent": -1.3474505618338073,
+        "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+      }
+    },
+    {
+      "case": {
+        "id": "prefill2:queued_pipe_w8:unimplemented_capacity_reference:48KiB",
+        "configuration": {
+          "workload": "prefill2",
+          "profile": "queued_pipe_w8",
+          "variant": "adaptive_prefix_pair_combine",
+          "contexts": 1,
+          "switch_cycles": 1,
+          "reuse_A": true,
+          "P_KiB": 48,
+          "dual_ports": true,
+          "P_port_quarters": 4,
+          "policy_KiB": 16,
+          "role": "unimplemented_capacity_reference"
+        },
+        "evidence_level": "容量参考：每P 48/64KiB、理想独立读写端口、1 context、预取判断固定16KiB；未实装",
+        "metrics": {
+          "tokens": 2,
+          "ticks": 134318298,
+          "seconds": 0.44772765812,
+          "tokens_per_second": 4.46700123106,
+          "read_bus_bytes": 3589355328,
+          "write_bus_bytes": 39623488,
+          "logical_read_bytes": 3588710208,
+          "logical_write_bytes": 39558976,
+          "dma_descriptors": 3188876,
+          "M_commands": 1516480,
+          "M_work_ticks": 107261600,
+          "resident_A_saved_bytes": 2267117568,
+          "P_scratch_peak_bytes": 48832,
+          "U_cache_peak_bytes": 12288
+        },
+        "reference_matches": [
+          {
+            "prior": "run05",
+            "full_old_fields_equal": true,
+            "mode": "exact_full_result"
+          }
+        ],
+        "log_sha256": "9914a2ed423c9e32a5b79dda1953b451f817adac96303c5ee1860be7036d8967"
+      },
+      "vs_16KiB_ideal_dual_ctx1": {
+        "description": "同ctx1/理想独立读写/有效16KiB预取阈值：容量参考对16KiB",
+        "candidate": "prefill2:queued_pipe_w8:unimplemented_capacity_reference:48KiB",
+        "baseline": "prefill2:queued_pipe_w8:ideal_1R1W_only:16KiB",
+        "candidate_tokens_per_second": 4.46700123106,
+        "baseline_tokens_per_second": 3.69669737899,
+        "throughput_ratio": 1.2083762269651765,
+        "throughput_change_percent": 20.837622696517656,
+        "elapsed_time_change_percent": -17.244316986317344,
+        "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+      },
+      "vs_16KiB_ideal_dual_ctx8": {
+        "description": "整路线比较：48/64KiB ctx1参考对16KiB ctx8理想端口联合目标；不是纯容量消融",
+        "candidate": "prefill2:queued_pipe_w8:unimplemented_capacity_reference:48KiB",
+        "baseline": "prefill2:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+        "candidate_tokens_per_second": 4.46700123106,
+        "baseline_tokens_per_second": 3.69669737899,
+        "throughput_ratio": 1.2083762269651765,
+        "throughput_change_percent": 20.837622696517656,
+        "elapsed_time_change_percent": -17.244316986317344,
+        "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+      }
+    },
+    {
+      "case": {
+        "id": "prefill2:queued_pipe_w8:unimplemented_capacity_reference:64KiB",
+        "configuration": {
+          "workload": "prefill2",
+          "profile": "queued_pipe_w8",
+          "variant": "adaptive_prefix_pair_combine",
+          "contexts": 1,
+          "switch_cycles": 1,
+          "reuse_A": true,
+          "P_KiB": 64,
+          "dual_ports": true,
+          "P_port_quarters": 4,
+          "policy_KiB": 16,
+          "role": "unimplemented_capacity_reference"
+        },
+        "evidence_level": "容量参考：每P 48/64KiB、理想独立读写端口、1 context、预取判断固定16KiB；未实装",
+        "metrics": {
+          "tokens": 2,
+          "ticks": 131942542,
+          "seconds": 0.4398084722,
+          "tokens_per_second": 4.54743400007,
+          "read_bus_bytes": 3439540032,
+          "write_bus_bytes": 39623488,
+          "logical_read_bytes": 3438894912,
+          "logical_write_bytes": 39558976,
+          "dma_descriptors": 3041420,
+          "M_commands": 1516480,
+          "M_work_ticks": 107261600,
+          "resident_A_saved_bytes": 2267117568,
+          "P_scratch_peak_bytes": 65216,
+          "U_cache_peak_bytes": 12288
+        },
+        "reference_matches": [
+          {
+            "prior": "run05",
+            "full_old_fields_equal": true,
+            "mode": "exact_full_result"
+          }
+        ],
+        "log_sha256": "bbe1214cf3e7076d262618c4f5db1f5d04311f88b45dc58fa180b9722aeedc55"
+      },
+      "vs_16KiB_ideal_dual_ctx1": {
+        "description": "同ctx1/理想独立读写/有效16KiB预取阈值：容量参考对16KiB",
+        "candidate": "prefill2:queued_pipe_w8:unimplemented_capacity_reference:64KiB",
+        "baseline": "prefill2:queued_pipe_w8:ideal_1R1W_only:16KiB",
+        "candidate_tokens_per_second": 4.54743400007,
+        "baseline_tokens_per_second": 3.69669737899,
+        "throughput_ratio": 1.230134234387766,
+        "throughput_change_percent": 23.01342343877659,
+        "elapsed_time_change_percent": -18.708058678027363,
+        "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+      },
+      "vs_16KiB_ideal_dual_ctx8": {
+        "description": "整路线比较：48/64KiB ctx1参考对16KiB ctx8理想端口联合目标；不是纯容量消融",
+        "candidate": "prefill2:queued_pipe_w8:unimplemented_capacity_reference:64KiB",
+        "baseline": "prefill2:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+        "candidate_tokens_per_second": 4.54743400007,
+        "baseline_tokens_per_second": 3.69669737899,
+        "throughput_ratio": 1.230134234387766,
+        "throughput_change_percent": 23.01342343877659,
+        "elapsed_time_change_percent": -18.708058678027363,
+        "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+      }
+    }
+  ],
+  "original_reference": {
+    "case": {
+      "id": "decode512:queued_pipe_w8:original_PR241_reference:16KiB",
+      "configuration": {
+        "workload": "decode512",
+        "profile": "queued_pipe_w8",
+        "variant": "observe",
+        "contexts": 1,
+        "switch_cycles": 1,
+        "reuse_A": true,
+        "P_KiB": 16,
+        "dual_ports": false,
+        "P_port_quarters": 4,
+        "policy_KiB": 0,
+        "role": "original_PR241_reference"
+      },
+      "evidence_level": "旧PR241 observe参考：每P 16KiB、共享端口日历、1 context",
+      "metrics": {
+        "tokens": 1,
+        "ticks": 110512497,
+        "seconds": 0.368374988033,
+        "tokens_per_second": 2.7146251306,
+        "read_bus_bytes": 3583993856,
+        "write_bus_bytes": 20734208,
+        "logical_read_bytes": 3565119488,
+        "logical_write_bytes": 14523136,
+        "dma_descriptors": 3136982,
+        "M_commands": 1521664,
+        "M_work_ticks": 59639776,
+        "resident_A_saved_bytes": 1151778816,
+        "P_scratch_peak_bytes": 16128,
+        "U_cache_peak_bytes": 12288
+      },
+      "reference_matches": [
+        {
+          "prior": "run04",
+          "full_old_fields_equal": true,
+          "mode": "only_new_policy_metadata"
+        },
+        {
+          "prior": "run01",
+          "full_old_fields_equal": true,
+          "mode": "recursive_all_old_fields"
+        }
+      ],
+      "log_sha256": "b710b1abd8ea72bab4fb6fe0583efe20b6b7aad2202947be439ec6676856029d"
+    },
+    "best_schedule_vs_observe": {
+      "description": "同硬件ctx1/shared：已有调度组合对observe",
+      "candidate": "decode512:queued_pipe_w8:baseline:16KiB",
+      "baseline": "decode512:queued_pipe_w8:original_PR241_reference:16KiB",
+      "candidate_tokens_per_second": 3.06365516254,
+      "baseline_tokens_per_second": 2.7146251306,
+      "throughput_ratio": 1.128573933836792,
+      "throughput_change_percent": 12.857393383679195,
+      "elapsed_time_change_percent": -11.3926017589013,
+      "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+    },
+    "joint_target_vs_observe": {
+      "description": "理想端口联合目标对observe的直接整路线比值；各阶段百分比不相加",
+      "candidate": "decode512:queued_pipe_w8:contexts_plus_ideal_1R1W:16KiB",
+      "baseline": "decode512:queued_pipe_w8:original_PR241_reference:16KiB",
+      "candidate_tokens_per_second": 3.49616888299,
+      "baseline_tokens_per_second": 2.7146251306,
+      "throughput_ratio": 1.2879011704305345,
+      "throughput_change_percent": 28.790117043053453,
+      "elapsed_time_change_percent": -22.354290611778204,
+      "method": "baseline.seconds / candidate.seconds; same workload/profile/token count"
+    }
+  },
+  "caveats": [
+    "共享端口ctx8是旧S32/S96体系中的机制投影；原生8xS64实现未因此获得S32/S96资格。",
+    "理想1R1W按独立64B/拍读和64B/拍写计时；当前四1RW bank实现不等于这个目标。",
+    "理想端口结果是条件目标参考，不是数学上界，也不是原生RTL实测速度。",
+    "48/64KiB仅保留为未实装容量参考；其对ctx8方案的比较同时改变容量和context策略。",
+    "Prefill2是两个输入token的摊销吞吐；decode是单次生成token，不跨场景比较百分比。",
+    "每项提升均直接比较同workload/profile的两次结果；不将各项百分比相加。"
+  ],
+  "analysis_script_sha256": "e924bf1b1a53169730b093f0f18f957d830d6b4effc97bdc108f6e893ecbad90"
+}

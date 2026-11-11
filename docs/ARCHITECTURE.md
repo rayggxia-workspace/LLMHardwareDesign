@@ -25,6 +25,29 @@ python -X utf8 project/experiments/block_v2/check_release.py --local-artifacts
 
 上面检查不重跑 EDA。需要重跑时，在固定Linux/ORFS/Slurm环境依次使用 `run_rtl.py --model <m|n|e|g> --out <新目录>`、`map.py --help`、`physical.py --help`、`qualify.py --help`；原始参数、工具/库SHA和候选选择以每宏原始回执为准，禁止将单阶段完成写成宏合格。此次整合未重新执行 RTL 仿真/综合/P&R。具体输入输出及限制见结果入口。
 
+## R 原始 LOAD 地址边界回归（Issue #242）
+
+`project/experiments/r_load_bounds/` 使用真实 R256/R1024 RTL 和既有 C 适配器，检查完整 10 位索引在状态行地址截位前得到验证。原始非法装载保持 `load_ready=0`；直接调用者须预校验或撤回，C 适配器返回显式地址错误。[目标范围、准备步骤及 Slurm 复跑命令](../project/experiments/r_load_bounds/README.md)。在已分配的 Slurm 资源和指定容器中可单独执行：
+
+```bash
+python3 -B project/experiments/r_load_bounds/run.py --case raw256 --out /全新输出目录
+# 其他案例：raw1024、service256、negative（需 --old-rtl /旧源/r_stream_local.sv）
+```
+
+[实际实验记录](experiments/issue-242-r-load-bounds.md)绑定测试 commit、工具、源码与日志 SHA。九次修复版执行通过、三次旧源码反例被检出。该修复仅经过 RTL 回归，原冻结宏的物理资格不自动转移；原 192 项最终网表回归及物理重新验收未执行。
+
+## token/s 研究与结果边界（Issue #244）
+
+`project/experiments/token_throughput_study/`固定PR220/241的历史基线与最新架构结果，分别计算旧资源图敏感性、原M/长K候选的配置边界，以及最新241达到4/5/10 token/s的必要条件。[正式研究报告](experiments/issue-244-token-throughput-study.md) · [输入、方法和服务器命令](../project/experiments/token_throughput_study/README.md)。
+
+```powershell
+python -B project/experiments/token_throughput_study/check.py
+python -B project/experiments/token_throughput_study/preview.py --out /全新目录/preview.json
+python -B project/experiments/token_throughput_study/assess_systemc.py --results work/Melodydt/244/upstream241-results.json --out /全新目录/assessment.json
+```
+
+这些命令不运行生产RTL或新增SystemC。完整旧图复算由个人Slurm作业101608完成，c96/node13、4核、22秒、COMPLETED0:0，任务图逐字节匹配且基线复现；此前101601的CRLF清单失败原件保留。最新241的34组结果是上游条件预测，本分支只核验记录与推导边界，未重跑其sweep。新量化/KV数值、服务与控制RTL、物理和能量未验收。
+
 ## 目录约定
 
 | 路径 | 用途 |
@@ -132,6 +155,10 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ## 数据与外部依赖
 
+P私有S容量扫描：`python3 -B project/experiments/sram_capacity_study/run.py --inputs FROZEN_INPUTS --out NEW_RESULTS`仅在本人Slurm新目录及既有SystemC/容器环境执行，4核UNLIMITED；参数化P容量与P端口占用，U固定16KiB，源/输入身份锁及完整16KiB回归是接收前提。[容量报告](experiments/issue-246-sram-capacity.md)给出28case和真实RTL扩容边界；本地`python -B work/Melodydt/246/verify.py`只核对回执/功能源，不替代RTL或物理验证。
+
+P/DMA供数研究采用[Issue245隔离实验](../project/experiments/p_dma_study/README.md)：在本人Slurm新目录、固定SystemC3.0.2环境运行`python3 -B project/experiments/p_dma_study/run.py --inputs FROZEN_INPUTS --out NEW_RESULTS --workers 4 --phase adaptive`，main/followup为另两组消融。必须先验证冻结PR241输入SHA和原版/观测版/上游基线完全一致；当前是原生S32等条件架构模型，不是生产RTL或真实生成。`python -B work/Melodydt/245/verify.py`仅核对轻量证据与15功能源SHA；三轮Slurm及负结果见[正式报告](experiments/issue-245-p-dma-study.md)。运行依赖服务器授权输入/容器，仓库本身不含全部依赖。
+
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
@@ -172,3 +199,244 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+
+## 固定SRAM的面积换速度研究（Issue247）
+
+[报告](experiments/issue-247-area-speed.md)、[源码与运行说明](../project/experiments/area_speed_study/README.md)、[轻量证据](../work/Melodydt/247/README.md)。用户保留SRAM扩容候选、暂不实装；隔离模型与弹性RTL不修改生产RTL。先多部分和，后实际C++边界/弹性链路，再依次评估P读写端口、第三P、向量lane。三轮101631/101635/101638均COMPLETED0:0；56次完整trace、32次小模型/非法参数及原P组对照，范围以报告为准。
+
+以下入口在已分配的Slurm节点运行，路径取该run冻结源码和输入；先核验source-files/input-files SHA。job.sh、job_stage2.sh、job_hardware.sh提供4核封装，第二/三轮必须携带真实前置结果及inputs.json源码commit；不能把相对示例路径当成可覆盖旧结果的命令。
+
+```bash
+python3 -B project/experiments/area_speed_study/run.py --inputs /absolute/frozen-inputs --out /absolute/new-run/results
+python3 -B project/experiments/area_speed_study/stage2_runner.py --root /absolute/new-stage2-run
+python3 -B project/experiments/area_speed_study/run_hardware.py --inputs /absolute/frozen-inputs --out /absolute/new-stage3-run/results --stage1 /absolute/stage1-result.json --stage2 /absolute/stage2-result.json
+# 本地证据一致性检查，不重新运行仿真。
+python -B work/Melodydt/247/verify.py
+```
+
+原生S32/96位M/E32、1R1W和宽向量为条件合同，未取得真实生成或新物理资格。link吞吐翻倍未改善原P程序的288拍，不能直接乘到token/s；三P均分在原两通道下退化。每P私有S仍16KiB，第三P活跃配置额外计一份16KiB，不宣称总存储预算相同。
+
+## 容量/端口两路线及预取交互（Issue247）
+
+[报告](experiments/issue-247-capacity-port-compare.md)、[源码](../project/experiments/sram_port_compare/README.md)、[证据](../work/Melodydt/247/compare/README.md)、[取舍](decisions/issue-247-capacity-port-routes.md)。run04/101665与run05/101672均c64/node1/4核/COMPLETED0:0，分别8:02与3:58；87完整trace、6尾块、6非法CLI、230回收输出SHA通过，含默认/历史回放。
+
+以下在获授权的Slurm节点与全新冻结目录执行。run04的job.sh和run05的job_policy.sh均复制成各run根的job.sh后提交；根目录有inputs.json真实source_commit、source-files.sha256和input-files.sha256，source/与inputs/来自同次封存。第二轮还需真实run04-result.json/run04-inputs.json并满足SHA门控；不得覆盖旧结果。
+
+```bash
+python3 -B SOURCE/project/experiments/sram_port_compare/run.py \
+ --inputs NEW_RUN/inputs --out NEW_RUN/results \
+ --capacity NEW_RUN/capacity-result.json --stage1 NEW_RUN/stage1-result.json \
+ --stage2 NEW_RUN/stage2-result.json --stage3 NEW_RUN/stage3-result.json
+python3 -B SOURCE/project/experiments/sram_port_compare/run_policy.py \
+ --inputs NEW_POLICY_RUN/inputs --out NEW_POLICY_RUN/results --prior NEW_POLICY_RUN/run04-result.json
+# 本地只核对源/回执，不重跑仿真。
+python -B work/Melodydt/247/compare/verify.py
+python -B work/Melodydt/247/compare/policy/verify.py
+```
+
+两P各48/64KiB＋读写并发，与各16KiB＋并发＋8组部分和在同一候选模型比较。固定预取判定后大容量decode仅多约1%至2%、prefill2多约21%至23%；实际S总量分别112/144/48KiB，最后者另计寄存器。端口占用敏感性不等于全芯片降频；同址冲突、真实1R1W宏/前端、面积/时序与真实生成仍未验收。生产RTL和SRAM容量未实装变更。
+
+## U连续融合与有限流水研究（Issue247）
+
+[报告](experiments/issue-247-u-fusion.md)、[源码](../project/experiments/u_fusion_study/README.md)、[证据](../work/Melodydt/247/fusion/README.md)。run07/101720原生单N/E有限FIFO108测量、run09/101728实际条件SystemC22完整case通过；并发整图数字仅冻结阶段费用的条件重放。生产RTL不改、SRAM扩容不实装；run06/08失败证据保留。
+
+```sh
+# 在独立Slurm目录，先核验source-files/input-files SHA；job.sh与job_overlap.sh均4核。
+python3 -B source/project/experiments/u_fusion_study/run.py --inputs inputs --out results --prior run05-result.json
+python3 -B source/project/experiments/u_fusion_study/run_overlap.py --repo source --out results --workers 4 --manifest inputs.json
+# 本机只读证据核验，不运行RTL/SystemC。
+python -B work/Melodydt/247/fusion/verify.py --repo . --index work/Melodydt/247/fusion/index.json
+```
+
+各out必须为新目录，真实40位源码commit在inputs.json；原生依赖、外部SRAM和工具SHA固定。完整事件保留服务器，部分日志/完整模型结果通过.gz.b64无损发布并验证原SHA。无实际大模型生成、完整张量数值或新物理资格。
+
+
+## Issue247 原生P仲裁、bank并发和A复用
+
+默认兼容的三个参数与命令合同见[详细实施文档](experiments/issue-247-p-native-optimizations.md)，源和运行器见[实验入口](../project/experiments/p_native_opt/README.md)，精确run10/11源码/工具/SHA见[证据](../work/Melodydt/247/native-p/README.md)。数据S保持16KiB，四1RW的机会并发不等于真正1R1W；新的生产候选未继承旧物理资格。
+
+```sh
+# 仅在本人独立Slurm目录及固定容器内执行EDA，先核对已上传source commit和SHA。
+python3 -B source/project/experiments/p_native_opt/run.py --repo source --out results --manifest inputs.json --workers 4 --components all
+# 补验scope须与inputs.json一致；integration只测local S和完整P。
+python3 -B source/project/experiments/p_native_opt/run.py --repo source --out results --manifest inputs.json --workers 4 --components integration
+# 本地只核验证据与管理结构。
+python -B work/Melodydt/247/native-p/verify.py
+python scripts/check_project.py
+```
+
+所有out为新目录；提交`job.sh`时4核、mdt-p-native、UNLIMITED，并立即读回job/节点/日志。最终性能必须计入context release；局部95→71拍及P长K2112→2032不能换算成整模型token/s，短K672→676退化保留。旧研究冻结源检查仍保留，不能通过更新旧SHA掩盖本轮新生产源码；旧物理/模型资格继续绑定其原commit。
+
+
+## Issue247 实施PDF与原生接口约束下的token/s
+
+[完整PDF](experiments/pdf/issue-247-p-native-optimizations.pdf)、[新版吞吐核验报告](experiments/issue-247-native-token-throughput.md)、[运行入口](../project/experiments/native_token_study/README.md)、[回执](../work/Melodydt/247/token-throughput/README.md)。旧S32/S96理想端口模型、实际P RTL命令校准和新条件图模型分别记录；原始trace原生准入必须拒绝，不能将条件适配器当已实现硬件。
+
+```bash
+# 各项使用独立的新run，固定容器、Slurm4核，并先校验源码commit/输入SHA。
+python3 -B source/project/experiments/native_token_study/run_legacy.py --root "$PWD"
+python3 -B source/project/experiments/native_token_study/calibration/run_calibration.py --repo source --out results --manifest inputs.json --workers 4
+python3 -B source/project/experiments/native_token_study/run.py --root "$PWD"
+# 本地只读证据检查，不运行RTL/SystemC。
+python -B work/Melodydt/247/token-throughput/verify.py
+```
+
+复现需要锁定的四份Qwen trace、原m-profile、run05历史完整结果、run13实测校准回执和`inputs.json`部署清单；位置和SHA见证据索引。2P/1U、300MHz、17.1GB/s均为条件参数，S固定16KiB；S32/S96适配器额外2712B/P明确列账。token/s不由局部周期比例外推，真实原生生成/新物理验收仍未完成。
+
+
+## Issue247 旧评价体系复评（2026-11-10）
+
+`project/experiments/legacy_metric_eval/` 固定旧PR241/Issue247生成器和原输入，按plan.json运行21场景。参考[运行准备](../project/experiments/legacy_metric_eval/README.md)；服务器独立run含source/、inputs/、4份旧result/input及SHA部署清单，目录内 `sbatch --parsable job.sh`，4核、既有SystemC容器。禁止在登录节点或Windows运行EDA。
+
+本地回收验证：`python -B work/Melodydt/247/legacy-metric-eval/verify.py`；分析重建：`python -B work/Melodydt/247/legacy-metric-eval/analyse.py <原始result.json> --out <新分析目录>`。只读后处理不是仿真。实际run15通过，范围和SHA见[报告](experiments/issue-247-legacy-metric-evaluation.md)。旧S32/S96与理想1R1W只用于条件模型评价，不授予当前4×1RW/S64或完整原生模型资格。
+
+
+## Issue247 新周期速度迭代
+
+[迭代合同与状态](experiments/issue-247-speed-iterations.md)。R1的正式RTL使用 `pu_u_group.NEXP_BATCH=1`，默认0保留原路径。新op15显式clobber原N统计会话，PACKED16/NX32精确magic、arity/count及未用lane零值合同由实验README定义；原N与S容量不变。
+
+```bash
+# 本人独立Slurm目录，已提交源码和input/source SHA先验一致，4核固定容器。
+python3 -B source/project/experiments/rtl_iterations/round1/run.py --root "$PWD"
+# 只有上述完整RTL通过且actual profile已SHA绑定后，才执行模型。
+python3 -B source/project/experiments/iterative_speed/round01/run.py --root "$PWD"
+# 本机仅验证回收证据；指数算术和SystemC均不在本机执行。
+python -B work/Melodydt/247/speed-iterations/verify.py
+```
+
+上两条使用不同新run目录，执行 `sbatch --parsable job.sh`，不覆盖旧结果。源快照单独保存，后续轮次修改当前RTL不改写旧资格。旧模型保留vector_region全额费用，S32 NExp采用实际NX32计算服务周期；S16 prefill保留旧路径。首轮run16/101835与run17/101838实际通过，报告与源/输入/输出SHA见迭代入口；这不等于原生完整LLM或物理资格。
+
+
+### Issue247第二轮：单命令stateless NExp
+
+实现与结果见[第二轮报告](experiments/issue-247-speed-round2.md)。源码863492081f0f512fc64fb73c787fcdcaf145a6b4；run18 RTL、run19旧模型均通过，真实费用与结果SHA在speed-iterations索引。正式U的NEXP_BATCH/NEXP_DIRECT默认关闭；不新增S容量。
+
+在本人服务器独立RUN目录，按归档payload/inputs/source SHA准备后通过对应job.sh提交Slurm；不要在登录节点或本机执行EDA。批处理入口：
+
+```sh
+python3 -B source/project/experiments/rtl_iterations/round2/run.py --root "$RUN"
+python3 -B source/project/experiments/iterative_speed/round02/run.py --root "$RUN"
+```
+
+离线证据：`python work/Melodydt/247/speed-iterations/verify.py`。R2源不同于R1，旧资格应核对归档source-snapshot，不要改历史SHA适配当前文件。
+
+
+### Issue247第三轮：有限矩阵供数
+
+见[第三轮实施报告](experiments/issue-247-speed-round3.md)。独立RTL实验round3与旧模型round03，真实四bank16KiB、单/双输入buffer、8完成预约、2读metadata；run20校准与run21旧体系24case通过，候选主项低于R2，保留负结果与大面积备份。
+
+仅Slurm分配节点执行归档job.sh；批处理入口分别为python3 -B source/project/experiments/rtl_iterations/round3/run.py --root RUN及python3 -B source/project/experiments/iterative_speed/round03/run.py --root RUN。源/输入必须与归档manifest SHA一致，新目录复跑，不覆盖原run20/21。
+
+离线证据python work/Melodydt/247/speed-iterations/verify.py；显式--current-run run20 --current-run run21可校验当前源，否则核验各自不可变源快照。retention.json记录未放入Git的大raw，离线验证不会假装重新读取服务器内容。完整原生P/DMA/生成与物理资格另验。
+
+
+### Issue247第四轮：可选四通道op12
+
+见[第四轮实施报告](experiments/issue-247-speed-round4.md)。只扩新stateless op12的EXP通道，NEXP_DIRECT_LANES默认2，可选4；需NEXP_BATCH=1及NEXP_DIRECT=1。原普通N仍两通道，S16/S32容器合同不变，SRAM16KiB。
+
+run22真实RTL校准、run23旧体系16case通过。仅Slurm分配节点按归档job.sh执行；入口python3 -B source/project/experiments/rtl_iterations/round4/run.py --root RUN与python3 -B source/project/experiments/iterative_speed/round04/run.py --root RUN。run18-observed输入的原日志SHA派生可用冻结make_prior.py重建，不能无来源替换基线。
+
+离线python work/Melodydt/247/speed-iterations/verify.py；选择--current-run run22 --current-run run23检查当前源，否则逐轮冻结source-snapshot核验。R1/R2生产源与R4不同，不能改旧SHA转移资格。大raw的retention索引不等于Git保存全部原始文件。此项没有综合/300MHz STA/物理或完整原生生成资格。
+
+## 顶层共享 S 直供 A 条件研究
+[实验入口](../project/experiments/shared_pool_study/README.md)在原R4上比较pool0/32/48/96KiB，保持每Block本地16KiB。按归档部署SHA准备本人服务器全新RUN，执行sbatch --parsable job.sh；批处理入口python3 -B source/project/experiments/shared_pool_study/run.py --root RUN。仅Slurm4核及既有SystemC3.0.2容器执行，禁止本机/登录节点编译或仿真。run25/101993完整32主例+10敏感例通过。只读本地证据验证：python -B work/Melodydt/247/shared-pool/verify.py；输入源码、实际状态及限制见[报告](experiments/issue-247-shared-pool-study.md)。共享池未实装生产RTL，不继承旧物理资格。
+
+## Issue247：共享32KiB原生双P与本地并发
+
+新RTL为project/rtl/shared_s/shared_a_pool32.sv、pu_p_shared_pair.sv及s_sram/block_feed_s16k_1r1w.sv。旧P参数默认关闭；新双P包装层显式选择共享A直供及逻辑1R1W。详见[实施报告](experiments/issue-247-shared32-native.md)与[决策](decisions/2026-11-10-issue-247-shared32-native.md)。
+
+在授权服务器个人新run目录部署source/、SHA锁定inputs.json、source/input-files.sha256后，仅Slurm执行：
+
+```sh
+# 从project/experiments/shared32_native/job.sh复制为run根job.sh
+sbatch --parsable job.sh
+# 默认旧模式精确回归：compat_job.sh复制为另一个run根job.sh
+# 原评价端口宽度：legacy_port_probe/job.sh，保留其README要求的全部冻结输入
+```
+
+原始通过：run32/102006完整RTL+ECHO0面积；run29/102003兼容；run30/102004旧体系端口敏感性。后处理可本地执行：python project/experiments/shared32_native/analyze.py --result RESULT_JSON --out ANALYSIS_JSON。仅后处理脚本修正了重复seed合并，不改变服务器原始结果。原生S8/S16与旧S32/S96分列，无完整原生大模型token/s、STA/P&R资格。
+
+
+## 共享32KiB A入口与双组带宽评估（Issue247）
+
+源码project/experiments/shared_width_study，报告docs/experiments/issue-247-prefill-width-evaluation.md。严格复用原prefill2/W8条件体系，只扩消费者/存储组调度；生产RTL不改。
+
+复现：按run33的inputs.json和source-files.sha256准备新的授权个人run目录，使用已记录源码commit ffa5410be225037c7f13c3092c2ee3487fa07ec0，在该目录执行sbatch --parsable job.sh。所有SystemC编译/运行只能在Slurm分配内；job.sh明确4核与容器。24场景须包含8个原16/32控制完整RESULT一致，并通过数值/有限FIFO/组冲突/实际双行消费检查。
+
+终态后在run目录执行python3 source/project/experiments/shared_width_study/collect_server.py <jobid>，回收后核验归档SHA，再执行python project/experiments/shared_width_study/analyze.py --receipts <回收目录> --out <新的分析目录>。后处理是JSON/日志核验，不运行EDA。完整原始事件留在服务器，仓库索引不代表全原始包已上传。
+
+## 原生共享A单片/双片入口（Issue247）
+
+当前pair默认A_WORDS_PER_BEAT=2；standalone pool/M/P参数默认1。接口及取舍见project/rtl/shared_s/README.md、[实施报告](experiments/issue-247-shared-a32-native.md)。旧shared32_native runner原样复现使用a7a36cbb固定源；当前版本测试使用shared_a32_native严格派生bench，保留旧检查。
+
+复跑按源码e7e8becca866e8257e026fddfc6e6215169e4015及run34部署manifest准备新的授权个人RUN目录，复制project/experiments/shared_a32_native/job.sh为job.sh，仅Slurm执行sbatch --parsable job.sh。容器入口：
+
+```sh
+python3 -B source/project/experiments/shared_a32_native/run.py --repo source --out results --manifest inputs.json --workers 4 --components all --area
+```
+
+run34/102033实际72run、12默认精确比较与六项面积全部通过。终态后从RUN执行python3 source/project/experiments/shared_a32_native/collect_server.py JOBID；回收先核归档/输出SHA。仅纯数据分析可本地执行：python work/Melodydt/247/shared-a32-native/analysis/analysis.py --input 原始result.json --historical run33原始result.json --out 新目录。完整命令/位置/证据见[交接](handoffs/2026-11-10-issue-247-shared-a32.md)。原生微基准不外推token/s，完整LLM/物理资格未完成。
+
+
+## 后续优化条件扫描（Issue247）
+
+生产RTL不变；源码在project/experiments/optimization_sweep、optimization_followup、optimization_bridge_study。
+各自冻结源码和输入见[研究交接](handoffs/2026-11-10-issue-247-optimization-sweep.md)。按相应inputs.json和source-files.sha256
+准备新的授权个人RUN目录，复制对应job.sh至RUN根，仅在Slurm执行sbatch --parsable job.sh；不可在本机或登录节点编译仿真。
+run35/36/37已完成，不覆盖旧run。批处理内部入口分别是：
+
+```sh
+python3 -B source/project/experiments/optimization_sweep/run.py --root RUN
+python3 -B source/project/experiments/optimization_followup/run.py --root RUN
+python3 -B source/project/experiments/optimization_bridge_study/run.py --root RUN
+```
+
+纯数据后处理可本地执行（RUNS_ROOT包含run35/36/37回收目录及冻结run25对照，REPO为正式仓库根）：
+
+```sh
+python work/Melodydt/247/optimization-sweep/analyze.py run35 --runs-root RUNS_ROOT --repo REPO
+python work/Melodydt/247/optimization-sweep/analyze.py run36 --runs-root RUNS_ROOT --repo REPO
+python work/Melodydt/247/optimization-sweep/analyze.py run37 --runs-root RUNS_ROOT --repo REPO
+python work/Melodydt/247/optimization-sweep/build_report.py --runs-root RUNS_ROOT --repo REPO
+python scripts/check_project.py
+```
+
+最后一个命令只检查管理结构，不代替192条件场景或原生RTL。新M/向量/NExp宽度与S16桥接均为未实现候选服务合同。
+
+## Issue247：S16桥接与E流水复现（2026-11-10）
+
+先读REMOTE_RULES，在授权个人全新RUN目录部署锁定source/、inputs.json及SHA清单，然后在该RUN执行 `sbatch --parsable job.sh`。原生job来源project/experiments/s16_vector_native/job.sh；模型job来源project/experiments/s16_vector_model/job.sh。它们强制Slurm1至4核、容器执行并校验部署SHA，不在登录节点/本机运行EDA。
+原生脚本run.py产生7配置×3组运行及4个同库面积；生成bench保留历史断言，加入NX16尾部/ACK/reset、独立E整数oracle及完整U自然/额外源比较。最终run43/source commit78c57285，结果位于授权个人目录/public/home/yuzelu/Melodydt/issue247-area-speed/run43/results。模型run42使用冻结run35生成源/输入、run41原生校准；生产RTL字节与run43相同，32例包括8完整基线控制与160负控。
+本地仅处理已下载证据，可执行（RUNS_DIR为含run35/41/42/43回收目录的本任务路径）：
+
+```text
+python scripts/check_project.py
+python project/experiments/s16_vector_native/analyze.py --runs RUNS_DIR --out work/Melodydt/247/s16-vector-native
+```
+
+每个run需receipts.tar与解出的receipts/。完整argv、输入/输出SHA、工具版本、失败尝试与状态见[阶段交接](handoffs/2026-11-10-issue-247-s16-vector-native.md)。管理检查不是RTL/物理验收，模型结果不是原生完整模型token/s。
+
+
+## U finite queue / staged NExp (Issue247)
+
+Production: `pu_queued_e_service.sv`, `pu_nexp_region.sv`, optional `pu_u_group.E_QUEUE_DEPTH=0/2/4` (default0).
+Use independent Slurm run directories with source/input SHA manifests; server rules in REMOTE_RULES.md apply.
+In the supplied EDA container, native runner: `python3 -B source/project/experiments/u_queue_native/run.py --root "$PWD"`.
+Model runner: `python3 -B source/project/experiments/u_queue_model/run.py --root "$PWD"`.
+Submit each prepared job from its root with `sbatch --parsable job.sh` (4 allocated cores, c64/c96).
+Model inputs freeze run42 generated files/results and run45 native receipts; 40 cases include 16 exact controls.
+Postprocess: `python project/experiments/u_queue_model/analyze.py --native <run45-receipts> --model <run46-receipts> --prior <run42-result.json> --output analysis.json`.
+Management only: `python scripts/check_project.py`. Never substitute this for EDA tests.
+Full reproduction, tail/scale/reset contracts, input hashes, test counts and area limits are in [the report](experiments/issue-247-u-queue-native.md).
+
+
+## Native S32 vector / partial timing calibration (Issue247)
+
+Optional `pu_u_group.E_S32=1`: four S32 lanes, signed7 shift, with finite `E_QUEUE_DEPTH=0/2/4`; defaults remain S16/serial.
+Use new Slurm run directories and locked source/input manifests, respecting REMOTE_RULES.md.
+Native: `python3 -B source/project/experiments/s32_vector_native/run.py --root "$PWD"` inside the fixed EDA image.
+Model: `python3 -B source/project/experiments/s32_vector_model/run.py --root "$PWD"` (freezes run46 sources/results and run49 native receipts).
+Submit prepared `job.sh` via `sbatch --parsable job.sh`; 4 allocated cores, c64/c96, no local EDA.
+Recheck: `python project/experiments/s32_vector_model/analyze.py --native <run49-receipts> --model <run50-receipts> --prior <run46-result.json> --output analysis.json`.
+The passed run49/run50 evidence covers 186 native tests, 27 exact default pairs, 8 local mappings, 32 model cases, 8 controls and 160 negative checks.
+This does not implement a complete mixed-width graph dispatcher or physical frequency signoff; see [the implementation report](experiments/issue-247-s32-vector.md).

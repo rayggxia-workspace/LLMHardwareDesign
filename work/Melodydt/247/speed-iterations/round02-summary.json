@@ -1,0 +1,359 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "scope": "Independent actual R2 SystemC paired audit; actual RTL costs, conditional old port model, no full-LLM/physical qualification",
+  "result_sha256": "b16ff9a0209add1227177d1899bbf9928ae7e83d724a0c113469e7c860c97098",
+  "source_commit": "863492081f0f512fc64fb73c787fcdcaf145a6b4",
+  "R1_result_sha256": "bc27f6b66c63b7356a4ead76e800c539efb1499322f91c45114e6df79595d076",
+  "R2_calibration_sha256": "fb0b4d0d1251140655feea5bd671c196e5ae13b1fd47066dc22d6e1e1a2eac78",
+  "R2_fees": [
+    7,
+    7,
+    9,
+    9,
+    16,
+    16,
+    18,
+    18
+  ],
+  "R2_required_gates": {
+    "compute_s32": true,
+    "full_U": true,
+    "numeric": true,
+    "lifecycle": true,
+    "default_compatibility": true,
+    "enabled_ordinary": true,
+    "stateless_context_preservation": true,
+    "old_batch_compatibility": true
+  },
+  "checked": {
+    "cases": 16,
+    "default_full_RESULT_regressions": 8,
+    "fallback_full_RESULT_regressions": 2,
+    "raw_logs_SHA": 16,
+    "reexecuted_tamper_rejections": 128,
+    "R1_generated_SHA_exact": 7,
+    "stateless_and_old_batch_proof_logs_in_run18": 18,
+    "hidden_M_S_cache_DDR_changes": false
+  },
+  "comparisons": [
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "layer": "shared",
+      "R1_tokens_s": 3.35052563236,
+      "R2_tokens_s": 3.37834376557,
+      "speedup_pct": 0.8302617638261678,
+      "R1_seconds": 0.298460632667,
+      "R2_seconds": 0.296003032667,
+      "delta_ms": -2.4576000000000042,
+      "spans_ms": {
+        "Dot": 247.59399666666667,
+        "KV_store": 0.05316333333333333,
+        "NExp": 4.970383333333333,
+        "canonical": 21.49358,
+        "copy": 0.01263,
+        "final_flush": 0.0,
+        "reduce": 8.625313333333333,
+        "vector": 13.25398
+      },
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": -2.4576,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "unchanged_M_S_cache_DDR": true,
+      "fallback_exact": false
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "layer": "idealdual",
+      "R1_tokens_s": 3.63678454238,
+      "R2_tokens_s": 3.66958239533,
+      "speedup_pct": 0.9018365694761998,
+      "R1_seconds": 0.274968172667,
+      "R2_seconds": 0.272510572667,
+      "delta_ms": -2.4576000000000042,
+      "spans_ms": {
+        "Dot": 224.10153666666668,
+        "KV_store": 0.05316333333333333,
+        "NExp": 4.970383333333333,
+        "canonical": 21.49358,
+        "copy": 0.01263,
+        "final_flush": 0.0,
+        "reduce": 8.625313333333333,
+        "vector": 13.25398
+      },
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": -2.4576,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "unchanged_M_S_cache_DDR": true,
+      "fallback_exact": false
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "layer": "shared",
+      "R1_tokens_s": 1.87361334071,
+      "R2_tokens_s": 1.8822804746,
+      "speedup_pct": 0.4625892494378503,
+      "R1_seconds": 0.53372805278,
+      "R2_seconds": 0.53127045278,
+      "delta_ms": -2.4576000000000597,
+      "spans_ms": {
+        "Dot": 482.8614166666667,
+        "KV_store": 0.05316333333333333,
+        "NExp": 4.970383333333333,
+        "canonical": 21.49358,
+        "copy": 0.01263,
+        "final_flush": 0.0,
+        "reduce": 8.625313333333333,
+        "vector": 13.25398
+      },
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": -2.4576,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "unchanged_M_S_cache_DDR": true,
+      "fallback_exact": false
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "layer": "idealdual",
+      "R1_tokens_s": 2.16739415621,
+      "R2_tokens_s": 2.17900079544,
+      "speedup_pct": 0.5355112354858749,
+      "R1_seconds": 0.461383545367,
+      "R2_seconds": 0.458925945367,
+      "delta_ms": -2.4576000000000042,
+      "spans_ms": {
+        "Dot": 410.51691,
+        "KV_store": 0.05316333333333333,
+        "NExp": 4.970383333333333,
+        "canonical": 21.49358,
+        "copy": 0.01263,
+        "final_flush": 0.0,
+        "reduce": 8.625313333333333,
+        "vector": 13.25398
+      },
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": -2.4576,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "unchanged_M_S_cache_DDR": true,
+      "fallback_exact": false
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "layer": "shared",
+      "R1_tokens_s": 2.68546727945,
+      "R2_tokens_s": 2.7582838139,
+      "speedup_pct": 2.7115033204103467,
+      "R1_seconds": 0.372374672987,
+      "R2_seconds": 0.362544272987,
+      "delta_ms": -9.830400000000017,
+      "spans_ms": {
+        "Dot": 267.29620666666665,
+        "KV_store": 0.05316333333333333,
+        "NExp": 19.889613333333333,
+        "canonical": 21.49358,
+        "copy": 0.01263,
+        "final_flush": 0.0,
+        "reduce": 23.793373333333335,
+        "vector": 30.00572
+      },
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": -9.8304,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "unchanged_M_S_cache_DDR": true,
+      "fallback_exact": false
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "layer": "idealdual",
+      "R1_tokens_s": 2.87778676255,
+      "R2_tokens_s": 2.96156894073,
+      "speedup_pct": 2.911340731495571,
+      "R1_seconds": 0.347489262587,
+      "R2_seconds": 0.337658862587,
+      "delta_ms": -9.830400000000017,
+      "spans_ms": {
+        "Dot": 242.41079666666667,
+        "KV_store": 0.05316333333333333,
+        "NExp": 19.889613333333333,
+        "canonical": 21.49358,
+        "copy": 0.01263,
+        "final_flush": 0.0,
+        "reduce": 23.793373333333335,
+        "vector": 30.00572
+      },
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "KV_store": 0.0,
+        "NExp": -9.8304,
+        "canonical": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "unchanged_M_S_cache_DDR": true,
+      "fallback_exact": false
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "layer": "shared",
+      "R1_tokens_s": 3.10725416366,
+      "R2_tokens_s": 3.10725416366,
+      "speedup_pct": 0.0,
+      "R1_seconds": 0.6436551034,
+      "R2_seconds": 0.6436551034,
+      "delta_ms": 0.0,
+      "spans_ms": {
+        "Dot": 429.34037666666666,
+        "NExp": 47.73011,
+        "copy": 13.57683,
+        "final_flush": 0.0,
+        "reduce": 9.7199,
+        "vector": 143.28789333333333
+      },
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "NExp": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "unchanged_M_S_cache_DDR": true,
+      "fallback_exact": true
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "layer": "idealdual",
+      "R1_tokens_s": 3.69669737899,
+      "R2_tokens_s": 3.69669737899,
+      "speedup_pct": 0.0,
+      "R1_seconds": 0.541023458227,
+      "R2_seconds": 0.541023458227,
+      "delta_ms": 0.0,
+      "spans_ms": {
+        "Dot": 326.70873,
+        "NExp": 47.73011,
+        "copy": 13.57683,
+        "final_flush": 0.0,
+        "reduce": 9.7199,
+        "vector": 143.28789333333333
+      },
+      "spans_delta_ms": {
+        "Dot": 0.0,
+        "NExp": 0.0,
+        "copy": 0.0,
+        "final_flush": 0.0,
+        "reduce": 0.0,
+        "vector": 0.0
+      },
+      "unchanged_M_S_cache_DDR": true,
+      "fallback_exact": true
+    }
+  ],
+  "CLI_refusals": [
+    "2",
+    "1junk",
+    "-1"
+  ],
+  "R1_disabled_rejected": true,
+  "missing_new_profile_rejected": true,
+  "profile_negative_rejections": [
+    "fee_minus_one",
+    "free_S16_n8",
+    "old_mode_identity",
+    "unpassed_calibration",
+    "unbound_measurement_log",
+    "old_command_measurement",
+    "stateless_gate_absent",
+    "old_batch_regression_absent"
+  ],
+  "target_status": {
+    "legacy_conditional_target_reached": false,
+    "ideal_target_tokens_per_second": 3.66958239533,
+    "shared_projection_tokens_per_second": 3.37834376557,
+    "actual_four_1RW_hardware_5_tokens_s_claimed": false
+  },
+  "main_bottleneck": {
+    "total_ms": 272.510572667,
+    "Dot_ms": 224.10153666666668,
+    "non_Dot_ms": 48.40905,
+    "span_pct": {
+      "Dot": 82.23590537183017,
+      "KV_store": 0.019508723207703717,
+      "NExp": 1.8239231178039457,
+      "canonical": 7.887246278060752,
+      "copy": 0.004634682565301234,
+      "final_flush": 0.0,
+      "reduce": 3.165129796220133,
+      "vector": 4.863657167605008
+    },
+    "flow_bus_bytes": {
+      "other": 4096,
+      "A": 66076672,
+      "weight": 3085697024,
+      "dynamic_B": 58982400,
+      "dot_output": 6211072,
+      "U_read": 12851200,
+      "U_write": 8238336,
+      "KV_write": 73728
+    },
+    "required_more_time_reduction_to_5_ms": 72.510572667
+  },
+  "necessary_constraint": {
+    "assumptions": "Keep current P bytes and 17.1GB/s aggregate DDR and serialized non-Dot time, allow otherwise perfect P",
+    "P_only_transfer_min_ms": 188.12673497076025,
+    "maximum_tokens_s_under_assumptions": 4.227690115149454
+  },
+  "R3_status": "Design only: staticW8/r1 S32/S96 finite supply, 2 outstanding SRAM reads, pending same-context prefetch, actual request/ACK/commit model required; no new M performance result",
+  "caveats": [
+    "No SRAM expansion",
+    "Ideal independent ports are a conditional target, not current four1RW hardware speed",
+    "NX32 retains signed low16 container alias and U16 zero-extension; prefill2 complete S16 fallback",
+    "No new physical clock or full-LLM numerical qualification",
+    "Retain R2 best result if R3 regresses"
+  ]
+}

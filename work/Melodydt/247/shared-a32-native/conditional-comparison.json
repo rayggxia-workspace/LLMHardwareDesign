@@ -1,0 +1,80 @@
+{
+  "scope": "Reused previously measured run30 conditional evaluation; arithmetic postprocessing only, not a new simulation",
+  "source_path": "work/Melodydt/247/shared32-native/legacy-port-summary.json",
+  "source_sha256": "18b3556a416e01e77950553cbad66ac41bd85195a87b169287c59fcec7d5851d",
+  "cases": [
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "layer": "shared",
+      "before_16B": 3.44738905761,
+      "after_32B": 3.44932242392,
+      "gain_percent": 0.05608204579439224
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w8",
+      "layer": "idealdual",
+      "before_16B": 3.64019895316,
+      "after_32B": 3.70022091143,
+      "gain_percent": 1.6488647747644691
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "layer": "shared",
+      "before_16B": 1.9323685392,
+      "after_32B": 1.9323793431,
+      "gain_percent": 0.0005591014229811009
+    },
+    {
+      "workload": "decode512",
+      "profile": "queued_pipe_w16",
+      "layer": "idealdual",
+      "before_16B": 2.19241328536,
+      "after_32B": 2.19242719277,
+      "gain_percent": 0.0006343425344557119
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "layer": "shared",
+      "before_16B": 2.81578080891,
+      "after_32B": 2.81707050272,
+      "gain_percent": 0.04580235101818708
+    },
+    {
+      "workload": "decode2048",
+      "profile": "queued_pipe_w8",
+      "layer": "idealdual",
+      "before_16B": 2.95522255928,
+      "after_32B": 2.99465874654,
+      "gain_percent": 1.3344574382786245
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "layer": "shared",
+      "before_16B": 3.38865940547,
+      "after_32B": 3.89419693927,
+      "gain_percent": 14.918511225529407
+    },
+    {
+      "workload": "prefill2",
+      "profile": "queued_pipe_w8",
+      "layer": "idealdual",
+      "before_16B": 3.49645863547,
+      "after_32B": 4.39891251536,
+      "gain_percent": 25.81051212032117
+    }
+  ],
+  "limitations": [
+    "No native S32-to-three-S16-limb conversion, native packed-capacity or K32 command lowering.",
+    "No measured descriptor/BEGIN/SEAL/RELEASE or P LOAD join overhead added.",
+    "Original byte-masked fill bridge and its two 1024B DDR descriptors remain conditional.",
+    "Only shared consumer width changes; local A suffix, B, M and aggregate overlap remain frozen.",
+    "Shared and ideal-dual LOCAL port layers are old conditional contracts, not qualification of the new local SRAM RTL.",
+    "300MHz remains an assumption; no physical closure or real model-weight/token generation proof."
+  ],
+  "native_full_model_tokens_per_second": null
+}
