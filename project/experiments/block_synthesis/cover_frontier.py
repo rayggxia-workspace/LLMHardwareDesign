@@ -47,14 +47,28 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     if rank_policy not in ('shared_tail','hypergraph_completion','hypergraph_resources'):raise ValueError('unknown cover rank policy')
     # catalogue adds only derived fields to copies, never changes source IR.
     actions,parents,ancestors=catalogue(tasks,[dict(a) for a in covers])
+    model=None
+    if 'event_model' in hardware:
+        from event_execution import Model, Infeasible
+        if rank_policy!='shared_tail' or hardware.get('window_calendar'):
+            raise ValueError('event execution uses its own calendars and the shared-tail bound')
+        if width==1 and covers:
+            raise ValueError('strict event greedy requires singleton actions')
+        model=Model(hardware,wire_budget=wire_budget)
     ids={t['id']:i for i,t in enumerate(tasks)};children={n:set() for n in ids}
     for n,ps in parents.items():
         for p in ps:children[p].add(n)
     indexed={n:[] for n in ids};by_action={a['id']:a for a in actions}
     masks={n:sum(1<<ids[p] for p in ps) for n,ps in parents.items()}
+    users={}
     for a in actions:
         a['mask']=sum(1<<ids[n] for n in a['covers']);indexed[a['anchor']].append(a)
         for b in a['bindings']:
+            if model:
+                model.validate_binding(b)
+                for stage in b['event_stages']:
+                    for value in stage.get('inputs',{}).values():
+                        users[value]=users.get(value,0)|a['mask']
             if (type(b['ticks'])!=int or b['ticks']<1 or
                 len(set(b['resources']))!=len(b['resources']) or
                 any(r not in hardware['resources'] for r in b['resources']) or
@@ -79,7 +93,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     tail={}
     for n in reversed(ancestors):tail[n]=minimum[n]+max((tail[c] for c in children[n]),default=0)
     initial=State(0,{}, {r:(0,)*c for r,c in hardware['resources'].items()},frozenset(),0,0,None,{},
-                  frozenset(n for n in ids if not parents[n]))
+                  frozenset(n for n in ids if not parents[n]),execution=model.initial if model else None)
     buckets={0:{}};calendar=calendar_resources(hardware);expanded=merged=pruned=seed_kept=0
     completion=None
     if rank_policy in ('hypergraph_completion','hypergraph_resources'):
@@ -88,7 +102,8 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
                               resource_releases=rank_policy=='hypergraph_resources')
     def netcost(s):return sum(hardware['nets'][n]['cost'] for n in s.nets if n not in fixed)
     def key(s):return (s.done,tuple(sorted(s.frontier.items())),tuple(sorted(s.resources.items())),
-        s.nets,tuple(sorted(s.cache.items())),tuple(sorted(s.windows.items())))
+        s.nets,tuple(sorted(s.cache.items())),tuple(sorted(s.windows.items())),
+        s.execution.key() if s.execution is not None else None)
     def rank(s):
         bound=(completion.get(s) if completion else
             max([s.makespan]+[max((s.frontier[p] for p in parents[n]),default=0)+tail[n] for n in s.ready]))
@@ -96,22 +111,41 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     def advance(s,a,b,policy):
         if s.done&a['mask'] or any(not s.done&(1<<ids[p]) for p in a['boundary']):return None
         arrival=max((s.frontier[p] for p in a['boundary']),default=0)
-        ev=evaluate(s,b,hardware,arrival,retention=policy,fixed=fixed,conflicts=conflicts,wire_budget=wire_budget)
-        if not ev['legal']:return None
+        execution=None
+        if model:
+            protected={value for value,mask in users.items() if mask&~(s.done|a['mask'])}
+            try:
+                execution,events=model.expand(s.execution,b,arrival,protected)
+            except Infeasible:
+                return None
+            start=min(event['start'] for event in events)
+            end=max(event['end'] for event in events)
+            delta_reads=execution.read_bytes-s.execution.read_bytes
+            delta_writes=execution.write_bytes-s.execution.write_bytes
+            ev={'start':start,'end':end,'makespan':max(s.makespan,end),'nets':execution.nets,
+                'resources':s.resources,'cache':s.cache,'traffic':delta_reads+delta_writes,
+                'details':{'events':events,'external_read_bytes':delta_reads,
+                           'external_write_bytes':delta_writes}}
+        else:
+            ev=evaluate(s,b,hardware,arrival,retention=policy,fixed=fixed,conflicts=conflicts,wire_budget=wire_budget)
+            if not ev['legal']:return None
         done=s.done|a['mask'];frontier={**s.frontier,**dict.fromkeys(a['covers'],ev['end'])}
         frontier={n:at for n,at in frontier.items() if any(not done&(1<<ids[c]) for c in children[n])}
         enabled=set().union(*(children[n] for n in a['covers']))-set(a['covers'])
         ready=(s.ready-set(a['covers']))|{c for c in enabled if done&masks[c]==masks[c]}
+        if model and ready:
+            cutoff=min(max((frontier[p] for p in parents[n]),default=0) for n in ready)
+            execution=execution.after(cutoff)
         row={'id':a['id'],'covers':list(a['covers']),'binding':b['id'],'site':b['site'],
              'start':ev['start'],'end':ev['end']}
         if b.get('read_cache'):row['cache_hit']=ev['cache_hit']
         if ev['details']:row['evaluation']=ev['details']
         if calendar:row['resource_windows']=ev['resource_windows']
         return State(done,frontier,ev['resources'],ev['nets'],ev['makespan'],s.traffic+ev['traffic'],
-            History(s.history,row),ev['cache'],frozenset(ready),ev.get('windows',s.windows))
+            History(s.history,row),ev['cache'],frozenset(ready),ev.get('windows',s.windows),execution)
     seeds={}
     if backbone is not None:
-        if backbone.get('kind')=='convex-cover-frontier-v1':
+        if backbone.get('kind') in ('convex-cover-frontier-v1','event-cover-frontier-v1'):
             from verify_cover_frontier import verify
             verify(tasks,hardware,covers,backbone,wire_budget=wire_budget)
         else:
@@ -135,7 +169,11 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     for count in range(len(tasks)+1):
         pool=buckets.pop(count,{})
         if count in seeds:pool.setdefault(key(seeds[count]),seeds[count])
-        ordered=sorted(pool.values(),key=rank);pruned+=max(0,len(ordered)-(width or len(ordered)))
+        candidates=pool.values()
+        if model and count==len(tasks):
+            candidates=[s for s in candidates if model.live_out <= (
+                s.execution.backing.keys() | {copy.value for copy in s.execution.copies.values()})]
+        ordered=sorted(candidates,key=rank);pruned+=max(0,len(ordered)-(width or len(ordered)))
         beam=ordered if width is None else ordered[:width]
         if count in seeds and all(key(s)!=key(seeds[count]) for s in beam):
             beam[-1]=seeds[count];seed_kept+=1
@@ -159,8 +197,10 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     best=min(complete,key=lambda s:(s.makespan,s.traffic,netcost(s)));rows=[];history=best.history
     while history is not None:rows.append(history.row);history=history.previous
     rows.reverse()
-    return {'status':'planned','kind':'convex-cover-frontier-v1','tasks':rows,'makespan':best.makespan,
-        'external_words':best.traffic,'nets':sorted(best.nets),'wire_cost':netcost(best),'final_read_cache':best.cache,
+    traffic=({'external_read_bytes':best.execution.read_bytes,
+              'external_write_bytes':best.execution.write_bytes} if model else {'external_words':best.traffic})
+    return {'status':'planned','kind':'event-cover-frontier-v1' if model else 'convex-cover-frontier-v1',
+        'tasks':rows,'makespan':best.makespan,**traffic,'nets':sorted(best.nets),'wire_cost':netcost(best),'final_read_cache':best.cache,
         'expanded':expanded,'merged':merged,'pruned':pruned,'width':width,'ready_limit':ready_limit,
         'covered_original_tasks':len(tasks),'multi_task_decisions':sum(len(r['covers'])>1 for r in rows),
         'backbone_prefix_slots':seed_kept,'rank_policy':rank_policy,

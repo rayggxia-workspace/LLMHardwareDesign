@@ -1,5 +1,8 @@
 # YUZE-LU 的进度
 
+2026-11-11 CST：#219 的[事件前沿](../../project/experiments/block_synthesis/EVENT_FRONTIER.md)独立叠加到 #220，使用 #251 三 P FFN 的 12 组冻结 RTL 日志核对事件、容量、ACK、周期和流量。
+固定 scope 回放的 DP 与贪心持平。可重排原生候选、整模型和系统性能留待后续独立验收。
+
 2026-11-09 CST：#219/PR220[迭代23/24](../../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_24.md)继续in_progress。
 逐行地址选择及来源可查的动态high16原生覆盖，保持16KiB/原宏/数值格式；双平台319测试。
 84合成完整程序及36此前真实模型边界程序四初态RTL通过，实际错行/错K均失败；初版漏检与外部预算工具修正保留。
