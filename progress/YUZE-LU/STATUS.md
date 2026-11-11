@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-12 CST，Issue #228：冻结底座上层布线实现接入新版 Algorithm 1 交接，验证局部接入、独立中继清单、测量反馈修复、DEF/OpenDB/GDS 读回与原生层不变。真实 U 的两份交接和历史 P 的实体中继均有独立证据。[验证范围与复跑](../../work/YUZE-LU/228/fixed-base-validation.md)。新版底座整产品的控制端点、联合提取与功能验收待补；待独立审查，登记 PR5 pending，Projects unverified/同步 pending。
+
 2026-11-08 CST，Issue #228：按用户澄清实现通用布线算法，独立task/228-generic-router叠加#227，不按Qwen3.5定制。多源接入/路径、fanout树、拆线重布及几何检查已实现；合成测试通过，实际导出与电气时序另验。待独立审查；登记PR5 pending，缺board配置，Projects unverified/同步pending，沿用Issue7。
 
 2026-11-08 CST，Issue #226：基于PR220 f23a6d934，在独立分支task/226-route-contract实现综合到布线接口；未修改原搜索/缓存。逻辑束/预约展开、base端点绑定/固定网络冲突、分级反馈和CLI已实现；真实双U306位输出明确unbound。待独立审查，实际端点导出和布线/RC/STA另阶段。登记PR5 pending，缺board配置，Projects unverified/同步pending，沿用Issue7。

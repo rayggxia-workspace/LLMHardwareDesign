@@ -1,4 +1,4 @@
-# 通用 M10 接入与 M11/M12 布线基线
+# 通用 M10 接入与 M11/M12 布线
 
 Issue #228，叠加 #227 的逐位接口合同。输入只有连接、端点几何和研究规则；
 算法不读模型名称、算子语义或 P/U/C/F/J 名称。不把 Qwen3.5 路线写入代码。
@@ -9,8 +9,8 @@ Issue #228，叠加 #227 的逐位接口合同。输入只有连接、端点几�
    导体，M11 落地金属及切孔满足已有障碍/占用。不是使用 pin 中心当任意接点。
 2. 将全部合法起点和终点放进同一多源 A* 搜索。M11 水平、M12 垂直，via11 换层；
    移动时检查实际线宽、落地金属、切孔的矩形占用和间距。多接收端从现有树继续生长。
-3. 一轮逐网布线，失败的临时树全部撤销。下一轮拆除所有上轮路线，失败网络先布，
-   其余按固定种子重排；历史阻塞点增加搜索代价。保存合法布通网数最多的结果。
+3. 一轮逐网布线，失败的临时树全部撤销。根据记录的阻塞网尝试局部重布，保留无关铜线；
+   局部重布仍有失败时，回到全局重排。历史阻塞点增加搜索代价。
 4. `check.py` 不导入搜索代码，从输出矩形/通孔重新检查网络覆盖、端点包围、障碍、
    金属/切孔间距、层方向及实际导体连通；移除via、漏pin、伪造完整率等负例拒绝。
 
@@ -18,11 +18,11 @@ Issue #228，叠加 #227 的逐位接口合同。输入只有连接、端点几�
 目标的 Manhattan 距离。它只在本次有限网格、当前障碍和给定接入候选下搜索；多网
 重排及逐接收端生长不保证全局最优。没有给总线位序或模型边赋予额外合法性。
 
-第一版是**粗网格基线**：轨距需不小于 cut＋cut spacing，以及线宽＋spacing。
-因此同网不同网格位置的切孔天然满足间距，点状态无需携带整条历史的通孔禁区。
-不支持细轨距/大通孔阵列、多层非优选方向、离网局部stub或任意工艺规则。
-没有网格落点时返回 `grid_access_not_found`，不能解释为真实物理上绝对无法接入。
-矩形间距采用保守 L-infinity 规则，尚未实现foundry EOL/min-area/antenna等规则。
+默认采用粗网格。配置 `access_pitch` 和 `access_radius` 后，在 M10 端点附近的窗口
+内用同一套 M11/M12 层走短线和换层，细轨道间距由实际矩形、切孔和已有导体检查。
+超出窗口后回到粗网格。线束提示影响出口容量排序，随后逐位搜索和占用。
+当前约束包含优选方向及保守矩形间距。工艺 EOL、min-area 和 antenna 须交独立物理工具。
+失败码只说明所声明网格、规则与搜索预算内的结果。
 
 ## 输入输出
 
@@ -43,9 +43,9 @@ Issue #228，叠加 #227 的逐位接口合同。输入只有连接、端点几�
 `failed` 区分grid_access_not_found、search_not_found、search_budget_exhausted。
 保存各轮顺序、节点展开数和布通数；几何检查独立重算线长与通孔数。
 
-`geometry_complete` 仅表示全部需求通过**声明的研究几何规则**；
-始终 `physical_qualified=false`，electrical/timing_status=not_evaluated。
-它不是实际芯片、foundry DRC或300MHz资格。当前没有ODB/DEF/GDS写出器或RC提取。
+`geometry_complete` 表示全部需求通过声明的研究几何规则。
+导出 `upper.def` 后可通过 OpenDB 和 KLayout 生成 GDS，核对真实 M10 覆盖和原生几何。
+路由回执保留 `physical_qualified=false`，需单独取得组合电气及时序证据。
 
 ## 与 #227 集成
 
@@ -60,7 +60,28 @@ python -B project/experiments/upper_router/run.py request.json routes.json --bas
 控制均按传入逐位网表处理，不由路由器根据模型补猜。
 
 未绑定需求在入口明确拒绝；这不妨碍使用标注清楚的合成几何开发/评估算法。
-实际底座pin导出、长线负载与RC/STA验收保持独立。
+## 与新版 Algorithm 1 集成
+
+```powershell
+python -B project/experiments/upper_router/run.py handoff/algorithm2-input.json routes.json --handoff handoff --native-gds native.gds --emit-def overlay --via-resistance-ohm 0.08
+```
+
+`--handoff` 核对程序、连接需求、已绑定网表、静态位成员和底座指纹。
+产品范围的 DEF 导出要求 `--frozen-base base.json` 和匹配的 `--native-gds`，由已核对的冻结视图重新绑定端点和固定网。
+示例过孔电阻沿用研究场景，工程运行由当前工艺规则提供。用 `ingest.tcl` 导入研究 LEF 和 DEF，
+再用 `physical_readback.py` 从 OpenDB 几何生成并回读 GDS。后端回执的范围是上层几何
+和 M1–M10 原生图形一致性。下游需要按 `bindings.json` 将上层分段关联到实际网表做寄生和 STA。
+默认 GDS 层号采用项目研究工艺，可在 `technology.gds_layer_map` 提供唯一的层号／datatype 对。
+
+`--repeaters inventory.json` 接收独立的 `upper-repeaters/1` 清单，可带真实或虚拟实例。
+实例提供 M10 两端、占地、供电声明、可选电气参数和物理视图散列。实际使用的中继按
+静态网独占，支持多级和多接收端分支。几何与中继分配一起验证，使用虚拟中继的结果
+会被物理导出拒绝。以 `--max-repeaters 0` 在同一清单上跑直连对照。
+
+`--previous routes.json --measurements violations.json` 读取绑定旧路线散列的
+`upper-route-feedback/1`。每条违规含分段、指标、实测、阈值及可选关联分段。
+修复保留未受影响的路线，新的候选必须重新提取。回读、提取和 STA 的复跑由调用方触发。
+运行范围、对抗用例和真实回执见 [验证记录](../../../work/YUZE-LU/228/fixed-base-validation.md)。
 
 ## 复跑
 
@@ -68,16 +89,16 @@ python -B project/experiments/upper_router/run.py request.json routes.json --bas
 python -B project/experiments/upper_router/run.py project/experiments/upper_router/examples/ripup.json routes.json --rounds 4
 python -B project/experiments/upper_router/run.py project/experiments/upper_router/examples/ripup.json check.json --check routes.json
 # 在upper_router目录执行
-python -B -m unittest test_router -v
+python -B -m unittest discover -v
 ```
 
 一轮存在失败时退出码2，仍输出合法部分路线和诊断；输入错误抛异常，拒绝布线。
 搜索预算是每网每轮节点上限，接入候选枚举与几何校验另计，不是总内存/运行时间上限。
-所有示例和21项测试几何均为合成，包含128位、随机命名、任意障碍和一驱多收。
+本地测试包含 512 条数据线及一条独立返回线、随机命名、任意障碍和一驱多收。
 30个小网格与独立Dijkstra最小代价对照；此对照不证明多网全局最优。
 `examples/ripup.json`中先布a会封住b的接点；第二轮优先b，a换路径，两网通过。
 
 传统详细布线已有pin access、track assignment及search/repair（见
 [OpenROAD官方说明](https://openroad.readthedocs.io/en/latest/main/src/drt/README.html)）；
 本交付是项目受限上层互联的可复查基线，不宣称这些基础方法本身是论文创新。
-#194的coupon实验用作历史失败背景，本目录没有继承其专用网名、常数或物理资格。
+#194 的实体中继作为独立实验夹具。通用搜索从清单读取中继、端点和规则。
