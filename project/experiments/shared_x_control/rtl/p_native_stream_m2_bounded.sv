@@ -260,6 +260,8 @@ module p_native_stream_m2_bounded #(
      expected_payload[211+:3]=2;expected_payload[215]=final_record;
      expected_payload[216]=final_record;expected_payload[217]=1;
      expected_payload[233:218]=current_context_generation;expected_payload[239:234]=current_load_shift;
+     // A live zero generation is set only after real post-FENCE BEGIN/CTX.
+     expected_payload[240]=current_context_generation==0&&contexts_live[context_id];
    end
    command_ticket={owner,rf_owner,input_key,32'h02504d02,owner[31:0],seq_id,next_session};
  end
@@ -464,7 +466,8 @@ module p_native_stream_m2_bounded #(
        BEGIN_SEND:if(tx_cmd_valid&&tx_cmd_ready)begin control_session<=next_session;state<=BEGIN_WAIT;end
        BEGIN_WAIT:if(begin_ack)begin
          context_generation[context_id]<=current_context_generation;
-         if(current_context_generation==0)context_wrap_allowed[context_id]<=0;
+         // Only a FENCE newer than entry into generation FFFF can authorize wrap.
+         if(current_context_generation==0||current_context_generation==16'hffff)context_wrap_allowed[context_id]<=0;
          state<=CTX_PUSH;
        end
        CTX_PUSH:begin ctx_ack<=0;control_session<=next_session;state<=CTX_ISSUE;end

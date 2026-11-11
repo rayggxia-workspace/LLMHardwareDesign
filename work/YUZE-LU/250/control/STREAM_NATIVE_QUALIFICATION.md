@@ -98,3 +98,24 @@ typed P候选不改旧 mc_dma_fabric.sv。P0–2 每个客户端默认128B scope
 
 同一pressure测试2/4个S128字的最短真实时间：DDR landing到可见raw1拍，raw到首S请求1拍，raw到末S ACK4/6拍，末ACK后1拍才释放raw，再至少1拍消费DONE。两种路径raw到末S ACK中位数5/8拍；完整分位数见 dma-stage-three-p-audit-102487.json。三P的432个混合压力动态请求跨2081–2135拍，包含同一fabric上的W/legacy竞争、真实S反压和有限DDR peer，不能当整个动态Dot或整模型速度。联合fixture不是已部署的动态运算完整程序。run104定时模型初次构建错误完整保留，102487严格检查未豁免这些错误。
 
+## M2 scope 代号实际回绕（run106–112）
+
+M2 的16位 scope generation 与 COPY generation 是独立的名字空间。M2 的同一 handle 到达 `FFFF` 后，只有晚于该次 `BEGIN_SCOPE` 的真实 FENCE 完成才准许下一次使用 generation 0；启动时的 purge 或更早的 FENCE 都不算。LC 在确认 `BEGIN_SCOPE(FFFF)` 时清除旧授权，匹配后续真实 FENCE 后再授权；执行票据内部 bit240 表示 LC 已有匹配的、仍活跃的 generation 0 context。旧票据其余保留位继续拒绝。bit240 不出现在 M 的128bit wire frame，无新增存储或物理 pin。M 仍独立检查自己的 handle、epoch、generation 与 frame 身份。
+
+基线102506在 `FFFF` 后完成真实 purge，但旧guard挡住合法 generation 0 EXEC；102515仅恢复旧的过期授权清除逻辑，在进入 `FFFF` 前有一次真实 purge，却试图直接回绕，真实 M 拒绝，未执行该记录。修复102507和含提前 purge 的102516各18次通过；每次确实接受一个 generation 0 EXEC，测试真实MC/LC程序存储、scope获取、DMA FENCE/后台 purge、M2与S，完整运行八个数值范围。分别观察到两次/三次后台 purge（均含启动）；每trial 315个真实W64请求和返回、18个完成记录、192个A读取、24个结果S128 ACK，独立参考逐位一致。102517未加速计数的普通程序亦18次通过。近回绕fixture只通过单独保存的源视图调整 reset 计数初值 `FFFE`，含早 purge 的测试还设定初始会话计数靠近耗尽；这些初值不进入生产候选。源、原始失败、log、CSV、向量、银行、SHA及实际 Slurm 用量见 run106–112 exact parts 与 `sacct-106-112.txt`。真实 COPY 名字空间的回绕仍需自己的连接排空/重置证据；本试验不提供其资格，也不提供300MHz物理资格。
+
+## 四个既有 W 银行并行填充（run113–120）
+
+此前宽条带的限制有两层：同组第二个记录要等第一笔 W 填完才发 ALLOC；下一组又等上一组完成。实际上旧实现可持有两个 W 银行，但任意时刻最多一个银行有 W64 请求仍在途。新 `p_native_weight_prefill` 先用各自真实 ALLOC/FILL 身份重叠两笔；`FOUR_BANK_LOOKAHEAD=1` 再最多接收两张后续 range ticket，通过同一 M aperture 发真实 ALLOC。只前取同一 K128、已有 RF context 的记录，首 tile 仍受真实 context 建立约束。每项仍等匹配真实 W FILL、A lease、guard credit 才 EXEC；已准备记录回放给同一执行器，不重复 ALLOC。四银行数据还在 M 原有 4×1152B 内。相对原 P 增加已分配较旧 W 的33 bit，加两项有界 range/ACK 元数据和索引506 bit，共539 bit控制状态的 RTL 上界；没有新 W/A/result payload 或 SRAM，没有面积/300MHz验收结论。
+
+下表各模式与对照用相同 P、真实 U/P 四银行 S、N64 Gate+N64 Up、K2048、同一输入寿命策略、同一批向量与两条带。每次比较均有512实际 M record、8704次64B W读请求/返回、512次 A 的真实S读、64次结果S128 ACK并逐位读回。早前有限直接DDR peer整体最多每两拍返回一个64B；第二组使用实际两通道、每通道32beat/32desc、共六个返回暂存的global DMA RTL，但外部DDR仍为有界fixture，只连接一个P的W源，无其它客户端竞争。
+
+| 路径 | 旧实现拍数 | 双银行拍数 | 四银行拍数 | 配对四银行减少 |
+|---|---:|---:|---:|---:|
+| 相同直接 DDR peer，102524/102530 | 39207–40792 | 33593–34342 | 25387–25952 | 35.17–36.38% |
+| 相同真实 global DMA，102544 | 34221–34950 | 未测 | 18323–18624 | 45.89–46.71% |
+
+独立CSV审计以真实 W64 tag 逐笔核对发出/返回，比较三方案实际地址多重集合，检查 `range accept → ALLOC → FILL EOP → EXEC → complete` 的每条身份并核实峰值在途银行1/2/4；global比较独立检查每通道任意3拍最多4个真实DDR issue。直接peer每scope的返回间隙，超过原有两拍每beat下限的累计额外时间从10704–11496拍降到3793–4077拍。该减少是同一个计算图下 P 控制/搬运调度改进，不应记成综合DP、整模型、实际DDR或token/s的收益。
+
+102535在同时拥有四个真实W银行且有未完成传输时取消，260–274拍收到匹配范围terminal。四个 M bank 逐一匹配实际 CANCEL/DRAIN；未发 EXEC、未产生新结果S ACK；已发的W读正常排空，未制造成功。范围中另有一个已offer但还未分配W的记录按错误退役。相同地址/银行重试前先毒化输出窗口，实际重算256记录、4352 W64和32结果ACK，再读回对照。102551把测试会话阈值暂设96，在真实DMA中经18次实际后台 purge（含启动）重复验证，取消到真实terminal203–206拍，实际13396 W64 req==return。任何排空时仍存活的 W 银行、guard 或result owner 都会触发fixture断言。生产阈值未变；生产范围只在没有前取 owner 时开始 FENCE。证据为 `wide-weight-prefill-102524-102535.json`、`wide-weight-global-102544-102551.json` 和 run113–120 exact parts；启动/fixture失误亦保存。复用 `P_STREAM_FOUR_W_SOURCE_LOCK.json` 的精确RTL，不可把这里一个P的性能复制为三P共享DDR的吞吐。
+

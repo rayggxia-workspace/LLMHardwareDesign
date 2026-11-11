@@ -30,4 +30,11 @@ s=s.replace('pair_retire_session<=exec_session;pair_retire_sequence<=seq_id;pair
          pair_retire_next_k<=k+16'd128;pair_retire_final<=final_record;''')
 s=s.replace('pair_abandon<=1;pair_retire_sequence<=seq_id;pair_retire_context<=completion_context;', '''pair_abandon<=1;pair_retire_sequence<=seq_id;pair_retire_context<=completion_context;
            pair_retire_next_k<=k;pair_retire_final<=0;''')
+s=s.replace('expected_payload[233:218]=current_context_generation;expected_payload[239:234]=current_load_shift;',
+ '''expected_payload[233:218]=current_context_generation;expected_payload[239:234]=current_load_shift;
+     // A live zero generation is set only after real post-FENCE BEGIN/CTX.
+     expected_payload[240]=current_context_generation==0&&contexts_live[context_id];''')
+s=s.replace("if(current_context_generation==0)context_wrap_allowed[context_id]<=0;",
+ '''// Only a FENCE newer than entry into generation FFFF can authorize wrap.
+         if(current_context_generation==0||current_context_generation==16'hffff)context_wrap_allowed[context_id]<=0;''')
 (p/'p_native_stream_m2_bounded.sv').write_text(s,encoding='utf-8')

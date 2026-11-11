@@ -47,8 +47,11 @@ body = r'''
 body += r"""
   wire [255:218] issue_frame_metadata=slots[issue_pointer].payload[255:218];
   wire [15:0] issue_next_k=slots[issue_pointer].payload[127:112];
+  // Metadata bit240 is the local producer's proof of a matched BEGIN/CTX
+  // at legal generation zero after a real FENCE; it is never a wire field.
   wire issue_profile_ok=EXEC_ISSUE_PROFILE ?
-      (issue_frame_metadata[255:240]==0&&issue_frame_metadata[239:234]<=17&&issue_frame_metadata[233:218]!=0&&
+      (issue_frame_metadata[255:241]==0&&issue_frame_metadata[239:234]<=17&&
+       ((issue_frame_metadata[233:218]==0)==issue_frame_metadata[240])&&
        slots[issue_pointer].payload[217]&&slots[issue_pointer].payload[213:211]==3'd2&&
        slots[issue_pointer].payload[215]==slots[issue_pointer].payload[216]&&
        slots[issue_pointer].ticket[511:384]==slots[issue_pointer].job_key&&

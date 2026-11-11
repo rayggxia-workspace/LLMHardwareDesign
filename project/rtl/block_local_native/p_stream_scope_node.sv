@@ -4,7 +4,8 @@
 // The original M, S, COPY/header and control route are independent peers.
 // No new W/A/result payload bank or duplicate descriptor register here.
 module p_stream_scope_node #(
- parameter logic [31:0] TOPOLOGY=32'd25001
+ parameter logic [31:0] TOPOLOGY=32'd25001,
+ parameter bit FOUR_BANK_LOOKAHEAD=1'b0
 )(
  input logic clk,reset,
  input logic service_valid,output logic service_ready,
@@ -83,10 +84,17 @@ module p_stream_scope_node #(
    .record_final,.record_spill,.record_A_first,.record_A_last,.record_A_uses,
    .complete_valid,.complete_ready,.complete_owner,.complete_sequence,.complete_context,.complete_next_k,
    .complete_error,.rejected_complete);
- p_native_stream_m2_bounded exec(
-   .scope_valid(scope_fire),.scope_ready(exec_ready),.scope_end,
-   .scope_cancel(service_cancel_valid&&service_cancel_ready),
-   .scope_owner(service_owner),.scope_data(service_descriptor),.*);
+ if(FOUR_BANK_LOOKAHEAD)begin: four_w
+   p_native_weight_prefill #(.FOUR_BANK_LOOKAHEAD(1'b1)) exec(
+     .scope_valid(scope_fire),.scope_ready(exec_ready),.scope_end,
+     .scope_cancel(service_cancel_valid&&service_cancel_ready),
+     .scope_owner(service_owner),.scope_data(service_descriptor),.*);
+ end else begin: serial_w
+   p_native_stream_m2_bounded exec(
+     .scope_valid(scope_fire),.scope_ready(exec_ready),.scope_end,
+     .scope_cancel(service_cancel_valid&&service_cancel_ready),
+     .scope_owner(service_owner),.scope_data(service_descriptor),.*);
+ end
  // These outputs are already validated by the real range service. They do
  // not instantiate a second parser or storage and may optimize away here.
  wire _unused_decoded=^{rf0,rf1,out_version,bias0,bias1,input_s,out_s0,out_s1,scratch_s,snapshot_s,record_bytes,rejected_complete};

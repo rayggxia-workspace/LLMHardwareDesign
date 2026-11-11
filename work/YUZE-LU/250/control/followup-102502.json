@@ -1,0 +1,36 @@
+{
+  "schema": "real-native-control-global-evidence/1",
+  "run": 106,
+  "job": 102502,
+  "source": "4ccccb8004c589e58a5081055d1290bf5784a5fe",
+  "state": "FAILED",
+  "note": "Initial hierarchical force fixture failed strict lint. Retained; no RTL pass or qualification.",
+  "allocation_CPUs": 60,
+  "elapsed_seconds": 3.0,
+  "TotalCPU_seconds": 2.288,
+  "package": "runs/run106.tar.gz",
+  "package_sha256": "61610cb566b6d4b2d06b3b1faba2d46d8f62916abf252b6e4148863c52540094",
+  "package_transport_manifest": "runs/run106.tar.gz.manifest.json",
+  "package_transport_manifest_sha256": "248a9987c6a539e31489976f1680083e2587da61690d7d378c979d3254ca04c1",
+  "package_members": 248,
+  "functional_clock_ns": 10,
+  "not_300MHz_STA": true,
+  "qualification": "M2 scope generation lifetime only; functional 10 ns, no timing or COPY-wrap claim.",
+  "logs": [],
+  "failures": [
+    {
+      "path": "./results/build-p-fabric.log",
+      "errors": [
+        "%Warning-SYNCASYNCNET: project/rtl/mother_control_native/mother_control_native64_transport128.sv:5:14: Signal flopped as both synchronous and async: 'tb_p_m2_scope_wrap.__Vcellinp__mother__rst_ni'",
+        "%Warning-SYNCASYNCNET: project/experiments/shared_x_control/rtl/p_native_stream_m2_bounded.sv:71:15: Signal flopped as both synchronous and async: 'tb_p_m2_scope_wrap.exec.context_generation__VforceEn'",
+        "%Warning-SYNCASYNCNET: project/experiments/shared_x_control/rtl/p_native_stream_m2_bounded.sv:71:15: Signal flopped as both synchronous and async: 'tb_p_m2_scope_wrap.exec.context_generation__VforceVal'",
+        "%Warning-SYNCASYNCNET: /public/home/yuzelu/project-circuit/issue250-control-prep-20261110-106/project/rtl/w8a16_v1/m_native_leaf_s32.sv:338:13: Signal flopped as both synchronous and async: 'tb_p_m2_scope_wrap.M.scope_generation__VforceEn'",
+        "%Warning-SYNCASYNCNET: /public/home/yuzelu/project-circuit/issue250-control-prep-20261110-106/project/rtl/w8a16_v1/m_native_leaf_s32.sv:338:13: Signal flopped as both synchronous and async: 'tb_p_m2_scope_wrap.M.scope_generation__VforceVal'",
+        "%Warning-SYNCASYNCNET: project/experiments/shared_x_control/rtl/p_native_stream_m2_bounded.sv:71:15: Signal flopped as both synchronous and async: 'tb_p_m2_scope_wrap.exec.context_generation'",
+        "%Warning-SYNCASYNCNET: /public/home/yuzelu/project-circuit/issue250-control-prep-20261110-106/project/rtl/w8a16_v1/m_native_leaf_s32.sv:338:13: Signal flopped as both synchronous and async: 'tb_p_m2_scope_wrap.M.scope_generation'",
+        "%Error: Exiting due to 7 warning(s)"
+      ]
+    }
+  ],
+  "timing_from_real_RTL": []
+}

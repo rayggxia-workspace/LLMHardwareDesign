@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 // Real serialized M + real S bank fixture, functional10ns not300MHzSTA.
 module tb_p_resident_x_compare #(parameter logic [2:0] MODE=3'd0, parameter int GROUPS=1);
- localparam bit RESIDENT=(MODE==3'd1), SOURCE_REUSE=(MODE==3'd2||MODE==3'd4), COMBINED=(MODE==3'd3), LAZY_SOURCE=(MODE==3'd4), HAS_RESIDENT=RESIDENT||COMBINED;
+ localparam bit FOUR_BANK=(MODE==3'd6), WEIGHT_PREFILL=(MODE==3'd5||FOUR_BANK), RESIDENT=(MODE==3'd1), SOURCE_REUSE=(MODE==3'd2||MODE==3'd4||WEIGHT_PREFILL), COMBINED=(MODE==3'd3), LAZY_SOURCE=(MODE==3'd4||WEIGHT_PREFILL), HAS_RESIDENT=RESIDENT||COMBINED;
  wire source_tile_reuse=SOURCE_REUSE&&(!LAZY_SOURCE||case_id!=0);
  wire use_resident=HAS_RESIDENT&&scope_data[48+:16]==16'd1;
  logic source_cfg,source_cfg_ready,source_cfg_bad,source_publish_ready,source_publish_bad,source_scale_valid,source_fill_done;
@@ -109,6 +109,11 @@ logic clk,reset;
    assign exec_state=exec.state;
  end else if(RESIDENT)begin:resident_provider
    p_native_resident_x_candidate exec(.*);
+   assign exec_contexts=exec.contexts_live;
+   assign exec_detached=exec.pair_detached;
+   assign exec_state=exec.state;
+ end else if(WEIGHT_PREFILL)begin:prefill_provider
+   p_native_weight_prefill #(.FOUR_BANK_LOOKAHEAD(FOUR_BANK)) exec(.*);
    assign exec_contexts=exec.contexts_live;
    assign exec_detached=exec.pair_detached;
    assign exec_state=exec.state;
@@ -329,7 +334,14 @@ logic clk,reset;
  integer stage_start,fill_start,fill_cycles,scope0_cycles,scope1_cycles,service_terminal_cycle;
  logic old_detached;
  integer cycle,seed,case_id,trace_file,accepted,returned,A_reads,writes,ACKs,completed,record_count;
- integer channel_live[2],last_ACK_cycle,last_complete_cycle;
+ integer channel_live[2],last_ACK_cycle,last_complete_cycle,peak_weight_banks,peak_weight_inflight,weight_inflight;
+ integer native_execs,drain_commands,cancel_error_count;
+ bit cancel_test,cancel_phase;
+ always_comb begin
+   weight_inflight=0;
+   for(integer b=0;b<4;b=b+1)
+     if(M.table_valid[b]&&M.table_issued[b]!=M.table_received[b])weight_inflight=weight_inflight+1;
+ end
  logic [31:0] start_cycle;
  string vectors,trace_path;
  always_comb begin
@@ -347,12 +359,20 @@ logic clk,reset;
   if(reset)begin
    peak_contexts<=0;pair_detaches<=0;old_detached<=0;
    cycle<=0;pending_mask<=0;response_slot<=-1;accepted<=0;returned<=0;A_reads<=0;writes<=0;ACKs<=0;completed<=0;record_count<=0;
-   channel_live[0]<=0;channel_live[1]<=0;last_ACK_cycle<=0;last_complete_cycle<=0;
+   channel_live[0]<=0;channel_live[1]<=0;last_ACK_cycle<=0;last_complete_cycle<=0;peak_weight_banks<=0;peak_weight_inflight<=0;
+   native_execs<=0;drain_commands<=0;cancel_error_count<=0;
   end else begin
    cycle<=cycle+1;
    old_detached<=exec_detached;
    if(exec_detached&&!old_detached)pair_detaches<=pair_detaches+1;
    if($countones(exec_contexts)>peak_contexts)peak_contexts<=$countones(exec_contexts);
+   if($countones(M.table_valid)>peak_weight_banks)peak_weight_banks<=$countones(M.table_valid);
+   if(weight_inflight>peak_weight_inflight)peak_weight_inflight<=weight_inflight;
+   if(M.n_alloc_valid&&M.n_alloc_ready)$fwrite(trace_file,"%0d,W_ALLOC,%0d,%0d,%0d,0\n",cycle,case_id,M.n_alloc_record,M.handle);
+   if(M.n_fill_ack_valid&&M.n_fill_ack_ready)$fwrite(trace_file,"%0d,W_FILL,%0d,%0d,%0d,%0d\n",cycle,case_id,M.n_fill_ack_record,M.n_fill_ack_bank,M.n_fill_ack_generation);
+   if(M.n_exec_valid&&M.n_exec_ready)begin native_execs<=native_execs+1;
+    $fwrite(trace_file,"%0d,M_EXEC,%0d,%0d,%0d,%0d\n",cycle,case_id,M.n_exec_record,M.n_exec_context,M.n_exec_k_offset);end
+   if(lc_valid&&lc_ready&&lc_sop&&lc_eop&&lc_data[19:16]==7)drain_commands<=drain_commands+1;
    if(mc_req_valid&&mc_req_ready)begin
     assert(mc_req_address[63:23]==0&&mc_req_address[19:0]<20'(GROUPS*17408)&&
            mc_req_address[22:20]>=1&&mc_req_address[22:20]<=4&&mc_req_address[5:0]==0)else $fatal(1,"DDR address");
@@ -372,7 +392,8 @@ logic clk,reset;
    if(sw_ack_valid&&sw_ack_ready)begin ACKs<=ACKs+1;last_ACK_cycle<=cycle;$fwrite(trace_file,"%0d,S_ACK,%0d,%0d,0,0\n",cycle,case_id,sw_ack_word);end
    if(record_valid&&record_ready)begin record_count<=record_count+1;$fwrite(trace_file,"%0d,RECORD,%0d,%0d,%0d,%0d\n",cycle,case_id,record_sequence,record_k,record_context);end
    if(complete_valid&&complete_ready)begin
-    assert(!complete_error)else $fatal(1,"real native completion error");completed<=completed+1;last_complete_cycle<=cycle;
+    assert(!complete_error||cancel_phase)else $fatal(1,"real native completion error");completed<=completed+1;last_complete_cycle<=cycle;
+    if(complete_error)cancel_error_count<=cancel_error_count+1;
     if(complete_next_k==scope_data[608+:16])assert(last_ACK_cycle<cycle)else $fatal(1,"FINAL before true S ACK");
     $fwrite(trace_file,"%0d,COMPLETE,%0d,%0d,%0d,%0d\n",cycle,case_id,complete_sequence,complete_next_k,complete_context);
    end
@@ -458,6 +479,7 @@ logic clk,reset;
   resident_publish=0;resident_scope_live=0;bad_copy_ticket=0;source_cfg=0;source_fill_done=0;
   a_load_proof_ready=RESIDENT;allow_native_A=1;load_proofs=0;
   reset=1;service_valid=0;service_done_ready=0;scope_cancel=0;scope_owner=0;scope_data=0;
+  cancel_test=$test$plusargs("CANCEL_FOUR");cancel_phase=0;
   directory_cfg=0;q_cmd=0;q_take=0;h_start=0;h_take=0;lease_start=0;release_window=0;copy_start=0;copy_take=0;
   tile_generation=0;tile_k=0;tile_session=0;tile_ticket=0;proof_accepted=0;
   uh_valid=0;uh_write=1;uh_rsp_ready=0;uh_address=0;uh_data=0;real_copy_ACKs=0;real_copy_reads=0;real_headers=0;real_quantizations=0;
@@ -517,8 +539,48 @@ logic clk,reset;
     real_headers==(RESIDENT?32:64)&&load_proofs==(RESIDENT?0:(COMBINED?16:32)))else $fatal(1,"input accounting");
   assert(accepted==1088*GROUPS&&accepted==returned&&ACKs==8*GROUPS&&writes==8*GROUPS&&completed==64*GROUPS&&record_count==64*GROUPS&&A_reads==512&&pair_detaches==32*GROUPS&&peak_contexts==2*GROUPS)
     else $fatal(1,"execution accounting req=%0d ack=%0d records=%0d reads=%0d pairs=%0d",accepted,ACKs,completed,A_reads,pair_detaches);
+  if(WEIGHT_PREFILL)assert(peak_weight_inflight>=2)else $fatal(1,"W overlap never reached two real banks");
+  if(FOUR_BANK&&GROUPS>=4)assert(peak_weight_banks==4)else $fatal(1,"W lookahead never allocated all four real banks");
+  $display("W_BANK_TIMING mode=%0d live=%0d actual_inflight=%0d",MODE,peak_weight_banks,peak_weight_inflight);
   $display("RESIDENT_X_TIMING mode=%0d startup=%0d first=%0d second=%0d accounted_total=%0d fixture_source_boot=%0d quant=%0d header=%0d copy=%0d post_copy_load_wait=%0d",
     MODE,fill_cycles,scope0_cycles,scope1_cycles,fill_cycles+scope0_cycles+scope1_cycles,boot_cycles,quant_cycles,header_cycles,copy_cycles,load_wait_cycles);
+  if(cancel_test)begin
+   integer cancel_start,cancel_latency,old_exec,old_drains,old_acks,old_errors;
+   assert(FOUR_BANK&&GROUPS==8);
+   case_id=2;scope_data=scopes[0];scope_owner={32'd1,32'd7,32'd8,32'd3};host_mode=0;
+   pause();service_valid=1;do @(posedge clk);while(!(service_ready&&scope_ready));@(negedge clk);service_valid=0;
+   resident_scope_live=1;
+   transfer_tile(0,2);transfer_tile(1,2);
+   while($countones(M.table_valid)!=4||weight_inflight<2||command_occupied!=0||exec_state!=5'd8)@(negedge clk);
+   old_exec=native_execs;old_drains=drain_commands;old_acks=ACKs;old_errors=cancel_error_count;cancel_start=cycle;
+   $fwrite(trace_file,"%0d,CANCEL_FOUR,%0d,%0d,%0d,%0d\n",cycle,case_id,old_exec,weight_inflight,old_drains);
+   cancel_phase=1;scope_cancel=1;assert(cancel_ready);pause();scope_cancel=0;
+   while(!service_done_valid)@(negedge clk);
+   assert(service_done_owner==scope_owner&&service_done_ticket==3&&service_done_status!=0&&
+       native_execs==old_exec&&ACKs==old_acks&&drain_commands==old_drains+4&&cancel_error_count>=old_errors+4&&
+       pending_mask==0&&M.table_valid==0&&A_live==0&&command_occupied==0&&result_occupied==0)
+     else $fatal(1,"four W cancel incomplete native=%0d drain=%0d error=%0d",native_execs-old_exec,drain_commands-old_drains,cancel_error_count-old_errors);
+   cancel_latency=cycle-cancel_start;
+   $fwrite(trace_file,"%0d,CANCEL_DONE,%0d,%0d,%0d,%0d\n",cycle,case_id,cancel_latency,drain_commands-old_drains,cancel_error_count-old_errors);
+   service_done_ready=1;pause();service_done_ready=0;cancel_phase=0;resident_scope_live=0;pause(2);
+   assert(quiescent&&accepted==returned&&rx_idle&&copy_idle)else $fatal(1,"cancel still owns a source");
+   // Re-run the identical weight/A addresses on the same physical four banks.
+   // Old positive results are first overwritten so a skipped computation fails.
+   for(integer way=0;way<2;way=way+1)for(integer word_id=0;word_id<2*GROUPS;word_id=word_id+1)
+    host_word(1,128+32*way+word_id,128'hdabe_4e11_5eed_cafe_dead_5555_ffff_cafe);
+   case_id=3;scope_owner={32'd1,32'd7,32'd8,32'd4};host_mode=0;pause();service_valid=1;
+   do @(posedge clk);while(!(service_ready&&scope_ready));@(negedge clk);service_valid=0;resident_scope_live=1;
+   old_exec=native_execs;old_acks=ACKs;
+   for(integer tile=0;tile<16;tile=tile+1)transfer_tile(tile,3);
+   while(!service_done_valid)@(negedge clk);
+   assert(service_done_owner==scope_owner&&service_done_ticket==4&&service_done_status==0&&
+       native_execs==old_exec+32*GROUPS&&ACKs==old_acks+4*GROUPS&&accepted==returned)
+     else $fatal(1,"post-cancel true retry failed");
+   service_done_ready=1;pause();service_done_ready=0;resident_scope_live=0;pause(2);assert(quiescent);
+   for(integer way=0;way<2;way=way+1)for(integer word_id=0;word_id<2*GROUPS;word_id=word_id+1)
+    host_word(0,128+32*way+word_id,expect_memory[2*GROUPS*way+word_id]);
+   $display("FOUR_CANCEL_PASS cycles=%0d drains=%0d errors=%0d retry_W64=%0d retry_S128ACK=%0d",cancel_latency,4,cancel_error_count-old_errors,32*GROUPS*17,ACKs-old_acks);
+  end
   $display("PASS p_resident_x_compare mode=%0d seed=%0d scopes=2 groups=%0d W64=%0d S128ACK=%0d Aread=%0d copy=%0d",
     MODE,seed,GROUPS,accepted,ACKs,A_reads,real_copy_ACKs);
   $fclose(trace_file);$finish;

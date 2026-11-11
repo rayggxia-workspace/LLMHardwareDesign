@@ -1,6 +1,7 @@
 `verilator_config
 // The imported base intentionally leaves its unused wide port unconnected.
 lint_off -rule PINCONNECTEMPTY -file "*/project/rtl/s_sram/local_s_base.sv"
+lint_off -rule PINCONNECTEMPTY -file "project/rtl/s_sram/local_s_base.sv"
 // Original delayed bank behavior uses blocking capture; kept byte-identical.
 lint_off -rule BLKSEQ -file "*/s_sram_256x128_freepdk45.v"
 // Clock/scoreboard counters are testbench-only blocking statements.
