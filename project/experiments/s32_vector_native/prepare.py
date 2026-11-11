@@ -38,12 +38,12 @@ def prepare(root,out):
   p.write_text(''.join(f'{((x>>308)<<310)|(x&((1<<308)-1)):079x}\n' for x in rows))
  rng=random.Random(2474701);edges=[LO,HI,-1,0,1,-65537,65537,0x40000000,-0x40000000,3,-3,5,-5,32768,-32769]
  dest=out/'s32';dest.mkdir();cases=[]
- for name in ['unary_s32','binary_s32','product_s32','convert_s32','mixed_edges','hazards','direct','backpressure','io_contention']:
+ for name in ['unary_s32','binary_s32','product_s32','convert_s32','mixed_edges','hazards','direct','backpressure','io_contention','unary_tile','binary_tile']:
   mem=[pack([edges[(i+j)%len(edges)] if i%2==0 else rng.randrange(LO,HI+1) for j in range(4)]) for i in range(1024)];initial=mem.copy();traffic=Counter();rows=[]
-  count=2048 if name=='mixed_edges' else 128 if name in ['hazards','direct'] else 64
+  count=16 if name.endswith('_tile') else 2048 if name=='mixed_edges' else 128 if name in ['hazards','direct'] else 64
   for i in range(count):
    op=0;shift=0;src=[i%128,128+i%128];dst=512+i%128;store=True;direct=False;abort=False
-   if name=='unary_s32':op=11;src=src[:1]
+   if name in ['unary_s32','unary_tile']:op=11;src=src[:1]
    if name=='product_s32':op=2;shift=29
    if name=='convert_s32':op=10;shift=[-64,-32,-13,-1,0,1,15,31,34,35,63][i%11];src=src[:1]
    if name=='mixed_edges':
