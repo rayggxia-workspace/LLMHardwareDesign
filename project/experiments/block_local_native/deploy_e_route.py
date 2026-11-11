@@ -19,17 +19,19 @@ def main():
     inputs.add_argument("--map-from", help="Completed exact AP64 mapping run")
     inputs.add_argument("--qualify-from", help="Completed exact AP64 physical route set")
     inputs.add_argument("--access-from", help="Independent gate root, use only candidate-234")
+    inputs.add_argument("--activity-from", help="Accepted gate root for exact final E activity")
     parser.add_argument("--after", type=int, help="Wait for exact mapping job success")
     parser.add_argument("--package-dir", type=Path, required=True)
     args = parser.parse_args()
     if not re.fullmatch(r"/public/home/yuzelu/project-circuit/issue250-ephys-[0-9-]+", args.root):
         raise ValueError("fresh owned issue250 E physical directory required")
-    inputs = args.map_from or args.qualify_from or args.access_from
+    inputs = args.map_from or args.qualify_from or args.access_from or args.activity_from
     family = "ejoint" if args.map_from else "ephys"
     if not re.fullmatch(r"/public/home/yuzelu/project-circuit/issue250-"+family+r"-[0-9-]+", inputs) or inputs == args.root:
         raise ValueError("invalid prior E run path")
     job = ("job_e_route.sh" if args.map_from else
-           "job_e_qualify.sh" if args.qualify_from else "job_e_access.sh")
+           "job_e_qualify.sh" if args.qualify_from else
+           "job_e_access.sh" if args.access_from else "job_e_activity.sh")
     args.package_dir.mkdir(parents=True, exist_ok=False)
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
     paths = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", commit, "--",
@@ -42,7 +44,7 @@ def main():
            "project/experiments/block_local_native/real_s_lint.vlt",
            "project/experiments/shared_x_control/rtl/native_s128_mux2.sv",
            "project/rtl/w8a16_v1/e_s128_frontend.sv", "project/rtl/s_sram"]
-          if args.qualify_from else [])]).decode().splitlines()
+          if args.qualify_from or args.activity_from else [])]).decode().splitlines()
     items = {p: subprocess.check_output(["git", "show", commit + ":" + p]) for p in paths}
     items["source-commit.txt"] = (commit + "\n").encode()
     manifest = "".join(hashlib.sha256(v).hexdigest() + "  " + p + "\n" for p, v in sorted(items.items()))
@@ -68,7 +70,8 @@ def main():
         shlex.quote(args.root + "/slurm-%j.log") + " source/project/experiments/block_local_native/" + job + " " +
         shlex.quote(inputs)]).decode().strip()
     record = dict(source_commit=commit, remote_root=args.root, map_root=args.map_from,
-                  qualification_route_root=args.qualify_from, access_audit_root=args.access_from, files=len(items),
+                  qualification_route_root=args.qualify_from, access_audit_root=args.access_from,
+                  activity_audit_root=args.activity_from, files=len(items),
                   package_sha256=hashlib.sha256(package.read_bytes()).hexdigest(), submit=result)
     (args.package_dir / "submission.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(record))

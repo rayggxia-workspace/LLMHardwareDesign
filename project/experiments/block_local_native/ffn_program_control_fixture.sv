@@ -77,7 +77,9 @@ module ffn_program_control_fixture(
     else $fatal(1,"real MC result status=%0d job=%0d epoch=%0d sequence=%0d",result_status,result_job,result_epoch,result_sequence);
   end
  end
- mother_control_native64_transport128 mother(
+ // A full Down scope takes about 45k cycles with the bounded DDR fixture.
+ // Keep the short transport watchdog and budget the admitted service WAIT.
+ mother_control_native64_transport128 #(.SERVICE_STALL_LIMIT(131072)) mother(
   .clk_i(clk),.rst_ni(mother_reset_n),.release_valid_i(release_valid),.release_sequence_i(32'd1),.release_epoch_i(32'd1),
   .deploy_valid_i(deploy),.deploy_generation_i(32'd1),.release_ready_o(release_ready),.poison_o(unused_mc[0]),
   .image_valid_o(unused_mc[1]),.cfg_req_valid_i(cfg_valid),.cfg_req_op_i(cfg_op),.cfg_req_generation_i(32'd1),

@@ -202,7 +202,7 @@
    <<",\"dynamic_local_return_B\":"<<ns_dynamic_local_return_B<<",\"dynamic_service_cycles_sum\":"<<ns_dynamic_service_cycles
    <<",\"dynamic_15pass_schedule\":"<<(nv_int("NS_DYNAMIC",0)?"true":"false")
    <<",\"dynamic_s32_enabled\":"<<(nv_int("NS_NATIVE_DOT",0)?"true":"false")
-   <<",\"dynamic_s32_rows\":"<<nv_int("NS_DOT_ROWS",1)<<",\"dynamic_s32_RTL_job\":"<<(nv_int("NS_DOT_STAGE64",0)?102444:102419)
+   <<",\"dynamic_s32_rows\":"<<nv_int("NS_DOT_ROWS",1)<<",\"dynamic_s32_RTL_job\":"<<(nv_int("NS_DOT_REFILL_NEXT",0)?102510:nv_int("NS_DOT_STAGE64",0)?102444:102419)
    <<",\"dynamic_s32_calls\":"<<ns_dot_calls<<",\"dynamic_s32_begins\":"<<ns_dot_begins
    <<",\"dynamic_s32_chunks\":"<<ns_dot_chunks<<",\"dynamic_s32_MACs\":"<<ns_dot_macs
    <<",\"dynamic_s32_A_staging_B\":"<<ns_dot_A_staged<<",\"dynamic_s32_B_staging_B\":"<<ns_dot_B_staged
@@ -215,6 +215,8 @@
    <<",\"dynamic_s32_landing_wait_ticks\":"<<mem.ns_dot_landing_wait<<",\"dynamic_s32_landing_B\":"<<mem.ns_dot_landing_bytes
    <<",\"dynamic_s32_AV_checkpoint_candidate\":"<<(nv_int("NS_DOT_AV_CKPT_PAIRS",0)?"true":"false")
    <<",\"dynamic_s32_AV_checkpoint_RTL_qualified\":false"
+   <<",\"dynamic_s32_AV_checkpoint_primitive_RTL_job\":"<<(ns_dot_av_saves&&nv_int("NS_DOT_CKPT_MEASURED",0)?102600:0)
+   <<",\"dynamic_s32_AV_S80_snapshot_service_cycles\":"<<ns_dot_av_snapshot_cycles
    <<",\"dynamic_s32_AV_S80_saves\":"<<ns_dot_av_saves<<",\"dynamic_s32_AV_S80_restores\":"<<ns_dot_av_restores
    <<",\"dynamic_s32_AV_S80_snapshot_S_words\":"<<ns_dot_av_snapshot_S_words<<",\"dynamic_s32_AV_paired_DDR_beats\":"<<ns_dot_av_pair_beats
    <<",\"dynamic_s32_production_source_and_LC_qualified\":false,\"dynamic_s32_physical_qualified\":false"

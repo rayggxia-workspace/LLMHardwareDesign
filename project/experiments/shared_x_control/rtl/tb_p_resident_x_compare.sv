@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 // Real serialized M + real S bank fixture, functional10ns not300MHzSTA.
 module tb_p_resident_x_compare #(parameter logic [2:0] MODE=3'd0, parameter int GROUPS=1);
- localparam bit FOUR_BANK=(MODE==3'd6), WEIGHT_PREFILL=(MODE==3'd5||FOUR_BANK), RESIDENT=(MODE==3'd1), SOURCE_REUSE=(MODE==3'd2||MODE==3'd4||WEIGHT_PREFILL), COMBINED=(MODE==3'd3), LAZY_SOURCE=(MODE==3'd4||WEIGHT_PREFILL), HAS_RESIDENT=RESIDENT||COMBINED;
+ localparam bit EARLY_EXEC=(MODE==3'd7), FOUR_BANK=(MODE==3'd6||EARLY_EXEC), WEIGHT_PREFILL=(MODE==3'd5||FOUR_BANK), RESIDENT=(MODE==3'd1), SOURCE_REUSE=(MODE==3'd2||MODE==3'd4||WEIGHT_PREFILL), COMBINED=(MODE==3'd3), LAZY_SOURCE=(MODE==3'd4||WEIGHT_PREFILL), HAS_RESIDENT=RESIDENT||COMBINED;
  wire source_tile_reuse=SOURCE_REUSE&&(!LAZY_SOURCE||case_id!=0);
  wire use_resident=HAS_RESIDENT&&scope_data[48+:16]==16'd1;
  logic source_cfg,source_cfg_ready,source_cfg_bad,source_publish_ready,source_publish_bad,source_scale_valid,source_fill_done;
@@ -109,6 +109,11 @@ logic clk,reset;
    assign exec_state=exec.state;
  end else if(RESIDENT)begin:resident_provider
    p_native_resident_x_candidate exec(.*);
+   assign exec_contexts=exec.contexts_live;
+   assign exec_detached=exec.pair_detached;
+   assign exec_state=exec.state;
+ end else if(EARLY_EXEC)begin:weight_overlap_provider
+   p_native_weight_overlap_candidate #(.FOUR_BANK_LOOKAHEAD(1'b1)) exec(.*);
    assign exec_contexts=exec.contexts_live;
    assign exec_detached=exec.pair_detached;
    assign exec_state=exec.state;

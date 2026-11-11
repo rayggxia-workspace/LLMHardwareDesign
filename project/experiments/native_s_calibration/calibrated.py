@@ -16,7 +16,7 @@ def apply(destination):
     root = destination / 'candidate'
     model = root / 'model.cpp'
     text = model.read_text()
-    text = replace(text, '#include "detail.hpp"', '#include "native_quantizer_profile.hpp"\n#include "native_dot_profile.hpp"\n#include "detail.hpp"')
+    text = replace(text, '#include "detail.hpp"', '#include "native_quantizer_profile.hpp"\n#include "native_dot_profile.hpp"\n#include "ffn_replay_profile.hpp"\n#include "detail.hpp"')
     text = replace(text, '#include "matrix.inc"', '#include "native_s128_service.inc"\n#include "native_projection.inc"\n#include "native_stripe.inc"\n#include "native_dynamic.inc"\n#include "native_s32_dot.inc"\n#include "matrix.inc"')
     text = replace(text, 'read(trace);SC_THREAD(run);', 'ns_initialize();read(trace);SC_THREAD(run);')
     text = replace(text, 'U outstanding[2]={0,0},max_descriptors=0;',
@@ -65,7 +65,7 @@ def apply(destination):
       issue=store[b->group].reserve(issue+C,6*C); // two true S128 reads, ACK then next request
      }else issue=store[b->group].reserve(issue,s_port_duration(cfg,b->group,cfg.beat));
     }''')
-    text = replace(text, 'sx_emit();std::cout<<"}\\n";', 'sx_emit();ns_emit();std::cout<<"}\\n";')
+    text = replace(text, 'sx_emit();std::cout<<"}\\n";', 'sx_emit();ns_emit();ns_emit_measured_ffn();std::cout<<"}\\n";')
     text = replace(text, 'try{\n   for(size_t i=0;i<ops.size();)', 'try{\n   if(nv_int("NS_CHECK_QUANT",0)){ns_check_quantizer();passed=true;sc_stop();return;}\n   for(size_t i=0;i<ops.size();)')
     text = replace(text,
         '''read_range(source,offset*(input.bits/8),n*(input.bits/8));
@@ -87,21 +87,47 @@ def apply(destination):
     dot = json.loads(Path(__file__).with_name('fixtures').joinpath('native-s32-fees-102419.json').read_text())
     assert dot['source_job']=='102419' and len(dot['profiles'])==12
     newer = json.loads(Path(__file__).with_name('fixtures').joinpath('native-s32-fees-102444.json').read_text())
+    refill = json.loads(Path(__file__).with_name('fixtures').joinpath('native-s32-fees-102510.json').read_text())
     stage = json.loads(Path(__file__).with_name('fixtures').joinpath('native-s32-stage64-102473.json').read_text())
+    checkpoint = json.loads(Path(__file__).with_name('fixtures').joinpath('native-s32-s80-102600.json').read_text())
     assert newer['source_job']=='102444' and len(newer['profiles'])==12
+    assert refill['source_job']=='102510' and len(refill['profiles'])==12
     assert stage['job']=='102473' and stage['raw_release_cycles'][0]==[5,7]
+    assert checkpoint['job']==102600 and checkpoint['trials']==144 and checkpoint['words']==[7,12,22]
     def dot_profile(profile,pressure,layout,rows):
         return next(p for p in profile['profiles'] if (p['pressure'],p['layout'],p['rows'])==(pressure,layout,rows))
     def c_array(values):
         return '{'+','.join(c_array(v) if isinstance(v,list) else str(v) for v in values)+'}'
+    ffn = json.loads(Path(__file__).with_name('fixtures').joinpath('ffn-three-p-102563-102564.json').read_text())
+    assert ffn['schema']=='paired-three-P-native-FFN/1' and [p['job'] for p in ffn['profiles']]==[102563,102564]
+    programmed = json.loads(Path(__file__).with_name('fixtures').joinpath('ffn-programmed-102604-102603.json').read_text())
+    assert programmed['schema']=='programmed-three-P-native-FFN/1' and [p['job'] for p in programmed['profiles']]==[102604,102603]
+    ffn_profiles = ffn['profiles']+programmed['profiles']
+    phases = []
+    for profile in ffn_profiles:
+        assert len(profile['trials'])==36
+        current = []
+        for mode in (0,1):
+            rows=[r for r in profile['trials'] if r['mode']==mode]
+            assert len(rows)==18
+            ordered=sorted(rows,key=lambda r:(r['gate']+r['down'],r['seed'],r['initial']))
+            current.append([[r['gate'],r['down'],r['seed'],r['initial']] for r in (rows[0],ordered[len(ordered)//2])])
+        phases.append(current)
+    (root / 'ffn_replay_profile.hpp').write_text('#pragma once\nnamespace ns_ffn_profile {\n'
+        +'constexpr int jobs[]='+c_array([p['job'] for p in ffn_profiles])+';\n'
+        +'constexpr int count=sizeof(jobs)/sizeof(jobs[0]);\n'
+        +'constexpr int phases[count][2][2][4]='+c_array(phases)+';\n'
+        +'constexpr int program[count][3]='+c_array([[p.get('program',{}).get(k,0) for k in ('calls','confirmed_reads','confirmed_writes')]
+                                                  for p in ffn_profiles])+';\n}\n',newline='\n')
     def table(profile,field):
         return [[[dot_profile(profile,pressure,layout,rows)[field] if field=='begin_cycles' else
                   [f['cycles'] for f in dot_profile(profile,pressure,layout,rows)['frames']]
                   for rows in (1,2,4)] for layout in ('N-major','K-major')] for pressure in (False,True)]
     (root / 'native_dot_profile.hpp').write_text('#pragma once\nnamespace ns_dot_profile {\n'
-        +'constexpr int begin[2][2][2][3]='+c_array([table(p,'begin_cycles') for p in (dot,newer)])+';\n'
-        +'constexpr int chunks[2][2][2][3][5]='+c_array([table(p,'frames') for p in (dot,newer)])+';\n'
-        +'constexpr int stage_release[2][2]='+c_array(stage['raw_release_cycles'])+';\n}\n',newline='\n')
+        +'constexpr int begin[3][2][2][3]='+c_array([table(p,'begin_cycles') for p in (dot,newer,refill)])+';\n'
+        +'constexpr int chunks[3][2][2][3][5]='+c_array([table(p,'frames') for p in (dot,newer,refill)])+';\n'
+        +'constexpr int stage_release[2][2]='+c_array(stage['raw_release_cycles'])+';\n'
+        +'constexpr int checkpoint[2][3][2]='+c_array(checkpoint['command_to_terminal_max_in_audited_trace'])+';\n}\n',newline='\n')
     quant = json.loads(Path(__file__).with_name('fixtures').joinpath('quantizer-102168.json').read_text())
     header = '#pragma once\n#include <vector>\nnamespace ns_quant_profile {\n'
     for frame in quant['frames']:

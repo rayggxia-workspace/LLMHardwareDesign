@@ -1,6 +1,9 @@
 // 64bit instructions; four-flit 128bit physical MC/LC task transport.
 `timescale 1ns/1ps
-module mother_control_native64_transport128 #(parameter [31:0] NATIVE_ABI_ID=32'h02500002)(
+module mother_control_native64_transport128 #(
+  parameter [31:0] NATIVE_ABI_ID=32'h02500002,
+  parameter integer unsigned SERVICE_STALL_LIMIT=4096
+)(
   input wire clk_i,
   input wire rst_ni,
   input wire release_valid_i,
@@ -87,7 +90,7 @@ module mother_control_native64_transport128 #(parameter [31:0] NATIVE_ABI_ID=32'
   wire core_recover_ready,core_recover_valid,bridge_drained;
   assign recover_ready_o=core_recover_ready&&bridge_drained&&transport_drained_i;
   assign core_recover_valid=recover_valid_i&&bridge_drained&&transport_drained_i;
-  mother_control_native64 #(.NATIVE_ABI_ID(NATIVE_ABI_ID)) mother(
+  mother_control_native64 #(.NATIVE_ABI_ID(NATIVE_ABI_ID),.SERVICE_STALL_LIMIT(SERVICE_STALL_LIMIT)) mother(
     .recover_valid_i(core_recover_valid),.recover_ready_o(core_recover_ready),.*);
   mc_packet128_bridge transport(
     .clk(clk_i),.reset(!rst_ni),.core_task_valid(task_valid_o),.core_task_ready(task_ready_i),

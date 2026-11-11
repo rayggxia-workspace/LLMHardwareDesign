@@ -1,6 +1,9 @@
 // Native nine-resident mother with separate unchanged 16KiB program SRAM.
 `timescale 1ns/1ps
-module mother_control_native64 #(parameter [31:0] NATIVE_ABI_ID=32'h02500002)(
+module mother_control_native64 #(
+  parameter [31:0] NATIVE_ABI_ID=32'h02500002,
+  parameter integer unsigned SERVICE_STALL_LIMIT=4096
+)(
   input wire clk_i,
   input wire rst_ni,
   input wire release_valid_i,
@@ -80,7 +83,7 @@ module mother_control_native64 #(parameter [31:0] NATIVE_ABI_ID=32'h02500002)(
   wire pm_req_ready_i,pm_rsp_valid_i,pm_rsp_error_i,pm_req_valid_o,pm_req_write_o,pm_rsp_ready_o;
   wire [127:0] pm_rsp_data_i,pm_req_data_o;
   wire [13:0] pm_req_address_o;
-  mc_native_controller #(.STALL_LIMIT(4096),.NATIVE_ABI_ID(NATIVE_ABI_ID)) core(.*);
+  mc_native_controller #(.STALL_LIMIT(4096),.SERVICE_STALL_LIMIT(SERVICE_STALL_LIMIT),.NATIVE_ABI_ID(NATIVE_ABI_ID)) core(.*);
   control_pm #(.BYTES(16384),.USE_SRAM(1'b1)) program_store(
     .clk_i,.rst_ni,.req_valid_i(pm_req_valid_o),.req_write_i(pm_req_write_o),
     .req_address_i(pm_req_address_o),.req_data_i(pm_req_data_o),.req_ready_o(pm_req_ready_i),

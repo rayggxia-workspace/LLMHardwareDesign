@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 // Real serialized M + real S bank fixture, functional10ns not300MHzSTA.
 module tb_p_weight_global #(parameter logic [2:0] MODE=3'd6, parameter int GROUPS=8, parameter logic [31:0] SESSION_LIMIT=32'hffffffe0);
- localparam bit FOUR_BANK=(MODE==3'd6), WEIGHT_PREFILL=(MODE==3'd5||FOUR_BANK), RESIDENT=(MODE==3'd1), SOURCE_REUSE=(MODE==3'd2||MODE==3'd4||WEIGHT_PREFILL), COMBINED=(MODE==3'd3), LAZY_SOURCE=(MODE==3'd4||WEIGHT_PREFILL), HAS_RESIDENT=RESIDENT||COMBINED;
+ localparam bit EARLY_EXEC=(MODE==3'd7), FOUR_BANK=(MODE==3'd6||EARLY_EXEC), WEIGHT_PREFILL=(MODE==3'd5||FOUR_BANK), RESIDENT=(MODE==3'd1), SOURCE_REUSE=(MODE==3'd2||MODE==3'd4||WEIGHT_PREFILL), COMBINED=(MODE==3'd3), LAZY_SOURCE=(MODE==3'd4||WEIGHT_PREFILL), HAS_RESIDENT=RESIDENT||COMBINED;
  wire source_tile_reuse=SOURCE_REUSE&&(!LAZY_SOURCE||case_id!=0);
  wire use_resident=HAS_RESIDENT&&scope_data[48+:16]==16'd1;
  logic source_cfg,source_cfg_ready,source_cfg_bad,source_publish_ready,source_publish_bad,source_scale_valid,source_fill_done;
@@ -109,6 +109,11 @@ logic clk,reset;
    assign exec_state=exec.state;
  end else if(RESIDENT)begin:resident_provider
    p_native_resident_x_candidate exec(.*);
+   assign exec_contexts=exec.contexts_live;
+   assign exec_detached=exec.pair_detached;
+   assign exec_state=exec.state;
+ end else if(EARLY_EXEC)begin:weight_overlap_provider
+   p_native_weight_overlap_candidate #(.FOUR_BANK_LOOKAHEAD(1'b1),.SESSION_LIMIT(SESSION_LIMIT)) exec(.*);
    assign exec_contexts=exec.contexts_live;
    assign exec_detached=exec.pair_detached;
    assign exec_state=exec.state;
@@ -377,6 +382,18 @@ logic clk,reset;
   .fault_valid(dma_fault_valid),.fault_ready(1'b1),.fault_kind(dma_fault_kind),.fault_client(dma_fault_client),
   .fault_local_tag(dma_fault_local_tag),.fault_global_tag(dma_fault_global_tag),.debug_beats,.debug_descriptors,.debug_generation);
  logic [63:0] backend_pending,planned_pending,response_claimed;
+ logic [1:0] hold_weight_responses;
+ logic backend_is_younger[64],backend_is_last_beat[64];
+ logic [63:0] younger_record_base;
+ wire [63:0] younger_pending_mask;
+ for(genvar entry=0;entry<64;entry=entry+1)begin: tagged_responses
+  assign younger_pending_mask[entry]=backend_is_younger[entry];
+ end
+ always @(posedge clk)begin
+  if(reset)younger_record_base<=0;
+  else if(case_id==2&&record_valid&&record_ready&&record_k==16'd128&&record_context==4'd1)
+   younger_record_base<=record_address;
+ end
  logic [63:0] backend_tag[64];logic [511:0] backend_data[64];logic backend_channel[64];
  integer backend_due[64],backend_free[4],backend_response[4],backend_candidate[4];
  integer backend_requests,backend_returns,backend_purges;
@@ -406,7 +423,9 @@ logic clk,reset;
   for(integer lane=0;lane<4;lane=lane+1)begin
    backend_candidate[lane]=-1;
    for(integer entry=0;entry<64;entry=entry+1)begin
-    if(backend_pending[entry]&&!response_claimed[entry]&&int'(backend_channel[entry])==lane/2&&backend_due[entry]<=cycle&&backend_candidate[lane]<0)backend_candidate[lane]=entry;
+    if(backend_pending[entry]&&!response_claimed[entry]&&
+       !(backend_is_last_beat[entry]&&(hold_weight_responses==1||
+         (hold_weight_responses==2&&backend_is_younger[entry])))&&int'(backend_channel[entry])==lane/2&&backend_due[entry]<=cycle&&backend_candidate[lane]<0)backend_candidate[lane]=entry;
    end
    if(backend_response[lane]>=0)begin
     d_rsp_valid[lane]=1;d_rsp_tag[lane*64+:64]=backend_tag[backend_response[lane]];
@@ -430,6 +449,9 @@ logic clk,reset;
        d_req_address[lane*64+:20]<20'(GROUPS*17408)&&d_req_address[lane*64+:6]==0&&d_req_tag[lane*64+6+:4]==9)
        else $fatal(1,"W global client/address");
      backend_data[backend_free[lane]]<=planned_data[lane];
+     backend_is_younger[backend_free[lane]]<=d_req_address[lane*64+:64]>=younger_record_base&&
+        d_req_address[lane*64+:64]<younger_record_base+64'd1088;
+     backend_is_last_beat[backend_free[lane]]<=(int'(d_req_address[lane*64+:20])%1088)==1024;
      $fwrite(trace_file,"%0d,DDR_BACKEND_REQ,%0d,%0d,%0d,%0d\n",cycle,case_id,lane,d_req_tag[lane*64+:64],d_req_address[lane*64+:64]);
     end
     if(backend_response[lane]<0&&backend_candidate[lane]>=0)backend_response[lane]<=backend_candidate[lane];
@@ -571,7 +593,7 @@ logic clk,reset;
   resident_publish=0;resident_scope_live=0;bad_copy_ticket=0;source_cfg=0;source_fill_done=0;
   a_load_proof_ready=RESIDENT;allow_native_A=1;load_proofs=0;
   reset=1;service_valid=0;service_done_ready=0;scope_cancel=0;scope_owner=0;scope_data=0;
-  cancel_test=$test$plusargs("CANCEL_FOUR");cancel_phase=0;
+  cancel_test=$test$plusargs("CANCEL_FOUR");cancel_phase=0;hold_weight_responses=0;
   directory_cfg=0;q_cmd=0;q_take=0;h_start=0;h_take=0;lease_start=0;release_window=0;copy_start=0;copy_take=0;
   tile_generation=0;tile_k=0;tile_session=0;tile_ticket=0;proof_accepted=0;
   uh_valid=0;uh_write=1;uh_rsp_ready=0;uh_address=0;uh_data=0;real_copy_ACKs=0;real_copy_reads=0;real_headers=0;real_quantizations=0;
@@ -637,19 +659,35 @@ logic clk,reset;
   $display("RESIDENT_X_TIMING mode=%0d startup=%0d first=%0d second=%0d accounted_total=%0d fixture_source_boot=%0d quant=%0d header=%0d copy=%0d post_copy_load_wait=%0d",
     MODE,fill_cycles,scope0_cycles,scope1_cycles,fill_cycles+scope0_cycles+scope1_cycles,boot_cycles,quant_cycles,header_cycles,copy_cycles,load_wait_cycles);
   if(cancel_test)begin
-   integer cancel_start,cancel_latency,old_exec,old_drains,old_acks,old_errors;
+   integer cancel_start,cancel_latency,old_exec,old_drains,old_acks,old_errors,expected_drains,prior_completions;
+   bit cancel_after_first_exec;
    assert(FOUR_BANK&&GROUPS==8);
    case_id=2;scope_data=scopes[0];scope_owner={32'd1,32'd7,32'd8,32'd3};host_mode=0;
    pause();service_valid=1;do @(posedge clk);while(!(service_ready&&scope_ready));@(negedge clk);service_valid=0;
    resident_scope_live=1;
-   transfer_tile(0,2);transfer_tile(1,2);
+   cancel_after_first_exec=$test$plusargs("CANCEL_DURING_OVERLAP");
+   assert(!cancel_after_first_exec||EARLY_EXEC);
+   prior_completions=completed;
+   transfer_tile(0,2);
+   while(completed<prior_completions+2*GROUPS||M.table_valid!=0||command_occupied!=0||result_occupied!=0||exec_state!=0)@(negedge clk);
+   hold_weight_responses=1;
+   transfer_tile(1,2);
    while($countones(M.table_valid)!=4||weight_inflight<2||command_occupied!=0||exec_state!=5'd8)@(negedge clk);
+   expected_drains=4;
+   if(cancel_after_first_exec)begin
+    old_exec=native_execs;
+    hold_weight_responses=2;
+    while(native_execs==old_exec)@(negedge clk);
+    assert(native_execs==old_exec+1&&command_occupied!=0&&$countones(M.table_valid)==4&&
+       |(backend_pending&younger_pending_mask)) else $fatal(1,"older EXEC must overlap true younger backend data");
+    expected_drains=3;
+   end
    old_exec=native_execs;old_drains=drain_commands;old_acks=ACKs;old_errors=cancel_error_count;cancel_start=cycle;
    $fwrite(trace_file,"%0d,CANCEL_FOUR,%0d,%0d,%0d,%0d\n",cycle,case_id,old_exec,weight_inflight,old_drains);
-   cancel_phase=1;scope_cancel=1;assert(cancel_ready);pause();scope_cancel=0;
+   cancel_phase=1;scope_cancel=1;hold_weight_responses=0;assert(cancel_ready);pause();scope_cancel=0;
    while(!service_done_valid)@(negedge clk);
    assert(service_done_owner==scope_owner&&service_done_ticket==3&&service_done_status!=0&&
-       native_execs==old_exec&&ACKs==old_acks&&drain_commands==old_drains+4&&cancel_error_count>=old_errors+4&&
+       native_execs==old_exec&&ACKs==old_acks&&drain_commands==old_drains+expected_drains&&cancel_error_count>=old_errors+expected_drains&&
        backend_pending==0&&M.table_valid==0&&A_live==0&&command_occupied==0&&result_occupied==0)
      else $fatal(1,"four W cancel incomplete native=%0d drain=%0d error=%0d",native_execs-old_exec,drain_commands-old_drains,cancel_error_count-old_errors);
    cancel_latency=cycle-cancel_start;
@@ -671,7 +709,7 @@ logic clk,reset;
    service_done_ready=1;pause();service_done_ready=0;resident_scope_live=0;pause(2);assert(quiescent);
    for(integer way=0;way<2;way=way+1)for(integer word_id=0;word_id<2*GROUPS;word_id=word_id+1)
     host_word(0,128+32*way+word_id,expect_memory[2*GROUPS*way+word_id]);
-   $display("FOUR_CANCEL_PASS cycles=%0d drains=%0d errors=%0d retry_W64=%0d retry_S128ACK=%0d",cancel_latency,4,cancel_error_count-old_errors,32*GROUPS*17,ACKs-old_acks);
+   $display("FOUR_CANCEL_PASS cycles=%0d drains=%0d errors=%0d retry_W64=%0d retry_S128ACK=%0d",cancel_latency,expected_drains,cancel_error_count-old_errors,32*GROUPS*17,ACKs-old_acks);
   end
   $display("PASS p_resident_x_compare mode=%0d seed=%0d scopes=2 groups=%0d W64=%0d S128ACK=%0d Aread=%0d copy=%0d",
     MODE,seed,GROUPS,accepted,ACKs,A_reads,real_copy_ACKs);

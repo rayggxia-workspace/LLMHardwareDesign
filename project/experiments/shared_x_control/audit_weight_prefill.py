@@ -14,7 +14,7 @@ def traces(path):
     result = {}
     with tarfile.open(path, "r:gz") as archive:
         for member in archive.getmembers():
-            key = re.search(r"/p-resident-([456])-([1-6])-([0-2])\.csv$", member.name)
+            key = re.search(r"/p-resident-([4567])-([1-6])-([0-2])\.csv$", member.name)
             if key is None:
                 continue
             assert member.isfile()

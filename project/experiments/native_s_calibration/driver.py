@@ -87,6 +87,25 @@ if os.environ.get('NS_ROUND')=='native-dot-M2':
         'single-M-serial-AV-reference','single-M-wave-AV-reference','M2-guard15-serial-AV',
         'M2-guard15-wave-AV','M2-guard15-wave-AV-stage-pressure','M2-guard15-wave-AV-all-pressure',
         'M2-guard15-wave-AV-serial-checkpoint','M2-guard15-wave-AV-first-DDR-offer')]
+if os.environ.get('NS_ROUND')=='native-dot-refill':
+    PLANS=[(name,4,2,1,0,1) for name in (
+        'old-serial-AV','refill-serial-AV','old-wave-AV','refill-wave-AV',
+        'refill-wave-first-DDR-offer','refill-wave-stage-pressure','refill-wave-all-pressure',
+        'refill-wave-serial-checkpoint')]
+if os.environ.get('NS_ROUND')=='measured-three-P-FFN':
+    PLANS=[(name,4,2,1,0,1) for name in (
+        'prior-modeled-serial-AV','prior-modeled-wave-AV','measured-serial-serial-AV',
+        'measured-four-W-serial-AV','measured-four-W-wave-AV','measured-four-W-pressured-FFN-wave-AV',
+        'measured-four-W-all-pressure','measured-four-W-median-FFN-wave-AV')]
+if os.environ.get('NS_ROUND')=='measured-S80':
+    PLANS=[(name,4,2,1,0,1) for name in (
+        'wave2-historical','wave2-measured-S80','wave2-pressure-historical',
+        'wave2-pressure-measured-S80','wave1-measured-S80','wave1-historical',
+        'serial-AV-reference','wave2-measured-S80-FFN-pressure')]
+if os.environ.get('NS_ROUND')=='programmed-FFN':
+    PLANS=[(name,4,2,1,0,1) for name in (
+        'unprogrammed-FFN','programmed-baseline','programmed-early','programmed-baseline-pressure',
+        'programmed-early-pressure','programmed-early-median','programmed-early-FFN-pressure','programmed-early-serial-AV')]
 name, mode, scope, word_cycles, response_cycles, ack = PLANS[int(os.environ["SLURM_PROCID"])]
 # Singularity on this host resets inherited CPU affinity. Restore the exact
 # srun allocation captured outside the container, then assert it again inside.
@@ -157,7 +176,7 @@ if os.environ.get('NS_ROUND') == 'G-overlap-1':
                NS_EARLY_STRIPE=str(int(rank != 2)), NS_G_OVERLAP=str(int(rank not in (0, 5))),
                NS_ORDINARY_PIPE_EXTRA=str(2 if new_pipeline else 0), NS_HEAD_PIPE_EXTRA=str(16 if new_pipeline else 0),
                NS_HEAD_INPUT_EXTRA=str(8 if new_pipeline else 0))
-if os.environ.get('NS_ROUND') in ('rf-II1-1','dynamic15-1','native-dot-1','native-dot-stage64','native-dot-av-wave','native-dot-M2'):
+if os.environ.get('NS_ROUND') in ('rf-II1-1','dynamic15-1','native-dot-1','native-dot-stage64','native-dot-av-wave','native-dot-M2','native-dot-refill','measured-three-P-FFN','measured-S80','programmed-FFN'):
     rank = int(os.environ['SLURM_PROCID'])
     env.update(NS_NATIVE='4', NS_GUARD_CYCLES='3', NS_CONTEXT_CYCLES='3',
                NS_RF_CONTEXTS='16', NS_PROJECT_COLS='192', NS_SPILL='0',
@@ -202,6 +221,41 @@ if os.environ.get('NS_ROUND')=='native-dot-M2':
                NS_DOT_PRESSURE=str(int(rank==5)),NS_DOT_AV_CKPT_PAIRS=str(0 if rank in (0,2) else 2),
                NS_DOT_CKPT_REQ_GAP=str(3 if rank==6 else 1),NS_DOT_STAGE_PRESSURE=str(int(rank in (4,5))),
                NS_M2_SHORT_GUARD=str(int(rank>=2)),NS_M2_FIRST_W_OFFER=str(int(rank==7)))
+if os.environ.get('NS_ROUND')=='native-dot-refill':
+    rank=int(os.environ['SLURM_PROCID'])
+    env.update(NS_HEAD_PIPE_EXTRA='2',NS_HEAD_INPUT_EXTRA='0',NS_M_PROFILE_JOB='102480',NS_EXEC_GAP='5',
+               NS_G_OVERLAP='1',NS_A_PREFETCH='1',NS_RECORD_CREDITS='6',NS_NATIVE_DOT='1',
+               NS_DOT_ROWS='4',NS_DOT_REUSE='2',NS_DOT_STAGE64='1',NS_DOT_RAW_SLOTS='2',
+               NS_DOT_PRESSURE=str(int(rank==6)),NS_DOT_AV_CKPT_PAIRS=str(0 if rank in (0,1) else 2),
+               NS_DOT_CKPT_REQ_GAP=str(3 if rank==7 else 1),NS_DOT_STAGE_PRESSURE=str(int(rank in (5,6))),
+               NS_M2_SHORT_GUARD='1',NS_M2_FIRST_W_OFFER=str(int(rank==4)),NS_DOT_REFILL_NEXT=str(int(rank not in (0,2))))
+if os.environ.get('NS_ROUND')=='measured-three-P-FFN':
+    rank=int(os.environ['SLURM_PROCID'])
+    env.update(NS_HEAD_PIPE_EXTRA='2',NS_HEAD_INPUT_EXTRA='0',NS_M_PROFILE_JOB='102480',NS_EXEC_GAP='5',
+               NS_G_OVERLAP='1',NS_A_PREFETCH='1',NS_RECORD_CREDITS='6',NS_NATIVE_DOT='1',
+               NS_DOT_ROWS='4',NS_DOT_REUSE='2',NS_DOT_STAGE64='1',NS_DOT_RAW_SLOTS='2',
+               NS_DOT_PRESSURE=str(int(rank==6)),NS_DOT_AV_CKPT_PAIRS=str(0 if rank in (0,2,3) else 2),
+               NS_DOT_STAGE_PRESSURE=str(int(rank==6)),NS_M2_SHORT_GUARD='1',NS_DOT_REFILL_NEXT='1',
+               NS_FFN_REPLAY=str(0 if rank<2 else 1 if rank==2 else 2),
+               NS_FFN_TRACE_MODE=str(int(rank in (5,6))),NS_FFN_TRACE_SAMPLE=str(int(rank==7)))
+if os.environ.get('NS_ROUND')=='measured-S80':
+    rank=int(os.environ['SLURM_PROCID'])
+    env.update(NS_HEAD_PIPE_EXTRA='2',NS_HEAD_INPUT_EXTRA='0',NS_M_PROFILE_JOB='102480',NS_EXEC_GAP='5',
+               NS_G_OVERLAP='1',NS_A_PREFETCH='1',NS_RECORD_CREDITS='6',NS_NATIVE_DOT='1',
+               NS_DOT_ROWS='4',NS_DOT_REUSE='2',NS_DOT_STAGE64='1',NS_DOT_RAW_SLOTS='2',
+               NS_DOT_PRESSURE=str(int(rank in (2,3))),NS_DOT_AV_CKPT_PAIRS=str(0 if rank==6 else 1 if rank in (4,5) else 2),
+               NS_DOT_STAGE_PRESSURE=str(int(rank in (2,3))),NS_M2_SHORT_GUARD='1',NS_DOT_REFILL_NEXT='1',
+               NS_FFN_REPLAY='2',NS_FFN_TRACE_MODE=str(int(rank==7)),NS_DOT_CKPT_MEASURED=str(int(rank in (1,3,4,7))))
+if os.environ.get('NS_ROUND')=='programmed-FFN':
+    rank=int(os.environ['SLURM_PROCID'])
+    pressure=str(int(rank in (3,4)))
+    env.update(NS_HEAD_PIPE_EXTRA='2',NS_HEAD_INPUT_EXTRA='0',NS_M_PROFILE_JOB='102480',NS_EXEC_GAP='5',
+               NS_G_OVERLAP='1',NS_A_PREFETCH='1',NS_RECORD_CREDITS='6',NS_NATIVE_DOT='1',
+               NS_DOT_ROWS='4',NS_DOT_REUSE='2',NS_DOT_STAGE64='1',NS_DOT_RAW_SLOTS='2',
+               NS_DOT_PRESSURE=pressure,NS_DOT_AV_CKPT_PAIRS=str(0 if rank==7 else 2),
+               NS_DOT_STAGE_PRESSURE=pressure,NS_M2_SHORT_GUARD='1',NS_DOT_REFILL_NEXT='1',NS_DOT_CKPT_MEASURED='1',
+               NS_FFN_REPLAY=str(2 if rank==0 else 3 if rank in (1,3) else 4),
+               NS_FFN_TRACE_MODE=str(int(rank in (3,4,6))),NS_FFN_TRACE_SAMPLE=str(int(rank==5)))
 args = ["queued_pipe_w8", "prefix_pair_combine", "8", "1", "1", "16", "0", "4", "0", "1", "1", "1"]
 trace = Path("/public/home/yuzelu/project-circuit/issue248-stream-quant-20261110-40/restored/inputs/decode512.trace")
 report = dict(plan=name, passed=False, source_env={k: v for k, v in env.items() if k.startswith(("SQ_", "BN_", "CL_", "NV_", "SX_", "NS_"))},
@@ -209,8 +263,14 @@ report = dict(plan=name, passed=False, source_env={k: v for k, v in env.items() 
               affinity=affinity, allocated_cpus_per_task=12,
               qualification="S128 sensitivity; operator/control pipelines and energy NOT fully calibrated")
 report['round'] = os.environ.get('NS_ROUND', 'reproduce')
-if report['round'] in ('native-dot-1','native-dot-stage64','native-dot-av-wave','native-dot-M2'):
+if report['round'] in ('native-dot-1','native-dot-stage64','native-dot-av-wave','native-dot-M2','native-dot-refill'):
     report['qualification']='Full-scope timing diagnostic; exact native S32 service RTL fees, bounded source candidates, conditional E/N/LC/physical/energy.'
+if report['round']=='measured-three-P-FFN':
+    report['qualification']='SystemC sequential phase replay of measured three-P FFN plus separate modeled source, export and other operators. No interfering DMA descriptor measured, no numerical or energy qualification.'
+if report['round']=='measured-S80':
+    report['qualification']='Measured three-P FFN phases and live checkpoint primitive replay, modeled paired-B and control. No complete AV RTL, 300MHz physical, numerical or energy qualification.'
+if report['round']=='programmed-FFN':
+    report['qualification']='Measured programmed FFN and live S80 primitive phase replay. Source entry, export, unrelated DMA and remaining operators are modeled separately; no whole-model numerical, physical or energy qualification.'
 
 
 def save():
@@ -225,13 +285,30 @@ try:
                            env=check_env, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, check=True)
         assert 'QUANT_TRACE_MATCH fallback95 known60 read96 write32 owners2 source102168' in (out / 'measured-service-check.log').read_text()
         report['measured_quantizer_and_copy_selfcheck'] = True
-    for label, current in (("micro", HERE / "generated/micro.trace"), ("decode512", trace)):
+    traces = (("micro", HERE / "generated/micro.trace"), ("decode512", trace))
+    for label, current in traces:
+        current_env = dict(env, NS_FFN_REPLAY='0') if label=='micro' and env.get('NS_FFN_REPLAY','0')!='0' else env
         with (out / (label + ".log")).open("w") as log:
-            subprocess.run([str(HERE / "candidate.exe"), str(current)] + args, env=env,
+            subprocess.run([str(HERE / "candidate.exe"), str(current)] + args, env=current_env,
                            stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, check=True)
         result = [json.loads(line[7:]) for line in (out / (label + ".log")).read_text().splitlines() if line.startswith("RESULT ")]
         assert len(result) == 1
-        if report['round'] in ('native-dot-1','native-dot-stage64','native-dot-av-wave','native-dot-M2') and label=='decode512' and env['NS_NATIVE_DOT']=='1':
+        if report['round']=='measured-S80' and label=='decode512':
+            native=result[0]['native_service']
+            checkpoint=int(env['NS_DOT_AV_CKPT_PAIRS'])!=0
+            exact=env['NS_DOT_CKPT_MEASURED']=='1'
+            assert native['dynamic_s32_AV_checkpoint_primitive_RTL_job']==(102600 if exact else 0)
+            assert not native['dynamic_s32_AV_checkpoint_RTL_qualified']
+            fee=(81 if env['NS_DOT_PRESSURE']=='1' else 56) if exact else 62
+            frames=36*2*16*2*3 if checkpoint else 0
+            assert native['dynamic_s32_AV_S80_snapshot_service_cycles']==frames*fee
+        if report['round']=='programmed-FFN' and label=='decode512':
+            ff=result[0]['FFN_measured_replay']
+            assert ff['job']==(102564,102604,102603)[int(env['NS_FFN_REPLAY'])-2] and ff['layers']==36
+            if ff['job'] in (102604,102603):
+                assert ff['actual_programmed_calls']==36*192 and ff['actual_programmed_DDR_read_bytes']==36*71884800
+                assert ff['actual_programmed_local_write_receipt_bytes']==36*96256
+        if report['round'] in ('native-dot-1','native-dot-stage64','native-dot-av-wave','native-dot-M2','native-dot-refill') and label=='decode512' and env['NS_NATIVE_DOT']=='1':
             native=result[0]['native_service']
             assert native['dynamic_s32_MACs']==73728*128*8 and native['dynamic_s32_calls']==72*3
             assert native['dynamic_s32_S_peak_B']<=16384 and native['dynamic_s32_peak_raw_slots']<=3*int(env['NS_DOT_RAW_SLOTS'])

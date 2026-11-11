@@ -26,7 +26,9 @@ def main():
     state = subprocess.check_output(['ssh', '-o', 'BatchMode=yes', HOST,
         f'sacct -j {job} -X -n -P -o JobID,State,ExitCode,Elapsed,AllocCPUS']).decode().strip()
     fields = state.split('|')
-    assert fields[0] == str(job) and fields[1] in ('COMPLETED', 'FAILED') and fields[4] == '60', state
+    allocation = submission.get('alloc_cpus', 60)
+    assert allocation in (60, 96)
+    assert fields[0] == str(job) and fields[1] in ('COMPLETED', 'FAILED') and fields[4] == str(allocation), state
     assert fields[1] != 'COMPLETED' or fields[2] == '0:0', state
     script = '''import hashlib,json,pathlib,tarfile
 root=pathlib.Path(ROOT)

@@ -16,4 +16,20 @@ Repeating the unstalled measured FFN cost for 36 sequential layers consumes 30,9
 
 The emitter binds the scope table to a 272 B mother image and the 352 B LC kernel used by each P. The 17 static MC instructions expand to 192 CALLs in the complete FFN. The expected terminal counters are 71,884,800 read bytes, including the 24,576 B descriptor arena, and 96,256 write bytes. The earlier paired DMA runs offered scopes from the test controller. The programmed variant brings actual PM fetch, MC/LC frame transport and descriptor reads into the same fixture.
 
-The source hashes, remote receipt hashes, failing runs and successful runs are recorded in `work/YUZE-LU/250/native-services/ffnnative/index.json`. The independent `audit_ffn_native.py` verifies raw receipts, byte order and CRC, full numerical pass counts and identical before/after DMA traffic.
+| Evidence | Programmed FFN scope | Passed | Gate/Up + Down cycles, seed 25001 mode 0 init 0 |
+| --- | --- | ---: | ---: |
+| 102601 | 384-column two-stripe regression | 36/36 | 21,681 + 0 |
+| 102604 | Complete FFN, four-W provider | 36/36 | 590,628 + 269,574 = 860,202 |
+| 102603 | Complete FFN, four-W plus early EXEC | 36/36 | 586,103 + 263,811 = 849,914 |
+
+For the complete program both providers confirmed 71,884,800 read bytes and 96,256 write bytes in all trials. Their DMA request and return counters both reached 1,123,200. The early provider saves 0.5223% to 1.1960% across 36 matched cases. This is a provider scheduling change on a fixed instruction image. The fixture still orchestrates the K-tile movement and outer Gate/Up and Down phases. The existing MC transport/fetch timeout remains 4,096 cycles. The fixture uses 131,072 cycles for WAIT on a valid outstanding service after job 102599 showed the original watchdog expiring during live FFN work. There is no instruction format change.
+
+The matched channel-placement experiment 102614 shifts the Up weights by 2,048 bytes to change their DDR channel. All 36 cases passed at identical confirmed traffic and numerical outputs. The change ranges from a 0.2306% slowdown to a 0.2278% speedup. Retain the original placement as the baseline.
+
+Run 102622 prepares each noninitial K tile after the previous window has released and its S reads have drained, before all three next-window requests arrive. It uses the same single S window and copies the same words. The paired full run saved 0.1104% to 1.3207% over 102603. In the first unstalled case it moved the wait from before COPY to the A proof after COPY and reduced 849,914 to 848,976 cycles. This scope uses the test fixture to sequence the tiles. Production use still requires LC ownership and cancellation integration.
+
+Independent combined test 102615 used two 384-column scopes, real typed DMA and three P engines. All 48 cases verified that the old COPY response remains owned until the actual acknowledgment, that one local rearm preserves the next admitted scope and that each M completes 22 real transport FENCE receipts. The local COPY and DDR generations remain separate namespaces.
+
+SystemC 102621 uses the 102603 programmed FFN phases and measured native S80 primitive fees. At B1 decode context512, 300 MHz and 51.2 GB/s, its unstalled configuration estimates 50,003,806 cycles or **5.999543 token/s**. Of those, 30,596,904 are the 36 measured FFN phases, 243,247 are modeled FFN boundaries and 19,163,655 are the modeled remaining path. The all-pressure case is 5.338631 token/s. This replay still needs integrated Attention and system electrical and energy evidence. The FFN comparisons above hold the program fixed and measure changes in the provider or tile sequence.
+
+The source hashes, remote receipt hashes, failing runs and successful runs are recorded in `work/YUZE-LU/250/native-services/ffnnative/index.json`. The independent `audit_ffn_native.py` verifies raw receipts, descriptor byte order and CRC, the exact MC and LC images, confirmed bytes, numerical pass counts and matched traffic. Invoke it with one or more `--receipt-cache` paths containing the raw archive mirrors.

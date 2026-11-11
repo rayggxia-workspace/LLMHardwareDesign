@@ -7,6 +7,60 @@
  U ns_stripe_sequence=0;sc_event ns_stripe_advance;
  std::unique_ptr<sc_fifo<int>> ns_G_jobs;
  std::array<int,32> ns_ring_owner;bool ns_ring_active=false;U ns_ring_peak=0;sc_event ns_ring_released;
+ U ns_measured_gate_cycles=0,ns_measured_down_cycles=0,ns_measured_gate_W64=0,ns_measured_down_W64=0;
+ U ns_measured_entry_ticks=0,ns_measured_export_ticks=0,ns_measured_ffns=0;
+ const int* ns_ffn_measurement()const{
+  const int provider=nv_int("NS_FFN_REPLAY",0),mode=nv_int("NS_FFN_TRACE_MODE",0),sample=nv_int("NS_FFN_TRACE_SAMPLE",0);
+  require(provider>=1&&provider<=ns_ffn_profile::count&&mode>=0&&mode<=1&&sample>=0&&sample<=1,"invalid measured FFN profile");
+  return ns_ffn_profile::phases[provider-1][mode][sample];
+ }
+ void ns_ffn_export(const Op& down){
+  for(int col=0;col<2048;col+=8){int p=(col/8)%3;sio(p,32);
+   pause_until(cl_links[p].reserve(now(),2*C));write_range(down.out,U(col)*4,32);cl_link_bytes+=32;
+  }
+  matrix_backed.insert(down.out);cl_active=false;
+ }
+ void ns_ffn_measured(size_t i,const Op& gate,const Op& up,const Op& down){
+  require(size(gate.in[0])==8192&&size(down.out)==8192&&
+     tensors[gate.in[1]].elements==U(2048)*11008&&tensors[up.in[1]].elements==U(2048)*11008&&
+     tensors[down.in[1]].elements==U(2048)*11008,"measured FFN shape mismatch");
+  const auto* phase=ns_ffn_measurement();
+  const U entered=now();
+  // The measurement starts with raw X already committed in U.S. Retain
+  // the current SystemC source-staging boundary and charge it separately.
+  while(cache.size()>128)remove_line(cache.begin());
+  read_range(gate.in[0],0,8192);
+  if(last_use[gate.in[0]]<=int(i+1))discard_range(gate.in[0],0,size(gate.in[0]));
+  require(mem.outstanding[0]==0&&mem.outstanding[1]==0,"replay starts with another DMA owner");
+  ns_measured_entry_ticks+=now()-entered;
+  cycles(phase[0]);ns_measured_gate_cycles+=phase[0];ns_measured_gate_W64+=748544;
+  cycles(phase[1]);ns_measured_down_cycles+=phase[1];ns_measured_down_W64+=374272;
+  // Root fixture terminates after actual local Down ACK. Product export is
+  // an additional estimated phase; diagnostic SRAM rereads are not replayed.
+  const U export_start=now();ns_ffn_export(down);ns_measured_export_ticks+=now()-export_start;
+  ++ns_measured_ffns;
+ }
+ void ns_emit_measured_ffn(){
+  if(!ns_measured_ffns)return;
+  const auto* phase=ns_ffn_measurement();
+  const int provider=nv_int("NS_FFN_REPLAY",0)-1;
+  const int job=ns_ffn_profile::jobs[provider];
+  const auto* program=ns_ffn_profile::program[provider];
+  const U cycles=ns_measured_gate_cycles+ns_measured_down_cycles;
+  const U bus_bytes=(ns_measured_gate_W64+ns_measured_down_W64)*64;
+  std::cout<<",\"FFN_measured_replay\":{\"job\":"<<job<<",\"layers\":"<<ns_measured_ffns
+   <<",\"seed\":"<<phase[2]<<",\"initial\":"<<phase[3]<<",\"mode\":"<<nv_int("NS_FFN_TRACE_MODE",0)
+   <<",\"gate_cycles\":"<<ns_measured_gate_cycles<<",\"down_cycles\":"<<ns_measured_down_cycles
+   <<",\"actual_W_bus_bytes\":"<<bus_bytes<<",\"mixed_accounted_weight_bus_bytes\":"<<bus_bytes+mem.sq_direct_bytes
+   <<",\"actual_programmed_DDR_read_bytes\":"<<ns_measured_ffns*program[1]
+   <<",\"actual_programmed_calls\":"<<ns_measured_ffns*program[0]
+   <<",\"actual_programmed_local_write_receipt_bytes\":"<<ns_measured_ffns*program[2]
+   <<",\"modeled_source_entry_cycles\":"<<ceildiv(ns_measured_entry_ticks,C)
+   <<",\"modeled_result_export_cycles\":"<<ceildiv(ns_measured_export_ticks,C)
+   <<",\"modeled_other_cycles\":"<<ceildiv(now()-cycles*C-ns_measured_entry_ticks-ns_measured_export_ticks,C)
+   <<",\"remaining_cycles_after_FFN_under_target\":"<<int64_t(32553329)-int64_t(cycles)
+   <<",\"whole_hardware_calibrated\":false,\"measured_interference_with_other_operators\":false}";
+ }
  void ns_ring_claim(int col){
   const int group=col/8,slot=group%32;
   while(ns_ring_owner[slot]!=-1&&ns_ring_owner[slot]!=group)wait(ns_ring_released);
@@ -72,6 +126,7 @@
  void ns_ffn_striped(size_t i){
   const Op gate=ops[i],up=ops[i+1],down=ops[i+4];++cl_ffns;cl_active=true;
   require(ns_stripes.empty(),"prior FFN stripe still live");ns_stripe_sequence=0;
+  if(nv_int("NS_FFN_REPLAY",0)){ns_ffn_measured(i,gate,up,down);return;}
   while(cache.size()>128)remove_line(cache.begin());
   if(sx_early())sx_early_begin();
   for(U off=0;off<2048;off+=128){
@@ -137,8 +192,5 @@
    for(auto& w:workers)if(!w.terminated())wait(w.terminated_event());
   }
   require(ns_stripes.empty(),"stripe pending transport or source hold");
-  for(int col=0;col<2048;col+=8){int p=(col/8)%3;sio(p,32);
-   pause_until(cl_links[p].reserve(now(),2*C));write_range(down.out,U(col)*4,32);cl_link_bytes+=32;
-  }
-  matrix_backed.insert(down.out);cl_active=false;
+  ns_ffn_export(down);
  }

@@ -3,7 +3,7 @@
 module test_ffn_three_p_native #(
  parameter integer COLS=384,
  parameter bit WITH_DOWN=1'b0,FOUR_BANK_LOOKAHEAD=1'b0,WITH_SHARED_DMA=1'b0,WITH_PROGRAM=1'b0,
- parameter bit SPLIT_UP_CHANNEL=1'b0
+ parameter bit SPLIT_UP_CHANNEL=1'b0,EARLY_EXEC=1'b0
 );
  localparam integer TILES=COLS/128,STRIPES=(COLS+191)/192;
  localparam [63:0] JOB=64'h250_ff01;
@@ -86,7 +86,7 @@ module test_ffn_three_p_native #(
  reg down_call=0,down_take=0;
  wire [2:0] down_ready,down_terminal;
  integer mode,seed,cycle,stripe_index,mid_retired,loads,copy_writes,project_terms,w_requests,w_responses;
- bit trace_tiles;
+ bit trace_tiles,early_k_prep;
  reg [1023:0] scopes[WITH_DOWN?192:STRIPES*3];
  reg [127:0] x_raw[512],mid_words[TILES*17];
  reg [127:0] down_words[516];
@@ -287,6 +287,10 @@ module test_ffn_three_p_native #(
    assert(execution_owner==call_owner&&execution_descriptor==descriptor)
     else $fatal(1,"actual MC/LC scope binding p=%0d stripe=%0d Down=%0d",p,stripe_index,down_phase);
   end
+  always @(posedge clk)if(!reset&&(project_done_valid[p]||down_terminal[p])&&project_done_error[p])
+   $fatal(1,"P terminal p=%0d status=%0d owner=%h expected=%h ticket=%h reads=%0d/%0d writes=%0d/%0d words=%0d,%0d",
+      p,result_status,returned_owner,call_owner,returned_ticket,read_bytes,expected_records*1088,
+      write_bytes,expected_writes,gate_count,up_count);
   assign project_done_owner[p*64+:64]=project_owner;
   assign project_done_first[p*16+:16]=descriptor[544+:16];
   assign project_done_gate_words[p*5+:5]=gate_count[4:0];
@@ -303,7 +307,7 @@ module test_ffn_three_p_native #(
   end else begin: no_scatter_dest
    wire [31:0] _unused_copy_return_tag=copy_return_tag;
   end
-  test_ffn_native_p_node #(.SHARED_MID_SOURCE(WITH_DOWN),.FOUR_BANK_LOOKAHEAD(FOUR_BANK_LOOKAHEAD)) node(
+  test_ffn_native_p_node #(.SHARED_MID_SOURCE(WITH_DOWN),.FOUR_BANK_LOOKAHEAD(FOUR_BANK_LOOKAHEAD),.EARLY_EXEC(EARLY_EXEC)) node(
    .clk,.reset,.allow_req(mode==0||(cycle+2*p)%7>=2),
    .allow_rsp(mode==0||(cycle+3*p)%11>=4),.service_valid(local_offer&&lc_call[p]),.service_ready(node_ready),
    .service_cancel_valid(lc_cancel[p]),.service_cancel_ready(lc_cancel_ready[p]),
@@ -560,7 +564,6 @@ module test_ffn_three_p_native #(
           mid_owner,mid_first,mid_destination,mid_destination_base,mid_shift,mid_retired,mid_words[mid_retired*17][5:0]);
     mid_retired<=mid_retired+1;
    end
-   if(|((project_done_valid|down_terminal)&project_done_error))$fatal(1,"real P range returned short or wrong terminal");
    assert(xcopy_faults==0&&copy_faults==0&&header_rejected==0&&q_reject==0&&dir_reject==0&&!dir_bad&&!dir_pub_bad)
     else $fatal(1,"native source/copy error down=%0d index=%0d k=%0d inspect=%0d xcopy=%0d scatter=%0d header=%0d quant=%0d directory=%0d",
          down_phase,down_index,tile_k,inspect,xcopy_faults,copy_faults,header_rejected,q_reject,dir_reject);
@@ -575,10 +578,19 @@ module test_ffn_three_p_native #(
   integer begin_cycle,need_cycle,quant_cycle,header_cycle,copy_cycle,proof_cycle;
   integer first_weight_req,first_weight_rsp;
   begin_cycle=cycle;first_weight_req=w_requests;first_weight_rsp=w_responses;
-  do cycle_wait();while(window_need!=3'b111||
-      needed_k[0]!=16'(k)||needed_k[1]!=16'(k)||needed_k[2]!=16'(k));
-  need_cycle=cycle;
-  assert(needed_key[0]==active_key&&needed_key[1]==active_key&&needed_key[2]==active_key);
+  // The first tile still waits for all three admitted scope identities.
+  // An interior K tile uses that same scope after the previous COPY lease
+  // released. Data enters the same S slot while the old A lives inside M.
+  if(early_k_prep&&k!=0)begin
+   assert(window_idle==3'b111&&reads_drained==3'b111&&xcopy_idle&&header_idle)
+    else $fatal(1,"early K preparation attempted before the preceding lease drained");
+   need_cycle=-1;
+  end else begin
+   do cycle_wait();while(window_need!=3'b111||
+       needed_k[0]!=k||needed_k[1]!=k||needed_k[2]!=k);
+   need_cycle=cycle;
+   assert(needed_key[0]==active_key&&needed_key[1]==active_key&&needed_key[2]==active_key);
+  end
   tile_k=16'(k);tile_generation=tile_generation+1;tile_ticket=tile_ticket+1;
   cycle_wait();
   if(!down_phase&&stripe_index==0)begin
@@ -627,7 +639,7 @@ module test_ffn_three_p_native #(
  integer start_cycle,down_start;
  initial begin
   mode=0;seed=0;
-  trace_tiles=$test$plusargs("TRACE_TILES");
+  trace_tiles=$test$plusargs("TRACE_TILES");early_k_prep=$test$plusargs("EARLY_K_PREP");
   if(!$value$plusargs("mode=%d",mode))$fatal(1,"mode");
   if(!$value$plusargs("seed=%d",seed))$fatal(1,"seed");
   if(!$value$plusargs("X=%s",xfile)||!$value$plusargs("SCOPES=%s",scopefile)||!$value$plusargs("MID=%s",midfile))
@@ -695,8 +707,8 @@ module test_ffn_three_p_native #(
    $display("PROGRAM_PROFILE calls=%0d confirmed_reads=%0d confirmed_writes=%0d",SCOPE_COUNT,terminal_reads,terminal_writes);
    program_result_take=1;cycle_wait();program_result_take=0;
   end
-  $display("PASS ffn_three_p_native columns=%0d stripes=%0d real_P_M=3 real_S_banks=16 Mid=%0d mode=%0d down=%0d four_w=%0d shared_dma=%0d program=%0d split_up=%0d",
-      COLS,STRIPES,TILES,mode,WITH_DOWN,FOUR_BANK_LOOKAHEAD,WITH_SHARED_DMA,WITH_PROGRAM,SPLIT_UP_CHANNEL);
+  $display("PASS ffn_three_p_native columns=%0d stripes=%0d real_P_M=3 real_S_banks=16 Mid=%0d mode=%0d down=%0d four_w=%0d shared_dma=%0d program=%0d split_up=%0d early_exec=%0d early_k_prep=%0d",
+      COLS,STRIPES,TILES,mode,WITH_DOWN,FOUR_BANK_LOOKAHEAD,WITH_SHARED_DMA,WITH_PROGRAM,SPLIT_UP_CHANNEL,EARLY_EXEC,early_k_prep);
   $finish;
  end
  wire [130:0] _unused_stats={xcopy_count,mr_close,mr_close_tag[0],mr_close_tag[1],mr_close_tag[2]};

@@ -3,6 +3,7 @@
 // Program memory, child controllers, packet transport and cohort grant are peers.
 `timescale 1ns/1ps
 module mc_native_controller #(parameter integer unsigned STALL_LIMIT=1024,
+  parameter integer unsigned SERVICE_STALL_LIMIT=STALL_LIMIT,
                            parameter [31:0] NATIVE_ABI_ID=32'h02500002) (
 `include "mc_native_ports.svh"
 );
@@ -130,6 +131,8 @@ module mc_native_controller #(parameter integer unsigned STALL_LIMIT=1024,
   wire movi_fields=ireg[119:112]==0 && ia<8 && ireg[103:64]==0 && ireg[31:0]==0;
   wire event_fields=ireg[119:112]==0 && ia<8 && ib<32 && ireg[95:0]==0;
   wire wait_fields=ireg[119:64]==0 && ireg[31:0]==0;
+  wire waiting_on_service=seq==DECODE && ireg_valid && opcode==8'h11 && wait_fields && wait_allocated && !wait_done;
+  wire [31:0] active_stall_limit=waiting_on_service ? SERVICE_STALL_LIMIT : STALL_LIMIT;
   wire cfg_meta_ok=cfg_req_generation_i>generation && cfg_req_total_bytes_i>=144 &&
        cfg_req_total_bytes_i<=16384 && cfg_req_total_bytes_i[3:0]==0 && cfg_req_image_id_i!=0 && cfg_req_topology_id_i!=0 &&
        cfg_req_abi_id_i==NATIVE_ABI_ID && cfg_req_capacity_id_i==32'h02590003;
@@ -435,7 +438,9 @@ module mc_native_controller #(parameter integer unsigned STALL_LIMIT=1024,
       end
       if(life==RUNNING && !result_valid) begin
         if(pm_fire || pm_done || task_fire || return_fire || trace_retire_o) stall_count<=0;
-        else if(STALL_LIMIT!=0 && stall_count>=STALL_LIMIT-1) begin fault(14); poisoned<=1; prepared<=0; life<=POISONED; end
+        else if(active_stall_limit!=0 && stall_count>=active_stall_limit-1) begin
+          fault(14); poisoned<=1; prepared<=0; life<=POISONED;
+        end
         else if(stall_count!=32'hffffffff) stall_count<=stall_count+1;
       end
       if(bad_return) begin

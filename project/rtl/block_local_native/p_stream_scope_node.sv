@@ -5,7 +5,7 @@
 // No new W/A/result payload bank or duplicate descriptor register here.
 module p_stream_scope_node #(
  parameter logic [31:0] TOPOLOGY=32'd25001,
- parameter bit FOUR_BANK_LOOKAHEAD=1'b0
+ parameter bit FOUR_BANK_LOOKAHEAD=1'b0,EARLY_EXEC=1'b0
 )(
  input logic clk,reset,
  input logic service_valid,output logic service_ready,
@@ -84,7 +84,12 @@ module p_stream_scope_node #(
    .record_final,.record_spill,.record_A_first,.record_A_last,.record_A_uses,
    .complete_valid,.complete_ready,.complete_owner,.complete_sequence,.complete_context,.complete_next_k,
    .complete_error,.rejected_complete);
- if(FOUR_BANK_LOOKAHEAD)begin: four_w
+ if(EARLY_EXEC)begin: early_exec
+   p_native_weight_overlap_candidate #(.FOUR_BANK_LOOKAHEAD(1'b1)) exec(
+     .scope_valid(scope_fire),.scope_ready(exec_ready),.scope_end,
+     .scope_cancel(service_cancel_valid&&service_cancel_ready),
+     .scope_owner(service_owner),.scope_data(service_descriptor),.*);
+ end else if(FOUR_BANK_LOOKAHEAD)begin: four_w
    p_native_weight_prefill #(.FOUR_BANK_LOOKAHEAD(1'b1)) exec(
      .scope_valid(scope_fire),.scope_ready(exec_ready),.scope_end,
      .scope_cancel(service_cancel_valid&&service_cancel_ready),

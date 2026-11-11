@@ -6,7 +6,7 @@ U ns_dot_calls=0,ns_dot_begins=0,ns_dot_chunks=0,ns_dot_macs=0;
 U ns_dot_A_staged=0,ns_dot_B_staged=0,ns_dot_bus_read=0,ns_dot_S_reads=0;
 U ns_dot_S_result_writes=0,ns_dot_S_export_reads=0,ns_dot_service_cycles=0;
 U ns_dot_s_peak=0,ns_dot_raw_live=0,ns_dot_raw_peak=0,ns_dot_qk_reuse=0;
-U ns_dot_av_saves=0,ns_dot_av_restores=0,ns_dot_av_snapshot_S_words=0,ns_dot_av_pair_beats=0;
+U ns_dot_av_saves=0,ns_dot_av_restores=0,ns_dot_av_snapshot_S_words=0,ns_dot_av_pair_beats=0,ns_dot_av_snapshot_cycles=0;
 bool ns_dot_target(const Op& o) const{
  return nv_int("NS_NATIVE_DOT",0)&&(o.layout==1||o.layout==2)&&
   (o.k==128||o.k==512)&&o.cols%8==0&&o.shift>=0&&o.shift<=63&&
@@ -17,6 +17,9 @@ void ns_dot_worker(const Op& o,int worker,sc_event& done){
  const int cap=nv_int("NS_DOT_ROWS",1),reuse=nv_int("NS_DOT_REUSE",0);
  const int depth=nv_int("NS_DOT_RAW_SLOTS",1),pressure=nv_int("NS_DOT_PRESSURE",0);
  const bool narrow=nv_int("NS_DOT_STAGE64",0);
+ const bool refill=nv_int("NS_DOT_REFILL_NEXT",0);
+ const int measured_profile=refill?2:narrow?1:0;
+ require(!refill||narrow,"refill profile only on the new actual S128 staging contract");
  require((cap==1||cap==2||cap==4)&&o.rows%cap==0,"native S32 measured active-row group");
  require(reuse>=0&&reuse<=2&&depth>=1&&depth<=2&&pressure>=0&&pressure<=1,"native S32 schedule choices");
  const int ci=cap==1?0:cap==2?1:2;
@@ -68,13 +71,13 @@ void ns_dot_worker(const Op& o,int worker,sc_event& done){
    stage(b.base+(U(batch)*o.k*o.cols+U(kk+k)*o.cols+col)*4,32,detail::DYNAMIC_B);
  };
  auto begin_owner=[&](){
-  const int begin=ns_dot_profile::begin[narrow][pressure][o.layout-1][ci];
+  const int begin=ns_dot_profile::begin[measured_profile][pressure][o.layout-1][ci];
   cycles(begin);++ns_dot_begins;ns_dot_service_cycles+=begin;
  };
  auto run_chunk=[&](int kk){
   flush(); // source committed before CHUNK; never overlap aliased S windows
   const int index=o.k==128?0:1+kk/128;
-  const U fee=ns_dot_profile::chunks[narrow][pressure][o.layout-1][ci][index];
+  const U fee=ns_dot_profile::chunks[measured_profile][pressure][o.layout-1][ci][index];
   pause_until(store[worker].reserve(now(),fee*C));
   ++ns_dot_chunks;++m_commands;m_tiles+=cap;stats.tiles+=cap;
   ns_dot_service_cycles+=fee;ns_dot_macs+=U(cap)*128*8;ns_dot_S_reads+=U(32)*(cap+8);
@@ -98,13 +101,14 @@ void ns_dot_worker(const Op& o,int worker,sc_event& done){
   export_owner(batch,row,col);
  };
  auto checkpoint=[&](bool load){
-  // Sensitivity until the checked S80 import/export RTL exists. Includes
-  // all header/data writes or reads, fixed CPA/control, and last true ACK.
+  // A historical sensitivity remains for comparison. 102600 measures
+  // the typed live service through true SRAM ACK and terminal take.
   const U gap=U(nv_int("NS_DOT_CKPT_REQ_GAP",1));
   require(gap==1||gap==3,"snapshot one/two real S owner sensitivity");
-  const U fee=checkpoint_words*gap+(load?10:8);
+  const bool exact=nv_int("NS_DOT_CKPT_MEASURED",0);
+  const U fee=exact?U(ns_dot_profile::checkpoint[pressure][ci][load?1:0]):checkpoint_words*gap+(load?10:8);
   pause_until(store[worker].reserve(now(),fee*C));
-  ns_dot_service_cycles+=fee;
+  ns_dot_service_cycles+=fee;ns_dot_av_snapshot_cycles+=fee;
   ns_dot_av_snapshot_S_words+=checkpoint_words;
   if(load)++ns_dot_av_restores;else ++ns_dot_av_saves;
  };

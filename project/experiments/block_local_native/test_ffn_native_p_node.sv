@@ -3,7 +3,7 @@
 // instantiated native M2. No shadow S/weights; only the external DDR peer
 // belongs to the test. The auxiliary port reuses idle logical mux clients.
 module test_ffn_native_p_node #(
- parameter bit SHARED_MID_SOURCE=1'b0,FOUR_BANK_LOOKAHEAD=1'b0
+ parameter bit SHARED_MID_SOURCE=1'b0,FOUR_BANK_LOOKAHEAD=1'b0,EARLY_EXEC=1'b0
 )(
  input logic clk,reset,allow_req,allow_rsp,
  input logic service_valid,output logic service_ready,
@@ -84,7 +84,7 @@ module test_ffn_native_p_node #(
  logic [511:0] sw_ticket,sw_ack_ticket;
  logic [9:0] sw_address;
  logic [127:0] sw_data;
- p_stream_scope_node #(.FOUR_BANK_LOOKAHEAD(FOUR_BANK_LOOKAHEAD)) exec(.service_ticket(service_owner[31:0]),
+ p_stream_scope_node #(.FOUR_BANK_LOOKAHEAD(FOUR_BANK_LOOKAHEAD),.EARLY_EXEC(EARLY_EXEC)) exec(.service_ticket(service_owner[31:0]),
   .stream_window_valid(window_enabled),.*);
  logic mc_fence_req_valid,mc_fence_done_ready;
  logic [31:0] mc_fence_req_cookie;

@@ -21,7 +21,12 @@ def git(*cmd):
 
 
 def package(output, commit, columns, w_provider, shared_dma, program):
-    lock_path = P+("P_STREAM_ONE_ENGINE_SOURCE_LOCK.json" if w_provider == "legacy" else "P_STREAM_FOUR_W_SOURCE_LOCK.json")
+    lock_path = P+{
+        "legacy": "P_STREAM_ONE_ENGINE_SOURCE_LOCK.json",
+        "serial": "P_STREAM_FOUR_W_SOURCE_LOCK.json",
+        "four": "P_STREAM_FOUR_W_SOURCE_LOCK.json",
+        "early": "P_STREAM_EARLY_EXEC_SOURCE_LOCK.json",
+    }[w_provider]
     lock = json.loads(git("show", f"{commit}:{lock_path}"))
     items = {lock_path: git("show", f"{commit}:{lock_path}")}
     bank_sha = lock["source_sha256"]["accepted-bank/s_sram_256x128_freepdk45.v"]
@@ -74,10 +79,12 @@ def main():
     p.add_argument("--package-dir", type=Path, required=True)
     p.add_argument("--columns", type=int, choices=(384,11008))
     p.add_argument("--down", action="store_true")
-    p.add_argument("--w-provider", choices=("legacy", "serial", "four"), default="legacy")
+    p.add_argument("--w-provider", choices=("legacy", "serial", "four", "early"), default="legacy")
     p.add_argument("--shared-dma", action="store_true")
     p.add_argument("--program", action="store_true")
     p.add_argument("--split-up-channel", action="store_true")
+    p.add_argument("--early-k-prep", action="store_true")
+    p.add_argument("--partition", choices=("c64", "c96"), default="c64")
     a = p.parse_args()
     if a.down and a.columns != 11008:
         p.error("--down requires the complete 11008-column Mid")
@@ -85,6 +92,8 @@ def main():
         p.error("--shared-dma requires a functional fixture")
     if a.program and not a.shared_dma:
         p.error("--program requires --shared-dma for real LC descriptor reads")
+    if a.early_k_prep and not a.program:
+        p.error("--early-k-prep compares programmed FFN only")
     if a.split_up_channel and not a.shared_dma:
         p.error("--split-up-channel requires the actual dual-channel DMA")
     if not re.fullmatch(r"/public/home/yuzelu/project-circuit/issue250-ffnnative-[0-9]{8}-[0-9]{2}", a.root):
@@ -95,11 +104,14 @@ def main():
     count = package(archive, commit, a.columns, a.w_provider, a.shared_dma, a.program)
     subprocess.run(["ssh", "-o", "BatchMode=yes", HOST, "mkdir "+shlex.quote(a.root)], check=True)
     subprocess.run(["scp", "-q", str(archive), HOST+":"+a.root+"/source.tar.gz"], check=True)
+    cpus = 96 if a.partition == "c96" else 60
+    cluster = "--partition=c96 --ntasks=8 --cpus-per-task=12 --time=00:12:00 " if a.partition == "c96" else ""
     result = subprocess.check_output(["ssh", "-o", "BatchMode=yes", HOST, "cd "+shlex.quote(a.root)+
-        " && tar xzf source.tar.gz && sbatch --output="+shlex.quote(a.root+"/slurm-%j.log")+" source/"+N+"job_ffn_native.sh"
-        +f" {a.columns or 0} {int(a.down)} {int(a.w_provider == 'four')} {int(a.shared_dma)} {int(a.program)} {int(a.split_up_channel)}"])
+        " && tar xzf source.tar.gz && sbatch "+cluster+"--output="+shlex.quote(a.root+"/slurm-%j.log")+" source/"+N+"job_ffn_native.sh"
+        +f" {a.columns or 0} {int(a.down)} {int(a.w_provider in ('four','early'))} {int(a.shared_dma)} {int(a.program)}"
+        +f" {int(a.split_up_channel)} {int(a.w_provider == 'early')} {int(a.early_k_prep)}"])
     record = dict(commit=commit, remote_root=a.root, files=count, columns=a.columns, down=a.down,w_provider=a.w_provider,
-                  shared_dma=a.shared_dma, program=a.program, split_up_channel=a.split_up_channel,
+                  shared_dma=a.shared_dma, program=a.program, split_up_channel=a.split_up_channel, early_k_prep=a.early_k_prep, alloc_cpus=cpus,
                   package_sha256=hashlib.sha256(archive.read_bytes()).hexdigest(),
                   submit=result.decode().strip())
     (a.package_dir/"submission.json").write_text(json.dumps(record, indent=2)+"\n", encoding="utf-8")

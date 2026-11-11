@@ -7,6 +7,8 @@
 #SBATCH --time=0
 set -euo pipefail
 root=$SLURM_SUBMIT_DIR
+threads=$SLURM_CPUS_PER_TASK
+case "$SLURM_JOB_PARTITION:$SLURM_NTASKS:$threads" in c64:6:10|c96:8:12) ;; *) exit 2;; esac
 cd "$root/source"
 sha256sum -c "$root/source.sha256" > "$root/source-check.log"
 scontrol show job "$SLURM_JOB_ID" > "$root/allocation.txt"
@@ -20,15 +22,19 @@ four=${3:-0}
 shared_dma=${4:-0}
 program=${5:-0}
 split_up=${6:-0}
+early=${7:-0}
+early_k_prep=${8:-0}
 prefill=()
 dma=()
 if [[ -f "$P/rtl/p_native_weight_prefill.sv" ]]; then prefill+=("$P/rtl/p_native_weight_prefill.sv"); fi
 if [[ $four == 1 && ${#prefill[@]} == 0 ]]; then exit 2; fi
+if [[ $early == 1 ]]; then prefill+=("$P/rtl/p_native_weight_overlap_candidate.sv"); fi
 if [[ $shared_dma == 1 ]]; then dma+=(project/rtl/mother_control_native/mc_dma_fabric_typed_p.sv); fi
 mkdir -p "$root/obj"
-srun --exact -n1 -c10 --cpu-bind=cores \
+srun --exact -n1 -c "$threads" --cpu-bind=cores \
  /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu \
- "$image" "$vlt" --lint-only --timing --assert -Wall --top-module p_stream_scope_node "-GFOUR_BANK_LOOKAHEAD=1'b$four" --Mdir "$root/obj" \
+ "$image" "$vlt" --lint-only --timing --assert -Wall --top-module p_stream_scope_node "-GFOUR_BANK_LOOKAHEAD=1'b$four" \
+ "-GEARLY_EXEC=1'b$early" --Mdir "$root/obj" \
  "$P/native_s_lint.vlt" \
  "$P"/rtl/{p_scope_range_service,p_native_stream_m2_bounded,bounded_serial_m_guard2,m_dual_exec_issue,m_short_command_tx,private_a_scaled_fenced_frontend,private_a_scaled_abort_frontend,private_a_tile_abort_frontend}.sv \
  "$N"/{p_stream_scope_node,p_scope128_decode,record_range_iterator}.sv "${prefill[@]}" > "$root/lint.log" 2>&1
@@ -47,11 +53,12 @@ if [[ $program == 1 ]]; then
 fi
 bank=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45.v
 echo "$(cat bank.sha256)  $bank" | sha256sum -c
-srun --exact -n1 -c10 --cpu-bind=cores \
+srun --exact -n1 -c "$threads" --cpu-bind=cores \
  "$runtime" exec --cleanenv --bind /public/home/yuzelu "$image" "$vlt" \
- --binary --timing --assert -Wall --timescale-override 1ns/1ps --x-initial unique --x-assign unique -j 10 \
+ --binary --timing --assert -Wall --timescale-override 1ns/1ps --x-initial unique --x-assign unique -j "$threads" \
  --top-module test_ffn_three_p_native "-GCOLS=$cols" "-GWITH_DOWN=1'b$down" "-GFOUR_BANK_LOOKAHEAD=1'b$four" \
- "-GWITH_SHARED_DMA=1'b$shared_dma" "-GWITH_PROGRAM=1'b$program" "-GSPLIT_UP_CHANNEL=1'b$split_up" --Mdir "$root/obj-joint" \
+ "-GWITH_SHARED_DMA=1'b$shared_dma" "-GWITH_PROGRAM=1'b$program" "-GSPLIT_UP_CHANNEL=1'b$split_up" \
+ "-GEARLY_EXEC=1'b$early" --Mdir "$root/obj-joint" \
  "$P/native_s_lint.vlt" "$EXP/real_s_lint.vlt" \
  "$P"/rtl/{p_scope_range_service,p_native_stream_m2_bounded,bounded_serial_m_guard2,m_dual_exec_issue,m_short_command_tx,private_a_scaled_fenced_frontend,private_a_scaled_abort_frontend,private_a_tile_abort_frontend,native_s128_mux3,early_copy_3p}.sv \
  "$N"/{p_stream_scope_node,p_scope128_decode,record_range_iterator,s32_stripe_copy,ffn_gate_up_ring_control,ffn_gate_up_mid,ffn_stripe_commit,quant_mid_s128_router,g_s128_observed_scale,copy_scale_header_rx,copy_scale_header_tx,early_copy_epoch_3p,s32_a16_tile_quantizer,a_scale_directory32,native_s128_mux4}.sv \
@@ -60,9 +67,9 @@ srun --exact -n1 -c10 --cpu-bind=cores \
  > "$root/build.log" 2>&1
 pids=()
 for seed in 25001 25002 25003 25004 25005 25006; do
-  srun --exact -n1 -c10 --cpu-bind=cores "$runtime" exec --cleanenv --bind /public/home/yuzelu "$image" bash -c '
+  srun --exact -n1 -c "$threads" --cpu-bind=cores "$runtime" exec --cleanenv --bind /public/home/yuzelu "$image" bash -c '
    set -euo pipefail
-   root=$1; cols=$2; seed=$3; exp=$4; down=$5; program=$6; split_up=$7
+   root=$1; cols=$2; seed=$3; exp=$4; down=$5; program=$6; split_up=$7; early_k_prep=$8
    out="$root/seed-$seed"
    vectors=(--root "$root/source" --out "$out" --columns "$cols" --seed "$seed")
    if [[ $down == 1 ]]; then vectors+=(--down); fi
@@ -74,6 +81,7 @@ for seed in 25001 25002 25003 25004 25005 25006; do
     crc=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))[\"local_crc32\"])" "$out/program.json")
     program_args=("+MOTHER=$out/mother.hex" "+LOCAL=$out/local.hex" "+LC_CRC=$crc")
    fi
+   if [[ $early_k_prep == 1 ]]; then program_args+=(+EARLY_K_PREP); fi
    for mode in 0 1; do
     for initial in 0 1 2; do
      log="$out/mode-$mode-initial-$initial.log"
@@ -82,7 +90,7 @@ for seed in 25001 25002 25003 25004 25005 25006; do
      grep -q "PASS ffn_three_p_native columns=$cols " "$log"
     done
    done
-  ' bash "$root" "$cols" "$seed" "$EXP" "$down" "$program" "$split_up" > "$root/seed-$seed.log" 2>&1 &
+  ' bash "$root" "$cols" "$seed" "$EXP" "$down" "$program" "$split_up" "$early_k_prep" > "$root/seed-$seed.log" 2>&1 &
   pids+=("$!")
 done
 failed=0

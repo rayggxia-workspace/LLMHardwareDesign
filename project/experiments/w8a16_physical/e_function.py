@@ -23,6 +23,7 @@ def main():
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=25001)
+    parser.add_argument("--activity", action="store_true", help="Measure exact final E leaf activity at the target period")
     args = parser.parse_args()
     check_native()
     cpus = len(os.sched_getaffinity(0))
@@ -51,16 +52,38 @@ def main():
         local_bank.write_bytes(bank.read_bytes())
         vlt = "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator"
         assert "VERILATOR_ROOT" not in os.environ
+        fixture = TEST/"test_e_s128_joint.sv"
+        trace_flags = []
+        if args.activity:
+            import e_activity
+            activity_fixture = args.out/fixture.name
+            e_activity.instrument(fixture,activity_fixture)
+            fixture = activity_fixture
+            trace_flags = ["--trace-vcd", "--trace-underscore"]
         # Warnings in generated Liberty cell models do not disable assertions.
         # The exact gate netlist is the only definition of the active AP64 leaf.
         run([vlt, "--binary", "--timing", "--assert", "--timescale-override", "1ns/1ps", "-Wno-fatal",
              "--x-initial", "unique", "--x-assign", "unique", "--top-module", "test_e_s128_joint",
              "-GAP64=1'b1", "-j", cpus, "--Mdir", args.out/"obj",
-             TEST/"real_s_lint.vlt", TEST/"test_e_s128_joint.sv", netlist, args.out/"cells.v",
+             *trace_flags, TEST/"real_s_lint.vlt", fixture, netlist, args.out/"cells.v",
              ROOT/"project/rtl/w8a16_v1/e_s128_frontend.sv",
              ROOT/"project/experiments/shared_x_control/rtl/native_s128_mux2.sv",
              ROOT/"project/rtl/s_sram/local_s_base.sv", ROOT/"project/rtl/s_sram/block_feed_s16k_sram.sv",
              local_bank], "build.log")
+        if args.activity:
+            activity = []
+            for label, mode, idle in (("active", 0, False), ("idle", 0, True)):
+                log = label+"-simulation.log"
+                extra = ["+activity_idle"] if idle else []
+                run([args.out/"obj/Vtest_e_s128_joint", "+vectors="+str(args.out/"vectors.hex"), f"+mode={mode}",
+                     "+activity="+str(args.out/f"{label}.vcd"), f"+verilator+seed+{args.seed}",
+                     "+verilator+rand+reset+0", *extra], log)
+                if not idle:
+                    assert sum(t.startswith("PASS e_s128_joint ") for t in (args.out/log).read_text().splitlines()) == 1
+                activity.append(e_activity.report(args.out,results,LIB,run,sha,label,log))
+            e_activity.save(args.out,results,activity,sha)
+            receipt["passed"] = True
+            return
         runs = []
         for mode in range(2):
             for initial in range(3):

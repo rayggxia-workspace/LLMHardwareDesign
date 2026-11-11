@@ -76,3 +76,18 @@ One-pair wave is 7.750448; conservative serial checkpoint transfers
 give 7.746779; combined pressure is 7.273558. These improvements are
 co-design sensitivity; they require new RTL and are not credited as
 pure mapping gains. No variant meets the throughput target.
+
+Run 28 / 102496 separately evaluates M2 short issue using the isolated
+real issuer/guard2 profile from 102480 (INPUT EOP +11, CONTINUE/FINAL EOP
++16/+18, consecutive EXEC II15). M2 at the same serial AV schedule is
+7.516904 token/s, versus 7.187736 with single M dispatch; combined with
+the **still conditional** AV checkpoint wave, M2 is 8.181031 versus
+7.792632. Charging the real registered first DDR offer raises cycle
+count from 36,670,196 to 36,697,961 (8.174841 token/s). The stage-pressure
+and combined-pressure alternatives reach 7.929642 and 7.610817 token/s.
+These rows have the same 75,497,472 S32 MACs and static weight bus bytes
+and no extra SRAM. They do not include proof of sustained wide-P issue:
+the old independent DMA producer can prefill four W banks, whereas
+the actual 102470/102474 coordinator serializes W fetches. The separate
+[same-weight, same-return audit](WIDE_P_DDR_REPLAY.md) explains why even
+the non-M2 FFN span cannot be treated as product calibrated.

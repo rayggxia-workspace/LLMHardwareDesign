@@ -1,0 +1,89 @@
+{
+  "schema": "ffn-copy-budget-and-M-fence-receipts/1",
+  "scope": "3 real P/M2, 16 real S banks, four W banks per P, shared typed DMA RTL with finite DDR peer, two 384-column Gate/Up/Mid invocations; forced near-wrap thresholds",
+  "scope_budgets": {
+    "fixture": [
+      32,
+      12,
+      3
+    ],
+    "one_full_11008_FFN_with_Down": [
+      1444,
+      348,
+      86
+    ]
+  },
+  "source": {
+    "baseline_commit": "0f691a49ef2edd4c68b645d10d7ddd806b40a54b",
+    "baseline_archive_sha256": "3791b2087fb6a8f050cb7181ac6e08139fecbda84e3db563ee90c4dc4cef385c",
+    "candidate_commit": "86079d80dd42967b03031a15cf5c21564c739aa0",
+    "candidate_archive_sha256": "62dfc488b289cf94e4d7ebaf53477c1e9737cc6cb2abf8d45b4b6ea5c9a72097"
+  },
+  "jobs": [
+    {
+      "job": 102609,
+      "suffix": "01",
+      "state": "FAILED",
+      "detail": "Strict lint reported unused low bits of budget sums"
+    },
+    {
+      "job": 102611,
+      "suffix": "02",
+      "state": "FAILED",
+      "detail": "Test compared echoed MC epoch with incremented M-to-LC epoch"
+    },
+    {
+      "job": 102615,
+      "suffix": "03",
+      "state": "COMPLETED",
+      "actual_cpu": 96,
+      "archive_sha256": "120fa90c1014d971648067c01484795595d738503748d34c02b09921a2b0076b",
+      "archive_bytes": 6179389,
+      "archive": "/public/home/yuzelu/project-circuit/issue250-copy-combined-20261111-03.receipts.tar.gz"
+    }
+  ],
+  "asserted_each_run": {
+    "P_M_fences": [
+      22,
+      22,
+      22
+    ],
+    "backend_startup_purges": 1,
+    "backend_total_purges": 67,
+    "COPY_rearm": 1,
+    "held_real_ack_cycles": 7,
+    "W64": 52224,
+    "COPY_S128_ack": 3072,
+    "scatter_S128_ack": 384
+  },
+  "audit": {
+    "pass_count": 48,
+    "checked_members": 172,
+    "run_cycles_by_scope": [
+      [
+        23674,
+        26824
+      ],
+      [
+        23652,
+        26799
+      ]
+    ],
+    "derived_sha256": {
+      "generated/copy_scale_header_rx_rearm.sv": "806eb5ed902aad35f4795bb2044579e2daac69295cae4d7ea9f87bb73eb57067",
+      "generated/copy_scale_header_tx_rearm.sv": "3bd6035875ee4f8b9df841004626abcc492a516029524e63c1abd44b9cce9260",
+      "generated/early_copy_3p_rearm.sv": "9168b56d27050bef2ecce0fe82e234e1e963dd59620a394c35c1e477ed0f259c",
+      "generated/early_copy_epoch_3p_rearm.sv": "a7ac4d6c6d203e9a939fddba9f13fd3f6e05e9f49c1e4d7610ea8d3042d4f7ab",
+      "generated/ffn_gate_up_mid_rearm.sv": "6cdec1eacd706d2fc5c8994f9951d3d34a7a967262c6a289470a2e3aeda0153c",
+      "generated/ffn_stripe_commit_rearm.sv": "d083efb31bde570dff4bbded2ad81cfd778d3edc534a07ba1f7555a21e42d097",
+      "generated/generated.json": "75ab8890417238158270859381d2feffd7f899a2fa352242c39dcd10fd4bee4b",
+      "generated/s32_a16_tile_quantizer_rearm.sv": "5bd6276e42cc757a7b477228dcceee13386b7f9529cb63483cb8b0ad2bdc82f8",
+      "generated/s32_stripe_copy_rearm.sv": "5724f712fad20494275c71e98af125103d603cff830daa26b7328ec07dbc2482",
+      "test/ffn_gate_up_mid_rearm.sv": "fbbe9ae2f438e3430357aac9b9547387f11e0d0d1ea61052e31ce717cb885e84",
+      "test/ffn_stripe_commit_rearm.sv": "6b15457426c5d0fe757bafe2b85b75206e825d2ab4f72c32821c46abc53cea41",
+      "test/p_stream_scope_node.sv": "36463e3277e3f7441536942d99f0198f7db742645212ea1f7a3a675c9b51f79a",
+      "test/test_ffn_copy_combined.sv": "43a8a444f98a67b193236ca9a37a6cfc480fa5116d4f937d7d893951eb4417ed",
+      "test/test_ffn_native_p_rearm_node.sv": "2e7222f9c6a0a0a94e11be8a371eef383c2b9bda7561259638b7116815f9a7c0"
+    }
+  }
+}

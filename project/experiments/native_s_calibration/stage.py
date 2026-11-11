@@ -45,11 +45,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--suffix', required=True)
     parser.add_argument('--out', type=Path, required=True)
-    parser.add_argument('--round', default='reproduce', choices=['reproduce', 'native-1', 'stripe-1', 'tile-1', 'lookahead-1', 'product-1', 'consumer-1', 'G-overlap-1', 'rf-II1-1','dynamic15-1','native-dot-1','native-dot-stage64','native-dot-av-wave','native-dot-M2'])
+    parser.add_argument('--source-ref',help='Freeze an explicit committed source while another audit is being prepared.')
+    parser.add_argument('--round', default='reproduce', choices=['reproduce', 'native-1', 'stripe-1', 'tile-1', 'lookahead-1', 'product-1', 'consumer-1', 'G-overlap-1', 'rf-II1-1','dynamic15-1','native-dot-1','native-dot-stage64','native-dot-av-wave','native-dot-M2','native-dot-refill','measured-three-P-FFN','measured-S80','programmed-FFN'])
     args = parser.parse_args()
     assert args.suffix.replace('-', '').isalnum()
-    commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT).decode().strip()
-    assert not subprocess.check_output(['git', 'status', '--porcelain', '--', 'project/experiments/native_s_calibration'], cwd=ROOT)
+    if args.source_ref is None:
+        assert not subprocess.check_output(['git', 'status', '--porcelain', '--', 'project/experiments/native_s_calibration'], cwd=ROOT)
+    commit = subprocess.check_output(['git','rev-parse','--verify',f'{args.source_ref or "HEAD"}^{{commit}}'], cwd=ROOT).decode().strip()
     data = freeze(commit)
     args.out.mkdir(exist_ok=False, parents=True)
     package = args.out / 'source.tar.gz'
