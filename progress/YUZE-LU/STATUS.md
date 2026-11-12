@@ -210,3 +210,4 @@ Issue250仍实施中：已精确复现基线9.21564723269，有限队列共享X�
 - 更新时间 2026-11-13 01:27 CST。任务 [Issue #250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)，分支 task/250-typed-dma-physical-timing，草案 [PR #263](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/263)。
 - 代码 699d238c888c01b809ec29bce6c4b540d288042c，18 组定向事务和六组三 P FFN 切片逐周期匹配。Nangate45 同方法映射面积下降约 24.8%，保留 64B 接口。
 - 正在复验 300 MHz 布局布线。五类底座、顶层互联和整模型吞吐继续按 Issue #250 验收，PR 待独立审查，Projects 状态未核实。
+- 2026-11-13 01:41 CST 复核实际关键路径后，把回传归属和标签随 64B 数据写入缓冲。新增一轮 18 组事务及六组切片均逐周期匹配，映射面积 691,454.764 µm²，物理检查进行中。

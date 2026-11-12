@@ -52,6 +52,12 @@ module mc_dma_fabric_typed_p #(
  localparam integer SKID_BITS=$clog2(SKIDS);
  reg [3:0] offer_valid;reg [SKIDS-1:0] skid_valid;
  reg [5:0] offer_entry[0:3],skid_entry[0:SKIDS-1];
+ // Ownership is stable from DDR return capture until the client consumes
+ // this skid. Latch it beside the payload so replay never reads the beat table.
+ reg [3:0] skid_client[0:SKIDS-1];
+ reg [31:0] skid_local_tag[0:SKIDS-1];
+ reg [5:0] skid_descriptor[0:SKIDS-1];
+ reg [4:0] skid_beat[0:SKIDS-1];
  reg [511:0] skid_data[0:SKIDS-1];
  reg [11:0] response_locked;reg [SKID_BITS-1:0] response_slot[0:11],response_rr[0:11];
  reg [3:0] request_rr[0:1];reg [4:0] issue_rr[0:1];
@@ -97,6 +103,14 @@ module mc_dma_fabric_typed_p #(
   remaining=available&~(32'd1<<first_slot);
   second_slot=5'(first_set({32'd0,remaining}));
   first_two_slots={|remaining,second_slot,|available,first_slot};
+ endfunction
+ function automatic [SKID_BITS-1:0] response_at_offset(
+  input [SKID_BITS-1:0] cursor,offset
+ );
+  reg [SKID_BITS:0] position;
+  position={1'b0,cursor}+{1'b0,offset};
+  if(position>=(SKID_BITS+1)'(SKIDS))position=position-(SKID_BITS+1)'(SKIDS);
+  response_at_offset=position[SKID_BITS-1:0];
  endfunction
  function automatic [3:0] request_at_offset(input [3:0] cursor,input [3:0] offset);
   reg [4:0] position;
@@ -210,11 +224,11 @@ module mc_dma_fabric_typed_p #(
    choice=-1;forwarded_slot[rc]=-1;
    if(response_locked[rc])choice=int'(response_slot[rc]);
    else for(rj=0;rj<SKIDS;rj=rj+1)begin
-    rs=(int'(response_rr[rc])+rj)%SKIDS;
-    if(choice<0&&skid_valid[rs]&&int'(b_client[skid_entry[rs]])==rc)choice=rs;
+    rs=int'(response_at_offset(response_rr[rc],SKID_BITS'(rj)));
+    if(choice<0&&skid_valid[rs]&&skid_client[rs]==4'(rc))choice=rs;
    end
    if(!reset&&choice>=0&&skid_valid[choice])begin
-    c_rsp_valid[rc]=1;c_rsp_tag[rc*32+:32]=b_local[skid_entry[choice]];
+    c_rsp_valid[rc]=1;c_rsp_tag[rc*32+:32]=skid_local_tag[choice];
     c_rsp_data[rc*512+:512]=skid_data[choice];forwarded_slot[rc]=choice;
    end
   end
@@ -414,7 +428,10 @@ module mc_dma_fabric_typed_p #(
    fault_valid<=0;fault_kind<=0;fault_client<=0;fault_local_tag<=0;fault_global_tag<=0;
    for(r=0;r<64;r=r+1)begin b_state[r]<=FREE;b_serial[r]<=0;b_client[r]<=0;b_local[r]<=0;b_address[r]<=0;b_desc[r]<=0;desc_client[r]<=0;desc_base[r]<=0;desc_address[r]<=0;desc_length[r]<=0;desc_next[r]<=0;desc_accepted[r]<=0;desc_returned[r]<=0;desc_cancelled[r]<=0;end
    for(r=0;r<4;r=r+1)offer_entry[r]<=0;
-   for(r=0;r<SKIDS;r=r+1)begin skid_entry[r]<=0;skid_data[r]<=0;end
+   for(r=0;r<SKIDS;r=r+1)begin
+    skid_entry[r]<=0;skid_client[r]<=0;skid_local_tag[r]<=0;
+    skid_descriptor[r]<=0;skid_beat[r]<=0;skid_data[r]<=0;
+   end
    for(r=0;r<12;r=r+1)begin response_slot[r]<=0;response_rr[r]<=0;end
    for(r=0;r<2;r=r+1)begin request_rr[r]<=0;issue_rr[r]<=0;previous_issues[r]<=0;end
   end else begin
@@ -430,18 +447,31 @@ module mc_dma_fabric_typed_p #(
    for(r=0;r<12;r=r+1)begin
     if(c_cancel_ack_valid[r]&&c_cancel_ack_ready[r])c_cancel_ack_valid[r]<=0;
     if(c_rsp_valid[r])begin
-     if(c_rsp_ready[r])begin response_locked[r]<=0;response_rr[r]<=SKID_BITS'((forwarded_slot[r]+1)%SKIDS);end
+     if(c_rsp_ready[r])begin
+      response_locked[r]<=0;
+      response_rr[r]<=response_at_offset(SKID_BITS'(forwarded_slot[r]),SKID_BITS'(1));
+     end
      else if(!response_locked[r])begin response_locked[r]<=1;response_slot[r]<=SKID_BITS'(forwarded_slot[r]);end
     end
    end
    for(r=0;r<2;r=r+1)previous_issues[r]<=2'(issue_counts[r]);
    for(r=0;r<64;r=r+1)if(desc_live[r]&&desc_closed[r]&&desc_accepted[r]==(desc_returned[r]|desc_cancelled[r]))begin desc_live[r]<=0;desc_closed[r]<=0;end
    for(r=0;r<SKIDS;r=r+1)if(skid_forward[r])begin
-    skid_valid[r]<=0;b_state[skid_entry[r]]<=FREE;desc_returned[b_desc[skid_entry[r]]][beat_index(int'(b_client[skid_entry[r]]),b_local[skid_entry[r]])]<=1;
+    skid_valid[r]<=0;b_state[skid_entry[r]]<=FREE;
+    desc_returned[skid_descriptor[r]][skid_beat[r]]<=1;
    end
    for(r=0;r<4;r=r+1)begin
     if(offer_fire[r])begin offer_valid[r]<=0;b_state[offer_entry[r]]<=ISSUED;end
-    if(return_capture[r])begin skid_valid[return_slot[r]]<=1;skid_entry[return_slot[r]]<=6'(return_entry[r]);skid_data[return_slot[r]]<=d_rsp_data[r*512+:512];b_state[return_entry[r]]<=RETURNING;end
+    if(return_capture[r])begin
+     skid_valid[return_slot[r]]<=1;
+     skid_entry[return_slot[r]]<=6'(return_entry[r]);
+     skid_client[return_slot[r]]<=b_client[return_entry[r]];
+     skid_local_tag[return_slot[r]]<=b_local[return_entry[r]];
+     skid_descriptor[return_slot[r]]<=b_desc[return_entry[r]];
+     skid_beat[return_slot[r]]<=5'(beat_index(int'(b_client[return_entry[r]]),b_local[return_entry[r]]));
+     skid_data[return_slot[r]]<=d_rsp_data[r*512+:512];
+     b_state[return_entry[r]]<=RETURNING;
+    end
     if(new_offer_entry[r]>=0)begin offer_valid[r]<=1;offer_entry[r]<=6'(new_offer_entry[r]);b_state[new_offer_entry[r]]<=OFFERED;issue_rr[r/2]<=5'((new_offer_entry[r]+1)%32);end
    end
    if(cancel_client>=0&&c_cancel_ready[cancel_client])begin
