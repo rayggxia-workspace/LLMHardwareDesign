@@ -204,3 +204,9 @@ Issue250仍实施中：已精确复现基线9.21564723269，有限队列共享X�
 用户明确授权将主线PR #8、并发PR #10及H1 PR #17合入main，并将两份参考HTML归档到ref-project/llm-routing/docs/。以上旧记录中的待授权／不自合并描述是当时状态，本次按用户的新授权执行，不伪造独立审查批准。H2工作树及运行任务保持独立。本次验证与限制见[整合回执](../../docs/handoffs/2026-10-23-h1-html-integration.md)。
 
 网络恢复续办：PR #8 已合并为 a30d598，PR #10 已按匹配 head 成功合并为 a77d288；完整 H1 整合树由 PR #17 交付，最新 CI 和合并状态以在线记录为准。本地 8 项检查、58 份 Python 语法、两份 HTML 资源／锚点及 9 产物不变检查通过。Issue #7 的 VECTOR 质量缺口保留；H1 交付与 H2／Issue #31 分开，项目登记及看板待办不变。
+
+## 2026-11-13 64B DMA 物理时序候选
+
+- 更新时间 2026-11-13 01:27 CST。任务 [Issue #250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)，分支 task/250-typed-dma-physical-timing，草案 [PR #263](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/263)。
+- 代码 699d238c888c01b809ec29bce6c4b540d288042c，18 组定向事务和六组三 P FFN 切片逐周期匹配。Nangate45 同方法映射面积下降约 24.8%，保留 64B 接口。
+- 正在复验 300 MHz 布局布线。五类底座、顶层互联和整模型吞吐继续按 Issue #250 验收，PR 待独立审查，Projects 状态未核实。
