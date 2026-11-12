@@ -2,6 +2,7 @@ import random
 import unittest
 
 from event_replay import Operation, Phase, ReplayDeadlock, replay
+from benchmark_event_ffn import copy_bank_receipt
 from cover_frontier import search
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
@@ -102,6 +103,7 @@ class ReplayTest(unittest.TestCase):
         capacity = {'bank': 2, 'credit': 2, 'ack': 1}
         for seed in range(120):
             rng = random.Random(seed)
+            rates = {'bank': (3, 4)} if seed % 2 else {}
             operations = []
             previous = ()
             for i in range(16):
@@ -112,8 +114,8 @@ class ReplayTest(unittest.TestCase):
                     Phase('ack', rng.randint(1, 3), (('ack', 1),)),
                 )
                 operations.append(Operation(phases, deps, rng.randint(0, 22), (('credit', 1),)))
-                resumed = replay(operations, capacity, previous=previous)
-                self.assertEqual(resumed, replay(operations, capacity), (seed, i))
+                resumed = replay(operations, capacity, previous=previous, issue_rates=rates)
+                self.assertEqual(resumed, replay(operations, capacity, issue_rates=rates), (seed, i))
                 previous = resumed
 
     def test_compute_writeback_and_command_ownership_follow_distinct_phases(self):
@@ -145,6 +147,107 @@ class ReplayTest(unittest.TestCase):
                 phases[1].update(start=4, end=5)
                 with self.assertRaisesRegex(ValueError, 'phase coverage'):
                     verify(tasks, h, (), plan)
+
+    def test_route_choice_compares_replayed_schedule_not_booked_arrival(self):
+        h = hardware()
+        spec = h['event_model']
+        spec['initial_copies'] = {'source': 'x'}
+        spec['initial_backing'] = ['x']
+        spec['routes']['direct']['setup'] = 5
+        spec['routes']['DDR-to-S1'].update(
+            claims={'DDR.bus': 1}, priority=-1,
+            phases={'issue': {'ticks': 1, 'claims': {}},
+                    'ack': {'ticks': 1, 'claims': {'S1': 1}},
+                    'hold_claims': {'DDR.credit': 1}})
+        spec['services'].update(
+            old={'ticks': 6, 'claims': {},
+                 'phases': [{'kind': 'issue', 'ticks': 1, 'claims': {}},
+                            {'kind': 'data', 'ticks': 4, 'claims': {'DDR.bus': 1}},
+                            {'kind': 'ack', 'ticks': 1, 'claims': {}}]},
+            use={'ticks': 8, 'claims': {}},
+        )
+        tasks = [
+            task('old', binding('old', stage('old'))),
+            task('use', binding('use', stage('use', inputs={'input': 'x'}, outputs={'result': 'y'}))),
+        ]
+        for timing, limit, route, makespan in (
+            ('calendar', None, 'direct', 15), ('replay', 1, 'direct', 15),
+            ('replay', None, 'DDR-to-S1', 14),
+        ):
+            spec.update(timing=timing, transport_limit=limit)
+            plan = search(tasks, h, width=1)
+            verify(tasks, h, (), plan)
+            self.assertEqual(plan['tasks'][0]['id'], 'old')
+            move = plan['tasks'][1]['evaluation']['events'][0]
+            self.assertEqual((move['route'], plan['makespan']), (route, makespan))
+            if timing == 'replay':
+                self.assertEqual(plan['transport_truncated'], 2 if limit == 1 else 0)
+                if limit is None:
+                    self.assertEqual(plan['tasks'][0]['end'], 10)
+                    self.assertEqual(plan['external_read_bytes'], 16)
+                    verify(tasks, h, (), search(tasks, h, width=2, backbone=plan))
+
+    def test_store_load_branches_preserve_legal_path_behind_incompatible_store(self):
+        h = hardware(resident=False)
+        spec = h['event_model']
+        spec.update(timing='replay', initial_copies={'source': 'x'})
+        h['nets'].update({'fast-store': {'cost': 1}, 'load': {'cost': 1}})
+        h['incompatible_nets'] = [('fast-store', 'load')]
+        store = spec['routes']['S0-to-DDR']
+        spec['routes']['slow-store'] = {**store, 'setup': 5}
+        store['nets'] = ['fast-store']
+        spec['routes']['DDR-to-S1']['nets'] = ['load']
+        tasks = [task('consume', binding('use', stage('consume', inputs={'input': 'x'},
+                                                      outputs={'result': 'y'})))]
+        plan = search(tasks, h, width=1)
+        verify(tasks, h, (), plan)
+        events = plan['tasks'][0]['evaluation']['events']
+        self.assertEqual([event['route'] for event in events if event['kind'] == 'move'],
+                         ['slow-store', 'DDR-to-S1'])
+        self.assertEqual((plan['external_write_bytes'], plan['external_read_bytes']), (16, 16))
+
+    def test_native_channel_rate_blocks_third_cycle_even_with_free_lanes(self):
+        h = hardware()
+        h['resources'].update({'DDR0.issue': 2, 'DDR1.issue': 2})
+        spec = h['event_model']
+        spec['live_out'] = []
+        spec['issue_rates'] = {f'DDR{i}.issue': {'window_ticks': 3, 'max_issues': 4} for i in range(2)}
+        for i in range(2):
+            spec['services'][f'issue{i}'] = {'ticks': 1, 'claims': {f'DDR{i}.issue': 1}}
+        tasks = [task(f'c0-{i}', binding('beat', stage('issue0'))) for i in range(6)]
+        spec['services']['gate'] = {'ticks': 2, 'claims': {}}
+        tasks += [task('gate', binding('gate', stage('gate'))),
+                  task('other', binding('beat', stage('issue1')), after=('gate',))]
+        static = search(tasks, h, width=1)
+        verify(tasks, h, (), static)
+        spec['timing'] = 'replay'
+        plan = search(tasks, h, width=1)
+        verify(tasks, h, (), plan)
+        self.assertEqual([r['start'] for r in plan['tasks'] if r['id'].startswith('c0')], [0, 0, 1, 1, 3, 3])
+        self.assertEqual(next(r['start'] for r in plan['tasks'] if r['id'] == 'other'), 2)
+        with self.assertRaisesRegex(ValueError, 'arbitration grant differs at tick 2'):
+            verify(tasks, h, (), {**static, 'timing': 'replay'})
+
+    def test_checkpoint_retains_issue_history_after_phase_end(self):
+        cap = {'port': 2}
+        rate = {'port': (3, 4)}
+        beat = Phase('issue', 1, (('port', 1),))
+        operations = [Operation((beat,)) for _ in range(4)]
+        operations += [Operation((beat,), release=2) for _ in range(2)]
+        prefix = replay(operations[:4], cap, issue_rates=rate)
+        resumed = replay(operations, cap, previous=prefix, issue_rates=rate)
+        self.assertEqual(resumed, replay(operations, cap, issue_rates=rate))
+        self.assertEqual([grants[0].start for grants in resumed], [0, 0, 1, 1, 3, 3])
+
+    def test_archive_audit_rejects_same_word_count_with_wrong_bank_or_early_ack(self):
+        rows = [{'header': 20, 'copy': 40}]
+        writes = [(20 + word - 880, p, word) for p in range(3) for word in range(880, 896)]
+        self.assertEqual(copy_bank_receipt(rows, writes), {
+            'verified_words': 48, 'last_write_to_ack_min': 5, 'last_write_to_ack_max': 5})
+        with self.assertRaisesRegex(ValueError, 'repeated'):
+            copy_bank_receipt(rows, writes[:-1] + [writes[-2]])
+        with self.assertRaisesRegex(ValueError, 'outside'):
+            copy_bank_receipt([{'header': 20, 'copy': 35}], writes)
 
     @staticmethod
     def tick_reference(operations, capacity):

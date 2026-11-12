@@ -1,5 +1,5 @@
 """Advance a branch's operation intents through shared hardware resources."""
-from collections import Counter
+from collections import Counter, deque
 from dataclasses import dataclass
 from heapq import heappop, heappush
 
@@ -36,7 +36,7 @@ class ReplayDeadlock(ValueError):
     """Pending operations have no advancing event."""
 
 
-def replay(operations, capacity, *, previous=()):
+def replay(operations, capacity, *, previous=(), issue_rates=None):
     """Simulate from reset. Lower priority numbers win among ready phases.
 
     At each tick, completions free resources before grants. A first grant
@@ -44,6 +44,7 @@ def replay(operations, capacity, *, previous=()):
     releases them. Between grants, only pending arrival or completion events
     can change eligibility.
     """
+    issue_rates = issue_rates or {}
     successors = [[] for _ in operations]
     dependencies = []
     for index, operation in enumerate(operations):
@@ -51,13 +52,16 @@ def replay(operations, capacity, *, previous=()):
                 or any(type(dep) is not int or not 0 <= dep < index for dep in operation.after)):
             raise ValueError('invalid replay operation or dependency')
         holds = dict(operation.holds)
+        if holds.keys() & issue_rates.keys():
+            raise ValueError('rate-limited issue ports cannot be held between phases')
         for phase in operation.phases:
             if (type(phase.ticks) is not int or phase.ticks < 1 or type(phase.priority) is not int
                     or any(type(units) is not int or not 0 < units <= capacity.get(resource, 0)
                            for resource, units in (*phase.claims, *operation.holds))
                     or holds.keys() & dict(phase.claims).keys()
                     or len(holds) != len(operation.holds)
-                    or len(dict(phase.claims)) != len(phase.claims)):
+                    or len(dict(phase.claims)) != len(phase.claims)
+                    or any(r in issue_rates and units > issue_rates[r][1] for r, units in phase.claims)):
                 raise ValueError('invalid replay phase duration, priority or resource claim')
         for dependency in operation.after:
             successors[dependency].append(index)
@@ -77,6 +81,22 @@ def replay(operations, capacity, *, previous=()):
     completed = {}
     running = []
     occupied = Counter()
+    issues = {resource: deque() for resource in issue_rates}
+    used_issues = Counter()
+
+    def record_issues(claims, start):
+        for resource, units in claims:
+            if resource in issue_rates:
+                expires = start + issue_rates[resource][0]
+                if expires > tick:
+                    issues[resource].append((expires, units))
+                    used_issues[resource] += units
+
+    if issue_rates:
+        cutoff = tick - max(window for window, _ in issue_rates.values())
+        accepted = (grant for prefix in grants for grant in prefix if grant.start > cutoff)
+        for grant in sorted(accepted, key=lambda grant: grant.start):
+            record_issues(operations[grant.operation].phases[grant.phase].claims, grant.start)
     for index, prefix in enumerate(grants):
         if not prefix:
             continue
@@ -103,6 +123,10 @@ def replay(operations, capacity, *, previous=()):
     pending = []
     finished = len(completed)
     while finished < len(operations):
+        for resource, history in issues.items():
+            while history and history[0][0] <= tick:
+                _, units = history.popleft()
+                used_issues[resource] -= units
         while running and running[0][0] == tick:
             _, index, phase_index = heappop(running)
             operation = operations[index]
@@ -127,10 +151,13 @@ def replay(operations, capacity, *, previous=()):
             operation = operations[index]
             phase = operation.phases[phase_index]
             claims = phase.claims + (operation.holds if phase_index == 0 else ())
-            if any(occupied[r] + units > capacity[r] for r, units in claims):
+            if (any(occupied[r] + units > capacity[r] for r, units in claims)
+                    or any(r in issue_rates and used_issues[r] + units > issue_rates[r][1]
+                           for r, units in phase.claims)):
                 waiting.append(request)
                 continue
             occupied.update(dict(claims))
+            record_issues(phase.claims, tick)
             end = tick + phase.ticks
             heappush(running, (end, index, phase_index))
             grants[index].append(Grant(index, phase_index, tick, end))
@@ -138,6 +165,8 @@ def replay(operations, capacity, *, previous=()):
         if finished == len(operations):
             break
         future = [queue[0][0] for queue in (running, arrivals) if queue]
+        if pending:
+            future.extend(history[0][0] for history in issues.values() if history)
         if not future:
             raise ReplayDeadlock(f'no replay progress at tick {tick}: {pending}')
         tick = min(future)

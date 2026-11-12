@@ -6,6 +6,7 @@ descriptors separately: the logs do not identify the individual issue/return
 times of every weight beat. This replay does not predict a different provider.
 """
 import argparse
+from bisect import bisect_right
 from collections import Counter, defaultdict
 import hashlib
 import json
@@ -20,7 +21,12 @@ from verify_cover_frontier import verify
 
 NATIVE_REF = '9abd46f5cbb4534bcfc614571ccd6d402ad11882'
 FIXTURE = 'project/experiments/native_s_calibration/fixtures/ffn-programmed-102604-102603.json'
+FIXTURE_BLOB = '18eea5fd653cef172e8c568bfbc19d9328da25d4'
 PROFILES = ('K_PROFILE', 'FFN_PROFILE', 'DOWN_PROFILE', 'PROGRAM_PROFILE', 'DMA_PROFILE')
+P_SRAM_WRITE = re.compile(
+    rb'^\s*(\d+) Writing test_ffn_three_p_native\.ps\[([012])\]\.node\.storage\.storage'
+    rb'\.banks\[([0-3])\]\.memory addr0=([01]+)\b')
+ACTIVE_INPUT = range(880, 896)
 
 
 def require(condition, message):
@@ -28,8 +34,37 @@ def require(condition, message):
         raise ValueError(message)
 
 
-def load_case(archive, job, seed, mode, initial):
-    frozen = json.loads(subprocess.check_output(['git', 'show', f'{NATIVE_REF}:{FIXTURE}']))
+def copy_bank_receipt(rows, writes):
+    """Check each P.S address independently of the K_PROFILE write counts."""
+    require(bool(rows), 'missing COPY intervals')
+    starts = [row['header'] for row in rows]
+    require(starts == sorted(set(starts)), 'COPY intervals are out of order')
+    expected = {(p, word) for p in range(3) for word in ACTIVE_INPUT}
+    seen = [set() for _ in rows]
+    last_write = [0] * len(rows)
+    bank_cycles = set()
+    for tick, p, word in writes:
+        index = bisect_right(starts, tick) - 1
+        require(index >= 0 and tick < rows[index]['copy'], 'P.S COPY write outside its issue/ACK')
+        require((p, word) in expected and (p, word) not in seen[index],
+                'wrong or repeated P.S COPY destination')
+        bank_cycle = (tick, p, word % 4)
+        require(bank_cycle not in bank_cycles, 'P.S bank has two writes on one tick')
+        bank_cycles.add(bank_cycle)
+        seen[index].add((p, word))
+        last_write[index] = max(last_write[index], tick)
+    require(all(window == expected for window in seen), 'P.S COPY bank write missing')
+    delays = [row['copy'] - tick for row, tick in zip(rows, last_write)]
+    return {'verified_words': len(writes), 'last_write_to_ack_min': min(delays),
+            'last_write_to_ack_max': max(delays)}
+
+
+def load_case(archive, job, seed, mode, initial, *, fixture=None):
+    contents = (fixture.read_bytes() if fixture is not None else
+                subprocess.check_output(['git', 'show', f'{NATIVE_REF}:{FIXTURE}']))
+    blob = hashlib.sha1(f'blob {len(contents)}\0'.encode() + contents).hexdigest()
+    require(blob == FIXTURE_BLOB, 'fixture differs from the pinned Git blob')
+    frozen = json.loads(contents)
     profile, = [p for p in frozen['profiles'] if p['job'] == job]
     trial, = [t for t in profile['trials']
               if (t['seed'], t['mode'], t['initial']) == (seed, mode, initial)]
@@ -41,7 +76,7 @@ def load_case(archive, job, seed, mode, initial):
             'RTL receipt archive differs from pinned SHA-256')
     prefix = f'seed-{seed}/'
     log = f'{prefix}mode-{mode}-initial-{initial}.log'
-    rows, summary, oracle = [], {}, None
+    rows, writes, summary, oracle = [], [], {}, None
     with tarfile.open(archive, 'r|gz') as source:
         for member in source:
             if member.name == prefix + 'oracle.json':
@@ -50,6 +85,15 @@ def load_case(archive, job, seed, mode, initial):
             if member.name == log:
                 with source.extractfile(member) as file:
                     for line in file:
+                        match = P_SRAM_WRITE.match(line)
+                        if match:
+                            timestamp, p, bank = map(int, match.groups()[:3])
+                            word = 4 * int(match[4], 2) + bank
+                            if word in ACTIVE_INPUT:
+                                # The pinned testbench clock is 10 ns. Its
+                                # cycle counter starts after 4 reset periods.
+                                writes.append(((timestamp - 40) // 10, p, word))
+                            continue
                         tag = line.partition(b' ')[0].decode()
                         if tag not in PROFILES:
                             continue
@@ -67,7 +111,7 @@ def load_case(archive, job, seed, mode, initial):
             (trial['gate'], trial['down']), 'fixture phase cycles differ')
     for source, declared in (('PROGRAM_PROFILE', profile['program']), ('DMA_PROFILE', profile['dma'])):
         require(all(summary[source][k] == v for k, v in declared.items()), 'fixture counters differ')
-    return rows, summary, oracle
+    return rows, summary, oracle, copy_bank_receipt(rows, writes)
 
 
 def make_problem(rows, summary, oracle):
@@ -188,10 +232,15 @@ def make_problem(rows, summary, oracle):
                                                      for p in sites[:3]]}
 
 
-def run(archive, job, seed, mode, initial):
-    rows, summary, oracle = load_case(archive, job, seed, mode, initial)
+def run(archive, job, seed, mode, initial, *, timing='calendar', fixture=None):
+    rows, summary, oracle, bank_receipt = load_case(archive, job, seed, mode, initial, fixture=fixture)
     tasks, hardware, observed = make_problem(rows, summary, oracle)
-    outcome = {'job': job, 'seed': seed, 'mode': mode, 'initial': initial, 'observed': observed, 'plans': {}}
+    require(bank_receipt['verified_words'] == observed['rtl_gate_copy_words'] + observed['rtl_down_copy_words'],
+            'physical P.S COPY writes differ from protocol totals')
+    observed['p_sram_copy'] = bank_receipt
+    hardware['event_model']['timing'] = timing
+    outcome = {'job': job, 'seed': seed, 'mode': mode, 'initial': initial, 'timing': timing,
+               'observed': observed, 'plans': {}}
     expected_copy = []
     phase_start = {}
     for row in rows:
@@ -238,8 +287,11 @@ def main():
     parser.add_argument('--seed', type=int, default=25001)
     parser.add_argument('--mode', type=int, default=0)
     parser.add_argument('--initial', type=int, default=0)
+    parser.add_argument('--timing', choices=('calendar', 'replay'), default='calendar')
+    parser.add_argument('--fixture', type=Path, help='local copy of the pinned #251 Git blob')
     args = parser.parse_args()
-    print(json.dumps(run(args.archive, args.job, args.seed, args.mode, args.initial), indent=2))
+    print(json.dumps(run(args.archive, args.job, args.seed, args.mode, args.initial,
+                         timing=args.timing, fixture=args.fixture), indent=2))
 
 
 if __name__ == '__main__':

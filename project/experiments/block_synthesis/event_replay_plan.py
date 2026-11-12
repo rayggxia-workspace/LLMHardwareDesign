@@ -1,7 +1,8 @@
 """Build replay intents from bound actions and project simulated grants back."""
+from collections import Counter, defaultdict
 from dataclasses import dataclass, replace
 
-from event_execution import Copy, DDR, reserve
+from event_execution import Copy, DDR, capacity_profile
 from event_replay import Operation, Phase, replay
 
 
@@ -88,16 +89,17 @@ def intents(model, decisions):
 
 def retime(model, decisions, proposed, previous=()):
     operations = intents(model, decisions)
-    trace = replay(operations, model.capacity, previous=previous)
+    trace = replay(operations, model.capacity, previous=previous, issue_rates=model.issue_rates)
     grants = iter(zip(operations, trace))
     copies = model.initial.copies.copy()
     backing = model.initial.backing.copy()
-    calendars = {}
+    occupancy = defaultdict(Counter)
     rows = []
 
     def occupy(claims, start, end):
         for resource, units in claims:
-            calendars[resource] = reserve(calendars.get(resource, ()), start, end, units)
+            occupancy[resource][start] += units
+            occupancy[resource][end] -= units
 
     for decision in decisions:
         row = decision.row
@@ -125,4 +127,5 @@ def retime(model, decisions, proposed, previous=()):
             events.append(actual)
         rows.append({**row, 'start': min(event['start'] for event in events),
                      'end': events[-1]['end'], 'evaluation': {**detail, 'events': events}})
+    calendars = {resource: capacity_profile(changes) for resource, changes in occupancy.items()}
     return replace(proposed, copies=copies, backing=backing, calendars=calendars), rows, trace

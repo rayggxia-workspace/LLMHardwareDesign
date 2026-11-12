@@ -49,6 +49,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     actions,parents,ancestors=catalogue(tasks,[dict(a) for a in covers])
     model=None
     live_replay=False
+    transport_counts={'transport_attempted':0,'transport_truncated':0}
     if 'event_model' in hardware:
         from event_execution import Model, Infeasible
         if rank_policy!='shared_tail' or hardware.get('window_calendar'):
@@ -63,6 +64,10 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         if live_replay:
             from event_replay import ReplayDeadlock
             from event_replay_plan import Decision, retime
+            from event_transport import draft, drafts
+            transport_limit=hardware['event_model'].get('transport_limit',32)
+            if transport_limit is not None and (type(transport_limit) is not int or transport_limit<1):
+                raise ValueError('positive transport limit required')
     ids={t['id']:i for i,t in enumerate(tasks)};children={n:set() for n in ids}
     for n,ps in parents.items():
         for p in ps:children[p].add(n)
@@ -117,27 +122,46 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         bound=(completion.get(s) if completion else
             max([s.makespan]+[max((s.frontier[p] for p in parents[n]),default=0)+tail[n] for n in s.ready]))
         return bound,s.makespan,s.traffic,netcost(s)
-    def advance(s,a,b,policy):
-        if s.done&a['mask'] or any(not s.done&(1<<ids[p]) for p in a['boundary']):return None
+    def advance(s,a,b,policy,forced_choices=None):
+        if s.done&a['mask'] or any(not s.done&(1<<ids[p]) for p in a['boundary']):return
         arrival=max((s.frontier[p] for p in a['boundary']),default=0)
-        execution=None
         if model:
             protected={value for value,mask in users.items() if mask&~(s.done|a['mask'])}
-            try:
-                execution,events=model.expand(s.execution,b,arrival,protected)
-            except Infeasible:
-                return None
-            start=min(event['start'] for event in events)
-            end=max(event['end'] for event in events)
-            delta_reads=execution.read_bytes-s.execution.read_bytes
-            delta_writes=execution.write_bytes-s.execution.write_bytes
-            ev={'start':start,'end':end,'makespan':max(s.makespan,end),'nets':execution.nets,
-                'resources':s.resources,'cache':s.cache,'traffic':delta_reads+delta_writes,
-                'details':{'events':events,'external_read_bytes':delta_reads,
-                           'external_write_bytes':delta_writes}}
+            draft_state=s.execution.after(arrival) if live_replay else s.execution
+            if live_replay and forced_choices is None:
+                proposals=drafts(model,draft_state,b,arrival,protected,transport_limit,transport_counts)
+            else:
+                try:
+                    if live_replay:
+                        execution,events=draft(model,draft_state,b,arrival,protected,forced_choices)
+                    else:
+                        execution,events=model.expand(s.execution,b,arrival,protected)
+                except Infeasible:
+                    return
+                proposals=((execution,events,forced_choices),)
+            for execution,events,choices in proposals:
+                result=event_successor(s,a,b,execution,events,choices)
+                if result is not None:
+                    yield result
         else:
             ev=evaluate(s,b,hardware,arrival,retention=policy,fixed=fixed,conflicts=conflicts,wire_budget=wire_budget)
-            if not ev['legal']:return None
+            if ev['legal']:
+                yield successor(s,a,b,ev)
+
+    def event_successor(s,a,b,execution,events,choices):
+        start=min(event['start'] for event in events)
+        end=max(event['end'] for event in events)
+        delta_reads=execution.read_bytes-s.execution.read_bytes
+        delta_writes=execution.write_bytes-s.execution.write_bytes
+        ev={'start':start,'end':end,'makespan':max(s.makespan,end),'nets':execution.nets,
+            'resources':s.resources,'cache':s.cache,'traffic':delta_reads+delta_writes,
+            'details':{'events':events,'external_read_bytes':delta_reads,
+                       'external_write_bytes':delta_writes}}
+        if live_replay:
+            ev['details']['transport_choices']=list(choices)
+        return successor(s,a,b,ev,execution)
+
+    def successor(s,a,b,ev,execution=None):
         done=s.done|a['mask']
         enabled=set().union(*(children[n] for n in a['covers']))-set(a['covers'])
         ready=(s.ready-set(a['covers']))|{c for c in enabled if done&masks[c]==masks[c]}
@@ -186,8 +210,16 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
             return row.get('evaluation',{}).get('retention','legacy')
         for row in backbone['tasks']:
             a=by_action[row['id']];b=next(b for b in a['bindings'] if b['id']==row['binding'])
-            s=advance(s,a,b,policy(b,row))
+            choices=tuple(row['evaluation'].get('transport_choices',())) if live_replay else None
+            s=next(advance(s,a,b,policy(b,row),choices),None)
             if s is None:raise ValueError('verified atomic backbone became illegal')
+            if live_replay:
+                proposed=s.history.row['evaluation']['events']
+                expected=row['evaluation']['events']
+                signature=lambda events: [(e['route'],e['value'],e['src'],e['dst'])
+                                          for e in events if e['kind']=='move']
+                if signature(proposed)!=signature(expected):
+                    raise ValueError('backbone transport choice differs from verified plan')
             seeds[s.done.bit_count()]=s
     buckets[0][key(initial)]=initial;complete=[]
     for count in range(len(tasks)+1):
@@ -210,21 +242,23 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
                     if s.done&a['mask'] or any(not s.done&(1<<ids[p]) for p in a['boundary']):continue
                     for b in a['bindings']:
                         for policy in retention_actions(s,b):
-                            expanded+=1;ns=advance(s,a,b,policy)
-                            if ns is None:continue
-                            k=key(ns);bucket=buckets.setdefault(ns.done.bit_count(),{});old=bucket.get(k)
-                            if old is not None:
-                                merged+=1
-                                if (old.makespan,old.traffic)<=(ns.makespan,ns.traffic):continue
-                            bucket[k]=ns
-    if not complete:return {'status':'no_plan_in_bounded_search','expanded':expanded}
+                            expanded+=1
+                            for ns in advance(s,a,b,policy):
+                                k=key(ns);bucket=buckets.setdefault(ns.done.bit_count(),{});old=bucket.get(k)
+                                if old is not None:
+                                    merged+=1
+                                    if (old.makespan,old.traffic)<=(ns.makespan,ns.traffic):continue
+                                bucket[k]=ns
+    timing_stats=({'timing':'replay','transport_limit':transport_limit,**transport_counts}
+                  if live_replay else {})
+    if not complete:return {'status':'no_plan_in_bounded_search','expanded':expanded,**timing_stats}
     best=min(complete,key=lambda s:(s.makespan,s.traffic,netcost(s)));rows=[];history=best.history
     while history is not None:rows.append(history.row);history=history.previous
     rows.reverse()
     traffic=({'external_read_bytes':best.execution.read_bytes,
               'external_write_bytes':best.execution.write_bytes} if model else {'external_words':best.traffic})
     return {'status':'planned','kind':'event-cover-frontier-v1' if model else 'convex-cover-frontier-v1',
-        **({'timing': 'replay'} if live_replay else {}),
+        **timing_stats,
         'tasks':rows,'makespan':best.makespan,**traffic,'nets':sorted(best.nets),'wire_cost':netcost(best),'final_read_cache':best.cache,
         'expanded':expanded,'merged':merged,'pruned':pruned,'width':width,'ready_limit':ready_limit,
         'covered_original_tasks':len(tasks),'multi_task_decisions':sum(len(r['covers'])>1 for r in rows),

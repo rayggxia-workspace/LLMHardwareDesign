@@ -1,5 +1,5 @@
 """Check the grants in an emitted replay trace against the arbitration contract."""
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 from event_execution import Model
 from event_replay_plan import Decision, intents
@@ -15,6 +15,7 @@ def verify_grants(tasks, hardware, rows):
     # to the planner, its checkpoint reconstruction, or its grant loop.
     ready_at = defaultdict(list)
     release_at = defaultdict(list)
+    issue_expires = defaultdict(list)
     ticks = set()
     for i, (operation, event) in enumerate(zip(operations, events)):
         phases = event.get('phases', (event,))
@@ -26,24 +27,37 @@ def verify_grants(tasks, hardware, rows):
             ready_at[ready].append((phase.priority, ready, i, j, start, claims))
             release_at[end].extend(releases)
             ticks.update((ready, start, end))
+            for resource, units in phase.claims:
+                if resource in model.issue_rates:
+                    expires = start + model.issue_rates[resource][0]
+                    issue_expires[expires].append((resource, units))
+                    ticks.add(expires)
             ready = end
 
     free = model.capacity.copy()
+    issue_count = Counter()
     waiting = []
     for tick in sorted(ticks):
         for resource, units in release_at[tick]:
             free[resource] += units
+        for resource, units in issue_expires[tick]:
+            issue_count[resource] -= units
         pending = sorted(waiting + ready_at[tick])
         waiting = []
         for request in pending:
             _, _, _, _, start, claims = request
             can_start = all(free[resource] >= units for resource, units in claims)
+            can_start = can_start and all(
+                resource not in model.issue_rates or issue_count[resource] + units <= model.issue_rates[resource][1]
+                for resource, units in claims)
             if start < tick or can_start != (start == tick):
                 raise ValueError(f'arbitration grant differs at tick {tick}')
             if can_start:
                 for resource, units in claims:
                     free[resource] -= units
+                    if resource in model.issue_rates:
+                        issue_count[resource] += units
             else:
                 waiting.append(request)
-    if waiting or free != model.capacity:
+    if waiting or free != model.capacity or any(issue_count.values()):
         raise ValueError('arbitration trace did not drain')

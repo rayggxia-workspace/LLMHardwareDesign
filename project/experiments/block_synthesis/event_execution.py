@@ -67,6 +67,10 @@ def reserve(profile, start, end, units):
     for lo, hi, occupied in profile:
         changes[lo] = changes.get(lo, 0) + occupied
         changes[hi] = changes.get(hi, 0) - occupied
+    return capacity_profile(changes)
+
+
+def capacity_profile(changes):
     result, level = [], 0
     for at, delta in sorted(changes.items()):
         if not delta:
@@ -82,6 +86,12 @@ class Model:
     def __init__(self, hardware, *, wire_budget=None):
         self.spec = hardware['event_model']
         self.capacity = hardware['resources']
+        self.issue_rates = {}
+        for resource, rate in self.spec.get('issue_rates', {}).items():
+            if (resource not in self.capacity or set(rate) != {'window_ticks', 'max_issues'}
+                    or any(type(n) is not int or n < 1 for n in rate.values())):
+                raise ValueError('invalid issue rate')
+            self.issue_rates[resource] = rate['window_ticks'], rate['max_issues']
         self.windows = self.spec['windows']
         self.sizes = self.spec['value_bytes']
         self.services = self.spec['services']
@@ -155,6 +165,7 @@ class Model:
         if type(service.get('priority', 0)) is not int:
             raise ValueError('invalid native arbitration priority')
         if any(type(n) is not int or n < 1 or n > self.capacity.get(r, 0)
+               or r in self.issue_rates and n > self.issue_rates[r][1]
                for r, n in service['claims'].items()):
             raise ValueError('invalid native resource claim')
         if not set(service.get('nets', ())) <= self.nets.keys():
@@ -166,6 +177,8 @@ class Model:
             raise ValueError('invalid phased route')
         holds = phases['hold_claims']
         self.validate_service({'claims': holds})
+        if holds.keys() & self.issue_rates.keys():
+            raise ValueError('rate-limited issue ports cannot be held between phases')
         used = set(route['claims'])
         for name in ('issue', 'ack'):
             item = phases[name]
@@ -181,6 +194,8 @@ class Model:
         phases = service['phases']
         holds = service.get('hold_claims', {})
         self.validate_service({'claims': holds})
+        if holds.keys() & self.issue_rates.keys():
+            raise ValueError('rate-limited issue ports cannot be held between phases')
         if not isinstance(phases, (list, tuple)) or len(phases) < 2 or service['claims']:
             raise ValueError('phased native stage must declare separate phase claims')
         names = set()
@@ -299,7 +314,7 @@ class Model:
             event['phases'] = phases
         return state, event
 
-    def best_move(self, state, value, sources, dst, ready):
+    def move_options(self, state, value, sources, dst, ready):
         destination = DDR if dst == DDR else self.windows[dst]['site']
         choices = []
         for src in sources:
@@ -311,61 +326,60 @@ class Model:
                     continue
                 choices.append((event['end'], new.read_bytes + new.write_bytes,
                                 self.wire_cost(new.nets), src, route, new, event))
-        if not choices:
-            raise Infeasible('no legal move')
-        return min(choices, key=lambda item: item[:5])[-2:]
+        return [item[-2:] for item in sorted(choices, key=lambda item: item[:5])]
 
-    def vacant(self, state, window, ready, protected, events):
+    def best_move(self, state, value, sources, dst, ready, choose=None):
+        options = self.move_options(state, value, sources, dst, ready)
+        if not options:
+            raise Infeasible('no legal move')
+        return options[0] if choose is None else choose(options)
+
+    def vacant(self, state, window, ready, protected, events, choose=None):
         old = state.copies.get(window)
         if old is None:
             return state, ready
         ready = max(ready, old.held_until)
         if (old.value in protected and old.value not in state.backing
                 and not any(w != window and c.value == old.value for w, c in state.copies.items())):
-            state, event = self.best_move(state, old.value, [window], DDR, ready)
+            state, event = self.best_move(state, old.value, [window], DDR, ready, choose)
             events.append(event)
             ready = event['end']
         return state, ready
 
-    def ensure(self, state, window, value, ready, protected, events, policy):
+    def ensure(self, state, window, value, ready, protected, events, policy, choose=None):
         old = state.copies.get(window)
         if old and old.value == value and policy != 'backing':
             return state
-        state, ready = self.vacant(state, window, ready, protected, events)
+        state, ready = self.vacant(state, window, ready, protected, events, choose)
         sources = [w for w, c in state.copies.items() if c.value == value and w != window]
         if policy == 'backing':
             if value not in state.backing:
                 state, event = self.best_move(state, value, sources + ([window] if old and old.value == value else []),
-                                              DDR, ready)
+                                              DDR, ready, choose)
                 events.append(event)
                 ready = event['end']
             sources = []
         if value in state.backing and policy != 'resident':
             sources.append(DDR)
-        choices = []
-        try:
-            direct, event = self.best_move(state, value, sources, window, ready)
-            choices.append((direct, [event]))
-        except Infeasible:
-            pass
+        direct = self.move_options(state, value, sources, window, ready)
+        choices = [(moved, [event]) for moved, event in direct]
         if policy == 'any' and value not in state.backing:
             # A dirty value may be cheaper to hand off via a real STORE/LOAD
             # than to wait for an occupied cross-site port.
-            try:
-                written, store = self.best_move(state, value, sources, DDR, ready)
-                loaded, load = self.best_move(written, value, [DDR], window, store['end'])
-                choices.append((loaded, [store, load]))
-            except Infeasible:
-                pass
+            stores = self.move_options(state, value, sources, DDR, ready)
+            for written, store in stores if choose is not None else stores[:1]:
+                loads = self.move_options(written, value, [DDR], window, store['end'])
+                choices.extend((loaded, [store, load]) for loaded, load in loads)
         if not choices:
             raise Infeasible('no legal input delivery')
-        selected, moves = min(choices, key=lambda item: (
+        choices.sort(key=lambda item: (
             item[1][-1]['end'], item[0].read_bytes + item[0].write_bytes,
             self.wire_cost(item[0].nets)))
+        selected, moves = choices[0] if choose is None else choose(choices)
         events.extend(moves)
         return selected
 
-    def expand(self, state, binding, ready, protected):
+    def expand(self, state, binding, ready, protected, *, choose=None):
         protected = protected | self.live_out
         remaining = Counter(value for stage in binding['event_stages']
                             for value in stage.get('inputs', {}).values())
@@ -376,14 +390,14 @@ class Model:
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
             for window, value in inputs.items():
                 state = self.ensure(state, window, value, ready, protected | remaining.keys(), events,
-                                    stage.get('input_policy', 'any'))
+                                    stage.get('input_policy', 'any'), choose)
             start_at = max([ready] + [state.copies[w].ready for w in inputs])
             for value in inputs.values():
                 remaining[value] -= 1
                 if remaining[value] == 0:
                     del remaining[value]
             for window in outputs:
-                state, at = self.vacant(state, window, start_at, protected | remaining.keys(), events)
+                state, at = self.vacant(state, window, start_at, protected | remaining.keys(), events, choose)
                 start_at = max(start_at, at)
             state = self.add_nets(state, service.get('nets', ()))
             phases = ()
