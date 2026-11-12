@@ -29,6 +29,11 @@ def stripe_fragments(first, width):
                  for way in range(2) for client in range(3))
 
 
+def s_pressure(client, response):
+    period, closed, step = (11, 4, 3) if response else (7, 2, 2)
+    return {'period': period, 'closed': closed, 'offset': step * client}
+
+
 def scatter_service(fragments, mode):
     """Return the registered service recipe, independent of measured latency."""
     if mode not in (0, 1):
@@ -38,8 +43,7 @@ def scatter_service(fragments, mode):
     def phase(name, ticks, resource=None, *, client=None, response=False):
         item = {'kind': name, 'ticks': ticks, 'claims': {resource: 1} if resource else {}}
         if mode and client is not None:
-            period, closed, step = (11, 4, 3) if response else (7, 2, 2)
-            item['ready_window'] = {'period': period, 'closed': closed, 'offset': step * client}
+            item['ready_window'] = s_pressure(client, response)
         phases.append(item)
 
     for index, fragment in enumerate(fragments):

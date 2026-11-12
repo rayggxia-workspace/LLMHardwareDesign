@@ -7,6 +7,7 @@ from pathlib import Path
 from cover_frontier import search
 from dma_read import Profile, Read
 from event_replay import Operation, Phase, replay
+from ffn_mid import MIN_TICKS, MidTile
 from ffn_scatter import scatter_service, stripe_fragments
 from verify_cover_frontier import verify
 
@@ -86,6 +87,25 @@ SCATTER_MONITOR = """  always @(posedge clk) if($test$plusargs("TRACE_SCATTER")&
     $display("SCATTER done %0d %0d %0d",cycle,copy_prefix,copy_error);
   end
 """
+MID_MONITOR = """  always @(posedge clk) if($test$plusargs("TRACE_MID")&&!reset)begin
+   if(dut.g_valid&&dut.g_ready)
+    $display("MID g_start %0d %0d %0d %0d %0d",cycle,mid_first,dut.g_gate_base,dut.g_up_base,dut.g_mid_base);
+   if(dut.gs_valid&&fs_ready[0]&&dut.g_active)
+    $display("MID g_req %0d %0d %0d",cycle,dut.gs_write,dut.gs_address);
+   if(dut.g_active&&fs_rsp_valid[0]&&dut.gs_rsp_ready)
+    $display("MID g_rsp %0d",cycle);
+   if(dut.gin&&dut.gin_ready)$display("MID g_in %0d",cycle);
+   if(dut.gout&&dut.gout_ready)$display("MID g_out %0d",cycle);
+   if(dut.g_done&&dut.g_take)$display("MID g_done %0d",cycle);
+   if(dut.mid_cmd&&dut.mid_cmd_ready)
+    $display("MID q_start %0d %0d %0d %0d",cycle,mid_first,mid_destination,mid_destination_base);
+   if(dut.qr_valid&&dut.qr_ready)
+    $display("MID q_req %0d %0d %0d %0d",cycle,dut.qr_write,dut.qr_address,dut.qr_tag);
+   if(dut.qs_valid&&dut.qs_ready)
+    $display("MID q_rsp %0d %0d",cycle,dut.qs_tag);
+   if(dut.q_done&&dut.q_take)$display("MID q_done %0d %0d",cycle,dut.q_words);
+  end
+"""
 
 # From the last accepted CALL flit, the LC accepts the frame, reads PM and
 # metadata, then presents the first 64 B fetch. CRC scans 124 bytes after the
@@ -114,7 +134,7 @@ def instrument(source, destination):
     if rtl.count(ANCHOR) != 1:
         raise ValueError('expected the unique programmed FFN block in #251')
     with destination.open('x', encoding='utf-8', newline='\n') as output:
-        output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + SCATTER_MONITOR + ANCHOR))
+        output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + SCATTER_MONITOR + MID_MONITOR + ANCHOR))
 
 
 def read_trace(source):
@@ -123,6 +143,7 @@ def read_trace(source):
     admission = {'ready': [], 'stripe': [], 'down': []}
     upstream = []
     scatter = []
+    mid = []
     start = result = program = None
     passed = False
     for line in source:
@@ -141,6 +162,9 @@ def read_trace(source):
         if line.startswith('SCATTER '):
             _, kind, *fields = line.split()
             scatter.append((kind, *map(int, fields)))
+        if line.startswith('MID '):
+            _, kind, *fields = line.split()
+            mid.append((kind, *map(int, fields)))
         if not line.startswith('CONTROL '):
             continue
         _, kind, raw_tick, *fields = line.split()
@@ -166,7 +190,7 @@ def read_trace(source):
     require(passed and start is not None and result is not None and not open_calls and program is not None,
             'incomplete programmed FFN trace')
     require(len(scopes) == 192, 'expected all 192 native calls')
-    return scopes, start, result, program, admission, upstream, scatter
+    return scopes, start, result, program, admission, upstream, scatter, mid
 
 
 def first_ready(edges, ticks, mask, release):
@@ -213,7 +237,13 @@ def controller_triggers(upstream):
     return releases
 
 
-def scatter_problem(fragments, mode, producer_ready):
+def trace_action(name, ticks, stages, after=()):
+    return {'id': name, 'after': after,
+            'bindings': [{'id': name, 'site': 'P0', 'ticks': ticks, 'resources': [],
+                          'nets': [], 'scratch_words': 0, 'event_stages': stages}]}
+
+
+def scatter_problem(fragments, mode, producer_ready, session):
     service = scatter_service(fragments, mode)
     resources = {r: 1 for phase in service['phases'] for r in phase['claims']}
     resources.update(service['hold_claims'])
@@ -230,27 +260,63 @@ def scatter_problem(fragments, mode, producer_ready):
             source = window(fragment.client, fragment.scratch + word)
             destination = window(0, fragment.destination(word))
             require(destination not in outputs, 'scatter writes the same ring word twice')
-            values[source] = 16
-            inputs[source] = outputs[destination] = source
+            value = f'{source}@{session}'
+            values[value] = 16
+            inputs[source] = outputs[destination] = value
 
-    def action(name, ticks, stage, after=()):
-        return {'id': name, 'after': after,
-                'bindings': [{'id': name, 'site': 'P0', 'ticks': ticks, 'resources': [],
-                              'nets': [], 'scratch_words': 0, 'event_stages': [stage]}]}
-
-    tasks = [action('producer', producer_ready, {'service': 'producer'}),
-             action('scatter', service['ticks'], {'service': 'scatter', 'inputs': inputs, 'outputs': outputs},
-                    after=('producer',))]
+    tasks = [trace_action('producer', producer_ready, [{'service': 'producer'}]),
+             trace_action('scatter', service['ticks'], [{'service': 'scatter', 'inputs': inputs, 'outputs': outputs}],
+                          after=('producer',))]
     hardware = {'resources': resources, 'nets': {},
                 'sites': {f'P{p}': {'bytes': 16384, 'words': 1024} for p in range(P_COUNT)},
                 'event_model': {'kind': 'qualified-event-model-v1', 'timing': 'replay',
-                                'value_bytes': values, 'windows': windows, 'initial_copies': inputs,
+                                'value_bytes': values, 'windows': windows, 'initial_copies': inputs.copy(),
                                 'routes': {}, 'services': {'producer': {'ticks': producer_ready, 'claims': {}},
                                                            'scatter': service}}}
     return tasks, hardware
 
 
-def check_scatter(scopes, upstream, observed, mode):
+def append_mid_actions(tasks, hardware, resident, tiles):
+    """Retain unconsumed ring words across stripes and bind each tile to them."""
+    spec = hardware['event_model']
+
+    def window(client, address):
+        site = f'P{client}'
+        name = f'{site}:{address}'
+        spec['windows'][name] = {'site': site, 'offset': address * 16, 'bytes': 16}
+        return name
+
+    for name, value in resident.items():
+        client, address = name.split(':')
+        window(int(client[1]), int(address))
+        spec['initial_copies'][name] = value
+        spec['value_bytes'][value] = 16
+    produced = tasks[-1]['bindings'][0]['event_stages'][0]['outputs']
+    require(not resident.keys() & produced.keys(), 'scatter overwrites an unconsumed ring word')
+    resident.update(produced)
+    spec['services']['decide'] = {'ticks': 1, 'claims': {}}
+    for tile in tiles:
+        inputs, outputs = {}, {}
+        for client, address in sorted(tile.input_words()):
+            name = window(client, address)
+            require(name in resident, f'Mid read without a produced ring word at {name}')
+            inputs[name] = resident.pop(name)
+        for client, address in sorted(tile.output_words()):
+            name = window(client, address)
+            value = f'Mid:{tile.first}:{address}'
+            spec['value_bytes'][value] = 16
+            outputs[name] = value
+        name = f'Mid:{tile.first}'
+        claims = tile.claims()
+        hardware['resources'].update(claims)
+        spec['services'][name] = {'ticks': MIN_TICKS, 'claims': claims,
+                                  'ffn_mid': {'mode': tile.mode, 'first': tile.first}}
+        stages = [{'service': 'decide'}, {'service': name, 'input_policy': 'resident',
+                                         'inputs': inputs, 'outputs': outputs}]
+        tasks.append(trace_action(name, MIN_TICKS + 1, stages, after=(tasks[-1]['id'],)))
+
+
+def check_scatter(scopes, upstream, observed, mode, observed_mid=None):
     by_session = {}
     for scope in scopes:
         done, session, _, _ = scope['done'][0]
@@ -262,16 +328,28 @@ def check_scatter(scopes, upstream, observed, mode):
     generation = words = cursor = 0
     commits = []
     latencies = []
+    resident = {}
+    consumed = 0
+    mid_cursor = 0
+    mid_commits = []
+    ack_to_publish = []
     for session in range(1, GATE_UP_STRIPES + 1):
         completion = by_session.get(session, {})
         require(set(completion) == set(range(P_COUNT)), f'incomplete P completions for stripe {session}')
         first = STRIPE_COLUMNS * (session - 1)
-        fragments = stripe_fragments(first, min(STRIPE_COLUMNS, GATE_UP_COLUMNS - first))
+        width = min(STRIPE_COLUMNS, GATE_UP_COLUMNS - first)
+        fragments = stripe_fragments(first, width)
         ready = max(completion.values()) + 1
-        tasks, hardware = scatter_problem(fragments, mode, ready)
+        tasks, hardware = scatter_problem(fragments, mode, ready, session)
+        tiles = []
+        if observed_mid is not None:
+            while consumed + MID_COLUMNS <= first + width:
+                tiles.append(MidTile(mode, consumed))
+                consumed += MID_COLUMNS
+            append_mid_actions(tasks, hardware, resident, tiles)
         plan = search(tasks, hardware, width=1)
         verify(tasks, hardware, (), plan)
-        starts = {p['kind']: p['start'] for p in plan['tasks'][-1]['evaluation']['events'][0]['phases']}
+        starts = {p['kind']: p['start'] for p in plan['tasks'][1]['evaluation']['events'][0]['phases']}
         stripe_events = []
         for index, fragment in enumerate(fragments):
             prefix = f'fragment{index}'
@@ -295,13 +373,31 @@ def check_scatter(scopes, upstream, observed, mode):
             cursor += 1
         commits.append(starts['commit'])
         latencies.append(starts['commit'] - ready)
+        for tile, row in zip(tiles, plan['tasks'][2:]):
+            event = row['evaluation']['events'][-1]
+            end, expected = tile.run(event['start'])
+            require(end == event['end'], f'Mid completion differs for tile {tile.first}')
+            for predicted_event in expected:
+                actual = observed_mid[mid_cursor] if mid_cursor < len(observed_mid) else None
+                require(actual == predicted_event, f'Mid {tile.first} differs: expected {predicted_event}, saw {actual}')
+                mid_cursor += 1
+            mid_commits.append(end - 1)
+            ack_to_publish.append(end - 1 - expected[-2][1])
 
     require(cursor == len(observed), 'unexpected scatter trace entries')
     require([tick for kind, tick in upstream if kind == 'scatter'] == commits, 'scatter commit differs')
-    predicted = iter(commits)
-    releases = [(kind, next(predicted) if kind == 'scatter' else tick) for kind, tick in upstream]
-    return releases, {'stripes': len(commits), 'fragments': generation, 'words': words,
-                      'min_cycles': min(latencies), 'max_cycles': max(latencies)}
+    predictions = {'scatter': iter(commits)}
+    report = {'scatter': {'stripes': len(commits), 'fragments': generation, 'words': words,
+                          'min_cycles': min(latencies), 'max_cycles': max(latencies)}}
+    if observed_mid is not None:
+        require(mid_cursor == len(observed_mid) and not resident and consumed == GATE_UP_COLUMNS,
+                'incomplete Mid trace or unconsumed ring words')
+        require([tick for kind, tick in upstream if kind == 'mid'] == mid_commits, 'Mid publication differs')
+        predictions['mid'] = iter(mid_commits)
+        report['mid'] = {'tiles': len(mid_commits), 'events': mid_cursor,
+                         'max_last_ack_to_publish': max(ack_to_publish)}
+    releases = [(kind, next(predictions[kind]) if kind in predictions else tick) for kind, tick in upstream]
+    return releases, report
 
 
 def replay_group(group, trigger, delay, is_down):
@@ -410,8 +506,8 @@ def check_admission(scopes, transfers, admission, upstream=None):
     return report
 
 
-def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False):
-    scopes, start, result, program, sampled_admission, upstream, observed_scatter = read_trace(source)
+def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False):
+    scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(source)
     transfers, terminals = [], []
     sequence = [0] * 3
     read_bytes = write_bytes = 0
@@ -468,12 +564,13 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
               'result_accept': result[0], 'read_bytes': read_bytes, 'write_bytes': write_bytes,
               'longest_service_offer_wait': max(s['dispatch'][0][0] - s['offer'][0][0] for s in scopes),
               'longest_done_to_terminal': max(s['terminal'][0][0] - s['done'][0][0] for s in scopes)}
-    if scatter:
-        upstream, report['scatter'] = check_scatter(scopes, upstream, observed_scatter, mode)
-    if admission or phase_release or scatter:
+    if scatter or mid:
+        upstream, data_report = check_scatter(scopes, upstream, observed_scatter, mode, observed_mid if mid else None)
+        report.update(data_report)
+    if admission or phase_release or scatter or mid:
         report['admission'] = check_admission(scopes, grants[:len(scopes)], sampled_admission,
-                                              upstream if phase_release or scatter else None)
-    if phase_release or scatter:
+                                              upstream if phase_release or scatter or mid else None)
+    if phase_release or scatter or mid:
         report['phase_replay_calls_per_strategy'] = len(scopes)
     return report
 
@@ -491,13 +588,14 @@ def main():
     verify.add_argument('--admission', action='store_true')
     verify.add_argument('--phase-release', action='store_true')
     verify.add_argument('--scatter', action='store_true')
+    verify.add_argument('--mid', action='store_true')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
     else:
         with args.log.open(encoding='utf-8') as source:
             print(json.dumps(check(source, args.mode, args.seed, admission=args.admission,
-                                   phase_release=args.phase_release, scatter=args.scatter), indent=2))
+                                   phase_release=args.phase_release, scatter=args.scatter, mid=args.mid), indent=2))
 
 
 if __name__ == '__main__':

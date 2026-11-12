@@ -10,6 +10,9 @@ from event_replay_plan import Decision, intents
 
 def verify_grants(tasks, hardware, rows):
     model = Model(hardware)
+    for task in tasks:
+        for binding in task['bindings']:
+            model.validate_binding(binding)
     by_task = {task['id']: task for task in tasks}
     decisions = [Decision(row, frozenset(by_task[row['id']].get('after', ())),
                           phase_edges(by_task[row['id']])) for row in rows]
@@ -32,6 +35,8 @@ def verify_grants(tasks, hardware, rows):
             start, end = interval['start'], interval['end']
             if start < ready:
                 raise ValueError('grant precedes phase dependency')
+            if phase.mid_tile is not None and phase.mid_tile.run(start)[0] != end:
+                raise ValueError('FFN Mid completion differs')
             claims = phase.claims + (operation.holds if j == 0 else ())
             releases = phase.claims + (operation.holds if j == len(phases) - 1 else ())
             ready_at[ready].append((phase.priority, ready, i, j, start, claims, phase.ready_window))

@@ -193,6 +193,21 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 使用 Verilator 5.006 和第 16 轮的固定数据。本机 `round17-scatter-logs.sha256` 为 `36ce257eb7417ba748fe256d5cc78cf14654453a06759c57da9cb1252c4f362f`，`round17-scatter-verified.json` 为 `556db18a7b4ba2afc169c551acac8c76119dc98afa05dbb094b7e47486b0741e`。Windows 350 项测试通过。该对照从采样的 P DONE 开始，固定控制次序保证 scatter 期间无其他 SRAM 客户争用。P 计算、G 和 Mid 提交、允许多客户同发时的 SRAM 所有权需要继续接入完整计划。
 
+### 从 scatter 到 G 激活和 Mid 目录发布
+
+第 18 轮接入 `ffn_mid` 事件服务。两次 G 指令各处理半个 tile，跟踪两组输入／输出槽、四级可停顿流水线和两条按序 SRAM 所有权。量化按 RTL 的写优先规则推进，两个拼接槽保留到写 ACK，未能发放的请求保持原身份。最后一个写 ACK 之后至少两拍才发布，压力模式下还要等目录 READY，最多再等四拍。该服务按实际发放拍重算周期，IR 校验绑定实际 P.S 源地址、目的地址和占用端口。
+
+- 把每条 stripe 的 scatter、G 和 Mid 放进同一份候选计划，未消费的环形字带入下一条 stripe。Mid 不再使用采样完成拍，模型的提交拍直接进入下一步放行检查。四组固定 102603 RTL 共核对 344 个 Mid tile、145,168 个 G／量化事件，地址、可见拍、请求和应答顺序一致。去掉新增探针行后，每份日志与第 17 轮逐行一致。
+- 同一模式、seed 和权重下，用仅增加首条 G 指令放行条件的对照版 RTL，分别在第 15,025 和 15,026 拍启动。两次前驱 scatter 都在第 14,087 拍提交。首个 Mid 分别在第 15,399 和 15,389 拍发布，晚一拍启动的候选早十拍发布。事件服务复现两组全部 G／量化事件。两组的完整 FFN 周期和流量相同，原数值断言均通过。与该压力相位等价的小图里，严格贪心选择先发候选，计划用 385 拍。宽度 8 的 DP 保留后发候选，计划用 375 拍。
+- 提前发布、错误的 G SRAM 字地址和错误的量化应答标签均被拒绝。独立计划检查还拒绝提前结束和错误的物理输入窗口。
+
+```bash
+# 复用第 17 轮运行参数，运行时增加 +TRACE_MID。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG --mode 1 --seed 25001 --mid
+```
+
+Verilator 5.006。本机 `round18-mid-logs.sha256` 为 `c5a72d3986237d13db54481821b8dd74c69f2e68dfd4c19e343c10b89b290b45`，`round18-mid-verified.json` 为 `fe0c80db99e622331b13ed9cce1b923a6902456573fff2e2fcaa4155337e2ac7`。清单包含四组原 RTL、两组放行对照和私有探针源。Windows 351 项测试通过。固定控制序列保证 G／Mid 独占所声明的 SRAM 端口，本轮按服务保留这些端口。仍使用采样的 P DONE 和 Down 之前的 Mid 读回事件，后续继续接入 P 执行及全局候选重排。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

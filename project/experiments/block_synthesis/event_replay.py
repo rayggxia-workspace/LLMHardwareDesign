@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from heapq import heappop, heappush
 
 from dma_read import BeatReceipt, Read, ReadFabric
+from ffn_mid import MidTile
 
 
 @dataclass(frozen=True)
@@ -38,6 +39,7 @@ class Phase:
     priority: int = 0
     dma_read: Read | None = None
     ready_window: ReadyWindow | None = None
+    mid_tile: MidTile | None = None
 
     @classmethod
     def from_spec(cls, name, ticks, spec):
@@ -116,6 +118,9 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
                     or phase.dma_read is not None and not phase.dma_read.valid()
                     or phase.ready_window is not None and (
                         not isinstance(phase.ready_window, ReadyWindow) or not phase.ready_window.valid())
+                    or phase.mid_tile is not None and (
+                        not isinstance(phase.mid_tile, MidTile) or not phase.mid_tile.valid()
+                        or phase.dma_read is not None or dict(phase.claims) != phase.mid_tile.claims())
                     or any(r in issue_rates and units > issue_rates[r][1] for r, units in phase.claims)):
                 raise ValueError('invalid replay phase duration, priority or resource claim')
             current = index, phase_index
@@ -227,7 +232,7 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
             occupied.update(dict(claims))
             record_issues(phase.claims, tick)
             if phase.dma_read is None:
-                end = tick + phase.ticks
+                end = phase.mid_tile.end(tick) if phase.mid_tile is not None else tick + phase.ticks
                 heappush(running, (end, index, phase_index))
                 grants[index].append(Grant(index, phase_index, tick, end))
             else:

@@ -137,7 +137,9 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     phased_claims(event, service['phases'], service.get('hold_claims', {}),
                                   service.get('nets', ()))
                 else:
-                    require(end-start == service['ticks'] and 'phases' not in event,
+                    valid_ticks = (timing == 'replay' and end-start >= service['ticks']
+                                   if 'ffn_mid' in service else end-start == service['ticks'])
+                    require(valid_ticks and 'phases' not in event,
                             'native stage service duration differs')
                     claim(service, start, end)
                 phase = {item['kind']: item for item in event.get('phases', ())}

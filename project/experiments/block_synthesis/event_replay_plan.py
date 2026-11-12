@@ -5,6 +5,7 @@ from dataclasses import dataclass, replace
 from dma_read import receipt_json
 from event_execution import Copy, DDR, PhaseEdge, capacity_profile, window_phase_indices
 from event_replay import Operation, Phase, replay
+from ffn_mid import MidTile
 
 
 @dataclass(frozen=True)
@@ -33,7 +34,10 @@ def event_operation(model, event):
         if 'phases' in service:
             phases = tuple(Phase.from_spec(p['kind'], p['ticks'], p) for p in service['phases'])
             return Operation(phases, holds=tuple(sorted(service.get('hold_claims', {}).items())))
-        return Operation((Phase.from_spec('stage', service['ticks'], service),))
+        phase = Phase.from_spec('stage', service['ticks'], service)
+        if 'ffn_mid' in service:
+            phase = replace(phase, mid_tile=MidTile.from_spec(service['ffn_mid']))
+        return Operation((phase,))
     route = model.routes[event['route']]
     size = model.sizes[event['value']]
     ticks = route['setup'] + (size + route['bytes_per_tick'] - 1) // route['bytes_per_tick']

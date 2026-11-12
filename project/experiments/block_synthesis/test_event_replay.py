@@ -9,6 +9,7 @@ from benchmark_native_sram_replay import check_trace
 from cover_frontier import search
 from dma_offer import DmaOfferChannel
 from event_replay import Operation, Phase, ReadyWindow, ReplayDeadlock, replay
+from ffn_mid import MIN_TICKS, MidTile
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
 
@@ -555,6 +556,44 @@ class ReplayTest(unittest.TestCase):
         spec['services']['gated']['ready_window']['closed'] = 7
         with self.assertRaisesRegex(ValueError, 'invalid phase READY'):
             search([old], h)
+
+    def test_mid_service_can_finish_earlier_after_later_launch(self):
+        tile = MidTile(1, 0)
+        claims = tile.claims()
+        names = {'gate': (720, 32), 'up': (784, 32), 'output': (256, 16)}
+        hardware = {
+            'resources': claims, 'nets': {}, 'sites': {'P0': {'words': 1024, 'bytes': 16384}},
+            'event_model': {
+                'kind': 'qualified-event-model-v1', 'timing': 'replay', 'routes': {},
+                'windows': {name: {'site': 'P0', 'offset': address * 16, 'bytes': count * 16}
+                            for name, (address, count) in names.items()},
+                'value_bytes': {name: count * 16 for name, (_, count) in names.items()},
+                'initial_copies': {'gate': 'gate', 'up': 'up'},
+                'services': {
+                    'early': {'ticks': 10, 'claims': {}},
+                    'late': {'ticks': 11, 'claims': {}},
+                    'mid': {'ticks': MIN_TICKS, 'claims': claims, 'ffn_mid': {'mode': 1, 'first': 0}},
+                },
+            },
+        }
+        tasks = [
+            task('producer', binding('early', stage('early')), binding('late', stage('late'))),
+            task('mid', binding('mid', stage('mid', inputs={'gate': 'gate', 'up': 'up'},
+                                            outputs={'output': 'output'})), after=('producer',)),
+        ]
+        for width, choice, start, finish in ((1, 'early', 10, 385), (8, 'late', 11, 375)):
+            plan = search(tasks, hardware, width=width)
+            verify(tasks, hardware, (), plan)
+            self.assertEqual((plan['tasks'][0]['binding'], plan['tasks'][1]['start'], plan['makespan']),
+                             (choice, start, finish))
+        plan['tasks'][1]['end'] -= 1
+        plan['tasks'][1]['evaluation']['events'][0]['end'] -= 1
+        plan['makespan'] -= 1
+        with self.assertRaisesRegex(ValueError, 'FFN Mid completion differs'):
+            verify(tasks, hardware, (), plan)
+        hardware['event_model']['windows']['up']['offset'] += 16
+        with self.assertRaisesRegex(ValueError, 'windows differ from physical inputs or output'):
+            search(tasks, hardware)
 
     @staticmethod
     def tick_reference(operations, capacity):

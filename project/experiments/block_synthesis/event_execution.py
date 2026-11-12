@@ -177,7 +177,8 @@ class Model:
             if endpoints == (DDR, DDR) or any(s != DDR and s not in regions for s in endpoints):
                 raise ValueError('unknown route site')
             if (type(route['setup']) is not int or route['setup'] < 0
-                    or type(route['bytes_per_tick']) is not int or route['bytes_per_tick'] < 1):
+                    or type(route['bytes_per_tick']) is not int or route['bytes_per_tick'] < 1
+                    or 'ffn_mid' in route):
                 raise ValueError('invalid route timing')
             self.validate_service(route)
             if 'phases' in route:
@@ -215,6 +216,12 @@ class Model:
         self.initial = Execution({}, copies, dict.fromkeys(external, 0))
 
     def validate_service(self, service):
+        if 'ffn_mid' in service:
+            from ffn_mid import MIN_TICKS, MidTile
+            tile = MidTile.from_spec(service['ffn_mid'])
+            if (self.spec.get('timing') != 'replay' or service['claims'] != tile.claims()
+                    or 'phases' in service or not 0 < service.get('ticks', 0) <= MIN_TICKS):
+                raise ValueError('FFN Mid requires its qualified replay ports and optimistic bound')
         if 'ready_window' in service:
             from event_replay import ReadyWindow
             if self.spec.get('timing') != 'replay':
@@ -339,7 +346,8 @@ class Model:
             raise ValueError('event mode requires explicit qualified stages for every binding')
         lower_bound = 0
         for stage in stages:
-            lower_bound += self.services[stage['service']]['ticks']
+            service = self.services[stage['service']]
+            lower_bound += service['ticks']
             if stage.get('input_policy', 'any') not in ('any', 'resident', 'backing'):
                 raise ValueError('unknown input policy')
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
@@ -347,14 +355,30 @@ class Model:
                 self.validate_copy(window, value)
             if inputs.keys() & outputs.keys():
                 raise ValueError('in-place native stages require a separate storage contract')
-            if 'copy_sites' in self.services[stage['service']]:
-                source, destinations = self.services[stage['service']]['copy_sites']
+            if 'ffn_mid' in service:
+                from ffn_mid import MidTile
+                tile = MidTile.from_spec(service['ffn_mid'])
+                if (self.physical_words(inputs) != tile.input_words()
+                        or self.physical_words(outputs) != tile.output_words()):
+                    raise ValueError('FFN Mid stage windows differ from physical inputs or output')
+            if 'copy_sites' in service:
+                source, destinations = service['copy_sites']
                 if (len(inputs) != 1 or {self.windows[w]['site'] for w in inputs} != {source}
                         or sorted(self.windows[w]['site'] for w in outputs) != sorted(destinations)
                         or set(outputs.values()) != set(inputs.values())):
                     raise ValueError('COPY stage changes identity or endpoint')
         if not 0 < binding['ticks'] <= lower_bound:
             raise ValueError('invalid optimistic stage bound')
+
+    def physical_words(self, operands):
+        words = set()
+        for window, value in operands.items():
+            region = self.windows[window]
+            site, offset, size = region['site'], region['offset'], self.sizes[value]
+            if site not in ('P0', 'P1', 'P2') or offset % 16 or size % 16:
+                raise ValueError('FFN Mid stage needs whole S128 words on P SRAM')
+            words.update((int(site[1]), word) for word in range(offset // 16, (offset + size) // 16))
+        return words
 
     def validate_phase(self, binding, location):
         index, name = location
