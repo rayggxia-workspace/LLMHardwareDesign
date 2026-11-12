@@ -3,7 +3,7 @@
 - 更新日期 2026-11-12（Asia/Shanghai，UTC+08:00）。仓库 `rayggxia-workspace/LLMHardwareDesign`，项目 ID `llm-hardware-design`。[Issue #255](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/255) 负责人 Melodydt。
 - [任务分支](https://github.com/rayggxia-workspace/LLMHardwareDesign/tree/task/255-dac-control-paper) 基于 [PR #251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251) 的 `9abd46f5cbb4534bcfc614571ccd6d402ad11882`。以 `task/250-w8a16-base-contract` 为堆叠 PR 的基分支。最新提交与审查状态见 [草稿 PR #256](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/256)。
 - 本地独立目录 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/255/authoring` 为文稿目录。线上分支是完整 Git 历史，本地文稿经 GitHub 连接器发布。PNG 预览及生成器检查副本保存在本任务本地目录。
-- [论文控制图文与固定版本证据](../papers/dac-control/README.md)。图 1 保留 NoPool 九个实例与 C 局控，用蓝色横带组织 C 内 S↔R/G/E 固定 SRAM 路径。G→E 后制旁路单独标示。图 2 先介绍四类指令的总体作用，再用 Llama 3.2-3B 与 Qwen3-4B 的 Q/K 前处理说明插入逐头 RMSNorm 如何改变张量路径和调用顺序。图中模型算子级映射为候选。两张可编辑图、中文说明和英文正文同目录，原三 P FFN 与 PR #180 的证据另列。
+- [论文控制图文与固定版本证据](../papers/dac-control/README.md)。图 1 保留 NoPool 九个实例与 C 局控，用蓝色接口表示固定 SRAM 访问，用与图 1(a) 对应的橙色横带表示 C 内后制路径。已验证 G→E 接入横带，S/R 端点仍属候选。图 2 先介绍四类指令的总体作用，再用 Llama 3.2-3B 与 Qwen3-4B 的 Q/K 前处理说明插入逐头 RMSNorm 如何改变张量路径和调用顺序。图中模型算子级映射为候选。两张可编辑图、中文说明和英文正文同目录，原三 P FFN 与 PR #180 的证据另列。
 
 ## 已执行检查
 

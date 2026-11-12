@@ -124,7 +124,7 @@ class Diagram:
 
 
 def architecture():
-    d = Diagram("1 - Base and C control", "control-architecture", 1200, 867)
+    d = Diagram("1 - Base and C control", "control-architecture", 1200, 881)
     d.text("base-heading", 38, 36, "(a)  NoPool base candidate", size=27, bold=True, width=600)
     d.box("mother", 397, 67, 385, 78, "Mother controller", "Program memory and task tokens",
           fill=BLUE, ink="#FFFFFF", size=26)
@@ -149,9 +149,9 @@ def architecture():
     d.edge("dma-data-path", [(920, 136), (920, 153), (1179, 153), (1179, 313), (1160, 313)],
            source="shared-dma", target="product-data-paths", color=OCHRE, dashed=True, direction="none")
 
-    d.text("c-detail-heading", 38, 381, "(b)  Local controller and physical links inside C",
+    d.text("c-detail-heading", 38, 381, "(b)  Local control and product-specific bypasses in C",
            size=27, bold=True, width=1020)
-    d.box("c-detail-frame", 40, 410, 1120, 398, stroke=LINE, fill=PANEL)
+    d.box("c-detail-frame", 40, 410, 1120, 414, stroke=LINE, fill=PANEL)
     d.box("mc-port", 66, 452, 182, 57, "MC interface", stroke=BLUE, fill=BLUE_BG)
     d.box("c-lc", 373, 435, 417, 91, "C local controller", "Dispatch services · track completion",
           fill=BLUE, ink="#FFFFFF", size=28)
@@ -160,9 +160,9 @@ def architecture():
     d.edge("c-pm-fetch", [(790, 481), (910, 481)], source="c-lc", target="c-program", direction="both")
     d.text("c-call-label", 310, 463, "Call / reply", color=BLUE, size=14, align="center", width=100)
     d.text("c-fetch-label", 850, 463, "Fetch", color=BLUE, size=14, align="center", width=95)
-    d.box("c-service", 347, 562, 468, 53, "Local services and adapters",
-          stroke=BLUE, fill=BLUE_BG)
-    d.edge("c-lc-service", [(581, 526), (581, 562)], source="c-lc", target="c-service", direction="both")
+    d.box("c-service", 347, 555, 468, 60, "Local services and adapters",
+          "Fixed SRAM access and macro interfaces", stroke=BLUE, fill=BLUE_BG)
+    d.edge("c-lc-service", [(581, 526), (581, 555)], source="c-lc", target="c-service", direction="both")
 
     for key, title, detail, x, port in (
         ("s", "S", "Private SRAM", 66, 403),
@@ -173,24 +173,26 @@ def architecture():
         d.box("macro-" + key, x, 660, 205, 57, title, detail, stroke=LINE, fill="white")
         d.edge("c-service-" + key, [(port, 615), (x + 102.5, 660)],
                source="c-service", target="macro-" + key, direction="both")
-    d.box("c-fixed-sram-paths", 66, 748, 1057, 42, "Fixed SRAM paths · S ↔ R/G/E via adapters",
-          fill=BLUE_BG, size=18)
-    for key in ("s", "r", "g", "e"):
+    d.box("c-product-bypasses", 66, 769, 1057, 42, "Product-specific bypass paths",
+          "G → E verified in C fixture", stroke=OCHRE, fill=OCHRE_BG, size=17)
+    for key in ("s", "r"):
         macro = "macro-" + key
         x, _, width, _ = d.boxes[macro]
         center = x + width / 2
-        d.edge("c-sram-" + key, [(center, 717), (center, 748)], source=macro,
-               target="c-fixed-sram-paths", direction="both")
-    d.edge("c-g-to-e-product", [(823, 690), (918, 690)], source="macro-g", target="macro-e",
-           color=OCHRE, dashed=True)
-    d.text("c-g-to-e-label", 870.5, 674, "Bypass", size=15,
-           color=OCHRE, align="center", width=85)
+        d.edge("c-candidate-" + key, [(center, 717), (center, 739)], source=macro,
+               color=OCHRE, dashed=True, direction="none")
+        d.text("c-candidate-" + key + "-label", center, 751, "Candidate endpoint",
+               size=14, color=OCHRE, align="center", width=180)
+    d.edge("c-bypass-g-out", [(720.5, 717), (720.5, 769)], source="macro-g",
+           target="c-product-bypasses", color=OCHRE, dashed=True)
+    d.edge("c-bypass-e-in", [(1020.5, 769), (1020.5, 717)], source="c-product-bypasses",
+           target="macro-e", color=OCHRE, dashed=True)
     for key, x, color, dashed, caption in (
         ("exchange", 60, BLUE, False, "Control and data exchange"),
-        ("physical", 623, OCHRE, True, "Product-specific physical wiring"),
+        ("physical", 623, OCHRE, True, "Product-specific bypass wiring"),
     ):
-        d.edge("key-" + key, [(x, 837), (x + 42, 837)], color=color, dashed=dashed, direction="none")
-        d.text("key-" + key + "-label", x + 54, 837, caption, size=16, color=color, width=470)
+        d.edge("key-" + key, [(x, 851), (x + 42, 851)], color=color, dashed=dashed, direction="none")
+        d.text("key-" + key + "-label", x + 54, 851, caption, size=16, color=color, width=470)
     return d
 
 

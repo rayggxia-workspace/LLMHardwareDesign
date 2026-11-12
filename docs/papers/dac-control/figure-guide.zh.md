@@ -12,10 +12,13 @@
 
 | 画法 | 图 1(b) 的规则 | 读图例子 |
 | --- | --- | --- |
-| 蓝色实线箭头 | 表示接口的控制与数据交换。宏上方按局控和服务适配器组织，宏下方按固定物理路径组织。 | 上方是母控调用、局控取指、宏命令与返回。下方是 S↔R、S↔G、S↔E，经仲裁和适配器读操作数、写结果。 |
-| 橙色虚线箭头 | 表示按产品接入的后制物理旁路，箭头方向跟随结果数据。 | G 输出经分离端点和保持槽直接送 E。连线也携带有效信号，并由 E 返回接收握手。 |
+| 蓝色实线箭头 | 表示局控和服务适配器上的控制与数据交换，包括固定的 SRAM 访问。 | R、G、E 通过既有仲裁和适配器访问 S。 |
+| 橙色横带和接入横带的虚线箭头 | 按图 1(a) 的方式汇总产品后制路径，箭头按数据方向绘制。 | G 向横带输出，E 从横带接收。该路径有独立 C 夹具的物理连线和网表回放记录。 |
+| 橙色短虚线 | 表示需要进一步设计的候选端点，短线在横带前断开。 | S 和 R 可作为后续设计的候选，图中未给它们绑定后制路径。 |
 
-**横带如何读。** 与图 1(a) 一样，方框下面的横带用于归纳物理路径。C 内的这条横带以 S 为存储端，R、G、E 是经仲裁访问它的三个计算客户端。请求和数据通过各自适配器，S 口一次处理一笔在途事务。G 的结果可以先写 S，再由 E 读回。接入橙色旁路时，E 也可直接接收 G 的结果，省去该中间结果的 SRAM 写入和读出。固定路径和后制旁路来自独立 C 夹具，整底座的联合验收仍是单独的步骤。[C 固定 SRAM 路径 RTL](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_cfj_v1/block_cfj_cf.sv#L75-L139) · [预连与后制证据](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/211/README.md#L63-L73) · [C 直送与回放对照](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/211/README.md#L109-L114)
+**G→E 的用途。** G 的结果可经 S 写回、再由 E 读出。通过后制旁路时，保持槽与接收适配器通过独立端点传递数据和有效信号，E 返回接收握手，省去该中间结果的 SRAM 往返。横带归纳按产品选定的点对点路径，每条实际连线由端点清单确定。[C 端点与握手 RTL](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_cfj_v1/block_cfj_cf.sv#L30-L35) · [C 直送与回放对照](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/211/README.md#L109-L114)
+
+**S、R 是否也能参加后制连线。** 架构上可以预留，例如 R→E 可以让 E 直接消费 R 的输出。底座需要先提供可接出的 R 结果、可接收的 E 输入、兼容的数据格式和握手，产品后制才能把两端连起来。S 也可以是后制路径的源或目的，此时仍需保留存储访问的仲裁和确认。项目中 J 夹具的 E→S 写回已经使用独立后制端点，可作为涉及 S 的例子。C 当前可回查的宏间后制旁路是 G→E，涉及 S 或 R 的新路径仍是候选。[C/F/J 端点说明](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/211/README.md#L36-L41) · [夹具后制与网表证据](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/211/README.md#L63-L73)
 
 ## 图 2　指令分类与两种模型的 Q/K 前处理
 
