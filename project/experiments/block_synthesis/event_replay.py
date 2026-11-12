@@ -7,16 +7,43 @@ from dma_read import BeatReceipt, Read, ReadFabric
 
 
 @dataclass(frozen=True)
+class ReadyWindow:
+    """An external READY gate, closed for the first residues of a period."""
+    period: int
+    closed: int
+    offset: int
+
+    @classmethod
+    def from_spec(cls, spec):
+        if not isinstance(spec, dict) or spec.keys() != {'period', 'closed', 'offset'}:
+            raise ValueError('invalid phase READY window')
+        gate = cls(**spec)
+        if not gate.valid():
+            raise ValueError('invalid phase READY window')
+        return gate
+
+    def valid(self):
+        return (all(type(value) is int for value in (self.period, self.closed, self.offset))
+                and 0 <= self.closed < self.period and 0 <= self.offset < self.period)
+
+    def next_tick(self, tick):
+        return tick + max(0, self.closed - (tick + self.offset) % self.period)
+
+
+@dataclass(frozen=True)
 class Phase:
     name: str
     ticks: int
     claims: tuple[tuple[str, int], ...] = ()
     priority: int = 0
     dma_read: Read | None = None
+    ready_window: ReadyWindow | None = None
 
     @classmethod
     def from_spec(cls, name, ticks, spec):
-        return cls(name, ticks, tuple(sorted(spec['claims'].items())), spec.get('priority', 0))
+        ready = ReadyWindow.from_spec(spec['ready_window']) if 'ready_window' in spec else None
+        return cls(name, ticks, tuple(sorted(spec['claims'].items())), spec.get('priority', 0),
+                   ready_window=ready)
 
 
 @dataclass(frozen=True)
@@ -54,8 +81,8 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
 
     At each tick, completions free resources before grants. A first grant
     acquires the operation's holds atomically, and the final completion
-    releases them. Between grants, only pending arrival or completion events
-    can change eligibility.
+    releases them. A request can also become eligible when its external READY
+    gate opens.
     """
     issue_rates = issue_rates or {}
     uses_dma = any(phase.dma_read is not None for operation in operations for phase in operation.phases)
@@ -87,6 +114,8 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
                     or len(holds) != len(operation.holds)
                     or len(dict(phase.claims)) != len(phase.claims)
                     or phase.dma_read is not None and not phase.dma_read.valid()
+                    or phase.ready_window is not None and (
+                        not isinstance(phase.ready_window, ReadyWindow) or not phase.ready_window.valid())
                     or any(r in issue_rates and units > issue_rates[r][1] for r, units in phase.claims)):
                 raise ValueError('invalid replay phase duration, priority or resource claim')
             current = index, phase_index
@@ -178,6 +207,7 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
 
         waiting = []
         launches = []
+        next_open = []
         for request in sorted(pending):
             _, _, index, phase_index = request
             operation = operations[index]
@@ -188,6 +218,12 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
                            for r, units in phase.claims)):
                 waiting.append(request)
                 continue
+            if phase.ready_window is not None:
+                opens = phase.ready_window.next_tick(tick)
+                if opens > tick:
+                    next_open.append(opens)
+                    waiting.append(request)
+                    continue
             occupied.update(dict(claims))
             record_issues(phase.claims, tick)
             if phase.dma_read is None:
@@ -211,7 +247,7 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
         pending = waiting
         if finished == len(operations):
             break
-        future = [queue[0][0] for queue in (running, arrivals) if queue]
+        future = [queue[0][0] for queue in (running, arrivals) if queue] + next_open
         if fabric is not None and fabric.active:
             future.append(tick + 1)
         if pending:

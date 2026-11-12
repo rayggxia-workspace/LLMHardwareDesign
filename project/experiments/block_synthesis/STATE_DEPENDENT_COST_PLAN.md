@@ -178,6 +178,21 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 Verilator 5.006，102603 固定 RTL 和数据条件同第 15 轮。每份新日志去掉 `RELEASE` 行后均与对应原日志逐行一致。本机 `round16-phase-release-logs.sha256` 为 `173d07d087aec3a70121e735b33a490cb0fdf6e942753e83f53405df20e2eba7`，`round16-phase-release-verified.json` 为 `5344c789a05992b5f42ee9fb25a7f2ffc8cbe6fd9814b67da03551ea92801385`。Windows 349 项测试及 `run.py --event-ir` 的阶段依赖输入通过。102604 压力模式、SRAM 初态 2 的固定轨迹仍复现 948,626 拍。
 
+### Gate/Up scatter 的物理字与 SRAM 反压
+
+第 17 轮把 P 的本地结果到环形缓冲的 scatter 改为逐字重放。六个片段由条带宽度、P 号和 Gate/Up 方向派生。每个 16 B 字经历源 SRAM 请求和响应、P0 目的 SRAM 写入与 ACK。使用不同的请求／响应资源，保持单字在途和 scatter 服务占用到 stripe 提交。目的字地址按实际交错规则和 64 字环形取模生成。分支中的源与目的均以实际 S 地址登记。
+
+- 事件阶段可用 `ready_window` 声明外部周期性 READY。在 FFN 夹具里，请求在 `(tick + 2*p) % 7 < 2` 时停发，响应在 `(tick + 3*p) % 11 < 4` 时停收。门打开、资源释放和新请求到达均可使等待阶段重新参与仲裁。独立检查在 READY 关闭时拒绝接纳，并检查开启后是否及时发放。加入优先写后，旧请求的合法发放从第 2 拍移到第 3 拍。随机逐拍参考和 1,920 次增量检查点对照覆盖周期门与容量、速率限制、跨阶段依赖的组合。
+- 用 102603 的原生 RTL 重跑四组。每组 58 个条带、348 个片段、5,504 个物理字逐事件核对，四组共 88,064 次逐字握手。scatter 提交由预测写 ACK 及控制时序产生，再送入第 16 轮的控制放行对照。192 列条带在无压力时用 690 拍，有压力时用 1,052–1,059 拍。例子是同一第 2 条带，入口分别为 24,285 和 24,315，重放得到 1,055 和 1,058 拍，两者均与 RTL 一致。
+- 篡改目的环形字地址、提前写 ACK、错用源响应 tag 都被拒绝。原 FFN 数值断言通过，四份日志去掉新探针行后与第 16 轮逐行一致。
+
+```bash
+# 复用第 16 轮插桩与运行参数，运行时再增加 +TRACE_SCATTER。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG --mode 1 --seed 25001 --scatter
+```
+
+使用 Verilator 5.006 和第 16 轮的固定数据。本机 `round17-scatter-logs.sha256` 为 `36ce257eb7417ba748fe256d5cc78cf14654453a06759c57da9cb1252c4f362f`，`round17-scatter-verified.json` 为 `556db18a7b4ba2afc169c551acac8c76119dc98afa05dbb094b7e47486b0741e`。Windows 350 项测试通过。该对照从采样的 P DONE 开始，固定控制次序保证 scatter 期间无其他 SRAM 客户争用。P 计算、G 和 Mid 提交、允许多客户同发时的 SRAM 所有权需要继续接入完整计划。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

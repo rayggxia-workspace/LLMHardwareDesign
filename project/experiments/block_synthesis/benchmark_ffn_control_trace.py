@@ -7,6 +7,7 @@ from pathlib import Path
 from cover_frontier import search
 from dma_read import Profile, Read
 from event_replay import Operation, Phase, replay
+from ffn_scatter import scatter_service, stripe_fragments
 from verify_cover_frontier import verify
 
 
@@ -73,6 +74,18 @@ ADMISSION_MONITOR = """  reg [31:0] probe_down_session=0;
    probe_ready_previous<={probe_range_ready,probe_exec_ready};
   end
 """
+SCATTER_MONITOR = """  always @(posedge clk) if($test$plusargs("TRACE_SCATTER")&&!reset)begin
+   if(copy_start&&copy_ready)
+    $display("SCATTER start %0d %0d %0d %0d %0d %0d %0d %0d %0d",cycle,tile_session,
+             copy_generation,source_p,gather.way,copy_first,copy_src,copy_ring,copy_words);
+   if(cs_valid&&cs_ready)$display("SCATTER read %0d %0d %0d",cycle,cs_address,cs_tag);
+   if(cs_rsp_valid&&cs_rsp_ready)$display("SCATTER response %0d %0d",cycle,cs_rsp_tag);
+   if(cd_valid&&cd_ready)$display("SCATTER write %0d %0d %0d",cycle,cd_address,cd_tag);
+   if(cd_rsp_valid&&cd_rsp_ready)$display("SCATTER ack %0d %0d",cycle,cd_rsp_tag);
+   if(copy_done&&copy_take)
+    $display("SCATTER done %0d %0d %0d",cycle,copy_prefix,copy_error);
+  end
+"""
 
 # From the last accepted CALL flit, the LC accepts the frame, reads PM and
 # metadata, then presents the first 64 B fetch. CRC scans 124 bytes after the
@@ -101,7 +114,7 @@ def instrument(source, destination):
     if rtl.count(ANCHOR) != 1:
         raise ValueError('expected the unique programmed FFN block in #251')
     with destination.open('x', encoding='utf-8', newline='\n') as output:
-        output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + ANCHOR))
+        output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + SCATTER_MONITOR + ANCHOR))
 
 
 def read_trace(source):
@@ -109,6 +122,7 @@ def read_trace(source):
     scopes = []
     admission = {'ready': [], 'stripe': [], 'down': []}
     upstream = []
+    scatter = []
     start = result = program = None
     passed = False
     for line in source:
@@ -124,6 +138,9 @@ def read_trace(source):
         if line.startswith('RELEASE '):
             _, kind, tick = line.split()
             upstream.append((kind, int(tick)))
+        if line.startswith('SCATTER '):
+            _, kind, *fields = line.split()
+            scatter.append((kind, *map(int, fields)))
         if not line.startswith('CONTROL '):
             continue
         _, kind, raw_tick, *fields = line.split()
@@ -149,7 +166,7 @@ def read_trace(source):
     require(passed and start is not None and result is not None and not open_calls and program is not None,
             'incomplete programmed FFN trace')
     require(len(scopes) == 192, 'expected all 192 native calls')
-    return scopes, start, result, program, admission, upstream
+    return scopes, start, result, program, admission, upstream, scatter
 
 
 def first_ready(edges, ticks, mask, release):
@@ -194,6 +211,97 @@ def controller_triggers(upstream):
         trigger = accept('down_done')
     require(next(events, None) is None, 'unexpected additional producer handshake')
     return releases
+
+
+def scatter_problem(fragments, mode, producer_ready):
+    service = scatter_service(fragments, mode)
+    resources = {r: 1 for phase in service['phases'] for r in phase['claims']}
+    resources.update(service['hold_claims'])
+    windows, values, inputs, outputs = {}, {}, {}, {}
+
+    def window(client, address):
+        site = f'P{client}'
+        name = f'{site}:{address}'
+        windows[name] = {'site': site, 'offset': address * 16, 'bytes': 16}
+        return name
+
+    for fragment in fragments:
+        for word in range(fragment.words):
+            source = window(fragment.client, fragment.scratch + word)
+            destination = window(0, fragment.destination(word))
+            require(destination not in outputs, 'scatter writes the same ring word twice')
+            values[source] = 16
+            inputs[source] = outputs[destination] = source
+
+    def action(name, ticks, stage, after=()):
+        return {'id': name, 'after': after,
+                'bindings': [{'id': name, 'site': 'P0', 'ticks': ticks, 'resources': [],
+                              'nets': [], 'scratch_words': 0, 'event_stages': [stage]}]}
+
+    tasks = [action('producer', producer_ready, {'service': 'producer'}),
+             action('scatter', service['ticks'], {'service': 'scatter', 'inputs': inputs, 'outputs': outputs},
+                    after=('producer',))]
+    hardware = {'resources': resources, 'nets': {},
+                'sites': {f'P{p}': {'bytes': 16384, 'words': 1024} for p in range(P_COUNT)},
+                'event_model': {'kind': 'qualified-event-model-v1', 'timing': 'replay',
+                                'value_bytes': values, 'windows': windows, 'initial_copies': inputs,
+                                'routes': {}, 'services': {'producer': {'ticks': producer_ready, 'claims': {}},
+                                                           'scatter': service}}}
+    return tasks, hardware
+
+
+def check_scatter(scopes, upstream, observed, mode):
+    by_session = {}
+    for scope in scopes:
+        done, session, _, _ = scope['done'][0]
+        if session <= GATE_UP_STRIPES:
+            owners = by_session.setdefault(session, {})
+            require(scope['client'] not in owners, 'duplicate P completion in stripe')
+            owners[scope['client']] = done
+
+    generation = words = cursor = 0
+    commits = []
+    latencies = []
+    for session in range(1, GATE_UP_STRIPES + 1):
+        completion = by_session.get(session, {})
+        require(set(completion) == set(range(P_COUNT)), f'incomplete P completions for stripe {session}')
+        first = STRIPE_COLUMNS * (session - 1)
+        fragments = stripe_fragments(first, min(STRIPE_COLUMNS, GATE_UP_COLUMNS - first))
+        ready = max(completion.values()) + 1
+        tasks, hardware = scatter_problem(fragments, mode, ready)
+        plan = search(tasks, hardware, width=1)
+        verify(tasks, hardware, (), plan)
+        starts = {p['kind']: p['start'] for p in plan['tasks'][-1]['evaluation']['events'][0]['phases']}
+        stripe_events = []
+        for index, fragment in enumerate(fragments):
+            prefix = f'fragment{index}'
+            generation += 1
+            stripe_events.append(('start', starts[f'{prefix}.start'], session, generation, fragment.client,
+                                  fragment.way, fragment.first, fragment.scratch, fragment.ring, fragment.words))
+            for word in range(fragment.words):
+                name = f'{prefix}.word{word}'
+                tag = generation << 16 | word
+                stripe_events.extend((
+                    ('read', starts[f'{name}.read'], fragment.scratch + word, tag),
+                    ('response', starts[f'{name}.response'], tag),
+                    ('write', starts[f'{name}.write'], fragment.destination(word), tag),
+                    ('ack', starts[f'{name}.ack'], tag),
+                ))
+            stripe_events.append(('done', starts[f'{prefix}.done'], fragment.words, 0))
+            words += fragment.words
+        for expected in stripe_events:
+            actual = observed[cursor] if cursor < len(observed) else None
+            require(actual == expected, f'stripe {session} scatter differs: expected {expected}, saw {actual}')
+            cursor += 1
+        commits.append(starts['commit'])
+        latencies.append(starts['commit'] - ready)
+
+    require(cursor == len(observed), 'unexpected scatter trace entries')
+    require([tick for kind, tick in upstream if kind == 'scatter'] == commits, 'scatter commit differs')
+    predicted = iter(commits)
+    releases = [(kind, next(predicted) if kind == 'scatter' else tick) for kind, tick in upstream]
+    return releases, {'stripes': len(commits), 'fragments': generation, 'words': words,
+                      'min_cycles': min(latencies), 'max_cycles': max(latencies)}
 
 
 def replay_group(group, trigger, delay, is_down):
@@ -302,8 +410,8 @@ def check_admission(scopes, transfers, admission, upstream=None):
     return report
 
 
-def check(source, mode, seed, *, admission=False, phase_release=False):
-    scopes, start, result, program, sampled_admission, upstream = read_trace(source)
+def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False):
+    scopes, start, result, program, sampled_admission, upstream, observed_scatter = read_trace(source)
     transfers, terminals = [], []
     sequence = [0] * 3
     read_bytes = write_bytes = 0
@@ -360,10 +468,12 @@ def check(source, mode, seed, *, admission=False, phase_release=False):
               'result_accept': result[0], 'read_bytes': read_bytes, 'write_bytes': write_bytes,
               'longest_service_offer_wait': max(s['dispatch'][0][0] - s['offer'][0][0] for s in scopes),
               'longest_done_to_terminal': max(s['terminal'][0][0] - s['done'][0][0] for s in scopes)}
-    if admission or phase_release:
+    if scatter:
+        upstream, report['scatter'] = check_scatter(scopes, upstream, observed_scatter, mode)
+    if admission or phase_release or scatter:
         report['admission'] = check_admission(scopes, grants[:len(scopes)], sampled_admission,
-                                              upstream if phase_release else None)
-    if phase_release:
+                                              upstream if phase_release or scatter else None)
+    if phase_release or scatter:
         report['phase_replay_calls_per_strategy'] = len(scopes)
     return report
 
@@ -380,13 +490,14 @@ def main():
     verify.add_argument('--seed', type=int, default=25001)
     verify.add_argument('--admission', action='store_true')
     verify.add_argument('--phase-release', action='store_true')
+    verify.add_argument('--scatter', action='store_true')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
     else:
         with args.log.open(encoding='utf-8') as source:
             print(json.dumps(check(source, args.mode, args.seed, admission=args.admission,
-                                   phase_release=args.phase_release), indent=2))
+                                   phase_release=args.phase_release, scatter=args.scatter), indent=2))
 
 
 if __name__ == '__main__':

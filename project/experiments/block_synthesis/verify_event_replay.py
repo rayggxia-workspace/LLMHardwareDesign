@@ -1,5 +1,6 @@
 """Check the grants in an emitted replay trace against the arbitration contract."""
 from collections import Counter, defaultdict
+from heapq import heapify, heappop, heappush
 
 from dma_read import ReadFabric, receipt_json
 from event_execution import Model, phase_edges
@@ -33,7 +34,7 @@ def verify_grants(tasks, hardware, rows):
                 raise ValueError('grant precedes phase dependency')
             claims = phase.claims + (operation.holds if j == 0 else ())
             releases = phase.claims + (operation.holds if j == len(phases) - 1 else ())
-            ready_at[ready].append((phase.priority, ready, i, j, start, claims))
+            ready_at[ready].append((phase.priority, ready, i, j, start, claims, phase.ready_window))
             release_at[end].extend(releases)
             ticks.update((ready, start, end))
             if phase.dma_read is not None:
@@ -49,7 +50,10 @@ def verify_grants(tasks, hardware, rows):
     free = model.capacity.copy()
     issue_count = Counter()
     waiting = []
-    for tick in sorted(ticks):
+    edges = list(ticks)
+    heapify(edges)
+    while edges:
+        tick = heappop(edges)
         for resource, units in release_at[tick]:
             free[resource] += units
         for resource, units in issue_expires[tick]:
@@ -57,11 +61,19 @@ def verify_grants(tasks, hardware, rows):
         pending = sorted(waiting + ready_at[tick])
         waiting = []
         for request in pending:
-            _, _, _, _, start, claims = request
+            _, _, _, _, start, claims, gate = request
             can_start = all(free[resource] >= units for resource, units in claims)
             can_start = can_start and all(
                 resource not in model.issue_rates or issue_count[resource] + units <= model.issue_rates[resource][1]
                 for resource, units in claims)
+            if can_start and gate is not None:
+                residue = (tick + gate.offset) % gate.period
+                if residue < gate.closed:
+                    opens = tick + gate.closed - residue
+                    if opens not in ticks:
+                        heappush(edges, opens)
+                        ticks.add(opens)
+                    can_start = False
             if start < tick or can_start != (start == tick):
                 raise ValueError(f'arbitration grant differs at tick {tick}')
             if can_start:

@@ -8,7 +8,7 @@ from benchmark_native_dma_read import CASES, OLD, event_input, moves_by_task
 from benchmark_native_sram_replay import check_trace
 from cover_frontier import search
 from dma_offer import DmaOfferChannel
-from event_replay import Operation, Phase, ReplayDeadlock, replay
+from event_replay import Operation, Phase, ReadyWindow, ReplayDeadlock, replay
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
 
@@ -98,7 +98,7 @@ class ReplayTest(unittest.TestCase):
             for index in range(18):
                 deps = frozenset(rng.sample(range(index), min(index, rng.randrange(3))))
                 phase = Phase('service', rng.randint(1, 5), (('bank', rng.randint(1, capacity)),),
-                              rng.randint(-1, 1))
+                              rng.randint(-1, 1), ready_window=ReadyWindow(7, 2, index % 7) if seed % 2 else None)
                 operations.append(Operation((phase,), deps, rng.randint(0, 12)))
             expected = self.tick_reference(operations, capacity)
             actual = replay(operations, {'bank': capacity})
@@ -115,8 +115,9 @@ class ReplayTest(unittest.TestCase):
                 deps = frozenset(rng.sample(range(i), min(i, rng.randrange(3))))
                 phases = (
                     Phase('bank', rng.randint(1, 5), (('bank', rng.randint(1, 2)),),
-                          rng.randint(-1, 1)),
-                    Phase('ack', rng.randint(1, 3), (('ack', 1),)),
+                          rng.randint(-1, 1), ready_window=ReadyWindow(7, 2, i % 7) if seed % 3 else None),
+                    Phase('ack', rng.randint(1, 3), (('ack', 1),),
+                          ready_window=ReadyWindow(11, 4, i % 11) if seed % 3 == 2 else None),
                 )
                 phase_after = ()
                 if i and rng.randrange(2):
@@ -522,6 +523,39 @@ class ReplayTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'require event replay'):
             search(base, h)
 
+    def test_ready_window_reprices_old_grant_and_rejects_wrong_edges(self):
+        h = hardware()
+        spec = h['event_model']
+        spec.update(timing='replay', live_out=[])
+        spec['services']['gated'] = {
+            'ticks': 2, 'claims': {'S0': 1},
+            'ready_window': {'period': 7, 'closed': 2, 'offset': 0},
+        }
+        spec['services']['interfere'] = {
+            'ticks': 3, 'claims': {},
+            'phases': [{'kind': 'prepare', 'ticks': 2, 'claims': {}},
+                       {'kind': 'write', 'ticks': 1, 'claims': {'S0': 1}, 'priority': -1}],
+        }
+        old = task('a-old', binding('old', stage('gated')))
+        other = task('b-new', binding('new', stage('interfere')))
+        base = search([old], h, width=1)
+        verify([old], h, (), base)
+        self.assertEqual(base['tasks'][0]['start'], 2)
+        crowded = search([old, other], h, width=1, ready_limit=1)
+        verify([old, other], h, (), crowded)
+        self.assertEqual((crowded['tasks'][0]['start'], crowded['makespan']), (3, 5))
+        for tick in (1, 4):
+            bad = deepcopy(base)
+            row = bad['tasks'][0]
+            row.update(start=tick, end=tick+2)
+            row['evaluation']['events'][0].update(start=tick, end=tick+2)
+            bad['makespan'] = tick+2
+            with self.assertRaisesRegex(ValueError, 'arbitration grant differs'):
+                verify([old], h, (), bad)
+        spec['services']['gated']['ready_window']['closed'] = 7
+        with self.assertRaisesRegex(ValueError, 'invalid phase READY'):
+            search([old], h)
+
     @staticmethod
     def tick_reference(operations, capacity):
         assigned = {}
@@ -533,7 +567,8 @@ class ReplayTest(unittest.TestCase):
                 if i in assigned or not op.after <= assigned.keys():
                     continue
                 ready = max([op.release] + [assigned[p][1] for p in op.after])
-                if ready <= tick:
+                gate = op.phases[0].ready_window
+                if ready <= tick and (gate is None or (tick + gate.offset) % gate.period >= gate.closed):
                     eligible.append((op.phases[0].priority, ready, i))
             for _, _, i in sorted(eligible):
                 phase = operations[i].phases[0]

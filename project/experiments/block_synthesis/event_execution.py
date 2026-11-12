@@ -215,6 +215,11 @@ class Model:
         self.initial = Execution({}, copies, dict.fromkeys(external, 0))
 
     def validate_service(self, service):
+        if 'ready_window' in service:
+            from event_replay import ReadyWindow
+            if self.spec.get('timing') != 'replay':
+                raise ValueError('READY window requires a replay phase')
+            ReadyWindow.from_spec(service['ready_window'])
         if type(service.get('priority', 0)) is not int:
             raise ValueError('invalid native arbitration priority')
         if any(type(n) is not int or n < 1 or n > self.capacity.get(r, 0)
@@ -235,7 +240,7 @@ class Model:
         used = set(route['claims'])
         for name in ('issue', 'ack'):
             item = phases[name]
-            if (set(item) - {'priority'} != {'ticks', 'claims'}
+            if (set(item) - {'priority', 'ready_window'} != {'ticks', 'claims'}
                     or type(item['ticks']) is not int or item['ticks'] < 1):
                 raise ValueError('invalid phased route endpoint')
             self.validate_service(item)
@@ -296,11 +301,12 @@ class Model:
         self.validate_service({'claims': holds})
         if holds.keys() & self.issue_rates.keys():
             raise ValueError('rate-limited issue ports cannot be held between phases')
-        if not isinstance(phases, (list, tuple)) or len(phases) < 2 or service['claims']:
+        if (not isinstance(phases, (list, tuple)) or len(phases) < 2
+                or service['claims'] or 'ready_window' in service):
             raise ValueError('phased native stage must declare separate phase claims')
         names = set()
         for phase in phases:
-            if (set(phase) - {'priority'} != {'kind', 'ticks', 'claims'}
+            if (set(phase) - {'priority', 'ready_window'} != {'kind', 'ticks', 'claims'}
                     or not isinstance(phase['kind'], str) or not phase['kind']
                     or phase['kind'] in names or type(phase['ticks']) is not int or phase['ticks'] < 1
                     or phase['claims'].keys() & holds.keys()):

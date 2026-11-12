@@ -29,6 +29,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
         writes[w].append((0, 0, value))
 
     def claim(record, start, end):
+        require('ready_window' not in record or timing == 'replay', 'READY window requires a replay phase')
         for r, units in record['claims'].items():
             reservations[r].extend(((start, units), (end, -units)))
         nets.update(record.get('nets', ()))
@@ -55,6 +56,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
         claim({'claims': holds, 'nets': nets}, start, end)
 
     def route_claims(event, route, size):
+        require('ready_window' not in route or timing == 'replay', 'READY window requires a replay phase')
         start, end = event['start'], event['end']
         duration = route['setup'] + (size+route['bytes_per_tick']-1)//route['bytes_per_tick']
         profile = route.get('phases')
