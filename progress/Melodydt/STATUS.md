@@ -8,3 +8,10 @@
 - 验证：在本地参考副本执行 `python -X utf8 scripts/check_project.py` 通过。文档表列、22 个 HTTPS 引用格式、两处换算、行尾空白通过；核查论文和厂商数据。未启动服务器仿真或板测。
 - 下一步：审查来源、计时阶段、硅片与仿真证据及图读数。用于同条件性能验收前，仍需同模型、量化、带宽和 512 输入/128 输出的证据。
 - 阻塞与待同步：项目登记 PR #5 待合并。当前没有可用 Projects 条目和字段工具，适用看板待核验、同步待执行，由具权限维护者处理。恢复入口见调研报告的协作交接。
+
+## 2026-11-12 21:43（Asia/Shanghai，UTC+08:00）
+
+- 按用户补充口径使用各论文的原始工况，扩展 TOM、MARCA、MARCA-v2、Platinum、HB-PIM、Titanus、Apple AFM 和手机 NPU 阶段测量，补齐已有论文的 PPA、位宽、内存和计时边界。
+- [Issue #261](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/261) · [PR #262](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/262) · [扩展报告](../../docs/experiments/issue-261-llm-asic-benchmarks.md)。待独立审查。
+- 验证：本地参考副本 `python -X utf8 scripts/check_project.py` 通过，4 个表格、36 个 HTTPS 引用的格式、关键换算和行尾空白通过。实际服务器作业和板测未执行。
+- 审查重点：核对硅片、仿真及算子数据的可比范围，确认后续引用使用原表工况。看板和登记交接见报告。线上检查以 PR 的运行回执为准。
