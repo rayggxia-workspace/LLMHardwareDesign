@@ -230,6 +230,21 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 本机 `round19-result-logs.sha256` 为 `813dba7b4891e683578f06bb2bb9c81613c57576713ae62f6851d35f2a566317`，`round19-result-verified.json` 为 `4a2e7ecab072faaecb9750e40bd797668060c08235a8ff6e5734536037631a95`。Windows 352 项测试通过。102604 固定轨迹的旧基线仍为贪心与 DP 各 948,626 拍。本轮读回是 #251 验证程序的实际 SRAM 流量。P 首字写发起仍来自 RTL 采样，通用候选重排还需从 K 窗口、权重和 M 执行推导该拍，并把跨 scope 的未排空事务带进同一快照。
 
+### 从 M EXEC 接纳到 P 记录退休
+
+第 20 轮把 P 结果首字写回的发起拍前推到 M 接纳 EXEC。冻结的 K128 FFN 每条 EXEC 有八个连续的 K16 操作数拍，尾拍后三拍交付点积，再经三拍缩放和累加产生 RF 回包。INPUT 回包在尾拍后一拍就绪。两类回包和已就绪的分配、填充、上下文回包共用一条有优先级的链路。从各自就绪拍重放仲裁，包头在选择后一拍发送，收到 EOP 才可释放该链路。INPUT EOP 解除操作数占用，RF EOP 后结果仍由有序 guard 持有，末 K 还需等两笔真实 SRAM 写确认。成对命令首条从 guard 直接退休，A_LAST 另需关闭及释放 A。模型算出的首字发起和记录退休继续驱动第 19 轮的 P、Mid 和 Down 检查。
+
+四组 #251 Verilator 5.006 完整仿真逐拍对齐 264,192 条 EXEC 和 1,080,832 个回包的选择与 EOP。其间 8,729 条 EXEC 接纳时，前一条的 RF 回包还未传完。受控范围内 INPUT 和 RF 各最多等待两拍。去掉新增探针后，四组日志与第 19 轮逐行一致。篡改 EXEC 上下文、操作数拍、点积拍、控制就绪拍、回包身份、EOP 或 guard 退休拍的七个负例均被拒绝。
+
+候选小图用同一套回包和写确认阶段重算两种 EXEC 接纳安排。空闲时，宽度 8 的 DP 选择第 8 拍接纳。加入第 18 和第 21 拍就绪的两条控制回包后，严格贪心仍选第 8 拍接纳，计划第 42 拍退休。宽度 8 的 DP 选第 9 拍接纳，计划第 39 拍退休。两份计划均经独立检查。该候选对照由事件 IR 注入，完整 RTL 对照使用固定程序。
+
+```bash
+# 复用第 19 轮运行参数，运行时增加 +TRACE_M。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG --mode 1 --seed 25001 --m
+```
+
+本机 `round20-m-logs.sha256` 为 `eafb86e7a6a92bb6a321643c2cf77efecc877acf74386b726330ab3619db294d`，`round20-m-verified.json` 为 `91e9862778768b4edc9a0e2021a22fc4c3a727f9f7c40203c52500b16bc7b027`。Windows 353 项测试通过，102604 固定轨迹基线仍为 948,626 拍。M EXEC 接纳以及分配、填充和上下文回包的就绪仍来自 RTL 采样。下一步从命令仲裁及 A/W 准备重算这些入口，验证候选改变后跨 scope 的状态能否继续推进。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

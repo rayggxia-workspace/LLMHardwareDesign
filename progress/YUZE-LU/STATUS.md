@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 20 轮。四组 #251 RTL 逐拍核对 264,192 条 M EXEC 和 1,080,832 个回包，P 首字写回从 M 执行与 guard 所有权重算。受控候选图中，加入两个控制回包后，宽度 8 的 DP 为 39 拍，严格贪心为 42 拍。353 项测试和七个负例通过。M 接纳与控制回包就绪仍来自 RTL 采样，继续接入 A/W 准备及命令仲裁。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 待本地后续提交，#219 仍在执行，看板交接沿用现有记录。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 19 轮。四组 #251 完整 FFN 按物理 SRAM 的写确认重建 768 次 P DONE、24 次 Down 组完成，并重放 7,552 字读回和程序接受。352 项测试通过，七个篡改负例均拒绝。P 首字写发起仍来自 RTL 采样，下一步接入 K／权重／M 执行。PR #257 和看板沿用现有远端交接。
 
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 18 轮。接入 G 流水、Mid SRAM 所有权及目录发布。四组 #251 完整 FFN 的 344 个 Mid tile、145,168 个事件逐拍对账。受控 RTL 中首条 G 晚一拍放行，首块 Mid 早十拍发布，完整 FFN 周期持平。351 项通过。下一步接入 P 计算与跨 scope 完整重排。PR #257 和看板沿用现有远端交接。

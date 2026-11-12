@@ -10,6 +10,7 @@ from benchmark_native_sram_replay import check_trace
 from cover_frontier import search
 from dma_offer import DmaOfferChannel
 from event_replay import Operation, Phase, ReadyWindow, ReplayDeadlock, replay
+from ffn_m import INPUT, INPUT_READY, RF, RF_READY, commit_phases, reply_phase
 from ffn_mid import MIN_TICKS, MidTile
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
@@ -604,6 +605,49 @@ class ReplayTest(unittest.TestCase):
         self.assertEqual(replay_readback(words, 1, 3, published), [(3, 5), (7, 12)])
         with self.assertRaisesRegex(ValueError, 'footprint differs'):
             replay_readback(words, 1, 1, {'P0:256': 'Mid:0', 'P1:257': 'Mid:128'})
+
+    def test_m_candidate_reprices_when_reply_snapshot_changes(self):
+        h = {'resources': {}, 'sites': {'P0': {'words': 0, 'bytes': 0}}, 'nets': {},
+             'event_model': {'kind': 'qualified-event-model-v1', 'timing': 'replay', 'services': {},
+                             'value_bytes': {}, 'windows': {}, 'routes': {}}}
+        services = h['event_model']['services']
+
+        def service(name, *phases):
+            parts = []
+            for phase in phases:
+                h['resources'].update(phase.claims)
+                item = {'kind': phase.name, 'ticks': phase.ticks, 'claims': dict(phase.claims),
+                        'priority': phase.priority}
+                if phase.ready_window:
+                    item['ready_window'] = dict(vars(phase.ready_window))
+                parts.append(item)
+            services[name] = {'ticks': sum(p.ticks for p in phases), 'claims': {}, 'phases': parts}
+            return stage(name)
+
+        def waits(row, producer, source, target):
+            row['event_after'] = [{'task': producer, 'from': [0, source], 'to': [0, target]}]
+            return row
+
+        exec_choices = task('exec', binding('early', service('early', Phase('offer', 7), Phase('admit', 1))),
+                            binding('late', service('late', Phase('offer', 8), Phase('admit', 1))))
+        rf = waits(task('rf', binding('rf', service('rf', Phase('prepare', RF_READY),
+                                                     reply_phase(0, RF, 4)))), 'exec', 'admit', 'prepare')
+        inputs = waits(task('inputs', binding('inputs', service('inputs', Phase('prepare', INPUT_READY),
+                                                                 reply_phase(0, INPUT, 2)))),
+                       'exec', 'admit', 'prepare')
+        stores = waits(task('stores', binding('stores', service('stores', *commit_phases(0, 1, True)))),
+                       'rf', 'reply frame', 'select guard head')
+        controls = [task(f'control{source}', binding(f'control{source}', service(
+            f'control{source}', Phase('prepare', tick), reply_phase(0, source, 2))))
+            for tick, source in ((18, 1), (21, 11))]
+        base = [exec_choices, rf, inputs, stores]
+        for tasks, width, choice, finish in ((base, 8, 'early', 39),
+                                             (base + controls, 1, 'early', 42),
+                                             (base + controls, 8, 'late', 39)):
+            plan = search(tasks, h, width=width)
+            verify(tasks, h, (), plan)
+            self.assertEqual((next(row['binding'] for row in plan['tasks'] if row['id'] == 'exec'),
+                              plan['makespan']), (choice, finish))
 
     @staticmethod
     def tick_reference(operations, capacity):

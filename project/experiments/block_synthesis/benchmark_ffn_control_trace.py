@@ -8,6 +8,8 @@ from pathlib import Path
 from cover_frontier import search
 from dma_read import Profile, Read
 from event_replay import Operation, Phase, replay
+from ffn_m import (ALLOC, BEGIN, FILL, FIRST_OPERAND, INPUT, LAST_OPERAND, RAW_READY, RF, Record, Reply,
+                   execution_replies, replay_commits, replay_replies)
 from ffn_mid import MIN_TICKS, MidTile
 from ffn_result import (READBACK_TAG, down_group_addresses, down_readback_words, mid_readback_words,
                         readback_service, sram_word_phases)
@@ -134,6 +136,57 @@ RESULT_MONITOR = """  always @(posedge clk) if($test$plusargs("TRACE_RESULT")&&!
    end
   end
 """
+M_MONITOR = """  for(genvar q=0;q<3;q++)begin: m_port
+   reg [4:0] probe_control_seen=0;
+   wire [4:0] probe_control_live={ps[q].node.M.local_valid,ps[q].node.M.command_reply_valid,
+      ps[q].node.M.n_rsp_valid&&ps[q].node.M.n_rsp_key==0,ps[q].node.M.n_fill_ack_valid,ps[q].node.M.n_alloc_ack_valid};
+   always @(posedge clk) if($test$plusargs("TRACE_M")&&!reset)begin
+    if(probe_control_live[0]&&!probe_control_seen[0])
+     $display("MEXEC control %0d %0d 1 %0d %0d 2",cycle,q,ps[q].node.M.alloc_session,ps[q].node.M.n_alloc_ack_record);
+    if(probe_control_live[1]&&!probe_control_seen[1])
+     $display("MEXEC control %0d %0d 2 %0d %0d 2",cycle,q,
+              ps[q].node.M.table_session[ps[q].node.M.n_fill_ack_bank],ps[q].node.M.n_fill_ack_record);
+    if(probe_control_live[2]&&!probe_control_seen[2])
+     $display("MEXEC control %0d %0d 4 %0d %0d %0d",cycle,q,ps[q].node.M.control_session,
+              ps[q].node.M.n_rsp_record,ps[q].node.M.n_rsp_snapshot?4:2);
+    if(probe_control_live[3]&&!probe_control_seen[3])
+     $display("MEXEC control %0d %0d 11 %0d %0d %0d",cycle,q,ps[q].node.M.session,
+              ps[q].node.M.command_reply_kind==1?0:ps[q].node.M.record_id,ps[q].node.M.command_reply_kind==0?3:2);
+    if(probe_control_live[4]&&!probe_control_seen[4])
+     $display("MEXEC control %0d %0d 9 %0d %0d %0d",cycle,q,ps[q].node.M.local_frame[79:48],
+              ps[q].node.M.local_frame[111:80],ps[q].node.M.local_length);
+    probe_control_seen<=probe_control_live;
+    if(ps[q].node.M.tx_end)begin
+     case(ps[q].node.M.tx_source)
+      1:probe_control_seen[0]<=0;
+      2:probe_control_seen[1]<=0;
+      4:probe_control_seen[2]<=0;
+      11:probe_control_seen[3]<=0;
+      9:probe_control_seen[4]<=0;
+     endcase
+    end
+    if(ps[q].node.M.n_exec_valid&&ps[q].node.M.n_exec_ready)
+     $display("MEXEC exec %0d %0d %0d %0d %0d %0d",cycle,q,ps[q].node.M.session,
+              ps[q].node.M.record_id,ps[q].node.M.exec_offset,ps[q].node.M.handle);
+    if(ps[q].node.M.native.w_valid&&ps[q].node.M.native.w_ready&&
+       (ps[q].node.M.native.w_first||ps[q].node.M.native.w_record_last))
+     $display("MEXEC operand %0d %0d %0d %0d %0d",cycle,q,ps[q].node.M.native.record_id,
+              ps[q].node.M.native.w_first,ps[q].node.M.native.w_record_last);
+    if(ps[q].node.M.native.pop)
+     $display("MEXEC raw %0d %0d %0d",cycle,q,ps[q].node.M.native.record_s[ps[q].node.M.native.raw_slot]);
+    if(!ps[q].node.M.tx_valid&&ps[q].node.M.selected_source!=0)
+     $display("MEXEC frame %0d %0d %0d %0d %0d %0d",cycle,q,ps[q].node.M.selected_source,
+              ps[q].node.M.selected_frame[79:48],ps[q].node.M.selected_frame[111:80],ps[q].node.M.selected_length);
+    if(ps[q].node.lr_valid&&ps[q].node.lr_ready&&ps[q].node.lr_eop)
+     $display("MEXEC eop %0d %0d %0d %0d %0d",cycle,q,ps[q].node.M.tx_source,
+              ps[q].node.M.tx_frame[79:48],ps[q].node.M.tx_frame[111:80]);
+    if(ps[q].node.exec.early_exec.exec.g_terminal_valid&&ps[q].node.exec.early_exec.exec.g_terminal_ready)
+     $display("MEXEC pop %0d %0d %0d %0d %0d",cycle,q,ps[q].node.exec.early_exec.exec.g_terminal_ticket[31:0],
+              ps[q].node.exec.early_exec.exec.g_terminal_ticket[63:32],
+              ps[q].node.exec.early_exec.exec.g_terminal_stored);
+   end
+  end
+"""
 
 # From the last accepted CALL flit, the LC accepts the frame, reads PM and
 # metadata, then presents the first 64 B fetch. CRC scans 124 bytes after the
@@ -163,10 +216,10 @@ def instrument(source, destination):
         raise ValueError('expected the unique programmed FFN block in #251')
     with destination.open('x', encoding='utf-8', newline='\n') as output:
         output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + SCATTER_MONITOR
-                                 + MID_MONITOR + RESULT_MONITOR + ANCHOR))
+                                 + MID_MONITOR + RESULT_MONITOR + M_MONITOR + ANCHOR))
 
 
-def read_trace(source, result_trace=None):
+def read_trace(source, result_trace=None, *, m=False):
     open_calls = {}
     scopes = []
     admission = {'ready': [], 'stripe': [], 'down': []}
@@ -175,11 +228,13 @@ def read_trace(source, result_trace=None):
     mid = []
     start = result = program = None
     passed = False
+    result_prefixes = ('PRESULT ', 'READBACK ', 'MEXEC ') if m else ('PRESULT ', 'READBACK ')
     for line in source:
-        if result_trace is not None and line.startswith(('PRESULT ', 'READBACK ')):
+        if result_trace is not None and line.startswith(result_prefixes):
             domain, kind, *fields = line.split()
             require(kind in {'PRESULT': ('write', 'ack', 'record', 'valid'),
-                             'READBACK': ('gate_done', 'request', 'ack')}[domain],
+                             'READBACK': ('gate_done', 'request', 'ack'),
+                             'MEXEC': ('exec', 'operand', 'raw', 'control', 'frame', 'eop', 'pop')}[domain],
                     f'unexpected {domain} event {kind}')
             result_trace[domain, kind].append(tuple(map(int, fields)))
         if line.startswith('PROGRAM_PROFILE '):
@@ -287,7 +342,129 @@ def p_result_addresses(session, client):
                  if fragment.client == client for word in range(fragment.words))
 
 
-def check_p_results(scopes, trace, mode):
+def ordered_scopes(scopes):
+    return sorted(scopes, key=lambda row: (row['dispatch'][0][1], row['client']))
+
+
+def p_k_slices(owner):
+    return (GATE_UP_COLUMNS if owner > GATE_UP_STRIPES else 2048) // 128
+
+
+def m_records(scopes):
+    """Expected record order, context, and store policy from FFN geometry."""
+    records = defaultdict(list)
+    sequence = 0
+    for scope in ordered_scopes(scopes):
+        client = scope['client']
+        dispatch, owner = scope['dispatch'][0]
+        contexts = len(p_result_addresses(owner, client)) // 2
+        slices = p_k_slices(owner)
+        for k in range(slices):
+            for context in range(contexts):
+                sequence += 1
+                # A_LAST closes and releases the input slot. The first
+                # member of a pair retires directly from the detached guard.
+                retire_delay = 3 if context + 1 == contexts else context % 2
+                records[client].append(Record(sequence, dispatch, owner, k * 128, context,
+                                              k + 1 == slices, retire_delay))
+    return records
+
+
+def m_control_replies(client, rows, records):
+    intents = [Reply(*row) for row in rows]
+    record_ids = {record.sequence for record in records}
+    weight = {ALLOC: {}, FILL: {}}
+    contexts = {BEGIN: set(), RF: set()}
+    for reply in intents:
+        require(reply.words == 2 and reply.source in (ALLOC, FILL, BEGIN, RF),
+                f'P{client} unexpected M control request')
+        if reply.source in weight:
+            by_record = weight[reply.source]
+            require(reply.sequence in record_ids and reply.sequence not in by_record,
+                    f'P{client} M weight control identity differs')
+            by_record[reply.sequence] = reply
+        else:
+            require(reply.sequence == 0 and reply.session not in contexts[reply.source],
+                    f'P{client} M context control identity differs')
+            contexts[reply.source].add(reply.session)
+    require(weight[ALLOC].keys() == weight[FILL].keys() == record_ids and
+            all(weight[ALLOC][row.sequence].session == weight[FILL][row.sequence].session and
+                row.dispatch < weight[ALLOC][row.sequence].ready < weight[FILL][row.sequence].ready
+                for row in records), f'P{client} M ALLOC/FILL coverage or ordering differs')
+    expected_contexts = sum(record.k == 0 for record in records)
+    require(len(contexts[BEGIN]) == len(contexts[RF]) == expected_contexts,
+            f'P{client} M context reply coverage differs')
+    return intents
+
+
+def check_m_execution(scopes, trace, mode):
+    lanes = {kind: defaultdict(list) for kind in ('exec', 'operand', 'raw', 'control', 'frame', 'eop', 'pop')}
+    for kind, lane in lanes.items():
+        for tick, client, *fields in trace['MEXEC', kind]:
+            require(0 <= client < P_COUNT, f'invalid M lane P{client}')
+            lane[client].append((tick, *fields))
+
+    stores, retired = {}, {}
+    report = {'executions': 0, 'replies': 0, 'max_input_wait': 0, 'max_rf_wait': 0, 'overlapping_execs': 0}
+    for client, records in m_records(scopes).items():
+        observed = {kind: lane[client] for kind, lane in lanes.items()}
+        starts = observed['exec']
+        require(len(starts) == len(records), f'P{client} EXEC coverage differs')
+        intents = m_control_replies(client, observed['control'], records)
+
+        operands, products = [], []
+        previous_tick = previous_session = 0
+        for (tick, session, sequence, offset, context), record in zip(starts, records):
+            require((sequence, offset, context) == (record.sequence, record.k, record.context)
+                    and max(previous_tick, record.dispatch) < tick and previous_session < session,
+                    f'P{client} EXEC sequence, K offset, context, or session differs')
+            previous_tick, previous_session = tick, session
+            operands.extend(((tick + FIRST_OPERAND, sequence, 1, 0), (tick + LAST_OPERAND, sequence, 0, 1)))
+            products.append((tick + RAW_READY, sequence))
+            intents.extend(execution_replies(tick, session, sequence, record.stores))
+        require(operands == observed['operand'], f'P{client} operand stream timing differs')
+        require(products == observed['raw'], f'P{client} raw dot timing differs')
+
+        frames, eops, input_eop, rf_eop, fill_eop = [], [], {}, {}, {}
+        for tick, reply in replay_replies(client, intents):
+            identity = reply.source, reply.session, reply.sequence
+            end = tick + reply.words
+            frames.append((tick, *identity, reply.words))
+            eops.append((end, *identity))
+            if reply.source == INPUT:
+                input_eop[reply.sequence] = end
+                report['max_input_wait'] = max(report['max_input_wait'], tick - reply.ready)
+            if reply.source == RF and reply.sequence:
+                rf_eop[reply.sequence] = end
+                report['max_rf_wait'] = max(report['max_rf_wait'], tick - reply.ready)
+            if reply.source == FILL:
+                fill_eop[reply.sequence] = end
+        require(frames == observed['frame'], f'P{client} M reply arbitration differs')
+        require(eops == observed['eop'], f'P{client} M reply EOP differs')
+        report['replies'] += len(frames)
+
+        commits = replay_commits(client, mode, [(rf_eop[record.sequence], record.stores) for record in records])
+        pop = []
+        previous_input = previous_rf = 0
+        active = []
+        for (tick, session, sequence, _, _), record, grants in zip(starts, records, commits):
+            active = [end for end in active if end >= tick]
+            require(max(previous_input, fill_eop[sequence]) < tick and len(active) < 2,
+                    f'P{client} EXEC exceeded M ownership or preceded FILL')
+            report['overlapping_execs'] += previous_rf >= tick
+            previous_input, previous_rf = input_eop[sequence], rf_eop[sequence]
+            terminal = grants[-1].start
+            active.append(terminal)
+            pop.append((terminal, session, sequence, int(record.stores)))
+            retired[client, sequence] = terminal + record.retire_delay, record.scope
+            if record.stores:
+                stores[client, sequence] = grants[0].end
+        require(pop == observed['pop'], f'P{client} guard terminal differs')
+        report['executions'] += len(records)
+    return stores, retired, report
+
+
+def check_p_results(scopes, trace, mode, m_stores=None, m_retired=None):
     writes, acks, records = (defaultdict(list) for _ in range(3))
     for kind, target in (('write', writes), ('ack', acks)):
         for tick, client, ticket, sequence, word, *address in trace['PRESULT', kind]:
@@ -303,7 +480,7 @@ def check_p_results(scopes, trace, mode):
     next_sequence = 1
     operations, expected = [], []
     valid, down, down_values = {}, {}, {}
-    for scope in sorted(scopes, key=lambda row: (row['dispatch'][0][1], row['client'])):
+    for scope in ordered_scopes(scopes):
         client = scope['client']
         dispatch, owner = scope['dispatch'][0]
         done, _, read_bytes, write_bytes = scope['done'][0]
@@ -312,7 +489,7 @@ def check_p_results(scopes, trace, mode):
         start, end = cursors[client], cursors[client] + len(addresses)
         cursors[client] = end
         issued, returned = writes[client][start:end], acks[client][start:end]
-        slices = (GATE_UP_COLUMNS if owner > GATE_UP_STRIPES else 2048) // 128
+        slices = p_k_slices(owner)
         records_per_slice = len(addresses) // 2
         completed = records.pop(key, ())
         require(len(issued) == len(returned) == len(addresses) == write_bytes // 16
@@ -324,6 +501,9 @@ def check_p_results(scopes, trace, mode):
             require(previous < tick < done and sequence == next_sequence + index
                     and next_k == (index // records_per_slice + 1) * 128,
                     f'P{client} scope {owner} record identity or K progress differs')
+            if m_retired is not None:
+                require((tick, owner) == m_retired.get((client, sequence)),
+                        f'P{client} scope {owner} M record retirement differs')
             previous = tick
         next_sequence += len(completed)
 
@@ -345,7 +525,8 @@ def check_p_results(scopes, trace, mode):
             phases = tuple(Phase.from_spec(item['kind'], item['ticks'], item)
                            for word in range(2)
                            for item in sram_word_phases(client, mode, f'word{word}'))
-            operations.append(Operation(phases, release=write0[0]))
+            release = write0[0] if m_stores is None else m_stores[client, sequence]
+            operations.append(Operation(phases, release=release))
             final = index + 1 == records_per_slice
             expected.append((key, (write0[0], ack0[0], write1[0], ack1[0]), record, final))
     require(not records and all(cursors[p] == len(writes[p]) == len(acks[p]) for p in range(P_COUNT)),
@@ -696,10 +877,12 @@ def check_admission(scopes, transfers, admission, upstream=None):
     return report
 
 
-def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False):
+def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False,
+          m=False):
+    readback = readback or m
     result_trace = defaultdict(list) if readback else None
     scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(
-        source, result_trace)
+        source, result_trace, m=m)
     transfers = []
     sequence = [0] * 3
     read_bytes = write_bytes = 0
@@ -736,8 +919,11 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
         ), release=call))
 
     p_done = None
+    m_stores = m_retired = None
+    if m:
+        m_stores, m_retired, m_report = check_m_execution(scopes, result_trace, mode)
     if readback:
-        p_done, down_done, down_values, p_report = check_p_results(scopes, result_trace, mode)
+        p_done, down_done, down_values, p_report = check_p_results(scopes, result_trace, mode, m_stores, m_retired)
     terminals = []
     for scope in scopes:
         client = scope['client']
@@ -774,6 +960,8 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
         upstream, report['readback'] = check_readback(upstream, result_trace, mode, down_done, result[0],
                                                        max(terminal_ticks), (mid_values, down_values))
         report['p_results'] = p_report
+    if m:
+        report['m_execution'] = m_report
     if admission or phase_release or scatter or mid or readback:
         report['admission'] = check_admission(scopes, grants[:len(scopes)], sampled_admission,
                                               upstream if phase_release or scatter or mid or readback else None)
@@ -797,6 +985,7 @@ def main():
     verify.add_argument('--scatter', action='store_true')
     verify.add_argument('--mid', action='store_true')
     verify.add_argument('--result', action='store_true')
+    verify.add_argument('--m', action='store_true', help='verify M EXEC through result acceptance')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
@@ -804,7 +993,7 @@ def main():
         with args.log.open(encoding='utf-8') as source:
             print(json.dumps(check(source, args.mode, args.seed, admission=args.admission,
                                    phase_release=args.phase_release, scatter=args.scatter, mid=args.mid,
-                                   readback=args.result), indent=2))
+                                   readback=args.result, m=args.m), indent=2))
 
 
 if __name__ == '__main__':
