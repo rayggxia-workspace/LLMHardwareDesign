@@ -19,6 +19,7 @@ from ffn_result import (READBACK_TAG, down_group_addresses, down_readback_words,
                         readback_service, sram_word_phases)
 from ffn_scatter import scatter_service, stripe_fragments
 from ffn_w import WeightTrace
+from ffn_w_dma import WeightDmaTrace
 from verify_cover_frontier import verify
 
 
@@ -354,7 +355,7 @@ def instrument(source, destination):
                                  + RESULT_MONITOR + M_MONITOR + ISSUE_MONITOR + AREAD_MONITOR + WEIGHT_MONITOR + ANCHOR))
 
 
-def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False, weight=None):
+def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False, weight=None, wdma=False):
     open_calls = {}
     scopes = []
     admission = {'ready': [], 'stripe': [], 'down': []}
@@ -370,8 +371,11 @@ def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False, 
         result_prefixes += ('PISSUE ',)
     if aread:
         result_prefixes += ('AREAD ',)
+    weight_prefixes = ('WEIGHT install ', 'WEIGHT request ', 'WEIGHT returned ', 'WEIGHT filled ')
+    if wdma:
+        weight_prefixes += ('WEIGHT offer ', 'WEIGHT backend_req ', 'WEIGHT backend_rsp ')
     for line in source:
-        if weight is not None and line.startswith(('WEIGHT install ', 'WEIGHT request ', 'WEIGHT returned ', 'WEIGHT filled ')):
+        if weight is not None and line.startswith(weight_prefixes):
             _, kind, *fields = line.split()
             weight.record(kind, *map(int, fields))
             continue
@@ -426,6 +430,8 @@ def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False, 
                 scopes.append(open_calls[client])
             require(client in open_calls, f'LC {client} event without CALL')
             open_calls[client].setdefault(kind, []).append((tick, *fields))
+            if wdma and kind in ('call', 'fetch', 'fetch_return'):
+                weight.record(kind, tick, *values)
             if kind == 'terminal':
                 del open_calls[client]
     require(passed and start is not None and result is not None and not open_calls and program is not None,
@@ -1173,16 +1179,16 @@ def check_admission(scopes, transfers, admission, upstream=None):
 
 
 def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False,
-          m=False, issue=False, aread=False, copy_delay_epoch=0, wa_join=False, lookahead=True, wfill=False):
+          m=False, issue=False, aread=False, copy_delay_epoch=0, wa_join=False, lookahead=True, wfill=False, wdma=False):
     aread = aread or copy_delay_epoch != 0
     wa_join = wa_join or aread or not lookahead
-    issue = issue or wa_join or wfill
+    issue = issue or wa_join or wfill or wdma
     m = m or issue
     readback = readback or m
     result_trace = defaultdict(list) if readback else None
-    weight = WeightTrace() if wfill else None
+    weight = WeightDmaTrace(mode, seed, CALL_TO_FETCH) if wdma else WeightTrace() if wfill else None
     scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(
-        source, result_trace, m=m, issue=issue, aread=aread, weight=weight)
+        source, result_trace, m=m, issue=issue, aread=aread, weight=weight, wdma=wdma)
     if weight is not None:
         weight.validate()
     transfers = []
@@ -1272,6 +1278,8 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
                                                   copy_delay_epoch=copy_delay_epoch)
     if wa_join:
         report['wa_joins'] = check_wa_joins(scopes, result_trace, m_retired, join_eops, proofs, lookahead=lookahead)
+    if wdma:
+        report['weight_dma'] = dict(weight.counts)
     if admission or phase_release or scatter or mid or readback:
         report['admission'] = check_admission(scopes, grants[:len(scopes)], sampled_admission,
                                               upstream if phase_release or scatter or mid or readback else None)
@@ -1302,6 +1310,7 @@ def main():
     verify.add_argument('--wa-join', action='store_true', help='also verify P bindings from A proof and reply EOPs')
     verify.add_argument('--no-lookahead', action='store_true', help='verify the fixture with W lookahead disabled')
     verify.add_argument('--wfill', action='store_true', help='drive W FILL from DMA beat receipts')
+    verify.add_argument('--wdma', action='store_true', help='replay W and descriptor traffic through the shared DMA')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
@@ -1312,7 +1321,7 @@ def main():
                                    phase_release=args.phase_release, scatter=args.scatter, mid=args.mid,
                                    readback=args.result, m=args.m, issue=args.issue, aread=args.aread,
                                    copy_delay_epoch=args.copy_delay_epoch, wa_join=args.wa_join,
-                                   lookahead=not args.no_lookahead, wfill=args.wfill), indent=2))
+                                   lookahead=not args.no_lookahead, wfill=args.wfill, wdma=args.wdma), indent=2))
 
 
 if __name__ == '__main__':

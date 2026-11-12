@@ -1,6 +1,7 @@
 """Clock the #251 typed read fabric with an explicit DDR service profile."""
 from bisect import bisect_right
 from collections import deque
+from collections.abc import Hashable
 from dataclasses import dataclass, field
 
 from dma_offer import DmaOfferChannel
@@ -95,8 +96,8 @@ class BeatReceipt:
 
 
 @dataclass(eq=False)
-class _Record:
-    key: tuple[int, int]
+class ReadRecord:
+    key: Hashable
     client: int
     address: int
     length: int
@@ -110,7 +111,7 @@ class _Record:
 
 @dataclass
 class _Beat:
-    record: _Record
+    record: ReadRecord
     address: int
     reserved: int
     offer: int | None = None
@@ -128,6 +129,17 @@ class _Channel:
     source_cursor: int = 0
     returns: tuple = field(default_factory=lambda: (deque(), deque()))
     return_lanes: list = field(default_factory=lambda: [None, None])
+
+
+@dataclass(slots=True)
+class ReadEdge:
+    """Explicit registered client offers and the resulting edge handshakes."""
+
+    offers: dict[int, ReadRecord]
+    accepted: list = field(default_factory=list)
+    delivered: list = field(default_factory=list)
+    issued: list = field(default_factory=list)
+    captured: list = field(default_factory=list)
 
 
 class ReadFabric:
@@ -150,11 +162,24 @@ class ReadFabric:
         stride = 64 * read.record_beats
         self.remaining[key] = read.size // 64
         self.receipts[key] = []
-        self.source[read.client].extend(_Record(key, read.client, address, read.record_beats)
+        self.source[read.client].extend(ReadRecord(key, read.client, address, read.record_beats)
                                        for address in range(read.address, read.address + read.size, stride))
 
-    def advance(self, tick):
+    def open_native(self, key, read):
+        """Register one record whose client will offer each beat explicitly."""
+        if key in self.remaining or not read.valid() or read.size != 64 * read.record_beats:
+            raise ValueError('invalid native DMA record')
+        self.remaining[key] = read.record_beats
+        self.receipts[key] = []
+        return ReadRecord(key, read.client, read.address, read.record_beats)
+
+    def advance(self, tick, *, edge=None):
         """Plan from pre-edge state, apply the handshakes, return completed reads."""
+        offers = edge.offers if edge is not None else {}
+        if any(not 0 <= client < 12 or client != record.client or self.source[client]
+               or record.key not in self.remaining or record.sent >= record.length
+               for client, record in offers.items()):
+            raise ValueError('native DMA offer does not match an open record and idle source')
         completed = []
         client_ready = ready_mask(self.profile.client_ready, tick, 4095)
         forwarded = self._client_responses(client_ready)
@@ -162,10 +187,10 @@ class ReadFabric:
         captures = []
         for ch, channel in enumerate(self.channels):
             free = [entry for entry, beat in enumerate(channel.beats) if beat is None]
-            reservations.append(self._source_reservations(ch, channel, free))
+            reservations.append(self._source_reservations(ch, channel, free, offers))
             channel.descriptors = {r for r in channel.descriptors if r.returned < r.length}
-            self._ddr_offers(tick, ch, channel, self._ddr_ready(tick, ch, channel))
-            captures.extend(self._ddr_returns(tick, ch, channel, forwarded))
+            self._ddr_offers(tick, ch, channel, self._ddr_ready(tick, ch, channel), edge)
+            captures.extend(self._ddr_returns(tick, ch, channel, forwarded, edge))
         for skid in sorted(forwarded):
             ch, entry = self.skids[skid]
             beat = self.channels[ch].beats[entry]
@@ -174,6 +199,8 @@ class ReadFabric:
             self.skids[skid] = None
             self.client_counts[record.client] -= 1
             record.returned += 1
+            if edge is not None:
+                edge.delivered.append((record, beat.address))
             key = record.key
             self.receipts[key].append(BeatReceipt(beat.address, ch, entry, beat.reserved,
                                                   beat.offer, beat.issue, beat.captured, tick,
@@ -184,14 +211,18 @@ class ReadFabric:
                 completed.append((key, tuple(sorted(self.receipts.pop(key), key=lambda row: row.address))))
         for skid, item in captures:
             self.skids[skid] = item
-        for channel, reserved in zip(self.channels, reservations):
+        for ch, (channel, reserved) in enumerate(zip(self.channels, reservations)):
             for entry, record in reserved:
-                channel.beats[entry] = _Beat(record, record.address + 64 * record.sent, tick)
+                address = record.address + 64 * record.sent
+                channel.beats[entry] = _Beat(record, address, tick)
                 channel.descriptors.add(record)
                 self.client_counts[record.client] += 1
                 record.sent += 1
-                if record.sent == record.length:
-                    self.source[record.client].popleft()
+                source = self.source[record.client]
+                if source and source[0] is record and record.sent == record.length:
+                    source.popleft()
+                if edge is not None:
+                    edge.accepted.append((record, address, 32 * ch + entry))
         return completed
 
     def _client_responses(self, ready):
@@ -213,7 +244,7 @@ class ReadFabric:
                 self.client_locked[client] = chosen
         return forwarded
 
-    def _source_reservations(self, ch, channel, free):
+    def _source_reservations(self, ch, channel, free, offers):
         result = []
         free_desc = 32 - len(channel.descriptors)
         lanes = min(2, len(free))
@@ -221,9 +252,12 @@ class ReadFabric:
             client = (channel.source_cursor + offset) % 12
             if len(result) == lanes:
                 break
-            if not self.source[client] or self.client_counts[client] >= 32:
+            if self.client_counts[client] >= 32:
                 continue
-            record = self.source[client][0]
+            source = self.source[client]
+            record = source[0] if source else offers.get(client)
+            if record is None:
+                continue
             if record.channel != ch or (not record.sent and not free_desc):
                 continue
             free_desc -= not record.sent
@@ -240,7 +274,7 @@ class ReadFabric:
         return sum(1 << lane for lane in range(2) if provider.ready(
             tick, 2 * ch + lane, len(channel.returns[lane]) + (channel.return_lanes[lane] is not None)))
 
-    def _ddr_offers(self, tick, ch, channel, ready):
+    def _ddr_offers(self, tick, ch, channel, ready, edge):
         old = channel.offer.entries
         reserved = sum(1 << i for i, beat in enumerate(channel.beats) if beat and beat.offer is None)
         channel.offer = channel.offer.advance(reserved, ready)
@@ -252,12 +286,14 @@ class ReadFabric:
                 if self.profile.ffn_provider is not None:
                     queue = channel.returns[lane]
                     beat.issue_lane = 2 * ch + lane
+                if edge is not None:
+                    edge.issued.append((2 * ch + lane, beat.address, 32 * ch + entry))
                 queue.append((tick + self.profile.return_latency[ch], entry))
         for entry in channel.offer.entries:
             if entry is not None and channel.beats[entry].offer is None:
                 channel.beats[entry].offer = tick + 1
 
-    def _ddr_returns(self, tick, ch, channel, forwarded):
+    def _ddr_returns(self, tick, ch, channel, forwarded, edge):
         free = deque(slot for slot in range(3 * ch, 3 * ch + 3)
                      if self.skids[slot] is None or slot in forwarded)
         captures = []
@@ -271,6 +307,8 @@ class ReadFabric:
                 beat.captured = tick
                 if self.profile.ffn_provider is not None:
                     beat.return_lane = 2 * ch + lane
+                if edge is not None:
+                    edge.captured.append((2 * ch + lane, 32 * ch + entry))
                 captures.append((free.popleft(), (ch, entry)))
                 entry = None
             channel.return_lanes[lane] = entry

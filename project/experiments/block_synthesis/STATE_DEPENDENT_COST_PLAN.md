@@ -315,6 +315,20 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 362 项测试通过。五个篡改负例覆盖 DMA 地址、过期 tag、完成代次、重复完成及错误的确认拍。两组原始轨迹及验证报告以本机 `round24-weight-verified.json` 索引，其 SHA-256 为 `62d87549789573f74a1329164b8f8647531928fa549c5379bc6f5acd88ab9125`。W 的 DMA 请求接纳和读回继续由波形提供。后续要把 W 的待发 bank、已锁定的 beat 和返回信用接入同一 DDR 仲裁，再让 K 供给、W/A 绑定和侧带发起随候选推进。
 
+### W bank 与描述符共用 DDR
+
+第 25 轮从 W bank 安装和控制器 CALL 重算 W 与描述符 DMA。每个 W 客户端保留四个 bank 的已发进度、轮转位置、已寄存的请求及剩余信用。当前拍返回的信用在下一拍可用。三个 W 客户端和描述符客户通过同一 `ReadFabric`。回放保留每个通道的请求表、两条物理发送通道、DDR 返回队列和响应暂存槽。重算的 W 读回驱动 FILL 回包，继而用于原有 M、A 和 P 轨迹校验。
+
+带背压的基线及 COPY 延后候选、无外加背压的另一 seed，每组均逐拍对齐 1,122,816 个 W beat、384 个描述符 beat、1,123,200 次物理 DDR 请求和等量返回。核对包括 W 的首次 VALID 和接纳、DDR 的物理通道及全局 tag、客户端取回的时刻及本地 tag。带背压的两组结果均在第 952,011 拍接纳，无外加背压为第 857,117 拍。
+
+同初态的缩小 RTL 对照在第 6 拍保留两个旧 W 客户端各四笔在途请求。把第三个 W bank 的安装从第 6 拍移到第 7 拍，第二条旧 W 记录的末拍从 49 提前到 46，后到的描述符从 27 提前到 24。新增 W 自己的末拍从 53 变为 54。两份从快照重算的结果均与从复位重算及独立 RTL 探针的 53 笔回执一致。六个篡改负例覆盖 CALL 拍、W tag 与接纳地址、后端物理通道、后端返回 tag、客户端返回 beat。
+
+```bash
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG.gz --mode 1 --seed 25001 --aread --wdma
+```
+
+363 项测试通过。本机 `round25-dma-verified.json` 的 SHA-256 为 `a0ca8ae370091d3e67f87aff1e8a77c5a0cdd15bce6a0a119458bec79241a36b`，包含三组完整轨迹与小例的原始文件哈希。完整检查仍从采样的 W bank 安装和 CALL 推进。接下来让 M 的分配接纳直接安装 W bank，用 DDR 返回继续驱动同一个 M 命令链路。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界
