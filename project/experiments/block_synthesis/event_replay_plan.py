@@ -2,7 +2,7 @@
 from collections import Counter, defaultdict
 from dataclasses import dataclass, replace
 
-from event_execution import Copy, DDR, capacity_profile
+from event_execution import Copy, DDR, capacity_profile, window_phase_indices
 from event_replay import Operation, Phase, replay
 
 
@@ -14,7 +14,7 @@ class Decision:
     def key(self):
         events = self.row['evaluation']['events']
         return (self.row['id'], self.row['binding'], self.predecessors,
-                tuple((event['route'], event['value'], event['src'], event['dst'])
+                tuple((event['route'], event['value'], event['src'], event['dst'], event.get('output_eviction'))
                       if event['kind'] == 'move' else (event['service'],)
                       for event in events))
 
@@ -25,23 +25,23 @@ def accesses(event):
     return {event['src']: event['value']}, {event['dst']: event['value']}
 
 
-def event_operation(model, event, dependencies):
+def event_operation(model, event):
     if event['kind'] == 'stage':
         service = model.services[event['service']]
         if 'phases' in service:
             phases = tuple(Phase.from_spec(p['kind'], p['ticks'], p) for p in service['phases'])
-            return Operation(phases, dependencies, holds=tuple(sorted(service.get('hold_claims', {}).items())))
-        return Operation((Phase.from_spec('stage', service['ticks'], service),), dependencies)
+            return Operation(phases, holds=tuple(sorted(service.get('hold_claims', {}).items())))
+        return Operation((Phase.from_spec('stage', service['ticks'], service),))
     route = model.routes[event['route']]
     size = model.sizes[event['value']]
     ticks = route['setup'] + (size + route['bytes_per_tick'] - 1) // route['bytes_per_tick']
     data = Phase.from_spec('data', ticks, route)
     if 'phases' not in route:
-        return Operation((data,), dependencies)
+        return Operation((data,))
     profile = route['phases']
     issue = Phase.from_spec('issue', profile['issue']['ticks'], profile['issue'])
     ack = Phase.from_spec('ack', profile['ack']['ticks'], profile['ack'])
-    return Operation((issue, data, ack), dependencies, holds=tuple(sorted(profile['hold_claims'].items())))
+    return Operation((issue, data, ack), holds=tuple(sorted(profile['hold_claims'].items())))
 
 
 def intents(model, decisions):
@@ -55,35 +55,43 @@ def intents(model, decisions):
         pending_moves = set()
         for event in decision.row['evaluation']['events']:
             index = len(operations)
+            operation = event_operation(model, event)
+            final = len(operation.phases) - 1
+            terminal = index, final
+            is_stage = event['kind'] == 'stage'
+            read, write, publish = (window_phase_indices(model.services[event['service']])
+                                    if is_stage else (None, 0, final))
             inputs, outputs = accesses(event)
-            dependencies = set(boundary)
+            dependencies = [set() for _ in operation.phases]
+            dependencies[0].update(boundary)
             for window, value in inputs.items():
                 if window == DDR:
                     if value not in model.initial.backing:
-                        dependencies.add(stores[value])
+                        dependencies[0].add(stores[value])
                 elif window in writers:
-                    dependencies.add(writers[window])
+                    dependencies[read or 0].add(writers[window])
             for window in outputs.keys() - {DDR}:
                 if window in writers:
-                    dependencies.add(writers[window])
-                dependencies.update(readers.get(window, ()))
-            if event['kind'] == 'stage':
-                dependencies.update(pending_moves)
+                    dependencies[write].add(writers[window])
+                dependencies[write].update(readers.get(window, ()))
+            if is_stage:
+                dependencies[0].update(pending_moves)
                 pending_moves.clear()
-                boundary = {index}
-            else:
-                pending_moves.add(index)
-            operations.append(event_operation(model, event, frozenset(dependencies)))
+                boundary = {terminal}
+            elif 'output_eviction' not in event:
+                pending_moves.add(terminal)
+            phase_after = tuple(map(frozenset, dependencies)) if any(dependencies) else ()
+            operations.append(replace(operation, phase_after=phase_after))
             for window in inputs.keys() - outputs.keys() - {DDR}:
-                readers.setdefault(window, set()).add(index)
+                readers.setdefault(window, set()).add((index, final if read is None else read))
             for window in outputs.keys() - {DDR}:
-                writers[window] = index
+                writers[window] = index, publish
                 readers.pop(window, None)
             if DDR in outputs:
-                stores.setdefault(outputs[DDR], index)
+                stores.setdefault(outputs[DDR], terminal)
         for covered in decision.row['covers']:
-            last_stage[covered] = index
-        last_stage[decision.row['id']] = index
+            last_stage[covered] = terminal
+        last_stage[decision.row['id']] = terminal
     return operations
 
 
@@ -117,13 +125,17 @@ def retime(model, decisions, proposed, previous=()):
                 actual['phases'] = phases
             occupy(operation.holds, start, end)
             inputs, outputs = accesses(event)
+            read, _, publish = (window_phase_indices(model.services[event['service']])
+                                if event['kind'] == 'stage' else (None, 0, len(schedule) - 1))
+            read_end = end if read is None else schedule[read].end
             for window in inputs.keys() - {DDR}:
-                copies[window] = replace(copies[window], held_until=max(copies[window].held_until, end))
+                copies[window] = replace(copies[window], held_until=max(copies[window].held_until, read_end))
             for window, value in outputs.items():
                 if window == DDR:
                     backing[value] = min(end, backing.get(value, end))
                 else:
-                    copies[window] = Copy(value, end, end)
+                    visible = schedule[publish].end
+                    copies[window] = Copy(value, visible, visible)
             events.append(actual)
         rows.append({**row, 'start': min(event['start'] for event in events),
                      'end': events[-1]['end'], 'evaluation': {**detail, 'events': events}})

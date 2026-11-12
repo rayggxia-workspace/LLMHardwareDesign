@@ -16,14 +16,46 @@
 | 6 | 同一绑定的本地源、COPY 和 DDR STORE／LOAD 备选分别进入重放，包含活数据写回。合成对照中日历选 COPY 15 拍，重放选 DDR 14 拍。预算为 1 时复现旧选路并报告截断。快速 STORE 与 LOAD 连线冲突时保留合法的慢 STORE 路径。重放骨架保留并核对原选路。 |
 | 7 | 从 #251 冻结 DMA RTL 合同加入通道滑动发放上限。合成饱和对照中，两条 lane 在第 0、1 拍各发两笔，第 2 拍虽空闲仍须等到第 3 拍。另一通道可在第 2 拍发放。检查点恢复保留已经完成但仍落在窗口内的发放。独立检查器拒绝超发轨迹。 |
 | 8 | 重新读取 #251 的 102603、102604 冻结 RTL 回执，按 SHA-256 及固定 Git blob 核对来源。以原始 bank 日志重建物理字地址，逐个验证 K128 COPY 的三份目的区间。负对照保持写入总量但改成重复地址，或把 ACK 提到写入前，均被拒绝。 |
+| 9 | 将 SRAM 输入捕获、输出写入、可见确认和命令退休拆成不同的依赖边。旧读者持有窗口至第 12 拍，新计算可在第 0–4 拍执行，再于第 12–14 拍写入，第 15 拍发布，第 23 拍释放槽位。独立检查器拒绝提前覆盖和提前读取。活数据外存保存与计算重叠时，16 B 写回保留，整份计划从 14 拍缩至 10 拍。 |
+| 10 | 重新运行 #251 的四 bank SRAM RTL。8 个条件共 86 次请求／应答握手逐拍一致。新增宽读推迟旧窄写；双通道应答阻塞时，槽满的一侧会让另一侧推进，应答出队当拍即可复用槽。将复用推迟一拍的篡改轨迹被拒绝。两种读取同一份 64 B 数据的候选在反压下实际排序反转。 |
 
-重放对每个绑定默认试算至多 32 组搬运组合，可通过硬件 JSON 的 `event_model.transport_limit` 调整，`null` 取消该上限。输出记录尝试数和发生截断的绑定扩展数。固定日历的预测只用于枚举顺序，完整后继由重放评分。物理窗口仍按整个操作持有，实际写入之前的早算和结果暂存需更细的阶段依赖。
+重放对每个绑定默认试算至多 32 组搬运组合，可通过硬件 JSON 的 `event_model.transport_limit` 调整，`null` 取消该上限。输出记录尝试数和发生截断的绑定扩展数。固定日历的预测只用于枚举顺序，完整后继由重放评分。
+
+原生服务通过 `window_phases.read`、`write`、`publish` 指定阶段名。读取占用以 `read` 阶段结束为边界，覆盖必须等到旧读取和活数据写回确认。延后写入须用 `window_phases.result_hold` 引用已声明的 `hold_claims`，以约束计算结果暂存。数据可在 `publish` 结束时供后继读取，命令槽保留到退休。未声明的窗口沿用整段服务的边界；任务显式 `after` 和同绑定的串行服务仍等待退休，输入搬运仍须在服务起点前确认。
 
 `event_model.issue_rates` 在重放模式生效。按 #251 冻结 DMA RTL，每个通道的单拍端口容量设为 2，配置 `{"window_ticks": 3, "max_issues": 4}`。RTL 还跟踪寄存后的待接纳 offer、描述符和回传，当前发放上限只复现该滑动窗口约束。DDR bank／行和读写切换、原生可变请求顺序的完整校准、持续 KV 与跨层／跨 token 验收仍待完成。
 
 固定轨迹回归入口为 `python -B project/experiments/block_synthesis/benchmark_event_ffn.py ARCHIVE --job 102603 --timing replay`。默认从 #251 固定提交读核对清单，也可通过 `--fixture FILE` 使用相同 Git blob 的本地副本。COPY 时序来自原轨迹，DDR 逐 beat 时序仍缺记录。源包和回执的来源见 [#251 冻结索引](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/250/native-services/ffnnative/index.json)。
 
 Windows Python 3.12.4 全套 339 项通过。两份原始回执取 seed 25001、两种压力、三种 SRAM 初态，各用日历／重放和贪心／DP 验证。每个原始条件核对 1,444 段 COPY 和 69,312 次真实 P.S 字写入。最后一次写入到 COPY 确认，无额外压力时为 5 拍，有压力时为 5–9 拍。固定请求序列的四组总拍数仍为 849914、941907、860202、948626。24 条运行回执（包含编译耗时）SHA-256 为 `6e0697e0a463d918a44db8476989071ddf4dc68ad62a5cac0d78724e870122c0`，本机 Codex 证据目录文件 `round8-ffn-bank-24-cases.jsonl`。本次核对已归档仿真，未重新运行 RTL。
+
+第 9–10 轮 Windows 全套 343 项通过。阶段依赖加入 120 个随机多阶段图，逐次追加的 1,920 份轨迹与从初态重放一致。第 9 轮修改后，#251 冻结 FFN 的 12 个条件在重放模式重新核对，贪心和 DP 都保持上述四组总拍数。回执 `round9-ffn-replay-12-cases.jsonl` 的 SHA-256 为 `00977b765210dfe76b4df1cd480a7e02a543d8a7a4d8ced15aad750688c15ad3`。
+
+### 原生 SRAM 候选对照
+
+第 10 轮用 WSL Ubuntu 22.04 的 Icarus Verilog 11.0 运行实际 feeder 与四个 256×128 bank 行为模型。`102603-source.tar.gz` 的 SHA-256 为 `058b32a84fbb7b3613dcf9fa6ab5fb74685d08a740ba417f569bedf6968d1d24`。从中提取 `block_feed_s16k_sram.sv`，SHA-256 为 `a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef`。bank 文件 `s_sram_256x128_freepdk45.v` 按同一源包的 `source/bank.sha256` 核对，SHA-256 为 `6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7`。
+
+```bash
+dir=/path/to/evidence
+iverilog -g2012 -s native_sram_replay_tb -o "$dir/native-sram-replay.vvp" \
+  project/experiments/block_synthesis/native_sram_replay_tb.sv \
+  "$dir/block_feed_s16k_sram.sv" "$dir/s_sram_256x128_freepdk45.v"
+for mode in 0 1 2 3 4 5 6 7; do
+  vvp "$dir/native-sram-replay.vvp" "+mode=$mode" > "$dir/native-sram-mode-$mode.log" || exit 1
+done
+python -B project/experiments/block_synthesis/benchmark_native_sram_replay.py "$dir"
+```
+
+探针通过实际窄写初始化四个 bank，检查宽读和逐 bank 窄读返回相同的四个 128 位字。旧请求在每组对照中均为三笔窄写。重放比较每笔接纳和应答的采样拍，同时检查追加候选的恢复重放与从初态重放完全一致。
+
+| 宽读应答条件 | 一次宽读，整份计划完成拍 | 四次窄读，整份计划完成拍 | 选择 |
+| --- | ---: | ---: | --- |
+| 始终可接收 | 5 | 8 | 宽读 |
+| 从第 9 拍可接收 | 9 | 8 | 窄读 |
+
+追加宽读时旧窄写的第一次接纳从第 0 拍移到第 1 拍，最后一次应答从第 4 拍移到第 5 拍。原始日志保存在本机 Codex 证据目录，`round10-native-sram-logs.sha256` 的 SHA-256 为 `f0b08712701751dcb5e012b83823cb0f785f652e436d5b30da13d41b82b5334c`，汇总 `round10-native-sram-check.json` 的 SHA-256 为 `33942b1cbe1bcbe5d4505eb2674c184c5b90ba2a2be3b8c6a081d12d99751780`。探针直接校准重放内核的仲裁与容量。将这一组物理请求接入 FFN 的候选生成、覆盖局控退休和 SRAM 时序分析仍待完成。
+
+同批本机用 Verilator 4.038 重跑了 #251 原 typed DMA 测试，6 个种子、3 个初始化参数均通过，每组 5,541 次源接纳、5,540 次真实 DDR 接纳及客户端返回、1 次预留取消。`mc_dma_fabric_typed_p.sv` SHA-256 为 `74c68493d5bd1f0c1310eab9d7c634384e8871f8a0d91b0ac4dc0dc0907b9b70`，`typed.cpp` SHA-256 为 `2d10af60a005c331e2a24f0b2d38a443515227aac23ba9f3762ed398837434bc`，本机日志索引 `native-dma-18-logs.sha256` 的 SHA-256 为 `9a4d82c5c69e9d943f9475553a4d9b31a1a77675d6ce13669eb73c81e27d5fa1`。当前这些 DMA 日志用于确认 RTL 基线；待补逐拍 held offer 与模型的对照。
 
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
@@ -33,7 +65,7 @@ Windows Python 3.12.4 全套 339 项通过。两份原始回执取 seed 25001、
 
 先在项目现有硬件和有证据的 Qwen2.5 执行范围内，把影响候选优劣的行为算准。模型、数值、底座、连接预算及候选池在对照中固定。延续 Algo1 从同一映射生成控制程序和连接需求的接口。定量周期由代价模型预测，部署指令按硬件合同等待真实事件。
 
-当前事件模式已经能用 S 副本决定是否搬运，用 K 的区间寻找连续空档，也能给 DDR 的请求、数据和 ACK 分段预约。缺口集中在两处。第一，粗粒度服务会把实际分阶段使用的资源锁到同一段时间。第二，已预约事件的预测时刻保持固定，新增请求对旧请求的运行时仲裁影响无法自然反映。固定配方的 FFN 回放用于复现该轨迹，另需能改变候选、请求顺序和竞争程度的证据。
+当前重放能用 S 副本决定是否搬运，用 K 的区间寻找连续空档，并用同一组阶段推进新增和未获授权的旧请求。服务的阶段精度取决于硬件合同。固定配方的 FFN 回放用于复现原轨迹。原生 SRAM 已有改变请求顺序和反压的证据，FFN 及局控／外存仍需同类对照。
 
 ## 1. 把硬件清单、芯片状态和试排计划写清楚
 

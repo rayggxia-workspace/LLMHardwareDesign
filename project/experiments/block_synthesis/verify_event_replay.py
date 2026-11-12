@@ -2,6 +2,7 @@
 from collections import Counter, defaultdict
 
 from event_execution import Model
+from event_replay import phase_dependencies
 from event_replay_plan import Decision, intents
 
 
@@ -19,9 +20,13 @@ def verify_grants(tasks, hardware, rows):
     ticks = set()
     for i, (operation, event) in enumerate(zip(operations, events)):
         phases = event.get('phases', (event,))
-        ready = max([operation.release] + [events[p]['end'] for p in operation.after])
         for j, (phase, interval) in enumerate(zip(operation.phases, phases)):
+            parents = phase_dependencies(operations, i, j)
+            ready = max([0 if j else operation.release] + [
+                events[p].get('phases', (events[p],))[q]['end'] for p, q in parents])
             start, end = interval['start'], interval['end']
+            if start < ready:
+                raise ValueError('grant precedes phase dependency')
             claims = phase.claims + (operation.holds if j == 0 else ())
             releases = phase.claims + (operation.holds if j == len(phases) - 1 else ())
             ready_at[ready].append((phase.priority, ready, i, j, start, claims))
@@ -32,7 +37,6 @@ def verify_grants(tasks, hardware, rows):
                     expires = start + model.issue_rates[resource][0]
                     issue_expires[expires].append((resource, units))
                     ticks.add(expires)
-            ready = end
 
     free = model.capacity.copy()
     issue_count = Counter()

@@ -115,17 +115,12 @@ def verify(tasks, hardware, plan, wire_budget=None):
                             and sorted(windows[w]['site'] for w in outputs) == sorted(destinations)
                             and set(outputs.values()) == set(inputs.values()),
                             'COPY identity or endpoints differ')
-                require(all(move['end'] <= start for move in pending_moves), 'stage precedes move ACK')
                 if stage.get('input_policy') == 'backing':
                     loaded = {(m['dst'], m['value']) for m in pending_moves if m['src'] == DDR}
                     require(set(inputs.items()) <= loaded, 'backing-only stage missed required DDR read')
                 if stage.get('input_policy') == 'resident':
                     loaded = {(m['dst'], m['value']) for m in pending_moves if m['src'] == DDR}
                     require(not set(inputs.items()) & loaded, 'resident stage introduced a DDR read')
-                for w, value in inputs.items():
-                    access(reads, w, value, start, end)
-                for w, value in outputs.items():
-                    access(writes, w, value, start, end)
                 if 'phases' in service:
                     phased_claims(event, service['phases'], service.get('hold_claims', {}),
                                   service.get('nets', ()))
@@ -133,6 +128,22 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     require(end-start == service['ticks'] and 'phases' not in event,
                             'native stage service duration differs')
                     claim(service, start, end)
+                phase = {item['kind']: item for item in event.get('phases', ())}
+                timing = service.get('window_phases', {})
+                read_at = phase.get(timing.get('read'), event)
+                write_at = phase.get(timing.get('write'), event)['start']
+                visible = phase.get(timing.get('publish'), event)['end']
+                for move in pending_moves:
+                    if 'output_eviction' in move:
+                        require('write' in timing and move['output_eviction'] == move['src']
+                                and move['src'] in outputs and move['dst'] == DDR
+                                and move['end'] <= write_at, 'invalid output eviction or write precedes its ACK')
+                    else:
+                        require(move['end'] <= start, 'stage precedes move ACK')
+                for w, value in inputs.items():
+                    access(reads, w, value, read_at['start'], read_at['end'])
+                for w, value in outputs.items():
+                    access(writes, w, value, write_at, visible)
                 local_read += service.get('read_bytes', 0)
                 local_write += service.get('write_bytes', 0)
                 boundary = end

@@ -22,6 +22,7 @@ class Operation:
     after: frozenset[int] = frozenset()
     release: int = 0
     holds: tuple[tuple[str, int], ...] = ()
+    phase_after: tuple[frozenset[tuple[int, int]], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -36,6 +37,14 @@ class ReplayDeadlock(ValueError):
     """Pending operations have no advancing event."""
 
 
+def phase_dependencies(operations, index, phase):
+    operation = operations[index]
+    extra = operation.phase_after[phase] if operation.phase_after else frozenset()
+    if phase:
+        return extra | {(index, phase - 1)}
+    return extra | {(parent, len(operations[parent].phases) - 1) for parent in operation.after}
+
+
 def replay(operations, capacity, *, previous=(), issue_rates=None):
     """Simulate from reset. Lower priority numbers win among ready phases.
 
@@ -45,16 +54,19 @@ def replay(operations, capacity, *, previous=(), issue_rates=None):
     can change eligibility.
     """
     issue_rates = issue_rates or {}
-    successors = [[] for _ in operations]
-    dependencies = []
+    successors = {}
+    dependencies = {}
+    release = {}
+    prerequisites = {}
     for index, operation in enumerate(operations):
         if (not operation.phases or type(operation.release) is not int or operation.release < 0
-                or any(type(dep) is not int or not 0 <= dep < index for dep in operation.after)):
+                or any(type(dep) is not int or not 0 <= dep < index for dep in operation.after)
+                or operation.phase_after and len(operation.phase_after) != len(operation.phases)):
             raise ValueError('invalid replay operation or dependency')
         holds = dict(operation.holds)
         if holds.keys() & issue_rates.keys():
             raise ValueError('rate-limited issue ports cannot be held between phases')
-        for phase in operation.phases:
+        for phase_index, phase in enumerate(operation.phases):
             if (type(phase.ticks) is not int or phase.ticks < 1 or type(phase.priority) is not int
                     or any(type(units) is not int or not 0 < units <= capacity.get(resource, 0)
                            for resource, units in (*phase.claims, *operation.holds))
@@ -63,19 +75,24 @@ def replay(operations, capacity, *, previous=(), issue_rates=None):
                     or len(dict(phase.claims)) != len(phase.claims)
                     or any(r in issue_rates and units > issue_rates[r][1] for r, units in phase.claims)):
                 raise ValueError('invalid replay phase duration, priority or resource claim')
-        for dependency in operation.after:
-            successors[dependency].append(index)
-        dependencies.append(len(operation.after))
+            current = index, phase_index
+            parents = phase_dependencies(operations, *current)
+            if any(parent not in prerequisites for parent in parents):
+                raise ValueError('phase dependency must name an earlier phase')
+            prerequisites[current] = parents
+            dependencies[current] = len(parents)
+            release[current] = 0 if phase_index else operation.release
+            for parent in parents:
+                successors.setdefault(parent, []).append(current)
 
     prefix_count = len(previous)
     if prefix_count >= len(operations) and previous:
         raise ValueError('replay requires an appended operation')
     # Until a new operation could first become ready, it cannot change a grant.
     # Later grants, including grants at the boundary tick, are speculative.
-    tick = min((max([op.release] + [previous[p][-1].end for p in op.after])
-                for op in operations[prefix_count:] if all(p < prefix_count for p in op.after)), default=0)
-    if not previous:
-        tick = 0
+    first_phases = ((index, 0) for index in range(prefix_count, len(operations)))
+    tick = min((max([release[key]] + [previous[p][j].end for p, j in prerequisites[key]])
+                for key in first_phases if all(p < prefix_count for p, _ in prerequisites[key])), default=0)
     grants = [[grant for grant in row if grant.start < tick] for row in previous]
     grants.extend([] for _ in operations[prefix_count:])
     completed = {}
@@ -97,15 +114,20 @@ def replay(operations, capacity, *, previous=(), issue_rates=None):
         accepted = (grant for prefix in grants for grant in prefix if grant.start > cutoff)
         for grant in sorted(accepted, key=lambda grant: grant.start):
             record_issues(operations[grant.operation].phases[grant.phase].claims, grant.start)
+    finished = 0
     for index, prefix in enumerate(grants):
         if not prefix:
             continue
         operation = operations[index]
         last = prefix[-1]
+        for grant in prefix:
+            if grant.end < tick:
+                key = index, grant.phase
+                completed[key] = grant.end
+                for child in successors.get(key, ()):
+                    dependencies[child] -= 1
         if len(prefix) == len(operation.phases) and last.end < tick:
-            completed[index] = last.end
-            for child in successors[index]:
-                dependencies[child] -= 1
+            finished += 1
             continue
         occupied.update(dict(operation.holds))
         if last.end >= tick:
@@ -113,15 +135,12 @@ def replay(operations, capacity, *, previous=(), issue_rates=None):
             heappush(running, (last.end, index, last.phase))
 
     arrivals = []
-    for index, operation in enumerate(operations):
-        prefix = grants[index]
-        if prefix and index not in completed and prefix[-1].end < tick:
-            heappush(arrivals, (prefix[-1].end, index, len(prefix)))
-        if not prefix and not dependencies[index]:
-            ready = max([operation.release] + [completed[p] for p in operation.after])
-            heappush(arrivals, (ready, index, 0))
+    for key, parents in prerequisites.items():
+        index, phase = key
+        if phase >= len(grants[index]) and not dependencies[key]:
+            ready = max([release[key]] + [completed[parent] for parent in parents])
+            heappush(arrivals, (ready, index, phase))
     pending = []
-    finished = len(completed)
     while finished < len(operations):
         for resource, history in issues.items():
             while history and history[0][0] <= tick:
@@ -131,15 +150,13 @@ def replay(operations, capacity, *, previous=(), issue_rates=None):
             _, index, phase_index = heappop(running)
             operation = operations[index]
             occupied.subtract(dict(operation.phases[phase_index].claims))
-            if phase_index + 1 < len(operation.phases):
-                heappush(arrivals, (tick, index, phase_index + 1))
-                continue
-            occupied.subtract(dict(operation.holds))
-            finished += 1
-            for child in successors[index]:
+            if phase_index + 1 == len(operation.phases):
+                occupied.subtract(dict(operation.holds))
+                finished += 1
+            for child in successors.get((index, phase_index), ()):
                 dependencies[child] -= 1
                 if not dependencies[child]:
-                    heappush(arrivals, (max(tick, operations[child].release), child, 0))
+                    heappush(arrivals, (max(tick, release[child]), *child))
         while arrivals and arrivals[0][0] <= tick:
             ready, index, phase_index = heappop(arrivals)
             phase = operations[index].phases[phase_index]

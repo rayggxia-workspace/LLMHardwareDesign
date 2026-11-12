@@ -11,6 +11,15 @@ from dataclasses import dataclass, replace
 DDR = 'DDR'
 
 
+def window_phase_indices(service):
+    """Return the read, write and publish phase indexes for native SRAM."""
+    phases = service.get('phases', ())
+    window_phases = service.get('window_phases', {})
+    indexes = {phase['kind']: index for index, phase in enumerate(phases)}
+    return (indexes.get(window_phases.get('read')), indexes.get(window_phases.get('write'), 0),
+            indexes.get(window_phases.get('publish'), max(0, len(phases) - 1)))
+
+
 @dataclass(frozen=True)
 class Copy:
     value: str
@@ -139,8 +148,8 @@ class Model:
             self.validate_service(service)
             if 'phases' in service:
                 self.validate_stage_phases(service)
-            elif 'hold_claims' in service:
-                raise ValueError('native stage holds require phases')
+            elif 'hold_claims' in service or 'window_phases' in service:
+                raise ValueError('native stage holds and window phases require phases')
             for field in ('read_bytes', 'write_bytes'):
                 count = service.get(field, 0)
                 if type(count) is not int or count < 0:
@@ -209,6 +218,17 @@ class Model:
             names.add(phase['kind'])
         if sum(p['ticks'] for p in phases) != service['ticks']:
             raise ValueError('native phase durations differ from optimistic service ticks')
+        timing = service.get('window_phases', {})
+        if (not isinstance(timing, dict) or timing.keys() - {'read', 'write', 'publish', 'result_hold'}
+                or any(not isinstance(timing[field], str) or timing[field] not in names
+                       for field in ('read', 'write', 'publish') if field in timing)
+                or ('write' in timing) != ('publish' in timing)):
+            raise ValueError('invalid SRAM window phases')
+        _, write, publish = window_phase_indices(service)
+        result_hold = timing.get('result_hold')
+        if (publish < write or ((write or 'result_hold' in timing)
+                                and (not isinstance(result_hold, str) or result_hold not in holds))):
+            raise ValueError('deferred write requires a result hold and later publish')
 
     def validate_copy(self, window, value):
         if window not in self.windows or value not in self.sizes:
@@ -397,7 +417,10 @@ class Model:
                 if remaining[value] == 0:
                     del remaining[value]
             for window in outputs:
+                evict_at = len(events)
                 state, at = self.vacant(state, window, start_at, protected | remaining.keys(), events, choose)
+                if 'write' in service.get('window_phases', {}) and len(events) > evict_at:
+                    events[-1] = {**events[-1], 'output_eviction': window}
                 start_at = max(start_at, at)
             state = self.add_nets(state, service.get('nets', ()))
             phases = ()
@@ -407,11 +430,14 @@ class Model:
                     state, start_at, spec, service.get('hold_claims', {}))
             else:
                 state, start, end = self.book(state, service['claims'], start_at, service['ticks'])
+            read, _, publish = window_phase_indices(service)
+            read_end = end if read is None else phases[read]['end']
+            visible = phases[publish]['end'] if phases else end
             copies = state.copies.copy()
             for w in inputs:
-                copies[w] = replace(copies[w], held_until=max(copies[w].held_until, end))
+                copies[w] = replace(copies[w], held_until=max(copies[w].held_until, read_end))
             for w, value in outputs.items():
-                copies[w] = Copy(value, end, end)
+                copies[w] = Copy(value, visible, visible)
             state = replace(state, copies=copies, read_bytes=state.read_bytes + service.get('read_bytes', 0),
                             write_bytes=state.write_bytes + service.get('write_bytes', 0))
             event = {'kind': 'stage', 'service': stage['service'], 'start': start, 'end': end,

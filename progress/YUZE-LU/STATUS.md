@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)在本地 `task/219-chip-state-replay` 完成第 9–10 轮。从 [#257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 继续把 SRAM 捕获、覆盖、发布和退休拆开，保留延迟写回期间的结果槽。重跑 #251 原生 SRAM RTL，8 个条件 86 次握手逐拍一致，反压使宽读与四次窄读的选择反转。待把探针合同接入原生候选，校准 DMA offer、局控、跨层和跨 token，沿用现有远端交接。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)从 [#257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 固定提交继续，在本地分支 `task/219-chip-state-replay` 完成第 1–8 轮检查点，远端待提交。搬运分支按新旧请求共同仲裁后的整份计划比较，加入 #251 DMA 通道滑动发放上限。339 项测试通过，#251 12 个冻结条件的 69,312 字／例物理 COPY 写入逐项核对。待实现按阶段的真实窗口所有权、原生 DMA 可变请求及局控对照、跨层和跨 token 验收。登记和看板沿用既有交接。
 
 2026-11-11 CST：#219 的[事件前沿](../../project/experiments/block_synthesis/EVENT_FRONTIER.md)在 [#257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 独立叠加到 #220，使用 #251 三 P FFN 的 12 组冻结 RTL 日志核对事件、容量、ACK、周期和流量。

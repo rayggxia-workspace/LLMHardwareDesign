@@ -1,9 +1,11 @@
+from copy import deepcopy
 import random
 import unittest
 
-from event_replay import Operation, Phase, ReplayDeadlock, replay
 from benchmark_event_ffn import copy_bank_receipt
+from benchmark_native_sram_replay import check_trace
 from cover_frontier import search
+from event_replay import Operation, Phase, ReplayDeadlock, replay
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
 
@@ -113,7 +115,11 @@ class ReplayTest(unittest.TestCase):
                           rng.randint(-1, 1)),
                     Phase('ack', rng.randint(1, 3), (('ack', 1),)),
                 )
-                operations.append(Operation(phases, deps, rng.randint(0, 22), (('credit', 1),)))
+                phase_after = ()
+                if i and rng.randrange(2):
+                    parent = rng.randrange(i)
+                    phase_after = (frozenset({(parent, 0)}), frozenset({(parent, 1)}))
+                operations.append(Operation(phases, deps, rng.randint(0, 22), (('credit', 1),), phase_after))
                 resumed = replay(operations, capacity, previous=previous, issue_rates=rates)
                 self.assertEqual(resumed, replay(operations, capacity, issue_rates=rates), (seed, i))
                 previous = resumed
@@ -248,6 +254,94 @@ class ReplayTest(unittest.TestCase):
             copy_bank_receipt(rows, writes[:-1] + [writes[-2]])
         with self.assertRaisesRegex(ValueError, 'outside'):
             copy_bank_receipt([{'header': 20, 'copy': 35}], writes)
+
+    def test_native_sram_trace_rejects_delayed_reuse_of_a_response_slot(self):
+        lines = [
+            'TRACE wide 0 issue 0', 'TRACE wide 1 issue 1', 'TRACE narrow 0 issue 2',
+            'TRACE narrow 1 issue 3', 'TRACE wide 0 ack 6', 'TRACE wide 2 issue 6',
+            'TRACE wide 1 ack 7', 'TRACE wide 2 ack 8', 'TRACE narrow 0 ack 9',
+            'TRACE narrow 2 issue 9', 'TRACE narrow 1 ack 10', 'TRACE narrow 2 ack 11', 'PASS mode=3',
+        ]
+        self.assertEqual(check_trace(3, lines)['end'], 11)
+        lines[9] = 'TRACE narrow 2 issue 10'
+        with self.assertRaisesRegex(ValueError, 'RTL=10, replay=9'):
+            check_trace(3, lines)
+
+    def test_deferred_write_waits_for_reader_and_publishes_before_retirement(self):
+        h = hardware()
+        h['resources']['result.slot'] = 1
+        spec = h['event_model']
+        spec.update(timing='replay', initial_copies={'source': 'x'})
+        spec['services'].update(
+            old={'ticks': 12, 'claims': {}},
+            new={'ticks': 15, 'claims': {}, 'hold_claims': {'result.slot': 1},
+                 'phases': [{'kind': 'compute', 'ticks': 4, 'claims': {'M0': 1}},
+                            {'kind': 'write', 'ticks': 2, 'claims': {'S0': 1}},
+                            {'kind': 'commit', 'ticks': 1, 'claims': {}},
+                            {'kind': 'retire', 'ticks': 8, 'claims': {}}],
+                 'window_phases': {'write': 'write', 'publish': 'commit', 'result_hold': 'result.slot'}},
+            read={'ticks': 1, 'claims': {'S0': 1}},
+            slot={'ticks': 1, 'claims': {'result.slot': 1}},
+        )
+        tasks = [
+            task('a-old', binding('old', stage('old', inputs={'source': 'x'}))),
+            task('b-produce', binding('new', stage('new', outputs={'source': 'y'}))),
+            task('c-read', binding('read', stage('read', inputs={'source': 'y'}))),
+            task('d-slot', binding('slot', stage('slot'))),
+        ]
+        plan = search(tasks, h, width=1, ready_limit=1)
+        verify(tasks, h, (), plan)
+        old, producer, reader, contender = plan['tasks']
+        self.assertEqual(old['end'], 12)
+        phases = producer['evaluation']['events'][0]['phases']
+        self.assertEqual([(p['start'], p['end']) for p in phases], [(0, 4), (12, 14), (14, 15), (15, 23)])
+        self.assertEqual((reader['start'], contender['start'], plan['makespan']), (15, 23, 24))
+
+        bad = deepcopy(plan)
+        bad['tasks'][1]['evaluation']['events'][0]['phases'][1].update(start=10, end=12)
+        with self.assertRaisesRegex(ValueError, 'custody'):
+            verify(tasks, h, (), bad)
+        bad = deepcopy(plan)
+        bad['tasks'][2]['evaluation']['events'][0].update(start=14, end=15)
+        bad['tasks'][2].update(start=14, end=15)
+        with self.assertRaisesRegex(ValueError, 'precedes ACK'):
+            verify(tasks, h, (), bad)
+        del spec['services']['new']['window_phases']['result_hold']
+        with self.assertRaisesRegex(ValueError, 'result hold'):
+            search(tasks, h)
+
+    def test_deferred_write_allows_compute_while_preserving_live_victim_in_ddr(self):
+        h = hardware()
+        h['resources']['result.slot'] = 1
+        spec = h['event_model']
+        spec.update(timing='replay', initial_copies={'source': 'x'}, live_out=['x', 'y'])
+        spec['routes']['S0-to-DDR']['setup'] = 7
+        spec['services']['split'] = {
+            'ticks': 5, 'claims': {}, 'hold_claims': {'result.slot': 1},
+            'phases': [{'kind': 'compute', 'ticks': 4, 'claims': {'M0': 1}},
+                       {'kind': 'write', 'ticks': 1, 'claims': {'S0': 1}}],
+            'window_phases': {'write': 'write', 'publish': 'write', 'result_hold': 'result.slot'},
+        }
+        tasks = [task('overwrite', binding('split', stage('split', outputs={'source': 'y'})))]
+        for timing, expected in [('calendar', 14), ('replay', 10)]:
+            spec['timing'] = timing
+            plan = search(tasks, h, width=1)
+            verify(tasks, h, (), plan)
+            move, compute = plan['tasks'][0]['evaluation']['events']
+            self.assertEqual((move['end'], move['output_eviction']), (9, 'source'))
+            self.assertEqual((plan['makespan'], plan['external_write_bytes']), (expected, 16))
+            if timing == 'replay':
+                self.assertEqual((compute['start'], compute['phases'][-1]['start']), (0, 9))
+
+    def test_checkpoint_uses_phase_completion_instead_of_retirement(self):
+        old = Operation((Phase('capture', 3), Phase('retire', 9)), holds=(('slot', 1),))
+        capture = (frozenset({(0, 0)}),)
+        write = Operation((Phase('write', 1),), phase_after=capture)
+        cap = {'slot': 1}
+        prefix = replay((old,), cap)
+        resumed = replay((old, write), cap, previous=prefix)
+        self.assertEqual(resumed, replay((old, write), cap))
+        self.assertEqual((resumed[1][0].start, resumed[0][-1].end), (3, 12))
 
     @staticmethod
     def tick_reference(operations, capacity):

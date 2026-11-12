@@ -1,5 +1,7 @@
 # 架构与运行
 
+2026-11-13 CST。#219 的[芯片状态重放](../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)通过 `run.py --event-ir` 及硬件 JSON 的 `event_model.timing = "replay"` 启用。方案文档列出 SRAM 窗口阶段合同、冻结 FFN 回归和四 bank 原生探针的复现命令。
+
 2026-11-09迭代21：[就绪DAG合同](../project/experiments/block_synthesis/RESIDENT_READY.md)。
 `resident_ready_survey.py IMMUTABLE_TILE_JSON REGISTERED_IR FRESH_OUTPUT --width 8` 使用同一有限S转移比较严格贪心与就绪DP。
 `audit_batch_terminal.py TERMINAL_BATCH_DIRECTORY REGISTERED_IR FRESH_AUDIT` 在任务助手目录，核对终态SHA和全部原整数算子输出。
