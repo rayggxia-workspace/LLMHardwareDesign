@@ -3,7 +3,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, replace
 
 from dma_read import receipt_json
-from event_execution import Copy, DDR, capacity_profile, window_phase_indices
+from event_execution import Copy, DDR, PhaseEdge, capacity_profile, window_phase_indices
 from event_replay import Operation, Phase, replay
 
 
@@ -11,10 +11,11 @@ from event_replay import Operation, Phase, replay
 class Decision:
     row: dict
     predecessors: frozenset[str]
+    event_after: tuple[PhaseEdge, ...] = ()
 
     def key(self):
         events = self.row['evaluation']['events']
-        return (self.row['id'], self.row['binding'], self.predecessors,
+        return (self.row['id'], self.row['binding'], self.predecessors, self.event_after,
                 tuple((event['route'], event['value'], event['src'], event['dst'], event.get('output_eviction'))
                       if event['kind'] == 'move' else (event['service'],)
                       for event in events))
@@ -50,11 +51,17 @@ def event_operation(model, event):
 def intents(model, decisions):
     operations = []
     last_stage = {}
+    named_phases = {}
     writers = {}
     readers = {}
     stores = {}
     for decision in decisions:
         boundary = {last_stage[name] for name in decision.predecessors}
+        phase_waits = defaultdict(set)
+        for edge in decision.event_after:
+            phase_waits[edge.target].add(named_phases[edge.task][edge.source])
+        stages = {}
+        stage_index = -1
         pending_moves = set()
         for event in decision.row['evaluation']['events']:
             index = len(operations)
@@ -78,6 +85,11 @@ def intents(model, decisions):
                     dependencies[write].add(writers[window])
                 dependencies[write].update(readers.get(window, ()))
             if is_stage:
+                stage_index += 1
+                for j, phase in enumerate(operation.phases):
+                    location = stage_index, phase.name
+                    stages[location] = index, j
+                    dependencies[j].update(phase_waits.get(location, ()))
                 # Descriptor/setup phases may run while the input delivery is
                 # in flight if the contract identifies a later capture phase.
                 dependencies[read or 0].update(pending_moves)
@@ -96,7 +108,9 @@ def intents(model, decisions):
                 stores.setdefault(outputs[DDR], terminal)
         for covered in decision.row['covers']:
             last_stage[covered] = terminal
+            named_phases[covered] = stages
         last_stage[decision.row['id']] = terminal
+        named_phases[decision.row['id']] = stages
     return operations
 
 

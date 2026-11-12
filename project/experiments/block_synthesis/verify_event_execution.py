@@ -6,7 +6,7 @@ copy map, resource profiles, route selection and cost evaluation.
 from bisect import bisect_right
 from collections import defaultdict
 
-from event_execution import backing_bytes
+from event_execution import backing_bytes, phase_edges
 
 DDR = 'DDR'
 
@@ -23,7 +23,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
     reservations, reads, writes = defaultdict(list), defaultdict(list), defaultdict(list)
     backing = dict.fromkeys(spec.get('initial_backing', ()), 0)
     read_external = []
-    ends, nets = {}, set()
+    ends, nets, phase_intervals = {}, set(), {}
     total_read = total_write = 0
     for w, value in spec.get('initial_copies', {}).items():
         writes[w].append((0, 0, value))
@@ -72,6 +72,8 @@ def verify(tasks, hardware, plan, wire_budget=None):
 
     by_task = {t['id']: t for t in tasks}
     require(len(by_task) == len(tasks) == len(plan['tasks']), 'event coverage differs')
+    edges_by_task = {name: phase_edges(task) for name, task in by_task.items()}
+    require(timing == 'replay' or not any(edges_by_task.values()), 'phase edges require event replay')
     for row in plan['tasks']:
         task = by_task[row['id']]
         require(task['id'] not in ends and all(p in ends for p in task.get('after', ())),
@@ -84,6 +86,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
         require(bool(events), 'empty event trace')
         stages = iter(binding['event_stages'])
         pending_moves, local_read, local_write = [], 0, 0
+        stage_index, intervals = 0, {}
         for event in events:
             start, end = event['start'], event['end']
             require(type(start) is int and type(end) is int and boundary <= start < end,
@@ -136,6 +139,9 @@ def verify(tasks, hardware, plan, wire_budget=None):
                             'native stage service duration differs')
                     claim(service, start, end)
                 phase = {item['kind']: item for item in event.get('phases', ())}
+                intervals.update({(stage_index, name): (item['start'], item['end'])
+                                  for name, item in (phase or {'stage': event}).items()})
+                stage_index += 1
                 window_timing = service.get('window_phases', {})
                 read_at = phase.get(window_timing.get('read'), event)
                 write_at = phase.get(window_timing.get('write'), event)['start']
@@ -156,6 +162,12 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 boundary = end
                 pending_moves.clear()
         require(not pending_moves and next(stages, None) is None, 'incomplete native stage sequence')
+        for edge in edges_by_task[task['id']]:
+            source = phase_intervals.get(edge.task, {}).get(edge.source)
+            target = intervals.get(edge.target)
+            require(source is not None and target is not None, 'phase edge endpoint differs')
+            require(source[1] <= target[0], 'stage started before its producer phase completed')
+        phase_intervals[task['id']] = intervals
         require(row['start'] == min(e['start'] for e in events) and row['end'] == boundary,
                 'action timing differs')
         require((detail['external_read_bytes'], detail['external_write_bytes']) == (local_read, local_write),

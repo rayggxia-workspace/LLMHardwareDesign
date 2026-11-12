@@ -4,8 +4,10 @@ import json
 from bisect import bisect_right
 from pathlib import Path
 
+from cover_frontier import search
 from dma_read import Profile, Read
 from event_replay import Operation, Phase, replay
+from verify_cover_frontier import verify
 
 
 ANCHOR = ' end else begin: direct_test'
@@ -49,6 +51,16 @@ ADMISSION_MONITOR = """  reg [31:0] probe_down_session=0;
    assign probe_exec_ready[q]=ps[q].node.exec.exec_ready;
   end
   always @(posedge clk) if($test$plusargs("TRACE_ADMISSION")&&!reset)begin
+   if(start_valid&&start_ready)
+    $display("RELEASE start %0d",cycle);
+   if(stripe_commit_valid&&stripe_commit_ready)
+    $display("RELEASE scatter %0d",cycle);
+   if(dut.schedule.mid_commit_valid&&dut.schedule.mid_commit_ready)
+    $display("RELEASE mid %0d",cycle);
+   if(!down_phase&&inspect&&inspect_rsp_take&&aux_v[inspect_p])
+    $display("RELEASE mid_read %0d",cycle);
+   if(down_take&&(&down_terminal))
+    $display("RELEASE down_done %0d",cycle);
    if(stripe_valid&&stripe_ready)
     $display("ADMISSION stripe %0d %0d",cycle,tile_session);
    if(down_phase&&tile_session!=probe_down_session)begin
@@ -74,6 +86,9 @@ GATE_UP_STRIPES = 58
 DOWN_GROUPS = 6
 P_COUNT = 3
 ALL_P = (1 << P_COUNT) - 1
+GATE_UP_COLUMNS = 11008
+STRIPE_COLUMNS = 192
+MID_COLUMNS = 128
 
 
 def require(condition, message):
@@ -93,6 +108,7 @@ def read_trace(source):
     open_calls = {}
     scopes = []
     admission = {'ready': [], 'stripe': [], 'down': []}
+    upstream = []
     start = result = program = None
     passed = False
     for line in source:
@@ -105,6 +121,9 @@ def read_trace(source):
             _, kind, *fields = line.split()
             require(kind in admission, 'unknown admission event')
             admission[kind].append(tuple(map(int, fields)))
+        if line.startswith('RELEASE '):
+            _, kind, tick = line.split()
+            upstream.append((kind, int(tick)))
         if not line.startswith('CONTROL '):
             continue
         _, kind, raw_tick, *fields = line.split()
@@ -130,7 +149,7 @@ def read_trace(source):
     require(passed and start is not None and result is not None and not open_calls and program is not None,
             'incomplete programmed FFN trace')
     require(len(scopes) == 192, 'expected all 192 native calls')
-    return scopes, start, result, program, admission
+    return scopes, start, result, program, admission, upstream
 
 
 def first_ready(edges, ticks, mask, release):
@@ -142,7 +161,88 @@ def first_ready(edges, ticks, mask, release):
     raise ValueError('no common P readiness after release')
 
 
-def check_admission(scopes, transfers, admission):
+def controller_triggers(upstream):
+    """Derive each release from producer handshakes and the fixture's rules."""
+    events = iter(upstream)
+
+    def accept(kind):
+        seen, tick = next(events, ('missing', -1))
+        require(seen == kind, f'expected {kind} producer handshake, saw {seen}')
+        return tick
+
+    require(all(a[1] < b[1] for a, b in zip(upstream, upstream[1:])),
+            'producer handshakes are out of order')
+    trigger = accept('start')
+    produced = committed = 0
+    releases = {}
+    for session in range(1, GATE_UP_STRIPES + 1):
+        # The ring advances through DECIDE and STRIPE_SEND, then the
+        # registered gather presents the work one edge after acceptance.
+        releases[session] = trigger, 3
+        trigger = accept('scatter')
+        produced += min(STRIPE_COLUMNS, GATE_UP_COLUMNS - produced)
+        while produced - committed >= MID_COLUMNS:
+            trigger = accept('mid')
+            committed += MID_COLUMNS
+    require(produced == committed == GATE_UP_COLUMNS, 'incomplete Mid production')
+    for _ in range(committed // MID_COLUMNS * 16):
+        trigger = accept('mid_read')
+    for group in range(DOWN_GROUPS):
+        # Fixture switches to Down after the last Mid read ACK and samples
+        # readiness one edge later. Other groups follow the prior DONE.
+        releases[GATE_UP_STRIPES + group + 1] = trigger, 2 if group == 0 else 1
+        trigger = accept('down_done')
+    require(next(events, None) is None, 'unexpected additional producer handshake')
+    return releases
+
+
+def replay_group(group, trigger, delay, is_down):
+    """Use the same qualified event IR and checker as DP for one scope group."""
+    origin = min(trigger, *(offer for offer, _ in group.values())) - 1
+    services, tasks = {}, []
+    hardware = {
+        'resources': {f'P{client}': 1 for client in range(P_COUNT)},
+        'sites': {'P0': {'words': 0, 'bytes': 0}}, 'nets': {},
+        'event_model': {'kind': 'qualified-event-model-v1', 'timing': 'replay',
+                        'routes': {}, 'windows': {}, 'value_bytes': {}, 'services': services},
+    }
+
+    def add(name, phases, waits=()):
+        ticks = sum(t for _, t, _ in phases)
+        services[name] = {'ticks': ticks, 'claims': {}}
+        if len(phases) == 1:
+            services[name]['claims'] = dict.fromkeys(phases[0][2], 1)
+        else:
+            services[name]['phases'] = [{'kind': kind, 'ticks': t, 'claims': dict.fromkeys(resources, 1)}
+                                         for kind, t, resources in phases]
+        tasks.append({'id': name, 'event_after': list(waits),
+                      'bindings': [{'id': name, 'site': 'P0', 'ticks': ticks, 'resources': [], 'nets': [],
+                                    'scratch_words': 0, 'event_stages': [{'service': name}]}]})
+
+    def edge(task, source, target):
+        return {'task': task, 'from': [0, source], 'to': [0, target]}
+
+    add('controller', (('producer', trigger - origin, ()), ('release', delay, ())))
+    if is_down:
+        for client, (offer, _) in group.items():
+            add(f'descriptor{client}', (('stage', offer - origin, ()),))
+        waits = [edge('controller', 'release', 'stage')]
+        waits.extend(edge(f'descriptor{client}', 'stage', 'stage') for client in group)
+        add('dispatch', (('stage', 1, tuple(hardware['resources'])),), waits)
+    else:
+        for client, (offer, _) in group.items():
+            add(f'P{client}', (('descriptor', offer - origin, ()), ('dispatch', 1, (f'P{client}',))),
+                (edge('controller', 'release', 'dispatch'),))
+    for width in (1, 8):
+        plan = search(tasks, hardware, width=width)
+        verify(tasks, hardware, (), plan)
+        rows = {row['id']: row['evaluation']['events'][0] for row in plan['tasks']}
+        for client, (_, actual) in group.items():
+            event = rows['dispatch'] if is_down else rows[f'P{client}']['phases'][-1]
+            require(origin + event['start'] == actual, f'candidate replay admission differs for P{client}')
+
+
+def check_admission(scopes, transfers, admission, upstream=None):
     edges = admission['ready']
     require(edges and all(len(row) == 3 and 0 <= row[1] <= ALL_P and 0 <= row[2] <= ALL_P
                           for row in edges), 'missing or invalid P readiness trace')
@@ -172,6 +272,10 @@ def check_admission(scopes, transfers, admission):
         require(scope['client'] not in group, 'duplicate P in admission group')
         group[scope['client']] = grants[-1].end, scope['dispatch'][0][0]
     require(by_session.keys() == release.keys(), 'admission session coverage differs')
+    triggers = controller_triggers(upstream) if upstream is not None else None
+    if triggers is not None:
+        require({session: tick + delay for session, (tick, delay) in triggers.items()} == release,
+                'producer-derived controller release differs')
 
     report = {kind: {'calls': 0, 'waiting_calls': 0, 'max_wait': 0,
                      'max_controller_wait': 0, 'max_peer_wait': 0, 'max_node_wait': 0}
@@ -193,11 +297,13 @@ def check_admission(scopes, transfers, admission):
             stats['max_controller_wait'] = max(stats['max_controller_wait'], max(0, release[session] - offer))
             stats['max_peer_wait'] = max(stats['max_peer_wait'], eligible - max(offer, release[session]))
             stats['max_node_wait'] = max(stats['max_node_wait'], predicted - eligible)
+        if triggers is not None:
+            replay_group(group, *triggers[session], is_down)
     return report
 
 
-def check(source, mode, seed, *, admission=False):
-    scopes, start, result, program, sampled_admission = read_trace(source)
+def check(source, mode, seed, *, admission=False, phase_release=False):
+    scopes, start, result, program, sampled_admission, upstream = read_trace(source)
     transfers, terminals = [], []
     sequence = [0] * 3
     read_bytes = write_bytes = 0
@@ -254,8 +360,11 @@ def check(source, mode, seed, *, admission=False):
               'result_accept': result[0], 'read_bytes': read_bytes, 'write_bytes': write_bytes,
               'longest_service_offer_wait': max(s['dispatch'][0][0] - s['offer'][0][0] for s in scopes),
               'longest_done_to_terminal': max(s['terminal'][0][0] - s['done'][0][0] for s in scopes)}
-    if admission:
-        report['admission'] = check_admission(scopes, grants[:len(scopes)], sampled_admission)
+    if admission or phase_release:
+        report['admission'] = check_admission(scopes, grants[:len(scopes)], sampled_admission,
+                                              upstream if phase_release else None)
+    if phase_release:
+        report['phase_replay_calls_per_strategy'] = len(scopes)
     return report
 
 
@@ -270,12 +379,14 @@ def main():
     verify.add_argument('--mode', type=int, choices=(0, 1), required=True)
     verify.add_argument('--seed', type=int, default=25001)
     verify.add_argument('--admission', action='store_true')
+    verify.add_argument('--phase-release', action='store_true')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
     else:
         with args.log.open(encoding='utf-8') as source:
-            print(json.dumps(check(source, args.mode, args.seed, admission=args.admission), indent=2))
+            print(json.dumps(check(source, args.mode, args.seed, admission=args.admission,
+                                   phase_release=args.phase_release), indent=2))
 
 
 if __name__ == '__main__':

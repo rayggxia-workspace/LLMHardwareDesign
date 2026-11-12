@@ -163,6 +163,21 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 人为偏移 Gate/Up 放行一拍、令 Down 一路跳过同组描述符等待，以及屏蔽 P 的 range READY 均触发核对失败。本机证据 `round15-admission-logs.sha256` 的 SHA-256 为 `1f2280d0d598fb34106d7f1c5ac0fc33ad5a373db6d14ca4282f39b7e6319388`，`round15-admission-verified.json` 为 `1078e3cf219c40f2973893a2ec269a6ee356e5d0f00dc810463a3d51b3665093`。Windows 348 项测试通过。102604 的压力模式和 SRAM 初态 2 在原固定轨迹合同下仍复现 948,626 拍。FFN 放行对照使用 RTL 采样的控制器入口及 P READY。跨 scope 的控制依赖、P 完成和 Down 同组放行仍需由候选重放内生生成，再比较完整原生候选的排序。
 
+### 跨任务阶段依赖与 FFN 放行
+
+第 16 轮在事件 IR 中增加 `event_after`。例如消费任务写入 `[{"task":"gate","from":[0,"publish"],"to":[0,"dispatch"]}]`，其第 0 个服务的 `dispatch` 只能在 `gate` 的第 0 个服务完成 `publish` 后发放。前沿先确定生产者的绑定，运行时允许消费者提前准备描述符，依赖拍随前驱重放更新。单阶段服务用 `stage` 指名。阶段边限重放模式，任务图保持有向无环。覆盖单个任务的替代动作可以导出同一阶段。涉及这些端点的多任务融合需要明确的内部阶段映射。
+
+- 受控争用例中，高优先级请求占用共享资源后，前驱放行从第 4 拍移到第 8 拍，已选任务的接纳随之推迟。无争用时短准备候选用 7 拍。加入争用后严格贪心保留该候选，整份计划用 11 拍。宽度 8 的 DP 保留长准备候选，整份计划用 9 拍。独立检查拒绝前驱放行前一拍发放的篡改计划，也拒绝无阶段映射、无效阶段名和循环。
+- 在 102603 的四组原生 RTL 上新增生产者握手探针。Gate/Up 的第一组由启动握手触发，此后由 scatter 或最后一个满足条件的 Mid 提交触发，经 3 拍走到可开工。首组 Down 由最后一个 Mid 读 ACK 触发，经 2 拍允许开工。后续 Down 组在上组 DONE 后一拍允许开工，且三路描述符全部可用时才同时接纳。按这些规则重建控制器放行，四组的入口和之前记录完全一致。
+- 256 组隔离回放使用同一套候选 IR 及检查器，贪心和 DP 各核对 768 次接纳边沿。已完成的描述符时刻来自第 14 轮的共享 DMA 重放，前驱提交来自采样的 RTL 握手。四组的 P READY 在放行时都已满足。把关键 Mid 提交或最后的 Mid 读 ACK 移一拍、删去 Down 完成握手，都导致检查失败。尚需在一份完整候选计划里生成这些生产者完成拍，并用原生可重排候选核对排序。
+
+```bash
+# 复用第 15 轮插桩与运行参数，新插桩同时输出 RELEASE 握手。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG --mode 1 --seed 25001 --phase-release
+```
+
+Verilator 5.006，102603 固定 RTL 和数据条件同第 15 轮。每份新日志去掉 `RELEASE` 行后均与对应原日志逐行一致。本机 `round16-phase-release-logs.sha256` 为 `173d07d087aec3a70121e735b33a490cb0fdf6e942753e83f53405df20e2eba7`，`round16-phase-release-verified.json` 为 `5344c789a05992b5f42ee9fb25a7f2ffc8cbe6fd9814b67da03551ea92801385`。Windows 349 项测试及 `run.py --event-ir` 的阶段依赖输入通过。102604 压力模式、SRAM 初态 2 的固定轨迹仍复现 948,626 拍。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

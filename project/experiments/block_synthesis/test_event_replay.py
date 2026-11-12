@@ -446,6 +446,82 @@ class ReplayTest(unittest.TestCase):
         self.assertEqual(resumed, replay((old, write), cap))
         self.assertEqual((resumed[1][0].start, resumed[0][-1].end), (3, 12))
 
+    def test_cross_task_phase_gate_retimes_old_work_and_changes_the_best_binding(self):
+        h = hardware()
+        h['event_model'].update(timing='replay', live_out=[])
+        services = h['event_model']['services']
+
+        def split(name, phases):
+            services[name] = {'ticks': sum(p[1] for p in phases), 'claims': {},
+                              'phases': [{'kind': kind, 'ticks': ticks, 'claims': claims,
+                                          'priority': priority}
+                                         for kind, ticks, claims, priority in phases]}
+
+        services['start'] = {'ticks': 1, 'claims': {}}
+        split('controller', [('decode', 1, {}, 0), ('release', 2, {'DDR.bus': 1}, 0),
+                             ('retire', 1, {}, 0)])
+        split('priority-read', [('prepare', 2, {}, 0), ('request', 4, {'DDR.bus': 1}, -1)])
+        split('long-setup', [('descriptor', 7, {}, 0), ('dispatch', 1, {'M0': 1}, 0)])
+        split('short-setup', [('descriptor', 1, {}, 0), ('dispatch', 3, {'M0': 1}, 0)])
+        producer = task('a-controller', binding('controller', stage('start'), stage('controller')))
+        consumer = task('b-ffn', binding('short', stage('short-setup')), binding('long', stage('long-setup')))
+        consumer['event_after'] = [{'task': producer['id'], 'from': [1, 'release'], 'to': [0, 'dispatch']}]
+        urgent = task('c-urgent', binding('priority-read', stage('priority-read')))
+
+        def row_for(plan, ident):
+            return next(row for row in plan['tasks'] if row['id'] == ident)
+
+        def dispatch(plan):
+            return row_for(plan, 'b-ffn')['evaluation']['events'][0]['phases'][-1]
+
+        base = [producer, consumer]
+        old = search(base, h, width=1, ready_limit=1)
+        verify(base, h, (), old)
+        self.assertEqual((dispatch(old)['start'], old['makespan'], row_for(old, 'b-ffn')['binding']),
+                         (4, 7, 'short'))
+        self.assertEqual(row_for(old, 'a-controller')['end'], 5)
+        self.assertEqual(row_for(old, 'b-ffn')['start'], 0)
+
+        crowded = [*base, urgent]
+        greedy = search(crowded, h, width=1, ready_limit=1)
+        beam = search(crowded, h, width=8)
+        for plan in (greedy, beam):
+            verify(crowded, h, (), plan)
+            self.assertEqual((dispatch(plan)['start'], row_for(plan, 'a-controller')['end']), (8, 9))
+        self.assertEqual((row_for(greedy, 'b-ffn')['binding'], greedy['makespan']), ('short', 11))
+        self.assertEqual((row_for(beam, 'b-ffn')['binding'], beam['makespan']), ('long', 9))
+
+        bad = deepcopy(greedy)
+        dispatch(bad).update(start=7, end=10)
+        consumer_row = row_for(bad, 'b-ffn')
+        consumer_row['evaluation']['events'][0]['end'] = consumer_row['end'] = bad['makespan'] = 10
+        with self.assertRaisesRegex(ValueError, 'before its producer phase completed'):
+            verify(crowded, h, (), bad)
+
+        # A singleton alternate action can export the original task's phase.
+        services['fast-start'] = {'ticks': 1, 'claims': {}, 'priority': -1}
+        split('fast-controller', [('decode', 1, {}, 0), ('release', 1, {}, 0),
+                                  ('retire', 1, {}, 0)])
+        alias = {'id': 'fast-control', 'covers': [producer['id']],
+                 'bindings': [binding('fast', stage('fast-start'), stage('fast-controller'))]}
+        covered = search(base, h, [alias], width=8)
+        verify(base, h, [alias], covered)
+        self.assertEqual((row_for(covered, 'fast-control')['end'], dispatch(covered)['start']), (4, 3))
+        with self.assertRaisesRegex(ValueError, 'no mapping'):
+            search(base, h, [{**alias, 'covers': [producer['id'], consumer['id']]}], width=8)
+
+        broken = deepcopy(base)
+        broken[1]['event_after'][0]['from'] = [0, 'release']
+        with self.assertRaisesRegex(ValueError, 'unknown phase'):
+            search(broken, h)
+        cyclic = deepcopy(base)
+        cyclic[0]['after'] = [consumer['id']]
+        with self.assertRaisesRegex(ValueError, 'cycle'):
+            search(cyclic, h)
+        h['event_model']['timing'] = 'calendar'
+        with self.assertRaisesRegex(ValueError, 'require event replay'):
+            search(base, h)
+
     @staticmethod
     def tick_reference(operations, capacity):
         assigned = {}

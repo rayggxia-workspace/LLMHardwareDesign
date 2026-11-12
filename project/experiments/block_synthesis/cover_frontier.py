@@ -11,10 +11,12 @@ from transition import retention_actions
 from window_calendar import evaluate,resources as calendar_resources
 
 
-def catalogue(tasks,covers):
+def catalogue(tasks,covers,*,event_dependencies=None):
     by={t['id']:t for t in tasks}
     if len(by)!=len(tasks):raise ValueError('duplicate cover source task')
-    parents={n:set(t.get('after',())) for n,t in by.items()}
+    hard={n:set(t.get('after',())) for n,t in by.items()}
+    event_dependencies=event_dependencies or {}
+    parents={n:hard[n]|{edge.task for edge in event_dependencies.get(n,())} for n in by}
     if any(not ps<=by.keys() for ps in parents.values()):raise ValueError('unknown cover dependency')
     ancestors={};pending=set(by)
     while pending:
@@ -37,6 +39,7 @@ def catalogue(tasks,covers):
         if any(ancestors[p]&members for p in outside):raise ValueError('nonconvex task cover')
         roots={n for n in members if not parents[n]&members}
         action['boundary']=outside;action['anchor']=min(roots)
+        action['after']=set().union(*(hard[n] for n in members))-members
     return actions,parents,ancestors
 
 
@@ -45,10 +48,10 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         ready_limit is not None and (type(ready_limit)!=int or ready_limit<1)):
         raise ValueError('positive cover frontier bounds required')
     if rank_policy not in ('shared_tail','hypergraph_completion','hypergraph_resources'):raise ValueError('unknown cover rank policy')
-    # catalogue adds only derived fields to copies, never changes source IR.
-    actions,parents,ancestors=catalogue(tasks,[dict(a) for a in covers])
+    covers=tuple(covers)
     model=None
     live_replay=False
+    event_dependencies={}
     transport_counts={'transport_attempted':0,'transport_truncated':0}
     if 'event_model' in hardware:
         from event_execution import Model, Infeasible
@@ -68,17 +71,35 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
             transport_limit=hardware['event_model'].get('transport_limit',32)
             if transport_limit is not None and (type(transport_limit) is not int or transport_limit<1):
                 raise ValueError('positive transport limit required')
+    if any('event_after' in task for task in tasks):
+        from event_execution import phase_edges
+        event_dependencies={task['id']:phase_edges(task) for task in tasks}
+        event_dependencies={name:edges for name,edges in event_dependencies.items() if edges}
+        if event_dependencies and not live_replay:
+            raise ValueError('phase edges require event replay')
+    endpoints=set(event_dependencies)|{edge.task for edges in event_dependencies.values() for edge in edges}
+    if any(len(a['covers'])>1 and endpoints.intersection(a['covers']) for a in covers):
+        raise ValueError('multi-task cover has no mapping for its phase edge endpoints')
+    # catalogue adds only derived fields to copies, never changes source IR.
+    actions,parents,ancestors=catalogue(tasks,[dict(a) for a in covers],event_dependencies=event_dependencies)
     ids={t['id']:i for i,t in enumerate(tasks)};children={n:set() for n in ids}
     for n,ps in parents.items():
         for p in ps:children[p].add(n)
     indexed={n:[] for n in ids};by_action={a['id']:a for a in actions}
     masks={n:sum(1<<ids[p] for p in ps) for n,ps in parents.items()}
+    phase_locations={}
+    for name,edges in event_dependencies.items():
+        for edge in edges:
+            phase_locations.setdefault(edge.task,set()).add(edge.source)
+            phase_locations.setdefault(name,set()).add(edge.target)
     users={}
     for a in actions:
         a['mask']=sum(1<<ids[n] for n in a['covers']);indexed[a['anchor']].append(a)
         for b in a['bindings']:
             if model:
                 model.validate_binding(b)
+                for location in phase_locations.get(a['covers'][0],()):
+                    model.validate_phase(b,location)
                 for stage in b['event_stages']:
                     for value in stage.get('inputs',{}).values():
                         users[value]=users.get(value,0)|a['mask']
@@ -103,8 +124,10 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     for a in actions:
         share=min(optimistic_ticks(b) for b in a['bindings'])//len(a['covers'])
         for n in a['covers']:minimum[n]=min(minimum[n],share)
+    hard_parents={t['id']:set(t.get('after',())) for t in tasks}
     tail={}
-    for n in reversed(ancestors):tail[n]=minimum[n]+max((tail[c] for c in children[n]),default=0)
+    for n in reversed(ancestors):
+        tail[n]=minimum[n]+max((tail[c] for c in children[n] if n in hard_parents[c]),default=0)
     initial=State(0,{}, {r:(0,)*c for r,c in hardware['resources'].items()},frozenset(),0,0,None,{},
                   frozenset(n for n in ids if not parents[n]),execution=model.initial if model else None)
     buckets={0:{}};calendar=calendar_resources(hardware);expanded=merged=pruned=seed_kept=0
@@ -120,11 +143,11 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         tuple(decision.key() for decision in s.replay_decisions))
     def rank(s):
         bound=(completion.get(s) if completion else
-            max([s.makespan]+[max((s.frontier[p] for p in parents[n]),default=0)+tail[n] for n in s.ready]))
+            max([s.makespan]+[max((s.frontier[p] for p in hard_parents[n]),default=0)+tail[n] for n in s.ready]))
         return bound,s.makespan,s.traffic,netcost(s)
     def advance(s,a,b,policy,forced_choices=None):
         if s.done&a['mask'] or any(not s.done&(1<<ids[p]) for p in a['boundary']):return
-        arrival=max((s.frontier[p] for p in a['boundary']),default=0)
+        arrival=max((s.frontier[p] for p in a['after']),default=0)
         if model:
             protected={value for value,mask in users.items() if mask&~(s.done|a['mask'])}
             draft_state=s.execution.after(arrival) if live_replay else s.execution
@@ -175,7 +198,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         history=History(s.history,row)
         frontier={**s.frontier,**dict.fromkeys(a['covers'],ev['end'])}
         if live_replay:
-            decisions=(*decisions,Decision(row,frozenset(a['boundary'])))
+            decisions=(*decisions,Decision(row,frozenset(a['after']),event_dependencies.get(a['covers'][0],())))
             try:
                 execution,rows,trace=retime(model,decisions,execution,trace)
             except ReplayDeadlock:

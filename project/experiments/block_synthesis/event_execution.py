@@ -30,6 +30,35 @@ def window_phase_indices(service):
 
 
 @dataclass(frozen=True)
+class PhaseEdge:
+    task: str
+    source: tuple[int, str]
+    target: tuple[int, str]
+
+
+def phase_edges(task):
+    """Read the event IR's cross-task phase completion dependencies."""
+    records = task.get('event_after', ())
+    if not isinstance(records, (tuple, list)):
+        raise ValueError('event_after must be a list of phase edges')
+    edges = []
+    for record in records:
+        if (not isinstance(record, dict) or set(record) != {'task', 'from', 'to'}
+                or not isinstance(record['task'], str) or not record['task']):
+            raise ValueError('invalid event_after phase edge')
+        source, target = record['from'], record['to']
+        for location in (source, target):
+            if (not isinstance(location, (tuple, list)) or len(location) != 2
+                    or type(location[0]) is not int or location[0] < 0
+                    or not isinstance(location[1], str) or not location[1]):
+                raise ValueError('phase edge needs a stage index and a phase name')
+        edges.append(PhaseEdge(record['task'], tuple(source), tuple(target)))
+    if len(set(edges)) != len(edges):
+        raise ValueError('duplicate event_after phase edge')
+    return tuple(edges)
+
+
+@dataclass(frozen=True)
 class Copy:
     value: str
     ready: int
@@ -320,6 +349,16 @@ class Model:
                     raise ValueError('COPY stage changes identity or endpoint')
         if not 0 < binding['ticks'] <= lower_bound:
             raise ValueError('invalid optimistic stage bound')
+
+    def validate_phase(self, binding, location):
+        index, name = location
+        stages = binding['event_stages']
+        if index >= len(stages):
+            raise ValueError('phase edge references an unknown stage')
+        service = self.services[stages[index]['service']]
+        names = {phase['kind'] for phase in service['phases']} if 'phases' in service else {'stage'}
+        if name not in names:
+            raise ValueError('phase edge references an unknown phase')
 
     def wire_cost(self, nets):
         return sum(self.nets[n]['cost'] for n in nets - self.fixed)

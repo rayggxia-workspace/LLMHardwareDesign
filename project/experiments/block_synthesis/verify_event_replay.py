@@ -2,15 +2,16 @@
 from collections import Counter, defaultdict
 
 from dma_read import ReadFabric, receipt_json
-from event_execution import Model
+from event_execution import Model, phase_edges
 from event_replay import phase_dependencies
 from event_replay_plan import Decision, intents
 
 
 def verify_grants(tasks, hardware, rows):
     model = Model(hardware)
-    dependencies = {task['id']: frozenset(task.get('after', ())) for task in tasks}
-    decisions = [Decision(row, dependencies[row['id']]) for row in rows]
+    by_task = {task['id']: task for task in tasks}
+    decisions = [Decision(row, frozenset(by_task[row['id']].get('after', ())),
+                          phase_edges(by_task[row['id']])) for row in rows]
     operations = intents(model, decisions)
     events = [event for row in rows for event in row['evaluation']['events']]
     # Use only reported intervals to derive eligibility and releases. No call
