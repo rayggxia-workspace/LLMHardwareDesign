@@ -349,48 +349,78 @@ LOCAL_VARIANTS = (
 
 def local_variant(d, x, variant):
     prefix, title, equation, nodes, operand_note, services = variant
-    d.box(prefix + "-variant", x, 237, 656, 489, stroke=LINE, fill=PANEL)
-    d.text(prefix + "-variant-title", x + 21, 269, title, size=23, bold=True, width=615)
-    d.text(prefix + "-formula", x + 21, 306, equation, size=23, bold=True, color=BLUE, width=615)
-    d.text(prefix + "-data-title", x + 21, 350, "Local data path", size=17, bold=True, width=610)
+    d.box(prefix + "-variant", x, 352, 648, 474, stroke=LINE, fill=PANEL)
+    d.text(prefix + "-variant-title", x + 21, 386, title, size=23, bold=True, width=606)
+    d.text(prefix + "-formula", x + 21, 423, equation, size=23, bold=True, color=BLUE, width=606)
+    d.text(prefix + "-data-title", x + 21, 465, "C0 local data path", size=17, bold=True, width=606)
     box_width = 125 if len(nodes) == 4 else 101
-    stride = (614 - box_width) / (len(nodes) - 1)
+    stride = (606 - box_width) / (len(nodes) - 1)
     for index, (name, detail) in enumerate(nodes):
         left = x + 21 + stride * index
         key = f"{prefix}-node-{index}"
-        d.box(key, left, 373, box_width, 58, name, detail,
+        d.box(key, left, 486, box_width, 58, name, detail,
               stroke=LINE if name == "S" else BLUE, fill="white" if name == "S" else BLUE_BG)
         if index:
             bypass = prefix == "b" and index == 1
-            d.edge(f"{prefix}-data-{index}", [(left - stride + box_width, 402), (left, 402)],
+            d.edge(f"{prefix}-data-{index}", [(left - stride + box_width, 515), (left, 515)],
                    source=f"{prefix}-node-{index - 1}", target=key,
                    color=OCHRE if bypass else BLUE, dashed=bypass)
-    d.text(prefix + "-operands", x + 21, 454, operand_note, size=16, color=GRAY, width=610)
-    d.text(prefix + "-program-title", x + 21, 500, "Local program · one call", size=18,
-           bold=True, width=610)
+    d.text(prefix + "-operands", x + 21, 568, operand_note, size=16, color=GRAY, width=606)
+    d.text(prefix + "-program-title", x + 21, 608, "C0 local program after exchange", size=18,
+           bold=True, width=606)
     for index, service in enumerate(services):
-        y = 540 + 42 * index
-        d.text(f"{prefix}-instruction-{index}", x + 21, y, f"L_EXEC d{index} → L_WAIT 0x01",
+        y = 646 + 38 * index
+        d.text(f"{prefix}-instruction-{index}", x + 21, y, f"L_EXEC d{index + 3} → L_WAIT 0x01",
                size=17, mono=True, color=BLUE, width=300)
         d.text(f"{prefix}-descriptor-{index}", x + 332, y, service, size=17,
-               color=INK, width=303)
-    d.text(prefix + "-local-end", x + 21, 676, "L_END · return terminal status", size=17,
-           color=BLUE, width=610)
+               color=INK, width=295)
+    d.text(prefix + "-local-end", x + 21, 784, "L_END · return terminal status", size=17,
+           color=BLUE, width=606)
+
+
+def global_schedule(d, x, prefix):
+    d.box(prefix + "-global", x, 30, 648, 299, stroke=BLUE, fill=PANEL)
+    d.text(prefix + "-global-title", x + 21, 56, "Inter-Block schedule", size=20, bold=True, width=606)
+    for index, (op, operands) in enumerate((
+        ("G_CALL", "C0, t2"), ("G_CALL", "U0, t3"), ("G_WAIT", "0x0C"), ("G_END", ""),
+    )):
+        left = x + 21 + 156 * index
+        key = f"{prefix}-global-step-{index}"
+        d.box(key, left, 77, 138, 54, op, operands, size=17)
+        if index:
+            d.edge(f"{prefix}-global-flow-{index}", [(left - 18, 104), (left, 104)],
+                   source=f"{prefix}-global-step-{index - 1}", target=key)
+
+    mc, c, u = (prefix + "-mother", prefix + "-C0", prefix + "-U0")
+    d.box(mc, x + 195, 153, 258, 55, "Mother controller", fill=BLUE, ink="#FFFFFF", size=20)
+    d.box(c, x + 59, 254, 160, 57, "C0", "Compute y")
+    d.box(u, x + 429, 254, 160, 57, "U0", "Prepare b")
+    for center, key in ((139, c), (509, u)):
+        d.edge(key + "-call", [(x + 324, 208), (x + 324, 229), (x + center, 229), (x + center, 254)],
+               source=mc, target=key, direction="both")
+    for label, value, start, end, y in (
+        ("x", "Input x", c, u, 274), ("b", "Prepared b", u, c, 295),
+    ):
+        points = [(x + 219, y), (x + 429, y)]
+        d.edge(f"{prefix}-exchange-{label}", points if label == "x" else points[::-1],
+               source=start, target=end)
+        d.text(f"{prefix}-exchange-{label}-label", x + 324, y + (-12 if label == "x" else 12),
+               value, size=14, color=BLUE, align="center", width=176)
+    d.edge(prefix + "-expand-C0", [(x + 139, 311), (x + 139, 352)], source=c,
+           target=prefix + "-variant", color=GRAY, direction="none")
 
 
 def scheduling_decoupling():
-    d = Diagram("4 - Global and local scheduling decoupling", "scheduling-decoupling", 1400, 802)
-    d.box("shared-mc", 36, 35, 1328, 92, "Same mother-controller instruction stream",
-          "…  G_CALL C0,t0  →  G_WAIT 0x01  →  …", fill=BLUE, ink="#FFFFFF", size=25)
-    d.box("c-task-contract", 36, 146, 1328, 61, "Same C0 task interface",
-          "Inputs x and b in S · Output y in S · Success after y write acknowledgement",
-          stroke=LINE, fill=PANEL, size=19)
-    for x, variant in zip((36, 708), LOCAL_VARIANTS):
+    d = Diagram("4 - Global and local scheduling decoupling", "scheduling-decoupling", 1400, 893)
+    for x, variant in zip((36, 716), LOCAL_VARIANTS):
         local_variant(d, x, variant)
-    d.edge("bypass-key", [(36, 762), (80, 762)], color=OCHRE, dashed=True, direction="none")
-    d.text("bypass-key-label", 91, 762, "Product-wired G → E bypass", size=17,
+        global_schedule(d, x, variant[0])
+    d.text("same-program", 700, 104, "=", size=24, bold=True, color=BLUE, align="center", width=30)
+    d.text("same-block-graph", 700, 279, "=", size=24, bold=True, color=BLUE, align="center", width=30)
+    d.edge("bypass-key", [(36, 860), (80, 860)], color=OCHRE, dashed=True, direction="none")
+    d.text("bypass-key-label", 91, 860, "Product-wired G → E bypass", size=17,
            color=OCHRE, width=435)
-    d.text("scope-note", 1053, 762, "Illustrative variants · G → E verified separately",
+    d.text("scope-note", 1053, 860, "Illustrative variants · G → E verified separately",
            size=17, color=GRAY, align="center", width=622)
     return d
 

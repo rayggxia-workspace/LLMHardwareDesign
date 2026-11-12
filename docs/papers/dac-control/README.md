@@ -7,7 +7,7 @@
 - [图 1 底座与 C 局控](control-architecture.svg)逐个排列九个候选 Block。C 局控和宏的接口用蓝色箭头表示，宏下方的橙色横带汇总产品后制路径，G→E 接入横带，S 与 R 标为待设计的候选端点。
 - [图 2 指令分类与模型映射](instruction-topologies.svg)先概括四类指令的作用，再对照 Llama 3.2 与 Qwen3 的注意力 Q/K 前处理，展示额外归一化阶段如何改变路径和发令顺序。
 - [图 3 三 P FFN 的程序复用](ffn-program-reuse.svg)展示母控循环、相同局控镜像、逐轮描述符寻址与 token 复用。
-- [图 4 二级调度解耦](scheduling-decoupling.svg)对比同一母控调用下的两种 C 内局控程序与数据路径。
+- [图 4 二级调度解耦](scheduling-decoupling.svg)并排绘制相同的 C0↔U0 连接和母控指令链，再展开两种 C0 局控程序与数据路径。
 - [可编辑源图](control-figures.drawio)含四个页面，在 diagrams.net 打开即可移动形状、改文字、重新连接箭头。四张 SVG 保留矢量元素和可编辑文本。用 [出图脚本](draw_control.py)可重建 SVG、PNG 和 diagrams.net 源图。手工微调请直接保存源图并从编辑器导出。
 
 ## 固定版本证据

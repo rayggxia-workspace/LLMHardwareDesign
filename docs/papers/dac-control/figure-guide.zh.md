@@ -82,7 +82,9 @@
 
 ![图 4 二级控制如何隔离局部算子变化](scheduling-decoupling.svg)
 
-**顶部是共用的跨 Block 调度。** 母控调用同一个 C0 任务入口，用 t0 追踪，并以 `G_WAIT 0x01` 等待终态后继续执行。两版保留相同的目标绑定、输入输出地址和格式。S 中的 `x`、`b` 是输入和偏置，输出 `y` 写到同一位置，成功终态在最终写确认后返回。B 的 `α` 是产品配置时装入 S 的局部参数，母控调用无需增加参数。 [母控调用与等待](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/mother_control_native/mc_native_controller.sv#L327-L352) · [局部写回和完成](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_cfj_v1/ucf_s_compute_client.sv#L46-L80)
+**上半图逐项对照母控层。** 左右各画同一组 C0、U0 和母控。C0 把输入 `x` 发给 U0，U0 把准备好的操作数 `b` 送回 C0。两个方向的蓝色箭头在左右完全对齐。四个指令框也逐项对应，先 `G_CALL C0,t2`，再 `G_CALL U0,t3`，接着 `G_WAIT 0x0C` 等 t2 和 t3，最后 `G_END`。两列从各自的 C0 向下展开，因此同一组跨 Block 连接和同一段母控程序可以直接对照。 [C/U 参考程序](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/cad3fa572d3cbf8515532df50868000806990b18/project/control_native_v1/images.py#L19-L35) · [母控调用与等待](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/mother_control_native/mc_native_controller.sv#L327-L352) · [局部写回和完成](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_cfj_v1/ucf_s_compute_client.sv#L46-L80)
+
+**下半图展开交换完成后的 C0。** 两版保留 C0 的交换前缀、输入输出地址和格式。成功终态都在 `y` 写确认后返回。B 的 `α` 在产品配置时装入 C0 的 S。U0 的程序和跨 Block 接口在两个示例中共用。
 
 | | A　激活加偏置 | B　激活乘增益后加偏置 |
 | --- | --- | --- |
@@ -91,6 +93,6 @@
 | 局控程序 | 两对 `L_EXEC / L_WAIT`，执行 SiLU、ADD，最后 `L_END`。 | 三对 `L_EXEC / L_WAIT`，执行 SiLU、MUL、ADD，最后 `L_END`。 |
 | 产品连接 | 使用经过适配器的固定 S 路径。 | 在预留的 G/E 端点之间接入后制旁路，最终写回仍走固定 S 路径。 |
 
-**局控和描述符分别改什么。** `d0`、`d1`、`d2` 是局控镜像的执行记录索引。A 的 `d0` 指定激活结果写到 S，`d1` 指定 ADD。B 的 `d0` 选旁路输出，`d1` 指定 MUL 并选旁路第一操作数，`d2` 指定 ADD。新增的一对指令改变局控指令流。每次局控等待复用局部 token 0，母控 t0 贯穿整个任务。图中重复的 E 是同一颗宏的两次调用，重复的 S 是同一颗 SRAM 的不同地址。 [局控执行记录示例](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/cfj_leaf_base/stage_groups.py#L113-L139) · [E 适配器](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_cfj_v1/cfj_e_port.sv#L16-L35)
+**局控和描述符分别改什么。** `d0–d2` 对应 C0 两版共用的 RESERVE、SEND、RECEIVE，已经用上半图的数据箭头表达。下半图从 `d3` 开始。A 的 `d3` 指定激活结果写到 S，`d4` 指定 ADD。B 的 `d3` 选旁路输出，`d4` 指定 MUL 并选旁路第一操作数，`d5` 指定 ADD。新增的一对指令改变局控指令流。每次局控等待复用局部 token 0，母控 t2 贯穿整个 C0 任务。图中重复的 E 是同一颗宏的两次调用，重复的 S 是同一颗 SRAM 的不同地址。 [局控执行记录示例](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/cfj_leaf_base/stage_groups.py#L113-L139) · [E 适配器](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_cfj_v1/cfj_e_port.sv#L16-L35)
 
 **证据范围。** 该示例以兼容的入口、依赖、张量格式、可见时点和服务约束为前提。定点实现须遵守舍入、饱和和有效 lane 约束。旁路跨过的是 `g` 的 SRAM 中转，现有适配器仍可能按描述符读取占位操作数。C 夹具已验证 G→E 直送与 SRAM 回放的同功能对照，本图的增益版本尚未端到端验证。 [定点算术](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/BLOCK_V2.md#L46-L60) · [旁路端点 RTL](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_cfj_v1/block_cfj_cf.sv#L100-L132) · [物理网表回放](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/211/README.md#L109-L114)
