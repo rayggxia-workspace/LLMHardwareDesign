@@ -146,7 +146,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
                                 and move['src'] in outputs and move['dst'] == DDR
                                 and move['end'] <= write_at, 'invalid output eviction or write precedes its ACK')
                     else:
-                        require(move['end'] <= start, 'stage precedes move ACK')
+                        require(move['end'] <= read_at['start'], 'stage read precedes move ACK')
                 for w, value in inputs.items():
                     access(reads, w, value, read_at['start'], read_at['end'])
                 for w, value in outputs.items():

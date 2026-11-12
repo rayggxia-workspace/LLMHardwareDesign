@@ -1,6 +1,7 @@
 """Record real MC/LC handshakes in the frozen #251 programmed FFN."""
 import argparse
 import json
+from bisect import bisect_right
 from pathlib import Path
 
 from dma_read import Profile, Read
@@ -39,6 +40,27 @@ MONITOR = """  reg [2:0] probe_offer_seen=0;
    end
   end
 """
+ADMISSION_MONITOR = """  reg [31:0] probe_down_session=0;
+  wire [2:0] probe_range_ready,probe_exec_ready;
+  reg [5:0] probe_ready_previous;
+  reg probe_ready_seen=0;
+  for(genvar q=0;q<3;q++)begin: admission_port
+   assign probe_range_ready[q]=ps[q].node.exec.range_ready;
+   assign probe_exec_ready[q]=ps[q].node.exec.exec_ready;
+  end
+  always @(posedge clk) if($test$plusargs("TRACE_ADMISSION")&&!reset)begin
+   if(stripe_valid&&stripe_ready)
+    $display("ADMISSION stripe %0d %0d",cycle,tile_session);
+   if(down_phase&&tile_session!=probe_down_session)begin
+    $display("ADMISSION down %0d %0d",cycle,tile_session);
+    probe_down_session<=tile_session;
+   end
+   if(!probe_ready_seen||probe_ready_previous!={probe_range_ready,probe_exec_ready})
+    $display("ADMISSION ready %0d %0d %0d",cycle,probe_range_ready,probe_exec_ready);
+   probe_ready_seen<=1;
+   probe_ready_previous<={probe_range_ready,probe_exec_ready};
+  end
+"""
 
 # From the last accepted CALL flit, the LC accepts the frame, reads PM and
 # metadata, then presents the first 64 B fetch. CRC scans 124 bytes after the
@@ -48,6 +70,10 @@ DESCRIPTOR_CHECK_TICKS = 125  # DMA phase ends one edge after the final beat.
 DONE_TO_TERMINAL_FRAME = 5
 TERMINAL_FRAME_WITH_BUBBLE = 5
 TERMINAL_EOP_OFFSET = 3
+GATE_UP_STRIPES = 58
+DOWN_GROUPS = 6
+P_COUNT = 3
+ALL_P = (1 << P_COUNT) - 1
 
 
 def require(condition, message):
@@ -60,12 +86,13 @@ def instrument(source, destination):
     if rtl.count(ANCHOR) != 1:
         raise ValueError('expected the unique programmed FFN block in #251')
     with destination.open('x', encoding='utf-8', newline='\n') as output:
-        output.write(rtl.replace(ANCHOR, MONITOR + ANCHOR))
+        output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + ANCHOR))
 
 
 def read_trace(source):
     open_calls = {}
     scopes = []
+    admission = {'ready': [], 'stripe': [], 'down': []}
     start = result = program = None
     passed = False
     for line in source:
@@ -74,6 +101,10 @@ def read_trace(source):
             program = dict(item.split('=') for item in line.split()[1:])
         if line.startswith('PASS ffn_three_p_native ') and ' program=1 ' in line:
             passed = True
+        if line.startswith('ADMISSION '):
+            _, kind, *fields = line.split()
+            require(kind in admission, 'unknown admission event')
+            admission[kind].append(tuple(map(int, fields)))
         if not line.startswith('CONTROL '):
             continue
         _, kind, raw_tick, *fields = line.split()
@@ -99,11 +130,74 @@ def read_trace(source):
     require(passed and start is not None and result is not None and not open_calls and program is not None,
             'incomplete programmed FFN trace')
     require(len(scopes) == 192, 'expected all 192 native calls')
-    return scopes, start, result, program
+    return scopes, start, result, program, admission
 
 
-def check(source, mode, seed):
-    scopes, start, result, program = read_trace(source)
+def first_ready(edges, ticks, mask, release):
+    index = bisect_right(ticks, release) - 1
+    require(index >= 0, 'missing P readiness at release')
+    for tick, range_ready, exec_ready in edges[index:]:
+        if range_ready & exec_ready & mask == mask:
+            return max(tick, release)
+    raise ValueError('no common P readiness after release')
+
+
+def check_admission(scopes, transfers, admission):
+    edges = admission['ready']
+    require(edges and all(len(row) == 3 and 0 <= row[1] <= ALL_P and 0 <= row[2] <= ALL_P
+                          for row in edges), 'missing or invalid P readiness trace')
+    ticks = [row[0] for row in edges]
+    require(ticks[0] == 0 and all(a < b for a, b in zip(ticks, ticks[1:])),
+            'unordered or truncated P readiness trace')
+    expected_sessions = (
+        ('stripe', range(1, GATE_UP_STRIPES + 1)),
+        ('down', range(GATE_UP_STRIPES + 1, GATE_UP_STRIPES + DOWN_GROUPS + 1)),
+    )
+    release = {}
+    for kind, sessions in expected_sessions:
+        rows = admission[kind]
+        require(all(len(row) == 2 for row in rows) and
+                [session for _, session in rows] == list(sessions) and
+                all(a[0] < b[0] for a, b in zip(rows, rows[1:])), f'invalid {kind} releases')
+        # The registered Gate/Up gather first asserts project_valid after
+        # accepting the stripe. Down's fixture waits one edge on phase entry;
+        # after subsequent groups it samples readiness in the same cycle.
+        for tick, session in rows:
+            release[session] = tick + (kind == 'stripe' or session == GATE_UP_STRIPES + 1)
+
+    by_session = {}
+    for scope, grants in zip(scopes, transfers):
+        session = scope['offer'][0][1]
+        group = by_session.setdefault(session, {})
+        require(scope['client'] not in group, 'duplicate P in admission group')
+        group[scope['client']] = grants[-1].end, scope['dispatch'][0][0]
+    require(by_session.keys() == release.keys(), 'admission session coverage differs')
+
+    report = {kind: {'calls': 0, 'waiting_calls': 0, 'max_wait': 0,
+                     'max_controller_wait': 0, 'max_peer_wait': 0, 'max_node_wait': 0}
+              for kind, _ in expected_sessions}
+    for session, group in by_session.items():
+        require(set(group) == set(range(P_COUNT)), f'missing P in session {session}')
+        is_down = session > GATE_UP_STRIPES
+        last_descriptor = max(offer for offer, _ in group.values())
+        for client, (offer, actual) in group.items():
+            descriptor = last_descriptor if is_down else offer
+            eligible = max(descriptor, release[session])
+            predicted = first_ready(edges, ticks, ALL_P if is_down else 1 << client, eligible)
+            require(predicted == actual, f'admission timing differs for session {session}, P{client}: '
+                    f'expected {predicted}, saw {actual}')
+            stats = report['down' if is_down else 'stripe']
+            stats['calls'] += 1
+            stats['waiting_calls'] += predicted > offer
+            stats['max_wait'] = max(stats['max_wait'], predicted - offer)
+            stats['max_controller_wait'] = max(stats['max_controller_wait'], max(0, release[session] - offer))
+            stats['max_peer_wait'] = max(stats['max_peer_wait'], eligible - max(offer, release[session]))
+            stats['max_node_wait'] = max(stats['max_node_wait'], predicted - eligible)
+    return report
+
+
+def check(source, mode, seed, *, admission=False):
+    scopes, start, result, program, sampled_admission = read_trace(source)
     transfers, terminals = [], []
     sequence = [0] * 3
     read_bytes = write_bytes = 0
@@ -156,10 +250,13 @@ def check(source, mode, seed):
             (len(scopes), read_bytes, write_bytes) and result[1:] == (read_bytes, write_bytes),
             'program byte accounting differs')
     require(result[0] > max(s['terminal'][0][0] for s in scopes), 'program result preceded child retirement')
-    return {'calls': len(scopes), 'descriptor_beats': 2 * len(scopes), 'start': start,
-            'result_accept': result[0], 'read_bytes': read_bytes, 'write_bytes': write_bytes,
-            'longest_service_offer_wait': max(s['dispatch'][0][0] - s['offer'][0][0] for s in scopes),
-            'longest_done_to_terminal': max(s['terminal'][0][0] - s['done'][0][0] for s in scopes)}
+    report = {'calls': len(scopes), 'descriptor_beats': 2 * len(scopes), 'start': start,
+              'result_accept': result[0], 'read_bytes': read_bytes, 'write_bytes': write_bytes,
+              'longest_service_offer_wait': max(s['dispatch'][0][0] - s['offer'][0][0] for s in scopes),
+              'longest_done_to_terminal': max(s['terminal'][0][0] - s['done'][0][0] for s in scopes)}
+    if admission:
+        report['admission'] = check_admission(scopes, grants[:len(scopes)], sampled_admission)
+    return report
 
 
 def main():
@@ -172,12 +269,13 @@ def main():
     verify.add_argument('log', type=Path)
     verify.add_argument('--mode', type=int, choices=(0, 1), required=True)
     verify.add_argument('--seed', type=int, default=25001)
+    verify.add_argument('--admission', action='store_true')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
     else:
         with args.log.open(encoding='utf-8') as source:
-            print(json.dumps(check(source, args.mode, args.seed), indent=2))
+            print(json.dumps(check(source, args.mode, args.seed, admission=args.admission), indent=2))
 
 
 if __name__ == '__main__':

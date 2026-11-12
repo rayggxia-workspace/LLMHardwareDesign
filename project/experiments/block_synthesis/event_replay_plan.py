@@ -78,7 +78,9 @@ def intents(model, decisions):
                     dependencies[write].add(writers[window])
                 dependencies[write].update(readers.get(window, ()))
             if is_stage:
-                dependencies[0].update(pending_moves)
+                # Descriptor/setup phases may run while the input delivery is
+                # in flight if the contract identifies a later capture phase.
+                dependencies[read or 0].update(pending_moves)
                 pending_moves.clear()
                 boundary = {terminal}
             elif 'output_eviction' not in event:

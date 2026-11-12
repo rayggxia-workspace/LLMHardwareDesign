@@ -148,6 +148,21 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 原始日志和本地复跑脚本位于本机证据目录。`round14-control-logs.sha256` 的 SHA-256 为 `a806fa42e28c35465d4c8fa78892b4be8af7b85f689037d5cb4d560da64edcbb`，`round14-control-verified.json` 为 `920584e61e8482ff987a1684ac909e05d2c4d844a9d8d720285b685e701e7799`。未插桩日志 `full-ffn-local-25001-0-0.log` 为 `7c94e6e5c79f858d6a25ecfd2a7c790bd8ff72a9bc1eabc8a3cb60896f4fdaf9`。
 
+### 服务放行与输入搬运的重叠
+
+第 15 轮沿用 102603 固定源包、程序、数据和四组运行条件。在原监控上增加 stripe 接收、Down 分组入口和 P 的 range／exec READY 位变化。四份日志除新增行外与第 14 轮逐行相同。检查器用描述符 DMA 重放的完成拍、采样的控制器入口和 READY 预测 768 次接纳边沿，全部逐拍一致。
+
+- Gate/Up 在 stripe 被 gather 接收的下一拍允许各 P 独立开工。每组 174 次中有 171 次在服务 VALID 后等待控制器。两种压力模式下最大等待分别为 853 拍和 1,576–1,578 拍。
+- Down 夹具在进入 Down 后多等一拍，此后按组同时要求三路描述符和三个 P 就绪。最大控制器等待分别为 4,350 拍和 6,719–6,759 拍。控制器允许后，较早准备好的描述符还可能等同组其他描述符，最长 33 拍。四组的 P READY 在相应放行点均满足条件。
+- 重放模式的候选可在输入搬运期间准备描述符。仅当服务合同用 `window_phases.read` 指定稍后的读取阶段时，输入搬运 ACK 依赖才移到该阶段。阶段资源及全服务持有的命令槽仍逐拍计入。合成对照中，输入需 DDR 搬运时日历版选短准备候选、10 拍，重放版选长准备候选、7 拍。输入已驻留时重放版选短准备候选、5 拍。两种搜索宽度均通过独立核对，搬运 ACK 前抢读被拒绝。
+
+```bash
+# 按第 14 轮命令生成插桩源，运行时再增加 +TRACE_ADMISSION。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG --mode 1 --seed 25001 --admission
+```
+
+人为偏移 Gate/Up 放行一拍、令 Down 一路跳过同组描述符等待，以及屏蔽 P 的 range READY 均触发核对失败。本机证据 `round15-admission-logs.sha256` 的 SHA-256 为 `1f2280d0d598fb34106d7f1c5ac0fc33ad5a373db6d14ca4282f39b7e6319388`，`round15-admission-verified.json` 为 `1078e3cf219c40f2973893a2ec269a6ee356e5d0f00dc810463a3d51b3665093`。Windows 348 项测试通过。102604 的压力模式和 SRAM 初态 2 在原固定轨迹合同下仍复现 948,626 拍。FFN 放行对照使用 RTL 采样的控制器入口及 P READY。跨 scope 的控制依赖、P 完成和 Down 同组放行仍需由候选重放内生生成，再比较完整原生候选的排序。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

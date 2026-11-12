@@ -396,6 +396,46 @@ class ReplayTest(unittest.TestCase):
             if timing == 'replay':
                 self.assertEqual((compute['start'], compute['phases'][-1]['start']), (0, 9))
 
+    def test_deferred_input_capture_changes_the_best_candidate_with_residency(self):
+        h = hardware()
+        h['resources']['LC.slot'] = 1
+        spec = h['event_model']
+        spec.update(initial_backing=['x'], live_out=[])
+        spec['routes']['DDR-to-S1']['setup'] = 3
+        for name, setup, capture in (('long-setup', 5, 2), ('short-setup', 1, 4)):
+            spec['services'][name] = {
+                'ticks': setup + capture, 'claims': {}, 'hold_claims': {'LC.slot': 1},
+                'phases': [{'kind': 'descriptor', 'ticks': setup, 'claims': {}},
+                           {'kind': 'capture', 'ticks': capture, 'claims': {'S1': 1}}],
+                'window_phases': {'read': 'capture'},
+            }
+        choices = [binding(name, stage(name, inputs={'input': 'x'}))
+                   for name in ('long-setup', 'short-setup')]
+        tasks = [task('consume', *choices)]
+        for timing, resident, expected in (
+            ('calendar', False, ('short-setup', 10)),
+            ('replay', False, ('long-setup', 7)),
+            ('replay', True, ('short-setup', 5)),
+        ):
+            spec.update(timing=timing, initial_copies={'input': 'x'} if resident else {})
+            for width in (1, 8):
+                plan = search(tasks, h, width=width)
+                verify(tasks, h, (), plan)
+                self.assertEqual((plan['tasks'][0]['binding'], plan['makespan']), expected)
+                self.assertEqual(plan['external_read_bytes'], 0 if resident else 16)
+
+        spec['initial_copies'] = {}
+        short_only = [task('consume', choices[1])]
+        bad = search(short_only, h, width=1)
+        verify(short_only, h, (), bad)
+        row = bad['tasks'][0]
+        move, service = row['evaluation']['events']
+        self.assertEqual((service['start'], move['end'], service['phases'][-1]['start']), (0, 5, 5))
+        service['phases'][-1].update(start=4, end=8)
+        service['end'] = row['end'] = bad['makespan'] = 8
+        with self.assertRaisesRegex(ValueError, 'read precedes move ACK'):
+            verify(short_only, h, (), bad)
+
     def test_checkpoint_uses_phase_completion_instead_of_retirement(self):
         old = Operation((Phase('capture', 3), Phase('retire', 9)), holds=(('slot', 1),))
         capture = (frozenset({(0, 0)}),)
