@@ -10,8 +10,8 @@ from benchmark_native_sram_replay import check_trace
 from cover_frontier import search
 from dma_offer import DmaOfferChannel
 from event_replay import Operation, Phase, ReadyWindow, ReplayDeadlock, replay
-from ffn_m import FILL, INPUT, INPUT_READY, RF, RF_READY, Reply, commit_phases, reply_phase
-from ffn_m_issue import ALLOC_CMD, Command, CommandLink
+from ffn_m import ALLOC, FILL, INPUT, INPUT_READY, RF, RF_READY, Record, Reply, commit_phases, reply_phase
+from ffn_m_issue import ALLOC_CMD, Command, CommandLink, join_schedule
 from ffn_mid import MIN_TICKS, MidTile
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
@@ -649,6 +649,23 @@ class ReplayTest(unittest.TestCase):
             verify(tasks, h, (), plan)
             self.assertEqual((next(row['binding'] for row in plan['tasks'] if row['id'] == 'exec'),
                               plan['makespan']), (choice, finish))
+
+    def test_p_binding_can_handoff_a_fill_on_the_older_input_edge(self):
+        records = [Record(1, 0, 1, 0, 0, False, 0), Record(2, 0, 1, 0, 1, False, 3)]
+        eops = {(FILL, 1): 11, (ALLOC, 2): 14, (INPUT, 1): 35, (FILL, 2): 35}
+        self.assertEqual(join_schedule(records, {(1, 0): 10}, eops, {}, lookahead=False), [(16, 1), (36, 2)])
+        eops[FILL, 2] += 1
+        self.assertEqual(join_schedule(records, {(1, 0): 10}, eops, {}, lookahead=False), [(16, 1), (38, 2)])
+
+    def test_lookahead_pair_waits_for_the_younger_front(self):
+        records = [Record(index + 1, 0, 1, 128, index, False, index % 2) for index in range(4)]
+        eops = {(FILL, 1): 20, (ALLOC, 2): 20, (INPUT, 1): 40, (FILL, 2): 25,
+                (FILL, 3): 50, (ALLOC, 4): 59, (INPUT, 3): 80, (FILL, 4): 61}
+        proof, retired = {(1, 128): 10}, {2: 56}
+        self.assertEqual(join_schedule(records, proof, eops, retired, lookahead=True),
+                         [(22, 1), (41, 2), (64, 3), (81, 4)])
+        self.assertEqual(join_schedule(records, proof, eops, retired, lookahead=False),
+                         [(22, 1), (41, 2), (61, 3), (81, 4)])
 
     def test_m_link_retimes_old_allocation_when_exec_releases_bank(self):
         side = [Command(tick, ALLOC_CMD, session, sequence, 2)

@@ -283,6 +283,20 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 完整 RTL 固定于 `9abd46f5cbb4534bcfc614571ccd6d402ad11882`，Verilator 5.006。原始记录和复现脚本保存在本机 Codex 实验目录。`round22-copy-logs.sha256` 为 `9e0088c065ae67f6d0f0e0aeb9ed55490204fb25028b51afc2cd078aaa3efd14`，`round22-copy-verified.json` 为 `f20161450733a7737562d253c391cfa20626214bf364dd8ac15de6172c249071`。Windows 358 项测试通过，102604 固定轨迹基线仍为 948,626 拍。K header 释放、W/A 绑定、侧带命令首次就绪和 FILL 首次就绪继续由各自波形提供。下一步用预测的 A 证明和 W 填充重算绑定，并将可改变的 K 供给与后续执行纳入同一次候选重放。
 
+### A 与 W 绑定的放行条件
+
+第 23 轮用重算的 A 证明、ALLOC／FILL／INPUT 回包 EOP 和上一条 P 记录的退休拍重新推导 W/A 绑定。直接配对的首条记录还要等第二条记录的分配回包。前瞻队列中的配对要等两条已填充记录恢复到执行端及上一对退休。第二条记录在第一条 INPUT EOP 交接。若它的 FILL 同拍到达，下拍即可绑定。若 FILL 晚一拍，需经过填充等待状态，绑定再晚两拍。
+
+四组固定和三组 COPY 候选每组重算 66,048 次绑定，均与 #251 RTL 对齐。另两组关闭 W 前瞻的完整波形也各重算 66,048 次绑定，使用采样的 A 证明。六个篡改负例分别覆盖 A 证明、首条 W 填充、第二条 W 分配、前瞻队列第二条填充、上一条 INPUT 和上一对退休。360 项测试通过。`round23-wa-verified.json` 的 SHA-256 为 `a85d93ccf59f39faaa2094e772cef84708c28cd9c69ad68112eaf2cea14a2d40`。
+
+```bash
+# --aread 和 --copy-delay-epoch 也会检查 W/A 绑定。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG --mode 1 --seed 25001 --wa-join
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check NO_LOOKAHEAD_LOG --mode 1 --seed 25001 --no-lookahead
+```
+
+完整检查先从采样绑定重放 M，再用重放的时刻反查绑定。随后要把这条回路改成事件驱动，使候选引起的 W 与 A 就绪变化直接推进 P/M。K header、侧带首次就绪和 FILL 首次就绪仍是采样入口。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

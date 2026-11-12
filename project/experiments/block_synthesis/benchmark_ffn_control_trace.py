@@ -12,7 +12,7 @@ from event_replay import Operation, Phase, replay
 from ffn_a import EVENTS as A_EVENTS, replay_tile as replay_a_tile
 from ffn_m import (ALLOC, BEGIN, FILL, FIRST_OPERAND, INPUT, LAST_OPERAND, RAW_READY, RF, Record, Reply,
                    execution_replies, replay_commits, replay_replies)
-from ffn_m_issue import ALLOC_CMD, SIDE_WORDS, Command, CommandLink
+from ffn_m_issue import ALLOC_CMD, SIDE_WORDS, Command, CommandLink, join_schedule
 from ffn_mid import MIN_TICKS, MidTile
 from ffn_result import (READBACK_TAG, down_group_addresses, down_readback_words, mid_readback_words,
                         readback_service, sram_word_phases)
@@ -557,7 +557,7 @@ def check_issue(client, observed, records, controls):
     return predicted, report
 
 
-def check_m_execution(scopes, trace, mode, *, issue=False):
+def check_m_execution(scopes, trace, mode, *, issue=False, join_eops=None):
     lanes = {kind: defaultdict(list) for kind in ('exec', 'operand', 'raw', 'control', 'frame', 'eop', 'pop')}
     for kind, lane in lanes.items():
         for tick, client, *fields in trace['MEXEC', kind]:
@@ -607,6 +607,8 @@ def check_m_execution(scopes, trace, mode, *, issue=False):
         for tick, reply in replies:
             identity = reply.source, reply.session, reply.sequence
             end = tick + reply.words
+            if join_eops is not None and reply.sequence and reply.source in (ALLOC, FILL, INPUT):
+                join_eops[client][reply.source, reply.sequence] = end
             frames.append((tick, *identity, reply.words))
             eops.append((end, *identity))
             if reply.source == INPUT:
@@ -660,6 +662,7 @@ def check_a_reads(scopes, trace, mode, m_retired, *, copy_delay_epoch=0):
     tiles = [(owner, tile * 128) for owner in sorted({s['dispatch'][0][1] for s in scopes})
              for tile in range(p_k_slices(owner))]
     require(0 <= copy_delay_epoch <= len(tiles), 'COPY delay epoch is outside the programmed tile sequence')
+    proofs = {}
     max_proof_wait = 0
     for epoch, (tile, profile) in enumerate(zip_longest(tiles, trace['AREAD', 'profile']), 1):
         require(tile is not None and profile is not None, 'A read K profile coverage differs')
@@ -677,6 +680,7 @@ def check_a_reads(scopes, trace, mode, m_retired, *, copy_delay_epoch=0):
                 f'COPY, A proof, or lease release differs in scope {scope}, K={k}')
         for kind, rows in events.items():
             expected[kind].extend(rows)
+        proofs[scope, k] = accepted
         expected['aload'].extend((accepted, p, scope, k, slot, generation, 0) for p in range(P_COUNT))
         max_proof_wait = max(max_proof_wait, accepted - max(tick for tick, _, _ in events['response']))
 
@@ -684,8 +688,27 @@ def check_a_reads(scopes, trace, mode, m_retired, *, copy_delay_epoch=0):
         domain = 'PISSUE' if kind == 'aload' else 'AREAD'
         for wanted, actual in zip_longest(sorted(rows), sorted(trace[domain, kind])):
             require(wanted == actual, f'{domain} {kind} differs: replay {wanted}, trace {actual}')
-    return {'tiles': len(tiles), 'copy_writes': len(expected['copy']), 'a_reads': len(expected['read']),
-            'proofs': len(expected['aload']), 'max_wait_after_last_read': max_proof_wait}
+    return ({'tiles': len(tiles), 'copy_writes': len(expected['copy']), 'a_reads': len(expected['read']),
+             'proofs': len(expected['aload']), 'max_wait_after_last_read': max_proof_wait}, proofs)
+
+
+def check_wa_joins(scopes, trace, retired, eops, proofs, *, lookahead):
+    sampled_proofs = defaultdict(dict)
+    if proofs is None:
+        for tick, p, scope, k, *_ in trace['PISSUE', 'aload']:
+            sampled_proofs[p][scope, k] = tick
+    observed = defaultdict(list)
+    for tick, p, _, sequence, *_ in trace['PISSUE', 'join']:
+        observed[p].append((tick, sequence))
+    count = 0
+    for p, records in m_records(scopes).items():
+        retirement = {record.sequence: retired[p, record.sequence][0] for record in records}
+        joins = join_schedule(records, proofs if proofs is not None else sampled_proofs[p],
+                              eops[p], retirement, lookahead=lookahead)
+        for expected, actual in zip_longest(joins, observed[p]):
+            require(expected == actual, f'P{p} W/A join differs: replay {expected}, trace {actual}')
+        count += len(joins)
+    return {'bindings': count, 'lookahead': lookahead, 'a_proof': 'replayed' if proofs is not None else 'sampled'}
 
 
 def check_p_results(scopes, trace, mode, m_stores=None, m_retired=None):
@@ -1102,9 +1125,10 @@ def check_admission(scopes, transfers, admission, upstream=None):
 
 
 def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False,
-          m=False, issue=False, aread=False, copy_delay_epoch=0):
+          m=False, issue=False, aread=False, copy_delay_epoch=0, wa_join=False, lookahead=True):
     aread = aread or copy_delay_epoch != 0
-    issue = issue or aread
+    wa_join = wa_join or aread or not lookahead
+    issue = issue or wa_join
     m = m or issue
     readback = readback or m
     result_trace = defaultdict(list) if readback else None
@@ -1147,8 +1171,9 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
 
     p_done = None
     m_stores = m_retired = None
+    join_eops = defaultdict(dict) if wa_join else None
     if m:
-        m_stores, m_retired, m_report = check_m_execution(scopes, result_trace, mode, issue=issue)
+        m_stores, m_retired, m_report = check_m_execution(scopes, result_trace, mode, issue=issue, join_eops=join_eops)
     if readback:
         p_done, down_done, down_values, p_report = check_p_results(scopes, result_trace, mode, m_stores, m_retired)
     terminals = []
@@ -1189,8 +1214,12 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
         report['p_results'] = p_report
     if m:
         report['m_execution'] = m_report
+    proofs = None
     if aread:
-        report['a_reads'] = check_a_reads(scopes, result_trace, mode, m_retired, copy_delay_epoch=copy_delay_epoch)
+        report['a_reads'], proofs = check_a_reads(scopes, result_trace, mode, m_retired,
+                                                  copy_delay_epoch=copy_delay_epoch)
+    if wa_join:
+        report['wa_joins'] = check_wa_joins(scopes, result_trace, m_retired, join_eops, proofs, lookahead=lookahead)
     if admission or phase_release or scatter or mid or readback:
         report['admission'] = check_admission(scopes, grants[:len(scopes)], sampled_admission,
                                               upstream if phase_release or scatter or mid or readback else None)
@@ -1218,6 +1247,8 @@ def main():
     verify.add_argument('--issue', action='store_true', help='verify P command issue through result acceptance')
     verify.add_argument('--aread', action='store_true', help='also replay COPY and private A SRAM handshakes')
     verify.add_argument('--copy-delay-epoch', type=int, default=0, help='launch COPY one cycle later in this tile epoch')
+    verify.add_argument('--wa-join', action='store_true', help='also verify P bindings from A proof and reply EOPs')
+    verify.add_argument('--no-lookahead', action='store_true', help='verify the fixture with W lookahead disabled')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
@@ -1226,7 +1257,8 @@ def main():
             print(json.dumps(check(source, args.mode, args.seed, admission=args.admission,
                                    phase_release=args.phase_release, scatter=args.scatter, mid=args.mid,
                                    readback=args.result, m=args.m, issue=args.issue, aread=args.aread,
-                                   copy_delay_epoch=args.copy_delay_epoch), indent=2))
+                                   copy_delay_epoch=args.copy_delay_epoch, wa_join=args.wa_join,
+                                   lookahead=not args.no_lookahead), indent=2))
 
 
 if __name__ == '__main__':
