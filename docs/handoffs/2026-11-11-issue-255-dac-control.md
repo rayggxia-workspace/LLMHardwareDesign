@@ -1,14 +1,14 @@
 # Issue #255 控制章节交接
 
-- 日期 2026-11-11（Asia/Shanghai，UTC+08:00）。仓库 `rayggxia-workspace/LLMHardwareDesign`，项目 ID `llm-hardware-design`。[Issue #255](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/255) 负责人 Melodydt。
+- 更新日期 2026-11-12（Asia/Shanghai，UTC+08:00）。仓库 `rayggxia-workspace/LLMHardwareDesign`，项目 ID `llm-hardware-design`。[Issue #255](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/255) 负责人 Melodydt。
 - [任务分支](https://github.com/rayggxia-workspace/LLMHardwareDesign/tree/task/255-dac-control-paper) 基于 [PR #251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251) 的 `9abd46f5cbb4534bcfc614571ccd6d402ad11882`。以 `task/250-w8a16-base-contract` 为堆叠 PR 的基分支。最新提交与审查状态见 [草稿 PR #256](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/256)。
 - 本地独立目录 `D:/Study_material/Study_material/LLMHardwareDesign/work/Melodydt/255/authoring` 为文稿目录。线上分支是完整 Git 历史，本地文稿经 GitHub 连接器发布。PNG 预览及生成器检查副本保存在本任务本地目录。
-- [论文控制图文与固定版本证据](../papers/dac-control/README.md)。图 1 按 NoPool 候选合同逐个排列实例，并用 C Block 展开母控接口、局控与 S/R/G/E。蓝色实线合并表达控制与数据交换，橙色虚线的 G→E 直送引用独立 C 夹具的后制连线和回放证据。图 2 保留五类 Block 的局控公共子集，以 Qwen2.5-3B-Instruct 门控 FFN 和 GPT-2 GELU MLP 对照分支汇合与串行调度。两例均为算子级候选映射。逐图说明和双页 diagrams.net 源图与 SVG 同目录。基线三 P FFN 的实现和 PR #180 的覆盖证据各有独立出处。
+- [论文控制图文与固定版本证据](../papers/dac-control/README.md)。图 1 保留 NoPool 九个实例与 C 局控，用蓝色横带组织 C 内 S↔R/G/E 固定 SRAM 路径。G→E 后制旁路单独标示。图 2 先介绍四类指令的总体作用，再用 Llama 3.2-3B 与 Qwen3-4B 的 Q/K 前处理说明插入逐头 RMSNorm 如何改变张量路径和调用顺序。图中模型算子级映射为候选。两张可编辑图、中文说明和英文正文同目录，原三 P FFN 与 PR #180 的证据另列。
 
 ## 已执行检查
 
 - 在本地管理副本执行 `python -X utf8 scripts/check_project.py`，通过。
-- 四个固定版本汇编、循环展开、LC 内核和 FFN 镜像生成文件的 Git blob 与远端一致。用 Python 3.12 运行本地 `verification/check_paper.py`，检查 diagrams.net 对象和连线样式、公共 ISA、FFN 镜像与 192 次调用。模型公式与固定版本官方源码和配置对照。两段示例用基线汇编器核对调用顺序、等待掩码、候选数据依赖与 P0 目标复用。两张图已渲染并目视核验。
+- 四个固定版本汇编、循环展开、LC 内核和 FFN 镜像生成文件的 Git blob 与远端一致。用 Python 3.12 运行本地 `verification/check_paper.py`，检查 diagrams.net 对象和连线样式、公共 ISA、FFN 镜像与 192 次调用。模型步骤对照固定版本源码及配置，C 连线对照固定 RTL 与独立夹具验收。两段程序以基线汇编器核对目标、依赖、调用顺序、掩码和 U0/U1 复用。两张图已渲染并目视核验。
 - 本轮无新增服务器作业，未执行 RTL 仿真、SystemC 或物理测试。
 
 ## 恢复步骤

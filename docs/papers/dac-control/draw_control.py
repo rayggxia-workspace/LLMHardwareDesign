@@ -124,7 +124,7 @@ class Diagram:
 
 
 def architecture():
-    d = Diagram("1 - Base and C control", "control-architecture", 1200, 818)
+    d = Diagram("1 - Base and C control", "control-architecture", 1200, 867)
     d.text("base-heading", 38, 36, "(a)  NoPool base candidate", size=27, bold=True, width=600)
     d.box("mother", 397, 67, 385, 78, "Mother controller", "Program memory and task tokens",
           fill=BLUE, ink="#FFFFFF", size=26)
@@ -151,7 +151,7 @@ def architecture():
 
     d.text("c-detail-heading", 38, 381, "(b)  Local controller and physical links inside C",
            size=27, bold=True, width=1020)
-    d.box("c-detail-frame", 40, 410, 1120, 345, stroke=LINE, fill=PANEL)
+    d.box("c-detail-frame", 40, 410, 1120, 398, stroke=LINE, fill=PANEL)
     d.box("mc-port", 66, 452, 182, 57, "MC interface", stroke=BLUE, fill=BLUE_BG)
     d.box("c-lc", 373, 435, 417, 91, "C local controller", "Dispatch services · track completion",
           fill=BLUE, ink="#FFFFFF", size=28)
@@ -165,126 +165,111 @@ def architecture():
     d.edge("c-lc-service", [(581, 526), (581, 562)], source="c-lc", target="c-service", direction="both")
 
     for key, title, detail, x, port in (
-        ("s", "S", "Private SRAM", 67, 403),
-        ("r", "R", "State service", 344, 526),
-        ("g", "G", "Activation", 621, 648),
-        ("e", "E", "Vector arithmetic", 898, 760),
+        ("s", "S", "Private SRAM", 66, 403),
+        ("r", "R", "State service", 342, 526),
+        ("g", "G", "Activation", 618, 648),
+        ("e", "E", "Vector arithmetic", 918, 760),
     ):
-        d.box("macro-" + key, x, 668, 221, 55, title, detail, stroke=LINE, fill="white")
-        d.edge("c-service-" + key, [(port, 615), (x + 110, 668)],
+        d.box("macro-" + key, x, 660, 205, 57, title, detail, stroke=LINE, fill="white")
+        d.edge("c-service-" + key, [(port, 615), (x + 102.5, 660)],
                source="c-service", target="macro-" + key, direction="both")
-    d.edge("c-g-to-e-product", [(842, 696), (898, 696)], source="macro-g", target="macro-e",
+    d.box("c-fixed-sram-paths", 66, 748, 1057, 42, "Fixed SRAM paths · S ↔ R/G/E via adapters",
+          fill=BLUE_BG, size=18)
+    for key in ("s", "r", "g", "e"):
+        macro = "macro-" + key
+        x, _, width, _ = d.boxes[macro]
+        center = x + width / 2
+        d.edge("c-sram-" + key, [(center, 717), (center, 748)], source=macro,
+               target="c-fixed-sram-paths", direction="both")
+    d.edge("c-g-to-e-product", [(823, 690), (918, 690)], source="macro-g", target="macro-e",
            color=OCHRE, dashed=True)
-    d.text("c-g-to-e-label", 870, 737, "Product-wired G → E bypass", size=15,
-           color=OCHRE, align="center", width=320)
+    d.text("c-g-to-e-label", 870.5, 674, "Bypass", size=15,
+           color=OCHRE, align="center", width=85)
     for key, x, color, dashed, caption in (
         ("exchange", 60, BLUE, False, "Control and data exchange"),
         ("physical", 623, OCHRE, True, "Product-specific physical wiring"),
     ):
-        d.edge("key-" + key, [(x, 787), (x + 42, 787)], color=color, dashed=dashed, direction="none")
-        d.text("key-" + key + "-label", x + 54, 787, caption, size=16, color=color, width=470)
+        d.edge("key-" + key, [(x, 837), (x + 42, 837)], color=color, dashed=dashed, direction="none")
+        d.text("key-" + key + "-label", x + 54, 837, caption, size=16, color=color, width=470)
     return d
 
 
-ISA_ROWS = (
-    ("Dispatch", (("G_CALL", "Launch target with a token"),),
-     (("L_EXEC", "Invoke a local service"),)),
-    ("Synchronization", (("G_WAIT", "Wait for selected tokens"),
-                         ("G_EVENT", "Consume READY and capture scalar")),
-     (("L_WAIT", "Wait for local completion"),)),
-    ("Arguments", (("G_MOVI", "Load a 32-bit immediate"),
-                   ("G_ADDI64", "Add to a 64-bit register pair")), ()),
-    ("Program flow", (("G_JNZ", "Select one of two forward PCs"),
-                      ("G_LOOP", "Repeat with a bounded counter"),
-                      ("G_END", "Finish the MC program")),
-     (("L_END", "Return task terminal status"),)),
+ISA_CLASSES = (
+    ("Dispatch", "Start a task on a Block or invoke a service within a Block"),
+    ("Synchronization", "Wait for required completions or consume a readiness event"),
+    ("Argument setup", "Initialize parameters and advance descriptor addresses"),
+    ("Program flow", "Select branches, repeat bounded loops, and finish execution"),
 )
 
 
 def isa_table(d):
     d.text("isa-heading", 36, 36, "(a)  Four instruction classes", size=28, bold=True, width=760)
-    d.text("mc-column", 243, 73, "Native MC v3 · 8 opcodes", size=20, bold=True, width=410)
-    d.text("lc-column", 885, 73, "Common LC · P / U / C / F / J", size=20, bold=True, width=420)
-    top = 97
-    for index, ((category, mc, lc), height) in enumerate(zip(ISA_ROWS, (42, 62, 62, 82))):
-        d.box(f"class-{index}", 36, top, 1328, height - 4, stroke=LINE, fill=PANEL)
-        d.text(f"class-{index}-name", 52, top + (height - 4) / 2, category,
-               size=19, bold=True, width=182)
-        for x, ops in ((243, mc), (885, lc)):
-            for row, (op, description) in enumerate(ops):
-                y = top + 18 + 21 * row
-                d.text("isa-" + op, x, y, op, size=18, color=BLUE, mono=True, width=145)
-                d.text("isa-" + op + "-action", x + 143, y, description, size=18, width=340)
-        top += height
+    for index, (category, purpose) in enumerate(ISA_CLASSES):
+        y = 67 + index * 43
+        d.box(f"class-{index}", 36, y, 1328, 39, stroke=LINE, fill=PANEL)
+        d.text(f"class-{index}-name", 52, y + 19.5, category, size=20, bold=True, width=220)
+        d.text(f"class-{index}-purpose", 275, y + 19.5, purpose, size=20, width=1040)
 
 
-QWEN_PROGRAM = (
-    "G_CALL A,t0 → G_CALL B,t1 → G_WAIT 0x03",
-    "G_CALL C,t2 → G_WAIT 0x04",
-    "G_CALL D,t3 → G_WAIT 0x08 → G_END",
+PROJECTION_PHASE = "G_CALL Aq,t0 → G_CALL Ak,t1 → G_WAIT 0x03"
+LLAMA_PROGRAM = (
+    PROJECTION_PHASE,
+    "G_CALL Cq,t2 → G_CALL Ck,t3 → G_WAIT 0x0C",
+    "G_END",
 )
-GPT_PROGRAM = (
-    "G_CALL A,t0 → G_WAIT 0x01",
-    "G_CALL B,t1 → G_WAIT 0x02",
-    "G_CALL C,t2 → G_WAIT 0x04 → G_END",
+QWEN_PROGRAM = (
+    PROJECTION_PHASE,
+    "G_CALL Bq,t2 → G_CALL Bk,t3 → G_WAIT 0x0C",
+    "G_CALL Cq,t4 → G_CALL Ck,t5 → G_WAIT 0x30",
+    "G_END",
 )
 
 
 def model_program(d, prefix, x, lines):
-    d.box(prefix + "program", x, 651, 655, 156, stroke=LINE, fill=PANEL)
-    d.text(prefix + "program-title", x + 20, 676, "MC issue order", size=18, bold=True, width=400)
+    d.box(prefix + "program", x, 505, 655, 148, stroke=LINE, fill=PANEL)
+    d.text(prefix + "program-title", x + 20, 528, "MC issue order", size=18, bold=True, width=400)
     for index, text in enumerate(lines):
-        d.text(prefix + f"step-{index}", x + 20, 708 + 30 * index, text,
+        d.text(prefix + f"step-{index}", x + 20, 555 + 26 * index, text,
                size=18, mono=True, width=610)
 
 
-def qwen_graph(d, x):
-    d.box("q-x", x, 493, 55, 61, "x", stroke=LINE, fill=PANEL)
-    d.box("q-A", x + 120, 447, 151, 61, "A · P0", "Gate projection")
-    d.box("q-B", x + 120, 539, 151, 61, "B · P1", "Up projection")
-    d.box("q-C", x + 338, 493, 142, 61, "C · P0.G32", "SiLU × Up")
-    d.box("q-D", x + 513, 493, 142, 61, "D · P2", "Down projection")
-    for source, target, start, end in (
-        ("x", "A", (55, 508), (120, 477)), ("x", "B", (55, 538), (120, 568)),
-        ("A", "C", (271, 477), (338, 508)), ("B", "C", (271, 568), (338, 538)),
-        ("C", "D", (480, 523), (513, 523)),
+def qk_graph(d, prefix, x, normalize):
+    d.box(prefix + "x", x, 394, 50, 52, "x", stroke=LINE, fill=PANEL)
+    for branch, y, port_y, p, u in (
+        ("q", 351, 407, "P0", "U0"),
+        ("k", 427, 433, "P1", "U1"),
     ):
-        d.edge("q-" + source + "-to-" + target, [(x + start[0], start[1]), (x + end[0], end[1])],
-               source="q-" + source, target="q-" + target, color=OCHRE, dashed=True)
-    d.text("q-formula", x + 325, 621, "Down(SiLU(Gate(x)) ⊙ Up(x))", size=22,
-           align="center", bold=True, width=600)
-
-
-def gpt_graph(d, x):
-    d.box("g-x", x, 493, 55, 61, "x", stroke=LINE, fill=PANEL)
-    d.box("g-A", x + 82, 493, 158, 61, "A · P0", "c_fc affine")
-    d.box("g-B", x + 269, 493, 155, 61, "B · F0.G16", "GELU (tanh)")
-    d.box("g-C", x + 454, 493, 201, 61, "C · P2", "c_proj affine")
-    for source, target, left, right in (
-        ("x", "A", 55, 82), ("A", "B", 240, 269), ("B", "C", 424, 454),
-    ):
-        d.edge("g-" + source + "-to-" + target, [(x + left, 523), (x + right, 523)],
-               source="g-" + source, target="g-" + target, color=OCHRE, dashed=True)
-    d.text("g-formula", x + 325, 621, "c_proj(GELU(c_fc(x)))", size=22,
-           align="center", bold=True, width=600)
+        a, b, c = (prefix + stage + branch for stage in "ABC")
+        d.box(a, x + 93, y, 147, 60, f"A{branch} · {p}", f"{branch.upper()} projection")
+        d.box(c, x + 492, y, 163, 60, f"C{branch} · {u}.E", f"{branch.upper()} RoPE")
+        center = y + 30
+        d.edge(prefix + "x-to-A" + branch, [(x + 50, port_y), (x + 93, center)],
+               source=prefix + "x", target=a)
+        if normalize:
+            d.box(b, x + 287, y, 158, 60, f"B{branch} · {u}.N", f"{branch.upper()} RMSNorm",
+                  stroke=OCHRE, fill=OCHRE_BG)
+            d.edge(prefix + f"A{branch}-to-B{branch}", [(x + 240, center), (x + 287, center)],
+                   source=a, target=b)
+            d.edge(prefix + f"B{branch}-to-C{branch}", [(x + 445, center), (x + 492, center)],
+                   source=b, target=c)
+        else:
+            d.edge(prefix + f"A{branch}-to-C{branch}", [(x + 240, center), (x + 492, center)],
+                   source=a, target=c)
 
 
 def instruction_topologies():
-    d = Diagram("2 - ISA and model FFN mappings", "instruction-topologies", 1400, 920)
+    d = Diagram("2 - ISA and attention QK preparation", "instruction-topologies", 1400, 710)
     isa_table(d)
-    d.text("mapping-heading", 36, 381, "(b)  Two model FFNs on the same Block inventory",
-           size=28, bold=True, width=1260)
-    d.text("q-heading", 37, 421, "Qwen2.5-3B-Instruct · gated FFN",
-           size=22, bold=True, width=610)
-    d.text("g-heading", 709, 421, "GPT-2 · GELU MLP",
-           size=22, bold=True, width=610)
-    qwen_graph(d, 37)
-    gpt_graph(d, 709)
-    model_program(d, "q-", 37, QWEN_PROGRAM)
-    model_program(d, "g-", 709, GPT_PROGRAM)
-    d.text("route-note", 700, 844, "Dashed tensor routes and Block assignments are illustrative",
-           size=18, align="center", width=1280, color=OCHRE)
-    d.text("local-note", 700, 873, "Common local sequence: L_EXEC → L_WAIT → L_END",
+    d.text("mapping-heading", 36, 277, "(b)  Preparing Q and K for attention", size=28, bold=True, width=1260)
+    d.text("l-heading", 37, 321, "Llama 3.2-3B · Projection → RoPE",
+           size=22, bold=True, width=640)
+    d.text("q-heading", 709, 321, "Qwen3-4B · Projection → RMSNorm → RoPE",
+           size=22, bold=True, width=655)
+    qk_graph(d, "l-", 37, normalize=False)
+    qk_graph(d, "q-", 709, normalize=True)
+    model_program(d, "l-", 37, LLAMA_PROGRAM)
+    model_program(d, "q-", 709, QWEN_PROGRAM)
+    d.text("route-note", 700, 683, "Tensor dependencies and illustrative Block assignments",
            size=18, align="center", width=1280, color=BLUE)
     return d
 
