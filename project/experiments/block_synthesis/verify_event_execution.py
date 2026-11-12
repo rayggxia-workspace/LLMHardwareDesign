@@ -6,6 +6,8 @@ copy map, resource profiles, route selection and cost evaluation.
 from bisect import bisect_right
 from collections import defaultdict
 
+from event_execution import backing_bytes
+
 DDR = 'DDR'
 
 
@@ -177,7 +179,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
             {max(items)[2] for items in writes.values() if items}), 'live output lost')
     capacity = spec.get('external_capacity_bytes')
     if capacity is not None:
-        require(sum(sizes[v] for v in backing) <= capacity,
+        require(backing_bytes(spec, backing) <= capacity,
                 'external backing capacity exceeded')
     for r, changes in reservations.items():
         occupied = 0

@@ -13,6 +13,13 @@ from dma_read import Profile, Read
 DDR = 'DDR'
 
 
+def backing_bytes(spec, values):
+    addresses = (spec.get('typed_dma') or {}).get('addresses', {})
+    sizes = spec['value_bytes']
+    return sum(sizes[value] * (len(addresses[value]) if isinstance(addresses.get(value), dict) else 1)
+               for value in values)
+
+
 def window_phase_indices(service):
     """Return the read, write and publish phase indexes for native SRAM."""
     phases = service.get('phases', ())
@@ -110,10 +117,6 @@ class Model:
         dma = self.spec.get('typed_dma')
         self.dma_profile = Profile.from_spec(dma) if dma is not None else None
         self.dma_addresses = {} if dma is None else dma.get('addresses', {})
-        if (not isinstance(self.dma_addresses, dict)
-                or self.dma_addresses.keys() - self.sizes.keys()
-                or any(type(a) is not int or not 0 <= a < 2**64 or a % 64 for a in self.dma_addresses.values())):
-            raise ValueError('invalid typed DMA address map')
         self.routes_by_sites = {}
         self.live_out = frozenset(self.spec.get('live_out', ()))
         self.external_capacity = self.spec.get('external_capacity_bytes')
@@ -175,9 +178,10 @@ class Model:
         external = self.spec.get('initial_backing', ())
         if len(set(external)) != len(external) or not set(external) <= self.sizes.keys():
             raise ValueError('invalid initial backing')
+        self.validate_dma_addresses(set(external))
         if self.external_capacity is not None and (
                 type(self.external_capacity) is not int or self.external_capacity < 0
-                or sum(self.sizes[v] for v in external) > self.external_capacity):
+                or backing_bytes(self.spec, external) > self.external_capacity):
             raise ValueError('invalid external backing capacity')
         self.initial = Execution({}, copies, dict.fromkeys(external, 0))
 
@@ -213,18 +217,45 @@ class Model:
     def validate_dma_route(self, route):
         params = route['typed_dma']
         if (self.dma_profile is None or route['src'] != DDR or 'phases' not in route
-                or not isinstance(params, dict) or params.keys() != {'client', 'record_beats'}
-                or any(type(n) is not int for n in params.values())
+                or not isinstance(params, dict) or params.keys() - {'replica'} != {'client', 'record_beats'}
+                or type(params['client']) is not int or type(params['record_beats']) is not int
+                or not isinstance(params.get('replica', 'primary'), str) or not params.get('replica', 'primary')
                 or not Read(params['client'], 0, 64 * params['record_beats'], params['record_beats']).valid()):
             raise ValueError('invalid typed DMA read route')
+
+    def validate_dma_addresses(self, initial):
+        if not isinstance(self.dma_addresses, dict) or self.dma_addresses.keys() - self.sizes.keys():
+            raise ValueError('invalid typed DMA address map')
+        regions = []
+        for value, item in self.dma_addresses.items():
+            replicas = isinstance(item, dict)
+            if replicas and (value not in initial or not item or any(not isinstance(n, str) or not n for n in item)):
+                raise ValueError('typed DMA replicas require named, initialized backing')
+            for address in item.values() if replicas else (item,):
+                if (type(address) is not int or address % 64
+                        or not 0 <= address < address + self.sizes[value] <= 2**64):
+                    raise ValueError('invalid typed DMA address map')
+                regions.append((address, address + self.sizes[value], replicas))
+        high = named_high = 0
+        for start, end, named in sorted(regions):
+            if start < named_high or named and start < high:
+                raise ValueError('typed DMA backing replicas overlap physical ranges')
+            high = max(high, end)
+            if named:
+                named_high = end
 
     def dma_read(self, route, value):
         params = route.get('typed_dma')
         if params is None:
             return None
         address = self.dma_addresses.get(value)
+        name = params.get('replica', 'primary')
+        if isinstance(address, dict):
+            address = address.get(name)
+        elif name != 'primary':
+            address = None
         if address is None:
-            raise Infeasible('typed DMA value needs a physical address')
+            raise Infeasible('typed DMA value needs a physical backing address for this route')
         read = Read(params['client'], address, self.sizes[value], params['record_beats'])
         if not read.valid():
             raise Infeasible('value does not fit typed DMA record geometry')
@@ -353,7 +384,7 @@ class Model:
             copies[src] = replace(copies[src], held_until=max(copies[src].held_until, end))
         if dst == DDR:
             backing[value] = end
-            if self.external_capacity is not None and sum(self.sizes[v] for v in backing) > self.external_capacity:
+            if self.external_capacity is not None and backing_bytes(self.spec, backing) > self.external_capacity:
                 raise Infeasible('external backing capacity')
         else:
             copies[dst] = Copy(value, end, end)

@@ -1,4 +1,10 @@
+#ifdef NATIVE_FFN_BACKEND
+#include "Vffn_dma_read_probe.h"
+using Probe = Vffn_dma_read_probe;
+#else
 #include "Vmc_dma_fabric_typed_p.h"
+using Probe = Vmc_dma_fabric_typed_p;
+#endif
 #include "verilated.h"
 #include <algorithm>
 #include <array>
@@ -23,6 +29,7 @@ struct Beat {
     uint32_t local;
     uint64_t address;
     int reserved = -1, offer = -1, issue = -1, captured = -1, delivered = -1, entry = -1;
+    int issue_lane = -1, return_lane = -1;
 };
 struct Response {
     uint64_t tag;
@@ -58,9 +65,17 @@ static std::vector<Stall> intervals(std::istream& input) {
     return result;
 }
 
-static void edge(Vmc_dma_fabric_typed_p& chip) {
+static double simulation_time = 0;
+
+double sc_time_stamp() {
+    return simulation_time;
+}
+
+static void edge(Probe& chip) {
+    ++simulation_time;
     chip.clk = 1;
     chip.eval();
+    ++simulation_time;
     chip.clk = 0;
     chip.eval();
 }
@@ -73,6 +88,11 @@ int main(int argc, char** argv) try {
     input >> latency[0] >> latency[1];
     auto ddr_stalls = intervals(input);
     auto client_stalls = intervals(input);
+#ifdef NATIVE_FFN_BACKEND
+    int mode, seed, cycle_offset;
+    input >> mode >> seed >> cycle_offset;
+    require(ddr_stalls.empty(), "FFN backend uses its own DDR ready");
+#endif
     size_t read_count;
     input >> read_count;
     std::vector<Read> reads(read_count);
@@ -80,13 +100,20 @@ int main(int argc, char** argv) try {
     require(bool(input), "invalid scenario");
 
     Verilated::randReset(0);
-    Vmc_dma_fabric_typed_p chip;
+    Probe chip;
     chip.clk = 0;
     chip.reset = 1;
     chip.c_req_valid = chip.c_close_valid = chip.c_cancel_valid = chip.c_fence_valid = 0;
     chip.p_mode_valid = chip.p_mode_native64 = chip.p_mode_client_drained = 0;
     chip.c_cancel_ack_ready = chip.c_fence_done_ready = 4095;
-    chip.d_req_ready = chip.d_rsp_valid = chip.d_fence_done_valid = 0;
+#ifdef NATIVE_FFN_BACKEND
+    chip.mode = mode;
+    chip.seed = seed;
+    chip.cycle = cycle_offset;
+#else
+    chip.d_req_ready = chip.d_rsp_valid = 0;
+#endif
+    chip.d_fence_done_valid = 0;
     chip.fault_ready = chip.d_fence_ready = 1;
     chip.eval();
     for (int i = 0; i < 4; ++i) edge(chip);
@@ -118,9 +145,14 @@ int main(int argc, char** argv) try {
     std::array<std::deque<int>, 12> source;
     std::map<std::pair<int, uint64_t>, int> by_address;
     std::map<std::pair<int, uint32_t>, int> by_local;
+    std::map<uint64_t, int> by_global;
+#ifdef NATIVE_FFN_BACKEND
+    std::array<int, 4> full_ticks{};
+#else
     std::array<std::deque<Response>, 2> returns;
     std::array<Response, 4> return_lane{};
     std::array<bool, 4> return_valid{};
+#endif
     size_t delivered = 0;
     for (int tick = 0; tick < 4096 && delivered < beats.size(); ++tick) {
         for (size_t i = 0; i < reads.size(); ++i)
@@ -129,7 +161,11 @@ int main(int argc, char** argv) try {
         chip.c_req_valid = chip.c_req_channel = 0;
         chip.c_req_record_beats = 0;
         chip.c_rsp_ready = ready(client_stalls, tick, 4095);
+#ifdef NATIVE_FFN_BACKEND
+        chip.cycle = tick + cycle_offset;
+#else
         chip.d_req_ready = ready(ddr_stalls, tick, 15);
+#endif
         for (int c = 0; c < 12; ++c) {
             if (source[c].empty()) continue;
             const auto& beat = beats[source[c].front()];
@@ -141,6 +177,7 @@ int main(int argc, char** argv) try {
             chip.c_req_tag[c] = beat.local;
             put64(chip.c_req_address, c, beat.address);
         }
+#ifndef NATIVE_FFN_BACKEND
         chip.d_rsp_valid = 0;
         for (int lane = 0; lane < 4; ++lane) {
             auto& queue = returns[lane / 2];
@@ -156,9 +193,13 @@ int main(int argc, char** argv) try {
             for (int word = 0; word < 16; ++word)
                 chip.d_rsp_data[16 * lane + word] = uint32_t(beats[response.beat].address) ^ uint32_t(word);
         }
+#endif
         chip.eval();
         require(!chip.fault_valid && !chip.p_req_rejected, "typed DMA fault");
         for (int lane = 0; lane < 4; ++lane) {
+#ifdef NATIVE_FFN_BACKEND
+            full_ticks[lane] += (chip.backend_full >> lane) & 1;
+#endif
             if ((chip.d_req_valid >> lane) & 1) {
                 const auto tag = get64(chip.d_req_tag, lane);
                 const int client = (tag >> 6) & 15;
@@ -169,14 +210,23 @@ int main(int argc, char** argv) try {
                 if ((chip.d_req_ready >> lane) & 1) {
                     require(beat.issue < 0, "duplicate DDR issue");
                     beat.issue = tick;
+                    beat.issue_lane = lane;
+                    require(by_global.emplace(tag, b).second, "duplicate global tag");
+#ifndef NATIVE_FFN_BACKEND
                     returns[lane / 2].push_back({tag, b, tick + latency[lane / 2]});
+#endif
                 }
             }
             if (((chip.d_rsp_ready & chip.d_rsp_valid) >> lane) & 1) {
-                auto& beat = beats[return_lane[lane].beat];
+                const auto tag = get64(chip.d_rsp_tag, lane);
+                auto& beat = beats[by_global.at(tag)];
                 require(beat.captured < 0, "duplicate DDR response capture");
                 beat.captured = tick;
+                beat.return_lane = lane;
+                by_global.erase(tag);
+#ifndef NATIVE_FFN_BACKEND
                 return_valid[lane] = false;
+#endif
             }
         }
         for (int c = 0; c < 12; ++c) {
@@ -202,10 +252,25 @@ int main(int argc, char** argv) try {
         }
         edge(chip);
     }
-    require(delivered == beats.size(), "probe timed out");
-    for (const auto& b : beats)
+    if (delivered != beats.size()) {
+        std::cerr << "delivered " << delivered << '/' << beats.size()
+                  << ", outstanding to DDR " << by_global.size()
+                  << ", pending client returns " << by_local.size() << '\n';
+        throw std::runtime_error("probe timed out");
+    }
+#ifdef NATIVE_FFN_BACKEND
+    std::cout << "BACKEND_FULL";
+    for (auto count : full_ticks) std::cout << ',' << count;
+    std::cout << '\n';
+#endif
+    for (const auto& b : beats) {
         std::cout << b.read << ',' << b.address << ',' << b.entry / 32 << ',' << b.entry % 32 << ','
-                  << b.reserved << ',' << b.offer << ',' << b.issue << ',' << b.captured << ',' << b.delivered << '\n';
+                  << b.reserved << ',' << b.offer << ',' << b.issue << ',' << b.captured << ',' << b.delivered;
+#ifdef NATIVE_FFN_BACKEND
+        std::cout << ',' << b.issue_lane << ',' << b.return_lane;
+#endif
+        std::cout << '\n';
+    }
     return 0;
 } catch (const std::exception& error) {
     std::cerr << "FAIL " << error.what() << '\n';

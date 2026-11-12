@@ -33,7 +33,7 @@ CASES['pressure'] = (
 RETURN_LATENCY = (3, 5)
 
 
-def event_input(requests, ddr_stalls=(), client_stalls=(), alternatives=None):
+def event_input(requests, ddr_stalls=(), client_stalls=(), alternatives=None, *, ffn_provider=None):
     alternatives = alternatives or {}
     tasks, sites, resources, routes, windows, sizes, addresses = [], {}, {}, {}, {}, {}, {}
     for index, read in enumerate(requests):
@@ -54,14 +54,15 @@ def event_input(requests, ddr_stalls=(), client_stalls=(), alternatives=None):
         tasks.append({'id': f'read-{index:02}', 'bindings': [
             {'id': 'use', 'site': site, 'ticks': 1, 'resources': [], 'nets': [], 'scratch_words': 0,
              'event_stages': [{'service': 'use', 'inputs': {site: value}}]}]})
+    provider = ({'ffn_provider': ffn_provider} if ffn_provider is not None
+                else {'return_latency': RETURN_LATENCY, 'ddr_ready': ddr_stalls})
     hardware = {
         'sites': sites, 'resources': resources, 'nets': {},
         'event_model': {
             'kind': 'qualified-event-model-v1', 'timing': 'replay', 'windows': windows,
             'value_bytes': sizes, 'routes': routes, 'services': {'use': {'ticks': 1, 'claims': {}}},
             'initial_backing': list(sizes),
-            'typed_dma': {'return_latency': RETURN_LATENCY, 'ddr_ready': ddr_stalls,
-                          'client_ready': client_stalls, 'addresses': addresses},
+            'typed_dma': {**provider, 'client_ready': client_stalls, 'addresses': addresses},
         },
     }
     return tasks, hardware
@@ -73,15 +74,22 @@ def moves_by_task(plan):
 
 def write_stimulus(directory):
     for name, (reads, ddr_stalls, client_stalls) in CASES.items():
-        rows = [RETURN_LATENCY, (len(ddr_stalls),), *ddr_stalls, (len(client_stalls),), *client_stalls, (len(reads),)]
-        rows.extend((read.release, read.client, read.address, read.size, read.record_beats) for read in reads)
-        with (directory / f'{name}.stim').open('x', encoding='ascii') as output:
-            output.writelines(' '.join(map(str, row)) + '\n' for row in rows)
+        write_case(directory, name, reads, ddr_stalls, client_stalls)
 
 
-def check_case(directory, name):
-    reads, ddr_stalls, client_stalls = CASES[name]
-    tasks, hardware = event_input(reads, ddr_stalls, client_stalls)
+def write_case(directory, name, reads, ddr_stalls=(), client_stalls=(), *, ffn_provider=None):
+    latency = (7, 8) if ffn_provider is not None else RETURN_LATENCY
+    rows = [latency, (len(ddr_stalls),), *ddr_stalls, (len(client_stalls),), *client_stalls]
+    if ffn_provider is not None:
+        rows.append((ffn_provider['mode'], ffn_provider['seed'], ffn_provider.get('cycle_offset', 0)))
+    rows.append((len(reads),))
+    rows.extend((read.release, read.client, read.address, read.size, read.record_beats) for read in reads)
+    with (directory / f'{name}.stim').open('x', encoding='ascii') as output:
+        output.writelines(' '.join(map(str, row)) + '\n' for row in rows)
+
+
+def check_case(directory, name, reads, ddr_stalls=(), client_stalls=(), *, ffn_provider=None):
+    tasks, hardware = event_input(reads, ddr_stalls, client_stalls, ffn_provider=ffn_provider)
     plan = search(tasks, hardware, width=1)
     verify(tasks, hardware, (), plan)
     moves = moves_by_task(plan)
@@ -89,11 +97,19 @@ def check_case(directory, name):
         if moves[index]['phases'][1]['start'] != read.release:
             raise ValueError(f'{name} source release differs')
     columns = ('address', 'channel', 'entry', 'reserved', 'offer', 'issue', 'captured', 'delivered')
+    if ffn_provider is not None:
+        columns += ('issue_lane', 'return_lane')
     expected = {(index, beat['address']): tuple(beat[key] for key in columns)
                 for index, move in moves.items() for beat in move['dma_beats']}
     observed = {}
+    full_ticks = None
     with (directory / f'{name}.csv').open(encoding='ascii') as source:
         for line in source:
+            if line.startswith('BACKEND_FULL,') and ffn_provider is not None:
+                if full_ticks is not None:
+                    raise ValueError(f'{name} duplicate backend summary')
+                full_ticks = list(map(int, line.strip().split(',')[1:]))
+                continue
             index, *beat = map(int, line.strip().split(','))
             key = index, beat[0]
             if key in observed:
@@ -102,16 +118,40 @@ def check_case(directory, name):
     for key in sorted(expected.keys() | observed.keys()):
         if observed.get(key) != expected.get(key):
             raise ValueError(f'{name} {key}: RTL={observed.get(key)}, DP={expected.get(key)}')
-    return {'beats': len(expected), 'ticks': plan['makespan'], 'read_bytes': plan['external_read_bytes'],
-            'read_1_first_reservation': moves[1]['dma_beats'][0]['reserved'],
+    result = {'beats': len(expected), 'ticks': plan['makespan'], 'read_bytes': plan['external_read_bytes'],
+            'read_1_first_reservation': moves[1]['dma_beats'][0]['reserved'] if len(reads) > 1 else None,
             'max_offer_wait': max(beat['issue'] - beat['offer'] for move in moves.values()
                                   for beat in move['dma_beats']),
             'max_skid_wait': max(beat['delivered'] - beat['captured'] for move in moves.values()
                                  for beat in move['dma_beats'])}
+    if ffn_provider is not None:
+        if full_ticks is None or len(full_ticks) != 4:
+            raise ValueError(f'{name} missing backend FIFO summary')
+        fills = [{} for _ in range(4)]
+        returns = [{} for _ in range(4)]
+        for beat in expected.values():
+            _, _, _, _, _, issue, capture, _, lane, returned_lane = beat
+            fills[lane][issue] = 1
+            returns[returned_lane][capture] = 1
+        measured = []
+        for entered, taken in zip(fills, returns):
+            level = full = previous = 0
+            for tick in sorted(entered.keys() | taken.keys()):
+                if level == 16:
+                    full += tick - previous
+                level += entered.get(tick, 0) - taken.get(tick, 0)
+                if not 0 <= level <= 16:
+                    raise ValueError(f'{name} backend FIFO exceeds physical depth')
+                previous = tick
+            measured.append(full)
+        if measured != full_ticks:
+            raise ValueError(f'{name} full FIFO residence differs: RTL={full_ticks}, DP={measured}')
+        result['full_lane_ticks'] = full_ticks
+    return result
 
 
 def check(directory):
-    results = {name: check_case(directory, name) for name in CASES}
+    results = {name: check_case(directory, name, *case) for name, case in CASES.items()}
     if results['old']['read_1_first_reservation'] >= results['added']['read_1_first_reservation']:
         raise ValueError('new read must delay the reservation of an old read')
     choices = {}

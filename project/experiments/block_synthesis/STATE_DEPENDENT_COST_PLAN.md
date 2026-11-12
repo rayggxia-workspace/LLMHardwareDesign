@@ -20,6 +20,7 @@
 | 10 | 重新运行 #251 的四 bank SRAM RTL。8 个条件共 86 次请求／应答握手逐拍一致。新增宽读推迟旧窄写；双通道应答阻塞时，槽满的一侧会让另一侧推进，应答出队当拍即可复用槽。将复用推迟一拍的篡改轨迹被拒绝。两种读取同一份 64 B 数据的候选在反压下实际排序反转。 |
 | 11 | 对 #251 typed DMA 的两通道分别推进寄存后的 lane 归属、上一拍发放数和轮询指针。18 次 RTL 运行逐拍核对 117,150 个通道采样、99,720 次真实 DDR 握手。已有 VALID 但未握手的请求占用发放额度，897 个通道拍因此少补发请求。提前一拍补发的篡改轨迹被拒绝。 |
 | 12 | 将 #251 普通读 fabric 接入 DP 的 LOAD 重放，按地址生成 64 B beat，维护每通道 32 个预留 beat、32 个描述符、2 个发放 lane 和 3 个回传槽，并保留客户端回传锁。7 次 RTL 对照核对 267 个 beat 的预留、VALID、发放、接收和交付。新增请求推迟旧预留，交换客户端反压使同 128 B 候选的代价从 24／13 拍翻为 13／24 拍。地址或捕获拍被篡改时，计划检查器拒绝。 |
+| 13 | 接入 #251 FFN 仿真后端的四条独立 lane，每条 FIFO 深度 16，两个通道分别在发放后第 7／8 拍可返回，按原规则叠加周期性反压。9 次 RTL 对照逐拍核对 2,728 个 beat 与 FIFO 满载拍数。允许候选从不同地址读取同一份已预置权重。旧请求的通道改变后，主副本与另一副本的排序反转。 |
 
 重放对每个绑定默认试算至多 32 组搬运组合，可通过硬件 JSON 的 `event_model.transport_limit` 调整，`null` 取消该上限。输出记录尝试数和发生截断的绑定扩展数。固定日历的预测只用于枚举顺序，完整后继由重放评分。
 
@@ -27,7 +28,7 @@
 
 `event_model.issue_rates` 在重放模式用于抽象端口的滑动发放上限。对 #251 逐 beat 读路由，在硬件清单的 `event_model.typed_dma` 配置 `addresses`（片段 ID 到 DDR 物理字节地址）、`return_latency`（两个通道的返回延迟）、可选的 `ddr_ready` 与 `client_ready`（按拍列出半开区间及 READY 掩码）。在 phased DDR LOAD 路由上声明 `typed_dma.client`、`typed_dma.record_beats`。每条记录以基地址位 11 决定通道；范围必须是完整的 2 beat 激活记录或 17／18 beat 权重记录。一个客户端按候选发起顺序提交完整记录。通用日历的路由吞吐仍用于草拟；重放从实际客户端回传结束和目的写 ACK 得到可读拍。
 
-逐 beat 读分支当前从初态重放，确保新增请求与旧请求一起推进，避免从旧轨迹恢复已过时的在途状态。DDR 响应使用可声明的固定延迟和 READY 反压，DDR bank／行、读写切换、原生写路径和跨 token 的持续状态仍待补齐。普通读合同涵盖合法记录流，运行时模式切换、异常和长序号回卷的 flush 尚待接入。
+逐 beat 读分支当前从初态重放，确保新增请求与旧请求一起推进，避免从旧轨迹恢复已过时的在途状态。选用 `typed_dma.ffn_provider` 时，填写 `mode`、`seed` 和可选的 `cycle_offset`，由 FFN provider 产生 DDR READY 和返回。读路由可用 `typed_dma.replica` 从 `addresses[片段]` 的具名地址中选择一份预置副本，未指定时查 `primary`。副本各自占用 DDR 容量，并检查物理区间互斥。DDR bank／行、读写切换、原生写路径和跨 token 的持续状态仍待补齐。普通读合同涵盖合法记录流，运行时模式切换、异常和长序号回卷的 flush 尚待接入。
 
 固定轨迹回归入口为 `python -B project/experiments/block_synthesis/benchmark_event_ffn.py ARCHIVE --job 102603 --timing replay`。默认从 #251 固定提交读核对清单，也可通过 `--fixture FILE` 使用相同 Git blob 的本地副本。COPY 时序来自原轨迹，DDR 逐 beat 时序仍缺记录。源包和回执的来源见 [#251 冻结索引](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/250/native-services/ffnnative/index.json)。
 
@@ -100,6 +101,33 @@ python -B project/experiments/block_synthesis/benchmark_native_dma_read.py check
 ```
 
 本机证据目录 `round12-dma-read` 下 `receipts.sha256` 的 SHA-256 为 `21944ef720c826aecd40a788acae6825e346483c5d0828e8a0bbc178a2efd5d9`，`verified.json` 为 `91840a49e872895ce6266065cc2a69fca9c731b022a34fe5061d5bc21a92ea6a`。Windows 全套 346 项测试通过。实际 `run.py --event-ir --event-width 8` 输入 3 个读任务，完成于 13 拍，384 B，计划核对通过。冻结 FFN 102604 的压力条件、初态 2 仍复现 948626 拍，使用其原固定轨迹合同。原生读探针校准 DMA fabric，DDR 服务由探针驱动；Qwen FFN 的动态逐 beat 合同仍需连接其有限 DDR 后端和局控。
+
+### FFN 有限 DDR 队列与权重副本
+
+第 13 轮从固定源包提取 `test_ffn_three_p_native.sv` 的 `finite_backend_lane` 和同版 DMA fabric，在 WSL Verilator 4.038 原样执行队列、READY／VALID 和返回延迟。探针仅替换响应数据的来源，用地址模式校验所有回传字。FIFO 满时依据时钟沿之前的占用，即使同拍发生返回也要等到下一拍才可发放。发放和回传必须走同一物理 lane，计划检查器拒绝更改回传 lane。
+
+| 对照 | 普通布局 | Up 基址加 2,048 B |
+| --- | ---: | ---: |
+| 36,864 B，mode 0 | 380 拍 | 312 拍 |
+| 36,864 B，mode 1 | 370 拍 | 312 拍 |
+
+独立重压组中，lane 0 满 44 拍。去掉队列上限后，地址 320 的发放被错算为第 25 拍，实际到第 69 拍才握手，检查器因此拒绝。另对一个 1,088 B 权重记录预置两份互不重叠的真实地址。旧请求用通道 0 时，主副本 38 拍、另一副本 31 拍。旧请求改到通道 1 后，主副本 31 拍、另一副本 39 拍。两种搜索宽度均选择 RTL 对照更快的地址。
+
+```bash
+dir=/path/to/evidence
+python -B project/experiments/block_synthesis/benchmark_ffn_dma_provider.py prepare "$dir/cases" \
+  --archive "$dir/102603-source.tar.gz"
+verilator --cc --exe --build --assert -Wno-fatal --top-module ffn_dma_read_probe \
+  -CFLAGS -DNATIVE_FFN_BACKEND --Mdir "$dir/provider-build" \
+  "$dir/cases/ffn_dma_read_probe.sv" "$dir/cases/mc_dma_fabric_typed_p.sv" \
+  "$PWD/project/experiments/block_synthesis/native_dma_read_probe.cpp"
+for stimulus in "$dir"/cases/*.stim; do
+  "$dir/provider-build/Vffn_dma_read_probe" "$stimulus" > "${stimulus%.stim}.csv" || exit 1
+done
+python -B project/experiments/block_synthesis/benchmark_ffn_dma_provider.py check "$dir/cases"
+```
+
+本机证据目录 `round13-ffn-provider-final` 下 `receipts.sha256` 的 SHA-256 为 `d75a302bf7f480d8a5e9727a3cf471610a794c662dd75cc066adeead89c67610`，`verified.json` 为 `e196e42bd4be6d3a2b34c8ff321710ad4761859c96e65e8becb9f6a5a8f3e40f`。Windows 全套 347 项通过。重新编译第 12 轮的 7 组原生探针，CSV 与原回执逐字节相同。该轮复现 FFN 使用的 DDR 仿真 provider。真实局控发起请求与计算交叠、完整 FFN 的动态重排仍待联调。
 
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 

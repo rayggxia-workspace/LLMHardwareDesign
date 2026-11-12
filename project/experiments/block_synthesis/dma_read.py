@@ -33,20 +33,44 @@ def ready_intervals(rows, full):
 
 
 @dataclass(frozen=True)
+class FfnProvider:
+    mode: int
+    seed: int
+    cycle_offset: int = 0
+
+    @classmethod
+    def from_spec(cls, spec):
+        if (not isinstance(spec, dict) or spec.keys() - {'mode', 'seed', 'cycle_offset'}
+                or not {'mode', 'seed'} <= spec.keys()
+                or any(type(n) is not int or n < 0 for n in spec.values()) or spec['mode'] not in (0, 1)):
+            raise ValueError('invalid #251 FFN provider')
+        return cls(**spec)
+
+    def ready(self, tick, lane, queued):
+        return queued < 16 and (self.mode == 0 or (self.cycle_offset + tick + lane) % 7 != self.seed % 7)
+
+
+@dataclass(frozen=True)
 class Profile:
     return_latency: tuple[int, int]
     ddr_ready: tuple = ()
     client_ready: tuple = ()
+    ffn_provider: FfnProvider | None = None
 
     @classmethod
     def from_spec(cls, spec):
-        if not isinstance(spec, dict) or spec.keys() - {'return_latency', 'ddr_ready', 'client_ready', 'addresses'}:
+        if (not isinstance(spec, dict)
+                or spec.keys() - {'return_latency', 'ddr_ready', 'client_ready', 'addresses', 'ffn_provider'}):
             raise ValueError('unknown typed DMA profile field')
+        client_ready = ready_intervals(spec.get('client_ready', ()), 4095)
+        if 'ffn_provider' in spec:
+            if {'return_latency', 'ddr_ready'} & spec.keys():
+                raise ValueError('#251 FFN provider already defines DDR timing and readiness')
+            return cls((7, 8), client_ready=client_ready, ffn_provider=FfnProvider.from_spec(spec['ffn_provider']))
         latencies = tuple(spec.get('return_latency', ()))
         if len(latencies) != 2 or any(type(n) is not int or n < 1 for n in latencies):
             raise ValueError('typed DMA needs one positive DDR return latency per channel')
-        return cls(latencies, ready_intervals(spec.get('ddr_ready', ()), 15),
-                   ready_intervals(spec.get('client_ready', ()), 4095))
+        return cls(latencies, ready_intervals(spec.get('ddr_ready', ()), 15), client_ready)
 
 
 def ready_mask(ranges, tick, full):
@@ -66,6 +90,8 @@ class BeatReceipt:
     issue: int
     captured: int
     delivered: int
+    issue_lane: int | None = None
+    return_lane: int | None = None
 
 
 @dataclass(eq=False)
@@ -90,6 +116,8 @@ class _Beat:
     offer: int | None = None
     issue: int | None = None
     captured: int | None = None
+    issue_lane: int | None = None
+    return_lane: int | None = None
 
 
 @dataclass
@@ -98,7 +126,7 @@ class _Channel:
     descriptors: set = field(default_factory=set)
     offer: DmaOfferChannel = field(default_factory=DmaOfferChannel)
     source_cursor: int = 0
-    returns: deque = field(default_factory=deque)
+    returns: tuple = field(default_factory=lambda: (deque(), deque()))
     return_lanes: list = field(default_factory=lambda: [None, None])
 
 
@@ -129,7 +157,6 @@ class ReadFabric:
         """Plan from pre-edge state, apply the handshakes, return completed reads."""
         completed = []
         client_ready = ready_mask(self.profile.client_ready, tick, 4095)
-        ddr_ready = ready_mask(self.profile.ddr_ready, tick, 15)
         forwarded = self._client_responses(client_ready)
         reservations = []
         captures = []
@@ -137,7 +164,7 @@ class ReadFabric:
             free = [entry for entry, beat in enumerate(channel.beats) if beat is None]
             reservations.append(self._source_reservations(ch, channel, free))
             channel.descriptors = {r for r in channel.descriptors if r.returned < r.length}
-            self._ddr_offers(tick, ch, channel, (ddr_ready >> (2 * ch)) & 3)
+            self._ddr_offers(tick, ch, channel, self._ddr_ready(tick, ch, channel))
             captures.extend(self._ddr_returns(tick, ch, channel, forwarded))
         for skid in sorted(forwarded):
             ch, entry = self.skids[skid]
@@ -149,7 +176,8 @@ class ReadFabric:
             record.returned += 1
             key = record.key
             self.receipts[key].append(BeatReceipt(beat.address, ch, entry, beat.reserved,
-                                                  beat.offer, beat.issue, beat.captured, tick))
+                                                  beat.offer, beat.issue, beat.captured, tick,
+                                                  beat.issue_lane, beat.return_lane))
             self.remaining[key] -= 1
             if self.remaining[key] == 0:
                 del self.remaining[key]
@@ -205,14 +233,26 @@ class ReadFabric:
             channel.source_cursor = (max(record.client for _, record in result) + 1) % 12
         return result
 
+    def _ddr_ready(self, tick, ch, channel):
+        provider = self.profile.ffn_provider
+        if provider is None:
+            return (ready_mask(self.profile.ddr_ready, tick, 15) >> (2 * ch)) & 3
+        return sum(1 << lane for lane in range(2) if provider.ready(
+            tick, 2 * ch + lane, len(channel.returns[lane]) + (channel.return_lanes[lane] is not None)))
+
     def _ddr_offers(self, tick, ch, channel, ready):
         old = channel.offer.entries
         reserved = sum(1 << i for i, beat in enumerate(channel.beats) if beat and beat.offer is None)
         channel.offer = channel.offer.advance(reserved, ready)
         for lane, entry in enumerate(old):
             if entry is not None and ready & (1 << lane):
-                channel.beats[entry].issue = tick
-                channel.returns.append((tick + self.profile.return_latency[ch], entry))
+                beat = channel.beats[entry]
+                beat.issue = tick
+                queue = channel.returns[0]
+                if self.profile.ffn_provider is not None:
+                    queue = channel.returns[lane]
+                    beat.issue_lane = 2 * ch + lane
+                queue.append((tick + self.profile.return_latency[ch], entry))
         for entry in channel.offer.entries:
             if entry is not None and channel.beats[entry].offer is None:
                 channel.beats[entry].offer = tick + 1
@@ -223,10 +263,14 @@ class ReadFabric:
         captures = []
         for lane in range(2):
             entry = channel.return_lanes[lane]
-            if entry is None and channel.returns and channel.returns[0][0] <= tick:
-                _, entry = channel.returns.popleft()
+            queue = channel.returns[lane if self.profile.ffn_provider is not None else 0]
+            if entry is None and queue and queue[0][0] <= tick:
+                _, entry = queue.popleft()
             if entry is not None and free:
-                channel.beats[entry].captured = tick
+                beat = channel.beats[entry]
+                beat.captured = tick
+                if self.profile.ffn_provider is not None:
+                    beat.return_lane = 2 * ch + lane
                 captures.append((free.popleft(), (ch, entry)))
                 entry = None
             channel.return_lanes[lane] = entry
@@ -234,4 +278,4 @@ class ReadFabric:
 
 
 def receipt_json(receipts):
-    return [vars(receipt).copy() for receipt in receipts]
+    return [{key: value for key, value in vars(receipt).items() if value is not None} for receipt in receipts]

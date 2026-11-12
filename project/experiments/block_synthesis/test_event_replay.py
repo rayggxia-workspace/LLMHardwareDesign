@@ -3,6 +3,7 @@ import random
 import unittest
 
 from benchmark_event_ffn import copy_bank_receipt
+from benchmark_ffn_dma_provider import RECORD_BYTES, paired_input
 from benchmark_native_dma_read import CASES, OLD, event_input, moves_by_task
 from benchmark_native_sram_replay import check_trace
 from cover_frontier import search
@@ -281,6 +282,31 @@ class ReplayTest(unittest.TestCase):
                 self.assertEqual((moves_by_task(plan)[2]['route'], plan['makespan']), (f'P2.read-{1-blocked}', 13))
         del hardware['event_model']['typed_dma']['addresses']['v2']
         self.assertEqual(search(tasks, hardware, width=1)['status'], 'no_plan_in_bounded_search')
+
+    def test_ffn_provider_selects_weight_replica_from_live_channel_occupancy(self):
+        for old_channel, route, new_channel in ((0, 'P1.read-10-replica', 1), (1, 'P1.read-10', 0)):
+            tasks, hardware = paired_input(old_channel)
+            plan = search(tasks, hardware, width=8)
+            verify(tasks, hardware, (), plan)
+            move = moves_by_task(plan)[1]
+            self.assertEqual((move['route'], plan['external_read_bytes']), (route, 2 * RECORD_BYTES))
+            for beat in move['dma_beats']:
+                self.assertEqual((beat['channel'], beat['issue_lane'] // 2), (new_channel, new_channel))
+                self.assertEqual(beat['issue_lane'], beat['return_lane'])
+            bad = deepcopy(plan)
+            moves_by_task(bad)[1]['dma_beats'][0]['return_lane'] ^= 1
+            with self.assertRaisesRegex(ValueError, 'DMA handshakes or completion differ'):
+                verify(tasks, hardware, (), bad)
+
+        spec = hardware['event_model']
+        spec['external_capacity_bytes'] -= 1
+        with self.assertRaisesRegex(ValueError, 'invalid external backing capacity'):
+            search(tasks, hardware, width=1)
+        spec['external_capacity_bytes'] += 1
+        addresses = spec['typed_dma']['addresses']['v1']
+        addresses['replica'] = addresses['primary'] + 64
+        with self.assertRaisesRegex(ValueError, 'replicas overlap'):
+            search(tasks, hardware, width=1)
 
     def test_archive_audit_rejects_same_word_count_with_wrong_bank_or_early_ack(self):
         rows = [{'header': 20, 'copy': 40}]
