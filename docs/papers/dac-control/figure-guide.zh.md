@@ -1,6 +1,6 @@
 # 控制章节图解
 
-[双页 diagrams.net 源图](control-figures.drawio)中，方框、文字和连线可单独编辑。两张 SVG 同样保留独立矢量对象和文字。
+[三页 diagrams.net 源图](control-figures.drawio)中，方框、文字和连线可单独编辑。三张 SVG 同样保留独立矢量对象和文字。
 
 ## 图 1　整体底座与 C Block 局控
 
@@ -57,3 +57,23 @@
 **指令顺序。** 两边都先发 Aq、Ak，分配 t0、t1，用 `G_WAIT 0x03` 等两个投影结果到达各 U。在 Llama 中，下一批是 Cq、Ck，等 `0x0C` 后结束。在 Qwen3 中，下一批是 Bq、Bk，先等 `0x0C` 确认两份归一化结果。U0、U1 的前序任务退役后，母控复用它们执行 Cq、Ck，用 `0x30` 等两路 RoPE 结束。每批的双路等待是图中选用的示例调度，两条分支的实际数据依赖各自独立。
 
 **部署条件。** 两图是算子级候选映射。描述符还需绑定权重、逐头归一化参数、RoPE 系数与 lane 排列，以及数据格式和地址。若生产者的终态只确认本地写入，程序需要安排跨 Block 搬运并等待目的写确认。两种模型的完整数值和端到端 RTL 执行留待验证。
+
+## 图 3　三 P FFN 的程序与描述符复用
+
+![图 3 三 P FFN 的程序与描述符复用](ffn-program-reuse.svg)
+
+**图 3(a) 一份循环体如何调用三个 P。** 左栏展示母控程序结构。初始化将描述符指针 `p` 设到基地址 `B`，把循环次数设为 64。每轮依次调用 P0、P1、P2，分别分配 t0、t1、t2。每次调用会捕获当时的描述符引用，随后 `G_ADDI64` 将指针增加 128 字节，指向下一条记录。三次调用发出后，`G_WAIT 0x07` 等齐三路任务终态。随后 `G_LOOP` 回到循环开头，最后一轮执行完后进入 `G_END`。图中的 `p` 是 64 位描述符指针对的简称。 [母控程序生成器](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/block_local_native/ffn_program_emit.py#L20-L49)
+
+**右栏展示局控复用。** P0、P1、P2 各装一份内容相同的 352 B 镜像。母控消息携带描述符引用，局控经共享 DMA 取回实际记录。记录里的权重地址、输出列范围和 SRAM 位置随任务变化。每个局控用同样的 `L_EXEC → L_WAIT → L_END` 启动服务、等待结果、返回终态。 [局控镜像生成器](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/shared_x_control/make_lc_kernel.py#L15-L34)
+
+**图 3(b) 每轮怎样选描述符。** `B` 是 DDR 描述符区的基地址，`D0` 等是从零开始编号的记录。第 0 轮给 P0、P1、P2 分配 `D0`、`D1`、`D2`。第 1 轮从 `B + 384` 开始，依次取 `D3` 到 `D5`。第 63 轮用 `D189` 到 `D191`。一般地，第 `r` 轮的 `P_i` 读 `D[3r+i]`，字节地址为 `B + 128(3r+i)`。橙色格是 DDR 记录，蓝色格是轮末的等待。掩码 `0x07` 选中 bit 0、1、2，对应 t0、t1、t2，等齐后下一轮才能复用这些 token。 [循环展开与地址校验](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/block_local_native/ffn_program_emit.py#L20-L49)
+
+| 存储或计数 | 本实验的值 | 含义 |
+| --- | --- | --- |
+| 母控镜像 | 272 B | 128 B 头部、17 条 8 B 指令、8 B 对齐填充。17 条由 8 条初始化、8 条循环体和 1 条结束指令组成。 |
+| 局控镜像 | 352 B / P | 每个 P 各装一份相同镜像，包含三条指令和镜像内的任务表、执行记录等。 |
+| 四份程序镜像合计 | 1,328 B | 一份母控镜像，加三份局控镜像。 |
+| DDR 描述符区 | 24,576 B（24 KiB） | 192 条记录，每条 128 B，单独保存任务参数。 |
+| 运行时调用 | 192 次 | 64 轮，每轮调用三个 P。 |
+
+**论文中的主张。** 母控只保存一次重复调度的循环体，局控内核按目标 Block 复用，逐任务变化保存在 DDR 描述符中。这组数字来自三 P FFN 夹具。实验采用 Qwen2.5-3B 的 FFN 尺寸和合成整数权重，K 分块搬运和外层 Gate/Up、Down 阶段由夹具组织。 [FFN 实验与范围](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/experiments/issue-250-three-p-ffn.md#L17-L25)

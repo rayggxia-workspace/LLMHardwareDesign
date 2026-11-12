@@ -3,10 +3,11 @@
 基线为 [PR #251 的 `9abd46f5`](https://github.com/rayggxia-workspace/LLMHardwareDesign/commit/9abd46f5cbb4534bcfc614571ccd6d402ad11882)，任务见 [Issue #255](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/255) 和 [草稿 PR #256](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/256)。
 
 - [英文正文与图注](control-section.md)解释为什么需要二级控制，以及如何用同一套指令描述不同模型的依赖关系。
-- [逐图中文说明](figure-guide.zh.md)解释图 1(b) 的蓝色交换接口、固定 SRAM 访问与橙色后制横带，以及图 2 的四类指令、案例算子和发令顺序。
+- [逐图中文说明](figure-guide.zh.md)解释图 1(b) 的蓝色交换接口、固定 SRAM 访问与橙色后制横带，图 2 的四类指令与模型算子，以及图 3 的程序镜像、描述符与等待。
 - [图 1 底座与 C 局控](control-architecture.svg)逐个排列九个候选 Block。C 局控和宏的接口用蓝色箭头表示，宏下方的橙色横带汇总产品后制路径，G→E 接入横带，S 与 R 标为待设计的候选端点。
 - [图 2 指令分类与模型映射](instruction-topologies.svg)先概括四类指令的作用，再对照 Llama 3.2 与 Qwen3 的注意力 Q/K 前处理，展示额外归一化阶段如何改变路径和发令顺序。
-- [可编辑源图](control-figures.drawio)含两个页面，在 diagrams.net 打开即可移动形状、改文字、重新连接箭头。两张 SVG 保留矢量元素和可编辑文本。用 [出图脚本](draw_control.py)可重建 SVG、PNG 和 diagrams.net 源图。手工微调请直接保存源图并从编辑器导出。
+- [图 3 三 P FFN 的程序复用](ffn-program-reuse.svg)展示母控循环、相同局控镜像、逐轮描述符寻址与 token 复用。
+- [可编辑源图](control-figures.drawio)含三个页面，在 diagrams.net 打开即可移动形状、改文字、重新连接箭头。三张 SVG 保留矢量元素和可编辑文本。用 [出图脚本](draw_control.py)可重建 SVG、PNG 和 diagrams.net 源图。手工微调请直接保存源图并从编辑器导出。
 
 ## 固定版本证据
 
@@ -20,7 +21,7 @@
 | Llama 3.2 与 Qwen3 的 Q/K 前处理均包含投影和 RoPE。Qwen3 在两者之间插入逐头 RMSNorm | [Llama 实现](https://github.com/huggingface/transformers/blob/v4.53.3/src/transformers/models/llama/modeling_llama.py#L187-L215)、[Qwen3 实现](https://github.com/huggingface/transformers/blob/v4.53.3/src/transformers/models/qwen3/modeling_qwen3.py#L159-L190)、[Qwen3-4B 配置](https://huggingface.co/Qwen/Qwen3-4B/blob/e619e22b5609bd7c38a835536155c19825f8fa5e/config.json)、[Llama 3.2 型号参数](https://github.com/meta-llama/llama-models/blob/main/models/sku_list.py) | 模型源码确定算子依赖。图中 Block 分配与调度为候选示例 |
 | U 的 N 支持 RMSNorm，E 支持局部配对 RoPE | [U 宏组织](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/pu_leaf_base/README.md#L18)、[N 的归一化合同](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/BLOCK_V2.md#L62-L70)、[E 的 RoPE 合同](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/BLOCK_V2.md#L46-L50) | 既有服务各有定点格式和数据布局限制，不能据此认定两种模型映射已通过端到端验证 |
 | 全局调度通过描述符引用传递服务参数。P 解码器校验描述符版本、长度及部署拓扑 | [LC 规格](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/shared_x_control/native_lc_contract.json)、[P 描述符解码 RTL](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_local_native/p_scope128_decode.sv#L28-L104) | 兼容性取决于已注册服务、端口及可用物理路径 |
-| 17 条静态 MC 指令构成 272 B 镜像。完整实例执行 64 轮，每轮三次 CALL | [FFN 程序生成器](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/block_local_native/ffn_program_emit.py) | 镜像大小包含头和对齐。192 次 CALL 为展开计数 |
+| 17 条静态 MC 指令构成 272 B 镜像。完整实例执行 64 轮，每轮三次 CALL | [FFN 程序生成器](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/block_local_native/ffn_program_emit.py) | 镜像大小包含头和对齐。192 次 CALL 为展开计数，DDR 描述符区另占 24,576 B |
 | 每个 P 的 LC 使用 352 B 镜像。实际执行 L_EXEC、L_WAIT、L_END，并取回 128 B 描述符 | [LC 镜像生成器](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/shared_x_control/make_lc_kernel.py)、[LC RTL](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/shared_x_control/rtl/lc_native_scope_controller.sv#L233-L276) | 三指令顺序为该已注册服务的内核。描述符通过两个 64 B DMA beat 获取 |
 | 三个 P 实例均通过真实控制与共享 DMA 接口，两个供数实现各通过 36 组完整 FFN 对照 | [控制夹具](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/block_local_native/ffn_program_control_fixture.sv)、[实验与回执](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/experiments/issue-250-three-p-ffn.md) | 固定镜像和搬运量时，提前发 EXEC 的供数实现节省 0.52–1.20% FFN 周期。实验采用确定性合成整数权重，夹具负责 K 分块搬运和外层阶段编排 |
 

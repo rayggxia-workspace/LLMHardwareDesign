@@ -276,11 +276,70 @@ def instruction_topologies():
     return d
 
 
+def program_reuse():
+    d = Diagram("3 - FFN program and descriptor reuse", "ffn-program-reuse", 1400, 738)
+    d.text("reuse-heading", 36, 36, "(a)  One loop, three local controllers",
+           size=28, bold=True, width=1100)
+    d.box("mc-program", 36, 72, 590, 263, stroke=BLUE, fill=PANEL)
+    d.text("mc-image-title", 56, 102, "Mother program · 272 B", size=24, bold=True, width=540)
+    d.text("mc-word-count", 56, 129, "17 static instructions · 8 B per word", size=18, width=540)
+    d.text("mc-init", 56, 158, "Initialize pointer p = B and round count = 64",
+           size=18, width=540)
+    for index in range(3):
+        d.text(f"mc-call-{index}", 56, 190 + 28 * index,
+               f"G_CALL P{index},t{index}   →   G_ADDI64 p,+128",
+               size=18, mono=True, color=BLUE, width=540)
+    d.text("mc-wait-loop", 56, 279, "G_WAIT 0x07    →   G_LOOP", size=18, mono=True, color=BLUE, width=540)
+    d.text("mc-end", 56, 310, "G_END after the final round", size=18, width=540)
+
+    d.text("local-image-title", 910, 78, "Same 352 B kernel image in each P",
+           size=21, bold=True, width=460)
+    d.edge("mother-to-local", [(626, 204), (854, 204)], source="mc-program", direction="both")
+    d.edge("local-trunk", [(854, 130), (854, 278)], direction="none")
+    d.text("call-ref-label", 738, 181, "Call + descriptor ref.", size=15, color=BLUE,
+           align="center", width=218)
+    d.text("terminal-label", 738, 226, "Terminal reply", size=15, color=BLUE, align="center", width=218)
+    for index in range(3):
+        y = 102 + 74 * index
+        key = f"local-P{index}"
+        d.box(key, 910, y, 454, 56, f"P{index} local controller", "L_EXEC → L_WAIT → L_END")
+        d.edge(f"trunk-to-P{index}", [(854, y + 28), (910, y + 28)], target=key, direction="both")
+
+    d.text("descriptor-heading", 36, 386, "(b)  Descriptor stream and token barriers",
+           size=28, bold=True, width=1100)
+    d.text("descriptor-arena", 36, 422, "DDR descriptor arena · 192 × 128 B = 24,576 B",
+           size=20, color=OCHRE, width=850)
+    d.text("descriptor-base", 1191, 422, "B = base byte address", size=18,
+           color=GRAY, align="center", width=345)
+    columns = (("Round", 36, 135), ("P0 / t0", 188, 258), ("P1 / t1", 465, 258),
+               ("P2 / t2", 742, 258), ("Round barrier", 1019, 345))
+    for index, (title, x, width) in enumerate(columns):
+        d.text(f"column-{index}", x + width / 2, 458, title,
+               size=19, bold=True, align="center", width=width)
+
+    for round_index, y in ((0, 480), (1, 534), (63, 614)):
+        d.box(f"round-{round_index}", 36, y, 135, 43, str(round_index), stroke=LINE, fill=PANEL)
+        for index, (_, x, width) in enumerate(columns[1:4]):
+            record = 3 * round_index + index
+            address = f"B + {128 * record:,}" if record else "B"
+            d.box(f"record-{record}", x, y, width, 43, f"D{record}  ·  {address}",
+                  stroke=OCHRE, fill=OCHRE_BG, size=18)
+        d.box(f"barrier-{round_index}", 1019, y, 345, 43, "G_WAIT 0x07", size=18)
+    for index, (_, x, width) in enumerate(columns):
+        d.text(f"omitted-{index}", x + width / 2, 598, "⋯", size=21,
+               color=GRAY, align="center", width=width)
+    d.text("descriptor-index", 36, 691, "Round r, target Pi  →  D[3r + i] at B + 128(3r + i)",
+           size=19, color=OCHRE, width=825)
+    d.text("call-count", 1191, 691, "64 rounds × 3 calls = 192 calls",
+           size=20, bold=True, align="center", width=345)
+    return d
+
+
 if __name__ == "__main__":
     plt.rcParams.update({"svg.fonttype": "none", "svg.hashsalt": "dac-control-figures"})
     output = Path(__file__).resolve().parent
     workbook = ET.Element("mxfile", host="app.diagrams.net", compressed="false")
-    for draw in (architecture, instruction_topologies):
+    for draw in (architecture, instruction_topologies, program_reuse):
         draw().save(output, workbook)
     if hasattr(ET, "indent"):
         ET.indent(workbook, space="  ")
