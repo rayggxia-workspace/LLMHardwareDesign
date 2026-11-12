@@ -19,12 +19,15 @@
 | 9 | 将 SRAM 输入捕获、输出写入、可见确认和命令退休拆成不同的依赖边。旧读者持有窗口至第 12 拍，新计算可在第 0–4 拍执行，再于第 12–14 拍写入，第 15 拍发布，第 23 拍释放槽位。独立检查器拒绝提前覆盖和提前读取。活数据外存保存与计算重叠时，16 B 写回保留，整份计划从 14 拍缩至 10 拍。 |
 | 10 | 重新运行 #251 的四 bank SRAM RTL。8 个条件共 86 次请求／应答握手逐拍一致。新增宽读推迟旧窄写；双通道应答阻塞时，槽满的一侧会让另一侧推进，应答出队当拍即可复用槽。将复用推迟一拍的篡改轨迹被拒绝。两种读取同一份 64 B 数据的候选在反压下实际排序反转。 |
 | 11 | 对 #251 typed DMA 的两通道分别推进寄存后的 lane 归属、上一拍发放数和轮询指针。18 次 RTL 运行逐拍核对 117,150 个通道采样、99,720 次真实 DDR 握手。已有 VALID 但未握手的请求占用发放额度，897 个通道拍因此少补发请求。提前一拍补发的篡改轨迹被拒绝。 |
+| 12 | 将 #251 普通读 fabric 接入 DP 的 LOAD 重放，按地址生成 64 B beat，维护每通道 32 个预留 beat、32 个描述符、2 个发放 lane 和 3 个回传槽，并保留客户端回传锁。7 次 RTL 对照核对 267 个 beat 的预留、VALID、发放、接收和交付。新增请求推迟旧预留，交换客户端反压使同 128 B 候选的代价从 24／13 拍翻为 13／24 拍。地址或捕获拍被篡改时，计划检查器拒绝。 |
 
 重放对每个绑定默认试算至多 32 组搬运组合，可通过硬件 JSON 的 `event_model.transport_limit` 调整，`null` 取消该上限。输出记录尝试数和发生截断的绑定扩展数。固定日历的预测只用于枚举顺序，完整后继由重放评分。
 
 原生服务通过 `window_phases.read`、`write`、`publish` 指定阶段名。读取占用以 `read` 阶段结束为边界，覆盖必须等到旧读取和活数据写回确认。延后写入须用 `window_phases.result_hold` 引用已声明的 `hold_claims`，以约束计算结果暂存。数据可在 `publish` 结束时供后继读取，命令槽保留到退休。未声明的窗口沿用整段服务的边界；任务显式 `after` 和同绑定的串行服务仍等待退休，输入搬运仍须在服务起点前确认。
 
-`event_model.issue_rates` 在重放模式生效。按 #251 冻结 DMA RTL，每个通道的单拍端口容量设为 2，配置 `{"window_ticks": 3, "max_issues": 4}`。当前 DP 的通用发放上限复现该滑动窗口约束。第 11 轮的寄存 offer 子模型已独立对照 RTL，DP 的逐 beat 请求、预留描述符和回传尚待接入。DDR bank／行和读写切换、原生可变请求顺序的完整校准、持续 KV 与跨层／跨 token 验收仍待完成。
+`event_model.issue_rates` 在重放模式用于抽象端口的滑动发放上限。对 #251 逐 beat 读路由，在硬件清单的 `event_model.typed_dma` 配置 `addresses`（片段 ID 到 DDR 物理字节地址）、`return_latency`（两个通道的返回延迟）、可选的 `ddr_ready` 与 `client_ready`（按拍列出半开区间及 READY 掩码）。在 phased DDR LOAD 路由上声明 `typed_dma.client`、`typed_dma.record_beats`。每条记录以基地址位 11 决定通道；范围必须是完整的 2 beat 激活记录或 17／18 beat 权重记录。一个客户端按候选发起顺序提交完整记录。通用日历的路由吞吐仍用于草拟；重放从实际客户端回传结束和目的写 ACK 得到可读拍。
+
+逐 beat 读分支当前从初态重放，确保新增请求与旧请求一起推进，避免从旧轨迹恢复已过时的在途状态。DDR 响应使用可声明的固定延迟和 READY 反压，DDR bank／行、读写切换、原生写路径和跨 token 的持续状态仍待补齐。普通读合同涵盖合法记录流，运行时模式切换、异常和长序号回卷的 flush 尚待接入。
 
 固定轨迹回归入口为 `python -B project/experiments/block_synthesis/benchmark_event_ffn.py ARCHIVE --job 102603 --timing replay`。默认从 #251 固定提交读核对清单，也可通过 `--fixture FILE` 使用相同 Git blob 的本地副本。COPY 时序来自原轨迹，DDR 逐 beat 时序仍缺记录。源包和回执的来源见 [#251 冻结索引](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/250/native-services/ffnnative/index.json)。
 
@@ -79,6 +82,24 @@ python -B project/experiments/block_synthesis/benchmark_native_dma_offer.py chec
 ```
 
 采样驱动 SHA-256 为 `4a54fab85e159fb4bb8794e42b92467448731fc22dc953394d93ad7c72044620`。本机日志索引 `round11-native-dma-offer-logs.sha256` 的 SHA-256 为 `b0abbe3c0b95160070f26155667b6fae4d950022ad0f0dd40b592437b044e6d3`，汇总 `round11-native-dma-offer-check.json` 的 SHA-256 为 `427e9455a135a9506193a4185f7badac91bc9a42afb6631fbe2a7f73c36e00b5`。Windows 全套 344 项测试通过。这个对照验证预留到发放的子模型，DDR 的 READY 和源端预留目前由 RTL 探针提供。
+
+### 原生 DMA 读候选对照
+
+第 12 轮用同一份 #251 RTL 和 Verilator 4.038，驱动两个通道及全部 12 个客户端。探针用地址生成每个 64 B 响应并检查客户端收到的完整数据。重放对每个 beat 记录物理地址、通道、beat 槽以及五个事件拍。重压组包含 233 个 beat，最长待 DDR 握手为 57 拍，回传槽内最长等待为 45 拍。加入第三个客户端后，旧客户端 8 的第一笔预留从第 1 拍移到第 2 拍。用相同数据和两个替代客户端比较，改变哪个客户端受反压后，宽度 1 和 8 都选择原生 RTL 对照更快的路径。
+
+```bash
+dir=/path/to/evidence
+python -B project/experiments/block_synthesis/benchmark_native_dma_read.py prepare "$dir/cases"
+verilator --cc --exe --build --assert -Wno-fatal --top-module mc_dma_fabric_typed_p \
+  --Mdir "$dir/read-build" "$dir/mc_dma_fabric_typed_p.sv" \
+  "$PWD/project/experiments/block_synthesis/native_dma_read_probe.cpp"
+for stimulus in "$dir"/cases/*.stim; do
+  "$dir/read-build/Vmc_dma_fabric_typed_p" "$stimulus" > "${stimulus%.stim}.csv" || exit 1
+done
+python -B project/experiments/block_synthesis/benchmark_native_dma_read.py check "$dir/cases"
+```
+
+本机证据目录 `round12-dma-read` 下 `receipts.sha256` 的 SHA-256 为 `21944ef720c826aecd40a788acae6825e346483c5d0828e8a0bbc178a2efd5d9`，`verified.json` 为 `91840a49e872895ce6266065cc2a69fca9c731b022a34fe5061d5bc21a92ea6a`。Windows 全套 346 项测试通过。实际 `run.py --event-ir --event-width 8` 输入 3 个读任务，完成于 13 拍，384 B，计划核对通过。冻结 FFN 102604 的压力条件、初态 2 仍复现 948626 拍，使用其原固定轨迹合同。原生读探针校准 DMA fabric，DDR 服务由探针驱动；Qwen FFN 的动态逐 beat 合同仍需连接其有限 DDR 后端和局控。
 
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 

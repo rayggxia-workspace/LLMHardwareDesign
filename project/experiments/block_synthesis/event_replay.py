@@ -3,6 +3,8 @@ from collections import Counter, deque
 from dataclasses import dataclass
 from heapq import heappop, heappush
 
+from dma_read import BeatReceipt, Read, ReadFabric
+
 
 @dataclass(frozen=True)
 class Phase:
@@ -10,6 +12,7 @@ class Phase:
     ticks: int
     claims: tuple[tuple[str, int], ...] = ()
     priority: int = 0
+    dma_read: Read | None = None
 
     @classmethod
     def from_spec(cls, name, ticks, spec):
@@ -31,6 +34,7 @@ class Grant:
     phase: int
     start: int
     end: int
+    dma_beats: tuple[BeatReceipt, ...] = ()
 
 
 class ReplayDeadlock(ValueError):
@@ -45,7 +49,7 @@ def phase_dependencies(operations, index, phase):
     return extra | {(parent, len(operations[parent].phases) - 1) for parent in operation.after}
 
 
-def replay(operations, capacity, *, previous=(), issue_rates=None):
+def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=None):
     """Simulate from reset. Lower priority numbers win among ready phases.
 
     At each tick, completions free resources before grants. A first grant
@@ -54,6 +58,15 @@ def replay(operations, capacity, *, previous=(), issue_rates=None):
     can change eligibility.
     """
     issue_rates = issue_rates or {}
+    uses_dma = any(phase.dma_read is not None for operation in operations for phase in operation.phases)
+    if uses_dma and dma_profile is None:
+        raise ValueError('typed DMA phase requires a service profile')
+    fabric = ReadFabric(dma_profile) if uses_dma else None
+    dma_starts = {}
+    # Variable-latency DMA requires the lane, beat, and skid ownership tables.
+    # Restore from reset until checkpoint replay also carries that state.
+    if uses_dma:
+        previous = ()
     successors = {}
     dependencies = {}
     release = {}
@@ -73,6 +86,7 @@ def replay(operations, capacity, *, previous=(), issue_rates=None):
                     or holds.keys() & dict(phase.claims).keys()
                     or len(holds) != len(operation.holds)
                     or len(dict(phase.claims)) != len(phase.claims)
+                    or phase.dma_read is not None and not phase.dma_read.valid()
                     or any(r in issue_rates and units > issue_rates[r][1] for r, units in phase.claims)):
                 raise ValueError('invalid replay phase duration, priority or resource claim')
             current = index, phase_index
@@ -163,6 +177,7 @@ def replay(operations, capacity, *, previous=(), issue_rates=None):
             pending.append((phase.priority, ready, index, phase_index))
 
         waiting = []
+        launches = []
         for request in sorted(pending):
             _, _, index, phase_index = request
             operation = operations[index]
@@ -175,13 +190,30 @@ def replay(operations, capacity, *, previous=(), issue_rates=None):
                 continue
             occupied.update(dict(claims))
             record_issues(phase.claims, tick)
-            end = tick + phase.ticks
-            heappush(running, (end, index, phase_index))
-            grants[index].append(Grant(index, phase_index, tick, end))
+            if phase.dma_read is None:
+                end = tick + phase.ticks
+                heappush(running, (end, index, phase_index))
+                grants[index].append(Grant(index, phase_index, tick, end))
+            else:
+                key = index, phase_index
+                dma_starts[key] = tick
+                launches.append((key, phase.dma_read))
+        for key, read in sorted(launches):
+            fabric.submit(key, read)
+        if fabric is not None and fabric.active:
+            for (index, phase_index), receipts in fabric.advance(tick):
+                start = dma_starts.pop((index, phase_index))
+                # A sampled client response is visible to the next stage at
+                # the following edge. The route still owes its own SRAM ACK.
+                end = tick + 1
+                grants[index].append(Grant(index, phase_index, start, end, receipts))
+                heappush(running, (end, index, phase_index))
         pending = waiting
         if finished == len(operations):
             break
         future = [queue[0][0] for queue in (running, arrivals) if queue]
+        if fabric is not None and fabric.active:
+            future.append(tick + 1)
         if pending:
             future.extend(history[0][0] for history in issues.values() if history)
         if not future:

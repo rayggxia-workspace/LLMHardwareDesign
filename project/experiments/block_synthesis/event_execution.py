@@ -8,6 +8,8 @@ value. Times are integer service-model ticks, and external traffic is in bytes.
 from collections import Counter
 from dataclasses import dataclass, replace
 
+from dma_read import Profile, Read
+
 DDR = 'DDR'
 
 
@@ -105,6 +107,13 @@ class Model:
         self.sizes = self.spec['value_bytes']
         self.services = self.spec['services']
         self.routes = self.spec['routes']
+        dma = self.spec.get('typed_dma')
+        self.dma_profile = Profile.from_spec(dma) if dma is not None else None
+        self.dma_addresses = {} if dma is None else dma.get('addresses', {})
+        if (not isinstance(self.dma_addresses, dict)
+                or self.dma_addresses.keys() - self.sizes.keys()
+                or any(type(a) is not int or not 0 <= a < 2**64 or a % 64 for a in self.dma_addresses.values())):
+            raise ValueError('invalid typed DMA address map')
         self.routes_by_sites = {}
         self.live_out = frozenset(self.spec.get('live_out', ()))
         self.external_capacity = self.spec.get('external_capacity_bytes')
@@ -141,6 +150,8 @@ class Model:
             self.validate_service(route)
             if 'phases' in route:
                 self.validate_route_phases(route)
+            if 'typed_dma' in route:
+                self.validate_dma_route(route)
             self.routes_by_sites.setdefault(endpoints, []).append(name)
         for service in self.services.values():
             if type(service['ticks']) is not int or service['ticks'] < 1:
@@ -198,6 +209,26 @@ class Model:
             used.update(item['claims'])
         if used & holds.keys():
             raise ValueError('phased route cannot claim a hold resource again')
+
+    def validate_dma_route(self, route):
+        params = route['typed_dma']
+        if (self.dma_profile is None or route['src'] != DDR or 'phases' not in route
+                or not isinstance(params, dict) or params.keys() != {'client', 'record_beats'}
+                or any(type(n) is not int for n in params.values())
+                or not Read(params['client'], 0, 64 * params['record_beats'], params['record_beats']).valid()):
+            raise ValueError('invalid typed DMA read route')
+
+    def dma_read(self, route, value):
+        params = route.get('typed_dma')
+        if params is None:
+            return None
+        address = self.dma_addresses.get(value)
+        if address is None:
+            raise Infeasible('typed DMA value needs a physical address')
+        read = Read(params['client'], address, self.sizes[value], params['record_beats'])
+        if not read.valid():
+            raise Infeasible('value does not fit typed DMA record geometry')
+        return read
 
     def validate_stage_phases(self, service):
         phases = service['phases']
@@ -311,6 +342,7 @@ class Model:
 
     def move(self, state, value, src, dst, ready, route_name):
         route = self.routes[route_name]
+        self.dma_read(route, value)
         size = self.sizes[value]
         ticks = route['setup'] + (size + route['bytes_per_tick'] - 1) // route['bytes_per_tick']
         state = self.add_nets(state, route.get('nets', ()))

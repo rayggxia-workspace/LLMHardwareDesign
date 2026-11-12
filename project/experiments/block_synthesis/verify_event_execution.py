@@ -16,6 +16,7 @@ def require(condition, message):
 
 def verify(tasks, hardware, plan, wire_budget=None):
     spec = hardware['event_model']
+    timing = spec.get('timing', 'calendar')
     windows, sizes = spec['windows'], spec['value_bytes']
     reservations, reads, writes = defaultdict(list), defaultdict(list), defaultdict(list)
     backing = dict.fromkeys(spec.get('initial_backing', ()), 0)
@@ -35,7 +36,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 'window capacity or identity differs')
         table[w].append((start, end, value))
 
-    def phased_claims(event, expected, holds, nets):
+    def phased_claims(event, expected, holds, nets, variable=None):
         start, end = event['start'], event['end']
         timeline = event.get('phases', [])
         require([p['kind'] for p in timeline] == [p['kind'] for p in expected]
@@ -44,8 +45,9 @@ def verify(tasks, hardware, plan, wire_budget=None):
         previous = start
         for phase, item in zip(timeline, expected):
             begin, stop = phase['start'], phase['end']
-            require(type(begin) is int and type(stop) is int and previous <= begin
-                    and stop-begin == item['ticks'], 'event phase order or duration differs')
+            require(type(begin) is int and type(stop) is int and previous <= begin < stop
+                    and (phase['kind'] == variable or stop-begin == item['ticks']),
+                    'event phase order or duration differs')
             claim(item, begin, stop)
             previous = stop
         claim({'claims': holds, 'nets': nets}, start, end)
@@ -54,6 +56,8 @@ def verify(tasks, hardware, plan, wire_budget=None):
         start, end = event['start'], event['end']
         duration = route['setup'] + (size+route['bytes_per_tick']-1)//route['bytes_per_tick']
         profile = route.get('phases')
+        native = 'typed_dma' in route and timing == 'replay'
+        require(('dma_beats' in event) == native, 'typed DMA receipt coverage differs')
         if profile is None:
             require(end-start == duration and 'phases' not in event, 'route service duration differs')
             claim(route, start, end)
@@ -62,7 +66,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
             {**profile['issue'], 'kind': 'issue'},
             {'kind': 'data', 'ticks': duration, 'claims': route['claims']},
             {**profile['ack'], 'kind': 'ack'},
-        ), profile['hold_claims'], route.get('nets', ()))
+        ), profile['hold_claims'], route.get('nets', ()), variable='data' if native else None)
 
     by_task = {t['id']: t for t in tasks}
     require(len(by_task) == len(tasks) == len(plan['tasks']), 'event coverage differs')
@@ -105,6 +109,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 stage = next(stages, None)
                 require(event['kind'] == 'stage' and stage and event['service'] == stage['service'],
                         'native stage identity or order differs')
+                require('dma_beats' not in event, 'typed DMA receipts belong to read routes')
                 service = spec['services'][stage['service']]
                 inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
                 require(event['inputs'] == inputs and event['outputs'] == outputs,
@@ -129,13 +134,13 @@ def verify(tasks, hardware, plan, wire_budget=None):
                             'native stage service duration differs')
                     claim(service, start, end)
                 phase = {item['kind']: item for item in event.get('phases', ())}
-                timing = service.get('window_phases', {})
-                read_at = phase.get(timing.get('read'), event)
-                write_at = phase.get(timing.get('write'), event)['start']
-                visible = phase.get(timing.get('publish'), event)['end']
+                window_timing = service.get('window_phases', {})
+                read_at = phase.get(window_timing.get('read'), event)
+                write_at = phase.get(window_timing.get('write'), event)['start']
+                visible = phase.get(window_timing.get('publish'), event)['end']
                 for move in pending_moves:
                     if 'output_eviction' in move:
-                        require('write' in timing and move['output_eviction'] == move['src']
+                        require('write' in window_timing and move['output_eviction'] == move['src']
                                 and move['src'] in outputs and move['dst'] == DDR
                                 and move['end'] <= write_at, 'invalid output eviction or write precedes its ACK')
                     else:
@@ -188,7 +193,6 @@ def verify(tasks, hardware, plan, wire_budget=None):
     require((makespan, total_read, total_write, sorted(nets), wire_cost) ==
             (plan['makespan'], plan['external_read_bytes'], plan['external_write_bytes'],
              plan['nets'], plan['wire_cost']), 'event plan summary differs')
-    timing = spec.get('timing', 'calendar')
     require(timing == plan.get('timing', 'calendar'), 'event timing model differs')
     if timing == 'replay':
         from verify_event_replay import verify_grants

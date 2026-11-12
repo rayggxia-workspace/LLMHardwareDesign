@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 12 轮。普通读 DMA 的物理 beat、预留、寄存发放和回传槽接入 DP；7 个 #251 RTL 对照核对 267 个 beat 的五个事件拍，客户端反压使同 128 B 的路径排序翻转。346 项测试和实际 `run.py --event-ir` 入口通过。下一步接入 FFN 的有限 DDR 后端和真实局控。PR #257 和看板沿用现有远端交接。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 11 轮，18 次 #251 原 DMA RTL 对照逐拍核对 117,150 个通道采样和 99,720 次 DDR 握手。原生 offer 子模型解释了 897 个因保持 VALID 而少补发的通道拍，下一步把编译候选的物理 beat、预留和回传接入重放分支。PR #257 和看板沿用现有远端交接。
 
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)在本地 `task/219-chip-state-replay` 完成第 9–10 轮。从 [#257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 继续把 SRAM 捕获、覆盖、发布和退休拆开，保留延迟写回期间的结果槽。重跑 #251 原生 SRAM RTL，8 个条件 86 次握手逐拍一致，反压使宽读与四次窄读的选择反转。待把探针合同接入原生候选，校准 DMA offer、局控、跨层和跨 token，沿用现有远端交接。

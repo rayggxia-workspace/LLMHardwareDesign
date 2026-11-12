@@ -2,6 +2,7 @@
 from collections import Counter, defaultdict
 from dataclasses import dataclass, replace
 
+from dma_read import receipt_json
 from event_execution import Copy, DDR, capacity_profile, window_phase_indices
 from event_replay import Operation, Phase, replay
 
@@ -36,6 +37,8 @@ def event_operation(model, event):
     size = model.sizes[event['value']]
     ticks = route['setup'] + (size + route['bytes_per_tick'] - 1) // route['bytes_per_tick']
     data = Phase.from_spec('data', ticks, route)
+    if 'typed_dma' in route:
+        data = replace(data, dma_read=model.dma_read(route, event['value']))
     if 'phases' not in route:
         return Operation((data,))
     profile = route['phases']
@@ -97,7 +100,8 @@ def intents(model, decisions):
 
 def retime(model, decisions, proposed, previous=()):
     operations = intents(model, decisions)
-    trace = replay(operations, model.capacity, previous=previous, issue_rates=model.issue_rates)
+    trace = replay(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
+                   dma_profile=model.dma_profile)
     grants = iter(zip(operations, trace))
     copies = model.initial.copies.copy()
     backing = model.initial.backing.copy()
@@ -121,6 +125,8 @@ def retime(model, decisions, proposed, previous=()):
             for phase, grant in zip(operation.phases, schedule):
                 occupy(phase.claims, grant.start, grant.end)
                 phases.append({'kind': phase.name, 'start': grant.start, 'end': grant.end})
+                if grant.dma_beats:
+                    actual['dma_beats'] = receipt_json(grant.dma_beats)
             if len(phases) > 1:
                 actual['phases'] = phases
             occupy(operation.holds, start, end)

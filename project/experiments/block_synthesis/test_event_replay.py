@@ -3,6 +3,7 @@ import random
 import unittest
 
 from benchmark_event_ffn import copy_bank_receipt
+from benchmark_native_dma_read import CASES, OLD, event_input, moves_by_task
 from benchmark_native_sram_replay import check_trace
 from cover_frontier import search
 from dma_offer import DmaOfferChannel
@@ -253,6 +254,33 @@ class ReplayTest(unittest.TestCase):
         self.assertEqual(blocked, DmaOfferChannel((None, 3), previous_issues=1, cursor=4))
         self.assertEqual(blocked.advance(reserved=0b1111110000, ready=0),
                          DmaOfferChannel((4, 3), previous_issues=0, cursor=5))
+
+    def test_typed_dma_frontier_retimes_old_reads_and_audits_beats(self):
+        tasks, hardware = event_input(OLD)
+        before = search(tasks, hardware, width=1)
+        self.assertEqual(moves_by_task(before)[1]['dma_beats'][0]['reserved'], 1)
+        tasks, hardware = event_input(*CASES['added'])
+        plan = search(tasks, hardware, width=1, ready_limit=1)
+        verify(tasks, hardware, (), plan)
+        self.assertEqual(plan['tasks'][-1]['id'], 'read-02')
+        move = moves_by_task(plan)[1]
+        self.assertEqual((move['dma_beats'][0]['reserved'], plan['makespan'], plan['external_read_bytes']),
+                         (2, 13, 384))
+        for field in ('address', 'captured'):
+            bad = deepcopy(plan)
+            moves_by_task(bad)[1]['dma_beats'][0][field] += 1
+            with self.assertRaisesRegex(ValueError, 'DMA handshakes or completion differ'):
+                verify(tasks, hardware, (), bad)
+
+    def test_typed_dma_frontier_chooses_route_based_on_client_backpressure(self):
+        for blocked in (0, 1):
+            tasks, hardware = event_input(*CASES[f'blocked-{blocked}-client-0'], alternatives={2: (1,)})
+            for width in (1, 8):
+                plan = search(tasks, hardware, width=width)
+                verify(tasks, hardware, (), plan)
+                self.assertEqual((moves_by_task(plan)[2]['route'], plan['makespan']), (f'P2.read-{1-blocked}', 13))
+        del hardware['event_model']['typed_dma']['addresses']['v2']
+        self.assertEqual(search(tasks, hardware, width=1)['status'], 'no_plan_in_bounded_search')
 
     def test_archive_audit_rejects_same_word_count_with_wrong_bank_or_early_ack(self):
         rows = [{'header': 20, 'copy': 40}]

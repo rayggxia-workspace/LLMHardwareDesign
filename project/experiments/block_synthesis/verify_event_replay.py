@@ -1,6 +1,7 @@
 """Check the grants in an emitted replay trace against the arbitration contract."""
 from collections import Counter, defaultdict
 
+from dma_read import ReadFabric, receipt_json
 from event_execution import Model
 from event_replay import phase_dependencies
 from event_replay_plan import Decision, intents
@@ -17,6 +18,8 @@ def verify_grants(tasks, hardware, rows):
     ready_at = defaultdict(list)
     release_at = defaultdict(list)
     issue_expires = defaultdict(list)
+    dma_launches = defaultdict(list)
+    dma_expected = {}
     ticks = set()
     for i, (operation, event) in enumerate(zip(operations, events)):
         phases = event.get('phases', (event,))
@@ -32,6 +35,10 @@ def verify_grants(tasks, hardware, rows):
             ready_at[ready].append((phase.priority, ready, i, j, start, claims))
             release_at[end].extend(releases)
             ticks.update((ready, start, end))
+            if phase.dma_read is not None:
+                key = i, j
+                dma_launches[start].append((key, phase.dma_read))
+                dma_expected[key] = end, event['dma_beats']
             for resource, units in phase.claims:
                 if resource in model.issue_rates:
                     expires = start + model.issue_rates[resource][0]
@@ -65,3 +72,21 @@ def verify_grants(tasks, hardware, rows):
                 waiting.append(request)
     if waiting or free != model.capacity or any(issue_count.values()):
         raise ValueError('arbitration trace did not drain')
+    if dma_launches:
+        verify_dma(model.dma_profile, dma_launches, dma_expected)
+
+
+def verify_dma(profile, launches, expected):
+    # Follow only the emitted launch edges. The cover scheduler and its
+    # speculative checkpoint play no role in this consistency check.
+    fabric = ReadFabric(profile)
+    tick = min(launches)
+    while launches or fabric.active:
+        for key, read in launches.pop(tick, ()):
+            fabric.submit(key, read)
+        for key, receipts in fabric.advance(tick):
+            if expected.pop(key) != (tick + 1, receipt_json(receipts)):
+                raise ValueError(f'typed DMA handshakes or completion differ at tick {tick}')
+        tick = tick + 1 if fabric.active else min(launches, default=0)
+    if expected:
+        raise ValueError('typed DMA trace did not drain')
