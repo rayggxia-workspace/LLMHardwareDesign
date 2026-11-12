@@ -245,6 +245,21 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 本机 `round20-m-logs.sha256` 为 `eafb86e7a6a92bb6a321643c2cf77efecc877acf74386b726330ab3619db294d`，`round20-m-verified.json` 为 `91e9862778768b4edc9a0e2021a22fc4c3a727f9f7c40203c52500b16bc7b027`。Windows 353 项测试通过，102604 固定轨迹基线仍为 948,626 拍。M EXEC 接纳以及分配、填充和上下文回包的就绪仍来自 RTL 采样。下一步从命令仲裁及 A/W 准备重算这些入口，验证候选改变后跨 scope 的状态能否继续推进。
 
+### 从 W/A 绑定到 M 命令接纳
+
+第 21 轮从 W/A 绑定、侧带命令和权重 FILL 就绪开始，同时重放 P→M 命令与 M→P 回包。已发起的前瞻命令保持到 EOP，随后才能给 EXEC 分配 session。M 接收缓冲在命令 EOP 后仍要完成解码和接纳。BEGIN、上下文和 ALLOC 的回包就绪从命令重新推导。每个 W bank 记录物理编号、代次和所有者，分配接收槽要等 ALLOC 回包 EOP 释放，W bank 本身要等该记录的 INPUT 回包 EOP 释放。A 捕获证明与每次 W/A 绑定按 scope、K、slot、generation 及使用序号核对。重算出的 EXEC 接纳继续驱动第 20 轮的运算和回包、P 写确认及程序接受。
+
+四组固定 RTL 各对齐 138,112 个命令、66,048 次 W 分配及 4,332 次 A 捕获证明。每组有 23,325 条 EXEC 因前瞻帧晚两拍入队，4,140 次 ALLOC 因前一个回包仍占用分配槽晚一拍接纳。这些 ALLOC 当时有可用 W bank。受控测试从第 31 拍复制四个 W bank 均在用、FILL 仍在传输的快照。改变首个 EXEC 的 W/A 绑定一拍后，待分配的第五个记录分别在第 51、52 拍接纳，并重新使用第 0 bank 的第 2 代。两份结果各自与从复位开始重放完全一致。
+
+真实 RTL 成对对照保持程序、输入、数值断言和字节数相同。在私有插桩版的实际 early-exec 实例关闭前瞻后，两种压力下的程序结果接受拍从 857,117、952,011 变为 1,179,527、1,292,029。模型在各自采样入口下逐拍复现两种配置。单独改变测试台顶层同名参数的两次运行给出原轨迹，查明该参数没有传入 active early-exec 实例。四组固定轨迹移除新增探针后均与第 20 轮逐行一致。八个篡改负例分别覆盖 bank 可用掩码、bank 代次、A 证明及绑定代次、绑定 bank、命令 EOP、A 使用拍和 EXEC session。
+
+```bash
+# 复用第 20 轮运行参数，运行时增加 +TRACE_ISSUE。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG --mode 1 --seed 25001 --issue
+```
+
+本机 `round21-admit-logs.sha256` 为 `dcef6d0ada817daf9c825a266bcf9b662d87d8f75ec71792ca2d352cc644746e`，`round21-admit-verified.json` 为 `d186058b7f7fdf4a5d7555f92d790b5486695619e916d5652da696bb25d321e1`。Verilator 5.006，Windows 355 项测试通过，102604 固定轨迹基线仍为 948,626 拍。A 捕获证明、W/A 绑定、侧带命令首次就绪和 FILL 首次就绪仍由 RTL 提供。两组下一段探针各已捕获 69,312 次 A 源字读回和同量 COPY 写确认。两组共 2,888 个 K 窗口的证明接纳拍等于 COPY 完成拍与最晚 A 读回后两拍的较大值。后续据此重算 A 捕获，再接入由 DDR beat 驱动的 FILL 和原生候选调度闭环。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

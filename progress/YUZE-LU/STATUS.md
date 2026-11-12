@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 21 轮。四组 #251 完整 RTL 各逐拍对齐 138,112 个命令及 66,048 次 W 分配。快照内保留已发 FILL、W bank 代次和待分配请求，候选修改会重算旧请求接纳。实际关闭前瞻的两组对照增加 322,410 和 340,018 拍，模型在各自采样入口下逐拍复现。355 项测试通过，八个篡改负例均拒绝。A 捕获、W/A 绑定、侧带命令和 FILL 首次就绪仍用采样，继续接入 COPY/SRAM/DDR。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 20 轮。四组 #251 RTL 逐拍核对 264,192 条 M EXEC 和 1,080,832 个回包，P 首字写回从 M 执行与 guard 所有权重算。受控候选图中，加入两个控制回包后，宽度 8 的 DP 为 39 拍，严格贪心为 42 拍。353 项测试和七个负例通过。M 接纳与控制回包就绪仍来自 RTL 采样，继续接入 A/W 准备及命令仲裁。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 待本地后续提交，#219 仍在执行，看板交接沿用现有记录。
 
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 19 轮。四组 #251 完整 FFN 按物理 SRAM 的写确认重建 768 次 P DONE、24 次 Down 组完成，并重放 7,552 字读回和程序接受。352 项测试通过，七个篡改负例均拒绝。P 首字写发起仍来自 RTL 采样，下一步接入 K／权重／M 执行。PR #257 和看板沿用现有远端交接。

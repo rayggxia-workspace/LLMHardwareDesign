@@ -1,7 +1,7 @@
 """Record real MC/LC handshakes in the frozen #251 programmed FFN."""
 import argparse
 import json
-from bisect import bisect_right
+from bisect import bisect_left, bisect_right
 from collections import defaultdict
 from pathlib import Path
 
@@ -10,6 +10,7 @@ from dma_read import Profile, Read
 from event_replay import Operation, Phase, replay
 from ffn_m import (ALLOC, BEGIN, FILL, FIRST_OPERAND, INPUT, LAST_OPERAND, RAW_READY, RF, Record, Reply,
                    execution_replies, replay_commits, replay_replies)
+from ffn_m_issue import ALLOC_CMD, SIDE_WORDS, Command, CommandLink
 from ffn_mid import MIN_TICKS, MidTile
 from ffn_result import (READBACK_TAG, down_group_addresses, down_readback_words, mid_readback_words,
                         readback_service, sram_word_phases)
@@ -187,6 +188,57 @@ M_MONITOR = """  for(genvar q=0;q<3;q++)begin: m_port
    end
   end
 """
+ISSUE_MONITOR = """  for(genvar q=0;q<3;q++)begin: issue_port
+   wire [127:0] side=ps[q].node.exec.early_exec.exec.side_data;
+   wire [127:0] command_word=ps[q].node.lc_data;
+   reg side_pending=0;
+   reg [31:0] side_session=0;
+   reg [3:0] previous_op;
+   reg [31:0] previous_session,previous_seq;
+   always @(posedge clk) if($test$plusargs("TRACE_ISSUE")&&!reset)begin
+    if(ps[q].node.exec.early_exec.exec.g_cmd_valid&&ps[q].node.exec.early_exec.exec.g_cmd_ready)
+     $display("PISSUE push %0d %0d %0d %0d",cycle,q,ps[q].node.exec.early_exec.exec.command_ticket[31:0],
+              ps[q].node.exec.early_exec.exec.command_ticket[63:32]);
+    if(ps[q].node.exec.early_exec.exec.side_valid&&ps[q].node.exec.early_exec.exec.side_sop)begin
+     if(!side_pending||side_session!=side[63:32])
+      $display("PISSUE side %0d %0d %0d %0d %0d %0d",cycle,q,side[19:16],side[63:32],side[95:64],side[23:20]);
+     side_pending<=1;side_session<=side[63:32];
+    end
+    if(ps[q].node.lc_valid&&ps[q].node.lc_ready)begin
+     if(ps[q].node.lc_sop)begin
+      $display("PISSUE sop %0d %0d %0d %0d %0d %0d",cycle,q,command_word[19:16],
+               command_word[63:32],command_word[95:64],command_word[23:20]);
+      previous_op<=command_word[19:16];previous_session<=command_word[63:32];previous_seq<=command_word[95:64];
+     end
+     if(ps[q].node.lc_eop)begin
+      if(ps[q].node.lc_sop)
+       $display("PISSUE eop %0d %0d %0d %0d %0d",cycle,q,command_word[19:16],command_word[63:32],command_word[95:64]);
+      else
+       $display("PISSUE eop %0d %0d %0d %0d %0d",cycle,q,previous_op,previous_session,previous_seq);
+     end
+    end
+    if(ps[q].node.exec.early_exec.exec.issue_use_valid&&ps[q].node.exec.early_exec.exec.af_use_ready)
+     $display("PISSUE ause %0d %0d %0d %0d",cycle,q,ps[q].node.exec.early_exec.exec.issue_use_session,
+              ps[q].node.exec.early_exec.exec.issue_use_record);
+    if(ps[q].node.exec.early_exec.exec.af_load_valid&&ps[q].node.exec.early_exec.exec.af_load_ready)
+     $display("PISSUE aload %0d %0d %0d %0d %0d %0d %0d",cycle,q,ps[q].node.exec.early_exec.exec.owner[31:0],
+              ps[q].node.exec.early_exec.exec.k,ps[q].node.exec.early_exec.exec.af_load_slot,
+              ps[q].node.exec.early_exec.exec.af_load_gen,ps[q].node.exec.early_exec.exec.af_load_error);
+    if(ps[q].node.exec.early_exec.exec.A_front.w_valid&&ps[q].node.exec.early_exec.exec.af_w_ready)
+     $display("PISSUE join %0d %0d %0d %0d %0d %0d %0d %0d %0d",cycle,q,
+              ps[q].node.exec.early_exec.exec.owner[31:0],ps[q].node.exec.early_exec.exec.seq_id,
+              ps[q].node.exec.early_exec.exec.k,ps[q].node.exec.early_exec.exec.selected_A_slot,
+              ps[q].node.exec.early_exec.exec.current_A_generation,ps[q].node.exec.early_exec.exec.current_use,
+              ps[q].node.exec.early_exec.exec.W_bank);
+    if(ps[q].node.M.n_alloc_valid&&ps[q].node.M.n_alloc_ready)
+     $display("PISSUE alloc %0d %0d %0d %0d %0d",cycle,q,ps[q].node.M.session,ps[q].node.M.record_id,
+              ps[q].node.M.n_free_mask);
+    if(ps[q].node.M.n_alloc_ack_valid&&!ps[q].node.M.alloc_installed)
+     $display("PISSUE bank %0d %0d %0d %0d %0d %0d",cycle,q,ps[q].node.M.alloc_session,ps[q].node.M.n_alloc_ack_record,
+              ps[q].node.M.n_alloc_ack_bank,ps[q].node.M.n_alloc_ack_generation);
+   end
+  end
+"""
 
 # From the last accepted CALL flit, the LC accepts the frame, reads PM and
 # metadata, then presents the first 64 B fetch. CRC scans 124 bytes after the
@@ -216,10 +268,10 @@ def instrument(source, destination):
         raise ValueError('expected the unique programmed FFN block in #251')
     with destination.open('x', encoding='utf-8', newline='\n') as output:
         output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + SCATTER_MONITOR
-                                 + MID_MONITOR + RESULT_MONITOR + M_MONITOR + ANCHOR))
+                                 + MID_MONITOR + RESULT_MONITOR + M_MONITOR + ISSUE_MONITOR + ANCHOR))
 
 
-def read_trace(source, result_trace=None, *, m=False):
+def read_trace(source, result_trace=None, *, m=False, issue=False):
     open_calls = {}
     scopes = []
     admission = {'ready': [], 'stripe': [], 'down': []}
@@ -228,13 +280,18 @@ def read_trace(source, result_trace=None, *, m=False):
     mid = []
     start = result = program = None
     passed = False
-    result_prefixes = ('PRESULT ', 'READBACK ', 'MEXEC ') if m else ('PRESULT ', 'READBACK ')
+    result_prefixes = ('PRESULT ', 'READBACK ')
+    if m:
+        result_prefixes += ('MEXEC ',)
+    if issue:
+        result_prefixes += ('PISSUE ',)
     for line in source:
         if result_trace is not None and line.startswith(result_prefixes):
             domain, kind, *fields = line.split()
             require(kind in {'PRESULT': ('write', 'ack', 'record', 'valid'),
                              'READBACK': ('gate_done', 'request', 'ack'),
-                             'MEXEC': ('exec', 'operand', 'raw', 'control', 'frame', 'eop', 'pop')}[domain],
+                             'MEXEC': ('exec', 'operand', 'raw', 'control', 'frame', 'eop', 'pop'),
+                             'PISSUE': ('push', 'side', 'sop', 'eop', 'ause', 'aload', 'join', 'alloc', 'bank')}[domain],
                     f'unexpected {domain} event {kind}')
             result_trace[domain, kind].append(tuple(map(int, fields)))
         if line.startswith('PROGRAM_PROFILE '):
@@ -397,12 +454,66 @@ def m_control_replies(client, rows, records):
     return intents
 
 
-def check_m_execution(scopes, trace, mode):
+def check_issue(client, observed, records, controls):
+    loads, generations = {}, [0, 0]
+    for tick, scope, k, slot, generation, error in observed['aload']:
+        require(slot == (k // 128) % 2 and k % 128 == 0 and error == 0 and (scope, k) not in loads,
+                f'P{client} A load proof identity differs')
+        generations[slot] += 1
+        require(generation == generations[slot], f'P{client} A load generation differs')
+        loads[scope, k] = tick, generation
+    require(loads.keys() == {(record.scope, record.k) for record in records}, f'P{client} A proof coverage differs')
+
+    joins = observed['join']
+    require(len(joins) == len(records), f'P{client} W/A join coverage differs')
+    for (tick, scope, sequence, k, slot, generation, use, _), record in zip(joins, records):
+        require((scope, sequence, k, use) == (record.scope, record.sequence, record.k, record.context + 1)
+                and slot == (k // 128) % 2, f'P{client} W/A join identity differs')
+        loaded, expected_generation = loads[scope, k]
+        require(record.dispatch < loaded and loaded + 2 <= tick and generation == expected_generation,
+                f'P{client} W/A join used an unpublished A generation')
+    side = [Command(*row) for row in observed['side']]
+    require(all(SIDE_WORDS.get(command.opcode) == command.words and
+                (command.sequence > 0 if command.opcode == ALLOC_CMD else command.sequence == 0)
+                for command in side), f'P{client} unsupported M command or length')
+    link = CommandLink({record.sequence: record.stores for record in records})
+    predicted = link.run([(row[0], row[2]) for row in joins], side, [reply for reply in controls if reply.source == FILL])
+    require(predicted.pushes == observed['push'], f'P{client} EXEC queue admission differs')
+    require([(tick, c.opcode, c.session, c.sequence, c.words) for tick, c in predicted.commands] == observed['sop'],
+            f'P{client} M command SOP differs')
+    require([(tick + c.words - 1, c.opcode, c.session, c.sequence) for tick, c in predicted.commands] == observed['eop'],
+            f'P{client} M command EOP differs')
+    require(predicted.executions == observed['ause'], f'P{client} A use did not match M EXEC admission')
+    require(predicted.allocations == observed['alloc'] and predicted.bank_acks == observed['bank'],
+            f'P{client} W allocation mask, bank, or generation differs')
+    require(sorted((r.ready, r.source, r.session, r.sequence, r.words) for r in predicted.controls)
+            == sorted((r.ready, r.source, r.session, r.sequence, r.words) for r in controls),
+            f'P{client} M control readiness differs')
+    filled = {reply.sequence: tick + reply.words for tick, reply in predicted.replies if reply.source == FILL}
+    bank = {sequence: index for _, _, sequence, index, _ in predicted.bank_acks}
+    require(all(filled[row[2]] + 2 <= row[0] and bank[row[2]] == row[-1] for row in joins),
+            f'P{client} W/A join used a W bank before matching FILL')
+    report = {
+        'commands': len(predicted.commands), 'a_loads': len(loads), 'allocations': len(predicted.allocations),
+        'full_bank_waits': len(predicted.bank_waits),
+        'alloc_ack_waits': len(predicted.alloc_ack_waits),
+        'lookahead_waits': sum(push[0] > join[0] + 1 for push, join in zip(predicted.pushes, joins)),
+    }
+    return predicted, report
+
+
+def check_m_execution(scopes, trace, mode, *, issue=False):
     lanes = {kind: defaultdict(list) for kind in ('exec', 'operand', 'raw', 'control', 'frame', 'eop', 'pop')}
     for kind, lane in lanes.items():
         for tick, client, *fields in trace['MEXEC', kind]:
             require(0 <= client < P_COUNT, f'invalid M lane P{client}')
             lane[client].append((tick, *fields))
+    issue_lanes = defaultdict(lambda: defaultdict(list))
+    if issue:
+        for kind in ('push', 'side', 'sop', 'eop', 'ause', 'aload', 'join', 'alloc', 'bank'):
+            for tick, client, *fields in trace['PISSUE', kind]:
+                require(0 <= client < P_COUNT, f'invalid P command lane P{client}')
+                issue_lanes[client][kind].append((tick, *fields))
 
     stores, retired = {}, {}
     report = {'executions': 0, 'replies': 0, 'max_input_wait': 0, 'max_rf_wait': 0, 'overlapping_execs': 0}
@@ -410,9 +521,19 @@ def check_m_execution(scopes, trace, mode):
         observed = {kind: lane[client] for kind, lane in lanes.items()}
         starts = observed['exec']
         require(len(starts) == len(records), f'P{client} EXEC coverage differs')
-        intents = m_control_replies(client, observed['control'], records)
+        controls = m_control_replies(client, observed['control'], records)
+        issue_trace = None
+        if issue:
+            issue_trace, issue_report = check_issue(client, issue_lanes[client], records, controls)
+            starts = [(tick, session, sequence, record.k, record.context)
+                      for (tick, session, sequence), record in zip(issue_trace.executions, records, strict=True)]
+            require(starts == observed['exec'], f'P{client} replayed M EXEC admission differs')
+            totals = report.setdefault('issue', dict.fromkeys(issue_report, 0))
+            for key, value in issue_report.items():
+                totals[key] += value
 
         operands, products = [], []
+        intents = controls.copy()
         previous_tick = previous_session = 0
         for (tick, session, sequence, offset, context), record in zip(starts, records):
             require((sequence, offset, context) == (record.sequence, record.k, record.context)
@@ -421,12 +542,14 @@ def check_m_execution(scopes, trace, mode):
             previous_tick, previous_session = tick, session
             operands.extend(((tick + FIRST_OPERAND, sequence, 1, 0), (tick + LAST_OPERAND, sequence, 0, 1)))
             products.append((tick + RAW_READY, sequence))
-            intents.extend(execution_replies(tick, session, sequence, record.stores))
+            if not issue:
+                intents.extend(execution_replies(tick, session, sequence, record.stores))
         require(operands == observed['operand'], f'P{client} operand stream timing differs')
         require(products == observed['raw'], f'P{client} raw dot timing differs')
 
         frames, eops, input_eop, rf_eop, fill_eop = [], [], {}, {}, {}
-        for tick, reply in replay_replies(client, intents):
+        replies = issue_trace.replies if issue else replay_replies(client, intents)
+        for tick, reply in replies:
             identity = reply.source, reply.session, reply.sequence
             end = tick + reply.words
             frames.append((tick, *identity, reply.words))
@@ -460,6 +583,11 @@ def check_m_execution(scopes, trace, mode):
             if record.stores:
                 stores[client, sequence] = grants[0].end
         require(pop == observed['pop'], f'P{client} guard terminal differs')
+        if issue:
+            pop_ticks = [row[0] for row in pop]
+            require(all(index - bisect_left(pop_ticks, tick) < 2
+                        for index, (tick, _, _) in enumerate(issue_trace.pushes)),
+                    f'P{client} EXEC queue accepted with both guard slots live')
         report['executions'] += len(records)
     return stores, retired, report
 
@@ -878,11 +1006,12 @@ def check_admission(scopes, transfers, admission, upstream=None):
 
 
 def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False,
-          m=False):
+          m=False, issue=False):
+    m = m or issue
     readback = readback or m
     result_trace = defaultdict(list) if readback else None
     scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(
-        source, result_trace, m=m)
+        source, result_trace, m=m, issue=issue)
     transfers = []
     sequence = [0] * 3
     read_bytes = write_bytes = 0
@@ -921,7 +1050,7 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
     p_done = None
     m_stores = m_retired = None
     if m:
-        m_stores, m_retired, m_report = check_m_execution(scopes, result_trace, mode)
+        m_stores, m_retired, m_report = check_m_execution(scopes, result_trace, mode, issue=issue)
     if readback:
         p_done, down_done, down_values, p_report = check_p_results(scopes, result_trace, mode, m_stores, m_retired)
     terminals = []
@@ -986,6 +1115,7 @@ def main():
     verify.add_argument('--mid', action='store_true')
     verify.add_argument('--result', action='store_true')
     verify.add_argument('--m', action='store_true', help='verify M EXEC through result acceptance')
+    verify.add_argument('--issue', action='store_true', help='verify P command issue through result acceptance')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
@@ -993,7 +1123,7 @@ def main():
         with args.log.open(encoding='utf-8') as source:
             print(json.dumps(check(source, args.mode, args.seed, admission=args.admission,
                                    phase_release=args.phase_release, scatter=args.scatter, mid=args.mid,
-                                   readback=args.result, m=args.m), indent=2))
+                                   readback=args.result, m=args.m, issue=args.issue), indent=2))
 
 
 if __name__ == '__main__':

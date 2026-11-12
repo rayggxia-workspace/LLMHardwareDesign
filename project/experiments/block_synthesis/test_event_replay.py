@@ -10,7 +10,8 @@ from benchmark_native_sram_replay import check_trace
 from cover_frontier import search
 from dma_offer import DmaOfferChannel
 from event_replay import Operation, Phase, ReadyWindow, ReplayDeadlock, replay
-from ffn_m import INPUT, INPUT_READY, RF, RF_READY, commit_phases, reply_phase
+from ffn_m import FILL, INPUT, INPUT_READY, RF, RF_READY, Reply, commit_phases, reply_phase
+from ffn_m_issue import ALLOC_CMD, Command, CommandLink
 from ffn_mid import MIN_TICKS, MidTile
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
@@ -648,6 +649,37 @@ class ReplayTest(unittest.TestCase):
             verify(tasks, h, (), plan)
             self.assertEqual((next(row['binding'] for row in plan['tasks'] if row['id'] == 'exec'),
                               plan['makespan']), (choice, finish))
+
+    def test_m_link_retimes_old_allocation_when_exec_releases_bank(self):
+        side = [Command(tick, ALLOC_CMD, session, sequence, 2)
+                for tick, session, sequence in ((1, 1, 1), (8, 2, 2), (15, 3, 3), (22, 4, 4), (41, 6, 5))]
+        fills = [Reply(tick, FILL, session, sequence, 2)
+                 for tick, session, sequence in ((30, 1, 1), (60, 2, 2), (64, 3, 3), (68, 4, 4), (75, 6, 5))]
+        stores = dict.fromkeys(range(1, 6), False)
+        snapshot = CommandLink(stores)
+        prefix = snapshot.run([], side, fills, until=31)
+        self.assertEqual((len(prefix.allocations), snapshot.banks), (4, [1, 2, 3, 4]))
+        self.assertEqual((prefix.replies[-1][0], snapshot.tx_open), (30, 33))
+        for join, allocation in ((34, 51), (35, 52)):
+            joins = [(join, 1), (80, 2), (105, 3), (130, 4), (155, 5)]
+            trace = deepcopy(snapshot).run(joins, [], [])
+            self.assertEqual(trace, CommandLink(stores).run(joins, side, fills))
+            self.assertEqual(trace.bank_waits, {5})
+            self.assertEqual(trace.allocations[-1], (allocation, 6, 5, 1))
+            self.assertEqual(trace.bank_acks[-1], (allocation + 1, 6, 5, 0, 2))
+        with self.assertRaisesRegex(ValueError, 'predates'):
+            snapshot.run([(30, 1)], [], [])
+        bad_fill = [Reply(2, FILL, 1, 1, 2), *fills[1:]]
+        with self.assertRaisesRegex(ValueError, 'matching ALLOC acknowledgement'):
+            CommandLink(stores).run([(34, 1)], side, bad_fill)
+
+    def test_m_link_preserves_lookahead_frame_before_exec_push(self):
+        fills = [Reply(8, FILL, 1, 1, 2), Reply(30, FILL, 2, 2, 2)]
+        for side_ready, push, start in ((9, 13, 17), (13, 15, 19)):
+            side = [Command(1, ALLOC_CMD, 1, 1, 2), Command(side_ready, ALLOC_CMD, 2, 2, 2)]
+            trace = CommandLink({1: True, 2: False}).run([(12, 1), (40, 2)], side, fills)
+            self.assertEqual(trace.pushes[0], (push, 3, 1))
+            self.assertEqual(trace.executions[0], (start, 3, 1))
 
     @staticmethod
     def tick_reference(operations, capacity):
