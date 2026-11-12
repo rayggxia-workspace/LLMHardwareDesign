@@ -5,6 +5,7 @@ import unittest
 from benchmark_event_ffn import copy_bank_receipt
 from benchmark_native_sram_replay import check_trace
 from cover_frontier import search
+from dma_offer import DmaOfferChannel
 from event_replay import Operation, Phase, ReplayDeadlock, replay
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
@@ -244,6 +245,14 @@ class ReplayTest(unittest.TestCase):
         resumed = replay(operations, cap, previous=prefix, issue_rates=rate)
         self.assertEqual(resumed, replay(operations, cap, issue_rates=rate))
         self.assertEqual([grants[0].start for grants in resumed], [0, 0, 1, 1, 3, 3])
+
+    def test_native_dma_held_offer_reserves_the_last_issue_credit(self):
+        # Channel zero at cycle 14 of the #251 typed seed-1 probe.
+        before = DmaOfferChannel((2, 3), previous_issues=2, cursor=4)
+        blocked = before.advance(reserved=0b11110000, ready=0b01)
+        self.assertEqual(blocked, DmaOfferChannel((None, 3), previous_issues=1, cursor=4))
+        self.assertEqual(blocked.advance(reserved=0b1111110000, ready=0),
+                         DmaOfferChannel((4, 3), previous_issues=0, cursor=5))
 
     def test_archive_audit_rejects_same_word_count_with_wrong_bank_or_early_ack(self):
         rows = [{'header': 20, 'copy': 40}]

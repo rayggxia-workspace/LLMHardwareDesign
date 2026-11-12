@@ -18,12 +18,13 @@
 | 8 | 重新读取 #251 的 102603、102604 冻结 RTL 回执，按 SHA-256 及固定 Git blob 核对来源。以原始 bank 日志重建物理字地址，逐个验证 K128 COPY 的三份目的区间。负对照保持写入总量但改成重复地址，或把 ACK 提到写入前，均被拒绝。 |
 | 9 | 将 SRAM 输入捕获、输出写入、可见确认和命令退休拆成不同的依赖边。旧读者持有窗口至第 12 拍，新计算可在第 0–4 拍执行，再于第 12–14 拍写入，第 15 拍发布，第 23 拍释放槽位。独立检查器拒绝提前覆盖和提前读取。活数据外存保存与计算重叠时，16 B 写回保留，整份计划从 14 拍缩至 10 拍。 |
 | 10 | 重新运行 #251 的四 bank SRAM RTL。8 个条件共 86 次请求／应答握手逐拍一致。新增宽读推迟旧窄写；双通道应答阻塞时，槽满的一侧会让另一侧推进，应答出队当拍即可复用槽。将复用推迟一拍的篡改轨迹被拒绝。两种读取同一份 64 B 数据的候选在反压下实际排序反转。 |
+| 11 | 对 #251 typed DMA 的两通道分别推进寄存后的 lane 归属、上一拍发放数和轮询指针。18 次 RTL 运行逐拍核对 117,150 个通道采样、99,720 次真实 DDR 握手。已有 VALID 但未握手的请求占用发放额度，897 个通道拍因此少补发请求。提前一拍补发的篡改轨迹被拒绝。 |
 
 重放对每个绑定默认试算至多 32 组搬运组合，可通过硬件 JSON 的 `event_model.transport_limit` 调整，`null` 取消该上限。输出记录尝试数和发生截断的绑定扩展数。固定日历的预测只用于枚举顺序，完整后继由重放评分。
 
 原生服务通过 `window_phases.read`、`write`、`publish` 指定阶段名。读取占用以 `read` 阶段结束为边界，覆盖必须等到旧读取和活数据写回确认。延后写入须用 `window_phases.result_hold` 引用已声明的 `hold_claims`，以约束计算结果暂存。数据可在 `publish` 结束时供后继读取，命令槽保留到退休。未声明的窗口沿用整段服务的边界；任务显式 `after` 和同绑定的串行服务仍等待退休，输入搬运仍须在服务起点前确认。
 
-`event_model.issue_rates` 在重放模式生效。按 #251 冻结 DMA RTL，每个通道的单拍端口容量设为 2，配置 `{"window_ticks": 3, "max_issues": 4}`。RTL 还跟踪寄存后的待接纳 offer、描述符和回传，当前发放上限只复现该滑动窗口约束。DDR bank／行和读写切换、原生可变请求顺序的完整校准、持续 KV 与跨层／跨 token 验收仍待完成。
+`event_model.issue_rates` 在重放模式生效。按 #251 冻结 DMA RTL，每个通道的单拍端口容量设为 2，配置 `{"window_ticks": 3, "max_issues": 4}`。当前 DP 的通用发放上限复现该滑动窗口约束。第 11 轮的寄存 offer 子模型已独立对照 RTL，DP 的逐 beat 请求、预留描述符和回传尚待接入。DDR bank／行和读写切换、原生可变请求顺序的完整校准、持续 KV 与跨层／跨 token 验收仍待完成。
 
 固定轨迹回归入口为 `python -B project/experiments/block_synthesis/benchmark_event_ffn.py ARCHIVE --job 102603 --timing replay`。默认从 #251 固定提交读核对清单，也可通过 `--fixture FILE` 使用相同 Git blob 的本地副本。COPY 时序来自原轨迹，DDR 逐 beat 时序仍缺记录。源包和回执的来源见 [#251 冻结索引](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/250/native-services/ffnnative/index.json)。
 
@@ -55,7 +56,29 @@ python -B project/experiments/block_synthesis/benchmark_native_sram_replay.py "$
 
 追加宽读时旧窄写的第一次接纳从第 0 拍移到第 1 拍，最后一次应答从第 4 拍移到第 5 拍。原始日志保存在本机 Codex 证据目录，`round10-native-sram-logs.sha256` 的 SHA-256 为 `f0b08712701751dcb5e012b83823cb0f785f652e436d5b30da13d41b82b5334c`，汇总 `round10-native-sram-check.json` 的 SHA-256 为 `33942b1cbe1bcbe5d4505eb2674c184c5b90ba2a2be3b8c6a081d12d99751780`。探针直接校准重放内核的仲裁与容量。将这一组物理请求接入 FFN 的候选生成、覆盖局控退休和 SRAM 时序分析仍待完成。
 
-同批本机用 Verilator 4.038 重跑了 #251 原 typed DMA 测试，6 个种子、3 个初始化参数均通过，每组 5,541 次源接纳、5,540 次真实 DDR 接纳及客户端返回、1 次预留取消。`mc_dma_fabric_typed_p.sv` SHA-256 为 `74c68493d5bd1f0c1310eab9d7c634384e8871f8a0d91b0ac4dc0dc0907b9b70`，`typed.cpp` SHA-256 为 `2d10af60a005c331e2a24f0b2d38a443515227aac23ba9f3762ed398837434bc`，本机日志索引 `native-dma-18-logs.sha256` 的 SHA-256 为 `9a4d82c5c69e9d943f9475553a4d9b31a1a77675d6ce13669eb73c81e27d5fa1`。当前这些 DMA 日志用于确认 RTL 基线；待补逐拍 held offer 与模型的对照。
+### 原生 DMA 寄存请求对照
+
+本机用 Verilator 4.038 重跑了 #251 原 typed DMA 测试。6 个种子、3 个初始化参数均通过，每组 5,541 次源接纳、5,540 次真实 DDR 接纳及客户端返回、1 次预留取消。`mc_dma_fabric_typed_p.sv` SHA-256 为 `74c68493d5bd1f0c1310eab9d7c634384e8871f8a0d91b0ac4dc0dc0907b9b70`，`typed.cpp` SHA-256 为 `2d10af60a005c331e2a24f0b2d38a443515227aac23ba9f3762ed398837434bc`，本机基线日志索引 `native-dma-18-logs.sha256` 的 SHA-256 为 `9a4d82c5c69e9d943f9475553a4d9b31a1a77675d6ce13669eb73c81e27d5fa1`。
+
+第 11 轮只在本地测试驱动插入采样。输入取 RTL 的已预留 beat 位图（排除当拍成功取消）和 DDR READY。输出从端口 VALID 和 tag 取物理槽位，并与原 `ISSUE` 记录互核。`DmaOfferChannel` 从复位推进 lane 归属、上一拍发放数和轮询指针。共观察到 27,387 个 lane 拍保持 VALID 等待。种子 1、初始参数 0 时，第 14 拍通道 0 的一条 lane 已握手，另一条保持。上一拍两次握手、本拍一次握手和一个保持请求用尽 4 份额度，所以第 15 拍第一条 lane 仍无 VALID，第 16 拍才补上新请求。将第 15 拍改成有新请求，检查器报告该拍槽位不符。
+
+```bash
+dir=/path/to/evidence
+python -B project/experiments/block_synthesis/benchmark_native_dma_offer.py instrument \
+  "$dir/typed.cpp" "$dir/typed-offer-probe.cpp"
+verilator --cc --exe --build --assert -Wno-fatal --x-initial unique --x-assign unique \
+  --top-module mc_dma_fabric_typed_p --Mdir "$dir/dma-build" \
+  "$dir/mc_dma_fabric_typed_p.sv" "$dir/typed-offer-probe.cpp"
+for initial in 0 1 2; do
+  for seed in 1 2 3 4 5 6; do
+    "$dir/dma-build/Vmc_dma_fabric_typed_p" "$seed" "$initial" \
+      "$dir/typed-dma-offer-$seed-$initial.csv" || exit 1
+  done
+done
+python -B project/experiments/block_synthesis/benchmark_native_dma_offer.py check "$dir"/typed-dma-offer-*.csv
+```
+
+采样驱动 SHA-256 为 `4a54fab85e159fb4bb8794e42b92467448731fc22dc953394d93ad7c72044620`。本机日志索引 `round11-native-dma-offer-logs.sha256` 的 SHA-256 为 `b0abbe3c0b95160070f26155667b6fae4d950022ad0f0dd40b592437b044e6d3`，汇总 `round11-native-dma-offer-check.json` 的 SHA-256 为 `427e9455a135a9506193a4185f7badac91bc9a42afb6631fbe2a7f73c36e00b5`。Windows 全套 344 项测试通过。这个对照验证预留到发放的子模型，DDR 的 READY 和源端预留目前由 RTL 探针提供。
 
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
