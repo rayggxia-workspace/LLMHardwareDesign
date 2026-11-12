@@ -62,6 +62,7 @@ TENET 提供另一种三值 BitNet-3B ASIC 方案。论文 `V 公开按模型规
 
 ### 商用 SoC 上的新增论文
 
+- **SmartBench: Is Your LLM Truly a Good Chinese Smartphone Assistant?（EMNLP 2025）。** iQOO 12 的 Snapdragon 8 Gen 3 NPU（SoC 4 nm），Qualcomm QNN、W4A16、表 5 的上下文长度 2048。Qwen2.5-3B（3.1B）为 **24.9 输出 tokens/s、873.4 输入 tokens/s、6.8 W**。BlueLM-3B（2.7B）为 **27.1 输出 tokens/s、930.9 输入 tokens/s、6.4 W**。表 5 未披露生成长度、面积或电源轨测量范围，功耗按手机测试值引用。[EMNLP 论文表 5](https://aclanthology.org/2025.emnlp-main.194.pdf) · [Qualcomm 工艺规格](https://docs.qualcomm.com/doc/87-71408-1/87-71408-1_REV_D_Snapdragon_8_gen_3_Mobile_Platform_Product_Brief.pdf)
 - **Apple Intelligence Foundation Language Models（2024）。** 约 3B 的 AFM-on-device，混合 2/4 bit 平均 3.7 bit/weight，使用 iPhone 15 Pro（A17 Pro，3 nm），作者报告 **30 输出 tokens/s**（无投机），TTFT 约为每输入 token 0.6 ms。该数来自作者配套说明，未披露 prompt/输出长度、独立 Neural Engine 面积和对应功耗。2025 年 2-bit QAT 版模型不沿用该速度。[技术报告](https://arxiv.org/html/2407.21075#S5) · [苹果测试说明](https://machinelearning.apple.com/research/introducing-apple-foundation-models) · [A17 Pro 工艺](https://www.apple.com/newsroom/2023/09/apple-unveils-iphone-15-pro-and-iphone-15-pro-max/)
 - **When NPUs Are Not Always Faster（2026）。** Snapdragon 8 Gen 3、Hexagon v75、16 GB RAM、Android 15、llama.cpp b7588，测试 Q4_0 的 Llama 3.2-3B 和 Qwen3-4B。用约 321、641、1281 输入 token 测试不同卸载比例，6 CPU 线程，论文默认 batch 参数 128。绝对解码点见图 2(e)/(g)。表 III 的 208/210 μs 是单次矩阵算子调用时延。Llama 3.2-3B 的全层卸载配置存在 CPU 回退，三种 prompt 下的整机电池耗能较 CPU-only 增加 22%、32%、51%。芯片面积和芯片独立功耗未披露。[论文 §III–IV](https://arxiv.org/html/2605.27435#S3)
 
