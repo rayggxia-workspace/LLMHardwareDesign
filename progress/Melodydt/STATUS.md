@@ -15,3 +15,10 @@
 - [Issue #261](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/261) · [PR #262](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/262) · [扩展报告](../../docs/experiments/issue-261-llm-asic-benchmarks.md)。待独立审查。
 - 验证：本地参考副本 `python -X utf8 scripts/check_project.py` 通过，4 个表格、36 个 HTTPS 引用的格式、关键换算和行尾空白通过。实际服务器作业和板测未执行。
 - 审查重点：核对硅片、仿真及算子数据的可比范围，确认后续引用使用原表工况。看板和登记交接见报告。线上检查以 PR 的运行回执为准。
+
+## 2026-11-12 22:10（Asia/Shanghai，UTC+08:00）
+
+- 依据用户更新的范围，调研报告现聚焦科研 ASIC。新增 ProQuant、NVLLM、P³-LLM、PALUTE、CHIME、TriGen、FlexPosit、Pimba、MX-like Tensor Core 共九篇，记录模型、精度、上下文、吞吐、面积、功耗和证据范围。
+- [Issue #261](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/261) · [PR #262](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/262) · [调研报告](../../docs/experiments/issue-261-llm-asic-benchmarks.md)。独立审查待执行。
+- 本地参考副本的 `python -X utf8 scripts/check_project.py` 通过。报告 5 张表、39 个不同 HTTPS 引用格式和 ProQuant 的速度/功耗换算通过校验。图读数从原论文 PDF 核对。未启动服务器仿真或板测。
+- 审查重点为 NVLLM 64-token 上下文、P³-LLM 4K 多 batch 和 ProQuant 硅片测量与外存模拟的计时边界。登记及看板同步待维护者处理，见报告的协作交接。
