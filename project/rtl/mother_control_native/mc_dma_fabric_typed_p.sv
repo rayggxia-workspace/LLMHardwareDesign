@@ -36,7 +36,8 @@ module mc_dma_fabric_typed_p #(
  output reg [3:0] fault_client,output reg [31:0] fault_local_tag,
  output reg [63:0] fault_global_tag,
  output reg [11:0] debug_beats,debug_descriptors,
- output wire [31:0] debug_generation
+ output wire [31:0] debug_generation,
+ output wire transport_quiescent
 );
  reg [2:0] native_tag_seen;
  reg [30:0] last_native_serial[0:2];
@@ -465,6 +466,12 @@ module mc_dma_fabric_typed_p #(
  end
  integer r,t;
  wire empty_transport=offer_valid==0&&skid_valid==0&&live_beats==0;
+ // F_IDLE after reset requires an accepted matching backend purge completion.
+ // Pending descriptors, new offers and held acknowledgements count as work
+ // even when the beat table is empty. The caller also checks backend idle.
+ assign transport_quiescent=!reset&&fence_state==F_IDLE&&empty_transport&&desc_live==0&&
+     !begin_auto_fence&&!fault_valid&&!(|c_cancel_ack_valid)&&!d_fence_done_valid&&
+     !(|{p_mode_valid,c_req_valid,c_close_valid,c_cancel_valid,c_fence_valid,d_rsp_valid});
  always @(posedge clk)begin
   if(reset)begin
    p_mode_active<=0;native_tag_seen<=0;

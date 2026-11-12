@@ -43,34 +43,25 @@ module ffn_program_control_fixture(
  /* verilator lint_on SYNCASYNCNET */
  logic [2:0] lc_cfg_ready,lc_cfg_rsp,lc_certified,lc_prepared,lc_session_ready,lc_idle;
  logic [7:0] lc_cfg_status[3];
- logic [2:0] lc_rx_ready,lc_tx_valid,lc_tx_ready,lc_tx_sop,lc_tx_eop;
- logic [7:0] lc_tx_source[3];
- logic [127:0] lc_tx_data[3];
- logic [1:0] rx_selected,rx_holder;
- logic rx_held;
+ logic [2:0] lc_rx_valid,lc_rx_ready,lc_tx_valid,lc_tx_ready,lc_tx_sop,lc_tx_eop;
+ logic [2:0][127:0] lc_tx_data;
+ logic [23:0] lc_rx_target,lc_rx_header_target;
+ logic packet_transport_idle;
+ // Runtime drain is independent of PM certification and session readiness.
+ wire runtime_drained=transport_drained&&(&lc_idle)&&packet_transport_idle;
  logic [127:0] mother_image[17],local_image[22];
  string mother_file,local_file;
  logic [245:0] unused_mc;
- assign tx_ready=tx_target<3&&lc_rx_ready[tx_target[1:0]];
- always_comb begin
-  rx_selected=0;
-  if(lc_tx_valid[2])rx_selected=2;
-  if(lc_tx_valid[1])rx_selected=1;
-  if(lc_tx_valid[0])rx_selected=0;
-  if(rx_held)rx_selected=rx_holder;
-  rx_valid=lc_tx_valid[rx_selected];
-  rx_data=lc_tx_data[rx_selected];
-  rx_source=lc_tx_source[rx_selected];
-  rx_sop=lc_tx_sop[rx_selected];
-  rx_eop=lc_tx_eop[rx_selected];
-  lc_tx_ready=0;
-  lc_tx_ready[rx_selected]=rx_ready;
- end
+ // The P0 physical view has TARGET=0 baked into its local controller.
+ // All three instances below use that same local control implementation.
+ mc_lc_packet128_switch #(.ENDPOINTS(3),.REBIND_TARGET(3'b111)) transport(
+  .clk,.reset,.tx_valid,.tx_sop,.tx_ready,.tx_target,.tx_header_target(tx_data[24+:8]),
+  .lc_rx_valid,.lc_rx_ready,.lc_rx_target,.lc_rx_header_target,
+  .lc_tx_valid,.lc_tx_ready,.lc_tx_data,.lc_tx_sop,.lc_tx_eop,
+  .rx_valid,.rx_ready,.rx_data,.rx_source,.rx_sop,.rx_eop,
+  .transport_idle(packet_transport_idle));
  always @(posedge clk)begin
-  if(reset)begin rx_held<=0;rx_holder<=0;end
-  else begin
-   if(rx_valid&&!rx_held)begin rx_held<=!(rx_ready&&rx_eop);rx_holder<=rx_selected;end
-   if(rx_valid&&rx_ready&&rx_eop)rx_held<=0;
+  if(!reset)begin
    assert(!tx_valid||tx_target<3);
    assert(frame_faults==0&&protocol_faults==0);
    if(result_valid)assert(result_status==0&&result_job==1&&result_epoch==9&&result_sequence==1)
@@ -92,7 +83,8 @@ module ffn_program_control_fixture(
   .start_valid_i(start),.start_credit_i(&lc_prepared),.start_job_i(32'd1),.start_epoch_i(32'd9),
   .start_sequence_i(32'd1),.start_generation_i(32'd1),.local_image_ids_i({192'd0,{3{TOPOLOGY}}}),
   .local_enabled_i(9'b111),.start_ready_o(ready),.tx_valid,.tx_ready,.tx_data,.tx_target,.tx_sop,.tx_eop,.tx_credit(unused_mc[82]),
-  .rx_valid,.rx_ready,.rx_data,.rx_source,.rx_sop,.rx_eop,.transport_drained_i(transport_drained&&(&lc_idle)&&!rx_held),
+  .rx_valid,.rx_ready,.rx_data,.rx_source,.rx_sop,.rx_eop,
+  .transport_drained_i(runtime_drained),
   .frame_fault_count(frame_faults),.result_valid_o(result_valid),.result_ready_i(result_ready),
   .result_job_o(result_job),.result_epoch_o(result_epoch),.result_sequence_o(result_sequence),.result_status_o(result_status),
   .result_error_pc_o(unused_mc[114:83]),.result_source_o(unused_mc[122:115]),.result_child_error_pc_o(unused_mc[154:123]),
@@ -106,18 +98,21 @@ module ffn_program_control_fixture(
 
  for(genvar p=0;p<3;p++)begin: local_core
   wire [31:0] actual_crc,ticket,local_faults,retired;
+  wire [7:0] local_source;
   wire [13:0] trace_address;
   wire trace_valid;
-  lc_native_scope_controller #(.TARGET(8'(p))) lc(.clk,.reset,
+  lc_native_scope_controller lc(.clk,.reset,
    .session_valid(lc_session&&(&lc_session_ready)),.session_ready(lc_session_ready[p]),
-   .session_generation(32'd1),.session_topology(TOPOLOGY),.transport_drained,
+   .session_generation(32'd1),.session_topology(TOPOLOGY),.transport_drained(runtime_drained),
    .cfg_valid(lc_cfg_valid&&(&lc_cfg_ready)),.cfg_ready(lc_cfg_ready[p]),.cfg_op(lc_cfg_op),.cfg_generation(32'd1),
    .cfg_abi(ABI),.cfg_capacity(32'h02510001),.cfg_crc(lc_crc),.cfg_bytes(16'd352),.cfg_address(lc_cfg_address),.cfg_data(lc_cfg_data),
    .cfg_rsp_valid(lc_cfg_rsp[p]),.cfg_rsp_ready(lc_cfg_take),.cfg_status(lc_cfg_status[p]),.cfg_actual_crc(actual_crc),
    .certified(lc_certified[p]),.prepared(lc_prepared[p]),
-   .rx_valid(tx_valid&&tx_target==8'(p)),.rx_ready(lc_rx_ready[p]),.rx_data(tx_data),.rx_sop(tx_sop),.rx_eop(tx_eop),.rx_target(tx_target),
+   .rx_valid(lc_rx_valid[p]),.rx_ready(lc_rx_ready[p]),
+   .rx_data({tx_data[127:32],lc_rx_header_target[8*p+:8],tx_data[23:0]}),
+   .rx_sop(tx_sop),.rx_eop(tx_eop),.rx_target(lc_rx_target[8*p+:8]),
    .tx_valid(lc_tx_valid[p]),.tx_ready(lc_tx_ready[p]),.tx_data(lc_tx_data[p]),
-   .tx_sop(lc_tx_sop[p]),.tx_eop(lc_tx_eop[p]),.tx_source(lc_tx_source[p]),
+   .tx_sop(lc_tx_sop[p]),.tx_eop(lc_tx_eop[p]),.tx_source(local_source),
    .mc_req_valid(dr_valid[p]),.mc_req_ready(dr_ready[p]),.mc_req_address(dr_address[64*p+:64]),.mc_req_tag(dr_tag[32*p+:32]),
    .mc_req_channel(dr_channel[p]),.mc_req_record_beats(dr_length[5*p+:5]),.mc_close_valid(dr_close[p]),
    .mc_close_ready(dr_close_ready[p]),.mc_close_tag_base(dr_close_tag[32*p+:32]),
@@ -131,6 +126,7 @@ module ffn_program_control_fixture(
    .pm_trace_valid(trace_valid),.pm_trace_address(trace_address),.retired_instructions(retired));
   always @(posedge clk)if(!reset)begin
    assert(local_faults==0);
+   assert(local_source==0);
    if(service_valid[p])assert(ticket==service_owner[128*p+:32]&&retired==1);
    if(lc_cfg_take&&lc_cfg_op==2)assert(actual_crc==lc_crc);
   end
@@ -161,6 +157,7 @@ module ffn_program_control_fixture(
    $fatal(1,"actual FFN program files and CRC required");
   $readmemh(mother_file,mother_image);$readmemh(local_file,local_image);
   wait(!reset);@(negedge clk);mother_reset_n=1;
+  while(!runtime_drained)@(negedge clk);
   local_config(0,0,0);
   for(integer word=0;word<22;word++)local_config(1,14'(word*16),local_image[word]);
   local_config(2,0,0);

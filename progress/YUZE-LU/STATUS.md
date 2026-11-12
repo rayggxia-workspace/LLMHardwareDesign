@@ -222,3 +222,9 @@ Under the same Nangate45 fast mapping, standard-cell area is 626,590.398 µm², 
 The request arbiter uses a registered cursor mask, one-hot selection and a prefix test for malformed request ordering. It keeps the two physical reservations per channel, the 64-byte DDR transfer and the existing backpressure and diagnostic priority. Earlier changes validate return tags against fixed entries in their own channel.
 
 The cursor equivalence proof covers all valid cursor values and all eligibility masks. The directed 18-pair DMA regression and all six FFN replay pairs remain cycle-exact. Each full FFN run covers 1,444 K windows. Under the same Nangate45 1960 by 1960 micrometer outline and 300 MHz constraints, detailed placement reports -4.60 ns setup slack, improving on -5.94 ns from the preceding published revision. The critical path is now c_req_tag[111] to c_req_ready[11]. Same-method mapped standard-cell area is 620,860.758 square micrometers. Extracted DMA timing and whole-system performance remain open.
+
+### Typed 64B DMA drain qualification
+
+The programmed FFN fixture now waits for an accepted matching purge, all four backend queues, the internal DMA transport and the control link before loading the local program. The internal DMA quiescent status also accounts for descriptors, incoming transfers and held acknowledgements. This work belongs to Issue #250 and builds on draft #263.
+
+The 24 quiescence checkpoints, 18 paired directed DMA traces, 18 paired real SRAM joint cases and six paired programmed FFN and Down runs pass. Steady execution is cycle-exact. Cold readiness takes 650 cycles, up by two cycles. The integrated physical drain reduction and the extracted top-level checks remain open.
