@@ -34,7 +34,8 @@ module mc_dma_stage64_joint #(
  output wire [3:0] fault_client,output wire [31:0] fault_local_tag,
  output wire [63:0] fault_global_tag,
  output wire [11:0] debug_beats,debug_descriptors,
- output wire [31:0] debug_generation
+ output wire [31:0] debug_generation,
+ output wire transport_quiescent
 ,
  input wire [2:0] dyn_cmd_valid,output wire [2:0] dyn_cmd_ready,dyn_cmd_admit,
  input wire [191:0] dyn_cmd_address,input wire [95:0] dyn_cmd_tag,input wire [29:0] dyn_cmd_dst,

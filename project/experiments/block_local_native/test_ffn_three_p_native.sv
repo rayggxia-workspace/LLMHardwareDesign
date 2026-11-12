@@ -8,7 +8,8 @@ module test_ffn_three_p_native #(
  localparam integer TILES=COLS/128,STRIPES=(COLS+191)/192;
  localparam [63:0] JOB=64'h250_ff01;
  reg clk;initial clk=0;always #5 clk=!clk;
- reg reset=1,start_valid=0,done_ready=0;
+ reg reset=1;
+ wire start_valid,done_ready;
  wire stripe_ready,stripe_commit_valid,stripe_commit_error;
  wire [63:0] stripe_commit_owner;
  wire [15:0] stripe_commit_first;
@@ -24,11 +25,15 @@ module test_ffn_three_p_native #(
  wire [29:0] fs_address;
  wire [383:0] fs_data,fs_rsp_data;
  wire [95:0] fs_tag,fs_rsp_tag;
+ bit zero_peer_ack_payload,poison_peer_ack_payload;
+ wire [255:0] peer_ack_payload=zero_peer_ack_payload?'0:
+     poison_peer_ack_payload?'1:fs_rsp_data[383:128];
+ wire [383:0] ffn_rsp_data={peer_ack_payload,fs_rsp_data[127:0]};
  ffn_gate_up_mid #(.TOTAL_COLUMNS(COLS)) dut(.clk,.reset,.start_valid,.start_ready,.start_owner(JOB),
   .stripe_valid,.stripe_ready,.stripe_owner,.stripe_first,.stripe_width,
   .stripe_commit_valid,.stripe_commit_ready,.stripe_commit_owner,.stripe_commit_first,.stripe_commit_error,
   .s_valid(fs_valid),.s_write(fs_write),.s_ready(fs_ready),.s_address(fs_address),.s_data(fs_data),.s_tag(fs_tag),
-  .s_rsp_valid(fs_rsp_valid),.s_rsp_ready(fs_rsp_ready),.s_rsp_data(fs_rsp_data),.s_rsp_tag(fs_rsp_tag),
+  .s_rsp_valid(fs_rsp_valid),.s_rsp_ready(fs_rsp_ready),.s_rsp_data(ffn_rsp_data),.s_rsp_tag(fs_rsp_tag),
   .mid_valid,.mid_ready,.mid_owner,.mid_first,.mid_destination,.mid_destination_base,.mid_shift,
   .done_valid,.done_ready,.done_error,.rejected_commits);
 
@@ -81,9 +86,8 @@ module test_ffn_three_p_native #(
 
  localparam [127:0] X_KEY={32'd1,32'd9,32'd8,32'd7};
  localparam [127:0] MID_KEY={32'd1,32'd9,32'd9,32'd1};
- reg down_phase=0;
- integer down_index=0;
- reg down_call=0,down_take=0;
+ wire down_phase,down_take;
+ wire [2:0] down_index,down_call;
  wire [2:0] down_ready,down_terminal;
  integer mode,seed,cycle,stripe_index,mid_retired,loads,copy_writes,project_terms,w_requests,w_responses;
  bit trace_tiles,early_k_prep;
@@ -91,16 +95,16 @@ module test_ffn_three_p_native #(
  reg [127:0] x_raw[512],mid_words[TILES*17];
  reg [127:0] down_words[516];
  wire [127:0] active_key=down_phase?MID_KEY:X_KEY;
- reg [15:0] tile_generation=0,tile_k=0;
- reg [31:0] tile_ticket=0;
- wire [31:0] tile_session=32'(down_phase?STRIPES+1+down_index:stripe_index+1);
- reg lease_start=0,lease_release=0;
+ wire [15:0] tile_generation,tile_k;
+ wire [31:0] tile_ticket;
+ wire [31:0] tile_session=32'(down_phase?STRIPES+1+int'(down_index):stripe_index+1);
+ wire lease_start,lease_release;
  wire [2:0] lease_ready,release_ready,window_enabled,window_idle,window_need,proof_valid,reads_drained;
  wire [15:0] needed_k[3];
  wire [127:0] needed_key[3];
  wire [5:0] proof_shift[3];
- reg proof_take=0;
- reg header_start=0,header_take=0;
+ wire proof_take;
+ wire header_start,header_take;
  wire header_start_ready,header_done,header_error,header_idle;
  wire [2:0] hf_valid,hf_ready,ha_valid,ha_ready,ha_error;
  wire [95:0] hf_tag,ha_tag;
@@ -114,7 +118,7 @@ module test_ffn_three_p_native #(
   .start_producer_error(!shift_valid),.frame_valid(hf_valid),.frame_ready(hf_ready),.frame_tag(hf_tag),.frame_data(hf_data),
   .ack_valid(ha_valid),.ack_ready(ha_ready),.ack_tag(ha_tag),.ack_error(ha_error),
   .done_valid(header_done),.done_ready(header_take),.done_error(header_error),.quiescent(header_idle),.rejected_ack(header_rejected));
- reg xcopy_start=0,xcopy_take=0;
+ wire xcopy_start,xcopy_take;
  wire xcopy_ready,xcopy_done,xcopy_error,xcopy_idle,xcopy_identity;
  wire [15:0] xcopy_gen,xcopy_k;
  wire [31:0] xcopy_session,xcopy_ticket,xcopy_faults,xcopy_count;
@@ -143,7 +147,8 @@ module test_ffn_three_p_native #(
   .copy_identity_valid(xcopy_identity),.copy_session(xcopy_session),.copy_ticket(xcopy_ticket),
   .done_valid(xcopy_done),.done_ready(xcopy_take),.done_error(xcopy_error),.quiescent(xcopy_idle),
   .fault_cycles(xcopy_faults),.committed_words(xcopy_count));
- reg q_start=0,q_take=0,dir_cfg=0;
+ wire q_start,q_take;
+ reg dir_cfg=0;
  wire q_start_ready,q_done,q_bad,q_cancelled,dir_cfg_ready,dir_bad,dir_pub_ready,dir_pub_bad,x_shift_valid;
  wire [127:0] q_key,q_wdata,q_rsp_data;
  wire [15:0] q_k,q_mask;
@@ -271,7 +276,7 @@ module test_ffn_three_p_native #(
   wire [2:0] _unused_flags={pr_q[p],reads_drained[p],window_idle[p]};
   wire [31:0] expected_records=down_phase?32'(descriptor[592+:5])*86:32'(project_groups[p*4+:4])*32;
   wire [31:0] expected_writes=down_phase?32'(descriptor[592+:5])*32:32'(project_groups[p*4+:4])*64;
-  wire local_offer=down_phase?down_call:project_valid[p];
+  wire local_offer=down_phase?down_call[p]:project_valid[p];
   wire local_take=down_phase?down_take:project_done_ready[p];
   assign project_ready[p]=!down_phase&&node_ready&&lc_call[p];
   assign project_done_valid[p]=!down_phase&&node_done&&lc_done_ready[p];
@@ -379,7 +384,7 @@ module test_ffn_three_p_native #(
   wire [2047:0] d_ret_data;
   wire d_fence,d_fence_ready,d_fence_done_ready;
   wire [31:0] d_fence_generation;
-  reg fence_pending;
+  reg fence_pending,backend_purge_completed;
   reg [31:0] fence_generation;
   integer backend_req,backend_rsp,backend_purges;
   wire fault_valid;
@@ -389,7 +394,9 @@ module test_ffn_three_p_native #(
   wire [63:0] fault_global;
   wire [11:0] debug_beats,debug_descriptors;
   wire [3:0] backend_empty;
-  wire [135:0] unused_debug;
+  wire transport_quiescent;
+  wire [31:0] transport_generation;
+  wire [103:0] unused_debug;
   wire [383:0] unused_cancel_tag,unused_fence_cookie;
   wire [107:0] unused_fence_epoch;
   assign dma_req_count=32'(backend_req);
@@ -403,7 +410,7 @@ module test_ffn_three_p_native #(
   assign dr_rsp_tag=rsp_tag[95:0];
   assign dr_rsp_data=rsp_data[1535:0];
   assign dr_close_ready=close_ready[2:0];
-  assign ddr_idle=&backend_empty&&debug_beats==0&&debug_descriptors==0&&!fence_pending;
+  assign ddr_idle=transport_quiescent&&(&backend_empty)&&backend_purge_completed&&!fence_pending;
   assign d_fence_ready=(&backend_empty)&&!fence_pending;
   mc_dma_fabric_typed_p dma(.clk,.reset,
    .p_mode_valid(3'd0),.p_mode_native64(3'd0),.p_mode_client_drained(3'b111),
@@ -423,8 +430,8 @@ module test_ffn_three_p_native #(
    .d_fence_valid(d_fence),.d_fence_ready,.d_fence_generation,
    .d_fence_done_valid(fence_pending),.d_fence_done_ready,.d_fence_done_generation(fence_generation),
    .fault_valid,.fault_ready(1'b1),.fault_kind,.fault_client,.fault_local_tag(fault_local),.fault_global_tag(fault_global),
-   .debug_beats,.debug_descriptors,.debug_generation(unused_debug[100:69]));
-  assign unused_debug[135:101]={req_ready[8:0],rsp_valid[8:0],close_ready[8:0],8'd0};
+   .debug_beats,.debug_descriptors,.debug_generation(transport_generation),.transport_quiescent);
+  assign unused_debug[103:69]={req_ready[8:0],rsp_valid[8:0],close_ready[8:0],8'd0};
   wire _unused=^{unused_debug,unused_cancel_tag,unused_fence_cookie,unused_fence_epoch,rsp_tag[287:0],rsp_data[4607:0]};
   for(genvar p=0;p<3;p++)begin: weight_returns
    assign mrsp_tag[p]=rsp_tag[(9+p)*32+:32];
@@ -482,13 +489,20 @@ module test_ffn_three_p_native #(
    end
   end
   always @(posedge clk)begin
-   if(reset)begin fence_pending<=0;fence_generation<=0;backend_req<=0;backend_rsp<=0;backend_purges<=0;end
+   if(reset)begin
+    fence_pending<=0;backend_purge_completed<=0;fence_generation<=0;
+    backend_req<=0;backend_rsp<=0;backend_purges<=0;
+   end
    else begin
     if(d_fence&&d_fence_ready)begin
      assert(d_req==0&&d_rsp==0&&backend_req==backend_rsp);
      fence_pending<=1;fence_generation<=d_fence_generation;backend_purges<=backend_purges+1;
     end
-    if(fence_pending&&d_fence_done_ready)fence_pending<=0;
+    if(fence_pending&&d_fence_done_ready)begin
+     assert(fence_generation==transport_generation+32'd1);
+     fence_pending<=0;backend_purge_completed<=1;
+    end
+    if(ddr_idle)assert(debug_beats==0&&debug_descriptors==0&&backend_req==backend_rsp);
     backend_req<=backend_req+$countones(d_req&d_req_ready);
     backend_rsp<=backend_rsp+$countones(d_rsp&d_rsp_ready);
     assert(!fault_valid)else $fatal(1,"real DMA fault kind=%0d client=%0d local=%h global=%h",fault_kind,fault_client,fault_local,fault_global);
@@ -574,57 +588,65 @@ module test_ffn_three_p_native #(
  task automatic cycle_wait;
   @(negedge clk);
  endtask
- task automatic tile(input logic [15:0] k);
-  integer begin_cycle,need_cycle,quant_cycle,header_cycle,copy_cycle,proof_cycle;
-  integer first_weight_req,first_weight_rsp;
-  begin_cycle=cycle;first_weight_req=w_requests;first_weight_rsp=w_responses;
-  // The first tile still waits for all three admitted scope identities.
-  // An interior K tile uses that same scope after the previous COPY lease
-  // released. Data enters the same S slot while the old A lives inside M.
-  if(early_k_prep&&k!=0)begin
-   assert(window_idle==3'b111&&reads_drained==3'b111&&xcopy_idle&&header_idle)
-    else $fatal(1,"early K preparation attempted before the preceding lease drained");
-   need_cycle=-1;
-  end else begin
-   do cycle_wait();while(window_need!=3'b111||
-       needed_k[0]!=k||needed_k[1]!=k||needed_k[2]!=k);
-   need_cycle=cycle;
-   assert(needed_key[0]==active_key&&needed_key[1]==active_key&&needed_key[2]==active_key);
+ reg scope_start=0,job_take=0;
+ wire scope_ready,job_done,job_error;
+ wire tile_command_valid,tile_command_ready,tile_done_valid,tile_done_ready,tile_done_error;
+ wire [6:0] tile_command_tiles;
+ ffn_native_job_sequencer #(.GATE_SCOPES(16'(STRIPES)),.WITH_DOWN(WITH_DOWN)) job_control(
+  .clk,.reset,.job_valid(scope_start),.job_ready(scope_ready),.job_done,.job_error,.job_done_ready(job_take),
+  .gate_start(start_valid),.gate_ready(start_ready),.gate_done(done_valid),.gate_error(done_error),
+  .gate_take(done_ready),.gate_commits(16'(stripe_index)),
+  .down_resources_ready((&pr_q)&&(&window_idle)&&copy_drained),
+  .down_phase,.down_index,.down_call,.down_ready,.down_terminal,.down_error(|project_done_error),.down_take,
+  .tiles_valid(tile_command_valid),.tiles_ready(tile_command_ready),.tiles_done(tile_done_valid),
+  .tiles_error(tile_done_error),.tiles_count(tile_command_tiles),.tiles_take(tile_done_ready));
+ wire all_need_match=&window_need&&needed_k[0]==tile_k&&needed_k[1]==tile_k&&needed_k[2]==tile_k;
+ wire needed_owner_ok=needed_key[0]==active_key&&needed_key[1]==active_key&&needed_key[2]==active_key;
+ wire proof_shift_ok=proof_shift[0]==tile_shift&&proof_shift[1]==tile_shift&&proof_shift[2]==tile_shift;
+ ffn_k_window_sequencer tile_control(.clk,.reset,.namespace_rearm(1'b0),
+  .command_valid(tile_command_valid),.command_ready(tile_command_ready),.command_tiles(tile_command_tiles),
+  .command_quantize(!down_phase&&stripe_index==0),.command_early(early_k_prep),
+  .need_match(all_need_match&&needed_owner_ok),.need_bad_owner(all_need_match&&!needed_owner_ok),
+  .previous_drained((&window_idle)&&(&reads_drained)&&xcopy_idle&&header_idle),
+  .tile_k,.tile_generation,.tile_ticket,.quant_valid(q_start),.quant_ready(q_start_ready),.quant_done(q_done),
+  .quant_bad(q_bad||q_cancelled||q_key!=X_KEY||q_k!=tile_k||q_words!=16||q_mask!=16'hffff),
+  .publish_ready(dir_pub_ready),.quant_take(q_take),.shift_valid,.header_idle,.source_idle(u_owners==0),
+  .lease_ready,.lease_start,.header_valid(header_start),.header_ready(header_start_ready),.header_done,
+  .header_bad(header_error||window_enabled!=3'b111),.header_take,
+  .copy_valid(xcopy_start),.copy_ready(xcopy_ready),.copy_done(xcopy_done),
+  .copy_bad(xcopy_error||xcopy_prefix!={3{11'd16}}||xcopy_key!=active_key),.copy_take(xcopy_take),
+  .proof_valid,.proof_bad(!proof_shift_ok),.proof_take,.release_ready,.lease_release,
+  .done_valid(tile_done_valid),.done_error(tile_done_error),.done_ready(tile_done_ready));
+
+ integer begin_cycle,need_cycle,quant_cycle,header_cycle,copy_cycle,proof_cycle;
+ integer first_weight_req,first_weight_rsp,completed_tiles;
+ always @(posedge clk)if(reset)begin
+  begin_cycle<=0;need_cycle<=-1;quant_cycle<=-1;header_cycle<=-1;copy_cycle<=-1;proof_cycle<=-1;
+  first_weight_req<=0;first_weight_rsp<=0;completed_tiles<=0;
+ end else begin
+  if(tile_command_valid&&tile_command_ready)begin
+   begin_cycle<=cycle+1;first_weight_req<=w_requests;first_weight_rsp<=w_responses;completed_tiles<=0;
   end
-  tile_k=16'(k);tile_generation=tile_generation+1;tile_ticket=tile_ticket+1;
-  cycle_wait();
-  if(!down_phase&&stripe_index==0)begin
-   q_start=1;do @(posedge clk);while(!q_start_ready);cycle_wait();q_start=0;
-   while(!q_done)cycle_wait();
-   assert(!q_bad&&!q_cancelled&&q_key==X_KEY&&q_k==tile_k&&q_words==16&&q_mask==16'hffff&&q_shift==0&&dir_pub_ready)
-    else $fatal(1,"true source quantize+publish");
-   q_take=1;cycle_wait();q_take=0;
-  end
-  quant_cycle=cycle;
-  assert(shift_valid&&header_idle&&u_owners==0);
-  while(lease_ready!=3'b111)cycle_wait();
-  lease_start=1;cycle_wait();lease_start=0;
-  header_start=1;do @(posedge clk);while(!header_start_ready);cycle_wait();header_start=0;
-  while(!header_done)cycle_wait();
-  assert(!header_error&&window_enabled==3'b111);
-  header_take=1;cycle_wait();header_take=0;
-  header_cycle=cycle;
-  xcopy_start=1;do @(posedge clk);while(!xcopy_ready);cycle_wait();xcopy_start=0;
-  while(!xcopy_done)cycle_wait();
-  assert(!xcopy_error&&xcopy_prefix=={3{11'd16}}&&xcopy_key==active_key);
-  xcopy_take=1;cycle_wait();xcopy_take=0;
-  copy_cycle=cycle;
-  while(proof_valid!=3'b111)cycle_wait();
-  assert(proof_shift[0]==tile_shift&&proof_shift[1]==tile_shift&&proof_shift[2]==tile_shift);
-  proof_take=1;cycle_wait();proof_take=0;
-  proof_cycle=cycle;
-  while(release_ready!=3'b111)cycle_wait();
-  lease_release=1;cycle_wait();lease_release=0;
-  assert(window_idle==3'b111);
-  if(trace_tiles)$display("K_PROFILE phase=%0d scope=%0d k=%0d start=%0d need=%0d quant=%0d header=%0d copy=%0d proof=%0d released=%0d W_req=%0d W_rsp=%0d",
-    down_phase,tile_session,k,begin_cycle,need_cycle,quant_cycle,header_cycle,copy_cycle,proof_cycle,cycle,
+  if(need_cycle<0&&all_need_match&&!(early_k_prep&&tile_k!=0))need_cycle<=cycle;
+  if(q_done&&q_take)assert(q_shift==0)else $fatal(1,"fixture source shift");
+  if(lease_start)quant_cycle<=cycle;
+  if(header_done&&header_take)header_cycle<=cycle;
+  if(xcopy_done&&xcopy_take)copy_cycle<=cycle;
+  if(proof_take)proof_cycle<=cycle;
+  if(lease_release)begin
+   assert(tile_k==16'(completed_tiles*128)&&quant_cycle>=0&&header_cycle>=0&&copy_cycle>=0&&proof_cycle>=0)
+    else $fatal(1,"wrong RTL K-range order at phase=%0d scope=%0d k=%0d",down_phase,tile_session,tile_k);
+   completed_tiles<=completed_tiles+1;
+   if(trace_tiles)$display("K_PROFILE phase=%0d scope=%0d k=%0d start=%0d need=%0d quant=%0d header=%0d copy=%0d proof=%0d released=%0d W_req=%0d W_rsp=%0d",
+    down_phase,tile_session,tile_k,begin_cycle,need_cycle,quant_cycle,header_cycle,copy_cycle,proof_cycle,cycle+1,
     w_requests-first_weight_req,w_responses-first_weight_rsp);
- endtask
+   begin_cycle<=cycle+1;first_weight_req<=w_requests;first_weight_rsp<=w_responses;
+   need_cycle<=-1;quant_cycle<=-1;header_cycle<=-1;copy_cycle<=-1;proof_cycle<=-1;
+  end
+  if(tile_done_valid&&tile_done_ready)assert(!tile_done_error&&completed_tiles==int'(tile_command_tiles))
+   else $fatal(1,"RTL K-range incomplete");
+ end
+
  reg inspect_req=0;
  task automatic read_data(input integer p, address,input logic [127:0] expected);
   assert(p>=0&&p<3&&address>=0&&address<1024);
@@ -636,9 +658,41 @@ module test_ffn_three_p_native #(
   inspect_rsp_take=1;cycle_wait();inspect_rsp_take=0;inspect=0;
  endtask
  string xfile,scopefile,midfile,downfile;
- integer start_cycle,down_start;
+ integer start_cycle,down_start,job_launches,down_scopes,peer_acks;
+ reg was_down;
+ always @(posedge clk)begin
+  if(reset)begin
+   start_cycle<=0;down_start<=0;was_down<=0;job_launches<=0;down_scopes<=0;peer_acks<=0;
+  end else begin
+   was_down<=down_phase;
+   if(scope_start&&scope_ready)job_launches<=job_launches+1;
+   if(start_valid&&start_ready)start_cycle<=cycle;
+   assert((fs_valid[2:1]&fs_ready[2:1]&~fs_write[2:1])==0)
+    else $fatal(1,"Mid peers must receive only writes");
+   peer_acks<=peer_acks+$countones(fs_rsp_valid[2:1]&fs_rsp_ready[2:1]);
+   if(done_valid&&done_ready)begin
+    assert(!done_error&&mid_retired==TILES&&loads==STRIPES*48&&copy_writes==STRIPES*768&&
+        project_terms==STRIPES*3&&w_requests==COLS/8*32*17&&w_requests==w_responses&&(WITH_PROGRAM||ddr_idle)&&
+        copy_drained&&rejected_commits==0&&rejected_terminals==0&&peer_acks==(TILES-(TILES+2)/3)*16)
+     else $fatal(1,"native three-P scope accounting");
+    $display("FFN_PROFILE cycles=%0d W64=%0d S_copy=%0d S_scatter=%0d",
+        cycle-start_cycle,w_requests,copy_writes,copy_committed);
+   end
+   if(down_phase&&!was_down)down_start<=cycle;
+   if(down_take)begin
+    assert(down_index==3'(down_scopes))else $fatal(1,"RTL Down scope out of order");
+    down_scopes<=down_scopes+1;
+    if(down_index==5)
+     $display("DOWN_PROFILE cycles=%0d W64=%0d Mid_replays=516 S_copy_words=24768 result_words=512",
+         cycle-down_start,2048/8*86*17);
+   end
+  end
+ end
  initial begin
   mode=0;seed=0;
+  zero_peer_ack_payload=$test$plusargs("ZERO_PEER_ACK_PAYLOAD");
+  poison_peer_ack_payload=$test$plusargs("POISON_PEER_ACK_PAYLOAD");
+  assert(!(zero_peer_ack_payload&&poison_peer_ack_payload))else $fatal(1,"choose one Mid ACK payload mode");
   trace_tiles=$test$plusargs("TRACE_TILES");early_k_prep=$test$plusargs("EARLY_K_PREP");
   if(!$value$plusargs("mode=%d",mode))$fatal(1,"mode");
   if(!$value$plusargs("seed=%d",seed))$fatal(1,"seed");
@@ -660,37 +714,16 @@ module test_ffn_three_p_native #(
    while(!program_ready)cycle_wait();
    program_start=1;cycle_wait();program_start=0;
   end
-  start_cycle=cycle;
-  start_valid=1;do @(posedge clk);while(!start_ready);cycle_wait();start_valid=0;
-  for(integer st=0;st<STRIPES;st++)begin
-   for(integer k=0;k<2048;k+=128)tile(16'(k));
-   while(stripe_index==st)cycle_wait();
-  end
-  while(!done_valid)cycle_wait();
-  assert(!done_error&&mid_retired==TILES&&loads==STRIPES*48&&copy_writes==STRIPES*768&&
-      project_terms==STRIPES*3&&w_requests==COLS/8*32*17&&w_requests==w_responses&&(WITH_PROGRAM||ddr_idle)&&
-      copy_drained&&rejected_commits==0&&rejected_terminals==0)
-   else $fatal(1,"native three-P scope accounting");
-  $display("FFN_PROFILE cycles=%0d W64=%0d S_copy=%0d S_scatter=%0d",cycle-start_cycle,w_requests,copy_writes,copy_committed);
-  done_ready=1;cycle_wait();done_ready=0;
+  scope_start=1;do @(posedge clk);while(!scope_ready);cycle_wait();scope_start=0;
+  while(!job_done)cycle_wait();
+  assert(!job_error&&job_launches==1&&down_scopes==(WITH_DOWN?6:0))
+   else $fatal(1,"RTL outer scope completion");
   for(integer k=0;k<TILES;k++)
    for(integer w=0;w<16;w++)read_data(k%3,256+16*(k/3)+w,mid_words[k*17+1+w]);
   if(WITH_DOWN)begin
-   assert(pr_q==3'b111&&window_idle==3'b111&&copy_drained);
-   down_phase=1;down_start=cycle;cycle_wait();
-   for(integer d=0;d<6;d++)begin
-    down_index=d;
-    while(down_ready!=3'b111)cycle_wait();
-    down_call=1;cycle_wait();down_call=0;
-    for(integer k=0;k<11008;k+=128)tile(16'(k));
-    while(down_terminal!=3'b111)cycle_wait();
-    down_take=1;cycle_wait();down_take=0;
-   end
    assert(loads==(STRIPES*16+6*86)*3&&copy_writes==(STRIPES*16+6*86)*48&&
      w_requests==(COLS/8*32+2048/8*86)*17&&w_requests==w_responses&&ddr_idle&&window_idle==3'b111)
      else $fatal(1,"actual Down K128 replay accounting");
-   $display("DOWN_PROFILE cycles=%0d W64=%0d Mid_replays=516 S_copy_words=24768 result_words=512",
-       cycle-down_start,2048/8*86*17);
    for(integer p=0;p<3;p++)
     for(integer w=0;w<(p==0?172:170);w++)read_data(p,w,down_words[172*p+w]);
   end
@@ -707,7 +740,11 @@ module test_ffn_three_p_native #(
    $display("PROGRAM_PROFILE calls=%0d confirmed_reads=%0d confirmed_writes=%0d",SCOPE_COUNT,terminal_reads,terminal_writes);
    program_result_take=1;cycle_wait();program_result_take=0;
   end
-  $display("PASS ffn_three_p_native columns=%0d stripes=%0d real_P_M=3 real_S_banks=16 Mid=%0d mode=%0d down=%0d four_w=%0d shared_dma=%0d program=%0d split_up=%0d early_exec=%0d early_k_prep=%0d",
+  job_take=1;cycle_wait();job_take=0;
+  assert(scope_ready)else $fatal(1,"RTL outer scope failed to return ownership");
+  $display("MID_ACK_PROFILE peer_acks=%0d zero_payload=%0d poison_payload=%0d",
+      peer_acks,zero_peer_ack_payload,poison_peer_ack_payload);
+  $display("PASS ffn_three_p_native columns=%0d stripes=%0d real_P_M=3 real_S_banks=16 Mid=%0d mode=%0d down=%0d four_w=%0d shared_dma=%0d program=%0d split_up=%0d early_exec=%0d early_k_prep=%0d rtl_k_window=1 rtl_outer_job=1",
       COLS,STRIPES,TILES,mode,WITH_DOWN,FOUR_BANK_LOOKAHEAD,WITH_SHARED_DMA,WITH_PROGRAM,SPLIT_UP_CHANNEL,EARLY_EXEC,early_k_prep);
   $finish;
  end
