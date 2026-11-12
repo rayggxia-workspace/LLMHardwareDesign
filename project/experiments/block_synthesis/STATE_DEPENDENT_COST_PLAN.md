@@ -21,6 +21,7 @@
 | 11 | 对 #251 typed DMA 的两通道分别推进寄存后的 lane 归属、上一拍发放数和轮询指针。18 次 RTL 运行逐拍核对 117,150 个通道采样、99,720 次真实 DDR 握手。已有 VALID 但未握手的请求占用发放额度，897 个通道拍因此少补发请求。提前一拍补发的篡改轨迹被拒绝。 |
 | 12 | 将 #251 普通读 fabric 接入 DP 的 LOAD 重放，按地址生成 64 B beat，维护每通道 32 个预留 beat、32 个描述符、2 个发放 lane 和 3 个回传槽，并保留客户端回传锁。7 次 RTL 对照核对 267 个 beat 的预留、VALID、发放、接收和交付。新增请求推迟旧预留，交换客户端反压使同 128 B 候选的代价从 24／13 拍翻为 13／24 拍。地址或捕获拍被篡改时，计划检查器拒绝。 |
 | 13 | 接入 #251 FFN 仿真后端的四条独立 lane，每条 FIFO 深度 16，两个通道分别在发放后第 7／8 拍可返回，按原规则叠加周期性反压。9 次 RTL 对照逐拍核对 2,728 个 beat 与 FIFO 满载拍数。允许候选从不同地址读取同一份已预置权重。旧请求的通道改变后，主副本与另一副本的排序反转。 |
+| 14 | 本机重新编译并运行 #251 完整 11,008 列 FFN，采集真实 MC／LC 控制握手。4 组共 768 次调用和 1,536 个描述符 beat，重放逐拍对齐 CALL 到请求、DMA 预留与返回、CRC 后的服务 VALID，以及 DONE 后的共享回传仲裁。去掉 CRC 或终端帧的一个周期、改动描述符地址均被拒绝。 |
 
 重放对每个绑定默认试算至多 32 组搬运组合，可通过硬件 JSON 的 `event_model.transport_limit` 调整，`null` 取消该上限。输出记录尝试数和发生截断的绑定扩展数。固定日历的预测只用于枚举顺序，完整后继由重放评分。
 
@@ -128,6 +129,24 @@ python -B project/experiments/block_synthesis/benchmark_ffn_dma_provider.py chec
 ```
 
 本机证据目录 `round13-ffn-provider-final` 下 `receipts.sha256` 的 SHA-256 为 `d75a302bf7f480d8a5e9727a3cf471610a794c662dd75cc066adeead89c67610`，`verified.json` 为 `e196e42bd4be6d3a2b34c8ff321710ad4761859c96e65e8becb9f6a5a8f3e40f`。Windows 全套 347 项通过。重新编译第 12 轮的 7 组原生探针，CSV 与原回执逐字节相同。该轮复现 FFN 使用的 DDR 仿真 provider。真实局控发起请求与计算交叠、完整 FFN 的动态重排仍待联调。
+
+### 完整 FFN 的 MC／LC 控制时序
+
+第 14 轮在 WSL Ubuntu 22.04 用 Verilator 5.006 重新编译 102603 固定源包及匹配的 SRAM bank，沿用原程序、Down、四 bank、共享 DMA 和早算配置。为兼容工具版本，编译省略了用于其他测试文件的 `native_mc_lint.vlt`。先复跑未插桩的 seed 25001、mode 0、初态 0，Gate/Up 586103 拍、Down 263811 拍。再插入只读握手监控，用相同的原生程序和数值断言跑两种 seed、各两种压力模式。四组 Gate/Up、Down、DMA 和程序计数均与同组归档逐项相同，每组 1,123,200 次 DDR 发放及返回、71,884,800 B 确认读取、96,256 B 确认写入。
+
+- 从 CALL 帧最后一拍到描述符第一笔 VALID 固定 46 拍。共享 DMA 重放按物理地址、通道、READY 和返程容量核对两个 64 B 描述符请求与返回。最后一个 beat 到服务 VALID 为 126 拍，其中 CRC 逐字节扫描 124 拍。
+- P 服务 DONE 后第 5 拍具备发回终端的条件。MC 共享收口按目标号仲裁，4 拍传帧，额外 1 拍周转。最晚一次 DONE 到终端末拍用 18 拍。
+- 服务 VALID 到 P 接纳最长 6,759 拍。接纳需要局控已准备描述符、外层 Gate/Up 或 Down 发出对应任务且 P 节点就绪。当前控制对照从实际 CALL 帧和 P 的 DONE 进入两个重放区间。外层调用生成、服务接纳和原生计算完成仍需接入同一个动态计划。
+
+```bash
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py instrument \
+  SOURCE/project/experiments/block_local_native/test_ffn_three_p_native.sv TRACE_TESTBENCH.sv
+# 按冻结 job_ffn_native.sh 的完整源表和 102603 参数编译，以 TRACE_TESTBENCH.sv 替换原测试顶层。
+# 用原 seed 回执的 X、scopes、Mid、Down、mother、local、LC_CRC 启动，增加 +TRACE_CONTROL。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG --mode 1 --seed 25001
+```
+
+原始日志和本地复跑脚本位于本机证据目录。`round14-control-logs.sha256` 的 SHA-256 为 `a806fa42e28c35465d4c8fa78892b4be8af7b85f689037d5cb4d560da64edcbb`，`round14-control-verified.json` 为 `920584e61e8482ff987a1684ac909e05d2c4d844a9d8d720285b685e701e7799`。未插桩日志 `full-ffn-local-25001-0-0.log` 为 `7c94e6e5c79f858d6a25ecfd2a7c790bd8ff72a9bc1eabc8a3cb60896f4fdaf9`。
 
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 

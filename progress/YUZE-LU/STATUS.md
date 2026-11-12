@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 14 轮。重编译 #251 完整 FFN，4 组原生周期和计数与归档相同，重放逐拍核对 768 个 CALL／终端和 1,536 个描述符 beat。服务 VALID 到接纳最长 6,759 拍。下一步将外层 Gate/Up 或 Down 放行、P 就绪和服务完成纳入候选重放，现有对照以真实 CALL 和 DONE 驱动。PR #257 和看板沿用现有远端交接。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 13 轮。#251 FFN 的有限 DDR 队列与物理权重副本选择已接入 DP，9 个 RTL 对照核对 2,728 个 beat 和每条 lane 的满载时间。旧请求更换通道后，两副本的最优选择随之翻转。347 项通过。继续联调真实 MC／LC 及完整 FFN，PR #257 和看板沿用现有远端交接。
 
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 12 轮。普通读 DMA 的物理 beat、预留、寄存发放和回传槽接入 DP；7 个 #251 RTL 对照核对 267 个 beat 的五个事件拍，客户端反压使同 128 B 的路径排序翻转。346 项测试和实际 `run.py --event-ir` 入口通过。下一步接入 FFN 的有限 DDR 后端和真实局控。PR #257 和看板沿用现有远端交接。
