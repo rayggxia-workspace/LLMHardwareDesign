@@ -81,20 +81,25 @@ class WeightDma:
 class WeightCommandLinks:
     """Join P/M allocation and reply state to the shared W DMA edges."""
 
-    def __init__(self, links, addresses):
+    def __init__(self, links, addresses, *, join_driver=None):
         self.links = links
         self.addresses = addresses
         self.installs = defaultdict(list)
         self.ready = defaultdict(list)
+        self.join_driver = join_driver
 
     def advance(self, tick):
         installs = self.installs.pop(tick, ())
+        joins = self.join_driver.advance(tick) if self.join_driver is not None else {}
         for client, link in self.links.items():
             ready = self.ready.pop(client, ())
-            if not ready and (link.resume is None or link.resume > tick):
+            binding = joins.get(client, ())
+            if not ready and not binding and (link.resume is None or link.resume > tick):
                 continue
             before = len(link.trace.bank_acks)
-            trace = link.run((), (), (), until=tick + 1, weight_completions=ready)
+            trace = link.run(binding, (), (), until=tick + 1, weight_completions=ready)
+            if self.join_driver is not None:
+                self.join_driver.observe(client, trace.replies)
             for edge, session, sequence, bank, generation in trace.bank_acks[before:]:
                 if edge != tick + 1:
                     raise ValueError('W bank install was not produced at its registered edge')
@@ -108,6 +113,8 @@ class WeightCommandLinks:
     def finish(self):
         if self.ready or self.installs:
             raise ValueError('W DMA and M link have pending handshakes')
+        if self.join_driver is not None:
+            self.join_driver.validate()
         return {client: link.run((), (), ()) for client, link in self.links.items()}
 
 

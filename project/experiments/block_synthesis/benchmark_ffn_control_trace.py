@@ -11,6 +11,7 @@ from cover_frontier import search
 from dma_read import Profile, Read
 from event_replay import Operation, Phase, replay
 from ffn_a import EVENTS as A_EVENTS, replay_tile as replay_a_tile
+from ffn_join import JoinController
 from ffn_m import (ALLOC, BEGIN, FILL, FIRST_OPERAND, INPUT, LAST_OPERAND, RAW_READY, RF, Record, Reply,
                    execution_replies, replay_commits, replay_replies)
 from ffn_m_issue import ALLOC_CMD, SIDE_WORDS, Command, CommandLink, join_schedule
@@ -546,20 +547,28 @@ def weight_address(client, record):
     return base + 64 * BEATS * index
 
 
-def read_linked_weight(source, scopes, events, mode, seed):
+def read_linked_weight(source, scopes, events, mode, seed, *, wjoin=False, lookahead=True, copy_delay_epoch=0):
     links, addresses = {}, {}
     side = defaultdict(list)
     joins = defaultdict(list)
     for tick, client, *fields in events['PISSUE', 'side']:
         side[client].append(Command(tick, *fields))
-    for tick, client, _, sequence, *_ in events['PISSUE', 'join']:
-        joins[client].append((tick, sequence))
-    for client, records in m_records(scopes).items():
+    if not wjoin:
+        for tick, client, _, sequence, *_ in events['PISSUE', 'join']:
+            joins[client].append((tick, sequence))
+    records_by_client = m_records(scopes)
+    join_driver = None
+    if wjoin:
+        tiles = [(scope, k, header, phase == 1) for phase, scope, k, header, *_ in events['AREAD', 'profile']]
+        join_driver = JoinController(records_by_client, tiles, mode, lookahead=lookahead,
+                                     copy_delay_epoch=copy_delay_epoch)
+    for client, records in records_by_client.items():
         addresses[client] = {record.sequence: weight_address(client, record) for record in records}
         link = CommandLink({record.sequence: record.stores for record in records})
         link.run(joins[client], side[client], (), until=0)
         links[client] = link
-    weight = WeightDmaTrace(mode, seed, CALL_TO_FETCH, links=WeightCommandLinks(links, addresses))
+    weight = WeightDmaTrace(mode, seed, CALL_TO_FETCH,
+                            links=WeightCommandLinks(links, addresses, join_driver=join_driver))
     source.seek(0)
     for line in source:
         if line.startswith(WEIGHT_BEATS + WEIGHT_FABRIC + ('CONTROL call ', 'CONTROL fetch ',
@@ -1226,9 +1235,10 @@ def check_admission(scopes, transfers, admission, upstream=None):
 
 def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False,
           m=False, issue=False, aread=False, copy_delay_epoch=0, wa_join=False, lookahead=True, wfill=False,
-          wdma=False, wlink=False):
-    aread = aread or copy_delay_epoch != 0
+          wdma=False, wlink=False, wjoin=False):
+    aread = aread or wjoin or copy_delay_epoch != 0
     wa_join = wa_join or aread or not lookahead
+    wlink = wlink or wjoin
     wdma = wdma or wlink
     issue = issue or wa_join or wfill or wdma
     m = m or issue
@@ -1240,7 +1250,8 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
     scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(
         source, result_trace, m=m, issue=issue, aread=aread, weight=weight, wdma=wdma and not wlink)
     if wlink:
-        weight = read_linked_weight(source, scopes, result_trace, mode, seed)
+        weight = read_linked_weight(source, scopes, result_trace, mode, seed, wjoin=wjoin,
+                                    lookahead=lookahead, copy_delay_epoch=copy_delay_epoch)
     if weight is not None:
         weight.validate()
     transfers = []
@@ -1330,6 +1341,17 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
                                                   copy_delay_epoch=copy_delay_epoch)
     if wa_join:
         report['wa_joins'] = check_wa_joins(scopes, result_trace, m_retired, join_eops, proofs, lookahead=lookahead)
+    if wjoin:
+        driver = weight.links.join_driver
+        expected = defaultdict(list)
+        for tick, client, _, sequence, *_ in result_trace['PISSUE', 'join']:
+            expected[client].append((tick, sequence))
+        require(all(lane.joined == expected[p] for p, lane in driver.lanes.items()) and driver.proofs == proofs,
+                'live A proof or W/A binding differs')
+        retirements = {(p, record.sequence): (lane.retired[record.sequence], record.scope)
+                       for p, lane in driver.lanes.items() for record in lane.records}
+        require(retirements == m_retired, 'live P record retirement differs')
+        report['wa_joins']['drives_command_issue'] = True
     if wdma:
         report['weight_dma'] = dict(weight.counts)
     if admission or phase_release or scatter or mid or readback:
@@ -1364,6 +1386,7 @@ def main():
     verify.add_argument('--wfill', action='store_true', help='drive W FILL from DMA beat receipts')
     verify.add_argument('--wdma', action='store_true', help='replay W and descriptor traffic through the shared DMA')
     verify.add_argument('--wlink', action='store_true', help='couple M bank allocation, shared DMA, and FILL replies')
+    verify.add_argument('--wjoin', action='store_true', help='drive bindings from A proofs and live M/DMA')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
@@ -1375,7 +1398,7 @@ def main():
                                    readback=args.result, m=args.m, issue=args.issue, aread=args.aread,
                                    copy_delay_epoch=args.copy_delay_epoch, wa_join=args.wa_join,
                                    lookahead=not args.no_lookahead, wfill=args.wfill, wdma=args.wdma,
-                                   wlink=args.wlink), indent=2))
+                                   wlink=args.wlink, wjoin=args.wjoin), indent=2))
 
 
 if __name__ == '__main__':

@@ -341,6 +341,23 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 364 项测试通过。六个篡改负例覆盖安装地址、bank、代次、session、缺失安装和 ALLOC 意图拍。本机 `round26-linked-verified.json` 的 SHA-256 为 `7803b18fd708a4bd401aa6f8a2ff939c59696f2c8d1334c6f703a54a059006b2`。当前仍从采样的侧带意图、W/A 绑定、K header 和 CALL 推进完整程序。下一段要把重算的 A 证明、FILL 和 P 退休送回同一事件推进器，直接产生 W/A 绑定。
 
+### W/A 绑定与 P 退休进入同一次重放
+
+第 27 轮把重算的 COPY 和私有 A 读证明、M 回包 EOP、P 记录退休送入同一个绑定控制器。控制器确认 W/A 齐备后推进 M EXEC。W bank 仍在对应的 INPUT 回包后释放，RF 回包驱动顺序 guard 和必要的 SRAM 写回。每个 P 的上一片 K 末条记录退休后，下一片 K 才能计算 A 读取的最早时刻。
+
+三组完整轨迹分别从 K header、侧带命令和 CALL 入口推进，每组逐拍对齐 4,332 次 A 证明接纳、66,048 次 W/A 绑定及 P 记录退休、1,123,200 次物理 DDR 请求及等量返回。带背压的基线和 COPY 晚一拍候选均在第 952,011 拍接纳程序结果，无外加背压的另一 seed 在第 857,117 拍接纳。
+
+完整 COPY 候选只推迟第 21 个 K tile 的 COPY 发起。背压相位变化使这一片的 COPY 确认晚三拍，A 证明早四拍，三个 P 的首条绑定均从第 17,370 拍变为第 17,366 拍。全程有 576 次绑定及对应的 EXEC 接纳时刻改变。程序完成拍相同。
+
+缩小模型对照从第 90 拍的共同快照分岔，W 已有在途请求。COPY 晚一拍使 A 证明从第 218 拍变为 219，W/A 绑定从第 220 拍变为 221，EXEC 接纳和 P 记录退休也各晚一拍。两份后缀均与从复位重算一致。另一对照推迟 W 分配，使绑定改为等待 FILL EOP 后两拍。
+
+```bash
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG.gz --mode 1 --seed 25001 --wjoin
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check CANDIDATE_LOG.gz --mode 1 --seed 25001 --copy-delay-epoch 21 --wjoin
+```
+
+365 项测试通过。同时改动观测的 A 证明、W/A 绑定和 P 退休拍后，实时推进仍重算出与原始记录一致的时序，逐拍对账分别拒绝这些篡改。另三项负例覆盖丢失绑定、绑定记录号错误和 K header 推迟 128 拍后与固定侧带命令的 session 顺序冲突。本机 `round27-join-verified.json` 的 SHA-256 为 `eff5312fe631a410624c787a950ebeeb5e1c4236cd4cd683860f1812364fec40`。当前模型仍从采样的侧带命令、K header 和 CALL 推进。接下来用 P 的队列、回包和退休生成侧带命令，覆盖会改变其 session 顺序的候选。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

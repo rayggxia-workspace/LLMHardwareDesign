@@ -2,6 +2,8 @@ from copy import deepcopy
 import unittest
 
 from dma_read import Profile
+from ffn_join import JoinController
+from ffn_m import Record
 from ffn_m_issue import ALLOC_CMD, Command, CommandLink, FILL, WeightCompletion
 from ffn_w_dma import WeightCommandLinks, WeightDma, WeightOwner
 
@@ -66,6 +68,54 @@ class WeightDmaTests(unittest.TestCase):
                 self.assertEqual(tuple(next(reply.ready for reply in traces[p].controls if reply.source == FILL)
                                        for p in range(3)), expected)
                 self.assertFalse(branch_dma.fabric.active)
+
+    def test_copy_candidate_retimes_live_binding_and_retirement_from_snapshot(self):
+        profile = Profile.from_spec({'ffn_provider': {'mode': 0, 'seed': 25002}})
+        records = {0: [Record(1, 70, 1, 0, 0, False, 0)]}
+        tiles = [(1, 0, 100, False)]
+
+        def start(allocation, delay):
+            driver = JoinController(records, tiles, 0, lookahead=True, copy_delay_epoch=delay)
+            link = CommandLink({1: False})
+            link.run((), [Command(allocation, ALLOC_CMD, 1, 1, 2)], (), until=0)
+            return WeightDma(profile), WeightCommandLinks({0: link}, {0: {1: 0x2000000}}, join_driver=driver)
+
+        def advance(state, first, last):
+            dma, coupled = state
+            for tick in range(first, last):
+                _, completed = dma.step(tick, coupled.advance(tick))
+                for owner, _ in completed:
+                    coupled.complete(owner.client, WeightCompletion(tick + 1, owner.session, owner.sequence,
+                                                                     owner.bank, owner.generation))
+
+        def result(state):
+            dma, coupled = state
+            self.assertFalse(dma.fabric.active)
+            issue = coupled.finish()[0]
+            lane = coupled.join_driver.lanes[0]
+            return (coupled.join_driver.proofs[1, 0], lane.eops[FILL, 1],
+                    lane.joined[0][0], issue.executions[0][0], lane.retired[1])
+
+        prefix = start(80, 0)
+        advance(prefix, 0, 90)
+        self.assertGreater(prefix[0].ports[0].outstanding, 0)
+        results = []
+        for delay in (0, 1):
+            branch = deepcopy(prefix)
+            branch[1].join_driver.copy_delay_epoch = delay
+            advance(branch, 90, 400)
+            cold = start(80, delay)
+            advance(cold, 0, 400)
+            results.append(result(branch))
+            self.assertEqual(results[-1], result(cold))
+        self.assertEqual(results[0][:3], (218, results[1][1], 220))
+        self.assertEqual(tuple(new - old for old, new in zip(*results)), (1, 0, 1, 1, 1))
+
+        late = start(220, 0)
+        advance(late, 0, 400)
+        proof, fill, binding, _, _ = result(late)
+        self.assertLess(proof, fill)
+        self.assertEqual(binding, fill + 2)
 
 
 if __name__ == '__main__':

@@ -29,36 +29,36 @@ class WeightCompletion:
     generation: int
 
 
+def join_tick(records, index, proofs, eops, retirements, *, lookahead):
+    """First binding edge once the necessary P and M events are known."""
+    record = records[index]
+    fill = eops[FILL, record.sequence]
+    proof = proofs[record.scope, record.k]
+    if record.context % 2:
+        # The older INPUT EOP can consume a same-edge younger FILL.
+        older_input = eops[INPUT, records[index - 1].sequence]
+        return older_input + 1 if fill <= older_input else fill + 2
+
+    tick = max(proof, fill) + 2
+    younger = records[index + 1] if index + 1 < len(records) else None
+    paired = (younger is not None and younger.scope == record.scope and younger.k == record.k
+              and younger.context == record.context + 1)
+    if lookahead and record.k and record.context:
+        # The prior pair must retire and both filled heads must reach front.
+        prior = retirements[records[index - 1].sequence]
+        tick = max(tick, max(prior, fill) + (5 if paired else 3))
+        if paired:
+            tick = max(tick, eops[FILL, younger.sequence] + 3)
+    elif paired:
+        # A direct pair waits for the second ALLOC acknowledgement.
+        tick = max(tick, eops[ALLOC, younger.sequence] + 2)
+    return tick
+
+
 def join_schedule(records, proofs, eops, retirements, *, lookahead):
     """Schedule each A/W binding from registered P record and bank readiness."""
-    joins = []
-    for index, record in enumerate(records):
-        sequence = record.sequence
-        fill = eops[FILL, sequence]
-        proof = proofs[record.scope, record.k]
-        if record.context % 2:
-            # The older record hands over at INPUT EOP. A younger FILL
-            # accepted on that same edge can enter W_JOIN immediately.
-            older_input = eops[INPUT, records[index - 1].sequence]
-            tick = older_input + 1 if fill <= older_input else fill + 2
-        else:
-            tick = max(proof, fill) + 2
-            younger = records[index + 1] if index + 1 < len(records) else None
-            paired = (younger is not None and younger.scope == record.scope and younger.k == record.k
-                      and younger.context == record.context + 1)
-            if lookahead and record.k and record.context:
-                # A filled queue head must become front before the two
-                # records can be restored. The prior pair also has to retire.
-                prior = retirements[records[index - 1].sequence]
-                tick = max(tick, max(prior, fill) + (5 if paired else 3))
-                if paired:
-                    tick = max(tick, eops[FILL, younger.sequence] + 3)
-            elif paired:
-                # A direct pair waits for the second ALLOC acknowledgement
-                # before restoring the older record, even if its W is ready.
-                tick = max(tick, eops[ALLOC, younger.sequence] + 2)
-        joins.append((tick, sequence))
-    return joins
+    return [(join_tick(records, index, proofs, eops, retirements, lookahead=lookahead), record.sequence)
+            for index, record in enumerate(records)]
 
 
 @dataclass(slots=True)
