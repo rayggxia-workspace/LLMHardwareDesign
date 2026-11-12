@@ -49,7 +49,6 @@ module mc_dma_fabric_typed_p #(
  reg [63:0] desc_address[0:63];reg [4:0] desc_length[0:63],desc_next[0:63];
  reg [17:0] desc_accepted[0:63],desc_returned[0:63],desc_cancelled[0:63];
  localparam integer SKIDS=2*SKIDS_PER_CHANNEL;
- localparam integer SKID_BITS=$clog2(SKIDS);
  reg [3:0] offer_valid;reg [SKIDS-1:0] skid_valid;
  reg [5:0] offer_entry[0:3],skid_entry[0:SKIDS-1];
  // Ownership is stable from DDR return capture until the client consumes
@@ -59,7 +58,9 @@ module mc_dma_fabric_typed_p #(
  reg [5:0] skid_descriptor[0:SKIDS-1];
  reg [4:0] skid_beat[0:SKIDS-1];
  reg [511:0] skid_data[0:SKIDS-1];
- reg [11:0] response_locked;reg [SKID_BITS-1:0] response_slot[0:11],response_rr[0:11];
+ reg [11:0] response_locked;
+ reg [SKIDS-1:0] response_slot[0:11],response_rr[0:11];
+ wire [SKIDS-1:0] response_selected[0:11];
  reg [3:0] request_rr[0:1];reg [4:0] issue_rr[0:1];
  reg [1:0] previous_issues[0:1];
  reg [31:0] transport_generation;
@@ -104,14 +105,6 @@ module mc_dma_fabric_typed_p #(
   second_slot=5'(first_set({32'd0,remaining}));
   first_two_slots={|remaining,second_slot,|available,first_slot};
  endfunction
- function automatic [SKID_BITS-1:0] response_at_offset(
-  input [SKID_BITS-1:0] cursor,offset
- );
-  reg [SKID_BITS:0] position;
-  position={1'b0,cursor}+{1'b0,offset};
-  if(position>=(SKID_BITS+1)'(SKIDS))position=position-(SKID_BITS+1)'(SKIDS);
-  response_at_offset=position[SKID_BITS-1:0];
- endfunction
  function automatic [3:0] request_at_offset(input [3:0] cursor,input [3:0] offset);
   reg [4:0] position;
   position={1'b0,cursor}+{1'b0,offset};
@@ -127,7 +120,7 @@ module mc_dma_fabric_typed_p #(
  reg [4:0] grant_beat[0:3],grant_length[0:3];
  reg [31:0] grant_tag[0:3],grant_base[0:3];
  reg [63:0] grant_address[0:3];
- integer forwarded_slot[0:11],cancel_client,close_desc,close_client;
+ integer cancel_client,close_desc,close_client;
  reg cancel_good,close_good;
  integer new_offer_entry[0:3];reg [3:0] offer_fire,return_capture;reg [SKIDS-1:0] skid_forward,selected_skids;
  integer return_entry[0:3],return_slot[0:3];
@@ -217,25 +210,42 @@ module mc_dma_fabric_typed_p #(
    d_req_tag[ol*64+:64]=global_tag(offer_entry[ol]);
   end
  end
- always @*begin: registered_client_response
-  integer rc,rj,rs,choice;
-  c_rsp_valid=0;c_rsp_tag=0;c_rsp_data=0;rs=0;choice=0;
-  for(rc=0;rc<12;rc=rc+1)begin
-   choice=-1;forwarded_slot[rc]=-1;
-   if(response_locked[rc])choice=int'(response_slot[rc]);
-   else for(rj=0;rj<SKIDS;rj=rj+1)begin
-    rs=int'(response_at_offset(response_rr[rc],SKID_BITS'(rj)));
-    if(choice<0&&skid_valid[rs]&&skid_client[rs]==4'(rc))choice=rs;
+ // Select the first eligible skid in cyclic slot order. Each possible
+ // cursor supplies a constant predecessor mask for each slot.
+ for(genvar rc=0;rc<12;rc=rc+1)begin: response_client
+  wire [SKIDS-1:0] eligible;
+  for(genvar skid=0;skid<SKIDS;skid=skid+1)begin: response_slot_choice
+   wire [SKIDS-1:0] head_wins;
+   assign eligible[skid]=skid_valid[skid]&&skid_client[skid]==4'(rc);
+   for(genvar head=0;head<SKIDS;head=head+1)begin: response_head
+    localparam integer DISTANCE=(skid+SKIDS-head)%SKIDS;
+    wire [SKIDS-1:0] earlier;
+    for(genvar prev=0;prev<SKIDS;prev=prev+1)begin: response_predecessor
+     assign earlier[prev]=((prev+SKIDS-head)%SKIDS < DISTANCE)?eligible[prev]:1'b0;
+    end
+    assign head_wins[head]=response_rr[rc][head]&&!(|earlier);
    end
-   if(!reset&&choice>=0&&skid_valid[choice])begin
-    c_rsp_valid[rc]=1;c_rsp_tag[rc*32+:32]=skid_local_tag[choice];
-    c_rsp_data[rc*512+:512]=skid_data[choice];forwarded_slot[rc]=choice;
+   assign response_selected[rc][skid]=!reset&&
+     (response_locked[rc]?(response_slot[rc][skid]&&skid_valid[skid]):
+       (eligible[skid]&&(|head_wins)));
+  end
+ end
+ always @*begin: registered_client_response
+  c_rsp_valid=0;c_rsp_tag=0;c_rsp_data=0;
+  for(integer client=0;client<12;client=client+1)begin
+   c_rsp_valid[client]=|response_selected[client];
+   for(integer skid=0;skid<SKIDS;skid=skid+1)begin
+    c_rsp_tag[client*32+:32]=c_rsp_tag[client*32+:32]|
+      ({32{response_selected[client][skid]}}&skid_local_tag[skid]);
+    c_rsp_data[client*512+:512]=c_rsp_data[client*512+:512]|
+      ({512{response_selected[client][skid]}}&skid_data[skid]);
    end
   end
  end
  always @*begin: actual_client_consumption
   skid_forward=0;
-  for(integer fc=0;fc<12;fc=fc+1)if(c_rsp_valid[fc]&&c_rsp_ready[fc])skid_forward[forwarded_slot[fc]]=1;
+  for(integer client=0;client<12;client=client+1)
+   skid_forward=skid_forward|(response_selected[client]&{SKIDS{c_rsp_ready[client]}});
  end
  always @*begin: registered_fence_reply
   c_fence_done_valid=0;c_fence_done_cookie=0;c_fence_done_epoch=0;
@@ -432,7 +442,7 @@ module mc_dma_fabric_typed_p #(
     skid_entry[r]<=0;skid_client[r]<=0;skid_local_tag[r]<=0;
     skid_descriptor[r]<=0;skid_beat[r]<=0;skid_data[r]<=0;
    end
-   for(r=0;r<12;r=r+1)begin response_slot[r]<=0;response_rr[r]<=0;end
+   for(r=0;r<12;r=r+1)begin response_slot[r]<=0;response_rr[r]<=SKIDS'(1);end
    for(r=0;r<2;r=r+1)begin request_rr[r]<=0;issue_rr[r]<=0;previous_issues[r]<=0;end
   end else begin
    for(r=0;r<3;r=r+1)begin
@@ -449,9 +459,9 @@ module mc_dma_fabric_typed_p #(
     if(c_rsp_valid[r])begin
      if(c_rsp_ready[r])begin
       response_locked[r]<=0;
-      response_rr[r]<=response_at_offset(SKID_BITS'(forwarded_slot[r]),SKID_BITS'(1));
+      response_rr[r]<={response_selected[r][SKIDS-2:0],response_selected[r][SKIDS-1]};
      end
-     else if(!response_locked[r])begin response_locked[r]<=1;response_slot[r]<=SKID_BITS'(forwarded_slot[r]);end
+     else if(!response_locked[r])begin response_locked[r]<=1;response_slot[r]<=response_selected[r];end
     end
    end
    for(r=0;r<2;r=r+1)previous_issues[r]<=2'(issue_counts[r]);

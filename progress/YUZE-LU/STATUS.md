@@ -211,3 +211,8 @@ Issue250仍实施中：已精确复现基线9.21564723269，有限队列共享X�
 - 代码 699d238c888c01b809ec29bce6c4b540d288042c，18 组定向事务和六组三 P FFN 切片逐周期匹配。Nangate45 同方法映射面积下降约 24.8%，保留 64B 接口。
 - 正在复验 300 MHz 布局布线。五类底座、顶层互联和整模型吞吐继续按 Issue #250 验收，PR 待独立审查，Projects 状态未核实。
 - 2026-11-13 01:41 CST 复核实际关键路径后，把回传归属和标签随 64B 数据写入缓冲。新增一轮 18 组事务及六组切片均逐周期匹配，映射面积 691,454.764 µm²，物理检查进行中。
+### Typed 64B return selection
+
+The cyclic return selector now uses constant predecessor masks and a one-hot slot cursor. It preserves the 64-byte DDR interface and the stalled-response owner. All 18 directed trace pairs and six full-width FFN replay pairs remain cycle-exact. Every FFN replay covers 1,444 real K windows.
+
+Under the same Nangate45 fast mapping, standard-cell area is 626,590.398 µm², down from 691,454.764 µm² in the previous revision. The same-outline detailed placement reports −5.94 ns worst setup slack at 300 MHz, compared with −6.64 ns. The remaining measured critical path starts at DDR return tag bit 10 and ends at P request rejection. Integrated DMA and top-level timing remain open.
