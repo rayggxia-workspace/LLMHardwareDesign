@@ -3,11 +3,13 @@ import argparse
 import json
 from bisect import bisect_left, bisect_right
 from collections import defaultdict
+from itertools import zip_longest
 from pathlib import Path
 
 from cover_frontier import search
 from dma_read import Profile, Read
 from event_replay import Operation, Phase, replay
+from ffn_a import EVENTS as A_EVENTS, replay_tile as replay_a_tile
 from ffn_m import (ALLOC, BEGIN, FILL, FIRST_OPERAND, INPUT, LAST_OPERAND, RAW_READY, RF, Record, Reply,
                    execution_replies, replay_commits, replay_replies)
 from ffn_m_issue import ALLOC_CMD, SIDE_WORDS, Command, CommandLink
@@ -19,6 +21,12 @@ from verify_cover_frontier import verify
 
 
 ANCHOR = ' end else begin: direct_test'
+COPY_LAUNCH = '  xcopy_start=1;do @(posedge clk);while(!xcopy_ready);cycle_wait();xcopy_start=0;'
+COPY_DELAY = '''  begin: candidate_copy_delay
+   integer epoch;
+   if($value$plusargs("COPY_DELAY_EPOCH=%d",epoch)&&epoch==int'(tile_generation))cycle_wait();
+  end
+'''
 MONITOR = """  reg [2:0] probe_offer_seen=0;
   reg [2:0] probe_fetch_seen=0;
   reg [31:0] probe_fetch_tag[3];
@@ -239,6 +247,45 @@ ISSUE_MONITOR = """  for(genvar q=0;q<3;q++)begin: issue_port
    end
   end
 """
+AREAD_MONITOR = """  always @(posedge clk) if($test$plusargs("TRACE_AREAD")&&!reset)begin
+   if(xcopy_start&&xcopy_ready)
+    $display("AREAD start %0d %0d %0d %0d %0d",cycle,tile_session,tile_k,tile_generation,tile_ticket);
+   if(xcopy_u_valid&&xcopy_u_ready)
+    $display("AREAD source %0d %0d %0d %0d",cycle,down_phase?int'(mid_source):3,xcopy_u_address,xcopy_u_tag);
+   if(xcopy_u_rsp_valid&&xcopy_u_rsp_ready)
+    $display("AREAD returned %0d %0d %0d",cycle,down_phase?int'(mid_source):3,xcopy_u_rsp_tag);
+   if(xcopy_done&&xcopy_take)
+    $display("AREAD done %0d %0d %0d",cycle,xcopy_gen,xcopy_error);
+  end
+  for(genvar q=0;q<3;q++)begin: aread_port
+   reg [10:0] prefix_previous;
+   reg [15:0] generation_previous;
+   reg seen=0;
+   always @(posedge clk) if($test$plusargs("TRACE_AREAD")&&!reset)begin
+    if(ps[q].node.exec.early_exec.exec.load_pending&&ps[q].node.exec.early_exec.exec.af_cmd_ready)
+     $display("AREAD load %0d %0d %0d %0d %0d %0d %0d",cycle,q,
+              ps[q].node.exec.early_exec.exec.owner[31:0],ps[q].node.exec.early_exec.exec.k,
+              ps[q].node.exec.early_exec.exec.current_A_generation,ps[q].node.exec.early_exec.exec.selected_A_slot,
+              ps[q].node.exec.early_exec.exec.input_word);
+    if(ps[q].node.ar_valid&&ps[q].node.ar_ready)
+     $display("AREAD read %0d %0d %0d %0d",cycle,q,ps[q].node.ar_address,ps[q].node.ar_tag);
+    if(ps[q].node.ar_rsp_valid&&ps[q].node.ar_rsp_ready)
+     $display("AREAD response %0d %0d %0d",cycle,q,ps[q].node.ar_rsp_tag);
+    if(ps[q].node.cp_valid&&ps[q].node.cp_ready)
+     $display("AREAD copy %0d %0d %0d %0d",cycle,q,ps[q].node.cp_address,ps[q].node.cp_tag);
+    if(ps[q].node.cp_ack_valid&&ps[q].node.cp_ack_ready)
+     $display("AREAD ack %0d %0d %0d",cycle,q,ps[q].node.cp_ack_tag);
+    if(!seen||prefix_previous!=ps[q].node.exec.early_exec.exec.effective_copy_prefix||
+       generation_previous!=ps[q].node.exec.early_exec.exec.current_window_generation)
+     $display("AREAD prefix %0d %0d %0d %0d",cycle,q,
+              ps[q].node.exec.early_exec.exec.current_window_generation,
+              ps[q].node.exec.early_exec.exec.effective_copy_prefix);
+    prefix_previous<=ps[q].node.exec.early_exec.exec.effective_copy_prefix;
+    generation_previous<=ps[q].node.exec.early_exec.exec.current_window_generation;
+    seen<=1;
+   end
+  end
+"""
 
 # From the last accepted CALL flit, the LC accepts the frame, reads PM and
 # metadata, then presents the first 64 B fetch. CRC scans 124 bytes after the
@@ -264,14 +311,15 @@ def require(condition, message):
 
 def instrument(source, destination):
     rtl = source.read_text(encoding='utf-8')
-    if rtl.count(ANCHOR) != 1:
-        raise ValueError('expected the unique programmed FFN block in #251')
+    if rtl.count(ANCHOR) != 1 or rtl.count(COPY_LAUNCH) != 1:
+        raise ValueError('expected the unique programmed FFN block and COPY launch in #251')
+    rtl = rtl.replace(COPY_LAUNCH, COPY_DELAY + COPY_LAUNCH)
     with destination.open('x', encoding='utf-8', newline='\n') as output:
         output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + SCATTER_MONITOR
-                                 + MID_MONITOR + RESULT_MONITOR + M_MONITOR + ISSUE_MONITOR + ANCHOR))
+                                 + MID_MONITOR + RESULT_MONITOR + M_MONITOR + ISSUE_MONITOR + AREAD_MONITOR + ANCHOR))
 
 
-def read_trace(source, result_trace=None, *, m=False, issue=False):
+def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False):
     open_calls = {}
     scopes = []
     admission = {'ready': [], 'stripe': [], 'down': []}
@@ -285,13 +333,20 @@ def read_trace(source, result_trace=None, *, m=False, issue=False):
         result_prefixes += ('MEXEC ',)
     if issue:
         result_prefixes += ('PISSUE ',)
+    if aread:
+        result_prefixes += ('AREAD ',)
     for line in source:
+        if aread and line.startswith('K_PROFILE '):
+            profile = {key: int(value) for key, value in (field.split('=') for field in line.split()[1:])}
+            result_trace['AREAD', 'profile'].append(tuple(profile[key] for key in
+                ('phase', 'scope', 'k', 'header', 'copy', 'proof', 'released')))
         if result_trace is not None and line.startswith(result_prefixes):
             domain, kind, *fields = line.split()
             require(kind in {'PRESULT': ('write', 'ack', 'record', 'valid'),
                              'READBACK': ('gate_done', 'request', 'ack'),
                              'MEXEC': ('exec', 'operand', 'raw', 'control', 'frame', 'eop', 'pop'),
-                             'PISSUE': ('push', 'side', 'sop', 'eop', 'ause', 'aload', 'join', 'alloc', 'bank')}[domain],
+                             'PISSUE': ('push', 'side', 'sop', 'eop', 'ause', 'aload', 'join', 'alloc', 'bank'),
+                             'AREAD': A_EVENTS}[domain],
                     f'unexpected {domain} event {kind}')
             result_trace[domain, kind].append(tuple(map(int, fields)))
         if line.startswith('PROGRAM_PROFILE '):
@@ -590,6 +645,47 @@ def check_m_execution(scopes, trace, mode, *, issue=False):
                     f'P{client} EXEC queue accepted with both guard slots live')
         report['executions'] += len(records)
     return stores, retired, report
+
+
+def check_a_reads(scopes, trace, mode, m_retired, *, copy_delay_epoch=0):
+    """Replay COPY and A using header release and replayed prior P retirement."""
+    previous_retire = {}
+    for p, records in m_records(scopes).items():
+        for record in records:
+            previous_retire[p, record.scope, record.k + 128] = m_retired[p, record.sequence][0]
+
+    expected = defaultdict(list)
+    expected['prefix'].extend((0, p, 0, 0) for p in range(P_COUNT))
+    a_generations = [0, 0]
+    tiles = [(owner, tile * 128) for owner in sorted({s['dispatch'][0][1] for s in scopes})
+             for tile in range(p_k_slices(owner))]
+    require(0 <= copy_delay_epoch <= len(tiles), 'COPY delay epoch is outside the programmed tile sequence')
+    max_proof_wait = 0
+    for epoch, (tile, profile) in enumerate(zip_longest(tiles, trace['AREAD', 'profile']), 1):
+        require(tile is not None and profile is not None, 'A read K profile coverage differs')
+        phase, scope, k, header, copy, proof, released = profile
+        down = scope > GATE_UP_STRIPES
+        require(tile == (scope, k) and phase == int(down), 'A read K profile identity differs')
+        slot = (k // 128) % 2
+        a_generations[slot] += 1
+        generation = a_generations[slot]
+        loads = [max(header - 2, previous_retire[p, scope, k] + 2) if k else header - 2
+                 for p in range(P_COUNT)]
+        start = header + int(epoch == copy_delay_epoch)
+        events, accepted = replay_a_tile(mode, start, scope, k, epoch, epoch, loads, generation, down=down)
+        require((copy, proof, released) == (events['done'][0][0] + 1, accepted + 1, accepted + 2),
+                f'COPY, A proof, or lease release differs in scope {scope}, K={k}')
+        for kind, rows in events.items():
+            expected[kind].extend(rows)
+        expected['aload'].extend((accepted, p, scope, k, slot, generation, 0) for p in range(P_COUNT))
+        max_proof_wait = max(max_proof_wait, accepted - max(tick for tick, _, _ in events['response']))
+
+    for kind, rows in expected.items():
+        domain = 'PISSUE' if kind == 'aload' else 'AREAD'
+        for wanted, actual in zip_longest(sorted(rows), sorted(trace[domain, kind])):
+            require(wanted == actual, f'{domain} {kind} differs: replay {wanted}, trace {actual}')
+    return {'tiles': len(tiles), 'copy_writes': len(expected['copy']), 'a_reads': len(expected['read']),
+            'proofs': len(expected['aload']), 'max_wait_after_last_read': max_proof_wait}
 
 
 def check_p_results(scopes, trace, mode, m_stores=None, m_retired=None):
@@ -1006,12 +1102,14 @@ def check_admission(scopes, transfers, admission, upstream=None):
 
 
 def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False,
-          m=False, issue=False):
+          m=False, issue=False, aread=False, copy_delay_epoch=0):
+    aread = aread or copy_delay_epoch != 0
+    issue = issue or aread
     m = m or issue
     readback = readback or m
     result_trace = defaultdict(list) if readback else None
     scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(
-        source, result_trace, m=m, issue=issue)
+        source, result_trace, m=m, issue=issue, aread=aread)
     transfers = []
     sequence = [0] * 3
     read_bytes = write_bytes = 0
@@ -1091,6 +1189,8 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
         report['p_results'] = p_report
     if m:
         report['m_execution'] = m_report
+    if aread:
+        report['a_reads'] = check_a_reads(scopes, result_trace, mode, m_retired, copy_delay_epoch=copy_delay_epoch)
     if admission or phase_release or scatter or mid or readback:
         report['admission'] = check_admission(scopes, grants[:len(scopes)], sampled_admission,
                                               upstream if phase_release or scatter or mid or readback else None)
@@ -1116,6 +1216,8 @@ def main():
     verify.add_argument('--result', action='store_true')
     verify.add_argument('--m', action='store_true', help='verify M EXEC through result acceptance')
     verify.add_argument('--issue', action='store_true', help='verify P command issue through result acceptance')
+    verify.add_argument('--aread', action='store_true', help='also replay COPY and private A SRAM handshakes')
+    verify.add_argument('--copy-delay-epoch', type=int, default=0, help='launch COPY one cycle later in this tile epoch')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
@@ -1123,7 +1225,8 @@ def main():
         with args.log.open(encoding='utf-8') as source:
             print(json.dumps(check(source, args.mode, args.seed, admission=args.admission,
                                    phase_release=args.phase_release, scatter=args.scatter, mid=args.mid,
-                                   readback=args.result, m=args.m, issue=args.issue), indent=2))
+                                   readback=args.result, m=args.m, issue=args.issue, aread=args.aread,
+                                   copy_delay_epoch=args.copy_delay_epoch), indent=2))
 
 
 if __name__ == '__main__':

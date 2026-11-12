@@ -260,6 +260,29 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 本机 `round21-admit-logs.sha256` 为 `dcef6d0ada817daf9c825a266bcf9b662d87d8f75ec71792ca2d352cc644746e`，`round21-admit-verified.json` 为 `d186058b7f7fdf4a5d7555f92d790b5486695619e916d5652da696bb25d321e1`。Verilator 5.006，Windows 355 项测试通过，102604 固定轨迹基线仍为 948,626 拍。A 捕获证明、W/A 绑定、侧带命令首次就绪和 FILL 首次就绪仍由 RTL 提供。两组下一段探针各已捕获 69,312 次 A 源字读回和同量 COPY 写确认。两组共 2,888 个 K 窗口的证明接纳拍等于 COPY 完成拍与最晚 A 读回后两拍的较大值。后续据此重算 A 捕获，再接入由 DDR beat 驱动的 FILL 和原生候选调度闭环。
 
+### COPY 与 A 读取共用 SRAM
+
+第 22 轮从 K header 释放拍和各 P 上一 K 的重放退休状态推出私有 A 加载。Gate/Up 从 U 取源字，Down 从保存 Mid 的 P 取源字。每个 P 的窄口按轮转接纳请求，保留两个按序返回的响应所有者。同一拍可以接收旧响应并接纳新请求。每个字的目的写确认推进可读前缀，A 加载按本地 slot 和代次请求，三个 P 在 COPY 完成且各自的读取证明均就绪时共同接纳证明。该模型按 #251 完整测试程序的串行 K 窗口重建，支持每个窗口内部的并行争用。
+
+四组固定波形和三组候选波形均逐拍对齐，每组 1,444 个 K tile、69,312 次目的写及确认、69,312 次 A 读及返回、4,332 次共同证明接纳。四组固定波形移除新探针后与第 21 轮逐行一致。每组候选只把指定 K 的 COPY 晚启动一拍，分岔前的探针轨迹与 A 加载拍保持相同。候选与基线使用同一程序、输入和数值断言。表中以各自原启动时刻为基线。
+
+| 压力及位置 | COPY 完成变化 | 共同证明接纳变化 | 完整 FFN 结果接纳变化 |
+| --- | ---: | ---: | ---: |
+| 有背压，Gate/Up scope 2，K=512 | +3 拍 | −4 拍 | 0 拍，952,011 |
+| 有背压，Down scope 59，K=3200 | +3 拍 | −4 拍 | 0 拍，952,011 |
+| 无外加背压，Gate/Up scope 2，K=512 | +2 拍 | −1 拍 | −1 拍，857,116 |
+
+无外加背压时，共享窄口仍然要仲裁 COPY 和 A。按 COPY 完成拍单独比较，这三个候选都会被判为较慢。按 A 证明接纳拍比较，它们均更早放行，完整程序里只有第三组把提前量传到了程序结果。九个篡改负例分别覆盖 COPY 启动、Down 源地址、A tag、提前返回、提前写确认、加载拍、提前发布前缀、提前接纳证明和租约释放。
+
+```bash
+# 复用第 21 轮运行参数，运行时增加 +TRACE_AREAD。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG --mode 1 --seed 25001 --aread
+# 对照运行额外增加 +COPY_DELAY_EPOCH=21。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check CANDIDATE_LOG --mode 1 --seed 25001 --copy-delay-epoch 21
+```
+
+完整 RTL 固定于 `9abd46f5cbb4534bcfc614571ccd6d402ad11882`，Verilator 5.006。原始记录和复现脚本保存在本机 Codex 实验目录。`round22-copy-logs.sha256` 为 `9e0088c065ae67f6d0f0e0aeb9ed55490204fb25028b51afc2cd078aaa3efd14`，`round22-copy-verified.json` 为 `f20161450733a7737562d253c391cfa20626214bf364dd8ac15de6172c249071`。Windows 358 项测试通过，102604 固定轨迹基线仍为 948,626 拍。K header 释放、W/A 绑定、侧带命令首次就绪和 FILL 首次就绪继续由各自波形提供。下一步用预测的 A 证明和 W 填充重算绑定，并将可改变的 K 供给与后续执行纳入同一次候选重放。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界
