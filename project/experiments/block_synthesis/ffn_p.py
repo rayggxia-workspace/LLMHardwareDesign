@@ -3,6 +3,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum, auto
 
+from ffn_a import P_COUNT
 from ffn_join import JoinController, Lane
 from ffn_m import ALLOC, BEGIN, FILL, INPUT, RF
 from ffn_m_issue import ALLOC_CMD, BEGIN_CMD, CONTEXT_CMD, EXEC_CMD, SIDE_WORDS, Command
@@ -54,6 +55,7 @@ class RecordController:
     next_session: int = 1
     control_session: int = 0
     sides: list = field(default_factory=list)
+    loads: dict = field(default_factory=dict)
     commands_seen: int = 0
     pushes_seen: int = 0
     executions_seen: int = 0
@@ -61,6 +63,13 @@ class RecordController:
     @property
     def records(self):
         return self.lane.records
+
+    def window_need(self):
+        if self.raw_valid:
+            record = self.records[self.next_record]
+            if record.context == 0:
+                return record.scope, record.k
+        return None
 
     def reply(self, source, index, tick):
         eop = self.lane.eops.get((source, self.records[index].sequence))
@@ -122,7 +131,7 @@ class RecordController:
         record = self.records[front] if front is not None else None
         active = self.records[self.active] if self.active is not None else None
         accept = record is not None and (
-            (self.state == State.IDLE and (record.context != 0 or windows[record.scope, record.k] <= tick))
+            (self.state == State.IDLE and (record.context != 0 or windows.get((record.scope, record.k), tick + 1) <= tick))
             or (self.state == State.PAIR_ACCEPT and front == self.active + 1))
 
         # Both decisions use the registered queue before this edge's push/pop.
@@ -156,12 +165,15 @@ class RecordController:
                 self.partner = self.active
                 self.preparing_second = True
             self.active = front
+            record = self.records[front]
+            if record.context == 0:
+                self.loads[record.scope, record.k] = tick + 1
             if replay:
                 self.ahead.popleft()
                 self.ahead_sent.remove(front)
                 self.state = State.FILL_WAIT
             else:
-                self.state = State.ALLOC_SEND if self.records[front].k else State.BEGIN_SEND
+                self.state = State.ALLOC_SEND if record.k else State.BEGIN_SEND
         elif self.state == State.BEGIN_WAIT and self.control(BEGIN, tick):
             self.state = State.CONTEXT_PUSH
         elif self.state == State.CONTEXT_PUSH:
@@ -230,14 +242,44 @@ class RecordController:
 class ProgrammedP(JoinController):
     """Generate side commands and bindings from range, A and M state."""
 
-    def __init__(self, records, tiles, mode, *, lookahead, copy_delay_epoch):
+    def __init__(self, records, tiles, mode, *, lookahead, copy_delay_epoch, window_plan=()):
         super().__init__(records, tiles, mode, lookahead=lookahead, copy_delay_epoch=copy_delay_epoch)
         # The fixture records header_cycle after taking the header DONE.
         # The P nodes see their registered window three edges earlier.
+        self.tiles = list(tiles)
         self.windows = {(scope, k): header - 3 for scope, k, header, _ in tiles}
         self.dispatch = {p: RecordController(lane) for p, lane in self.lanes.items()}
+        self.window_plan = deque(window_plan)
+        self.window_schedule = []
+
+    def prepare_window(self, tick):
+        if not self.window_plan:
+            return
+        if self.window_schedule:
+            scope, k, *_ = self.window_schedule[-1]
+            proof = self.proofs.get((scope, k))
+            if proof is None or tick <= proof + 2:
+                return
+        scope, k, down, quantize = self.window_plan[0]
+        if any(controller.window_need() != (scope, k) for controller in self.dispatch.values()):
+            return
+        # The fixture serializes source quantization with COPY on an idle U
+        # port. Once prequantized, only the host and header edges remain.
+        quant = tick + (97 if quantize else 1)
+        header = quant + 8
+        self.window_plan.popleft()
+        self.window_schedule.append((scope, k, tick, quant, header))
+        self.windows[scope, k] = header - 3
+        self.tiles.append((scope, k, header, down))
+
+    def tile_loads(self, scope, k, header):
+        if len(self.dispatch) != P_COUNT:
+            return super().tile_loads(scope, k, header)
+        loads = [self.dispatch[p].loads.get((scope, k)) for p in range(P_COUNT)]
+        return None if None in loads else loads
 
     def advance(self, tick):
+        self.prepare_window(tick)
         self.publish_proofs(tick)
         joins, commands = {}, {}
         for p, state in self.dispatch.items():
@@ -254,6 +296,8 @@ class ProgrammedP(JoinController):
 
     def validate(self):
         super().validate()
+        if self.window_plan:
+            raise ValueError('programmed FFN did not start every requested K window')
         for client, state in self.dispatch.items():
             if (state.state != State.IDLE or state.pending_side is not None or state.ahead
                     or state.completed != len(state.records)):

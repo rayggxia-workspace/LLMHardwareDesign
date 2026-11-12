@@ -57,17 +57,22 @@ class JoinController:
             lane.retired[record.sequence] = commit[-1].start + record.retire_delay
             lane.next_retire += 1
 
+    def tile_loads(self, scope, k, header):
+        if not k:
+            return [header - 2] * P_COUNT
+        previous = self.last[scope, k - 128]
+        if any(sequence not in self.lanes[p].retired for p, sequence in previous.items()):
+            return None
+        return [max(header - 2, self.lanes[p].retired[previous[p]] + 2) for p in range(P_COUNT)]
+
     def publish_proofs(self, tick):
         while self.tile_cursor < len(self.tiles):
             scope, k, header, down = self.tiles[self.tile_cursor]
             if tick < header:
                 break
-            loads = [header - 2] * P_COUNT
-            if k:
-                previous = self.last[scope, k - 128]
-                if any(sequence not in self.lanes[p].retired for p, sequence in previous.items()):
-                    break
-                loads = [max(header - 2, self.lanes[p].retired[previous[p]] + 2) for p in range(P_COUNT)]
+            loads = self.tile_loads(scope, k, header)
+            if loads is None:
+                break
             epoch = self.tile_cursor + 1
             slot = (k // 128) % 2
             self.generations[slot] += 1

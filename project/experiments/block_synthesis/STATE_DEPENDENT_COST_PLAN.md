@@ -376,6 +376,26 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 推进仍以 scope dispatch、K header 和 CALL 波形为入口。已核对 1,444 个 K tile 的共同请求与 P 范围迭代器提供首条记录的时刻一致。首个 scope 的源量化耗时 97 拍，后续已有源数据的阶段耗时 1 拍，租约和 header 传输再耗时 8 拍。下一轮用这些接口时序和 P 的真实请求生成 header。
 
+### P 请求驱动 K 窗口和 A 加载
+
+第 29 轮从程序记录生成 K 窗口顺序。上一窗口的 COPY 与 A 读取证明接纳后释放租约。三个 P 都持有下一片 K 的首条范围记录时，发起该片的公共窗口。按测试台固定的源量化和 header 接口推进，三个 P 各在真正接纳首条记录后发出本地 A 加载。源量化阶段使用已核对的固定时序。测试台在此阶段独占 U SRAM。
+
+带背压的基线、COPY 候选、关闭 W 前瞻的变体及无外加背压的基线，每组逐拍对齐 1,444 次共同请求、量化与 header 时刻，4,332 次本地 A 加载和证明接纳、72,064 条侧带命令及后续 M 与 DDR 握手。第 21 个 K tile 的 COPY 晚发一拍后，后续 11 个 K header 提前 6 至 19 拍，两组程序均在第 952,011 拍完成。
+
+用同一 Verilator 构建与 mode 0 输入重新运行另一候选，只把第一个 K tile 的 COPY 晚发一拍。首个 A 证明晚一拍，之后 1,443 个 K header 均晚一拍。完整重放逐拍通过，程序结果从第 857,117 拍变为第 857,118 拍，数值及字节断言通过。五组原始轨迹和对账报告见本机 `round29-window-verified.json`，SHA-256 为 `49d1266bddf6cd23df5bc01859fe2495e944f10c132707d8eac50349234269b4`。
+
+三 P 缩小模型在第 179 拍已有三个 BEGIN 帧在途时分岔。把第一片 COPY 晚发一拍，下一片 K 的共同请求由第 372 拍变为 373，header 由第 477 拍变为 478，证明接纳由第 595 拍变为 596。快照分支与从复位重算一致。
+
+```bash
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG.gz --mode 1 --seed 25001 --wwindow
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check CANDIDATE_LOG.gz --mode 1 --seed 25001 --copy-delay-epoch 21 --wwindow
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check EARLY_COPY_LOG.gz --mode 0 --seed 25002 --copy-delay-epoch 1 --wwindow
+```
+
+367 项测试通过。请求、量化、header、K 身份和覆盖五个观测篡改均被拒绝。把一个 P 的真实 dispatch 推迟 16 拍，模型不再于第 1,938 拍安装这批 W bank。删改 K profile 的观测时刻后，完整重放仍能重算全部窗口、侧带和共享 DDR。负例报告 `round29-window-adversarial.json` 的 SHA-256 为 `abb24e0f11235a1cbb1620ee6df9b5e2f77d441b3a19ce078ebedd7d6cfbc820`。
+
+当前的入口为 scope dispatch 和 CALL。四组既有轨迹的首个 CALL 均为程序启动后第 58 拍，同组 CALL 相隔 16 拍，组间最后一条终端回执到下一组首个 CALL 相隔 18 拍。下一步由已重算的 P 退休推动局控终端回执，再从该回执恢复母控等待和后续 CALL。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

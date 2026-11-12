@@ -360,7 +360,8 @@ def instrument(source, destination):
                                  + RESULT_MONITOR + M_MONITOR + ISSUE_MONITOR + AREAD_MONITOR + WEIGHT_MONITOR + ANCHOR))
 
 
-def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False, weight=None, wdma=False):
+def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False, weight=None, wdma=False,
+               window=False):
     open_calls = {}
     scopes = []
     admission = {'ready': [], 'stripe': [], 'down': []}
@@ -388,6 +389,9 @@ def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False, 
             profile = {key: int(value) for key, value in (field.split('=') for field in line.split()[1:])}
             result_trace['AREAD', 'profile'].append(tuple(profile[key] for key in
                 ('phase', 'scope', 'k', 'header', 'copy', 'proof', 'released')))
+            if window:
+                result_trace['AREAD', 'window'].append(tuple(profile[key] for key in
+                    ('scope', 'k', 'need', 'quant', 'header')))
         if result_trace is not None and line.startswith(result_prefixes):
             domain, kind, *fields = line.split()
             require(kind in {'PRESULT': ('write', 'ack', 'record', 'valid'),
@@ -548,8 +552,9 @@ def weight_address(client, record):
     return base + 64 * BEATS * index
 
 
-def read_linked_weight(source, scopes, events, mode, seed, *, wjoin=False, wside=False,
+def read_linked_weight(source, scopes, events, mode, seed, *, wjoin=False, wside=False, wwindow=False,
                        lookahead=True, copy_delay_epoch=0):
+    wside = wside or wwindow
     wjoin = wjoin or wside
     links, addresses = {}, {}
     side = defaultdict(list)
@@ -562,7 +567,12 @@ def read_linked_weight(source, scopes, events, mode, seed, *, wjoin=False, wside
             joins[client].append((tick, sequence))
     records_by_client = m_records(scopes)
     join_driver = None
-    if wjoin:
+    if wwindow:
+        keys = sorted({(record.scope, record.k) for records in records_by_client.values() for record in records})
+        plan = [(scope, k, scope > GATE_UP_STRIPES, scope == 1) for scope, k in keys]
+        join_driver = ProgrammedP(records_by_client, (), mode, lookahead=lookahead,
+                                  copy_delay_epoch=copy_delay_epoch, window_plan=plan)
+    elif wjoin:
         tiles = [(scope, k, header, phase == 1) for phase, scope, k, header, *_ in events['AREAD', 'profile']]
         driver = ProgrammedP if wside else JoinController
         join_driver = driver(records_by_client, tiles, mode, lookahead=lookahead,
@@ -833,6 +843,12 @@ def check_live_side(driver, rows):
     for p, state in driver.dispatch.items():
         for wanted, seen in zip_longest(state.sides, observed[p]):
             require(wanted == seen, f'P{p} live side command differs: replay {wanted}, trace {seen}')
+    return len(rows)
+
+
+def check_live_windows(driver, rows):
+    for wanted, seen in zip_longest(driver.window_schedule, rows):
+        require(wanted == seen, f'live K window differs: replay {wanted}, trace {seen}')
     return len(rows)
 
 
@@ -1251,7 +1267,8 @@ def check_admission(scopes, transfers, admission, upstream=None):
 
 def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False,
           m=False, issue=False, aread=False, copy_delay_epoch=0, wa_join=False, lookahead=True, wfill=False,
-          wdma=False, wlink=False, wjoin=False, wside=False):
+          wdma=False, wlink=False, wjoin=False, wside=False, wwindow=False):
+    wside = wside or wwindow
     wjoin = wjoin or wside
     aread = aread or wjoin or copy_delay_epoch != 0
     wa_join = wa_join or aread or not lookahead
@@ -1265,9 +1282,9 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
     if not wlink:
         weight = WeightDmaTrace(mode, seed, CALL_TO_FETCH) if wdma else WeightTrace() if wfill else None
     scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(
-        source, result_trace, m=m, issue=issue, aread=aread, weight=weight, wdma=wdma and not wlink)
+        source, result_trace, m=m, issue=issue, aread=aread, weight=weight, wdma=wdma and not wlink, window=wwindow)
     if wlink:
-        weight = read_linked_weight(source, scopes, result_trace, mode, seed, wjoin=wjoin, wside=wside,
+        weight = read_linked_weight(source, scopes, result_trace, mode, seed, wjoin=wjoin, wside=wside, wwindow=wwindow,
                                     lookahead=lookahead, copy_delay_epoch=copy_delay_epoch)
     if weight is not None:
         weight.validate()
@@ -1371,6 +1388,12 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
         report['wa_joins']['drives_command_issue'] = True
         if wside:
             report['wa_joins']['side_commands'] = check_live_side(driver, result_trace['PISSUE', 'side'])
+        if wwindow:
+            report['a_reads']['windows'] = check_live_windows(driver, result_trace['AREAD', 'window'])
+            loads = sorted((tick, p, scope, k) for p, state in driver.dispatch.items()
+                           for (scope, k), tick in state.loads.items())
+            require(loads == sorted(row[:4] for row in result_trace['AREAD', 'load']),
+                    'live P load admission differs')
     if wdma:
         report['weight_dma'] = dict(weight.counts)
     if admission or phase_release or scatter or mid or readback:
@@ -1407,6 +1430,7 @@ def main():
     verify.add_argument('--wlink', action='store_true', help='couple M bank allocation, shared DMA, and FILL replies')
     verify.add_argument('--wjoin', action='store_true', help='drive bindings from A proofs and live M/DMA')
     verify.add_argument('--wside', action='store_true', help='generate P side commands and bindings from live state')
+    verify.add_argument('--wwindow', action='store_true', help='generate K windows from live P record requests')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
@@ -1418,7 +1442,8 @@ def main():
                                    readback=args.result, m=args.m, issue=args.issue, aread=args.aread,
                                    copy_delay_epoch=args.copy_delay_epoch, wa_join=args.wa_join,
                                    lookahead=not args.no_lookahead, wfill=args.wfill, wdma=args.wdma,
-                                   wlink=args.wlink, wjoin=args.wjoin, wside=args.wside), indent=2))
+                                   wlink=args.wlink, wjoin=args.wjoin, wside=args.wside,
+                                   wwindow=args.wwindow), indent=2))
 
 
 if __name__ == '__main__':

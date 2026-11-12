@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 29 轮。P 共同请求生成 K 窗口和 A 加载，五组完整 RTL 各对齐 1,444 个窗口。新跑的首片 COPY 候选使后续 1,443 个 header 及程序结果晚一拍。367 项测试通过，六个负例均拒绝。scope dispatch 与 CALL 仍来自波形，继续从 P 退休和终端回执生成 CALL。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 28 轮。P 记录队列和回包直接驱动侧带与 EXEC。四组完整 RTL 各逐拍对齐 72,064 条侧带命令，COPY 候选改变 564 条命令的时刻，关闭 W 前瞻增加 340,018 拍。366 项测试通过，六个负例均拒绝。继续由 P 的请求生成 K header，再接入 scope dispatch 和 CALL。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。
 
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 27 轮。A 证明、M 回包和 P 退休直接生成 W/A 绑定。三组完整轨迹各逐拍对齐 66,048 次绑定及退休。第 21 个 K tile 的 COPY 晚一拍后，首个绑定早四拍，共 576 次绑定及 EXEC 接纳改变，程序完成拍相同。365 项测试通过，六个篡改负例均拒绝。侧带命令、K header 和 CALL 仍由波形提供。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。
