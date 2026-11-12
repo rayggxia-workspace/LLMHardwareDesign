@@ -20,6 +20,15 @@ class Command:
     words: int
 
 
+@dataclass(frozen=True, slots=True)
+class WeightCompletion:
+    ready: int
+    session: int
+    sequence: int
+    bank: int
+    generation: int
+
+
 def join_schedule(records, proofs, eops, retirements, *, lookahead):
     """Schedule each A/W binding from registered P record and bank readiness."""
     joins = []
@@ -63,6 +72,7 @@ class IssueTrace:
     replies: list
     bank_waits: set
     alloc_ack_waits: set
+    fill_ack_waits: set
 
 
 class CommandLink:
@@ -72,7 +82,7 @@ class CommandLink:
         self.stores = stores
         self.events = []
         self.serial = 0
-        self.trace = IssueTrace([], [], [], [], [], [], [], set(), set())
+        self.trace = IssueTrace([], [], [], [], [], [], [], set(), set(), set())
         self.join = deque()
         self.side = deque()
         self.exec = deque()
@@ -91,6 +101,8 @@ class CommandLink:
         self.alloc_acked = {}
         self.fill_seen = set()
         self.weight_ready = set()
+        self.fill_ack_pending = {}
+        self.fill_ack_owner = None
         self.input_live = set()
         self.rf_live = set()
         self.clock = 0
@@ -117,6 +129,8 @@ class CommandLink:
             self.alloc_acked[reply.sequence] = reply.session
         elif reply.source == FILL:
             self.weight_ready.add(reply.sequence)
+            if self.fill_ack_owner == reply.sequence:
+                self.fill_ack_owner = None
         elif reply.source == INPUT:
             sequence = reply.sequence
             self.banks[self.owner_bank.pop(sequence)] = None
@@ -140,6 +154,15 @@ class CommandLink:
             self.fill_seen.add(payload.sequence)
             self.trace.controls.append(payload)
             self.ready_reply(payload)
+        elif event == 'weight complete':
+            if (self.alloc_acked.get(payload.sequence) != payload.session
+                    or self.owner_bank.get(payload.sequence) != payload.bank
+                    or self.generation[payload.bank] != payload.generation):
+                raise ValueError('completed W data did not match its live bank')
+            if (payload.bank in self.fill_ack_pending or payload.sequence == self.fill_ack_owner
+                    or payload.sequence in self.fill_seen):
+                raise ValueError('W completion duplicated an existing FILL acknowledgement')
+            self.fill_ack_pending[payload.bank] = payload
         elif event == 'reply':
             self.ready_reply(payload)
         else:
@@ -208,13 +231,15 @@ class CommandLink:
         if not choose_exec:
             self.side_open = tick + command.words
 
-    def run(self, joins, side, fills, *, until=None):
+    def run(self, joins, side, fills, *, until=None, weight_completions=()):
         """Optionally stop just before an edge, retaining both wires and their owners."""
         joins, side, fills = tuple(joins), tuple(side), tuple(fills)
+        weight_completions = tuple(weight_completions)
         if ((until is not None and until < self.clock)
                 or any(tick < self.clock for tick, _ in joins)
                 or any(command.ready < self.clock for command in side)
-                or any(reply.ready < self.clock for reply in fills)):
+                or any(reply.ready < self.clock for reply in fills)
+                or any(weight.ready < self.clock for weight in weight_completions)):
             raise ValueError('M intent predates the command-link snapshot')
         for tick, sequence in joins:
             self.schedule(tick + 1, 'join', sequence)
@@ -222,12 +247,14 @@ class CommandLink:
             self.schedule(command.ready, 'side', command)
         for reply in fills:
             self.schedule(reply.ready, 'fill', reply)
+        for weight in weight_completions:
+            self.schedule(weight.ready, 'weight complete', weight)
         future = [self.events[0][0]] if self.events else []
         if self.resume is not None:
             future.append(self.resume)
         self.resume = None
         tick = min(future, default=self.clock)
-        while self.events or self.join or self.side or self.exec or self.reply or self.rx:
+        while self.events or self.join or self.side or self.exec or self.reply or self.rx or self.fill_ack_pending:
             if until is not None and tick >= until:
                 self.clock = until
                 self.resume = tick
@@ -236,6 +263,12 @@ class CommandLink:
             while self.events and self.events[0][0] == tick:
                 _, _, event, payload = heappop(self.events)
                 self.arrive(tick, event, payload)
+            if self.fill_ack_pending and self.fill_ack_owner is None:
+                weight = self.fill_ack_pending.pop(min(self.fill_ack_pending))
+                self.fill_ack_owner = weight.sequence
+                if tick > weight.ready:
+                    self.trace.fill_ack_waits.add(weight.sequence)
+                self.schedule(tick + 1, 'fill', Reply(tick + 1, FILL, weight.session, weight.sequence, 2))
             if self.rx:
                 self.accept(tick)
             if self.reply and tick >= self.tx_open:
@@ -267,7 +300,7 @@ class CommandLink:
                     if opens > tick:
                         future.append(opens)
             if not future:
-                if self.rx or self.join or self.side or self.exec or self.reply:
+                if self.rx or self.join or self.side or self.exec or self.reply or self.fill_ack_pending:
                     raise ValueError('M command or reply deadlocked with a live owner')
                 self.clock = tick + 1
                 break
@@ -275,6 +308,6 @@ class CommandLink:
         if until is not None:
             self.clock = until
             return self.trace
-        if self.owner_bank or self.alloc_acked or self.input_live or self.rf_live:
+        if self.owner_bank or self.alloc_acked or self.input_live or self.rf_live or self.fill_ack_owner is not None:
             raise ValueError('M completed with a live W or execution owner')
         return self.trace

@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 24 轮。基线及 COPY 候选各从 1,122,816 个 W beat 推出 66,048 次 FILL，完整回包和绑定逐拍一致。基线 5,563 次等待 FILL 确认槽，候选 5,555 次。362 项测试通过，五个篡改负例均拒绝。DMA 客户端握手仍来自波形，继续接入 W 源端与共享 DDR 仲裁。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 23 轮。九组完整 RTL 各重算 66,048 次 W/A 绑定并逐拍对齐，覆盖前瞻、关闭前瞻和 COPY 候选。360 项测试通过，六个篡改负例均拒绝。完整检查以采样绑定启动 M 重放，再按回包、退休和 A 证明反查绑定。源文件清单确认逐拍对照使用 #251 基础及 #250 的三个替换文件。恢复 #251 原始文件的两组运行通过数值及字节断言，阶段周期另行记录。继续接入 W 的 DDR 请求和填充就绪。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。
 
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 22 轮。四组固定和三组候选 RTL 各逐拍对齐 1,444 个 K tile、69,312 次 A 读及 4,332 次共同证明接纳。两组带背压候选把 COPY 晚启动一拍，A 证明早四拍，全程序结果持平。无外加背压对照的 A 证明及程序结果均早一拍。358 项测试通过，九个篡改负例均拒绝。K header、W/A 绑定、侧带命令及 FILL 首次就绪仍采样。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。

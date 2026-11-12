@@ -11,8 +11,9 @@ from cover_frontier import search
 from dma_offer import DmaOfferChannel
 from event_replay import Operation, Phase, ReadyWindow, ReplayDeadlock, replay
 from ffn_m import ALLOC, FILL, INPUT, INPUT_READY, RF, RF_READY, Record, Reply, commit_phases, reply_phase
-from ffn_m_issue import ALLOC_CMD, Command, CommandLink, join_schedule
+from ffn_m_issue import ALLOC_CMD, Command, CommandLink, WeightCompletion, join_schedule
 from ffn_mid import MIN_TICKS, MidTile
+from ffn_w import WeightTrace
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
 
@@ -666,6 +667,38 @@ class ReplayTest(unittest.TestCase):
                          [(22, 1), (41, 2), (64, 3), (81, 4)])
         self.assertEqual(join_schedule(records, proof, eops, retired, lookahead=False),
                          [(22, 1), (41, 2), (61, 3), (81, 4)])
+
+    def test_weight_record_requires_every_distinct_beat(self):
+        trace = WeightTrace()
+        address, tag = 0x2000000, 1 << 5
+        trace.record('install', 1, 0, 1, 2, 0, 1, address)
+        for beat in range(17):
+            trace.record('request', 2 + beat, 0, address + 64 * beat, tag + beat)
+        for beat in range(16, 0, -1):
+            trace.record('returned', 40 - beat, 0, tag + beat)
+        with self.assertRaisesRegex(ValueError, 'coverage'):
+            trace.validate()
+        with self.assertRaisesRegex(ValueError, 'repeated'):
+            trace.record('returned', 40, 0, tag + 16)
+        trace.record('returned', 41, 0, tag)
+        trace.validate()
+        self.assertEqual(trace.completed[0], [WeightCompletion(42, 1, 2, 0, 1)])
+
+    def test_pending_fill_ack_is_retimed_from_a_command_link_snapshot(self):
+        side = [Command(tick, ALLOC_CMD, sequence, sequence, 2)
+                for tick, sequence in ((1, 1), (8, 2), (15, 3))]
+        pending = [WeightCompletion(29, 3, 3, 2, 1), WeightCompletion(30, 2, 2, 1, 1)]
+        joins = [(50, 1), (90, 2), (130, 3)]
+        stores = dict.fromkeys(range(1, 4), False)
+        snapshot = CommandLink(stores)
+        snapshot.run([], side, [], until=31, weight_completions=pending)
+        for when, expected in ((31, [(30, 3), (34, 1), (38, 2)]),
+                               (34, [(30, 3), (34, 2), (38, 1)])):
+            candidate = WeightCompletion(when, 1, 1, 0, 1)
+            trace = deepcopy(snapshot).run(joins, [], [], weight_completions=[candidate])
+            self.assertEqual(trace, CommandLink(stores).run(joins, side, [], weight_completions=pending + [candidate]))
+            self.assertEqual([(reply.ready, reply.sequence) for reply in trace.controls if reply.source == FILL],
+                             expected)
 
     def test_m_link_retimes_old_allocation_when_exec_releases_bank(self):
         side = [Command(tick, ALLOC_CMD, session, sequence, 2)

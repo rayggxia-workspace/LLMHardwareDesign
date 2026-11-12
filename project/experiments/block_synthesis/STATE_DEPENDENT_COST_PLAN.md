@@ -301,6 +301,20 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 版本复核时，把三个替换文件恢复为 #251 固定提交中的原文件，以同一 seed、程序及输入重建仿真。两种压力均通过数值和字节断言。其 Gate/Up 加 Mid 与 Down 的原生阶段计数分别为 587,573／265,042 拍和 658,314／284,362 拍。双所有者组合在同样口径下为 586,103／263,811 拍和 658,258／283,649 拍。这是测试台的阶段计数。固定提交的 W/A 绑定尚未逐拍对账。`full-ffn-251-reference-0.log` 的 SHA-256 为 `9ca89ce3833699c0c250e6fedd0305cd4aacefd2161ba9e4ef829ad8a935e347`，`full-ffn-251-reference-1.log` 为 `478a3501647c9755061c41cb5ca08eae1efa503f7b689ab4b4038037176dc604`。
 
+### 从 W beat 到 FILL 回包
+
+第 24 轮在 DMA 客户端边界对账每个 W bank 的安装、请求和读回。每条记录按 bank、代次和 tag 收齐 17 个不同 beat 后成为待确认项。M 的 FILL 确认槽按 bank 编号选择，持有到 FILL 回包的 EOP。该确认仍与 INPUT、RF、ALLOC 等回包竞争同一条返回链路。命令模型由 beat 完成驱动 FILL 首次就绪，继续重放回包和执行。
+
+带背压的基线和 COPY 晚一拍候选各对齐 1,122,816 个 W beat、66,048 次 FILL 和后续绑定。新增探针外的轨迹各与第 22 轮逐行一致。基线有 5,563 条记录收齐后仍等待 FILL 确认槽，最长 7 拍。候选有 5,555 条，两者的程序结果均在第 952,011 拍接纳。独立小例从第 31 拍已有一个确认占槽、另一个 bank 等待的快照开始。把第三个 bank 的完成从第 34 拍提到第 31 拍，使原有待确认 bank 的就绪从第 34 拍推迟到第 38 拍。两个快照后缀各与从复位开始的模型重放一致。
+
+```bash
+# 使用 instrument 生成测试台，运行时增加 +TRACE_WEIGHT。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG.gz --mode 1 --seed 25001 --aread --wfill
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check CANDIDATE_LOG.gz --mode 1 --seed 25001 --copy-delay-epoch 21 --wfill
+```
+
+362 项测试通过。五个篡改负例覆盖 DMA 地址、过期 tag、完成代次、重复完成及错误的确认拍。两组原始轨迹及验证报告以本机 `round24-weight-verified.json` 索引，其 SHA-256 为 `62d87549789573f74a1329164b8f8647531928fa549c5379bc6f5acd88ab9125`。W 的 DMA 请求接纳和读回继续由波形提供。后续要把 W 的待发 bank、已锁定的 beat 和返回信用接入同一 DDR 仲裁，再让 K 供给、W/A 绑定和侧带发起随候选推进。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

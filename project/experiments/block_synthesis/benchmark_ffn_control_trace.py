@@ -1,5 +1,6 @@
 """Record and verify handshakes in the programmed FFN RTL fixture."""
 import argparse
+import gzip
 import json
 from bisect import bisect_left, bisect_right
 from collections import defaultdict
@@ -17,6 +18,7 @@ from ffn_mid import MIN_TICKS, MidTile
 from ffn_result import (READBACK_TAG, down_group_addresses, down_readback_words, mid_readback_words,
                         readback_service, sram_word_phases)
 from ffn_scatter import scatter_service, stripe_fragments
+from ffn_w import WeightTrace
 from verify_cover_frontier import verify
 
 
@@ -287,6 +289,39 @@ AREAD_MONITOR = """  always @(posedge clk) if($test$plusargs("TRACE_AREAD")&&!re
   end
 """
 
+WEIGHT_MONITOR = """  for(genvar q=0;q<3;q++)begin: weight_probe
+   reg seen=0,fill_seen=0;
+   reg [31:0] previous_tag,previous_fill;
+   always @(posedge clk) if($test$plusargs("TRACE_WEIGHT")&&!reset)begin
+    if(ps[q].node.M.n_alloc_ack_valid&&!ps[q].node.M.alloc_installed)
+     $display("WEIGHT install %0d %0d %0d %0d %0d %0d %0d",cycle,q,ps[q].node.M.alloc_session,
+              ps[q].node.M.n_alloc_ack_record,ps[q].node.M.n_alloc_ack_bank,
+              ps[q].node.M.n_alloc_ack_generation,ps[q].node.M.alloc_base);
+    if(mr_valid[q]&&(!seen||previous_tag!=mr_tag[q]))
+     $display("WEIGHT offer %0d %0d %0d %0d %0d %0d",cycle,q,mr_addr[q],mr_tag[q],mr_channel[q],mr_beats[q]);
+    if(mr_valid[q]&&mr_ready[q])
+     $display("WEIGHT request %0d %0d %0d %0d",cycle,q,mr_addr[q],mr_tag[q]);
+    if(mrsp_valid[q]&&mrsp_ready[q])
+     $display("WEIGHT returned %0d %0d %0d",cycle,q,mrsp_tag[q]);
+    if(ps[q].node.M.n_fill_ack_valid&&(!fill_seen||previous_fill!=ps[q].node.M.n_fill_ack_record))
+     $display("WEIGHT filled %0d %0d %0d %0d %0d",cycle,q,ps[q].node.M.n_fill_ack_record,
+              ps[q].node.M.n_fill_ack_bank,ps[q].node.M.n_fill_ack_generation);
+    seen<=mr_valid[q];previous_tag<=mr_tag[q];
+    fill_seen<=ps[q].node.M.n_fill_ack_valid;previous_fill<=ps[q].node.M.n_fill_ack_record;
+   end
+  end
+  if(WITH_SHARED_DMA)begin: weight_backend
+   for(genvar q=0;q<4;q++)begin: backend_probe
+    always @(posedge clk) if($test$plusargs("TRACE_WEIGHT")&&!reset)begin
+     if(actual_shared_dma.d_req[q]&&actual_shared_dma.d_req_ready[q])
+      $display("WEIGHT backend_req %0d %0d %0d %0d",cycle,q,actual_shared_dma.d_addr[q*64+:64],actual_shared_dma.d_tag[q*64+:64]);
+     if(actual_shared_dma.d_rsp[q]&&actual_shared_dma.d_rsp_ready[q])
+      $display("WEIGHT backend_rsp %0d %0d %0d",cycle,q,actual_shared_dma.d_ret_tag[q*64+:64]);
+    end
+   end
+  end
+"""
+
 # From the last accepted CALL flit, the LC accepts the frame, reads PM and
 # metadata, then presents the first 64 B fetch. CRC scans 124 bytes after the
 # final data handshake. The two following edges consume CRC and assert service.
@@ -315,11 +350,11 @@ def instrument(source, destination):
         raise ValueError('expected the unique programmed FFN block and COPY launch')
     rtl = rtl.replace(COPY_LAUNCH, COPY_DELAY + COPY_LAUNCH)
     with destination.open('x', encoding='utf-8', newline='\n') as output:
-        output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + SCATTER_MONITOR
-                                 + MID_MONITOR + RESULT_MONITOR + M_MONITOR + ISSUE_MONITOR + AREAD_MONITOR + ANCHOR))
+        output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + SCATTER_MONITOR + MID_MONITOR
+                                 + RESULT_MONITOR + M_MONITOR + ISSUE_MONITOR + AREAD_MONITOR + WEIGHT_MONITOR + ANCHOR))
 
 
-def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False):
+def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False, weight=None):
     open_calls = {}
     scopes = []
     admission = {'ready': [], 'stripe': [], 'down': []}
@@ -336,6 +371,10 @@ def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False):
     if aread:
         result_prefixes += ('AREAD ',)
     for line in source:
+        if weight is not None and line.startswith(('WEIGHT install ', 'WEIGHT request ', 'WEIGHT returned ', 'WEIGHT filled ')):
+            _, kind, *fields = line.split()
+            weight.record(kind, *map(int, fields))
+            continue
         if aread and line.startswith('K_PROFILE '):
             profile = {key: int(value) for key, value in (field.split('=') for field in line.split()[1:])}
             result_trace['AREAD', 'profile'].append(tuple(profile[key] for key in
@@ -509,7 +548,7 @@ def m_control_replies(client, rows, records):
     return intents
 
 
-def check_issue(client, observed, records, controls):
+def check_issue(client, observed, records, controls, weight=None):
     loads, generations = {}, [0, 0]
     for tick, scope, k, slot, generation, error in observed['aload']:
         require(slot == (k // 128) % 2 and k % 128 == 0 and error == 0 and (scope, k) not in loads,
@@ -532,7 +571,9 @@ def check_issue(client, observed, records, controls):
                 (command.sequence > 0 if command.opcode == ALLOC_CMD else command.sequence == 0)
                 for command in side), f'P{client} unsupported M command or length')
     link = CommandLink({record.sequence: record.stores for record in records})
-    predicted = link.run([(row[0], row[2]) for row in joins], side, [reply for reply in controls if reply.source == FILL])
+    fills = [reply for reply in controls if reply.source == FILL] if weight is None else []
+    completions = weight.completed[client] if weight is not None else ()
+    predicted = link.run([(row[0], row[2]) for row in joins], side, fills, weight_completions=completions)
     require(predicted.pushes == observed['push'], f'P{client} EXEC queue admission differs')
     require([(tick, c.opcode, c.session, c.sequence, c.words) for tick, c in predicted.commands] == observed['sop'],
             f'P{client} M command SOP differs')
@@ -554,10 +595,17 @@ def check_issue(client, observed, records, controls):
         'alloc_ack_waits': len(predicted.alloc_ack_waits),
         'lookahead_waits': sum(push[0] > join[0] + 1 for push, join in zip(predicted.pushes, joins)),
     }
+    if weight is not None:
+        require(predicted.bank_acks == weight.installs[client], f'P{client} W DMA installs differ')
+        owners = {item.sequence: (item.bank, item.generation) for item in completions}
+        expected = [(reply.ready, reply.sequence, *owners[reply.sequence])
+                    for reply in predicted.controls if reply.source == FILL]
+        require(expected == weight.filled[client], f'P{client} W FILL ACK arbitration differs')
+        report.update({'weight_completions': len(completions), 'fill_ack_waits': len(predicted.fill_ack_waits)})
     return predicted, report
 
 
-def check_m_execution(scopes, trace, mode, *, issue=False, join_eops=None):
+def check_m_execution(scopes, trace, mode, *, issue=False, join_eops=None, weight=None):
     lanes = {kind: defaultdict(list) for kind in ('exec', 'operand', 'raw', 'control', 'frame', 'eop', 'pop')}
     for kind, lane in lanes.items():
         for tick, client, *fields in trace['MEXEC', kind]:
@@ -579,7 +627,7 @@ def check_m_execution(scopes, trace, mode, *, issue=False, join_eops=None):
         controls = m_control_replies(client, observed['control'], records)
         issue_trace = None
         if issue:
-            issue_trace, issue_report = check_issue(client, issue_lanes[client], records, controls)
+            issue_trace, issue_report = check_issue(client, issue_lanes[client], records, controls, weight)
             starts = [(tick, session, sequence, record.k, record.context)
                       for (tick, session, sequence), record in zip(issue_trace.executions, records, strict=True)]
             require(starts == observed['exec'], f'P{client} replayed M EXEC admission differs')
@@ -1125,15 +1173,18 @@ def check_admission(scopes, transfers, admission, upstream=None):
 
 
 def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False,
-          m=False, issue=False, aread=False, copy_delay_epoch=0, wa_join=False, lookahead=True):
+          m=False, issue=False, aread=False, copy_delay_epoch=0, wa_join=False, lookahead=True, wfill=False):
     aread = aread or copy_delay_epoch != 0
     wa_join = wa_join or aread or not lookahead
-    issue = issue or wa_join
+    issue = issue or wa_join or wfill
     m = m or issue
     readback = readback or m
     result_trace = defaultdict(list) if readback else None
+    weight = WeightTrace() if wfill else None
     scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(
-        source, result_trace, m=m, issue=issue, aread=aread)
+        source, result_trace, m=m, issue=issue, aread=aread, weight=weight)
+    if weight is not None:
+        weight.validate()
     transfers = []
     sequence = [0] * 3
     read_bytes = write_bytes = 0
@@ -1173,7 +1224,8 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
     m_stores = m_retired = None
     join_eops = defaultdict(dict) if wa_join else None
     if m:
-        m_stores, m_retired, m_report = check_m_execution(scopes, result_trace, mode, issue=issue, join_eops=join_eops)
+        m_stores, m_retired, m_report = check_m_execution(scopes, result_trace, mode, issue=issue,
+                                                          join_eops=join_eops, weight=weight)
     if readback:
         p_done, down_done, down_values, p_report = check_p_results(scopes, result_trace, mode, m_stores, m_retired)
     terminals = []
@@ -1249,16 +1301,18 @@ def main():
     verify.add_argument('--copy-delay-epoch', type=int, default=0, help='launch COPY one cycle later in this tile epoch')
     verify.add_argument('--wa-join', action='store_true', help='also verify P bindings from A proof and reply EOPs')
     verify.add_argument('--no-lookahead', action='store_true', help='verify the fixture with W lookahead disabled')
+    verify.add_argument('--wfill', action='store_true', help='drive W FILL from DMA beat receipts')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
     else:
-        with args.log.open(encoding='utf-8') as source:
+        open_log = gzip.open if args.log.suffix == '.gz' else open
+        with open_log(args.log, 'rt', encoding='utf-8') as source:
             print(json.dumps(check(source, args.mode, args.seed, admission=args.admission,
                                    phase_release=args.phase_release, scatter=args.scatter, mid=args.mid,
                                    readback=args.result, m=args.m, issue=args.issue, aread=args.aread,
                                    copy_delay_epoch=args.copy_delay_epoch, wa_join=args.wa_join,
-                                   lookahead=not args.no_lookahead), indent=2))
+                                   lookahead=not args.no_lookahead, wfill=args.wfill), indent=2))
 
 
 if __name__ == '__main__':
