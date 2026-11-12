@@ -335,11 +335,71 @@ def program_reuse():
     return d
 
 
+LOCAL_VARIANTS = (
+    ("a", "A · Activation with bias", "y = SiLU(x) + b",
+     (("G", "SiLU"), ("S", "Store g"), ("E", "ADD b"), ("S", "Store y")),
+     "S also supplies b to E",
+     ("G.SiLU → S.g", "E.ADD(g, b) → S.y")),
+    ("b", "B · Activation with gain and bias", "y = α × SiLU(x) + b",
+     (("G", "SiLU"), ("E", "MUL α"), ("S", "Store m"), ("E", "ADD b"), ("S", "Store y")),
+     "S supplies local gain α and bias b",
+     ("G.SiLU → bypass", "E.MUL(g, α) → S.m", "E.ADD(m, b) → S.y")),
+)
+
+
+def local_variant(d, x, variant):
+    prefix, title, equation, nodes, operand_note, services = variant
+    d.box(prefix + "-variant", x, 237, 656, 489, stroke=LINE, fill=PANEL)
+    d.text(prefix + "-variant-title", x + 21, 269, title, size=23, bold=True, width=615)
+    d.text(prefix + "-formula", x + 21, 306, equation, size=23, bold=True, color=BLUE, width=615)
+    d.text(prefix + "-data-title", x + 21, 350, "Local data path", size=17, bold=True, width=610)
+    box_width = 125 if len(nodes) == 4 else 101
+    stride = (614 - box_width) / (len(nodes) - 1)
+    for index, (name, detail) in enumerate(nodes):
+        left = x + 21 + stride * index
+        key = f"{prefix}-node-{index}"
+        d.box(key, left, 373, box_width, 58, name, detail,
+              stroke=LINE if name == "S" else BLUE, fill="white" if name == "S" else BLUE_BG)
+        if index:
+            bypass = prefix == "b" and index == 1
+            d.edge(f"{prefix}-data-{index}", [(left - stride + box_width, 402), (left, 402)],
+                   source=f"{prefix}-node-{index - 1}", target=key,
+                   color=OCHRE if bypass else BLUE, dashed=bypass)
+    d.text(prefix + "-operands", x + 21, 454, operand_note, size=16, color=GRAY, width=610)
+    d.text(prefix + "-program-title", x + 21, 500, "Local program · one call", size=18,
+           bold=True, width=610)
+    for index, service in enumerate(services):
+        y = 540 + 42 * index
+        d.text(f"{prefix}-instruction-{index}", x + 21, y, f"L_EXEC d{index} → L_WAIT 0x01",
+               size=17, mono=True, color=BLUE, width=300)
+        d.text(f"{prefix}-descriptor-{index}", x + 332, y, service, size=17,
+               color=INK, width=303)
+    d.text(prefix + "-local-end", x + 21, 676, "L_END · return terminal status", size=17,
+           color=BLUE, width=610)
+
+
+def scheduling_decoupling():
+    d = Diagram("4 - Global and local scheduling decoupling", "scheduling-decoupling", 1400, 802)
+    d.box("shared-mc", 36, 35, 1328, 92, "Same mother-controller instruction stream",
+          "…  G_CALL C0,t0  →  G_WAIT 0x01  →  …", fill=BLUE, ink="#FFFFFF", size=25)
+    d.box("c-task-contract", 36, 146, 1328, 61, "Same C0 task interface",
+          "Inputs x and b in S · Output y in S · Success after y write acknowledgement",
+          stroke=LINE, fill=PANEL, size=19)
+    for x, variant in zip((36, 708), LOCAL_VARIANTS):
+        local_variant(d, x, variant)
+    d.edge("bypass-key", [(36, 762), (80, 762)], color=OCHRE, dashed=True, direction="none")
+    d.text("bypass-key-label", 91, 762, "Product-wired G → E bypass", size=17,
+           color=OCHRE, width=435)
+    d.text("scope-note", 1053, 762, "Illustrative variants · G → E verified separately",
+           size=17, color=GRAY, align="center", width=622)
+    return d
+
+
 if __name__ == "__main__":
     plt.rcParams.update({"svg.fonttype": "none", "svg.hashsalt": "dac-control-figures"})
     output = Path(__file__).resolve().parent
     workbook = ET.Element("mxfile", host="app.diagrams.net", compressed="false")
-    for draw in (architecture, instruction_topologies, program_reuse):
+    for draw in (architecture, instruction_topologies, program_reuse, scheduling_decoupling):
         draw().save(output, workbook)
     if hasattr(ET, "indent"):
         ET.indent(workbook, space="  ")

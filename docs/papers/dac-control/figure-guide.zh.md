@@ -1,6 +1,6 @@
 # 控制章节图解
 
-[三页 diagrams.net 源图](control-figures.drawio)中，方框、文字和连线可单独编辑。三张 SVG 同样保留独立矢量对象和文字。
+[四页 diagrams.net 源图](control-figures.drawio)中，方框、文字和连线可单独编辑。四张 SVG 同样保留独立矢量对象和文字。
 
 ## 图 1　整体底座与 C Block 局控
 
@@ -77,3 +77,20 @@
 | 运行时调用 | 192 次 | 64 轮，每轮调用三个 P。 |
 
 **论文中的主张。** 母控只保存一次重复调度的循环体，局控内核按目标 Block 复用，逐任务变化保存在 DDR 描述符中。这组数字来自三 P FFN 夹具。实验采用 Qwen2.5-3B 的 FFN 尺寸和合成整数权重，K 分块搬运和外层 Gate/Up、Down 阶段由夹具组织。 [FFN 实验与范围](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/experiments/issue-250-three-p-ffn.md#L17-L25)
+
+## 图 4　保持母控指令流，调整 Block 内部算子
+
+![图 4 二级控制如何隔离局部算子变化](scheduling-decoupling.svg)
+
+**顶部是共用的跨 Block 调度。** 母控调用同一个 C0 任务入口，用 t0 追踪，并以 `G_WAIT 0x01` 等待终态后继续执行。两版保留相同的目标绑定、输入输出地址和格式。S 中的 `x`、`b` 是输入和偏置，输出 `y` 写到同一位置，成功终态在最终写确认后返回。B 的 `α` 是产品配置时装入 S 的局部参数，母控调用无需增加参数。 [母控调用与等待](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/mother_control_native/mc_native_controller.sv#L327-L352) · [局部写回和完成](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_cfj_v1/ucf_s_compute_client.sv#L46-L80)
+
+| | A　激活加偏置 | B　激活乘增益后加偏置 |
+| --- | --- | --- |
+| 计算 | `y = SiLU(x) + b` | `y = α × SiLU(x) + b` |
+| 中间结果 | G 将 `g` 写到 S。E 从 S 读取 `g` 和 `b`。 | G 通过橙色旁路把 `g` 送给 E 的第一操作数端口。E 从 S 取 `α`，将乘积 `m` 写回 S。随后同一颗 E 从 S 读 `m`、`b` 做加法。 |
+| 局控程序 | 两对 `L_EXEC / L_WAIT`，执行 SiLU、ADD，最后 `L_END`。 | 三对 `L_EXEC / L_WAIT`，执行 SiLU、MUL、ADD，最后 `L_END`。 |
+| 产品连接 | 使用经过适配器的固定 S 路径。 | 在预留的 G/E 端点之间接入后制旁路，最终写回仍走固定 S 路径。 |
+
+**局控和描述符分别改什么。** `d0`、`d1`、`d2` 是局控镜像的执行记录索引。A 的 `d0` 指定激活结果写到 S，`d1` 指定 ADD。B 的 `d0` 选旁路输出，`d1` 指定 MUL 并选旁路第一操作数，`d2` 指定 ADD。新增的一对指令改变局控指令流。每次局控等待复用局部 token 0，母控 t0 贯穿整个任务。图中重复的 E 是同一颗宏的两次调用，重复的 S 是同一颗 SRAM 的不同地址。 [局控执行记录示例](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/experiments/cfj_leaf_base/stage_groups.py#L113-L139) · [E 适配器](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_cfj_v1/cfj_e_port.sv#L16-L35)
+
+**证据范围。** 该示例以兼容的入口、依赖、张量格式、可见时点和服务约束为前提。定点实现须遵守舍入、饱和和有效 lane 约束。旁路跨过的是 `g` 的 SRAM 中转，现有适配器仍可能按描述符读取占位操作数。C 夹具已验证 G→E 直送与 SRAM 回放的同功能对照，本图的增益版本尚未端到端验证。 [定点算术](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/BLOCK_V2.md#L46-L60) · [旁路端点 RTL](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/project/rtl/block_cfj_v1/block_cfj_cf.sv#L100-L132) · [物理网表回放](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/211/README.md#L109-L114)
