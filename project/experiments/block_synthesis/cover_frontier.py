@@ -48,6 +48,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     # catalogue adds only derived fields to copies, never changes source IR.
     actions,parents,ancestors=catalogue(tasks,[dict(a) for a in covers])
     model=None
+    live_replay=False
     if 'event_model' in hardware:
         from event_execution import Model, Infeasible
         if rank_policy!='shared_tail' or hardware.get('window_calendar'):
@@ -55,6 +56,13 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         if width==1 and covers:
             raise ValueError('strict event greedy requires singleton actions')
         model=Model(hardware,wire_budget=wire_budget)
+        timing=hardware['event_model'].get('timing', 'calendar')
+        if timing not in ('calendar', 'replay'):
+            raise ValueError('unknown event timing model')
+        live_replay=timing=='replay'
+        if live_replay:
+            from event_replay import ReplayDeadlock
+            from event_replay_plan import Decision, retime
     ids={t['id']:i for i,t in enumerate(tasks)};children={n:set() for n in ids}
     for n,ps in parents.items():
         for p in ps:children[p].add(n)
@@ -103,7 +111,8 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     def netcost(s):return sum(hardware['nets'][n]['cost'] for n in s.nets if n not in fixed)
     def key(s):return (s.done,tuple(sorted(s.frontier.items())),tuple(sorted(s.resources.items())),
         s.nets,tuple(sorted(s.cache.items())),tuple(sorted(s.windows.items())),
-        s.execution.key() if s.execution is not None else None)
+        s.execution.key() if s.execution is not None else None,
+        tuple(decision.key() for decision in s.replay_decisions))
     def rank(s):
         bound=(completion.get(s) if completion else
             max([s.makespan]+[max((s.frontier[p] for p in parents[n]),default=0)+tail[n] for n in s.ready]))
@@ -129,20 +138,35 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         else:
             ev=evaluate(s,b,hardware,arrival,retention=policy,fixed=fixed,conflicts=conflicts,wire_budget=wire_budget)
             if not ev['legal']:return None
-        done=s.done|a['mask'];frontier={**s.frontier,**dict.fromkeys(a['covers'],ev['end'])}
-        frontier={n:at for n,at in frontier.items() if any(not done&(1<<ids[c]) for c in children[n])}
+        done=s.done|a['mask']
         enabled=set().union(*(children[n] for n in a['covers']))-set(a['covers'])
         ready=(s.ready-set(a['covers']))|{c for c in enabled if done&masks[c]==masks[c]}
-        if model and ready:
-            cutoff=min(max((frontier[p] for p in parents[n]),default=0) for n in ready)
-            execution=execution.after(cutoff)
         row={'id':a['id'],'covers':list(a['covers']),'binding':b['id'],'site':b['site'],
              'start':ev['start'],'end':ev['end']}
         if b.get('read_cache'):row['cache_hit']=ev['cache_hit']
         if ev['details']:row['evaluation']=ev['details']
         if calendar:row['resource_windows']=ev['resource_windows']
+        decisions=s.replay_decisions
+        trace=s.replay_trace
+        history=History(s.history,row)
+        frontier={**s.frontier,**dict.fromkeys(a['covers'],ev['end'])}
+        if live_replay:
+            decisions=(*decisions,Decision(row,frozenset(a['boundary'])))
+            try:
+                execution,rows,trace=retime(model,decisions,execution,trace)
+            except ReplayDeadlock:
+                return None
+            history=None
+            for scheduled in rows:
+                history=History(history,scheduled)
+                frontier.update(dict.fromkeys(scheduled['covers'],scheduled['end']))
+            ev['makespan']=max(scheduled['end'] for scheduled in rows)
+        frontier={n:at for n,at in frontier.items() if any(not done&(1<<ids[c]) for c in children[n])}
+        if model and ready and not live_replay:
+            cutoff=min(max((frontier[p] for p in parents[n]),default=0) for n in ready)
+            execution=execution.after(cutoff)
         return State(done,frontier,ev['resources'],ev['nets'],ev['makespan'],s.traffic+ev['traffic'],
-            History(s.history,row),ev['cache'],frozenset(ready),ev.get('windows',s.windows),execution)
+            history,ev['cache'],frozenset(ready),ev.get('windows',s.windows),execution,decisions,trace)
     seeds={}
     if backbone is not None:
         if backbone.get('kind') in ('convex-cover-frontier-v1','event-cover-frontier-v1'):
@@ -200,6 +224,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     traffic=({'external_read_bytes':best.execution.read_bytes,
               'external_write_bytes':best.execution.write_bytes} if model else {'external_words':best.traffic})
     return {'status':'planned','kind':'event-cover-frontier-v1' if model else 'convex-cover-frontier-v1',
+        **({'timing': 'replay'} if live_replay else {}),
         'tasks':rows,'makespan':best.makespan,**traffic,'nets':sorted(best.nets),'wire_cost':netcost(best),'final_read_cache':best.cache,
         'expanded':expanded,'merged':merged,'pruned':pruned,'width':width,'ready_limit':ready_limit,
         'covered_original_tasks':len(tasks),'multi_task_decisions':sum(len(r['covers'])>1 for r in rows),

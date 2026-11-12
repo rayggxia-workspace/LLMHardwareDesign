@@ -35,6 +35,21 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 'window capacity or identity differs')
         table[w].append((start, end, value))
 
+    def phased_claims(event, expected, holds, nets):
+        start, end = event['start'], event['end']
+        timeline = event.get('phases', [])
+        require([p['kind'] for p in timeline] == [p['kind'] for p in expected]
+                and timeline[0]['start'] == start and timeline[-1]['end'] == end,
+                'event phase coverage differs')
+        previous = start
+        for phase, item in zip(timeline, expected):
+            begin, stop = phase['start'], phase['end']
+            require(type(begin) is int and type(stop) is int and previous <= begin
+                    and stop-begin == item['ticks'], 'event phase order or duration differs')
+            claim(item, begin, stop)
+            previous = stop
+        claim({'claims': holds, 'nets': nets}, start, end)
+
     def route_claims(event, route, size):
         start, end = event['start'], event['end']
         duration = route['setup'] + (size+route['bytes_per_tick']-1)//route['bytes_per_tick']
@@ -43,20 +58,11 @@ def verify(tasks, hardware, plan, wire_budget=None):
             require(end-start == duration and 'phases' not in event, 'route service duration differs')
             claim(route, start, end)
             return
-        timeline = event.get('phases', [])
-        require([p['kind'] for p in timeline] == ['issue', 'data', 'ack']
-                and timeline[0]['start'] == start and timeline[-1]['end'] == end,
-                'route phase coverage differs')
-        previous = start
-        for phase in timeline:
-            kind = phase['kind']
-            item = {'ticks': duration, 'claims': route['claims']} if kind == 'data' else profile[kind]
-            begin, stop = phase['start'], phase['end']
-            require(type(begin) is int and type(stop) is int and previous <= begin
-                    and stop-begin == item['ticks'], 'route phase order or duration differs')
-            claim(item, begin, stop)
-            previous = stop
-        claim({'claims': profile['hold_claims'], 'nets': route.get('nets', ())}, start, end)
+        phased_claims(event, (
+            {**profile['issue'], 'kind': 'issue'},
+            {'kind': 'data', 'ticks': duration, 'claims': route['claims']},
+            {**profile['ack'], 'kind': 'ack'},
+        ), profile['hold_claims'], route.get('nets', ()))
 
     by_task = {t['id']: t for t in tasks}
     require(len(by_task) == len(tasks) == len(plan['tasks']), 'event coverage differs')
@@ -101,8 +107,8 @@ def verify(tasks, hardware, plan, wire_budget=None):
                         'native stage identity or order differs')
                 service = spec['services'][stage['service']]
                 inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
-                require(end-start == service['ticks'] and event['inputs'] == inputs
-                        and event['outputs'] == outputs, 'native stage service or values differ')
+                require(event['inputs'] == inputs and event['outputs'] == outputs,
+                        'native stage values differ')
                 if 'copy_sites' in service:
                     source, destinations = service['copy_sites']
                     require(len(inputs) == 1 and [windows[w]['site'] for w in inputs] == [source]
@@ -120,7 +126,13 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     access(reads, w, value, start, end)
                 for w, value in outputs.items():
                     access(writes, w, value, start, end)
-                claim(service, start, end)
+                if 'phases' in service:
+                    phased_claims(event, service['phases'], service.get('hold_claims', {}),
+                                  service.get('nets', ()))
+                else:
+                    require(end-start == service['ticks'] and 'phases' not in event,
+                            'native stage service duration differs')
+                    claim(service, start, end)
                 local_read += service.get('read_bytes', 0)
                 local_write += service.get('write_bytes', 0)
                 boundary = end
@@ -165,5 +177,10 @@ def verify(tasks, hardware, plan, wire_budget=None):
     require((makespan, total_read, total_write, sorted(nets), wire_cost) ==
             (plan['makespan'], plan['external_read_bytes'], plan['external_write_bytes'],
              plan['nets'], plan['wire_cost']), 'event plan summary differs')
+    timing = spec.get('timing', 'calendar')
+    require(timing == plan.get('timing', 'calendar'), 'event timing model differs')
+    if timing == 'replay':
+        from verify_event_replay import verify_grants
+        verify_grants(tasks, hardware, plan['tasks'])
     return {'passed': True, 'makespan': makespan, 'external_read_bytes': total_read,
             'external_write_bytes': total_write, 'resources': len(reservations)}

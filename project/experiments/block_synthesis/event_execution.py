@@ -127,11 +127,16 @@ class Model:
             if type(service['ticks']) is not int or service['ticks'] < 1:
                 raise ValueError('invalid native stage duration')
             self.validate_service(service)
+            if 'phases' in service:
+                self.validate_stage_phases(service)
+            elif 'hold_claims' in service:
+                raise ValueError('native stage holds require phases')
             for field in ('read_bytes', 'write_bytes'):
                 count = service.get(field, 0)
                 if type(count) is not int or count < 0:
                     raise ValueError('invalid native stage traffic')
-            if (service.get('read_bytes') or service.get('write_bytes')) and not service['claims']:
+            if ((service.get('read_bytes') or service.get('write_bytes'))
+                    and not (service['claims'] or any(p['claims'] for p in service.get('phases', ())))):
                 raise ValueError('external native stage must reserve a resource')
         copies = {}
         for w, v in self.spec.get('initial_copies', {}).items():
@@ -147,6 +152,8 @@ class Model:
         self.initial = Execution({}, copies, dict.fromkeys(external, 0))
 
     def validate_service(self, service):
+        if type(service.get('priority', 0)) is not int:
+            raise ValueError('invalid native arbitration priority')
         if any(type(n) is not int or n < 1 or n > self.capacity.get(r, 0)
                for r, n in service['claims'].items()):
             raise ValueError('invalid native resource claim')
@@ -162,12 +169,31 @@ class Model:
         used = set(route['claims'])
         for name in ('issue', 'ack'):
             item = phases[name]
-            if set(item) != {'ticks', 'claims'} or type(item['ticks']) is not int or item['ticks'] < 1:
+            if (set(item) - {'priority'} != {'ticks', 'claims'}
+                    or type(item['ticks']) is not int or item['ticks'] < 1):
                 raise ValueError('invalid phased route endpoint')
             self.validate_service(item)
             used.update(item['claims'])
         if used & holds.keys():
             raise ValueError('phased route cannot claim a hold resource again')
+
+    def validate_stage_phases(self, service):
+        phases = service['phases']
+        holds = service.get('hold_claims', {})
+        self.validate_service({'claims': holds})
+        if not isinstance(phases, (list, tuple)) or len(phases) < 2 or service['claims']:
+            raise ValueError('phased native stage must declare separate phase claims')
+        names = set()
+        for phase in phases:
+            if (set(phase) - {'priority'} != {'kind', 'ticks', 'claims'}
+                    or not isinstance(phase['kind'], str) or not phase['kind']
+                    or phase['kind'] in names or type(phase['ticks']) is not int or phase['ticks'] < 1
+                    or phase['claims'].keys() & holds.keys()):
+                raise ValueError('invalid native service phase')
+            self.validate_service(phase)
+            names.add(phase['kind'])
+        if sum(p['ticks'] for p in phases) != service['ticks']:
+            raise ValueError('native phase durations differ from optimistic service ticks')
 
     def validate_copy(self, window, value):
         if window not in self.windows or value not in self.sizes:
@@ -227,16 +253,18 @@ class Model:
             booked, start, end = self.book(state, route['claims'], ready, ticks)
             return booked, start, end, ()
         profile = route['phases']
-        holds = profile['hold_claims']
+        return self.book_phases(state, ready, (
+            ('issue', profile['issue']['ticks'], profile['issue']['claims']),
+            ('data', ticks, route['claims']),
+            ('ack', profile['ack']['ticks'], profile['ack']['claims']),
+        ), profile['hold_claims'])
+
+    def book_phases(self, state, ready, phases, holds):
         while True:
             booked = state
             trace = []
             at = ready
-            for kind, duration, claims in (
-                ('issue', profile['issue']['ticks'], profile['issue']['claims']),
-                ('data', ticks, route['claims']),
-                ('ack', profile['ack']['ticks'], profile['ack']['claims']),
-            ):
+            for kind, duration, claims in phases:
                 booked, start, at = self.book(booked, claims, at, duration)
                 trace.append({'kind': kind, 'start': start, 'end': at})
             begin = trace[0]['start']
@@ -358,7 +386,13 @@ class Model:
                 state, at = self.vacant(state, window, start_at, protected | remaining.keys(), events)
                 start_at = max(start_at, at)
             state = self.add_nets(state, service.get('nets', ()))
-            state, start, end = self.book(state, service['claims'], start_at, service['ticks'])
+            phases = ()
+            if 'phases' in service:
+                spec = tuple((p['kind'], p['ticks'], p['claims']) for p in service['phases'])
+                state, start, end, phases = self.book_phases(
+                    state, start_at, spec, service.get('hold_claims', {}))
+            else:
+                state, start, end = self.book(state, service['claims'], start_at, service['ticks'])
             copies = state.copies.copy()
             for w in inputs:
                 copies[w] = replace(copies[w], held_until=max(copies[w].held_until, end))
@@ -366,7 +400,10 @@ class Model:
                 copies[w] = Copy(value, end, end)
             state = replace(state, copies=copies, read_bytes=state.read_bytes + service.get('read_bytes', 0),
                             write_bytes=state.write_bytes + service.get('write_bytes', 0))
-            events.append({'kind': 'stage', 'service': stage['service'], 'start': start, 'end': end,
-                           'inputs': inputs, 'outputs': outputs})
+            event = {'kind': 'stage', 'service': stage['service'], 'start': start, 'end': end,
+                     'inputs': inputs, 'outputs': outputs}
+            if phases:
+                event['phases'] = phases
+            events.append(event)
             ready = end
         return state, events
