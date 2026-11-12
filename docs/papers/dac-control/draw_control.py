@@ -1,0 +1,436 @@
+from html import escape
+from pathlib import Path
+import xml.etree.ElementTree as ET
+
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
+from matplotlib.path import Path as PlotPath
+
+
+INK = "#162A38"
+BLUE = "#154D73"
+BLUE_BG = "#EAF2F8"
+OCHRE = "#89501C"
+OCHRE_BG = "#FAF0E5"
+GRAY = "#465D6C"
+LINE = "#C2D0D8"
+PANEL = "#F6F9FA"
+
+
+class Diagram:
+    def __init__(self, page, name, width, height):
+        self.page = page
+        self.name = name
+        self.fig = plt.figure(figsize=(7.25, 7.25 * height / width), facecolor="white")
+        self.ax = self.fig.add_axes([0, 0, 1, 1], xlim=(0, width), ylim=(height, 0))
+        self.ax.set_axis_off()
+        self.scale = 522 / width
+        self.model = ET.Element("mxGraphModel", page="1", pageWidth=str(width), pageHeight=str(height),
+                                grid="0", arrows="1", connect="1", background="#FFFFFF")
+        self.cells = ET.SubElement(self.model, "root")
+        ET.SubElement(self.cells, "mxCell", id="0")
+        ET.SubElement(self.cells, "mxCell", id="1", parent="0")
+        self.boxes = {}
+
+    def vertex(self, key, value, style, bounds):
+        node = ET.SubElement(self.cells, "mxCell", id=key, value=value, style=style,
+                             vertex="1", parent="1")
+        geometry = dict(zip(("x", "y", "width", "height"), map(str, bounds)))
+        ET.SubElement(node, "mxGeometry", {**geometry, "as": "geometry"})
+
+    def print_text(self, key, x, y, content, *, size, color, align, bold, mono=False):
+        artist = self.ax.text(x, y, content, va="center", ha=align, fontsize=size * self.scale,
+                              color=color, weight="bold" if bold else "normal",
+                              family="DejaVu Sans Mono" if mono else "DejaVu Sans",
+                              zorder=4)
+        artist.set_gid(key)
+
+    def text(self, key, x, y, content, *, size=17, color=INK, align="left", bold=False,
+             mono=False, width=400):
+        self.print_text(key, x, y, content, size=size, color=color, align=align, bold=bold, mono=mono)
+        left = x - width / 2 if align == "center" else x
+        family = "DejaVu Sans Mono" if mono else "DejaVu Sans"
+        style = (f"text;html=1;align={align};verticalAlign=middle;spacing=0;overflow=visible;"
+                 f"fontFamily={family};fontSize={size};fontColor={color};fontStyle={int(bold)};")
+        self.vertex(key, escape(content), style, (left, y - size, width, 2 * size))
+
+    def box(self, key, x, y, width, height, title="", detail="", *, stroke=BLUE, fill=BLUE_BG,
+            size=20, bold=True, ink=INK):
+        detail_ink = GRAY if stroke == LINE else stroke
+        if ink != INK:
+            detail_ink = "#DEEAF2"
+        rect = FancyBboxPatch((x, y), width, height, boxstyle="round,pad=0,rounding_size=8",
+                              edgecolor=stroke, facecolor=fill, linewidth=0.82, zorder=1)
+        self.ax.add_patch(rect)
+        rect.set_gid(key)
+        self.boxes[key] = (x, y, width, height)
+        if title:
+            self.print_text(key + "-title", x + width / 2, y + height * (0.35 if detail else 0.5),
+                            title, size=size, color=ink, align="center", bold=bold)
+        if detail:
+            self.print_text(key + "-detail", x + width / 2, y + height * 0.71, detail,
+                            size=size * 0.79, color=detail_ink, align="center", bold=False)
+        value = f"<b>{escape(title)}</b>" if bold else escape(title)
+        if detail:
+            value += f'<br><span style="font-size:{size * 0.79:g}px;color:{detail_ink}">{escape(detail)}</span>'
+        style = (f"rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;"
+                 f"strokeColor={stroke};fillColor={fill};fontColor={ink};fontFamily=DejaVu Sans;"
+                 f"fontSize={size};spacing=0;")
+        self.vertex(key, value, style, (x, y, width, height))
+
+    def edge(self, key, points, *, source=None, target=None, color=BLUE, dashed=False,
+             direction="forward"):
+        path = PlotPath(points, [PlotPath.MOVETO] + [PlotPath.LINETO] * (len(points) - 1))
+        style = {"forward": "-|>", "both": "<|-|>", "none": "-"}[direction]
+        artist = FancyArrowPatch(path=path, arrowstyle=style, mutation_scale=7,
+                                 color=color, linewidth=0.96, zorder=3,
+                                 linestyle=(0, (3, 2)) if dashed else "-")
+        self.ax.add_patch(artist)
+        artist.set_gid(key)
+        drawing_style = (f"edgeStyle=none;rounded=0;html=1;strokeColor={color};strokeWidth=2;"
+                         f"dashed={int(dashed)};startArrow={'block' if direction == 'both' else 'none'};"
+                         f"endArrow={'none' if direction == 'none' else 'block'};")
+        attributes = {"id": key, "edge": "1", "parent": "1"}
+        for prefix, side, vertex, point in (("exit", "source", source, points[0]),
+                                            ("entry", "target", target, points[-1])):
+            if vertex is not None:
+                x, y, width, height = self.boxes[vertex]
+                px, py = point
+                drawing_style += (f"{prefix}X={(px - x) / width:g};"
+                                  f"{prefix}Y={(py - y) / height:g};{prefix}Perimeter=0;")
+                attributes[side] = vertex
+        cell = ET.SubElement(self.cells, "mxCell", {**attributes, "style": drawing_style})
+        geometry = ET.SubElement(cell, "mxGeometry", {"relative": "1", "as": "geometry"})
+        if source is None:
+            ET.SubElement(geometry, "mxPoint", {"x": str(points[0][0]), "y": str(points[0][1]),
+                                               "as": "sourcePoint"})
+        if target is None:
+            ET.SubElement(geometry, "mxPoint", {"x": str(points[-1][0]), "y": str(points[-1][1]),
+                                               "as": "targetPoint"})
+        if len(points) > 2:
+            waypoints = ET.SubElement(geometry, "Array", {"as": "points"})
+            for x, y in points[1:-1]:
+                ET.SubElement(waypoints, "mxPoint", x=str(x), y=str(y))
+
+    def save(self, output, workbook):
+        self.fig.savefig(output / (self.name + ".svg"), metadata={"Date": None})
+        self.fig.savefig(output / (self.name + ".png"), dpi=220)
+        plt.close(self.fig)
+        page = ET.SubElement(workbook, "diagram", id=self.name, name=self.page)
+        page.append(self.model)
+
+
+def architecture():
+    d = Diagram("1 - Base and C control", "control-architecture", 1200, 881)
+    d.text("base-heading", 38, 36, "(a)  NoPool base candidate", size=27, bold=True, width=600)
+    d.box("mother", 397, 67, 385, 78, "Mother controller", "Program memory and task tokens",
+          fill=BLUE, ink="#FFFFFF", size=26)
+    d.box("shared-dma", 832, 77, 175, 59, "Shared DMA", stroke=LINE, fill=PANEL)
+    d.box("external-ddr", 1040, 77, 120, 59, "DDR", "Off-chip", stroke=LINE, fill=PANEL)
+    d.edge("memory-link", [(1007, 106), (1040, 106)], source="shared-dma", target="external-ddr",
+           direction="both")
+    d.text("calls-label", 93, 158, "Calls and terminal replies", color=BLUE)
+    d.edge("mc-control-trunk", [(590, 145), (590, 178)], source="mother", direction="none")
+    d.edge("control-trunk", [(96, 178), (1096, 178)], direction="none")
+    d.box("product-data-paths", 40, 291, 1120, 45, "Product-bound data paths",
+          stroke=OCHRE, fill=OCHRE_BG)
+    for index, name in enumerate(("P0", "P1", "P2", "U0", "U1", "C0", "F0", "J0", "J1")):
+        x = 42 + 125 * index
+        center = x + 54
+        selected = name == "C0"
+        d.box(name, x, 205, 108, 49, name, stroke=BLUE if selected else LINE,
+              fill=BLUE_BG if selected else PANEL)
+        d.edge("control-" + name, [(center, 178), (center, 205)], target=name, direction="both")
+        d.edge("data-" + name, [(center, 254), (center, 291)], source=name,
+               target="product-data-paths", color=OCHRE, dashed=True, direction="none")
+    d.edge("dma-data-path", [(920, 136), (920, 153), (1179, 153), (1179, 313), (1160, 313)],
+           source="shared-dma", target="product-data-paths", color=OCHRE, dashed=True, direction="none")
+
+    d.text("c-detail-heading", 38, 381, "(b)  Local control and product-specific bypasses in C",
+           size=27, bold=True, width=1020)
+    d.box("c-detail-frame", 40, 410, 1120, 414, stroke=LINE, fill=PANEL)
+    d.box("mc-port", 66, 452, 182, 57, "MC interface", stroke=BLUE, fill=BLUE_BG)
+    d.box("c-lc", 373, 435, 417, 91, "C local controller", "Dispatch services · track completion",
+          fill=BLUE, ink="#FFFFFF", size=28)
+    d.box("c-program", 910, 452, 212, 57, "Program memory", stroke=LINE, fill="white", size=18)
+    d.edge("c-call-return", [(248, 481), (373, 481)], source="mc-port", target="c-lc", direction="both")
+    d.edge("c-pm-fetch", [(790, 481), (910, 481)], source="c-lc", target="c-program", direction="both")
+    d.text("c-call-label", 310, 463, "Call / reply", color=BLUE, size=14, align="center", width=100)
+    d.text("c-fetch-label", 850, 463, "Fetch", color=BLUE, size=14, align="center", width=95)
+    d.box("c-service", 347, 555, 468, 60, "Local services and adapters",
+          "Fixed SRAM access and macro interfaces", stroke=BLUE, fill=BLUE_BG)
+    d.edge("c-lc-service", [(581, 526), (581, 555)], source="c-lc", target="c-service", direction="both")
+
+    for key, title, detail, x, port in (
+        ("s", "S", "Private SRAM", 66, 403),
+        ("r", "R", "State service", 342, 526),
+        ("g", "G", "Activation", 618, 648),
+        ("e", "E", "Vector arithmetic", 918, 760),
+    ):
+        d.box("macro-" + key, x, 660, 205, 57, title, detail, stroke=LINE, fill="white")
+        d.edge("c-service-" + key, [(port, 615), (x + 102.5, 660)],
+               source="c-service", target="macro-" + key, direction="both")
+    d.box("c-product-bypasses", 66, 769, 1057, 42, "Product-specific bypass paths",
+          "G → E verified in C fixture", stroke=OCHRE, fill=OCHRE_BG, size=17)
+    for key in ("s", "r"):
+        macro = "macro-" + key
+        x, _, width, _ = d.boxes[macro]
+        center = x + width / 2
+        d.edge("c-candidate-" + key, [(center, 717), (center, 739)], source=macro,
+               color=OCHRE, dashed=True, direction="none")
+        d.text("c-candidate-" + key + "-label", center, 751, "Candidate endpoint",
+               size=14, color=OCHRE, align="center", width=180)
+    d.edge("c-bypass-g-out", [(720.5, 717), (720.5, 769)], source="macro-g",
+           target="c-product-bypasses", color=OCHRE, dashed=True)
+    d.edge("c-bypass-e-in", [(1020.5, 769), (1020.5, 717)], source="c-product-bypasses",
+           target="macro-e", color=OCHRE, dashed=True)
+    for key, x, color, dashed, caption in (
+        ("exchange", 60, BLUE, False, "Control and data exchange"),
+        ("physical", 623, OCHRE, True, "Product-specific bypass wiring"),
+    ):
+        d.edge("key-" + key, [(x, 851), (x + 42, 851)], color=color, dashed=dashed, direction="none")
+        d.text("key-" + key + "-label", x + 54, 851, caption, size=16, color=color, width=470)
+    return d
+
+
+ISA_CLASSES = (
+    ("Dispatch", "Start a task on a Block or invoke a service within a Block"),
+    ("Synchronization", "Wait for required completions or consume a readiness event"),
+    ("Argument setup", "Initialize parameters and advance descriptor addresses"),
+    ("Program flow", "Select branches, repeat bounded loops, and finish execution"),
+)
+
+
+def isa_table(d):
+    d.text("isa-heading", 36, 36, "(a)  Four instruction classes", size=28, bold=True, width=760)
+    for index, (category, purpose) in enumerate(ISA_CLASSES):
+        y = 67 + index * 43
+        d.box(f"class-{index}", 36, y, 1328, 39, stroke=LINE, fill=PANEL)
+        d.text(f"class-{index}-name", 52, y + 19.5, category, size=20, bold=True, width=220)
+        d.text(f"class-{index}-purpose", 275, y + 19.5, purpose, size=20, width=1040)
+
+
+PROJECTION_PHASE = "G_CALL Aq,t0 → G_CALL Ak,t1 → G_WAIT 0x03"
+LLAMA_PROGRAM = (
+    PROJECTION_PHASE,
+    "G_CALL Cq,t2 → G_CALL Ck,t3 → G_WAIT 0x0C",
+    "G_END",
+)
+QWEN_PROGRAM = (
+    PROJECTION_PHASE,
+    "G_CALL Bq,t2 → G_CALL Bk,t3 → G_WAIT 0x0C",
+    "G_CALL Cq,t4 → G_CALL Ck,t5 → G_WAIT 0x30",
+    "G_END",
+)
+
+
+def model_program(d, prefix, x, lines):
+    d.box(prefix + "program", x, 505, 655, 148, stroke=LINE, fill=PANEL)
+    d.text(prefix + "program-title", x + 20, 528, "MC issue order", size=18, bold=True, width=400)
+    for index, text in enumerate(lines):
+        d.text(prefix + f"step-{index}", x + 20, 555 + 26 * index, text,
+               size=18, mono=True, width=610)
+
+
+def qk_graph(d, prefix, x, normalize):
+    d.box(prefix + "x", x, 394, 50, 52, "x", stroke=LINE, fill=PANEL)
+    for branch, y, port_y, p, u in (
+        ("q", 351, 407, "P0", "U0"),
+        ("k", 427, 433, "P1", "U1"),
+    ):
+        a, b, c = (prefix + stage + branch for stage in "ABC")
+        d.box(a, x + 93, y, 147, 60, f"A{branch} · {p}", f"{branch.upper()} projection")
+        d.box(c, x + 492, y, 163, 60, f"C{branch} · {u}.E", f"{branch.upper()} RoPE")
+        center = y + 30
+        d.edge(prefix + "x-to-A" + branch, [(x + 50, port_y), (x + 93, center)],
+               source=prefix + "x", target=a)
+        if normalize:
+            d.box(b, x + 287, y, 158, 60, f"B{branch} · {u}.N", f"{branch.upper()} RMSNorm",
+                  stroke=OCHRE, fill=OCHRE_BG)
+            d.edge(prefix + f"A{branch}-to-B{branch}", [(x + 240, center), (x + 287, center)],
+                   source=a, target=b)
+            d.edge(prefix + f"B{branch}-to-C{branch}", [(x + 445, center), (x + 492, center)],
+                   source=b, target=c)
+        else:
+            d.edge(prefix + f"A{branch}-to-C{branch}", [(x + 240, center), (x + 492, center)],
+                   source=a, target=c)
+
+
+def instruction_topologies():
+    d = Diagram("2 - ISA and attention QK preparation", "instruction-topologies", 1400, 710)
+    isa_table(d)
+    d.text("mapping-heading", 36, 277, "(b)  Preparing Q and K for attention", size=28, bold=True, width=1260)
+    d.text("l-heading", 37, 321, "Llama 3.2-3B · Projection → RoPE",
+           size=22, bold=True, width=640)
+    d.text("q-heading", 709, 321, "Qwen3-4B · Projection → RMSNorm → RoPE",
+           size=22, bold=True, width=655)
+    qk_graph(d, "l-", 37, normalize=False)
+    qk_graph(d, "q-", 709, normalize=True)
+    model_program(d, "l-", 37, LLAMA_PROGRAM)
+    model_program(d, "q-", 709, QWEN_PROGRAM)
+    d.text("route-note", 700, 683, "Tensor dependencies and illustrative Block assignments",
+           size=18, align="center", width=1280, color=BLUE)
+    return d
+
+
+def program_reuse():
+    d = Diagram("3 - FFN program and descriptor reuse", "ffn-program-reuse", 1400, 738)
+    d.text("reuse-heading", 36, 36, "(a)  One loop, three local controllers",
+           size=28, bold=True, width=1100)
+    d.box("mc-program", 36, 72, 590, 263, stroke=BLUE, fill=PANEL)
+    d.text("mc-image-title", 56, 102, "Mother program · 272 B", size=24, bold=True, width=540)
+    d.text("mc-word-count", 56, 129, "17 static instructions · 8 B per word", size=18, width=540)
+    d.text("mc-init", 56, 158, "Initialize pointer p = B and round count = 64",
+           size=18, width=540)
+    for index in range(3):
+        d.text(f"mc-call-{index}", 56, 190 + 28 * index,
+               f"G_CALL P{index},t{index}   →   G_ADDI64 p,+128",
+               size=18, mono=True, color=BLUE, width=540)
+    d.text("mc-wait-loop", 56, 279, "G_WAIT 0x07    →   G_LOOP", size=18, mono=True, color=BLUE, width=540)
+    d.text("mc-end", 56, 310, "G_END after the final round", size=18, width=540)
+
+    d.text("local-image-title", 910, 78, "Same 352 B kernel image in each P",
+           size=21, bold=True, width=460)
+    d.edge("mother-to-local", [(626, 204), (854, 204)], source="mc-program", direction="both")
+    d.edge("local-trunk", [(854, 130), (854, 278)], direction="none")
+    d.text("call-ref-label", 738, 181, "Call + descriptor ref.", size=15, color=BLUE,
+           align="center", width=218)
+    d.text("terminal-label", 738, 226, "Terminal reply", size=15, color=BLUE, align="center", width=218)
+    for index in range(3):
+        y = 102 + 74 * index
+        key = f"local-P{index}"
+        d.box(key, 910, y, 454, 56, f"P{index} local controller", "L_EXEC → L_WAIT → L_END")
+        d.edge(f"trunk-to-P{index}", [(854, y + 28), (910, y + 28)], target=key, direction="both")
+
+    d.text("descriptor-heading", 36, 386, "(b)  Descriptor stream and token barriers",
+           size=28, bold=True, width=1100)
+    d.text("descriptor-arena", 36, 422, "DDR descriptor arena · 192 × 128 B = 24,576 B",
+           size=20, color=OCHRE, width=850)
+    d.text("descriptor-base", 1191, 422, "B = base byte address", size=18,
+           color=GRAY, align="center", width=345)
+    columns = (("Round", 36, 135), ("P0 / t0", 188, 258), ("P1 / t1", 465, 258),
+               ("P2 / t2", 742, 258), ("Round barrier", 1019, 345))
+    for index, (title, x, width) in enumerate(columns):
+        d.text(f"column-{index}", x + width / 2, 458, title,
+               size=19, bold=True, align="center", width=width)
+
+    for round_index, y in ((0, 480), (1, 534), (63, 614)):
+        d.box(f"round-{round_index}", 36, y, 135, 43, str(round_index), stroke=LINE, fill=PANEL)
+        for index, (_, x, width) in enumerate(columns[1:4]):
+            record = 3 * round_index + index
+            address = f"B + {128 * record:,}" if record else "B"
+            d.box(f"record-{record}", x, y, width, 43, f"D{record}  ·  {address}",
+                  stroke=OCHRE, fill=OCHRE_BG, size=18)
+        d.box(f"barrier-{round_index}", 1019, y, 345, 43, "G_WAIT 0x07", size=18)
+    for index, (_, x, width) in enumerate(columns):
+        d.text(f"omitted-{index}", x + width / 2, 598, "⋯", size=21,
+               color=GRAY, align="center", width=width)
+    d.text("descriptor-index", 36, 691, "Round r, target Pi  →  D[3r + i] at B + 128(3r + i)",
+           size=19, color=OCHRE, width=825)
+    d.text("call-count", 1191, 691, "64 rounds × 3 calls = 192 calls",
+           size=20, bold=True, align="center", width=345)
+    return d
+
+
+LOCAL_VARIANTS = (
+    ("a", "A · Activation with bias", "y = SiLU(x) + b",
+     (("G", "SiLU"), ("S", "Store g"), ("E", "ADD b"), ("S", "Store y")),
+     "S also supplies b to E",
+     ("G.SiLU → S.g", "E.ADD(g, b) → S.y")),
+    ("b", "B · Activation with gain and bias", "y = α × SiLU(x) + b",
+     (("G", "SiLU"), ("E", "MUL α"), ("S", "Store m"), ("E", "ADD b"), ("S", "Store y")),
+     "S supplies local gain α and bias b",
+     ("G.SiLU → bypass", "E.MUL(g, α) → S.m", "E.ADD(m, b) → S.y")),
+)
+
+
+def local_variant(d, x, variant):
+    prefix, title, equation, nodes, operand_note, services = variant
+    d.box(prefix + "-variant", x, 352, 648, 474, stroke=LINE, fill=PANEL)
+    d.text(prefix + "-variant-title", x + 21, 386, title, size=23, bold=True, width=606)
+    d.text(prefix + "-formula", x + 21, 423, equation, size=23, bold=True, color=BLUE, width=606)
+    d.text(prefix + "-data-title", x + 21, 465, "C0 local data path", size=17, bold=True, width=606)
+    box_width = 125 if len(nodes) == 4 else 101
+    stride = (606 - box_width) / (len(nodes) - 1)
+    for index, (name, detail) in enumerate(nodes):
+        left = x + 21 + stride * index
+        key = f"{prefix}-node-{index}"
+        d.box(key, left, 486, box_width, 58, name, detail,
+              stroke=LINE if name == "S" else BLUE, fill="white" if name == "S" else BLUE_BG)
+        if index:
+            bypass = prefix == "b" and index == 1
+            d.edge(f"{prefix}-data-{index}", [(left - stride + box_width, 515), (left, 515)],
+                   source=f"{prefix}-node-{index - 1}", target=key,
+                   color=OCHRE if bypass else BLUE, dashed=bypass)
+    d.text(prefix + "-operands", x + 21, 568, operand_note, size=16, color=GRAY, width=606)
+    d.text(prefix + "-program-title", x + 21, 608, "C0 local program after exchange", size=18,
+           bold=True, width=606)
+    for index, service in enumerate(services):
+        y = 646 + 38 * index
+        d.text(f"{prefix}-instruction-{index}", x + 21, y, f"L_EXEC d{index + 3} → L_WAIT 0x01",
+               size=17, mono=True, color=BLUE, width=300)
+        d.text(f"{prefix}-descriptor-{index}", x + 332, y, service, size=17,
+               color=INK, width=295)
+    d.text(prefix + "-local-end", x + 21, 784, "L_END · return terminal status", size=17,
+           color=BLUE, width=606)
+
+
+def global_schedule(d, x, prefix):
+    d.box(prefix + "-global", x, 30, 648, 299, stroke=BLUE, fill=PANEL)
+    d.text(prefix + "-global-title", x + 21, 56, "Inter-Block schedule", size=20, bold=True, width=606)
+    for index, (op, operands) in enumerate((
+        ("G_CALL", "C0, t2"), ("G_CALL", "U0, t3"), ("G_WAIT", "0x0C"), ("G_END", ""),
+    )):
+        left = x + 21 + 156 * index
+        key = f"{prefix}-global-step-{index}"
+        d.box(key, left, 77, 138, 54, op, operands, size=17)
+        if index:
+            d.edge(f"{prefix}-global-flow-{index}", [(left - 18, 104), (left, 104)],
+                   source=f"{prefix}-global-step-{index - 1}", target=key)
+
+    mc, c, u = (prefix + "-mother", prefix + "-C0", prefix + "-U0")
+    d.box(mc, x + 195, 153, 258, 55, "Mother controller", fill=BLUE, ink="#FFFFFF", size=20)
+    d.box(c, x + 59, 254, 160, 57, "C0", "Compute y")
+    d.box(u, x + 429, 254, 160, 57, "U0", "Prepare b")
+    for center, key in ((139, c), (509, u)):
+        d.edge(key + "-call", [(x + 324, 208), (x + 324, 229), (x + center, 229), (x + center, 254)],
+               source=mc, target=key, direction="both")
+    for label, value, start, end, y in (
+        ("x", "Input x", c, u, 274), ("b", "Prepared b", u, c, 295),
+    ):
+        points = [(x + 219, y), (x + 429, y)]
+        d.edge(f"{prefix}-exchange-{label}", points if label == "x" else points[::-1],
+               source=start, target=end)
+        d.text(f"{prefix}-exchange-{label}-label", x + 324, y + (-12 if label == "x" else 12),
+               value, size=14, color=BLUE, align="center", width=176)
+    d.edge(prefix + "-expand-C0", [(x + 139, 311), (x + 139, 352)], source=c,
+           target=prefix + "-variant", color=GRAY, direction="none")
+
+
+def scheduling_decoupling():
+    d = Diagram("4 - Global and local scheduling decoupling", "scheduling-decoupling", 1400, 893)
+    for x, variant in zip((36, 716), LOCAL_VARIANTS):
+        local_variant(d, x, variant)
+        global_schedule(d, x, variant[0])
+    d.text("same-program", 700, 104, "=", size=24, bold=True, color=BLUE, align="center", width=30)
+    d.text("same-block-graph", 700, 279, "=", size=24, bold=True, color=BLUE, align="center", width=30)
+    d.edge("bypass-key", [(36, 860), (80, 860)], color=OCHRE, dashed=True, direction="none")
+    d.text("bypass-key-label", 91, 860, "Product-wired G → E bypass", size=17,
+           color=OCHRE, width=435)
+    d.text("scope-note", 1053, 860, "Illustrative variants · G → E verified separately",
+           size=17, color=GRAY, align="center", width=622)
+    return d
+
+
+if __name__ == "__main__":
+    plt.rcParams.update({"svg.fonttype": "none", "svg.hashsalt": "dac-control-figures"})
+    output = Path(__file__).resolve().parent
+    workbook = ET.Element("mxfile", host="app.diagrams.net", compressed="false")
+    for draw in (architecture, instruction_topologies, program_reuse, scheduling_decoupling):
+        draw().save(output, workbook)
+    if hasattr(ET, "indent"):
+        ET.indent(workbook, space="  ")
+    ET.ElementTree(workbook).write(output / "control-figures.drawio", encoding="utf-8", xml_declaration=True)
