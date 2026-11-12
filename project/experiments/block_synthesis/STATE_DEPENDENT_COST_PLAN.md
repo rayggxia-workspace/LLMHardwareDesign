@@ -281,13 +281,15 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check CANDIDATE_LOG --mode 1 --seed 25001 --copy-delay-epoch 21
 ```
 
-完整 RTL 固定于 `9abd46f5cbb4534bcfc614571ccd6d402ad11882`，Verilator 5.006。原始记录和复现脚本保存在本机 Codex 实验目录。`round22-copy-logs.sha256` 为 `9e0088c065ae67f6d0f0e0aeb9ed55490204fb25028b51afc2cd078aaa3efd14`，`round22-copy-verified.json` 为 `f20161450733a7737562d253c391cfa20626214bf364dd8ac15de6172c249071`。Windows 358 项测试通过，102604 固定轨迹基线仍为 948,626 拍。K header 释放、W/A 绑定、侧带命令首次就绪和 FILL 首次就绪继续由各自波形提供。下一步用预测的 A 证明和 W 填充重算绑定，并将可改变的 K 供给与后续执行纳入同一次候选重放。
+本地仿真使用 Verilator 5.006。对构建用的 52 个直接源文件和两个头文件逐一对账，其中 51 个文件与 #251 的 `9abd46f5cbb4534bcfc614571ccd6d402ad11882` 一致。其余三个文件来自 #250 修订。M leaf 来自 `b78e24a93838c086d665c152fff392d2d6ddcb8b`，M native 来自 `21fac77b3bf80210cf3e484d26e9834bf0daf413`，测试台来自 `b7d420063d19a40d384ce16250a38e59b8d79c6b`。这两份 M 源码提供双执行所有者。测试台采用串行 K 准备。第 22、23 轮的逐拍结论适用于这套组合和记录的受控变体。102604 是独立的 #251 归档轨迹，回放仍为 948,626 拍。
+
+原始记录和复现脚本保存在本机 Codex 实验目录。`round22-copy-source.json` 为 `83cdb535fb50de6ce312807c23adb209b9e57baf4e0ae5700f67abfa35b2a19d`，`round22-copy-logs.sha256` 为 `9e0088c065ae67f6d0f0e0aeb9ed55490204fb25028b51afc2cd078aaa3efd14`，`round22-copy-verified.json` 为 `8ed12589d1a596d749046dc783308f6195dd4542af9677d6a6e5886462d7a0be`。Windows 358 项测试通过。K header 释放、W/A 绑定、侧带命令首次就绪和 FILL 首次就绪继续由各自波形提供。下一步用预测的 A 证明和 W 填充重算绑定，并将可改变的 K 供给与后续执行纳入同一次候选重放。
 
 ### A 与 W 绑定的放行条件
 
 第 23 轮用重算的 A 证明、ALLOC／FILL／INPUT 回包 EOP 和上一条 P 记录的退休拍重新推导 W/A 绑定。直接配对的首条记录还要等第二条记录的分配回包。前瞻队列中的配对要等两条已填充记录恢复到执行端及上一对退休。第二条记录在第一条 INPUT EOP 交接。若它的 FILL 同拍到达，下拍即可绑定。若 FILL 晚一拍，需经过填充等待状态，绑定再晚两拍。
 
-四组固定和三组 COPY 候选每组重算 66,048 次绑定，均与 #251 RTL 对齐。另两组关闭 W 前瞻的完整波形也各重算 66,048 次绑定，使用采样的 A 证明。六个篡改负例分别覆盖 A 证明、首条 W 填充、第二条 W 分配、前瞻队列第二条填充、上一条 INPUT 和上一对退休。360 项测试通过。`round23-wa-verified.json` 的 SHA-256 为 `a85d93ccf59f39faaa2094e772cef84708c28cd9c69ad68112eaf2cea14a2d40`。
+四组固定和三组 COPY 候选每组重算 66,048 次绑定，均与上述本地组合的 RTL 波形对齐。另两组关闭 W 前瞻的完整波形也各重算 66,048 次绑定，使用采样的 A 证明。六个篡改负例分别覆盖 A 证明、首条 W 填充、第二条 W 分配、前瞻队列第二条填充、上一条 INPUT 和上一对退休。360 项测试通过。`round23-wa-verified.json` 的 SHA-256 为 `a85d93ccf59f39faaa2094e772cef84708c28cd9c69ad68112eaf2cea14a2d40`。
 
 ```bash
 # --aread 和 --copy-delay-epoch 也会检查 W/A 绑定。
@@ -296,6 +298,8 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 ```
 
 完整检查先从采样绑定重放 M，再用重放的时刻反查绑定。随后要把这条回路改成事件驱动，使候选引起的 W 与 A 就绪变化直接推进 P/M。K header、侧带首次就绪和 FILL 首次就绪仍是采样入口。
+
+版本复核时，把三个替换文件恢复为 #251 固定提交中的原文件，以同一 seed、程序及输入重建仿真。两种压力均通过数值和字节断言。其 Gate/Up 加 Mid 与 Down 的原生阶段计数分别为 587,573／265,042 拍和 658,314／284,362 拍。双所有者组合在同样口径下为 586,103／263,811 拍和 658,258／283,649 拍。这是测试台的阶段计数。固定提交的 W/A 绑定尚未逐拍对账。`full-ffn-251-reference-0.log` 的 SHA-256 为 `9ca89ce3833699c0c250e6fedd0305cd4aacefd2161ba9e4ef829ad8a935e347`，`full-ffn-251-reference-1.log` 为 `478a3501647c9755061c41cb5ca08eae1efa503f7b689ab4b4038037176dc604`。
 
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 

@@ -1,4 +1,4 @@
-"""COPY and private A loads through the #251 narrow SRAM ports."""
+"""COPY and private A loads through the programmed FFN narrow SRAM ports."""
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 

@@ -1,4 +1,4 @@
-"""Timing of the accepted K128 EXEC and its replies in the #251 FFN."""
+"""Timing of K128 EXEC and its replies in the dual-owner FFN fixture."""
 
 from dataclasses import dataclass
 

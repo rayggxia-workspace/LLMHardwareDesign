@@ -1,4 +1,4 @@
-"""Record real MC/LC handshakes in the frozen #251 programmed FFN."""
+"""Record and verify handshakes in the programmed FFN RTL fixture."""
 import argparse
 import json
 from bisect import bisect_left, bisect_right
@@ -312,7 +312,7 @@ def require(condition, message):
 def instrument(source, destination):
     rtl = source.read_text(encoding='utf-8')
     if rtl.count(ANCHOR) != 1 or rtl.count(COPY_LAUNCH) != 1:
-        raise ValueError('expected the unique programmed FFN block and COPY launch in #251')
+        raise ValueError('expected the unique programmed FFN block and COPY launch')
     rtl = rtl.replace(COPY_LAUNCH, COPY_DELAY + COPY_LAUNCH)
     with destination.open('x', encoding='utf-8', newline='\n') as output:
         output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + SCATTER_MONITOR

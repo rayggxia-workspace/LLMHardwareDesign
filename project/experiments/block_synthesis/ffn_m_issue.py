@@ -1,4 +1,4 @@
-"""Command receiver and weight-bank ownership for one #251 P/M pair."""
+"""Command receiver and weight-bank ownership for a dual-owner FFN P/M pair."""
 
 from collections import deque
 from dataclasses import dataclass
