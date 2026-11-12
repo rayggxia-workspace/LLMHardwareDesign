@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 26 轮。M 分配直接驱动共享 DDR，再由读回驱动 FILL。三组完整轨迹各重算 66,048 次 bank 安装和确认。小例改变新 ALLOC 后，已有 W 的确认提前 4、2 拍，DMA 回执与独立 RTL 一致。364 项测试通过，六个篡改负例均拒绝。侧带意图、W/A 绑定、K header 和 CALL 仍从波形提供。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 25 轮。三组完整 RTL 各从 W bank 安装和 CALL 重算 1,123,200 次物理 DDR 请求及等量返回。小例从同一在途状态重算候选，旧 W 与描述符均提前 3 拍，逐 beat 对齐独立 RTL。363 项测试通过，六个篡改负例均拒绝。W bank 安装仍采样，继续与 M 分配和返回链路双向连接。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。
 
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 24 轮。基线及 COPY 候选各从 1,122,816 个 W beat 推出 66,048 次 FILL，完整回包和绑定逐拍一致。基线 5,563 次等待 FILL 确认槽，候选 5,555 次。362 项测试通过，五个篡改负例均拒绝。DMA 客户端握手仍来自波形，继续接入 W 源端与共享 DDR 仲裁。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。

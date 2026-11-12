@@ -301,7 +301,12 @@ class CommandLink:
                         future.append(opens)
             if not future:
                 if self.rx or self.join or self.side or self.exec or self.reply or self.fill_ack_pending:
-                    raise ValueError('M command or reply deadlocked with a live owner')
+                    if until is None:
+                        raise ValueError('M command or reply deadlocked with a live owner')
+                    # An attached producer can supply a new event after the
+                    # snapshot. Keep the blocked command and its owner.
+                    self.clock = until
+                    return self.trace
                 self.clock = tick + 1
                 break
             tick = min(future)

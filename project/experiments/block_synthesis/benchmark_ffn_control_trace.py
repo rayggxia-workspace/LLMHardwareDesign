@@ -18,8 +18,8 @@ from ffn_mid import MIN_TICKS, MidTile
 from ffn_result import (READBACK_TAG, down_group_addresses, down_readback_words, mid_readback_words,
                         readback_service, sram_word_phases)
 from ffn_scatter import scatter_service, stripe_fragments
-from ffn_w import WeightTrace
-from ffn_w_dma import WeightDmaTrace
+from ffn_w import BEATS, WeightTrace
+from ffn_w_dma import WeightCommandLinks, WeightDmaTrace
 from verify_cover_frontier import verify
 
 
@@ -290,6 +290,8 @@ AREAD_MONITOR = """  always @(posedge clk) if($test$plusargs("TRACE_AREAD")&&!re
   end
 """
 
+WEIGHT_BEATS = ('WEIGHT install ', 'WEIGHT request ', 'WEIGHT returned ', 'WEIGHT filled ')
+WEIGHT_FABRIC = ('WEIGHT offer ', 'WEIGHT backend_req ', 'WEIGHT backend_rsp ')
 WEIGHT_MONITOR = """  for(genvar q=0;q<3;q++)begin: weight_probe
    reg seen=0,fill_seen=0;
    reg [31:0] previous_tag,previous_fill;
@@ -333,6 +335,7 @@ TERMINAL_FRAME_WITH_BUBBLE = 5
 TERMINAL_EOP_OFFSET = 3
 GATE_UP_STRIPES = 58
 DOWN_GROUPS = 6
+DOWN_SCOPE_COLUMNS = 384
 P_COUNT = 3
 ALL_P = (1 << P_COUNT) - 1
 GATE_UP_COLUMNS = 11008
@@ -371,9 +374,9 @@ def read_trace(source, result_trace=None, *, m=False, issue=False, aread=False, 
         result_prefixes += ('PISSUE ',)
     if aread:
         result_prefixes += ('AREAD ',)
-    weight_prefixes = ('WEIGHT install ', 'WEIGHT request ', 'WEIGHT returned ', 'WEIGHT filled ')
+    weight_prefixes = WEIGHT_BEATS
     if wdma:
-        weight_prefixes += ('WEIGHT offer ', 'WEIGHT backend_req ', 'WEIGHT backend_rsp ')
+        weight_prefixes += WEIGHT_FABRIC
     for line in source:
         if weight is not None and line.startswith(weight_prefixes):
             _, kind, *fields = line.split()
@@ -527,6 +530,45 @@ def m_records(scopes):
     return records
 
 
+def weight_address(client, record):
+    """Address of an unheaded K128 weight record in the programmed fixture."""
+    if record.scope > GATE_UP_STRIPES:
+        base = 0x06000000
+        first = DOWN_SCOPE_COLUMNS * (record.scope - GATE_UP_STRIPES - 1)
+        group = record.context
+    else:
+        groups = len(p_result_addresses(record.scope, client)) // 4
+        way, group = divmod(record.context, groups)
+        base = (way + 1) * 0x02000000
+        first = STRIPE_COLUMNS * (record.scope - 1)
+    column = first + 8 * client + 24 * group
+    index = (column // 8) * p_k_slices(record.scope) + record.k // 128
+    return base + 64 * BEATS * index
+
+
+def read_linked_weight(source, scopes, events, mode, seed):
+    links, addresses = {}, {}
+    side = defaultdict(list)
+    joins = defaultdict(list)
+    for tick, client, *fields in events['PISSUE', 'side']:
+        side[client].append(Command(tick, *fields))
+    for tick, client, _, sequence, *_ in events['PISSUE', 'join']:
+        joins[client].append((tick, sequence))
+    for client, records in m_records(scopes).items():
+        addresses[client] = {record.sequence: weight_address(client, record) for record in records}
+        link = CommandLink({record.sequence: record.stores for record in records})
+        link.run(joins[client], side[client], (), until=0)
+        links[client] = link
+    weight = WeightDmaTrace(mode, seed, CALL_TO_FETCH, links=WeightCommandLinks(links, addresses))
+    source.seek(0)
+    for line in source:
+        if line.startswith(WEIGHT_BEATS + WEIGHT_FABRIC + ('CONTROL call ', 'CONTROL fetch ',
+                                                         'CONTROL fetch_return ', 'CONTROL result ')):
+            _, kind, *fields = line.split()
+            weight.record(kind, *map(int, fields))
+    return weight
+
+
 def m_control_replies(client, rows, records):
     intents = [Reply(*row) for row in rows]
     record_ids = {record.sequence for record in records}
@@ -576,10 +618,14 @@ def check_issue(client, observed, records, controls, weight=None):
     require(all(SIDE_WORDS.get(command.opcode) == command.words and
                 (command.sequence > 0 if command.opcode == ALLOC_CMD else command.sequence == 0)
                 for command in side), f'P{client} unsupported M command or length')
-    link = CommandLink({record.sequence: record.stores for record in records})
-    fills = [reply for reply in controls if reply.source == FILL] if weight is None else []
     completions = weight.completed[client] if weight is not None else ()
-    predicted = link.run([(row[0], row[2]) for row in joins], side, fills, weight_completions=completions)
+    coupled = getattr(weight, 'issue', None)
+    if coupled is not None:
+        predicted = coupled[client]
+    else:
+        link = CommandLink({record.sequence: record.stores for record in records})
+        fills = [reply for reply in controls if reply.source == FILL] if weight is None else []
+        predicted = link.run([(row[0], row[2]) for row in joins], side, fills, weight_completions=completions)
     require(predicted.pushes == observed['push'], f'P{client} EXEC queue admission differs')
     require([(tick, c.opcode, c.session, c.sequence, c.words) for tick, c in predicted.commands] == observed['sop'],
             f'P{client} M command SOP differs')
@@ -1179,16 +1225,22 @@ def check_admission(scopes, transfers, admission, upstream=None):
 
 
 def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False,
-          m=False, issue=False, aread=False, copy_delay_epoch=0, wa_join=False, lookahead=True, wfill=False, wdma=False):
+          m=False, issue=False, aread=False, copy_delay_epoch=0, wa_join=False, lookahead=True, wfill=False,
+          wdma=False, wlink=False):
     aread = aread or copy_delay_epoch != 0
     wa_join = wa_join or aread or not lookahead
+    wdma = wdma or wlink
     issue = issue or wa_join or wfill or wdma
     m = m or issue
     readback = readback or m
     result_trace = defaultdict(list) if readback else None
-    weight = WeightDmaTrace(mode, seed, CALL_TO_FETCH) if wdma else WeightTrace() if wfill else None
+    weight = None
+    if not wlink:
+        weight = WeightDmaTrace(mode, seed, CALL_TO_FETCH) if wdma else WeightTrace() if wfill else None
     scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(
-        source, result_trace, m=m, issue=issue, aread=aread, weight=weight, wdma=wdma)
+        source, result_trace, m=m, issue=issue, aread=aread, weight=weight, wdma=wdma and not wlink)
+    if wlink:
+        weight = read_linked_weight(source, scopes, result_trace, mode, seed)
     if weight is not None:
         weight.validate()
     transfers = []
@@ -1311,6 +1363,7 @@ def main():
     verify.add_argument('--no-lookahead', action='store_true', help='verify the fixture with W lookahead disabled')
     verify.add_argument('--wfill', action='store_true', help='drive W FILL from DMA beat receipts')
     verify.add_argument('--wdma', action='store_true', help='replay W and descriptor traffic through the shared DMA')
+    verify.add_argument('--wlink', action='store_true', help='couple M bank allocation, shared DMA, and FILL replies')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
@@ -1321,7 +1374,8 @@ def main():
                                    phase_release=args.phase_release, scatter=args.scatter, mid=args.mid,
                                    readback=args.result, m=args.m, issue=args.issue, aread=args.aread,
                                    copy_delay_epoch=args.copy_delay_epoch, wa_join=args.wa_join,
-                                   lookahead=not args.no_lookahead, wfill=args.wfill, wdma=args.wdma), indent=2))
+                                   lookahead=not args.no_lookahead, wfill=args.wfill, wdma=args.wdma,
+                                   wlink=args.wlink), indent=2))
 
 
 if __name__ == '__main__':

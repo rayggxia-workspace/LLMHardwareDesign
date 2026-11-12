@@ -78,12 +78,47 @@ class WeightDma:
         return edge, completed
 
 
+class WeightCommandLinks:
+    """Join P/M allocation and reply state to the shared W DMA edges."""
+
+    def __init__(self, links, addresses):
+        self.links = links
+        self.addresses = addresses
+        self.installs = defaultdict(list)
+        self.ready = defaultdict(list)
+
+    def advance(self, tick):
+        installs = self.installs.pop(tick, ())
+        for client, link in self.links.items():
+            ready = self.ready.pop(client, ())
+            if not ready and (link.resume is None or link.resume > tick):
+                continue
+            before = len(link.trace.bank_acks)
+            trace = link.run((), (), (), until=tick + 1, weight_completions=ready)
+            for edge, session, sequence, bank, generation in trace.bank_acks[before:]:
+                if edge != tick + 1:
+                    raise ValueError('W bank install was not produced at its registered edge')
+                self.installs[edge].append((client, session, sequence, bank, generation,
+                                            self.addresses[client][sequence]))
+        return installs
+
+    def complete(self, client, weight):
+        self.ready[client].append(weight)
+
+    def finish(self):
+        if self.ready or self.installs:
+            raise ValueError('W DMA and M link have pending handshakes')
+        return {client: link.run((), (), ()) for client, link in self.links.items()}
+
+
 class WeightDmaTrace:
     """Compare each modeled edge against both ends of the physical fabric."""
 
-    def __init__(self, mode, seed, call_to_fetch):
+    def __init__(self, mode, seed, call_to_fetch, *, links=None):
         self.service = WeightDma(Profile.from_spec({'ffn_provider': {'mode': mode, 'seed': seed}}))
         self.call_to_fetch = call_to_fetch
+        self.links = links
+        self.issue = None
         self.descriptors = defaultdict(list)
         self.serial = [0] * 3
         self.call_count = 0
@@ -113,12 +148,16 @@ class WeightDmaTrace:
         elif kind == 'filled':
             p, *identity = fields
             self.filled[p].append((tick, *identity))
-        else:
+        elif kind != 'result':
             self.edge_events[kind].append(fields)
 
     def verify_edge(self):
         tick = self.clock
-        if not self.edge_events and not self.service.fabric.active and tick not in self.descriptors:
+        if self.links is not None:
+            installs = self.links.advance(tick)
+        else:
+            installs = self.edge_events.pop('install', ())
+        if not installs and not self.edge_events and not self.service.fabric.active and tick not in self.descriptors:
             return
         for descriptor in self.descriptors.pop(tick, ()):
             self.service.submit_descriptor(*descriptor)
@@ -128,7 +167,8 @@ class WeightDmaTrace:
                 record = port.locked
                 address = record.address + 64 * record.sent
                 expected['offer'].append((p, address, local_tag(record, address), record.channel, BEATS))
-        installs = self.edge_events.pop('install', ())
+        if self.links is not None:
+            expected['install'].extend(installs)
         for p, session, sequence, bank, generation, _ in installs:
             self.installs[p].append((tick, session, sequence, bank, generation))
         edge, completed = self.service.step(tick, installs)
@@ -151,8 +191,10 @@ class WeightDmaTrace:
                 expected['returned'].append((record.client - 9, tag))
         for owner, _ in completed:
             if isinstance(owner, WeightOwner):
-                self.completed[owner.client].append(
-                    WeightCompletion(tick + 1, owner.session, owner.sequence, owner.bank, owner.generation))
+                completion = WeightCompletion(tick + 1, owner.session, owner.sequence, owner.bank, owner.generation)
+                self.completed[owner.client].append(completion)
+                if self.links is not None:
+                    self.links.complete(owner.client, completion)
         for kind in expected.keys() | self.edge_events.keys():
             wanted = sorted(expected[kind])
             observed = sorted(self.edge_events.get(kind, ()))
@@ -167,3 +209,5 @@ class WeightDmaTrace:
         self.verify_edge()
         if self.descriptors or self.service.fabric.active or not self.counts['returned']:
             raise ValueError('shared W DMA trace did not retire every record')
+        if self.links is not None:
+            self.issue = self.links.finish()

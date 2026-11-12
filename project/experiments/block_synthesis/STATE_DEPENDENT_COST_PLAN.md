@@ -329,6 +329,18 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 363 项测试通过。本机 `round25-dma-verified.json` 的 SHA-256 为 `a0ca8ae370091d3e67f87aff1e8a77c5a0cdd15bce6a0a119458bec79241a36b`，包含三组完整轨迹与小例的原始文件哈希。完整检查仍从采样的 W bank 安装和 CALL 推进。接下来让 M 的分配接纳直接安装 W bank，用 DDR 返回继续驱动同一个 M 命令链路。
 
+### M 分配与 W DMA 双向推进
+
+第 26 轮在 M 接纳 ALLOC 后，由模型选出可用 bank、更新代次并在下一拍安装。W 地址从 Gate、Up、Down 的 scope、列组与 K128 记录编号推导。三个 P/M 命令链路共用同一 DMA，读回再进入各自的 FILL 确认仲裁，随后按真实的回包竞争和 INPUT 释放条件回收 W bank。波形里的 W 安装拍、地址、代次和读回用于对账。
+
+第 25 轮的三组完整轨迹每组均重算并逐拍对齐 66,048 次 bank 安装和 FILL、1,123,200 次物理 DDR 请求及等量返回，以及后续的执行和结果接纳。受控模型从第 13 拍的同一在途状态分岔。新 ALLOC 推迟 3 拍时，两条旧 W 的 FILL 就绪分别从第 47、50 拍提前到第 43、48 拍，新 W 的 FILL 从第 60 拍变为第 61 拍。每个分支均从复位重算核对，DMA 部分与独立 RTL 探针的 53 笔回执逐拍一致。该小例的 M 部分由模型驱动，完整 RTL 逐拍覆盖在三组实际程序上完成。
+
+```bash
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG.gz --mode 1 --seed 25001 --aread --wlink
+```
+
+364 项测试通过。六个篡改负例覆盖安装地址、bank、代次、session、缺失安装和 ALLOC 意图拍。本机 `round26-linked-verified.json` 的 SHA-256 为 `7803b18fd708a4bd401aa6f8a2ff939c59696f2c8d1334c6f703a54a059006b2`。当前仍从采样的侧带意图、W/A 绑定、K header 和 CALL 推进完整程序。下一段要把重算的 A 证明、FILL 和 P 退休送回同一事件推进器，直接产生 W/A 绑定。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界
