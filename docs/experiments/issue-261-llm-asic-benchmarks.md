@@ -1,8 +1,8 @@
-# 2B–4B 文本模型 ASIC 推理吞吐调研
+# 2B–4B 模型科研 ASIC 推理吞吐调研
 
 2026-11-12（Asia/Shanghai） · [Issue #261](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/261) · [PR #251 的基准合同](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/experiments/issue-250-benchmark-contract.md)
 
-收录总参数量为 2B–4B 的公开文本模型或论文注明规模的实验模型，采用来源的型号标称规模。主指标为逐 token 解码速度，预填充速度用输入 tokens/s 表示，端到端生成速度单列。功耗和频率仅记录来源明确的测量边界。按各论文或厂商的原始工况收录，记录与项目不同的量化、带宽、上下文和测量边界。2026-11-12 扩充逐篇 PPA 与实验配置。本调研引用公开结果，无新仿真、板测或物理验收。
+收录面向 2B–4B 模型的科研 ASIC、研究型 PIM/NMP 及流片前硬件设计，采用论文和官方模型的标称规模。多模态论文注明视觉输入和计时范围。主指标为逐 token 解码速度，预填充速度用输入 tokens/s 表示，端到端生成速度单列。功耗和频率仅记录来源明确的测量边界。按各论文的原始工况收录，记录与项目不同的量化、带宽、上下文和测量边界。2026-11-12 补充九篇科研硬件论文。本调研引用公开结果，无新仿真、板测或物理验收。
 
 ## 专用 ASIC 论文
 
@@ -60,33 +60,35 @@ TENET 提供另一种三值 BitNet-3B ASIC 方案。论文 `V 公开按模型规
 - **HB-PIM: Unifying Two Operators with One PIM。** 包含 OPT-2.7B，图 8 对 Alpaca 和 ShareGPT 报告相对吞吐性能。论文的 4.06× 相对 vLLM-GPU 是整个模型组的平均。2.7B 绝对解码速度及整堆叠 PPA 未核实。DuoPU 的面积功耗仅为 32 nm 综合估算的计算单元。[HB-PIM 论文](https://doi.org/10.1007/978-981-95-1021-4_16) · [表 2 和图 8 全文](https://eurekamag.com/research/100/402/100402060.pdf)
 - **Titanus: Enabling KV Cache Pruning and Quantization On-the-Fly for LLM Acceleration。** OPT-2.7B 的纳入证据是 W8A8 SmoothQuant、INT3 KV 量化及级联剪枝的质量评估和对应的 core 设计。TruthfulQA 中该模型的 ROUGE-1 为 0.4311（原始）和 0.4289（HQE）。2.7B 档的解码速度、面积和功耗待核实。论文加速 headline 对应 6.7B。[Titanus §5](https://arxiv.org/html/2505.17787#S5)
 
-### 商用 SoC 上的新增论文
+### 本轮新增科研 ASIC 与流片前设计
 
-- **SmartBench: Is Your LLM Truly a Good Chinese Smartphone Assistant?（EMNLP 2025）。** iQOO 12 的 Snapdragon 8 Gen 3 NPU（SoC 4 nm），Qualcomm QNN、W4A16、表 5 的上下文长度 2048。Qwen2.5-3B（3.1B）为 **24.9 输出 tokens/s、873.4 输入 tokens/s、6.8 W**。BlueLM-3B（2.7B）为 **27.1 输出 tokens/s、930.9 输入 tokens/s、6.4 W**。表 5 未披露生成长度、面积或电源轨测量范围，功耗按手机测试值引用。[EMNLP 论文表 5](https://aclanthology.org/2025.emnlp-main.194.pdf) · [Qualcomm 工艺规格](https://docs.qualcomm.com/doc/87-71408-1/87-71408-1_REV_D_Snapdragon_8_gen_3_Mobile_Platform_Product_Brief.pdf)
-- **Apple Intelligence Foundation Language Models（2024）。** 约 3B 的 AFM-on-device，混合 2/4 bit 平均 3.7 bit/weight，使用 iPhone 15 Pro（A17 Pro，3 nm），作者报告 **30 输出 tokens/s**（无投机），TTFT 约为每输入 token 0.6 ms。该数来自作者配套说明，未披露 prompt/输出长度、独立 Neural Engine 面积和对应功耗。2025 年 2-bit QAT 版模型不沿用该速度。[技术报告](https://arxiv.org/html/2407.21075#S5) · [苹果测试说明](https://machinelearning.apple.com/research/introducing-apple-foundation-models) · [A17 Pro 工艺](https://www.apple.com/newsroom/2023/09/apple-unveils-iphone-15-pro-and-iphone-15-pro-max/)
-- **When NPUs Are Not Always Faster（2026）。** Snapdragon 8 Gen 3、Hexagon v75、16 GB RAM、Android 15、llama.cpp b7588，测试 Q4_0 的 Llama 3.2-3B 和 Qwen3-4B。用约 321、641、1281 输入 token 测试不同卸载比例，6 CPU 线程，论文默认 batch 参数 128。绝对解码点见图 2(e)/(g)。表 III 的 208/210 μs 是单次矩阵算子调用时延。Llama 3.2-3B 的全层卸载配置存在 CPU 回退，三种 prompt 下的整机电池耗能较 CPU-only 增加 22%、32%、51%。芯片面积和芯片独立功耗未披露。[论文 §III–IV](https://arxiv.org/html/2605.27435#S3)
+以下各行保留原始工况。标为“图读数”的数字由原论文的坐标轴或图中标签取得。按延迟折算的速度和功耗给出分母及测量边界。
 
-## 商用 ASIC 与片上 NPU 公开数据
+| 论文 / 受测模型 | 速度与实验工况 | 工艺与运行点 | 面积 | 功耗或能效 | 证据与来源 |
+| --- | --- | --- | --- | --- | --- |
+| **ProQuant**，2026 / Qwen2-VL-2B-Instruct、Qwen2.5-VL-3B-Instruct、Qwen3-VL-2B-Instruct | 256 视觉 + 256 文本 token 时，W4A4 的 decode 吞吐依次为 **31.85、16.01、27.86 tokens/s**，按论文的 `1000 / 延迟(ms)` 折算。各精度的延迟及能量见下表 | **TSMC 22 nm 流片**。板上调压电路支持 0.6–1.0 V，表中工况的具体电压和频率待核实。8 GB DDR4、38.4 GB/s，片上 token 与权重缓冲区各 4 MB，INT8 峰值 2.46 TOPS | 裸片面积待核实 | 同工况 W4A4 的加速器与 DDR4 平均功耗约 **3.95、3.95、3.94 W**，由 mJ 除以 ms 折算 | 片上延迟与功耗实测，外部 DDR4 访问用 DRAMPower 模拟，整模型结果由周期模型组合。ZU5EV FPGA 提供控制及接口。[附录 E、表 A7–A12](https://arxiv.org/html/2611.08216v1#A5) |
+| **NVLLM**，DAC 2026 / OPT-2.7B，INT8 | **23.2 / 29.9 / 35.4 tokens/s**，分别为基础版 / 12C / 16C（32 / 48 / 64 个 NAND plane），解码上下文 **64 token**，图 6(a) 柱上标注 | TSMC 28 nm，NPU 500 MHz、NAND CMOS 350 MHz。FFN 权重进 3D NAND，Q/K/V/O 权重和 KV cache 走 LPDDR5X | NPU **0.459 mm²**，新增 NAND CMOS 逻辑 **2.692 mm²** | NPU **240.15 mW**、NAND CMOS 逻辑 **895.68 mW**，各为表 2 的模块综合值 | Verilog 综合 + NAND/DRAM 周期模型。表 2 面积、功耗覆盖所列模块，2.7B 各规模整机功耗待核实。[§4、表 2–3](https://arxiv.org/html/2604.25699v2#S4) · [图 6(a)](https://arxiv.org/pdf/2604.25699v2#page=5) |
+| **P³-LLM**，2026 v4 / Llama 3.2-3B，W4A8KV4P8 | **约 360 / 670 / 670 / 890 tokens/s**，依次对应 B1 / B2 / B4 / B8 的总解码吞吐，固定 **4K 上下文**，图 13 读数。P8 是 attention score 位宽 | PCU 在 TSMC 28 nm RTL 综合，PPA 缩放至 20 nm HBM-PIM。系统 4 个 1 GHz NPU、16 个 HBM 伪通道，PCU 500 MHz | 论文表 VII 的 PCU 计算 **8.4 mm²**、缓冲 **6.2 mm²**，HBM 面积开销 **17.5%** | PE 在表 VIII 的 1 GHz 比较下为 **0.18 pJ/MAC**，系统解码功耗待核实 | 周期仿真，Llama 使用 post-RoPE K 量化。B2 以上的总吞吐口径包含同批序列。[§VI、表 VII–VIII](https://arxiv.org/html/2511.06838v4#S6) · [图 13](https://arxiv.org/pdf/2511.06838v4#page=12) |
+| **PALUTE**，2026 / Qwen3-4B，W4A4 | **1,264 tokens/s**，摘要与表 2 的端到端吞吐。论文另扫输入/输出长度，表 2 对应的长度和 batch 待核实 | LUT 生成器及控制器以 **7 nm CMOS、200 MHz** 综合。系统假设 **35 nm、768 层、24 GB M3D DRAM**，权重、LUT 和 KV 分层放置 | **112.4 mm²**，表 2 按逻辑与存储裸片中较大者计 | **0.16 W**，表 2 的端到端估算值，论文另报 **7,738 tokens/J** | 作者周期仿真 + 逻辑 RTL 综合。近存储集成与 768 层并行度属于设计假设。[摘要与 §4、表 1–2](https://arxiv.org/html/2606.08891v1#S4) |
+| **CHIME**，2026 / MobileVLM 3B（LLaMA 2.7B + ViT + LDP） | **约 233 tokens/s**，图 6(b) 的 3B 端到端生成点。VQA 默认输入一张 512×512 图像与 128 个文本 token，输出 488 个 token | FP16，1 GHz。逻辑采用 **40 nm RTL 综合并缩放到 7 nm**，存储模型为 **35 nm DRAM、28 nm CNFET RRAM**。200 层 DRAM 和 8 层 RRAM | 图 7 的 DRAM / RRAM 两块逻辑 die 分别 **28.71 / 24.85 mm²** | 图 6(b) 的 3B 点约 **1.6 W**（图读数），表 V 给出的跨模型典型值为约 2 W | 自研系统仿真 + NeuroSim + RTL 综合。吞吐对应多模态端到端工况。[§IV、表 II–V](https://arxiv.org/html/2601.19908v1#S4) · [图 6–7](https://arxiv.org/pdf/2601.19908v1#page=6) |
+| **TriGen**，2026 / Llama 3.2-3B、OPT-2.7B，MXINT8 激活、UINT4 权重 | 图 9 在序列长度 **2048** 给端到端相对延迟，完整优化约为各自基线的 **0.36× / 0.39×**（图读数）。绝对解码 tokens/s 待核实 | **14 nm** RTL 核对 C++ 周期模型。默认单 NPU、1 GHz、32×32 MPA、1 MiB/NPU、32 GB/s DRAM 总带宽 | 整芯片面积待核实 | 整芯片功耗待核实 | 归一化基线为该设计的 INT16/UINT4 配置。Llama 采用 SpinQuant + GPTQ，OPT 采用 AWQ + GPTQ。[§VII、表 IV–V](https://arxiv.org/html/2602.12962v1#S7) · [图 9](https://arxiv.org/pdf/2602.12962v1#page=10) |
+| **FlexPosit**，2026 / Phi-2 2.7B、OPT-2.7B | 图 11 的相对 FP16 基线延迟为 **0.247× / 0.225×**，**B1、256 输入 token**、等计算面积，按 BitMoD 4-bit 的 PPL 对齐。权重 Posit 平均 **4.5 / 4.1 bit**，激活 FP16。绝对解码 tokens/s 待核实 | **16 nm** RTL，1 GHz 阵列，DDR4 采用 Ramulator 2.0，激活/权重缓冲各 512 KB | 32×16 阵列 **0.109761 mm²** | 同一阵列 **65.537 mW**，表 VIII 的综合估算 | 图 11 为等面积模型结果，表 VIII 为阵列 PPA，系统级功耗待核实。[§VI、表 II/VIII](https://arxiv.org/html/2609.04724v1#S6) · [图 11](https://arxiv.org/pdf/2609.04724v1#page=12) |
+| **Pimba**，MICRO 2025 / RetNet、GLA、HGRN2、Mamba-2，均按论文 2.7B 档 | 图 12 为归一化生成吞吐。**Mamba-2 2.7B** 在 B32 / B64 / B128 时，约为 A100 基线的 **1.4× / 1.8× / 2.4×**（图读数），输入和输出各 **2,048 token**。绝对 tokens/s 待核实 | FreePDK **45 nm** 综合后缩放至 **10 nm**，SPU 378 MHz，HBM2E 总线 1,512 MHz，单 GPU + 研究 PIM 架构 | 表 3 单元 **0.092 mm²**，含 **0.053 mm²** 计算及 **0.039 mm²** 缓冲 | 计算逻辑 **8.2908 mW**，表 3 单元口径 | Ramulator2 周期模型。状态使用 MX8，GPU 与存内单元分工，面积和功耗对应所提 PIM 模块。[§6、表 3](https://arxiv.org/html/2507.10178v3#S6) · [图 12](https://arxiv.org/pdf/2507.10178v3#page=10) |
+| **MX-like Tensor Core**，ASPDAC 2027 作者预印本 / Qwen2.5-3B | **204.8 GOPS**，4×16 PE + 重量化单元，用真实 Transformer 层的 **32×1024** 数据块驱动。整模型解码速度待核实 | **TSMC 28 nm，400 MHz、0.8 V、TT**，使用 2,048 次 MAC 的门级活动估算功耗 | 代表配置 E2M3×E2M1、UE5M3 为 **0.646 mm²** | 对应 **51.6 mW**，包含论文所列片上存储和移动开销 | SNAX 上的算子综合和门级评估。同一模型的算子参考。[§4、图 5(d)](https://arxiv.org/html/2610.26083v1#S4) |
 
-| 硬件 | 模型 | 输出 tokens/s | TTFT | 配置与范围 | 来源 |
-| --- | --- | ---: | ---: | --- | --- |
-| Axelera Metis Edge 130p 16 GB PCIe | Llama 3.2-3B | **5.5** | 1.50 s | 1 张卡，4096 prompt；厂商定义为首 token 后的生成速度。该表未列生成长度和量化。 | [Voyager SDK](https://github.com/axelera-ai-hub/voyager-sdk/blob/latest/docs/reference/models/model-zoo.md#llm-performance-characteristics) |
-| Axelera Metis Edge 130p 16 GB PCIe | Qwen3-4B | **4.7** | 2.04 s | 同一参考平台与 4096 prompt。 | [Voyager SDK](https://github.com/axelera-ai-hub/voyager-sdk/blob/latest/docs/reference/models/model-zoo.md#llm-performance-characteristics) |
-| Rockchip RK3588 NPU | Gemma 2 2B | **10.37** | 598.41 ms | W8A8，128 输入/64 生成，CPU/NPU 最高频率。 | [RKLLM 官方 benchmark](https://github.com/airockchip/rknn-llm/blob/main/benchmark.md#rk3588) |
-| Rockchip RK3588 NPU | TeleChat2-3B | **10.18** | 618.48 ms | 同上。 | [RKLLM 官方 benchmark](https://github.com/airockchip/rknn-llm/blob/main/benchmark.md#rk3588) |
-| Rockchip RK3588 NPU | Phi-3 Mini 3.8B | **7.45** | 1,017.28 ms | 同上。 | [RKLLM 官方 benchmark](https://github.com/airockchip/rknn-llm/blob/main/benchmark.md#rk3588) |
-| Rockchip RK3588 NPU | MiniCPM3-4B | **5.94** | 1,408.49 ms | 同上。 | [RKLLM 官方 benchmark](https://github.com/airockchip/rknn-llm/blob/main/benchmark.md#rk3588) |
-| Rockchip RK3588 NPU | Qwen3.5-2B | **13.59** | 776.95 ms | 同上。 | [RKLLM 官方 benchmark](https://github.com/airockchip/rknn-llm/blob/main/benchmark.md#rk3588) |
-| Rockchip RK3588 NPU | Qwen3.5-4B | **6.22** | 2,068.88 ms | 同上。 | [RKLLM 官方 benchmark](https://github.com/airockchip/rknn-llm/blob/main/benchmark.md#rk3588) |
-| Qualcomm Snapdragon 8 Elite Mobile / X Elite / X2 Elite | Llama 3.2-3B Instruct | **30 / 19.7 / 43.2** | — | EdgeCIM v2 表 III 转录 Qualcomm AI Hub 的 INT4 结果。Qualcomm 定义为首 token 后的生成速度。该行采用论文冻结的官方数据快照，具体请求长度待核实。 | [EdgeCIM v2 表 III](https://arxiv.org/html/2604.11512v2#S5.T3) · [Qualcomm AI Hub](https://aihub.qualcomm.com/models/llama_v3_2_3b_instruct) |
+#### ProQuant 解码原始值与换算
 
-Mobilint 的 ISSCC 2026 `17.3 可作为有流片的相关论文，官方模型卡列出 REGULUS 的 Qwen3-4B，公开可核对资料中该模型解码速度待核实。清华的 ISSCC 2026 `31.8 报告投机解码时延范围，公开材料中尚未核实该范围与 2B–4B 目标模型的逐项映射。 [Mobilint 论文](https://doi.org/10.1109/ISSCC49663.2026.11409083) · [Qwen3-4B 模型卡](https://huggingface.co/mobilint/Qwen3-4B-regulus-rb-usb) · [清华论文](https://doi.org/10.1109/ISSCC49663.2026.11408953)
+同一行的四组数据均为 256 视觉 + 256 文本 token，格式为“延迟 ms / 能量 mJ / 速度 tokens/s”。其中 W4A4 的速度区间按表 A7–A9 的四种输入组合折算。W8A8 出自表 A10–A12。 [附录 E](https://arxiv.org/html/2611.08216v1#A5)
 
-Rockchip RK3576 也公开了同样 128 输入/64 生成条件下的量化对照。W4A16 / W8A8 的输出速度分别为 Gemma 2 2B **9.14 / 5.24**、TeleChat2-3B **8.97 / 5.12**、Phi-3 3.8B **6.58 / 3.74**、MiniCPM3-4B **4.87 / 3.01**、Qwen3.5-2B **11.03 / 6.73**、Qwen3.5-4B **5.02 / 3.03** tokens/s。 [RK3576 官方表](https://github.com/airockchip/rknn-llm/blob/main/benchmark.md#rk3576)
+| 模型 | BF16 | W8A8 | W4A8 | W4A4 | W4A4 解码区间（tokens/s） |
+| --- | --- | --- | --- | --- | ---: |
+| Qwen2-VL-2B-Instruct | 124.55 / 493.04 / 8.03 | 62.71 / 246.94 / 15.95 | 31.79 / 124.33 / 31.46 | 31.40 / 123.95 / 31.85 | 30.96–31.85 |
+| Qwen2.5-VL-3B-Instruct | 248.69 / 984.06 / 4.02 | 125.07 / 492.73 / 8.00 | 63.25 / 247.63 / 15.81 | 62.45 / 246.85 / 16.01 | 15.72–16.01 |
+| Qwen3-VL-2B-Instruct | 140.46 / 556.20 / 7.12 | 70.35 / 278.22 / 14.21 | 35.89 / 141.56 / 27.86 | 35.89 / 141.56 / 27.86 | 25.35–27.86 |
 
 ## 与 PR #251 的比较条件
 
-- **同模型候选是 EdgeCIM 的 Qwen2.5-3B。** 该论文采用 128 输入/128 输出、273 GB/s 和 INT4/INT8 的设计空间搜索。项目对比条件是同一 Qwen2.5-3B 权重与数值合同、W8A16、B1、512 输入/128 输出、无投机、51.2 GB/s。相同标称参数量的 Qwen3、Qwen3.5 和 Llama 是不同计算图。 [项目合同](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/experiments/issue-250-benchmark-contract.md) · [EdgeCIM v2 `V](https://arxiv.org/html/2604.11512v2#S5)
+- **同模型整模型候选是 EdgeCIM 的 Qwen2.5-3B。** 该论文采用 128 输入/128 输出、273 GB/s 和 INT4/INT8 的设计空间搜索。项目对比条件是同一 Qwen2.5-3B 权重与数值合同、W8A16、B1、512 输入/128 输出、无投机、51.2 GB/s。同样评估 Qwen2.5-3B 的 MX-like Tensor Core 给出的是算子吞吐。Qwen2.5-VL-3B、Qwen3 和 Llama 使用不同计算图。 [项目合同](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/experiments/issue-250-benchmark-contract.md) · [EdgeCIM v2 `V](https://arxiv.org/html/2604.11512v2#S5)
 - **绝对值依赖权重供给与序列长度。** 在项目历史 trace 每 token 都读取 3,298,000,896 B 权重的假设下，峰值 DDR 权重供给上限为 `51.2e9 / 3,298,000,896 ≈ 15.52 token/s`，尚需支付 KV、激活、计算和协议成本。9.215647 token/s 是项目的历史条件基线。公开表中尚未找到能与该条件直接比较的同模型实测。 [基线及字节账本](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/experiments/issue-250-benchmark-contract.md)
 - **连续生成的计时分母**可采用从首个到末个输出 token 的时间，分子为该时间窗内的 token 间隔数，平均 TPOT 为该段总耗时除以 token 间隔数。另报 TTFT、prefill tokens/s、p50/p95 TPOT，记录 KV 起始长度、权重/KV 精度、频率、内存配置、是否含主机时间。不同内存和精度下的公开吞吐保留原条件。
 
