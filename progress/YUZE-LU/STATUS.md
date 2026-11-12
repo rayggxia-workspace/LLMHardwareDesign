@@ -216,3 +216,9 @@ Issue250仍实施中：已精确复现基线9.21564723269，有限队列共享X�
 The cyclic return selector now uses constant predecessor masks and a one-hot slot cursor. It preserves the 64-byte DDR interface and the stalled-response owner. All 18 directed trace pairs and six full-width FFN replay pairs remain cycle-exact. Every FFN replay covers 1,444 real K windows.
 
 Under the same Nangate45 fast mapping, standard-cell area is 626,590.398 µm², down from 691,454.764 µm² in the previous revision. The same-outline detailed placement reports −5.94 ns worst setup slack at 300 MHz, compared with −6.64 ns. The remaining measured critical path starts at DDR return tag bit 10 and ends at P request rejection. Integrated DMA and top-level timing remain open.
+
+### Typed 64B request reservation
+
+The request arbiter uses a registered cursor mask, one-hot selection and a prefix test for malformed request ordering. It keeps the two physical reservations per channel, the 64-byte DDR transfer and the existing backpressure and diagnostic priority. Earlier changes validate return tags against fixed entries in their own channel.
+
+The cursor equivalence proof covers all valid cursor values and all eligibility masks. The directed 18-pair DMA regression and all six FFN replay pairs remain cycle-exact. Each full FFN run covers 1,444 K windows. Under the same Nangate45 1960 by 1960 micrometer outline and 300 MHz constraints, detailed placement reports -4.60 ns setup slack, improving on -5.94 ns from the preceding published revision. The critical path is now c_req_tag[111] to c_req_ready[11]. Same-method mapped standard-cell area is 620,860.758 square micrometers. Extracted DMA timing and whole-system performance remain open.

@@ -61,7 +61,7 @@ module mc_dma_fabric_typed_p #(
  reg [11:0] response_locked;
  reg [SKIDS-1:0] response_slot[0:11],response_rr[0:11];
  wire [SKIDS-1:0] response_selected[0:11];
- reg [3:0] request_rr[0:1];reg [4:0] issue_rr[0:1];
+ reg [11:0] request_rr[0:1];reg [4:0] issue_rr[0:1];
  reg [1:0] previous_issues[0:1];
  reg [31:0] transport_generation;
  // A finite namespace exhaustion invokes actual transport purge, even when
@@ -105,12 +105,26 @@ module mc_dma_fabric_typed_p #(
   second_slot=5'(first_set({32'd0,remaining}));
   first_two_slots={|remaining,second_slot,|available,first_slot};
  endfunction
- function automatic [3:0] request_at_offset(input [3:0] cursor,input [3:0] offset);
-  reg [4:0] position;
-  position={1'b0,cursor}+{1'b0,offset};
-  if(position>=5'd24)request_at_offset=4'(position-5'd24);
-  else if(position>=5'd12)request_at_offset=4'(position-5'd12);
-  else request_at_offset=4'(position);
+ // The cursor mask starts at the next client. Prefer that suffix before
+ // wrapping to the lower-numbered clients.
+ function automatic [11:0] first_request(input [11:0] eligible,input [11:0] cursor_mask);
+  reg [11:0] suffix,scan;
+  suffix=eligible&cursor_mask;
+  scan=(|suffix)?suffix:eligible;
+  for(integer client=0;client<12;client=client+1)
+   first_request[client]=scan[client]&&!(|(scan&((12'd1<<client)-12'd1)));
+ endfunction
+ function automatic [3:0] request_index(input [11:0] selected);
+  request_index=0;
+  for(integer client=0;client<12;client=client+1)
+   request_index=request_index|({4{selected[client]}}&4'(client));
+ endfunction
+ function automatic [11:0] before_request(input [11:0] selected,input [11:0] cursor_mask);
+  reg selected_in_suffix;
+  selected_in_suffix=|(selected&cursor_mask);
+  for(integer client=0;client<12;client=client+1)
+   before_request[client]=(cursor_mask[client]&&!selected_in_suffix)||
+       (cursor_mask[client]==selected_in_suffix&&(|(selected>>(client+1))));
  endfunction
 
  reg [11:0] accepted_client;
@@ -122,7 +136,7 @@ module mc_dma_fabric_typed_p #(
  reg [63:0] grant_address[0:3];
  integer cancel_client,close_desc,close_client;
  reg cancel_good,close_good;
- integer new_offer_entry[0:3];reg [3:0] offer_fire,return_capture;reg [SKIDS-1:0] skid_forward,selected_skids;
+ integer new_offer_entry[0:3];reg [3:0] offer_fire,return_capture;reg [SKIDS-1:0] skid_forward;
  integer return_entry[0:3],return_slot[0:3];
  reg new_fault;reg [7:0] new_fault_kind;reg [3:0] new_fault_client;
  reg [31:0] new_fault_local;reg [63:0] new_fault_global;
@@ -143,9 +157,10 @@ module mc_dma_fabric_typed_p #(
  integer first_free_beat,second_free_beat,first_free_desc,second_free_desc,new_descs;
  wire [11:0] invalid_requests,new_requests,request_has_credit;
  wire [4:0] request_beat[0:11];
- reg [11:0] request_bad_now,channel_requests,request_remaining,request_requires_desc,request_eligible,bad_in_order;
- reg [3:0] request_head,request_offset;
- reg [63:0] selected_returns;
+ reg [11:0] request_bad_now,channel_requests,request_remaining,request_eligible,bad_in_order,request_selected;
+ reg [3:0] invalid_return_lanes;
+ reg [1:0] invalid_return_lane;
+ reg duplicate_return,previous_lane_uses_slot;
  reg [31:0] issue_remaining;
  reg [4:0] issue_offset;
  wire [11:0] cancel_candidates=c_cancel_valid&(~c_cancel_ack_valid|c_cancel_ack_ready);
@@ -300,20 +315,35 @@ module mc_dma_fabric_typed_p #(
       (owner[5]!=c_req_channel[client]||desc_closed[owner]||desc_length[owner]!=length||
        desc_next[owner]!=request_beat[client]||desc_address[owner]!=record_address));
  end
+ // Compare the returned tag against fixed entries in its physical channel.
+ // The entry field selects one already compared result instead of driving
+ // three variable reads from the owner table.
+ wire [3:0] return_owner_matches;
+ for(genvar lane=0;lane<4;lane=lane+1)begin: return_owner
+  wire [63:0] tag=d_rsp_tag[lane*64+:64];
+  wire [31:0] entries;
+  for(genvar index=0;index<32;index=index+1)begin: entry_match
+   localparam integer ENTRY=(lane/2)*32+index;
+   assign entries[index]=tag[14:10]==5'(index)&&b_state[ENTRY]==ISSUED&&
+       tag[31:16]==b_serial[ENTRY]&&tag[9:6]==b_client[ENTRY];
+  end
+  assign return_owner_matches[lane]=tag[63:32]==transport_generation&&
+      tag[15]==1'(lane/2)&&tag[5:0]==6'd0&&(|entries);
+ end
  // Combinational plans are applied atomically by the sequential owner table.
  always @* begin
   c_req_ready=0;c_close_ready=0;c_cancel_ready=0;p_req_rejected=0;
   d_rsp_ready=0;
   return_capture=0;
-  selected_skids=0;
   new_fault=0;new_fault_kind=0;new_fault_client=0;new_fault_local=0;new_fault_global=0;
   accepted_client=0;grant_valid=0;grant_new=0;grant=0;
-  selected_returns=0;
+  invalid_return_lanes=0;invalid_return_lane=0;
+  duplicate_return=0;previous_lane_uses_slot=0;
   issue_remaining=0;issue_offset=0;
   cancel_client=-1;cancel_good=0;close_desc=-1;close_client=-1;close_good=0;
   close_candidates=0;close_candidate=0;
-  request_bad_now=invalid_requests;channel_requests=0;request_remaining=0;request_requires_desc=0;
-  request_eligible=0;bad_in_order=0;request_head=0;request_offset=0;
+  request_bad_now=invalid_requests;channel_requests=0;request_remaining=0;
+  request_eligible=0;bad_in_order=0;request_selected=0;
   chosen=0;free_entry=0;free_desc=0;budget=0;held=0;slot=0;n=0;e=0;d=0;c=0;
   first_free_beat=-1;second_free_beat=-1;first_free_desc=-1;second_free_desc=-1;new_descs=0;
   for(ch=0;ch<2;ch=ch+1)issue_counts[ch]=0;
@@ -323,21 +353,33 @@ module mc_dma_fabric_typed_p #(
    grant_beat[i]=0;grant_length[i]=0;grant_tag[i]=0;grant_base[i]=0;grant_address[i]=0;
    if(offer_fire[i])issue_counts[i/2]=issue_counts[i/2]+1;
   end
-  // Reject transport duplicates without changing any owner's data/credit.
+  // An entry and a skid belong to one channel. Only the other lane of
+  // that channel can claim either earlier in this cycle.
   for(i=0;i<4;i=i+1)if(d_rsp_valid[i])begin
    e=int'(d_rsp_tag[i*64+10+:6]);
-   if(b_state[e]==ISSUED&&global_tag(6'(e))==d_rsp_tag[i*64+:64]&&e/32==i/2&&!selected_returns[e])begin
-    // Each DDR lane may land in any free skid in its channel. The
-    // shared finite pool avoids tying one blocked client to a return lane.
+   duplicate_return=0;
+   if(i%2!=0)duplicate_return=return_capture[i-1]&&return_entry[i-1]==e;
+   if(return_owner_matches[i]&&!duplicate_return)begin
     chosen=-1;
     for(j=0;j<SKIDS_PER_CHANNEL;j=j+1)begin
      slot=(i/2)*SKIDS_PER_CHANNEL+j;
-     if(chosen<0&&(!skid_valid[slot]||skid_forward[slot])&&!selected_skids[slot])chosen=slot;
+     previous_lane_uses_slot=0;
+     if(i%2!=0)previous_lane_uses_slot=return_capture[i-1]&&return_slot[i-1]==slot;
+     if(chosen<0&&(!skid_valid[slot]||skid_forward[slot])&&!previous_lane_uses_slot)
+      chosen=slot;
     end
-    if(chosen>=0)begin d_rsp_ready[i]=1;return_capture[i]=1;return_entry[i]=e;return_slot[i]=chosen;selected_skids[chosen]=1;selected_returns[e]=1;end
-   end else if(fault_space&&!new_fault)begin
-    d_rsp_ready[i]=1;new_fault=1;new_fault_kind=8'd1;new_fault_client=4'hf;new_fault_global=d_rsp_tag[i*64+:64];
-   end
+    if(chosen>=0)begin
+     d_rsp_ready[i]=1;return_capture[i]=1;return_entry[i]=e;return_slot[i]=chosen;
+    end
+   end else invalid_return_lanes[i]=1;
+  end
+  // A blocked valid return waits for space. A malformed return competes
+  // for the existing diagnostic slot, with the lowest lane taking priority.
+  if(fault_space&&(|invalid_return_lanes))begin
+   invalid_return_lane=2'(first_set({60'd0,invalid_return_lanes}));
+   d_rsp_ready[invalid_return_lane]=1;
+   new_fault=1;new_fault_kind=8'd1;new_fault_client=4'hf;
+   new_fault_global=d_rsp_tag[invalid_return_lane*64+:64];
   end
   if(d_fence_done_valid&&(fence_state!=F_WAIT||d_fence_done_generation!=transport_generation+32'd1)&&fault_space&&!new_fault)begin
    new_fault=1;new_fault_kind=8'd2;new_fault_client=4'hf;new_fault_global={32'd0,d_fence_done_generation};
@@ -366,18 +408,15 @@ module mc_dma_fabric_typed_p #(
    second_free_beat=free_beat_slots[ch][11]?int'({1'(ch),free_beat_slots[ch][10:6]}):-1;
    first_free_desc=free_descriptor_slots[ch][5]?int'({1'(ch),free_descriptor_slots[ch][4:0]}):-1;
    second_free_desc=free_descriptor_slots[ch][11]?int'({1'(ch),free_descriptor_slots[ch][10:6]}):-1;
-   request_head=request_at_offset(request_rr[ch],0);
    channel_requests=c_req_valid&((ch==0)?~c_req_channel:c_req_channel);
    request_remaining=channel_requests&~request_bad_now&request_has_credit;
-   request_remaining=12'({request_remaining,request_remaining}>>request_head);
-   request_requires_desc=12'({new_requests,new_requests}>>request_head);
    for(j=0;j<2;j=j+1)begin
     free_entry=(j==0)?first_free_beat:second_free_beat;
     free_desc=(new_descs==0)?first_free_desc:second_free_desc;
-    request_eligible=request_remaining&((free_desc<0)?~request_requires_desc:12'hfff);
+    request_eligible=request_remaining&((free_desc<0)?~new_requests:12'hfff);
     if(free_entry>=0&&(|request_eligible))begin
-     request_offset=4'(first_set({52'd0,request_eligible}));
-     c=int'(request_at_offset(request_head,request_offset));
+     request_selected=first_request(request_eligible,request_rr[ch]);
+     c=int'(request_index(request_selected));
      d=request_desc[c];
      grant={1'(ch),1'(j)};
      grant_new[grant]=d<0;
@@ -387,19 +426,19 @@ module mc_dma_fabric_typed_p #(
      grant_beat[grant]=request_beat[c];grant_length[grant]=c_req_record_beats[c*5+:5];
      grant_tag[grant]=c_req_tag[c*32+:32];grant_base[grant]=tag_base(c,c_req_tag[c*32+:32]);
      grant_address[grant]=c_req_address[c*64+:64];
-     c_req_ready[c]=1;accepted_client[c]=1;n=n+1;
-     request_remaining[request_offset]=0;
+     c_req_ready=c_req_ready|request_selected;accepted_client=accepted_client|request_selected;n=n+1;
+     request_remaining=request_remaining&~request_selected;
     end
    end
    // A malformed request consumes the diagnostic slot only if the scan
    // would have reached it before using the last physical reservation.
    bad_in_order=channel_requests&request_bad_now;
-   bad_in_order=12'({bad_in_order,bad_in_order}>>request_head);
-   if(n==2)bad_in_order=bad_in_order&((12'd1<<request_offset)-12'd1);
+   if(n==2)bad_in_order=bad_in_order&before_request(request_selected,request_rr[ch]);
    if(fault_space&&!new_fault&&(|bad_in_order))begin
-    request_offset=4'(first_set({52'd0,bad_in_order}));
-    c=int'(request_at_offset(request_head,request_offset));
-    c_req_ready[c]=1;if(c<3)p_req_rejected[c]=1;
+    request_selected=first_request(bad_in_order,request_rr[ch]);
+    c=int'(request_index(request_selected));
+    c_req_ready=c_req_ready|request_selected;
+    p_req_rejected=p_req_rejected|request_selected[2:0];
     new_fault=1;new_fault_kind=8'd4;new_fault_client=4'(c);new_fault_local=c_req_tag[c*32+:32];
    end
   end
@@ -443,7 +482,7 @@ module mc_dma_fabric_typed_p #(
     skid_descriptor[r]<=0;skid_beat[r]<=0;skid_data[r]<=0;
    end
    for(r=0;r<12;r=r+1)begin response_slot[r]<=0;response_rr[r]<=SKIDS'(1);end
-   for(r=0;r<2;r=r+1)begin request_rr[r]<=0;issue_rr[r]<=0;previous_issues[r]<=0;end
+   for(r=0;r<2;r=r+1)begin request_rr[r]<=12'hfff;issue_rr[r]<=0;previous_issues[r]<=0;end
   end else begin
    for(r=0;r<3;r=r+1)begin
     if(p_mode_valid[r]&&p_mode_ready[r])p_mode_active[r]<=p_mode_native64[r];
@@ -511,7 +550,7 @@ module mc_dma_fabric_typed_p #(
     if(grant_beat[r]+5'd1==grant_length[r])desc_closed[grant_desc[r]]<=1;
    end
    for(r=0;r<12;r=r+1)if(accepted_client[r])begin
-    request_rr[c_req_channel[r]]<=4'((r+1)%12);
+    request_rr[c_req_channel[r]]<=12'hfff<<((r+1)%12);
    end
    case(fence_state)
     F_IDLE:if(begin_auto_fence||begin_fence)begin
