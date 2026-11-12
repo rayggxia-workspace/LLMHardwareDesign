@@ -16,6 +16,7 @@ from ffn_m import (ALLOC, BEGIN, FILL, FIRST_OPERAND, INPUT, LAST_OPERAND, RAW_R
                    execution_replies, replay_commits, replay_replies)
 from ffn_m_issue import ALLOC_CMD, SIDE_WORDS, Command, CommandLink, join_schedule
 from ffn_mid import MIN_TICKS, MidTile
+from ffn_p import ProgrammedP
 from ffn_result import (READBACK_TAG, down_group_addresses, down_readback_words, mid_readback_words,
                         readback_service, sram_word_phases)
 from ffn_scatter import scatter_service, stripe_fragments
@@ -547,12 +548,15 @@ def weight_address(client, record):
     return base + 64 * BEATS * index
 
 
-def read_linked_weight(source, scopes, events, mode, seed, *, wjoin=False, lookahead=True, copy_delay_epoch=0):
+def read_linked_weight(source, scopes, events, mode, seed, *, wjoin=False, wside=False,
+                       lookahead=True, copy_delay_epoch=0):
+    wjoin = wjoin or wside
     links, addresses = {}, {}
     side = defaultdict(list)
     joins = defaultdict(list)
-    for tick, client, *fields in events['PISSUE', 'side']:
-        side[client].append(Command(tick, *fields))
+    if not wside:
+        for tick, client, *fields in events['PISSUE', 'side']:
+            side[client].append(Command(tick, *fields))
     if not wjoin:
         for tick, client, _, sequence, *_ in events['PISSUE', 'join']:
             joins[client].append((tick, sequence))
@@ -560,8 +564,9 @@ def read_linked_weight(source, scopes, events, mode, seed, *, wjoin=False, looka
     join_driver = None
     if wjoin:
         tiles = [(scope, k, header, phase == 1) for phase, scope, k, header, *_ in events['AREAD', 'profile']]
-        join_driver = JoinController(records_by_client, tiles, mode, lookahead=lookahead,
-                                     copy_delay_epoch=copy_delay_epoch)
+        driver = ProgrammedP if wside else JoinController
+        join_driver = driver(records_by_client, tiles, mode, lookahead=lookahead,
+                             copy_delay_epoch=copy_delay_epoch)
     for client, records in records_by_client.items():
         addresses[client] = {record.sequence: weight_address(client, record) for record in records}
         link = CommandLink({record.sequence: record.stores for record in records})
@@ -818,6 +823,17 @@ def check_wa_joins(scopes, trace, retired, eops, proofs, *, lookahead):
             require(expected == actual, f'P{p} W/A join differs: replay {expected}, trace {actual}')
         count += len(joins)
     return {'bindings': count, 'lookahead': lookahead, 'a_proof': 'replayed' if proofs is not None else 'sampled'}
+
+
+def check_live_side(driver, rows):
+    observed = defaultdict(list)
+    for tick, p, *fields in rows:
+        require(p in driver.dispatch, f'invalid P side lane P{p}')
+        observed[p].append(Command(tick, *fields))
+    for p, state in driver.dispatch.items():
+        for wanted, seen in zip_longest(state.sides, observed[p]):
+            require(wanted == seen, f'P{p} live side command differs: replay {wanted}, trace {seen}')
+    return len(rows)
 
 
 def check_p_results(scopes, trace, mode, m_stores=None, m_retired=None):
@@ -1235,7 +1251,8 @@ def check_admission(scopes, transfers, admission, upstream=None):
 
 def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False,
           m=False, issue=False, aread=False, copy_delay_epoch=0, wa_join=False, lookahead=True, wfill=False,
-          wdma=False, wlink=False, wjoin=False):
+          wdma=False, wlink=False, wjoin=False, wside=False):
+    wjoin = wjoin or wside
     aread = aread or wjoin or copy_delay_epoch != 0
     wa_join = wa_join or aread or not lookahead
     wlink = wlink or wjoin
@@ -1250,7 +1267,7 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
     scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(
         source, result_trace, m=m, issue=issue, aread=aread, weight=weight, wdma=wdma and not wlink)
     if wlink:
-        weight = read_linked_weight(source, scopes, result_trace, mode, seed, wjoin=wjoin,
+        weight = read_linked_weight(source, scopes, result_trace, mode, seed, wjoin=wjoin, wside=wside,
                                     lookahead=lookahead, copy_delay_epoch=copy_delay_epoch)
     if weight is not None:
         weight.validate()
@@ -1352,6 +1369,8 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
                        for p, lane in driver.lanes.items() for record in lane.records}
         require(retirements == m_retired, 'live P record retirement differs')
         report['wa_joins']['drives_command_issue'] = True
+        if wside:
+            report['wa_joins']['side_commands'] = check_live_side(driver, result_trace['PISSUE', 'side'])
     if wdma:
         report['weight_dma'] = dict(weight.counts)
     if admission or phase_release or scatter or mid or readback:
@@ -1387,6 +1406,7 @@ def main():
     verify.add_argument('--wdma', action='store_true', help='replay W and descriptor traffic through the shared DMA')
     verify.add_argument('--wlink', action='store_true', help='couple M bank allocation, shared DMA, and FILL replies')
     verify.add_argument('--wjoin', action='store_true', help='drive bindings from A proofs and live M/DMA')
+    verify.add_argument('--wside', action='store_true', help='generate P side commands and bindings from live state')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
@@ -1398,7 +1418,7 @@ def main():
                                    readback=args.result, m=args.m, issue=args.issue, aread=args.aread,
                                    copy_delay_epoch=args.copy_delay_epoch, wa_join=args.wa_join,
                                    lookahead=not args.no_lookahead, wfill=args.wfill, wdma=args.wdma,
-                                   wlink=args.wlink, wjoin=args.wjoin), indent=2))
+                                   wlink=args.wlink, wjoin=args.wjoin, wside=args.wside), indent=2))
 
 
 if __name__ == '__main__':

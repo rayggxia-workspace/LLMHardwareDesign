@@ -358,6 +358,24 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 365 项测试通过。同时改动观测的 A 证明、W/A 绑定和 P 退休拍后，实时推进仍重算出与原始记录一致的时序，逐拍对账分别拒绝这些篡改。另三项负例覆盖丢失绑定、绑定记录号错误和 K header 推迟 128 拍后与固定侧带命令的 session 顺序冲突。本机 `round27-join-verified.json` 的 SHA-256 为 `eff5312fe631a410624c787a950ebeeb5e1c4236cd4cd683860f1812364fec40`。当前模型仍从采样的侧带命令、K header 和 CALL 推进。接下来用 P 的队列、回包和退休生成侧带命令，覆盖会改变其 session 顺序的候选。
 
+### P 记录队列生成侧带命令
+
+第 28 轮由 P 的状态生成 BEGIN、上下文和 ALLOC 首次 VALID。每个 P 的范围迭代器保留六个记录名额，前瞻队列最多容纳两条记录。直接配对先等第一条 ALLOC 回包，再接第二条记录。前瞻记录保留 bank 和 FILL，轮到队首才交给执行。侧带帧的实际 EOP 和 EXEC 入 guard 的时刻决定 session 号何时递增。W/A 绑定也由该状态机发出，进入已有的 M 和共享 DDR 重放。
+
+三组已记录的完整 RTL 每组逐拍核对 72,064 条侧带命令、66,048 次 W/A 绑定和 P 退休、1,123,200 次物理 DDR 请求及等量返回。第 21 个 K tile 的 COPY 晚发一拍后，模型复现 564 次侧带命令时刻变化。三个 P 的第一条受影响 ALLOC 均从第 17,417 拍提前到第 17,413 拍。缩小模型在第 100 拍已有 BEGIN 帧在途时分岔，COPY 晚一拍把下一对记录的六条侧带命令各推迟一拍。两个分支均与从复位重算一致。
+
+用相同输入、seed 和背压重新构建 RTL，只关闭 P 节点的 W 前瞻。新轨迹逐拍通过同样的核对，程序结果从第 952,011 拍变为第 1,292,029 拍，外部字节数相同。变体保留双 EXEC 所有者和四个 M bank。本机 `round28-side-verified.json` 包含四份原始轨迹哈希，文件 SHA-256 为 `838d5db6a852678014abbabcb6125c4964f7a4876e6832a7bb40d63adb36a00f`。
+
+```bash
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG.gz --mode 1 --seed 25001 --wside
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check CANDIDATE_LOG.gz --mode 1 --seed 25001 --copy-delay-epoch 21 --wside
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check NO_LOOKAHEAD_LOG.gz --mode 1 --seed 25001 --no-lookahead --wside
+```
+
+366 项测试通过。五个观测篡改负例覆盖首次 VALID、丢失命令、session、ALLOC 记录号和长度。另把首个 K header 推迟 16 拍，对账在第 1,938 拍的三次 bank 安装处报出差异。删改多个侧带观测后，完整重放仍重算出原始 72,064 条侧带命令和 1,123,200 次 DDR 请求。本机 `round28-side-adversarial.json` 的 SHA-256 为 `c049c85ba31ad9a82bdae7380edf5e7af24aa7e5c20629b940a5d7257acb6ccb`。
+
+推进仍以 scope dispatch、K header 和 CALL 波形为入口。已核对 1,444 个 K tile 的共同请求与 P 范围迭代器提供首条记录的时刻一致。首个 scope 的源量化耗时 97 拍，后续已有源数据的阶段耗时 1 拍，租约和 header 传输再耗时 8 拍。下一轮用这些接口时序和 P 的真实请求生成 header。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

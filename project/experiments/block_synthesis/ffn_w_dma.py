@@ -90,16 +90,17 @@ class WeightCommandLinks:
 
     def advance(self, tick):
         installs = self.installs.pop(tick, ())
-        joins = self.join_driver.advance(tick) if self.join_driver is not None else {}
+        joins, side = self.join_driver.advance(tick) if self.join_driver is not None else ({}, {})
         for client, link in self.links.items():
             ready = self.ready.pop(client, ())
             binding = joins.get(client, ())
-            if not ready and not binding and (link.resume is None or link.resume > tick):
+            commands = side.get(client, ())
+            if not ready and not binding and not commands and (link.resume is None or link.resume > tick):
                 continue
             before = len(link.trace.bank_acks)
-            trace = link.run(binding, (), (), until=tick + 1, weight_completions=ready)
+            trace = link.run(binding, commands, (), until=tick + 1, weight_completions=ready)
             if self.join_driver is not None:
-                self.join_driver.observe(client, trace.replies)
+                self.join_driver.observe(client, trace)
             for edge, session, sequence, bank, generation in trace.bank_acks[before:]:
                 if edge != tick + 1:
                     raise ValueError('W bank install was not produced at its registered edge')

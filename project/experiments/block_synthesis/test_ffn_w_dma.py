@@ -5,6 +5,7 @@ from dma_read import Profile
 from ffn_join import JoinController
 from ffn_m import Record
 from ffn_m_issue import ALLOC_CMD, Command, CommandLink, FILL, WeightCompletion
+from ffn_p import ProgrammedP
 from ffn_w_dma import WeightCommandLinks, WeightDma, WeightOwner
 
 
@@ -116,6 +117,45 @@ class WeightDmaTests(unittest.TestCase):
         proof, fill, binding, _, _ = result(late)
         self.assertLess(proof, fill)
         self.assertEqual(binding, fill + 2)
+
+    def test_copy_candidate_retimes_next_pair_side_commands(self):
+        profile = Profile.from_spec({'ffn_provider': {'mode': 0, 'seed': 25002}})
+        rows = [Record(i + 1, 70, 1, 0, i, False, delay) for i, delay in enumerate((0, 1, 0, 3))]
+        addresses = {0: {r.sequence: 0x2000000 + 1088 * i for i, r in enumerate(rows)}}
+
+        def start(delay):
+            link = CommandLink({r.sequence: r.stores for r in rows})
+            driver = ProgrammedP({0: rows}, [(1, 0, 100, False)], 0, lookahead=True, copy_delay_epoch=delay)
+            return WeightDma(profile), WeightCommandLinks({0: link}, addresses, join_driver=driver)
+
+        def advance(state, first, last):
+            dma, coupled = state
+            for tick in range(first, last):
+                _, completed = dma.step(tick, coupled.advance(tick))
+                for owner, _ in completed:
+                    coupled.complete(owner.client, WeightCompletion(tick + 1, owner.session, owner.sequence,
+                                                                     owner.bank, owner.generation))
+
+        def side_commands(state):
+            _, coupled = state
+            coupled.finish()
+            return coupled.join_driver.dispatch[0].sides
+
+        prefix = start(0)
+        advance(prefix, 0, 100)
+        self.assertEqual(prefix[1].join_driver.dispatch[0].pending_side.session, 1)
+        results = []
+        for delay in (0, 1):
+            branch = deepcopy(prefix)
+            branch[1].join_driver.copy_delay_epoch = delay
+            advance(branch, 100, 400)
+            cold = start(delay)
+            advance(cold, 0, 400)
+            results.append(side_commands(branch))
+            self.assertEqual(results[-1], side_commands(cold))
+        self.assertEqual(results[0][:6], results[1][:6])
+        self.assertEqual([c.ready for c in results[0][6:]], [263, 277, 283, 292, 306, 312])
+        self.assertEqual([c.ready for c in results[1][6:]], [264, 278, 284, 293, 307, 313])
 
 
 if __name__ == '__main__':

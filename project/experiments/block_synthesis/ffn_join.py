@@ -3,7 +3,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 
 from ffn_a import P_COUNT, replay_tile
-from ffn_m import ALLOC, FILL, INPUT, RF, replay_commits
+from ffn_m import ALLOC, BEGIN, FILL, INPUT, RF, replay_commits
 from ffn_m_issue import join_tick
 
 
@@ -13,6 +13,7 @@ class Lane:
     joined: list = field(default_factory=list)
     retired: dict = field(default_factory=dict)
     eops: dict = field(default_factory=dict)
+    context_eops: dict = field(default_factory=dict)
     replies_seen: int = 0
     next_retire: int = 0
     guard_end: int = 0
@@ -35,11 +36,14 @@ class JoinController:
             for record in lane.records:
                 self.last[record.scope, record.k][p] = record.sequence
 
-    def observe(self, client, replies):
+    def observe(self, client, trace):
         lane = self.lanes[client]
+        replies = trace.replies
         for tick, reply in replies[lane.replies_seen:]:
             if reply.sequence and reply.source in (ALLOC, FILL, INPUT, RF):
                 lane.eops[reply.source, reply.sequence] = tick + reply.words
+            elif not reply.sequence and reply.source in (BEGIN, RF):
+                lane.context_eops[reply.source, reply.session] = tick + reply.words
         lane.replies_seen = len(replies)
         while lane.next_retire < len(lane.records):
             record = lane.records[lane.next_retire]
@@ -91,7 +95,7 @@ class JoinController:
                 intent = tick, lane.records[index].sequence
                 lane.joined.append(intent)
                 launches[p] = (intent,)
-        return launches
+        return launches, {}
 
     def validate(self):
         if self.tile_cursor != len(self.tiles):
