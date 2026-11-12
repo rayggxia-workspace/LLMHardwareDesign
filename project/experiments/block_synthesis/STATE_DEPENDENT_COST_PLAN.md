@@ -208,6 +208,28 @@ python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py che
 
 Verilator 5.006。本机 `round18-mid-logs.sha256` 为 `c5a72d3986237d13db54481821b8dd74c69f2e68dfd4c19e343c10b89b290b45`，`round18-mid-verified.json` 为 `fe0c80db99e622331b13ed9cce1b923a6902456573fff2e2fcaa4155337e2ac7`。清单包含四组原 RTL、两组放行对照和私有探针源。Windows 351 项测试通过。固定控制序列保证 G／Mid 独占所声明的 SRAM 端口，本轮按服务保留这些端口。仍使用采样的 P DONE 和 Down 之前的 Mid 读回事件，后续继续接入 P 执行及全局候选重排。
 
+### 从 P 写回到 Down 放行和程序结果
+
+第 19 轮在固定 #251 FFN 中，从每条最终 K 记录首字写请求的接纳拍开始重放。两次 16 B 写入共用 P 的 SRAM 接口，每次写确认受当前拍的响应 READY 控制，第二字等第一字确认后才能发出。按描述符几何检查每个记录序号、K 进度、地址及双字票据。最后一笔确认后，guard 和 A 生命周期还要推进四拍才能完成末条记录，range iterator 再过两拍发出 DONE VALID。Gate/Up 各 P 单独确认，Down 每组三个 P 等到最慢的 VALID 后一起确认。模型的 P DONE 进入 scatter 和 LC→MC 回传重放，Down 组完成进入下一组放行。
+
+读回以已经发布的 Mid 和 Down 物理字为输入，复用 SRAM 请求和响应 READY 门。Mid 最后一次发布后两拍确认 Gate/Up 结束，再过一拍发起第一笔读回。逐字等待响应再发下一笔，最后一个 Mid 读确认后两拍放行首组 Down。最后一组 Down 确认后开始读回 512 字，程序结果在最后一笔读确认后接受。四组 RTL 中，子命令均在末笔读确认前退休。
+
+四组 Verilator 5.006 RTL 的数值和累计流量断言通过。每组检查 66,048 条 P 记录、6,016 次写请求及确认、192 个 scope DONE、1,376 字 Mid 和 512 字 Down 读回，逐拍一致。Down 单个 P 从 DONE VALID 到组确认最长等待 24 拍。去掉新增探针后，四组日志与第 18 轮逐行一致。七个负对照分别篡改写地址、写确认拍、K 进度、P DONE VALID 拍、Down 读地址、Mid 读回标签和程序接受拍，检查均拒绝。
+
+| Seed／初始化 | 压力模式 | 最后 Mid 读确认拍 | 最后 Down 读确认拍 | 程序接受拍 |
+| --- | --- | ---: | ---: | ---: |
+| 25001／0 | 0 | 591,769 | 857,116 | 857,117 |
+| 25001／0 | 1 | 666,040 | 952,010 | 952,011 |
+| 25002／2 | 0 | 591,769 | 857,116 | 857,117 |
+| 25002／2 | 1 | 666,095 | 951,933 | 951,934 |
+
+```bash
+# 复用第 18 轮运行参数，运行时增加 +TRACE_RESULT。
+python -B project/experiments/block_synthesis/benchmark_ffn_control_trace.py check TRACE_LOG --mode 1 --seed 25001 --result
+```
+
+本机 `round19-result-logs.sha256` 为 `813dba7b4891e683578f06bb2bb9c81613c57576713ae62f6851d35f2a566317`，`round19-result-verified.json` 为 `4a2e7ecab072faaecb9750e40bd797668060c08235a8ff6e5734536037631a95`。Windows 352 项测试通过。102604 固定轨迹的旧基线仍为贪心与 DP 各 948,626 拍。本轮读回是 #251 验证程序的实际 SRAM 流量。P 首字写发起仍来自 RTL 采样，通用候选重排还需从 K 窗口、权重和 M 执行推导该拍，并把跨 scope 的未排空事务带进同一快照。
+
 搜索与硬件实测的对照方法参考 [Ansor](https://www.usenix.org/conference/osdi20/presentation/zheng)。内存控制器的地址解码、队列、仲裁和完成回调的分层参考 [Ramulator 2.0](https://arxiv.org/abs/2308.11030)。当前实现使用项目自有合同。
 
 ## 目标和边界

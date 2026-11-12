@@ -3,6 +3,7 @@ import random
 import unittest
 
 from benchmark_event_ffn import copy_bank_receipt
+from benchmark_ffn_control_trace import replay_readback
 from benchmark_ffn_dma_provider import RECORD_BYTES, paired_input
 from benchmark_native_dma_read import CASES, OLD, event_input, moves_by_task
 from benchmark_native_sram_replay import check_trace
@@ -594,6 +595,15 @@ class ReplayTest(unittest.TestCase):
         hardware['event_model']['windows']['up']['offset'] += 16
         with self.assertRaisesRegex(ValueError, 'windows differ from physical inputs or output'):
             search(tasks, hardware)
+
+    def test_ffn_readback_respects_published_words_and_live_ready(self):
+        words = ((0, 256), (1, 256))
+        published = {'P0:256': 'Mid:0', 'P1:256': 'Mid:128'}
+        self.assertEqual(replay_readback(words, 0, 1, published), [(1, 3), (4, 6)])
+        self.assertEqual(replay_readback(words, 1, 1, published), [(2, 4), (7, 12)])
+        self.assertEqual(replay_readback(words, 1, 3, published), [(3, 5), (7, 12)])
+        with self.assertRaisesRegex(ValueError, 'footprint differs'):
+            replay_readback(words, 1, 1, {'P0:256': 'Mid:0', 'P1:257': 'Mid:128'})
 
     @staticmethod
     def tick_reference(operations, capacity):

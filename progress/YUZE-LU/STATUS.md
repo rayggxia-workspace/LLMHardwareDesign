@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 19 轮。四组 #251 完整 FFN 按物理 SRAM 的写确认重建 768 次 P DONE、24 次 Down 组完成，并重放 7,552 字读回和程序接受。352 项测试通过，七个篡改负例均拒绝。P 首字写发起仍来自 RTL 采样，下一步接入 K／权重／M 执行。PR #257 和看板沿用现有远端交接。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 18 轮。接入 G 流水、Mid SRAM 所有权及目录发布。四组 #251 完整 FFN 的 344 个 Mid tile、145,168 个事件逐拍对账。受控 RTL 中首条 G 晚一拍放行，首块 Mid 早十拍发布，完整 FFN 周期持平。351 项通过。下一步接入 P 计算与跨 scope 完整重排。PR #257 和看板沿用现有远端交接。
 
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 17 轮。接入阶段 READY 门和逐 16 B 字的 scatter。#251 四组完整 FFN 对账 22,016 字及 232 次条带提交，提交拍由写 ACK 重算。350 项通过。后续沿已采样的 P DONE 向前接 P 计算，向后接 G 和 Mid 提交。PR #257 和看板沿用现有远端交接。

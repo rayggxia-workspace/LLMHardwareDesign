@@ -2,12 +2,15 @@
 import argparse
 import json
 from bisect import bisect_right
+from collections import defaultdict
 from pathlib import Path
 
 from cover_frontier import search
 from dma_read import Profile, Read
 from event_replay import Operation, Phase, replay
 from ffn_mid import MIN_TICKS, MidTile
+from ffn_result import (READBACK_TAG, down_group_addresses, down_readback_words, mid_readback_words,
+                        readback_service, sram_word_phases)
 from ffn_scatter import scatter_service, stripe_fragments
 from verify_cover_frontier import verify
 
@@ -106,6 +109,31 @@ MID_MONITOR = """  always @(posedge clk) if($test$plusargs("TRACE_MID")&&!reset)
    if(dut.q_done&&dut.q_take)$display("MID q_done %0d %0d",cycle,dut.q_words);
   end
 """
+RESULT_MONITOR = """  always @(posedge clk) if($test$plusargs("TRACE_RESULT")&&!reset)begin
+   if(done_valid&&done_ready)$display("READBACK gate_done %0d",cycle);
+   if(inspect&&inspect_req&&aux_ready[inspect_p])
+    $display("READBACK request %0d %0d %0d %0d",cycle,down_phase,inspect_p,inspect_addr);
+   if(inspect&&inspect_rsp_take&&aux_v[inspect_p])
+    $display("READBACK ack %0d %0d %0d %0d %0d",cycle,down_phase,inspect_p,inspect_addr,aux_tag[inspect_p]);
+  end
+  for(genvar q=0;q<3;q++)begin: result_port
+   reg probe_done_previous=0;
+   always @(posedge clk) if($test$plusargs("TRACE_RESULT")&&!reset)begin
+    if(ps[q].node.sw_valid&&ps[q].node.sw_ready)
+     $display("PRESULT write %0d %0d %0d %0d %0d %0d",cycle,q,ps[q].node.sw_ticket[31:0],
+              ps[q].node.sw_ticket[63:32],ps[q].node.sw_word,ps[q].node.sw_address);
+    if(ps[q].node.sw_ack_valid&&ps[q].node.sw_ack_ready)
+     $display("PRESULT ack %0d %0d %0d %0d %0d",cycle,q,ps[q].node.sw_ack_ticket[31:0],
+              ps[q].node.sw_ack_ticket[63:32],ps[q].node.sw_ack_word);
+    if(ps[q].node.exec.complete_valid&&ps[q].node.exec.complete_ready)
+     $display("PRESULT record %0d %0d %0d %0d %0d",cycle,q,ps[q].node.exec.complete_owner[31:0],
+              ps[q].node.exec.complete_sequence,ps[q].node.exec.complete_next_k);
+    if(ps[q].node_done&&!probe_done_previous)
+     $display("PRESULT valid %0d %0d %0d",cycle,q,lc_done_owner[q*128+:32]);
+    probe_done_previous<=ps[q].node_done;
+   end
+  end
+"""
 
 # From the last accepted CALL flit, the LC accepts the frame, reads PM and
 # metadata, then presents the first 64 B fetch. CRC scans 124 bytes after the
@@ -134,10 +162,11 @@ def instrument(source, destination):
     if rtl.count(ANCHOR) != 1:
         raise ValueError('expected the unique programmed FFN block in #251')
     with destination.open('x', encoding='utf-8', newline='\n') as output:
-        output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + SCATTER_MONITOR + MID_MONITOR + ANCHOR))
+        output.write(rtl.replace(ANCHOR, MONITOR + ADMISSION_MONITOR + SCATTER_MONITOR
+                                 + MID_MONITOR + RESULT_MONITOR + ANCHOR))
 
 
-def read_trace(source):
+def read_trace(source, result_trace=None):
     open_calls = {}
     scopes = []
     admission = {'ready': [], 'stripe': [], 'down': []}
@@ -147,6 +176,12 @@ def read_trace(source):
     start = result = program = None
     passed = False
     for line in source:
+        if result_trace is not None and line.startswith(('PRESULT ', 'READBACK ')):
+            domain, kind, *fields = line.split()
+            require(kind in {'PRESULT': ('write', 'ack', 'record', 'valid'),
+                             'READBACK': ('gate_done', 'request', 'ack')}[domain],
+                    f'unexpected {domain} event {kind}')
+            result_trace[domain, kind].append(tuple(map(int, fields)))
         if line.startswith('PROGRAM_PROFILE '):
             require(program is None, 'duplicate programmed FFN profile')
             program = dict(item.split('=') for item in line.split()[1:])
@@ -243,6 +278,158 @@ def trace_action(name, ticks, stages, after=()):
                           'nets': [], 'scratch_words': 0, 'event_stages': stages}]}
 
 
+def p_result_addresses(session, client):
+    if session > GATE_UP_STRIPES:
+        return tuple(down_group_addresses(session - GATE_UP_STRIPES - 1, DOWN_GROUPS, client))
+    first = STRIPE_COLUMNS * (session - 1)
+    width = min(STRIPE_COLUMNS, GATE_UP_COLUMNS - first)
+    return tuple(fragment.scratch + word for fragment in stripe_fragments(first, width)
+                 if fragment.client == client for word in range(fragment.words))
+
+
+def check_p_results(scopes, trace, mode):
+    writes, acks, records = (defaultdict(list) for _ in range(3))
+    for kind, target in (('write', writes), ('ack', acks)):
+        for tick, client, ticket, sequence, word, *address in trace['PRESULT', kind]:
+            target[client].append((tick, ticket, sequence, word, *address))
+    for tick, client, owner, sequence, next_k in trace['PRESULT', 'record']:
+        records[owner, client].append((tick, sequence, next_k))
+    ready = {(owner, client): tick for tick, client, owner in trace['PRESULT', 'valid']}
+    require(len(ready) == len(trace['PRESULT', 'valid']) == len(scopes), 'P result VALID coverage differs')
+    require(set(writes) == set(acks) == set(range(P_COUNT)), 'P store client coverage differs')
+
+    cursors = [0] * P_COUNT
+    tickets = [0] * P_COUNT
+    next_sequence = 1
+    operations, expected = [], []
+    valid, down, down_values = {}, {}, {}
+    for scope in sorted(scopes, key=lambda row: (row['dispatch'][0][1], row['client'])):
+        client = scope['client']
+        dispatch, owner = scope['dispatch'][0]
+        done, _, read_bytes, write_bytes = scope['done'][0]
+        key = owner, client
+        addresses = p_result_addresses(owner, client)
+        start, end = cursors[client], cursors[client] + len(addresses)
+        cursors[client] = end
+        issued, returned = writes[client][start:end], acks[client][start:end]
+        slices = (GATE_UP_COLUMNS if owner > GATE_UP_STRIPES else 2048) // 128
+        records_per_slice = len(addresses) // 2
+        completed = records.pop(key, ())
+        require(len(issued) == len(returned) == len(addresses) == write_bytes // 16
+                and write_bytes % 16 == 0 and len(completed) == slices * records_per_slice
+                and read_bytes == len(completed) * 1088,
+                f'P{client} scope {owner} result traffic differs')
+        previous = dispatch
+        for index, (tick, sequence, next_k) in enumerate(completed):
+            require(previous < tick < done and sequence == next_sequence + index
+                    and next_k == (index // records_per_slice + 1) * 128,
+                    f'P{client} scope {owner} record identity or K progress differs')
+            previous = tick
+        next_sequence += len(completed)
+
+        for index, (record, sequence, _) in enumerate(completed[-records_per_slice:]):
+            first = 2 * index
+            write0, write1 = issued[first:first + 2]
+            ack0, ack1 = returned[first:first + 2]
+            ticket = write0[1]
+            require(ticket > tickets[client], f'P{client} result ticket reused or out of order')
+            tickets[client] = ticket
+            for word, (request, ack) in enumerate(((write0, ack0), (write1, ack1))):
+                address = addresses[first + word]
+                require(request[1:] == (ticket, sequence, word, address)
+                        and ack[1:] == (ticket, sequence, word)
+                        and dispatch < request[0] < ack[0] < record,
+                        f'P{client} scope {owner} result address, ticket or ordering differs')
+                if owner > GATE_UP_STRIPES:
+                    down_values[f'P{client}:{address}'] = f'Down:{owner}:{client}:{sequence}:{word}'
+            phases = tuple(Phase.from_spec(item['kind'], item['ticks'], item)
+                           for word in range(2)
+                           for item in sram_word_phases(client, mode, f'word{word}'))
+            operations.append(Operation(phases, release=write0[0]))
+            final = index + 1 == records_per_slice
+            expected.append((key, (write0[0], ack0[0], write1[0], ack1[0]), record, final))
+    require(not records and all(cursors[p] == len(writes[p]) == len(acks[p]) for p in range(P_COUNT)),
+            'unexpected P result records or store transactions')
+
+    capacity = dict.fromkeys((f'P{client}.S.{port}' for client in range(P_COUNT)
+                              for port in ('request', 'response')), 1)
+    grants = replay(operations, capacity)
+    for (key, observed, record, final), operation in zip(expected, grants):
+        request0, _, ack0, request1, _, ack1 = operation
+        require((request0.start, ack0.start, request1.start, ack1.start) == observed,
+                f'P scope {key} result store handshake differs')
+        if final:
+            # The last record goes through guard terminal, A close, A release,
+            # and executor COMPLETE. The iterator exposes VALID two edges later.
+            complete = ack1.start + 4
+            require(complete == record and complete + 2 == ready.get(key),
+                    f'P scope {key} range drain differs')
+            valid[key] = complete + 2
+            if key[0] > GATE_UP_STRIPES:
+                down[key[0]] = max(down.get(key[0], 0), valid[key])
+
+    completions = {}
+    for scope in scopes:
+        actual, owner, _, _ = scope['done'][0]
+        key = owner, scope['client']
+        predicted = down.get(owner, valid[key])
+        require(actual == predicted, f'P scope {key} DONE handshake differs')
+        completions[key] = predicted
+    return completions, list(down.values()), down_values, {
+        'stores': sum(cursors), 'records': next_sequence - 1, 'scopes': len(valid),
+        'max_valid_to_done': max(completions[key] - tick for key, tick in valid.items()),
+    }
+
+
+def replay_readback(words, mode, release, published):
+    service = readback_service(words, mode)
+    windows = {f'P{client}:{address}': {'site': f'P{client}', 'offset': address * 16, 'bytes': 16}
+               for client, address in words}
+    require(windows.keys() == published.keys(), 'readback footprint differs from published results')
+    hardware = {
+        'resources': {resource: 1 for phase in service['phases'] for resource in phase['claims']},
+        'nets': {}, 'sites': {f'P{p}': {'bytes': 16384, 'words': 1024} for p in range(P_COUNT)},
+        'event_model': {'kind': 'qualified-event-model-v1', 'timing': 'replay',
+                        'value_bytes': dict.fromkeys(published.values(), 16), 'windows': windows,
+                        'initial_copies': published.copy(), 'routes': {},
+                        'services': {'publish': {'ticks': release, 'claims': {}}, 'readback': service}},
+    }
+    tasks = [trace_action('publish', release, [{'service': 'publish'}]),
+             trace_action('readback', service['ticks'], [{'service': 'readback', 'input_policy': 'resident',
+                                                            'inputs': published}], after=('publish',))]
+    plan = search(tasks, hardware, width=1)
+    verify(tasks, hardware, (), plan)
+    phases = plan['tasks'][-1]['evaluation']['events'][0]['phases']
+    return [(phases[3 * index]['start'], phases[3 * index + 2]['start']) for index in range(len(words))]
+
+
+def check_readback(upstream, trace, mode, down_done, result, last_terminal, published):
+    last_mid = max(tick for kind, tick in upstream if kind == 'mid')
+    require(trace['READBACK', 'gate_done'] == [(last_mid + 2,)], 'Gate/Up controller DONE differs')
+    mid_words = mid_readback_words(GATE_UP_COLUMNS // MID_COLUMNS)
+    down_words = down_readback_words(DOWN_GROUPS, P_COUNT)
+    requests, acks = [], []
+    phase_acks = []
+    for phase, (words, release) in enumerate(((mid_words, last_mid + 3), (down_words, down_done[-1] + 1))):
+        receipts = replay_readback(words, mode, release, published[phase])
+        for (request, ack), (client, address) in zip(receipts, words):
+            requests.append((request, phase, client, address))
+            acks.append((ack, phase, client, address, READBACK_TAG))
+        phase_acks.append([ack for _, ack in receipts])
+    require(requests == trace['READBACK', 'request'], 'result readback request differs')
+    require(acks == trace['READBACK', 'ack'], 'result readback ACK differs')
+    require(result == phase_acks[1][-1] + 1 and last_terminal < phase_acks[1][-1],
+            'program result acceptance differs')
+    replacements = {'mid_read': phase_acks[0], 'down_done': down_done}
+    for kind, ticks in replacements.items():
+        require([tick for event, tick in upstream if event == kind] == ticks, f'{kind} producer differs')
+    predictions = {kind: iter(ticks) for kind, ticks in replacements.items()}
+    return [(kind, next(predictions[kind]) if kind in predictions else tick) for kind, tick in upstream], {
+        'mid_words': len(mid_words), 'down_words': len(down_words), 'last_mid_ack': phase_acks[0][-1],
+        'last_down_ack': phase_acks[1][-1], 'result_accept': result,
+    }
+
+
 def scatter_problem(fragments, mode, producer_ready, session):
     service = scatter_service(fragments, mode)
     resources = {r: 1 for phase in service['phases'] for r in phase['claims']}
@@ -316,14 +503,14 @@ def append_mid_actions(tasks, hardware, resident, tiles):
         tasks.append(trace_action(name, MIN_TICKS + 1, stages, after=(tasks[-1]['id'],)))
 
 
-def check_scatter(scopes, upstream, observed, mode, observed_mid=None):
+def check_scatter(scopes, upstream, observed, mode, observed_mid=None, p_done=None):
     by_session = {}
     for scope in scopes:
         done, session, _, _ = scope['done'][0]
         if session <= GATE_UP_STRIPES:
             owners = by_session.setdefault(session, {})
             require(scope['client'] not in owners, 'duplicate P completion in stripe')
-            owners[scope['client']] = done
+            owners[scope['client']] = done if p_done is None else p_done[session, scope['client']]
 
     generation = words = cursor = 0
     commits = []
@@ -333,6 +520,7 @@ def check_scatter(scopes, upstream, observed, mode, observed_mid=None):
     mid_cursor = 0
     mid_commits = []
     ack_to_publish = []
+    published = {}
     for session in range(1, GATE_UP_STRIPES + 1):
         completion = by_session.get(session, {})
         require(set(completion) == set(range(P_COUNT)), f'incomplete P completions for stripe {session}')
@@ -383,6 +571,8 @@ def check_scatter(scopes, upstream, observed, mode, observed_mid=None):
                 mid_cursor += 1
             mid_commits.append(end - 1)
             ack_to_publish.append(end - 1 - expected[-2][1])
+            require(not published.keys() & event['outputs'].keys(), 'Mid publication overwrites a readback word')
+            published.update(event['outputs'])
 
     require(cursor == len(observed), 'unexpected scatter trace entries')
     require([tick for kind, tick in upstream if kind == 'scatter'] == commits, 'scatter commit differs')
@@ -397,7 +587,7 @@ def check_scatter(scopes, upstream, observed, mode, observed_mid=None):
         report['mid'] = {'tiles': len(mid_commits), 'events': mid_cursor,
                          'max_last_ack_to_publish': max(ack_to_publish)}
     releases = [(kind, next(predictions[kind]) if kind in predictions else tick) for kind, tick in upstream]
-    return releases, report
+    return releases, report, published
 
 
 def replay_group(group, trigger, delay, is_down):
@@ -506,9 +696,11 @@ def check_admission(scopes, transfers, admission, upstream=None):
     return report
 
 
-def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False):
-    scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(source)
-    transfers, terminals = [], []
+def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False):
+    result_trace = defaultdict(list) if readback else None
+    scopes, start, result, program, sampled_admission, upstream, observed_scatter, observed_mid = read_trace(
+        source, result_trace)
+    transfers = []
     sequence = [0] * 3
     read_bytes = write_bytes = 0
     for index, scope in enumerate(scopes):
@@ -542,35 +734,50 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
             Phase('descriptor DMA', 1, dma_read=Read(client, addr, 128, 2)),
             Phase('CRC and service offer', DESCRIPTOR_CHECK_TICKS),
         ), release=call))
+
+    p_done = None
+    if readback:
+        p_done, down_done, down_values, p_report = check_p_results(scopes, result_trace, mode)
+    terminals = []
+    for scope in scopes:
+        client = scope['client']
+        done, owner, _, _ = scope['done'][0]
+        if p_done is not None:
+            done = p_done[owner, client]
         terminals.append(Operation((
             Phase('terminal packet and receive bubble', TERMINAL_FRAME_WITH_BUBBLE, (('MC.rx', 1),), client),
         ), release=done + DONE_TO_TERMINAL_FRAME))
-
     profile = Profile.from_spec({'ffn_provider': {'mode': mode, 'seed': seed}})
     grants = replay(transfers + terminals, {'MC.rx': 1}, dma_profile=profile)
+    terminal_ticks = []
     for scope, transfer, terminal in zip(scopes, grants[:len(scopes)], grants[len(scopes):]):
         beats = transfer[1].dma_beats
         require(tuple(beat.reserved for beat in beats) == tuple(row[0] for row in scope['fetch'])
                 and sorted((beat.delivered, scope['fetch'][i][1]) for i, beat in enumerate(beats)) ==
                 scope['fetch_return'], 'descriptor DMA handshakes differ')
         require(transfer[-1].end == scope['offer'][0][0], 'CRC or service offer timing differs')
-        require(terminal[0].start + TERMINAL_EOP_OFFSET == scope['terminal'][0][0],
-                'terminal arbitration or framing differs')
+        terminal_ticks.append(terminal[0].start + TERMINAL_EOP_OFFSET)
+        require(terminal_ticks[-1] == scope['terminal'][0][0], 'terminal arbitration or framing differs')
     require((int(program['calls']), int(program['confirmed_reads']), int(program['confirmed_writes'])) ==
             (len(scopes), read_bytes, write_bytes) and result[1:] == (read_bytes, write_bytes),
             'program byte accounting differs')
-    require(result[0] > max(s['terminal'][0][0] for s in scopes), 'program result preceded child retirement')
+    require(result[0] > max(terminal_ticks), 'program result preceded child retirement')
     report = {'calls': len(scopes), 'descriptor_beats': 2 * len(scopes), 'start': start,
               'result_accept': result[0], 'read_bytes': read_bytes, 'write_bytes': write_bytes,
               'longest_service_offer_wait': max(s['dispatch'][0][0] - s['offer'][0][0] for s in scopes),
               'longest_done_to_terminal': max(s['terminal'][0][0] - s['done'][0][0] for s in scopes)}
-    if scatter or mid:
-        upstream, data_report = check_scatter(scopes, upstream, observed_scatter, mode, observed_mid if mid else None)
+    if scatter or mid or readback:
+        upstream, data_report, mid_values = check_scatter(scopes, upstream, observed_scatter, mode,
+                                                          observed_mid if mid or readback else None, p_done)
         report.update(data_report)
-    if admission or phase_release or scatter or mid:
+    if readback:
+        upstream, report['readback'] = check_readback(upstream, result_trace, mode, down_done, result[0],
+                                                       max(terminal_ticks), (mid_values, down_values))
+        report['p_results'] = p_report
+    if admission or phase_release or scatter or mid or readback:
         report['admission'] = check_admission(scopes, grants[:len(scopes)], sampled_admission,
-                                              upstream if phase_release or scatter or mid else None)
-    if phase_release or scatter or mid:
+                                              upstream if phase_release or scatter or mid or readback else None)
+    if phase_release or scatter or mid or readback:
         report['phase_replay_calls_per_strategy'] = len(scopes)
     return report
 
@@ -589,13 +796,15 @@ def main():
     verify.add_argument('--phase-release', action='store_true')
     verify.add_argument('--scatter', action='store_true')
     verify.add_argument('--mid', action='store_true')
+    verify.add_argument('--result', action='store_true')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
     else:
         with args.log.open(encoding='utf-8') as source:
             print(json.dumps(check(source, args.mode, args.seed, admission=args.admission,
-                                   phase_release=args.phase_release, scatter=args.scatter, mid=args.mid), indent=2))
+                                   phase_release=args.phase_release, scatter=args.scatter, mid=args.mid,
+                                   readback=args.result), indent=2))
 
 
 if __name__ == '__main__':
