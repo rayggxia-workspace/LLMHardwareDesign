@@ -109,6 +109,8 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     'invalid event interval or prerequisite')
             if event['kind'] == 'move':
                 src, dst, value = event['src'], event['dst'], event['value']
+                require(value not in spec.get('indexed_ingress', {}),
+                        'native indexed ingress cannot be moved as a whole window')
                 route = spec['routes'][event['route']]
                 require(all(event['route'] not in issues.get('routes', {}) for issues in interface_issues),
                         'route has no qualified interface')
@@ -158,6 +160,17 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 require(('ffn_program' in event) == ('ffn_program' in service and timing == 'replay'),
                         'FFN program receipt coverage differs')
                 inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
+                ingress = spec.get('indexed_ingress', {})
+                offset = service.get('indexed_read', {}).get('index_window_offset', 0)
+                require(not ingress.keys() & outputs.values(), 'native ingress cannot be a stage output')
+                if offset or ingress.keys() & inputs.values():
+                    require(len(inputs) == 1 and all(
+                        ingress.get(value) == {'window': window, 'offset': offset}
+                        and type(offset) is int and offset > 0 and sizes[value] in (4, 8)
+                        and offset + sizes[value] <= windows[window]['bytes']
+                        and (windows[window]['offset'] + offset) % sizes[value] == 0
+                        and value not in backing and writes.get(window) == [(0, 0, value)]
+                        for window, value in inputs.items()), 'invalid or overwritten native indexed ingress')
                 materializations = [(window, outputs[window]) for window in stage.get('backed_outputs', ())]
                 require(event['inputs'] == inputs and event['outputs'] == outputs,
                         'native stage values differ')

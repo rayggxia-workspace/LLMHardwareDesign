@@ -477,6 +477,24 @@ class Model:
             if stage.get('input_policy', 'any') not in ('any', 'resident', 'backing'):
                 raise ValueError('unknown input policy')
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
+            ingress = self.spec.get('indexed_ingress', {})
+            offset = service.get('indexed_read', {}).get('index_window_offset', 0)
+            if ingress.keys() & outputs.values():
+                raise ValueError('native ingress cannot be a stage output')
+            if offset or ingress.keys() & inputs.values():
+                if len(inputs) != 1:
+                    raise ValueError('indexed ingress requires one SRAM window')
+                (window, value), = inputs.items()
+                self.validate_copy(window, value)
+                size = self.sizes[value]
+                if (ingress.get(value) != {'window': window, 'offset': offset}
+                        or value in self.initial.backing or window in stage.get('persist', ())
+                        or stage.get('input_policy') == 'backing'
+                        or type(offset) is not int or offset <= 0 or size not in (4, 8)
+                        or self.spec.get('initial_copies', {}).get(window) != value
+                        or offset + size > self.windows[window]['bytes']
+                        or (self.windows[window]['offset'] + offset) % size):
+                    raise ValueError('indexed ingress lies outside its qualified SRAM window')
             backed = stage.get('backed_outputs', ())
             if (not isinstance(backed, (list, tuple)) or any(not isinstance(w, str) or w not in outputs for w in backed)
                     or len(set(backed)) != len(backed)):
@@ -712,6 +730,8 @@ class Model:
         return ticks, claims, read
 
     def move(self, state, value, src, dst, ready, route_name):
+        if value in self.spec.get('indexed_ingress', {}):
+            raise Infeasible('native indexed ingress cannot be moved as a whole window')
         route = self.routes[route_name]
         ticks, claims, _ = self.route_data(route, value)
         size = self.sizes[value]
@@ -824,6 +844,10 @@ class Model:
                     raise Infeasible('stage operand is outside its control site')
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
             for window, value in inputs.items():
+                if service.get('indexed_read', {}).get('index_window_offset', 0):
+                    original = state.copies.get(window)
+                    if original is None or original.value != value or original.ready != 0:
+                        raise Infeasible('indexed ingress is no longer resident')
                 state = self.ensure(state, window, value, ready, protected | remaining.keys(), events,
                                     stage.get('input_policy', 'any'), choose,
                                     prefetch=window in stage.get('prefetch', ()))

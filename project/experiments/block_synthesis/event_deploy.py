@@ -197,6 +197,10 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
                     if table_address % 16 or table_address + spec['value_bytes'][index['table']] > 1 << index['address_bits']:
                         raise ValueError('indexed table lies outside its declared address width or alignment')
                     descriptor.update(op='INDEXED_LOAD', indexed_read={**index,'table_address':table_address})
+                    if 'index_window_offset' in index:
+                        # The physical operand has a subwindow address. Keep the
+                        # enclosing SRAM window for the command hazard check.
+                        descriptor['read'] = [{**reads[0], 'address': reads[0]['address'] + index['index_window_offset']}]
                 pending_moves.clear()
                 previous = {sequence}
                 if stage_id is not None:

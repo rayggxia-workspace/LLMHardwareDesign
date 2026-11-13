@@ -343,3 +343,22 @@ python -B UPPER_ROUTER/run.py OUT/algorithm2-input.json OUT/routes.json --handof
 布线和局控输出引用同一计划散列。该输入仍有 10 组未绑定的接口需求。
 日志 `audit-loop-memory-109588.log` SHA-256 为
 `a5e21268dd2514d9c1dd6bfcf6e523504823fa51e4fe87e19b4f561ae2427395`。
+
+## 同一计划中的原生索引和首个 RMS
+
+`indexed_gather` 的 `index_window_offset` 可声明由原生入口写入的单个已对齐索引。
+非零偏移引用完整的 SRAM 窗口作资源和覆写检查，并将索引的真实字节地址交给编码器。
+索引只由声明的入口提供，不能作为普通 LOAD/STORE 的数据；覆盖后不能恢复成旧索引。
+这让 Gather 读同一个窗口里的索引，后续 gamma LOAD 再复用整个窗口。
+
+远端作业 109614 用封存图上的节点和真实权重地址联合编译位置 0、511、512、638 的
+Gather 和首个 RMS。每个位置的 Gather、gamma LOAD、RMS 由同一份计划生成。
+通过 #260 `1ea06be2` 的原 linker，12 份描述符以及四份局控镜像逐字节匹配分段归档。
+调度器验证依赖，原 linker 的母控展开检查验证 CALL 目标及描述符地址。
+每份计划的连线和指令来源一致。对照使用归档拓扑，范围是两个相邻算子。
+
+- 远端目录 `framework-r10-WmbQfv` 内的 `audit-native-ingress-rms.py` SHA-256
+  `efff33c68f2c7f30b694fb32c1d336049174fc4b305afe4f2068114018b81efc`。
+- `audit-native-ingress-rms-109614.log` SHA-256
+  `ad041829d2b5818528708743e0471c3f3bf17e876426faaa20094b515bb02d61`。
+- 109613 远端回归通过 409 项，包括索引偏移、窗口复用及非法搬运检查。

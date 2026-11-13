@@ -76,7 +76,13 @@ def indexed_bindings(node, model, hardware):
         site = profile['site']
         if source['site'] != site or destination['site'] != site:
             raise Unsupported('indexed Gather window/control site differs')
-        if source['bytes'] < value_size(values[index]) or destination['bytes'] < length:
+        index_bytes = value_size(values[index])
+        offset = profile.get('index_window_offset', 0)
+        if (type(offset) is not int or offset < 0 or offset and (
+                (source['offset'] + offset) % (definition['index_bits'] // 8)
+                or elements != 1 or spec.get('initial_copies', {}).get(profile['index_window']) != index)):
+            raise Unsupported('indexed Gather subwindow needs a single aligned index from native ingress')
+        if source['bytes'] < offset + index_bytes or destination['bytes'] < length:
             continue
         address_bits = profile['address_bits']
         bandwidth = profile['bytes_per_tick']
@@ -85,6 +91,13 @@ def indexed_bindings(node, model, hardware):
                 type(bandwidth) is not int or bandwidth < 1 or type(setup) is not int or setup < 1):
             raise Unsupported('invalid indexed Gather address/timing profile')
         config = {**parameters, 'address_bits':address_bits}
+        if offset:
+            ingress = {'window': profile['index_window'], 'offset': offset}
+            if spec.setdefault('indexed_ingress', {}).setdefault(index, ingress) != ingress:
+                raise Unsupported('indexed Gather has conflicting native ingress placements')
+            if index in spec['initial_backing']:
+                raise Unsupported('native indexed ingress cannot also have DDR backing')
+            config['index_window_offset'] = offset
         name = 'indexed-load:' + profile['id'] + ':' + hashlib.sha256(
             json.dumps(config,sort_keys=True).encode()).hexdigest()[:16]
         ticks = elements * (setup + (row_bytes + bandwidth - 1) // bandwidth)
