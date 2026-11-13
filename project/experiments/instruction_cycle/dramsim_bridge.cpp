@@ -1,9 +1,11 @@
-// Live, read-only transport to the public DRAMsim3 API.
-// Same-address requests are serialized because the API callbacks carry only an address.
+// Live transport to the public DRAMsim3 API. The optional WR observer requires
+// the pinned controller patch. Same-address requests are always serialized.
 #include <charconv>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <limits>
+#include <map>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -14,6 +16,10 @@
 #include <vector>
 
 #include "dramsim3.h"
+
+#ifdef ISSUE265_WRITE_COMMIT
+extern "C" void issue265_observe_writes(void (*observer)(void *, uint64_t, uint64_t, uint64_t), void *context);
+#endif
 
 namespace {
 
@@ -35,10 +41,15 @@ void end_of_request(std::istringstream& request) {
 
 class Bridge {
 public:
-    Bridge(const char* config, const char* output)
-        : memory_(dramsim3::GetMemorySystem(config, output,
+    Bridge(const char* config, const char* output) {
+#ifdef ISSUE265_WRITE_COMMIT
+        issue265_observe_writes([](void* context, uint64_t address, uint64_t raw_tick, uint64_t write_delay) {
+            static_cast<Bridge*>(context)->write_issued(address, raw_tick, write_delay);
+        }, this);
+#endif
+        memory_.reset(dramsim3::GetMemorySystem(config, output,
               [this](uint64_t address) { read_complete(address); },
-              [](uint64_t) { throw std::runtime_error("unexpected write callback in read-only bridge"); })) {
+              [this](uint64_t address) { write_admitted(address); }));
         if (!memory_ || memory_->GetBusBits() * memory_->GetBurstLength() != 512) {
             throw std::runtime_error("expected a 64-byte DRAM burst");
         }
@@ -50,73 +61,156 @@ public:
     }
 
     void run(std::ostream& reply) {
-        reply << "READY " << period_ps_ << std::endl;
+        reply << "READY " << period_ps_;
+#ifdef ISSUE265_WRITE_COMMIT
+        reply << " WR_COMPLETION";
+#endif
+        reply << std::endl;
         for (std::string line; std::getline(std::cin, line);) {
             std::istringstream request(line);
             std::string op;
             request >> op;
             if (op == "CAN") {
                 const auto address = number(request);
+#ifdef ISSUE265_WRITE_COMMIT
+                const auto write = number(request);
+                if (write > 1) throw std::runtime_error("write flag must be zero or one");
+#else
+                const auto write = false;
+#endif
                 end_of_request(request);
-                reply << "CAN " << can_accept(address) << std::endl;
-            } else if (op == "READ") {
+                reply << "CAN " << can_accept(address, write) << std::endl;
+            } else if (op == "READ"
+#ifdef ISSUE265_WRITE_COMMIT
+                       || op == "WRITE"
+#endif
+            ) {
                 const auto id = number(request);
                 const auto address = number(request);
+                const bool write = op == "WRITE";
                 end_of_request(request);
-                if (!can_accept(address) || !ids_.insert(id).second) {
-                    throw std::runtime_error("read submitted without a free slot and unique live identity");
+                if (!can_accept(address, write) || !ids_.insert(id).second) {
+                    throw std::runtime_error("request submitted without a free slot and unique live identity");
                 }
-                addresses_.emplace(address, id);
-                if (!memory_->AddTransaction(address, false)) {
+                addresses_.emplace(address, Pending{id, write});
+                if (!memory_->AddTransaction(address, write)) {
                     throw std::runtime_error("DRAM admission changed after acceptance");
                 }
-                reply << "READ " << id << std::endl;
+                reply << op << ' ' << id << std::endl;
             } else if (op == "TICK") {
                 const auto count = number(request);
                 end_of_request(request);
-                if (!count || (count != 1 && !addresses_.empty())) {
-                    throw std::runtime_error("live reads require individual DRAM ticks");
+                if (!count || count > std::numeric_limits<uint64_t>::max() - tick_
+                    || (count != 1 && !addresses_.empty())) {
+                    throw std::runtime_error("invalid advance; live requests require individual DRAM ticks");
                 }
-                for (uint64_t tick = 0; tick < count; ++tick) memory_->ClockTick();
+                for (uint64_t elapsed = 0; elapsed < count; ++elapsed) {
+                    ++tick_;
+                    memory_->ClockTick();
+#ifdef ISSUE265_WRITE_COMMIT
+                    finish_writes();
+#endif
+                }
                 reply << "DONE " << completed_.size();
-                for (const auto& [id, address] : completed_) reply << ' ' << id << ' ' << address;
+                for (const auto& completion : completed_) {
+                    reply << ' ' << completion.id << ' ' << completion.address;
+#ifdef ISSUE265_WRITE_COMMIT
+                    reply << ' ' << completion.done_tick << ' ';
+                    if (completion.command_tick) reply << completion.command_tick;
+                    else reply << -1;
+#endif
+                }
                 completed_.clear();
                 reply << std::endl;
             } else if (op == "EXIT") {
                 end_of_request(request);
-                if (!addresses_.empty() || !completed_.empty()) {
-                    throw std::runtime_error("cannot exit before all reads complete");
+                if (!addresses_.empty() || !completed_.empty() || !due_writes_.empty()) {
+                    throw std::runtime_error("cannot exit before all transactions complete");
                 }
                 memory_->PrintStats();
                 reply << "EXIT" << std::endl;
                 return;
             } else {
-                throw std::runtime_error("unsupported DRAM command; bridge is read-only");
+                throw std::runtime_error("unsupported DRAM bridge command");
             }
         }
         throw std::runtime_error("unexpected EOF; use EXIT after draining reads");
     }
 
 private:
-    bool can_accept(uint64_t address) const {
+    struct Pending {
+        uint64_t id;
+        bool write;
+        bool admission_callback = false;
+        uint64_t command_tick = 0;
+    };
+
+    struct Completion {
+        uint64_t id;
+        uint64_t address;
+        uint64_t done_tick;
+        uint64_t command_tick;
+    };
+
+    bool can_accept(uint64_t address, bool write) const {
         if (address % 64) throw std::runtime_error("unaligned DRAM address");
-        return !addresses_.count(address) && memory_->WillAcceptTransaction(address, false);
+        return !addresses_.count(address) && memory_->WillAcceptTransaction(address, write);
     }
 
-    void read_complete(uint64_t address) {
+    void complete(uint64_t address, bool write) {
         const auto entry = addresses_.find(address);
-        if (entry == addresses_.end()) throw std::runtime_error("read callback has no live owner");
-        const auto id = entry->second;
+        if (entry == addresses_.end() || entry->second.write != write) {
+            throw std::runtime_error("DRAM completion has no matching live owner");
+        }
+        const auto pending = entry->second;
+        if (write && (!pending.admission_callback || !pending.command_tick)) {
+            throw std::runtime_error("write completed without observed admission and WR issue");
+        }
         addresses_.erase(entry);
-        ids_.erase(id);
-        completed_.emplace_back(id, address);
+        ids_.erase(pending.id);
+        completed_.push_back({pending.id, address, tick_, pending.command_tick});
     }
 
-    std::unordered_map<uint64_t, uint64_t> addresses_;
+    void read_complete(uint64_t address) { complete(address, false); }
+
+    void write_admitted(uint64_t address) {
+        const auto entry = addresses_.find(address);
+        if (entry == addresses_.end() || !entry->second.write || entry->second.admission_callback) {
+            throw std::runtime_error("write admission callback has no unique live owner");
+        }
+        entry->second.admission_callback = true;
+    }
+
+#ifdef ISSUE265_WRITE_COMMIT
+    void write_issued(uint64_t address, uint64_t raw_tick, uint64_t write_delay) {
+        const auto entry = addresses_.find(address);
+        // The hook runs inside ClockTick at the controller's zero-based index.
+        // Tick replies and the old read bridge instead count executed ticks.
+        if (!tick_ || raw_tick != tick_ - 1 || !write_delay
+            || write_delay > std::numeric_limits<uint64_t>::max() - tick_
+            || entry == addresses_.end() || !entry->second.write || entry->second.command_tick) {
+            throw std::runtime_error("WR command has no unique live owner or valid tick");
+        }
+        entry->second.command_tick = tick_;
+        due_writes_.emplace(tick_ + write_delay, address);
+    }
+
+    void finish_writes() {
+        while (!due_writes_.empty() && due_writes_.begin()->first <= tick_) {
+            const auto entry = due_writes_.begin();
+            if (entry->first != tick_) throw std::runtime_error("missed modeled write data completion");
+            complete(entry->second, true);
+            due_writes_.erase(entry);
+        }
+    }
+#endif
+
+    std::unordered_map<uint64_t, Pending> addresses_;
     std::unordered_set<uint64_t> ids_;
-    std::vector<std::pair<uint64_t, uint64_t>> completed_;
+    std::multimap<uint64_t, uint64_t> due_writes_;
+    std::vector<Completion> completed_;
     std::unique_ptr<dramsim3::MemorySystem> memory_;
-    uint64_t period_ps_ = 0;
+    uint64_t period_ps_ = 0, tick_ = 0;
 };
 
 }  // namespace
