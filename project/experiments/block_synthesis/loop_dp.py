@@ -5,10 +5,14 @@ external transfers. No whole tensor is presumed resident in S. Keeping bodies
 as loops avoids expanding billions of native commands into search nodes.
 """
 from dataclasses import dataclass,field
+from typing import TYPE_CHECKING
 from transition import evaluate_transition, retention_actions
 from static_wiring import completion_covers
 from column_shards import leaf_rows
 from service_bounds import optimistic_ticks
+
+if TYPE_CHECKING:
+    from event_replay import ReplayTrace
 
 
 @dataclass(frozen=True)
@@ -31,7 +35,7 @@ class State:
     windows: dict = field(default_factory=dict)
     execution: object = None
     replay_decisions: tuple = ()
-    replay_trace: tuple = ()
+    replay_trace: 'ReplayTrace | None' = None
 
 
 def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahead=True,

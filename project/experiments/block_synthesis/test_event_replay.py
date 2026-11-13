@@ -1,15 +1,17 @@
 from copy import deepcopy
 import random
 import unittest
+from unittest.mock import patch
 
 from benchmark_event_ffn import copy_bank_receipt
 from benchmark_ffn_control_trace import replay_readback
 from benchmark_ffn_dma_provider import RECORD_BYTES, paired_input
-from benchmark_native_dma_read import CASES, OLD, event_input, moves_by_task
+from benchmark_native_dma_read import CASES, OLD, Request, event_input, moves_by_task
 from benchmark_native_sram_replay import check_trace
 from cover_frontier import search
 from dma_offer import DmaOfferChannel
-from event_replay import Operation, Phase, ReadyWindow, ReplayDeadlock, replay
+from dma_read import Profile, Read
+from event_replay import Operation, Phase, ReadyWindow, ReplayDeadlock, ReplayTrace, replay, replay_branch
 from ffn_m import ALLOC, FILL, INPUT, INPUT_READY, RF, RF_READY, Record, Reply, commit_phases, reply_phase
 from ffn_m_issue import ALLOC_CMD, Command, CommandLink, WeightCompletion, join_schedule
 from ffn_mid import MIN_TICKS, MidTile
@@ -253,6 +255,96 @@ class ReplayTest(unittest.TestCase):
         resumed = replay(operations, cap, previous=prefix, issue_rates=rate)
         self.assertEqual(resumed, replay(operations, cap, issue_rates=rate))
         self.assertEqual([grants[0].start for grants in resumed], [0, 0, 1, 1, 3, 3])
+
+    def test_dma_checkpoint_rearbitrates_inflight_reads_for_sibling_candidates(self):
+        profile = Profile.from_spec({'return_latency': [7, 8],
+                                     'ddr_ready': [[3, 7, 14]],
+                                     'client_ready': [[10, 20, 4094]]})
+        capacity = {'slot': 2, 'port': 2}
+        rates = {'port': (5, 2)}
+        options = dict(issue_rates=rates, dma_profile=profile)
+        older = Operation((Phase('data', 1, (('port', 1),), dma_read=Read(0, 0, 1024, 2)),
+                           Phase('ack', 2)), holds=(('slot', 1),))
+        prefix = replay_branch([older], capacity, previous=ReplayTrace((), checkpoint_stride=2), **options)
+        at_four = next(checkpoint for checkpoint in prefix.checkpoints if checkpoint.tick == 4)
+        self.assertEqual(dict(at_four.starts), {(0, 0): 0})
+        self.assertIsNotNone(at_four.fabric.channels[0].offer.entries[0])
+
+        def compare(address):
+            read = Phase('data', 1, (('port', 1),), dma_read=Read(1, address, 512, 2))
+            younger = Operation((read,), release=4, holds=(('slot', 1),))
+            operations = [older, younger]
+            branch = replay_branch(operations, capacity, previous=prefix, **options)
+            self.assertTrue(any(checkpoint is at_four for checkpoint in branch.checkpoints))
+            self.assertEqual(branch.grants, replay(operations, capacity, **options))
+            return branch.grants
+
+        shared = compare(1024)
+        independent = compare(2048)
+        self.assertNotEqual(shared[0][0].dma_beats, independent[0][0].dma_beats)
+        self.assertEqual(compare(1024), shared)
+        self.assertEqual(prefix.grants, replay([older], capacity, **options))
+
+    def test_dma_checkpoint_keeps_rotation_across_idle_time(self):
+        profile = Profile.from_spec({'ffn_provider': {'mode': 1, 'seed': 25001}})
+
+        def read(client, address, release):
+            return Operation((Phase('data', 1, dma_read=Read(client, address, 256, 2)),), release=release)
+
+        operations = [read(3, 0, 0), Operation((Phase('idle', 100),)), read(4, 512, 150)]
+        prefix = replay_branch(operations[:2], {}, dma_profile=profile)
+        self.assertTrue(any(not checkpoint.fabric.active for checkpoint in prefix.checkpoints))
+        branch = replay_branch(operations, {}, previous=prefix, dma_profile=profile)
+        self.assertEqual(branch.grants, replay(operations, {}, dma_profile=profile))
+
+    def test_dma_checkpoint_matches_reset_under_mixed_pressure(self):
+        cap = {'port': 2, 'slot': 4, 'ack': 1}
+        for seed in range(48):
+            rng = random.Random(seed)
+            spec = ({'return_latency': [5, 8], 'ddr_ready': [[11, 39, 5], [73, 91, 10]]}
+                    if seed % 2 else {'ffn_provider': {'mode': seed % 4 // 2, 'seed': seed}})
+            spec['client_ready'] = [[19, 44, 0], [75, 123, 2730]]
+            options = dict(dma_profile=Profile.from_spec(spec), issue_rates={'port': (4, 3)})
+            previous = ReplayTrace((), checkpoint_stride=5)
+            operations = []
+            for index in range(14):
+                address = 4096 * index + 2048 * rng.randrange(2)
+                read = Read(rng.randrange(9), address, 128 * rng.randint(1, 12), 2)
+                data = Phase('data', 1, (('port', 1),), rng.randrange(3), dma_read=read)
+                setup = Phase('setup', rng.randint(1, 5), ready_window=ReadyWindow(7, 3, index % 7))
+                ack = Phase('ack', 2, (('ack', 1),))
+                phases = (setup, data, ack) if index % 2 else (data, ack)
+                deps = frozenset({rng.randrange(index)}) if index and rng.randrange(3) == 0 else frozenset()
+                release = 21 * index if seed % 3 else rng.randrange(160)
+                operations.append(Operation(phases, deps, release, holds=(('slot', 1),)))
+                previous = replay_branch(operations, cap, previous=previous, **options)
+                self.assertEqual(previous.grants, replay(operations, cap, **options), (seed, index))
+                self.assertLessEqual(len(previous.checkpoints), 16)
+
+    def test_frontier_scores_routes_with_a_live_dma_checkpoint(self):
+        requests = (Request(1, 0, 0, 4096), Request(1, 0, 8192, 512))
+        tasks, h = event_input(requests, client_stalls=((0, 140, 4094),), alternatives={1: (1,)})
+        spec = h['event_model']
+        spec['services']['gate'] = {'ticks': 70, 'claims': {}}
+        gate = task('gate', {**binding('timer', stage('gate')), 'site': 'P0', 'ticks': 70})
+        tasks.insert(0, gate)
+        tasks[-1]['after'] = ['gate']
+        restored = []
+
+        def check_branch(operations, capacity, *, previous, **options):
+            result = replay_branch(operations, capacity, previous=previous, **options)
+            self.assertEqual(result.grants, replay(operations, capacity, **options))
+            if previous:
+                restored.extend(snapshot.tick for snapshot in result.checkpoints
+                                if snapshot.starts and any(snapshot is old for old in previous.checkpoints))
+            return result
+
+        with patch('event_replay_plan.replay_branch', side_effect=check_branch):
+            plan = search(tasks, h, width=1, ready_limit=1)
+        verify(tasks, h, (), plan)
+        self.assertIn(64, restored)
+        row = next(row for row in plan['tasks'] if row['id'] == 'read-01')
+        self.assertEqual(row['evaluation']['events'][0]['route'], 'P1.read-1')
 
     def test_native_dma_held_offer_reserves_the_last_issue_credit(self):
         # Channel zero at cycle 14 of the #251 typed seed-1 probe.

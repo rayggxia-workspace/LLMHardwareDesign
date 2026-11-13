@@ -4,7 +4,7 @@ from dataclasses import dataclass, replace
 
 from dma_read import receipt_json
 from event_execution import Copy, DDR, PhaseEdge, capacity_profile, window_phase_indices
-from event_replay import Operation, Phase, replay
+from event_replay import Operation, Phase, replay_branch
 from ffn_mid import MidTile
 
 
@@ -118,11 +118,11 @@ def intents(model, decisions):
     return operations
 
 
-def retime(model, decisions, proposed, previous=()):
+def retime(model, decisions, proposed, previous=None):
     operations = intents(model, decisions)
-    trace = replay(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
-                   dma_profile=model.dma_profile)
-    grants = iter(zip(operations, trace))
+    trace = replay_branch(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
+                          dma_profile=model.dma_profile)
+    grants = iter(zip(operations, trace.grants))
     copies = model.initial.copies.copy()
     backing = model.initial.backing.copy()
     occupancy = defaultdict(Counter)

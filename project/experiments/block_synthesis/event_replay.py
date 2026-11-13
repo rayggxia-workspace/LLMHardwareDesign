@@ -1,5 +1,6 @@
 """Advance a branch's operation intents through shared hardware resources."""
 from collections import Counter, deque
+from copy import deepcopy
 from dataclasses import dataclass
 from heapq import heappop, heappush
 
@@ -66,6 +67,22 @@ class Grant:
     dma_beats: tuple[BeatReceipt, ...] = ()
 
 
+@dataclass(frozen=True)
+class DmaCheckpoint:
+    """DMA state immediately before an arbitration edge."""
+
+    tick: int
+    fabric: ReadFabric
+    starts: tuple[tuple[tuple[int, int], int], ...]
+
+
+@dataclass(frozen=True)
+class ReplayTrace:
+    grants: tuple[tuple[Grant, ...], ...]
+    checkpoints: tuple[DmaCheckpoint, ...] = ()
+    checkpoint_stride: int = 64
+
+
 class ReplayDeadlock(ValueError):
     """Pending operations have no advancing event."""
 
@@ -79,7 +96,18 @@ def phase_dependencies(operations, index, phase):
 
 
 def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=None):
-    """Simulate from reset. Lower priority numbers win among ready phases.
+    """Replay a plan, optionally reusing a fixed-service grant prefix."""
+    return _replay(operations, capacity, ReplayTrace(previous), issue_rates, dma_profile).grants
+
+
+def replay_branch(operations, capacity, *, previous=None, issue_rates=None, dma_profile=None):
+    """Extend a DP branch with a reusable trace and pre-edge DMA snapshots."""
+    return _replay(operations, capacity, previous or ReplayTrace(()), issue_rates, dma_profile,
+                   save_checkpoints=True)
+
+
+def _replay(operations, capacity, previous, issue_rates, dma_profile, *, save_checkpoints=False):
+    """Lower priority numbers win among ready phases.
 
     At each tick, completions free resources before grants. A first grant
     acquires the operation's holds atomically, and the final completion
@@ -92,10 +120,6 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
         raise ValueError('typed DMA phase requires a service profile')
     fabric = ReadFabric(dma_profile) if uses_dma else None
     dma_starts = {}
-    # Variable-latency DMA requires the lane, beat, and skid ownership tables.
-    # Restore from reset until checkpoint replay also carries that state.
-    if uses_dma:
-        previous = ()
     successors = {}
     dependencies = {}
     release = {}
@@ -133,15 +157,30 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
             for parent in parents:
                 successors.setdefault(parent, []).append(current)
 
-    prefix_count = len(previous)
-    if prefix_count >= len(operations) and previous:
+    old_grants = previous.grants
+    prefix_count = len(old_grants)
+    if prefix_count >= len(operations) and old_grants:
         raise ValueError('replay requires an appended operation')
     # Until a new operation could first become ready, it cannot change a grant.
     # Later grants, including grants at the boundary tick, are speculative.
     first_phases = ((index, 0) for index in range(prefix_count, len(operations)))
-    tick = min((max([release[key]] + [previous[p][j].end for p, j in prerequisites[key]])
+    tick = min((max([release[key]] + [old_grants[p][j].end for p, j in prerequisites[key]])
                 for key in first_phases if all(p < prefix_count for p, _ in prerequisites[key])), default=0)
-    grants = [[grant for grant in row if grant.start < tick] for row in previous]
+    checkpoints = []
+    stride = previous.checkpoint_stride
+    if uses_dma:
+        checkpoints = [checkpoint for checkpoint in previous.checkpoints if checkpoint.tick <= tick]
+        tick = 0
+        if checkpoints:
+            checkpoint = checkpoints[-1]
+            tick = checkpoint.tick
+            fabric = deepcopy(checkpoint.fabric)
+            dma_starts = dict(checkpoint.starts)
+    grants = [
+        # An in-flight DMA grant's old end and receipts were speculative.
+        [grant for grant in row if grant.start < tick and (index, grant.phase) not in dma_starts]
+        for index, row in enumerate(old_grants)
+    ]
     grants.extend([] for _ in operations[prefix_count:])
     completed = {}
     running = []
@@ -158,10 +197,11 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
                     used_issues[resource] += units
 
     if issue_rates:
+        accepted = [(grant.start, grant.operation, grant.phase) for prefix in grants for grant in prefix]
+        accepted.extend((start, index, phase) for (index, phase), start in dma_starts.items())
         cutoff = tick - max(window for window, _ in issue_rates.values())
-        accepted = (grant for prefix in grants for grant in prefix if grant.start > cutoff)
-        for grant in sorted(accepted, key=lambda grant: grant.start):
-            record_issues(operations[grant.operation].phases[grant.phase].claims, grant.start)
+        for start, index, phase in sorted(entry for entry in accepted if entry[0] > cutoff):
+            record_issues(operations[index].phases[phase].claims, start)
     finished = 0
     for index, prefix in enumerate(grants):
         if not prefix:
@@ -182,14 +222,25 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
             occupied.update(dict(operation.phases[last.phase].claims))
             heappush(running, (last.end, index, last.phase))
 
+    for index, phase in dma_starts:
+        operation = operations[index]
+        occupied.update(dict(operation.phases[phase].claims))
+        if phase == 0:
+            occupied.update(dict(operation.holds))
     arrivals = []
     for key, parents in prerequisites.items():
         index, phase = key
-        if phase >= len(grants[index]) and not dependencies[key]:
+        if key not in dma_starts and phase >= len(grants[index]) and not dependencies[key]:
             ready = max([release[key]] + [completed[parent] for parent in parents])
             heappush(arrivals, (ready, index, phase))
     pending = []
     while finished < len(operations):
+        if save_checkpoints and fabric is not None and tick >= (checkpoints[-1].tick if checkpoints else 0) + stride:
+            if len(checkpoints) == 16:
+                # Bound retained fabric copies while keeping earlier rollback points.
+                checkpoints = checkpoints[1::2]
+                stride *= 2
+            checkpoints.append(DmaCheckpoint(tick, deepcopy(fabric), tuple(dma_starts.items())))
         for resource, history in issues.items():
             while history and history[0][0] <= tick:
                 _, units = history.popleft()
@@ -260,4 +311,4 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
         if not future:
             raise ReplayDeadlock(f'no replay progress at tick {tick}: {pending}')
         tick = min(future)
-    return tuple(tuple(operation) for operation in grants)
+    return ReplayTrace(tuple(tuple(operation) for operation in grants), tuple(checkpoints), stride)
