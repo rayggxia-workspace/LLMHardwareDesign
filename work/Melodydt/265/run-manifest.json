@@ -142,12 +142,12 @@
       "sha256": "e5a06366c8e187cfbb386f6be5cd086daa84ea3ebc38687f854e7a0f5770e2f4"
     },
     "onnx": {
-      "export-0/cached.onnx": null,
-      "export-1/cached.onnx": null,
-      "export-2/cached.onnx": null,
-      "template-full/template.onnx": null
+      "export-0/cached.onnx": "34211e9096baf3e65d958348b26a9fe67a5b322a703d02899972ee0247c402b2",
+      "export-1/cached.onnx": "56f564a49ac71638f85f953abad75ce44a4636ec8da7f2cc7aa388eb39834682",
+      "export-2/cached.onnx": "fab9c5e8c056f98ff31427a9f33b3f10d245e658b56e360c3c633635992f6764",
+      "template-full/template.onnx": "200e22e44ad555c900f03edd0d70a53296f0158e50260bca9ec67c06740cd10b"
     },
-    "onnx_external_data": null
+    "onnx_external_data": {}
   },
   "profiles": {
     "legacy": {
@@ -241,7 +241,7 @@
       "c64",
       "c96"
     ],
-    "host_key_fingerprint": null,
+    "host_key_fingerprint": "SHA256:DL7XnYNbr+zrwjvO2edFLaPpnycbMqMaFxg+vFcQKkU",
     "verified_checkpoint_path": null,
     "verified_toolchain_path": null
   },
@@ -260,5 +260,59 @@
       "sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
       "scope": "Historical #149 RTL smoke. Recheck the current file before reusing it."
     }
+  },
+  "server_readback": {
+    "date": "2026-11-13",
+    "timezone": "Asia/Shanghai",
+    "hostname": "mgt01",
+    "slurm": [
+      {
+        "id": 101602,
+        "job_name": "yzl-sc234-chain",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "elapsed": "02:16:37",
+        "partition": "c96",
+        "allocated_cpus": 60,
+        "node": "node13"
+      },
+      {
+        "id": 103217,
+        "job_name": "yzl-strict-kv",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:01:23",
+        "partition": "c64",
+        "allocated_cpus": 10,
+        "node": "node5"
+      },
+      {
+        "id": 103220,
+        "job_name": "yzl-strict-dram",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:00:07",
+        "partition": "c64",
+        "allocated_cpus": 2,
+        "node": "node1"
+      }
+    ],
+    "component_receipts": {
+      "kv": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/strict-kv-localize-OhtHd3pH/result.json",
+        "sha256": "882f1e7b77086368fab694f77b162bca001738ea9e088546a56dfa857e77ac92"
+      },
+      "ddr": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/strict-dram-repeat-ZyprDHdt/receipt.json",
+        "sha256": "0e80372f6dfc79c29d07bf6bd06555da90d5544f010f64d868f2706071c876f0"
+      }
+    },
+    "reference_files_sha256_matched": 12,
+    "legacy_quantized_weights_sha256_matched": 434,
+    "legacy_calibration_and_compiler_resource_sha256_matched": true,
+    "onnx_files_matched_archive": 4,
+    "onnx_protobuf_schema_sha256": "eec80d60778be4d49524475b95fb05e5d1f917d67d815785a075dceeb29c1f53",
+    "historical_container_sha256_matched": true,
+    "container_python": "3.10.12"
   }
 }
