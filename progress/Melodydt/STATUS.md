@@ -55,3 +55,9 @@
 - [Issue #265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 与[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 在独立 DRAMsim3 统一队列候选中核对实际 WR 发出和写数据结束。等周期 stock 读回归保持第 50／78 tick，联动 105 拍。300 MHz 与 630 ps 的请求/响应采样、有限 FIFO 和 FENCE 已接入同一时间轴。
 - Slurm 107731 在 c64/node3 完成（4 核，15 秒，0:0）。常规与留出共独立对照 22 RD／10 WR，验证不同的新旧数据、同址顺序、FIFO 信用和排空。两个短例分别 50／128 拍。30 项本地单测、独立命令追踪复核和 6 个篡改负例通过。[运行与散列](../../work/Melodydt/265/dram-write-cdc-107731.json)
 - 下一步由 Melodydt 绑定同一部署的实际 MC/LC 镜像、物理 DMA 地址及 KV、时钟/CDC 与写完成协议，先对账单层和跨层短窗。现有 300 MHz/统一队列为实验候选，整机 tokens/s 待估，#265 进行中，PR 草稿，登记待合并，Projects 待核验与同步。
+
+## 2026-11-13 19:52（Asia/Shanghai，UTC+08:00）Qwen 原生短窗 DDR 与 KV
+
+- [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 与[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 使用 case 2 的 106093 QKV 与 105530 跨层 RMS 原生归档，验证 17 页 MC、实际 LC、物理地址和已提交载荷。107921 首次执行因描述符重复计数退出，修正后 107931 在 c64/node3 使用 3 核、1 分 33 秒完成（0:0）。四组共 3,165,652 个 DDR 回调完全匹配，输出 SHA-256 全部核验。[实验回执](../../work/Melodydt/265/qwen-native-ddr-107931.json)
+- case 2、3 各核验 4 份 step 11→12 原始 S32 K/V 数组及 step 11–13 layer 0/1 的 SSA 依赖。项目结构与现有 30 项本地单测通过。已识别 106093 测试台和 DDR 桥的时钟比例差异；105530 具备同步时钟与整个窗口计数，层间边界时标待补。
+- Melodydt 接下来用 105530 的镜像、描述符、路由及起始状态独立生成 DMA 发起／接受时刻，补层间标记，预留 105572 作完整上下文验证。#265 进行中，整机 tokens/s 与同机加速比待估，PR 保持草稿，登记待合并，Projects 待核验和同步。

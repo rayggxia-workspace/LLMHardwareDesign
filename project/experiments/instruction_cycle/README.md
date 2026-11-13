@@ -112,3 +112,25 @@ python -B project/experiments/instruction_cycle/audit_dram_write_cdc.py "$RUN/re
 ```
 
 复跑时将回执中 `source_sha256` 列出的文件放入 Melodydt 的全新目录，生成相同的 `source.sha256`，再执行 `sbatch --parsable --chdir="$PWD" run_dram_write_cdc.sbatch`。该脚本对照冻结原库、配置及 `src`/`ext` 编译输入并在本目录构建。下一步是绑定同一部署的 Qwen2.5-3B 控制镜像、片外地址映射、KV 请求、时钟/CDC 与写提交协议，用实际单层和跨层 decode 窗口对账。当前短例使用候选时钟和 FIFO 参数，整机 tokens/s 及加速比待测。
+
+## Qwen2.5-3B 原生短窗 DDR 对账
+
+`qwen_native_ddr.py` 对 case 2 的两个独立 Verilator 归档核验母控页及共用局控镜像的散列、逻辑长度、填充、CRC32 和指令终止位。核验描述符工件、控制传输计数、物理写地址和 tag、逐拍接收与归还、DDR 回调及已提交数据。读事务的物理通道由源 lane 决定，激活与写事务按地址交织。`DDR-0` 与 `DDR-1` 分别是基准与带压力的两次测试台运行，每次均含两个 DDR 通道。
+
+| 上游作业 | 测试范围 | MC 页／调用 | 原 RTL 周期，模式 0／1 | 每模式回调数 |
+| --- | --- | ---: | ---: | ---: |
+| 106093 | layer 0 的 prompt 位置 497–499，嵌入、RMS、QKV 与 KV 写回 | 9／261 | 1,141,401／1,238,816 | 263,085 |
+| 105530 | 位置 636–638 的三位置上下文，layer 0 到 layer 1 首个 RMS | 8／393 | 1,795,357／1,927,341 | 1,319,741 |
+
+`replay_native_ddr.cpp` 以归档中的**已接受请求**及其 DDR tick 驱动同版本 DRAMsim3 的两个实例。独立比较每个通道、tick、方向和物理地址的回调多重集，保留同址重复次数。该对账验证 DDR 后端。发射、仲裁、背压和片上退休仍需由快速模型独立生成。106093 的测试台周期为 10 ns，DDR 桥按 `10000/3 ps` 推进，该窗口只用于 DDR 事件核验。105530 的 DDR 桥绑定实际 10 ns 测试台边沿，归档给出整个窗口周期和层间结果，层间交接两端的统一时标待补。归档 strict-write 回调按上游仿真库定义；107731 的 WR 数据结束仍使用独立候选模型。
+
+`qwen_kv_reference.py` 审计 case 2、3 的逻辑整数回放。针对 decode step 11–13 的 layer 0/1 检查残差到下一层归一化的依赖和 KV 追加。在 11→12 边界独立重算每 case 四份 S32 张量的字节散列，12→13 由固定回执追溯。这两组逻辑输入和原生 RTL 窗口的地址及周期分别登记。
+
+在服务器的全新个人目录放置 `qwen_native_ddr.py`、`qwen_kv_reference.py`、`replay_native_ddr.cpp`、`run_qwen_native_ddr.sbatch`，把所用源提交写入 `git-commit.txt`。运行目录和输入散列见 [107931 回执](../../../work/Melodydt/265/qwen-native-ddr-107931.json)。
+
+```bash
+sha256sum qwen_native_ddr.py qwen_kv_reference.py replay_native_ddr.cpp run_qwen_native_ddr.sbatch git-commit.txt > source.sha256
+bash -n run_qwen_native_ddr.sbatch
+sbatch --parsable run_qwen_native_ddr.sbatch
+sha256sum -c output.sha256  # 作业成功结束后
+```

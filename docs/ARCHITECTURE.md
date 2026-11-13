@@ -198,3 +198,5 @@ python -B project/experiments/instruction_cycle/copy_reference.py work/Melodydt/
 ### DDR 写数据结束与跨时钟采样
 
 [复跑与协议](../project/experiments/instruction_cycle/README.md#ddr-写数据结束与跨时钟采样)记录 DRAMsim3 WR 命令、写数据结束、300 MHz/630 ps FIFO 时钟映射和独立命令追踪审核。[107731 回执](../work/Melodydt/265/dram-write-cdc-107731.json)冻结源码、配置、命令日志与比较范围。
+
+[Qwen2.5-3B 原生短窗](../project/experiments/instruction_cycle/README.md#qwen25-3b-原生短窗-ddr-对账)使用 `run_qwen_native_ddr.sbatch` 核验实际 MC/LC 镜像、已接受 DDR 地址和回调，并独立检查 case 2、3 的逻辑 KV 边界。[107931 回执](../work/Melodydt/265/qwen-native-ddr-107931.json)给出服务器路径、作业和输入输出散列。
