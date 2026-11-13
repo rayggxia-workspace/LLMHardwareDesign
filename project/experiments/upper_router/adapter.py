@@ -27,6 +27,8 @@ def bind_request(request, base, technology, obstacles=()):
         nets.append({'id': net['id'], 'driver': net['driver'], 'sinks': sinks})
     context = {'base_id': base['base_id'], 'base_sha256': request['base_sha256'],
                'request_sha256': request['sha256'], 'dbu_per_micron': base['dbu_per_micron']}
+    if 'gds' in base.get('views', {}):
+        context['native_gds_sha256'] = base['views']['gds']['sha256']
     if 'native_inventory' in base:
         context['native_inventory'] = deepcopy(base['native_inventory'])
     return {'schema_version': 'upper-router/1', 'units': 'dbu',

@@ -73,6 +73,28 @@ python -B project/experiments/upper_router/native_inventory.py inventory catalog
 验证。独立叶块 ITerm 须先补充原生导通和落点证据。输出底座状态为 `candidate`，
 夹具标签保留到路由上下文。
 
+已经在原生 ODB 中分开的真实 ITerm 切口可用 `true_iterm_inventory.py` 导出同一套契约。
+在配置中提供 `native-iterm-cut-source/1`、带 `path` 和 `sha256` 的 `views`（`odb`、`def`、
+`netlist`、`gds`）、`catalog`、`users`，以及可选的 `rules` 和 `related_constructive_proof`。
+`cuts` 逐位列出 `driver` 和 `sinks`，`access` 以 `instance/pin` 为键，提供 `instance`、
+`pin`、`native_net`、`m10_boxes_dbu`、`kind`。`native_gds_layers` 把原生 ODB 金属和过孔
+层名映射到原始 GDS 的 `[layer, datatype]`。
+
+- `parent_routed_iterm` 从实际 ITerm 沿同网 M1–M10 导体追踪到落点，逐层核对原始铜图形。
+- `independent_hard_leaf` 核对 R0 硬叶块的实际位置、精确 M10 ITerm、独立叶块的 `odb`、
+  `gds` 和 `spef`，并用提取电阻路径核对内部真实 ITerm。
+
+```bash
+ITERM_SOURCE_CONFIG=/path/source.json ITERM_SOURCE_SHA256=<trusted-sha256> \
+  ITERM_OUTPUT=/path/new-output ITERM_OPENROAD=/path/openroad \
+  ITERM_GEOMETRY=project/experiments/block_v1/odb_geometry.tcl \
+  klayout -b -r project/experiments/upper_router/true_iterm_inventory.py
+```
+
+配置引用的 DEF 和 Verilog 必须与重开 ODB 的导出字节一致。选中原生网若带 BTerm、
+多个驱动、或源和目的已在同一网，适配器会拒绝输出契约。它输出候选底座及原生切口
+证据。组合后的上层走线、提取、时序与签核依赖实际实现的独立回执。
+
 ## 与新版 Algorithm 1 集成
 
 ```powershell

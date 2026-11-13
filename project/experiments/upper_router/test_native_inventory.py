@@ -99,6 +99,7 @@ class NativeInventoryTests(unittest.TestCase):
         spec = bind_request(request, read_base(self.path / 'base.json'), tech)
         validate(spec)
         self.assertEqual(spec['context']['native_inventory']['scope'], 'native_cut_fixture')
+        self.assertEqual(spec['context']['native_gds_sha256'], base['views']['gds']['sha256'])
         self.assertEqual(len(spec['nets']), 2)
 
     def test_reject_wrong_manifest_and_edited_table(self):
