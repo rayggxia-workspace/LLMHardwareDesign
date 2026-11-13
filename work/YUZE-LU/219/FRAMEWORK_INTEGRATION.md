@@ -268,6 +268,12 @@ Algo2 `4ebd2a2fc` 直接读取 `algorithm2-input.json` 与同目录的 `--handof
 31 个与已有接点共用同一个原生网。684 个权重位和 86 个栅栏位在 M60 叶宏上直接有
 M10 几何。独立放置的 DMA v45 ODB 有对应的 4344 个逻辑 BTerm，均需父层引出。
 这两项审计把 main 侧的数据通路问题缩小到同一摆位上的 DMA 引出、配套控制和服务合同。
+同一 main 摆位外框为 5863 × 6033 µm。用组级 DEF 外框检查独立 DMA v45 的
+1960 × 1960 µm 区域，现有外框中没有无交叠矩形位置。保留所有现有组和交换器坐标时，
+东侧示例需要增加 835 µm 宽度。这个检查只约束当前 DMA 外框及组位置，尚未计入
+物理间距、PG 和布线，也未搜索重新摆放或不同 DMA 布局。
+远端 `main-dma-placement-fit.json` SHA-256 为
+`52d78f024a0bb276658823de3c6f638f3e06de7a72a8e6c3802db83a7b2a5f8f`。
 外部 DDR、其余 DMA 客户端、KV 读写、全图原生 provider、时钟复位和联合验收仍待绑定。
 
 远端目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em/full-graph-zwl0Tr/merged-bmMd5X/native-request-6WI0tH/joint-ddr-4C8sHe`。大文件留在服务器。
