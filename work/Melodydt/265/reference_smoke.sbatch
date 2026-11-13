@@ -4,7 +4,6 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=48G
 #SBATCH --time=00:25:00
 set -euo pipefail
 
@@ -30,6 +29,11 @@ sha256sum -c source.sha256
 cp -- "$environment/pip-freeze-historical-onnx.txt" pip-freeze.txt
 sha256sum pip-freeze.txt > environment.sha256
 hostname
+awk '/^MemAvailable:/ {
+  print "Node MemAvailable KiB:", $2
+  found = 1
+  if ($2 < 41943040) exit 1
+} END { if (!found) exit 1 }' /proc/meminfo
 
 export SINGULARITYENV_HF_HUB_OFFLINE=1 SINGULARITYENV_TRANSFORMERS_OFFLINE=1
 export SINGULARITYENV_PYTHONNOUSERSITE=1
