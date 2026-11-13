@@ -3,7 +3,8 @@ from collections import defaultdict
 from heapq import heappush, heappop
 import random
 
-from geometry import (Occupancy, access_points, segment_shape, via_shapes, validate, need)
+from geometry import (NativePins, Occupancy, RoutingGrid, access_points, box, segment_shape,
+                      net_priority, too_close, via_shapes, validate, need)
 
 
 def route_shapes(route, tech):
@@ -15,7 +16,8 @@ def route_shapes(route, tech):
     return shapes
 
 
-def connect(starts, goals, tech, occupancy, owner, history, limit):
+def connect(starts, goals, tech, occupancy, owner, history, limit, *,
+            grid=None, source_via=False, blockers=None):
     """Multi-source A*: selecting endpoints and path in one search.
 
     Starts/goals are legal access or existing tree nodes, never pin centers
@@ -29,55 +31,69 @@ def connect(starts, goals, tech, occupancy, owner, history, limit):
     queue = []
     previous = {}
     costs = {}
-    root = {}
-    for s in starts:
+    cuts = {}
+    grid = grid or RoutingGrid(tech, ())
+    fine = grid.fine < grid.pitch
+    for s in sorted(starts):
         costs[s] = 0
         previous[s] = None
-        root[s] = s
+        cuts[s] = ()
         heappush(queue, (heuristic(s), 0, s))
     expanded = 0
     blocked = defaultdict(int)
     while queue and expanded < limit:
-        _, cost, node = heappop(queue)
+        _, neg_cost, node = heappop(queue)
+        cost = -neg_cost
         if cost != costs[node]:
             continue
         expanded += 1
         if node in goalset:
-            path = []
-            end = node
-            while node is not None:
-                path.append(node)
-                node = previous[node]
-            return path[::-1], expanded, blocked
+            path = [node]
+            while previous[path[-1]] is not None:
+                path.append(previous[path[-1]])
+            v10 = tech['via10']
+            if not source_via or not too_close(box(path[0][:2], v10['cut']),
+                                               box(path[-1][:2], v10['cut']), v10['spacing']):
+                return path[::-1], expanded, blocked
         x, y, layer = node
-        moves = [(x+pitch, y, layer), (x-pitch, y, layer)] if layer == 11 else [(x, y+pitch, layer), (x, y-pitch, layer)]
-        moves.append((x, y, 23-layer))
-        for nxt in moves:
+        for nxt in grid.moves(node):
             switching = nxt[2] != layer
             shapes = via_shapes('via11', (x, y), tech) if switching else [segment_shape('M'+str(layer), (x, y), nxt[:2], tech)]
-            if not occupancy.legal(shapes, owner):
+            if switching and fine:
+                cut = shapes[0][1]
+                if any(too_close(cut, old, tech['via11']['spacing']) for old in cuts[node]):
+                    blocked[nxt] += 1
+                    continue
+            if not occupancy.legal(shapes, owner, blockers):
                 blocked[nxt] += 1
                 continue
-            edge = tech.get('via_cost', pitch) if switching else pitch
+            edge = (tech.get('via_cost', pitch) if switching
+                    else abs(x-nxt[0])+abs(y-nxt[1]))
             new = cost+edge+history.get(nxt, 0)*tech.get('history_weight', pitch)
             if new < costs.get(nxt, float('inf')):
                 costs[nxt] = new
                 previous[nxt] = node
-                root[nxt] = root[node]
-                heappush(queue, (new+heuristic(nxt), new, nxt))
+                cuts[nxt] = cuts[node]+(shapes[0][1],) if switching and fine else cuts[node]
+                heappush(queue, (new+heuristic(nxt), -new, nxt))
     return None, expanded, blocked
 
 
-def route_net(net, spec, occupancy, history, limit):
+def route_net(net, spec, occupancy, history, limit, native, blockers=None):
     tech = spec['technology']
     name = net['id']
     result = {'segments': [], 'via10': [], 'via11': []}
     tree = set()
     expanded = 0
     blocked = defaultdict(int)
+    terminals = [net['driver'], *net['sinks']]
+    own_pins = set(terminals)
+    grid = RoutingGrid(tech, (spec['pins'][pin] for pin in terminals))
+    accesses = {pin: access_points(spec['pins'][pin], tech) for pin in terminals}
     def candidates(pin):
-        return [(x, y, 11) for x, y in access_points(spec['pins'][pin], tech)
-                if occupancy.legal(via_shapes('via10', (x, y), tech), name)]
+        committed = {tuple(v['at']) for v in result['via10']}
+        return [(x, y, 11) for x, y in accesses[pin] if (x, y) not in committed
+                and native.exclusive((x, y), own_pins)
+                and occupancy.legal(via_shapes('via10', (x, y), tech), name, blockers)]
     starts = candidates(net['driver'])
     if not net['sinks']:
         return result, None, 0, blocked
@@ -89,7 +105,9 @@ def route_net(net, spec, occupancy, history, limit):
         goals = candidates(sink)
         if not goals:
             return None, 'grid_access_not_found', expanded, blocked
-        path, used, failures = connect(tree or starts, goals, tech, occupancy, name, history, max(0, limit-expanded))
+        path, used, failures = connect(tree or starts, goals, tech, occupancy, name, history,
+                                       max(0, limit-expanded), grid=grid, source_via=not tree,
+                                       blockers=blockers)
         expanded += used
         for key, n in failures.items():
             blocked[key] += n
@@ -114,42 +132,54 @@ def route(spec, *, rounds=8, max_expansions=100000, seed=0):
     validate(spec)
     need(type(rounds) is int and rounds > 0 and type(max_expansions) is int and max_expansions > 0, 'positive search budgets required')
     t = spec['technology']
-    need(t.get('via_cost', t['pitch']) >= 0 and t.get('history_weight', t['pitch']) >= 0, 'negative route cost')
+    native = NativePins(spec)
     history = defaultdict(int)
     nets = {n['id']: n for n in spec['nets']}
-    order = sorted(nets, key=lambda n: (min([len(access_points(spec['pins'][p], t)) for p in [nets[n]['driver']]+nets[n]['sinks']]), n))
+    priority = net_priority(spec).__getitem__
+    order = sorted(nets, key=priority)
     rng = random.Random(seed)
     attempts = []
     best = None
+    locked = {}
     for iteration in range(rounds):
-        routes, failed = {}, {}
+        routes, failed, conflicts = dict(locked), {}, {}
         total = 0
+        occupancy = Occupancy(t)
+        occupancy.add([(o['layer'], o['rect']) for o in spec.get('obstacles', [])], None)
+        for name, wire in locked.items():
+            occupancy.add(route_shapes(wire, t), name)
         for name in order:
-            # Rebuild from accepted nets; a failed multi-sink tentative tree
-            # must not leave ghost obstacles behind.
-            occupancy = Occupancy(t)
-            occupancy.add([(o['layer'], o['rect']) for o in spec.get('obstacles', [])], None)
-            for other, r in routes.items():
-                occupancy.add(route_shapes(r, t), other)
-            r, reason, used, blocked = route_net(nets[name], spec, occupancy, history, max_expansions)
+            trial = occupancy.fork()
+            blockers = set()
+            r, reason, used, blocked = route_net(nets[name], spec, trial, history, max_expansions,
+                                                native, blockers)
             total += used
             for point in blocked:
                 history[point] += 1
             if reason:
                 failed[name] = reason
+                conflicts[name] = sorted(blockers - {name})
             else:
                 routes[name] = r
+                occupancy.add(route_shapes(r, t), name)
         attempts.append({'round': iteration, 'order': list(order), 'routed': len(routes),
-                         'failed': dict(failed), 'expanded': total})
+                         'failed': dict(failed), 'blockers': conflicts, 'kept': sorted(locked),
+                         'expanded': total})
         score = (-len(routes), sum(len(r['segments']) for r in routes.values()))
         if best is None or score < best[0]:
             best = (score, routes, failed)
         if not failed:
             break
-        # Failed nets get first access to resources on the next rip-up round.
-        tail = [n for n in order if n not in failed]
-        rng.shuffle(tail)
-        order = sorted(failed)+tail
+        # A local round preserves unrelated copper. If it stalls, reopen all routes.
+        affected = {blocker for ids in conflicts.values() for blocker in ids}
+        if iteration % 2 == 0 and affected:
+            locked = {name: wire for name, wire in routes.items() if name not in affected}
+            tail = sorted(affected - set(failed), key=priority)
+        else:
+            locked = {}
+            tail = [n for n in nets if n not in failed]
+            rng.shuffle(tail)
+        order = sorted(failed, key=priority)+tail
     _, routes, failed = best
     result = {'schema_version': 'upper-router-result/1', 'routes': routes, 'failed': failed,
               'attempts': attempts, 'status': 'geometry_complete' if not failed else 'partial',

@@ -146,6 +146,10 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ## 数据与外部依赖
 
+冻结底座上层布线（#228）用 `python -B -m unittest discover -s project/experiments/upper_router -v` 回归。
+实际交接与中继修复命令见 [M10 接入与 M11/M12 布线](../project/experiments/upper_router/README.md)。
+物理后端依赖项目的研究工艺 LEF、OpenROAD 和 KLayout。原生几何与上层导出读回单独验收。
+
 Block前沿搜索原型（#219）：`python -B -m unittest discover -s project/experiments/block_search -v`。输入/输出、服务器复现、模型范围与假设成本边界见[原型说明](../project/experiments/block_search/README.md)，服务器实际运行与输入/输出哈希见[工作记录](../work/YUZE-LU/219/README.md)。当前不支持自动分片/spill或生成原生控制镜像，不将分析成功视为RTL/物理验收。
 
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。

@@ -1,7 +1,7 @@
 """Geometry/connectivity verifier: reads rectangles, not A* search state."""
 import hashlib
 import json
-from geometry import (Occupancy, box, contains, need, segment_shape,
+from geometry import (NativePins, Occupancy, RoutingGrid, box, contains, need, segment_shape,
                       touching, validate, via_shapes)
 
 
@@ -23,6 +23,7 @@ def verify(spec, result):
              for r in result['failed'].values()), 'unsupported failure claim')
     need(result['status'] == ('partial' if result['failed'] else 'geometry_complete'), 'false complete claim')
     t = spec['technology']
+    native = NativePins(spec)
     occupancy = Occupancy(t)
     occupancy.add([(o['layer'], o['rect']) for o in spec.get('obstacles', [])], None)
     length = 0
@@ -36,6 +37,7 @@ def verify(spec, result):
         metal = []
         bridges = []
         pins = {}
+        terminals = {net['driver'], *net['sinks']}
         def add_metals(items):
             indices = []
             for layer, rect in items:
@@ -44,28 +46,30 @@ def verify(spec, result):
                     indices.append(len(metal))
                     metal.append((layer, rect))
             return indices
-        def on_grid(point):
-            need(len(point) == 2 and all(type(x) is int for x in point), 'invalid route point')
-            need(all((p-o) % t['pitch'] == 0 for p, o in zip(point, t['origin'])), 'off-grid route')
+        grid = RoutingGrid(t, (spec['pins'][p] for p in [net['driver'], *net['sinks']]))
+        def on_grid(a, b):
+            need(grid.allows(a, b), 'route outside the declared coarse or local access grid')
         for s in route['segments']:
             a, b, layer = s['a'], s['b'], s['layer']
-            on_grid(a); on_grid(b)
+            on_grid(a, b)
             need((layer == 'M11' and a[1] == b[1] and a[0] != b[0]) or
                  (layer == 'M12' and a[0] == b[0] and a[1] != b[1]), 'invalid routing layer/direction')
             length += abs(a[0]-b[0])+abs(a[1]-b[1])
             add_metals([segment_shape(layer, a, b, t)])
         for v in route['via10']:
             pin, point = v['pin'], v['at']
-            on_grid(point)
+            on_grid(point, point)
             need(pin in [net['driver']]+net['sinks'] and pin not in pins, 'foreign/duplicate via10 terminal')
             lower = box(point, t['via10']['cut']+2*t['via10']['lower_enclosure'])
             need(any(contains(rect, lower) for rect in spec['pins'][pin]), 'via10 not enclosed by actual M10 pin')
+            need(native.exclusive(point, terminals), 'via10 could contact a foreign M10 pin')
             pins[pin] = add_metals(via_shapes('via10', point, t))[0]
             cuts10 += 1
         need(set(pins) == set([net['driver']]+net['sinks']), 'missing terminal access')
+        need(len({tuple(v['at']) for v in route['via10']}) == len(pins), 'shared via10 landing')
         need(len({tuple(p) for p in route['via11']}) == len(route['via11']), 'duplicate via11')
         for point in route['via11']:
-            on_grid(point)
+            on_grid(point, point)
             indices = add_metals(via_shapes('via11', point, t))
             bridges.append(tuple(indices))
             cuts11 += 1

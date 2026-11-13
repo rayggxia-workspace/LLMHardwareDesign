@@ -1,5 +1,7 @@
 # Issue #228：通用上层布线算法交付
 
+冻结底座扩展见[对抗验证与真实回读](fixed-base-validation.md)。下文保留最初粗网格交付的范围。
+
 关联 [Issue228](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/228)、PR227接口合同。
 基于 `0513ca9470bc2ac28d56571d8eb1cdaf75c36818`，独立分支task/228-generic-router。
 用户已澄清需要通用布线算法，未按Qwen3.5构造路线或修改其综合映射。

@@ -25,18 +25,24 @@ def bind_request(request, base, technology, obstacles=()):
             require(term in terms, 'missing physical term')
             pins[term] = deepcopy(terms[term])
         nets.append({'id': net['id'], 'driver': net['driver'], 'sinks': sinks})
+    context = {'base_id': base['base_id'], 'base_sha256': request['base_sha256'],
+               'request_sha256': request['sha256'], 'dbu_per_micron': base['dbu_per_micron']}
+    if 'gds' in base.get('views', {}):
+        context['native_gds_sha256'] = base['views']['gds']['sha256']
+    if 'native_inventory' in base:
+        context['native_inventory'] = deepcopy(base['native_inventory'])
     return {'schema_version': 'upper-router/1', 'units': 'dbu',
             'technology': deepcopy(technology), 'obstacles': deepcopy(list(obstacles)),
-            'pins': pins, 'nets': nets, 'context': {
-                'base_id': base['base_id'], 'base_sha256': request['base_sha256'],
-                'request_sha256': request['sha256'], 'dbu_per_micron': base['dbu_per_micron']}}
+            'pins': pins, 'nets': nets, 'context': context}
 
 
 def failure_feedback(request, result, evidence):
-    require(result['context']['request_sha256'] == request['sha256'] and
-            result['context']['base_sha256'] == request['base_sha256'], 'stale route feedback')
+    physical = result.get('physical_routes', result)
+    context = physical['context']
+    require(context['request_sha256'] == request['sha256'] and
+            context['base_sha256'] == request['base_sha256'], 'stale route feedback')
+    scope = {'evidence': evidence, 'spec_sha256': physical['spec_sha256'], 'hard_constraint': False}
     return feedback(request, [
         {'category': 'search_not_found', 'phase': 'access' if reason == 'grid_access_not_found' else 'routing',
-         'code': reason, 'net_ids': [name], 'evidence': evidence,
-         'spec_sha256': result['spec_sha256'], 'hard_constraint': False}
+         'code': reason, 'net_ids': [name], **scope}
         for name, reason in result['failed'].items()])
