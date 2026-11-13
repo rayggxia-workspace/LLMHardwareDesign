@@ -2,6 +2,7 @@
 import argparse
 import json
 from pathlib import Path
+from time import perf_counter
 
 from benchmark_attention_kv import problem as attention_problem, read_geometry, typed_route
 from benchmark_ffn_program_dp import problem as ffn_problem
@@ -283,18 +284,27 @@ def check_layers(plan, spec, geometry, candidate):
                 raise ValueError('layer cache versions differ')
             for event in events:
                 value = event['value']
-                if sorted(b['address'] for b in event['dma_beats']) != list(
+                if 'dma_beats' in event and sorted(b['address'] for b in event['dma_beats']) != list(
                         range(addresses[value], addresses[value] + sizes[value], 64)):
                     raise ValueError('layer cache physical beat coverage differs')
             total.append(events)
 
     setup, = [e for e in rows['l1-attention']['evaluation']['events'] if e.get('service') == 'l1-qkv-ready']
-    early = [beat for e in reads[1] for beat in e['dma_beats'] if beat['issue'] < programs[0]['end']]
+    early = [beat for e in reads[1] for beat in e.get('dma_beats', ()) if beat['issue'] < programs[0]['end']]
     first_tile = 'l1-h0-k-0'
     expected_early = set(range(addresses[first_tile], addresses[first_tile] + sizes[first_tile], 64))
-    if (sorted(b['address'] for b in early) != (sorted(expected_early) if candidate == 'lookahead' else [])
-            or any(b['issue'] < programs[0]['start'] for b in early)
-            or setup['start'] < max(programs[0]['end'], *(e['end'] for e in writes[0]))):
+    if plan['timing'] == 'snapshot':
+        moved = [e for e in reads[1] if e['phases'][1]['start'] < programs[0]['end']]
+        expected_moved = [first_tile] if candidate == 'lookahead' else []
+        if sorted(e['value'] for e in moved) != expected_moved:
+            raise ValueError('snapshot changed which historical tile can overlap FFN')
+        early_count = sum(sizes[e['value']] // 64 for e in moved)
+    else:
+        if (sorted(b['address'] for b in early) != (sorted(expected_early) if candidate == 'lookahead' else [])
+                or any(b['issue'] < programs[0]['start'] for b in early)):
+            raise ValueError('layer 1 prefetch beat coverage differs')
+        early_count = len(early)
+    if setup['start'] < max(programs[0]['end'], *(e['end'] for e in writes[0])):
         raise ValueError('layer 1 prefetch or output dependency differs')
     final_visible = max(programs[1]['end'], *(e['end'] for group in writes for e in group))
     retire, = rows['retire-layer-pair']['evaluation']['events']
@@ -303,7 +313,7 @@ def check_layers(plan, spec, geometry, candidate):
     return {'makespan': plan['makespan'], 'ffn': [[p['start'], p['end']] for p in programs],
             'cache_store_visible': [max(e['end'] for e in group) for group in writes],
             'layer1_qkv_start': setup['start'], 'layer_pair_retire': retire['start'],
-            'cache_read_while_ffn': len(early), 'traffic': traffic}
+            'cache_read_while_ffn': early_count, 'traffic': traffic}
 
 
 def main():
@@ -316,6 +326,7 @@ def main():
     cli.add_argument('--tile', type=int, default=8)
     cli.add_argument('--layer-pair', action='store_true')
     cli.add_argument('--width', type=int, default=1)
+    cli.add_argument('--snapshot-ffn-ticks', type=int)
     args = cli.parse_args()
     first, hash0 = read_geometry(args.case / 'step-1', 0)
     second, hash1 = (read_geometry(args.case / 'step-1', 1) if args.layer_pair
@@ -323,13 +334,24 @@ def main():
     dependencies = layer_pair_dependencies(args.case / 'step-1') if args.layer_pair else {}
     model, hardware = build(first, second, tile=args.tile, mode=args.mode, seed=args.seed,
                             candidate=args.candidate, queue=args.queue, cross_layer=args.layer_pair)
+    if args.snapshot_ffn_ticks is not None:
+        if not args.layer_pair:
+            cli.error('the snapshot comparison requires --layer-pair')
+        spec = hardware['event_model']
+        spec['timing'] = 'snapshot'
+        for service in spec['services'].values():
+            if 'ffn_program' in service:
+                service['snapshot_ticks'] = args.snapshot_ffn_ticks
+    started = perf_counter()
     result = compile_event_ir(model, hardware, width=args.width)
+    seconds = perf_counter() - started
     plan = result['plan']
     attention = 'l1-attention' if args.layer_pair else 't1-attention'
     chosen = next((row['binding'] for row in plan.get('tasks', ()) if row['id'] == attention), args.candidate)
     check_plan = check_layers if args.layer_pair else check
     print(json.dumps({'candidate': args.candidate, 'chosen': chosen, 'width': args.width,
                       'programs': [hash0, hash1], 'mode': args.mode, 'queue': args.queue,
+                      'timing': plan['timing'], 'seconds': round(seconds, 3),
                       **dependencies,
                       **check_plan(plan, hardware['event_model'], first, chosen)},
                      sort_keys=True))

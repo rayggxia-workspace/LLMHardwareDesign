@@ -3,10 +3,12 @@ import random
 import unittest
 from unittest.mock import patch
 
+from benchmark_attention_kv import typed_route
 from benchmark_decode_handoff import build as decode_handoff
 from benchmark_event_ffn import copy_bank_receipt
 from benchmark_ffn_control_trace import replay_readback
 from benchmark_ffn_dma_provider import RECORD_BYTES, paired_input
+from benchmark_ffn_program_dp import problem as ffn_problem
 from benchmark_native_dma_read import CASES, OLD, Request, event_input, moves_by_task
 from benchmark_native_sram_replay import check_trace, event_input as sram_input
 from cover_frontier import search
@@ -26,6 +28,62 @@ from verify_cover_frontier import verify
 
 
 class ReplayTest(unittest.TestCase):
+    def test_snapshot_prices_same_volume_by_channel_and_client(self):
+        for address in (0x200, 0x800):
+            for blocked in (0, 1):
+                with self.subTest(address=address, blocked=blocked):
+                    tasks, h = event_input((Request(1, 7, 0), Request(1, 0, address)),
+                                           client_stalls=((0, 20, 4095 ^ (1 << blocked)),),
+                                           alternatives={1: (1,)})
+                    h['event_model']['timing'] = 'snapshot'
+                    plan = search(tasks, h, width=1, ready_limit=1)
+                    verify(tasks, h, (), plan)
+                    first, second = moves_by_task(plan).values()
+                    first_data, second_data = (move['phases'][1] for move in (first, second))
+                    self.assertEqual(second['route'], f'P1.read-{1-blocked}')
+                    self.assertNotIn('dma_beats', second)
+                    if address == 0x200:
+                        self.assertEqual(first_data['end'], second_data['start'])
+                    else:
+                        self.assertEqual(first_data['start'], second_data['start'])
+
+    def test_ffn_scratch_coverage_invalidates_gamma_before_reuse(self):
+        ir, h = ffn_problem(1, 1, 25001, [('programmed-ffn', 0, True)])
+        tasks = ir['tasks']
+        spec = h['event_model']
+        spec['timing'] = 'snapshot'
+        spec['services']['programmed-ffn']['snapshot_ticks'] = 50
+        spec['services']['programmed-ffn']['claims'] = SHARED_RESOURCES.copy()
+        spec['windows']['gamma'] = {'site': 'U', 'offset': 8192, 'bytes': 8192}
+        spec['value_bytes']['gamma'] = 8192
+        spec['initial_copies'] = {**spec['initial_copies'], 'gamma': 'gamma'}
+        spec['typed_dma'] = {'ffn_provider': {'mode': 1, 'seed': 25001},
+                             'mixed': {'queue': 16, 'write_latency': 9}, 'addresses': {'gamma': 0x30000000}}
+        spec['routes'].update(load=typed_route('DDR', 'U', 4, 'U.S.port'),
+                              store=typed_route('U', 'DDR', 3, 'U.S.port'))
+        tasks.append(task('read-gamma', binding('reuse', stage('consumer', inputs={'gamma': 'gamma'})),
+                          after=('ffn',)))
+        plan = search(tasks, h, width=1)
+        verify(tasks, h, (), plan)
+        rows = {row['id']: row for row in plan['tasks']}
+        spill, program = rows['ffn']['evaluation']['events']
+        load, consume = rows['read-gamma']['evaluation']['events']
+        self.assertEqual((spill['value'], load['value']), ('gamma', 'gamma'))
+        self.assertLessEqual(spill['end'], program['start'])
+        self.assertLessEqual(program['end'], load['start'])
+        self.assertLessEqual(load['end'], consume['start'])
+        self.assertEqual((plan['external_read_bytes'], plan['external_write_bytes']),
+                         (READ_BYTES + 8192, 8192))
+
+        bad = deepcopy(plan)
+        consumer = next(row for row in bad['tasks'] if row['id'] == 'read-gamma')
+        consumer['evaluation']['events'].pop(0)
+        consumer['evaluation']['external_read_bytes'] = 0
+        consumer['start'] = consume['start']
+        bad['external_read_bytes'] -= 8192
+        with self.assertRaisesRegex(ValueError, 'source custody'):
+            verify(tasks, h, (), bad)
+
     def test_layer_program_images_have_distinct_physical_backing(self):
         geometry = (2, 8, 512, 128)
         _, hardware = decode_handoff(geometry, geometry, tile=8, mode=1, seed=25001,

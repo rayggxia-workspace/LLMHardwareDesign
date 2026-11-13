@@ -8,6 +8,7 @@ from dma_read import BeatReceipt, Read, ReadFabric
 from ffn_a import P_COUNT, ActivationWindow
 from ffn_mid import MidTile
 from ffn_program_cost import ActiveProgram, FfnCost, Program
+from snapshot_cost import ClientResponse
 from sram_feeder import Access, SramFeeder
 
 
@@ -45,7 +46,7 @@ class Phase:
     claims: tuple[tuple[str, int], ...] = ()
     priority: int = 0
     dma_read: Read | None = None
-    ready_window: ReadyWindow | None = None
+    ready_window: ReadyWindow | ClientResponse | None = None
     mid_tile: MidTile | None = None
     sram_access: Access | None = None
     activation: ActivationWindow | None = None
@@ -177,7 +178,7 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
                     or phase.sram_access is not None and (
                         not phase.sram_access.valid() or phase.dma_read is not None or phase.mid_tile is not None)
                     or phase.ready_window is not None and (
-                        not isinstance(phase.ready_window, ReadyWindow) or not phase.ready_window.valid())
+                        not isinstance(phase.ready_window, (ReadyWindow, ClientResponse)) or not phase.ready_window.valid())
                     or phase.mid_tile is not None and (
                         not isinstance(phase.mid_tile, MidTile) or not phase.mid_tile.valid()
                         or phase.dma_read is not None or dict(phase.claims) != phase.mid_tile.claims())

@@ -11,7 +11,8 @@ from dataclasses import dataclass, replace
 from dma_read import FfnProvider, Profile, Read
 from ffn_a import A_BASE, P_COUNT, WORDS, ActivationWindow
 from ffn_program_cost import (EXTERNAL_CLIENTS, INPUT_BYTES, Program, READ_BYTES, RESOURCES, RESULT_BYTES,
-                              SHARED_RESOURCES, SITES)
+                              SHARED_RESOURCES, SITES, U_QUANT_END)
+from snapshot_cost import CHANNELS, dma_cost
 from sram_feeder import Access, profile as feeder_profile
 
 DDR = 'DDR'
@@ -28,6 +29,14 @@ def backing_bytes(spec, values):
     fixture_bytes = READ_BYTES * len(program_offsets(spec['services']))
     return fixture_bytes + sum(sizes[value] * (len(addresses[value]) if isinstance(addresses.get(value), dict) else 1)
                                for value in values)
+
+
+def scratch_overwrites(service, windows):
+    """Externally named windows that lose their version during a native program."""
+    if 'ffn_program' not in service:
+        return frozenset()
+    return frozenset(w for w, location in windows.items()
+                     if location['site'] == 'U' and INPUT_BYTES <= location['offset'] < U_QUANT_END)
 
 
 def window_phase_indices(service):
@@ -157,7 +166,14 @@ class Model:
     def __init__(self, hardware, *, wire_budget=None):
         self.spec = hardware['event_model']
         self.sites = hardware['sites']
-        self.capacity = hardware['resources']
+        self.timing = self.spec.get('timing', 'calendar')
+        self.snapshot = self.timing == 'snapshot'
+        self.phased = self.timing in ('snapshot', 'replay')
+        self.capacity = hardware['resources'].copy()
+        if self.snapshot and 'typed_dma' in self.spec:
+            if self.capacity.keys() & set(CHANNELS):
+                raise ValueError('DDR channel names are reserved for snapshot timing')
+            self.capacity.update(dict.fromkeys(CHANNELS, 1))
         self.issue_rates = {}
         for resource, rate in self.spec.get('issue_rates', {}).items():
             if (resource not in self.capacity or set(rate) != {'window_ticks', 'max_issues'}
@@ -177,8 +193,8 @@ class Model:
         self.routes = self.spec['routes']
         dma = self.spec.get('typed_dma')
         self.dma_profile = Profile.from_spec(dma) if dma is not None else None
-        if self.dma_profile is not None and self.dma_profile.mixed and self.spec.get('timing') != 'replay':
-            raise ValueError('mixed DMA requires event replay')
+        if self.dma_profile is not None and self.dma_profile.mixed and not self.phased:
+            raise ValueError('mixed DMA requires phase timing')
         self.dma_addresses = {} if dma is None else dma.get('addresses', {})
         self.routes_by_sites = {}
         self.live_out = frozenset(self.spec.get('live_out', ()))
@@ -227,6 +243,10 @@ class Model:
             if type(service['ticks']) is not int or service['ticks'] < 1:
                 raise ValueError('invalid native stage duration')
             self.validate_service(service)
+            if self.snapshot and 'snapshot_ticks' in service and 'ffn_program' not in service:
+                raise ValueError('snapshot_ticks belongs to a calibrated FFN program')
+            if self.snapshot and {'ffn_mid', 'sram_access', 'ffn_activation'} & service.keys():
+                raise ValueError('native service lacks a snapshot cost contract')
             if 'ffn_program' in service:
                 program = self.validate_program_service(service)
                 programs[program.address_offset] = program
@@ -277,8 +297,8 @@ class Model:
                 raise ValueError('FFN Mid requires its qualified replay ports and optimistic bound')
         if 'ready_window' in service:
             from event_replay import ReadyWindow
-            if self.spec.get('timing') != 'replay':
-                raise ValueError('READY window requires a replay phase')
+            if not self.phased:
+                raise ValueError('READY window requires phase timing')
             ReadyWindow.from_spec(service['ready_window'])
         if type(service.get('priority', 0)) is not int:
             raise ValueError('invalid native arbitration priority')
@@ -312,19 +332,22 @@ class Model:
         params = route['typed_dma']
         write = route['dst'] == DDR
         if (self.dma_profile is None or not (route['src'] == DDR or write) or 'phases' not in route
-                or write and (self.dma_profile.mixed is None or self.spec.get('timing') != 'replay')
+                or write and (self.dma_profile.mixed is None or not self.phased)
                 or not isinstance(params, dict) or params.keys() - {'replica'} != {'client', 'record_beats'}
                 or type(params['client']) is not int or type(params['record_beats']) is not int
                 or write and 'replica' in params
                 or not isinstance(params.get('replica', 'primary'), str) or not params.get('replica', 'primary')
                 or not Read(params['client'], 0, 64 * params['record_beats'], params['record_beats'], write).valid()):
             raise ValueError('invalid typed DMA write route' if write else 'invalid typed DMA read route')
-        if self.has_ffn_program and (params['client'] not in EXTERNAL_CLIENTS
-                                     or (route['src'] if write else route['dst']) in SITES
-                                     or any('DDR' in item for item in (route['claims'],
-                                            route['phases']['hold_claims'],
-                                            route['phases']['issue']['claims'], route['phases']['ack']['claims']))):
-            raise ValueError('shared FFN DMA route must use a separate client and destination')
+        if self.has_ffn_program:
+            site = route['src'] if write else route['dst']
+            phases = route['phases']
+            holds, ack = phases['hold_claims'], phases['ack']['claims']
+            port = 'U.S.port'
+            owns_u = port in holds or (port in route['claims'] and port in ack)
+            if (params['client'] not in EXTERNAL_CLIENTS or site in SITES and (site != 'U' or not owns_u)
+                    or any('DDR' in item for item in (route['claims'], holds, phases['issue']['claims'], ack))):
+                raise ValueError('shared FFN DMA route must use a separate client and protect its SRAM port')
 
     def validate_dma_addresses(self, initial):
         if not isinstance(self.dma_addresses, dict) or self.dma_addresses.keys() - self.sizes.keys():
@@ -410,7 +433,7 @@ class Model:
         in_place = timing.get('in_place', ())
         if (not isinstance(in_place, (list, tuple)) or any(not isinstance(w, str) for w in in_place)
                 or len(in_place) != len(set(in_place)) or in_place and (
-                    self.spec.get('timing') != 'replay' or 'write' not in timing
+                    not self.phased or 'write' not in timing
                     or any(w not in ranges or not phase_order[ranges[w][0]] < write
                            or phase_order[ranges[w][1]] != write for w in in_place))):
             raise ValueError('invalid in-place SRAM update phases')
@@ -440,7 +463,7 @@ class Model:
                 raise ValueError('SRAM input read phases name an unbound input window')
             if 'prefetch' in stage:
                 windows = stage['prefetch']
-                if (self.spec.get('timing') != 'replay' or stage_index == 0
+                if (not self.phased or stage_index == 0
                         or not isinstance(windows, (list, tuple)) or not windows
                         or any(not isinstance(w, str) or w not in inputs for w in windows)
                         or len(set(windows)) != len(windows) or stage.get('input_policy') == 'resident'):
@@ -458,7 +481,7 @@ class Model:
             if 'ffn_activation' in service:
                 self.activation_window(service, inputs, outputs)
             if 'ffn_program' in service:
-                self.validate_program_windows(inputs, outputs)
+                self.validate_program_windows(service, inputs, outputs)
             in_place = set(service.get('window_phases', {}).get('in_place', ()))
             if ((inputs.keys() & outputs.keys()) != in_place
                     or any(inputs[w] == outputs[w] or self.sizes[inputs[w]] != self.sizes[outputs[w]]
@@ -498,8 +521,10 @@ class Model:
 
     def validate_program_service(self, service):
         program = Program.from_spec(service['ffn_program'])
+        if self.snapshot and (type(service.get('snapshot_ticks')) is not int or service['snapshot_ticks'] < 2):
+            raise ValueError('FFN snapshot requires a calibrated program duration')
         claims = RESOURCES if self.dma_profile is None else SHARED_RESOURCES
-        if (self.spec.get('timing') != 'replay' or self.sram_profiles.keys() & set(SITES)
+        if (not self.phased or self.sram_profiles.keys() & set(SITES)
                 or {'phases', 'ffn_mid', 'ffn_activation', 'sram_access', 'copy_sites'} & service.keys()
                 or service['ticks'] != 1 or any(self.capacity.get(r) != n for r, n in RESOURCES.items())
                 or service['claims'] != claims
@@ -511,7 +536,7 @@ class Model:
             raise ValueError('shared FFN and typed DMA require the same calibrated provider')
         return program
 
-    def validate_program_windows(self, inputs, outputs):
+    def validate_program_windows(self, service, inputs, outputs):
         if len(inputs) != 1 or len(outputs) != 3:
             raise ValueError('calibrated FFN requires one input and three result windows')
         (source, value), = inputs.items()
@@ -521,7 +546,8 @@ class Model:
                           for w, v in outputs.items()) != [(f'P{p}', 0, size) for p, size in enumerate(RESULT_BYTES)]
                 or len(set(outputs.values())) != 3):
             raise ValueError('calibrated FFN input or result layout differs')
-        if any(window not in inputs and window not in outputs and location['site'] in SITES
+        exposed = inputs.keys() | outputs.keys() | scratch_overwrites(service, self.windows)
+        if any(window not in exposed and location['site'] in SITES
                for window, location in self.windows.items()):
             raise ValueError('calibrated FFN scratch cannot share its private SRAM windows')
 
@@ -608,14 +634,14 @@ class Model:
             calendars[r] = reserve(calendars.get(r, ()), start, end, n)
         return replace(state, calendars=calendars), start, end
 
-    def book_route(self, state, route, ready, ticks):
+    def book_route(self, state, route, ready, ticks, claims):
         if 'phases' not in route:
-            booked, start, end = self.book(state, route['claims'], ready, ticks)
+            booked, start, end = self.book(state, claims, ready, ticks)
             return booked, start, end, ()
         profile = route['phases']
         return self.book_phases(state, ready, (
             ('issue', profile['issue']['ticks'], profile['issue']['claims']),
-            ('data', ticks, route['claims']),
+            ('data', ticks, claims),
             ('ack', profile['ack']['ticks'], profile['ack']['claims']),
         ), profile['hold_claims'])
 
@@ -634,14 +660,23 @@ class Model:
                 return booked, begin, at, trace
             ready = hold_start
 
-    def move(self, state, value, src, dst, ready, route_name):
-        route = self.routes[route_name]
-        self.dma_read(route, value)
+    def route_data(self, route, value):
+        read = self.dma_read(route, value)
         size = self.sizes[value]
         ticks = route['setup'] + (size + route['bytes_per_tick'] - 1) // route['bytes_per_tick']
+        claims = route['claims']
+        if self.snapshot and read is not None:
+            duration, channels = dma_cost(self.dma_profile, read)
+            return max(ticks, duration), claims | dict.fromkeys(channels, 1), None
+        return ticks, claims, read
+
+    def move(self, state, value, src, dst, ready, route_name):
+        route = self.routes[route_name]
+        ticks, claims, _ = self.route_data(route, value)
+        size = self.sizes[value]
         state = self.add_nets(state, route.get('nets', ()))
         source_ready = state.backing[value] if src == DDR else state.copies[src].ready
-        state, start, end, phases = self.book_route(state, route, max(ready, source_ready), ticks)
+        state, start, end, phases = self.book_route(state, route, max(ready, source_ready), ticks, claims)
         copies, backing = state.copies.copy(), state.backing.copy()
         if src != DDR:
             copies[src] = replace(copies[src], held_until=max(copies[src].held_until, end))
@@ -680,13 +715,14 @@ class Model:
             raise Infeasible('no legal move')
         return options[0] if choose is None else choose(options, events)
 
-    def vacant(self, state, window, ready, protected, events, choose=None):
+    def vacant(self, state, window, ready, protected, events, choose=None, *, replacing=()):
         old = state.copies.get(window)
         if old is None:
             return state, ready
         ready = max(ready, old.held_until)
         if (old.value in protected and old.value not in state.backing
-                and not any(w != window and c.value == old.value for w, c in state.copies.items())):
+                and not any(w != window and w not in replacing and c.value == old.value
+                            for w, c in state.copies.items())):
             state, event = self.best_move(state, old.value, [window], DDR, ready, choose, events=events)
             events.append(event)
             ready = event['end']
@@ -754,9 +790,12 @@ class Model:
                 remaining[value] -= 1
                 if remaining[value] == 0:
                     del remaining[value]
-            for window in outputs:
+            overwritten = scratch_overwrites(service, self.windows)
+            replacing = outputs.keys() | overwritten
+            for window in (*outputs, *sorted(overwritten)):
                 evict_at = len(events)
-                state, at = self.vacant(state, window, start_at, protected | remaining.keys(), events, choose)
+                state, at = self.vacant(state, window, start_at, protected | remaining.keys(), events, choose,
+                                        replacing=replacing)
                 if 'write' in service.get('window_phases', {}) and len(events) > evict_at:
                     events[-1] = {**events[-1], 'output_eviction': window}
                 start_at = max(start_at, at)
@@ -767,13 +806,17 @@ class Model:
                 state, start, end, phases = self.book_phases(
                     state, start_at, spec, service.get('hold_claims', {}))
             else:
-                state, start, end = self.book(state, service['claims'], start_at, service['ticks'])
+                state, start, end = self.book(state, service['claims'], start_at,
+                                              service.get('snapshot_ticks', service['ticks'])
+                                              if self.snapshot else service['ticks'])
             _, _, publish = window_phase_indices(service)
             visible = phases[publish]['end'] if phases else end
             copies = state.copies.copy()
             for w, (_, last) in input_phase_intervals(service, inputs).items():
                 read_end = phases[last]['end'] if phases else end
                 copies[w] = replace(copies[w], held_until=max(copies[w].held_until, read_end))
+            for w in overwritten:
+                copies.pop(w, None)
             for w, value in outputs.items():
                 copies[w] = Copy(value, visible, visible)
             state = replace(state, copies=copies, read_bytes=state.read_bytes + service.get('read_bytes', 0),

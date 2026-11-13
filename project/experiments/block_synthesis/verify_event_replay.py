@@ -43,6 +43,8 @@ def verify_grants(tasks, hardware, rows):
             start, end = interval['start'], interval['end']
             if start < ready:
                 raise ValueError('grant precedes phase dependency')
+            if model.snapshot and end - start != phase.ticks:
+                raise ValueError('snapshot phase duration differs')
             if phase.mid_tile is not None and phase.mid_tile.run(start)[0] != end:
                 raise ValueError('FFN Mid completion differs')
             if phase.activation is not None:
@@ -95,9 +97,8 @@ def verify_grants(tasks, hardware, rows):
                 resource not in model.issue_rates or issue_count[resource] + units <= model.issue_rates[resource][1]
                 for resource, units in claims)
             if can_start and gate is not None:
-                residue = (tick + gate.offset) % gate.period
-                if residue < gate.closed:
-                    opens = tick + gate.closed - residue
+                opens = gate.next_tick(tick)
+                if opens > tick:
                     if opens not in ticks:
                         heappush(edges, opens)
                         ticks.add(opens)

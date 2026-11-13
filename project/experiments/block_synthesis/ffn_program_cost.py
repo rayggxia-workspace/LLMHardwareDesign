@@ -8,6 +8,8 @@ from functools import lru_cache
 READ_BYTES = 71884800
 LOCAL_WRITE_BYTES = 96256
 INPUT_BYTES = 8192
+# The three-P fixture quantizes the S32 row to S16 at S128 word 512.
+U_QUANT_END = INPUT_BYTES + INPUT_BYTES // 2
 RESULT_BYTES = (2752, 2720, 2720)
 RESOURCES = dict.fromkeys(('MC', 'DDR', 'U.S.port', *(f'P{p}.{unit}' for p in range(3)
                                                     for unit in ('LC', 'S.port', 'M'))), 1)

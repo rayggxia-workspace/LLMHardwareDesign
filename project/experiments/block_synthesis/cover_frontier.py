@@ -62,9 +62,9 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
             raise ValueError('strict event greedy requires singleton actions')
         model=Model(hardware,wire_budget=wire_budget)
         timing=hardware['event_model'].get('timing', 'calendar')
-        if timing not in ('calendar', 'replay'):
+        if timing not in ('calendar', 'replay', 'snapshot'):
             raise ValueError('unknown event timing model')
-        live_replay=timing=='replay'
+        live_replay=model.phased
         if live_replay:
             from event_replay import ReplayDeadlock
             from event_replay_plan import Decision, delivery_at, retime
@@ -77,7 +77,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         event_dependencies={task['id']:phase_edges(task) for task in tasks}
         event_dependencies={name:edges for name,edges in event_dependencies.items() if edges}
         if event_dependencies and not live_replay:
-            raise ValueError('phase edges require event replay')
+            raise ValueError('phase edges require event replay or snapshot timing')
     endpoints=set(event_dependencies)|{edge.task for edges in event_dependencies.values() for edge in edges}
     if any(len(a['covers'])>1 and endpoints.intersection(a['covers']) for a in covers):
         raise ValueError('multi-task cover has no mapping for its phase edge endpoints')
@@ -279,7 +279,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
                                     merged+=1
                                     if (old.makespan,old.traffic)<=(ns.makespan,ns.traffic):continue
                                 bucket[k]=ns
-    timing_stats=({'timing':'replay','transport_limit':transport_limit,**transport_counts}
+    timing_stats=({'timing':model.timing,'transport_limit':transport_limit,**transport_counts}
                   if live_replay else {})
     if not complete:return {'status':'no_plan_in_bounded_search','expanded':expanded,**timing_stats}
     best=min(complete,key=lambda s:(s.makespan,s.traffic,netcost(s)));rows=[];history=best.history

@@ -3,10 +3,12 @@ from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass, replace
 
 from dma_read import receipt_json
-from event_execution import Copy, DDR, PhaseEdge, capacity_profile, input_phase_intervals, window_phase_indices
+from event_execution import (Copy, DDR, PhaseEdge, capacity_profile, input_phase_intervals, scratch_overwrites,
+                             window_phase_indices)
 from event_replay import Operation, Phase, replay_branch
 from ffn_mid import MidTile
 from ffn_program_cost import Program
+from snapshot_cost import ClientResponse
 from sram_feeder import receipt_json as sram_receipts
 
 
@@ -37,27 +39,33 @@ def event_operation(model, event):
         if 'phases' in service:
             phases = tuple(Phase.from_spec(p['kind'], p['ticks'], p) for p in service['phases'])
             return Operation(phases, holds=tuple(sorted(service.get('hold_claims', {}).items())))
-        phase = Phase.from_spec('stage', service['ticks'], service)
+        ticks = service.get('snapshot_ticks', service['ticks']) if model.snapshot else service['ticks']
+        phase = Phase.from_spec('stage', ticks, service)
         if 'ffn_mid' in service:
             phase = replace(phase, mid_tile=MidTile.from_spec(service['ffn_mid']))
         if 'sram_access' in service:
             phase = replace(phase, sram_access=model.sram_access(service, event['inputs'], event['outputs']))
         if 'ffn_activation' in service:
             phase = replace(phase, activation=model.activation_window(service, event['inputs'], event['outputs']))
-        if 'ffn_program' in service:
+        if 'ffn_program' in service and not model.snapshot:
             phase = replace(phase, ffn_program=Program.from_spec(service['ffn_program']))
         return Operation((phase,))
     route = model.routes[event['route']]
-    size = model.sizes[event['value']]
-    ticks = route['setup'] + (size + route['bytes_per_tick'] - 1) // route['bytes_per_tick']
-    data = Phase.from_spec('data', ticks, route)
-    if 'typed_dma' in route:
-        data = replace(data, dma_read=model.dma_read(route, event['value']))
+    ticks, claims, read = model.route_data(route, event['value'])
+    data = Phase.from_spec('data', ticks, {**route, 'claims': claims})
+    if read is not None:
+        data = replace(data, dma_read=read)
     if 'phases' not in route:
         return Operation((data,))
     profile = route['phases']
     issue = Phase.from_spec('issue', profile['issue']['ticks'], profile['issue'])
     ack = Phase.from_spec('ack', profile['ack']['ticks'], profile['ack'])
+    if model.snapshot and 'typed_dma' in route:
+        client = route['typed_dma']['client']
+        stalls = tuple((start, end) for start, end, mask in model.dma_profile.client_ready
+                       if not mask & (1 << client))
+        if stalls:
+            ack = replace(ack, ready_window=ClientResponse(stalls, ack.ready_window))
     return Operation((issue, data, ack), holds=tuple(sorted(profile['hold_claims'].items())))
 
 
@@ -103,7 +111,8 @@ def intents(model, decisions):
                         dependencies[0].add(stores[value])
                 elif window in writers:
                     dependencies[reads[window][0]].add(writers[window])
-            for window in outputs.keys() - {DDR}:
+            overwritten = (outputs.keys() - {DDR}) | scratch_overwrites(service, model.windows)
+            for window in overwritten:
                 if window in writers:
                     dependencies[write].add(writers[window])
                 dependencies[write].update(readers.get(window, ()))
@@ -139,7 +148,7 @@ def intents(model, decisions):
             operations.append(replace(operation, phase_after=phase_after, activation_after=activation_after))
             for window in inputs.keys() - outputs.keys() - {DDR}:
                 readers.setdefault(window, set()).add((index, reads[window][1]))
-            for window in outputs.keys() - {DDR}:
+            for window in overwritten:
                 writers[window] = index, publish
                 readers.pop(window, None)
             if DDR in outputs:
@@ -155,7 +164,8 @@ def intents(model, decisions):
 def retime(model, decisions, proposed, previous=None):
     operations = intents(model, decisions)
     trace = replay_branch(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
-                          dma_profile=model.dma_profile, sram_profiles=model.sram_profiles)
+                          dma_profile=None if model.snapshot else model.dma_profile,
+                          sram_profiles=model.sram_profiles)
     grants = iter(zip(operations, trace.grants))
     copies = model.initial.copies.copy()
     backing = model.initial.backing.copy()
@@ -199,6 +209,8 @@ def retime(model, decisions, proposed, previous=None):
             for window in inputs.keys() - {DDR}:
                 read_end = schedule[reads[window][1]].end
                 copies[window] = replace(copies[window], held_until=max(copies[window].held_until, read_end))
+            for window in scratch_overwrites(service, model.windows):
+                copies.pop(window, None)
             for window, value in outputs.items():
                 if window == DDR:
                     backing[value] = min(end, backing.get(value, end))
@@ -216,8 +228,8 @@ def delivery_at(model, decisions, candidate, previous):
     """Trial an unfinished binding through its most recent transport choice."""
     operations = intents(model, (*decisions, candidate))
     trace = replay_branch(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
-                          dma_profile=model.dma_profile, sram_profiles=model.sram_profiles,
-                          save_checkpoints=False)
+                          dma_profile=None if model.snapshot else model.dma_profile,
+                          sram_profiles=model.sram_profiles, save_checkpoints=False)
     # The route probe ends at the delivery being ranked. A prefetched LOAD
     # may finish while an earlier compute stage in the same binding runs.
     return trace.grants[-1][-1].end
