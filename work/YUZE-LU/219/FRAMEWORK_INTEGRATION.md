@@ -362,3 +362,39 @@ Gather 和首个 RMS。每个位置的 Gather、gamma LOAD、RMS 由同一份计
 - `audit-native-ingress-rms-109614.log` SHA-256
   `ad041829d2b5818528708743e0471c3f3bf17e876426faaa20094b515bb02d61`。
 - 109613 远端回归通过 409 项，包括索引偏移、窗口复用及非法搬运检查。
+
+## Block V2 直接描述符准入审计
+
+远端 109637 对新 Algo1 重编的 #260 封存请求校验母控页、 CALL 展开、目标掩码、
+描述符地址、CRC 和实际字节。共覆盖 184,927 个母控页、8,273,243 次 CALL。
+对照 main `7a809d1e8dcda063c66f5ca18e9c186fb23ec668` 的 P scope 和 U39 本地 EXEC
+入口，2,599,452 次 P 调用和 276,943 次 U 调用的原描述符头在对应直接入口会被拒绝。
+其余 5,396,848 次 P 调用匹配该头部检查，是否支持完整字段、实际搬运、数值和命令完成仍需资格证据。
+审计覆盖封存请求实际使用的四个目标。它检查直接复用原描述符的路径，局控镜像重编和服务重映射另验。
+
+`native_service_routes.targets[].rejected_routes` 可把已证实的拒绝项接入搜索。每项包含
+`schema`、`abi`、`opcode` 和 `reason`，沿用目标编号、组装实例及网表视图散列的核对。
+同一目标的准入和拒绝表不能包含相同签名。用 `run.py --event-ir` 读取附表底座后，
+真实 Gather 得到 `U0: rejected native signature (3, 7, 4): rejected_by_u_exec_header`。
+搜到替代候选时仍需相应正向服务合同。阶段发布依赖也须有目标命令可观测的完成语义。
+
+复跑脚本为 [audit_native_v2_dispatch.py](audit_native_v2_dispatch.py)。
+`PYTHONPATH` 包含本分支的 `project/experiments/block_synthesis` 和 #260 固定版本的
+`project/experiments/mother_control_native`。取远端同一编译目录下
+`request-runtime-r2`、`v2-candidate-embedding` 和 `framework-r11-CatJ8r/main-source`
+为前三个输入，第四个参数为新输出目录。源视图现场按散列核验，审计输出中的
+`base-with-native-rejections.json` 可直接用作 `--event-route-base`。在同一输出目录，
+`gather-event-ir.json` 和 `gather-hardware.json` 可直接用作 `run.py` 的前两个参数，
+配合 `--event-ir --event-route-scope interface --event-control-fabric` 及候选底座的
+`control-fabric` 复跑 Gather 诊断。
+
+| 远端 `framework-r11-CatJ8r/native-dispatch-109637` 产物 | SHA-256 |
+| --- | --- |
+| `report.json` | `6a75691b78e522092a14b07b71be1ecab56b25aa29308f3efab438748c8d26cb` |
+| `rejected-routes.json` | `f40b3dad848b07473a676831bc4b4a687932dba75d1b448fe94c03ff8d98ea00` |
+| `base-with-native-rejections.json` | `d7dc3bf245da22db63b9d9f23900b32d50d6a036400552cedad08e3e9c4c5d00` |
+| `compile/result.json` | `34917b05db437e408621e9605d1d7395e06f139def810b09b55e8370446b28a2` |
+
+远端 109620 的 409 项回归通过。109409 是原拓扑上的独立严格运行，运行中的页和 DDR
+回调仅用于观察进度。完整 Block V2 产品仍需实际 P/U 编码和服务映射、同底座的数据面绑定、
+整份计划的联合布线、真实 KV 及 token 退休证据。

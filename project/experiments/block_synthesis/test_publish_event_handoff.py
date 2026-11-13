@@ -122,6 +122,19 @@ class RouteAdmissionTest(unittest.TestCase):
         self.assertEqual(result['plan']['nets'], ['control'])
         self.assertEqual(compile_event_ir(model, arch, route_base=base, route_scope='interface')
                          ['plan']['tasks'][0]['binding'], 'enabled')
+        denied = {'schema': 3, 'abi': 7, 'opcode': 2, 'reason': 'descriptor header mismatch'}
+        target['rejected_routes'] = [denied]
+        with self.assertRaisesRegex(ValueError, 'invalid or duplicate native dispatch route'):
+            compile_event_ir(model, arch, route_base=base)
+        routes = target['routes']
+        target['routes'] = []
+        rejected = compile_event_ir(model, arch, route_base=base, route_scope='interface')
+        self.assertEqual(rejected['status'], 'no_plan_in_bounded_search')
+        self.assertEqual(rejected['native_dispatch_issues']['services']['block-source'],
+                         'lane0: rejected native signature (3, 7, 2): descriptor header mismatch')
+        self.assertIn('no physical service route', rejected['native_dispatch_issues']['services']['produce'])
+        del target['rejected_routes']
+        target['routes'] = routes
         target['netlist_sha256'] = 'b'*64
         with self.assertRaisesRegex(ValueError, 'differs from the target assembly'):
             compile_event_ir(model, arch, route_base=base)

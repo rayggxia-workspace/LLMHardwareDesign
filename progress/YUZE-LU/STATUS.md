@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 核对重编 #260 整包的 184,927 页及 8,273,243 次 CALL。已把 2,876,395 次原始描述符的 P/U 直接入口冲突接入 Algo1 搜索，并从真实 Gather 的命令行复现；409 项远端回归通过。匹配头部的调用仍需完整服务资格。下一步验证同底座的实际局控编码、数据面及 Algo2 布线。详见[准入证据](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#block-v2-直接描述符准入审计)。
+
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 把同一 #260 封存请求的包控制和三 P 描述符、权重、栅栏需求投影到已有联合摆位，Algo2 读入 5132 根网。OpenDB 验证 2310 个原生叶宏端点和 8414 个候选逃线端点。另核对 main P2545 实际接点，DMA v45 仍需在共同摆位引出 4344 个数据面逻辑端点。联合摆位与 main 的 P 版本不同。详见[联合摆位交接](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#联合摆位的-pdma-交接与-main-端点对照)。
 
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 新增 Block V2 的 C0→U0 数据链交接，Algo2 读回 153 根链路信号及相应控制网；U0、U1 反向各缺 128 个 M10 数据接点。已对照 #260 整包的 21 类调用与实际 P/U 描述符入口，给出需要另选服务或重新编码的调用。109409 继续执行旧拓扑的严格 TLM。详见[数据端点与调用入口核对](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#数据端点交接与整包描述符入口核对)。

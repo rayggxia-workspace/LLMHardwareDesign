@@ -42,6 +42,7 @@ def qualify_native_dispatch(hardware, base):
     inventory = base.get('native_service_routes')
     contracts = resolved.get('native_provider_contracts', {})
     available = {}
+    rejected = {}
     if inventory is not None:
         if (inventory.get('schema') != 'native-rtl-target-routes/1'
                 or inventory.get('topology_id') != resolved.get('topology_id')
@@ -63,14 +64,22 @@ def qualify_native_dispatch(hardware, base):
                     or target['netlist_sha256'] != base['views'][view]['sha256']):
                 raise ValueError(f'{name}: native dispatch inventory differs from the target assembly')
             enabled = {}
+            denied = {}
+            for route in target.get('rejected_routes', ()):
+                key = signature(route)
+                reason = route.get('reason')
+                if key in denied or not isinstance(reason, str) or not reason:
+                    raise ValueError(f'{name}: invalid or duplicate rejected native dispatch route')
+                denied[key] = reason
             for route in target['routes']:
                 key = signature(route)
                 completions = route['completions']
-                if (key in enabled or not isinstance(completions, (list, tuple)) or not completions
+                if (key in enabled or key in denied or not isinstance(completions, (list, tuple)) or not completions
                         or any(not isinstance(terminal, str) or not terminal for terminal in completions)):
                     raise ValueError(f'{name}: invalid or duplicate native dispatch route')
                 enabled[key] = frozenset(completions)
             available[name] = enabled
+            rejected[name] = denied
 
     def check(record, targets, completion):
         if not targets:
@@ -86,6 +95,10 @@ def qualify_native_dispatch(hardware, base):
             if not calls:
                 return f'{name}: native encoder declares no calls for {provider!r}'
             required = {signature(call) for call in calls}
+            denied = required & rejected[name].keys()
+            if denied:
+                key = min(denied)
+                return f'{name}: rejected native signature {key}: {rejected[name][key]}'
             missing = required - available[name].keys()
             if missing:
                 return f'{name}: no physical service route for signatures {sorted(missing)}'
