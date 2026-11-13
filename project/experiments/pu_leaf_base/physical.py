@@ -198,7 +198,7 @@ def main():
     pg_offset = (5, 12, 17, 23)[args.slot % 4] if exact_p_probe else 5
     if m9_probe and args.slot in {20, 28, 36}:
         pg_offset = 12
-    rtl = Path("project/rtl/pu_leaf_base").resolve()
+    rtl = Path("project/rtl/block_v1").resolve()
     top = f"pu_{group.lower()}_group"
     controller = None
     if with_controller:
@@ -338,7 +338,9 @@ foreach prefix $families {
 """
     )
     std = "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib"
-    verilog = " ".join(map(str, sorted(rtl.glob("*.sv"))))
+    rtl_files = sorted([*(rtl / "pu").glob("*.sv"), *(rtl / "common").glob("*.sv")],
+                       key=lambda path: path.name)
+    verilog = " ".join(map(str, rtl_files))
     verilog += " " + str(Path("project/rtl/block_local_s/block_local_s_arbiter.sv").resolve())
     include = ""
     if controller:

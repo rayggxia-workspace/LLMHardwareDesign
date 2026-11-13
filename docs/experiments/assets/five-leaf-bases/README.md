@@ -1,11 +1,11 @@
 # 五类独立叶宏组与母控：交付入口及 _128 / _64 摆放图
 
-本页统一索引 P/U/C/F/J 与母控。源码仍按实际项目目录保存，大体积交付包仍在验收报告指定的授权存储，不搬移或复制原始证据。
+本页统一索引 P/U/C/F/J 与母控。五类 Block RTL 统一放在 [`project/rtl/block_v1/`](../../../../project/rtl/block_v1/)。源码仍按实际项目目录保存，大体积交付包仍在验收报告指定的授权存储，不搬移或复制原始证据。
 
 | 交付 | 源码 | 实验、回执与包位置 |
 | --- | --- | --- |
-| P / U（_64、_128） | [独立叶宏组](../../../../project/rtl/pu_leaf_base/) | [P/U 验收入口](../../../../work/YUZE-LU/212/README.md)；[U 当前修复与验收](../../../../work/YUZE-LU/212/u-native-fix.md) |
-| C / F / J（_64、_128） | [独立叶宏组](../../../../project/rtl/block_cfj_v1/) | [C/F/J 验收入口](../../../../work/YUZE-LU/211/README.md) |
+| P / U（_64、_128） | [独立叶宏组](../../../../project/rtl/block_v1/pu/) | [P/U 验收入口](../../../../work/YUZE-LU/212/README.md)；[U 当前修复与验收](../../../../work/YUZE-LU/212/u-native-fix.md) |
+| C / F / J（_64、_128） | [独立叶宏组](../../../../project/rtl/block_v1/cfj/) | [C/F/J 验收入口](../../../../work/YUZE-LU/211/README.md) |
 | 母控（64 v2、128 v1） | [母控与真实程序 SRAM](../../../../project/rtl/mother_control_v1/) | [双格式验收报告](../../mother-control-dual-format.md)、[交付包索引及 SHA](../../../../work/YUZE-LU/223/acceptance-index.json)、[复跑说明](../../../../project/experiments/mother_control_v1/README.md) |
 
 母控由 [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 交付，用户已授权合入 main。两种程序格式分别验收，共用同一组六文件，物理 cell 名为 `mother_control_64`；并非两份不同的物理版图。当前母控为两个驻留目标，母控最终网表与五类 Block/局控 RTL 的有限组合已通过，不代表九实例系统联合布局布线。下方五类图册保留 #213/#214 的 P/C/F/J 来源，并将 U 两版更新为 #221 新验收包，图源绑定与当前图片同步。

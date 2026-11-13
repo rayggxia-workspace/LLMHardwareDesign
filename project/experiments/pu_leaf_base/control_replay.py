@@ -26,7 +26,7 @@ design = run / "design"
 native = run / "staged/native"
 
 for name in ("pu_p_group", "pu_p_store_control", "pu_u_group", "pu_compact_e_service"):
-    shutil.copyfile(src / f"project/rtl/pu_leaf_base/{name}.sv", design / f"{name}.sv")
+    shutil.copyfile(src / f"project/rtl/block_v1/pu/{name}.sv", design / f"{name}.sv")
 for name in ("local_s_base", "local_s_p", "block_feed_s16k_sram"):
     shutil.copyfile(src / f"project/rtl/s_sram/{name}.sv", native / f"{name}.sv")
 shutil.copyfile(src / "project/rtl/block_v2/block_v2_e_compact.sv", native / "block_v2_e_compact.sv")
@@ -97,7 +97,7 @@ if len(sys.argv) > 3:
     if group == "P":
         shutil.copyfile(directory / "pj_native_service.sv", design / "pu_p_native_service.sv")
     else:
-        shutil.copyfile(src / "project/rtl/pu_leaf_base/pu_u_direct_pair.sv", design / "pu_u_direct_pair.sv")
+        shutil.copyfile(src / "project/rtl/block_v1/pu/pu_u_direct_pair.sv", design / "pu_u_direct_pair.sv")
         shutil.copyfile(directory / "ucf_native_service.sv", design / "ucf_native_service.sv")
     controller_dir = run / "staged/project/control_rtl_min_v0_1"
     fixture = controller_dir / "tb_network_lc_wires.svh"
