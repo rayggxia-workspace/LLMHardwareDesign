@@ -14,6 +14,7 @@ FIRST_EDGE_PS = 55000
 
 OBSERVER = r"""
     // Sample all handshakes before nonblocking updates on the shared core edge.
+    bit qwen_first_rms_seen;
     always @(posedge clk) begin : qwen_observe
         longint unsigned edge_ps, core_cycle;
         if (!reset) begin
@@ -27,6 +28,11 @@ OBSERVER = r"""
                 $display("QWEN_EDGE prompt_ddr_admit ps=%0d cycle=%0d generation=0 ddr_core_before=%0d address=%0d tag=%0d",
                          edge_ps,core_cycle,core_cycle-1,qkv_attention_datapath.physical_addr[63:0],
                          qkv_attention_datapath.physical_tag[63:0]);
+            if (!qwen_first_rms_seen&&qkv_attention_datapath.prompt_row&&qkv_attention_datapath.prompt_normalized) begin
+                $display("QWEN_EDGE prompt_rms_publish ps=%0d cycle=%0d generation=0 ddr_core_before=%0d",
+                         edge_ps,core_cycle,core_cycle-1);
+                qwen_first_rms_seen=1;
+            end
             if (datapath.start&&datapath.ready)
                 $display("QWEN_EDGE job_accept ps=%0d cycle=%0d generation=0",edge_ps,core_cycle);
             if (qwen_page_launch)
@@ -128,11 +134,13 @@ def audit(log_path, frozen_log):
     jobs = kind_rows("job_accept")
     prompt_starts = kind_rows("prompt_accept")
     prompt_ddr = kind_rows("prompt_ddr_admit")
+    prompt_rms = kind_rows("prompt_rms_publish")
     starts, commits = kind_rows("page_launch"), kind_rows("page_commit")
     verify(len(jobs) == 1 and len(starts) == len(commits) == 8, "unexpected job or page witness count")
-    verify(len(prompt_starts) == 1 and len(prompt_ddr) == 3 and
-           prompt_starts[0]["cycle"] < prompt_ddr[0]["cycle"] < jobs[0]["cycle"], "unexpected prompt startup witnesses")
-    verify(all(row["ddr_core_before"] == row["cycle"] - 1 for row in prompt_starts + prompt_ddr),
+    verify(len(prompt_starts) == len(prompt_ddr) == len(prompt_rms) == 1 and
+           prompt_starts[0]["cycle"] < prompt_ddr[0]["cycle"] < prompt_rms[0]["cycle"] <= jobs[0]["cycle"],
+           "unexpected prompt startup witnesses")
+    verify(all(row["ddr_core_before"] == row["cycle"] - 1 for row in prompt_starts + prompt_ddr + prompt_rms),
            "prompt witness differs from DDR counter before the sampled edge")
     previous = jobs[0]["cycle"] - 1
     for index, (start, commit) in enumerate(zip(starts, commits)):
@@ -167,18 +175,21 @@ def audit(log_path, frozen_log):
     return {"core_period_ps": CORE_PERIOD_PS, "first_edge_ps": FIRST_EDGE_PS, "total_cycles": int(clock[4]),
             "boundary_core_cycles": cycle_delta, "boundary_ps": cycle_delta * CORE_PERIOD_PS,
             "prompt_start": prompt_starts[0], "prompt_ddr_admissions": prompt_ddr,
+            "prompt_rms_publish": prompt_rms[0],
             "page_starts": starts, "page_commits": commits, "boundaries": boundaries, "event_count": len(events)}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    commands = parser.add_subparsers(dest="command", required=True)
+    commands = parser.add_subparsers(dest="command")
     patch = commands.add_parser("patch")
     patch.add_argument("source", type=Path)
     inspect = commands.add_parser("audit")
     inspect.add_argument("log", type=Path)
     inspect.add_argument("baseline", type=Path)
     args = parser.parse_args()
+    if args.command is None:
+        parser.error("a command is required")
     if args.command == "patch":
         instrument(args.source)
     else:
