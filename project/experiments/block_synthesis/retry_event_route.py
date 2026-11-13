@@ -49,8 +49,9 @@ def retry(previous, base, request, router_input, routing, *, nets=(), width=8):
             require(name not in observed, 'duplicate Algo2 net observation')
             observed[name] = row['code']
     require(observed == failed, 'Algo2 failures and observations differ')
-    selected = set(nets) if nets else set(observed)
-    require(selected and selected <= observed.keys(), 'retry needs failed Algo2 net IDs')
+    selected = set(nets)
+    require(selected and selected <= observed.keys(),
+            'choose failed Algo2 net IDs for an explicit alternate mapping trial')
     members = {member['id']: member['demand_id'] for member in request['members']}
     physical_nets = {row['id']: row for row in request['nets']}
     require(selected <= physical_nets.keys(), 'feedback net has no prior logical demand')
@@ -71,6 +72,8 @@ def retry(previous, base, request, router_input, routing, *, nets=(), width=8):
     result['route_trial'] = {
         'prior': source, 'request_sha256': request['sha256'], 'feedback_sha256': feedback['sha256'],
         'failed_nets': sorted(selected), 'excluded_demands': sorted(excluded), 'fixed_demands': fixed,
+        'observed_failure_codes': {name: observed[name] for name in sorted(selected)},
+        'hard_constraint': False,
     }
     return result
 
@@ -79,7 +82,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('result', 'base', 'handoff', 'routing', 'output'):
         parser.add_argument(name, type=Path)
-    parser.add_argument('--net', action='append', default=[], help='retry around this failed physical net ID')
+    parser.add_argument('--net', action='append', required=True,
+                        help='trial an alternate mapping around this failed physical net ID')
     parser.add_argument('--width', type=int, default=8)
     args = parser.parse_args()
 

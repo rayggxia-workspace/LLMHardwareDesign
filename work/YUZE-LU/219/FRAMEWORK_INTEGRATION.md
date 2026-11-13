@@ -620,3 +620,32 @@ prompt 行取数，一个 8 KiB 行有 128 个 DDR beat 与 512 个 SRAM 写 ACK
 | `routed-native-109893/summary.json` | `4aa08522da6a600f0d8057000d31f5aa1037ee25639ae15caf85f2803cc17d3c` |
 | `routing-impact.json` | `057840d00731ce0e918ece03b8f282e38ce3e2a58f2de4b2ef5b083b20cd2d08` |
 | `gather-ingress-audit.json` | `4231790e8b1d621d63b93249d0edaf0d5bdfc398f9b2c6afa21fba32cc240fe1` |
+
+## C0 到 U0 的逐字提交与试布回执
+
+Algo1 按 `u-stored-link` 只接受单个 16 B 对齐字，两端地址范围均为 0 至 16368。
+独立验证器重复检查该约束，物理接口禁止把这类端点映成 DDR。发现单条候选过宽时，
+搜索仍可选择其他合法路由。109968 通过 413 项远端回归。
+
+109992 从同一 Block V2 C0→U0 端点候选出发。单字原计划指令及端点保持一致，
+直接把一个 8 KiB 词嵌入行放进单次预留会被拒绝，去掉约束的控制组会错误接受。
+已放入 C0 SRAM 的一行拆成 512 条分片 COPY，每条等目标提交 ACK，消费指令等待该分片。
+Algo2 独立读回与控制 IR 同源的计划，静态成员 858 个，待布信号网 734 根，与单字的端点规模一致。
+这项实验验证算法排程与 Algo2 接口准入。它从源 SRAM 已有完整行开始，下一步需让真实
+运行时索引经 DDR 取得对应行，再打通 #260 指令编码和动态执行。
+
+同一 4,981 网 DMA 试布以同样的每网搜索预算比较两种接点选择。109947 基线几何通过 8 根，
+109946 贪心预留仅通过 5 根。109978 单独分配落点时，10,300 个端点中有 8,982 个获分配，
+1,318 根网至少缺一个落点。回执用于识别局部接入问题。搜索未找到路线时，Algo1 的重试要求显式
+指定要试排除的网，记录原失败码及非硬约束属性，并在重排后生成新的同源指令及网表。
+
+远端目录仍为 `ingress-route-iN0LbH`。
+
+| 文件 | SHA-256 |
+| --- | --- |
+| `route-abi-109968.log` | `724bd71623838e50302aea08d69dab33ccb7d8ae9b0c25c4aa6439c8b9a9831b` |
+| `real-stored-transport-109992.json` | `893bc64bff697aeac7a82cd841485f7c929e68734f9c8a15d2ee0437e4b25ae2` |
+| `real-stored-transport-109992-fragments.json` | `c2edc75f1bb0eea065ddfb1b5ca4ef4a3608e8ed1dd01ac63b96fbad64640d99` |
+| `escape-route-109946.json` | `9a0e415d475154bddc0e842893a277af6ff6c585bd3e6f8348084cd6d55522fc` |
+| `escape-route-109947.json` | `165905570386978513fc71fc373ed1b3cdd15cbe1085dc4c787b3a9e15799f23` |
+| `escape-route-109978.json` | `03242bcd7d960c3822f589227ccf35d97438bdfae363eb729f8d8812b765e7a2` |

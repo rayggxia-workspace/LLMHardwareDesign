@@ -16,6 +16,15 @@ from snapshot_cost import CHANNELS, dma_cost, measured_dma_cost
 from sram_feeder import Access, profile as feeder_profile
 
 DDR = 'DDR'
+STORED_WORD_BYTES = 16
+
+
+def stored_link_operand(route, offset, size):
+    """One stored-link reservation carries one aligned private SRAM word."""
+    return route.get('transport_abi') != 'u-stored-link' or (
+        size == STORED_WORD_BYTES and offset is not None
+        and 0 <= offset < STORED_WORD_BYTES * (1 << 10) and offset % STORED_WORD_BYTES == 0
+    )
 
 
 def program_offsets(services):
@@ -735,6 +744,9 @@ class Model:
         route = self.routes[route_name]
         ticks, claims, _ = self.route_data(route, value)
         size = self.sizes[value]
+        if not all(stored_link_operand(route, self.windows.get(window, {}).get('offset'), size)
+                   for window in (src, dst)):
+            raise Infeasible('stored link requires one aligned 16-byte SRAM word per reservation')
         state = self.add_nets(state, route.get('nets', ()))
         source_ready = state.backing[value] if src == DDR else state.copies[src].ready
         state, start, end, phases = self.book_route(state, route, max(ready, source_ready), ticks, claims)

@@ -311,8 +311,13 @@ class HandoffTest(unittest.TestCase):
         routes = route(spec, rounds=1, max_expansions=1)
         self.assertEqual(len(routes['failed']), 1)
         routes['feedback'] = failure_feedback(request, routes, 'route-test')
-        trial = retry(previous, base, request, spec, routes)
+        with self.assertRaisesRegex(ValueError, 'explicit alternate mapping trial'):
+            retry(previous, base, request, spec, routes)
+        failed, = routes['failed']
+        trial = retry(previous, base, request, spec, routes, nets=[failed])
         self.assertEqual(trial['status'], 'planned')
+        self.assertEqual(trial['route_trial']['observed_failure_codes'], {failed: 'search_budget_exhausted'})
+        self.assertFalse(trial['route_trial']['hard_constraint'])
         self.assertEqual(trial['route_trial']['excluded_demands'], ['P0-P1'])
         self.assertNotIn('P0-P1', trial['plan']['nets'])
         self.assertIn('P0-P1', previous['plan']['nets'])

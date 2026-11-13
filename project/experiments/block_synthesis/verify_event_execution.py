@@ -6,7 +6,7 @@ copy map, resource profiles, route selection and cost evaluation.
 from bisect import bisect_right
 from collections import defaultdict
 
-from event_execution import backing_bytes, phase_edges, scratch_overwrites
+from event_execution import backing_bytes, phase_edges, scratch_overwrites, stored_link_operand
 
 DDR = 'DDR'
 
@@ -121,6 +121,9 @@ def verify(tasks, hardware, plan, wire_budget=None):
                         and route['dst'] == (DDR if dst == DDR else windows[dst]['site']),
                         'route endpoints differ')
                 size = sizes[value]
+                require(all(stored_link_operand(route, windows.get(window, {}).get('offset'), size)
+                            for window in (src, dst)),
+                        'stored link requires one aligned 16-byte SRAM word per reservation')
                 route_claims(event, route, size)
                 if src == DDR:
                     read_external.append((start, value))

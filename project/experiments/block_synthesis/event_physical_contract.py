@@ -2,7 +2,7 @@
 from copy import deepcopy
 from functools import lru_cache
 
-from event_deploy import demand_closure
+from event_deploy import DDR, demand_closure
 
 TRANSPORT_ROLES = {
     'ready-valid-commit': {'data', 'valid', 'ready', 'ack'},
@@ -108,8 +108,8 @@ def qualify_hardware(hardware, base):
         if not src or not dst or type(data_width) is not int or data_width < 8 or data_width % 8:
             raise ValueError('missing transport endpoint owner or data width')
         widths = {'data': data_width, 'address': 10, 'reserved_address': 10}
-        if profile == 'u-stored-link' and data_width != 128:
-            raise ValueError('U stored link requires its 128-bit data interface')
+        if profile == 'u-stored-link' and (data_width != 128 or DDR in (src, dst)):
+            raise ValueError('U stored link requires two SRAM endpoints and its 128-bit data interface')
         reverse = {'ready', 'ack', 'stored_ack', 'reserved', 'reserved_address'}
         check_roles(names, {role: (dst, src, widths.get(role, 1)) if role in reverse
                             else (src, dst, widths.get(role, 1)) for role in required})
@@ -119,6 +119,8 @@ def qualify_hardware(hardware, base):
         sites = route['src'], route['dst']
         data_nets = route.get('transport_nets', route.get('nets', ()))
         try:
+            if route.get('transport_abi') == 'u-stored-link' and DDR in sites:
+                raise ValueError('U stored link requires two SRAM endpoints')
             if sites[0] != sites[1]:
                 owners = route.get('transport_owners')
                 if owners is None:

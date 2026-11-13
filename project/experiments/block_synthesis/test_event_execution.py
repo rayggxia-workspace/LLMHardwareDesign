@@ -74,6 +74,46 @@ class EventExecutionTest(unittest.TestCase):
                     self.assertEqual(constrained['makespan'], 16)
                     verify([a, b], h, (), constrained, wire_budget=0)
 
+    def test_stored_link_admits_aligned_words_and_falls_back_for_larger_values(self):
+        from verify_event_execution import verify as verify_timeline
+
+        tasks = [
+            task('a', binding('producer', stage('produce', outputs={'source': 'x'}))),
+            task('b', binding('consumer', stage('consume', inputs={'input': 'x'},
+                                                outputs={'result': 'y'})), after=('a',)),
+        ]
+        for size in (16, 32):
+            with self.subTest(size=size):
+                h = hardware()
+                spec = h['event_model']
+                spec['value_bytes']['x'] = size
+                for window in ('source', 'input'):
+                    site = spec['windows'][window]['site']
+                    h['sites'][site] = {'words': 4, 'bytes': 64}
+                    spec['windows'][window]['bytes'] = size
+                for window in ('other', 'result'):
+                    spec['windows'][window]['offset'] = size
+                plan = search(tasks, h)
+                self.assertEqual(plan['nets'], ['P0-P1'])
+                spec['routes']['direct']['transport_abi'] = 'u-stored-link'
+                if size == 32:
+                    with self.assertRaisesRegex(ValueError, 'one aligned 16-byte SRAM word'):
+                        verify_timeline(tasks, h, plan)
+                legal = search(tasks, h)
+                verify(tasks, h, (), legal)
+                self.assertEqual(legal['nets'], ['P0-P1'] if size == 16 else [])
+                self.assertEqual(legal['external_read_bytes'], 0 if size == 16 else size)
+
+    def test_stored_link_rejects_unaligned_and_out_of_range_words(self):
+        from event_execution import stored_link_operand
+
+        route = {'transport_abi': 'u-stored-link'}
+        for offset in (None, -16, 4, 16384):
+            with self.subTest(offset=offset):
+                self.assertFalse(stored_link_operand(route, offset, 16))
+        self.assertTrue(stored_link_operand(route, 16368, 16))
+        self.assertFalse(stored_link_operand(route, 0, 8))
+
     def test_booked_ddr_credit_changes_same_future_move(self):
         h = hardware(resident=False)
         h['event_model']['initial_backing'] = ['x']
