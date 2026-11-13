@@ -388,7 +388,7 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
             reads = fabric.advance(tick) if fabric is not None and fabric.active else ()
         for (index, phase_index), receipts in reads:
             start = device_starts.pop((index, phase_index))
-            # The route still owes its destination SRAM ACK.
+            # The route still owes its endpoint ACK after the fabric returns.
             end = tick + 1
             grants[index].append(Grant(index, phase_index, start, end, receipts))
             heappush(running, (end, index, phase_index))

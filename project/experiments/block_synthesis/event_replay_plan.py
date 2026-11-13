@@ -103,6 +103,10 @@ def intents(model, decisions):
                     dependencies[write].add(writers[window])
                 dependencies[write].update(readers.get(window, ()))
             if is_stage:
+                for window in event.get('persist', ()):
+                    value = inputs[window]
+                    if value not in model.initial.backing:
+                        dependencies[read or 0].add(stores[value])
                 stage_index += 1
                 for j, phase in enumerate(operation.phases):
                     location = stage_index, phase.name

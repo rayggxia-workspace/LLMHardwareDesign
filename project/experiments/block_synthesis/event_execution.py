@@ -162,6 +162,8 @@ class Model:
         self.routes = self.spec['routes']
         dma = self.spec.get('typed_dma')
         self.dma_profile = Profile.from_spec(dma) if dma is not None else None
+        if self.dma_profile is not None and self.dma_profile.mixed and self.spec.get('timing') != 'replay':
+            raise ValueError('mixed DMA requires event replay')
         self.dma_addresses = {} if dma is None else dma.get('addresses', {})
         self.routes_by_sites = {}
         self.live_out = frozenset(self.spec.get('live_out', ()))
@@ -202,8 +204,8 @@ class Model:
                 self.validate_route_phases(route)
             if 'typed_dma' in route:
                 self.validate_dma_route(route)
-            elif self.has_ffn_program and self.dma_profile is not None and DDR in endpoints:
-                raise ValueError('shared FFN requires an explicit typed route for external traffic')
+            elif self.dma_profile is not None and (self.has_ffn_program or self.dma_profile.mixed) and DDR in endpoints:
+                raise ValueError('shared DMA requires an explicit typed route for external traffic')
             self.routes_by_sites.setdefault(endpoints, []).append(name)
         for service in self.services.values():
             if type(service['ticks']) is not int or service['ticks'] < 1:
@@ -211,9 +213,9 @@ class Model:
             self.validate_service(service)
             if 'ffn_program' in service:
                 self.validate_program_service(service)
-            elif self.has_ffn_program and self.dma_profile is not None and (
+            elif self.dma_profile is not None and (self.has_ffn_program or self.dma_profile.mixed) and (
                     service.get('read_bytes') or service.get('write_bytes')):
-                raise ValueError('shared FFN requires explicit typed routes for external traffic')
+                raise ValueError('shared DMA requires explicit typed routes for external traffic')
             if 'sram_access' in service and ('phases' in service or 'ffn_mid' in service
                                              or 'copy_sites' in service or 'ffn_activation' in service):
                 raise ValueError('SRAM feeder access requires a standalone service')
@@ -288,13 +290,17 @@ class Model:
 
     def validate_dma_route(self, route):
         params = route['typed_dma']
-        if (self.dma_profile is None or route['src'] != DDR or 'phases' not in route
+        write = route['dst'] == DDR
+        if (self.dma_profile is None or not (route['src'] == DDR or write) or 'phases' not in route
+                or write and (self.dma_profile.mixed is None or self.spec.get('timing') != 'replay')
                 or not isinstance(params, dict) or params.keys() - {'replica'} != {'client', 'record_beats'}
                 or type(params['client']) is not int or type(params['record_beats']) is not int
+                or write and 'replica' in params
                 or not isinstance(params.get('replica', 'primary'), str) or not params.get('replica', 'primary')
-                or not Read(params['client'], 0, 64 * params['record_beats'], params['record_beats']).valid()):
-            raise ValueError('invalid typed DMA read route')
-        if self.has_ffn_program and (params['client'] not in EXTERNAL_CLIENTS or route['dst'] in SITES
+                or not Read(params['client'], 0, 64 * params['record_beats'], params['record_beats'], write).valid()):
+            raise ValueError('invalid typed DMA write route' if write else 'invalid typed DMA read route')
+        if self.has_ffn_program and (params['client'] not in EXTERNAL_CLIENTS
+                                     or (route['src'] if write else route['dst']) in SITES
                                      or any('DDR' in item for item in (route['claims'],
                                             route['phases']['hold_claims'],
                                             route['phases']['issue']['claims'], route['phases']['ack']['claims']))):
@@ -317,9 +323,12 @@ class Model:
                     raise ValueError('typed DMA backing overlaps the calibrated FFN program')
                 regions.append((address, address + self.sizes[value], replicas))
         high = named_high = 0
+        mixed = self.dma_profile is not None and self.dma_profile.mixed is not None
         for start, end, named in sorted(regions):
             if start < named_high or named and start < high:
                 raise ValueError('typed DMA backing replicas overlap physical ranges')
+            if mixed and start < high:
+                raise ValueError('mixed DMA backing overlaps physical ranges')
             high = max(high, end)
             if named:
                 named_high = end
@@ -336,7 +345,10 @@ class Model:
             address = None
         if address is None:
             raise Infeasible('typed DMA value needs a physical backing address for this route')
-        read = Read(params['client'], address, self.sizes[value], params['record_beats'])
+        write = route['dst'] == DDR
+        if write and isinstance(self.dma_addresses.get(value), dict):
+            raise Infeasible('typed DMA write requires a single physical backing address')
+        read = Read(params['client'], address, self.sizes[value], params['record_beats'], write)
         if not read.valid():
             raise Infeasible('value does not fit typed DMA record geometry')
         return read
@@ -390,6 +402,12 @@ class Model:
             if stage.get('input_policy', 'any') not in ('any', 'resident', 'backing'):
                 raise ValueError('unknown input policy')
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
+            persisted = stage.get('persist', ())
+            if (not isinstance(persisted, (list, tuple)) or any(not isinstance(w, str) for w in persisted)
+                    or len(set(persisted)) != len(persisted) or not set(persisted) <= inputs.keys()
+                    or persisted and (self.dma_profile is None or self.dma_profile.mixed is None
+                                      or stage.get('input_policy', 'any') == 'backing')):
+                raise ValueError('persist requires unique resident input windows and mixed DMA')
             for window, value in (*inputs.items(), *outputs.items()):
                 self.validate_copy(window, value)
             if 'sram_access' in service:
@@ -672,6 +690,12 @@ class Model:
             for window, value in inputs.items():
                 state = self.ensure(state, window, value, ready, protected | remaining.keys(), events,
                                     stage.get('input_policy', 'any'), choose)
+            for window in stage.get('persist', ()):
+                value = inputs[window]
+                if value not in state.backing:
+                    state, store = self.best_move(state, value, [window], DDR, ready, choose, events=events)
+                    events.append(store)
+                ready = max(ready, state.backing[value])
             start_at = max([ready] + [state.copies[w].ready for w in inputs])
             for value in inputs.values():
                 remaining[value] -= 1
@@ -703,6 +727,8 @@ class Model:
                             write_bytes=state.write_bytes + service.get('write_bytes', 0))
             event = {'kind': 'stage', 'service': stage['service'], 'start': start, 'end': end,
                      'inputs': inputs, 'outputs': outputs}
+            if stage.get('persist'):
+                event['persist'] = list(stage['persist'])
             if phases:
                 event['phases'] = phases
             events.append(event)

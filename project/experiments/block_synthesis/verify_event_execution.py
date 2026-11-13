@@ -119,7 +119,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 stage = next(stages, None)
                 require(event['kind'] == 'stage' and stage and event['service'] == stage['service'],
                         'native stage identity or order differs')
-                require('dma_beats' not in event, 'typed DMA receipts belong to read routes')
+                require('dma_beats' not in event, 'typed DMA receipts belong to move routes')
                 service = spec['services'][stage['service']]
                 require(('sram_beats' in event) == ('sram_access' in service), 'SRAM receipt coverage differs')
                 require(('activation' in event) == ('ffn_activation' in service), 'FFN activation receipt coverage differs')
@@ -127,6 +127,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
                 require(event['inputs'] == inputs and event['outputs'] == outputs,
                         'native stage values differ')
+                require(event.get('persist', []) == list(stage.get('persist', ())), 'persist windows differ')
                 if 'copy_sites' in service:
                     source, destinations = service['copy_sites']
                     require(len(inputs) == 1 and [windows[w]['site'] for w in inputs] == [source]
@@ -156,6 +157,8 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 stage_index += 1
                 window_timing = service.get('window_phases', {})
                 read_at = phase.get(window_timing.get('read'), event)
+                for w in stage.get('persist', ()):
+                    read_external.append((read_at['start'], inputs[w]))
                 write_at = phase.get(window_timing.get('write'), event)['start']
                 visible = phase.get(window_timing.get('publish'), event)['end']
                 for move in pending_moves:

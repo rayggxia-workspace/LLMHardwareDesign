@@ -1,4 +1,4 @@
-"""Clock the #251 typed read fabric with an explicit DDR service profile."""
+"""Clock the typed DMA fabric with an explicit DDR service profile."""
 from bisect import bisect_right
 from collections import deque
 from collections.abc import Hashable
@@ -13,11 +13,13 @@ class Read:
     address: int
     size: int
     record_beats: int
+    write: bool = False
 
     def valid(self):
         lengths = (2,) if self.client < 9 else (17, 18)
         alignment = 128 if self.client < 9 else 64
-        return (0 <= self.client < 12 and self.record_beats in lengths
+        return (0 <= self.client < 12 and (not self.write or 3 <= self.client < 9)
+                and self.record_beats in lengths
                 and self.address % alignment == 0 and self.size > 0 and self.size % (self.record_beats * 64) == 0
                 and 0 <= self.address < self.address + self.size <= 2**64)
 
@@ -52,26 +54,48 @@ class FfnProvider:
 
 
 @dataclass(frozen=True)
+class MixedTiming:
+    """Bank and direction rules derived from PR182, in scheduler ticks."""
+
+    queue: int
+    write_latency: int
+    bank_issue: int = 2
+    row_miss: int = 6
+    turnaround: int = 4
+
+    @classmethod
+    def from_spec(cls, spec):
+        if (not isinstance(spec, dict) or spec.keys() != {'queue', 'write_latency'}
+                or any(type(n) is not int or n < 1 for n in spec.values())):
+            raise ValueError('mixed DMA requires positive queue depth and write latency')
+        return cls(**spec)
+
+
+@dataclass(frozen=True)
 class Profile:
     return_latency: tuple[int, int]
     ddr_ready: tuple = ()
     client_ready: tuple = ()
     ffn_provider: FfnProvider | None = None
+    mixed: MixedTiming | None = None
 
     @classmethod
     def from_spec(cls, spec):
         if (not isinstance(spec, dict)
-                or spec.keys() - {'return_latency', 'ddr_ready', 'client_ready', 'addresses', 'ffn_provider'}):
+                or spec.keys() - {'return_latency', 'ddr_ready', 'client_ready', 'addresses', 'ffn_provider',
+                                  'mixed'}):
             raise ValueError('unknown typed DMA profile field')
         client_ready = ready_intervals(spec.get('client_ready', ()), 4095)
+        mixed = MixedTiming.from_spec(spec['mixed']) if 'mixed' in spec else None
         if 'ffn_provider' in spec:
             if {'return_latency', 'ddr_ready'} & spec.keys():
                 raise ValueError('#251 FFN provider already defines DDR timing and readiness')
-            return cls((7, 8), client_ready=client_ready, ffn_provider=FfnProvider.from_spec(spec['ffn_provider']))
+            return cls((7, 8), client_ready=client_ready,
+                       ffn_provider=FfnProvider.from_spec(spec['ffn_provider']), mixed=mixed)
         latencies = tuple(spec.get('return_latency', ()))
         if len(latencies) != 2 or any(type(n) is not int or n < 1 for n in latencies):
             raise ValueError('typed DMA needs one positive DDR return latency per channel')
-        return cls(latencies, ready_intervals(spec.get('ddr_ready', ()), 15), client_ready)
+        return cls(latencies, ready_intervals(spec.get('ddr_ready', ()), 15), client_ready, mixed=mixed)
 
 
 def ready_mask(ranges, tick, full):
@@ -93,6 +117,7 @@ class BeatReceipt:
     delivered: int
     issue_lane: int | None = None
     return_lane: int | None = None
+    write: bool | None = None
 
 
 @dataclass(eq=False)
@@ -103,6 +128,7 @@ class ReadRecord:
     length: int
     sent: int = 0
     returned: int = 0
+    write: bool = False
 
     @property
     def channel(self):
@@ -129,6 +155,10 @@ class _Channel:
     source_cursor: int = 0
     returns: tuple = field(default_factory=lambda: (deque(), deque()))
     return_lanes: list = field(default_factory=lambda: [None, None])
+    bank_free: list = field(default_factory=lambda: [0] * 4)
+    bank_rows: list = field(default_factory=lambda: [None] * 4)
+    response_write: bool = False
+    response_open: int = 0
 
 
 @dataclass(slots=True)
@@ -159,15 +189,17 @@ class ReadFabric:
         return bool(self.remaining or any(c.descriptors for c in self.channels))
 
     def submit(self, key, read):
+        if key in self.remaining or read.write and self.profile.mixed is None:
+            raise ValueError('invalid or duplicate DMA submission')
         stride = 64 * read.record_beats
         self.remaining[key] = read.size // 64
         self.receipts[key] = []
-        self.source[read.client].extend(ReadRecord(key, read.client, address, read.record_beats)
+        self.source[read.client].extend(ReadRecord(key, read.client, address, read.record_beats, write=read.write)
                                        for address in range(read.address, read.address + read.size, stride))
 
     def open_native(self, key, read):
         """Register one record whose client will offer each beat explicitly."""
-        if key in self.remaining or not read.valid() or read.size != 64 * read.record_beats:
+        if key in self.remaining or not read.valid() or read.write or read.size != 64 * read.record_beats:
             raise ValueError('invalid native DMA record')
         self.remaining[key] = read.record_beats
         self.receipts[key] = []
@@ -204,7 +236,7 @@ class ReadFabric:
             key = record.key
             self.receipts[key].append(BeatReceipt(beat.address, ch, entry, beat.reserved,
                                                   beat.offer, beat.issue, beat.captured, tick,
-                                                  beat.issue_lane, beat.return_lane))
+                                                  beat.issue_lane, beat.return_lane, True if record.write else None))
             self.remaining[key] -= 1
             if self.remaining[key] == 0:
                 del self.remaining[key]
@@ -269,6 +301,21 @@ class ReadFabric:
 
     def _ddr_ready(self, tick, ch, channel):
         provider = self.profile.ffn_provider
+        if self.profile.mixed is not None:
+            # Already-held return lanes still consume backend queue entries.
+            free = self.profile.mixed.queue - sum(map(len, channel.returns))
+            free -= sum(entry is not None for entry in channel.return_lanes)
+            available = self._provider_ready(tick, ch, channel, provider)
+            if free <= 0:
+                return 0
+            if free == 1 and available == 3:
+                if channel.offer.entries[0] is None and channel.offer.entries[1] is not None:
+                    return 2
+                return 1
+            return available
+        return self._provider_ready(tick, ch, channel, provider)
+
+    def _provider_ready(self, tick, ch, channel, provider):
         if provider is None:
             return (ready_mask(self.profile.ddr_ready, tick, 15) >> (2 * ch)) & 3
         return sum(1 << lane for lane in range(2) if provider.ready(
@@ -288,7 +335,16 @@ class ReadFabric:
                     beat.issue_lane = 2 * ch + lane
                 if edge is not None:
                     edge.issued.append((2 * ch + lane, beat.address, 32 * ch + entry))
-                queue.append((tick + self.profile.return_latency[ch], entry))
+                timing = self.profile.mixed
+                due = tick + self.profile.return_latency[ch]
+                if timing is not None:
+                    bank, row = (beat.address // 64) % 4, beat.address // 1024
+                    command = max(tick, channel.bank_free[bank])
+                    latency = timing.write_latency if beat.record.write else self.profile.return_latency[ch]
+                    due = command + latency + (timing.row_miss if channel.bank_rows[bank] != row else 0)
+                    channel.bank_free[bank] = command + timing.bank_issue
+                    channel.bank_rows[bank] = row
+                queue.append((due, entry))
         for entry in channel.offer.entries:
             if entry is not None and channel.beats[entry].offer is None:
                 channel.beats[entry].offer = tick + 1
@@ -297,10 +353,17 @@ class ReadFabric:
         free = deque(slot for slot in range(3 * ch, 3 * ch + 3)
                      if self.skids[slot] is None or slot in forwarded)
         captures = []
+        timing = self.profile.mixed
+        if timing is not None:
+            self._select_response_direction(tick, channel, free)
         for lane in range(2):
             entry = channel.return_lanes[lane]
             queue = channel.returns[lane if self.profile.ffn_provider is not None else 0]
             if entry is None and queue and queue[0][0] <= tick:
+                candidate = queue[0][1]
+                if timing is not None and (tick < channel.response_open
+                                           or channel.beats[candidate].record.write != channel.response_write):
+                    continue
                 _, entry = queue.popleft()
             if entry is not None and free:
                 beat = channel.beats[entry]
@@ -313,6 +376,17 @@ class ReadFabric:
                 entry = None
             channel.return_lanes[lane] = entry
         return captures
+
+    def _select_response_direction(self, tick, channel, free):
+        if not free or tick < channel.response_open or any(entry is not None for entry in channel.return_lanes):
+            return
+        heads = [queue[0][1] for queue in channel.returns if queue and queue[0][0] <= tick]
+        if heads:
+            entry = min(heads, key=lambda head: channel.beats[head].issue)
+            write = channel.beats[entry].record.write
+            if write != channel.response_write:
+                channel.response_write = write
+                channel.response_open = tick + self.profile.mixed.turnaround
 
 
 def receipt_json(receipts):

@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)推进至第 41 轮。完整 FFN 进入事件 DP，读写共享后端队列、bank 行状态和返回方向。旧 KV 等 STORE 确认后才允许读回，候选可从运行中的 FFN 和 DDR 快照试排。383 项远程回归和 288 次混合快照对照通过，旧写的位置能使同一权重副本候选的排序反转。下一步把 #234 的连续整数 KV 交接和更多 Attention 阶段接入同一事件时间线。任务分支的改动待汇入 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 29 轮。P 共同请求生成 K 窗口和 A 加载，五组完整 RTL 各对齐 1,444 个窗口。新跑的首片 COPY 候选使后续 1,443 个 header 及程序结果晚一拍。367 项测试通过，六个负例均拒绝。scope dispatch 与 CALL 仍来自波形，继续从 P 退休和终端回执生成 CALL。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。
 
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)完成本地第 28 轮。P 记录队列和回包直接驱动侧带与 EXEC。四组完整 RTL 各逐拍对齐 72,064 条侧带命令，COPY 候选改变 564 条命令的时刻，关闭 W 前瞻增加 340,018 拍。366 项测试通过，六个负例均拒绝。继续由 P 的请求生成 K header，再接入 scope dispatch 和 CALL。[PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 沿用远端交接。
