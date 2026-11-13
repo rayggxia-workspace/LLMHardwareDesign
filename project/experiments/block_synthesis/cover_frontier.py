@@ -44,7 +44,7 @@ def catalogue(tasks,covers,*,event_dependencies=None):
 
 
 def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,backbone=None,
-           rank_policy='shared_tail',route_admission=None):
+           rank_policy='shared_tail',route_admission=None,completion_only=False):
     if (width is not None and (type(width)!=int or width<1) or
         ready_limit is not None and (type(ready_limit)!=int or ready_limit<1)):
         raise ValueError('positive cover frontier bounds required')
@@ -53,6 +53,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     model=None
     live_replay=False
     event_dependencies={}
+    unencodable=0
     transport_counts={'transport_attempted':0,'transport_truncated':0,
                       'transport_probed':0,'transport_probe_skipped':0}
     if 'event_model' in hardware:
@@ -196,6 +197,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         return successor(s,a,b,ev,execution)
 
     def successor(s,a,b,ev,execution=None):
+        nonlocal unencodable
         done=s.done|a['mask']
         enabled=set().union(*(children[n] for n in a['covers']))-set(a['covers'])
         ready=(s.ready-set(a['covers']))|{c for c in enabled if done&masks[c]==masks[c]}
@@ -211,9 +213,13 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         if live_replay:
             decisions=(*decisions,Decision(row,frozenset(a['after']),event_dependencies.get(a['covers'][0],())))
             try:
-                execution,rows,trace=retime(model,decisions,execution,trace)
+                timed=retime(model,decisions,execution,trace,completion_only=completion_only)
             except ReplayDeadlock:
                 return None
+            if timed is None:
+                unencodable+=1
+                return None
+            execution,rows,trace=timed
             history=None
             for scheduled in rows:
                 history=History(history,scheduled)
@@ -286,6 +292,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
                                 bucket[k]=ns
     timing_stats=({'timing':model.timing,'transport_limit':transport_limit,**transport_counts}
                   if live_replay else {})
+    if unencodable:timing_stats['completion_only_rejections']=unencodable
     if not complete:return {'status':'no_plan_in_bounded_search','expanded':expanded,**timing_stats}
     best=min(complete,key=lambda s:(s.makespan,s.traffic,netcost(s)));rows=[];history=best.history
     while history is not None:rows.append(history.row);history=history.previous

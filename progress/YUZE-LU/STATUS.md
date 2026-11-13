@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 将原生 WAIT 表达能力加入 Algo1 搜索。独立 DMA 的 4,344 个数据端口详细布线报告零违例，同一三 P 计划用新物理凭据重新被 Algo2 和固定 #260 页读取器读回。新底座仍欠运行时索引到 DDR 行的 Gather 服务、完整数据/控制布线和真实 KV 与退休验收。见[远端回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#原生-wait-准入与-dma-接点实布)。
+
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加整图 lowering 缺项报告，并将 #260 整数请求的 21 项完成合同与 main P/U 的直接入口审计对账。远端复现 tile 交接及共享 DDR 下的宏选择反转，410 项回归通过。Algo2 实际试布仍有 4,973 根待解决。下一步验证新底座的可执行服务、真实数据路径和 KV/退休。详见[模型与整图缺项回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#七点模型复核与整图缺项)。
 
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 用 main P2545 真实叶端点与独立 DMA 的暂定 M10 接点完成同计划接口回放。Algo2 读入 4,981 根控制与数据网，固定 #260 读回 192 条 CALL 和 64 组 WAIT。原生层引出、Algo2 几何结果及整图原生执行仍待验收。见[三 P 同计划回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#含数据面的三-p-同计划接口试验)。

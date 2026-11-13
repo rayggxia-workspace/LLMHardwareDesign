@@ -94,7 +94,8 @@ def compile_event_ir(model, hardware, *, budget=None, width=8, emit_dependencies
             hardware = qualify_native_dispatch(hardware, route_base)
         admit = route_admission(hardware, route_base, route_contract, product=route_scope == 'product')
     tasks, covers = model['tasks'], model.get('covers', ())
-    plan = search(tasks, hardware, covers, width=width, wire_budget=budget, route_admission=admit)
+    plan = search(tasks, hardware, covers, width=width, wire_budget=budget, route_admission=admit,
+                  completion_only=emit_outputs and timing in ('replay', 'snapshot'))
     result = {'status': plan['status'], 'plan': plan, 'wire_budget': budget,
               'scope': 'qualified event IR and schedule'}
     if route_base is not None:

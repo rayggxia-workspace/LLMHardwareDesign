@@ -212,8 +212,19 @@ def intents(model, decisions):
     return operations
 
 
-def retime(model, decisions, proposed, previous=None):
+def encodable_on_completion(operations):
+    """Can every external dependency be placed before a command's launch?"""
+    return all(not operation.activation_after and all(
+        parent == index or step == 0 and event == len(operations[parent].phases) - 1
+        for step in range(len(operation.phases))
+        for parent, event in phase_dependencies(operations, index, step))
+        for index, operation in enumerate(operations))
+
+
+def retime(model, decisions, proposed, previous=None, *, completion_only=False):
     operations = intents(model, decisions)
+    if completion_only and not encodable_on_completion(operations):
+        return None
     trace = replay_branch(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
                           dma_profile=None if model.snapshot else model.dma_profile,
                           sram_profiles=model.sram_profiles, snapshot=model.snapshot)
