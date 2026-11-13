@@ -275,6 +275,38 @@ class HandoffTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'fingerprint'):
                 verify_handoff(pack['algorithm2-input'], folder)
 
+    def test_algo2_feedback_recompiles_same_candidate_pool(self):
+        from adapter import failure_feedback
+        from retry_event_route import retry
+        from run import compile_event_ir
+
+        model, hardware, _, catalog, base, rules = fixture()
+        previous = compile_event_ir(model, hardware, route_base=base, route_catalog=catalog,
+                                    route_scope='interface', emit_outputs=True)
+        self.assertIn('P0-P1', previous['plan']['nets'])
+        pack = build(model, previous['resolved_hardware'], previous['plan'], catalog, base, rules,
+                     bind_request, source_outputs=previous['outputs'])
+        request, spec = pack['requirements'], pack['algorithm2-input']
+        routes = route(spec, rounds=1, max_expansions=1)
+        self.assertEqual(len(routes['failed']), 1)
+        routes['feedback'] = failure_feedback(request, routes, 'route-test')
+        trial = retry(previous, base, request, spec, routes)
+        self.assertEqual(trial['status'], 'planned')
+        self.assertEqual(trial['route_trial']['excluded_demands'], ['P0-P1'])
+        self.assertNotIn('P0-P1', trial['plan']['nets'])
+        self.assertIn('P0-P1', previous['plan']['nets'])
+        self.assertEqual(trial['plan']['external_read_bytes'], 16)
+        self.assertEqual(trial['plan']['external_write_bytes'], 16)
+        rebuilt = build(model, trial['resolved_hardware'], trial['plan'], catalog, base, rules,
+                        bind_request, source_outputs=trial['outputs'])
+        self.assertEqual(rebuilt['handoff']['coverage']['new_signal_nets'], 0)
+        self.assertNotEqual(pack['handoff']['source']['plan_sha256'],
+                            rebuilt['handoff']['source']['plan_sha256'])
+        with self.assertRaisesRegex(ValueError, 'different router input'):
+            retry(previous, base, request, {**spec, 'obstacles': [{'different': True}]}, routes)
+        with self.assertRaisesRegex(ValueError, 'different base'):
+            retry(previous, {**base, 'base_id': 'another'}, request, spec, routes)
+
     def test_tampered_plan_and_missing_endpoint_are_rejected(self):
         model, arch, plan, catalog, base, rules = fixture()
         corrupt = {**plan, 'nets': []}

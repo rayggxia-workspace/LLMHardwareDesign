@@ -398,3 +398,24 @@ Gather 和首个 RMS。每个位置的 Gather、gamma LOAD、RMS 由同一份计
 远端 109620 的 409 项回归通过。109409 是原拓扑上的独立严格运行，运行中的页和 DDR
 回调仅用于观察进度。完整 Block V2 产品仍需实际 P/U 编码和服务映射、同底座的数据面绑定、
 整份计划的联合布线、真实 KV 及 token 退休证据。
+
+## Algo2 试布回执与 Algo1 重选
+
+`retry_event_route.py RESULT BASE HANDOFF ROUTES NEW_RESULT [--net PHYSICAL_NET_ID]`
+读取当前 Algo2 `--handoff` 入口发出的 `route-contract/1` 搜索回执。
+它独立验证先前的计划、程序和线束，以底座、需求、布线输入及反馈内容的散列核对本次试布。
+选中的失败物理网经逐位成员回到逻辑需求，再以相同 Event IR、候选库、底座和布线预算重跑。
+重复试验延续上一次主动选择的排除项。省略 `--net` 会使用本次回执中的全部失败网。
+排除项只进入试验结果，不改动底座及原硬件清单。固定需求保留，单凭搜索耗尽不能形成硬性物理约束。
+
+远端 109665 在此前同一 C0→U0 数据交接上使用 Algo2 `4ebd2a2fc`，
+显式将试布扩展预算设为 1，生成真实网级回执。选择数据线
+`net-018b5e04b11627fecef6014e`，Algo1 将其映射到 `stored:C0->U0`。
+这份单消费者候选池缺少替代输入路径，重搜如实返回 `no_plan_in_bounded_search`。
+`framework-r11-CatJ8r/feedback-109665/routes.json` 的 SHA-256 为
+`650ef4dfa4d0abf2ee372a27070f175bbb1426ec76d23219eca2230b7b686e29`，
+`retry.json` 为 `df6200977ebe7ecfda16a8f29d62cbfafbd68495b18208c8099ee1de949340eb`。
+
+新增回归用同一个 Algo2 入口生成等价失败回执，并在具备替代路径的候选池中验证重选。
+结果走 DDR STORE/LOAD，各 16 B，计划散列变更，指令和布线重新从这个后继计划发布。
+测试也核对了更换底座和更换试布输入后的拒绝行为。

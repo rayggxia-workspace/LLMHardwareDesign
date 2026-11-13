@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 接入现有 Algo2 的试布回执。Block V2 的 C0→U0 实际端点用例中，Algo1 将失败物理网追溯到对应逻辑需求并重搜；该用例无替代输入路径。另有替代搬运路径的回归验证重新生成同计划指令和线束。见[试布回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#algo2-试布回执与-algo1-重选)。
+
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 核对重编 #260 整包的 184,927 页及 8,273,243 次 CALL。已把 2,876,395 次原始描述符的 P/U 直接入口冲突接入 Algo1 搜索，并从真实 Gather 的命令行复现；409 项远端回归通过。匹配头部的调用仍需完整服务资格。下一步验证同底座的实际局控编码、数据面及 Algo2 布线。详见[准入证据](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#block-v2-直接描述符准入审计)。
 
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 把同一 #260 封存请求的包控制和三 P 描述符、权重、栅栏需求投影到已有联合摆位，Algo2 读入 5132 根网。OpenDB 验证 2310 个原生叶宏端点和 8414 个候选逃线端点。另核对 main P2545 实际接点，DMA v45 仍需在共同摆位引出 4344 个数据面逻辑端点。联合摆位与 main 的 P 版本不同。详见[联合摆位交接](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#联合摆位的-pdma-交接与-main-端点对照)。
