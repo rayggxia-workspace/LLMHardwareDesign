@@ -27,11 +27,12 @@ module tb_native_host_program_switch;
     initial begin
         reg [TARGETS-1:0] bit_mask;
         reg [RESPONSE_BITS-1:0] expected_payload;
+        reg [REQUEST_BITS-1:0] expected_request;
         tick();
         require(idle && !host_req_ready && !host_rsp_valid, "reset gates requests and responses");
         reset = 0;
         host_req_valid = 1;
-        host_req_payload = {1'b1, 320'h8c005511abcd0123456789, 1'b1};
+        expected_request = {1'b1, 320'h8c005511abcd0123456789, 1'b1};
         #1;
         require(target_req_valid == '0 && !host_req_ready, "admission closed");
         for (int target_index = 0; target_index < TARGETS; target_index++) begin
@@ -39,20 +40,22 @@ module tb_native_host_program_switch;
             host_req_target = 4'(target_index);
             host_req_valid = 1;
             allow_request = 1;
+            host_req_payload = expected_request;
             target_req_ready = ~bit_mask;
             #1;
-            require(target_req_valid == bit_mask && !host_req_ready &&
-                target_req_payload == host_req_payload, "only requested target sees payload under backpressure");
-            tick();
-            require(idle && !host_rsp_valid, "blocked request does not reserve owner");
-            target_req_ready = '1;
-            #1;
-            require(host_req_ready, "selected target can accept");
+            require(target_req_valid == '0 && host_req_ready,
+                "capture host command independently of target readiness");
             tick();
             allow_request = 0;
             host_req_target = 4'((target_index + 1) % TARGETS);
+            host_req_payload = ~expected_request;
             target_rsp_valid = ~bit_mask;
-            #1;
+            tick();
+            require(!idle && !host_req_ready && !host_rsp_valid && target_req_valid == bit_mask &&
+                target_req_payload == expected_request && target_rsp_ready == '0,
+                "registered request remains stable and selected while the target stalls");
+            target_req_ready = '1;
+            tick();
             require(!idle && !host_req_ready && !host_rsp_valid && target_req_valid == '0,
                 "unselected responses and second request cannot be observed");
             expected_payload = {8'(~target_index), 160'h0102030405060708090a0b0c0d0e0f1020304050, 8'(target_index)};
