@@ -88,8 +88,11 @@ def indexed_bindings(node, model, hardware):
         name = 'indexed-load:' + profile['id'] + ':' + hashlib.sha256(
             json.dumps(config,sort_keys=True).encode()).hexdigest()[:16]
         ticks = elements * (setup + (row_bytes + bandwidth - 1) // bandwidth)
-        spec['services'][name] = {'ticks':ticks,'claims':profile['claims'], 'nets':profile.get('nets', ()),
-                                  'control_site':site,'read_bytes':length,'indexed_read':config}
+        service = {'ticks':ticks,'claims':profile['claims'], 'nets':profile.get('nets', ()),
+                   'control_site':site,'read_bytes':length,'indexed_read':config}
+        if 'native_providers' in profile:
+            service['native_providers'] = deepcopy(profile['native_providers'])
+        spec['services'][name] = service
         result.append({'id':profile['id'],'site':site,'ticks':ticks,'scratch_words':0,
                        'resources':[],'nets':[], 'event_stages':[
                            {'service':name,'inputs':{profile['index_window']:index},
@@ -117,6 +120,12 @@ def lower(model, hardware):
         backing.update(model['inputs'])
     spec['initial_backing'] = sorted(backing)
     initial = backing | set(spec.get('initial_copies', {}).values())
+    external_outputs = model.get('external_outputs', ())
+    if (not isinstance(external_outputs, (list, tuple)) or any(not isinstance(v, str) for v in external_outputs)
+            or len(external_outputs) != len(set(external_outputs))
+            or not set(external_outputs) <= set(model['outputs'])):
+        raise Unsupported('external_outputs must name distinct graph outputs')
+    external_outputs = set(external_outputs)
     producers = {}
     node_ids = set()
     for node in nodes:
@@ -189,16 +198,25 @@ def lower(model, hardware):
         if not bindings:
             raise Unsupported(f'{name}: no qualified event recipe for {node.get("domain", "")}/{node["op"]} '
                               f'with inputs {profile_in} and outputs {profile_out}')
+        for binding in bindings:
+            for stage in binding['event_stages']:
+                written = [w for w, value in stage.get('outputs', {}).items() if value in external_outputs]
+                if written:
+                    stage['backed_outputs'] = list(dict.fromkeys((*stage.get('backed_outputs', ()), *written)))
         tasks.append({'id': name, 'after': sorted({producers[v] for v in inputs if v in producers}),
                       'bindings': bindings})
 
     missing = set(model['outputs']) - initial - producers.keys()
     if missing:
         raise Unsupported('no graph producer or backing for outputs ' + str(sorted(missing)))
+    if external_outputs - backing - producers.keys():
+        raise Unsupported('external outputs need a DDR image or a graph producer')
     sizes = spec.setdefault('value_bytes', {})
     for value in sorted(live):
         size = value_size(values[value])
         if sizes.setdefault(value, size) != size:
             raise Unsupported('event storage size differs for ' + value)
     spec['live_out'] = model['outputs']
+    if external_outputs:
+        spec['external_outputs'] = sorted(external_outputs)
     return {'tasks': tasks}, h

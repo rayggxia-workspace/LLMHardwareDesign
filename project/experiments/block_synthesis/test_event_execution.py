@@ -100,6 +100,52 @@ class EventExecutionTest(unittest.TestCase):
         self.assertEqual(after.write_bytes, 16)
         self.assertEqual(after.backing['x'], 4)
 
+    def test_external_output_is_published_only_after_its_store(self):
+        from event_deploy import emit
+
+        producer = stage('produce', outputs={'source': 'y'})
+        producer['backed_outputs'] = ['source']
+        tasks = [task('a', binding('producer', producer))]
+        for timing in ('calendar', 'replay'):
+            with self.subTest(timing=timing):
+                h = hardware()
+                spec = h['event_model']
+                spec.update(timing=timing, external_outputs=['y'],
+                            external_addresses={'y': 64})
+                plan = search(tasks, h)
+                verify(tasks, h, (), plan)
+                compute, store = plan['tasks'][0]['evaluation']['events']
+                self.assertTrue(store['materializes_output'])
+                self.assertEqual((compute['end'], store['start'], store['end']), (5, 5, 9))
+                self.assertEqual((plan['makespan'], plan['external_write_bytes']), (9, 16))
+                program = emit(tasks, h, (), plan)['program']
+                compute_command, store_command, _ = program['mother']
+                self.assertIn(compute_command['sequence'], store_command['wait_for'])
+                descriptor = program['locals']['P0'][1]
+                self.assertEqual(descriptor['required_completion'], 'destination_commit_ack')
+                self.assertEqual(descriptor['write'][0]['address'], 64)
+                del spec['routes']['S0-to-DDR']
+                self.assertEqual(search(tasks, h)['status'], 'no_plan_in_bounded_search')
+
+    def test_qualified_native_inplace_window_waits_for_old_value(self):
+        from event_deploy import emit
+
+        update = stage('produce', inputs={'source': 'x'}, outputs={'source': 'y'})
+        update['inplace_windows'] = ['source']
+        tasks = [task('a', binding('update', update))]
+        h = hardware()
+        spec = h['event_model']
+        spec['initial_backing'] = ['x']
+        spec['services']['produce']['inplace_windows'] = {'source': 16}
+        plan = search(tasks, h)
+        verify(tasks, h, (), plan)
+        program = emit(tasks, h, (), plan)['program']
+        load, compute, _ = program['mother']
+        self.assertEqual(compute['wait_for'], [load['sequence']])
+        spec['services']['produce']['inplace_windows']['source'] = 8
+        with self.assertRaisesRegex(ValueError, 'whole-window in-place contract'):
+            search(tasks, h)
+
     def test_verifier_rejects_wrong_data_ack_traffic_and_resource_overlap(self):
         h = hardware()
         h['event_model']['initial_copies'] = {'source': 'x'}

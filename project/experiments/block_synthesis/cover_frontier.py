@@ -261,7 +261,8 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         if count in seeds:pool.setdefault(key(seeds[count]),seeds[count])
         candidates=pool.values()
         if model and count==len(tasks):
-            candidates=[s for s in candidates if model.live_out <= (
+            candidates=[s for s in candidates if model.external_outputs <= s.execution.backing.keys()
+                and model.live_out <= (
                 s.execution.backing.keys() | {copy.value for copy in s.execution.copies.values()})]
         ordered=sorted(candidates,key=rank);pruned+=max(0,len(ordered)-(width or len(ordered)))
         beam=ordered if width is None else ordered[:width]

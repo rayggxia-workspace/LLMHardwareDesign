@@ -26,6 +26,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
     phased = timing in ('replay', 'snapshot')
     windows, sizes = spec['windows'], spec['value_bytes']
     reservations, reads, writes = defaultdict(list), defaultdict(list), defaultdict(list)
+    inplace_reads = defaultdict(list)
     backing = dict.fromkeys(spec.get('initial_backing', ()), 0)
     read_external = []
     ends, nets, phase_intervals = {}, set(), {}
@@ -98,6 +99,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
         require(bool(events), 'empty event trace')
         stages = iter(binding['event_stages'])
         pending_moves, local_read, local_write = [], 0, 0
+        materializations = []
         stage_index, intervals = 0, {}
         for event in events:
             start, end = event['start'], event['end']
@@ -127,8 +129,18 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     local_write += size
                 else:
                     access(writes, dst, value, start, end)
-                pending_moves.append(event)
+                if event.get('materializes_output'):
+                    require(event['materializes_output'] is True and dst == DDR and materializations
+                            and (src, value) == materializations[0] and start >= boundary,
+                            'unexpected or premature output materialization')
+                    materializations.pop(0)
+                    boundary = end
+                else:
+                    require(not materializations, 'required output materialization was skipped')
+                    pending_moves.append(event)
             else:
+                require(not materializations and 'materializes_output' not in event,
+                        'required output materialization was skipped')
                 stage = next(stages, None)
                 require(event['kind'] == 'stage' and stage and event['service'] == stage['service'],
                         'native stage identity or order differs')
@@ -145,6 +157,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 require(('ffn_program' in event) == ('ffn_program' in service and timing == 'replay'),
                         'FFN program receipt coverage differs')
                 inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
+                materializations = [(window, outputs[window]) for window in stage.get('backed_outputs', ())]
                 require(event['inputs'] == inputs and event['outputs'] == outputs,
                         'native stage values differ')
                 require(event.get('persist', []) == list(stage.get('persist', ())), 'persist windows differ')
@@ -194,7 +207,13 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 write_at = phase.get(window_timing.get('write'), event)['start']
                 visible = phase.get(window_timing.get('publish'), event)['end']
                 in_place = set(window_timing.get('in_place', ()))
-                require((inputs.keys() & outputs.keys()) == in_place and (not in_place or phased),
+                whole_window = set(stage.get('inplace_windows', ()))
+                qualified = service.get('inplace_windows', {})
+                require(not whole_window or (not phased and all(
+                    qualified.get(w) == windows[w]['bytes'] == sizes[inputs[w]] == sizes[outputs[w]]
+                    and inputs[w] != outputs[w] for w in whole_window)),
+                    'invalid native whole-window in-place contract')
+                require((inputs.keys() & outputs.keys()) == in_place | whole_window,
                         'in-place SRAM windows differ')
                 for move in pending_moves:
                     if 'output_eviction' in move:
@@ -217,7 +236,10 @@ def verify(tasks, hardware, plan, wire_budget=None):
                         # qualified kernel reads each old word before replacing it.
                         require(first_read < write_at < last_read <= visible, 'invalid in-place SRAM custody')
                         last_read = write_at
-                    access(reads, w, value, first_read, last_read)
+                    if w in whole_window:
+                        inplace_reads[w].append((start, end, value, outputs[w]))
+                    else:
+                        access(reads, w, value, first_read, last_read)
                 for w in scratch_overwrites(service, windows):
                     writes[w].append((start, end, None))
                 for w, value in outputs.items():
@@ -226,7 +248,8 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 local_write += service.get('write_bytes', 0)
                 prefetch_boundary, boundary = boundary, end
                 pending_moves.clear()
-        require(not pending_moves and next(stages, None) is None, 'incomplete native stage sequence')
+        require(not pending_moves and not materializations and next(stages, None) is None,
+                'incomplete native stage sequence')
         for edge in edges_by_task[task['id']]:
             source = phase_intervals.get(edge.task, {}).get(edge.source)
             target = intervals.get(edge.target)
@@ -246,6 +269,11 @@ def verify(tasks, hardware, plan, wire_budget=None):
         changes = sorted(writes[w])
         require(all(a[1] <= b[0] for a, b in zip(changes, changes[1:])), 'window writers overlap')
         starts = [a for a, _, _ in changes]
+        for start, end, old, new in inplace_reads[w]:
+            i = bisect_right(starts, start) - 1
+            require(i > 0 and changes[i] == (start, end, new)
+                    and changes[i-1][1] <= start and changes[i-1][2] == old,
+                    'in-place SRAM replacement lacks previous value')
         for start, end, value in reads[w]:
             i = bisect_right(starts, start) - 1
             require(i >= 0 and changes[i][1] <= start and changes[i][2] == value
@@ -255,6 +283,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
             'external read precedes store ACK')
     require(set(spec.get('live_out', ())) <= (backing.keys() |
             {max(items)[2] for items in writes.values() if items}), 'live output lost')
+    require(set(spec.get('external_outputs', ())) <= backing.keys(), 'external output lacks store ACK')
     capacity = spec.get('external_capacity_bytes')
     if capacity is not None:
         require(backing_bytes(spec, backing) <= capacity,

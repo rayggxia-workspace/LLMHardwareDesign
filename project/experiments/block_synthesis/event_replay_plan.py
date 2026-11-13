@@ -191,6 +191,8 @@ def intents(model, decisions):
                 pending_moves.clear()
                 prefetch_boundary = boundary
                 boundary = {terminal}
+            elif event.get('materializes_output'):
+                boundary = {terminal}
             elif 'output_eviction' not in event:
                 pending_moves.append((terminal, event['dst'], event['value']))
             phase_after = tuple(map(frozenset, dependencies)) if any(dependencies) else ()

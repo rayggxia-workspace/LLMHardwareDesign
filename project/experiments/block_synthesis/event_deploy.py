@@ -165,7 +165,10 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
                 read, write = [src], [dst]
                 descriptor = {'op': 'COPY', 'route': route_name, 'read': read, 'write': write,
                               'required_completion': 'destination_commit_ack'}
-                pending_moves.append(sequence)
+                if event.get('materializes_output'):
+                    previous = {sequence}
+                else:
+                    pending_moves.append(sequence)
             else:
                 service_name = event['service']
                 service = spec['services'][service_name]
@@ -229,7 +232,7 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
             key = (access['site'], access['address'])
             if key in writers:
                 row['wait_for'].add(writers[key])
-            row['wait_for'].update(readers.pop(key, ()))
+            row['wait_for'].update(reader for reader in readers.pop(key, ()) if reader != number)
             writers[key] = number
 
     loop_edges = loop_lease_edges([row for row in records if 'leases' in row], hardware['resources'])

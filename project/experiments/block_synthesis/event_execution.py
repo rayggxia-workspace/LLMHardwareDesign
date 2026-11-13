@@ -203,6 +203,7 @@ class Model:
         self.dma_addresses = {} if dma is None else dma.get('addresses', {})
         self.routes_by_sites = {}
         self.live_out = frozenset(self.spec.get('live_out', ()))
+        self.external_outputs = frozenset(self.spec.get('external_outputs', ()))
         self.external_capacity = self.spec.get('external_capacity_bytes')
         self.nets = hardware['nets']
         self.fixed = frozenset(n for n, item in self.nets.items() if item.get('fixed'))
@@ -226,7 +227,7 @@ class Model:
             raise ValueError('invalid resource capacity')
         if any(type(b) is not int or b < 1 for b in self.sizes.values()):
             raise ValueError('invalid value size')
-        if not self.live_out <= self.sizes.keys():
+        if not self.live_out <= self.sizes.keys() or not self.external_outputs <= self.live_out:
             raise ValueError('unknown live output')
         regions = {}
         for window, info in self.windows.items():
@@ -477,6 +478,10 @@ class Model:
             if stage.get('input_policy', 'any') not in ('any', 'resident', 'backing'):
                 raise ValueError('unknown input policy')
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
+            backed = stage.get('backed_outputs', ())
+            if (not isinstance(backed, (list, tuple)) or any(not isinstance(w, str) or w not in outputs for w in backed)
+                    or len(set(backed)) != len(backed)):
+                raise ValueError('backed outputs must name distinct output windows')
             if service.get('window_phases', {}).get('input_reads', {}).keys() - inputs.keys():
                 raise ValueError('SRAM input read phases name an unbound input window')
             if 'prefetch' in stage:
@@ -501,6 +506,19 @@ class Model:
             if 'ffn_program' in service:
                 self.validate_program_windows(service, inputs, outputs)
             in_place = set(service.get('window_phases', {}).get('in_place', ()))
+            if 'inplace_windows' in stage:
+                declared = stage['inplace_windows']
+                qualified = service.get('inplace_windows', {})
+                if (self.phased or in_place or not isinstance(declared, (list, tuple))
+                        or not isinstance(qualified, dict)
+                        or any(not isinstance(w, str) or w not in inputs or w not in outputs
+                               or type(qualified.get(w)) is not int
+                               or qualified[w] != self.windows[w]['bytes']
+                               or self.sizes[inputs[w]] != qualified[w]
+                               or self.sizes[outputs[w]] != qualified[w] for w in declared)
+                        or len(declared) != len(set(declared))):
+                    raise ValueError('invalid native whole-window in-place contract')
+                in_place = set(declared)
             if ((inputs.keys() & outputs.keys()) != in_place
                     or any(inputs[w] == outputs[w] or self.sizes[inputs[w]] != self.sizes[outputs[w]]
                            for w in in_place)):
@@ -860,4 +878,8 @@ class Model:
                 event['phases'] = phases
             events.append(event)
             ready = end
+            for window in stage.get('backed_outputs', ()):
+                state, store = self.best_move(state, outputs[window], [window], DDR, ready, choose, events=events)
+                events.append({**store, 'materializes_output': True})
+                ready = store['end']
         return state, events
