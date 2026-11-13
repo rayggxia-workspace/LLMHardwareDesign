@@ -118,6 +118,11 @@ DDR 镜像绑定 439 个只读资产及 72 个后续状态，状态写表覆盖 
 生成 activation 读表，并核对每行对应先前确切的 8192 B STORE。109409 依赖新版封包，
 使用原 `1ea06be2` 性能入口执行全请求。
 
+109408 已封存新版程序和内存初始化表。重新生成的 23,004 行 activation 地址与参考相同，
+地址表以各页先前实际发出的 STORE 描述符为依据。109422 独立解析全部 184,927 页的
+原生描述符和目标位掩码，核对 23,004 页 FFN 输入和紧随其后的 Down 写回绑定。
+109409 已进入 prefill 并报告实际 DDR 读写回调，首个 token 要等 prefill 全部结束。
+
 从 109215 的母控页目标掩码和服务签名得到 P0、P1、P2、U0 四个执行目标。109384
 通过独立交换器的封存目标表和四组 M10 端点导出 1248 个控制连接成员、881 根网、
 2129 个端点。Algo2 适配器读回通过。这个交接基于既有 #260 拓扑的已生成指令，
@@ -139,6 +144,10 @@ U39 的 N32 路径接受阶段提交、Softmax、结果排出三种行操作。�
 | 109384 | 新编译请求控制连线，`v2-native-control-request/algorithm2-input.json` | `a7fa920581a20cf8c25770ed6580ca349d6dfbdcd5c96d7b3cb29491310b4d41` |
 | 109392 | 881 根参考控制网的 M10 接入检查 | `fd58de785add96a3eb34ed0fff386da2d37cadb746ccf4789b67b933a2dd3d93` |
 | 109400 | 431 根控制网的有限预算试布 | `acbc407f6f98f478133e41f19ea4a9ce30821a77c4922fa539460cd82484199d` |
+| 109408 | 带 activation 的新版封包，`request-runtime-r2/proof.sha256` | `9fc35ec5fb682adce14f20458c9d5b22aef84c4722bd74823b39f241e760968e` |
+| 109410 | 新版封包 130 份二进制一致，唯一变化的元数据为来源凭据 | `e4d5ed2cfec0fdb3c02ae94bf051d61862b58b8aee79e6f984a8b79703679cc3` |
+| 109411 | 新版封包重新生成 Algo2 控制输入，`v2-native-control-request-r2/algorithm2-input.json` | `dba355bb7af57113ce1d5083a4b875e826b522c4099f575164f164fa9169fa99` |
+| 109422 | 新版封包全页服务角色和 FFN 输入、输出绑定核验 | `87017ec7ff2221524824d2d5855e9aa9d4dd0ebdd42a312b013105be4a70cbec` |
 
 本轮远端目录为上述目录下的 `full-graph-zwl0Tr`。合并源及回执在 `merged-bmMd5X`。
 
@@ -156,7 +165,7 @@ U39 的 N32 路径接受阶段提交、Softmax、结果排出三种行操作。�
 | 109225 | 5214 份二进制一致，`binary-diff-109225.log` | `cc2cb67c1f963e33339d2e22b9ee9e3b814941f0fd288567f134cdf540b7c1b7` |
 | 109206、109215 | 639 个位置重编及初版封包，`request-runtime/proof.sha256` | `57ddccc1ac67891fe312ce449fcd451be18ad07851d7eee79df32d8ed617db9e` |
 | 109246 | 初版包缺 FFN activation 地址表，TLM 启动前退出 | `2e721ef83e7c1caaad0237526f828e245dba1ce98e51a57e6cef5ffd4e105fc2` |
-| 109408、109409 | 重新生成严格封包及依赖全请求 TLM，无 checkpoint、短程或预装 KV 参数 | 已提交 |
+| 109409 | 完整 #260 TLM，无 checkpoint、短程或预装 KV 参数，`strict-tlm-109409/progress.jsonl` | 已进入 prefill |
 | 109283 | 405 项回归通过，含控制线束传递依赖 | `bb29bf84deca42d6938ceedc1cd11107137a3b950cce38e2606bd67c207470fe` |
 | 109326 | Block V2 候选上的 Gather 同计划链接及 Algo2 读回 | `ab46cea37e098ed7192a55e5015ae8e6762740f726cf2f3114ff94cfaa7c42db` |
 | 109330 | 431 根候选控制线的 M10 接入间距检查 | `064b37f47d8da5856996c7a60eea62c025d0fb7605207f68abcd66464661a83b` |
