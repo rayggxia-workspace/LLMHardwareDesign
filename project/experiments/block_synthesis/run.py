@@ -56,6 +56,8 @@ def compile_event_ir(model, hardware, *, budget=None, width=8, emit_dependencies
 
     if 'event_model' not in hardware:
         raise ValueError('event IR requires a qualified hardware event model')
+    if emit_dependencies and hardware['event_model'].get('timing') not in ('replay', 'snapshot'):
+        raise ValueError('phase dependencies require replay or snapshot timing')
     tasks, covers = model['tasks'], model.get('covers', ())
     plan = search(tasks, hardware, covers, width=width, wire_budget=budget)
     result = {'status': plan['status'], 'plan': plan, 'scope': 'qualified event IR and schedule'}

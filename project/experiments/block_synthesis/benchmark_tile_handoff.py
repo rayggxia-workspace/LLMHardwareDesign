@@ -50,7 +50,7 @@ def run(tasks, hw):
     return plan, {row['id']: row for row in plan['tasks']}
 
 
-def handoff(early):
+def handoff(policy):
     windows = {f'tile-{i}': window('P0', 16 * i, 16) for i in range(2)}
     services = {
         'produce': {
@@ -66,31 +66,44 @@ def handoff(early):
     }
     hw = hardware({'P0': 32}, ('M', 'E', 'S', 'result'), windows,
                   dict.fromkeys(windows, 16), services)
-    producer = task('producer', binding('producer', 'P0', [
-        stage('produce', outputs={name: name}) for name in windows]))
+    producers = [task('producer', binding('producer', 'P0', [
+        stage('produce', outputs={name: name}) for name in windows]))]
+    if policy == 'command':
+        # This profile models independently acknowledged tile commands.
+        # Their final phase is the publish event; command cleanup is not a
+        # consumer prerequisite for such a service.
+        service = services['produce']
+        service['phases'].pop()
+        service['ticks'] = 4
+        producers = [task(f'producer-{i}', binding('produce', 'P0', [
+            stage('produce', outputs={name: name})])) for i, name in enumerate(windows)]
     consumers = [
         task(f'consumer-{i}', binding('consume', 'P0', [stage('consume', inputs={name: name})]),
-             after=() if early else ('producer',))
+             after={'tile': (), 'barrier': ('producer',),
+                    'command': (f'producer-{i}',)}[policy])
         for i, name in enumerate(windows)
     ]
-    if early:
+    if policy == 'tile':
         for i, consumer in enumerate(consumers):
             consumer['event_after'] = [{'task': 'producer', 'from': [i, 'publish'], 'to': [0, 'stage']}]
-    result = compile_event_ir({'tasks': [producer, *consumers]}, hw, emit_dependencies=True)
+    result = compile_event_ir({'tasks': [*producers, *consumers]}, hw, emit_dependencies=True)
     plan = result['plan']
     rows = {row['id']: row for row in plan['tasks']}
     operations = result['phase_dependencies']['operations']
+    blockers = result['phase_dependencies']['completion_only_blockers']
     waits = {entry['task']: entry['phases'][0]['wait_for'] for entry in operations
-             if entry['task'] != 'producer'}
-    writes = rows['producer']['evaluation']['events']
+             if entry['task'].startswith('consumer-')}
+    writes = [event for producer in producers for event in rows[producer['id']]['evaluation']['events']]
     tiles = []
     for i, write in enumerate(writes):
         commit = next(phase for phase in write['phases'] if phase['kind'] == 'publish')
         read = rows[f'consumer-{i}']
-        prerequisites = [[operations[parent]['id'], operations[parent]['phases'][phase]['event']]
+        prerequisites = [[operations[parent]['task'], operations[parent]['phases'][phase]['event']]
                          for parent, phase in waits[read['id']]]
-        expected = [[i, 'publish']] if early else [[i, 'publish'], [1, 'retire']]
-        if set(map(tuple, expected)) != set(map(tuple, prerequisites)):
+        expected = {'tile': [['producer', 'publish']],
+                    'barrier': [['producer', 'publish'], ['producer', 'retire']],
+                    'command': [[f'producer-{i}', 'publish']]}[policy]
+        if sorted(expected) != sorted(prerequisites):
             raise ValueError(f'unexpected command prerequisites for tile {i}: {prerequisites}')
         tiles.append({'write_start': commit['start'], 'publish': commit['end'],
                       'producer_retire': write['end'], 'consume_start': read['start'],
@@ -99,8 +112,11 @@ def handoff(early):
     boundaries = sorted({tile[key] for tile in tiles for key in ('write_start', 'last_read')})
     peak = max(sum(16 for tile in tiles if tile['write_start'] <= tick < tile['last_read'])
                for tick in boundaries)
+    if len(blockers) != {'tile': 2, 'barrier': 2, 'command': 0}[policy]:
+        raise ValueError(f'unexpected command ABI blockers: {blockers}')
     return {'ticks': plan['makespan'], 'peak_live_tile_bytes': peak,
-            'wait_owner': 'Algo1 dependency', 'tiles': tiles}
+            'wait_owner': 'Algo1 dependency', 'tiles': tiles,
+            'completion_only_blockers': blockers}
 
 
 def placement(pressure):
@@ -142,7 +158,7 @@ def main():
     cli.add_argument('case', choices=('handoff', 'placement'))
     args = cli.parse_args()
     if args.case == 'handoff':
-        result = {'barrier': handoff(False), 'tile': handoff(True)}
+        result = {policy: handoff(policy) for policy in ('barrier', 'tile', 'command')}
     else:
         result = {'idle': placement(False), 'shared_channel': placement(True)}
     print(json.dumps(result, indent=2))

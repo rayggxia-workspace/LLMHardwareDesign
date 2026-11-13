@@ -64,7 +64,22 @@ def dependency_program(tasks, hardware, covers, plan):
                 ],
                 'activation_after': [list(parent) for parent in operation.activation_after],
             })
-    return {'schema': 'algo1-phase-dependencies/1', 'operations': records}
+    return {'schema': 'algo1-phase-dependencies/1', 'operations': records,
+            'completion_only_blockers': completion_only_blockers(records)}
+
+
+def completion_only_blockers(records):
+    """Report waits that a command-start / command-complete ABI cannot preserve."""
+    blockers = []
+    for record in records:
+        target = record['id']
+        for step, phase in enumerate(record['phases']):
+            for producer, event in phase['wait_for']:
+                if step != 0 or event != len(records[producer]['phases']) - 1:
+                    blockers.append({'producer': [producer, event], 'consumer': [target, step]})
+        for parent in record['activation_after']:
+            blockers.append({'producer': parent, 'consumer': [target, 'activation']})
+    return blockers
 
 
 def event_operation(model, event):

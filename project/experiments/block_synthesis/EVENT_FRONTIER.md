@@ -28,6 +28,14 @@ python project/experiments/block_synthesis/run.py MODEL_IR.json HARDWARE.json NE
 
 宽度 1 的严格贪心对照使用单任务动作。若要评估复合动作，应另建立每步只选择一个后继的对照。比较时固定硬件配置、候选池、输入和连接预算。按完成时间、DDR 总字节、静态网代价依次比较。对比新旧成本模型时重放同一动作序列，并分开记录执行能力与搜索策略的收益。
 
+对 `timing: replay` 或 `timing: snapshot` 的输入，在 `--event-ir` 上加
+`--event-dependencies` 可在 `result.json` 导出 `phase_dependencies`。每条边引用
+生产命令及其完成阶段、消费命令及其接纳阶段。命令内部的阶段顺序由登记的服务保证。
+`completion_only_blockers` 列出只暴露命令发出和终止的 ABI 无法表达的边。列表为空时，
+仍须验证目标指令、实际地址、完成事件与硬件服务。输出中的周期用于比较 Algo1 计划。
+
+[tile 交接、共享 DDR 和两个后端的远程对照](../../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md)
+
 ## Qwen2.5-3B 三 P FFN 回放
 
 复用 #251 两套已归档 RTL 日志，按已登记的 SHA-256 验证归档并读取同一试验的描述符与原始 `K_PROFILE`。每例按实际三 P 并行的 scope 边界回放 928 次 Gate/Up 和 516 次 Down 的 K128 准备、COPY ACK、源窗口释放。X 的 16 个 A16 分片沿用原 U.S 地址，86 个 Mid 分片按 29／29／28 留在原三个 P.S，Down 的 512 字结果按描述符留在各 P.S。两个阶段报告里的计时边界余量单列入各自的末尾；阶段内使用真实 COPY ACK 时间差。
