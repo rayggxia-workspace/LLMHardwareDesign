@@ -140,7 +140,12 @@ def validate_base(base):
     require(base.get('schema_version') == VERSION, 'unsupported base schema')
     require(base.get('state') in ('candidate', 'frozen'), 'unknown base state')
     require(base.get('base_id'), 'missing base identity')
-    parent_cuts = base.get('assembly_state') == 'placed_parent_cuts'
+    assembly_state = base.get('assembly_state')
+    parent_cuts = assembly_state == 'placed_parent_cuts'
+    staged = assembly_state == 'staged_source_views'
+    if staged:
+        require(base['state'] == 'candidate', 'staged source views require a candidate base')
+        require(not base.get('realizations'), 'staged source views cannot establish native realizations')
     if parent_cuts:
         require(base['state'] == 'candidate', 'placed parent cuts require a candidate base')
         require(not base.get('realizations') and not base.get('fixed_native_nets'),
@@ -162,15 +167,18 @@ def validate_base(base):
                 'missing database units')
         views = base.get('views', {})
         required = {'odb', 'netlist', 'gds'}
-        if base.get('assembly_state') == 'placed_source_views':
+        if assembly_state == 'placed_source_views' or staged:
             require(base['state'] == 'candidate', 'placed source views require a candidate base')
             assemblies = base.get('assemblies', [])
             names = {row['id'] for row in assemblies}
             require(assemblies and len(names) == len(assemblies), 'invalid placed resource assembly')
             for row in assemblies:
                 refs = row.get('views', {})
-                require(required <= refs.keys() and all(refs[k] in views for k in required),
-                        'assembled resources require ODB/netlist/GDS references')
+                is_staged = row.get('state') == 'staged'
+                require(staged or not is_staged, 'staged assembly requires staged source views')
+                view_kinds = {'odb', 'endpoint_plan'} if is_staged else required
+                require(view_kinds <= refs.keys() and all(refs[k] in views for k in view_kinds),
+                        'assembled resources lack required physical views')
                 translation = row.get('translation_dbu', [])
                 require(len(translation) == 2 and all(type(v) is int for v in translation),
                         'invalid resource translation')
@@ -398,3 +406,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

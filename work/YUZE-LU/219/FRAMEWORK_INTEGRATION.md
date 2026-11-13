@@ -505,3 +505,44 @@ FENCE 的 258 个为 M5 3 个、M6 255 个。P2545 的 647 个 M10 及 801 个�
 `audit-dma-existing-pins.sbatch` 与 `audit-dma-existing-pins.tcl` 位于同一
 远端编译目录。下一次物理试验可从这些已摆低层接点向 M10 引出，
 核对实际连通和间距，然后把通过的几何与共同摆位一同交给 Algo2。
+
+
+## 含数据面的三 P 同计划接口试验
+
+109804 核对 main P2545 的 770 路权重与 FENCE 端口。每一位属于一个组边界 BTerm
+和一个单独的 M10 叶端点，组级 ODB 无既有连接线，也无其他叶或标准单元接点。
+按原始三个 P 的摆位变换，逐位登记 2,310 个真实叶端点。此输入用于
+直接从叶宏 M10 向上接入的试验。端口附近的间距、可接入性和连通仍要检查。
+
+采用原 DMA-v45 摆位，按其 4,344 个已知逻辑端口生成待验证的 M10 端口计划。
+九组与 MC 坐标沿用 main。为独立 DMA 位于原 P2 以东留出空间，DMA 原点
+取 `[9576000, 0]` DBU，给 P2 和 DMA 的外框留 `100000` DBU 间隙。
+候选右边界扩到 `13596000` DBU，原边界为 `11726000` DBU。
+`route-contract/1` 的 `staged_source_views` 模式将源 ODB 和端口计划分别绑定到
+真实散列。仅允许 candidate 范围，端点归属仍按组校验。正式冻结和产品范围的
+物理视图要求继续生效。109818 的四项反例覆盖假冻结、产品入口、缺失计划和缺失实例。
+
+109815 从同一真实首层三 P 算子计划生成控制、描述符、权重与 FENCE 需求，
+导出 4,981 根物理网和 10,300 个接点。Algo2 的实际读入器接受 interface 交接，
+按 400 DBU 局部网格枚举，每个接点都有至少一个候选位置。路由结果另由 109817 检查。
+新 DMA 的 M10 shapes 是计划位置，需通过独立原生层布线，接点的网格枚举仅检查几何入口。
+
+109816 独立读回同方案的母控与局控编码。对照已有 scope 的真实描述符，母控、
+三份局控与 24,576 B 描述符逐字节一致。固定 #260 `1ea06be2` 读取一页、192 条
+CALL、64 组 WAIT。结果范围为接口编码，原生层数据连接和整图运行仍未验收。
+
+| 远端产物，位于 `framework-r11-CatJ8r/` | SHA-256 |
+| --- | --- |
+| `p-v2-direct-m10-109804/base.json` | `c223edb790a7864af751bd2e8cba782a46a2ade84e171c29ea3b53b9e15f5745` |
+| `dma-m10-global-109793/landings.tsv` | `ec4ecb7d4f0bf7c6a7b31d59af06d02141aa8089d5015ce93c1b2b9050d718cc` |
+| `draft-native-dma-handoff-109815/summary.json` | `11ddad9cc2a0546f0b54f214e38effd59c2f0144f6d7d3451439c5fe06251519` |
+| `draft-native-dma-handoff-109815/requirements.json` | `8e736fbe37ec14b54b4e64fc56ec707715bf7a203c66b949be110665bae14a38` |
+| `draft-native-dma-handoff-109815/algorithm2-input.json` | `b808e867cc75f24a628fae0692b2f6ac9c17ad42de54c9b31be12a89e12f602c` |
+| `staged-dma-native-109816/summary.json` | `4b406f6ec480fa4a83f553c695ea83cea5f95316fcc29f10697957988b34ef31` |
+| `regression-109814.log`，410 项通过 | `b5eb30d5860a03a37efbfe067e07820a10c224f6e523711af90805f7d3cdc916` |
+| `dma-staged-gate-109818.log` | `a756519c70bcffc427880c4394a4b362a28aa888c9645b9fa9fd446d337afd23` |
+
+复现脚本位于 [dma-m10/](dma-m10/)。作业输入还使用上节锁定的源 ODB、逐位表和
+三 P 存档 scope。当前原生层试布保留全部 DMA 实例与原始逻辑，只在新的物理试验副本中
+分配 M10 端口。整图仍需动态 token Gather 的真实 DDR 至 U 服务、后续完整服务映射、
+真实 KV 和 token 退休。109409 是旧拓扑的独立严格进度。

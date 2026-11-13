@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 用 main P2545 真实叶端点与独立 DMA 的暂定 M10 接点完成同计划接口回放。Algo2 读入 4,981 根控制与数据网，固定 #260 读回 192 条 CALL 和 64 组 WAIT。原生层引出、Algo2 几何结果及整图原生执行仍待验收。见[三 P 同计划回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#含数据面的三-p-同计划接口试验)。
+
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 把原生命令所需的数据面通路纳入 Algo1 候选准入。109781 用实际端点清单复核三 P 首层方案并报告九个缺失需求，109758 的细网格试布布通 27/730 根控制网。完整数据通路、联合布线和原生整图执行待验证。详见[同计划准入回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#algo1-原生命令的数据面准入)。
 
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加同计划的原生编码与 #260 指令页交接。109741 在 main Block V2 加交换器的候选摆位上，用同一方案产出 730 根待布控制网，#260 读取器核对 192 条 CALL 和 64 组 WAIT，三 P 原生镜像与归档字节一致。109728 的 410 项回归通过。当前验证范围是控制端点与指令页，数据面和严格整图执行仍待接入。见[原生交接回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#同一计划交给-algo2-与-260-指令页读取器)。
