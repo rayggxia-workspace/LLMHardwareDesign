@@ -28,7 +28,7 @@ def marker(kind, cycle, **values):
     return {"kind": kind, "cycle": cycle, "generation": 1, **values}
 
 
-def predict(archive, binary, config, output, embedding, mode):
+def predict(archive, binary, config, output, embedding, mode, *, with_first_weight=False):
     page = decode_archive(archive)["pages"][0]
 
     def after_pm(prefix, ddr):
@@ -57,9 +57,17 @@ def predict(archive, binary, config, output, embedding, mode):
             markers.append(marker("service_retire", service["service_retire"], **identity, status=0,
                                   read=512, write=512))
             control = next_call(page, index, service["service_retire"])
-        return {"scope": "105530 generation 1 startup to third service accept", "mode": mode,
-                "core_cycle_origin": prefix["core_cycle_origin"], "prompt_start_one_based_edge": PROMPT_ACCEPT_EDGE,
-                "schedule": schedule, "ddr_events": ddr.events, "markers": markers}
+        result = {"scope": "105530 generation 1 startup to third service accept", "mode": mode,
+                  "core_cycle_origin": prefix["core_cycle_origin"], "prompt_start_one_based_edge": PROMPT_ACCEPT_EDGE,
+                  "schedule": schedule, "ddr_events": ddr.events, "markers": markers}
+        if with_first_weight:
+            from qwen_projection_front import first_weight_offer
+            from qwen_weight_record import read_weight_record
+            front = first_weight_offer(call, descriptor["service_accept"], mode)
+            result["scope"] = "105530 generation 1 startup through the first P_SCOPE weight record"
+            result["projection_front"] = front
+            result["weight_record"] = read_weight_record(fabric, front["weight_source_offer"], front["weight_address"])
+        return result
 
     return predict_pm(archive, binary, config, output, embedding, mode, PROMPT_ACCEPT_EDGE, after_pm=after_pm)
 
@@ -111,11 +119,12 @@ def audit_wait_release(page, rows):
             "matched_page_commit": predicted_commit}
 
 
-def compare(archive, prediction, edge_log):
+def compare(archive, prediction, edge_log, *, with_first_weight=False):
     mode = prediction["mode"]
     require(mode in (0, 1), "invalid 105530 mode")
     expected = prediction["ddr_events"]
-    require(len(expected) == 4 * PREDICTED_BURSTS, "incomplete DDR prefix prediction")
+    bursts = PREDICTED_BURSTS + (17 if with_first_weight else 0)
+    require(len(expected) == 4 * bursts, "incomplete DDR prefix prediction")
     proof = Proof(archive, WINDOWS["next_rms"][0])
     trace = "DDR-{}/transactions.tsv".format(mode)
     source = proof.path(trace)
@@ -133,7 +142,7 @@ def compare(archive, prediction, edge_log):
     for index, (event, actual) in enumerate(zip(wanted, observed)):
         require(event == actual, "control marker {} differs: predicted {}, observed {}".format(index, event, actual))
     page = decode_archive(archive)["pages"][0]
-    return {"mode": mode, "matched_ddr_bursts": PREDICTED_BURSTS, "matched_ddr_events": len(expected),
+    return {"mode": mode, "matched_ddr_bursts": bursts, "matched_ddr_events": len(expected),
             "matched_control_markers": len(wanted), "rtl_ddr_trace_sha256": trace_sha,
             "rtl_edge_trace_sha256": MODE_EDGE_SHA[mode], "conditional_wait_audit": audit_wait_release(page, observed)}
 
@@ -148,12 +157,15 @@ def main():
     check = commands.add_parser("compare")
     for name in ("archive", "prediction", "edges"):
         check.add_argument(name, type=Path)
+    for command in (make, check):
+        command.add_argument("--with-first-weight", action="store_true", help="include the first 17-beat P_SCOPE record")
     args = parser.parse_args()
     if args.operation == "predict":
         result = predict(args.archive, args.binary.resolve(), args.config.resolve(), args.output.resolve(),
-                         args.embedding, args.mode)
+                         args.embedding, args.mode, with_first_weight=args.with_first_weight)
     else:
-        result = compare(args.archive, json.loads(args.prediction.read_bytes()), args.edges)
+        result = compare(args.archive, json.loads(args.prediction.read_bytes()), args.edges,
+                         with_first_weight=args.with_first_weight)
         result["prediction_sha256"] = file_digest(args.prediction)
     print(json.dumps(result, indent=2))
 
