@@ -120,11 +120,12 @@ def rtl_summary(log, mode, control, window, program):
     require([page["generation"] for page in pages] == list(range(1, len(control["pages"]) + 1)),
             "RTL terminal sequence differs from mother pages")
     calls = sum(page["calls"] for page in pages)
-    service_bytes = sum(page["read_bytes"] for page in pages)
+    terminal_reads = sum(page["read_bytes"] for page in pages)
     terminal_writes = sum(page["write_bytes"] for page in pages)
     mc_bursts = sum((page["bytes"] + 63) // 64 for page in control["pages"])
     lc_bursts = ((control["local"]["bytes"] + 63) // 64) * (2 if window == "archived_qkv" else 4)
     require(read == program["expected_ddr_reads"] + mc_bursts + lc_bursts
+            and program["expected_terminal_reads"] == terminal_reads
             and program["expected_terminal_writes"] == terminal_writes, "program and runtime transfer totals differ")
     extra = {}
     if window == "archived_qkv":
@@ -154,8 +155,6 @@ def rtl_summary(log, mode, control, window, program):
                                        r"scratch_read_acks=(\d+)$")
         require((words, writes, reads) == (512, 11264, 11264) and activation * 64 == activation_bytes,
                 "unexpected next-layer commit")
-        require(program["expected_terminal_reads"] == service_bytes + 128 * calls,
-                "next-RMS terminal totals differ after descriptor accounting")
         tokens = [(int(position), int(token)) for position, token in
                   re.findall(r"^HISTORY_ROW_READY position=(\d+) token=(\d+)$", log, re.MULTILINE)]
         require(len(tokens) == program["positions"] == program["attention"]["context"]
@@ -168,7 +167,7 @@ def rtl_summary(log, mode, control, window, program):
     return {"mode": mode, "rtl_cycles": cycles, "ddr_ticks_per_channel": ch0, "ddr_admission_waits": stalls,
             "ddr_host_period_ps_ratio": [period_num, period_den], "counts": {"read": read, "write": write,
                                                                            "activation": activation},
-            "pages": pages, "terminal_calls": calls, "service_terminal_read_bytes": service_bytes,
+            "pages": pages, "terminal_calls": calls, "terminal_read_bytes": terminal_reads,
             "mc_ddr_fetch_bursts": mc_bursts, "lc_ddr_fetch_bursts": lc_bursts, **extra}
 
 
@@ -184,7 +183,7 @@ def write_addresses(proof):
     return result
 
 
-def lifecycle(proof, name, kind, root, summary, expected_writes):
+def lifecycle(proof, name, kind, root, summary, boundaries):
     """Audit finite port ownership while spooling one monotone stream per channel/event."""
     digest = hashlib.sha256()
     pending, returned, delays = {}, Counter(), Counter()
@@ -227,7 +226,12 @@ def lifecycle(proof, name, kind, root, summary, expected_writes):
                     require(entry[3] is not None and entry[3] <= tick * num // (den * DDR_PS)
                             and queue[0] == key and tick <= summary["rtl_cycles"], "RTL DDR return order differs")
                     if kind == "write":
-                        require(expected_writes.pop(address, None) == tag, "committed KV address/tag differs from store table")
+                        require(boundaries.expected_writes.pop(address, None) == tag,
+                                "committed KV address/tag differs from store table")
+                        boundaries.write_returns[address] = tick
+                    elif kind == "activation":
+                        require(address not in boundaries.activation_admits, "duplicate FFN activation address")
+                        boundaries.activation_admits[address] = entry[1]
                     queue.popleft()
                     del pending[key]
                     returned[channel] += 1
@@ -240,7 +244,7 @@ def lifecycle(proof, name, kind, root, summary, expected_writes):
     total = sum(returned.values())
     require(not pending and total == summary["counts"][kind], "native DDR trace did not drain or differs from RTL total")
     if kind == "write":
-        require(not expected_writes, "KV store table has uncommitted bursts")
+        require(not boundaries.expected_writes, "KV store table has uncommitted bursts")
     return {"trace_sha256": digest.hexdigest(), "retired_per_channel": [returned[0], returned[1]],
             "max_outstanding_per_port": depths, "ddr_ticks_p50": percentile(delays, total, 50),
             "ddr_ticks_p95": percentile(delays, total, 95), "ddr_ticks_max": max(delays)}
@@ -294,6 +298,17 @@ def simulated_rows(path):
             yield int(channel), int(tick), op, int(address)
 
 
+class Boundaries:
+    def __init__(self, addresses):
+        self.expected_writes = addresses
+        self.write_returns = {}
+        self.activation_admits = {}
+
+    def activation_gaps(self):
+        require(self.activation_admits.keys() <= self.write_returns.keys(), "FFN activation lacks its producer write")
+        return [admit - self.write_returns[address] for address, admit in self.activation_admits.items()]
+
+
 def mode_audit(proof, window, control, program, mode, binary, config, output):
     output.mkdir()
     log = proof.read("replay-{}.log".format(mode)).decode("ascii")
@@ -301,8 +316,14 @@ def mode_audit(proof, window, control, program, mode, binary, config, output):
     names = {"read": "transactions.tsv", "activation": "activation-transactions.tsv", "write": "write-transactions.tsv"}
     kinds = [kind for kind in names if result["counts"][kind]]
     prefix = "DDR-{}/".format(mode)
-    result["lifecycle"] = {kind: lifecycle(proof, prefix + names[kind], kind, output, result, write_addresses(proof))
+    boundaries = Boundaries(write_addresses(proof))
+    result["lifecycle"] = {kind: lifecycle(proof, prefix + names[kind], kind, output, result, boundaries)
                            for kind in kinds}
+    if boundaries.activation_admits:
+        gaps = boundaries.activation_gaps()
+        require(len(gaps) == result["counts"]["activation"] and min(gaps) > 0,
+                "FFN activation did not wait for matched committed writes")
+        result["ffn_activation_write_to_admit_core_cycles"] = {"min": min(gaps), "max": max(gaps)}
     reference = proof.read("generated/kv-reference.bin")
     committed = proof.read(prefix + "committed-kv.bin")
     require(committed == reference and len(committed) == result["counts"]["write"] * 64, "committed KV payload differs")
