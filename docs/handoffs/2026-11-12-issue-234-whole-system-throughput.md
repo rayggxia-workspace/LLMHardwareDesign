@@ -3,7 +3,7 @@
 - 日期与交接人：2026-11-12（CST），YUZE-LU。
 - 任务：[LLMHardwareDesign Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234)。当前负责人为 YUZE-LU，接手人由项目负责人指定。
 - 分支：`task/234-whole-system-throughput-handoff`，基于 `main` 的 `c4d7b960599b9d292f27eb4429d5f226a7156c95`。本次提交号见交接 PR。独立工作树，已有实现和远程作业保留原状。
-- 当前状态：整机仿真入口未接通，主场景未完成，没有通过验收的吞吐数据。交接 PR 仅提交实施与验收合同。
+- 当前状态：已补入[指令驱动事务级评估代码](../../project/experiments/systemc_benchmark/README.md)，可运行两步 decode 和短 prefill。正式 P512/D128 联合仿真和物理验收仍在进行。
 
 ## 目标
 
@@ -37,4 +37,4 @@
 - [ ] **能耗和最优适配对照**：按已验证的活动与能耗边界报告 J/token，缺失能耗记录为待验收。采用面向 3–4B 充分优化的 ASIC／FPGA 配置，记录模型、精度、输入长度、批量、带宽与硬件边界。保持原 FPGA 性能和能效门槛。若落后，保留原结果，区分算法、硬件和存储瓶颈，修复后重新实跑。算法 20% 指标用相同硬件和数值合同的对照来验证，配方及硬件收益分别记录。
 - [ ] **复现**：保存代码、程序、硬件、权重、输入和工具版本，Slurm 作业号、退出状态、运行命令、仿真日志、数值与事务检查和结果 SHA-256。数值、吞吐及对应验收项达标后再关闭任务。
 
-本 PR 的验证范围为文档与已有远程回执核对。项目登记沿用[管理中心 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5)。项目看板按[现有接入交接](2026-10-21-issue-7-projects.md)处理。
+本 PR 包含短程评估代码、服务回归与已有远程回执。项目登记沿用[管理中心 PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5)。项目看板按[现有接入交接](2026-10-21-issue-7-projects.md)处理。

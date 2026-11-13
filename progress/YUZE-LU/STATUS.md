@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-13（CST）指令驱动的吞吐评估
+
+[Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) 的 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 已补入[事务级回放、短程吞吐审计和复现命令](../../project/experiments/systemc_benchmark/README.md)。下一步核对短程实验回执并校准宽口 RTL。正式 P512/D128 联合验收仍在进行。看板配置待核验。
+
 ## 2026-11-12（CST）Qwen2.5-3B 整机吞吐交接
 
 [Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) 仍在执行，后续接手人待指定。[实施与验收交接](../../docs/handoffs/2026-11-12-issue-234-whole-system-throughput.md)记录远程作业 101602、103217、103220，以及真实控制、算子、SRAM 和 DDR 联合仿真的待接通路径。整机吞吐和能耗未验收。
