@@ -2,7 +2,7 @@
 
 ## 2026-11-13（CST）九组共同底座选型
 
-[Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) / [PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) 登记[正式候选宏及端点准入](../../docs/local-blocks/PRODUCT_BASE_V1.md)。P 改为绑定 S_P 的普通口等价对照，保留 M60 原生 A256 和真 64 B DDR 返回。九组联合物理、端点逐位绑定、64 B DMA 和同源模型闭环继续验收。登记 pending，看板核验见 PR 回执。
+[Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) / [PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) 登记[正式候选宏及端点准入](../../docs/local-blocks/PRODUCT_BASE_V1.md)。P 改为绑定 S_P 的普通口等价对照，保留 M60 原生 A256 和真 64 B DDR 返回。九组 30 颗独立功能叶宏及 10 颗程序 SRAM bank 已联合试排。真实母控／局控网和三 P 的 64 B DMA／FENCE 已完成联合 DEF 逐位绑定审计。联合供电与详细布线、64 B DMA 时序和同源模型闭环继续验收，见共同底座物理与连接回执。登记 pending，看板核验见 PR 回执。
 
 ## 2026-11-08（CST）U 原生入口和双向发送修复
 
