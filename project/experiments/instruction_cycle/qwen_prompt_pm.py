@@ -34,7 +34,7 @@ def fetch_pm(ddr, ready, base, image_bytes, domain, config_word_cycles):
     return stores
 
 
-def predict(archive, binary, config, output, embedding, mode, prompt_start):
+def predict(archive, binary, config, output, embedding, mode, prompt_start, *, after_pm=None):
     proof = Proof(archive, WINDOWS["next_rms"][0])
     deployment = controls(proof, "next_rms", WINDOWS["next_rms"][1])
     local, mother = deployment["local"], deployment["pages"][0]
@@ -60,11 +60,12 @@ def predict(archive, binary, config, output, embedding, mode, prompt_start):
         # MC program RAM sits behind control_pm and the four SRAM banks. Its
         # WRITE config ACK is consumed six edges after the config request.
         mother_stores = fetch_pm(ddr, mc_stream_accept + 1, mother["address"], mother["bytes"], MC_DOMAIN, 7)
-        return {"scope": "105530 first prompt row through generation 1 LC/MC PM DDR reads",
+        result = {"scope": "105530 first prompt row through generation 1 LC/MC PM DDR reads",
                 "mode": mode, "core_cycle_origin": rms["core_cycle_origin"],
                 "prompt_start_one_based_edge": prompt_start, "rms": rms,
                 "lc_seal_ack": lc_seal_ack, "lc_install_retire": lc_installed, "mc_stream_accept": mc_stream_accept,
-                "ddr_events": ddr.events, "lc_config_writes": local_stores, "mc_config_writes": mother_stores}
+                "ddr_events": ddr.events[:], "lc_config_writes": local_stores, "mc_config_writes": mother_stores}
+        return result if after_pm is None else after_pm(result, ddr)
 
     return predict_prompt(archive, binary, config, output, mode, prompt_start, tail=tail)
 
