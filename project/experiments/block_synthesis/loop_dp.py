@@ -29,6 +29,7 @@ class State:
     cache: dict
     ready: frozenset = frozenset()
     windows: dict = field(default_factory=dict)
+    execution: object = None
 
 
 def search(tasks,hardware,*,width=16,ready_limit=4,wire_budget=None,wire_lookahead=True,

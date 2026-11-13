@@ -35,9 +35,14 @@ def project(tasks,covers,plan):
 
 
 def verify(tasks,hardware,covers,plan,wire_budget=None):
-    if plan.get('kind')!='convex-cover-frontier-v1':raise ValueError('unknown cover frontier plan')
+    expected='event-cover-frontier-v1' if 'event_model' in hardware else 'convex-cover-frontier-v1'
+    if plan.get('kind')!=expected:raise ValueError('unknown cover frontier plan')
     projected,ordinary=project(tasks,covers,plan)
-    result=verify_schedule(projected,hardware,ordinary,wire_budget=wire_budget)
+    if expected=='event-cover-frontier-v1':
+        from verify_event_execution import verify as verify_events
+        result=verify_events(projected,hardware,ordinary,wire_budget=wire_budget)
+    else:
+        result=verify_schedule(projected,hardware,ordinary,wire_budget=wire_budget)
     if plan.get('covered_original_tasks')!=len(tasks):raise ValueError('original task count differs')
     return {**result,'covered_original_tasks':len(tasks),'decisions':len(projected),
             'scope':'independent original task coverage, committed dependencies and schedule; native recipe proof separate'}

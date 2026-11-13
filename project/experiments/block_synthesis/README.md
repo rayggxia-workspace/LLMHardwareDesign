@@ -1,5 +1,7 @@
 # 有约束的 Block 综合规划器（Issue #219）
 
+2026-11-11：[执行状态驱动的事件前沿](EVENT_FRONTIER.md)。`run.py --event-ir` 使用共用转移按 S 副本、ACK 和资源预约计算本轮成本。#251 三 P Qwen FFN 冻结回放及同池对照见该文。
+
 2026-11-09：[原生S32 Add聚合](S32_ADD_AGGREGATE.md)。三初态各384例及独立负对照、Windows/Linux各234项通过；
 有限S与实际P/feeder服务已验证，仍需完整split32准备、共同候选/缓存失效/独立审计/整网数值接入。
 `add_tile_survey.py CHECKED_IR CHECKED_PLAN ADD_PROOF NEW_REPORT`仅调查机会，不宣称生成新计划或算法20%。
