@@ -1,7 +1,10 @@
-"""Resource demand for a typed DMA transfer at scheduling granularity."""
+"""Memory resource demand at scheduling granularity."""
+from collections import deque
 from dataclasses import dataclass
 from math import gcd
 from types import MappingProxyType
+
+from dma_read import ready_mask
 
 
 CHANNEL_BYTES = 2048
@@ -27,6 +30,84 @@ class ClientResponse:
             if allowed == tick:
                 return tick
             tick = allowed
+
+
+class SnapshotSram:
+    """Track pending access counts and two response slots per feeder port."""
+
+    def __init__(self, ready):
+        self.ready = ready
+        self.requests = (deque(), deque())
+        self.responses = (deque(), deque())
+        self.run = None
+
+    @property
+    def active(self):
+        return any(self.requests) or any(self.responses)
+
+    def submit(self, key, access):
+        width = 4 if access.wide else 1
+        self.requests[access.wide].append((key, access.words // width))
+
+    def next_edge(self, tick):
+        for port in (1, 0):
+            queue, slots = self.requests[port], self.responses[port]
+            if (queue and queue[0][1] > 1 and len(slots) == 2
+                    and slots[0][0] == tick and slots[1][0] == tick + 1
+                    and all(owner is None for _, owner in slots)
+                    and not self.responses[1 - port] and (port or not self.requests[1])
+                    and ready_mask(self.ready, tick, 3) & (1 << port)):
+                # With both slots rotating, ACK and issue each advance once
+                # per tick until a gate closes or the last request can issue.
+                end = tick + queue[0][1] - 1
+                for lo, hi, mask in self.ready:
+                    if hi > tick and not mask & (1 << port):
+                        end = min(end, lo)
+                        break
+                self.run = tick, port
+                return end
+        future = []
+        for port, (queue, slots) in enumerate(zip(self.requests, self.responses)):
+            if queue and len(slots) < 2:
+                return tick
+            if slots:
+                edge = max(tick, slots[0][0])
+                for lo, hi, mask in self.ready:
+                    if edge < lo:
+                        break
+                    if edge < hi and not mask & (1 << port):
+                        edge = hi
+                future.append(edge)
+        return min(future)
+
+    def advance(self, tick):
+        if self.run is not None:
+            start, port = self.run
+            self.run = None
+            if tick > start:
+                key, count = self.requests[port][0]
+                self.requests[port][0] = key, count - (tick - start)
+                slots = self.responses[port]
+                slots.clear()
+                slots.extend(((tick, None), (tick + 1, None)))
+        ready = ready_mask(self.ready, tick, 3)
+        completed = []
+        for port, slots in enumerate(self.responses):
+            if slots and slots[0][0] <= tick and ready & (1 << port):
+                _, owner = slots.popleft()
+                if owner is not None:
+                    completed.append((owner, ()))
+        for port in (1, 0):
+            queue, slots = self.requests[port], self.responses[port]
+            if queue and len(slots) < 2:
+                key, count = queue[0]
+                if count == 1:
+                    queue.popleft()
+                else:
+                    queue[0] = key, count - 1
+                slots.append((tick + 2, key if count == 1 else None))
+                break
+        return completed
 
 
 def channel_bytes(address, size, record_beats=2):

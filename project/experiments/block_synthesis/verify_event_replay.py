@@ -43,7 +43,7 @@ def verify_grants(tasks, hardware, rows):
             start, end = interval['start'], interval['end']
             if start < ready:
                 raise ValueError('grant precedes phase dependency')
-            if model.snapshot and end - start != phase.ticks:
+            if model.snapshot and phase.sram_access is None and end - start != phase.ticks:
                 raise ValueError('snapshot phase duration differs')
             if phase.mid_tile is not None and phase.mid_tile.run(start)[0] != end:
                 raise ValueError('FFN Mid completion differs')
@@ -70,7 +70,7 @@ def verify_grants(tasks, hardware, rows):
                 dma_launches[start].append((key, phase.dma_read))
                 dma_expected[key] = end, event['dma_beats']
             if phase.sram_access is not None:
-                sram[phase.sram_access.site].append((start, i, j, end, phase.sram_access, event['sram_beats']))
+                sram[phase.sram_access.site].append((start, i, j, end, phase.sram_access, event.get('sram_beats')))
             for resource, units in phase.claims:
                 if resource in model.issue_rates:
                     expires = start + model.issue_rates[resource][0]
@@ -117,16 +117,22 @@ def verify_grants(tasks, hardware, rows):
     if dma_launches or program_launches:
         verify_dma(model.dma_profile, dma_launches, dma_expected, program_launches)
     for site, jobs in sram.items():
-        verify_sram(model.sram_profiles[site], jobs)
+        verify_sram(model.sram_profiles[site], jobs, snapshot=model.snapshot)
 
 
-def verify_sram(profile, jobs):
-    """Audit issue and ACK from observed launches with an independent FIFO timeline."""
+def verify_sram(profile, jobs, *, snapshot=False):
+    """Audit grants and completions with an independent FIFO timeline."""
     launches = defaultdict(list)
     claimed = {}
     for start, i, j, end, access, beats in sorted(jobs):
         width = 4 if access.wide else 1
-        words = list(range(access.word, access.word + access.words, width))
+        words = range(access.word, access.word + access.words, width)
+        if snapshot:
+            for index in range(len(words)):
+                key = i, j, index
+                claimed[key] = {'ack': end - 1} if index == len(words) - 1 else {}
+                launches[start].append((int(access.wide), key))
+            continue
         if not isinstance(beats, list) or len(beats) != len(words):
             raise ValueError('SRAM beat coverage differs')
         for index, (word, beat) in enumerate(zip(words, beats)):
@@ -151,12 +157,12 @@ def verify_sram(profile, jobs):
         for port in range(2):
             if slots[port] and slots[port][0][0] <= tick and ready & (1 << port):
                 _, key = slots[port].popleft()
-                if claimed.pop(key)['ack'] != tick:
+                if claimed.pop(key).get('ack', tick) != tick:
                     raise ValueError(f'SRAM response ACK differs at tick {tick}')
         for port in (1, 0):
             if queued[port] and len(slots[port]) < 2:
                 key = queued[port].popleft()
-                if claimed[key]['issue'] != tick:
+                if claimed[key].get('issue', tick) != tick:
                     raise ValueError(f'SRAM bank grant differs at tick {tick}')
                 slots[port].append((tick + 2, key))
                 break

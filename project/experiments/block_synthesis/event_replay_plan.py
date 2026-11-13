@@ -165,7 +165,7 @@ def retime(model, decisions, proposed, previous=None):
     operations = intents(model, decisions)
     trace = replay_branch(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
                           dma_profile=None if model.snapshot else model.dma_profile,
-                          sram_profiles=model.sram_profiles)
+                          sram_profiles=model.sram_profiles, snapshot=model.snapshot)
     grants = iter(zip(operations, trace.grants))
     copies = model.initial.copies.copy()
     backing = model.initial.backing.copy()
@@ -229,7 +229,7 @@ def delivery_at(model, decisions, candidate, previous):
     operations = intents(model, (*decisions, candidate))
     trace = replay_branch(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
                           dma_profile=None if model.snapshot else model.dma_profile,
-                          sram_profiles=model.sram_profiles, save_checkpoints=False)
+                          sram_profiles=model.sram_profiles, snapshot=model.snapshot, save_checkpoints=False)
     # The route probe ends at the delivery being ranked. A prefetched LOAD
     # may finish while an earlier compute stage in the same binding runs.
     return trace.grants[-1][-1].end

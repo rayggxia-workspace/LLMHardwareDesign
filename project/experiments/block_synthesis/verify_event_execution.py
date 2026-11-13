@@ -129,7 +129,8 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 require('prefetch' not in event, 'prefetch marker belongs to a move')
                 require('dma_beats' not in event, 'typed DMA receipts belong to move routes')
                 service = spec['services'][stage['service']]
-                require(('sram_beats' in event) == ('sram_access' in service), 'SRAM receipt coverage differs')
+                require(('sram_beats' in event) == ('sram_access' in service and timing == 'replay'),
+                        'SRAM receipt coverage differs')
                 require(('activation' in event) == ('ffn_activation' in service), 'FFN activation receipt coverage differs')
                 require(('ffn_program' in event) == ('ffn_program' in service and timing == 'replay'),
                         'FFN program receipt coverage differs')
@@ -159,7 +160,9 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     variable = any(kind in service for kind in ('ffn_mid', 'sram_access', 'ffn_activation',
                                                                  'ffn_program'))
                     if timing == 'snapshot':
-                        valid_ticks = end-start == service.get('snapshot_ticks', service['ticks'])
+                        expected_ticks = service.get('snapshot_ticks', service['ticks'])
+                        valid_ticks = (end-start >= expected_ticks if 'sram_access' in service
+                                       else end-start == expected_ticks)
                     else:
                         valid_ticks = (timing == 'replay' and end-start >= service['ticks']
                                        if variable else end-start == service['ticks'])

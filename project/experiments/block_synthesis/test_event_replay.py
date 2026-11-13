@@ -256,6 +256,41 @@ class ReplayTest(unittest.TestCase):
         self.assertGreater(results[0][0][0].end, results[1][0][0].end)
         self.assertEqual(results[1][0], old.grants[0])
 
+    def test_snapshot_sram_reproduces_archived_candidate_ranking(self):
+        for mode, expected in ((4, 'wide'), (6, 'narrow')):
+            for width in (1, 8):
+                with self.subTest(mode=mode, width=width):
+                    tasks, h = sram_input(mode, compare=True)
+                    reference = search(tasks, h, width=width, ready_limit=1)
+                    h['event_model']['timing'] = 'snapshot'
+                    plan = search(tasks, h, width=width, ready_limit=1)
+                    verify(tasks, h, (), plan)
+                    self.assertEqual(plan['tasks'][-1]['binding'], expected)
+                    self.assertEqual(plan['makespan'], reference['makespan'])
+                    self.assertEqual([row['end'] for row in plan['tasks']],
+                                     [row['end'] for row in reference['tasks']])
+                    self.assertTrue(all('sram_beats' not in row['evaluation']['events'][0]
+                                        for row in plan['tasks']))
+
+    def test_snapshot_sram_batches_until_an_arrival_or_ready_boundary(self):
+        rng = random.Random(257)
+        for _ in range(20):
+            operations = []
+            start = rng.randrange(6, 38)
+            profiles = {'P0': ((start, start + 23, rng.randrange(4)),)}
+            for release in (0, 3, 15, 33, 64, 121):
+                wide = rng.choice((False, True))
+                words = rng.randrange(2, 81) * (4 if wide else 1)
+                phase = Phase('sram', 1, sram_access=Access('P0', 0, words, wide, False))
+                operations.append(Operation((phase,), release=release))
+            reference = replay(operations, {}, sram_profiles=profiles)
+            state = None
+            for count in range(1, len(operations) + 1):
+                state = replay_branch(operations[:count], {}, sram_profiles=profiles,
+                                      previous=state, snapshot=True)
+            self.assertEqual([(row[0].start, row[0].end) for row in state.grants],
+                             [(row[0].start, row[0].end) for row in reference])
+
     def test_sram_plan_audit_rejects_changed_banks_and_slot_reuse(self):
         tasks, h = sram_input(3)
         plan = search(tasks, h, width=1, ready_limit=1)

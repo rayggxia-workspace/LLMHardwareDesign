@@ -185,8 +185,8 @@ class Model:
         feeders = self.spec.get('sram_feeders', {})
         if (not isinstance(feeders, dict) or any(site not in hardware['sites']
                                                 for site in feeders)
-                or feeders and self.spec.get('timing') != 'replay'):
-            raise ValueError('SRAM feeders require known sites and event replay')
+                or feeders and not self.phased):
+            raise ValueError('SRAM feeders require known sites and phase timing')
         self.sram_profiles = {site: feeder_profile(spec) for site, spec in feeders.items()}
         self.services = self.spec['services']
         self.has_ffn_program = any('ffn_program' in service for service in self.services.values())
@@ -250,7 +250,7 @@ class Model:
             self.validate_service(service)
             if self.snapshot and 'snapshot_ticks' in service and 'ffn_program' not in service:
                 raise ValueError('snapshot_ticks belongs to a calibrated FFN program')
-            if self.snapshot and {'ffn_mid', 'sram_access', 'ffn_activation'} & service.keys():
+            if self.snapshot and {'ffn_mid', 'ffn_activation'} & service.keys():
                 raise ValueError('native service lacks a snapshot cost contract')
             if 'ffn_program' in service:
                 program = self.validate_program_service(service)

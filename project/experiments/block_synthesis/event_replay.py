@@ -8,7 +8,7 @@ from dma_read import BeatReceipt, Read, ReadFabric
 from ffn_a import P_COUNT, ActivationWindow
 from ffn_mid import MidTile
 from ffn_program_cost import ActiveProgram, FfnCost, Program
-from snapshot_cost import ClientResponse
+from snapshot_cost import ClientResponse, SnapshotSram
 from sram_feeder import Access, SramFeeder
 
 
@@ -110,19 +110,22 @@ def phase_dependencies(operations, index, phase):
     return extra | {(parent, len(operations[parent].phases) - 1) for parent in operation.after}
 
 
-def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=None, sram_profiles=None):
+def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=None, sram_profiles=None,
+           snapshot=False):
     """Replay a plan, optionally reusing a fixed-service grant prefix."""
-    return _replay(operations, capacity, ReplayTrace(previous), issue_rates, dma_profile, sram_profiles).grants
+    return _replay(operations, capacity, ReplayTrace(previous), issue_rates, dma_profile, sram_profiles,
+                   snapshot=snapshot).grants
 
 
 def replay_branch(operations, capacity, *, previous=None, issue_rates=None, dma_profile=None,
-                  sram_profiles=None, save_checkpoints=True):
+                  sram_profiles=None, snapshot=False, save_checkpoints=True):
     """Extend a DP branch with a reusable trace and pre-edge memory snapshots."""
     return _replay(operations, capacity, previous or ReplayTrace(()), issue_rates, dma_profile, sram_profiles,
-                   save_checkpoints=save_checkpoints)
+                   snapshot=snapshot, save_checkpoints=save_checkpoints)
 
 
-def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profiles, *, save_checkpoints=False):
+def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profiles, *, snapshot=False,
+            save_checkpoints=False):
     """Lower priority numbers win among ready phases.
 
     At each tick, completions free resources before grants. A first grant
@@ -143,7 +146,8 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
     sites = sorted({phase.sram_access.site for op in operations for phase in op.phases if phase.sram_access})
     if any(site not in sram_profiles for site in sites):
         raise ValueError('SRAM access requires a feeder profile')
-    feeders = {site: SramFeeder(sram_profiles[site]) for site in sites}
+    feeder_class = SnapshotSram if snapshot else SramFeeder
+    feeders = {site: feeder_class(sram_profiles[site]) for site in sites}
     device_starts = {}
     activations = set()
     successors = {}
