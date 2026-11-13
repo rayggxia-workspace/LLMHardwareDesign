@@ -66,6 +66,12 @@ def build(model, hardware, plan, catalog, base, rules, bind_request, *,
     command_source = source_outputs['program']['source'] if source_outputs else {}
     physical_base = command_source.get('physical_base_sha256')
     require(physical_base is None or physical_base == digest(base), 'schedule used a different physical base')
+    if route_scope == 'product' and source_outputs is not None:
+        from event_physical_contract import qualify_hardware
+
+        require(physical_base is not None and 'physical_interface_issues' in hardware['event_model']
+                and qualify_hardware(hardware, base) == hardware,
+                'product schedule lacks physical interface qualification')
     generated = emit(tasks, resolved, covers, plan, physical_base_sha256=physical_base)
     if source_outputs is not None:
         require(resolved == hardware and source_outputs == generated,
@@ -109,8 +115,9 @@ def build(model, hardware, plan, catalog, base, rules, bind_request, *,
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('event_ir', 'hardware', 'result', 'catalog', 'base', 'rules', 'output'):
+    for name in ('result', 'catalog', 'base', 'rules', 'output'):
         parser.add_argument(name, type=Path)
+    parser.add_argument('legacy_args', nargs='*', type=Path, help=argparse.SUPPRESS)
     parser.add_argument('--scope', choices=('interface', 'product'), default='interface')
     parser.add_argument('--control-images', type=Path)
     parser.add_argument('--wire-budget', type=int, help='override the budget recorded in the compiler result')
@@ -118,6 +125,13 @@ def main():
                         default=Path(__file__).resolve().parents[1] / 'upper_router',
                         help='directory containing the Algorithm 2 adapter.py')
     args = parser.parse_args()
+    event_ir = source_hardware = None
+    if args.legacy_args:
+        if len(args.legacy_args) != 2:
+            parser.error('provide RESULT CATALOG BASE RULES OUTPUT, or prefix them with EVENT_IR HARDWARE')
+        event_ir, source_hardware = args.result, args.catalog
+        args.result, args.catalog, args.base, args.rules, args.output = (
+            args.base, args.rules, args.output, *args.legacy_args)
     if not (args.upper_router / 'adapter.py').is_file():
         parser.error('Algorithm 2 adapter.py is missing; pass --upper-router from the router checkout')
     sys.path.insert(0, str(args.upper_router.resolve()))
@@ -127,13 +141,18 @@ def main():
         return json.loads(path.read_text(encoding='utf-8'))
 
     try:
-        model, hardware, result = (load(path) for path in (args.event_ir, args.hardware, args.result))
+        result = load(args.result)
+        model = load(event_ir) if event_ir is not None else result.get('event_ir')
+        hardware = result.get('resolved_hardware')
+        if hardware is None and source_hardware is not None:
+            hardware = load(source_hardware)
         require(result.get('status') == 'planned', 'handoff requires a planned event schedule')
+        require(model is not None and hardware is not None,
+                'result must contain event IR and resolved hardware, or supply EVENT_IR HARDWARE')
         base = read_base(args.base)
         manifest = load(args.control_images) if args.control_images else None
         if 'event_ir' in result:
             require(model == result['event_ir'], 'provided event IR differs from compiler output')
-        hardware = result.get('resolved_hardware', hardware)
         budget = args.wire_budget if args.wire_budget is not None else result.get('wire_budget')
         files = build(model, hardware, result['plan'], load(args.catalog), base, load(args.rules), bind_request,
                       route_scope=args.scope, manifest=manifest,

@@ -43,7 +43,8 @@ def catalogue(tasks,covers,*,event_dependencies=None):
     return actions,parents,ancestors
 
 
-def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,backbone=None,rank_policy='shared_tail'):
+def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,backbone=None,
+           rank_policy='shared_tail',route_admission=None):
     if (width is not None and (type(width)!=int or width<1) or
         ready_limit is not None and (type(ready_limit)!=int or ready_limit<1)):
         raise ValueError('positive cover frontier bounds required')
@@ -60,7 +61,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
             raise ValueError('event execution uses its own calendars and the shared-tail bound')
         if width==1 and covers:
             raise ValueError('strict event greedy requires singleton actions')
-        model=Model(hardware,wire_budget=wire_budget)
+        model=Model(hardware,wire_budget=wire_budget,route_admission=route_admission)
         timing=hardware['event_model'].get('timing', 'calendar')
         if timing not in ('calendar', 'replay', 'snapshot'):
             raise ValueError('unknown event timing model')
@@ -138,7 +139,10 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         from cover_bounds import Completion
         completion=Completion(actions,hardware,ids,wire_budget=wire_budget,
                               resource_releases=rank_policy=='hypergraph_resources')
-    def netcost(s):return sum(hardware['nets'][n]['cost'] for n in s.nets if n not in fixed)
+    def netcost(s):
+        if model:
+            return model.wire_cost(s.nets)
+        return sum(hardware['nets'][n]['cost'] for n in s.nets if n not in fixed)
     def key(s):return (s.done,tuple(sorted(s.frontier.items())),tuple(sorted(s.resources.items())),
         s.nets,tuple(sorted(s.cache.items())),tuple(sorted(s.windows.items())),
         s.execution.key() if s.execution is not None else None,

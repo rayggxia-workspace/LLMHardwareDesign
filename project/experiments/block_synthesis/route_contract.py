@@ -103,6 +103,12 @@ def expand(users, catalog):
     unresolved = []
     for name in sorted(users):
         template = templates.get(name)
+        if template and template.get('realization'):
+            declaration = template['realization']
+            require(not template.get('signals')
+                    and declaration.get('kind') in ('native_service', 'external_boundary')
+                    and declaration.get('id'), 'invalid non-routing realization')
+            continue
         if not template or not template.get('signals'):
             unresolved.append({'demand_id': name, 'reason': 'missing_interface_template'})
             continue
@@ -213,6 +219,43 @@ def elaborate(users, catalog, base, source):
     validate_base(base)
     users, dependencies, members, unresolved = expand(users, catalog)
     nets, missing = bind_members(members, base)
+    assemblies = {item['id']: item for item in base.get('assemblies', ())}
+    leaves = {item['instance'] for item in base.get('leaf_instances', ())}
+    realizations = []
+    for demand in sorted(users):
+        declaration = catalog['demands'].get(demand, {}).get('realization')
+        if not declaration:
+            continue
+        provider_id = declaration['id']
+        provider = base.get('realizations', {}).get(provider_id)
+        if not provider:
+            missing.append({'demand_id': demand, 'reason': 'missing_native_realization'})
+            continue
+        require(provider['kind'] == declaration['kind'], 'native realization kind mismatch')
+        group = provider['assembly']
+        require(group in assemblies, 'native realization outside supplied assembly')
+        assembly = assemblies[group]
+        require(provider['views'] == assembly['views']
+                and set(provider['views'].values()) <= base['views'].keys(),
+                'native realization uses another source view')
+        require(provider.get('inventory_sha256') == assembly.get('inventory_sha256'),
+                'native realization inventory mismatch')
+        instances = provider['leaf_instances']
+        require(instances and set(instances) <= leaves and all(p.startswith(group+'/') for p in instances),
+                'native realization leaf mismatch')
+        if provider['kind'] == 'external_boundary':
+            require(provider.get('boundary_pins'), 'external realization without actual boundary pins')
+            for pin, meta in provider['boundary_pins'].items():
+                require(pin.startswith(group+'/') and meta['direction'] in ('INPUT', 'OUTPUT')
+                        and meta['shapes'] and meta.get('native_net', '').startswith(group+'/'),
+                        'invalid declared external physical boundary')
+                for shape in meta['shapes']:
+                    rect = shape.get('rect', ())
+                    require(shape.get('layer') in {f'metal{i}' for i in range(1, 11)}
+                            and len(rect) == 4 and all(type(v) is int for v in rect)
+                            and rect[0] < rect[2] and rect[1] < rect[3], 'invalid native boundary geometry')
+        realizations.append({**provider, 'demand_id': demand, 'provider_id': provider_id,
+                             'qualification': 'supplied resource realization only'})
     result = {'schema_version': VERSION, 'source': source,
               'base_id': base['base_id'], 'base_sha256': digest(base),
               'catalog_sha256': digest(catalog), 'users': users,
@@ -221,6 +264,8 @@ def elaborate(users, catalog, base, source):
               'status': 'unbound' if unresolved or missing else 'endpoint_binding_complete',
               'physical_qualified': False,
               'scope': 'manifest binding only; no via access, geometry, RC, STA or system qualification'}
+    if realizations:
+        result['realizations'] = realizations
     return seal(result)
 
 

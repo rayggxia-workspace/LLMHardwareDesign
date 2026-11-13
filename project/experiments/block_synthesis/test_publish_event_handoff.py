@@ -9,6 +9,7 @@ import unittest
 
 from cover_frontier import search
 from publish_event_handoff import build, source_identity
+from route_contract import elaborate
 from test_event_execution import binding, hardware, stage, task
 
 
@@ -57,6 +58,41 @@ def fixture():
     rules = {'technology': {'bounds': [0, 0, 220, 120], 'origin': [0, 0], 'pitch': 10,
                             'width': 2, 'spacing': 2, 'via10': via.copy(), 'via11': via.copy()}}
     return model, arch, plan, catalog, base, rules
+
+
+class RouteAdmissionTest(unittest.TestCase):
+    def test_missing_route_endpoint_is_rejected_during_search(self):
+        from run import compile_event_ir
+
+        model, arch, _, catalog, base, _ = fixture()
+        for name, route in arch['event_model']['routes'].items():
+            if 'DDR' in (route['src'], route['dst']):
+                route['nets'] = [name]
+                arch['nets'][name] = {'cost': 1}
+        result = compile_event_ir(model, arch, route_base=base, route_catalog=catalog,
+                                  route_scope='interface')
+        self.assertEqual(result['status'], 'planned')
+        del base['endpoints']['open-in']
+        result = compile_event_ir(model, arch, route_base=base, route_catalog=catalog,
+                                  route_scope='interface')
+        self.assertEqual(result['status'], 'no_plan_in_bounded_search')
+
+    def test_native_service_requires_matching_assembly_inventory(self):
+        _, _, _, catalog, base, _ = fixture()
+        views = {key: key for key in base['views']}
+        catalog['demands']['local-read'] = {'realization': {'kind': 'native_service', 'id': 'read'}}
+        base['assemblies'] = [{'id': 'P0', 'views': views, 'inventory_sha256': 'b'*64}]
+        base['leaf_instances'] = [{'instance': 'P0/memory'}]
+        base['realizations'] = {'read': {'kind': 'native_service', 'assembly': 'P0',
+                                         'views': views, 'inventory_sha256': 'b'*64,
+                                         'leaf_instances': ['P0/memory']}}
+        request = elaborate({'local-read': []}, catalog, base, {})
+        self.assertEqual(request['status'], 'endpoint_binding_complete')
+        self.assertEqual(request['realizations'][0]['provider_id'], 'read')
+        self.assertEqual(request['nets'], [])
+        base['realizations']['read']['inventory_sha256'] = 'c'*64
+        with self.assertRaisesRegex(ValueError, 'inventory mismatch'):
+            elaborate({'local-read': []}, catalog, base, {})
 
 
 @unittest.skipUnless((ROUTER / 'adapter.py').is_file(), 'upper router checkout required')

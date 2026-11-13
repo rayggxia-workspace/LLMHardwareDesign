@@ -163,7 +163,7 @@ def capacity_profile(changes):
 
 
 class Model:
-    def __init__(self, hardware, *, wire_budget=None):
+    def __init__(self, hardware, *, wire_budget=None, route_admission=None):
         self.spec = hardware['event_model']
         self.sites = hardware['sites']
         self.timing = self.spec.get('timing', 'calendar')
@@ -206,6 +206,18 @@ class Model:
         self.external_capacity = self.spec.get('external_capacity_bytes')
         self.nets = hardware['nets']
         self.fixed = frozenset(n for n, item in self.nets.items() if item.get('fixed'))
+        if any(set(item.get('requires', ())) - self.nets.keys() for item in self.nets.values()):
+            raise ValueError('required connection is missing from the hardware inventory')
+        self.excluded_nets = frozenset(self.spec.get('excluded_nets', ()))
+        if self.excluded_nets - self.nets.keys() or self.excluded_nets & self.fixed:
+            raise ValueError('event trial excludes an unknown or fixed net')
+        physical_issues = self.spec.get('physical_interface_issues', {})
+        logical_issues = self.spec.get('logical_control_issues', {})
+        self.product_interfaces = 'physical_interface_issues' in self.spec
+        self.unqualified_routes = physical_issues.get('routes', {}).keys() | logical_issues.get('routes', {}).keys()
+        self.unqualified_services = (physical_issues.get('services', {}).keys()
+                                     | logical_issues.get('services', {}).keys())
+        self.route_admission = route_admission
         self.conflicts = tuple(frozenset(pair) for pair in hardware.get('incompatible_nets', ()))
         self.wire_budget = wire_budget
         if self.spec.get('kind') != 'qualified-event-model-v1':
@@ -242,7 +254,8 @@ class Model:
                 self.validate_dma_route(route)
             elif self.dma_profile is not None and (self.has_ffn_program or self.dma_profile.mixed) and DDR in endpoints:
                 raise ValueError('shared DMA requires an explicit typed route for external traffic')
-            self.routes_by_sites.setdefault(endpoints, []).append(name)
+            if name not in self.unqualified_routes:
+                self.routes_by_sites.setdefault(endpoints, []).append(name)
         programs = {}
         for service in self.services.values():
             if type(service['ticks']) is not int or service['ticks'] < 1:
@@ -616,12 +629,18 @@ class Model:
             raise ValueError('FFN load edges require all three retirement lanes')
 
     def wire_cost(self, nets):
-        return sum(self.nets[n]['cost'] for n in nets - self.fixed)
+        from event_deploy import demand_closure
+
+        return sum(self.nets[n]['cost'] for n in demand_closure(self.nets, nets | self.fixed) - self.fixed)
 
     def add_nets(self, state, nets):
+        from event_deploy import demand_closure
+
         combined = state.nets | frozenset(nets)
-        if (any(pair <= combined | self.fixed for pair in self.conflicts)
-                or self.wire_budget is not None and self.wire_cost(combined) > self.wire_budget):
+        needed = demand_closure(self.nets, combined | self.fixed)
+        if (needed & self.excluded_nets or any(pair <= needed for pair in self.conflicts)
+                or self.wire_budget is not None and sum(self.nets[n]['cost'] for n in needed - self.fixed) > self.wire_budget
+                or self.route_admission is not None and not self.route_admission(frozenset(needed))):
             raise Infeasible('static net conflict or budget')
         return replace(state, nets=combined)
 
@@ -779,6 +798,13 @@ class Model:
         state = self.add_nets(state, binding['nets'])
         for stage in binding['event_stages']:
             service = self.services[stage['service']]
+            if stage['service'] in self.unqualified_services:
+                raise Infeasible('stage has no qualified interface')
+            if self.product_interfaces:
+                from event_physical_contract import stage_is_local
+
+                if not stage_is_local(self.windows, service, stage):
+                    raise Infeasible('stage operand is outside its control site')
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
             for window, value in inputs.items():
                 state = self.ensure(state, window, value, ready, protected | remaining.keys(), events,

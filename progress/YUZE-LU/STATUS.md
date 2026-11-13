@@ -1,6 +1,6 @@
 # YUZE-LU 的进度
 
-2026-11-14 CST。#219 的框架分支已跑通 tile 交接与同池 DDR 排序反转，并让类型化图通过快照计划同时输出控制和布线 IR。算法 2 当前入口验证通过。#260 封存程序通过 CALL 审计和一页 TLM 回放。九组真实底座准入、全图原生编码和同计划完整请求仍待验证。详见[远程回执与剩余缺口](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md)。
+2026-11-14 CST。#219 的框架分支已跑通 tile 交接、同池 DDR 排序反转及 Qwen2.5-3B B1/S2 无 KV 完整图编译。两种搜索宽度在三组真实输入上逐位核对 logits。当前算法 2 读取旧候选底座的整图交接和两 U 真实端点用例。#260 归档 linker 用新 Algo1 计划生成一段三 P SwiGLU 原生程序，192 次 CALL 的控制和描述符与参考逐字节一致。Block V2 九组加 MC06 准入、同计划完整请求和持续 KV 退休仍待验证。详见[远程回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md)。
 
 2026-11-13 CST。#219 第 51 轮将 #251 SRAM feeder 的回传槽、宽窄口仲裁和 READY 纳入 DP 快照。8 组归档 RTL 的 43 个访问完成拍一致，900 组远程压力对照及 395 项回归通过。深度 8 的两层同池对照也保住早读选择。FFN 分段外存需求已提取，分支内 FFN 竞争计价及历史裁剪仍待接入。详见[芯片状态计价方案](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)。任务分支待汇入 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)。
 

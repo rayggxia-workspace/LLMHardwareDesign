@@ -17,7 +17,11 @@ def require(condition, message):
 
 
 def verify(tasks, hardware, plan, wire_budget=None):
+    from event_deploy import demand_closure
+    from event_physical_contract import stage_is_local
+
     spec = hardware['event_model']
+    interface_issues = [spec.get(name, {}) for name in ('logical_control_issues', 'physical_interface_issues')]
     timing = spec.get('timing', 'calendar')
     phased = timing in ('replay', 'snapshot')
     windows, sizes = spec['windows'], spec['value_bytes']
@@ -103,6 +107,8 @@ def verify(tasks, hardware, plan, wire_budget=None):
             if event['kind'] == 'move':
                 src, dst, value = event['src'], event['dst'], event['value']
                 route = spec['routes'][event['route']]
+                require(all(event['route'] not in issues.get('routes', {}) for issues in interface_issues),
+                        'route has no qualified interface')
                 if 'prefetch' in event:
                     require(event['prefetch'] is True and phased and stage_index > 0
                             and src == DDR and 'typed_dma' in route, 'invalid prefetch move')
@@ -129,6 +135,10 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 require('prefetch' not in event, 'prefetch marker belongs to a move')
                 require('dma_beats' not in event, 'typed DMA receipts belong to move routes')
                 service = spec['services'][stage['service']]
+                require(all(stage['service'] not in issues.get('services', {}) for issues in interface_issues),
+                        'stage has no qualified interface')
+                require('physical_interface_issues' not in spec or stage_is_local(windows, service, stage),
+                        'stage operand is outside its control site')
                 require(('sram_beats' in event) == ('sram_access' in service and timing == 'replay'),
                         'SRAM receipt coverage differs')
                 require(('activation' in event) == ('ffn_activation' in service), 'FFN activation receipt coverage differs')
@@ -256,8 +266,10 @@ def verify(tasks, hardware, plan, wire_budget=None):
             require(0 <= occupied <= hardware['resources'][r], 'resource capacity exceeded')
         require(occupied == 0, 'unreleased resource reservation')
     fixed = {n for n, info in hardware['nets'].items() if info.get('fixed')}
-    wire_cost = sum(hardware['nets'][n]['cost'] for n in nets-fixed)
-    require(not any(set(pair) <= nets | fixed for pair in hardware.get('incompatible_nets', ()))
+    needed = demand_closure(hardware['nets'], nets | fixed)
+    wire_cost = sum(hardware['nets'][n]['cost'] for n in needed - fixed)
+    require(not needed.intersection(spec.get('excluded_nets', ()))
+            and not any(set(pair) <= needed for pair in hardware.get('incompatible_nets', ()))
             and (wire_budget is None or wire_cost <= wire_budget), 'static wire conflict or budget')
     makespan = max(ends.values(), default=0)
     require((makespan, total_read, total_write, sorted(nets), wire_cost) ==

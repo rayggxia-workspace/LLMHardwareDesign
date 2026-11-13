@@ -42,9 +42,9 @@
 
 快照分支接入了 #257 的控制、线束发射器和基于硬件配方的图 lowering。
 `run.py MODEL HARDWARE OUT --event-graph` 从类型化图生成计划、控制和线束需求。
-本轮以两节点图走完新编译路径与算法 2 入口。内部阶段的串行配方可以使用，任意阶段 DAG
-仍待合流。完成级等待可导出，无法由命令 ABI 表达的阶段边会被拒绝。下一步接入
-完整图配方、实际底座准入和原生链接，验证能独立确认的 native tile。产品计时以真实
+此前以两节点图走完新编译路径与算法 2 入口。内部阶段的串行配方可以使用，任意阶段 DAG
+仍待合流。完成级等待可导出，无法由命令 ABI 表达的阶段边会被拒绝。原生 tile 的
+独立确认仍待验证。产品计时以真实
 权重、自产 KV、合法程序、联合事务和 token 实际退休为验收。参考
 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)、
 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260)。
@@ -53,6 +53,52 @@
 摆位，算法 2 以 `--handoff` 检查新计划来源并通过 130 根实际端点线的几何校验。
 放置的组级源视图仅在候选范围接受，产品范围仍要求整体冻结视图。该候选来自旧 #230
 资源摆位，和 main 的 Block V2 九组加 MC06 目标属于不同物理版本。
+
+## 完整图入口和原生 linker 回归
+
+新增 `--event-native-program` 和 `--event-native-profiles`，复用 #257 的整型有限循环
+lowering。循环属于已资格化的服务，完整工作量、参与局控和资源租约进入同一个搜索。
+程序的模型 SHA、整数工作和外存区域均经检查。可通过 `--event-route-base`、`--event-route-catalog`
+和 `--event-control-fabric` 在试排时绑定接口。布线成本包含依赖线束闭包，缺接点的候选在
+搜索时排除。端点合同同时区分新增逐位连线、已有组内服务、以及仅到组边界的接口。
+
+编译成功后可直接从编译结果发布，无需重复提供派生的 IR 和已解析硬件。
+
+```text
+python publish_event_handoff.py RESULT CATALOG BASE RULES OUT --upper-router UPPER_ROUTER
+python UPPER_ROUTER/run.py OUT/algorithm2-input.json ROUTES --handoff OUT
+```
+
+Qwen2.5-3B 的 B1/S2 无 KV 回归覆盖 36 层，宽度 1、8 各执行 1083 次有限循环派发
+和 8850 条整数指令。用真实权重重新编译后，两种宽度各三组 logits 与独立整数参考逐位一致。
+在旧 #230 组级摆位上，完整图交接经 Algo2 `4ebd2a2fc` 读取，确认六项原生服务、四项外部
+边界和零根新增线。同版代码另用两 U 实例的 36 任务回归校验 130 根新增线。前者的外部接口
+仅到组边界，main 的 Block V2 九组加 MC06 仍需要同版本的控制、DMA 和完整顶层端点合同。
+109147 用 main 六份源 DEF 核对远端 packet 合同的 2613 条有向连接需求。九组和 MC06
+涉及的组级 BTerm 均匹配方向及 M10。合同还引用 `sw` 的 1509 个不同端点，而 main 这版
+候选摆位没有 `sw` 实例。该交叉检查只核对源端点，等待 Algo2 给出实际组装及控制实现。
+
+使用 #260 的真实 prefill 图、封存权重布局和归档 native linker，重编第一层选定的
+三 P SwiGLU scope。新 Algo1 的控制计划通过 192 次 CALL 链接，母控、三个局控镜像及描述符
+逐字节匹配独立保存的可执行参考。这次检验原生接口兼容性，选中的服务是单个强制绑定。
+全请求仍需把 P512/D128 的各阶段纳入同一份绑定、真实 DDR 地址和 KV 版本计划，再用 #260
+执行到 token 退休。不能把有限循环解释器的时间或这段二进制一致性用作吞吐。
+
+本轮远端目录为上述目录下的 `full-graph-zwl0Tr`。合并源及回执在 `merged-bmMd5X`。
+
+| 作业 | 结果 | 证据 SHA-256 |
+| --- | --- | --- |
+| 109108 | 整图重新编译及 6 次 logits 核验，`accepted/report.json` | `9c5d503bdacd41e894828860d3c52d828cf549364b04169f933fd67f99d8f5c9` |
+| 109123 | 两 U 的 130 根网通过当前 Algo2 | `55d57588587daf5a679516b353eb915cce6a274e3c5dec3399bc7e123205e2fe` |
+| 109124、109126 | 完整图发布与当前 Algo2 回读，`qwen-route.json` | `8381cff5de97fb51a2dd151354f735a0c94e22f96543b31117c52ed240c63507` |
+| 109135 | 192 次原生 CALL，`native-scope/scope-link.json` | `4d5f3dbbca761b73382251b18f7d1c039230e9e98f0643de1d15043c83726017` |
+| 109143 | 402 项回归通过，含当前 Algo2；`release-source.sha256` | `96cd55ab3b3d9487564f9a41f99caed249048afadb9033d40e73171d822b86e5` |
+| 109144 | 最终代码再编完整图及 6 次 logits 核验，`accepted-final/report.json` | `a4253b0c3ed56c3b785cf20d8f0a8d952e6db30d4f05595df0286229e4b6af43` |
+| 109147 | main 候选组 DEF 与 packet 控制端点核对，`v2-packet-endpoints.json` | `cea07799579bee486102a9352ddf417e63771ded90163e8f8f6a1b09f045d961` |
+
+109119/109120 最初用了旧端点检查器，109122 则发现原生资源声明尚未接入。更新检查器和
+接入声明后，109123/109124/109126 通过相应范围。109136 的缺接点负例保留了另一条
+合法 DDR 路径，109143 补上 DDR 线束需求后复测。
 
 ## 远程回执
 
