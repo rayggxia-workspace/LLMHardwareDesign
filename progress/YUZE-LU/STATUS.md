@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加同计划的原生编码与 #260 指令页交接。109741 在 main Block V2 加交换器的候选摆位上，用同一方案产出 730 根待布控制网，#260 读取器核对 192 条 CALL 和 64 组 WAIT，三 P 原生镜像与归档字节一致。109728 的 410 项回归通过。当前验证范围是控制端点与指令页，数据面和严格整图执行仍待接入。见[原生交接回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#同一计划交给-algo2-与-260-指令页读取器)。
+
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 接入现有 Algo2 的试布回执。Block V2 的 C0→U0 实际端点用例中，Algo1 将失败物理网追溯到对应逻辑需求并重搜；该用例无替代输入路径。另有替代搬运路径的回归验证重新生成同计划指令和线束。见[试布回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#algo2-试布回执与-algo1-重选)。
 
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 核对重编 #260 整包的 184,927 页及 8,273,243 次 CALL。已把 2,876,395 次原始描述符的 P/U 直接入口冲突接入 Algo1 搜索，并从真实 Gather 的命令行复现；409 项远端回归通过。匹配头部的调用仍需完整服务资格。下一步验证同底座的实际局控编码、数据面及 Algo2 布线。详见[准入证据](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#block-v2-直接描述符准入审计)。

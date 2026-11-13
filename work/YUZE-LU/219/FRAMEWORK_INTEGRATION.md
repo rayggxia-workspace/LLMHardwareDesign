@@ -419,3 +419,36 @@ Gather 和首个 RMS。每个位置的 Gather、gamma LOAD、RMS 由同一份计
 新增回归用同一个 Algo2 入口生成等价失败回执，并在具备替代路径的候选池中验证重选。
 结果走 DDR STORE/LOAD，各 16 B，计划散列变更，指令和布线重新从这个后继计划发布。
 测试也核对了更换底座和更换试布输入后的拒绝行为。
+
+## 同一计划交给 Algo2 与 #260 指令页读取器
+
+`link_event_deployment.link_verified_event` 从已选的 Event IR、方案和底座独立重建控制与线束，
+再按目标和 provider 契约检查编码器实际产出的每次调用。比较内容包括调用数、有序的
+(schema, ABI, opcode) 以及每条调用的完成条件。通过后交给归档的原生 linker 做 CRC、
+拓扑、目标和原生等待检查。原生链路与 Algo2 交接使用同一个计划和底座。
+`export_native_tlm_pages.write_tlm_page_tables` 用 #260 的 PM 格式读回并封存母控页、
+目标掩码、描述符地址范围和字节，拒绝 DDR 地址重叠及描述符来源偏差。
+
+远端作业 109741 从真实模型首层三 P FFN 的归档 scope 重新编译。选择 P0/P1/P2，
+使用基于 main Block V2 摆位、额外放置包交换器的候选底座。交换器将全局目标 0/1/2
+分别重绑定到各 P 的本地目标 0。该用例按 P 的 stream-A16 命令入口建立研究用清单。
+该清单只用于 interface 范围。三个局控镜像、母控镜像及 24,576 B 描述符与归档字节完全一致。
+Algo2 的实际 handoff 读取器接受 975 个位成员和 730 根待布控制网。
+由 #260 `1ea06be2` 字节一致的 `export_tlm_mother_program.py`、`replay_tlm_mother.py`、
+`native_tlm_local.py`、`native_program_runtime.py` 独立读回 1 页、192 次 CALL、64 组 WAIT，
+核对每次目标、地址和描述符校验，属于无计时编码检查。七个故障注入均按预期拒绝。
+
+| 远端产物，位于 `framework-r11-CatJ8r/native-same-plan-109741/` | SHA-256 |
+| --- | --- |
+| `summary.json` | `3c6158a91c09f3909f6131d22d5c6de1d191dfe10a7c3ec133685ecf36e4f8b9` |
+| `handoff.json` | `28e1c4737d444932d901db120e19ee6b9ed0ff5818332bc7365ef63ab2b6f402` |
+| `algorithm2-input.json` | `312813c949ffef72e9c51f383e3ddffe5c9b0e80e6e19a2a6c06dafe316b6958` |
+| `native-route-requirements.json` | `0927cd27682ed3c66aad6216d46875fb6137aadb485fd1f0fc228ed6279dd366` |
+| `tlm-pages/proof.sha256` | `756044049a470207268a3e6bfcf7207a21649c3086099c77d43c6ea3c7b9480d` |
+
+回归作业 109728 通过 410 项测试和项目管理结构检查。默认网格的实际试布 109733
+接收相同 handoff，730 根网均报未找到网格接入。试验回执 `native-route-109733.json` 的
+SHA-256 为 `da71d1ab752e973bb1c94265f63309020f68c8e0ab7bcd6c0416c19094870fa4`。
+物理后续使用同一份输入测试细接入网格。样本的 WAIT 以整个 scope 的结束为单位。
+scope 内的 K128 输入窗口交付、权重 DMA、Gate/Up 到 Mid 的阶段协作、主控装载和确认网络
+还须在 main 共同底座上落地；整图服务、KV 追加及真实 token 退休仍需完整 #260 请求执行。
