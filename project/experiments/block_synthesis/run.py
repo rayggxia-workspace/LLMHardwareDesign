@@ -50,7 +50,7 @@ def compile_model(model, hardware, *, budget=None, seconds=30, rounds=4, cover_l
                            'native_dma_replay_required': False, 'physical_routing_required': False}}
 
 
-def compile_event_ir(model, hardware, *, budget=None, width=8):
+def compile_event_ir(model, hardware, *, budget=None, width=8, emit_dependencies=False):
     from cover_frontier import search
     from verify_cover_frontier import verify as verify_events
 
@@ -61,6 +61,9 @@ def compile_event_ir(model, hardware, *, budget=None, width=8):
     result = {'status': plan['status'], 'plan': plan, 'scope': 'qualified event IR and schedule'}
     if plan['status'] == 'planned':
         result['verification'] = verify_events(tasks, hardware, covers, plan, wire_budget=budget)
+        if emit_dependencies:
+            from event_replay_plan import dependency_program
+            result['phase_dependencies'] = dependency_program(tasks, hardware, covers, plan)
     return result
 
 
@@ -72,6 +75,8 @@ def main():
     p.add_argument('--audit-only', action='store_true')
     p.add_argument('--lowered', action='store_true', help='internal tile IR, not a second author-maintained model format')
     p.add_argument('--event-ir', action='store_true', help='plan an internal IR with qualified event stages')
+    p.add_argument('--event-dependencies', action='store_true',
+                   help='export phase waits from an event replay or snapshot plan')
     p.add_argument('--event-width', type=int, default=8, help='beam width for --event-ir, 1 for singleton greedy')
     p.add_argument('--wire-budget', type=int)
     p.add_argument('--seconds', type=float, default=30)
@@ -81,15 +86,20 @@ def main():
     a = p.parse_args()
     if a.event_ir and (a.audit_only or a.lowered or a.model.suffix == '.onnx'):
         p.error('--event-ir requires event IR JSON and is incompatible with --audit-only and --lowered')
-    a.output.mkdir(exist_ok=False)
+    if a.event_dependencies and not a.event_ir:
+        p.error('--event-dependencies requires --event-ir')
     hardware = json.loads(a.hardware.read_text())
+    if a.event_dependencies and hardware.get('event_model', {}).get('timing') not in ('replay', 'snapshot'):
+        p.error('--event-dependencies requires replay or snapshot timing')
+    a.output.mkdir(exist_ok=False)
     model = import_onnx(a.model) if a.model.suffix == '.onnx' else json.loads(a.model.read_text())
     if a.lowered:
         model['lowered'] = True
     began = time.monotonic()
     write(a.output / 'imported.json', model)
     if a.event_ir:
-        result = compile_event_ir(model, hardware, budget=a.wire_budget, width=a.event_width)
+        result = compile_event_ir(model, hardware, budget=a.wire_budget, width=a.event_width,
+                                  emit_dependencies=a.event_dependencies)
     else:
         coverage = audit(model, hardware)
         write(a.output / 'coverage.json', coverage)
@@ -107,7 +117,8 @@ def main():
                            if a.event_ir else
                            'minimize elapsed ticks; then external words and static net cost; optional hard wire budget')
     write(a.output / 'result.json', result)
-    print(json.dumps({k: v for k, v in result.items() if k not in ('graph', 'plan')}, ensure_ascii=False))
+    print(json.dumps({k: v for k, v in result.items() if k not in ('graph', 'plan', 'phase_dependencies')},
+                     ensure_ascii=False))
 
 
 if __name__ == '__main__':

@@ -3,9 +3,9 @@ from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass, replace
 
 from dma_read import receipt_json
-from event_execution import (Copy, DDR, PhaseEdge, capacity_profile, input_phase_intervals, scratch_overwrites,
+from event_execution import (Copy, DDR, Model, PhaseEdge, capacity_profile, input_phase_intervals, phase_edges, scratch_overwrites,
                              window_phase_indices)
-from event_replay import Operation, Phase, replay_branch
+from event_replay import Operation, Phase, phase_dependencies, replay_branch
 from ffn_mid import MidTile
 from ffn_program_cost import Program
 from snapshot_cost import ClientResponse
@@ -31,6 +31,40 @@ def accesses(event):
     if event['kind'] == 'stage':
         return event['inputs'], event['outputs']
     return {event['src']: event['value']}, {event['dst']: event['value']}
+
+
+def dependency_program(tasks, hardware, covers, plan):
+    """Export the waits selected by the planner for use by a target encoder.
+
+    An operation's internal phase order belongs to its registered service.
+    Cross-operation edges need an observable event or an equivalent ordering
+    guarantee from the target ABI before this program can be encoded.
+    """
+    from verify_cover_frontier import project
+
+    projected, _ = project(tasks, covers, plan)
+    decisions = [Decision(row, frozenset(task['after']), phase_edges(task))
+                 for task, row in zip(projected, plan['tasks'])]
+    operations = intents(Model(hardware), decisions)
+    records = []
+    for row in plan['tasks']:
+        for event in row['evaluation']['events']:
+            index = len(records)
+            operation = operations[index]
+            records.append({
+                'id': index,
+                'task': row['id'],
+                'kind': event['kind'],
+                'target': event['service'] if event['kind'] == 'stage' else event['route'],
+                'phases': [
+                    {'event': phase.name,
+                     'wait_for': [list(parent) for parent in sorted(phase_dependencies(operations, index, step))
+                                  if parent[0] != index]}
+                    for step, phase in enumerate(operation.phases)
+                ],
+                'activation_after': [list(parent) for parent in operation.activation_after],
+            })
+    return {'schema': 'algo1-phase-dependencies/1', 'operations': records}
 
 
 def event_operation(model, event):
