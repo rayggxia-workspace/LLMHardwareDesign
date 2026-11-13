@@ -322,14 +322,15 @@ def route_admission(hardware, base, contract, *, product=False):
     return admitted
 
 
-def bind_routes(wiring, hardware, base, elaborate, verify=None):
+def bind_routes(wiring, hardware, base, elaborate, verify=None, *, catalog=None):
     """Hand a selected event graph to the existing route-contract elaborator."""
     if wiring.get('schema') != 'block-event-demands/1' or wiring['source']['hardware_sha256'] != digest(hardware):
         raise ValueError('router input is not bound to this selected event hardware')
     if 'physical_base_sha256' in wiring['source'] and wiring['source']['physical_base_sha256'] != digest(base):
         raise ValueError('router input is not bound to this physical base')
-    catalog = route_catalog(hardware)
-    request = elaborate(wiring['users'],catalog,base,wiring['source'])
+    if catalog is None:
+        catalog = route_catalog(hardware)
+    request = elaborate(wiring['users'], catalog, base, wiring['source'])
     if request['members'] != wiring['members'] or request['dependencies'] != wiring['dependencies']:
         raise ValueError('router expansion differs from selected event endpoint demands')
     if verify is not None:

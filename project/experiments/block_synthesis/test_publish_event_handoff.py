@@ -9,7 +9,7 @@ import unittest
 
 from cover_frontier import search
 from publish_event_handoff import build, source_identity
-from route_contract import elaborate
+from route_contract import elaborate, verify_requirements
 from test_event_execution import binding, hardware, stage, task
 
 
@@ -175,8 +175,19 @@ class HandoffTest(unittest.TestCase):
         pack = build(model, result['resolved_hardware'], result['plan'], catalog, base, rules,
                      bind_request, source_outputs=result['outputs'])
         self.assertEqual(set(pack['wiring']['users']), {'P0-P1', 'credit', 'reset', 'resident-control'})
-        self.assertEqual(pack['handoff']['source']['plan_sha256'],
-                         result['outputs']['program']['source']['plan_sha256'])
+        native = pack['native-route-requirements']
+        wiring = result['outputs']['wiring']
+        self.assertEqual(pack['handoff']['source']['plan_sha256'], native['source']['plan_sha256'])
+        self.assertEqual(native['source'], result['outputs']['program']['source'])
+        self.assertEqual(native['sha256'], pack['handoff']['native_route_request_sha256'])
+        self.assertEqual(native['members'], wiring['members'])
+        self.assertEqual(native['dependencies'], wiring['dependencies'])
+        self.assertEqual(set(native['users']), {'P0-P1', 'credit', 'reset'})
+        for field in ('catalog_sha256', 'base_sha256'):
+            self.assertEqual(native[field], pack['requirements'][field])
+        verify_requirements(native, wiring['users'], catalog, base, wiring['source'])
+        with self.assertRaisesRegex(ValueError, 'route request differs'):
+            verify_requirements(pack['requirements'], wiring['users'], catalog, base, wiring['source'])
         broken = deepcopy(result['plan'])
         broken['nets'].remove('reset')
         with self.assertRaisesRegex(ValueError, 'event plan summary differs'):

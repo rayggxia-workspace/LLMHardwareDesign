@@ -185,6 +185,29 @@ Algo1 的搜索现在可以读取底座中的 `native_service_routes`。候选�
 接入声明后，109123/109124/109126 通过相应范围。109136 的缺接点负例保留了另一条
 合法 DDR 路径，109143 补上 DDR 线束需求后复测。
 
+## 同一计划的原生端点凭据
+
+绑定物理底座的编译结果现在同时导出 `requirements.json` 和
+`native-route-requirements.json`。Algo2 继续读取现有交接文件，其中包含固定底座需求。
+原生 linker 的 `route_binding` 接受后者、同一目录输入中的 catalog 和 base，以及
+`route_contract.verify_requirements`。原生凭据只包含被选命令及其传递线束需求，
+来源字段与 control IR 一致。两个文件的计划、硬件、底座和 catalog 散列一致，
+交接清单的 `native_route_request_sha256` 记录原生凭据的校验值。
+该凭据仅证明端点绑定，仍须使用目标实际服务路由核验可执行性。
+
+远端在 `native-request-6WI0tH/v2-candidate-dual-receipt` 复用真实 prefill Gather。
+原生 linker 拒绝直接传入 Algo2 需求文件，读取原生端点凭据后生成的母控、局控和
+描述符仍与参考逐字节一致。Algo2 通过交接校验，含 431 根待布控制线。
+109446 首次读取时，试验脚本生成的文件名缺少 `.json` 后缀；109448 纠正命名后
+用同一产物验证两个后端。候选交换器位置仍为此前的研究假设，U39 的 Gather
+服务拒绝证据仍适用。
+
+| 作业 | 结果 | 证据 SHA-256 |
+| --- | --- | --- |
+| 109447 | 406 项回归通过，`framework-reg-109447.log` | `f4ebfacceea0e18a157e11813e594c155054cebb876aec6d2dafd63f3fe63fae` |
+| 109448 | Algo2 交接和原生凭据读回，`v2-dual-read-109448.log` | `92dc0b5c47c361b308555c76d754f17e48a2b6151d32bb82aa7fdf12570bd709` |
+| 109446 | 原生负对照与三份镜像一致性通过，`native/deployment.json` | `39c9ac67025f1fbb136c7bbf4049526c34dfa6ee5371722e6042f8b975eb426e` |
+
 ## 远程回执
 
 目录 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em`。

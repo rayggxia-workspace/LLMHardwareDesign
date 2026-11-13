@@ -1,4 +1,4 @@
-"""Publish verified Algo1 events and source-bound images for Algo2."""
+"""Publish one verified Algo1 schedule for routing and native linking."""
 import argparse
 import hashlib
 import json
@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 
 from route_contract import digest, elaborate, read_base, require, verify_requirements
-from event_deploy import attach_route_catalog, emit
+from event_deploy import attach_route_catalog, bind_routes, emit
 from verify_cover_frontier import verify
 
 
@@ -114,8 +114,19 @@ def build(model, hardware, plan, catalog, base, rules, bind_request, *,
                'coverage': {'new_signal_nets': sum(bool(net['sinks']) for net in spec['nets']),
                             'static_bit_members': len(request['members']), 'control_images': len(images)},
                'physical_qualified': False}
-    return {'handoff': receipt, 'program': program, 'wiring': wiring,
-            'requirements': request, 'algorithm2-input': spec}
+    files = {'handoff': receipt, 'program': program, 'wiring': wiring,
+             'requirements': request, 'algorithm2-input': spec}
+    if physical_base is not None:
+        native_request = bind_routes(generated['wiring'], resolved, base, elaborate,
+                                     verify_requirements, catalog=catalog)
+        require(native_request['status'] == 'endpoint_binding_complete',
+                'unbound native endpoint demands')
+        routing_users = request['users']
+        require(all(routing_users.get(name) == uses for name, uses in native_request['users'].items()),
+                'native command demands differ from the routing handoff')
+        receipt['native_route_request_sha256'] = native_request['sha256']
+        files['native-route-requirements'] = native_request
+    return files
 
 
 def main():
