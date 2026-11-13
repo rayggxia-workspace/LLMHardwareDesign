@@ -188,6 +188,144 @@ class EventExecutionTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'resource capacity'):
             verify([a, b], h, (), bad)
 
+    def test_does_not_discard_wired_route_in_full_graph(self):
+        h = hardware()
+        spec = h['event_model']
+        h['nets']['preferred-now'] = {'cost': 1}
+        spec['routes']['preferred-now'] = {**spec['routes']['direct'], 'setup': 0,
+                                          'nets': ['preferred-now']}
+        spec['services']['final'] = {**spec['services']['consume'], 'nets': ['P0-P1']}
+        spec['value_bytes'].update({f'x{i}':16 for i in range(36)})
+        tasks = []
+        for i in range(36):
+            make, use = f'make{i}', f'use{i}'
+            tasks.append(task(make, binding('make', stage('produce', outputs={'source':f'x{i}'})),
+                              after=(f'use{i-1}',) if i else ()))
+            output = {'result':'y'} if i == 35 else None
+            tasks.append(task(use, binding('use', stage('final' if i == 35 else 'consume',
+                                                       inputs={'input':f'x{i}'}, outputs=output)), after=(make,)))
+        plan = search(tasks, h, width=8, wire_budget=1)
+        self.assertTrue(verify(tasks,h,(),plan,wire_budget=1)['passed'])
+        self.assertEqual(plan['nets'], ['P0-P1'])
+        self.assertEqual(plan['makespan'], 36*12)
+
+    def test_ddr_credit_uses_window_after_phase_wait_shrinks(self):
+        h = hardware(resident=False)
+        h['resources']['issue'] = 1
+        h['event_model']['initial_backing'] = ['x']
+        h['event_model']['routes']['DDR-to-S1'].update(
+            claims={'DDR.bus':1},
+            phases={'issue':{'ticks':2,'claims':{'issue':1}}, 'ack':{'ticks':1,'claims':{'S1':1}},
+                    'hold_claims':{'DDR.credit':1}})
+        model = Model(h)
+        for first_end in (8,12,16):
+            for gap in (8,9,10):
+                for second_duration in (6,8,10):
+                    state, _, _ = model.book(model.initial, {'DDR.credit':1}, 0, first_end)
+                    state, _, _ = model.book(state, {'DDR.credit':1}, first_end+gap, second_duration)
+                    state, _, _ = model.book(state, {'DDR.bus':1}, 0, first_end+1)
+                    _, event = model.move(state, 'x', 'DDR', 'input', 0, 'DDR-to-S1')
+                    self.assertEqual((event['start'],event['end']), (first_end,first_end+7))
+
+    def test_full_36_layer_route_and_compute_capacity(self):
+        h = hardware()
+        spec = h['event_model']
+        h['nets']['fast'] = {'cost': 1}
+        h['resources']['compute-credit'] = 2
+        spec['routes']['fast'] = {**spec['routes']['direct'], 'setup': 0, 'nets': ['fast']}
+        spec['services'].update(
+            left={'ticks': 8, 'claims': {'M0': 1, 'compute-credit': 1}},
+            right={'ticks': 8, 'claims': {'M1': 1, 'compute-credit': 1}},
+            join={'ticks': 8, 'claims': {'M1': 1, 'S1': 1}},
+            terminal={'ticks': 8, 'claims': {'M1': 1, 'S1': 1}, 'nets': ['P0-P1']},
+        )
+        tasks = []
+        for layer in range(36):
+            source = f'x{layer}'
+            left, right, join = f'left{layer}', f'right{layer}', f'join{layer}'
+            parents = (f'join{layer-1}',) if layer else ()
+            spec['value_bytes'][source] = 16
+            tasks.extend((
+                task(left, binding(left, stage('left', outputs={'source': source})), after=parents),
+                task(right, binding(right, stage('right')), after=parents),
+                task(join, binding(join, stage('terminal' if layer == 35 else 'join',
+                     inputs={'input': source}, outputs={'result': 'y'} if layer == 35 else None)),
+                     after=(left, right)),
+            ))
+        for capacity, expected in ((2, 720), (1, 1008)):
+            with self.subTest(capacity=capacity):
+                h['resources']['compute-credit'] = capacity
+                plan = search(tasks, h, width=8, wire_budget=1)
+                self.assertEqual(plan['makespan'], expected)
+                self.assertEqual(plan['nets'], ['P0-P1'])
+                self.assertEqual((plan['external_read_bytes'], plan['external_write_bytes']), (0, 0))
+                self.assertTrue(verify(tasks, h, (), plan, wire_budget=1)['passed'])
+
+    def test_complete_stage_cost_and_parallel_credit_limit(self):
+        h = hardware()
+        spec = h['event_model']
+        spec['initial_copies'] = {'source':'x'}
+        spec['initial_backing'] = ['x']
+        h['resources']['credit'] = 2
+        h['resources']['independent'] = 1
+        spec['services'].update(
+            slow={'ticks':20,'claims':{'independent':1, 'credit':1}},
+            consume={'ticks':3,'claims':{'M1':1, 'S1':1, 'credit':1}},
+        )
+        spec['routes']['direct']['setup'] = 7
+        left = dict(stage('slow'), id='left')
+        right = dict(stage('consume', inputs={'input':'x'}, outputs={'result':'y'}), id='right')
+        parallel = binding('parallel', left, right)
+        tasks = [task('pair',parallel)]
+        plan = search(tasks,h)
+        verify(tasks,h,(),plan)
+        self.assertEqual(plan['makespan'],20)
+
+        right['after'] = ['left']
+        h['resources']['credit'] = 1
+        serial = search(tasks,h)
+        verify(tasks,h,(),serial)
+        self.assertEqual(serial['makespan'],27)
+
+        # A second input gates the same stage. The early DDR arrival buys no time.
+        spec['initial_copies']['other'] = 'z'
+        spec['initial_backing'].append('z')
+        spec['windows']['z_in'] = {'site':'P1','offset':32,'bytes':16}
+        h['sites']['P1']['bytes'] = 48
+        spec['windows']['other']['site'] = 'P2'
+        spec['windows']['other']['offset'] = 0
+        h['sites']['P2'] = {'words':1,'bytes':16}
+        spec['routes']['z_onchip'] = {'src':'P2','dst':'P1','setup':20,'bytes_per_tick':8,
+                                     'claims':{'independent':1}}
+        # The hardware serves this value only on its dedicated on-chip path.
+        spec['initial_backing'].remove('z')
+        right['inputs']['z_in'] = 'z'
+        right.pop('after')
+        tasks = [task('pair',binding('only-right',right))]
+        plan = search(tasks,h,width=None,ready_limit=None)
+        verify(tasks,h,(),plan)
+        self.assertEqual((plan['makespan'],plan['external_read_bytes']), (25,0))
+        plan['tasks'][0]['site'] = 'INVALID-P999'
+        with self.assertRaisesRegex(ValueError,'dispatch site'):
+            verify(tasks,h,(),plan)
+
+    def test_dominance_keeps_less_traffic_when_later_work_hides_time_lead(self):
+        h = hardware()
+        h['event_model']['live_out'] = []
+        h['event_model']['services'].update({
+            'fast':{'ticks':2,'claims':{'DDR.bus':1},'read_bytes':16},
+            'slow-start':{'ticks':2,'claims':{'DDR.bus':1}},
+            'slow-finish':{'ticks':3,'claims':{}},
+            'critical':{'ticks':10,'claims':{'M1':1}},
+        })
+        a = task('a',binding('fast',stage('fast')),binding('slow',stage('slow-start'),stage('slow-finish')))
+        for candidate in a['bindings']:
+            candidate['ticks'] = 2
+        tasks = [a,task('b',binding('critical',stage('critical')))]
+        plan = search(tasks,h,width=None,ready_limit=1)
+        verify(tasks,h,(),plan)
+        self.assertEqual((plan['makespan'],plan['external_read_bytes']), (10,0))
+
 
 if __name__ == '__main__':
     unittest.main()

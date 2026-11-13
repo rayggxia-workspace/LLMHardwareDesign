@@ -1,39 +1,16 @@
 """Publish verified Algo1 events and source-bound images for Algo2."""
 import argparse
-from collections import defaultdict
 import hashlib
 import json
 from pathlib import Path
 import sys
 
 from route_contract import digest, elaborate, read_base, require, verify_requirements
-from verify_cover_frontier import project, verify
+from event_deploy import attach_route_catalog, emit
+from verify_cover_frontier import verify
 
 
 SCHEMA = 'algo1-handoff/1'
-
-
-def selection(model, hardware, plan, wire_budget):
-    """Identify binding, physical service and move demand users."""
-    tasks, covers = model['tasks'], model.get('covers', ())
-    verify(tasks, hardware, covers, plan, wire_budget=wire_budget)
-    actions, _ = project(tasks, covers, plan)
-    users = defaultdict(list)
-    spec = hardware['event_model']
-    for action, row in zip(actions, plan['tasks']):
-        (binding,) = action['bindings']
-        observed = set(binding['nets'])
-        for event in row['evaluation']['events']:
-            records = spec['routes'] if event['kind'] == 'move' else spec['services']
-            key = 'route' if event['kind'] == 'move' else 'service'
-            observed.update(records[event[key]].get('nets', ()))
-        for name in sorted(observed):
-            users[name].append({'task_id': row['id'], 'binding_id': row['binding']})
-    require(set(users) == set(plan['nets']), 'verified schedule and extracted static nets differ')
-    for name, net in hardware['nets'].items():
-        if net.get('fixed'):
-            users.setdefault(name, [])
-    return dict(users)
 
 
 def source_identity(model, hardware, plan):
@@ -78,11 +55,25 @@ def program_images(manifest, source, hardware, artifact_root):
 
 
 def build(model, hardware, plan, catalog, base, rules, bind_request, *,
-          route_scope='interface', manifest=None, artifact_root=None, wire_budget=None):
+          route_scope='interface', manifest=None, artifact_root=None, wire_budget=None,
+          source_outputs=None):
     require(route_scope in {'interface', 'product'}, 'unknown handoff scope')
     require(plan.get('status') == 'planned', 'handoff requires a planned event schedule')
     source = source_identity(model, hardware, plan)
-    users = selection(model, hardware, plan, wire_budget)
+    tasks, covers = model['tasks'], model.get('covers', ())
+    verify(tasks, hardware, covers, plan, wire_budget=wire_budget)
+    resolved = attach_route_catalog(hardware, catalog)
+    command_source = source_outputs['program']['source'] if source_outputs else {}
+    physical_base = command_source.get('physical_base_sha256')
+    require(physical_base is None or physical_base == digest(base), 'schedule used a different physical base')
+    generated = emit(tasks, resolved, covers, plan, physical_base_sha256=physical_base)
+    if source_outputs is not None:
+        require(resolved == hardware and source_outputs == generated,
+                'command and wiring outputs differ from the verified schedule')
+    users = dict(generated['wiring']['users'])
+    for name, net in resolved['nets'].items():
+        if net.get('fixed'):
+            users.setdefault(name, [])
     request = elaborate(users, catalog, base, source)
     verify_requirements(request, users, catalog, base, source)
     require(not request['unresolved'], 'unbound physical demands: ' + str(request['unresolved']))
@@ -99,7 +90,7 @@ def build(model, hardware, plan, catalog, base, rules, bind_request, *,
     spec = bind_request(request, base, rules['technology'], rules.get('obstacles', []))
     program = {'schema_version': SCHEMA, 'source': source,
                'kind': 'target_control_images' if product else 'scheduled_event_ir',
-               'decisions': plan['tasks'],
+               'decisions': plan['tasks'], 'control_ir': generated['program'],
                'topology_id': hardware.get('program_target', {}).get('topology_id'),
                'images': images, 'native_execution_qualified': False}
     wiring = {'schema_version': SCHEMA, 'source': source, 'members': request['members'],
@@ -122,7 +113,7 @@ def main():
         parser.add_argument(name, type=Path)
     parser.add_argument('--scope', choices=('interface', 'product'), default='interface')
     parser.add_argument('--control-images', type=Path)
-    parser.add_argument('--wire-budget', type=int)
+    parser.add_argument('--wire-budget', type=int, help='override the budget recorded in the compiler result')
     parser.add_argument('--upper-router', type=Path,
                         default=Path(__file__).resolve().parents[1] / 'upper_router',
                         help='directory containing the Algorithm 2 adapter.py')
@@ -140,10 +131,14 @@ def main():
         require(result.get('status') == 'planned', 'handoff requires a planned event schedule')
         base = read_base(args.base)
         manifest = load(args.control_images) if args.control_images else None
+        if 'event_ir' in result:
+            require(model == result['event_ir'], 'provided event IR differs from compiler output')
+        hardware = result.get('resolved_hardware', hardware)
+        budget = args.wire_budget if args.wire_budget is not None else result.get('wire_budget')
         files = build(model, hardware, result['plan'], load(args.catalog), base, load(args.rules), bind_request,
                       route_scope=args.scope, manifest=manifest,
                       artifact_root=args.control_images.parent if manifest is not None else None,
-                      wire_budget=args.wire_budget)
+                      wire_budget=budget, source_outputs=result.get('outputs'))
         args.output.mkdir(exist_ok=False)
         for name, data in files.items():
             (args.output / (name + '.json')).write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n',

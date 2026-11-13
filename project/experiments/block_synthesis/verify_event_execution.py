@@ -16,6 +16,8 @@ def require(condition, message):
 
 def verify(tasks, hardware, plan, wire_budget=None):
     spec = hardware['event_model']
+    interface_issues = spec.get('physical_interface_issues', {})
+    logical_issues = spec.get('logical_control_issues', {})
     windows, sizes = spec['windows'], spec['value_bytes']
     reservations, reads, writes = defaultdict(list), defaultdict(list), defaultdict(list)
     backing = dict.fromkeys(spec.get('initial_backing', ()), 0)
@@ -65,12 +67,20 @@ def verify(tasks, hardware, plan, wire_budget=None):
         require(task['id'] not in ends and all(p in ends for p in task.get('after', ())),
                 'event task order differs')
         (binding,) = [b for b in task['bindings'] if b['id'] == row['binding']]
+        require(row.get('site') == binding['site'] and binding['site'] in hardware['sites'],
+                'event dispatch site differs')
         nets.update(binding['nets'])
         boundary = max((ends[p] for p in task.get('after', ())), default=0)
         detail = row['evaluation']
         events = detail['events']
         require(bool(events), 'empty event trace')
-        stages = iter(binding['event_stages'])
+        recipe = binding['event_stages']
+        parallel = any('id' in stage or 'after' in stage for stage in recipe)
+        remaining = {stage['id']: stage for stage in recipe} if parallel else {}
+        if parallel:
+            require(len(remaining) == len(recipe), 'duplicate native stage ID')
+        stages = iter(()) if parallel else iter(recipe)
+        stage_ends = {}
         pending_moves, local_read, local_write = [], 0, 0
         for event in events:
             start, end = event['start'], event['end']
@@ -78,6 +88,8 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     'invalid event interval or prerequisite')
             if event['kind'] == 'move':
                 src, dst, value = event['src'], event['dst'], event['value']
+                require(event['route'] not in interface_issues.get('routes', {})
+                        and event['route'] not in logical_issues.get('routes', {}), 'unqualified route interface')
                 route = spec['routes'][event['route']]
                 require(src != dst and route['src'] == (DDR if src == DDR else windows[src]['site'])
                         and route['dst'] == (DDR if dst == DDR else windows[dst]['site']),
@@ -96,10 +108,28 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     access(writes, dst, value, start, end)
                 pending_moves.append(event)
             else:
-                stage = next(stages, None)
+                name = event.get('stage_id')
+                stage = remaining.pop(name, None) if parallel else next(stages, None)
                 require(event['kind'] == 'stage' and stage and event['service'] == stage['service'],
                         'native stage identity or order differs')
+                if parallel:
+                    parents = stage.get('after', ())
+                    require(all(parent in stage_ends for parent in parents), 'native stage prerequisite missing')
+                    earliest = max((stage_ends[parent] for parent in parents), default=boundary)
+                    require(start >= earliest and all(move.get('stage_id') == name and move['start'] >= earliest
+                                                      for move in pending_moves),
+                            'native stage or transfer precedes its prerequisite')
+                    stage_ends[name] = end
+                else:
+                    require(name is None and all('stage_id' not in move for move in pending_moves),
+                            'unexpected stage identity on serial service')
                 service = spec['services'][stage['service']]
+                require(stage['service'] not in interface_issues.get('services', {})
+                        and stage['service'] not in logical_issues.get('services', {}), 'unqualified service interface')
+                if 'physical_interface_issues' in spec:
+                    from event_physical_contract import stage_is_local
+
+                    require(stage_is_local(windows, service, stage), 'physical service operands cross control sites')
                 inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
                 require(end-start == service['ticks'] and event['inputs'] == inputs
                         and event['outputs'] == outputs, 'native stage service or values differ')
@@ -121,18 +151,33 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 for w, value in outputs.items():
                     access(writes, w, value, start, end)
                 claim(service, start, end)
-                local_read += service.get('read_bytes', 0)
+                indexed = service.get('indexed_read')
+                if indexed:
+                    length = indexed['indices'] * indexed['row_words'] * 16
+                    require(indexed['table'] in spec.get('initial_backing', ())
+                            and sizes[indexed['table']] == indexed['rows'] * indexed['row_words'] * 16
+                            and len(inputs) == len(outputs) == 1
+                            and sizes[next(iter(inputs.values()))] == indexed['indices'] * indexed['index_bits'] // 8
+                            and sizes[next(iter(outputs.values()))] == length
+                            and service.get('read_bytes') == length,
+                            'indexed read contract or traffic differs')
+                    local_read += length
+                else:
+                    local_read += service.get('read_bytes', 0)
                 local_write += service.get('write_bytes', 0)
-                boundary = end
+                if not parallel:
+                    boundary = end
                 pending_moves.clear()
-        require(not pending_moves and next(stages, None) is None, 'incomplete native stage sequence')
-        require(row['start'] == min(e['start'] for e in events) and row['end'] == boundary,
+        require(not pending_moves and not remaining and next(stages, None) is None,
+                'incomplete native stage sequence')
+        finished = max(stage_ends.values()) if parallel else boundary
+        require(row['start'] == min(e['start'] for e in events) and row['end'] == finished,
                 'action timing differs')
         require((detail['external_read_bytes'], detail['external_write_bytes']) == (local_read, local_write),
                 'action traffic differs')
         total_read += local_read
         total_write += local_write
-        ends[row['id']] = boundary
+        ends[row['id']] = finished
 
     for w in writes.keys() | reads.keys():
         changes = sorted(writes[w])
@@ -158,8 +203,16 @@ def verify(tasks, hardware, plan, wire_budget=None):
             require(0 <= occupied <= hardware['resources'][r], 'resource capacity exceeded')
         require(occupied == 0, 'unreleased resource reservation')
     fixed = {n for n, info in hardware['nets'].items() if info.get('fixed')}
-    wire_cost = sum(hardware['nets'][n]['cost'] for n in nets-fixed)
-    require(not any(set(pair) <= nets | fixed for pair in hardware.get('incompatible_nets', ()))
+    dependencies = set(nets)
+    while True:
+        required = {dep for n in dependencies for dep in hardware['nets'][n].get('requires', ())}
+        if required <= dependencies:
+            break
+        require(required <= hardware['nets'].keys(), 'undeclared required connection')
+        dependencies.update(required)
+    wire_cost = sum(hardware['nets'][n]['cost'] for n in dependencies-fixed)
+    require(not dependencies.intersection(spec.get('excluded_nets', ())), 'event trial uses an excluded net')
+    require(not any(set(pair) <= dependencies | fixed for pair in hardware.get('incompatible_nets', ()))
             and (wire_budget is None or wire_cost <= wire_budget), 'static wire conflict or budget')
     makespan = max(ends.values(), default=0)
     require((makespan, total_read, total_write, sorted(nets), wire_cost) ==

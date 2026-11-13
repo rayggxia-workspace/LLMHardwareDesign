@@ -64,7 +64,7 @@ class HandoffTest(unittest.TestCase):
     def test_actual_algo2_consumer_routes_exact_selected_move_and_fixed_wiring(self):
         inputs = fixture()
         pack = build(*inputs, bind_request)
-        self.assertEqual(pack['wiring']['users']['P0-P1'], [{'task_id': 'b', 'binding_id': 'consumer'}])
+        self.assertEqual(pack['wiring']['users']['P0-P1'], [{'task_id': 'b', 'binding_id': 'consumer', 'event_id': 1}])
         self.assertEqual(pack['wiring']['users']['resident-control'], [])
         self.assertEqual(pack['handoff']['coverage']['static_bit_members'], 2)
         self.assertEqual(pack['handoff']['coverage']['new_signal_nets'], 1)

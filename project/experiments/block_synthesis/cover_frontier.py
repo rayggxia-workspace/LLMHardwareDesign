@@ -40,7 +40,8 @@ def catalogue(tasks,covers):
     return actions,parents,ancestors
 
 
-def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,backbone=None,rank_policy='shared_tail'):
+def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,backbone=None,
+           rank_policy='shared_tail',route_admission=None):
     if (width is not None and (type(width)!=int or width<1) or
         ready_limit is not None and (type(ready_limit)!=int or ready_limit<1)):
         raise ValueError('positive cover frontier bounds required')
@@ -49,26 +50,30 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     actions,parents,ancestors=catalogue(tasks,[dict(a) for a in covers])
     model=None
     if 'event_model' in hardware:
-        from event_execution import Model, Infeasible
+        from event_execution import Model
         if rank_policy!='shared_tail' or hardware.get('window_calendar'):
             raise ValueError('event execution uses its own calendars and the shared-tail bound')
-        if width==1 and covers:
-            raise ValueError('strict event greedy requires singleton actions')
-        model=Model(hardware,wire_budget=wire_budget)
+        model=Model(hardware,wire_budget=wire_budget,route_admission=route_admission)
     ids={t['id']:i for i,t in enumerate(tasks)};children={n:set() for n in ids}
     for n,ps in parents.items():
         for p in ps:children[p].add(n)
     indexed={n:[] for n in ids};by_action={a['id']:a for a in actions}
     masks={n:sum(1<<ids[p] for p in ps) for n,ps in parents.items()}
     users={}
+    required = {}
     for a in actions:
         a['mask']=sum(1<<ids[n] for n in a['covers']);indexed[a['anchor']].append(a)
         for b in a['bindings']:
             if model:
                 model.validate_binding(b)
+                nets = set(b['nets'])
                 for stage in b['event_stages']:
+                    nets.update(model.services[stage['service']].get('nets', ()))
                     for value in stage.get('inputs',{}).values():
                         users[value]=users.get(value,0)|a['mask']
+                if not any(stage['service'] in model.unqualified_services for stage in b['event_stages']):
+                    for node in a['covers']:
+                        required[node] = required.get(node, nets) & nets
             if (type(b['ticks'])!=int or b['ticks']<1 or
                 len(set(b['resources']))!=len(b['resources']) or
                 any(r not in hardware['resources'] for r in b['resources']) or
@@ -76,6 +81,8 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
                 any(n<0 or n>hardware['sites'][s]['words'] for s,n in
                     b.get('scratch_by_site',{b['site']:b['scratch_words']}).items())):
                 raise ValueError('invalid cover native binding')
+    if model:
+        model.required_nets = frozenset().union(*required.values())
     fixed=frozenset(n for n,m in hardware['nets'].items() if m.get('fixed'))
     conflicts=[]
     for pair in hardware.get('incompatible_nets',()):
@@ -100,7 +107,10 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         from cover_bounds import Completion
         completion=Completion(actions,hardware,ids,wire_budget=wire_budget,
                               resource_releases=rank_policy=='hypergraph_resources')
-    def netcost(s):return sum(hardware['nets'][n]['cost'] for n in s.nets if n not in fixed)
+    def netcost(s):
+        if model:
+            return model.wire_cost(s.nets)
+        return sum(hardware['nets'][n]['cost'] for n in s.nets if n not in fixed)
     def key(s):return (s.done,tuple(sorted(s.frontier.items())),tuple(sorted(s.resources.items())),
         s.nets,tuple(sorted(s.cache.items())),tuple(sorted(s.windows.items())),
         s.execution.key() if s.execution is not None else None)
@@ -109,26 +119,27 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
             max([s.makespan]+[max((s.frontier[p] for p in parents[n]),default=0)+tail[n] for n in s.ready]))
         return bound,s.makespan,s.traffic,netcost(s)
     def advance(s,a,b,policy):
-        if s.done&a['mask'] or any(not s.done&(1<<ids[p]) for p in a['boundary']):return None
+        if s.done&a['mask'] or any(not s.done&(1<<ids[p]) for p in a['boundary']):
+            return
         arrival=max((s.frontier[p] for p in a['boundary']),default=0)
-        execution=None
         if model:
             protected={value for value,mask in users.items() if mask&~(s.done|a['mask'])}
-            try:
-                execution,events=model.expand(s.execution,b,arrival,protected)
-            except Infeasible:
-                return None
-            start=min(event['start'] for event in events)
-            end=max(event['end'] for event in events)
-            delta_reads=execution.read_bytes-s.execution.read_bytes
-            delta_writes=execution.write_bytes-s.execution.write_bytes
-            ev={'start':start,'end':end,'makespan':max(s.makespan,end),'nets':execution.nets,
-                'resources':s.resources,'cache':s.cache,'traffic':delta_reads+delta_writes,
-                'details':{'events':events,'external_read_bytes':delta_reads,
-                           'external_write_bytes':delta_writes}}
+            for execution,events in model.expand_choices(s.execution,b,arrival,protected):
+                start=min(event['start'] for event in events)
+                end=max(event['end'] for event in events)
+                delta_reads=execution.read_bytes-s.execution.read_bytes
+                delta_writes=execution.write_bytes-s.execution.write_bytes
+                ev={'start':start,'end':end,'makespan':max(s.makespan,end),'nets':execution.nets,
+                    'resources':s.resources,'cache':s.cache,'traffic':delta_reads+delta_writes,
+                    'details':{'events':events,'external_read_bytes':delta_reads,
+                               'external_write_bytes':delta_writes}}
+                yield commit(s,a,b,ev,execution)
         else:
             ev=evaluate(s,b,hardware,arrival,retention=policy,fixed=fixed,conflicts=conflicts,wire_budget=wire_budget)
-            if not ev['legal']:return None
+            if ev['legal']:
+                yield commit(s,a,b,ev,None)
+
+    def commit(s,a,b,ev,execution):
         done=s.done|a['mask'];frontier={**s.frontier,**dict.fromkeys(a['covers'],ev['end'])}
         frontier={n:at for n,at in frontier.items() if any(not done&(1<<ids[c]) for c in children[n])}
         enabled=set().union(*(children[n] for n in a['covers']))-set(a['covers'])
@@ -138,7 +149,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
             execution=execution.after(cutoff)
         row={'id':a['id'],'covers':list(a['covers']),'binding':b['id'],'site':b['site'],
              'start':ev['start'],'end':ev['end']}
-        if b.get('read_cache'):row['cache_hit']=ev['cache_hit']
+        if not model and b.get('read_cache'):row['cache_hit']=ev['cache_hit']
         if ev['details']:row['evaluation']=ev['details']
         if calendar:row['resource_windows']=ev['resource_windows']
         return State(done,frontier,ev['resources'],ev['nets'],ev['makespan'],s.traffic+ev['traffic'],
@@ -162,37 +173,88 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
             return row.get('evaluation',{}).get('retention','legacy')
         for row in backbone['tasks']:
             a=by_action[row['id']];b=next(b for b in a['bindings'] if b['id']==row['binding'])
-            s=advance(s,a,b,policy(b,row))
+            alternatives = advance(s,a,b,'event' if model else policy(b,row))
+            if model:
+                alternatives = (state for state in alternatives
+                                if state.history.row['evaluation']['events'] == row['evaluation']['events'])
+            s=next(alternatives,None)
             if s is None:raise ValueError('verified atomic backbone became illegal')
             seeds[s.done.bit_count()]=s
-    buckets[0][key(initial)]=initial;complete=[]
-    for count in range(len(tasks)+1):
-        pool=buckets.pop(count,{})
-        if count in seeds:pool.setdefault(key(seeds[count]),seeds[count])
-        candidates=pool.values()
-        if model and count==len(tasks):
-            candidates=[s for s in candidates if model.live_out <= (
-                s.execution.backing.keys() | {copy.value for copy in s.execution.copies.values()})]
-        ordered=sorted(candidates,key=rank);pruned+=max(0,len(ordered)-(width or len(ordered)))
-        beam=ordered if width is None else ordered[:width]
-        if count in seeds and all(key(s)!=key(seeds[count]) for s in beam):
-            beam[-1]=seeds[count];seed_kept+=1
-        if count==len(tasks):complete=beam;break
-        for s in beam:
-            roots=sorted(s.ready,key=lambda n:(-tail[n],n))
-            if ready_limit is not None:roots=roots[:ready_limit]
-            for n in roots:
-                for a in indexed[n]:
-                    if s.done&a['mask'] or any(not s.done&(1<<ids[p]) for p in a['boundary']):continue
-                    for b in a['bindings']:
-                        for policy in retention_actions(s,b):
-                            expanded+=1;ns=advance(s,a,b,policy)
-                            if ns is None:continue
-                            k=key(ns);bucket=buckets.setdefault(ns.done.bit_count(),{});old=bucket.get(k)
-                            if old is not None:
-                                merged+=1
-                                if (old.makespan,old.traffic)<=(ns.makespan,ns.traffic):continue
-                            bucket[k]=ns
+    def successors(s):
+        nonlocal expanded
+        roots=sorted(s.ready,key=lambda n:(-tail[n],n))
+        if ready_limit is not None:
+            roots=roots[:ready_limit]
+        for n in roots:
+            for a in indexed[n]:
+                if s.done&a['mask'] or any(not s.done&(1<<ids[p]) for p in a['boundary']):
+                    continue
+                for binding in a['bindings']:
+                    policies = ('event',) if model else retention_actions(s,binding)
+                    for policy in policies:
+                        expanded += 1
+                        yield from advance(s,a,binding,policy)
+
+    def retain(pool,state):
+        nonlocal merged
+        k=key(state)
+        previous=pool.setdefault(k,[])
+        if not model:
+            if previous:
+                merged += 1
+                old=previous[0]
+                if (old.makespan,old.traffic)<=(state.makespan,state.traffic):
+                    return
+            previous[:]=[state]
+            return
+        # Both objectives must improve. An existing time lead can disappear
+        # when a later action dominates the final makespan.
+        if any(old.makespan<=state.makespan and old.traffic<=state.traffic for old in previous):
+            merged += 1
+            return
+        remaining=[old for old in previous
+                   if not (state.makespan<=old.makespan and state.traffic<=old.traffic)]
+        merged += len(previous)-len(remaining)
+        previous[:]=[*remaining,state]
+
+    def valid_output(s):
+        return not model or model.live_out <= (
+            s.execution.backing.keys() | {copy.value for copy in s.execution.copies.values()})
+
+    complete=[]
+    if model and width==1:
+        s=initial
+        while s is not None and s.done.bit_count()<len(tasks):
+            s=min((candidate for candidate in successors(s)
+                   if candidate.done.bit_count()<len(tasks) or valid_output(candidate)),
+                  key=rank,default=None)
+        if s is not None and valid_output(s):
+            complete=[s]
+    else:
+        retain(buckets[0],initial)
+        for count in range(len(tasks)+1):
+            pool=buckets.pop(count,{})
+            seed=seeds.get(count)
+            if seed is not None:
+                retain(pool,seed)
+            candidates=(s for group in pool.values() for s in group
+                        if count!=len(tasks) or valid_output(s))
+            ordered=sorted(candidates,key=rank)
+            pruned+=max(0,len(ordered)-(width or len(ordered)))
+            beam=ordered if width is None else ordered[:width]
+            if seed is not None and all((key(s),s.makespan,s.traffic)!=(key(seed),seed.makespan,seed.traffic)
+                                        for s in beam):
+                if beam:
+                    beam[-1]=seed
+                elif count!=len(tasks) or valid_output(seed):
+                    beam=[seed]
+                seed_kept+=1
+            if count==len(tasks):
+                complete=beam
+                break
+            for s in beam:
+                for candidate in successors(s):
+                    retain(buckets.setdefault(candidate.done.bit_count(),{}),candidate)
     if not complete:return {'status':'no_plan_in_bounded_search','expanded':expanded}
     best=min(complete,key=lambda s:(s.makespan,s.traffic,netcost(s)));rows=[];history=best.history
     while history is not None:rows.append(history.row);history=history.previous

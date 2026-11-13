@@ -5,10 +5,23 @@ reservations when another action is inserted. A window remains owned through
 the consumer or destination acknowledgement. Only declared routes can move a
 value. Times are integer service-model ticks, and external traffic is in bytes.
 """
-from collections import Counter
 from dataclasses import dataclass, replace
 
 DDR = 'DDR'
+
+
+def stage_graph(stages):
+    """Return the declared stages and dependencies, preserving legacy serial lists."""
+    graph = {}
+    explicit = any('id' in stage or 'after' in stage for stage in stages)
+    for index, stage in enumerate(stages):
+        name = stage.get('id') if explicit else index
+        parents = tuple(stage.get('after', ())) if explicit else ((index - 1,) if index else ())
+        if (explicit and (not isinstance(name, str) or not name) or name in graph
+                or len(set(parents)) != len(parents) or any(parent not in graph for parent in parents)):
+            raise ValueError('invalid event stage identity or topological order')
+        graph[name] = (stage, parents)
+    return graph
 
 
 @dataclass(frozen=True)
@@ -79,20 +92,35 @@ def reserve(profile, start, end, units):
 
 
 class Model:
-    def __init__(self, hardware, *, wire_budget=None):
+    def __init__(self, hardware, *, wire_budget=None, required_nets=(), route_admission=None):
         self.spec = hardware['event_model']
         self.capacity = hardware['resources']
         self.windows = self.spec['windows']
         self.sizes = self.spec['value_bytes']
         self.services = self.spec['services']
         self.routes = self.spec['routes']
+        self.product_interfaces = 'physical_interface_issues' in self.spec
+        interface_issues = self.spec.get('physical_interface_issues', {})
+        logical_issues = self.spec.get('logical_control_issues', {})
+        self.unqualified_routes = interface_issues.get('routes', {}).keys() | logical_issues.get('routes', {}).keys()
+        self.unqualified_services = (interface_issues.get('services', {}).keys() |
+                                     logical_issues.get('services', {}).keys())
         self.routes_by_sites = {}
         self.live_out = frozenset(self.spec.get('live_out', ()))
         self.external_capacity = self.spec.get('external_capacity_bytes')
         self.nets = hardware['nets']
         self.fixed = frozenset(n for n, item in self.nets.items() if item.get('fixed'))
+        self.net_dependencies = {name: frozenset(item['requires']) for name, item in self.nets.items()
+                                 if item.get('requires')}
+        if any(not deps <= self.nets.keys() for deps in self.net_dependencies.values()):
+            raise ValueError('required connection is missing from the hardware budget')
         self.conflicts = tuple(frozenset(pair) for pair in hardware.get('incompatible_nets', ()))
         self.wire_budget = wire_budget
+        self.route_admission = route_admission
+        self.required_nets = frozenset(required_nets)
+        self.excluded_nets = frozenset(self.spec.get('excluded_nets', ()))
+        if not self.excluded_nets <= self.nets.keys() or self.excluded_nets & self.fixed:
+            raise ValueError('event trial excludes an unknown or fixed net')
         if self.spec.get('kind') != 'qualified-event-model-v1':
             raise ValueError('unknown event model')
         if any(type(c) is not int or c < 1 for c in self.capacity.values()):
@@ -122,7 +150,8 @@ class Model:
             self.validate_service(route)
             if 'phases' in route:
                 self.validate_route_phases(route)
-            self.routes_by_sites.setdefault(endpoints, []).append(name)
+            if name not in self.unqualified_routes:
+                self.routes_by_sites.setdefault(endpoints, []).append(name)
         for service in self.services.values():
             if type(service['ticks']) is not int or service['ticks'] < 1:
                 raise ValueError('invalid native stage duration')
@@ -133,6 +162,11 @@ class Model:
                     raise ValueError('invalid native stage traffic')
             if (service.get('read_bytes') or service.get('write_bytes')) and not service['claims']:
                 raise ValueError('external native stage must reserve a resource')
+            indexed = service.get('indexed_read')
+            if indexed and (indexed['table'] not in self.spec.get('initial_backing', ())
+                            or self.sizes[indexed['table']] != indexed['rows'] * indexed['row_words'] * 16
+                            or service.get('read_bytes') != indexed['indices'] * indexed['row_words'] * 16):
+                raise ValueError('indexed stage does not bind the declared external table and traffic')
         copies = {}
         for w, v in self.spec.get('initial_copies', {}).items():
             self.validate_copy(w, v)
@@ -179,9 +213,11 @@ class Model:
         stages = binding.get('event_stages')
         if not stages:
             raise ValueError('event mode requires explicit qualified stages for every binding')
-        lower_bound = 0
-        for stage in stages:
-            lower_bound += self.services[stage['service']]['ticks']
+        ends, ancestors = {}, {}
+        writers = {}
+        for name, (stage, parents) in stage_graph(stages).items():
+            ends[name] = self.services[stage['service']]['ticks'] + max((ends[p] for p in parents), default=0)
+            ancestors[name] = set(parents).union(*(ancestors[p] for p in parents))
             if stage.get('input_policy', 'any') not in ('any', 'resident', 'backing'):
                 raise ValueError('unknown input policy')
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
@@ -189,22 +225,45 @@ class Model:
                 self.validate_copy(window, value)
             if inputs.keys() & outputs.keys():
                 raise ValueError('in-place native stages require a separate storage contract')
+            indexed = self.services[stage['service']].get('indexed_read')
+            if indexed and (len(inputs) != 1 or len(outputs) != 1
+                            or self.sizes[next(iter(inputs.values()))] != indexed['indices'] * indexed['index_bits'] // 8
+                            or self.sizes[next(iter(outputs.values()))] != indexed['indices'] * indexed['row_words'] * 16):
+                raise ValueError('indexed stage requires a correctly sized index and destination')
+            for value in inputs.values():
+                if value in writers and not writers[value] & ancestors[name]:
+                    raise ValueError('stage input missing its producer dependency')
+            for value in outputs.values():
+                writers.setdefault(value, set()).add(name)
             if 'copy_sites' in self.services[stage['service']]:
                 source, destinations = self.services[stage['service']]['copy_sites']
                 if (len(inputs) != 1 or {self.windows[w]['site'] for w in inputs} != {source}
                         or sorted(self.windows[w]['site'] for w in outputs) != sorted(destinations)
                         or set(outputs.values()) != set(inputs.values())):
                     raise ValueError('COPY stage changes identity or endpoint')
-        if not 0 < binding['ticks'] <= lower_bound:
+        if not 0 < binding['ticks'] <= max(ends.values()):
             raise ValueError('invalid optimistic stage bound')
 
+    def network_closure(self, nets):
+        if not self.net_dependencies:
+            return nets
+        closed = set(nets)
+        pending = list(nets)
+        while pending:
+            more = self.net_dependencies.get(pending.pop(), frozenset()) - closed
+            closed.update(more)
+            pending.extend(more)
+        return frozenset(closed)
+
     def wire_cost(self, nets):
-        return sum(self.nets[n]['cost'] for n in nets - self.fixed)
+        return sum(self.nets[n]['cost'] for n in self.network_closure(nets) - self.fixed)
 
     def add_nets(self, state, nets):
         combined = state.nets | frozenset(nets)
-        if (any(pair <= combined | self.fixed for pair in self.conflicts)
-                or self.wire_budget is not None and self.wire_cost(combined) > self.wire_budget):
+        needed = self.network_closure(combined | self.required_nets)
+        if (needed & self.excluded_nets or any(pair <= needed | self.fixed for pair in self.conflicts)
+                or self.wire_budget is not None and self.wire_cost(needed) > self.wire_budget
+                or self.route_admission is not None and not self.route_admission(needed)):
             raise Infeasible('static net conflict or budget')
         return replace(state, nets=combined)
 
@@ -240,11 +299,15 @@ class Model:
                 booked, start, at = self.book(booked, claims, at, duration)
                 trace.append({'kind': kind, 'start': start, 'end': at})
             begin = trace[0]['start']
-            _, hold_start, _ = self.book(state, holds, begin, at-begin)
-            if hold_start == begin:
-                booked, _, _ = self.book(booked, holds, begin, at-begin)
+            conflict_end = max((available(state.calendars.get(resource, ()),
+                                          self.capacity[resource], begin, at - begin, units)
+                                for resource, units in holds.items()), default=begin)
+            if conflict_end == begin:
+                booked, _, _ = self.book(booked, holds, begin, at - begin)
                 return booked, begin, at, trace
-            ready = hold_start
+            # Recompute the phases at the next opportunity. The earlier wait for
+            # the data bus may disappear, allowing a shorter credit reservation.
+            ready = conflict_end
 
     def move(self, state, value, src, dst, ready, route_name):
         route = self.routes[route_name]
@@ -271,102 +334,137 @@ class Model:
             event['phases'] = phases
         return state, event
 
-    def best_move(self, state, value, sources, dst, ready):
+    def moves(self, state, value, sources, dst, ready):
         destination = DDR if dst == DDR else self.windows[dst]['site']
-        choices = []
         for src in sources:
             site = DDR if src == DDR else self.windows[src]['site']
             for route in self.routes_by_sites.get((site, destination), ()):
                 try:
-                    new, event = self.move(state, value, src, dst, ready, route)
+                    yield self.move(state, value, src, dst, ready, route)
                 except Infeasible:
                     continue
-                choices.append((event['end'], new.read_bytes + new.write_bytes,
-                                self.wire_cost(new.nets), src, route, new, event))
-        if not choices:
-            raise Infeasible('no legal move')
-        return min(choices, key=lambda item: item[:5])[-2:]
 
-    def vacant(self, state, window, ready, protected, events):
+    def vacancies(self, state, window, ready, protected, events):
         old = state.copies.get(window)
         if old is None:
-            return state, ready
+            yield state, ready, events
+            return
         ready = max(ready, old.held_until)
         if (old.value in protected and old.value not in state.backing
                 and not any(w != window and c.value == old.value for w, c in state.copies.items())):
-            state, event = self.best_move(state, old.value, [window], DDR, ready)
-            events.append(event)
-            ready = event['end']
-        return state, ready
+            for new, event in self.moves(state, old.value, (window,), DDR, ready):
+                yield new, event['end'], (*events, event)
+        else:
+            yield state, ready, events
 
-    def ensure(self, state, window, value, ready, protected, events, policy):
+    def deliveries(self, state, window, value, ready, protected, events, policy):
         old = state.copies.get(window)
         if old and old.value == value and policy != 'backing':
-            return state
-        state, ready = self.vacant(state, window, ready, protected, events)
-        sources = [w for w, c in state.copies.items() if c.value == value and w != window]
-        if policy == 'backing':
-            if value not in state.backing:
-                state, event = self.best_move(state, value, sources + ([window] if old and old.value == value else []),
-                                              DDR, ready)
-                events.append(event)
-                ready = event['end']
-            sources = []
-        if value in state.backing and policy != 'resident':
-            sources.append(DDR)
-        choices = []
+            yield state, events
+            return
+        for vacant, at, prefix in self.vacancies(state, window, ready, protected, events):
+            sources = tuple(w for w, c in vacant.copies.items() if c.value == value and w != window)
+            if policy != 'backing':
+                direct = (*sources, DDR) if value in vacant.backing and policy != 'resident' else sources
+                for loaded, load in self.moves(vacant, value, direct, window, at):
+                    yield loaded, (*prefix, load)
+            elif value in vacant.backing:
+                for loaded, load in self.moves(vacant, value, (DDR,), window, at):
+                    yield loaded, (*prefix, load)
+            if policy == 'resident' or value in vacant.backing:
+                continue
+            spill_sources = (*sources, window) if old and old.value == value else sources
+            for written, store in self.moves(vacant, value, spill_sources, DDR, at):
+                for loaded, load in self.moves(written, value, (DDR,), window, store['end']):
+                    yield loaded, (*prefix, store, load)
+
+    def stage_choices(self, state, stage, ready, protected, events):
+        if stage['service'] in self.unqualified_services:
+            return
+        service = self.services[stage['service']]
+        if self.product_interfaces:
+            from event_physical_contract import stage_is_local
+
+            if not stage_is_local(self.windows, service, stage):
+                return
+        inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
+        policy = stage.get('input_policy', 'any')
+
+        def prepare(index, current, trace):
+            if index == len(inputs):
+                yield current, trace
+                return
+            window, value = operands[index]
+            for loaded, path in self.deliveries(current, window, value, ready,
+                                                 protected | input_values, trace, policy):
+                yield from prepare(index + 1, loaded, path)
+
+        def clear(index, current, at, trace):
+            if index == len(destinations):
+                yield current, at, trace
+                return
+            for vacant, available_at, path in self.vacancies(current, destinations[index], at,
+                                                             protected | input_values, trace):
+                yield from clear(index + 1, vacant, available_at, path)
+
+        operands, destinations = tuple(inputs.items()), tuple(outputs)
+        input_values = set(inputs.values())
         try:
-            direct, event = self.best_move(state, value, sources, window, ready)
-            choices.append((direct, [event]))
+            state = self.add_nets(state, service.get('nets', ()))
         except Infeasible:
-            pass
-        if policy == 'any' and value not in state.backing:
-            # A dirty value may be cheaper to hand off via a real STORE/LOAD
-            # than to wait for an occupied cross-site port.
-            try:
-                written, store = self.best_move(state, value, sources, DDR, ready)
-                loaded, load = self.best_move(written, value, [DDR], window, store['end'])
-                choices.append((loaded, [store, load]))
-            except Infeasible:
-                pass
-        if not choices:
-            raise Infeasible('no legal input delivery')
-        selected, moves = min(choices, key=lambda item: (
-            item[1][-1]['end'], item[0].read_bytes + item[0].write_bytes,
-            self.wire_cost(item[0].nets)))
-        events.extend(moves)
-        return selected
+            return
+        for loaded, input_events in prepare(0, state, events):
+            start_at = max([ready] + [loaded.copies[w].ready for w in inputs])
+            for vacant, at, trace in clear(0, loaded, start_at, input_events):
+                booked, start, end = self.book(vacant, service['claims'], at, service['ticks'])
+                copies = booked.copies.copy()
+                for w in inputs:
+                    copies[w] = replace(copies[w], held_until=max(copies[w].held_until, end))
+                for w, value in outputs.items():
+                    copies[w] = Copy(value, end, end)
+                booked = replace(booked, copies=copies,
+                                 read_bytes=booked.read_bytes + service.get('read_bytes', 0),
+                                 write_bytes=booked.write_bytes + service.get('write_bytes', 0))
+                event = {'kind': 'stage', 'service': stage['service'], 'start': start, 'end': end,
+                         'inputs': inputs, 'outputs': outputs}
+                yield booked, (*trace, event)
+
+    def expand_choices(self, state, binding, ready, protected):
+        """Enumerate feasible successors before scoring a complete action."""
+        graph = stage_graph(binding['event_stages'])
+        protected = protected | self.live_out
+        try:
+            state = self.add_nets(state, binding['nets'])
+        except Infeasible:
+            return
+
+        # Traverse iteratively: measured recipes can contain hundreds of serial stages.
+        stack = [(state, {}, ())]
+        while stack:
+            current, ends, events = stack.pop()
+            if len(ends) == len(graph):
+                yield current, list(events)
+                continue
+            for name, (stage, parents) in reversed(graph.items()):
+                if name in ends or any(parent not in ends for parent in parents):
+                    continue
+                future_values = {value for other, (entry, _) in graph.items()
+                                 if other != name and other not in ends
+                                 for value in entry.get('inputs', {}).values()}
+                at = max((ends[parent] for parent in parents), default=ready)
+                for booked, trace in self.stage_choices(current, stage, at, protected | future_values, ()):
+                    if isinstance(name, str):
+                        trace = tuple({**event, 'stage_id': name} for event in trace)
+                    stack.append((booked, {**ends, name: trace[-1]['end']}, (*events, *trace)))
 
     def expand(self, state, binding, ready, protected):
-        protected = protected | self.live_out
-        remaining = Counter(value for stage in binding['event_stages']
-                            for value in stage.get('inputs', {}).values())
-        events = []
-        state = self.add_nets(state, binding['nets'])
-        for stage in binding['event_stages']:
-            service = self.services[stage['service']]
-            inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
-            for window, value in inputs.items():
-                state = self.ensure(state, window, value, ready, protected | remaining.keys(), events,
-                                    stage.get('input_policy', 'any'))
-            start_at = max([ready] + [state.copies[w].ready for w in inputs])
-            for value in inputs.values():
-                remaining[value] -= 1
-                if remaining[value] == 0:
-                    del remaining[value]
-            for window in outputs:
-                state, at = self.vacant(state, window, start_at, protected | remaining.keys(), events)
-                start_at = max(start_at, at)
-            state = self.add_nets(state, service.get('nets', ()))
-            state, start, end = self.book(state, service['claims'], start_at, service['ticks'])
-            copies = state.copies.copy()
-            for w in inputs:
-                copies[w] = replace(copies[w], held_until=max(copies[w].held_until, end))
-            for w, value in outputs.items():
-                copies[w] = Copy(value, end, end)
-            state = replace(state, copies=copies, read_bytes=state.read_bytes + service.get('read_bytes', 0),
-                            write_bytes=state.write_bytes + service.get('write_bytes', 0))
-            events.append({'kind': 'stage', 'service': stage['service'], 'start': start, 'end': end,
-                           'inputs': inputs, 'outputs': outputs})
-            ready = end
-        return state, events
+        """Return the best complete successor for a stand-alone service evaluation."""
+        def score(item):
+            execution, events = item
+            return (max(event['end'] for event in events),
+                    execution.read_bytes + execution.write_bytes, self.wire_cost(execution.nets))
+
+        best = min(self.expand_choices(state, binding, ready, protected), key=score, default=None)
+        if best is None:
+            raise Infeasible('no legal event expansion')
+        return best
