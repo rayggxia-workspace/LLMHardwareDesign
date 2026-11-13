@@ -19,7 +19,7 @@ bank=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-155/bank-views-
 echo "6c1c1ca9d183ab7c4c74df056c9730cf352d165301546126e29b644a45ef9de7  $bank" | sha256sum -c
 /public/home/yuzelu/opt/eda/verilator-5-042-repro02/bin/verilator --binary --timing --assert -Wno-fatal --x-initial unique --x-assign unique -j "$cpus" --top-module tb_u_native_entry --Mdir "$out/obj" -Iproject/rtl/block_v2 \
  project/experiments/pu_leaf_base/tb_u_native_entry.sv "$out/endpoint.sv" "$out/lc/ucf_native_service.sv" "$out/lc/stored_link.sv" \
- project/rtl/pu_leaf_base/{pu_u_group,pu_compact_e_service,pu_u_direct_pair,ucf_s_compute_client}.sv \
+ project/rtl/block_v1/pu/{pu_u_group,pu_compact_e_service,pu_u_direct_pair}.sv project/rtl/block_v1/common/ucf_s_compute_client.sv \
  project/rtl/block_local_s/block_local_s_arbiter.sv project/rtl/s_sram/{local_s_base,block_feed_s16k_sram}.sv \
  project/rtl/block_v2/{block_v2_n,block_v2_n_group,block_v2_e_compact}.sv "$bank" > "$out/compile.log" 2>&1
 for seed in 1:143 2:143 2:144; do

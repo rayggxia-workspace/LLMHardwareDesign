@@ -23,18 +23,20 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
         case "$slot" in
             0) top=tb_pu_p_store
                src=(project/rtl/block_local_s/block_local_s_arbiter.sv
-                    project/rtl/pu_leaf_base/pu_p_store_control.sv);;
+                    project/rtl/block_v1/pu/pu_p_store_control.sv);;
             1) top=tb_pu_compact_e
                src=(project/rtl/block_v2/{block_v2_e,block_v2_e_compact}.sv
-                    project/rtl/pu_leaf_base/pu_compact_e_service.sv);;
+                    project/rtl/block_v1/pu/pu_compact_e_service.sv);;
             2) top=tb_pu_p_group
                src=(project/rtl/block_local_s/block_local_s_arbiter.sv
                     project/rtl/block_v2/{block_v2_m,block_v2_g}.sv
-                    project/rtl/pu_leaf_base/{pu_p_group,pu_p_store_control,pj_feed_hold,pj_mem_port,pj_sram_client}.sv);;
+                    project/rtl/block_v1/pu/{pu_p_group,pu_p_store_control,pj_feed_hold}.sv
+                    project/rtl/block_v1/common/{pj_mem_port,pj_sram_client}.sv);;
             3) top=tb_pu_u_group
                src=(project/rtl/block_local_s/block_local_s_arbiter.sv
                     project/rtl/block_v2/{block_v2_n,block_v2_n_group,block_v2_e,block_v2_e_compact}.sv
-                    project/rtl/pu_leaf_base/{pu_u_group,pu_compact_e_service,pu_u_direct_pair,ucf_s_compute_client}.sv);;
+                    project/rtl/block_v1/pu/{pu_u_group,pu_compact_e_service,pu_u_direct_pair}.sv
+                    project/rtl/block_v1/common/ucf_s_compute_client.sv);;
             *) exit 2;;
         esac
         out=$root/$top
@@ -47,7 +49,7 @@ exec srun --exact --ntasks=1 --cpus-per-task="$cpus" --cpu-bind=cores \
             case "$slot" in
                 2) src=(project/rtl/block_v2/{block_v2_m,block_v2_g}.sv);;
                 3) src=(project/rtl/block_v2/{block_v2_n,block_v2_n_group,block_v2_e,block_v2_e_compact}.sv
-                        project/rtl/pu_leaf_base/pu_u_direct_pair.sv);;
+                        project/rtl/block_v1/pu/pu_u_direct_pair.sv);;
                 *) exit 2;;
             esac
             src+=("$out/cells.v" "$gate")

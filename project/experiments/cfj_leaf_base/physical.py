@@ -90,12 +90,13 @@ for key, (lef, lib, gds) in views.items():
     exact.write_text(abstract)
     views[key] = exact, lib, gds
 
-rtl = source / "project/rtl/block_cfj_v1"
+rtl = source / "project/rtl/block_v1"
 top = "block_cfj_j" if kind=="j" else "block_cfj_cf"
 # Compile the C parameter override explicitly and bind the prequalified R256
 # physical master to the unparameterized blackbox from its Liberty view.
 rtl_files = []
-for path in sorted(rtl.glob("*.sv")):
+for path in sorted([*(rtl / "cfj").glob("*.sv"), *(rtl / "common").glob("*.sv")],
+                   key=lambda path: path.name):
     if path.name == "block_cfj_j.sv" and kind != "j" or path.name == "block_cfj_cf.sv" and kind == "j":
         continue
     target = out / path.name

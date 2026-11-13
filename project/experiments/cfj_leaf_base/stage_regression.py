@@ -21,7 +21,9 @@ pj = bundle / "staged/pj/project/rtl"
 for name in ("block_feed_s16k_sram.sv", "local_s_base.sv"):
     shutil.copyfile(root / "project/rtl/s_sram" / name, native / name)
 shutil.copyfile(root / "project/rtl/block_v2/block_v2_e_compact.sv", native / "block_v2_e_compact.sv")
-for rtl in (root / "project/rtl/block_cfj_v1").glob("*.sv"):
+rtl_root = root / "project/rtl/block_v1"
+for rtl in sorted([*(rtl_root / "cfj").glob("*.sv"), *(rtl_root / "common").glob("*.sv")],
+                  key=lambda path: path.name):
     if rtl.name in ("pj_mem_port.sv", "pj_sram_client.sv"):
         target = pj / "block_pj_v1" / rtl.name
     elif rtl.name.startswith("ucf_"):
