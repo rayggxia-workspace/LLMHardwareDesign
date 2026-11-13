@@ -49,6 +49,11 @@
 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)、
 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260)。
 
+后续用同一编译路径重编了 #257 的 36 个原始任务 U 组图。交接读取带源视图的候选
+摆位，算法 2 以 `--handoff` 检查新计划来源并通过 130 根实际端点线的几何校验。
+放置的组级源视图仅在候选范围接受，产品范围仍要求整体冻结视图。该候选来自旧 #230
+资源摆位，和 main 的 Block V2 九组加 MC06 目标属于不同物理版本。
+
 ## 远程回执
 
 目录 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em`。
@@ -63,9 +68,13 @@
 | 108968 | #260 母控页和 CALL 读取检查 | `3898d96c3dd1e988a9cb8d95dba0d7070ffce6dadbb2ff2865fafd100a97c219` |
 | 109009 | #260 一页回放，`execution.json` | `cdec2acc56348b638c1e8cfb269d5e1a5b647590008e567f2135360aacd419ca` |
 | 109035 | 类型化图经快照编译和当前算法 2 消费、控制 IR 正负对照 | `111708d475d995f7cc09643b35064f66399ac3145bd9b76706cef1b1a5d1f22a` |
+| 109043 | `b8ae3a696` 项目结构及 400 项回归通过 | `c4fb7e86995c3ac9c5c13b2349eccd75cc913683b25567c037cb1410ba06b81a` |
+| 109054 | 新编译 U 组交接与 130 根网几何校验，`u-route.json` | `1f0cefb51f7c53e40dacf780313e052904aae9ff27dc07843100e18e1654f2cc` |
 
 以上作业均 `COMPLETED 0:0`。一页 TLM 的早期启动失败（108995、108998、109006）
 已保留，分别修正了 Slurm 下的路径和归档依赖。
+作业 109048 拒绝了仅含各实例源视图的输入。109054 使用增加候选摆位校验的适配，
+继续对每份源视图做哈希核对。
 
 项目 `llm-hardware-design`，协作规则 `rayggxia-project-collab 1.0.0`，Issue #219
 继续进行，负责人 YUZE-LU，独立审查人待指定。登记沿用 management-hub PR #5。

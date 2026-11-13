@@ -149,8 +149,24 @@ def validate_base(base):
     if base.get('endpoints'):
         require(type(base.get('dbu_per_micron')) is int and base['dbu_per_micron'] > 0,
                 'missing database units')
-        require(all(k in base.get('views', {}) for k in ('odb', 'netlist', 'gds')),
-                'bound endpoints require ODB/netlist/GDS references')
+        views = base.get('views', {})
+        required = {'odb', 'netlist', 'gds'}
+        if base.get('assembly_state') == 'placed_source_views':
+            require(base['state'] == 'candidate', 'placed source views require a candidate base')
+            assemblies = base.get('assemblies', [])
+            names = {row['id'] for row in assemblies}
+            require(assemblies and len(names) == len(assemblies), 'invalid placed resource assembly')
+            for row in assemblies:
+                refs = row.get('views', {})
+                require(required <= refs.keys() and all(refs[k] in views for k in required),
+                        'assembled resources require ODB/netlist/GDS references')
+                translation = row.get('translation_dbu', [])
+                require(len(translation) == 2 and all(type(v) is int for v in translation),
+                        'invalid resource translation')
+            require(all(pin.get('assembly') in names for pin in base['endpoints'].values()),
+                    'endpoint outside resource assembly')
+        else:
+            require(required <= views.keys(), 'bound endpoints require ODB/netlist/GDS references')
 
 
 def bind_members(members, base):
