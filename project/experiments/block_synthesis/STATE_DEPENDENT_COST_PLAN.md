@@ -550,7 +550,7 @@ Slurm `106664` 管理结构检查和 387 项回归通过，`/tmp/yzl-i219-r44reg
 
 `benchmark_norm_event.py` 复用 `algorithm-fix-17-rows` 三初态已归档的 2048 元素 S16 RMSNorm。原生命令分为 BEGIN 8、STATS 4,096、FACTOR 170、SCALE 8,192 拍，常驻对照通过独立检查并复现原总长 12,466 拍。显式声明 N 端口优先、FACTOR 不占 S 端口和 64 B/拍的模型搬运时，非驻留 4,096 B gamma 放在 [4104,4168) 完成，结果仍在第 12,466 拍可见。将同样的 gamma 设为入口依赖则需 12,530 拍。分段长度源自归档原生命令，重叠采用模型端口合同。#234 层间归一化的数据格式为 S32，仍需独立接续和校准。
 
-Slurm `106785` 管理结构和 388 项回归通过，回归日志 SHA-256 为 `73d491d44a5be0d531e91c9be0ffb2b373e5d2e40e064c2b1e64c4d291f3d5d7`。Slurm `106801` 的非驻留与驻留对照通过。两份回执及哈希保存在共享项目目录 `run/decode-final-106303_0.log` 的 `R45 phase-specific input custody receipts` 段。
+Slurm `106785` 管理结构和 388 项回归通过，回归日志 SHA-256 为 `73d491d44a5be0d531e91c9be0ffb2b373e5d2e40e064c2b1e64c4d291f3d5d7`。Slurm `106801` 的非驻留与驻留对照通过。Slurm `106811` 扫描了 80 组系数计算时长与搬运速率，每组核对入口读取与晚读，合计 160 份计划与手算一致。40 组非驻留均缩短，40 组驻留均持平。回执及哈希保存在共享项目目录 `run/decode-final-106303_0.log` 的 `R45 phase-specific input custody receipts` 和 `R45 normalization timing sweep` 段。
 
 ## 目标和边界
 
