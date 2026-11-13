@@ -28,7 +28,7 @@ def marker(kind, cycle, **values):
     return {"kind": kind, "cycle": cycle, "generation": 1, **values}
 
 
-def predict(archive, binary, config, output, embedding, mode, *, with_first_weight=False):
+def predict(archive, binary, config, output, embedding, mode, *, weight_records=0):
     page = decode_archive(archive)["pages"][0]
 
     def after_pm(prefix, ddr):
@@ -60,13 +60,19 @@ def predict(archive, binary, config, output, embedding, mode, *, with_first_weig
         result = {"scope": "105530 generation 1 startup to third service accept", "mode": mode,
                   "core_cycle_origin": prefix["core_cycle_origin"], "prompt_start_one_based_edge": PROMPT_ACCEPT_EDGE,
                   "schedule": schedule, "ddr_events": ddr.events, "markers": markers}
-        if with_first_weight:
+        if weight_records:
             from qwen_projection_front import first_weight_offer
             from qwen_weight_record import read_weight_record
             front = first_weight_offer(call, descriptor["service_accept"], mode)
             result["scope"] = "105530 generation 1 startup through the first P_SCOPE weight record"
             result["projection_front"] = front
-            result["weight_record"] = read_weight_record(fabric, front["weight_source_offer"], front["weight_address"])
+            result["weight_record"] = read_weight_record(fabric, front["weight_source_offer"], front["weight_address"],
+                                                         beats=front["weight_record_beats"])
+            if weight_records == 2:
+                result["scope"] = "105530 generation 1 startup through the first two P_SCOPE weight records"
+                result["second_weight_record"] = read_weight_record(
+                    fabric, front["second_weight_source_offer"], front["second_weight_address"],
+                    beats=front["second_weight_record_beats"])
         return result
 
     return predict_pm(archive, binary, config, output, embedding, mode, PROMPT_ACCEPT_EDGE, after_pm=after_pm)
@@ -119,11 +125,11 @@ def audit_wait_release(page, rows):
             "matched_page_commit": predicted_commit}
 
 
-def compare(archive, prediction, edge_log, *, with_first_weight=False):
+def compare(archive, prediction, edge_log, *, weight_records=0):
     mode = prediction["mode"]
     require(mode in (0, 1), "invalid 105530 mode")
     expected = prediction["ddr_events"]
-    bursts = PREDICTED_BURSTS + (17 if with_first_weight else 0)
+    bursts = PREDICTED_BURSTS + 17 * weight_records
     require(len(expected) == 4 * bursts, "incomplete DDR prefix prediction")
     proof = Proof(archive, WINDOWS["next_rms"][0])
     trace = "DDR-{}/transactions.tsv".format(mode)
@@ -158,14 +164,18 @@ def main():
     for name in ("archive", "prediction", "edges"):
         check.add_argument(name, type=Path)
     for command in (make, check):
-        command.add_argument("--with-first-weight", action="store_true", help="include the first 17-beat P_SCOPE record")
+        weight = command.add_mutually_exclusive_group()
+        weight.add_argument("--with-first-weight", dest="weight_records", action="store_const", const=1, default=0,
+                            help="include the first 17-beat P_SCOPE record")
+        weight.add_argument("--with-two-weights", dest="weight_records", action="store_const", const=2,
+                            help="include both 17-beat records of the first drained P_SCOPE pair")
     args = parser.parse_args()
     if args.operation == "predict":
         result = predict(args.archive, args.binary.resolve(), args.config.resolve(), args.output.resolve(),
-                         args.embedding, args.mode, with_first_weight=args.with_first_weight)
+                         args.embedding, args.mode, weight_records=args.weight_records)
     else:
         result = compare(args.archive, json.loads(args.prediction.read_bytes()), args.edges,
-                         with_first_weight=args.with_first_weight)
+                         weight_records=args.weight_records)
         result["prediction_sha256"] = file_digest(args.prediction)
     print(json.dumps(result, indent=2))
 

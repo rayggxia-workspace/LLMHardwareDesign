@@ -1,4 +1,4 @@
-"""Advance 105530's isolated first P0 weight record on the live DDR devices."""
+"""Advance 105530's first two P0 weight records on the live DDR devices."""
 
 from dma_ddr import Beat
 from qwen_descriptor_dma import BURST_BYTES, SLOTS_PER_CHANNEL
@@ -10,6 +10,7 @@ CLIENT = 9
 SKIDS_PER_CHANNEL = 3
 LANE_DEPTH = 16
 ISSUE_WINDOW_CREDITS = 4
+PREFIX_RECORD_ADDRESSES = (0x4C9000, 0x4CD400)
 
 
 def _advance_ddr(ddr, channel, tick, target, queues, submitted, completed, addresses):
@@ -34,24 +35,27 @@ def _advance_ddr(ddr, channel, tick, target, queues, submitted, completed, addre
 
 
 def read_weight_record(fabric, offer_cycle, address, *, beats=17):
-    """Predict one complete client-9 record with no competing clients or bank owners.
+    """Predict the next physically isolated client-9 record in the frozen prefix.
 
     The caller supplies the first M request offer from the control/alloc FSM.
     This prefix starts after all earlier physical and client responses and
-    ends at the final M fill. It carries the existing slot serial counters and
-    DRAMsim3 state forward. The first client-9 response cursor starts at zero.
+    ends at the final M fill. Slot serials, arbitration cursors and live DDR
+    state survive the handoff between these records.
     """
     ddr = fabric.ddr
+    completed_records, issue_cursors, response_cursor = getattr(fabric, "weight_prefix_state", (0, (0, 0), 0))
     require(type(offer_cycle) is int and offer_cycle > fabric.last_response
-            and fabric.open_record is None and not getattr(fabric, "weight_record_read", False)
+            and fabric.open_record is None
             and all(device.idle for device in ddr.dram), "first weight record requires a drained prefix")
-    require(type(address) is int and type(beats) is int and beats in (17, 18)
-            and 0 <= address <= (1 << 34) - beats * BURST_BYTES and address % BURST_BYTES == 0,
-            "invalid native weight record")
+    require(completed_records < len(PREFIX_RECORD_ADDRESSES) and type(address) is int
+            and address == PREFIX_RECORD_ADDRESSES[completed_records] and type(beats) is int and beats == 17,
+            "unsupported weight record outside the first two Q projection records")
 
     channel = (address >> 11) & 1
     lane_base = channel * 2
     entry_base = channel * SLOTS_PER_CHANNEL
+    skid_base = channel * SKIDS_PER_CHANNEL
+    total_skids = 2 * SKIDS_PER_CHANNEL
     slots = range(entry_base, entry_base + SLOTS_PER_CHANNEL)
     device = ddr.dram[channel]
     tick = offer_cycle * CORE_PS // DDR_PS
@@ -66,10 +70,7 @@ def read_weight_record(fabric, offer_cycle, address, *, beats=17):
     queues = [[], []]
     submitted, completed = set(), set()
     addresses = {}
-    issue_cursor = 0
-    # The global skid cursor starts at zero, so each channel starts scanning
-    # at its first local skid when the other channel has no responses.
-    response_cursor = 0
+    issue_cursor = issue_cursors[channel]
     previous_issues = 0
     cycle = offer_cycle
     while None in responses:
@@ -83,13 +84,13 @@ def read_weight_record(fabric, offer_cycle, address, *, beats=17):
             free_entry = next((slot for slot in slots if slot not in occupied), None)
             require(free_entry is not None, "isolated weight producer exhausted typed slots")
 
-        forwarded = next((slot for offset in range(SKIDS_PER_CHANNEL)
-                          for slot in ((response_cursor + offset) % SKIDS_PER_CHANNEL,)
-                          if skids[slot] is not None), None)
+        live_skids = [slot for slot, entry in enumerate(skids) if entry is not None]
+        forwarded = min(live_skids, key=lambda slot: (skid_base + slot - response_cursor) % total_skids,
+                        default=None)
         if forwarded is not None:
             responses[occupied.pop(skids[forwarded])] = cycle
             skids[forwarded] = None
-            response_cursor = (forwarded + 1) % SKIDS_PER_CHANNEL
+            response_cursor = (skid_base + forwarded + 1) % total_skids
 
         issues = 0
         for local_lane in range(2):
@@ -144,6 +145,8 @@ def read_weight_record(fabric, offer_cycle, address, *, beats=17):
             "weight record has live transport after its final client response")
     ddr.tick[channel] = tick
     fabric.last_response = max(responses)
-    fabric.weight_record_read = True
+    issue_cursors = list(issue_cursors)
+    issue_cursors[channel] = issue_cursor
+    fabric.weight_prefix_state = (completed_records + 1, tuple(issue_cursors), response_cursor)
     return {"address": address, "client_accepts": accepts, "phy_admits": admits, "phy_returns": returns,
             "client_responses": responses, "global_tags": tags, "lanes": lanes}

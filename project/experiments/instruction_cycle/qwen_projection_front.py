@@ -1,9 +1,9 @@
-"""Predict the first Q projection weight offer in the 105530 fixture.
+"""Predict the first pair of Q projection weight offers in 105530.
 
 The input is the accepted ticket-3 P_SCOPE in a drained P0/M instance.
-Cycles use the DDR bridge's pre-edge count. The endpoint is the registered
-M leaf offer to typed DMA. Subsequent record beats, COPY and EXEC are outside
-this model.
+Cycles use the DDR bridge's pre-edge count. The endpoints are registered
+M leaf offers to typed DMA. The model stops before COPY and EXEC timing is
+needed to advance the record iterator.
 """
 
 import struct
@@ -22,7 +22,7 @@ WEIGHT_CLIENT = 9
 
 
 def first_weight_offer(call, service_accept, mode):
-    """Return source-derived activation and first weight launch milestones."""
+    """Return source-derived activation and the first two weight launches."""
     raw = bytes.fromhex(call["descriptor_hex"])
     require(type(service_accept) is int and service_accept >= 0 and mode in (0, 1),
             "invalid P_SCOPE edge or testbench mode")
@@ -35,7 +35,7 @@ def first_weight_offer(call, service_accept, mode):
     require((columns, first, stride, groups, context, full_k, k_begin, k_end, ways, head)
             == (256, 0, 8, 16, 0, 2048, 0, 2048, 1, 0),
             "unsupported first Q projection weight layout")
-    weight = service_spans(raw[:4], call["operation"], raw)[0]
+    weight, second_weight = service_spans(raw[:4], call["operation"], raw)[:2]
 
     # The accepted job registers its first iterator record and the window
     # sequencer observes NEED at +2. QUANT_REQ fires at +3 and its first S32
@@ -71,6 +71,14 @@ def first_weight_offer(call, service_accept, mode):
     weight_table_installed = weight_allocated + 1
     weight_source_offer = weight_table_installed + 2  # Lock request, then registered valid.
 
+    # M registers the first ALLOC reply when it installs the table. The two
+    # reply flits are followed by one ALLOC_WAIT edge and one FILL_WAIT edge.
+    # PAIR_ACCEPT_SECOND then consumes the already-held same-K iterator record.
+    # Both K0 records create distinct contexts, so the second repeats the
+    # same BEGIN/CONTEXT/ALLOC command path while the first weight fills.
+    second_record_accept = weight_table_installed + 2 + 1 + 1 + 1
+    second_weight_source_offer = second_record_accept + (weight_source_offer - record_accept)
+
     return {"target": call["target"], "ticket": call["ticket"], "service_accept": service_accept,
             "first_scan_read": first_scan_read, "last_scan_ack": last_scan_ack,
             "first_convert_read": first_convert_read, "last_packed_write": write,
@@ -78,4 +86,7 @@ def first_weight_offer(call, service_accept, mode):
             "header_publish": header_publish, "first_record_accept": record_accept,
             "weight_allocated": weight_allocated, "weight_table_installed": weight_table_installed,
             "weight_source_offer": weight_source_offer, "weight_client": WEIGHT_CLIENT,
-            "weight_address": weight["address"], "weight_record_beats": weight["bytes"] // BURST_BYTES}
+            "weight_address": weight["address"], "weight_record_beats": weight["bytes"] // BURST_BYTES,
+            "second_record_accept": second_record_accept, "second_weight_source_offer": second_weight_source_offer,
+            "second_weight_address": second_weight["address"],
+            "second_weight_record_beats": second_weight["bytes"] // BURST_BYTES}
