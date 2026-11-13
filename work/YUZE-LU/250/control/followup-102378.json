@@ -1,0 +1,31 @@
+{
+  "schema": "real-native-control-global-evidence/1",
+  "run": 71,
+  "job": 102378,
+  "source": "8da537685",
+  "state": "FAILED",
+  "note": "strict guard2 unused expected slice and fixture ready; retained and fixed",
+  "allocation_CPUs": 60,
+  "elapsed_seconds": 4.0,
+  "TotalCPU_seconds": 1.684,
+  "package": "runs/run71.tar.gz",
+  "package_sha256": "8ce3b58cf73d536082cca177b259dc73193d6b132b55d3c2ebfd040e428f953e",
+  "package_transport_manifest": "runs/run71.tar.gz.manifest.json",
+  "package_transport_manifest_sha256": "f6dbd1cacf35ab4defdb96f57ecd4a52d45b49544dca203f842b62140bcd3f51",
+  "package_members": 126,
+  "functional_clock_ns": 10,
+  "not_300MHz_STA": true,
+  "qualification": "LOCAL_CONTIG K128/256 static W8A16, explicit shift8/zero bias. Actual MC/LC PM, true four-bank S, M and global DMA only in named global fixtures. FENCE/cancel/admission fixtures retain their explicitly pinned backend. No streamed whole projection, whole FFN/model, five-provider, physical, energy or token/s qualification.",
+  "logs": [],
+  "failures": [
+    {
+      "path": "./project/experiments/shared_x_control/results/build-native_s.log",
+      "errors": [
+        "%Warning-UNUSEDSIGNAL: rtl/tb_serial_m_guard2.sv:48:26: Signal is not used: 'cancel_one_ready'",
+        "%Warning-UNUSEDSIGNAL: rtl/bounded_serial_m_guard2.sv:127:16: Bits of signal are not used: 'expected'[63:0]",
+        "%Error: Exiting due to 2 warning(s)"
+      ]
+    }
+  ],
+  "timing_from_real_RTL": []
+}

@@ -1,0 +1,9 @@
+read_json /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/unsigned.json
+hierarchy -check -top g_s32
+write_verilog -noattr -noexpr -norename structural.v
+write_json structural.json
+design -reset
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog structural.v
+hierarchy -check -top g_s32
+write_json reparsed.json

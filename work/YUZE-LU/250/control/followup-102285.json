@@ -1,0 +1,413 @@
+{
+  "schema": "real-control-program-lifetime-admission/1",
+  "run": 47,
+  "job": 102285,
+  "source": "988bcbdb7",
+  "state": "FAILED",
+  "note": "fixture missed one-cycle consumed service_done then let next CALL through",
+  "allocation_CPUs": 60,
+  "elapsed_seconds": 9,
+  "TotalCPU_seconds": 21.195,
+  "package": "runs/issue250-control-prep-20261110-47.pack.tar.gz",
+  "package_sha256": "d1a639c7098b0324fd05230cfce7e5f638cc7ba37cbd84e6c8553cfc88eba214",
+  "package_transport_manifest": "runs/issue250-control-prep-20261110-47.pack.tar.gz.manifest.json",
+  "package_transport_manifest_sha256": "271c9403a0697ee43cbaa3c80ecd9b289c1aa90453efcf80e390cb375efd10c0",
+  "functional_clock_ns": 10,
+  "not_300MHz_STA": true,
+  "qualification": "LOCAL_CONTIG full K128/256, static W8A16, explicit shift8/zero bias and bootstrap A image. FENCE backend is bounded fixture, actual production global fabric not joined in these jobs. No whole model, cross-P system, physical, energy or token/s qualification.",
+  "logs": [
+    {
+      "path": "./results/p-program-6-0.log",
+      "PASS": false,
+      "observations": [
+        "[21905000] %Fatal: tb_p_program_numeric.sv:511: Assertion failed in tb_p_program_numeric: actual descriptor deployment",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_numeric.sv:511: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./results/build-p-program.log",
+      "PASS": false,
+      "observations": []
+    },
+    {
+      "path": "./results/p-program-2-0.log",
+      "PASS": false,
+      "observations": [
+        "[12045000] %Fatal: tb_p_program_numeric.sv:511: Assertion failed in tb_p_program_numeric: actual descriptor deployment",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_numeric.sv:511: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./results/p-program-5-0.log",
+      "PASS": false,
+      "observations": [
+        "[12045000] %Fatal: tb_p_program_numeric.sv:511: Assertion failed in tb_p_program_numeric: actual descriptor deployment",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_numeric.sv:511: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./results/p-program-3-0.log",
+      "PASS": false,
+      "observations": [
+        "[16685000] %Fatal: tb_p_program_numeric.sv:511: Assertion failed in tb_p_program_numeric: actual descriptor deployment",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_numeric.sv:511: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./results/p-program-4-0.log",
+      "PASS": false,
+      "observations": [
+        "[11905000] %Fatal: tb_p_program_numeric.sv:511: Assertion failed in tb_p_program_numeric: actual descriptor deployment",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_numeric.sv:511: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./results/p-program-1-0.log",
+      "PASS": false,
+      "observations": [
+        "[11915000] %Fatal: tb_p_program_numeric.sv:511: Assertion failed in tb_p_program_numeric: actual descriptor deployment",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_numeric.sv:511: Verilog $stop"
+      ]
+    }
+  ],
+  "timelines": [
+    {
+      "path": "./results/p-program-5-0.csv",
+      "counts": {
+        "A_M": 8,
+        "A_S_REQ": 16,
+        "COMPLETE": 1,
+        "DDR_REQ": 17,
+        "DDR_RSP": 17,
+        "LC_M": 13,
+        "LC_PM": 44,
+        "LC_RETURN": 1,
+        "MC_CALL": 2,
+        "MC_PM": 39,
+        "M_LR": 14,
+        "RECORD": 1,
+        "SCOPE_REQ": 2,
+        "SCOPE_RSP": 2,
+        "S_ACK": 2,
+        "S_WRITE": 2
+      },
+      "program_scopes": [
+        {
+          "case": "0",
+          "CALL_SOP": 821,
+          "RETURN_EOP": 1136,
+          "CALL_SOP_to_RETURN_EOP_cycles": 315
+        },
+        {
+          "case": "0",
+          "CALL_SOP": 1151
+        }
+      ],
+      "records": [
+        {
+          "case": "0",
+          "sequence": "100",
+          "k": "0",
+          "context": "0",
+          "accepted": 1006,
+          "complete": 1126,
+          "accepted_to_complete_cycles": 120
+        }
+      ]
+    },
+    {
+      "path": "./results/p-program-3-0.csv",
+      "counts": {
+        "A_M": 24,
+        "A_S_REQ": 32,
+        "CASE_DONE": 1,
+        "COMPLETE": 3,
+        "DDR_REQ": 51,
+        "DDR_RSP": 51,
+        "LC_M": 39,
+        "LC_PM": 67,
+        "LC_RETURN": 2,
+        "MC_CALL": 3,
+        "MC_PM": 42,
+        "M_LR": 42,
+        "RECORD": 3,
+        "SCOPE_REQ": 4,
+        "SCOPE_RSP": 4,
+        "S_ACK": 6,
+        "S_WRITE": 6
+      },
+      "program_scopes": [
+        {
+          "case": "0",
+          "CALL_SOP": 821,
+          "RETURN_EOP": 1126,
+          "CALL_SOP_to_RETURN_EOP_cycles": 305
+        },
+        {
+          "case": "1",
+          "CALL_SOP": 1186,
+          "RETURN_EOP": 1600,
+          "CALL_SOP_to_RETURN_EOP_cycles": 414
+        },
+        {
+          "case": "1",
+          "CALL_SOP": 1615
+        }
+      ],
+      "records": [
+        {
+          "case": "0",
+          "sequence": "100",
+          "k": "0",
+          "context": "0",
+          "accepted": 1004,
+          "complete": 1116,
+          "accepted_to_complete_cycles": 112
+        },
+        {
+          "case": "1",
+          "sequence": "116",
+          "k": "0",
+          "context": "0",
+          "accepted": 1369,
+          "complete": 1479,
+          "accepted_to_complete_cycles": 110
+        },
+        {
+          "case": "1",
+          "sequence": "117",
+          "k": "0",
+          "context": "1",
+          "accepted": 1480,
+          "complete": 1590,
+          "accepted_to_complete_cycles": 110
+        }
+      ]
+    },
+    {
+      "path": "./results/p-program-2-0.csv",
+      "counts": {
+        "A_M": 8,
+        "A_S_REQ": 16,
+        "COMPLETE": 1,
+        "DDR_REQ": 17,
+        "DDR_RSP": 17,
+        "LC_M": 13,
+        "LC_PM": 44,
+        "LC_RETURN": 1,
+        "MC_CALL": 2,
+        "MC_PM": 39,
+        "M_LR": 14,
+        "RECORD": 1,
+        "SCOPE_REQ": 2,
+        "SCOPE_RSP": 2,
+        "S_ACK": 2,
+        "S_WRITE": 2
+      },
+      "program_scopes": [
+        {
+          "case": "0",
+          "CALL_SOP": 821,
+          "RETURN_EOP": 1136,
+          "CALL_SOP_to_RETURN_EOP_cycles": 315
+        },
+        {
+          "case": "0",
+          "CALL_SOP": 1151
+        }
+      ],
+      "records": [
+        {
+          "case": "0",
+          "sequence": "100",
+          "k": "0",
+          "context": "0",
+          "accepted": 1006,
+          "complete": 1126,
+          "accepted_to_complete_cycles": 120
+        }
+      ]
+    },
+    {
+      "path": "./results/p-program-6-0.csv",
+      "counts": {
+        "A_M": 40,
+        "A_S_REQ": 64,
+        "CASE_DONE": 2,
+        "COMPLETE": 5,
+        "DDR_REQ": 85,
+        "DDR_RSP": 85,
+        "LC_M": 56,
+        "LC_PM": 90,
+        "LC_RETURN": 3,
+        "MC_CALL": 4,
+        "MC_PM": 45,
+        "M_LR": 64,
+        "RECORD": 5,
+        "SCOPE_REQ": 6,
+        "SCOPE_RSP": 6,
+        "S_ACK": 8,
+        "S_WRITE": 8
+      },
+      "program_scopes": [
+        {
+          "case": "0",
+          "CALL_SOP": 821,
+          "RETURN_EOP": 1126,
+          "CALL_SOP_to_RETURN_EOP_cycles": 305
+        },
+        {
+          "case": "1",
+          "CALL_SOP": 1186,
+          "RETURN_EOP": 1599,
+          "CALL_SOP_to_RETURN_EOP_cycles": 413
+        },
+        {
+          "case": "2",
+          "CALL_SOP": 1714,
+          "RETURN_EOP": 2122,
+          "CALL_SOP_to_RETURN_EOP_cycles": 408
+        },
+        {
+          "case": "2",
+          "CALL_SOP": 2137
+        }
+      ],
+      "records": [
+        {
+          "case": "0",
+          "sequence": "100",
+          "k": "0",
+          "context": "0",
+          "accepted": 1004,
+          "complete": 1116,
+          "accepted_to_complete_cycles": 112
+        },
+        {
+          "case": "1",
+          "sequence": "116",
+          "k": "0",
+          "context": "0",
+          "accepted": 1369,
+          "complete": 1479,
+          "accepted_to_complete_cycles": 110
+        },
+        {
+          "case": "1",
+          "sequence": "117",
+          "k": "0",
+          "context": "1",
+          "accepted": 1480,
+          "complete": 1589,
+          "accepted_to_complete_cycles": 109
+        },
+        {
+          "case": "2",
+          "sequence": "132",
+          "k": "0",
+          "context": "0",
+          "accepted": 1897,
+          "complete": 2000,
+          "accepted_to_complete_cycles": 103
+        },
+        {
+          "case": "2",
+          "sequence": "133",
+          "k": "128",
+          "context": "0",
+          "accepted": 2001,
+          "complete": 2112,
+          "accepted_to_complete_cycles": 111
+        }
+      ]
+    },
+    {
+      "path": "./results/p-program-4-0.csv",
+      "counts": {
+        "A_M": 8,
+        "A_S_REQ": 16,
+        "COMPLETE": 1,
+        "DDR_REQ": 17,
+        "DDR_RSP": 17,
+        "LC_M": 13,
+        "LC_PM": 44,
+        "LC_RETURN": 1,
+        "MC_CALL": 2,
+        "MC_PM": 39,
+        "M_LR": 14,
+        "RECORD": 1,
+        "SCOPE_REQ": 2,
+        "SCOPE_RSP": 2,
+        "S_ACK": 2,
+        "S_WRITE": 2
+      },
+      "program_scopes": [
+        {
+          "case": "0",
+          "CALL_SOP": 821,
+          "RETURN_EOP": 1122,
+          "CALL_SOP_to_RETURN_EOP_cycles": 301
+        },
+        {
+          "case": "0",
+          "CALL_SOP": 1137
+        }
+      ],
+      "records": [
+        {
+          "case": "0",
+          "sequence": "100",
+          "k": "0",
+          "context": "0",
+          "accepted": 1005,
+          "complete": 1112,
+          "accepted_to_complete_cycles": 107
+        }
+      ]
+    },
+    {
+      "path": "./results/p-program-1-0.csv",
+      "counts": {
+        "A_M": 8,
+        "A_S_REQ": 16,
+        "COMPLETE": 1,
+        "DDR_REQ": 17,
+        "DDR_RSP": 17,
+        "LC_M": 13,
+        "LC_PM": 44,
+        "LC_RETURN": 1,
+        "MC_CALL": 2,
+        "MC_PM": 39,
+        "M_LR": 14,
+        "RECORD": 1,
+        "SCOPE_REQ": 2,
+        "SCOPE_RSP": 2,
+        "S_ACK": 2,
+        "S_WRITE": 2
+      },
+      "program_scopes": [
+        {
+          "case": "0",
+          "CALL_SOP": 821,
+          "RETURN_EOP": 1123,
+          "CALL_SOP_to_RETURN_EOP_cycles": 302
+        },
+        {
+          "case": "0",
+          "CALL_SOP": 1138
+        }
+      ],
+      "records": [
+        {
+          "case": "0",
+          "sequence": "100",
+          "k": "0",
+          "context": "0",
+          "accepted": 1005,
+          "complete": 1113,
+          "accepted_to_complete_cycles": 108
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "passed": false,
+  "commands": [],
+  "start_unix": 1794330833.79774,
+  "native_anchors": {
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "full_deck_sha256": "4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147",
+    "source": "Main accepted M mapping receipt and main release-six/M/evidence/drc/five-macro-drc.json"
+  },
+  "profiles": {
+    "passed": true,
+    "profiles": {
+      "g_geometry.py": {
+        "original": "project/experiments/block_v2/actual_geometry.py",
+        "original_sha256": "ca6ef591331729c5e1ef5430c3d632779bc863ef10ffa7fb4061a0c7159ba31e",
+        "derived_sha256": "f578e300a4173e93e038a647a4b55e862e8d588dda905465e7ae9468764d2fd0",
+        "replacements": [
+          {
+            "before": "assert cpus==16 and kind in ('m','n','e','g','r','s','t')",
+            "after": "assert cpus in (10,12) and kind=='g'"
+          },
+          {
+            "before": "script='set_thread_count 16\\n",
+            "after": "script='set_thread_count '+str(cpus)+'\\n"
+          }
+        ]
+      },
+      "g_escape.py": {
+        "original": "project/experiments/block_feed_v1/escape.py",
+        "original_sha256": "3ecbcd7bb9fc56c9a1acd56315d8974f76b4762c74cfabbe82e5c4047840ad65",
+        "derived_sha256": "1980760235f99efc37c16cb476282d1f9ac29dfc5fd92528f983b081aad0b315",
+        "replacements": [
+          {
+            "before": "from deliver import accepted",
+            "after": "from g_deliver import accepted"
+          },
+          {
+            "before": "from pins import generate",
+            "after": "from g_pins import generate"
+          },
+          {
+            "before": "assert cpus==16 and kind in 'mvrst'",
+            "after": "assert cpus in (10,12) and kind=='g'"
+          },
+          {
+            "before": "script='set_thread_count 16\\n",
+            "after": "script='set_thread_count '+str(cpus)+'\\n"
+          }
+        ]
+      }
+    },
+    "scope": "Verify explicit G-only/allocated-CPU specializations of main access gates.\n\nNo geometry, rule, source-file or electrical checks are removed. Original\nmain files stay unchanged. The two local derived modules have an exact,\nmachine-checked textual diff: use 10/12 allocated CPUs, select G and its\naccepted-delivery adapter, and rebuild the explicit edge-staggered pin plan.\n"
+  },
+  "delivery_receipt_sha256": "bb8f0dc3fd646bc0b411d8b212466e30e5a4d426072e888bfba10616cf2fb76c",
+  "end_unix": 1794330833.9198177,
+  "outputs": {
+    "export.tcl": "cf735a99108b24f412f8340491685d834bcfab3eab83f8efdbf13042a7f888b2"
+  }
+}

@@ -1,0 +1,17 @@
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog -sv /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-03/source/project/rtl/w8a16_v1/g_s32.sv
+hierarchy -check -top g_s32
+proc
+opt
+write_json operators.json
+synth -top g_s32 -noabc
+dfflibmap -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+abc -exe /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-03/source/project/experiments/w8a16_physical/abc_batch.py -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+clean
+check -assert
+flatten -noscopeinfo
+clean
+check -assert
+stat -liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+write_verilog -noattr mapped.v
+write_json mapped.json

@@ -1,0 +1,2109 @@
+{
+  "schema": "issue250-native-control-rtl-evidence/1",
+  "issue": 250,
+  "scope": "Native control evidence by named scope: bounded protocol peers, actual MC/LC PM, true S and M numeric LOCAL_CONTIG K128/256, real finite global DMA and normal-drain cancel/FENCE. Not whole-model/streamed/five-provider/physical/performance qualification.",
+  "tool": "Verilator 5.042 strict --Wall --timing --assert",
+  "runtime": "/public/software/singularity-ce-4.3.4/bin/singularity",
+  "image": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+  "policy": "c64 6x10 allocation; one compiler task up to10cores then six independent seed tasks, no artificial load",
+  "execution_source_and_tools_sha": "inside each package results/; build/ intentionally excluded",
+  "package_remote_local_sha256_verified": true,
+  "runs": [
+    {
+      "run": 5,
+      "source": "655216c6d67538c0f5a5ab14aa6ec9b316dd5779",
+      "jobs": [
+        {
+          "job": 102076,
+          "state": "COMPLETED",
+          "scope": "abstract_protocol",
+          "cases": 47,
+          "elapsed_seconds": 2,
+          "TotalCPU_seconds": 0.331
+        },
+        {
+          "job": 102077,
+          "state": "FAILED",
+          "scope": "RTL_not_started",
+          "reason": "/usr/bin/singularity absent on compute node",
+          "elapsed_seconds": 3,
+          "TotalCPU_seconds": 1.364
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-05.pack.tar.gz",
+      "package_sha256": "5735fee254c23d02c35b7e1ee7fb24fefada5e9bee17f505a7197c66e6c18ad4",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-05"
+    },
+    {
+      "run": 6,
+      "source": "b97aa590e6916f6a8449a3a958d77bf9aca93081",
+      "jobs": [
+        {
+          "job": 102080,
+          "state": "FAILED",
+          "scope": "strict_guard_compile",
+          "reason": "testbench PROCASSINIT and unused-width warnings; no functional simulations",
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 2.008
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-06.pack.tar.gz",
+      "package_sha256": "375e07b11cf7e86eb2bf8ab3769d1ae6841ba96eb01be9a55128b138f20d3bbf",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-06"
+    },
+    {
+      "run": 7,
+      "source": "083f8c13dc46cef068da06c43e8b3a7edc36e358",
+      "jobs": [
+        {
+          "job": 102082,
+          "state": "COMPLETED",
+          "scope": "old_one_result_guard_only",
+          "seeds": 6,
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 13.942
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-07.pack.tar.gz",
+      "package_sha256": "58baf2258b42605bbf4805f295ab588d41594164db47169bd7f76666c40c8fe1",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-07"
+    },
+    {
+      "run": 8,
+      "source": "ca77df68e539a03ad2a4aace008abf89d2072b1c",
+      "jobs": [
+        {
+          "job": 102085,
+          "state": "FAILED",
+          "scope": "two_result_guard_passed_6_seeds_private_copy_compile_failed",
+          "reason": "private-copy testbench unused upper-width warnings",
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 14.342
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-08.pack.tar.gz",
+      "package_sha256": "c9bf51db96ad7a753901266787766403f993ce3737f4218e7ceeec34d655eef5",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-08"
+    },
+    {
+      "run": 9,
+      "source": "e863eaf0e3d9a1979bdcb69975074f45f3ae2822",
+      "jobs": [
+        {
+          "job": 102086,
+          "state": "COMPLETED",
+          "scope": "private_A_earlycopy_only_before_extended_late_return_tests",
+          "seeds": 6,
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 9.674
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-09.pack.tar.gz",
+      "package_sha256": "06e4e074f65bf88eb3fd51eb80aaa6b92ba9a00804d121953c7dec1d3eb99bb2",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-09"
+    },
+    {
+      "run": 10,
+      "source": "94fc02211cee1f82788b785f5ed7e43db189fa23",
+      "jobs": [
+        {
+          "job": 102089,
+          "state": "COMPLETED",
+          "scope": "two_result_guard_AND_private_A_earlycopy",
+          "benches": 2,
+          "seeds_per_bench": 6,
+          "elapsed_seconds": 11,
+          "TotalCPU_seconds": 22.478
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-10.pack.tar.gz",
+      "package_sha256": "feadc3ce8482406e94f6992e388b4ee1277a7f160f35c23d96d6b051132dc655",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-10"
+    },
+    {
+      "run": 11,
+      "source": "20769643f",
+      "jobs": [
+        {
+          "job": 102100,
+          "state": "COMPLETED",
+          "scope": "guard and A/copy conservative-fixture handshake timelines",
+          "benches": 2,
+          "seeds_per_bench": 6,
+          "elapsed_seconds": 12,
+          "TotalCPU_seconds": 22.673
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-11.pack.tar.gz",
+      "package_sha256": "a96db3d9ae6574d1015c0797df16178eacefa07e39aeb8a33bd986d78797ab88",
+      "machine_report": "timing-102100.json",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-11"
+    },
+    {
+      "run": 12,
+      "source": "203955251",
+      "jobs": [
+        {
+          "job": 102107,
+          "state": "FAILED",
+          "scope": "first actual-S integration strict compile",
+          "reason": "candidate combinational process graph cycle plus imported intentional empty pins and behavioral blocking warnings",
+          "elapsed_seconds": 4,
+          "TotalCPU_seconds": 1.529
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-12.pack.tar.gz",
+      "package_sha256": "27880e6944a78257f8bcd817de5edf900ce6ea5eba29c735a3b1d6bfb39551dc",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-12"
+    },
+    {
+      "run": 13,
+      "source": "2f1f0a144",
+      "jobs": [
+        {
+          "job": 102108,
+          "state": "FAILED",
+          "scope": "actual-S strict compile after candidate combinational path split",
+          "reason": "file-scoped imported PINCONNECTEMPTY waiver failed to match relative source path",
+          "elapsed_seconds": 4,
+          "TotalCPU_seconds": 1.534
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-13.pack.tar.gz",
+      "package_sha256": "418a0f7402e543c195768d1e744192827257c09adc9fde2b7611d3868b4f19e1",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-13"
+    },
+    {
+      "run": 14,
+      "source": "85d5f88ab",
+      "jobs": [
+        {
+          "job": 102109,
+          "state": "COMPLETED",
+          "scope": "actual local_s_base plus four banks per U and three P, source initialized through ordinary port",
+          "seeds": 6,
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 10.225
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-14.pack.tar.gz",
+      "package_sha256": "0b8a7b5565bc05ac7cac9fa9af3aa9326a5ed841a843a32c591882bdc457e922",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-14"
+    },
+    {
+      "run": 15,
+      "source": "057a301f1",
+      "jobs": [
+        {
+          "job": 102110,
+          "state": "COMPLETED",
+          "scope": "actual SRAM U-to-three-P copy plus signed A replay, native S128 cycle timeline",
+          "seeds": 6,
+          "reset_initial_states": 3,
+          "elapsed_seconds": 8,
+          "TotalCPU_seconds": 12.2
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-15.pack.tar.gz",
+      "package_sha256": "0f902d793e796a0469660e52030901a2cd58119947d0a49fb6bfae1c396f5697",
+      "machine_report": "native-s-102110.json",
+      "remote_source_directory": "/public/home/yuzelu/project-circuit/issue250-control-prep-20261110-15"
+    },
+    {
+      "run": 16,
+      "source": "d6b23873c",
+      "jobs": [
+        {
+          "job": 102129,
+          "state": "COMPLETED",
+          "scope": "all copy complete, two A LOADs active",
+          "seeds": 6,
+          "reset_initial_states": 3,
+          "elapsed_seconds": 8,
+          "TotalCPU_seconds": 12.139
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-16.pack.tar.gz",
+      "package_sha256": "169b8176e52d42ad2eb4251fb1e685178deea9e43c1c4d2ef4c3488eb3c410fd",
+      "machine_report": "native-s-no-overlap-102129.json"
+    },
+    {
+      "run": 17,
+      "source": "4011def7e",
+      "jobs": [
+        {
+          "job": 102140,
+          "state": "COMPLETED",
+          "scope": "all copy complete, isolated first LOAD: 66 cycles",
+          "seeds": 6,
+          "reset_initial_states": 3,
+          "elapsed_seconds": 8,
+          "TotalCPU_seconds": 12.225
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-17.pack.tar.gz",
+      "package_sha256": "f8f1999764e2f091d89ae7d7145f2c59484b944a0cfd03ea9f47f9a59d0efcb9",
+      "machine_report": "native-s-single-first-102140.json"
+    },
+    {
+      "run": 18,
+      "source": "1f4e369cd",
+      "jobs": [
+        {
+          "job": 102150,
+          "state": "COMPLETED",
+          "scope": "four source providers x18 actual S+copy+A replay",
+          "elapsed_seconds": 10,
+          "TotalCPU_seconds": 20.948
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-18.pack.tar.gz",
+      "package_sha256": "416d1974c4bfc9fa04baa8518dadf86142d6534c8d86c615caefb5e3a84ace20"
+    },
+    {
+      "run": 19,
+      "source": "243536847",
+      "jobs": [
+        {
+          "job": 102152,
+          "state": "FAILED",
+          "scope": "strict lint TB initial/unused ports; fixed without RTL waiver",
+          "elapsed_seconds": 0,
+          "TotalCPU_seconds": 0.234
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-19.pack.tar.gz",
+      "package_sha256": "a376a9bb88dae2ff6085e218c92bb8c1f483000b7ca2bbc9e5d94a818b1f97f5"
+    },
+    {
+      "run": 20,
+      "source": "ea740c0f0",
+      "jobs": [
+        {
+          "job": 102155,
+          "state": "COMPLETED",
+          "scope": "18 router held-request/late/wrong tag/release-key negative tests",
+          "elapsed_seconds": 5,
+          "TotalCPU_seconds": 8.957
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-20.pack.tar.gz",
+      "package_sha256": "f102ff7542236c82adb877cd7674ab31eeb5652b57b939a257f1a045623a4011"
+    },
+    {
+      "run": 21,
+      "source": "fce8f2e86",
+      "jobs": [
+        {
+          "job": 102161,
+          "state": "FAILED",
+          "scope": "TB dangling assertion else",
+          "elapsed_seconds": 2,
+          "TotalCPU_seconds": 1.487
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-21.pack.tar.gz",
+      "package_sha256": "185fa0c94118bf08866924b71db8a7f3c088ba24d6955fb2fcccff6488c9a069"
+    },
+    {
+      "run": 22,
+      "source": "48c957e35",
+      "jobs": [
+        {
+          "job": 102163,
+          "state": "FAILED",
+          "scope": "TB unused metadata bits; strict lint",
+          "elapsed_seconds": 2,
+          "TotalCPU_seconds": 1.545
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-22.pack.tar.gz",
+      "package_sha256": "e232e4727555cf160cc1f3ce67a4f6ebdfbb549304b840fbadb99b12fc0eede5"
+    },
+    {
+      "run": 23,
+      "source": "050ed8200",
+      "jobs": [
+        {
+          "job": 102165,
+          "state": "FAILED",
+          "scope": "TB checked repeated inactive tag bus without valid",
+          "elapsed_seconds": 6,
+          "TotalCPU_seconds": 14.72
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-23.pack.tar.gz",
+      "package_sha256": "fc3ebb1823de124d9114927982b8e6736c779c08d87dd0b56094271a4fba73bf"
+    },
+    {
+      "run": 24,
+      "source": "ad91cab5b",
+      "jobs": [
+        {
+          "job": 102167,
+          "state": "COMPLETED",
+          "scope": "18 actual SRAM serial guard tests",
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 16.481
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-24.pack.tar.gz",
+      "package_sha256": "12c31f10ebb5b9fc326f940d08ad39affa7f52adffa08db2d7e64a9284eff967"
+    },
+    {
+      "run": 25,
+      "source": "0d0e35601",
+      "jobs": [
+        {
+          "job": 102169,
+          "state": "COMPLETED",
+          "scope": "18 real S tests plus held INPUT EOP, FINAL, CONTINUE, SPILL and malformed frames",
+          "elapsed_seconds": 8,
+          "TotalCPU_seconds": 16.939
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-25.pack.tar.gz",
+      "package_sha256": "784d7b428631ae38bd4c8bd3414e6b85fe6c83bab8a24c92cde1d93c8ef7bdac"
+    },
+    {
+      "run": 26,
+      "source": "c38ec713a",
+      "jobs": [
+        {
+          "job": 102174,
+          "state": "FAILED",
+          "scope": "TB unconstrained int arguments under strict lint",
+          "elapsed_seconds": 1,
+          "TotalCPU_seconds": 0.289
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-26.pack.tar.gz",
+      "package_sha256": "95f4dc9f2a79b66e08aeac5c6ad42be6a0302322c75d777890217ece95cbf62e"
+    },
+    {
+      "run": 27,
+      "source": "f9051cc54",
+      "jobs": [
+        {
+          "job": 102176,
+          "state": "COMPLETED",
+          "scope": "18 mutable 1KiB PM boot CRC tests and actual compact kernel reads",
+          "elapsed_seconds": 5,
+          "TotalCPU_seconds": 9.901
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-27.pack.tar.gz",
+      "package_sha256": "89b66776bb1f4eebe4d3fe4fe08806dad26ac2bd8f84b427d7759b47f858e7b5"
+    },
+    {
+      "run": 28,
+      "source": "ab6fbe26b",
+      "jobs": [
+        {
+          "job": 102183,
+          "state": "COMPLETED",
+          "scope": "18 actual S serial guard tests with full ABORT key/owner and withheld source drain",
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 17.588
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-28.pack.tar.gz",
+      "package_sha256": "019b305fd6a4f65c697e7c2708d3ea11c9af0178124992c638c7af24716e4541",
+      "bank_source_closure": "Same unchanged SHA6c1c1ca9\u2026 source included in runs/issue250-control-prep-20261110-25.pack.tar.gz; native_s script independently verifies it before compile."
+    },
+    {
+      "run": 29,
+      "source": "337f6cff4",
+      "jobs": [
+        {
+          "job": 102187,
+          "state": "COMPLETED",
+          "scope": "18 finite128B scope fetch, real two64B requests and inline124byte CRC",
+          "elapsed_seconds": 4,
+          "TotalCPU_seconds": 9.746
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-29.pack.tar.gz",
+      "package_sha256": "01cf48b281a513d9f8b94d574053f2be6b294553560c0e164045029555504a7b"
+    },
+    {
+      "run": 30,
+      "source": "a039b4733",
+      "jobs": [
+        {
+          "job": 102199,
+          "state": "COMPLETED",
+          "scope": "18 scope fetch cancellation CLOSE and actual issued return drain tests",
+          "elapsed_seconds": 5,
+          "TotalCPU_seconds": 9.797
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-30.pack.tar.gz",
+      "package_sha256": "e6b0d0b6ab7740cffbc79bff819c21983f620c96585eb9350bbc010a3cbe30a3"
+    },
+    {
+      "run": 31,
+      "source": "e7c3f3567",
+      "jobs": [
+        {
+          "job": 102212,
+          "state": "FAILED",
+          "scope": "native LC strictlint preserved failure",
+          "elapsed_seconds": 1,
+          "TotalCPU_seconds": 0.406
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-31.pack.tar.gz",
+      "package_sha256": "6f234ebeae316eaaec53cbf5632b2100ef5a0ce1ba24c846887dd7be787f92c8"
+    },
+    {
+      "run": 32,
+      "source": "68d50114a",
+      "jobs": [
+        {
+          "job": 102214,
+          "state": "FAILED",
+          "scope": "peer bitmap text transform syntax failure preserved",
+          "elapsed_seconds": 1,
+          "TotalCPU_seconds": 0.271
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-32.pack.tar.gz",
+      "package_sha256": "d16a0f3ddcf6cd3792e3e282078859e57212492a1ecadd1b993c97ab512babf5"
+    },
+    {
+      "run": 33,
+      "source": "fef82a1e6",
+      "jobs": [
+        {
+          "job": 102215,
+          "state": "FAILED",
+          "scope": "native LC loop diagnostic strictlint failure preserved",
+          "elapsed_seconds": 1,
+          "TotalCPU_seconds": 0.409
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-33.pack.tar.gz",
+      "package_sha256": "53f36e3f99b6f166b52dc76636f82b9648f4b8ac1e6eb4f92feae7728dbb08a2"
+    },
+    {
+      "run": 34,
+      "source": "32fa11a62",
+      "jobs": [
+        {
+          "job": 102216,
+          "state": "COMPLETED",
+          "scope": "18 actual LC PM/fetch/typed/range trials, finite record peer",
+          "elapsed_seconds": 6,
+          "TotalCPU_seconds": 15.805
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-34.pack.tar.gz",
+      "package_sha256": "36d62434b65af4e8858da0ae0505b1aae078dc9c61e147b5f43e27fa00faf0ec"
+    },
+    {
+      "run": 35,
+      "source": "ac165e07c",
+      "jobs": [
+        {
+          "job": 102217,
+          "state": "COMPLETED",
+          "scope": "18 LC trials incl preboot init, rejected-config preservation, invalid CANCEL payload",
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 16.031
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-35.pack.tar.gz",
+      "package_sha256": "b6364a8720501c1ab17418b54e6ea1134f17474e06dd3951da58d909bc158363"
+    },
+    {
+      "run": 36,
+      "source": "4dae0df61",
+      "jobs": [
+        {
+          "job": 102225,
+          "state": "FAILED",
+          "scope": "actual MC/LC bench strict diagnostic observation failure retained",
+          "elapsed_seconds": 6,
+          "TotalCPU_seconds": 0.777
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-36.pack.tar.gz",
+      "package_sha256": "42be2919a85cede9acc848ee44bd283343907dfe5e688d7db9a242deab297c48"
+    },
+    {
+      "run": 37,
+      "source": "78886ad4e",
+      "jobs": [
+        {
+          "job": 102226,
+          "state": "COMPLETED",
+          "scope": "18 actual SRAM MC PM to native LC PM/fetch/typed/range trials, finite record peer",
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 16.198
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-37.pack.tar.gz",
+      "package_sha256": "3065507d64b14ec894b8305b9bef92c0d5325f62e579ab6ee085fdcce5b77bda"
+    },
+    {
+      "run": 38,
+      "source": "8939dbefc",
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-38.pack.tar.gz",
+      "package_sha256": "748e497e3e02a13ccdace47dae3a3d630c2de2c3c18023da5b5d94698a5e9102",
+      "jobs": [
+        {
+          "job": 102239,
+          "state": "COMPLETED",
+          "elapsed_seconds": 12,
+          "TotalCPU_seconds": 32.661,
+          "scope": "run38 actual MC/LC PM/fetch/typed/range with finite record peer; run40 actual S128 A abort with fixture-supplied verified transport proof, not actual M ABORT join. No numeric M or final physical qualification."
+        }
+      ],
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-38.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "91d656e5959a04cea8351ca96939522b0f7e2231fc3c5485fae9d19e16935230"
+    },
+    {
+      "run": 39,
+      "source": "ccd34af93",
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-39.pack.tar.gz",
+      "package_sha256": "446174e7d8e1cd0629c82b8f07a8bd5d66754694191087b23d0a88c331d9a9ae",
+      "jobs": [
+        {
+          "job": 102243,
+          "state": "FAILED",
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 10.574,
+          "scope": "run38 actual MC/LC PM/fetch/typed/range with finite record peer; run40 actual S128 A abort with fixture-supplied verified transport proof, not actual M ABORT join. No numeric M or final physical qualification."
+        }
+      ],
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-39.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "231393c6dd5f2c267a472a5c520307a4790bd0e27675b438ec7f418720d9bbe8"
+    },
+    {
+      "run": 40,
+      "source": "7c1b911e6",
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-40.pack.tar.gz",
+      "package_sha256": "d470444c477c907fed87df2dfba85d9340f6bf220521681065e8109f941f0ff8",
+      "jobs": [
+        {
+          "job": 102245,
+          "state": "COMPLETED",
+          "elapsed_seconds": 7,
+          "TotalCPU_seconds": 12.42,
+          "scope": "run38 actual MC/LC PM/fetch/typed/range with finite record peer; run40 actual S128 A abort with fixture-supplied verified transport proof, not actual M ABORT join. No numeric M or final physical qualification."
+        }
+      ],
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-40.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "b8ef072713e13df96d74f552c89a65d14ca07a3f32a7f993576969ffebc90f07"
+    },
+    {
+      "run": 41,
+      "source": "c6137b8c5",
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-41.pack.tar.gz",
+      "package_sha256": "d4979c45e79c18e37a21d51a0408072d624a4d38e5a89a474eef0c31a6ff95ab",
+      "jobs": [
+        {
+          "job": 102259,
+          "state": "COMPLETED",
+          "elapsed_seconds": 2,
+          "TotalCPU_seconds": 0.269,
+          "scope": "Strict --Wall lint of candidate p_native_record_executor only; no functional/numeric execution in this job."
+        }
+      ],
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-41.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "7ebb7a4029a29ed93b230658cb77fcc2d50e6a7abb496c0fe2fabb1a5878d46e"
+    },
+    {
+      "run": 42,
+      "source": "d701dc719",
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-42.pack.tar.gz",
+      "package_sha256": "68cb8d12af634fef318238de64b919094e48b1fe59384afe56920a895e34afa3",
+      "jobs": [
+        {
+          "job": 102267,
+          "state": "FAILED",
+          "elapsed_seconds": 3,
+          "TotalCPU_seconds": 0.743,
+          "scope": "Failed integration compile due explicit testbench shift width warning; no functional run; failure retained without waiver."
+        }
+      ],
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-42.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "05eb2684739ebcb52a3e468e6a919012339e3d931461e7a6a1c9d25a66ad53e4"
+    },
+    {
+      "run": 43,
+      "source": "8f7f3e248",
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-43.pack.tar.gz",
+      "package_sha256": "c0848fce455371efb6ec0298fb9ef97939261138f0e8e05637e7c5b6db45ac9c",
+      "jobs": [
+        {
+          "job": 102270,
+          "state": "COMPLETED",
+          "elapsed_seconds": 9,
+          "TotalCPU_seconds": 20.488,
+          "scope": "Eight typed full K128/256 ordinary/head ranges, 1/2 output groups sharing A; real root decoder/range, directory, real M serial aperture, true S four-bank A reads and result ACK/readback. A preloaded and shift8 explicitly committed; finite32slot DDR peer, no MC/LC PM in this numeric gate, no global DMA, whole model, physical, energy or token/s qualification."
+        }
+      ],
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-43.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "aacf61e6cd66588f22e32f130c14233738267989bc01f1aaa5444618109f9354"
+    },
+    {
+      "run": 44,
+      "source": "13b9ffd7e",
+      "jobs": [
+        {
+          "job": 102274,
+          "state": "FAILED",
+          "scope": "strict testbench boot address width",
+          "elapsed_seconds": 2,
+          "TotalCPU_seconds": 0.93
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-44.pack.tar.gz",
+      "package_sha256": "8be42db10ae4de43b2b54c3f681620729d025d173b0b9098747bc13b9fcdbd47",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-44.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "35ae17d0943fab88e485d99ee4eb10caf974a89b199efc84423e4f66d87089fa"
+    },
+    {
+      "run": 45,
+      "source": "e1277da5a",
+      "jobs": [
+        {
+          "job": 102276,
+          "state": "FAILED",
+          "scope": "MC certify correctly refused omitted physical PM readback",
+          "elapsed_seconds": 10,
+          "TotalCPU_seconds": 21.153
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-45.pack.tar.gz",
+      "package_sha256": "2e38b1345878c760cee8ccb767a29a0bd6968012e7d1e9418229d766184afdb5",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-45.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "7109d463c6db738a223309cb09bfbabe5042be73febfd1ac455448b44e60dffb"
+    },
+    {
+      "run": 46,
+      "source": "d16188bfd",
+      "jobs": [
+        {
+          "job": 102280,
+          "state": "FAILED",
+          "scope": "bootstrap directory publication used not-yet-fetched key in fixture",
+          "elapsed_seconds": 10,
+          "TotalCPU_seconds": 21.199
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-46.pack.tar.gz",
+      "package_sha256": "1c77c76617189aadcbd208ccd5abe8705b80b4b6f606fa64c13eccca92ddf483",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-46.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "cbd5d3f756e97df3784510fcd5a302ded865d01dff8f23a7cbac631e92cfc97a"
+    },
+    {
+      "run": 47,
+      "source": "988bcbdb7",
+      "jobs": [
+        {
+          "job": 102285,
+          "state": "FAILED",
+          "scope": "fixture missed one-cycle consumed service_done then let next CALL through",
+          "elapsed_seconds": 9,
+          "TotalCPU_seconds": 21.195
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-47.pack.tar.gz",
+      "package_sha256": "d1a639c7098b0324fd05230cfce7e5f638cc7ba37cbd84e6c8553cfc88eba214",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-47.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "271c9403a0697ee43cbaa3c80ecd9b289c1aa90453efcf80e390cb375efd10c0"
+    },
+    {
+      "run": 48,
+      "source": "f159b1473",
+      "jobs": [
+        {
+          "job": 102287,
+          "state": "FAILED",
+          "scope": "all eight numeric programs correct; final fixture expected cumulative24 for per-CALL retired3",
+          "elapsed_seconds": 11,
+          "TotalCPU_seconds": 21.633
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-48.pack.tar.gz",
+      "package_sha256": "2e55ae0e3c6f705853739c7754ae3efe4924797b4b89860b5a27619f3d25cc16",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-48.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "6b176bc8056c1db3687ff870dffe7427258d20562611c5a7ee0974e68eb40878"
+    },
+    {
+      "run": 49,
+      "source": "0d1a8e3e2",
+      "jobs": [
+        {
+          "job": 102292,
+          "state": "COMPLETED",
+          "scope": "18 actual MC/LC program-to-M/S numeric trials",
+          "elapsed_seconds": 11,
+          "TotalCPU_seconds": 23.97
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-49.pack.tar.gz",
+      "package_sha256": "fd5e583938f17aefb3dc874503c67e1c1d54fe5e725e5a5adf4e5d555322a01c",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-49.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "6c13e540a6ed42b04dfd69c3273964db9ceb3128a2210077daa7525d534f0846"
+    },
+    {
+      "run": 50,
+      "source": "c7a4ffe87",
+      "jobs": [
+        {
+          "job": 102295,
+          "state": "COMPLETED",
+          "scope": "18 actual namespace FENCE tests and18 actual cancel/context-reuse tests",
+          "elapsed_seconds": 18,
+          "TotalCPU_seconds": 41.737
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-50.pack.tar.gz",
+      "package_sha256": "179b2ed1c724f37d1189b1abdac5b34edf5d1d03c2ed98812e242511898fb7c4",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-50.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "7a155aca0b12f3c8345bf4906129f4ce955f3eacbfb5291a23b9d461d773d708"
+    },
+    {
+      "run": 51,
+      "source": "114cec2bd",
+      "jobs": [
+        {
+          "job": 102301,
+          "state": "FAILED",
+          "scope": "Strict actual global join exposed process-dependency UNOPTFLAT; no waiver or function result",
+          "elapsed_seconds": 4.0,
+          "TotalCPU_seconds": 1.7
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-51.pack.tar.gz",
+      "package_sha256": "f9d93b4c2a6459652e99ccb2c4a9d7bf68286fb918ea99c2c460da93c3adbf30",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-51.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "09918551194c5de4b85a17813c05b5e3f3837df0b99e2d617c834d6ab5aaf52b"
+    },
+    {
+      "run": 52,
+      "source": "8c1b2ef5b",
+      "jobs": [
+        {
+          "job": 102312,
+          "state": "COMPLETED",
+          "scope": "Actual MC LC M S global DMA with DMA0b60 and baseline M000825; 18 numeric trials",
+          "elapsed_seconds": 19.0,
+          "TotalCPU_seconds": 58.619
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-52.pack.tar.gz",
+      "package_sha256": "18e0d8c538ca3b3bb99f7927c6052b09269165e91deaf82d465cf1b0fa1a804f",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-52.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "a20930acad807ebb0584dabca4883b87d4573d52cd85976d266f747348fa4703"
+    },
+    {
+      "run": 53,
+      "source": "049c6f445",
+      "jobs": [
+        {
+          "job": 102322,
+          "state": "COMPLETED",
+          "scope": "Actual global numeric join with registered request M f08 and native LOCAL_CONTIG admission;18 trials",
+          "elapsed_seconds": 19.0,
+          "TotalCPU_seconds": 58.22
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-53.pack.tar.gz",
+      "package_sha256": "e4fba9060e4c46ad943083727a52cfc0fd460519bf25447ea29d8161e4348b40",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-53.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "ed37046ae44d33133fd9017199e5a84566ec6f5c5e307bdc8b91cca4ca20ba69"
+    },
+    {
+      "run": 54,
+      "source": "049c6f445",
+      "jobs": [
+        {
+          "job": 102323,
+          "state": "FAILED",
+          "scope": "Archive directory layout omitted experiment-relative upstream; no functional result",
+          "elapsed_seconds": 2.0,
+          "TotalCPU_seconds": 0.084
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-54.pack.tar.gz",
+      "package_sha256": "86270abe205ce62a934d57c116f0212eaf1e778c40d95c6183f28d74901e924f",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-54.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "5c24276058e6855aecf9554480b0c40a8b73a4d405efd342c6d9e204fd76ae37"
+    },
+    {
+      "run": 55,
+      "source": "049c6f445",
+      "jobs": [
+        {
+          "job": 102324,
+          "state": "COMPLETED",
+          "scope": "Real M S namespace FENCE, cancel/context reuse and unregistered profile rejection;18 trials per top; bounded DDR fixture",
+          "elapsed_seconds": 24.0,
+          "TotalCPU_seconds": 61.49
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-55.pack.tar.gz",
+      "package_sha256": "0a39694b222a2219567304a75d2b1715fb86ac8376365e309747ace97a87d7af",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-55.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "351d887405ba558c784aee1765218aed5a3ea31f736dd888c149069165d065d0"
+    },
+    {
+      "run": 56,
+      "source": "91f89e6cd",
+      "jobs": [],
+      "state": "SOURCE_TRANSFER_FAILED_NO_SLURM",
+      "allocation_CPUs": 0,
+      "note": "D disk exhausted during automatic Git gc and source archive creation; uploaded tar911360B truncated; remote tar EOF, no Slurm was submitted. Shared Git failure pack preserved by root on C; no Git objects deleted.",
+      "package": "runs/issue250-control-prep-20261110-56.truncated-upload.tar",
+      "package_sha256": "a17bb9ee7c17461ebadd1cadd91cd634d2fdd646ebcfa8c5f871603b6792fd04",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-56.truncated-upload.tar.manifest.json",
+      "package_transport_manifest_sha256": "c394cbd3ad9b465e89aed70117017b99788f611d420553054626f97f022ff474"
+    },
+    {
+      "run": 57,
+      "source": "91f89e6cd",
+      "jobs": [
+        {
+          "job": 102329,
+          "state": "FAILED",
+          "scope": "Strict global FENCE fixture unused local diagnostic tag; no RTL waiver or functional result",
+          "elapsed_seconds": 2.0,
+          "TotalCPU_seconds": 2.0
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-57.pack.tar.gz",
+      "package_sha256": "1b1cf0300718159495fe6fde3c630acb7a5a6dfd5c6b6d862fd48dc4289529f7",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-57.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "5245167d4f62d7e9f5f096140285bbd809ad5436a9a6104cdd9705037a5208d6"
+    },
+    {
+      "run": 58,
+      "source": "ea7732961",
+      "jobs": [
+        {
+          "job": 102331,
+          "state": "COMPLETED",
+          "scope": "Actual MC LC M S global namespace FENCE; wrong global purge generation cannot release owner;18 trials",
+          "elapsed_seconds": 18.0,
+          "TotalCPU_seconds": 58.569
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-58.pack.tar.gz",
+      "package_sha256": "8d79e23cf5f4523b0b1473e349ab62bb8eb8015e45d3132b350cb79b332748bf",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-58.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "b32d341e2f0555e39511eaa0b842a68eb6535762845c935b552374252eeebe92"
+    },
+    {
+      "run": 59,
+      "source": "ea7732961",
+      "jobs": [
+        {
+          "job": 102332,
+          "state": "FAILED",
+          "scope": "Actual global cancellation reached correct fault17 and drain; fixture expected abort flag cleared before result ACK and overstated A reads",
+          "elapsed_seconds": 16.0,
+          "TotalCPU_seconds": 55.523
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-59.pack.tar.gz",
+      "package_sha256": "59a83dd33f6912c897c71b03f728911014604e73dd7067dfcd6f9043e65ba1e9",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-59.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "365f6d7be7123169575f0f46c2720284d80564bb77d950a9d50320e048d84a34"
+    },
+    {
+      "run": 60,
+      "source": "f10430d1e",
+      "jobs": [
+        {
+          "job": 102334,
+          "state": "COMPLETED",
+          "scope": "Actual MC wrong-source fault17 to LC CANCEL to native RF abandon A and global DMA drain;18 trials",
+          "elapsed_seconds": 18.0,
+          "TotalCPU_seconds": 57.428
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-60.pack.tar.gz",
+      "package_sha256": "b6b019e563b0eedff5768ce73210d32d573ac1586994ec6f0e830fa5cb00e838",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-60.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "0363d27aa409289566e83a38d7c0cd1cfbcfffa288397f4de92b9cfbf77999f5"
+    },
+    {
+      "run": 61,
+      "source": "4905950c3",
+      "jobs": [
+        {
+          "job": 102341,
+          "state": "FAILED",
+          "scope": "Fixture job named nonexistent vector builder; no RTL execution",
+          "elapsed_seconds": 1.0,
+          "TotalCPU_seconds": 0.027
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-61.pack.tar.gz",
+      "package_sha256": "32e5171a368bae4a4f569e28dccce3e20710944848e10b81cef422e6e30b467c",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-61.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "53c2804d0f50b1580caf2cbabeaf8036a7e49feae94d9e378af207bbd8dcf818"
+    },
+    {
+      "run": 62,
+      "source": "4e2234536",
+      "jobs": [
+        {
+          "job": 102343,
+          "state": "COMPLETED",
+          "scope": "Fixed stage stream native M S numerical and complete stale COPY identity checks;18 trials",
+          "elapsed_seconds": 9.0,
+          "TotalCPU_seconds": 20.612
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-62.pack.tar.gz",
+      "package_sha256": "29d030747eea2ea5b4a4edd786d974aa5a5d92c177bd55ea177f8441a58072da",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-62.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "4d562452c76744bc168dd73a4826093eafedc7d2222877208428c95f0b0f1372"
+    },
+    {
+      "run": 63,
+      "source": "24541625c",
+      "jobs": [
+        {
+          "job": 102346,
+          "state": "COMPLETED",
+          "scope": "Stream native positive regression after early cancel implementation;18 trials",
+          "elapsed_seconds": 9.0,
+          "TotalCPU_seconds": 20.675
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-63.pack.tar.gz",
+      "package_sha256": "e52650bebdacada1705ca56828c57ba555453f4e7c42dd1b65496059eb4c0f3d",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-63.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "4f96d7bc6b6d120aaef3014064d82323579ad56a4ba5ca22e1a1cfbc697d11a8"
+    },
+    {
+      "run": 64,
+      "source": "24541625c",
+      "jobs": [
+        {
+          "job": 102347,
+          "state": "COMPLETED",
+          "scope": "Partial4word LOAD cancel to real M CANCEL DRAIN DROP and same context K256 reuse;18 trials",
+          "elapsed_seconds": 8.0,
+          "TotalCPU_seconds": 20.546
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-64.pack.tar.gz",
+      "package_sha256": "98f2cb8a0f97c41d5bbe57094e634d27077a9a64d53b6d9f61420a5a233a4e5a",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-64.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "7a52e54a9aae3e6b201af85e31e39600e5123ef5cf4a907ddf411bf14a39fe83"
+    },
+    {
+      "run": 65,
+      "source": "55790e8eb",
+      "jobs": [
+        {
+          "job": 102350,
+          "state": "FAILED",
+          "scope": "Strict real COPY stream fixture width and unselected diagnostics; no waiver or function result",
+          "elapsed_seconds": 1.0,
+          "TotalCPU_seconds": 0.835
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-65.pack.tar.gz",
+      "package_sha256": "9a6921e77a87a731bc4a2e2413ace7cfd3f24861abb2177445c570fd42888a1d",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-65.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "d57302a42dc8506f0bc4ce367dd04ee9434ebb85cbfb99c13b6b0a56f59f0e3b"
+    },
+    {
+      "run": 66,
+      "source": "fec91c2dd",
+      "jobs": [
+        {
+          "job": 102352,
+          "state": "FAILED",
+          "scope": "Remaining strict prefix width fixture warning; no waiver or function result",
+          "elapsed_seconds": 2.0,
+          "TotalCPU_seconds": 0.853
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-66.pack.tar.gz",
+      "package_sha256": "1970944eff4ec3c97611ebaf9bc4d91d0ae5ccf41728d91504397bfc7cb1af30",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-66.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "3f1564d4e8ef1d1674bf60af547becb13ad8685aefb0b3a3fcc3b04357b8fbdd"
+    },
+    {
+      "run": 67,
+      "source": "a2dd0c677",
+      "jobs": [
+        {
+          "job": 102353,
+          "state": "COMPLETED",
+          "scope": "Real S32 quantizer headers RX epoch COPY true U P S and M numeric stream;18 trials",
+          "elapsed_seconds": 9.0,
+          "TotalCPU_seconds": 22.47
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-67.pack.tar.gz",
+      "package_sha256": "e0d1d7678c80a174ba42d1becdae76eddd919a30e7280b70464645186801bab8",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-67.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "6efff533114d494f85f60b564724935f7a8e0b09d4486a0cc31518aebc338568"
+    },
+    {
+      "run": 68,
+      "source": "c01417038",
+      "jobs": [
+        {
+          "job": 102359,
+          "state": "COMPLETED",
+          "scope": "Real partial COPY halt with source link S A M drain and same owner context numeric reuse;18 trials",
+          "elapsed_seconds": 8.0,
+          "TotalCPU_seconds": 22.0
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/issue250-control-prep-20261110-68.pack.tar.gz",
+      "package_sha256": "5b3e966896ddc2140004bbe3c22ff00f35a110e1c924e2130341a0b8465a8826",
+      "package_transport_manifest": "runs/issue250-control-prep-20261110-68.pack.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "ccf86bfb6ca893c488ffc634f4c233bf66b9ee00327543aff5c332ddd0171bbe"
+    },
+    {
+      "run": 69,
+      "source": "737784597",
+      "jobs": [
+        {
+          "job": 102370,
+          "state": "COMPLETED",
+          "scope": "Actual quantizer/header/COPY/nativeM/trueS with stream prefetch disabled; seed1 5285 cycles versus former 4997. One P; no throughput/physical claim.",
+          "elapsed_seconds": 9.0,
+          "TotalCPU_seconds": 22.586
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run69.tar.gz",
+      "package_sha256": "23949fd48e6ab3cdb9c0f633bf1e3806d5b1f82a585ed81263533e5f98b100bb",
+      "package_transport_manifest": "runs/run69.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "85b237d6e45346186eb01b9384b9777af1e6184822f95fac750d4080c13d1e51"
+    },
+    {
+      "run": 70,
+      "source": "737784597",
+      "jobs": [
+        {
+          "job": 102371,
+          "state": "COMPLETED",
+          "scope": "Actual partial COPY halt and M/A/S drain then same-context K256 reuse, stream prefetch disabled; seed1 1103 cycles versus former 1055.",
+          "elapsed_seconds": 9.0,
+          "TotalCPU_seconds": 22.026
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run70.tar.gz",
+      "package_sha256": "8c5534cc7023d8c48f1d1375a8281b8815dd637da142c49d18bb6da170c96233",
+      "package_transport_manifest": "runs/run70.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "a0551e1b88d97af868a21ba5ddc542ae8d39b2a835ea20c0ef868c003ff6834a"
+    },
+    {
+      "run": 71,
+      "source": "8da537685",
+      "jobs": [
+        {
+          "job": 102378,
+          "state": "FAILED",
+          "scope": "strict guard2 unused expected slice and fixture ready; retained and fixed",
+          "elapsed_seconds": 4.0,
+          "TotalCPU_seconds": 1.684
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run71.tar.gz",
+      "package_sha256": "8ce3b58cf73d536082cca177b259dc73193d6b132b55d3c2ebfd040e428f953e",
+      "package_transport_manifest": "runs/run71.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "f6dbd1cacf35ab4defdb96f57ecd4a52d45b49544dca203f842b62140bcd3f51"
+    },
+    {
+      "run": 72,
+      "source": "4f22211f5",
+      "jobs": [
+        {
+          "job": 102381,
+          "state": "COMPLETED",
+          "scope": "two-native metadata issue after real INPUT EOP, out-of-order RF two result slots, per-ticket cancel preserving first FINAL, true four-bank S; M frame peer, not actual M2",
+          "elapsed_seconds": 11.0,
+          "TotalCPU_seconds": 19.271
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run72.tar.gz",
+      "package_sha256": "3a8db7ab74db25ace9d1410407ba7f6250bf0aaa86d8b97aca00564cfd9f6d9c",
+      "package_transport_manifest": "runs/run72.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "85af736ff354250cca0b19eb3881768c623495d1edec27303c63f7d66e59bc2d"
+    },
+    {
+      "run": 73,
+      "source": "7d11b68d3",
+      "jobs": [
+        {
+          "job": 102382,
+          "state": "FAILED",
+          "scope": "launcher selected nested root source directory instead of flat pinned modules; no RTL compiled",
+          "elapsed_seconds": 2.0,
+          "TotalCPU_seconds": 0.335
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run73.tar.gz",
+      "package_sha256": "af0455a587118d23b79645d8ce2698fd8e68d3c23853bbe7c445e3e7e1a74fc3",
+      "package_transport_manifest": "runs/run73.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "25fa1392a59acca53cc864c76fba15817f187afa5fb57e810b6b95b38f9b5d27"
+    },
+    {
+      "run": 74,
+      "source": "7d11b68d3",
+      "jobs": [
+        {
+          "job": 102383,
+          "state": "FAILED",
+          "scope": "launcher selected nonexistent nested M source directory; no RTL compiled",
+          "elapsed_seconds": 2.0,
+          "TotalCPU_seconds": 0.085
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run74.tar.gz",
+      "package_sha256": "458415646c80498348c95c4cabec4612ec1b46d4762631734475cc0066014d87",
+      "package_transport_manifest": "runs/run74.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "f4002f583d2cecb9e8f09a06a8cd77542700a1afb5a9701895d97cb7d13e35ac"
+    },
+    {
+      "run": 75,
+      "source": "7d11b68d3",
+      "jobs": [
+        {
+          "job": 102385,
+          "state": "COMPLETED",
+          "scope": "typed2 explicit optin actual quantizer/header/COPY/A/M/trueS eight K128/256 scopes; fixture descriptors not actual MC/CRC fetch",
+          "elapsed_seconds": 10.0,
+          "TotalCPU_seconds": 22.642
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run75.tar.gz",
+      "package_sha256": "d6ac2890784cc42ae0113b7b83f0bfd29559f985ce5fc1a3ea7bde008a46721d",
+      "package_transport_manifest": "runs/run75.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "9e48d37f28b49b658b7e1bb1deddee7f02fb46221c1819dc895674b03c4e9e4a"
+    },
+    {
+      "run": 76,
+      "source": "69c55839d",
+      "jobs": [
+        {
+          "job": 102387,
+          "state": "FAILED",
+          "scope": "known mixed asynchronous MC and synchronous LC reset fixture policy not yet scoped to new test top; strict build failed",
+          "elapsed_seconds": 3.0,
+          "TotalCPU_seconds": 2.129
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run76.tar.gz",
+      "package_sha256": "b7ab31cee8281d0035f0200dc90a379ff34d0c08b431e63b14976489b926f7cb",
+      "package_transport_manifest": "runs/run76.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "a5b2a9496847a5c0d388b455e891a43a61d884d74a662f1462935e7f61d77dbd"
+    },
+    {
+      "run": 77,
+      "source": "bd580f271",
+      "jobs": [
+        {
+          "job": 102390,
+          "state": "COMPLETED",
+          "scope": "actual MC SRAM PM400B33instructions to LC PM352B3instructions descriptor128B DDR fetch CRC to typed2 actual quant/header/COPY/A/M/S with real globalDMA6return slots; eight bounded scopes not wholeFFN",
+          "elapsed_seconds": 20.0,
+          "TotalCPU_seconds": 63.083
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run77.tar.gz",
+      "package_sha256": "f0b0f285da089bf3d2cac4ddcb44f4385eabd40a2e3b747c7999d540be11ef2b",
+      "package_transport_manifest": "runs/run77.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "0e7d8abe1b76d382b92888f88c78ad8bc7b7d1c4f35d5516a1e426447dcb1053"
+    },
+    {
+      "run": 78,
+      "source": "786d21998",
+      "jobs": [
+        {
+          "job": 102391,
+          "state": "FAILED",
+          "scope": "actual long stream exposed old executor querying released RX metadata during A replay; retained, fixed by captured shift",
+          "elapsed_seconds": 10.0,
+          "TotalCPU_seconds": 20.032
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run78.tar.gz",
+      "package_sha256": "71a6ce482e1fdf4efc250c48bb4597f18f6f0689bb175c44670e065e3e2fc3d7",
+      "package_transport_manifest": "runs/run78.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "8ed9aa609e27fbb3ec897c1bd9834f050181276343fb41df4d0f6f167181529c"
+    },
+    {
+      "run": 79,
+      "source": "195575ee7",
+      "jobs": [
+        {
+          "job": 102392,
+          "state": "COMPLETED",
+          "scope": "one synthetic K11008 N8 scope, 86 true quant/COPY/LOAD/nativeM records, current RX shift no86entry destination directory,1462 W64,1376 A128reads,2 true S128 ACK; no checkpoint or throughput claim",
+          "elapsed_seconds": 11.0,
+          "TotalCPU_seconds": 26.196
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run79.tar.gz",
+      "package_sha256": "45373ffc406cea2f005ce1da99d7c43e77a08cb24159f12b81265372579385df",
+      "package_transport_manifest": "runs/run79.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "9ed44338f1d757ff8027464e245dd99f03d5e9d5378d44ac06e879c4d49a810c"
+    },
+    {
+      "run": 80,
+      "source": "c652728c5",
+      "jobs": [
+        {
+          "job": 102394,
+          "state": "COMPLETED",
+          "scope": "intermediate guard2 early RF error owner retention and error ABORT behavior; M frame peer used earlier error metadata, superseded exact ABI by102405",
+          "elapsed_seconds": 11.0,
+          "TotalCPU_seconds": 20.035
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run80.tar.gz",
+      "package_sha256": "ecf793d4c6e3e20fd8cec46b5b6cd59d32b1839657dce830b0948fa571e6eb40",
+      "package_transport_manifest": "runs/run80.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "3e098b4f56cdfe95648d451411b092eaa3a233a2239da753a044a9c85f6962f4"
+    },
+    {
+      "run": 81,
+      "source": "c652728c5",
+      "jobs": [
+        {
+          "job": 102395,
+          "state": "COMPLETED",
+          "scope": "actual MC/globalDMA typed2 eight-scope regression with fixed captured shift195575ee7; same7618 seed1",
+          "elapsed_seconds": 20.0,
+          "TotalCPU_seconds": 62.936
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run81.tar.gz",
+      "package_sha256": "49895c375e551b7a144a3537e253954e7c260d783b38803341013667ce2219ff",
+      "package_transport_manifest": "runs/run81.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "01dbedc4881318f27852b5f64958aacc7a11c133a3151c50ece131a0f5332c04"
+    },
+    {
+      "run": 82,
+      "source": "3fd1d18c0",
+      "jobs": [
+        {
+          "job": 102401,
+          "state": "FAILED",
+          "scope": "strict guard2 error metadata width was136 versus128, fixed exact44bit shape zero span",
+          "elapsed_seconds": 4.0,
+          "TotalCPU_seconds": 1.687
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run82.tar.gz",
+      "package_sha256": "99f09484c840928fd8e974093118759bee4bc21389beec55fd83783b1078eced",
+      "package_transport_manifest": "runs/run82.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "f39e748a62ebd5b47aa263130c3a937116991767c44fa7dd825c02c7557d62af"
+    },
+    {
+      "run": 83,
+      "source": "a30f288f8",
+      "jobs": [
+        {
+          "job": 102405,
+          "state": "COMPLETED",
+          "scope": "actual four-bank S guard2 unit exact V2 early RF error and status1 ABORT zero cursor, selective cancellation retains other FINAL; M frame peer",
+          "elapsed_seconds": 12.0,
+          "TotalCPU_seconds": 20.116
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run83.tar.gz",
+      "package_sha256": "ba3d88e7bc715cc6033a6d90cccdad70132a78beaa5ba0ad3d3a942d63fb9749",
+      "package_transport_manifest": "runs/run83.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "f40785027d5cb7f2de086a91de749ca2bd46beb851a95d161a757792f7ca1ea3"
+    },
+    {
+      "run": 84,
+      "source": "5f05540b2",
+      "jobs": [
+        {
+          "job": 102406,
+          "state": "FAILED",
+          "scope": "new actual P M2 side CONTEXT control reply was126-bit comparison; strict build caught, corrected high48 zero bits",
+          "elapsed_seconds": 3.0,
+          "TotalCPU_seconds": 0.905
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run84.tar.gz",
+      "package_sha256": "5989dce4deb58b060dec4b25aff19b51d0bc577a6113f4c15c9600fb2f4c7977",
+      "package_transport_manifest": "runs/run84.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "d0a29172a1fef7a59f2d0c476773477423a02ff29b66b4b6e3236d8ef9111648"
+    },
+    {
+      "run": 85,
+      "source": "f993d2ef0",
+      "jobs": [
+        {
+          "job": 102407,
+          "state": "COMPLETED",
+          "scope": "actual M2 V2 source21fac77 with real P quant/COPY/A/S and dual issuer; one prepared record at a time, functional binding not overlap/II qualification",
+          "elapsed_seconds": 10.0,
+          "TotalCPU_seconds": 23.426
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run85.tar.gz",
+      "package_sha256": "10fd81742b04d8b742a8d8e3cf942aec141756b6bf229efc873895efa672f7ab",
+      "package_transport_manifest": "runs/run85.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "6789f848338adf81122da50614608a82b27e910686a5e46405266b350f126837"
+    },
+    {
+      "run": 86,
+      "source": "a172ed3a206fca72e3828f034b28606da12d3787",
+      "jobs": [
+        {
+          "job": 102412,
+          "state": "COMPLETED",
+          "scope": "Actual M2 V2 paired K128 contexts with two true W fills and two independently guarded result slots through real COPY and four-bank S.",
+          "elapsed_seconds": 10.0,
+          "TotalCPU_seconds": 23.265
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run86.tar.gz",
+      "package_sha256": "c3ce47a027ff2e773a19280919e7c66788df239c1b3d84534bcc641066fca08c",
+      "package_transport_manifest": "runs/run86.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "de08fac7a063c3032ae23e268864da878cb2744416fc0f2bc3b30eedc29d4b86"
+    },
+    {
+      "run": 87,
+      "source": "767d2fb93e8dc60098355e266ac05ecc6395184d",
+      "jobs": [
+        {
+          "job": 102417,
+          "state": "COMPLETED",
+          "scope": "Actual paired cancel before EXEC and after first INPUT EOP; exact W CANCEL/DRAIN, RF cleanup and same-owner reuse.",
+          "elapsed_seconds": 12.0,
+          "TotalCPU_seconds": 25.66
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run87.tar.gz",
+      "package_sha256": "86b498d75e46079b53421a11402a9005d32da106f56b7043214491ea53d76d9b",
+      "package_transport_manifest": "runs/run87.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "964a9a0ee1ce7af8b45fcac8e3529e069673dc481bc2e0d344715e31ee82e82d"
+    },
+    {
+      "run": 88,
+      "source": "2d63c9f8ed02934b1dc07db7e93ac10037a66eb8",
+      "jobs": [
+        {
+          "job": 102423,
+          "state": "COMPLETED",
+          "scope": "Bounded M2 same-tile pair across successive K128; actual COPY, RF prefix/FINAL and true S acknowledgements.",
+          "elapsed_seconds": 11.0,
+          "TotalCPU_seconds": 23.319
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run88.tar.gz",
+      "package_sha256": "eb92b48e4733ab7a236c7dff603fd75b4f0a95b3095f6ffbe77ab8101548d1ae",
+      "package_transport_manifest": "runs/run88.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "457f11616b395ab158132cce0cf53ecf1bb4f2d65a65daf9e39effecaa7824dc"
+    },
+    {
+      "run": 89,
+      "source": "2d63c9f8ed02934b1dc07db7e93ac10037a66eb8",
+      "jobs": [
+        {
+          "job": 102424,
+          "state": "COMPLETED",
+          "scope": "Bounded M2 second-tile cancellation with real prior RF progress, unchanged failed cursor and same-owner numerical replay.",
+          "elapsed_seconds": 12.0,
+          "TotalCPU_seconds": 26.036
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run89.tar.gz",
+      "package_sha256": "5886585a99d9b9dc1e9dcb9eda8362a1e492dbc8166da39e03356f85b1bb511f",
+      "package_transport_manifest": "runs/run89.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "06b1a8fa9d31075f35e2d065069c19a9c3c479dba37dfb19800f909d19ab1b23"
+    },
+    {
+      "run": 90,
+      "source": "9500715f37b33e6e73b6c64de2b1f379af3ce834",
+      "jobs": [
+        {
+          "job": 102429,
+          "state": "COMPLETED",
+          "scope": "Actual MC/LC program SRAM, scope fetch and CRC, shared finite global DMA and M2 streaming P using only current RX scale metadata.",
+          "elapsed_seconds": 20.0,
+          "TotalCPU_seconds": 64.834
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run90.tar.gz",
+      "package_sha256": "1a381a23ab9781a3a29f209188d3cf27a992aca645602540c52bdf5992ec4a1d",
+      "package_transport_manifest": "runs/run90.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "755071fa61753d62d3bf93998cd530081ffb526219dfd0e302274994a41e3ab9"
+    },
+    {
+      "run": 91,
+      "source": "d7ffb6308902c354cd7e59f1efa59c3794e820dc",
+      "jobs": [
+        {
+          "job": 102431,
+          "state": "FAILED",
+          "scope": "First synthetic Gate Up K2048 attempt failed strict SV lexical parse of unsplit hex ternary; no simulation claimed.",
+          "elapsed_seconds": 3.0,
+          "TotalCPU_seconds": 0.415
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run91.tar.gz",
+      "package_sha256": "18c4808f7095e02984797bf4e33e98c4585e34d23b2b3c4141a6d99bca380266",
+      "package_transport_manifest": "runs/run91.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "9f6a863343bc476627cd01080b9dfb2304eb27d74c672b20ccb74a2c989a8539"
+    },
+    {
+      "run": 92,
+      "source": "68e598acb32470cf918449286dd381b826184dc3",
+      "jobs": [
+        {
+          "job": 102433,
+          "state": "COMPLETED",
+          "scope": "Synthetic full K2048 Gate Up: sixteen actual quant/header/COPY/LOAD tiles, two independent RF owners, 32 ordinary W records and four genuine result S128 ACK. One P.",
+          "elapsed_seconds": 11.0,
+          "TotalCPU_seconds": 23.743
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run92.tar.gz",
+      "package_sha256": "952e6aa53782ba4ee8288143062de4526f7fd126e2f2a5b1a3c17df4f011458e",
+      "package_transport_manifest": "runs/run92.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "875406e8acc2b029d88ce69e6593b6739c4321da51cd445f3a69d33eecd99661"
+    },
+    {
+      "run": 93,
+      "source": "208b4c59fc2f307fc61710ebfa10dc277da751f8",
+      "jobs": [
+        {
+          "job": 102448,
+          "state": "FAILED",
+          "scope": "Launcher omitted external pinned S source copy; no simulation.",
+          "elapsed_seconds": 1.0,
+          "TotalCPU_seconds": 0.134
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run93.tar.gz",
+      "package_sha256": "4110319dae741a6f92a6fde9e958b18493937b6bea14349e3db463a70bfbc9c3",
+      "package_transport_manifest": "runs/run93.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "d7db088845cc71662b5abee466eb7c0ea05756a2fc0881fbba54e09969096892"
+    },
+    {
+      "run": 94,
+      "source": "208b4c59fc2f307fc61710ebfa10dc277da751f8",
+      "jobs": [
+        {
+          "job": 102449,
+          "state": "FAILED",
+          "scope": "Strict lint reported two unused fixture observation signals; no simulation.",
+          "elapsed_seconds": 1.0,
+          "TotalCPU_seconds": 0.941
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run94.tar.gz",
+      "package_sha256": "144202cdb0a4a64e7bc5dafb2ce4622a4400460b2c3d20577a1b08db0c330489",
+      "package_transport_manifest": "runs/run94.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "9b18ca91cd879a6813521dabe91e59ad7979a648a0c8cf148a48cf850b51bfb3"
+    },
+    {
+      "run": 95,
+      "source": "92c6a325840d688a1a8c2e93d85bbdeef3e88eb7",
+      "jobs": [
+        {
+          "job": 102452,
+          "state": "FAILED",
+          "scope": "Wrong second-stripe A fixture index was exposed by true S numerical readback; no complete trial claimed.",
+          "elapsed_seconds": 8.0,
+          "TotalCPU_seconds": 21.56
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run95.tar.gz",
+      "package_sha256": "13c0fab9245676c58221a7e35f117c930491decd1025f6e6a0ca64d6cde21a3c",
+      "package_transport_manifest": "runs/run95.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "ab0902092e3165d055f535d671e0587a8894385640812eddabc1ee8934966485"
+    },
+    {
+      "run": 96,
+      "source": "77fa567b7e1f81b1226211b4b4fad356b0c6801a",
+      "jobs": [
+        {
+          "job": 102455,
+          "state": "FAILED",
+          "scope": "All 18 stream trials passed; resident compilation caught inherited out-of-range diagnostic signal.",
+          "elapsed_seconds": 11.0,
+          "TotalCPU_seconds": 25.251
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run96.tar.gz",
+      "package_sha256": "eabe66a8dcc190f322b95e7b39e65fd45fa293c06959790ecb0234725d441819",
+      "package_transport_manifest": "runs/run96.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "d2ae12f607fa8c20644a6721f61066e3fe4329f4c5d5685c0c40b3b6c9b7f461"
+    },
+    {
+      "run": 97,
+      "source": "a0a8202f6bc813259ae60751c825d7aec274a708",
+      "jobs": [
+        {
+          "job": 102457,
+          "state": "FAILED",
+          "scope": "Stream 18 PASS; resident compiled and expected stale-ticket rejection was misclassified by fixture on next cycle.",
+          "elapsed_seconds": 18.0,
+          "TotalCPU_seconds": 45.498
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run97.tar.gz",
+      "package_sha256": "044809b0391a1dfae8f2c5f73db557704eabb82982a4db7f9dfb4810c038b30a",
+      "package_transport_manifest": "runs/run97.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "a6425f4d10e41eeae8cdfd4e6ae748a3c74921d5f2ec0da5dd75835adc905b34"
+    },
+    {
+      "run": 98,
+      "source": "e7ad05c52927b363413a6f7934f220a62bdac4f5",
+      "jobs": [
+        {
+          "job": 102459,
+          "state": "COMPLETED",
+          "scope": "Matched Gate/Up K2048 two-stripe resident-P versus repeat quantized streaming. Includes actual source startup/copy and stale proof negative.",
+          "elapsed_seconds": 18.0,
+          "TotalCPU_seconds": 48.711
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run98.tar.gz",
+      "package_sha256": "00b470eb8c1e98159fe14c95e731cdcfd038a99bddf23648051f19a689941aab",
+      "package_transport_manifest": "runs/run98.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "8cc6c27592c6e71c2f7be9a3bd3826cebf43a529b43506a82537c62fa36ea271"
+    },
+    {
+      "run": 99,
+      "source": "aa9a4923f25e3fa23e9fe82f7f065a2a7fa003fe",
+      "jobs": [
+        {
+          "job": 102461,
+          "state": "COMPLETED",
+          "scope": "Matched three ways, stronger once-quantized resident U.S baseline also verified. All actual S storage and ACKs.",
+          "elapsed_seconds": 26.0,
+          "TotalCPU_seconds": 73.491
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run99.tar.gz",
+      "package_sha256": "460a57f8407c6d68fa2acf51025810f064551af603370968af763154b3a86cf6",
+      "package_transport_manifest": "runs/run99.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "1b33699dbc0b131018134fd071637859a2169d7f027d3d188d03fe56420a4154"
+    },
+    {
+      "run": 100,
+      "source": "5f137509c9ce6b2f4b47ba36e7c48a3ec55e2fd3",
+      "jobs": [
+        {
+          "job": 102466,
+          "state": "FAILED",
+          "scope": "Launcher used Bash reserved GROUPS shell variable; no simulation.",
+          "elapsed_seconds": 1.0,
+          "TotalCPU_seconds": 0.051
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run100.tar.gz",
+      "package_sha256": "db2f7ec3f26eb7eacd0525c4addb3442e75d0d197c76dd1480dd42f1122919f7",
+      "package_transport_manifest": "runs/run100.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "9e7c425a5ebbec038c6a3f04082f7830fb3577906542b5d51c02acb59a01388a"
+    },
+    {
+      "run": 101,
+      "source": "552a6dc1cc8f08ebfe6efe4e28ae1b0b098d558d",
+      "jobs": [
+        {
+          "job": 102470,
+          "state": "COMPLETED",
+          "scope": "Full P stripe: K2048 N64 Gate plus N64 Up, sixteen real RF contexts, three separate matched modes and a single-executor resident to stream handoff.",
+          "elapsed_seconds": 36.0,
+          "TotalCPU_seconds": 118.636
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run101.tar.gz",
+      "package_sha256": "cd97f00a9fa8f09538af07b62a6a8f83a580aa1615a6b059dacbfd62c6434db3",
+      "package_transport_manifest": "runs/run101.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "ffbbfb32330080dfd63c29af6fdbabf266030249679719e3f2bd9bae4b75a84a"
+    },
+    {
+      "run": 102,
+      "source": "747969c55c541b50b5f5651a26ee9cb3e443726e",
+      "jobs": [
+        {
+          "job": 102474,
+          "state": "COMPLETED",
+          "scope": "Full-width one-P lazy U retention; real producer writes/quant and COPY in first range, no repeated quant or startup barrier in second.",
+          "elapsed_seconds": 12.0,
+          "TotalCPU_seconds": 29.634
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run102.tar.gz",
+      "package_sha256": "22209871d65760e66ff2825f43e06fcca38ffd9dbddbb40ab21b963d6e7ee3ce",
+      "package_transport_manifest": "runs/run102.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "89d90c499243fa06a3ca2774f62d157e95098bfba188cd0a376d1f5c9167a1d8"
+    },
+    {
+      "run": 103,
+      "source": "30ed253fa8419c2a38aed4e7a73c966833aed9ed",
+      "jobs": [
+        {
+          "job": 102475,
+          "state": "COMPLETED",
+          "scope": "Independent finite DMA RTL strict twelve-client suite; native64 and legacy runtime admission, cross-channel identity and same-client FENCE checks, no stage/S join in this job.",
+          "elapsed_seconds": 18.0,
+          "TotalCPU_seconds": 55.282
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run103.tar.gz",
+      "package_sha256": "1e5a5bec8fe5e57ee97b108226e955c649b22d75b1531a24d27065e5ad17fa0f",
+      "package_transport_manifest": "runs/run103.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "d89ea7dcc6b3aafd06b12e046e94339ce1232664a24a55afd65a5c5842bce71a"
+    },
+    {
+      "run": 104,
+      "source": "74d0bc2c5541d2742982012aa10bd7911e3e81d5",
+      "jobs": [
+        {
+          "job": 102485,
+          "state": "FAILED",
+          "scope": "First true joint compile required explicitly scheduling the bank delay model; no simulation.",
+          "elapsed_seconds": 0.0,
+          "TotalCPU_seconds": 0.238
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run104.tar.gz",
+      "package_sha256": "adc79e3e8059709eeeee29ca547b5a0ad4cbea6722ad68e0fbe28e68475357de",
+      "package_transport_manifest": "runs/run104.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "46fcdea04471f91fa1c9457b9aa8acd06621fec76064160767beedc0b5453233"
+    },
+    {
+      "run": 105,
+      "source": "6a5de98a88e2195d5e3d388e32248b2ae33b3c31",
+      "jobs": [
+        {
+          "job": 102487,
+          "state": "COMPLETED",
+          "scope": "Twelve-source finite typed DMA and three real staging/S banks; actual data ACK, mode transitions, reject and cancel, independent timing/work-conservation audit.",
+          "elapsed_seconds": 19.0,
+          "TotalCPU_seconds": 48.753
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run105.tar.gz",
+      "package_sha256": "d090bb02eba0377019cce0baebce378e06b279feb7561a7cc422e2a0e22c8f55",
+      "package_transport_manifest": "runs/run105.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "2da5485996f744565e8b1454aa46ecd954cfc576aa78a68c6fc2f114058add44"
+    },
+    {
+      "run": 106,
+      "source": "4ccccb8004c589e58a5081055d1290bf5784a5fe",
+      "jobs": [
+        {
+          "job": 102502,
+          "state": "FAILED",
+          "scope": "Initial hierarchical force fixture failed strict lint. Retained; no RTL pass or qualification.",
+          "elapsed_seconds": 3.0,
+          "TotalCPU_seconds": 2.288
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run106.tar.gz",
+      "package_sha256": "61610cb566b6d4b2d06b3b1faba2d46d8f62916abf252b6e4148863c52540094",
+      "package_transport_manifest": "runs/run106.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "248a9987c6a539e31489976f1680083e2587da61690d7d378c979d3254ca04c1"
+    },
+    {
+      "run": 107,
+      "source": "c01877d69c73c3b2a45ddcdec00a87fb7b2d3ffc",
+      "jobs": [
+        {
+          "job": 102505,
+          "state": "FAILED",
+          "scope": "Seeded fixture generated exact reset views but launcher did not bind them. Assertion confirmed counters not near wrap; retained.",
+          "elapsed_seconds": 18.0,
+          "TotalCPU_seconds": 60.444
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run107.tar.gz",
+      "package_sha256": "820dc397292a73581171c716c610e084fb313310afc62127517765ae316f268b",
+      "package_transport_manifest": "runs/run107.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "269e7c64c7d0bdbb425b3111de1ae2aa2b9402e8499b4125aa669a94ed73b991"
+    },
+    {
+      "run": 108,
+      "source": "6eb241f0403af3c54ef6f82ef6a6617c924dd71d",
+      "jobs": [
+        {
+          "job": 102506,
+          "state": "FAILED",
+          "scope": "Baseline behavioral negative. Actual purge completed after generation FFFF but original local issue guard rejected generation zero and programmed scope never finished.",
+          "elapsed_seconds": 18.0,
+          "TotalCPU_seconds": 60.871
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run108.tar.gz",
+      "package_sha256": "dc1c349b20688362d78ff493f6e2e1a59a210e60238a0affd64fe609438fbe71",
+      "package_transport_manifest": "runs/run108.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "0d7e14d2fb21c332c0eb17d55c67b328e19cbd23106d9ff1c27664cf2dc6a175"
+    },
+    {
+      "run": 109,
+      "source": "aff4398c3bbe7b7ca359beda1c4d86312f74fd0f",
+      "jobs": [
+        {
+          "job": 102507,
+          "state": "COMPLETED",
+          "scope": "Fixed rollover. True MC and LC programs, M2 and S, exact post-FFFF backend purge, true generation-zero EXEC and numeric comparison.",
+          "elapsed_seconds": 19.0,
+          "TotalCPU_seconds": 65.019
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run109.tar.gz",
+      "package_sha256": "33ad5d63932d90eed04c9bd94e28702fa62c7567ea472a8acc9fe3e16ee10b44",
+      "package_transport_manifest": "runs/run109.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "e38cb4dc9ada8ea148878d30be105794588238b809005da5d692ddbe482285da"
+    },
+    {
+      "run": 110,
+      "source": "e8b5c1da96afb9f68ea6d14017ca73869683a46d",
+      "jobs": [
+        {
+          "job": 102515,
+          "state": "FAILED",
+          "scope": "Deliberate stale-permit negative. Actual purge before generation FFFF cannot authorize next generation zero. Restoring stale permit causes real M admission fault; no wrapped EXEC.",
+          "elapsed_seconds": 17.0,
+          "TotalCPU_seconds": 60.868
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run110.tar.gz",
+      "package_sha256": "d3702e244ed2890771bf6bf1b39df00a2a9acc6b6438e5227b1c0f3880008723",
+      "package_transport_manifest": "runs/run110.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "de54dc569c05774431c4c953904963115177ec741cd809746b9588b2b327a71b"
+    },
+    {
+      "run": 111,
+      "source": "e8b5c1da96afb9f68ea6d14017ca73869683a46d",
+      "jobs": [
+        {
+          "job": 102516,
+          "state": "COMPLETED",
+          "scope": "With actual earlier purge, candidate still demands another post-FFFF purge; true generation-zero EXEC then passes eight programmed scopes.",
+          "elapsed_seconds": 18.0,
+          "TotalCPU_seconds": 65.021
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run111.tar.gz",
+      "package_sha256": "a7c58d8f368a958e0a2afe5e53c06410f4752538eda5550dccab54324027dbf7",
+      "package_transport_manifest": "runs/run111.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "b66aca5a59ba36bbb0b8a719ad7d65084d04e163e00370c22e09d0134d58a18b"
+    },
+    {
+      "run": 112,
+      "source": "e8b5c1da96afb9f68ea6d14017ca73869683a46d",
+      "jobs": [
+        {
+          "job": 102517,
+          "state": "COMPLETED",
+          "scope": "Unseeded real MC and LC program, scope fetch, DMA, S and M2 regression for production candidate. No extra purge needed.",
+          "elapsed_seconds": 18.0,
+          "TotalCPU_seconds": 65.116
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run112.tar.gz",
+      "package_sha256": "70e5df5774451b90b96e43c55a209baebc660eb4b6d1d2d3ca83769c1f643d05",
+      "package_transport_manifest": "runs/run112.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "48a8b8458d80286e79fbd2a9aee4a5e05ddffb8a96c2240811c4f759412b046a"
+    },
+    {
+      "run": 113,
+      "source": "929590a5c334b6b42c116255ea6ee3c53e14a727",
+      "jobs": [
+        {
+          "job": 102524,
+          "state": "COMPLETED",
+          "scope": "Exact same wide fixture direct finite DDR peer; 18 serial and 18 true two-W-bank concurrent fills.",
+          "elapsed_seconds": 21.0,
+          "TotalCPU_seconds": 57.696
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run113.tar.gz",
+      "package_sha256": "2bdb2b924261694ee8c551162d19ba220479af8816594bd43acf81b1674007a8",
+      "package_transport_manifest": "runs/run113.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "f79a2318bc7d3cf74f64a9ddb48b56770fc08ffb4e051dc991e753e56f2d8144"
+    },
+    {
+      "run": 114,
+      "source": "956ffcf6caf7b7d9c000d2bb599399ef1347c5fb",
+      "jobs": [
+        {
+          "job": 102530,
+          "state": "COMPLETED",
+          "scope": "Four true W bank fills, two metadata-only lookahead slots, same wide workload and direct finite DDR peer.",
+          "elapsed_seconds": 11.0,
+          "TotalCPU_seconds": 28.203
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run114.tar.gz",
+      "package_sha256": "ea7fb9bfc82d94f78f83289c401aaa07fec1b556cff239245822e73dedbb6471",
+      "package_transport_manifest": "runs/run114.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "b9d7fca1dfe20cf2834677b421faeb10fb6c3602e749ae7e0ae24fc076e99181"
+    },
+    {
+      "run": 115,
+      "source": "043fa61d5420ac0ae5e74f2520826eb04ca86aaf",
+      "jobs": [
+        {
+          "job": 102535,
+          "state": "COMPLETED",
+          "scope": "Direct peer: actual four-bank early cancellation, no new EXEC/output ACK, real drain and same-bank retry with poisoned prior results.",
+          "elapsed_seconds": 10.0,
+          "TotalCPU_seconds": 31.174
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run115.tar.gz",
+      "package_sha256": "5a74d3eecb7f234f1b490202d149815c8a4a2f0df81cd8583fc118c7706fcb16",
+      "package_transport_manifest": "runs/run115.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "1bb2d39c01f19aef03a6f1f28c6c56eb94ce2036be318c6dfa3edba835d87cfe"
+    },
+    {
+      "run": 116,
+      "source": "6e5059175f5774d3cf085de912609b70bd0c453d",
+      "jobs": [
+        {
+          "job": 102537,
+          "state": "FAILED",
+          "scope": "Normal global comparison launcher failed shell parsing before simulation; unchanged result scope and retained original source.",
+          "elapsed_seconds": 1.0,
+          "TotalCPU_seconds": 0.005
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run116.tar.gz",
+      "package_sha256": "4c96f3bbe37cc3153891da30c880fe3f95172ec43d562251c44e7ee45aade4ba",
+      "package_transport_manifest": "runs/run116.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "77aeb82dde6b1ea008b8fb7e5c7c412db162cead4c21aa54e60536c2058392ab"
+    },
+    {
+      "run": 117,
+      "source": "6e5059175f5774d3cf085de912609b70bd0c453d",
+      "jobs": [
+        {
+          "job": 102538,
+          "state": "FAILED",
+          "scope": "Forced global FENCE launcher failed shell parsing before simulation; retained.",
+          "elapsed_seconds": 1.0,
+          "TotalCPU_seconds": 0.005
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run117.tar.gz",
+      "package_sha256": "9af9b2d1ee0ab974ba710e0c9a4aa194f002092f4e5f275b0c44951da15939e0",
+      "package_transport_manifest": "runs/run117.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "01b5bd463feb0acf0be0606026d6f1a01d7a9bdd148faa8ee0a01fb591191ea5"
+    },
+    {
+      "run": 118,
+      "source": "6c09d43bbb4e90e9d9e6a422ef40ca16a71736e8",
+      "jobs": [
+        {
+          "job": 102544,
+          "state": "COMPLETED",
+          "scope": "Normal exact wide serial and four-bank paired compare through actual 6-skid global DMA RTL with bounded external DDR peer, one W client.",
+          "elapsed_seconds": 36.0,
+          "TotalCPU_seconds": 113.309
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run118.tar.gz",
+      "package_sha256": "b4e33f9b98c360aab4512d17b8e7fd9680a904c3366121dc9532da273718eedc",
+      "package_transport_manifest": "runs/run118.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "2d79e7fd520b30963f4235749029de5dc641f379ac1799dca3d30f22032d1f86"
+    },
+    {
+      "run": 119,
+      "source": "6c09d43bbb4e90e9d9e6a422ef40ca16a71736e8",
+      "jobs": [
+        {
+          "job": 102543,
+          "state": "FAILED",
+          "scope": "Forced low session limit produced real fences and correct 512 records/64 SACK, then old benchmark expectation erroneously demanded all 256 paired detaches. No RTL pass counted.",
+          "elapsed_seconds": 17.0,
+          "TotalCPU_seconds": 49.344
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run119.tar.gz",
+      "package_sha256": "dba369b6aa23843844271dda2566064ff060eeb6b6564ffb0058f887cf79512e",
+      "package_transport_manifest": "runs/run119.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "9c05711fc9865fdc300384b4cdf1f0d26441ad5fe2550bf42b8bf2b5abfc18f5"
+    },
+    {
+      "run": 120,
+      "source": "8df143cbf17ca43d16f0dadbed16921f28c97dc6",
+      "jobs": [
+        {
+          "job": 102551,
+          "state": "COMPLETED",
+          "scope": "Forced low session limit actual 18 backend purges plus four occupied-bank cancellation, exact post-cancel retry, and zero owner leaks.",
+          "elapsed_seconds": 20.0,
+          "TotalCPU_seconds": 59.704
+        }
+      ],
+      "allocation_CPUs": 60,
+      "package": "runs/run120.tar.gz",
+      "package_sha256": "e33cb6ef8d701e5db1a97f2d2403cc641a878ddf0b10a7cdeee0ce7f45ded5ca",
+      "package_transport_manifest": "runs/run120.tar.gz.manifest.json",
+      "package_transport_manifest_sha256": "bce989512a3a4bafd4a258cc0b06de7e7e6f7c5ad46f63c1988cae714682e361"
+    }
+  ],
+  "latest_admission": {
+    "guard_job": 102100,
+    "actual_SRAM_job": 102110,
+    "guard": "two metadata slots plus independent real 2x32B result FIFO; second native/result overlaps first destination ACK",
+    "private_A": "2x256B, repeated same-kk M use, END_USE, native S128, no old feeder",
+    "copy": "U one read inflight, each P16B hold, actual destination ACK updates prefix",
+    "negative": "cancel drain, new epoch reload, late old copy ACK and old S response during new generation, no implicit atomic rollback",
+    "generic_source_job": 102150,
+    "generic_source_negative_job": 102155,
+    "stream_M_guard_actual_S_job": 102169,
+    "lc_mutable_PM_unit_job": 102176,
+    "ABORT_actual_S_job": 102183,
+    "scope_fetch_job": 102187,
+    "scope_partial_CLOSE_job": 102199,
+    "native_LC_PM_fetch_typed_range_job": 102217,
+    "actual_MC_PM_to_native_LC_control_job": 102226,
+    "native_LC_MC_provenance_and_bias_regression_job": 102239,
+    "private_A_real_S_abort_profile_job": 102245,
+    "true_M_serial_S_numeric_range_job": 102270,
+    "actual_MC_LC_PM_to_true_M_and_S_numeric_job": 102292,
+    "actual_M_scope_cancel_and_namespace_FENCE_job": 102295,
+    "actual_MC_LC_M_global_DMA_joint_job": 102322,
+    "actual_global_namespace_FENCE_job": 102331,
+    "actual_MC_error_to_LC_CANCEL_global_drain_job": 102334,
+    "native_local_contig_profile_rejection_job": 102324,
+    "native_stream_M_S_job": 102346,
+    "native_stream_partial_LOAD_cancel_job": 102347,
+    "actual_quant_header_epoch_COPY_M_S_job": 102353,
+    "actual_COPY_halt_M_S_owner_reuse_job": 102359
+  },
+  "not_done": [
+    "actual_controller_cycles_per_model",
+    "physical_area_timing",
+    "energy_token_s",
+    "wholeprojection_FFN_outer_five_provider_registration",
+    "wholemodel_M_G_weight_joint_numeric_and_cancel_fence",
+    "wholemodel_streamed_input_and_complete_five_provider_registration"
+  ]
+}

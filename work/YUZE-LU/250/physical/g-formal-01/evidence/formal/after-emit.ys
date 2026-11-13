@@ -1,0 +1,7 @@
+read_json /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-07/formal/after-logic.json
+write_verilog -norename -noattr -noexpr /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-07/formal/after-logic.v
+design -reset
+read_liberty -lib /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-07/formal/after-logic.v
+hierarchy -check -top g_s32
+write_json /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-07/formal/after-reparsed.json

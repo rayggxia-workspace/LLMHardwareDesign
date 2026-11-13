@@ -1,0 +1,68 @@
+{
+  "schema": "issue250-storage-options/1",
+  "status": "Capacity arithmetic, not a frozen hardware allocation",
+  "private_usable_bytes": 16384,
+  "old": 16384,
+  "down_s32_conservative": {
+    "parts": {
+      "down": 2752,
+      "b_double": 2304,
+      "a_double": 512,
+      "gate_up": 1024,
+      "mid": 1024,
+      "control": 512
+    },
+    "bytes": 8128
+  },
+  "down_mid_s32": {
+    "parts": {
+      "down": 2752,
+      "b_double": 2304,
+      "a_double": 512,
+      "gate_up": 1024,
+      "mid": 512,
+      "control": 512
+    },
+    "bytes": 7616
+  },
+  "independent_x_bytes": 0,
+  "x_in_private_s_bytes": 4096,
+  "four_weight_banks": {
+    "count": 4,
+    "bytes_each": 1152,
+    "total_bytes": 4608,
+    "relation": "Must explicitly replace the old 2304B double-B or be an additional physical buffer; never count as free"
+  },
+  "weight_replaces_double_b": {
+    "parts": {
+      "down": 2752,
+      "b_double": 4608,
+      "a_double": 512,
+      "gate_up": 1024,
+      "mid": 1024,
+      "control": 512
+    },
+    "bytes": 10432,
+    "with_x_bytes": 14528,
+    "with_x_remaining_bytes": 1856
+  },
+  "projection_context_register_bytes": 512,
+  "projection_context_location": "Separate register/context resource; do not silently charge twice to private SRAM",
+  "g_table": {
+    "entries": 257,
+    "bits_per_entry": 32,
+    "logical_bytes": 1028,
+    "lanes": 2,
+    "lookups_per_lane": 2,
+    "simultaneous_lookups": 4,
+    "physical_implementation": "Unmeasured. Four adjacent-point read services may duplicate logic or storage; report actual result"
+  },
+  "shared_pool": {
+    "usable_bytes": 32768,
+    "lvt_enabled": false,
+    "physical_bytes_minimum": 32768,
+    "same_4kib_bank_count_if_reused": 8,
+    "same_bank_outline_area_um2_if_reused": 739696.4002,
+    "area_scope": "Conditional sum of accepted bank outlines only; excludes pool logic, pins, PG, gaps and routing"
+  }
+}

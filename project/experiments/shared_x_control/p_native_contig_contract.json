@@ -1,0 +1,107 @@
+{
+  "schema": "P-native-local-contiguous-service/1",
+  "provider_abi": "0x02504d02",
+  "scope_schema": "0x02505001",
+  "service": 1,
+  "registration": "LOCAL_CONTIG_RANGE_K128_256_ZERO_BIAS",
+  "native_profile_parameter": "p_scope_range_service.NATIVE_LOCAL_CONTIG=1",
+  "scope_admission": {
+    "full_k": [
+      128,
+      256
+    ],
+    "k_begin": 0,
+    "k_end": "full_k",
+    "bias_address": 0,
+    "numeric": "static W8A16 and FP16 per-group scale, integer S32 state, RNE",
+    "input": "complete A16 image starts at K=0 in existing private S",
+    "unsupported_profile_status": 43,
+    "unsupported_service2_or3_status": 36,
+    "unsupported_has_no_M_S_or_DMA_side_effect": true
+  },
+  "identity": {
+    "A_key_msb_to_lsb": [
+      "job32",
+      "epoch32",
+      "tensor32",
+      "version32"
+    ],
+    "scope_owner_msb_to_lsb": [
+      "MC_generation32",
+      "job32",
+      "epoch32",
+      "task_sequence32"
+    ],
+    "RF_owner_msb_to_lsb": [
+      "A.job32",
+      "A.epoch32",
+      "rf_object_base[way]+global_column/8",
+      "output_version32"
+    ],
+    "directory_lookup": "K element offset",
+    "A_and_M_kk": "K element offset/128",
+    "S_A_address": "input_s_base+16*(K/128)",
+    "copy_prefix_offset": "16*(K/128)",
+    "A_shift_ready": "exact committed key/K directory publication; data ACK alone is insufficient"
+  },
+  "resources": {
+    "accepted_record": 1,
+    "native_guard_active": 1,
+    "guard_metadata_slots": 2,
+    "guard_result_slots": {
+      "count": 2,
+      "bytes_each": 32
+    },
+    "A_slots": {
+      "count": 2,
+      "bytes_each": 256
+    },
+    "new_private_SRAM_bytes": 0,
+    "source_reads": "one real S128 request in flight, existing ordinary port and two-owner arbitration",
+    "snapshot_restore": "not registered in this provider",
+    "capacity_claim": "single-record coordinator is a functional baseline, not the prior parallel throughput model"
+  },
+  "completion": {
+    "INPUT": "only releases operand/W input lease; never range/LC/MC completion",
+    "CONTINUE": "owned RF response EOP, S32 context updated, no result S write",
+    "FINAL": "owned RF payload captured by actual guard then two successful real S128 write ACKs",
+    "confirmed_read_bytes": "whole W record only after exact owned FILL ACK; LC adds its actual128B parameter fetch",
+    "confirmed_write_bytes": "16*successful guard result S128 ACK count, not external DDR output bytes"
+  },
+  "ordinary_cancel": {
+    "new_work": "stop after any already offered range record is accepted or explicitly error-retired",
+    "accepted_native_record": "finish its eight true A handshakes, W input lease and actual RF/FINAL-S ACK",
+    "RF_cleanup": "real CONTEXT kind4 ABANDON for every still-live owned context, wait matching response",
+    "A_cleanup": "halt plus true S/operand/receipt drain, then invalidate unissued planned references via explicit flush",
+    "prefix": "committed K16/RF prefix is not rolled back or described as reusable partial record",
+    "emergency_raw_abort": "not registered by this normal-drain executor; fault quarantines rather than fabricating drain"
+  },
+  "namespace_fence": {
+    "trigger": "reserve command session space; before reused A generation or observed W/context generation would wrap",
+    "M_command": "real short FENCE, exact response cookie/session and returned epoch",
+    "backend": "real global DMA drain/purge done; outstanding=0 alone is not a namespace proof",
+    "A_rearm": "only when all A leases FREE and true source reads/receipts drained; monotonically newer32bit rearm epoch",
+    "context": "retain context generation across fences; wrap0 only once per context after changed transport epoch",
+    "source_compatibility": "prior private_a_tile_frontend and prior abort profile sources remain unchanged",
+    "control_storage_added": "explicit fence/session/context metadata, 16x16bit nextK plus16live bits and one32bit A rearm epoch; must count in P LC physical area"
+  },
+  "coverage": {
+    "real_M_S_numeric": "102270 eighteen trials, eight full-range configurations",
+    "actual_MC_LC_program_numeric": "102292 eighteen trials, eight real scope CALLs",
+    "normal_cancel_and_namespace_fence": "102295 eighteen trials per fixture; bounded backend peer",
+    "real_global_DMA_joint": "102312 eighteen trials, startup purge, six actual MC return skids",
+    "not_qualified": [
+      "whole model",
+      "streamed service2",
+      "dynamic S32xS32 Attention",
+      "partial restore/spill",
+      "three-P performance",
+      "energy/token_s",
+      "integrated physical300MHz"
+    ],
+    "real_global_DMA_registered_request_M": "102322 eighteen trials; M f08aefb93, fabric0b60b134e, finite six64B return skids and real startup purge",
+    "real_global_namespace_FENCE": "102331 eighteen trials; actual M FENCE/global purge with one deliberately bad generation; owner waits matching purge",
+    "actual_MC_error_to_LC_CANCEL": "102334 eighteen trials; wrong-source error17, actual MC CANCEL, native current record/RF abandon/true S and A drain, result ACK clears MC error hold",
+    "native_admission_negative": "102324 eighteen trials per top; K384 and partial K256 rejected43 with no M/S/DMA issue"
+  }
+}

@@ -1,0 +1,187 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 4_1_cts cts
+Running cts.tcl, stage 4_1_cts
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/3_place.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/3_place.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+clock_tree_synthesis -sink_clustering_enable -repair_clock_nets
+[INFO CTS-0050] Root buffer is CLKBUF_X3.
+[INFO CTS-0051] Sink buffer is CLKBUF_X3.
+[INFO CTS-0052] The following clock buffers will be used for CTS:
+                    CLKBUF_X3
+[INFO CTS-0049] Characterization buffer is CLKBUF_X3.
+[INFO CTS-0007] Net "clk" found for clock "core".
+[INFO CTS-0010]  Clock net "clk" has 553 sinks.
+[INFO CTS-0008] TritonCTS found 1 clock nets.
+[INFO CTS-0097] Characterization used 1 buffer(s) types.
+[INFO CTS-0201] 0 blockages from hard placement blockages and placed macros will be used.
+[INFO CTS-0027] Generating H-Tree topology for net clk.
+[INFO CTS-0028]  Total number of sinks: 553.
+[INFO CTS-0090]  Sinks will be clustered based on buffer max cap.
+[INFO CTS-0030]  Number of static layers: 0.
+[INFO CTS-0020]  Wire segment unit: 14000  dbu (7 um).
+[INFO CTS-0206] Best clustering solution was found from max clustering size of 9 and max clustering diameter of 82.
+[INFO CTS-0019]  Total number of sinks after clustering: 89.
+[INFO CTS-0024]  Normalized sink region: [(2.90429, 2.82929), (31.7164, 31.7626)].
+[INFO CTS-0025]     Width:  28.8121.
+[INFO CTS-0026]     Height: 28.9333.
+ Level 1
+    Direction: Vertical
+    Sinks per sub-region: 45
+    Sub-region size: 28.8121 X 14.4667
+[INFO CTS-0034]     Segment length (rounded): 8.
+ Level 2
+    Direction: Horizontal
+    Sinks per sub-region: 23
+    Sub-region size: 14.4061 X 14.4667
+[INFO CTS-0034]     Segment length (rounded): 8.
+ Level 3
+    Direction: Vertical
+    Sinks per sub-region: 12
+    Sub-region size: 14.4061 X 7.2333
+[INFO CTS-0034]     Segment length (rounded): 4.
+[INFO CTS-0038]  Stop criterion found. Sink region hpwl is smaller than max wirelength (591.189 um) and max number of sinks is 15.
+[INFO CTS-0035]  Number of sinks covered: 89.
+[INFO CTS-0018]     Created 98 clock buffers.
+[INFO CTS-0012]     Minimum number of buffers in the clock path: 3.
+[INFO CTS-0013]     Maximum number of buffers in the clock path: 3.
+[INFO CTS-0015]     Created 98 clock nets.
+[INFO CTS-0016]     Fanout distribution for the current clock = 2:4, 3:5, 4:6, 5:9, 6:18, 7:25, 8:20, 9:3, 10:3, 11:1, 12:1, 13:1, 14:1..
+[INFO CTS-0017]     Max level of the clock tree: 3.
+[INFO CTS-0098] Clock net "clk"
+[INFO CTS-0099]  Sinks 633
+[INFO CTS-0100]  Leaf buffers 89
+[INFO CTS-0101]  Average sink wire length 362.82 um
+[INFO CTS-0102]  Path depth 2 - 3
+[INFO CTS-0207]  Dummy loads inserted 80
+[INFO CTS-0500] Runtime: 0.61s
+estimate_parasitics -placement
+detailed_placement
+[INFO DPL-0006] Core area: 43029.22 um^2
+[INFO DPL-0007] Movable instances area: 27571.17 um^2
+[INFO DPL-0008] Fixed instances area within core: 98.69 um^2
+[INFO DPL-0009] Utilization: 64.3%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 23540 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |        430 |       110 |       320
+        1 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 1.
+[INFO DPL-0500] Runtime: 0.09s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves                5497
+total displacement       7039.0 u
+average displacement        0.3 u
+max displacement            8.4 u
+original HPWL          177001.2 u
+legalized HPWL         179983.6 u
+delta HPWL                    2 %
+
+estimate_parasitics -placement
+repair_timing -setup_margin 0 -hold_margin 0.02 -repair_tns 100 -verbose
+[INFO RSZ-0100] Repair move sequence: UnbufferMove SizeUpMove SwapPinsMove BufferMove CloneMove SplitLoadMove 
+[INFO RSZ-0098] No setup violations found
+[INFO RSZ-0505] Runtime: 0.29s
+[INFO RSZ-0046] Found 309 endpoints with hold violations.
+Iteration | Resized | Buffers | Cloned Gates |   Area   |   WNS   |   TNS   | Endpoint
+--------------------------------------------------------------------------------------
+        0 |       0 |       0 |            0 |    +0.0% |  -0.060 |  -4.824 | $auto$ff.cc:337:slice$10556/D
+       10 |       0 |      27 |            0 |    +0.1% |  -0.054 |  -4.328 | $auto$ff.cc:337:slice$10538/D
+       20 |       0 |      57 |            0 |    +0.2% |  -0.051 |  -3.801 | $auto$ff.cc:337:slice$10423/D
+       30 |       0 |      87 |            0 |    +0.3% |  -0.050 |  -3.292 | $auto$ff.cc:337:slice$10445/D
+       40 |       0 |     117 |            0 |    +0.3% |  -0.048 |  -2.800 | $auto$ff.cc:337:slice$10422/D
+       50 |       0 |     147 |            0 |    +0.4% |  -0.048 |  -2.321 | $auto$ff.cc:337:slice$10524/D
+       60 |       0 |     177 |            0 |    +0.5% |  -0.047 |  -1.847 | $auto$ff.cc:337:slice$10725/D
+       70 |       0 |     207 |            0 |    +0.6% |  -0.045 |  -1.385 | $auto$ff.cc:337:slice$10517/D
+       80 |       0 |     237 |            0 |    +0.7% |  -0.042 |  -0.946 | $auto$ff.cc:337:slice$10464/D
+       90 |       0 |     268 |            0 |    +0.8% |  -0.038 |  -0.496 | $auto$ff.cc:337:slice$10730/D
+      100 |       0 |     295 |            0 |    +0.9% |  -0.030 |  -0.191 | $auto$ff.cc:337:slice$10435/D
+      110 |       0 |     318 |            0 |    +0.9% |  -0.007 |  -0.010 | $auto$ff.cc:337:slice$10553/D
+      120 |       0 |     330 |            0 |    +1.0% |   0.005 |   0.000 | $auto$ff.cc:337:slice$10411/D
+      130 |       0 |     340 |            0 |    +1.0% |   0.006 |   0.000 | $auto$ff.cc:337:slice$10339/D
+      140 |       0 |     351 |            0 |    +1.0% |   0.007 |   0.000 | $auto$ff.cc:337:slice$10343/D
+      150 |       0 |     361 |            0 |    +1.0% |   0.008 |   0.000 | $auto$ff.cc:337:slice$10400/D
+      160 |       0 |     371 |            0 |    +1.1% |   0.008 |   0.000 | $auto$ff.cc:337:slice$10263/D
+      170 |       0 |     382 |            0 |    +1.1% |   0.009 |   0.000 | $auto$ff.cc:337:slice$10246/D
+      180 |       0 |     394 |            0 |    +1.1% |   0.011 |   0.000 | $auto$ff.cc:337:slice$11579/D
+      190 |       0 |     405 |            0 |    +1.2% |   0.013 |   0.000 | $auto$ff.cc:337:slice$13128/D
+      200 |       0 |     415 |            0 |    +1.2% |   0.015 |   0.000 | $auto$ff.cc:337:slice$10366/D
+      210 |       0 |     425 |            0 |    +1.2% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10314/D
+      220 |       0 |     435 |            0 |    +1.3% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10556/D
+      230 |       0 |     444 |            0 |    +1.3% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10556/D
+      240 |       0 |     454 |            0 |    +1.3% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10556/D
+      250 |       0 |     464 |            0 |    +1.3% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10556/D
+      260 |       0 |     474 |            0 |    +1.4% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10556/D
+      270 |       0 |     484 |            0 |    +1.4% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10556/D
+      280 |       0 |     495 |            0 |    +1.4% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10556/D
+      290 |       0 |     504 |            0 |    +1.5% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10556/D
+      300 |       0 |     514 |            0 |    +1.5% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10556/D
+      310 |       0 |     523 |            0 |    +1.5% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10556/D
+      310 |       0 |     523 |            0 |    +1.5% |   0.016 |   0.000 | $auto$ff.cc:337:slice$10556/D
+    final |       0 |     525 |            0 |    +1.5% |   0.020 |   0.000 | $auto$ff.cc:337:slice$10500/D
+--------------------------------------------------------------------------------------
+[INFO RSZ-0032] Inserted 525 hold buffers.
+[INFO RSZ-0506] Runtime: 1.02s
+Elapsed time: 0:01.49[h:]min:sec. CPU time: user 1.48 sys 0.11 (106%). Peak memory: 116372KB.
+Repair timing output passed lec test
+detailed_placement
+[INFO DPL-0006] Core area: 43029.22 um^2
+[INFO DPL-0007] Movable instances area: 27990.12 um^2
+[INFO DPL-0008] Fixed instances area within core: 98.69 um^2
+[INFO DPL-0009] Utilization: 65.3%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 24065 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |       1782 |       508 |      1271
+        1 |        374 |        88 |       286
+        2 |        208 |        36 |       169
+        3 |         72 |        12 |        51
+        4 |         35 |         5 |        30
+        5 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 5.
+[INFO DPL-0500] Runtime: 0.14s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves                6754
+total displacement       1187.2 u
+average displacement        0.0 u
+max displacement            9.2 u
+original HPWL          180412.8 u
+legalized HPWL         181232.0 u
+delta HPWL                    0 %
+
+estimate_parasitics -placement
+Report metrics stage 4, cts final...
+
+==========================================================================
+cts final report_design_area
+--------------------------------------------------------------------------
+Design area 28089 um^2 65% utilization.
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/4_1_cts.odb
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/4_cts.sdc
+Elapsed time: 0:07.60[h:]min:sec. CPU time: user 12.85 sys 3.08 (209%). Peak memory: 375012KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+4_1_cts                .odb          1        2     1.07      113 ec1d2c3382
+cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/4_1_cts.odb /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/4_cts.odb
+make: Leaving directory '/OpenROAD-flow-scripts/flow'

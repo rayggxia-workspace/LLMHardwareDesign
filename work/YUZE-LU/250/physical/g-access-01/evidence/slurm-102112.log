@@ -1,0 +1,19 @@
+/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif: OK
+OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-09/source/project/experiments/w8a16_physical/g_access.py", line 82, in <module>
+    main()
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-09/source/project/experiments/w8a16_physical/g_access.py", line 63, in main
+    stage("geometry",geometry)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-09/source/project/experiments/w8a16_physical/g_access.py", line 47, in stage
+    operation(out,run)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-09/source/project/experiments/w8a16_physical/g_access.py", line 61, in geometry
+    g_geometry.export(ROOT,out,cpus,run,"g",selected=selected,
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-09/source/project/experiments/w8a16_physical/g_geometry.py", line 136, in export
+    with slot(out.parents[2]):
+  File "/usr/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-09/source/project/experiments/block_v2/io_slots.py", line 18, in slot
+    assert allowed in base.parents and any(p.startswith('issue143-') for p in base.parts)
+AssertionError
+srun: error: node15: task 0: Exited with exit code 1

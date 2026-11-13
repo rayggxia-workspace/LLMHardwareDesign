@@ -1,5 +1,28 @@
 # 当前状态
 
+2026-11-11更新：三P完整FFN真母控/局控/双通道DMA/16个原S bank两版各36项通过，合成整数权重与Qwen2.5-3B同尺寸。早发EXEC首个无背压样本860,202→849,914拍，36组节省0.52%–1.20%，搬运量相同。编程FFN与S80实测费用回校的SystemC估计5.999543 token/s，低于9.215647。整token实测、能耗、联合物理与DP待验收。见[回执](experiments/issue-250-three-p-ffn.md)。
+
+2026-11-11更新：E32 AP64（234×234 µm）独立原 TT 300MHz、两种 DRC、最终网表/严格等价和 158 个研究 M10 接入通过；三P动态回传真实落地通过。已回校时间模型7.187736 token/s，AV未实现候选7.792632，均低于同条件9.215647。整层M/Down、系统物理、能耗和DP待验收。见[回执与范围](experiments/issue-250-native-progress-06.md)。
+
+2026-11-11更新：原生S32完整decode512时间回放最佳候选7.098255 token/s，尚低于同条件9.215647；同16lane单slot驻留策略吞吐+16.74%，DP算法和部署未验收。真三P.S/G/量化86 Mid tile通过、上游M仍需接入。64-bit E真S通过，独立M/E和整系统原300MHz继续迭代。见[范围与回执](experiments/issue-250-native-progress-05.md)。
+
+
+2026-11-11更新：完整scope动态15-pass实费诊断仅0.498712694 token/s，旧8.136179仍含动态占位，性能门未过；硬件#252独立处理。真量化/COPY/M/S与取消已测；三P86 Mid tile/六轮供数36PASS，同S预取死锁已修，S不扩容。typed2范围通过但实际outer未资格，M最终TT300MHz持续迭代。见[最新回执](experiments/issue-250-native-progress-04.md)。
+
+2026-11-11补充：RF head II1/实际M回归、MC→LC真实PM/取参/range已测；M最终TT300MHz仍在迭代。已测guard费用回校条件结果8.136179，未达9.215647，dynamic/E/N与整系统仍未资格。详见[补充进展](experiments/issue-250-native-progress-02.md)。
+
+## 2026-11-11：原生数据、scale与控制边界联合推进
+
+[Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) / [PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)继续实施。G32叶原TT300MHz、DRC0、最终ODB/等价及204端点研究接入通过；M完整短帧/DMA/有限RF已回归，产品P&R继续迭代。原生S128量化已从323/194降至95/60拍，真实scale目录与两A use联合回放通过；不增私有SRAM，新增寄存器和程序存储单列面积。九resident MC、真实128位传输、小LC PM及scope取参已有独立证据，但真实whole-FFN outer、控制循环、动态QK/AV/数值profile、联合物理和系统性能仍未验收。8.64697仍为待完整费用回校的条件迭代，低于旧9.21565目标；不将硬件改进记作DP收益。 详见[联合闭环台账](experiments/issue-250-native-integration.md)。
+
+## 2026-11-11：原生存储与有限流水回校
+
+[Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)持续实施。首版方向为私有S内X、双256B A槽、同K复用和早复制，无新增共享池或4KiB X寄存器。历史NoPool9.223787已复现；公共S128诊断7.595433，同原生Xreg7.585591，尚低于旧条件目标9.215647，不宣称系统达标。真实四W银行、16×8 S32上下文/scale、G32及有限A/copy/双结果槽已有独立RTL测试；G紧凑物理和真实S流适配继续迭代。联合数值/程序、完整宏及LC/MC物理、系统计时能耗与DP仍待完成，失败/低性能结果全部保留。详见工作索引和合同。
+
+## 2026-11-10：共享X/S32底座联合实现启动
+
+[Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) / [PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251) 的[合同](plans/w8a16-next-base-contract.md)替代旧S128草稿，结合PR249的窄持续状态/有限供数和PR243共享A32。首门为相同51.2GB/s、3P、S32/Mid32条件下不低于9.21564723269 token/s；未通过前不冻结资源或声称新300 MHz验收。私有S不扩容、不默认LVT复制；共享池/权重/附属寄存器独立记面积，main紧凑宏为最终占地和端点比较基点。联合评估、物理基线和控制合同并行准备；宏RTL/物理、五类组/LC/MC/指令与DP适配全部仍待实际完成。详见[执行入口](../work/YUZE-LU/250/README.md)，登记/看板缺项继续交接。
+
 2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 
 2026-11-08，用户授权将母控 [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 合入 main，并在[五类 Block 与母控统一入口](experiments/assets/five-leaf-bases/README.md)并列索引源码、图册及双格式验收包。工程证据不变；合并结果以 PR 在线回执为准，授权整合不冒充独立审查或九实例系统验收。

@@ -1,0 +1,99 @@
+{
+  "schema": "shared-x-control-audit/1",
+  "passed": true,
+  "coverage": "abstract_transaction_protocol_only_not_RTL_numeric_timing_or_physical",
+  "slurm_job_id": "102066",
+  "slurm_cpus_per_task": "10",
+  "slurm_node": "node10",
+  "shard": 0,
+  "shards": 6,
+  "python": "3.11.7",
+  "elapsed_seconds": 0.007717332802712917,
+  "process_CPU_seconds": 0.006557449999999999,
+  "source_sha256": {
+    "audit_protocol.py": "c50b04a1bd3176a0bf634e7a491c48845cd6127017337243f82e0ad570549d5e",
+    "private_a_protocol.py": "a71e925468b6d5f74f09f86629ba043449b7bea98c96245200ec261af6e0bf0a",
+    "run_audit.py": "0e10098eb81048d07d036913e369ccc14b5141692abeb3dc8ee8dc25553f6c2b"
+  },
+  "contract_sha256": "2f9ba9fc7da38b43214d42c8274aeebd4d6b6f72c1b128e621ccd2587464d012",
+  "cases": [
+    {
+      "name": "candidate_header",
+      "passed": true,
+      "actual_rejection": null,
+      "scope": "candidate_header_admission_not_binary_codec"
+    },
+    {
+      "name": "three_readers_repeated_load_early_A_release_two_S_ACKs",
+      "passed": true,
+      "expected_rejection": null,
+      "actual_rejection": null,
+      "trace_sha256": "d4f9d144986e3a87d888f13598727c3b25095a511cfe11b94739cac3b5be2b43",
+      "counters_if_admitted": {
+        "fill_commits": 16,
+        "A_words_copied": 64,
+        "S_commits": 2,
+        "events": 109
+      }
+    },
+    {
+      "name": "idle_unstarted_P1_P2_not_drained",
+      "passed": true,
+      "expected_rejection": "RELEASE before all reader end declarations",
+      "actual_rejection": "event 53 RELEASE_REQUEST: RELEASE before all reader end declarations",
+      "trace_sha256": "fc5f966ad4437abc77f7f3f86e5c1e1389234458da4bda8ae684ba98f87e7775",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "one_active_one_prepared_is_legal",
+      "passed": true,
+      "expected_rejection": null,
+      "actual_rejection": null,
+      "trace_sha256": "0f5fb7266e87cbb809b73f2c531843b475c3fc16f804696397ddf199b323a227",
+      "counters_if_admitted": {
+        "fill_commits": 16,
+        "A_words_copied": 0,
+        "S_commits": 0,
+        "events": 13
+      }
+    },
+    {
+      "name": "same_low8_epoch_foreign_full_identity",
+      "passed": true,
+      "expected_rejection": "stale/foreign full identity",
+      "actual_rejection": "event 11 LOAD_ACCEPT: stale/foreign full identity",
+      "trace_sha256": "f13ecab65a8f43aaff9b908e799707c6cdb9b0cd98ed6fcbe472a6b07b8d55be",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "halt_rejects_new_fill",
+      "passed": true,
+      "expected_rejection": "accept after halt/quarantine",
+      "actual_rejection": "event 3 FILL_ACCEPT: accept after halt/quarantine",
+      "trace_sha256": "638bab541b8d8d78bc3503636370b38591e9aad36e93777865d05cfb14095b29",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "private_A_prefetch_before_W_and_shared_S_phase",
+      "passed": true,
+      "expected_rejection": null,
+      "actual_rejection": null,
+      "trace_sha256": "535633ae3b98fca9dfb3aef14ea53c807b0232941d88df5523a4386403da4a0b",
+      "counters_if_admitted": {
+        "phase_switches_unpriced": 2,
+        "live_A_slots": 1
+      },
+      "scope": "private_S128_A256x2_alternative_protocol"
+    },
+    {
+      "name": "private_X_source_close_not_only_first_tile",
+      "passed": true,
+      "expected_rejection": "X close before all planned real S reads",
+      "actual_rejection": "event 34 X_END_READ: X close before all planned real S reads",
+      "trace_sha256": "0d737064c3cc0e00487dd444395c3a0e3fe4af2759d52c281a20f9b0a0cf2678",
+      "counters_if_admitted": null,
+      "scope": "private_S128_A256x2_alternative_protocol"
+    }
+  ],
+  "private_candidate_sha256": "4fea9b4351960be3b669cb9e6f668c7e54c1ef6c1b4bca3fc4b973f246381dc4"
+}

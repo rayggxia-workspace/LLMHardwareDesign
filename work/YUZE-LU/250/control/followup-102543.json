@@ -1,0 +1,330 @@
+{
+  "schema": "real-native-control-global-evidence/1",
+  "run": 119,
+  "job": 102543,
+  "source": "6c09d43bbb4e90e9d9e6a422ef40ca16a71736e8",
+  "state": "FAILED",
+  "note": "Forced low session limit produced real fences and correct 512 records/64 SACK, then old benchmark expectation erroneously demanded all 256 paired detaches. No RTL pass counted.",
+  "allocation_CPUs": 60,
+  "elapsed_seconds": 17.0,
+  "TotalCPU_seconds": 49.344,
+  "package": "runs/run119.tar.gz",
+  "package_sha256": "dba369b6aa23843844271dda2566064ff060eeb6b6564ffb0058f887cf79512e",
+  "package_transport_manifest": "runs/run119.tar.gz.manifest.json",
+  "package_transport_manifest_sha256": "9c05711fc9865fdc300384b4cdf1f0d26441ad5fe2550bf42b8bf2b5abfc18f5",
+  "package_members": 216,
+  "functional_clock_ns": 10,
+  "not_300MHz_STA": true,
+  "qualification": "One P real S wide Gate/Up. Functional 10 ns; no three-P, system performance or physical timing claim.",
+  "logs": [],
+  "failures": [
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-3-0.log",
+      "errors": [
+        "[207790000] %Fatal: tb_p_weight_global.sv:633: Assertion failed in tb_p_weight_global: execution accounting req=8704 ack=64 records=512 reads=512 pairs=235",
+        "%Error: rtl/tb_p_weight_global.sv:633: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-6-0.log",
+      "errors": [
+        "[209200000] %Fatal: tb_p_weight_global.sv:633: Assertion failed in tb_p_weight_global: execution accounting req=8704 ack=64 records=512 reads=512 pairs=235",
+        "%Error: rtl/tb_p_weight_global.sv:633: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-1-0.log",
+      "errors": [
+        "[208640000] %Fatal: tb_p_weight_global.sv:633: Assertion failed in tb_p_weight_global: execution accounting req=8704 ack=64 records=512 reads=512 pairs=235",
+        "%Error: rtl/tb_p_weight_global.sv:633: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-4-0.log",
+      "errors": [
+        "[209080000] %Fatal: tb_p_weight_global.sv:633: Assertion failed in tb_p_weight_global: execution accounting req=8704 ack=64 records=512 reads=512 pairs=235",
+        "%Error: rtl/tb_p_weight_global.sv:633: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-5-0.log",
+      "errors": [
+        "[206880000] %Fatal: tb_p_weight_global.sv:633: Assertion failed in tb_p_weight_global: execution accounting req=8704 ack=64 records=512 reads=512 pairs=235",
+        "%Error: rtl/tb_p_weight_global.sv:633: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-2-0.log",
+      "errors": [
+        "[209680000] %Fatal: tb_p_weight_global.sv:633: Assertion failed in tb_p_weight_global: execution accounting req=8704 ack=64 records=512 reads=512 pairs=235",
+        "%Error: rtl/tb_p_weight_global.sv:633: Verilog $stop"
+      ]
+    }
+  ],
+  "timing_from_real_RTL": [
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-3-0.csv",
+      "sha256": "7ac59fee0384a1879bae205062ba2fd5158eea0a98aafdc70104e00645d8b3c6",
+      "rows": 48811,
+      "event_counts": {
+        "DDR_PURGE_REQ": 12,
+        "DDR_PURGE_DONE": 12,
+        "RECORD": 512,
+        "LC_M": 2347,
+        "M_LR": 4310,
+        "A_S_REQ": 512,
+        "W_ALLOC": 512,
+        "DDR_REQ": 8704,
+        "DDR_BACKEND_REQ": 8704,
+        "DDR_BACKEND_RSP": 8704,
+        "DDR_RSP": 8704,
+        "W_FILL": 512,
+        "QUANT_DONE": 16,
+        "M_EXEC": 512,
+        "A_M": 4096,
+        "COMPLETE": 512,
+        "S_WRITE": 64,
+        "S_ACK": 64,
+        "CASE_DONE": 2
+      },
+      "case_cycles": [
+        {
+          "cycle": "10453",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "10351",
+          "detail": "256",
+          "value": "32"
+        },
+        {
+          "cycle": "20775",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "10222",
+          "detail": "512",
+          "value": "64"
+        }
+      ]
+    },
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-6-0.csv",
+      "sha256": "4de8972ab504895eb3cd43fd3cff0aad39e11b021c49e035e8a0c282951722fb",
+      "rows": 48811,
+      "event_counts": {
+        "DDR_PURGE_REQ": 12,
+        "DDR_PURGE_DONE": 12,
+        "RECORD": 512,
+        "LC_M": 2347,
+        "M_LR": 4310,
+        "A_S_REQ": 512,
+        "W_ALLOC": 512,
+        "DDR_REQ": 8704,
+        "DDR_BACKEND_REQ": 8704,
+        "DDR_BACKEND_RSP": 8704,
+        "DDR_RSP": 8704,
+        "W_FILL": 512,
+        "QUANT_DONE": 16,
+        "M_EXEC": 512,
+        "A_M": 4096,
+        "COMPLETE": 512,
+        "S_WRITE": 64,
+        "S_ACK": 64,
+        "CASE_DONE": 2
+      },
+      "case_cycles": [
+        {
+          "cycle": "10522",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "10420",
+          "detail": "256",
+          "value": "32"
+        },
+        {
+          "cycle": "20916",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "10294",
+          "detail": "512",
+          "value": "64"
+        }
+      ]
+    },
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-5-0.csv",
+      "sha256": "7443ed1167dae484b4adc7a875200535ed2998ba4fe6e71af86f97c9644dfb70",
+      "rows": 48811,
+      "event_counts": {
+        "DDR_PURGE_REQ": 12,
+        "DDR_PURGE_DONE": 12,
+        "RECORD": 512,
+        "LC_M": 2347,
+        "M_LR": 4310,
+        "A_S_REQ": 512,
+        "W_ALLOC": 512,
+        "DDR_REQ": 8704,
+        "DDR_BACKEND_REQ": 8704,
+        "DDR_BACKEND_RSP": 8704,
+        "DDR_RSP": 8704,
+        "W_FILL": 512,
+        "QUANT_DONE": 16,
+        "M_EXEC": 512,
+        "A_M": 4096,
+        "COMPLETE": 512,
+        "S_WRITE": 64,
+        "S_ACK": 64,
+        "CASE_DONE": 2
+      },
+      "case_cycles": [
+        {
+          "cycle": "10408",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "10302",
+          "detail": "256",
+          "value": "32"
+        },
+        {
+          "cycle": "20684",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "10172",
+          "detail": "512",
+          "value": "64"
+        }
+      ]
+    },
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-2-0.csv",
+      "sha256": "10649ed7ddf3f5d0e815c62055c670c88e8b7e6d034d1f295495ab3c6dbedcea",
+      "rows": 48811,
+      "event_counts": {
+        "DDR_PURGE_REQ": 12,
+        "DDR_PURGE_DONE": 12,
+        "RECORD": 512,
+        "LC_M": 2347,
+        "M_LR": 4310,
+        "A_S_REQ": 512,
+        "W_ALLOC": 512,
+        "DDR_REQ": 8704,
+        "DDR_BACKEND_REQ": 8704,
+        "DDR_BACKEND_RSP": 8704,
+        "DDR_RSP": 8704,
+        "W_FILL": 512,
+        "QUANT_DONE": 16,
+        "M_EXEC": 512,
+        "A_M": 4096,
+        "COMPLETE": 512,
+        "S_WRITE": 64,
+        "S_ACK": 64,
+        "CASE_DONE": 2
+      },
+      "case_cycles": [
+        {
+          "cycle": "10548",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "10443",
+          "detail": "256",
+          "value": "32"
+        },
+        {
+          "cycle": "20964",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "10313",
+          "detail": "512",
+          "value": "64"
+        }
+      ]
+    },
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-4-0.csv",
+      "sha256": "a595f82fab1b5e9d23445ce56fe3f6caa0bc2501dd52ac48d65d8e5bd06e1abc",
+      "rows": 48811,
+      "event_counts": {
+        "DDR_PURGE_REQ": 12,
+        "DDR_PURGE_DONE": 12,
+        "RECORD": 512,
+        "LC_M": 2347,
+        "M_LR": 4310,
+        "A_S_REQ": 512,
+        "W_ALLOC": 512,
+        "DDR_REQ": 8704,
+        "DDR_BACKEND_REQ": 8704,
+        "DDR_BACKEND_RSP": 8704,
+        "DDR_RSP": 8704,
+        "W_FILL": 512,
+        "QUANT_DONE": 16,
+        "M_EXEC": 512,
+        "A_M": 4096,
+        "COMPLETE": 512,
+        "S_WRITE": 64,
+        "S_ACK": 64,
+        "CASE_DONE": 2
+      },
+      "case_cycles": [
+        {
+          "cycle": "10515",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "10412",
+          "detail": "256",
+          "value": "32"
+        },
+        {
+          "cycle": "20904",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "10287",
+          "detail": "512",
+          "value": "64"
+        }
+      ]
+    },
+    {
+      "path": "./project/experiments/shared_x_control/results/p-resident-6-1-0.csv",
+      "sha256": "be13b9b9857dae94cf44707d5e0e1d700966d4221cd1644268094e8b76cc5946",
+      "rows": 48811,
+      "event_counts": {
+        "DDR_PURGE_REQ": 12,
+        "DDR_PURGE_DONE": 12,
+        "RECORD": 512,
+        "LC_M": 2347,
+        "M_LR": 4310,
+        "A_S_REQ": 512,
+        "W_ALLOC": 512,
+        "DDR_REQ": 8704,
+        "DDR_BACKEND_REQ": 8704,
+        "DDR_BACKEND_RSP": 8704,
+        "DDR_RSP": 8704,
+        "W_FILL": 512,
+        "QUANT_DONE": 16,
+        "M_EXEC": 512,
+        "A_M": 4096,
+        "COMPLETE": 512,
+        "S_WRITE": 64,
+        "S_ACK": 64,
+        "CASE_DONE": 2
+      },
+      "case_cycles": [
+        {
+          "cycle": "10499",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "10396",
+          "detail": "256",
+          "value": "32"
+        },
+        {
+          "cycle": "20860",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "10259",
+          "detail": "512",
+          "value": "64"
+        }
+      ]
+    }
+  ]
+}
