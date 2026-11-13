@@ -92,7 +92,7 @@ def load_row(ddr, first_request, lane, base, first_word):
     return next_request, writes
 
 
-def predict(archive, binary, config, output, mode, prompt_start):
+def predict(archive, binary, config, output, mode, prompt_start, *, tail=None):
     inp = prompt_inputs(archive)
     require(file_digest(config) == CONFIG_SHA, "DDR config differs from 105530")
     output.mkdir()
@@ -108,10 +108,13 @@ def predict(archive, binary, config, output, mode, prompt_start):
         embedding_done, embedding_stores = load_row(ddr, prompt_return + 3, 1,
                                                      inp["embedding_base"] + inp["token"] * ROW_BYTES, 0)
         gamma_done, gamma_stores = load_row(ddr, embedding_done + 3, 3, inp["gamma_base"], ROW_BYTES // SRAM_WORD_BYTES)
-    return {"scope": "105530 first prompt row through initial RMS gamma load", "mode": mode,
-            "prompt_start_core_cycle": prompt_start, "binding": inp,
-            "last_gamma_sram_ack_core_cycle": gamma_done - 1,
-            "ddr_events": ddr.events, "sram_writes": {"embedding": embedding_stores, "gamma": gamma_stores}}
+        result = {"scope": "105530 first prompt row through initial RMS gamma load", "mode": mode,
+                  "prompt_start_core_cycle": prompt_start, "binding": inp,
+                  "last_gamma_sram_ack_core_cycle": gamma_done - 1,
+                  "ddr_events": ddr.events[:], "sram_writes": {"embedding": embedding_stores, "gamma": gamma_stores}}
+        if tail is not None:
+            return tail(result, ddr)
+    return result
 
 
 def compare(prediction, trace):
