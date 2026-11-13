@@ -59,6 +59,7 @@ class RecordController:
     commands_seen: int = 0
     pushes_seen: int = 0
     executions_seen: int = 0
+    dispatches: dict | None = None
 
     @property
     def records(self):
@@ -152,7 +153,8 @@ class RecordController:
             self.next_record += 1
         elif raw is None and self.next_record < len(self.records):
             record = self.records[self.next_record]
-            self.raw_valid = tick > record.dispatch and self.next_record - self.completed < 6
+            dispatch = record.dispatch if self.dispatches is None else self.dispatches.get(record.scope)
+            self.raw_valid = dispatch is not None and tick > dispatch and self.next_record - self.completed < 6
         if offer is not None:
             self.ahead_offer = offer
         if self.detached is not None and self.lane.retired.get(self.records[self.detached].sequence) == tick:
@@ -242,15 +244,25 @@ class RecordController:
 class ProgrammedP(JoinController):
     """Generate side commands and bindings from range, A and M state."""
 
-    def __init__(self, records, tiles, mode, *, lookahead, copy_delay_epoch, window_plan=()):
+    def __init__(self, records, tiles, mode, *, lookahead, copy_delay_epoch, window_plan=(), live_dispatch=False):
         super().__init__(records, tiles, mode, lookahead=lookahead, copy_delay_epoch=copy_delay_epoch)
         # The fixture records header_cycle after taking the header DONE.
         # The P nodes see their registered window three edges earlier.
         self.tiles = list(tiles)
         self.windows = {(scope, k): header - 3 for scope, k, header, _ in tiles}
-        self.dispatch = {p: RecordController(lane) for p, lane in self.lanes.items()}
+        self.dispatch = {p: RecordController(lane, dispatches={} if live_dispatch else None)
+                         for p, lane in self.lanes.items()}
         self.window_plan = deque(window_plan)
         self.window_schedule = []
+
+    def scope_ready(self, p, owner, tick, done):
+        controller = self.dispatch[p]
+        record = controller.records[controller.next_record]
+        return (record.scope == owner and controller.state == State.IDLE
+                and (owner == 1 or tick > done.get((owner - 1, p), tick)))
+
+    def admit(self, p, owner, tick):
+        self.dispatch[p].dispatches[owner] = tick
 
     def prepare_window(self, tick):
         if not self.window_plan:

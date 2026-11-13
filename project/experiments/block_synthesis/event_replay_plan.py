@@ -1,11 +1,12 @@
 """Build replay intents from bound actions and project simulated grants back."""
 from collections import Counter, defaultdict
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 
 from dma_read import receipt_json
 from event_execution import Copy, DDR, PhaseEdge, capacity_profile, window_phase_indices
 from event_replay import Operation, Phase, replay_branch
 from ffn_mid import MidTile
+from ffn_program_cost import Program
 from sram_feeder import receipt_json as sram_receipts
 
 
@@ -42,6 +43,8 @@ def event_operation(model, event):
             phase = replace(phase, sram_access=model.sram_access(service, event['inputs'], event['outputs']))
         if 'ffn_activation' in service:
             phase = replace(phase, activation=model.activation_window(service, event['inputs'], event['outputs']))
+        if 'ffn_program' in service:
+            phase = replace(phase, ffn_program=Program.from_spec(service['ffn_program']))
         return Operation((phase,))
     route = model.routes[event['route']]
     size = model.sizes[event['value']]
@@ -166,6 +169,8 @@ def retime(model, decisions, proposed, previous=None):
                 if phase.activation is not None:
                     retirements = tuple(trace.grants[i][j].end for i, j in operation.activation_after)
                     actual['activation'] = phase.activation.receipt(start, retirements)
+                if phase.ffn_program is not None:
+                    actual['ffn_program'] = asdict(phase.ffn_program.receipt(start))
             if len(phases) > 1:
                 actual['phases'] = phases
             occupy(operation.holds, start, end)

@@ -11,16 +11,22 @@ from cover_frontier import search
 from dma_read import Profile, Read
 from event_replay import Operation, Phase, replay
 from ffn_a import EVENTS as A_EVENTS, replay_tile as replay_a_tile
+from ffn_control import (CALL_TO_FETCH, DESCRIPTOR_CHECK_TICKS, DONE_TO_TERMINAL_FRAME, DOWN_GROUPS,
+                         GATE_UP_COLUMNS, GATE_UP_STRIPES, MID_COLUMNS, STRIPE_COLUMNS,
+                         TERMINAL_EOP_OFFSET, TERMINAL_FRAME_WITH_BUBBLE,
+                         MotherController)
 from ffn_join import JoinController
-from ffn_m import (ALLOC, BEGIN, FILL, FIRST_OPERAND, INPUT, LAST_OPERAND, RAW_READY, RF, Record, Reply,
+from ffn_m import (ALLOC, BEGIN, FILL, FIRST_OPERAND, INPUT, LAST_OPERAND, RAW_READY, RF, Reply,
                    execution_replies, replay_commits, replay_replies)
 from ffn_m_issue import ALLOC_CMD, SIDE_WORDS, Command, CommandLink, join_schedule
 from ffn_mid import MIN_TICKS, MidTile
 from ffn_p import ProgrammedP
-from ffn_result import (READBACK_TAG, down_group_addresses, down_readback_words, mid_readback_words,
+from ffn_program import (m_records as programmed_records, p_k_slices, p_result_addresses, programmed_ffn,
+                         scope_groups, weight_address, window_plan)
+from ffn_result import (READBACK_TAG, down_readback_words, mid_readback_words,
                         readback_service, sram_word_phases)
 from ffn_scatter import scatter_service, stripe_fragments
-from ffn_w import BEATS, WeightTrace
+from ffn_w import WeightTrace
 from ffn_w_dma import WeightCommandLinks, WeightDmaTrace
 from verify_cover_frontier import verify
 
@@ -327,22 +333,8 @@ WEIGHT_MONITOR = """  for(genvar q=0;q<3;q++)begin: weight_probe
   end
 """
 
-# From the last accepted CALL flit, the LC accepts the frame, reads PM and
-# metadata, then presents the first 64 B fetch. CRC scans 124 bytes after the
-# final data handshake. The two following edges consume CRC and assert service.
-CALL_TO_FETCH = 46
-DESCRIPTOR_CHECK_TICKS = 125  # DMA phase ends one edge after the final beat.
-DONE_TO_TERMINAL_FRAME = 5
-TERMINAL_FRAME_WITH_BUBBLE = 5
-TERMINAL_EOP_OFFSET = 3
-GATE_UP_STRIPES = 58
-DOWN_GROUPS = 6
-DOWN_SCOPE_COLUMNS = 384
 P_COUNT = 3
 ALL_P = (1 << P_COUNT) - 1
-GATE_UP_COLUMNS = 11008
-STRIPE_COLUMNS = 192
-MID_COLUMNS = 128
 
 
 def require(condition, message):
@@ -499,61 +491,18 @@ def trace_action(name, ticks, stages, after=()):
                           'nets': [], 'scratch_words': 0, 'event_stages': stages}]}
 
 
-def p_result_addresses(session, client):
-    if session > GATE_UP_STRIPES:
-        return tuple(down_group_addresses(session - GATE_UP_STRIPES - 1, DOWN_GROUPS, client))
-    first = STRIPE_COLUMNS * (session - 1)
-    width = min(STRIPE_COLUMNS, GATE_UP_COLUMNS - first)
-    return tuple(fragment.scratch + word for fragment in stripe_fragments(first, width)
-                 if fragment.client == client for word in range(fragment.words))
-
-
 def ordered_scopes(scopes):
     return sorted(scopes, key=lambda row: (row['dispatch'][0][1], row['client']))
 
 
-def p_k_slices(owner):
-    return (GATE_UP_COLUMNS if owner > GATE_UP_STRIPES else 2048) // 128
-
-
 def m_records(scopes):
     """Expected record order, context, and store policy from FFN geometry."""
-    records = defaultdict(list)
-    sequence = 0
-    for scope in ordered_scopes(scopes):
-        client = scope['client']
-        dispatch, owner = scope['dispatch'][0]
-        contexts = len(p_result_addresses(owner, client)) // 2
-        slices = p_k_slices(owner)
-        for k in range(slices):
-            for context in range(contexts):
-                sequence += 1
-                # A_LAST closes and releases the input slot. The first
-                # member of a pair retires directly from the detached guard.
-                retire_delay = 3 if context + 1 == contexts else context % 2
-                records[client].append(Record(sequence, dispatch, owner, k * 128, context,
-                                              k + 1 == slices, retire_delay))
-    return records
-
-
-def weight_address(client, record):
-    """Address of an unheaded K128 weight record in the programmed fixture."""
-    if record.scope > GATE_UP_STRIPES:
-        base = 0x06000000
-        first = DOWN_SCOPE_COLUMNS * (record.scope - GATE_UP_STRIPES - 1)
-        group = record.context
-    else:
-        groups = len(p_result_addresses(record.scope, client)) // 4
-        way, group = divmod(record.context, groups)
-        base = (way + 1) * 0x02000000
-        first = STRIPE_COLUMNS * (record.scope - 1)
-    column = first + 8 * client + 24 * group
-    index = (column // 8) * p_k_slices(record.scope) + record.k // 128
-    return base + 64 * BEATS * index
+    return programmed_records((scope['client'], *scope['dispatch'][0]) for scope in ordered_scopes(scopes))
 
 
 def read_linked_weight(source, scopes, events, mode, seed, *, wjoin=False, wside=False, wwindow=False,
-                       lookahead=True, copy_delay_epoch=0):
+                       lookahead=True, copy_delay_epoch=0, mother_start=None, live_admission=False):
+    wwindow = wwindow or mother_start is not None
     wside = wside or wwindow
     wjoin = wjoin or wside
     links, addresses = {}, {}
@@ -565,13 +514,15 @@ def read_linked_weight(source, scopes, events, mode, seed, *, wjoin=False, wside
     if not wjoin:
         for tick, client, _, sequence, *_ in events['PISSUE', 'join']:
             joins[client].append((tick, sequence))
+    if live_admission:
+        weight = programmed_ffn(mother_start, mode, seed, lookahead=lookahead,
+                                copy_delay_epoch=copy_delay_epoch, replay_class=WeightDmaTrace)
+        return compare_weight_trace(source, weight)
     records_by_client = m_records(scopes)
     join_driver = None
     if wwindow:
-        keys = sorted({(record.scope, record.k) for records in records_by_client.values() for record in records})
-        plan = [(scope, k, scope > GATE_UP_STRIPES, scope == 1) for scope, k in keys]
         join_driver = ProgrammedP(records_by_client, (), mode, lookahead=lookahead,
-                                  copy_delay_epoch=copy_delay_epoch, window_plan=plan)
+                                  copy_delay_epoch=copy_delay_epoch, window_plan=window_plan(records_by_client))
     elif wjoin:
         tiles = [(scope, k, header, phase == 1) for phase, scope, k, header, *_ in events['AREAD', 'profile']]
         driver = ProgrammedP if wside else JoinController
@@ -582,13 +533,26 @@ def read_linked_weight(source, scopes, events, mode, seed, *, wjoin=False, wside
         link = CommandLink({record.sequence: record.stores for record in records})
         link.run(joins[client], side[client], (), until=0)
         links[client] = link
+    mother = None
+    if mother_start is not None:
+        mother = MotherController(mother_start, scope_groups(records_by_client), join_driver.lanes)
     weight = WeightDmaTrace(mode, seed, CALL_TO_FETCH,
-                            links=WeightCommandLinks(links, addresses, join_driver=join_driver))
+                            links=WeightCommandLinks(links, addresses, join_driver=join_driver), mother=mother)
+    return compare_weight_trace(source, weight)
+
+
+def compare_weight_trace(source, weight):
+    controls = ('CONTROL call ', 'CONTROL fetch ', 'CONTROL fetch_return ', 'CONTROL result ')
+    if weight.mother is not None:
+        controls += ('CONTROL start ', 'CONTROL terminal ')
+    if weight.admission is not None:
+        controls += ('CONTROL offer ', 'CONTROL dispatch ')
     source.seek(0)
     for line in source:
-        if line.startswith(WEIGHT_BEATS + WEIGHT_FABRIC + ('CONTROL call ', 'CONTROL fetch ',
-                                                         'CONTROL fetch_return ', 'CONTROL result ')):
+        if line.startswith(WEIGHT_BEATS + WEIGHT_FABRIC + controls):
             _, kind, *fields = line.split()
+            if kind == 'offer' and line.startswith('CONTROL '):
+                kind = 'scope_offer'
             weight.record(kind, *map(int, fields))
     return weight
 
@@ -1267,7 +1231,9 @@ def check_admission(scopes, transfers, admission, upstream=None):
 
 def check(source, mode, seed, *, admission=False, phase_release=False, scatter=False, mid=False, readback=False,
           m=False, issue=False, aread=False, copy_delay_epoch=0, wa_join=False, lookahead=True, wfill=False,
-          wdma=False, wlink=False, wjoin=False, wside=False, wwindow=False):
+          wdma=False, wlink=False, wjoin=False, wside=False, wwindow=False, wcall=False, wdispatch=False):
+    wcall = wcall or wdispatch
+    wwindow = wwindow or wcall
     wside = wside or wwindow
     wjoin = wjoin or wside
     aread = aread or wjoin or copy_delay_epoch != 0
@@ -1285,7 +1251,8 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
         source, result_trace, m=m, issue=issue, aread=aread, weight=weight, wdma=wdma and not wlink, window=wwindow)
     if wlink:
         weight = read_linked_weight(source, scopes, result_trace, mode, seed, wjoin=wjoin, wside=wside, wwindow=wwindow,
-                                    lookahead=lookahead, copy_delay_epoch=copy_delay_epoch)
+                                    lookahead=lookahead, copy_delay_epoch=copy_delay_epoch,
+                                    mother_start=start if wcall else None, live_admission=wdispatch)
     if weight is not None:
         weight.validate()
     transfers = []
@@ -1396,6 +1363,14 @@ def check(source, mode, seed, *, admission=False, phase_release=False, scatter=F
                     'live P load admission differs')
     if wdma:
         report['weight_dma'] = dict(weight.counts)
+    if wcall:
+        require(weight.mother.done == p_done, 'live P service DONE differs')
+        report['mother'] = {'generated_calls': weight.counts['call'], 'terminals': weight.counts['terminal'],
+                            'scope_done': len(weight.mother.done)}
+    if wdispatch:
+        require(weight.admission.producers == upstream, 'live FFN producer edges differ')
+        report['mother']['generated_dispatches'] = len(weight.admission.dispatches)
+        report['mother']['generated_result'] = weight.admission.result
     if admission or phase_release or scatter or mid or readback:
         report['admission'] = check_admission(scopes, grants[:len(scopes)], sampled_admission,
                                               upstream if phase_release or scatter or mid or readback else None)
@@ -1431,6 +1406,8 @@ def main():
     verify.add_argument('--wjoin', action='store_true', help='drive bindings from A proofs and live M/DMA')
     verify.add_argument('--wside', action='store_true', help='generate P side commands and bindings from live state')
     verify.add_argument('--wwindow', action='store_true', help='generate K windows from live P record requests')
+    verify.add_argument('--wcall', action='store_true', help='drive CALL and descriptor traffic from live retirement')
+    verify.add_argument('--wdispatch', action='store_true', help='drive scope admission from live descriptors and producers')
     args = parser.parse_args()
     if args.action == 'instrument':
         instrument(args.source, args.destination)
@@ -1443,7 +1420,7 @@ def main():
                                    copy_delay_epoch=args.copy_delay_epoch, wa_join=args.wa_join,
                                    lookahead=not args.no_lookahead, wfill=args.wfill, wdma=args.wdma,
                                    wlink=args.wlink, wjoin=args.wjoin, wside=args.wside,
-                                   wwindow=args.wwindow), indent=2))
+                                   wwindow=args.wwindow, wcall=args.wcall, wdispatch=args.wdispatch), indent=2))
 
 
 if __name__ == '__main__':

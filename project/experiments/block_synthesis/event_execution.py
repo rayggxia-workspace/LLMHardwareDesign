@@ -10,6 +10,7 @@ from dataclasses import dataclass, replace
 
 from dma_read import Profile, Read
 from ffn_a import A_BASE, P_COUNT, WORDS, ActivationWindow
+from ffn_program_cost import INPUT_BYTES, Program, READ_BYTES, RESOURCES, RESULT_BYTES
 from sram_feeder import Access, profile as feeder_profile
 
 DDR = 'DDR'
@@ -190,7 +191,7 @@ class Model:
                 raise ValueError('unknown route site')
             if (type(route['setup']) is not int or route['setup'] < 0
                     or type(route['bytes_per_tick']) is not int or route['bytes_per_tick'] < 1
-                    or 'ffn_mid' in route or 'sram_access' in route or 'ffn_activation' in route):
+                    or {'ffn_mid', 'sram_access', 'ffn_activation', 'ffn_program'} & route.keys()):
                 raise ValueError('invalid route timing')
             self.validate_service(route)
             if 'phases' in route:
@@ -202,6 +203,8 @@ class Model:
             if type(service['ticks']) is not int or service['ticks'] < 1:
                 raise ValueError('invalid native stage duration')
             self.validate_service(service)
+            if 'ffn_program' in service:
+                self.validate_program_service(service)
             if 'sram_access' in service and ('phases' in service or 'ffn_mid' in service
                                              or 'copy_sites' in service or 'ffn_activation' in service):
                 raise ValueError('SRAM feeder access requires a standalone service')
@@ -376,6 +379,8 @@ class Model:
                 self.sram_access(service, inputs, outputs)
             if 'ffn_activation' in service:
                 self.activation_window(service, inputs, outputs)
+            if 'ffn_program' in service:
+                self.validate_program_windows(inputs, outputs)
             if inputs.keys() & outputs.keys():
                 raise ValueError('in-place native stages require a separate storage contract')
             if 'ffn_mid' in service:
@@ -409,6 +414,26 @@ class Model:
                 or service['ticks'] > access.words // (4 if access.wide else 1) + 1):
             raise ValueError('invalid SRAM feeder access range or bound')
         return access
+
+    def validate_program_service(self, service):
+        Program.from_spec(service['ffn_program'])
+        if (self.spec.get('timing') != 'replay' or self.dma_profile is not None or self.sram_profiles
+                or {'phases', 'ffn_mid', 'ffn_activation', 'sram_access', 'copy_sites'} & service.keys()
+                or service['ticks'] != 1 or any(self.capacity.get(r) != n for r, n in RESOURCES.items())
+                or service['claims'] != RESOURCES
+                or service.get('read_bytes') != READ_BYTES or service.get('write_bytes', 0)):
+            raise ValueError('calibrated FFN program requires exclusive resources and qualified traffic')
+
+    def validate_program_windows(self, inputs, outputs):
+        if len(inputs) != 1 or len(outputs) != 3:
+            raise ValueError('calibrated FFN requires one input and three result windows')
+        (source, value), = inputs.items()
+        if (self.windows[source]['site'] != 'U' or self.windows[source]['offset'] != 0
+                or self.sizes[value] != INPUT_BYTES
+                or sorted((self.windows[w]['site'], self.windows[w]['offset'], self.sizes[v])
+                          for w, v in outputs.items()) != [(f'P{p}', 0, size) for p, size in enumerate(RESULT_BYTES)]
+                or len(set(outputs.values())) != 3):
+            raise ValueError('calibrated FFN input or result layout differs')
 
     def activation_window(self, service, inputs, outputs):
         config = service['ffn_activation']

@@ -119,13 +119,16 @@ class WeightCommandLinks:
         return {client: link.run((), (), ()) for client, link in self.links.items()}
 
 
-class WeightDmaTrace:
-    """Compare each modeled edge against both ends of the physical fabric."""
+class WeightReplay:
+    """Advance one edge across P/M links, shared DDR and FFN control."""
 
-    def __init__(self, mode, seed, call_to_fetch, *, links=None):
+    def __init__(self, mode, seed, call_to_fetch, *, links=None, mother=None, admission=None, trace=False):
         self.service = WeightDma(Profile.from_spec({'ffn_provider': {'mode': mode, 'seed': seed}}))
         self.call_to_fetch = call_to_fetch
         self.links = links
+        self.mother = mother
+        self.admission = admission
+        self.trace = trace
         self.issue = None
         self.descriptors = defaultdict(list)
         self.serial = [0] * 3
@@ -133,43 +136,40 @@ class WeightDmaTrace:
         self.installs = defaultdict(list)
         self.filled = defaultdict(list)
         self.completed = defaultdict(list)
-        self.edge_events = defaultdict(list)
-        self.clock = None
         self.global_tags = [0] * 64
         self.entry_serials = [0] * 64
         self.counts = Counter()
 
-    def record(self, kind, tick, *fields):
-        if self.clock is None:
-            self.clock = tick
-        if tick < self.clock:
-            raise ValueError(f'DMA trace went backward at tick {tick}')
-        while self.clock < tick:
-            self.verify_edge()
-            self.clock += 1
-        if kind == 'call':
-            p, = fields
-            self.serial[p] += 1
-            address = 4096 + 128 * self.call_count
-            self.call_count += 1
-            self.descriptors[tick + self.call_to_fetch].append((p, self.serial[p], address))
-        elif kind == 'filled':
-            p, *identity = fields
-            self.filled[p].append((tick, *identity))
-        elif kind != 'result':
-            self.edge_events[kind].append(fields)
+    def call(self, tick, client):
+        self.serial[client] += 1
+        address = 4096 + 128 * self.call_count
+        self.call_count += 1
+        self.descriptors[tick + self.call_to_fetch].append((client, self.serial[client], address))
 
-    def verify_edge(self):
-        tick = self.clock
-        if self.links is not None:
-            installs = self.links.advance(tick)
-        else:
-            installs = self.edge_events.pop('install', ())
-        if not installs and not self.edge_events and not self.service.fabric.active and tick not in self.descriptors:
-            return
+    def advance(self, tick, sampled_installs=()):
+        installs = self.links.advance(tick) if self.links is not None else sampled_installs
+        calls, terminals = self.mother.advance(tick) if self.mother is not None else ((), ())
+        for client in calls:
+            self.call(tick, client)
+        offers, dispatches = self.admission.advance(tick) if self.admission is not None else ((), ())
+        result = self.admission is not None and tick == self.admission.result
+        if not (installs or calls or terminals or offers or dispatches or result or self.service.fabric.active
+                or tick in self.descriptors):
+            return {}
         for descriptor in self.descriptors.pop(tick, ()):
             self.service.submit_descriptor(*descriptor)
         expected = defaultdict(list)
+        if calls:
+            expected['call'].extend((p,) for p in calls)
+        if terminals:
+            expected['terminal'].extend((p,) for p in terminals)
+        if offers:
+            expected['scope_offer'].extend(offers)
+        if dispatches:
+            expected['dispatch'].extend(dispatches)
+        if result:
+            expected['result'].append((self.counts['fetch'] * 64 + self.counts['returned'] * 64,
+                                       self.admission.write_bytes))
         for p, port in enumerate(self.service.ports):
             if port.offered_at == tick:
                 record = port.locked
@@ -177,8 +177,9 @@ class WeightDmaTrace:
                 expected['offer'].append((p, address, local_tag(record, address), record.channel, BEATS))
         if self.links is not None:
             expected['install'].extend(installs)
-        for p, session, sequence, bank, generation, _ in installs:
-            self.installs[p].append((tick, session, sequence, bank, generation))
+        if self.trace:
+            for p, session, sequence, bank, generation, _ in installs:
+                self.installs[p].append((tick, session, sequence, bank, generation))
         edge, completed = self.service.step(tick, installs)
         expected['backend_req'].extend((lane, address, self.global_tags[entry]) for lane, address, entry in edge.issued)
         expected['backend_rsp'].extend((lane, self.global_tags[entry]) for lane, entry in edge.captured)
@@ -200,22 +201,63 @@ class WeightDmaTrace:
         for owner, _ in completed:
             if isinstance(owner, WeightOwner):
                 completion = WeightCompletion(tick + 1, owner.session, owner.sequence, owner.bank, owner.generation)
-                self.completed[owner.client].append(completion)
+                if self.trace:
+                    self.completed[owner.client].append(completion)
                 if self.links is not None:
                     self.links.complete(owner.client, completion)
+            elif self.admission is not None:
+                self.admission.descriptor_returned(tick, *owner)
+        for kind, rows in expected.items():
+            self.counts[kind] += len(rows)
+        return expected
+
+    def validate(self):
+        if self.descriptors or self.service.fabric.active or not self.counts['returned']:
+            raise ValueError('shared W DMA did not retire every record')
+        if self.links is not None:
+            self.issue = self.links.finish()
+        if self.mother is not None:
+            self.mother.validate()
+        if self.admission is not None:
+            self.admission.validate()
+
+
+class WeightDmaTrace(WeightReplay):
+    """Compare each modeled edge against both ends of the physical fabric."""
+
+    def __init__(self, mode, seed, call_to_fetch, *, links=None, mother=None, admission=None):
+        super().__init__(mode, seed, call_to_fetch, links=links, mother=mother, admission=admission, trace=True)
+        self.edge_events = defaultdict(list)
+        self.clock = None
+
+    def record(self, kind, tick, *fields):
+        if self.clock is None:
+            self.clock = tick
+        if tick < self.clock:
+            raise ValueError(f'DMA trace went backward at tick {tick}')
+        while self.clock < tick:
+            self.verify_edge()
+            self.clock += 1
+        if kind == 'call' and self.mother is None:
+            self.call(tick, *fields)
+        elif kind == 'filled':
+            p, *identity = fields
+            self.filled[p].append((tick, *identity))
+        elif kind != 'start' and (kind != 'result' or self.admission is not None):
+            self.edge_events[kind].append(fields)
+
+    def verify_edge(self):
+        sampled = self.edge_events.pop('install', ()) if self.links is None else ()
+        expected = self.advance(self.clock, sampled)
         for kind in expected.keys() | self.edge_events.keys():
-            wanted = sorted(expected[kind])
+            wanted = sorted(expected.get(kind, ()))
             observed = sorted(self.edge_events.get(kind, ()))
             if wanted != observed:
-                raise ValueError(f'DMA {kind} differs at tick {tick}, replay {wanted}, trace {observed}')
-            self.counts[kind] += len(wanted)
+                raise ValueError(f'DMA {kind} differs at tick {self.clock}, replay {wanted}, trace {observed}')
         self.edge_events.clear()
 
     def validate(self):
         if self.clock is None:
             raise ValueError('missing shared W DMA trace')
         self.verify_edge()
-        if self.descriptors or self.service.fabric.active or not self.counts['returned']:
-            raise ValueError('shared W DMA trace did not retire every record')
-        if self.links is not None:
-            self.issue = self.links.finish()
+        super().validate()

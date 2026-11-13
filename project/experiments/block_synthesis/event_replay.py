@@ -7,6 +7,7 @@ from heapq import heappop, heappush
 from dma_read import BeatReceipt, Read, ReadFabric
 from ffn_a import P_COUNT, ActivationWindow
 from ffn_mid import MidTile
+from ffn_program_cost import Program
 from sram_feeder import Access, SramFeeder
 
 
@@ -45,6 +46,7 @@ class Phase:
     mid_tile: MidTile | None = None
     sram_access: Access | None = None
     activation: ActivationWindow | None = None
+    ffn_program: Program | None = None
 
     @classmethod
     def from_spec(cls, name, ticks, spec):
@@ -172,6 +174,9 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
                         or phase.dma_read is not None or dict(phase.claims) != phase.mid_tile.claims())
                     or phase.activation is not None and any(
                         device is not None for device in (phase.dma_read, phase.mid_tile, phase.sram_access))
+                    or phase.ffn_program is not None and any(
+                        device is not None for device in (phase.dma_read, phase.mid_tile, phase.sram_access,
+                                                          phase.activation))
                     or any(r in issue_rates and units > issue_rates[r][1] for r, units in phase.claims)):
                 raise ValueError('invalid replay phase duration, priority or resource claim')
             current = index, phase_index
@@ -324,6 +329,8 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
             if phase.dma_read is None and phase.sram_access is None:
                 if phase.activation is not None:
                     end = phase.activation.run(tick)[1] + 1
+                elif phase.ffn_program is not None:
+                    end = phase.ffn_program.receipt(tick).result_tick + 1
                 else:
                     end = phase.mid_tile.end(tick) if phase.mid_tile is not None else tick + phase.ticks
                 heappush(running, (end, index, phase_index))

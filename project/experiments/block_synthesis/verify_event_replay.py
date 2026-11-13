@@ -1,5 +1,6 @@
 """Check the grants in an emitted replay trace against the arbitration contract."""
 from collections import Counter, defaultdict, deque
+from dataclasses import asdict
 from heapq import heapify, heappop, heappush
 
 from dma_read import ReadFabric, ready_mask, receipt_json
@@ -48,6 +49,10 @@ def verify_grants(tasks, hardware, rows):
                 expected = phase.activation.receipt(start, retirements)
                 if event['activation'] != expected or end != expected['proof'] + 1:
                     raise ValueError('FFN activation handshakes or proof differ')
+            if phase.ffn_program is not None:
+                cost = phase.ffn_program.receipt(start)
+                if event['ffn_program'] != asdict(cost) or end != cost.result_tick + 1:
+                    raise ValueError('FFN program retirement or traffic differs')
             claims = phase.claims + (operation.holds if j == 0 else ())
             releases = phase.claims + (operation.holds if j == len(phases) - 1 else ())
             ready_at[ready].append((phase.priority, ready, i, j, start, claims, phase.ready_window))
