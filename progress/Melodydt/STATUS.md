@@ -49,3 +49,9 @@
 - [Issue #265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 与[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 将有限队列 DMA 的回包和 FENCE 接入通用片上时间轴。修复同 Block 的快 FENCE 越过慢写，增加同址差异载荷、队列、事务身份和依赖回归。28 项本地单测通过。
 - 107669 在 c64/node3 完成（4 核，12 秒，0:0），冻结 64 B DMA RTL 的 24 项排空证据匹配。107683 及修复后 107695 在 c64/node3 完成，实时读桥复现同址读回包第 50／78 拍，片上联动短例第 105 拍完成。有限参考后端验证写可见，实时 DRAMsim3 拒绝写回调冒充提交。[运行与散列](../../work/Melodydt/265/dma-ddr-receipts.json)
 - 下一步由 Melodydt 绑定实际 DDR 的写提交和排空、片上/DDR 时钟转换及 CDC，再接入真实 Qwen DMA 地址与 KV。尚未评估整机 tokens/s 或模型加速比。#265 进行中，PR 草稿，登记待合并，Projects 待核验与同步。
+
+## 2026-11-13 18:13（Asia/Shanghai，UTC+08:00）DDR 写数据结束与跨时钟
+
+- [Issue #265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 与[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 在独立 DRAMsim3 统一队列候选中核对实际 WR 发出和写数据结束。等周期 stock 读回归保持第 50／78 tick，联动 105 拍。300 MHz 与 630 ps 的请求/响应采样、有限 FIFO 和 FENCE 已接入同一时间轴。
+- Slurm 107731 在 c64/node3 完成（4 核，15 秒，0:0）。常规与留出共独立对照 22 RD／10 WR，验证不同的新旧数据、同址顺序、FIFO 信用和排空。两个短例分别 50／128 拍。30 项本地单测、独立命令追踪复核和 6 个篡改负例通过。[运行与散列](../../work/Melodydt/265/dram-write-cdc-107731.json)
+- 下一步由 Melodydt 绑定同一部署的实际 MC/LC 镜像、物理 DMA 地址及 KV、时钟/CDC 与写完成协议，先对账单层和跨层短窗。现有 300 MHz/统一队列为实验候选，整机 tokens/s 待估，#265 进行中，PR 草稿，登记待合并，Projects 待核验与同步。

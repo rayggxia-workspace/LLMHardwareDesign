@@ -91,4 +91,24 @@ python -B project/experiments/instruction_cycle/compare_dma_typed_trace.py <归�
 python -B project/experiments/instruction_cycle/compare_dma_mixed_legacy.py <97279-归档日志目录>
 ```
 
-服务器复跑使用 `run_dma_quiescence.sbatch` 和 `run_dram_live.sbatch`。按回执在 Melodydt 的全新目录放入对应源文件，核对 `source.sha256`，执行 `sbatch --parsable --chdir="$PWD" <脚本>`。下一步需要为实际部署建立片上与 DDR 时钟转换及 CDC，绑定 DDR 的写提交／可见性和真正的队列排空，再接入 Qwen2.5-3B 的实际 DMA 地址与 KV 请求。等周期短例目前没有整机吞吐或加速比。
+服务器复跑使用 `run_dma_quiescence.sbatch` 和 `run_dram_live.sbatch`。按回执在 Melodydt 的全新目录放入对应源文件，核对 `source.sha256`，执行 `sbatch --parsable --chdir="$PWD" <脚本>`。
+
+## DDR 写数据结束与跨时钟采样
+
+`patch_dramsim_write.py` 在独立目录复制并核验冻结的 DRAMsim3 `29817593`，为实际发出的 `WR` 增加观察点，并从原 DDR4 配置生成统一事务队列的候选配置。保留原版分离队列与只读桥用于回归。统一队列使少量尾写能进入命令队列。在选定配置中，`WR` 发出后按 `CWL + BL/2` 的 20 个 DDR 时钟记录写数据结束。控制器仍按本身的恢复约束调度后续命令。原写回调单独核对入队身份；写数据结束才解锁同址事务。回读数据由模型内存保存。这里验证的是 DRAMsim3 命令时序与模型的数据可见性，板上控制器写提交和持久性仍待绑定。
+
+`DramLive` 使用精确有理数映射片上 300 MHz（`10000/3 ps`）和 DDR `630 ps`。候选 CDC 的请求、响应 FIFO 深度均为 2，两边均以严格晚于源事件的首个接收时钟边沿开始两级采样。请求槽信用在 DDR 接受后同步回片上，响应信用从 DDR 发出保留到完成被片上接收再同步返回。FENCE 核对先前事务已返回且描述符已退休。完整窗口结束后另检查 FIFO 指针信用已稳定；该检查只给出最晚核验边沿。
+
+| 场景 | DRAMsim3 发出的 RD／WR | 最后写在片上可见 | FENCE 退休 | 同址回读首次发出到 CDC | 依赖计算完成 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 常规，相位 0 ps | 3／1 | 21 | 31 | 32 | 50 |
+| 留出，相位 173 ps | 19／9 | 68 | 81 | 82 | 128 |
+
+表中最后四列均为片上周期。`audit_dram_write_cdc.py` 从 DRAMsim3 命令追踪独立解码物理地址，逐笔核对 32 条 RD／WR 的 ID、发出和数据结束边沿、双时钟采样与 FIFO 信用。两个用例分别读回 64 B 和 576 B 新数据，核验写前值与写后值的 SHA-256。原只读桥仍在第 50、78 个 DDR tick 回包，原同周期片上短例仍为 105 拍。[作业 107731 回执](../../../work/Melodydt/265/dram-write-cdc-107731.json)记录精确配置、编译输入和输出散列。
+
+```bash
+RUN=/public/home/yuzelu/Melodydt/runs/issue-265/dram-cdc-20261113-01
+python -B project/experiments/instruction_cycle/audit_dram_write_cdc.py "$RUN/result.json" "$RUN/results"
+```
+
+复跑时将回执中 `source_sha256` 列出的文件放入 Melodydt 的全新目录，生成相同的 `source.sha256`，再执行 `sbatch --parsable --chdir="$PWD" run_dram_write_cdc.sbatch`。该脚本对照冻结原库、配置及 `src`/`ext` 编译输入并在本目录构建。下一步是绑定同一部署的 Qwen2.5-3B 控制镜像、片外地址映射、KV 请求、时钟/CDC 与写提交协议，用实际单层和跨层 decode 窗口对账。当前短例使用候选时钟和 FIFO 参数，整机 tokens/s 及加速比待测。

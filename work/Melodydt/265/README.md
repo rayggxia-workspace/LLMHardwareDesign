@@ -12,6 +12,8 @@
 
 有限队列 DMA、实时 DRAMsim3 读桥及独立 RTL 验证见 [DMA／DDR 回执](dma-ddr-receipts.json)和[复跑命令](../../../project/experiments/instruction_cycle/README.md#有限-dma-队列与实时-dramsim3)。
 
+统一队列候选的 DDR 写数据结束、跨时钟回包和 FENCE 见 [107731 回执](dram-write-cdc-107731.json)及[验证说明](../../../project/experiments/instruction_cycle/README.md#ddr-写数据结束与跨时钟采样)。
+
 `audit_fast_cycle_inputs.py` 在 Python 3.7.0 上运行，通过两个历史作业的归档恢复三 P FFN 控制顺序，并对照原有 RTL 日志。原始归档按 [#251 索引](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/250/native-services/ffnnative/index.json) 从项目服务器只读获取。两个作业归档登记的源提交均为 `ab7611d43e4c007cc966ab5e61903118d33fcb4a`。将其命名为 `<job>-receipts.tar.gz`。`fast-cycle-inputs.local/` 为本地未提交缓存。
 
 | 作业 | 服务器相对 `/public/home/yuzelu/project-circuit/` 的位置 | SHA-256 |

@@ -194,3 +194,7 @@ python -B project/experiments/instruction_cycle/copy_reference.py work/Melodydt/
 ### 有限队列 DMA／DDR
 
 [实验说明](../project/experiments/instruction_cycle/README.md#有限-dma-队列与实时-dramsim3)记录片上调度、64 B 事务、FENCE、实时 DRAMsim3 读桥及独立 RTL 的复跑命令。[DMA／DDR 回执](../work/Melodydt/265/dma-ddr-receipts.json)记录版本、工具、作业和散列。
+
+### DDR 写数据结束与跨时钟采样
+
+[复跑与协议](../project/experiments/instruction_cycle/README.md#ddr-写数据结束与跨时钟采样)记录 DRAMsim3 WR 命令、写数据结束、300 MHz/630 ps FIFO 时钟映射和独立命令追踪审核。[107731 回执](../work/Melodydt/265/dram-write-cdc-107731.json)冻结源码、配置、命令日志与比较范围。
