@@ -7,7 +7,7 @@ from heapq import heappop, heappush
 from dma_read import BeatReceipt, Read, ReadFabric
 from ffn_a import P_COUNT, ActivationWindow
 from ffn_mid import MidTile
-from ffn_program_cost import Program
+from ffn_program_cost import ActiveProgram, FfnCost, Program
 from sram_feeder import Access, SramFeeder
 
 
@@ -73,6 +73,7 @@ class Grant:
     end: int
     dma_beats: tuple[BeatReceipt, ...] = ()
     sram_beats: tuple[tuple[int, int, int], ...] = ()
+    ffn_program: FfnCost | None = None
 
 
 @dataclass(frozen=True)
@@ -126,9 +127,13 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
     """
     issue_rates = issue_rates or {}
     uses_dma = any(phase.dma_read is not None for operation in operations for phase in operation.phases)
+    shares_program = dma_profile is not None and any(phase.ffn_program is not None
+                                                      for operation in operations for phase in operation.phases)
     if uses_dma and dma_profile is None:
         raise ValueError('typed DMA phase requires a service profile')
-    fabric = ReadFabric(dma_profile) if uses_dma else None
+    fabric = ReadFabric(dma_profile) if uses_dma or shares_program else None
+    active_program = None
+    program_retired = False
     sram_profiles = sram_profiles or {}
     sites = sorted({phase.sram_access.site for op in operations for phase in op.phases if phase.sram_access})
     if any(site not in sram_profiles for site in sites):
@@ -201,7 +206,7 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
     checkpoints = []
     stride = previous.checkpoint_stride
     has_live_activation = any(operation.activation_after for operation in operations)
-    if uses_dma or feeders or has_live_activation:
+    if fabric is not None or feeders or has_live_activation:
         checkpoints = [checkpoint for checkpoint in previous.checkpoints if checkpoint.tick <= tick]
         tick = 0
         if checkpoints:
@@ -223,6 +228,16 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
     occupied = Counter()
     issues = {resource: deque() for resource in issue_rates}
     used_issues = Counter()
+
+    def save_checkpoint():
+        nonlocal checkpoints, stride
+        if checkpoints and checkpoints[-1].tick == tick:
+            return
+        if len(checkpoints) == 16:
+            checkpoints = checkpoints[1::2]
+            stride *= 2
+        starts = tuple((key, start) for key, start in device_starts.items() if start < tick)
+        checkpoints.append(DeviceCheckpoint(tick, deepcopy(fabric), starts, deepcopy(feeders)))
 
     def record_issues(claims, start):
         for resource, units in claims:
@@ -271,14 +286,12 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
             heappush(arrivals, (ready, index, phase))
     pending = []
     while finished < len(operations):
-        if (save_checkpoints and (fabric is not None or feeders or has_live_activation)
-                and tick >= (checkpoints[-1].tick if checkpoints else 0) + stride):
-            if len(checkpoints) == 16:
-                # Bound retained fabric copies while keeping earlier rollback points.
-                checkpoints = checkpoints[1::2]
-                stride *= 2
-            checkpoints.append(DeviceCheckpoint(tick, deepcopy(fabric), tuple(device_starts.items()),
-                                                deepcopy(feeders)))
+        # FFN has sizeable program-local state. Restore a checkpoint before
+        # launch for candidates that can affect an active program.
+        if (save_checkpoints and active_program is None and (fabric is not None or feeders or has_live_activation)
+                and (program_retired or tick >= (checkpoints[-1].tick if checkpoints else 0) + stride)):
+            save_checkpoint()
+        program_retired = False
         for resource, history in issues.items():
             while history and history[0][0] <= tick:
                 _, units = history.popleft()
@@ -326,15 +339,25 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
                 device_starts[key] = tick
                 activations.add(key)
                 continue
+            if phase.ffn_program is not None and shares_program:
+                if active_program is not None:
+                    raise ValueError('the calibrated FFN controller can run one program at a time')
+                if save_checkpoints:
+                    save_checkpoint()
+                active_program = key, ActiveProgram(phase.ffn_program, tick, fabric)
+                device_starts[key] = tick
+                continue
             if phase.dma_read is None and phase.sram_access is None:
+                cost = None
                 if phase.activation is not None:
                     end = phase.activation.run(tick)[1] + 1
                 elif phase.ffn_program is not None:
-                    end = phase.ffn_program.receipt(tick).result_tick + 1
+                    cost = phase.ffn_program.receipt(tick)
+                    end = cost.result_tick + 1
                 else:
                     end = phase.mid_tile.end(tick) if phase.mid_tile is not None else tick + phase.ticks
                 heappush(running, (end, index, phase_index))
-                grants[index].append(Grant(index, phase_index, tick, end))
+                grants[index].append(Grant(index, phase_index, tick, end, ffn_program=cost))
             else:
                 device_starts[key] = tick
                 if phase.sram_access is not None:
@@ -343,14 +366,25 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
                     launches.append((key, phase.dma_read))
         for key, read in sorted(launches):
             fabric.submit(key, read)
-        if fabric is not None and fabric.active:
-            for (index, phase_index), receipts in fabric.advance(tick):
-                start = device_starts.pop((index, phase_index))
-                # A sampled client response is visible to the next stage at
-                # the following edge. The route still owes its own SRAM ACK.
+        if active_program is not None:
+            key, program = active_program
+            cost, reads = program.advance(tick)
+            if cost is not None:
+                index, phase_index = key
+                start = device_starts.pop(key)
                 end = tick + 1
-                grants[index].append(Grant(index, phase_index, start, end, receipts))
+                grants[index].append(Grant(index, phase_index, start, end, ffn_program=cost))
                 heappush(running, (end, index, phase_index))
+                active_program = None
+                program_retired = True
+        else:
+            reads = fabric.advance(tick) if fabric is not None and fabric.active else ()
+        for (index, phase_index), receipts in reads:
+            start = device_starts.pop((index, phase_index))
+            # The route still owes its destination SRAM ACK.
+            end = tick + 1
+            grants[index].append(Grant(index, phase_index, start, end, receipts))
+            heappush(running, (end, index, phase_index))
         for key, access in sorted(sram_launches):
             feeders[access.site].submit(key, access)
         for feeder in feeders.values():
@@ -378,7 +412,7 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
         if finished == len(operations):
             break
         future = [queue[0][0] for queue in (running, arrivals) if queue] + next_open
-        if fabric is not None and fabric.active:
+        if active_program is not None or fabric is not None and fabric.active:
             future.append(tick + 1)
         future.extend(feeder.next_edge(tick + 1) for feeder in feeders.values() if feeder.active)
         if pending:

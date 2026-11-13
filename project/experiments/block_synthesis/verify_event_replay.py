@@ -7,6 +7,7 @@ from dma_read import ReadFabric, ready_mask, receipt_json
 from event_execution import Model, phase_edges
 from event_replay import phase_dependencies
 from event_replay_plan import Decision, intents
+from ffn_program_cost import ActiveProgram
 
 
 def verify_grants(tasks, hardware, rows):
@@ -30,6 +31,7 @@ def verify_grants(tasks, hardware, rows):
     issue_expires = defaultdict(list)
     dma_launches = defaultdict(list)
     dma_expected = {}
+    program_launches = {}
     sram = defaultdict(list)
     ticks = set()
     for i, (operation, event) in enumerate(zip(operations, events)):
@@ -50,9 +52,12 @@ def verify_grants(tasks, hardware, rows):
                 if event['activation'] != expected or end != expected['proof'] + 1:
                     raise ValueError('FFN activation handshakes or proof differ')
             if phase.ffn_program is not None:
-                cost = phase.ffn_program.receipt(start)
-                if event['ffn_program'] != asdict(cost) or end != cost.result_tick + 1:
-                    raise ValueError('FFN program retirement or traffic differs')
+                if model.dma_profile is None:
+                    check_program(phase.ffn_program.receipt(start), end, event['ffn_program'])
+                else:
+                    if start in program_launches:
+                        raise ValueError('two FFN programs were launched on the same edge')
+                    program_launches[start] = phase.ffn_program, end, event['ffn_program']
             claims = phase.claims + (operation.holds if j == 0 else ())
             releases = phase.claims + (operation.holds if j == len(phases) - 1 else ())
             ready_at[ready].append((phase.priority, ready, i, j, start, claims, phase.ready_window))
@@ -108,8 +113,8 @@ def verify_grants(tasks, hardware, rows):
                 waiting.append(request)
     if waiting or free != model.capacity or any(issue_count.values()):
         raise ValueError('arbitration trace did not drain')
-    if dma_launches:
-        verify_dma(model.dma_profile, dma_launches, dma_expected)
+    if dma_launches or program_launches:
+        verify_dma(model.dma_profile, dma_launches, dma_expected, program_launches)
     for site, jobs in sram.items():
         verify_sram(model.sram_profiles[site], jobs)
 
@@ -157,17 +162,35 @@ def verify_sram(profile, jobs):
         tick = tick + 1 if any(queued) or any(slots) else min(launches, default=tick + 1)
 
 
-def verify_dma(profile, launches, expected):
+def check_program(cost, end, receipt):
+    if receipt != asdict(cost) or end != cost.result_tick + 1:
+        raise ValueError('FFN program retirement or traffic differs')
+
+
+def verify_dma(profile, launches, expected, programs):
     # Follow only the emitted launch edges. The cover scheduler and its
     # speculative checkpoint play no role in this consistency check.
     fabric = ReadFabric(profile)
-    tick = min(launches)
-    while launches or fabric.active:
+    tick = min((*launches, *programs))
+    active = None
+    while launches or programs or fabric.active or active is not None:
         for key, read in launches.pop(tick, ()):
             fabric.submit(key, read)
-        for key, receipts in fabric.advance(tick):
+        if tick in programs:
+            if active is not None:
+                raise ValueError('FFN program overlaps another program')
+            program, end, receipt = programs.pop(tick)
+            active = ActiveProgram(program, tick, fabric)
+        if active is None:
+            reads = fabric.advance(tick) if fabric.active else ()
+        else:
+            cost, reads = active.advance(tick)
+            if cost is not None:
+                check_program(cost, end, receipt)
+                active = None
+        for key, receipts in reads:
             if expected.pop(key) != (tick + 1, receipt_json(receipts)):
                 raise ValueError(f'typed DMA handshakes or completion differ at tick {tick}')
-        tick = tick + 1 if fabric.active else min(launches, default=0)
+        tick = tick + 1 if fabric.active or active is not None else min((*launches, *programs), default=0)
     if expected:
         raise ValueError('typed DMA trace did not drain')

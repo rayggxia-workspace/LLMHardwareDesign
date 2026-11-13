@@ -15,13 +15,55 @@ from event_replay import Operation, Phase, ReadyWindow, ReplayDeadlock, ReplayTr
 from ffn_m import ALLOC, FILL, INPUT, INPUT_READY, RF, RF_READY, Record, Reply, commit_phases, reply_phase
 from ffn_m_issue import ALLOC_CMD, Command, CommandLink, WeightCompletion, join_schedule
 from ffn_mid import MIN_TICKS, MidTile
+from ffn_program_cost import FfnCost, Program, SHARED_RESOURCES
 from ffn_w import WeightTrace
+from ffn_w_dma import WeightDma, WeightOwner
 from sram_feeder import Access
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
 
 
 class ReplayTest(unittest.TestCase):
+    def test_shared_ffn_restores_before_launch_and_reprices_inflight_reads(self):
+        profile = Profile.from_spec({'ffn_provider': {'mode': 1, 'seed': 25001}})
+        capacity = SHARED_RESOURCES
+        spec = Program(1, 25001, True, 0)
+        timer = Operation((Phase('timer', 128),))
+        ffn = Operation((Phase('ffn', 1, tuple(capacity.items()), ffn_program=spec),), after=(0,))
+        old_read = Operation((Phase('read', 1, dma_read=Read(3, 0x10000000, 8192, 2)),), release=126)
+
+        class ShortProgram:
+            def __init__(self, program, start, fabric):
+                self.dma = WeightDma(profile, fabric=fabric)
+                self.start = start
+
+            def advance(self, tick):
+                installs = ((0, 1, 1, 0, 1, 0x2000000),) if tick == self.start else ()
+                _, completions = self.dma.step(tick, installs)
+                result, reads = None, []
+                for key, beats in completions:
+                    if isinstance(key, WeightOwner):
+                        result = FfnCost(tick, 17 * 64, 0)
+                    else:
+                        reads.append((key, beats))
+                return result, reads
+
+        with patch('event_replay.ActiveProgram', ShortProgram):
+            operations = [timer, old_read, ffn]
+            prefix = replay_branch(operations, capacity, dma_profile=profile)
+            self.assertEqual(prefix.grants[2][0].start, 128)
+            checkpoint = next(cp for cp in prefix.checkpoints if cp.tick == 128)
+            self.assertIn((1, 0), checkpoint.fabric.remaining)
+            self.assertTrue(any(cp.tick == prefix.grants[2][0].end for cp in prefix.checkpoints))
+            branches = []
+            for address in (0x10010000, 0x10010800):
+                read = Operation((Phase('read', 1, dma_read=Read(4, address, 4096, 2)),), release=131)
+                branch = replay_branch([*operations, read], capacity, dma_profile=profile, previous=prefix)
+                self.assertEqual(branch.grants, replay([*operations, read], capacity, dma_profile=profile))
+                branches.append(branch.grants)
+            self.assertNotEqual(branches[0][1][0].dma_beats, prefix.grants[1][0].dma_beats)
+            self.assertNotEqual(branches[0][2][0].ffn_program, branches[1][2][0].ffn_program)
+
     def test_sram_checkpoint_preserves_pending_responses_and_reprices_old_reads(self):
         profiles = {'P0': ((0, 90, 2),), 'P1': ()}
         read = Operation((Phase('read', 1, sram_access=Access('P0', 0, 8, False, False)),))

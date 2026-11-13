@@ -6,7 +6,7 @@ from ffn_join import JoinController
 from ffn_m import Record
 from ffn_m_issue import ALLOC_CMD, Command, CommandLink, FILL, WeightCompletion
 from ffn_p import ProgrammedP
-from ffn_w_dma import WeightCommandLinks, WeightDma, WeightOwner
+from ffn_w_dma import DescriptorOwner, WeightCommandLinks, WeightDma, WeightOwner
 
 
 def advance_links(state, first, last):
@@ -39,7 +39,7 @@ class WeightDmaTests(unittest.TestCase):
             self.assertFalse(service.fabric.active)
             return done
 
-        keys = WeightOwner(*old[1][:-1]), (0, 1), WeightOwner(*candidate[:-1])
+        keys = WeightOwner(*old[1][:-1]), DescriptorOwner(0, 1), WeightOwner(*candidate[:-1])
         for launch, ends in ((6, (49, 27, 53)), (7, (46, 24, 54))):
             with self.subTest(launch=launch):
                 branch = run(deepcopy(prefix), 6, launch)

@@ -169,8 +169,8 @@ def retime(model, decisions, proposed, previous=None):
                 if phase.activation is not None:
                     retirements = tuple(trace.grants[i][j].end for i, j in operation.activation_after)
                     actual['activation'] = phase.activation.receipt(start, retirements)
-                if phase.ffn_program is not None:
-                    actual['ffn_program'] = asdict(phase.ffn_program.receipt(start))
+                if grant.ffn_program is not None:
+                    actual['ffn_program'] = asdict(grant.ffn_program)
             if len(phases) > 1:
                 actual['phases'] = phases
             occupy(operation.holds, start, end)

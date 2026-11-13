@@ -1,6 +1,5 @@
 """Program geometry and construction for the calibrated three-P FFN."""
 from collections import defaultdict
-from dataclasses import dataclass
 
 from event_replay import ReplayDeadlock
 from ffn_a import P_COUNT
@@ -10,6 +9,7 @@ from ffn_dispatch import ScopeAdmission
 from ffn_m import Record
 from ffn_m_issue import CommandLink
 from ffn_p import ProgrammedP
+from ffn_program_cost import FfnCost
 from ffn_result import down_group_addresses
 from ffn_scatter import stripe_fragments
 from ffn_w import BEATS
@@ -80,14 +80,7 @@ def scope_groups(records_by_client):
             for owner in sorted(last)]
 
 
-@dataclass(frozen=True, slots=True)
-class FfnCost:
-    result_tick: int
-    read_bytes: int
-    write_bytes: int
-
-
-def programmed_ffn(start, mode, seed, *, lookahead=True, copy_delay_epoch=0, replay_class=WeightReplay):
+def programmed_ffn(start, mode, seed, *, lookahead=True, copy_delay_epoch=0, replay_class=WeightReplay, fabric=None):
     dispatches = ((client, -1, owner) for owner in range(1, GATE_UP_STRIPES + DOWN_GROUPS + 1)
                   for client in range(P_COUNT))
     records = m_records(dispatches)
@@ -99,7 +92,8 @@ def programmed_ffn(start, mode, seed, *, lookahead=True, copy_delay_epoch=0, rep
                                 for client, rows in records.items()}, addresses, join_driver=p)
     mother = MotherController(start, scope_groups(records), p.lanes)
     admission = ScopeAdmission(start, mode, mother, p)
-    return replay_class(mode, seed, CALL_TO_FETCH, links=links, mother=mother, admission=admission)
+    options = {} if fabric is None else {'fabric': fabric}
+    return replay_class(mode, seed, CALL_TO_FETCH, links=links, mother=mother, admission=admission, **options)
 
 
 def finish_program(replay, first, deadline):

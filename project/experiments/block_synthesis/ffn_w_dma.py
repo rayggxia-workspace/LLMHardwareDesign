@@ -16,6 +16,12 @@ class WeightOwner:
     generation: int
 
 
+@dataclass(frozen=True, slots=True)
+class DescriptorOwner:
+    client: int
+    serial: int
+
+
 @dataclass(slots=True)
 class WeightPort:
     banks: list = field(default_factory=lambda: [None] * 4)
@@ -42,20 +48,20 @@ class WeightPort:
 
 def local_tag(record, address):
     beat = (address - record.address) // 64
-    if record.client < 9:
-        return 2 * record.key[1] + beat
+    if isinstance(record.key, DescriptorOwner):
+        return 2 * record.key.serial + beat
     return (record.key.bank << 21) | (record.key.generation << 5) | beat
 
 
 class WeightDma:
     """A cycle step with bank installs and descriptor starts as its inputs."""
 
-    def __init__(self, profile):
-        self.fabric = ReadFabric(profile)
+    def __init__(self, profile, *, fabric=None):
+        self.fabric = ReadFabric(profile) if fabric is None else fabric
         self.ports = [WeightPort() for _ in range(3)]
 
     def submit_descriptor(self, client, serial, address):
-        self.fabric.submit((client, serial), Read(client, address, 128, 2))
+        self.fabric.submit(DescriptorOwner(client, serial), Read(client, address, 128, 2))
 
     def step(self, tick, installs):
         edge = ReadEdge({p + 9: port.locked for p, port in enumerate(self.ports) if port.locked is not None})
@@ -122,8 +128,9 @@ class WeightCommandLinks:
 class WeightReplay:
     """Advance one edge across P/M links, shared DDR and FFN control."""
 
-    def __init__(self, mode, seed, call_to_fetch, *, links=None, mother=None, admission=None, trace=False):
-        self.service = WeightDma(Profile.from_spec({'ffn_provider': {'mode': mode, 'seed': seed}}))
+    def __init__(self, mode, seed, call_to_fetch, *, links=None, mother=None, admission=None, trace=False, fabric=None):
+        profile = Profile.from_spec({'ffn_provider': {'mode': mode, 'seed': seed}}) if fabric is None else fabric.profile
+        self.service = WeightDma(profile, fabric=fabric)
         self.call_to_fetch = call_to_fetch
         self.links = links
         self.mother = mother
@@ -147,6 +154,13 @@ class WeightReplay:
         self.descriptors[tick + self.call_to_fetch].append((client, self.serial[client], address))
 
     def advance(self, tick, sampled_installs=()):
+        events, external = self.advance_shared(tick, sampled_installs)
+        if external:
+            raise ValueError('standalone FFN received a non-program DMA completion')
+        return events
+
+    def advance_shared(self, tick, sampled_installs=()):
+        """Clock the fabric once and return completions for external clients separately."""
         installs = self.links.advance(tick) if self.links is not None else sampled_installs
         calls, terminals = self.mother.advance(tick) if self.mother is not None else ((), ())
         for client in calls:
@@ -155,7 +169,7 @@ class WeightReplay:
         result = self.admission is not None and tick == self.admission.result
         if not (installs or calls or terminals or offers or dispatches or result or self.service.fabric.active
                 or tick in self.descriptors):
-            return {}
+            return {}, ()
         for descriptor in self.descriptors.pop(tick, ()):
             self.service.submit_descriptor(*descriptor)
         expected = defaultdict(list)
@@ -184,35 +198,39 @@ class WeightReplay:
         expected['backend_req'].extend((lane, address, self.global_tags[entry]) for lane, address, entry in edge.issued)
         expected['backend_rsp'].extend((lane, self.global_tags[entry]) for lane, entry in edge.captured)
         for record, address, entry in edge.accepted:
-            tag = local_tag(record, address)
-            if record.client < 9:
-                expected['fetch'].append((record.client, tag, address))
-            else:
-                expected['request'].append((record.client - 9, address, tag))
+            if isinstance(record.key, DescriptorOwner):
+                expected['fetch'].append((record.client, local_tag(record, address), address))
+            elif isinstance(record.key, WeightOwner):
+                expected['request'].append((record.client - 9, address, local_tag(record, address)))
             self.entry_serials[entry] += 1
             # The fixture completes its reset purge before the first CALL.
             self.global_tags[entry] = (2 << 32) | (self.entry_serials[entry] << 16) | (entry << 10) | (record.client << 6)
         for record, address in edge.delivered:
-            tag = local_tag(record, address)
-            if record.client < 9:
-                expected['fetch_return'].append((record.client, tag))
-            else:
-                expected['returned'].append((record.client - 9, tag))
-        for owner, _ in completed:
+            if isinstance(record.key, DescriptorOwner):
+                expected['fetch_return'].append((record.client, local_tag(record, address)))
+            elif isinstance(record.key, WeightOwner):
+                expected['returned'].append((record.client - 9, local_tag(record, address)))
+        external = []
+        for owner, receipts in completed:
             if isinstance(owner, WeightOwner):
                 completion = WeightCompletion(tick + 1, owner.session, owner.sequence, owner.bank, owner.generation)
                 if self.trace:
                     self.completed[owner.client].append(completion)
                 if self.links is not None:
                     self.links.complete(owner.client, completion)
-            elif self.admission is not None:
-                self.admission.descriptor_returned(tick, *owner)
+            elif isinstance(owner, DescriptorOwner):
+                if self.admission is not None:
+                    self.admission.descriptor_returned(tick, owner.client, owner.serial)
+            else:
+                external.append((owner, receipts))
         for kind, rows in expected.items():
             self.counts[kind] += len(rows)
-        return expected
+        return expected, external
 
     def validate(self):
-        if self.descriptors or self.service.fabric.active or not self.counts['returned']:
+        if (self.descriptors or any(isinstance(key, (WeightOwner, DescriptorOwner))
+                                    for key in self.service.fabric.remaining)
+                or not self.counts['returned']):
             raise ValueError('shared W DMA did not retire every record')
         if self.links is not None:
             self.issue = self.links.finish()

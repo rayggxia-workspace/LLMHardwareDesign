@@ -8,9 +8,10 @@ value. Times are integer service-model ticks, and external traffic is in bytes.
 from collections import Counter
 from dataclasses import dataclass, replace
 
-from dma_read import Profile, Read
+from dma_read import FfnProvider, Profile, Read
 from ffn_a import A_BASE, P_COUNT, WORDS, ActivationWindow
-from ffn_program_cost import INPUT_BYTES, Program, READ_BYTES, RESOURCES, RESULT_BYTES
+from ffn_program_cost import (BACKING, EXTERNAL_CLIENTS, INPUT_BYTES, Program, READ_BYTES, RESOURCES, RESULT_BYTES,
+                              SHARED_RESOURCES, SITES)
 from sram_feeder import Access, profile as feeder_profile
 
 DDR = 'DDR'
@@ -19,8 +20,9 @@ DDR = 'DDR'
 def backing_bytes(spec, values):
     addresses = (spec.get('typed_dma') or {}).get('addresses', {})
     sizes = spec['value_bytes']
-    return sum(sizes[value] * (len(addresses[value]) if isinstance(addresses.get(value), dict) else 1)
-               for value in values)
+    fixture_bytes = READ_BYTES if any('ffn_program' in service for service in spec['services'].values()) else 0
+    return fixture_bytes + sum(sizes[value] * (len(addresses[value]) if isinstance(addresses.get(value), dict) else 1)
+                               for value in values)
 
 
 def window_phase_indices(service):
@@ -139,6 +141,7 @@ def capacity_profile(changes):
 class Model:
     def __init__(self, hardware, *, wire_budget=None):
         self.spec = hardware['event_model']
+        self.sites = hardware['sites']
         self.capacity = hardware['resources']
         self.issue_rates = {}
         for resource, rate in self.spec.get('issue_rates', {}).items():
@@ -155,6 +158,7 @@ class Model:
             raise ValueError('SRAM feeders require known sites and event replay')
         self.sram_profiles = {site: feeder_profile(spec) for site, spec in feeders.items()}
         self.services = self.spec['services']
+        self.has_ffn_program = any('ffn_program' in service for service in self.services.values())
         self.routes = self.spec['routes']
         dma = self.spec.get('typed_dma')
         self.dma_profile = Profile.from_spec(dma) if dma is not None else None
@@ -198,6 +202,8 @@ class Model:
                 self.validate_route_phases(route)
             if 'typed_dma' in route:
                 self.validate_dma_route(route)
+            elif self.has_ffn_program and self.dma_profile is not None and DDR in endpoints:
+                raise ValueError('shared FFN requires an explicit typed route for external traffic')
             self.routes_by_sites.setdefault(endpoints, []).append(name)
         for service in self.services.values():
             if type(service['ticks']) is not int or service['ticks'] < 1:
@@ -205,6 +211,9 @@ class Model:
             self.validate_service(service)
             if 'ffn_program' in service:
                 self.validate_program_service(service)
+            elif self.has_ffn_program and self.dma_profile is not None and (
+                    service.get('read_bytes') or service.get('write_bytes')):
+                raise ValueError('shared FFN requires explicit typed routes for external traffic')
             if 'sram_access' in service and ('phases' in service or 'ffn_mid' in service
                                              or 'copy_sites' in service or 'ffn_activation' in service):
                 raise ValueError('SRAM feeder access requires a standalone service')
@@ -285,6 +294,11 @@ class Model:
                 or not isinstance(params.get('replica', 'primary'), str) or not params.get('replica', 'primary')
                 or not Read(params['client'], 0, 64 * params['record_beats'], params['record_beats']).valid()):
             raise ValueError('invalid typed DMA read route')
+        if self.has_ffn_program and (params['client'] not in EXTERNAL_CLIENTS or route['dst'] in SITES
+                                     or any('DDR' in item for item in (route['claims'],
+                                            route['phases']['hold_claims'],
+                                            route['phases']['issue']['claims'], route['phases']['ack']['claims']))):
+            raise ValueError('shared FFN DMA route must use a separate client and destination')
 
     def validate_dma_addresses(self, initial):
         if not isinstance(self.dma_addresses, dict) or self.dma_addresses.keys() - self.sizes.keys():
@@ -298,6 +312,9 @@ class Model:
                 if (type(address) is not int or address % 64
                         or not 0 <= address < address + self.sizes[value] <= 2**64):
                     raise ValueError('invalid typed DMA address map')
+                if self.has_ffn_program and any(address < hi and lo < address + self.sizes[value]
+                                                for lo, hi in BACKING):
+                    raise ValueError('typed DMA backing overlaps the calibrated FFN program')
                 regions.append((address, address + self.sizes[value], replicas))
         high = named_high = 0
         for start, end, named in sorted(regions):
@@ -416,13 +433,18 @@ class Model:
         return access
 
     def validate_program_service(self, service):
-        Program.from_spec(service['ffn_program'])
-        if (self.spec.get('timing') != 'replay' or self.dma_profile is not None or self.sram_profiles
+        program = Program.from_spec(service['ffn_program'])
+        claims = RESOURCES if self.dma_profile is None else SHARED_RESOURCES
+        if (self.spec.get('timing') != 'replay' or self.sram_profiles.keys() & set(SITES)
                 or {'phases', 'ffn_mid', 'ffn_activation', 'sram_access', 'copy_sites'} & service.keys()
                 or service['ticks'] != 1 or any(self.capacity.get(r) != n for r, n in RESOURCES.items())
-                or service['claims'] != RESOURCES
+                or service['claims'] != claims
+                or any(self.sites.get(site, {}).get('bytes') != 16384
+                       or self.sites[site].get('words') != 1024 for site in SITES)
                 or service.get('read_bytes') != READ_BYTES or service.get('write_bytes', 0)):
-            raise ValueError('calibrated FFN program requires exclusive resources and qualified traffic')
+            raise ValueError('calibrated FFN program requires qualified geometry, resources and traffic')
+        if self.dma_profile is not None and self.dma_profile.ffn_provider != FfnProvider(program.mode, program.seed):
+            raise ValueError('shared FFN and typed DMA require the same calibrated provider')
 
     def validate_program_windows(self, inputs, outputs):
         if len(inputs) != 1 or len(outputs) != 3:
@@ -434,6 +456,9 @@ class Model:
                           for w, v in outputs.items()) != [(f'P{p}', 0, size) for p, size in enumerate(RESULT_BYTES)]
                 or len(set(outputs.values())) != 3):
             raise ValueError('calibrated FFN input or result layout differs')
+        if any(window not in inputs and window not in outputs and location['site'] in SITES
+               for window, location in self.windows.items()):
+            raise ValueError('calibrated FFN scratch cannot share its private SRAM windows')
 
     def activation_window(self, service, inputs, outputs):
         config = service['ffn_activation']
