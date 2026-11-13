@@ -34,11 +34,19 @@ class Receiver:
     ports: tuple   # Resource names in priority order for simultaneous results
 
 
+@dataclass(frozen=True)
+class DmaBinding:
+    port: object
+    requests: dict  # Operation ID to Transfer or Fence
+    priority: tuple  # Physical resource order for same-edge offers
+    max_cycles: int = 100_000
+
+
 def _positive_int(value):
     return type(value) is int and value >= 1
 
 
-def simulate(programs, services, resources, receivers):
+def simulate(programs, services, resources, receivers, dma=None):
     """Return the events of the single-clock, registered protocol in README.md."""
     operations = [op for stream in programs.values() for op in stream]
     names = {op.identifier for op in operations}
@@ -53,6 +61,15 @@ def simulate(programs, services, resources, receivers):
         if (not _positive_int(receiver.depth) or not _positive_int(receiver.latency) or not receiver.ports
                 or len(set(receiver.ports)) != len(receiver.ports) or not set(receiver.ports) <= resources.keys()):
             raise ValueError("invalid receiver: " + name)
+    dma_priority = {}
+    if dma is not None:
+        if (not dma.requests or not dma.requests.keys() <= names or not dma.port.drained
+                or dma.port.last_cycle != -1 or len(dma.priority) != len(set(dma.priority))
+                or not _positive_int(dma.max_cycles)):
+            raise ValueError("invalid DMA binding or initial state")
+        dma_priority = {name: i for i, name in enumerate(dma.priority)}
+        if len({request.tag for request in dma.requests.values()}) != len(dma.requests):
+            raise ValueError("DMA tags must be unique across bound operations")
     for block, stream in programs.items():
         for op in stream:
             rule = services.get(op.service)
@@ -64,6 +81,8 @@ def simulate(programs, services, resources, receivers):
                 raise ValueError("missing or invalid service for {}:{}".format(block, op.identifier))
             if not set(op.after) <= names or op.identifier in op.after:
                 raise ValueError("invalid dependency for " + op.identifier)
+            if dma is not None and op.identifier in dma.requests and (rule.receiver or rule.resource not in dma_priority):
+                raise ValueError("DMA operation requires an explicit resource priority and no local receiver: " + op.identifier)
 
     pc = dict.fromkeys(programs, 0)
     pointers = dict.fromkeys(resources, 0)
@@ -78,14 +97,34 @@ def simulate(programs, services, resources, receivers):
     events = []
     cycle = 0
     serial = 0
+    dma_waiting = deque()
+    dma_inflight = {}
+    dma_responses = {}
 
     def emit(kind, op, block, resource):
         events.append({"cycle": cycle, "event": kind, "op": op, "block": block, "resource": resource})
 
+    def completion_priority(event):
+        resource, receiver = event[5:]
+        if dma is not None and event[3] in dma.requests:
+            return dma_priority[resource], event[1]
+        return port_priority.get(receiver, {}).get(resource, 0), event[1]
+
     while len(done) < len(operations):
+        if dma is not None and cycle > dma.max_cycles:
+            raise ValueError("DMA-coupled simulation did not finish by cycle {}".format(dma.max_cycles))
         finished = []
         while scheduled and scheduled[0][0] == cycle:
             finished.append(heapq.heappop(scheduled))
+
+        retired_dma = None
+        if dma is not None and (dma_waiting or not dma.port.drained):
+            offered = dma.requests[dma_waiting[0][0]] if dma_waiting else None
+            start_event = len(dma.port.events)
+            accepted, retired_dma = dma.port.step(cycle, offered)
+            events.extend(dma.port.events[start_event:])
+            if accepted:
+                dma_inflight[offered.tag] = dma_waiting.popleft()
 
         # Sample each queue's old occupancy. A pop cannot provide same-edge credit.
         for name, pending in waiting.items():
@@ -127,10 +166,12 @@ def simulate(programs, services, resources, receivers):
 
         # Existing queue entries precede arrivals from this edge. Simultaneous
         # arrivals use physical port priority, then launch order on that port.
-        for _, _, kind, op, block, resource, receiver in sorted(
-                finished, key=lambda event: (port_priority.get(event[6], {}).get(event[5], 0), event[1])):
+        for _, _, kind, op, block, resource, receiver in sorted(finished, key=completion_priority):
             if kind == "service":
                 emit("service_done", op, block, resource)
+                if dma is not None and op in dma.requests:
+                    dma_waiting.append((op, block, resource))
+                    continue
                 if receiver:
                     waiting[receiver].append((op, block, resource))
                     continue
@@ -141,10 +182,19 @@ def simulate(programs, services, resources, receivers):
             done.add(op)
             free[resource] += 1
 
+        if retired_dma is not None:
+            op, block, resource = dma_inflight.pop(retired_dma.tag)
+            dma_responses[op] = retired_dma.data
+            emit("complete", op, block, resource)
+            done.add(op)
+            free[resource] += 1
+
         if len(done) == len(operations):
             break
         # One edge exposes the state changes above. Then jump over idle edges.
         following = [scheduled[0][0]] if scheduled else []
+        if dma is not None and (dma_waiting or not dma.port.drained):
+            following.append(cycle + 1)
         if any(queue and occupied[name] < receivers[name].depth for name, queue in waiting.items()):
             following.append(cycle + 1)
         for block, stream in programs.items():
@@ -159,5 +209,10 @@ def simulate(programs, services, resources, receivers):
             raise ValueError("deadlock at cycle {} with heads {}".format(cycle, ", ".join(heads)))
         cycle = min(following)
 
-    return {"last_cycle": cycle if operations else None, "events": events,
-            "event_counts": dict(Counter(event["event"] for event in events))}
+    result = {"last_cycle": cycle if operations else None, "events": events,
+              "event_counts": dict(Counter(event["event"] for event in events))}
+    if dma is not None:
+        if not dma.port.drained:
+            raise ValueError("DMA port remains active at model retirement")
+        result["dma_responses"] = dma_responses
+    return result
