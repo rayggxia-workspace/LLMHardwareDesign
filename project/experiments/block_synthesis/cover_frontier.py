@@ -67,7 +67,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         if live_replay:
             from event_replay import ReplayDeadlock
             from event_replay_plan import Decision, retime
-            from event_transport import draft, drafts
+            from event_transport import draft, transport_successors
             transport_limit=hardware['event_model'].get('transport_limit',32)
             if transport_limit is not None and (type(transport_limit) is not int or transport_limit<1):
                 raise ValueError('positive transport limit required')
@@ -152,20 +152,21 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
             protected={value for value,mask in users.items() if mask&~(s.done|a['mask'])}
             draft_state=s.execution.after(arrival) if live_replay else s.execution
             if live_replay and forced_choices is None:
-                proposals=drafts(model,draft_state,b,arrival,protected,transport_limit,transport_counts)
-            else:
-                try:
-                    if live_replay:
-                        execution,events=draft(model,draft_state,b,arrival,protected,forced_choices)
-                    else:
-                        execution,events=model.expand(s.execution,b,arrival,protected)
-                except Infeasible:
-                    return
-                proposals=((execution,events,forced_choices),)
-            for execution,events,choices in proposals:
-                result=event_successor(s,a,b,execution,events,choices)
-                if result is not None:
-                    yield result
+                def evaluate_candidate(execution,events,choices):
+                    return event_successor(s,a,b,execution,events,choices)
+                yield from transport_successors(model,draft_state,b,arrival,protected,transport_limit,
+                                                transport_counts,evaluate_candidate,rank)
+                return
+            try:
+                if live_replay:
+                    execution,events,_=draft(model,draft_state,b,arrival,protected,forced_choices)
+                else:
+                    execution,events=model.expand(s.execution,b,arrival,protected)
+            except Infeasible:
+                return
+            result=event_successor(s,a,b,execution,events,forced_choices)
+            if result is not None:
+                yield result
         else:
             ev=evaluate(s,b,hardware,arrival,retention=policy,fixed=fixed,conflicts=conflicts,wire_budget=wire_budget)
             if ev['legal']:

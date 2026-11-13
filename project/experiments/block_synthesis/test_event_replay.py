@@ -223,6 +223,31 @@ class ReplayTest(unittest.TestCase):
                          ['slow-store', 'DDR-to-S1'])
         self.assertEqual((plan['external_write_bytes'], plan['external_read_bytes']), (16, 16))
 
+    def test_transport_budget_considers_route_ready_before_enumerating_combinations(self):
+        h = hardware(resident=False)
+        spec = h['event_model']
+        spec.update(timing='replay', initial_backing=['x', 'z'], live_out=[])
+        route = spec['routes']['DDR-to-S1']
+        route.update(setup=0, ready_window={'period': 128, 'closed': 110, 'offset': 0})
+        for index in range(20):
+            spec['routes'][f'blocked-{index}'] = {
+                **route, 'ready_window': {**route['ready_window'], 'closed': 90 + index},
+            }
+        spec['routes']['open'] = {**route, 'setup': 2, 'ready_window': {'period': 128, 'closed': 0, 'offset': 0}}
+        spec['services']['use'] = {'ticks': 1, 'claims': {}}
+        tasks = [task('graph', binding('graph', stage('use', inputs={'input': 'x'}),
+                                       stage('use', inputs={'result': 'z'})))]
+        bounded = search(tasks, h, width=1)
+        spec['transport_limit'] = None
+        exhaustive = search(tasks, h, width=1)
+        for plan in (bounded, exhaustive):
+            verify(tasks, h, (), plan)
+            moves = [event for event in plan['tasks'][0]['evaluation']['events'] if event['kind'] == 'move']
+            self.assertEqual(([move['route'] for move in moves], plan['makespan']), (['open', 'open'], 10))
+        self.assertEqual((bounded['transport_attempted'], bounded['transport_truncated']), (32, 1))
+        self.assertEqual((exhaustive['transport_attempted'], exhaustive['transport_truncated']), (484, 0))
+        verify(tasks, h, (), search(tasks, h, width=2, backbone=bounded))
+
     def test_native_channel_rate_blocks_third_cycle_even_with_free_lanes(self):
         h = hardware()
         h['resources'].update({'DDR0.issue': 2, 'DDR1.issue': 2})
