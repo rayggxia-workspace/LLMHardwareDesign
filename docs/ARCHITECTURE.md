@@ -172,3 +172,13 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+
+## #265 片上指令周期实验
+
+单时钟事件模型、输入约束、Slurm 短程 RTL 复跑和版本追踪见[实验说明](../project/experiments/instruction_cycle/README.md)。主要复核命令如下。
+
+```bash
+python -B -m unittest discover -s project/experiments/instruction_cycle -p 'test_*.py' -v
+python -B project/experiments/instruction_cycle/compare_arbiter.py <107488-日志目录>
+python -B project/experiments/instruction_cycle/copy_reference.py work/Melodydt/265/copy-rtl-input.json
+```

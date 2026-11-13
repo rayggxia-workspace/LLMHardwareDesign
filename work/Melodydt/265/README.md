@@ -4,6 +4,8 @@
 
 [Issue #265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 当前研究指令与拓扑驱动的快速周期估算。方案、输入及验证顺序见[决策记录](../../../docs/decisions/0265-instruction-driven-cycle-estimation.md)。本目录保留前期输入冻结和参考环境证据。
 
+第一步的[片上模型和验证入口](../../../project/experiments/instruction_cycle/README.md)包含发射顺序、冲突、仲裁和背压的实现。短程 RTL [107488 回执](onchip-rtl-107488.json)及双 U_64 [COPY 对照输入](copy-rtl-input.json)记录两个已经逐拍核验的范围。
+
 `audit_fast_cycle_inputs.py` 在 Python 3.7.0 上运行，通过两个历史作业的归档恢复三 P FFN 控制顺序，并对照原有 RTL 日志。原始归档按 [#251 索引](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/250/native-services/ffnnative/index.json) 从项目服务器只读获取。两个作业归档登记的源提交均为 `ab7611d43e4c007cc966ab5e61903118d33fcb4a`。将其命名为 `<job>-receipts.tar.gz`。`fast-cycle-inputs.local/` 为本地未提交缓存。
 
 | 作业 | 服务器相对 `/public/home/yuzelu/project-circuit/` 的位置 | SHA-256 |

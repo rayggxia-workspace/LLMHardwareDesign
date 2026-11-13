@@ -1,0 +1,594 @@
+{
+  "schema": "issue265-copy-rtl-input/1",
+  "source": {
+    "repository": "rayggxia-workspace/LLMHardwareDesign",
+    "reference_commit": "a326d04e170cb84d273e96e7906bdf23775a0ca8",
+    "slurm_job": 100343,
+    "source_index": "work/YUZE-LU/219/results/mutex-control-v2/receipt.json",
+    "source_directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-105-current-mother-u",
+    "bench": {
+      "path": "fixture/design/tb_native_pair.sv",
+      "sha256": "783ce88142c1f520ebdf7d312b5b7ec14ebc149c9f785b941def64b737b3b1c5"
+    },
+    "arbiter": {
+      "path": "fixture/staged/native/block_local_s_arbiter.sv",
+      "sha256": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee"
+    },
+    "sram": {
+      "path": "fixture/staged/native/block_feed_s16k_sram.sv",
+      "sha256": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef"
+    },
+    "stored_link": {
+      "path": "fixture/design/stored_link.sv",
+      "sha256": "7a852eebeb6988b2dc448bec9f4dfd48cdad56728c7ad07633008ed614c15571"
+    }
+  },
+  "protocol": {
+    "source": "destination-side U_64 RTL; pre-edge cycle numbering",
+    "write_ready_period": 7,
+    "write_ready_phase": 1,
+    "ack_ready_period": 11,
+    "ack_ready_phase": 3,
+    "visible_response_edges_after_sram_send": 2
+  },
+  "cases": [
+    {
+      "name": "normal-1-143",
+      "scenario": "normal",
+      "log_path": "work/YUZE-LU/219/results/mutex-control-v2/current-control/protocol/normal-1-143.log",
+      "log_sha256": "4920a395f5e82c9558f89e4764aef17eefd9988c6b090f8d407f15c4641a4d18",
+      "accepted_writes": [
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 41,
+          "cycle": 1095
+        },
+        {
+          "source": 1,
+          "destination": 0,
+          "address": 43,
+          "cycle": 1207
+        },
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 42,
+          "cycle": 1258
+        }
+      ],
+      "expected": {
+        "commits": [
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 41,
+            "cycle": 1098
+          },
+          {
+            "source": 1,
+            "destination": 0,
+            "address": 43,
+            "cycle": 1210
+          },
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 42,
+            "cycle": 1261
+          }
+        ],
+        "source_releases": [
+          {
+            "source": 0,
+            "cycle": 1098
+          },
+          {
+            "source": 1,
+            "cycle": 1210
+          },
+          {
+            "source": 0,
+            "cycle": 1261
+          }
+        ]
+      }
+    },
+    {
+      "name": "stalled-1-143",
+      "scenario": "stalled",
+      "log_path": "work/YUZE-LU/219/results/mutex-control-v2/current-control/protocol/stalled-1-143.log",
+      "log_sha256": "08fdfbd67e41d4c161d1d7b16ed9b2a4fe681ba30bf73f7a791174fcd3e89194",
+      "accepted_writes": [
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 41,
+          "cycle": 1541
+        },
+        {
+          "source": 1,
+          "destination": 0,
+          "address": 43,
+          "cycle": 1695
+        },
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 42,
+          "cycle": 1772
+        }
+      ],
+      "expected": {
+        "commits": [
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 41,
+            "cycle": 1554
+          },
+          {
+            "source": 1,
+            "destination": 0,
+            "address": 43,
+            "cycle": 1708
+          },
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 42,
+            "cycle": 1785
+          }
+        ],
+        "source_releases": [
+          {
+            "source": 0,
+            "cycle": 1554
+          },
+          {
+            "source": 1,
+            "cycle": 1708
+          },
+          {
+            "source": 0,
+            "cycle": 1785
+          }
+        ]
+      }
+    },
+    {
+      "name": "reset-1-143",
+      "scenario": "reset",
+      "log_path": "work/YUZE-LU/219/results/mutex-control-v2/current-control/protocol/reset-1-143.log",
+      "log_sha256": "283ec22e19dc53da0380aa7c084b9a7bcb3f0a18713643195c9b11f64720ad26",
+      "accepted_writes": [
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 41,
+          "cycle": 3088
+        },
+        {
+          "source": 1,
+          "destination": 0,
+          "address": 43,
+          "cycle": 3235
+        },
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 42,
+          "cycle": 3312
+        }
+      ],
+      "expected": {
+        "commits": [
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 41,
+            "cycle": 3094
+          },
+          {
+            "source": 1,
+            "destination": 0,
+            "address": 43,
+            "cycle": 3248
+          },
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 42,
+            "cycle": 3325
+          }
+        ],
+        "source_releases": [
+          {
+            "source": 0,
+            "cycle": 3094
+          },
+          {
+            "source": 1,
+            "cycle": 3248
+          },
+          {
+            "source": 0,
+            "cycle": 3325
+          }
+        ]
+      }
+    },
+    {
+      "name": "normal-2-143",
+      "scenario": "normal",
+      "log_path": "work/YUZE-LU/219/results/mutex-control-v2/current-control/protocol/normal-2-143.log",
+      "log_sha256": "d3be0505801e9bb43f2ec2191098047ab81347fcba6e3d47b9a6f39320953bdc",
+      "accepted_writes": [
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 41,
+          "cycle": 1095
+        },
+        {
+          "source": 1,
+          "destination": 0,
+          "address": 43,
+          "cycle": 1207
+        },
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 42,
+          "cycle": 1258
+        }
+      ],
+      "expected": {
+        "commits": [
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 41,
+            "cycle": 1098
+          },
+          {
+            "source": 1,
+            "destination": 0,
+            "address": 43,
+            "cycle": 1210
+          },
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 42,
+            "cycle": 1261
+          }
+        ],
+        "source_releases": [
+          {
+            "source": 0,
+            "cycle": 1098
+          },
+          {
+            "source": 1,
+            "cycle": 1210
+          },
+          {
+            "source": 0,
+            "cycle": 1261
+          }
+        ]
+      }
+    },
+    {
+      "name": "stalled-2-143",
+      "scenario": "stalled",
+      "log_path": "work/YUZE-LU/219/results/mutex-control-v2/current-control/protocol/stalled-2-143.log",
+      "log_sha256": "c538b23050b28aaf5e6611f4089018463e259537eb3293ac27f4ddee87172557",
+      "accepted_writes": [
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 41,
+          "cycle": 1541
+        },
+        {
+          "source": 1,
+          "destination": 0,
+          "address": 43,
+          "cycle": 1695
+        },
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 42,
+          "cycle": 1772
+        }
+      ],
+      "expected": {
+        "commits": [
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 41,
+            "cycle": 1554
+          },
+          {
+            "source": 1,
+            "destination": 0,
+            "address": 43,
+            "cycle": 1708
+          },
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 42,
+            "cycle": 1785
+          }
+        ],
+        "source_releases": [
+          {
+            "source": 0,
+            "cycle": 1554
+          },
+          {
+            "source": 1,
+            "cycle": 1708
+          },
+          {
+            "source": 0,
+            "cycle": 1785
+          }
+        ]
+      }
+    },
+    {
+      "name": "reset-2-143",
+      "scenario": "reset",
+      "log_path": "work/YUZE-LU/219/results/mutex-control-v2/current-control/protocol/reset-2-143.log",
+      "log_sha256": "67178eec78282d35069b0cd5b93178e5bc91ae5af10aa0ec088a357f122ee5b5",
+      "accepted_writes": [
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 41,
+          "cycle": 3088
+        },
+        {
+          "source": 1,
+          "destination": 0,
+          "address": 43,
+          "cycle": 3235
+        },
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 42,
+          "cycle": 3312
+        }
+      ],
+      "expected": {
+        "commits": [
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 41,
+            "cycle": 3094
+          },
+          {
+            "source": 1,
+            "destination": 0,
+            "address": 43,
+            "cycle": 3248
+          },
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 42,
+            "cycle": 3325
+          }
+        ],
+        "source_releases": [
+          {
+            "source": 0,
+            "cycle": 3094
+          },
+          {
+            "source": 1,
+            "cycle": 3248
+          },
+          {
+            "source": 0,
+            "cycle": 3325
+          }
+        ]
+      }
+    },
+    {
+      "name": "normal-2-144",
+      "scenario": "normal",
+      "log_path": "work/YUZE-LU/219/results/mutex-control-v2/current-control/protocol/normal-2-144.log",
+      "log_sha256": "9c3f7bf4bc1e71bf0c3cd3e226855bc90df4b27b7d628232d410a7ff88e8da6a",
+      "accepted_writes": [
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 41,
+          "cycle": 1095
+        },
+        {
+          "source": 1,
+          "destination": 0,
+          "address": 43,
+          "cycle": 1207
+        },
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 42,
+          "cycle": 1258
+        }
+      ],
+      "expected": {
+        "commits": [
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 41,
+            "cycle": 1098
+          },
+          {
+            "source": 1,
+            "destination": 0,
+            "address": 43,
+            "cycle": 1210
+          },
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 42,
+            "cycle": 1261
+          }
+        ],
+        "source_releases": [
+          {
+            "source": 0,
+            "cycle": 1098
+          },
+          {
+            "source": 1,
+            "cycle": 1210
+          },
+          {
+            "source": 0,
+            "cycle": 1261
+          }
+        ]
+      }
+    },
+    {
+      "name": "stalled-2-144",
+      "scenario": "stalled",
+      "log_path": "work/YUZE-LU/219/results/mutex-control-v2/current-control/protocol/stalled-2-144.log",
+      "log_sha256": "25d5f5c49ba53d180c665f778c03aa22fc7794ceb24850ba14f0855c86f129b1",
+      "accepted_writes": [
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 41,
+          "cycle": 1541
+        },
+        {
+          "source": 1,
+          "destination": 0,
+          "address": 43,
+          "cycle": 1695
+        },
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 42,
+          "cycle": 1772
+        }
+      ],
+      "expected": {
+        "commits": [
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 41,
+            "cycle": 1554
+          },
+          {
+            "source": 1,
+            "destination": 0,
+            "address": 43,
+            "cycle": 1708
+          },
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 42,
+            "cycle": 1785
+          }
+        ],
+        "source_releases": [
+          {
+            "source": 0,
+            "cycle": 1554
+          },
+          {
+            "source": 1,
+            "cycle": 1708
+          },
+          {
+            "source": 0,
+            "cycle": 1785
+          }
+        ]
+      }
+    },
+    {
+      "name": "reset-2-144",
+      "scenario": "reset",
+      "log_path": "work/YUZE-LU/219/results/mutex-control-v2/current-control/protocol/reset-2-144.log",
+      "log_sha256": "915d5f510d946d17aee10251a9a5aea5359728cf5d36fbfa511022fbf0d14c41",
+      "accepted_writes": [
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 41,
+          "cycle": 3088
+        },
+        {
+          "source": 1,
+          "destination": 0,
+          "address": 43,
+          "cycle": 3235
+        },
+        {
+          "source": 0,
+          "destination": 1,
+          "address": 42,
+          "cycle": 3312
+        }
+      ],
+      "expected": {
+        "commits": [
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 41,
+            "cycle": 3094
+          },
+          {
+            "source": 1,
+            "destination": 0,
+            "address": 43,
+            "cycle": 3248
+          },
+          {
+            "source": 0,
+            "destination": 1,
+            "address": 42,
+            "cycle": 3325
+          }
+        ],
+        "source_releases": [
+          {
+            "source": 0,
+            "cycle": 3094
+          },
+          {
+            "source": 1,
+            "cycle": 3248
+          },
+          {
+            "source": 0,
+            "cycle": 3325
+          }
+        ]
+      }
+    }
+  ]
+}

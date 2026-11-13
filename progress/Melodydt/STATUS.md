@@ -25,3 +25,9 @@
 - 已完成[方案](../../docs/decisions/0265-instruction-driven-cycle-estimation.md)与[首轮控制输入审计](../../work/Melodydt/265/README.md#快速周期评估)。两份历史归档的 MC/LC 镜像及描述符一致，恢复 192 次调用及 64 个 WAIT。12 份历史日志验证两种压力模式和三种 SRAM 初态；同模式下提前发起 EXEC 的两个作业分别相差 10,288 和 6,719 周期。
 - 已通过 Python 3.7 实物审计、7 个无效输入检查及项目管理检查。服务器本轮只读获取历史归档。本轮未提交新作业，未测整机周期或吞吐。
 - 下一步由 Melodydt 从具有完整端点和时间戳的短 RTL 用例冻结服务参数，先实现片上事件模型，再接入有限队列的 DDR。后续需从并行分支绑定同版本部署拓扑、DMA 物理地址与 DDR 配置，以及独立留出窗口。#265 进行中，PR 保持草稿，登记待合并，Projects 待核验和同步。
+
+## 2026-11-13 16:00（Asia/Shanghai，UTC+08:00）片上周期模型
+
+- [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 与[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 增加[单时钟事件原型](../../project/experiments/instruction_cycle/README.md)，显式建模队首发射、算子占用与发起间隔、共享端口、仲裁、接收端容量及 ACK 背压。已修正同拍争用曾由操作 ID 隐式决定的排序，现按端口优先级与端口内发起顺序。8 个本地用例和项目管理检查通过。
+- Slurm 107481 在第一组回执后因测试台结束路径触发超时，修正后 107488 在 c64/node3 用 4 核 6 秒完成（0:0）。真实 S 仲裁 RTL 的 54 个事件和历史作业 100343 的 27 笔 COPY 写接受到提交/释放逐拍一致。[作业、路径及散列](../../work/Melodydt/265/onchip-rtl-107488.json)
+- 下一步由 Melodydt 绑定实际 MC/LC 二进制到完整的短程拓扑和分阶段算子/存储服务，逐指令对账。DDR 及 Qwen2.5-3B 整机 tokens/s 仍待评估。#265 进行中，PR 草稿，登记待合并，Projects 待核验与同步。
