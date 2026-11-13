@@ -37,7 +37,35 @@ def check_sha(value, label):
 
 
 def read_json(path):
-    return json.loads(path.read_text(encoding="utf-8"))
+    def unique_pairs(pairs):
+        result = {}
+        for key, value in pairs:
+            require(key not in result, f"duplicate JSON key in {path}: {key}")
+            result[key] = value
+        return result
+
+    return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=unique_pairs)
+
+
+def validate_frozen_fields(data, frozen):
+    for key in ("schema_version", "issue", "owner", "repository", "branch", "inherited_commit",
+                "workload", "revisions", "checkpoint", "cases", "historical_inputs",
+                "runtime_artifact_names"):
+        require(data[key] == frozen[key], f"run override changes frozen field: {key}")
+    for name in PROFILES:
+        actual = {key: value for key, value in data["profiles"][name].items() if key != "runtime"}
+        expected = {key: value for key, value in frozen["profiles"][name].items() if key != "runtime"}
+        require(actual == expected, f"run override changes frozen platform: {name}")
+        for field, value in frozen["profiles"][name]["runtime"].items():
+            if value is not None:
+                require(data["profiles"][name]["runtime"][field] == value,
+                        f"run override changes verified runtime field: {name}/{field}")
+    for key in ("host", "user", "host_key_fingerprint", "job_prefix", "run_root", "partitions"):
+        require(data["server"][key] == frozen["server"][key], f"run override changes server field: {key}")
+    for key in ("verified_checkpoint_path", "verified_toolchain_path"):
+        if frozen["server"][key] is not None:
+            require(data["server"][key] == frozen["server"][key],
+                    f"run override changes verified server field: {key}")
 
 
 def validate_manifest(data):
@@ -115,6 +143,12 @@ def validate_manifest(data):
                 require(isinstance(value, str) and GIT_SHA.fullmatch(value), f"invalid {name}/{field}")
             else:
                 require(type(value) is int and value > 0, f"{name}/{field}: expected positive integer")
+        if name == "candidate_250":
+            for field, target in (("core_clock_hz", "core_clock_target_hz"),
+                                  ("ddr_bandwidth_bytes_per_second",
+                                   "ddr_target_bandwidth_bytes_per_second")):
+                require(runtime[field] is None or runtime[field] == data["profiles"][name][target],
+                        f"candidate runtime differs from frozen target: {field}")
 
 
 def safe_file(root, name):
@@ -155,25 +189,41 @@ def verify_index(root, path, expected=None, weights_only=False):
     return rows
 
 
-def verify_inputs(data, root, profile):
-    checkpoint = safe_file(root, "checkpoint")
+def verify_reference_files(data, checkpoint, reference, graphs):
+    expected_shards = {name for name in data["checkpoint"] if name.endswith(".safetensors")}
+    require({path.name for path in checkpoint.glob("*.safetensors")} == expected_shards,
+            "checkpoint has missing or additional safetensors shards")
     for name, digest in data["checkpoint"].items():
         verify_file(checkpoint, name, digest)
     expected_checkpoint = {name: digest for name, digest in data["checkpoint"].items()
                            if name.endswith(".safetensors") or name == "config.json"}
     vocab_size = data["workload"]["vocab_size"]
     for case in data["cases"]:
-        case_root = safe_file(root, f"reference/{case['id']}")
+        case_root = safe_file(reference, case["id"])
         tokens = read_json(verify_file(case_root, "tokens.json", case["tokens_sha256"]))
         receipt = read_json(verify_file(case_root, "receipt.json", case["reference_receipt_sha256"]))
         require(receipt["checkpoint_files_sha256"] == expected_checkpoint
                 and receipt["tokens_sha256"] == case["tokens_sha256"]
-                and receipt["batch"] == 1 and receipt["prompt_tokens"] == case["prompt_tokens"]
-                and receipt["generated_tokens"] == 128, f"{case['id']}: wrong reference receipt")
-        prompt = tokens["prompt"]
-        require(len(prompt) == case["prompt_tokens"]
-                and all(type(token) is int and 0 <= token < vocab_size for token in prompt),
-                f"{case['id']}: invalid prompt IDs")
+                and all(type(receipt[k]) is int and receipt[k] == expected for k, expected in {
+                    "batch": 1, "prompt_tokens": case["prompt_tokens"], "generated_tokens": 128,
+                    "parameter_count": data["workload"]["parameters"],
+                }.items()), f"{case['id']}: wrong reference receipt")
+        for kind, length in (("prompt", case["prompt_tokens"]), ("generated", 128)):
+            ids = tokens[kind]
+            require(isinstance(ids, list) and len(ids) == length
+                    and all(type(token) is int and 0 <= token < vocab_size for token in ids),
+                    f"{case['id']}: invalid {kind} IDs")
+
+    inputs = data["historical_inputs"]
+    require(inputs["onnx_external_data"] is not None, "external-data inventory is missing")
+    for name, digest in {**inputs["onnx"], **inputs["onnx_external_data"]}.items():
+        check_sha(digest, name)
+        verify_file(graphs, name, digest)
+
+
+def verify_inputs(data, root, profile):
+    verify_reference_files(data, *(safe_file(root, name)
+                                   for name in ("checkpoint", "reference", "graphs")))
 
     inputs = data["historical_inputs"]
     if profile == "legacy":
@@ -184,10 +234,6 @@ def verify_inputs(data, root, profile):
         rows = verify_index(weights_root, index, expected=inputs["weights_count"], weights_only=True)
         require(rows["generated/calibration.json"] == inputs["calibration_sha256"],
                 "calibration hash differs from independently pinned identity")
-    graphs = safe_file(root, "graphs")
-    for name, digest in {**inputs["onnx"], **(inputs["onnx_external_data"] or {})}.items():
-        if digest is not None:
-            verify_file(graphs, name, digest)
 
 
 def verify_deployment(data, root, profile):
@@ -197,8 +243,7 @@ def verify_deployment(data, root, profile):
     for name, artifact in names.items():
         if runtime.get(name) is not None:
             files[name] = verify_file(root, artifact, runtime[name])
-    if "build_inputs" in files:
-        verify_index(root, files["build_inputs"])
+    build_inputs = verify_index(root, files["build_inputs"]) if "build_inputs" in files else {}
     if "quantized_inputs" in files:
         verify_index(root, files["quantized_inputs"])
     if "images" in files:
@@ -211,8 +256,18 @@ def verify_deployment(data, root, profile):
                 "control images target a different topology")
         require(set(images["source"]) == {"ir_sha256", "hardware_sha256", "plan_sha256"},
                 "incomplete control-image source identity")
+        source_paths = target["source_artifacts"]
+        require(set(source_paths) == set(images["source"])
+                and len(set(source_paths.values())) == len(source_paths),
+                "control images need distinct pinned IR, hardware and plan files")
         for name, digest in images["source"].items():
             check_sha(digest, name)
+            source_path = source_paths[name]
+            require(source_path in build_inputs, f"unbound image source: {name}")
+            artifact = read_json(safe_file(root, source_path))
+            encoded = json.dumps(artifact, sort_keys=True, separators=(",", ":"),
+                                 ensure_ascii=False).encode("utf-8")
+            require(hashlib.sha256(encoded).hexdigest() == digest, f"image source differs: {name}")
         entries = images["images"]
         require({image["controller"] for image in entries} == set(controllers)
                 and len(entries) == len(controllers), "missing or duplicate control images")
@@ -230,6 +285,10 @@ def verify_deployment(data, root, profile):
             used_paths.add(path)
             require(type(image["bytes"]) is int and path.stat().st_size == image["bytes"] > 0,
                     f"wrong image length: {path}")
+            capacity = controller.get("capacity_bytes")
+            if capacity is not None:
+                require(type(capacity) is int and image["bytes"] <= capacity,
+                        f"image exceeds controller capacity: {image['controller']}")
 
 
 def blockers(data, profile):
@@ -244,6 +303,14 @@ def blockers(data, profile):
     return [key for key, value in checks.items() if value is None]
 
 
+def verify_server_bindings(data, assets):
+    checkpoint = safe_file(assets, "checkpoint")
+    require(Path(data["server"]["verified_checkpoint_path"]).resolve() == checkpoint,
+            "checkpoint path does not match the verified server binding")
+    python = Path(data["server"]["verified_toolchain_path"])
+    require(python.is_file(), "verified Python executable is unavailable on this host")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=MANIFEST)
@@ -254,6 +321,7 @@ def main():
     try:
         data = read_json(args.manifest)
         validate_manifest(data)
+        validate_frozen_fields(data, read_json(MANIFEST))
         print("PASS: manifest structure and pinned identifiers")
         if args.assets:
             verify_inputs(data, args.assets.resolve(), args.profile)
@@ -271,7 +339,8 @@ def main():
                 print(f"PENDING: {name}")
             print("BLOCKED: submission preflight")
             return 2
-        print("PASS: submission preflight")
+        verify_server_bindings(data, args.assets.resolve())
+        print("PASS: frozen input and deployment file verification")
         return 0
     except (OSError, ValueError, TypeError, KeyError) as error:
         print(f"FAIL: {error}", file=sys.stderr)
