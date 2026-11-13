@@ -61,6 +61,25 @@ def fixture():
 
 
 class RouteAdmissionTest(unittest.TestCase):
+    def test_placed_parent_cuts_require_terminal_evidence_and_candidate_scope(self):
+        _, _, _, catalog, base, _ = fixture()
+        base['assembly_state'] = 'placed_parent_cuts'
+        del base['fixed_native_nets']
+        base['views'] = {kind: {'path': kind, 'sha256': 'a' * 64}
+                         for kind in ('odb', 'cut_identity', 'leaf_access', 'parent_access')}
+        for endpoint in base['endpoints'].values():
+            endpoint['anchor_class'] = 'parent_escape_required'
+        self.assertFalse(elaborate({'P0-P1': []}, catalog, base, {})['physical_qualified'])
+        for key, value, reason in (
+                ('state', 'frozen', 'candidate base'),
+                ('fixed_native_nets', {'claimed': {'driver': 'open-out'}}, 'native realizations'),
+                ('views', {'odb': base['views']['odb']}, 'terminal evidence')):
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, reason):
+                elaborate({'P0-P1': []}, catalog, {**base, key: value}, {})
+        del base['endpoints']['open-in']['anchor_class']
+        with self.assertRaisesRegex(ValueError, 'access class'):
+            elaborate({'P0-P1': []}, catalog, base, {})
+
     def test_product_search_excludes_fast_provider_missing_from_physical_dispatch(self):
         from run import compile_event_ir
 

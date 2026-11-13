@@ -140,6 +140,11 @@ def validate_base(base):
     require(base.get('schema_version') == VERSION, 'unsupported base schema')
     require(base.get('state') in ('candidate', 'frozen'), 'unknown base state')
     require(base.get('base_id'), 'missing base identity')
+    parent_cuts = base.get('assembly_state') == 'placed_parent_cuts'
+    if parent_cuts:
+        require(base['state'] == 'candidate', 'placed parent cuts require a candidate base')
+        require(not base.get('realizations') and not base.get('fixed_native_nets'),
+                'placed parent cuts do not establish qualified native realizations')
     # These are references, not a second manually maintained geometry database.
     for view in base.get('views', {}).values():
         require(view.get('path') and len(view.get('sha256', '')) == 64, 'invalid view reference')
@@ -171,6 +176,12 @@ def validate_base(base):
                         'invalid resource translation')
             require(all(pin.get('assembly') in names for pin in base['endpoints'].values()),
                     'endpoint outside resource assembly')
+        elif parent_cuts:
+            require({'odb', 'cut_identity', 'leaf_access', 'parent_access'} <= views.keys(),
+                    'placed parent cuts require ODB and terminal evidence')
+            require(all(pin.get('anchor_class') in ('leaf_m10', 'parent_escape_required')
+                        for pin in base['endpoints'].values()),
+                    'placed parent cut endpoint must declare its access class')
         else:
             require(required <= views.keys(), 'bound endpoints require ODB/netlist/GDS references')
 

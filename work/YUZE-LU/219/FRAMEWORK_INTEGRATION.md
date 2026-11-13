@@ -244,6 +244,56 @@ RoPE、KV 等同样需要寻找实际实现或重新编码，因此补一个 Gat
 | [数据链读回](v2-data-link-readback.json) | `f61bff2968c32d0a18bf4414f6c928804b3d415ca6b38a57de5f625511f93150` |
 | [全包描述符头核对](v2-native-header-audit.json) | `d7b5eb2a476c4b13d2798a4091459e84bdd83dab4cb2499fd655fd3e2b39d976` |
 
+## 联合摆位的 P–DMA 交接与 main 端点对照
+
+从 109408 同一份封存程序的目标掩码和真实服务签名派生 1248 个包控制连接。
+三 P 的 `(0x02505001,0x02504d02,2)` scope 调用另需描述符、512 位权重和 M60 完成栅栏。
+在 #185 的联合 A 摆位中绑定 4344 个 P–DMA 连接成员，另核对 18 项常量接收位。
+用联合前 DEF 的实际端口恢复 93 个描述符驱动别名。按电气驱动合并后导出 5132 根网、
+10724 个物理端点。交接绑定 #260 封存包散列。硬件服务兼容性不由端点覆盖推断。
+
+远端 109556 用 OpenDB 检查全部 10724 个选中端点的归属、方向及 M10 几何。其中
+2310 个是叶宏 ITerm，8414 个是已放置的父层逃线 BTerm。后者在原始 cut ODB 中没有
+下层连线。另从已有 DRT 试布 ODB 读回本次选中的 2129 个控制 BTerm，各自均有
+下层连线。该试布 ODB 为独立的控制逃线供体。剩余 6285 个选中父层数据端点尚未下层布通。
+
+Algo2 `4ebd2a2fc` 直接读取 `algorithm2-input.json` 与同目录的 `--handoff`。
+全量输入通过接口验证，所有端点各自有几何候选接入点。109559 的每网 12 次扩展
+试布完成 1 根，5129 根达到预算，2 根报告 `grid_access_not_found`。
+这些诊断来自有限预算，不作为不可布的证明。候选底座 `placed_parent_cuts` 要求实际 ODB
+及端点来源，产品入口仍要求整体冻结视图。
+
+联合 A 的 P 网表为 `66cc8f9c`，摆位也与 main 九组不同。另用 main P2545 的 ODB
+对照同一逻辑合同。每组 P 的 678 个描述符逻辑位中，647 个有组级 M10 接点，
+31 个与已有接点共用同一个原生网。684 个权重位和 86 个栅栏位在 M60 叶宏上直接有
+M10 几何。独立放置的 DMA v45 ODB 有对应的 4344 个逻辑 BTerm，均需父层引出。
+这两项审计把 main 侧的数据通路问题缩小到同一摆位上的 DMA 引出、配套控制和服务合同。
+外部 DDR、其余 DMA 客户端、KV 读写、全图原生 provider、时钟复位和联合验收仍待绑定。
+
+远端目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em/full-graph-zwl0Tr/merged-bmMd5X/native-request-6WI0tH/joint-ddr-4C8sHe`。大文件留在服务器。
+复跑将本分支 `project/experiments/block_synthesis` 和 Algo2 `4ebd2a2fc` 的
+`project/experiments/upper_router` 加入 `PYTHONPATH`，然后执行：
+
+```text
+python -B project_joint_ddr.py JOINT PREJOIN_DEF NATIVE_PACKAGE CONTROL_PROJECTION OUT
+python -B UPPER_ROUTER/run.py OUT/algorithm2-input.json OUT/routes.json --handoff OUT --rounds 1 --max-expansions 12
+```
+
+`JOINT` 是远端 `issue185-joint-packet-dma-bound-20261113-01`。
+`PREJOIN_DEF` 是同级 `issue185-joint-flat-layout-20261113-01/seed-A.def`。
+`NATIVE_PACKAGE` 和 `CONTROL_PROJECTION` 分别是 `joint-ddr-4C8sHe` 上一级的
+`request-runtime-r2` 和 `v2-native-control-request-r2`。 `OUT` 为新建空目录。
+
+| 工件或作业 | SHA-256 |
+| --- | --- |
+| `algorithm2-input.json` | `3db5dee214335d53fd2b1e3ee1bf720183540541c4142363ae290ca6cf5b5c7b` |
+| `handoff.json` | `ff832bf88d6c78fd77bfc3528c592b62dc3b666952ee01b009a25aba6b0bd59f` |
+| `report.json` | `fab55c8584e1c7bab02e54025e8cc58badcbab9d99a344bb343663acc2732215` |
+| 109556 OpenDB 读回 | `3cd7925cf49204934bc1424c98b8da08f79996bba56d4d0973cfc1633d094dfd` |
+| 109559 有限预算试布 | `34c4b3941946982b75dff20b751aa00c1a4673909a11302a33e8477a7d45d385` |
+| 109565 的 407 项算法回归 | `19dfa801ea54d76c90ab4470e99071068f7bc7a59c13c05c02917dc4bcb75cbd` |
+| 109557 和 109560 的 main P 与 DMA 对照 | `1e974aa553632588a52f63571c475e11008b6dd0e0b7b9560a622935e63f5db7` |
+
 ## 远程回执
 
 目录 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em`。
