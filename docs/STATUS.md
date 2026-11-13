@@ -1,5 +1,9 @@
 # 当前状态
 
+2026-11-09，Issue240继续进行10 token/s双路线研究，PR241保持draft。[新回执](../work/YUZE-LU/240/ten-token/RESULTS.md)：102.4 GB/s、3P/K16/E8的条件SystemC预测context512为10.7298、context640为10.1907、context2048为6.6501 token/s；固定17.1 GB/s的W4/head8、W2/head8仅4.9202/6.7335且量化未验收。新增24项审计、61项负向/边界检查，原生N批处理66440值及K16/K32新M共242个响应逐位通过。M1–M10预制/独立叶宏/局控分组/M11–M12顶层方法保持，新宽端口与算术须另版本冻结；整图数值、联合RTL、物理及能耗未完成，不能宣称底座已实测10或计为DP收益。原研究结果保留如下。登记/看板缺项沿用Issue7，不自合并。
+
+2026-11-09，[Issue #240](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/240) / [PR #241](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/241) 交付独立 SystemC Block 性能研究：34项计时/工作量审计、225算术小例、4资源/ACK、5冒烟及9个原M RTL小例通过。新宏/接口假设下，Qwen派生context512 decode预测 W16 1.6821、W8 2.7146 token/s；W8未量化验收，新增硬件未做RTL/物理，本轮不是#220算法收益或现有五类底座实测。私有S仍16KiB、顶层后制方法不变；同条件FPGA目标尚未证明。详见[研究回执](../work/YUZE-LU/240/RESULTS.md)。待独立审查；登记PR5 pending，缺board配置，Projects unverified/同步pending。
+
 2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 
 2026-11-08，用户授权将母控 [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 合入 main，并在[五类 Block 与母控统一入口](experiments/assets/five-leaf-bases/README.md)并列索引源码、图册及双格式验收包。工程证据不变；合并结果以 PR 在线回执为准，授权整合不冒充独立审查或九实例系统验收。
