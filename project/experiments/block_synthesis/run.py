@@ -121,7 +121,9 @@ def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependenc
                         native_loops=None, route_base=None, route_catalog=None,
                         route_scope='product', control_fabric=None):
     from event_deploy import digest
+    from event_lowering import MissingImplementations
 
+    provenance = {'graph_sha256': digest(model), 'input_hardware_sha256': digest(hardware)}
     try:
         if native_loops is None:
             from event_lowering import lower
@@ -133,13 +135,15 @@ def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependenc
             from event_loop_graph import lower
 
             lowered, resolved, audit = lower(model, hardware, *native_loops)
+    except MissingImplementations as error:
+        return {'status': 'blocked_lowering', 'reason': str(error), 'lowering_coverage': error.coverage, **provenance}
     except Unsupported as error:
-        return {'status': 'blocked_lowering', 'reason': str(error)}
+        return {'status': 'blocked_lowering', 'reason': str(error), **provenance}
     result = compile_event_ir(lowered, resolved, budget=budget, width=width,
                               emit_dependencies=emit_dependencies, emit_outputs=True,
                               route_base=route_base, route_catalog=route_catalog,
                               route_scope=route_scope, control_fabric=control_fabric)
-    result.update(graph_sha256=digest(model), input_hardware_sha256=digest(hardware))
+    result.update(provenance)
     if native_loops is not None:
         result['native_loop_verification'] = audit
     return result

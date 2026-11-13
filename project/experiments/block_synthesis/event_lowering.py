@@ -117,6 +117,18 @@ def indexed_bindings(node, model, hardware):
     return result
 
 
+class MissingImplementations(Unsupported):
+    """The graph is well-formed enough to identify its missing bindings."""
+
+    def __init__(self, missing, total):
+        super().__init__(missing[0]['reason'])
+        self.coverage = {
+            'total_graph_nodes': total,
+            'nodes_with_event_bindings': total - len(missing),
+            'missing_bindings': missing,
+        }
+
+
 def lower(model, hardware):
     """Produce candidates, without assigning any node to a particular Block.
 
@@ -159,6 +171,7 @@ def lower(model, hardware):
 
     live = set(model['outputs']) | initial
     tasks = []
+    missing_implementations = []
     for node in nodes:
         name = node['id']
         inputs, outputs = node['inputs'], node['outputs']
@@ -205,14 +218,19 @@ def lower(model, hardware):
             binding.setdefault('resources', [])
             binding.setdefault('nets', [])
             bindings.append(binding)
-        if not bindings and node['op'] == 'Gather' and node.get('domain', '') == '':
+        domain, operator = node.get('domain', ''), node['op']
+        reason = f'{name}: no qualified event recipe for {domain}/{operator} with inputs {profile_in} and outputs {profile_out}'
+        if not bindings and operator == 'Gather' and not domain:
             try:
-                bindings = indexed_bindings(node,model,h)
-            except Unsupported as exc:
-                raise Unsupported(f'{name}: {exc}') from exc
+                bindings = indexed_bindings(node, model, h)
+            except Unsupported as error:
+                reason = f'{name}: {error}'
         if not bindings:
-            raise Unsupported(f'{name}: no qualified event recipe for {node.get("domain", "")}/{node["op"]} '
-                              f'with inputs {profile_in} and outputs {profile_out}')
+            missing_implementations.append({
+                'node': name, 'domain': domain, 'operator': operator, 'reason': reason,
+                'inputs': profile_in, 'outputs': profile_out,
+            })
+            continue
         for binding in bindings:
             for stage in binding['event_stages']:
                 written = [w for w, value in stage.get('outputs', {}).items() if value in external_outputs]
@@ -226,6 +244,8 @@ def lower(model, hardware):
         raise Unsupported('no graph producer or backing for outputs ' + str(sorted(missing)))
     if external_outputs - backing - producers.keys():
         raise Unsupported('external outputs need a DDR image or a graph producer')
+    if missing_implementations:
+        raise MissingImplementations(missing_implementations, len(nodes))
     sizes = spec.setdefault('value_bytes', {})
     for value in sorted(live):
         size = value_size(values[value])
