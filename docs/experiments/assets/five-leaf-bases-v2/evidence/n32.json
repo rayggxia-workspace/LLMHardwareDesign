@@ -1,0 +1,118 @@
+{
+  "passed": true,
+  "native_leaf_accepted": true,
+  "top": "n_s32_softmax_s128",
+  "signal_pins": 414,
+  "die_um": [
+    336,
+    336
+  ],
+  "added_SRAM_B": 0,
+  "clock": {
+    "schema": "block-v1-300mhz-contract/1",
+    "clock_ns": 3.3333333333333335,
+    "uncertainty_ns": 0.1,
+    "clock_transition_ns": 0.05,
+    "input_delay_max_ns": 0.8,
+    "input_delay_min_ns": 0.2,
+    "output_delay_max_ns": 0.8,
+    "output_delay_min_ns": 0.2,
+    "input_driver": {
+      "cell": "BUF_X2",
+      "pin": "Z"
+    },
+    "output_load_pf": 0.05,
+    "corner": "NangateOpenCellLibrary_typical",
+    "status": "Selected revised-leaf design contract; actual300MHz closure not yet measured",
+    "rationale": [
+      "3.333333333ns clock; symmetric0.8ns I/O windows leave1.633333333ns total for declared external interconnect after0.1ns uncertainty, rather than copying old2ns delays.",
+      "50fF receiver load is explicit macro-boundary test budget, including2fF receiver and48fF local wire allowance; eventual complete escape load must be reported separately and must not silently inherit end-to-end300MHz qualification.",
+      "No false or multicycle exceptions added. Pipeline stages, clock/drivers/FIFOs and all physical resources priced in native frozen macro."
+    ]
+  },
+  "sealed_receipt_sha256": "52baa5e3a4c4e2b137847bcbdbee8b8e8ea9d1f5b09e7086c7bbff9913c280de",
+  "native_routing_layers": [
+    "metal1",
+    "metal2",
+    "metal3",
+    "metal4",
+    "metal5",
+    "metal6",
+    "metal7",
+    "metal8",
+    "metal9",
+    "metal10"
+  ],
+  "scope": "Independent Nangate45 TT leaf, including exact M10 terminals.",
+  "hierarchical_lib_qualified": false,
+  "product_M11_M12_qualified": false,
+  "final_files": {
+    "6_final.v": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-deliver01/delivery/6_final.v",
+      "sha256": "3c7c2db1e6046dcad5d02509996930fa450f1656dc6ace077606418b360ac972",
+      "bytes": 4317466
+    },
+    "6_final.sdc": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-deliver01/delivery/6_final.sdc",
+      "sha256": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+      "bytes": 715
+    },
+    "6_final.def": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-deliver01/delivery/6_final.def",
+      "sha256": "615766d81879c6a54aa6bc4cdf9e80e2db4f7a363971a81048b005af84f6d2cb",
+      "bytes": 24026825
+    },
+    "6_final.odb": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-deliver01/delivery/6_final.odb",
+      "sha256": "cdc9278d4c874bc62de62d5d27f2feddc250e187a505a6ef460d994b187962ba",
+      "bytes": 35952177
+    },
+    "6_final.spef": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-deliver01/delivery/6_final.spef",
+      "sha256": "d6fabca78ce211a46e6dad7bbfa9fa7bfa3982bbd86e566d135eab1b93b965f4",
+      "bytes": 26322663
+    },
+    "6_final.gds": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-deliver01/delivery/6_final.gds",
+      "sha256": "263c15f1364f62312abac3fc13e2851cf5aa7ccca34dcc9203cf43f18f262eb8",
+      "bytes": 22187348
+    },
+    "physical-pins.tsv": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-deliver01/delivery/physical-pins.tsv",
+      "sha256": "730307343596bd23e53928e2788cb97c587d9f7805587106f2b116e207b4e7c3",
+      "bytes": 20198
+    }
+  },
+  "gate_receipts": {
+    "physical": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-audit01/audit/physical/five-macro-physical.json",
+      "sha256": "95b8912469520334495ea7775a214900c957fef3af55dc0aaed94352e9de1756",
+      "receipt": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-audit01/audit/physical/receipt.json",
+      "receipt_sha256": "75a6e4e9366f0d4a0a3974c7077fbe67e71e4e9fdeeaa86755cc022f0804d873"
+    },
+    "drc": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-audit01/audit/drc/drc.json",
+      "sha256": "2069182194885054f05e341f93634b54879aaf120428962d76980c18c5808ba8",
+      "receipt": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-audit01/audit/drc/receipt.json",
+      "receipt_sha256": "6d5c936987b66a54772bb4e79df4d1924c4504ed865bae5906cc82155004b185"
+    },
+    "function": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-function01/function/final-function.json",
+      "sha256": "69741e2637ef7a5e60622f58251e7dbf9690bff01904ad877cc7d2bf5864bc79",
+      "receipt": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-function01/function/receipt.json",
+      "receipt_sha256": "773ecbaa1715a02b45af811ce4864bb54c91bf1f75fba6f6bdb3e037225c6b4c"
+    },
+    "formal": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-formal01/formal/formal.json",
+      "sha256": "400557bee8eb24a0c5108f874530af6f83ba5e144a43e875b56c50e49ae98462",
+      "receipt": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-formal01/formal/receipt.json",
+      "receipt_sha256": "95fca388c85cea6caa6cf6d4134817bea4508646355de121f9152466c99b0ff8"
+    },
+    "main_n_density": {
+      "path": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-audit01/audit/density/main-n-density.json",
+      "sha256": "8c0e0e674deb3e5d664b28a8f7237fce97b0157bdff0a7a2e48974ae2dcea909",
+      "receipt": "/public/home/yuzelu/project-circuit/issue252-native32-20261111-side-n32-compact-audit01/audit/density/receipt.json",
+      "receipt_sha256": "235311120fa7c3e916cdf6af46a09856e73ab661c7d14bc2820b65b352486b63"
+    }
+  }
+}

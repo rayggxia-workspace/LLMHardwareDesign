@@ -1,0 +1,121 @@
+{
+  "scope": "Issue 250 exact U39 paired-escape well-eco02, Nangate45 M1-M10, 300 MHz TT",
+  "remote_exact_artifact_dir": "/public/home/yuzelu/project-circuit/issue250-u39-on-u38-exact-incremental-route-20261113-02-paired-escape-metal-mask-eco01-well-eco02",
+  "remote_unchanged_stock_dir": "/public/home/yuzelu/project-circuit/issue250-u39-on-u38-exact-incremental-route-20261113-02-paired-escape-metal-mask-eco01-well-eco02-original-full01",
+  "remote_exact_gate_dir": "/public/home/yuzelu/project-circuit/issue250-cu-v3-u39well02-ideal-join-gates-20261113-01",
+  "remote_raw_artifact_sha256": {
+    "native.gds": "170bc06eedf85119c59d3f65cade6e42aed3d8db56edfaa19249fe602469ce71",
+    "native-filled.def": "5a7a44c49a70de3a89337486b4b833011b5c212e7ce8ecbc3a8fb42a774ef29d",
+    "native-filled.odb": "55ca74e568c9a56ed857f71e12b471bcac03ef79315c127cb41767f00932091c",
+    "native-filled.v": "844fe7b36c85dfec621e3978ba6a3d773b0bf8de6fdfadf398c90120f81db268",
+    "native.spef": "38ce97bfe151196b1712c9ec0e38325f476a86c4cb3002cf52548a0bbd122c9b"
+  },
+  "original_stock": {
+    "slurm_step": "103616.32",
+    "klayout": "0.30.12",
+    "deck": "/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc",
+    "deck_sha256": "4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147",
+    "report_lyrdb_sha256": "1ca86c4b913f29c7e3a3f5d76a320b6d187bf92416c8372ecc13a4a457ea1a82",
+    "categories": 129,
+    "rule_output_operations_checked": 133,
+    "nonzero_rule_outputs": 0,
+    "drc_items": 0,
+    "antenna_output_rules": 10,
+    "antenna_items": 0,
+    "engine_reported_elapsed_seconds": "4719.450"
+  },
+  "jobs": {
+    "103616.32": {
+      "state": "COMPLETED",
+      "elapsed": "00:55:08",
+      "start": "2026-11-13T03:37:39",
+      "end": "2026-11-13T04:32:47",
+      "exit_code": "0:0"
+    },
+    "104237": {
+      "state": "COMPLETED",
+      "elapsed": "00:02:09",
+      "start": "2026-11-13T03:38:34",
+      "end": "2026-11-13T03:40:43",
+      "exit_code": "0:0"
+    },
+    "104363": {
+      "state": "COMPLETED",
+      "elapsed": "00:05:12",
+      "start": "2026-11-13T03:59:25",
+      "end": "2026-11-13T04:04:37",
+      "exit_code": "0:0"
+    }
+  },
+  "electrical": {
+    "setup_slack_ps": "17.839730",
+    "hold_slack_ps": "0.566186",
+    "original_liberty_signed_union": {
+      "max_capacitance": {
+        "signed_rows_checked": 200,
+        "signed_violations": 0,
+        "flagged_violations": 0,
+        "worst_pin": "_46440_/ZN",
+        "limit": "26.054399490",
+        "actual": "26.036338806",
+        "slack": "0.018060436"
+      },
+      "max_slew": {
+        "signed_rows_checked": 200,
+        "signed_violations": 0,
+        "flagged_violations": 0,
+        "worst_pin": "local_group.datapath.n32/cmd_tag[20]",
+        "limit": "0.199000001",
+        "actual": "0.189508438",
+        "slack": "0.009491561"
+      },
+      "max_fanout": {
+        "signed_rows_checked": 128,
+        "signed_violations": 0,
+        "flagged_violations": 0,
+        "worst_pin": "program_store.single_bank.storage/dout0[0]",
+        "limit": "4",
+        "actual": "1",
+        "slack": "3"
+      }
+    },
+    "power_grid": {
+      "VDD": "connected",
+      "VSS": "connected"
+    }
+  },
+  "native_interfaces": {
+    "ports_m10": 2345,
+    "centered_m10": 2315,
+    "alternate_directed_m10": 30,
+    "sram_m3_same_owner_lands": 267,
+    "foreign_contacts": 0,
+    "exact_n32_contacts_at_declared_owner": 160
+  },
+  "gates": {
+    "passed": 15,
+    "cases": [
+      "normal-1-143.log",
+      "normal-2-143.log",
+      "normal-2-144.log",
+      "stalled-1-143.log",
+      "stalled-2-143.log",
+      "stalled-2-144.log",
+      "fault-1-143.log",
+      "fault-2-143.log",
+      "fault-2-144.log",
+      "stalled-fault-1-143.log",
+      "stalled-fault-2-143.log",
+      "stalled-fault-2-144.log",
+      "reset-1-143.log",
+      "reset-2-143.log",
+      "reset-2-144.log"
+    ],
+    "proof_sha256": "953ca59b733844a5df036dc8441af22aad778d42f4dffb9464cb39f1b681554b",
+    "cut_ports": 770,
+    "restored_logical_owners": 656,
+    "moved_gate_terminals": 1295,
+    "scope": "Exact C V3/U39/MC/control-switch/relay gate netlists. The simulator ideally joins the preserved upper M10 port groups. The signed-off lower ODB, DEF and GDS are untouched. OpenROAD's retained legacy cut port declarations have no active references."
+  },
+  "raw_files": "Large raw artifacts are referenced by their verified SHA-256 values and retained remote paths."
+}

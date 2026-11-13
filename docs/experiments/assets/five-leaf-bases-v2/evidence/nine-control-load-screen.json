@@ -1,0 +1,66 @@
+{
+  "total_directed_terminal_edges": 2613,
+  "native_physical_nets": 1631,
+  "by_kind": {
+    "mother_switch": {
+      "networks": 158,
+      "positive_at_ground": 154,
+      "positive_at_isolated": 154,
+      "worst_ground": {
+        "margin_ff": 28.5416849,
+        "site": "sw",
+        "port": "rx_valid",
+        "sinks": 1
+      },
+      "worst_isolated": {
+        "margin_ff": 15.730741000000002,
+        "site": "sw",
+        "port": "rx_data[23]",
+        "sinks": 1
+      },
+      "unknown": 4
+    },
+    "shared": {
+      "networks": 123,
+      "positive_at_ground": 68,
+      "positive_at_isolated": 20,
+      "worst_ground": {
+        "margin_ff": -24.323771150000013,
+        "site": "mc",
+        "port": "tx_data[123]",
+        "sinks": 9
+      },
+      "worst_isolated": {
+        "margin_ff": -68.07459999999999,
+        "site": "mc",
+        "port": "tx_data[45]",
+        "sinks": 9
+      },
+      "unknown": 0
+    },
+    "switch_local": {
+      "networks": 1350,
+      "positive_at_ground": 1278,
+      "positive_at_isolated": 1275,
+      "worst_ground": {
+        "margin_ff": 3.4743760999999935,
+        "site": "sw",
+        "port": "lc_tx_ready[3]",
+        "sinks": 1
+      },
+      "worst_isolated": {
+        "margin_ff": -24.943391000000005,
+        "site": "sw",
+        "port": "lc_tx_ready[3]",
+        "sinks": 1
+      },
+      "unknown": 72
+    }
+  },
+  "limitations": [
+    "direct connection only; positive values exclude top R, C, skew and slew",
+    "clock/reset and programming/configuration paths not included",
+    "transport_drained_i needs system transport-idle reduction, not only the switch flag",
+    "exact U39 v02 standalone passed original full DRC; P remains a physical candidate"
+  ]
+}
