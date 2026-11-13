@@ -1,0 +1,97 @@
+{
+  "recorded_at": "2026-11-09T12:12:09.699788+08:00",
+  "job": 101543,
+  "scope": "Only own PENDING101486 held/redirected/released after owner/state checks. No running or other-user jobs modified.",
+  "chain": "101543->101486",
+  "allocation": "single node6x10; c64/c96/debug30min",
+  "at_most_one_own_job_running": true,
+  "actions": [
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "101486",
+        "-o"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "hold",
+        "101486"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "101486",
+        "-o"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--hold",
+        "--dependency=afterany:101535",
+        "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/recipe-matrix-001/slurm-%j.log",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/recipe-matrix-001/recipe_matrix.sbatch",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/recipe-matrix-001"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "101543",
+        "-o"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "update",
+        "JobId=101486",
+        "Dependency=afterany:101543"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "101486",
+        "-o"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "release",
+        "101543"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "release",
+        "101486"
+      ],
+      "returncode": 0
+    }
+  ],
+  "full_journal_sha256": "a4ce2fac15a5bcb14fe41d9dec713dea47a239ae05268ca67bcfd54a79b42245",
+  "remote_journal": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/recipe-matrix-001/submission.json"
+}

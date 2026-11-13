@@ -1,5 +1,57 @@
 # YUZE-LU 的进度
 
+## 2026-11-09 13:22 CST：Issue234程序级SystemC
+
+[Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，in_progress。
+真实compact64母控/局控驱动E13/S/N Stats2/Exp1，原生132次、SystemC内核132次，数值/镜像/时间一致；四损坏镜像拒绝。
+1.300/1.370us含行为PM，不作通用服务系数/整网时间。810文件7.769MB已全成员/远端SHA核验；驱动首次watchdog失败留档，无硬件改动。
+101543 COMPLETED0:0/15m40s，十八样本的logits/.02/argmax/全部72KV通过；是单列配方修复，非DP收益，非连续生成，未覆盖先前导图严格门。
+连续驱动已接候选与resume身份，D128六场景待冻结提交。41项检查及结构/语法/diff通过。
+固定九组/3M/位宽/原预算，完整D128、整网SystemC时间/总J/token和FPGA双门未完成；下一步整数KV与模型组装。
+登记PR5 pending，看板unverified/同步pending，审查待指定；见[账本](../../work/YUZE-LU/234/README.md)。
+
+## 2026-11-09 12:26 CST：Issue234共享S服务的SystemC联动
+
+[Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，in_progress。
+新增真实SystemC U包服务模型：S仲裁/注册返回、E/N服务FSM及叶流水独立推进，不读取已测总时长或预计算开始时间。
+每初态341个命令/S请求返回/完成ACK事件与真实RTL完全一致，三初态共1023；原数据/保持/背压断言保留，未知输入拒绝。
+49文件200783字节包完整成员/远端SHA核验；仍只验串行服务链，未验同时E/N争用、LC镜像/部署、整网或能量。
+41项单位检查及管理结构检查通过。101543仍PENDING(Resources)，12:24队列预报12:47:20但不承诺，链101543→101486保持6×10单节点。
+固定九组/3M/原预算继续；完整3B D128与整网SystemC token/s/总J/token、公开FPGA双门仍未达标。登记/看板/审查缺项见账本。
+
+## 2026-11-09 12:12 CST：Issue234现有E/N/S服务与完整形状矩阵
+
+[Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，in_progress。
+固定九组/3M及原外存预算；E13将规范S32转成[x,0]后经S供N Stats2，11输入×三初态真实RTL通过，全部写确认/读保持/完成背压断言保留。
+整数ps时钟检查通过；旧测试台时基、实数时间换算和启动路径错误完整留档。160文件0.732MB包成员/远端SHA已核验；无硬件变化，无LC程序/整网时间或能量主张。
+101543完整形状数值矩阵已冻结提交（P128/P512 prefill、P512 decode，RMS1/2且门乘细6位），12:12仍PENDING(Resources)；链101543→101486，单节点6×10、至多一个本人benchmark运行。
+101486仍首token且源不变。完整3B D128、整网SystemC token/s/总J/token与FPGA双门仍未完成。登记PR5 pending，看板unverified/同步pending，审查待指定。
+
+## 2026-11-09 11:53 CST：Issue234数值候选与N模型
+
+[Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [Draft PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，in_progress。
+候选101535 FAILED1:0/2m59s；P0Q2三样本修复通过、P0Q1仍失败原门，其他四形状通过保持。FFN低行down误差3.18–4.73%降至0.081–0.104%，
+这是数值配方修复，DP收益零；18次同候选程序与旧adapter逐位一致，不冒充默认程序等价。60文件5.147MB已完整SHA回收。
+N SystemC246服务与真实RTL/最终网表三初态共1476次时序一致，独立isqrt核对因子，八非法描述符拒绝；7个负输入证实旧Exp Stats1语义错误，Stats2仍需包构造/LC lowering验收。
+107文件24.116MB包已完整成员/远端SHA核验。41项单位检查、管理结构、语法及diff检查通过；原生校准独立记录。
+新增完整主场景数值矩阵脚本（P128/P512 prefill、P512 decode，RMS1/2且门乘细6位），尚未提交作业；101486仍等Priority、源未改。
+完整3B D128、整网SystemC token/s/总J/token、FPGA双门槛仍未达标，固定九组/原预算继续优化。登记PR5 pending，看板unverified/同步pending，审查人待指定；见[账本](../../work/YUZE-LU/234/README.md)。
+
+## 2026-11-09 11:29 CST：Issue234组件校准继续
+
+[Issue234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) / [草稿PR235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)，仍in_progress。
+固定九组/3M和现有外存预算先优化，扩容另评。M Execute真实SystemC双银行/缩放流水8192描述符与原生三初态一致、五非法描述符拒绝。
+P_64原程序在RTL/最终父层网表三初态及匹配idle共12次通过、窗口363拍；原Lib/RC六份父层功耗采样及1427天线输入逐项核对。
+父层增量0.451–0.782nJ/该程序，初态差异保留，未包含M/G/S内部能量，不作整块或通用调用系数。两个新包约92MB、513文件成员/本地/远端SHA一致。
+41项单位检查及管理结构检查通过。精度候选101535等待资源，链101535→101486、单节点6×10；后者仍只请求首token，不冒充D128。
+完整3B连续D128、校准整网SystemC时间/总J/token和公开FPGA双指标尚未达标，继续开发，不关闭任务。
+详见[账本](../../work/YUZE-LU/234/README.md)；登记PR5 pending，看板无配置/Projects能力，unverified/同步pending，独立审查人待指定。
+
+## 2026-11-09（CST）Qwen3B SystemC时间/能耗与充分优化对照
+
+[Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234)，独立	ask/234-systemc-benchmark，in_progress；[Draft PR #235](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/235)。10:42 CST：用户确认先固定九组/3M和外存预算，优化后再评估扩容，约束及旧IR SHA已记录。母控SystemC五场景408次执行/4008事件与RTL/最终网表三初态一致，含完整CALL参数及返回仲裁，仍仅双目标组件。串行有限地址分配六个完整形状通过独立存活/重叠检查，516434个冻结原地址抽查通过；64GiB仅容量诊断，不选定物理预算，未完成DP并行/数值RAM整程。两个新包33MB已逐文件及远端SHA核对。41项检查通过。101514已失败原质量门，18次与旧adapter逐位一致；定位FFN小值行门乘舍入经down投影放大，新更细S32格式候选待远程验证，不计DP收益；tiny诊断四token恢复通过。101486首token仍PENDING。完整3B D128、整系统SystemC时间/总J/token和FPGA双指标尚未达标，继续开发；算法/后端/配方/硬件收益分列。硬件Issue238/PR239独立，扩容暂缓。见[证据账本](../../work/YUZE-LU/234/README.md)。登记PR5 pending，无board配置/Projects能力，看板unverified/同步pending，沿用Issue7交接。
+
+
 ## 2026-11-08（CST）U 原生入口和双向发送修复
 
 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) → `in_review`；[PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 待独立审查。独立 TX 槽和普通三源入口修复后，两版重新综合并通过完整原版 GDS DRC 0、TT 300 MHz、电气/PG及三档代表上层 RC。U_128 setup/hold +255.014/+14.595 ps，U_64 +73.082/+0.212 ps；最终网表 48/48、78/78 全部通过。两包及全部 1,389/2,101 文件回收核验成功，31 硬件源文件与审查代码一致。[最终回执](../../work/YUZE-LU/212/u-native-fix.md)。P 不变。用户已授权将 #221 合入 main；五类图册 U 两版已绑定新验收包，P/C/F/J 图源不变。实际合并状态以 PR 在线回执为准，Issue 在线 assignee 未指定。登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，复用接入交接 Issue7。
@@ -170,3 +222,7 @@
 用户明确授权将主线PR #8、并发PR #10及H1 PR #17合入main，并将两份参考HTML归档到ref-project/llm-routing/docs/。以上旧记录中的待授权／不自合并描述是当时状态，本次按用户的新授权执行，不伪造独立审查批准。H2工作树及运行任务保持独立。本次验证与限制见[整合回执](../../docs/handoffs/2026-10-23-h1-html-integration.md)。
 
 网络恢复续办：PR #8 已合并为 a30d598，PR #10 已按匹配 head 成功合并为 a77d288；完整 H1 整合树由 PR #17 交付，最新 CI 和合并状态以在线记录为准。本地 8 项检查、58 份 Python 语法、两份 HTML 资源／锚点及 9 产物不变检查通过。Issue #7 的 VECTOR 质量缺口保留；H1 交付与 H2／Issue #31 分开，项目登记及看板待办不变。
+
+2026-11-09 CST：完整整数KV候选已冻结提交101602，链101486→101602，单节点6×10、c64/c96 UNLIMITED，旧基线源/资源不变。
+源码0aecf173f，主B1/P512/D128、补P128/P2048、各两提示；各先跑tiny四token控制。当前PENDING(Dependency)，未把提交当执行。
+部署及资源证据见[Issue234账本](../../work/YUZE-LU/234/README.md)，完整D128、整网时间/能量与FPGA双门未达标。

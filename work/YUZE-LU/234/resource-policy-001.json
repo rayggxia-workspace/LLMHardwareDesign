@@ -1,0 +1,26 @@
+{
+  "recorded_at": "2026-11-09T10:40:00+08:00",
+  "user_decision": "先固定九组资源，优化后再评估扩容",
+  "phase": "fixed existing nine groups before any expansion comparison",
+  "groups": {"P": 3, "U": 2, "C": 1, "F": 1, "J": 2},
+  "M_instances": 3,
+  "allow_more_compute_macros_in_fixed_baseline": false,
+  "allow_more_external_bandwidth_in_fixed_baseline": false,
+  "frozen_compiler_resource_profile": {
+    "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-220-statecost-v2-plan/generated/nine-groups-count-experiment-ir.json",
+    "sha256": "444c850b1b39a35d6b311ebee85bbc14b8fd6a508f5c9e7407f8cd47141d565e",
+    "memory_kind": "pr182-bounded-v1",
+    "channels": 2,
+    "word_bytes": 16,
+    "bank_count": 4,
+    "scope": "deterministic compiler abstraction; not RTL/VIP or device calibration"
+  },
+  "physical_external_memory_capacity_bytes": null,
+  "physical_external_memory_bandwidth_bytes_per_second": null,
+  "external_budget_status": "The old profile has no qualified device capacity or bandwidth. Device calibration must be explicit and retained across fixed-resource optimizations; its selection must not silently increase resources to meet a target.",
+  "bounded_allocator_64_GiB": "Capacity diagnostic only, not an approved expansion, physical memory selection, bandwidth measurement or performance baseline.",
+  "separate_gain_categories": ["DP search and scheduling", "backend allocation and layout", "registered service recipes", "numerical precision and packing", "hardware changes or expansion"],
+  "algorithm_20_percent_rule": "Only DP search/scheduling changes under identical hardware, recipes, precision, memory budget and workload count toward algorithm-only improvement.",
+  "hardware_candidates": "Issue238/PR239 stays separate from the frozen hardware baseline; evaluate only as a labeled hardware change. More macros/bandwidth are deferred until the fixed-nine case is assessed.",
+  "acceptance_unchanged": "B1/P512/D128 generation speed and J/token must both meet the qualified public FPGA comparison; P128/P2048 supplementary. No current end-to-end acceptance."
+}

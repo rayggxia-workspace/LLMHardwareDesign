@@ -1,5 +1,10 @@
 # 架构与运行
 
+Issue234新增程序级SystemC复现见[benchmark说明](../project/experiments/systemc_benchmark/README.md)：
+`n_exp_lc_fixture.py`生成真实compact64镜像，`n_exp_lc_probe.py`独立字节审计及回放，
+`systemc_lc_native_main.cpp`在SystemC3.0.1中执行同一RTL/父层网表，原生/SystemC各132次一致。
+范围仅两U目标组件，行为PM和零延迟活动SRAM不提供物理PM、整模型时间或能耗资格。
+
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
 
 ## 研究系统边界
@@ -172,3 +177,8 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+
+
+## Issue #234：Qwen3B SystemC时间和能量校准
+
+独立实验入口、实际命令、Slurm资源约束及证据分级见[systemc_benchmark](../project/experiments/systemc_benchmark/README.md)，实际作业/散列见[work234](../work/YUZE-LU/234/README.md)。当前为未完成的校准实验，不是整网decode token/s或J/token验收。旧计划仅以绑定/缓存/依赖重算成本再交SystemC；CPU数值参考墙钟、默认切换功耗和单宏资格不能替代系统证据。

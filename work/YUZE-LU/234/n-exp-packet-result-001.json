@@ -1,0 +1,81 @@
+{
+  "passed": true,
+  "scope": "Existing private-S + E13 + N public-service packet recipe; actual RTL three initializations. Not LC program deployment, physical timing, SystemC whole-model performance or energy.",
+  "fixed_resource_policy": "P3/U2/C1/F1/J2, 3M; existing E13 only; no hardware/bandwidth expansion",
+  "hardware_changed": false,
+  "LC_program_generated": false,
+  "clock_hz": 300000000,
+  "clock_check": "Integer1ps time base; consecutive positive edges must differ3333/3334ps throughout execution.",
+  "services_per_initialization": 11,
+  "initializations": {
+    "1-143": {
+      "sha256": "7b319e7c8e03fa02946fd6476fe3018bbb13e7bd811e822abec11a4ef0fbfadf",
+      "elapsed_ps": 2796667,
+      "services": 11
+    },
+    "2-143": {
+      "sha256": "0b8906176095e91106ad326711ce52b0f1e71ebb48ecf7c8faee0c5f9ccd3e8c",
+      "elapsed_ps": 2796667,
+      "services": 11
+    },
+    "2-144": {
+      "sha256": "bbb87f2400f1cada36f900e47e0fc06575a8c0d26a117b3230fe180bc3b6a3cd",
+      "elapsed_ps": 2796667,
+      "services": 11
+    }
+  },
+  "service_recipe": {
+    "scope": "Build a real private-S/E13/N relative-Exp packet-construction fixture.\n\nExisting U-group public-port tasks and all their SRAM/ACK checks are reused.\nThis demonstrates an additional service recipe, not emitted LC instructions,\nphysical timing qualification, a DP speedup or a change to functional hardware.\n",
+    "original_public_port_fixture_sha256": "ac7a3949f79d5b27d984f3b9516de119388a2ca01d7d0ad3d868e35f9585cb3a",
+    "native_fixture_sha256": "f2b456fdcb537d8cf770467af41a7c486621148c8d86c20fc9b7db3720d66a9b",
+    "fixture_count": 11,
+    "instrumented_fixture_sha256": "9e32e3f1beafbb47f8e5a6d21cc2ffa403a6e3591ecd4397ef1725989216ed00",
+    "packet_fixtures_sha256": "701b5cac16b87ced3cf3eff0b09198200bf76e74fc145b4ea79e7786db95bf6a",
+    "hardware_changed": false,
+    "LC_program_generated": false,
+    "service_recipe": "canonical S32 S[8] -> E13 shift0 -> packed [x,0] S[9] -> N Begin/Stats2/Finalize/Exp1 -> S[10]"
+  },
+  "binary_sha256": "50ebe8befbaa628f7b8275f627e31367d9dfe7c28a06d1de9727b9177c968144",
+  "source_identity": {
+    "base_git_commit": "5de0ae1865948d1d4b40cf5f8a3cb7723e7f11a7",
+    "generator_is_new_candidate_not_yet_committed": true,
+    "files_sha256": {
+      "project/experiments/systemc_benchmark/n_exp_packet_fixture.py": "fa388a057c8ca4efea6af9e388c96fda5df5d604a5db77f4e840e2a303cce803",
+      "project/experiments/pu_leaf_base/tb_pu_u_group.sv": "ac7a3949f79d5b27d984f3b9516de119388a2ca01d7d0ad3d868e35f9585cb3a",
+      "project/rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+      "project/rtl/s_sram/local_s_base.sv": "084a4c63e4fbe0a5e56c6319e542c5a7c6561e9ec5af0a07ed98ef0bd5aa21f4",
+      "project/rtl/s_sram/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+      "project/rtl/block_v2/block_v2_n.sv": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+      "project/rtl/block_v2/block_v2_n_group.sv": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+      "project/rtl/block_v2/block_v2_n_exp.svh": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+      "project/rtl/block_v2/block_v2_e.sv": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+      "project/rtl/block_v2/block_v2_e_compact.sv": "03e6c806007c7d97a30f3793580a107e7d5beb9c4a3d1e8d0d278d33256ca230",
+      "project/rtl/pu_leaf_base/pu_u_group.sv": "f2136115a15aa34260f598770b5576970dfadea407879d897e5571630989bd59",
+      "project/rtl/pu_leaf_base/pu_u_direct_pair.sv": "d70c8e5699cf4492ad43288e9395d1f6ef842ddf63ba03fef4c548ac072f85f3",
+      "project/rtl/pu_leaf_base/pu_compact_e_service.sv": "850b4a6a185ffcbb97816fa7dd69baae583d237c28bb56b3b5340694de8f71ba",
+      "project/rtl/pu_leaf_base/ucf_s_compute_client.sv": "8757f22b6cc03c11d2ac7aafe873c2c2121d00e130bfab90ab6de7eca1e258cc"
+    }
+  },
+  "checks": [
+    "Independent native relative-Exp answers on11 S16 values including negative extrema and positives.",
+    "Canonical sign-extended S32 input to E13; complete128-bit packed[x,0] answer and S readback.",
+    "Begin/Stats2/Finalize/Exp1 answer and S write/readback; all original ACK/source-hold assertions.",
+    "Three-cycle held completion stability and error/saturation checks for all55 service commands per initialization."
+  ],
+  "preserved_failures": [
+    "001 invalid Verilator -j2 CLI before build.",
+    "002 data pass without explicit testbench timescale; excluded from300MHz qualification.",
+    "003/005 real-time conversion truncation at first fractional edge; clock assertion rejected.",
+    "004 launcher incorrectly renamed existing bank-input path; compile failed. Original003 bank path restored.",
+    "006 integer-picosecond clock/check and unchanged data assertions pass all three initializations."
+  ],
+  "archive": {
+    "sha256": "439b1f56c0af9aaea0e45ca9af20fe66fd146aed5d5e8078362c813f0fb1562b",
+    "bytes": 732356,
+    "files": 160,
+    "all_member_sha256_verified": true
+  },
+  "remote_archive": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/local-results-012/n-exp-packet-results-001.tar.gz",
+  "remote_archive_sha256_verified": true,
+  "recorded_at": "2026-11-09T12:10:42.755348+08:00"
+}

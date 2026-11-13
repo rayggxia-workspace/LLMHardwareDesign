@@ -1,0 +1,105 @@
+{
+  "scope": "Audit independent SystemC U service/S timing against actual RTL events.\n\nThe input contains no measured service times. This serialized packet recipe\nqualifies neither concurrent E/N contention nor LC, physical timing or energy.\n",
+  "passed": true,
+  "SystemC_version": "3.0.1",
+  "clock_hz": 300000000,
+  "SystemC_input_contains_measured_service_latency": false,
+  "events_per_initialization": 341,
+  "native_event_comparisons": 1023,
+  "event_counts": {
+    "S_REQ": 88,
+    "S_RSP": 88,
+    "CMD": 55,
+    "DONE": 55,
+    "TAKE": 55
+  },
+  "native_comparisons": [
+    {
+      "initialization": "1-143",
+      "events": 341,
+      "passed": true
+    },
+    {
+      "initialization": "2-143",
+      "events": 341,
+      "passed": true
+    },
+    {
+      "initialization": "2-144",
+      "events": 341,
+      "passed": true
+    }
+  ],
+  "testbench_elapsed_ps": 2796667,
+  "elapsed_includes_artificial_backpressure_and_readback": true,
+  "validated_components": [
+    "four-client round-robin S arbiter",
+    "registered SRAM response and finite two-response capacity",
+    "E service read/execute/write/ACK FSM and E13 pipeline",
+    "N service read/execute/write/ACK FSM and softmax command pipelines",
+    "shared private S service arbitration on the serialized recipe",
+    "source hold and completion backpressure"
+  ],
+  "not_qualified": [
+    "simultaneous E/N request contention",
+    "LC programs and PM/deployment",
+    "payload arithmetic in SystemC",
+    "physical STA",
+    "full-model integer KV sequence",
+    "full-model timing",
+    "energy"
+  ],
+  "hardware_changed": false,
+  "invalid_input_rejected": true,
+  "source_identity": {
+    "base_git_commit": "7f20efa0ce30e01dcbdc50785ab977dae9b28567",
+    "generator_is_new_candidate_not_yet_committed": true,
+    "files_sha256": {
+      "project/experiments/systemc_benchmark/n_exp_packet_fixture.py": "583ea559fe96d1113423a85a13d62b34e892f87ce06422aa188003a645bdf31f",
+      "project/experiments/systemc_benchmark/systemc_u_packet.cpp": "2d58e697258c0d65e1fb4135bac63b1f6e71101376c5af3891c4dc0c8d27d938",
+      "project/experiments/pu_leaf_base/tb_pu_u_group.sv": "ac7a3949f79d5b27d984f3b9516de119388a2ca01d7d0ad3d868e35f9585cb3a",
+      "project/rtl/block_local_s/block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+      "project/rtl/s_sram/local_s_base.sv": "084a4c63e4fbe0a5e56c6319e542c5a7c6561e9ec5af0a07ed98ef0bd5aa21f4",
+      "project/rtl/s_sram/block_feed_s16k_sram.sv": "a1ba89671305fd76f99e1b0c2a6fdadcbc73c783a0383c2b9640b496577317ef",
+      "project/rtl/block_v2/block_v2_n.sv": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+      "project/rtl/block_v2/block_v2_n_group.sv": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+      "project/rtl/block_v2/block_v2_n_exp.svh": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+      "project/rtl/block_v2/block_v2_e.sv": "865ff289b05c5bcd045ae4bc40feeb9402b928b281951367c31e8c4c2c752b0b",
+      "project/rtl/block_v2/block_v2_e_compact.sv": "03e6c806007c7d97a30f3793580a107e7d5beb9c4a3d1e8d0d278d33256ca230",
+      "project/rtl/pu_leaf_base/pu_u_group.sv": "f2136115a15aa34260f598770b5576970dfadea407879d897e5571630989bd59",
+      "project/rtl/pu_leaf_base/pu_u_direct_pair.sv": "d70c8e5699cf4492ad43288e9395d1f6ef842ddf63ba03fef4c548ac072f85f3",
+      "project/rtl/pu_leaf_base/pu_compact_e_service.sv": "850b4a6a185ffcbb97816fa7dd69baae583d237c28bb56b3b5340694de8f71ba",
+      "project/rtl/pu_leaf_base/ucf_s_compute_client.sv": "8757f22b6cc03c11d2ac7aafe873c2c2121d00e130bfab90ab6de7eca1e258cc"
+    }
+  },
+  "files_sha256": {
+    "/home/lululu/llhd-issue234-225e4a762/u-packet-timing-001/systemc.log": "508607d3079b7803804d0c6b7e9cbd7555a88ec597818c47d2fa506a39f1045a",
+    "/home/lululu/llhd-issue234-225e4a762/raw/n-exp-packet-source-007/source-identity.json": "44cec9f56c097c55711fddb4a513d795eff7a8554c460db2968972724bde0956",
+    "/home/lululu/llhd-issue234-225e4a762/n-exp-packet-007/fixture/generation.json": "cf1201db2b6b6d60a1fc5e7b6500272f0994cb312cd19561c3aa0e984939672e",
+    "/home/lululu/llhd-issue234-225e4a762/n-exp-packet-007/fixture/tb_n_exp_packet.sv": "3d1276ecfe8d121febdeea2f8897ec782f63f5597adec9e5c794cbb6aae2d659",
+    "/home/lululu/llhd-issue234-225e4a762/n-exp-packet-007/fixture/packet-fixtures.tsv": "701b5cac16b87ced3cf3eff0b09198200bf76e74fc145b4ea79e7786db95bf6a",
+    "/home/lululu/llhd-issue234-225e4a762/u-packet-timing-001/systemc-u-packet": "f804de4deeea5412e234bbe0e1fc277615341bb79e026c10572cbf5d882edbbf",
+    "/home/lululu/llhd-issue234-225e4a762/n-exp-packet-007/obj/Vtb_n_exp_packet": "c8e68250698dd3ace49517560cf32fd3f22eacc5d4d2345d71d9d422ff1f8898",
+    "/home/lululu/llhd-issue234-225e4a762/u-packet-timing-001/build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/lululu/llhd-issue234-225e4a762/n-exp-packet-007/build.log": "38ee920908643a514732988f47e9d3d7134e9cf126102744fad5fcb93a4c11d5",
+    "/home/lululu/llhd-issue234-225e4a762/p-control-003/sources/sram-functional.v": "1871109017b197e12c03beb0a1f2a1bd9f0387898858a831535cf300744fe10e",
+    "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/systemc/lib64/libsystemc.so.3.0.1": "930767c0ec7a203c38552201a22fa2a27a319c47d4d9019096457a674bca0848",
+    "/home/lululu/llhd-issue234-225e4a762/n-exp-packet-007/run-1-143.log": "8cdd97359299cb226019d17bc45614fd5789d9678372abe5e593da7117bc3f45",
+    "/home/lululu/llhd-issue234-225e4a762/n-exp-packet-007/run-2-143.log": "f91fddd56f422b4141c87d5c52d7c4306b6c03660ef7234fe856b220238dba79",
+    "/home/lululu/llhd-issue234-225e4a762/n-exp-packet-007/run-2-144.log": "687a562b6bad31622d38c5e197259965c21788fd099cccbff62bdd2f102ad4ef"
+  },
+  "audit_source_sha256": "bcfeca2057fbedeb2e0df00ed765e71da928f4f3f0f61f79d55f1c742e9a600d",
+  "archive": {
+    "sha256": "ce6e0a39232eaef0cba0ae1e643ed4ef951b744492355cfc3edf3d152fb68cd9",
+    "bytes": 200783,
+    "files": 49,
+    "all_member_sha256_verified": true
+  },
+  "prior_data_proof_sha256": "1587514ccdf66fbfdde3ce02e5fd2e44a59f4923dc1c5003726bd77822f213a8",
+  "preserved_failures": [
+    "Two initial WSL shell invocations lost the inline $b path before the audit ran. Final audit launcher uses direct Python paths; both successful source versions retained. Earlier actual RTL fixture failures remain in the linked prior proof archive."
+  ],
+  "remote_archive": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/local-results-013/u-packet-results-001.tar.gz",
+  "remote_archive_sha256_verified": true,
+  "recorded_at": "2026-11-09T12:23:41.775442+08:00"
+}

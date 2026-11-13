@@ -1,0 +1,113 @@
+{
+  "job_id": 101602,
+  "root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001",
+  "source": {
+    "git_commit": "0aecf173f5e39e101da60b20ba4c510514a84f71",
+    "scope": "Numerical recipe candidate RMS1/product+6; target full integer KV D128, not DP/device performance",
+    "files_sha256": {
+      "sequence_recipe.sbatch": "8bbf70f476833839505cf990af19d95d1ef680a2a1769b2dd747856502cb017f",
+      "sequence_replay.py": "972da411f9adc86a5b804cd4ac88bf687c4e2107c220b552e6d15899a24de130",
+      "sequence_policy.py": "3d5546e6ec1733fff44676bd8fa25004e6ced0a6f1978ad8f0905749f330ef55",
+      "cached_primitives.py": "d8e4e02b23679b6f430ca9353ab3c831620f932858a4fdcef6cfaba0c7f97387",
+      "cached_template.py": "158ade486e649bf534f12c4a2a7c643533665e22a1fdc3e38b32de466cdd8139",
+      "kv_handoff.py": "5d8f900318c66e780fcd05bbcf7971a162da69036c224e72c277c401ca312a22",
+      "exact_reference_dot.py": "cdb76d39b6ea452d1095c37fa73eaba00255f586d782fd38e5a54b9bd1e3c15c",
+      "contraction_bounds.py": "9540c9df806ff52719d1133b5d4ce8e2fbc94b97707f88099e7ba979e8ddd697"
+    }
+  },
+  "source_archive_sha256": "3a2ee2aa3eb88c39c8ba86dff48af0ebed46b215c2da173f69e82179fb8344d6",
+  "allocation": "one node6x10, c64/c96, UNLIMITED",
+  "dependency": "afterany:101486",
+  "chain": "101486->101602",
+  "prior_job_source_or_resources_changed": false,
+  "journal": [
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "101486",
+        "-o"
+      ],
+      "returncode": 0,
+      "stdout": "JobId=101486 JobName=yzl-sc234-seq UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294576806 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=Resources Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-09T07:30:56 EligibleTime=2026-11-09T13:03:01 AccrueTime=2026-11-09T13:03:01 StartTime=2026-11-10T00:27:03 EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T13:24:44 Scheduler=Backfill:* Partition=c64,c96 AllocNode:Sid=mgt01:1153759 ReqNodeList=(null) ExcNodeList=(null) NodeList= SchedNodeList=node13 NumNodes=1-1 NumCPUs=60 NumTasks=6 CPUs/Task=10 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=60,mem=1M,node=1,billing=60 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=10 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/sequence_replay.sbatch WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001/slurm-101486.out Power= TresPerTask=cpu:10 \n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "squeue",
+        "-h",
+        "-u",
+        "yuzelu",
+        "-o",
+        "%i|%j|%T"
+      ],
+      "returncode": 0,
+      "stdout": "94771|yzl-sram-physical|PENDING\n94773|yzl-sram-final|PENDING\n94774|yzl-sram-formal|PENDING\n95043|yzl-sram-model|PENDING\n95044|yzl-sram-views|PENDING\n95045|yzl-sram-physical|PENDING\n95046|yzl-sram-final|PENDING\n95048|yzl-sram-formal|PENDING\n95074|yzl-sram-physical|PENDING\n95075|yzl-sram-final|PENDING\n95076|yzl-sram-formal|PENDING\n98419_[0]|yzl-ge-final|PENDING\n98420_[0]|yzl-ge-release|PENDING\n98431_[0]|yzl-ge-final|PENDING\n98432_[0]|yzl-ge-release|PENDING\n101601|mdt-tps-study|PENDING\n97935|yzl-ffndp-route|RUNNING\n97936|yzl-ffndp-route|RUNNING\n101525|yzl-topo-bound|RUNNING\n101585_3|yzl-peer-3b-score|RUNNING\n101585_2|yzl-peer-3b-score|RUNNING\n101585_0|yzl-peer-3b-score|RUNNING\n101585_1|yzl-peer-3b-score|RUNNING\n101486|yzl-sc234-seq|PENDING\n101590|yzl-resident-real|PENDING\n101591|yzl-resident-cover|PENDING\n101593|yzl-resident-loops|PENDING\n101596_1|yzl-peer-otpu-v2|PENDING\n101596_0|yzl-peer-otpu-v2|PENDING\n101585_5|yzl-peer-3b-score|PENDING\n101585_4|yzl-peer-3b-score|PENDING\n95508|yzl-r166-stage183|PENDING\n95303|yzl-r166-equiv1024|RUNNING\n95310|yzl-r166-equivnorm|RUNNING\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--hold",
+        "--dependency=afterany:101486",
+        "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001/slurm-%j.log",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001/sequence_recipe.sbatch",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001"
+      ],
+      "returncode": 0,
+      "stdout": "101602\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "101602",
+        "-o"
+      ],
+      "returncode": 0,
+      "stdout": "JobId=101602 JobName=yzl-sc234-chain UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=0 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=JobHeldUser Dependency=afterany:101486(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-09T13:24:46 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T13:24:46 Scheduler=Main Partition=c64,c96 AllocNode:Sid=mgt01:1951029 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=60 NumTasks=6 CPUs/Task=10 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=60,mem=1M,node=1,billing=60 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=10 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001/sequence_recipe.sbatch WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001/slurm-101602.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001/slurm-101602.log Power= TresPerTask=cpu:10 \n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "scontrol",
+        "release",
+        "101602"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "101602",
+        "-o"
+      ],
+      "returncode": 0,
+      "stdout": "JobId=101602 JobName=yzl-sc234-chain UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294576764 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=afterany:101486(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-09T13:24:46 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T13:24:46 Scheduler=Main Partition=c64,c96 AllocNode:Sid=mgt01:1951029 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=60 NumTasks=6 CPUs/Task=10 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=60,mem=1M,node=1,billing=60 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=10 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001/sequence_recipe.sbatch WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001/slurm-101602.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001/slurm-101602.log Power= TresPerTask=cpu:10 \n",
+      "stderr": ""
+    }
+  ],
+  "UTC": "2026-11-09T05:24:46.450040Z",
+  "workload": "six four-token tiny controls, then full36-layer3B B1 P128/P512/P2048, two prompts each, targetD128",
+  "state_at_submission": "JobId=101602 JobName=yzl-sc234-chain UserId=yuzelu(10011) GroupId=yuzelu(10011) MCS_label=N/A Priority=4294576764 Nice=0 Account=yuzelu QOS=normal JobState=PENDING Reason=None Dependency=afterany:101486(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A SubmitTime=2026-11-09T13:24:46 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-09T13:24:46 Scheduler=Main Partition=c64,c96 AllocNode:Sid=mgt01:1951029 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1-1 NumCPUs=60 NumTasks=6 CPUs/Task=10 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=60,mem=1M,node=1,billing=60 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=10 MinMemoryNode=0 MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) Network=(null) Command=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001/sequence_recipe.sbatch WorkDir=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001 StdErr=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001/slurm-101602.log StdIn=/dev/null StdOut=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-recipe-001/slurm-101602.log Power= TresPerTask=cpu:10",
+  "not_yet_qualified": [
+    "continuous full3B quality",
+    "SystemC whole-model timing",
+    "energy",
+    "FPGA double gate"
+  ],
+  "recorded_at": "2026-11-09T13:26:56.093715+08:00",
+  "status": "submitted, pending dependency at last readback; execution not yet evidenced",
+  "fixed_hardware": "P3/U2/C1/F1/J2,3M, existing bit widths/interfaces and external budget unchanged",
+  "DP_gain_claimed": false,
+  "quality_gate_unchanged": true,
+  "total_energy_qualified": false
+}

@@ -1,0 +1,31 @@
+{
+  "kind": "compute-only analytical lower bound; NOT measured SystemC decode token/s",
+  "scope": "one B1 decode token, only 36 Q projections, applying frozen scalar recipe; sequence-independent linear projections",
+  "old_ir_sha256": "5cfe32f9237b195524fd6b7291340003c1ab88e712e89677ae40d8478438db40",
+  "layers": 36,
+  "M_Execute_cycles_observed": 22,
+  "K": 2048,
+  "N": 2048,
+  "components": 3,
+  "minimum_M_Execute_cycles": 9965666304,
+  "assumed_frequency_hz": 300000000,
+  "optimistic_full_sharding_bounds": [
+    {
+      "M_count": 1,
+      "minimum_seconds": 33.21888768,
+      "maximum_full_model_tokens_per_second": 0.030103355947166982
+    },
+    {
+      "M_count": 3,
+      "minimum_seconds": 11.07296256,
+      "maximum_full_model_tokens_per_second": 0.09031006784150095
+    }
+  ],
+  "assumptions": [
+    "keep old S32/S16 scalar 1x1x1 service and no data-dependent zero skipping",
+    "allow perfect parallel work sharing, even beyond old whole-kernel bindings",
+    "ignore every other projection/operator, load/scale/S/DMA/ACK/control cost"
+  ],
+  "conclusion": "placement/DP changes alone cannot remove scalar native-work floor; tile/recipe and precision changes need separate qualification and ablation",
+  "hardware_failure_asserted": false
+}
