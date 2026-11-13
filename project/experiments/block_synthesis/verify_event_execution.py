@@ -175,7 +175,8 @@ def verify(tasks, hardware, plan, wire_budget=None):
             source = phase_intervals.get(edge.task, {}).get(edge.source)
             target = intervals.get(edge.target)
             require(source is not None and target is not None, 'phase edge endpoint differs')
-            require(source[1] <= target[0], 'stage started before its producer phase completed')
+            if edge.load is None:
+                require(source[1] <= target[0], 'stage started before its producer phase completed')
         phase_intervals[task['id']] = intervals
         require(row['start'] == min(e['start'] for e in events) and row['end'] == boundary,
                 'action timing differs')

@@ -67,8 +67,13 @@ def intents(model, decisions):
     for decision in decisions:
         boundary = {last_stage[name] for name in decision.predecessors}
         phase_waits = defaultdict(set)
+        activation_waits = defaultdict(dict)
         for edge in decision.event_after:
-            phase_waits[edge.target].add(named_phases[edge.task][edge.source])
+            parent = named_phases[edge.task][edge.source]
+            if edge.load is None:
+                phase_waits[edge.target].add(parent)
+            else:
+                activation_waits[edge.target][edge.load] = parent
         stages = {}
         stage_index = -1
         pending_moves = set()
@@ -82,6 +87,7 @@ def intents(model, decisions):
                                     if is_stage else (None, 0, final))
             inputs, outputs = accesses(event)
             dependencies = [set() for _ in operation.phases]
+            activation_after = ()
             dependencies[0].update(boundary)
             for window, value in inputs.items():
                 if window == DDR:
@@ -99,6 +105,9 @@ def intents(model, decisions):
                     location = stage_index, phase.name
                     stages[location] = index, j
                     dependencies[j].update(phase_waits.get(location, ()))
+                    if location in activation_waits:
+                        lanes = activation_waits[location]
+                        activation_after = tuple(lanes[lane] for lane in sorted(lanes))
                 # Descriptor/setup phases may run while the input delivery is
                 # in flight if the contract identifies a later capture phase.
                 dependencies[read or 0].update(pending_moves)
@@ -107,7 +116,7 @@ def intents(model, decisions):
             elif 'output_eviction' not in event:
                 pending_moves.add(terminal)
             phase_after = tuple(map(frozenset, dependencies)) if any(dependencies) else ()
-            operations.append(replace(operation, phase_after=phase_after))
+            operations.append(replace(operation, phase_after=phase_after, activation_after=activation_after))
             for window in inputs.keys() - outputs.keys() - {DDR}:
                 readers.setdefault(window, set()).add((index, final if read is None else read))
             for window in outputs.keys() - {DDR}:
@@ -155,7 +164,8 @@ def retime(model, decisions, proposed, previous=None):
                 if grant.sram_beats:
                     actual['sram_beats'] = sram_receipts(phase.sram_access, grant.sram_beats)
                 if phase.activation is not None:
-                    actual['activation'] = phase.activation.receipt(start)
+                    retirements = tuple(trace.grants[i][j].end for i, j in operation.activation_after)
+                    actual['activation'] = phase.activation.receipt(start, retirements)
             if len(phases) > 1:
                 actual['phases'] = phases
             occupy(operation.holds, start, end)

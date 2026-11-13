@@ -20,13 +20,16 @@ class ActivationWindow:
     copy_delay: int
     load_offsets: tuple[int, int, int]
 
-    def run(self, header):
+    def run(self, header, retirements=()):
+        loads = tuple(header + offset for offset in self.load_offsets)
+        if retirements:
+            loads = tuple(max(load, retirement + 2) for load, retirement in zip(loads, retirements))
         return replay_window(self.mode, header + self.copy_delay, 0, 0, 0, 0,
-                             tuple(header + offset for offset in self.load_offsets), 0,
+                             loads, 0,
                              source=self.source, source_base=self.source_base)
 
-    def receipt(self, header):
-        events, proof = self.run(header)
+    def receipt(self, header, retirements=()):
+        events, proof = self.run(header, retirements)
         return {'copy_start': events['start'][0][0], 'copy_done': events['done'][0][0],
                 'proof': proof, 'loads': [row[0] for row in events['load']],
                 'writes': [list(row[:3]) for row in events['copy']],

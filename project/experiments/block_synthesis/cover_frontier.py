@@ -101,6 +101,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
                 model.validate_binding(b)
                 for location in phase_locations.get(a['covers'][0],()):
                     model.validate_phase(b,location)
+                model.validate_activation_edges(b,event_dependencies.get(a['covers'][0],()))
                 for stage in b['event_stages']:
                     for value in stage.get('inputs',{}).values():
                         users[value]=users.get(value,0)|a['mask']

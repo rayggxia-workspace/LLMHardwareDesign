@@ -38,7 +38,8 @@ def project(tasks,covers,plan):
         after=sorted({owners[n] for n in dependencies})
         projected={'id':a['id'],'after':after,'bindings':bindings}
         if phase_waits:
-            projected['event_after']=[{'task':owners[edge.task],'from':edge.source,'to':edge.target}
+            projected['event_after']=[{'task':owners[edge.task],'from':edge.source,'to':edge.target,
+                                       **({'load':edge.load} if edge.load is not None else {})}
                                       for edge in phase_waits]
         output.append(projected);rows.append(row)
         owners.update(dict.fromkeys(group,a['id']))

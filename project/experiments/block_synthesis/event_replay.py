@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from heapq import heappop, heappush
 
 from dma_read import BeatReceipt, Read, ReadFabric
-from ffn_a import ActivationWindow
+from ffn_a import P_COUNT, ActivationWindow
 from ffn_mid import MidTile
 from sram_feeder import Access, SramFeeder
 
@@ -60,6 +60,7 @@ class Operation:
     release: int = 0
     holds: tuple[tuple[str, int], ...] = ()
     phase_after: tuple[frozenset[tuple[int, int]], ...] = ()
+    activation_after: tuple[tuple[int, int], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -132,6 +133,7 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
         raise ValueError('SRAM access requires a feeder profile')
     feeders = {site: SramFeeder(sram_profiles[site]) for site in sites}
     device_starts = {}
+    activations = set()
     successors = {}
     dependencies = {}
     release = {}
@@ -141,6 +143,15 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
                 or any(type(dep) is not int or not 0 <= dep < index for dep in operation.after)
                 or operation.phase_after and len(operation.phase_after) != len(operation.phases)):
             raise ValueError('invalid replay operation or dependency')
+        if operation.activation_after and (
+                len(operation.activation_after) != P_COUNT or len(operation.phases) != 1
+                or operation.phases[0].activation is None
+                or any(parent not in prerequisites for parent in operation.activation_after)
+                or any(resource in dict(operations[i].phases[j].claims)
+                       or resource in dict(operations[i].holds)
+                       for i, j in operation.activation_after
+                       for resource, _ in operation.phases[0].claims)):
+            raise ValueError('invalid FFN retirement dependencies')
         holds = dict(operation.holds)
         if holds.keys() & issue_rates.keys():
             raise ValueError('rate-limited issue ports cannot be held between phases')
@@ -184,7 +195,8 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
                 for key in first_phases if all(p < prefix_count for p, _ in prerequisites[key])), default=0)
     checkpoints = []
     stride = previous.checkpoint_stride
-    if uses_dma or feeders:
+    has_live_activation = any(operation.activation_after for operation in operations)
+    if uses_dma or feeders or has_live_activation:
         checkpoints = [checkpoint for checkpoint in previous.checkpoints if checkpoint.tick <= tick]
         tick = 0
         if checkpoints:
@@ -194,6 +206,7 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
                 fabric = deepcopy(checkpoint.fabric)
             feeders.update(deepcopy(checkpoint.feeders))
             device_starts = dict(checkpoint.starts)
+            activations = {key for key in device_starts if operations[key[0]].activation_after}
     grants = [
         # An in-flight device grant's old end and receipts were speculative.
         [grant for grant in row if grant.start < tick and (index, grant.phase) not in device_starts]
@@ -253,7 +266,7 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
             heappush(arrivals, (ready, index, phase))
     pending = []
     while finished < len(operations):
-        if (save_checkpoints and (fabric is not None or feeders)
+        if (save_checkpoints and (fabric is not None or feeders or has_live_activation)
                 and tick >= (checkpoints[-1].tick if checkpoints else 0) + stride):
             if len(checkpoints) == 16:
                 # Bound retained fabric copies while keeping earlier rollback points.
@@ -303,6 +316,11 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
                     continue
             occupied.update(dict(claims))
             record_issues(phase.claims, tick)
+            key = index, phase_index
+            if operation.activation_after:
+                device_starts[key] = tick
+                activations.add(key)
+                continue
             if phase.dma_read is None and phase.sram_access is None:
                 if phase.activation is not None:
                     end = phase.activation.run(tick)[1] + 1
@@ -311,7 +329,6 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
                 heappush(running, (end, index, phase_index))
                 grants[index].append(Grant(index, phase_index, tick, end))
             else:
-                key = index, phase_index
                 device_starts[key] = tick
                 if phase.sram_access is not None:
                     sram_launches.append((key, phase.sram_access))
@@ -336,6 +353,20 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
                     end = tick + 1
                     grants[index].append(Grant(index, phase_index, start, end, sram_beats=receipts))
                     heappush(running, (end, index, phase_index))
+        for key in sorted(activations):
+            retirements = operations[key[0]].activation_after
+            if any(j >= len(grants[i]) for i, j in retirements):
+                continue
+            # Only deterministic or already-confirmed end times are stored
+            # in grants. If restoring at a boundary before a retirement,
+            # leave this window live until those end times are known again.
+            index, phase_index = key
+            start = device_starts.pop(key)
+            activation = operations[index].phases[phase_index].activation
+            end = activation.run(start, tuple(grants[i][j].end for i, j in retirements))[1] + 1
+            heappush(running, (end, index, phase_index))
+            grants[index].append(Grant(index, phase_index, start, end))
+            activations.remove(key)
         pending = waiting
         if finished == len(operations):
             break

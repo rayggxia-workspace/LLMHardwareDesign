@@ -9,7 +9,7 @@ from ffn_a import A_BASE, P_COUNT, WORDS
 from verify_cover_frontier import verify
 
 
-def problem(mode, header, source, source_word, offsets):
+def problem(mode, header, source, source_word, offsets, *, retirements=()):
     ports = {f'P{p}.S.port': 1 for p in range(P_COUNT)}
     if source == 'U':
         ports['U.S.port'] = 1
@@ -36,10 +36,18 @@ def problem(mode, header, source, source_word, offsets):
             'ffn_activation': {'mode': mode, 'copy_delay': delay, 'load_offsets': offsets},
         }
         candidates.append(binding(name, {'source': 'tile'}, outputs))
-    return ([{'id': 'header', 'bindings': [binding('header', ticks=header)]},
+    tasks = [{'id': 'header', 'bindings': [binding('header', ticks=header)]},
              {'id': 'activation', 'after': ['header'], 'bindings': candidates},
-             {'id': 'consume', 'after': ['activation'], 'bindings': [binding('consume', outputs)]}],
-            hardware)
+             {'id': 'consume', 'after': ['activation'], 'bindings': [binding('consume', outputs)]}]
+    if retirements:
+        tasks[1]['event_after'] = []
+        for p, tick in enumerate(retirements):
+            name = f'retire-{p}'
+            spec['services'][name] = {'ticks': tick, 'claims': {}}
+            tasks[1]['event_after'].append({'task': name, 'from': [0, 'stage'], 'to': [0, 'stage'], 'load': p})
+        tasks = [{'id': f'retire-{p}', 'bindings': [binding(f'retire-{p}', ticks=tick)]}
+                 for p, tick in enumerate(retirements)] + tasks
+    return tasks, hardware
 
 
 def observed(path, scope, k):
@@ -53,7 +61,16 @@ def activation_receipt(source, scope, k):
     loads, proofs = {}, set()
     tags = {}
     details = {}
+    previous_records, previous_pops = {}, {}
     for line in source:
+        if line.startswith(('MEXEC exec ', 'MEXEC pop ')):
+            _, kind, *fields = line.split()
+            tick, p, _, sequence, *data = map(int, fields)
+            if kind == 'exec' and k and data[0] == k - 128:
+                previous_records[p] = sequence
+            if kind == 'pop' and previous_records.get(p) == sequence:
+                previous_pops[p] = tick
+            continue
         if not line.startswith(('AREAD ', 'K_PROFILE ', 'PISSUE aload ')):
             continue
         if line.startswith('K_PROFILE '):
@@ -85,37 +102,42 @@ def activation_receipt(source, scope, k):
             break
     details['loads'] = [loads[p] for p in range(P_COUNT)]
     details['proof'], = proofs
+    if k:
+        # The terminal record of the prior K retires three edges after pop.
+        details['retirements'] = [previous_pops[p] + 3 for p in range(P_COUNT)]
     return {**details, **{kind: sorted(rows) for kind, rows in beats.items()}}
 
 
 def compare(baseline, candidate, scope, k, mode):
     receipts = [observed(path, scope, k) for path in (baseline, candidate)]
     first, second = receipts
-    context = ('header', 'source', 'source_word', 'loads')
+    context = ('header', 'source', 'source_word', 'retirements')
     if any(first[field] != second[field] for field in context):
         raise ValueError('archived candidates have different entry state')
     header = first['header']
     tasks, hardware = problem(mode, header, first['source'], first['source_word'],
-                              tuple(load - header for load in first['loads']))
-    for binding, receipt in zip(tasks[1]['bindings'], receipts):
+                              (-2,) * P_COUNT, retirements=first['retirements'])
+    activation = next(task for task in tasks if task['id'] == 'activation')
+    for binding, receipt in zip(activation['bindings'], receipts):
         forced = deepcopy(tasks)
-        forced[1]['bindings'] = [binding]
+        next(task for task in forced if task['id'] == 'activation')['bindings'] = [binding]
         result = search(forced, hardware, width=1)
         verify(forced, hardware, (), result)
-        event = result['tasks'][1]['evaluation']['events'][0]
+        event = next(row for row in result['tasks'] if row['id'] == 'activation')['evaluation']['events'][0]
         expected = {key: receipt[key] for key in event['activation']}
         actual = {key: sorted(value) if key in ('writes', 'reads', 'write_acks', 'read_acks') else value
                   for key, value in event['activation'].items()}
-        if actual != expected or result['tasks'][2]['start'] != receipt['proof'] + 1:
+        if actual != expected or result['tasks'][-1]['start'] != receipt['proof'] + 1:
             raise ValueError(f'FFN activation evidence differs for {binding["id"]}')
-    preferred = tasks[1]['bindings'][min(range(2), key=lambda i: receipts[i]['proof'])]['id']
+    preferred = activation['bindings'][min(range(2), key=lambda i: receipts[i]['proof'])]['id']
     for width in (1, 8):
         result = search(tasks, hardware, width=width)
         verify(tasks, hardware, (), result)
-        if result['tasks'][1]['binding'] != preferred:
+        if next(row['binding'] for row in result['tasks'] if row['id'] == 'activation') != preferred:
             raise ValueError('FFN candidate ranking differs')
     return {'scope': scope, 'k': k, 'copy_done': [r['copy_done'] for r in receipts],
-            'proof': [r['proof'] for r in receipts], 'selected': preferred}
+            'proof': [r['proof'] for r in receipts], 'retirements': first['retirements'],
+            'loads': first['loads'], 'selected': preferred}
 
 
 if __name__ == '__main__':

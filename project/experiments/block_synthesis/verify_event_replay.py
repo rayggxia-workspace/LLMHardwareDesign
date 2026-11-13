@@ -13,6 +13,10 @@ def verify_grants(tasks, hardware, rows):
     for task in tasks:
         for binding in task['bindings']:
             model.validate_binding(binding)
+            edges = phase_edges(task)
+            for edge in edges:
+                model.validate_phase(binding, edge.target)
+            model.validate_activation_edges(binding, edges)
     by_task = {task['id']: task for task in tasks}
     decisions = [Decision(row, frozenset(by_task[row['id']].get('after', ())),
                           phase_edges(by_task[row['id']])) for row in rows]
@@ -39,7 +43,9 @@ def verify_grants(tasks, hardware, rows):
             if phase.mid_tile is not None and phase.mid_tile.run(start)[0] != end:
                 raise ValueError('FFN Mid completion differs')
             if phase.activation is not None:
-                expected = phase.activation.receipt(start)
+                retirements = tuple(events[p].get('phases', (events[p],))[q]['end']
+                                    for p, q in operation.activation_after)
+                expected = phase.activation.receipt(start, retirements)
                 if event['activation'] != expected or end != expected['proof'] + 1:
                     raise ValueError('FFN activation handshakes or proof differ')
             claims = phase.claims + (operation.holds if j == 0 else ())

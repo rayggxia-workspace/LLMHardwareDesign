@@ -36,6 +36,7 @@ class PhaseEdge:
     task: str
     source: tuple[int, str]
     target: tuple[int, str]
+    load: int | None = None
 
 
 def phase_edges(task):
@@ -45,7 +46,7 @@ def phase_edges(task):
         raise ValueError('event_after must be a list of phase edges')
     edges = []
     for record in records:
-        if (not isinstance(record, dict) or set(record) != {'task', 'from', 'to'}
+        if (not isinstance(record, dict) or record.keys() - {'load'} != {'task', 'from', 'to'}
                 or not isinstance(record['task'], str) or not record['task']):
             raise ValueError('invalid event_after phase edge')
         source, target = record['from'], record['to']
@@ -54,7 +55,10 @@ def phase_edges(task):
                     or type(location[0]) is not int or location[0] < 0
                     or not isinstance(location[1], str) or not location[1]):
                 raise ValueError('phase edge needs a stage index and a phase name')
-        edges.append(PhaseEdge(record['task'], tuple(source), tuple(target)))
+        load = record.get('load')
+        if 'load' in record and (type(load) is not int or not 0 <= load < P_COUNT):
+            raise ValueError('FFN load edge must name a P lane')
+        edges.append(PhaseEdge(record['task'], tuple(source), tuple(target), load))
     if len(set(edges)) != len(edges):
         raise ValueError('duplicate event_after phase edge')
     return tuple(edges)
@@ -452,6 +456,18 @@ class Model:
         names = {phase['kind'] for phase in service['phases']} if 'phases' in service else {'stage'}
         if name not in names:
             raise ValueError('phase edge references an unknown phase')
+
+    def validate_activation_edges(self, binding, edges):
+        loads = {}
+        for edge in edges:
+            if edge.load is not None:
+                stage, _ = edge.target
+                service = self.services[binding['event_stages'][stage]['service']]
+                if 'ffn_activation' not in service or edge.load in loads.setdefault(stage, set()):
+                    raise ValueError('FFN load edges require one retirement per activation lane')
+                loads[stage].add(edge.load)
+        if any(len(lanes) != P_COUNT for lanes in loads.values()):
+            raise ValueError('FFN load edges require all three retirement lanes')
 
     def wire_cost(self, nets):
         return sum(self.nets[n]['cost'] for n in nets - self.fixed)
