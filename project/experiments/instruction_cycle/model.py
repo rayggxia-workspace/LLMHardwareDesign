@@ -97,7 +97,9 @@ def simulate(programs, services, resources, receivers, dma=None):
     events = []
     cycle = 0
     serial = 0
-    dma_waiting = deque()
+    dma_order = {block: deque() for block in programs}
+    dma_ready = {}
+    dma_held = None
     dma_inflight = {}
     dma_responses = {}
 
@@ -118,13 +120,19 @@ def simulate(programs, services, resources, receivers, dma=None):
             finished.append(heapq.heappop(scheduled))
 
         retired_dma = None
-        if dma is not None and (dma_waiting or not dma.port.drained):
-            offered = dma.requests[dma_waiting[0][0]] if dma_waiting else None
+        if dma is not None and dma_held is None:
+            heads = [queue[0] for queue in dma_order.values() if queue and queue[0] in dma_ready]
+            if heads:
+                dma_held = min(heads, key=lambda op: dma_ready[op][0])
+        if dma is not None and (dma_held is not None or not dma.port.drained):
+            offered = dma.requests[dma_held] if dma_held is not None else None
             start_event = len(dma.port.events)
             accepted, retired_dma = dma.port.step(cycle, offered)
             events.extend(dma.port.events[start_event:])
             if accepted:
-                dma_inflight[offered.tag] = dma_waiting.popleft()
+                _, block, resource = dma_ready.pop(dma_held)
+                dma_inflight[offered.tag] = (dma_order[block].popleft(), block, resource)
+                dma_held = None
 
         # Sample each queue's old occupancy. A pop cannot provide same-edge credit.
         for name, pending in waiting.items():
@@ -160,17 +168,19 @@ def simulate(programs, services, resources, receivers, dma=None):
             next_issue[name] = cycle + rule.interval
             free[name] -= 1
             pc[block] += 1
+            if dma is not None and op.identifier in dma.requests:
+                dma_order[block].append(op.identifier)
             heapq.heappush(scheduled, (cycle + rule.latency, serial, "service", op.identifier, block, name, rule.receiver))
             serial += 1
             emit("issue", op.identifier, block, name)
 
         # Existing queue entries precede arrivals from this edge. Simultaneous
         # arrivals use physical port priority, then launch order on that port.
-        for _, _, kind, op, block, resource, receiver in sorted(finished, key=completion_priority):
+        for _, sequence, kind, op, block, resource, receiver in sorted(finished, key=completion_priority):
             if kind == "service":
                 emit("service_done", op, block, resource)
                 if dma is not None and op in dma.requests:
-                    dma_waiting.append((op, block, resource))
+                    dma_ready[op] = ((cycle, dma_priority[resource], sequence), block, resource)
                     continue
                 if receiver:
                     waiting[receiver].append((op, block, resource))
@@ -193,7 +203,8 @@ def simulate(programs, services, resources, receivers, dma=None):
             break
         # One edge exposes the state changes above. Then jump over idle edges.
         following = [scheduled[0][0]] if scheduled else []
-        if dma is not None and (dma_waiting or not dma.port.drained):
+        if dma is not None and (dma_held is not None or not dma.port.drained
+                                or any(queue and queue[0] in dma_ready for queue in dma_order.values())):
             following.append(cycle + 1)
         if any(queue and occupied[name] < receivers[name].depth for name, queue in waiting.items()):
             following.append(cycle + 1)
