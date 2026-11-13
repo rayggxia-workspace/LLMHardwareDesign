@@ -11,6 +11,9 @@ from ffn_program_cost import ActiveProgram, FfnCost, Program
 from sram_feeder import Access, SramFeeder
 
 
+PROGRAM_CHECKPOINT_STRIDE = 131_072
+
+
 @dataclass(frozen=True)
 class ReadyWindow:
     """An external READY gate, closed for the first residues of a period."""
@@ -84,6 +87,7 @@ class DeviceCheckpoint:
     fabric: ReadFabric | None
     starts: tuple[tuple[tuple[int, int], int], ...]
     feeders: dict[str, SramFeeder]
+    program: tuple[tuple[int, int], ActiveProgram] | None = None
 
 
 @dataclass(frozen=True)
@@ -212,8 +216,9 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
         if checkpoints:
             checkpoint = checkpoints[-1]
             tick = checkpoint.tick
-            if checkpoint.fabric is not None:
-                fabric = deepcopy(checkpoint.fabric)
+            saved_fabric, active_program = deepcopy((checkpoint.fabric, checkpoint.program))
+            if saved_fabric is not None:
+                fabric = saved_fabric
             feeders.update(deepcopy(checkpoint.feeders))
             device_starts = dict(checkpoint.starts)
             activations = {key for key in device_starts if operations[key[0]].activation_after}
@@ -237,7 +242,8 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
             checkpoints = checkpoints[1::2]
             stride *= 2
         starts = tuple((key, start) for key, start in device_starts.items() if start < tick)
-        checkpoints.append(DeviceCheckpoint(tick, deepcopy(fabric), starts, deepcopy(feeders)))
+        saved_fabric, saved_program = deepcopy((fabric, active_program))
+        checkpoints.append(DeviceCheckpoint(tick, saved_fabric, starts, deepcopy(feeders), saved_program))
 
     def record_issues(claims, start):
         for resource, units in claims:
@@ -286,10 +292,11 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
             heappush(arrivals, (ready, index, phase))
     pending = []
     while finished < len(operations):
-        # FFN has sizeable program-local state. Restore a checkpoint before
-        # launch for candidates that can affect an active program.
-        if (save_checkpoints and active_program is None and (fabric is not None or feeders or has_live_activation)
-                and (program_retired or tick >= (checkpoints[-1].tick if checkpoints else 0) + stride)):
+        # Use a wider interval for large program snapshots. Copy the FFN
+        # and DMA together to preserve references to the same in-flight records.
+        interval = max(stride, PROGRAM_CHECKPOINT_STRIDE) if active_program is not None else stride
+        if (save_checkpoints and (fabric is not None or feeders or has_live_activation)
+                and (program_retired or tick >= (checkpoints[-1].tick if checkpoints else 0) + interval)):
             save_checkpoint()
         program_retired = False
         for resource, history in issues.items():
