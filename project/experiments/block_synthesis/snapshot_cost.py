@@ -47,17 +47,25 @@ def channel_bytes(address, size, record_beats=2):
 
 def dma_cost(profile, request):
     """Price a burst by its bottleneck channel and fixed response latency."""
-    duration = 0
-    active = []
-    for channel, size in enumerate(channel_bytes(request.address, request.size, request.record_beats)):
-        if not size:
-            continue
-        active.append(CHANNELS[channel])
-        latency = profile.return_latency[channel]
-        if profile.mixed:
-            if request.write:
-                latency = profile.mixed.write_latency
-            latency += profile.mixed.row_miss
-        duration = max(duration, size // BEAT_BYTES + latency)
-    return duration, active
+    counts = channel_bytes(request.address, request.size, request.record_beats)
+    used = tuple(channel for channel, size in enumerate(counts) if size)
+    active = tuple(CHANNELS[channel] for channel in used)
+    if profile.mixed is None:
+        return max(counts[ch] // BEAT_BYTES + profile.return_latency[ch] for ch in used), active
+
+    timing = profile.mixed
+    beats = request.size // BEAT_BYTES
+    latency = timing.write_latency if request.write else max(profile.return_latency[ch] for ch in used)
+    # One client delivers at most one beat per tick across both channels.
+    # Reservation and return-slot handoff add three edges to the cold read.
+    startup = latency + timing.row_miss + 3
+    if request.write:
+        startup += timing.turnaround
+    # The backend queue recycles a slot at capture, before the client ACK.
+    # Charge its steady-state rate only for beats beyond the initial credits.
+    queue = timing.queue
+    remaining = max(0, max(counts) // BEAT_BYTES - queue)
+    credit_latency = latency + 3
+    credit_delay = (remaining * max(0, credit_latency - queue) + queue - 1) // queue
+    return startup + beats + credit_delay, active
 

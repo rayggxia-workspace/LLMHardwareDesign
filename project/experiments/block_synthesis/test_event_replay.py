@@ -22,12 +22,25 @@ from ffn_mid import MIN_TICKS, MidTile
 from ffn_program_cost import DESCRIPTOR_BASE, FfnCost, Program, READ_BYTES, SHARED_RESOURCES
 from ffn_w import WeightTrace
 from ffn_w_dma import WeightDma, WeightOwner
+from snapshot_cost import dma_cost
 from sram_feeder import Access
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
 
 
 class ReplayTest(unittest.TestCase):
+    def test_snapshot_dma_drain_is_limited_by_client_and_queue(self):
+        request = Read(3, 0x30000000, 8192, 2)
+        profile = Profile.from_spec({'return_latency': [7, 8],
+                                     'mixed': {'queue': 16, 'write_latency': 9}})
+        self.assertEqual(dma_cost(profile, request),
+                         (145, ('DDR.channel0', 'DDR.channel1')))
+        congested = Profile.from_spec({'return_latency': [7, 8],
+                                       'mixed': {'queue': 8, 'write_latency': 9}})
+        self.assertEqual(dma_cost(congested, request)[0], 166)
+        self.assertGreater(dma_cost(congested, Read(3, request.address, request.size, 2, True))[0],
+                           dma_cost(congested, request)[0])
+
     def test_snapshot_prices_same_volume_by_channel_and_client(self):
         for address in (0x200, 0x800):
             for blocked in (0, 1):
