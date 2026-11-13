@@ -190,3 +190,7 @@ python -B project/experiments/instruction_cycle/copy_reference.py work/Melodydt/
 ### 双 U_64 控制、算子与跨 Block 事务
 
 [双 U_64 实验说明](../project/experiments/instruction_cycle/README.md#双-u_64-从-start-到-result)记录 Compact V2 镜像、PM、SRAM 和跨 Block ACK 的周期模型及 Slurm 复跑命令。[107643 回执](../work/Melodydt/265/dual-u-rtl-107643.json)区分实际接受 RESULT 的边沿和下一拍的旧摘要。
+
+### 有限队列 DMA／DDR
+
+[实验说明](../project/experiments/instruction_cycle/README.md#有限-dma-队列与实时-dramsim3)记录片上调度、64 B 事务、FENCE、实时 DRAMsim3 读桥及独立 RTL 的复跑命令。[DMA／DDR 回执](../work/Melodydt/265/dma-ddr-receipts.json)记录版本、工具、作业和散列。

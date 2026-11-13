@@ -43,3 +43,9 @@
 - [Issue #265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 与[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 已绑定三份真实 Compact V2 镜像、双 LC、SRAM PM、E 算子、窄口仲裁与跨 Block 写入/ACK。作业 107643 在 c64/node3 用 4 核 10 秒完成（0:0），正常、原背压、留出背压分别 351/490/470 拍，630 个事件逐拍一致。[运行及散列](../../work/Melodydt/265/dual-u-rtl-107643.json)
 - 已对账 100343 三份完整历史日志共 402 个事件。修复空闲跳步跳过 WAIT 释放、LC token 绑定和日志边界校验。16 项单测、管理检查、386 组跳步与逐拍等价检查通过。
 - 三组新 RTL 未观测到同拍 S 争用，定向仲裁仍沿用 107488。下一步由 Melodydt 用有限队列 DMA/DDR 短例验证请求身份、返回、写可见性、背压和排空，并将其接入同一时间轴。Qwen2.5-3B 整机吞吐待估，Issue 进行中，PR 草稿，登记待合并，Projects 待核验及同步。
+
+## 2026-11-13 17:55（Asia/Shanghai，UTC+08:00）有限队列 DMA／DDR
+
+- [Issue #265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 与[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 将有限队列 DMA 的回包和 FENCE 接入通用片上时间轴。修复同 Block 的快 FENCE 越过慢写，增加同址差异载荷、队列、事务身份和依赖回归。28 项本地单测通过。
+- 107669 在 c64/node3 完成（4 核，12 秒，0:0），冻结 64 B DMA RTL 的 24 项排空证据匹配。107683 及修复后 107695 在 c64/node3 完成，实时读桥复现同址读回包第 50／78 拍，片上联动短例第 105 拍完成。有限参考后端验证写可见，实时 DRAMsim3 拒绝写回调冒充提交。[运行与散列](../../work/Melodydt/265/dma-ddr-receipts.json)
+- 下一步由 Melodydt 绑定实际 DDR 的写提交和排空、片上/DDR 时钟转换及 CDC，再接入真实 Qwen DMA 地址与 KV。尚未评估整机 tokens/s 或模型加速比。#265 进行中，PR 草稿，登记待合并，Projects 待核验与同步。

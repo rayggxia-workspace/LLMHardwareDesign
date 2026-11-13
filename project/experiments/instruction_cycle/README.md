@@ -69,3 +69,26 @@ python -B project/experiments/instruction_cycle/dual_u_cycle.py "$RUN/generated"
 ```
 
 在 Melodydt 的全新运行目录复跑时，从 [107643 回执](../../../work/Melodydt/265/dual-u-rtl-107643.json) 的 `frozen_source_directory` 复制 `fixture/{design,staged,lc}` 和 `generated/{mother.mem,local0.mem,local1.mem,rtl-source-sha256.json,input-data.json,connections.json}` 到对应位置。放入 `probe_dual_u.py` 和 `run_dual_u_probe.sbatch`，生成 `sha256sum probe_dual_u.py run_dual_u_probe.sbatch > probe.sha256`，再执行 `sbatch --parsable --chdir="$PWD" run_dual_u_probe.sbatch`。运行器核验冻结源码和镜像后编译，原测试台断言继续运行。
+
+## 有限 DMA 队列与实时 DRAMsim3
+
+`model.py::DmaBinding` 将 DMA 描述符和 FENCE 绑定到片上操作。每个 Block 保留 DMA 描述符的发起顺序，准备更快的 FENCE 等待同 Block 的旧描述符先进入 DMA。同拍就绪的不同 Block 按显式端口顺序仲裁，未接受的请求保持原身份。`dma_ddr.py` 分别跟踪描述符、64 B beat、后端信用、返回槽和客户端退休。相同物理地址在已发 beat 完成前保持锁定。后端可在完成边沿接收其他地址，DMA 信用和同址锁在下一边沿才可复用。返回槽堵塞会继续占用描述符。绑定用例的响应端保持 ready，独立 DMA 测试另覆盖消费者停顿。这里的 FENCE 等待先前描述符退休、端口和后端排空后发布响应，后续 beat 在该响应被消费后才可发起。
+
+| 验证范围 | 结果 |
+| --- | --- |
+| 有限队列参考后端，写入与读取使用不同新旧数据 | 第 4 拍写被接受，第 11 拍写可见，第 17 拍 FENCE 退休，第 19 拍后续同址读被接受，依赖该读的片上算子在第 24 拍启动、32 拍完成 |
+| 冻结 DRAMsim3 DDR4，实时读回调 | 依次在第 0、50 拍提交同址两读，分别在第 50、78 拍回包，保留各自 ID，对应两条物理 RD 命令；同址未完成读阻塞第二笔入队 |
+| 同时间轴上的实时读后端短例 | 3 笔读对应 3 条物理 RD 命令，FENCE 第 65 拍退休，后续读第 94 拍回包，依赖算子第 97 拍发起、第 105 拍完成 |
+| 冻结 64 B typed DMA RTL | 作业 107669 的 24 个排空检查点全部匹配；独立归档六个 seed 各匹配 5,540 笔返回 ID，三种初始化的散列一致 |
+
+实时桥使用 630 ps 的共同时间单位，只将 DRAMsim3 的读返回时间和身份接回模型，负载字节来自模型内存。冻结 DRAMsim3 写回调发生在写缓冲接收，历史 103220 的 64 个写回调对应 60 条物理 WR 命令，实时桥因此拒绝写入。参考后端的写可见和 FENCE 语义来自明确定义的有限队列协议。冻结 #264 RTL 提供读通道和排空证据。历史 #179 另有 12 笔 16 B RTL 混合事务和 24 次跨时钟域握手，其四次同址回读的写值与种子初值相同，无法用这些回读区分新旧值。证据分界、源版本和 SHA-256 见 [DMA／DDR 回执](../../../work/Melodydt/265/dma-ddr-receipts.json)。
+
+```bash
+python -B -m unittest discover -s project/experiments/instruction_cycle -p 'test_*.py' -q
+python -B project/experiments/instruction_cycle/check_dma_ddr.py
+python -B project/experiments/instruction_cycle/compare_dma_rtl.py <107669-运行目录>/quiescence.log
+python -B project/experiments/instruction_cycle/compare_dma_typed_trace.py <归档>/candidate-1-0.csv <归档>/candidate-1-0.log
+python -B project/experiments/instruction_cycle/compare_dma_mixed_legacy.py <97279-归档日志目录>
+```
+
+服务器复跑使用 `run_dma_quiescence.sbatch` 和 `run_dram_live.sbatch`。按回执在 Melodydt 的全新目录放入对应源文件，核对 `source.sha256`，执行 `sbatch --parsable --chdir="$PWD" <脚本>`。下一步需要为实际部署建立片上与 DDR 时钟转换及 CDC，绑定 DDR 的写提交／可见性和真正的队列排空，再接入 Qwen2.5-3B 的实际 DMA 地址与 KV 请求。等周期短例目前没有整机吞吐或加速比。
