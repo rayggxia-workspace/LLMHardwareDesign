@@ -9,7 +9,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from check import digest, verify
-from handoff import verify_handoff
+from handoff import verify_event_program, verify_handoff
 from repair import repair
 from repeaters import check_allocations, inventory
 from resource_search import route_resources
@@ -240,6 +240,41 @@ class FixedBaseTests(unittest.TestCase):
             (folder/'handoff.json').write_text(json.dumps(receipt))
             with self.assertRaisesRegex(ValueError, 'bound static netlist'):
                 verify_handoff(spec, folder)
+
+    def test_versioned_event_product_checks_control_bytes_and_base(self):
+        payload = b'control code'
+        image = {'controller': 'MC', 'level': 'mother', 'abi': 'v1',
+                 'bytes': len(payload), 'sha256': hashlib.sha256(payload).hexdigest(),
+                 'payload_hex': payload.hex()}
+        program = {'schema_version': 'algo1-handoff/1', 'kind': 'target_control_images',
+                   'topology_id': 'base-a', 'native_execution_qualified': False,
+                   'images': [image, dict(image, controller='LC', level='local')]}
+        receipt = {'route_scope': 'product', 'physical_qualified': False,
+                   'coverage': {'static_bit_members': 0, 'control_images': 2}}
+        request = {'members': []}
+        verify_event_program(program, receipt, request, Path('base.json'))
+        with self.assertRaisesRegex(ValueError, 'requires the frozen base'):
+            verify_event_program(program, receipt, request, None)
+        image['payload_hex'] = b'fake code'.hex()
+        with self.assertRaisesRegex(ValueError, 'image bytes differ'):
+            verify_event_program(program, receipt, request, Path('base.json'))
+
+    def test_repeater_feedback_uses_logical_ids_instead_of_segment_ids(self):
+        from adapter import failure_feedback
+        from route_contract import seal, verify_feedback
+
+        request = seal({'base_id': 'B', 'base_sha256': 'native', 'members': [],
+                        'nets': [{'id': 'logical/path'}]})
+        result = {'failed': {'logical/path': 'grid_access_not_found'}, 'physical_routes': {
+            'failed': {'segment/0/0': 'grid_access_not_found'}, 'spec_sha256': 'physical',
+            'context': {'base_sha256': 'native', 'request_sha256': request['sha256']}}}
+        report = failure_feedback(request, result, 'route.json')
+        self.assertEqual(report['observations'][0]['net_ids'], ['logical/path'])
+        self.assertEqual(report['observations'][0]['phase'], 'access')
+        verify_feedback(report, request)
+        result['physical_routes']['context']['base_sha256'] = 'another'
+        with self.assertRaisesRegex(ValueError, 'stale route feedback'):
+            failure_feedback(request, result, 'route.json')
 
     def test_product_rebind_rejects_resealed_fake_fixed_sink(self):
         from adapter import bind_request

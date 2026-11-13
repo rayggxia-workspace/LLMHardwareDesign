@@ -52,6 +52,7 @@ def main():
     if a.handoff:
         from handoff import verify_handoff
         admission = verify_handoff(spec, a.handoff, a.frozen_base)
+        request = read(a.handoff / 'requirements.json')
         if admission['scope'] == 'product' and a.emit_def and not (a.frozen_base and a.native_gds):
             p.error('product DEF handoff requires --frozen-base and --native-gds')
     else:
@@ -94,10 +95,10 @@ def main():
         physical_spec, physical_routes = result['physical_spec'], result['physical_routes']
     else:
         result = route(spec, rounds=a.rounds, max_expansions=a.max_expansions, seed=a.seed)
-        if request:
-            from adapter import failure_feedback
-            result['feedback'] = failure_feedback(request, result, str(a.output))
         physical_spec, physical_routes = spec, result
+    if request and not a.check:
+        from adapter import failure_feedback
+        result['feedback'] = failure_feedback(request, result, str(a.output))
     if admission:
         result['admission'] = admission
     a.output.parent.mkdir(parents=True, exist_ok=True)

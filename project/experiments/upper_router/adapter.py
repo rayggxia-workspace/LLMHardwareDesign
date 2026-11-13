@@ -37,10 +37,12 @@ def bind_request(request, base, technology, obstacles=()):
 
 
 def failure_feedback(request, result, evidence):
-    require(result['context']['request_sha256'] == request['sha256'] and
-            result['context']['base_sha256'] == request['base_sha256'], 'stale route feedback')
+    physical = result.get('physical_routes', result)
+    context = physical['context']
+    require(context['request_sha256'] == request['sha256'] and
+            context['base_sha256'] == request['base_sha256'], 'stale route feedback')
+    scope = {'evidence': evidence, 'spec_sha256': physical['spec_sha256'], 'hard_constraint': False}
     return feedback(request, [
         {'category': 'search_not_found', 'phase': 'access' if reason == 'grid_access_not_found' else 'routing',
-         'code': reason, 'net_ids': [name], 'evidence': evidence,
-         'spec_sha256': result['spec_sha256'], 'hard_constraint': False}
+         'code': reason, 'net_ids': [name], **scope}
         for name, reason in result['failed'].items()])
