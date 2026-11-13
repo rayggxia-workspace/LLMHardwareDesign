@@ -18,3 +18,10 @@
 - 2026-11-13（Asia/Shanghai），[PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266)。从官方固定 revision 在本人任务目录落地 checkpoint，9 个模型工件的 SHA-256 均匹配。任务专用 Python 3.10.12 已对齐历史核心包，`pip check` 通过。
 - Slurm 107396 `zny-qwenref` 以 `e6e01fa46663101179a8679afc6deb45a638c93d` 在 c64/node2 上运行，8 核，74 秒，`COMPLETED 0:0`。两条 P512 的首两 token 与冻结参考相符，实际 P512 ONNX 输出已执行。参考回执和依赖清单已验散列。
 - 已修复冻结字段可被覆盖、重复键和控制镜像缺实际来源及容量验证。下一步继续复现原整数偏差并完成整机平台绑定。整机 D128 和吞吐待验证。恢复及追踪入口见[交接](../../docs/handoffs/2026-11-13-issue-265-input-freeze.md#2026-11-13-参考环境验证)。
+
+## 2026-11-13 15:29（Asia/Shanghai，UTC+08:00）快速周期评估
+
+- [Issue #265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 和[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 由 Melodydt 继续推进，沿用 `task/265-qwen3b-system-evaluation`。当前范围为已部署指令与拓扑驱动的快速周期和 DDR 吞吐估算；并行分支负责全程 decode 吞吐仿真。
+- 已完成[方案](../../docs/decisions/0265-instruction-driven-cycle-estimation.md)与[首轮控制输入审计](../../work/Melodydt/265/README.md#快速周期评估)。两份历史归档的 MC/LC 镜像及描述符一致，恢复 192 次调用及 64 个 WAIT。12 份历史日志验证两种压力模式和三种 SRAM 初态；同模式下提前发起 EXEC 的两个作业分别相差 10,288 和 6,719 周期。
+- 已通过 Python 3.7 实物审计、7 个无效输入检查及项目管理检查。服务器本轮只读获取历史归档。本轮未提交新作业，未测整机周期或吞吐。
+- 下一步由 Melodydt 从具有完整端点和时间戳的短 RTL 用例冻结服务参数，先实现片上事件模型，再接入有限队列的 DDR。后续需从并行分支绑定同版本部署拓扑、DMA 物理地址与 DDR 配置，以及独立留出窗口。#265 进行中，PR 保持草稿，登记待合并，Projects 待核验和同步。
