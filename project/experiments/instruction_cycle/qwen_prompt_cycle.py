@@ -76,7 +76,7 @@ class PromptDdr:
         return returned
 
 
-def load_row(ddr, first_request, lane, base):
+def load_row(ddr, first_request, lane, base, first_word):
     """READ_WAIT → four serialized STORE/STORE_WAIT pairs → READ or DONE."""
     next_request = first_request
     writes = []
@@ -85,7 +85,7 @@ def load_row(ddr, first_request, lane, base):
         store = returned + 1  # loader enters STORE after capturing the read response
         for word in range(BURST_BYTES // SRAM_WORD_BYTES):
             ack = store + SRAM_ACCEPT_TO_ACK
-            scratch_word = burst * (BURST_BYTES // SRAM_WORD_BYTES) + word
+            scratch_word = first_word + burst * (BURST_BYTES // SRAM_WORD_BYTES) + word
             writes.append((scratch_word & 3, scratch_word >> 2, store, ack))
             store = ack + 1
         next_request = store
@@ -106,8 +106,8 @@ def predict(archive, binary, config, output, mode, prompt_start):
         # READ issues. Embedding DONE is consumed before the RMS launch and
         # its gamma loader launch, so the two loaders never share the S port.
         embedding_done, embedding_stores = load_row(ddr, prompt_return + 3, 1,
-                                                     inp["embedding_base"] + inp["token"] * ROW_BYTES)
-        gamma_done, gamma_stores = load_row(ddr, embedding_done + 3, 3, inp["gamma_base"])
+                                                     inp["embedding_base"] + inp["token"] * ROW_BYTES, 0)
+        gamma_done, gamma_stores = load_row(ddr, embedding_done + 3, 3, inp["gamma_base"], ROW_BYTES // SRAM_WORD_BYTES)
     return {"scope": "105530 first prompt row through initial RMS gamma load", "mode": mode,
             "prompt_start_core_cycle": prompt_start, "binding": inp,
             "last_gamma_sram_ack_core_cycle": gamma_done - 1,
@@ -116,6 +116,8 @@ def predict(archive, binary, config, output, mode, prompt_start):
 
 def compare(prediction, trace):
     """Compare against the archive only after the independent prediction exists."""
+    require(len(prediction["ddr_events"]) == 4 * (1 + 2 * ROW_BYTES // BURST_BYTES),
+            "prediction does not cover the complete ingress read prefix")
     count = 0
     with trace.open("r", encoding="ascii") as stream:
         for expected in prediction["ddr_events"]:
