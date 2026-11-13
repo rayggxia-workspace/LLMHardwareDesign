@@ -100,10 +100,11 @@ def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=N
     return _replay(operations, capacity, ReplayTrace(previous), issue_rates, dma_profile).grants
 
 
-def replay_branch(operations, capacity, *, previous=None, issue_rates=None, dma_profile=None):
+def replay_branch(operations, capacity, *, previous=None, issue_rates=None, dma_profile=None,
+                  save_checkpoints=True):
     """Extend a DP branch with a reusable trace and pre-edge DMA snapshots."""
     return _replay(operations, capacity, previous or ReplayTrace(()), issue_rates, dma_profile,
-                   save_checkpoints=True)
+                   save_checkpoints=save_checkpoints)
 
 
 def _replay(operations, capacity, previous, issue_rates, dma_profile, *, save_checkpoints=False):

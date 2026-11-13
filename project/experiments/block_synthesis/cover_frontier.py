@@ -52,7 +52,8 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     model=None
     live_replay=False
     event_dependencies={}
-    transport_counts={'transport_attempted':0,'transport_truncated':0}
+    transport_counts={'transport_attempted':0,'transport_truncated':0,
+                      'transport_probed':0,'transport_probe_skipped':0}
     if 'event_model' in hardware:
         from event_execution import Model, Infeasible
         if rank_policy!='shared_tail' or hardware.get('window_calendar'):
@@ -66,7 +67,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         live_replay=timing=='replay'
         if live_replay:
             from event_replay import ReplayDeadlock
-            from event_replay_plan import Decision, retime
+            from event_replay_plan import Decision, delivery_at, retime
             from event_transport import draft, transport_successors
             transport_limit=hardware['event_model'].get('transport_limit',32)
             if transport_limit is not None and (type(transport_limit) is not int or transport_limit<1):
@@ -154,8 +155,13 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
             if live_replay and forced_choices is None:
                 def evaluate_candidate(execution,events,choices):
                     return event_successor(s,a,b,execution,events,choices)
+                def probe_delivery(events):
+                    decision=Decision({'evaluation':{'events':events}, 'covers':a['covers'], 'id':a['id']},
+                                      frozenset(a['after']), event_dependencies.get(a['covers'][0],()))
+                    fixed=len(s.replay_trace.grants) if s.replay_trace else 0
+                    return delivery_at(model,s.replay_decisions,decision,s.replay_trace,fixed)
                 yield from transport_successors(model,draft_state,b,arrival,protected,transport_limit,
-                                                transport_counts,evaluate_candidate,rank)
+                                                transport_counts,evaluate_candidate,rank,probe_delivery)
                 return
             try:
                 if live_replay:

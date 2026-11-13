@@ -167,3 +167,11 @@ def retime(model, decisions, proposed, previous=None):
                      'end': events[-1]['end'], 'evaluation': {**detail, 'events': events}})
     calendars = {resource: capacity_profile(changes) for resource, changes in occupancy.items()}
     return replace(proposed, copies=copies, backing=backing, calendars=calendars), rows, trace
+
+
+def delivery_at(model, decisions, candidate, previous, fixed_operations):
+    """Trial an unfinished binding through its most recent transport choice."""
+    operations = intents(model, (*decisions, candidate))
+    trace = replay_branch(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
+                          dma_profile=model.dma_profile, save_checkpoints=False)
+    return max(grants[-1].end for grants in trace.grants[fixed_operations:])

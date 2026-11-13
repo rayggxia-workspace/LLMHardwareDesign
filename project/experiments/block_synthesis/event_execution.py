@@ -480,11 +480,11 @@ class Model:
                                 self.wire_cost(new.nets), src, route, new, event))
         return [item[-2:] for item in sorted(choices, key=lambda item: item[:5])]
 
-    def best_move(self, state, value, sources, dst, ready, choose=None):
+    def best_move(self, state, value, sources, dst, ready, choose=None, *, events=()):
         options = self.move_options(state, value, sources, dst, ready)
         if not options:
             raise Infeasible('no legal move')
-        return options[0] if choose is None else choose(options)
+        return options[0] if choose is None else choose(options, events)
 
     def vacant(self, state, window, ready, protected, events, choose=None):
         old = state.copies.get(window)
@@ -493,7 +493,7 @@ class Model:
         ready = max(ready, old.held_until)
         if (old.value in protected and old.value not in state.backing
                 and not any(w != window and c.value == old.value for w, c in state.copies.items())):
-            state, event = self.best_move(state, old.value, [window], DDR, ready, choose)
+            state, event = self.best_move(state, old.value, [window], DDR, ready, choose, events=events)
             events.append(event)
             ready = event['end']
         return state, ready
@@ -507,7 +507,7 @@ class Model:
         if policy == 'backing':
             if value not in state.backing:
                 state, event = self.best_move(state, value, sources + ([window] if old and old.value == value else []),
-                                              DDR, ready, choose)
+                                              DDR, ready, choose, events=events)
                 events.append(event)
                 ready = event['end']
             sources = []
@@ -527,7 +527,7 @@ class Model:
         choices.sort(key=lambda item: (
             item[1][-1]['end'], item[0].read_bytes + item[0].write_bytes,
             self.wire_cost(item[0].nets)))
-        selected, moves = choices[0] if choose is None else choose(choices)
+        selected, moves = choices[0] if choose is None else choose(choices, events)
         events.extend(moves)
         return selected
 

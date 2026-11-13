@@ -356,8 +356,9 @@ class ReplayTest(unittest.TestCase):
         tasks[-1]['after'] = ['gate']
         restored = []
 
-        def check_branch(operations, capacity, *, previous, **options):
-            result = replay_branch(operations, capacity, previous=previous, **options)
+        def check_branch(operations, capacity, *, previous, save_checkpoints=True, **options):
+            result = replay_branch(operations, capacity, previous=previous, save_checkpoints=save_checkpoints,
+                                   **options)
             self.assertEqual(result.grants, replay(operations, capacity, **options))
             if previous:
                 restored.extend(snapshot.tick for snapshot in result.checkpoints
@@ -370,6 +371,35 @@ class ReplayTest(unittest.TestCase):
         self.assertIn(64, restored)
         row = next(row for row in plan['tasks'] if row['id'] == 'read-01')
         self.assertEqual(row['evaluation']['events'][0]['route'], 'P1.read-1')
+
+    def test_transport_budget_reserves_trials_for_distinct_live_dma_routes(self):
+        requests = (Request(1, 0, 0, 4096), Request(1, 0, 8192, 512))
+        for blocked, route, ticks in ((0, 'P1.read-1', 206), (1, 'P1.read-0', 87)):
+            tasks, h = event_input(requests, client_stalls=((0, 140, 4095 ^ (1 << blocked)),),
+                                   alternatives={1: (1,)})
+            spec = h['event_model']
+            spec['services']['gate'] = {'ticks': 70, 'claims': {}}
+            tasks.insert(0, task('gate', {**binding('timer', stage('gate')), 'ticks': 70}))
+            tasks[-1]['after'] = ['gate']
+            for index in range(36):
+                spec['routes'][f'P1.read-0-{index:02}'] = dict(spec['routes']['P1.read-0'])
+            bounded = search(tasks, h, width=1, ready_limit=1)
+            self.assertEqual((bounded['transport_attempted'], bounded['transport_probed']), (4, 2))
+            spec['transport_limit'] = None
+            exhaustive = search(tasks, h, width=1, ready_limit=1)
+            self.assertEqual(exhaustive['transport_attempted'], 40)
+            for plan in (bounded, exhaustive):
+                verify(tasks, h, (), plan)
+                self.assertEqual(plan['makespan'], ticks)
+                self.assertEqual(plan['tasks'][-1]['evaluation']['events'][0]['route'], route)
+            if blocked == 0:
+                for index in range(36):
+                    spec['routes'][f'P1.read-0-{index:02}']['priority'] = index + 1
+                spec['transport_limit'] = 2
+                diverse = search(tasks, h, width=1, ready_limit=1)
+                verify(tasks, h, (), diverse)
+                self.assertEqual((diverse['makespan'], diverse['transport_probed']), (206, 2))
+                self.assertGreater(diverse['transport_probe_skipped'], 0)
 
     def test_native_dma_held_offer_reserves_the_last_issue_credit(self):
         # Channel zero at cycle 14 of the #251 typed seed-1 probe.
