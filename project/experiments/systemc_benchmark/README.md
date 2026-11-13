@@ -6,6 +6,24 @@ This Python transaction-level model replays sealed Algo1 mother programs and the
 
 Use Python 3.10 or newer. Build `native_tlm_dram.cpp` as a C++17 shared library against the project's qualified DRAMsim3 build with strict write callbacks. Use its `src` and `ext/headers` include paths, and make the linked `libdramsim3.so` available to the dynamic loader. The run needs the sealed deployment directory, its proof SHA-256, the initial DDR image table with its payloads, and the 630 ps single-channel DDR configuration. The two-step decode additionally needs the sealed KV binding and its SHA-256.
 
+Copy [the case manifest](native_tlm_cases.example.json) and fill in the input paths. Paths are relative to the manifest unless given as absolute paths. A case can override any of the five shared inputs under its own `inputs`. Cases execute independently and can be submitted separately. The manifest launcher calls the existing TLM runner and writes an audit for decode and short prefill.
+
+```bash
+bench=project/experiments/systemc_benchmark
+python "$bench/run_native_tlm_cases.py" my-cases.json runs --dry-run
+python "$bench/run_native_tlm_cases.py" my-cases.json runs --case decode-512
+python "$bench/run_native_tlm_cases.py" my-cases.json runs --case prefill-2
+```
+
+| Mode | Inputs and timing scope |
+| --- | --- |
+| `decode` | Sealed KV binding and digest. Executes two complete positions from representative 512-position KV and audits both retirements. |
+| `prefill` | One or two input positions from the sealed prompt, starting with empty KV. Audits all layers, KV stores and DDR callbacks. |
+| `checkpoint` | Positive page limit and optional first-layer capture. Produces a diagnostic timeline. |
+| `request` | Runs all phases of the sealed deployment in one timeline. Formal P512/D128 acceptance has its own evidence requirements. |
+
+The case options select 128- or 512-bit SRAM, the 1–32 beat KV read window, and either one outstanding DDR transaction per channel or the modeled 32-credit budget with rolling issue limits. The current runner validates the Qwen2.5-3B deployment geometry and its supported service descriptors. Other models require corresponding providers and validation.
+
 From the repository root, substitute the input paths and hashes in these commands. Each output directory must be new.
 
 ```bash

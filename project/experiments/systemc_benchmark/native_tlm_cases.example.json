@@ -1,0 +1,38 @@
+{
+  "inputs": {
+    "program": "inputs/request-runtime-archived",
+    "memory": "inputs/request-memory-archived/ddr-initial.tsv",
+    "dram_library": "inputs/native-dram.so",
+    "dram_config": "inputs/DDR4-single-channel.ini",
+    "deployment_sha256": "74078b0b40fdeb73aeae71e3091db3e6a25fc5f27bc03c9981214bfef92b39ef"
+  },
+  "cases": {
+    "decode-128": {
+      "mode": "decode",
+      "kv_binding": "inputs/binding.json",
+      "kv_sha256": "78347abd13135d71a678ff87b4760175ea81fb701a4edb022e080165321f2b4e",
+      "dma_fabric_budget": true,
+      "kv_read_window": 8
+    },
+    "decode-512": {
+      "mode": "decode",
+      "kv_binding": "inputs/binding.json",
+      "kv_sha256": "78347abd13135d71a678ff87b4760175ea81fb701a4edb022e080165321f2b4e",
+      "dma_fabric_budget": true,
+      "kv_read_window": 8,
+      "sram_port_bits": 512
+    },
+    "prefill-2": {
+      "mode": "prefill",
+      "prefill_tokens": 2,
+      "dma_fabric_budget": true,
+      "kv_read_window": 8,
+      "sram_port_bits": 512
+    },
+    "checkpoint": {
+      "mode": "checkpoint",
+      "checkpoint_pages": 9,
+      "capture_first_layer": true
+    }
+  }
+}

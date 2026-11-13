@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-14（CST）短程吞吐回执与复现入口
+
+[PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 补充[配置化回放入口](../../project/experiments/systemc_benchmark/README.md)和[从 0.957 tok/s 起的瓶颈分析与证据](../../work/YUZE-LU/234/native-sram-width/PERFORMANCE_ANALYSIS.md)。下一步分别量化窄口写流水、V 复用、分片重叠和宽口成本。宽口 RTL、300 MHz 物理时序及正式 P512/D128 联合验收仍待完成。Issue #234 继续进行，审查人待指定，看板同步待核验。
+
 ## 2026-11-13（CST）指令驱动的吞吐评估
 
 [Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) 的 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 已补入[事务级回放、短程吞吐审计和复现命令](../../project/experiments/systemc_benchmark/README.md)。下一步核对短程实验回执并校准宽口 RTL。正式 P512/D128 联合验收仍在进行。看板配置待核验。
