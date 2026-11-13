@@ -46,7 +46,11 @@ def decode(program, hardware):
             raise ValueError('finite-loop dispatch duration or resource lease differs')
         if set(commands) != {item['control'] for item in loop['participants'].values()}:
             raise ValueError('finite-loop local target differs from its selected binding')
-        for command in commands.values():
+        for target, command in commands.items():
+            if 'memory_by_site' in service:
+                site = hardware['control_groups'][target]['site']
+                if command.get('external_memory') != service['memory_by_site'].get(site, {}):
+                    raise ValueError('finite-loop local memory demand differs from its selected binding')
             if (command['op'] != 'RUN_LOOP' or command['task_id'] != task
                     or command['binding_id'] != dispatch['binding_id'] or command['service'] != service_id
                     or command['required_completion'] != loop['completion'] or command['loop'] != loop

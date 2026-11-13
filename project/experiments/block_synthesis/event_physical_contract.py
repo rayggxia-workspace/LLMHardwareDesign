@@ -150,7 +150,33 @@ def qualify_hardware(hardware, base):
                 raise ValueError('cross-site service requires explicit COPY control and completion')
             else:
                 controls = controls_for_sites([service.get('control_site')])
-            if service.get('read_bytes') or service.get('write_bytes'):
+            if 'finite_loop' in service:
+                participants = service['finite_loop']['participants']
+                traffic = service.get('memory_by_site', {})
+                if set(traffic) - participants.keys():
+                    raise ValueError('finite-loop memory traffic names a non-participating site')
+                totals = {'read': 0, 'write': 0}
+                for site, directions in traffic.items():
+                    control = participants[site]['control']
+                    for direction, demand in directions.items():
+                        if direction not in totals or type(demand['bytes']) is not int or demand['bytes'] <= 0:
+                            raise ValueError(f'{control}: invalid finite-loop memory traffic')
+                        totals[direction] += demand['bytes']
+                        path = demand.get('path')
+                        if not path:
+                            raise ValueError(f'{control}: missing finite-loop memory {direction} interface')
+                        try:
+                            if not path['nets'] or not set(path['nets']) <= set(service['nets']):
+                                raise ValueError('memory transport is absent from service connections')
+                            local = control
+                            external = path['external_owner']
+                            source, target = (external, local) if direction == 'read' else (local, external)
+                            transport(path['abi'], path['nets'], source, target, path['width_bits'])
+                        except ValueError as exc:
+                            raise ValueError(f'{control}: finite-loop memory {direction}: {exc}') from exc
+                if any(totals[direction] != service.get(direction + '_bytes', 0) for direction in totals):
+                    raise ValueError('finite-loop memory traffic does not match service totals')
+            elif service.get('read_bytes') or service.get('write_bytes'):
                 memory_nets = service.get('memory_nets', ())
                 if not set(memory_nets) <= set(service.get('nets', ())):
                     raise ValueError('memory transport is absent from service connections')

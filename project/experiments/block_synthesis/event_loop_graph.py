@@ -43,6 +43,15 @@ def lower(model, hardware, primitive_program, profile):
     placement = {info['site']: name for name, info in resolved['control_groups'].items()}
     if placement.keys() != site_inventory.keys() or len(placement) != len(resolved['control_groups']):
         raise ValueError('finite-loop groups differ from the native control sites')
+    memory_interfaces = resolved.get('finite_loop_memory_interfaces', {})
+    for control, interfaces in memory_interfaces.items():
+        if control not in resolved['control_groups'] or set(interfaces) - {'read', 'write'}:
+            raise ValueError(f'{control}: invalid finite-loop memory interface target or direction')
+        for direction, path in interfaces.items():
+            if (not isinstance(path, dict) or not {'nets', 'abi', 'external_owner', 'width_bits'} <= path.keys()
+                    or not isinstance(path['nets'], list) or not path['nets']
+                    or any(not isinstance(net, str) or net not in resolved['nets'] for net in path['nets'])):
+                raise ValueError(f'{control}: invalid finite-loop memory {direction} interface')
     spec = {'kind': 'qualified-event-model-v1', 'windows': {}, 'services': {}, 'routes': {},
             'value_bytes': {}, 'native_loop_library': {
                 'source_model_sha256': model['sha256'],
@@ -69,9 +78,35 @@ def lower(model, hardware, primitive_program, profile):
             for site in sites:
                 if site_inventory[site]['io_resource'] not in binding['resources']:
                     raise ValueError('native loop scratch lacks its site IO lease')
+            counts = source['primitive_counts']
+            memory_by_site = {}
+            nets = set(binding['nets'])
+            owners = {macro: resolved['leaf_inventory'][group]['site']
+                      for macro, group in binding['macro_binding'].items()}
+            owners['IO'] = binding['site']
+            for site, participant in sites.items():
+                interfaces = memory_interfaces.get(participant['control'], {})
+                directions = {}
+                for direction, action in (('read', 'load'), ('write', 'store')):
+                    fallback = site + '.io.' + action
+                    nets.discard(fallback)
+                    words = sum(counts.get(macro + ':' + direction, 0)
+                                for macro, owner in owners.items() if owner == site)
+                    if not words:
+                        continue
+                    path = interfaces.get(direction)
+                    directions[direction] = {'bytes': words * 16, 'path': path}
+                    nets.update(path['nets'] if path is not None else [fallback])
+                if directions:
+                    memory_by_site[site] = directions
+            for direction in ('read', 'write'):
+                accounted = sum(item.get(direction, {}).get('bytes', 0) for item in memory_by_site.values())
+                if accounted != binding['external_' + direction + '_words'] * 16:
+                    raise ValueError('finite-loop external traffic is not assigned to its participants')
             spec['services'][service] = {
                 'ticks': binding['ticks'], 'claims': dict.fromkeys(binding['resources'], 1),
-                'nets': binding['nets'], 'read_bytes': binding['external_read_words'] * 16,
+                'nets': sorted(nets), 'memory_by_site': memory_by_site,
+                'read_bytes': binding['external_read_words'] * 16,
                 'write_bytes': binding['external_write_words'] * 16, 'finite_loop': {
                     'task_id': task['id'],
                     'body': source['body'], 'primitives': primitive_ids[task['id']],

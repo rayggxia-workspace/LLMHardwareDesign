@@ -202,7 +202,11 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
                 if stage_id is not None:
                     stage_events[stage_id] = sequence
             for target, roles in participants.items():
-                local[target].append({**common, **descriptor, 'roles': roles})
+                command = {**common, **descriptor, 'roles': roles}
+                if command['op'] == 'RUN_LOOP' and 'memory_by_site' in service:
+                    site = hardware['control_groups'][target]['site']
+                    command['external_memory'] = service['memory_by_site'].get(site, {})
+                local[target].append(command)
             records.append({**common, 'op': 'DISPATCH', 'targets': sorted(participants),
                             'wait_for': wait, 'read': read, 'write': write, **leases})
             task_numbers.append(sequence)

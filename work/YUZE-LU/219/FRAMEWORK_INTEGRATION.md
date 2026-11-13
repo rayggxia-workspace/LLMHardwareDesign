@@ -325,3 +325,21 @@ python -B UPPER_ROUTER/run.py OUT/algorithm2-input.json OUT/routes.json --handof
 项目 `llm-hardware-design`，协作规则 `rayggxia-project-collab 1.0.0`，Issue #219
 继续进行，负责人 YUZE-LU，独立审查人待指定。登记沿用 management-hub PR #5。
 当前无 `config/board.json`，看板 unverified，同步 pending。
+
+## 有限循环的分组外存接口
+
+全图 lowering 从独立核对的原语读写计数和候选宏绑定推导 `memory_by_site`。
+`IO` 原语使用候选指定的 IO 站点，其余原语使用实际执行宏的站点。
+每个局控的 `RUN_LOOP` 描述符带该站点的 `external_memory`，功能回放检查它与选中服务一致。
+
+硬件可以提供 `finite_loop_memory_interfaces`，按局控组名和 `read`、`write` 配置。
+每个方向声明 `nets`、`abi`、`external_owner` 和 `width_bits`。
+已有的传输 ABI 逐位检查控制组和外部端点、方向、宽度与确认信号。搜索在候选上计入这些
+实际线束和传递依赖。缺接口时保留有流量方向的逻辑需求，产品准入报告该组缺失的接口。
+原生服务和最终完成信号仍由独立的 native dispatch 准入检查。
+
+远端 109588 重新编译既有 36 层 B1/S2 无 KV 图。4,333 个候选中 4,328 个有多站点
+外存需求。选中 1,083 次派发，2,165 份局控命令带非空外存需求，所有字节数与原总计相符。
+布线和局控输出引用同一计划散列。该输入仍有 10 组未绑定的接口需求。
+日志 `audit-loop-memory-109588.log` SHA-256 为
+`a5e21268dd2514d9c1dd6bfcf6e523504823fa51e4fe87e19b4f561ae2427395`。
