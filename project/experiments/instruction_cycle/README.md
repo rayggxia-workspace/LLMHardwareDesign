@@ -192,3 +192,11 @@ sbatch --parsable run_qwen_page_cycle.sbatch \
 sha256sum -c output.sha256
 cat comparison-{0,1}.json
 ```
+
+## 107361 整机对照与 105530 第二条 Q 权重
+
+107361 的 [对照回执](../../../work/Melodydt/265/qwen-tlm-decode-107361.json) 固定 TLM 参考及归档 SHA-256。第二步 291 页的耗时逐页求和为 1,045.096187442 ms，与两个 token 退休时刻之差一致。Attention 708.546 ms（67.8%），FFN 147.380 ms（14.1%），词表投影 105.866 ms（10.1%）。这些百分比按各阶段页的完整墙钟计时分组，DDR 在途及 SRAM 等待等可重叠计数未再次累加。107361 的 Attention 为串行单拍 KV 读。部署、KV、时钟与退休窗口的匹配要求见[决策记录](../../../docs/decisions/0265-instruction-driven-cycle-estimation.md#2026-11-14-短程整机对照)。
+
+105530 的第一对 Q 权重使用两个新 W 上下文。第二条在第一条 ALLOC 确认后即可接收并推进控制，复用上条权重传输结束后的 DMA slot 序号、轮询位置和两路 DRAMsim3 状态。在模式 0／1，第二条首拍物理接受为 35573／35731，末拍物理返回为 35593／35749，均用 DDR 桥零基核时钟 pre-edge。两种模式各匹配 323 笔读、1,292 个 DDR 事件及 11 个控制标记。两条记录的物理 DMA 窗口无重叠，下一条需要建模 A COPY/LOAD、两个 W bank 的就绪及 M EXEC 的依赖。
+
+按上节准备同名源文件，用 [108930 回执](../../../work/Melodydt/265/qwen-105530-two-weights-108930.json) 的 commit 和散列替换旧值。在新的本人运行目录使用 `sbatch --parsable run_qwen_page_cycle.sbatch <108208 探针目录> --with-two-weights`，再核对 `sha256sum -c output.sha256` 和 `comparison-{0,1}.json`。

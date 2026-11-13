@@ -48,3 +48,9 @@
 ## 当前交付与恢复
 
 实际运行了[控制输入审计](../../work/Melodydt/265/README.md#快速周期评估)和现有项目管理检查。本阶段没有估算器周期、同机加速比或整机估算 tokens/s。下一个门槛由 Melodydt 负责，选择一组具备发射、接受、完成和 ACK 时标的短 RTL 记录，冻结该用例的服务参数和端点映射，交付首个可独立出周期并与留出用例对账的片上事件模型。已知后续依赖为部署拓扑和地址/队列配置。
+
+## 2026-11-14 短程整机对照
+
+采用 [PR #260 的两步 TLM 回放](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/69e4239584c84aacf4dcf66432be2ccf76887182/project/experiments/systemc_benchmark/README.md#L29-L36) 作短程整机对照，固定归档作业 107361。首步从 512 位置代表性 KV 开始，第二步使用首步实际选出的 token 及其 KV 写入。两步均覆盖 36 层和完整词表。按两次退休间隔 `1,045,096,187,442 ps` 计算得 `0.956849725428261 tok/s`，计时窗口包含一个 token 间隔。按 [回执](../../work/Melodydt/265/qwen-tlm-decode-107361.json) 复用同一部署、初始 DDR/KV、128-bit SRAM、3,334 ps 核时钟、双通道 630 ps DDR、每通道 32 个 DMA credit、串行单拍 Attention KV 读，以及同一 token 退休边界，才报告相对误差。运行时间加速比另按同机、同工作负载实测。
+
+105530 的 10 ns 原生 RTL 短窗用于逐拍校验局部服务、争用和背压。105572 保留为 RTL 留出。107361 用于复核整机量级及逐页时间，原回执的 `timing_calibrated` 与 `numerically_accepted` 均为 false。后续 107947/108284 使用 8-beat KV 窗口，需用自己的匹配基线。正式 P512/D128 验收沿用上节退休定义。

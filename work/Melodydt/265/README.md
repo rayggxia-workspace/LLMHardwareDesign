@@ -20,6 +20,10 @@ Qwen2.5-3B case 2 的真实 QKV、KV 写回及 layer 0→1 RMS 窗口已接入 D
 
 [105530 首页与首笔权重回执](qwen-105530-first-page-108366.json)记录 108297、108312、108366 的源提交、工具、输入和输出散列。每种模式的独立预测现覆盖到首个 Q 投影的首个 17 拍权重记录；[复跑说明](../../../project/experiments/instruction_cycle/README.md#105530-首个指令页与首笔-q-投影权重)另标明以 RTL 退休边沿为输入的整页 WAIT 核对。
 
+[107361 短程整机 TLM 对照回执](qwen-tlm-decode-107361.json)固定归档部署、KV、退休时间与逐页耗时。第二步由 291 页组成，退休间隔为 1,045.096187442 ms。该运行使用 128-bit SRAM 和串行单拍 Attention KV 读。只读复核两步 582 页及原审计 SHA-256 后，复算得到 0.956849725428261 tok/s。
+
+[108930 第二条 Q 权重回执](qwen-105530-two-weights-108930.json)记录在 105530 RTL 短窗内对账的结果，保存源码、工具、输入和输出散列。
+
 `audit_fast_cycle_inputs.py` 在 Python 3.7.0 上运行，通过两个历史作业的归档恢复三 P FFN 控制顺序，并对照原有 RTL 日志。原始归档按 [#251 索引](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/250/native-services/ffnnative/index.json) 从项目服务器只读获取。两个作业归档登记的源提交均为 `ab7611d43e4c007cc966ab5e61903118d33fcb4a`。将其命名为 `<job>-receipts.tar.gz`。`fast-cycle-inputs.local/` 为本地未提交缓存。
 
 | 作业 | 服务器相对 `/public/home/yuzelu/project-circuit/` 的位置 | SHA-256 |

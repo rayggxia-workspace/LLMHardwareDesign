@@ -74,3 +74,10 @@
 - 108297、108312、108366 均在 c64/node3 用 2 核、6 秒完成（0:0）。108366 每模式精确匹配 306 笔 DDR 读的 1,224 个事件和 11 个控制标记。源码、预测及输出散列通过，项目结构和本地 30 项单测通过。[源码、日志、命令及回执](../../work/Melodydt/265/qwen-105530-first-page-108366.json)
 - 108312 和 108366 每模式核对 123 次 WAIT、246 个后续描述符接收边沿及页提交，输入为 RTL 服务退休边沿。下一步由 Melodydt 在同一 105530 冻结窗口继续到 Q 的首个 EXEC 和退休，补 W 双 bank、A COPY/LOAD、M EXEC 的重叠及多请求竞争。后续再验证三 P 并发、跨层和留出 105572。整机 tokens/s 与同机加速比待估。
 - #265 进行中，PR 草稿，独立审查人待指定。登记 PR #5 待合并。仓库缺 `config/board.json`，Projects 条目和同步待具权限的维护者处理。
+
+## 2026-11-14（Asia/Shanghai，UTC+08:00）整机 TLM 对照与第二条 Q 权重
+
+- [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 由 Melodydt 在 `task/265-qwen3b-system-evaluation` 推进。[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 固定 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 的 107361 为短程整机 TLM 对照。只读重跑原审计，输出 SHA-256 与归档一致。582 页核对通过，第二步退休间隔 1,045.096187442 ms、0.956849725428261 tok/s，Attention 页占 67.8%。[对照回执](../../work/Melodydt/265/qwen-tlm-decode-107361.json)
+- 同一 105530 原生 RTL 窗口已推进到首个 Q 投影的两条权重。108930 在 c64/node3 用 2 核、6 秒完成（0:0），两种模式各匹配 323 笔 DDR 读、1,292 个事件和 11 个控制标记。源码和输出 SHA-256、管理检查和 30 项单测通过。[Slurm 回执](../../work/Melodydt/265/qwen-105530-two-weights-108930.json)
+- 下一步由 Melodydt 在首个 Q 投影中建模 A COPY/LOAD、双 bank 就绪和首对 M EXEC，以第三条权重首拍作可观测边界。服务退休、三 P 并发、跨层和完整上下文 105572 留出仍待验证。整机预测误差和同机加速比待匹配 107361 的部署与时钟后实测。
+- #265 进行中，PR 草稿，独立审查人待指定。登记 PR #5 待合并。仓库缺 `config/board.json`，Projects 条目与同步待具权限维护者处理。
