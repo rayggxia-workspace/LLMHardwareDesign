@@ -1,0 +1,162 @@
+{
+  "passed": true,
+  "row_service_proof": {
+    "manifest_sha256": "bff2f8d84badb91a93345ec4f5dd5c75e01e889831f65a436cc4d5e05a3404c1",
+    "logs_sha256": [
+      "ea50b9e34f3f623c664f0f54f799caa7414e5c64c3c1d021f8480a10d665c464",
+      "ea50b9e34f3f623c664f0f54f799caa7414e5c64c3c1d021f8480a10d665c464",
+      "ea50b9e34f3f623c664f0f54f799caa7414e5c64c3c1d021f8480a10d665c464"
+    ],
+    "cases_per_initialization": [
+      288,
+      288,
+      288
+    ]
+  },
+  "row_formats": [
+    [
+      16,
+      0
+    ],
+    [
+      16,
+      10
+    ],
+    [
+      32,
+      0
+    ],
+    [
+      32,
+      5
+    ],
+    [
+      32,
+      23
+    ],
+    [
+      32,
+      29
+    ],
+    [
+      32,
+      30
+    ],
+    [
+      32,
+      34
+    ],
+    [
+      32,
+      35
+    ]
+  ],
+  "wrong_row_fault": {
+    "returncode": 1,
+    "bytes": 3287
+  },
+  "independent_tiles": [
+    {
+      "file": "region-v209-rows-2.json",
+      "sha256": "1fa9e635b976d72145537449b8108a0c5327080869fd4e9d9520d1c0532284e6",
+      "rows": 2,
+      "independent_cases_per_plan": 4,
+      "plans": {
+        "scalar_greedy": {
+          "width": 1,
+          "rank_policy": "future_copies",
+          "total_ticks": 54486,
+          "copy_ticks": 15134,
+          "native_service_ticks": 39352,
+          "external_words": 738
+        },
+        "batch_greedy": {
+          "width": 1,
+          "rank_policy": "future_copies",
+          "total_ticks": 60025,
+          "copy_ticks": 26248,
+          "native_service_ticks": 33777,
+          "external_words": 1288
+        },
+        "batch_cost_greedy": {
+          "width": 1,
+          "rank_policy": "copy_cost",
+          "total_ticks": 64688,
+          "copy_ticks": 30736,
+          "native_service_ticks": 33952,
+          "external_words": 1509
+        },
+        "batch_dp": {
+          "width": 8,
+          "rank_policy": "future_copies",
+          "total_ticks": 59615,
+          "copy_ticks": 25888,
+          "native_service_ticks": 33727,
+          "external_words": 1270
+        }
+      },
+      "strongest_greedy": "scalar_greedy",
+      "strongest_dp": "batch_dp",
+      "dp_vs_strongest_greedy_fraction": -0.09413427302426314
+    },
+    {
+      "file": "region-v209-rows-4.json",
+      "sha256": "3eb0c38ef2942e60dae0d85a651cca78d161a721480a3b7fe7c6f61d4ee27f58",
+      "rows": 4,
+      "independent_cases_per_plan": 4,
+      "plans": {
+        "scalar_greedy": {
+          "width": 1,
+          "rank_policy": "future_copies",
+          "total_ticks": 104134,
+          "copy_ticks": 26822,
+          "native_service_ticks": 77312,
+          "external_words": 1305
+        },
+        "batch_greedy": {
+          "width": 1,
+          "rank_policy": "future_copies",
+          "total_ticks": 109037,
+          "copy_ticks": 49200,
+          "native_service_ticks": 59837,
+          "external_words": 2414
+        },
+        "batch_cost_greedy": {
+          "width": 1,
+          "rank_policy": "copy_cost",
+          "total_ticks": 114457,
+          "copy_ticks": 54620,
+          "native_service_ticks": 59837,
+          "external_words": 2685
+        },
+        "batch_dp": {
+          "width": 8,
+          "rank_policy": "future_copies",
+          "total_ticks": 109037,
+          "copy_ticks": 49200,
+          "native_service_ticks": 59837,
+          "external_words": 2414
+        }
+      },
+      "strongest_greedy": "scalar_greedy",
+      "strongest_dp": "batch_dp",
+      "dp_vs_strongest_greedy_fraction": -0.04708356540611125
+    }
+  ],
+  "independent_stress": {
+    "passed": true,
+    "repeats": 12,
+    "python": "3.12.7 (main, Oct 26 2025, 19:10:49) [GCC 8.5.0 20210514 (Red Hat 8.5.0-28)]",
+    "malloc": "debug",
+    "schedule_sha256": "3053b3ee020075a2a32b377d8f9620078cde294dc47b201d5fd88c5ed7e99b9d",
+    "code_sha256": {
+      "stress_overlap.py": "169ee8edee9eeab5174599240e447714d0cd82931ac84a9fd53805de836c03a3",
+      "resident_overlap.py": "ef4d8579513e90bc078c7f500cb598cbb0b7d17275e673ff074b0aff9a23680a",
+      "verify_resident_overlap.py": "41bf668087b844589b627294dce8e1ad14194bb2de99e9476a66b92e500d8fe4"
+    }
+  },
+  "stress_state": "JobID|State|ExitCode|Elapsed|AllocCPUS|Timelimit\n101659|COMPLETED|0:0|00:02:49|4|UNLIMITED\n101659.batch|COMPLETED|0:0|00:02:49|4|\n101659.extern|COMPLETED|0:0|00:02:49|4|\n",
+  "ir_sha256": "3fff3712f59ff04eedd491fe87fd913a7487fd34a01203eaf3afdd70e212165c",
+  "audit_sha256": "367444712f6c389713f0b4b6883fc838c9b0e22127cd651b34fc24bd57a702b8",
+  "scope": "288 prepared-word native row services per SRAM state, independent source/finite-S cold tile numerics and repeated actor scheduling; no actual-weight batched loop, complete row-program RTL, full-loop mapping, system or energy/token/s qualification"
+}

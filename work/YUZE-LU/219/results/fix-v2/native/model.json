@@ -1,0 +1,85 @@
+{
+  "tasks": [
+    {
+      "id": "rms",
+      "op": "RMSNorm",
+      "numeric": "n-rms-q6.10-gamma-q6.10",
+      "inputs": [
+        "x",
+        "gamma",
+        "epsilon"
+      ],
+      "outputs": [
+        "normalized"
+      ]
+    },
+    {
+      "id": "soft",
+      "op": "Softmax",
+      "numeric": "n-softmax-q6.10-to-q1.14",
+      "inputs": [
+        "scores"
+      ],
+      "outputs": [
+        "probability"
+      ]
+    },
+    {
+      "id": "residual",
+      "op": "AddSat",
+      "numeric": "s16-saturate-no-rescale",
+      "inputs": [
+        "normalized",
+        "x"
+      ],
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "values": {
+    "x": {
+      "shape": [
+        1,
+        2048
+      ]
+    },
+    "gamma": {
+      "shape": [
+        2048
+      ]
+    },
+    "epsilon": {
+      "shape": []
+    },
+    "normalized": {
+      "shape": [
+        1,
+        2048
+      ]
+    },
+    "scores": {
+      "shape": [
+        1,
+        16
+      ]
+    },
+    "y": {
+      "shape": [
+        1,
+        2048
+      ]
+    },
+    "probability": {
+      "shape": [
+        1,
+        16
+      ]
+    }
+  },
+  "outputs": [
+    "y",
+    "probability"
+  ],
+  "source": "native integer N interface semantics; not a relabeled FLOAT ONNX"
+}

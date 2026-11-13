@@ -1,0 +1,220 @@
+{
+  "status": "HEURISTIC",
+  "best_bound": 0,
+  "tasks": {
+    "a": {
+      "service": "U0.E.add",
+      "site": "U0.S",
+      "start": 0,
+      "end": 20
+    },
+    "b": {
+      "service": "U0.E.add",
+      "site": "U0.S",
+      "start": 20,
+      "end": 40
+    },
+    "c": {
+      "service": "U0.E.add",
+      "site": "U0.S",
+      "start": 40,
+      "end": 60
+    },
+    "d": {
+      "service": "U0.E.add",
+      "site": "U0.S",
+      "start": 60,
+      "end": 80
+    }
+  },
+  "moves": [],
+  "allocations": [
+    {
+      "id": "seed-alloc-0",
+      "value": "x",
+      "site": "U0.S",
+      "words": 1,
+      "start": 0,
+      "end": 20,
+      "address": 0,
+      "origin": "initial"
+    },
+    {
+      "id": "seed-alloc-1",
+      "value": "y",
+      "site": "U0.S",
+      "words": 1,
+      "start": 0,
+      "end": 20,
+      "address": 1,
+      "origin": "initial"
+    },
+    {
+      "id": "seed-alloc-2",
+      "value": "z",
+      "site": "U0.S",
+      "words": 1,
+      "start": 0,
+      "end": 40,
+      "address": 2,
+      "origin": "initial"
+    },
+    {
+      "id": "seed-alloc-3",
+      "value": "w",
+      "site": "U0.S",
+      "words": 1,
+      "start": 0,
+      "end": 40,
+      "address": 3,
+      "origin": "initial"
+    },
+    {
+      "id": "seed-alloc-4",
+      "value": "a",
+      "site": "U0.S",
+      "words": 1,
+      "start": 0,
+      "end": 80,
+      "address": 4,
+      "origin": "producer:a"
+    },
+    {
+      "id": "seed-alloc-5",
+      "value": "b",
+      "site": "U0.S",
+      "words": 1,
+      "start": 20,
+      "end": 60,
+      "address": 0,
+      "origin": "producer:b"
+    },
+    {
+      "id": "seed-alloc-6",
+      "value": "c",
+      "site": "U0.S",
+      "words": 1,
+      "start": 40,
+      "end": 80,
+      "address": 1,
+      "origin": "producer:c"
+    },
+    {
+      "id": "seed-alloc-7",
+      "value": "d",
+      "site": "U0.S",
+      "words": 1,
+      "start": 60,
+      "end": 80,
+      "address": 0,
+      "origin": "producer:d"
+    }
+  ],
+  "claims": [
+    {
+      "resource": "U0.E",
+      "start": 0,
+      "end": 20,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 0,
+      "end": 20,
+      "demand": 1
+    },
+    {
+      "resource": "U0.service-client",
+      "start": 0,
+      "end": 20,
+      "demand": 1
+    },
+    {
+      "resource": "U0.E",
+      "start": 20,
+      "end": 40,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 20,
+      "end": 40,
+      "demand": 1
+    },
+    {
+      "resource": "U0.service-client",
+      "start": 20,
+      "end": 40,
+      "demand": 1
+    },
+    {
+      "resource": "U0.E",
+      "start": 40,
+      "end": 60,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 40,
+      "end": 60,
+      "demand": 1
+    },
+    {
+      "resource": "U0.service-client",
+      "start": 40,
+      "end": 60,
+      "demand": 1
+    },
+    {
+      "resource": "U0.E",
+      "start": 60,
+      "end": 80,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 60,
+      "end": 80,
+      "demand": 1
+    },
+    {
+      "resource": "U0.service-client",
+      "start": 60,
+      "end": 80,
+      "demand": 1
+    }
+  ],
+  "nets": [],
+  "wire_cost": 0,
+  "external_words": 0,
+  "optimality_scope": "lowered choices; neighborhood bounds are conditional, not global",
+  "makespan": 80,
+  "seconds": 0.00013645458966493607,
+  "external_regions": [],
+  "optimization_history": [
+    {
+      "kind": "memory:a",
+      "open_tasks": [
+        "a",
+        "c",
+        "d"
+      ],
+      "fixed_tasks": 1,
+      "status": "OPTIMAL",
+      "accepted": false,
+      "bound": 80.0,
+      "coupled_binding_families": []
+    },
+    {
+      "kind": "memory:z",
+      "open_tasks": [
+        "b"
+      ],
+      "fixed_tasks": 3,
+      "status": "OPTIMAL",
+      "accepted": false,
+      "bound": 80.0,
+      "coupled_binding_families": []
+    }
+  ]
+}

@@ -1,0 +1,353 @@
+[
+  {
+    "case": "u1-ch1-credit4-bundles2",
+    "instances": 1,
+    "channels": 1,
+    "credits": 4,
+    "s_words_each": 1024,
+    "preconnected_bundles": 0,
+    "bundle_budget": 2,
+    "baseline_ticks": 62892,
+    "optimized_ticks": 62892,
+    "baseline_external_words": 2305,
+    "optimized_external_words": 2305,
+    "selected_bundles": 2,
+    "checks_passed": true,
+    "seconds": 12.375632846727967,
+    "history": [
+      {
+        "kind": "shared-net:U0.N.read",
+        "open_tasks": [
+          "rms@row0",
+          "rms@row1",
+          "rms@row2",
+          "rms@row3"
+        ],
+        "fixed_tasks": 0,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 56657.0,
+        "coupled_binding_families": []
+      },
+      {
+        "kind": "resource:U0.client:rms@row3",
+        "open_tasks": [
+          "rms@row2",
+          "rms@row3"
+        ],
+        "fixed_tasks": 2,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 56657.0,
+        "coupled_binding_families": []
+      },
+      {
+        "kind": "memory:x@row0",
+        "open_tasks": [
+          "rms@row0"
+        ],
+        "fixed_tasks": 3,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 56657.0,
+        "coupled_binding_families": []
+      }
+    ],
+    "constructive_history": [
+      {
+        "kind": "construct-independent-streams",
+        "status": "NOT_APPLICABLE",
+        "accepted": false,
+        "reason": "one execution site; no independent stream to overlap"
+      },
+      {
+        "kind": "construct-independent-streams",
+        "status": "NOT_APPLICABLE",
+        "accepted": false,
+        "reason": "one execution site; no independent stream to overlap"
+      }
+    ]
+  },
+  {
+    "case": "u2-ch1-credit4-bundles2",
+    "instances": 2,
+    "channels": 1,
+    "credits": 4,
+    "s_words_each": 1024,
+    "preconnected_bundles": 0,
+    "bundle_budget": 2,
+    "baseline_ticks": 62892,
+    "optimized_ticks": 62892,
+    "baseline_external_words": 2305,
+    "optimized_external_words": 2305,
+    "selected_bundles": 2,
+    "checks_passed": true,
+    "seconds": 12.082215008325875,
+    "history": [
+      {
+        "kind": "shared-net:U0.N.read",
+        "open_tasks": [
+          "rms@row0",
+          "rms@row1",
+          "rms@row2",
+          "rms@row3"
+        ],
+        "fixed_tasks": 0,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 13776.0,
+        "coupled_binding_families": []
+      },
+      {
+        "kind": "resource:U0.client:rms@row3",
+        "open_tasks": [
+          "rms@row2",
+          "rms@row3"
+        ],
+        "fixed_tasks": 2,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 56657.0,
+        "coupled_binding_families": []
+      },
+      {
+        "kind": "memory:x@row0",
+        "open_tasks": [
+          "rms@row0"
+        ],
+        "fixed_tasks": 3,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 56657.0,
+        "coupled_binding_families": []
+      }
+    ],
+    "constructive_history": [
+      {
+        "kind": "construct-independent-streams",
+        "status": "NOT_APPLICABLE",
+        "accepted": false,
+        "reason": "one execution site; no independent stream to overlap"
+      },
+      {
+        "kind": "construct-independent-streams",
+        "status": "NOT_APPLICABLE",
+        "accepted": false,
+        "reason": "parallel branch bindings exceed the static connection budget"
+      }
+    ]
+  },
+  {
+    "case": "u2-ch1-credit4-bundles4",
+    "instances": 2,
+    "channels": 1,
+    "credits": 4,
+    "s_words_each": 1024,
+    "preconnected_bundles": 0,
+    "bundle_budget": 4,
+    "baseline_ticks": 62892,
+    "optimized_ticks": 35363,
+    "baseline_external_words": 2305,
+    "optimized_external_words": 2562,
+    "selected_bundles": 4,
+    "checks_passed": true,
+    "seconds": 12.092022163793445,
+    "history": [
+      {
+        "kind": "shared-net:U0.N.read",
+        "open_tasks": [
+          "rms@row0",
+          "rms@row2"
+        ],
+        "fixed_tasks": 2,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 29105.0,
+        "coupled_binding_families": []
+      },
+      {
+        "kind": "memory:gamma@row0",
+        "open_tasks": [
+          "rms@row0",
+          "rms@row1",
+          "rms@row2",
+          "rms@row3"
+        ],
+        "fixed_tasks": 0,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 13776.0,
+        "coupled_binding_families": []
+      },
+      {
+        "kind": "resource:U1.client:rms@row3",
+        "open_tasks": [
+          "rms@row1",
+          "rms@row3"
+        ],
+        "fixed_tasks": 2,
+        "status": "FEASIBLE",
+        "accepted": false,
+        "bound": 29105.0,
+        "coupled_binding_families": []
+      }
+    ],
+    "constructive_history": [
+      {
+        "kind": "construct-independent-streams",
+        "status": "NOT_APPLICABLE",
+        "accepted": false,
+        "reason": "one execution site; no independent stream to overlap"
+      },
+      {
+        "kind": "construct-independent-streams",
+        "status": "VERIFIED",
+        "accepted": true,
+        "before_ticks": 62892,
+        "after_ticks": 35363
+      }
+    ]
+  },
+  {
+    "case": "u2-ch2-credit4-bundles4",
+    "instances": 2,
+    "channels": 2,
+    "credits": 4,
+    "s_words_each": 1024,
+    "preconnected_bundles": 0,
+    "bundle_budget": 4,
+    "baseline_ticks": 62892,
+    "optimized_ticks": 32234,
+    "baseline_external_words": 2305,
+    "optimized_external_words": 2562,
+    "selected_bundles": 4,
+    "checks_passed": true,
+    "seconds": 12.090436563827097,
+    "history": [
+      {
+        "kind": "shared-net:U0.N.read",
+        "open_tasks": [
+          "rms@row0",
+          "rms@row2"
+        ],
+        "fixed_tasks": 2,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 29106.0,
+        "coupled_binding_families": []
+      },
+      {
+        "kind": "memory:gamma@row0",
+        "open_tasks": [
+          "rms@row0",
+          "rms@row1",
+          "rms@row2",
+          "rms@row3"
+        ],
+        "fixed_tasks": 0,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 17031.0,
+        "coupled_binding_families": []
+      },
+      {
+        "kind": "resource:U1.client:rms@row3",
+        "open_tasks": [
+          "rms@row1",
+          "rms@row3"
+        ],
+        "fixed_tasks": 2,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 29105.0,
+        "coupled_binding_families": []
+      }
+    ],
+    "constructive_history": [
+      {
+        "kind": "construct-independent-streams",
+        "status": "NOT_APPLICABLE",
+        "accepted": false,
+        "reason": "one execution site; no independent stream to overlap"
+      },
+      {
+        "kind": "construct-independent-streams",
+        "status": "VERIFIED",
+        "accepted": true,
+        "before_ticks": 62892,
+        "after_ticks": 32234
+      }
+    ]
+  },
+  {
+    "case": "u2-ch2-credit1-bundles4",
+    "instances": 2,
+    "channels": 2,
+    "credits": 1,
+    "s_words_each": 1024,
+    "preconnected_bundles": 0,
+    "bundle_budget": 4,
+    "baseline_ticks": 93720,
+    "optimized_ticks": 49392,
+    "baseline_external_words": 2305,
+    "optimized_external_words": 2562,
+    "selected_bundles": 4,
+    "checks_passed": true,
+    "seconds": 12.08576835040003,
+    "history": [
+      {
+        "kind": "shared-net:U0.N.read",
+        "open_tasks": [
+          "rms@row0",
+          "rms@row2"
+        ],
+        "fixed_tasks": 2,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 39287.0,
+        "coupled_binding_families": []
+      },
+      {
+        "kind": "memory:gamma@row0",
+        "open_tasks": [
+          "rms@row0",
+          "rms@row1",
+          "rms@row2",
+          "rms@row3"
+        ],
+        "fixed_tasks": 0,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 17123.0,
+        "coupled_binding_families": []
+      },
+      {
+        "kind": "resource:U1.client:rms@row3",
+        "open_tasks": [
+          "rms@row1",
+          "rms@row3"
+        ],
+        "fixed_tasks": 2,
+        "status": "UNKNOWN",
+        "accepted": false,
+        "bound": 39287.0,
+        "coupled_binding_families": []
+      }
+    ],
+    "constructive_history": [
+      {
+        "kind": "construct-independent-streams",
+        "status": "NOT_APPLICABLE",
+        "accepted": false,
+        "reason": "one execution site; no independent stream to overlap"
+      },
+      {
+        "kind": "construct-independent-streams",
+        "status": "VERIFIED",
+        "accepted": true,
+        "before_ticks": 93720,
+        "after_ticks": 49392
+      }
+    ]
+  }
+]

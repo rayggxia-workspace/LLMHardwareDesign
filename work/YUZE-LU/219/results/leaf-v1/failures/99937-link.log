@@ -1,0 +1,8 @@
+native_probe.cpp: In member function 'void TiledRecurrent::error(const std::array<int, 8>&, uint32_t)':
+native_probe.cpp:135:4: error: this 'for' clause does not guard... [-Werror=misleading-indentation]
+  135 |    for(unsigned i=0;i<4;++i)data[i]=uint32_t(x[half*4+i]);load(4,half,data);}
+      |    ^~~
+native_probe.cpp:135:59: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'for'
+  135 |    for(unsigned i=0;i<4;++i)data[i]=uint32_t(x[half*4+i]);load(4,half,data);}
+      |                                                           ^~~~
+cc1plus: all warnings being treated as errors

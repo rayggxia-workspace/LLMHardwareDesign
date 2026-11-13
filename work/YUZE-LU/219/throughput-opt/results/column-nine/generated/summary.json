@@ -1,0 +1,276 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "scenario": "nine-groups-count-experiment",
+      "wire_budget": 10,
+      "previous_dp": 1220294380026,
+      "same_pool_greedy": 1220294380026,
+      "proposed": 1220294380026,
+      "gain_against_stronger_baseline_fraction": 0.0,
+      "change_against_previous_action_pool_fraction": 0.0,
+      "wire_cost": 10,
+      "external_words": 26318235135,
+      "compound_tasks": 0,
+      "compound_services": 0,
+      "audit": {
+        "passed": true,
+        "peak_words": {
+          "P0.S": 1023,
+          "U0.S": 8
+        },
+        "external_words": 26318235135,
+        "static_nets": 10,
+        "checked_static_conflict_pairs": 0,
+        "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+      },
+      "cost_audit": {
+        "passed": true,
+        "kernels": 8404,
+        "bindings": 240770,
+        "primitive_instructions": 8850,
+        "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+      },
+      "scope": {
+        "eligible_tasks": 253,
+        "added_bindings": 30360,
+        "max_shards": 4,
+        "max_bindings_per_task": 512,
+        "truncated_families": 0,
+        "partitions": "balanced and memory-channel balanced widths; all child issue orders",
+        "cache_choices": "stream or largest legal read-only prefix per child; dynamic preserve/shrink/discard",
+        "scope": "full-K disjoint output columns; prepared A shared; S16 B; native arithmetic unchanged",
+        "excluded": "K partitions, dirty output residency, intra-service overlap, arbitrary partitions, LC encoding"
+      },
+      "compile_seconds": 183.80230147670954,
+      "diagnostic": {
+        "verified_plan_makespan": 1220294380026,
+        "critical_path_lower_bound": 339456777154,
+        "mandatory_resource_bounds": {
+          "virtual-memory.channel.1": {
+            "mandatory_tasks": 145,
+            "minimum_reserved_work": 74067802,
+            "capacity": 1,
+            "completion_lower_bound": 74067802
+          }
+        },
+        "completion_lower_bound": 610145391009,
+        "resource_pool_bounds": {
+          "native.M": {
+            "resources": [
+              "P0.M",
+              "P1.M",
+              "P2.M"
+            ],
+            "capacity": 3,
+            "minimum_resource_time": 1220209574888,
+            "completion_lower_bound": 406736524963
+          },
+          "native.G": {
+            "resources": [
+              "C0.G",
+              "F0.G",
+              "P0.G",
+              "P1.G",
+              "P2.G"
+            ],
+            "capacity": 5,
+            "minimum_resource_time": 0,
+            "completion_lower_bound": 0
+          },
+          "native.N": {
+            "resources": [
+              "U0.N",
+              "U1.N"
+            ],
+            "capacity": 2,
+            "minimum_resource_time": 74067802,
+            "completion_lower_bound": 37033901
+          },
+          "native.E": {
+            "resources": [
+              "C0.E",
+              "F0.E",
+              "J0.E",
+              "J1.E",
+              "U0.E",
+              "U1.E"
+            ],
+            "capacity": 6,
+            "minimum_resource_time": 83819080228,
+            "completion_lower_bound": 13969846705
+          },
+          "native.R": {
+            "resources": [
+              "C0.R"
+            ],
+            "capacity": 1,
+            "minimum_resource_time": 0,
+            "completion_lower_bound": 0
+          },
+          "native.T": {
+            "resources": [
+              "J0.T",
+              "J1.T"
+            ],
+            "capacity": 2,
+            "minimum_resource_time": 0,
+            "completion_lower_bound": 0
+          },
+          "virtual-memory.channels": {
+            "resources": [
+              "virtual-memory.channel.0",
+              "virtual-memory.channel.1"
+            ],
+            "capacity": 2,
+            "minimum_resource_time": 1220290782018,
+            "completion_lower_bound": 610145391009
+          }
+        },
+        "maximum_time_reduction_fraction_with_current_actions": 0.5000014742377163,
+        "assumptions": "same serial leaf-service / compound column candidates, optimistic all-hit endpoints; no finer phases or new hardware",
+        "scope": "proof within current serial-service action family; not a physical performance or global hardware bound"
+      },
+      "performance_scope": "native-profile conservative model ticks; not system cycles or token/s"
+    },
+    {
+      "scenario": "nine-groups-count-experiment",
+      "wire_budget": 18,
+      "previous_dp": 915081145434,
+      "same_pool_greedy": 651023044346,
+      "proposed": 646447547450,
+      "gain_against_stronger_baseline_fraction": 0.007028164265055148,
+      "change_against_previous_action_pool_fraction": 0.29356259750778035,
+      "wire_cost": 18,
+      "external_words": 26318382418,
+      "compound_tasks": 253,
+      "compound_services": 506,
+      "audit": {
+        "passed": true,
+        "peak_words": {
+          "P0.S": 1023,
+          "P1.S": 1023,
+          "U0.S": 8,
+          "C0.S": 8
+        },
+        "external_words": 26318382418,
+        "static_nets": 18,
+        "checked_static_conflict_pairs": 0,
+        "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+      },
+      "cost_audit": {
+        "passed": true,
+        "kernels": 8404,
+        "bindings": 240770,
+        "primitive_instructions": 8850,
+        "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+      },
+      "scope": {
+        "eligible_tasks": 253,
+        "added_bindings": 30360,
+        "max_shards": 4,
+        "max_bindings_per_task": 512,
+        "truncated_families": 0,
+        "partitions": "balanced and memory-channel balanced widths; all child issue orders",
+        "cache_choices": "stream or largest legal read-only prefix per child; dynamic preserve/shrink/discard",
+        "scope": "full-K disjoint output columns; prepared A shared; S16 B; native arithmetic unchanged",
+        "excluded": "K partitions, dirty output residency, intra-service overlap, arbitrary partitions, LC encoding"
+      },
+      "compile_seconds": 362.83736577257514,
+      "diagnostic": {
+        "verified_plan_makespan": 646447547450,
+        "critical_path_lower_bound": 339456777154,
+        "mandatory_resource_bounds": {
+          "virtual-memory.channel.1": {
+            "mandatory_tasks": 145,
+            "minimum_reserved_work": 74067802,
+            "capacity": 1,
+            "completion_lower_bound": 74067802
+          }
+        },
+        "completion_lower_bound": 610145391009,
+        "resource_pool_bounds": {
+          "native.M": {
+            "resources": [
+              "P0.M",
+              "P1.M",
+              "P2.M"
+            ],
+            "capacity": 3,
+            "minimum_resource_time": 1220209574888,
+            "completion_lower_bound": 406736524963
+          },
+          "native.G": {
+            "resources": [
+              "C0.G",
+              "F0.G",
+              "P0.G",
+              "P1.G",
+              "P2.G"
+            ],
+            "capacity": 5,
+            "minimum_resource_time": 0,
+            "completion_lower_bound": 0
+          },
+          "native.N": {
+            "resources": [
+              "U0.N",
+              "U1.N"
+            ],
+            "capacity": 2,
+            "minimum_resource_time": 74067802,
+            "completion_lower_bound": 37033901
+          },
+          "native.E": {
+            "resources": [
+              "C0.E",
+              "F0.E",
+              "J0.E",
+              "J1.E",
+              "U0.E",
+              "U1.E"
+            ],
+            "capacity": 6,
+            "minimum_resource_time": 83819080228,
+            "completion_lower_bound": 13969846705
+          },
+          "native.R": {
+            "resources": [
+              "C0.R"
+            ],
+            "capacity": 1,
+            "minimum_resource_time": 0,
+            "completion_lower_bound": 0
+          },
+          "native.T": {
+            "resources": [
+              "J0.T",
+              "J1.T"
+            ],
+            "capacity": 2,
+            "minimum_resource_time": 0,
+            "completion_lower_bound": 0
+          },
+          "virtual-memory.channels": {
+            "resources": [
+              "virtual-memory.channel.0",
+              "virtual-memory.channel.1"
+            ],
+            "capacity": 2,
+            "minimum_resource_time": 1220290782018,
+            "completion_lower_bound": 610145391009
+          }
+        },
+        "maximum_time_reduction_fraction_with_current_actions": 0.056156383583167435,
+        "assumptions": "same serial leaf-service / compound column candidates, optimistic all-hit endpoints; no finer phases or new hardware",
+        "scope": "proof within current serial-service action family; not a physical performance or global hardware bound"
+      },
+      "performance_scope": "native-profile conservative model ticks; not system cycles or token/s"
+    }
+  ],
+  "inputs": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-232-incremental-ready-plan/generated/nine-groups-count-experiment-ir.json": "93388c5c145202531c179273a26ac08fc51e67186b865f3fc7a24f36da6a430e",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-239-static-completion-budget/generated/nine-groups-count-experiment-budget-10.json": "45ac7e15d03997a7966effc9156b7937c5778a1e28afd702b921642aa4a0e50a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-239-static-completion-budget/generated/nine-groups-count-experiment-budget-18.json": "0c7a581aba8aecf15d1a685fd6d26f0251db95cc9dc93de95027617c45c7b5de"
+  }
+}

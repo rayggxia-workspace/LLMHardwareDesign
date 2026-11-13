@@ -1,5 +1,139 @@
 # 当前状态
 
+2026-11-09：#219/PR220[迭代23/24](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_24.md)实现原生逐行地址选择、动态high16消费者覆盖及逐term混合K检查。
+两行冷切片相对最终强旧贪心少7.421%模型时间，但新DP仍慢于新强贪心0.0441%；不是整模型或20%算法结论。
+Windows/Linux最终各319测试；84合成及36此前真实模型边界的完整程序RTL，四初态和实际错行/错K负对照通过，首版故障未检出及地址预算修正均保留。
+四行服务器调查亦通过有限S数值检查（少8.574%）；尚无四行完整程序RTL或新覆盖整模型资格。
+整模型流量审计首次因缺少覆盖投影失败，修后独立服务器319测试及全流量守恒通过：80.19亿逻辑请求，tile B/A加载占38.48%/28.86%，不是DRAM事务。
+原全图搜索和依赖作业继续，101683已终态待八行输出回收；完整KV/SystemC/能耗/token/s/充分适配ASIC与FPGA对照未完成，Issue保持in_progress。
+
+2026-11-09：#219/PR220[迭代22](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_22.md)以未修改RTL证明M无效宽读字可忽略，四初态各288案例、48完整冷程序及故障注入通过；双平台及独立服务器各312测试通过。
+两行切片模型时间较旧约束少10.50729%，但同合同强贪心与DP差仅0.57703%，不记为20%算法收益；宽8尚只完成有限S数值验证，完整程序RTL为宽2。
+只读ISSUE计数显示该切片请求位点约1.745%，逐事件审计又发现大量跨S中转/同S布局重读；小tile的未来活字峰值远低于16KiB，不能简单归因容量。
+101660旧布局终态负结果已回收；101683新掩码、101673严格就绪及原全图继续运行。下一步研究逐字表示/布局与合法路径，避免以修正过强约束冒充搜索收益。
+完整真实权重/共同注册/KV/SystemC/DRAM/能耗/token/s/充分适配3–4B对照仍未完成，任务继续in_progress。
+
+2026-11-09：#219/PR220[迭代21](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_21.md)新增同一前沿的就绪节点/兼容分组/有限S状态搜索，保持原固定顺序候选。
+严格贪心与完成数分层DP明确分开；双平台及独立服务器严格版本各309测试通过，模型调查仍运行，不能宣称新全模型收益。
+第一版分片101657已COMPLETED：18冷tile/72候选/288独立数值重验通过；DP额外最好1.26044%，多数持平且有负结果。
+算法20%/真实权重批程序及RTL/完整KV/SystemC/能耗/token/s/充分适配对照均未完成；详见报告的失败记录和作业入口。
+
+2026-11-09：#219/PR220迭代19的完整FFN事件重叠独立服务器终态通过，模型时间少4.43044%、逻辑外部记录不变，同池DP额外0。
+三初态各64个真实P/E/S程序、216调度证书和最终来源/数值重验通过；本机长运行异常未定根因，独立服务器12次纯轨迹压力通过。
+[迭代20](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_20.md)新增每前沿多行/单行、有限S实际排列和付费重排；行服务三初态各288案例及双平台305项通过。
+完整S32冷tile中2/4行DP目前仍慢于最强单行贪心9.41%/4.71%，负结果保留，不能记为20%。
+新的布局估计与较大行数调查运行中；新分片未注册完整模型，完整批程序RTL/真实权重/循环/系统资格未完成。
+101626/101525保持运行，101654重叠全图与101655全部实际权重回放有afterok依赖；算法20%/KV/SystemC/能耗/token/s/充分适配对照继续in_progress。
+
+
+2026-11-09：#219/PR220[迭代18](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_18.md)新增条件共同表达式保留/写回/重算，保留所有原输出ACK和旧候选。
+同九组/16KiB/18束FFN共同后端模型时间少5.34688%、记录少1.54219%；同池DP额外0，未达到算法20%。
+Windows/Linux最终各289项；54实际权重边界/324程序、三初态各48个真实M/E/S程序和两类实际故障注入通过。
+旧101616终态COMPLETED，实际每输入73循环全部元素接回完整36层整数图，三输入逐位通过；不代表新复用完整模型。
+发布前复现并修复尾部重算位置误用，保留冻结反例，只取消受影响101625，以101626冻结修复源重跑；101525保持运行。
+新全图终态、KV/SystemC/能耗/token/s/充分适配对照继续未完成。
+
+2026-11-09：#219/PR220迭代17新增显式候选跨S传输/静态并集前沿，正式注册禁止未合格路径混入。
+两个FFN区域的7-tick候选条件下模型时间少16.30%/15.28%，不是现有硬件性能；同池DP仍略差于强贪心。
+Windows/Linux各277项，三初态各64次真实SRAM传输边界和提前ACK负对照、54真实边界/162程序通过。
+101591旧最大冷区域全图搜索终态同池DP仅额外0.0000197562%；101616全部选中元素实际权重回放已提交RUNNING，未记通过；101525仍RUNNING。
+继续分析共同原生表达式/有限S/分片；算法20%及KV/SystemC能耗/token/s/充分适配对照未完成。见[迭代17](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_17.md)。
+
+2026-11-09：#219/PR220迭代16新增只读S/保护字/B银行跨元素连续程序、前序/周期独立核验及全部元素回放。
+同九组/16KiB/18束，FFN新执行方式少3.47246%模型时间；同池强贪心与DP相同，非算法20%。
+Windows/Linux各269项；三初态各48条8元素实际RTL链及保护字/银行负对照通过。
+101593旧四循环及101604新12段连续循环全部元素接回完整36层整数图，三输入终态逐位通过；101590接口失败已修，101605的54个真实边界案例补验通过。
+迭代15已在线发布bf31827f；本轮发布以PR回执为准。外存中间结果中转/全S保留、算法20%/KV/SystemC能耗/token/s对照继续未完成。
+
+2026-11-09：#219/PR220迭代15（本地阶段，尚待本轮在线发布）新增实测服务成本、凸区域驻留候选与单一图覆盖前沿。
+真实FFN同4290驻留绑定/18束，超边估计较均摊强贪心少5.39681367%，新DP对新强贪心额外0；非整模型20%。
+Windows/Linux各261项通过。101548旧完整选中计划三输入已终态逐位通过；101590真实边界、101591全图搜索、101593全部驻留元素接回整图均已提交，最近核验PENDING；101525继续RUNNING。
+局部S仍有每元素冷启动和大范围保留的保守性；完整KV/SystemC时间能耗/token/s/充分适配对照继续未完成，目标active。
+
+2026-11-09：[Issue219/PR220迭代14](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_14.md)修复FFN切片来源闭合，
+完整图重新独立核验通过。新增原生SSA/有限S驻留复制DP原型、216组合成边界数值、三初态各168程序实际M/E/S RTL及负对照；
+Windows/Linux各248项通过。尚未接入完整综合器、无实际权重整网驻留或时间/能耗资格，外存问题仍未完整解决。
+101516终态同池仅额外0.00010276037%，新选中数值101548及拓扑101525归档时运行；算法20%/KV/SystemC/token/s继续未完成。
+
+2026-11-09：[Issue219/PR220迭代13](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_13.md)验证未修改P/M/S上的多行S32 Add聚合：
+三初态各384例、独立负对照及Windows/Linux各234项通过。23个真实FFN Add含原准备的串行成本机会少29.8194%、逻辑记录少29.4998%；
+尚未注册共同候选/生成新调度，不是整模型或算法收益。一般脏驻留仍未实现。101500历史池终态更慢于当前强计划，保留负结果；四项旧作业仍运行。
+算法20%/KV/SystemC能耗/token/s/最优适配对照未完成，继续in_progress。
+
+2026-11-09：[Issue219/PR220迭代12](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_12.md)新增未就绪长链下界与单金属诊断，Windows/Linux各231项通过。
+真实FFN同池新greedy/DP/backbone-DP额外0，125个最大静态并集也未加强切片下界；完整新greedy更差，保留强计划及负结果。
+101509完整phase池终态，条件DP仅额外0.0000192676%；101526其自身三输入数值终态逐位通过。101516新搜索、101525拓扑继续核验。
+一般脏驻留/算法20%/完整KV/SystemC能耗/token/s/最优适配对照未完成，in_progress。
+
+2026-11-09，#219/PR220[迭代11](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_11.md)部分交付：
+新增原生tile描述符阶段协作、独立重建/预约检查；Windows/Linux各221项、4个literal/native有限S双回放通过。
+真实FFN101508终态：共同后端少3.07596%，同池搜索额外0，流量多48条；普通分片全图101506终态仍额外0。
+新整网贪心167,410,873,122 ticks，较旧强计划少17.39470%是共同后端收益，不能计算法20%，流量多4048条。
+101511新贪心三个输入逐位数值已终态通过，HF/argmax/SHA保持；101509策略、101513同池好前缀及101500/101501仍运行，4核/UNLIMITED。
+一般脏驻留、算法20%及多轮、完整KV/校准SystemC能耗/token/s/最优适配对照未完成，Issue继续in_progress。
+
+2026-11-09，#219/PR220[迭代10](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_10.md)部分交付：
+完整已验计划关键链复原202,663,587,646 ticks；本轮分片前动作族最多剩8.6111%时间降幅，需增加真实可执行选择。
+修正辅助窗口下界，新增独立多M原生tile分片/地址与临时区检查，Windows/Linux各214项及4个literal/native有限S双回放通过。
+真实FFN18个新候选仍不胜最强旧计划，额外0；PU资格E均接通道1时整服务独占阻断并行，下一轮验证实际描述符阶段交接。
+101504/101505终态通过，101500/101501/101506归档时RUNNING、4核/UNLIMITED；整网新数值及20%/一般驻留/KV/SystemC能耗/token/s仍未完成。
+
+2026-11-09，#219/PR220[迭代9](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_9.md)部分交付：
+实际辅助窗口/三段外存物化、独立S/资源/成本审计及同宽度好前缀消融；Windows/Linux各204项，
+三组指定SRAM初态各347例原生重排/ACK及负对照、68例有限S数值通过。新动作额外16条LOAD，非外存减少成果。
+真实FFN最终仍选此前最强计划，额外0；保留退化和错误分母诊断，不凑20%。修正N后的完整旧DP三个输入数值已终态逐位通过。
+完整窗口/好前缀消融101500/101501继续运行UNLIMITED；一般驻留、KV/SystemC能耗/token/s及最优适配对照未完成，Issue in_progress。
+登记pending，看板unverified/同步pending，待独立审查不自合并。
+
+2026-11-09，#219/PR220[迭代8](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_8.md)部分交付：
+新tile贪心/DP各三次完整3B整数数值通过；发现历史NExp原生模板与独立参考不一致，已改两次显式Stats，
+三个初态各653例N RTL及负对照通过。旧向量数值不证明旧原生命令，重编译整图贪心三输入数值逐位通过；完整旧DP/条件DP均202,663,587,646模型ticks，新策略额外0，选中DP数值补验中。
+Windows/Linux各187项；修正后FFN较最强同池基线3.890449%，价格下界无新增收益，保持消融；一般驻留/合法阶段预约继续推进。
+100972已自然完成；算法约20%、完整KV/校准能耗/token/s与最优适配对照继续in_progress，待独立审查不自合并。
+登记pending，看板unverified/同步pending。
+
+2026-11-09，#219/PR220[迭代7](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_7.md)部分交付：
+受限tile共同候选、缓存失效、独立检查及有限S小例子数值通过，Windows/Linux各178项。
+真实FFN规划搬运减67.0961%，该计划/新整网数值仍待验；按显式实例绑定外围服务，首轮C/F/J成本试验作废留证。
+条件策略相对同池旧DP额外0，算法20%、完整KV/系统能耗/token/s与最优适配对照继续in_progress；登记pending，看板unverified/同步pending，待独立审查。
+
+2026-11-09，#219/PR220[迭代6](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_6.md)部分交付：
+不变M/E/S的347例多列及真实S32转换、184例多行和Windows/Linux各169项通过；有包含转换/外存复制的共同成本配方，
+尚未接入完整DP/缓存失效/新计划数值，不计DP20%。前轮阶段计划101213完整3B三输入逐位通过，HF误差/argmax保持；
+100972早期源全图仍RUNNING/UNLIMITED。算法约20%、一般驻留、完整KV/校准时间能耗/token/s与最优适配对照继续in_progress。
+登记pending，看板unverified/同步pending，待独立审查不自合并/关闭。
+
+2026-11-09，#219/PR220[迭代5](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_5.md)部分交付：
+同池条件尾部DP在完整3B额外0.0716468%、真实FFN切片0.0871689%；资源尾部消融无收益。Windows/Linux各157项通过。
+现有M/P/S/feeder不变的84个四态RTL多行场景通过，含R2/K2048；B staging减半，A不变，尚未接入全图候选，
+不计DP20%或系统性能。完整Linux成本/调度审计已过，新计划数值101213待验；额外SystemC阶段微实验100970及搬运审计100971通过，
+早期冻结源全图搜索100972仍运行。微实验不代表整机时间/能耗/token/s。
+一般驻留、完整KV decode/能耗/token/s及充分适配ASIC/FPGA对照继续in_progress；登记pending、看板unverified/同步pending。
+
+2026-11-09，#219/PR220迭代4完成选中全图计划的逻辑搬运守恒审计：A重复读约65.8%，静态权重约23.4%。
+一般tile与跨算子有限S驻留未完成，已写入[后续合同](../project/experiments/block_synthesis/MEMORY_REUSE.md)。
+新增精确长循环阶段基础，本地145项通过，孤立候选诊断不计新算法收益；额外远程SystemC核对待终态。
+独立[硬件容量PR237](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/237)不改变固定硬件算法基线。
+实际20%、更多轮、KV decode/能耗/token/s及充分适配ASIC/FPGA对照仍未完成，继续in_progress；登记pending，看板unverified/同步pending。
+
+2026-11-09：[PR220算法迭代3](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_3.md)完成输出列分片及前沿整数分配，134项及本轮六次完整3B整数数值回放通过。同候选/预算较强基线下九组18束收益0.706898%，不将约29%动作池变化计入20%算法目标。SystemC原生命令阶段微实验及负对照通过，尚非完整系统性能；下一轮校准阶段占用与事件前沿。SystemC能耗、KV token/s及ASIC/FPGA对照未完成，Issue219继续in_progress、待独立审查；登记pending、看板unverified/同步pending。
+
+2026-11-09：[PR220算法迭代2](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_2.md)新增8,404原语/准备服务及独立工作量/依赖/容量检查，修复静态线束预算导致有解却丢失的问题；122项及完整5/9组预算复核通过。同候选/同预算DP额外执行收益仍0，阶段化与编译优化不计入20%目标；SystemC3.0.2环境已就绪，时间/能耗/KV token/s及ASIC/FPGA对照继续未完成。Issue219持续in_progress，待独立审查；登记pending、看板unverified/同步pending。
+
+2026-11-08：PR220通用Dot准备复用通过完整Qwen2.5-3B B1/S2无KV复验，110项及五组/九组各三输入逐位一致。同10/18束模型代价分别下降60.5851%/59.9470%，搬运减约72.058%，每S仍16KiB；显式外存预留增83.824MiB，容量未资格化。收益来自循环配方，非DP单独收益；见[结果及边界](../work/YUZE-LU/219/throughput-opt/RESULTS.md)。待独立审查，登记pending、看板unverified/同步pending。
+
+2026-11-08：PR220新增每次转移的状态求值与部分前缀命中，完整Qwen2.5-3B五组/九组各三输入及105项检查通过。五组/同10束预算结果不变，九组模型完成时间增加约0.00007686%；未取得新增性能收益。见[结果](../work/YUZE-LU/219/STATE_COST_RESULTS.md)。成果待独立审查；登记pending、看板unverified/同步pending。
+
+2026-11-08 综合算法补充：[Issue219/PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 已加入有限S只读Dot分片及缓存感知DP状态；完整真实3B五组/九组各三输入与旧整数结果逐位一致，100项测试及独立地址/容量/静态互斥重验通过。复用贪心较原基线模型代价降17.16%、搬运降25.40%；九组DP另降26.14%但束数10→18，同10束无额外收益。仅覆盖只读Dot分量；整网控制编码与真实布线另验。见[本轮说明](../work/YUZE-LU/219/READ_CACHE_RESULTS.md)，下方“全部spill”系旧基线。
+
+2026-11-08 审查修复及控制接入：[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 原整网 DP 与独立检查器遗漏 incompatible_nets，现已分别修复。90 项测试（含 150 个互斥小 DAG 穷举对照）、完整 3B 计划重验通过；当前独立母控含实际程序 SRAM、两组 U_64 局控的小图自动镜像完成 9 次数值／写 ACK／源保持与释放回放。原完整清单声明互斥对为 0，不代表物理无冲突；固定放置小图不代表任意整网 DP 控制编码、九目标或物理通过。见[修复与控制证据](../work/YUZE-LU/219/MUTEX_CONTROL_RESULTS.md)，旧数值及同预算无收益结论保留。
+
+2026-11-08 算法整网里程碑：[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 修复Gather、实际量化、动态矩阵/地址与完整S32原语分解。完整真实Qwen2.5-3B B1/S2三输入生成IR数值回放通过（L2 0.5265%/0.7251%/0.5592%，两位置argmax一致）；各S16KiB、预连0、#182虚拟外存，整网计划与独立检查通过。75项测试、原语三初态通过；同连接预算DP尚无整网收益，全部spill后端仍需tile/cache优化。不继承系统RTL/物理资格，其他bench未获完整整网资格。见[完整结果及回执](../work/YUZE-LU/219/FULL_RESULTS.md)，下方11-07的Gather阻塞为已修复历史。
+
+2026-11-07 算法后续：[Issue219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219)/[Draft PR220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 新增M/N/E/G/R256/T原生命令配方、跨片状态保留和显式格式转换。服务器46项检查、五类混合图38任务及R256跨片三初态回放通过，私有S各16KiB、预连0、虚拟外存。完整Qwen2.5-3B仍缺Gather、量化与动态布局等软件转换，未称整网通过。[结果与回执](../work/YUZE-LU/219/LEAF_RESULTS.md)。
+
+2026-11-07 算法分支进展：[Issue #219](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/219) / [Draft PR #220](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/220) 已修正零数据预连、虚拟外存和算法验收边界；服务器34项检查、真实N/E客户端三初态回放及5组16KiB调度对照通过。[证据与未完成项](../work/YUZE-LU/219/FIX_RESULTS.md)。完整3B模型的数值/尺度/布局等软件转换尚未完成；控制镜像、原生DMA和最终物理不作为当前算法验收前提。此进展不改写其他硬件任务的资格或状态。
+
 2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 
 2026-11-08，用户授权将母控 [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 合入 main，并在[五类 Block 与母控统一入口](experiments/assets/five-leaf-bases/README.md)并列索引源码、图册及双格式验收包。工程证据不变；合并结果以 PR 在线回执为准，授权整合不冒充独立审查或九实例系统验收。

@@ -1,0 +1,35 @@
+native_probe.cpp: In function 'int main(int, char**)':
+native_probe.cpp:152:93: error: no match for 'operator=' (operand types are 'std::array<short unsigned int, 8>' and 'std::array<std::array<short int, 8>, 8>::value_type' {aka 'std::array<short int, 8>'})
+  152 |     for(unsigned n=1;n<=8;++n){c=NCommand{};c.op=NCommand::Op::Exp;c.count=n;c.data=data[n-1];auto out=call(c);
+      |                                                                                             ^
+In file included from /usr/include/c++/11/tuple:39,
+                 from /usr/include/c++/11/functional:54,
+                 from /usr/include/c++/11/pstl/glue_algorithm_defs.h:13,
+                 from /usr/include/c++/11/algorithm:74,
+                 from inputs/blocks/common.hpp:8,
+                 from inputs/blocks/m.hpp:9,
+                 from inputs/native_engines.hpp:2,
+                 from native_probe.cpp:3:
+/usr/include/c++/11/array:95:12: note: candidate: 'constexpr std::array<short unsigned int, 8>& std::array<short unsigned int, 8>::operator=(const std::array<short unsigned int, 8>&)'
+   95 |     struct array
+      |            ^~~~~
+/usr/include/c++/11/array:95:12: note:   no known conversion for argument 1 from 'std::array<std::array<short int, 8>, 8>::value_type' {aka 'std::array<short int, 8>'} to 'const std::array<short unsigned int, 8>&'
+/usr/include/c++/11/array:95:12: note: candidate: 'constexpr std::array<short unsigned int, 8>& std::array<short unsigned int, 8>::operator=(std::array<short unsigned int, 8>&&)'
+/usr/include/c++/11/array:95:12: note:   no known conversion for argument 1 from 'std::array<std::array<short int, 8>, 8>::value_type' {aka 'std::array<short int, 8>'} to 'std::array<short unsigned int, 8>&&'
+native_probe.cpp:157:47: error: no match for 'operator=' (operand types are 'std::array<short unsigned int, 8>' and 'std::array<std::array<short int, 8>, 8>::value_type' {aka 'std::array<short int, 8>'})
+  157 |     c.count=n;c.data=mode==0?exp[n-1]:data[n-1];c.gamma.fill(1024);call(c);}
+      |                                               ^
+In file included from /usr/include/c++/11/tuple:39,
+                 from /usr/include/c++/11/functional:54,
+                 from /usr/include/c++/11/pstl/glue_algorithm_defs.h:13,
+                 from /usr/include/c++/11/algorithm:74,
+                 from inputs/blocks/common.hpp:8,
+                 from inputs/blocks/m.hpp:9,
+                 from inputs/native_engines.hpp:2,
+                 from native_probe.cpp:3:
+/usr/include/c++/11/array:95:12: note: candidate: 'constexpr std::array<short unsigned int, 8>& std::array<short unsigned int, 8>::operator=(const std::array<short unsigned int, 8>&)'
+   95 |     struct array
+      |            ^~~~~
+/usr/include/c++/11/array:95:12: note:   no known conversion for argument 1 from 'std::array<std::array<short int, 8>, 8>::value_type' {aka 'std::array<short int, 8>'} to 'const std::array<short unsigned int, 8>&'
+/usr/include/c++/11/array:95:12: note: candidate: 'constexpr std::array<short unsigned int, 8>& std::array<short unsigned int, 8>::operator=(std::array<short unsigned int, 8>&&)'
+/usr/include/c++/11/array:95:12: note:   no known conversion for argument 1 from 'std::array<std::array<short int, 8>, 8>::value_type' {aka 'std::array<short int, 8>'} to 'std::array<short unsigned int, 8>&&'

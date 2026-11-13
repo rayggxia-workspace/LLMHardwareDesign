@@ -1,0 +1,191 @@
+{
+  "status": "HEURISTIC",
+  "best_bound": 0,
+  "tasks": {
+    "rms@row0": {
+      "service": "U0.RMSNorm.2048",
+      "site": "U0.S",
+      "start": 0,
+      "end": 12466
+    },
+    "soft@row0": {
+      "service": "U0.Softmax.16",
+      "site": "U0.S",
+      "start": 12466,
+      "end": 12672
+    },
+    "residual@row0": {
+      "service": "U0.AddSat.row2048",
+      "site": "U0.S",
+      "start": 12672,
+      "end": 17792
+    }
+  },
+  "moves": [],
+  "allocations": [
+    {
+      "id": "seed-alloc-0",
+      "value": "x@row0",
+      "site": "U0.S",
+      "words": 256,
+      "start": 0,
+      "end": 17792,
+      "address": 0,
+      "origin": "initial"
+    },
+    {
+      "id": "seed-alloc-1",
+      "value": "gamma@row0",
+      "site": "U0.S",
+      "words": 256,
+      "start": 0,
+      "end": 12466,
+      "address": 256,
+      "origin": "initial"
+    },
+    {
+      "id": "seed-alloc-2",
+      "value": "epsilon@row0",
+      "site": "U0.S",
+      "words": 1,
+      "start": 0,
+      "end": 12466,
+      "address": 512,
+      "origin": "initial"
+    },
+    {
+      "id": "seed-alloc-3",
+      "value": "scores@row0",
+      "site": "U0.S",
+      "words": 2,
+      "start": 0,
+      "end": 12672,
+      "address": 513,
+      "origin": "initial"
+    },
+    {
+      "id": "seed-alloc-4",
+      "value": "normalized@row0",
+      "site": "U0.S",
+      "words": 256,
+      "start": 0,
+      "end": 17792,
+      "address": 515,
+      "origin": "producer:rms@row0"
+    },
+    {
+      "id": "seed-alloc-5",
+      "value": "probability@row0",
+      "site": "U0.S",
+      "words": 2,
+      "start": 12466,
+      "end": 17792,
+      "address": 256,
+      "origin": "producer:soft@row0"
+    },
+    {
+      "id": "soft@row0:scratch:U0.Softmax.16",
+      "value": null,
+      "site": "U0.S",
+      "words": 2,
+      "start": 12466,
+      "end": 12672,
+      "address": 258,
+      "origin": null
+    },
+    {
+      "id": "seed-alloc-7",
+      "value": "y@row0",
+      "site": "U0.S",
+      "words": 256,
+      "start": 12672,
+      "end": 17792,
+      "address": 258,
+      "origin": "producer:residual@row0"
+    }
+  ],
+  "claims": [
+    {
+      "resource": "U0.N",
+      "start": 0,
+      "end": 12466,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 0,
+      "end": 12466,
+      "demand": 1
+    },
+    {
+      "resource": "U0.client",
+      "start": 0,
+      "end": 12466,
+      "demand": 1
+    },
+    {
+      "resource": "U0.N",
+      "start": 12466,
+      "end": 12672,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 12466,
+      "end": 12672,
+      "demand": 1
+    },
+    {
+      "resource": "U0.client",
+      "start": 12466,
+      "end": 12672,
+      "demand": 1
+    },
+    {
+      "resource": "U0.E",
+      "start": 12672,
+      "end": 17792,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 12672,
+      "end": 17792,
+      "demand": 1
+    },
+    {
+      "resource": "U0.client",
+      "start": 12672,
+      "end": 17792,
+      "demand": 1
+    }
+  ],
+  "nets": [
+    "U0.E.read",
+    "U0.E.write",
+    "U0.N.read",
+    "U0.N.write"
+  ],
+  "wire_cost": 4,
+  "external_words": 0,
+  "optimality_scope": "lowered choices; neighborhood bounds are conditional, not global",
+  "makespan": 17792,
+  "seconds": 0.00024256017059087753,
+  "external_regions": [],
+  "optimization_history": [],
+  "constructive_history": [
+    {
+      "kind": "construct-independent-streams",
+      "status": "NOT_APPLICABLE",
+      "accepted": false,
+      "reason": "parallel incumbent needs externally initialized inputs"
+    },
+    {
+      "kind": "construct-independent-streams",
+      "status": "NOT_APPLICABLE",
+      "accepted": false,
+      "reason": "parallel incumbent needs externally initialized inputs"
+    }
+  ],
+  "total_seconds": 0.0007230397313833237
+}

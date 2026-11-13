@@ -1,0 +1,864 @@
+{
+  "status": "planned",
+  "tasks": [
+    {
+      "id": "v202#prepare-A",
+      "binding": "M=P0/E=U0",
+      "start": 0,
+      "end": 1245184,
+      "site": "P0.S"
+    },
+    {
+      "id": "v202",
+      "binding": "column-shards[M=P0;columns=0:3670;M-read-cache=169|M=P1;columns=3670:7339;M-read-cache=169|M=P2;columns=7339:11008;M-read-cache=169];phases=fcfs",
+      "start": 1245184,
+      "end": 2973881578,
+      "site": "P0.S",
+      "evaluation": {
+        "cost_model": "dot-phased-column-shards-v1",
+        "services": [
+          {
+            "id": "v202#columns-0",
+            "binding": "M=P0;columns=0:3670;M-read-cache=169",
+            "site": "P0.S",
+            "start": 1245184,
+            "end": 2973881578,
+            "cache_hit": false,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 0,
+              "loaded_prefix": 169,
+              "retained_prefix": 169,
+              "external_read_words": 56408915,
+              "external_write_words": 7340,
+              "scratch_by_site": {
+                "P0.S": 1023
+              },
+              "duration": 2972636394,
+              "delta_makespan": 2972636394,
+              "channel_wait_ticks": 220747334
+            }
+          },
+          {
+            "id": "v202#columns-1",
+            "binding": "M=P1;columns=3670:7339;M-read-cache=169",
+            "site": "P1.S",
+            "start": 1245184,
+            "end": 2752384416,
+            "cache_hit": false,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 0,
+              "loaded_prefix": 169,
+              "retained_prefix": 169,
+              "external_read_words": 56393545,
+              "external_write_words": 7338,
+              "scratch_by_site": {
+                "P1.S": 1023
+              },
+              "duration": 2751139232,
+              "delta_makespan": 0,
+              "channel_wait_ticks": 0
+            }
+          },
+          {
+            "id": "v202#columns-2",
+            "binding": "M=P2;columns=7339:11008;M-read-cache=169",
+            "site": "P2.S",
+            "start": 1245184,
+            "end": 2973131756,
+            "cache_hit": false,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 0,
+              "loaded_prefix": 169,
+              "retained_prefix": 169,
+              "external_read_words": 56393545,
+              "external_write_words": 7338,
+              "scratch_by_site": {
+                "P2.S": 1023
+              },
+              "duration": 2971886572,
+              "delta_makespan": 0,
+              "channel_wait_ticks": 220747340
+            }
+          }
+        ],
+        "phase_timing": {
+          "makespan_ticks": 2972636394,
+          "worker_completion_ticks": [
+            2972636394,
+            2751139232,
+            2971886572
+          ],
+          "phase_counts": {
+            "external-load-until-S-commit": 169196005,
+            "M_SCALE": 135266304,
+            "S-operand-read": 405798912,
+            "M_LOAD": 405798912,
+            "M": 135266304,
+            "M_READ": 22016,
+            "S-result-write": 22016,
+            "external-store-until-ACK": 22016
+          },
+          "arbitration": "FCFS-request-age-then-worker-ID",
+          "reservation": "all-union-resources-through-final-ACK"
+        },
+        "delta_makespan": 2972636394
+      }
+    },
+    {
+      "id": "v287#prepare-A",
+      "binding": "M=P0/E=U0",
+      "start": 2973881578,
+      "end": 2975126762,
+      "site": "P0.S"
+    },
+    {
+      "id": "v287",
+      "binding": "column-shards[M=P0;columns=0:3670;M-read-cache=169|M=P1;columns=3670:7339;M-read-cache=169|M=P2;columns=7339:11008;M-read-cache=169];phases=fcfs",
+      "start": 2975126762,
+      "end": 5947722596,
+      "site": "P0.S",
+      "evaluation": {
+        "cost_model": "dot-phased-column-shards-v1",
+        "services": [
+          {
+            "id": "v287#columns-0",
+            "binding": "M=P0;columns=0:3670;M-read-cache=169",
+            "site": "P0.S",
+            "start": 2975126762,
+            "end": 5947722596,
+            "cache_hit": true,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 169,
+              "loaded_prefix": 0,
+              "retained_prefix": 169,
+              "external_read_words": 56407901,
+              "external_write_words": 7340,
+              "scratch_by_site": {
+                "P0.S": 1023
+              },
+              "duration": 2972595834,
+              "delta_makespan": 2972595834,
+              "channel_wait_ticks": 220727054
+            }
+          },
+          {
+            "id": "v287#columns-1",
+            "binding": "M=P1;columns=3670:7339;M-read-cache=169",
+            "site": "P1.S",
+            "start": 2975126762,
+            "end": 5726245714,
+            "cache_hit": true,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 169,
+              "loaded_prefix": 0,
+              "retained_prefix": 169,
+              "external_read_words": 56392531,
+              "external_write_words": 7338,
+              "scratch_by_site": {
+                "P1.S": 1023
+              },
+              "duration": 2751118952,
+              "delta_makespan": 0,
+              "channel_wait_ticks": 0
+            }
+          },
+          {
+            "id": "v287#columns-2",
+            "binding": "M=P2;columns=7339:11008;M-read-cache=169",
+            "site": "P2.S",
+            "start": 2975126762,
+            "end": 5946972774,
+            "cache_hit": true,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 169,
+              "loaded_prefix": 0,
+              "retained_prefix": 169,
+              "external_read_words": 56392531,
+              "external_write_words": 7338,
+              "scratch_by_site": {
+                "P2.S": 1023
+              },
+              "duration": 2971846012,
+              "delta_makespan": 0,
+              "channel_wait_ticks": 220727060
+            }
+          }
+        ],
+        "phase_timing": {
+          "makespan_ticks": 2972595834,
+          "worker_completion_ticks": [
+            2972595834,
+            2751118952,
+            2971846012
+          ],
+          "phase_counts": {
+            "external-load-until-S-commit": 169192963,
+            "M_SCALE": 135266304,
+            "S-operand-read": 405798912,
+            "M_LOAD": 405798912,
+            "M": 135266304,
+            "M_READ": 22016,
+            "S-result-write": 22016,
+            "external-store-until-ACK": 22016
+          },
+          "arbitration": "FCFS-request-age-then-worker-ID",
+          "reservation": "all-union-resources-through-final-ACK"
+        },
+        "delta_makespan": 2972595834
+      }
+    },
+    {
+      "id": "v203",
+      "binding": "M=P0/E=U0",
+      "start": 5947722596,
+      "end": 5980790628,
+      "site": "P0.S"
+    },
+    {
+      "id": "v204",
+      "binding": "M=P0/E=U0",
+      "start": 5980790628,
+      "end": 6022885220,
+      "site": "P0.S"
+    },
+    {
+      "id": "v205",
+      "binding": "M=P0/E=U0",
+      "start": 6022885220,
+      "end": 6055226724,
+      "site": "P0.S"
+    },
+    {
+      "id": "v207",
+      "binding": "M=P0/E=U0",
+      "start": 6055226724,
+      "end": 6082284388,
+      "site": "P0.S"
+    },
+    {
+      "id": "v209",
+      "binding": "M=P0/E=U0",
+      "start": 6082284388,
+      "end": 6095978340,
+      "site": "P0.S"
+    },
+    {
+      "id": "v210",
+      "binding": "M=P0/E=U0",
+      "start": 6095978340,
+      "end": 6129046372,
+      "site": "P0.S"
+    },
+    {
+      "id": "v212",
+      "binding": "M=P0/E=U0",
+      "start": 6129046372,
+      "end": 6168807268,
+      "site": "P0.S"
+    },
+    {
+      "id": "v213",
+      "binding": "M=P0/E=U0",
+      "start": 6168807268,
+      "end": 6201875300,
+      "site": "P0.S"
+    },
+    {
+      "id": "v214",
+      "binding": "M=P0/E=U0",
+      "start": 6201875300,
+      "end": 6241636196,
+      "site": "P0.S"
+    },
+    {
+      "id": "v215",
+      "binding": "M=P0/E=U0",
+      "start": 6241636196,
+      "end": 6274704228,
+      "site": "P0.S"
+    },
+    {
+      "id": "v217",
+      "binding": "M=P0/E=U0",
+      "start": 6274704228,
+      "end": 6314465124,
+      "site": "P0.S"
+    },
+    {
+      "id": "v218",
+      "binding": "M=P0/E=U0",
+      "start": 6314465124,
+      "end": 6347533156,
+      "site": "P0.S"
+    },
+    {
+      "id": "v219",
+      "binding": "M=P0/E=U0",
+      "start": 6347533156,
+      "end": 6387294052,
+      "site": "P0.S"
+    },
+    {
+      "id": "v220",
+      "binding": "M=P0/E=U0",
+      "start": 6387294052,
+      "end": 6420362084,
+      "site": "P0.S"
+    },
+    {
+      "id": "v222",
+      "binding": "M=P0/E=U0",
+      "start": 6420362084,
+      "end": 6460122980,
+      "site": "P0.S"
+    },
+    {
+      "id": "v223",
+      "binding": "M=P0/E=U0",
+      "start": 6460122980,
+      "end": 6493191012,
+      "site": "P0.S"
+    },
+    {
+      "id": "v224",
+      "binding": "M=P0/E=U0",
+      "start": 6493191012,
+      "end": 6532951908,
+      "site": "P0.S"
+    },
+    {
+      "id": "v225",
+      "binding": "M=P0/E=U0",
+      "start": 6532951908,
+      "end": 6566019940,
+      "site": "P0.S"
+    },
+    {
+      "id": "v227",
+      "binding": "M=P0/E=U0",
+      "start": 6566019940,
+      "end": 6605780836,
+      "site": "P0.S"
+    },
+    {
+      "id": "v228",
+      "binding": "M=P0/E=U0",
+      "start": 6605780836,
+      "end": 6638848868,
+      "site": "P0.S"
+    },
+    {
+      "id": "v229",
+      "binding": "M=P0/E=U0",
+      "start": 6638848868,
+      "end": 6678609764,
+      "site": "P0.S"
+    },
+    {
+      "id": "v230",
+      "binding": "M=P0/E=U0",
+      "start": 6678609764,
+      "end": 6711677796,
+      "site": "P0.S"
+    },
+    {
+      "id": "v232",
+      "binding": "M=P0/E=U0",
+      "start": 6711677796,
+      "end": 6751438692,
+      "site": "P0.S"
+    },
+    {
+      "id": "v233",
+      "binding": "M=P0/E=U0",
+      "start": 6751438692,
+      "end": 6784506724,
+      "site": "P0.S"
+    },
+    {
+      "id": "v234",
+      "binding": "M=P0/E=U0",
+      "start": 6784506724,
+      "end": 6824267620,
+      "site": "P0.S"
+    },
+    {
+      "id": "v235",
+      "binding": "M=P0/E=U0",
+      "start": 6824267620,
+      "end": 6857335652,
+      "site": "P0.S"
+    },
+    {
+      "id": "v237",
+      "binding": "M=P0/E=U0",
+      "start": 6857335652,
+      "end": 6897096548,
+      "site": "P0.S"
+    },
+    {
+      "id": "v238",
+      "binding": "M=P0/E=U0",
+      "start": 6897096548,
+      "end": 6930164580,
+      "site": "P0.S"
+    },
+    {
+      "id": "v239",
+      "binding": "M=P0/E=U0",
+      "start": 6930164580,
+      "end": 6969925476,
+      "site": "P0.S"
+    },
+    {
+      "id": "v240",
+      "binding": "M=P0/E=U0",
+      "start": 6969925476,
+      "end": 7002993508,
+      "site": "P0.S"
+    },
+    {
+      "id": "v242",
+      "binding": "M=P0/E=U0",
+      "start": 7002993508,
+      "end": 7042754404,
+      "site": "P0.S"
+    },
+    {
+      "id": "v243",
+      "binding": "M=P0/E=U0",
+      "start": 7042754404,
+      "end": 7075822436,
+      "site": "P0.S"
+    },
+    {
+      "id": "v244",
+      "binding": "M=P0/E=U0",
+      "start": 7075822436,
+      "end": 7115583332,
+      "site": "P0.S"
+    },
+    {
+      "id": "v262",
+      "binding": "M=P0/E=U0",
+      "start": 7115583332,
+      "end": 7129277284,
+      "site": "P0.S"
+    },
+    {
+      "id": "v263",
+      "binding": "M=P0/E=U0",
+      "start": 7129277284,
+      "end": 7142971236,
+      "site": "P0.S"
+    },
+    {
+      "id": "v245",
+      "binding": "M=P0/E=U0",
+      "start": 7142971236,
+      "end": 7176039268,
+      "site": "P0.S"
+    },
+    {
+      "id": "v264",
+      "binding": "M=P0/E=U0",
+      "start": 7176039268,
+      "end": 7218133860,
+      "site": "P0.S"
+    },
+    {
+      "id": "v247",
+      "binding": "M=P0/E=U0",
+      "start": 7218133860,
+      "end": 7257894756,
+      "site": "P0.S"
+    },
+    {
+      "id": "v265",
+      "binding": "M=P0/E=U0",
+      "start": 7257894756,
+      "end": 7290962788,
+      "site": "P0.S"
+    },
+    {
+      "id": "v248",
+      "binding": "M=P0/E=U0",
+      "start": 7290962788,
+      "end": 7324030820,
+      "site": "P0.S"
+    },
+    {
+      "id": "v267",
+      "binding": "M=P0/E=U0",
+      "start": 7324030820,
+      "end": 7350758244,
+      "site": "P0.S"
+    },
+    {
+      "id": "v269",
+      "binding": "M=P0/E=U0",
+      "start": 7350758244,
+      "end": 7392852836,
+      "site": "P0.S"
+    },
+    {
+      "id": "v249",
+      "binding": "M=P0/E=U0",
+      "start": 7392852836,
+      "end": 7432613732,
+      "site": "P0.S"
+    },
+    {
+      "id": "v250",
+      "binding": "M=P0/E=U0",
+      "start": 7432613732,
+      "end": 7465681764,
+      "site": "P0.S"
+    },
+    {
+      "id": "v271",
+      "binding": "M=P0/E=U0",
+      "start": 7465681764,
+      "end": 7507776356,
+      "site": "P0.S"
+    },
+    {
+      "id": "v252",
+      "binding": "M=P0/E=U0",
+      "start": 7507776356,
+      "end": 7547537252,
+      "site": "P0.S"
+    },
+    {
+      "id": "v272",
+      "binding": "M=P0/E=U0",
+      "start": 7547537252,
+      "end": 7561231204,
+      "site": "P0.S"
+    },
+    {
+      "id": "v273",
+      "binding": "N=U0",
+      "start": 7561231204,
+      "end": 7563058532,
+      "site": "U0.S"
+    },
+    {
+      "id": "v275",
+      "binding": "M=P0/E=U0",
+      "start": 7563058532,
+      "end": 7576752484,
+      "site": "P0.S"
+    },
+    {
+      "id": "v276",
+      "binding": "M=P0/E=U0",
+      "start": 7576752484,
+      "end": 7609820516,
+      "site": "P0.S"
+    },
+    {
+      "id": "v253",
+      "binding": "M=P0/E=U0",
+      "start": 7609820516,
+      "end": 7642888548,
+      "site": "P0.S"
+    },
+    {
+      "id": "v277",
+      "binding": "M=P0/E=U0",
+      "start": 7642888548,
+      "end": 7675956580,
+      "site": "P0.S"
+    },
+    {
+      "id": "v254",
+      "binding": "M=P0/E=U0",
+      "start": 7675956580,
+      "end": 7715717476,
+      "site": "P0.S"
+    },
+    {
+      "id": "v278",
+      "binding": "M=P0/E=U0",
+      "start": 7715717476,
+      "end": 7748785508,
+      "site": "P0.S"
+    },
+    {
+      "id": "v255",
+      "binding": "M=P0/E=U0",
+      "start": 7748785508,
+      "end": 7781853540,
+      "site": "P0.S"
+    },
+    {
+      "id": "v279",
+      "binding": "M=P0/E=U0",
+      "start": 7781853540,
+      "end": 7834647908,
+      "site": "P0.S"
+    },
+    {
+      "id": "v257",
+      "binding": "M=P0/E=U0",
+      "start": 7834647908,
+      "end": 7874408804,
+      "site": "P0.S"
+    },
+    {
+      "id": "v258",
+      "binding": "M=P0/E=U0",
+      "start": 7874408804,
+      "end": 7907476836,
+      "site": "P0.S"
+    },
+    {
+      "id": "v281",
+      "binding": "M=P0/E=U0",
+      "start": 7907476836,
+      "end": 7921170788,
+      "site": "P0.S"
+    },
+    {
+      "id": "v282",
+      "binding": "M=P0/E=U0",
+      "start": 7921170788,
+      "end": 7947898212,
+      "site": "P0.S"
+    },
+    {
+      "id": "v260",
+      "binding": "M=P0/E=U0",
+      "start": 7947898212,
+      "end": 7987659108,
+      "site": "P0.S"
+    },
+    {
+      "id": "v280",
+      "binding": "M=P0/E=U0",
+      "start": 7987659108,
+      "end": 8020727140,
+      "site": "P0.S"
+    },
+    {
+      "id": "v283",
+      "binding": "M=P0/E=U0",
+      "start": 8020727140,
+      "end": 8053795172,
+      "site": "P0.S"
+    },
+    {
+      "id": "v284",
+      "binding": "M=P0/E=U0",
+      "start": 8053795172,
+      "end": 8084441444,
+      "site": "P0.S"
+    },
+    {
+      "id": "v261",
+      "binding": "M=P0/E=U0",
+      "start": 8084441444,
+      "end": 8117509476,
+      "site": "P0.S"
+    },
+    {
+      "id": "v285",
+      "binding": "M=P0/E=U0",
+      "start": 8117509476,
+      "end": 8144567140,
+      "site": "P0.S"
+    },
+    {
+      "id": "v286",
+      "binding": "M=P0/E=U0",
+      "start": 8144567140,
+      "end": 8171624804,
+      "site": "P0.S"
+    },
+    {
+      "id": "v288",
+      "binding": "M=P0/E=U0",
+      "start": 8171624804,
+      "end": 8204692836,
+      "site": "P0.S"
+    },
+    {
+      "id": "v289#prepare-A",
+      "binding": "M=P0/E=U0",
+      "start": 8204692836,
+      "end": 8211385700,
+      "site": "P0.S"
+    },
+    {
+      "id": "v289",
+      "binding": "column-shards[M=P0;columns=0:683;M-read-cache=169|M=P1;columns=683:1366;M-read-cache=169|M=P2;columns=1366:2048;M-read-cache=169];phases=fcfs",
+      "start": 8211385700,
+      "end": 11261130658,
+      "site": "P0.S",
+      "evaluation": {
+        "cost_model": "dot-phased-column-shards-v1",
+        "services": [
+          {
+            "id": "v289#columns-0",
+            "binding": "M=P0;columns=0:683;M-read-cache=169",
+            "site": "P0.S",
+            "start": 8211385700,
+            "end": 11261130658,
+            "cache_hit": false,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 0,
+              "loaded_prefix": 169,
+              "retained_prefix": 169,
+              "external_read_words": 59456165,
+              "external_write_words": 1366,
+              "scratch_by_site": {
+                "P0.S": 1023
+              },
+              "duration": 3049744958,
+              "delta_makespan": 3049744958,
+              "channel_wait_ticks": 236592454
+            }
+          },
+          {
+            "id": "v289#columns-1",
+            "binding": "M=P1;columns=683:1366;M-read-cache=169",
+            "site": "P1.S",
+            "start": 8211385700,
+            "end": 11024538204,
+            "cache_hit": false,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 0,
+              "loaded_prefix": 169,
+              "retained_prefix": 169,
+              "external_read_words": 59456165,
+              "external_write_words": 1366,
+              "scratch_by_site": {
+                "P1.S": 1023
+              },
+              "duration": 2813152504,
+              "delta_makespan": 0,
+              "channel_wait_ticks": 0
+            }
+          },
+          {
+            "id": "v289#columns-2",
+            "binding": "M=P2;columns=1366:2048;M-read-cache=169",
+            "site": "P2.S",
+            "start": 8211385700,
+            "end": 11257011876,
+            "cache_hit": false,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 0,
+              "loaded_prefix": 169,
+              "retained_prefix": 169,
+              "external_read_words": 59369115,
+              "external_write_words": 1364,
+              "scratch_by_site": {
+                "P2.S": 1023
+              },
+              "duration": 3045626176,
+              "delta_makespan": 0,
+              "channel_wait_ticks": 236592460
+            }
+          }
+        ],
+        "phase_timing": {
+          "makespan_ticks": 3049744958,
+          "worker_completion_ticks": [
+            3049744958,
+            2813152504,
+            3045626176
+          ],
+          "phase_counts": {
+            "external-load-until-S-commit": 178281445,
+            "M_SCALE": 135266304,
+            "S-operand-read": 405798912,
+            "M_LOAD": 405798912,
+            "M": 135266304,
+            "M_READ": 4096,
+            "S-result-write": 4096,
+            "external-store-until-ACK": 4096
+          },
+          "arbitration": "FCFS-request-age-then-worker-ID",
+          "reservation": "all-union-resources-through-final-ACK"
+        },
+        "delta_makespan": 3049744958
+      }
+    }
+  ],
+  "makespan": 11261130658,
+  "external_words": 593160141,
+  "nets": [
+    "P0.M.read",
+    "P0.M.write",
+    "P0.S.io.load",
+    "P0.S.io.store",
+    "P1.M.read",
+    "P1.M.write",
+    "P1.S.io.load",
+    "P1.S.io.store",
+    "P2.M.read",
+    "P2.M.write",
+    "P2.S.io.load",
+    "P2.S.io.store",
+    "U0.E.read",
+    "U0.E.write",
+    "U0.N.read",
+    "U0.N.write",
+    "U0.S.io.load",
+    "U0.S.io.store"
+  ],
+  "wire_cost": 18,
+  "width": 1,
+  "ready_limit": 1,
+  "expanded": 4276,
+  "merged": 1836,
+  "pruned": 1330,
+  "rejected_static_conflicts": 0,
+  "rejected_wire_completions": 0,
+  "wire_completion_covers": 36,
+  "read_cache_hits": 3,
+  "read_cache_calls": 9,
+  "final_read_cache": {
+    "P0.S": [
+      "[\"v288\",[1,2],11008,3]",
+      169,
+      1014
+    ],
+    "P1.S": [
+      "[\"v288\",[1,2],11008,3]",
+      169,
+      1014
+    ],
+    "P2.S": [
+      "[\"v288\",[1,2],11008,3]",
+      169,
+      1014
+    ]
+  },
+  "scheduling_policy": {
+    "priority": "heft",
+    "rank": "earliest_finish"
+  },
+  "conditional_tail_statistics": null,
+  "optimality": "bounded frontier DP with append-only resource calendars; no global optimality guarantee"
+}
