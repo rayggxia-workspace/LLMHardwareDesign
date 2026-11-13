@@ -39,6 +39,16 @@ def window_phase_indices(service):
             indexes.get(window_phases.get('publish'), max(0, len(phases) - 1)))
 
 
+def input_phase_intervals(service, inputs):
+    """Return the first and last SRAM access phases for each input window."""
+    timing = service.get('window_phases', {})
+    phases = {phase['kind']: i for i, phase in enumerate(service.get('phases', ()))}
+    read = phases.get(timing.get('read'))
+    default = (0, max(0, len(phases) - 1)) if read is None else (read, read)
+    ranges = timing.get('input_reads', {})
+    return {w: (phases[ranges[w][0]], phases[ranges[w][1]]) if w in ranges else default for w in inputs}
+
+
 @dataclass(frozen=True)
 class PhaseEdge:
     task: str
@@ -383,11 +393,18 @@ class Model:
         if sum(p['ticks'] for p in phases) != service['ticks']:
             raise ValueError('native phase durations differ from optimistic service ticks')
         timing = service.get('window_phases', {})
-        if (not isinstance(timing, dict) or timing.keys() - {'read', 'write', 'publish', 'result_hold'}
+        if (not isinstance(timing, dict) or timing.keys() - {'read', 'write', 'publish', 'result_hold', 'input_reads'}
                 or any(not isinstance(timing[field], str) or timing[field] not in names
                        for field in ('read', 'write', 'publish') if field in timing)
                 or ('write' in timing) != ('publish' in timing)):
             raise ValueError('invalid SRAM window phases')
+        ranges = timing.get('input_reads', {})
+        phase_order = {phase['kind']: index for index, phase in enumerate(phases)}
+        if (not isinstance(ranges, dict) or any(
+                not isinstance(window, str) or not isinstance(span, (list, tuple)) or len(span) != 2
+                or any(not isinstance(name, str) or name not in phase_order for name in span)
+                or phase_order[span[0]] > phase_order[span[1]] for window, span in ranges.items())):
+            raise ValueError('invalid SRAM input read phases')
         _, write, publish = window_phase_indices(service)
         result_hold = timing.get('result_hold')
         if (publish < write or ((write or 'result_hold' in timing)
@@ -411,6 +428,8 @@ class Model:
             if stage.get('input_policy', 'any') not in ('any', 'resident', 'backing'):
                 raise ValueError('unknown input policy')
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
+            if service.get('window_phases', {}).get('input_reads', {}).keys() - inputs.keys():
+                raise ValueError('SRAM input read phases name an unbound input window')
             if 'prefetch' in stage:
                 windows = stage['prefetch']
                 if (self.spec.get('timing') != 'replay' or stage_index == 0
@@ -738,11 +757,11 @@ class Model:
                     state, start_at, spec, service.get('hold_claims', {}))
             else:
                 state, start, end = self.book(state, service['claims'], start_at, service['ticks'])
-            read, _, publish = window_phase_indices(service)
-            read_end = end if read is None else phases[read]['end']
+            _, _, publish = window_phase_indices(service)
             visible = phases[publish]['end'] if phases else end
             copies = state.copies.copy()
-            for w in inputs:
+            for w, (_, last) in input_phase_intervals(service, inputs).items():
+                read_end = phases[last]['end'] if phases else end
                 copies[w] = replace(copies[w], held_until=max(copies[w].held_until, read_end))
             for w, value in outputs.items():
                 copies[w] = Copy(value, visible, visible)

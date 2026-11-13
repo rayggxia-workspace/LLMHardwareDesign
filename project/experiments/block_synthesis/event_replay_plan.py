@@ -3,7 +3,7 @@ from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass, replace
 
 from dma_read import receipt_json
-from event_execution import Copy, DDR, PhaseEdge, capacity_profile, window_phase_indices
+from event_execution import Copy, DDR, PhaseEdge, capacity_profile, input_phase_intervals, window_phase_indices
 from event_replay import Operation, Phase, replay_branch
 from ffn_mid import MidTile
 from ffn_program_cost import Program
@@ -81,16 +81,17 @@ def intents(model, decisions):
                 activation_waits[edge.target][edge.load] = parent
         stages = {}
         stage_index = -1
-        pending_moves = set()
+        pending_moves = []
         for event in decision.row['evaluation']['events']:
             index = len(operations)
             operation = event_operation(model, event)
             final = len(operation.phases) - 1
             terminal = index, final
             is_stage = event['kind'] == 'stage'
-            read, write, publish = (window_phase_indices(model.services[event['service']])
-                                    if is_stage else (None, 0, final))
             inputs, outputs = accesses(event)
+            service = model.services[event['service']] if is_stage else {}
+            read, write, publish = window_phase_indices(service) if is_stage else (None, 0, final)
+            reads = input_phase_intervals(service, inputs) if is_stage else dict.fromkeys(inputs, (0, final))
             dependencies = [set() for _ in operation.phases]
             activation_after = ()
             # A one-stage lookahead can overlap its preceding native stage.
@@ -101,7 +102,7 @@ def intents(model, decisions):
                     if value not in model.initial.backing:
                         dependencies[0].add(stores[value])
                 elif window in writers:
-                    dependencies[read or 0].add(writers[window])
+                    dependencies[reads[window][0]].add(writers[window])
             for window in outputs.keys() - {DDR}:
                 if window in writers:
                     dependencies[write].add(writers[window])
@@ -110,7 +111,7 @@ def intents(model, decisions):
                 for window in event.get('persist', ()):
                     value = inputs[window]
                     if value not in model.initial.backing:
-                        dependencies[read or 0].add(stores[value])
+                        dependencies[reads[window][0]].add(stores[value])
                 stage_index += 1
                 for j, phase in enumerate(operation.phases):
                     location = stage_index, phase.name
@@ -121,16 +122,23 @@ def intents(model, decisions):
                         activation_after = tuple(lanes[lane] for lane in sorted(lanes))
                 # Descriptor/setup phases may run while the input delivery is
                 # in flight if the contract identifies a later capture phase.
-                dependencies[read or 0].update(pending_moves)
+                for move, dst, value in pending_moves:
+                    if inputs.get(dst) == value:
+                        first = reads[dst][0]
+                    elif dst == DDR:
+                        first = min((reads[w][0] for w in inputs if inputs[w] == value), default=read or 0)
+                    else:
+                        first = read or 0
+                    dependencies[first].add(move)
                 pending_moves.clear()
                 prefetch_boundary = boundary
                 boundary = {terminal}
             elif 'output_eviction' not in event:
-                pending_moves.add(terminal)
+                pending_moves.append((terminal, event['dst'], event['value']))
             phase_after = tuple(map(frozenset, dependencies)) if any(dependencies) else ()
             operations.append(replace(operation, phase_after=phase_after, activation_after=activation_after))
             for window in inputs.keys() - outputs.keys() - {DDR}:
-                readers.setdefault(window, set()).add((index, final if read is None else read))
+                readers.setdefault(window, set()).add((index, reads[window][1]))
             for window in outputs.keys() - {DDR}:
                 writers[window] = index, publish
                 readers.pop(window, None)
@@ -184,10 +192,12 @@ def retime(model, decisions, proposed, previous=None):
                 actual['phases'] = phases
             occupy(operation.holds, start, end)
             inputs, outputs = accesses(event)
-            read, _, publish = (window_phase_indices(model.services[event['service']])
-                                if event['kind'] == 'stage' else (None, 0, len(schedule) - 1))
-            read_end = end if read is None else schedule[read].end
+            service = model.services[event['service']] if event['kind'] == 'stage' else {}
+            _, _, publish = window_phase_indices(service) if service else (None, 0, len(schedule) - 1)
+            reads = (input_phase_intervals(service, inputs) if service
+                     else dict.fromkeys(inputs, (0, len(schedule) - 1)))
             for window in inputs.keys() - {DDR}:
+                read_end = schedule[reads[window][1]].end
                 copies[window] = replace(copies[window], held_until=max(copies[window].held_until, read_end))
             for window, value in outputs.items():
                 if window == DDR:

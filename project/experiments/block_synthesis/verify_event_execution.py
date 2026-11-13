@@ -165,9 +165,13 @@ def verify(tasks, hardware, plan, wire_budget=None):
                                   for name, item in (phase or {'stage': event}).items()})
                 stage_index += 1
                 window_timing = service.get('window_phases', {})
-                read_at = phase.get(window_timing.get('read'), event)
+                default_read = phase.get(window_timing.get('read'), event)
+                read_ranges = window_timing.get('input_reads', {})
+                require(read_ranges.keys() <= inputs.keys(), 'SRAM read phases name an unbound input window')
+                read_at = {w: (phase[read_ranges[w][0]]['start'], phase[read_ranges[w][1]]['end'])
+                           if w in read_ranges else (default_read['start'], default_read['end']) for w in inputs}
                 for w in stage.get('persist', ()):
-                    read_external.append((read_at['start'], inputs[w]))
+                    read_external.append((read_at[w][0], inputs[w]))
                 write_at = phase.get(window_timing.get('write'), event)['start']
                 visible = phase.get(window_timing.get('publish'), event)['end']
                 for move in pending_moves:
@@ -176,9 +180,16 @@ def verify(tasks, hardware, plan, wire_budget=None):
                                 and move['src'] in outputs and move['dst'] == DDR
                                 and move['end'] <= write_at, 'invalid output eviction or write precedes its ACK')
                     else:
-                        require(move['end'] <= read_at['start'], 'stage read precedes move ACK')
+                        if inputs.get(move['dst']) == move['value']:
+                            first_read = read_at[move['dst']][0]
+                        elif move['dst'] == DDR:
+                            first_read = min((read_at[w][0] for w, v in inputs.items() if v == move['value']),
+                                             default=default_read['start'])
+                        else:
+                            first_read = default_read['start']
+                        require(move['end'] <= first_read, 'stage read precedes move ACK')
                 for w, value in inputs.items():
-                    access(reads, w, value, read_at['start'], read_at['end'])
+                    access(reads, w, value, *read_at[w])
                 for w, value in outputs.items():
                     access(writes, w, value, write_at, visible)
                 local_read += service.get('read_bytes', 0)

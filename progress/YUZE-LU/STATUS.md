@@ -1,6 +1,8 @@
 # YUZE-LU 的进度
 
-2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)第 44 轮将两层 FFN 的独立 DDR 镜像、各自 KV 和共享内存状态接进同一事件图。387 项远程回归、24 个快照分岔及层 1 的六份整数分块对照通过。两段完整 FFN 的强制候选和同池贪心／DP 在 Slurm `106615`、`106616` 运行，待核对完整周期。任务分支待汇入 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)。
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)第 45 轮为不同操作数记录首次及末次读取。归档 S16 RMSNorm 的阶段长度用于驻留／非驻留对照，388 项远程回归通过。#234 层间 S32 归一化仍待独立接续及校准。任务分支待汇入 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)。
+
+2026-11-13 CST。#219 第 44 轮将两层 FFN 的独立 DDR 镜像、各自 KV 和共享内存状态接进同一事件图。387 项远程回归、24 个快照分岔及层 1 的六份整数分块对照通过。两段完整 FFN 在同流量下验证早读可推迟前层 KV 写回，同时提前两层完成。两种压力下的同池贪心均达到强制对照的最早完成拍，宽度 8 的 Slurm `106616` 待收取。
 
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)推进至第 43 轮。相邻两步使用同一物理历史与共享 FFN/KV 外存仲裁，允许旧 K 预取和 FFN 重叠，下一 token 的 Q/K/V 仍等待 FFN 完成。六份 #234 归档 KV 的五种分块逐位验证及 386 项远程回归通过。Attention 端口和计算时序仍待原生校准，整模型跨层与退休仍待接续。任务分支待汇入 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)。
 

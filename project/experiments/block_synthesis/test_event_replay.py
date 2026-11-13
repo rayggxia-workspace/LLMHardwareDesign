@@ -654,6 +654,49 @@ class ReplayTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'RTL=10, replay=9'):
             check_trace(3, lines)
 
+    def test_norm_late_operand_delivery_and_replay_keep_window_custody(self):
+        h = hardware()
+        h['resources']['N.context'] = 1
+        spec = h['event_model']
+        spec.update(timing='replay', initial_backing=['gamma'], initial_copies={'source': 'x'})
+        spec['value_bytes']['gamma'] = 16
+        spec['services']['norm'] = {
+            'ticks': 9, 'claims': {}, 'hold_claims': {'N.context': 1},
+            'phases': [{'kind': 'stats', 'ticks': 2, 'claims': {'S0': 1}},
+                       {'kind': 'factor', 'ticks': 3, 'claims': {}},
+                       {'kind': 'replay', 'ticks': 1, 'claims': {'S0': 1, 'S1': 1}},
+                       {'kind': 'publish', 'ticks': 2, 'claims': {'S1': 1}},
+                       {'kind': 'retire', 'ticks': 1, 'claims': {}}],
+            'window_phases': {'input_reads': {'source': ['stats', 'replay'], 'input': ['replay', 'replay']},
+                              'write': 'publish', 'publish': 'publish', 'result_hold': 'N.context'},
+        }
+        old = binding('wait', stage('wait-credit'))
+        old['ticks'] = 10
+        norm = binding('norm', stage('norm', inputs={'source': 'x', 'input': 'gamma'}, outputs={'result': 'y'}))
+        norm['ticks'] = 9
+        tasks = [task('a-wait', old), task('b-norm', norm),
+                 task('c-reuse', binding('reuse', stage('produce', outputs={'source': 'z'})))]
+        plan = search(tasks, h, width=1, ready_limit=1)
+        verify(tasks, h, (), plan)
+        load, row = plan['tasks'][1]['evaluation']['events']
+        self.assertEqual((load['start'], load['end']), (10, 14))
+        self.assertEqual([(p['start'], p['end']) for p in row['phases']],
+                         [(0, 2), (2, 5), (14, 15), (15, 17), (17, 18)])
+        self.assertEqual(plan['tasks'][2]['start'], 15)
+        bad = deepcopy(plan)
+        bad['tasks'][1]['evaluation']['events'][1]['phases'][2].update(start=13, end=14)
+        with self.assertRaisesRegex(ValueError, 'stage read precedes move ACK'):
+            verify(tasks, h, (), bad)
+        bad = deepcopy(plan)
+        bad['tasks'][2].update(start=14, end=19)
+        bad['tasks'][2]['evaluation']['events'][0].update(start=14, end=19)
+        with self.assertRaisesRegex(ValueError, 'outlives source custody'):
+            verify(tasks, h, (), bad)
+        invalid = spec['services']['norm']['window_phases']['input_reads']
+        invalid['source'] = ['replay', 'stats']
+        with self.assertRaisesRegex(ValueError, 'invalid SRAM input read phases'):
+            search(tasks, h)
+
     def test_deferred_write_waits_for_reader_and_publishes_before_retirement(self):
         h = hardware()
         h['resources']['result.slot'] = 1
