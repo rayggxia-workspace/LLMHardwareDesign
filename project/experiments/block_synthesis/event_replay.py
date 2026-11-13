@@ -6,6 +6,7 @@ from heapq import heappop, heappush
 
 from dma_read import BeatReceipt, Read, ReadFabric
 from ffn_mid import MidTile
+from sram_feeder import Access, SramFeeder
 
 
 @dataclass(frozen=True)
@@ -41,6 +42,7 @@ class Phase:
     dma_read: Read | None = None
     ready_window: ReadyWindow | None = None
     mid_tile: MidTile | None = None
+    sram_access: Access | None = None
 
     @classmethod
     def from_spec(cls, name, ticks, spec):
@@ -65,21 +67,23 @@ class Grant:
     start: int
     end: int
     dma_beats: tuple[BeatReceipt, ...] = ()
+    sram_beats: tuple[tuple[int, int, int], ...] = ()
 
 
 @dataclass(frozen=True)
-class DmaCheckpoint:
-    """DMA state immediately before an arbitration edge."""
+class DeviceCheckpoint:
+    """In-flight memory device state immediately before an arbitration edge."""
 
     tick: int
-    fabric: ReadFabric
+    fabric: ReadFabric | None
     starts: tuple[tuple[tuple[int, int], int], ...]
+    feeders: dict[str, SramFeeder]
 
 
 @dataclass(frozen=True)
 class ReplayTrace:
     grants: tuple[tuple[Grant, ...], ...]
-    checkpoints: tuple[DmaCheckpoint, ...] = ()
+    checkpoints: tuple[DeviceCheckpoint, ...] = ()
     checkpoint_stride: int = 64
 
 
@@ -95,19 +99,19 @@ def phase_dependencies(operations, index, phase):
     return extra | {(parent, len(operations[parent].phases) - 1) for parent in operation.after}
 
 
-def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=None):
+def replay(operations, capacity, *, previous=(), issue_rates=None, dma_profile=None, sram_profiles=None):
     """Replay a plan, optionally reusing a fixed-service grant prefix."""
-    return _replay(operations, capacity, ReplayTrace(previous), issue_rates, dma_profile).grants
+    return _replay(operations, capacity, ReplayTrace(previous), issue_rates, dma_profile, sram_profiles).grants
 
 
 def replay_branch(operations, capacity, *, previous=None, issue_rates=None, dma_profile=None,
-                  save_checkpoints=True):
-    """Extend a DP branch with a reusable trace and pre-edge DMA snapshots."""
-    return _replay(operations, capacity, previous or ReplayTrace(()), issue_rates, dma_profile,
+                  sram_profiles=None, save_checkpoints=True):
+    """Extend a DP branch with a reusable trace and pre-edge memory snapshots."""
+    return _replay(operations, capacity, previous or ReplayTrace(()), issue_rates, dma_profile, sram_profiles,
                    save_checkpoints=save_checkpoints)
 
 
-def _replay(operations, capacity, previous, issue_rates, dma_profile, *, save_checkpoints=False):
+def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profiles, *, save_checkpoints=False):
     """Lower priority numbers win among ready phases.
 
     At each tick, completions free resources before grants. A first grant
@@ -120,7 +124,12 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, *, save_ch
     if uses_dma and dma_profile is None:
         raise ValueError('typed DMA phase requires a service profile')
     fabric = ReadFabric(dma_profile) if uses_dma else None
-    dma_starts = {}
+    sram_profiles = sram_profiles or {}
+    sites = sorted({phase.sram_access.site for op in operations for phase in op.phases if phase.sram_access})
+    if any(site not in sram_profiles for site in sites):
+        raise ValueError('SRAM access requires a feeder profile')
+    feeders = {site: SramFeeder(sram_profiles[site]) for site in sites}
+    device_starts = {}
     successors = {}
     dependencies = {}
     release = {}
@@ -141,6 +150,8 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, *, save_ch
                     or len(holds) != len(operation.holds)
                     or len(dict(phase.claims)) != len(phase.claims)
                     or phase.dma_read is not None and not phase.dma_read.valid()
+                    or phase.sram_access is not None and (
+                        not phase.sram_access.valid() or phase.dma_read is not None or phase.mid_tile is not None)
                     or phase.ready_window is not None and (
                         not isinstance(phase.ready_window, ReadyWindow) or not phase.ready_window.valid())
                     or phase.mid_tile is not None and (
@@ -169,17 +180,19 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, *, save_ch
                 for key in first_phases if all(p < prefix_count for p, _ in prerequisites[key])), default=0)
     checkpoints = []
     stride = previous.checkpoint_stride
-    if uses_dma:
+    if uses_dma or feeders:
         checkpoints = [checkpoint for checkpoint in previous.checkpoints if checkpoint.tick <= tick]
         tick = 0
         if checkpoints:
             checkpoint = checkpoints[-1]
             tick = checkpoint.tick
-            fabric = deepcopy(checkpoint.fabric)
-            dma_starts = dict(checkpoint.starts)
+            if checkpoint.fabric is not None:
+                fabric = deepcopy(checkpoint.fabric)
+            feeders.update(deepcopy(checkpoint.feeders))
+            device_starts = dict(checkpoint.starts)
     grants = [
-        # An in-flight DMA grant's old end and receipts were speculative.
-        [grant for grant in row if grant.start < tick and (index, grant.phase) not in dma_starts]
+        # An in-flight device grant's old end and receipts were speculative.
+        [grant for grant in row if grant.start < tick and (index, grant.phase) not in device_starts]
         for index, row in enumerate(old_grants)
     ]
     grants.extend([] for _ in operations[prefix_count:])
@@ -199,7 +212,7 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, *, save_ch
 
     if issue_rates:
         accepted = [(grant.start, grant.operation, grant.phase) for prefix in grants for grant in prefix]
-        accepted.extend((start, index, phase) for (index, phase), start in dma_starts.items())
+        accepted.extend((start, index, phase) for (index, phase), start in device_starts.items())
         cutoff = tick - max(window for window, _ in issue_rates.values())
         for start, index, phase in sorted(entry for entry in accepted if entry[0] > cutoff):
             record_issues(operations[index].phases[phase].claims, start)
@@ -223,7 +236,7 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, *, save_ch
             occupied.update(dict(operation.phases[last.phase].claims))
             heappush(running, (last.end, index, last.phase))
 
-    for index, phase in dma_starts:
+    for index, phase in device_starts:
         operation = operations[index]
         occupied.update(dict(operation.phases[phase].claims))
         if phase == 0:
@@ -231,17 +244,19 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, *, save_ch
     arrivals = []
     for key, parents in prerequisites.items():
         index, phase = key
-        if key not in dma_starts and phase >= len(grants[index]) and not dependencies[key]:
+        if key not in device_starts and phase >= len(grants[index]) and not dependencies[key]:
             ready = max([release[key]] + [completed[parent] for parent in parents])
             heappush(arrivals, (ready, index, phase))
     pending = []
     while finished < len(operations):
-        if save_checkpoints and fabric is not None and tick >= (checkpoints[-1].tick if checkpoints else 0) + stride:
+        if (save_checkpoints and (fabric is not None or feeders)
+                and tick >= (checkpoints[-1].tick if checkpoints else 0) + stride):
             if len(checkpoints) == 16:
                 # Bound retained fabric copies while keeping earlier rollback points.
                 checkpoints = checkpoints[1::2]
                 stride *= 2
-            checkpoints.append(DmaCheckpoint(tick, deepcopy(fabric), tuple(dma_starts.items())))
+            checkpoints.append(DeviceCheckpoint(tick, deepcopy(fabric), tuple(device_starts.items()),
+                                                deepcopy(feeders)))
         for resource, history in issues.items():
             while history and history[0][0] <= tick:
                 _, units = history.popleft()
@@ -264,6 +279,7 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, *, save_ch
 
         waiting = []
         launches = []
+        sram_launches = []
         next_open = []
         for request in sorted(pending):
             _, _, index, phase_index = request
@@ -283,30 +299,43 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, *, save_ch
                     continue
             occupied.update(dict(claims))
             record_issues(phase.claims, tick)
-            if phase.dma_read is None:
+            if phase.dma_read is None and phase.sram_access is None:
                 end = phase.mid_tile.end(tick) if phase.mid_tile is not None else tick + phase.ticks
                 heappush(running, (end, index, phase_index))
                 grants[index].append(Grant(index, phase_index, tick, end))
             else:
                 key = index, phase_index
-                dma_starts[key] = tick
-                launches.append((key, phase.dma_read))
+                device_starts[key] = tick
+                if phase.sram_access is not None:
+                    sram_launches.append((key, phase.sram_access))
+                else:
+                    launches.append((key, phase.dma_read))
         for key, read in sorted(launches):
             fabric.submit(key, read)
         if fabric is not None and fabric.active:
             for (index, phase_index), receipts in fabric.advance(tick):
-                start = dma_starts.pop((index, phase_index))
+                start = device_starts.pop((index, phase_index))
                 # A sampled client response is visible to the next stage at
                 # the following edge. The route still owes its own SRAM ACK.
                 end = tick + 1
                 grants[index].append(Grant(index, phase_index, start, end, receipts))
                 heappush(running, (end, index, phase_index))
+        for key, access in sorted(sram_launches):
+            feeders[access.site].submit(key, access)
+        for feeder in feeders.values():
+            if feeder.active:
+                for (index, phase_index), receipts in feeder.advance(tick):
+                    start = device_starts.pop((index, phase_index))
+                    end = tick + 1
+                    grants[index].append(Grant(index, phase_index, start, end, sram_beats=receipts))
+                    heappush(running, (end, index, phase_index))
         pending = waiting
         if finished == len(operations):
             break
         future = [queue[0][0] for queue in (running, arrivals) if queue] + next_open
         if fabric is not None and fabric.active:
             future.append(tick + 1)
+        future.extend(feeder.next_edge(tick + 1) for feeder in feeders.values() if feeder.active)
         if pending:
             future.extend(history[0][0] for history in issues.values() if history)
         if not future:

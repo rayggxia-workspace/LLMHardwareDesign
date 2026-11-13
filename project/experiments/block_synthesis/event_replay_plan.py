@@ -6,6 +6,7 @@ from dma_read import receipt_json
 from event_execution import Copy, DDR, PhaseEdge, capacity_profile, window_phase_indices
 from event_replay import Operation, Phase, replay_branch
 from ffn_mid import MidTile
+from sram_feeder import receipt_json as sram_receipts
 
 
 @dataclass(frozen=True)
@@ -37,6 +38,8 @@ def event_operation(model, event):
         phase = Phase.from_spec('stage', service['ticks'], service)
         if 'ffn_mid' in service:
             phase = replace(phase, mid_tile=MidTile.from_spec(service['ffn_mid']))
+        if 'sram_access' in service:
+            phase = replace(phase, sram_access=model.sram_access(service, event['inputs'], event['outputs']))
         return Operation((phase,))
     route = model.routes[event['route']]
     size = model.sizes[event['value']]
@@ -121,7 +124,7 @@ def intents(model, decisions):
 def retime(model, decisions, proposed, previous=None):
     operations = intents(model, decisions)
     trace = replay_branch(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
-                          dma_profile=model.dma_profile)
+                          dma_profile=model.dma_profile, sram_profiles=model.sram_profiles)
     grants = iter(zip(operations, trace.grants))
     copies = model.initial.copies.copy()
     backing = model.initial.backing.copy()
@@ -147,6 +150,8 @@ def retime(model, decisions, proposed, previous=None):
                 phases.append({'kind': phase.name, 'start': grant.start, 'end': grant.end})
                 if grant.dma_beats:
                     actual['dma_beats'] = receipt_json(grant.dma_beats)
+                if grant.sram_beats:
+                    actual['sram_beats'] = sram_receipts(phase.sram_access, grant.sram_beats)
             if len(phases) > 1:
                 actual['phases'] = phases
             occupy(operation.holds, start, end)
@@ -173,5 +178,6 @@ def delivery_at(model, decisions, candidate, previous, fixed_operations):
     """Trial an unfinished binding through its most recent transport choice."""
     operations = intents(model, (*decisions, candidate))
     trace = replay_branch(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
-                          dma_profile=model.dma_profile, save_checkpoints=False)
+                          dma_profile=model.dma_profile, sram_profiles=model.sram_profiles,
+                          save_checkpoints=False)
     return max(grants[-1].end for grants in trace.grants[fixed_operations:])

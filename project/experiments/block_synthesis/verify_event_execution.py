@@ -62,6 +62,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
         profile = route.get('phases')
         native = 'typed_dma' in route and timing == 'replay'
         require(('dma_beats' in event) == native, 'typed DMA receipt coverage differs')
+        require('sram_beats' not in event, 'SRAM receipts belong to feeder services')
         if profile is None:
             require(end-start == duration and 'phases' not in event, 'route service duration differs')
             claim(route, start, end)
@@ -118,6 +119,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
                         'native stage identity or order differs')
                 require('dma_beats' not in event, 'typed DMA receipts belong to read routes')
                 service = spec['services'][stage['service']]
+                require(('sram_beats' in event) == ('sram_access' in service), 'SRAM receipt coverage differs')
                 inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
                 require(event['inputs'] == inputs and event['outputs'] == outputs,
                         'native stage values differ')
@@ -137,8 +139,9 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     phased_claims(event, service['phases'], service.get('hold_claims', {}),
                                   service.get('nets', ()))
                 else:
+                    variable = 'ffn_mid' in service or 'sram_access' in service
                     valid_ticks = (timing == 'replay' and end-start >= service['ticks']
-                                   if 'ffn_mid' in service else end-start == service['ticks'])
+                                   if variable else end-start == service['ticks'])
                     require(valid_ticks and 'phases' not in event,
                             'native stage service duration differs')
                     claim(service, start, end)

@@ -9,6 +9,7 @@ from collections import Counter
 from dataclasses import dataclass, replace
 
 from dma_read import Profile, Read
+from sram_feeder import Access, profile as feeder_profile
 
 DDR = 'DDR'
 
@@ -141,6 +142,12 @@ class Model:
             self.issue_rates[resource] = rate['window_ticks'], rate['max_issues']
         self.windows = self.spec['windows']
         self.sizes = self.spec['value_bytes']
+        feeders = self.spec.get('sram_feeders', {})
+        if (not isinstance(feeders, dict) or any(site not in hardware['sites']
+                                                for site in feeders)
+                or feeders and self.spec.get('timing') != 'replay'):
+            raise ValueError('SRAM feeders require known sites and event replay')
+        self.sram_profiles = {site: feeder_profile(spec) for site, spec in feeders.items()}
         self.services = self.spec['services']
         self.routes = self.spec['routes']
         dma = self.spec.get('typed_dma')
@@ -178,7 +185,7 @@ class Model:
                 raise ValueError('unknown route site')
             if (type(route['setup']) is not int or route['setup'] < 0
                     or type(route['bytes_per_tick']) is not int or route['bytes_per_tick'] < 1
-                    or 'ffn_mid' in route):
+                    or 'ffn_mid' in route or 'sram_access' in route):
                 raise ValueError('invalid route timing')
             self.validate_service(route)
             if 'phases' in route:
@@ -190,6 +197,9 @@ class Model:
             if type(service['ticks']) is not int or service['ticks'] < 1:
                 raise ValueError('invalid native stage duration')
             self.validate_service(service)
+            if 'sram_access' in service and ('phases' in service or 'ffn_mid' in service
+                                             or 'copy_sites' in service):
+                raise ValueError('SRAM feeder access requires a standalone service')
             if 'phases' in service:
                 self.validate_stage_phases(service)
             elif 'hold_claims' in service or 'window_phases' in service:
@@ -353,6 +363,8 @@ class Model:
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
             for window, value in (*inputs.items(), *outputs.items()):
                 self.validate_copy(window, value)
+            if 'sram_access' in service:
+                self.sram_access(service, inputs, outputs)
             if inputs.keys() & outputs.keys():
                 raise ValueError('in-place native stages require a separate storage contract')
             if 'ffn_mid' in service:
@@ -369,6 +381,23 @@ class Model:
                     raise ValueError('COPY stage changes identity or endpoint')
         if not 0 < binding['ticks'] <= lower_bound:
             raise ValueError('invalid optimistic stage bound')
+
+    def sram_access(self, service, inputs, outputs):
+        kind = service['sram_access']
+        if kind not in ('read-narrow', 'read-wide', 'write-narrow'):
+            raise ValueError('invalid SRAM feeder access kind')
+        write = kind == 'write-narrow'
+        operands, other = (outputs, inputs) if write else (inputs, outputs)
+        if len(operands) != 1 or other:
+            raise ValueError('SRAM feeder access requires exactly one window operand')
+        (window, value), = operands.items()
+        site, offset = self.windows[window]['site'], self.windows[window]['offset']
+        size = self.sizes[value]
+        access = Access(site, offset // 16, size // 16, kind == 'read-wide', write)
+        if (site not in self.sram_profiles or offset % 16 or size % 16 or not access.valid()
+                or service['ticks'] > access.words // (4 if access.wide else 1) + 1):
+            raise ValueError('invalid SRAM feeder access range or bound')
+        return access
 
     def physical_words(self, operands):
         words = set()

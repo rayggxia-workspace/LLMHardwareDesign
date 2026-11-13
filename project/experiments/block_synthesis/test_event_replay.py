@@ -7,7 +7,7 @@ from benchmark_event_ffn import copy_bank_receipt
 from benchmark_ffn_control_trace import replay_readback
 from benchmark_ffn_dma_provider import RECORD_BYTES, paired_input
 from benchmark_native_dma_read import CASES, OLD, Request, event_input, moves_by_task
-from benchmark_native_sram_replay import check_trace
+from benchmark_native_sram_replay import check_trace, event_input as sram_input
 from cover_frontier import search
 from dma_offer import DmaOfferChannel
 from dma_read import Profile, Read
@@ -16,11 +16,53 @@ from ffn_m import ALLOC, FILL, INPUT, INPUT_READY, RF, RF_READY, Record, Reply, 
 from ffn_m_issue import ALLOC_CMD, Command, CommandLink, WeightCompletion, join_schedule
 from ffn_mid import MIN_TICKS, MidTile
 from ffn_w import WeightTrace
+from sram_feeder import Access
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
 
 
 class ReplayTest(unittest.TestCase):
+    def test_sram_checkpoint_preserves_pending_responses_and_reprices_old_reads(self):
+        profiles = {'P0': ((0, 90, 2),), 'P1': ()}
+        read = Operation((Phase('read', 1, sram_access=Access('P0', 0, 8, False, False)),))
+        options = {'sram_profiles': profiles}
+        timer = Operation((Phase('timer', 64),))
+        old = replay_branch([read, timer], {}, **options)
+        snapshot = next(checkpoint for checkpoint in old.checkpoints if checkpoint.tick == 64)
+        self.assertEqual(snapshot.tick, 64)
+        self.assertEqual(len(snapshot.feeders['P0'].responses[0]), 2)
+        results = []
+        for site in ('P0', 'P1', 'P0'):
+            candidate = Operation((Phase('read', 1, sram_access=Access(site, 16, 64, True, False)),),
+                                  release=86)
+            operations = [read, timer, candidate]
+            branch = replay_branch(operations, {}, previous=old, **options)
+            self.assertIn(snapshot, branch.checkpoints)
+            self.assertEqual(branch.grants, replay(operations, {}, **options))
+            results.append(branch.grants)
+        self.assertEqual(results[0], results[2])
+        self.assertGreater(results[0][0][0].end, results[1][0][0].end)
+        self.assertEqual(results[1][0], old.grants[0])
+
+    def test_sram_plan_audit_rejects_changed_banks_and_slot_reuse(self):
+        tasks, h = sram_input(3)
+        plan = search(tasks, h, width=1, ready_limit=1)
+        verify(tasks, h, (), plan)
+        for changes, error in (
+            ({'banks': [1, 0, 2, 3]}, 'address, bank'),
+            ({'issue': 5}, 'bank grant'),
+            ({'issue': 7, 'ack': 9}, 'bank grant'),
+        ):
+            bad = deepcopy(plan)
+            row = next(row for row in bad['tasks'] if row['id'] == 'wide-2')
+            row['evaluation']['events'][0]['sram_beats'][0].update(changes)
+            if 'ack' in changes:
+                # Keep the altered beat individually plausible.
+                row['evaluation']['events'][0]['sram_beats'][0]['ack'] = 9
+                row['evaluation']['events'][0]['end'] = row['end'] = 10
+            with self.assertRaisesRegex(ValueError, error):
+                verify(tasks, h, (), bad)
+
     def test_new_request_changes_old_completion_and_keeps_credit(self):
         write = Operation((Phase('issue', 1), Phase('data', 4, (('bus', 1),)),
                            Phase('ack', 2)), holds=(('credit', 1),))

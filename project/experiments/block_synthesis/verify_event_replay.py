@@ -1,8 +1,8 @@
 """Check the grants in an emitted replay trace against the arbitration contract."""
-from collections import Counter, defaultdict
+from collections import Counter, defaultdict, deque
 from heapq import heapify, heappop, heappush
 
-from dma_read import ReadFabric, receipt_json
+from dma_read import ReadFabric, ready_mask, receipt_json
 from event_execution import Model, phase_edges
 from event_replay import phase_dependencies
 from event_replay_plan import Decision, intents
@@ -25,6 +25,7 @@ def verify_grants(tasks, hardware, rows):
     issue_expires = defaultdict(list)
     dma_launches = defaultdict(list)
     dma_expected = {}
+    sram = defaultdict(list)
     ticks = set()
     for i, (operation, event) in enumerate(zip(operations, events)):
         phases = event.get('phases', (event,))
@@ -46,6 +47,8 @@ def verify_grants(tasks, hardware, rows):
                 key = i, j
                 dma_launches[start].append((key, phase.dma_read))
                 dma_expected[key] = end, event['dma_beats']
+            if phase.sram_access is not None:
+                sram[phase.sram_access.site].append((start, i, j, end, phase.sram_access, event['sram_beats']))
             for resource, units in phase.claims:
                 if resource in model.issue_rates:
                     expires = start + model.issue_rates[resource][0]
@@ -92,6 +95,51 @@ def verify_grants(tasks, hardware, rows):
         raise ValueError('arbitration trace did not drain')
     if dma_launches:
         verify_dma(model.dma_profile, dma_launches, dma_expected)
+    for site, jobs in sram.items():
+        verify_sram(model.sram_profiles[site], jobs)
+
+
+def verify_sram(profile, jobs):
+    """Audit issue and ACK from observed launches with an independent FIFO timeline."""
+    launches = defaultdict(list)
+    claimed = {}
+    for start, i, j, end, access, beats in sorted(jobs):
+        width = 4 if access.wide else 1
+        words = list(range(access.word, access.word + access.words, width))
+        if not isinstance(beats, list) or len(beats) != len(words):
+            raise ValueError('SRAM beat coverage differs')
+        for index, (word, beat) in enumerate(zip(words, beats)):
+            banks = list(range(4)) if access.wide else [word % 4]
+            if (not isinstance(beat, dict) or beat.keys() != {'word', 'banks', 'issue', 'ack'}
+                    or beat['word'] != word or beat['banks'] != banks
+                    or any(type(beat[key]) is not int for key in ('issue', 'ack'))
+                    or not start <= beat['issue'] <= beat['ack'] - 2 < end):
+                raise ValueError('SRAM address, bank or beat timing differs')
+            key = i, j, index
+            claimed[key] = beat
+            launches[start].append((int(access.wide), key))
+        if beats[-1]['ack'] + 1 != end:
+            raise ValueError('SRAM completion differs from final ACK')
+    queued = deque(), deque()
+    slots = deque(), deque()
+    tick = min(launches)
+    while launches or claimed:
+        for port, key in launches.pop(tick, ()):
+            queued[port].append(key)
+        ready = ready_mask(profile, tick, 3)
+        for port in range(2):
+            if slots[port] and slots[port][0][0] <= tick and ready & (1 << port):
+                _, key = slots[port].popleft()
+                if claimed.pop(key)['ack'] != tick:
+                    raise ValueError(f'SRAM response ACK differs at tick {tick}')
+        for port in (1, 0):
+            if queued[port] and len(slots[port]) < 2:
+                key = queued[port].popleft()
+                if claimed[key]['issue'] != tick:
+                    raise ValueError(f'SRAM bank grant differs at tick {tick}')
+                slots[port].append((tick + 2, key))
+                break
+        tick = tick + 1 if any(queued) or any(slots) else min(launches, default=tick + 1)
 
 
 def verify_dma(profile, launches, expected):
