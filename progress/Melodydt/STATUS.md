@@ -22,3 +22,10 @@
 - [Issue #261](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/261) · [PR #262](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/262) · [调研报告](../../docs/experiments/issue-261-llm-asic-benchmarks.md)。独立审查待执行。
 - 本地参考副本的 `python -X utf8 scripts/check_project.py` 通过。报告 5 张表、39 个不同 HTTPS 引用格式和 ProQuant 的速度/功耗换算通过校验。图读数从原论文 PDF 核对。未启动服务器仿真或板测。
 - 审查重点为 NVLLM 64-token 上下文、P³-LLM 4K 多 batch 和 ProQuant 硅片测量与外存模拟的计时边界。登记及看板同步待维护者处理，见报告的协作交接。
+
+## 2026-11-13 12:52（Asia/Shanghai，UTC+08:00）
+
+- [Issue #261](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/261) · [PR #262](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/262) · [9 页科研 ASIC PDF](../../docs/experiments/issue-261-llm-asic-benchmarks.pdf)。
+- 将调研快照 `893622cb1919c1c5b86734cdd9f5f50ccf4028ec` 整理为 21 篇论文索引、逐模型数据与 PPA。根据原图补齐 EdgeCIM INT8 和逐模型面积、Pimba 四个 2.7B 模型的批量吞吐，均标为图读数。
+- PDF 由 ReportLab 4.4.9 生成，SHA-256 `39bd02b431bccf6c02101992ff8f675528d3560b1a1daf360c8c4089ea758a8b`。Poppler 逐页渲染、pypdf 6.21.4 核验页数及链接，项目结构检查通过。文献整理未执行新仿真或板测。
+- 独立审查待执行。登记 PR #5 待合并，Projects 实际条目未核验，待具权限维护者处理。
