@@ -17,7 +17,8 @@ OBSERVER = r"""
     bit qwen_first_rms_seen;
     always @(posedge clk) begin : qwen_observe
         longint unsigned edge_ps, core_cycle;
-        if (!reset) begin
+        if (reset) qwen_first_rms_seen<=0;
+        else begin
             edge_ps=longint'($realtime/1ps);
             core_cycle=(edge_ps-64'd55000)/64'd10000+1;
             if (qkv_attention_datapath.prompt_start&&qkv_attention_datapath.prompt_ready)
@@ -31,7 +32,7 @@ OBSERVER = r"""
             if (!qwen_first_rms_seen&&qkv_attention_datapath.prompt_row&&qkv_attention_datapath.prompt_normalized) begin
                 $display("QWEN_EDGE prompt_rms_publish ps=%0d cycle=%0d generation=0 ddr_core_before=%0d",
                          edge_ps,core_cycle,core_cycle-1);
-                qwen_first_rms_seen=1;
+                qwen_first_rms_seen<=1;
             end
             if (datapath.start&&datapath.ready)
                 $display("QWEN_EDGE job_accept ps=%0d cycle=%0d generation=0",edge_ps,core_cycle);
