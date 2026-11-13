@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 已在远端重编 #260 既有拓扑的 639 个位置，130 份程序与描述符二进制和归档一致。根据新编程序的目标掩码，在 Block V2 候选摆位上绑定 881 根控制网。U39 的实际本地控制器拒绝 #260 Gather 的描述符版本，数据面及产品服务编码仍待接入。初版封包缺少 FFN activation 地址表，已从新编阶段凭据重新封包并提交全请求 TLM。详见[远程回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md)。
+
 2026-11-14 CST。#219 的框架分支已跑通 tile 交接、同池 DDR 排序反转及 Qwen2.5-3B B1/S2 无 KV 完整图编译。两种搜索宽度在三组真实输入上逐位核对 logits。当前算法 2 读取旧候选底座的整图交接和两 U 真实端点用例。#260 归档 linker 用新 Algo1 计划生成一段三 P SwiGLU 原生程序，192 次 CALL 的控制和描述符与参考逐字节一致。Block V2 九组加 MC06 准入、同计划完整请求和持续 KV 退休仍待验证。详见[远程回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md)。
 
 2026-11-13 CST。#219 第 51 轮将 #251 SRAM feeder 的回传槽、宽窄口仲裁和 READY 纳入 DP 快照。8 组归档 RTL 的 43 个访问完成拍一致，900 组远程压力对照及 395 项回归通过。深度 8 的两层同池对照也保住早读选择。FFN 分段外存需求已提取，分支内 FFN 竞争计价及历史裁剪仍待接入。详见[芯片状态计价方案](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)。任务分支待汇入 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)。

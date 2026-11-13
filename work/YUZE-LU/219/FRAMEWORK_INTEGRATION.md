@@ -108,6 +108,38 @@ Algo2 用同一计划散列和物理源散列读取交接。
 这里覆盖控制链的一项真实服务，候选接入点仍需联合布线和物理验收。全图服务、
 DMA 数据路径、顶层时钟和复位仍需绑定到同一底座。
 
+## 全请求封包和 Block V2 服务缺口
+
+109206 完成 80 个并行编译任务，封存 639 个位置。109215 复验并生成 128 个请求阶段、
+184,927 页和 8,273,243 次 CALL。与归档比较，130 份二进制全部逐字节相同。初始
+DDR 镜像绑定 439 个只读资产及 72 个后续状态，状态写表覆盖 92,016 个 K/V 行。
+初版包缺少 #260 性能消费者需要的 `ffn-activation.tsv`，109246 在发出第一条事务前
+退出。109408 改用项目提交 `fed2d9be3` 的页封包器，从同一批新编译阶段的封存凭据
+生成 activation 读表，并核对每行对应先前确切的 8192 B STORE。109409 依赖新版封包，
+使用原 `1ea06be2` 性能入口执行全请求。
+
+从 109215 的母控页目标掩码和服务签名得到 P0、P1、P2、U0 四个执行目标。109384
+通过独立交换器的封存目标表和四组 M10 端点导出 1248 个控制连接成员、881 根网、
+2129 个端点。Algo2 适配器读回通过。这个交接基于既有 #260 拓扑的已生成指令，
+覆盖包控制，不包含整个 Block V2 图的共同搜索、DDR 数据面、时钟、复位或最终物理布线。
+对照包的 881 根网各有候选 M10 接入点。109334 全组搜索超时，109400 在较短的
+单网扩展预算下报告 431 根控制网预算耗尽，保留为试布结果。
+
+确定的服务缺口在 U39。Gather 的 #260 TLM 记录头为 `(schema, ABI, opcode) = (3, 7, 4)`，
+U39 走 `u_n32_controlled_64` 的本地控制器，`exec_ok` 要求执行描述符首 32 位为 1。
+U39 的 N32 路径接受阶段提交、Softmax、结果排出三种行操作。包转发和目标编号的匹配
+只能绑定控制线。产品映射要有实际实现支持的服务、编码器和搬运合同，才能让 Algo1
+在搜索时纳入这条候选。参考 [U39 本地执行入口](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/7a809d1e8dcda063c66f5ca18e9c186fb23ec668/project/rtl/block_v2/u/pu_native_lc.sv#L172)
+与 [U39 N32 描述符](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/7a809d1e8dcda063c66f5ca18e9c186fb23ec668/project/rtl/block_v2/u/u_n32_s128_group.sv#L32)。
+
+| 作业 | 结果 | 证据 SHA-256 |
+| --- | --- | --- |
+| 109359 | 四个边界位置的各阶段均找到链接器消费的 Algo1 源计划 | `48eae1ff246b4422401f105e3e91159cab2b3db77c096d732db60cb766bf472f` |
+| 109356 | 全包 130 份二进制与独立归档一致 | `6189db73a2b35a19cf3d6446e5d17db4d8bc11636e17ca01836622c7d8c49c3b` |
+| 109384 | 新编译请求控制连线，`v2-native-control-request/algorithm2-input.json` | `a7fa920581a20cf8c25770ed6580ca349d6dfbdcd5c96d7b3cb29491310b4d41` |
+| 109392 | 881 根参考控制网的 M10 接入检查 | `fd58de785add96a3eb34ed0fff386da2d37cadb746ccf4789b67b933a2dd3d93` |
+| 109400 | 431 根控制网的有限预算试布 | `acbc407f6f98f478133e41f19ea4a9ce30821a77c4922fa539460cd82484199d` |
+
 本轮远端目录为上述目录下的 `full-graph-zwl0Tr`。合并源及回执在 `merged-bmMd5X`。
 
 | 作业 | 结果 | 证据 SHA-256 |
@@ -122,8 +154,9 @@ DMA 数据路径、顶层时钟和复位仍需绑定到同一底座。
 | 109198、109203 | 四个边界位置重编；109198 的 prefill 哈希参数错误由 109203 修正 | `native-request-6WI0tH/r3`、`r4` |
 | 109221 | 404 项回归通过，`regression-109221.log` | `d8afe41f08dba901ca1d7b765d93c4c3dfa88485c402fb710756834d565f7c30` |
 | 109225 | 5214 份二进制一致，`binary-diff-109225.log` | `cc2cb67c1f963e33339d2e22b9ee9e3b814941f0fd288567f134cdf540b7c1b7` |
-| 109206、109215 | 全请求重编及依赖封包，远端目录 `native-request-6WI0tH` | 运行中 |
-| 109246 | 完整 #260 TLM 消费，依赖 109215；无 checkpoint、短程或预装 KV 参数 | 已提交 |
+| 109206、109215 | 639 个位置重编及初版封包，`request-runtime/proof.sha256` | `57ddccc1ac67891fe312ce449fcd451be18ad07851d7eee79df32d8ed617db9e` |
+| 109246 | 初版包缺 FFN activation 地址表，TLM 启动前退出 | `2e721ef83e7c1caaad0237526f828e245dba1ce98e51a57e6cef5ffd4e105fc2` |
+| 109408、109409 | 重新生成严格封包及依赖全请求 TLM，无 checkpoint、短程或预装 KV 参数 | 已提交 |
 | 109283 | 405 项回归通过，含控制线束传递依赖 | `bb29bf84deca42d6938ceedc1cd11107137a3b950cce38e2606bd67c207470fe` |
 | 109326 | Block V2 候选上的 Gather 同计划链接及 Algo2 读回 | `ab46cea37e098ed7192a55e5015ae8e6762740f726cf2f3114ff94cfaa7c42db` |
 | 109330 | 431 根候选控制线的 M10 接入间距检查 | `064b37f47d8da5856996c7a60eea62c025d0fb7605207f68abcd66464661a83b` |
