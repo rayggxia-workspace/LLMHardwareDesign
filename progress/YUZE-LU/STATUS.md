@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 新增 Block V2 的 C0→U0 数据链交接，Algo2 读回 153 根链路信号及相应控制网；U0、U1 反向各缺 128 个 M10 数据接点。已对照 #260 整包的 21 类调用与实际 P/U 描述符入口，给出需要另选服务或重新编码的调用。109409 继续执行旧拓扑的严格 TLM。详见[数据端点与调用入口核对](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#数据端点交接与整包描述符入口核对)。
+
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 已在远端重编 #260 既有拓扑的 639 个位置，130 份程序与描述符二进制和归档一致。根据新编程序的目标掩码，在 Block V2 候选摆位上绑定 881 根控制网。U39 的实际本地控制器拒绝 #260 Gather 的描述符版本，数据面及产品服务编码仍待接入。初版封包缺少 FFN activation 地址表，已从新编阶段凭据重新封包并提交全请求 TLM。详见[远程回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md)。
 
 2026-11-14 CST。#219 的框架分支已跑通 tile 交接、同池 DDR 排序反转及 Qwen2.5-3B B1/S2 无 KV 完整图编译。两种搜索宽度在三组真实输入上逐位核对 logits。当前算法 2 读取旧候选底座的整图交接和两 U 真实端点用例。#260 归档 linker 用新 Algo1 计划生成一段三 P SwiGLU 原生程序，192 次 CALL 的控制和描述符与参考逐字节一致。Block V2 九组加 MC06 准入、同计划完整请求和持续 KV 退休仍待验证。详见[远程回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md)。

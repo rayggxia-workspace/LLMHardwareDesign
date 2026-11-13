@@ -208,6 +208,42 @@ Algo1 的搜索现在可以读取底座中的 `native_service_routes`。候选�
 | 109448 | Algo2 交接和原生凭据读回，`v2-dual-read-109448.log` | `92dc0b5c47c361b308555c76d754f17e48a2b6151d32bb82aa7fdf12570bd709` |
 | 109446 | 原生负对照与三份镜像一致性通过，`native/deployment.json` | `39c9ac67025f1fbb136c7bbf4049526c34dfa6ee5371722e6042f8b975eb426e` |
 
+## 数据端点交接与整包描述符入口核对
+
+使用 main `7a809d1e` 的九组和 MC06 坐标、已有候选交换器坐标，以及对应组的散列锁定源视图。
+`audit-v2-data-link.py` 按组 DEF 逐位提取 stored-link 的驱动、接收、M10 几何和实例平移。
+`C0 → U0`、`C0 → U1` 各有完整的 153 个信号端点角色，包括 128 位数据、地址、
+valid/ready、写确认和接收窗口预留。反向两条路径各缺少 U39 的 128 位
+`outgoing_data` M10 几何。存在逻辑 BTerm 时仍要求实际金属接入。
+
+用一个已驻留 C0 的 16 B 片段和 U0 的模型服务试排，选择 `stored:C0->U0`。
+同一计划的 Algo2 包包含 734 根待布网，其中 153 根是该数据链。Algo2 接口校验、
+哈希源视图的逐位重绑、重建整个路由输入，以及原生端点凭据与计划散列核对均通过。
+在 400 DBU 接入网格下，1592 个端点、734 根网均有几何候选接入点。
+这个用例只验证物理接点与计划交接，服务时长和驻留输入是试验假设。
+联合布线、原生命令及真实 DDR 搬运仍需各自的证据。
+第一次作业 109466 生成了数据包，随后 Algo2 的可选冻结底座入口要求整体 GDS。
+本次用接口入口读回，并逐一校验组级源视图与重绑结果。产品入口继续要求整体冻结视图。
+
+`audit-v2-native-headers.py` 读取 109408 封存的实际调用签名，按真实目标编号，
+对照主分支源清单中 P 的 `p_scope128_decode` 和 U 的 `pu_native_lc`。
+21 类、8,273,243 次调用中，5,396,848 次的 schema/ABI 对上 P scope 头，
+2,599,452 次在 P scope 入口被头部条件排除，276,943 次在 U39 native EXEC 入口被
+描述符首字条件排除。核对的是原样复用 #260 描述符的前置条件。头部匹配的调用
+还需验证控制封包、操作数、目的地址、完成事件和数据面。P0 的 LOAD、STORE、
+RoPE、KV 等同样需要寻找实际实现或重新编码，因此补一个 Gather 编码器还不足以闭环。
+
+远端工作目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em/full-graph-zwl0Tr/merged-bmMd5X/native-request-6WI0tH`。复跑需要将同版本的 Algo1 模块加入
+`PYTHONPATH`，数据链核对同时需要 Algo2 `4ebd2a2fc` 的模块。两个脚本的输入均为
+已有封存包和源视图。候选目录是 `v2-candidate-dual-receipt`，主分支源清单是
+`project/rtl/block_v2/source-manifest.json`。
+
+| 工件 | SHA-256 |
+| --- | --- |
+| `v2-data-link-readback/algorithm2-input.json` | `612eb35340d14bdc70821d46dfc690f2b2bfcab92fc3e10c7440db70aa82ac0e` |
+| [数据链读回](v2-data-link-readback.json) | `f61bff2968c32d0a18bf4414f6c928804b3d415ca6b38a57de5f625511f93150` |
+| [全包描述符头核对](v2-native-header-audit.json) | `d7b5eb2a476c4b13d2798a4091459e84bdd83dab4cb2499fd655fd3e2b39d976` |
+
 ## 远程回执
 
 目录 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em`。
