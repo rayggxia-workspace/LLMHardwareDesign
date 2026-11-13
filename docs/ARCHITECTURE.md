@@ -186,3 +186,7 @@ python -B project/experiments/instruction_cycle/copy_reference.py work/Melodydt/
 ### A2 控制镜像与算子联合对账
 
 [实验说明](../project/experiments/instruction_cycle/README.md#a2-母控局控与片上算子联合验证)给出真实 V1 MC/LC 二进制、Slurm 复跑、冻结输入和 PM／feeder／M／S 的逐拍验证。服务器回执为 [107535](../work/Melodydt/265/a2-rtl-107535.json)。
+
+### 双 U_64 控制、算子与跨 Block 事务
+
+[双 U_64 实验说明](../project/experiments/instruction_cycle/README.md#双-u_64-从-start-到-result)记录 Compact V2 镜像、PM、SRAM 和跨 Block ACK 的周期模型及 Slurm 复跑命令。[107643 回执](../work/Melodydt/265/dual-u-rtl-107643.json)区分实际接受 RESULT 的边沿和下一拍的旧摘要。

@@ -45,4 +45,27 @@ python -B project/experiments/instruction_cycle/a2_cycle.py "$RUN/results/a2/bou
 python -B project/experiments/instruction_cycle/a2_cycle.py "$RUN/results/a2/boundary_reuse_stall" --stall 1 --log "$RUN/results/heldout.log"
 ```
 
-如需在 Slurm 复跑，在 Melodydt 自己的全新目录放置冻结的 `source.tar`、`probe_a2.py` 和 `run_a2_probe.sbatch`，按回执核验 `source.tar`，生成 `sha256sum probe_a2.py run_a2_probe.sbatch > probe.sha256`，执行 `bash -n run_a2_probe.sbatch` 后运行 `sbatch --parsable --chdir="$PWD" run_a2_probe.sbatch`。后续从双 U_64 的实际 MC/LC 与跨块事务开始，将 A2 独占服务的规则扩展到并发资源占用。
+如需在 Slurm 复跑，在 Melodydt 自己的全新目录放置冻结的 `source.tar`、`probe_a2.py` 和 `run_a2_probe.sbatch`，按回执核验 `source.tar`，生成 `sha256sum probe_a2.py run_a2_probe.sbatch > probe.sha256`，执行 `bash -n run_a2_probe.sbatch` 后运行 `sbatch --parsable --chdir="$PWD" run_a2_probe.sbatch`。
+
+## 双 U_64 从 START 到 RESULT
+
+`dual_u_images.py` 从 [#220 冻结用例](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/a326d04e170cb84d273e96e7906bdf23775a0ca8/work/YUZE-LU/219/MUTEX_CONTROL_RESULTS.md) 的三份 Compact V2 镜像恢复两个母控 `CALL`、两路局控的 11 个服务、等待掩码以及跨 Block 写地址和接收预约。`dual_u_cycle.py` 从已接受 START 的边沿开始推导母控 SRAM PM、两路独立局控 PM、E Add/Mul、Block 内共享窄口和跨 Block 事务。两个 64-bit PC 可能重复访问同一条 128-bit PM 行。两个局控可同时运行；母控收到两份 terminal 并释放 WAIT 后才进入 RESULT。`dual_u_services.py` 保留每个 S 仲裁器的轮询指针和单槽命令，发出数据后一直持有归属，源端只在目标端 SRAM ACK 接受后释放。
+
+| 场景 | 接受 START 到接受 RESULT | 对账事件 |
+| --- | ---: | ---: |
+| 无背压 | 351 拍 | 210 |
+| 原背压，写／ACK 相位 1／3 | 490 拍 | 210 |
+| 留出背压，写／ACK 相位 2／5 | 470 拍 | 210 |
+
+[作业 107643](../../../work/Melodydt/265/dual-u-rtl-107643.json) 的 630 个事件全部逐拍一致，并核对实际传输数据、每组 112 B 确认读与 80 B 确认写。留出组在读取新 RTL 日志前预报 470 拍。旧作业 100343 的正常、背压和复位后窗口额外核对 402 个事件，最终复位窗口为 485 拍。旧摘要在 RESULT 接受后的下一个观测点打印，比接受边沿多 1 拍。模型仅比较复位后的完整窗口。
+
+该图的依赖在各私有 S 内错开了 E、接收写与源端读，三组新 RTL 均未观测到 `S_CONTEND`。本轮覆盖真实多目标控制重叠与传输背压。E/RX 同拍冲突在定向模型测试中检查，独立 S 仲裁 RTL 的竞争证据来自 [107488](../../../work/Melodydt/265/onchip-rtl-107488.json)。当前片上模型会跳过纯 PM 空闲间隔。活动服务仍逐边沿推进，运行速度未量化。片外 DDR 未接入。
+
+```bash
+RUN=/public/home/yuzelu/Melodydt/runs/issue-265/dual-u-20261113-01
+python -B project/experiments/instruction_cycle/dual_u_cycle.py "$RUN/generated" "$RUN/results/dual_u/normal.log" --stall 0
+python -B project/experiments/instruction_cycle/dual_u_cycle.py "$RUN/generated" "$RUN/results/dual_u/stalled.log" --stall 1
+python -B project/experiments/instruction_cycle/dual_u_cycle.py "$RUN/generated" "$RUN/results/dual_u/heldout.log" --stall 1 --request-phase 2 --ack-phase 5
+```
+
+在 Melodydt 的全新运行目录复跑时，从 [107643 回执](../../../work/Melodydt/265/dual-u-rtl-107643.json) 的 `frozen_source_directory` 复制 `fixture/{design,staged,lc}` 和 `generated/{mother.mem,local0.mem,local1.mem,rtl-source-sha256.json,input-data.json,connections.json}` 到对应位置。放入 `probe_dual_u.py` 和 `run_dual_u_probe.sbatch`，生成 `sha256sum probe_dual_u.py run_dual_u_probe.sbatch > probe.sha256`，再执行 `sbatch --parsable --chdir="$PWD" run_dual_u_probe.sbatch`。运行器核验冻结源码和镜像后编译，原测试台断言继续运行。
