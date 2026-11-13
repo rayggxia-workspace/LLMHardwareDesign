@@ -22,7 +22,7 @@ from ffn_mid import MIN_TICKS, MidTile
 from ffn_program_cost import DESCRIPTOR_BASE, FfnCost, Program, READ_BYTES, SHARED_RESOURCES
 from ffn_w import WeightTrace
 from ffn_w_dma import WeightDma, WeightOwner
-from snapshot_cost import dma_cost
+from snapshot_cost import dma_cost, measured_dma_cost
 from sram_feeder import Access
 from test_event_execution import binding, hardware, stage, task
 from verify_cover_frontier import verify
@@ -40,6 +40,18 @@ class ReplayTest(unittest.TestCase):
         self.assertEqual(dma_cost(congested, request)[0], 166)
         self.assertGreater(dma_cost(congested, Read(3, request.address, request.size, 2, True))[0],
                            dma_cost(congested, request)[0])
+
+    def test_snapshot_dma_measurements_match_only_the_record_geometry_and_direction(self):
+        profile = Profile.from_spec({'return_latency': [7, 8],
+                                     'mixed': {'queue': 4, 'write_latency': 9}})
+        measured = measured_dma_cost([[2048, 2048, 0, 134], [0, 2048, 1, 102]])
+        read = Read(3, 0, 4096, 2)
+        self.assertEqual(dma_cost(profile, read, measured)[0], 134)
+        write = Read(3, 0, 4096, 2, True)
+        self.assertEqual(dma_cost(profile, write, measured), dma_cost(profile, write))
+        self.assertEqual(dma_cost(profile, Read(3, 2048, 2048, 2, True), measured)[0], 102)
+        with self.assertRaisesRegex(ValueError, 'duplicate snapshot DMA'):
+            measured_dma_cost([[2048, 2048, 0, 134], [2048, 2048, 0, 135]])
 
     def test_snapshot_prices_same_volume_by_channel_and_client(self):
         for address in (0x200, 0x800):

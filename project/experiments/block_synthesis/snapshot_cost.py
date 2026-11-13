@@ -1,6 +1,7 @@
 """Resource demand for a typed DMA transfer at scheduling granularity."""
 from dataclasses import dataclass
 from math import gcd
+from types import MappingProxyType
 
 
 CHANNEL_BYTES = 2048
@@ -45,11 +46,31 @@ def channel_bytes(address, size, record_beats=2):
     return tuple(counts if first % 2 == 0 else reversed(counts))
 
 
-def dma_cost(profile, request):
+def measured_dma_cost(samples):
+    """Index isolated transfer measurements by channel work and direction."""
+    result = {}
+    for row in samples:
+        if (not isinstance(row, (tuple, list)) or len(row) != 4
+                or any(type(n) is not int for n in row) or min(row[:2]) < 0
+                or any(n % 128 for n in row[:2]) or not sum(row[:2])
+                or row[2] not in (0, 1) or row[3] < 1):
+            raise ValueError('invalid snapshot DMA measurement')
+        ch0, ch1, direction, ticks = row
+        key = ((ch0, ch1), bool(direction))
+        if key in result:
+            raise ValueError('duplicate snapshot DMA measurement')
+        result[key] = ticks
+    return MappingProxyType(result)
+
+
+def dma_cost(profile, request, measured=None):
     """Price a burst by its bottleneck channel and fixed response latency."""
     counts = channel_bytes(request.address, request.size, request.record_beats)
     used = tuple(channel for channel, size in enumerate(counts) if size)
     active = tuple(CHANNELS[channel] for channel in used)
+    measured_ticks = measured.get((counts, request.write)) if measured and request.record_beats == 2 else None
+    if measured_ticks is not None:
+        return measured_ticks, active
     if profile.mixed is None:
         return max(counts[ch] // BEAT_BYTES + profile.return_latency[ch] for ch in used), active
 

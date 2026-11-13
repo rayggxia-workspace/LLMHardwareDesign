@@ -12,7 +12,7 @@ from dma_read import FfnProvider, Profile, Read
 from ffn_a import A_BASE, P_COUNT, WORDS, ActivationWindow
 from ffn_program_cost import (EXTERNAL_CLIENTS, INPUT_BYTES, Program, READ_BYTES, RESOURCES, RESULT_BYTES,
                               SHARED_RESOURCES, SITES, U_QUANT_END)
-from snapshot_cost import CHANNELS, dma_cost
+from snapshot_cost import CHANNELS, dma_cost, measured_dma_cost
 from sram_feeder import Access, profile as feeder_profile
 
 DDR = 'DDR'
@@ -193,6 +193,11 @@ class Model:
         self.routes = self.spec['routes']
         dma = self.spec.get('typed_dma')
         self.dma_profile = Profile.from_spec(dma) if dma is not None else None
+        measured = self.spec.get('snapshot_dma_samples', ())
+        if (not isinstance(measured, (list, tuple))
+                or measured and (not self.snapshot or self.dma_profile is None)):
+            raise ValueError('snapshot DMA measurements require typed DMA and snapshot timing')
+        self.dma_samples = measured_dma_cost(measured)
         if self.dma_profile is not None and self.dma_profile.mixed and not self.phased:
             raise ValueError('mixed DMA requires phase timing')
         self.dma_addresses = {} if dma is None else dma.get('addresses', {})
@@ -666,7 +671,7 @@ class Model:
         ticks = route['setup'] + (size + route['bytes_per_tick'] - 1) // route['bytes_per_tick']
         claims = route['claims']
         if self.snapshot and read is not None:
-            duration, channels = dma_cost(self.dma_profile, read)
+            duration, channels = dma_cost(self.dma_profile, read, self.dma_samples)
             return max(ticks, duration), claims | dict.fromkeys(channels, 1), None
         return ticks, claims, read
 
