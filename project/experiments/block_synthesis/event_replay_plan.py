@@ -40,6 +40,8 @@ def event_operation(model, event):
             phase = replace(phase, mid_tile=MidTile.from_spec(service['ffn_mid']))
         if 'sram_access' in service:
             phase = replace(phase, sram_access=model.sram_access(service, event['inputs'], event['outputs']))
+        if 'ffn_activation' in service:
+            phase = replace(phase, activation=model.activation_window(service, event['inputs'], event['outputs']))
         return Operation((phase,))
     route = model.routes[event['route']]
     size = model.sizes[event['value']]
@@ -152,6 +154,8 @@ def retime(model, decisions, proposed, previous=None):
                     actual['dma_beats'] = receipt_json(grant.dma_beats)
                 if grant.sram_beats:
                     actual['sram_beats'] = sram_receipts(phase.sram_access, grant.sram_beats)
+                if phase.activation is not None:
+                    actual['activation'] = phase.activation.receipt(start)
             if len(phases) > 1:
                 actual['phases'] = phases
             occupy(operation.holds, start, end)

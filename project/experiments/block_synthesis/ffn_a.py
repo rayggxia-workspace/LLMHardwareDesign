@@ -12,6 +12,29 @@ COPY, A_READ, AUX = 1, 2, 3
 EVENTS = ('start', 'source', 'returned', 'done', 'load', 'read', 'response', 'copy', 'ack', 'prefix')
 
 
+@dataclass(frozen=True)
+class ActivationWindow:
+    mode: int
+    source: int
+    source_base: int
+    copy_delay: int
+    load_offsets: tuple[int, int, int]
+
+    def run(self, header):
+        return replay_window(self.mode, header + self.copy_delay, 0, 0, 0, 0,
+                             tuple(header + offset for offset in self.load_offsets), 0,
+                             source=self.source, source_base=self.source_base)
+
+    def receipt(self, header):
+        events, proof = self.run(header)
+        return {'copy_start': events['start'][0][0], 'copy_done': events['done'][0][0],
+                'proof': proof, 'loads': [row[0] for row in events['load']],
+                'writes': [list(row[:3]) for row in events['copy']],
+                'write_acks': [list(row[:2]) for row in events['ack']],
+                'reads': [list(row[:3]) for row in events['read']],
+                'read_acks': [list(row[:2]) for row in events['response']]}
+
+
 @dataclass
 class Port:
     """Two ordered response owners and a four-client round-robin cursor."""
@@ -44,17 +67,22 @@ def replay_tile(mode, start, scope, k, generation, ticket, loads, a_generation, 
     The programmed fixture closes the previous COPY and its A reads before
     starting the next COPY. Its first request establishes each port's cursor.
     """
-    ports = [Port() for _ in range(P_COUNT)]
-    req_windows = [s_pressure(p, False) for p in range(P_COUNT)]
-    rsp_windows = [s_pressure(p, True) for p in range(P_COUNT)]
     tile = k // 128
-    slot = tile % 2
     if down:
         source = tile % P_COUNT
         source_base = 256 + WORDS * (tile // P_COUNT)
     else:
         source = P_COUNT
         source_base = 512 + WORDS * tile
+    return replay_window(mode, start, scope, k, generation, ticket, loads, a_generation,
+                         source=source, source_base=source_base)
+
+
+def replay_window(mode, start, scope, k, generation, ticket, loads, a_generation, *, source, source_base):
+    ports = [Port() for _ in range(P_COUNT)]
+    req_windows = [s_pressure(p, False) for p in range(P_COUNT)]
+    rsp_windows = [s_pressure(p, True) for p in range(P_COUNT)]
+    slot = (k // 128) % 2
     events = defaultdict(list)
     events['start'].append((start, scope, k, generation, ticket))
     for p, load in enumerate(loads):

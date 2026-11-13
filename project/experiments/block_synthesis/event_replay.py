@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from heapq import heappop, heappush
 
 from dma_read import BeatReceipt, Read, ReadFabric
+from ffn_a import ActivationWindow
 from ffn_mid import MidTile
 from sram_feeder import Access, SramFeeder
 
@@ -43,6 +44,7 @@ class Phase:
     ready_window: ReadyWindow | None = None
     mid_tile: MidTile | None = None
     sram_access: Access | None = None
+    activation: ActivationWindow | None = None
 
     @classmethod
     def from_spec(cls, name, ticks, spec):
@@ -157,6 +159,8 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
                     or phase.mid_tile is not None and (
                         not isinstance(phase.mid_tile, MidTile) or not phase.mid_tile.valid()
                         or phase.dma_read is not None or dict(phase.claims) != phase.mid_tile.claims())
+                    or phase.activation is not None and any(
+                        device is not None for device in (phase.dma_read, phase.mid_tile, phase.sram_access))
                     or any(r in issue_rates and units > issue_rates[r][1] for r, units in phase.claims)):
                 raise ValueError('invalid replay phase duration, priority or resource claim')
             current = index, phase_index
@@ -300,7 +304,10 @@ def _replay(operations, capacity, previous, issue_rates, dma_profile, sram_profi
             occupied.update(dict(claims))
             record_issues(phase.claims, tick)
             if phase.dma_read is None and phase.sram_access is None:
-                end = phase.mid_tile.end(tick) if phase.mid_tile is not None else tick + phase.ticks
+                if phase.activation is not None:
+                    end = phase.activation.run(tick)[1] + 1
+                else:
+                    end = phase.mid_tile.end(tick) if phase.mid_tile is not None else tick + phase.ticks
                 heappush(running, (end, index, phase_index))
                 grants[index].append(Grant(index, phase_index, tick, end))
             else:

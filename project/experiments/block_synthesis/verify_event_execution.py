@@ -63,6 +63,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
         native = 'typed_dma' in route and timing == 'replay'
         require(('dma_beats' in event) == native, 'typed DMA receipt coverage differs')
         require('sram_beats' not in event, 'SRAM receipts belong to feeder services')
+        require('activation' not in event, 'FFN activation receipts belong to native window services')
         if profile is None:
             require(end-start == duration and 'phases' not in event, 'route service duration differs')
             claim(route, start, end)
@@ -120,6 +121,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 require('dma_beats' not in event, 'typed DMA receipts belong to read routes')
                 service = spec['services'][stage['service']]
                 require(('sram_beats' in event) == ('sram_access' in service), 'SRAM receipt coverage differs')
+                require(('activation' in event) == ('ffn_activation' in service), 'FFN activation receipt coverage differs')
                 inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
                 require(event['inputs'] == inputs and event['outputs'] == outputs,
                         'native stage values differ')
@@ -139,7 +141,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     phased_claims(event, service['phases'], service.get('hold_claims', {}),
                                   service.get('nets', ()))
                 else:
-                    variable = 'ffn_mid' in service or 'sram_access' in service
+                    variable = any(kind in service for kind in ('ffn_mid', 'sram_access', 'ffn_activation'))
                     valid_ticks = (timing == 'replay' and end-start >= service['ticks']
                                    if variable else end-start == service['ticks'])
                     require(valid_ticks and 'phases' not in event,

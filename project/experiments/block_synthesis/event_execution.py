@@ -9,6 +9,7 @@ from collections import Counter
 from dataclasses import dataclass, replace
 
 from dma_read import Profile, Read
+from ffn_a import A_BASE, P_COUNT, WORDS, ActivationWindow
 from sram_feeder import Access, profile as feeder_profile
 
 DDR = 'DDR'
@@ -185,7 +186,7 @@ class Model:
                 raise ValueError('unknown route site')
             if (type(route['setup']) is not int or route['setup'] < 0
                     or type(route['bytes_per_tick']) is not int or route['bytes_per_tick'] < 1
-                    or 'ffn_mid' in route or 'sram_access' in route):
+                    or 'ffn_mid' in route or 'sram_access' in route or 'ffn_activation' in route):
                 raise ValueError('invalid route timing')
             self.validate_service(route)
             if 'phases' in route:
@@ -198,8 +199,12 @@ class Model:
                 raise ValueError('invalid native stage duration')
             self.validate_service(service)
             if 'sram_access' in service and ('phases' in service or 'ffn_mid' in service
-                                             or 'copy_sites' in service):
+                                             or 'copy_sites' in service or 'ffn_activation' in service):
                 raise ValueError('SRAM feeder access requires a standalone service')
+            if 'ffn_activation' in service and (self.spec.get('timing') != 'replay'
+                                                or 'phases' in service or 'ffn_mid' in service
+                                                or service['ticks'] != 1):
+                raise ValueError('FFN activation window requires a standalone replay service')
             if 'phases' in service:
                 self.validate_stage_phases(service)
             elif 'hold_claims' in service or 'window_phases' in service:
@@ -365,6 +370,8 @@ class Model:
                 self.validate_copy(window, value)
             if 'sram_access' in service:
                 self.sram_access(service, inputs, outputs)
+            if 'ffn_activation' in service:
+                self.activation_window(service, inputs, outputs)
             if inputs.keys() & outputs.keys():
                 raise ValueError('in-place native stages require a separate storage contract')
             if 'ffn_mid' in service:
@@ -398,6 +405,33 @@ class Model:
                 or service['ticks'] > access.words // (4 if access.wide else 1) + 1):
             raise ValueError('invalid SRAM feeder access range or bound')
         return access
+
+    def activation_window(self, service, inputs, outputs):
+        config = service['ffn_activation']
+        if (not isinstance(config, dict) or config.keys() != {'mode', 'copy_delay', 'load_offsets'}
+                or type(config['mode']) is not int or config['mode'] not in (0, 1)
+                or type(config['copy_delay']) is not int or config['copy_delay'] not in (0, 1)
+                or not isinstance(config['load_offsets'], (list, tuple))
+                or len(config['load_offsets']) != P_COUNT
+                or any(type(offset) is not int or not -2 <= offset <= 1024 for offset in config['load_offsets'])):
+            raise ValueError('invalid FFN activation window timing')
+        if len(inputs) != 1 or len(outputs) != P_COUNT:
+            raise ValueError('FFN activation window requires one source and three destinations')
+        (src, value), = inputs.items()
+        source = self.windows[src]
+        sites = ('P0', 'P1', 'P2', 'U')
+        port_sites = set(sites[:P_COUNT]) | {source['site']}
+        if (source['site'] not in sites or source['offset'] % 16 or self.sizes[value] != WORDS * 16
+                or source['offset'] + self.sizes[value] > 16384
+                or source['site'] in sites[:P_COUNT] and source['offset'] + self.sizes[value] > A_BASE * 16
+                or sorted((self.windows[w]['site'], self.windows[w]['offset'], v) for w, v in outputs.items())
+                != [(site, A_BASE * 16, value) for site in sites[:P_COUNT]]
+                or any(self.capacity.get(f'{site}.S.port') != 1
+                       or service['claims'].get(f'{site}.S.port') != 1 for site in port_sites)
+                or port_sites & self.sram_profiles.keys()):
+            raise ValueError('invalid FFN activation windows or private port ownership')
+        return ActivationWindow(config['mode'], sites.index(source['site']), source['offset'] // 16,
+                                config['copy_delay'], tuple(config['load_offsets']))
 
     def physical_words(self, operands):
         words = set()

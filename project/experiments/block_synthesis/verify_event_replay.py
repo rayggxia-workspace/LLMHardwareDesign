@@ -38,6 +38,10 @@ def verify_grants(tasks, hardware, rows):
                 raise ValueError('grant precedes phase dependency')
             if phase.mid_tile is not None and phase.mid_tile.run(start)[0] != end:
                 raise ValueError('FFN Mid completion differs')
+            if phase.activation is not None:
+                expected = phase.activation.receipt(start)
+                if event['activation'] != expected or end != expected['proof'] + 1:
+                    raise ValueError('FFN activation handshakes or proof differ')
             claims = phase.claims + (operation.holds if j == 0 else ())
             releases = phase.claims + (operation.holds if j == len(phases) - 1 else ())
             ready_at[ready].append((phase.priority, ready, i, j, start, claims, phase.ready_window))

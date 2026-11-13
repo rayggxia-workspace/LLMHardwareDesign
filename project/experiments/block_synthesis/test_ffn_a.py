@@ -2,10 +2,39 @@
 from copy import deepcopy
 import unittest
 
+from benchmark_ffn_activation_dp import problem
+from cover_frontier import search
 from ffn_a import A_READ, AUX, COPY, Port, replay_tile
+from verify_cover_frontier import verify
 
 
 class ActivationReadTests(unittest.TestCase):
+    def test_frontier_propagates_activation_proof_to_consumer(self):
+        tasks, hardware = problem(1, 17172, 'U', 576, (97, 90, 93))
+        for width in (1, 8):
+            plan = search(tasks, hardware, width=width)
+            verify(tasks, hardware, (), plan)
+            self.assertEqual(plan['tasks'][1]['binding'], 'one-tick-later')
+            self.assertEqual(plan['tasks'][2]['start'], 17365)
+
+        bad = deepcopy(plan)
+        activation = bad['tasks'][1]['evaluation']['events'][0]['activation']
+        activation['write_acks'][0][0] -= 1
+        with self.assertRaisesRegex(ValueError, 'activation handshakes or proof'):
+            verify(tasks, hardware, (), bad)
+
+        bad = deepcopy(plan)
+        consumer = bad['tasks'][2]
+        consumer['start'] -= 1
+        consumer['evaluation']['events'][0]['start'] -= 1
+        with self.assertRaisesRegex(ValueError, 'interval or prerequisite'):
+            verify(tasks, hardware, (), bad)
+
+        spec = hardware['event_model']
+        spec['services']['one-tick-later']['claims'] = {'U.S.port': 1}
+        with self.assertRaisesRegex(ValueError, 'private port ownership'):
+            search(tasks, hardware, width=1)
+
     def test_full_port_cannot_bypass_a_response_owner(self):
         port = Port()
         copy, read, aux = (880, 1), (880, 2), (256, 3)
