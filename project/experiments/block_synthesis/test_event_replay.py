@@ -697,6 +697,49 @@ class ReplayTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'invalid SRAM input read phases'):
             search(tasks, h)
 
+    def test_in_place_row_preserves_a_live_old_version_and_hides_partial_output(self):
+        h = hardware(resident=False)
+        h['resources']['N.context'] = 1
+        spec = h['event_model']
+        spec.update(timing='replay', initial_copies={'source': 'x', 'other': 'z'}, live_out=['y'])
+        spec['services']['norm-update'] = {
+            'ticks': 13, 'claims': {}, 'hold_claims': {'N.context': 1},
+            'phases': [{'kind': 'stats', 'ticks': 2, 'claims': {'S0': 1}},
+                       {'kind': 'factor', 'ticks': 4, 'claims': {}},
+                       {'kind': 'apply', 'ticks': 5, 'claims': {'S0': 1}},
+                       {'kind': 'retire', 'ticks': 2, 'claims': {}}],
+            'window_phases': {'input_reads': {'source': ['stats', 'apply'], 'other': ['apply', 'apply']},
+                              'in_place': ['source'], 'write': 'apply', 'publish': 'apply',
+                              'result_hold': 'N.context'},
+        }
+        norm = binding('norm', stage('norm-update', inputs={'source': 'x', 'other': 'z'}, outputs={'source': 'y'}))
+        norm['ticks'] = 13
+        tasks = [task('a-update', norm),
+                 task('b-current', binding('use', stage('consume', inputs={'source': 'y'}))),
+                 task('c-old', binding('read-old', stage('consume', inputs={'input': 'x'})), after=('a-update',))]
+        plan = search(tasks, h, width=1, ready_limit=1)
+        verify(tasks, h, (), plan)
+        store, update = plan['tasks'][0]['evaluation']['events']
+        apply = update['phases'][2]
+        self.assertEqual((store['src'], store['dst'], store['value']), ('source', 'DDR', 'x'))
+        self.assertLessEqual(store['end'], apply['start'])
+        rows = {row['id']: row for row in plan['tasks']}
+        self.assertEqual(rows['b-current']['start'], apply['end'])
+        old_load, _ = rows['c-old']['evaluation']['events']
+        self.assertEqual((old_load['src'], old_load['value']), ('DDR', 'x'))
+        self.assertEqual((plan['external_read_bytes'], plan['external_write_bytes']), (16, 16))
+
+        bad = deepcopy(plan)
+        row = next(row for row in bad['tasks'] if row['id'] == 'b-current')
+        row['start'] -= 1
+        row['end'] -= 1
+        row['evaluation']['events'][0].update(start=row['start'], end=row['end'])
+        with self.assertRaisesRegex(ValueError, 'window read precedes ACK'):
+            verify(tasks, h, (), bad)
+        del spec['services']['norm-update']['window_phases']['in_place']
+        with self.assertRaisesRegex(ValueError, 'in-place native stages'):
+            search(tasks, h)
+
     def test_deferred_write_waits_for_reader_and_publishes_before_retirement(self):
         h = hardware()
         h['resources']['result.slot'] = 1

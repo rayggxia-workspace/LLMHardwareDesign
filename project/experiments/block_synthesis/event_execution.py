@@ -393,7 +393,8 @@ class Model:
         if sum(p['ticks'] for p in phases) != service['ticks']:
             raise ValueError('native phase durations differ from optimistic service ticks')
         timing = service.get('window_phases', {})
-        if (not isinstance(timing, dict) or timing.keys() - {'read', 'write', 'publish', 'result_hold', 'input_reads'}
+        if (not isinstance(timing, dict) or timing.keys() - {
+                'read', 'write', 'publish', 'result_hold', 'input_reads', 'in_place'}
                 or any(not isinstance(timing[field], str) or timing[field] not in names
                        for field in ('read', 'write', 'publish') if field in timing)
                 or ('write' in timing) != ('publish' in timing)):
@@ -406,6 +407,13 @@ class Model:
                 or phase_order[span[0]] > phase_order[span[1]] for window, span in ranges.items())):
             raise ValueError('invalid SRAM input read phases')
         _, write, publish = window_phase_indices(service)
+        in_place = timing.get('in_place', ())
+        if (not isinstance(in_place, (list, tuple)) or any(not isinstance(w, str) for w in in_place)
+                or len(in_place) != len(set(in_place)) or in_place and (
+                    self.spec.get('timing') != 'replay' or 'write' not in timing
+                    or any(w not in ranges or not phase_order[ranges[w][0]] < write
+                           or phase_order[ranges[w][1]] != write for w in in_place))):
+            raise ValueError('invalid in-place SRAM update phases')
         result_hold = timing.get('result_hold')
         if (publish < write or ((write or 'result_hold' in timing)
                                 and (not isinstance(result_hold, str) or result_hold not in holds))):
@@ -451,7 +459,10 @@ class Model:
                 self.activation_window(service, inputs, outputs)
             if 'ffn_program' in service:
                 self.validate_program_windows(inputs, outputs)
-            if inputs.keys() & outputs.keys():
+            in_place = set(service.get('window_phases', {}).get('in_place', ()))
+            if ((inputs.keys() & outputs.keys()) != in_place
+                    or any(inputs[w] == outputs[w] or self.sizes[inputs[w]] != self.sizes[outputs[w]]
+                           for w in in_place)):
                 raise ValueError('in-place native stages require a separate storage contract')
             if 'ffn_mid' in service:
                 from ffn_mid import MidTile

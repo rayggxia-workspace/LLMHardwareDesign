@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)第 46 轮允许有限 SRAM 上按阶段原址更新并保留旧版本，复用 #234 层 1 的归一化程序形状及实际 gamma 地址。四组成对回放和 389 项远程回归通过。S32 整段硬件时序及数值接续仍待独立验证。任务分支待汇入 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)第 45 轮为不同操作数记录首次及末次读取。归档 S16 RMSNorm 的阶段长度用于驻留／非驻留对照，388 项远程回归通过。#234 层间 S32 归一化仍待独立接续及校准。任务分支待汇入 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)。
 
 2026-11-13 CST。#219 第 44 轮将两层 FFN 的独立 DDR 镜像、各自 KV 和共享内存状态接进同一事件图。387 项远程回归、24 个快照分岔及层 1 的六份整数分块对照通过。两段完整 FFN 在同流量下验证早读可推迟前层 KV 写回，同时提前两层完成。两种压力下的同池贪心均达到强制对照的最早完成拍，宽度 8 的 Slurm `106616` 待收取。

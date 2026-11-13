@@ -174,6 +174,9 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     read_external.append((read_at[w][0], inputs[w]))
                 write_at = phase.get(window_timing.get('write'), event)['start']
                 visible = phase.get(window_timing.get('publish'), event)['end']
+                in_place = set(window_timing.get('in_place', ()))
+                require((inputs.keys() & outputs.keys()) == in_place and (not in_place or timing == 'replay'),
+                        'in-place SRAM windows differ')
                 for move in pending_moves:
                     if 'output_eviction' in move:
                         require('write' in window_timing and move['output_eviction'] == move['src']
@@ -189,7 +192,13 @@ def verify(tasks, hardware, plan, wire_budget=None):
                             first_read = default_read['start']
                         require(move['end'] <= first_read, 'stage read precedes move ACK')
                 for w, value in inputs.items():
-                    access(reads, w, value, *read_at[w])
+                    first_read, last_read = read_at[w]
+                    if w in in_place:
+                        # The update phase owns the window exclusively. Its
+                        # qualified kernel reads each old word before replacing it.
+                        require(first_read < write_at < last_read <= visible, 'invalid in-place SRAM custody')
+                        last_read = write_at
+                    access(reads, w, value, first_read, last_read)
                 for w, value in outputs.items():
                     access(writes, w, value, write_at, visible)
                 local_read += service.get('read_bytes', 0)
