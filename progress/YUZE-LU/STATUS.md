@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 将 C/U 的 512 次存储字搬运编成两端局控 PM 片段并独立读回。DDR 端点审计定位到 C/U 尚缺运行时索引读入路径，固定 #260 仍需可常驻的局控服务及整图封包。见[局控与索引入口回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#cu-存储链路的局控编码与动态查表入口)。
+
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 为 C/U 已存储字搬运增加 16 B 合同。真实端点上的 512 条分片搬运生成同源控制 IR 和 Algo2 输入，后者独立读回。远端 413 项回归通过。运行时 DDR 行供数和整图 #260 仍待打通。见[远端回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#c0-到-u0-的逐字提交与试布回执)。
 
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 将原生 WAIT 表达能力加入 Algo1 搜索。独立 DMA 的 4,344 个数据端口详细布线报告零违例，同一三 P 计划用新物理凭据重新被 Algo2 和固定 #260 页读取器读回。新底座仍欠运行时索引到 DDR 行的 Gather 服务、完整数据/控制布线和真实 KV 与退休验收。见[远端回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#原生-wait-准入与-dma-接点实布)。

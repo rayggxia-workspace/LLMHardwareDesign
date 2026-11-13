@@ -655,3 +655,31 @@ Algo2 独立读回与控制 IR 同源的计划，静态成员 858 个，待布�
 | `escape-route-109947.json` | `165905570386978513fc71fc373ed1b3cdd15cbe1085dc4c787b3a9e15799f23` |
 | `escape-route-109978.json` | `03242bcd7d960c3822f589227ccf35d97438bdfae363eb729f8d8812b765e7a2` |
 | `stored-word-native-boundary-109992.json` | `ce4064231cc0dd0a4ab1e7a23b7d391e74617a05d09ee4e35e8512bb59860856` |
+
+## C/U 存储链路的局控编码与动态查表入口
+
+109992 的 512 次 16 B COPY 来自同一份已核对计划。远端 110079 重新生成控制和连接需求后，
+以已归档 C/U 存储链路使用的汇编器为每次 COPY 生成两个局控 PM 片段。C 执行 SEND，U 执行
+RESERVE 和 RECEIVE。两端局控可同组发起，U 的地址预留生效后才可接收数据，源端以目的 SRAM
+写入确认结束发送，后续复用等待两端结束。生成 1,024 份镜像，单份最多 496 B。读回核对原始
+执行记录、地址单位和完成事件，另拒绝了角色重复、弱化完成条件及地址不对齐三种错误输入。
+512 个消费占位操作仍待原生绑定。
+
+固定的 [#260 页执行入口](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260)
+读回边界复核拒绝这些 PM 内的 1,536 条旧局控执行记录作为外层 DDR CALL 描述符。每个目标
+各需 512 份不同的 PM 片段，本次请求装包器要求同一阶段内每目标的常驻 PM 字节一致。这个回执
+提供局部编码和读回证据，完整图还需绑定可长期驻留的本地服务和运行时输入接口。
+
+远端 110045 在上述候选的 C0/U0 网表与联合 DMA 连接合同中核对接收端点。已绑定的 DMA 数据路径
+仅至 P0/P1/P2。C0/U0 有片上数据接收与写确认端口，合同中没有把按 token 索引读出的 DDR 行送到
+这些端口的适配路径。封存索引表含 512 个 DDR prompt 输入和 127 个来自前次退休的输入。下一步
+需要以这些运行时来源驱动已校验的 DDR 行地址和传输，再发布目的 SRAM 的存储完成事件。
+
+复现脚本为 `audit-ddr-ingress.py` 和 `verify-stored-link-control.py`，使用
+`ingress-route-iN0LbH/native-stored-tpmuEH` 中的 Slurm 回执。项目结构检查 110080 通过。
+
+| 文件 | SHA-256 |
+| --- | --- |
+| `ddr-ingress.json` | `4aca2d8a8c713613fbcab7802549055958984aad4bd17794ad2a48782ad87d1a` |
+| `control-110079/report.json` | `abb68bd9d5d6e8be0d4165b6f857a5c7299d71b6cdbefd713212dd90ce68b46f` |
+| `control-110079/stored-link-pm-manifest.json` | `f1b06533f90579f149d33367760de7a00852ac51ab84d0ac52b1bf6d5fffce43` |
