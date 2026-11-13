@@ -8,7 +8,7 @@ from qwen_descriptor_dma import TypedReadFabric, fetch_descriptor
 from qwen_drl1_cycle import run_drl1
 from qwen_native_control import decode_archive
 from qwen_native_ddr import Proof, WINDOWS, fields, file_digest, require
-from qwen_page_dispatch import dispatch, next_call
+from qwen_page_dispatch import dispatch, next_call, page_commit
 from qwen_prompt_pm import INGRESS_BURSTS, EXPECTED_LC_BURSTS, EXPECTED_MC_BURSTS, predict as predict_pm
 
 
@@ -64,14 +64,14 @@ def predict(archive, binary, config, output, embedding, mode):
     return predict_pm(archive, binary, config, output, embedding, mode, PROMPT_ACCEPT_EDGE, after_pm=after_pm)
 
 
-def marker_prefix(path, mode):
+def observed_first_page(path, mode):
     require(file_digest(path) == MODE_EDGE_SHA[mode], "instrumented RTL evidence differs from 108208")
     result = []
     with path.open("r", encoding="ascii") as stream:
         for line in stream:
             prefix, kind, *items = line.split()
             require(prefix == "QWEN_EDGE", "invalid RTL edge record")
-            if kind not in ("descriptor_admit", "service_accept", "service_retire"):
+            if kind not in ("descriptor_admit", "service_accept", "service_retire", "page_commit"):
                 continue
             row = {key: int(value) for key, value in (item.split("=") for item in items)}
             if row["generation"] != 1:
@@ -79,9 +79,36 @@ def marker_prefix(path, mode):
             row.pop("ps")
             row["cycle"] -= 1  # 108208 marks the edge with a one-based counter
             result.append({"kind": kind, **row})
-            if kind == "service_accept" and row["ticket"] == SERVICES_MODELED + 1:
+            if kind == "page_commit":
                 break
     return result
+
+
+def audit_wait_release(page, rows):
+    """Check the MC/LC handoff given observed provider terminal edges."""
+    retires = [row for row in rows if row["kind"] == "service_retire"]
+    descriptors = [row for row in rows if row["kind"] == "descriptor_admit"]
+    commits = [row for row in rows if row["kind"] == "page_commit"]
+    count = len(page["calls"])
+    require(len(retires) == count and len(descriptors) == DESCRIPTOR_BURSTS * count
+            and len(commits) == 1 and (commits[0]["calls"], commits[0]["status"]) == (count, 0),
+            "incomplete generation 1 WAIT evidence")
+    for index, (retired, call) in enumerate(zip(retires, page["calls"])):
+        require((retired["target"], retired["ticket"], retired["status"]) == (call["target"], call["ticket"], 0),
+                "unexpected retired service at WAIT {}".format(index))
+        if index == count - 1:
+            break
+        predicted = next_call(page, index, retired["cycle"])["descriptor_admissions"]
+        offset = (index + 1) * DESCRIPTOR_BURSTS
+        actual = [{key: row[key] for key in ("cycle", "target", "tag", "address")}
+                  for row in descriptors[offset:offset + DESCRIPTOR_BURSTS]]
+        require(predicted == actual, "WAIT release after ticket {} differs: {} vs {}".format(
+            retired["ticket"], predicted, actual))
+    predicted_commit = page_commit(page, retires[-1]["cycle"])
+    require(predicted_commit == commits[0]["cycle"], "page commit differs after final observed service")
+    return {"input": "observed_provider_retire", "matched_wait_handoffs": count - 1,
+            "matched_next_descriptor_admissions": DESCRIPTOR_BURSTS * (count - 1),
+            "matched_page_commit": predicted_commit}
 
 
 def compare(archive, prediction, edge_log):
@@ -100,14 +127,15 @@ def compare(archive, prediction, edge_log):
     trace_sha = file_digest(source)
     proof.check(trace, trace_sha)
 
-    observed = marker_prefix(edge_log, mode)
+    observed = observed_first_page(edge_log, mode)
     wanted = prediction["markers"]
-    require(len(wanted) == len(observed) == 11, "incomplete dispatch marker prefix")
+    require(len(wanted) == 11 and len(observed) > len(wanted), "incomplete dispatch marker prefix")
     for index, (event, actual) in enumerate(zip(wanted, observed)):
         require(event == actual, "control marker {} differs: predicted {}, observed {}".format(index, event, actual))
+    page = decode_archive(archive)["pages"][0]
     return {"mode": mode, "matched_ddr_bursts": PREDICTED_BURSTS, "matched_ddr_events": len(expected),
             "matched_control_markers": len(wanted), "rtl_ddr_trace_sha256": trace_sha,
-            "rtl_edge_trace_sha256": MODE_EDGE_SHA[mode]}
+            "rtl_edge_trace_sha256": MODE_EDGE_SHA[mode], "conditional_wait_audit": audit_wait_release(page, observed)}
 
 
 def main():

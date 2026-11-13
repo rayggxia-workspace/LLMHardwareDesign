@@ -14,7 +14,6 @@ MC_INSTRUCTION_CYCLES = MC_PM_REQUEST_TO_RESPONSE + 2
 PACKET_FLITS = 4
 LC_PM_REQUEST_TO_RESPONSE = 1
 LC_META_WORDS = 20
-CRC_BYTES = DESCRIPTOR_BYTES - 4
 
 
 def _descriptor_edges(call, decode):
@@ -74,16 +73,6 @@ def dispatch(page, mc_last_write_ack, mode):
     return {"mc_last_write_ack": mc_last_write_ack, "mc_readback_requests": readback_words,
             "mc_prove": prove, "mc_prepare": prepare, "mc_install_retire": installed, "mc_start": started,
             **_descriptor_edges(call, decode)}
-
-
-def service_accept(last_lc_descriptor_response):
-    """Predict an immediately ready native provider after the LC checks CRC32."""
-    require(type(last_lc_descriptor_response) is int and last_lc_descriptor_response >= 0,
-            "invalid descriptor response cycle")
-    # On the final response edge lc_scope_fetch128 enters CRC. It visits
-    # bytes 0 through 123, then FETCH_WAIT consumes DONE. The route's offer
-    # is combinational when the service router is free.
-    return last_lc_descriptor_response + CRC_BYTES + 2
 
 
 def next_call(page, completed_index, service_retire):
