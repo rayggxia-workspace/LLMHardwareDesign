@@ -212,12 +212,11 @@ class Model:
         self.excluded_nets = frozenset(self.spec.get('excluded_nets', ()))
         if self.excluded_nets - self.nets.keys() or self.excluded_nets & self.fixed:
             raise ValueError('event trial excludes an unknown or fixed net')
-        physical_issues = self.spec.get('physical_interface_issues', {})
-        logical_issues = self.spec.get('logical_control_issues', {})
+        interface_issues = [self.spec.get(key, {}) for key in (
+            'physical_interface_issues', 'logical_control_issues', 'native_dispatch_issues')]
         self.product_interfaces = 'physical_interface_issues' in self.spec
-        self.unqualified_routes = physical_issues.get('routes', {}).keys() | logical_issues.get('routes', {}).keys()
-        self.unqualified_services = (physical_issues.get('services', {}).keys()
-                                     | logical_issues.get('services', {}).keys())
+        self.unqualified_routes = set().union(*(issues.get('routes', {}) for issues in interface_issues))
+        self.unqualified_services = set().union(*(issues.get('services', {}) for issues in interface_issues))
         self.route_admission = route_admission
         self.conflicts = tuple(frozenset(pair) for pair in hardware.get('incompatible_nets', ()))
         self.wire_budget = wire_budget

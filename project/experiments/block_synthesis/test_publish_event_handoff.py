@@ -61,6 +61,61 @@ def fixture():
 
 
 class RouteAdmissionTest(unittest.TestCase):
+    def test_product_search_excludes_fast_provider_missing_from_physical_dispatch(self):
+        from run import compile_event_ir
+
+        arch = hardware()
+        arch.update(topology_id=25, control_groups={'lane0': {'site': 'P0', 'block_id': 3,
+                                                            'control_net': 'control'}})
+        arch['nets']['control'] = {'cost': 1, 'signals': [
+            {'name': 'command', 'width': 1, 'driver': 'mother/out', 'sinks': ['lane0/in']},
+            {'name': 'done', 'width': 1, 'driver': 'lane0/out', 'sinks': ['mother/in']},
+        ]}
+        services = arch['event_model']['services']
+        services['produce'].update(control_site='P0', native_providers={'lane0': 'fast'})
+        services['block-source'].update(control_site='P0', native_providers={'lane0': 'enabled'})
+        arch['native_provider_contracts'] = {
+            name: {'calls': [
+                {'schema': 3, 'abi': 7, 'opcode': opcode, 'completion': 'service_done'}]}
+            for name, opcode in (('fast', 4), ('enabled', 2))
+        }
+        arch['event_model']['live_out'] = ['x']
+        model = {'tasks': [task('root',
+                               binding('fast', stage('produce', outputs={'source': 'x'})),
+                               binding('enabled', stage('block-source', outputs={'source': 'x'})))]}
+        base = {'schema_version': 'route-contract/1', 'state': 'frozen', 'base_id': 'base',
+                'dbu_per_micron': 2000,
+                'views': {name: {'path': name, 'sha256': 'a'*64} for name in ('odb', 'netlist', 'gds')},
+                'assemblies': [{'id': 'lane0', 'views': {'netlist': 'netlist'}}],
+                'endpoints': {
+                    pin: {'odb_term': pin, 'assembly': pin.split('/')[0], 'role': role, 'native_net': pin,
+                          'm10_shapes': [{'layer': 'M10', 'object': pin, 'rect_dbu': [0, 0, 2, 2]}]}
+                    for pin, role in (('mother/out', 'driver'), ('lane0/in', 'sink'),
+                                      ('lane0/out', 'driver'), ('mother/in', 'sink'))
+                }}
+        target = {'group': 'lane0', 'id': 3, 'netlist_view': 'netlist', 'netlist_sha256': 'a'*64,
+                  'routes': [{'schema': 3, 'abi': 7, 'opcode': 2, 'completions': ['service_done']}]}
+        base['native_service_routes'] = {'schema': 'native-rtl-target-routes/1',
+                                         'topology_id': 25, 'targets': [target]}
+        result = compile_event_ir(model, arch, route_base=base)
+        self.assertEqual(result['plan']['tasks'][0]['binding'], 'enabled')
+        self.assertEqual(result['outputs']['program']['locals']['lane0'][0]['service'], 'block-source')
+        self.assertEqual(result['plan']['nets'], ['control'])
+        self.assertEqual(compile_event_ir(model, arch, route_base=base, route_scope='interface')
+                         ['plan']['tasks'][0]['binding'], 'enabled')
+        target['netlist_sha256'] = 'b'*64
+        with self.assertRaisesRegex(ValueError, 'differs from the target assembly'):
+            compile_event_ir(model, arch, route_base=base)
+        target['netlist_sha256'] = 'a'*64
+        target['routes'][0]['completions'] = ['issue_only']
+        rejected = compile_event_ir(model, arch, route_base=base)
+        self.assertEqual(rejected['status'], 'no_plan_in_bounded_search')
+        issues = rejected['native_dispatch_issues']['services']
+        self.assertIn('no physical service route for signatures [(3, 7, 4)]', issues['produce'])
+        self.assertIn('no physical completion', issues['block-source'])
+        del base['native_service_routes']
+        self.assertEqual(compile_event_ir(model, arch, route_base=base)['status'], 'no_plan_in_bounded_search')
+
     def test_missing_route_endpoint_is_rejected_during_search(self):
         from run import compile_event_ir
 

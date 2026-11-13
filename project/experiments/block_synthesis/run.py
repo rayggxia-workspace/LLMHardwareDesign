@@ -88,6 +88,10 @@ def compile_event_ir(model, hardware, *, budget=None, width=8, emit_dependencies
 
         if route_scope == 'product':
             hardware = qualify_hardware(hardware, route_base)
+        elif 'native_service_routes' in route_base:
+            from event_native_dispatch import qualify_native_dispatch
+
+            hardware = qualify_native_dispatch(hardware, route_base)
         admit = route_admission(hardware, route_base, route_contract, product=route_scope == 'product')
     tasks, covers = model['tasks'], model.get('covers', ())
     plan = search(tasks, hardware, covers, width=width, wire_budget=budget, route_admission=admit)
@@ -96,7 +100,7 @@ def compile_event_ir(model, hardware, *, budget=None, width=8, emit_dependencies
     if route_base is not None:
         result.update(physical_base_sha256=digest(route_base), route_scope=route_scope)
     if plan['status'] != 'planned':
-        for field in ('logical_control_issues', 'physical_interface_issues'):
+        for field in ('logical_control_issues', 'physical_interface_issues', 'native_dispatch_issues'):
             if field in hardware['event_model']:
                 result[field] = hardware['event_model'][field]
     if plan['status'] == 'planned':

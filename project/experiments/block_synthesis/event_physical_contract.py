@@ -166,4 +166,6 @@ def qualify_hardware(hardware, base):
         else:
             service['nets'] = sorted(set(service.get('nets', ())) | controls)
     spec['physical_interface_issues'] = issues
-    return resolved
+    from event_native_dispatch import qualify_native_dispatch
+
+    return qualify_native_dispatch(resolved, base)

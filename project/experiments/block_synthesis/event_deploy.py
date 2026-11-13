@@ -105,6 +105,8 @@ def loop_lease_edges(dispatches, capacity):
 
 
 def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
+    from event_native_dispatch import route_targets, service_completion, service_targets
+
     projected, _ = project(tasks, covers, plan)
     spec = hardware['event_model']
     phased = spec.get('timing') in ('replay', 'snapshot')
@@ -157,11 +159,11 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
                 route_name = event['route']
                 route = spec['routes'][route_name]
                 net_ids = route.get('nets', ())
-                participants = {}
-                if src['site'] != DDR:
-                    participants.setdefault(placements.get(src['site'], src['site']), []).append('send')
-                if dst['site'] != DDR:
-                    participants.setdefault(placements.get(dst['site'], dst['site']), []).append('receive')
+                participants = {target: [] for target in sorted(route_targets(route, placements))}
+                for operand_, role in ((src, 'send'), (dst, 'receive')):
+                    source_site = operand_['site']
+                    if source_site != DDR:
+                        participants[placements.get(source_site, source_site)].append(role)
                 read, write = [src], [dst]
                 descriptor = {'op': 'COPY', 'route': route_name, 'read': read, 'write': write,
                               'required_completion': 'destination_commit_ack'}
@@ -178,25 +180,23 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
                 site = service.get('control_site', (reads or writes or [{'site': row['site']}])[0]['site'])
                 if site not in hardware['sites']:
                     raise ValueError('unknown service control site ' + site)
-                participants = {placements.get(site, site): ['execute']}
+                targets = service_targets(service, placements) or {placements.get(site, site)}
+                participants = {target: ['execute'] for target in sorted(targets)}
                 read, write = reads, writes
                 descriptor = {'op': 'EXEC', 'service': service_name, 'read': read, 'write': write,
-                              'required_completion': 'service_done'}
+                              'required_completion': service_completion(service)}
                 if not phased:
                     wait.update(pending_moves)
                 if 'finite_loop' in service:
                     loop = service['finite_loop']
-                    participants = {info['control']: ['execute'] for info in loop['participants'].values()}
-                    descriptor.update(op='RUN_LOOP', loop=loop,
-                                      required_completion=loop['completion'])
+                    descriptor.update(op='RUN_LOOP', loop=loop)
                     leases = {'leases': service['claims']}
                 if 'indexed_read' in service:
                     index = service['indexed_read']
                     table_address = addresses[index['table']]
                     if table_address % 16 or table_address + spec['value_bytes'][index['table']] > 1 << index['address_bits']:
                         raise ValueError('indexed table lies outside its declared address width or alignment')
-                    descriptor.update(op='INDEXED_LOAD', indexed_read={**index,'table_address':table_address},
-                                      required_completion='destination_commit_ack')
+                    descriptor.update(op='INDEXED_LOAD', indexed_read={**index,'table_address':table_address})
                 pending_moves.clear()
                 previous = {sequence}
                 if stage_id is not None:

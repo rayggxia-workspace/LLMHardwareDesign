@@ -90,8 +90,10 @@ def indexed_bindings(node, model, hardware):
         ticks = elements * (setup + (row_bytes + bandwidth - 1) // bandwidth)
         service = {'ticks':ticks,'claims':profile['claims'], 'nets':profile.get('nets', ()),
                    'control_site':site,'read_bytes':length,'indexed_read':config}
-        if 'native_providers' in profile:
-            service['native_providers'] = deepcopy(profile['native_providers'])
+        for field in ('native_providers', 'memory_nets', 'memory_owner', 'memory_local_owner',
+                      'memory_abi', 'memory_width_bits'):
+            if field in profile:
+                service[field] = deepcopy(profile[field])
         spec['services'][name] = service
         result.append({'id':profile['id'],'site':site,'ticks':ticks,'scratch_words':0,
                        'resources':[],'nets':[], 'event_stages':[

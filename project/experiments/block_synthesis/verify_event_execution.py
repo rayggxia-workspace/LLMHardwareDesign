@@ -21,7 +21,8 @@ def verify(tasks, hardware, plan, wire_budget=None):
     from event_physical_contract import stage_is_local
 
     spec = hardware['event_model']
-    interface_issues = [spec.get(name, {}) for name in ('logical_control_issues', 'physical_interface_issues')]
+    interface_issues = [spec.get(name, {}) for name in (
+        'logical_control_issues', 'physical_interface_issues', 'native_dispatch_issues')]
     timing = spec.get('timing', 'calendar')
     phased = timing in ('replay', 'snapshot')
     windows, sizes = spec['windows'], spec['value_bytes']

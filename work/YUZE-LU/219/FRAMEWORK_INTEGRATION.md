@@ -137,6 +137,15 @@ U39 的 N32 路径接受阶段提交、Softmax、结果排出三种行操作。�
 在搜索时纳入这条候选。参考 [U39 本地执行入口](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/7a809d1e8dcda063c66f5ca18e9c186fb23ec668/project/rtl/block_v2/u/pu_native_lc.sv#L172)
 与 [U39 N32 描述符](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/7a809d1e8dcda063c66f5ca18e9c186fb23ec668/project/rtl/block_v2/u/u_n32_s128_group.sv#L32)。
 
+Algo1 的搜索现在可以读取底座中的 `native_service_routes`。候选声明目标组及编码器 ID。
+硬件目录中的 `native_provider_contracts` 给出该编码器需要的调用签名和各调用的完成语义。
+底座记录目标组、数字 ID、网表视图及散列，并列出该目标实际提供的签名及完成语义。
+产品模式用这些声明过滤搜索。候选底座提供该表时，接口模式也执行相同过滤。
+编码后的实际字节仍由原生 linker 校验。既有的端点交接可单独用于研究和诊断。
+远端 109436 使用真实 Gather 描述符及 U39 视图复现缺口，搜索给出
+`U0: no physical service route for signatures [(3, 7, 4)]`。
+该检查只核实 Gather 的拒绝条件。九组的完整服务库存及数据搬运合同仍需同版本底座证据。
+
 | 作业 | 结果 | 证据 SHA-256 |
 | --- | --- | --- |
 | 109359 | 四个边界位置的各阶段均找到链接器消费的 Algo1 源计划 | `48eae1ff246b4422401f105e3e91159cab2b3db77c096d732db60cb766bf472f` |
@@ -148,6 +157,8 @@ U39 的 N32 路径接受阶段提交、Softmax、结果排出三种行操作。�
 | 109410 | 新版封包 130 份二进制一致，唯一变化的元数据为来源凭据 | `e4d5ed2cfec0fdb3c02ae94bf051d61862b58b8aee79e6f984a8b79703679cc3` |
 | 109411 | 新版封包重新生成 Algo2 控制输入，`v2-native-control-request-r2/algorithm2-input.json` | `dba355bb7af57113ce1d5083a4b875e826b522c4099f575164f164fa9169fa99` |
 | 109422 | 新版封包全页服务角色和 FFN 输入、输出绑定核验 | `87017ec7ff2221524824d2d5855e9aa9d4dd0ebdd42a312b013105be4a70cbec` |
+| 109434 | 406 项算法回归通过，含真实服务路由缺失时选择可执行备选 | `7f0ab553d505d37d7eea90a5020544d0d2d81a46c9ded9a7c544428c15186fb3` |
+| 109436 | U39 Gather 候选在同一底座被搜索排除 | `495f41b267c22755af90b7e2b486690d4b15b4276c049c975cc390624c3302ed` |
 
 本轮远端目录为上述目录下的 `full-graph-zwl0Tr`。合并源及回执在 `merged-bmMd5X`。
 

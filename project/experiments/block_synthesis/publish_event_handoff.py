@@ -66,6 +66,11 @@ def build(model, hardware, plan, catalog, base, rules, bind_request, *,
     command_source = source_outputs['program']['source'] if source_outputs else {}
     physical_base = command_source.get('physical_base_sha256')
     require(physical_base is None or physical_base == digest(base), 'schedule used a different physical base')
+    if route_scope == 'interface' and 'native_service_routes' in base:
+        from event_native_dispatch import qualify_native_dispatch
+
+        require(physical_base is not None and qualify_native_dispatch(hardware, base) == hardware,
+                'schedule lacks native dispatch qualification for this base')
     if route_scope == 'product' and source_outputs is not None:
         from event_physical_contract import qualify_hardware
 
