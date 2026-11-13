@@ -396,12 +396,19 @@ class Model:
         if not stages:
             raise ValueError('event mode requires explicit qualified stages for every binding')
         lower_bound = 0
-        for stage in stages:
+        for stage_index, stage in enumerate(stages):
             service = self.services[stage['service']]
             lower_bound += service['ticks']
             if stage.get('input_policy', 'any') not in ('any', 'resident', 'backing'):
                 raise ValueError('unknown input policy')
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
+            if 'prefetch' in stage:
+                windows = stage['prefetch']
+                if (self.spec.get('timing') != 'replay' or stage_index == 0
+                        or not isinstance(windows, (list, tuple)) or not windows
+                        or any(not isinstance(w, str) or w not in inputs for w in windows)
+                        or len(set(windows)) != len(windows) or stage.get('input_policy') == 'resident'):
+                    raise ValueError('prefetch requires replay and unique input windows after the first stage')
             persisted = stage.get('persist', ())
             if (not isinstance(persisted, (list, tuple)) or any(not isinstance(w, str) for w in persisted)
                     or len(set(persisted)) != len(persisted) or not set(persisted) <= inputs.keys()
@@ -645,13 +652,15 @@ class Model:
             ready = event['end']
         return state, ready
 
-    def ensure(self, state, window, value, ready, protected, events, policy, choose=None):
+    def ensure(self, state, window, value, ready, protected, events, policy, choose=None, *, prefetch=False):
         old = state.copies.get(window)
-        if old and old.value == value and policy != 'backing':
+        if old and old.value == value and policy != 'backing' and not prefetch:
             return state
+        if prefetch and value not in state.backing:
+            raise Infeasible('prefetch requires published DDR backing')
         state, ready = self.vacant(state, window, ready, protected, events, choose)
         sources = [w for w, c in state.copies.items() if c.value == value and w != window]
-        if policy == 'backing':
+        if policy == 'backing' or prefetch:
             if value not in state.backing:
                 state, event = self.best_move(state, value, sources + ([window] if old and old.value == value else []),
                                               DDR, ready, choose, events=events)
@@ -661,8 +670,11 @@ class Model:
         if value in state.backing and policy != 'resident':
             sources.append(DDR)
         direct = self.move_options(state, value, sources, window, ready)
+        if prefetch:
+            direct = [(moved, {**event, 'prefetch': True}) for moved, event in direct
+                      if 'typed_dma' in self.routes[event['route']]]
         choices = [(moved, [event]) for moved, event in direct]
-        if policy == 'any' and value not in state.backing:
+        if policy == 'any' and not prefetch and value not in state.backing:
             # A dirty value may be cheaper to hand off via a real STORE/LOAD
             # than to wait for an occupied cross-site port.
             stores = self.move_options(state, value, sources, DDR, ready)
@@ -689,7 +701,8 @@ class Model:
             inputs, outputs = stage.get('inputs', {}), stage.get('outputs', {})
             for window, value in inputs.items():
                 state = self.ensure(state, window, value, ready, protected | remaining.keys(), events,
-                                    stage.get('input_policy', 'any'), choose)
+                                    stage.get('input_policy', 'any'), choose,
+                                    prefetch=window in stage.get('prefetch', ()))
             for window in stage.get('persist', ()):
                 value = inputs[window]
                 if value not in state.backing:

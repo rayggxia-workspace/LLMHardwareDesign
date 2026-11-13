@@ -19,7 +19,8 @@ class Decision:
     def key(self):
         events = self.row['evaluation']['events']
         return (self.row['id'], self.row['binding'], self.predecessors, self.event_after,
-                tuple((event['route'], event['value'], event['src'], event['dst'], event.get('output_eviction'))
+                tuple((event['route'], event['value'], event['src'], event['dst'], event.get('output_eviction'),
+                       event.get('prefetch'))
                       if event['kind'] == 'move' else (event['service'],)
                       for event in events))
 
@@ -69,6 +70,7 @@ def intents(model, decisions):
     stores = {}
     for decision in decisions:
         boundary = {last_stage[name] for name in decision.predecessors}
+        prefetch_boundary = boundary
         phase_waits = defaultdict(set)
         activation_waits = defaultdict(dict)
         for edge in decision.event_after:
@@ -91,7 +93,9 @@ def intents(model, decisions):
             inputs, outputs = accesses(event)
             dependencies = [set() for _ in operation.phases]
             activation_after = ()
-            dependencies[0].update(boundary)
+            # A one-stage lookahead can overlap its preceding native stage.
+            # Backing and window dependencies below still gate the transfer.
+            dependencies[0].update(prefetch_boundary if event.get('prefetch') else boundary)
             for window, value in inputs.items():
                 if window == DDR:
                     if value not in model.initial.backing:
@@ -119,6 +123,7 @@ def intents(model, decisions):
                 # in flight if the contract identifies a later capture phase.
                 dependencies[read or 0].update(pending_moves)
                 pending_moves.clear()
+                prefetch_boundary = boundary
                 boundary = {terminal}
             elif 'output_eviction' not in event:
                 pending_moves.add(terminal)

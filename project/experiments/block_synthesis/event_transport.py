@@ -22,7 +22,7 @@ def estimated_delivery(model, events):
 
 
 def move_key(model, events):
-    return tuple((event['value'], event['src'], event['dst'], event.get('output_eviction'),
+    return tuple((event['value'], event['src'], event['dst'], event.get('output_eviction'), event.get('prefetch'),
                   event_operation(model, event), frozenset(model.routes[event['route']].get('nets', ())))
                  for event in events)
 

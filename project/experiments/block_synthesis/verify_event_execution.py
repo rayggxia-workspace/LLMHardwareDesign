@@ -86,6 +86,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
         (binding,) = [b for b in task['bindings'] if b['id'] == row['binding']]
         nets.update(binding['nets'])
         boundary = max((ends[p] for p in task.get('after', ())), default=0)
+        prefetch_boundary = boundary
         detail = row['evaluation']
         events = detail['events']
         require(bool(events), 'empty event trace')
@@ -94,11 +95,15 @@ def verify(tasks, hardware, plan, wire_budget=None):
         stage_index, intervals = 0, {}
         for event in events:
             start, end = event['start'], event['end']
-            require(type(start) is int and type(end) is int and boundary <= start < end,
+            earliest = prefetch_boundary if event.get('prefetch') else boundary
+            require(type(start) is int and type(end) is int and earliest <= start < end,
                     'invalid event interval or prerequisite')
             if event['kind'] == 'move':
                 src, dst, value = event['src'], event['dst'], event['value']
                 route = spec['routes'][event['route']]
+                if 'prefetch' in event:
+                    require(event['prefetch'] is True and timing == 'replay' and stage_index > 0
+                            and src == DDR and 'typed_dma' in route, 'invalid prefetch move')
                 require(src != dst and route['src'] == (DDR if src == DDR else windows[src]['site'])
                         and route['dst'] == (DDR if dst == DDR else windows[dst]['site']),
                         'route endpoints differ')
@@ -119,6 +124,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 stage = next(stages, None)
                 require(event['kind'] == 'stage' and stage and event['service'] == stage['service'],
                         'native stage identity or order differs')
+                require('prefetch' not in event, 'prefetch marker belongs to a move')
                 require('dma_beats' not in event, 'typed DMA receipts belong to move routes')
                 service = spec['services'][stage['service']]
                 require(('sram_beats' in event) == ('sram_access' in service), 'SRAM receipt coverage differs')
@@ -128,6 +134,9 @@ def verify(tasks, hardware, plan, wire_budget=None):
                 require(event['inputs'] == inputs and event['outputs'] == outputs,
                         'native stage values differ')
                 require(event.get('persist', []) == list(stage.get('persist', ())), 'persist windows differ')
+                prefetched = [(m['dst'], m['value']) for m in pending_moves if m.get('prefetch')]
+                expected_prefetch = [(w, inputs[w]) for w in stage.get('prefetch', ())]
+                require(sorted(prefetched) == sorted(expected_prefetch), 'prefetch inputs differ')
                 if 'copy_sites' in service:
                     source, destinations = service['copy_sites']
                     require(len(inputs) == 1 and [windows[w]['site'] for w in inputs] == [source]
@@ -174,7 +183,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
                     access(writes, w, value, write_at, visible)
                 local_read += service.get('read_bytes', 0)
                 local_write += service.get('write_bytes', 0)
-                boundary = end
+                prefetch_boundary, boundary = boundary, end
                 pending_moves.clear()
         require(not pending_moves and next(stages, None) is None, 'incomplete native stage sequence')
         for edge in edges_by_task[task['id']]:

@@ -35,6 +35,48 @@ def mixed_problem():
 
 
 class MixedDmaTests(unittest.TestCase):
+    def test_prefetch_overlaps_previous_compute_but_waits_for_window_custody(self):
+        for reuses_window in (False, True):
+            with self.subTest(reuses_window=reuses_window):
+                _, hw = mixed_problem()
+                spec = hw['event_model']
+                spec['live_out'] = []
+                spec['initial_backing'].append('kv0')
+                spec['initial_copies']['next-kv'] = 'kv0'
+                spec['services']['compute'] = {'ticks': 80, 'claims': {}}
+                predecessor = task('release', binding('release', stage('produce')))
+                inputs = {'next-kv': 'kv0'} if reuses_window else {}
+                dst = 'next-kv' if reuses_window else 'weight-slot'
+                # Both windows fit a 128 B tile. Only next-kv is read by the old stage.
+                spec['value_bytes']['weight'] = 128
+                stages = [stage('compute', inputs=inputs),
+                          {**stage('consume', inputs={dst: 'weight'}), 'prefetch': [dst]}]
+                tasks = [predecessor, task('attention', binding('prefetch', *stages), after=('release',))]
+                plan = search(tasks, hw, width=8)
+                verify(tasks, hw, (), plan)
+                first, load, consume = plan['tasks'][1]['evaluation']['events']
+                self.assertEqual(load['start'], first['end'] if reuses_window else first['start'])
+                self.assertEqual(consume['start'], max(first['end'], load['end']))
+                bad = deepcopy(plan)
+                del bad['tasks'][1]['evaluation']['events'][1]['prefetch']
+                with self.assertRaisesRegex(ValueError, 'prefetch inputs differ|invalid event interval'):
+                    verify(tasks, hw, (), bad)
+
+    def test_prefetch_waits_for_explicit_ddr_publication(self):
+        _, hw = mixed_problem()
+        hw['event_model']['live_out'] = []
+        publish = {**stage('produce', inputs={'kv-slot': 'kv0'}), 'persist': ['kv-slot']}
+        prefetch = {**stage('consume', inputs={'next-kv': 'kv0'}), 'prefetch': ['next-kv']}
+        tasks = [task('publication', binding('publish', publish)),
+                 task('attention', binding('prefetch', stage('produce'), prefetch))]
+        plan = search(tasks, hw, width=8)
+        verify(tasks, hw, (), plan)
+        store = plan['tasks'][0]['evaluation']['events'][0]
+        first, load, consumer = plan['tasks'][1]['evaluation']['events']
+        self.assertLess(first['end'], store['end'])
+        self.assertEqual(load['start'], store['end'])
+        self.assertEqual(consumer['start'], load['end'])
+
     def test_explicit_kv_persist_waits_for_ack_without_eviction(self):
         _, hw = mixed_problem()
         hw['event_model']['live_out'] = ['kv0']
