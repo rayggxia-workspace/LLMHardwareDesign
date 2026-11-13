@@ -67,3 +67,10 @@
 - [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 和[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 独立展开 8 页、393 次服务和 265 组 WAIT。108173 两种模式各核对 1,318,877 笔普通读地址、128 笔 FFN 激活读和 736 笔写地址及 tag；108184 每模式逐事件匹配首行到首次 MC/LC 镜像读的 267 笔事务。首笔 DDR 接受使用冻结测试台的启动延迟，随后由模型推导。
 - 108159 的两种原生 RTL 均通过，Slurm 因散列清单分隔符退出 1:0。108208 仅复核原产物，在 c64/node3 用 1 核 2 秒完成（0:0）。跨层观测为 32,383／32,353 拍，核对 8 份 DDR/KV 散列及两组 1,652 条标记。已通过本地 30 项测试及项目结构检查。[证据与恢复](../../work/Melodydt/265/qwen-105530-cycle-receipt.json)
 - 下一步由 Melodydt 接续母控 PM 装载、校验与发射，预测第 1 页全部 DMA，随后验证第 5 页三 P 共享资源；完整上下文 105572 保留作留出。整窗周期、整机 tokens/s 和同机加速比待估，#265 进行中，PR 草稿，登记待合并，Projects 待核验和同步。
+
+## 2026-11-13 22:28（Asia/Shanghai，UTC+08:00）首个指令页与 Q 投影权重
+
+- Melodydt 在 [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 的 `task/265-qwen3b-system-evaluation` 提交 MC 读回/CRC、MC/LC 发射、两次 DRL1 及首个 Q 权重记录的周期模型。[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266)
+- 108297、108312、108366 均在 c64/node3 用 2 核、6 秒完成（0:0）。108366 每模式精确匹配 306 笔 DDR 读的 1,224 个事件和 11 个控制标记。源码、预测及输出散列通过，项目结构和本地 30 项单测通过。[源码、日志、命令及回执](../../work/Melodydt/265/qwen-105530-first-page-108366.json)
+- 108312 和 108366 每模式核对 123 次 WAIT、246 个后续描述符接收边沿及页提交，输入为 RTL 服务退休边沿。下一步由 Melodydt 在同一 105530 冻结窗口继续到 Q 的首个 EXEC 和退休，补 W 双 bank、A COPY/LOAD、M EXEC 的重叠及多请求竞争。后续再验证三 P 并发、跨层和留出 105572。整机 tokens/s 与同机加速比待估。
+- #265 进行中，PR 草稿，独立审查人待指定。登记 PR #5 待合并。仓库缺 `config/board.json`，Projects 条目和同步待具权限的维护者处理。

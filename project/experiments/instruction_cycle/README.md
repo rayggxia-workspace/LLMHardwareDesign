@@ -162,3 +162,33 @@ python -B project/experiments/instruction_cycle/qwen_native_control.py "$ARCHIVE
 python -B project/experiments/instruction_cycle/qwen_native_control.py "$ARCHIVE" \
     --edge-log "$PROBE/edges-0.log" --edge-log "$PROBE/edges-1.log"
 ```
+
+## 105530 首个指令页与首笔 Q 投影权重
+
+`qwen_page_cycle.py` 在连续的两路 DRAMsim3 状态上继续推导母控程序读回及 CRC、PROVE/PREPARE、CALL 链路、局控描述符 DMA 和两次 DRL1。DRL1 建模 8 笔 DDR 读、32 笔窄口写及 SRAM 请求和 ACK 背压。两次 DRL1 完成后，首个 Q `P_SCOPE` 根据实际描述符推导激活窗口扫描、量化打包、Header 及权重上下文建立，然后经 typed DMA 的 slot、credit、注册 offer、lane FIFO 和回包 skid 处理首个 17 拍权重记录。
+
+Slurm 108366 两种模式各与冻结 RTL 匹配 306 笔 DDR 读的 1,224 个事件和 11 个控制标记。DDR 逐事件比较 lane、tag、物理地址、接受与返回的核时钟边沿，以及 DRAMsim3 接收与回调的 DDR tick。模式 1 覆盖同拍双 lane 接受及双 lane 回包。首笔 Q 权重从物理地址 5,017,600 起，共 1,088 B。表中用 DDR 桥的零基核时钟 pre-edge。权重源端 offer 和 M 末拍接收为模型输出，RTL 探针直接核对其中的物理 DMA 边沿。
+
+| 边沿 | 模式 0 | 模式 1 |
+| --- | ---: | ---: |
+| 第一条 DRL1 退休 | 34704 | 34777 |
+| 第二条 DRL1 退休 | 35059 | 35184 |
+| Q P_SCOPE 接受 | 35264 | 35390 |
+| 首拍权重源端 offer | 35542 | 35700 |
+| 首拍物理接受 | 35544 | 35702 |
+| 末拍物理返回 | 35564 | 35720 |
+| M 末拍接收 | 35565 | 35723 |
+
+两种模式另各核对 123 次 WAIT 接续、246 个后续描述符接收边沿及最终页提交。此项的输入是冻结 RTL 中的服务退休边沿，整页独立周期仍依赖后续服务模型。测试台提供首个 prompt 握手和固定的两拍首读间隔；首笔权重后的多记录竞争、A COPY/LOAD 与 EXEC 重叠、服务退休、跨层及完整上下文 105572 留出验证待完成。
+
+复跑时在本人全新任务目录放置 [108366 回执](../../../work/Melodydt/265/qwen-105530-first-page-108366.json) 中 `source_sha256` 所列文件。将回执的 `source_commit` 写入 `git-commit.txt`，按回执复核散列。两种模式先完成独立预测并封存散列，再读取冻结 RTL 进行比较。
+
+```bash
+sha256sum *.py dramsim_bridge.cpp run_qwen_page_cycle.sbatch git-commit.txt > source.sha256
+bash -n run_qwen_page_cycle.sbatch
+sbatch --parsable run_qwen_page_cycle.sbatch \
+    /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --with-first-weight
+# 作业完成后，在运行目录核对预测、对照及环境清单
+sha256sum -c output.sha256
+cat comparison-{0,1}.json
+```
