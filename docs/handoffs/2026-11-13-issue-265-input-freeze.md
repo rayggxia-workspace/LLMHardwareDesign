@@ -45,3 +45,28 @@ python3 -B work/Melodydt/265/preflight.py --profile legacy --assets /path/to/ass
 - 两份 KV 定位与 DDR 组件回执和 #260 记载的 SHA-256 一致。六个 token 文件和六个参考回执全部匹配。旧 S16 校准、索引、434 份实际权重与九组资源描述均通过实物散列核对。
 - 四份 ONNX 的 SHA-256 均与已校验归档中的回执一致。按 ONNX protobuf 模式遍历张量，四份图均无外部数据引用。宿主 Python 导入共享 ONNX 依赖时报语法错误，共享 SIF 的 Python 3.10.12 导入完整 ONNX 包时仍有本地扩展不匹配。最终以该容器内的 protobuf 解析完成图引用核对。完整 ONNX 运行环境仍需绑定。
 - #149 的共享 SIF 实物散列与历史回执一致。在已核对的共同项目路径内未找到匹配的公开模型副本，待用获授权的共享 checkpoint 和完整 Python 环境。整机部署的 RTL、硬件时钟、DDR 配置、镜像和启动入口仍待提供。未执行完整预检或提交仿真。
+
+## 2026-11-13 参考环境验证
+
+固定模型的公开来源为 ModelScope `Qwen/Qwen2.5-3B@5defd2796acd3cb2051bb4c787eddc7f8f35e113`。集群访问模型发布站超时，本机通过其固定 revision 端点下载并校验 9 个文件。两个大分片通过分段传输后重新校验完整散列。服务器副本位于 `/public/home/yuzelu/Melodydt/runs/issue-265/assets-20261113-01/checkpoint`，使用本任务独立目录。
+
+已在同一共享 SIF 中建立任务专用 Python 3.10.12 环境，固定 PyTorch 2.10.0+cpu、Transformers 5.20.2、ONNX 1.17.0 和 ONNX Runtime 1.20.1，核心包版本与 `frontend-full-002/export-1/receipt.json` 一致。原上游 CPython ABI 和当前容器不同。首次环境准备的最后一条散列命令因 CRLF 报错，依赖安装已成功。改为 LF 传输后，版本对齐、`pip check` 与导入验证通过。首次 Slurm 申请 48 GiB 被拒绝，未生成作业号。c64/c96 调度配置仅登记每节点 1 MiB，修订脚本取消显式内存申请，并在计算节点检查可用内存。
+
+- 作业 **107396 `zny-qwenref`**。源码 `e6e01fa46663101179a8679afc6deb45a638c93d`，c64／node2／8 核，`COMPLETED 0:0`，耗时 74 秒。
+- 两个原始 P512 用例的前两个 token 分别为 `1246, 264` 和 `7525, 323`，与冻结参考完全一致。缓存与独立全前缀 logits 的最大差分别为 1.085e−5 和 9.537e−6。
+- 实际 P512 ONNX Runtime 推理输出的 Top-1 均与 FP32 一致，logits 最大绝对差分别为 1.543e−4 和 1.574e−4。该检查覆盖 prefill 词表输出。历史导出全 K/V 数值门与 P512/D128 整机验收仍待后续执行。
+- [参考回执](../../work/Melodydt/265/reference-smoke-107396.json) SHA-256 为 `492f76af1bc81f296e5a03621e3e22a082be4c53c7c056f6e6791979e48433dc`。[依赖锁定](../../work/Melodydt/265/reference-requirements-107396.txt) SHA-256 为 `5db2a5d1ccc822d31cd9affe1f17925987740c25c81e422af2df85a28319eb2d`。两者均与服务器实物一致。
+
+```bash
+RUN=/public/home/yuzelu/Melodydt/runs/issue-265/reference-smoke-20261113-01
+cd "$RUN"
+# 实际提交命令
+# sbatch --parsable --output=slurm-%j.out reference_smoke.sbatch ../assets-20261113-01/checkpoint ../reference-env-20261113-01
+squeue -j 107396
+sacct -j 107396 --format=JobID,JobName,State,ExitCode,Elapsed,AllocCPUS,NodeList
+tail -F "$RUN/slurm-107396.out"
+sha256sum -c "$RUN/output.sha256"
+cat "$RUN/reference-smoke.json"
+```
+
+下一步由 Melodydt 用该参考环境复现两条历史整数路径的数值分叉，并完成所选平台的原生部署绑定。整机 RTL、时钟、SRAM／DDR 及控制镜像仍缺联合证据，两个 profile 的完整预检仍返回 2。整机 tokens/s 待实际运行与验收。

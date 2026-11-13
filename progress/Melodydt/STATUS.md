@@ -12,3 +12,9 @@
 - ED25519 主机指纹匹配，已登录 `mgt01`。三个历史作业终态及两份组件回执与 #260 一致。
 - 实物核验通过 12 份参考文件、434 份旧权重、校准清单、九组资源、四份 ONNX 与历史共享 SIF。四份 ONNX 均无外部数据引用。
 - 继续落实获授权的共享 checkpoint、完整 Python 环境和实际整机部署。本地预检仍返回 2，服务器完整预检待执行，未提交新作业。详见[运行交接](../../docs/handoffs/2026-11-13-issue-265-input-freeze.md#2026-11-13-服务器只读核验)。
+
+### 两个 P512 样本的 FP32 参考验证
+
+- 2026-11-13（Asia/Shanghai），[PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266)。从官方固定 revision 在本人任务目录落地 checkpoint，9 个模型工件的 SHA-256 均匹配。任务专用 Python 3.10.12 已对齐历史核心包，`pip check` 通过。
+- Slurm 107396 `zny-qwenref` 以 `e6e01fa46663101179a8679afc6deb45a638c93d` 在 c64/node2 上运行，8 核，74 秒，`COMPLETED 0:0`。两条 P512 的首两 token 与冻结参考相符，实际 P512 ONNX 输出已执行。参考回执和依赖清单已验散列。
+- 已修复冻结字段可被覆盖、重复键和控制镜像缺实际来源及容量验证。下一步继续复现原整数偏差并完成整机平台绑定。整机 D128 和吞吐待验证。恢复及追踪入口见[交接](../../docs/handoffs/2026-11-13-issue-265-input-freeze.md#2026-11-13-参考环境验证)。
