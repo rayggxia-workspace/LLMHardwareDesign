@@ -134,3 +134,31 @@ bash -n run_qwen_native_ddr.sbatch
 sbatch --parsable run_qwen_native_ddr.sbatch
 sha256sum -c output.sha256  # 作业成功结束后
 ```
+
+## 105530 指令、地址与独立周期预测
+
+`qwen_native_control.py` 解码 `LBCISA01` 母控 V3 和驻留局控 V2，执行静态 CALL、WAIT、指针递增和循环。四个目标的服务签名与冻结 RTL 路由核对。描述符、KV、投影、FFN、Attention 和输入读均从冻结部署恢复。第 5 页是 64 组 P0/P1/P2 并发调用，每组 WAIT 等三个目标退休，组内完成顺序由实际服务决定。
+
+| 指标 | 每种模式 |
+| --- | ---: |
+| 母控页／服务调用 | 8／393 |
+| 普通 DDR 读地址（含控制、描述符和服务） | 1,318,877 |
+| 独立 FFN 激活读／DDR 写 | 128／736 |
+| 首行 prompt、嵌入、gamma 与首次 LC/MC 镜像的逐时标 DDR 读 | 267 笔／1,068 个事件 |
+
+全窗读地址比较保留地址的重复次数。写回另比较地址与 tag，FFN 激活另核对同地址写返回先于读接收。控制比较保留 CALL/WAIT 依赖和局控目标。周期模型覆盖首行输入、两个串行 SRAM 载入、RMS 数据范围扫描、因子与归一化计算、控制器启动及首次 LC/MC 装载。启动用探针确认的 prompt 握手边沿 2，握手到首笔读的两拍按测试台固定；额外一拍的门控原因待定位。随后的时间从 RTL 状态机、资源规则和实时 DRAMsim3 回包推导。两种模式首个 LC 读均为 pre-edge 33369、DDR tick 529666。首个 MC 读分别为 pre-edge 33825／33835，模型复现了两种模式的背压与刷新差异。整窗权重调度、并发服务和后续 DMA 周期仍待独立预测。
+
+`instrument_qwen_105530.py` 在冻结源码上增加被动探针，统一记录页启动/提交、程序和描述符请求、服务接收/退休，以及第 0 层残差提交到第 1 层 RMS 退休。探针使用 10 ns RTL 时钟。探针 `cycle` 从 1 开始，DDR `admit`/`return` 的核时钟计数使用 `cycle - 1`；DDR 的接受与回调按 630 ps tick。原生输入及产物散列、边界结果和恢复命令见 [105530 预测与探针回执](../../../work/Melodydt/265/qwen-105530-cycle-receipt.json)。
+
+| RTL 模式 | Layer 0 残差提交 | Layer 1 RMS 退休 | 同域间隔 |
+| --- | ---: | ---: | ---: |
+| 0 | 1,759,875 | 1,792,258 | 32,383 拍（323.83 µs） |
+| 1 | 1,891,889 | 1,924,242 | 32,353 拍（323.53 µs） |
+
+两种原生模式均通过原有断言。后处理 108208 校验了 54 份冻结生成物、8 份 DDR/KV 产物和两组探针回执。两组各 1,652 条探针事件；其中 58 次 PM 和 786 次描述符发起及 393 次服务接收和退休与解码的目标及 WAIT 依赖一致。跨层间隔为 RTL 观测值，供扩展周期模型后对账。
+
+```bash
+python -B project/experiments/instruction_cycle/qwen_native_control.py "$ARCHIVE" --compare --read-traces
+python -B project/experiments/instruction_cycle/qwen_native_control.py "$ARCHIVE" \
+    --edge-log "$PROBE/edges-0.log" --edge-log "$PROBE/edges-1.log"
+```

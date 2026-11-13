@@ -16,6 +16,8 @@
 
 Qwen2.5-3B case 2 的真实 QKV、KV 写回及 layer 0→1 RMS 窗口已接入 DDR 对账。四组回放精确匹配 3,165,652 个回调，case 2、3 的整数 KV 边界另有独立原始数据核验。[107931 回执](qwen-native-ddr-107931.json)记录输入、时钟、服务器路径、散列和下一步；[复跑说明](../../../project/experiments/instruction_cycle/README.md#qwen25-3b-原生短窗-ddr-对账)说明预测边界。
 
+[105530 预测与探针回执](qwen-105530-cycle-receipt.json)记录全窗控制/地址对账、首行到首次 MC/LC 装载的独立周期及跨层 RTL 探针。完整上下文 105572 留作后续验证。
+
 `audit_fast_cycle_inputs.py` 在 Python 3.7.0 上运行，通过两个历史作业的归档恢复三 P FFN 控制顺序，并对照原有 RTL 日志。原始归档按 [#251 索引](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/250/native-services/ffnnative/index.json) 从项目服务器只读获取。两个作业归档登记的源提交均为 `ab7611d43e4c007cc966ab5e61903118d33fcb4a`。将其命名为 `<job>-receipts.tar.gz`。`fast-cycle-inputs.local/` 为本地未提交缓存。
 
 | 作业 | 服务器相对 `/public/home/yuzelu/project-circuit/` 的位置 | SHA-256 |

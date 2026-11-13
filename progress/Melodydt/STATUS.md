@@ -61,3 +61,9 @@
 - [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 与[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 使用 case 2 的 106093 QKV 与 105530 跨层 RMS 原生归档，验证 17 页 MC、实际 LC、物理地址和已提交载荷。107921 首次执行因描述符重复计数退出，修正后 107931 在 c64/node3 使用 3 核、1 分 33 秒完成（0:0）。四组共 3,165,652 个 DDR 回调完全匹配，输出 SHA-256 全部核验。[实验回执](../../work/Melodydt/265/qwen-native-ddr-107931.json)
 - case 2、3 各核验 4 份 step 11→12 原始 S32 K/V 数组及 step 11–13 layer 0/1 的 SSA 依赖。项目结构与现有 30 项本地单测通过。已识别 106093 测试台和 DDR 桥的时钟比例差异；105530 具备同步时钟与整个窗口计数，层间边界时标待补。
 - Melodydt 接下来用 105530 的镜像、描述符、路由及起始状态独立生成 DMA 发起／接受时刻，补层间标记，预留 105572 作完整上下文验证。#265 进行中，整机 tokens/s 与同机加速比待估，PR 保持草稿，登记待合并，Projects 待核验和同步。
+
+## 2026-11-13 21:53（Asia/Shanghai，UTC+08:00）105530 周期预测与跨层探针
+
+- [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 和[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 独立展开 8 页、393 次服务和 265 组 WAIT。108173 两种模式各核对 1,318,877 笔普通读地址、128 笔 FFN 激活读和 736 笔写地址及 tag；108184 每模式逐事件匹配首行到首次 MC/LC 镜像读的 267 笔事务。首笔 DDR 接受使用冻结测试台的启动延迟，随后由模型推导。
+- 108159 的两种原生 RTL 均通过，Slurm 因散列清单分隔符退出 1:0。108208 仅复核原产物，在 c64/node3 用 1 核 2 秒完成（0:0）。跨层观测为 32,383／32,353 拍，核对 8 份 DDR/KV 散列及两组 1,652 条标记。已通过本地 30 项测试及项目结构检查。[证据与恢复](../../work/Melodydt/265/qwen-105530-cycle-receipt.json)
+- 下一步由 Melodydt 接续母控 PM 装载、校验与发射，预测第 1 页全部 DMA，随后验证第 5 页三 P 共享资源；完整上下文 105572 保留作留出。整窗周期、整机 tokens/s 和同机加速比待估，#265 进行中，PR 草稿，登记待合并，Projects 待核验和同步。
