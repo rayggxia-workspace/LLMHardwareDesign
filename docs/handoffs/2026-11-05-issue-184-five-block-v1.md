@@ -1,22 +1,22 @@
 # Issue #184 五类逻辑 Block v1 执行交接
 
-- 当前修订：2026-11-07，YUZE-LU / Codex。合同版本 `five-block-v1/2026-11-07`。
+- 当前修订：2026-11-13，YUZE-LU / Codex。合同版本 `five-block-v1/2026-11-13`。
 - [Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) · [PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) · 远端分支 `task/184-five-block-v1`。
-- 统一入口为[实施与验收合同](../local-blocks/FIVE_BLOCK_V1_PLAN.md)和[决策 0007](../decisions/0007-five-block-v1-synthesis.md)。合同修订不构成 RTL/EDA 验收。旧 P/J 任务 #187 与组合硬宏包作为历史结果保留。
-- 本次从远端 `c60dd412caa1d2a01c7275ed07b788060d321769` 修订。旧工作树同内容但历史不同，保留原分支，在本地 `task/184-five-block-contract-v2` 工作，再将提交正常推进 PR #185 原分支。
+- 统一入口为[共同底座实施清单](../local-blocks/PRODUCT_BASE_V1.md)、[实施与验收合同](../local-blocks/FIVE_BLOCK_V1_PLAN.md)和[决策 0007](../decisions/0007-five-block-v1-synthesis.md)。合同修订不构成 RTL/EDA 验收。旧 P/J 任务 #187 与组合硬宏包作为历史结果保留。
+- 当前续作从 #185 的 4aa8206a2 与已合并独立交付的 main c4d7b9605 对齐。
 
 ## 执行前必须确认
 
 1. 读取 `AGENTS.md`、协作 Skill 及本合同。五类各一份实现，九组是控制归属；全局直接摆独立叶宏和标准单元局控，组合验证夹具的硬框/LEF 不得成为顶层单元。
-2. 叶宏选型使用 #203 的 S_base/S_P、#205 的紧凑 G/E，锁定每颗 master 的合格源码、ABI、六文件/集成视图和 SHA。旧 P4/N4/N5 包只保留历史记录，不得按旧面积或客户端数实施新版。
-3. P/U 由 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) / [PR #214](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214) 跟踪，C/F/J 由 [Issue #211](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/211) / [PR #213](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) 跟踪。用户正在修改两份 PR，集成前读取其最终合格回执，核对 E 源数量、双向发送前进、PM/描述符 ABI 和实际 LC 身份。最新源码与旧版物理资格分别登记。
-4. 对齐 `model/arch/base` schema 和合同版本，列出完整五类资源、28 个功能叶实例、九个 LC 身份、实际 PM/MEM、S 外部仲裁、保持/选择/驱动及额外算术。独立夹具的 ID0 或外部 PM 代理不得直接视为已完成顶层部署。
+2. 叶宏按[候选库存](../local-blocks/product-base-v1-inventory.json)选定，逐项核对匹配视图、ABI、六文件与摘要。P 的原生 S_P 普通口保留，A256 由父层拼拍，真实 W512 由 DDR 传输供应。
+3. #213/#214/#221/#224 的独立交付已进 main。联合接入新 P/U/C/F/J 与 MC06 时核对 E 源数量、双向发送前进、PM/描述符 ABI 和真实 LC 身份。旧版资格与新版本分别登记。
+4. 对齐 model/arch/base schema，列出 30 个独立功能叶实例、九个 LC 身份、实际 PM/MEM、S 外部仲裁和辅助资源。端点从真实联合布局导出。
 5. 五类服务、SystemC、映射器、RTL 与全局物理并行工作，共用上述输入与事件合同。逐位登记真实叶宏/适配端点；主要组内/组间数据边默认后制，有限预连逐项确认。同步修订映射、程序和布线需求，禁止只换端口名而保持旧封装几何模型。
 6. 比较紧凑全局布局，解释每处保留区和大块空白；锁定共同底座前试至少两份产品连接。按合同完成五类局部路径、九实例与同底座不同产品的联合验收。运行远程作业前读取 `docs/REMOTE_RULES.md`，记录输入/工具/命令、输出和摘要。
 
 ## 本次交付与待办
 
-本次仅修订合同、决策、交接和状态，并同步 Issue/PR 入口。实际检查以 PR #185 当前回执为准；未执行 RTL、SystemC、模型或 EDA。#184 继续开放，五类实现、PM/MEM、DP 和完整底座/产品验收仍按证据推进，不据此标 done。
+本次固定候选宏清单和端点准入。P 的 RTL 与 S_P 最终映射网表替换对照各六组通过。继续执行 P 父层接入和紧凑布局、U/C/F/J 端点归属、64 B DMA 及联合底座与产品验收。
 
 项目登记 [management-hub PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 为 pending；缺少 `config/board.json`，Projects 条目 unverified、同步 pending，待具备权限的管理员核验。此项不改变技术合同。
 

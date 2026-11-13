@@ -1,7 +1,7 @@
 # 五类逻辑 Block v1 实施与验收合同
 
-- 合同版本：`five-block-v1/2026-11-07`。关联 [Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184)、[PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) 与[决策 0007](../decisions/0007-five-block-v1-synthesis.md)。
-- 本版落实用户已确认的架构约束，文档待 PR 审查接收；实现及联合验收分别凭证据接收。
+- 合同版本：`five-block-v1/2026-11-13`。关联 [Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184)、[PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) 与[决策 0007](../decisions/0007-five-block-v1-synthesis.md)。
+- [九组底座实施清单](PRODUCT_BASE_V1.md)及[机器可读宏清单](product-base-v1-inventory.json)记录 #250 的正式候选和实际端点准入。合同待审查，物理底座在联合验收前保持候选状态。
 - 本版取代[旧计划 c60dd412](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/c60dd412caa1d2a01c7275ed07b788060d321769/docs/local-blocks/FIVE_BLOCK_V1_PLAN.md)中“先硬化五种组合 Block，再拼九实例”的物理边界、旧 S 选型和面积估算。旧结果保留其实际验证范围。
 
 本合同是 #184 后续实施的共同架构与验收依据。实现 PR 与本合同不一致时必须登记差异并在合并/冻结前消除；改变约束须同一 PR 更新合同版本及依赖工件，不能只凭实现现状默改定义。
@@ -32,7 +32,7 @@ P/U/C/F/J 是五类局控负责的逻辑资源组，每类只选择一个 `imple
 | [#203 紧凑局部 S](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/d6152a274e28e3c1f0c73ca39a1e68dc831a2801/project/experiments/compact_local_s/README.md) | 选用已验收 `S_base` 与 `S_P`；两种均 16 KiB，客户端仲裁已外移。来源 head `d6152a274e28e3c1f0c73ca39a1e68dc831a2801` |
 | [#205 紧凑 G/E](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/8cbab7495dd0c389b5f9610f006a76f45d7b9e64/project/experiments/block_v2/COMPACT_GE.md) | 选用 G 与串行输入的 `block_v2_e_compact`，后者不能作为旧 E 的 pin/ABI 直接替换。来源 head `8cbab7495dd0c389b5f9610f006a76f45d7b9e64` |
 | [#180 两级控制](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/180)、[#195 局控接入](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/195) | 母控、局控和描述符的可复用原型及有限场景；选定 ISA 子集、程序位宽、取指/装载和描述符 ABI 后统一版本，超出部分明确拒绝 |
-| [#214 P/U](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214)、[#213 C/F/J](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213) | 当前实现和修订来源。用户正在修改，集成时必须锁定最终合格包、源码 SHA、ABI 和回执；最新 RTL 与已合格物理包逐项对应，不能混用两个版本的资格 |
+| [#214 P/U](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/214)、[#213 C/F/J](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/213)、[#221 U 修复](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221)、[#224 母控](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) | 已合并的独立验收基线。以当前 main 的实际源和原交付包为准。#250 新宏与控制集成按本版清单重新核对，原独立资格保留其原范围 |
 | [叶宏结果](../BLOCK_V2_RESULTS.md)、[#183](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/183)、[#163](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/163)、[#182](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/182)、[#154](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/154) | 其余叶宏、适配、有限 MEM/DMA 和 SystemC 的来源。逐条记录可复用范围，独立叶宏或旧系统证据不转移为本版联合通过 |
 | [#189](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/189)、[#190](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/190)、[#194](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/194)、[#196](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/196) | 历史组合封装、九实例试布和 DP 实验可作功能、算法及失败参考。旧外框、封装 pin 和旧尺寸不得成为新底座约束；DP 需重新绑定真实资源和端点 |
 
@@ -40,15 +40,15 @@ P/U/C/F/J 是五类局控负责的逻辑资源组，每类只选择一个 `imple
 
 | 类型 | 独立功能叶宏组成 | 私有 S | 实例数 |
 | --- | --- | --- | --- |
-| P | M、紧凑 G、S_P | 16 KiB，普通口及 A128/B512 feeder | 3 |
-| U | N、紧凑 E、S_base | 16 KiB，单普通口 | 2 |
-| C | R256、紧凑 G、紧凑 E、S_base | 同上 | 1 |
-| F | 紧凑 G、紧凑 E、S_base | 同上 | 1 |
-| J | 紧凑 E、S_base、T（6 KiB） | 同上 | 2 |
+| P | W8A16 M60、G32、S_P | 16 KiB，普通 S128 加原生 feeder，正式路径按实际适配能力登记 | 3 |
+| U | N32、紧凑 E、S_base | 16 KiB，单普通 S128 | 2 |
+| C | R256、紧凑 G、紧凑 E、E32、S_base | 同上 | 1 |
+| F | 紧凑 G、紧凑 E、E32、S_base | 同上 | 1 |
+| J | E32、S_base、T（6 KiB） | 同上 | 2 |
 
-共 28 个功能叶实例；私有 S 共 144 KiB，T 共 12 KiB。局控、程序存储、外部仲裁、保持槽、选择器和 MEM 接口另列资源清单。J 若保留旧封装宏外的三路加法/饱和计算，必须列为真实算术资源并计价；改由 E 分步实现须独立证明数值等价，不能忽略中途饱和顺序。G 的可用模式按实际叶宏能力注册，不得因某个封装仅调用 gated SiLU 就缩写全部能力。
+九组共 30 个独立功能叶实例，私有 S 共 144 KiB，T 共 12 KiB。C/F 各保留两颗不同服务的 E。J 的汇合交给 E32，父层分拍、保持、舍入与饱和顺序随实际服务验证。局控、程序存储、外部仲裁、保持槽、选择器、MEM 与中继单独登记。G32 和紧凑 G 分别注册各自实际格式和模式。
 
-最新独立叶宏外框：S_base 为 880×520 µm、273 个信号 pin；S_P 为 900×540 µm、965 个信号 pin；G 为 220×220 µm、108 个信号 pin；紧凑 E 为 340×340 µm、273 个信号 pin。#203/#205 的资格限定为各自独立配置、TT 1.1 V/25 °C、300 MHz 和其原生完整规则/研究接入测试范围，仍需父层实际负载和联合时序验收。九颗 S 的叶外框合计为 4.2036 mm²；这不是完整底座面积。旧计划约 28.28 mm² 以及旧组合封装总面积仅为历史，不能用新旧 S 面积直接相减推导新顶层。
+S_base 为 880×520 µm、273 个信号 pin，S_P 为 900×540 µm、965 个信号 pin。紧凑 G 为 220×220 µm、108 个信号 pin，紧凑 E 为 340×340 µm、273 个信号 pin。G32 为 240×240 µm、204 个信号 pin。九颗 S 的叶外框合计 4.2036 mm²。父层以真实 ODB 核对全部面积、负载和时序。P 的 S_base 窄口回归和 5,482 点夹具分别保留其实际证据。
 
 ### 接口必须兑现的语义
 
@@ -71,9 +71,11 @@ P/U/C/F/J 是五类局控负责的逻辑资源组，每类只选择一个 `imple
 
 ### 面积和布局
 
-联合 floorplan 从最新真实叶宏外框与局控/辅助标准单元清单出发。联合 ODB 核对上述 28 个独立叶实例、九个正确的局控身份及全部新增有源资源，不得导入五类组合硬宏。各组只施加合理的软聚拢约束，不继承旧验证夹具的正方形外框、固定 halo 或整片空白。
+联合 floorplan 从最新真实叶宏外框与局控/辅助标准单元清单出发。联合 ODB 核对上述 30 个独立功能叶实例、九个正确的局控身份及全部新增有源资源，不得导入五类组合硬宏。各组只施加合理的软聚拢约束，不继承旧验证夹具的正方形外框、固定 halo 或整片空白。
 
 从父层 DEF/ODB 分别报告硬宏、功能/控制/适配/取指标准单元、CTS/中继、填充、不可摆放通道/保留区和剩余合法空闲行。平面分类避免重复计面积；PG/信号金属占用按层另报。每个大块空白、halo 和保留区记录位置、尺寸、用途及 pin 接入/拥塞/PG/时序依据。至少比较两份相同资源和规则的紧凑布局候选，保留较小候选的成功或失败证据，选择实际通过接入、布线和 300 MHz 电气门的紧凑方案。原生层冻结前允许正常全局布局优化；冻结后的改变建立新底座版本。
+
+母控与局控采用实际控制端点的 M5/M6 本地逃线到 M10，再由顶层 M11/M12 布跨组信号。MC/LC 归属、程序 ABI、共享广播与返回选择固定，逐位物理连接和控制时序随共同底座核对。预制选择逻辑和中继各有真实有源实现，虚拟中继仅参与布局探索。详见[端点清单的验收要求](PRODUCT_BASE_V1.md#端点和预连)。
 
 ### 控制和并行工作
 
@@ -83,7 +85,7 @@ P/U 实现以 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesi
 | --- | --- |
 | RTL/局控/存储 | 五类逻辑服务、九实例母控/局控、真实 S 和有限 PM/MEM。实现仲裁、E 分拍、RX/TX 保持、预制选择器。验证装载/读回、背压、复位、实际完成与释放 |
 | SystemC/数值 | 消费同一程序、描述符、资源清单和拓扑，限制 S/PM 端口、队列、上下文、保持和带宽。对照独立整数参考与 RTL 数值、状态、事件偏序；周期估计与实测分栏 |
-| 映射/程序后端 | 只为锁定实现列合法服务、实例、分片、S 窗口和注册路径，生成程序及逐位连接。拒绝 ABI/容量/对象/拓扑不匹配；同产品线束并集纳入一个 DP |
+| 映射/程序后端 | 只为锁定实现列合法服务、实例、分片、S 窗口和注册路径，生成程序及逐位连接。拒绝 ABI/容量/对象/拓扑不匹配；按产品汇总静态线束，DP 与贪心共享同一合同 |
 | 物理 | 直接摆实际叶宏和标准单元，先做真实端点接入和紧凑布局，再联合上层试布、提取/STA/PG/几何，回传具体接点、负载、通道及失败证据 |
 
 `READY` 表示目的窗口和信用已预约。目的 S 实际写完成后才发带 `epoch/task/object/fragment` 的 `stored ACK`，源按匹配确认释放。区分 S 读响应占用与源对象生存期：数据进入独立 TX 保持槽后应能退休共享 S 读响应，保持载荷/对象直到目的确认。若采用串行替代方案，须在资源表与生成调度中约束并证明可前进。验证已预约的双向同时发送，允许完成或在发起前明确拒绝非法组合，禁止接受后相互等 S。
@@ -94,12 +96,14 @@ C→U→C 外发前预约返回窗口，原任务驻留时自主 RX/ACK 仍须�
 | --- | --- |
 | `model.json`、执行 profile | 模型/权重版本、算子/张量/形状/格式/状态、batch/上下文/prefill/decode、实际切片和舍入 |
 | `arch.json` | `contract_revision`、每类唯一 `implementation_id`、九个 `logical_block_id`、实际叶宏/LC/私有 S、额外算术、ISA/描述符/PM ABI、端口/队列/上下文、E 源拍数、并发与完成事件 |
-| `base.json` | `contract_revision/base_id`、真实叶宏或父层单元 pin/M10 导体、固定/候选/不支持路径、预制选择/中继、驱动和接收模型、规则及视图 SHA。没有强制合成的 Block 外框端口 |
+| `base.json` | `contract_revision/base_id`、真实叶宏或父层单元 pin/M10 导体、固定/候选/不支持路径、预制选择、驱动和接收模型、规则及视图 SHA。中继通过独立清单输入，并随实物布置复核 |
 | `mapping.json`、程序和逐位线束 | 分片、S 窗口/生存期、ACK/事件、每条 `edge_id` 的任务/真实端点/位序/握手，统一绑定 `implementation_id/base_id/topology_id`、合同版本及输入摘要 |
 
 集成准入检查必须核对上述版本和摘要，缺失或不匹配则拒绝部署；本节定义待实现的共同工件要求，不宣称现有各 PR 已具备这些字段。各线从同版 fixture 并行启动，以实际硬件证据校准估计。远程作业遵守[远程规则](../REMOTE_RULES.md)，每轮保留输入/工具/命令/作业/输出摘要、失败及修改证据。
 
-## 4. 一个产品级 DP
+## 4. Algo1 和 Algo2
+
+[Algo1 #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257) 消费图、执行 profile 和硬件能力，产出母控/局控镜像与整产品的静态逐位需求。DP、贪心或其他合法搜索共用该接口。[Algo2 #258/#259](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/259) 消费绑定真实 M10 的连线需求、物理视图、规则和独立中继清单，返回几何或失败及电气反馈。以下 DP 是同一合同下的一个求解器。
 
 交接签名必须充分描述后续可行性与成本：仍存活对象的位置/S 窗口、有效时间和未完成消费/ACK，以及上下文、端口、队列和占用。只有这些未来相关量等价，状态才可合并。首版用明确的层间排空和规范交接压缩状态；有跨层重叠时补足在途状态，不能只保留“已做几层、用了几拍”。
 
