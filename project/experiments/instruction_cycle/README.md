@@ -28,4 +28,21 @@ bash -n run_arbiter.sbatch
 sbatch --parsable --chdir="$PWD" run_arbiter.sbatch
 ```
 
-下一轮需要把实际 MC/LC 镜像、短用例的 SRAM bank/端口与分阶段算子占用接进同一事件图，再与完整短窗口逐指令对账。当前 RTL 证据覆盖局部 SRAM 仲裁和跨 Block COPY 的目标端阶段，尚无独立的 Qwen2.5-3B 整机周期、模型加速比或 tokens/s。
+## A2 母控、局控与片上算子联合验证
+
+`a2_images.py` 从实际二进制校验并解码 128-bit V1 的 `G_CALL/G_WAIT/G_END`、`L_EXEC/L_WAIT/L_END`、task 及 M 执行描述符。A2 的输入地址绑定到 S 的 4-bank 宽口，B 先于 A，两次各读 64 B。M 结果走窄口，按 `word & 3` 选 bank，写入 16 B。`a2_cycle.py` 将母控和局控 PM 握手、两次 feeder 发起与接收、M START/READ_RAW、S 写回和 ACK 放在同一时钟上，并用冻结种子的 S8 数据独立校验 S64 结果。程序部署与种子预装在 START 前完成。模型输入是两份镜像、种子、START 接受边沿及测试台的 `STALL` 参数。除 START 作为窗口起点，PM、运算、ACK 和 RESULT 的时标只用于对账。
+
+该版本 S 的窄口在 SEND 后一拍可见响应，仲裁器接受写到 ACK 最早 2 拍。前一版双 U_64 对照使用不同 SRAM 实现，写到 ACK 最早 3 拍。A2 feeder 在接收上一笔宽口响应的同拍可以发下一笔。冻结测试台在运行期间保持 host 窄口空闲，故实际验证覆盖独占 feeder 及写回和 ACK 背压。并发宽窄口竞争、多目标发起、复位恢复、片外 DDR 及整机加速比仍待验证。
+
+作业 [107535 回执](../../../work/Melodydt/265/a2-rtl-107535.json) 在 Verilator 5.042 上记录 5 次成功任务，从 accepted START 到 accepted RESULT 共 224 个事件，逐拍零误差。正常为 105 拍，原背压的两次连续任务为 217、219 拍，留出背压为 151、154 拍。旧作业 97305 从 CALL 开始记录，独立对账为 99、209、209 拍。两种窗口分别记录。原始用例的三个非法描述符仍由 RTL 拒绝，检查无确认数据移动。
+
+从服务器保留的运行目录取回各 case 的 `mother.bin`、`local.bin`、`seed.bin`、`run.log` 和留出 `heldout.log`，按回执核对散列后运行。
+
+```bash
+RUN=/public/home/yuzelu/Melodydt/runs/issue-265/a2-onchip-20261113-01
+python -B project/experiments/instruction_cycle/a2_cycle.py "$RUN/results/a2/single_signed" --stall 0
+python -B project/experiments/instruction_cycle/a2_cycle.py "$RUN/results/a2/boundary_reuse_stall" --stall 2
+python -B project/experiments/instruction_cycle/a2_cycle.py "$RUN/results/a2/boundary_reuse_stall" --stall 1 --log "$RUN/results/heldout.log"
+```
+
+如需在 Slurm 复跑，在 Melodydt 自己的全新目录放置冻结的 `source.tar`、`probe_a2.py` 和 `run_a2_probe.sbatch`，按回执核验 `source.tar`，生成 `sha256sum probe_a2.py run_a2_probe.sbatch > probe.sha256`，执行 `bash -n run_a2_probe.sbatch` 后运行 `sbatch --parsable --chdir="$PWD" run_a2_probe.sbatch`。后续从双 U_64 的实际 MC/LC 与跨块事务开始，将 A2 独占服务的规则扩展到并发资源占用。

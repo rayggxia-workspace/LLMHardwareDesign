@@ -25,16 +25,18 @@ def simulate(requests, memory_closed, response_closed, response_latency):
     The upstream queues supply persistent head-valid. The peer holds each SRAM
     response once eligible. Closed intervals are sorted and disjoint.
     """
-    if not requests or len(requests) != len(response_closed) or response_latency < 1:
+    if (not requests or len(requests) != len(response_closed)
+            or type(response_latency) is not int or response_latency < 1):
         raise ValueError("incomplete arbiter peer configuration")
     for intervals in (memory_closed, *response_closed):
         end = -1
         for first, last in intervals:
-            if first <= end or last < first:
+            if type(first) is not int or type(last) is not int or first <= end or last < first:
                 raise ValueError("invalid ready interval")
             end = last
     for stream in requests:
-        if any(item.arrival < 0 or item.sequence != index or not 0 <= item.address < 1024
+        if any(any(type(value) is not int for value in (item.arrival, item.sequence, item.address, item.write))
+               or item.arrival < 0 or item.sequence != index or not 0 <= item.address < 1024
                or item.write not in (0, 1) for index, item in enumerate(stream)):
             raise ValueError("invalid client request")
     queues = [deque(stream) for stream in requests]

@@ -1,4 +1,5 @@
 import unittest
+from dataclasses import replace
 
 from model import Operation, Receiver, Resource, Service, simulate
 
@@ -70,6 +71,26 @@ class InstructionCycleTest(unittest.TestCase):
         programs = {"A": [Operation("earlier", "op", ("later",)), Operation("later", "op")]}
         with self.assertRaisesRegex(ValueError, "deadlock.*earlier"):
             simulate(programs, {"op": Service("r", 1, 1)}, resources, {})
+
+    def test_rejects_noninteger_and_nonpositive_timing_and_capacity(self):
+        programs = {"A": [Operation("a", "op")]}
+        service = Service("r", 1, 1, "rx")
+        resource = Resource(("A",), 1)
+        receiver = Receiver(1, 1, ("r",))
+        for value in (0, -1, 1.5, True, float("nan")):
+            for field in ("latency", "interval"):
+                with self.subTest(config="service", field=field, value=value):
+                    with self.assertRaisesRegex(ValueError, "invalid service"):
+                        simulate(programs, {"op": replace(service, **{field: value})},
+                                 {"r": resource}, {"rx": receiver})
+            with self.subTest(config="resource", field="slots", value=value):
+                with self.assertRaisesRegex(ValueError, "invalid resource"):
+                    simulate(programs, {"op": service}, {"r": replace(resource, slots=value)}, {"rx": receiver})
+            for field in ("depth", "latency"):
+                with self.subTest(config="receiver", field=field, value=value):
+                    with self.assertRaisesRegex(ValueError, "invalid receiver"):
+                        simulate(programs, {"op": service}, {"r": resource},
+                                 {"rx": replace(receiver, **{field: value})})
 
     def test_jumps_over_idle_cycles(self):
         programs = {"A": [Operation("op", "long")]}

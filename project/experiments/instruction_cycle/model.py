@@ -34,6 +34,10 @@ class Receiver:
     ports: tuple   # Resource names in priority order for simultaneous results
 
 
+def _positive_int(value):
+    return type(value) is int and value >= 1
+
+
 def simulate(programs, services, resources, receivers):
     """Return the events of the single-clock, registered protocol in README.md."""
     operations = [op for stream in programs.values() for op in stream]
@@ -41,18 +45,19 @@ def simulate(programs, services, resources, receivers):
     if len(names) != len(operations) or "" in names:
         raise ValueError("operation identifiers must be unique and nonempty")
     for name, resource in resources.items():
-        if (resource.slots < 1 or resource.arbitration not in ("round_robin", "fixed")
+        if (not _positive_int(resource.slots) or resource.arbitration not in ("round_robin", "fixed")
                 or not resource.clients or len(set(resource.clients)) != len(resource.clients)
                 or any(client not in programs for client in resource.clients)):
             raise ValueError("invalid resource: " + name)
     for name, receiver in receivers.items():
-        if (receiver.depth < 1 or receiver.latency < 1 or not receiver.ports
+        if (not _positive_int(receiver.depth) or not _positive_int(receiver.latency) or not receiver.ports
                 or len(set(receiver.ports)) != len(receiver.ports) or not set(receiver.ports) <= resources.keys()):
             raise ValueError("invalid receiver: " + name)
     for block, stream in programs.items():
         for op in stream:
             rule = services.get(op.service)
-            if (rule is None or rule.resource not in resources or rule.latency < 1 or rule.interval < 1
+            if (rule is None or rule.resource not in resources
+                    or not _positive_int(rule.latency) or not _positive_int(rule.interval)
                     or block not in resources[rule.resource].clients
                     or rule.receiver and (rule.receiver not in receivers
                                           or rule.resource not in receivers[rule.receiver].ports)):

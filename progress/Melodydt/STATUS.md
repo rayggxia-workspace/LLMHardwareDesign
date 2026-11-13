@@ -31,3 +31,9 @@
 - [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 与[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 增加[单时钟事件原型](../../project/experiments/instruction_cycle/README.md)，显式建模队首发射、算子占用与发起间隔、共享端口、仲裁、接收端容量及 ACK 背压。已修正同拍争用曾由操作 ID 隐式决定的排序，现按端口优先级与端口内发起顺序。8 个本地用例和项目管理检查通过。
 - Slurm 107481 在第一组回执后因测试台结束路径触发超时，修正后 107488 在 c64/node3 用 4 核 6 秒完成（0:0）。真实 S 仲裁 RTL 的 54 个事件和历史作业 100343 的 27 笔 COPY 写接受到提交/释放逐拍一致。[作业、路径及散列](../../work/Melodydt/265/onchip-rtl-107488.json)
 - 下一步由 Melodydt 绑定实际 MC/LC 二进制到完整的短程拓扑和分阶段算子/存储服务，逐指令对账。DDR 及 Qwen2.5-3B 整机 tokens/s 仍待评估。#265 进行中，PR 草稿，登记待合并，Projects 待核验与同步。
+
+## 2026-11-13 16:23（Asia/Shanghai，UTC+08:00）A2 真实控制镜像到退休
+
+- [Issue #265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 与[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 接入 A2 实际 MC/LC 二进制、独立 PM、四 bank S feeder、M 与窄口写回。Slurm 107535 在 c64/node3 用 4 核 9 秒完成（0:0），5 次运行从 START 到 RESULT 的 224 个事件全部逐拍一致，含未用于推导的 151/154 拍留出场景。[作业、版本及散列](../../work/Melodydt/265/a2-rtl-107535.json)
+- 复核收紧母控 token 范围、非整数周期/容量/地址和逆序或缺任务的回执。13 项本地测试、旧作业 97305 的 81 个事件、107488 的 54 个事件、历史 COPY 的 27 笔及管理检查通过。
+- 下一步由 Melodydt 用实际双 U_64 镜像做多目标发起到退休验证，再扩展宽窄口竞争和 DMA/DDR。A2 的 host 窄口在运行窗保持空闲。整机吞吐和同机加速比待测，#265 进行中，PR 保持草稿，登记待合并，Projects 待核验和同步。

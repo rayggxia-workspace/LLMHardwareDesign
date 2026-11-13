@@ -1,0 +1,133 @@
+{
+  "schema": "issue265-a2-rtl-cycle/1",
+  "issue": 265,
+  "pull_request": 266,
+  "rtl_source_commit": "6ab1271409d7824480cd05326094bb5d515167d6",
+  "probe_commit": "943999880890151beaf33484371069e942e10d63",
+  "source_archive_sha256": "71c49b72ec70e74ef163e01bd333604adba9bc81bf7fb36ad6a085d106bf6c26",
+  "server": "yuzelu@10.129.166.172",
+  "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/a2-onchip-20261113-01",
+  "submission": "sbatch --parsable --chdir=/public/home/yuzelu/Melodydt/runs/issue-265/a2-onchip-20261113-01 run_a2_probe.sbatch",
+  "slurm": {
+    "job": 107535,
+    "name": "zny-a2cycle",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 9,
+    "partition": "c64",
+    "cpus": 4,
+    "node": "node3",
+    "log": "slurm-107535.out"
+  },
+  "versions": {
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "server_python": "3.10.12",
+    "comparison_python": "3.7.0"
+  },
+  "source_sha256": {
+    "probe_a2.py": "35244fa778039fd4c8825da17c91db87f0cbbf828d89951324eaa3aa2a0a7ddd",
+    "run_a2_probe.sbatch": "ecca66f85a2d5c4289b15ef02687b378b82d446cfd8d373f6891b4c566d37fe0"
+  },
+  "tool_sha256": {
+    "/public/home/yuzelu/opt/eda/containers/orfs-26Q1.sif": "8b7b78f8f6e8218aacf5f23b78635bdc72000874ceed5b6132d2c95a05fbb85e",
+    "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462"
+  },
+  "bench": {
+    "stock_bench_sha256": "2694b3f6af796f9428529fcd27086ed3a7739c370834da82d262bd8c193aea3c",
+    "instrumented_bench_sha256": "88b00a606eee526fcd2dff7775a034315fe61820ff59b8e855eee5c51516c3c7",
+    "stock_runner_sha256": "4e6f107e002147b80e9a163af855878dccb072691f84013ab84602621ba52093",
+    "heldout_log_sha256": "0647a79e2d0a24b350e03158120bc7c9d999ab478529b5004a4af4e2ad57fbde",
+    "probe_report_sha256": "9e71b57edf17151a4a06220bf3b7c539e010d710ad669bc023089e17134ea164"
+  },
+  "output_sha256": {
+    "results/a2/single_signed/mother.bin": "be66eec8b725140272209b9c748f4faa63a7538584fe5d72b2f557ef6240edad",
+    "results/a2/single_signed/local.bin": "507398b161c6345fb3c9a49ac13c31f326d9d0c8f10b1c70717687f91d828796",
+    "results/a2/single_signed/seed.bin": "36bd6079385079bf1a1571795cb3c70ae37dc299a853674e49d7e79804efa391",
+    "results/a2/single_signed/run.log": "ccba146e007207a28a94fbed61d3543c938e31623a559ea370ecb843cea40415",
+    "results/a2/boundary_reuse_stall/mother.bin": "be66eec8b725140272209b9c748f4faa63a7538584fe5d72b2f557ef6240edad",
+    "results/a2/boundary_reuse_stall/local.bin": "e3857cb7d617026845dcc8078c776329fc92cadcc576522383d09a8434c33885",
+    "results/a2/boundary_reuse_stall/seed.bin": "2e33014548c54de54523977e5285d443d1f8609de8c803d9bd3b0a7ce60d147f",
+    "results/a2/boundary_reuse_stall/run.log": "8b08e650cba1b3616bef98553b7734d1d155168648111eed6832c15f01eb570d",
+    "results/a2/report.json": "7abea3fd99f8538b3843e4bfbab5427be49696f90ba40251779a348bf84a4ba8",
+    "results/heldout.log": "0647a79e2d0a24b350e03158120bc7c9d999ab478529b5004a4af4e2ad57fbde",
+    "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+    "verilator-version.txt": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+    "tools.sha256": "ea1a0ddbb0e108e8b8fbf17e47976a3a5b2e5ff4390b5e69360b13045fa4f43a"
+  },
+  "scope": "accepted START to accepted RESULT, excluding deployment and host SRAM preload/readback",
+  "comparisons": [
+    {
+      "case": "single_signed",
+      "stall": 0,
+      "job": 7,
+      "start": 371,
+      "result": 476,
+      "cycles": 105,
+      "matched_events": 34,
+      "max_cycle_error": 0
+    },
+    {
+      "case": "boundary_reuse_stall",
+      "stall": 2,
+      "job": 7,
+      "start": 509,
+      "result": 726,
+      "cycles": 217,
+      "matched_events": 52,
+      "max_cycle_error": 0
+    },
+    {
+      "case": "boundary_reuse_stall",
+      "stall": 2,
+      "job": 8,
+      "start": 767,
+      "result": 986,
+      "cycles": 219,
+      "matched_events": 52,
+      "max_cycle_error": 0
+    },
+    {
+      "case": "boundary_reuse_heldout",
+      "stall": 1,
+      "job": 7,
+      "start": 508,
+      "result": 659,
+      "cycles": 151,
+      "matched_events": 43,
+      "max_cycle_error": 0
+    },
+    {
+      "case": "boundary_reuse_heldout",
+      "stall": 1,
+      "job": 8,
+      "start": 700,
+      "result": 854,
+      "cycles": 154,
+      "matched_events": 43,
+      "max_cycle_error": 0
+    }
+  ],
+  "historical": {
+    "slurm_job": 97305,
+    "boundary": "accepted CALL to accepted RESULT",
+    "source_log_sha256": {
+      "single_signed": "942e97a0fece1c08f37f570a9f224357cb766d8b920ffdb33218059a4bf0149e",
+      "boundary_reuse_stall": "cafca8bb726c403b4c26d7eabad652eebb0522da80a66a041b83c165ab79660f"
+    },
+    "cycles": [
+      99,
+      209,
+      209
+    ],
+    "matched_events": 81
+  },
+  "rejected_rtl_descriptors": [
+    "unaligned",
+    "alias",
+    "reserved"
+  ],
+  "confirmed_bytes_per_success": {
+    "read": 128,
+    "write": 16
+  }
+}

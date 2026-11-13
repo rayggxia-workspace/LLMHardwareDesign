@@ -182,3 +182,7 @@ python -B -m unittest discover -s project/experiments/instruction_cycle -p 'test
 python -B project/experiments/instruction_cycle/compare_arbiter.py <107488-日志目录>
 python -B project/experiments/instruction_cycle/copy_reference.py work/Melodydt/265/copy-rtl-input.json
 ```
+
+### A2 控制镜像与算子联合对账
+
+[实验说明](../project/experiments/instruction_cycle/README.md#a2-母控局控与片上算子联合验证)给出真实 V1 MC/LC 二进制、Slurm 复跑、冻结输入和 PM／feeder／M／S 的逐拍验证。服务器回执为 [107535](../work/Melodydt/265/a2-rtl-107535.json)。
