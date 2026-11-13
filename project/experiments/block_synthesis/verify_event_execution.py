@@ -301,9 +301,12 @@ def verify(tasks, hardware, plan, wire_budget=None):
             and not any(set(pair) <= needed for pair in hardware.get('incompatible_nets', ()))
             and (wire_budget is None or wire_cost <= wire_budget), 'static wire conflict or budget')
     makespan = max(ends.values(), default=0)
-    require((makespan, total_read, total_write, sorted(nets), wire_cost) ==
+    # Older receipts listed only direct users. Their independently verified
+    # schedules are still readable, and new plans seal the full dependency set.
+    require(plan['nets'] in (sorted(nets), sorted(demand_closure(hardware['nets'], nets)))
+            and (makespan, total_read, total_write, wire_cost) ==
             (plan['makespan'], plan['external_read_bytes'], plan['external_write_bytes'],
-             plan['nets'], plan['wire_cost']), 'event plan summary differs')
+             plan['wire_cost']), 'event plan summary differs')
     require(timing == plan.get('timing', 'calendar'), 'event timing model differs')
     if phased:
         from verify_event_replay import verify_grants

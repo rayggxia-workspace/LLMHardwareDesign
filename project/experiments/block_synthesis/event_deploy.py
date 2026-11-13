@@ -212,7 +212,9 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
         for net in set(binding['nets']):
             users[net].append({'task_id': row['id'], 'binding_id': row['binding']})
         task_completions[row['id']] = task_numbers
-    if set(users) != set(plan['nets']):
+    nets = hardware['nets']
+    selected = demand_closure(nets, users)
+    if plan['nets'] not in (sorted(users), sorted(selected)):
         raise ValueError('program and selected network union differ')
 
     # Preserve finite-window lifetimes even when hardware completion order
@@ -244,8 +246,6 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
               'topology_id': hardware.get('topology_id')}
     if physical_base_sha256 is not None:
         source['physical_base_sha256'] = physical_base_sha256
-    nets = hardware['nets']
-    selected = demand_closure(nets, users)
     dependencies = [list(edge) for edge in sorted(
         {(name, dependency) for name in selected for dependency in nets[name].get('requires', ())})]
     members, unresolved = bit_requests(selected, hardware)

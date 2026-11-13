@@ -97,6 +97,36 @@ class RouteAdmissionTest(unittest.TestCase):
 
 @unittest.skipUnless((ROUTER / 'adapter.py').is_file(), 'upper router checkout required')
 class HandoffTest(unittest.TestCase):
+    def test_selected_plan_seals_transitive_wires_for_both_backends(self):
+        from run import compile_event_ir
+
+        model, arch, _, catalog, base, rules = fixture()
+        for i, (name, source) in enumerate((('credit', 'P0-P1'), ('reset', 'credit'))):
+            catalog['demands'][source]['requires'] = [name]
+            arch['nets'][name] = {'cost': 2}
+            catalog['demands'][name] = {'signals': [
+                {'name': name, 'width': 1, 'driver': f'{name}-out', 'sinks': [f'{name}-in']}
+            ]}
+            for x, suffix, role in ((20, 'out', 'driver'), (180, 'in', 'sink')):
+                pin = f'{name}-{suffix}'
+                y = 75 + i * 20
+                base['endpoints'][pin] = {'odb_term': pin, 'role': role, 'native_net': pin,
+                                          'm10_shapes': [{'layer': 'M10', 'object': pin,
+                                                          'rect_dbu': [x-2, y-2, x+2, y+2]}]}
+        result = compile_event_ir(model, arch, route_base=base, route_catalog=catalog, route_scope='interface')
+        self.assertEqual(result['plan']['nets'], ['P0-P1', 'credit', 'reset'])
+        self.assertEqual(result['plan']['wire_cost'], 5)
+        self.assertEqual(set(result['outputs']['wiring']['users']), {'P0-P1'})
+        pack = build(model, result['resolved_hardware'], result['plan'], catalog, base, rules,
+                     bind_request, source_outputs=result['outputs'])
+        self.assertEqual(set(pack['wiring']['users']), {'P0-P1', 'credit', 'reset', 'resident-control'})
+        self.assertEqual(pack['handoff']['source']['plan_sha256'],
+                         result['outputs']['program']['source']['plan_sha256'])
+        broken = deepcopy(result['plan'])
+        broken['nets'].remove('reset')
+        with self.assertRaisesRegex(ValueError, 'event plan summary differs'):
+            build(model, result['resolved_hardware'], broken, catalog, base, rules, bind_request)
+
     def test_replay_plan_reaches_router_with_its_own_control_waits(self):
         from run import compile_event_graph
 

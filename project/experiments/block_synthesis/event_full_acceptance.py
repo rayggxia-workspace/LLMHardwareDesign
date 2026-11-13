@@ -8,6 +8,7 @@ import time
 import numpy as np
 
 from event_loop_control import decode
+from event_deploy import demand_closure
 from frontend import import_onnx
 from full_integer import Interpreter, Oracle
 from leaf_catalog import read_profiles
@@ -71,7 +72,7 @@ def main():
             write(control, result['outputs']['program'])
             write(directory / 'plan.json', plan)
             write(directory / 'wiring.json', wiring)
-            if set(wiring['users']) != set(plan['nets']) or any(
+            if demand_closure(result['resolved_hardware']['nets'], wiring['users']) != set(plan['nets']) or any(
                     'event_id' not in user for users in wiring['users'].values() for user in users):
                 raise ValueError('selected wire demand cannot be traced to its dispatch')
             ordered = decode(read(control), result['resolved_hardware'])

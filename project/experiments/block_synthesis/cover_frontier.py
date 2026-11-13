@@ -292,9 +292,14 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     rows.reverse()
     traffic=({'external_read_bytes':best.execution.read_bytes,
               'external_write_bytes':best.execution.write_bytes} if model else {'external_words':best.traffic})
+    selected_nets=best.nets
+    if model:
+        from event_deploy import demand_closure
+
+        selected_nets=demand_closure(hardware['nets'], selected_nets)
     return {'status':'planned','kind':'event-cover-frontier-v1' if model else 'convex-cover-frontier-v1',
         **timing_stats,
-        'tasks':rows,'makespan':best.makespan,**traffic,'nets':sorted(best.nets),'wire_cost':netcost(best),'final_read_cache':best.cache,
+        'tasks':rows,'makespan':best.makespan,**traffic,'nets':sorted(selected_nets),'wire_cost':netcost(best),'final_read_cache':best.cache,
         'expanded':expanded,'merged':merged,'pruned':pruned,'width':width,'ready_limit':ready_limit,
         'covered_original_tasks':len(tasks),'multi_task_decisions':sum(len(r['covers'])>1 for r in rows),
         'backbone_prefix_slots':seed_kept,'rank_policy':rank_policy,
