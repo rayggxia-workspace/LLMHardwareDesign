@@ -8,9 +8,9 @@
 
 ## 当前计算宏与实现状态
 
-当前实现分为 M/N/E/G/R/S/T。M、N（归约与归一化）、E（基础向量算术/RoPE）、G（激活与门控）、S、T 已完成300MHz叶子验收和本地实收；R 未完成，仅保留研究源码。每类合格宏只选一个实现，见[实际合同](BLOCK_V2.md)和[结果、文件及证据入口](BLOCK_V2_RESULTS.md)。规划背景仍见[边界分析](COMPUTE_BLOCK_BOUNDARIES_2026-10-30.md)。
+当前实现分为 M/N/E/G/R/S/T。[基础宏交付索引](BLOCK_V2_RESULTS.md)记录各宏的独立验收范围、源码和最终文件。
 
-RTL：M/N/E/G 在 `project/rtl/block_v2`；S 在 `project/rtl/block_feed_v1`，顶层 `block_feed_s_macro`，依赖 `block_feed_loader` 和 `block_feed_s16k`；T 为 `project/rtl/block_v1/transaction6k.sv`。未完成 R 为 `project/rtl/block_library_v1/block_v1_r.sv`。源码从研究分支 Git 对象原字节提取，并与已验收包的源 SHA 独立核对。
+RTL 中 M/N/E/G 位于 `project/rtl/block_v2`，R256/R1024 位于 `project/rtl/r_local_state`，基线 S 位于 `project/rtl/block_feed_v1`，T 为 `project/rtl/block_v1/transaction6k.sv`。局部 SRAM S 的 P4/N4/N5 共用 `project/rtl/block_local_s` 与 `project/rtl/s_sram` 的 RTL。[局部 SRAM S 规格及双后端回归命令](BLOCK_LOCAL_S_SRAM.md)。
 
 运行及验证入口在 `project/experiments/block_v2`；`block_v1` 和 `block_feed_v1` 中的复用依赖保留原路径/原算法，不能将依赖目录理解成又一套已交付宏。原研究全过程仍在 #143/PR144；本次从最新 main 独立整合，不接管 #121/#130，原始数据库放授权存储，Git只收轻量回执、SHA及代码。
 
@@ -135,3 +135,40 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+## P/U 独立叶宏底座
+
+P 使用独立 M、紧凑 G、S_P。U 使用独立 N、紧凑 E、S_base。真实 SRAM、母局控控制链和 M1–M10 物理复跑见 [P/U 实验](../project/experiments/pu_leaf_base/README.md)。
+
+五类 P/U/C/F/J 的 `_128` / `_64` 当前摆放图、逐版本归档图源与验收入口集中在[五类独立叶宏组图册](experiments/assets/five-leaf-bases/README.md)。U 当前修复后的独立验收及重放范围见[最终回执](../work/YUZE-LU/212/u-native-fix.md)。
+
+## Issue #223：母控独立实现与五类控制兼容性
+
+源码、固定版本和验收边界见 `project/experiments/mother_control_v1/README.md`；源锁为 #180 81663a1e。先64位完成独立物理及实际Block一致性，再128位。以下命令在获授权集群的全新目录执行，EDA须放在Slurm计算任务；不在登录节点运行。每个P&R候选10核，RTL/独立审计4核。工具、真实SRAM与工艺均依赖现有授权环境，不宣称仅凭仓库可重建全部外部依赖。
+
+```bash
+# SOURCE包含仓库project子树及锁定的control180软件参考；每次新建输出目录。
+# Slurm数组0–1（每项10核）调用：
+bash SOURCE/project/experiments/mother_control_v1/physical.sh NEW_PHYSICAL SOURCE
+# 4核计算任务调用：
+bash SOURCE/project/experiments/mother_control_v1/regression.sh NEW_RTL SOURCE
+bash SOURCE/project/experiments/mother_control_v1/audit.sh NEW_PREFLIGHT SOURCE PHYSICAL_CANDIDATE preflight
+bash SOURCE/project/experiments/mother_control_v1/audit.sh NEW_FULL_AUDIT SOURCE PHYSICAL_CANDIDATE full
+bash SOURCE/project/experiments/mother_control_v1/gate.sh NEW_GATE SOURCE PHYSICAL_CANDIDATE
+```
+
+`physical.sh`需Slurm数组索引和原生银行generation.json，路径已固定在执行源。只在输入RTL散列完全相同时允许显式复用映射网表。预检不会标记完整物理通过；full使用未改原版完整GDS规则。最终网表回归与提取STA分别验收。原周期3.333333333ns经ORFS write_sdc写成3.3333ns，略严格；审计记录读回周期且不接受更慢周期，同时逐位核对I/O延迟、转换、负载及setup/hold不确定度。
+
+`consistency.py`入口强制要求full audit与对应格式最终网表功能回执均通过，再以同一物理母控连接实际P/U/C/F/J局控和服务RTL。CFJ原紧凑源需逐项满足247文件锁，P/U保留既有局控；U绑定#221已验收31文件源。私有S是真实SRAM，LC程序存储仍为行为夹具。64位全部通过后，128位gate再强制校验已合格64位清单和同一组六文件；核心按镜像版本动态取指，未更改有源RTL或物理实现。
+
+```bash
+# 新目录、Slurm 4核；先前64位清单必须已完整合格。
+bash SOURCE/project/experiments/mother_control_v1/regression.sh NEW_RTL128 SOURCE 128
+bash SOURCE/project/experiments/mother_control_v1/gate.sh NEW_GATE128 SOURCE CANDIDATE 128 QUALIFIED64_MANIFEST
+# KIND含C-roundtrip、CF-duplex、U-duplex和U-fma-duplex；最后一项选择镜像/局控格式。
+bash SOURCE/project/experiments/mother_control_v1/consistency.sh NEW_BIND SOURCE AUDIT_JSON GATE_JSON CELLS_SV KIND 128
+# 本机只读校验，不执行归档内容，自动识别两种格式。
+python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --receipt NEW_RECEIPT.json
+```
+
+两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。

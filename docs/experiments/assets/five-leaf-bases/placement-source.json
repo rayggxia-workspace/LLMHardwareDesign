@@ -1,0 +1,624 @@
+{
+  "schema": 1,
+  "scope": "Independent TT 300 MHz fixtures; not nine-instance placement or joint-top acceptance.",
+  "sources": [
+    {
+      "kind": "P",
+      "version": "128",
+      "archive_sha256": "5ea762aae33f422e97985156f1bcee445ef6b13146b37395255a00c819e7229f",
+      "archive_name": "p-accepted.tar.gz",
+      "member_sha256": {
+        "native/inputs.json": "c95b4a6de714703e30bed6067be1d6660cba592157433df4de0c9ae5d806f695",
+        "native/6_final.def": "8e28b4833cd2664c14abbd3ed2cf206953659aa5d4d9e5338790aba946559f9a"
+      },
+      "size_um": [
+        2014.0,
+        1026.0
+      ],
+      "macros": [
+        {
+          "name": "datapath.gate",
+          "master": "block_v2_g",
+          "alias": "G",
+          "xy_um": [
+            728.0,
+            676.0
+          ],
+          "size_um": [
+            220.0,
+            220.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "datapath.multiply",
+          "master": "block_v2_m",
+          "alias": "M",
+          "xy_um": [
+            1036.0,
+            48.0
+          ],
+          "size_um": [
+            930.0,
+            930.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "datapath.store",
+          "master": "local_s_p",
+          "alias": "S",
+          "xy_um": [
+            48.0,
+            48.0
+          ],
+          "size_um": [
+            900.0,
+            540.0
+          ],
+          "orientation": "N"
+        }
+      ],
+      "standard_cell_points": 81113
+    },
+    {
+      "kind": "U",
+      "version": "128",
+      "archive_sha256": "ee8039647804668b5023ddcd6eabbcf5033616a7858a550a7d1e39ef17138264",
+      "archive_name": "u128-native-fixed-accepted.tar.gz",
+      "member_sha256": {
+        "native/6_final.def": "e2c1c47a34c962cc2ca38e167e4b45dddb68f764164de642c4cab2a729e39458",
+        "native/inputs.json": "eb2e80c453bae43e006c127ebd36a92dcd725c42433cf184fd6cf36916a4dca2"
+      },
+      "size_um": [
+        1034.0,
+        1214.0
+      ],
+      "macros": [
+        {
+          "name": "datapath.elementwise",
+          "master": "block_v2_e_compact",
+          "alias": "E",
+          "xy_um": [
+            48.0,
+            656.0
+          ],
+          "size_um": [
+            340.0,
+            340.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "datapath.normalize",
+          "master": "block_v2_n",
+          "alias": "N",
+          "xy_um": [
+            476.0,
+            656.0
+          ],
+          "size_um": [
+            510.0,
+            510.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "datapath.store",
+          "master": "local_s_base",
+          "alias": "S",
+          "xy_um": [
+            48.0,
+            48.0
+          ],
+          "size_um": [
+            880.0,
+            520.0
+          ],
+          "orientation": "N"
+        }
+      ],
+      "standard_cell_points": 69940
+    },
+    {
+      "kind": "C",
+      "version": "128",
+      "archive_sha256": "dec81cab66b022844c1cdb25212381ff6817bd4b83bf99551ae30cead9abd7bb",
+      "archive_name": "accepted-c-tx-slot.tar.gz",
+      "member_sha256": {
+        "native/6_final.def": "c2f263f162b7d2fb74d3549267d748b88197f5915d4b9869fc9431d4b679b656",
+        "physical/inventory.json": "028d65a3f43cddff4e1fa0d4702efa5909cbf6dd92c6cdb38b21653af9dba88e"
+      },
+      "size_um": [
+        2096.0,
+        1144.0
+      ],
+      "macros": [
+        {
+          "name": "services.engine\\[0\\].element.arithmetic.leaf",
+          "master": "block_v2_e_compact",
+          "alias": "E",
+          "xy_um": [
+            1144.0,
+            664.0
+          ],
+          "size_um": [
+            340.0,
+            340.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.engine\\[1\\].genblk1.activate.leaf",
+          "master": "block_v2_g",
+          "alias": "G",
+          "xy_um": [
+            1544.0,
+            668.0
+          ],
+          "size_um": [
+            220.0,
+            220.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.engine\\[2\\].genblk1.recurrent.leaf.leaf",
+          "master": "r_stream_local",
+          "alias": "R",
+          "xy_um": [
+            72.0,
+            72.0
+          ],
+          "size_um": [
+            1000.0,
+            1000.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.store.leaf",
+          "master": "local_s_base",
+          "alias": "S",
+          "xy_um": [
+            1144.0,
+            72.0
+          ],
+          "size_um": [
+            880.0,
+            520.0
+          ],
+          "orientation": "N"
+        }
+      ],
+      "standard_cell_points": 61673
+    },
+    {
+      "kind": "F",
+      "version": "128",
+      "archive_sha256": "c9bbc3115f501a9d004b731479688a6fd560f30186964fb01f2ab00bb9eee5f0",
+      "archive_name": "accepted-f-tx-slot.tar.gz",
+      "member_sha256": {
+        "native/6_final.def": "6f6d7a8143500ffd6968c797bf71f372144ae967aabd511beb387d3d64e346b5",
+        "physical/inventory.json": "ce0a87a37f737000700246c296fea87bd9d8f5de51fb0ab683aa18a23d81cbe7"
+      },
+      "size_um": [
+        1024.0,
+        1076.0
+      ],
+      "macros": [
+        {
+          "name": "services.engine\\[0\\].element.arithmetic.leaf",
+          "master": "block_v2_e_compact",
+          "alias": "E",
+          "xy_um": [
+            72.0,
+            664.0
+          ],
+          "size_um": [
+            340.0,
+            340.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.engine\\[1\\].genblk1.activate.leaf",
+          "master": "block_v2_g",
+          "alias": "G",
+          "xy_um": [
+            524.0,
+            668.0
+          ],
+          "size_um": [
+            220.0,
+            220.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.store.leaf",
+          "master": "local_s_base",
+          "alias": "S",
+          "xy_um": [
+            72.0,
+            72.0
+          ],
+          "size_um": [
+            880.0,
+            520.0
+          ],
+          "orientation": "N"
+        }
+      ],
+      "standard_cell_points": 52606
+    },
+    {
+      "kind": "J",
+      "version": "128",
+      "archive_sha256": "262a836051726736eb86cb501293b4d35b7ee1fae2dbb2e421ac55db325e859c",
+      "archive_name": "accepted-j.tar.gz",
+      "member_sha256": {
+        "native/6_final.def": "bba9860b5df74d530a8fea704d845fe03c7e4bbce4aeccb353d64c255e6e6b64",
+        "physical/inventory.json": "d8d225f0b53c297f5edc405ac22b535f62658392d2bb272b7a76ef8ec63d5867"
+      },
+      "size_um": [
+        2136.0,
+        1184.0
+      ],
+      "macros": [
+        {
+          "name": "services.arithmetic.leaf",
+          "master": "block_v2_e_compact",
+          "alias": "E",
+          "xy_um": [
+            1184.0,
+            664.0
+          ],
+          "size_um": [
+            340.0,
+            340.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.lease",
+          "master": "transaction6k",
+          "alias": "T",
+          "xy_um": [
+            72.0,
+            72.0
+          ],
+          "size_um": [
+            1040.0,
+            1040.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.store.leaf",
+          "master": "local_s_base",
+          "alias": "S",
+          "xy_um": [
+            1184.0,
+            72.0
+          ],
+          "size_um": [
+            880.0,
+            520.0
+          ],
+          "orientation": "N"
+        }
+      ],
+      "standard_cell_points": 64802
+    },
+    {
+      "kind": "P",
+      "version": "64",
+      "archive_sha256": "13545e6ee575512edac07aebe553bf5d6c8666ccec3b040afde581cd4f35c390",
+      "archive_name": "p64-accepted.tar.gz",
+      "member_sha256": {
+        "native/6_final.def": "9d7a53998f5f3db927389da89b70fb9846ef186010318a41259c2883cac48fc0",
+        "native/inputs.json": "66a8421c05236ce4b3548d6c6fe9d3e69c7f4d08900cce8069ec7db3d6458a0a"
+      },
+      "size_um": [
+        2014.0,
+        1026.0
+      ],
+      "macros": [
+        {
+          "name": "datapath.gate",
+          "master": "block_v2_g",
+          "alias": "G",
+          "xy_um": [
+            728.0,
+            676.0
+          ],
+          "size_um": [
+            220.0,
+            220.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "datapath.multiply",
+          "master": "block_v2_m",
+          "alias": "M",
+          "xy_um": [
+            1036.0,
+            48.0
+          ],
+          "size_um": [
+            930.0,
+            930.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "datapath.store",
+          "master": "local_s_p",
+          "alias": "S",
+          "xy_um": [
+            48.0,
+            48.0
+          ],
+          "size_um": [
+            900.0,
+            540.0
+          ],
+          "orientation": "N"
+        }
+      ],
+      "standard_cell_points": 70473
+    },
+    {
+      "kind": "U",
+      "version": "64",
+      "archive_sha256": "dae3b8274296970865dfd13bb4d72014f6c8590ea3cd94bb15720fa6b36b22f7",
+      "archive_name": "u64-native-fixed-accepted.tar.gz",
+      "member_sha256": {
+        "native/6_final.def": "8ad49feccc55e574f4086991983d2b5d3faa4fe6fdcbabafe75383bd01b7dd8a",
+        "native/inputs.json": "e050e7ff5fbb558f31bd55e60c016d84a9e25cbf50fa1fc8f082b65993006d18"
+      },
+      "size_um": [
+        1034.0,
+        1214.0
+      ],
+      "macros": [
+        {
+          "name": "datapath.elementwise",
+          "master": "block_v2_e_compact",
+          "alias": "E",
+          "xy_um": [
+            48.0,
+            656.0
+          ],
+          "size_um": [
+            340.0,
+            340.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "datapath.normalize",
+          "master": "block_v2_n",
+          "alias": "N",
+          "xy_um": [
+            476.0,
+            656.0
+          ],
+          "size_um": [
+            510.0,
+            510.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "datapath.store",
+          "master": "local_s_base",
+          "alias": "S",
+          "xy_um": [
+            48.0,
+            48.0
+          ],
+          "size_um": [
+            880.0,
+            520.0
+          ],
+          "orientation": "N"
+        }
+      ],
+      "standard_cell_points": 59587
+    },
+    {
+      "kind": "C",
+      "version": "64",
+      "archive_sha256": "c98a22a08d3b01d20829cfda4c7aa293e7153ffae7d9b62819b4f2b2b0fce0b8",
+      "archive_name": "accepted-c_64.tar.gz",
+      "member_sha256": {
+        "native/6_final.def": "265f0232b0cdaa51a3638e4ba39e7578478bb6af9f55aa908f486803fd90ebfd",
+        "physical/inventory.json": "37642908c775051092178e596e81c0e524fe964bfb271cd190d4da0c4b57e0e1"
+      },
+      "size_um": [
+        2096.0,
+        1144.0
+      ],
+      "macros": [
+        {
+          "name": "services.engine\\[0\\].element.arithmetic.leaf",
+          "master": "block_v2_e_compact",
+          "alias": "E",
+          "xy_um": [
+            1144.0,
+            664.0
+          ],
+          "size_um": [
+            340.0,
+            340.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.engine\\[1\\].genblk1.activate.leaf",
+          "master": "block_v2_g",
+          "alias": "G",
+          "xy_um": [
+            1544.0,
+            668.0
+          ],
+          "size_um": [
+            220.0,
+            220.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.engine\\[2\\].genblk1.recurrent.leaf.leaf",
+          "master": "r_stream_local",
+          "alias": "R",
+          "xy_um": [
+            72.0,
+            72.0
+          ],
+          "size_um": [
+            1000.0,
+            1000.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.store.leaf",
+          "master": "local_s_base",
+          "alias": "S",
+          "xy_um": [
+            1144.0,
+            72.0
+          ],
+          "size_um": [
+            880.0,
+            520.0
+          ],
+          "orientation": "N"
+        }
+      ],
+      "standard_cell_points": 63390
+    },
+    {
+      "kind": "F",
+      "version": "64",
+      "archive_sha256": "0e671a98dc922afe9ffbfb84f5250c27279bd87b94027635db12463a4c010883",
+      "archive_name": "accepted-f_64.tar.gz",
+      "member_sha256": {
+        "native/6_final.def": "874840be98ce15c25ba5c8ad812402c05a5271d57788589517aeb1c08d2b57eb",
+        "physical/inventory.json": "558fcd578ad3d27da11fe5d6329766c05017a72686c9cd157c88368de63a8aa4"
+      },
+      "size_um": [
+        1024.0,
+        1076.0
+      ],
+      "macros": [
+        {
+          "name": "services.engine\\[0\\].element.arithmetic.leaf",
+          "master": "block_v2_e_compact",
+          "alias": "E",
+          "xy_um": [
+            72.0,
+            664.0
+          ],
+          "size_um": [
+            340.0,
+            340.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.engine\\[1\\].genblk1.activate.leaf",
+          "master": "block_v2_g",
+          "alias": "G",
+          "xy_um": [
+            524.0,
+            668.0
+          ],
+          "size_um": [
+            220.0,
+            220.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.store.leaf",
+          "master": "local_s_base",
+          "alias": "S",
+          "xy_um": [
+            72.0,
+            72.0
+          ],
+          "size_um": [
+            880.0,
+            520.0
+          ],
+          "orientation": "N"
+        }
+      ],
+      "standard_cell_points": 54721
+    },
+    {
+      "kind": "J",
+      "version": "64",
+      "archive_sha256": "552c2553b5a944e7b8f024fbf26d2d225b8d47a1c0aedc5e0d57f72261cf27e9",
+      "archive_name": "accepted-j_64.tar.gz",
+      "member_sha256": {
+        "native/6_final.def": "ef257ed65ebe35a90768303ecb0a978d47ceaaa617599158cf5051b15c94c3d2",
+        "physical/inventory.json": "3381a76310e3d0cf6f79570f68444c26df55fbd27f9a8d14c0821143a1be2369"
+      },
+      "size_um": [
+        2136.0,
+        1184.0
+      ],
+      "macros": [
+        {
+          "name": "services.arithmetic.leaf",
+          "master": "block_v2_e_compact",
+          "alias": "E",
+          "xy_um": [
+            1184.0,
+            664.0
+          ],
+          "size_um": [
+            340.0,
+            340.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.lease",
+          "master": "transaction6k",
+          "alias": "T",
+          "xy_um": [
+            72.0,
+            72.0
+          ],
+          "size_um": [
+            1040.0,
+            1040.0
+          ],
+          "orientation": "N"
+        },
+        {
+          "name": "services.store.leaf",
+          "master": "local_s_base",
+          "alias": "S",
+          "xy_um": [
+            1184.0,
+            72.0
+          ],
+          "size_um": [
+            880.0,
+            520.0
+          ],
+          "orientation": "N"
+        }
+      ],
+      "standard_cell_points": 76401
+    }
+  ]
+}

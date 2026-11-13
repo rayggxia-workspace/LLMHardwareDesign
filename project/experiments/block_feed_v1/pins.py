@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "block_v1"))
 from revision300_geometry import DBU, u, box, verify
 
 
-def generate(ports, side, technology):
+def generate(ports, side, technology, bands=2):
     g = technology["geometry_um"]
     assert (g["pitch"], g["cut_width"], g["cut_spacing"]) == (4., 2., 2.2)
     ox, oy, step, width = u(g["track_offset_x"]), u(g["track_offset_y"]), u(4), u(side)
@@ -21,10 +21,19 @@ def generate(ports, side, technology):
         return offset + step * round((value-offset)/step)
     xl, xr = near(width/4, ox), near(3*width/4, ox)
     yb, yt = near(width/4, oy), near(3*width/4, oy)
+    if bands == 2:
+        x_left, x_right = [xl, xl+step], [xr, xr-step]
+        y_bottom, y_top = [yb, yb+step], [yt, yt-step]
+    else:
+        fractions = [(i+1)/(2*(bands+1)) for i in range(bands)]
+        x_left = [near(width*f, ox) for f in fractions]
+        x_right = [near(width*(1-f), ox) for f in fractions]
+        y_bottom = [near(width*f, oy) for f in fractions]
+        y_top = [near(width*(1-f), oy) for f in fractions]
     xs = list(range(ox + step*math.ceil((u(24)-ox)/step), width-u(24), step))
     # Exclude both rows of vertical via landings, including their cut spacing.
     ys = [y for y in range(oy + step*math.ceil((u(24)-oy)/step), width-u(24), step)
-          if all(abs(y-v) >= u(8) for v in (yb, yb+step, yt, yt-step))]
+          if all(abs(y-v) >= u(8) for v in y_bottom+y_top)]
     slots = dict(left=ys, right=ys, bottom=xs, top=xs)
     used = {name: 0 for name in slots}
     pins, shapes, connections, groups = [], [], [], []
@@ -47,14 +56,14 @@ def generate(ports, side, technology):
             for i in range(begin, begin+n):
                 track = slots[direction][used[direction]]
                 # Use the real4um grid parity, including any excluded rows.
-                parity = ((track-(oy if direction in ("left","right") else ox))//step) % 2
+                band = ((track-(oy if direction in ("left","right") else ox))//step) % bands
                 used[direction] += 1
                 if direction in ("left", "right"):
-                    x, y = (xl+parity*step if direction == "left" else xr-parity*step), track
+                    x, y = (x_left if direction == "left" else x_right)[band], track
                     end = [ox-u(32) if direction == "left" else ox+step*math.ceil(width/step)+u(32), y]
                     layer = "metal11"
                 else:
-                    x, y = track, (yb+parity*step if direction == "bottom" else yt-parity*step)
+                    x, y = track, (y_bottom if direction == "bottom" else y_top)[band]
                     end = [x, oy-u(32) if direction == "bottom" else oy+step*math.ceil(width/step)+u(32)]
                     layer = "metal12"
                 name = port if count == 1 else f"{port}[{i}]"
@@ -80,4 +89,6 @@ def generate(ports, side, technology):
                 track_demand=used, track_capacity={s:len(v) for s,v in slots.items()},
                 wire_pitch_um=4., stagger_um=4., qualified_access=False,
                 scope="One declared candidate; unchanged coarse rules. Actual native route, full GDS, drive/RC and timing still required.")
+    if bands != 2:
+        plan.update(policy="four-sides-multiple-bands", bands_per_side=bands)
     return plan, fixture, proof
