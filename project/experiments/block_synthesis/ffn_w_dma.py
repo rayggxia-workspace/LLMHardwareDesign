@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 
 from dma_read import Profile, Read, ReadEdge, ReadFabric, ReadRecord
 from ffn_m_issue import WeightCompletion
+from ffn_program_cost import DESCRIPTOR_BASE
 from ffn_w import BEATS
 
 
@@ -128,10 +129,12 @@ class WeightCommandLinks:
 class WeightReplay:
     """Advance one edge across P/M links, shared DDR and FFN control."""
 
-    def __init__(self, mode, seed, call_to_fetch, *, links=None, mother=None, admission=None, trace=False, fabric=None):
+    def __init__(self, mode, seed, call_to_fetch, *, links=None, mother=None, admission=None, trace=False, fabric=None,
+                 descriptor_base=DESCRIPTOR_BASE):
         profile = Profile.from_spec({'ffn_provider': {'mode': mode, 'seed': seed}}) if fabric is None else fabric.profile
         self.service = WeightDma(profile, fabric=fabric)
         self.call_to_fetch = call_to_fetch
+        self.descriptor_base = descriptor_base
         self.links = links
         self.mother = mother
         self.admission = admission
@@ -149,7 +152,7 @@ class WeightReplay:
 
     def call(self, tick, client):
         self.serial[client] += 1
-        address = 4096 + 128 * self.call_count
+        address = self.descriptor_base + 128 * self.call_count
         self.call_count += 1
         self.descriptors[tick + self.call_to_fetch].append((client, self.serial[client], address))
 
@@ -243,8 +246,10 @@ class WeightReplay:
 class WeightDmaTrace(WeightReplay):
     """Compare each modeled edge against both ends of the physical fabric."""
 
-    def __init__(self, mode, seed, call_to_fetch, *, links=None, mother=None, admission=None):
-        super().__init__(mode, seed, call_to_fetch, links=links, mother=mother, admission=admission, trace=True)
+    def __init__(self, mode, seed, call_to_fetch, *, links=None, mother=None, admission=None,
+                 descriptor_base=DESCRIPTOR_BASE):
+        super().__init__(mode, seed, call_to_fetch, links=links, mother=mother, admission=admission, trace=True,
+                         descriptor_base=descriptor_base)
         self.edge_events = defaultdict(list)
         self.clock = None
 

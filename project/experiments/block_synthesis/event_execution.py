@@ -10,17 +10,22 @@ from dataclasses import dataclass, replace
 
 from dma_read import FfnProvider, Profile, Read
 from ffn_a import A_BASE, P_COUNT, WORDS, ActivationWindow
-from ffn_program_cost import (BACKING, EXTERNAL_CLIENTS, INPUT_BYTES, Program, READ_BYTES, RESOURCES, RESULT_BYTES,
+from ffn_program_cost import (EXTERNAL_CLIENTS, INPUT_BYTES, Program, READ_BYTES, RESOURCES, RESULT_BYTES,
                               SHARED_RESOURCES, SITES)
 from sram_feeder import Access, profile as feeder_profile
 
 DDR = 'DDR'
 
 
+def program_offsets(services):
+    return {service['ffn_program'].get('address_offset', 0)
+            for service in services.values() if 'ffn_program' in service}
+
+
 def backing_bytes(spec, values):
     addresses = (spec.get('typed_dma') or {}).get('addresses', {})
     sizes = spec['value_bytes']
-    fixture_bytes = READ_BYTES if any('ffn_program' in service for service in spec['services'].values()) else 0
+    fixture_bytes = READ_BYTES * len(program_offsets(spec['services']))
     return fixture_bytes + sum(sizes[value] * (len(addresses[value]) if isinstance(addresses.get(value), dict) else 1)
                                for value in values)
 
@@ -207,12 +212,14 @@ class Model:
             elif self.dma_profile is not None and (self.has_ffn_program or self.dma_profile.mixed) and DDR in endpoints:
                 raise ValueError('shared DMA requires an explicit typed route for external traffic')
             self.routes_by_sites.setdefault(endpoints, []).append(name)
+        programs = {}
         for service in self.services.values():
             if type(service['ticks']) is not int or service['ticks'] < 1:
                 raise ValueError('invalid native stage duration')
             self.validate_service(service)
             if 'ffn_program' in service:
-                self.validate_program_service(service)
+                program = self.validate_program_service(service)
+                programs[program.address_offset] = program
             elif self.dma_profile is not None and (self.has_ffn_program or self.dma_profile.mixed) and (
                     service.get('read_bytes') or service.get('write_bytes')):
                 raise ValueError('shared DMA requires explicit typed routes for external traffic')
@@ -234,6 +241,9 @@ class Model:
             if ((service.get('read_bytes') or service.get('write_bytes'))
                     and not (service['claims'] or any(p['claims'] for p in service.get('phases', ())))):
                 raise ValueError('external native stage must reserve a resource')
+        self.program_backing = sorted(region for program in programs.values() for region in program.backing)
+        if any(prev[1] > current[0] for prev, current in zip(self.program_backing, self.program_backing[1:])):
+            raise ValueError('calibrated FFN program images overlap physical ranges')
         copies = {}
         for w, v in self.spec.get('initial_copies', {}).items():
             self.validate_copy(w, v)
@@ -318,8 +328,7 @@ class Model:
                 if (type(address) is not int or address % 64
                         or not 0 <= address < address + self.sizes[value] <= 2**64):
                     raise ValueError('invalid typed DMA address map')
-                if self.has_ffn_program and any(address < hi and lo < address + self.sizes[value]
-                                                for lo, hi in BACKING):
+                if any(address < hi and lo < address + self.sizes[value] for lo, hi in self.program_backing):
                     raise ValueError('typed DMA backing overlaps the calibrated FFN program')
                 regions.append((address, address + self.sizes[value], replicas))
         high = named_high = 0
@@ -470,6 +479,7 @@ class Model:
             raise ValueError('calibrated FFN program requires qualified geometry, resources and traffic')
         if self.dma_profile is not None and self.dma_profile.ffn_provider != FfnProvider(program.mode, program.seed):
             raise ValueError('shared FFN and typed DMA require the same calibrated provider')
+        return program
 
     def validate_program_windows(self, inputs, outputs):
         if len(inputs) != 1 or len(outputs) != 3:

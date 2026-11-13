@@ -3,6 +3,7 @@ import random
 import unittest
 from unittest.mock import patch
 
+from benchmark_decode_handoff import build as decode_handoff
 from benchmark_event_ffn import copy_bank_receipt
 from benchmark_ffn_control_trace import replay_readback
 from benchmark_ffn_dma_provider import RECORD_BYTES, paired_input
@@ -11,11 +12,12 @@ from benchmark_native_sram_replay import check_trace, event_input as sram_input
 from cover_frontier import search
 from dma_offer import DmaOfferChannel
 from dma_read import Profile, Read
+from event_execution import Model, backing_bytes
 from event_replay import Operation, Phase, ReadyWindow, ReplayDeadlock, ReplayTrace, replay, replay_branch
 from ffn_m import ALLOC, FILL, INPUT, INPUT_READY, RF, RF_READY, Record, Reply, commit_phases, reply_phase
 from ffn_m_issue import ALLOC_CMD, Command, CommandLink, WeightCompletion, join_schedule
 from ffn_mid import MIN_TICKS, MidTile
-from ffn_program_cost import FfnCost, Program, SHARED_RESOURCES
+from ffn_program_cost import DESCRIPTOR_BASE, FfnCost, Program, READ_BYTES, SHARED_RESOURCES
 from ffn_w import WeightTrace
 from ffn_w_dma import WeightDma, WeightOwner
 from sram_feeder import Access
@@ -24,6 +26,47 @@ from verify_cover_frontier import verify
 
 
 class ReplayTest(unittest.TestCase):
+    def test_layer_program_images_have_distinct_physical_backing(self):
+        geometry = (2, 8, 512, 128)
+        _, hardware = decode_handoff(geometry, geometry, tile=8, mode=1, seed=25001,
+                                     candidate='lookahead', queue=16, cross_layer=True)
+        spec = hardware['event_model']
+        capacity = 2 * READ_BYTES + 2 * 512 * 2048
+        spec['external_capacity_bytes'] = capacity
+        first, second = (spec['services'][name]['ffn_program']
+                         for name in ('programmed-ffn', 'programmed-ffn-l1'))
+        second['lookahead'] = False
+        spec['services']['alternate-l1'] = {**spec['services']['programmed-ffn-l1'],
+                                            'ffn_program': {**second, 'lookahead': True}}
+        self.assertEqual(backing_bytes(spec, spec['initial_backing']), capacity)
+        self.assertEqual(len(Model(hardware).program_backing), 8)
+
+        bad = deepcopy(hardware)
+        bad['event_model']['external_capacity_bytes'] -= 1
+        with self.assertRaisesRegex(ValueError, 'invalid external backing capacity'):
+            Model(bad)
+        bad = deepcopy(hardware)
+        bad['event_model']['services']['programmed-ffn-l1']['ffn_program']['address_offset'] = 0x1000
+        with self.assertRaisesRegex(ValueError, 'program images overlap'):
+            Model(bad)
+        bad = deepcopy(hardware)
+        bad['event_model']['typed_dma']['addresses']['l1-h0-k-0'] = second['address_offset'] + DESCRIPTOR_BASE
+        with self.assertRaisesRegex(ValueError, 'backing overlaps the calibrated FFN program'):
+            Model(bad)
+        for offset in (True, -4096, 2048, 2**64):
+            with self.assertRaisesRegex(ValueError, 'invalid calibrated FFN address offset'):
+                Program.from_spec({**first, 'address_offset': offset})
+
+        base, moved = (Program.from_spec(config).start(32) for config in (first, second))
+        offset = second['address_offset']
+        for client, records in base.links.addresses.items():
+            self.assertEqual(moved.links.addresses[client],
+                             {sequence: address + offset for sequence, address in records.items()})
+        base.call(32, 0)
+        moved.call(32, 0)
+        self.assertEqual(next(iter(base.descriptors.values())), [(0, 1, DESCRIPTOR_BASE)])
+        self.assertEqual(next(iter(moved.descriptors.values())), [(0, 1, DESCRIPTOR_BASE + offset)])
+
     def test_shared_ffn_restores_live_state_and_reprices_inflight_reads(self):
         profile = Profile.from_spec({'ffn_provider': {'mode': 1, 'seed': 25001}})
         capacity = SHARED_RESOURCES
@@ -67,6 +110,46 @@ class ReplayTest(unittest.TestCase):
             self.assertNotEqual(branches[0][1][0].dma_beats, prefix.grants[1][0].dma_beats)
             self.assertNotEqual(branches[0][2][0].ffn_program, branches[1][2][0].ffn_program)
             self.assertEqual(branches[0], branches[2])
+
+    def test_prefetch_retimes_two_programs_on_one_live_fabric(self):
+        profile = Profile.from_spec({'ffn_provider': {'mode': 1, 'seed': 25001},
+                                     'mixed': {'queue': 8, 'write_latency': 9}})
+        cap = {'MC': 1}
+        claims = tuple(cap.items())
+        first = Operation((Phase('ffn', 1, claims, ffn_program=Program(1, 25001, True, 0)),), release=20)
+        store = Operation((Phase('store', 1, dma_read=Read(3, 0x30004000, 256, 2, True)),), release=24)
+        second = Operation((Phase('ffn', 1, claims, ffn_program=Program(1, 25001, True, 0, 0x10000000)),),
+                           after=(0,))
+
+        class ShortProgram:
+            def __init__(self, program, start, fabric):
+                self.dma = WeightDma(profile, fabric=fabric)
+                self.start = start
+                base = 0x02000000 + program.address_offset
+                self.installs = ((0, 1, 1, 0, 1, base), (1, 1, 2, 0, 1, base + 128))
+                self.finished = 0
+
+            def advance(self, tick):
+                _, completions = self.dma.step(tick, self.installs if tick == self.start else ())
+                reads = []
+                for key, beats in completions:
+                    if isinstance(key, WeightOwner):
+                        self.finished += 1
+                    else:
+                        reads.append((key, beats))
+                return (FfnCost(tick, 34 * 64, 0) if self.finished == 2 else None), reads
+
+        with patch('event_replay.ActiveProgram', ShortProgram), patch('event_replay.PROGRAM_CHECKPOINT_STRIDE', 8):
+            operations = [first, store, second]
+            prior = replay_branch(operations, cap, dma_profile=profile, previous=ReplayTrace((), (), 8))
+            expected = [(159, 84, 218), (97, 60, 182)]
+            for address, ends in zip((0x40004000, 0x40004800), expected):
+                prefetch = Operation((Phase('prefetch', 1, dma_read=Read(4, address, 4096, 2)),), release=24)
+                branch = replay_branch([*operations, prefetch], cap, dma_profile=profile, previous=prior)
+                self.assertEqual(branch.grants, replay([*operations, prefetch], cap, dma_profile=profile))
+                self.assertEqual(tuple(grants[0].end for grants in branch.grants[:3]), ends)
+                self.assertEqual(branch.grants[2][0].start, branch.grants[0][0].end)
+            self.assertEqual(tuple(grants[0].end for grants in prior.grants), (95, 60, 152))
 
     def test_sram_checkpoint_preserves_pending_responses_and_reprices_old_reads(self):
         profiles = {'P0': ((0, 90, 2),), 'P1': ()}

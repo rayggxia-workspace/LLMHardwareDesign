@@ -14,7 +14,8 @@ RESOURCES = dict.fromkeys(('MC', 'DDR', 'U.S.port', *(f'P{p}.{unit}' for p in ra
 SITES = ('U', 'P0', 'P1', 'P2')
 SHARED_RESOURCES = {name: count for name, count in RESOURCES.items() if name != 'DDR'}
 EXTERNAL_CLIENTS = frozenset(range(3, 9))
-BACKING = ((0x1000, 0x7000), (0x02000000, 0x036D8000),
+DESCRIPTOR_BASE = 0x1000
+BACKING = ((DESCRIPTOR_BASE, 0x7000), (0x02000000, 0x036D8000),
            (0x04000000, 0x056D8000), (0x06000000, 0x076D8000))
 
 
@@ -37,18 +38,29 @@ class Program:
     seed: int
     lookahead: bool
     copy_delay_epoch: int
+    address_offset: int = 0
 
     @classmethod
     def from_spec(cls, spec):
+        required = {'mode', 'seed', 'lookahead', 'copy_delay_epoch'}
         if (not isinstance(spec, dict)
-                or spec.keys() != {'mode', 'seed', 'lookahead', 'copy_delay_epoch'}
+                or not required <= spec.keys() <= required | {'address_offset'}
                 or type(spec['mode']) is not int or spec['mode'] not in (0, 1)
                 or type(spec['seed']) is not int or not 0 <= spec['seed'] < 2**32
                 or type(spec['lookahead']) is not bool
                 or type(spec['copy_delay_epoch']) is not int
                 or not 0 <= spec['copy_delay_epoch'] <= 1444):
             raise ValueError('invalid calibrated FFN program')
-        return cls(**spec)
+        program = cls(**spec)
+        offset = program.address_offset
+        # Preserve descriptor alignment and the provider's channel-select bit.
+        if type(offset) is not int or offset % 4096 or not 0 <= offset <= 2**64 - BACKING[-1][1]:
+            raise ValueError('invalid calibrated FFN address offset')
+        return program
+
+    @property
+    def backing(self):
+        return tuple((lo + self.address_offset, hi + self.address_offset) for lo, hi in BACKING)
 
     @lru_cache(maxsize=128)
     def receipt(self, start):
@@ -60,7 +72,8 @@ class Program:
     def start(self, tick, fabric=None):
         from ffn_program import programmed_ffn
         return programmed_ffn(tick, self.mode, self.seed, lookahead=self.lookahead,
-                              copy_delay_epoch=self.copy_delay_epoch, fabric=fabric)
+                              copy_delay_epoch=self.copy_delay_epoch, fabric=fabric,
+                              address_offset=self.address_offset)
 
 
 class ActiveProgram:

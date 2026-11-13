@@ -9,7 +9,7 @@ from ffn_dispatch import ScopeAdmission
 from ffn_m import Record
 from ffn_m_issue import CommandLink
 from ffn_p import ProgrammedP
-from ffn_program_cost import FfnCost
+from ffn_program_cost import DESCRIPTOR_BASE, FfnCost
 from ffn_result import down_group_addresses
 from ffn_scatter import stripe_fragments
 from ffn_w import BEATS
@@ -80,11 +80,12 @@ def scope_groups(records_by_client):
             for owner in sorted(last)]
 
 
-def programmed_ffn(start, mode, seed, *, lookahead=True, copy_delay_epoch=0, replay_class=WeightReplay, fabric=None):
+def programmed_ffn(start, mode, seed, *, lookahead=True, copy_delay_epoch=0, replay_class=WeightReplay, fabric=None,
+                   address_offset=0):
     dispatches = ((client, -1, owner) for owner in range(1, GATE_UP_STRIPES + DOWN_GROUPS + 1)
                   for client in range(P_COUNT))
     records = m_records(dispatches)
-    addresses = {p: {record.sequence: weight_address(p, record) for record in rows}
+    addresses = {p: {record.sequence: address_offset + weight_address(p, record) for record in rows}
                  for p, rows in records.items()}
     p = ProgrammedP(records, (), mode, lookahead=lookahead, copy_delay_epoch=copy_delay_epoch,
                     window_plan=window_plan(records), live_dispatch=True)
@@ -93,7 +94,8 @@ def programmed_ffn(start, mode, seed, *, lookahead=True, copy_delay_epoch=0, rep
     mother = MotherController(start, scope_groups(records), p.lanes)
     admission = ScopeAdmission(start, mode, mother, p)
     options = {} if fabric is None else {'fabric': fabric}
-    return replay_class(mode, seed, CALL_TO_FETCH, links=links, mother=mother, admission=admission, **options)
+    return replay_class(mode, seed, CALL_TO_FETCH, links=links, mother=mother, admission=admission,
+                        descriptor_base=DESCRIPTOR_BASE + address_offset, **options)
 
 
 def finish_program(replay, first, deadline):
