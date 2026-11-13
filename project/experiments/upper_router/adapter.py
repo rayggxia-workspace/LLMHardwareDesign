@@ -25,11 +25,13 @@ def bind_request(request, base, technology, obstacles=()):
             require(term in terms, 'missing physical term')
             pins[term] = deepcopy(terms[term])
         nets.append({'id': net['id'], 'driver': net['driver'], 'sinks': sinks})
+    context = {'base_id': base['base_id'], 'base_sha256': request['base_sha256'],
+               'request_sha256': request['sha256'], 'dbu_per_micron': base['dbu_per_micron']}
+    if 'native_inventory' in base:
+        context['native_inventory'] = deepcopy(base['native_inventory'])
     return {'schema_version': 'upper-router/1', 'units': 'dbu',
             'technology': deepcopy(technology), 'obstacles': deepcopy(list(obstacles)),
-            'pins': pins, 'nets': nets, 'context': {
-                'base_id': base['base_id'], 'base_sha256': request['base_sha256'],
-                'request_sha256': request['sha256'], 'dbu_per_micron': base['dbu_per_micron']}}
+            'pins': pins, 'nets': nets, 'context': context}
 
 
 def failure_feedback(request, result, evidence):

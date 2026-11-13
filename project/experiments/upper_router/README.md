@@ -60,6 +60,19 @@ python -B project/experiments/upper_router/run.py request.json routes.json --bas
 控制均按传入逐位网表处理，不由路由器根据模型补猜。
 
 未绑定需求在入口明确拒绝；这不妨碍使用标注清楚的合成几何开发/评估算法。
+可从带源指纹的原生切口清单生成同一套 `route-contract/1` 文件。下列命令使用已有
+接口目录和需求使用者，保留夹具范围及原生视图 SHA-256。
+
+```powershell
+python -B project/experiments/upper_router/native_inventory.py inventory catalog.json users.json output --manifest-sha256 <trusted-manifest-sha256> --role <fixture-role> --rules rules.json
+```
+
+输出为 `base.json`、`requirements.json` 和可选的 `router-input.json`。目录须包含原始
+清单导出和哈希清单。适配器核对实际 ODB、DEF、GDS、网表和 SPEF 字节，以及选中
+切口的方向、M10 所有权和提取连通。已有完整 M10 BTerm 两侧的切口可进入夹具几何
+验证。独立叶块 ITerm 须先补充原生导通和落点证据。输出底座状态为 `candidate`，
+夹具标签保留到路由上下文。
+
 ## 与新版 Algorithm 1 集成
 
 ```powershell
