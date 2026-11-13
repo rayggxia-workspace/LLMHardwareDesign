@@ -50,7 +50,7 @@ def compile_model(model, hardware, *, budget=None, seconds=30, rounds=4, cover_l
                            'native_dma_replay_required': False, 'physical_routing_required': False}}
 
 
-def compile_event_ir(model, hardware, *, budget=None, width=8, emit_dependencies=False):
+def compile_event_ir(model, hardware, *, budget=None, width=8, emit_dependencies=False, emit_outputs=False):
     from cover_frontier import search
     from verify_cover_frontier import verify as verify_events
 
@@ -60,12 +60,34 @@ def compile_event_ir(model, hardware, *, budget=None, width=8, emit_dependencies
         raise ValueError('phase dependencies require replay or snapshot timing')
     tasks, covers = model['tasks'], model.get('covers', ())
     plan = search(tasks, hardware, covers, width=width, wire_budget=budget)
-    result = {'status': plan['status'], 'plan': plan, 'scope': 'qualified event IR and schedule'}
+    result = {'status': plan['status'], 'plan': plan, 'wire_budget': budget,
+              'scope': 'qualified event IR and schedule'}
     if plan['status'] == 'planned':
         result['verification'] = verify_events(tasks, hardware, covers, plan, wire_budget=budget)
         if emit_dependencies:
             from event_replay_plan import dependency_program
             result['phase_dependencies'] = dependency_program(tasks, hardware, covers, plan)
+        if emit_outputs:
+            from event_deploy import emit
+
+            result.update(event_ir=model, resolved_hardware=hardware,
+                          outputs=emit(tasks, hardware, covers, plan))
+    return result
+
+
+def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependencies=False):
+    from event_deploy import digest
+    from event_lowering import lower
+
+    if 'event_model' not in hardware:
+        raise ValueError('event graph requires a qualified hardware event model')
+    try:
+        lowered, resolved = lower(model, hardware)
+    except Unsupported as error:
+        return {'status': 'blocked_lowering', 'reason': str(error)}
+    result = compile_event_ir(lowered, resolved, budget=budget, width=width,
+                              emit_dependencies=emit_dependencies, emit_outputs=True)
+    result.update(graph_sha256=digest(model), input_hardware_sha256=digest(hardware))
     return result
 
 
@@ -76,9 +98,13 @@ def main():
     p.add_argument('output', type=Path)
     p.add_argument('--audit-only', action='store_true')
     p.add_argument('--lowered', action='store_true', help='internal tile IR, not a second author-maintained model format')
-    p.add_argument('--event-ir', action='store_true', help='plan an internal IR with qualified event stages')
+    event_input = p.add_mutually_exclusive_group()
+    event_input.add_argument('--event-ir', action='store_true', help='plan an internal IR with qualified event stages')
+    event_input.add_argument('--event-graph', action='store_true', help='lower a typed JSON or ONNX graph to event IR')
     p.add_argument('--event-dependencies', action='store_true',
                    help='export phase waits from an event replay or snapshot plan')
+    p.add_argument('--event-outputs', action='store_true',
+                   help='export control and wiring IR from the selected event plan')
     p.add_argument('--event-width', type=int, default=8, help='beam width for --event-ir, 1 for singleton greedy')
     p.add_argument('--wire-budget', type=int)
     p.add_argument('--seconds', type=float, default=30)
@@ -88,8 +114,10 @@ def main():
     a = p.parse_args()
     if a.event_ir and (a.audit_only or a.lowered or a.model.suffix == '.onnx'):
         p.error('--event-ir requires event IR JSON and is incompatible with --audit-only and --lowered')
-    if a.event_dependencies and not a.event_ir:
-        p.error('--event-dependencies requires --event-ir')
+    if a.event_graph and (a.audit_only or a.lowered):
+        p.error('--event-graph is incompatible with --audit-only and --lowered')
+    if (a.event_dependencies or a.event_outputs) and not (a.event_ir or a.event_graph):
+        p.error('event outputs require --event-ir or --event-graph')
     hardware = json.loads(a.hardware.read_text())
     if a.event_dependencies and hardware.get('event_model', {}).get('timing') not in ('replay', 'snapshot'):
         p.error('--event-dependencies requires replay or snapshot timing')
@@ -101,7 +129,14 @@ def main():
     write(a.output / 'imported.json', model)
     if a.event_ir:
         result = compile_event_ir(model, hardware, budget=a.wire_budget, width=a.event_width,
-                                  emit_dependencies=a.event_dependencies)
+                                  emit_dependencies=a.event_dependencies, emit_outputs=a.event_outputs)
+    elif a.event_graph:
+        if a.model.suffix == '.onnx':
+            from canonicalize import canonicalize
+
+            model = canonicalize(model)
+        result = compile_event_graph(model, hardware, budget=a.wire_budget, width=a.event_width,
+                                     emit_dependencies=a.event_dependencies)
     else:
         coverage = audit(model, hardware)
         write(a.output / 'coverage.json', coverage)
@@ -116,10 +151,11 @@ def main():
     result['seconds'] = time.monotonic() - began
     result['input_sha256'] = {str(v): hashlib.sha256(v.read_bytes()).hexdigest() for v in (a.model, a.hardware)}
     result['objective'] = ('minimize elapsed ticks; then external bytes and static net cost; optional hard wire budget'
-                           if a.event_ir else
+                           if a.event_ir or a.event_graph else
                            'minimize elapsed ticks; then external words and static net cost; optional hard wire budget')
     write(a.output / 'result.json', result)
-    print(json.dumps({k: v for k, v in result.items() if k not in ('graph', 'plan', 'phase_dependencies')},
+    print(json.dumps({k: v for k, v in result.items()
+                      if k not in ('graph', 'plan', 'phase_dependencies', 'outputs', 'event_ir', 'resolved_hardware')},
                      ensure_ascii=False))
 
 

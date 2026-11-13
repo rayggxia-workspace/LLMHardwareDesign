@@ -40,8 +40,11 @@
   184,927 页和 8,273,243 次 CALL；同包一页 TLM 跑通，141 笔 DDR 请求均回调，
   无 token 退休。两项用于验证消费接口，尚无新 Algo1 计划贯通到该请求包的证据。
 
-下一步把快照分支的阶段依赖和 #257 的控制 IR、线束需求合流。用同一个已选计划驱动
-算法 2 和原生链接。先验证能独立确认的 native tile，再跑完整 LLM 图。产品计时以真实
+快照分支接入了 #257 的控制、线束发射器和基于硬件配方的图 lowering。
+`run.py MODEL HARDWARE OUT --event-graph` 从类型化图生成计划、控制和线束需求。
+本轮以两节点图走完新编译路径与算法 2 入口。内部阶段的串行配方可以使用，任意阶段 DAG
+仍待合流。完成级等待可导出，无法由命令 ABI 表达的阶段边会被拒绝。下一步接入
+完整图配方、实际底座准入和原生链接，验证能独立确认的 native tile。产品计时以真实
 权重、自产 KV、合法程序、联合事务和 token 实际退休为验收。参考
 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)、
 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260)。
@@ -59,6 +62,7 @@
 | 109010 | 当前算法 2 接口回放，`route-current-u.json` | `22a17a3e05d779a3c1471d589266d9aa30e8ac90b7371436518411ec7a7c444b` |
 | 108968 | #260 母控页和 CALL 读取检查 | `3898d96c3dd1e988a9cb8d95dba0d7070ffce6dadbb2ff2865fafd100a97c219` |
 | 109009 | #260 一页回放，`execution.json` | `cdec2acc56348b638c1e8cfb269d5e1a5b647590008e567f2135360aacd419ca` |
+| 109035 | 类型化图经快照编译和当前算法 2 消费、控制 IR 正负对照 | `111708d475d995f7cc09643b35064f66399ac3145bd9b76706cef1b1a5d1f22a` |
 
 以上作业均 `COMPLETED 0:0`。一页 TLM 的早期启动失败（108995、108998、109006）
 已保留，分别修正了 Slurm 下的路径和归档依赖。

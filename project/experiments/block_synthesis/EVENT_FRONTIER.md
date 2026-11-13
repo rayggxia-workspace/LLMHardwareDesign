@@ -33,6 +33,8 @@ python project/experiments/block_synthesis/run.py MODEL_IR.json HARDWARE.json NE
 生产命令及其完成阶段、消费命令及其接纳阶段。命令内部的阶段顺序由登记的服务保证。
 `completion_only_blockers` 列出只暴露命令发出和终止的 ABI 无法表达的边。列表为空时，
 仍须验证目标指令、实际地址、完成事件与硬件服务。输出中的周期用于比较 Algo1 计划。
+加 `--event-outputs` 则输出同一已验证计划的控制 IR 和线束需求。只支持命令完成的
+控制 IR 遇到无法表达的阶段边会报出缺口。原生编码和实际端点验证由各自后端负责。
 
 [tile 交接、共享 DDR 和两个后端的远程对照](../../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md)
 

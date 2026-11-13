@@ -86,7 +86,8 @@ def handoff(policy):
     if policy == 'tile':
         for i, consumer in enumerate(consumers):
             consumer['event_after'] = [{'task': 'producer', 'from': [i, 'publish'], 'to': [0, 'stage']}]
-    result = compile_event_ir({'tasks': [*producers, *consumers]}, hw, emit_dependencies=True)
+    model = {'tasks': [*producers, *consumers]}
+    result = compile_event_ir(model, hw, emit_dependencies=True, emit_outputs=policy == 'command')
     plan = result['plan']
     rows = {row['id']: row for row in plan['tasks']}
     operations = result['phase_dependencies']['operations']
@@ -114,9 +115,30 @@ def handoff(policy):
                for tick in boundaries)
     if len(blockers) != {'tile': 2, 'barrier': 2, 'command': 0}[policy]:
         raise ValueError(f'unexpected command ABI blockers: {blockers}')
-    return {'ticks': plan['makespan'], 'peak_live_tile_bytes': peak,
-            'wait_owner': 'Algo1 dependency', 'tiles': tiles,
-            'completion_only_blockers': blockers}
+    report = {'ticks': plan['makespan'], 'peak_live_tile_bytes': peak,
+              'wait_owner': 'Algo1 dependency', 'tiles': tiles,
+              'completion_only_blockers': blockers}
+    if policy == 'command':
+        outputs = result['outputs']
+        dispatch = outputs['program']['mother'][:-1]
+        if outputs['program']['source'] != outputs['wiring']['source']:
+            raise ValueError('control and wiring outputs do not share provenance')
+        by_task = {row['task_id']: row for row in dispatch}
+        for i in range(2):
+            if by_task[f'consumer-{i}']['wait_for'] != [by_task[f'producer-{i}']['sequence']]:
+                raise ValueError('control IR lost its tile completion dependency')
+        report['control_dispatch'] = [{'task': row['task_id'], 'wait_for': row['wait_for']} for row in dispatch]
+    else:
+        from event_deploy import emit
+
+        try:
+            emit(model['tasks'], hw, (), plan)
+        except ValueError as error:
+            if 'command completion cannot preserve' not in str(error):
+                raise
+        else:
+            raise ValueError('control IR silently replaced a phase wait')
+    return report
 
 
 def placement(pressure):
