@@ -683,3 +683,33 @@ RESERVE 和 RECEIVE。两端局控可同组发起，U 的地址预留生效后�
 | `ddr-ingress.json` | `4aca2d8a8c713613fbcab7802549055958984aad4bd17794ad2a48782ad87d1a` |
 | `control-110079/report.json` | `abb68bd9d5d6e8be0d4165b6f857a5c7299d71b6cdbefd713212dd90ce68b46f` |
 | `control-110079/stored-link-pm-manifest.json` | `f1b06533f90579f149d33367760de7a00852ac51ab84d0ac52b1bf6d5fffce43` |
+
+## 从已链接的查表指令生成运行时索引表
+
+`event_request_ingress.py` 依据选中的 Gather、已链接 CALL 的内容和母控页位置生成 #260
+的 `input-index.tsv`。校验计划身份、目标、字节地址、表范围、CRC 和目的端写确认语义。
+Prompt 指向真实 DDR burst 和索引所在 lane。Decode 记录上一 token 的退休来源。
+`export_native_tlm_pages.py` 可直接封存单页或多页 prompt 片段的索引记录。
+整包回归由每个封存 stage 的 proof 找到其母控页，每项均与整包内的 CALL 和描述符核对。
+
+远端 110128 从 639 份已链接的 Gather 重建索引表，与参考整包逐字节相同。
+其中 512 条来自 DDR prompt，127 条来自前一次退休。偏移、计划身份、CRC、输入来源及重复页
+负例均拒绝。110127 让旧拓扑的 #260 后端执行了新导出的首个 prompt 页，
+收到 141 次实际 DDR 回调，落地 4 笔输入索引写和 512 笔结果写，结果与实际权重镜像的 8 KiB
+行一致。其余索引记录验证覆盖的是封包对应关系，尚无该次整包的新退休记录。
+远端 110129 的项目结构和 413 项回归通过。
+
+110130 对同一候选底座的 v45 DMA 与已声明的 M10 接点做静态核对。现有合同使用客户 0、1、2、
+9、10、11。逻辑客户 3 至 8 支持按 128 B 对齐的两拍请求，当前端点目录缺这些客户的 684 个
+请求、返回及关闭信号成员。真实 8 KiB 权重行可以按 64 个双拍记录发出，在两个通道各 32 条。
+就支持两拍的端点读取单个 prompt burst 时还会读相邻 64 B。没有将这些逻辑客户选入产品计划，
+地址产生、端点引出和 U.S 写确认需要同一个实物服务合同。
+
+远程目录为 `ingress-route-iN0LbH/request-ingress-6BvrlA`。
+
+| 文件 | SHA-256 |
+| --- | --- |
+| `receipt-110128/report.json` | `f25879ea94c8615511665f6fc0eec03c66f2bf8c503a8f0c5b7197d6f11ce41c` |
+| `timed-110127/report.json` | `37d744fff2f3ebf1ac51561f2cc9e07a07371dd3c275d7198419a9951a13f266` |
+| `regression-110129.log` | `0b38944e4bcf598f86be19e01da45ade2a5b995b5aa3ac3cb7b82b5b01dd58a0` |
+| `lanes-110130.json` | `7b9f2b5745e3de7ed46b916e90b4b07bae880efb42858137ade87be15da95147` |

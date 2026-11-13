@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 从已链接 Gather 生成 #260 的运行时索引记录。639 条记录与旧整包逐字节一致，首个 prompt 页用原后端执行并核对实际 8 KiB 行。候选底座的 v45 DMA 存在可用协议的逻辑客户，但该客户的 M10 接点和 U.S 确认路径待实现。见[输入索引回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#从已链接的查表指令生成运行时索引表)。
+
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 将 C/U 的 512 次存储字搬运编成两端局控 PM 片段并独立读回。DDR 端点审计定位到 C/U 尚缺运行时索引读入路径，固定 #260 仍需可常驻的局控服务及整图封包。见[局控与索引入口回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#cu-存储链路的局控编码与动态查表入口)。
 
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 为 C/U 已存储字搬运增加 16 B 合同。真实端点上的 512 条分片搬运生成同源控制 IR 和 Algo2 输入，后者独立读回。远端 413 项回归通过。运行时 DDR 行供数和整图 #260 仍待打通。见[远端回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#c0-到-u0-的逐字提交与试布回执)。
