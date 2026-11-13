@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 把原生命令所需的数据面通路纳入 Algo1 候选准入。109781 用实际端点清单复核三 P 首层方案并报告九个缺失需求，109758 的细网格试布布通 27/730 根控制网。完整数据通路、联合布线和原生整图执行待验证。详见[同计划准入回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#algo1-原生命令的数据面准入)。
+
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加同计划的原生编码与 #260 指令页交接。109741 在 main Block V2 加交换器的候选摆位上，用同一方案产出 730 根待布控制网，#260 读取器核对 192 条 CALL 和 64 组 WAIT，三 P 原生镜像与归档字节一致。109728 的 410 项回归通过。当前验证范围是控制端点与指令页，数据面和严格整图执行仍待接入。见[原生交接回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#同一计划交给-algo2-与-260-指令页读取器)。
 
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 接入现有 Algo2 的试布回执。Block V2 的 C0→U0 实际端点用例中，Algo1 将失败物理网追溯到对应逻辑需求并重搜；该用例无替代输入路径。另有替代搬运路径的回归验证重新生成同计划指令和线束。见[试布回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#algo2-试布回执与-algo1-重选)。

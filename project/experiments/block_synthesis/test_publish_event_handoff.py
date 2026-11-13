@@ -120,6 +120,27 @@ class RouteAdmissionTest(unittest.TestCase):
         self.assertEqual(result['plan']['tasks'][0]['binding'], 'enabled')
         self.assertEqual(result['outputs']['program']['locals']['lane0'][0]['service'], 'block-source')
         self.assertEqual(result['plan']['nets'], ['control'])
+        target['routes'][0]['requires'] = ['dma']
+        qualified = compile_event_ir(model, arch, route_base=base, route_scope='interface')
+        self.assertEqual(qualified['status'], 'no_plan_in_bounded_search')
+        self.assertIn("missing physical native dispatch demands ['dma']",
+                      qualified['native_dispatch_issues']['services']['block-source'])
+        arch['nets']['dma'] = {'cost': 1, 'signals': [
+            {'name': 'data', 'width': 1, 'driver': 'memory/out', 'sinks': ['lane0/memory-in']},
+        ]}
+        for pin, role in (('memory/out', 'driver'), ('lane0/memory-in', 'sink')):
+            base['endpoints'][pin] = {
+                'odb_term': pin, 'role': role, 'native_net': pin,
+                'm10_shapes': [{'layer': 'M10', 'object': pin, 'rect_dbu': [0, 0, 2, 2]}],
+            }
+        qualified = compile_event_ir(model, arch, route_base=base, route_scope='interface')
+        self.assertEqual(qualified['plan']['nets'], ['dma'])
+        self.assertEqual(qualified['outputs']['wiring']['users']['dma'][0]['event_id'], 0)
+        self.assertEqual(compile_event_ir(model, arch, route_base=base)['plan']['nets'], ['control', 'dma'])
+        target['routes'][0]['requires'] = ['dma', 'dma']
+        with self.assertRaisesRegex(ValueError, 'invalid native dispatch route requirements'):
+            compile_event_ir(model, arch, route_base=base)
+        del target['routes'][0]['requires']
         self.assertEqual(compile_event_ir(model, arch, route_base=base, route_scope='interface')
                          ['plan']['tasks'][0]['binding'], 'enabled')
         denied = {'schema': 3, 'abi': 7, 'opcode': 2, 'reason': 'descriptor header mismatch'}

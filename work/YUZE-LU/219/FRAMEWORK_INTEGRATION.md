@@ -452,3 +452,40 @@ SHA-256 为 `da71d1ab752e973bb1c94265f63309020f68c8e0ab7bcd6c0416c19094870fa4`�
 物理后续使用同一份输入测试细接入网格。样本的 WAIT 以整个 scope 的结束为单位。
 scope 内的 K128 输入窗口交付、权重 DMA、Gate/Up 到 Mid 的阶段协作、主控装载和确认网络
 还须在 main 共同底座上落地；整图服务、KV 追加及真实 token 退休仍需完整 #260 请求执行。
+
+
+## Algo1 原生命令的数据面准入
+
+`native_service_routes.targets[].routes[].requires` 按目标和命令签名声明必要的物理需求 ID。
+Algo1 在选候选之前核对需求及其依赖的端点。选中服务时，把相关需求计入同一方案的
+线束并集。缺少端点时，服务给出具体的需求 ID。端点齐全进入试布和后续物理验收。
+
+远端 109781 用 109741 的真实首层三 P 方案复查同一候选摆位。以 main P2545 的 DEF
+和 ODB 散列、原生 DMA 端点清单及逐位逻辑接口对照九个需求包。每个 P 有 678 位描述符、
+684 位权重和 86 位 FENCE。P 侧描述符已有 647 个组级 M10 端点，另外 31 个通过
+同一原生导体的别名接入。每个 P 仍有 770 位权重和 FENCE 需要从原生叶端点引到组边界。
+候选中缺 DMA 实例和 4,344 个对应的 DMA 侧接点，另有 18 项常量连接待落实。
+加入这些真实需求后，Algo1 拒绝该候选并列出九个缺项。需求仍处于端点绑定阶段。
+
+复现入口 [audit_native_dma_prerequisites.py](audit_native_dma_prerequisites.py)。
+依次输入远端 `native-same-plan-109741`、`../joint-ddr-4C8sHe`、原联合摆位的
+`packet-pdma-contract.json` 及新输出目录。前两个目录相对于远端编译目录
+`framework-r11-CatJ8r`。第三份输入位于
+`/public/home/yuzelu/project-circuit/issue185-joint-packet-dma-bound-20261113-01/`。
+输出 `base.json`、`hardware.json` 和 `compile.json` 保留搜索诊断和逐位需求。
+
+细网格试布 109758 对 109741 的 730 根控制网布通 27 根，按研究几何规则核对。
+其余 174 根未找到网格接入，521 根耗尽扩展预算，8 根在本次搜索中未找到路径。
+这份回执仍待产品级布线和验证。旧拓扑上的严格 #260 运行 109409 独立推进。
+
+| 远端产物，位于 `framework-r11-CatJ8r/` | SHA-256 |
+| --- | --- |
+| `native-dma-prerequisites-109781/report.json` | `1326876127ddbe6c9937c60955946538cbbd1ba1219e45bc7a7eda8a7c93e9e8` |
+| `native-dma-prerequisites-109781/compile.json` | `fd2065623339a9641d3277c1ce2370b8e9b26cb6d976e19e6bbac3af2742e757` |
+| `native-route-109758.json` | `9eaed1c3c78504d2030afeb18d5a5770b88df3965629743fc5052499178acd9f` |
+
+远端 109782 通过全部 410 项回归。日志 SHA-256 为
+`bf907ee4136057850f5c66a3ba30804a5e373fa33b0faf294f71ae9c25632200`。
+通用准入回归覆盖缺需求、真实端点闭合后重新准入，以及所选命令在同计划输出中
+登记需求。现有候选摆位无独立 DMA 宏的轴对齐矩形空间。同一 main P 版本的下一步是
+核对 DMA 有效物理接点和组边界逃线，再验证一版带足够空间的共同摆位。

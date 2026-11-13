@@ -42,6 +42,9 @@ def qualify_native_dispatch(hardware, base):
     inventory = base.get('native_service_routes')
     contracts = resolved.get('native_provider_contracts', {})
     available = {}
+    demands = hardware['nets']
+    bound_demands = {}
+    catalog = None
     rejected = {}
     if inventory is not None:
         if (inventory.get('schema') != 'native-rtl-target-routes/1'
@@ -77,11 +80,37 @@ def qualify_native_dispatch(hardware, base):
                 if (key in enabled or key in denied or not isinstance(completions, (list, tuple)) or not completions
                         or any(not isinstance(terminal, str) or not terminal for terminal in completions)):
                     raise ValueError(f'{name}: invalid or duplicate native dispatch route')
-                enabled[key] = frozenset(completions)
+                needs = route.get('requires', ())
+                if (not isinstance(needs, (list, tuple))
+                        or any(not isinstance(net, str) or not net for net in needs)
+                        or len(set(needs)) != len(needs)):
+                    raise ValueError(f'{name}: invalid native dispatch route requirements')
+                enabled[key] = frozenset(completions), frozenset(needs)
             available[name] = enabled
             rejected[name] = denied
 
+    def missing_demands(needs):
+        nonlocal catalog
+        if not needs:
+            return set()
+        from event_deploy import route_catalog
+        from route_contract import elaborate
+
+        if catalog is None:
+            catalog = route_catalog(hardware)
+        missing = set()
+        for net in sorted(needs):
+            if net not in bound_demands:
+                bound_demands[net] = (net in demands and elaborate(
+                    {net: []}, catalog, base, {})['status'] == 'endpoint_binding_complete')
+            if not bound_demands[net]:
+                missing.add(net)
+        return missing
+
     def check(record, targets, completion):
+        from event_deploy import demand_closure
+
+        needs = set()
         if not targets:
             return 'no native command target'
         for name in sorted(targets):
@@ -104,10 +133,19 @@ def qualify_native_dispatch(hardware, base):
                 return f'{name}: no physical service route for signatures {sorted(missing)}'
             for call in calls:
                 key = signature(call)
-                if call['completion'] not in available[name][key]:
+                completions, prerequisites = available[name][key]
+                if call['completion'] not in completions:
                     return f'{name}: no physical completion {call["completion"]!r} for {key}'
+                needs.update(prerequisites)
             if calls[-1]['completion'] != completion:
                 return f'{name}: final native call does not provide {completion!r}'
+        missing = missing_demands(needs)
+        if missing:
+            return f'missing physical native dispatch demands {sorted(missing)}'
+        if needs and needs - demand_closure(demands, record.get('nets', ())):
+            # A selected provider must emit its auxiliary data-plane connections
+            # as part of the same plan; make them actual search requirements.
+            record['nets'] = sorted(set(record.get('nets', ())) | needs)
         return None
 
     issues = {'routes': {}, 'services': {}}
