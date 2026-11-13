@@ -1,0 +1,156 @@
+"""Publish verified Algo1 events and source-bound images for Algo2."""
+import argparse
+from collections import defaultdict
+import hashlib
+import json
+from pathlib import Path
+import sys
+
+from route_contract import digest, elaborate, read_base, require, verify_requirements
+from verify_cover_frontier import project, verify
+
+
+SCHEMA = 'algo1-handoff/1'
+
+
+def selection(model, hardware, plan, wire_budget):
+    """Identify binding, physical service and move demand users."""
+    tasks, covers = model['tasks'], model.get('covers', ())
+    verify(tasks, hardware, covers, plan, wire_budget=wire_budget)
+    actions, _ = project(tasks, covers, plan)
+    users = defaultdict(list)
+    spec = hardware['event_model']
+    for action, row in zip(actions, plan['tasks']):
+        (binding,) = action['bindings']
+        observed = set(binding['nets'])
+        for event in row['evaluation']['events']:
+            records = spec['routes'] if event['kind'] == 'move' else spec['services']
+            key = 'route' if event['kind'] == 'move' else 'service'
+            observed.update(records[event[key]].get('nets', ()))
+        for name in sorted(observed):
+            users[name].append({'task_id': row['id'], 'binding_id': row['binding']})
+    require(set(users) == set(plan['nets']), 'verified schedule and extracted static nets differ')
+    for name, net in hardware['nets'].items():
+        if net.get('fixed'):
+            users.setdefault(name, [])
+    return dict(users)
+
+
+def source_identity(model, hardware, plan):
+    return {'ir_sha256': digest(model), 'hardware_sha256': digest(hardware),
+            'plan_sha256': digest(plan)}
+
+
+def program_images(manifest, source, hardware, artifact_root):
+    """Bind binary bytes from a target encoder to its exact schedule and ABI."""
+    require(manifest.get('schema_version') == 'algo1-control-images/1', 'unknown control-image manifest')
+    require(manifest.get('source') == source, 'control images belong to a different schedule or hardware')
+    target = hardware.get('program_target', {})
+    controllers = target.get('controllers', {})
+    topology = target.get('topology_id')
+    require(bool(topology) and manifest.get('topology_id') == topology, 'control topology identity differs')
+    require(sum(row.get('level') == 'mother' for row in controllers.values()) == 1
+            and any(row.get('level') == 'local' for row in controllers.values()),
+            'product requires a mother and local control target')
+    images = {}
+    used_paths = set()
+    root = artifact_root.resolve()
+    for image in manifest['images']:
+        identity = image['controller']
+        require(identity in controllers and identity not in images, 'duplicate or unknown control image target')
+        target_controller = controllers[identity]
+        require(image['level'] == target_controller['level'] in {'mother', 'local'}
+                and image['abi'] == target_controller['abi'], 'control image ABI differs')
+        file_name = Path(image['path'])
+        path = (root / file_name).resolve()
+        require(not file_name.is_absolute() and '..' not in file_name.parts and path.is_relative_to(root)
+                and path.is_file() and path not in used_paths, 'invalid or reused image path')
+        payload = path.read_bytes()
+        require(payload and len(payload) == image['bytes']
+                and hashlib.sha256(payload).hexdigest() == image['sha256'],
+                'control image bytes differ')
+        capacity = target_controller.get('capacity_bytes')
+        require(capacity is None or len(payload) <= capacity, 'control image exceeds target capacity')
+        used_paths.add(path)
+        images[identity] = dict(image, payload_hex=payload.hex())
+    require(images.keys() == controllers.keys(), 'incomplete target controller images')
+    return [images[identity] for identity in sorted(images)]
+
+
+def build(model, hardware, plan, catalog, base, rules, bind_request, *,
+          route_scope='interface', manifest=None, artifact_root=None, wire_budget=None):
+    require(route_scope in {'interface', 'product'}, 'unknown handoff scope')
+    require(plan.get('status') == 'planned', 'handoff requires a planned event schedule')
+    source = source_identity(model, hardware, plan)
+    users = selection(model, hardware, plan, wire_budget)
+    request = elaborate(users, catalog, base, source)
+    verify_requirements(request, users, catalog, base, source)
+    require(not request['unresolved'], 'unbound physical demands: ' + str(request['unresolved']))
+    product = route_scope == 'product'
+    if product:
+        require(base['state'] == 'frozen', 'product requires frozen native views')
+        require({'odb', 'def', 'gds', 'netlist', 'spef'} <= base['views'].keys(),
+                'product requires all native physical views')
+        require(manifest is not None and artifact_root is not None, 'product requires source-bound control images')
+        images = program_images(manifest, source, hardware, artifact_root)
+    else:
+        require(manifest is None, 'interface handoff consumes event IR only')
+        images = []
+    spec = bind_request(request, base, rules['technology'], rules.get('obstacles', []))
+    program = {'schema_version': SCHEMA, 'source': source,
+               'kind': 'target_control_images' if product else 'scheduled_event_ir',
+               'decisions': plan['tasks'],
+               'topology_id': hardware.get('program_target', {}).get('topology_id'),
+               'images': images, 'native_execution_qualified': False}
+    wiring = {'schema_version': SCHEMA, 'source': source, 'members': request['members'],
+              'users': request['users'], 'unresolved': []}
+    receipt = {'schema_version': SCHEMA, 'route_scope': route_scope,
+               'status': 'ready_for_algorithm_2' if product else 'interface_ready_for_algorithm_2',
+               'unresolved': [], 'source': source, 'base_sha256': request['base_sha256'],
+               'program_sha256': digest(program), 'wiring_sha256': digest(wiring),
+               'request_sha256': request['sha256'], 'router_input_sha256': digest(spec),
+               'coverage': {'new_signal_nets': sum(bool(net['sinks']) for net in spec['nets']),
+                            'static_bit_members': len(request['members']), 'control_images': len(images)},
+               'physical_qualified': False}
+    return {'handoff': receipt, 'program': program, 'wiring': wiring,
+            'requirements': request, 'algorithm2-input': spec}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for name in ('event_ir', 'hardware', 'result', 'catalog', 'base', 'rules', 'output'):
+        parser.add_argument(name, type=Path)
+    parser.add_argument('--scope', choices=('interface', 'product'), default='interface')
+    parser.add_argument('--control-images', type=Path)
+    parser.add_argument('--wire-budget', type=int)
+    parser.add_argument('--upper-router', type=Path,
+                        default=Path(__file__).resolve().parents[1] / 'upper_router',
+                        help='directory containing the Algorithm 2 adapter.py')
+    args = parser.parse_args()
+    if not (args.upper_router / 'adapter.py').is_file():
+        parser.error('Algorithm 2 adapter.py is missing; pass --upper-router from the router checkout')
+    sys.path.insert(0, str(args.upper_router.resolve()))
+    from adapter import bind_request
+
+    def load(path):
+        return json.loads(path.read_text(encoding='utf-8'))
+
+    try:
+        model, hardware, result = (load(path) for path in (args.event_ir, args.hardware, args.result))
+        require(result.get('status') == 'planned', 'handoff requires a planned event schedule')
+        base = read_base(args.base)
+        manifest = load(args.control_images) if args.control_images else None
+        files = build(model, hardware, result['plan'], load(args.catalog), base, load(args.rules), bind_request,
+                      route_scope=args.scope, manifest=manifest,
+                      artifact_root=args.control_images.parent if manifest is not None else None,
+                      wire_budget=args.wire_budget)
+        args.output.mkdir(exist_ok=False)
+        for name, data in files.items():
+            (args.output / (name + '.json')).write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n',
+                                                         encoding='utf-8')
+    except (OSError, KeyError, ValueError) as error:
+        parser.exit(2, str(error) + '\n')
+
+
+if __name__ == '__main__':
+    main()

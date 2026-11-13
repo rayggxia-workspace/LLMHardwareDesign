@@ -28,6 +28,19 @@ python project/experiments/block_synthesis/run.py MODEL_IR.json HARDWARE.json NE
 
 宽度 1 的严格贪心对照使用单任务动作。若要评估复合动作，应另建立每步只选择一个后继的对照。比较时固定硬件配置、候选池、输入和连接预算。按完成时间、DDR 总字节、静态网代价依次比较。对比新旧成本模型时重放同一动作序列，并分开记录执行能力与搜索策略的收益。
 
+## 交给上层布线
+
+与 #227 的接口目录、底座清单及 #259 的 `upper_router` 同树运行。输入使用本轮事件排程的 `result.json`，并提供生成它的原事件 IR、硬件清单、接口目录、候选／冻结底座和布线规则。发布器重跑独立事件验证器，从每个选中的执行方式、原生阶段、实际搬运以及固定连接重建静态需求。依赖的预约、确认和控制信号由接口目录展开。每个物理位由 #227 的真实端点合同核对。
+
+```text
+python project/experiments/block_synthesis/publish_event_handoff.py EVENT_IR.json HARDWARE.json result.json CATALOG.json BASE.json RULES.json handoff
+python project/experiments/upper_router/run.py handoff/algorithm2-input.json routes.json --handoff handoff
+```
+
+如果两份 PR 分开检出，给发布器传入 `--upper-router`，指向 Algo2 检出中的 `project/experiments/upper_router`。
+
+接口试验交付事件程序、逐位连接、绑定网表和路由输入，由同一份排程指纹关联。产品调用加 `--scope product --control-images IMAGE_MANIFEST.json`，必须具有冻结底座的 ODB/DEF/GDS/netlist/SPEF、硬件的 `program_target.controllers` 和同一 topology ID 下完整的目标 ISA 镜像。镜像清单 schema 为 `algo1-control-images/1`，其 `source` 包含 IR、硬件和排程 SHA-256，每项包含 `controller/level/abi/path/bytes/sha256`，路径相对镜像清单。发布结果包含已校验的镜像字节。编码、程序回放和联合物理验收各有独立证据。尚缺目标 ISA 编码的事件排程可走接口试验。
+
 ## Qwen2.5-3B 三 P FFN 回放
 
 复用 #251 两套已归档 RTL 日志，按已登记的 SHA-256 验证归档并读取同一试验的描述符与原始 `K_PROFILE`。每例按实际三 P 并行的 scope 边界回放 928 次 Gate/Up 和 516 次 Down 的 K128 准备、COPY ACK、源窗口释放。X 的 16 个 A16 分片沿用原 U.S 地址，86 个 Mid 分片按 29／29／28 留在原三个 P.S，Down 的 512 字结果按描述符留在各 P.S。两个阶段报告里的计时边界余量单列入各自的末尾；阶段内使用真实 COPY ACK 时间差。
