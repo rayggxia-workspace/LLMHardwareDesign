@@ -65,7 +65,8 @@ def typed_route(src, dst, client, port):
                        'hold_claims': {}}}
 
 
-def problem(geometry, *, tile, write_release=None, write_channel=0, post_write_work=0):
+def problem(geometry, *, tile, write_release=None, write_channel=0, post_write_work=0,
+            append_start=None, window_past=None):
     kv_heads, group, past, dimension = geometry
     row = dimension * 4
     if (tile < 1 or row % 128 or write_channel not in (0, 1) or post_write_work < 0
@@ -74,6 +75,7 @@ def problem(geometry, *, tile, write_release=None, write_channel=0, post_write_w
     sites = {name: {'words': 1024, 'bytes': 16384} for name in ('P0', 'P1', 'P2', 'C', 'U')}
     resources = dict.fromkeys(('dot', 'norm', 'acc', 'operand-context', *(site + '.S' for site in sites)), 1)
     windows, sizes, addresses, resident, services = {}, {}, {}, {}, {}
+    historical = set()
     used = dict.fromkeys(sites, 0)
 
     def allocate(window, site, size):
@@ -111,10 +113,22 @@ def problem(geometry, *, tile, write_release=None, write_channel=0, post_write_w
     for slot in range(2):
         allocate(f'cache-{slot}', 'P0', row * tile)
         allocate(f'pv-state-{slot}', f'P{slot + 1}', accumulator_bytes)
-    for window in ('query', 'current-k', 'current-v'):
-        allocate(window, 'P0', row * (group if window == 'query' else 1))
-    chunks = [(start, min(tile, past - start)) for start in range(0, past, tile)] + [(past, 1)]
-    for i, (_, count) in enumerate(chunks):
+    separate = append_start is not None
+    base = past if append_start is None else append_start
+    maximum = past if window_past is None else window_past
+    if not 0 < base <= past <= maximum:
+        raise ValueError('invalid history allocation')
+
+    def current(name, head):
+        return f'{name}-h{head}' if separate and name != 'query' else name
+
+    allocate('query', 'P0', row * group)
+    for name in ('current-k', 'current-v'):
+        for head in range(kv_heads if separate else 1):
+            allocate(current(name, head), 'P0', row)
+    base_chunks = [(start, min(tile, base - start)) for start in range(0, base, tile)]
+    chunks = base_chunks + [(start, 1) for start in range(base, past + 1)]
+    for i, (_, count) in enumerate(base_chunks + [(start, 1) for start in range(base, maximum + 1)]):
         size = count * group * 4
         for name, site in (('score', 'C'), ('prob', 'U')):
             allocate(f'{name}-{i}', site if used[site] + size <= sites[site]['bytes'] else 'P0', size)
@@ -129,30 +143,35 @@ def problem(geometry, *, tile, write_release=None, write_channel=0, post_write_w
     stages = []
     results = []
     stream_base = 0x200000
-    stream_stride = (past * row + 4095) // 4096 * 4096
+    stream_stride = ((maximum + int(separate)) * row + 4095) // 4096 * 4096
     for head in range(kv_heads):
         for name in ('query', 'current-k', 'current-v'):
             value = f'{name}-{head}'
-            sizes[value] = windows[name]['bytes']
+            sizes[value] = windows[current(name, head)]['bytes']
         if head == 0:
-            resident.update({name: f'{name}-{head}' for name in ('query', 'current-k', 'current-v')})
+            resident.update({current(name, head): f'{name}-{head}' for name in ('query', 'current-k', 'current-v')})
         else:
             # Projection and RoPE delivery are outside this comparison.
             stages.append(stage(f'provide-{head}', 1, ('P0.S',),
-                                outputs={name: f'{name}-{head}' for name in ('query', 'current-k', 'current-v')}))
+                                outputs={current(name, head): f'{name}-{head}'
+                                         for name in ('query', 'current-k', 'current-v')}))
         scores, probabilities = {}, {}
         for kind in ('k', 'v'):
             previous = {}
             for i, (start, count) in enumerate(chunks):
                 value = f'h{head}-{kind}-{start}'
                 if start == past:
-                    window = 'current-' + kind
-                    value = f'{window}-{head}'
+                    window = current('current-' + kind, head)
+                    value = f'current-{kind}-{head}'
+                    if separate:
+                        stream = 2 * head + (kind == 'v')
+                        addresses[value] = stream_base + stream * stream_stride + start * row
                 else:
                     window = f'cache-{i % 2}'
                     stream = 2 * head + (kind == 'v')
                     addresses[value] = stream_base + stream * stream_stride + start * row
                     sizes[value] = count * row
+                    historical.add(value)
                 inputs = {window: value}
                 if kind == 'k':
                     score = f'h{head}-score-{i}'
@@ -203,7 +222,7 @@ def problem(geometry, *, tile, write_release=None, write_channel=0, post_write_w
             successor = stage('write-dependent-work', post_write_work)
             tasks.append({'id': 'write-dependent-work', 'after': ['older-write'],
                           'bindings': [binding('write-dependent-work', [successor])]})
-    initial = sorted(addresses.keys() - {'older-write'})
+    initial = sorted(historical)
     return {'tasks': tasks}, {'sites': sites, 'resources': resources, 'nets': {}, 'event_model': {
         'kind': 'qualified-event-model-v1', 'timing': 'replay', 'windows': windows,
         'value_bytes': sizes, 'initial_copies': resident, 'initial_backing': initial, 'live_out': results,
@@ -243,12 +262,7 @@ def main():
     cli.add_argument('--write-channel', type=int, default=0)
     cli.add_argument('--post-write-work', type=int, default=0)
     args = cli.parse_args()
-    raw = (args.receipt_directory / 'program.json').read_bytes()
-    digest = sha256(raw).hexdigest()
-    receipt = json.loads((args.receipt_directory / 'receipt.json').read_text(encoding='utf-8'))
-    if digest != receipt['program_sha256']:
-        raise ValueError('integer program differs from its receipt')
-    geometry = decode_geometry(json.loads(raw), args.layer)
+    geometry, digest = read_geometry(args.receipt_directory, args.layer)
     model, hardware = problem(geometry, tile=args.tile, write_release=args.write_release,
                               write_channel=args.write_channel, post_write_work=args.post_write_work)
     attention = next(task for task in model['tasks'] if task['id'] == 'attention')
@@ -271,6 +285,18 @@ def main():
                       'write_release': args.write_release, 'write_channel': args.write_channel,
                       'post_write_work': args.post_write_work,
                       'forced': candidates, 'selected': selected}, sort_keys=True))
+
+
+def read_geometry(directory, layer):
+    raw = (directory / 'program.json').read_bytes()
+    digest = sha256(raw).hexdigest()
+    receipt = json.loads((directory / 'receipt.json').read_text(encoding='utf-8'))
+    geometry = decode_geometry(json.loads(raw), layer)
+    if digest != receipt['program_sha256'] or not receipt['passed'] or receipt['query_tokens'] != 1:
+        raise ValueError('integer program differs from its qualified receipt')
+    if receipt['prefix_tokens'] != geometry[2]:
+        raise ValueError('integer receipt has the wrong prefix length')
+    return geometry, digest
 
 
 if __name__ == '__main__':

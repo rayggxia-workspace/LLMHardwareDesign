@@ -202,10 +202,12 @@ def retime(model, decisions, proposed, previous=None):
     return replace(proposed, copies=copies, backing=backing, calendars=calendars), rows, trace
 
 
-def delivery_at(model, decisions, candidate, previous, fixed_operations):
+def delivery_at(model, decisions, candidate, previous):
     """Trial an unfinished binding through its most recent transport choice."""
     operations = intents(model, (*decisions, candidate))
     trace = replay_branch(operations, model.capacity, previous=previous, issue_rates=model.issue_rates,
                           dma_profile=model.dma_profile, sram_profiles=model.sram_profiles,
                           save_checkpoints=False)
-    return max(grants[-1].end for grants in trace.grants[fixed_operations:])
+    # The route probe ends at the delivery being ranked. A prefetched LOAD
+    # may finish while an earlier compute stage in the same binding runs.
+    return trace.grants[-1][-1].end

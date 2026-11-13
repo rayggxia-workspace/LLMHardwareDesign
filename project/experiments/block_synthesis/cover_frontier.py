@@ -159,8 +159,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
                 def probe_delivery(events):
                     decision=Decision({'evaluation':{'events':events}, 'covers':a['covers'], 'id':a['id']},
                                       frozenset(a['after']), event_dependencies.get(a['covers'][0],()))
-                    fixed=len(s.replay_trace.grants) if s.replay_trace else 0
-                    return delivery_at(model,s.replay_decisions,decision,s.replay_trace,fixed)
+                    return delivery_at(model,s.replay_decisions,decision,s.replay_trace)
                 yield from transport_successors(model,draft_state,b,arrival,protected,transport_limit,
                                                 transport_counts,evaluate_candidate,rank,probe_delivery)
                 return

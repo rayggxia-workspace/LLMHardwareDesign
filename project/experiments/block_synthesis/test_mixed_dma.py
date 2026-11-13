@@ -3,7 +3,9 @@ import unittest
 
 from cover_frontier import search
 from dma_read import Profile, Read
+from event_execution import Model
 from event_replay import Operation, Phase, replay_branch
+from event_replay_plan import Decision, delivery_at
 from test_event_execution import binding, stage, task
 from verify_cover_frontier import verify
 
@@ -76,6 +78,34 @@ class MixedDmaTests(unittest.TestCase):
         self.assertLess(first['end'], store['end'])
         self.assertEqual(load['start'], store['end'])
         self.assertEqual(consumer['start'], load['end'])
+
+    def test_route_probe_scores_prefetch_ack_inside_longer_compute(self):
+        _, hw = mixed_problem()
+        spec = hw['event_model']
+        spec['live_out'] = []
+        spec['value_bytes']['weight'] = 128
+        spec['transport_limit'] = 2
+        spec['typed_dma']['client_ready'] = [(0, 44, 4095 ^ (1 << 4))]
+        slow = spec['routes'].pop('load-kv')
+        fast = deepcopy(slow)
+        fast['typed_dma']['client'] = 5
+        spec['routes'].update({'a-slow': slow, 'z-fast': fast})
+        spec['services']['compute'] = {'ticks': 90, 'claims': {}}
+        prefetched = {**stage('consume', inputs={'weight-slot': 'weight'}), 'prefetch': ['weight-slot']}
+        tasks = [task('attention', binding('prefetch', stage('compute'), prefetched))]
+        plan = search(tasks, hw, width=1)
+        verify(tasks, hw, (), plan)
+        compute, load, _ = plan['tasks'][0]['evaluation']['events']
+        self.assertLess(load['end'], compute['end'])
+        self.assertEqual(load['route'], 'z-fast')
+        model = Model(hw)
+        delivered = []
+        for route in ('a-slow', 'z-fast'):
+            row = {'id': 'attention', 'covers': ['attention'],
+                   'evaluation': {'events': [compute, {**load, 'route': route}]}}
+            delivered.append(delivery_at(model, (), Decision(row, frozenset()), None))
+        self.assertLess(delivered[1], delivered[0])
+        self.assertLess(delivered[0], compute['end'])
 
     def test_explicit_kv_persist_waits_for_ack_without_eviction(self):
         _, hw = mixed_problem()

@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)推进至第 43 轮。相邻两步使用同一物理历史与共享 FFN/KV 外存仲裁，允许旧 K 预取和 FFN 重叠，下一 token 的 Q/K/V 仍等待 FFN 完成。六份 #234 归档 KV 的五种分块逐位验证及 386 项远程回归通过。Attention 端口和计算时序仍待原生校准，整模型跨层与退休仍待接续。任务分支待汇入 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)。
+
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)推进至第 42 轮。事件 DP 支持对有 DDR 副本的历史窗口提前一阶段试排，保留发布确认、旧读者和有限 SRAM 约束。#234 两条序列的前三步完整历史逐地址对账。旧写上关键路径的四个模型对照中，宽度 8 切回串行并达到同池最佳，严格贪心仍选预取。385 项远程回归通过。后续需校准原生 Attention 服务并接入同层 FFN、跨 token 追加和下一层。任务分支待汇入 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)。
 
 2026-11-13 CST。#219 的[芯片状态重放](../../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)推进至第 41 轮。完整 FFN 进入事件 DP，读写共享后端队列、bank 行状态和返回方向。旧 KV 等 STORE 确认后才允许读回，候选可从运行中的 FFN 和 DDR 快照试排。383 项远程回归和 288 次混合快照对照通过，旧写的位置能使同一权重副本候选的排序反转。下一步把 #234 的连续整数 KV 交接和更多 Attention 阶段接入同一事件时间线。任务分支的改动待汇入 [PR #257](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/257)。
