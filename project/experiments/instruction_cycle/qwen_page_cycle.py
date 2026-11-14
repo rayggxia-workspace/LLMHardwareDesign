@@ -61,14 +61,16 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
         result = {"scope": "105530 generation 1 startup to third service accept", "mode": mode,
                   "core_cycle_origin": prefix["core_cycle_origin"], "prompt_start_one_based_edge": PROMPT_ACCEPT_EDGE,
                   "schedule": schedule, "ddr_events": ddr.events, "markers": markers}
-        if weight_records == K0_WEIGHT_RECORDS:
+        if weight_records in (K0_WEIGHT_RECORDS, 2 * K0_WEIGHT_RECORDS):
             from qwen_projection_front import first_weight_offer
             from qwen_projection_pipeline import run_k0
             front = first_weight_offer(call, descriptor["service_accept"], mode)
-            result["scope"] = "105530 generation 1 startup through the first Q K0 window"
+            through_k1 = weight_records == 2 * K0_WEIGHT_RECORDS
+            result["scope"] = "105530 generation 1 startup through the first Q " + ("K1" if through_k1 else "K0") + " window"
             result["projection_front"] = front
-            result["projection_k0"] = run_k0(call, front, fabric, mode)
-            result["projection_k0"].pop("next_window", None)
+            result["projection_k0"] = run_k0(call, front, fabric, mode, through_k1=through_k1)
+            if not through_k1:
+                result["projection_k0"].pop("next_window", None)
         elif weight_records:
             from qwen_projection_front import first_weight_offer
             from qwen_weight_record import read_weight_record
@@ -191,6 +193,8 @@ def main():
                             help="include the first P_SCOPE pair execution and the third drained weight record")
         weight.add_argument("--through-k0", dest="weight_records", action="store_const", const=K0_WEIGHT_RECORDS,
                             help="include all sixteen K0 P_SCOPE weight records")
+        weight.add_argument("--through-k1", dest="weight_records", action="store_const", const=2 * K0_WEIGHT_RECORDS,
+                            help="include the first two Q K128 windows and thirty-two weight records")
     args = parser.parse_args()
     if args.operation == "predict":
         result = predict(args.archive, args.binary.resolve(), args.config.resolve(), args.output.resolve(),
