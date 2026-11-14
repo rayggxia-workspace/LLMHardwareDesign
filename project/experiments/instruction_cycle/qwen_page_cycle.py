@@ -114,7 +114,7 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
                     if weight_records == THROUGH_QKV_PAGE:
                         retired = [row for row in markers if row["kind"] == "service_retire"]
                         markers.append(marker("page_commit", result["page_commit"], calls=len(retired), status=0,
-                                              read=sum(row["read"] for row in retired),
+                                              read=sum(row["read"] for row in retired) + len(retired) * DESCRIPTOR_BURSTS * 64,
                                               write=sum(row["write"] for row in retired)))
             elif not through_k1:
                 result["projection_k0"].pop("next_window", None)
