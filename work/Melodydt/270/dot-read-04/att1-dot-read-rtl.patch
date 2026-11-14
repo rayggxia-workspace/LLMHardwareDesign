@@ -1,0 +1,365 @@
+--- a/project/rtl/block_local_native/s128_attention_core_scope.sv
++++ b/project/rtl/block_local_native/s128_attention_core_scope.sv
+@@ -5,7 +5,8 @@
+     parameter bit PIPELINE_KV_WRITES=1'b0,
+     parameter bit SELECT_V_BEAT=1'b0,
+     parameter bit DDR_RESPONSE_QUEUE=1'b0,
+-    parameter bit OVERLAP_REFILL=1'b0
++    parameter bit OVERLAP_REFILL=1'b0,
++    parameter bit HALF_TILE=1'b0, parameter bit OVERLAP_DOT=1'b0
+ ) (
+     input logic clk,reset,
+     input logic service_valid,
+@@ -43,7 +44,7 @@
+     typedef enum logic [4:0] {
+         IDLE,K_REFILL,K_WAIT,DOT_BEGIN,DOT_BEGIN_WAIT,DOT_STEP,DOT_WAIT,
+         SCALE_READ,SCALE_READ_WAIT,SCALE_SEND,SCALE_RESULT,SCALE_WRITE,SCALE_ACK,
+-        N_START,N_WAIT,V_REFILL,V_WAIT,RECOVER,REPORT
++        N_START,N_WAIT,V_REFILL,V_WAIT,JOIN_TILE,RECOVER,REPORT
+     } state_t;
+     state_t state;
+     logic [15:0] count,first,filled;
+@@ -88,17 +89,37 @@
+     assign service_cancel_ready=!reset&&state!=IDLE&&state!=RECOVER&&state!=REPORT&&!cancelled;
+     assign service_done_valid=!reset&&state==REPORT;
+ 
++    logic current_bank, next_started, next_done, next_failed, dot_failed;
++    logic [31:0] expected_dot_tag;
++    localparam logic [15:0] K_TILE = HALF_TILE ? 16'd4 : 16'd8;
++    localparam logic [15:0] V_TILE = HALF_TILE ? 16'd64 : 16'd128;
+     wire [15:0] remaining=count-first;
+-    wire [3:0] qk_columns=remaining>=8 ? 4'd8 : remaining[3:0];
+-    wire [7:0] av_length=remaining>=128 ? 8'd128 : remaining[7:0];
++    wire [15:0] tile_advance=av ? V_TILE : K_TILE;
++    wire [15:0] next_first=first+tile_advance;
++    wire has_next=remaining>tile_advance;
++    wire overlap_state=OVERLAP_DOT&&(state==DOT_WAIT||state==JOIN_TILE)&&has_next;
++    wire start_next=overlap_state&&!next_started&&!(state==JOIN_TILE&&dot_failed);
++    wire [15:0] refill_first=overlap_state ? next_first : first;
++    wire [15:0] refill_remaining=count-refill_first;
++    wire refill_bank=overlap_state ? !current_bank : current_bank;
++    wire [9:0] refill_work=work_base+{2'd0,refill_bank,7'd0};
++    wire [9:0] dot_work=work_base+{2'd0,current_bank,7'd0};
++    initial assert((!HALF_TILE || (DDR_RESPONSE_QUEUE&&SELECT_V_BEAT)) && (!OVERLAP_DOT || HALF_TILE));
++    wire [3:0] qk_columns=remaining>=K_TILE ? K_TILE[3:0] : remaining[3:0];
++    wire [7:0] av_length=remaining>=V_TILE ? V_TILE[7:0] : remaining[7:0];
+     wire [10:0] score_words=(11'(count)+11'd3)>>2;
+-    wire load_active=state==K_REFILL||state==K_WAIT||state==V_REFILL||state==V_WAIT;
+-    wire value_refill=state==V_REFILL||state==V_WAIT;
+-    wire [15:0] v_position=first+filled;
++    wire initial_load=state==K_REFILL||state==K_WAIT||state==V_REFILL||state==V_WAIT;
++    wire load_launch=state==K_REFILL||state==V_REFILL||start_next;
++    wire load_take_done=state==K_WAIT||state==V_WAIT||(overlap_state&&next_started&&!next_done);
++    wire load_active=initial_load||(overlap_state&&next_started&&!next_done);
++    wire value_refill=av;
++    wire [15:0] v_position=refill_first+filled;
++    wire [7:0] refill_length=refill_remaining>=V_TILE ? V_TILE[7:0] : refill_remaining[7:0];
++    wire [3:0] refill_cols=refill_remaining>=K_TILE ? K_TILE[3:0] : refill_remaining[3:0];
+     wire [63:0] refill_base=value_refill ?
+         v_base+{39'd0,v_position,9'd0}+{55'd0,group_index[3:2],7'd0}+
+-        (SELECT_V_BEAT && group_index[1] ? 64'd64 : 64'd0) : k_base+{39'd0,first,9'd0};
+-    wire [9:0] refill_s_base=value_refill ? work_base+{filled[8:0],1'b0} : work_base;
++        (SELECT_V_BEAT && group_index[1] ? 64'd64 : 64'd0) : k_base+{39'd0,refill_first,9'd0};
++    wire [9:0] refill_s_base=refill_work+(value_refill ? {filled[8:0],1'b0} : 10'd0);
+     wire load_ready,load_done,load_error,load_s_valid,load_s_take,load_rd_take;
+     wire [9:0] load_s_address;
+     wire [127:0] load_s_data;
+@@ -118,15 +139,15 @@
+         wire [31:0] local_return = response_serial - refill_serial;
+         assign load_rd_tag = 0;
+         s128_ddr_response_load #(.OVERLAP(OVERLAP_REFILL)) load_span(
+-            .clk,.reset(datapath_reset),.launch_valid(state==K_REFILL||state==V_REFILL),.launch_ready(load_ready),
++            .clk,.reset(datapath_reset),.launch_valid(load_launch),.launch_ready(load_ready),
+             .launch_base(refill_base),.launch_s_base(refill_s_base),
+-            .launch_bursts(value_refill ? av_length : {1'b0,qk_columns,3'b0}),
++            .launch_bursts(value_refill ? refill_length : {1'b0,refill_cols,3'b0}),
+             .launch_pair(value_refill),.launch_pair_high(group_index[0]),
+-            .done_valid(load_done),.done_error(load_error),.done_ready(state==K_WAIT||state==V_WAIT),
++            .done_valid(load_done),.done_error(load_error),.done_ready(load_take_done),
+             .rd_valid,.rd_ready,.rd_address,.rd_rsp_valid,.rd_rsp_ready(load_rd_take),
+             .rd_rsp_tag({!good_rd,31'd0,local_return}),.rd_rsp_data,
+-            .s_valid(load_s_valid),.s_ready(load_active&&s_req_ready),.s_address(load_s_address),
+-            .s_data(load_s_data),.s_tag(load_s_tag),.s_rsp_valid(load_active&&s_rsp_valid),
++            .s_valid(load_s_valid),.s_ready(load_request_ready),.s_address(load_s_address),
++            .s_data(load_s_data),.s_tag(load_s_tag),.s_rsp_valid(load_response_valid),
+             .s_rsp_ready(load_s_take),.s_rsp_tag(s_rsp_error ? accepted_s_tag ^ 32'd1 : accepted_s_tag));
+     end else begin : serialized_loader
+         s128_ddr_range_load #(.PIPELINE_WRITES(PIPELINE_KV_WRITES),.STRIDED_PAIR(SELECT_V_BEAT)) load_span(
+@@ -153,19 +174,19 @@
+     wire [9:0] dot_s_address;
+     wire [127:0] dot_s_data;
+     wire [9:0] dot_result=av ? out_base+{5'd0,group_index,1'b0} : score_base+first[11:2];
+-    dot_s32_s128 #(.ROWS(1),.REFILL_NEXT(1'b1),.CHECKPOINT(1'b1)) dot(
++    dot_s32_s128 #(.ROWS(1),.REFILL_NEXT(1'b1),.CHECKPOINT(1'b1),.AV_WORDS(HALF_TILE ? 128 : 256)) dot(
+         .clk,.reset(datapath_reset),.cmd_valid(state==DOT_BEGIN||state==DOT_STEP),.cmd_ready(dot_ready),
+         .cmd_kind(dot_begin ? 2'd0 : 2'd1),.cmd_key(service_done_owner),.cmd_tag(serial),
+         .cmd_full_k(av ? count : 16'd128),.cmd_k_offset(av&&!dot_begin ? first : 16'd0),
+         .cmd_chunk_k(dot_begin ? 8'd0 : av ? av_length : 8'd128),.cmd_n(av ? 4'd8 : qk_columns),
+         .cmd_rows(3'd1),.cmd_shift(6'd16),.cmd_layout(av),.cmd_a_base(av ? score_base+first[11:2] : q_base),
+-        .cmd_b_base(work_base),.cmd_result_base(dot_result),.cmd_sources_committed(1'b1),
++        .cmd_b_base(dot_work),.cmd_result_base(dot_result),.cmd_sources_committed(1'b1),
+         .abort_valid(1'b0),.abort_key(128'd0),.abort_ready(),
+         .rsp_valid(dot_done),.rsp_ready(state==DOT_BEGIN_WAIT||state==DOT_WAIT),.rsp_kind(dot_kind),
+         .rsp_key(dot_key),.rsp_tag(dot_tag),.rsp_error(dot_error),.rsp_aborted(dot_aborted),
+         .rsp_done(dot_final),.rsp_written_mask(dot_mask),.s_req_valid(dot_s_valid),
+-        .s_req_ready(dot_active&&s_req_ready),.s_req_write(dot_s_write),.s_req_address(dot_s_address),
+-        .s_req_wdata(dot_s_data),.s_rsp_valid(dot_active&&s_rsp_valid),.s_rsp_ready(dot_s_take),
++        .s_req_ready(dot_request_ready),.s_req_write(dot_s_write),.s_req_address(dot_s_address),
++        .s_req_wdata(dot_s_data),.s_rsp_valid(dot_response_valid),.s_rsp_ready(dot_s_take),
+         .s_rsp_data,.s_rsp_error);
+ 
+     wire norm_active=state==N_START||state==N_WAIT;
+@@ -194,13 +215,38 @@
+         .out_valid(e_done),.out_ready(state==SCALE_RESULT),.out_data(e_result),
+         .out_clipped(e_clipped),.out_error(e_error));
+ 
++    // The real S port returns its two accepted requests in order.
++    logic owner[2], owner_head, owner_tail;
++    logic [1:0] owner_count;
++    logic hold_owner, held_load, prefer_load;
++    wire owner_load=owner[owner_head];
++    wire share_port=OVERLAP_DOT&&(load_active||dot_active);
++    wire shared_rsp=s_rsp_valid&&owner_count!=0;
++    wire load_response_valid=share_port ? shared_rsp&&owner_load : load_active&&s_rsp_valid;
++    wire dot_response_valid=share_port ? shared_rsp&&!owner_load : dot_active&&s_rsp_valid;
++    wire shared_take=share_port&&shared_rsp&&(owner_load ? load_s_take : dot_s_take);
++    wire shared_credit=owner_count<2||shared_take;
++    wire load_offer=load_active&&load_s_valid;
++    wire dot_offer=dot_active&&dot_s_valid;
++    wire select_load=hold_owner ? held_load : load_offer&&(!dot_offer||prefer_load);
++    wire load_request_ready=share_port ? shared_credit&&select_load&&s_req_ready : load_active&&s_req_ready;
++    wire dot_request_ready=share_port ? shared_credit&&!select_load&&s_req_ready : dot_active&&s_req_ready;
++    wire shared_accept=share_port&&s_req_valid&&s_req_ready;
++    wire accept_load=load_offer&&load_request_ready;
++
+     always_comb begin
+         s_req_valid=state==SCALE_READ||state==SCALE_WRITE;
+         s_req_write=state==SCALE_WRITE;
+         s_req_address=score_base+score_word;
+         s_req_data=scale_output;
+         s_rsp_ready=state==SCALE_READ_WAIT||state==SCALE_ACK;
+-        if(load_active) begin
++        if(share_port) begin
++            s_req_valid=shared_credit&&(select_load ? load_offer : dot_offer);
++            s_req_write=select_load||dot_s_write;
++            s_req_address=select_load ? load_s_address : dot_s_address;
++            s_req_data=select_load ? load_s_data : dot_s_data;
++            s_rsp_ready=owner_count!=0&&(owner_load ? load_s_take : dot_s_take);
++        end else if(load_active) begin
+             s_req_valid=load_s_valid;
+             s_req_write=1;
+             s_req_address=load_s_address;
+@@ -220,8 +266,11 @@
+             s_rsp_ready=norm_s_take;
+         end
+     end
+-    wire dot_tag_ok=dot_tag==serial&&dot_key==service_done_owner&&!dot_error&&!dot_aborted;
++    wire dot_tag_ok=dot_tag==(OVERLAP_DOT ? expected_dot_tag : serial)&&dot_key==service_done_owner&&!dot_error&&!dot_aborted;
+     wire final_chunk=!av||first+{8'd0,av_length}==count;
++
++    wire bad_tile=!dot_tag_ok||dot_kind!=1||dot_final!=final_chunk||
++        dot_mask!=(final_chunk ? 2'b11 : 2'b00);
+ 
+     task automatic fault();
+         service_done_status<=SERVICE_FAULT;
+@@ -238,19 +287,45 @@
+             accepted_rd_tag<=0; accepted_load_tag<=0; response_serial<=0; refill_serial<=0;
+             service_done_owner<=0; service_done_ticket<=0; service_done_status<=0;
+             service_done_read_bytes<=0; service_done_write_bytes<=0;
++            current_bank<=0; next_started<=0; next_done<=0; next_failed<=0; dot_failed<=0;
++            expected_dot_tag<=0;
++            owner_head<=0; owner_tail<=0; owner_count<=0; hold_owner<=0; held_load<=0; prefer_load<=0;
+         end else begin
++            if (share_port) begin
++                case ({shared_accept,shared_take})
++                    2'b10: owner_count<=owner_count+1'b1;
++                    2'b01: owner_count<=owner_count-1'b1;
++                    default: ;
++                endcase
++                if(shared_take) owner_head<=!owner_head;
++                if(shared_accept) begin
++                    owner[owner_tail]<=select_load;
++                    owner_tail<=!owner_tail;
++                    prefer_load<=!select_load;
++                    hold_owner<=0;
++                end else if(s_req_valid&&!s_req_ready) begin
++                    hold_owner<=1;
++                    held_load<=select_load;
++                end
++            end
++            if((state==DOT_BEGIN||state==DOT_STEP)&&dot_ready) expected_dot_tag<=serial;
++            if(start_next&&load_ready) next_started<=1;
++            if(overlap_state&&next_started&&!next_done&&load_done) begin
++                next_done<=1;
++                next_failed<=load_error;
++            end
+             if(cancel) cancelled<=1;
+-            if(load_s_valid&&load_active&&s_req_ready) begin
++            if(accept_load) begin
+                 load_s_tags[load_s_tail]<=load_s_tag;
+                 load_s_tail<=!load_s_tail;
+             end
+-            if(load_active&&s_rsp_valid&&load_s_take) load_s_head<=!load_s_head;
++            if(load_response_valid&&load_s_take) load_s_head<=!load_s_head;
+             if(rd_valid&&rd_ready) begin
+                 accepted_rd_tag<=rd_tag;
+                 accepted_load_tag<=load_rd_tag;
+                 serial<=serial+1'b1;
+             end
+-            if((state==K_REFILL||state==V_REFILL)&&load_ready) refill_serial<=serial;
++            if(load_launch&&load_ready) refill_serial<=serial;
+             if(rd_rsp_valid&&rd_rsp_ready) begin
+                 response_serial<=response_serial+1'b1;
+                 if(good_rd) service_done_read_bytes<=service_done_read_bytes+64;
+@@ -264,6 +339,7 @@
+                     work_base<=launch_work[9:0]; out_base<=launch_out[9:0];
+                     k_base<=launch_k; v_base<=launch_v; coefficient<=launch_scale;
+                     av<=0; cancelled<=0; first<=0; filled<=0; group_index<=0; score_word<=0; serial<=0; response_serial<=0;
++                    current_bank<=0;
+                     state<=valid_descriptor ? K_REFILL : REPORT;
+                 end
+                 K_REFILL: if(load_ready) state<=K_WAIT;
+@@ -278,11 +354,14 @@
+                 end
+                 DOT_STEP: if(dot_ready) state<=DOT_WAIT;
+                 DOT_WAIT: if(dot_done) begin
+-                    if(!dot_tag_ok||dot_kind!=1||dot_final!=final_chunk||dot_mask!=(final_chunk ? 2'b11 : 2'b00))
++                    if(OVERLAP_DOT&&has_next) begin
++                        dot_failed<=bad_tile;
++                        state<=JOIN_TILE;
++                    end else if(bad_tile)
+                         fault();
+                     else if(!av) begin
+-                        if(remaining<=8) state<=SCALE_READ;
+-                        else begin first<=first+8; state<=K_REFILL; end
++                        if(!has_next) state<=SCALE_READ;
++                        else begin first<=next_first; state<=K_REFILL; end
+                     end else if(!final_chunk) begin
+                         first<=first+{8'd0,av_length}; filled<=0; state<=V_REFILL;
+                     end else begin
+@@ -294,7 +373,18 @@
+                                 state<=REPORT;
+                             end
+                         end else begin
+-                            group_index<=group_index+1'b1; first<=0; filled<=0; state<=DOT_BEGIN;
++                            group_index<=group_index+1'b1; first<=0; filled<=0; current_bank<=0; state<=DOT_BEGIN;
++                        end
++                    end
++                end
++                JOIN_TILE: begin
++                    if(dot_failed&&!next_started) fault();
++                    else if(next_done) begin
++                        next_started<=0; next_done<=0; next_failed<=0; dot_failed<=0;
++                        if(dot_failed||next_failed) fault();
++                        else begin
++                            first<=next_first; current_bank<=!current_bank;
++                            state<=av ? DOT_STEP : DOT_BEGIN;
+                         end
+                     end
+                 end
+@@ -324,7 +414,7 @@
+                 N_START: if(norm_ready) state<=N_WAIT;
+                 N_WAIT: if(norm_done) begin
+                     if(norm_error||norm_aborted||norm_tag!=serial||norm_writes!={score_words,1'b0}) fault();
+-                    else begin av<=1; first<=0; filled<=0; state<=DOT_BEGIN; end
++                    else begin av<=1; first<=0; filled<=0; current_bank<=0; state<=DOT_BEGIN; end
+                 end
+                 V_REFILL: if(load_ready) state<=V_WAIT;
+                 V_WAIT: if(load_done) begin
+--- a/project/rtl/native_s32_dot/dot_s32_s128.sv
++++ b/project/rtl/native_s32_dot/dot_s32_s128.sv
+@@ -6,7 +6,7 @@
+ // Reset is a coherent service/S reset. A local cancel drains every accepted
+ // response and keeps an already offered request stable until it is accepted.
+ module dot_s32_s128 #(
+- parameter integer ROWS=1, parameter bit REFILL_NEXT=0,parameter bit CHECKPOINT=0
++ parameter integer ROWS=1, parameter bit REFILL_NEXT=0,parameter bit CHECKPOINT=0, parameter integer AV_WORDS=256
+ ) (
+  input wire clk,reset,
+  input wire cmd_valid,output wire cmd_ready,input wire [1:0] cmd_kind,
+@@ -171,10 +171,10 @@
+  // A/B/result cannot alias. Sources must have true producer ACK proof before
+  // CHUNK is offered; this flag is a contract input, not a guessed cache hit.
+  wire [12:0] a_end={3'd0,cmd_a_base}+13'(int'(rows)*32);
+- wire [12:0] b_end={3'd0,cmd_b_base}+(layout?13'd256:13'(int'(n)*32));
++ wire [12:0] b_end={3'd0,cmd_b_base}+(layout?13'(AV_WORDS):13'(int'(n)*32));
+  wire [12:0] r_end={3'd0,result_base}+13'(int'(rows)*2);
+  wire chunk_bad=!owned||cmd_key!=key||!cmd_sources_committed||cmd_k_offset!=next_chunk||
+-  cmd_chunk_k==0||cmd_chunk_k>128||{1'b0,cmd_k_offset}+{9'd0,cmd_chunk_k}>{1'b0,full_k}||
++  cmd_chunk_k==0||cmd_chunk_k>128||(layout&&int'(cmd_chunk_k)*2>AV_WORDS)||{1'b0,cmd_k_offset}+{9'd0,cmd_chunk_k}>{1'b0,full_k}||
+   ((cmd_chunk_k&8'd3)!=0&&{1'b0,cmd_k_offset}+{9'd0,cmd_chunk_k}!={1'b0,full_k})||
+   a_end>1024||b_end>1024||r_end>1024||
+   ({3'd0,cmd_a_base}<b_end&&{3'd0,cmd_b_base}<a_end)||
+--- a/project/experiments/block_local_native/test_native_attention_core_scope.sv
++++ b/project/experiments/block_local_native/test_native_attention_core_scope.sv
+@@ -1,5 +1,5 @@
+ `timescale 1ns/1ps
+-module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT=380, parameter bit SELECT_V_BEAT=1'b0, DDR_RESPONSE_QUEUE=1'b0, OVERLAP_REFILL=1'b0);
++module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT=380, parameter bit SELECT_V_BEAT=1'b0, DDR_RESPONSE_QUEUE=1'b0, OVERLAP_REFILL=1'b0, HALF_TILE=1'b0, OVERLAP_DOT=1'b0);
+     logic clk, reset=1, start=0, ready, result_valid;
+     initial clk=0;
+     always #5 clk=~clk;
+@@ -86,7 +86,7 @@
+     wire allow_ack=mode==0 || cycle%5==0;
+     assign engine_ready=active && memory_ready && allow_request;
+     assign engine_rsp=active && memory_rsp && allow_ack;
+-    s128_attention_core_scope #(.TOPOLOGY(32'd25001),.PIPELINE_KV_WRITES(1),.SELECT_V_BEAT(SELECT_V_BEAT),.DDR_RESPONSE_QUEUE(DDR_RESPONSE_QUEUE),.OVERLAP_REFILL(OVERLAP_REFILL)) scope(
++    s128_attention_core_scope #(.TOPOLOGY(32'd25001),.PIPELINE_KV_WRITES(1),.SELECT_V_BEAT(SELECT_V_BEAT),.DDR_RESPONSE_QUEUE(DDR_RESPONSE_QUEUE),.OVERLAP_REFILL(OVERLAP_REFILL),.HALF_TILE(HALF_TILE),.OVERLAP_DOT(OVERLAP_DOT)) scope(
+         .clk,.reset,.service_valid(p_valid),.service_ready(p_ready),.service_owner(p_owner),
+         .service_ticket(p_ticket),.service_descriptor(p_descriptor),.service_cancel_valid(p_cancel),
+         .service_cancel_ready(p_cancel_ready),.service_done_valid(p_done),.service_done_ready(p_done_ready),
+@@ -112,11 +112,12 @@
+     import "DPI-C" function int unsigned ddr_read_step();
+     import "DPI-C" function void ddr_read_finish();
+     int unsigned requests,acks,calls,retired;
++    int unsigned shared_cycles, shared_load_wait, shared_dot_wait;
+     always @(posedge clk) begin
+         if(reset) begin
+             take_ptr<=0;put_ptr<=0;outstanding<=0;peak_outstanding<=0;
+             kv_requests<=0;kv_callbacks<=0;completed<=0;cycle<=0;
+-            descriptor_reads<=0;descriptor_callbacks<=0;requests<=0;acks<=0;calls<=0;retired<=0;
++            descriptor_reads<=0;descriptor_callbacks<=0;shared_cycles<=0;shared_load_wait<=0;shared_dot_wait<=0;requests<=0;acks<=0;calls<=0;retired<=0;
+         end else begin
+             cycle<=cycle+1;
+             completed<=ddr_read_step();
+@@ -169,6 +170,11 @@
+             if(p_valid && p_ready) begin
+                 assert(active && descriptor_callbacks==2 && p_ticket==1 && p_owner!=0);
+                 calls<=calls+1;
++            end
++            if(OVERLAP_DOT && scope.load_active && scope.dot_active) begin
++                shared_cycles<=shared_cycles+1;
++                if(scope.load_s_valid&&!scope.load_request_ready) shared_load_wait<=shared_load_wait+1;
++                if(scope.dot_s_valid&&!scope.dot_request_ready) shared_dot_wait<=shared_dot_wait+1;
+             end
+             if(engine_req && engine_ready) begin
+                 assert(active && requests>=acks);
+@@ -230,6 +236,8 @@
+         $fclose(readback);
+         ddr_read_finish();
+         if(DDR_RESPONSE_QUEUE) assert(peak_outstanding==8);
++        if(OVERLAP_DOT) assert(shared_cycles!=0);
++        $display("S overlap cycles=%0d load_wait=%0d dot_wait=%0d",shared_cycles,shared_load_wait,shared_dot_wait);
+         $display("DDR bridge peak outstanding=%0d",peak_outstanding);
+         $display("PASS typed AttentionCore mode=%0d cycles=%0d descriptors=%0d KV_callbacks=%0d SRAM_acks=%0d reads=%0d writes=%0d",
+                  mode,cycle,descriptor_callbacks,kv_callbacks,acks,terminal_reads,terminal_writes);
+--- a/project/experiments/block_local_native/run_native_attention_core_scope.sh
++++ b/project/experiments/block_local_native/run_native_attention_core_scope.sh
+@@ -11,7 +11,7 @@
+  cd "$SLURM_SUBMIT_DIR"
+  exec srun --exact -n1 -c"$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
+   /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu \
+-  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK,SELECT_V_BEAT=${SELECT_V_BEAT:-0},DDR_RESPONSE_QUEUE=${DDR_RESPONSE_QUEUE:-0},OVERLAP_REFILL=${OVERLAP_REFILL:-0}" \
++  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK,SELECT_V_BEAT=${SELECT_V_BEAT:-0},DDR_RESPONSE_QUEUE=${DDR_RESPONSE_QUEUE:-0},OVERLAP_REFILL=${OVERLAP_REFILL:-0},HALF_TILE=${HALF_TILE:-0},OVERLAP_DOT=${OVERLAP_DOT:-0}" \
+   /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif bash "$PWD/source/$EXP/run_native_attention_core_scope.sh" in-container "$PWD" "${1:-}"
+ fi
+ source /OpenROAD-flow-scripts/env.sh
+@@ -53,7 +53,7 @@
+ top=test_native_attention_core_scope
+ "$vlt" --binary --timing --assert -Wall --timescale-override 1ns/1ps --x-initial unique --x-assign unique \
+  -j "$SLURM_CPUS_PER_TASK" --top-module "$top" -GMOTHER_WORDS="$mother_words" -GCONTEXT="$context" \
+- "-GSELECT_V_BEAT=1'b${SELECT_V_BEAT:-0}" "-GDDR_RESPONSE_QUEUE=1'b${DDR_RESPONSE_QUEUE:-0}" "-GOVERLAP_REFILL=1'b${OVERLAP_REFILL:-0}" \
++ "-GSELECT_V_BEAT=1'b${SELECT_V_BEAT:-0}" "-GDDR_RESPONSE_QUEUE=1'b${DDR_RESPONSE_QUEUE:-0}" "-GOVERLAP_REFILL=1'b${OVERLAP_REFILL:-0}" "-GHALF_TILE=1'b${HALF_TILE:-0}" "-GOVERLAP_DOT=1'b${OVERLAP_DOT:-0}" \
+  -Wno-PINCONNECTEMPTY -CFLAGS "-std=c++17 -isystem $dram/src -isystem $dram/ext/headers" \
+  -LDFLAGS "-L$dram -Wl,-rpath,$dram -ldramsim3" "$PWD/$EXP/ddr_read_bridge.cpp" --Mdir "$out/obj" \
+  "$P"/{native_s_lint,p_program_lint}.vlt "$EXP/real_s_lint.vlt" "$gate/sram-lint.vlt" \

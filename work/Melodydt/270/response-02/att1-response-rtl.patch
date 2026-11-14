@@ -1,0 +1,229 @@
+--- a/project/rtl/block_local_native/s128_attention_core_scope.sv
++++ b/project/rtl/block_local_native/s128_attention_core_scope.sv
+@@ -3,7 +3,8 @@
+ module s128_attention_core_scope #(
+     parameter logic [31:0] TOPOLOGY=0,
+     parameter bit PIPELINE_KV_WRITES=1'b0,
+-    parameter bit SELECT_V_BEAT=1'b0
++    parameter bit SELECT_V_BEAT=1'b0,
++    parameter bit DDR_RESPONSE_QUEUE=1'b0
+ ) (
+     input logic clk,reset,
+     input logic service_valid,
+@@ -107,18 +108,38 @@
+     wire [31:0] accepted_s_tag=load_s_tags[load_s_head];
+     logic [63:0] accepted_rd_tag,accepted_load_tag;
+     assign rd_tag={service_done_ticket,serial};
+-    wire good_rd=rd_rsp_tag==accepted_rd_tag&&!rd_rsp_error;
+-    s128_ddr_range_load #(.PIPELINE_WRITES(PIPELINE_KV_WRITES),.STRIDED_PAIR(SELECT_V_BEAT)) load_span(
+-        .clk,.reset(datapath_reset),.launch_valid(state==K_REFILL||state==V_REFILL),.launch_ready(load_ready),
+-        .launch_base(refill_base),.launch_s_base(refill_s_base),
+-        .launch_bursts(value_refill ? (SELECT_V_BEAT ? av_length : 8'd2) : {1'b0,qk_columns,3'b0}),
+-        .launch_pair(value_refill),.launch_pair_beat(group_index[1]),.launch_pair_high(group_index[0]),
+-        .done_valid(load_done),.done_error(load_error),.done_ready(state==K_WAIT||state==V_WAIT),
+-        .rd_valid,.rd_ready,.rd_address,.rd_tag(load_rd_tag),.rd_rsp_valid,.rd_rsp_ready(load_rd_take),
+-        .rd_rsp_tag(good_rd ? accepted_load_tag : accepted_load_tag ^ 64'd1),.rd_rsp_data,
+-        .s_valid(load_s_valid),.s_ready(load_active&&s_req_ready),.s_address(load_s_address),
+-        .s_data(load_s_data),.s_tag(load_s_tag),.s_rsp_valid(load_active&&s_rsp_valid),
+-        .s_rsp_ready(load_s_take),.s_rsp_tag(s_rsp_error ? accepted_s_tag ^ 32'd1 : accepted_s_tag));
++    logic [31:0] response_serial,refill_serial;
++    wire _unused_loader_tags = ^{accepted_load_tag,refill_serial};
++    wire [63:0] expected_rd_tag = DDR_RESPONSE_QUEUE ? {service_done_ticket,response_serial} : accepted_rd_tag;
++    wire good_rd=rd_rsp_tag==expected_rd_tag&&!rd_rsp_error;
++    initial assert(!DDR_RESPONSE_QUEUE || (SELECT_V_BEAT && PIPELINE_KV_WRITES));
++    if (DDR_RESPONSE_QUEUE) begin : response_queue
++        wire [31:0] local_return = response_serial - refill_serial;
++        assign load_rd_tag = 0;
++        s128_ddr_response_load load_span(
++            .clk,.reset(datapath_reset),.launch_valid(state==K_REFILL||state==V_REFILL),.launch_ready(load_ready),
++            .launch_base(refill_base),.launch_s_base(refill_s_base),
++            .launch_bursts(value_refill ? av_length : {1'b0,qk_columns,3'b0}),
++            .launch_pair(value_refill),.launch_pair_high(group_index[0]),
++            .done_valid(load_done),.done_error(load_error),.done_ready(state==K_WAIT||state==V_WAIT),
++            .rd_valid,.rd_ready,.rd_address,.rd_rsp_valid,.rd_rsp_ready(load_rd_take),
++            .rd_rsp_tag({!good_rd,31'd0,local_return}),.rd_rsp_data,
++            .s_valid(load_s_valid),.s_ready(load_active&&s_req_ready),.s_address(load_s_address),
++            .s_data(load_s_data),.s_tag(load_s_tag),.s_rsp_valid(load_active&&s_rsp_valid),
++            .s_rsp_ready(load_s_take),.s_rsp_tag(s_rsp_error ? accepted_s_tag ^ 32'd1 : accepted_s_tag));
++    end else begin : serialized_loader
++        s128_ddr_range_load #(.PIPELINE_WRITES(PIPELINE_KV_WRITES),.STRIDED_PAIR(SELECT_V_BEAT)) load_span(
++            .clk,.reset(datapath_reset),.launch_valid(state==K_REFILL||state==V_REFILL),.launch_ready(load_ready),
++            .launch_base(refill_base),.launch_s_base(refill_s_base),
++            .launch_bursts(value_refill ? (SELECT_V_BEAT ? av_length : 8'd2) : {1'b0,qk_columns,3'b0}),
++            .launch_pair(value_refill),.launch_pair_beat(group_index[1]),.launch_pair_high(group_index[0]),
++            .done_valid(load_done),.done_error(load_error),.done_ready(state==K_WAIT||state==V_WAIT),
++            .rd_valid,.rd_ready,.rd_address,.rd_tag(load_rd_tag),.rd_rsp_valid,.rd_rsp_ready(load_rd_take),
++            .rd_rsp_tag(good_rd ? accepted_load_tag : accepted_load_tag ^ 64'd1),.rd_rsp_data,
++            .s_valid(load_s_valid),.s_ready(load_active&&s_req_ready),.s_address(load_s_address),
++            .s_data(load_s_data),.s_tag(load_s_tag),.s_rsp_valid(load_active&&s_rsp_valid),
++            .s_rsp_ready(load_s_take),.s_rsp_tag(s_rsp_error ? accepted_s_tag ^ 32'd1 : accepted_s_tag));
++    end
+     assign rd_rsp_ready=load_rd_take;
+ 
+     wire dot_active=state==DOT_BEGIN||state==DOT_BEGIN_WAIT||state==DOT_STEP||state==DOT_WAIT;
+@@ -213,7 +234,7 @@
+             coefficient<=0; serial<=0; scale_input<=0; scale_output<=0; scale_send<=0; scale_high<=0;
+             load_s_tags[0]<=0; load_s_tags[1]<=0;
+             load_s_head<=0; load_s_tail<=0;
+-            accepted_rd_tag<=0; accepted_load_tag<=0;
++            accepted_rd_tag<=0; accepted_load_tag<=0; response_serial<=0; refill_serial<=0;
+             service_done_owner<=0; service_done_ticket<=0; service_done_status<=0;
+             service_done_read_bytes<=0; service_done_write_bytes<=0;
+         end else begin
+@@ -228,7 +249,11 @@
+                 accepted_load_tag<=load_rd_tag;
+                 serial<=serial+1'b1;
+             end
+-            if(rd_rsp_valid&&rd_rsp_ready&&good_rd) service_done_read_bytes<=service_done_read_bytes+64;
++            if((state==K_REFILL||state==V_REFILL)&&load_ready) refill_serial<=serial;
++            if(rd_rsp_valid&&rd_rsp_ready) begin
++                response_serial<=response_serial+1'b1;
++                if(good_rd) service_done_read_bytes<=service_done_read_bytes+64;
++            end
+             case(state)
+                 IDLE: if(service_valid&&service_ready) begin
+                     service_done_owner<=service_owner; service_done_ticket<=service_ticket;
+@@ -237,7 +262,7 @@
+                     count<=launch_count; q_base<=launch_q[9:0]; score_base<=launch_score[9:0];
+                     work_base<=launch_work[9:0]; out_base<=launch_out[9:0];
+                     k_base<=launch_k; v_base<=launch_v; coefficient<=launch_scale;
+-                    av<=0; cancelled<=0; first<=0; filled<=0; group_index<=0; score_word<=0; serial<=0;
++                    av<=0; cancelled<=0; first<=0; filled<=0; group_index<=0; score_word<=0; serial<=0; response_serial<=0;
+                     state<=valid_descriptor ? K_REFILL : REPORT;
+                 end
+                 K_REFILL: if(load_ready) state<=K_WAIT;
+--- a/project/experiments/block_local_native/test_native_attention_core_scope.sv
++++ b/project/experiments/block_local_native/test_native_attention_core_scope.sv
+@@ -1,5 +1,5 @@
+ `timescale 1ns/1ps
+-module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT=380, parameter bit SELECT_V_BEAT=1'b0);
++module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT=380, parameter bit SELECT_V_BEAT=1'b0, DDR_RESPONSE_QUEUE=1'b0);
+     logic clk, reset=1, start=0, ready, result_valid;
+     initial clk=0;
+     always #5 clk=~clk;
+@@ -20,17 +20,28 @@
+     localparam int DATA_READS=CONTEXT*(8+16*BEATS_PER_V_ROW);
+     localparam int DATA_BYTES=64*DATA_READS;
+     localparam int PROB_WORDS=(CONTEXT+3)/4;
+-    logic pending,ddr_rsp,pending_data;
++    localparam int BRIDGE_DEPTH=DDR_RESPONSE_QUEUE ? 8 : 1;
++    logic ddr_rsp;
++    logic [63:0] return_tags[8];
++    logic [511:0] return_data[8];
++    logic return_is_kv[8];
++    logic [2:0] take_ptr,put_ptr;
++    logic [3:0] outstanding,peak_outstanding;
++    wire pending_data=return_is_kv[take_ptr];
++    wire enqueue_desc=dr_valid[0]&&dr_ready[0];
++    wire enqueue_kv=kv_valid&&kv_ready;
++    wire pop_ddr=ddr_rsp&&(pending_data ? kv_take : dr_rsp_ready[0]);
+     logic kv_valid,kv_ready,kv_take;
+     logic [63:0] kv_address,kv_tag,key_base,value_base;
+     int unsigned kv_requests,kv_callbacks;
+-    logic [63:0] base,ret_tag;
+-    logic [511:0] ret_data;
++    logic [63:0] base;
++    wire [63:0] ret_tag=return_tags[take_ptr];
++    wire [511:0] ret_data=return_data[take_ptr];
+     logic [31:0] completed;
+     int unsigned cycle,mode,descriptor_reads,descriptor_callbacks;
+-    assign drained=!pending;
+-    assign dr_ready={2'b00, !reset && !pending && (mode==0 || cycle%5!=0)};
+-    assign ddr_rsp=!reset && pending && completed[0];
++    assign drained=outstanding==0;
++    assign dr_ready={2'b00, !reset && outstanding<4'(BRIDGE_DEPTH) && (mode==0 || cycle%5!=0)};
++    assign ddr_rsp=!reset && outstanding!=0 && completed[0];
+     assign kv_ready=dr_ready[0] && !dr_valid[0];
+     ffn_program_control_fixture #(.MOTHER_WORDS(MOTHER_WORDS),.SERVICE_STALL_LIMIT(2000000)) control(
+         .clk,.reset,.start,.transport_drained(drained),.start_sequence(32'd1),.ready,.result_valid,
+@@ -75,7 +86,7 @@
+     wire allow_ack=mode==0 || cycle%5==0;
+     assign engine_ready=active && memory_ready && allow_request;
+     assign engine_rsp=active && memory_rsp && allow_ack;
+-    s128_attention_core_scope #(.TOPOLOGY(32'd25001),.PIPELINE_KV_WRITES(1),.SELECT_V_BEAT(SELECT_V_BEAT)) scope(
++    s128_attention_core_scope #(.TOPOLOGY(32'd25001),.PIPELINE_KV_WRITES(1),.SELECT_V_BEAT(SELECT_V_BEAT),.DDR_RESPONSE_QUEUE(DDR_RESPONSE_QUEUE)) scope(
+         .clk,.reset,.service_valid(p_valid),.service_ready(p_ready),.service_owner(p_owner),
+         .service_ticket(p_ticket),.service_descriptor(p_descriptor),.service_cancel_valid(p_cancel),
+         .service_cancel_ready(p_cancel_ready),.service_done_valid(p_done),.service_done_ready(p_done_ready),
+@@ -103,7 +114,8 @@
+     int unsigned requests,acks,calls,retired;
+     always @(posedge clk) begin
+         if(reset) begin
+-            pending<=0;pending_data<=0;kv_requests<=0;kv_callbacks<=0;completed<=0;ret_tag<=0;ret_data<=0;cycle<=0;
++            take_ptr<=0;put_ptr<=0;outstanding<=0;peak_outstanding<=0;
++            kv_requests<=0;kv_callbacks<=0;completed<=0;cycle<=0;
+             descriptor_reads<=0;descriptor_callbacks<=0;requests<=0;acks<=0;calls<=0;retired<=0;
+         end else begin
+             cycle<=cycle+1;
+@@ -114,7 +126,8 @@
+                 assert(dr_length[4:0]==2 && descriptor_reads<2 && dr_address[63:0]==base+64'(descriptor_reads*64));
+                 ddr_read_enqueue(0,dr_address[63:0],{32'd0,dr_tag[31:0]});
+                 ddr_weight_image_read(dr_address[63:0],payload);
+-                ret_tag<={32'd0,dr_tag[31:0]};ret_data<=payload;pending<=1;pending_data<=0;
++                return_tags[put_ptr]<={32'd0,dr_tag[31:0]};
++                return_data[put_ptr]<=payload;return_is_kv[put_ptr]<=0;
+                 descriptor_reads<=descriptor_reads+1;
+             end
+             if(kv_valid && kv_ready) begin
+@@ -133,12 +146,23 @@
+                 end
+                 ddr_read_enqueue(0,kv_address,kv_tag);
+                 ddr_weight_image_read(kv_address,payload);
+-                ret_tag<=kv_tag;ret_data<=payload;pending<=1;pending_data<=1;
++                return_tags[put_ptr]<=kv_tag;return_data[put_ptr]<=payload;return_is_kv[put_ptr]<=1;
+                 kv_requests<=kv_requests+1;
+             end
+-            if(ddr_rsp && (pending_data ? kv_take : dr_rsp_ready[0])) begin
++            if(enqueue_desc||enqueue_kv) put_ptr<=put_ptr+1'b1;
++            case ({enqueue_desc||enqueue_kv,pop_ddr})
++                2'b10: begin
++                    outstanding<=outstanding+1'b1;
++                    if(outstanding>=peak_outstanding) peak_outstanding<=outstanding+1'b1;
++                end
++                2'b01: outstanding<=outstanding-1'b1;
++                default: ;
++            endcase
++            if(pop_ddr) begin
+                 ddr_read_retire(0,ret_tag);
+-                pending<=0;
++                take_ptr<=take_ptr+1'b1;
++                // The registered completion describes the just-retired front.
++                completed<=0;
+                 if(pending_data) kv_callbacks<=kv_callbacks+1;
+                 else descriptor_callbacks<=descriptor_callbacks+1;
+             end
+@@ -205,6 +229,8 @@
+         for(int i=0;i<32;i++) host_word(1'b0,10'(512+i),expected[PROB_WORDS+i],readback);
+         $fclose(readback);
+         ddr_read_finish();
++        if(DDR_RESPONSE_QUEUE) assert(peak_outstanding==8);
++        $display("DDR bridge peak outstanding=%0d",peak_outstanding);
+         $display("PASS typed AttentionCore mode=%0d cycles=%0d descriptors=%0d KV_callbacks=%0d SRAM_acks=%0d reads=%0d writes=%0d",
+                  mode,cycle,descriptor_callbacks,kv_callbacks,acks,terminal_reads,terminal_writes);
+         $finish;
+--- a/project/experiments/block_local_native/run_native_attention_core_scope.sh
++++ b/project/experiments/block_local_native/run_native_attention_core_scope.sh
+@@ -11,7 +11,7 @@
+  cd "$SLURM_SUBMIT_DIR"
+  exec srun --exact -n1 -c"$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
+   /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu \
+-  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK,SELECT_V_BEAT=${SELECT_V_BEAT:-0}" \
++  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK,SELECT_V_BEAT=${SELECT_V_BEAT:-0},DDR_RESPONSE_QUEUE=${DDR_RESPONSE_QUEUE:-0}" \
+   /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif bash "$PWD/source/$EXP/run_native_attention_core_scope.sh" in-container "$PWD" "${1:-}"
+ fi
+ source /OpenROAD-flow-scripts/env.sh
+@@ -53,12 +53,12 @@
+ top=test_native_attention_core_scope
+ "$vlt" --binary --timing --assert -Wall --timescale-override 1ns/1ps --x-initial unique --x-assign unique \
+  -j "$SLURM_CPUS_PER_TASK" --top-module "$top" -GMOTHER_WORDS="$mother_words" -GCONTEXT="$context" \
+- "-GSELECT_V_BEAT=1'b${SELECT_V_BEAT:-0}" \
++ "-GSELECT_V_BEAT=1'b${SELECT_V_BEAT:-0}" "-GDDR_RESPONSE_QUEUE=1'b${DDR_RESPONSE_QUEUE:-0}" \
+  -Wno-PINCONNECTEMPTY -CFLAGS "-std=c++17 -isystem $dram/src -isystem $dram/ext/headers" \
+  -LDFLAGS "-L$dram -Wl,-rpath,$dram -ldramsim3" "$PWD/$EXP/ddr_read_bridge.cpp" --Mdir "$out/obj" \
+  "$P"/{native_s_lint,p_program_lint}.vlt "$EXP/real_s_lint.vlt" "$gate/sram-lint.vlt" \
+  "$P"/rtl/{lc_native_service_router,lc_program_store_1k,lc_scope_fetch128,lc_native_scope_controller}.sv \
+- "$N"/{s128_attention_core_scope,s128_ddr_range_load}.sv "$EXP/native_attention_lint.vlt" \
++ "$N"/{s128_attention_core_scope,s128_ddr_range_load,s128_ddr_response_load}.sv "$EXP/native_attention_lint.vlt" \
+  project/rtl/native_s32_dot/{dot_s32_core,dot_s32_s128,dot_s80_checkpoint}.sv \
+  project/rtl/native_s32_n/n_s32_softmax_s128.sv project/rtl/block_v2/block_v2_n_group.sv \
+  -Iproject/rtl/native_s32_n \
