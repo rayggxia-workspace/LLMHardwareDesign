@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from dma_ddr import Beat
 from qwen_descriptor_dma import BURST_BYTES, SLOTS_PER_CHANNEL
 from qwen_native_ddr import DDR_PS, require
-from qwen_prompt_cycle import CORE_PS
+from qwen_prompt_cycle import CORE_PS, ROW_BYTES
 from qwen_weight_record import ISSUE_WINDOW_CREDITS, LANE_DEPTH, SKIDS_PER_CHANNEL
 
 
@@ -21,6 +21,10 @@ CHANNELS = 2
 LANES_PER_CHANNEL = 2
 TOTAL_SKIDS = CHANNELS * SKIDS_PER_CHANNEL
 M_CREDITS = 32
+# The historical fixture uses direct physical reads when advancing the U
+# embedding/RMS row. These lanes and exact frozen regions carry local beat
+# tags, not typed-M DMA generations.
+HISTORY_DIRECT_BASES = {1: (3300175872, 3969437696), 3: (4543033344,)}
 
 
 @dataclass(frozen=True)
@@ -120,15 +124,17 @@ class WeightPipeline:
                 self.request_cursor[channel] = (client + 1) % 12
 
     def resume_after_drained_clients(self):
-        """Resume M after modeled serial client-0/5 reads and strict writes."""
+        """Resume M after typed reads, historical row refills and strict writes."""
         require(self.idle and not any(self.records.values()) and not self.installs and not self.releases
                 and not any(self.outstanding.values()) and self.fabric.open_record is None
                 and self.fabric.generation == self.generation and all(device.idle for device in self.ddr.dram),
                 "weight scope handoff requires drained M banks and unchanged DMA generation")
         events = self.ddr.events[self.event_count:]
         if events:
-            require(all(tag >> 32 == self.generation and cycle > self.cycle
-                        for kind, cycle, _, tag, _ in events if kind in ("admit", "return"))
+            require(all(cycle > self.cycle and (tag >> 32 == self.generation
+                        or 0 <= tag < ROW_BYTES // BURST_BYTES
+                        and address - tag * BURST_BYTES in HISTORY_DIRECT_BASES.get(lane, ()))
+                        for kind, cycle, lane, tag, address in events if kind in ("admit", "return"))
                     and self.fabric.last_response > self.cycle, "external DMA edges do not follow the weight scope")
             self._restore_serial_cursors(events)
             self.previous_issues = [0, 0]
