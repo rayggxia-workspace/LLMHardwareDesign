@@ -145,13 +145,13 @@ def load_row(ddr, first_request, lane, base, first_word):
     return next_request, writes
 
 
-def predict(archive, binary, config, output, mode, prompt_start, *, tail=None):
+def predict(archive, binary, config, output, mode, prompt_start, *, tail=None, allow_writes=False):
     inp = prompt_inputs(archive)
     require(file_digest(config) == CONFIG_SHA, "DDR config differs from 105530")
     output.mkdir()
     with ExitStack() as stack:
         devices = [stack.enter_context(DramLive(binary, config, output / "channel{}".format(channel),
-                                               capacity_bytes=1 << 34)) for channel in range(2)]
+                                               capacity_bytes=1 << 34, allow_writes=allow_writes)) for channel in range(2)]
         require(all(device.period_ps == DDR_PS for device in devices), "DDR device period differs from 105530")
         ddr = PromptDdr(devices, mode)
         prompt_return = ddr.read(prompt_start + 1, 0, inp["job"] << 32, inp["prompt_base"])

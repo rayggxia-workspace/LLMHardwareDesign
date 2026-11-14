@@ -30,7 +30,12 @@ g++ --version > compiler-version.txt
 python3 --version > python-version.txt
 dram=$1 config=$2 archive=$3 embedding=$4 probe=$5
 shift 5
-g++ -std=c++17 -O2 -Wall -Wextra -Werror -isystem "$dram/src" dramsim_bridge.cpp \
+strict=()
+if [[ ${1:-} == --through-first-kv-store ]]; then
+    strict=(-DISSUE265_NATIVE_STRICT -isystem "$dram/ext/headers")
+    sha256sum "$dram/src/memory_system.h" >> tools.sha256
+fi
+g++ -std=c++17 -O2 -Wall -Wextra -Werror -isystem "$dram/src" "${strict[@]}" dramsim_bridge.cpp \
     -L"$dram" -Wl,-rpath,"$dram" -ldramsim3 -o bridge-read > build.log 2>&1
 for mode in 0 1; do
     python3 -B qwen_page_cycle.py predict "$archive" ./bridge-read "$config" "device-$mode" "$embedding" --mode "$mode" "$@" \

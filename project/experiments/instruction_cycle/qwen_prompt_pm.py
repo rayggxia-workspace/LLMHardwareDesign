@@ -34,7 +34,7 @@ def fetch_pm(ddr, ready, base, image_bytes, domain, config_word_cycles):
     return stores
 
 
-def predict(archive, binary, config, output, embedding, mode, prompt_start, *, after_pm=None):
+def predict(archive, binary, config, output, embedding, mode, prompt_start, *, after_pm=None, allow_writes=False):
     proof = Proof(archive, WINDOWS["next_rms"][0])
     deployment = controls(proof, "next_rms", WINDOWS["next_rms"][1])
     local, mother = deployment["local"], deployment["pages"][0]
@@ -67,7 +67,7 @@ def predict(archive, binary, config, output, embedding, mode, prompt_start, *, a
                 "ddr_events": ddr.events[:], "lc_config_writes": local_stores, "mc_config_writes": mother_stores}
         return result if after_pm is None else after_pm(result, ddr)
 
-    return predict_prompt(archive, binary, config, output, mode, prompt_start, tail=tail)
+    return predict_prompt(archive, binary, config, output, mode, prompt_start, tail=tail, allow_writes=allow_writes)
 
 
 def compare(archive, prediction):

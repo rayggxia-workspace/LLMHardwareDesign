@@ -24,6 +24,8 @@ SERVICES_MODELED = 2
 PREDICTED_BURSTS = PM_PREFIX_BURSTS + SERVICES_MODELED * (DESCRIPTOR_BURSTS + DRL1_BURSTS) + DESCRIPTOR_BURSTS
 K0_WEIGHT_RECORDS = 16
 FULL_Q_WEIGHT_RECORDS = 256
+AFTER_Q = FULL_Q_WEIGHT_RECORDS + 1
+THROUGH_KV_STORE = AFTER_Q + 1
 
 
 def marker(kind, cycle, **values):
@@ -62,11 +64,11 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
         result = {"scope": "105530 generation 1 startup to third service accept", "mode": mode,
                   "core_cycle_origin": prefix["core_cycle_origin"], "prompt_start_one_based_edge": PROMPT_ACCEPT_EDGE,
                   "schedule": schedule, "ddr_events": ddr.events, "markers": markers}
-        if weight_records in (K0_WEIGHT_RECORDS, 2 * K0_WEIGHT_RECORDS, FULL_Q_WEIGHT_RECORDS):
+        if weight_records in (K0_WEIGHT_RECORDS, 2 * K0_WEIGHT_RECORDS, FULL_Q_WEIGHT_RECORDS, AFTER_Q, THROUGH_KV_STORE):
             from qwen_projection_front import first_weight_offer
             from qwen_projection_pipeline import run_k0
             front = first_weight_offer(call, descriptor["service_accept"], mode)
-            through_q = weight_records == FULL_Q_WEIGHT_RECORDS
+            through_q = weight_records >= FULL_Q_WEIGHT_RECORDS
             through_k1 = weight_records == 2 * K0_WEIGHT_RECORDS
             scope = "first Q provider retirement" if through_q else "first Q {} window".format("K1" if through_k1 else "K0")
             result["scope"] = "105530 generation 1 startup through " + scope
@@ -75,6 +77,26 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
             if through_q:
                 markers.append(marker("service_retire", result["projection_k0"]["service_retire"], **identity,
                                       status=0, read=FULL_Q_WEIGHT_RECORDS * 17 * 64, write=512))
+                if weight_records >= AFTER_Q:
+                    from qwen_post_projection import run_post_projection
+                    through_store = weight_records == THROUGH_KV_STORE
+                    post = run_post_projection(page, fabric, result["projection_k0"]["service_retire"],
+                                               through_store=through_store)
+                    result["scope"] = "105530 generation 1 through the first KVR1 " + ("retirement" if through_store else "write offer")
+                    result["post_projection"] = post
+                    for stage in post["stages"]:
+                        stage_identity = stage["call"]
+                        call = page["calls"][stage_identity["ticket"] - 1]
+                        for row in stage["dispatch"]["descriptor_admissions"]:
+                            markers.append(marker("descriptor_admit", row["cycle"], target=row["target"],
+                                                  tag=row["tag"], address=row["address"]))
+                        markers.append(marker("service_accept", stage["descriptor"]["service_accept"],
+                                              **stage_identity, schema=call["schema"], op=call["operation"]))
+                        if "service" in stage:
+                            service = stage["service"]
+                            read = 512 if call["ticket"] == 4 else service["read_bytes"]
+                            markers.append(marker("service_retire", service["service_retire"], **stage_identity,
+                                                  status=0, read=read, write=512))
             elif not through_k1:
                 result["projection_k0"].pop("next_window", None)
         elif weight_records:
@@ -101,7 +123,8 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
                     beats=pair["third_weight_record_beats"])
         return result
 
-    return predict_pm(archive, binary, config, output, embedding, mode, PROMPT_ACCEPT_EDGE, after_pm=after_pm)
+    return predict_pm(archive, binary, config, output, embedding, mode, PROMPT_ACCEPT_EDGE, after_pm=after_pm,
+                      allow_writes=weight_records == THROUGH_KV_STORE)
 
 
 def observed_first_page(path, mode):
@@ -155,7 +178,9 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
     mode = prediction["mode"]
     require(mode in (0, 1), "invalid 105530 mode")
     expected = prediction["ddr_events"]
-    bursts = PREDICTED_BURSTS + 17 * weight_records
+    bursts = PREDICTED_BURSTS + 17 * min(weight_records, FULL_Q_WEIGHT_RECORDS)
+    if weight_records >= AFTER_Q:
+        bursts += 3 * DESCRIPTOR_BURSTS + DRL1_BURSTS
     require(len(expected) == 4 * bursts, "incomplete DDR prefix prediction")
     proof = Proof(archive, WINDOWS["next_rms"][0])
     trace = "DDR-{}/transactions.tsv".format(mode)
@@ -170,14 +195,35 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
 
     observed = observed_first_page(edge_log, mode)
     wanted = prediction["markers"]
-    marker_count = 12 if weight_records == FULL_Q_WEIGHT_RECORDS else 11
+    marker_count = {FULL_Q_WEIGHT_RECORDS: 12, AFTER_Q: 23, THROUGH_KV_STORE: 24}.get(weight_records, 11)
     require(len(wanted) == marker_count and len(observed) > len(wanted), "incomplete dispatch marker prefix")
     for index, (event, actual) in enumerate(zip(wanted, observed)):
         require(event == actual, "control marker {} differs: predicted {}, observed {}".format(index, event, actual))
     page = decode_archive(archive)["pages"][0]
-    return {"mode": mode, "matched_ddr_bursts": bursts, "matched_ddr_events": len(expected),
-            "matched_control_markers": len(wanted), "rtl_ddr_trace_sha256": trace_sha,
-            "rtl_edge_trace_sha256": MODE_EDGE_SHA[mode], "conditional_wait_audit": audit_wait_release(page, observed)}
+    result = {"mode": mode, "matched_ddr_bursts": bursts, "matched_ddr_events": len(expected),
+              "matched_control_markers": len(wanted), "rtl_ddr_trace_sha256": trace_sha,
+              "rtl_edge_trace_sha256": MODE_EDGE_SHA[mode], "conditional_wait_audit": audit_wait_release(page, observed)}
+    if weight_records >= AFTER_Q:
+        name = "DDR-{}/write-transactions.tsv".format(mode)
+        source = proof.path(name)
+        post = prediction["post_projection"]
+        if weight_records == THROUGH_KV_STORE:
+            write_events = post["write_events"]
+            require(len(write_events) == 32, "incomplete first KV store")
+        else:
+            ready = post["write_ready"]
+            address = ready["address"]
+            write_events = [["admit", ready["first_ddr_write_accept_if_idle"], (address >> 6) & 1,
+                             ready["tag"], address]]
+        with source.open(encoding="ascii") as stream:
+            for index, event in enumerate(write_events):
+                kind, cycle, lane, tag, address = fields(stream.readline(), 5)
+                actual = [kind, int(cycle), int(lane), int(tag), int(address)]
+                require(list(event) == actual, "KV DDR event {} differs: {} vs {}".format(index, event, actual))
+        write_sha = file_digest(source)
+        proof.check(name, write_sha)
+        result.update(matched_kv_ddr_events=len(write_events), rtl_kv_trace_sha256=write_sha)
+    return result
 
 
 def main():
@@ -204,6 +250,10 @@ def main():
                             help="include the first two Q K128 windows and thirty-two weight records")
         weight.add_argument("--through-q", dest="weight_records", action="store_const", const=FULL_Q_WEIGHT_RECORDS,
                             help="include all 256 first Q weight records and the service retirement")
+        weight.add_argument("--through-first-kv-offer", dest="weight_records", action="store_const", const=AFTER_Q,
+                            help="include post-Q bias and the first KVR1 store offer")
+        weight.add_argument("--through-first-kv-store", dest="weight_records", action="store_const", const=THROUGH_KV_STORE,
+                            help="include strict DDR writes and retirement of the first KVR1 service")
     args = parser.parse_args()
     if args.operation == "predict":
         result = predict(args.archive, args.binary.resolve(), args.config.resolve(), args.output.resolve(),

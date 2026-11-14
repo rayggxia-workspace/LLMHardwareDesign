@@ -53,13 +53,14 @@ class DramLive:
             )
             response = self._read()
             if (len(response) not in (2, 3) or response[0] != "READY"
-                    or len(response) == 3 and response[2] != "WR_COMPLETION"):
+                    or len(response) == 3 and response[2] not in ("WR_COMPLETION", "WR_CALLBACK")):
                 raise RuntimeError("invalid DRAM bridge startup response: {}".format(response))
             self.period_ps = int(response[1])
             if not 0 <= dram_phase_ps < self.period_ps:
                 raise ValueError("DRAM phase must be within one tick period")
             self.model_period_ps = Fraction(self.period_ps if model_period_ps is None else model_period_ps)
             self.supports_writes = len(response) == 3
+            self.native_strict_writes = self.supports_writes and response[2] == "WR_CALLBACK"
             if allow_writes and not self.supports_writes:
                 raise ValueError("DRAM bridge does not advertise write completion")
             self._allow_writes = allow_writes
@@ -192,8 +193,11 @@ class DramLive:
                 raise RuntimeError("DRAM callback identity or address does not match a live transaction")
             beat, accepted = entry
             done, command = timing if timing else (tick, -1)
-            if (done != tick or done <= accepted or (beat.write and not accepted <= command <= done)
-                    or (not beat.write and command != -1)):
+            if beat.write and not self.native_strict_writes:
+                command_valid = accepted <= command <= done
+            else:
+                command_valid = command == -1
+            if done != tick or done <= accepted or not command_valid:
                 raise RuntimeError("invalid DRAM callback timing or write command identity")
             del self._pending[serial]
             host_ready = self._to_host(self._ddr_time(done)) if self._cdc else done

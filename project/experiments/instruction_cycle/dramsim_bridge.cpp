@@ -1,5 +1,6 @@
-// Live transport to the public DRAMsim3 API. The optional WR observer requires
-// the pinned controller patch. Same-address requests are always serialized.
+// Live transport to the public DRAMsim3 API. The optional WR observer is
+// distinct from the archived controller's native strict write callback.
+// Same-address requests are always serialized.
 #include <charconv>
 #include <cmath>
 #include <cstdint>
@@ -15,7 +16,19 @@
 #include <utility>
 #include <vector>
 
+#ifdef ISSUE265_NATIVE_STRICT
+#include "memory_system.h"
+#else
 #include "dramsim3.h"
+#endif
+
+#if defined(ISSUE265_WRITE_COMMIT) && defined(ISSUE265_NATIVE_STRICT)
+#error "Select one DRAM write completion mechanism"
+#endif
+
+#if defined(ISSUE265_WRITE_COMMIT) || defined(ISSUE265_NATIVE_STRICT)
+#define ISSUE265_SUPPORTS_WRITES
+#endif
 
 #ifdef ISSUE265_WRITE_COMMIT
 extern "C" void issue265_observe_writes(void (*observer)(void *, uint64_t, uint64_t, uint64_t), void *context);
@@ -49,7 +62,13 @@ public:
 #endif
         memory_.reset(dramsim3::GetMemorySystem(config, output,
               [this](uint64_t address) { read_complete(address); },
+#ifdef ISSUE265_NATIVE_STRICT
+              [this](uint64_t address) { complete(address, true); }));
+        if (!memory_) throw std::runtime_error("could not construct strict DDR device");
+        memory_->EnableStrictWrites();
+#else
               [this](uint64_t address) { write_admitted(address); }));
+#endif
         if (!memory_ || memory_->GetBusBits() * memory_->GetBurstLength() != 512) {
             throw std::runtime_error("expected a 64-byte DRAM burst");
         }
@@ -64,6 +83,8 @@ public:
         reply << "READY " << period_ps_;
 #ifdef ISSUE265_WRITE_COMMIT
         reply << " WR_COMPLETION";
+#elif defined(ISSUE265_NATIVE_STRICT)
+        reply << " WR_CALLBACK";
 #endif
         reply << std::endl;
         for (std::string line; std::getline(std::cin, line);) {
@@ -72,7 +93,7 @@ public:
             request >> op;
             if (op == "CAN") {
                 const auto address = number(request);
-#ifdef ISSUE265_WRITE_COMMIT
+#ifdef ISSUE265_SUPPORTS_WRITES
                 const auto write = number(request);
                 if (write > 1) throw std::runtime_error("write flag must be zero or one");
 #else
@@ -81,7 +102,7 @@ public:
                 end_of_request(request);
                 reply << "CAN " << can_accept(address, write) << std::endl;
             } else if (op == "READ"
-#ifdef ISSUE265_WRITE_COMMIT
+#ifdef ISSUE265_SUPPORTS_WRITES
                        || op == "WRITE"
 #endif
             ) {
@@ -114,7 +135,7 @@ public:
                 reply << "DONE " << completed_.size();
                 for (const auto& completion : completed_) {
                     reply << ' ' << completion.id << ' ' << completion.address;
-#ifdef ISSUE265_WRITE_COMMIT
+#ifdef ISSUE265_SUPPORTS_WRITES
                     reply << ' ' << completion.done_tick << ' ';
                     if (completion.command_tick) reply << completion.command_tick;
                     else reply << -1;
@@ -163,9 +184,11 @@ private:
             throw std::runtime_error("DRAM completion has no matching live owner");
         }
         const auto pending = entry->second;
+#ifdef ISSUE265_WRITE_COMMIT
         if (write && (!pending.admission_callback || !pending.command_tick)) {
             throw std::runtime_error("write completed without observed admission and WR issue");
         }
+#endif
         addresses_.erase(entry);
         ids_.erase(pending.id);
         completed_.push_back({pending.id, address, tick_, pending.command_tick});
@@ -173,6 +196,7 @@ private:
 
     void read_complete(uint64_t address) { complete(address, false); }
 
+#ifndef ISSUE265_NATIVE_STRICT
     void write_admitted(uint64_t address) {
         const auto entry = addresses_.find(address);
         if (entry == addresses_.end() || !entry->second.write || entry->second.admission_callback) {
@@ -180,6 +204,7 @@ private:
         }
         entry->second.admission_callback = true;
     }
+#endif
 
 #ifdef ISSUE265_WRITE_COMMIT
     void write_issued(uint64_t address, uint64_t raw_tick, uint64_t write_delay) {
