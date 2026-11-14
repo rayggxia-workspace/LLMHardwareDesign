@@ -1,5 +1,7 @@
 # 架构与运行
 
+[七模型短程 TLM 回放](../work/Melodydt/274/RESULTS.md)记录真实权重生成、两步 Decode、两位置 Prefill、Slurm 和状态审计的复跑入口。模型专用服务及定点数值边界随实测回执记录。
+
 Qwen2.5-3B 的 [指令驱动事务级评估](../project/experiments/systemc_benchmark/README.md)提供配置化运行入口，覆盖两步 decode、短 prefill、诊断前缀、完整请求回放、128/512-bit 对照及短程吞吐审计。
 
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。

@@ -7,10 +7,10 @@
 | 模型 | 短 Prefill（输入 token/s） | Decode（token/s） | 作业与结果目录 |
 | --- | ---: | ---: | --- |
 | Qwen3-0.6B | 13.481376 | 3.585938 | 115055 完成，`qwen3-short-fast-01/run-115055` |
-| Llama-3.2-1B | 7.178705 | 运行中 | Prefill `qwen3-short-fast-01/run-115056`，Decode `llama-short-03/` |
-| Phi-4-mini | 运行中 | 运行中 | 115103，`phi-short-02/run-115103` |
+| Llama-3.2-1B | 7.178705 | 运行中 | Prefill `qwen3-short-fast-01/run-115056`，Decode `llama-short-03/run-115128` |
+| Phi-4-mini | 运行中 | 运行中 | Prefill `phi-short-02/run-115103`，Decode `phi-short-03/run-115129` |
 | Gemma-3-4B | 运行中 | 运行中 | 115122，`gemma-short-03/run-115122` |
-| Granite MoE | 运行中 | 运行中 | 115109，`granite-short-01/run-115109` |
+| Granite MoE | 8.055319 | 运行中 | Prefill `granite-short-01/run-115109`，Decode `granite-short-02/run-115130` |
 | Qwen3.5-4B | 运行中 | 运行中 | 115124，`hybrid-short-01/run-115124` |
 | Falcon-H1-3B | 运行中 | 运行中 | Prefill 115125，`hybrid-short-01/run-115125`，Decode 115126，`hybrid-short-02/run-115126` |
 
@@ -34,6 +34,7 @@
 - Granite 115106 联调两位置、单层、7.801003222 ms，实际 router 每次选 8/40 个专家。结果 SHA-256 `71509679499eb12111c3330f64f83af4b6e0e9b216d61323fb91a9e5e671b599`。
 - Qwen3.5 115120 联调首个 GDN 层，两位置 32.558220342 ms。69,632 笔递推和卷积状态写入，34,816 笔跨步读回。结果 SHA-256 `e6de21a3385178ebe6a4de13b3ff724f17782b17c4dd775bc7858ed74720d049`。补包 115110 含 250 个张量、7,050,117,120 B，包索引 SHA-256 `b3c357d62dc0c8a8bb5b591c89f132d6b7e34dd1288aaebf4c89dac195c1359f`。
 - Falcon 115121 联调首个 Attention/Mamba2 层，两位置 26.758704004 ms，133,376 笔递推和卷积状态写入，66,688 笔跨步读回，另有 64 笔 KV 写入、32 笔跨步读回。结果 SHA-256 `6dd737b95b860a4118278c632f7125fdafb9d37d36e8468358ce4e9c8dcc6056`。
+- Granite 115109 的 Prefill 在 c64/node10 跑完两位置 × 32 层，覆盖 64 份路由与 26,940,138 笔 DDR 回调。总模拟时间 248.283146700 ms，结果 SHA-256 `603abdc3758d19c3c2a9f746407ec9bedeca3802fca75bf9902ef61c1aca2cdc`。独立审计 `audits/granite-prefill-115109.json` SHA-256 `8872e8e2699d3f8fa6a4d77a323305933b6c2fe95c0eede3df6d2acc960b0822`。
 
 ## 候选映射
 
@@ -41,3 +42,20 @@
 - Gemma 和 Qwen3.5 的 256 维注意力分窗处理完整的 K/V。Gemma 的 1,024 位置窗口完整覆盖本测试；将前 512 个历史位置视为零。Gemma 执行 (1+\gamma) 归一化与 GELU-tanh，用每字 40 周期的候选时序。
 - Granite 使用实际投影产生 router logits，取 top-8，并在回放中动态从 DDR 读取专家投影。时钟显式计入路由、结果累加和搬运。加权累加与路由时序尚未用 RTL 校准。
 - Qwen3.5 的 24 个 GDN 层和 Falcon 的 32 个 Mamba2 层通过八笔在途的 DDR 窗口执行卷积和递推状态读写。状态在 S32/Q16 与局控内部 FP32 算术间转换。32-lane 状态算术周期是候选值。每个模型第二步核对前一步的全部状态回调。全包保持原始权重和校验索引，实际投影采用 W8A16；词表以 HEAD16 完成，补齐行不参与 argmax。
+
+## 复跑与审计
+
+登录服务器后进入表中 `run-<job>` 的上级目录。使用该目录的冻结脚本和上游清单。下例的 `-n2 -c10` 分别运行 Prefill 和 Decode 各 10 核。单阶段仅保留一个模式并使用 `-n1`。多模型准备按节点配额分批，c96 可用 8×12 核，60 核配置可用 6×10 核。
+
+```bash
+R=/public/home/yuzelu/Melodydt/runs/issue-274
+cd "$R/hybrid-short-01"
+sha256sum -c source.sha256
+sha256sum -c upstream.sha256
+sbatch --parsable --job-name=mdt-274gdnfull -p c96,c64 -N1 -n2 -c10 -t 08:00:00 -o slurm-%j.log fast_qwen3_short.sbatch qwen35 prefill decode
+sacct -X -j 115124 --format=JobID,State,ExitCode,AllocCPUS,NodeList,Elapsed
+tail -n 10 run-115124/prefill.log run-115124/decode.log
+sha256sum -c run-115124/output.sha256
+```
+
+使用 `audit_short.py` 核对两位置、层数、程序页、DDR 回调、跨位置状态和反馈 token。Decode 审计可提供 `--reference`，仅在输入 token 一致时计算该步的 logits 相对 L2。所有日志、MC 页面、LC 描述符、权重映像和状态结果均保存在授权服务器。冻结参考的 SHA-256 索引为 `dense-zero-reference-02/ref-115104/reference.sha256`（`3ee5aba543abeaeab427edf879c2068313492fcffa6acf632b9585230dec8510`）和 `hybrid-zero-reference-01/ref-115123/reference.sha256`（`fa000dcfec03304c6d56c380e1a6bb61536f6809a84051c39bbefc4bf7d17e00`）。
