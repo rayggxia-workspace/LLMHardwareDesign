@@ -837,3 +837,5 @@ C0 提供同一版底座上的传输端点。当前记录尚无词表退休源�
 
 远端目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em/full-graph-zwl0Tr/merged-bmMd5X/native-request-6WI0tH/framework-r11-CatJ8r/ingress-route-iN0LbH/resident-gather-HefhYQ/prompt-ddr-6T8eOJ/decode-feedback-xts0x7`。下一步是把退休服务、主控派发和真实存储路径绑定至同一完整计划，
 然后按固定 #260 在目标底座验收真实 KV 和 P512/D128 token 退休。
+
+Algo2 作业 110386 读取并接受 110385 的接口包，回执和底座哈希相符。650 根网中完成 1 根，648 根达到搜索预算，1 根缺网格接入。该次试布仅验证 Algo2 确实消费了同一份接口包。结果 `algo2-110386.json` SHA-256 为 `1171365c8535f884072cddb4f2823b4661b57bfa027d363e26805d3bdf433ebe`。
