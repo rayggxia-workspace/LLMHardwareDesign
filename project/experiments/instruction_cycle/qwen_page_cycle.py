@@ -1,4 +1,4 @@
-"""Predict generation 1 through its first two DRL1 services and next dispatch."""
+"""Predict 105530 generation 1 through the selected Q weight prefix."""
 
 import argparse
 import json
@@ -70,9 +70,18 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
                                                          beats=front["weight_record_beats"])
             if weight_records == 2:
                 result["scope"] = "105530 generation 1 startup through the first two P_SCOPE weight records"
+            if weight_records >= 2:
                 result["second_weight_record"] = read_weight_record(
                     fabric, front["second_weight_source_offer"], front["second_weight_address"],
                     beats=front["second_weight_record_beats"])
+            if weight_records == 3:
+                from qwen_projection_pair import projection_pair
+                pair = projection_pair(call, front, result["weight_record"], result["second_weight_record"], mode)
+                result["scope"] = "105530 generation 1 startup through the third P_SCOPE weight record"
+                result["projection_pair"] = pair
+                result["third_weight_record"] = read_weight_record(
+                    fabric, pair["third_weight_source_offer"], pair["third_weight_address"],
+                    beats=pair["third_weight_record_beats"])
         return result
 
     return predict_pm(archive, binary, config, output, embedding, mode, PROMPT_ACCEPT_EDGE, after_pm=after_pm)
@@ -169,6 +178,8 @@ def main():
                             help="include the first 17-beat P_SCOPE record")
         weight.add_argument("--with-two-weights", dest="weight_records", action="store_const", const=2,
                             help="include both 17-beat records of the first drained P_SCOPE pair")
+        weight.add_argument("--with-three-weights", dest="weight_records", action="store_const", const=3,
+                            help="include the first P_SCOPE pair execution and the third drained weight record")
     args = parser.parse_args()
     if args.operation == "predict":
         result = predict(args.archive, args.binary.resolve(), args.config.resolve(), args.output.resolve(),

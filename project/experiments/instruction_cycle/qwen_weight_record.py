@@ -1,4 +1,4 @@
-"""Advance 105530's first two P0 weight records on the live DDR devices."""
+"""Advance 105530's first three P0 weight records on the live DDR devices."""
 
 from dma_ddr import Beat
 from qwen_descriptor_dma import BURST_BYTES, SLOTS_PER_CHANNEL
@@ -10,7 +10,7 @@ CLIENT = 9
 SKIDS_PER_CHANNEL = 3
 LANE_DEPTH = 16
 ISSUE_WINDOW_CREDITS = 4
-PREFIX_RECORD_ADDRESSES = (0x4C9000, 0x4CD400)
+PREFIX_RECORD_ADDRESSES = (0x4C9000, 0x4CD400, 0x4D1800)
 
 
 def _advance_ddr(ddr, channel, tick, target, queues, submitted, completed, addresses):
@@ -46,10 +46,10 @@ def read_weight_record(fabric, offer_cycle, address, *, beats=17):
     completed_records, issue_cursors, response_cursor = getattr(fabric, "weight_prefix_state", (0, (0, 0), 0))
     require(type(offer_cycle) is int and offer_cycle > fabric.last_response
             and fabric.open_record is None
-            and all(device.idle for device in ddr.dram), "first weight record requires a drained prefix")
+            and all(device.idle for device in ddr.dram), "weight record requires a drained prefix")
     require(completed_records < len(PREFIX_RECORD_ADDRESSES) and type(address) is int
             and address == PREFIX_RECORD_ADDRESSES[completed_records] and type(beats) is int and beats == 17,
-            "unsupported weight record outside the first two Q projection records")
+            "unsupported weight record outside the first three Q projection records")
 
     channel = (address >> 11) & 1
     lane_base = channel * 2
@@ -59,6 +59,8 @@ def read_weight_record(fabric, offer_cycle, address, *, beats=17):
     slots = range(entry_base, entry_base + SLOTS_PER_CHANNEL)
     device = ddr.dram[channel]
     tick = offer_cycle * CORE_PS // DDR_PS
+    # An idle channel advances independently from its previous tick. This
+    # preserves DDR state and the fixture's absolute lane scan parity.
     require(tick >= ddr.tick[channel] and not device.completions(tick), "unexpected DDR activity before weight offer")
 
     accepts, tags = [], []
