@@ -51,6 +51,7 @@ class DramBridge:
         self.check(self.handle is not None)
         self.completion = U64()
         self.stats_buffer = (U64 * len(STAT_KEYS))()
+        self.closed_stats = None
         clock.dram = self
 
     def check(self, valid):
@@ -72,6 +73,8 @@ class DramBridge:
 
     @property
     def stats(self):
+        if self.closed_stats is not None:
+            return self.closed_stats.copy()
         self.check(self.lib.fast_dram_stats(self.handle, self.stats_buffer) == 1)
         return Counter({key: value for key, value in zip(STAT_KEYS, self.stats_buffer) if value})
 
@@ -91,8 +94,10 @@ class DramBridge:
     def close(self):
         if self.pending:
             raise RuntimeError("DDR closed before drain")
+        final_stats = self.stats
         self.check(self.lib.fast_dram_close(self.handle) == 1)
         self.handle = None
+        self.closed_stats = final_stats
 
 
 def main():
