@@ -34,8 +34,10 @@
 
 | 整段配置 | 512 bit 基线吞吐 | 512 bit 加流水 |
 | --- | ---: | --- |
-| Decode，已有 512-position KV，连续两步 | 2.0909 tok/s | 110382 运行中 |
-| Prefill，空 KV，两个输入位置 | 5.4079 tok/s | 110383 运行中 |
+| Decode，已有 512-position KV，连续两步 | 2.0909 tok/s | 2.3390 tok/s（+11.87%） |
+| Prefill，空 KV，两个输入位置 | 5.4079 tok/s | 5.5065 tok/s（+1.82%） |
+
+两组均完成并通过 110390 对照审计。Decode 审计覆盖 582 页，两次词表退休间隔从 478.261 ms 降至 427.534 ms。Prefill 审计覆盖 578 页，两个位置总耗时从 369.831 ms 降至 363.206 ms。逐页核对母控指令周期、服务调用和 DDR 请求与回调，decode 还核对两次退休的 token ID 与跨步 KV。整段结果采用母控指令驱动的 TLM 回放，局部服务以模型执行。见 [decode 对照](memory-pipeline-receipts/decode-comparison.json) 和 [prefill 对照](memory-pipeline-receipts/prefill-comparison.json)。
 
 基线回执见 [SRAM 位宽实验](native-sram-width/README.md)。用相同部署、同一组 DDR 参数和执行参数分别运行基线与流水模式。流水模式由 `--pipeline-memory` 打开。运行命令见 [decode](memory-pipeline-receipts/run.sbatch) 和 [prefill](memory-pipeline-receipts/prefill.sbatch)。结束后用 `python work/YUZE-LU/234/audit_memory_pipeline.py decode BASELINE_DIR CANDIDATE_DIR` 对照。Prefill 将子命令换成 `prefill`。输入目录须包含 `execution.json`、`timing-audit.json` 和 `page-timing.jsonl`。
 
