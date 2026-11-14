@@ -3,6 +3,7 @@
 import argparse
 from collections import Counter
 from contextlib import redirect_stdout
+from dataclasses import asdict
 import json
 from pathlib import Path
 import sys
@@ -17,6 +18,7 @@ from publish_native_request_handoff import (
 )
 from route_contract import digest, seal
 from tlm_model_registry import model_for
+from tlm_sram import load_sram_profile
 from verify_candidate_algo2 import verify_candidate
 
 
@@ -122,7 +124,7 @@ def match_models(providers, rewrites, models):
 
 
 def inspect(request, handoff, base_path, fabric_path, policy_path, control_path,
-            *, gather_inputs=None, call_archives=(), models=None):
+            *, gather_inputs=None, call_archives=(), models=None, sram_config=None):
     spec = read(handoff / 'algorithm2-input.json')
     wiring = verify_candidate(spec, handoff, base_path)
     base, program, receipt = read(base_path), read(handoff / 'program.json'), read(handoff / 'handoff.json')
@@ -132,6 +134,13 @@ def inspect(request, handoff, base_path, fabric_path, policy_path, control_path,
             and digest(receipt) == wiring['admission']['receipt_sha256']
             and digest(base) == source['base_sha256'] == wiring['admission']['base_sha256'],
             'current program or base differs from the checked handoff')
+
+    resources = None
+    if sram_config is not None:
+        instances, config_hash = load_sram_profile(
+            sram_config, source['base_sha256'], {row['id'] for row in base['assemblies']})
+        resources = dict(origin='external_model_parameters', config_sha256=config_hash,
+                         instances={name: asdict(sram) for name, sram in instances.items()})
 
     witness, signatures = verify_package(request, program)
     fabric, policy, control = read(fabric_path), read(policy_path), read(control_path)
@@ -193,6 +202,7 @@ def inspect(request, handoff, base_path, fabric_path, policy_path, control_path,
         unresolved_feedback=program['unresolved_feedback'],
         call_evidence={key: value for key, value in evidence.items() if key != 'signatures'}
         if evidence else None,
+        sram_profile=resources,
         evaluation_executed=False,
     )
 
@@ -204,11 +214,13 @@ def main():
     parser.add_argument('--gather', nargs=2, type=Path, metavar=('LOCAL_IMAGES', 'DIRECT_CALL_AUDIT'))
     parser.add_argument('--call-archive', action='append', nargs=3, default=[],
                         metavar=('STEP', 'FIRST_PAGE', 'TAR'))
+    parser.add_argument('--sram-config', type=Path,
+                        help='externally specified SRAM capacity and port widths by instance')
     args = parser.parse_args()
     archives = [(int(step), int(page), Path(path)) for step, page, path in args.call_archive]
     result = inspect(args.request, args.handoff, args.base_path, args.fabric_path,
                      args.policy_path, args.control_path, gather_inputs=args.gather,
-                     call_archives=archives)
+                     call_archives=archives, sram_config=args.sram_config)
     with args.output.open('x', encoding='utf-8') as out:
         json.dump(result, out, sort_keys=True, indent=2)
         out.write('\n')

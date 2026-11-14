@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 16:39 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加外部指定的 SRAM 实例、容量和读写位宽。112358、112359 用同一底座分别读回 128-bit 和 512-bit 读配置，核对对齐事务换算和 Gather 单字写约束。远端 10 项测试通过，目标底座执行仍待接入。[参数及回执](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#sram-容量和端口位宽由外部配置)。
+
 2026-11-14 16:25 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加 Algo1 指令包、同计划连线与独立底座的 TLM 准入检查。远端 112167 核对 184,927 页与 639 页 Gather 替换，定位 12 类派发缺口、2 类完成信号缺口，以及 7 类等待 TLM 实现的候选服务。PR #260 原短程作业按诊断记录。下一步用目标绑定的资源时序与单页 Gather 验证实际指令执行。[回执及复现](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#对同计划底座的-tlm-准入)。
 
 2026-11-14 16:08 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 完成 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 两输入位置的短程 prefill。111805 用原版审计核对 578 页和 288 次 KV 写入，TLM 结果 5.5065 token/s。111806 已报告第一步 token 退休，第二步运行中。完整 P512/D128 仍取消。见[快评回执](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#pr-260-短程吞吐)。

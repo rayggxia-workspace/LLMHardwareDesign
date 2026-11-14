@@ -102,3 +102,26 @@ python3.11 -B tlm_plan_preflight.py "$deployment" "$handoff" "$base" \
 本次部署用 `request-runtime-r2`，交接用 `handoff-111873`，底座用 `geometry-110384/base.json`，控制投影用 `v2-native-control-request-r2/requirements.json`，Gather 局控用 `request-110369`。全量准入统计来自已封存的服务清单，逐字节指令定位来自显式给出的归档页范围。通过 6 项模型查找及替换回归，并在真实交接上拒绝混用底座与指令包。
 
 下一步需要底座绑定的 SRAM、DDR、互联和时钟参数，以及按同一签名实现的服务模型。先用已重链的 U0 Gather 执行位置 0 的单页，按母控 CALL、目标写确认和 WAIT 核对完成语义。覆盖实际计划所需服务后，再固定场景与同一底座的参数，比较两个 Algo1 计划。
+
+### SRAM 容量和端口位宽由外部配置
+
+给 `tlm_plan_preflight.py` 或 `tlm-preflight.sbatch` 加 `--sram-config sram.json`。参数文件用 `base_sha256` 绑定目标底座，每个实例独立填写 `assembly`、`capacity_bytes`、`read_bits` 和 `write_bits`。例如下列配置比较 U0 连续宽读的潜在的影响。
+
+```json
+{
+  "base_sha256": "5e29e7ad71e1be84b5b8fd8b5a327d4672bef511af8b567a7c08d6f36ee0620b",
+  "sram": {
+    "U0.data": {"assembly": "U0", "capacity_bytes": 16384, "read_bits": 512, "write_bits": 128},
+    "P0.data": {"assembly": "P0", "capacity_bytes": 16384, "read_bits": 128, "write_bits": 128}
+  }
+}
+```
+
+字地址仍以 16 B 为单位。服务支持连续合并时，令端口一次能传的字数为位宽除以 128。每笔事务在端口边界及服务允许的边界截断，沿用 PR #260 的对齐拆分原则。程序存储可以另设具名实例，数据端口参数不会传给程序装载。Gather 本身逐个 16 B 写入并等待确认，事务换算按其 128-bit 服务能力计。外部参数的文件散列及值写入回执，服务派发仍由既有候选底座凭据决定。
+
+远端 112358、112359 用同一计划与底座分别提交 128-bit 和 512-bit 的 U0 读参数，P0 及 U0 写参数相同。支持合并的对齐 8 KiB 读从 512 笔变为 128 笔，两种配置的 Gather 存储仍为 512 笔。两份准入回执除参数外完全一致。10 项测试通过。以上结果覆盖参数绑定和事务拆分，评估入口尚未执行计划或计算 token 时间。
+
+| 远端 `tlm-input-LmzyNWWZ/sram-profile-6RafkmGL` 产物 | SHA-256 |
+| --- | --- |
+| `preflight-128.json` | `71ed9ec8580df6371c89fcea18cb9928df856a7a17c02a8860104bdad248aa22` |
+| `preflight-512.json` | `704ea81e1314419f2b8796799e6af246728bf0da18546ee04b9a36e0ce0d12d4` |
