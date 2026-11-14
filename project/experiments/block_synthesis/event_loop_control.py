@@ -58,6 +58,13 @@ def decode(program, hardware):
         raise ValueError('finite-loop program does not match its qualified hardware and arithmetic')
     _verify_ranges(library)
     ranges = library.get('ranges', {})
+    if spec.get('native_sram_handoff'):
+        from event_handoff_control import decode_handoff
+
+        lease_edges = loop_lease_edges(program['mother'][:-1], hardware['resources'])
+        ordered = decode_handoff(program, hardware, lease_edges)
+        return {'instructions': library['program']['instructions'],
+                'ranges': [(row['task_id'], ranges.get(row['task_id'])) for row in ordered]}
     by_sequence = defaultdict(dict)
     for group, commands in program['locals'].items():
         for command in commands:

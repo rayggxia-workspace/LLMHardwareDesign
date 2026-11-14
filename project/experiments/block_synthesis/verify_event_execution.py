@@ -66,6 +66,7 @@ def verify(tasks, hardware, plan, wire_budget=None):
         require('ready_window' not in route or phased, 'READY window requires a replay phase')
         start, end = event['start'], event['end']
         duration = route['setup'] + (size+route['bytes_per_tick']-1)//route['bytes_per_tick']
+        duration *= route.get('ticks_per_word', 1)
         profile = route.get('phases')
         native = 'typed_dma' in route and timing == 'replay'
         summarized = 'typed_dma' in route and timing == 'snapshot'

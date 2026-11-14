@@ -199,17 +199,27 @@ def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependenc
         result['native_loop_verification'] = audit
         if tile_depth:
             from event_native_range import lower_ranges
+            from event_native_residency import lower_residency
 
             tiled, tile_hardware = lower_ranges(lowered, resolved)
             if tiled is not lowered:
                 tile_result = compile_event_ir(tiled, tile_hardware, budget=budget, width=width,
                                                emit_dependencies=emit_dependencies, emit_outputs=True,
                                                tile_limit=tile_depth, **target)
+                candidates = [('whole', result), ('ranges', tile_result)]
+                resident, resident_hardware = lower_residency(tiled, tile_hardware)
+                if resident is not tiled:
+                    candidates.append(('sram', compile_event_ir(
+                        resident, resident_hardware, budget=budget, width=width,
+                        emit_dependencies=emit_dependencies, emit_outputs=True,
+                        tile_limit=tile_depth, **target)))
                 attempts = []
-                for kind, candidate in (('whole', result), ('ranges', tile_result)):
+                for kind, candidate in candidates:
                     plan = candidate['plan']
                     attempts.append({'layout': kind, 'status': candidate['status'],
                                      'makespan': plan.get('makespan'),
+                                     'external_bytes': (plan['external_read_bytes'] + plan['external_write_bytes']
+                                                        if candidate['status'] == 'planned' else None),
                                      'expanded': plan.get('expanded', 0),
                                      'depth_pruned': plan.get('tile_depth_pruned', 0)})
 
@@ -218,11 +228,14 @@ def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependenc
                     return (plan['makespan'], plan['external_read_bytes'] + plan['external_write_bytes'],
                             plan['wire_cost'])
 
-                if tile_result['status'] == 'planned' and (
-                        result['status'] != 'planned' or score(tile_result) < score(result)):
-                    result = tile_result
+                feasible = [(kind, candidate) for kind, candidate in candidates
+                            if candidate['status'] == 'planned']
+                selected = None
+                if feasible:
+                    selected, result = min(feasible, key=lambda item: score(item[1]))
                     result['native_loop_verification'] = audit
-                result['tile_search'] = {'max_partial_depth': tile_depth, 'layouts': attempts}
+                result['tile_search'] = {'max_partial_depth': tile_depth, 'layouts': attempts,
+                                         'selected_layout': selected}
     result.update(provenance)
     return result
 

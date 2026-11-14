@@ -10,6 +10,7 @@ from time import perf_counter
 from event_deploy import digest
 from event_loop_control import decode, replay
 from event_native_range import lower_ranges
+from event_native_residency import lower_residency
 from run import compile_event_ir
 
 
@@ -58,7 +59,7 @@ def slice_program(program, ids, layer_path):
                                if name in needed or name in inputs}}
 
 
-def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None):
+def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None, modes=('range',)):
     # Select only the requested workload. Incoming edges define layer inputs
     # already available at the start; keep every intra-layer edge.
     tasks = [deepcopy(task) for task in event_ir['tasks'] if task['id'].startswith(layer_path)]
@@ -84,8 +85,14 @@ def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None
     }}
     whole = {'tasks': tasks}
     ranged, ranged_hardware = lower_ranges(whole, active)
+    layouts = {'whole': (whole, active), 'range': (ranged, ranged_hardware)}
+    if 'sram' in modes:
+        layouts['sram'] = lower_residency(ranged, ranged_hardware)
+    if 'force-ddr' in modes:
+        layouts['force-ddr'] = lower_residency(ranged, ranged_hardware, spill=True)
     results = []
     reference = None
+
     def report_overlap(plan, ir, target):
         spans = target['event_model']['native_loop_library'].get('ranges', {})
         if not spans:
@@ -100,9 +107,10 @@ def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None
                    for parent in task['after'] if parent in spans
                    and spans[parent]['kernel'] != spans[task['id']]['kernel'])
 
-    for depth in depths:
+    trials = [(depth, mode) for depth in depths for mode in (modes if depth else ('whole',))]
+    for depth, mode in trials:
         started = perf_counter()
-        ir, target = (ranged, ranged_hardware) if depth else (whole, active)
+        ir, target = layouts[mode]
         result = compile_event_ir(ir, target, width=width, budget=budget,
                                   tile_limit=depth or None, emit_outputs=True)
         seconds = round(perf_counter() - started, 6)
@@ -110,7 +118,8 @@ def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None
             raise ValueError(f'depth {depth}: {result["status"]} or failed verification')
         program = result['outputs']['program']
         decoded = decode(program, result['resolved_hardware'])
-        if (len(program['mother']) - 1 != len(ir['tasks'])
+        commands = [cmd for local in program['locals'].values() for cmd in local]
+        if (len({cmd['sequence'] for cmd in commands if cmd['op'] == 'RUN_LOOP'}) != len(ir['tasks'])
                 or len(decoded['instructions']) != len(arithmetic['instructions'])):
             raise ValueError('emitted control does not dispatch the entire layer')
         if fixture:
@@ -128,7 +137,10 @@ def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None
                 np.testing.assert_array_equal(value.raw, reference[name].raw)
                 np.testing.assert_array_equal(value.mask, reference[name].mask)
         plan = result['plan']
-        results.append({'depth': depth, 'seconds': seconds, 'bit_exact_vs_whole': fixture is not None, 'dispatches': len(program['mother']) - 1,
+        from event_residency_stats import handoff_stats
+
+        residency = handoff_stats(plan, target['event_model'])
+        results.append({'mode': mode, 'depth': depth, 'seconds': seconds, 'bit_exact_vs_whole': fixture is not None, 'dispatches': len(program['mother']) - 1,
                         'candidate_bindings': sum(len(task['bindings']) for task in ir['tasks']),
                         'model_ticks': plan['makespan'], 'expanded': plan['expanded'],
                         'merged': plan['merged'], 'pruned': plan['pruned'],
@@ -137,7 +149,7 @@ def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None
                         'early_tile_edges': report_overlap(plan, ir, target),
                         'read_bytes': plan['external_read_bytes'],
                         'write_bytes': plan['external_write_bytes'], 'nets': len(plan['nets']),
-                        'wire_cost': plan['wire_cost']})
+                        'wire_cost': plan['wire_cost'], **residency})
     return {'layer_path': layer_path, 'width': width, 'wire_budget': budget,
             'tasks': len(tasks), 'integer_instructions': len(source_tasks),
             'input_dependencies': incoming, 'decoded_integer_instructions': len(arithmetic['instructions']), 'source_onnx_sha256': source['source_model_sha256'],
@@ -157,6 +169,7 @@ def main():
     parser.add_argument('--budget', type=int, default=10)
     parser.add_argument('--depth', nargs='+', type=int, default=[0, 1, 2, 3])
     parser.add_argument('--numeric-fixture', type=Path, nargs=4, metavar=('ONNX', 'WEIGHTS', 'ACTIVATIONS', 'ORACLE'))
+    parser.add_argument('--modes', nargs='+', choices=('range', 'force-ddr', 'sram'), default=['range', 'force-ddr', 'sram'])
     parser.add_argument('--input-ids', type=int, nargs='+', default=[1, 2])
     args = parser.parse_args()
     fixture = None
@@ -189,7 +202,7 @@ def main():
                                    initial, ids, oracle))
             fixture = initial, ids, oracle
         report = evaluate(read(args.event_ir), read(args.hardware), args.layer_path,
-                          args.width, args.depth, args.budget, fixture)
+                          args.width, args.depth, args.budget, fixture, args.modes)
     finally:
         if oracle is not None:
             oracle.close()

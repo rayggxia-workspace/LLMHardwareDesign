@@ -256,6 +256,9 @@ class Model:
                     or type(route['bytes_per_tick']) is not int or route['bytes_per_tick'] < 1
                     or {'ffn_mid', 'sram_access', 'ffn_activation', 'ffn_program'} & route.keys()):
                 raise ValueError('invalid route timing')
+            if 'ticks_per_word' in route and (route['bytes_per_tick'] != 16 or route['setup'] != 0
+                    or type(route['ticks_per_word']) is not int or route['ticks_per_word'] < 1):
+                raise ValueError('invalid serial 16 B route timing')
             self.validate_service(route)
             if 'phases' in route:
                 self.validate_route_phases(route)
@@ -732,6 +735,7 @@ class Model:
         read = self.dma_read(route, value)
         size = self.sizes[value]
         ticks = route['setup'] + (size + route['bytes_per_tick'] - 1) // route['bytes_per_tick']
+        ticks *= route.get('ticks_per_word', 1)
         claims = route['claims']
         if self.snapshot and read is not None:
             duration, channels = dma_cost(self.dma_profile, read, self.dma_samples)
