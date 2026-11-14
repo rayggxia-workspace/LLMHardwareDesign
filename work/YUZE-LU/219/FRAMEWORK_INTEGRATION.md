@@ -713,3 +713,25 @@ Prompt 指向真实 DDR burst 和索引所在 lane。Decode 记录上一 token �
 | `timed-110127/report.json` | `37d744fff2f3ebf1ac51561f2cc9e07a07371dd3c275d7198419a9951a13f266` |
 | `regression-110129.log` | `0b38944e4bcf598f86be19e01da45ade2a5b995b5aa3ac3cb7b82b5b01dd58a0` |
 | `lanes-110130.json` | `7b9f2b5745e3de7ed46b916e90b4b07bae880efb42858137ade87be15da95147` |
+
+## Gather 的 v45 DMA 接点与双拍请求
+
+110151 在源摆位中找到 client 3 的 684 个不同端口，均有内部端子和唯一边界端子。源接点位于 M5 的有 414 个，位于 M6 的有 270 个。110152 保留前次 4,344 个 M10 接点的坐标并生成合计 5,028 个布线引导。110153 在独立 DMA 实例内完成这些端口的详细布线，全部端口有线对象，最终 DRC 报告为空。
+
+110165 校验详细布线文件后，将新增 684 个接点导入既有候选底座目录。110170 重新生成原三 P 对照的同一计划，Algo2 独立读取 4,981 根网，待布引脚、线网和障碍几何一致。新增端点是 DMA 侧物理事实。本次没有新增 Gather 服务到 `native_service_routes`，也没有生成带占位对端的 Algo2 线网。
+
+110160 用 v45 client 3 的真实约束编出每条 DDR record 的两次 64 B 请求。两次请求依次使用同一 tag base、连续 64 B 地址和相同通道。源 RTL 在接纳第二拍时自动关闭该 record。512 条 prompt 索引都选择到正确的 burst，另外核对 127 条上一步退休来源的表记录。按第一条 prompt 实际回调取得索引，再用它读真实权重行，对照收到 130 次 DRAMsim3 回调，其中行数据为两个通道各 32 条双拍 record。SRAM 模型在确认全部 512 个 16 B 输出字后才报告完成，8 KiB 与真实权重文件逐字节一致。6 项地址、跨度和标签错误被拒绝。首跑 110159 的验证器误要求 prefill 各位置的 page 都为 0，改为按 `(step, page)` 检查顺序后通过。
+
+候选底座的 U0 已有逐字存储链路，在部署期间一份运行时 reservation 只接受一个地址。保留现有协议时，整行需要逐字获取所有权。新的可常驻 Gather 服务需要为整行持有地址窗口，读入实时索引，发出合法 record，并按目的端逐字 ACK 结算后再发完成事件。该服务、两端实连及 #260 的同计划整图退休仍待验收。110160 的格式回放使用 #260 归档后端的 DDR 与 SRAM 模型，范围为一个 prompt 位置，未接入 Block V2 局控。
+
+远端目录
+
+`/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em/full-graph-zwl0Tr/merged-bmMd5X/native-request-6WI0tH/framework-r11-CatJ8r/ingress-route-iN0LbH/gather-block-v2-skqxd3`
+
+| 远端文件 | SHA-256 |
+| --- | --- |
+| `detail-110153/dma-detail.odb` | `9d4cc09be229a6683679bee0f4261c678c74f3f0d13207a9c6c167c29f03bde4` |
+| `detail-110153/routes.tsv` | `15a8d78bf1fd9cc2d9952848cd7b48c2c6dafb4cc4a4b42e9a628f08c969fcbd` |
+| `format-110160/report.json` | `24b90f1d7dd18d37c34a2585544dfc92f74bc6cb3f72c1cb495c38a00de525f4` |
+| `base-110165.json` | `86bb713f56abdccf770b321a4a74f480e4846d82d33e30dc99679289c3ac6f43` |
+| `algo2-110170/summary.json` | `54c865f8598ef464c1ded22917c0c15dfc39d2a0e4cf5ec4587b04380f31ad3a` |

@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 新增 v45 DMA 客户端 3 的 684 个 M10 接点。独立 DMA 的 5,028 个端口有详细布线，最终报告零违例。Algo2 在新端点目录上重新读回原三 P 计划的 4,981 根网。Gather 的真实权重行通过双拍记录的远端对照。U0 仍需运行时整行窗口与写确认服务，再接 #260 整图。见[远程回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#gather-的-v45-dma-接点与双拍请求)。
+
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 从已链接 Gather 生成 #260 的运行时索引记录。639 条记录与旧整包逐字节一致，首个 prompt 页用原后端执行并核对实际 8 KiB 行。候选底座的 v45 DMA 存在可用协议的逻辑客户，但该客户的 M10 接点和 U.S 确认路径待实现。见[输入索引回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#从已链接的查表指令生成运行时索引表)。
 
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 将 C/U 的 512 次存储字搬运编成两端局控 PM 片段并独立读回。DDR 端点审计定位到 C/U 尚缺运行时索引读入路径，固定 #260 仍需可常驻的局控服务及整图封包。见[局控与索引入口回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#cu-存储链路的局控编码与动态查表入口)。
