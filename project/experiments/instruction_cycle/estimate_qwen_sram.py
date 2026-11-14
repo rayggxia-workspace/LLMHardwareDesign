@@ -18,6 +18,8 @@ WIDTHS = (128, 256, 512)
 ATT1 = int.from_bytes(b"ATT1", "little")
 PAGES = 291
 CALIBRATION_TRACE = "422e89d190c43ac567b6e47898ffc38b4f96e4943339b6d177c46a2741e7ece8"
+ARCHIVED_TRACE_WIDTH = {CALIBRATION_TRACE: 128,
+                        "01ef24bee6aa6b5258de0222ba7e56491e5b079d1cf92afc345b24a7bc06bb35": 512}
 STAGES = ("input_rms", "qkv", "attention", "o_projection", "post_attention", "ffn", "down_store", "final_residual")
 
 
@@ -184,14 +186,32 @@ def estimate(program, trace, widths, through):
             "dma_credits_per_channel": 32, "pipeline_memory": False, "estimates": candidates}
 
 
-def measure(prediction, trace, width, step):
+def measure(prediction, trace, width, step, *, execution=None, prefix=False):
     require(prediction.get("schema") == "qwen-sram-estimate/1" and
             prediction.get("calibration_trace_sha256") == CALIBRATION_TRACE and
             prediction.get("deployment_sha256") == DEPLOYMENT, "unexpected width-estimation schema or input")
     result = prediction["estimates"][str(width)]["pages_for_step1_step2"]
     data = trace.read_bytes()
+    trace_hash = sha256(data).hexdigest()
+    archived_width = ARCHIVED_TRACE_WIDTH.get(trace_hash)
+    run = None
+    if archived_width is not None:
+        require(archived_width == width, "archived timing trace belongs to a different SRAM width")
+    elif execution is not None:
+        run = json.loads(execution.read_bytes())
+        require(run.get("sram_port_bits") == width and not run.get("pipeline_memory") and
+                run.get("deployment_sha256") == DEPLOYMENT and run.get("initial_history") == 512 and
+                run.get("pages") == 2 * PAGES and run.get("kv_cross_step_read_beats") == 1152 and
+                len(run.get("retirements", ())) == 2,
+                "execution evidence does not match a complete, non-pipelined width comparison")
+    else:
+        require(prefix, "comparison needs the execution evidence or explicit prefix mode")
     observed = [row for row in map(json.loads, data.splitlines()) if row["step"] == step]
-    check_phase(observed, step, complete=False)
+    check_phase(observed, step, complete=not prefix)
+    if run is not None:
+        require(observed[-1]["end_ps"] == run["retirements"][step - 1][1] and
+                observed[0]["start_ps"] == (0 if step == 1 else run["retirements"][0][1]),
+                "timing trace and execution retirement edges disagree")
     expected = [row for row in result if row["step"] == step][:len(observed)]
     require(len(expected) == len(observed) and [row["page"] for row in expected] == list(range(len(observed))),
             "prediction lacks ordered matching pages")
@@ -202,14 +222,17 @@ def measure(prediction, trace, width, step):
         actual_ps[stage] += actual["end_ps"] - actual["start_ps"]
     predicted, observed = sum(estimated_ps.values()), sum(actual_ps.values())
     complete = len(expected) == PAGES
+    configured = archived_width is not None or run is not None
+    interval = complete and configured
     return {"step": step, "sram_bits": width, "pages": len(expected), "complete_interval": complete,
+            "reference_configuration_verified": configured,
             "estimated_ps": predicted, "reference_ps": observed, "error_ps": predicted - observed,
             "signed_duration_error_percent": (predicted - observed) * 100 / observed,
-            "estimated_tok_s": 1e12 / predicted if complete else None,
-            "reference_tok_s": 1e12 / observed if complete else None,
-            "signed_throughput_error_percent": (observed - predicted) * 100 / predicted if complete else None,
+            "estimated_tok_s": 1e12 / predicted if interval else None,
+            "reference_tok_s": 1e12 / observed if interval else None,
+            "signed_throughput_error_percent": (observed - predicted) * 100 / predicted if interval else None,
             "estimated_stage_ps": dict(estimated_ps), "reference_stage_ps": dict(actual_ps),
-            "trace_sha256": sha256(data).hexdigest()}
+            "trace_sha256": trace_hash}
 
 
 def main():
@@ -226,12 +249,16 @@ def main():
     comparison.add_argument("trace", type=Path)
     comparison.add_argument("--sram-bits", type=int, choices=WIDTHS, required=True)
     comparison.add_argument("--step", type=int, choices=(1, 2), default=2)
+    evidence = comparison.add_mutually_exclusive_group()
+    evidence.add_argument("--execution", type=Path, help="execution.json for a complete width-specific TLM run")
+    evidence.add_argument("--prefix", action="store_true", help="compare an explicitly selected diagnostic prefix")
     args = parser.parse_args()
     if args.action == "predict":
         result = estimate(args.deployment, args.calibration_trace, tuple(dict.fromkeys(args.sram_bits)), args.through_step)
     else:
         data = args.prediction.read_bytes()
-        result = measure(json.loads(data), args.trace, args.sram_bits, args.step)
+        result = measure(json.loads(data), args.trace, args.sram_bits, args.step,
+                         execution=args.execution, prefix=args.prefix)
         result["prediction_sha256"] = sha256(data).hexdigest()
     print(json.dumps(result, indent=2))
 

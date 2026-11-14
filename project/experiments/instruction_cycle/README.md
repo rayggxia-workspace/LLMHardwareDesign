@@ -258,3 +258,16 @@ sbatch --parsable run_qwen_fast_tlm.sbatch
 `--through-residual-page` 在 111058 连续匹配四个完整页。`--through-ffn-ingress` 在 111111 进一步核验 FFN 激活搬运及三 P 首批描述符和接受。每种模式累计 781,100 条普通 DDR 读事件、512 条独立 FFN 激活读事件、2,432 条严格 DDR 写事件和 833 个控制标记。FFN 权重并发、执行退休和后续页仍待完成独立周期核对。
 
 128-bit 串行单拍 KV 配置下，Attention 占 107361 第二步 67.8% 的页用时。127 间隔估算固定首步非 Attention 时间，Attention 随实际 descriptor 展开的串行 DDR beat 和 ACKed SRAM 字数量缩放。在两个校准分量均施加 ±5% 假设扰动时，阶段吞吐为 0.84293–0.93166 tok/s。需要 C576/C639 的同配置独立完整退休记录确认长上下文误差。完整 P512/D128 联合运行及数值验收由 [#234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) 跟踪。
+
+## 多位宽 Qwen2.5-3B Decode 快评
+
+八笔 KV 窗口的非流水配置使用 `estimate_qwen_sram.py`，可传入 128、256、512-bit。只用 107947 第一步校准，估算输入还包括封存的部署目录。二进制描述符、母控页及局控镜像表决定端口请求和 ACK 节拍，按配置分别估计各阶段。FFN 使用三 P 每个 WAIT 的最长并发链，加 Mid 汇集和搬运。未随位宽重算的 DDR 服务时间由对照误差约束。
+
+```bash
+python -B estimate_qwen_sram.py predict DEPLOYMENT TRACE_107947 --sram-bits 128 256 512 --through-step 2 > prediction.json
+python -B estimate_qwen_sram.py compare prediction.json TRACE_108284 --sram-bits 512
+# 完整 256-bit 独立参考，核对执行配置和实际退休边沿
+python -B estimate_qwen_sram.py compare prediction.json TRACE_256 --sram-bits 256 --execution EXECUTION_JSON_256
+```
+
+`run_qwen_sram_estimate.sbatch` 在完整封存目录估算 127 个间隔。`run_qwen_sram_256.sbatch` 在独立工作目录生成 256-bit 匹配 TLM 参考。原单拍 KV 模型的输入和误差记录见上节。流水配置使用对应 TLM 回放，快评未建模其分片重叠规则。见[结果及恢复入口](../../../docs/handoffs/2026-11-14-issue-265-qwen-sram-width-model.md)。

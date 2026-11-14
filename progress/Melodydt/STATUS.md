@@ -101,3 +101,9 @@
 - Melodydt [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 对 PR #260 `dd423e5a` 固定 DDR 与 KV 窗口。仅用 107947 的 128-bit 首步校准，128-bit 第二步吞吐误差 +0.01245%，未拟合的 512-bit 档吞吐误差 −12.58%、延迟误差 +14.39%。ATT1 服务时长仅高估 0.81%，整体高估 68.806 ms 中有 67.122 ms 来自固定了其余服务。见[估算回执](../../work/Melodydt/265/qwen-sram-width-transfer.json)。
 - 111631–111635 在 c96/node17 各占 1 核运行。已读回的前缀页数为 70、94、142、92、142，全字段相符。全窗回放误差待各作业终态。下一步由 Melodydt 读回 `comparison.json` 及 SHA-256，再报 582/578 页和完整吞吐误差。[恢复交接](../../docs/handoffs/2026-11-14-issue-265-qwen-sram-sweep.md)
 - [PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 草稿、Issue 进行中、独立审查人待指定。项目登记 PR #5 待合并，Projects 缺设仓库配置，待维护者核验。
+
+## 2026-11-14（Asia/Shanghai，UTC+08:00）跨 SRAM 位宽 Decode 快评修复
+
+- [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 按母控/局控及实际描述符计算 128/256/512-bit 的端口占用及 ACK，并为 FFN 建模三 P 并发链与 Mid。用 107947 第一步校准，128-bit 第二步吞吐误差 +0.01252%，512-bit 第二步误差 −0.64648%，此前仅缩放 Attention 的误差 −12.5773%。[机器回执](../../work/Melodydt/265/qwen-sram-width-estimate-20261114.json)
+- 256-bit 预测在查看参考耗时前封存。独立作业 111693 的前 150 页耗时误差 +0.52851%，完整第二次退休待核验。111738 在 74 秒内估算全部 127 个反馈间隔，三档平均 1.126325、1.627322、1.974047 tok/s，长上下文时序仍待验证。[恢复命令](../../docs/handoffs/2026-11-14-issue-265-qwen-sram-width-model.md)
+- 33 项单测通过。上轮 111633、111635 各 578 页及审计完全匹配。Issue 进行中，[PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 独立审查待指定。项目登记 PR #5 待合并，Projects 缺 `config/board.json`，待具权限维护者核验。
