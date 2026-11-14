@@ -19,6 +19,53 @@ TILE_ELEMENTS = 128
 WORDS_S32 = TILE_ELEMENTS * 4 // SRAM_WORD_BYTES
 WORDS_A16 = TILE_ELEMENTS * 2 // SRAM_WORD_BYTES
 WEIGHT_CLIENT = 9
+CONVERT_READ, PACKED_WRITE = range(2)
+
+
+def packed_write_edges(convert_start, mode):
+    """Return the final pack write and ACK from the native conversion requests."""
+    issued_reads = issued_writes = written = 0
+    allocated = [False, False]
+    returned = [0, 0]
+    held = inflight = None
+    cycle = convert_start
+    while written < WORDS_A16:
+        require(cycle - convert_start < 512, "Q packed quantization stalled")
+        # Use pre-edge packing state. A convert read held for SRAM ready
+        # retains priority even when the second half of a pack arrives.
+        offer = held
+        if offer is None:
+            if issued_writes < WORDS_A16 and returned[issued_writes % 2] == 2:
+                offer = (PACKED_WRITE, issued_writes)
+            elif issued_reads < WORDS_S32 and (issued_reads % 2 or not allocated[issued_reads // 2 % 2]):
+                offer = (CONVERT_READ, issued_reads)
+        ready = inflight is None
+        if inflight is not None and inflight[0] == cycle:
+            _, kind, index = inflight
+            inflight = None
+            if kind == PACKED_WRITE:
+                written += 1
+                allocated[index % 2] = False
+                returned[index % 2] = 0
+            else:
+                returned[index // 2 % 2] += 1
+        if offer is not None:
+            kind, index = offer
+            if ready and (kind != PACKED_WRITE or gated_edge(cycle, mode, 7, 2) == cycle):
+                response = cycle + SRAM_ACCEPT_TO_ACK
+                if kind == PACKED_WRITE:
+                    issued_writes += 1
+                    last_write = cycle
+                    response = gated_edge(response, mode, 11, 4)
+                else:
+                    issued_reads += 1
+                    allocated[index // 2 % 2] = True
+                inflight = (response, kind, index)
+                held = None
+            else:
+                held = offer
+        cycle += 1
+    return last_write, cycle - 1
 
 
 def first_weight_offer(call, service_accept, mode):
@@ -45,15 +92,10 @@ def first_weight_offer(call, service_accept, mode):
     source_stride = SRAM_ACCEPT_TO_ACK + 1
     last_scan_ack = first_scan_read + (WORDS_S32 - 1) * source_stride + SRAM_ACCEPT_TO_ACK
 
-    # CHOOSE uses one edge after the last maximum scan ACK. In CONVERT the
-    # priority packed write follows each pair of S32 rereads. P.S scratch
+    # CHOOSE uses one edge after the last maximum scan ACK. P.S scratch
     # requests and ACKs use the P0 AUX mode gates; U.S reads do not.
     first_convert_read = last_scan_ack + 2
-    next_pair = first_convert_read
-    for _ in range(WORDS_A16):
-        write = gated_edge(next_pair + 2 * source_stride, mode, 7, 2)
-        write_ack = gated_edge(write + SRAM_ACCEPT_TO_ACK, mode, 11, 4)
-        next_pair = write_ack + 1
+    write, write_ack = packed_write_edges(first_convert_read, mode)
 
     quant_done = write_ack + 1  # All writes drained, so the quantizer raises DONE.
     lease = quant_done + 2  # Sequencer consumes DONE, then accepts the idle lease.

@@ -7,14 +7,13 @@ import struct
 from qwen_drl1_cycle import gated_edge
 from qwen_native_control import P_SCOPE, TOPOLOGY, service_spans
 from qwen_native_ddr import require
-from qwen_projection_front import PROVIDER_ABI, WORDS_A16, WORDS_S32, first_weight_offer
+from qwen_projection_front import PROVIDER_ABI, WORDS_S32, first_weight_offer, packed_write_edges
 from qwen_projection_pair import OPERAND_BEATS, _activation_window
 from qwen_prompt_cycle import BURST_BYTES, SRAM_ACCEPT_TO_ACK
 
 
 BEGIN, INPUT, RF, ALLOC, FILL = range(5)
 WEIGHT_BANKS = 4
-CONVERT_READ, PACKED_WRITE = range(2)
 
 
 @dataclass
@@ -438,53 +437,9 @@ def _k1_header(last_k0_record_accept, mode):
     # leaves results in RF, hence P SRAM scratch is available for quantization.
     first_scan = last_k0_record_accept + 4
     convert_start = first_scan + WORDS_S32 * (SRAM_ACCEPT_TO_ACK + 1) + 1
-    issued_reads = issued_writes = written = 0
-    allocated = [False, False]
-    returned = [0, 0]
-    held = inflight = None
-
-    # One physical transaction is live at the prompt SRAM mux. The
-    # quantizer can still present and lock a convert read while that mux
-    # waits for its prior ACK. A newly ready pack cannot overtake it.
-    cycle = convert_start
-    while written < WORDS_A16:
-        require(cycle - convert_start < 512, "Q packed quantization stalled")
-        offer = held
-        if offer is None:
-            if issued_writes < WORDS_A16 and returned[issued_writes % 2] == 2:
-                offer = (PACKED_WRITE, issued_writes)
-            elif issued_reads < WORDS_S32 and (issued_reads % 2 or not allocated[issued_reads // 2 % 2]):
-                offer = (CONVERT_READ, issued_reads)
-        if inflight is not None and inflight[0] == cycle:
-            _, kind, index = inflight
-            inflight_ready = False
-            inflight = None
-            if kind == PACKED_WRITE:
-                written += 1
-                allocated[index % 2] = False
-                returned[index % 2] = 0
-            else:
-                returned[index // 2 % 2] += 1
-        else:
-            inflight_ready = inflight is None
-
-        if offer is not None:
-            kind, index = offer
-            if inflight_ready and (kind != PACKED_WRITE or gated_edge(cycle, mode, 7, 2) == cycle):
-                response = cycle + SRAM_ACCEPT_TO_ACK
-                if kind == PACKED_WRITE:
-                    issued_writes += 1
-                    response = gated_edge(response, mode, 11, 4)
-                else:
-                    issued_reads += 1
-                    allocated[index // 2 % 2] = True
-                inflight = (response, kind, index)
-                held = None
-            else:
-                held = offer
-        cycle += 1
+    _, write_ack = packed_write_edges(convert_start, mode)
     # Last write ACK, quantizer DONE, sequencer take, lease, and two headers.
-    return cycle + 6
+    return write_ack + 7
 
 
 class ProjectionProvider:
