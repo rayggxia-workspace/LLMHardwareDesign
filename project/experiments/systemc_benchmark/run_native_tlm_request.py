@@ -107,6 +107,7 @@ def main():
     parser.add_argument("--dma-fabric-budget", action="store_true")
     parser.add_argument("--kv-read-window", type=int, default=1, choices=range(1, 33))
     parser.add_argument("--sram-port-bits", type=int, default=128, choices=(128, 512))
+    parser.add_argument("--pipeline-memory", action="store_true")
     args = parser.parse_args()
     if args.checkpoint_pages < 0:
         parser.error("--checkpoint-pages must be nonnegative")
@@ -169,15 +170,17 @@ def main():
             return descriptor[address-base:address-base+64]
         return memory(address)
 
-    scheduler = Scheduler(clock, dram, read, core_ps=3334, pm_write_bits=args.sram_port_bits)
-    dma = NativeDMA(clock, dram, memory, core_ps=3334)
+    scheduler = Scheduler(clock, dram, read, core_ps=3334, pm_write_bits=args.sram_port_bits,
+                          pipeline=args.pipeline_memory)
+    dma = NativeDMA(clock, dram, memory, core_ps=3334, pipeline=args.pipeline_memory)
     u_service, p_service = UArithmetic(clock, u), UArithmetic(clock, p0)
     projection = Projection(clock, dram, memory, u, p0, source_word=512, scratch_word=1008,
                             scratch_sram=p0)
-    attention = Attention(clock, dram, memory, projection, kv_window=args.kv_read_window)
+    attention = Attention(clock, dram, memory, projection, kv_window=args.kv_read_window,
+                          pipeline=args.pipeline_memory)
     providers = {
         P: projection.provider,
-        (3, 3, 7, 4): embedding(u, dram, memory),
+        (3, 3, 7, 4): embedding(u, dram, memory, pipeline=args.pipeline_memory),
         (3, 3, 7, 3): u_service.rms,
         (3, 3, 7, 2): u_service.add,
         (0, 3, 7, 2): p_service.add,
@@ -383,6 +386,7 @@ def main():
                       completed_layers_in_current_position=layers,
                       timing_calibrated=False, numerically_accepted=False,
                       sram_port_bits=args.sram_port_bits,
+                      pipeline_memory=args.pipeline_memory,
                       sram={name: dict(s.stats) for name, s in srams.items()},
                       attention_kv=dict(window=args.kv_read_window, **attention.stats),
                       dma_scope=("32 credits per channel and rolling issue limits with FIFO arbitration"

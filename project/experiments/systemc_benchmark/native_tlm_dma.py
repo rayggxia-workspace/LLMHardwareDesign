@@ -5,6 +5,7 @@ from collections import Counter
 from struct import unpack_from
 
 from native_tlm_timing import Transfer
+from native_tlm_pipeline import span, stream
 
 
 class CommittedMemory:
@@ -54,9 +55,10 @@ class CommittedMemory:
 
 
 class NativeDMA:
-    def __init__(self, clock, dram, memory, *, core_ps):
+    def __init__(self, clock, dram, memory, *, core_ps, pipeline=False):
         self.clock, self.dram, self.memory, self.core_ps = clock, dram, memory, core_ps
         self.writer = None
+        self.pipeline = pipeline
         self.stats = Counter()
 
     def next_edge(self, action):
@@ -75,7 +77,7 @@ class NativeDMA:
                 raise ValueError("invalid native DMA descriptor extent")
 
             def execute(done):
-                def beat(offset):
+                def beat(offset, complete=None):
                     if offset == size:
                         if store:
                             self.writer = None
@@ -84,15 +86,19 @@ class NativeDMA:
                     address = base + offset
                     s_word = word + offset // 16
                     if store:
-                        gather(offset, address, s_word, [])
+                        gather(offset, address, s_word, [], complete)
                     else:
-                        self.dram.submit(Transfer(address), lambda: read_return(offset, address, s_word),
+                        self.dram.submit(Transfer(address), lambda: read_return(offset, address, s_word, complete),
                                          channel=channel)
 
-                def read_return(offset, address, s_word):
+                def read_return(offset, address, s_word, complete):
                     payload = self.memory(address)
                     self.stats["read_returns"] += 1
-                    self.next_edge(lambda: fill(offset, s_word, payload, 0))
+                    if complete:
+                        self.next_edge(lambda: span(sram, s_word, 4, self.next_edge,
+                                                   lambda _: complete(), payload))
+                    else:
+                        self.next_edge(lambda: fill(offset, s_word, payload, 0))
 
                 def fill(offset, s_word, payload, lane):
                     if lane == 4:
@@ -103,17 +109,20 @@ class NativeDMA:
                     sram.access_beat(s_word + lane, count, lambda _: self.next_edge(
                         lambda: fill(offset, s_word, payload, end)), payload[16 * lane:16 * end])
 
-                def gather(offset, address, s_word, parts):
+                def gather(offset, address, s_word, parts, complete):
                     lanes = sum(len(part) // 16 for part in parts)
                     if lanes < 4:
                         def received(payload):
                             parts.append(payload)
-                            self.next_edge(lambda: gather(offset, address, s_word, parts))
+                            self.next_edge(lambda: gather(offset, address, s_word, parts, complete))
 
                         linear = s_word + lanes
                         if down_sram is None:
                             count = sram.beat_words(linear, 4 - lanes)
-                            sram.access_beat(linear, count, received)
+                            if complete:
+                                span(sram, linear, 4-lanes, self.next_edge, received)
+                            else:
+                                sram.access_beat(linear, count, received)
                         else:
                             group, lane = divmod(linear, 2)
                             source = down_sram[group % 3]
@@ -121,13 +130,15 @@ class NativeDMA:
                             count = source.beat_words(word, min(2 - lane, 4 - lanes))
                             source.access_beat(word, count, received)
                         return
-                    payload = b"".join(parts)
+                    submit_write(offset, address, b"".join(parts), complete)
+
+                def submit_write(offset, address, payload, complete):
                     commit = self.memory.begin_write(address, tag + offset // 64, payload)
 
                     def write_return():
                         commit()
                         self.stats["write_commits"] += 1
-                        self.next_edge(lambda: beat(offset + 64))
+                        self.next_edge(complete or (lambda: beat(offset + 64)))
 
                     self.dram.submit(Transfer(address, payload), write_return, channel=channel)
 
@@ -135,7 +146,11 @@ class NativeDMA:
                     if self.writer is not None:
                         raise ValueError("native DDR write lane is already held by another descriptor")
                     self.writer = record
-                self.next_edge(lambda: beat(0))
+                if self.pipeline:
+                    self.next_edge(lambda: stream(size//64, 8, lambda i, ack: beat(64*i, ack),
+                                                  lambda: beat(size)))
+                else:
+                    self.next_edge(lambda: beat(0))
 
             return execute
         return bind

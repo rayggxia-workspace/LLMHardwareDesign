@@ -52,3 +52,5 @@ Short prefill starts with empty KV and runs the first two prompt positions throu
 The 512-bit candidate models up to four adjacent 16-byte words per SRAM request on one bank row, with partial bank enables and an acknowledged response. It uses the same clock, instruction stream and DDR budget as the 128-bit case. This is a width sensitivity experiment with modeled local services. RTL and physical qualification of the 512-bit path, end-to-end numerical acceptance and the full P512/D128 benchmark remain open.
 
 The [experiment record](../../../work/YUZE-LU/234/native-sram-width/README.md) identifies the archived inputs and runs.
+
+For the opt-in SRAM and DMA pipeline timing experiment, pass `--pipeline-memory` to `run_native_tlm_request.py`. See the [matched decode and prefill setup](../../../work/YUZE-LU/234/MEMORY_PIPELINE_EXPERIMENT.md).

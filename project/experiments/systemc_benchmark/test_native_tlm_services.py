@@ -63,20 +63,21 @@ class NativeTLMServicesTest(unittest.TestCase):
 
     def test_dma_handoff_reads_only_live_committed_kv(self):
         for bits in (128, 512):
-            with self.subTest(bits=bits):
-                self.check_dma_handoff(bits)
+            for pipeline in (False, True):
+                with self.subTest(bits=bits, pipeline=pipeline):
+                    self.check_dma_handoff(bits, pipeline)
 
-    def check_dma_handoff(self, bits):
+    def check_dma_handoff(self, bits, pipeline):
         clock = Clock()
         if self.dram_args:
             library, config, output = self.dram_args
-            directory = output / str(bits)
+            directory = output / f"{bits}-{int(pipeline)}"
             directory.mkdir()
             dram = Dram(clock, library, config, directory, credits=1)
         else:
             dram = CallbackDDR(clock)
         memory = CommittedMemory(lambda _: b"x" * 64, [(0x4000, 512, 91)])
-        dma = NativeDMA(clock, dram, memory, core_ps=10)
+        dma = NativeDMA(clock, dram, memory, core_ps=10, pipeline=pipeline)
         source, consumer = [S128(clock, core_ps=10, port_bits=bits) for _ in range(2)]
         source.words = {i: bytes([i]) * 16 for i in range(32)}
         with self.assertRaisesRegex(ValueError, "unbound"):
@@ -136,14 +137,15 @@ class NativeTLMServicesTest(unittest.TestCase):
 
     def test_ffn_down_store_interleaves_real_private_sram_results(self):
         for bits in (128, 512):
-            with self.subTest(bits=bits):
-                self.check_ffn_down_store(bits)
+            for pipeline in (False, True):
+                with self.subTest(bits=bits, pipeline=pipeline):
+                    self.check_ffn_down_store(bits, pipeline)
 
-    def check_ffn_down_store(self, bits):
+    def check_ffn_down_store(self, bits, pipeline):
         clock = Clock()
-        dram = CallbackDDR(clock)
+        dram = ReorderingDDR(clock)
         memory = CommittedMemory(lambda _: b"", [(8192, 8192, 128)])
-        dma = NativeDMA(clock, dram, memory, core_ps=10)
+        dma = NativeDMA(clock, dram, memory, core_ps=10, pipeline=pipeline)
         banks = [S128(clock, core_ps=10, port_bits=bits) for _ in range(3)]
         expected = b"".join(word.to_bytes(16, "little") for word in range(512))
         for word in range(512):
@@ -192,10 +194,11 @@ class NativeTLMServicesTest(unittest.TestCase):
     def test_attention_reads_two_committed_positions_and_writes_weighted_value(self):
         for window in (1, 8):
             for bits in (128, 512):
-                with self.subTest(window=window, bits=bits):
-                    self.check_attention(window, bits)
+                for pipeline in (False, True):
+                    with self.subTest(window=window, bits=bits, pipeline=pipeline):
+                        self.check_attention(window, bits, pipeline)
 
-    def check_attention(self, window, bits):
+    def check_attention(self, window, bits, pipeline):
         clock = Clock()
         dram = ReorderingDDR(clock)
         memory = CommittedMemory(lambda _: b"", [(4096, 1024, 64), (8192, 1024, 128)])
@@ -208,7 +211,7 @@ class NativeTLMServicesTest(unittest.TestCase):
         sram = S128(clock, core_ps=10, port_bits=bits)
         sram.words.update((i, bytes(16)) for i in range(32))
         aperture = Projection(clock, dram, memory, sram, sram, source_word=0, scratch_word=32)
-        attention = Attention(clock, dram, memory, aperture, kv_window=window)
+        attention = Attention(clock, dram, memory, aperture, kv_window=window, pipeline=pipeline)
         descriptor = record("<6HIQQ", 2, 1, 0, 512, 544, 800, 1 << 30, 4096, 8192)
         done = []
         attention.provider(descriptor)(lambda: done.append(True))
@@ -217,8 +220,35 @@ class NativeTLMServicesTest(unittest.TestCase):
         self.assertEqual(unpack("<128i", result), tuple(range(64, 192)))
         self.assertEqual(attention.stats["kv_read_returns"], 80)
         self.assertEqual(len(dram.offered), 80)
-        if window > 1:
+        if window > 1 or pipeline:
             self.assertEqual(attention.stats["kv_window_peak"], window)
+
+    def test_attention_ping_pong_keeps_results_and_ddr_addresses(self):
+        positions = 69
+        observed = []
+        for pipeline in (False, True):
+            clock = Clock()
+            dram = ReorderingDDR(clock)
+            sram = S128(clock, core_ps=10, port_bits=512)
+            q = pack("<4i", 1, 2, 3, 4)
+            sram.words.update((i, q) for i in range(32))
+            aperture = Projection(clock, dram, None, sram, sram, source_word=0, scratch_word=32)
+            key, value = 65536, 131072
+            history = {
+                base + row*512 + offset: pack("<16i", *(
+                    (row+1)*(offset//4+lane+1) for lane in range(16)))
+                for base in (key, value) for row in range(positions) for offset in range(0, 512, 64)
+            }
+            attention = Attention(clock, dram, history.__getitem__, aperture, kv_window=8, pipeline=pipeline)
+            descriptor = record("<6HIQQ", positions, positions-1, 0, 512, 544, 800,
+                                1 << 30, key, value)
+            done = []
+            attention.provider(descriptor)(lambda: done.append(True))
+            clock.until(lambda: bool(done))
+            observed.append((
+                [sram.words[i] for i in range(800, 832)],
+                sorted(transfer.address for transfer in dram.offered)))
+        self.assertEqual(observed[0], observed[1])
 
 
 if __name__ == "__main__":

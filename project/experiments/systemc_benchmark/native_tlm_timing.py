@@ -9,6 +9,7 @@ from itertools import count
 from functools import lru_cache
 from mmap import ACCESS_READ, mmap
 from struct import unpack_from
+from native_tlm_pipeline import span, stream
 
 
 @dataclass
@@ -217,9 +218,10 @@ class S128:
 
 
 class Scheduler:
-    def __init__(self, clock, ddr, memory, *, core_ps, pm_write_bits=128):
+    def __init__(self, clock, ddr, memory, *, core_ps, pm_write_bits=128, pipeline=False):
         self.clock, self.ddr, self.memory, self.core_ps = clock, ddr, memory, core_ps
         self.pm_write_bytes = pm_write_bits // 8
+        self.pipeline_pm = pipeline
         self.serial, self.terminals = count(), {}
         self.local_images = {}
         self.local_targets = set()
@@ -240,7 +242,8 @@ class Scheduler:
             self.clock.until(lambda: bool(returned))
             committed = []
             writes = (min(64, image_bytes - offset) + self.pm_write_bytes - 1) // self.pm_write_bytes
-            self.clock.after(writes * 2 * core_ps, lambda: committed.append(True))
+            cycles = writes + 1 if self.pipeline_pm else writes * 2
+            self.clock.after(cycles * core_ps, lambda: committed.append(True))
             self.clock.until(lambda: bool(committed))
         if mother:
             scanned = []
@@ -315,7 +318,7 @@ class Scheduler:
         return self.terminals.pop(handle)
 
 
-def embedding(sram, ddr, memory):
+def embedding(sram, ddr, memory, *, pipeline=False):
     """Execute the native one-index gather and commit all 512 destination words."""
     def bind(record):
         table, rows, offset, output, bits = unpack_from("<QIHHH", record, 16)
@@ -330,6 +333,19 @@ def embedding(sram, ddr, memory):
                 if not 0 <= index < rows:
                     raise ValueError("embedding index outside its table")
                 row = table + 8192 * index
+
+                if pipeline:
+                    def edge(action):
+                        clock = sram.clock
+                        clock.after(sram.core_ps - clock.now % sram.core_ps, action)
+
+                    def load(index, ack):
+                        address = row + 64 * index
+                        ddr.submit(Transfer(address), lambda: edge(lambda: span(
+                            sram, output + 4*index, 4, edge, lambda _: ack(), memory(address))), channel=0)
+
+                    stream(128, 8, load, done)
+                    return
 
                 def burst(beat):
                     if beat == 128:

@@ -20,6 +20,7 @@ def quantize(row):
 class FFN:
     def __init__(self, clock, dram, memory, u, banks, dma, input_base):
         self.clock, self.u, self.banks = clock, u, banks
+        self.pipeline_copy = dma.pipeline
         self.projections = [Projection(clock, dram, memory, u, bank, source_word=0, scratch_word=512)
                             for bank in banks]
         self.x = {}
@@ -104,6 +105,21 @@ class FFN:
         self.stripe.clear()
         self.mid_pending = True
         start = self.clock.now
+        prefetched = {}
+        waiting = {}
+
+        def fetch(i):
+            _, target, gate, up = fragments[i]
+            bank = self.banks[target]
+
+            def received(g, u):
+                if i in waiting:
+                    waiting.pop(i)(g, u)
+                else:
+                    prefetched[i] = (g, u)
+
+            projection.read_span(bank, gate, 2, lambda g: projection.read_span(
+                bank, up, 2, lambda u: received(g, u)))
 
         def fragment(i):
             if i == len(fragments):
@@ -113,6 +129,18 @@ class FFN:
             if column != self.groups*8:
                 raise ValueError("missing or reordered Gate/Up columns")
             bank = self.banks[target]
+            if self.pipeline_copy:
+                def copy(g, u):
+                    if i+1 < len(fragments):
+                        fetch(i+1)
+                    projection.write_span(self.banks[0], 720, g, lambda:
+                        projection.write_span(self.banks[0], 784, u, lambda: activate(i)))
+
+                if i in prefetched:
+                    copy(*prefetched.pop(i))
+                else:
+                    waiting[i] = copy
+                return
             projection.read_span(bank, gate, 2, lambda g: projection.read_span(
                 bank, up, 2, lambda u: projection.write_span(self.banks[0], 720, g, lambda:
                     projection.write_span(self.banks[0], 784, u, lambda: activate(i)))))
@@ -152,6 +180,8 @@ class FFN:
                 self.banks[0], 784, 2, lambda u: projection.edge(
                     lambda: product(unpack("<8i", g), unpack("<8i", u)), 11)))
 
+        if self.pipeline_copy:
+            fetch(0)
         fragment(0)
         self.clock.until(lambda: not self.mid_pending)
         self.mid_barrier_ps += self.clock.now - start

@@ -1,0 +1,183 @@
+diff --git a/project/experiments/block_local_native/run_native_attention_core_scope.sh b/project/experiments/block_local_native/run_native_attention_core_scope.sh
+index f96d079eb..fe06f38a3 100644
+--- a/project/experiments/block_local_native/run_native_attention_core_scope.sh
++++ b/project/experiments/block_local_native/run_native_attention_core_scope.sh
+@@ -11,7 +11,7 @@ if [[ ${1:-} != in-container ]]; then
+  cd "$SLURM_SUBMIT_DIR"
+  exec srun --exact -n1 -c"$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
+   /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu \
+-  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK" \
++  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK,PIPELINE_KV_WRITES=${PIPELINE_KV_WRITES:-0}" \
+   /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif bash "$PWD/source/$EXP/run_native_attention_core_scope.sh" in-container "$PWD" "${1:-}"
+ fi
+ source /OpenROAD-flow-scripts/env.sh
+@@ -53,6 +53,7 @@ MC=project/rtl/mother_control_native
+ top=test_native_attention_core_scope
+ "$vlt" --binary --timing --assert -Wall --timescale-override 1ns/1ps --x-initial unique --x-assign unique \
+  -j "$SLURM_CPUS_PER_TASK" --top-module "$top" -GMOTHER_WORDS="$mother_words" -GCONTEXT="$context" \
++ "-GPIPELINE_KV_WRITES=1'b${PIPELINE_KV_WRITES:-0}" \
+  -Wno-PINCONNECTEMPTY -CFLAGS "-std=c++17 -isystem $dram/src -isystem $dram/ext/headers" \
+  -LDFLAGS "-L$dram -Wl,-rpath,$dram -ldramsim3" "$PWD/$EXP/ddr_read_bridge.cpp" --Mdir "$out/obj" \
+  "$P"/{native_s_lint,p_program_lint}.vlt "$EXP/real_s_lint.vlt" "$gate/sram-lint.vlt" \
+diff --git a/project/experiments/block_local_native/test_native_attention_core_scope.sv b/project/experiments/block_local_native/test_native_attention_core_scope.sv
+index cfc60fd51..f5053cd23 100644
+--- a/project/experiments/block_local_native/test_native_attention_core_scope.sv
++++ b/project/experiments/block_local_native/test_native_attention_core_scope.sv
+@@ -1,5 +1,8 @@
+ `timescale 1ns/1ps
+-module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT=380);
++module test_native_attention_core_scope #(
++    parameter int MOTHER_WORDS=15, CONTEXT=380,
++    parameter bit PIPELINE_KV_WRITES=1'b0
++);
+     logic clk, reset=1, start=0, ready, result_valid;
+     initial clk=0;
+     always #5 clk=~clk;
+@@ -74,7 +77,7 @@ module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT
+     wire allow_ack=mode==0 || cycle%5==0;
+     assign engine_ready=active && memory_ready && allow_request;
+     assign engine_rsp=active && memory_rsp && allow_ack;
+-    s128_attention_core_scope #(.TOPOLOGY(32'd25001)) scope(
++    s128_attention_core_scope #(.TOPOLOGY(32'd25001),.PIPELINE_KV_WRITES(PIPELINE_KV_WRITES)) scope(
+         .clk,.reset,.service_valid(p_valid),.service_ready(p_ready),.service_owner(p_owner),
+         .service_ticket(p_ticket),.service_descriptor(p_descriptor),.service_cancel_valid(p_cancel),
+         .service_cancel_ready(p_cancel_ready),.service_done_valid(p_done),.service_done_ready(p_done_ready),
+diff --git a/project/rtl/block_local_native/s128_attention_core_scope.sv b/project/rtl/block_local_native/s128_attention_core_scope.sv
+index 0033cdbef..12e386d50 100644
+--- a/project/rtl/block_local_native/s128_attention_core_scope.sv
++++ b/project/rtl/block_local_native/s128_attention_core_scope.sv
+@@ -1,7 +1,8 @@
+ `timescale 1ns/1ps
+ // Single-head Q16 causal attention. The LC supplies the finite window and KV region.
+ module s128_attention_core_scope #(
+-    parameter logic [31:0] TOPOLOGY=0
++    parameter logic [31:0] TOPOLOGY=0,
++    parameter bit PIPELINE_KV_WRITES=1'b0
+ ) (
+     input logic clk,reset,
+     input logic service_valid,
+@@ -99,11 +100,13 @@ module s128_attention_core_scope #(
+     wire [127:0] load_s_data;
+     wire [31:0] load_s_tag;
+     wire [63:0] load_rd_tag;
+-    logic [31:0] accepted_s_tag;
++    logic [31:0] load_s_tags[2];
++    logic load_s_head,load_s_tail;
++    wire [31:0] accepted_s_tag=load_s_tags[load_s_head];
+     logic [63:0] accepted_rd_tag,accepted_load_tag;
+     assign rd_tag={service_done_ticket,serial};
+     wire good_rd=rd_rsp_tag==accepted_rd_tag&&!rd_rsp_error;
+-    s128_ddr_range_load load_span(
++    s128_ddr_range_load #(.PIPELINE_WRITES(PIPELINE_KV_WRITES)) load_span(
+         .clk,.reset(datapath_reset),.launch_valid(state==K_REFILL||state==V_REFILL),.launch_ready(load_ready),
+         .launch_base(refill_base),.launch_s_base(refill_s_base),
+         .launch_bursts(value_refill ? 8'd2 : {1'b0,qk_columns,3'b0}),
+@@ -206,12 +209,18 @@ module s128_attention_core_scope #(
+             state<=IDLE; av<=0; cancelled<=0; count<=0; first<=0; filled<=0; group_index<=0;
+             q_base<=0; score_base<=0; work_base<=0; out_base<=0; score_word<=0; k_base<=0; v_base<=0;
+             coefficient<=0; serial<=0; scale_input<=0; scale_output<=0; scale_send<=0; scale_high<=0;
+-            accepted_s_tag<=0; accepted_rd_tag<=0; accepted_load_tag<=0;
++            load_s_tags[0]<=0; load_s_tags[1]<=0;
++            load_s_head<=0; load_s_tail<=0;
++            accepted_rd_tag<=0; accepted_load_tag<=0;
+             service_done_owner<=0; service_done_ticket<=0; service_done_status<=0;
+             service_done_read_bytes<=0; service_done_write_bytes<=0;
+         end else begin
+             if(cancel) cancelled<=1;
+-            if(load_s_valid&&load_active&&s_req_ready) accepted_s_tag<=load_s_tag;
++            if(load_s_valid&&load_active&&s_req_ready) begin
++                load_s_tags[load_s_tail]<=load_s_tag;
++                load_s_tail<=!load_s_tail;
++            end
++            if(load_active&&s_rsp_valid&&load_s_take) load_s_head<=!load_s_head;
+             if(rd_valid&&rd_ready) begin
+                 accepted_rd_tag<=rd_tag;
+                 accepted_load_tag<=load_rd_tag;
+diff --git a/project/rtl/block_local_native/s128_ddr_range_load.sv b/project/rtl/block_local_native/s128_ddr_range_load.sv
+index a566fe4a1..a707d4ba3 100644
+--- a/project/rtl/block_local_native/s128_ddr_range_load.sv
++++ b/project/rtl/block_local_native/s128_ddr_range_load.sv
+@@ -1,7 +1,9 @@
+ `timescale 1ns/1ps
+ // Refill one resident S128 span from 64-byte DDR bursts. A two-burst record
+ // can select one aligned S128 word pair for the V layout without rewriting data.
+-module s128_ddr_range_load (
++module s128_ddr_range_load #(
++    parameter bit PIPELINE_WRITES = 1'b0
++) (
+     input logic clk, reset,
+     input logic launch_valid,
+     output logic launch_ready,
+@@ -35,6 +37,12 @@ module s128_ddr_range_load (
+     logic [1:0] word;
+     logic pair, pair_beat, pair_high;
+     logic [511:0] data;
++    logic [2:0] sent, acknowledged;
++    wire [2:0] write_count = pair ? 3'd2 : 3'd4;
++    wire pipe_ack = s_rsp_valid && s_rsp_ready;
++    wire pipe_send = s_valid && s_ready;
++    wire [9:0] ack_address = s_base + (pair ? {9'd0, acknowledged[0]} : {burst, acknowledged[1:0]});
++    wire bad_ack = pipe_ack && s_rsp_tag != {22'h12a000, ack_address};
+
+     wire [11:0] launch_words = launch_pair ? 12'd2 : {2'b0, launch_bursts, 2'b0};
+     wire [64:0] launch_end = {1'b0, launch_base} + {51'd0, launch_bursts, 6'd0};
+@@ -52,11 +60,15 @@ module s128_ddr_range_load (
+     assign rd_address = base + {50'd0, burst, 6'd0};
+     assign rd_tag = {56'd0, burst};
+     assign rd_rsp_ready = !reset && state == READ_WAIT;
+-    assign s_valid = !reset && state == STORE;
+-    assign s_address = s_base + (pair ? {9'd0, word[0]} : {burst, word});
+-    assign s_data = data[{data_lane, 7'd0}+:128];
++    assign s_valid = !reset && state == STORE && (!PIPELINE_WRITES ||
++        (sent < write_count && (sent - acknowledged < 3'd2 || pipe_ack)));
++    wire [1:0] write_word = PIPELINE_WRITES ? sent[1:0] : word;
++    assign s_address = s_base + (pair ? {9'd0, write_word[0]} : {burst, write_word});
++    wire [1:0] write_lane = PIPELINE_WRITES ? (pair ? {pair_high, sent[0]} : sent[1:0]) : data_lane;
++    assign s_data = data[{write_lane, 7'd0}+:128];
+     assign s_tag = {22'h12a000, s_address};
+-    assign s_rsp_ready = !reset && state == STORE_WAIT;
++    assign s_rsp_ready = !reset && (PIPELINE_WRITES
++        ? state == STORE && acknowledged < sent : state == STORE_WAIT);
+
+     always_ff @(posedge clk) begin
+         if (reset) begin
+@@ -70,6 +82,8 @@ module s128_ddr_range_load (
+             pair_beat <= 0;
+             pair_high <= 0;
+             data <= 0;
++            sent <= 0;
++            acknowledged <= 0;
+             done_error <= 0;
+         end else begin
+             case (state)
+@@ -92,6 +106,8 @@ module s128_ddr_range_load (
+                         state <= REPORT;
+                     end else if (store_this_burst) begin
+                         data <= rd_rsp_data;
++                        sent <= 0;
++                        acknowledged <= 0;
+                         state <= STORE;
+                     end else if (last_burst) begin
+                         state <= REPORT;
+@@ -100,7 +116,20 @@ module s128_ddr_range_load (
+                         state <= READ;
+                     end
+                 end
+-                STORE: if (s_valid && s_ready) state <= STORE_WAIT;
++                STORE: if (PIPELINE_WRITES) begin
++                    if (pipe_send) sent <= sent + 1'b1;
++                    if (pipe_ack) begin
++                        acknowledged <= acknowledged + 1'b1;
++                        if (bad_ack) done_error <= 1;
++                        if (acknowledged + 1'b1 == write_count) begin
++                            if (last_burst || done_error || bad_ack) state <= REPORT;
++                            else begin
++                                burst <= burst + 1'b1;
++                                state <= READ;
++                            end
++                        end
++                    end
++                end else if (s_valid && s_ready) state <= STORE_WAIT;
+                 STORE_WAIT: if (s_rsp_valid && s_rsp_ready) begin
+                     if (s_rsp_tag != s_tag) begin
+                         done_error <= 1;

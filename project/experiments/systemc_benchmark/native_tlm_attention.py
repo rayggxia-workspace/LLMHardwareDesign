@@ -7,6 +7,7 @@ from struct import pack, unpack, unpack_from
 import sys
 
 from native_tlm_timing import Transfer
+from native_tlm_pipeline import span
 from native_tlm_u import rne, s32
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "native_s32_n"))
@@ -19,12 +20,13 @@ def softmax_lut():
 
 
 class Attention:
-    def __init__(self, clock, dram, memory, aperture, *, kv_window=1):
+    def __init__(self, clock, dram, memory, aperture, *, kv_window=1, pipeline=False):
         if not 1 <= kv_window <= 32:
             raise ValueError("KV read window must be between 1 and 32 beats")
         self.clock, self.dram, self.memory, self.aperture = clock, dram, memory, aperture
         self.sram = aperture.target
         self.kv_window = kv_window
+        self.pipeline = pipeline
         self.stats = Counter()
 
     def provider(self, record):
@@ -110,15 +112,50 @@ class Attention:
                     else:
                         if lane is not None:
                             payload = payload[lane:lane+32]
-                        self.aperture.edge(lambda: write(destination, payload, acknowledged))
+                        if self.pipeline:
+                            self.aperture.edge(lambda: span(
+                                self.sram, destination, len(payload)//16, self.aperture.edge,
+                                lambda _: acknowledged(), payload))
+                        else:
+                            self.aperture.edge(lambda: write(destination, payload, acknowledged))
 
                 issue()
 
-            def qk(first):
+            def tiled(count, tile, load, consume, finish):
+                """Two disjoint half windows, with at most one refill active."""
+                def start(index, bank):
+                    if index == count:
+                        finish()
+                        return
+                    size = min(tile, count-index)
+                    load(index, size, bank, lambda: compute(index, size, bank))
+
+                def compute(index, size, bank):
+                    next_index = index + size
+                    next_bank = 1-bank
+                    waiting = 2 if next_index < count else 1
+
+                    def ready():
+                        nonlocal waiting
+                        waiting -= 1
+                        if waiting == 0:
+                            if next_index == count:
+                                finish()
+                            else:
+                                compute(next_index, min(tile, count-next_index), next_bank)
+
+                    if next_index < count:
+                        load(next_index, min(tile, count-next_index), next_bank, ready)
+                    consume(index, size, bank, ready)
+
+                start(0, 0)
+
+            def qk(first, *, tile_ready=None, bank=0, refill_only=False):
                 if first == count:
                     softmax()
                     return
-                n = min(8, count - first)
+                n = min(4 if self.pipeline else 8, count - first)
+                destination = work + 128*bank
 
                 def loaded():
                     def dot(q, keys):
@@ -131,15 +168,19 @@ class Attention:
                         values.extend([0] * (-n % 4))
                         self.stats["qk_dot_groups"] += 1
                         self.aperture.edge(lambda: write(score + first // 4, pack(
-                            "<" + "i" * len(values), *values), lambda: qk(first+n)), 128)
+                            "<" + "i" * len(values), *values), tile_ready or (lambda: qk(first+n))), 128)
 
-                    read(query, 32, lambda q: read(work, 32*n, lambda keys: dot(q, keys)))
+                    read(query, 32, lambda q: read(destination, 32*n, lambda keys: dot(q, keys)))
 
+                if self.pipeline and not refill_only:
+                    loaded()
+                    return
                 base = k_base + first*512
-                if self.kv_window == 1:
+                if self.kv_window == 1 and not self.pipeline:
                     read_memory(base, 8*n, work, loaded)
                 else:
-                    prefetch(8*n, lambda i: (base + 64*i, work + 4*i, None), loaded)
+                    prefetch(8*n, lambda i: (base + 64*i, destination + 4*i, None),
+                             tile_ready if refill_only else loaded)
 
             def softmax():
                 def scale(index):
@@ -163,20 +204,21 @@ class Attention:
                     write(score, pack("<" + "i"*len(exponents), *exponents),
                           lambda: read(score, score_words, lambda _: self.aperture.edge(
                               lambda: write(score, pack("<" + "i"*len(probability), *probability),
-                                            lambda: av(0, 0, [0]*8)), 64)))
+                                            lambda: start_av(0)), 64)))
 
                 scale(0)
 
-            def av(group, first, sums):
+            def av(group, first, sums, *, tile_ready=None, bank=0, refill_only=False):
                 if first == count:
                     output = pack("<8i", *(s32(rne(value, 16)) for value in sums))
-                    write(out + 2*group, output, done if group == 15 else lambda: av(group+1, 0, [0]*8))
+                    write(out + 2*group, output, done if group == 15 else lambda: start_av(group+1))
                     return
-                n = min(128, count-first)
+                n = min(64 if self.pipeline else 128, count-first)
+                destination = work + 128*bank
 
                 def loaded():
                     read(score+first//4, (n+3)//4,
-                         lambda probs: read(work, 2*n, lambda values: reduce(probs, values)))
+                         lambda probs: read(destination, 2*n, lambda values: reduce(probs, values)))
 
                 def refill(index):
                     if index == n:
@@ -191,9 +233,11 @@ class Attention:
                         for lane, value in enumerate(unpack_from("<8i", values, 32*row)):
                             sums[lane] += probability[row]*value
                     self.stats["av_dot_groups"] += 1
-                    self.aperture.edge(lambda: av(group, first+n, sums), n)
+                    self.aperture.edge(tile_ready or (lambda: av(group, first+n, sums)), n)
 
-                if self.kv_window == 1:
+                if self.pipeline and not refill_only:
+                    loaded()
+                elif self.kv_window == 1 and not self.pipeline:
                     refill(0)
                 else:
                     pick = group % 4
@@ -201,9 +245,24 @@ class Attention:
                     def plan(i):
                         row, beat = divmod(i, 2)
                         address = v_base + (first+row)*512 + (group//4)*128 + 64*beat
-                        return address, work + 2*row if beat == pick//2 else None, (pick % 2)*32
+                        return address, destination + 2*row if beat == pick//2 else None, (pick % 2)*32
 
-                    prefetch(2*n, plan, loaded)
+                    prefetch(2*n, plan, tile_ready if refill_only else loaded)
 
-            qk(0)
+            def start_av(group):
+                sums = [0]*8
+                if self.pipeline:
+                    tiled(count, 64,
+                          lambda i, _, b, ack: av(group, i, sums, tile_ready=ack, bank=b, refill_only=True),
+                          lambda i, _, b, ack: av(group, i, sums, tile_ready=ack, bank=b),
+                          lambda: av(group, count, sums))
+                else:
+                    av(group, 0, sums)
+
+            if self.pipeline:
+                tiled(count, 4,
+                      lambda i, _, b, ack: qk(i, tile_ready=ack, bank=b, refill_only=True),
+                      lambda i, _, b, ack: qk(i, tile_ready=ack, bank=b), softmax)
+            else:
+                qk(0)
         return execute
