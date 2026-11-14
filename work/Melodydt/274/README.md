@@ -80,3 +80,20 @@ sha256sum -c packed-114340/receipts.sha256
 ```
 
 下一步用已打包真实权重编译 Qwen3 第 0 层的输入 RMS、QKV、头内 Q/K Norm、RoPE、16Q/8KV 和 O/FFN/残差服务，以实际写确认核验跨位置 KV。当前整模型短程吞吐 0/7，#274 继续进行中，审查未完成。
+
+
+### Qwen3 输入与 Q/K 归一化
+
+114376 `mdt-274q3rms` 在 c64/node4 用 12 核执行，COMPLETED 0:0。1,024 元素 input RMS 和 128 元素 query/key RMS 各用两组独立边界向量，gamma 来自冻结 Qwen3 第 0 层。用同一 #260 事件时钟执行母控取指、DDR gamma 读取到 SRAM、任务完成及 WAIT，214 笔 DDR 读取和回调全部对账。相对 FP64 参考最大 relative L2 为 0.00815%。这是固定点组件检查，输入向量来自夹具，未串到真实 QKV 或跨步 KV。局控描述符格式为 TLM 候选，无 RTL 时序资格。
+
+服务器目录 `qwen3-rms-01`，源码与依赖锁定在 `source.sha256` 和 `upstream.sha256`，作业日志为 `slurm-114376.log`，输出在 `run-114376`。已重验整个输出清单。 `run-114376/receipt.json` SHA-256 `7dbe631e9d5cc90f30c85b54b565ad226c4fbf192bb9b93082d93b2a93ce1746`。
+
+```bash
+cd /public/home/yuzelu/Melodydt/runs/issue-274/qwen3-rms-01
+sbatch --parsable --job-name=mdt-274q3rms -p c64,c96 -N1 -n1 -c12 -t 00:30:00 -o slurm-%j.log qwen3_rms.sbatch
+sacct -j 114376 --format=JobID,State,ExitCode,AllocCPUS,NodeList
+tail -n 40 slurm-114376.log
+sha256sum -c run-114376/output.sha256
+```
+
+恢复时先把 114290 的 Gather 输出和这一组件接在同一时间线，再将 114340 的 QKV 记录以 16Q/8KV 接入并做两位置一致性检查。整模型吞吐 0/7。当前所有已提交作业均已结束。
