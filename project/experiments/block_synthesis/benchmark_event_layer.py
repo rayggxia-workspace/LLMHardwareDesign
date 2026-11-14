@@ -8,7 +8,8 @@ from pathlib import Path
 from time import perf_counter
 
 from event_deploy import digest
-from event_loop_control import decode
+from event_loop_control import decode, replay
+from event_native_range import lower_ranges
 from run import compile_event_ir
 
 
@@ -57,7 +58,7 @@ def slice_program(program, ids, layer_path):
                                if name in needed or name in inputs}}
 
 
-def evaluate(event_ir, hardware, layer_path, width, depths, budget):
+def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None):
     # Select only the requested workload. Incoming edges define layer inputs
     # already available at the start; keep every intra-layer edge.
     tasks = [deepcopy(task) for task in event_ir['tasks'] if task['id'].startswith(layer_path)]
@@ -81,28 +82,59 @@ def evaluate(event_ir, hardware, layer_path, width, depths, budget):
         'native_loop_library': {**source, 'program': arithmetic, 'integer_program_sha256': digest(arithmetic),
                                 'dependencies': {task['id']: task['after'] for task in tasks}},
     }}
+    whole = {'tasks': tasks}
+    ranged, ranged_hardware = lower_ranges(whole, active)
     results = []
+    reference = None
+    def report_overlap(plan, ir, target):
+        spans = target['event_model']['native_loop_library'].get('ranges', {})
+        if not spans:
+            return 0
+        ends = {row['id']: row['end'] for row in plan['tasks']}
+        starts = {row['id']: row['start'] for row in plan['tasks']}
+        last = {}
+        for task, span in spans.items():
+            last[span['kernel']] = max(last.get(span['kernel'], 0), ends[task])
+        return sum(starts[task['id']] < last[spans[parent]['kernel']]
+                   for task in ir['tasks'] if task['id'] in spans
+                   for parent in task['after'] if parent in spans
+                   and spans[parent]['kernel'] != spans[task['id']]['kernel'])
+
     for depth in depths:
         started = perf_counter()
-        # The same frontier and depth check used by typed tile lowering. The
-        # native entry currently emits whole commands with no tile-owner tags.
-        result = compile_event_ir({'tasks': tasks}, active, width=width, budget=budget,
+        ir, target = (ranged, ranged_hardware) if depth else (whole, active)
+        result = compile_event_ir(ir, target, width=width, budget=budget,
                                   tile_limit=depth or None, emit_outputs=True)
         seconds = round(perf_counter() - started, 6)
         if result['status'] != 'planned' or not result['verification']['passed']:
             raise ValueError(f'depth {depth}: {result["status"]} or failed verification')
         program = result['outputs']['program']
         decoded = decode(program, result['resolved_hardware'])
-        if (len(program['mother']) - 1 != len(tasks)
+        if (len(program['mother']) - 1 != len(ir['tasks'])
                 or len(decoded['instructions']) != len(arithmetic['instructions'])):
             raise ValueError('emitted control does not dispatch the entire layer')
+        if fixture:
+            import numpy as np
+
+            initial, ids, oracle = fixture
+            actual = replay(program, result['resolved_hardware'], initial, ids, oracle)
+            if reference is None:
+                reference = actual
+            if actual.keys() != reference.keys():
+                raise ValueError('different final tensor identities')
+            for name, value in actual.items():
+                if value.exponent != reference[name].exponent:
+                    raise ValueError('different output exponent')
+                np.testing.assert_array_equal(value.raw, reference[name].raw)
+                np.testing.assert_array_equal(value.mask, reference[name].mask)
         plan = result['plan']
-        results.append({'depth': depth, 'seconds': seconds, 'dispatches': len(program['mother']) - 1,
-                        'candidate_bindings': sum(len(task['bindings']) for task in tasks),
+        results.append({'depth': depth, 'seconds': seconds, 'bit_exact_vs_whole': fixture is not None, 'dispatches': len(program['mother']) - 1,
+                        'candidate_bindings': sum(len(task['bindings']) for task in ir['tasks']),
                         'model_ticks': plan['makespan'], 'expanded': plan['expanded'],
                         'merged': plan['merged'], 'pruned': plan['pruned'],
                         'peak_bucket_states': plan['peak_bucket_states'],
                         'depth_pruned': plan.get('tile_depth_pruned', 0),
+                        'early_tile_edges': report_overlap(plan, ir, target),
                         'read_bytes': plan['external_read_bytes'],
                         'write_bytes': plan['external_write_bytes'], 'nets': len(plan['nets']),
                         'wire_cost': plan['wire_cost']})
@@ -110,8 +142,9 @@ def evaluate(event_ir, hardware, layer_path, width, depths, budget):
             'tasks': len(tasks), 'integer_instructions': len(source_tasks),
             'input_dependencies': incoming, 'decoded_integer_instructions': len(arithmetic['instructions']), 'source_onnx_sha256': source['source_model_sha256'],
             'integer_program_sha256': source['integer_program_sha256'],
-            'qualified_tile_recipes': sum('tile' in recipe for recipe in spec.get('recipes', ())),
-            'tile_owned_tasks': sum('tile_parent' in task for task in tasks),
+            'automatically_ranged_operators': len({task['tile_parent'] for task in ranged['tasks']
+                                                 if 'tile_parent' in task}),
+            'tile_owned_tasks': sum('tile_parent' in task for task in ranged['tasks']),
             'native_completion_contracts': dict(completions), 'cases': results}
 
 
@@ -123,9 +156,49 @@ def main():
     parser.add_argument('--width', type=int, default=8)
     parser.add_argument('--budget', type=int, default=10)
     parser.add_argument('--depth', nargs='+', type=int, default=[0, 1, 2, 3])
+    parser.add_argument('--numeric-fixture', type=Path, nargs=4, metavar=('ONNX', 'WEIGHTS', 'ACTIVATIONS', 'ORACLE'))
+    parser.add_argument('--input-ids', type=int, nargs='+', default=[1, 2])
     args = parser.parse_args()
-    report = evaluate(read(args.event_ir), read(args.hardware), args.layer_path,
-                      args.width, args.depth, args.budget)
+    fixture = None
+    oracle = None
+    try:
+        if args.numeric_fixture:
+            if args.depth[0] != 0:
+                raise ValueError('numerical comparison requires depth 0 first')
+            from frontend import import_onnx
+            from full_integer import Interpreter, Oracle
+            from wide_program import execute
+
+            onnx, weights_path, calibration, executable = args.numeric_fixture
+            model = import_onnx(onnx)
+            hardware = read(args.hardware)
+            source = hardware['event_model']['native_loop_library']
+            if model['sha256'] != source['source_model_sha256']:
+                raise ValueError('numeric fixture uses a different graph')
+            weights = read(weights_path)
+            weights['_root'] = str(weights_path.parent.parent)
+            oracle = Oracle([str(executable.resolve())])
+            initial = Interpreter(model, weights, read(calibration), oracle).initial
+            ids = [args.input_ids]
+            embedding = [op for op in source['program']['instructions']
+                         if op['op'] == 'Gather' and 'input_ids' in op['inputs']]
+            if len(embedding) != 1:
+                raise ValueError('expected one input embedding')
+            op, = embedding
+            initial.update(execute({'instructions': [op], 'outputs': {op['id']: op['id']}},
+                                   initial, ids, oracle))
+            fixture = initial, ids, oracle
+        report = evaluate(read(args.event_ir), read(args.hardware), args.layer_path,
+                          args.width, args.depth, args.budget, fixture)
+    finally:
+        if oracle is not None:
+            oracle.close()
+    if args.numeric_fixture:
+        report['input_ids'] = args.input_ids
+        report['numeric_manifest_sha256'] = {
+            path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in args.numeric_fixture
+        }
     report['input_sha256'] = {
         path.name: hashlib.sha256(path.read_bytes()).hexdigest()
         for path in (args.event_ir, args.hardware)

@@ -195,9 +195,35 @@ def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependenc
     result = compile_event_ir(lowered, resolved, budget=budget, width=width,
                               emit_dependencies=emit_dependencies, emit_outputs=True,
                               **target)
-    result.update(provenance)
     if native_loops is not None:
         result['native_loop_verification'] = audit
+        if tile_depth:
+            from event_native_range import lower_ranges
+
+            tiled, tile_hardware = lower_ranges(lowered, resolved)
+            if tiled is not lowered:
+                tile_result = compile_event_ir(tiled, tile_hardware, budget=budget, width=width,
+                                               emit_dependencies=emit_dependencies, emit_outputs=True,
+                                               tile_limit=tile_depth, **target)
+                attempts = []
+                for kind, candidate in (('whole', result), ('ranges', tile_result)):
+                    plan = candidate['plan']
+                    attempts.append({'layout': kind, 'status': candidate['status'],
+                                     'makespan': plan.get('makespan'),
+                                     'expanded': plan.get('expanded', 0),
+                                     'depth_pruned': plan.get('tile_depth_pruned', 0)})
+
+                def score(candidate):
+                    plan = candidate['plan']
+                    return (plan['makespan'], plan['external_read_bytes'] + plan['external_write_bytes'],
+                            plan['wire_cost'])
+
+                if tile_result['status'] == 'planned' and (
+                        result['status'] != 'planned' or score(tile_result) < score(result)):
+                    result = tile_result
+                    result['native_loop_verification'] = audit
+                result['tile_search'] = {'max_partial_depth': tile_depth, 'layouts': attempts}
+    result.update(provenance)
     return result
 
 

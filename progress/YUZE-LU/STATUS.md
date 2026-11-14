@@ -1,6 +1,6 @@
 # YUZE-LU 的进度
 
-2026-11-14 CST。#219 的 [PR #273](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/273) 移除手工指定图节点组的入口和演示。远端对比真实 Qwen2.5-3B 首层的 30 个原生任务。现有绑定以整条命令报告完成，深度 0 到 3 的工期和展开数相同。下一步为原生 lowering 接入可独立发布与等待的 tile 服务。[回执](../../work/YUZE-LU/219/TILE_FRONTIER.md)。
+2026-11-14 CST。#219 的 [PR #273](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/273) 移除手工指定图节点组的入口，将原生有限循环的范围提交接入逐 tile 前沿。远端 Qwen2.5-3B 首层 23 个算子自动分块，深度 2 有 11 次提前交接，层输出与整算子逐位一致，模型工期相同。下一步是 Block V2 产品局控范围编码、真实完成回报和物理时序验证。[回执](../../work/YUZE-LU/219/TILE_FRONTIER.md)。
 
 2026-11-14 16:39 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加外部指定的 SRAM 实例、容量和读写位宽。112358、112359 用同一底座分别读回 128-bit 和 512-bit 读配置，核对对齐事务换算和 Gather 单字写约束。远端 10 项测试通过，目标底座执行仍待接入。[参数及回执](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#sram-容量和端口位宽由外部配置)。
 
