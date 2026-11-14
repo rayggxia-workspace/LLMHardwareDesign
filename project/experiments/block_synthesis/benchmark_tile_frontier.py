@@ -11,7 +11,8 @@ import numpy as np
 from tile_frontier import compile_ranges
 
 
-def qwen_cut(archive, consumer, columns, capacity, continuation, ddr_rate, sram_rate, workspace):
+def qwen_cut(archive, consumer, columns, capacity, groups, ddr_rate, sram_rate, workspace,
+             bank_bytes=0, bank_rate=0, accumulator_bytes=8, max_group_outputs=0, record_bytes=16):
     inv = archive['leaf_inventory']
     if capacity > inv['P0']['words'] * archive['virtual_memory']['word_bytes']:
         raise ValueError('capacity exceeds the archived P SRAM')
@@ -26,17 +27,19 @@ def qwen_cut(archive, consumer, columns, capacity, continuation, ddr_rate, sram_
         raise ValueError('expected one pointwise Product feeding a static-weight Dot')
     axis = {'extent': k, 'alignment': 256}
     return {'hardware': {'sram_bytes': capacity, 'ddr_bytes_per_tick': ddr_rate,
-                         'sram_bytes_per_tick': sram_rate, 'workspace_bytes': workspace},
+                         'sram_bytes_per_tick': sram_rate, 'workspace_bytes': workspace,
+                         'partial_bank_bytes': bank_bytes, 'partial_bank_bytes_per_tick': bank_rate},
             'services': {
                 'pointwise': {'max_output_cells': (k + 255) // 256, 'pairs_per_tick': 8, 'setup_ticks': 16},
                 'ordered_sum': {'max_output_cells': (columns + 127) // 128, 'pairs_per_tick': 64,
-                                'setup_ticks': 16, 'accumulator_bytes': 8 if continuation else 0,
-                                'max_reduction_cells': 8 if continuation else 0}},
+                                'setup_ticks': 16, 'accumulator_bytes': accumulator_bytes if groups else 0,
+                                'max_reduction_cells': 8 if groups else 0, 'max_groups': max(1, groups),
+                                'max_continuation_outputs': max_group_outputs}},
             'operators': [
-                {'value': product['id'], 'output': axis, 'record_bytes': 16,
-                 'external_bytes_per_pair': 32,
+                {'value': product['id'], 'output': axis, 'record_bytes': record_bytes,
+                 'external_bytes_per_pair': 2 * record_bytes,
                  'service': 'pointwise'},
-                {'value': dot['id'], 'output': {'extent': columns, 'alignment': 128}, 'record_bytes': 16,
+                {'value': dot['id'], 'output': {'extent': columns, 'alignment': 128}, 'record_bytes': record_bytes,
                  'reads': [{'value': product['id'], 'axis': 'reduction'}],
                  'reduction': axis, 'static_bytes_per_pair': 2,
                  'service': 'ordered_sum'},
@@ -104,7 +107,8 @@ def measure(contract, product, dot, columns, depth, width, objective):
         traffic['handoff_write'] += action['write_bytes'].get(product['id'], 0)
         traffic['handoff_read'] += action['read_bytes'].get(product['id'], 0)
         traffic['output'] += action['write_bytes'].get(dot['id'], 0)
-        traffic['onchip_accumulator'] += action['sram_partial_service_bytes']
+        traffic['onchip_accumulator'] += (action['sram_partial_service_bytes']
+                                          + action['bank_partial_service_bytes'])
     if sum(amount for kind, amount in traffic.items() if kind != 'onchip_accumulator') != plan['ddr_bytes']:
         raise AssertionError('DDR traffic does not reconcile')
     return {**plan, 'seconds': elapsed, 'traffic': dict(traffic),
@@ -122,15 +126,22 @@ def main():
     parser.add_argument('--ddr-rate', type=int, default=16)
     parser.add_argument('--sram-rate', type=int, default=16)
     parser.add_argument('--objective', choices=('time', 'ddr'), default='time')
+    parser.add_argument('--multi-groups', type=int, default=4)
+    parser.add_argument('--bank-bytes', type=int, default=0)
+    parser.add_argument('--bank-rate', type=int, default=0)
+    parser.add_argument('--record-bytes', type=int, default=16)
+    parser.add_argument('--accumulator-bytes', type=int, default=8)
+    parser.add_argument('--max-group-outputs', type=int, default=0)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     archive = json.loads(args.archive.read_text())
     cases = {}
-    for name, depth, continuation in (('whole_ops', 0, False), ('tiles_depth_2', 2, False),
-                                       ('continuation_depth_1', 1, True), ('continuation_depth_2', 2, True),
-                                       ('continuation_depth_3', 3, True)):
+    for name, depth, groups in (('whole_ops', 0, 0), ('whole_reduction', 2, 0),
+                                ('single_group', 2, 1), ('multi_group', 2, args.multi_groups)):
         contract, product, dot = qwen_cut(archive, args.consumer, args.columns, args.capacity,
-                                         continuation, args.ddr_rate, args.sram_rate, args.workspace)
+                                         groups, args.ddr_rate, args.sram_rate, args.workspace,
+                                         args.bank_bytes, args.bank_rate, args.accumulator_bytes,
+                                         args.max_group_outputs, args.record_bytes)
         cases[name] = {'depth': depth, 'contract': contract,
                        **measure(contract, product, dot, args.columns, depth, args.width, args.objective)}
     if len({case['arithmetic_sha256'] for case in cases.values()}) != 1:
@@ -139,7 +150,7 @@ def main():
                                        'beam_width': args.width, 'objective': args.objective,
                                        'cases': cases}, indent=2) + '\n')
     for name, result in cases.items():
-        keys = ('ticks', 'ddr_bytes', 'sram_peak', 'expanded', 'generated', 'beam_pruned', 'seconds', 'traffic')
+        keys = ('ticks', 'ddr_bytes', 'sram_peak', 'expanded', 'generated', 'beam_pruned', 'seconds', 'partial_peak', 'max_active_output_groups', 'traffic')
         print(name, {key: result[key] for key in keys}, flush=True)
 
 

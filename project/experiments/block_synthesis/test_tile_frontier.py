@@ -1,7 +1,7 @@
 """Regression checks across generic access graphs and capacity bounds."""
 import unittest
 
-from tile_frontier import Access, Axis, Frontier, Hardware, Offer, Operator
+from tile_frontier import Access, Axis, Frontier, Group, Hardware, Offer, Operator, Progress
 
 
 class RangeSearchTest(unittest.TestCase):
@@ -46,6 +46,43 @@ class RangeSearchTest(unittest.TestCase):
         self.assertEqual(plan['ddr_bytes'], 64)
         self.assertEqual(sum(a['write_bytes'].get('exposed', 0) for a in plan['actions']), 32)
         self.assertEqual(sum(a['read_bytes'].get('exposed', 0) for a in plan['actions']), 0)
+
+    def test_two_output_groups_share_one_activation_stream(self):
+        axis = Axis(4, 1)
+        graph = (Operator('producer', axis, 8, ()),
+                 Operator('consumer', Axis(4, 1), 8, (Access('producer', 'reduction'),), axis))
+        hardware = Hardware(16, 8, 64, partial_bank_bytes=32, partial_bank_bytes_per_tick=64)
+
+        def solve(groups, target):
+            services = {'producer': Offer(4, 1, 8),
+                        'consumer': Offer(4, 1, 8, 8, 2, groups, 2)}
+            return Frontier(graph, services, target, depth=2, objective='ddr').solve()
+
+        one = solve(1, hardware)
+        two = solve(2, hardware)
+        self.assertGreater(one['ddr_bytes'], two['ddr_bytes'])
+        self.assertEqual(two['ddr_bytes'], 32)
+        self.assertEqual(two['max_active_output_groups'], 2)
+        self.assertEqual(two['partial_peak'], 32)
+        smaller_bank = Hardware(16, 8, 64, partial_bank_bytes=16, partial_bank_bytes_per_tick=64)
+        self.assertGreater(solve(2, smaller_bank)['ddr_bytes'], 32)
+
+    def test_out_of_order_publication_preserves_unconsumed_output(self):
+        output = Axis(2, 1)
+        k = Axis(2, 1)
+        graph = (Operator('source', k, 8, ()),
+                 Operator('reduce', output, 16, (Access('source', 'reduction'),), k),
+                 Operator('sink', output, 16, (Access('reduce', 'output'),)))
+        services = {'source': Offer(2, 1, 4), 'reduce': Offer(2, 1, 4, 8, 1, 2),
+                    'sink': Offer(2, 1, 4)}
+        frontier = Frontier(graph, services, Hardware(64, 8, 32), depth=3)
+
+        # Output 1 is published while output 0 still has an outstanding K cell.
+        progress = (Progress(2, 3), Progress(2, 2, (Group(0, 1, 1),)), Progress())
+        self.assertEqual(frontier.live(0, progress), 2)
+        self.assertEqual(frontier.live(1, progress), 3)
+        progress = (*progress[:2], Progress(1, 1))
+        self.assertEqual(frontier.live(1, progress), 2)
 
     def test_full_access_cannot_read_a_prefix(self):
         axis = Axis(8, 2)

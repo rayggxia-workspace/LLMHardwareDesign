@@ -1,0 +1,58 @@
+{
+  "scope": "Frozen native Down command audit from Block V2 archive, separate from modeled alternatives",
+  "native_down": {
+    "weight_compute_mode": "projection_stream_a16",
+    "reduction_alignment": 128,
+    "reduction_chunk_elements_per_u_supply_maximum": 2048,
+    "p_scope_covers_complete_k": true,
+    "maximum_output_lanes_per_p_scope": 128,
+    "private_s32_rf": {"groups": 16, "lanes_per_group": 8, "bytes_per_lane": 4},
+    "rf_owner": "context plus owner and next K within the running P scope",
+    "cross_scope_stream_checkpoint": "rejected by p_scope128_decode stream_bad",
+    "admit_multi_output_scope_checkpoint": false,
+    "sram_a16_input_words_per_k128": 16,
+    "activation_supply": {
+      "from": ["U0", "U1"],
+      "to": ["P0"],
+      "route_scope": "projection window request, copy and lease candidate bindings",
+      "no_generic_activate_broadcast_declared": true,
+      "completion": "matching generation lease after confirmed copy and scale metadata"
+    },
+    "p_completion": "scope_committed",
+    "output_store_completion": "destination_commit_ack",
+    "checkpoint_transfers_permitted_in_range_dp_with_native_only": 0,
+    "port_throughput": "128 bits per accepted SRAM request, arbitration and ACK latency contract for multi-scope Down unavailable"
+  },
+  "attention_reference": {
+    "scope": "internal to an Attention service",
+    "arithmetic": "S80",
+    "max_lanes_per_checkpoint": 8,
+    "snapshot_payload_words": 5,
+    "snapshot_metadata_words": 2,
+    "bytes_per_snapshot": 112,
+    "inbound_completion": "successful matching DONE after all words acknowledged and metadata validated",
+    "reuse_v_reference_two_images": true,
+    "archived_resident_service_v_reads_per_16": 4,
+    "reuse_v_selected_in_archived_resident_service": false,
+    "grants_native_down_checkpoint": false
+  },
+  "existing_fixed_mid_path": {
+    "scope": "ffn_gate_up_mid fixed ring, separate from archived general streamed projection",
+    "destinations": ["P0.S", "P1.S", "P2.S"],
+    "placement": "one selected destination per stripe",
+    "publication": "matching owner after sixteen writes are acknowledged",
+    "grants_generic_simultaneous_shared_mid_window": false
+  },
+  "sources": [
+    "blockv2-mod/compiler/native_projection_candidates.py",
+    "blockv2-mod/compiler/native_ffn_candidates.py",
+    "blockv2-mod/hardware/projection-feed-links.json",
+    "blockv2-mod/rtl/blockv2_mod_p0.sv",
+    "blockv2-mod/rtl/p_services/s128_attention_core_scope.sv",
+    "blockv2-mod/rtl/p_services/dot_s80_checkpoint.sv",
+    "native provider rtl/block_local_native/p_scope128_decode.sv",
+    "native provider rtl/block_local_native/ffn_gate_up_mid.sv",
+    "native provider rtl/w8a16_v1/projection_context_s32.sv",
+    "blockv2-mod/evidence/native-ffn-candidates-114185"
+  ]
+}

@@ -1,0 +1,1579 @@
+{
+  "source_sha256": {
+    "src/tile_frontier.py": "adf6af2aeb5266eb883e5474abd3cfbe161fd3e16134b207a1f34d59fb2be238",
+    "src/benchmark_tile_frontier.py": "4fec09dec3aa61b74b2049d21b94e0acd9e4eba4185bf9335c8973afb6688809",
+    "src/test_tile_frontier.py": "32cec51b27d2a432d1e9d1262614df9824062624cbbb99a615812d539a516432",
+    "src/audit_tile_frontier_native.py": "a6b780edb5c771bfaa8a9eb422e76440ac49cfca659e29927e27abe7c34e26ed"
+  },
+  "scope": "serialized planning model and separate static native command audit",
+  "regression": {
+    "slurm_job": 114441,
+    "passed": 32
+  },
+  "reports": {
+    "bank-s64-ddr": {
+      "beam_width": 32,
+      "objective": "ddr",
+      "contract": {
+        "hardware": {
+          "sram_bytes": 16384,
+          "ddr_bytes_per_tick": 16,
+          "sram_bytes_per_tick": 64,
+          "workspace_bytes": 2048,
+          "partial_bank_bytes": 16384,
+          "partial_bank_bytes_per_tick": 64
+        },
+        "services": {
+          "pointwise": {
+            "max_output_cells": 43,
+            "pairs_per_tick": 8,
+            "setup_ticks": 16
+          },
+          "ordered_sum": {
+            "max_output_cells": 16,
+            "pairs_per_tick": 64,
+            "setup_ticks": 16,
+            "accumulator_bytes": 8,
+            "max_reduction_cells": 8,
+            "max_groups": 4,
+            "max_continuation_outputs": 1024
+          }
+        },
+        "operators": [
+          {
+            "value": "v288",
+            "output": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "record_bytes": 16,
+            "external_bytes_per_pair": 32,
+            "service": "pointwise"
+          },
+          {
+            "value": "v289",
+            "output": {
+              "extent": 2048,
+              "alignment": 128
+            },
+            "record_bytes": 16,
+            "reads": [
+              {
+                "value": "v288",
+                "axis": "reduction"
+              }
+            ],
+            "reduction": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "static_bytes_per_pair": 2,
+            "service": "ordered_sum"
+          }
+        ]
+      },
+      "cases": {
+        "whole_ops": {
+          "ticks": 3217792,
+          "ddr_bytes": 45826048,
+          "sram_peak": 2048,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 2,
+          "generated": 2,
+          "beam_pruned": 0,
+          "incumbent_expanded": 0,
+          "seconds": 0.00039496831595897675,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 176128,
+            "handoff_read": 176128,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 2
+        },
+        "whole_reduction": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 1752,
+          "generated": 11224,
+          "beam_pruned": 1158,
+          "incumbent_expanded": 2,
+          "seconds": 0.3257480524480343,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "single_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 22112,
+          "generated": 153040,
+          "beam_pruned": 54481,
+          "incumbent_expanded": 1754,
+          "seconds": 5.74238327331841,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "multi_group": {
+          "ticks": 3215248,
+          "ddr_bytes": 45473792,
+          "sram_peak": 14336,
+          "partial_peak": 16384,
+          "max_active_output_groups": 2,
+          "expanded": 23090,
+          "generated": 259086,
+          "beam_pruned": 160170,
+          "incumbent_expanded": 23866,
+          "seconds": 17.432726614177227,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 0,
+            "handoff_read": 0,
+            "output": 32768,
+            "onchip_accumulator": 655360
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 63
+        }
+      }
+    },
+    "bank-s64": {
+      "beam_width": 32,
+      "objective": "time",
+      "contract": {
+        "hardware": {
+          "sram_bytes": 16384,
+          "ddr_bytes_per_tick": 16,
+          "sram_bytes_per_tick": 64,
+          "workspace_bytes": 2048,
+          "partial_bank_bytes": 16384,
+          "partial_bank_bytes_per_tick": 64
+        },
+        "services": {
+          "pointwise": {
+            "max_output_cells": 43,
+            "pairs_per_tick": 8,
+            "setup_ticks": 16
+          },
+          "ordered_sum": {
+            "max_output_cells": 16,
+            "pairs_per_tick": 64,
+            "setup_ticks": 16,
+            "accumulator_bytes": 8,
+            "max_reduction_cells": 8,
+            "max_groups": 4,
+            "max_continuation_outputs": 1024
+          }
+        },
+        "operators": [
+          {
+            "value": "v288",
+            "output": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "record_bytes": 16,
+            "external_bytes_per_pair": 32,
+            "service": "pointwise"
+          },
+          {
+            "value": "v289",
+            "output": {
+              "extent": 2048,
+              "alignment": 128
+            },
+            "record_bytes": 16,
+            "reads": [
+              {
+                "value": "v288",
+                "axis": "reduction"
+              }
+            ],
+            "reduction": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "static_bytes_per_pair": 2,
+            "service": "ordered_sum"
+          }
+        ]
+      },
+      "cases": {
+        "whole_ops": {
+          "ticks": 3217792,
+          "ddr_bytes": 45826048,
+          "sram_peak": 2048,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 2,
+          "generated": 2,
+          "beam_pruned": 0,
+          "incumbent_expanded": 0,
+          "seconds": 0.0004129381850361824,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 176128,
+            "handoff_read": 176128,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 2
+        },
+        "whole_reduction": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 1752,
+          "generated": 11224,
+          "beam_pruned": 1158,
+          "incumbent_expanded": 2,
+          "seconds": 0.325573543086648,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "single_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 21877,
+          "generated": 152208,
+          "beam_pruned": 55725,
+          "incumbent_expanded": 1754,
+          "seconds": 5.7043596329167485,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "multi_group": {
+          "ticks": 3215248,
+          "ddr_bytes": 45473792,
+          "sram_peak": 14336,
+          "partial_peak": 16384,
+          "max_active_output_groups": 2,
+          "expanded": 22929,
+          "generated": 261402,
+          "beam_pruned": 135609,
+          "incumbent_expanded": 23631,
+          "seconds": 16.735824880190194,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 0,
+            "handoff_read": 0,
+            "output": 32768,
+            "onchip_accumulator": 655360
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 63
+        }
+      }
+    },
+    "bank-s80-fast": {
+      "beam_width": 24,
+      "objective": "time",
+      "contract": {
+        "hardware": {
+          "sram_bytes": 16384,
+          "ddr_bytes_per_tick": 16,
+          "sram_bytes_per_tick": 64,
+          "workspace_bytes": 2048,
+          "partial_bank_bytes": 32768,
+          "partial_bank_bytes_per_tick": 256
+        },
+        "services": {
+          "pointwise": {
+            "max_output_cells": 43,
+            "pairs_per_tick": 8,
+            "setup_ticks": 16
+          },
+          "ordered_sum": {
+            "max_output_cells": 16,
+            "pairs_per_tick": 64,
+            "setup_ticks": 16,
+            "accumulator_bytes": 14,
+            "max_reduction_cells": 8,
+            "max_groups": 4,
+            "max_continuation_outputs": 1024
+          }
+        },
+        "operators": [
+          {
+            "value": "v288",
+            "output": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "record_bytes": 16,
+            "external_bytes_per_pair": 32,
+            "service": "pointwise"
+          },
+          {
+            "value": "v289",
+            "output": {
+              "extent": 2048,
+              "alignment": 128
+            },
+            "record_bytes": 16,
+            "reads": [
+              {
+                "value": "v288",
+                "axis": "reduction"
+              }
+            ],
+            "reduction": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "static_bytes_per_pair": 2,
+            "service": "ordered_sum"
+          }
+        ]
+      },
+      "cases": {
+        "whole_ops": {
+          "ticks": 3217792,
+          "ddr_bytes": 45826048,
+          "sram_peak": 2048,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 2,
+          "generated": 2,
+          "beam_pruned": 0,
+          "incumbent_expanded": 0,
+          "seconds": 0.0004045087844133377,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 176128,
+            "handoff_read": 176128,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 2
+        },
+        "whole_reduction": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 1326,
+          "generated": 8526,
+          "beam_pruned": 933,
+          "incumbent_expanded": 2,
+          "seconds": 0.2453705994412303,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "single_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 16629,
+          "generated": 114974,
+          "beam_pruned": 40994,
+          "incumbent_expanded": 1328,
+          "seconds": 4.239188253879547,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "multi_group": {
+          "ticks": 3209488,
+          "ddr_bytes": 45473792,
+          "sram_peak": 14336,
+          "partial_peak": 28672,
+          "max_active_output_groups": 2,
+          "expanded": 17288,
+          "generated": 194868,
+          "beam_pruned": 105176,
+          "incumbent_expanded": 17957,
+          "seconds": 12.310459463857114,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 0,
+            "handoff_read": 0,
+            "output": 32768,
+            "onchip_accumulator": 1146880
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 63
+        }
+      }
+    },
+    "bank-s80": {
+      "beam_width": 24,
+      "objective": "time",
+      "contract": {
+        "hardware": {
+          "sram_bytes": 16384,
+          "ddr_bytes_per_tick": 16,
+          "sram_bytes_per_tick": 64,
+          "workspace_bytes": 2048,
+          "partial_bank_bytes": 32768,
+          "partial_bank_bytes_per_tick": 64
+        },
+        "services": {
+          "pointwise": {
+            "max_output_cells": 43,
+            "pairs_per_tick": 8,
+            "setup_ticks": 16
+          },
+          "ordered_sum": {
+            "max_output_cells": 16,
+            "pairs_per_tick": 64,
+            "setup_ticks": 16,
+            "accumulator_bytes": 14,
+            "max_reduction_cells": 8,
+            "max_groups": 4,
+            "max_continuation_outputs": 1024
+          }
+        },
+        "operators": [
+          {
+            "value": "v288",
+            "output": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "record_bytes": 16,
+            "external_bytes_per_pair": 32,
+            "service": "pointwise"
+          },
+          {
+            "value": "v289",
+            "output": {
+              "extent": 2048,
+              "alignment": 128
+            },
+            "record_bytes": 16,
+            "reads": [
+              {
+                "value": "v288",
+                "axis": "reduction"
+              }
+            ],
+            "reduction": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "static_bytes_per_pair": 2,
+            "service": "ordered_sum"
+          }
+        ]
+      },
+      "cases": {
+        "whole_ops": {
+          "ticks": 3217792,
+          "ddr_bytes": 45826048,
+          "sram_peak": 2048,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 2,
+          "generated": 2,
+          "beam_pruned": 0,
+          "incumbent_expanded": 0,
+          "seconds": 0.00038350746035575867,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 176128,
+            "handoff_read": 176128,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 2
+        },
+        "whole_reduction": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 1326,
+          "generated": 8526,
+          "beam_pruned": 933,
+          "incumbent_expanded": 2,
+          "seconds": 0.24851150810718536,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "single_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 16592,
+          "generated": 114940,
+          "beam_pruned": 45560,
+          "incumbent_expanded": 1328,
+          "seconds": 4.255748338997364,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "multi_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 15678,
+          "generated": 190900,
+          "beam_pruned": 97996,
+          "incumbent_expanded": 17920,
+          "seconds": 12.151327057741582,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        }
+      }
+    },
+    "bank-threshold-192": {
+      "beam_width": 24,
+      "objective": "time",
+      "contract": {
+        "hardware": {
+          "sram_bytes": 16384,
+          "ddr_bytes_per_tick": 16,
+          "sram_bytes_per_tick": 64,
+          "workspace_bytes": 2048,
+          "partial_bank_bytes": 32768,
+          "partial_bank_bytes_per_tick": 192
+        },
+        "services": {
+          "pointwise": {
+            "max_output_cells": 43,
+            "pairs_per_tick": 8,
+            "setup_ticks": 16
+          },
+          "ordered_sum": {
+            "max_output_cells": 16,
+            "pairs_per_tick": 64,
+            "setup_ticks": 16,
+            "accumulator_bytes": 14,
+            "max_reduction_cells": 8,
+            "max_groups": 4,
+            "max_continuation_outputs": 1024
+          }
+        },
+        "operators": [
+          {
+            "value": "v288",
+            "output": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "record_bytes": 16,
+            "external_bytes_per_pair": 32,
+            "service": "pointwise"
+          },
+          {
+            "value": "v289",
+            "output": {
+              "extent": 2048,
+              "alignment": 128
+            },
+            "record_bytes": 16,
+            "reads": [
+              {
+                "value": "v288",
+                "axis": "reduction"
+              }
+            ],
+            "reduction": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "static_bytes_per_pair": 2,
+            "service": "ordered_sum"
+          }
+        ]
+      },
+      "cases": {
+        "whole_ops": {
+          "ticks": 3217792,
+          "ddr_bytes": 45826048,
+          "sram_peak": 2048,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 2,
+          "generated": 2,
+          "beam_pruned": 0,
+          "incumbent_expanded": 0,
+          "seconds": 0.000352984294295311,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 176128,
+            "handoff_read": 176128,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 2
+        },
+        "whole_reduction": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 1326,
+          "generated": 8526,
+          "beam_pruned": 933,
+          "incumbent_expanded": 2,
+          "seconds": 0.17954950593411922,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "single_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 16640,
+          "generated": 115023,
+          "beam_pruned": 41606,
+          "incumbent_expanded": 1328,
+          "seconds": 3.2299236059188843,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "multi_group": {
+          "ticks": 3211008,
+          "ddr_bytes": 45473792,
+          "sram_peak": 14336,
+          "partial_peak": 28672,
+          "max_active_output_groups": 2,
+          "expanded": 17260,
+          "generated": 194738,
+          "beam_pruned": 104540,
+          "incumbent_expanded": 17968,
+          "seconds": 9.530813460238278,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 0,
+            "handoff_read": 0,
+            "output": 32768,
+            "onchip_accumulator": 1146880
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 63
+        }
+      }
+    },
+    "bank-threshold-8k": {
+      "beam_width": 24,
+      "objective": "ddr",
+      "contract": {
+        "hardware": {
+          "sram_bytes": 16384,
+          "ddr_bytes_per_tick": 16,
+          "sram_bytes_per_tick": 64,
+          "workspace_bytes": 2048,
+          "partial_bank_bytes": 8192,
+          "partial_bank_bytes_per_tick": 256
+        },
+        "services": {
+          "pointwise": {
+            "max_output_cells": 43,
+            "pairs_per_tick": 8,
+            "setup_ticks": 16
+          },
+          "ordered_sum": {
+            "max_output_cells": 16,
+            "pairs_per_tick": 64,
+            "setup_ticks": 16,
+            "accumulator_bytes": 8,
+            "max_reduction_cells": 8,
+            "max_groups": 4,
+            "max_continuation_outputs": 1024
+          }
+        },
+        "operators": [
+          {
+            "value": "v288",
+            "output": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "record_bytes": 16,
+            "external_bytes_per_pair": 32,
+            "service": "pointwise"
+          },
+          {
+            "value": "v289",
+            "output": {
+              "extent": 2048,
+              "alignment": 128
+            },
+            "record_bytes": 16,
+            "reads": [
+              {
+                "value": "v288",
+                "axis": "reduction"
+              }
+            ],
+            "reduction": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "static_bytes_per_pair": 2,
+            "service": "ordered_sum"
+          }
+        ]
+      },
+      "cases": {
+        "whole_ops": {
+          "ticks": 3217792,
+          "ddr_bytes": 45826048,
+          "sram_peak": 2048,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 2,
+          "generated": 2,
+          "beam_pruned": 0,
+          "incumbent_expanded": 0,
+          "seconds": 0.000356992706656456,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 176128,
+            "handoff_read": 176128,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 2
+        },
+        "whole_reduction": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 1326,
+          "generated": 8526,
+          "beam_pruned": 933,
+          "incumbent_expanded": 2,
+          "seconds": 0.177566422149539,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "single_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 16622,
+          "generated": 114909,
+          "beam_pruned": 42981,
+          "incumbent_expanded": 1328,
+          "seconds": 3.1738464636728168,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "multi_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 17381,
+          "generated": 173098,
+          "beam_pruned": 83459,
+          "incumbent_expanded": 17950,
+          "seconds": 9.44874004367739,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        }
+      }
+    },
+    "native-U0": {
+      "source_sha256": "1075927627d5505b5f3c1a6e3d56331c6628295a29f9b188c3471ae19304280a",
+      "binding": "/model/model/layers.0/mlp/down_proj/MatMul@U0+P0",
+      "k": 11008,
+      "rows": 2,
+      "output_columns_per_scope": [
+        128
+      ],
+      "directions": {
+        "load": 192,
+        "compute": 32,
+        "supply": 192,
+        "store": 32
+      },
+      "mid_reads_bytes": 1409024,
+      "mid_writes_bytes": 88064,
+      "unique_mid_bytes": 88064,
+      "load_reuse_counts": [
+        16
+      ],
+      "mid_handoff_bytes": 1497088
+    },
+    "native-U1": {
+      "source_sha256": "ee28957e9f93ef07bf739e897b2e5cc4f6c6e2772445e8e4a3dc28aae7b0349b",
+      "binding": "/model/model/layers.0/mlp/down_proj/MatMul@U1+P0",
+      "k": 11008,
+      "rows": 2,
+      "output_columns_per_scope": [
+        128
+      ],
+      "directions": {
+        "load": 192,
+        "compute": 32,
+        "supply": 192,
+        "store": 32
+      },
+      "mid_reads_bytes": 1409024,
+      "mid_writes_bytes": 88064,
+      "unique_mid_bytes": 88064,
+      "load_reuse_counts": [
+        16
+      ],
+      "mid_handoff_bytes": 1497088
+    },
+    "packed-bank": {
+      "beam_width": 24,
+      "objective": "time",
+      "contract": {
+        "hardware": {
+          "sram_bytes": 16384,
+          "ddr_bytes_per_tick": 16,
+          "sram_bytes_per_tick": 64,
+          "workspace_bytes": 2048,
+          "partial_bank_bytes": 16384,
+          "partial_bank_bytes_per_tick": 256
+        },
+        "services": {
+          "pointwise": {
+            "max_output_cells": 43,
+            "pairs_per_tick": 8,
+            "setup_ticks": 16
+          },
+          "ordered_sum": {
+            "max_output_cells": 16,
+            "pairs_per_tick": 64,
+            "setup_ticks": 16,
+            "accumulator_bytes": 8,
+            "max_reduction_cells": 8,
+            "max_groups": 4,
+            "max_continuation_outputs": 1024
+          }
+        },
+        "operators": [
+          {
+            "value": "v288",
+            "output": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "record_bytes": 4,
+            "external_bytes_per_pair": 8,
+            "service": "pointwise"
+          },
+          {
+            "value": "v289",
+            "output": {
+              "extent": 2048,
+              "alignment": 128
+            },
+            "record_bytes": 4,
+            "reads": [
+              {
+                "value": "v288",
+                "axis": "reduction"
+              }
+            ],
+            "reduction": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "static_bytes_per_pair": 2,
+            "service": "ordered_sum"
+          }
+        ]
+      },
+      "cases": {
+        "whole_ops": {
+          "ticks": 3183232,
+          "ddr_bytes": 45273088,
+          "sram_peak": 2048,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 2,
+          "generated": 2,
+          "beam_pruned": 0,
+          "incumbent_expanded": 0,
+          "seconds": 0.00039366818964481354,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 88064,
+            "handoff_write": 44032,
+            "handoff_read": 44032,
+            "output": 8192,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 2
+        },
+        "whole_reduction": {
+          "ticks": 3181936,
+          "ddr_bytes": 45244416,
+          "sram_peak": 16384,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 1327,
+          "generated": 10397,
+          "beam_pruned": 4104,
+          "incumbent_expanded": 2,
+          "seconds": 0.20977202709764242,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 88064,
+            "handoff_write": 29696,
+            "handoff_read": 29696,
+            "output": 8192,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 5
+        },
+        "single_group": {
+          "ticks": 3181936,
+          "ddr_bytes": 45244416,
+          "sram_peak": 16384,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 16618,
+          "generated": 132106,
+          "beam_pruned": 62757,
+          "incumbent_expanded": 1329,
+          "seconds": 3.5761715518310666,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 88064,
+            "handoff_write": 29696,
+            "handoff_read": 29696,
+            "output": 8192,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 5
+        },
+        "multi_group": {
+          "ticks": 3180672,
+          "ddr_bytes": 45185024,
+          "sram_peak": 13312,
+          "partial_peak": 16384,
+          "max_active_output_groups": 2,
+          "expanded": 15663,
+          "generated": 240639,
+          "beam_pruned": 125328,
+          "incumbent_expanded": 17947,
+          "seconds": 10.664852261543274,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 88064,
+            "handoff_write": 0,
+            "handoff_read": 0,
+            "output": 8192,
+            "onchip_accumulator": 163840
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 17
+        }
+      }
+    },
+    "packed-pool": {
+      "beam_width": 24,
+      "objective": "time",
+      "contract": {
+        "hardware": {
+          "sram_bytes": 16384,
+          "ddr_bytes_per_tick": 16,
+          "sram_bytes_per_tick": 64,
+          "workspace_bytes": 2048,
+          "partial_bank_bytes": 0,
+          "partial_bank_bytes_per_tick": 0
+        },
+        "services": {
+          "pointwise": {
+            "max_output_cells": 43,
+            "pairs_per_tick": 8,
+            "setup_ticks": 16
+          },
+          "ordered_sum": {
+            "max_output_cells": 16,
+            "pairs_per_tick": 64,
+            "setup_ticks": 16,
+            "accumulator_bytes": 8,
+            "max_reduction_cells": 8,
+            "max_groups": 4,
+            "max_continuation_outputs": 1024
+          }
+        },
+        "operators": [
+          {
+            "value": "v288",
+            "output": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "record_bytes": 4,
+            "external_bytes_per_pair": 8,
+            "service": "pointwise"
+          },
+          {
+            "value": "v289",
+            "output": {
+              "extent": 2048,
+              "alignment": 128
+            },
+            "record_bytes": 4,
+            "reads": [
+              {
+                "value": "v288",
+                "axis": "reduction"
+              }
+            ],
+            "reduction": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "static_bytes_per_pair": 2,
+            "service": "ordered_sum"
+          }
+        ]
+      },
+      "cases": {
+        "whole_ops": {
+          "ticks": 3183232,
+          "ddr_bytes": 45273088,
+          "sram_peak": 2048,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 2,
+          "generated": 2,
+          "beam_pruned": 0,
+          "incumbent_expanded": 0,
+          "seconds": 0.0003631776198744774,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 88064,
+            "handoff_write": 44032,
+            "handoff_read": 44032,
+            "output": 8192,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 2
+        },
+        "whole_reduction": {
+          "ticks": 3181936,
+          "ddr_bytes": 45244416,
+          "sram_peak": 16384,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 1327,
+          "generated": 10397,
+          "beam_pruned": 4104,
+          "incumbent_expanded": 2,
+          "seconds": 0.21455173194408417,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 88064,
+            "handoff_write": 29696,
+            "handoff_read": 29696,
+            "output": 8192,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 5
+        },
+        "single_group": {
+          "ticks": 3181936,
+          "ddr_bytes": 45244416,
+          "sram_peak": 16384,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 16350,
+          "generated": 123316,
+          "beam_pruned": 55862,
+          "incumbent_expanded": 1329,
+          "seconds": 3.508872104808688,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 88064,
+            "handoff_write": 29696,
+            "handoff_read": 29696,
+            "output": 8192,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 5
+        },
+        "multi_group": {
+          "ticks": 3181936,
+          "ddr_bytes": 45244416,
+          "sram_peak": 16384,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 17372,
+          "generated": 267334,
+          "beam_pruned": 127780,
+          "incumbent_expanded": 17679,
+          "seconds": 13.186928520910442,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 88064,
+            "handoff_write": 29696,
+            "handoff_read": 29696,
+            "output": 8192,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 5
+        }
+      }
+    },
+    "pool-s64-ddr": {
+      "beam_width": 24,
+      "objective": "ddr",
+      "contract": {
+        "hardware": {
+          "sram_bytes": 16384,
+          "ddr_bytes_per_tick": 16,
+          "sram_bytes_per_tick": 64,
+          "workspace_bytes": 2048,
+          "partial_bank_bytes": 0,
+          "partial_bank_bytes_per_tick": 0
+        },
+        "services": {
+          "pointwise": {
+            "max_output_cells": 43,
+            "pairs_per_tick": 8,
+            "setup_ticks": 16
+          },
+          "ordered_sum": {
+            "max_output_cells": 16,
+            "pairs_per_tick": 64,
+            "setup_ticks": 16,
+            "accumulator_bytes": 8,
+            "max_reduction_cells": 8,
+            "max_groups": 4,
+            "max_continuation_outputs": 1024
+          }
+        },
+        "operators": [
+          {
+            "value": "v288",
+            "output": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "record_bytes": 16,
+            "external_bytes_per_pair": 32,
+            "service": "pointwise"
+          },
+          {
+            "value": "v289",
+            "output": {
+              "extent": 2048,
+              "alignment": 128
+            },
+            "record_bytes": 16,
+            "reads": [
+              {
+                "value": "v288",
+                "axis": "reduction"
+              }
+            ],
+            "reduction": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "static_bytes_per_pair": 2,
+            "service": "ordered_sum"
+          }
+        ]
+      },
+      "cases": {
+        "whole_ops": {
+          "ticks": 3217792,
+          "ddr_bytes": 45826048,
+          "sram_peak": 2048,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 2,
+          "generated": 2,
+          "beam_pruned": 0,
+          "incumbent_expanded": 0,
+          "seconds": 0.00042017269879579544,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 176128,
+            "handoff_read": 176128,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 2
+        },
+        "whole_reduction": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 1326,
+          "generated": 8526,
+          "beam_pruned": 933,
+          "incumbent_expanded": 2,
+          "seconds": 0.24431173503398895,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "single_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 16548,
+          "generated": 107511,
+          "beam_pruned": 23153,
+          "incumbent_expanded": 1328,
+          "seconds": 3.835432310588658,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "multi_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 17436,
+          "generated": 250078,
+          "beam_pruned": 125567,
+          "incumbent_expanded": 17876,
+          "seconds": 15.83293327037245,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        }
+      }
+    },
+    "pool-s64": {
+      "beam_width": 24,
+      "objective": "time",
+      "contract": {
+        "hardware": {
+          "sram_bytes": 16384,
+          "ddr_bytes_per_tick": 16,
+          "sram_bytes_per_tick": 64,
+          "workspace_bytes": 2048,
+          "partial_bank_bytes": 0,
+          "partial_bank_bytes_per_tick": 0
+        },
+        "services": {
+          "pointwise": {
+            "max_output_cells": 43,
+            "pairs_per_tick": 8,
+            "setup_ticks": 16
+          },
+          "ordered_sum": {
+            "max_output_cells": 16,
+            "pairs_per_tick": 64,
+            "setup_ticks": 16,
+            "accumulator_bytes": 8,
+            "max_reduction_cells": 8,
+            "max_groups": 4,
+            "max_continuation_outputs": 0
+          }
+        },
+        "operators": [
+          {
+            "value": "v288",
+            "output": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "record_bytes": 16,
+            "external_bytes_per_pair": 32,
+            "service": "pointwise"
+          },
+          {
+            "value": "v289",
+            "output": {
+              "extent": 2048,
+              "alignment": 128
+            },
+            "record_bytes": 16,
+            "reads": [
+              {
+                "value": "v288",
+                "axis": "reduction"
+              }
+            ],
+            "reduction": {
+              "extent": 11008,
+              "alignment": 256
+            },
+            "static_bytes_per_pair": 2,
+            "service": "ordered_sum"
+          }
+        ]
+      },
+      "cases": {
+        "whole_ops": {
+          "ticks": 3217792,
+          "ddr_bytes": 45826048,
+          "sram_peak": 2048,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 2,
+          "generated": 2,
+          "beam_pruned": 0,
+          "incumbent_expanded": 0,
+          "seconds": 0.00041136331856250763,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 176128,
+            "handoff_read": 176128,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 2
+        },
+        "whole_reduction": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 1326,
+          "generated": 8526,
+          "beam_pruned": 933,
+          "incumbent_expanded": 2,
+          "seconds": 0.24627445079386234,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "single_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 16561,
+          "generated": 107796,
+          "beam_pruned": 24079,
+          "incumbent_expanded": 1328,
+          "seconds": 3.8705867240205407,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        },
+        "multi_group": {
+          "ticks": 3216672,
+          "ddr_bytes": 45801472,
+          "sram_peak": 14336,
+          "partial_peak": 0,
+          "max_active_output_groups": 0,
+          "expanded": 17383,
+          "generated": 198346,
+          "beam_pruned": 86624,
+          "incumbent_expanded": 17889,
+          "seconds": 14.428869388997555,
+          "traffic": {
+            "weight": 45088768,
+            "external_inputs": 352256,
+            "handoff_write": 163840,
+            "handoff_read": 163840,
+            "output": 32768,
+            "onchip_accumulator": 0
+          },
+          "arithmetic_sha256": "a39c512f7a08b26a07e0b2b07c86e58cd571c55a23b2eb8cde2441d27a7e62e0",
+          "dispatch_count": 4
+        }
+      }
+    }
+  }
+}

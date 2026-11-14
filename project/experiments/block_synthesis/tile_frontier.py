@@ -53,6 +53,8 @@ class Offer:
     pairs_per_tick: int
     accumulator_bytes: int = 0
     max_reduction_cells: int = 0  # max cells per continuation; zero disables continuation
+    max_groups: int = 1
+    max_continuation_outputs: int = 0
 
 
 @dataclass(frozen=True)
@@ -61,13 +63,22 @@ class Hardware:
     ddr_bytes_per_tick: int
     sram_bytes_per_tick: int
     workspace_bytes: int = 0
+    partial_bank_bytes: int = 0
+    partial_bank_bytes_per_tick: int = 0
+
+
+@dataclass(frozen=True)
+class Group:
+    start: int
+    stop: int
+    prefix: int
 
 
 @dataclass(frozen=True)
 class Progress:
-    out: int = 0
-    stop: int = 0  # chosen output tile end while a reduction is open
-    prefix: int = 0
+    allocated: int = 0
+    published: int = 0
+    groups: tuple = ()
 
 
 @dataclass(frozen=True)
@@ -112,6 +123,8 @@ class Frontier:
         if (not self.graph or depth < 0 or width is not None and width < 1
                 or objective not in ('time', 'ddr')
                 or not 0 <= hardware.workspace_bytes < hardware.sram_bytes
+                or min(hardware.partial_bank_bytes, hardware.partial_bank_bytes_per_tick) < 0
+                or bool(hardware.partial_bank_bytes) != bool(hardware.partial_bank_bytes_per_tick)
                 or min(hardware.sram_bytes, hardware.ddr_bytes_per_tick,
                        hardware.sram_bytes_per_tick) <= 0):
             raise ValueError('invalid frontier bounds or hardware')
@@ -123,8 +136,8 @@ class Frontier:
         for i, (node, service) in enumerate(zip(self.graph, self.offers)):
             if (node.value in known or node.output.extent < 1 or node.output.alignment < 1
                     or node.record_bytes < 1 or service.max_output_cells < 1
-                    or service.setup_ticks < 0 or service.pairs_per_tick < 1
-                    or service.accumulator_bytes < 0 or service.max_reduction_cells < 0
+                    or service.max_groups < 1 or service.setup_ticks < 0 or service.pairs_per_tick < 1
+                    or min(service.accumulator_bytes, service.max_reduction_cells, service.max_continuation_outputs) < 0
                     or min(node.static_bytes_per_pair, node.external_bytes_per_pair) < 0
                     or node.reduction and min(node.reduction.extent, node.reduction.alignment) < 1
                     or service.max_reduction_cells and not (node.reduction and service.accumulator_bytes)):
@@ -157,22 +170,30 @@ class Frontier:
             count -= axis.cells * axis.alignment - axis.extent
         return count * node.record_bytes
 
-    def used(self, progress, residents):
+    def partial_bytes(self, progress):
+        return sum(node.output.size(g.start, g.stop) * offer.accumulator_bytes
+                   for node, offer, p in zip(self.graph, self.offers, progress) for g in p.groups)
+
+    def used(self, residents, partial_bytes):
         return (sum(self.size(i, mask) for i, mask in enumerate(residents) if mask)
-                + sum(self.graph[i].output.size(p.out, p.stop) * self.offers[i].accumulator_bytes
-                      for i, p in enumerate(progress) if p.prefix))
+                + (0 if self.hardware.partial_bank_bytes else partial_bytes))
 
     def live(self, i, progress):
         mask = 0
         for user, axis in self.users[i]:
             p = progress[user]
             extent = self.graph[user].output.cells
-            if p.out == extent:
+            if p.published == self.full[user]:
                 continue
-            lower = p.out if axis == 'output' else 0
-            if axis == 'reduction' and p.stop == extent:
-                lower = p.prefix
-            mask |= self.full[i] & ~interval(0, lower)
+            if axis == 'output':
+                mask |= self.full[i] & ~p.published
+            elif axis == 'reduction' and p.allocated == extent:
+                # Once all groups exist, a K cell is dead as soon as the
+                # slowest outstanding group has consumed it.
+                prefix = min(group.prefix for group in p.groups)
+                mask |= self.full[i] & ~interval(0, prefix)
+            else:
+                mask |= self.full[i]
         return mask
 
     def ranking(self, state, label):
@@ -181,15 +202,16 @@ class Frontier:
         remaining_ticks = 0
         remaining_ddr = 0
         for i, (node, service, p) in enumerate(zip(self.graph, self.offers, state.progress)):
-            work = node.output.size(p.out, node.output.cells)
+            remaining_outputs = self.full[i] & ~p.published
+            outputs = self.size(i, remaining_outputs) // node.record_bytes
             k = node.reduction.extent if node.reduction else 1
-            work *= k
-            if p.prefix:
-                work -= node.output.size(p.out, p.stop) * node.reduction.offset(p.prefix)
+            work = outputs * k
+            for group in p.groups:
+                work -= node.output.size(group.start, group.stop) * node.reduction.offset(group.prefix)
             remaining_ticks += blocks(work, service.pairs_per_tick)
             remaining_ddr += work * (node.static_bytes_per_pair + node.external_bytes_per_pair)
             if self.exports[i]:
-                remaining_ddr += node.output.size(p.out, node.output.cells) * node.record_bytes
+                remaining_ddr += self.size(i, remaining_outputs)
             remaining_ddr += self.size(i, state.backed[i] & ~state.resident[i])
         remaining_ticks += blocks(remaining_ddr, self.hardware.ddr_bytes_per_tick)
         return self.cost(label.ticks + remaining_ticks, label.ddr + remaining_ddr, label.peak)
@@ -201,42 +223,55 @@ class Frontier:
         longest = []
         for i, p in enumerate(progress):
             previous = max((longest[src] for src, _ in self.reads[i]), default=0)
-            open_now = p.prefix > 0 or 0 < p.out < self.graph[i].output.cells
+            open_now = bool(p.allocated and p.published != self.full[i])
             longest.append(previous + int(open_now))
             if longest[-1] > depth:
                 return False
         return True
 
-    def actions(self, state, depth, continuation):
-        for i, (node, service, p) in enumerate(zip(self.graph, self.offers, state.progress)):
-            end = node.output.cells
-            if p.out >= end:
-                continue
-            if p.prefix:
-                stops = (p.stop,)
-            elif depth == 0:
-                stops = (end,) if end <= service.max_output_cells else ()
-            else:
-                stops = span_choices(p.out, end, service.max_output_cells)
-            for stop in stops:
-                limit = self.reductions[i]
-                if not depth or not continuation or not service.max_reduction_cells:
+    def group_choices(self, i, p, depth, max_groups):
+        node, service = self.graph[i], self.offers[i]
+        yield from p.groups
+        end = node.output.cells
+        if p.allocated == end or len(p.groups) >= max_groups:
+            return
+        if depth == 0:
+            if end <= service.max_output_cells:
+                yield Group(0, end, 0)
+            return
+        for stop in span_choices(p.allocated, end, service.max_output_cells):
+            yield Group(p.allocated, stop, 0)
+
+    def actions(self, state, depth, group_limit):
+        for i, (service, p) in enumerate(zip(self.offers, state.progress)):
+            limit = self.reductions[i]
+            may_continue = depth and group_limit and service.max_reduction_cells
+            max_groups = min(service.max_groups, group_limit) if may_continue else 1
+            for group in self.group_choices(i, p, depth, max_groups):
+                outputs = self.graph[i].output.size(group.start, group.stop)
+                if (not may_continue
+                        or service.max_continuation_outputs and outputs > service.max_continuation_outputs):
                     next_prefixes = (limit,)
                 else:
-                    next_prefixes = tuple(span_choices(p.prefix, limit, service.max_reduction_cells))
-                    if not p.prefix and next_prefixes[-1] != limit:
+                    next_prefixes = tuple(span_choices(group.prefix, limit, service.max_reduction_cells))
+                    if not group.prefix and next_prefixes[-1] != limit:
                         next_prefixes += (limit,)
                 for prefix in next_prefixes:
-                    yield from self.dispatch(state, i, stop, prefix, depth)
+                    yield from self.dispatch(state, i, group, prefix, depth)
 
-    def dispatch(self, state, i, stop, prefix, depth):
+    def dispatch(self, state, i, group, prefix, depth):
         node, service = self.graph[i], self.offers[i]
         p = state.progress[i]
-        output = interval(p.out, stop)
-        reduction = interval(p.prefix, prefix)
+        output = interval(group.start, group.stop)
+        reduction = interval(group.prefix, prefix)
         finish = prefix == self.reductions[i]
+        groups = [current for current in p.groups if current != group]
+        if not finish:
+            groups.append(Group(group.start, group.stop, prefix))
+            groups.sort(key=lambda current: current.start)
         progress = list(state.progress)
-        progress[i] = Progress(stop) if finish else Progress(p.out, stop, prefix)
+        progress[i] = Progress(max(p.allocated, group.stop),
+                               p.published | (output if finish else 0), tuple(groups))
         if not self.legal_depth(progress, depth):
             return
         from_ddr = {}
@@ -256,11 +291,14 @@ class Frontier:
                 from_ddr[name] = from_ddr.get(name, 0) + cold
             local_bytes += self.size(src, mask & state.resident[src])
 
-        outputs = node.output.size(p.out, stop)
-        k = node.reduction.size(p.prefix, prefix) if node.reduction else 1
+        outputs = node.output.size(group.start, group.stop)
+        k = node.reduction.size(group.prefix, prefix) if node.reduction else 1
         weights = outputs * k * node.static_bytes_per_pair
         external = outputs * k * node.external_bytes_per_pair
-        partial = outputs * service.accumulator_bytes * (int(bool(p.prefix)) + int(not finish))
+        partial = outputs * service.accumulator_bytes * (int(bool(group.prefix)) + int(not finish))
+        partial_used = self.partial_bytes(progress)
+        if self.hardware.partial_bank_bytes and partial_used > self.hardware.partial_bank_bytes:
+            return
         # Dead versions can be dropped after all reads in this dispatch.
         live = tuple(self.live(j, progress) for j in range(len(self.graph)))
         resident = [mask & needed for mask, needed in zip(state.resident, live)]
@@ -281,7 +319,7 @@ class Frontier:
                 writes[node.value] = volume
             # Spill oldest aligned cells first if this transition needs space.
             # The current output can instead select its direct-DDR alternative.
-            usage = self.used(progress, placed)
+            usage = self.used(placed, partial_used)
             for src, mask in enumerate(resident):
                 while usage > self.capacity and mask:
                     cell = mask & -mask
@@ -296,34 +334,44 @@ class Frontier:
             if usage > self.capacity:
                 continue
             ddr = sum(from_ddr.values()) + sum(writes.values()) + weights + external
-            onchip = local_bytes + self.size(i, retained) + partial
+            onchip = local_bytes + self.size(i, retained)
+            bank_ticks = 0
+            if self.hardware.partial_bank_bytes:
+                bank_ticks = blocks(partial, self.hardware.partial_bank_bytes_per_tick)
+            else:
+                onchip += partial
             ticks = (service.setup_ticks + blocks(outputs * k, service.pairs_per_tick)
                      + blocks(ddr, self.hardware.ddr_bytes_per_tick)
-                     + blocks(onchip, self.hardware.sram_bytes_per_tick))
-            action = {'operator': node.value, 'output': [node.output.offset(p.out), node.output.offset(stop)],
-                      'reduction': ([node.reduction.offset(p.prefix), node.reduction.offset(prefix)]
+                     + blocks(onchip, self.hardware.sram_bytes_per_tick) + bank_ticks)
+            action = {'operator': node.value, 'output': [node.output.offset(group.start), node.output.offset(group.stop)],
+                      'reduction': ([node.reduction.offset(group.prefix), node.reduction.offset(prefix)]
                                     if node.reduction else None),
                       'publishes': finish, 'retains_bytes': self.size(i, retained),
                       'sram_live_bytes': usage, 'sram_service_bytes': onchip,
                       'sram_reserved_bytes': usage + self.hardware.workspace_bytes,
-                      'sram_partial_service_bytes': partial,
+                      'sram_partial_service_bytes': partial if not self.hardware.partial_bank_bytes else 0,
+                      'bank_partial_service_bytes': partial if self.hardware.partial_bank_bytes else 0,
+                      'partial_live_bytes': partial_used, 'active_output_groups': len(groups),
                       'read_bytes': from_ddr, 'write_bytes': writes, 'static_bytes': weights,
                       'external_input_bytes': external,
                       'ticks': ticks}
-            advance = (stop - p.out) * (prefix - p.prefix)
+            advance = (group.stop - group.start) * (prefix - group.prefix)
             yield State(tuple(progress), tuple(placed), tuple(saved)), action, advance, ddr
 
     def solve(self):
         """Find a dispatch plan under the selected candidate and beam bounds."""
-        labels, metrics = self.search(self.depth, self.width, True)
+        maximum = max(offer.max_groups for offer in self.offers)
+        labels, metrics = self.search(self.depth, self.width, maximum)
         metrics['incumbent_expanded'] = 0
         if self.depth and self.width is not None:
             # Preserve weaker plans even when the main beam drops them.
-            variants = [(0, False)]
+            variants = [(0, 0)]
             if any(service.max_reduction_cells for service in self.offers):
-                variants.append((self.depth, False))
-            for depth, continuation in variants:
-                baseline, counters = self.search(depth, self.width, continuation)
+                variants.append((self.depth, 0))
+                if maximum > 1:
+                    variants.append((self.depth, 1))
+            for depth, group_limit in variants:
+                baseline, counters = self.search(depth, self.width, group_limit)
                 metrics['incumbent_expanded'] += counters['expanded']
                 labels.extend(baseline)
         if not labels:
@@ -335,9 +383,11 @@ class Frontier:
             actions.append(cursor.action)
             cursor = cursor.parent
         return {'ticks': best.ticks, 'ddr_bytes': best.ddr, 'sram_peak': best.peak,
+                'partial_peak': max(action['partial_live_bytes'] for action in actions),
+                'max_active_output_groups': max(action['active_output_groups'] for action in actions),
                 **metrics, 'actions': actions[::-1]}
 
-    def search(self, depth, width, continuation):
+    def search(self, depth, width, group_limit):
         count = len(self.graph)
         empty = State((Progress(),) * count, (0,) * count, (0,) * count)
         buckets = {0: {empty: Label(0, 0, 0)}}
@@ -350,7 +400,7 @@ class Frontier:
                 entries = sorted(entries, key=lambda entry: self.ranking(*entry))[:width]
             for state, label in entries:
                 expanded += 1
-                for successor, action, advance, io in self.actions(state, depth, continuation):
+                for successor, action, advance, io in self.actions(state, depth, group_limit):
                     generated += 1
                     step = Label(label.ticks + action['ticks'], label.ddr + io,
                                  max(label.peak, action['sram_reserved_bytes']), label, action)
