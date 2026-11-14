@@ -54,3 +54,5 @@ The 512-bit candidate models up to four adjacent 16-byte words per SRAM request 
 The [experiment record](../../../work/YUZE-LU/234/native-sram-width/README.md) identifies the archived inputs and runs.
 
 For the opt-in SRAM and DMA pipeline timing experiment, pass `--pipeline-memory` to `run_native_tlm_request.py`. See the [matched decode and prefill setup](../../../work/YUZE-LU/234/MEMORY_PIPELINE_EXPERIMENT.md).
+
+For the ATT1 SRAM pipeline comparison, run both sides with `--pipeline-memory --dma-fabric-budget --sram-port-bits 512 --kv-read-window 8 --kv-response-slots 16 --av-value-fetch selected --rtl-weight-fetch`. Add `--attn-sram-pipeline` to the candidate. This keeps the same DDR workload and tests separate ATT1 SRAM refill and operand-read scheduling through the same local SRAM port. See the [job receipts and comparison](../../../work/YUZE-LU/234/AV_WEIGHT_EXPERIMENT.md#att1-的-sram-请求流水).

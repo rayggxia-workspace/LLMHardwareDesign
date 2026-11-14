@@ -53,11 +53,11 @@
 
 | 已完成且逐页匹配的范围 | 原配置 | 开启 ATT1 SRAM 流水 |
 | --- | ---: | ---: |
-| C512 decode 前三层，总耗时 | 24.091 ms | 20.527 ms |
-| C512 decode 前三层，仅 Attention 页 | 11.729 ms | 8.187 ms |
-| 空 KV 两 token prefill 前五层，总耗时 | 20.897 ms | 20.878 ms |
+| C512 decode 前七层，总耗时 | 56.187 ms | 47.919 ms |
+| C512 decode 前七层，仅 Attention 页 | 27.367 ms | 19.104 ms |
+| 空 KV 两 token prefill，第一个位置前九层 | 37.606 ms | 37.580 ms |
 
-表中各层计入从第一条层内指令到本层结束的时间，独立的 embedding 页及词表头由整次作业计入。完成的对照页中，母控指令周期数、局控调用绑定和次数、DDR 事务数以及各 S 读写次数和字节数一致。首层 Attention 页的 DDR 读为 197,060 笔、写为 128 笔。基于前三层，decode 每层约少 1.19 ms，其余层节省相近时，36 层约少 43 ms/token。短 prefill 的 Attention 窗口短，前五层累计差约 0.018 ms。完整吞吐使用退休时间计算。 [逐页对照](attn-critical-path-receipts/matched-prefix.json)
+表中各层计入从第一条层内指令到本层结束的时间，独立的 embedding 页及 decode 词表头由整次作业计入。完成的对照页中，母控指令周期数、局控调用绑定和次数、DDR 事务数以及各 S 读写次数和字节数一致。首层 Attention 页的 DDR 读为 197,060 笔、写为 128 笔。七层平均约少 1.18 ms，其余层节省相近时，36 层约少 42.5 ms/token。若沿用前一版约 376 ms/token 的临时估值（111875 的 289.204 ms 前缀加 110382 的 86.828 ms 词表页），得到约 3.0 tok/s 的规划值。完整吞吐使用实际退休时间计算。 [逐页对照](attn-critical-path-receipts/matched-prefix.json)
 
 | 作业 | 两步 decode | 空 KV 两 token prefill |
 | --- | ---: | ---: |

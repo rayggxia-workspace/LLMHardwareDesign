@@ -2,7 +2,7 @@
 
 ## 2026-11-14（CST）ATT1 局部 SRAM 流水对照
 
-[PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 增加候选 TLM 的 ATT1 SRAM 回填和取数流水。前三层 decode 的 Attention 页合计 11.729→8.187 ms，母控指令、局控调用、DDR 与 SRAM 访问量一致。候选作业 112069/112070 运行两步 decode 和短 prefill，112116/112117 待两组完成后核对吞吐。硬件实现及正式 P512/D128 仍待验收。 [配置与对照](../../work/YUZE-LU/234/AV_WEIGHT_EXPERIMENT.md#att1-的-sram-请求流水)
+[PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 增加候选 TLM 的 ATT1 SRAM 回填和取数流水。前七层 decode 的 Attention 页合计 27.367→19.104 ms，母控指令、局控调用、DDR 与 SRAM 访问量一致。候选作业 112069/112070 运行两步 decode 和短 prefill，112116/112117 待两组完成后核对吞吐。硬件实现及正式 P512/D128 仍待验收。 [配置与对照](../../work/YUZE-LU/234/AV_WEIGHT_EXPERIMENT.md#att1-的-sram-请求流水)
 
 ## 2026-11-14（CST）短程吞吐回执与复现入口
 
