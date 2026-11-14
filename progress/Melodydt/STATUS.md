@@ -95,3 +95,9 @@
 - 整机 110666 在 c64/node10 单核运行 01:30:11，两个 token 退休后因释放 DDR 再读计数退出 1:0。111176 在 c64/node11 单核 4 秒通过关闭回归和结果恢复。两步 582 页、退休、DDR 审计与 107361 完整一致。c64/node2 同机九页原版、DDR 批推进、加入原生整数运算分别为 170、70、60 s。
 - 111058 对齐原生 RTL QKV、Attention、O 投影及残差/RMS 共四页。111111 延伸到 FFN 首批三路服务接收，两种模式各核验 781,100 条普通读、512 条激活读、2,432 条写和 833 个控制标记。105572 扩展对照截至首个完整 Q 和后续描述符，先封存模型输出后读取扩展时序。保留原留出首个 K0 的模式 1 五拍失配。
 - 当前待审查 [PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266)，独立审查人待指定，Issue 保持进行中。交接由 Melodydt 跟进长上下文的同配置完整退休对照及原生三 P FFN。P512/D128 联合运行、数值验收由 [#234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) 负责。项目登记 PR #5 待合并。仓库缺 config/board.json，Projects 由具权限维护者核验。 [恢复入口](../../docs/handoffs/2026-11-14-issue-265-qwen-decode-fast-evaluation.md)
+
+## 2026-11-14（Asia/Shanghai，UTC+08:00）PR #260 SRAM 扫描
+
+- Melodydt [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 对 PR #260 `dd423e5a` 固定 DDR 与 KV 窗口。仅用 107947 的 128-bit 首步校准，128-bit 第二步吞吐误差 +0.01245%，未拟合的 512-bit 档吞吐误差 −12.58%、延迟误差 +14.39%。ATT1 服务时长仅高估 0.81%，整体高估 68.806 ms 中有 67.122 ms 来自固定了其余服务。见[估算回执](../../work/Melodydt/265/qwen-sram-width-transfer.json)。
+- 111631–111635 在 c96/node17 各占 1 核运行。已读回的前缀页数为 70、94、142、92、142，全字段相符。全窗回放误差待各作业终态。下一步由 Melodydt 读回 `comparison.json` 及 SHA-256，再报 582/578 页和完整吞吐误差。[恢复交接](../../docs/handoffs/2026-11-14-issue-265-qwen-sram-sweep.md)
+- [PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 草稿、Issue 进行中、独立审查人待指定。项目登记 PR #5 待合并，Projects 缺设仓库配置，待维护者核验。

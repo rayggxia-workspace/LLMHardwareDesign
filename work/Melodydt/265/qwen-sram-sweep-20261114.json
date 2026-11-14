@@ -1,0 +1,322 @@
+{
+  "issue": 265,
+  "pr": 266,
+  "base_pr": 260,
+  "base_pr_head": "dd423e5a8010e7371ee1ccbd589df00bc0ff6478",
+  "source_commit": "560f637450fa016b76daa7749681c3c5351d8b2a",
+  "host": "yuzelu@10.129.166.172",
+  "root": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01",
+  "reference": {
+    "core_ps": 3334,
+    "ddr_ps": 630,
+    "ddr_channels": 2,
+    "dma_credits_per_channel": 32,
+    "kv_read_window": 8,
+    "decode_initial_history": 512,
+    "decode_intervals": 1,
+    "prefill_input_positions": 2
+  },
+  "status_observed_cst": "2026-11-14T14:20:30+08:00",
+  "toolchain": {
+    "python_version": "Python 3.10.12",
+    "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+  },
+  "scope": "matching archive service code per run and an independent execution replacing the DDR scheduler only; pending full-window measured replay errors",
+  "cases": [
+    {
+      "reference_job": 107947,
+      "reference_archive": "/public/home/yuzelu/project-circuit/issue260-native-kv-window-jL6neTvA",
+      "reference_source_manifest_sha256": "45d5a429835f1145b8e2b3e8d9b42044aa40884a0a2993498cf69d1f16bd261b",
+      "reference_output_sha256": {
+        "execution.json": "c4e98763c4453d1c6a4685581799494b8eaec978c7ccedd1ca070fd3568aad5a",
+        "page-timing.jsonl": "422e89d190c43ac567b6e47898ffc38b4f96e4943339b6d177c46a2741e7ece8",
+        "timing-audit.json": "e1a7a545eae6b51b3a6bfa89f5be15b8035fa064f4627728fde0145fcc4181ec"
+      },
+      "mode": "decode",
+      "sram_port_bits": 128,
+      "pipeline_memory": false,
+      "reference_elapsed_ps": 828821614510,
+      "reference_tok_s": 1.2065322410675798,
+      "reference_pages": 582,
+      "reference_ddr": {
+        "channel1_peak_queued": 8,
+        "ddr_queue_ps": 82987752998,
+        "channel1_peak_active": 12,
+        "reads": 126860392,
+        "callbacks": 126908776,
+        "ddr_inflight_ps": 2825582657310,
+        "channel0_peak_queued": 6,
+        "channel0_peak_active": 12,
+        "writes": 48384,
+        "dma_issue_throttle_ticks": 5923213
+      },
+      "reference_retirements": [
+        [
+          20772,
+          827821201134
+        ],
+        [
+          279,
+          1656642815644
+        ]
+      ],
+      "job": 111631,
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01/107947",
+      "launcher": "sbatch --parsable run_qwen_sram_sweep.sbatch 107947",
+      "log": "slurm-111631.out",
+      "name": "zny-qwenbw",
+      "partition": "c96",
+      "cpus": 1,
+      "node": "node17",
+      "state": "RUNNING",
+      "elapsed": "00:07:16",
+      "start_cst": "2026-11-14T14:13:12+08:00",
+      "matched_pages_snapshot": 70,
+      "prefix_directory": "107947/prefix-check.xXYttUqe",
+      "verified_sha256": {
+        "107947/prefix-check.xXYttUqe/new.jsonl": "fa66bea6352235620c6030c41a2d28d5638d64c83b9d1e3ee5224cf10ee24d08",
+        "107947/prefix-check.xXYttUqe/ref.jsonl": "7ab4f7caabac617835ff1197bc911447822ea7fc6d322e123905b90c6e6e5a74",
+        "107947/source.sha256": "9e95ab258c8220ce607e80fe2762e824433932733071e4163fa87202ab48f37b",
+        "107947/inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "107947/fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "107947/compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "107947/python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+      },
+      "final_comparison": null
+    },
+    {
+      "reference_job": 108284,
+      "reference_archive": "/public/home/yuzelu/project-circuit/issue260-native-sram512-SMbOWTw6",
+      "reference_source_manifest_sha256": "08a1e9c93961a8afecb9fa4b07d23653f95bd037210d0f25a3fcbd633f346ea2",
+      "reference_output_sha256": {
+        "execution.json": "de831a7be9ce1f02b37b2ee05fdf7d18aab9bdc53c7d447805b82ce1b10b7a71",
+        "page-timing.jsonl": "01ef24bee6aa6b5258de0222ba7e56491e5b079d1cf92afc345b24a7bc06bb35",
+        "timing-audit.json": "ba040a7bc88262c0df68d9422c1e2dbdb5dc79a716a6936f6f3d8273935b733a"
+      },
+      "mode": "decode",
+      "sram_port_bits": 512,
+      "pipeline_memory": false,
+      "reference_elapsed_ps": 478260746356,
+      "reference_tok_s": 2.090909629567709,
+      "reference_pages": 582,
+      "reference_ddr": {
+        "channel1_peak_queued": 8,
+        "ddr_queue_ps": 83158470824,
+        "channel1_peak_active": 12,
+        "reads": 126860392,
+        "callbacks": 126908776,
+        "ddr_inflight_ps": 2780851369590,
+        "channel0_peak_queued": 6,
+        "channel0_peak_active": 12,
+        "writes": 48384,
+        "dma_issue_throttle_ticks": 6110589
+      },
+      "reference_retirements": [
+        [
+          20772,
+          478110216256
+        ],
+        [
+          279,
+          956370962612
+        ]
+      ],
+      "job": 111632,
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01/108284",
+      "launcher": "sbatch --parsable run_qwen_sram_sweep.sbatch 108284",
+      "log": "slurm-111632.out",
+      "name": "zny-qwenbw",
+      "partition": "c96",
+      "cpus": 1,
+      "node": "node17",
+      "state": "RUNNING",
+      "elapsed": "00:07:16",
+      "start_cst": "2026-11-14T14:13:12+08:00",
+      "matched_pages_snapshot": 94,
+      "prefix_directory": "108284/prefix-check.16mBBcMU",
+      "verified_sha256": {
+        "108284/prefix-check.16mBBcMU/new.jsonl": "44b4da6c76df2b505aacb28f54a358f492f6a935b4f6d1c3fa1f615b887d087d",
+        "108284/prefix-check.16mBBcMU/ref.jsonl": "3fd70cbe182ecc3f7aca89dc7fab95bafc4a9b32829650220c4a65a3556d4b5d",
+        "108284/source.sha256": "7cc661e6df4e86c166e7de4da890c12cc2de23e484885555ef2c799bf8ef903f",
+        "108284/inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "108284/fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "108284/compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "108284/python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+      },
+      "final_comparison": null
+    },
+    {
+      "reference_job": 108359,
+      "reference_archive": "/public/home/yuzelu/project-circuit/issue260-native-sram512-full-zrXP7jjS",
+      "reference_source_manifest_sha256": "420d00413fcab5e6995d2768cd08ed94d7c2c88116b89e424140ee598b167311",
+      "reference_output_sha256": {
+        "execution.json": "336331c27f680cee732e8c1849256b7ba628c9855c8cb74e7ca6168918b0aaee",
+        "page-timing.jsonl": "5ec2500b61ccddc37336fb25b72c929b790ff146e1d0615cd2b82f7eeb3d4314",
+        "timing-audit.json": "193ca67db31896a1158a8b7cef477cc6e7c5e43cc652445d2010f054f9cf7e5a"
+      },
+      "mode": "prefill",
+      "sram_port_bits": 512,
+      "pipeline_memory": false,
+      "reference_elapsed_ps": 369831191448,
+      "reference_tok_s": 5.40787268961658,
+      "reference_pages": 578,
+      "reference_ddr": {
+        "channel0_peak_queued": 6,
+        "ddr_queue_ps": 60763582980,
+        "channel0_peak_active": 12,
+        "reads": 92323014,
+        "callbacks": 92371398,
+        "ddr_inflight_ps": 2025966319020,
+        "channel1_peak_queued": 8,
+        "channel1_peak_active": 12,
+        "writes": 48384,
+        "dma_issue_throttle_ticks": 3868466
+      },
+      "reference_retirements": [],
+      "job": 111633,
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01/108359",
+      "launcher": "sbatch --parsable run_qwen_sram_sweep.sbatch 108359",
+      "log": "slurm-111633.out",
+      "name": "zny-qwenbw",
+      "partition": "c96",
+      "cpus": 1,
+      "node": "node17",
+      "state": "RUNNING",
+      "elapsed": "00:07:15",
+      "start_cst": "2026-11-14T14:13:13+08:00",
+      "matched_pages_snapshot": 142,
+      "prefix_directory": "108359/prefix-check.mv9vBvmh",
+      "verified_sha256": {
+        "108359/prefix-check.mv9vBvmh/new.jsonl": "5e112a334e5d2f6f1564bf51b7500da9dd468bbe7247d0d668c6cc6786286365",
+        "108359/prefix-check.mv9vBvmh/ref.jsonl": "f89e76c1d8898b6c22d4f915df63da9a5a2009155222256a58b28691c68f0675",
+        "108359/source.sha256": "be797013161374e8290c3abb30cb1714bbecdfb4e49bc84b83ba46b65e0d9e1c",
+        "108359/inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "108359/fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "108359/compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "108359/python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+      },
+      "final_comparison": null
+    },
+    {
+      "reference_job": 110382,
+      "reference_archive": "/public/home/yuzelu/project-circuit/issue260-sram-pipeline-qk3uTFl1",
+      "reference_source_manifest_sha256": "0a734ff07e913ad709da33681b00876ae61dd3f54d762498d30a1882b90ae985",
+      "reference_output_sha256": {
+        "execution.json": "37328d2cd027f4840388a8bd6da97cb31d7c1f8ae63fdac17c2ef7b2e6b5e18e",
+        "page-timing.jsonl": "af1784f0bea74774374e3e6796c916cf91cbb94928d580f8e3f6ba0366c1f4e7",
+        "timing-audit.json": "a6ad36ba544b11c78e9c30ce9f1637df2548aa000eb2fd815186e9a7f1692347"
+      },
+      "mode": "decode",
+      "sram_port_bits": 512,
+      "pipeline_memory": true,
+      "reference_elapsed_ps": 427533726314,
+      "reference_tok_s": 2.338996758504977,
+      "reference_pages": 582,
+      "reference_ddr": {
+        "channel1_peak_queued": 8,
+        "ddr_queue_ps": 91547195260,
+        "channel1_peak_active": 12,
+        "reads": 126860392,
+        "callbacks": 126908776,
+        "ddr_inflight_ps": 2798902924020,
+        "channel0_peak_queued": 8,
+        "channel0_peak_active": 12,
+        "dma_issue_throttle_ticks": 8424216,
+        "writes": 48384
+      },
+      "reference_retirements": [
+        [
+          20772,
+          427297749128
+        ],
+        [
+          279,
+          854831475442
+        ]
+      ],
+      "job": 111634,
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01/110382",
+      "launcher": "sbatch --parsable run_qwen_sram_sweep.sbatch 110382",
+      "log": "slurm-111634.out",
+      "name": "zny-qwenbw",
+      "partition": "c96",
+      "cpus": 1,
+      "node": "node17",
+      "state": "RUNNING",
+      "elapsed": "00:07:15",
+      "start_cst": "2026-11-14T14:13:13+08:00",
+      "matched_pages_snapshot": 92,
+      "prefix_directory": "110382/prefix-check.GRKNlkiH",
+      "verified_sha256": {
+        "110382/prefix-check.GRKNlkiH/new.jsonl": "969087279f8560f23a9070444a2571083411a464abd2c3c3a897b617013c39f7",
+        "110382/prefix-check.GRKNlkiH/ref.jsonl": "204af6c142ad183991c6c3aae84cdf1817c1d71ae072e85075f75515ae0fb26f",
+        "110382/source.sha256": "dc46554eed6764a70f9c43074447c58abb556d150e065df933858d4f48eeeb47",
+        "110382/inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "110382/fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "110382/compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "110382/python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+      },
+      "final_comparison": null
+    },
+    {
+      "reference_job": 110383,
+      "reference_archive": "/public/home/yuzelu/project-circuit/issue260-sram-pipeline-qk3uTFl1",
+      "reference_source_manifest_sha256": "0a734ff07e913ad709da33681b00876ae61dd3f54d762498d30a1882b90ae985",
+      "reference_output_sha256": {
+        "execution.json": "a808bce1d3dec4ce0571dcd6b271df9ebe01eac8d0ef6b44f96d4b70678debdf",
+        "page-timing.jsonl": "989f3ef5a87b51ebb9294312241e433e5d2e82690e69c85208ebef1691a1b921",
+        "timing-audit.json": "cbb6636c94022569fa0636be68ba1f8fc71f91e99d9ee411bd95d5dc02534a17"
+      },
+      "mode": "prefill",
+      "sram_port_bits": 512,
+      "pipeline_memory": true,
+      "reference_elapsed_ps": 363205986672,
+      "reference_tok_s": 5.506517164889514,
+      "reference_pages": 578,
+      "reference_ddr": {
+        "channel0_peak_queued": 8,
+        "ddr_queue_ps": 60912669992,
+        "channel0_peak_active": 12,
+        "reads": 92323014,
+        "callbacks": 92371398,
+        "ddr_inflight_ps": 2022600529530,
+        "channel1_peak_queued": 8,
+        "channel1_peak_active": 12,
+        "dma_issue_throttle_ticks": 3946764,
+        "writes": 48384
+      },
+      "reference_retirements": [],
+      "job": 111635,
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01/110383",
+      "launcher": "sbatch --parsable run_qwen_sram_sweep.sbatch 110383",
+      "log": "slurm-111635.out",
+      "name": "zny-qwenbw",
+      "partition": "c96",
+      "cpus": 1,
+      "node": "node17",
+      "state": "RUNNING",
+      "elapsed": "00:07:15",
+      "start_cst": "2026-11-14T14:13:13+08:00",
+      "matched_pages_snapshot": 142,
+      "prefix_directory": "110383/prefix-check.YrLF9dBp",
+      "verified_sha256": {
+        "110383/prefix-check.YrLF9dBp/new.jsonl": "74f97ddf191a2915cddadfda2e03beac826a7bffe01b92729be3e3c3e341889c",
+        "110383/prefix-check.YrLF9dBp/ref.jsonl": "c2e15ef576942ff079294a068c7f8e404b76d3040b7a1f20f1d48a3acec2557a",
+        "110383/source.sha256": "878e92d073543ff9969ee9643a77fe3c4c018b0fedef869a3a34c81b0c502da2",
+        "110383/inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "110383/fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "110383/compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "110383/python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+      },
+      "final_comparison": null
+    }
+  ],
+  "transfer_audit": {
+    "script": "work/Melodydt/265/audit_qwen_sram_width_transfer.py",
+    "script_sha256": "f250601d7b795098f6c4b9f88a27b146ec71109b0f10f17955eb2b1beef27eed",
+    "receipt": "work/Melodydt/265/qwen-sram-width-transfer.json",
+    "receipt_sha256": "9a76b7ab21745fb060ffc7ff2fe20f679798648f578d21fa80d8d3b1c07e49bf",
+    "python_version": "Python 3.7.0",
+    "preregistered_blind_comparison": false
+  }
+}

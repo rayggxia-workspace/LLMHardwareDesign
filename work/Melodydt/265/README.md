@@ -69,3 +69,7 @@ sbatch --parsable --output=slurm-%j.out reference_smoke.sbatch "$CHECKPOINT" "$R
 [整机两步对照与 D128 估算回执](qwen-decode-evaluation-107361.json)固定 107361 的单拍 KV 配置、首步校准、次步误差、127 个反馈阶段的资源审计及原生 RTL 校验范围。
 
 整机快评恢复入口为[运行交接](../../../docs/handoffs/2026-11-14-issue-265-qwen-decode-fast-evaluation.md)。110666 的两步整机轨迹及 111176 的恢复回执已与 107361 对齐，几何及估算覆盖全部 127 个缓存反馈间隔。111058、111111 分别记录原生 RTL 四页完整对账和 FFN 首批三路服务接收。大体积原始结果保存在回执给出的许可服务器目录。
+
+## PR #260 SRAM 带宽对照
+
+[带宽变化归档](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/dd423e5a8010e7371ee1ccbd589df00bc0ff6478/work/YUZE-LU/234/native-sram-width/README.md) · [512-bit 流水归档](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/dd423e5a8010e7371ee1ccbd589df00bc0ff6478/work/YUZE-LU/234/MEMORY_PIPELINE_EXPERIMENT.md)。匹配 TLM 复跑和 ATT1 跨位宽估算的范围及恢复命令见[交接](../../../docs/handoffs/2026-11-14-issue-265-qwen-sram-sweep.md)。筛选作业、版本及散列见[复跑快照](qwen-sram-sweep-20261114.json)，已复算的估算误差见[估算回执](qwen-sram-width-transfer.json)。

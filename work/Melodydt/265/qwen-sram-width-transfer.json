@@ -1,0 +1,81 @@
+{
+  "scope": "exploratory ATT1-only width transfer; not independent full-system timing",
+  "original_serial_estimator": "unsupported: all targets use KV window 8 instead of window 1",
+  "calibration_job": 107947,
+  "calibration_phase": 1,
+  "kv_read_window": 8,
+  "core_ps": 3334,
+  "calibration_attention_service_ps": 490275478822,
+  "calibration_outside_attention_ps": 337545722312,
+  "calibration_attention_beats": 40822272,
+  "calibration_attention_residual_ps": 81971114278,
+  "phase2_attention_beats": {
+    "128": 40896000,
+    "512": 12736512
+  },
+  "descriptor_sha256": [
+    "2976da8a1ee65cd1664b0b733a42d71ee955191b2d6ba61ef1eb85684802d784",
+    "708b5ec253aa268722cc778b0bdf660c470d09f714c615c0fe9f4711c5ba9ea1"
+  ],
+  "calibration_trace_sha256": "422e89d190c43ac567b6e47898ffc38b4f96e4943339b6d177c46a2741e7ece8",
+  "predictions": {
+    "128": {
+      "interval_ps": 828718416337,
+      "tok_s": 1.2066824874244715,
+      "attention_service_ps": 491172694025
+    },
+    "512": {
+      "interval_ps": 547067217361,
+      "tok_s": 1.8279289423042098,
+      "attention_service_ps": 209521495049
+    }
+  },
+  "prediction_sha256": "56671482b1d47895a62660b6aeadf4fdca79859f76edd04eefc4038db37068aa",
+  "comparisons": {
+    "107947": {
+      "role": "same-width, next-position control",
+      "estimated_interval_ps": 828718416337,
+      "observed_interval_ps": 828821614510,
+      "estimated_tok_s": 1.2066824874244715,
+      "observed_tok_s": 1.2065322410675798,
+      "signed_latency_error_percent": -0.012451192294376981,
+      "signed_throughput_error_percent": 0.012452742809330094,
+      "estimated_attention_service_ps": 491172694025,
+      "observed_attention_service_ps": 491356104904,
+      "signed_attention_latency_error_percent": -0.03732748553838247,
+      "estimated_outside_attention_ps": 337545722312,
+      "observed_outside_attention_ps": 337465509606,
+      "reference_trace_sha256": "422e89d190c43ac567b6e47898ffc38b4f96e4943339b6d177c46a2741e7ece8"
+    },
+    "108284": {
+      "role": "unfitted 512-bit width transfer",
+      "estimated_interval_ps": 547067217361,
+      "observed_interval_ps": 478260746356,
+      "estimated_tok_s": 1.8279289423042098,
+      "observed_tok_s": 2.090909629567709,
+      "signed_latency_error_percent": 14.386811280092585,
+      "signed_throughput_error_percent": -12.577333976785493,
+      "estimated_attention_service_ps": 209521495049,
+      "observed_attention_service_ps": 207836892400,
+      "signed_attention_latency_error_percent": 0.8105407223650347,
+      "estimated_outside_attention_ps": 337545722312,
+      "observed_outside_attention_ps": 270423853956,
+      "reference_trace_sha256": "01ef24bee6aa6b5258de0222ba7e56491e5b079d1cf92afc345b24a7bc06bb35"
+    },
+    "110382": {
+      "role": "non-pipelined counterfactual against pipelined variant",
+      "estimated_interval_ps": 547067217361,
+      "observed_interval_ps": 427533726314,
+      "estimated_tok_s": 1.8279289423042098,
+      "observed_tok_s": 2.338996758504977,
+      "signed_latency_error_percent": 27.95884480917167,
+      "signed_throughput_error_percent": -21.849872785947245,
+      "estimated_attention_service_ps": 209521495049,
+      "observed_attention_service_ps": 160197736474,
+      "signed_attention_latency_error_percent": 30.789298064149126,
+      "estimated_outside_attention_ps": 337545722312,
+      "observed_outside_attention_ps": 267335989840,
+      "reference_trace_sha256": "af1784f0bea74774374e3e6796c916cf91cbb94928d580f8e3f6ba0366c1f4e7"
+    }
+  }
+}
