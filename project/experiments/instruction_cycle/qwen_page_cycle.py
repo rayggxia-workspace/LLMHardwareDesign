@@ -31,6 +31,7 @@ THROUGH_ATTENTION_PAGE = THROUGH_QKV_PAGE + 1
 THROUGH_OUTPUT_INGRESS = THROUGH_ATTENTION_PAGE + 1
 THROUGH_OUTPUT_PAGE = THROUGH_OUTPUT_INGRESS + 1
 THROUGH_RESIDUAL_PAGE = THROUGH_OUTPUT_PAGE + 1
+THROUGH_FFN_INGRESS = THROUGH_RESIDUAL_PAGE + 1
 
 
 def marker(kind, cycle, *, generation=1, **values):
@@ -179,7 +180,7 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
                             markers.append(marker("page_commit", output_line["page_commit"], **next_generation, status=0,
                                                   calls=len(stages), read=sum(s["service"]["read_bytes"] + 128 for s in stages),
                                                   write=sum(s["service"]["write_bytes"] for s in stages)))
-                    if weight_records == THROUGH_RESIDUAL_PAGE:
+                    if weight_records >= THROUGH_RESIDUAL_PAGE:
                         from qwen_residual_front import predict_residual_page
                         fourth = pages[3]
                         residual = predict_residual_page(fourth, fabric, output_line["page_commit"], archive)
@@ -204,6 +205,26 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
                         markers.append(marker("page_commit", residual["page_commit"], **next_generation, status=0,
                                               calls=len(stages), read=sum(s["service"]["read_bytes"] + 128 for s in stages),
                                               write=sum(s["service"]["write_bytes"] for s in stages)))
+                    if weight_records == THROUGH_FFN_INGRESS:
+                        from qwen_ffn_front import predict_g5_front
+                        fifth = pages[4]
+                        ffn = predict_g5_front(fifth, fabric, residual["page_commit"], archive)
+                        result["scope"] = "105530 startup through FFN activation ingress and first three P service accepts"
+                        result["ffn_ingress"] = ffn
+                        generation = fifth["generation"]
+                        markers.append(marker("page_launch", ffn["page_launch"], generation=generation,
+                                              step=0, page=4, targets=fifth["target_mask"]))
+                        for row in ffn["pm_admissions"]:
+                            markers.append(marker("pm_admit", row["cycle"], generation=generation,
+                                                  domain=row["domain"], tag=row["tag"], address=row["address"]))
+                        for stage in ffn["first_wave"]:
+                            for row in stage["dispatch"]["descriptor_admissions"]:
+                                markers.append(marker("descriptor_admit", row["cycle"], generation=generation,
+                                                      target=row["target"], tag=row["tag"], address=row["address"]))
+                        for stage, call in zip(ffn["first_wave"], fifth["calls"]):
+                            markers.append(marker("service_accept", stage["service_accept"], generation=generation,
+                                                  target=stage["target"], ticket=stage["ticket"],
+                                                  schema=call["schema"], op=call["operation"]))
             elif not through_k1:
                 result["projection_k0"].pop("next_window", None)
         elif weight_records:
@@ -284,6 +305,18 @@ def audit_wait_release(page, rows):
             "matched_page_commit": predicted_commit}
 
 
+def compare_ddr_prefix(proof, name, events):
+    source = proof.path(name)
+    with source.open(encoding="ascii") as stream:
+        for index, event in enumerate(events):
+            kind, cycle, lane, tag, address = fields(stream.readline(), 5)
+            actual = [kind, int(cycle), int(lane), int(tag), int(address)]
+            require(list(event) == actual, "{} event {} differs: predicted {}, observed {}".format(name, index, event, actual))
+    digest = file_digest(source)
+    proof.check(name, digest)
+    return digest
+
+
 def compare(archive, prediction, edge_log, *, weight_records=0):
     mode = prediction["mode"]
     require(mode in (0, 1), "invalid 105530 mode")
@@ -302,26 +335,23 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
         observed_generation = 3
     if weight_records >= THROUGH_OUTPUT_PAGE:
         bursts += 32 * DESCRIPTOR_BURSTS + 16 * FULL_Q_WEIGHT_RECORDS * 17
-    if weight_records == THROUGH_RESIDUAL_PAGE:
+    if weight_records >= THROUGH_RESIDUAL_PAGE:
         bursts += 4 + 6 * DESCRIPTOR_BURSTS + 2 * 128
         observed_generation = 4
+    if weight_records == THROUGH_FFN_INGRESS:
+        bursts += 17 + 3 * DESCRIPTOR_BURSTS
+        observed_generation = 5
     require(len(expected) == 4 * bursts, "incomplete DDR prefix prediction")
     proof = Proof(archive, WINDOWS["next_rms"][0])
     trace = "DDR-{}/transactions.tsv".format(mode)
-    source = proof.path(trace)
-    with source.open("r", encoding="ascii") as stream:
-        for index, event in enumerate(expected):
-            name, cycle, lane, tag, address = fields(stream.readline(), 5)
-            actual = [name, int(cycle), int(lane), int(tag), int(address)]
-            require(list(event) == actual, "DDR event {} differs: predicted {}, observed {}".format(index, event, actual))
-    trace_sha = file_digest(source)
-    proof.check(trace, trace_sha)
+    trace_sha = compare_ddr_prefix(proof, trace, expected)
 
     observed = observed_pages(edge_log, mode, observed_generation)
     wanted = prediction["markers"]
     marker_count = {FULL_Q_WEIGHT_RECORDS: 12, AFTER_Q: 23, THROUGH_KV_STORE: 24,
                     THROUGH_QKV_PAGE: 497, THROUGH_ATTENTION_PAGE: 631, THROUGH_OUTPUT_INGRESS: 647,
-                    THROUGH_OUTPUT_PAGE: 776, THROUGH_RESIDUAL_PAGE: 806}.get(weight_records, 11)
+                    THROUGH_OUTPUT_PAGE: 776, THROUGH_RESIDUAL_PAGE: 806,
+                    THROUGH_FFN_INGRESS: 833}.get(weight_records, 11)
     require(len(wanted) == marker_count and len(observed) >= len(wanted), "incomplete dispatch marker prefix")
     for index, (event, actual) in enumerate(zip(wanted, observed)):
         require(event == actual, "control marker {} differs: predicted {}, observed {}".format(index, event, actual))
@@ -332,26 +362,26 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
               "conditional_wait_audit": audit_wait_release(page, [row for row in observed if row["generation"] == 1])}
     if weight_records >= AFTER_Q:
         name = "DDR-{}/write-transactions.tsv".format(mode)
-        source = proof.path(name)
         post = prediction["post_projection"]
         if weight_records >= THROUGH_KV_STORE:
             write_events = post["write_events"]
             expected_writes = {THROUGH_KV_STORE: 32, THROUGH_QKV_PAGE: 384, THROUGH_ATTENTION_PAGE: 896,
-                               THROUGH_OUTPUT_INGRESS: 896, THROUGH_OUTPUT_PAGE: 1408, THROUGH_RESIDUAL_PAGE: 2432}
+                               THROUGH_OUTPUT_INGRESS: 896, THROUGH_OUTPUT_PAGE: 1408, THROUGH_RESIDUAL_PAGE: 2432,
+                               THROUGH_FFN_INGRESS: 2432}
             require(len(write_events) == expected_writes[weight_records], "incomplete KV store prefix")
         else:
             ready = post["write_ready"]
             address = ready["address"]
             write_events = [["admit", ready["first_ddr_write_accept_if_idle"], (address >> 6) & 1,
                              ready["tag"], address]]
-        with source.open(encoding="ascii") as stream:
-            for index, event in enumerate(write_events):
-                kind, cycle, lane, tag, address = fields(stream.readline(), 5)
-                actual = [kind, int(cycle), int(lane), int(tag), int(address)]
-                require(list(event) == actual, "KV DDR event {} differs: {} vs {}".format(index, event, actual))
-        write_sha = file_digest(source)
-        proof.check(name, write_sha)
+        write_sha = compare_ddr_prefix(proof, name, write_events)
         result.update(matched_kv_ddr_events=len(write_events), rtl_kv_trace_sha256=write_sha)
+    if weight_records == THROUGH_FFN_INGRESS:
+        events = prediction["ffn_ingress"]["activation_events"]
+        require(len(events) == 4 * 128, "incomplete dedicated FFN activation DDR trace")
+        name = "DDR-{}/activation-transactions.tsv".format(mode)
+        activation_sha = compare_ddr_prefix(proof, name, events)
+        result.update(matched_activation_ddr_events=len(events), rtl_activation_trace_sha256=activation_sha)
     return result
 
 
@@ -393,6 +423,8 @@ def main():
                             help="include the entire O projection page after Attention")
         weight.add_argument("--through-residual-page", dest="weight_records", action="store_const", const=THROUGH_RESIDUAL_PAGE,
                             help="include the U residual and RMS services after the O projection")
+        weight.add_argument("--through-ffn-ingress", dest="weight_records", action="store_const", const=THROUGH_FFN_INGRESS,
+                            help="include FFN activation ingress and three P descriptor/service accepts")
     args = parser.parse_args()
     if args.operation == "predict":
         result = predict(args.archive, args.binary.resolve(), args.config.resolve(), args.output.resolve(),

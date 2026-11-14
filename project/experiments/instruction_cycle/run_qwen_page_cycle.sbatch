@@ -33,7 +33,7 @@ shift 5
 strict=()
 if [[ ${1:-} == --through-first-kv-store || ${1:-} == --through-qkv-page || ${1:-} == --through-attention-page ||
       ${1:-} == --through-output-ingress || ${1:-} == --through-output-page ||
-      ${1:-} == --through-residual-page ]]; then
+      ${1:-} == --through-residual-page || ${1:-} == --through-ffn-ingress ]]; then
     strict=(-DISSUE265_NATIVE_STRICT -isystem "$dram/ext/headers")
     sha256sum "$dram/src/memory_system.h" >> tools.sha256
 fi
