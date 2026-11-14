@@ -76,6 +76,16 @@ def _kv(call, accepted, fabric):
             "writes": writes}
 
 
+def _resident_result(resident, destination, kind):
+    # The page can preserve a completed K/V row across several unrelated
+    # P scopes. Invalidate only an overwritten region in the same P SRAM.
+    for source in tuple(resident):
+        if abs(source - destination) < ROW_WORDS:
+            del resident[source]
+    if kind is not None:
+        resident[destination] = kind
+
+
 def predict_generation_one_tail(page, fabric, last_retire, projection, *, last_ticket=7):
     """Predict successive complete services 7 through `last_ticket` on one fabric."""
     require(page["generation"] == 1 and 7 <= last_ticket <= len(page["calls"])
@@ -83,7 +93,7 @@ def predict_generation_one_tail(page, fabric, last_retire, projection, *, last_t
             "generation-1 continuation requires the completed first projection and first ADD2 lease release")
     stages = []
     retired = last_retire
-    last_add2 = last_rope = None
+    resident = {}
     for index in range(6, last_ticket):
         call = page["calls"][index]
         require(call["target"] == 0 and call["ticket"] == index + 1, "unexpected serial QKV CALL")
@@ -95,22 +105,26 @@ def predict_generation_one_tail(page, fabric, last_retire, projection, *, last_t
             service = projection.run(call, accepted, fabric.mode)
             service.update(service_accept=accepted, status=0, read_bytes=16 * 16 * 17 * BURST_BYTES,
                            write_bytes=ROW_WORDS * SRAM_WORD_BYTES)
-            last_add2 = last_rope = None
+            _resident_result(resident, projection.pending_output[0], None)
         elif schema == DRL1:
             service = run_drl1(fabric, call, accepted)
+            destination, = struct.unpack_from("<H", bytes.fromhex(call["descriptor_hex"]), 16)
+            _resident_result(resident, destination, None)
         elif schema == ADD2:
             require(projection.pending_output is not None, "ADD2 has no raw P projection output")
             projection_base, words = projection.pending_output
             service = run_add2(call, accepted, fabric.mode, projection_base)
             projection.release_output(projection_base, words)
-            last_add2 = service["destination"]
+            _resident_result(resident, service["destination"], ADD2)
         elif schema == ROPE:
             service = _rope(call, accepted, fabric.mode)
-            require(last_add2 == service["source"], "RoPE has no matching ADD2 result")
-            last_rope = service["destination"]
+            require(resident.get(service["source"]) == ADD2, "RoPE has no matching ADD2 result")
+            _resident_result(resident, service["destination"], ROPE)
         elif schema == KVR1:
+            source, = struct.unpack_from("<H", bytes.fromhex(call["descriptor_hex"]), 16)
+            producer = ROPE if call["operation"] == 1 else ADD2
+            require(resident.get(source) == producer, "KVR1 has no matching resident result")
             service = _kv(call, accepted, fabric)
-            require(service["source"] in (last_add2, last_rope), "KVR1 has no matching resident result")
         else:
             raise ValueError("unsupported generation-1 service schema: {}".format(schema))
         retired = service["service_retire"]
