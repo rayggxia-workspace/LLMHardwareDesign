@@ -1,5 +1,7 @@
 # 架构与运行
 
+2026-11-08 main 的真实大模型仿真入口与缺口见[Issue232审计](experiments/issue-232-main-model-readiness.md)。本轮主干U入口服务器RTL冒烟3/3通过；独立宏 `check_release.py` 的五项支持脚本摘要与冻结清单不符，尚待定位。完整模型SystemC/层RTL来源、统一顶层与程序/外存接入边界分别列明，不能从独立Block通过推导整模型已就绪。
+
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
 
 ## 研究系统边界
