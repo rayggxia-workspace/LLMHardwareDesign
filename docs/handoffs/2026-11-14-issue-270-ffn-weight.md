@@ -31,6 +31,6 @@ done
 sha256sum results/{decode-full,prefill-full,m-113199-mode-0,m-113199-mode-1}.json
 ```
 
-- 完整 TLM 判据为四项退出 0:0、582/578 页、每场景 72 个成对 FFN Down 散列一致、DDR/S 流量一致、Decode 退休 token 和跨步 KV 一致。用实际值计算前缀误差。ATT1 112976 和 113070 完成后分别在 `att1-refill-03/tlm-final` 和 `att1-dot-read-04/tlm` 校验原 `output.sha256`，核对 Decode 基点并更新证据。
+- 完整 TLM 判据为四项退出 0:0、582/578 页、每场景 72 个成对 FFN Down 散列一致、DDR/S 流量一致、Decode 退休 token 和跨步 KV 一致。用实际值计算前缀误差。ATT1 112976 的输出已通过散列，两步 Decode 2.609346 tok/s。113070 完成后在 `att1-dot-read-04/tlm` 校验原 `output.sha256`，核对第四轮 Decode 基点并更新证据。
 - 原生 113199 的判据为退出 0:0、旧数值与读写审计通过、两模式探针散列校验、每模式三类投影各 44,032 个权重记录且身份与票据闭合。将 P1 尾部事件与其余两路对齐，按实测选择优先优化 bank/DDR 调度或本地 EXEC 交接。
 - 负责人 Melodydt。Issue 进行中，PR 草稿，独立审查人待指定。登记 PR #5 待合并，Projects 缺 `config/board.json`，看板及同步待具权限维护者核验。

@@ -11,6 +11,7 @@ import re
 
 EVENTS = ("first_issue", "last_issue", "full_fill", "ack", "exec", "result")
 P_TARGET = re.compile(r"\.feed_forward\.ps\[([012])]\.")
+SHARED_P0 = ".p0.physical_node.M.ffn_weight_probe"
 CLOCK_PS = 10_000
 PAIRINGS = (
     ("issue_spread", "first_issue", "last_issue"),
@@ -46,6 +47,7 @@ def describe(hist):
 def audit(trace, assets, partial):
     bounds = ranges(assets)
     records = {}
+    front_records = set()
     digest = sha256()
     with trace.open("rb") as stream:
         for line in stream:
@@ -54,17 +56,31 @@ def audit(trace, assets, partial):
                 continue
             _, instance, event, time_ps, bank, generation, record, payload = line.decode("ascii").split()
             p = P_TARGET.search(instance)
-            if not p:
+            if p:
+                target = int(p[1])
+            elif instance.endswith(SHARED_P0):
+                target = 0
+            else:
                 continue
             time_ps, bank = int(time_ps), int(bank)
-            key = (int(p[1]), bank, int(generation), int(record))
+            key = (target, bank, int(generation), int(record))
+            if event == "first_issue":
+                address = int(payload, 16)
+                kinds = [kind for start, end, kind in bounds if start <= address < end]
+                if not kinds and target == 0:
+                    front_records.add(key)
+                    continue
+                if len(kinds) != 1:
+                    raise ValueError("invalid FFN address at {}".format(key))
+                front_records.discard(key)
+            if key in front_records:
+                continue
             entry = records.setdefault(key, {})
             if event not in EVENTS or event in entry:
                 raise ValueError("invalid or repeated native event {} at {}".format(event, key))
             entry[event] = time_ps
             if event == "first_issue":
-                address = int(payload, 16)
-                entry["kind"], = [kind for start, end, kind in bounds if start <= address < end]
+                entry["kind"], = kinds
             if event in ("exec", "result"):
                 entry[event + "_ticket"] = int(payload, 16)
 
