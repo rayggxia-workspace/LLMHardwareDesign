@@ -67,3 +67,5 @@ sbatch --parsable --output=slurm-%j.out reference_smoke.sbatch "$CHECKPOINT" "$R
 提交前完整部署预检的 `--manifest` 参数可填写运行绑定，冻结字段以本目录的版本为准。控制镜像的 `source` 使用上游约定的规范化 JSON 散列。为其在 `topology.json` 的 `program_target.source_artifacts` 登记 IR、硬件与计划的相对路径，并把原始文件的散列纳入 `build-inputs.sha256`。
 
 [整机两步对照与 D128 估算回执](qwen-decode-evaluation-107361.json)固定 107361 的单拍 KV 配置、首步校准、次步误差、127 个反馈阶段的资源审计及原生 RTL 校验范围。
+
+整机快评恢复入口为[运行交接](../../../docs/handoffs/2026-11-14-issue-265-qwen-decode-fast-evaluation.md)。110666 的两步整机轨迹及 111176 的恢复回执已与 107361 对齐，几何及估算覆盖全部 127 个缓存反馈间隔。111058、111111 分别记录原生 RTL 四页完整对账和 FFN 首批三路服务接收。大体积原始结果保存在回执给出的许可服务器目录。

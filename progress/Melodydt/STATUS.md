@@ -91,7 +91,7 @@
 
 ## 2026-11-14（Asia/Shanghai，UTC+08:00）整机 Decode 快速估算
 
-- Melodydt [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 固定 107361 的 128-bit SRAM、单拍 KV、3,334 ps 核时钟与双通道 630 ps DDR。新估算为 127 间隔 143.489733463362 s、0.8850807437 tok/s。第二步未参与拟合，吞吐误差 +0.05633%。几何上界 1.3317315170 tok/s。仅短程对照和结构覆盖，正式 P512/D128 时序验收待完成。[回执](../../work/Melodydt/265/qwen-decode-evaluation-107361.json)
-- 110646、110675、110682、110720 原生 RTL 前缀全部与实时 DRAMsim3 匹配，首个 Q 退休及首个 KV 写提交均通过。105572 留出模式 0 逐事件通过，模式 1 首条权重接收晚五拍。完整原生 QKV 页与后续 Attention 正在验证。
-- 110649/110695 在 c64/node2 的九页同机对照为 170/70/60 s。110666 的两步整机回放在 c64/node10 已开始，随 [草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 连续跟踪。保持 Issue 进行中，独立审查人待指定。项目登记 PR #5 待合并；仓库缺 `config/board.json`，Projects 由具权限维护者核验。
-- 完整 QKV、Attention 两页已连续匹配 RTL。110962 通过 124 个服务及页提交，111002 续接全部 16 组 ATT1/DWS1。105572 完整首 Q 与下一描述符的扩展诊断每种模式通过 18,572 个事件。110666 首 token 20772 的退休时间与 107361 相同，截至本次读回 361 页完整字段一致。
+- Melodydt 在 [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 固定 107361 的 128-bit SRAM、单拍 KV、3,334 ps 核时钟与双通道 630 ps DDR。估算的 127 个缓存退休间隔共 143.489733463362 s、0.8850807437 tok/s。第二步只作检验，吞吐误差 +0.05633%。资源上界 1.3317315170 tok/s。[回执](../../work/Melodydt/265/qwen-decode-evaluation-107361.json)
+- 整机 110666 在 c64/node10 单核运行 01:30:11，两个 token 退休后因释放 DDR 再读计数退出 1:0。111176 在 c64/node11 单核 4 秒通过关闭回归和结果恢复。两步 582 页、退休、DDR 审计与 107361 完整一致。c64/node2 同机九页原版、DDR 批推进、加入原生整数运算分别为 170、70、60 s。
+- 111058 对齐原生 RTL QKV、Attention、O 投影及残差/RMS 共四页。111111 延伸到 FFN 首批三路服务接收，两种模式各核验 781,100 条普通读、512 条激活读、2,432 条写和 833 个控制标记。105572 扩展对照截至首个完整 Q 和后续描述符，先封存模型输出后读取扩展时序。保留原留出首个 K0 的模式 1 五拍失配。
+- 当前待审查 [PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266)，独立审查人待指定，Issue 保持进行中。交接由 Melodydt 跟进长上下文的同配置完整退休对照及原生三 P FFN。P512/D128 联合运行、数值验收由 [#234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) 负责。项目登记 PR #5 待合并。仓库缺 config/board.json，Projects 由具权限维护者核验。 [恢复入口](../../docs/handoffs/2026-11-14-issue-265-qwen-decode-fast-evaluation.md)

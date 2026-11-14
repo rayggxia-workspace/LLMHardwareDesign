@@ -208,3 +208,5 @@ python -B project/experiments/instruction_cycle/copy_reference.py work/Melodydt/
 [105530 首对 Q EXEC 与第三条权重](../project/experiments/instruction_cycle/README.md#105530-首对-q-exec-与第三条权重)使用 `run_qwen_page_cycle.sbatch <探针目录> --with-three-weights` 独立生成预测，再用 `run_qwen_105530_markers.sbatch --pair <预测目录>` 在第三条权重源端接收时结束短 RTL，核对 SRAM、双权重 bank 和 M EXEC 的握手。
 
 [Qwen D128 缓存 Decode 估算](../project/experiments/instruction_cycle/README.md#qwen25-3b-整机-decode-速度估算)先由 `run_qwen_request_geometry.sbatch` 校验全部 127 个反馈阶段，再用 `estimate_qwen_decode.py` 在封存 107361 的单拍 KV 配置下计算吞吐与第二步误差。`run_qwen_fast_tlm.sbatch` 以原始母控、局控和真实 DRAMsim3 事务运行两步匹配参考，保留全部页及退休记录。
+
+110666 的 582 页和两次退休由 `run_qwen_fast_tlm_recovery.sbatch <110666 目录>` 恢复汇总，并在 111176 对齐 107361 的 DDR 审计。原生短窗使用 `run_qwen_page_cycle.sbatch <探针目录> --through-ffn-ingress` 连续预测前四页及 FFN 的激活搬运、镜像安装、首批三个 P 的描述符和服务接收。时间口径、范围和 SHA-256 见[整机回执](../work/Melodydt/265/qwen-decode-evaluation-107361.json)。

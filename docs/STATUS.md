@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-14，[#265 快速评估](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 在冻结的 Qwen2.5-3B 128-bit SRAM、串行单拍 KV 和双通道 DDR 配置下，估算 127 个缓存 Decode 间隔为 143.490 s、**0.88508 tok/s**。两步整机 TLM 原始轨迹及后处理审计与 107361 逐页对齐，第二步估算相对吞吐误差 +0.05633%。正式整机 P512/D128 联合运行和数值验收仍由 [#234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) 跟踪。详见[原始版本、散列及适用范围](../work/Melodydt/265/qwen-decode-evaluation-107361.json)。
+
 2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 
 2026-11-08，用户授权将母控 [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 合入 main，并在[五类 Block 与母控统一入口](experiments/assets/five-leaf-bases/README.md)并列索引源码、图册及双格式验收包。工程证据不变；合并结果以 PR 在线回执为准，授权整合不冒充独立审查或九实例系统验收。
