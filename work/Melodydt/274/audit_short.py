@@ -1,15 +1,46 @@
 """Check finalized two-position replay coverage and compare compatible FP32 logits."""
 import argparse
+from hashlib import sha256
 import json
 from pathlib import Path
 
 import numpy as np
 
-from hashlib import sha256
-
 
 def hash_file(path):
     return sha256(path.read_bytes()).hexdigest()
+
+
+def prefill_difference(path, model, reference):
+    import torch
+    from safetensors import safe_open
+
+    receipt = json.loads((reference / "reference.json").read_text())
+    checkpoint = Path(receipt["checkpoint"])
+    config = json.loads((checkpoint / "config.json").read_text())
+    config = config.get("text_config", config)
+    key = {
+        "gemma": "language_model.model.norm.weight",
+        "qwen35": "model.language_model.norm.weight",
+        "falcon": "model.final_layernorm.weight",
+    }.get(model, "model.norm.weight")
+    weight = None
+    for shard in sorted(checkpoint.glob("*.safetensors")):
+        with safe_open(shard, framework="pt", device="cpu") as source:
+            if key in source.keys():
+                weight = source.get_tensor(key).float().numpy()
+                break
+    state = np.fromfile(path, dtype="<i4")/65536
+    gold = torch.load(reference / "prefill-post-norm.pt", weights_only=True).numpy().reshape(-1)
+    if weight is None or weight.shape != state.shape or state.shape != gold.shape:
+        raise ValueError("prefill final residual and reference normalization shapes disagree")
+    if model in ("gemma", "qwen35"):
+        weight = weight + 1
+    eps = config.get("rms_norm_eps", 1e-6)
+    modeled = state*weight/np.sqrt(np.mean(state**2)+eps)
+    return {"scope": "position 1 residual normalized offline against FP32",
+            "relative_l2": float(np.linalg.norm(modeled-gold)/np.linalg.norm(gold)),
+            "cosine": float(modeled@gold/(np.linalg.norm(modeled)*np.linalg.norm(gold)))}
 
 
 def audit(run, layers, vocab, mode, reference=None):
@@ -48,6 +79,8 @@ def audit(run, layers, vocab, mode, reference=None):
         for route in routes:
             if len(set(route["ids"])) != 8 or not all(0 <= k < 40 for k in route["ids"]):
                 raise ValueError("incorrect Granite expert selection")
+    if len(res["boundary"]) != 2:
+        raise ValueError("expected two residual boundaries")
     for i, image in enumerate(res["boundary"]):
         if image["step"] != i or hash_file(run / f"residual-{i}.bin") != image["sha256"]:
             raise ValueError("residual boundary differs")
@@ -80,9 +113,15 @@ def audit(run, layers, vocab, mode, reference=None):
                                 "relative_l2": float(relative)})
     elif res["interval_ps"] != res["boundary"][-1]["complete_ps"]:
         raise ValueError("wrong final-residual timing boundary")
+    elif reference is not None:
+        model = res.get("model", "qwen3")
+        numeric.append(prefill_difference(run / "residual-1.bin", model, reference))
     return {"mode": mode, "layers": layers, "pages": pages, "calls": calls,
             "interval_ps": res["interval_ps"], "tok_s": res["tok_s"], "retirements": res["retirements"],
-            "numeric": numeric, "candidate_tlm": True, "result_sha256": hash_file(run / "result.json")}
+            "numeric": numeric, "residual_saturations": res.get("residual_saturations"),
+            "kv_reads": res["cross_step_reads"], "state_reads": res.get("recurrent_cross_step_reads", 0),
+            "ddr_callbacks": res["ddr"]["callbacks"],
+            "candidate_tlm": True, "result_sha256": hash_file(run / "result.json")}
 
 
 if __name__ == "__main__":
