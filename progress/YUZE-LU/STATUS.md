@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 16:08 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 完成 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 两输入位置的短程 prefill。111805 用原版审计核对 578 页和 288 次 KV 写入，TLM 结果 5.5065 token/s。111806 已报告第一步 token 退休，第二步运行中。完整 P512/D128 仍取消。见[快评回执](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#pr-260-短程吞吐)。
+
 2026-11-14 15:56 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 合并 C0 残差控制网和原整图接口。111993 独立读回 6,085 根网和 12,753 个端点。14 类整图服务仍缺派发或完成接口。本轮继续用两项 PR #260 短程作业，待其原版审计。见[合并布线入口](../../work/YUZE-LU/219/native_ingress/SAME_PLAN_NATIVE_REQUEST.md#同一底座的合并布线输入)。
 
 2026-11-14 15:46 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 读回 C0 残差输出至下一层 RMSNorm 输入的 512 组写确认依赖及 1,024 个局控镜像，复用原 153 根候选线。111983 完成。C0 输入来源、母控页和可执行的 S32 RMSNorm 服务待闭合。两项 PR #260 短程评估仍运行。见[残差输出](../../work/YUZE-LU/219/native_ingress/SAME_PLAN_NATIVE_REQUEST.md#残差输出写入下一层的输入窗口)。

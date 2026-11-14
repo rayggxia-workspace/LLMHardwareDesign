@@ -60,4 +60,14 @@ Qwen2.5-3B 样本产生 128 条阶段记录和 127 条 decode 索引交接，覆
 
 两项采用 PR #260 流水用例的 TLM 参数，使用 512-bit SRAM 端口、每 DDR 通道 32 个信用及 KV 读窗口 8。部署封印是 `9fc35ec5fb682adce14f20458c9d5b22aef84c4722bd74823b39f241e760968e`，decode 历史绑定是 `78347abd13135d71a678ff87b4760175ea81fb701a4edb022e080165321f2b4e`。吞吐取自完整短程的模拟时间。该执行器在本组用例沿用 Qwen2.5-3B 的 36 层短程合同和模型化局控。
 
-`pr260-fast.sbatch` 接收远端输出根、固定版本代码目录、部署、内存目录表、decode KV 绑定、模式和 SRAM 位宽。复跑所需资产为远端目录 `pr260-dd423e5`、框架目录的同级 `request-runtime-r2` 及同处的 `request-memory-r2/ddr-initial.tsv`，decode 历史绑定来自远端 `issue260-request-kv-binding-dbIUacE6/bound-104206/binding.json`。每个作业输出 `execution.json`、`page-timing.jsonl` 和 `timing-audit.json`。两项已提交，吞吐待作业结束与原版审计。
+`pr260-fast.sbatch` 接收远端输出根、固定版本代码目录、部署、内存目录表、decode KV 绑定、模式和 SRAM 位宽。复跑所需资产为远端目录 `pr260-dd423e5`、框架目录的同级 `request-runtime-r2` 及同处的 `request-memory-r2/ddr-initial.tsv`，decode 历史绑定来自远端 `issue260-request-kv-binding-dbIUacE6/bound-104206/binding.json`。每个作业输出 `execution.json`、`page-timing.jsonl` 和 `timing-audit.json`。两项均在远端运行。
+
+111805 跑完 578 页，原版审计通过。空 KV 的两个输入位置合计模拟 363,205,986,672 ps，得到 **5.5065 token/s**。原版核对 288 条 KV 写入，92,323,014 笔 DDR 读取与 48,384 笔写入全部回调。运行结果的 `timing_calibrated` 和 `numerically_accepted` 均为 false。111806 已进入第二步，等第二次 token 退休后验收吞吐。
+
+| 111805 产物 | SHA-256 |
+| --- | --- |
+| `execution.json` | `bdd127cb6138da3c0855e538958a9515b3a177facb2c976ff0b07992c884965c` |
+| `page-timing.jsonl` | `989f3ef5a87b51ebb9294312241e433e5d2e82690e69c85208ebef1691a1b921` |
+| `timing-audit.clean.json` | `cbb6636c94022569fa0636be68ba1f8fc71f91e99d9ee411bd95d5dc02534a17` |
+
+容器 shell 启动提示混入原始 `timing-audit.json` 首行。使用相同固定版本审计脚本独立复跑，去掉启动提示后的 JSON 与纯 JSON 逐项一致。
