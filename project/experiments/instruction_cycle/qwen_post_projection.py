@@ -18,17 +18,18 @@ KVR1 = int.from_bytes(b"KVR1", "little")
 NATIVE_ABI = 0x02500002
 
 
-def _descriptor(fabric, call, offer, *, physical_ready=None):
+def _descriptor(fabric, call, offer, *, physical_ready=None, client=0):
     """Fetch both beats with real sibling-lane issue and return skids."""
     ddr = fabric.ddr
     address = call["descriptor_address"]
-    require(call["target"] == 0 and address % (2 * BURST_BYTES) == 0 and offer > fabric.last_response
+    require((call["target"], client) in ((0, 0), (3, 1))
+            and address % (2 * BURST_BYTES) == 0 and offer > fabric.last_response
             and fabric.open_record is None and all(device.idle for device in ddr.dram),
-            "post-projection descriptor requires a drained P0 transport")
+            "descriptor requires a drained P0 or U transport")
     channel = (address >> 11) & 1
     first_lane = 2 * channel
     entry = channel * SLOTS_PER_CHANNEL
-    tags = [fabric._allocate(entry + index, 0) for index in range(2)]
+    tags = [fabric._allocate(entry + index, client) for index in range(2)]
     addresses = [address + index * BURST_BYTES for index in range(2)]
     second_offered = offer + 3
     cycle = offer + 2
