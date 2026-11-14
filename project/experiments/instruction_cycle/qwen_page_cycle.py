@@ -321,7 +321,7 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
     wanted = prediction["markers"]
     marker_count = {FULL_Q_WEIGHT_RECORDS: 12, AFTER_Q: 23, THROUGH_KV_STORE: 24,
                     THROUGH_QKV_PAGE: 497, THROUGH_ATTENTION_PAGE: 631, THROUGH_OUTPUT_INGRESS: 647,
-                    THROUGH_OUTPUT_PAGE: 781, THROUGH_RESIDUAL_PAGE: 811}.get(weight_records, 11)
+                    THROUGH_OUTPUT_PAGE: 776, THROUGH_RESIDUAL_PAGE: 806}.get(weight_records, 11)
     require(len(wanted) == marker_count and len(observed) >= len(wanted), "incomplete dispatch marker prefix")
     for index, (event, actual) in enumerate(zip(wanted, observed)):
         require(event == actual, "control marker {} differs: predicted {}, observed {}".format(index, event, actual))
