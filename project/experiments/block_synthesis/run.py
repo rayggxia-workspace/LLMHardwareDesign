@@ -51,7 +51,7 @@ def compile_model(model, hardware, *, budget=None, seconds=30, rounds=4, cover_l
 
 
 def compile_event_ir(model, hardware, *, budget=None, width=8, emit_dependencies=False, emit_outputs=None,
-                     route_base=None, route_catalog=None, route_scope='product', control_fabric=None):
+                     route_base=None, route_catalog=None, route_scope='product', control_fabric=None, tile_limit=None):
     from cover_frontier import search
     from event_deploy import attach_route_catalog, digest, route_admission
     from verify_cover_frontier import verify as verify_events
@@ -94,8 +94,12 @@ def compile_event_ir(model, hardware, *, budget=None, width=8, emit_dependencies
             hardware = qualify_native_dispatch(hardware, route_base)
         admit = route_admission(hardware, route_base, route_contract, product=route_scope == 'product')
     tasks, covers = model['tasks'], model.get('covers', ())
+    if tile_limit is None:
+        tile_limit = model.get('tile_depth_limit')
+    elif model.get('tile_depth_limit') != tile_limit:
+        model = {**model, 'tile_depth_limit': tile_limit}
     plan = search(tasks, hardware, covers, width=width, wire_budget=budget, route_admission=admit,
-                  completion_only=emit_outputs and timing in ('replay', 'snapshot'))
+                  completion_only=emit_outputs and timing in ('replay', 'snapshot'), tile_limit=tile_limit)
     result = {'status': plan['status'], 'plan': plan, 'wire_budget': budget,
               'scope': 'qualified event IR and schedule'}
     if route_base is not None:
@@ -120,11 +124,59 @@ def compile_event_ir(model, hardware, *, budget=None, width=8, emit_dependencies
 
 def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependencies=False,
                         native_loops=None, route_base=None, route_catalog=None,
-                        route_scope='product', control_fabric=None):
+                        route_scope='product', control_fabric=None, tile_depth=2, tile_trials=8):
     from event_deploy import digest
     from event_lowering import MissingImplementations
 
     provenance = {'graph_sha256': digest(model), 'input_hardware_sha256': digest(hardware)}
+    target = dict(route_base=route_base, route_catalog=route_catalog,
+                  route_scope=route_scope, control_fabric=control_fabric)
+    if (type(tile_depth) is not int or tile_depth < 0
+            or type(tile_trials) is not int or tile_trials < 1):
+        raise ValueError('tile depth must be nonnegative and tile trials positive')
+    if native_loops is None:
+        from event_lowering import _lower_layout, signature
+        from event_tiling import discover_tiles, tile_layouts
+
+        spec = hardware.get('event_model', {})
+        if tile_depth and any(r.get('tile') for r in spec.get('recipes', ())):
+            layouts = tile_layouts(discover_tiles(model, spec['recipes'], signature, tile_trials), tile_trials)
+            if layouts:
+                attempts = []
+                selected, baseline_failure, best = None, None, None
+                for layout in [[], *layouts]:
+                    try:
+                        ir, resolved = _lower_layout(model, hardware, layout)
+                    except Unsupported as error:
+                        failure = {'status': 'blocked_lowering', 'reason': str(error)}
+                        if isinstance(error, MissingImplementations):
+                            failure['lowering_coverage'] = error.coverage
+                        if not layout:
+                            baseline_failure = failure
+                        attempts.append({'layout': layout, **failure})
+                        continue
+                    result = compile_event_ir(ir, resolved, budget=budget, width=width,
+                                              emit_dependencies=emit_dependencies, emit_outputs=True,
+                                              tile_limit=tile_depth if layout else None, **target)
+                    plan = result['plan']
+                    attempt = {'layout': layout, 'status': result['status'],
+                               'expanded': plan.get('expanded', 0),
+                               'peak_bucket_states': plan.get('peak_bucket_states', 0),
+                               'depth_pruned': plan.get('tile_depth_pruned', 0)}
+                    if not layout and result['status'] != 'planned':
+                        baseline_failure = result
+                    if result['status'] == 'planned':
+                        score = (plan['makespan'], plan['external_read_bytes'] + plan['external_write_bytes'],
+                                 plan['wire_cost'])
+                        attempt['makespan'] = score[0]
+                        if best is None or score < best:
+                            best, selected = score, result
+                            selected['selected_tile_layout'] = layout
+                    attempts.append(attempt)
+                if selected is None:
+                    selected = baseline_failure
+                selected.update(provenance, tile_search={'max_partial_depth': tile_depth, 'layouts': attempts})
+                return selected
     try:
         if native_loops is None:
             from event_lowering import lower
@@ -142,11 +194,64 @@ def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependenc
         return {'status': 'blocked_lowering', 'reason': str(error), **provenance}
     result = compile_event_ir(lowered, resolved, budget=budget, width=width,
                               emit_dependencies=emit_dependencies, emit_outputs=True,
-                              route_base=route_base, route_catalog=route_catalog,
-                              route_scope=route_scope, control_fabric=control_fabric)
-    result.update(provenance)
+                              **target)
     if native_loops is not None:
         result['native_loop_verification'] = audit
+        if tile_depth:
+            from event_native_dot_tiles import lower_dot_tiles
+            from event_native_range import feature_tile_words, lower_ranges
+            from event_native_residency import lower_residency
+
+            candidates = [('whole', result)]
+            layouts = [lower_ranges(lowered, resolved)]
+            layouts.append(lower_ranges(lowered, resolved, feature_words=feature_tile_words(resolved)))
+            prepared_layouts = []
+            for index, (tiled, tile_hardware) in enumerate(layouts):
+                if tiled is lowered or (index and tiled == layouts[0][0]):
+                    continue
+                if not index:
+                    prepared_layouts.append(('ranges', tiled, tile_hardware))
+                resident, resident_hardware = lower_residency(tiled, tile_hardware)
+                prepared_layouts.append(('features' if index else 'sram', resident, resident_hardware))
+            if not prepared_layouts:
+                optimized, optimization_hardware = lower_dot_tiles(lowered, resolved)
+                if optimized is not lowered:
+                    prepared_layouts.append(('block-tile', optimized, optimization_hardware))
+            for kind, tiled, tile_hardware in prepared_layouts:
+                choices = [(kind, tiled, tile_hardware)]
+                if kind in ('sram', 'features'):
+                    optimized, optimization_hardware = lower_dot_tiles(tiled, tile_hardware)
+                    if optimized is not tiled:
+                        choices.append((kind + '+block-tile', optimized, optimization_hardware))
+                for name, ir, hw in choices:
+                    candidates.append((name, compile_event_ir(
+                        ir, hw, budget=budget, width=width,
+                        emit_dependencies=emit_dependencies, emit_outputs=True,
+                        tile_limit=tile_depth, **target)))
+            attempts = []
+            for kind, candidate in candidates:
+                plan = candidate['plan']
+                attempts.append({'layout': kind, 'status': candidate['status'],
+                                 'makespan': plan.get('makespan'),
+                                 'external_bytes': (plan['external_read_bytes'] + plan['external_write_bytes']
+                                                    if candidate['status'] == 'planned' else None),
+                                 'expanded': plan.get('expanded', 0),
+                                 'depth_pruned': plan.get('tile_depth_pruned', 0)})
+
+            def score(candidate):
+                plan = candidate['plan']
+                return (plan['makespan'], plan['external_read_bytes'] + plan['external_write_bytes'],
+                        plan['wire_cost'])
+
+            feasible = [(kind, candidate) for kind, candidate in candidates
+                        if candidate['status'] == 'planned']
+            selected = None
+            if feasible:
+                selected, result = min(feasible, key=lambda item: score(item[1]))
+                result['native_loop_verification'] = audit
+            result['tile_search'] = {'max_partial_depth': tile_depth, 'layouts': attempts,
+                                     'selected_layout': selected}
+    result.update(provenance)
     return result
 
 
@@ -172,6 +277,10 @@ def main():
     p.add_argument('--event-outputs', action='store_true',
                    help='export control and wiring IR from the selected event plan')
     p.add_argument('--event-width', type=int, default=8, help='beam width for --event-ir, 1 for singleton greedy')
+    p.add_argument('--event-tile-depth', type=int, default=2,
+                   help='maximum partial-operator chain depth (0 disables automatic tiling)')
+    p.add_argument('--event-tile-trials', type=int, default=8,
+                   help='maximum automatically discovered tile layouts to schedule')
     p.add_argument('--wire-budget', type=int)
     p.add_argument('--seconds', type=float, default=30)
     p.add_argument('--rounds', type=int, default=4)
@@ -228,7 +337,7 @@ def main():
             model = canonicalize(model)
         result = compile_event_graph(model, hardware, budget=a.wire_budget, width=a.event_width,
                                      emit_dependencies=a.event_dependencies, native_loops=native_loops,
-                                     **event_target)
+                                     tile_depth=a.event_tile_depth, tile_trials=a.event_tile_trials, **event_target)
     else:
         coverage = audit(model, hardware)
         write(a.output / 'coverage.json', coverage)

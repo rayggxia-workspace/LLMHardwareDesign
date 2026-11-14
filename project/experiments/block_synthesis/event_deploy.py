@@ -105,6 +105,7 @@ def loop_lease_edges(dispatches, capacity):
 
 
 def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
+    from event_execution import scratch_overwrites
     from event_native_dispatch import route_targets, service_completion, service_targets
 
     projected, _ = project(tasks, covers, plan)
@@ -165,6 +166,8 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
                     if source_site != DDR:
                         participants[placements.get(source_site, source_site)].append(role)
                 read, write = [src], [dst]
+                if spec.get('native_sram_handoff'):
+                    leases = {'leases': route['claims']}
                 descriptor = {'op': 'COPY', 'route': route_name, 'read': read, 'write': write,
                               'required_completion': 'destination_commit_ack'}
                 if event.get('materializes_output'):
@@ -213,6 +216,8 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
                 local[target].append(command)
             records.append({**common, 'op': 'DISPATCH', 'targets': sorted(participants),
                             'wait_for': wait, 'read': read, 'write': write, **leases})
+            if event['kind'] != 'move' and 'dot_tile' in service.get('finite_loop', {}):
+                records[-1]['scratch_overwrites'] = scratch_overwrites(service, spec['windows'])
             task_numbers.append(sequence)
             for net in net_ids:
                 users[net].append({'task_id': row['id'], 'binding_id': row['binding'],
@@ -238,6 +243,13 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
             if key in writers:
                 row['wait_for'].add(writers[key])
             readers[key].add(number)
+        for window in sorted(row.get('scratch_overwrites', ())):
+            region = spec['windows'][window]
+            key = (region['site'], region['offset'])
+            if key in writers:
+                row['wait_for'].add(writers[key])
+            row['wait_for'].update(readers.pop(key, ()))
+            writers[key] = number
         for access in row['write']:
             key = (access['site'], access['address'])
             if key in writers:
@@ -247,9 +259,29 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
 
     loop_edges = loop_lease_edges([row for row in records if 'leases' in row], hardware['resources'])
     for row in records:
+        row.pop('scratch_overwrites', None)
         row['wait_for'].update(loop_edges.get(row['sequence'], ()))
         row['wait_for'] = sorted(row['wait_for'])
         del row['read'], row['write']
+    if spec.get('native_sram_handoff'):
+        # The calendar can place an independent copy before an earlier search
+        # decision. Issue commands in time order so every wait can name an
+        # already-issued descriptor, even when resource edges cross decisions.
+        records.sort(key=lambda row: (row['estimated_start'], row['sequence']))
+        sequence_map = {row['sequence']: i for i, row in enumerate(records)}
+        for i, row in enumerate(records):
+            row['sequence'] = i
+            row['wait_for'] = sorted(sequence_map[parent] for parent in row['wait_for'])
+            if any(parent >= i for parent in row['wait_for']):
+                raise ValueError('native handoff waits on a later dispatch')
+        for commands in local.values():
+            for command in commands:
+                command['sequence'] = sequence_map[command['sequence']]
+            commands.sort(key=lambda command: command['sequence'])
+        for demands in users.values():
+            for request in demands:
+                if 'event_id' in request:
+                    request['event_id'] = sequence_map[request['event_id']]
     source = {'plan_sha256': digest(plan), 'hardware_sha256': digest(hardware),
               'topology_id': hardware.get('topology_id')}
     if physical_base_sha256 is not None:

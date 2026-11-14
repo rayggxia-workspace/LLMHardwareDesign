@@ -7,13 +7,13 @@ import time
 
 import numpy as np
 
-from event_loop_control import decode
+from event_loop_control import decode, replay
 from event_deploy import demand_closure
 from frontend import import_onnx
 from full_integer import Interpreter, Oracle
 from leaf_catalog import read_profiles
 from run import compile_event_graph
-from wide_program import compile_program, execute
+from wide_program import compile_program
 
 
 def sha(path):
@@ -87,7 +87,7 @@ def main():
             for index, expected in enumerate(gold['samples']):
                 began = time.monotonic()
                 ids = expected['ids']
-                final = execute(ordered, original.initial, ids, oracle)[model['outputs'][0]]
+                final = replay(read(control), result['resolved_hardware'], original.initial, ids, oracle)[model['outputs'][0]]
                 checksum = hashlib.sha256(final.raw.tobytes()).hexdigest()
                 values = final.raw.astype(np.float64) * 2.**final.exponent
                 reference = logits['reference' + str(index)]

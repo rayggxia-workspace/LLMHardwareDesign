@@ -44,7 +44,7 @@ def catalogue(tasks,covers,*,event_dependencies=None):
 
 
 def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,backbone=None,
-           rank_policy='shared_tail',route_admission=None,completion_only=False):
+           rank_policy='shared_tail',route_admission=None,completion_only=False,tile_limit=None):
     if (width is not None and (type(width)!=int or width<1) or
         ready_limit is not None and (type(ready_limit)!=int or ready_limit<1)):
         raise ValueError('positive cover frontier bounds required')
@@ -54,6 +54,7 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     live_replay=False
     event_dependencies={}
     unencodable=0
+    depth_pruned=0
     transport_counts={'transport_attempted':0,'transport_truncated':0,
                       'transport_probed':0,'transport_probe_skipped':0}
     if 'event_model' in hardware:
@@ -88,6 +89,30 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     ids={t['id']:i for i,t in enumerate(tasks)};children={n:set() for n in ids}
     for n,ps in parents.items():
         for p in ps:children[p].add(n)
+    tile_nodes = {}
+    for task in tasks:
+        if 'tile_parent' in task:
+            tile_nodes.setdefault(task['tile_parent'], []).append(task['id'])
+    if tile_limit is not None and (type(tile_limit) is not int or tile_limit < 1):
+        raise ValueError('tile depth must be a positive integer')
+    tile_masks, tile_ancestors = {}, {}
+    if tile_limit is not None:
+        # Collapse tile chains back to original operators for the depth limit.
+        owner = {n: parent for parent, members in tile_nodes.items() for n in members}
+        for parent, members in tile_nodes.items():
+            tile_masks[parent] = sum(1 << ids[n] for n in members)
+            first_parents = set().union(*(ancestors[n] for n in members))
+            tile_ancestors[parent] = {owner[n] for n in first_parents if n in owner} - {parent}
+        parent_order = tuple(dict.fromkeys(owner[n] for n in ancestors if n in owner))
+
+    def active_depth(mask):
+        levels = {}
+        for parent in parent_order:
+            group = tile_masks[parent]
+            if mask & group and (mask & group) != group:
+                levels[parent] = 1 + max((levels.get(p, 0) for p in tile_ancestors[parent]), default=0)
+        return max(levels.values(), default=0)
+
     indexed={n:[] for n in ids};by_action={a['id']:a for a in actions}
     masks={n:sum(1<<ids[p] for p in ps) for n,ps in parents.items()}
     phase_locations={}
@@ -251,6 +276,8 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         for row in backbone['tasks']:
             a=by_action[row['id']];b=next(b for b in a['bindings'] if b['id']==row['binding'])
             choices=tuple(row['evaluation'].get('transport_choices',())) if live_replay else None
+            if tile_masks and active_depth(s.done | a['mask']) > tile_limit:
+                raise ValueError('cover backbone exceeds tile depth limit')
             s=next(advance(s,a,b,policy(b,row),choices),None)
             if s is None:raise ValueError('verified atomic backbone became illegal')
             if live_replay:
@@ -262,9 +289,11 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
                     raise ValueError('backbone transport choice differs from verified plan')
             seeds[s.done.bit_count()]=s
     buckets[0][key(initial)]=initial;complete=[]
+    peak_bucket = 0
     for count in range(len(tasks)+1):
         pool=buckets.pop(count,{})
         if count in seeds:pool.setdefault(key(seeds[count]),seeds[count])
+        peak_bucket = max(peak_bucket, len(pool))
         candidates=pool.values()
         if model and count==len(tasks):
             candidates=[s for s in candidates if model.external_outputs <= s.execution.backing.keys()
@@ -277,10 +306,21 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
         if count==len(tasks):complete=beam;break
         for s in beam:
             roots=sorted(s.ready,key=lambda n:(-tail[n],n))
+            if tile_masks:
+                eligible = []
+                for n in roots:
+                    if all(active_depth(s.done | action['mask']) > tile_limit for action in indexed[n]):
+                        depth_pruned += len(indexed[n])
+                    else:
+                        eligible.append(n)
+                roots = eligible
             if ready_limit is not None:roots=roots[:ready_limit]
             for n in roots:
                 for a in indexed[n]:
                     if s.done&a['mask'] or any(not s.done&(1<<ids[p]) for p in a['boundary']):continue
+                    if tile_masks and active_depth(s.done | a['mask']) > tile_limit:
+                        depth_pruned += 1
+                        continue
                     for b in a['bindings']:
                         for policy in retention_actions(s,b):
                             expanded+=1
@@ -292,8 +332,11 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
                                 bucket[k]=ns
     timing_stats=({'timing':model.timing,'transport_limit':transport_limit,**transport_counts}
                   if live_replay else {})
+    if tile_limit is not None:
+        timing_stats.update(tile_depth_limit=tile_limit, tile_depth_pruned=depth_pruned)
     if unencodable:timing_stats['completion_only_rejections']=unencodable
-    if not complete:return {'status':'no_plan_in_bounded_search','expanded':expanded,**timing_stats}
+    if not complete:return {'status':'no_plan_in_bounded_search','expanded':expanded,
+                            'peak_bucket_states':peak_bucket,**timing_stats}
     best=min(complete,key=lambda s:(s.makespan,s.traffic,netcost(s)));rows=[];history=best.history
     while history is not None:rows.append(history.row);history=history.previous
     rows.reverse()
@@ -307,7 +350,8 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     return {'status':'planned','kind':'event-cover-frontier-v1' if model else 'convex-cover-frontier-v1',
         **timing_stats,
         'tasks':rows,'makespan':best.makespan,**traffic,'nets':sorted(selected_nets),'wire_cost':netcost(best),'final_read_cache':best.cache,
-        'expanded':expanded,'merged':merged,'pruned':pruned,'width':width,'ready_limit':ready_limit,
+        'expanded':expanded,'merged':merged,'pruned':pruned,'peak_bucket_states':peak_bucket,
+        'width':width,'ready_limit':ready_limit,
         'covered_original_tasks':len(tasks),'multi_task_decisions':sum(len(r['covers'])>1 for r in rows),
         'backbone_prefix_slots':seed_kept,'rank_policy':rank_policy,
         'completion_calls':completion.calls if completion else 0,

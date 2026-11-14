@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #273](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/273) 加入特征分块驻留和块级 Dot 配方候选。Qwen2.5-3B 首层两组输入逐位一致。最佳整行加块级方案的模型拍下降 90.6%，DDR 字节下降 90.8%。Down 的 gated 激活仍经过 DDR。远端回归 416 项通过、6 项跳过。[回执](../../work/YUZE-LU/219/TILE_FRONTIER_FOLLOWUP.md)。
+
+2026-11-14 CST。#219 的 [PR #273](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/273) 增加 tile 的 SRAM 驻留、版本保护及 DDR 回退。真实 Qwen2.5-3B 首层的两组输入逐位一致，束宽 8 少 5 KiB DDR 读，束宽 32 少 17 KiB。现有归档无 P0 到 U0 的已声明直接路径，写回不变。完整回归 421 项通过，产品局控范围编码待验证。[回执](../../work/YUZE-LU/219/TILE_FRONTIER.md)。
+
 2026-11-14 16:39 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加外部指定的 SRAM 实例、容量和读写位宽。112358、112359 用同一底座分别读回 128-bit 和 512-bit 读配置，核对对齐事务换算和 Gather 单字写约束。远端 10 项测试通过，目标底座执行仍待接入。[参数及回执](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#sram-容量和端口位宽由外部配置)。
 
 2026-11-14 16:25 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加 Algo1 指令包、同计划连线与独立底座的 TLM 准入检查。远端 112167 核对 184,927 页与 639 页 Gather 替换，定位 12 类派发缺口、2 类完成信号缺口，以及 7 类等待 TLM 实现的候选服务。PR #260 原短程作业按诊断记录。下一步用目标绑定的资源时序与单页 Gather 验证实际指令执行。[回执及复现](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#对同计划底座的-tlm-准入)。
