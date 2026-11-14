@@ -23,6 +23,10 @@ kv_sha=78347abd13135d71a678ff87b4760175ea81fb701a4edb022e080165321f2b4e
 program=$asset/request-runtime-archived
 memory=$asset/request-memory-archived/ddr-initial.tsv
 reference=$archive/run-107361
+previous=
+if [[ ${1:-} == --reuse-prefix ]]; then
+    previous=$(realpath "${2:?prior matched-node prefix run directory required}")
+fi
 cat > inputs.sha256 <<EOF
 1bf5465dc4a4bbb8e4618502e1fe5a591d1c2c9fdc8b20cf84d5ea7d198e2a33  $archive/source.sha256
 $deployment  $program/proof.sha256
@@ -42,9 +46,10 @@ sha256sum -c inputs.sha256
 
 srun --exact -n1 -c1 --cpu-bind=cores /public/software/singularity-ce-4.3.4/bin/singularity exec \
     --cleanenv --bind /public/home/yuzelu "$image" bash -s -- \
-    "$python" "$archive" "$dependencies" "$dram" "$program" "$memory" "$config" "$kv" "$deployment" "$kv_sha" <<'RUN'
+    "$python" "$archive" "$dependencies" "$dram" "$program" "$memory" "$config" "$kv" "$deployment" "$kv_sha" "$previous" <<'RUN'
 set -euo pipefail
 python=$1 archive=$2 dependencies=$3 dram=$4 program=$5 memory=$6 config=$7 kv=$8 deployment=$9 kv_sha=${10}
+previous=${11}
 export LC_ALL=C PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1
 export PYTHONPATH="$dependencies/systemc_benchmark:$dependencies/block_local_native"
 g++ --version > compiler-version.txt
@@ -52,14 +57,23 @@ g++ --version > compiler-version.txt
 g++ -std=c++17 -O3 -Wall -Wextra -Werror -shared -fPIC -isystem "$dram/src" -isystem "$dram/ext/headers" \
     fast_tlm_dram.cpp -L"$dram" -Wl,-rpath,"$dram" -ldramsim3 -o fast_tlm_dram.so > build.log 2>&1
 args=(--decode-kv-binding "$kv" --decode-kv-sha256 "$kv_sha" --dma-fabric-budget)
-start=${SECONDS}
-"$python" -B fast_tlm_replay.py --archive "$archive" --pages 9 --fast-ddr \
-    "$program" "$memory" "$PWD/fast_tlm_dram.so" "$config" fast-prefix "$deployment" "${args[@]}"
-echo "$((SECONDS-start))" > fast-prefix.wall-seconds
-start=${SECONDS}
-"$python" -B fast_tlm_replay.py --archive "$archive" --pages 9 \
-    "$program" "$memory" "$dependencies/dram-106937.so" "$config" baseline-prefix "$deployment" "${args[@]}"
-echo "$((SECONDS-start))" > baseline-prefix.wall-seconds
+if [[ -n "$previous" ]]; then
+    cmp "$previous/fast_tlm_dram.so" fast_tlm_dram.so
+    mkdir fast-prefix baseline-prefix
+    for variant in fast baseline; do
+        cp "$previous/$variant-prefix/page-timing.jsonl" "$variant-prefix/"
+        cp "$previous/$variant-prefix.wall-seconds" .
+    done
+else
+    start=${SECONDS}
+    "$python" -B fast_tlm_replay.py --archive "$archive" --pages 9 --fast-ddr \
+        "$program" "$memory" "$PWD/fast_tlm_dram.so" "$config" fast-prefix "$deployment" "${args[@]}"
+    echo "$((SECONDS-start))" > fast-prefix.wall-seconds
+    start=${SECONDS}
+    "$python" -B fast_tlm_replay.py --archive "$archive" --pages 9 \
+        "$program" "$memory" "$dependencies/dram-106937.so" "$config" baseline-prefix "$deployment" "${args[@]}"
+    echo "$((SECONDS-start))" > baseline-prefix.wall-seconds
+fi
 head -n 9 "$archive/run-107361/page-timing.jsonl" > archived-prefix.jsonl
 "$python" -B fast_tlm_replay.py --compare archived-prefix.jsonl baseline-prefix/page-timing.jsonl
 "$python" -B fast_tlm_replay.py --compare archived-prefix.jsonl fast-prefix/page-timing.jsonl
