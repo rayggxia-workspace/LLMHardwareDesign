@@ -27,14 +27,16 @@ FULL_Q_WEIGHT_RECORDS = 256
 AFTER_Q = FULL_Q_WEIGHT_RECORDS + 1
 THROUGH_KV_STORE = AFTER_Q + 1
 THROUGH_QKV_PAGE = THROUGH_KV_STORE + 1
+THROUGH_ATTENTION_PAGE = THROUGH_QKV_PAGE + 1
 
 
-def marker(kind, cycle, **values):
-    return {"kind": kind, "cycle": cycle, "generation": 1, **values}
+def marker(kind, cycle, *, generation=1, **values):
+    return {"kind": kind, "cycle": cycle, "generation": generation, **values}
 
 
 def predict(archive, binary, config, output, embedding, mode, *, weight_records=0):
-    page = decode_archive(archive)["pages"][0]
+    pages = decode_archive(archive)["pages"]
+    page = pages[0]
 
     def after_pm(prefix, ddr):
         control = dispatch(page, prefix["mc_config_writes"][-1][2], mode)
@@ -74,7 +76,7 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
             scope = "first Q provider retirement" if through_q else "first Q {} window".format("K1" if through_k1 else "K0")
             result["scope"] = "105530 generation 1 startup through " + scope
             result["projection_front"] = front
-            if weight_records == THROUGH_QKV_PAGE:
+            if weight_records >= THROUGH_QKV_PAGE:
                 from qwen_projection_pipeline import ProjectionProvider
                 projection = ProjectionProvider(fabric)
                 result["projection_k0"] = projection.run(call, descriptor["service_accept"], mode)
@@ -91,7 +93,7 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
                     result["scope"] = "105530 generation 1 through the first KVR1 " + ("retirement" if through_store else "write offer")
                     result["post_projection"] = post
                     stages = post["stages"]
-                    if weight_records == THROUGH_QKV_PAGE:
+                    if weight_records >= THROUGH_QKV_PAGE:
                         from qwen_qkv_page import predict_generation_one_tail, read_history_rows
                         projection.release_output(*projection.pending_output)
                         tail = predict_generation_one_tail(page, fabric, stages[-1]["service"]["service_retire"],
@@ -113,11 +115,37 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
                             service = stage["service"]
                             markers.append(marker("service_retire", service["service_retire"], **stage_identity,
                                                   status=0, read=service["read_bytes"], write=service["write_bytes"]))
-                    if weight_records == THROUGH_QKV_PAGE:
+                    if weight_records >= THROUGH_QKV_PAGE:
                         retired = [row for row in markers if row["kind"] == "service_retire"]
                         markers.append(marker("page_commit", result["page_commit"], calls=len(retired), status=0,
                                               read=sum(row["read"] for row in retired) + len(retired) * DESCRIPTOR_BURSTS * 64,
                                               write=sum(row["write"] for row in retired)))
+                    if weight_records == THROUGH_ATTENTION_PAGE:
+                        from qwen_attention_front import predict_attention_page
+                        second = pages[1]
+                        attention = predict_attention_page(second, fabric, result["page_commit"])
+                        result["scope"] = "105530 startup through the native Attention page commit"
+                        result["attention"] = attention
+                        next_generation = {"generation": second["generation"]}
+                        markers.append(marker("page_launch", attention["page_launch"], **next_generation,
+                                              step=0, page=1, targets=second["target_mask"]))
+                        for row in attention["pm_admissions"]:
+                            markers.append(marker("pm_admit", row["cycle"], **next_generation,
+                                                  domain=row["domain"], tag=row["tag"], address=row["address"]))
+                        for stage, call in zip(attention["stages"], second["calls"]):
+                            service = stage["service"]
+                            for row in stage["dispatch"]["descriptor_admissions"]:
+                                markers.append(marker("descriptor_admit", row["cycle"], **next_generation,
+                                                      target=row["target"], tag=row["tag"], address=row["address"]))
+                            markers.append(marker("service_accept", stage["descriptor"]["service_accept"],
+                                                  **next_generation, **stage["call"], schema=call["schema"], op=call["operation"]))
+                            markers.append(marker("service_retire", service["service_retire"], **next_generation,
+                                                  **stage["call"], status=0, read=service["read_bytes"],
+                                                  write=service["write_bytes"]))
+                        stages = attention["stages"]
+                        markers.append(marker("page_commit", attention["page_commit"], **next_generation, status=0,
+                                              calls=len(stages), read=sum(stage["service"]["read_bytes"] + 128 for stage in stages),
+                                              write=sum(stage["service"]["write_bytes"] for stage in stages)))
             elif not through_k1:
                 result["projection_k0"].pop("next_window", None)
         elif weight_records:
@@ -148,22 +176,26 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
                       allow_writes=weight_records >= THROUGH_KV_STORE)
 
 
-def observed_first_page(path, mode):
+def observed_pages(path, mode, through_attention):
     require(file_digest(path) == MODE_EDGE_SHA[mode], "instrumented RTL evidence differs from 108208")
     result = []
     with path.open("r", encoding="ascii") as stream:
         for line in stream:
             prefix, kind, *items = line.split()
             require(prefix == "QWEN_EDGE", "invalid RTL edge record")
-            if kind not in ("descriptor_admit", "service_accept", "service_retire", "page_commit"):
+            control = kind in ("descriptor_admit", "service_accept", "service_retire", "page_commit")
+            if not control and kind not in ("page_launch", "pm_admit"):
                 continue
             row = {key: int(value) for key, value in (item.split("=") for item in items)}
-            if row["generation"] != 1:
+            limit = 2 if through_attention else 1
+            if row["generation"] > limit:
                 break
+            if (row["generation"] != 1 or not control) and not (through_attention and row["generation"] == 2):
+                continue
             row.pop("ps")
             row["cycle"] -= 1  # 108208 marks the edge with a one-based counter
             result.append({"kind": kind, **row})
-            if kind == "page_commit":
+            if kind == "page_commit" and row["generation"] == limit:
                 break
     return result
 
@@ -202,8 +234,11 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
     bursts = PREDICTED_BURSTS + 17 * min(weight_records, FULL_Q_WEIGHT_RECORDS)
     if weight_records >= AFTER_Q:
         bursts += 3 * DESCRIPTOR_BURSTS + DRL1_BURSTS
-    if weight_records == THROUGH_QKV_PAGE:
+    if weight_records >= THROUGH_QKV_PAGE:
         bursts = 123155
+    through_attention = weight_records == THROUGH_ATTENTION_PAGE
+    if through_attention:
+        bursts += 4 + 32 * DESCRIPTOR_BURSTS + 16 * 120
     require(len(expected) == 4 * bursts, "incomplete DDR prefix prediction")
     proof = Proof(archive, WINDOWS["next_rms"][0])
     trace = "DDR-{}/transactions.tsv".format(mode)
@@ -216,24 +251,26 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
     trace_sha = file_digest(source)
     proof.check(trace, trace_sha)
 
-    observed = observed_first_page(edge_log, mode)
+    observed = observed_pages(edge_log, mode, through_attention)
     wanted = prediction["markers"]
-    marker_count = {FULL_Q_WEIGHT_RECORDS: 12, AFTER_Q: 23, THROUGH_KV_STORE: 24, THROUGH_QKV_PAGE: 497}.get(weight_records, 11)
+    marker_count = {FULL_Q_WEIGHT_RECORDS: 12, AFTER_Q: 23, THROUGH_KV_STORE: 24,
+                    THROUGH_QKV_PAGE: 497, THROUGH_ATTENTION_PAGE: 631}.get(weight_records, 11)
     require(len(wanted) == marker_count and len(observed) >= len(wanted), "incomplete dispatch marker prefix")
     for index, (event, actual) in enumerate(zip(wanted, observed)):
         require(event == actual, "control marker {} differs: predicted {}, observed {}".format(index, event, actual))
     page = decode_archive(archive)["pages"][0]
     result = {"mode": mode, "matched_ddr_bursts": bursts, "matched_ddr_events": len(expected),
               "matched_control_markers": len(wanted), "rtl_ddr_trace_sha256": trace_sha,
-              "rtl_edge_trace_sha256": MODE_EDGE_SHA[mode], "conditional_wait_audit": audit_wait_release(page, observed)}
+              "rtl_edge_trace_sha256": MODE_EDGE_SHA[mode],
+              "conditional_wait_audit": audit_wait_release(page, [row for row in observed if row["generation"] == 1])}
     if weight_records >= AFTER_Q:
         name = "DDR-{}/write-transactions.tsv".format(mode)
         source = proof.path(name)
         post = prediction["post_projection"]
         if weight_records >= THROUGH_KV_STORE:
             write_events = post["write_events"]
-            require(len(write_events) == (384 if weight_records == THROUGH_QKV_PAGE else 32),
-                    "incomplete KV store prefix")
+            expected_writes = {THROUGH_KV_STORE: 32, THROUGH_QKV_PAGE: 384, THROUGH_ATTENTION_PAGE: 896}
+            require(len(write_events) == expected_writes[weight_records], "incomplete KV store prefix")
         else:
             ready = post["write_ready"]
             address = ready["address"]
@@ -280,6 +317,8 @@ def main():
                             help="include strict DDR writes and retirement of the first KVR1 service")
         weight.add_argument("--through-qkv-page", dest="weight_records", action="store_const", const=THROUGH_QKV_PAGE,
                             help="include the complete first native QKV page")
+        weight.add_argument("--through-attention-page", dest="weight_records", action="store_const", const=THROUGH_ATTENTION_PAGE,
+                            help="include the complete native QKV and Attention pages")
     args = parser.parse_args()
     if args.operation == "predict":
         result = predict(args.archive, args.binary.resolve(), args.config.resolve(), args.output.resolve(),
