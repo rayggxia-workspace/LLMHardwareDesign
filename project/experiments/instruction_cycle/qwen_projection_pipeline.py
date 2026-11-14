@@ -77,11 +77,14 @@ class K0Schedule:
                 chosen = min(available, key=lambda item: item[1])
                 self.replies.remove(chosen)
                 _, kind, record = chosen
-                self.active_reply = (cycle + 2, kind, record)
+                self.active_reply = (cycle + self._reply_flits(kind), kind, record)
         elif self.active_reply[0] == cycle:
             _, kind, record = self.active_reply
             self.active_reply = None
             self._on_reply(cycle, kind, record)
+
+    def _reply_flits(self, kind):
+        return 2
 
     def _step_weights(self, cycle):
         for fill in self.transport.step(cycle):
@@ -216,7 +219,7 @@ class K0Schedule:
 class ResidentWindowSchedule(K0Schedule):
     """Advance one nonfinal K window with live RF contexts and W lookahead."""
 
-    def __init__(self, previous, activation, spans):
+    def __init__(self, previous, activation, spans, *, final=False, mode=0):
         super().__init__(previous.transport, activation, spans)
         self.generations = previous.generations
         self.bank_cursor = previous.bank_cursor
@@ -229,6 +232,10 @@ class ResidentWindowSchedule(K0Schedule):
         self.side = None
         self.guard_start = None
         self.guard_owned = set()
+        self.final = final
+        self.mode = mode
+        self.store_order = deque()
+        self.result_port_ready = 0
         self.range_offer_edge = None
         self.window_complete = None
 
@@ -258,9 +265,32 @@ class ResidentWindowSchedule(K0Schedule):
         else:
             require(kind == RF and self.m_active is record, "resident RF reply has no EXEC owner")
             record.edges["rf_eop"] = cycle
-            record.edges["guard_terminal"] = cycle + 2
+            if self.final:
+                self.store_order.append(record)
+            else:
+                record.edges["guard_terminal"] = cycle + 2
             self.m_active = None
             self.m_available = cycle + 2
+
+    def _reply_flits(self, kind):
+        return 4 if self.final and kind == RF else 2
+
+    def _result_store(self, cycle):
+        if not self.store_order or self.result_port_ready > cycle:
+            return
+        record = self.store_order.popleft()
+        # The final RF reply carries two S128 payload flits. Once accepted,
+        # guard head enters C_REQUEST and holds the first write through ACK.
+        offer = max(record.edges["rf_eop"] + 2, cycle + 1)
+        writes, acks = [], []
+        for _ in range(2):
+            store = gated_edge(offer, self.mode, 7, 2)
+            ack = gated_edge(store + SRAM_ACCEPT_TO_ACK, self.mode, 11, 4)
+            writes.append(store)
+            acks.append(ack)
+            offer = ack + 1
+        record.edges.update(result_writes=writes, result_acks=acks, guard_terminal=offer)
+        self.result_port_ready = offer + 1
 
     def _link_ready(self, cycle):
         # The leaf may buffer one command frame during an older EXEC, but a
@@ -394,6 +424,8 @@ class ResidentWindowSchedule(K0Schedule):
                 self._on_action(cycle, action, record)
             self._advance_replies(cycle)
             self._step_weights(cycle)
+            if self.final:
+                self._result_store(cycle)
             cycle += 1
         require(not self.owners and not self.replies and self.active_reply is None and not self.guard_owned
                 and not self.ahead and not self.fill_pending and self.fill_owner is None, "resident Q window did not drain")
@@ -454,8 +486,8 @@ def _k1_header(last_k0_record_accept, mode):
     return cycle + 6
 
 
-def run_k0(call, front, fabric, mode, *, through_k1=False):
-    """Predict K0 and optionally K1 on the live DDR fabric."""
+def run_k0(call, front, fabric, mode, *, through_k1=False, through_q=False):
+    """Predict K0 and optionally all later K128 windows on the live DDR fabric."""
     from qwen_weight_pipeline import WeightPipeline
 
     require(mode in (0, 1) and front == first_weight_offer(call, front["service_accept"], mode),
@@ -482,12 +514,23 @@ def run_k0(call, front, fabric, mode, *, through_k1=False):
                    "first_weight_record_beats": spans[groups]["bytes"] // BURST_BYTES}
     result = {"activation": activation, "records": records, "k0_range_complete": schedule.k0_complete,
               "next_window": next_window}
-    if through_k1:
-        k1_activation = _activation_window(header, mode)
-        k1 = ResidentWindowSchedule(schedule, k1_activation, spans[groups:2 * groups])
-        k1.run(accept)
-        result["k1"] = {"activation": k1_activation, "records": _record_results(k1),
-                        "range_complete": k1.window_complete}
+    if through_k1 or through_q:
+        remaining = []
+        for index in range(1, len(spans) // groups if through_q else 2):
+            if index > 1:
+                header = _k1_header(schedule.records[-1].accepted, mode)
+                accept = max(header, schedule.window_complete) + 1
+            activation = _activation_window(header, mode)
+            final = index + 1 == len(spans) // groups
+            schedule = ResidentWindowSchedule(schedule, activation, spans[index * groups:(index + 1) * groups],
+                                              final=final, mode=mode)
+            schedule.run(accept)
+            remaining.append({"activation": activation, "records": _record_results(schedule),
+                              "range_complete": schedule.window_complete})
+        result["k1"] = remaining[0]
+        if through_q:
+            result["remaining_windows"] = remaining
+            result["service_retire"] = schedule.window_complete + 2
     return result
 
 

@@ -23,6 +23,7 @@ DRL1_BURSTS = 8
 SERVICES_MODELED = 2
 PREDICTED_BURSTS = PM_PREFIX_BURSTS + SERVICES_MODELED * (DESCRIPTOR_BURSTS + DRL1_BURSTS) + DESCRIPTOR_BURSTS
 K0_WEIGHT_RECORDS = 16
+FULL_Q_WEIGHT_RECORDS = 256
 
 
 def marker(kind, cycle, **values):
@@ -61,15 +62,20 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
         result = {"scope": "105530 generation 1 startup to third service accept", "mode": mode,
                   "core_cycle_origin": prefix["core_cycle_origin"], "prompt_start_one_based_edge": PROMPT_ACCEPT_EDGE,
                   "schedule": schedule, "ddr_events": ddr.events, "markers": markers}
-        if weight_records in (K0_WEIGHT_RECORDS, 2 * K0_WEIGHT_RECORDS):
+        if weight_records in (K0_WEIGHT_RECORDS, 2 * K0_WEIGHT_RECORDS, FULL_Q_WEIGHT_RECORDS):
             from qwen_projection_front import first_weight_offer
             from qwen_projection_pipeline import run_k0
             front = first_weight_offer(call, descriptor["service_accept"], mode)
+            through_q = weight_records == FULL_Q_WEIGHT_RECORDS
             through_k1 = weight_records == 2 * K0_WEIGHT_RECORDS
-            result["scope"] = "105530 generation 1 startup through the first Q " + ("K1" if through_k1 else "K0") + " window"
+            scope = "first Q provider retirement" if through_q else "first Q {} window".format("K1" if through_k1 else "K0")
+            result["scope"] = "105530 generation 1 startup through " + scope
             result["projection_front"] = front
-            result["projection_k0"] = run_k0(call, front, fabric, mode, through_k1=through_k1)
-            if not through_k1:
+            result["projection_k0"] = run_k0(call, front, fabric, mode, through_k1=through_k1, through_q=through_q)
+            if through_q:
+                markers.append(marker("service_retire", result["projection_k0"]["service_retire"], **identity,
+                                      status=0, read=FULL_Q_WEIGHT_RECORDS * 17 * 64, write=512))
+            elif not through_k1:
                 result["projection_k0"].pop("next_window", None)
         elif weight_records:
             from qwen_projection_front import first_weight_offer
@@ -164,7 +170,8 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
 
     observed = observed_first_page(edge_log, mode)
     wanted = prediction["markers"]
-    require(len(wanted) == 11 and len(observed) > len(wanted), "incomplete dispatch marker prefix")
+    marker_count = 12 if weight_records == FULL_Q_WEIGHT_RECORDS else 11
+    require(len(wanted) == marker_count and len(observed) > len(wanted), "incomplete dispatch marker prefix")
     for index, (event, actual) in enumerate(zip(wanted, observed)):
         require(event == actual, "control marker {} differs: predicted {}, observed {}".format(index, event, actual))
     page = decode_archive(archive)["pages"][0]
@@ -195,6 +202,8 @@ def main():
                             help="include all sixteen K0 P_SCOPE weight records")
         weight.add_argument("--through-k1", dest="weight_records", action="store_const", const=2 * K0_WEIGHT_RECORDS,
                             help="include the first two Q K128 windows and thirty-two weight records")
+        weight.add_argument("--through-q", dest="weight_records", action="store_const", const=FULL_Q_WEIGHT_RECORDS,
+                            help="include all 256 first Q weight records and the service retirement")
     args = parser.parse_args()
     if args.operation == "predict":
         result = predict(args.archive, args.binary.resolve(), args.config.resolve(), args.output.resolve(),
