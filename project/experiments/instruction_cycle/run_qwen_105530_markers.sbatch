@@ -41,6 +41,11 @@ printf '%s  %s\n' \
 sha256sum -c "$baseline/tools.sha256"
 
 run=$PWD
+pair_predictions=
+if [[ ${1:-} == --pair ]]; then
+    pair_predictions=$(realpath "${2:?sealed three-record prediction directory required}")
+    (cd "$pair_predictions" && sha256sum -c prediction.sha256)
+fi
 if [[ ${1:-} == --verify ]]; then
     prior=$(realpath "${2:?existing instrumented replay directory required}")
     verify_replay "$prior" "$baseline" "$run" "$run"
@@ -56,9 +61,16 @@ cp -R "$baseline/generated" "$replay/generated"
     awk '$2 ~ /^generated\// { print }' "$baseline/proof.sha256" > prepared.sha256
     sha256sum -c prepared.sha256
 )
-python3 -B instrument_qwen_105530.py patch "$run/source"
+if [[ -n "$pair_predictions" ]]; then
+    python3 -B instrument_qwen_105530_pair.py "$run/source"
+else
+    python3 -B instrument_qwen_105530.py patch "$run/source"
+fi
 runner=$run/source/project/experiments/block_local_native/run_decode638_q_tile_replay.sh
 top=$run/source/project/experiments/block_local_native/test_native_decode638_product_replay.sv
+if [[ -n "$pair_predictions" ]]; then
+    python3 -B audit_qwen_105530_pair.py prepare-runner "$runner"
+fi
 bash -n "$runner"
 sha256sum "$runner" "$top" > instrumented.sha256
 srun --exact -n1 -c"$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
@@ -66,4 +78,11 @@ srun --exact -n1 -c"$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
     --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK" \
     "$image" bash "$runner" "$run" "$linked" history-final-product-ffn-next-rms 636 2
 
-verify_replay "$replay" "$baseline" "$run" "$replay"
+if [[ -n "$pair_predictions" ]]; then
+    python3 -B audit_qwen_105530_pair.py compare "$pair_predictions" "$replay" "$baseline" > "$replay/pair-audit.json"
+    sha256sum source.sha256 instrumented.sha256 "$replay"/{prepared.sha256,build.log,tools.sha256,pair-audit.json,replay-0.log,replay-1.log,DDR-0/transactions.tsv,DDR-1/transactions.tsv} > output.sha256
+    sha256sum -c output.sha256
+    python3 -B audit_qwen_105530_pair.py require-match "$replay/pair-audit.json"
+else
+    verify_replay "$replay" "$baseline" "$run" "$replay"
+fi
