@@ -19,7 +19,8 @@ COPY_EVENTS = {
 }
 EXEC_EVENTS = (
     "guard_accept", "exec_first_flit", "exec_last_flit", "a_use", "m_exec_start",
-    "first_operand", "last_operand", "raw_accept", "input_eop", "rf_eop",
+    "first_operand", "last_operand", "raw_accept", "input_eop", "rf_offer", "rf_eop",
+    "guard_terminal", "range_complete",
 )
 
 
@@ -37,8 +38,12 @@ def prepare_runner(path):
 def expected_cycles(prediction):
     pair = prediction["projection_pair"]
     expected = {event: pair[key] for event, key in COPY_EVENTS.items()}
+    expected["copy_start"] = [pair["copy_start"]]
     expected["a_load_proof"] = [pair["a_load_proof"]]
     expected["third_weight_accept"] = [pair["third_weight_source_offer"]]
+    front = prediction["projection_front"]
+    expected["weight_offer"] = [front["weight_source_offer"], front["second_weight_source_offer"],
+                                pair["third_weight_source_offer"]]
     expected.update({event: [record[event] for record in pair["exec"]] for event in EXEC_EVENTS})
     return expected
 
@@ -74,6 +79,29 @@ def verify_ddr_prefix(replay, baseline, mode):
         verify(not actual.readline(), "probe ran beyond the third source admission")
 
 
+def check_identity(prediction, events):
+    # Frozen ticket 3 descriptor binds these two P SRAM regions and K0 records.
+    front, pair = prediction["projection_front"], prediction["projection_pair"]
+    weights = (front["weight_address"], front["second_weight_address"], pair["third_weight_address"])
+    checks = [
+        ("copy_read", "address", list(range(1008, 1024))),
+        ("copy_write", "address", list(range(880, 896))),
+        ("a_load_read", "address", list(range(880, 896))),
+        ("weight_offer", "address", list(weights)),
+        ("weight_offer", "beats", [17, 17, 17]),
+        ("weight_offer", "channel", [address >> 11 & 1 for address in weights]),
+        ("range_complete", "context", [0, 1]),
+    ]
+    checks.extend((event, "sequence", [1303041, 1303042]) for event in (
+        "weight_fill_ack", "guard_accept", "exec_first_flit", "exec_last_flit",
+        "a_use", "m_exec_start", "raw_accept", "input_eop", "rf_offer", "rf_eop",
+        "guard_terminal", "range_complete"))
+    return {event + "." + field: {"expected": expected, "actual": actual}
+            for event, field, expected in checks
+            for actual in [[row[field] for row in events.get(event, [])]]
+            if actual != expected}
+
+
 def compare(predictions, replay, baseline):
     result = []
     for mode in (0, 1):
@@ -87,11 +115,13 @@ def compare(predictions, replay, baseline):
         actual = {event: [row["cycle"] for row in events.get(event, [])] for event in expected}
         differences = {event: {"expected": expected[event], "actual": actual[event]}
                        for event in expected if actual[event] != expected[event]}
+        identity_differences = check_identity(prediction, events)
         result.append({"mode": mode, "prediction_sha256": hashlib.sha256(data).hexdigest(),
                        "matched_original_ddr_events": PREFIX_EVENTS,
                        "matched_internal_edges": sum(len(actual[event]) for event in expected
                                                      if event not in differences),
-                       "differences": differences, "observed": events})
+                       "differences": differences, "identity_differences": identity_differences,
+                       "observed": events})
     return result
 
 
@@ -114,7 +144,9 @@ def main():
         print(json.dumps(compare(args.predictions, args.replay, args.baseline), indent=2))
     else:
         rows = json.loads(args.audit.read_bytes())
-        verify(all(not mode["differences"] for mode in rows), "projection probe differs from prediction")
+        verify([mode["mode"] for mode in rows] == [0, 1]
+               and all(not mode["differences"] and not mode["identity_differences"] for mode in rows),
+               "projection probe differs from prediction")
 
 
 if __name__ == "__main__":

@@ -44,7 +44,7 @@ def observer():
     ]
     execution = [
         tap("weight_fill_ack", f"{M}.tx_end && {M}.tx_source == 4'd2",
-            sequence=f"{M}.tx_frame[95:64]", session=f"{M}.tx_frame[63:32]"),
+            sequence=f"{M}.tx_frame[111:80]", session=f"{M}.tx_frame[79:48]"),
         tap("guard_accept", f"{EXEC}.g_cmd_valid && {EXEC}.g_cmd_ready", sequence=f"{EXEC}.seq_id"),
         tap("exec_first_flit",
             f"{NODE}.lc_valid && {NODE}.lc_ready && {NODE}.lc_sop && {NODE}.lc_data[19:16] == 4'd3",
@@ -62,11 +62,11 @@ def observer():
             session=f"{NODE}.a_session"),
         tap("raw_accept", f"{CORE}.raw_valid && {CORE}.raw_ready", sequence=f"{M}.A_record"),
         tap("input_eop", f"{M}.tx_end && {M}.tx_source == 4'd3",
-            sequence=f"{M}.tx_frame[95:64]", session=f"{M}.tx_frame[63:32]"),
+            sequence=f"{M}.tx_frame[111:80]", session=f"{M}.tx_frame[79:48]"),
         tap("rf_offer", f"{M}.n_rsp_valid && {M}.n_rsp_kind == 3'd2 && !qwen_pair_rf_pending",
             sequence=f"{M}.n_rsp_record"),
-        tap("rf_eop", f"{M}.tx_end && {M}.tx_source == 4'd4 && {M}.tx_frame[106:104] == 3'd2",
-            sequence=f"{M}.tx_frame[95:64]", session=f"{M}.tx_frame[63:32]"),
+        tap("rf_eop", f"{M}.tx_end && {M}.tx_source == 4'd4 && {M}.tx_frame[122:120] == 3'd2",
+            sequence=f"{M}.tx_frame[111:80]", session=f"{M}.tx_frame[79:48]"),
         tap("guard_terminal", f"{EXEC}.g_terminal_valid && {EXEC}.g_terminal_ready",
             sequence=f"{EXEC}.g_terminal_ticket[63:32]", session=f"{EXEC}.g_terminal_ticket[31:0]"),
         tap("range_complete", f"{RANGE}.complete_valid && {RANGE}.complete_ready",
