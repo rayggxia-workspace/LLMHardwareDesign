@@ -4,6 +4,7 @@ import argparse
 from collections import Counter
 import ctypes
 import heapq
+import json
 from pathlib import Path
 import sys
 
@@ -96,10 +97,24 @@ class DramBridge:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--archive", required=True, type=Path)
+    parser.add_argument("--archive", type=Path)
+    parser.add_argument("--compare", nargs=2, type=Path, metavar=("REFERENCE", "CANDIDATE"))
     parser.add_argument("--fast-ddr", action="store_true")
     parser.add_argument("--pages", type=int, default=0, help="stop at a diagnostic page boundary")
     args, replay_args = parser.parse_known_args()
+    if args.compare:
+        first, second = args.compare
+        if first.suffix == ".jsonl" and second.suffix == ".jsonl":
+            from itertools import zip_longest
+            with first.open(encoding="ascii") as reference, second.open(encoding="ascii") as candidate:
+                for index, (left, right) in enumerate(zip_longest(reference, candidate), 1):
+                    if left is None or right is None or json.loads(left) != json.loads(right):
+                        raise ValueError("page trace differs at row {}".format(index))
+        elif json.loads(first.read_bytes()) != json.loads(second.read_bytes()):
+            raise ValueError("result differs: {}".format(first.name))
+        return
+    if args.archive is None:
+        parser.error("--archive is required to run the replay")
     if args.pages < 0:
         parser.error("--pages must be nonnegative")
     sys.path.insert(0, str(args.archive.resolve()))

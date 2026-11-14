@@ -61,8 +61,8 @@ start=${SECONDS}
     "$program" "$memory" "$dependencies/dram-106937.so" "$config" baseline-prefix "$deployment" "${args[@]}"
 echo "$((SECONDS-start))" > baseline-prefix.wall-seconds
 head -n 9 "$archive/run-107361/page-timing.jsonl" > archived-prefix.jsonl
-cmp archived-prefix.jsonl baseline-prefix/page-timing.jsonl
-cmp archived-prefix.jsonl fast-prefix/page-timing.jsonl
+"$python" -B fast_tlm_replay.py --compare archived-prefix.jsonl baseline-prefix/page-timing.jsonl
+"$python" -B fast_tlm_replay.py --compare archived-prefix.jsonl fast-prefix/page-timing.jsonl
 sha256sum *-prefix.wall-seconds {baseline,fast}-prefix/page-timing.jsonl archived-prefix.jsonl > prefix.sha256
 echo "MATCHED_9_PAGES, starting two-step decode"
 start=${SECONDS}
@@ -79,7 +79,7 @@ df6c62434b009195035853e9577edbfe653824017af745bdeb81fceca111238d  $reference/exe
 EOF
 sha256sum -c reference.sha256
 for file in execution.json page-timing.jsonl timing-audit.json; do
-    cmp "$reference/$file" "decode/$file"
+    python3 -B fast_tlm_replay.py --compare "$reference/$file" "decode/$file"
 done
 sha256sum source.sha256 inputs.sha256 reference.sha256 prefix.sha256 fast_tlm_dram.so \
     compiler-version.txt python-version.txt decode.wall-seconds decode/{execution.json,page-timing.jsonl,timing-audit.json} > output.sha256
