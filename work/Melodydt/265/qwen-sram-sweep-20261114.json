@@ -1,0 +1,666 @@
+{
+  "issue": 265,
+  "pr": 266,
+  "base_pr": 260,
+  "base_pr_head": "dd423e5a8010e7371ee1ccbd589df00bc0ff6478",
+  "source_commit": "560f637450fa016b76daa7749681c3c5351d8b2a",
+  "host": "yuzelu@10.129.166.172",
+  "root": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01",
+  "reference": {
+    "core_ps": 3334,
+    "ddr_ps": 630,
+    "ddr_channels": 2,
+    "dma_credits_per_channel": 32,
+    "kv_read_window": 8,
+    "decode_initial_history": 512,
+    "decode_intervals": 1,
+    "prefill_input_positions": 2
+  },
+  "status_observed_cst": "2026-11-14T16:09:35+08:00",
+  "toolchain": {
+    "python_version": "Python 3.10.12",
+    "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+  },
+  "scope": "complete matching TLM replay of five archived service configurations with independently scheduled DDR time; equality here measures reproducibility",
+  "cases": [
+    {
+      "reference_job": 107947,
+      "reference_archive": "/public/home/yuzelu/project-circuit/issue260-native-kv-window-jL6neTvA",
+      "reference_source_manifest_sha256": "45d5a429835f1145b8e2b3e8d9b42044aa40884a0a2993498cf69d1f16bd261b",
+      "reference_output_sha256": {
+        "execution.json": "c4e98763c4453d1c6a4685581799494b8eaec978c7ccedd1ca070fd3568aad5a",
+        "page-timing.jsonl": "422e89d190c43ac567b6e47898ffc38b4f96e4943339b6d177c46a2741e7ece8",
+        "timing-audit.json": "e1a7a545eae6b51b3a6bfa89f5be15b8035fa064f4627728fde0145fcc4181ec"
+      },
+      "mode": "decode",
+      "sram_port_bits": 128,
+      "pipeline_memory": false,
+      "reference_elapsed_ps": 828821614510,
+      "reference_tok_s": 1.2065322410675798,
+      "reference_pages": 582,
+      "reference_ddr": {
+        "channel1_peak_queued": 8,
+        "ddr_queue_ps": 82987752998,
+        "channel1_peak_active": 12,
+        "reads": 126860392,
+        "callbacks": 126908776,
+        "ddr_inflight_ps": 2825582657310,
+        "channel0_peak_queued": 6,
+        "channel0_peak_active": 12,
+        "writes": 48384,
+        "dma_issue_throttle_ticks": 5923213
+      },
+      "reference_retirements": [
+        [
+          20772,
+          827821201134
+        ],
+        [
+          279,
+          1656642815644
+        ]
+      ],
+      "job": 111631,
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01/107947",
+      "launcher": "sbatch --parsable run_qwen_sram_sweep.sbatch 107947",
+      "log": "slurm-111631.out",
+      "name": "zny-qwenbw",
+      "partition": "c96",
+      "cpus": 1,
+      "node": "node17",
+      "state": "COMPLETED",
+      "elapsed": "01:06:29",
+      "start_cst": "2026-11-14T14:13:12+08:00",
+      "matched_pages_snapshot": 70,
+      "prefix_directory": "107947/prefix-check.xXYttUqe",
+      "verified_sha256": {
+        "107947/prefix-check.xXYttUqe/new.jsonl": "fa66bea6352235620c6030c41a2d28d5638d64c83b9d1e3ee5224cf10ee24d08",
+        "107947/prefix-check.xXYttUqe/ref.jsonl": "7ab4f7caabac617835ff1197bc911447822ea7fc6d322e123905b90c6e6e5a74",
+        "107947/source.sha256": "9e95ab258c8220ce607e80fe2762e824433932733071e4163fa87202ab48f37b",
+        "107947/inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "107947/fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "107947/compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "107947/python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+      },
+      "final_comparison": {
+        "mode": "decode",
+        "reference_elapsed_ps": 828821614510,
+        "candidate_elapsed_ps": 828821614510,
+        "elapsed_error_ps": 0,
+        "signed_elapsed_error_percent": 0,
+        "reference_tok_s": 1.2065322410675798,
+        "candidate_tok_s": 1.2065322410675798,
+        "signed_throughput_error_percent": 0,
+        "pages": 582,
+        "exact_pages": 582,
+        "max_absolute_page_duration_error_ps": 0,
+        "first_difference": null,
+        "execution_equal": true,
+        "timing_audit_equal": true,
+        "reference_ddr": {
+          "channel1_peak_queued": 8,
+          "ddr_queue_ps": 82987752998,
+          "channel1_peak_active": 12,
+          "reads": 126860392,
+          "callbacks": 126908776,
+          "ddr_inflight_ps": 2825582657310,
+          "channel0_peak_queued": 6,
+          "channel0_peak_active": 12,
+          "writes": 48384,
+          "dma_issue_throttle_ticks": 5923213
+        },
+        "candidate_ddr": {
+          "reads": 126860392,
+          "writes": 48384,
+          "callbacks": 126908776,
+          "ddr_queue_ps": 82987752998,
+          "ddr_inflight_ps": 2825582657310,
+          "dma_issue_throttle_ticks": 5923213,
+          "channel0_peak_queued": 6,
+          "channel1_peak_queued": 8,
+          "channel0_peak_active": 12,
+          "channel1_peak_active": 12
+        },
+        "reference_retirements": [
+          [
+            20772,
+            827821201134
+          ],
+          [
+            279,
+            1656642815644
+          ]
+        ],
+        "candidate_retirements": [
+          [
+            20772,
+            827821201134
+          ],
+          [
+            279,
+            1656642815644
+          ]
+        ]
+      },
+      "exit_code": "0:0",
+      "end_cst": "2026-11-14T15:19:41+08:00",
+      "compute_wall_seconds": 3984,
+      "output_manifest_sha256": "03d7c13b4b5101e9a7545c742c714c135c2d3f5dfc7ab67b11dd144fcdcc7dcb",
+      "final_output_sha256": {
+        "source.sha256": "9e95ab258c8220ce607e80fe2762e824433932733071e4163fa87202ab48f37b",
+        "reference-107947.sha256": "711234bfb6671084ffed43971431333aa886027b4b6fc371d31eb71b20a6545a",
+        "inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "candidate.wall-seconds": "71bbc664a20ec1db28e68cc9b9330c05ddf5a95e9a1ebda18627dcd63cc894e3",
+        "comparison.json": "8a44955f25aac4bb1732b724518d93baaacfbaf7e4f4be8163c4a1208b980b77",
+        "candidate/execution.json": "35d605af71d247bc029f19842e354e9a31cb01a83c43dcc5f1f5155fb643cbdf",
+        "candidate/page-timing.jsonl": "207c6ad8a9deecdfc003171f9743a035f083093bd492e1391db328eedfdaab22",
+        "candidate/timing-audit.json": "e1a7a545eae6b51b3a6bfa89f5be15b8035fa064f4627728fde0145fcc4181ec"
+      }
+    },
+    {
+      "reference_job": 108284,
+      "reference_archive": "/public/home/yuzelu/project-circuit/issue260-native-sram512-SMbOWTw6",
+      "reference_source_manifest_sha256": "08a1e9c93961a8afecb9fa4b07d23653f95bd037210d0f25a3fcbd633f346ea2",
+      "reference_output_sha256": {
+        "execution.json": "de831a7be9ce1f02b37b2ee05fdf7d18aab9bdc53c7d447805b82ce1b10b7a71",
+        "page-timing.jsonl": "01ef24bee6aa6b5258de0222ba7e56491e5b079d1cf92afc345b24a7bc06bb35",
+        "timing-audit.json": "ba040a7bc88262c0df68d9422c1e2dbdb5dc79a716a6936f6f3d8273935b733a"
+      },
+      "mode": "decode",
+      "sram_port_bits": 512,
+      "pipeline_memory": false,
+      "reference_elapsed_ps": 478260746356,
+      "reference_tok_s": 2.090909629567709,
+      "reference_pages": 582,
+      "reference_ddr": {
+        "channel1_peak_queued": 8,
+        "ddr_queue_ps": 83158470824,
+        "channel1_peak_active": 12,
+        "reads": 126860392,
+        "callbacks": 126908776,
+        "ddr_inflight_ps": 2780851369590,
+        "channel0_peak_queued": 6,
+        "channel0_peak_active": 12,
+        "writes": 48384,
+        "dma_issue_throttle_ticks": 6110589
+      },
+      "reference_retirements": [
+        [
+          20772,
+          478110216256
+        ],
+        [
+          279,
+          956370962612
+        ]
+      ],
+      "job": 111632,
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01/108284",
+      "launcher": "sbatch --parsable run_qwen_sram_sweep.sbatch 108284",
+      "log": "slurm-111632.out",
+      "name": "zny-qwenbw",
+      "partition": "c96",
+      "cpus": 1,
+      "node": "node17",
+      "state": "COMPLETED",
+      "elapsed": "00:49:51",
+      "start_cst": "2026-11-14T14:13:12+08:00",
+      "matched_pages_snapshot": 94,
+      "prefix_directory": "108284/prefix-check.16mBBcMU",
+      "verified_sha256": {
+        "108284/prefix-check.16mBBcMU/new.jsonl": "44b4da6c76df2b505aacb28f54a358f492f6a935b4f6d1c3fa1f615b887d087d",
+        "108284/prefix-check.16mBBcMU/ref.jsonl": "3fd70cbe182ecc3f7aca89dc7fab95bafc4a9b32829650220c4a65a3556d4b5d",
+        "108284/source.sha256": "7cc661e6df4e86c166e7de4da890c12cc2de23e484885555ef2c799bf8ef903f",
+        "108284/inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "108284/fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "108284/compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "108284/python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+      },
+      "final_comparison": {
+        "mode": "decode",
+        "reference_elapsed_ps": 478260746356,
+        "candidate_elapsed_ps": 478260746356,
+        "elapsed_error_ps": 0,
+        "signed_elapsed_error_percent": 0,
+        "reference_tok_s": 2.090909629567709,
+        "candidate_tok_s": 2.090909629567709,
+        "signed_throughput_error_percent": 0,
+        "pages": 582,
+        "exact_pages": 582,
+        "max_absolute_page_duration_error_ps": 0,
+        "first_difference": null,
+        "execution_equal": true,
+        "timing_audit_equal": true,
+        "reference_ddr": {
+          "channel1_peak_queued": 8,
+          "ddr_queue_ps": 83158470824,
+          "channel1_peak_active": 12,
+          "reads": 126860392,
+          "callbacks": 126908776,
+          "ddr_inflight_ps": 2780851369590,
+          "channel0_peak_queued": 6,
+          "channel0_peak_active": 12,
+          "writes": 48384,
+          "dma_issue_throttle_ticks": 6110589
+        },
+        "candidate_ddr": {
+          "reads": 126860392,
+          "writes": 48384,
+          "callbacks": 126908776,
+          "ddr_queue_ps": 83158470824,
+          "ddr_inflight_ps": 2780851369590,
+          "dma_issue_throttle_ticks": 6110589,
+          "channel0_peak_queued": 6,
+          "channel1_peak_queued": 8,
+          "channel0_peak_active": 12,
+          "channel1_peak_active": 12
+        },
+        "reference_retirements": [
+          [
+            20772,
+            478110216256
+          ],
+          [
+            279,
+            956370962612
+          ]
+        ],
+        "candidate_retirements": [
+          [
+            20772,
+            478110216256
+          ],
+          [
+            279,
+            956370962612
+          ]
+        ]
+      },
+      "exit_code": "0:0",
+      "end_cst": "2026-11-14T15:03:03+08:00",
+      "compute_wall_seconds": 2987,
+      "output_manifest_sha256": "e0e0a62651c0de9602e7fa95d1b909f46c9f54ab20480fd2ec59f07bc188b42e",
+      "final_output_sha256": {
+        "source.sha256": "7cc661e6df4e86c166e7de4da890c12cc2de23e484885555ef2c799bf8ef903f",
+        "reference-108284.sha256": "5e5ebe5c461c62c91537a17cde855a41b23208a29975f41fd62e59c1820f0e83",
+        "inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "candidate.wall-seconds": "c7bba8370961838190c452e4ac6baae64eece10e4d79cf028d43b7884a9bc7dd",
+        "comparison.json": "bf412ded8500a753f0fcea8df26497f72a05fd5fb52bdce60b1f77b5ced493a9",
+        "candidate/execution.json": "bb6f661b36e42a3995341fdef02981c3fa7bdde266f915da7029506e012d3abb",
+        "candidate/page-timing.jsonl": "11ed1a1fc148cca7501e2db77ac2e13e60240cf3ab2d382ea2db13d4e99695bd",
+        "candidate/timing-audit.json": "ba040a7bc88262c0df68d9422c1e2dbdb5dc79a716a6936f6f3d8273935b733a"
+      }
+    },
+    {
+      "reference_job": 108359,
+      "reference_archive": "/public/home/yuzelu/project-circuit/issue260-native-sram512-full-zrXP7jjS",
+      "reference_source_manifest_sha256": "420d00413fcab5e6995d2768cd08ed94d7c2c88116b89e424140ee598b167311",
+      "reference_output_sha256": {
+        "execution.json": "336331c27f680cee732e8c1849256b7ba628c9855c8cb74e7ca6168918b0aaee",
+        "page-timing.jsonl": "5ec2500b61ccddc37336fb25b72c929b790ff146e1d0615cd2b82f7eeb3d4314",
+        "timing-audit.json": "193ca67db31896a1158a8b7cef477cc6e7c5e43cc652445d2010f054f9cf7e5a"
+      },
+      "mode": "prefill",
+      "sram_port_bits": 512,
+      "pipeline_memory": false,
+      "reference_elapsed_ps": 369831191448,
+      "reference_tok_s": 5.40787268961658,
+      "reference_pages": 578,
+      "reference_ddr": {
+        "channel0_peak_queued": 6,
+        "ddr_queue_ps": 60763582980,
+        "channel0_peak_active": 12,
+        "reads": 92323014,
+        "callbacks": 92371398,
+        "ddr_inflight_ps": 2025966319020,
+        "channel1_peak_queued": 8,
+        "channel1_peak_active": 12,
+        "writes": 48384,
+        "dma_issue_throttle_ticks": 3868466
+      },
+      "reference_retirements": [],
+      "job": 111633,
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01/108359",
+      "launcher": "sbatch --parsable run_qwen_sram_sweep.sbatch 108359",
+      "log": "slurm-111633.out",
+      "name": "zny-qwenbw",
+      "partition": "c96",
+      "cpus": 1,
+      "node": "node17",
+      "state": "COMPLETED",
+      "elapsed": "00:29:37",
+      "start_cst": "2026-11-14T14:13:13+08:00",
+      "matched_pages_snapshot": 142,
+      "prefix_directory": "108359/prefix-check.mv9vBvmh",
+      "verified_sha256": {
+        "108359/prefix-check.mv9vBvmh/new.jsonl": "5e112a334e5d2f6f1564bf51b7500da9dd468bbe7247d0d668c6cc6786286365",
+        "108359/prefix-check.mv9vBvmh/ref.jsonl": "f89e76c1d8898b6c22d4f915df63da9a5a2009155222256a58b28691c68f0675",
+        "108359/source.sha256": "be797013161374e8290c3abb30cb1714bbecdfb4e49bc84b83ba46b65e0d9e1c",
+        "108359/inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "108359/fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "108359/compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "108359/python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+      },
+      "final_comparison": {
+        "mode": "prefill",
+        "reference_elapsed_ps": 369831191448,
+        "candidate_elapsed_ps": 369831191448,
+        "elapsed_error_ps": 0,
+        "signed_elapsed_error_percent": 0,
+        "reference_tok_s": 5.40787268961658,
+        "candidate_tok_s": 5.40787268961658,
+        "signed_throughput_error_percent": 0,
+        "pages": 578,
+        "exact_pages": 578,
+        "max_absolute_page_duration_error_ps": 0,
+        "first_difference": null,
+        "execution_equal": true,
+        "timing_audit_equal": true,
+        "reference_ddr": {
+          "channel0_peak_queued": 6,
+          "ddr_queue_ps": 60763582980,
+          "channel0_peak_active": 12,
+          "reads": 92323014,
+          "callbacks": 92371398,
+          "ddr_inflight_ps": 2025966319020,
+          "channel1_peak_queued": 8,
+          "channel1_peak_active": 12,
+          "writes": 48384,
+          "dma_issue_throttle_ticks": 3868466
+        },
+        "candidate_ddr": {
+          "reads": 92323014,
+          "writes": 48384,
+          "callbacks": 92371398,
+          "ddr_queue_ps": 60763582980,
+          "ddr_inflight_ps": 2025966319020,
+          "dma_issue_throttle_ticks": 3868466,
+          "channel0_peak_queued": 6,
+          "channel1_peak_queued": 8,
+          "channel0_peak_active": 12,
+          "channel1_peak_active": 12
+        },
+        "reference_retirements": [],
+        "candidate_retirements": []
+      },
+      "exit_code": "0:0",
+      "end_cst": "2026-11-14T14:42:50+08:00",
+      "compute_wall_seconds": 1774,
+      "output_manifest_sha256": "3019094e7d4bd0478677d5623ebc978a8a8ce405494a4040e8dce638d3aa2330",
+      "final_output_sha256": {
+        "source.sha256": "be797013161374e8290c3abb30cb1714bbecdfb4e49bc84b83ba46b65e0d9e1c",
+        "reference-108359.sha256": "bc3488f540a6c3cf2e848ff75d0da95636c07cd901ec16307fc5d8a248e6c3e2",
+        "inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "candidate.wall-seconds": "62ac99901fdfdf3e3fe3a67054823e933cfce41f2a2b3f1ba056ff420c362f6c",
+        "comparison.json": "471a375f6488646d6109cf35e72cf7519100cc471f08fe543c3aa8db1531347d",
+        "candidate/execution.json": "db42388a774dbd8b907822734d7361027876df8573304d21acf47b2fe3820538",
+        "candidate/page-timing.jsonl": "cc8dcd160a8ce0d4cb79a4166ec5f56edb5428963e3c37391f60d7b3369c7ade",
+        "candidate/timing-audit.json": "c8d3bee0db41f1cd19b4024a47fc3afde3a7df5385909cb5c5115cd2eb90f25e"
+      }
+    },
+    {
+      "reference_job": 110382,
+      "reference_archive": "/public/home/yuzelu/project-circuit/issue260-sram-pipeline-qk3uTFl1",
+      "reference_source_manifest_sha256": "0a734ff07e913ad709da33681b00876ae61dd3f54d762498d30a1882b90ae985",
+      "reference_output_sha256": {
+        "execution.json": "37328d2cd027f4840388a8bd6da97cb31d7c1f8ae63fdac17c2ef7b2e6b5e18e",
+        "page-timing.jsonl": "af1784f0bea74774374e3e6796c916cf91cbb94928d580f8e3f6ba0366c1f4e7",
+        "timing-audit.json": "a6ad36ba544b11c78e9c30ce9f1637df2548aa000eb2fd815186e9a7f1692347"
+      },
+      "mode": "decode",
+      "sram_port_bits": 512,
+      "pipeline_memory": true,
+      "reference_elapsed_ps": 427533726314,
+      "reference_tok_s": 2.338996758504977,
+      "reference_pages": 582,
+      "reference_ddr": {
+        "channel1_peak_queued": 8,
+        "ddr_queue_ps": 91547195260,
+        "channel1_peak_active": 12,
+        "reads": 126860392,
+        "callbacks": 126908776,
+        "ddr_inflight_ps": 2798902924020,
+        "channel0_peak_queued": 8,
+        "channel0_peak_active": 12,
+        "dma_issue_throttle_ticks": 8424216,
+        "writes": 48384
+      },
+      "reference_retirements": [
+        [
+          20772,
+          427297749128
+        ],
+        [
+          279,
+          854831475442
+        ]
+      ],
+      "job": 111634,
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01/110382",
+      "launcher": "sbatch --parsable run_qwen_sram_sweep.sbatch 110382",
+      "log": "slurm-111634.out",
+      "name": "zny-qwenbw",
+      "partition": "c96",
+      "cpus": 1,
+      "node": "node17",
+      "state": "COMPLETED",
+      "elapsed": "00:50:50",
+      "start_cst": "2026-11-14T14:13:13+08:00",
+      "matched_pages_snapshot": 92,
+      "prefix_directory": "110382/prefix-check.GRKNlkiH",
+      "verified_sha256": {
+        "110382/prefix-check.GRKNlkiH/new.jsonl": "969087279f8560f23a9070444a2571083411a464abd2c3c3a897b617013c39f7",
+        "110382/prefix-check.GRKNlkiH/ref.jsonl": "204af6c142ad183991c6c3aae84cdf1817c1d71ae072e85075f75515ae0fb26f",
+        "110382/source.sha256": "dc46554eed6764a70f9c43074447c58abb556d150e065df933858d4f48eeeb47",
+        "110382/inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "110382/fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "110382/compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "110382/python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+      },
+      "final_comparison": {
+        "mode": "decode",
+        "reference_elapsed_ps": 427533726314,
+        "candidate_elapsed_ps": 427533726314,
+        "elapsed_error_ps": 0,
+        "signed_elapsed_error_percent": 0,
+        "reference_tok_s": 2.338996758504977,
+        "candidate_tok_s": 2.338996758504977,
+        "signed_throughput_error_percent": 0,
+        "pages": 582,
+        "exact_pages": 582,
+        "max_absolute_page_duration_error_ps": 0,
+        "first_difference": null,
+        "execution_equal": true,
+        "timing_audit_equal": true,
+        "reference_ddr": {
+          "channel1_peak_queued": 8,
+          "ddr_queue_ps": 91547195260,
+          "channel1_peak_active": 12,
+          "reads": 126860392,
+          "callbacks": 126908776,
+          "ddr_inflight_ps": 2798902924020,
+          "channel0_peak_queued": 8,
+          "channel0_peak_active": 12,
+          "dma_issue_throttle_ticks": 8424216,
+          "writes": 48384
+        },
+        "candidate_ddr": {
+          "reads": 126860392,
+          "writes": 48384,
+          "callbacks": 126908776,
+          "ddr_queue_ps": 91547195260,
+          "ddr_inflight_ps": 2798902924020,
+          "dma_issue_throttle_ticks": 8424216,
+          "channel0_peak_queued": 8,
+          "channel1_peak_queued": 8,
+          "channel0_peak_active": 12,
+          "channel1_peak_active": 12
+        },
+        "reference_retirements": [
+          [
+            20772,
+            427297749128
+          ],
+          [
+            279,
+            854831475442
+          ]
+        ],
+        "candidate_retirements": [
+          [
+            20772,
+            427297749128
+          ],
+          [
+            279,
+            854831475442
+          ]
+        ]
+      },
+      "exit_code": "0:0",
+      "end_cst": "2026-11-14T15:04:03+08:00",
+      "compute_wall_seconds": 3047,
+      "output_manifest_sha256": "7a30a4bb43ee00f0b4866805c9c0f53c99ee12c5801710f227cc2873f117be18",
+      "final_output_sha256": {
+        "source.sha256": "dc46554eed6764a70f9c43074447c58abb556d150e065df933858d4f48eeeb47",
+        "reference-110382.sha256": "9bc2fb3e1ca2dd2054a3ffa47fa00dc781c4991a682d915f29c6408657456bc2",
+        "inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "candidate.wall-seconds": "8dba22393af1bf634ba2a4a3264ace11414ea0df935e586422a1ad23631e8bf8",
+        "comparison.json": "12f2419abc40639dc28b6385b60c6555f6881790b66b1d30d34e8f48411f218b",
+        "candidate/execution.json": "c7997f32957aa6dd95100ca8340f4936a2a4eba7b4f41550bd4f8bd896978a77",
+        "candidate/page-timing.jsonl": "e5314ace08ae607e7fa8914feb69c9408118cc84f79d0d616c596515d0cb241e",
+        "candidate/timing-audit.json": "a6ad36ba544b11c78e9c30ce9f1637df2548aa000eb2fd815186e9a7f1692347"
+      }
+    },
+    {
+      "reference_job": 110383,
+      "reference_archive": "/public/home/yuzelu/project-circuit/issue260-sram-pipeline-qk3uTFl1",
+      "reference_source_manifest_sha256": "0a734ff07e913ad709da33681b00876ae61dd3f54d762498d30a1882b90ae985",
+      "reference_output_sha256": {
+        "execution.json": "a808bce1d3dec4ce0571dcd6b271df9ebe01eac8d0ef6b44f96d4b70678debdf",
+        "page-timing.jsonl": "989f3ef5a87b51ebb9294312241e433e5d2e82690e69c85208ebef1691a1b921",
+        "timing-audit.json": "cbb6636c94022569fa0636be68ba1f8fc71f91e99d9ee411bd95d5dc02534a17"
+      },
+      "mode": "prefill",
+      "sram_port_bits": 512,
+      "pipeline_memory": true,
+      "reference_elapsed_ps": 363205986672,
+      "reference_tok_s": 5.506517164889514,
+      "reference_pages": 578,
+      "reference_ddr": {
+        "channel0_peak_queued": 8,
+        "ddr_queue_ps": 60912669992,
+        "channel0_peak_active": 12,
+        "reads": 92323014,
+        "callbacks": 92371398,
+        "ddr_inflight_ps": 2022600529530,
+        "channel1_peak_queued": 8,
+        "channel1_peak_active": 12,
+        "dma_issue_throttle_ticks": 3946764,
+        "writes": 48384
+      },
+      "reference_retirements": [],
+      "job": 111635,
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-sweep-20261114-01/110383",
+      "launcher": "sbatch --parsable run_qwen_sram_sweep.sbatch 110383",
+      "log": "slurm-111635.out",
+      "name": "zny-qwenbw",
+      "partition": "c96",
+      "cpus": 1,
+      "node": "node17",
+      "state": "COMPLETED",
+      "elapsed": "00:29:32",
+      "start_cst": "2026-11-14T14:13:13+08:00",
+      "matched_pages_snapshot": 142,
+      "prefix_directory": "110383/prefix-check.YrLF9dBp",
+      "verified_sha256": {
+        "110383/prefix-check.YrLF9dBp/new.jsonl": "74f97ddf191a2915cddadfda2e03beac826a7bffe01b92729be3e3c3e341889c",
+        "110383/prefix-check.YrLF9dBp/ref.jsonl": "c2e15ef576942ff079294a068c7f8e404b76d3040b7a1f20f1d48a3acec2557a",
+        "110383/source.sha256": "878e92d073543ff9969ee9643a77fe3c4c018b0fedef869a3a34c81b0c502da2",
+        "110383/inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "110383/fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "110383/compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "110383/python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+      },
+      "final_comparison": {
+        "mode": "prefill",
+        "reference_elapsed_ps": 363205986672,
+        "candidate_elapsed_ps": 363205986672,
+        "elapsed_error_ps": 0,
+        "signed_elapsed_error_percent": 0,
+        "reference_tok_s": 5.506517164889514,
+        "candidate_tok_s": 5.506517164889514,
+        "signed_throughput_error_percent": 0,
+        "pages": 578,
+        "exact_pages": 578,
+        "max_absolute_page_duration_error_ps": 0,
+        "first_difference": null,
+        "execution_equal": true,
+        "timing_audit_equal": true,
+        "reference_ddr": {
+          "channel0_peak_queued": 8,
+          "ddr_queue_ps": 60912669992,
+          "channel0_peak_active": 12,
+          "reads": 92323014,
+          "callbacks": 92371398,
+          "ddr_inflight_ps": 2022600529530,
+          "channel1_peak_queued": 8,
+          "channel1_peak_active": 12,
+          "dma_issue_throttle_ticks": 3946764,
+          "writes": 48384
+        },
+        "candidate_ddr": {
+          "reads": 92323014,
+          "writes": 48384,
+          "callbacks": 92371398,
+          "ddr_queue_ps": 60912669992,
+          "ddr_inflight_ps": 2022600529530,
+          "dma_issue_throttle_ticks": 3946764,
+          "channel0_peak_queued": 8,
+          "channel1_peak_queued": 8,
+          "channel0_peak_active": 12,
+          "channel1_peak_active": 12
+        },
+        "reference_retirements": [],
+        "candidate_retirements": []
+      },
+      "exit_code": "0:0",
+      "end_cst": "2026-11-14T14:42:45+08:00",
+      "compute_wall_seconds": 1769,
+      "output_manifest_sha256": "73bc6897d439ed6f9d91785b6bc1ffacfb0a2f3d1212d2606157d05a2a4d69f3",
+      "final_output_sha256": {
+        "source.sha256": "878e92d073543ff9969ee9643a77fe3c4c018b0fedef869a3a34c81b0c502da2",
+        "reference-110383.sha256": "482c63c83f9302df13c485df6f1e1ffd8e331359b8569bd0ff6d8c5fa5b4c80e",
+        "inputs.sha256": "c2c9f1d460e56469c86582454953246e4b628fccac8cf4598cf76e095e771974",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+        "candidate.wall-seconds": "2e0fd5409ffd0f9005682f50a7526424170313d854812b5d2d31aefeb5cc135e",
+        "comparison.json": "503e365f324d49eb5a4b7d2bd358931e255779a75487a2b96de8802b7e539e11",
+        "candidate/execution.json": "dbb05a2ebd05f5df07b8bfd44e6ca64416cbcc5d0bbb11eff3b566bb13b6380a",
+        "candidate/page-timing.jsonl": "cb22213dc38ee70bf7e18e35b121eef2abe9776b028ea33de1defcb3fae8fc50",
+        "candidate/timing-audit.json": "ff40cd4bd56c4363e1a5aa214ba1361d862989396d0b4587fd221201a8f8121f"
+      }
+    }
+  ],
+  "transfer_audit": {
+    "script": "work/Melodydt/265/audit_qwen_sram_width_transfer.py",
+    "script_sha256": "f250601d7b795098f6c4b9f88a27b146ec71109b0f10f17955eb2b1beef27eed",
+    "receipt": "work/Melodydt/265/qwen-sram-width-transfer.json",
+    "receipt_sha256": "9a76b7ab21745fb060ffc7ff2fe20f679798648f578d21fa80d8d3b1c07e49bf",
+    "python_version": "Python 3.7.0",
+    "preregistered_blind_comparison": false
+  }
+}

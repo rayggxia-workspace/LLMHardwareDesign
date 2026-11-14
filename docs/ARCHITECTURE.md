@@ -174,3 +174,43 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+
+## #265 片上指令周期实验
+
+[Qwen2.5-3B Decode 快评指南](../project/experiments/instruction_cycle/QWEN_DECODE_GUIDE.md)记录派生分支入口、128/256/512-bit 与缓存反馈阶段的可变参数、固定硬件条件和复跑命令。
+
+单时钟事件模型、输入约束、Slurm 短程 RTL 复跑和版本追踪见[实验说明](../project/experiments/instruction_cycle/README.md)。主要复核命令如下。
+
+```bash
+python -B -m unittest discover -s project/experiments/instruction_cycle -p 'test_*.py' -v
+python -B project/experiments/instruction_cycle/compare_arbiter.py <107488-日志目录>
+python -B project/experiments/instruction_cycle/copy_reference.py work/Melodydt/265/copy-rtl-input.json
+```
+
+### A2 控制镜像与算子联合对账
+
+[实验说明](../project/experiments/instruction_cycle/README.md#a2-母控局控与片上算子联合验证)给出真实 V1 MC/LC 二进制、Slurm 复跑、冻结输入和 PM／feeder／M／S 的逐拍验证。服务器回执为 [107535](../work/Melodydt/265/a2-rtl-107535.json)。
+
+### 双 U_64 控制、算子与跨 Block 事务
+
+[双 U_64 实验说明](../project/experiments/instruction_cycle/README.md#双-u_64-从-start-到-result)记录 Compact V2 镜像、PM、SRAM 和跨 Block ACK 的周期模型及 Slurm 复跑命令。[107643 回执](../work/Melodydt/265/dual-u-rtl-107643.json)区分实际接受 RESULT 的边沿和下一拍的旧摘要。
+
+### 有限队列 DMA／DDR
+
+[实验说明](../project/experiments/instruction_cycle/README.md#有限-dma-队列与实时-dramsim3)记录片上调度、64 B 事务、FENCE、实时 DRAMsim3 读桥及独立 RTL 的复跑命令。[DMA／DDR 回执](../work/Melodydt/265/dma-ddr-receipts.json)记录版本、工具、作业和散列。
+
+### DDR 写数据结束与跨时钟采样
+
+[复跑与协议](../project/experiments/instruction_cycle/README.md#ddr-写数据结束与跨时钟采样)记录 DRAMsim3 WR 命令、写数据结束、300 MHz/630 ps FIFO 时钟映射和独立命令追踪审核。[107731 回执](../work/Melodydt/265/dram-write-cdc-107731.json)冻结源码、配置、命令日志与比较范围。
+
+[Qwen2.5-3B 原生短窗](../project/experiments/instruction_cycle/README.md#qwen25-3b-原生短窗-ddr-对账)使用 `run_qwen_native_ddr.sbatch` 核验实际 MC/LC 镜像、已接受 DDR 地址和回调，并独立检查 case 2、3 的逻辑 KV 边界。[107931 回执](../work/Melodydt/265/qwen-native-ddr-107931.json)给出服务器路径、作业和输入输出散列。
+
+[105530 独立预测与跨层探针](../project/experiments/instruction_cycle/README.md#105530-指令地址与独立周期预测)从镜像和描述符展开全窗地址与 CALL/WAIT。以 `run_qwen_prompt_pm.sbatch` 预测首行至首批 MC/LC DDR 周期，以 `run_qwen_105530_markers.sbatch` 复跑原生 RTL 并采集同域跨层边沿。[作业与散列](../work/Melodydt/265/qwen-105530-cycle-receipt.json)
+
+[105530 首页与首笔 Q 投影权重](../project/experiments/instruction_cycle/README.md#105530-首个指令页与首笔-q-投影权重)使用 `run_qwen_page_cycle.sbatch <108208 边沿目录> --with-first-weight` 连续推导 MC/LC 发射、DRL1、typed DMA 和首笔投影权重的周期。运行器在读取 RTL 对照前封存两种预测。[作业与散列](../work/Melodydt/265/qwen-105530-first-page-108366.json)
+
+[105530 首对 Q EXEC 与第三条权重](../project/experiments/instruction_cycle/README.md#105530-首对-q-exec-与第三条权重)使用 `run_qwen_page_cycle.sbatch <探针目录> --with-three-weights` 独立生成预测，再用 `run_qwen_105530_markers.sbatch --pair <预测目录>` 在第三条权重源端接收时结束短 RTL，核对 SRAM、双权重 bank 和 M EXEC 的握手。
+
+[Qwen D128 缓存 Decode 估算](../project/experiments/instruction_cycle/README.md#qwen25-3b-整机-decode-速度估算)先由 `run_qwen_request_geometry.sbatch` 校验全部 127 个反馈阶段，再用 `estimate_qwen_decode.py` 在封存 107361 的单拍 KV 配置下计算吞吐与第二步误差。`run_qwen_fast_tlm.sbatch` 以原始母控、局控和真实 DRAMsim3 事务运行两步匹配参考，保留全部页及退休记录。
+
+110666 的 582 页和两次退休由 `run_qwen_fast_tlm_recovery.sbatch <110666 目录>` 恢复汇总，并在 111176 对齐 107361 的 DDR 审计。原生短窗使用 `run_qwen_page_cycle.sbatch <探针目录> --through-ffn-ingress` 连续预测前四页及 FFN 的激活搬运、镜像安装、首批三个 P 的描述符和服务接收。时间口径、范围和 SHA-256 见[整机回执](../work/Melodydt/265/qwen-decode-evaluation-107361.json)。

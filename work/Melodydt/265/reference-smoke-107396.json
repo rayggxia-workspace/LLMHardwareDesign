@@ -1,0 +1,67 @@
+{
+  "scope": "HF FP32 reference environment and ONNX parser smoke",
+  "passed": true,
+  "full_p512_d128_qualified": false,
+  "device_timing_qualified": false,
+  "python": "3.10.12",
+  "torch": "2.10.0+cpu",
+  "transformers": "5.20.2",
+  "onnx": "1.17.0",
+  "onnxruntime": "1.20.1",
+  "checkpoint_revision": "5defd2796acd3cb2051bb4c787eddc7f8f35e113",
+  "checkpoint_files_verified": 9,
+  "checkpoint_directory": "/public/home/yuzelu/Melodydt/runs/issue-265/assets-20261113-01/checkpoint",
+  "manifest_sha256": "032953498bccb410a4012960dbb41421debed65f43c8b6f7921efb83c05feaf8",
+  "parameter_count": 3085938688,
+  "tokenizer_length": 151665,
+  "cases": [
+    {
+      "case": "case-2",
+      "prompt_tokens": 512,
+      "generated_tokens": [
+        1246,
+        264
+      ],
+      "cached_decode_steps": 1,
+      "cached_vs_full_maxabs": 1.0848045349121094e-05,
+      "onnx_prefill_top1_matches_hf": true,
+      "onnx_prefill_maxabs_vs_hf": 0.00015425682067871094
+    },
+    {
+      "case": "case-3",
+      "prompt_tokens": 512,
+      "generated_tokens": [
+        7525,
+        323
+      ],
+      "cached_decode_steps": 1,
+      "cached_vs_full_maxabs": 9.5367431640625e-06,
+      "onnx_prefill_top1_matches_hf": true,
+      "onnx_prefill_maxabs_vs_hf": 0.00015735626220703125
+    }
+  ],
+  "onnx_checker": [
+    {
+      "path": "export-0/cached.onnx",
+      "sha256": "34211e9096baf3e65d958348b26a9fe67a5b322a703d02899972ee0247c402b2",
+      "nodes": 2537
+    },
+    {
+      "path": "export-1/cached.onnx",
+      "sha256": "56f564a49ac71638f85f953abad75ce44a4636ec8da7f2cc7aa388eb39834682",
+      "nodes": 2537
+    },
+    {
+      "path": "export-2/cached.onnx",
+      "sha256": "fab9c5e8c056f98ff31427a9f33b3f10d245e658b56e360c3c633635992f6764",
+      "nodes": 2537
+    },
+    {
+      "path": "template-full/template.onnx",
+      "sha256": "200e22e44ad555c900f03edd0d70a53296f0158e50260bca9ec67c06740cd10b",
+      "nodes": 9285
+    }
+  ],
+  "onnxruntime_p512_prefill_executed": true,
+  "onnx_equivalence_qualified": false
+}

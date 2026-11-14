@@ -1,0 +1,342 @@
+{
+  "schema_version": 1,
+  "issue": 265,
+  "owner": "Melodydt",
+  "repository": "rayggxia-workspace/LLMHardwareDesign",
+  "branch": "task/265-qwen3b-system-evaluation",
+  "inherited_commit": "05225f51ee5367f8ca19793c45485dc5a90cc81c",
+  "workload": {
+    "model": "Qwen/Qwen2.5-3B",
+    "publisher_revision": "5defd2796acd3cb2051bb4c787eddc7f8f35e113",
+    "parameters": 3085938688,
+    "layers": 36,
+    "vocab_size": 151936,
+    "batch": 1,
+    "output_tokens": 128,
+    "primary_prompt_tokens": 512,
+    "case_contexts": [
+      128,
+      128,
+      512,
+      512,
+      2048,
+      2048
+    ],
+    "sampling": "greedy",
+    "stop_policy": "fixed_output_count",
+    "cached_decode_steps": 127,
+    "reference_uses_extra_numeric_warmthrough": true,
+    "integer_reference_relative_l2_max": 0.02,
+    "same_prefix_top1_required": true
+  },
+  "sources": {
+    "contract": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/eaf3008868982e5ac6c2f70878250c148ec6d009/work/YUZE-LU/234/BENCHMARK_CONTRACT.md",
+    "handoff": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/05225f51ee5367f8ca19793c45485dc5a90cc81c/docs/handoffs/2026-11-12-issue-234-whole-system-throughput.md",
+    "reference": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/eaf3008868982e5ac6c2f70878250c148ec6d009/work/YUZE-LU/234/reference-result.json",
+    "model": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/2ada6cf6a61f5acff4b6052e81e15d20070dc0f3/project/experiments/gpu_model_evidence/results/issue-32/model-manifests.json",
+    "calibration_index": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/1d284bdcb38bc9625c74d6ffeabae151094520b7/work/YUZE-LU/219/results/full-v1/provenance/algorithm-fix-43-calibration/output.sha256",
+    "resource_policy": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/eaf3008868982e5ac6c2f70878250c148ec6d009/work/YUZE-LU/234/resource-policy-001.json",
+    "sequence_job": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/eaf3008868982e5ac6c2f70878250c148ec6d009/work/YUZE-LU/234/sequence-recipe-attempt-001.json",
+    "export_job": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/eaf3008868982e5ac6c2f70878250c148ec6d009/work/YUZE-LU/234/frontend-full-result-002.json",
+    "legacy_launcher": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/0aecf173f5e39e101da60b20ba4c510514a84f71/project/experiments/systemc_benchmark/sequence_recipe.sbatch",
+    "candidate_memory": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/docs/experiments/issue-250-local-s-width.md",
+    "candidate_constraints": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250",
+    "event_compiler": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/a326d04e170cb84d273e96e7906bdf23775a0ca8/project/experiments/block_synthesis/EVENT_FRONTIER.md",
+    "dram_fixture": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/eaf3008868982e5ac6c2f70878250c148ec6d009/work/YUZE-LU/234/systemc-dram-result-001.json",
+    "historical_server_environment": "https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/96fa9dc1f126ab7b45e0a20579fd3af19ae72704/work/Melodydt/149/README.md"
+  },
+  "revisions": {
+    "legacy_compiler": "1d284bdcb38bc9625c74d6ffeabae151094520b7",
+    "pr235": "eaf3008868982e5ac6c2f70878250c148ec6d009",
+    "job_101602": "0aecf173f5e39e101da60b20ba4c510514a84f71",
+    "pr251": "9abd46f5cbb4534bcfc614571ccd6d402ad11882",
+    "pr257_handoff": "461f533a813cf5bc08974ee84968b2f731f4a2cf",
+    "pr257_audited": "a326d04e170cb84d273e96e7906bdf23775a0ca8",
+    "pr257_parent_compiler": "05602e4316dad898e19a31f49bbd19e2a6ab8b78"
+  },
+  "checkpoint": {
+    "config.json": "27467e2fc311a7656c09a43ae9c3d408211e1f212bbddbc93c8596a06423826f",
+    "generation_config.json": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8",
+    "merges.txt": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+    "model-00001-of-00002.safetensors": "f9558df91d3b89b4826e4db37439edb52f1d62a4fd602685013e7ca6b9f60f8f",
+    "model-00002-of-00002.safetensors": "51410930d5cf19a998fdb17ef0c46e4d9ace72c97a975a3331395a8a500f5edb",
+    "model.safetensors.index.json": "bc8aaa0c87d4335177e01c765f1de0db81661c67c1a72fbfb0d521b09f5ddc56",
+    "tokenizer.json": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+    "tokenizer_config.json": "c91efca15ceff6e9ee9424db58a6f59cd41294e550a86cbd07e3c1fb500b34f9",
+    "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+  },
+  "cases": [
+    {
+      "id": "case-0",
+      "prompt_tokens": 128,
+      "tokens_sha256": "145f12d7169a4b7d6928672cb8e5e2d0ad642235407e05ce9af2983ac48b22d9",
+      "reference_receipt_sha256": "2f21fbce49aed16dd0c57dbce8bf90fe22d3d0e1546c08a40a9640b23c41b28f",
+      "prefill_onnx": "export-0/cached.onnx"
+    },
+    {
+      "id": "case-1",
+      "prompt_tokens": 128,
+      "tokens_sha256": "11869c0ace8110d22ffbe35d272d0cdcdd162d97a1f352a5689cb4bb459f3ab4",
+      "reference_receipt_sha256": "543ff80f7f29565ff3a697f51ad19c58f3ba73ec927ae88d65fc3d565f64b7ab",
+      "prefill_onnx": "export-0/cached.onnx"
+    },
+    {
+      "id": "case-2",
+      "prompt_tokens": 512,
+      "tokens_sha256": "ee87fd8f2fb870401927ada4164a5f9d4d726ae4aef69181fad1175aeea8c7d3",
+      "reference_receipt_sha256": "0635e8e7e90331d28c30b40a14ea75ed2c1778954064c750b7375191eeb2a3d0",
+      "prefill_onnx": "export-1/cached.onnx"
+    },
+    {
+      "id": "case-3",
+      "prompt_tokens": 512,
+      "tokens_sha256": "36c412b05f2130b5c02bf49963edf049b22ff6672be2f04abbcbf96b19e43847",
+      "reference_receipt_sha256": "51edc407f078efc8e098ac928a68f3e027631b1a30814926826a58ab91bd3956",
+      "prefill_onnx": "export-1/cached.onnx"
+    },
+    {
+      "id": "case-4",
+      "prompt_tokens": 2048,
+      "tokens_sha256": "a40c32dac2149b1167e6fe77b4790ddb89e579a11fd184b5d889a4cd9d3c899b",
+      "reference_receipt_sha256": "72c0880c82ca7087e38396339c57093ff4fe49af452e450ca430e1cbc049952e",
+      "prefill_onnx": "export-2/cached.onnx"
+    },
+    {
+      "id": "case-5",
+      "prompt_tokens": 2048,
+      "tokens_sha256": "43b7d367fedf6d496ca6582d77aca339db8198cbc9517125c3cc328bf2561ca5",
+      "reference_receipt_sha256": "80f5a7e18bfb778e5b176c0160887038a5928b2dc3d94d9ec15f52f1c28c9757",
+      "prefill_onnx": "export-2/cached.onnx"
+    }
+  ],
+  "historical_inputs": {
+    "roots": {
+      "reference": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/reference-002",
+      "legacy_weights": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-43-calibration",
+      "graphs": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/frontend-full-002",
+      "checkpoint": null
+    },
+    "weights_index_sha256": "a6e83325de5be3ef6dce4bb9ee64cf722027738f7a590486d973cce23bdf9244",
+    "weights_count": 434,
+    "calibration_sha256": "013b03698e11ae7e3fe1239d2a1a3b8719dbb721dd67a07d802a616a7bf82696",
+    "integer_recipe": {
+      "weight_bits": 16,
+      "kv_bits": 32,
+      "kv_exponent": -20,
+      "rms_refinements": 1,
+      "weighted_product_fraction_bits": 6
+    },
+    "source_archive_sha256": "3a2ee2aa3eb88c39c8ba86dff48af0ebed46b215c2da173f69e82179fb8344d6",
+    "source_files_sha256": {
+      "sequence_recipe.sbatch": "8bbf70f476833839505cf990af19d95d1ef680a2a1769b2dd747856502cb017f",
+      "sequence_replay.py": "972da411f9adc86a5b804cd4ac88bf687c4e2107c220b552e6d15899a24de130",
+      "sequence_policy.py": "3d5546e6ec1733fff44676bd8fa25004e6ced0a6f1978ad8f0905749f330ef55",
+      "cached_primitives.py": "d8e4e02b23679b6f430ca9353ab3c831620f932858a4fdcef6cfaba0c7f97387",
+      "cached_template.py": "158ade486e649bf534f12c4a2a7c643533665e22a1fdc3e38b32de466cdd8139",
+      "kv_handoff.py": "5d8f900318c66e780fcd05bbcf7971a162da69036c224e72c277c401ca312a22",
+      "exact_reference_dot.py": "cdb76d39b6ea452d1095c37fa73eaba00255f586d782fd38e5a54b9bd1e3c15c",
+      "contraction_bounds.py": "9540c9df806ff52719d1133b5d4ce8e2fbc94b97707f88099e7ba979e8ddd697"
+    },
+    "export_receipts_archive": {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/frontend-full-002-results-001/frontend-full-002-results.tar.gz",
+      "sha256": "e5a06366c8e187cfbb386f6be5cd086daa84ea3ebc38687f854e7a0f5770e2f4"
+    },
+    "onnx": {
+      "export-0/cached.onnx": "34211e9096baf3e65d958348b26a9fe67a5b322a703d02899972ee0247c402b2",
+      "export-1/cached.onnx": "56f564a49ac71638f85f953abad75ce44a4636ec8da7f2cc7aa388eb39834682",
+      "export-2/cached.onnx": "fab9c5e8c056f98ff31427a9f33b3f10d245e658b56e360c3c633635992f6764",
+      "template-full/template.onnx": "200e22e44ad555c900f03edd0d70a53296f0158e50260bca9ec67c06740cd10b"
+    },
+    "onnx_external_data": {}
+  },
+  "profiles": {
+    "legacy": {
+      "scope": "Frozen compiler baseline",
+      "groups": {
+        "P": 3,
+        "U": 2,
+        "C": 1,
+        "F": 1,
+        "J": 2
+      },
+      "m_instances": 3,
+      "abstract_memory": {
+        "kind": "pr182-bounded-v1",
+        "channels": 2,
+        "word_bytes": 16,
+        "banks": 4
+      },
+      "compiler_profile": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-220-statecost-v2-plan/generated/nine-groups-count-experiment-ir.json",
+        "sha256": "444c850b1b39a35d6b311ebee85bbc14b8fd6a508f5c9e7407f8cd47141d565e",
+        "memory_kind": "pr182-bounded-v1",
+        "channels": 2,
+        "word_bytes": 16,
+        "bank_count": 4,
+        "scope": "deterministic compiler abstraction; not RTL/VIP or device calibration"
+      },
+      "runtime": {
+        "core_clock_hz": null,
+        "sram_contract": null,
+        "ddr_capacity_bytes": null,
+        "ddr_bandwidth_bytes_per_second": null,
+        "ddr_configuration": null,
+        "cdc_contract": null,
+        "images": null,
+        "topology": null,
+        "launcher": null,
+        "toolchain": null,
+        "container": null,
+        "compiler_commit": null,
+        "rtl_commit": null,
+        "build_inputs": null
+      }
+    },
+    "candidate_250": {
+      "scope": "Separate #250 candidate",
+      "core_clock_target_hz": 300000000,
+      "ddr_target_bandwidth_bytes_per_second": 51200000000,
+      "private_sram_bytes": 16384,
+      "weight_bits": 8,
+      "activation_bits": 16,
+      "persistent_state": "S32/Q16",
+      "mid_bits": 32,
+      "runtime": {
+        "core_clock_hz": null,
+        "sram_contract": null,
+        "ddr_capacity_bytes": null,
+        "ddr_bandwidth_bytes_per_second": null,
+        "ddr_configuration": null,
+        "cdc_contract": null,
+        "images": null,
+        "topology": null,
+        "launcher": null,
+        "toolchain": null,
+        "container": null,
+        "quantized_inputs": null,
+        "compiler_commit": null,
+        "rtl_commit": null,
+        "build_inputs": null
+      }
+    }
+  },
+  "runtime_artifact_names": {
+    "sram_contract": "sram.json",
+    "ddr_configuration": "ddr.ini",
+    "cdc_contract": "clock-domains.json",
+    "images": "control-images.json",
+    "topology": "topology.json",
+    "launcher": "launch",
+    "toolchain": "toolchain.json",
+    "container": "runtime.sif",
+    "quantized_inputs": "quantized-inputs.sha256",
+    "build_inputs": "build-inputs.sha256"
+  },
+  "server": {
+    "host": "10.129.166.172",
+    "user": "yuzelu",
+    "job_prefix": "zny-",
+    "run_root": "/public/home/yuzelu/Melodydt/runs/issue-265",
+    "partitions": [
+      "c64",
+      "c96"
+    ],
+    "host_key_fingerprint": "SHA256:DL7XnYNbr+zrwjvO2edFLaPpnycbMqMaFxg+vFcQKkU",
+    "verified_checkpoint_path": "/public/home/yuzelu/Melodydt/runs/issue-265/assets-20261113-01/checkpoint",
+    "verified_toolchain_path": "/public/home/yuzelu/Melodydt/runs/issue-265/reference-env-20261113-01/venv/bin/python"
+  },
+  "historical_tool_evidence": {
+    "systemc": "3.0.1",
+    "systemc_library_sha256": "930767c0ec7a203c38552201a22fa2a27a319c47d4d9019096457a674bca0848",
+    "dramsim3_commit": "29817593b3389f1337235d63cac515024ab8fd6e",
+    "dramsim3_library_sha256": "2aa0b2c81b1943065fbbb56620774333313bf1b1d7009343b37af5cbdeba15ef",
+    "dramsim3_fixture_ini_sha256": "a42535330a6148c7d6d967b613b894b968217fa8b91df17067630fe7e3cd6a58",
+    "verilator": "5.042",
+    "gcc": "11.4.0",
+    "singularity": "4.3.4",
+    "scope": "Historical component runs. The effective integrated deployment and SIF are pending verification.",
+    "container_149": {
+      "path": "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif",
+      "sha256": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+      "scope": "Historical #149 RTL smoke. Recheck the current file before reusing it."
+    }
+  },
+  "server_readback": {
+    "date": "2026-11-13",
+    "timezone": "Asia/Shanghai",
+    "hostname": "mgt01",
+    "slurm": [
+      {
+        "id": 101602,
+        "job_name": "yzl-sc234-chain",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "elapsed": "02:16:37",
+        "partition": "c96",
+        "allocated_cpus": 60,
+        "node": "node13"
+      },
+      {
+        "id": 103217,
+        "job_name": "yzl-strict-kv",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:01:23",
+        "partition": "c64",
+        "allocated_cpus": 10,
+        "node": "node5"
+      },
+      {
+        "id": 103220,
+        "job_name": "yzl-strict-dram",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:00:07",
+        "partition": "c64",
+        "allocated_cpus": 2,
+        "node": "node1"
+      }
+    ],
+    "component_receipts": {
+      "kv": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/strict-kv-localize-OhtHd3pH/result.json",
+        "sha256": "882f1e7b77086368fab694f77b162bca001738ea9e088546a56dfa857e77ac92"
+      },
+      "ddr": {
+        "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/strict-dram-repeat-ZyprDHdt/receipt.json",
+        "sha256": "0e80372f6dfc79c29d07bf6bd06555da90d5544f010f64d868f2706071c876f0"
+      }
+    },
+    "reference_files_sha256_matched": 12,
+    "legacy_quantized_weights_sha256_matched": 434,
+    "legacy_calibration_and_compiler_resource_sha256_matched": true,
+    "onnx_files_matched_archive": 4,
+    "onnx_protobuf_schema_sha256": "eec80d60778be4d49524475b95fb05e5d1f917d67d815785a075dceeb29c1f53",
+    "historical_container_sha256_matched": true,
+    "container_python": "3.10.12"
+  },
+  "reference_environment": {
+    "verification_date": "2026-11-13",
+    "source_commit": "e6e01fa46663101179a8679afc6deb45a638c93d",
+    "job_id": 107396,
+    "job_name": "zny-qwenref",
+    "terminal_state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:01:14",
+    "partition": "c64",
+    "node": "node2",
+    "allocated_cpus": 8,
+    "run_directory": "/public/home/yuzelu/Melodydt/runs/issue-265/reference-smoke-20261113-01",
+    "results_sha256": "492f76af1bc81f296e5a03621e3e22a082be4c53c7c056f6e6791979e48433dc",
+    "requirements_sha256": "5db2a5d1ccc822d31cd9affe1f17925987740c25c81e422af2df85a28319eb2d",
+    "python": "3.10.12",
+    "torch": "2.10.0+cpu",
+    "transformers": "5.20.2",
+    "onnx": "1.17.0",
+    "onnxruntime": "1.20.1",
+    "results": "reference-smoke-107396.json",
+    "requirements": "reference-requirements-107396.txt",
+    "checkpoint_publisher_endpoint": "https://www.modelscope.cn/api/v1/models/Qwen/Qwen2.5-3B/repo",
+    "qualification": "FP32 P512 prefill and first cached decode, plus P512 ONNX logits; no device or full sequence qualification."
+  }
+}

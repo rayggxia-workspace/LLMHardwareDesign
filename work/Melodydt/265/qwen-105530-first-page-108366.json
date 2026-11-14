@@ -1,0 +1,640 @@
+{
+  "schema": "issue265-qwen-native-first-page/1",
+  "issue": 265,
+  "pr": 266,
+  "server": "yuzelu@10.129.166.172",
+  "archive": {
+    "job_id": 105530,
+    "case": 2,
+    "positions": [
+      636,
+      637,
+      638
+    ],
+    "directory": "/public/home/yuzelu/project-circuit/issue260-decode638-live-product-next-rms-u8Z2olTH/replay-105530",
+    "source_tar_sha256": "e6833398029d6348699370a6fb8630968792849c0b83a4e8974812a53cae3b32",
+    "upstream_git_commit": null,
+    "proof_sha256": "afa825d6f1d3f549adf5a8cfb021c85e4cb428b00ff06cf46acbd44f2c298ee9",
+    "topology": 25001,
+    "core_period_ps": 10000,
+    "ddr_period_ps": 630,
+    "verilator": "5.042",
+    "embedding_row_sha256": "fb88f7d99096a0b1de4f2d27f053369c82b2f6fab7dc31dd4890be034aba5439"
+  },
+  "held_out": {
+    "job_id": 105572,
+    "used": false
+  },
+  "rtl_probe": {
+    "simulation_job": 108159,
+    "verification_job": 108208,
+    "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01",
+    "manifest_sha256": "0dec2e339bb355191a4bf0674d61504f2749db378e70cd6c7c11325d3d566aad"
+  },
+  "runs": [
+    {
+      "job_id": 108297,
+      "job_name": "zny-qwenpage",
+      "source_commit": "ef83cef22f3b11a1f8a335b6dfb19a969815bec9",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-page-20261113-01",
+      "stdout": "slurm-108297.out",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "partition": "c64",
+      "node": "node3",
+      "cpus": 2,
+      "elapsed": "00:00:06",
+      "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01",
+      "output_manifest_sha256": "1bcb43bcccfc46d5d002c58cfbe7e6ac89c6c90176f5960d052741196c9857e9",
+      "output_sha256": {
+        "prediction-0.json": "1276ec028ae1e669544b60f5f207573e24ae5bf8c2da43d03cf9cff3c0bed05e",
+        "prediction-1.json": "c6db804323e4e6acf4c317a0874e438b719798af11ddda3ad1659c0eab87ff64",
+        "comparison-0.json": "3a9ebc0d14255e5076b1a09a01a8ba384a62c5fa482ee31a79762dbd67b353a9",
+        "comparison-1.json": "ba6f91621d0c6df4adca758c81ee5e060e670ed6da07a51dd723f6c14b07e3e3",
+        "prediction.sha256": "b9bee8337b2a24fd7e2dd627d0b2677cad905b3ce30478524e880fa5c34e5761",
+        "tools.sha256": "9d49301ef5e3e43d404adf5f655861087dc4baab8068da02a8be201e9c4eecf5",
+        "source.sha256": "cfc05347ff207aca026778718cd6913677659ecb932b694669259b263c349886",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "bridge-read": "ce2c768696d5d65019c5d411244835cbf3023784647573e80c7d85101fb58817"
+      },
+      "source_sha256": {
+        "qwen_prompt_cycle.py": "9379a8e5bff45d8626685ef55e885d019f0c2b6b3f1d74ba37db873eb60204a3",
+        "qwen_prompt_pm.py": "0c793a0772f0b8040b495d822f8abb484b6f73cc89fee9a092c8dd6a201a0424",
+        "qwen_page_dispatch.py": "a02e14242696633867691cd0dc914ca2d893696128c367ee3f4aee9f0dc757a8",
+        "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+        "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+        "qwen_page_cycle.py": "545b36e29749b159f6a5717f07f9952c097ca6c9a1391e5e9e12b49999254515",
+        "run_qwen_page_cycle.sbatch": "083f6c2c801563a482d92785ac6f4c1ead0df089139ee2d8af6cdf4c34dbc6c3",
+        "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+        "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+        "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+        "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+        "dram_live.py": "eefb4cb221b9b42724770e55d058f06cbdc4d00cb6956878f3463324fe0b6d22",
+        "dramsim_bridge.cpp": "76b28487dde12085749ea559fff722e2c75b6050769519c719a10bd722cb75c8",
+        "git-commit.txt": "4823659db549981c03bd1e0db4914036d74201532009e605e6fbfde436fbc42d"
+      },
+      "tools_sha256": {
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b"
+      },
+      "python_version": "Python 3.10.12",
+      "cpp_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+    },
+    {
+      "job_id": 108312,
+      "job_name": "zny-qwenpage",
+      "source_commit": "49c7a4235a7d52487235511a0dde9a1d3bc6d283",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-page-20261113-02",
+      "stdout": "slurm-108312.out",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "partition": "c64",
+      "node": "node3",
+      "cpus": 2,
+      "elapsed": "00:00:06",
+      "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01",
+      "output_manifest_sha256": "1750d3ad325a9f15a1fc2c1becc889dff1579018dd7fe00f991cf7342f680cb0",
+      "output_sha256": {
+        "prediction-0.json": "1276ec028ae1e669544b60f5f207573e24ae5bf8c2da43d03cf9cff3c0bed05e",
+        "prediction-1.json": "c6db804323e4e6acf4c317a0874e438b719798af11ddda3ad1659c0eab87ff64",
+        "comparison-0.json": "ff6ddb72603cbe2b9310f465511c4b6be24df463ec12b5ddabd2202e90d6d52b",
+        "comparison-1.json": "10823e78dfe765651f50b7e1321712ce99cf6732895db96f111ddae4b841d509",
+        "prediction.sha256": "b9bee8337b2a24fd7e2dd627d0b2677cad905b3ce30478524e880fa5c34e5761",
+        "tools.sha256": "9d49301ef5e3e43d404adf5f655861087dc4baab8068da02a8be201e9c4eecf5",
+        "source.sha256": "0b380e99741ee70f2ae88f4bcb2ecde7089ed507c5839c170b93c45889c4125a",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "bridge-read": "ce2c768696d5d65019c5d411244835cbf3023784647573e80c7d85101fb58817"
+      },
+      "source_sha256": {
+        "qwen_prompt_cycle.py": "9379a8e5bff45d8626685ef55e885d019f0c2b6b3f1d74ba37db873eb60204a3",
+        "qwen_prompt_pm.py": "0c793a0772f0b8040b495d822f8abb484b6f73cc89fee9a092c8dd6a201a0424",
+        "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+        "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+        "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+        "qwen_page_cycle.py": "80a7f12fc0a3078a9f486dcbb193ec425e665e45dd32f2aca619e1b0e53eb8b8",
+        "run_qwen_page_cycle.sbatch": "083f6c2c801563a482d92785ac6f4c1ead0df089139ee2d8af6cdf4c34dbc6c3",
+        "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+        "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+        "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+        "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+        "dram_live.py": "eefb4cb221b9b42724770e55d058f06cbdc4d00cb6956878f3463324fe0b6d22",
+        "dramsim_bridge.cpp": "76b28487dde12085749ea559fff722e2c75b6050769519c719a10bd722cb75c8",
+        "git-commit.txt": "8872ec2056f6669dfedb949712f0855b52bae343bb0d2b64b15c74aa5e0eb68d"
+      },
+      "tools_sha256": {
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b"
+      },
+      "python_version": "Python 3.10.12",
+      "cpp_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+    },
+    {
+      "job_id": 108366,
+      "job_name": "zny-qwenpage",
+      "source_commit": "63f03a82a322195af3f0dfb0c60370e6db65c1f8",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-page-20261113-03",
+      "stdout": "slurm-108366.out",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "partition": "c64",
+      "node": "node3",
+      "cpus": 2,
+      "elapsed": "00:00:06",
+      "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --with-first-weight",
+      "output_manifest_sha256": "df48f5af317ffec159831116731ff02f8917f1a3463caed58ee705fe00afc215",
+      "output_sha256": {
+        "prediction-0.json": "9c09c112458ba4b8cca8b085a3636de34a4fef7bb3079c73289b783e53ec9ac0",
+        "prediction-1.json": "e2bba5900c9bfed474c9dfcc73d7fdbaa339099996bcb30638a481a5cc8da43f",
+        "comparison-0.json": "e7980e5876907415ab15f2336a176c69ff93fffeb080f41c91f8a932c235a92a",
+        "comparison-1.json": "28722a0efd1221a88f702ea28307cfe6e8148775dabc7b941c3668aee28e6f11",
+        "prediction.sha256": "be47209a75a13bf9a5393427d6452c5655f57e8418a4f80082f3aa9ac78ba1d6",
+        "tools.sha256": "9d49301ef5e3e43d404adf5f655861087dc4baab8068da02a8be201e9c4eecf5",
+        "source.sha256": "55c556087cde69dc8e9a641d2276cbfc30f4fff2e8aa03f880ae36074bcaf0b0",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "bridge-read": "ce2c768696d5d65019c5d411244835cbf3023784647573e80c7d85101fb58817"
+      },
+      "source_sha256": {
+        "qwen_prompt_cycle.py": "9379a8e5bff45d8626685ef55e885d019f0c2b6b3f1d74ba37db873eb60204a3",
+        "qwen_prompt_pm.py": "0c793a0772f0b8040b495d822f8abb484b6f73cc89fee9a092c8dd6a201a0424",
+        "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+        "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+        "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+        "qwen_page_cycle.py": "0a1a5e08d985de08d4979825853188eeaa6bb7c0f73318d5d1a308118fb2dd3f",
+        "run_qwen_page_cycle.sbatch": "90c01382fe67371b5aa5353ad7a92c5d15c88cf79cdc42ec4e7ceea6850c141b",
+        "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+        "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+        "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+        "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+        "dram_live.py": "eefb4cb221b9b42724770e55d058f06cbdc4d00cb6956878f3463324fe0b6d22",
+        "dramsim_bridge.cpp": "76b28487dde12085749ea559fff722e2c75b6050769519c719a10bd722cb75c8",
+        "qwen_projection_front.py": "4650b298014e21c1e6047d007fff2403b00d2018014b039670bd26404f6cef90",
+        "qwen_weight_record.py": "2e72a2a488ed208472a467518688b82a210ed3e3172d9f862e3e8c107e3042fa",
+        "git-commit.txt": "273002d1ea0f7b14a3cc8ff1b1c1d531d556b6061189ffacb760141103174209"
+      },
+      "tools_sha256": {
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b"
+      },
+      "python_version": "Python 3.10.12",
+      "cpp_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+    }
+  ],
+  "measurement_boundary": {
+    "scope": "First MC/LC program load, two DRL1 retirements, and first Q P_SCOPE activation-window launch through its isolated 17-beat weight record.",
+    "start_input": "fixture prompt acceptance edge 2 and fixed two-edge launch to first admit",
+    "clock_index": "zero-based pre-edge DDR bridge core count",
+    "ddr_backend": "two live DRAMsim3 devices with original configuration and continuous state",
+    "conditional_full_page_wait_input": "observed RTL provider retirements",
+    "page_cycles_independently_qualified": false,
+    "cross_layer_cycles_independently_qualified": false,
+    "whole_system_decode_qualified": false,
+    "projection_validation": "Independent first weight offer and M fills; observed comparison covers only physical admits, DRAMsim3 accepts/callbacks and physical returns for these 17 beats.",
+    "excluded": "Concurrent weight records, activation COPY and A LOAD overlap with M EXEC, remaining provider retirements, multi-P contention, later pages."
+  },
+  "modes": [
+    {
+      "comparison": {
+        "mode": 0,
+        "matched_ddr_bursts": 306,
+        "matched_ddr_events": 1224,
+        "matched_control_markers": 11,
+        "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+        "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+        "conditional_wait_audit": {
+          "input": "observed_provider_retire",
+          "matched_wait_handoffs": 123,
+          "matched_next_descriptor_admissions": 246,
+          "matched_page_commit": 547468
+        },
+        "prediction_sha256": "9c09c112458ba4b8cca8b085a3636de34a4fef7bb3079c73289b783e53ec9ac0"
+      },
+      "mode": 0,
+      "initial_mc_write_ack": 33943,
+      "calls": [
+        {
+          "ticket": 1,
+          "descriptor_ddr_address": 4591420928,
+          "descriptor_client_accepts": [
+            34400,
+            34401
+          ],
+          "physical_ddr_admits": [
+            34402,
+            34403
+          ],
+          "physical_ddr_returns": [
+            34406,
+            34407
+          ],
+          "service_accept": 34534,
+          "service": "DRL1",
+          "service_retire": 34704,
+          "ddr_reads": 8,
+          "sram_writes": 32
+        },
+        {
+          "ticket": 2,
+          "descriptor_ddr_address": 4591421056,
+          "descriptor_client_accepts": [
+            34777,
+            34778
+          ],
+          "physical_ddr_admits": [
+            34779,
+            34780
+          ],
+          "physical_ddr_returns": [
+            34783,
+            34784
+          ],
+          "service_accept": 34911,
+          "service": "DRL1",
+          "service_retire": 35059,
+          "ddr_reads": 8,
+          "sram_writes": 32
+        },
+        {
+          "ticket": 3,
+          "descriptor_ddr_address": 4591421184,
+          "descriptor_client_accepts": [
+            35132,
+            35133
+          ],
+          "physical_ddr_admits": [
+            35134,
+            35135
+          ],
+          "physical_ddr_returns": [
+            35136,
+            35137
+          ],
+          "service_accept": 35264,
+          "service": "P_SCOPE"
+        }
+      ],
+      "projection_front": {
+        "target": 0,
+        "ticket": 3,
+        "service_accept": 35264,
+        "first_scan_read": 35268,
+        "last_scan_ack": 35363,
+        "first_convert_read": 35365,
+        "last_packed_write": 35506,
+        "last_packed_write_ack": 35508,
+        "quant_done": 35509,
+        "header_publish": 35515,
+        "first_record_accept": 35516,
+        "weight_allocated": 35539,
+        "weight_table_installed": 35540,
+        "weight_source_offer": 35542,
+        "weight_client": 9,
+        "weight_address": 5017600,
+        "weight_record_beats": 17
+      },
+      "weight_record": {
+        "address": 5017600,
+        "client_accepts": [
+          35542,
+          35543,
+          35544,
+          35545,
+          35546,
+          35547,
+          35548,
+          35549,
+          35550,
+          35551,
+          35552,
+          35553,
+          35554,
+          35555,
+          35556,
+          35557,
+          35558
+        ],
+        "phy_admits": [
+          35544,
+          35545,
+          35546,
+          35547,
+          35548,
+          35549,
+          35550,
+          35551,
+          35552,
+          35553,
+          35554,
+          35555,
+          35556,
+          35557,
+          35558,
+          35559,
+          35560
+        ],
+        "phy_returns": [
+          35548,
+          35549,
+          35550,
+          35551,
+          35552,
+          35553,
+          35554,
+          35555,
+          35556,
+          35557,
+          35558,
+          35559,
+          35560,
+          35561,
+          35562,
+          35563,
+          35564
+        ],
+        "client_responses": [
+          35549,
+          35550,
+          35551,
+          35552,
+          35553,
+          35554,
+          35555,
+          35556,
+          35557,
+          35558,
+          35559,
+          35560,
+          35561,
+          35562,
+          35563,
+          35564,
+          35565
+        ],
+        "global_tags": [
+          8590721600,
+          8590198336,
+          8590002752,
+          8590003776,
+          8590004800,
+          8590005824,
+          8590006848,
+          8590007872,
+          8590787136,
+          8590263872,
+          8590068288,
+          8590069312,
+          8590070336,
+          8590071360,
+          8590072384,
+          8590073408,
+          8590852672
+        ],
+        "lanes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "comparison": {
+        "mode": 1,
+        "matched_ddr_bursts": 306,
+        "matched_ddr_events": 1224,
+        "matched_control_markers": 11,
+        "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+        "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+        "conditional_wait_audit": {
+          "input": "observed_provider_retire",
+          "matched_wait_handoffs": 123,
+          "matched_next_descriptor_admissions": 246,
+          "matched_page_commit": 591737
+        },
+        "prediction_sha256": "e2bba5900c9bfed474c9dfcc73d7fdbaa339099996bcb30638a481a5cc8da43f"
+      },
+      "mode": 1,
+      "initial_mc_write_ack": 33954,
+      "calls": [
+        {
+          "ticket": 1,
+          "descriptor_ddr_address": 4591420928,
+          "descriptor_client_accepts": [
+            34411,
+            34412
+          ],
+          "physical_ddr_admits": [
+            34413,
+            34414
+          ],
+          "physical_ddr_returns": [
+            34417,
+            34418
+          ],
+          "service_accept": 34545,
+          "service": "DRL1",
+          "service_retire": 34777,
+          "ddr_reads": 8,
+          "sram_writes": 32
+        },
+        {
+          "ticket": 2,
+          "descriptor_ddr_address": 4591421056,
+          "descriptor_client_accepts": [
+            34850,
+            34851
+          ],
+          "physical_ddr_admits": [
+            34852,
+            34853
+          ],
+          "physical_ddr_returns": [
+            34856,
+            34857
+          ],
+          "service_accept": 34984,
+          "service": "DRL1",
+          "service_retire": 35184,
+          "ddr_reads": 8,
+          "sram_writes": 32
+        },
+        {
+          "ticket": 3,
+          "descriptor_ddr_address": 4591421184,
+          "descriptor_client_accepts": [
+            35257,
+            35258
+          ],
+          "physical_ddr_admits": [
+            35259,
+            35261
+          ],
+          "physical_ddr_returns": [
+            35261,
+            35263
+          ],
+          "service_accept": 35390,
+          "service": "P_SCOPE"
+        }
+      ],
+      "projection_front": {
+        "target": 0,
+        "ticket": 3,
+        "service_accept": 35390,
+        "first_scan_read": 35394,
+        "last_scan_ack": 35489,
+        "first_convert_read": 35491,
+        "last_packed_write": 35662,
+        "last_packed_write_ack": 35666,
+        "quant_done": 35667,
+        "header_publish": 35673,
+        "first_record_accept": 35674,
+        "weight_allocated": 35697,
+        "weight_table_installed": 35698,
+        "weight_source_offer": 35700,
+        "weight_client": 9,
+        "weight_address": 5017600,
+        "weight_record_beats": 17
+      },
+      "weight_record": {
+        "address": 5017600,
+        "client_accepts": [
+          35700,
+          35701,
+          35702,
+          35703,
+          35704,
+          35705,
+          35706,
+          35707,
+          35708,
+          35709,
+          35710,
+          35711,
+          35712,
+          35713,
+          35714,
+          35715,
+          35716
+        ],
+        "phy_admits": [
+          35702,
+          35703,
+          35704,
+          35706,
+          35706,
+          35707,
+          35708,
+          35709,
+          35711,
+          35711,
+          35712,
+          35713,
+          35714,
+          35716,
+          35716,
+          35717,
+          35718
+        ],
+        "phy_returns": [
+          35706,
+          35707,
+          35708,
+          35709,
+          35708,
+          35710,
+          35711,
+          35712,
+          35714,
+          35713,
+          35715,
+          35716,
+          35717,
+          35718,
+          35719,
+          35719,
+          35720
+        ],
+        "client_responses": [
+          35707,
+          35708,
+          35710,
+          35711,
+          35709,
+          35712,
+          35713,
+          35714,
+          35716,
+          35715,
+          35717,
+          35718,
+          35719,
+          35721,
+          35720,
+          35722,
+          35723
+        ],
+        "global_tags": [
+          8590721600,
+          8590198336,
+          8590002752,
+          8590003776,
+          8590004800,
+          8590005824,
+          8590006848,
+          8590007872,
+          8590787136,
+          8590263872,
+          8590070336,
+          8590068288,
+          8590069312,
+          8590071360,
+          8590072384,
+          8590073408,
+          8590329408
+        ],
+        "lanes": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ]
+      }
+    }
+  ],
+  "next": "Model overlapping P_SCOPE W records, activation COPY/lease, A LOAD and EXEC through the first tile and provider retirement. Use already frozen 105530 physical DDR and service evidence, adding narrowly scoped passive edges if needed. Then validate the rest of the page, three-P contention and held-out 105572."
+}

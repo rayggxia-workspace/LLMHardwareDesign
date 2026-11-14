@@ -1,0 +1,366 @@
+{
+  "schema": "issue265-dma-ddr-evidence/1",
+  "issue": 265,
+  "pull_request": 266,
+  "server": "yuzelu@10.129.166.172",
+  "comparison_python": "3.7.0",
+  "quiescence": {
+    "job": 107669,
+    "name": "zny-dmaqui",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 12,
+    "partition": "c64",
+    "node": "node3",
+    "cpus": 4,
+    "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/dma-quiescence-20261113-01",
+    "submission": "sbatch --parsable --chdir=/public/home/yuzelu/Melodydt/runs/issue-265/dma-quiescence-20261113-01 run_dma_quiescence.sbatch",
+    "log": "slurm-107669.out",
+    "probe_commit": "4803da745c82f91b9c31dd11fad726dc15aac3c6",
+    "rtl_commit": "69ce47aa7fda8d732997131a90206ec4895c2ed7",
+    "verilator": "5.042",
+    "matched_checkpoints": 24,
+    "output_sha256": {
+      "quiescence.log": "e94f442a1293ee48ab622bc84adb37a01fb930a3f6e8d96108e2665205338e13",
+      "verilator-version.txt": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+      "build.log": "6222c3f77b83679c6f721cf08543910c227f222f62b9f4d7e2825b5ee8405ecc",
+      "tools.sha256": "1fb4e3faa571f1435bfae3b948acc8fab529e15fab8697d0ce5df1880ba13638",
+      "source.sha256": "073e5baabf24407a87806d0644d8314d1d9f273b81fafe485e485ac8c62fc7c1"
+    },
+    "source_sha256": {
+      "mc_dma_fabric_typed_p.sv": "a4d99306602159de041d0f52402d95452cfdb53825bf51b16a4e106ac6382e0c",
+      "tb_transport_quiescent.sv": "97703ef2b1fda30e9e4e2c9178990d3fb9681babd404027d3342ce5a4096304b",
+      "run_dma_quiescence.sbatch": "15ff9b6a4427e32dc37d26485d89f012246f7b361475487792a46f51edb3da68"
+    },
+    "tool_sha256": {
+      "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+      "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462"
+    },
+    "scope": "64B read transport RTL and a directed mock backend"
+  },
+  "dram_live": {
+    "job": 107695,
+    "name": "zny-dramlive",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 2,
+    "partition": "c64",
+    "node": "node3",
+    "cpus": 2,
+    "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/dram-live-20261113-02",
+    "submission": "sbatch --parsable --chdir=/public/home/yuzelu/Melodydt/runs/issue-265/dram-live-20261113-02 run_dram_live.sbatch",
+    "log": "slurm-107695.out",
+    "source_commit": "e8afad4f8b2541681647dd57f5b5aa55bf320c2c",
+    "server_python": "3.10.12",
+    "compiler": "g++ 11.4.0",
+    "dramsim3_revision": "29817593",
+    "tick_ps": 630,
+    "source_sha256": {
+      "run_dram_live.sbatch": "9f93c45c2d39434054884fbd327edfb2178ae7e54082fa9b2c072f41cad784e5",
+      "check_dma_ddr.py": "2593b4e29912532b518b504ca4b11fdf719560c5a6f435fb3a50da35f6c20905",
+      "dram_live.py": "3a0d2128ab9b51c8fc7dd944751c22c90f0fa52a8e69682779298c507eb62226",
+      "dramsim_bridge.cpp": "c246a5e6bc36642a62dbd300bee59956a608b87fb71107e7430f33454ea3f6d5",
+      "model.py": "327e301c2cc2f006d2131c5bafb775f62677640d8f2a4b31e741503f788fc811",
+      "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e"
+    },
+    "tool_sha256": {
+      "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/strict-dram-repeat-ZyprDHdt/raw/dramsim3-source-001/libdramsim3.so": "2aa0b2c81b1943065fbbb56620774333313bf1b1d7009343b37af5cbdeba15ef",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/strict-dram-repeat-ZyprDHdt/raw/dramsim3-source-001/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/strict-dram-repeat-ZyprDHdt/systemc-dram-001/results-002/native.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766"
+    },
+    "output_sha256": {
+      "result.json": "3c82e3281d0fa37600bbb1d5accfb7969a0bba5d2d5c7c9d849dfdf2566aed8b",
+      "build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+      "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+      "tools.sha256": "474fec0d18d6bf9a501ac8cc584c5f4fac9283c7b6659ebeb40285bad93731ed",
+      "source.sha256": "30a34ba17d9602e8c52e446412654fd7fe9f758f95439a34c576b5d86c833adb",
+      "results/reference/dramsim3.json": "bc17936d3e0bbd35ee704c15d71f76e928b38552b9843b73dd89f363c90cdec4",
+      "results/coupled/dramsim3.json": "e50ead01a24c7fb8228aa296ff4583a0e8eb6f48ad305be14545299bb4fdec52"
+    },
+    "prior_run": {
+      "job": 107683,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed_seconds": 3,
+      "partition": "c64",
+      "node": "node3",
+      "cpus": 2,
+      "source_commit": "ef1bd786499238f7a1f12dde40fa55ff163ae800",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/dram-live-20261113-01",
+      "log": "slurm-107683.out",
+      "result_identical_after_fence_order_fix": true
+    },
+    "reference": {
+      "accepted": [
+        [
+          0,
+          "first"
+        ],
+        [
+          50,
+          "second"
+        ]
+      ],
+      "returned": [
+        [
+          50,
+          "first"
+        ],
+        [
+          78,
+          "second"
+        ]
+      ],
+      "write_rejected": true,
+      "physical_read_commands": 2,
+      "physical_write_commands": 0
+    },
+    "coupled": {
+      "last_cycle": 105,
+      "counts": {
+        "issue": 6,
+        "service_done": 6,
+        "accept": 4,
+        "backend_accept": 3,
+        "complete": 6,
+        "read_return": 3,
+        "response": 4,
+        "retire": 4,
+        "fence_ready": 1
+      },
+      "read_data_bytes": 192,
+      "fence_retire": 65,
+      "same_address_read_accept": 66,
+      "same_address_read_return": 94,
+      "dependent_issue": 97,
+      "physical_read_commands": 3,
+      "physical_write_commands": 0
+    },
+    "finite_peer": {
+      "last_cycle": 32,
+      "counts": {
+        "issue": 6,
+        "service_done": 6,
+        "accept": 4,
+        "backend_stall": 4,
+        "backend_accept": 3,
+        "complete": 6,
+        "read_return": 2,
+        "write_visible": 1,
+        "response": 4,
+        "retire": 4,
+        "fence_ready": 1
+      },
+      "read_data_bytes": 128,
+      "fence_retire": 17,
+      "same_address_read_accept": 19,
+      "same_address_read_return": 21,
+      "dependent_issue": 24,
+      "write_accept": 4,
+      "write_visible": 11
+    }
+  },
+  "historical_typed_rtl": {
+    "slurm_job": 104354,
+    "reference_commit": "69ce47aa7fda8d732997131a90206ec4895c2ed7",
+    "directory": "/public/home/yuzelu/project-circuit/issue250-typed-dma-quiescence-v10-20261113-01/directed-final",
+    "witness_sha256": "c5f37cde68c9b02e7d5aad490f9e9937a0bf2c7240f1dedc84e6d4a46c124e71",
+    "initializations_per_seed": 3,
+    "all_initialization_manifest_hashes_match": true,
+    "unique_streams": [
+      {
+        "seed": 1,
+        "schema": "issue265-dma-identity-rtl/1",
+        "source_commit": "69ce47aa7fda8d732997131a90206ec4895c2ed7",
+        "scope": "typed DMA read-only transport with testbench backend",
+        "trace_sha256": "9d8e41218309e2fba9776a9f2814fd8282a99bd8c6f25cf6f11d58233685cfc1",
+        "log_sha256": "562b8fa00c59db787a8590e500e39414c5c454accca582f7454ae0a748be3aa9",
+        "cycles": 3278,
+        "counts": {
+          "accepted": 5541,
+          "issued": 5540,
+          "returned": 5540,
+          "reserved_cancelled": 1,
+          "faults": 13,
+          "backend_fences": 3,
+          "mode_accepts": 8
+        },
+        "invalid_returns": 3,
+        "generations": [
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "seed": 2,
+        "schema": "issue265-dma-identity-rtl/1",
+        "source_commit": "69ce47aa7fda8d732997131a90206ec4895c2ed7",
+        "scope": "typed DMA read-only transport with testbench backend",
+        "trace_sha256": "0fb72c445ccbbeeed3b9404e2e7837e41aa7ee79d3488329c7f7f99f435925a9",
+        "log_sha256": "59122b15c102ed501a88f600eafc7b0c5e5e1b048596fe3a42a5d52a49a80fd6",
+        "cycles": 3288,
+        "counts": {
+          "accepted": 5541,
+          "issued": 5540,
+          "returned": 5540,
+          "reserved_cancelled": 1,
+          "faults": 13,
+          "backend_fences": 3,
+          "mode_accepts": 8
+        },
+        "invalid_returns": 3,
+        "generations": [
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "seed": 3,
+        "schema": "issue265-dma-identity-rtl/1",
+        "source_commit": "69ce47aa7fda8d732997131a90206ec4895c2ed7",
+        "scope": "typed DMA read-only transport with testbench backend",
+        "trace_sha256": "ac6104fd95deadd702013cd68be70b4be96431dc10acfa02174a2ce31b466eca",
+        "log_sha256": "810a85d6dd00c2ee9b5d1376ede9e8c77b1043802281e6045235acd6739bfebc",
+        "cycles": 3206,
+        "counts": {
+          "accepted": 5541,
+          "issued": 5540,
+          "returned": 5540,
+          "reserved_cancelled": 1,
+          "faults": 13,
+          "backend_fences": 3,
+          "mode_accepts": 8
+        },
+        "invalid_returns": 3,
+        "generations": [
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "seed": 4,
+        "schema": "issue265-dma-identity-rtl/1",
+        "source_commit": "69ce47aa7fda8d732997131a90206ec4895c2ed7",
+        "scope": "typed DMA read-only transport with testbench backend",
+        "trace_sha256": "49cb867d575fbf468d5c54ef2dbc393c4fee028dc5e9423142143453398f7ebb",
+        "log_sha256": "3b1b480c1320fbd2130c048e76eabb8dc705af570125e99a4e1d51c862e5f4e4",
+        "cycles": 3270,
+        "counts": {
+          "accepted": 5541,
+          "issued": 5540,
+          "returned": 5540,
+          "reserved_cancelled": 1,
+          "faults": 13,
+          "backend_fences": 3,
+          "mode_accepts": 8
+        },
+        "invalid_returns": 3,
+        "generations": [
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "seed": 5,
+        "schema": "issue265-dma-identity-rtl/1",
+        "source_commit": "69ce47aa7fda8d732997131a90206ec4895c2ed7",
+        "scope": "typed DMA read-only transport with testbench backend",
+        "trace_sha256": "7cb6ce70f9c2984f5f3f543179fd2e5e39a2c6ac41429b9adecc428e44c5b0b1",
+        "log_sha256": "576b1cc3254d77372993bc26068d040be01d4ec5e52a794b65dea981fc518ce5",
+        "cycles": 3230,
+        "counts": {
+          "accepted": 5541,
+          "issued": 5540,
+          "returned": 5540,
+          "reserved_cancelled": 1,
+          "faults": 13,
+          "backend_fences": 3,
+          "mode_accepts": 8
+        },
+        "invalid_returns": 3,
+        "generations": [
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "seed": 6,
+        "schema": "issue265-dma-identity-rtl/1",
+        "source_commit": "69ce47aa7fda8d732997131a90206ec4895c2ed7",
+        "scope": "typed DMA read-only transport with testbench backend",
+        "trace_sha256": "e9a253f8f675a2b7c5ec63a53eda4edb628ecdcdd5b7c321eeb92062fc447bc5",
+        "log_sha256": "bbf8e3abab09c5aa8e46950a89973bbba38d4b15c57e8f2b0cec71a5ba74a070",
+        "cycles": 3277,
+        "counts": {
+          "accepted": 5541,
+          "issued": 5540,
+          "returned": 5540,
+          "reserved_cancelled": 1,
+          "faults": 13,
+          "backend_fences": 3,
+          "mode_accepts": 8
+        },
+        "invalid_returns": 3,
+        "generations": [
+          2,
+          3,
+          4
+        ]
+      }
+    ]
+  },
+  "historical_legacy_rtl": {
+    "slurm_job": 97279,
+    "source_commit": "d0f029329b86257368b3196678efeda9fc31b477",
+    "archive_sha256": "6db8dd269cd8e3ff4e75c2c9578a5d3e30beca48cce80cb3062c43fe9d59f745",
+    "runs": {
+      "receiver_fast": {
+        "matched_native_transactions": 3,
+        "matched_crossings": 6,
+        "read_after_write_addresses": [
+          464
+        ],
+        "visibility_discriminator_addresses": [],
+        "peer_response_cycles": 3,
+        "log_sha256": "8a9ecaa47aaa275f5051384281a935b648b470a6f52b3d0ef3d8374e2774e5d2"
+      },
+      "receiver_stalled": {
+        "matched_native_transactions": 3,
+        "matched_crossings": 6,
+        "read_after_write_addresses": [
+          464
+        ],
+        "visibility_discriminator_addresses": [],
+        "peer_response_cycles": 12,
+        "log_sha256": "1903064598fa7af7b4a55de1c4cbc6f24a359d57924d0ebbce452f7f15fe3d1d"
+      },
+      "receiver_two_jobs": {
+        "matched_native_transactions": 6,
+        "matched_crossings": 12,
+        "read_after_write_addresses": [
+          464,
+          528
+        ],
+        "visibility_discriminator_addresses": [],
+        "peer_response_cycles": 9,
+        "log_sha256": "29e4728d809c720957b5f0a884db0b1ff680414938c407fb60aebb4574fb8f5f"
+      }
+    },
+    "scope": "16B native DMA with finite synthetic peer; same-address writes equal destination seed"
+  },
+  "historical_dramsim3": {
+    "slurm_job": 103220,
+    "receipt_sha256": "0e80372f6dfc79c29d07bf6bd06555da90d5544f010f64d868f2706071c876f0",
+    "same_address_logical_reads": 3,
+    "physical_read_commands": 2,
+    "stock_write_callbacks": 64,
+    "stock_physical_write_commands": 60
+  }
+}

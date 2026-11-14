@@ -1,0 +1,51 @@
+{
+  "schema": "issue265-onchip-rtl/1",
+  "issue": 265,
+  "pull_request": 266,
+  "rtl_source_commit": "b706ad56edc5cfde005555e277e3b1a63d094b98",
+  "dut_also_available_at": "cfee027c30a226a2d9f8025a4c7298169591fe0d",
+  "dut_path": "project/rtl/block_local_s/block_local_s_arbiter.sv",
+  "server": "yuzelu@10.129.166.172",
+  "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/onchip-rtl-20261113-02",
+  "submission": "sbatch --parsable --chdir=/public/home/yuzelu/Melodydt/runs/issue-265/onchip-rtl-20261113-02 run_arbiter.sbatch",
+  "slurm": {
+    "job": 107488,
+    "name": "zny-cycle",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 6,
+    "partition": "c64",
+    "cpus": 4,
+    "node": "node3",
+    "log": "slurm-107488.out"
+  },
+  "prior_attempt": {
+    "job": 107481,
+    "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/onchip-rtl-20261113-01",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "diagnosis": "The testbench emitted the first case's summary, then reached the timeout assertion after $finish under Verilator. The retry explicitly exits the loop and asserts timeout only when transactions remain."
+  },
+  "tools": {
+    "verilator_version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "verilator_sha256": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462",
+    "container_sha256": "c742bf99ea498fb4da5135bc83fd1677abcebe0e64470e6a115f2baecb3905df",
+    "comparison_python_version": "3.7.0"
+  },
+  "source_sha256": {
+    "block_local_s_arbiter.sv": "7e267f31072b84a7d9ca6464dee58089f60c90bab7c0c30109905422ec3d16ee",
+    "arbiter_tb.sv": "69b098474eb9f8044927cc50d2b1ba9d76dccc9c8922b6933632687dafebe87b",
+    "run_arbiter.sbatch": "e0490dd00d8107eee5a5ffa4c3fd2315927897dac3f7330f77f9f10710b83009"
+  },
+  "output_sha256": {
+    "rtl-0.log": "46c51daa3a84645d1e83101f6ef5fc17d58992b6f14ec00587cb57ceac4305f1",
+    "rtl-1.log": "cfb1c9bed084b981b65d8ede6d00476b87484e8e86d7e1c4b36a2a1f69d82b0f",
+    "verilator-version.txt": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+    "build.log": "7c955b62d0749525a7a42a001a9e4e8a59164926367ab6c2b7aba9f13063e01e",
+    "tools.sha256": "f6f057fccbacf488568b819e57f9075910ef04fb1bc8f9df4d930749e739fb60"
+  },
+  "comparison": [
+    {"case": 0, "matched_handshakes": 27, "last_response_cycle": 45, "max_cycle_error": 0},
+    {"case": 1, "matched_handshakes": 27, "last_response_cycle": 45, "max_cycle_error": 0}
+  ]
+}

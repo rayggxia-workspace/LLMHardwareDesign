@@ -1,0 +1,1200 @@
+{
+  "schema": "issue265-qwen-native-ddr-replay/1",
+  "issue": 265,
+  "pr": 266,
+  "source_commit": "35150cfbc83a0fab0264529fbcff6c73d9ff42b9",
+  "server": "yuzelu@10.129.166.172",
+  "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-native-ddr-20261113-02",
+  "submit": "sbatch --parsable run_qwen_native_ddr.sbatch",
+  "slurm": {
+    "job_id": 107931,
+    "name": "zny-qwenddr",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "partition": "c64",
+    "cpus": 3,
+    "node": "node3",
+    "elapsed": "00:01:33",
+    "log": "slurm-107931.out"
+  },
+  "first_attempt": {
+    "job_id": 107921,
+    "source_commit": "075b12a9a4a37a9f32990c48fd283accea8938d0",
+    "exit_code": "1:0",
+    "failure": "next-RMS terminal totals double counted descriptor bytes",
+    "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-native-ddr-20261113-01"
+  },
+  "tool_versions": {
+    "cpp": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+    "python": "Python 3.10.12",
+    "upstream_verilator": "5.042",
+    "ddr_tick_ps": 630
+  },
+  "source_sha256": {
+    "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+    "qwen_kv_reference.py": "9a68aaeba6204ad44bb13f4a95fb39db195b86fe198772724ed8d161e6eef4b4",
+    "replay_native_ddr.cpp": "bf6d7f3b82b2e5b52a3d6dc87d33421c4c465e80d806fc41ed2d841793f41cbc",
+    "run_qwen_native_ddr.sbatch": "3766d199338947f0786cdc3ea2c9e4078d199fdc105e88fd1f86b9183ed521c9",
+    "git-commit.txt": "fcfa3242082f5ff78fa7cf226db17607a3d62157ef2b0e966b6779f9ccb2f9cd"
+  },
+  "tool_sha256": {
+    "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+    "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+    "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/memory_system.h": "b750651e5fc871df216570cfa1687894f9242a16a26fb69bf1099a97f5080e4b",
+    "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766"
+  },
+  "output_manifest_sha256": "494853e6e6d070da7a0fa56a6cf3dd0e23ef52f01252ca97fb00c9a1af6eb4f0",
+  "output_sha256": {
+    "archived-qkv.json": "080b5699ff5058777c7ddba3c6fe7acfeff4fa4464e28d85d140858cffe56f3f",
+    "next-rms.json": "17f18b209d6a877ddd2220eb4a432e9e498365f7a4d03f5c48778fe8dc9d5cb1",
+    "kv-reference.json": "014330587f163f61b9c7dd46af3b6f4ff987cd2fef9e2d5f971981bb54e262c1",
+    "tools.sha256": "bbb746bd889c785d3f68e9e6366dffca0da97566f9f760d14e3507bbb6f6f3f2",
+    "source.sha256": "738c9c6d96db97b569e2e41760b9872b57365c9171ed50c65ef5c4c76cc6494c",
+    "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+    "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+    "replay_native_ddr": "39f480504fe326b76401317eeccf7d9aac116b5b00a1056ced2f0396dbedd98a"
+  },
+  "raw_replay_paths": [
+    "archived-qkv/{0,1}/{schedule.tsv,callbacks.tsv,dramsim}",
+    "next-rms/{0,1}/{schedule.tsv,callbacks.tsv,dramsim}"
+  ],
+  "windows": [
+    {
+      "job_id": 106093,
+      "directory": "/public/home/yuzelu/project-circuit/issue260-product-archived-qkv3-0s7UrbHi/replay-106093",
+      "source_tar_sha256": "b090bb7597a9e487588bf450fcd0479c8adf1ab4672e48ae1158e4d454109994",
+      "upstream_git_commit": null,
+      "scope": "layer 0 archived prompt positions 497\u2013499; legacy DDR cadence differs from 10 ns RTL clock",
+      "case": 2,
+      "proof_sha256": "323204441215e5ec179df7c6f8a23803bf4902d2053e11a4b3988b6234f8c2dd",
+      "lineage": {
+        "source_graph_sha256": "10b6064e80d94dcb3be2ddc91659d58e2e6f181152f08594e8c867ef4804fc21",
+        "selected_descriptor_sha256": "85d63f96035f2216840c966b27e35dc75decce0d374fe2e6031ce154146bd039",
+        "tokens_sha256": "ee87fd8f2fb870401927ada4164a5f9d4d726ae4aef69181fad1175aeea8c7d3",
+        "linked_bundle_proof_sha256": "822b99dd7622afdb3e66ea400bd35ade471897a45c324eefdaf9870b227febac",
+        "layout_sha256": "c7b733b8d2b4ecee93a84f96a72e9041bc8c7f10406b180115387377681e88a8"
+      },
+      "mc_pages": 9,
+      "modes": [
+        {
+          "mode": 0,
+          "rtl_cycles": 1141401,
+          "ddr_ticks_per_channel": 6039158,
+          "ddr_host_period_ps_ratio": [
+            10000,
+            3
+          ],
+          "clock_mapping": "legacy_ddr_step",
+          "counts": {
+            "read": 262989,
+            "write": 96,
+            "activation": 0
+          },
+          "terminal_calls": 261,
+          "terminal_read_bytes": 17104560,
+          "mc_ddr_fetch_bursts": 36,
+          "lc_ddr_fetch_bursts": 12,
+          "exact_ddr_callbacks": 263085,
+          "committed_kv_sha256": "abcf2490193b6e0d24b8b2c01d08c3782177bb6158bdf8ec25bc74daeb56cacb",
+          "replay_schedule_sha256": "6a6bd798116e25126d3cf1a847f770dc7ed8566d2a9137082519415808c34d60",
+          "replay_callbacks_sha256": "eef385abcd2ca4d1740c557a34c2bc947e44634dc145a7194a305aef307e44a3",
+          "lifecycle": {
+            "read": {
+              "trace_sha256": "582abade4416416a5670f19ce366fad8e5d8549cd1aa00d1447243fc53dac4d7",
+              "retired_per_channel": [
+                131593,
+                131396
+              ],
+              "max_outstanding_per_port": [
+                16,
+                15,
+                16,
+                15
+              ],
+              "ddr_ticks_p50": 44,
+              "ddr_ticks_p95": 85,
+              "ddr_ticks_max": 734
+            },
+            "write": {
+              "trace_sha256": "1f31e1868a30641dfc43c06de2bc0f5500eb929698b82c7dfc78b9c92f7efe53",
+              "retired_per_channel": [
+                48,
+                48
+              ],
+              "max_outstanding_per_port": [
+                1
+              ],
+              "ddr_ticks_p50": 22,
+              "ddr_ticks_p95": 44,
+              "ddr_ticks_max": 66
+            }
+          },
+          "prompt_positions": [
+            497,
+            498,
+            499
+          ]
+        },
+        {
+          "mode": 1,
+          "rtl_cycles": 1238816,
+          "ddr_ticks_per_channel": 6554582,
+          "ddr_host_period_ps_ratio": [
+            10000,
+            3
+          ],
+          "clock_mapping": "legacy_ddr_step",
+          "counts": {
+            "read": 262989,
+            "write": 96,
+            "activation": 0
+          },
+          "terminal_calls": 261,
+          "terminal_read_bytes": 17104560,
+          "mc_ddr_fetch_bursts": 36,
+          "lc_ddr_fetch_bursts": 12,
+          "exact_ddr_callbacks": 263085,
+          "committed_kv_sha256": "abcf2490193b6e0d24b8b2c01d08c3782177bb6158bdf8ec25bc74daeb56cacb",
+          "replay_schedule_sha256": "c9d8ffab9ed9b4dd18607c57a975d9a51bd6c271aa56e61d6c38fa6f32985ea2",
+          "replay_callbacks_sha256": "5a65f79bce4633b190a2efdb1858a9767906082b752c0fb5de68cfea7809e8ca",
+          "lifecycle": {
+            "read": {
+              "trace_sha256": "89cb8ac21fb54ec3909147f6695ee3024945f4b0dcce6c4fa75917720f06e9ce",
+              "retired_per_channel": [
+                131593,
+                131396
+              ],
+              "max_outstanding_per_port": [
+                16,
+                15,
+                16,
+                15
+              ],
+              "ddr_ticks_p50": 44,
+              "ddr_ticks_p95": 84,
+              "ddr_ticks_max": 732
+            },
+            "write": {
+              "trace_sha256": "e65cce58fd8626898c7b915fda18a7737dc075da0480135466d36ec73ce9608d",
+              "retired_per_channel": [
+                48,
+                48
+              ],
+              "max_outstanding_per_port": [
+                1
+              ],
+              "ddr_ticks_p50": 22,
+              "ddr_ticks_p95": 66,
+              "ddr_ticks_max": 576
+            }
+          },
+          "prompt_positions": [
+            497,
+            498,
+            499
+          ]
+        }
+      ]
+    },
+    {
+      "job_id": 105530,
+      "directory": "/public/home/yuzelu/project-circuit/issue260-decode638-live-product-next-rms-u8Z2olTH/replay-105530",
+      "source_tar_sha256": "e6833398029d6348699370a6fb8630968792849c0b83a4e8974812a53cae3b32",
+      "upstream_git_commit": null,
+      "scope": "three-position suffix 636\u2013638; layer 0 into layer 1 input RMS; synchronized 10 ns RTL edges",
+      "case": 2,
+      "proof_sha256": "afa825d6f1d3f549adf5a8cfb021c85e4cb428b00ff06cf46acbd44f2c298ee9",
+      "lineage": {
+        "source_graph_sha256": "10b6064e80d94dcb3be2ddc91659d58e2e6f181152f08594e8c867ef4804fc21",
+        "selected_descriptor_sha256": "85d63f96035f2216840c966b27e35dc75decce0d374fe2e6031ce154146bd039",
+        "tokens_sha256": "ee87fd8f2fb870401927ada4164a5f9d4d726ae4aef69181fad1175aeea8c7d3",
+        "linked_bundle_proof_sha256": "822b99dd7622afdb3e66ea400bd35ade471897a45c324eefdaf9870b227febac",
+        "layout_sha256": "c7b733b8d2b4ecee93a84f96a72e9041bc8c7f10406b180115387377681e88a8",
+        "next_rms_reference_sha256": "de690590e853245dac25fc6809e9a5c43c8328f8f2401cc6ad04bcc3acdadb86"
+      },
+      "mc_pages": 8,
+      "modes": [
+        {
+          "mode": 0,
+          "rtl_cycles": 1795357,
+          "ddr_ticks_per_channel": 28497730,
+          "ddr_host_period_ps_ratio": [
+            10000,
+            1
+          ],
+          "clock_mapping": "synchronized_rtl_edge",
+          "counts": {
+            "read": 1318877,
+            "write": 736,
+            "activation": 128
+          },
+          "terminal_calls": 393,
+          "terminal_read_bytes": 84574336,
+          "mc_ddr_fetch_bursts": 34,
+          "lc_ddr_fetch_bursts": 24,
+          "exact_ddr_callbacks": 1319741,
+          "committed_kv_sha256": "4195a5480b38d6f67995b30be77e4bf4519a119005cbb54cf89ae63515380245",
+          "replay_schedule_sha256": "adcfc7b9afe1ed2c74737876e74e562a9c7a288ee464d65117af316989cf6382",
+          "replay_callbacks_sha256": "fba33ee5fc0ed4b9b97709c72e23564b212d7fe98b80f2a4dc91391fba2db3fa",
+          "ffn_activation_write_to_admit_core_cycles": {
+            "min": 2044,
+            "max": 2288
+          },
+          "lifecycle": {
+            "read": {
+              "trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+              "retired_per_channel": [
+                659094,
+                659783
+              ],
+              "max_outstanding_per_port": [
+                16,
+                16,
+                16,
+                16
+              ],
+              "ddr_ticks_p50": 28,
+              "ddr_ticks_p95": 72,
+              "ddr_ticks_max": 745
+            },
+            "activation": {
+              "trace_sha256": "6a8de56fb86e0c26a3dc9fca0dfb53e589e294180a6da675b7890d780b383d6a",
+              "retired_per_channel": [
+                64,
+                64
+              ],
+              "max_outstanding_per_port": [
+                1
+              ],
+              "ddr_ticks_p50": 28,
+              "ddr_ticks_p95": 28,
+              "ddr_ticks_max": 573
+            },
+            "write": {
+              "trace_sha256": "428853085c5b66384d45bcfe9e621683fbbf906e624aa40642ea471258e235cd",
+              "retired_per_channel": [
+                368,
+                368
+              ],
+              "max_outstanding_per_port": [
+                1
+              ],
+              "ddr_ticks_p50": 22,
+              "ddr_ticks_p95": 44,
+              "ddr_ticks_max": 678
+            }
+          },
+          "position_tokens": [
+            [
+              636,
+              13
+            ],
+            [
+              637,
+              220
+            ],
+            [
+              638,
+              81917
+            ]
+          ],
+          "next_layer_rms_words": 512
+        },
+        {
+          "mode": 1,
+          "rtl_cycles": 1927341,
+          "ddr_ticks_per_channel": 30592714,
+          "ddr_host_period_ps_ratio": [
+            10000,
+            1
+          ],
+          "clock_mapping": "synchronized_rtl_edge",
+          "counts": {
+            "read": 1318877,
+            "write": 736,
+            "activation": 128
+          },
+          "terminal_calls": 393,
+          "terminal_read_bytes": 84574336,
+          "mc_ddr_fetch_bursts": 34,
+          "lc_ddr_fetch_bursts": 24,
+          "exact_ddr_callbacks": 1319741,
+          "committed_kv_sha256": "4195a5480b38d6f67995b30be77e4bf4519a119005cbb54cf89ae63515380245",
+          "replay_schedule_sha256": "dfe56881d57075312ec7740b63b4f99ca82e154951638ce77f44fecc9b606d57",
+          "replay_callbacks_sha256": "3febc443398513909670d86019b00a8d6e0cc5772d22f3bbef15d191cf99464a",
+          "ffn_activation_write_to_admit_core_cycles": {
+            "min": 2015,
+            "max": 2360
+          },
+          "lifecycle": {
+            "read": {
+              "trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+              "retired_per_channel": [
+                659094,
+                659783
+              ],
+              "max_outstanding_per_port": [
+                16,
+                16,
+                16,
+                16
+              ],
+              "ddr_ticks_p50": 28,
+              "ddr_ticks_p95": 72,
+              "ddr_ticks_max": 774
+            },
+            "activation": {
+              "trace_sha256": "723640636fcb816d6e384d834946827797c29f6eb1cb5ffef02df51ffad0199e",
+              "retired_per_channel": [
+                64,
+                64
+              ],
+              "max_outstanding_per_port": [
+                1
+              ],
+              "ddr_ticks_p50": 28,
+              "ddr_ticks_p95": 28,
+              "ddr_ticks_max": 618
+            },
+            "write": {
+              "trace_sha256": "330104cf3493bb44adc98fc8f776c9b265f6b1ee579180bedfd3deeaeda5bdfb",
+              "retired_per_channel": [
+                368,
+                368
+              ],
+              "max_outstanding_per_port": [
+                1
+              ],
+              "ddr_ticks_p50": 22,
+              "ddr_ticks_p95": 44,
+              "ddr_ticks_max": 601
+            }
+          },
+          "position_tokens": [
+            [
+              636,
+              13
+            ],
+            [
+              637,
+              220
+            ],
+            [
+              638,
+              81917
+            ]
+          ],
+          "next_layer_rms_words": 512
+        }
+      ]
+    }
+  ],
+  "exact_ddr_callbacks_total": 3165652,
+  "kv_numeric_reference": {
+    "directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-range-segments-OT8GaRTa",
+    "final_integer_audit_job": 103338,
+    "final_integer_audit_sha256": "c86f681fc817291af03ad1d6aac809c00766f707bfac6a90ac2524ad3a31e87a",
+    "raw_s32_tensors_checked_per_case": 4,
+    "raw_s32_bytes_checked_per_case": 2142208,
+    "raw_boundary": [
+      11,
+      12
+    ],
+    "receipt_only_boundary": [
+      12,
+      13
+    ],
+    "cases": [
+      {
+        "case": 2,
+        "layers": [
+          0,
+          1
+        ],
+        "steps": [
+          {
+            "step": 11,
+            "prefix_tokens": 522,
+            "integer_selected_token": 13,
+            "receipt_sha256": "257186dfe1bd3caad2c93b46c6273dc9b4fc0a21d1bba79af2ca912c4078f80a",
+            "program_sha256": "1fd159d62fee91f0c6df9b7ae5edc41a6bf2a31897b4a2d261eeff9a0f504a77",
+            "onnx_sha256": "1727ff66375df5135b5b5d89ecca9be34f65bc255b2978c876a91909c2d7676b",
+            "kv": [
+              {
+                "source": "next_0_k",
+                "input": "past_0_k",
+                "shape": [
+                  1,
+                  2,
+                  522,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133632,
+                "canonical_s32_sha256": "c1f46ba76489b713e5d6a4353a9a0730e38140538738749c3f26ae740ed9da2b",
+                "output_ssa": "v8959",
+                "concat_ssa": "v60",
+                "new_token_ssa": "v59",
+                "output_shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ]
+              },
+              {
+                "source": "next_0_v",
+                "input": "past_0_v",
+                "shape": [
+                  1,
+                  2,
+                  522,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133632,
+                "canonical_s32_sha256": "9d6859e1e35a6347c21fe7166067117f363802f750332372c95cec11bb030265",
+                "output_ssa": "v63",
+                "concat_ssa": "v63",
+                "new_token_ssa": "v62",
+                "output_shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_k",
+                "input": "past_1_k",
+                "shape": [
+                  1,
+                  2,
+                  522,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133632,
+                "canonical_s32_sha256": "2b4e3a6f365a37e34473eb428726dfaafb0ddd66a2a69ddb44f2ca6989844b89",
+                "output_ssa": "v8960",
+                "concat_ssa": "v350",
+                "new_token_ssa": "v349",
+                "output_shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_v",
+                "input": "past_1_v",
+                "shape": [
+                  1,
+                  2,
+                  522,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133632,
+                "canonical_s32_sha256": "73be34e51b2b767ee510839c0c513213375bb717eac90cecb157a1f041175685",
+                "output_ssa": "v353",
+                "concat_ssa": "v353",
+                "new_token_ssa": "v352",
+                "output_shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ]
+              }
+            ],
+            "adjacent_layer_edges": [
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v296",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              },
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v297",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              }
+            ],
+            "previous_selected_token_from_receipt": 10295
+          },
+          {
+            "step": 12,
+            "prefix_tokens": 523,
+            "integer_selected_token": 220,
+            "receipt_sha256": "2427120e7f5c8e254596665a4d0248d409231a713949d3a8990d29719350bdb4",
+            "program_sha256": "54183c2db0a7892fdbc91f25e157b5a5cf62f2ecbd3dfc2b44aec443f2183227",
+            "onnx_sha256": "21c3d98ac53cb567742e2fb92d87fdefc0be04b4de452d32e174540c210ad71b",
+            "kv": [
+              {
+                "source": "next_0_k",
+                "input": "past_0_k",
+                "shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133888,
+                "canonical_s32_sha256": "db69bdd6e0bf0890ef69f657b394e357c35cea8e49979a5612e54205eb43992f",
+                "output_ssa": "v8959",
+                "concat_ssa": "v60",
+                "new_token_ssa": "v59",
+                "output_shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ]
+              },
+              {
+                "source": "next_0_v",
+                "input": "past_0_v",
+                "shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133888,
+                "canonical_s32_sha256": "5572678ea79b819a40bc1048c2053b2f50e2898a9470a57003fc4e6afaa61451",
+                "output_ssa": "v63",
+                "concat_ssa": "v63",
+                "new_token_ssa": "v62",
+                "output_shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_k",
+                "input": "past_1_k",
+                "shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133888,
+                "canonical_s32_sha256": "24cb673f39d56330867655958708561fcf6dde7104c72a9a5c2884b51a12e5f9",
+                "output_ssa": "v8960",
+                "concat_ssa": "v350",
+                "new_token_ssa": "v349",
+                "output_shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_v",
+                "input": "past_1_v",
+                "shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133888,
+                "canonical_s32_sha256": "dfff898f4a0fbb1a33272f3de4b38dba672099ccb7410874e607f9ca37539f97",
+                "output_ssa": "v353",
+                "concat_ssa": "v353",
+                "new_token_ssa": "v352",
+                "output_shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ]
+              }
+            ],
+            "adjacent_layer_edges": [
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v296",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              },
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v297",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              }
+            ],
+            "previous_selected_token_from_receipt": 13
+          },
+          {
+            "step": 13,
+            "prefix_tokens": 524,
+            "integer_selected_token": 1374,
+            "receipt_sha256": "c17f5f03871db124dc89e13003b0e640bf08843e99676c244ee6890f92c3e132",
+            "program_sha256": "972de5d220b5adaf6099e0e9243f9a8e1a90f484328bbbd0f073c0b963bf0ed8",
+            "onnx_sha256": "15e2d14863594fbe0cacd5ad9882fcf0d6bd5f8287da17730e68e9d778a5cf6c",
+            "kv": [
+              {
+                "source": "next_0_k",
+                "input": "past_0_k",
+                "shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 134144,
+                "canonical_s32_sha256": "8e40ed9b27df6b050136283342f164a74fe1ba3ad819aec78b31571666e858f1",
+                "output_ssa": "v8959",
+                "concat_ssa": "v60",
+                "new_token_ssa": "v59",
+                "output_shape": [
+                  1,
+                  2,
+                  525,
+                  128
+                ]
+              },
+              {
+                "source": "next_0_v",
+                "input": "past_0_v",
+                "shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 134144,
+                "canonical_s32_sha256": "598a9df9bfef3d994d211d90209a1ab35bce669adb19a92e292cb2ab8af9a429",
+                "output_ssa": "v63",
+                "concat_ssa": "v63",
+                "new_token_ssa": "v62",
+                "output_shape": [
+                  1,
+                  2,
+                  525,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_k",
+                "input": "past_1_k",
+                "shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 134144,
+                "canonical_s32_sha256": "8f84415609272411e5d0898a7ac19519bf8851f3aa592f11429e1c9d94e92662",
+                "output_ssa": "v8960",
+                "concat_ssa": "v350",
+                "new_token_ssa": "v349",
+                "output_shape": [
+                  1,
+                  2,
+                  525,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_v",
+                "input": "past_1_v",
+                "shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 134144,
+                "canonical_s32_sha256": "b970ba1d68acf30f56a17c540f06aa2a6e5eb05fe81785481ebecad9818aa311",
+                "output_ssa": "v353",
+                "concat_ssa": "v353",
+                "new_token_ssa": "v352",
+                "output_shape": [
+                  1,
+                  2,
+                  525,
+                  128
+                ]
+              }
+            ],
+            "adjacent_layer_edges": [
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v296",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              },
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v297",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              }
+            ],
+            "previous_selected_token_from_receipt": 220
+          }
+        ],
+        "prompt_ids_json_sha256": "48ef96374803a3447ea988ed02ca09e9ee32e264c5c72187bc0c6c4dabe10969",
+        "weights_manifest_sha256": "013b03698e11ae7e3fe1239d2a1a3b8719dbb721dd67a07d802a616a7bf82696",
+        "segment_receipt_sha256": [
+          "f3a7c30449ff899d403e67b40d9ea5eaccdca4d4822b050a833d0565b8c781af",
+          "e8bd0094282e0fe2b9e454aefa136ce3f606c101d743c599dac274d2d4fb6605"
+        ],
+        "segment_boundary_state_sha256": "c8d227acbc13ce3448ee45c36a09deb74a7bf1c4499302dc7d326fd2039b2212"
+      },
+      {
+        "case": 3,
+        "layers": [
+          0,
+          1
+        ],
+        "steps": [
+          {
+            "step": 11,
+            "prefix_tokens": 522,
+            "integer_selected_token": 315,
+            "receipt_sha256": "b2520370931b7d5daddd37d4366f2aeb0d8484716844fe5e0e731593e550dc83",
+            "program_sha256": "1fd159d62fee91f0c6df9b7ae5edc41a6bf2a31897b4a2d261eeff9a0f504a77",
+            "onnx_sha256": "1727ff66375df5135b5b5d89ecca9be34f65bc255b2978c876a91909c2d7676b",
+            "kv": [
+              {
+                "source": "next_0_k",
+                "input": "past_0_k",
+                "shape": [
+                  1,
+                  2,
+                  522,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133632,
+                "canonical_s32_sha256": "e5ddf4baeecf8e34933578986329c32f48baa6c632debebc95903b49be53c7ff",
+                "output_ssa": "v8959",
+                "concat_ssa": "v60",
+                "new_token_ssa": "v59",
+                "output_shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ]
+              },
+              {
+                "source": "next_0_v",
+                "input": "past_0_v",
+                "shape": [
+                  1,
+                  2,
+                  522,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133632,
+                "canonical_s32_sha256": "4daac0249eb808b8cac948c5aa24513b5748709616983b2b0494a445d3848783",
+                "output_ssa": "v63",
+                "concat_ssa": "v63",
+                "new_token_ssa": "v62",
+                "output_shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_k",
+                "input": "past_1_k",
+                "shape": [
+                  1,
+                  2,
+                  522,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133632,
+                "canonical_s32_sha256": "67999c74feabd257174bcb573d2a0d9a06aa93c5abcff218fd4599909e2a5530",
+                "output_ssa": "v8960",
+                "concat_ssa": "v350",
+                "new_token_ssa": "v349",
+                "output_shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_v",
+                "input": "past_1_v",
+                "shape": [
+                  1,
+                  2,
+                  522,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133632,
+                "canonical_s32_sha256": "3eac5221daf17cc4661edb51650e391e34791a0a8586c1d6e600d46df39b63f4",
+                "output_ssa": "v353",
+                "concat_ssa": "v353",
+                "new_token_ssa": "v352",
+                "output_shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ]
+              }
+            ],
+            "adjacent_layer_edges": [
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v296",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              },
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v297",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              }
+            ],
+            "previous_selected_token_from_receipt": 5510
+          },
+          {
+            "step": 12,
+            "prefix_tokens": 523,
+            "integer_selected_token": 37852,
+            "receipt_sha256": "211da1e56697a75b553829d7ac8d3f78789c094180f3677bce22f443d9fd8a75",
+            "program_sha256": "54183c2db0a7892fdbc91f25e157b5a5cf62f2ecbd3dfc2b44aec443f2183227",
+            "onnx_sha256": "21c3d98ac53cb567742e2fb92d87fdefc0be04b4de452d32e174540c210ad71b",
+            "kv": [
+              {
+                "source": "next_0_k",
+                "input": "past_0_k",
+                "shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133888,
+                "canonical_s32_sha256": "ab8564fc7ac27a37b087b1335c7678235b13fad947d83b9bc0956c9e21fada4d",
+                "output_ssa": "v8959",
+                "concat_ssa": "v60",
+                "new_token_ssa": "v59",
+                "output_shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ]
+              },
+              {
+                "source": "next_0_v",
+                "input": "past_0_v",
+                "shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133888,
+                "canonical_s32_sha256": "1459cf1934fb6d633680224ed37e594e1582dbf8581360752c32741ec5e2c0b5",
+                "output_ssa": "v63",
+                "concat_ssa": "v63",
+                "new_token_ssa": "v62",
+                "output_shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_k",
+                "input": "past_1_k",
+                "shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133888,
+                "canonical_s32_sha256": "ba5c48efe106d93341cd89bb250c4f5f087c2702636b72d5d1bc2a9a06d4a856",
+                "output_ssa": "v8960",
+                "concat_ssa": "v350",
+                "new_token_ssa": "v349",
+                "output_shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_v",
+                "input": "past_1_v",
+                "shape": [
+                  1,
+                  2,
+                  523,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 133888,
+                "canonical_s32_sha256": "94e9111092b04f2ff8572ab84eb7255e1cf114678164fa35da3977c0d30e9f45",
+                "output_ssa": "v353",
+                "concat_ssa": "v353",
+                "new_token_ssa": "v352",
+                "output_shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ]
+              }
+            ],
+            "adjacent_layer_edges": [
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v296",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              },
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v297",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              }
+            ],
+            "previous_selected_token_from_receipt": 315
+          },
+          {
+            "step": 13,
+            "prefix_tokens": 524,
+            "integer_selected_token": 6172,
+            "receipt_sha256": "120e125943dd23d1e65701b9312d706b8d766073e869109a32392008f67727d4",
+            "program_sha256": "972de5d220b5adaf6099e0e9243f9a8e1a90f484328bbbd0f073c0b963bf0ed8",
+            "onnx_sha256": "15e2d14863594fbe0cacd5ad9882fcf0d6bd5f8287da17730e68e9d778a5cf6c",
+            "kv": [
+              {
+                "source": "next_0_k",
+                "input": "past_0_k",
+                "shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 134144,
+                "canonical_s32_sha256": "b572eec11b8ecd2f5b5bbdbad91586e6caed1561d12ea91247fe65ea980e3326",
+                "output_ssa": "v8959",
+                "concat_ssa": "v60",
+                "new_token_ssa": "v59",
+                "output_shape": [
+                  1,
+                  2,
+                  525,
+                  128
+                ]
+              },
+              {
+                "source": "next_0_v",
+                "input": "past_0_v",
+                "shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 134144,
+                "canonical_s32_sha256": "64e4e1c9d33648403fa9c9f767bea7288ada1b44ac936744dac17f752582c01e",
+                "output_ssa": "v63",
+                "concat_ssa": "v63",
+                "new_token_ssa": "v62",
+                "output_shape": [
+                  1,
+                  2,
+                  525,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_k",
+                "input": "past_1_k",
+                "shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 134144,
+                "canonical_s32_sha256": "b963e6ebe8b8b556f0552f27405bfd0e7c95f13b1e2bb2a02d03b84bbd195ad4",
+                "output_ssa": "v8960",
+                "concat_ssa": "v350",
+                "new_token_ssa": "v349",
+                "output_shape": [
+                  1,
+                  2,
+                  525,
+                  128
+                ]
+              },
+              {
+                "source": "next_1_v",
+                "input": "past_1_v",
+                "shape": [
+                  1,
+                  2,
+                  524,
+                  128
+                ],
+                "exponent": -20,
+                "logical_elements": 134144,
+                "canonical_s32_sha256": "4823562d51d8dfcb0587fa87fb01e40f91f1aefab1162986a89fa266465b1225",
+                "output_ssa": "v353",
+                "concat_ssa": "v353",
+                "new_token_ssa": "v352",
+                "output_shape": [
+                  1,
+                  2,
+                  525,
+                  128
+                ]
+              }
+            ],
+            "adjacent_layer_edges": [
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v296",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              },
+              {
+                "producer_ssa": "v295",
+                "producer_kernel": "/model/model/layers.0/Add_1",
+                "consumer_ssa": "v297",
+                "consumer_kernel": "/model/model/layers.1/input_layernorm/Mul_1",
+                "shape": [
+                  1,
+                  1,
+                  2048
+                ]
+              }
+            ],
+            "previous_selected_token_from_receipt": 37852
+          }
+        ],
+        "prompt_ids_json_sha256": "070eb26abbc276e53dc7b414ec1edf9bf1f7bc450588332b329c8e99918ad9eb",
+        "weights_manifest_sha256": "013b03698e11ae7e3fe1239d2a1a3b8719dbb721dd67a07d802a616a7bf82696",
+        "segment_receipt_sha256": [
+          "b29ac83bfaad6fb30a687527324039199848501d83bf047adabbc981112f4466",
+          "d06b092aa4429a0b4789927b1451190d1406635f522adaa3c44ef0ae0a327ad0"
+        ],
+        "segment_boundary_state_sha256": "2f9bf4d374ff771e4ff0ef09f2356338ded29422eacf85aa69ad015cd307d777"
+      }
+    ]
+  },
+  "full_context_held_out": {
+    "job_id": 105572,
+    "scope": "contiguous layer 0 history 0\u2013638 through layer 1 input RMS",
+    "proof_sha256": "1b4ab04710b5328016aed55bc0d37d396875b210996d6dd5b757b9208ec5e9ac",
+    "compared_in_this_run": false
+  },
+  "other_reference": {
+    "job_id": 107361,
+    "scope": "two-token TLM",
+    "timing_calibrated": false,
+    "numerically_accepted": false,
+    "execution_sha256": "df6c62434b009195035853e9577edbfe653824017af745bdeb81fceca111238d",
+    "timing_audit_sha256": "7dae55035c57c9c30545813a0495c7446df51d7f51c9389c750396c438fb9c92"
+  },
+  "measurement_boundary": {
+    "ddr_input": "observed accept time, address and operation",
+    "predicted_mc_lc_or_dma_admission": false,
+    "whole_system_timing_qualified": false,
+    "next": "predict 105530 admits from frozen MC/LC, descriptors, routes and start state; expose residual and next RMS edge timestamps"
+  }
+}

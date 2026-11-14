@@ -1,0 +1,2362 @@
+{
+  "schema": "issue265-qwen-decode-evaluation/1",
+  "issue": 265,
+  "pr": 266,
+  "server": "yuzelu@10.129.166.172",
+  "upstream": {
+    "pr": 260,
+    "reference": 107361,
+    "reference_receipt": "qwen-tlm-decode-107361.json",
+    "pr_head_observed_at_selection": "3584920d4e79ee45922be95df27e5193523d6313",
+    "published_replay_commit": "69e4239584c84aacf4dcf66432be2ccf76887182",
+    "archived_job_source_commit": null,
+    "pr_head_observed_at_delivery": "dd423e5a8010e7371ee1ccbd589df00bc0ff6478"
+  },
+  "estimation": {
+    "source_commit": "fd6ee8a1e07c5435a02ee0b1da96614ced06f85c",
+    "python_version": "3.7.0",
+    "working_directory": "work/Melodydt/265/qwen-estimate-107361.local",
+    "command": "python -B project/experiments/instruction_cycle/estimate_qwen_decode.py <110707 geometry.json> <107361 page-timing.jsonl>",
+    "output_sha256": "0781f3d865669da346de40a732b88e8ddd1625e93cb518862c2badaad83eee52",
+    "source_sha256": "c230df4e58ede61b0f934fdc97a2f66a6711df49bb95a1b62c0963a9eb0da32c",
+    "host_seconds": 0.105782,
+    "platform": "Windows, same machine speedup not qualified for this estimator",
+    "result": {
+      "scope": "calibrated TLM timing estimate for 127 cached-decode intervals, serial KV",
+      "calibration": {
+        "step": 1,
+        "duration_ps": 1043184915264,
+        "attention_ps": 707001505360,
+        "non_attention_ps": 336183409904,
+        "attention_work_ps": 595778236416
+      },
+      "assumptions": [
+        "fix non-Attention time from phase 1 at invariant geometry",
+        "scale Attention time by serialized DDR read and ACKed SRAM word demand",
+        "estimate feedback intervals only; no prefill, numerical or native RTL acceptance"
+      ],
+      "intervals": 127,
+      "estimated_elapsed_ps": 143489733463362,
+      "estimated_tok_s": 0.8850807436507476,
+      "comparison": {
+        "job_id": 107361,
+        "trace_sha256": "56b1238ca44f6796f4982e41d8f6674a7c6730c65b98c05afae23ba447ddc831",
+        "step": 2,
+        "observed_ps": 1045096187442,
+        "estimated_ps": 1044507859353,
+        "signed_duration_error_percent": -0.056294157042138346,
+        "observed_tok_s": 0.956849725428261,
+        "estimated_tok_s": 0.9573886793148981,
+        "signed_throughput_error_percent": 0.05632586521315678,
+        "observed_attention_ps": 708545927516
+      }
+    },
+    "sensitivity": {
+      "scenario": "both calibrated Attention and remaining phase components perturbed by up to 5 percent as an assumed sensitivity scenario",
+      "interval_tok_s": [
+        0.8429340415721406,
+        0.9316639406849976
+      ],
+      "statistical_error_interval": false,
+      "interpretation": "assumed perturbation; one adjacent reference supplies no justified full-range uncertainty interval"
+    },
+    "decomposition_ps": {
+      "attention": 100794440405554,
+      "non_attention": 42695293057808
+    },
+    "phase_results": [
+      {
+        "step": 1,
+        "elapsed_ps": 1043184915264,
+        "attention_ps": 707001505360,
+        "elapsed_floor_ps": 677878973280,
+        "kv_positions": 513
+      },
+      {
+        "step": 2,
+        "elapsed_ps": 1044507859353,
+        "attention_ps": 708324449449,
+        "elapsed_floor_ps": 678993795936,
+        "kv_positions": 514
+      },
+      {
+        "step": 3,
+        "elapsed_ps": 1045830803441,
+        "attention_ps": 709647393537,
+        "elapsed_floor_ps": 680108618592,
+        "kv_positions": 515
+      },
+      {
+        "step": 4,
+        "elapsed_ps": 1047153747530,
+        "attention_ps": 710970337626,
+        "elapsed_floor_ps": 681223441248,
+        "kv_positions": 516
+      },
+      {
+        "step": 5,
+        "elapsed_ps": 1048586078444,
+        "attention_ps": 712402668540,
+        "elapsed_floor_ps": 682430442336,
+        "kv_positions": 517
+      },
+      {
+        "step": 6,
+        "elapsed_ps": 1049909022533,
+        "attention_ps": 713725612629,
+        "elapsed_floor_ps": 683545264992,
+        "kv_positions": 518
+      },
+      {
+        "step": 7,
+        "elapsed_ps": 1051231966622,
+        "attention_ps": 715048556718,
+        "elapsed_floor_ps": 684660087648,
+        "kv_positions": 519
+      },
+      {
+        "step": 8,
+        "elapsed_ps": 1052554910710,
+        "attention_ps": 716371500806,
+        "elapsed_floor_ps": 685774910304,
+        "kv_positions": 520
+      },
+      {
+        "step": 9,
+        "elapsed_ps": 1054206015276,
+        "attention_ps": 718022605372,
+        "elapsed_floor_ps": 687166268256,
+        "kv_positions": 521
+      },
+      {
+        "step": 10,
+        "elapsed_ps": 1055528959365,
+        "attention_ps": 719345549461,
+        "elapsed_floor_ps": 688281090912,
+        "kv_positions": 522
+      },
+      {
+        "step": 11,
+        "elapsed_ps": 1056851903454,
+        "attention_ps": 720668493550,
+        "elapsed_floor_ps": 689395913568,
+        "kv_positions": 523
+      },
+      {
+        "step": 12,
+        "elapsed_ps": 1058174847542,
+        "attention_ps": 721991437638,
+        "elapsed_floor_ps": 690510736224,
+        "kv_positions": 524
+      },
+      {
+        "step": 13,
+        "elapsed_ps": 1059607178457,
+        "attention_ps": 723423768553,
+        "elapsed_floor_ps": 691717737312,
+        "kv_positions": 525
+      },
+      {
+        "step": 14,
+        "elapsed_ps": 1060930122545,
+        "attention_ps": 724746712641,
+        "elapsed_floor_ps": 692832559968,
+        "kv_positions": 526
+      },
+      {
+        "step": 15,
+        "elapsed_ps": 1062253066634,
+        "attention_ps": 726069656730,
+        "elapsed_floor_ps": 693947382624,
+        "kv_positions": 527
+      },
+      {
+        "step": 16,
+        "elapsed_ps": 1063576010723,
+        "attention_ps": 727392600819,
+        "elapsed_floor_ps": 695062205280,
+        "kv_positions": 528
+      },
+      {
+        "step": 17,
+        "elapsed_ps": 1065227115289,
+        "attention_ps": 729043705385,
+        "elapsed_floor_ps": 696453563232,
+        "kv_positions": 529
+      },
+      {
+        "step": 18,
+        "elapsed_ps": 1066550059377,
+        "attention_ps": 730366649473,
+        "elapsed_floor_ps": 697568385888,
+        "kv_positions": 530
+      },
+      {
+        "step": 19,
+        "elapsed_ps": 1067873003466,
+        "attention_ps": 731689593562,
+        "elapsed_floor_ps": 698683208544,
+        "kv_positions": 531
+      },
+      {
+        "step": 20,
+        "elapsed_ps": 1069195947555,
+        "attention_ps": 733012537651,
+        "elapsed_floor_ps": 699798031200,
+        "kv_positions": 532
+      },
+      {
+        "step": 21,
+        "elapsed_ps": 1070628278469,
+        "attention_ps": 734444868565,
+        "elapsed_floor_ps": 701005032288,
+        "kv_positions": 533
+      },
+      {
+        "step": 22,
+        "elapsed_ps": 1071951222558,
+        "attention_ps": 735767812654,
+        "elapsed_floor_ps": 702119854944,
+        "kv_positions": 534
+      },
+      {
+        "step": 23,
+        "elapsed_ps": 1073274166646,
+        "attention_ps": 737090756742,
+        "elapsed_floor_ps": 703234677600,
+        "kv_positions": 535
+      },
+      {
+        "step": 24,
+        "elapsed_ps": 1074597110735,
+        "attention_ps": 738413700831,
+        "elapsed_floor_ps": 704349500256,
+        "kv_positions": 536
+      },
+      {
+        "step": 25,
+        "elapsed_ps": 1076248215301,
+        "attention_ps": 740064805397,
+        "elapsed_floor_ps": 705740858208,
+        "kv_positions": 537
+      },
+      {
+        "step": 26,
+        "elapsed_ps": 1077571159390,
+        "attention_ps": 741387749486,
+        "elapsed_floor_ps": 706855680864,
+        "kv_positions": 538
+      },
+      {
+        "step": 27,
+        "elapsed_ps": 1078894103478,
+        "attention_ps": 742710693574,
+        "elapsed_floor_ps": 707970503520,
+        "kv_positions": 539
+      },
+      {
+        "step": 28,
+        "elapsed_ps": 1080217047567,
+        "attention_ps": 744033637663,
+        "elapsed_floor_ps": 709085326176,
+        "kv_positions": 540
+      },
+      {
+        "step": 29,
+        "elapsed_ps": 1081649378482,
+        "attention_ps": 745465968578,
+        "elapsed_floor_ps": 710292327264,
+        "kv_positions": 541
+      },
+      {
+        "step": 30,
+        "elapsed_ps": 1082972322570,
+        "attention_ps": 746788912666,
+        "elapsed_floor_ps": 711407149920,
+        "kv_positions": 542
+      },
+      {
+        "step": 31,
+        "elapsed_ps": 1084295266659,
+        "attention_ps": 748111856755,
+        "elapsed_floor_ps": 712521972576,
+        "kv_positions": 543
+      },
+      {
+        "step": 32,
+        "elapsed_ps": 1085618210747,
+        "attention_ps": 749434800843,
+        "elapsed_floor_ps": 713636795232,
+        "kv_positions": 544
+      },
+      {
+        "step": 33,
+        "elapsed_ps": 1087269315314,
+        "attention_ps": 751085905410,
+        "elapsed_floor_ps": 715028153184,
+        "kv_positions": 545
+      },
+      {
+        "step": 34,
+        "elapsed_ps": 1088592259402,
+        "attention_ps": 752408849498,
+        "elapsed_floor_ps": 716142975840,
+        "kv_positions": 546
+      },
+      {
+        "step": 35,
+        "elapsed_ps": 1089915203491,
+        "attention_ps": 753731793587,
+        "elapsed_floor_ps": 717257798496,
+        "kv_positions": 547
+      },
+      {
+        "step": 36,
+        "elapsed_ps": 1091238147580,
+        "attention_ps": 755054737676,
+        "elapsed_floor_ps": 718372621152,
+        "kv_positions": 548
+      },
+      {
+        "step": 37,
+        "elapsed_ps": 1092670478494,
+        "attention_ps": 756487068590,
+        "elapsed_floor_ps": 719579622240,
+        "kv_positions": 549
+      },
+      {
+        "step": 38,
+        "elapsed_ps": 1093993422583,
+        "attention_ps": 757810012679,
+        "elapsed_floor_ps": 720694444896,
+        "kv_positions": 550
+      },
+      {
+        "step": 39,
+        "elapsed_ps": 1095316366671,
+        "attention_ps": 759132956767,
+        "elapsed_floor_ps": 721809267552,
+        "kv_positions": 551
+      },
+      {
+        "step": 40,
+        "elapsed_ps": 1096639310760,
+        "attention_ps": 760455900856,
+        "elapsed_floor_ps": 722924090208,
+        "kv_positions": 552
+      },
+      {
+        "step": 41,
+        "elapsed_ps": 1098290415326,
+        "attention_ps": 762107005422,
+        "elapsed_floor_ps": 724315448160,
+        "kv_positions": 553
+      },
+      {
+        "step": 42,
+        "elapsed_ps": 1099613359415,
+        "attention_ps": 763429949511,
+        "elapsed_floor_ps": 725430270816,
+        "kv_positions": 554
+      },
+      {
+        "step": 43,
+        "elapsed_ps": 1100936303503,
+        "attention_ps": 764752893599,
+        "elapsed_floor_ps": 726545093472,
+        "kv_positions": 555
+      },
+      {
+        "step": 44,
+        "elapsed_ps": 1102259247592,
+        "attention_ps": 766075837688,
+        "elapsed_floor_ps": 727659916128,
+        "kv_positions": 556
+      },
+      {
+        "step": 45,
+        "elapsed_ps": 1103691578506,
+        "attention_ps": 767508168602,
+        "elapsed_floor_ps": 728866917216,
+        "kv_positions": 557
+      },
+      {
+        "step": 46,
+        "elapsed_ps": 1105014522595,
+        "attention_ps": 768831112691,
+        "elapsed_floor_ps": 729981739872,
+        "kv_positions": 558
+      },
+      {
+        "step": 47,
+        "elapsed_ps": 1106337466684,
+        "attention_ps": 770154056780,
+        "elapsed_floor_ps": 731096562528,
+        "kv_positions": 559
+      },
+      {
+        "step": 48,
+        "elapsed_ps": 1107660410772,
+        "attention_ps": 771477000868,
+        "elapsed_floor_ps": 732211385184,
+        "kv_positions": 560
+      },
+      {
+        "step": 49,
+        "elapsed_ps": 1109311515338,
+        "attention_ps": 773128105434,
+        "elapsed_floor_ps": 733602743136,
+        "kv_positions": 561
+      },
+      {
+        "step": 50,
+        "elapsed_ps": 1110634459427,
+        "attention_ps": 774451049523,
+        "elapsed_floor_ps": 734717565792,
+        "kv_positions": 562
+      },
+      {
+        "step": 51,
+        "elapsed_ps": 1111957403516,
+        "attention_ps": 775773993612,
+        "elapsed_floor_ps": 735832388448,
+        "kv_positions": 563
+      },
+      {
+        "step": 52,
+        "elapsed_ps": 1113280347604,
+        "attention_ps": 777096937700,
+        "elapsed_floor_ps": 736947211104,
+        "kv_positions": 564
+      },
+      {
+        "step": 53,
+        "elapsed_ps": 1114712678519,
+        "attention_ps": 778529268615,
+        "elapsed_floor_ps": 738154212192,
+        "kv_positions": 565
+      },
+      {
+        "step": 54,
+        "elapsed_ps": 1116035622607,
+        "attention_ps": 779852212703,
+        "elapsed_floor_ps": 739269034848,
+        "kv_positions": 566
+      },
+      {
+        "step": 55,
+        "elapsed_ps": 1117358566696,
+        "attention_ps": 781175156792,
+        "elapsed_floor_ps": 740383857504,
+        "kv_positions": 567
+      },
+      {
+        "step": 56,
+        "elapsed_ps": 1118681510785,
+        "attention_ps": 782498100881,
+        "elapsed_floor_ps": 741498680160,
+        "kv_positions": 568
+      },
+      {
+        "step": 57,
+        "elapsed_ps": 1120332615351,
+        "attention_ps": 784149205447,
+        "elapsed_floor_ps": 742890038112,
+        "kv_positions": 569
+      },
+      {
+        "step": 58,
+        "elapsed_ps": 1121655559439,
+        "attention_ps": 785472149535,
+        "elapsed_floor_ps": 744004860768,
+        "kv_positions": 570
+      },
+      {
+        "step": 59,
+        "elapsed_ps": 1122978503528,
+        "attention_ps": 786795093624,
+        "elapsed_floor_ps": 745119683424,
+        "kv_positions": 571
+      },
+      {
+        "step": 60,
+        "elapsed_ps": 1124301447617,
+        "attention_ps": 788118037713,
+        "elapsed_floor_ps": 746234506080,
+        "kv_positions": 572
+      },
+      {
+        "step": 61,
+        "elapsed_ps": 1125733778531,
+        "attention_ps": 789550368627,
+        "elapsed_floor_ps": 747441507168,
+        "kv_positions": 573
+      },
+      {
+        "step": 62,
+        "elapsed_ps": 1127056722620,
+        "attention_ps": 790873312716,
+        "elapsed_floor_ps": 748556329824,
+        "kv_positions": 574
+      },
+      {
+        "step": 63,
+        "elapsed_ps": 1128379666708,
+        "attention_ps": 792196256804,
+        "elapsed_floor_ps": 749671152480,
+        "kv_positions": 575
+      },
+      {
+        "step": 64,
+        "elapsed_ps": 1129702610797,
+        "attention_ps": 793519200893,
+        "elapsed_floor_ps": 750785975136,
+        "kv_positions": 576
+      },
+      {
+        "step": 65,
+        "elapsed_ps": 1131353715363,
+        "attention_ps": 795170305459,
+        "elapsed_floor_ps": 752177333088,
+        "kv_positions": 577
+      },
+      {
+        "step": 66,
+        "elapsed_ps": 1132676659452,
+        "attention_ps": 796493249548,
+        "elapsed_floor_ps": 753292155744,
+        "kv_positions": 578
+      },
+      {
+        "step": 67,
+        "elapsed_ps": 1133999603540,
+        "attention_ps": 797816193636,
+        "elapsed_floor_ps": 754406978400,
+        "kv_positions": 579
+      },
+      {
+        "step": 68,
+        "elapsed_ps": 1135322547629,
+        "attention_ps": 799139137725,
+        "elapsed_floor_ps": 755521801056,
+        "kv_positions": 580
+      },
+      {
+        "step": 69,
+        "elapsed_ps": 1136754878544,
+        "attention_ps": 800571468640,
+        "elapsed_floor_ps": 756728802144,
+        "kv_positions": 581
+      },
+      {
+        "step": 70,
+        "elapsed_ps": 1138077822632,
+        "attention_ps": 801894412728,
+        "elapsed_floor_ps": 757843624800,
+        "kv_positions": 582
+      },
+      {
+        "step": 71,
+        "elapsed_ps": 1139400766721,
+        "attention_ps": 803217356817,
+        "elapsed_floor_ps": 758958447456,
+        "kv_positions": 583
+      },
+      {
+        "step": 72,
+        "elapsed_ps": 1140723710809,
+        "attention_ps": 804540300905,
+        "elapsed_floor_ps": 760073270112,
+        "kv_positions": 584
+      },
+      {
+        "step": 73,
+        "elapsed_ps": 1142374815376,
+        "attention_ps": 806191405472,
+        "elapsed_floor_ps": 761464628064,
+        "kv_positions": 585
+      },
+      {
+        "step": 74,
+        "elapsed_ps": 1143697759464,
+        "attention_ps": 807514349560,
+        "elapsed_floor_ps": 762579450720,
+        "kv_positions": 586
+      },
+      {
+        "step": 75,
+        "elapsed_ps": 1145020703553,
+        "attention_ps": 808837293649,
+        "elapsed_floor_ps": 763694273376,
+        "kv_positions": 587
+      },
+      {
+        "step": 76,
+        "elapsed_ps": 1146343647642,
+        "attention_ps": 810160237738,
+        "elapsed_floor_ps": 764809096032,
+        "kv_positions": 588
+      },
+      {
+        "step": 77,
+        "elapsed_ps": 1147775978556,
+        "attention_ps": 811592568652,
+        "elapsed_floor_ps": 766016097120,
+        "kv_positions": 589
+      },
+      {
+        "step": 78,
+        "elapsed_ps": 1149098922645,
+        "attention_ps": 812915512741,
+        "elapsed_floor_ps": 767130919776,
+        "kv_positions": 590
+      },
+      {
+        "step": 79,
+        "elapsed_ps": 1150421866733,
+        "attention_ps": 814238456829,
+        "elapsed_floor_ps": 768245742432,
+        "kv_positions": 591
+      },
+      {
+        "step": 80,
+        "elapsed_ps": 1151744810822,
+        "attention_ps": 815561400918,
+        "elapsed_floor_ps": 769360565088,
+        "kv_positions": 592
+      },
+      {
+        "step": 81,
+        "elapsed_ps": 1153395915388,
+        "attention_ps": 817212505484,
+        "elapsed_floor_ps": 770751923040,
+        "kv_positions": 593
+      },
+      {
+        "step": 82,
+        "elapsed_ps": 1154718859477,
+        "attention_ps": 818535449573,
+        "elapsed_floor_ps": 771866745696,
+        "kv_positions": 594
+      },
+      {
+        "step": 83,
+        "elapsed_ps": 1156041803565,
+        "attention_ps": 819858393661,
+        "elapsed_floor_ps": 772981568352,
+        "kv_positions": 595
+      },
+      {
+        "step": 84,
+        "elapsed_ps": 1157364747654,
+        "attention_ps": 821181337750,
+        "elapsed_floor_ps": 774096391008,
+        "kv_positions": 596
+      },
+      {
+        "step": 85,
+        "elapsed_ps": 1158797078568,
+        "attention_ps": 822613668664,
+        "elapsed_floor_ps": 775303392096,
+        "kv_positions": 597
+      },
+      {
+        "step": 86,
+        "elapsed_ps": 1160120022657,
+        "attention_ps": 823936612753,
+        "elapsed_floor_ps": 776418214752,
+        "kv_positions": 598
+      },
+      {
+        "step": 87,
+        "elapsed_ps": 1161442966746,
+        "attention_ps": 825259556842,
+        "elapsed_floor_ps": 777533037408,
+        "kv_positions": 599
+      },
+      {
+        "step": 88,
+        "elapsed_ps": 1162765910834,
+        "attention_ps": 826582500930,
+        "elapsed_floor_ps": 778647860064,
+        "kv_positions": 600
+      },
+      {
+        "step": 89,
+        "elapsed_ps": 1164417015400,
+        "attention_ps": 828233605496,
+        "elapsed_floor_ps": 780039218016,
+        "kv_positions": 601
+      },
+      {
+        "step": 90,
+        "elapsed_ps": 1165739959489,
+        "attention_ps": 829556549585,
+        "elapsed_floor_ps": 781154040672,
+        "kv_positions": 602
+      },
+      {
+        "step": 91,
+        "elapsed_ps": 1167062903578,
+        "attention_ps": 830879493674,
+        "elapsed_floor_ps": 782268863328,
+        "kv_positions": 603
+      },
+      {
+        "step": 92,
+        "elapsed_ps": 1168385847666,
+        "attention_ps": 832202437762,
+        "elapsed_floor_ps": 783383685984,
+        "kv_positions": 604
+      },
+      {
+        "step": 93,
+        "elapsed_ps": 1169818178581,
+        "attention_ps": 833634768677,
+        "elapsed_floor_ps": 784590687072,
+        "kv_positions": 605
+      },
+      {
+        "step": 94,
+        "elapsed_ps": 1171141122669,
+        "attention_ps": 834957712765,
+        "elapsed_floor_ps": 785705509728,
+        "kv_positions": 606
+      },
+      {
+        "step": 95,
+        "elapsed_ps": 1172464066758,
+        "attention_ps": 836280656854,
+        "elapsed_floor_ps": 786820332384,
+        "kv_positions": 607
+      },
+      {
+        "step": 96,
+        "elapsed_ps": 1173787010847,
+        "attention_ps": 837603600943,
+        "elapsed_floor_ps": 787935155040,
+        "kv_positions": 608
+      },
+      {
+        "step": 97,
+        "elapsed_ps": 1175438115413,
+        "attention_ps": 839254705509,
+        "elapsed_floor_ps": 789326512992,
+        "kv_positions": 609
+      },
+      {
+        "step": 98,
+        "elapsed_ps": 1176761059501,
+        "attention_ps": 840577649597,
+        "elapsed_floor_ps": 790441335648,
+        "kv_positions": 610
+      },
+      {
+        "step": 99,
+        "elapsed_ps": 1178084003590,
+        "attention_ps": 841900593686,
+        "elapsed_floor_ps": 791556158304,
+        "kv_positions": 611
+      },
+      {
+        "step": 100,
+        "elapsed_ps": 1179406947679,
+        "attention_ps": 843223537775,
+        "elapsed_floor_ps": 792670980960,
+        "kv_positions": 612
+      },
+      {
+        "step": 101,
+        "elapsed_ps": 1180839278593,
+        "attention_ps": 844655868689,
+        "elapsed_floor_ps": 793877982048,
+        "kv_positions": 613
+      },
+      {
+        "step": 102,
+        "elapsed_ps": 1182162222682,
+        "attention_ps": 845978812778,
+        "elapsed_floor_ps": 794992804704,
+        "kv_positions": 614
+      },
+      {
+        "step": 103,
+        "elapsed_ps": 1183485166770,
+        "attention_ps": 847301756866,
+        "elapsed_floor_ps": 796107627360,
+        "kv_positions": 615
+      },
+      {
+        "step": 104,
+        "elapsed_ps": 1184808110859,
+        "attention_ps": 848624700955,
+        "elapsed_floor_ps": 797222450016,
+        "kv_positions": 616
+      },
+      {
+        "step": 105,
+        "elapsed_ps": 1186459215425,
+        "attention_ps": 850275805521,
+        "elapsed_floor_ps": 798613807968,
+        "kv_positions": 617
+      },
+      {
+        "step": 106,
+        "elapsed_ps": 1187782159514,
+        "attention_ps": 851598749610,
+        "elapsed_floor_ps": 799728630624,
+        "kv_positions": 618
+      },
+      {
+        "step": 107,
+        "elapsed_ps": 1189105103603,
+        "attention_ps": 852921693699,
+        "elapsed_floor_ps": 800843453280,
+        "kv_positions": 619
+      },
+      {
+        "step": 108,
+        "elapsed_ps": 1190428047691,
+        "attention_ps": 854244637787,
+        "elapsed_floor_ps": 801958275936,
+        "kv_positions": 620
+      },
+      {
+        "step": 109,
+        "elapsed_ps": 1191860378606,
+        "attention_ps": 855676968702,
+        "elapsed_floor_ps": 803165277024,
+        "kv_positions": 621
+      },
+      {
+        "step": 110,
+        "elapsed_ps": 1193183322694,
+        "attention_ps": 856999912790,
+        "elapsed_floor_ps": 804280099680,
+        "kv_positions": 622
+      },
+      {
+        "step": 111,
+        "elapsed_ps": 1194506266783,
+        "attention_ps": 858322856879,
+        "elapsed_floor_ps": 805394922336,
+        "kv_positions": 623
+      },
+      {
+        "step": 112,
+        "elapsed_ps": 1195829210872,
+        "attention_ps": 859645800968,
+        "elapsed_floor_ps": 806509744992,
+        "kv_positions": 624
+      },
+      {
+        "step": 113,
+        "elapsed_ps": 1197480315438,
+        "attention_ps": 861296905534,
+        "elapsed_floor_ps": 807901102944,
+        "kv_positions": 625
+      },
+      {
+        "step": 114,
+        "elapsed_ps": 1198803259526,
+        "attention_ps": 862619849622,
+        "elapsed_floor_ps": 809015925600,
+        "kv_positions": 626
+      },
+      {
+        "step": 115,
+        "elapsed_ps": 1200126203615,
+        "attention_ps": 863942793711,
+        "elapsed_floor_ps": 810130748256,
+        "kv_positions": 627
+      },
+      {
+        "step": 116,
+        "elapsed_ps": 1201449147704,
+        "attention_ps": 865265737800,
+        "elapsed_floor_ps": 811245570912,
+        "kv_positions": 628
+      },
+      {
+        "step": 117,
+        "elapsed_ps": 1202881478618,
+        "attention_ps": 866698068714,
+        "elapsed_floor_ps": 812452572000,
+        "kv_positions": 629
+      },
+      {
+        "step": 118,
+        "elapsed_ps": 1204204422707,
+        "attention_ps": 868021012803,
+        "elapsed_floor_ps": 813567394656,
+        "kv_positions": 630
+      },
+      {
+        "step": 119,
+        "elapsed_ps": 1205527366795,
+        "attention_ps": 869343956891,
+        "elapsed_floor_ps": 814682217312,
+        "kv_positions": 631
+      },
+      {
+        "step": 120,
+        "elapsed_ps": 1206850310884,
+        "attention_ps": 870666900980,
+        "elapsed_floor_ps": 815797039968,
+        "kv_positions": 632
+      },
+      {
+        "step": 121,
+        "elapsed_ps": 1208501415450,
+        "attention_ps": 872318005546,
+        "elapsed_floor_ps": 817188397920,
+        "kv_positions": 633
+      },
+      {
+        "step": 122,
+        "elapsed_ps": 1209824359539,
+        "attention_ps": 873640949635,
+        "elapsed_floor_ps": 818303220576,
+        "kv_positions": 634
+      },
+      {
+        "step": 123,
+        "elapsed_ps": 1211147303627,
+        "attention_ps": 874963893723,
+        "elapsed_floor_ps": 819418043232,
+        "kv_positions": 635
+      },
+      {
+        "step": 124,
+        "elapsed_ps": 1212470247716,
+        "attention_ps": 876286837812,
+        "elapsed_floor_ps": 820532865888,
+        "kv_positions": 636
+      },
+      {
+        "step": 125,
+        "elapsed_ps": 1213902578630,
+        "attention_ps": 877719168726,
+        "elapsed_floor_ps": 821739866976,
+        "kv_positions": 637
+      },
+      {
+        "step": 126,
+        "elapsed_ps": 1215225522719,
+        "attention_ps": 879042112815,
+        "elapsed_floor_ps": 822854689632,
+        "kv_positions": 638
+      },
+      {
+        "step": 127,
+        "elapsed_ps": 1216548466808,
+        "attention_ps": 880365056904,
+        "elapsed_floor_ps": 823969512288,
+        "kv_positions": 639
+      }
+    ]
+  },
+  "geometry": {
+    "id": 110707,
+    "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-request-geometry-20261114-01",
+    "source_commit": "be0b3bab6d586b3cded81e2b3e48b63ac76e529a",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "partition": "c64",
+    "node": "node7",
+    "cpus": 1,
+    "slurm_seconds": 19,
+    "command": "sbatch --parsable run_qwen_request_geometry.sbatch",
+    "output_manifest_sha256": "cbee656da9dff717474dc51f93b93bcf7f9542a2d616054f46bf897bb277c62a",
+    "output_sha256": {
+      "geometry.json": "c0d838b3d80e931459d14f71fea71ca1a6d5dee18c7ec72916a47a7ac0eebb9b",
+      "source.sha256": "4a9e34a942268f6aece22a21b32bde779d67f7b17189f9963e50fa2caae930b5",
+      "tools.sha256": "b061c17214f557f5752b99435540ab7880ee608162eca8b0872393a352cca5e0",
+      "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+    },
+    "source_sha256": {
+      "qwen_request_geometry.py": "e5ce3ba7658cb8b460b11a7d105fcac06714d55951c143281a5590f1ad9d2a95",
+      "run_qwen_request_geometry.sbatch": "fd0421ae31fc7e12c1084fff246361566bbf77f794f1212a264cc4c766b7fda3",
+      "git-commit.txt": "e57acb0addaca1a4db5a1a2982e9c4b482ea37368a2468cbc0fa64aa78503866"
+    },
+    "tools_sha256": {
+      "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+      "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766"
+    },
+    "python_version": "Python 3.10.12",
+    "result": {
+      "deployment_sha256": "74078b0b40fdeb73aeae71e3091db3e6a25fc5f27bc03c9981214bfef92b39ef",
+      "topology": 25001,
+      "source_manifest_sha256": "1bf5465dc4a4bbb8e4618502e1fe5a591d1c2c9fdc8b20cf84d5ea7d198e2a33",
+      "scope": "sealed workload geometry and optimistic lower bounds for the fixed 107361 TLM service rules",
+      "prefill": {
+        "input_tokens": 512,
+        "pages": 147970,
+        "descriptor_bytes": 833049216,
+        "time_estimated": false
+      },
+      "decode": {
+        "retired_token_design": 128,
+        "intervals": 127,
+        "core_ps": 3334,
+        "ddr_ps": 630,
+        "ddr_burst_bytes": 64,
+        "attention_ddr_read_window": 1,
+        "sram_port_bits": 128,
+        "assumed_weight_ingress_bytes_per_p_core_edge": 64,
+        "total": {
+          "pages": 36957,
+          "calls": 1765046,
+          "duration_floor_ps": 95364567391392,
+          "duration_floor_if_no_coalescing_ps": 96110128954368,
+          "weight_channel0_bursts": 3272235264,
+          "weight_channel1_bursts": 3272235264,
+          "weight_macs": 391883522048,
+          "head_weight_bursts": 694651392,
+          "kv_store_calls": 18288,
+          "attention_calls": 73152,
+          "attention_beats": 1685422080,
+          "attention_sram_words": 5731909632
+        },
+        "aggregate_toks_per_second_ceiling": 1.331731516998037,
+        "matched_two_step_phase2_toks_per_second_ceiling": 1.4727675068392776,
+        "aggregate_if_no_weight_coalescing_toks_per_second_ceiling": 1.3214007865944926
+      },
+      "bound_omissions": [
+        "compute, PM, descriptors, most SRAM traffic, writes, row and refresh losses",
+        "whole-request prefill execution and terminal timing"
+      ],
+      "elapsed_host_seconds": 16.987824445590377
+    }
+  },
+  "native_rtl_prefix": {
+    "archive": 105530,
+    "core_period_ps": 10000,
+    "ddr_period_ps": 630,
+    "heldout": 105572,
+    "heldout_compared": true,
+    "first_q_retire_pre_edges": [
+      47340,
+      48630
+    ],
+    "first_kv_store_retire_pre_edges": [
+      49086,
+      50558
+    ],
+    "runs": [
+      {
+        "id": 110646,
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-k0-20261114-01",
+        "source_commit": "e847440c6f32cd4d7cdfb1cd20d52d3056508db0",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "partition": "c96",
+        "node": "node15",
+        "cpus": 2,
+        "slurm_seconds": 5,
+        "log": "slurm-110646.out",
+        "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-k0",
+        "output_manifest_sha256": "a9df7a3b2ec1f2958b9f44c1e3fd96af053ff714fc54bfdacc4a8401ba7c8867",
+        "output_sha256": {
+          "prediction-0.json": "fc76b024f1d7d0412b955a5d6e5d6e052f82fe1257af5bce0ee40377e0c100fa",
+          "prediction-1.json": "a321e6b59fd43883c683584290059c90606becac01e6b567398ecb507c4f920a",
+          "comparison-0.json": "860a8c9367bbcca38f621177e696a624fed8ae764000c864e6b09d53918dd2bd",
+          "comparison-1.json": "87e66b6d6d32ef2702084dadb15e62427af45428e854136738f2aeb523cd97f6",
+          "prediction.sha256": "7efa670866863c75442852e6d2f4215686b8dd68cb87daaf2b507538c9d32425",
+          "tools.sha256": "9d49301ef5e3e43d404adf5f655861087dc4baab8068da02a8be201e9c4eecf5",
+          "source.sha256": "78a0ec5abe66904f2023692d74c30e68b4c52417912fb0a33292084562d11749",
+          "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+          "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+          "bridge-read": "ce2c768696d5d65019c5d411244835cbf3023784647573e80c7d85101fb58817"
+        },
+        "source_sha256": {
+          "qwen_prompt_cycle.py": "9379a8e5bff45d8626685ef55e885d019f0c2b6b3f1d74ba37db873eb60204a3",
+          "qwen_prompt_pm.py": "0c793a0772f0b8040b495d822f8abb484b6f73cc89fee9a092c8dd6a201a0424",
+          "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+          "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+          "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+          "qwen_page_cycle.py": "9c9db04d7d7bed62dbba992a1b5583f899575b2ae0e8b36813b63493f5b2e6c9",
+          "run_qwen_page_cycle.sbatch": "90c01382fe67371b5aa5353ad7a92c5d15c88cf79cdc42ec4e7ceea6850c141b",
+          "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+          "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+          "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+          "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+          "dram_live.py": "eefb4cb221b9b42724770e55d058f06cbdc4d00cb6956878f3463324fe0b6d22",
+          "dramsim_bridge.cpp": "76b28487dde12085749ea559fff722e2c75b6050769519c719a10bd722cb75c8",
+          "qwen_projection_front.py": "1a5d1b8588a5a43eac7a2e6cc5cd1be4ac279c6487070ea54822d817672342fe",
+          "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+          "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+          "qwen_projection_pipeline.py": "cf2e1a690e25e2019f64c9a0113a44372bf545727a5744fe74f59e04dda44fd3",
+          "qwen_weight_pipeline.py": "05683998a8b030b87f93821734ee1fd361828768091dbec7fde488767d54a095",
+          "git-commit.txt": "1d6eb0cd1572f396c6e4843b4034e45e284d2a34e7b87e6d532ef82cb535496f"
+        },
+        "tools_sha256": {
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b"
+        },
+        "python_version": "Python 3.10.12",
+        "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+        "modes": [
+          {
+            "mode": 0,
+            "matched_ddr_bursts": 561,
+            "matched_ddr_events": 2244,
+            "matched_control_markers": 11,
+            "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+            "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 547468
+            },
+            "prediction_sha256": "fc76b024f1d7d0412b955a5d6e5d6e052f82fe1257af5bce0ee40377e0c100fa"
+          },
+          {
+            "mode": 1,
+            "matched_ddr_bursts": 561,
+            "matched_ddr_events": 2244,
+            "matched_control_markers": 11,
+            "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+            "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 591737
+            },
+            "prediction_sha256": "a321e6b59fd43883c683584290059c90606becac01e6b567398ecb507c4f920a"
+          }
+        ]
+      },
+      {
+        "id": 110675,
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-k1-20261114-01",
+        "source_commit": "88db71834641befaff7fd5f852641447878fdde1",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "partition": "c64",
+        "node": "node12",
+        "cpus": 2,
+        "slurm_seconds": 11,
+        "log": "slurm-110675.out",
+        "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-k1",
+        "output_manifest_sha256": "c29387dfa2485be245b9372b49d7d0ae86b9b0cf96ff573e28163b142740758a",
+        "output_sha256": {
+          "prediction-0.json": "33238d632f0cbbe9130ca76c5de7caca5be287659b8eebd2e2c541568ac868c8",
+          "prediction-1.json": "c55c1659037d154057f06591e1ee41000be276cad1aa1b2bbfb54f0e900dd17a",
+          "comparison-0.json": "972ab55ba20ec3edab732c533f036271b8e8bb15019c3f23738170c955a1ece8",
+          "comparison-1.json": "8f4a8256be7c1a9ac5742ecd591bb3e2a8b35e2a37cd3ee66540fd4a24734dbb",
+          "prediction.sha256": "c7ad76685c60facaab641ae9d095841c1899db24beb333785b00cdb97a674164",
+          "tools.sha256": "9d49301ef5e3e43d404adf5f655861087dc4baab8068da02a8be201e9c4eecf5",
+          "source.sha256": "0c2730ae016da6e1d5eca8f6c45204b587cc7d172747c197720a227b4c365cec",
+          "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+          "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+          "bridge-read": "ce2c768696d5d65019c5d411244835cbf3023784647573e80c7d85101fb58817"
+        },
+        "source_sha256": {
+          "qwen_prompt_cycle.py": "9379a8e5bff45d8626685ef55e885d019f0c2b6b3f1d74ba37db873eb60204a3",
+          "qwen_prompt_pm.py": "0c793a0772f0b8040b495d822f8abb484b6f73cc89fee9a092c8dd6a201a0424",
+          "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+          "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+          "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+          "qwen_page_cycle.py": "3cb480b3d92d4ce50fe44f948c63a5923484b99fb3e9b6f21fc6b74d1e763c5b",
+          "run_qwen_page_cycle.sbatch": "90c01382fe67371b5aa5353ad7a92c5d15c88cf79cdc42ec4e7ceea6850c141b",
+          "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+          "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+          "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+          "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+          "dram_live.py": "eefb4cb221b9b42724770e55d058f06cbdc4d00cb6956878f3463324fe0b6d22",
+          "dramsim_bridge.cpp": "76b28487dde12085749ea559fff722e2c75b6050769519c719a10bd722cb75c8",
+          "qwen_projection_front.py": "1a5d1b8588a5a43eac7a2e6cc5cd1be4ac279c6487070ea54822d817672342fe",
+          "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+          "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+          "qwen_projection_pipeline.py": "1c45b0ab2cfaf913f0754f74d3b8d24e2ef97c01b014aa625a5a4b0eaef69f68",
+          "qwen_weight_pipeline.py": "05683998a8b030b87f93821734ee1fd361828768091dbec7fde488767d54a095",
+          "git-commit.txt": "1841fd0beccca34aed0415828b39ece02dee848573512a8b6a569a35bc50d69d"
+        },
+        "tools_sha256": {
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b"
+        },
+        "python_version": "Python 3.10.12",
+        "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+        "modes": [
+          {
+            "mode": 0,
+            "matched_ddr_bursts": 833,
+            "matched_ddr_events": 3332,
+            "matched_control_markers": 11,
+            "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+            "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 547468
+            },
+            "prediction_sha256": "33238d632f0cbbe9130ca76c5de7caca5be287659b8eebd2e2c541568ac868c8"
+          },
+          {
+            "mode": 1,
+            "matched_ddr_bursts": 833,
+            "matched_ddr_events": 3332,
+            "matched_control_markers": 11,
+            "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+            "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 591737
+            },
+            "prediction_sha256": "c55c1659037d154057f06591e1ee41000be276cad1aa1b2bbfb54f0e900dd17a"
+          }
+        ]
+      },
+      {
+        "id": 110682,
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-projection-20261114-01",
+        "source_commit": "e47b99a82d97bc18f522365b17f497b12e322b2a",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "partition": "c64",
+        "node": "node11",
+        "cpus": 2,
+        "slurm_seconds": 10,
+        "log": "slurm-110682.out",
+        "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-q",
+        "output_manifest_sha256": "f9b266eda12fcfe6649bb9494297dec0de1b747c3f5d23aa2f7782b9300ff24a",
+        "output_sha256": {
+          "prediction-0.json": "e59c04b58bed1d15fa0956308efab66ab91c6e3bddc45683c57d3a84f26f8d71",
+          "prediction-1.json": "08cee8e808aa29dad1ff9bfaa7651a3556eb2fa81a9be78b364e86fed4312ddd",
+          "comparison-0.json": "cc69535ca7ce9620f5a026c6975348d0de3ccd5b0c7d9a8ced724dd06adbb372",
+          "comparison-1.json": "a6d2326f30f41145d98eba56b9cb745ef239982694df912d6f5f5fb3703c885c",
+          "prediction.sha256": "2cdeca3e3b1c3e937620c596104f8c8f3b3dbe9bcf500f041e9f7a9cc987655e",
+          "tools.sha256": "9d49301ef5e3e43d404adf5f655861087dc4baab8068da02a8be201e9c4eecf5",
+          "source.sha256": "153c90176c695c150493160e80aff80a1e7c8dae97eeaf92ae6b3cc85f5b3aa3",
+          "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+          "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+          "bridge-read": "ce2c768696d5d65019c5d411244835cbf3023784647573e80c7d85101fb58817"
+        },
+        "source_sha256": {
+          "qwen_prompt_cycle.py": "9379a8e5bff45d8626685ef55e885d019f0c2b6b3f1d74ba37db873eb60204a3",
+          "qwen_prompt_pm.py": "0c793a0772f0b8040b495d822f8abb484b6f73cc89fee9a092c8dd6a201a0424",
+          "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+          "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+          "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+          "qwen_page_cycle.py": "56f40204d5b3ade49ada5e8fe8abcdeeb09c696dfcf0d554eba32be866a3a950",
+          "run_qwen_page_cycle.sbatch": "90c01382fe67371b5aa5353ad7a92c5d15c88cf79cdc42ec4e7ceea6850c141b",
+          "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+          "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+          "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+          "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+          "dram_live.py": "eefb4cb221b9b42724770e55d058f06cbdc4d00cb6956878f3463324fe0b6d22",
+          "dramsim_bridge.cpp": "76b28487dde12085749ea559fff722e2c75b6050769519c719a10bd722cb75c8",
+          "qwen_projection_front.py": "1a5d1b8588a5a43eac7a2e6cc5cd1be4ac279c6487070ea54822d817672342fe",
+          "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+          "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+          "qwen_projection_pipeline.py": "3c649e616e86d314b4b86600718134560b92dd4c8df76b210806052830f6049f",
+          "qwen_weight_pipeline.py": "05683998a8b030b87f93821734ee1fd361828768091dbec7fde488767d54a095",
+          "git-commit.txt": "15f6edce587a2e40a4aee06df2afb2317e39c41b74fb4f669fa89484a4ef25f2"
+        },
+        "tools_sha256": {
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b"
+        },
+        "python_version": "Python 3.10.12",
+        "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+        "modes": [
+          {
+            "mode": 0,
+            "matched_ddr_bursts": 4641,
+            "matched_ddr_events": 18564,
+            "matched_control_markers": 12,
+            "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+            "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 547468
+            },
+            "prediction_sha256": "e59c04b58bed1d15fa0956308efab66ab91c6e3bddc45683c57d3a84f26f8d71"
+          },
+          {
+            "mode": 1,
+            "matched_ddr_bursts": 4641,
+            "matched_ddr_events": 18564,
+            "matched_control_markers": 12,
+            "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+            "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 591737
+            },
+            "prediction_sha256": "08cee8e808aa29dad1ff9bfaa7651a3556eb2fa81a9be78b364e86fed4312ddd"
+          }
+        ]
+      },
+      {
+        "id": 110720,
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-first-kv-20261114-01",
+        "source_commit": "50c81c810426d1e86d36a634458c957fbc65d084",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "partition": "c64",
+        "node": "node11",
+        "cpus": 2,
+        "slurm_seconds": 10,
+        "log": "slurm-110720.out",
+        "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-first-kv-store",
+        "output_manifest_sha256": "9e9a267f7d89c8ffede8da3244fa7d0a5b8137088f528f58531635e9c47349d1",
+        "output_sha256": {
+          "prediction-0.json": "005d8dbd4d82b83c9b53e4f37eb4f062f879d41a14e3e79df3e501bb497a6fb0",
+          "prediction-1.json": "ca78d852c41fa191c78a59c7b02ec81e4c6a069a29a6e5cee976c75a1d7347b9",
+          "comparison-0.json": "e85dfa7c449a17767360b1f8810cdc694e9838c3e89ef9484cdec18405d7ef1e",
+          "comparison-1.json": "3bd9149bb167f6056ebe77e0d14e1f1020b53f1c151d30833c01b274c4dc671b",
+          "prediction.sha256": "21f0be94f43e87b2c5232d9618e33e46988a15e295aa6bff92aca87225001625",
+          "tools.sha256": "fa92a615d995d3e28a1340ec32f547cf18317b2f1d06bf4b035f57ad249b753d",
+          "source.sha256": "7e22bada5790e08aa4efba045077a54a031bc31c8a6a3ff6c5b3603870f59d0b",
+          "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+          "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+          "bridge-read": "2617b590633005011e75718e36ff7d0b53102c7d4e316c42a5bd2123381991a5"
+        },
+        "source_sha256": {
+          "qwen_prompt_cycle.py": "6757e3777658ca429193891f05b1a46aa3d9ec8653c302cc06c1c8e972ba26ed",
+          "qwen_prompt_pm.py": "1a4a36bab5d6c78e3c40753914199ac1b544b2a4f2924338fd8fb5642bc485c8",
+          "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+          "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+          "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+          "qwen_page_cycle.py": "0207927b8208105310460840814806edb3d027d7bd4a7be21637eaebeae27ad5",
+          "run_qwen_page_cycle.sbatch": "2e91052d82bfbf931cff407eeb583b42acf2711236539ff2de7ed5466a5b06e7",
+          "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+          "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+          "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+          "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+          "dram_live.py": "1474372bab48e684b06a0f574e5ca9614add5e2c5ff1687e2a36453226ae417f",
+          "dramsim_bridge.cpp": "0500f836b2d0884c827f4600bbd15775697eb10c68bc07baafda24296bfe913d",
+          "qwen_projection_front.py": "1a5d1b8588a5a43eac7a2e6cc5cd1be4ac279c6487070ea54822d817672342fe",
+          "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+          "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+          "qwen_projection_pipeline.py": "3c649e616e86d314b4b86600718134560b92dd4c8df76b210806052830f6049f",
+          "qwen_weight_pipeline.py": "05683998a8b030b87f93821734ee1fd361828768091dbec7fde488767d54a095",
+          "qwen_post_projection.py": "8d4779d82759f7426b3a4695bfc436afde46671ea254bda674c7fbec266df516",
+          "qwen_kv_write.py": "eb1350cd6077bdcfb37a186d2f8dae14574afea77e8262a516e112f294119758",
+          "git-commit.txt": "682514a5bb58150f430b98bdb6f1ecc79a8e9b00b1dbcb4e4b49f60e6efac3ea"
+        },
+        "tools_sha256": {
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/memory_system.h": "b750651e5fc871df216570cfa1687894f9242a16a26fb69bf1099a97f5080e4b"
+        },
+        "python_version": "Python 3.10.12",
+        "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+        "modes": [
+          {
+            "mode": 0,
+            "matched_ddr_bursts": 4655,
+            "matched_ddr_events": 18620,
+            "matched_control_markers": 24,
+            "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+            "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 547468
+            },
+            "matched_kv_ddr_events": 32,
+            "rtl_kv_trace_sha256": "428853085c5b66384d45bcfe9e621683fbbf906e624aa40642ea471258e235cd",
+            "prediction_sha256": "005d8dbd4d82b83c9b53e4f37eb4f062f879d41a14e3e79df3e501bb497a6fb0"
+          },
+          {
+            "mode": 1,
+            "matched_ddr_bursts": 4655,
+            "matched_ddr_events": 18620,
+            "matched_control_markers": 24,
+            "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+            "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 591737
+            },
+            "matched_kv_ddr_events": 32,
+            "rtl_kv_trace_sha256": "330104cf3493bb44adc98fc8f776c9b265f6b1ee579180bedfd3deeaeda5bdfb",
+            "prediction_sha256": "ca78d852c41fa191c78a59c7b02ec81e4c6a069a29a6e5cee976c75a1d7347b9"
+          }
+        ]
+      }
+    ],
+    "heldout_validation": {
+      "archive": 105572,
+      "preregistered_source": "ea05cc6536e81d8d15efe1b64f3ceadf7208c60f",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-heldout-20261114-01",
+      "criteria": "exact equality of all 2244 ordered DDR events in each mode through first Q K0",
+      "prediction_job": 110832,
+      "prediction_state": "COMPLETED 0:0",
+      "prediction_node": "c64/node9",
+      "prediction_wall_seconds": 6,
+      "prediction_command": "sbatch --parsable run_qwen_105572_holdout.sbatch predict",
+      "prediction_sha256": [
+        "d39770d652612242ef73a4e32546111f220795ae840d3f35c8aab980caa76724",
+        "bebae5484ad6ccf5881144ddc1c3e9a6fa10f868fa63fe498769ab0d9a4c55ce"
+      ],
+      "prediction_manifest_sha256": "605a49105774a2b9519869370116878d81dccf4f53cc4753b9f47f99233f1105",
+      "model_output_manifest_sha256": "8559c5787a4b54b5f15d8397d7a1fb62ef26cc3b57eded604c3e2f376d7fd9b1",
+      "compare_job": 110843,
+      "comparison_state": "FAILED 1:0",
+      "comparison_node": "c64/node11",
+      "comparison_wall_seconds": 3,
+      "compare_command": "sbatch --parsable run_qwen_105572_holdout.sbatch compare d39770d652612242ef73a4e32546111f220795ae840d3f35c8aab980caa76724 bebae5484ad6ccf5881144ddc1c3e9a6fa10f868fa63fe498769ab0d9a4c55ce",
+      "mode0": {
+        "matched_events": 2244,
+        "zero_error": true,
+        "comparison_sha256": "19916d3eba865d5e1c98a139cc7d7f493e4618ff4cc24c9bf1ff0bedb31d4430"
+      },
+      "mode1": {
+        "matched_prefix_events": 1156,
+        "first_different_event": {
+          "kind": "admit",
+          "address": 5017600,
+          "tag": 8590721600,
+          "lane": 0,
+          "predicted_pre_edge": 35736,
+          "observed_pre_edge": 35731
+        }
+      },
+      "diagnostic_after_source_fix": {
+        "source_commit": "bd0cab41821ee67ede9a86b35b33c8f49f1bb6cb",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-heldout-diagnostic-20261114-01",
+        "prediction_job": 110895,
+        "prediction_state": "COMPLETED 0:0",
+        "prediction_node": "c64/node9",
+        "prediction_wall_seconds": 5,
+        "compare_job": 110917,
+        "compare_state": "COMPLETED 0:0",
+        "compare_node": "c64/node11",
+        "compare_wall_seconds": 2,
+        "prediction_sha256": [
+          "d39770d652612242ef73a4e32546111f220795ae840d3f35c8aab980caa76724",
+          "4d54d5c2f066e12154bc9d6b32bd67ebba41710a6b335111ca1f0f047125fa59"
+        ],
+        "prediction_command": "sbatch --parsable run_qwen_105572_holdout.sbatch predict",
+        "compare_command": "sbatch --parsable run_qwen_105572_holdout.sbatch compare d39770d652612242ef73a4e32546111f220795ae840d3f35c8aab980caa76724 4d54d5c2f066e12154bc9d6b32bd67ebba41710a6b335111ca1f0f047125fa59",
+        "model_output_manifest_sha256": "e227e323c8201c731be4cdf4b4d504a98f5c0a05b07848e4dd4062e569b6370e",
+        "output_manifest_sha256": "5044be85a6de9d0eefe69349c6e59a02a38af3573cb1b285cf1fd7a31f61b80f",
+        "source_manifest_sha256": "7859888333821eac000e704a311670da837304b580575f9f37d3e2c82df34809",
+        "matched_events_per_mode": 2244,
+        "independent_heldout_qualification": false,
+        "scope": "source-derived fix, reused opened evaluation traces"
+      }
+    },
+    "full_page_attempts": [
+      {
+        "id": 110774,
+        "source_commit": "f512c7789c9631658ffb29741ec91c2aac7b2cda",
+        "state": "FAILED 1:0",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-qkv-page-20261114-01",
+        "cause": "Overly strict SRAM residency check rejected RoPE data surviving an unrelated projection."
+      },
+      {
+        "id": 110794,
+        "source_commit": "ba2135c95367b985610270c45c28cc5cd7c60875",
+        "state": "FAILED 1:0",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-qkv-page-20261114-02",
+        "cause": "Model lacks second-row prompt embedding/RMS and descriptor gate; first DDR mismatch at mode0 index71052."
+      },
+      {
+        "id": 110915,
+        "source_commit": "38d240eeb7248a3db854c71eebff33a8c73ab1bd",
+        "state": "FAILED 1:0",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-qkv-page-20261114-03",
+        "cause": "Cursor replay incorrectly treated raw prompt ingress tags as typed client tags."
+      },
+      {
+        "id": 110938,
+        "source_commit": "768b508f26586e328bed559f4506df582db68ea8",
+        "state": "FAILED 1:0",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-qkv-page-20261114-04",
+        "cause": "History embedding table base was incorrectly offset by the first token index."
+      }
+    ],
+    "full_page_current": {
+      "id": 110962,
+      "source_commit": "f3abfb919a04dcd4c3332938a72d4f4f624fa90f",
+      "state": "COMPLETED",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-qkv-page-20261114-05",
+      "node": "c64/node11",
+      "cpus": 2,
+      "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-qkv-page",
+      "exit_code": "0:0",
+      "slurm_seconds": 144,
+      "output_manifest_sha256": "d427e1b84e9ea7d4a062008fdd5502171f4219da35e3e8a428faff89f5885f14",
+      "output_sha256": {
+        "prediction-0.json": "813a72f4053b0e07ac88cbad741ae2c8ac7bd226e57e8e45fd66b8566837341a",
+        "prediction-1.json": "d12c5d65f0bbdd6b3bc380d4d7231fe30f1854f94ae61d9a69aaa164f6b84c88",
+        "comparison-0.json": "5ccb8fa01056975e0af2f94d3fc5902d2e3e42bebdeeee6ab5eb51ee3e7a0d82",
+        "comparison-1.json": "ca40f2e54915bf31391f625249799dd95743361d7681cc3f5fff1c3f8b5fe3ad",
+        "prediction.sha256": "196d323270f15e08785b2f6f19110287eb639b0275ee453a4df4c4593d1a337c",
+        "tools.sha256": "fa92a615d995d3e28a1340ec32f547cf18317b2f1d06bf4b035f57ad249b753d",
+        "source.sha256": "7a7393145b95cb8fe1c8ac8cfab100bce4dca6687aa51af8fc2cac9418a71795",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "bridge-read": "2617b590633005011e75718e36ff7d0b53102c7d4e316c42a5bd2123381991a5"
+      },
+      "source_sha256": {
+        "qwen_prompt_cycle.py": "6757e3777658ca429193891f05b1a46aa3d9ec8653c302cc06c1c8e972ba26ed",
+        "qwen_prompt_pm.py": "1a4a36bab5d6c78e3c40753914199ac1b544b2a4f2924338fd8fb5642bc485c8",
+        "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+        "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+        "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+        "qwen_page_cycle.py": "944de68f7a205e967f268104a8fd4366cfcecdb0ad0752fc35e640f6e97c5298",
+        "run_qwen_page_cycle.sbatch": "a31a7bb60295913d553ca5f5145082caf08c4bd6b1eb965285034d2f2ea36778",
+        "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+        "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+        "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+        "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+        "dram_live.py": "1474372bab48e684b06a0f574e5ca9614add5e2c5ff1687e2a36453226ae417f",
+        "dramsim_bridge.cpp": "0500f836b2d0884c827f4600bbd15775697eb10c68bc07baafda24296bfe913d",
+        "qwen_projection_front.py": "e33dce92f7d49704252ce993fe8f7e6d0fb81dd3ee8ff2a50b1aa5db0d76670f",
+        "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+        "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+        "qwen_projection_pipeline.py": "db4e39ba5332e225944bee9e7d68146bd89c308ae01f116384f6ad7222ddf6e7",
+        "qwen_weight_pipeline.py": "b9765d72186a49e896f24f1c4eff8f99fca732346b3653e28ff405b161449a3e",
+        "qwen_post_projection.py": "bc59f6b4421143e76d586040f9f3db7ec4f748503567b9ee44dfeab1b090527c",
+        "qwen_kv_write.py": "eb1350cd6077bdcfb37a186d2f8dae14574afea77e8262a516e112f294119758",
+        "qwen_qkv_page.py": "d8c3b07c6a5099ae68897448e968fff89e9dfb5a587a88d43d9bf45ead044892",
+        "git-commit.txt": "84a5d9d7f04cdb3fd442532068fd372b4dfbc055951af478fb455e18d21da508"
+      },
+      "tools_sha256": {
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/memory_system.h": "b750651e5fc871df216570cfa1687894f9242a16a26fb69bf1099a97f5080e4b"
+      },
+      "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "python_version": "Python 3.10.12",
+      "modes": [
+        {
+          "mode": 0,
+          "matched_ddr_bursts": 123155,
+          "matched_ddr_events": 492620,
+          "matched_control_markers": 497,
+          "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+          "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+          "conditional_wait_audit": {
+            "input": "observed_provider_retire",
+            "matched_wait_handoffs": 123,
+            "matched_next_descriptor_admissions": 246,
+            "matched_page_commit": 547468
+          },
+          "matched_kv_ddr_events": 384,
+          "rtl_kv_trace_sha256": "428853085c5b66384d45bcfe9e621683fbbf906e624aa40642ea471258e235cd",
+          "prediction_sha256": "813a72f4053b0e07ac88cbad741ae2c8ac7bd226e57e8e45fd66b8566837341a"
+        },
+        {
+          "mode": 1,
+          "matched_ddr_bursts": 123155,
+          "matched_ddr_events": 492620,
+          "matched_control_markers": 497,
+          "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+          "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+          "conditional_wait_audit": {
+            "input": "observed_provider_retire",
+            "matched_wait_handoffs": 123,
+            "matched_next_descriptor_admissions": 246,
+            "matched_page_commit": 591737
+          },
+          "matched_kv_ddr_events": 384,
+          "rtl_kv_trace_sha256": "330104cf3493bb44adc98fc8f776c9b265f6b1ee579180bedfd3deeaeda5bdfb",
+          "prediction_sha256": "d12c5d65f0bbdd6b3bc380d4d7231fe30f1854f94ae61d9a69aaa164f6b84c88"
+        }
+      ],
+      "page_commit_pre_edges": [
+        547468,
+        591737
+      ],
+      "independent_full_page_timing": true
+    },
+    "long_context_complete_q": {
+      "source_commit": "debf63e3a65a9fcdb2a25b6b0b0a422ed58b0268",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-heldout-full-q-20261114-01",
+      "criterion": "18,572 exact ordered DDR events per mode, first Q plus next descriptor; retirement is checked indirectly through WAIT",
+      "prediction": {
+        "id": 111001,
+        "state": "COMPLETED 0:0",
+        "node": "c64/node11",
+        "cpus": 2,
+        "slurm_seconds": 9,
+        "sha256": [
+          "eb4a5be9bb53ffb61ad8f89ad1024e933fec1aa1a50b5bf20a3fdad096f0a10d",
+          "b7964b8a6234894db715777bf9e5a6e3372724e7b082e6f8195c190d7de26281"
+        ],
+        "output_manifest_sha256": "3c7930903711cba18fa38704ee86db3319837ef8d9d3b533ca1696e230e77bb6"
+      },
+      "comparison": {
+        "id": 111005,
+        "state": "COMPLETED 0:0",
+        "node": "c64/node11",
+        "cpus": 2,
+        "slurm_seconds": 2,
+        "output_manifest_sha256": "f0d303d867480cbcd7bdd989f7012171e5f1f8776a5215bc35c5be673674b683",
+        "matched_ddr_bursts_each": 4643,
+        "matched_ddr_events_each": 18572,
+        "core_edge_error": 0,
+        "ddr_tick_error": 0
+      },
+      "qualification": "K0 overlaps previously opened diagnostic; extension through Q and following descriptors sealed before comparing their timings"
+    },
+    "full_attention_page": {
+      "id": 111002,
+      "source_commit": "db0d1154682b05a17f447e82cc16e1f88456455e",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-attention-page-20261114-01",
+      "node": "c64/node11",
+      "cpus": 2,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "slurm_seconds": 143,
+      "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-attention-page",
+      "output_manifest_sha256": "1617bb3a1152471e93eaf6dae873089151cd50f11fc8cbbb3a6151830442843a",
+      "output_sha256": {
+        "prediction-0.json": "2258c802a22ca720c932f279a3d41b20f1df28fde87dec25b31e27e22f8afa86",
+        "prediction-1.json": "9c34c4a14586758a935c6fde0f415e442b712c035aff83744cc0bd212e94ff3b",
+        "comparison-0.json": "ab96ff4687d2151facdfbd1cad00c987d041d30ee3f73a4cedf959a806cd18f8",
+        "comparison-1.json": "9e5a8d54885946106dc024ef93b49f9f1d8825a87700368aa8a3f65856ee28ee",
+        "prediction.sha256": "fd0489bd04d861d818ede1e13d3afbbc2b6aba01a98afdb13cf81b8ef6dca2b5",
+        "tools.sha256": "fa92a615d995d3e28a1340ec32f547cf18317b2f1d06bf4b035f57ad249b753d",
+        "source.sha256": "fa2950c76e44e7ea38db5588d8ea964f36f5cc6cff0877a4d9feb755659dbf91",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "bridge-read": "2617b590633005011e75718e36ff7d0b53102c7d4e316c42a5bd2123381991a5"
+      },
+      "source_sha256": {
+        "qwen_prompt_cycle.py": "6757e3777658ca429193891f05b1a46aa3d9ec8653c302cc06c1c8e972ba26ed",
+        "qwen_prompt_pm.py": "1a4a36bab5d6c78e3c40753914199ac1b544b2a4f2924338fd8fb5642bc485c8",
+        "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+        "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+        "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+        "qwen_page_cycle.py": "972c4980f51138d44e0f54d839581cefa178591178a41ddac18f283ef7ad67f5",
+        "run_qwen_page_cycle.sbatch": "7bc96d52233fc5ce1b6e23552bbdfca6f4176df8ffa79a857501d470b9ab323f",
+        "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+        "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+        "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+        "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+        "dram_live.py": "1474372bab48e684b06a0f574e5ca9614add5e2c5ff1687e2a36453226ae417f",
+        "dramsim_bridge.cpp": "0500f836b2d0884c827f4600bbd15775697eb10c68bc07baafda24296bfe913d",
+        "qwen_projection_front.py": "e33dce92f7d49704252ce993fe8f7e6d0fb81dd3ee8ff2a50b1aa5db0d76670f",
+        "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+        "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+        "qwen_projection_pipeline.py": "db4e39ba5332e225944bee9e7d68146bd89c308ae01f116384f6ad7222ddf6e7",
+        "qwen_weight_pipeline.py": "b9765d72186a49e896f24f1c4eff8f99fca732346b3653e28ff405b161449a3e",
+        "qwen_post_projection.py": "bc59f6b4421143e76d586040f9f3db7ec4f748503567b9ee44dfeab1b090527c",
+        "qwen_kv_write.py": "eb1350cd6077bdcfb37a186d2f8dae14574afea77e8262a516e112f294119758",
+        "qwen_qkv_page.py": "d8c3b07c6a5099ae68897448e968fff89e9dfb5a587a88d43d9bf45ead044892",
+        "qwen_attention_dot.py": "4258547dae694552e34224ee4e10c2ea66933319bc73defbc30a5daddd2b9082",
+        "qwen_attention_front.py": "e53ede5b654b393f4d5a61f9dc5962bd3a0f4a538f3656e2e5f5bd37875be90c",
+        "git-commit.txt": "d2602222d230f6f0e9add9c6354d92e770fd05f83346def0c9a95330be9df68f"
+      },
+      "tools_sha256": {
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/memory_system.h": "b750651e5fc871df216570cfa1687894f9242a16a26fb69bf1099a97f5080e4b"
+      },
+      "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "python_version": "Python 3.10.12",
+      "modes": [
+        {
+          "mode": 0,
+          "matched_ddr_bursts": 125143,
+          "matched_ddr_events": 500572,
+          "matched_control_markers": 631,
+          "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+          "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+          "conditional_wait_audit": {
+            "input": "observed_provider_retire",
+            "matched_wait_handoffs": 123,
+            "matched_next_descriptor_admissions": 246,
+            "matched_page_commit": 547468
+          },
+          "matched_kv_ddr_events": 896,
+          "rtl_kv_trace_sha256": "428853085c5b66384d45bcfe9e621683fbbf906e624aa40642ea471258e235cd",
+          "prediction_sha256": "2258c802a22ca720c932f279a3d41b20f1df28fde87dec25b31e27e22f8afa86"
+        },
+        {
+          "mode": 1,
+          "matched_ddr_bursts": 125143,
+          "matched_ddr_events": 500572,
+          "matched_control_markers": 631,
+          "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+          "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+          "conditional_wait_audit": {
+            "input": "observed_provider_retire",
+            "matched_wait_handoffs": 123,
+            "matched_next_descriptor_admissions": 246,
+            "matched_page_commit": 591737
+          },
+          "matched_kv_ddr_events": 896,
+          "rtl_kv_trace_sha256": "330104cf3493bb44adc98fc8f776c9b265f6b1ee579180bedfd3deeaeda5bdfb",
+          "prediction_sha256": "9c34c4a14586758a935c6fde0f415e442b712c035aff83744cc0bd212e94ff3b"
+        }
+      ],
+      "attention_page_commit_pre_edges": [
+        590747,
+        643095
+      ]
+    },
+    "output_ingress": {
+      "id": 111032,
+      "source_commit": "ce3ea51711a6cd5b1ecc58ea0305c551bb6980e3",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-output-ingress-20261114-01",
+      "node": "c64/node11",
+      "cpus": 2,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "slurm_seconds": 143,
+      "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-output-ingress",
+      "output_manifest_sha256": "bcb30149dc6f4e62af140d2e7b28c3f1887532d2aae5a1ea666c10867b4c2620",
+      "output_sha256": {
+        "prediction-0.json": "49a0a0f1c13d6e2bedffaf4b6bc21ac4e847dbad776b17c8ba992851e18bddf4",
+        "prediction-1.json": "f8387ac3b4680c5ceb83a3b2c3a476958c69d619b26418592ce9cc1f877cc097",
+        "comparison-0.json": "77c7a746c9652305a93ca964681fa04a5f32fcd6c24a2405417ac03885f610f8",
+        "comparison-1.json": "f6feee782ca0ef3420339c663b08fae53d747a211fdfcd9035ebec49fe5c9d08",
+        "prediction.sha256": "f65beec2109dc092039b530b0673def68ed66b31ba7e8d2ff290cb9ac144dd5d",
+        "tools.sha256": "fa92a615d995d3e28a1340ec32f547cf18317b2f1d06bf4b035f57ad249b753d",
+        "source.sha256": "e1173c8b8662db25b534b856e086dd68d9f925576672e5729ea88026a7a94d16",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "bridge-read": "2617b590633005011e75718e36ff7d0b53102c7d4e316c42a5bd2123381991a5"
+      },
+      "source_sha256": {
+        "qwen_prompt_cycle.py": "6757e3777658ca429193891f05b1a46aa3d9ec8653c302cc06c1c8e972ba26ed",
+        "qwen_prompt_pm.py": "1a4a36bab5d6c78e3c40753914199ac1b544b2a4f2924338fd8fb5642bc485c8",
+        "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+        "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+        "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+        "qwen_page_cycle.py": "ee9811bcf1f0538d410c4c437c2ab34a0ea2fa7520f902dc0c6eb6a9f962705f",
+        "run_qwen_page_cycle.sbatch": "37f6bc527665319f61cd1ae0b714de0527c4b003e98d3b32ba5e1c3cc1b53a73",
+        "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+        "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+        "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+        "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+        "dram_live.py": "1474372bab48e684b06a0f574e5ca9614add5e2c5ff1687e2a36453226ae417f",
+        "dramsim_bridge.cpp": "0500f836b2d0884c827f4600bbd15775697eb10c68bc07baafda24296bfe913d",
+        "qwen_projection_front.py": "e33dce92f7d49704252ce993fe8f7e6d0fb81dd3ee8ff2a50b1aa5db0d76670f",
+        "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+        "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+        "qwen_projection_pipeline.py": "db4e39ba5332e225944bee9e7d68146bd89c308ae01f116384f6ad7222ddf6e7",
+        "qwen_weight_pipeline.py": "b9765d72186a49e896f24f1c4eff8f99fca732346b3653e28ff405b161449a3e",
+        "qwen_post_projection.py": "ec677f36aacc3ba00cfcd6dd7c4472d7d26a6ffd5d62b645909d278167d8eb63",
+        "qwen_kv_write.py": "eb1350cd6077bdcfb37a186d2f8dae14574afea77e8262a516e112f294119758",
+        "qwen_qkv_page.py": "d8c3b07c6a5099ae68897448e968fff89e9dfb5a587a88d43d9bf45ead044892",
+        "qwen_attention_dot.py": "4258547dae694552e34224ee4e10c2ea66933319bc73defbc30a5daddd2b9082",
+        "qwen_attention_front.py": "e53ede5b654b393f4d5a61f9dc5962bd3a0f4a538f3656e2e5f5bd37875be90c",
+        "qwen_output_front.py": "ab4e755b8285b5cf8840361a0743e930689f2179f68bfbeb00c9a8712d96f44a",
+        "git-commit.txt": "ff28d9733afa327109ea4d163059d93e98cad3b855de48c383dfa25d08941a88"
+      },
+      "tools_sha256": {
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/memory_system.h": "b750651e5fc871df216570cfa1687894f9242a16a26fb69bf1099a97f5080e4b"
+      },
+      "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "python_version": "Python 3.10.12",
+      "modes": [
+        {
+          "mode": 0,
+          "matched_ddr_bursts": 125284,
+          "matched_ddr_events": 501136,
+          "matched_control_markers": 647,
+          "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+          "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+          "conditional_wait_audit": {
+            "input": "observed_provider_retire",
+            "matched_wait_handoffs": 123,
+            "matched_next_descriptor_admissions": 246,
+            "matched_page_commit": 547468
+          },
+          "matched_kv_ddr_events": 896,
+          "rtl_kv_trace_sha256": "428853085c5b66384d45bcfe9e621683fbbf906e624aa40642ea471258e235cd",
+          "prediction_sha256": "49a0a0f1c13d6e2bedffaf4b6bc21ac4e847dbad776b17c8ba992851e18bddf4"
+        },
+        {
+          "mode": 1,
+          "matched_ddr_bursts": 125284,
+          "matched_ddr_events": 501136,
+          "matched_control_markers": 647,
+          "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+          "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+          "conditional_wait_audit": {
+            "input": "observed_provider_retire",
+            "matched_wait_handoffs": 123,
+            "matched_next_descriptor_admissions": 246,
+            "matched_page_commit": 591737
+          },
+          "matched_kv_ddr_events": 896,
+          "rtl_kv_trace_sha256": "330104cf3493bb44adc98fc8f776c9b265f6b1ee579180bedfd3deeaeda5bdfb",
+          "prediction_sha256": "f8387ac3b4680c5ceb83a3b2c3a476958c69d619b26418592ce9cc1f877cc097"
+        }
+      ],
+      "committed_attention_output_bytes": 8192,
+      "output_load_retire_pre_edges": [
+        593981,
+        646344
+      ]
+    },
+    "full_output_and_residual_pages": {
+      "id": 111058,
+      "source_commit": "764407a5b294c147f47a365aae723db493427728",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-residual-page-20261114-01",
+      "log": "slurm-111058.out",
+      "partition": "c64",
+      "node": "node10",
+      "cpus": 2,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "slurm_seconds": 221,
+      "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-residual-page",
+      "output_manifest_sha256": "5740253f5a6537bc0f4bfa301fa6da1f9fe6104465929a3439b6a2339244815e",
+      "output_sha256": {
+        "prediction-0.json": "c5428e0c5df21dc22088a24367f109f01cb653e129f6a32186b2bd1a3affcfe4",
+        "prediction-1.json": "997ae26d68a0691f4341a5296f0445c357b745665efb7cbad2a64967005456eb",
+        "comparison-0.json": "f4936df914db94f2867fc5b21c24cdcea0b00b871188d56888ecbad0c69144e7",
+        "comparison-1.json": "b0640f40a491f495292d8c9bcb80d8f121ce50036cebfb10aca2d6e89c3cf993",
+        "prediction.sha256": "3319bd39fc929ac63f3524c7b8480e06742cc4ff276e8d5f27a45f87ad6f0c92",
+        "tools.sha256": "fa92a615d995d3e28a1340ec32f547cf18317b2f1d06bf4b035f57ad249b753d",
+        "source.sha256": "d855c30a94a99f53171dbd982a789810a295e2276fac8fd682e8efe6034035f4",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+      },
+      "source_sha256": {
+        "bridge-read": "2617b590633005011e75718e36ff7d0b53102c7d4e316c42a5bd2123381991a5",
+        "qwen_prompt_cycle.py": "6757e3777658ca429193891f05b1a46aa3d9ec8653c302cc06c1c8e972ba26ed",
+        "qwen_prompt_pm.py": "1a4a36bab5d6c78e3c40753914199ac1b544b2a4f2924338fd8fb5642bc485c8",
+        "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+        "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+        "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+        "qwen_page_cycle.py": "d21e65782a6532bd36d2f05d8a91dcdfdbf095d88d7a85761a906bdee2a959fc",
+        "run_qwen_page_cycle.sbatch": "663beaa9d192496063d95b545f4395188270a08c56db71bb470bfc548b041ce6",
+        "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+        "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+        "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+        "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+        "dram_live.py": "1474372bab48e684b06a0f574e5ca9614add5e2c5ff1687e2a36453226ae417f",
+        "dramsim_bridge.cpp": "0500f836b2d0884c827f4600bbd15775697eb10c68bc07baafda24296bfe913d",
+        "qwen_projection_front.py": "e33dce92f7d49704252ce993fe8f7e6d0fb81dd3ee8ff2a50b1aa5db0d76670f",
+        "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+        "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+        "qwen_projection_pipeline.py": "823127cc41afb5b027f17d25f90abb88bc1f325a0b1e9b36cf081cf2453cd7de",
+        "qwen_weight_pipeline.py": "615275dee71cdac1929e7591ecffd874a6478e9fa32c12fd07fa36d7a82878b1",
+        "qwen_post_projection.py": "f300030200dcfae74f071c93f461780ba95ddf10f86ceb3c0bd56925f6c5e450",
+        "qwen_kv_write.py": "eb1350cd6077bdcfb37a186d2f8dae14574afea77e8262a516e112f294119758",
+        "qwen_qkv_page.py": "d8c3b07c6a5099ae68897448e968fff89e9dfb5a587a88d43d9bf45ead044892",
+        "qwen_attention_dot.py": "4258547dae694552e34224ee4e10c2ea66933319bc73defbc30a5daddd2b9082",
+        "qwen_attention_front.py": "e53ede5b654b393f4d5a61f9dc5962bd3a0f4a538f3656e2e5f5bd37875be90c",
+        "qwen_output_front.py": "d5e50f14793b27d48719ea4f27ee943c9963db702d5821f92260408f0e37c55e",
+        "qwen_residual_front.py": "9886a638cd6839119500e6d5eeda1b04d5ec894e2d9a82e32b471bb67b094ac6",
+        "git-commit.txt": "062dc49c40a944050bd9db092826ddcf5a811c2ebbc28746dbaeaf37201baae1"
+      },
+      "tools_sha256": {
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/memory_system.h": "b750651e5fc871df216570cfa1687894f9242a16a26fb69bf1099a97f5080e4b"
+      },
+      "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "python_version": "Python 3.10.12",
+      "modes": [
+        {
+          "mode": 0,
+          "matched_ddr_bursts": 195252,
+          "matched_ddr_events": 781008,
+          "matched_control_markers": 806,
+          "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+          "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+          "conditional_wait_audit": {
+            "input": "observed_provider_retire",
+            "matched_wait_handoffs": 123,
+            "matched_next_descriptor_admissions": 246,
+            "matched_page_commit": 547468
+          },
+          "matched_kv_ddr_events": 2432,
+          "rtl_kv_trace_sha256": "428853085c5b66384d45bcfe9e621683fbbf906e624aa40642ea471258e235cd",
+          "prediction_sha256": "c5428e0c5df21dc22088a24367f109f01cb653e129f6a32186b2bd1a3affcfe4"
+        },
+        {
+          "mode": 1,
+          "matched_ddr_bursts": 195252,
+          "matched_ddr_events": 781008,
+          "matched_control_markers": 806,
+          "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+          "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+          "conditional_wait_audit": {
+            "input": "observed_provider_retire",
+            "matched_wait_handoffs": 123,
+            "matched_next_descriptor_admissions": 246,
+            "matched_page_commit": 591737
+          },
+          "matched_kv_ddr_events": 2432,
+          "rtl_kv_trace_sha256": "330104cf3493bb44adc98fc8f776c9b265f6b1ee579180bedfd3deeaeda5bdfb",
+          "prediction_sha256": "997ae26d68a0691f4341a5296f0445c357b745665efb7cbad2a64967005456eb"
+        }
+      ],
+      "output_page_commit_pre_edges": [
+        796064,
+        867858
+      ],
+      "residual_page_commit_pre_edges": [
+        848658,
+        920520
+      ],
+      "prior_audit_failure": {
+        "id": 111046,
+        "source_commit": "5f547be0a8321e1b877b6a3fe8eb603b6e53e3dd",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-output-page-20261114-01",
+        "reason": "comparison expected 781 rather than 776 projected control markers after matching mode 0 read events; replaced by the verified four-page comparison"
+      }
+    },
+    "ffn_ingress": {
+      "id": 111111,
+      "source_commit": "f89b9e2153737ffab9087e24e44ba53ec200ce69",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-ffn-ingress-20261114-01",
+      "log": "slurm-111111.out",
+      "partition": "c64",
+      "node": "node1",
+      "cpus": 2,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "slurm_seconds": 222,
+      "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-ffn-ingress",
+      "output_manifest_sha256": "5b1ccb70af3e59f40f0eb28d2c6ba2e4204f410d1ca718bfad17a072ae3f4d89",
+      "output_sha256": {
+        "prediction-0.json": "2924adcf0d390070cfccfc830d0f5a833162128051ff37ea659f42f081c8b90e",
+        "prediction-1.json": "d25a37b8cf5aeadd83fb7674fc8f52a2c7679ba8d2d47be920c799ee2522ef57",
+        "comparison-0.json": "362ef8744ba507439345a3a6681a447738792b1ee98914d8a63d89d8fc00e110",
+        "comparison-1.json": "af9254d617e72ee3d98181a941844ce76f3c0fcfb43c16031f55478904d21f0b",
+        "prediction.sha256": "603a615a7e6940bf6d6400add3db67eded2ec724fb15ad8eef562c2189bbdcbc",
+        "tools.sha256": "fa92a615d995d3e28a1340ec32f547cf18317b2f1d06bf4b035f57ad249b753d",
+        "source.sha256": "7d2229491551ed8b32d1f58035f6e2861bba42977b5c541b22c4ff2a45d2a5b7",
+        "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+        "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+        "bridge-read": "2617b590633005011e75718e36ff7d0b53102c7d4e316c42a5bd2123381991a5"
+      },
+      "source_sha256": {
+        "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+        "dram_live.py": "1474372bab48e684b06a0f574e5ca9614add5e2c5ff1687e2a36453226ae417f",
+        "qwen_attention_dot.py": "4258547dae694552e34224ee4e10c2ea66933319bc73defbc30a5daddd2b9082",
+        "qwen_attention_front.py": "e53ede5b654b393f4d5a61f9dc5962bd3a0f4a538f3656e2e5f5bd37875be90c",
+        "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+        "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+        "qwen_ffn_front.py": "47f5cbd41a480571a444b1d27cc458a2024280a4bc4ce9e6758063e3fd9fa7f6",
+        "qwen_kv_write.py": "eb1350cd6077bdcfb37a186d2f8dae14574afea77e8262a516e112f294119758",
+        "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+        "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+        "qwen_output_front.py": "d5e50f14793b27d48719ea4f27ee943c9963db702d5821f92260408f0e37c55e",
+        "qwen_page_cycle.py": "2a500cbe6d63b859af7ae9d27c5b95d4518d777ccde986a9fee6dced89863a1c",
+        "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+        "qwen_post_projection.py": "f300030200dcfae74f071c93f461780ba95ddf10f86ceb3c0bd56925f6c5e450",
+        "qwen_projection_front.py": "e33dce92f7d49704252ce993fe8f7e6d0fb81dd3ee8ff2a50b1aa5db0d76670f",
+        "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+        "qwen_projection_pipeline.py": "823127cc41afb5b027f17d25f90abb88bc1f325a0b1e9b36cf081cf2453cd7de",
+        "qwen_prompt_cycle.py": "6757e3777658ca429193891f05b1a46aa3d9ec8653c302cc06c1c8e972ba26ed",
+        "qwen_prompt_pm.py": "1a4a36bab5d6c78e3c40753914199ac1b544b2a4f2924338fd8fb5642bc485c8",
+        "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+        "qwen_qkv_page.py": "d8c3b07c6a5099ae68897448e968fff89e9dfb5a587a88d43d9bf45ead044892",
+        "qwen_residual_front.py": "9886a638cd6839119500e6d5eeda1b04d5ec894e2d9a82e32b471bb67b094ac6",
+        "qwen_weight_pipeline.py": "615275dee71cdac1929e7591ecffd874a6478e9fa32c12fd07fa36d7a82878b1",
+        "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+        "dramsim_bridge.cpp": "0500f836b2d0884c827f4600bbd15775697eb10c68bc07baafda24296bfe913d",
+        "run_qwen_page_cycle.sbatch": "45c732231e85f6f8d940dd1f2cc05bad3fdd7ed0671f691b11300ba4ead4aa23",
+        "git-commit.txt": "f0b713493a680204cbefb7d3a498753bc215619a69dd6b523ee656c3f4a55b38"
+      },
+      "tools_sha256": {
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/memory_system.h": "b750651e5fc871df216570cfa1687894f9242a16a26fb69bf1099a97f5080e4b"
+      },
+      "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "python_version": "Python 3.10.12",
+      "modes": [
+        {
+          "mode": 0,
+          "matched_ddr_bursts": 195275,
+          "matched_ddr_events": 781100,
+          "matched_control_markers": 833,
+          "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+          "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+          "conditional_wait_audit": {
+            "input": "observed_provider_retire",
+            "matched_wait_handoffs": 123,
+            "matched_next_descriptor_admissions": 246,
+            "matched_page_commit": 547468
+          },
+          "matched_kv_ddr_events": 2432,
+          "rtl_kv_trace_sha256": "428853085c5b66384d45bcfe9e621683fbbf906e624aa40642ea471258e235cd",
+          "matched_activation_ddr_events": 512,
+          "rtl_activation_trace_sha256": "6a8de56fb86e0c26a3dc9fca0dfb53e589e294180a6da675b7890d780b383d6a",
+          "prediction_sha256": "2924adcf0d390070cfccfc830d0f5a833162128051ff37ea659f42f081c8b90e"
+        },
+        {
+          "mode": 1,
+          "matched_ddr_bursts": 195275,
+          "matched_ddr_events": 781100,
+          "matched_control_markers": 833,
+          "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+          "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+          "conditional_wait_audit": {
+            "input": "observed_provider_retire",
+            "matched_wait_handoffs": 123,
+            "matched_next_descriptor_admissions": 246,
+            "matched_page_commit": 591737
+          },
+          "matched_kv_ddr_events": 2432,
+          "rtl_kv_trace_sha256": "330104cf3493bb44adc98fc8f776c9b265f6b1ee579180bedfd3deeaeda5bdfb",
+          "matched_activation_ddr_events": 512,
+          "rtl_activation_trace_sha256": "723640636fcb816d6e384d834946827797c29f6eb1cb5ffef02df51ffad0199e",
+          "prediction_sha256": "d25a37b8cf5aeadd83fb7674fc8f52a2c7679ba8d2d47be920c799ee2522ef57"
+        }
+      ],
+      "ffn_page_launch_pre_edges": [
+        850690,
+        922523
+      ],
+      "first_three_provider_accept_pre_edges": [
+        [
+          852339,
+          852355,
+          852369
+        ],
+        [
+          924188,
+          924203,
+          924218
+        ]
+      ],
+      "boundary": "start from pre-edge 2 fixture anchor; predict across the complete first four pages, then FFN activation DDR reads, PM and three first-wave descriptors with the same two live DDR devices; G5 arithmetic and later waits are outside the verified prefix"
+    }
+  },
+  "runtime_validation": {
+    "matched_prefix": {
+      "jobs": [
+        110649,
+        110695
+      ],
+      "node": "node2",
+      "cpus": 1,
+      "pages": 9,
+      "baseline_wall_seconds": 170,
+      "batched_ddr_wall_seconds": 70,
+      "native_integer_and_batched_ddr_wall_seconds": 60,
+      "first_attempt": {
+        "id": 110649,
+        "source_commit": "e943da281f8d2d830d3f4473943ba3a141d0957d",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-20261114-01",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "reason": "byte comparison of JSON objects with different key ordering; both nine-page traces matched by parsed fields"
+      },
+      "audited": {
+        "id": 110695,
+        "source_commit": "5f895d56d8a1f47b5c2f0f8fc00eb6e9ce8063d0",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-math-20261114-01",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "slurm_seconds": 64,
+        "command": "sbatch --parsable --partition=c64 --nodelist=node2 --time=00:12:00 run_qwen_fast_tlm.sbatch --math-prefix /public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-20261114-01",
+        "output_manifest_sha256": "0f8180039c85c3bbc0a0d13a76a7e7e2ee5a6dbb05c6159e9e6dd490eb3bd64a",
+        "output_sha256": {
+          "source.sha256": "4e19a9c43b5622042e2b9ea3862f9244da6c50c75e31c72c32d5b964c9925993",
+          "inputs.sha256": "b2193fcd0cf11fb693e35e042e0db3b568378de6dc010b1f4958d2f6164d8ef5",
+          "prefix.sha256": "b03d1abfaf4262d3240617cfbd5a78f6ed9fed9ab5bbf478cb272ba9cf527a2d",
+          "fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+          "fast_tlm_math.so": "6109b1f46bc6608270851c60713e445b2783f313bc8bea8db5a838515fb15fb2",
+          "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+          "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+          "math-prefix.wall-seconds": "95cf32708a31caa478a0e9141103ac567d85e5186e697e7e0c81f75589999e31",
+          "math-prefix/page-timing.jsonl": "6d1f95489e90768b3365b77623a2138007b45ffeb2a2f1e05c35cab07a74f3fe"
+        },
+        "source_sha256": {
+          "fast_tlm_replay.py": "cb160ff9fead4deb9743ad1e3c672b9e744675cb79c8cda74dd3f8ed0ab23d3c",
+          "fast_tlm_dram.cpp": "19256861ad88f352899f3f44b8fbbf3674713fc0797baf4a95d1d675a045b8ae",
+          "run_qwen_fast_tlm.sbatch": "14f6f067ca88afd63b5a4bcaceefd033c3994fda9f22ba973a83a046ce2b6af7",
+          "fast_tlm_math.cpp": "a582057ab908b4050885a68dcb3304f15e9e8ba63542d028afd491bc8acfd2e5",
+          "fast_tlm_numerics.py": "78bfc3c29d1a2c8b56772d571a35dadc2fc55bd3c718090b9c4df13a6d2af11c"
+        },
+        "inputs_sha256": {
+          "/public/home/yuzelu/project-circuit/issue260-native-two-dma-sRx1azw1/source.sha256": "1bf5465dc4a4bbb8e4618502e1fe5a591d1c2c9fdc8b20cf84d5ea7d198e2a33",
+          "/public/home/yuzelu/project-circuit/issue234-native-fixed-skip-request-H2gY5uiN/request-runtime-archived/proof.sha256": "74078b0b40fdeb73aeae71e3091db3e6a25fc5f27bc03c9981214bfef92b39ef",
+          "/public/home/yuzelu/project-circuit/issue260-full-preflight-LUsXKLuZ/kv-106243/binding.json": "78347abd13135d71a678ff87b4760175ea81fb701a4edb022e080165321f2b4e",
+          "/public/home/yuzelu/project-circuit/issue234-native-fixed-skip-request-H2gY5uiN/request-memory-archived/ddr-initial.tsv": "e55ce2d889261daccbf43335875be922fe813fe92dc0ae9ee28fd1f5b880d7b5",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+          "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/dram-106937.so": "363d38212c06ded6b012c609cf834d2176fb51acb41ec0fedca918768cfbe292",
+          "/public/home/yuzelu/project-circuit/issue234-ddr-quiet-JDehtRNz/quiet/source/libdramsim3.so": "00ccc86ab97f9d25f84bdf6df22b4972e70b96ff56fc7dd39805b2280b14698f",
+          "/public/home/yuzelu/project-circuit/issue234-ddr-quiet-JDehtRNz/quiet/source/src/memory_system.h": "b750651e5fc871df216570cfa1687894f9242a16a26fb69bf1099a97f5080e4b",
+          "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/systemc_benchmark/native_rtl_retirements.py": "601134bdb862045dd3002abe615284c5501deb36c064175fd84eb29bd2ac5837",
+          "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/systemc_benchmark/prepare_native_whole_request.py": "4b763d1dcb22840f70c11e81447591715369b8f37b7febdbdecc353949d870ef",
+          "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/block_local_native/native_program_runtime.py": "7ed0eb23bbba07aabad7c257a4ba1f1e1dca09e8cca15768adfdf78e9e8b613b",
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a"
+        },
+        "prefix_sha256": {
+          "baseline-prefix.wall-seconds": "133688d458bf650fa5dcd7475ec449f4d617bacaa8cd63dfdfa5cf620d698b91",
+          "fast-prefix.wall-seconds": "6442bc26a7c562f5afe6467dab36365c709909f6a81afcecfc0c25cff0f1bab0",
+          "baseline-prefix/page-timing.jsonl": "eb5d5787860b99d4f6d4a425120661bcc8e30d28228eaa6329e7f8ec540d9c22",
+          "fast-prefix/page-timing.jsonl": "6d1f95489e90768b3365b77623a2138007b45ffeb2a2f1e05c35cab07a74f3fe",
+          "archived-prefix.jsonl": "eb5d5787860b99d4f6d4a425120661bcc8e30d28228eaa6329e7f8ec540d9c22"
+        },
+        "python_version": "Python 3.10.12",
+        "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+      }
+    },
+    "whole_matched_replay": {
+      "id": 110666,
+      "source_commit": "4a3fabade7687da46fe83091a4ab29eeb8b84dfa",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-20261114-02",
+      "log": "slurm-110666.out",
+      "partition": "c64",
+      "node": "node10",
+      "cpus": 1,
+      "command": "sbatch --parsable run_qwen_fast_tlm.sbatch --reuse-prefix /public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-20261114-01",
+      "state": "FAILED",
+      "scope": "same 107361 TLM semantics, 582 pages activating all 36 layers and vocabulary twice",
+      "first_retirement": {
+        "token": 20772,
+        "time_ps": 1043184915264
+      },
+      "exit_code": "1:0",
+      "stage_at_exit": "after both retirements and C++ DDR drain, before the original execution.json and audit export",
+      "failure": "upstream reads stats after close, ctypes handle already released",
+      "slurm_wall_seconds": 5411,
+      "start_cst": "2026-11-14T11:58:40+08:00",
+      "end_cst": "2026-11-14T13:28:51+08:00",
+      "matched_pages": 582,
+      "source_sha256": {
+        "fast_tlm_replay.py": "8217a6f9b43a9af34b8ad2a7169102d9290bc67a06b890857eda897d8bbe4b08",
+        "fast_tlm_dram.cpp": "19256861ad88f352899f3f44b8fbbf3674713fc0797baf4a95d1d675a045b8ae",
+        "run_qwen_fast_tlm.sbatch": "183f5017e526fa68b621ff15e04a1bfa1ed558d285cf3f05f14f7df225fc91ae"
+      },
+      "inputs_sha256": {
+        "/public/home/yuzelu/project-circuit/issue260-native-two-dma-sRx1azw1/source.sha256": "1bf5465dc4a4bbb8e4618502e1fe5a591d1c2c9fdc8b20cf84d5ea7d198e2a33",
+        "/public/home/yuzelu/project-circuit/issue234-native-fixed-skip-request-H2gY5uiN/request-runtime-archived/proof.sha256": "74078b0b40fdeb73aeae71e3091db3e6a25fc5f27bc03c9981214bfef92b39ef",
+        "/public/home/yuzelu/project-circuit/issue260-full-preflight-LUsXKLuZ/kv-106243/binding.json": "78347abd13135d71a678ff87b4760175ea81fb701a4edb022e080165321f2b4e",
+        "/public/home/yuzelu/project-circuit/issue234-native-fixed-skip-request-H2gY5uiN/request-memory-archived/ddr-initial.tsv": "e55ce2d889261daccbf43335875be922fe813fe92dc0ae9ee28fd1f5b880d7b5",
+        "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+        "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/dram-106937.so": "363d38212c06ded6b012c609cf834d2176fb51acb41ec0fedca918768cfbe292",
+        "/public/home/yuzelu/project-circuit/issue234-ddr-quiet-JDehtRNz/quiet/source/libdramsim3.so": "00ccc86ab97f9d25f84bdf6df22b4972e70b96ff56fc7dd39805b2280b14698f",
+        "/public/home/yuzelu/project-circuit/issue234-ddr-quiet-JDehtRNz/quiet/source/src/memory_system.h": "b750651e5fc871df216570cfa1687894f9242a16a26fb69bf1099a97f5080e4b",
+        "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/systemc_benchmark/native_rtl_retirements.py": "601134bdb862045dd3002abe615284c5501deb36c064175fd84eb29bd2ac5837",
+        "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/systemc_benchmark/prepare_native_whole_request.py": "4b763d1dcb22840f70c11e81447591715369b8f37b7febdbdecc353949d870ef",
+        "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/block_local_native/native_program_runtime.py": "7ed0eb23bbba07aabad7c257a4ba1f1e1dca09e8cca15768adfdf78e9e8b613b",
+        "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a"
+      },
+      "prefix_sha256": {
+        "baseline-prefix.wall-seconds": "133688d458bf650fa5dcd7475ec449f4d617bacaa8cd63dfdfa5cf620d698b91",
+        "fast-prefix.wall-seconds": "6442bc26a7c562f5afe6467dab36365c709909f6a81afcecfc0c25cff0f1bab0",
+        "baseline-prefix/page-timing.jsonl": "eb5d5787860b99d4f6d4a425120661bcc8e30d28228eaa6329e7f8ec540d9c22",
+        "fast-prefix/page-timing.jsonl": "6d1f95489e90768b3365b77623a2138007b45ffeb2a2f1e05c35cab07a74f3fe",
+        "archived-prefix.jsonl": "eb5d5787860b99d4f6d4a425120661bcc8e30d28228eaa6329e7f8ec540d9c22"
+      },
+      "python_version": "Python 3.10.12",
+      "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "original_sha256": {
+        "decode/page-timing.jsonl": "512dd64e4eff5db20837bd40ac263e5b83d6282a8a69218310ef782c951e8815",
+        "decode/progress.jsonl": "67e458ad4469ad17ccd8bcfc485d371f921f1902742dec9b52d8e64f184bb4c4",
+        "slurm-110666.out": "c190e34da00be6ae7deafc57abe8c6538d499f2525a9b348e2cc6a91d7124605"
+      },
+      "second_retirement": {
+        "token": 279,
+        "time_ps": 2088281102706
+      },
+      "result_recovery": {
+        "id": 111176,
+        "source_commit": "713461a04d3c831328b86b48d56f20665385e4fc",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-recovery-20261114-01",
+        "log": "slurm-111176.out",
+        "partition": "c64",
+        "node": "node11",
+        "cpus": 1,
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "slurm_seconds": 4,
+        "command": "sbatch --parsable run_qwen_fast_tlm_recovery.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-20261114-02",
+        "output_manifest_sha256": "1882752df87fc9c6f98349871d9857e5f3ccd2a4e1dee453089ce6a5b1e4f744",
+        "output_sha256": {
+          "source.sha256": "5fee031430efefab71583ac8023aaa407163d944de2a57bc9fedf572bad44a95",
+          "inputs.sha256": "d2040f0779def6d68d1fe0e251c57ee783f6bc475fe015f4182cd50973f7c44c",
+          "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+          "close-smoke/stats.json": "32bc724cd420c04b7537fa948dfab60502f8fb1605c1c67b334a4363410c975c",
+          "recovered/execution.json": "7b261a5b82f1f8996143a5305c37b067dd1b0afe931a5c38d0e5a32b61db800b",
+          "recovered/page-timing.jsonl": "512dd64e4eff5db20837bd40ac263e5b83d6282a8a69218310ef782c951e8815",
+          "recovered/timing-audit.json": "7dae55035c57c9c30545813a0495c7446df51d7f51c9389c750396c438fb9c92",
+          "recovered/channel0/dramsim3.json": "d31ac9c0ccc7d3fb3705f92dca5b78fe8b9920f610e5ad747642abb5545cf5b0",
+          "recovered/channel0/dramsim3.txt": "49199c64c7ecd021cea1d295e7d9f46dc219143f54994e54892978c3c56d8c7b",
+          "recovered/channel0/dramsim3epoch.json": "4f5c959e8d2159e2408b342dca4af008aea322a909424b76a185e9921ac6dfd7",
+          "recovered/channel1/dramsim3.json": "7e9fb2b46047b06620fa11326ec768aa860b4c5dfcca511af23363eeb929e47e",
+          "recovered/channel1/dramsim3.txt": "9831c0e495562717c31e5112dae9d854219d471a8708b9fb037f85c80fdf5184",
+          "recovered/channel1/dramsim3epoch.json": "3e51913d265aaae5b9c7ab81bde716e2962a3d45376fc331fc2fb99ff92722da"
+        },
+        "source_sha256": {
+          "fast_tlm_replay.py": "efa68cc38657d5f684489044f28f39a5f0ee0c74b764ca93b1b4df48459200ac",
+          "recover_qwen_fast_tlm.py": "327f7a1cc6f750d724074901fad6f0825f9dc79e0e8d50272a3c374d511d3317",
+          "run_qwen_fast_tlm_recovery.sbatch": "c2637bfc1c96089289cc9d024390ff136a78eed09bd1096516dad7a037a0ae33",
+          "git-commit.txt": "8222ef11b4fb6e33cc0d72bd20f59e419e325b4938f2ca7528145ec19caf7f93"
+        },
+        "inputs_sha256": {
+          "/public/home/yuzelu/project-circuit/issue260-native-two-dma-sRx1azw1/source.sha256": "1bf5465dc4a4bbb8e4618502e1fe5a591d1c2c9fdc8b20cf84d5ea7d198e2a33",
+          "/public/home/yuzelu/project-circuit/issue260-native-two-dma-sRx1azw1/audit_native_decode_timing.py": "d5d5f4883ddf51d4f79a2255bc0a2265937fc1ab1f539b0f8f599f9a80e43a74",
+          "/public/home/yuzelu/project-circuit/issue260-native-two-dma-sRx1azw1/run-107361/execution.json": "df6c62434b009195035853e9577edbfe653824017af745bdeb81fceca111238d",
+          "/public/home/yuzelu/project-circuit/issue260-native-two-dma-sRx1azw1/run-107361/page-timing.jsonl": "56b1238ca44f6796f4982e41d8f6674a7c6730c65b98c05afae23ba447ddc831",
+          "/public/home/yuzelu/project-circuit/issue260-native-two-dma-sRx1azw1/run-107361/timing-audit.json": "7dae55035c57c9c30545813a0495c7446df51d7f51c9389c750396c438fb9c92",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+          "/public/home/yuzelu/project-circuit/issue260-full-preflight-LUsXKLuZ/kv-106243/binding.json": "78347abd13135d71a678ff87b4760175ea81fb701a4edb022e080165321f2b4e",
+          "/public/home/yuzelu/project-circuit/issue234-ddr-quiet-JDehtRNz/quiet/source/libdramsim3.so": "00ccc86ab97f9d25f84bdf6df22b4972e70b96ff56fc7dd39805b2280b14698f",
+          "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-20261114-02/fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a"
+        },
+        "python_version": "Python 3.10.12",
+        "method": "derived from the original candidate page timeline and retirement log, uses sealed binding to record the already-checked live KV geometry; upstream 107361 was used after recovery for comparison",
+        "comparison": "parsed equality of all 582 ordered page rows and both JSON summaries, byte equality for six per-channel DRAMsim3 files",
+        "execution": {
+          "pages": 582,
+          "positions": 514,
+          "retirements": [
+            [
+              20772,
+              1043184915264
+            ],
+            [
+              279,
+              2088281102706
+            ]
+          ],
+          "ddr": {
+            "reads": 126860392,
+            "callbacks": 126908776,
+            "ddr_queue_ps": 74602086300,
+            "ddr_inflight_ps": 2688384869100,
+            "channel0_peak_queued": 6,
+            "channel1_peak_queued": 6,
+            "channel0_peak_active": 12,
+            "channel1_peak_active": 12,
+            "writes": 48384,
+            "dma_issue_throttle_ticks": 3634438
+          },
+          "completed_layers_in_current_position": 36,
+          "timing_calibrated": false,
+          "numerically_accepted": false,
+          "dma_scope": "32 credits per channel and rolling issue limits with FIFO arbitration",
+          "retirement_interval_ps": 1045096187442,
+          "initial_history": 512,
+          "kv_cross_step_read_beats": 1152,
+          "deployment_sha256": "74078b0b40fdeb73aeae71e3091db3e6a25fc5f27bc03c9981214bfef92b39ef",
+          "kv_binding_sha256": "78347abd13135d71a678ff87b4760175ea81fb701a4edb022e080165321f2b4e",
+          "scope": "two native mother program decode phases with modeled local services"
+        },
+        "timing": {
+          "scope": "two native mother program decode phases with modeled local services",
+          "timing_calibrated": false,
+          "retirement_ps": [
+            1043184915264,
+            2088281102706
+          ],
+          "interval_tok_s": 0.956849725428261,
+          "pages_per_step": [
+            291,
+            291
+          ],
+          "timing_by_step_ps": [
+            {
+              "ingress_ps": 6668,
+              "program_load_ps": 301833098,
+              "pre_dispatch_ps": 289676270,
+              "mother_instruction_ps": 1027152056,
+              "mother_wait_ps": 1030335841540,
+              "ffn_barrier_ps": 11230405632,
+              "other_dispatch_ps": 0,
+              "elapsed_ps": 1043184915264,
+              "sram_port_wait_ps": 90038004,
+              "ddr_queue_ps": 37294911062,
+              "ddr_inflight_ps": 1342041734880
+            },
+            {
+              "ingress_ps": 6668,
+              "program_load_ps": 298621762,
+              "pre_dispatch_ps": 290100774,
+              "mother_instruction_ps": 1027152056,
+              "mother_wait_ps": 1032249900550,
+              "ffn_barrier_ps": 11230405632,
+              "other_dispatch_ps": 0,
+              "elapsed_ps": 1045096187442,
+              "sram_port_wait_ps": 90408078,
+              "ddr_queue_ps": 37307175238,
+              "ddr_inflight_ps": 1346343134220
+            }
+          ],
+          "overlapping_counters": [
+            "sram_port_wait_ps",
+            "ddr_queue_ps",
+            "ddr_inflight_ps"
+          ]
+        },
+        "live_two_channel_close_smoke": {
+          "reads": 1,
+          "writes": 1,
+          "callbacks": 2,
+          "ddr_queue_ps": 1260,
+          "ddr_inflight_ps": 57960,
+          "channel0_peak_queued": 1,
+          "channel1_peak_queued": 1,
+          "channel0_peak_active": 1,
+          "channel1_peak_active": 1
+        }
+      },
+      "archived_reference_slurm_wall": {
+        "job": 107361,
+        "node": "node3",
+        "seconds": 14262,
+        "comparison_scope": "different hosts; not a matched-host speedup"
+      }
+    }
+  },
+  "acceptance": {
+    "formal_rtl_p512_d128": false,
+    "estimator_uses_archived_step1_for_calibration": true,
+    "step2_excluded_from_fit": true,
+    "independent_long_context_timing_error_verified": false,
+    "host_speedup_measured_same_node_pages": 9,
+    "simulated_whole_replay_scope_steps": 2,
+    "original_tlm_numerically_accepted": false,
+    "original_tlm_rtl_timing_calibrated": false,
+    "estimated_decode_excludes_prefill_and_first_token_latency": true,
+    "successful_complete_timing_comparison": true,
+    "corrected_runner_fully_rerun": false,
+    "acceptance_thresholds_preregistered_for_short_reference": false,
+    "parallel_full_request_snapshot": {
+      "issue": 234,
+      "job": 107343,
+      "status": "RUNNING",
+      "node": "node2",
+      "scope": "separate full P512/D128 TLM request; formal RTL and numerical acceptance remain separate",
+      "observed_cst": "2026-11-14T13:35:50+08:00"
+    }
+  }
+}

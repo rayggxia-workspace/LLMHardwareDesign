@@ -1,0 +1,222 @@
+{
+  "schema": "issue265-dual-u-rtl-cycle/1",
+  "issue": 265,
+  "pull_request": 266,
+  "frozen_source_job": 100343,
+  "frozen_reference_commit": "a326d04e170cb84d273e96e7906bdf23775a0ca8",
+  "frozen_source_directory": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-105-current-mother-u",
+  "probe_commit": "670887da65193b13012cb334067bc595e402133a",
+  "server": "yuzelu@10.129.166.172",
+  "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/dual-u-20261113-01",
+  "submission": "sbatch --parsable --chdir=/public/home/yuzelu/Melodydt/runs/issue-265/dual-u-20261113-01 run_dual_u_probe.sbatch",
+  "slurm": {
+    "job": 107643,
+    "name": "zny-dualu",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 10,
+    "partition": "c64",
+    "cpus": 4,
+    "node": "node3",
+    "log": "slurm-107643.out"
+  },
+  "tools": {
+    "verilator": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+    "server_python": "3.10.12",
+    "comparison_python": "3.7.0",
+    "sha256": {
+      "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+      "/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator": "deaac572105cb908ace4f66b845e68905f162aa3e364df964f707172f4693462"
+    }
+  },
+  "source_sha256": {
+    "probe_dual_u.py": "21034bf10077fd2c98e2571e7f363ea607bed20f9c99ed06d2c5547d16986f9f",
+    "run_dual_u_probe.sbatch": "a72a7a30a5589c69bf18d5236bddb1bec0ea4a3c255c490273442d01e21de94c",
+    "fixture_source_index": "8c3a7ebfe71523795588481db49ee9b9da4191fa4f9407885513f7bcd493b810",
+    "stock_bench": "783ce88142c1f520ebdf7d312b5b7ec14ebc149c9f785b941def64b737b3b1c5",
+    "instrumented_bench": "8991493c9934a945607f791300d2d4f3034a133c756d8d50161a90cc7d2ef48d"
+  },
+  "frozen_input_sha256": {
+    "mother.mem": "057dfc74775eb04abe568a73867ce6b7e950814353fef0715762660b4d113c6e",
+    "local0.mem": "3f901227917a1da87221df02763a12a4f96210e9f7002ab86243d4e17f83c6df",
+    "local1.mem": "f1c77f374da2455b9ab602423cd63320468f173cca4c7f323c4f372625296a04",
+    "input-data.json": "2fbddab261072be1abce1af5427838ea578f3fdf2875096d16b616b4a73ecbac"
+  },
+  "output_sha256": {
+    "results/dual_u/normal.log": "57c7cc5f2c031d2eea2ffcb31a536fcf51a991d8b3c89b058af1a94dd3e8b85a",
+    "results/dual_u/stalled.log": "068f6a0c97e4c01ba986a1dd47d148d97af865f9f6ae48f11a40e266715e0dab",
+    "results/dual_u/heldout.log": "b56bbe1046af3d4866b0e6c78818229d28e73494cf21832c64d257bbdd2b661c",
+    "results/dual_u/tb_native_pair.sv": "8991493c9934a945607f791300d2d4f3034a133c756d8d50161a90cc7d2ef48d",
+    "results/dual_u/compile.log": "b244520066cc97bbac33a3984c5b552bdcdc6f22f4425ac89cb87d5f854fb426",
+    "results/dual_u/probe-report.json": "b5e7306783385620c85eb99edd1fb4e6b923719df9348d1a3af62501a101a8d7",
+    "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+    "verilator-version.txt": "236ebe366813b05171083d3cc6ca20a694e6ad6b8e5499fa43748f5be4f71f3f",
+    "tools.sha256": "1fb4e3faa571f1435bfae3b948acc8fab529e15fab8697d0ce5df1880ba13638"
+  },
+  "scope": "accepted START to accepted RESULT; historical reset comparison begins at final accepted START",
+  "confirmed_bytes_per_success": {
+    "read": 112,
+    "write": 80
+  },
+  "simultaneous_s_contenders_observed": false,
+  "comparisons": [
+    {
+      "mode": "normal",
+      "stall": 0,
+      "request_phase": 1,
+      "ack_phase": 3,
+      "start": 965,
+      "result": 1316,
+      "post_edge_summary": 1317,
+      "cycles": 351,
+      "matched_events": 210,
+      "max_cycle_error": 0,
+      "log_sha256": "57c7cc5f2c031d2eea2ffcb31a536fcf51a991d8b3c89b058af1a94dd3e8b85a",
+      "event_counts": {
+        "START": 1,
+        "MCPM": 4,
+        "CALL": 2,
+        "LCPM": 120,
+        "LC_ISSUE": 11,
+        "LC_RETURN": 11,
+        "MC_RETURN": 2,
+        "RESULT": 1,
+        "E_ISSUE": 2,
+        "S_GRANT": 12,
+        "S_SEND": 12,
+        "S_RSP": 12,
+        "E_BEAT": 4,
+        "E_RESULT": 2,
+        "E_RETURN": 2,
+        "TX_READ": 3,
+        "WRITE": 3,
+        "COMMIT": 3,
+        "RELEASE": 3
+      }
+    },
+    {
+      "mode": "stalled",
+      "stall": 1,
+      "request_phase": 1,
+      "ack_phase": 3,
+      "start": 1369,
+      "result": 1859,
+      "post_edge_summary": 1860,
+      "cycles": 490,
+      "matched_events": 210,
+      "max_cycle_error": 0,
+      "log_sha256": "068f6a0c97e4c01ba986a1dd47d148d97af865f9f6ae48f11a40e266715e0dab",
+      "event_counts": {
+        "START": 1,
+        "MCPM": 4,
+        "CALL": 2,
+        "LCPM": 120,
+        "LC_ISSUE": 11,
+        "LC_RETURN": 11,
+        "MC_RETURN": 2,
+        "RESULT": 1,
+        "E_ISSUE": 2,
+        "S_GRANT": 12,
+        "S_SEND": 12,
+        "S_RSP": 12,
+        "E_BEAT": 4,
+        "E_RESULT": 2,
+        "E_RETURN": 2,
+        "TX_READ": 3,
+        "WRITE": 3,
+        "COMMIT": 3,
+        "RELEASE": 3
+      }
+    },
+    {
+      "mode": "heldout",
+      "stall": 1,
+      "request_phase": 2,
+      "ack_phase": 5,
+      "start": 1369,
+      "result": 1839,
+      "post_edge_summary": 1840,
+      "cycles": 470,
+      "matched_events": 210,
+      "max_cycle_error": 0,
+      "log_sha256": "b56bbe1046af3d4866b0e6c78818229d28e73494cf21832c64d257bbdd2b661c",
+      "event_counts": {
+        "START": 1,
+        "MCPM": 4,
+        "CALL": 2,
+        "LCPM": 120,
+        "LC_ISSUE": 11,
+        "LC_RETURN": 11,
+        "MC_RETURN": 2,
+        "RESULT": 1,
+        "E_ISSUE": 2,
+        "S_GRANT": 12,
+        "S_SEND": 12,
+        "S_RSP": 12,
+        "E_BEAT": 4,
+        "E_RESULT": 2,
+        "E_RETURN": 2,
+        "TX_READ": 3,
+        "WRITE": 3,
+        "COMMIT": 3,
+        "RELEASE": 3
+      }
+    }
+  ],
+  "historical": [
+    {
+      "mode": "normal",
+      "start": 965,
+      "result": 1316,
+      "post_edge_summary": 1317,
+      "cycles": 351,
+      "matched_events": 134,
+      "max_cycle_error": 0,
+      "log_sha256": "4920a395f5e82c9558f89e4764aef17eefd9988c6b090f8d407f15c4641a4d18",
+      "event_counts": {
+        "START": 1,
+        "MCPM": 4,
+        "LCPM": 120,
+        "WRITE": 3,
+        "COMMIT": 3,
+        "RELEASE": 3
+      }
+    },
+    {
+      "mode": "stalled",
+      "start": 1369,
+      "result": 1859,
+      "post_edge_summary": 1860,
+      "cycles": 490,
+      "matched_events": 134,
+      "max_cycle_error": 0,
+      "log_sha256": "08fdfbd67e41d4c161d1d7b16ed9b2a4fe681ba30bf73f7a791174fcd3e89194",
+      "event_counts": {
+        "START": 1,
+        "MCPM": 4,
+        "LCPM": 120,
+        "WRITE": 3,
+        "COMMIT": 3,
+        "RELEASE": 3
+      }
+    },
+    {
+      "mode": "reset",
+      "start": 2914,
+      "result": 3399,
+      "post_edge_summary": 3400,
+      "cycles": 485,
+      "matched_events": 134,
+      "max_cycle_error": 0,
+      "log_sha256": "283ec22e19dc53da0380aa7c084b9a7bcb3f0a18713643195c9b11f64720ad26",
+      "event_counts": {
+        "START": 1,
+        "MCPM": 4,
+        "LCPM": 120,
+        "WRITE": 3,
+        "COMMIT": 3,
+        "RELEASE": 3
+      }
+    }
+  ]
+}

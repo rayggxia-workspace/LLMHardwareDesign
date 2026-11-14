@@ -1,0 +1,144 @@
+{
+  "schema": "issue265-qwen-tlm-reference/1",
+  "issue": 265,
+  "upstream_issue": 234,
+  "upstream_pr": 260,
+  "published_replay_commit": "69e4239584c84aacf4dcf66432be2ccf76887182",
+  "original_archive_git_commit": null,
+  "server": "yuzelu@10.129.166.172",
+  "job": {
+    "id": 107361,
+    "name": "yzl-native-two-dma",
+    "partition": "c64",
+    "node": "node3",
+    "cpus": 1,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "03:57:42"
+  },
+  "archive": "/public/home/yuzelu/project-circuit/issue260-native-two-dma-sRx1azw1",
+  "result_directory": "run-107361",
+  "archived_audit_command": "python3 -B audit_native_decode_timing.py run-107361",
+  "archived_audit_output_sha256": "7dae55035c57c9c30545813a0495c7446df51d7f51c9389c750396c438fb9c92",
+  "archive_file_sha256": {
+    "execution.json": "df6c62434b009195035853e9577edbfe653824017af745bdeb81fceca111238d",
+    "timing-audit.json": "7dae55035c57c9c30545813a0495c7446df51d7f51c9389c750396c438fb9c92",
+    "page-timing.jsonl": "56b1238ca44f6796f4982e41d8f6674a7c6730c65b98c05afae23ba447ddc831",
+    "source.sha256": "1bf5465dc4a4bbb8e4618502e1fe5a591d1c2c9fdc8b20cf84d5ea7d198e2a33",
+    "run.sbatch": "13e4ddbb5608d13e943be598c0907d4fad1a515c0a88359dda69fadccd180efb",
+    "audit_native_decode_timing.py": "d5d5f4883ddf51d4f79a2255bc0a2265937fc1ab1f539b0f8f599f9a80e43a74"
+  },
+  "inputs": {
+    "deployment_sha256": "74078b0b40fdeb73aeae71e3091db3e6a25fc5f27bc03c9981214bfef92b39ef",
+    "kv_binding_sha256": "78347abd13135d71a678ff87b4760175ea81fb701a4edb022e080165321f2b4e",
+    "initial_ddr_table_sha256": "e55ce2d889261daccbf43335875be922fe813fe92dc0ae9ee28fd1f5b880d7b5",
+    "ddr_config_sha256": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+    "dramsim3_bridge_sha256": "363d38212c06ded6b012c609cf834d2176fb51acb41ec0fedca918768cfbe292"
+  },
+  "workload": {
+    "scope": "two native mother program decode phases with modeled local services",
+    "batch": 1,
+    "initial_representative_kv_positions": 512,
+    "positions_after_run": 514,
+    "decode_steps": 2,
+    "layers_per_step": 36,
+    "pages_per_step": [
+      291,
+      291
+    ],
+    "kv_cross_step_read_beats": 1152,
+    "includes_full_vocabulary_projection": true
+  },
+  "timing": {
+    "core_period_ps": 3334,
+    "ddr_period_ps": 630,
+    "sram_port_bits": 128,
+    "kv_reads_in_flight_per_attention_stream": 1,
+    "ddr_channels": 2,
+    "dma_credits_per_channel": 32,
+    "dma_scope": "32 credits per channel and rolling issue limits with FIFO arbitration"
+  },
+  "result": {
+    "retirements": [
+      {
+        "token_id": 20772,
+        "time_ps": 1043184915264
+      },
+      {
+        "token_id": 279,
+        "time_ps": 2088281102706
+      }
+    ],
+    "retirement_interval_ps": 1045096187442,
+    "interval_tok_s": 0.956849725428261,
+    "intervals_measured": 1,
+    "step_two_stage_elapsed_ps": {
+      "embedding": {
+        "pages": 1,
+        "elapsed_ps": 8218310
+      },
+      "input_rms": {
+        "pages": 36,
+        "elapsed_ps": 2800843390
+      },
+      "qkv_rope_kv_write": {
+        "pages": 36,
+        "elapsed_ps": 43193810368
+      },
+      "attention": {
+        "pages": 36,
+        "elapsed_ps": 708545927516
+      },
+      "o_projection": {
+        "pages": 36,
+        "elapsed_ps": 30236912840
+      },
+      "attention_residual_ffn_rms": {
+        "pages": 36,
+        "elapsed_ps": 4843278462
+      },
+      "ffn": {
+        "pages": 36,
+        "elapsed_ps": 147379683376
+      },
+      "down_store": {
+        "pages": 36,
+        "elapsed_ps": 340658118
+      },
+      "final_residual": {
+        "pages": 36,
+        "elapsed_ps": 1803290586
+      },
+      "final_rms": {
+        "pages": 1,
+        "elapsed_ps": 77828896
+      },
+      "vocabulary": {
+        "pages": 1,
+        "elapsed_ps": 105865735580
+      }
+    },
+    "ddr_over_two_steps": {
+      "channel1_peak_queued": 6,
+      "ddr_queue_ps": 74602086300,
+      "channel1_peak_active": 12,
+      "reads": 126860392,
+      "callbacks": 126908776,
+      "ddr_inflight_ps": 2688384869100,
+      "channel0_peak_queued": 6,
+      "channel0_peak_active": 12,
+      "writes": 48384,
+      "dma_issue_throttle_ticks": 3634438
+    }
+  },
+  "comparison": {
+    "use": "whole-request TLM comparison on matching deployment, KV, timing, DMA and retirement boundaries",
+    "timing_calibrated": false,
+    "numerically_accepted": false,
+    "rtl_prefix_job": 105530,
+    "rtl_prefix_compatible_for_throughput_error": false,
+    "rtl_held_out_job": 105572,
+    "rtl_held_out_used": false,
+    "full_p512_d128_accepted": false
+  }
+}
