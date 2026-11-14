@@ -200,3 +200,31 @@ cat comparison-{0,1}.json
 105530 的第一对 Q 权重使用两个新 W 上下文。第二条在第一条 ALLOC 确认后即可接收并推进控制，复用上条权重传输结束后的 DMA slot 序号、轮询位置和两路 DRAMsim3 状态。在模式 0／1，第二条首拍物理接受为 35573／35731，末拍物理返回为 35593／35749，均用 DDR 桥零基核时钟 pre-edge。两种模式各匹配 323 笔读、1,292 个 DDR 事件及 11 个控制标记。两条记录的物理 DMA 窗口无重叠，下一条需要建模 A COPY/LOAD、两个 W bank 的就绪及 M EXEC 的依赖。
 
 按上节准备同名源文件，用 [108930 回执](../../../work/Melodydt/265/qwen-105530-two-weights-108930.json) 的 commit 和散列替换旧值。在新的本人运行目录使用 `sbatch --parsable run_qwen_page_cycle.sbatch <108208 探针目录> --with-two-weights`，再核对 `sha256sum -c output.sha256` 和 `comparison-{0,1}.json`。
+
+## 105530 首对 Q EXEC 与第三条权重
+
+`qwen_projection_pair.py` 将量化打包后的同 P COPY、A LOAD、两个 W bank 的 FILL 回复、两条 EXEC 及第三条权重发起接到同一时间轴。COPY 从 P SRAM scratch 1008–1023 读出并写到 880–895，A LOAD 只在相应 COPY 写确认之后可读。模型核对 SRAM 两个 owner 槽、轮询和请求／回包门控。首条 EXEC 的 INPUT EOP 释放发起路径，第二条可继续准备，M 等上一条占用的 RF 路径释放后才接受第二条。同一 P 的第三条权重从地址 5,052,416 发往 DDR 通道 1。
+
+| 关键边沿（零基 pre-edge） | 模式 0 | 模式 1 |
+| --- | ---: | ---: |
+| COPY末次 ACK | 35646 | 35858 |
+| A LOAD proof | 35652 | 35866 |
+| 第一条 M EXEC 接收 | 35659 | 35873 |
+| 第二条 M EXEC 接收 | 35677 | 35891 |
+| 第二条 EXEC 完成并交给范围迭代器 | 35696 | 35910 |
+| 第三条权重源端接收 | 35723 | 35937 |
+| 第三条权重 DDR 首拍接收 | 35725 | 35939 |
+| 第三条权重 DDR 末拍返回 | 35745 | 35957 |
+
+110583 用实时 DRAMsim3 每种模式独立预测并对齐 340 笔 DDR 读的 1,360 个事件及 11 个控制标记。整页 WAIT 仍以冻结 RTL 服务退休为输入。内部探针单独复跑同一个冻结输入，在第三条权重源端接收结束，110601 每种模式核对 1,292 个原始 DDR 前缀事件和 114 个内部边沿，COPY/A LOAD 地址、两条执行序号与 W 通道身份均核对通过。模型适用范围为第一对 K0 EXEC 及第三条权重传输，后续记录重叠、下一 K 窗和完整 Q 服务退休待建模。
+
+```bash
+# 独立预测，在本人新运行目录按回执核对源码和环境
+sbatch --parsable run_qwen_page_cycle.sbatch <108208-探针目录> --with-three-weights
+# 片上握手探针，在另一个新运行目录使用已封存的预测
+sbatch --parsable --job-name=zny-qwenpair run_qwen_105530_markers.sbatch --pair <110583-预测目录>
+```
+
+[源码、作业、日志和校验回执](../../../work/Melodydt/265/qwen-105530-projection-pair-110583.json)
+
+[PR #260 的 108308 对照](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/3584920d4e79ee45922be95df27e5193523d6313/work/YUZE-LU/234/native-sram-width/evidence/comparison-108308.json)另提供同样 8-beat KV 窗口和 3,334 ps 核周期的两组短程 TLM 结果。128-bit SRAM 为 1.20653 tok/s，512-bit 为 2.09091 tok/s。对照只在匹配配置下使用。107361 仍是单拍 KV 配置的参考。两组宽度的时序及吞吐仍需硬件校准和正式 P512/D128 验收。

@@ -81,3 +81,10 @@
 - 同一 105530 原生 RTL 窗口已推进到首个 Q 投影的两条权重。108930 在 c64/node3 用 2 核、6 秒完成（0:0），两种模式各匹配 323 笔 DDR 读、1,292 个事件和 11 个控制标记。源码和输出 SHA-256、管理检查和 30 项单测通过。[Slurm 回执](../../work/Melodydt/265/qwen-105530-two-weights-108930.json)
 - 下一步由 Melodydt 在首个 Q 投影中建模 A COPY/LOAD、双 bank 就绪和首对 M EXEC，以第三条权重首拍作可观测边界。服务退休、三 P 并发、跨层和完整上下文 105572 留出仍待验证。整机预测误差和同机加速比待匹配 107361 的部署与时钟后实测。
 - #265 进行中，PR 草稿，独立审查人待指定。登记 PR #5 待合并。仓库缺 `config/board.json`，Projects 条目与同步待具权限维护者处理。
+
+## 2026-11-14（Asia/Shanghai，UTC+08:00）首对 Q EXEC 与第三条权重
+
+- Melodydt 在 [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 的 `task/265-qwen3b-system-evaluation` 接通同 P COPY、A LOAD、双权重 bank 就绪及首对 M EXEC。110583 在 c96/node15 两核 15 秒完成（0:0），两种模式各匹配 340 笔 DDR 读、1,360 个事件和 11 个控制标记。[草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266)
+- 110589 在编译前因集群 Python 3.6 参数不兼容退出，110596 在内部审计因 RF EOP 探针字段错误退出。修正后 110601 在 c64/node2 用 8 核 2 分 20 秒完成（0:0），两种模式各匹配 114 个内部边沿和 1,292 个冻结 DDR 事件。源与输出散列、30 项单测及项目结构检查通过。[源码、命令、日志及回执](../../work/Melodydt/265/qwen-105530-projection-pair-110583.json)
+- 107361 的 0.9568497254 tok/s 仍作单拍 KV 短程整机 TLM 对照。PR #260 的 108308 另给出同 8-beat KV 配置下 128／512-bit 的 1.20653／2.09091 tok/s。下一步由 Melodydt 建模 W bank 复用、后续记录重叠、下一 K 激活窗口及完整 Q 服务退休。跨页、多 P、105572 留出和整机预测误差待验证。
+- Issue 继续进行中，PR 草稿，独立审查人待指定。项目登记 PR #5 待合并，仓库缺 `config/board.json`，Projects 待具权限维护者核验和同步。

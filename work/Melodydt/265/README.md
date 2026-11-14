@@ -24,6 +24,8 @@ Qwen2.5-3B case 2 的真实 QKV、KV 写回及 layer 0→1 RMS 窗口已接入 D
 
 [108930 第二条 Q 权重回执](qwen-105530-two-weights-108930.json)记录在 105530 RTL 短窗内对账的结果，保存源码、工具、输入和输出散列。
 
+[110583/110601 首对 Q EXEC 与第三条权重回执](qwen-105530-projection-pair-110583.json)记录完整 DDR 对照及短 RTL 探针。两种模式各匹配 1,360 个 DDR 事件及 114 个内部边沿。回执另保存 PR #260 的同配置 8-beat KV SRAM 宽度对照证据。
+
 `audit_fast_cycle_inputs.py` 在 Python 3.7.0 上运行，通过两个历史作业的归档恢复三 P FFN 控制顺序，并对照原有 RTL 日志。原始归档按 [#251 索引](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/9abd46f5cbb4534bcfc614571ccd6d402ad11882/work/YUZE-LU/250/native-services/ffnnative/index.json) 从项目服务器只读获取。两个作业归档登记的源提交均为 `ab7611d43e4c007cc966ab5e61903118d33fcb4a`。将其命名为 `<job>-receipts.tar.gz`。`fast-cycle-inputs.local/` 为本地未提交缓存。
 
 | 作业 | 服务器相对 `/public/home/yuzelu/project-circuit/` 的位置 | SHA-256 |

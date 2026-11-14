@@ -204,3 +204,5 @@ python -B project/experiments/instruction_cycle/copy_reference.py work/Melodydt/
 [105530 独立预测与跨层探针](../project/experiments/instruction_cycle/README.md#105530-指令地址与独立周期预测)从镜像和描述符展开全窗地址与 CALL/WAIT。以 `run_qwen_prompt_pm.sbatch` 预测首行至首批 MC/LC DDR 周期，以 `run_qwen_105530_markers.sbatch` 复跑原生 RTL 并采集同域跨层边沿。[作业与散列](../work/Melodydt/265/qwen-105530-cycle-receipt.json)
 
 [105530 首页与首笔 Q 投影权重](../project/experiments/instruction_cycle/README.md#105530-首个指令页与首笔-q-投影权重)使用 `run_qwen_page_cycle.sbatch <108208 边沿目录> --with-first-weight` 连续推导 MC/LC 发射、DRL1、typed DMA 和首笔投影权重的周期。运行器在读取 RTL 对照前封存两种预测。[作业与散列](../work/Melodydt/265/qwen-105530-first-page-108366.json)
+
+[105530 首对 Q EXEC 与第三条权重](../project/experiments/instruction_cycle/README.md#105530-首对-q-exec-与第三条权重)使用 `run_qwen_page_cycle.sbatch <探针目录> --with-three-weights` 独立生成预测，再用 `run_qwen_105530_markers.sbatch --pair <预测目录>` 在第三条权重源端接收时结束短 RTL，核对 SRAM、双权重 bank 和 M EXEC 的握手。
