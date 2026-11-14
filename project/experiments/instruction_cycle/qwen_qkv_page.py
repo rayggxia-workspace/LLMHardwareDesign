@@ -44,7 +44,7 @@ def read_history_rows(archive, embedding):
             _, _, selected = range_shift(struct.unpack("<{}i".format(ROW_BYTES // 4), data), baseline)
             extra = selected - baseline
             require(extra == (metadata >> 64) & 63, "historical RMS shift differs from sealed row metadata")
-            rows.append({"token": token, "address": program["embedding_address"] + (token - tokens[0]) * ROW_BYTES,
+            rows.append({"token": token, "address": program["embedding_address"] + token * ROW_BYTES,
                          "gamma_address": gamma, "extra_shift": extra,
                          "row_sha256": digest})
     return rows
