@@ -42,3 +42,9 @@
 - [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。单变量局控候选通过 54 项定向回归，C639 113742 完成 0:0。Gate/Up 和 Down 的两模式 WAIT 总周期增约 11%。提前发出先吃掉了年轻权重的重叠时间。
 - 当前完整短程 TLM 基线为 Decode 2.925996 tok/s、短 Prefill 6.316164 输入 tok/s。该候选依据正常、背压 C639 和前四层窗口的敏感性分别为 2.840833/5.931992 和 2.838812/5.923231。疑似退化候选暂不进入速度基线。
 - 113850 正常和背压均完成 0:0，前序一致，Gate/Up 增 11.06%/11.20%、Down 增 10.96%/11.54%。提前执行候选淘汰。当前保留基线的 HEAD16 为 86.828 ms，占第二步 25.41%。下一步进行词表细分。恢复见 [交接](../../docs/handoffs/2026-11-14-issue-270-ffn-exec.md)。后续每步报告当前两项速度和剩余全部步骤。STA、正式 P512/D128 未执行；独立审查人待指定，登记 PR #5 待合并，Projects 待具权限维护者核验。
+
+## 2026-11-14（Asia/Shanghai）HEAD16 词表阶段拆分
+
+- [#270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。原生权重配对完整背压对照 14,109,900 周期持平。原生读回应答同拍发下一请求，正常读回每 tile 97→66 周期、整表仅省 22 周期，背压省 0 周期。全部 logits、embedding、选中 token、DDR 数和 SRAM 索引核验通过。两个 RTL 实验均关闭，归档失败与独立修复见 [实验报告](../../work/Melodydt/270/head16-08/README.md)。
+- 最近完整速度 Decode 2.925996 tok/s，短 Prefill 6.316164 输入 tok/s。前四层逐页相同。48-tile TLM WeightFetch 抽样外推 Decode 2.933969 tok/s，短 Prefill 端点在 HEAD16 之前。114107/114108/114109 持久运行，启动及对账见 [交接](../../docs/handoffs/2026-11-14-issue-270-head16.md)。
+- Melodydt 读回完整两步/短 Prefill，再定位 HEAD16 激活/局控及 QKV/O 的关键路径，补 ATT1 故障与分片验收后执行组合 300 MHz STA 和 #234 正式 B1/P512/D128。独立审查人待指定，登记 PR #5 待合并，Projects 缺配置待具权限维护者核验。
