@@ -2,9 +2,10 @@
 
 import struct
 
-from qwen_native_control import TOPOLOGY
+from qwen_attention_front import DWS1, _activation_store
+from qwen_native_control import P_SCOPE, TOPOLOGY
 from qwen_native_ddr import require
-from qwen_page_dispatch import MC_CONFIG_PM_ACK, MC_INSTRUCTION_CYCLES, _descriptor_edges
+from qwen_page_dispatch import MC_CONFIG_PM_ACK, MC_INSTRUCTION_CYCLES, _descriptor_edges, _wait_release, next_call
 from qwen_post_projection import NATIVE_ABI, _descriptor
 from qwen_prompt_cycle import BURST_BYTES, ROW_BYTES, SRAM_ACCEPT_TO_ACK, SRAM_WORD_BYTES
 
@@ -17,6 +18,8 @@ U_READ_LANE = 3
 LC_IMAGE_BYTES = 352
 MC_IMAGE_BYTES = 272
 DRL8 = int.from_bytes(b"DRL8", "little")
+FIRST_PROJECTION = 157
+LAST_STORE = 188
 
 
 def _fetch_pm(fabric, offer, address, byte_count, domain, config_ack):
@@ -117,3 +120,62 @@ def predict_output_front(page, fabric, previous_commit):
     return {"generation": GENERATION, **setup,
             "stages": [{"call": {"target": call["target"], "ticket": call["ticket"]},
                         "dispatch": control, "descriptor": descriptor, "service": service}]}
+
+
+def predict_output_page(page, fabric, previous_commit, projection, *, last_ticket=LAST_STORE):
+    """Continue the same physical P0 and DDR channels through the O page."""
+    calls = page["calls"]
+    require(len(calls) == 1 + LAST_STORE - FIRST_PROJECTION + 1
+            and FIRST_PROJECTION <= last_ticket <= LAST_STORE
+            and projection.fabric is fabric and projection.previous is not None
+            and projection.last_ticket < FIRST_PROJECTION and projection.pending_output is None,
+            "O page requires a drained projection instance from QKV")
+    require(all((call["target"], call["ticket"], call["wave"], call["mc_pc"], call["schema"])
+                == (0, FIRST_PROJECTION + index, index + 1, 13, P_SCOPE if index % 2 == 0 else DWS1)
+                for index, call in enumerate(calls[1:])), "unsupported O projection/store sequence")
+    result = predict_output_front(page, fabric, previous_commit)
+    stages = result["stages"]
+    loaded_av = stages[0]["service"]
+    local_calls = [{**call, "ticket": index + 1} for index, call in enumerate(calls[1:])]
+    local_page = {**page, "generation": 1, "target_mask": 1, "calls": local_calls}
+    retired = loaded_av["service_retire"]
+    next_limit = last_ticket - FIRST_PROJECTION + 1
+    seen_tiles = set()
+    row_address = tile = None
+    for index, call in enumerate(calls[1:1 + next_limit]):
+        if index:
+            control = next_call(local_page, index - 1, retired)
+        else:
+            require(page["waves"][0]["wait_pc"] == 10 and page["waves"][1]["wait_pc"] == 15,
+                    "unexpected U-to-P control sequence")
+            wait = _wait_release(retired)
+            # SETHI and LOOP-BEGIN separate the initial U WAIT from P CALL.
+            decode = wait["mc_wait_release"] + 3 * MC_INSTRUCTION_CYCLES
+            control = {**wait, **_descriptor_edges(local_calls[0], decode)}
+        offer = control["descriptor_admissions"][0]["cycle"]
+        descriptor = _descriptor(fabric, local_calls[index], offer)
+        accepted = descriptor["service_accept"]
+        raw = bytes.fromhex(call["descriptor_hex"])
+        if index % 2 == 0:
+            tile, = struct.unpack_from("<I", raw, 68)
+            require(tile not in seen_tiles, "O projection repeats an output tile")
+            seen_tiles.add(tile)
+            service = projection.run(call, accepted, fabric.mode, loaded_av=loaded_av)
+            service.update(service_accept=accepted, status=0, read_bytes=256 * 17 * BURST_BYTES, write_bytes=512)
+        else:
+            base, words = projection.pending_output
+            address, = struct.unpack_from("<Q", raw, 24)
+            head = address - 4 * tile
+            if row_address is None:
+                row_address = head
+            require(head == row_address and words * SRAM_WORD_BYTES == 512, "O DWS1 does not commit its projection span")
+            service = _activation_store(call, accepted, fabric, base)
+            projection.release_output(base, words)
+        retired = service["service_retire"]
+        stages.append({"call": {"target": call["target"], "ticket": call["ticket"]},
+                       "dispatch": control, "descriptor": descriptor, "service": service})
+    if last_ticket == LAST_STORE:
+        require(seen_tiles == set(range(0, 2048, 128)), "O page does not cover its complete output row")
+        wait = _wait_release(retired)["mc_wait_release"]
+        result["page_commit"] = wait + 2 * MC_INSTRUCTION_CYCLES + 2
+    return result

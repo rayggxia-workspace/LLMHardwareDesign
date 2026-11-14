@@ -123,14 +123,26 @@ class WeightPipeline:
                 self.issue_cursor[channel] = ((tag >> 10) + 1) % SLOTS_PER_CHANNEL
                 self.request_cursor[channel] = (client + 1) % 12
 
-    def resume_after_drained_clients(self):
+    def resume_after_drained_clients(self, *, through_attention=False):
         """Resume M after typed reads, historical row refills and strict writes."""
         require(self.idle and not any(self.records.values()) and not self.installs and not self.releases
                 and not any(self.outstanding.values()) and self.fabric.open_record is None
                 and self.fabric.generation == self.generation and all(device.idle for device in self.ddr.dram),
                 "weight scope handoff requires drained M banks and unchanged DMA generation")
         events = self.ddr.events[self.event_count:]
-        if events:
+        if through_attention:
+            # The frozen Attention page spans both typed channels. Its K/V,
+            # PM, and subsequent U DRL8 reads bypass this arbiter completely.
+            # Get both final issue/request cursors at their registered sources.
+            cursors = self.fabric.descriptor_cursors
+            require(set(cursors) == {0, 1} and all(self.cycle < entry[0] <= self.fabric.last_response
+                                                  for entry in cursors.values())
+                    and all(cycle > self.cycle for kind, cycle, _, _, _ in events if kind in ("admit", "return")),
+                    "Attention/O handoff requires fresh drained descriptors on both channels")
+            for channel, (_, issue, request) in cursors.items():
+                self.issue_cursor[channel], self.request_cursor[channel] = issue, request
+            self.previous_issues = [0, 0]
+        elif events:
             require(all(cycle > self.cycle and (tag >> 32 == self.generation
                         or 0 <= tag < ROW_BYTES // BURST_BYTES
                         and address - tag * BURST_BYTES in HISTORY_DIRECT_BASES.get(lane, ()))

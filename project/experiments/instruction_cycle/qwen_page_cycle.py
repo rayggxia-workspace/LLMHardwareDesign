@@ -29,6 +29,7 @@ THROUGH_KV_STORE = AFTER_Q + 1
 THROUGH_QKV_PAGE = THROUGH_KV_STORE + 1
 THROUGH_ATTENTION_PAGE = THROUGH_QKV_PAGE + 1
 THROUGH_OUTPUT_INGRESS = THROUGH_ATTENTION_PAGE + 1
+THROUGH_OUTPUT_PAGE = THROUGH_OUTPUT_INGRESS + 1
 
 
 def marker(kind, cycle, *, generation=1, **values):
@@ -147,11 +148,15 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
                         markers.append(marker("page_commit", attention["page_commit"], **next_generation, status=0,
                                               calls=len(stages), read=sum(stage["service"]["read_bytes"] + 128 for stage in stages),
                                               write=sum(stage["service"]["write_bytes"] for stage in stages)))
-                    if weight_records == THROUGH_OUTPUT_INGRESS:
-                        from qwen_output_front import predict_output_front
+                    if weight_records >= THROUGH_OUTPUT_INGRESS:
+                        from qwen_output_front import predict_output_front, predict_output_page
                         third = pages[2]
-                        output_line = predict_output_front(third, fabric, attention["page_commit"])
-                        result["scope"] = "105530 through the first timed transfer of committed Attention output to U"
+                        if weight_records == THROUGH_OUTPUT_PAGE:
+                            output_line = predict_output_page(third, fabric, attention["page_commit"], projection)
+                            result["scope"] = "105530 startup through the complete native O projection page"
+                        else:
+                            output_line = predict_output_front(third, fabric, attention["page_commit"])
+                            result["scope"] = "105530 through the first timed transfer of committed Attention output to U"
                         result["output_ingress"] = output_line
                         next_generation = {"generation": third["generation"]}
                         markers.append(marker("page_launch", output_line["page_launch"], **next_generation,
@@ -159,16 +164,20 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
                         for row in output_line["pm_admissions"]:
                             markers.append(marker("pm_admit", row["cycle"], **next_generation,
                                                   domain=row["domain"], tag=row["tag"], address=row["address"]))
-                        stage = output_line["stages"][0]
-                        for row in stage["dispatch"]["descriptor_admissions"]:
-                            markers.append(marker("descriptor_admit", row["cycle"], **next_generation,
-                                                  target=row["target"], tag=row["tag"], address=row["address"]))
-                        call = third["calls"][0]
-                        service = stage["service"]
-                        markers.append(marker("service_accept", stage["descriptor"]["service_accept"],
-                                              **next_generation, **stage["call"], schema=call["schema"], op=call["operation"]))
-                        markers.append(marker("service_retire", service["service_retire"], **next_generation,
-                                              **stage["call"], status=0, read=service["read_bytes"], write=service["write_bytes"]))
+                        for stage, call in zip(output_line["stages"], third["calls"]):
+                            for row in stage["dispatch"]["descriptor_admissions"]:
+                                markers.append(marker("descriptor_admit", row["cycle"], **next_generation,
+                                                      target=row["target"], tag=row["tag"], address=row["address"]))
+                            service = stage["service"]
+                            markers.append(marker("service_accept", stage["descriptor"]["service_accept"],
+                                                  **next_generation, **stage["call"], schema=call["schema"], op=call["operation"]))
+                            markers.append(marker("service_retire", service["service_retire"], **next_generation,
+                                                  **stage["call"], status=0, read=service["read_bytes"], write=service["write_bytes"]))
+                        if weight_records == THROUGH_OUTPUT_PAGE:
+                            stages = output_line["stages"]
+                            markers.append(marker("page_commit", output_line["page_commit"], **next_generation, status=0,
+                                                  calls=len(stages), read=sum(s["service"]["read_bytes"] + 128 for s in stages),
+                                                  write=sum(s["service"]["write_bytes"] for s in stages)))
             elif not through_k1:
                 result["projection_k0"].pop("next_window", None)
         elif weight_records:
@@ -262,9 +271,11 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
     if weight_records >= THROUGH_ATTENTION_PAGE:
         bursts += 4 + 32 * DESCRIPTOR_BURSTS + 16 * 120
         observed_generation = 2
-    if weight_records == THROUGH_OUTPUT_INGRESS:
+    if weight_records >= THROUGH_OUTPUT_INGRESS:
         bursts += 11 + DESCRIPTOR_BURSTS + 128
         observed_generation = 3
+    if weight_records == THROUGH_OUTPUT_PAGE:
+        bursts += 32 * DESCRIPTOR_BURSTS + 16 * FULL_Q_WEIGHT_RECORDS * 17
     require(len(expected) == 4 * bursts, "incomplete DDR prefix prediction")
     proof = Proof(archive, WINDOWS["next_rms"][0])
     trace = "DDR-{}/transactions.tsv".format(mode)
@@ -280,7 +291,8 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
     observed = observed_pages(edge_log, mode, observed_generation)
     wanted = prediction["markers"]
     marker_count = {FULL_Q_WEIGHT_RECORDS: 12, AFTER_Q: 23, THROUGH_KV_STORE: 24,
-                    THROUGH_QKV_PAGE: 497, THROUGH_ATTENTION_PAGE: 631, THROUGH_OUTPUT_INGRESS: 647}.get(weight_records, 11)
+                    THROUGH_QKV_PAGE: 497, THROUGH_ATTENTION_PAGE: 631, THROUGH_OUTPUT_INGRESS: 647,
+                    THROUGH_OUTPUT_PAGE: 781}.get(weight_records, 11)
     require(len(wanted) == marker_count and len(observed) >= len(wanted), "incomplete dispatch marker prefix")
     for index, (event, actual) in enumerate(zip(wanted, observed)):
         require(event == actual, "control marker {} differs: predicted {}, observed {}".format(index, event, actual))
@@ -296,7 +308,7 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
         if weight_records >= THROUGH_KV_STORE:
             write_events = post["write_events"]
             expected_writes = {THROUGH_KV_STORE: 32, THROUGH_QKV_PAGE: 384, THROUGH_ATTENTION_PAGE: 896,
-                               THROUGH_OUTPUT_INGRESS: 896}
+                               THROUGH_OUTPUT_INGRESS: 896, THROUGH_OUTPUT_PAGE: 1408}
             require(len(write_events) == expected_writes[weight_records], "incomplete KV store prefix")
         else:
             ready = post["write_ready"]
@@ -348,6 +360,8 @@ def main():
                             help="include the complete native QKV and Attention pages")
         weight.add_argument("--through-output-ingress", dest="weight_records", action="store_const",
                             const=THROUGH_OUTPUT_INGRESS, help="include the committed Attention output load to U")
+        weight.add_argument("--through-output-page", dest="weight_records", action="store_const", const=THROUGH_OUTPUT_PAGE,
+                            help="include the entire O projection page after Attention")
     args = parser.parse_args()
     if args.operation == "predict":
         result = predict(args.archive, args.binary.resolve(), args.config.resolve(), args.output.resolve(),

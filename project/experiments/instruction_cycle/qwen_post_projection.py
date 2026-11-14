@@ -96,6 +96,11 @@ def _descriptor(fabric, call, offer, *, physical_ready=None, client=0):
     ddr.tick[channel] = tick
     assembled = max(responses)
     fabric.last_response = assembled
+    # These are the last registered arbitration cursors, independent of the
+    # physical gate that may admit the reserved sibling first.
+    if not hasattr(fabric, "descriptor_cursors"):
+        fabric.descriptor_cursors = {}
+    fabric.descriptor_cursors[channel] = (assembled, (entry + 2) % SLOTS_PER_CHANNEL, (client + 1) % 12)
     crc = assembled + DESCRIPTOR_CRC_BYTES
     serial = call["ticket"]
     return {"descriptor_address": address, "client_accepts": [offer, offer + 1],

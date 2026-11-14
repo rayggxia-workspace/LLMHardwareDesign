@@ -458,10 +458,10 @@ class ProjectionProvider:
         self.pending_output = None
 
     def release_output(self, base, words):
-        require(self.pending_output == (base, words), "ADD2 does not own the active projection result")
+        require(self.pending_output == (base, words), "consumer does not own the active projection result")
         self.pending_output = None
 
-    def run(self, call, service_accept, mode, *, through_q=True):
+    def run(self, call, service_accept, mode, *, through_q=True, loaded_av=None):
         raw = bytes.fromhex(call["descriptor_hex"])
         require(mode == self.fabric.mode and self.pending_output is None and type(service_accept) is int
                 and service_accept > self.fabric.last_response and call["target"] == 0
@@ -470,9 +470,19 @@ class ProjectionProvider:
                 "unsupported serial P0 projection service or live output lease")
         columns, first, stride, groups, context, full_k, k_begin, k_end, ways, head = struct.unpack_from(
             "<IIHBBHHHBB", raw, 64)
+        pack, output = struct.unpack_from("<2H", raw, 84)
         require(columns in (256, 2048) and first + groups * stride <= columns
                 and (stride, groups, context, full_k, k_begin, k_end, ways, head) == (8, 16, 0, 2048, 0, 2048, 1, 0)
-                and struct.unpack_from("<2H", raw, 84) == (880, 896), "unsupported serial QKV geometry")
+                and pack == 880, "unsupported serial projection geometry")
+        if loaded_av is None:
+            require(output == 896, "unsupported serial QKV output geometry")
+        else:
+            require(157 <= call["ticket"] <= 187 and call["ticket"] % 2 == 1 and through_q
+                    and (columns, output) == (2048, 0) and first % 128 == 0
+                    and loaded_av["destination"] == 512 and loaded_av["write_bytes"] == 8192
+                    and loaded_av["service_retire"] < service_accept
+                    and struct.unpack_from("<IIIII", raw, 20) == (3, 9, 1, 4096, 0),
+                    "O projection requires its committed U AV row")
         # BEGIN/CONTEXT once per context, ALLOC and EXEC once per record.
         records = groups * full_k // 128
         sessions = 2 * groups + 2 * records
@@ -485,7 +495,7 @@ class ProjectionProvider:
         else:
             require(through_q and self.transport.idle and not any(self.transport.records.values()),
                     "serial projection inherits a nonempty M transport")
-            self.transport.resume_after_drained_clients()
+            self.transport.resume_after_drained_clients(through_attention=loaded_av is not None and self.last_ticket < 157)
             # Scope acceptance, registered first record offer and NEED
             # use the same edge sequence for every successful QKV launch.
             header = _k1_header(service_accept, mode)
@@ -498,7 +508,7 @@ class ProjectionProvider:
             self.next_session += sessions
             self.context_generation += 1
             self.window_generation += full_k // 128
-            self.pending_output = (896, 32)
+            self.pending_output = (output, 32)
         return result
 
 
