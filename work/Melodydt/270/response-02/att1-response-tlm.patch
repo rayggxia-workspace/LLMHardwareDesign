@@ -1,0 +1,42 @@
+--- a/native_tlm_attention.py
++++ b/native_tlm_attention.py
+@@ -26,6 +26,7 @@
+         self.clock, self.dram, self.memory, self.aperture = clock, dram, memory, aperture
+         self.sram = aperture.target
+         self.kv_window = kv_window
++        self.kv_response_slots = 16
+         self.pipeline = pipeline
+         self.stats = Counter()
+ 
+@@ -72,22 +73,28 @@
+                 self.aperture.write_span(self.sram, start, payload, done)
+ 
+             def prefetch(beats, plan, finished):
+-                issued = committed = 0
++                issued = returned_count = committed = 0
+                 ready = {}
+                 draining = False
+ 
+                 def issue():
+                     nonlocal issued
+-                    while issued < beats and issued - committed < self.kv_window:
++                    while (issued < beats and issued - returned_count < self.kv_window
++                           and issued - committed < self.kv_response_slots):
+                         index = issued
+                         address, _, _ = plan(index)
+                         issued += 1
+-                        self.stats["kv_window_peak"] = max(self.stats["kv_window_peak"], issued - committed)
++                        self.stats["kv_window_peak"] = max(self.stats["kv_window_peak"], issued - returned_count)
++                        self.stats["kv_reserved_slots_peak"] = max(
++                            self.stats["kv_reserved_slots_peak"], issued - committed)
+                         self.dram.submit(Transfer(address), lambda i=index, a=address: returned(i, a), channel=1)
+ 
+                 def returned(index, address):
++                    nonlocal returned_count
++                    returned_count += 1
+                     ready[index] = self.memory(address)
+                     self.stats["kv_read_returns"] += 1
++                    issue()
+                     drain()
+ 
+                 def acknowledged():

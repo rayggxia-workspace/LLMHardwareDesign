@@ -6,3 +6,9 @@
 - C380 Verilator 原生对照 112602/112603 均完成 0:0。两模式数值与参考逐字相符，KV 回包 15,200→9,120，正常/背压周期分别下降 28.13%/14.94%。项目管理检查通过，300 MHz 物理验收未执行。
 - 512-bit 基础流水下，前四层外推两步 Decode 2.455394 tok/s，短 Prefill 5.507167 输入 tok/s。112559/112560 仍在 `/public/home/yuzelu/Melodydt/runs/issue-270/att1-selected-01/tlm` 保存全过程。下一步读回完整审计和散列，对照预测误差，随后做 ATT1 回填/读出流水。复现及追踪见 [#270 ATT1 回执](../../work/Melodydt/270/README.md)。
 - 任务处于进行中，独立审查人待指定。项目登记 PR #5 待合并，Projects 配置缺失，条目和同步待具权限维护者核验。
+
+## 2026-11-14（Asia/Shanghai）ATT1 回包与 S 写确认解耦
+
+- [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。C380 同流量原生回归 112668/112669 均完成 0:0，正常 163,454→85,495 拍，背压 371,268→271,308 拍，读回逐字匹配。
+- 512-bit 两步 Decode、短 Prefill 前四层外推为 2.455394664 tok/s 和 5.507166863 输入 tok/s，上一轮基线外推 2.455393940 / 5.507166863。112637、112638 在 `/public/home/yuzelu/Melodydt/runs/issue-270/att1-response-02/tlm` 持久运行。恢复与原始散列见 [第二轮回执](../../work/Melodydt/270/response-02/README.md)。
+- Melodydt 后续读回四个作业终态及输出散列，再评估同流量的多回填窗口和共享 S 读出。物理 STA/完整 P512/D128 未执行。独立审查人待指定，登记 PR #5 待合并，Projects 待具权限维护者核验。
