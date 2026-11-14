@@ -12,6 +12,16 @@ def compare(before, after, mode):
     for key in ("pages", "positions", "sram_port_bits", "deployment_sha256"):
         if results[0].get(key) != results[1].get(key):
             raise ValueError(f"mismatched {key}")
+    sram_pipeline = results[1].get("attn_sram_pipeline", False)
+    if sram_pipeline:
+        if results[0].get("attn_sram_pipeline", False):
+            raise ValueError("expected a baseline and an ATT1 SRAM pipeline candidate")
+        for key in ("pipeline_memory", "rtl_weight_fetch", "av_value_fetch", "dma_scope"):
+            if results[0][key] != results[1][key]:
+                raise ValueError(f"mismatched {key}")
+        for key in ("window", "response_slots"):
+            if results[0]["attention_kv"][key] != results[1]["attention_kv"][key]:
+                raise ValueError(f"mismatched KV {key}")
     if mode == "decode":
         for key in ("kv_cross_step_read_beats", "kv_binding_sha256"):
             if results[0][key] != results[1][key]:
@@ -22,7 +32,8 @@ def compare(before, after, mode):
         if audits[0]["kv_stores"] != audits[1]["kv_stores"]:
             raise ValueError("mismatched prefill KV stores")
     pages = saved_reads = 0
-    ratio = {"legacy": 1, "selected": 2, "paired": 4, "paired-ping-pong": 4}[results[1]["av_value_fetch"]]
+    ratios = {"legacy": 1, "selected": 2, "paired": 4, "paired-ping-pong": 4}
+    before_ratio, ratio = (ratios[r.get("av_value_fetch", "legacy")] for r in results)
     with (before / "page-timing.jsonl").open() as a, (after / "page-timing.jsonl").open() as b:
         for left, right in zip_longest(a, b):
             if left is None or right is None:
@@ -41,16 +52,22 @@ def compare(before, after, mode):
                 av = legacy // ratio
             else:
                 raise ValueError("missing AV counters")
-            if ratio * av != legacy:
+            before_av = left.get("av_read_requests", legacy) if before_ratio == 1 else left["av_read_requests"]
+            if before_ratio * before_av != legacy or ratio * av != legacy:
                 raise ValueError("incorrect AV request count")
-            saved_reads += legacy - av
+            saved_reads += before_av - av
             for key in ("reads", "writes", "callbacks"):
-                reduction = 0 if key == "writes" else legacy - av
+                reduction = 0 if key == "writes" else before_av - av
                 if left["ddr"].get(key, 0) - right["ddr"].get(key, 0) != reduction:
                     raise ValueError(f"mismatched page DDR {key}")
             if sorted((c["provider"], c["count"]) for c in left["calls"]) != sorted(
                     (c["provider"], c["count"]) for c in right["calls"]):
                 raise ValueError("mismatched page CALLs")
+            if sram_pipeline:
+                for instance, counts in left["sram"].items():
+                    for key in ("read_beats", "write_beats", "read_bytes", "write_bytes"):
+                        if counts.get(key, 0) != right["sram"][instance].get(key, 0):
+                            raise ValueError(f"mismatched {instance} SRAM {key}")
             pages += 1
     if pages != results[0]["pages"]:
         raise ValueError("page count does not match execution")
@@ -63,7 +80,8 @@ def compare(before, after, mode):
     return dict(mode=mode, baseline_tok_s=baseline, candidate_tok_s=candidate,
                 gain_percent=100*(candidate/baseline-1), av_ddr_bytes_saved=64*saved_reads,
                 av_mode=results[1]["av_value_fetch"],
-                rtl_weight_fetch=results[1].get("rtl_weight_fetch", False), timing_calibrated=False)
+                rtl_weight_fetch=results[1].get("rtl_weight_fetch", False),
+                attn_sram_pipeline=sram_pipeline, timing_calibrated=False)
 
 
 if __name__ == "__main__":

@@ -46,3 +46,25 @@
 `--kv-response-slots 16` 为候选 ATT1 路径加入 16 个回包槽，保留 8 个读请求额度。发请求时预留槽位，DDR 返回即归还请求额度，S 写确认后才归还槽位。S 写入器可先写已返回的位置，Dot 仍等整片写确认。单通道绑定和 S 端口配置使用原设置。局部测试用乱序回包核对全部 V 地址、输出、读额度和回包槽上限。
 
 沿用 selected V、512-bit S、修订后的权重取数。两步 decode 作业 111977，与 111875 的唯一区别为回包槽模式。两 token prefill 作业 111978，对应无回包槽的短 prefill 权重对照 111857，另含 selected V。两组远程路径为 `/public/home/yuzelu/project-circuit/issue260-av-weight-GEwVA0Bi/kv-slots16`，源文件由 [散列](av-weight-receipts/kv-slots16-source.sha256) 固定。作业 111981 和 111982 负责完成后对照审计。回包槽为候选系统 TLM 改动，硬件实现待验证。
+
+## ATT1 的 SRAM 请求流水
+
+`--attn-sram-pipeline` 允许 ATT1 最多同时跟踪四份回填数据从提交写请求到写确认，读取一段连续数据时最多保持两拍请求未应答。读写和上一版共用同一个 512-bit S 端口，每拍最多接受一次访问，响应延迟仍为两拍。回填窗口写齐后才放行对应的计算。两组使用同一部署、母控指令、局控调用和描述符，保留 8 笔 KV DDR 读额度和 16 个回包槽，DDR 频道绑定和 S 容量相同。
+
+| 已完成且逐页匹配的范围 | 原配置 | 开启 ATT1 SRAM 流水 |
+| --- | ---: | ---: |
+| C512 decode 前三层，总耗时 | 24.091 ms | 20.527 ms |
+| C512 decode 前三层，仅 Attention 页 | 11.729 ms | 8.187 ms |
+| 空 KV 两 token prefill 前五层，总耗时 | 20.897 ms | 20.878 ms |
+
+表中各层计入从第一条层内指令到本层结束的时间，独立的 embedding 页及词表头由整次作业计入。完成的对照页中，母控指令周期数、局控调用绑定和次数、DDR 事务数以及各 S 读写次数和字节数一致。首层 Attention 页的 DDR 读为 197,060 笔、写为 128 笔。基于前三层，decode 每层约少 1.19 ms，其余层节省相近时，36 层约少 43 ms/token。短 prefill 的 Attention 窗口短，前五层累计差约 0.018 ms。完整吞吐使用退休时间计算。 [逐页对照](attn-critical-path-receipts/matched-prefix.json)
+
+| 作业 | 两步 decode | 空 KV 两 token prefill |
+| --- | ---: | ---: |
+| 同配置基线 | 111977 | 111978 |
+| ATT1 SRAM 流水 | 112069 | 112070 |
+| 等两边完成后逐页审计 | 112116 | 112117 |
+
+流水组远程目录为 `/public/home/yuzelu/project-circuit/issue260-av-weight-GEwVA0Bi/sram-rw-pipeline`。启动方式与该目录的 `decode.sbatch` 和 `prefill.sbatch` 一致，参数为 `512 --av-value-fetch selected --rtl-weight-fetch --kv-response-slots 16 --attn-sram-pipeline`。结果写入各 `run-<job>/sram-pipeline-comparison.json`。 [执行源 SHA-256](attn-critical-path-receipts/sram-pipeline-source.sha256) · [对照审计](audit_av_weight.py)
+
+`python scripts/check_project.py` 通过。运行 `python project/experiments/systemc_benchmark/test_native_tlm_services.py` 通过 10 项，其中 Attention 用 69 个位置和乱序返回，在 128/512-bit 下验证输出逐字一致、逐地址 DDR 事务及有限队列。512-bit 端口与新的 ATT1 供数时序属于 #260 候选 TLM，硬件 RTL、物理时序及当前两次完整吞吐回执仍待验证。Issue #234 保持开放，审查人待指定。看板配置缺失，当前 Issue 未返回已关联的 Projects 条目。协作规则版本为 rayggxia-project-collab 1.0.0，登记沿用待核验状态。

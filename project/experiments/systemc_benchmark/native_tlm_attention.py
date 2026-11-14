@@ -21,7 +21,7 @@ def softmax_lut():
 
 class Attention:
     def __init__(self, clock, dram, memory, aperture, *, kv_window=1, pipeline=False,
-                 value_fetch="legacy", kv_response_slots=0):
+                 value_fetch="legacy", kv_response_slots=0, sram_pipeline=False):
         if not 1 <= kv_window <= 32:
             raise ValueError("KV read window must be between 1 and 32 beats")
         self.clock, self.dram, self.memory, self.aperture = clock, dram, memory, aperture
@@ -30,6 +30,9 @@ class Attention:
         if kv_response_slots and not kv_window < kv_response_slots <= 64:
             raise ValueError("KV response slots must exceed the read window and be at most 64")
         self.kv_response_slots = kv_response_slots
+        if sram_pipeline and (not pipeline or not kv_response_slots):
+            raise ValueError("ATT1 SRAM pipeline requires memory pipeline and KV response slots")
+        self.sram_pipeline = sram_pipeline
         if value_fetch not in ("legacy", "selected", "paired", "paired-ping-pong"):
             raise ValueError("unknown AV fetch mode")
         if value_fetch == "paired-ping-pong" and not pipeline:
@@ -75,7 +78,10 @@ class Attention:
                 step(0)
 
             def read(start, words, done):
-                self.aperture.read_span(self.sram, start, words, done)
+                if self.sram_pipeline:
+                    span(self.sram, start, words, self.aperture.edge, done)
+                else:
+                    self.aperture.read_span(self.sram, start, words, done)
 
             def write(start, payload, done):
                 self.aperture.write_span(self.sram, start, payload, done)
@@ -83,7 +89,8 @@ class Attention:
             def prefetch(beats, plan, finished):
                 issued = returned_count = committed = 0
                 ready = {}
-                draining = False
+                writes_active = 0
+                write_depth = 4 if self.sram_pipeline else 1
 
                 def issue():
                     nonlocal issued
@@ -110,9 +117,9 @@ class Attention:
                     drain()
 
                 def acknowledged():
-                    nonlocal committed, draining
+                    nonlocal committed, writes_active
                     committed += 1
-                    draining = False
+                    writes_active -= 1
                     if committed == beats:
                         finished()
                     else:
@@ -120,14 +127,16 @@ class Attention:
                         drain()
 
                 def drain():
-                    nonlocal draining
-                    if draining or not ready:
-                        return
-                    index = next(iter(ready)) if self.kv_response_slots else committed
-                    if index not in ready:
-                        return
-                    draining = True
-                    payload = ready.pop(index)
+                    nonlocal writes_active
+                    while writes_active < write_depth and ready:
+                        index = next(iter(ready)) if self.kv_response_slots else committed
+                        if index not in ready:
+                            return
+                        writes_active += 1
+                        self.stats["kv_sram_write_peak"] = max(self.stats["kv_sram_write_peak"], writes_active)
+                        store(index, ready.pop(index))
+
+                def store(index, payload):
                     _, destination, lane = plan(index)
                     if destination is None:
                         self.aperture.edge(acknowledged)

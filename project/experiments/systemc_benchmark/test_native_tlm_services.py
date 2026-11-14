@@ -229,12 +229,15 @@ class NativeTLMServicesTest(unittest.TestCase):
         observed = []
         configurations = [(m, p) for m in ("legacy", "selected", "paired") for p in (False, True)]
         configurations.append(("paired-ping-pong", True))
-        configurations = [(mode, pipeline, 0) for mode, pipeline in configurations]
-        configurations.append(("selected", True, 16))
-        for mode, pipeline, response_slots in configurations:
+        configurations = [(mode, pipeline, 0, False, 512) for mode, pipeline in configurations]
+        configurations.append(("selected", True, 16, False, 512))
+        configurations.extend((mode, True, 16, True, bits)
+                              for mode in ("legacy", "selected", "paired-ping-pong")
+                              for bits in (128, 512))
+        for mode, pipeline, response_slots, sram_pipeline, bits in configurations:
             clock = Clock()
             dram = ReorderingDDR(clock)
-            sram = S128(clock, core_ps=10, port_bits=512)
+            sram = S128(clock, core_ps=10, port_bits=bits)
             q = pack("<4i", 1, 2, 3, 4)
             sram.words.update((i, q) for i in range(32))
             aperture = Projection(clock, dram, None, sram, sram, source_word=0, scratch_word=32)
@@ -245,7 +248,8 @@ class NativeTLMServicesTest(unittest.TestCase):
                 for base in (key, value) for row in range(positions) for offset in range(0, 512, 64)
             }
             attention = Attention(clock, dram, history.__getitem__, aperture, kv_window=8,
-                                  pipeline=pipeline, value_fetch=mode, kv_response_slots=response_slots)
+                                  pipeline=pipeline, value_fetch=mode, kv_response_slots=response_slots,
+                                  sram_pipeline=sram_pipeline)
             descriptor = record("<6HIQQ", positions, positions-1, 0, 512, 544, 800,
                                 1 << 30, key, value)
             done = []
@@ -259,6 +263,8 @@ class NativeTLMServicesTest(unittest.TestCase):
                 self.assertEqual(attention.stats["kv_window_peak"], 8)
                 self.assertGreater(attention.stats["kv_reserved_slots_peak"], 8)
                 self.assertLessEqual(attention.stats["kv_reserved_slots_peak"], response_slots)
+            if sram_pipeline:
+                self.assertEqual(attention.stats["kv_sram_write_peak"], 4)
             if mode == "paired-ping-pong":
                 self.assertEqual(attention.stats["av_overlapping_refill_tiles"], 16)
                 self.assertEqual(attention.stats["av_checkpoint_ops"], 64)

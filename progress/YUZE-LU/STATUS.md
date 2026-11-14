@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-14（CST）ATT1 局部 SRAM 流水对照
+
+[PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 增加候选 TLM 的 ATT1 SRAM 回填和取数流水。前三层 decode 的 Attention 页合计 11.729→8.187 ms，母控指令、局控调用、DDR 与 SRAM 访问量一致。候选作业 112069/112070 运行两步 decode 和短 prefill，112116/112117 待两组完成后核对吞吐。硬件实现及正式 P512/D128 仍待验收。 [配置与对照](../../work/YUZE-LU/234/AV_WEIGHT_EXPERIMENT.md#att1-的-sram-请求流水)
+
 ## 2026-11-14（CST）短程吞吐回执与复现入口
 
 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 补充[配置化回放入口](../../project/experiments/systemc_benchmark/README.md)和[从 0.957 tok/s 起的瓶颈分析与证据](../../work/YUZE-LU/234/native-sram-width/PERFORMANCE_ANALYSIS.md)。[内存流水对照](../../work/YUZE-LU/234/MEMORY_PIPELINE_EXPERIMENT.md)已通过 Attention 双写在途组件回归，512-bit 的两步 decode 和短 prefill 已完成 TLM 对照审计，分别为 2.3390 和 5.5065 tok/s。V 复用待测。宽口 RTL、300 MHz 物理时序及正式 P512/D128 联合验收仍待完成。Issue #234 继续进行，审查人待指定，看板同步待核验。

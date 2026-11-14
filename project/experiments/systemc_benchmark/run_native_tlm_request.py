@@ -105,6 +105,7 @@ def main():
     parser.add_argument("--decode-kv-binding", type=Path)
     parser.add_argument("--decode-kv-sha256")
     parser.add_argument("--dma-fabric-budget", action="store_true")
+    parser.add_argument("--attn-sram-pipeline", action="store_true")
     parser.add_argument("--kv-response-slots", type=int, default=0)
     parser.add_argument("--kv-read-window", type=int, default=1, choices=range(1, 33))
     parser.add_argument("--sram-port-bits", type=int, default=128, choices=(128, 512))
@@ -116,6 +117,8 @@ def main():
         parser.error("--av-value-fetch paired-ping-pong requires --pipeline-memory")
     if args.kv_response_slots and not args.kv_read_window < args.kv_response_slots <= 64:
         parser.error("--kv-response-slots must exceed --kv-read-window and be at most 64")
+    if args.attn_sram_pipeline and (not args.pipeline_memory or not args.kv_response_slots):
+        parser.error("--attn-sram-pipeline requires --pipeline-memory and --kv-response-slots")
     if args.checkpoint_pages < 0:
         parser.error("--checkpoint-pages must be nonnegative")
     decode = args.decode_kv_binding is not None
@@ -185,7 +188,7 @@ def main():
                             scratch_sram=p0, rtl_weight_fetch=args.rtl_weight_fetch)
     attention = Attention(clock, dram, memory, projection, kv_window=args.kv_read_window,
                           pipeline=args.pipeline_memory, value_fetch=args.av_value_fetch,
-                          kv_response_slots=args.kv_response_slots)
+                          kv_response_slots=args.kv_response_slots, sram_pipeline=args.attn_sram_pipeline)
     providers = {
         P: projection.provider,
         (3, 3, 7, 4): embedding(u, dram, memory, pipeline=args.pipeline_memory),
@@ -404,7 +407,7 @@ def main():
                       timing_calibrated=False, numerically_accepted=False,
                       sram_port_bits=args.sram_port_bits,
                       pipeline_memory=args.pipeline_memory, av_value_fetch=args.av_value_fetch,
-                      rtl_weight_fetch=args.rtl_weight_fetch,
+                      rtl_weight_fetch=args.rtl_weight_fetch, attn_sram_pipeline=args.attn_sram_pipeline,
                       sram={name: dict(s.stats) for name, s in srams.items()},
                       attention_kv=dict(window=args.kv_read_window, response_slots=args.kv_response_slots, **attention.stats),
                       dma_scope=("32 credits per channel and rolling issue limits with FIFO arbitration"
