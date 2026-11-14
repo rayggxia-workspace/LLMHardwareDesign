@@ -26,8 +26,10 @@ class Attention:
         self.clock, self.dram, self.memory, self.aperture = clock, dram, memory, aperture
         self.sram = aperture.target
         self.kv_window = kv_window
-        if value_fetch not in ("legacy", "selected", "paired"):
+        if value_fetch not in ("legacy", "selected", "paired", "paired-ping-pong"):
             raise ValueError("unknown AV fetch mode")
+        if value_fetch == "paired-ping-pong" and not pipeline:
+            raise ValueError("paired AV ping-pong requires the memory pipeline")
         self.value_fetch = value_fetch
         self.pipeline = pipeline
         self.stats = Counter()
@@ -124,7 +126,7 @@ class Attention:
 
                 issue()
 
-            def tiled(count, tile, load, consume, finish):
+            def tiled(count, tile, load, consume, finish, *, record_overlap=None):
                 """Two disjoint half windows, with at most one refill active."""
                 def start(index, bank):
                     if index == count:
@@ -137,9 +139,12 @@ class Attention:
                     next_index = index + size
                     next_bank = 1-bank
                     waiting = 2 if next_index < count else 1
+                    fork_time = self.clock.now
 
                     def ready():
                         nonlocal waiting
+                        if waiting == 2 and record_overlap is not None:
+                            record_overlap(self.clock.now - fork_time)
                         waiting -= 1
                         if waiting == 0:
                             if next_index == count:
@@ -212,15 +217,18 @@ class Attention:
                 scale(0)
 
             def start_av(group):
-                paired = self.value_fetch == "paired"
+                paired_ping_pong = self.value_fetch == "paired-ping-pong"
+                paired = self.value_fetch in ("paired", "paired-ping-pong")
                 selected = self.value_fetch != "legacy"
                 lanes = 16 if paired else 8
                 row_words = lanes // 4
-                tile = 32 if paired else (128 if self.pipeline else 256) // row_words
+                tile = (28 if paired_ping_pong else 32) if paired else (128 if self.pipeline else 256) // row_words
+                bank_words = tile * row_words
+                checkpoint = work + bank_words * (2 if paired_ping_pong else 1)
                 sums = [0] * lanes
 
                 def load(first, n, bank, ready):
-                    destination = work + 128 * bank
+                    destination = work + bank_words * bank
                     group_address = v_base + (group // 4) * 128
                     pick = group % 4
 
@@ -239,7 +247,7 @@ class Attention:
                     prefetch(beats, plan, ready)
 
                 def consume(first, n, bank, ready):
-                    destination = work + 128 * bank
+                    destination = work + bank_words * bank
 
                     def step_slice(half, complete):
                         def dot(probs, values):
@@ -272,7 +280,8 @@ class Attention:
                         def snapshot_io(payload, finished):
                             self.stats["av_checkpoint_ops"] += 1
                             image = []
-                            base = work + 128 + 7 * half
+                            base = checkpoint + 7 * half
+                            started = self.clock.now
 
                             def received(data):
                                 image.append(data)
@@ -280,12 +289,16 @@ class Attention:
 
                             def word(index):
                                 if index == 7:
-                                    self.aperture.edge(lambda: finished(b"".join(image)), 4)
+                                    self.aperture.edge(retire_snapshot, 4)
                                 elif payload is None:
                                     read(base + index, 1, received)
                                 else:
                                     write(base + index, payload[16 * index:16 * (index + 1)],
                                           lambda: word(index + 1))
+                            def retire_snapshot():
+                                self.stats["av_checkpoint_elapsed_ps"] += self.clock.now - started
+                                finished(b"".join(image))
+
                             self.aperture.edge(lambda: word(0), 4)
 
                         def save():
@@ -322,8 +335,12 @@ class Attention:
                         n = min(tile, count - first)
                         load(first, n, 0, lambda: consume(first, n, 0, lambda: serial(first + n)))
 
-                if self.pipeline and not paired:
-                    tiled(count, tile, load, consume, finish)
+                if self.pipeline and (not paired or paired_ping_pong):
+                    def record_overlap(elapsed):
+                        self.stats["av_overlapping_refill_tiles"] += 1
+                        self.stats["av_refill_compute_overlap_ps"] += elapsed
+
+                    tiled(count, tile, load, consume, finish, record_overlap=record_overlap)
                 else:
                     serial(0)
 

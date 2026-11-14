@@ -109,8 +109,10 @@ def main():
     parser.add_argument("--sram-port-bits", type=int, default=128, choices=(128, 512))
     parser.add_argument("--pipeline-memory", action="store_true")
     parser.add_argument("--rtl-weight-fetch", action="store_true")
-    parser.add_argument("--av-value-fetch", choices=("legacy", "selected", "paired"), default="legacy")
+    parser.add_argument("--av-value-fetch", choices=("legacy", "selected", "paired", "paired-ping-pong"), default="legacy")
     args = parser.parse_args()
+    if args.av_value_fetch == "paired-ping-pong" and not args.pipeline_memory:
+        parser.error("--av-value-fetch paired-ping-pong requires --pipeline-memory")
     if args.checkpoint_pages < 0:
         parser.error("--checkpoint-pages must be nonnegative")
     decode = args.decode_kv_binding is not None
@@ -325,6 +327,8 @@ def main():
 
                 av_before = attention.stats["av_read_requests"]
                 av_legacy_before = attention.stats["av_legacy_read_requests"]
+                av_overlap_before = attention.stats["av_refill_compute_overlap_ps"]
+                av_checkpoint_before = attention.stats["av_checkpoint_elapsed_ps"]
                 run_page(page, topology=topology, descriptor_base=base, descriptor_bytes=size,
                          scheduler=scheduler, providers=page_providers,
                          after_wait=ffn.after_wait if ffn else None, timing=measure,
@@ -335,6 +339,8 @@ def main():
                     end_ps=clock.now, ddr=dict(dram.stats-ddr_start),
                     av_read_requests=attention.stats["av_read_requests"] - av_before,
                     av_legacy_read_requests=attention.stats["av_legacy_read_requests"] - av_legacy_before,
+                    av_refill_compute_overlap_ps=attention.stats["av_refill_compute_overlap_ps"] - av_overlap_before,
+                    av_checkpoint_elapsed_ps=attention.stats["av_checkpoint_elapsed_ps"] - av_checkpoint_before,
                     mother_instruction_cycles=instruction_cycles,
                     mother_wait_ps=mother_wait_ps,
                     mid_barrier_ps=ffn.mid_barrier_ps if ffn else 0,

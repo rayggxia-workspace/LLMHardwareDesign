@@ -32,3 +32,11 @@
 | 只取必要 V 地址和权重取数 | 111875 | |
 
 远程目录为 `/public/home/yuzelu/project-circuit/issue260-av-weight-GEwVA0Bi`。完整回放结束后由相应 Slurm 依赖任务执行 [对照审计](audit_av_weight.py)。审计逐页核对母控指令、服务调用、DDR 读写和 KV 结果，DDR 读数差额必须全部来自 AV。整段吞吐待完整回放。物理时序仍待验收。
+
+## 28 行双窗口对照
+
+`--pipeline-memory --av-value-fetch paired-ping-pong` 使用两个连续的 V 窗口，每个为 112 个 S128 字。两份七字快照紧接在第二个窗口后面。总共占用 238 字（3,808 B），均在描述符既有的 256 字工作区中。算当前片与加载下一片同时发起，两条路径共用一个带仲裁的 S 端口。当前片的两组计算和快照操作、下一片写确认均完成后才换窗口。单窗口 `paired` 保留用于对照。
+
+逐页新增 `av_refill_compute_overlap_ps` 与 `av_checkpoint_elapsed_ps`。前者计两条路径同时在执行的墙钟区间，后者包含快照命令计费、共享端口等待及 S 应答，两个计数可以互相重叠。局部测试用 69 个位置跨过两个分片边界，验证 V 各地址只读一次、K 不变、与原方式输出逐字一致，以及非零重叠。
+
+远程目录 `/public/home/yuzelu/project-circuit/issue260-av-weight-GEwVA0Bi/paired28`，两步 decode 作业 111910，两 token prefill 作业 111911，对照审计 111913/111914。配置保持 512-bit 数据 S、相同程序和 DDR 参数，关闭权重取数新模式以隔离 V 改动。已有的串行 V1 RTL 仍是硬件证据。28 行双窗口是 TLM 实验，待原生 RTL 实现与物理验收。

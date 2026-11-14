@@ -22,7 +22,7 @@ def compare(before, after, mode):
         if audits[0]["kv_stores"] != audits[1]["kv_stores"]:
             raise ValueError("mismatched prefill KV stores")
     pages = saved_reads = 0
-    ratio = {"legacy": 1, "selected": 2, "paired": 4}[results[1]["av_value_fetch"]]
+    ratio = {"legacy": 1, "selected": 2, "paired": 4, "paired-ping-pong": 4}[results[1]["av_value_fetch"]]
     with (before / "page-timing.jsonl").open() as a, (after / "page-timing.jsonl").open() as b:
         for left, right in zip_longest(a, b):
             if left is None or right is None:

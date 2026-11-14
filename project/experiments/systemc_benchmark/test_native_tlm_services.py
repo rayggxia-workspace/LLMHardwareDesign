@@ -227,8 +227,9 @@ class NativeTLMServicesTest(unittest.TestCase):
     def test_attention_ping_pong_keeps_results_and_ddr_addresses(self):
         positions = 69
         observed = []
-        for mode, pipeline in ((m, p) for m in ("legacy", "selected", "paired")
-                               for p in (False, True)):
+        configurations = [(m, p) for m in ("legacy", "selected", "paired") for p in (False, True)]
+        configurations.append(("paired-ping-pong", True))
+        for mode, pipeline in configurations:
             clock = Clock()
             dram = ReorderingDDR(clock)
             sram = S128(clock, core_ps=10, port_bits=512)
@@ -251,7 +252,11 @@ class NativeTLMServicesTest(unittest.TestCase):
             observed.append([sram.words[i] for i in range(800, 832)])
             requested = Counter(t.address for t in dram.offered)
             self.assertEqual(requested, {addr: (1 if addr < value else
-                {"legacy": 4, "selected": 2, "paired": 1}[mode]) for addr in history})
+                {"legacy": 4, "selected": 2, "paired": 1, "paired-ping-pong": 1}[mode]) for addr in history})
+            if mode == "paired-ping-pong":
+                self.assertEqual(attention.stats["av_overlapping_refill_tiles"], 16)
+                self.assertEqual(attention.stats["av_checkpoint_ops"], 64)
+                self.assertGreater(attention.stats["av_refill_compute_overlap_ps"], 0)
         self.assertTrue(all(result == observed[0] for result in observed[1:]))
 
 
