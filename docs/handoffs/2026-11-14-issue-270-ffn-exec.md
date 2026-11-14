@@ -9,13 +9,12 @@
 | 113742 | node7 | `sbatch --parsable run_ffn_exec.sbatch` | COMPLETED 0:0 |
 | 113759 | node7 | `sbatch --parsable --job-name=zny-ffn-guard-b run_ffn_guard.sbatch base` | COMPLETED 0:0，54 项 |
 | 113762 | node7 | `sbatch --parsable --job-name=zny-ffn-guard-c run_ffn_guard.sbatch exec` | COMPLETED 0:0，54 项 |
-| 113850 | node3 | `sbatch --parsable run_ffn_exec_scoped.sbatch` | RUNNING，正常模式 |
+| 113850 | node3 | `sbatch --parsable run_ffn_exec_scoped.sbatch` | COMPLETED 0:0，正常和背压均核验 |
  
 ```bash
 cd /public/home/yuzelu/Melodydt/runs/issue-270/ffn-exec-07
-squeue -j 113850
 sacct -X -j 113742,113743,113744,113759,113760,113762,113850 -o JobID,JobName,Partition,AllocCPUS,State,ExitCode,Elapsed,Nodelist
-tail -f slurm-113850.out
+tail -n 12 slurm-113850.out
 d=run-113850/replay-113850
 ls "$d"/{replay-*.log,ffn-wait.sha256,verified-proof.log}
 bash finish_exec_pair.sh 113850
@@ -24,10 +23,11 @@ cat results/113850/sensitivity-{0,1}.json
 
 后续每完成一个步骤都报告两项固定负载速度、证据范围和余下全部步骤。
 
-1. 收齐 113850 的正常和背压原生 A/B。核对 FFN 前序指纹、各模式 128 个 WAIT、事务、已提交字节的散列和同轮检测。若退化一致，归档本轮为淘汰候选并沿用上一轮基线。若要继续做 FFN，只评估保留年轻记录预取时压缩交接，先做小范围原生 A/B。
-2. 完成 HEAD16 权重、M、读回、argmax 与退休归因。逐项 A/B 既有权重预取和输出/归约重叠，核对 151,936 列、并列选择和退休 token。短 Prefill 同步回归。
-3. 重排热点，按测量决定 QKV/O 是否复用供数机制。补 ATT1 共享端口故障/背压/排空及分片取舍。
-4. 冻结组合，做完整短程、原生联合及 300 MHz setup/hold、面积和资源回归。
-5. 通过 PR #272 向 #234 交付，检查正式 B1/P512/D128 连续反馈、自生成 KV、数值、TTFT、吞吐与 J/token；独立审查及合并后完成 #270。
+113850 正常和背压分别核验了前序指纹、128 个 WAIT、事务及已提交字节散列。两模式 Gate/Up、Down 均慢约 11%，此轮调度归档为淘汰候选。沿用上一轮完整 TLM 基线 2.925996 tok/s 和 6.316164 输入 tok/s。
+
+1. 完成 HEAD16 权重、M、读回、argmax 与退休归因。逐项 A/B 既有权重预取和输出/归约重叠，核对 151,936 列、并列选择和退休 token。短 Prefill 同步回归。
+2. 重排热点，按测量决定 QKV/O 是否复用供数机制。补 ATT1 共享端口故障/背压/排空及分片取舍。
+3. 冻结组合，做完整短程、原生联合及 300 MHz setup/hold、面积和资源回归。
+4. 通过 PR #272 向 #234 交付，检查正式 B1/P512/D128 连续反馈、自生成 KV、数值、TTFT、吞吐与 J/token；独立审查及合并后完成 #270。
 
 Melodydt 接续，Issue 进行中，PR 草稿，审查人待指定。规则 `rayggxia-project-collab 1.0.0`，项目 `llm-hardware-design`，登记 PR #5 待合并，因缺 `config/board.json` 由具权限维护者核验 Projects 及同步。

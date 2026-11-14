@@ -41,4 +41,4 @@
 
 - [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。单变量局控候选通过 54 项定向回归，C639 113742 完成 0:0。Gate/Up 和 Down 的两模式 WAIT 总周期增约 11%。提前发出先吃掉了年轻权重的重叠时间。
 - 当前完整短程 TLM 基线为 Decode 2.925996 tok/s、短 Prefill 6.316164 输入 tok/s。该候选依据正常、背压 C639 和前四层窗口的敏感性分别为 2.840833/5.931992 和 2.838812/5.923231。疑似退化候选暂不进入速度基线。
-- 113850 限定于真实 FFN 所有权，正常入口与基线观测指纹一致，仍在 c64/node3 持久运行。恢复见 [交接](../../docs/handoffs/2026-11-14-issue-270-ffn-exec.md)。后续每步报告当前两项速度和剩余全部步骤。STA、正式 P512/D128 未执行；独立审查人待指定，登记 PR #5 待合并，Projects 待具权限维护者核验。
+- 113850 正常和背压均完成 0:0，前序一致，Gate/Up 增 11.06%/11.20%、Down 增 10.96%/11.54%。提前执行候选淘汰。当前保留基线的 HEAD16 为 86.828 ms，占第二步 25.41%。下一步进行词表细分。恢复见 [交接](../../docs/handoffs/2026-11-14-issue-270-ffn-exec.md)。后续每步报告当前两项速度和剩余全部步骤。STA、正式 P512/D128 未执行；独立审查人待指定，登记 PR #5 待合并，Projects 待具权限维护者核验。
