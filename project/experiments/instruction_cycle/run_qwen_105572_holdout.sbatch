@@ -28,6 +28,15 @@ srun --exact -n1 -c "$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
 set -euo pipefail
 stage=$1 dram=$2 config=$3 archive=$4 embedding=$5
 export LC_ALL=C
+prefix=prediction
+comparison=heldout-comparison
+scope=()
+if [[ "$stage" == *-full-q ]]; then
+    stage=${stage%-full-q}
+    prefix=full-q-prediction
+    comparison=full-q-comparison
+    scope=(--through-q)
+fi
 case "$stage" in
     predict)
         g++ --version > compiler-version.txt
@@ -36,20 +45,20 @@ case "$stage" in
             -L"$dram" -Wl,-rpath,"$dram" -ldramsim3 -o bridge-read > build.log 2>&1
         for mode in 0 1; do
             python3 -B qwen_heldout_cycle.py predict "$archive" ./bridge-read "$config" \
-                "device-$mode" "$embedding" --mode "$mode" > "prediction-$mode.json"
+                "device-$mode" "$embedding" --mode "$mode" "${scope[@]}" > "$prefix-$mode.json"
         done
-        sha256sum prediction-{0,1}.json > prediction.sha256
+        sha256sum "$prefix"-{0,1}.json > "$prefix.sha256"
         sha256sum source.sha256 inputs.sha256 bridge-read compiler-version.txt python-version.txt \
-            prediction.sha256 prediction-{0,1}.json > model-output.sha256
+            "$prefix.sha256" "$prefix"-{0,1}.json > model-output.sha256
         ;;
     compare)
         estimates=("$6" "$7")
-        sha256sum -c prediction.sha256
+        sha256sum -c "$prefix.sha256"
         for mode in 0 1; do
-            python3 -B qwen_heldout_cycle.py compare "$archive" "prediction-$mode.json" "${estimates[mode]}" \
-                > "heldout-comparison-$mode.json"
+            python3 -B qwen_heldout_cycle.py compare "$archive" "$prefix-$mode.json" "${estimates[mode]}" \
+                "${scope[@]}" > "$comparison-$mode.json"
         done
-        sha256sum heldout-comparison-{0,1}.json prediction.sha256 > output.sha256
+        sha256sum "$comparison"-{0,1}.json "$prefix.sha256" > output.sha256
         sha256sum -c output.sha256
         ;;
     *) exit 2 ;;

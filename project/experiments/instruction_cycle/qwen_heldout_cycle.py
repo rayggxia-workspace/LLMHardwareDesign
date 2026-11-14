@@ -1,9 +1,9 @@
-"""Frozen 105572 validation of the 105530 first-Q K0 cycle model.
+"""Frozen 105572 timing checks for the 105530 first-Q cycle model.
 
 The acceptance threshold is exact equality of all 2,244 ordered read events
-per mode through ticket 3's first 16 weight records. Predict from sealed
-inputs first. Use a preregistered source commit and a prediction SHA-256
-written before opening either held-out DDR trace.
+per mode through ticket 3's first 16 weight records, or all 18,572 events
+through the next ticket's descriptor in the extended diagnostic. Predict
+from sealed inputs and record its SHA-256 before comparing the DDR trace.
 """
 
 import argparse
@@ -34,6 +34,7 @@ EMBEDDING_ROW_SHA = "14868690d2b0ea49d89af4a1c417c3a125c417e0f415068c5d9df58fe9c
 ARCHIVE = Path("/public/home/yuzelu/project-circuit/issue260-decode638-live-product-c639-pWbjIwaZ/replay-105572")
 PROMPT_ACCEPT_EDGE = 2
 EXPECTED_BURSTS = 561
+FULL_Q_BURSTS = 4643
 FIXTURE_INPUTS = (
     "generated/test_native_projection_live.sv",
     "generated/native_prompt_embedding_rms_fixture.sv",
@@ -105,7 +106,7 @@ def sealed_inputs(proof, embedding):
             "first 105572 descriptor table differs from its sealed extent")
     # The production prefix uses the same serial 13-word CALL template.
     # Its C639 loop bound exceeds the training decoder's 10,000-step guard;
-    # only validate the literal template and instantiate its first three
+    # only validate the literal template and instantiate the initial
     # iterations rather than replacing the guard for other callers.
     instructions = [instruction(word) for word in words(mother)]
     descriptor_base = int(desc_base, 16)
@@ -118,18 +119,18 @@ def sealed_inputs(proof, embedding):
             "unexpected 105572 P0 serial CALL template")
     routes = decode_routes(proof.read("generated/decode638_product_routes.svh"))
     calls = []
-    for offset in range(3):
+    for offset in range(4):
         call = {"target": 0, "ticket": offset + 1, "mc_pc": 8, "wave": offset,
                 "descriptor_address": descriptor_base + offset * 128}
         descriptor(call, data[offset * 128:(offset + 1) * 128], routes)
         calls.append(call)
-    require([call["schema"] for call in calls] == [DRL1, DRL1, P_SCOPE], "unsupported first three 105572 calls")
+    require([call["schema"] for call in calls] == [DRL1, DRL1, P_SCOPE, DRL1], "unsupported initial 105572 calls")
     page = {"generation": 1, "address": int(base, 16), "bytes": int(size), "target_mask": int(target),
             "calls": calls, "waves": [{"wait_pc": 10} for _ in calls]}
     return spec, token, shift - rms[1], int(local_base, 16), int(local_bytes), page
 
 
-def predict(archive, binary, config, output, embedding, mode):
+def predict(archive, binary, config, output, embedding, mode, *, through_q=False):
     """Run the existing source models on the held-out inputs and live DDR."""
     proof = HeldoutProof(archive)
     spec, token, extra, local_base, local_bytes, page = sealed_inputs(proof, embedding)
@@ -153,7 +154,7 @@ def predict(archive, binary, config, output, embedding, mode):
         mc_stores = fetch_pm(ddr, mc_ready, page["address"], page["bytes"], MC_DOMAIN, 7)
         control = dispatch(page, mc_stores[-1][2], mode)
         fabric = TypedReadFabric(ddr)
-        for index, call in enumerate(page["calls"]):
+        for index, call in enumerate(page["calls"][:3]):
             offer = control["descriptor_admissions"][0]["cycle"]
             # The two-beat shared transport also handles a first lane stall
             # if relocation moves an offer onto a blocked physical edge.
@@ -164,26 +165,41 @@ def predict(archive, binary, config, output, embedding, mode):
                 service = run_drl1(fabric, call, fetched["service_accept"])
                 control = next_call(page, index, service["service_retire"])
         front = first_weight_offer(call, fetched["service_accept"], mode)
-        projection = run_k0(call, front, fabric, mode)
-        require(len(ddr.events) == EXPECTED_BURSTS * 4, "incomplete 105572 first K0 prediction")
-        return {"schema": "issue265-105572-k0-holdout/1", "job": JOB, "proof_sha256": PROOF_SHA,
-                "mode": mode, "workload": "first native Q K0", "expected_bursts": EXPECTED_BURSTS,
+        projection = run_k0(call, front, fabric, mode, through_q=through_q)
+        if through_q:
+            control = next_call(page, 2, projection["service_retire"])
+            upcoming = page["calls"][3]
+            offer = control["descriptor_admissions"][0]["cycle"]
+            next_descriptor = _descriptor(fabric, upcoming, offer)
+            require(next_descriptor["client_accepts"] == [row["cycle"] for row in control["descriptor_admissions"]],
+                    "105572 dispatcher and Q retirement handoff disagree")
+        expected_bursts = FULL_Q_BURSTS if through_q else EXPECTED_BURSTS
+        require(len(ddr.events) == expected_bursts * 4, "incomplete 105572 read prefix prediction")
+        schema = "issue265-105572-full-q-diagnostic/1" if through_q else "issue265-105572-k0-holdout/1"
+        workload = "first native Q through the next descriptor" if through_q else "first native Q K0"
+        result = {"schema": schema, "job": JOB, "proof_sha256": PROOF_SHA,
+                "mode": mode, "workload": workload, "expected_bursts": expected_bursts,
                 "acceptance": "all ordered events exact at zero cycles and zero DDR ticks", "first_token": token,
                 "prompt_accept_edge": PROMPT_ACCEPT_EDGE, "ddr_events": ddr.events,
                 "first_q_accept_pre_edge": fetched["service_accept"], "projection": projection}
+        if through_q:
+            result["next_descriptor"] = next_descriptor
+        return result
 
 
-def compare(archive, prediction_path, expected_prediction_sha):
+def compare(archive, prediction_path, expected_prediction_sha, *, through_q=False):
     """Compare the sealed prediction with the ordered held-out prefix."""
     require(file_digest(prediction_path) == expected_prediction_sha, "prediction was not sealed before comparison")
     predicted = json.loads(prediction_path.read_bytes())
     proof = HeldoutProof(archive)
     mode = predicted["mode"]
+    expected_bursts = FULL_Q_BURSTS if through_q else EXPECTED_BURSTS
+    schema = "issue265-105572-full-q-diagnostic/1" if through_q else "issue265-105572-k0-holdout/1"
     require((predicted["schema"], predicted["job"], predicted["proof_sha256"], predicted["expected_bursts"])
-            == ("issue265-105572-k0-holdout/1", JOB, PROOF_SHA, EXPECTED_BURSTS)
+            == (schema, JOB, PROOF_SHA, expected_bursts)
             and mode in (0, 1), "not an eligible held-out prediction")
     events = predicted["ddr_events"]
-    require(len(events) == EXPECTED_BURSTS * 4, "incomplete held-out event prefix")
+    require(len(events) == expected_bursts * 4, "incomplete held-out event prefix")
     name = "DDR-{}/transactions.tsv.gz".format(mode)
     trace = proof.path(name)
     digest = file_digest(trace)
@@ -210,12 +226,15 @@ def main():
     check.add_argument("archive", type=Path)
     check.add_argument("prediction", type=Path)
     check.add_argument("prediction_sha256")
+    for command in (make, check):
+        command.add_argument("--through-q", action="store_true",
+                             help="extended diagnostic through the descriptor following the first Q service")
     args = parser.parse_args()
     if args.command == "predict":
         result = predict(args.archive, args.binary.resolve(), args.config.resolve(), args.output.resolve(),
-                         args.embedding, args.mode)
+                         args.embedding, args.mode, through_q=args.through_q)
     else:
-        result = compare(args.archive, args.prediction, args.prediction_sha256)
+        result = compare(args.archive, args.prediction, args.prediction_sha256, through_q=args.through_q)
     print(json.dumps(result, indent=2))
 
 
