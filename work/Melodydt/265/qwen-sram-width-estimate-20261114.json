@@ -111,7 +111,7 @@
   ],
   "independent_256": {
     "job": 111693,
-    "state": "RUNNING",
+    "state": "COMPLETED",
     "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-sram-256-20261114-01",
     "log": "slurm-111693.out",
     "node": "node2",
@@ -169,7 +169,66 @@
       "trace_sha256": "74b8e4e6eb7ac45cce400d342f41a19df0cd80d90a9d6f589c8d3f49a219ca27",
       "prediction_sha256": "ee3b55600f6b53bda89145e9028e29e7a55143d87ba321cb1d396d0a560e5b98"
     },
-    "full_interval": null
+    "full_interval": {
+      "step": 2,
+      "sram_bits": 256,
+      "pages": 291,
+      "complete_interval": true,
+      "reference_configuration_verified": true,
+      "estimated_ps": 579933435960,
+      "reference_ps": 577756451518,
+      "error_ps": 2176984442,
+      "signed_duration_error_percent": 0.37679967679810084,
+      "estimated_tok_s": 1.7243358254463077,
+      "reference_tok_s": 1.7308331172635032,
+      "signed_throughput_error_percent": -0.37538522647798395,
+      "estimated_stage_ps": {
+        "embedding": 6594652,
+        "input_rms": 2706064438,
+        "qkv": 35536912628,
+        "attention": 288488021866,
+        "o_projection": 24053543080,
+        "post_attention": 4472754372,
+        "ffn": 129404142320,
+        "down_store": 246589308,
+        "final_residual": 1617316732,
+        "final_rms": 75108352,
+        "vocabulary": 93326388212
+      },
+      "reference_stage_ps": {
+        "embedding": 6467960,
+        "input_rms": 2701260144,
+        "qkv": 34626223860,
+        "attention": 286457570058,
+        "o_projection": 23186743088,
+        "post_attention": 4451003356,
+        "ffn": 131084128250,
+        "down_store": 238377666,
+        "final_residual": 1608391614,
+        "final_rms": 75145026,
+        "vocabulary": 93321140496
+      },
+      "trace_sha256": "ea889a0a0dc53357c9e83f1d9717b80a23e73f6718206da987e39bfc9c234c0a",
+      "prediction_sha256": "0c010dce0c115d59f27c46f4d3e1f82d71a44280fc17cb46fd918d2cf29bd7be"
+    },
+    "exit_code": "0:0",
+    "elapsed": "01:10:53",
+    "end_cst": "2026-11-14T15:42:33+08:00",
+    "compute_wall_seconds": 4250,
+    "output_manifest_sha256": "380441e485b94c6b8a4b27b8486dd10a791850978c2f231f17035920aa6285a6",
+    "final_output_sha256": {
+      "output.sha256": "380441e485b94c6b8a4b27b8486dd10a791850978c2f231f17035920aa6285a6",
+      "source.sha256": "c390d157ee42b9466631467ff562bc1b16aee056679616ef463062ee62af9c69",
+      "inputs.sha256": "51266aec17b98c876b26ed3f858d2d66c6e4dc76742f9044ecd338c7d458255f",
+      "derived-source.sha256": "14ee88ed6e19677fc6c9b94cf5c932aa27ad12a03b70c48c42bee6b2e0bda7ac",
+      "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+      "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+      "fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+      "candidate.wall-seconds": "351fa2b21d695fcf474932e8d7da5c1c360da2fe3923a1e12330eed8e33f41cf",
+      "candidate/execution.json": "59d45b79f1d621ac578b3f106217d4e503ae151ce81ac132cbf9062e365189e2",
+      "candidate/page-timing.jsonl": "ea889a0a0dc53357c9e83f1d9717b80a23e73f6718206da987e39bfc9c234c0a",
+      "candidate/timing-audit.json": "f7650aa73431f1029bfd9feca1c92d2ec34fdc706079764aa58953842c24bdfe"
+    }
   },
   "full_request_estimate": {
     "job": 111738,

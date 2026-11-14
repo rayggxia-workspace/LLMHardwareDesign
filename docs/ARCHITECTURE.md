@@ -175,6 +175,8 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 
 ## #265 片上指令周期实验
 
+[Qwen2.5-3B Decode 快评指南](../project/experiments/instruction_cycle/QWEN_DECODE_GUIDE.md)记录派生分支入口、128/256/512-bit 与缓存反馈阶段的可变参数、固定硬件条件和复跑命令。
+
 单时钟事件模型、输入约束、Slurm 短程 RTL 复跑和版本追踪见[实验说明](../project/experiments/instruction_cycle/README.md)。主要复核命令如下。
 
 ```bash

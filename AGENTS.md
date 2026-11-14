@@ -11,6 +11,8 @@
 3. 一项任务对应一个 Issue。没有 Issue 时先整理任务范围和验收条件，并在获得的授权范围内创建 Issue；没有权限时明确交接，不编造 Issue 编号。
 4. 在 `task/<issue-number>-<short-slug>` 分支工作，提交 PR 供审查；不擅自直接提交到受保护分支或合并自己的 PR。
 
+基于 `task/265-qwen3b-system-evaluation` 开展 Qwen Decode 快评时，先读[快评指南](project/experiments/instruction_cycle/QWEN_DECODE_GUIDE.md)，核对可变参数、固定配置和验证范围。
+
 ## 实施范围
 
 - 使用远程服务器前，必须阅读并遵守[远程服务器使用规则](docs/REMOTE_RULES.md)，按其中的资源与目录权限范围操作。

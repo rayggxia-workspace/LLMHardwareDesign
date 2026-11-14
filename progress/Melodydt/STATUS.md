@@ -107,3 +107,9 @@
 - [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 按母控/局控及实际描述符计算 128/256/512-bit 的端口占用及 ACK，并为 FFN 建模三 P 并发链与 Mid。用 107947 第一步校准，128-bit 第二步吞吐误差 +0.01252%，512-bit 第二步误差 −0.64648%，此前仅缩放 Attention 的误差 −12.5773%。[机器回执](../../work/Melodydt/265/qwen-sram-width-estimate-20261114.json)
 - 256-bit 预测在查看参考耗时前封存。独立作业 111693 的前 150 页耗时误差 +0.52851%，完整第二次退休待核验。111738 在 74 秒内估算全部 127 个反馈间隔，三档平均 1.126325、1.627322、1.974047 tok/s，长上下文时序仍待验证。[恢复命令](../../docs/handoffs/2026-11-14-issue-265-qwen-sram-width-model.md)
 - 33 项单测通过。上轮 111633、111635 各 578 页及审计完全匹配。Issue 进行中，[PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 独立审查待指定。项目登记 PR #5 待合并，Projects 缺 `config/board.json`，待具权限维护者核验。
+
+## 2026-11-14（Asia/Shanghai，UTC+08:00）快评复用指南与最终对照
+
+- [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 已在评估分支加入[快评指南](../../project/experiments/instruction_cycle/QWEN_DECODE_GUIDE.md)，从 AGENTS、架构、实验 README 和交接可以直接进入。指南涵盖可变参数、固定配置、派生 worktree、复跑及报告口径。
+- 111693 完成 256-bit 对照，582 页，第二步预测 1.724335825 tok/s，参考 1.730833117 tok/s，吞吐误差 −0.37539%。五档 TLM 复跑各自全部页及审计一致。见[快评回执](../../work/Melodydt/265/qwen-sram-width-estimate-20261114.json)和[复跑回执](../../work/Melodydt/265/qwen-sram-sweep-20261114.json)。
+- 长上下文独立退休对照由 Melodydt 接续。[PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 待独立审查，Issue 进行中。管理中心 PR #5 待合并，Projects 缺 `config/board.json`，具权限维护者待核验。

@@ -1,5 +1,7 @@
 # 片上指令周期模型
 
+从该分支开始 Qwen Decode 快评，见[适用条件、可变参数和命令](QWEN_DECODE_GUIDE.md)。
+
 这是 [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 的单时钟实验原型。`model.py::simulate` 接受每个 Block 按 PC 排序的操作、依赖、服务表、物理资源和接收端配置，返回发射、服务完成、入队、ACK、退休的边沿和最后完成周期。发射仅查看该 Block 的队首操作；其他 Block 可以独立推进。地址相关的 RAW/WAW 依赖由上游 lowering 绑定到相应写入的可见完成事件。共享物理 bank/端口或同一算子映射到同一资源；端口宽度和地址冲突由拓扑绑定决定。
 
 每种服务分别指定延迟与最短发起间隔。资源声明在途槽位数及客户端顺序，支持固定优先级和轮询。轮询指针只在请求被接受后推进。需要 ACK 的操作在 ACK 前占用资源。接收端同一周期最多接受一次入队，保留旧 FIFO 顺序，同周期到达按配置的物理端口优先级、同端口按发起顺序排队。已完成服务但未进入接收端的结果继续占用在途槽位。接收端和依赖均在下一拍观察 ACK 带来的释放，模拟时钟可跳过空闲拍。未知服务、缺路由或无进展均显式失败。
@@ -260,6 +262,8 @@ sbatch --parsable run_qwen_fast_tlm.sbatch
 128-bit 串行单拍 KV 配置下，Attention 占 107361 第二步 67.8% 的页用时。127 间隔估算固定首步非 Attention 时间，Attention 随实际 descriptor 展开的串行 DDR beat 和 ACKed SRAM 字数量缩放。在两个校准分量均施加 ±5% 假设扰动时，阶段吞吐为 0.84293–0.93166 tok/s。需要 C576/C639 的同配置独立完整退休记录确认长上下文误差。完整 P512/D128 联合运行及数值验收由 [#234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) 跟踪。
 
 ## 多位宽 Qwen2.5-3B Decode 快评
+
+[快评指南](QWEN_DECODE_GUIDE.md)列出固定硬件条件、派生分支和复跑步骤。
 
 八笔 KV 窗口的非流水配置使用 `estimate_qwen_sram.py`，可传入 128、256、512-bit。只用 107947 第一步校准，估算输入还包括封存的部署目录。二进制描述符、母控页及局控镜像表决定端口请求和 ACK 节拍，按配置分别估计各阶段。FFN 使用三 P 每个 WAIT 的最长并发链，加 Mid 汇集和搬运。未随位宽重算的 DDR 服务时间由对照误差约束。
 
