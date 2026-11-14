@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 15:46 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 读回 C0 残差输出至下一层 RMSNorm 输入的 512 组写确认依赖及 1,024 个局控镜像，复用原 153 根候选线。111971 完成。C0 输入来源、母控页和可执行的 S32 RMSNorm 服务待闭合。两项 PR #260 短程评估仍运行。见[残差输出](../../work/YUZE-LU/219/native_ingress/SAME_PLAN_NATIVE_REQUEST.md#残差输出写入下一层的输入窗口)。
+
 2026-11-14 15:36 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 将真实算子图中的一条 S32 残差映射到 C0，读回 32 个局控镜像及 Algo2 侧的 431 根控制网。111950 和三项否定对照通过。U 组通用数据输出缺 M10 接点，C0 输入供应、结果窗交接和母控调度待闭合。两项 PR #260 短程评估仍进行中。见[残差回执](../../work/YUZE-LU/219/native_ingress/SAME_PLAN_NATIVE_REQUEST.md#c0-的-s32-残差编译与搬运接口)。
 
 2026-11-14 15:15 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 从独立 Block V2 候选底座读回 5,935 根网、12,330 个 M10 端点，保护项拒绝改坐标及换底座。20 根接入诊断来自试布占用。111873、111882 和项目结构检查通过。下一步补齐目标服务和退休路径，短程 PR #260 作业 111805、111806 仍运行。见[同图交接](../../work/YUZE-LU/219/native_ingress/SAME_PLAN_NATIVE_REQUEST.md#候选底座独立读回)。

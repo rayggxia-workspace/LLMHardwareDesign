@@ -53,3 +53,9 @@ PR #260 的模型在 S32 相加溢出时拒绝写入。C0 E32 指令可返回饱
 | --- | --- |
 | `resident-111950/residual-proof.json` | `95aea6c6877a8b0b9a3b0da4ef57a648d1a6a2133c798211b9343b1c7cc4a3d5` |
 | `resident-111950/algorithm2-input.json` | `1e114e23e85fca0f38c2dda1631e337ebdf5023a2ef388bf490bdcdc39e39de3` |
+
+### 残差输出写入下一层的输入窗口
+
+111971 读取同一条已编译残差的 C0 输出对象和下一层 `/model/model/layers.1/input_layernorm/Mul_1` 的真实输入对象。两个计划中对象名、长度及 C0→U0 的已绑定链路必须吻合。将输出的 8 KiB 编成 512 组 16 B 搬运。每组在 U0 预留并接收，C0 发送，两端都等待目标 SRAM 写确认。母控依赖清单要求先收齐 C0 算完的完成通知，再执行这 512 组。下一层计算需等第 512 组写确认和其余输入就绪。512 组共导出 1,024 个局控镜像，均重新解码核对地址、指令、目标和等待。链路继续使用已有 153 根候选线，未增加物理需求。
+
+复现用 `resident_s32/egress.sbatch`。远端 `residual-c0-PABZ4Gwh/egress-111971/egress.json` 的 SHA-256 为 `88f101a99eed2148b401a6074fe1e01065c3b088fc8ff6a6a87b7e880e0fcf00`。清单包含生产者、消费端原计划及线路摘要。它交付局控机器镜像和等候依赖，尚未生成用于整图的母控页。C0 的两个输入仍需供给，RMSNorm 仍需验证与 S32 图格式等价的主底座服务。
