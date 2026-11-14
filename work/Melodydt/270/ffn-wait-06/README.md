@@ -25,16 +25,16 @@
 
 | 场景 | 第四轮 ATT1 完整基线 | FFN 前四层外推 | FFN 完整 TLM |
 | --- | ---: | ---: | ---: |
-| 两步 Decode，初始 KV 512 | 2.739056 tok/s | 2.926561 tok/s | 待 113165 |
+| 两步 Decode，初始 KV 512 | 2.739056 tok/s | 2.926561 tok/s | 2.925996 tok/s |
 | 两位置短 Prefill，初始 KV 空 | 5.511216 输入 tok/s | 6.316319 输入 tok/s | 6.316164 输入 tok/s |
 
-短 Prefill 为 113166/113167，578 页、72 个 Down 散列、程序和 DDR/SRAM 流量对账通过。同比提高 14.61%，前四层外推比完整结果高 0.0025%。Decode 使用 113070 和 113164 的真实退休间隔以及第二步前四层，外推提高 6.85%。第四轮 ATT1 相对第三轮完整 Decode 从 2.609346 到 2.739056 tok/s，短 Prefill 从 5.511880 到 5.511216 输入 tok/s。
+短 Prefill 为 113166/113167，578 页、72 个 Down 散列、程序和 DDR/SRAM 流量对账通过。同比提高 14.61%，前四层外推比完整结果高 0.0025%。Decode 的 113164/113165 均完成 0:0，582 页、72 个 Down、相同退休 token 和跨步 KV 读、逐页程序和流量均对账。完整 TLM 提高 6.82%，第二步前四层外推比完整值高 0.019%。第四轮 ATT1 相对第三轮完整 Decode 从 2.609346 到 2.739056 tok/s，短 Prefill 从 5.511880 到 5.511216 输入 tok/s。
 
 第二个 Decode 的词表页耗时 86.827619 ms，占 ATT1 基线退休间隔 23.78%，1187 次调用覆盖 151,936 列。当前页级计数包含描述符和整个 provider 的累计时间。后续应为 SRAM 输出读回、归约及 retirement 添加单独时间戳。分析可用 [词表页脚本](audit_head16_baseline.py) 复跑。
 
 ## 证据与复现
 
 - 源归档、探针、启动命令和工具版本见 [源码清单](source.sha256)、[工具清单](tools.sha256) 和 [Slurm 脚本](run_ffn_wait.sbatch)。同一源码生成流程复用 [prepare_native_probe.py](../ffn-weight-05/prepare_native_probe.py)。
-- [正常模式摘要](mode-0-summary.json) · [背压模式摘要](mode-1-summary.json) · [原生探针散列](ffn-wait.sha256) · [短 Prefill 完整对账](prefill-full.json) · [Decode 预测](decode-rebased.json) · [词表页事务收据](head16-baseline.json)。
+- [正常模式摘要](mode-0-summary.json) · [背压模式摘要](mode-1-summary.json) · [原生探针散列](ffn-wait.sha256) · [短 Prefill 完整对账](prefill-full.json) · [Decode 预测](decode-rebased.json) · [Decode 完整对账](decode-full.json) · [词表页事务收据](head16-baseline.json)。
 - 本地项目结构、Python 和 Bash 语法、Verilator 构建、原生两模式功能输出及探针散列、已完成短 Prefill 及第三/四轮 ATT1 短程校验已执行。FFN 新功能、原生端口故障注入、300 MHz STA 和正式 P512/D128 待执行。
 - 后续全部步骤与服务器恢复命令见 [交接](../../../../docs/handoffs/2026-11-14-issue-270-ffn-wait.md)。
