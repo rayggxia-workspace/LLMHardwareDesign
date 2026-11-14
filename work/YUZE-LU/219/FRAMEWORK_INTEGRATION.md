@@ -736,3 +736,53 @@ Prompt 指向真实 DDR burst 和索引所在 lane。Decode 记录上一 token �
 | `base-110165.json` | `86bb713f56abdccf770b321a4a74f480e4846d82d33e30dc99679289c3ac6f43` |
 | `algo2-110170/summary.json` | `54c865f8598ef464c1ded22917c0c15dfc39d2a0e4cf5ec4587b04380f31ad3a` |
 | `pinned-native-110176/summary.json` | `aaa68ec3dd630939cbb4e98f5be781e8926d5465d0269d7724bd1aeb1c4e1649` |
+
+## U0 Gather 的局控程序和两端布线交接
+
+以 main 已审计的 U 控制源码和 v45 DMA client 3 构建独立候选。Algo1 将选定的
+`INDEXED_LOAD` 编成 version 2 局控程序。程序区为 352 B，依次执行 `L_EXEC`、
+`L_WAIT` 和 `L_END`。服务从私有 SRAM 读取运行时索引并持有互不重叠的输入与结果
+窗口，按双拍请求从外存读取 8 KiB 行。标签允许一条 record 的两拍乱序返回。最后
+一个 16 B 目标写 ACK 后才报告完成。单条命令中的访问节奏由服务控制，Algo1 输出
+受目标提交约束的等待。
+
+110195 用旧链接描述符独立核对字段和完成条件，拒绝四个错误候选。在原接点目录上，
+650 根网只有 DMA 端可绑定。110208 对 639 条已封存计划逐条核对新编码，涵盖 512 条
+prompt 位置和 127 条上一 token 来源记录，共生成 16 份不同的局控 PM。
+
+110275 通过真实局控、v45 DMA 和目标 S SRAM 检查首个 prompt 的 Gather。110286 又通过
+U0 外层四拍 CALL 接口执行同一镜像，使用单银行程序 SRAM，验证回传四拍中的任务标识和
+完成状态。用例从封存 prompt 提取索引 840，测试端通过 DMA 后端供给真实权重行并打乱
+双拍返回顺序。128 个回传和 512 次目标写确认全部到齐，SRAM 内容逐字节核对。没有生成
+波形。这里使用测试端预装索引和供数，产品运行仍需母控指令启动的索引交付及实际 DDR
+后端。
+
+110281 在相同的 U 逻辑边界和已归档 PM 银行实现上完成综合。110293 使用 U39 外形和原
+叶块位置完成候选摆放。保留 1575 个现有逻辑接点的位置，分配 650 个 DMA M10 候选接点。
+45 个常量输出逐位实例化 tie cell，保持独立可绑定的驱动端。旧版叶宏导出接点仍用于几何
+避让。110302 从 OpenDB 核对 650 个不同信号和 M10 矩形，并生成这 650 根网的全局导引。
+下层详细布线在 N32 的 `s_req_address[1]` 处报无法接入，尚无经详细布线验收的 U0 接点。
+详细布线用副本移除无几何的边界对象及内部共享常量。完整候选网表和摆位凭据保留。
+
+110305 用新端点和 DMA 实布端点重新选定 Gather。同一份计划输出 650 根数据连接和
+352 B 局控程序，Algo2 `--handoff` 独立读回 650 根网与 1300 个端点。
+发布的 PM 与 110286 执行的镜像逐字节相同。交接限于 Gather 数据接口，此处
+未发布产品布线或 #260 可执行整包。110306 使用 Algo2 原入口试布一轮，每个候选最多
+2000 次扩展。1 根通过研究几何检查，648 根耗尽预算，1 根报告接入搜索失败。完整结果
+`algo2-110306.json` 的 SHA-256 为
+`39773e190559e7ec0b43284c38d6729fa87658695c4c48a6a3d55dbd106ec337`。
+在明确的 N32 接入错误后取消 110296 的详细布线作业。
+
+远端目录为同一框架目录下的 `ingress-route-iN0LbH/resident-gather-HefhYQ`。
+[候选源码与复跑入口](gather-v2/resident/README.md)。
+
+| 远端文件 | SHA-256 |
+| --- | --- |
+| `request-110208/local-sidecars.json` | `4186ab8c4081b543d53891aab5daa322b39f6ad59cdbb277891b354134865e16` |
+| `frame-program-110286/result.log` | `8e48f217953cdb502bb47e7a03e27db1420a150daec50254f3ba435fdc240312` |
+| `frame-map-110281/mapped.v` | `301558e7e68511ae4197b0b961df31e451099d262fd93abaf80d245ff251904c` |
+| `frame-place-110293/staged-u.odb` | `0ac468bec1cf2b067b909ea719e3e6149fc7334ae29690c3eb6b8fb3b4a9d303` |
+| `frame-route-110302/staged-ports.tsv` | `ff84e707cbbbf1de854cf1be53082a58706ea77cd7abf7b3b54a1239c970c120` |
+| `handoff-110305/algorithm2-input.json` | `ca19846eb67f2184b213bbd8e37dca496c8c63ddc78f1be99cf4d351764f1378` |
+| `handoff-110305/summary.json` | `498dcfc3276e136729ed47176dbc68a461913d3535a9b6c5994d87cf61e87407` |
+| `handoff-110305/local.pm` | `1b7ffac566df3c40a25bed6f91ba12003db9982b38726a6c3f2e6bb90479c304` |
