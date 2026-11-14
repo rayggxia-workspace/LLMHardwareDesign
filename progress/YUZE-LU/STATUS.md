@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 15:15 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 从独立 Block V2 候选底座读回 5,935 根网、12,330 个 M10 端点，保护项拒绝改坐标及换底座。20 根接入诊断来自试布占用。111873、111882 和项目结构检查通过。下一步补齐目标服务和退休路径，短程 PR #260 作业 111805、111806 仍运行。见[同图交接](../../work/YUZE-LU/219/native_ingress/SAME_PLAN_NATIVE_REQUEST.md#候选底座独立读回)。
+
 2026-11-14 15:00 CST。#219 停止完整 P512/D128 作业 109409，使用 PR #260 的 TLM 短程方法对同图部署远程并行执行两个输入位置的 prefill 和两步 decode，作业 111805 与 111806 等待结果。111756 完成同页实时 QKV 的四条 KVR1 写回，111828 复核同一 Algo2 布线规范的接入诊断。见[复现与验收](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#pr-260-短程吞吐)。
 
 2026-11-14 14:39 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 记录 U0 CALL、索引写确认、首读及读回，扩展 PR #260 的 RTL 审计，保持原有完成校验。用全图的 288 个原始 KVR1 描述符跑完真实 DDR 写回，两个阶段的实际回执驱动阶段控制器。KV 源和其余阶段结果仍来自各自测试端。下一步同一底座接实时 QKV、词表及 C0 索引发送。见[回执](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#实际索引与-kv-回执)。

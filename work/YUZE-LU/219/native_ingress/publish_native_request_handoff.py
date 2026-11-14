@@ -9,7 +9,7 @@ from struct import unpack_from
 from route_contract import digest, elaborate, read_base, require, seal, verify_requirements
 from adapter import bind_request
 from geometry import validate
-from handoff import verify_handoff
+from verify_candidate_algo2 import verify_candidate
 
 from bind_gather_mother_topology import bind as bind_mother
 
@@ -236,14 +236,15 @@ def build(request_dir, base_path, prior_control, p_compiler, geometry_dir, gathe
                        ('wiring', wiring), ('requirements', route), ('handoff', receipt)):
         (output/(name+'.json')).write_text(json.dumps(data, sort_keys=True, indent=2)+'\n')
     (output/'gather-mother.pm').write_bytes(native_mother)
-    admission = verify_handoff(spec, output)
+    readback = verify_candidate(spec, output, base_path)
     report = dict(source=source, pages=pages, calls=all_calls,
                   known_demands=dict(Counter(row['demand_id'] for row in route['members'])),
                   known_nets=len(spec['nets']), terminals=len(spec['pins']),
                   unresolved_service_calls=sum(row['signature']['calls'] for row in gaps),
                   unresolved_service_signatures=len(gaps),
                   feedback_edges=len(feedback['feedback_edges']),
-                  replacements=len(gather['pages']), admission=admission,
+                  replacements=len(gather['pages']), admission=readback['admission'],
+                  candidate_readback=readback,
                   mother_replacement=program['mother_replacement'],
                   execution_status=program['execution_status'])
     (output/'summary.json').write_text(json.dumps(report, sort_keys=True, indent=2)+'\n')

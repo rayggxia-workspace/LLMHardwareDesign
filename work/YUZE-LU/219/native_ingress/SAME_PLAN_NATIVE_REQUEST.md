@@ -30,3 +30,11 @@ Algo2 的原生 `verify_handoff` 已读回同计划的 6,395 个信号成员、5
 ## 远端入口
 
 工作目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em/full-graph-zwl0Tr/merged-bmMd5X/native-request-6WI0tH/framework-r11-CatJ8r/p-native-audit-FMPaww/live-vocabulary-CgSH5M/joint-placement-CrmPRH`。交接产物位于 `handoff-111294`；以 `algorithm2-input.json` 和同目录 provenance 文件运行 Algo2 `--handoff`。作业 111290 对字节相同的输入做了有界搜索。5,935 根网中有 2 根通过几何检查，5,913 根用尽搜索预算，另有 20 根在尝试中未找到网格接入。该结果是部分布线，保留逐网诊断供 Algo2 继续。路由结果 SHA-256 为 `d87598418bf4c9e44873b165dffaf5aca7a1b7da84dcaf8f230a5dd16341e91f`。主控镜像对照位于 `gather-topology-111292`。使用 `request-handoff.sbatch`、`gather-topology.sbatch`、`live-gather-topology.sbatch` 与 `request-kv-program.sbatch` 复现。模型、走线数据库和日志均留在远端。
+
+## 候选底座独立读回
+
+远端 111873 用冻结版本的 Algo2 接口直接接收 `algorithm2-input.json`，并用 Algo1 的分块底座读取器从原始候选底座重新绑定网和 M10 矩形。5,935 根候选网和 12,330 个 M10 端点一致，六份接口及程序文件与 111294 逐字节一致。篡改端点坐标再重算入口摘要以及换用另一底座这两个用例均被拒绝。新导出在 `summary.json` 保存 `candidate_readback`，SHA-256 为 `d8458a826582678e089cff397a66233f64d156e2cf5dc2cfc91ce9d9033307ee`。候选底座采用分块物理视图，进入 Algo2 时继续使用 `--handoff`。
+
+先用本项目 `block_synthesis` 和 [Algo2 PR #259 的固定版本](https://github.com/rayggxia-workspace/LLMHardwareDesign/commit/4ebd2a2fc845ccc6a1c17ed1751f208bb5791a8f) 的 `upper_router` 设置 `PYTHONPATH`，再运行 `verify_candidate_algo2.py <handoff-dir> <candidate-base.json>`。111873 使用生成交接时的独立输入 `geometry-110384/base.json`。读回结果适用于当前候选底座及其已有路由需求。产品路径仍有 14 类接口未绑定。
+
+111882 从同一路由规范和 111290 的路由几何重算候选落点。20 根报告缺接入的网各有一个端点的唯一合法落点被已布线路占用，空网架上均可落。受影响为 P2 描述符 17 根、P1 fence 1 根、P0 控制 2 根。这个结果把诊断定位到试布占用。路由器保留非硬约束分类。复现用 `request_retirement/route-input-survey.sbatch`。回执 `route-survey-111882.json` 的 SHA-256 为 `c5125d6d5e0362befe6995cbc00d859798044d083c72881292c659b662d5beb1`。两项产物位于上述工作目录的 `algo2-readback-gu7sOs3Z`。
