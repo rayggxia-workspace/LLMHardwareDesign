@@ -49,7 +49,7 @@ Qwen2.5-3B 样本产生 128 条阶段记录和 127 条 decode 索引交接，覆
 
 111828 对照 111294 的同图交接与 111290 的有界联合试布。两份交接的布线规范和底座摘要一致，重绑编译程序后入场回执有变化。5,935 根网中有 2 根通过几何检查，5,913 根耗尽搜索预算，20 根没有找到网格接入。后者集中在 P2 描述符 17 根、P1 fence 1 根和 P0 分组控制 2 根。Algo2 把这 5,933 条诊断都标为非硬约束。复核脚本为 `route-input-survey.sbatch`，产物 SHA-256 为 `e1c4aaf1893f51d7b874f60d70c6f550ba40758cd36d4d13fdccc66bf63b6bbf`。
 
-## PR #260 短程吞吐
+## PR #260 短程吞吐诊断
 
 完整 P512/D128 任务 109409 已取消。使用 `dd423e5a8010e7371ee1ccbd589df00bc0ff6478` 的指令驱动 TLM 和原版后处理脚本，在相同编译部署上远程并行评估。
 
@@ -62,7 +62,7 @@ Qwen2.5-3B 样本产生 128 条阶段记录和 127 条 decode 索引交接，覆
 
 `pr260-fast.sbatch` 接收远端输出根、固定版本代码目录、部署、内存目录表、decode KV 绑定、模式和 SRAM 位宽。复跑所需资产为远端目录 `pr260-dd423e5`、框架目录的同级 `request-runtime-r2` 及同处的 `request-memory-r2/ddr-initial.tsv`，decode 历史绑定来自远端 `issue260-request-kv-binding-dbIUacE6/bound-104206/binding.json`。每个作业输出 `execution.json`、`page-timing.jsonl` 和 `timing-audit.json`。两项均在远端运行。
 
-111805 跑完 578 页，原版审计通过。空 KV 的两个输入位置合计模拟 363,205,986,672 ps，得到 **5.5065 token/s**。原版核对 288 条 KV 写入，92,323,014 笔 DDR 读取与 48,384 笔写入全部回调。运行结果的 `timing_calibrated` 和 `numerically_accepted` 均为 false。111806 已进入第二步，等第二次 token 退休后验收吞吐。
+111805 跑完 578 页，原版审计通过。空 KV 的两个输入位置合计模拟 363,205,986,672 ps，得到 **5.5065 token/s**。原版核对 288 条 KV 写入，92,323,014 笔 DDR 读取与 48,384 笔写入全部回调。运行结果的 `timing_calibrated` 和 `numerically_accepted` 均为 false。111806 已进入第二步，等第二次 token 退休后回收诊断吞吐。短 decode 使用 PR #260 的全零历史 KV 和首步输入 840。两项旧运行的资源来自该执行器内建配置。
 
 | 111805 产物 | SHA-256 |
 | --- | --- |
@@ -71,3 +71,34 @@ Qwen2.5-3B 样本产生 128 条阶段记录和 127 条 decode 索引交接，覆
 | `timing-audit.clean.json` | `cbb6636c94022569fa0636be68ba1f8fc71f91e99d9ee411bd95d5dc02534a17` |
 
 容器 shell 启动提示混入原始 `timing-audit.json` 首行。使用相同固定版本审计脚本独立复跑，去掉启动提示后的 JSON 与纯 JSON 逐项一致。
+
+
+## 对同计划底座的 TLM 准入
+
+Algo1 选择映射和时序依赖，并输出封存的母控／局控程序、地址表和同计划布线。TLM 消费这份计划与独立提供的目标底座。候选连线经端点重绑后可作为评估假设。经确认的连线预测还需要相应的 Algo2 布线和时序凭据。
+
+`tlm_plan_preflight.py` 先校验底座物理视图、交接摘要、封存程序的所有成员、控制投影和路由需求。然后用底座目标、schema、ABI、opcode、完成语义及实际端点重新判断派发。用封存的原描述符和替换局控镜像重建 Gather，检查 639 个替换页及母控字节。TLM 模型按替换后的五字段签名匹配已经安装的可调用实现。评估入口还未安装此底座的服务模型，所以没有运行时序和吞吐。
+
+| 远端 112167 的全计划回执 | 服务签名 | CALL |
+| --- | ---: | ---: |
+| 底座缺派发 | 12 | 2,875,756 |
+| 底座缺确切完成信号 | 2 | 980,080 |
+| 候选派发和线束相符，当前入口缺 TLM 实现 | 7 | 4,417,407 |
+
+回执覆盖 184,927 页，重绑 5,935 根候选网和 12,330 个端点。选取两份编译归档对 580 页、26,607 条描述符逐项核对封印、重定位描述符和完成语义，覆盖全部 21 个签名的样本。阶段、页号、描述符下标均从 0 起。例如阶段 0 第 1 页的描述符 0 和 1 分别是 U0 的 gamma 读入和 RMSNorm。阶段 0 第 147969 页描述符 0 的词表投影要求 `tile_consumed`，当前 P0 接口缺该完成信号。词表结果、C0 索引生产端及其物理连接缺口在回执中另列。
+
+### 复现
+
+新工具位于本页同目录。远端 `tlm-input-LmzyNWWZ/preflight-with-call-evidence.json` 的 SHA-256 为 `69b1208ffa2e8274b5f866efc45656864ce967b2ec5aeec626c3741b4c80c618`。保持算法二读回时的独立候选底座路径，输入名对应远端 111873、109637 和 112167 的归档。运行 Python 3.11，并在 `PYTHONPATH` 加入 `block_synthesis`、`upper_router`、`native_ingress`、Gather 局控合同及母控编解码器目录。
+
+```bash
+python3.11 -B tlm_plan_preflight.py "$deployment" "$handoff" "$base" \
+  "$control_fabric" "$rewrite_profile" "$control_projection" "$receipt" \
+  --gather "$gather_locals" "$direct_call_audit" \
+  --call-archive 0 0 "$archive_row0" \
+  --call-archive 0 147679 "$archive_row511"
+```
+
+本次部署用 `request-runtime-r2`，交接用 `handoff-111873`，底座用 `geometry-110384/base.json`，控制投影用 `v2-native-control-request-r2/requirements.json`，Gather 局控用 `request-110369`。全量准入统计来自已封存的服务清单，逐字节指令定位来自显式给出的归档页范围。通过 6 项模型查找及替换回归，并在真实交接上拒绝混用底座与指令包。
+
+下一步需要底座绑定的 SRAM、DDR、互联和时钟参数，以及按同一签名实现的服务模型。先用已重链的 U0 Gather 执行位置 0 的单页，按母控 CALL、目标写确认和 WAIT 核对完成语义。覆盖实际计划所需服务后，再固定场景与同一底座的参数，比较两个 Algo1 计划。
