@@ -20,12 +20,16 @@ def softmax_lut():
 
 
 class Attention:
-    def __init__(self, clock, dram, memory, aperture, *, kv_window=1, pipeline=False, value_fetch="legacy"):
+    def __init__(self, clock, dram, memory, aperture, *, kv_window=1, pipeline=False,
+                 value_fetch="legacy", kv_response_slots=0):
         if not 1 <= kv_window <= 32:
             raise ValueError("KV read window must be between 1 and 32 beats")
         self.clock, self.dram, self.memory, self.aperture = clock, dram, memory, aperture
         self.sram = aperture.target
         self.kv_window = kv_window
+        if kv_response_slots and not kv_window < kv_response_slots <= 64:
+            raise ValueError("KV response slots must exceed the read window and be at most 64")
+        self.kv_response_slots = kv_response_slots
         if value_fetch not in ("legacy", "selected", "paired", "paired-ping-pong"):
             raise ValueError("unknown AV fetch mode")
         if value_fetch == "paired-ping-pong" and not pipeline:
@@ -77,21 +81,31 @@ class Attention:
                 self.aperture.write_span(self.sram, start, payload, done)
 
             def prefetch(beats, plan, finished):
-                issued = committed = 0
+                issued = returned_count = committed = 0
                 ready = {}
                 draining = False
 
                 def issue():
                     nonlocal issued
-                    while issued < beats and issued - committed < self.kv_window:
+                    while issued < beats:
+                        active = issued - (returned_count if self.kv_response_slots else committed)
+                        reserved = issued - committed
+                        if active >= self.kv_window or (self.kv_response_slots and reserved >= self.kv_response_slots):
+                            break
                         index = issued
                         address, _, _ = plan(index)
                         issued += 1
-                        self.stats["kv_window_peak"] = max(self.stats["kv_window_peak"], issued - committed)
+                        self.stats["kv_window_peak"] = max(self.stats["kv_window_peak"], active + 1)
+                        self.stats["kv_reserved_slots_peak"] = max(
+                            self.stats["kv_reserved_slots_peak"], reserved + 1)
                         self.dram.submit(Transfer(address), lambda i=index, a=address: returned(i, a), channel=1)
 
                 def returned(index, address):
+                    nonlocal returned_count
+                    returned_count += 1
                     ready[index] = self.memory(address)
+                    if self.kv_response_slots:
+                        issue()
                     self.stats["kv_read_returns"] += 1
                     drain()
 
@@ -107,11 +121,14 @@ class Attention:
 
                 def drain():
                     nonlocal draining
-                    if draining or committed not in ready:
+                    if draining or not ready:
+                        return
+                    index = next(iter(ready)) if self.kv_response_slots else committed
+                    if index not in ready:
                         return
                     draining = True
-                    payload = ready.pop(committed)
-                    _, destination, lane = plan(committed)
+                    payload = ready.pop(index)
+                    _, destination, lane = plan(index)
                     if destination is None:
                         self.aperture.edge(acknowledged)
                     else:
@@ -184,7 +201,7 @@ class Attention:
                     loaded()
                     return
                 base = k_base + first*512
-                if self.kv_window == 1 and not self.pipeline:
+                if self.kv_window == 1 and not self.pipeline and not self.kv_response_slots:
                     read_memory(base, 8*n, work, loaded)
                 else:
                     prefetch(8*n, lambda i: (base + 64*i, destination + 4*i, None),

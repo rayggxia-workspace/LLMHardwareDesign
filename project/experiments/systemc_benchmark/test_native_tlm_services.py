@@ -229,7 +229,9 @@ class NativeTLMServicesTest(unittest.TestCase):
         observed = []
         configurations = [(m, p) for m in ("legacy", "selected", "paired") for p in (False, True)]
         configurations.append(("paired-ping-pong", True))
-        for mode, pipeline in configurations:
+        configurations = [(mode, pipeline, 0) for mode, pipeline in configurations]
+        configurations.append(("selected", True, 16))
+        for mode, pipeline, response_slots in configurations:
             clock = Clock()
             dram = ReorderingDDR(clock)
             sram = S128(clock, core_ps=10, port_bits=512)
@@ -243,7 +245,7 @@ class NativeTLMServicesTest(unittest.TestCase):
                 for base in (key, value) for row in range(positions) for offset in range(0, 512, 64)
             }
             attention = Attention(clock, dram, history.__getitem__, aperture, kv_window=8,
-                                  pipeline=pipeline, value_fetch=mode)
+                                  pipeline=pipeline, value_fetch=mode, kv_response_slots=response_slots)
             descriptor = record("<6HIQQ", positions, positions-1, 0, 512, 544, 800,
                                 1 << 30, key, value)
             done = []
@@ -253,6 +255,10 @@ class NativeTLMServicesTest(unittest.TestCase):
             requested = Counter(t.address for t in dram.offered)
             self.assertEqual(requested, {addr: (1 if addr < value else
                 {"legacy": 4, "selected": 2, "paired": 1, "paired-ping-pong": 1}[mode]) for addr in history})
+            if response_slots:
+                self.assertEqual(attention.stats["kv_window_peak"], 8)
+                self.assertGreater(attention.stats["kv_reserved_slots_peak"], 8)
+                self.assertLessEqual(attention.stats["kv_reserved_slots_peak"], response_slots)
             if mode == "paired-ping-pong":
                 self.assertEqual(attention.stats["av_overlapping_refill_tiles"], 16)
                 self.assertEqual(attention.stats["av_checkpoint_ops"], 64)

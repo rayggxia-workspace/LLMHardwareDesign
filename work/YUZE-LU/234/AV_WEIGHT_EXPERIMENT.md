@@ -40,3 +40,9 @@
 逐页新增 `av_refill_compute_overlap_ps` 与 `av_checkpoint_elapsed_ps`。前者计两条路径同时在执行的墙钟区间，后者包含快照命令计费、共享端口等待及 S 应答，两个计数可以互相重叠。局部测试用 69 个位置跨过两个分片边界，验证 V 各地址只读一次、K 不变、与原方式输出逐字一致，以及非零重叠。
 
 远程目录 `/public/home/yuzelu/project-circuit/issue260-av-weight-GEwVA0Bi/paired28`，两步 decode 作业 111910，两 token prefill 作业 111911，对照审计 111913/111914。配置保持 512-bit 数据 S、相同程序和 DDR 参数，关闭权重取数新模式以隔离 V 改动。已有的串行 V1 RTL 仍是硬件证据。28 行双窗口是 TLM 实验，待原生 RTL 实现与物理验收。
+
+## 独立 KV 回包槽
+
+`--kv-response-slots 16` 为候选 ATT1 路径加入 16 个回包槽，保留 8 个读请求额度。发请求时预留槽位，DDR 返回即归还请求额度，S 写确认后才归还槽位。S 写入器可先写已返回的位置，Dot 仍等整片写确认。单通道绑定和 S 端口配置使用原设置。局部测试用乱序回包核对全部 V 地址、输出、读额度和回包槽上限。
+
+沿用 selected V、512-bit S、修订后的权重取数。两步 decode 作业 111977，与 111875 的唯一区别为回包槽模式。两 token prefill 作业 111978，对应无回包槽的短 prefill 权重对照 111857，另含 selected V。两组远程路径为 `/public/home/yuzelu/project-circuit/issue260-av-weight-GEwVA0Bi/kv-slots16`，源文件由 [散列](av-weight-receipts/kv-slots16-source.sha256) 固定。作业 111981 和 111982 负责完成后对照审计。回包槽为候选系统 TLM 改动，硬件实现待验证。

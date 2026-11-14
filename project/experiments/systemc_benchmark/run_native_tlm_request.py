@@ -105,6 +105,7 @@ def main():
     parser.add_argument("--decode-kv-binding", type=Path)
     parser.add_argument("--decode-kv-sha256")
     parser.add_argument("--dma-fabric-budget", action="store_true")
+    parser.add_argument("--kv-response-slots", type=int, default=0)
     parser.add_argument("--kv-read-window", type=int, default=1, choices=range(1, 33))
     parser.add_argument("--sram-port-bits", type=int, default=128, choices=(128, 512))
     parser.add_argument("--pipeline-memory", action="store_true")
@@ -113,6 +114,8 @@ def main():
     args = parser.parse_args()
     if args.av_value_fetch == "paired-ping-pong" and not args.pipeline_memory:
         parser.error("--av-value-fetch paired-ping-pong requires --pipeline-memory")
+    if args.kv_response_slots and not args.kv_read_window < args.kv_response_slots <= 64:
+        parser.error("--kv-response-slots must exceed --kv-read-window and be at most 64")
     if args.checkpoint_pages < 0:
         parser.error("--checkpoint-pages must be nonnegative")
     decode = args.decode_kv_binding is not None
@@ -181,7 +184,8 @@ def main():
     projection = Projection(clock, dram, memory, u, p0, source_word=512, scratch_word=1008,
                             scratch_sram=p0, rtl_weight_fetch=args.rtl_weight_fetch)
     attention = Attention(clock, dram, memory, projection, kv_window=args.kv_read_window,
-                          pipeline=args.pipeline_memory, value_fetch=args.av_value_fetch)
+                          pipeline=args.pipeline_memory, value_fetch=args.av_value_fetch,
+                          kv_response_slots=args.kv_response_slots)
     providers = {
         P: projection.provider,
         (3, 3, 7, 4): embedding(u, dram, memory, pipeline=args.pipeline_memory),
@@ -402,7 +406,7 @@ def main():
                       pipeline_memory=args.pipeline_memory, av_value_fetch=args.av_value_fetch,
                       rtl_weight_fetch=args.rtl_weight_fetch,
                       sram={name: dict(s.stats) for name, s in srams.items()},
-                      attention_kv=dict(window=args.kv_read_window, **attention.stats),
+                      attention_kv=dict(window=args.kv_read_window, response_slots=args.kv_response_slots, **attention.stats),
                       dma_scope=("32 credits per channel and rolling issue limits with FIFO arbitration"
                                  if args.dma_fabric_budget else "one credit per channel with FIFO arbitration"))
         if prefill_end:
