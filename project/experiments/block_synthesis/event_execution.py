@@ -42,6 +42,12 @@ def backing_bytes(spec, values):
 
 def scratch_overwrites(service, windows):
     """Externally named windows that lose their version during a native program."""
+    loop = service.get('finite_loop', {})
+    if 'dot_tile' in loop:
+        participants = loop['participants']
+        return frozenset(w for w, region in windows.items()
+                         if region['site'] in participants
+                         and region['offset'] < 16 * participants[region['site']]['words'])
     if 'ffn_program' not in service:
         return frozenset()
     return frozenset(w for w, location in windows.items()

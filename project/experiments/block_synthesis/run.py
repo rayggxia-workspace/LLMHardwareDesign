@@ -198,44 +198,59 @@ def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependenc
     if native_loops is not None:
         result['native_loop_verification'] = audit
         if tile_depth:
-            from event_native_range import lower_ranges
+            from event_native_dot_tiles import lower_dot_tiles
+            from event_native_range import feature_tile_words, lower_ranges
             from event_native_residency import lower_residency
 
-            tiled, tile_hardware = lower_ranges(lowered, resolved)
-            if tiled is not lowered:
-                tile_result = compile_event_ir(tiled, tile_hardware, budget=budget, width=width,
-                                               emit_dependencies=emit_dependencies, emit_outputs=True,
-                                               tile_limit=tile_depth, **target)
-                candidates = [('whole', result), ('ranges', tile_result)]
+            candidates = [('whole', result)]
+            layouts = [lower_ranges(lowered, resolved)]
+            layouts.append(lower_ranges(lowered, resolved, feature_words=feature_tile_words(resolved)))
+            prepared_layouts = []
+            for index, (tiled, tile_hardware) in enumerate(layouts):
+                if tiled is lowered or (index and tiled == layouts[0][0]):
+                    continue
+                if not index:
+                    prepared_layouts.append(('ranges', tiled, tile_hardware))
                 resident, resident_hardware = lower_residency(tiled, tile_hardware)
-                if resident is not tiled:
-                    candidates.append(('sram', compile_event_ir(
-                        resident, resident_hardware, budget=budget, width=width,
+                prepared_layouts.append(('features' if index else 'sram', resident, resident_hardware))
+            if not prepared_layouts:
+                optimized, optimization_hardware = lower_dot_tiles(lowered, resolved)
+                if optimized is not lowered:
+                    prepared_layouts.append(('block-tile', optimized, optimization_hardware))
+            for kind, tiled, tile_hardware in prepared_layouts:
+                choices = [(kind, tiled, tile_hardware)]
+                if kind in ('sram', 'features'):
+                    optimized, optimization_hardware = lower_dot_tiles(tiled, tile_hardware)
+                    if optimized is not tiled:
+                        choices.append((kind + '+block-tile', optimized, optimization_hardware))
+                for name, ir, hw in choices:
+                    candidates.append((name, compile_event_ir(
+                        ir, hw, budget=budget, width=width,
                         emit_dependencies=emit_dependencies, emit_outputs=True,
                         tile_limit=tile_depth, **target)))
-                attempts = []
-                for kind, candidate in candidates:
-                    plan = candidate['plan']
-                    attempts.append({'layout': kind, 'status': candidate['status'],
-                                     'makespan': plan.get('makespan'),
-                                     'external_bytes': (plan['external_read_bytes'] + plan['external_write_bytes']
-                                                        if candidate['status'] == 'planned' else None),
-                                     'expanded': plan.get('expanded', 0),
-                                     'depth_pruned': plan.get('tile_depth_pruned', 0)})
+            attempts = []
+            for kind, candidate in candidates:
+                plan = candidate['plan']
+                attempts.append({'layout': kind, 'status': candidate['status'],
+                                 'makespan': plan.get('makespan'),
+                                 'external_bytes': (plan['external_read_bytes'] + plan['external_write_bytes']
+                                                    if candidate['status'] == 'planned' else None),
+                                 'expanded': plan.get('expanded', 0),
+                                 'depth_pruned': plan.get('tile_depth_pruned', 0)})
 
-                def score(candidate):
-                    plan = candidate['plan']
-                    return (plan['makespan'], plan['external_read_bytes'] + plan['external_write_bytes'],
-                            plan['wire_cost'])
+            def score(candidate):
+                plan = candidate['plan']
+                return (plan['makespan'], plan['external_read_bytes'] + plan['external_write_bytes'],
+                        plan['wire_cost'])
 
-                feasible = [(kind, candidate) for kind, candidate in candidates
-                            if candidate['status'] == 'planned']
-                selected = None
-                if feasible:
-                    selected, result = min(feasible, key=lambda item: score(item[1]))
-                    result['native_loop_verification'] = audit
-                result['tile_search'] = {'max_partial_depth': tile_depth, 'layouts': attempts,
-                                         'selected_layout': selected}
+            feasible = [(kind, candidate) for kind, candidate in candidates
+                        if candidate['status'] == 'planned']
+            selected = None
+            if feasible:
+                selected, result = min(feasible, key=lambda item: score(item[1]))
+                result['native_loop_verification'] = audit
+            result['tile_search'] = {'max_partial_depth': tile_depth, 'layouts': attempts,
+                                     'selected_layout': selected}
     result.update(provenance)
     return result
 

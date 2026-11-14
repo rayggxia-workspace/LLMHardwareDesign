@@ -20,12 +20,21 @@ def _verify_ranges(library):
             primitives[node['kernel']].append(node)
     for task, span in ranges.items():
         kernel, (lo, hi), grid = span['kernel'], span['rows'], span['grid']
+        nodes = primitives[kernel]
+        columns = span.get('columns')
         if (task not in library['dependencies'] or not 0 <= lo < hi <= prod(grid)
-                or not primitives[kernel]
-                or any(node['shape'][:-1] != grid for node in primitives[kernel])
-                or span['output_indices'] != {node['id']: [lo * node['shape'][-1], hi * node['shape'][-1]]
-                                             for node in primitives[kernel]}):
+                or not nodes or any(node['shape'][:-1] != grid for node in nodes)):
             raise ValueError('invalid native loop output range')
+        if columns is not None and (hi != lo + 1 or len(columns) != 2 or any(
+                not 0 <= columns[0] < columns[1] <= node['shape'][-1] for node in nodes)):
+            raise ValueError('invalid native loop column range')
+        indices = {}
+        for node in nodes:
+            stride = node['shape'][-1]
+            indices[node['id']] = ([lo * stride, hi * stride] if columns is None else
+                                   [lo * stride + columns[0], lo * stride + columns[1]])
+        if span['output_indices'] != indices:
+            raise ValueError('invalid native loop output indices')
         regions = library['primitive_regions']
         expected = {}
         for value, (first, stop) in span['output_indices'].items():
@@ -36,14 +45,19 @@ def _verify_ranges(library):
             expected[value] = [base + first, base + stop]
         if span['commit_record_ranges'] != expected:
             raise ValueError('native range commits different DDR records')
-        owners[kernel].append((lo, hi, task))
+        owners[kernel].append((indices[nodes[0]['id']], task, columns is not None))
     for kernel, parts in owners.items():
         stop, previous = 0, None
-        for lo, hi, task in sorted(parts):
-            if lo != stop or (previous and previous not in library['dependencies'][task]):
+        shape = primitives[kernel][0]['shape']
+        feature = parts[0][2]
+        if feature and any(node['shape'] != shape for node in primitives[kernel]):
+            raise ValueError('native feature tiles do not share an output grid')
+        for (lo, hi), task, has_columns in sorted(parts):
+            if (feature != has_columns or lo != stop
+                    or (previous and previous not in library['dependencies'][task])):
                 raise ValueError('native range overlap, gap or missing scratch lifetime dependency')
             stop, previous = hi, task
-        if stop != prod(primitives[kernel][0]['shape'][:-1]) or kernel in library['dependencies']:
+        if stop != prod(shape) or kernel in library['dependencies']:
             raise ValueError('incomplete or duplicate native range coverage')
 
 
@@ -121,11 +135,32 @@ def decode(program, hardware):
     return ordered
 
 
-def replay(program, hardware, initial, ids, oracle):
+def replay(program, hardware, initial, ids, oracle, *, tile_command=None):
     """Execute the selected control order with the qualified integer arithmetic."""
     decoded = decode(program, hardware)
-    if 'ranges' in decoded:
-        from event_range_replay import replay_ranges
+    spec = hardware['event_model']
+    library = program['native_loop_library']
+    selected_tiles = {}
+    for row in program['mother'][:-1]:
+        service = spec['services'].get(row['task_id'] + '@' + row['binding_id'], {})
+        loop = service.get('finite_loop', {})
+        if 'dot_tile' in loop:
+            selected_tiles[row['task_id']] = loop
+    if 'ranges' not in decoded and not selected_tiles:
+        return execute(decoded, initial, ids, oracle)
+    from event_range_replay import replay_ranges
 
-        return replay_ranges(program['native_loop_library']['program'], decoded['ranges'], initial, ids, oracle)
-    return execute(decoded, initial, ids, oracle)
+    dispatches = decoded.get('ranges', [(row['task_id'], None) for row in program['mother'][:-1]])
+    if not selected_tiles:
+        return replay_ranges(library['program'], dispatches, initial, ids, oracle)
+    if tile_command is None:
+        raise ValueError('numeric replay of native Dot tiles requires a finite-S interpreter')
+    from native_tile_replay import NativeTileReplay
+
+    worker = NativeTileReplay({'hardware': hardware, 'tile_constants': library['dot_tile_constants']},
+                              tile_command)
+    try:
+        return replay_ranges(library['program'], dispatches, initial, ids, oracle,
+                             dot_services=selected_tiles, tile_worker=worker)
+    finally:
+        worker.close()

@@ -7,7 +7,8 @@ from full_integer import Q
 from wide_program import execute
 
 
-def replay_ranges(program, dispatched, initial, ids, oracle):
+def replay_ranges(program, dispatched, initial, ids, oracle, *, dot_services=None, tile_worker=None):
+    dot_services = dot_services or {}
     nodes = {node['id']: node for node in program['instructions']}
     kernels = {}
     for node in nodes.values():
@@ -15,12 +16,40 @@ def replay_ranges(program, dispatched, initial, ids, oracle):
     values = {**initial, 'input_ids': np.asarray(ids, dtype=np.int64)}
     committed = {}
 
-    def result(node, args, shape):
+    def result(node, args, shape, service=None):
         names = [str(i) for i in range(len(args))]
         single = {**node, 'inputs': names, 'shape': list(shape)}
+        executor = None
+        if service is not None:
+            if node['op'] != 'Dot' or service['dot_tile']['primitive'] != node['id']:
+                raise ValueError('native tile dispatch does not match its Dot')
+            if tile_worker is None:
+                raise ValueError('independent tile interpreter is required')
+            tile = service['dot_tile']
+            binding = {'dot_tile': tile, 'macro_binding': service['macro_binding'],
+                       'tile_work': service['tile_work']}
+
+            class TileDot:
+                def dot(self, node, left, right):
+                    from preparation_reuse import PreparedOperands
+
+                    p = {'input': node['inputs'][0], 'K': tile['K'], 'rows': tile['rows'], 'components': 3,
+                         'external_words': tile['prepare_elements'] * 3,
+                         'external_base': tile['prepared_A_base']}
+                    prep = PreparedOperands({'operand_preparations': {node['id']: p}})
+                    prep.prepare(node, left)
+                    _, records = prep.current_records
+                    raw, self.final = tile_worker.dot(node, records, right, binding)
+                    return raw.reshape(node['shape'])
+
+                def finalize(self, node, out):
+                    np.testing.assert_array_equal(self.final.reshape(node['shape']), out)
+                    return out
+
+            executor = TileDot()
         return execute({'instructions': [single], 'predicates': program['predicates'],
                         'outputs': {'result': single['id']}},
-                       dict(zip(names, args)), ids, oracle)['result']
+                       dict(zip(names, args)), ids, oracle, dot_executor=executor)['result']
 
     def raw(value):
         return value.raw if isinstance(value, Q) else np.asarray(value)
@@ -52,14 +81,19 @@ def replay_ranges(program, dispatched, initial, ids, oracle):
         value = values[name]
         return value if span is None else transform(value, lambda x: x.reshape(-1)[slice(*span)])
 
-    def pointwise_operand(name, shape, lo, hi):
+    def pointwise_operand(name, shape, lo, hi, columns):
         source = nodes.get(name)
         outer = tuple(shape[:-1])
         if source and tuple(source['shape'][:-1]) == outer and source['shape']:
             stride = source['shape'][-1]
+            if columns is not None and stride == shape[-1]:
+                first, stop = columns
+                part = read(name, (lo * stride + first, lo * stride + stop))
+                return transform(part, lambda x: x.reshape(1, stop - first))
             part = read(name, (lo * stride, hi * stride))
             return transform(part, lambda x: x.reshape(hi - lo, stride))
-        return transform(read(name), lambda x: np.broadcast_to(x, shape).reshape(-1, shape[-1])[lo:hi])
+        result = transform(read(name), lambda x: np.broadcast_to(x, shape).reshape(-1, shape[-1])[lo:hi])
+        return result if columns is None else transform(result, lambda x: x[:, slice(*columns)])
 
     def write_range(node, q, span):
         name, shape = node['id'], node['shape']
@@ -81,15 +115,18 @@ def replay_ranges(program, dispatched, initial, ids, oracle):
         if descriptor is None:
             for node in kernels[task]:
                 if node['op'] not in ('Constant', 'View', 'Mask'):
-                    values[node['id']] = result(node, [read(name) for name in node['inputs']], node['shape'])
+                    values[node['id']] = result(node, [read(name) for name in node['inputs']],
+                                                node['shape'], dot_services.get(task))
             continue
         lo, hi = descriptor['rows']
         nrows = hi - lo
+        columns = descriptor.get('columns')
         for node in kernels[descriptor['kernel']]:
             if node['id'] not in descriptor['output_indices']:
                 continue
             op, shape, names = node['op'], node['shape'], node['inputs']
-            out_shape = (nrows, shape[-1])
+            width = shape[-1] if columns is None else columns[1] - columns[0]
+            out_shape = (nrows, width)
             if op in ('Sum', 'SquareSum', 'Max', 'NFactor'):
                 length = node['attributes']['length']
                 args = [transform(read(names[0], (lo * length, hi * length)),
@@ -107,15 +144,15 @@ def replay_ranges(program, dispatched, initial, ids, oracle):
                         x, (*shape[:-2], inner_rows, length)).reshape(-1, 1, length)[lo:hi])
                 # All K for every output. RHS is whole-value synchronized.
                 def rhs(x):
-                    if x.ndim == 2:
-                        return x
-                    batches = np.broadcast_to(x, (*shape[:-2], length, shape[-1]))
-                    return batches.reshape(-1, length, shape[-1])[np.arange(lo, hi) // inner_rows]
+                    if x.ndim != 2:
+                        batches = np.broadcast_to(x, (*shape[:-2], length, shape[-1]))
+                        x = batches.reshape(-1, length, shape[-1])[np.arange(lo, hi) // inner_rows]
+                    return x if columns is None else x[..., slice(*columns)]
                 args = [a, transform(read(names[1]), rhs)]
-                out_shape = (nrows, 1, shape[-1])
+                out_shape = (nrows, 1, width)
             else:
-                args = [pointwise_operand(name, shape, lo, hi) for name in names]
-            q = result(node, args, out_shape)
+                args = [pointwise_operand(name, shape, lo, hi, columns) for name in names]
+            q = result(node, args, out_shape, dot_services.get(task))
             write_range(node, q, descriptor['output_indices'][node['id']])
     if any(not mask.all() for mask in committed.values()):
         raise ValueError('native range program left uncommitted scalar records')

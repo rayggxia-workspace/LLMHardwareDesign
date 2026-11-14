@@ -105,6 +105,7 @@ def loop_lease_edges(dispatches, capacity):
 
 
 def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
+    from event_execution import scratch_overwrites
     from event_native_dispatch import route_targets, service_completion, service_targets
 
     projected, _ = project(tasks, covers, plan)
@@ -215,6 +216,8 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
                 local[target].append(command)
             records.append({**common, 'op': 'DISPATCH', 'targets': sorted(participants),
                             'wait_for': wait, 'read': read, 'write': write, **leases})
+            if event['kind'] != 'move' and 'dot_tile' in service.get('finite_loop', {}):
+                records[-1]['scratch_overwrites'] = scratch_overwrites(service, spec['windows'])
             task_numbers.append(sequence)
             for net in net_ids:
                 users[net].append({'task_id': row['id'], 'binding_id': row['binding'],
@@ -240,6 +243,13 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
             if key in writers:
                 row['wait_for'].add(writers[key])
             readers[key].add(number)
+        for window in sorted(row.get('scratch_overwrites', ())):
+            region = spec['windows'][window]
+            key = (region['site'], region['offset'])
+            if key in writers:
+                row['wait_for'].add(writers[key])
+            row['wait_for'].update(readers.pop(key, ()))
+            writers[key] = number
         for access in row['write']:
             key = (access['site'], access['address'])
             if key in writers:
@@ -249,6 +259,7 @@ def emit(tasks, hardware, covers, plan, *, physical_base_sha256=None):
 
     loop_edges = loop_lease_edges([row for row in records if 'leases' in row], hardware['resources'])
     for row in records:
+        row.pop('scratch_overwrites', None)
         row['wait_for'].update(loop_edges.get(row['sequence'], ()))
         row['wait_for'] = sorted(row['wait_for'])
         del row['read'], row['write']

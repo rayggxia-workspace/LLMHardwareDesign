@@ -2,6 +2,7 @@
 from collections import defaultdict
 
 from event_deploy import external_addresses
+from event_execution import scratch_overwrites
 
 
 def decode_handoff(program, hardware, lease_edges):
@@ -30,7 +31,7 @@ def decode_handoff(program, hardware, lease_edges):
             raise ValueError('native handoff record address differs')
         return window, value
 
-    access = {}
+    access, destroyed = {}, {}
     for seq, dispatch in enumerate(dispatches):
         task, binding = dispatch['task_id'], dispatch['binding_id']
         start, end = dispatch['estimated_start'], dispatch['estimated_end']
@@ -74,6 +75,7 @@ def decode_handoff(program, hardware, lease_edges):
                 raise ValueError('native handoff RUN_LOOP differs from binding')
             roles = {entry['control']: ['execute'] for entry in loop['participants'].values()}
             loops[task] = dispatch
+            destroyed[seq] = scratch_overwrites(service, windows)
         if set(commands) != roles.keys():
             raise ValueError('native handoff participant mismatch')
         common = ('sequence', 'task_id', 'binding_id', 'estimated_start', 'estimated_end')
@@ -111,6 +113,12 @@ def decode_handoff(program, hardware, lease_edges):
             if old is None or old[0] != value or old[1] not in waits:
                 raise ValueError('native handoff read precedes committed version')
             readers[key].add(seq)
+        for window in destroyed.get(seq, ()):
+            key = (window, None)
+            old = last_write.get(key)
+            if ((old is not None and old[1] not in waits) or not readers.pop(key, set()) <= waits):
+                raise ValueError('native tile overwrites a live SRAM window')
+            last_write[key] = None, seq
         for window, value in writes:
             key = (window, value if window == 'DDR' else None)
             old = last_write.get(key)

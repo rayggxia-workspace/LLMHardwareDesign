@@ -6,10 +6,11 @@ import hashlib
 import json
 from pathlib import Path
 from time import perf_counter
+from math import prod
 
 from event_deploy import digest
 from event_loop_control import decode, replay
-from event_native_range import lower_ranges
+from event_native_range import feature_tile_words, lower_ranges
 from event_native_residency import lower_residency
 from run import compile_event_ir
 
@@ -53,13 +54,62 @@ def slice_program(program, ids, layer_path):
     return {**program,
             'instructions': [op for op in instructions if op['id'] in needed],
             'outputs': {name: name for name in outputs},
-            'initial_formats': {name: {k: formats[name][k] for k in ('shape', 'exponent', 'bits')
+            'initial_formats': {name: {k: formats[name][k] for k in ('shape', 'exponent', 'bits', 'source_file', 'literal')
                                        if k in formats.get(name, {})} for name in sorted(inputs)},
             'value_bindings': {value: name for value, name in program['value_bindings'].items()
                                if name in needed or name in inputs}}
 
 
-def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None, modes=('range',)):
+def projection_traffic(plan, target):
+    """Count immutable Dot weights and activation at a blocked reduction input."""
+    spec = target['event_model']
+    library = spec['native_loop_library']
+    program = library['program']
+    inputs = program['initial_formats']
+    nodes = {node['id']: node for node in program['instructions']}
+    ranges = library.get('ranges', {})
+    rows = {row['id']: row for row in plan['tasks']}
+    residents = {version.rsplit('@', 1)[0] for version in spec['value_bytes']}
+    scratch = max(meta['words'] for meta in target['sites'].values()) - 8
+    weights = 0
+    blocked_reductions = {}
+    selected_tiles = Counter()
+    scratch_peak = Counter()
+    for task, row in rows.items():
+        span = ranges.get(task, {})
+        event = next(item for item in row['evaluation']['events'] if item['kind'] == 'stage')
+        loop = spec['services'][event['service']]['finite_loop']
+        tile = loop.get('dot_tile')
+        for site, footprint in loop['participants'].items():
+            scratch_peak[site] = max(scratch_peak[site], footprint['words'] * 16)
+        if tile:
+            selected_tiles[span.get('kernel', task)] += 1
+            weights += loop['tile_work']['dot_B_loads'] * 16
+        for name in loop['primitives']:
+            node = nodes[name]
+            if node['op'] != 'Dot':
+                continue
+            a, b = node['inputs']
+            if not tile and inputs.get(b, {}).get('source_file') and library['operands'][name][1] == 1:
+                # Scalar partial reads one B record per A component and K.
+                volume = prod(node['shape']) if not span else (
+                    span['output_indices'][name][1] - span['output_indices'][name][0])
+                weights += volume * library['operands'][name][0] * node['attributes']['length'] * 16
+            if (a in nodes and nodes[a]['kernel'] != node['kernel'] and a not in residents
+                    and node['attributes']['length'] > scratch):
+                # Unique canonical volume when a full input row exceeds
+                # even the largest site's available SRAM.
+                kernel = span.get('kernel', task)
+                blocked_reductions[kernel] = prod(nodes[a]['shape']) * 16
+    return {'static_dot_weight_read_bytes': weights,
+            'native_dot_tile_dispatches': dict(selected_tiles),
+            'max_native_scratch_bytes': dict(scratch_peak),
+            'blocked_full_reduction_canonical_activation_bytes': blocked_reductions,
+            'partial_sum_ddr_bytes': 0}
+
+
+def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None, modes=('range',),
+             *, tile_command=None):
     # Select only the requested workload. Incoming edges define layer inputs
     # already available at the start; keep every intra-layer edge.
     tasks = [deepcopy(task) for task in event_ir['tasks'] if task['id'].startswith(layer_path)]
@@ -86,10 +136,23 @@ def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None
     whole = {'tasks': tasks}
     ranged, ranged_hardware = lower_ranges(whole, active)
     layouts = {'whole': (whole, active), 'range': (ranged, ranged_hardware)}
-    if 'sram' in modes:
+    if {'sram', 'row-block-tile'} & set(modes):
         layouts['sram'] = lower_residency(ranged, ranged_hardware)
     if 'force-ddr' in modes:
         layouts['force-ddr'] = lower_residency(ranged, ranged_hardware, spill=True)
+    if {'features', 'block-tile'} & set(modes):
+        feature_ir, feature_hardware = lower_ranges(whole, active, feature_words=feature_tile_words(active))
+        layouts['features'] = lower_residency(feature_ir, feature_hardware)
+        if 'block-tile' in modes:
+            from event_native_dot_tiles import lower_dot_tiles
+
+            layouts['block-tile'] = lower_dot_tiles(*layouts['features'])
+            if layouts['block-tile'] == layouts['features']:
+                raise ValueError('no qualified native Dot tile was admitted')
+    if 'row-block-tile' in modes:
+        from event_native_dot_tiles import lower_dot_tiles
+
+        layouts['row-block-tile'] = lower_dot_tiles(*layouts['sram'])
     results = []
     reference = None
 
@@ -126,7 +189,8 @@ def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None
             import numpy as np
 
             initial, ids, oracle = fixture
-            actual = replay(program, result['resolved_hardware'], initial, ids, oracle)
+            actual = replay(program, result['resolved_hardware'], initial, ids, oracle,
+                            tile_command=tile_command)
             if reference is None:
                 reference = actual
             if actual.keys() != reference.keys():
@@ -149,7 +213,7 @@ def evaluate(event_ir, hardware, layer_path, width, depths, budget, fixture=None
                         'early_tile_edges': report_overlap(plan, ir, target),
                         'read_bytes': plan['external_read_bytes'],
                         'write_bytes': plan['external_write_bytes'], 'nets': len(plan['nets']),
-                        'wire_cost': plan['wire_cost'], **residency})
+                        'wire_cost': plan['wire_cost'], **residency, **projection_traffic(plan, target)})
     return {'layer_path': layer_path, 'width': width, 'wire_budget': budget,
             'tasks': len(tasks), 'integer_instructions': len(source_tasks),
             'input_dependencies': incoming, 'decoded_integer_instructions': len(arithmetic['instructions']), 'source_onnx_sha256': source['source_model_sha256'],
@@ -169,7 +233,10 @@ def main():
     parser.add_argument('--budget', type=int, default=10)
     parser.add_argument('--depth', nargs='+', type=int, default=[0, 1, 2, 3])
     parser.add_argument('--numeric-fixture', type=Path, nargs=4, metavar=('ONNX', 'WEIGHTS', 'ACTIVATIONS', 'ORACLE'))
-    parser.add_argument('--modes', nargs='+', choices=('range', 'force-ddr', 'sram'), default=['range', 'force-ddr', 'sram'])
+    parser.add_argument('--modes', nargs='+', choices=('range', 'force-ddr', 'sram', 'features', 'block-tile', 'row-block-tile'), default=['range', 'force-ddr', 'sram'])
+    parser.add_argument('--tile-worker', type=Path)
+    parser.add_argument('--tile-profile', type=Path, nargs=3,
+                        metavar=('COLUMN_PROBE', 'ROW_PROBE', 'INSTANCE_SERVICES'))
     parser.add_argument('--input-ids', type=int, nargs='+', default=[1, 2])
     args = parser.parse_args()
     fixture = None
@@ -201,8 +268,20 @@ def main():
             initial.update(execute({'instructions': [op], 'outputs': {op['id']: op['id']}},
                                    initial, ids, oracle))
             fixture = initial, ids, oracle
-        report = evaluate(read(args.event_ir), read(args.hardware), args.layer_path,
-                          args.width, args.depth, args.budget, fixture, args.modes)
+        hardware = read(args.hardware)
+        if args.tile_profile:
+            from tile_recipe import read_qualification
+
+            column, row, bindings = args.tile_profile
+            declared = read(bindings)
+            for role in ('P', 'E'):
+                declared[role] = [group for group in declared[role]
+                                  if group in hardware['leaf_inventory']]
+            hardware['tile_service_profiles'] = read_qualification(column, row)
+            hardware['tile_service_bindings'] = declared
+        report = evaluate(read(args.event_ir), hardware, args.layer_path,
+                          args.width, args.depth, args.budget, fixture, args.modes,
+                          tile_command=[str(args.tile_worker.resolve())] if args.tile_worker else None)
     finally:
         if oracle is not None:
             oracle.close()
@@ -216,6 +295,11 @@ def main():
         path.name: hashlib.sha256(path.read_bytes()).hexdigest()
         for path in (args.event_ir, args.hardware)
     }
+    if args.tile_profile:
+        report['tile_worker_sha256'] = (hashlib.sha256(args.tile_worker.read_bytes()).hexdigest()
+                                        if args.tile_worker else None)
+        report['tile_service_profiles_sha256'] = digest(hardware['tile_service_profiles'])
+        report['tile_service_bindings_sha256'] = digest(hardware['tile_service_bindings'])
     print(json.dumps(report, indent=2))
 
 

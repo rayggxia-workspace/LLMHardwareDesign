@@ -29,3 +29,27 @@ class RangeReplayTest(unittest.TestCase):
         np.testing.assert_array_equal(result['output'].raw, value)
         with self.assertRaisesRegex(ValueError, 'uncommitted range'):
             replay_ranges(program, [first, consume_second, second, consume_first], initial, [[]], None)
+
+    def test_feature_tiles_keep_full_dot_and_feed_only_committed_columns(self):
+        dot = {'id': 'x', 'kernel': 'dot', 'op': 'Dot', 'inputs': ['a', 'b'],
+               'shape': [1, 3], 'exponent': 1, 'bits': 32,
+               'attributes': {'shift': 1, 'length': 2}}
+        add = {'id': 'y', 'kernel': 'add', 'op': 'Add', 'inputs': ['x', 'bias'],
+               'shape': [1, 3], 'exponent': 1, 'bits': 32,
+               'attributes': {'signs': [1, 1]}}
+        program = {'instructions': [dot, add], 'predicates': {}, 'outputs': {'result': 'y'}}
+        initial = {'a': Q(np.array([[2, 3]]), 0),
+                   'b': Q(np.array([[1, 2, 3], [3, 2, 1]]), 0),
+                   'bias': Q(np.array([10, 20, 30]), 1)}
+
+        def range_command(node, first, stop):
+            return f"{node['kernel']}{first}", {
+                'kernel': node['kernel'], 'rows': [0, 1], 'columns': [first, stop],
+                'output_indices': {node['id']: [first, stop]}}
+
+        first = [range_command(node, 0, 2) for node in (dot, add)]
+        tail = [range_command(node, 2, 3) for node in (dot, add)]
+        result = replay_ranges(program, first + tail, initial, [[]], None)
+        np.testing.assert_array_equal(result['result'].raw, [[16, 25, 34]])
+        with self.assertRaisesRegex(ValueError, 'uncommitted range'):
+            replay_ranges(program, [first[0], tail[1], tail[0], first[1]], initial, [[]], None)

@@ -21,7 +21,7 @@ def _row_grid(ops):
                        or not node['shape'] for node in work):
         return None
     grid = tuple(work[0]['shape'][:-1])
-    if prod(grid) < 2 or any(tuple(node['shape'][:-1]) != grid for node in work):
+    if any(tuple(node['shape'][:-1]) != grid for node in work):
         return None
     local = {node['id']: node for node in work}
     for node in work:
@@ -42,11 +42,17 @@ def _aligned(consumer, slot, producer, grid):
     return False
 
 
-def lower_ranges(event_ir, hardware):
+def feature_tile_words(hardware):
+    """Leave at least three quarters of the smallest site for other windows."""
+    return max(1, min(site['words'] for site in hardware['leaf_inventory'].values()) // 4)
+
+
+def lower_ranges(event_ir, hardware, *, feature_words=None):
     """Use the same native loop leaves and final ACK once per finite range.
 
     Slicing begins and ends at independent output iterations. Addresses keep
-    the original tensor shape and use the output span's absolute scalar index.
+    the original tensor shape and absolute scalar index. A feature tile covers
+    columns of one output row and never shortens a Dot's reduction.
     Transparent masks preserve indices. General views, RHS matrix operands,
     and unsliced endpoints retain whole-value synchronization.
     """
@@ -84,13 +90,57 @@ def lower_ranges(event_ir, hardware):
                         aligned_edges[name][owner] = (old and aligned and grids[owner] == grid
                                                       and _aligned(node, slot, source, grid))
 
-    # Only split operators on an edge that can actually hand off a tile.
-    endpoints = {node for name in grids for parent in tasks[name]['after']
-                 if aligned_edges[name].get(parent, False) for node in (name, parent)}
-    if not endpoints:
+    # Feature ranges keep complete Dot reductions and pointwise iterations.
+    feature_extent = {}
+    if feature_words is not None:
+        if type(feature_words) is not int or feature_words < 1:
+            raise ValueError('feature tile size must be positive')
+        for name in grids:
+            work = [node for node in kernels[name] if node['op'] not in _METADATA]
+            extent = work[0]['shape'][-1]
+            if extent <= feature_words or any(
+                    node['op'] not in _POINTWISE | {'Dot'} or node['shape'][-1] != extent
+                    or node['attributes'].get('predicate_source') is not None for node in work):
+                continue
+            local = {node['id'] for node in work}
+            if any(node['op'] == 'Dot' and local.intersection(node['inputs']) for node in work):
+                continue
+            feature_extent[name] = extent
+
+    def same_feature_edge(name, parent):
+        if (name not in feature_extent or feature_extent.get(name) != feature_extent.get(parent)
+                or not aligned_edges[name].get(parent, False)):
+            return False
+        seen = False
+        for node in kernels[name]:
+            for operand in node['inputs']:
+                for source, aligned in sources(operand):
+                    if source['kernel'] != parent:
+                        continue
+                    if (not aligned or node['op'] not in _POINTWISE
+                            or source['shape'] != node['shape']):
+                        return False
+                    seen = True
+        return seen
+
+    feature_edges = {(name, parent) for name in feature_extent for parent in tasks[name]['after']
+                     if same_feature_edge(name, parent)}
+    feature_nodes = {node for edge in feature_edges for node in edge}
+    row_nodes = {node for name, grid in grids.items() if prod(grid) > 1
+                 for parent in tasks[name]['after'] if aligned_edges[name].get(parent, False)
+                 and name not in feature_nodes and parent not in feature_nodes for node in (name, parent)}
+    tiles = {}
+    for name in row_nodes:
+        extent = prod(grids[name])
+        tiles[name] = [(0, extent // 2, None), (extent // 2, extent, None)]
+    for name in feature_nodes:
+        extent = feature_extent[name]
+        tiles[name] = [(row, row + 1, [col, min(extent, col + feature_words)])
+                       for row in range(prod(grids[name])) for col in range(0, extent, feature_words)]
+    if not tiles:
         return event_ir, hardware
-    parts = {name: (f'{name}::range::0', f'{name}::range::1') if name in endpoints else (name,)
-             for name in tasks}
+    parts = {name: tuple(f'{name}::range::{i}' for i in range(len(tiles[name])))
+             if name in tiles else (name,) for name in tasks}
     if len({part for names in parts.values() for part in names}) != sum(map(len, parts.values())):
         raise ValueError('native range task name collision')
     services = {}
@@ -102,8 +152,8 @@ def lower_ranges(event_ir, hardware):
         for index, part in enumerate(parts[name]):
             parents = []
             for parent in task['after']:
-                if (len(parts[name]) > 1 and len(parts[parent]) > 1
-                        and aligned_edges[name].get(parent, False)):
+                if ((name, parent) in feature_edges or
+                        (name in row_nodes and parent in row_nodes and aligned_edges[name].get(parent, False))):
                     parents.append(parts[parent][index])
                 else:
                     parents.extend(parts[parent])
@@ -117,10 +167,14 @@ def lower_ranges(event_ir, hardware):
             # only after the previous range has committed and released it.
             if index:
                 parents.append(parts[name][index - 1])
-            extent = prod(grids[name])
-            lo, hi = (0, extent // 2) if index == 0 else (extent // 2, extent)
-            spans = {node['id']: [lo * node['shape'][-1], hi * node['shape'][-1]]
-                     for node in kernels[name] if node['op'] not in _METADATA}
+            lo, hi, columns = tiles[name][index]
+            spans = {}
+            for node in kernels[name]:
+                if node['op'] in _METADATA:
+                    continue
+                stride = node['shape'][-1]
+                spans[node['id']] = ([lo * stride, hi * stride] if columns is None else
+                                     [lo * stride + columns[0], lo * stride + columns[1]])
             records = {}
             for value, (first, stop) in spans.items():
                 region = library['primitive_regions'][value]
@@ -130,6 +184,8 @@ def lower_ranges(event_ir, hardware):
                 records[value] = [base + first, base + stop]
             descriptor = {'kernel': name, 'rows': [lo, hi], 'grid': list(grids[name]),
                           'output_indices': spans, 'commit_record_ranges': records}
+            if columns is not None:
+                descriptor['columns'] = columns
             ranges[part] = descriptor
             body = seq(*(primitive_body({**node, 'shape': [spans[node['id']][1] - spans[node['id']][0]]},
                                          components[node['id']])[0]
@@ -140,14 +196,18 @@ def lower_ranges(event_ir, hardware):
                 original_id = binding['event_stages'][0]['service']
                 service = spec['services'][original_id]
                 whole = counts(service['finite_loop']['body'], templates)
-                # Identical per-row leaf work including both DDR directions.
-                if any(stats[key] * extent != whole[key] * (hi - lo) for key in stats.keys() | whole.keys()):
+                extent = prod(grids[name])
+                iterations = hi - lo
+                if columns is not None:
+                    extent *= feature_extent[name]
+                    iterations *= columns[1] - columns[0]
+                if any(stats[key] * extent != whole[key] * iterations for key in stats.keys() | whole.keys()):
                     raise ValueError(f'{name}: native range work differs from whole-loop work')
-                ticks, remainder = divmod(service['ticks'] * (hi - lo), extent)
+                ticks, remainder = divmod(service['ticks'] * iterations, extent)
                 if remainder or not ticks:
                     raise ValueError(f'{name}: native range duration is not integral')
                 memory = {
-                    site: {direction: {**entry, 'bytes': entry['bytes'] * (hi - lo) // extent}
+                    site: {direction: {**entry, 'bytes': entry['bytes'] * iterations // extent}
                            for direction, entry in directions.items()}
                     for site, directions in service['memory_by_site'].items()
                 }

@@ -18,8 +18,11 @@ def lower_residency(ir, hardware, *, spill=False):
     nodes = {node['id']: node for node in program['instructions']}
     task_by_id = {task['id']: task for task in ir['tasks']}
     by_kernel = defaultdict(dict)
+    def partition(span):
+        return tuple(span['rows']), tuple(span.get('columns', ()))
+
     for task, span in ranges.items():
-        by_kernel[span['kernel']][tuple(span['rows'])] = task
+        by_kernel[span['kernel']][partition(span)] = task
     readers = defaultdict(list)
     for node in nodes.values():
         for slot, name in enumerate(node['inputs']):
@@ -34,16 +37,18 @@ def lower_residency(ir, hardware, *, spill=False):
             node = nodes[value]
             accesses = readers[value]
             if ((hi - lo) * 16 > max_window_bytes
-                    or node['op'] not in WRITE_RESULT or value in program['outputs'].values()
+                    or node['op'] not in (WRITE_RESULT | {'Select'} if 'columns' in span else WRITE_RESULT)
+                    or value in program['outputs'].values()
                     or not accesses):
                 continue
             uses = defaultdict(set)
             for user, slot in accesses:
-                dest = by_kernel[user['kernel']].get(tuple(span['rows']))
+                dest = by_kernel[user['kernel']].get(partition(span))
                 if (dest is None or dest == task or task not in task_by_id[dest]['after']
                         or user['op'] not in READ_SOURCE or ranges[dest]['grid'] != span['grid']
                         or user['id'] not in ranges[dest]['output_indices']
-                        or (user['op'] == 'Dot' and (slot != 0 or node['shape'][-1] != user['attributes']['length']))
+                        or (user['op'] == 'Dot' and ('columns' in span or slot != 0
+                                                     or node['shape'][-1] != user['attributes']['length']))
                         or (user['op'] != 'Dot' and node['shape'][-1] not in (1, user['shape'][-1]))):
                     break
                 split = user['op'] == 'Add' or library['operands'][user['id']][slot] == 3
@@ -71,16 +76,21 @@ def lower_residency(ir, hardware, *, spill=False):
     # Color simultaneous operand uses into distinct finite windows. Otherwise
     # windows are reusable, with eviction/writeback and lifetime enforced by DP.
     windows, locations, selected = {}, {}, set()
+    interference = defaultdict(set)
+    for (_, site), items in touch.items():
+        for item in items:
+            interference[site, item].update(items)
     for item, (lo, hi, uses) in sorted(candidates.items(), key=lambda pair: (
             -(pair[1][1] - pair[1][0]), pair[0])):
         size = (hi - lo) * 16
         allocations = {}
         for site in sorted(sites_for[item]):
             slots = locations.get(site, ())
-            related = set().union(*(items for (task, owner), items in touch.items()
-                                     if owner == site and item in items))
-            # The two ranges of an operator may both be live before either consumer runs.
-            related.update(other for other in selected if other[1] == item[1])
+            related = interference[site, item]
+            # Feature versions can reuse slots because the event scheduler
+            # writes back an evicted version if a future consumer still needs it.
+            if 'columns' not in ranges[item[0]]:
+                related.update(other for other in selected if other[1] == item[1])
             slot = next((i for i, (length, assigned) in enumerate(slots)
                          if size <= length and not related.intersection(assigned)), None)
             if slot is None:
