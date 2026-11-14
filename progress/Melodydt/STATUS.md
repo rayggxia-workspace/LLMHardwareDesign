@@ -36,3 +36,9 @@
 - [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。113287 原生 C639 两模式完成 0:0，各 128 波次/384 scope，源、输出与探针散列核验，与 113199 的功能级回执和 DDR 事务逐字相同。正常/背压 Gate/Up 最慢一路的配对准备平均 1,204/1,043 拍，单独等权重 268/105 拍。优先做局控可执行老记录与后续配对准备解耦的单项 A/B。
 - ATT1 第四轮完整基线 2.739056 tok/s / 5.511216 输入 tok/s。短 Prefill 113166/113167 完整为 6.316164 输入 tok/s，逐页与 Down 通过。FFN Decode 第二步前四层外推 2.926561 tok/s，完整 113164/113165 对账为 2.925996 tok/s（+6.82%），582 页和 72 个 Down 散列一致。保留词表 86.827619 ms 的基线页时间。
 - 后续逐步汇报两项速度、验证限制和剩余全部步骤。详见 [第六轮回执](../../work/Melodydt/270/ffn-wait-06/README.md) 和 [恢复交接](../../docs/handoffs/2026-11-14-issue-270-ffn-wait.md)。审查人待指定，登记 PR #5 待合并，Projects 缺配置待具权限维护者核验。物理 STA 与 P512/D128 未执行。
+
+## 2026-11-14（Asia/Shanghai）FFN EXEC 提前发出消融
+
+- [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。单变量局控候选通过 54 项定向回归，C639 113742 完成 0:0。Gate/Up 和 Down 的两模式 WAIT 总周期增约 11%。提前发出先吃掉了年轻权重的重叠时间。
+- 当前完整短程 TLM 基线为 Decode 2.925996 tok/s、短 Prefill 6.316164 输入 tok/s。该候选依据正常、背压 C639 和前四层窗口的敏感性分别为 2.840833/5.931992 和 2.838812/5.923231。疑似退化候选暂不进入速度基线。
+- 113850 限定于真实 FFN 所有权，正常入口与基线观测指纹一致，仍在 c64/node3 持久运行。恢复见 [交接](../../docs/handoffs/2026-11-14-issue-270-ffn-exec.md)。后续每步报告当前两项速度和剩余全部步骤。STA、正式 P512/D128 未执行；独立审查人待指定，登记 PR #5 待合并，Projects 待具权限维护者核验。
