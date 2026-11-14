@@ -9,6 +9,7 @@ from audit_residual_handoff import audit_data_paths
 from event_stored_link_control import ABI, CAPACITY, COMMIT_ACK, RECEIVE, RESERVE, SEND
 from event_stored_link_control import local_image, routines
 from route_contract import digest
+from verify_candidate_algo2 import verify_candidate
 
 
 def read(path):
@@ -64,7 +65,9 @@ def main():
 
     proof = read(args.residual / 'residual-proof.json')
     program = read(args.residual / 'program.json')
-    if program['control_ir']['source'] != proof['source']:
+    placement = verify_candidate(read(args.residual / 'algorithm2-input.json'), args.residual,
+                                 args.residual / 'base.json')
+    if placement != proof['placement'] or program['control_ir']['source'] != proof['source']:
         raise ValueError('producer image source and selected plan disagree')
     command, = program['control_ir']['locals'][proof['target']]
     src, = command['write']
@@ -115,7 +118,7 @@ def main():
                                  bytes=len(payload), path=path.name, sha256=sha256(payload).hexdigest()))
         waves.append(dict(copy, images=controls, wait_for_wave=index - 1 if index else None))
     result = dict(format='algo1-resident-result-egress/1', producer=program['source'],
-                  producer_terminal_image=images[-1]['image_id'],
+                  producer_requires=dict(images=[row['image_id'] for row in images], completion='task_done'),
                   producer_report_sha256=sha256((args.residual / 'residual-proof.json').read_bytes()).hexdigest(),
                   physical_input=access['outbound'], consumer=consumer, consumer_plan=consumer_plan,
                   consumer_operand=dst, consumer_requires=dict(wave=waves[-1]['sequence'], completion=COMMIT_ACK),
