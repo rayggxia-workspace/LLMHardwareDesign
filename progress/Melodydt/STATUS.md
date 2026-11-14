@@ -12,3 +12,9 @@
 - [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。C380 同流量原生回归 112668/112669 均完成 0:0，正常 163,454→85,495 拍，背压 371,268→271,308 拍，读回逐字匹配。
 - 512-bit 两步 Decode、短 Prefill 前四层外推为 2.455394664 tok/s 和 5.507166863 输入 tok/s，上一轮基线外推 2.455393940 / 5.507166863。112637、112638 在 `/public/home/yuzelu/Melodydt/runs/issue-270/att1-response-02/tlm` 持久运行。恢复与原始散列见 [第二轮回执](../../work/Melodydt/270/response-02/README.md)。
 - Melodydt 后续读回四个作业终态及输出散列，再评估同流量的多回填窗口和共享 S 读出。物理 STA/完整 P512/D128 未执行。独立审查人待指定，登记 PR #5 待合并，Projects 待具权限维护者核验。
+
+## 2026-11-14（Asia/Shanghai）ATT1 SRAM 多块回填
+
+- [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。上两轮 582/578 页完整对账，回包解耦轮 2.455286 tok/s / 5.502012 输入 tok/s。
+- C380 原生 A/B 112990/112991 数值与流量一致，正常 85,495→67,242 拍、背压 271,308 拍持平。113009 正常及两个错误标签排空用例通过。多块回填前四层外推 2.609134 tok/s / 5.502848 输入 tok/s。
+- 112976/112977 在 `/public/home/yuzelu/Melodydt/runs/issue-270/att1-refill-03/tlm-final` 持久运行。Melodydt 后续核对完整吞吐，再测共享 S 读写重叠。复现与散列见 [第三轮回执](../../work/Melodydt/270/refill-03/README.md)。登记 PR #5 待合并，看板待核验，物理时序未执行。

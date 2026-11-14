@@ -1,0 +1,50 @@
+--- a/native_tlm_attention.py
++++ b/native_tlm_attention.py
+@@ -73,9 +73,9 @@
+                 self.aperture.write_span(self.sram, start, payload, done)
+ 
+             def prefetch(beats, plan, finished):
+-                issued = returned_count = committed = 0
++                issued = returned_count = scheduled = committed = 0
+                 ready = {}
+-                draining = False
++                writes_active = 0
+ 
+                 def issue():
+                     nonlocal issued
+@@ -98,9 +98,9 @@
+                     drain()
+ 
+                 def acknowledged():
+-                    nonlocal committed, draining
++                    nonlocal committed, writes_active
+                     committed += 1
+-                    draining = False
++                    writes_active -= 1
+                     if committed == beats:
+                         finished()
+                     else:
+@@ -108,12 +108,17 @@
+                         drain()
+ 
+                 def drain():
+-                    nonlocal draining
+-                    if draining or committed not in ready:
+-                        return
+-                    draining = True
+-                    payload = ready.pop(committed)
+-                    _, destination, lane = plan(committed)
++                    nonlocal scheduled, writes_active
++                    while writes_active < 4 and scheduled in ready:
++                        index = scheduled
++                        scheduled += 1
++                        writes_active += 1
++                        self.stats["kv_sram_write_peak"] = max(
++                            self.stats["kv_sram_write_peak"], writes_active)
++                        store(index, ready.pop(index))
++
++                def store(index, payload):
++                    _, destination, lane = plan(index)
+                     if destination is None:
+                         self.aperture.edge(acknowledged)
+                     else:

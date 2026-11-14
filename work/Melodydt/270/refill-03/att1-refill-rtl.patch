@@ -1,0 +1,156 @@
+--- a/project/rtl/block_local_native/s128_ddr_response_load.sv
++++ b/project/rtl/block_local_native/s128_ddr_response_load.sv
+@@ -1,7 +1,7 @@
+ `timescale 1ns/1ps
+ // Ordered DMA response stream. A request reserves its data slot until
+ // the final SRAM acknowledgement, and its DDR credit until the return.
+-module s128_ddr_response_load (
++module s128_ddr_response_load #(parameter bit OVERLAP = 1'b0) (
+     input logic clk, reset,
+     input logic launch_valid,
+     output logic launch_ready,
+@@ -37,6 +37,12 @@
+     logic [511:0] payload [16];
+     logic poisoned [16];
+     logic [2:0] sent, acknowledged;
++    logic [7:0] offered;
++    logic [1:0] pending_writes;
++    wire [7:0] write_slot = OVERLAP ? offered : committed;
++    wire offer_has_data = write_slot != returned;
++    wire skip_offer = OVERLAP && offer_has_data && poisoned[write_slot[3:0]];
++    wire take_offer = s_valid && s_ready;
+ 
+     wire [11:0] words = launch_pair ? {3'd0, launch_bursts, 1'b0} : {2'd0, launch_bursts, 2'b0};
+     wire [7:0] last = launch_bursts - 8'd1;
+@@ -50,6 +56,7 @@
+     wire take_s = s_rsp_valid && s_rsp_ready;
+     wire commit_burst = drop || (take_s && acknowledged + 3'd1 == writes);
+     wire [9:0] word_base = s_base + (pair ? {1'b0, committed, 1'b0} : {committed, 2'b0});
++    wire [9:0] offer_base = s_base + (pair ? {1'b0, write_slot, 1'b0} : {write_slot, 2'b0});
+     wire [1:0] lane = pair ? {pair_high, sent[0]} : sent[1:0];
+     wire [31:0] ack_tag = {22'h12a000, word_base + {7'd0, acknowledged}};
+ 
+@@ -60,11 +67,12 @@
+         (issued - committed < RESPONSE_SLOTS || commit_burst);
+     assign rd_address = base + (pair ? {47'd0, issued, 9'd0} : {50'd0, issued, 6'd0});
+     assign rd_rsp_ready = !reset && state == ACTIVE && returned != issued;
+-    assign s_rsp_ready = !reset && state == ACTIVE && acknowledged < sent;
+-    assign s_valid = !reset && state == ACTIVE && have_data && !drop &&
+-        sent < writes && (sent - acknowledged < 3'd2 || take_s);
+-    assign s_address = word_base + {7'd0, sent};
+-    assign s_data = payload[committed[3:0]][{lane, 7'd0}+:128];
++    assign s_rsp_ready = !reset && state == ACTIVE &&
++        (OVERLAP ? pending_writes != 0 && !drop : acknowledged < sent);
++    assign s_valid = !reset && state == ACTIVE && offer_has_data && !poisoned[write_slot[3:0]] &&
++        (OVERLAP ? pending_writes < 2 || take_s : sent < writes && (sent - acknowledged < 3'd2 || take_s));
++    assign s_address = offer_base + {7'd0, sent};
++    assign s_data = payload[write_slot[3:0]][{lane, 7'd0}+:128];
+     assign s_tag = {22'h12a000, s_address};
+ 
+     always_ff @(posedge clk) begin
+@@ -78,6 +86,8 @@
+             bursts <= 0;
+             pair <= 0;
+             pair_high <= 0;
++            offered <= 0;
++            pending_writes <= 0;
+             sent <= 0;
+             acknowledged <= 0;
+             done_error <= 0;
+@@ -92,6 +102,8 @@
+                     issued <= 0;
+                     returned <= 0;
+                     committed <= 0;
++                    offered <= 0;
++                    pending_writes <= 0;
+                     sent <= 0;
+                     acknowledged <= 0;
+                     done_error <= !legal;
+@@ -106,15 +118,26 @@
+                         if (rd_rsp_tag != {56'd0, returned}) done_error <= 1;
+                     end
+                     if (take_s && s_rsp_tag != ack_tag) done_error <= 1;
++                    if (OVERLAP) begin
++                        case ({take_offer,take_s})
++                            2'b10: pending_writes <= pending_writes + 1'b1;
++                            2'b01: pending_writes <= pending_writes - 1'b1;
++                            default: ;
++                        endcase
++                        if (skip_offer || (take_offer && sent + 1'b1 == writes)) begin
++                            offered <= offered + 1'b1;
++                            sent <= 0;
++                        end else if (take_offer) sent <= sent + 1'b1;
++                    end
+                     if (commit_burst) begin
+                         committed <= committed + 1'b1;
+-                        sent <= 0;
++                        if (!OVERLAP) sent <= 0;
+                         acknowledged <= 0;
+                         // A failed beat stays poisoned. Accepted work drains in order
+                         // before the scope can reset the datapath or admit another span.
+                         if (committed + 1'b1 == bursts) state <= REPORT;
+                     end else begin
+-                        if (s_valid && s_ready) sent <= sent + 1'b1;
++                        if (!OVERLAP && take_offer) sent <= sent + 1'b1;
+                         if (take_s) acknowledged <= acknowledged + 1'b1;
+                     end
+                 end
+--- a/project/rtl/block_local_native/s128_attention_core_scope.sv
++++ b/project/rtl/block_local_native/s128_attention_core_scope.sv
+@@ -4,7 +4,8 @@
+     parameter logic [31:0] TOPOLOGY=0,
+     parameter bit PIPELINE_KV_WRITES=1'b0,
+     parameter bit SELECT_V_BEAT=1'b0,
+-    parameter bit DDR_RESPONSE_QUEUE=1'b0
++    parameter bit DDR_RESPONSE_QUEUE=1'b0,
++    parameter bit OVERLAP_REFILL=1'b0
+ ) (
+     input logic clk,reset,
+     input logic service_valid,
+@@ -116,7 +117,7 @@
+     if (DDR_RESPONSE_QUEUE) begin : response_queue
+         wire [31:0] local_return = response_serial - refill_serial;
+         assign load_rd_tag = 0;
+-        s128_ddr_response_load load_span(
++        s128_ddr_response_load #(.OVERLAP(OVERLAP_REFILL)) load_span(
+             .clk,.reset(datapath_reset),.launch_valid(state==K_REFILL||state==V_REFILL),.launch_ready(load_ready),
+             .launch_base(refill_base),.launch_s_base(refill_s_base),
+             .launch_bursts(value_refill ? av_length : {1'b0,qk_columns,3'b0}),
+--- a/project/experiments/block_local_native/test_native_attention_core_scope.sv
++++ b/project/experiments/block_local_native/test_native_attention_core_scope.sv
+@@ -1,5 +1,5 @@
+ `timescale 1ns/1ps
+-module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT=380, parameter bit SELECT_V_BEAT=1'b0, DDR_RESPONSE_QUEUE=1'b0);
++module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT=380, parameter bit SELECT_V_BEAT=1'b0, DDR_RESPONSE_QUEUE=1'b0, OVERLAP_REFILL=1'b0);
+     logic clk, reset=1, start=0, ready, result_valid;
+     initial clk=0;
+     always #5 clk=~clk;
+@@ -86,7 +86,7 @@
+     wire allow_ack=mode==0 || cycle%5==0;
+     assign engine_ready=active && memory_ready && allow_request;
+     assign engine_rsp=active && memory_rsp && allow_ack;
+-    s128_attention_core_scope #(.TOPOLOGY(32'd25001),.PIPELINE_KV_WRITES(1),.SELECT_V_BEAT(SELECT_V_BEAT),.DDR_RESPONSE_QUEUE(DDR_RESPONSE_QUEUE)) scope(
++    s128_attention_core_scope #(.TOPOLOGY(32'd25001),.PIPELINE_KV_WRITES(1),.SELECT_V_BEAT(SELECT_V_BEAT),.DDR_RESPONSE_QUEUE(DDR_RESPONSE_QUEUE),.OVERLAP_REFILL(OVERLAP_REFILL)) scope(
+         .clk,.reset,.service_valid(p_valid),.service_ready(p_ready),.service_owner(p_owner),
+         .service_ticket(p_ticket),.service_descriptor(p_descriptor),.service_cancel_valid(p_cancel),
+         .service_cancel_ready(p_cancel_ready),.service_done_valid(p_done),.service_done_ready(p_done_ready),
+--- a/project/experiments/block_local_native/run_native_attention_core_scope.sh
++++ b/project/experiments/block_local_native/run_native_attention_core_scope.sh
+@@ -11,7 +11,7 @@
+  cd "$SLURM_SUBMIT_DIR"
+  exec srun --exact -n1 -c"$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
+   /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu \
+-  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK,SELECT_V_BEAT=${SELECT_V_BEAT:-0},DDR_RESPONSE_QUEUE=${DDR_RESPONSE_QUEUE:-0}" \
++  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK,SELECT_V_BEAT=${SELECT_V_BEAT:-0},DDR_RESPONSE_QUEUE=${DDR_RESPONSE_QUEUE:-0},OVERLAP_REFILL=${OVERLAP_REFILL:-0}" \
+   /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif bash "$PWD/source/$EXP/run_native_attention_core_scope.sh" in-container "$PWD" "${1:-}"
+ fi
+ source /OpenROAD-flow-scripts/env.sh
+@@ -53,7 +53,7 @@
+ top=test_native_attention_core_scope
+ "$vlt" --binary --timing --assert -Wall --timescale-override 1ns/1ps --x-initial unique --x-assign unique \
+  -j "$SLURM_CPUS_PER_TASK" --top-module "$top" -GMOTHER_WORDS="$mother_words" -GCONTEXT="$context" \
+- "-GSELECT_V_BEAT=1'b${SELECT_V_BEAT:-0}" "-GDDR_RESPONSE_QUEUE=1'b${DDR_RESPONSE_QUEUE:-0}" \
++ "-GSELECT_V_BEAT=1'b${SELECT_V_BEAT:-0}" "-GDDR_RESPONSE_QUEUE=1'b${DDR_RESPONSE_QUEUE:-0}" "-GOVERLAP_REFILL=1'b${OVERLAP_REFILL:-0}" \
+  -Wno-PINCONNECTEMPTY -CFLAGS "-std=c++17 -isystem $dram/src -isystem $dram/ext/headers" \
+  -LDFLAGS "-L$dram -Wl,-rpath,$dram -ldramsim3" "$PWD/$EXP/ddr_read_bridge.cpp" --Mdir "$out/obj" \
+  "$P"/{native_s_lint,p_program_lint}.vlt "$EXP/real_s_lint.vlt" "$gate/sram-lint.vlt" \
