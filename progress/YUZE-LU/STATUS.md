@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 15:36 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 将真实算子图中的一条 S32 残差映射到 C0，读回 32 个局控镜像及 Algo2 侧的 431 根控制网。111950 和三项否定对照通过。U 组通用数据输出缺 M10 接点，C0 输入供应、结果窗交接和母控调度待闭合。两项 PR #260 短程评估仍进行中。见[残差回执](../../work/YUZE-LU/219/native_ingress/SAME_PLAN_NATIVE_REQUEST.md#c0-的-s32-残差编译与搬运接口)。
+
 2026-11-14 15:15 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 从独立 Block V2 候选底座读回 5,935 根网、12,330 个 M10 端点，保护项拒绝改坐标及换底座。20 根接入诊断来自试布占用。111873、111882 和项目结构检查通过。下一步补齐目标服务和退休路径，短程 PR #260 作业 111805、111806 仍运行。见[同图交接](../../work/YUZE-LU/219/native_ingress/SAME_PLAN_NATIVE_REQUEST.md#候选底座独立读回)。
 
 2026-11-14 15:00 CST。#219 停止完整 P512/D128 作业 109409，使用 PR #260 的 TLM 短程方法对同图部署远程并行执行两个输入位置的 prefill 和两步 decode，作业 111805 与 111806 等待结果。111756 完成同页实时 QKV 的四条 KVR1 写回，111828 复核同一 Algo2 布线规范的接入诊断。见[复现与验收](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#pr-260-短程吞吐)。

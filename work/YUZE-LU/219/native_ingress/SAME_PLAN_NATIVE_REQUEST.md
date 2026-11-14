@@ -38,3 +38,18 @@ Algo2 的原生 `verify_handoff` 已读回同计划的 6,395 个信号成员、5
 先用本项目 `block_synthesis` 和 [Algo2 PR #259 的固定版本](https://github.com/rayggxia-workspace/LLMHardwareDesign/commit/4ebd2a2fc845ccc6a1c17ed1751f208bb5791a8f) 的 `upper_router` 设置 `PYTHONPATH`，再运行 `verify_candidate_algo2.py <handoff-dir> <candidate-base.json>`。111873 使用生成交接时的独立输入 `geometry-110384/base.json`。读回结果适用于当前候选底座及其已有路由需求。产品路径仍有 14 类接口未绑定。
 
 111882 从同一路由规范和 111290 的路由几何重算候选落点。20 根报告缺接入的网各有一个端点的唯一合法落点被已布线路占用，空网架上均可落。受影响为 P2 描述符 17 根、P1 fence 1 根、P0 控制 2 根。这个结果把诊断定位到试布占用。路由器保留非硬约束分类。复现用 `request_retirement/route-input-survey.sbatch`。回执 `route-survey-111882.json` 的 SHA-256 为 `c5125d6d5e0362befe6995cbc00d859798044d083c72881292c659b662d5beb1`。两项产物位于上述工作目录的 `algo2-readback-gu7sOs3Z`。
+
+## C0 的 S32 残差编译与搬运接口
+
+远端作业 111950 读取 Qwen2.5-3B 第 0 个输入位置、第 0 层 `/model/model/layers.0/Add_1` 的封存算子计划及 ADD2 描述符。选择 C0 的 S32 E32 服务，将 8 KiB 输出展开为 512 条 16 B 局部加法和 32 个局控镜像。原始计划在 U0 执行并含两次 DDR 读入。此实验显式要求两份输入已经在 C0 的 16 KiB 私有 SRAM 中，因此重新编译的是计算片段。每条 `L_EXEC` 后跟 `L_WAIT`，最后由局控报告任务完成。Algo2 独立复核该片段的 431 根控制网及 863 个 M10 端点。损坏指令描述符 CRC、改变操作数地址、换用其他 SRAM 三个对照均被拒绝。
+
+C0 的 128 位 `rx_data` 在源 DEF 中有 128 个 M10 接点。U1 源 DEF 的 128 位通用 `outgoing_data` 无 M10 接点，U0 暂存放置的接点清单也无此总线的 M10 接点。现有反向 C0→U0 索引搬运需求有 153 根已绑定候选线，包括数据、地址、接纳、存后确认与目的地预留信号。该需求来自原整图交接。残差结果在进入原请求之前仍需分配出入窗口、搬运及母控等待。
+
+PR #260 的模型在 S32 相加溢出时拒绝写入。C0 E32 指令可返回饱和状态。等价范围限定为各 lane 的和均落在 S32 范围内。此次检查覆盖机器记录和端点绑定，数值回归与母控执行待验收。
+
+复现在上述工作目录的 `residual-c0-PABZ4Gwh`，以 `resident.sbatch` 运行。源码和配置位于 `resident_s32/`。`c-e32-profile.json` 固定候选 C 网表、已归档的 RTL 证据及局部拓扑。复现时将该配置的 `rtl_archive_commit` 和 `rtl_archive_path` 指向的 Git 内容保存为配置目录下的 `rtl_witness`。远端复核使用 Algo2 固定版本 `4ebd2a2fc845ccc6a1c17ed1751f208bb5791a8f` 及 `issue250-u-n32-stored-link-20261112-01/staged/project/control_image_v0_1` 中的二进制编解码器。
+
+| 产物 | SHA-256 |
+| --- | --- |
+| `resident-111950/residual-proof.json` | `95aea6c6877a8b0b9a3b0da4ef57a648d1a6a2133c798211b9343b1c7cc4a3d5` |
+| `resident-111950/algorithm2-input.json` | `1e114e23e85fca0f38c2dda1631e337ebdf5023a2ef388bf490bdcdc39e39de3` |
