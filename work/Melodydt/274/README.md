@@ -97,3 +97,29 @@ sha256sum -c run-114376/output.sha256
 ```
 
 恢复时先把 114290 的 Gather 输出和这一组件接在同一时间线，再将 114340 的 QKV 记录以 16Q/8KV 接入并做两位置一致性检查。整模型吞吐 0/7。当前所有已提交作业均已结束。
+
+## 2026-11-15 整模型指令回放
+
+Qwen3 候选将每个位置的 Gather、输入 RMS、带 Q/K Norm 与 RoPE 的 16Q/8KV 注意力、O 投影、FFN 和残差编译为 MC 页面及 LC 描述符。Decode 同时编译最终归一化、全词表 HEAD16 和返回的 token。模型使用 512-bit SRAM、3,334 ps 核周期、双通道 630 ps DRAMsim3、32 DMA credits、8-beat KV 窗口。512 个历史位置的值为零；跨步状态必须经过 DDR 写完成回调后可读。映射采用串行 P 投影，另外两个 S 作有界中间存储，显式计入 SRAM 读写的跨组 COPY。该映射与 #260 Qwen2.5 的三 P FFN 调度不同，控制与互联服务为 TLM 候选。
+
+| 作业 | 节点及核数 | 结果 |
+| --- | --- | --- |
+| 115016、115017 | c64/node4，12 核 | 先后发现描述符未按 128 B 对齐、prompt 与固定 embedding 基址冲突。失败源和日志留在原目录。 |
+| 115019 | c64/node4，12 核 | COMPLETED 0:0。首层两个位置 4 页，5.307888 ms 模拟时间，256 笔 KV 写入、128 笔跨步读回，526,128 次 DDR 读与 256 次写全部对账。仅为联调。 |
+| 115033 | c64/node4，2×12 核 | 全 28 层短 Prefill 与两步 Decode 并行作业，完整结果待读回。 |
+| 115021 | c64/node2，6×10 核 | Gemma、Llama、Phi、Qwen3.5、Falcon 包成功。Granite 的极小值导致原打包器 FP16 scale 下溢，批次保留 FAILED 1:0。 |
+| 115035 | c64/node11，10 核 | Granite 修复重跑 COMPLETED 0:0。17,400 个极小权重组以零系数编码并计量量化误差，专家权重布局未合并。 |
+| 115036 | c64/node11，10 核 | Qwen3 用零值 512 历史 KV 的 FP32 对照 COMPLETED 0:0。首步输入 264，连续选出 1293 和 882。 |
+
+服务器任务根 `/public/home/yuzelu/Melodydt/runs/issue-274`。Qwen3 回放在 `qwen3-short-01`，源清单 SHA-256 为 `4a71d7c9740df03aa76ac143ad494777084556372aa85a0f552f8d44ad4139b3`，依赖见 `upstream.sha256`。115019 的 `prefill/result.json` SHA-256 为 `ab194b5e3526c87b94a6667f716d9f8ef95ca075fe13eab9ea0b830f4a4a2180`。115021、115035 的打包回执清单分别在 `pack-rest-01/packed-115021/receipts.sha256` 与 `pack-granite-02/packed-115035/receipts.sha256`，SHA-256 为 `0a304d0f6b0c809c0e39d75d6d0a0b966725bfe1ef10945013936c41091aff50` 和 `6056d9d754ad7f95cdd421361539499b8545f836414e27dad7dfc383cfc577a4`。115036 的 `qwen3-zero-reference/ref-115036/qwen3/reference.json` SHA-256 为 `5ea2ac7d7af4361b372533e742d91a2efbb62ed433e799de56f57f612ffa9c96`。
+
+```bash
+cd /public/home/yuzelu/Melodydt/runs/issue-274/qwen3-short-01
+sbatch --parsable --job-name=mdt-274q3full -p c64,c96 -N1 -n2 -c12 -t 06:00:00 -o slurm-%j.log qwen3_short.sbatch
+squeue -j 115033
+sacct -j 115033 --format=JobID,JobName,State,ExitCode,AllocCPUS,NodeList
+tail -n 25 run-115033/prefill.log run-115033/decode.log
+sha256sum -c run-115033/output.sha256
+```
+
+两项成功后核对 28 层×两个位置、两次词表退休、KV 每步写入和第二步读回、DDR 事务和散列。零历史 reference 比较两步 token 与 logits。六个已打包模型尚需各自的执行描述符和服务，特别是 Llama 的 64 维头和 RoPE、Gemma 的局部/全局注意力、Phi 融合投影、Qwen3.5/Falcon 的持续状态、Granite 的实际 MoE 路由。

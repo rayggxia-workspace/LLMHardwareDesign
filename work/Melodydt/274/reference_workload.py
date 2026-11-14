@@ -31,7 +31,7 @@ def data_path(archive, name):
     return Path(receipt["model_path"]), sha(checkpoint / "export_receipt.json")
 
 
-def run(model_path, label, out, threads, export_receipt=None):
+def run(model_path, label, out, threads, export_receipt=None, *, zero_history=False):
     out.mkdir()
     torch.set_num_threads(threads)
     torch.set_num_interop_threads(1)
@@ -63,6 +63,12 @@ def run(model_path, label, out, threads, export_receipt=None):
         if initial_state["length"] != 512:
             raise ValueError("checkpoint cache did not cover 512 input positions")
         torch.save(past, out / "history512.pt")
+        if zero_history:
+            if model.config.model_type != "qwen3":
+                raise ValueError("zero-history reference is currently defined for Qwen3")
+            for layer in past.layers:
+                layer.keys.zero_()
+                layer.values.zero_()
         del prefix
         step_tokens = []
         current = first
@@ -81,7 +87,8 @@ def run(model_path, label, out, threads, export_receipt=None):
             step_tokens.append({"input": current_id, "selected": int(current.item()), "state": state})
     (out / "input-ids.json").write_text(json.dumps(ids.flatten().tolist()) + "\n")
     receipt = {
-        "scope": "independent FP32 model reference with live 512-position history; no TLM timing",
+        "scope": "independent FP32 model reference; no TLM timing",
+        "history_payload": "zeros" if zero_history else "live FP32",
         "model": label, "checkpoint": str(model_path), "archived_export_receipt_sha256": export_receipt,
         "checkpoint_files": {p.name: {"bytes": p.stat().st_size, "sha256": sha(p)} for p in model_files},
         "torch": torch.__version__, "short_prefill": short_state, "initial_state": initial_state,
@@ -99,9 +106,10 @@ if __name__ == "__main__":
     parser.add_argument("output", type=Path)
     parser.add_argument("threads", type=int)
     parser.add_argument("--checkpoint", type=Path)
+    parser.add_argument("--zero-history", action="store_true")
     args = parser.parse_args()
     if args.checkpoint:
         path, source = args.checkpoint, None
     else:
         path, source = data_path(args.archive, args.model)
-    run(path, args.model, args.output, args.threads, source)
+    run(path, args.model, args.output, args.threads, source, zero_history=args.zero_history)
