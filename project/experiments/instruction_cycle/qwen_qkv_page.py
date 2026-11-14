@@ -1,19 +1,64 @@
 """Advance the 105530 serial P0 QKV page after its first KVR1 store."""
 
+import hashlib
+import json
 import struct
 
 from qwen_drl1_cycle import DRL1, run_drl1
 from qwen_kv_write import write_kv_burst
 from qwen_native_control import P_SCOPE, TOPOLOGY
-from qwen_native_ddr import require
+from qwen_native_ddr import Proof, WINDOWS, fields, require
 from qwen_page_dispatch import next_call, page_commit
 from qwen_post_projection import ADD2, KVR1, NATIVE_ABI, _descriptor, _s128, run_add2
-from qwen_prompt_cycle import BURST_BYTES, SRAM_WORD_BYTES
+from qwen_prompt_cycle import BURST_BYTES, ROW_BYTES, SRAM_WORD_BYTES, load_row
+from qwen_prompt_rms import range_shift, rms_edges
 
 
 ROPE = int.from_bytes(b"RPE1", "little")
 ROW_WORDS = 32
 WORDS_PER_BURST = BURST_BYTES // SRAM_WORD_BYTES
+HISTORY_ROW_SHA = (
+    "134e40c84572c83a5aaf999c23a702536df5c60d3acc22a70f8a6fd50e6e82f6",
+    "380fafd7343579c46fdcf3bc5da76d5df664a8fb27cc9f15f337fe0a68ab00d6",
+)
+
+
+def read_history_rows(archive, embedding):
+    """Bind the two additional historical tokens and their RMS scan profiles."""
+    proof = Proof(archive, WINDOWS["next_rms"][0])
+    program = json.loads(proof.read("generated/program.json"))["prompt_ingress"]
+    tokens = struct.unpack_from("<3I", proof.read("generated/token.bin"))
+    reference = tuple(int(line, 16) for line in proof.read("generated/history-meta.hex").splitlines())
+    gamma, baseline, *_ = map(int, fields(proof.read("generated/rms-descriptor.txt"), 7))
+    require(len(reference) == len(tokens) == 3 and tokens == tuple(program["tokens"])
+            and gamma == program["gamma_address"] and program["serial_rms"] is True,
+            "invalid historical row metadata")
+    rows = []
+    with embedding.open("rb") as source:
+        for token, metadata, expected in zip(tokens[1:], reference[1:], HISTORY_ROW_SHA):
+            source.seek(token * ROW_BYTES)
+            data = source.read(ROW_BYTES)
+            digest = hashlib.sha256(data).hexdigest()
+            require(len(data) == ROW_BYTES and metadata & 0xffffffff == token and digest == expected,
+                    "historical token differs from sealed embedding range")
+            _, _, selected = range_shift(struct.unpack("<{}i".format(ROW_BYTES // 4), data), baseline)
+            extra = selected - baseline
+            require(extra == (metadata >> 64) & 63, "historical RMS shift differs from sealed row metadata")
+            rows.append({"token": token, "address": program["embedding_address"] + (token - tokens[0]) * ROW_BYTES,
+                         "gamma_address": gamma, "extra_shift": extra,
+                         "row_sha256": digest})
+    return rows
+
+
+def _refill_history(ddr, retired, row):
+    # After K/V store number four or eight, the wrapper retires the old
+    # embedding row. The next token is already held in the one prompt beat.
+    embedding_done, _ = load_row(ddr, retired + 3, 1, row["address"], 0)
+    gamma_done, _ = load_row(ddr, embedding_done + 3, 3, row["gamma_address"], ROW_BYTES // SRAM_WORD_BYTES)
+    gamma_ack = gamma_done - 1
+    edges = rms_edges(gamma_ack, row["extra_shift"])
+    return {**row, "previous_store_retire": retired, "last_gamma_sram_ack": gamma_ack,
+            "row_publish": edges["row_publish_visible"]}
 
 
 def _rope(call, accepted, mode):
@@ -86,7 +131,7 @@ def _resident_result(resident, destination, kind):
         resident[destination] = kind
 
 
-def predict_generation_one_tail(page, fabric, last_retire, projection, *, last_ticket=7):
+def predict_generation_one_tail(page, fabric, last_retire, projection, *, last_ticket=7, history_rows=None):
     """Predict successive complete services 7 through `last_ticket` on one fabric."""
     require(page["generation"] == 1 and 7 <= last_ticket <= len(page["calls"])
             and projection.fabric is fabric and projection.last_ticket == 3 and projection.pending_output is None,
@@ -94,11 +139,19 @@ def predict_generation_one_tail(page, fabric, last_retire, projection, *, last_t
     stages = []
     retired = last_retire
     resident = {}
+    history = []
     for index in range(6, last_ticket):
         call = page["calls"][index]
         require(call["target"] == 0 and call["ticket"] == index + 1, "unexpected serial QKV CALL")
         control = next_call(page, index - 1, retired)
-        descriptor = _descriptor(fabric, call, control["descriptor_admissions"][0]["cycle"])
+        physical_ready = None
+        if index in (20, 40):
+            require(history_rows is not None and len(history_rows) == 2,
+                    "continuation needs the bound historical embedding rows")
+            history.append(_refill_history(fabric.ddr, retired, history_rows[len(history)]))
+            physical_ready = history[-1]["row_publish"]
+        descriptor = _descriptor(fabric, call, control["descriptor_admissions"][0]["cycle"],
+                                 physical_ready=physical_ready)
         accepted = descriptor["service_accept"]
         schema = call["schema"]
         if schema == P_SCOPE:
@@ -130,7 +183,7 @@ def predict_generation_one_tail(page, fabric, last_retire, projection, *, last_t
         retired = service["service_retire"]
         stages.append({"call": {"target": call["target"], "ticket": call["ticket"]}, "dispatch": control,
                        "descriptor": descriptor, "service": service})
-    result = {"stages": stages}
+    result = {"stages": stages, "history_rows": history}
     if last_ticket == len(page["calls"]):
         require(projection.pending_output is None, "generation-1 page retains a raw P projection lease")
         result["page_commit"] = page_commit(page, retired)

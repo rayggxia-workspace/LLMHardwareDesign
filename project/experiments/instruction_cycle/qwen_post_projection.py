@@ -18,7 +18,7 @@ KVR1 = int.from_bytes(b"KVR1", "little")
 NATIVE_ABI = 0x02500002
 
 
-def _descriptor(fabric, call, offer):
+def _descriptor(fabric, call, offer, *, physical_ready=None):
     """Fetch both beats with real sibling-lane issue and return skids."""
     ddr = fabric.ddr
     address = call["descriptor_address"]
@@ -30,19 +30,23 @@ def _descriptor(fabric, call, offer):
     entry = channel * SLOTS_PER_CHANNEL
     tags = [fabric._allocate(entry + index, 0) for index in range(2)]
     addresses = [address + index * BURST_BYTES for index in range(2)]
-    second_reserved = offer + 3
+    second_offered = offer + 3
     cycle = offer + 2
+    if physical_ready is not None:
+        require(physical_ready >= second_offered, "descriptor block must hold both reserved beats")
+        cycle = physical_ready
+    first_physical = cycle
     tick = cycle * CORE_PS // DDR_PS
     device = ddr.dram[channel]
     require(tick >= ddr.tick[channel] and not device.completions(tick), "descriptor DDR did not start idle")
 
-    offered = {first_lane: 0}
+    offered = {first_lane: 0} if physical_ready is None else {first_lane: 0, first_lane + 1: 1}
     queues = [deque(), deque()]
     pending, complete = {}, set()
     skids = deque()
     admitted, returned, responses, lanes = ([None, None] for _ in range(4))
     while None in responses:
-        require(cycle - offer < 4096, "post-projection descriptor did not drain")
+        require(cycle - first_physical < 4096, "post-projection descriptor did not drain")
         if skids:
             responses[skids.popleft()] = cycle
         # Capture physical responses and issue admitted holds in lane order.
@@ -58,7 +62,7 @@ def _descriptor(fabric, call, offer):
                 queue.append(index)
                 admitted[index], lanes[index] = cycle, lane
                 ddr.events.append(("admit", cycle, lane, tags[index], addresses[index]))
-        if cycle + 1 == second_reserved:
+        if cycle + 1 == second_offered:
             # At offer+2 the second beat moves RESERVED→OFFERED. If the
             # prior lane is still held, allocate the second lane instead.
             lane = first_lane + int(first_lane in offered)

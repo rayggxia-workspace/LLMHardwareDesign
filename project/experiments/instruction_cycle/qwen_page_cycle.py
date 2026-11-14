@@ -92,13 +92,15 @@ def predict(archive, binary, config, output, embedding, mode, *, weight_records=
                     result["post_projection"] = post
                     stages = post["stages"]
                     if weight_records == THROUGH_QKV_PAGE:
-                        from qwen_qkv_page import predict_generation_one_tail
+                        from qwen_qkv_page import predict_generation_one_tail, read_history_rows
                         projection.release_output(*projection.pending_output)
                         tail = predict_generation_one_tail(page, fabric, stages[-1]["service"]["service_retire"],
-                                                           projection, last_ticket=len(page["calls"]))
+                                                           projection, last_ticket=len(page["calls"]),
+                                                           history_rows=read_history_rows(archive, embedding))
                         stages.extend(tail["stages"])
                         result["scope"] = "105530 generation 1 through the complete QKV page commit"
                         result["page_commit"] = tail["page_commit"]
+                        result["history_rows"] = tail["history_rows"]
                     for stage in stages:
                         stage_identity = stage["call"]
                         call = page["calls"][stage_identity["ticket"] - 1]
@@ -201,7 +203,7 @@ def compare(archive, prediction, edge_log, *, weight_records=0):
     if weight_records >= AFTER_Q:
         bursts += 3 * DESCRIPTOR_BURSTS + DRL1_BURSTS
     if weight_records == THROUGH_QKV_PAGE:
-        bursts = 122643
+        bursts = 123155
     require(len(expected) == 4 * bursts, "incomplete DDR prefix prediction")
     proof = Proof(archive, WINDOWS["next_rms"][0])
     trace = "DDR-{}/transactions.tsv".format(mode)
