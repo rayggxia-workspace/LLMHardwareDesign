@@ -250,3 +250,5 @@ sbatch --parsable run_qwen_fast_tlm.sbatch
 ```
 
 `run_qwen_page_cycle.sbatch` 的 `--through-k0`、`--through-k1`、`--through-q`、`--through-first-kv-store` 逐级验证权重记录重叠、M/COPY/A SRAM、投影退休、偏置与严格 DDR KV 提交。110720 两种模式各匹配 4,655 笔读、8 笔写的全部 18,652 个事件和 24 个控制标记。留出 105572 先锁定预测散列，模式 0 全部匹配，模式 1 首条权重物理接收预测晚五拍。留出只覆盖首个 K0，按真实定长请求保持并修复量化阻塞后，诊断两种模式均对齐；原始留出失败仍保留。详细边界和所有 Slurm 路径见[评估回执](../../../work/Melodydt/265/qwen-decode-evaluation-107361.json)。
+
+`--through-qkv-page` 独立完成首个 QKV 页的 124 个服务及页提交。110962 每种模式匹配 492,620 读事件、384 严格写事件和 497 控制标记。覆盖底座对下一历史行的 embedding/RMS 补载、挂起描述符、跨调用 SRAM 驻留、投影 bank 复用和 RoPE。用 `--through-attention-page` 继续同一 DDR 状态，111002 覆盖第二页全部 16 组 ATT1/DWS1，两页每种模式累计匹配 500,572 读事件、896 写事件、631 控制标记。页提交 pre-edge 590747／643095。105572 后续扩展诊断到首个完整 Q 退休引导的下一描述符，两种模式各匹配 18,572 事件；该扩展的预测在读取超出原 K0 的时序前封存。
