@@ -138,6 +138,11 @@ def lower(model, hardware):
     """
     h = deepcopy(hardware)
     spec = h['event_model']
+    tile_specs, tile_order = {}, {}
+    if 'tile_groups' in spec:
+        from event_tiling import lower_tiles
+
+        model, tile_specs, tile_order = lower_tiles(model, spec['tile_groups'])
     values = model['values']
     nodes = model['tasks']
     backing = set(spec.get('initial_backing', ()))
@@ -184,7 +189,8 @@ def lower(model, hardware):
         bindings = []
         for recipe in by_operator.get((node.get('domain', ''), node['op']), ()):
             if (recipe['inputs'] != profile_in or recipe['outputs'] != profile_out
-                    or recipe.get('attributes', {}) != node.get('attributes', {})):
+                    or recipe.get('attributes', {}) != node.get('attributes', {})
+                    or recipe.get('tile') != tile_specs.get(name)):
                 continue
             binding = deepcopy(recipe['binding'])
             stages = binding['event_stages']
@@ -220,7 +226,7 @@ def lower(model, hardware):
             bindings.append(binding)
         domain, operator = node.get('domain', ''), node['op']
         reason = f'{name}: no qualified event recipe for {domain}/{operator} with inputs {profile_in} and outputs {profile_out}'
-        if not bindings and operator == 'Gather' and not domain:
+        if not bindings and operator == 'Gather' and not domain and name not in tile_specs:
             try:
                 bindings = indexed_bindings(node, model, h)
             except Unsupported as error:
@@ -236,8 +242,9 @@ def lower(model, hardware):
                 written = [w for w, value in stage.get('outputs', {}).items() if value in external_outputs]
                 if written:
                     stage['backed_outputs'] = list(dict.fromkeys((*stage.get('backed_outputs', ()), *written)))
-        tasks.append({'id': name, 'after': sorted({producers[v] for v in inputs if v in producers}),
-                      'bindings': bindings})
+        after = {producers[v] for v in inputs if v in producers}
+        after.update(tile_order.get(name, ()))
+        tasks.append({'id': name, 'after': sorted(after), 'bindings': bindings})
 
     missing = set(model['outputs']) - initial - producers.keys()
     if missing:

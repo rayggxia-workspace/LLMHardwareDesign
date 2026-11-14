@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 20:57 CST。#219 的 tile 前沿独立分支增加配方驱动的 tile 任务图。三类算子对的远程对照 113624 完成，418 项回归 113625 通过。下一步为真实底座补齐独立完成的切片配方，并核对同计划原生指令及吞吐。[回执](../../work/YUZE-LU/219/TILE_FRONTIER.md)。
+
 2026-11-14 16:39 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加外部指定的 SRAM 实例、容量和读写位宽。112358、112359 用同一底座分别读回 128-bit 和 512-bit 读配置，核对对齐事务换算和 Gather 单字写约束。远端 10 项测试通过，目标底座执行仍待接入。[参数及回执](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#sram-容量和端口位宽由外部配置)。
 
 2026-11-14 16:25 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加 Algo1 指令包、同计划连线与独立底座的 TLM 准入检查。远端 112167 核对 184,927 页与 639 页 Gather 替换，定位 12 类派发缺口、2 类完成信号缺口，以及 7 类等待 TLM 实现的候选服务。PR #260 原短程作业按诊断记录。下一步用目标绑定的资源时序与单页 Gather 验证实际指令执行。[回执及复现](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#对同计划底座的-tlm-准入)。

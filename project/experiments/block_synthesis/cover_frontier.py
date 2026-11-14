@@ -262,9 +262,11 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
                     raise ValueError('backbone transport choice differs from verified plan')
             seeds[s.done.bit_count()]=s
     buckets[0][key(initial)]=initial;complete=[]
+    peak_bucket = 0
     for count in range(len(tasks)+1):
         pool=buckets.pop(count,{})
         if count in seeds:pool.setdefault(key(seeds[count]),seeds[count])
+        peak_bucket = max(peak_bucket, len(pool))
         candidates=pool.values()
         if model and count==len(tasks):
             candidates=[s for s in candidates if model.external_outputs <= s.execution.backing.keys()
@@ -293,7 +295,8 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     timing_stats=({'timing':model.timing,'transport_limit':transport_limit,**transport_counts}
                   if live_replay else {})
     if unencodable:timing_stats['completion_only_rejections']=unencodable
-    if not complete:return {'status':'no_plan_in_bounded_search','expanded':expanded,**timing_stats}
+    if not complete:return {'status':'no_plan_in_bounded_search','expanded':expanded,
+                            'peak_bucket_states':peak_bucket,**timing_stats}
     best=min(complete,key=lambda s:(s.makespan,s.traffic,netcost(s)));rows=[];history=best.history
     while history is not None:rows.append(history.row);history=history.previous
     rows.reverse()
@@ -307,7 +310,8 @@ def search(tasks,hardware,covers=(),*,width=16,ready_limit=4,wire_budget=None,ba
     return {'status':'planned','kind':'event-cover-frontier-v1' if model else 'convex-cover-frontier-v1',
         **timing_stats,
         'tasks':rows,'makespan':best.makespan,**traffic,'nets':sorted(selected_nets),'wire_cost':netcost(best),'final_read_cache':best.cache,
-        'expanded':expanded,'merged':merged,'pruned':pruned,'width':width,'ready_limit':ready_limit,
+        'expanded':expanded,'merged':merged,'pruned':pruned,'peak_bucket_states':peak_bucket,
+        'width':width,'ready_limit':ready_limit,
         'covered_original_tasks':len(tasks),'multi_task_decisions':sum(len(r['covers'])>1 for r in rows),
         'backbone_prefix_slots':seed_kept,'rank_policy':rank_policy,
         'completion_calls':completion.calls if completion else 0,
