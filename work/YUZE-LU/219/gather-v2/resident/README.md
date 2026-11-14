@@ -26,3 +26,21 @@ Prompt 绑定把字地址直接编码进 PM，v45 客户端 3 取一个对齐的
 
 `lower-request.sbatch` 对模式 1 编码真实 prompt 地址，对模式 2 记录前一
 退休步、目标字和 lane 的确认依赖。模式 2 仍需母控接到 U0 的真实写入提交路径。
+
+## Decode 退休索引与新版端点
+
+`lower-request.sbatch` 输出的 decode PM 先预留目标词，再接收并等待 SRAM 写确认，
+随后读取该词的 lane 8 执行 Gather。母控侧须从实际退休事件提供该词。
+
+先生成四拍测试端并应用 `prompt-frame.patch`，再执行
+`patch -p0 < decode-frame.patch`。运行
+`run-decode.sbatch WORK FRAMEWORK INGRESS INPUT_INDEX_TSV ARCHIVE_CHECKER`。
+测试端重放作业 105727 的封存词表 logits，再由真实 argmax 产生 token。
+正常与延迟 ACK 两个模式使用同一份局控程序。
+
+新版候选的综合与摆位沿用 map-frame、stage-frame、audit-frame。综合前在 WORK
+创建 `tmp` 目录。用
+`handoff-prompt.sbatch WORK FRAMEWORK DMA_EVIDENCE_DIR PLACE_DIR STAGED_PORTS_TSV TESTED_PROMPT_PM`
+重新导出经过程序字节核对的 Algo2 输入。
+`qualify-decode.sbatch WORK FRAMEWORK BASE STORED_BUNDLE PLACE_DIR STAGED_PORTS_TSV`
+核对同版候选的存储链路端点。该回执保留退休源未绑定状态。

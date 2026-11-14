@@ -66,6 +66,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('base','place','audited_ports','compiled','reference_pm','rules','out'):
         parser.add_argument(name,type=Path)
+    parser.add_argument('--prompt-address', type=lambda value:int(value,0))
     args=parser.parse_args()
     base=read_base(args.base)
     signature=stage_base(base,args.place,args.audited_ports)
@@ -81,7 +82,8 @@ def main():
     assert result['status']=='planned', result
     program=result['outputs']['program']
     command,=program['locals']['U0']
-    pm=local_image(command,topology=0x02500031,image_id=1,pack_image=pack_image)
+    pm=local_image(command,topology=0x02500031,image_id=1,pack_image=pack_image,
+                   prompt_address=args.prompt_address)
     assert pm==args.reference_pm.read_bytes()
     rules=json.loads(args.rules.read_bytes())
     resolved=result['resolved_hardware']

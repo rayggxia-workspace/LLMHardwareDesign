@@ -808,3 +808,32 @@ U0 外层四拍 CALL 接口执行同一镜像，使用单银行程序 SRAM，验
 归档作业 105727 在前一底座验证了 151936 个真实 logits 经词表退休得到 token 81917，
 并在写入确认后消费。Block V2 上仍待把该依赖接到实际退休源，完成整图绑定和
 #260 固定入口的 P512/D128 实际退休。当前没有整机速度结论。
+
+## Decode 退休索引与新版 U0 接点
+
+Algo1 给 127 个 decode 边界生成目标 PM，顺序为预留 SRAM word、接收已退休 token、
+等真实 SRAM 写确认、读取索引、查表、回报目标行提交。每个源申请保留所需退休步。
+与旧 PM 相比，原生 LC 的描述符从一条增加到三条，共 640 B。
+
+110370 从经过封存检查的 151936 个真实 S32 logits 用原生 argmax 在现场得到 token 81917。
+测试端将该值经原生 `native_retired_token_index` 接入 SRAM 存储链路。
+正常与延迟 ACK 模式都确认下一次 Gather 等到了索引提交。目标通过 128 次 DMA 返回读
+真实权重行，512 次写确认后按实际 SRAM 内容做逐位核对。在延迟模式下索引确认
+由第 38626 拍推至 38635 拍。这个回放隔离了索引交接，词表投影来自封存的旧底座轨迹。
+110363 验证了过早发令会触发局控 stall watchdog，正式编排须在退休后发下一页 CALL。
+初次验证 110362 的测试端曾把镜像长度设为 624 B，已按实际 640 B 调整并重跑。
+
+新版 U0 的综合、候选摆位、M10 接点与下层全局布线分别在 110379、110380、110381 完成。
+接点核对重用 C0→U0 存储链路线束，153 个逐位成员和 650 个 DMA 成员均有候选几何。
+C0 提供同一版底座上的传输端点。当前记录尚无词表退休源到 C0 的已验证绑定。
+新版候选另从相同首条 prompt 计划导出 Algo2 输入，局控程序与 110353 实际执行字节一致。
+
+| 作业 | 归档 | SHA-256 |
+| --- | --- | --- |
+| 110369 | `request-110369/local-sidecars.json` | `e5b923317150d7dfbe36d453ec439352fe7fd2b6d85719cb0fe45d628e41065b` |
+| 110370 | `decode-program-110370/assets.json` | `4238cf5fa097196ad220c81d1c83683fe5e5dc13bf5fdd2f33be91fd38bcc115` |
+| 110384 | `geometry-110384/geometry-requirements.json` | `ec7aeaf0ac37a55332186378b1889e42c5eccabd53c8a0b14a50c3a8dfee2472` |
+| 110385 | `handoff-110385/algorithm2-input.json` | `c65c89d50cfb78d8e9538dc333f5bbbbe313e8686f5304860e0e57f33ccb3af1` |
+
+远端目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em/full-graph-zwl0Tr/merged-bmMd5X/native-request-6WI0tH/framework-r11-CatJ8r/ingress-route-iN0LbH/resident-gather-HefhYQ/prompt-ddr-6T8eOJ/decode-feedback-xts0x7`。下一步是把退休服务、主控派发和真实存储路径绑定至同一完整计划，
+然后按固定 #260 在目标底座验收真实 KV 和 P512/D128 token 退休。

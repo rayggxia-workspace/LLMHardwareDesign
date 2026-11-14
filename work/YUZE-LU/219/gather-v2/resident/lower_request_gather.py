@@ -48,11 +48,20 @@ def main():
                 raise ValueError('invalid sealed retired token placement')
             source = {'kind': 'previous_retired_token', 'retired_step': step - 1,
                       'word': dest, 'lane_offset': lane,
-                      'prerequisite': 'retired_token_sram_commit_ack'}
+                      'prerequisite': 'retired_token_sram_commit_ack',
+                      'transport': 'u-stored-link',
+                      'target_completion': 'LINK_RECEIVE'}
         local = local_image(command, topology=topology, image_id=1, pack_image=pack_image,
-                            prompt_address=source.get('address'))
+                            prompt_address=source.get('address'),
+                            retired_index={k:source[k] for k in ('word', 'lane_offset')} if mode == 2 else None)
         header = unpack_header(local[:128])
         d = header['execution_offset']
+        if mode == 2:
+            if (header['execution_count'] != 3 or
+                    tuple(unpack_from('<H', local, d+i*128+4)[0] for i in range(3)) != (0x103, 0x102, GATHER)
+                    or unpack_from('<I', local, d+64)[0] != dest):
+                raise ValueError('retired index wait does not bind the planned destination word')
+            d += 256
         table, table_rows, offset, target, bits = unpack_from('<QIHHH',descriptor,16)
         a, b, c, e = unpack_from('<IIII',local,d+64)
         assert (a|(b&0xffff)<<32,c,b>>16,e)==(table,table_rows,offset,target) and bits==32
@@ -78,7 +87,7 @@ def main():
     report = {'source_gather_plans':len(records),'prompt_index_plans':sum(x['source_mode']==1 for x in records),
               'previous_token_plans':sum(x['source_mode']==2 for x in records),'unique_local_images':len(images),
               'prompt_dma_bytes':sum(x['input_source'].get('record_bytes', 0) for x in records),
-              'decode_requires_external_commit':True,
+              'decode_requires_token_owner_binding':True,
               'bytes_by_image':images,'mother_integration':False,'target_executed':False}
     (args.output/'summary.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n')
     print(json.dumps(report,sort_keys=True))

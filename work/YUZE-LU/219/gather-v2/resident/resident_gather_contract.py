@@ -5,6 +5,8 @@ from struct import unpack_from
 LINK_ABI = 0x01930001
 CAPACITY_ID = 0x17630001
 GATHER = 0x0104
+LINK_RESERVE = 0x0103
+LINK_RECEIVE = 0x0102
 COMPLETION = 'destination_commit_ack'
 WINDOW_BYTES = 8192
 ADDRESS_LIMIT = 1 << 48
@@ -37,7 +39,7 @@ def words(command):
         raise ValueError('Gather operands cannot own disjoint native SRAM windows')
     return table & 0xffffffff, (table >> 32) | offset << 16, rows, dest//16
 
-def local_image(command, *, topology, image_id, pack_image, prompt_address=None):
+def local_image(command, *, topology, image_id, pack_image, prompt_address=None, retired_index=None):
     if any(type(n) is not int or not 0 < n < 1 << 32 for n in (topology, image_id)):
         raise ValueError('invalid resident U image identity')
     fields = words(command)
@@ -46,15 +48,33 @@ def local_image(command, *, topology, image_id, pack_image, prompt_address=None)
                 or prompt_address % 4):
             raise ValueError('invalid native DDR prompt index address')
         fields += (prompt_address & 0xffffffff, (prompt_address >> 32) | (1 << 16))
-    code = [{'op': 'L_EXEC', 'a': 0, 'b': 0, 'c': 0}, {'op': 'L_WAIT', 'x': 1}, {'op': 'L_END'}]
+    records = [(GATHER, fields)]
+    if retired_index is not None:
+        if prompt_address is not None:
+            raise ValueError('a Gather command must use a single index source')
+        if (not isinstance(retired_index, dict)
+                or set(retired_index) != {'word', 'lane_offset'}
+                or type(retired_index['word']) is not int
+                or retired_index['lane_offset'] != 8
+                or not 0 <= retired_index['word'] < 1024
+                or command['read'][0]['address'] != 16 * retired_index['word'] + 8):
+            raise ValueError('retired token does not match the indexed SRAM word and lane')
+        records[:0] = [(LINK_RESERVE, (retired_index['word'],)), (LINK_RECEIVE, ())]
+    code = []
+    for index in range(len(records)):
+        code.extend(({'op': 'L_EXEC', 'a': 0, 'b': 0, 'c': index}, {'op': 'L_WAIT', 'x': 1}))
+    code.append({'op': 'L_END'})
     header = {'entry_pc': 0, 'max_steps': len(code), 'resource_mask': 1,
               'program_image_id': image_id, 'topology_id': topology, 'native_abi_id': LINK_ABI,
               'capacity_profile_id': CAPACITY_ID}
     task = {'block_type': 0, 'entry_pc': 0, 'max_steps': len(code), 'required_resources': 1,
             'program_image_id': image_id, 'topology_id': topology, 'native_abi_id': LINK_ABI}
-    execution = {'resource': 0, 'service': 0, 'native_op': GATHER, 'native_abi_id': LINK_ABI,
-                 **{f'native{i}': value for i, value in enumerate(fields)}}
-    return pack_image('local', code, {'task': [task], 'execution': [execution]}, header, instruction_version=2)
+    executions = [
+        {'resource': 0, 'service': 0, 'native_op': opcode, 'native_abi_id': LINK_ABI,
+         **{f'native{i}': value for i, value in enumerate(operands)}}
+        for opcode, operands in records
+    ]
+    return pack_image('local', code, {'task': [task], 'execution': executions}, header, instruction_version=2)
 
 def demand(site, client):
     if not site or type(client) is not int or client not in range(3, 9):

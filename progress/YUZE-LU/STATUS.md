@@ -1,5 +1,6 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 将 decode 的索引写确认编入 127 条原生 U0 Gather。正常和背压两种回归从封存 logits 现场选 token 并核对真实权重行。新 U0 网表重建了 Algo2 接口。全图词表退休源、母控与 U0 的写入路径仍需共同绑定。见[远端回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#decode-退休索引与新版-u0-接点)。
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 从 639 个封存 Gather 生成索引来源和局控程序。U0 经 v45 DMA 从真实 prompt 记录取索引并按 512 笔 SRAM 提交回报。Decode 的 127 条入口均记录上一退休步的写确认依赖，目标底座上的退休输送和固定 #260 完整请求待接入。见[远端回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#u0-从-ddr-取-prompt-索引)。
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 由同一 Gather 计划生成 U0 局控程序和 650 根数据网。真实局控经四拍入口执行首条 Gather，v45 DMA 交付 128 笔真实权重数据，目标 SRAM 512 笔提交后回报完成。Algo2 读回候选端点。详细布线停在 N32 接入，仍需接上母控索引供给并验收 #260 全请求。见[远端回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#u0-gather-的局控程序和两端布线交接)。
 

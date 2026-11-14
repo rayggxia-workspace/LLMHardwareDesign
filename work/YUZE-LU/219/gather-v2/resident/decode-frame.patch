@@ -1,0 +1,241 @@
+--- tb_u_gather_frame.sv
++++ tb_u_gather_decode.sv
+@@ -4,17 +4,46 @@
+   always #5 clk=~clk;
+   integer cycle=0, issued=0, commits=0, index_reads=0;
+   reg [127:0] expected_row[0:511];
+-  reg [127:0] image[0:21];
+-  reg [31:0] index_asset[0:0];
++  reg [127:0] image[0:39];
+   localparam logic [63:0] TABLE=64'd3298373632;
+-  logic [63:0] row_address, prompt_address;
+-  logic prompt_mode;
+-  reg [127:0] expected_prompt[0:7];
+-  string prompt_path;
+-  integer prompt_beats;
++  localparam integer LOGIT_WORDS=37984;
++  localparam logic [31:0] TOKEN_GENERATION=32'd127;
++  reg [127:0] logits[0:LOGIT_WORDS-1];
++  logic [63:0] row_address;
++  logic [15:0] pm_bytes;
++  logic [31:0] logit_word=0;
++  logic token_cmd=0, feed_logits=0, stall_mode;
++  wire token_cmd_ready, logit_ready, retired_valid, retired_ready, retired_error;
++  wire [31:0] retired_token,retired_tag;
++  wire index_done,index_error,index_ack_ready;
++  wire [31:0] index_tag;
++  wire [9:0] index_word,link_addr;
++  wire [127:0] index_data;
++  wire link_reserved;
++  integer retire_at=-1,index_commit_at=-1;
++  string logits_path, mode;
++  wire ack_enable=!stall_mode || cycle>=index_accept_at+11;
++  integer index_accept_at=-1;
++  s32_token_argmax argmax(
++    .clk,.reset,.cmd_valid(token_cmd),.cmd_ready(token_cmd_ready),
++    .cmd_length(32'd151936),.cmd_tag(TOKEN_GENERATION),
++    .in_valid(feed_logits && logit_word<LOGIT_WORDS),.in_ready(logit_ready),
++    .in_index(logit_word*4),.in_mask(4'hf),.in_data(logits[logit_word[15:0]]),
++    .done_valid(retired_valid),.done_ready(retired_ready),.done_token(retired_token),
++    .done_tag(retired_tag),.done_logit(),.done_error(retired_error));
++  native_retired_token_index index_writer(
++    .clk,.reset,.request_valid(retired_valid && !retired_error && link_reserved),
++    .request_ready(index_ready),.request_generation(retired_tag),
++    .request_token(retired_token),.request_word(link_addr),.s_valid(incoming_valid),
++    .s_ready(incoming_ready),.s_word(index_word),.s_data(index_data),.s_tag(index_tag),
++    .ack_valid(incoming_ack && ack_enable),.ack_ready(index_ack_ready),
++    .ack_tag(index_tag),.ack_error(1'b0),.done_valid(index_done),
++    .done_ready(1'b1),.done_error(index_error));
++  wire index_ready;
++  assign retired_ready=index_ready && link_reserved && !retired_error;
+   localparam logic [31:0] TOPOLOGY=32'h02500031;
+   logic release_valid=0,deploy=0,cfg_valid=0,cfg_take=0,task_valid=0,event_take=0;
+-  logic incoming_valid=0;
++  wire incoming_valid;
+   logic [2:0] cfg_op=0;
+   logic [13:0] cfg_addr=0;
+   logic [127:0] cfg_data=0;
+@@ -27,7 +56,7 @@
+   wire pm_req,pm_ready,pm_write,pm_rsp,pm_take,pm_error;
+   wire [3:0] life;
+   integer last_commit=-1;
+-  string image_path, row_path, index_path;
++  string image_path, row_path;
+   wire frame_ready,tx_valid,tx_sop,tx_eop,link_fault,link_drained;
+   logic tx_ready=0;
+   logic [2:0] tx_words=0;
+@@ -38,7 +67,7 @@
+     .release_valid_i(release_valid),.release_sequence_i(32'd1),.release_epoch_i(32'd1),
+     .deploy_valid_i(deploy),.deploy_generation_i(32'd1),.poison_o(poison),
+     .cfg_req_valid_i(cfg_valid),.cfg_req_op_i(cfg_op),.cfg_req_generation_i(32'd1),
+-    .cfg_req_address_i(cfg_addr),.cfg_req_data_i(cfg_data),.cfg_req_total_bytes_i(16'd352),
++    .cfg_req_address_i(cfg_addr),.cfg_req_data_i(cfg_data),.cfg_req_total_bytes_i(pm_bytes),
+     .cfg_req_image_id_i(image[3][96+:32]),.cfg_req_topology_id_i(TOPOLOGY),
+     .cfg_req_abi_id_i(32'h01930001),.cfg_req_capacity_id_i(32'h17630001),
+     .cfg_req_proof_i(1'b1),.cfg_rsp_ready_i(cfg_take),.cfg_req_ready_o(cfg_ready),
+@@ -55,8 +84,9 @@
+     .probability_ack_sequence('0),
+     .dma_req_valid,.dma_req_ready,.dma_req_address,.dma_req_tag,.dma_req_channel,.dma_req_record_beats,
+     .dma_rsp_valid,.dma_rsp_ready,.dma_rsp_tag,.dma_rsp_data,
+-    .incoming_valid,.incoming_ready,.incoming_addr(10'd512),.incoming_data({96'b0,index_asset[0]}),
+-    .incoming_ack,.incoming_ack_ready(1'b1),.peer_rx_reserved(1'b0),.peer_rx_addr('0),
++    .incoming_valid,.incoming_ready,.incoming_addr(index_word),.incoming_data(index_data),
++    .incoming_ack,.incoming_ack_ready(index_ack_ready && ack_enable),
++    .link_rx_reserved(link_reserved),.link_rx_addr(link_addr),.peer_rx_reserved(1'b0),.peer_rx_addr('0),
+     .outgoing_ready(1'b0),.outgoing_ack(1'b0)
+   );
+   wire dma_req_valid,dma_req_ready,dma_req_channel,dma_rsp_ready;
+@@ -127,13 +157,8 @@
+         for (int lane=0;lane<4;lane++) begin
+           if (backend_valid[lane] && backend_ready[lane]) begin
+             int beat;
+-            if (backend_count < prompt_beats) begin
+-              beat=int'((backend_addr[64*lane+:64]-prompt_address)/64);
+-              assert (beat>=0 && beat<2);
+-            end else begin
+-              beat=int'((backend_addr[64*lane+:64]-row_address)/64);
+-              assert (beat>=0 && beat<128 && beat/2==(backend_count-prompt_beats)/2);
+-            end
++            beat=int'((backend_addr[64*lane+:64]-row_address)/64);
++            assert(beat>=0 && beat<128 && beat/2==backend_count/2);
+             assert (lane/2==int'(backend_addr[64*lane+11]));
+             assert (!arrived[beat%2]);
+             arrived[beat%2]=1;
+@@ -154,22 +179,33 @@
+           backend_rsp_valid[first_lane]<=1;
+           backend_rsp_tags[64*first_lane+:64]<=backend_tag[phase];
+           for (int i=0;i<4;i++)
+-            if (response_count<prompt_beats)
+-              backend_rsp_data[512*first_lane+128*i+:128]<=expected_prompt[4*phase+i];
+-            else
+-              backend_rsp_data[512*first_lane+128*i+:128]<=expected_row[8*((response_count-prompt_beats)/2)+4*phase+i];
++            backend_rsp_data[512*first_lane+128*i+:128]<=expected_row[8*(response_count/2)+4*phase+i];
+           if (phase==0) arrived=0;
+         end
+         backend_have<=arrived;
+       end
++    if (feed_logits && logit_word<LOGIT_WORDS && logit_ready)
++      logit_word<=logit_word+1;
++    if (retired_valid && retired_ready) begin
++      assert(retired_tag==TOKEN_GENERATION && retired_token==81917 && logit_word==LOGIT_WORDS);
++      retire_at<=cycle;
++      row_address<=TABLE+64'(retired_token)*8192;
++    end
++    if (incoming_valid && incoming_ready) begin
++      assert(retire_at>=0 && link_reserved && index_word==512 && index_tag==TOKEN_GENERATION);
++      assert(index_data=={32'd0,retired_token,64'd0});
++      index_accept_at<=cycle;
++    end
++    if (incoming_ack && index_ack_ready && ack_enable) begin
++      assert(index_accept_at>=0 && (!stall_mode || cycle>=index_accept_at+11));
++      assert(dut.local_group.l_rsp && dut.local_group.l_take && !dut.local_group.gather_active);
++      index_commit_at<=cycle;
++    end
++    if (index_done) assert(!index_error && index_commit_at>=0);
++    if (index_commit_at<0) assert(!dma_req_valid && index_reads==0 && !tx_valid);
+     if (dma_req_valid && dma_req_ready) begin
+-      if (issued < prompt_beats) begin
+-        assert(dma_req_address==prompt_address+64*issued && dma_req_tag==32'(128+issued));
+-      end else begin
+-        assert(dma_req_address==row_address+64*(issued-prompt_beats) &&
+-               dma_req_tag==32'(issued-prompt_beats));
+-        assert(response_count>=prompt_beats);
+-      end
++      assert(index_commit_at>=0 && cycle>index_commit_at && index_reads==1);
++      assert(dma_req_address==row_address+64*issued && dma_req_tag==32'(issued));
+       assert(dma_req_channel==dma_req_address[11] && dma_req_record_beats==2);
+       issued<=issued+1;
+     end
+@@ -177,7 +213,7 @@
+       if (dut.local_group.l_wr) begin
+         assert(dut.local_group.l_addr==10'(commits) && dut.local_group.l_data==expected_row[commits]);
+       end else begin
+-        assert(dut.local_group.l_addr==512);
++        assert(dut.local_group.l_addr==512 && index_commit_at>=0 && cycle>index_commit_at);
+         index_reads<=index_reads+1;
+       end
+     end
+@@ -186,12 +222,12 @@
+       last_commit<=cycle;
+     end
+     if (event_valid) begin
+-      assert(commits==512 && issued==128+prompt_beats && backend_count==issued &&
+-             response_count==issued && index_reads==(prompt_mode ? 0 : 1));
++      assert(commits==512 && issued==128 && backend_count==issued &&
++             response_count==issued && index_reads==1);
+       assert(cycle>last_commit && event_packet[0+:16]==2 && event_packet[16+:8]==2 && event_packet[24+:8]==3 &&
+              event_packet[32+:32]==7 && event_packet[64+:32]==1 &&
+              event_packet[96+:32]==1 && event_packet[144+:16]==0 &&
+-             event_packet[192+:32]==(prompt_mode ? 8320 : 8208) && event_packet[224+:32]==8192 &&
++             event_packet[192+:32]==8208 && event_packet[224+:32]==8208 &&
+              event_packet[128+:8]==9 && event_packet[352+:32]==1 && event_packet[384+:32]==NATIVE_TOPOLOGY);
+     end
+   end
+@@ -214,39 +250,36 @@
+     cfg_take=1; @(negedge clk); cfg_take=0;
+   endtask
+   initial begin
+-    #200000;
++    #1000000;
+     $fatal(1,"timeout life=%0d seq=%0d pc=%0d commits=%0d issued=%0d fault=%0d",life,dut.local_group.seq_o,dut.local_group.trace_pc_o,commits,issued,dma_fault);
+   end
+   initial begin
+-    assert($value$plusargs("image=%s",image_path) && $value$plusargs("row=%s",row_path)
+-            && $value$plusargs("index=%s",index_path));
++    assert($value$plusargs("image=%s",image_path) && $value$plusargs("row=%s",row_path) &&
++           $value$plusargs("logits=%s",logits_path) && $value$plusargs("bytes=%d",pm_bytes) &&
++           $value$plusargs("mode=%s",mode));
++    assert(pm_bytes==640);
+     $readmemh(image_path,image);
+     $readmemh(row_path,expected_row);
+-    $readmemh(index_path,index_asset);
+-    prompt_mode=$value$plusargs("prompt=%s",prompt_path);
+-    prompt_beats=prompt_mode ? 2 : 0;
+-    if (prompt_mode) begin
+-      assert($value$plusargs("prompt_record=%h",prompt_address));
+-      $readmemh(prompt_path,expected_prompt);
+-    end
+-    row_address=TABLE+64'(index_asset[0])*8192;
++    $readmemh(logits_path,logits);
++    stall_mode=mode=="stall";
+     repeat(5) @(negedge clk);
+     reset=0;
+     repeat(5) @(negedge clk);
+     release_valid=1; @(negedge clk); release_valid=0;
+     configure(0,0);
+-    for(integer i=0;i<22;i++) configure(1,i);
+-    for(integer i=0;i<22;i++) configure(2,i);
++    for(integer i=0;i<40;i++) configure(1,i);
++    for(integer i=0;i<40;i++) configure(2,i);
+     configure(3,0);
+     configure(4,0);
+-    if (!prompt_mode) begin
+-      incoming_valid=1;
+-      do @(posedge clk); while(!incoming_ready);
+-      @(negedge clk); incoming_valid=0;
+-      while(!incoming_ack) @(negedge clk);
+-    end
+     @(negedge clk); deploy=1;
+     while(life!=5) @(negedge clk);
++    token_cmd=1;
++    do @(posedge clk); while(!token_cmd_ready);
++    @(negedge clk); token_cmd=0;
++    feed_logits=1;
++    // The request sequencer may dispatch this decode page only after retirement.
++    while(!retired_valid) @(negedge clk);
++    assert(!retired_error);
+     task_packet[0+:16]=2; task_packet[24+:8]=3; task_packet[32+:32]=7;
+     task_packet[64+:32]=1; task_packet[96+:32]=1; task_packet[136+:8]=9;
+     task_packet[160+:32]=NATIVE_IMAGE; task_packet[192+:32]=NATIVE_TOPOLOGY;
+@@ -265,9 +298,8 @@
+     event_take=1;
+     @(negedge clk); event_take=0;
+     assert(life==5 && link_drained && !link_fault);
+-    $display("PASS generated Gather framed CALL read_back=352 ddr_beats=%0d sram_writes=%0d last_commit=%0d prompt_reads=%0d local_index_reads=%0d",
+-             response_count,commits,last_commit,prompt_beats,index_reads);
++    $display("PASS retired-token Gather token=%0d logits=%0d retire=%0d accept=%0d index_commit=%0d row_commit=%0d ddr=%0d writes=%0d",
++             retired_token,logit_word*4,retire_at,index_accept_at,index_commit_at,last_commit,response_count,commits);
+     $finish;
+   end
+ endmodule
+-
