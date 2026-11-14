@@ -107,11 +107,11 @@ def _s128(offer, word, mode):
 
 
 def run_add2(call, service_accept, mode, projection_base):
-    """Predict successful Q bias with its retained raw-output lease."""
+    """Predict successful P0 bias with its retained raw-output lease."""
     raw = bytes.fromhex(call["descriptor_hex"])
-    require(len(raw) == 128 and (call["target"], call["ticket"]) == (0, 5)
+    require(len(raw) == 128 and call["target"] == 0 and call["ticket"] >= 5
             and struct.unpack_from("<IHHII", raw) == (ADD2, 128, 2, ADD2_ABI, TOPOLOGY)
-            and not any(raw[24:124]), "unsupported first Q bias descriptor")
+            and not any(raw[24:124]), "unsupported P0 bias descriptor")
     left, right, destination, count = struct.unpack_from("<4H", raw, 16)
     require(left == projection_base and count == 32
             and all(base + count <= 1024 for base in (left, right, destination))

@@ -85,6 +85,7 @@ class WeightPipeline:
         self.ddr = fabric.ddr
         require(fabric.open_record is None and not hasattr(fabric, "weight_prefix_state")
                 and all(device.idle for device in self.ddr.dram), "weight pipeline requires drained descriptor prefix")
+        self.generation = fabric.generation
         self.cycle = fabric.last_response
         self.records = {client: {} for client in CLIENTS}
         self.history = {}
@@ -102,16 +103,41 @@ class WeightPipeline:
         self.offered = {}
         self.skids = {}
         self.lane_queues = [deque() for _ in range(CHANNELS * LANES_PER_CHANNEL)]
+        self._restore_serial_cursors(self.ddr.events)
+        self.event_count = len(self.ddr.events)
+
+    def _restore_serial_cursors(self, events):
         # The earlier quiescent typed traffic has one source and one lane at
-        # a time. Its last physical issue on each channel identifies the last
-        # registered offer; source acceptance order is the same.
-        for kind, _, lane, tag, _ in self.ddr.events:
-            if kind == "admit" and tag >> 32 == fabric.generation:
+        # a time, or is a two-beat post-projection descriptor. In either
+        # case the last physical issue on each channel is also the last
+        # registered offer and belongs to the last source accepted.
+        for kind, _, lane, tag, _ in events:
+            if kind == "admit" and tag >> 32 == self.generation:
                 client = (tag >> 6) & 15
-                require(client not in CLIENTS, "M cursors cannot be restored from an earlier weight stream")
+                require(client in (0, 5), "unknown serial client during weight pipeline handoff")
                 channel = lane // LANES_PER_CHANNEL
                 self.issue_cursor[channel] = ((tag >> 10) + 1) % SLOTS_PER_CHANNEL
                 self.request_cursor[channel] = (client + 1) % 12
+
+    def resume_after_drained_clients(self):
+        """Resume M after modeled serial client-0/5 reads and strict writes."""
+        require(self.idle and not any(self.records.values()) and not self.installs and not self.releases
+                and not any(self.outstanding.values()) and self.fabric.open_record is None
+                and self.fabric.generation == self.generation and all(device.idle for device in self.ddr.dram),
+                "weight scope handoff requires drained M banks and unchanged DMA generation")
+        events = self.ddr.events[self.event_count:]
+        if events:
+            require(all(tag >> 32 == self.generation and cycle > self.cycle
+                        for kind, cycle, _, tag, _ in events if kind in ("admit", "return"))
+                    and self.fabric.last_response > self.cycle, "external DMA edges do not follow the weight scope")
+            self._restore_serial_cursors(events)
+            self.previous_issues = [0, 0]
+        # Strict writes do not change the typed arbiter, but cannot be
+        # revisited on the core timeline after updating the shared device.
+        writes = getattr(self.ddr, "write_events", ())
+        write_return = writes[-1][1] if writes else -1
+        self.cycle = max(self.cycle, self.fabric.last_response, write_return)
+        self.event_count = len(self.ddr.events)
 
     @property
     def idle(self):
@@ -301,6 +327,8 @@ class WeightPipeline:
     def step(self, cycle):
         """Apply one pre-edge cycle and return all M client fills on it."""
         require(type(cycle) is int and cycle > self.cycle, "weight pipeline requires increasing core edges")
+        require(len(self.ddr.events) == self.event_count and self.fabric.generation == self.generation,
+                "weight pipeline must resume after external DDR traffic")
         if cycle != self.cycle + 1:
             require(self.idle and all(edge >= cycle for edge, _ in self.installs)
                     and all(edge >= cycle for edge, _, _ in self.releases),
@@ -312,4 +340,5 @@ class WeightPipeline:
         self._step_sources(cycle, accepts, fills)
         self._advance_ddr(cycle)
         self.cycle = cycle
+        self.event_count = len(self.ddr.events)
         return tuple(fills)

@@ -2,11 +2,12 @@
 
 from collections import deque
 from dataclasses import dataclass, field
+import struct
 
 from qwen_drl1_cycle import gated_edge
-from qwen_native_control import service_spans
+from qwen_native_control import P_SCOPE, TOPOLOGY, service_spans
 from qwen_native_ddr import require
-from qwen_projection_front import WORDS_A16, WORDS_S32, first_weight_offer
+from qwen_projection_front import PROVIDER_ABI, WORDS_A16, WORDS_S32, first_weight_offer
 from qwen_projection_pair import OPERAND_BEATS, _activation_window
 from qwen_prompt_cycle import BURST_BYTES, SRAM_ACCEPT_TO_ACK
 
@@ -486,24 +487,94 @@ def _k1_header(last_k0_record_accept, mode):
     return cycle + 6
 
 
+class ProjectionProvider:
+    """A physical P0/M instance spanning serial full-width QKV services."""
+
+    def __init__(self, fabric):
+        from qwen_weight_pipeline import WeightPipeline
+
+        self.fabric = fabric
+        self.transport = WeightPipeline(fabric)
+        self.previous = None
+        self.last_ticket = 0
+        self.next_session = 1
+        self.context_generation = 0
+        self.window_generation = 0
+        self.pending_output = None
+
+    def release_output(self, base, words):
+        require(self.pending_output == (base, words), "ADD2 does not own the active projection result")
+        self.pending_output = None
+
+    def run(self, call, service_accept, mode, *, through_q=True):
+        raw = bytes.fromhex(call["descriptor_hex"])
+        require(mode == self.fabric.mode and self.pending_output is None and type(service_accept) is int
+                and service_accept > self.fabric.last_response and call["target"] == 0
+                and call["ticket"] > self.last_ticket and len(raw) == 128
+                and struct.unpack_from("<IHHII", raw) == (P_SCOPE, 128, 2, PROVIDER_ABI, TOPOLOGY),
+                "unsupported serial P0 projection service or live output lease")
+        columns, first, stride, groups, context, full_k, k_begin, k_end, ways, head = struct.unpack_from(
+            "<IIHBBHHHBB", raw, 64)
+        require(columns in (256, 2048) and first + groups * stride <= columns
+                and (stride, groups, context, full_k, k_begin, k_end, ways, head) == (8, 16, 0, 2048, 0, 2048, 1, 0)
+                and struct.unpack_from("<2H", raw, 84) == (880, 896), "unsupported serial QKV geometry")
+        # BEGIN/CONTEXT once per context, ALLOC and EXEC once per record.
+        records = groups * full_k // 128
+        sessions = 2 * groups + 2 * records
+        first_service = self.previous is None
+        require(self.next_session + sessions < 0xffffffe0 and self.context_generation + 1 < 0xffff
+                and self.window_generation + full_k // 128 < 0xffff,
+                "projection requires a namespace fence")
+        if first_service:
+            front = first_weight_offer(call, service_accept, mode)
+        else:
+            require(through_q and self.transport.idle and not any(self.transport.records.values()),
+                    "serial projection inherits a nonempty M transport")
+            self.transport.resume_after_drained_clients()
+            # Scope acceptance, registered first record offer and NEED
+            # use the same edge sequence for every successful QKV launch.
+            header = _k1_header(service_accept, mode)
+            front = {"service_accept": service_accept, "header_publish": header, "first_record_accept": header + 1}
+        result, end = _run_projection(call, front, self.transport, mode, through_q=through_q,
+                                      previous=self.previous)
+        if through_q:
+            self.previous = end
+            self.last_ticket = call["ticket"]
+            self.next_session += sessions
+            self.context_generation += 1
+            self.window_generation += full_k // 128
+            self.pending_output = (896, 32)
+        return result
+
+
 def run_k0(call, front, fabric, mode, *, through_k1=False, through_q=False):
     """Predict K0 and optionally all later K128 windows on the live DDR fabric."""
     from qwen_weight_pipeline import WeightPipeline
 
     require(mode in (0, 1) and front == first_weight_offer(call, front["service_accept"], mode),
             "unexpected first Q activation prefix")
+    result, _ = _run_projection(call, front, WeightPipeline(fabric), mode,
+                                through_k1=through_k1, through_q=through_q)
+    return result
+
+
+def _run_projection(call, front, transport, mode, *, through_k1=False, through_q=False, previous=None):
     raw = bytes.fromhex(call["descriptor_hex"])
     spans = service_spans(raw[:4], call["operation"], raw)
     groups = raw[74]
     require(groups == 16 and len(spans) == 256, "unexpected Q group count")
     activation = _activation_window(front["header_publish"], mode)
-    transport = WeightPipeline(fabric)
     schedule = K0Schedule(transport, activation, spans[:groups])
+    if previous is not None:
+        schedule.generations = previous.generations
+        schedule.bank_cursor = previous.bank_cursor
+        schedule.m_available = previous.m_available
     schedule.run(front["first_record_accept"])
     records = _record_results(schedule)
-    require(records[0]["weight"]["client_accepts"][0] == front["weight_source_offer"]
-            and records[1]["weight"]["client_accepts"][0] == front["second_weight_source_offer"],
-            "K0 does not reproduce the initial two control offers")
+    if previous is None:
+        require(records[0]["weight"]["client_accepts"][0] == front["weight_source_offer"]
+                and records[1]["weight"]["client_accepts"][0] == front["second_weight_source_offer"],
+                "K0 does not reproduce the initial two control offers")
 
     header = _k1_header(schedule.records[-1].accepted, mode)
     accept = max(header, schedule.k0_complete) + 1
@@ -531,7 +602,7 @@ def run_k0(call, front, fabric, mode, *, through_k1=False, through_q=False):
         if through_q:
             result["remaining_windows"] = remaining
             result["service_retire"] = schedule.window_complete + 2
-    return result
+    return result, schedule
 
 
 def _record_results(schedule):

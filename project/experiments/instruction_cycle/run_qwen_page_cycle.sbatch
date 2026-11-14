@@ -31,7 +31,7 @@ python3 --version > python-version.txt
 dram=$1 config=$2 archive=$3 embedding=$4 probe=$5
 shift 5
 strict=()
-if [[ ${1:-} == --through-first-kv-store ]]; then
+if [[ ${1:-} == --through-first-kv-store || ${1:-} == --through-qkv-page ]]; then
     strict=(-DISSUE265_NATIVE_STRICT -isystem "$dram/ext/headers")
     sha256sum "$dram/src/memory_system.h" >> tools.sha256
 fi
