@@ -11,12 +11,23 @@ link="$d/mother-ingress-sNMsK9/link-110415"
 assets="$d/decode-program-110370"
 python3 -B bind_gather_mother_topology.py "$link/mother.pm" "$link/request-link.json" "$base" "$assets/local.pm" "$out/native"
 sha256sum --check --quiet "$live/run-111164/proof.sha256"
-python3 -B - "$live" "$out" "$base" <<'PY'
+python3 -B - "$live" "$out" "$base" "$assets/local.pm" <<'PY'
 import json,sys
+from hashlib import sha256
 from pathlib import Path
-live,out,base=map(Path,sys.argv[1:])
+from struct import unpack_from
+live,out,base,local=map(Path,sys.argv[1:])
 topology=json.loads(base.read_bytes())['native_service_routes']['topology_id']
 run=live/'run-111164'
+prior_receipt=(run/'sources.json').read_bytes()
+sources=json.loads(prior_receipt)
+sources.update(
+    source_binding_receipt_sha256=sha256(prior_receipt).hexdigest(),
+    gather_mother_sha256=sha256((out/'native/mother.pm').read_bytes()).hexdigest(),
+    gather_native_topology=topology,
+    gather_local_topology=unpack_from('<I',local.read_bytes(),64)[0],
+)
+(out/'sources.json').write_text(json.dumps(sources,sort_keys=True,indent=2)+'\n')
 s=(run/'live_token_gather.sv').read_text()
 old="assert(mother_image[4][0+:32]==TOPOLOGY);"
 assert s.count(old)==1
