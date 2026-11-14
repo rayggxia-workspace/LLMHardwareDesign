@@ -34,7 +34,9 @@ module u_indexed_gather (
     reg [9:0] index_word, output_word;
     reg [1:0] index_lane;
     reg [31:0] table_rows;
-    reg [47:0] table_base, row_address;
+    reg [47:0] table_base, row_address, prompt_record;
+    reg [4:0] prompt_lane;
+    reg read_prompt;
     reg [5:0] record_number;
     reg [2:0] word_number;
     reg issue_beat;
@@ -49,15 +51,25 @@ module u_indexed_gather (
     wire [31:0] d_rows = descriptor[576+:32];
     wire [31:0] d_output = descriptor[608+:32];
     wire [48:0] table_end = {1'b0,d_table} + {4'b0,d_rows,13'b0};
-    wire valid_descriptor = descriptor[1023:640]==0 && d_table[6:0]==0 &&
+    wire [47:0] d_prompt_address = descriptor[640+:48];
+    wire d_read_prompt = descriptor[688];
+    wire valid_descriptor = descriptor[1023:689]==0 &&
+        (d_read_prompt ? d_prompt_address[1:0]==0 : d_prompt_address==0) &&
+        d_table[6:0]==0 &&
         d_index[1:0]==0 && d_index<16384 && d_rows!=0 &&
         (d_output==0 || d_output==512) && d_index[13]!=d_output[9] &&
         table_end<=49'h1_0000_0000_0000;
-    wire [31:0] input_index = s_rsp_data[32*index_lane+:32];
+    wire [31:0] input_index = read_prompt ?
+        (prompt_lane[4] ? return_high[32*prompt_lane[3:0]+:32] :
+                          return_low[32*prompt_lane[3:0]+:32]) :
+        s_rsp_data[32*index_lane+:32];
     wire [32:0] normalized = {input_index[31],input_index} +
         (input_index[31] ? {1'b0,table_rows} : 33'd0);
-    wire [47:0] record_address = row_address + {35'b0,record_number,7'b0};
-    wire [31:0] tag_base = {25'b0,record_number,1'b0};
+    // Clients 3-8 admit two consecutive, aligned 64 B beats per record.
+    // Reserve a distinct record tag for the prompt lookup.
+    wire [47:0] record_address = read_prompt ? prompt_record :
+        row_address + {35'b0,record_number,7'b0};
+    wire [31:0] tag_base = {24'b0,read_prompt,record_number,1'b0};
     wire req_fire = dma_req_valid && dma_req_ready;
     wire rsp_fire = dma_rsp_valid && dma_rsp_ready;
     wire [1:0] offer = req_fire ? (issue_beat ? 2'b10 : 2'b01) : 2'b00;
@@ -90,6 +102,7 @@ module u_indexed_gather (
             status<=0; read_bytes<=0; write_bytes<=0;
             index_word<=0; output_word<=0; index_lane<=0;
             table_base<=0; table_rows<=0; row_address<=0;
+            prompt_record<=0; prompt_lane<=0; read_prompt<=0;
             record_number<=0; word_number<=0; issue_beat<=0;
             outstanding<=0; received<=0; bad_response<=0;
         end else begin
@@ -111,7 +124,9 @@ module u_indexed_gather (
                     record_number<=0; word_number<=0; issue_beat<=0;
                     index_word<=d_index[13:4]; index_lane<=d_index[3:2];
                     output_word<=d_output[9:0]; table_rows<=d_rows; table_base<=d_table;
-                    state<=valid_descriptor ? INDEX : DONE;
+                    prompt_record<={d_prompt_address[47:7],7'b0};
+                    prompt_lane<=d_prompt_address[6:2]; read_prompt<=d_read_prompt;
+                    state<=!valid_descriptor ? DONE : d_read_prompt ? ISSUE : INDEX;
                 end
                 INDEX: if (s_req_ready) state<=INDEX_ACK;
                 INDEX_ACK: if (s_rsp_valid) begin
@@ -132,6 +147,17 @@ module u_indexed_gather (
                     if (bad_response || rsp_fire) begin
                         status<=16'h0222;
                         state<=DONE;
+                    end else if (read_prompt) begin
+                        if (normalized>={1'b0,table_rows}) begin
+                            status<=16'h0222;
+                            state<=DONE;
+                        end else begin
+                            read_prompt<=0;
+                            row_address<=table_base + {3'b0,normalized[31:0],13'b0};
+                            issue_beat<=0;
+                            received<=0;
+                            state<=ISSUE;
+                        end
                     end else state<=WRITE;
                 end
                 WRITE: if (s_req_ready) state<=WRITE_ACK;

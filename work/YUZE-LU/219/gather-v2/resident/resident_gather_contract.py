@@ -37,10 +37,15 @@ def words(command):
         raise ValueError('Gather operands cannot own disjoint native SRAM windows')
     return table & 0xffffffff, (table >> 32) | offset << 16, rows, dest//16
 
-def local_image(command, *, topology, image_id, pack_image):
+def local_image(command, *, topology, image_id, pack_image, prompt_address=None):
     if any(type(n) is not int or not 0 < n < 1 << 32 for n in (topology, image_id)):
         raise ValueError('invalid resident U image identity')
     fields = words(command)
+    if prompt_address is not None:
+        if (type(prompt_address) is not int or not 0 <= prompt_address < ADDRESS_LIMIT
+                or prompt_address % 4):
+            raise ValueError('invalid native DDR prompt index address')
+        fields += (prompt_address & 0xffffffff, (prompt_address >> 32) | (1 << 16))
     code = [{'op': 'L_EXEC', 'a': 0, 'b': 0, 'c': 0}, {'op': 'L_WAIT', 'x': 1}, {'op': 'L_END'}]
     header = {'entry_pc': 0, 'max_steps': len(code), 'resource_mask': 1,
               'program_image_id': image_id, 'topology_id': topology, 'native_abi_id': LINK_ABI,

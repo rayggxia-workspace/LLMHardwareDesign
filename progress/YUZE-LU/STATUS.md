@@ -1,5 +1,6 @@
 # YUZE-LU 的进度
 
+2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 从 639 个封存 Gather 生成索引来源和局控程序。U0 经 v45 DMA 从真实 prompt 记录取索引并按 512 笔 SRAM 提交回报。Decode 的 127 条入口均记录上一退休步的写确认依赖，目标底座上的退休输送和固定 #260 完整请求待接入。见[远端回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#u0-从-ddr-取-prompt-索引)。
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 由同一 Gather 计划生成 U0 局控程序和 650 根数据网。真实局控经四拍入口执行首条 Gather，v45 DMA 交付 128 笔真实权重数据，目标 SRAM 512 笔提交后回报完成。Algo2 读回候选端点。详细布线停在 N32 接入，仍需接上母控索引供给并验收 #260 全请求。见[远端回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#u0-gather-的局控程序和两端布线交接)。
 
 2026-11-14 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 新增 v45 DMA 客户端 3 的 684 个 M10 接点。独立 DMA 的 5,028 个端口有详细布线，最终报告零违例。Algo2 在新端点目录上重新读回原三 P 计划的 4,981 根网。Gather 的真实权重行通过双拍记录的远端对照。U0 仍需运行时整行窗口与写确认服务，再接 #260 整图。见[远程回执](../../work/YUZE-LU/219/FRAMEWORK_INTEGRATION.md#gather-的-v45-dma-接点与双拍请求)。

@@ -786,3 +786,25 @@ U0 外层四拍 CALL 接口执行同一镜像，使用单银行程序 SRAM，验
 | `handoff-110305/algorithm2-input.json` | `ca19846eb67f2184b213bbd8e37dca496c8c63ddc78f1be99cf4d351764f1378` |
 | `handoff-110305/summary.json` | `498dcfc3276e136729ed47176dbc68a461913d3535a9b6c5994d87cf61e87407` |
 | `handoff-110305/local.pm` | `1b7ffac566df3c40a25bed6f91ba12003db9982b38726a6c3f2e6bb90479c304` |
+
+## U0 从 DDR 取 prompt 索引
+
+使用实际 v45 客户端 3 的双 64 B beat 合同。Algo1 从封存 Gather 和索引表编码
+48-bit prompt 字节地址，U0 回读 352 B 程序并通过四拍 CALL 执行。请求 128 B
+对齐记录后按地址提取 32-bit 索引，新增 128 B 请求计入局控读字节。命令随后的
+8192 B 真实权重行在 512 笔目标 SRAM 写确认后才回报完成。现场包含反序返回和链路背压。
+源码与调度作业属于候选 U0，同一 DMA 接口的线束需求未增加。既有端点回执对应上一版
+网表，更新版需重新进行物理验证。
+
+| Slurm | 结果 | SHA-256 |
+| --- | --- | --- |
+| 110353 | 实际位置 0 和 16 分别取上下 64 B 中的索引。各 130 次 DMA 返回，512 次写确认，0 次本地索引读 | `05758fed14e3ac037c2dd6f6e7c2687c36d56189b001737cd2912abaff0f50b5`、`74eeafbe17a461a63bda2a28181794c7ebb941226f3e80c216bed96db1d525dc` |
+| 110353 | SRAM 索引旧程序回归，128 次 DMA 返回，512 次写确认，1 次本地索引读 | `050edef17da3a1dd1b9793115a1cb76c1d03316f3d3b821f26ff76ee734c2b18` |
+| 110354 | 639 个封存 Gather 均重编并解码。512 项带地址的 prompt 命令，127 项带前一步退休写确认要求的 decode 命令，513 个不同 PM | `9f50caa84ff146ef66ef911c8b010aa9915838b5eb294d0fc21e8704bd40022b` |
+
+远端目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em/full-graph-zwl0Tr/merged-bmMd5X/native-request-6WI0tH/framework-r11-CatJ8r/ingress-route-iN0LbH/resident-gather-HefhYQ/prompt-ddr-6T8eOJ`。
+110353 使用真实 U0 控制、DMA fabric 与 SRAM，测试端提供经哈希校验的资产数据。
+110354 的 decode 确认是编译产物中的依赖，旧版 SRAM 索引回归使用测试输入。
+归档作业 105727 在前一底座验证了 151936 个真实 logits 经词表退休得到 token 81917，
+并在写入确认后消费。Block V2 上仍待把该依赖接到实际退休源，完成整图绑定和
+#260 固定入口的 P512/D128 实际退休。当前没有整机速度结论。

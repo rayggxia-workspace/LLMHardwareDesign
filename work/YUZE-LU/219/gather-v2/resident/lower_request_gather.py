@@ -30,7 +30,7 @@ def main():
 
     def lower(item):
         i, fields = item
-        step, page, position, mode, _, dest, lane = map(lambda x:int(x,16),fields.split())
+        step, page, position, mode, burst, dest, lane = map(lambda x:int(x,16),fields.split())
         assert i==position and mode in (1,2)
         program, linked, descriptor, seal = archive.row_read(args.rows,position)
         call, = linked['calls']
@@ -38,15 +38,31 @@ def main():
         assert command['read'][0]['address']==16*dest+lane
         assert call['binding_id']==command['binding_id']
         topology = 0x02500031
-        local = local_image(command,topology=topology,image_id=1,pack_image=pack_image)
+        if mode == 1:
+            if burst % 64 or lane not in range(0, 64, 4):
+                raise ValueError('invalid sealed prompt DDR placement')
+            source = {'kind': 'prompt_ddr', 'address': burst + lane,
+                      'record_address': (burst + lane) & ~127, 'record_bytes': 128}
+        else:
+            if burst or lane != 8:
+                raise ValueError('invalid sealed retired token placement')
+            source = {'kind': 'previous_retired_token', 'retired_step': step - 1,
+                      'word': dest, 'lane_offset': lane,
+                      'prerequisite': 'retired_token_sram_commit_ack'}
+        local = local_image(command, topology=topology, image_id=1, pack_image=pack_image,
+                            prompt_address=source.get('address'))
         header = unpack_header(local[:128])
         d = header['execution_offset']
         table, table_rows, offset, target, bits = unpack_from('<QIHHH',descriptor,16)
         a, b, c, e = unpack_from('<IIII',local,d+64)
         assert (a|(b&0xffff)<<32,c,b>>16,e)==(table,table_rows,offset,target) and bits==32
         assert unpack_from('<H',local,d+4)==(GATHER,)
+        source_bits, = unpack_from('<Q', local, d+80)
+        expected_source = (1 << 48) | source['address'] if mode == 1 else 0
+        if source_bits != expected_source:
+            raise ValueError('resident PM does not encode the selected index source')
         checksum = sha256(local).hexdigest()
-        record = {'step':step, 'page':page, 'position':position, 'source_mode':mode,
+        record = {'step':step, 'page':page, 'position':position, 'source_mode':mode, 'input_source':source,
                   'original_stage_proof':seal, 'plan_sha256':program['source']['plan_sha256'],
                   'pm_sha256':checksum, 'target_topology':topology, 'completion':'destination_commit_ack'}
         return checksum, local, record
@@ -61,6 +77,8 @@ def main():
     (args.output/'local-sidecars.json').write_text(json.dumps(records,sort_keys=True,indent=2)+'\n')
     report = {'source_gather_plans':len(records),'prompt_index_plans':sum(x['source_mode']==1 for x in records),
               'previous_token_plans':sum(x['source_mode']==2 for x in records),'unique_local_images':len(images),
+              'prompt_dma_bytes':sum(x['input_source'].get('record_bytes', 0) for x in records),
+              'decode_requires_external_commit':True,
               'bytes_by_image':images,'mother_integration':False,'target_executed':False}
     (args.output/'summary.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n')
     print(json.dumps(report,sort_keys=True))

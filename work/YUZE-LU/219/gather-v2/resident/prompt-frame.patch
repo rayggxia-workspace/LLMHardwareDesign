@@ -1,0 +1,112 @@
+--- tb_u_gather_frame.sv
++++ tb_u_gather_frame.sv
+@@ -7,7 +7,11 @@
+   reg [127:0] image[0:21];
+   reg [31:0] index_asset[0:0];
+   localparam logic [63:0] TABLE=64'd3298373632;
+-  logic [63:0] row_address;
++  logic [63:0] row_address, prompt_address;
++  logic prompt_mode;
++  reg [127:0] expected_prompt[0:7];
++  string prompt_path;
++  integer prompt_beats;
+   localparam logic [31:0] TOPOLOGY=32'h02500031;
+   logic release_valid=0,deploy=0,cfg_valid=0,cfg_take=0,task_valid=0,event_take=0;
+   logic incoming_valid=0;
+@@ -123,8 +127,13 @@
+         for (int lane=0;lane<4;lane++) begin
+           if (backend_valid[lane] && backend_ready[lane]) begin
+             int beat;
+-            beat=int'((backend_addr[64*lane+:64]-row_address)/64);
+-            assert (beat>=0 && beat<128 && beat/2==backend_count/2);
++            if (backend_count < prompt_beats) begin
++              beat=int'((backend_addr[64*lane+:64]-prompt_address)/64);
++              assert (beat>=0 && beat<2);
++            end else begin
++              beat=int'((backend_addr[64*lane+:64]-row_address)/64);
++              assert (beat>=0 && beat<128 && beat/2==(backend_count-prompt_beats)/2);
++            end
+             assert (lane/2==int'(backend_addr[64*lane+11]));
+             assert (!arrived[beat%2]);
+             arrived[beat%2]=1;
+@@ -145,13 +154,22 @@
+           backend_rsp_valid[first_lane]<=1;
+           backend_rsp_tags[64*first_lane+:64]<=backend_tag[phase];
+           for (int i=0;i<4;i++)
+-            backend_rsp_data[512*first_lane+128*i+:128]<=expected_row[8*(response_count/2)+4*phase+i];
++            if (response_count<prompt_beats)
++              backend_rsp_data[512*first_lane+128*i+:128]<=expected_prompt[4*phase+i];
++            else
++              backend_rsp_data[512*first_lane+128*i+:128]<=expected_row[8*((response_count-prompt_beats)/2)+4*phase+i];
+           if (phase==0) arrived=0;
+         end
+         backend_have<=arrived;
+       end
+     if (dma_req_valid && dma_req_ready) begin
+-      assert(dma_req_address==row_address+64*issued && dma_req_tag==32'(issued));
++      if (issued < prompt_beats) begin
++        assert(dma_req_address==prompt_address+64*issued && dma_req_tag==32'(128+issued));
++      end else begin
++        assert(dma_req_address==row_address+64*(issued-prompt_beats) &&
++               dma_req_tag==32'(issued-prompt_beats));
++        assert(response_count>=prompt_beats);
++      end
+       assert(dma_req_channel==dma_req_address[11] && dma_req_record_beats==2);
+       issued<=issued+1;
+     end
+@@ -168,11 +186,12 @@
+       last_commit<=cycle;
+     end
+     if (event_valid) begin
+-      assert(commits==512 && issued==128 && backend_count==128 && response_count==128 && index_reads==1);
++      assert(commits==512 && issued==128+prompt_beats && backend_count==issued &&
++             response_count==issued && index_reads==(prompt_mode ? 0 : 1));
+       assert(cycle>last_commit && event_packet[0+:16]==2 && event_packet[16+:8]==2 && event_packet[24+:8]==3 &&
+              event_packet[32+:32]==7 && event_packet[64+:32]==1 &&
+              event_packet[96+:32]==1 && event_packet[144+:16]==0 &&
+-             event_packet[192+:32]==8208 && event_packet[224+:32]==8192 &&
++             event_packet[192+:32]==(prompt_mode ? 8320 : 8208) && event_packet[224+:32]==8192 &&
+              event_packet[128+:8]==9 && event_packet[352+:32]==1 && event_packet[384+:32]==NATIVE_TOPOLOGY);
+     end
+   end
+@@ -204,6 +223,12 @@
+     $readmemh(image_path,image);
+     $readmemh(row_path,expected_row);
+     $readmemh(index_path,index_asset);
++    prompt_mode=$value$plusargs("prompt=%s",prompt_path);
++    prompt_beats=prompt_mode ? 2 : 0;
++    if (prompt_mode) begin
++      assert($value$plusargs("prompt_record=%h",prompt_address));
++      $readmemh(prompt_path,expected_prompt);
++    end
+     row_address=TABLE+64'(index_asset[0])*8192;
+     repeat(5) @(negedge clk);
+     reset=0;
+@@ -214,10 +239,12 @@
+     for(integer i=0;i<22;i++) configure(2,i);
+     configure(3,0);
+     configure(4,0);
+-    incoming_valid=1;
+-    do @(posedge clk); while(!incoming_ready);
+-    @(negedge clk); incoming_valid=0;
+-    while(!incoming_ack) @(negedge clk);
++    if (!prompt_mode) begin
++      incoming_valid=1;
++      do @(posedge clk); while(!incoming_ready);
++      @(negedge clk); incoming_valid=0;
++      while(!incoming_ack) @(negedge clk);
++    end
+     @(negedge clk); deploy=1;
+     while(life!=5) @(negedge clk);
+     task_packet[0+:16]=2; task_packet[24+:8]=3; task_packet[32+:32]=7;
+@@ -238,8 +265,8 @@
+     event_take=1;
+     @(negedge clk); event_take=0;
+     assert(life==5 && link_drained && !link_fault);
+-    $display("PASS generated Gather framed CALL read_back=352 ddr_beats=%0d sram_writes=%0d last_commit=%0d",
+-             response_count,commits,last_commit);
++    $display("PASS generated Gather framed CALL read_back=352 ddr_beats=%0d sram_writes=%0d last_commit=%0d prompt_reads=%0d local_index_reads=%0d",
++             response_count,commits,last_commit,prompt_beats,index_reads);
+     $finish;
+   end
+ endmodule
