@@ -228,3 +228,25 @@ sbatch --parsable --job-name=zny-qwenpair run_qwen_105530_markers.sbatch --pair 
 [源码、作业、日志和校验回执](../../../work/Melodydt/265/qwen-105530-projection-pair-110583.json)
 
 [PR #260 的 108308 对照](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/3584920d4e79ee45922be95df27e5193523d6313/work/YUZE-LU/234/native-sram-width/evidence/comparison-108308.json)另提供同样 8-beat KV 窗口和 3,334 ps 核周期的两组短程 TLM 结果。128-bit SRAM 为 1.20653 tok/s，512-bit 为 2.09091 tok/s。对照只在匹配配置下使用。107361 仍是单拍 KV 配置的参考。两组宽度的时序及吞吐仍需硬件校准和正式 P512/D128 验收。
+
+## Qwen2.5-3B 整机 Decode 速度估算
+
+使用 [107361 的 128-bit SRAM 和串行 KV 对照](../../../work/Melodydt/265/qwen-tlm-decode-107361.json)，读取冻结几何及第一页到末页的调度回执。估算仅从首步取得校准参数，第二步仅用于验证。
+
+| 口径 | 数值 |
+| --- | ---: |
+| 127 个 Decode 间隔估算 | 143.489733463362 s |
+| D128 缓存 Decode 吞吐估计 | **0.8850807437 tok/s** |
+| 第二步预测 / 参考吞吐 | 0.9573886793 / 0.9568497254 tok/s |
+| 第二步吞吐相对差 | +0.05633% |
+| 127 间隔的资源上界 | 1.3317315170 tok/s |
+
+```bash
+# 用本人的新运行目录完成封存几何核验
+sbatch --parsable run_qwen_request_geometry.sbatch
+python -B estimate_qwen_decode.py <geometry.json> <107361-page-timing.jsonl>
+# 完整两步 TLM 先在同节点逐字段核对九页，再检查两步全部退休和时间线
+sbatch --parsable run_qwen_fast_tlm.sbatch
+```
+
+`run_qwen_page_cycle.sbatch` 的 `--through-k0`、`--through-k1`、`--through-q`、`--through-first-kv-store` 逐级验证权重记录重叠、M/COPY/A SRAM、投影退休、偏置与严格 DDR KV 提交。110720 两种模式各匹配 4,655 笔读、8 笔写的全部 18,652 个事件和 24 个控制标记。留出 105572 先锁定预测散列，模式 0 全部匹配，模式 1 首条权重物理接收预测晚五拍。留出只覆盖首个 K0，按真实定长请求保持并修复量化阻塞后，诊断两种模式均对齐；原始留出失败仍保留。详细边界和所有 Slurm 路径见[评估回执](../../../work/Melodydt/265/qwen-decode-evaluation-107361.json)。

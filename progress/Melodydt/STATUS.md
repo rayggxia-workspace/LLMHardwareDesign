@@ -88,3 +88,9 @@
 - 110589 在编译前因集群 Python 3.6 参数不兼容退出，110596 在内部审计因 RF EOP 探针字段错误退出。修正后 110601 在 c64/node2 用 8 核 2 分 20 秒完成（0:0），两种模式各匹配 114 个内部边沿和 1,292 个冻结 DDR 事件。源与输出散列、30 项单测及项目结构检查通过。[源码、命令、日志及回执](../../work/Melodydt/265/qwen-105530-projection-pair-110583.json)
 - 107361 的 0.9568497254 tok/s 仍作单拍 KV 短程整机 TLM 对照。PR #260 的 108308 另给出同 8-beat KV 配置下 128／512-bit 的 1.20653／2.09091 tok/s。下一步由 Melodydt 建模 W bank 复用、后续记录重叠、下一 K 激活窗口及完整 Q 服务退休。跨页、多 P、105572 留出和整机预测误差待验证。
 - Issue 继续进行中，PR 草稿，独立审查人待指定。项目登记 PR #5 待合并，仓库缺 `config/board.json`，Projects 待具权限维护者核验和同步。
+
+## 2026-11-14（Asia/Shanghai，UTC+08:00）整机 Decode 快速估算
+
+- Melodydt [#265](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/265) 固定 107361 的 128-bit SRAM、单拍 KV、3,334 ps 核时钟与双通道 630 ps DDR。新估算为 127 间隔 143.489733463362 s、0.8850807437 tok/s。第二步未参与拟合，吞吐误差 +0.05633%。几何上界 1.3317315170 tok/s。仅短程对照和结构覆盖，正式 P512/D128 时序验收待完成。[回执](../../work/Melodydt/265/qwen-decode-evaluation-107361.json)
+- 110646、110675、110682、110720 原生 RTL 前缀全部与实时 DRAMsim3 匹配，首个 Q 退休及首个 KV 写提交均通过。105572 留出模式 0 逐事件通过，模式 1 首条权重接收晚五拍。完整原生 QKV 页与后续 Attention 正在验证。
+- 110649/110695 在 c64/node2 的九页同机对照为 170/70/60 s。110666 的两步整机回放在 c64/node10 已开始，随 [草稿 PR #266](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/266) 连续跟踪。保持 Issue 进行中，独立审查人待指定。项目登记 PR #5 待合并；仓库缺 `config/board.json`，Projects 由具权限维护者核验。

@@ -1,0 +1,713 @@
+{
+  "schema": "issue265-qwen-decode-evaluation/1",
+  "issue": 265,
+  "pr": 266,
+  "server": "yuzelu@10.129.166.172",
+  "upstream": {
+    "pr": 260,
+    "reference": 107361,
+    "source_commit": "3584920d4e79ee45922be95df27e5193523d6313",
+    "reference_receipt": "qwen-tlm-decode-107361.json"
+  },
+  "estimation": {
+    "source_commit": "fd6ee8a1e07c5435a02ee0b1da96614ced06f85c",
+    "python_version": "3.7.0",
+    "working_directory": "work/Melodydt/265/qwen-estimate-107361.local",
+    "command": "python -B project/experiments/instruction_cycle/estimate_qwen_decode.py <110707 geometry.json> <107361 page-timing.jsonl>",
+    "output_sha256": "0781f3d865669da346de40a732b88e8ddd1625e93cb518862c2badaad83eee52",
+    "source_sha256": "c230df4e58ede61b0f934fdc97a2f66a6711df49bb95a1b62c0963a9eb0da32c",
+    "host_seconds": 0.105782,
+    "platform": "Windows, same machine speedup not qualified for this estimator",
+    "result": {
+      "scope": "calibrated TLM timing estimate for 127 cached-decode intervals, serial KV",
+      "calibration": {
+        "step": 1,
+        "duration_ps": 1043184915264,
+        "attention_ps": 707001505360,
+        "non_attention_ps": 336183409904,
+        "attention_work_ps": 595778236416
+      },
+      "assumptions": [
+        "fix non-Attention time from phase 1 at invariant geometry",
+        "scale Attention time by serialized DDR read and ACKed SRAM word demand",
+        "estimate feedback intervals only; no prefill, numerical or native RTL acceptance"
+      ],
+      "intervals": 127,
+      "estimated_elapsed_ps": 143489733463362,
+      "estimated_tok_s": 0.8850807436507476,
+      "comparison": {
+        "job_id": 107361,
+        "trace_sha256": "56b1238ca44f6796f4982e41d8f6674a7c6730c65b98c05afae23ba447ddc831",
+        "step": 2,
+        "observed_ps": 1045096187442,
+        "estimated_ps": 1044507859353,
+        "signed_duration_error_percent": -0.056294157042138346,
+        "observed_tok_s": 0.956849725428261,
+        "estimated_tok_s": 0.9573886793148981,
+        "signed_throughput_error_percent": 0.05632586521315678,
+        "observed_attention_ps": 708545927516
+      }
+    },
+    "selected_phase_results": [
+      {
+        "step": 1,
+        "elapsed_ps": 1043184915264,
+        "attention_ps": 707001505360,
+        "elapsed_floor_ps": 677878973280,
+        "kv_positions": 513
+      },
+      {
+        "step": 2,
+        "elapsed_ps": 1044507859353,
+        "attention_ps": 708324449449,
+        "elapsed_floor_ps": 678993795936,
+        "kv_positions": 514
+      },
+      {
+        "step": 127,
+        "elapsed_ps": 1216548466808,
+        "attention_ps": 880365056904,
+        "elapsed_floor_ps": 823969512288,
+        "kv_positions": 639
+      }
+    ]
+  },
+  "geometry": {
+    "id": 110707,
+    "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-request-geometry-20261114-01",
+    "source_commit": "be0b3bab6d586b3cded81e2b3e48b63ac76e529a",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "partition": "c64",
+    "node": "node7",
+    "cpus": 1,
+    "slurm_seconds": 19,
+    "command": "sbatch --parsable run_qwen_request_geometry.sbatch",
+    "output_manifest_sha256": "cbee656da9dff717474dc51f93b93bcf7f9542a2d616054f46bf897bb277c62a",
+    "output_sha256": {
+      "geometry.json": "c0d838b3d80e931459d14f71fea71ca1a6d5dee18c7ec72916a47a7ac0eebb9b",
+      "source.sha256": "4a9e34a942268f6aece22a21b32bde779d67f7b17189f9963e50fa2caae930b5",
+      "tools.sha256": "b061c17214f557f5752b99435540ab7880ee608162eca8b0872393a352cca5e0",
+      "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056"
+    },
+    "source_sha256": {
+      "qwen_request_geometry.py": "e5ce3ba7658cb8b460b11a7d105fcac06714d55951c143281a5590f1ad9d2a95",
+      "run_qwen_request_geometry.sbatch": "fd0421ae31fc7e12c1084fff246361566bbf77f794f1212a264cc4c766b7fda3",
+      "git-commit.txt": "e57acb0addaca1a4db5a1a2982e9c4b482ea37368a2468cbc0fa64aa78503866"
+    },
+    "tools_sha256": {
+      "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+      "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766"
+    },
+    "python_version": "Python 3.10.12",
+    "result": {
+      "deployment_sha256": "74078b0b40fdeb73aeae71e3091db3e6a25fc5f27bc03c9981214bfef92b39ef",
+      "topology": 25001,
+      "source_manifest_sha256": "1bf5465dc4a4bbb8e4618502e1fe5a591d1c2c9fdc8b20cf84d5ea7d198e2a33",
+      "scope": "sealed workload geometry and optimistic lower bounds for the fixed 107361 TLM service rules",
+      "prefill": {
+        "input_tokens": 512,
+        "pages": 147970,
+        "descriptor_bytes": 833049216,
+        "time_estimated": false
+      },
+      "decode": {
+        "retired_token_design": 128,
+        "intervals": 127,
+        "core_ps": 3334,
+        "ddr_ps": 630,
+        "ddr_burst_bytes": 64,
+        "attention_ddr_read_window": 1,
+        "sram_port_bits": 128,
+        "assumed_weight_ingress_bytes_per_p_core_edge": 64,
+        "total": {
+          "pages": 36957,
+          "calls": 1765046,
+          "duration_floor_ps": 95364567391392,
+          "duration_floor_if_no_coalescing_ps": 96110128954368,
+          "weight_channel0_bursts": 3272235264,
+          "weight_channel1_bursts": 3272235264,
+          "weight_macs": 391883522048,
+          "head_weight_bursts": 694651392,
+          "kv_store_calls": 18288,
+          "attention_calls": 73152,
+          "attention_beats": 1685422080,
+          "attention_sram_words": 5731909632
+        },
+        "aggregate_toks_per_second_ceiling": 1.331731516998037,
+        "matched_two_step_phase2_toks_per_second_ceiling": 1.4727675068392776,
+        "aggregate_if_no_weight_coalescing_toks_per_second_ceiling": 1.3214007865944926
+      },
+      "bound_omissions": [
+        "compute, PM, descriptors, most SRAM traffic, writes, row and refresh losses",
+        "whole-request prefill execution and terminal timing"
+      ],
+      "elapsed_host_seconds": 16.987824445590377
+    }
+  },
+  "native_rtl_prefix": {
+    "archive": 105530,
+    "core_period_ps": 10000,
+    "ddr_period_ps": 630,
+    "heldout": 105572,
+    "heldout_compared": true,
+    "first_q_retire_pre_edges": [
+      47340,
+      48630
+    ],
+    "first_kv_store_retire_pre_edges": [
+      49086,
+      50558
+    ],
+    "runs": [
+      {
+        "id": 110646,
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-k0-20261114-01",
+        "source_commit": "e847440c6f32cd4d7cdfb1cd20d52d3056508db0",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "partition": "c96",
+        "node": "node15",
+        "cpus": 2,
+        "slurm_seconds": 5,
+        "log": "slurm-110646.out",
+        "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-k0",
+        "output_manifest_sha256": "a9df7a3b2ec1f2958b9f44c1e3fd96af053ff714fc54bfdacc4a8401ba7c8867",
+        "output_sha256": {
+          "prediction-0.json": "fc76b024f1d7d0412b955a5d6e5d6e052f82fe1257af5bce0ee40377e0c100fa",
+          "prediction-1.json": "a321e6b59fd43883c683584290059c90606becac01e6b567398ecb507c4f920a",
+          "comparison-0.json": "860a8c9367bbcca38f621177e696a624fed8ae764000c864e6b09d53918dd2bd",
+          "comparison-1.json": "87e66b6d6d32ef2702084dadb15e62427af45428e854136738f2aeb523cd97f6",
+          "prediction.sha256": "7efa670866863c75442852e6d2f4215686b8dd68cb87daaf2b507538c9d32425",
+          "tools.sha256": "9d49301ef5e3e43d404adf5f655861087dc4baab8068da02a8be201e9c4eecf5",
+          "source.sha256": "78a0ec5abe66904f2023692d74c30e68b4c52417912fb0a33292084562d11749",
+          "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+          "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+          "bridge-read": "ce2c768696d5d65019c5d411244835cbf3023784647573e80c7d85101fb58817"
+        },
+        "source_sha256": {
+          "qwen_prompt_cycle.py": "9379a8e5bff45d8626685ef55e885d019f0c2b6b3f1d74ba37db873eb60204a3",
+          "qwen_prompt_pm.py": "0c793a0772f0b8040b495d822f8abb484b6f73cc89fee9a092c8dd6a201a0424",
+          "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+          "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+          "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+          "qwen_page_cycle.py": "9c9db04d7d7bed62dbba992a1b5583f899575b2ae0e8b36813b63493f5b2e6c9",
+          "run_qwen_page_cycle.sbatch": "90c01382fe67371b5aa5353ad7a92c5d15c88cf79cdc42ec4e7ceea6850c141b",
+          "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+          "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+          "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+          "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+          "dram_live.py": "eefb4cb221b9b42724770e55d058f06cbdc4d00cb6956878f3463324fe0b6d22",
+          "dramsim_bridge.cpp": "76b28487dde12085749ea559fff722e2c75b6050769519c719a10bd722cb75c8",
+          "qwen_projection_front.py": "1a5d1b8588a5a43eac7a2e6cc5cd1be4ac279c6487070ea54822d817672342fe",
+          "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+          "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+          "qwen_projection_pipeline.py": "cf2e1a690e25e2019f64c9a0113a44372bf545727a5744fe74f59e04dda44fd3",
+          "qwen_weight_pipeline.py": "05683998a8b030b87f93821734ee1fd361828768091dbec7fde488767d54a095",
+          "git-commit.txt": "1d6eb0cd1572f396c6e4843b4034e45e284d2a34e7b87e6d532ef82cb535496f"
+        },
+        "tools_sha256": {
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b"
+        },
+        "python_version": "Python 3.10.12",
+        "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+        "modes": [
+          {
+            "mode": 0,
+            "matched_ddr_bursts": 561,
+            "matched_ddr_events": 2244,
+            "matched_control_markers": 11,
+            "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+            "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 547468
+            },
+            "prediction_sha256": "fc76b024f1d7d0412b955a5d6e5d6e052f82fe1257af5bce0ee40377e0c100fa"
+          },
+          {
+            "mode": 1,
+            "matched_ddr_bursts": 561,
+            "matched_ddr_events": 2244,
+            "matched_control_markers": 11,
+            "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+            "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 591737
+            },
+            "prediction_sha256": "a321e6b59fd43883c683584290059c90606becac01e6b567398ecb507c4f920a"
+          }
+        ]
+      },
+      {
+        "id": 110675,
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-k1-20261114-01",
+        "source_commit": "88db71834641befaff7fd5f852641447878fdde1",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "partition": "c64",
+        "node": "node12",
+        "cpus": 2,
+        "slurm_seconds": 11,
+        "log": "slurm-110675.out",
+        "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-k1",
+        "output_manifest_sha256": "c29387dfa2485be245b9372b49d7d0ae86b9b0cf96ff573e28163b142740758a",
+        "output_sha256": {
+          "prediction-0.json": "33238d632f0cbbe9130ca76c5de7caca5be287659b8eebd2e2c541568ac868c8",
+          "prediction-1.json": "c55c1659037d154057f06591e1ee41000be276cad1aa1b2bbfb54f0e900dd17a",
+          "comparison-0.json": "972ab55ba20ec3edab732c533f036271b8e8bb15019c3f23738170c955a1ece8",
+          "comparison-1.json": "8f4a8256be7c1a9ac5742ecd591bb3e2a8b35e2a37cd3ee66540fd4a24734dbb",
+          "prediction.sha256": "c7ad76685c60facaab641ae9d095841c1899db24beb333785b00cdb97a674164",
+          "tools.sha256": "9d49301ef5e3e43d404adf5f655861087dc4baab8068da02a8be201e9c4eecf5",
+          "source.sha256": "0c2730ae016da6e1d5eca8f6c45204b587cc7d172747c197720a227b4c365cec",
+          "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+          "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+          "bridge-read": "ce2c768696d5d65019c5d411244835cbf3023784647573e80c7d85101fb58817"
+        },
+        "source_sha256": {
+          "qwen_prompt_cycle.py": "9379a8e5bff45d8626685ef55e885d019f0c2b6b3f1d74ba37db873eb60204a3",
+          "qwen_prompt_pm.py": "0c793a0772f0b8040b495d822f8abb484b6f73cc89fee9a092c8dd6a201a0424",
+          "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+          "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+          "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+          "qwen_page_cycle.py": "3cb480b3d92d4ce50fe44f948c63a5923484b99fb3e9b6f21fc6b74d1e763c5b",
+          "run_qwen_page_cycle.sbatch": "90c01382fe67371b5aa5353ad7a92c5d15c88cf79cdc42ec4e7ceea6850c141b",
+          "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+          "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+          "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+          "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+          "dram_live.py": "eefb4cb221b9b42724770e55d058f06cbdc4d00cb6956878f3463324fe0b6d22",
+          "dramsim_bridge.cpp": "76b28487dde12085749ea559fff722e2c75b6050769519c719a10bd722cb75c8",
+          "qwen_projection_front.py": "1a5d1b8588a5a43eac7a2e6cc5cd1be4ac279c6487070ea54822d817672342fe",
+          "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+          "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+          "qwen_projection_pipeline.py": "1c45b0ab2cfaf913f0754f74d3b8d24e2ef97c01b014aa625a5a4b0eaef69f68",
+          "qwen_weight_pipeline.py": "05683998a8b030b87f93821734ee1fd361828768091dbec7fde488767d54a095",
+          "git-commit.txt": "1841fd0beccca34aed0415828b39ece02dee848573512a8b6a569a35bc50d69d"
+        },
+        "tools_sha256": {
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b"
+        },
+        "python_version": "Python 3.10.12",
+        "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+        "modes": [
+          {
+            "mode": 0,
+            "matched_ddr_bursts": 833,
+            "matched_ddr_events": 3332,
+            "matched_control_markers": 11,
+            "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+            "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 547468
+            },
+            "prediction_sha256": "33238d632f0cbbe9130ca76c5de7caca5be287659b8eebd2e2c541568ac868c8"
+          },
+          {
+            "mode": 1,
+            "matched_ddr_bursts": 833,
+            "matched_ddr_events": 3332,
+            "matched_control_markers": 11,
+            "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+            "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 591737
+            },
+            "prediction_sha256": "c55c1659037d154057f06591e1ee41000be276cad1aa1b2bbfb54f0e900dd17a"
+          }
+        ]
+      },
+      {
+        "id": 110682,
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-projection-20261114-01",
+        "source_commit": "e47b99a82d97bc18f522365b17f497b12e322b2a",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "partition": "c64",
+        "node": "node11",
+        "cpus": 2,
+        "slurm_seconds": 10,
+        "log": "slurm-110682.out",
+        "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-q",
+        "output_manifest_sha256": "f9b266eda12fcfe6649bb9494297dec0de1b747c3f5d23aa2f7782b9300ff24a",
+        "output_sha256": {
+          "prediction-0.json": "e59c04b58bed1d15fa0956308efab66ab91c6e3bddc45683c57d3a84f26f8d71",
+          "prediction-1.json": "08cee8e808aa29dad1ff9bfaa7651a3556eb2fa81a9be78b364e86fed4312ddd",
+          "comparison-0.json": "cc69535ca7ce9620f5a026c6975348d0de3ccd5b0c7d9a8ced724dd06adbb372",
+          "comparison-1.json": "a6d2326f30f41145d98eba56b9cb745ef239982694df912d6f5f5fb3703c885c",
+          "prediction.sha256": "2cdeca3e3b1c3e937620c596104f8c8f3b3dbe9bcf500f041e9f7a9cc987655e",
+          "tools.sha256": "9d49301ef5e3e43d404adf5f655861087dc4baab8068da02a8be201e9c4eecf5",
+          "source.sha256": "153c90176c695c150493160e80aff80a1e7c8dae97eeaf92ae6b3cc85f5b3aa3",
+          "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+          "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+          "bridge-read": "ce2c768696d5d65019c5d411244835cbf3023784647573e80c7d85101fb58817"
+        },
+        "source_sha256": {
+          "qwen_prompt_cycle.py": "9379a8e5bff45d8626685ef55e885d019f0c2b6b3f1d74ba37db873eb60204a3",
+          "qwen_prompt_pm.py": "0c793a0772f0b8040b495d822f8abb484b6f73cc89fee9a092c8dd6a201a0424",
+          "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+          "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+          "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+          "qwen_page_cycle.py": "56f40204d5b3ade49ada5e8fe8abcdeeb09c696dfcf0d554eba32be866a3a950",
+          "run_qwen_page_cycle.sbatch": "90c01382fe67371b5aa5353ad7a92c5d15c88cf79cdc42ec4e7ceea6850c141b",
+          "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+          "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+          "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+          "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+          "dram_live.py": "eefb4cb221b9b42724770e55d058f06cbdc4d00cb6956878f3463324fe0b6d22",
+          "dramsim_bridge.cpp": "76b28487dde12085749ea559fff722e2c75b6050769519c719a10bd722cb75c8",
+          "qwen_projection_front.py": "1a5d1b8588a5a43eac7a2e6cc5cd1be4ac279c6487070ea54822d817672342fe",
+          "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+          "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+          "qwen_projection_pipeline.py": "3c649e616e86d314b4b86600718134560b92dd4c8df76b210806052830f6049f",
+          "qwen_weight_pipeline.py": "05683998a8b030b87f93821734ee1fd361828768091dbec7fde488767d54a095",
+          "git-commit.txt": "15f6edce587a2e40a4aee06df2afb2317e39c41b74fb4f669fa89484a4ef25f2"
+        },
+        "tools_sha256": {
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b"
+        },
+        "python_version": "Python 3.10.12",
+        "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+        "modes": [
+          {
+            "mode": 0,
+            "matched_ddr_bursts": 4641,
+            "matched_ddr_events": 18564,
+            "matched_control_markers": 12,
+            "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+            "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 547468
+            },
+            "prediction_sha256": "e59c04b58bed1d15fa0956308efab66ab91c6e3bddc45683c57d3a84f26f8d71"
+          },
+          {
+            "mode": 1,
+            "matched_ddr_bursts": 4641,
+            "matched_ddr_events": 18564,
+            "matched_control_markers": 12,
+            "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+            "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 591737
+            },
+            "prediction_sha256": "08cee8e808aa29dad1ff9bfaa7651a3556eb2fa81a9be78b364e86fed4312ddd"
+          }
+        ]
+      },
+      {
+        "id": 110720,
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-first-kv-20261114-01",
+        "source_commit": "50c81c810426d1e86d36a634458c957fbc65d084",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "partition": "c64",
+        "node": "node11",
+        "cpus": 2,
+        "slurm_seconds": 10,
+        "log": "slurm-110720.out",
+        "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-first-kv-store",
+        "output_manifest_sha256": "9e9a267f7d89c8ffede8da3244fa7d0a5b8137088f528f58531635e9c47349d1",
+        "output_sha256": {
+          "prediction-0.json": "005d8dbd4d82b83c9b53e4f37eb4f062f879d41a14e3e79df3e501bb497a6fb0",
+          "prediction-1.json": "ca78d852c41fa191c78a59c7b02ec81e4c6a069a29a6e5cee976c75a1d7347b9",
+          "comparison-0.json": "e85dfa7c449a17767360b1f8810cdc694e9838c3e89ef9484cdec18405d7ef1e",
+          "comparison-1.json": "3bd9149bb167f6056ebe77e0d14e1f1020b53f1c151d30833c01b274c4dc671b",
+          "prediction.sha256": "21f0be94f43e87b2c5232d9618e33e46988a15e295aa6bff92aca87225001625",
+          "tools.sha256": "fa92a615d995d3e28a1340ec32f547cf18317b2f1d06bf4b035f57ad249b753d",
+          "source.sha256": "7e22bada5790e08aa4efba045077a54a031bc31c8a6a3ff6c5b3603870f59d0b",
+          "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+          "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+          "bridge-read": "2617b590633005011e75718e36ff7d0b53102c7d4e316c42a5bd2123381991a5"
+        },
+        "source_sha256": {
+          "qwen_prompt_cycle.py": "6757e3777658ca429193891f05b1a46aa3d9ec8653c302cc06c1c8e972ba26ed",
+          "qwen_prompt_pm.py": "1a4a36bab5d6c78e3c40753914199ac1b544b2a4f2924338fd8fb5642bc485c8",
+          "qwen_page_dispatch.py": "71ba5ae7956fd120272f2faf86bc3db4385f7b91773286be1a0f423bc7ce97b9",
+          "qwen_descriptor_dma.py": "bc16615be8d50703aec90bc6a3fc2f6b54907682720425e24e2f76e8a90ea14b",
+          "qwen_drl1_cycle.py": "440b88608b0e227246cfa2fb20a13ae7cacbf097da9a046f8302d687b15358e7",
+          "qwen_page_cycle.py": "0207927b8208105310460840814806edb3d027d7bd4a7be21637eaebeae27ad5",
+          "run_qwen_page_cycle.sbatch": "2e91052d82bfbf931cff407eeb583b42acf2711236539ff2de7ed5466a5b06e7",
+          "qwen_prompt_rms.py": "5153bc0590c872a3aaa16e3c91e50dfaf5759a153cd2d7c4e28c2c4b0617b7e6",
+          "qwen_native_control.py": "07375a59518b263e0660401a0f6bcd54327886538246fd22db0129c65f2917f4",
+          "qwen_native_ddr.py": "ad0c9924d7f0d5cbb5e0ef1a417417f37622e65988c7258f901e18c47131dfda",
+          "dma_ddr.py": "11ddca78f26ffb3536b82c933b845c6dc576dd5cbd0fe8c8cf14883750d1cb6e",
+          "dram_live.py": "1474372bab48e684b06a0f574e5ca9614add5e2c5ff1687e2a36453226ae417f",
+          "dramsim_bridge.cpp": "0500f836b2d0884c827f4600bbd15775697eb10c68bc07baafda24296bfe913d",
+          "qwen_projection_front.py": "1a5d1b8588a5a43eac7a2e6cc5cd1be4ac279c6487070ea54822d817672342fe",
+          "qwen_weight_record.py": "e968dee40f256e063408d384cd3baf5c375acf751ceb060eeb7cc4b9b87ea87e",
+          "qwen_projection_pair.py": "eebdccf07fe33f80e73adf5f9206c190cdc5445fdb739a63e6012d29b456d1bc",
+          "qwen_projection_pipeline.py": "3c649e616e86d314b4b86600718134560b92dd4c8df76b210806052830f6049f",
+          "qwen_weight_pipeline.py": "05683998a8b030b87f93821734ee1fd361828768091dbec7fde488767d54a095",
+          "qwen_post_projection.py": "8d4779d82759f7426b3a4695bfc436afde46671ea254bda674c7fbec266df516",
+          "qwen_kv_write.py": "eb1350cd6077bdcfb37a186d2f8dae14574afea77e8262a516e112f294119758",
+          "git-commit.txt": "682514a5bb58150f430b98bdb6f1ecc79a8e9b00b1dbcb4e4b49f60e6efac3ea"
+        },
+        "tools_sha256": {
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/libdramsim3.so": "40bebfe479208bd6660c7619bb55735678c6b2751fc309e4f700e94b407bd3b1",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/dramsim3.h": "1727137ebfc02836855f0efe91ac6accaa089711d2124e0d0720704527787d3b",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/dramsim3/src/memory_system.h": "b750651e5fc871df216570cfa1687894f9242a16a26fb69bf1099a97f5080e4b"
+        },
+        "python_version": "Python 3.10.12",
+        "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+        "modes": [
+          {
+            "mode": 0,
+            "matched_ddr_bursts": 4655,
+            "matched_ddr_events": 18620,
+            "matched_control_markers": 24,
+            "rtl_ddr_trace_sha256": "76e997f19b22352b0fb8298ccb21842b6bcb200c2cebaf25d1014924cc173cab",
+            "rtl_edge_trace_sha256": "f909bd275417ec983fa0185350b7ba29d76abfcd55a329051caf379ecb971781",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 547468
+            },
+            "matched_kv_ddr_events": 32,
+            "rtl_kv_trace_sha256": "428853085c5b66384d45bcfe9e621683fbbf906e624aa40642ea471258e235cd",
+            "prediction_sha256": "005d8dbd4d82b83c9b53e4f37eb4f062f879d41a14e3e79df3e501bb497a6fb0"
+          },
+          {
+            "mode": 1,
+            "matched_ddr_bursts": 4655,
+            "matched_ddr_events": 18620,
+            "matched_control_markers": 24,
+            "rtl_ddr_trace_sha256": "2247915330b38a87a70f1e5d0f5b2e4828c82a49872913b584394df2902e38b8",
+            "rtl_edge_trace_sha256": "25671452cf3187cd97fa60a6616f919cd421857a227cd318fd083c766004e908",
+            "conditional_wait_audit": {
+              "input": "observed_provider_retire",
+              "matched_wait_handoffs": 123,
+              "matched_next_descriptor_admissions": 246,
+              "matched_page_commit": 591737
+            },
+            "matched_kv_ddr_events": 32,
+            "rtl_kv_trace_sha256": "330104cf3493bb44adc98fc8f776c9b265f6b1ee579180bedfd3deeaeda5bdfb",
+            "prediction_sha256": "ca78d852c41fa191c78a59c7b02ec81e4c6a069a29a6e5cee976c75a1d7347b9"
+          }
+        ]
+      }
+    ],
+    "heldout_validation": {
+      "archive": 105572,
+      "preregistered_source": "ea05cc6536e81d8d15efe1b64f3ceadf7208c60f",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-heldout-20261114-01",
+      "criteria": "exact equality of all 2244 ordered DDR events in each mode through first Q K0",
+      "prediction_job": 110832,
+      "prediction_state": "COMPLETED 0:0",
+      "prediction_node": "c64/node9",
+      "prediction_wall_seconds": 6,
+      "prediction_command": "sbatch --parsable run_qwen_105572_holdout.sbatch predict",
+      "prediction_sha256": [
+        "d39770d652612242ef73a4e32546111f220795ae840d3f35c8aab980caa76724",
+        "bebae5484ad6ccf5881144ddc1c3e9a6fa10f868fa63fe498769ab0d9a4c55ce"
+      ],
+      "prediction_manifest_sha256": "605a49105774a2b9519869370116878d81dccf4f53cc4753b9f47f99233f1105",
+      "model_output_manifest_sha256": "8559c5787a4b54b5f15d8397d7a1fb62ef26cc3b57eded604c3e2f376d7fd9b1",
+      "compare_job": 110843,
+      "comparison_state": "FAILED 1:0",
+      "comparison_node": "c64/node11",
+      "comparison_wall_seconds": 3,
+      "compare_command": "sbatch --parsable run_qwen_105572_holdout.sbatch compare d39770d652612242ef73a4e32546111f220795ae840d3f35c8aab980caa76724 bebae5484ad6ccf5881144ddc1c3e9a6fa10f868fa63fe498769ab0d9a4c55ce",
+      "mode0": {
+        "matched_events": 2244,
+        "zero_error": true,
+        "comparison_sha256": "19916d3eba865d5e1c98a139cc7d7f493e4618ff4cc24c9bf1ff0bedb31d4430"
+      },
+      "mode1": {
+        "matched_prefix_events": 1156,
+        "first_different_event": {
+          "kind": "admit",
+          "address": 5017600,
+          "tag": 8590721600,
+          "lane": 0,
+          "predicted_pre_edge": 35736,
+          "observed_pre_edge": 35731
+        }
+      },
+      "diagnostic_after_source_fix": {
+        "source_commit": "bd0cab41821ee67ede9a86b35b33c8f49f1bb6cb",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-heldout-diagnostic-20261114-01",
+        "prediction_job": 110895,
+        "prediction_state": "COMPLETED 0:0",
+        "prediction_node": "c64/node9",
+        "prediction_wall_seconds": 5,
+        "compare_job": 110917,
+        "compare_state": "COMPLETED 0:0",
+        "compare_node": "c64/node11",
+        "compare_wall_seconds": 2,
+        "prediction_sha256": [
+          "d39770d652612242ef73a4e32546111f220795ae840d3f35c8aab980caa76724",
+          "4d54d5c2f066e12154bc9d6b32bd67ebba41710a6b335111ca1f0f047125fa59"
+        ],
+        "prediction_command": "sbatch --parsable run_qwen_105572_holdout.sbatch predict",
+        "compare_command": "sbatch --parsable run_qwen_105572_holdout.sbatch compare d39770d652612242ef73a4e32546111f220795ae840d3f35c8aab980caa76724 4d54d5c2f066e12154bc9d6b32bd67ebba41710a6b335111ca1f0f047125fa59",
+        "model_output_manifest_sha256": "e227e323c8201c731be4cdf4b4d504a98f5c0a05b07848e4dd4062e569b6370e",
+        "output_manifest_sha256": "5044be85a6de9d0eefe69349c6e59a02a38af3573cb1b285cf1fd7a31f61b80f",
+        "source_manifest_sha256": "7859888333821eac000e704a311670da837304b580575f9f37d3e2c82df34809",
+        "matched_events_per_mode": 2244,
+        "independent_heldout_qualification": false,
+        "scope": "source-derived fix, reused opened evaluation traces"
+      }
+    },
+    "full_page_attempts": [
+      {
+        "id": 110774,
+        "source_commit": "f512c7789c9631658ffb29741ec91c2aac7b2cda",
+        "state": "FAILED 1:0",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-qkv-page-20261114-01",
+        "cause": "Overly strict SRAM residency check rejected RoPE data surviving an unrelated projection."
+      },
+      {
+        "id": 110794,
+        "source_commit": "ba2135c95367b985610270c45c28cc5cd7c60875",
+        "state": "FAILED 1:0",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-qkv-page-20261114-02",
+        "cause": "Model lacks second-row prompt embedding/RMS and descriptor gate; first DDR mismatch at mode0 index71052."
+      },
+      {
+        "id": 110915,
+        "source_commit": "38d240eeb7248a3db854c71eebff33a8c73ab1bd",
+        "state": "FAILED 1:0",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-qkv-page-20261114-03",
+        "cause": "Cursor replay incorrectly treated raw prompt ingress tags as typed client tags."
+      },
+      {
+        "id": 110938,
+        "source_commit": "768b508f26586e328bed559f4506df582db68ea8",
+        "state": "FAILED 1:0",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-qkv-page-20261114-04",
+        "cause": "History embedding table base was incorrectly offset by the first token index."
+      }
+    ],
+    "full_page_current": {
+      "id": 110962,
+      "source_commit": "f3abfb919a04dcd4c3332938a72d4f4f624fa90f",
+      "state": "RUNNING",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-qkv-page-20261114-05",
+      "node": "c64/node11",
+      "cpus": 2,
+      "command": "sbatch --parsable run_qwen_page_cycle.sbatch /public/home/yuzelu/Melodydt/runs/issue-265/qwen-edge-verify-20261113-01 --through-qkv-page"
+    }
+  },
+  "runtime_validation": {
+    "matched_prefix": {
+      "jobs": [
+        110649,
+        110695
+      ],
+      "node": "node2",
+      "cpus": 1,
+      "pages": 9,
+      "baseline_wall_seconds": 170,
+      "batched_ddr_wall_seconds": 70,
+      "native_integer_and_batched_ddr_wall_seconds": 60,
+      "first_attempt": {
+        "id": 110649,
+        "source_commit": "e943da281f8d2d830d3f4473943ba3a141d0957d",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-20261114-01",
+        "state": "FAILED",
+        "exit_code": "1:0",
+        "reason": "byte comparison of JSON objects with different key ordering; both nine-page traces matched by parsed fields"
+      },
+      "audited": {
+        "id": 110695,
+        "source_commit": "5f895d56d8a1f47b5c2f0f8fc00eb6e9ce8063d0",
+        "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-math-20261114-01",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "slurm_seconds": 64,
+        "command": "sbatch --parsable --partition=c64 --nodelist=node2 --time=00:12:00 run_qwen_fast_tlm.sbatch --math-prefix /public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-20261114-01",
+        "output_manifest_sha256": "0f8180039c85c3bbc0a0d13a76a7e7e2ee5a6dbb05c6159e9e6dd490eb3bd64a",
+        "output_sha256": {
+          "source.sha256": "4e19a9c43b5622042e2b9ea3862f9244da6c50c75e31c72c32d5b964c9925993",
+          "inputs.sha256": "b2193fcd0cf11fb693e35e042e0db3b568378de6dc010b1f4958d2f6164d8ef5",
+          "prefix.sha256": "b03d1abfaf4262d3240617cfbd5a78f6ed9fed9ab5bbf478cb272ba9cf527a2d",
+          "fast_tlm_dram.so": "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b",
+          "fast_tlm_math.so": "6109b1f46bc6608270851c60713e445b2783f313bc8bea8db5a838515fb15fb2",
+          "compiler-version.txt": "9eaf9b7f4b11c2e84e2478c2ceb0e4f48f4ba88565bcfc832b3bce49847dda6d",
+          "python-version.txt": "f6b75e07f1488db28a89724a522725e3e01af3dc78f6fd365f17eb4059e41056",
+          "math-prefix.wall-seconds": "95cf32708a31caa478a0e9141103ac567d85e5186e697e7e0c81f75589999e31",
+          "math-prefix/page-timing.jsonl": "6d1f95489e90768b3365b77623a2138007b45ffeb2a2f1e05c35cab07a74f3fe"
+        },
+        "source_sha256": {
+          "fast_tlm_replay.py": "cb160ff9fead4deb9743ad1e3c672b9e744675cb79c8cda74dd3f8ed0ab23d3c",
+          "fast_tlm_dram.cpp": "19256861ad88f352899f3f44b8fbbf3674713fc0797baf4a95d1d675a045b8ae",
+          "run_qwen_fast_tlm.sbatch": "14f6f067ca88afd63b5a4bcaceefd033c3994fda9f22ba973a83a046ce2b6af7",
+          "fast_tlm_math.cpp": "a582057ab908b4050885a68dcb3304f15e9e8ba63542d028afd491bc8acfd2e5",
+          "fast_tlm_numerics.py": "78bfc3c29d1a2c8b56772d571a35dadc2fc55bd3c718090b9c4df13a6d2af11c"
+        },
+        "inputs_sha256": {
+          "/public/home/yuzelu/project-circuit/issue260-native-two-dma-sRx1azw1/source.sha256": "1bf5465dc4a4bbb8e4618502e1fe5a591d1c2c9fdc8b20cf84d5ea7d198e2a33",
+          "/public/home/yuzelu/project-circuit/issue234-native-fixed-skip-request-H2gY5uiN/request-runtime-archived/proof.sha256": "74078b0b40fdeb73aeae71e3091db3e6a25fc5f27bc03c9981214bfef92b39ef",
+          "/public/home/yuzelu/project-circuit/issue260-full-preflight-LUsXKLuZ/kv-106243/binding.json": "78347abd13135d71a678ff87b4760175ea81fb701a4edb022e080165321f2b4e",
+          "/public/home/yuzelu/project-circuit/issue234-native-fixed-skip-request-H2gY5uiN/request-memory-archived/ddr-initial.tsv": "e55ce2d889261daccbf43335875be922fe813fe92dc0ae9ee28fd1f5b880d7b5",
+          "/public/home/yuzelu/project-circuit/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini": "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766",
+          "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/dram-106937.so": "363d38212c06ded6b012c609cf834d2176fb51acb41ec0fedca918768cfbe292",
+          "/public/home/yuzelu/project-circuit/issue234-ddr-quiet-JDehtRNz/quiet/source/libdramsim3.so": "00ccc86ab97f9d25f84bdf6df22b4972e70b96ff56fc7dd39805b2280b14698f",
+          "/public/home/yuzelu/project-circuit/issue234-ddr-quiet-JDehtRNz/quiet/source/src/memory_system.h": "b750651e5fc871df216570cfa1687894f9242a16a26fb69bf1099a97f5080e4b",
+          "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/systemc_benchmark/native_rtl_retirements.py": "601134bdb862045dd3002abe615284c5501deb36c064175fd84eb29bd2ac5837",
+          "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/systemc_benchmark/prepare_native_whole_request.py": "4b763d1dcb22840f70c11e81447591715369b8f37b7febdbdecc353949d870ef",
+          "/public/home/yuzelu/project-circuit/issue260-tlm-joint-9BiJdfEg/block_local_native/native_program_runtime.py": "7ed0eb23bbba07aabad7c257a4ba1f1e1dca09e8cca15768adfdf78e9e8b613b",
+          "/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif": "49eae8b526c6eec806473b13db5d98f848424f38de9fa3430e8ce8e157144f3a"
+        },
+        "prefix_sha256": {
+          "baseline-prefix.wall-seconds": "133688d458bf650fa5dcd7475ec449f4d617bacaa8cd63dfdfa5cf620d698b91",
+          "fast-prefix.wall-seconds": "6442bc26a7c562f5afe6467dab36365c709909f6a81afcecfc0c25cff0f1bab0",
+          "baseline-prefix/page-timing.jsonl": "eb5d5787860b99d4f6d4a425120661bcc8e30d28228eaa6329e7f8ec540d9c22",
+          "fast-prefix/page-timing.jsonl": "6d1f95489e90768b3365b77623a2138007b45ffeb2a2f1e05c35cab07a74f3fe",
+          "archived-prefix.jsonl": "eb5d5787860b99d4f6d4a425120661bcc8e30d28228eaa6329e7f8ec540d9c22"
+        },
+        "python_version": "Python 3.10.12",
+        "compiler_version": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+      }
+    },
+    "whole_matched_replay": {
+      "id": 110666,
+      "source_commit": "4a3fabade7687da46fe83091a4ab29eeb8b84dfa",
+      "directory": "/public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-20261114-02",
+      "log": "slurm-110666.out",
+      "partition": "c64",
+      "node": "node10",
+      "cpus": 1,
+      "command": "sbatch --parsable run_qwen_fast_tlm.sbatch --reuse-prefix /public/home/yuzelu/Melodydt/runs/issue-265/qwen-fast-tlm-20261114-01",
+      "state": "RUNNING",
+      "scope": "same 107361 TLM semantics, 582 pages activating all 36 layers and vocabulary twice",
+      "matched_page_snapshot": 235
+    }
+  },
+  "acceptance": {
+    "formal_rtl_p512_d128": false,
+    "estimator_uses_archived_step1_for_calibration": true,
+    "step2_excluded_from_fit": true,
+    "independent_long_context_timing_error_verified": false
+  }
+}
