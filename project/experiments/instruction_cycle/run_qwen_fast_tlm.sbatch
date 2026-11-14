@@ -24,7 +24,11 @@ program=$asset/request-runtime-archived
 memory=$asset/request-memory-archived/ddr-initial.tsv
 reference=$archive/run-107361
 previous=
+math_prefix=0
 if [[ ${1:-} == --reuse-prefix ]]; then
+    previous=$(realpath "${2:?prior matched-node prefix run directory required}")
+elif [[ ${1:-} == --math-prefix ]]; then
+    math_prefix=1
     previous=$(realpath "${2:?prior matched-node prefix run directory required}")
 fi
 cat > inputs.sha256 <<EOF
@@ -46,10 +50,10 @@ sha256sum -c inputs.sha256
 
 srun --exact -n1 -c1 --cpu-bind=cores /public/software/singularity-ce-4.3.4/bin/singularity exec \
     --cleanenv --bind /public/home/yuzelu "$image" bash -s -- \
-    "$python" "$archive" "$dependencies" "$dram" "$program" "$memory" "$config" "$kv" "$deployment" "$kv_sha" "$previous" <<'RUN'
+    "$python" "$archive" "$dependencies" "$dram" "$program" "$memory" "$config" "$kv" "$deployment" "$kv_sha" "$previous" "$math_prefix" <<'RUN'
 set -euo pipefail
 python=$1 archive=$2 dependencies=$3 dram=$4 program=$5 memory=$6 config=$7 kv=$8 deployment=$9 kv_sha=${10}
-previous=${11}
+previous=${11} math_prefix=${12}
 export LC_ALL=C PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1
 export PYTHONPATH="$dependencies/systemc_benchmark:$dependencies/block_local_native"
 g++ --version > compiler-version.txt
@@ -78,6 +82,15 @@ head -n 9 "$archive/run-107361/page-timing.jsonl" > archived-prefix.jsonl
 "$python" -B fast_tlm_replay.py --compare archived-prefix.jsonl baseline-prefix/page-timing.jsonl
 "$python" -B fast_tlm_replay.py --compare archived-prefix.jsonl fast-prefix/page-timing.jsonl
 sha256sum *-prefix.wall-seconds {baseline,fast}-prefix/page-timing.jsonl archived-prefix.jsonl > prefix.sha256
+if ((math_prefix)); then
+    g++ -std=c++17 -O3 -Wall -Wextra -Werror -shared -fPIC fast_tlm_math.cpp -o fast_tlm_math.so >> build.log 2>&1
+    start=${SECONDS}
+    "$python" -B fast_tlm_replay.py --archive "$archive" --pages 9 --fast-ddr --native-math "$PWD/fast_tlm_math.so" \
+        "$program" "$memory" "$PWD/fast_tlm_dram.so" "$config" math-prefix "$deployment" "${args[@]}"
+    echo "$((SECONDS-start))" > math-prefix.wall-seconds
+    "$python" -B fast_tlm_replay.py --compare archived-prefix.jsonl math-prefix/page-timing.jsonl
+    exit
+fi
 echo "MATCHED_9_PAGES, starting two-step decode"
 start=${SECONDS}
 "$python" -B fast_tlm_replay.py --archive "$archive" --fast-ddr \
@@ -85,6 +98,13 @@ start=${SECONDS}
 echo "$((SECONDS-start))" > decode.wall-seconds
 "$python" -B "$archive/audit_native_decode_timing.py" decode > decode/timing-audit.json
 RUN
+
+if ((math_prefix)); then
+    sha256sum source.sha256 inputs.sha256 prefix.sha256 fast_tlm_{dram,math}.so \
+        compiler-version.txt python-version.txt math-prefix.wall-seconds math-prefix/page-timing.jsonl > output.sha256
+    sha256sum -c output.sha256
+    exit
+fi
 
 cat > reference.sha256 <<EOF
 df6c62434b009195035853e9577edbfe653824017af745bdeb81fceca111238d  $reference/execution.json

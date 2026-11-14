@@ -100,6 +100,7 @@ def main():
     parser.add_argument("--archive", type=Path)
     parser.add_argument("--compare", nargs=2, type=Path, metavar=("REFERENCE", "CANDIDATE"))
     parser.add_argument("--fast-ddr", action="store_true")
+    parser.add_argument("--native-math", type=Path, help="use sealed bit-exact native provider arithmetic")
     parser.add_argument("--pages", type=int, default=0, help="stop at a diagnostic page boundary")
     args, replay_args = parser.parse_known_args()
     if args.compare:
@@ -144,6 +145,10 @@ def main():
 
         timing.Clock = BatchedClock
         timing.Dram = DramBridge
+
+    if args.native_math:
+        from fast_tlm_numerics import install
+        install(args.native_math)
 
     import run_native_tlm_request as replay
 
