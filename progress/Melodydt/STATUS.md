@@ -30,3 +30,9 @@
 - [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272) 由 Melodydt 接续。本轮在冻结 ATT1 的 512-bit 方案上做 FFN 四权重 bank A/B。前四层同程序、同流量及 Down 散列对照通过。两步 Decode 外推 2.931091 tok/s，短 Prefill 外推 6.327444 输入 tok/s，后者按 113071 的完整 ATT1 5.511216 输入 tok/s 重定基。
 - TLM 113164–113167 持久运行，原生归档 DDR 113181 完成 0:0，回包 2,245,632、在途峰值 63。原生 C639 三路 P 监测 113199 已进入回放，113195 的归档入口失败已修复。下一步根据原生每个 M bank 的填充与 EXEC 边沿定位 Gate/Up 尾延迟，并对账四项完整同比。见 [第五轮回执](../../work/Melodydt/270/ffn-weight-05/README.md) 和 [恢复交接](../../docs/handoffs/2026-11-14-issue-270-ffn-weight.md)。
 - 完整 P512/D128 与物理 STA 未执行，任务进行中，独立审查人待指定。登记 PR #5 待合并，Projects 缺配置待具权限维护者核验和同步。
+
+## 2026-11-14（Asia/Shanghai）FFN 三路 P 与母控 WAIT 对账
+
+- [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。113287 原生 C639 两模式完成 0:0，各 128 波次/384 scope，源、输出与探针散列核验，与 113199 的功能级回执和 DDR 事务逐字相同。正常/背压 Gate/Up 最慢一路的配对准备平均 1,204/1,043 拍，单独等权重 268/105 拍。优先做局控可执行老记录与后续配对准备解耦的单项 A/B。
+- ATT1 第四轮完整基线 2.739056 tok/s / 5.511216 输入 tok/s。短 Prefill 113166/113167 完整为 6.316164 输入 tok/s，逐页与 Down 通过。FFN Decode 第二步前四层外推 2.926561 tok/s，候选 113165 尚待完整对账。保留词表 86.827619 ms 的基线页时间。
+- 后续逐步汇报两项速度、验证限制和剩余全部步骤。详见 [第六轮回执](../../work/Melodydt/270/ffn-wait-06/README.md) 和 [恢复交接](../../docs/handoffs/2026-11-14-issue-270-ffn-wait.md)。审查人待指定，登记 PR #5 待合并，Projects 缺配置待具权限维护者核验。物理 STA 与 P512/D128 未执行。
