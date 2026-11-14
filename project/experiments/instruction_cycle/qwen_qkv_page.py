@@ -53,7 +53,9 @@ def read_history_rows(archive, embedding):
 def _refill_history(ddr, retired, row):
     # After K/V store number four or eight, the wrapper retires the old
     # embedding row. The next token is already held in the one prompt beat.
-    embedding_done, _ = load_row(ddr, retired + 3, 1, row["address"], 0)
+    # ROW TAKE, the next token handshake, and loader LAUNCH each consume
+    # an edge before the first read can be offered.
+    embedding_done, _ = load_row(ddr, retired + 4, 1, row["address"], 0)
     gamma_done, _ = load_row(ddr, embedding_done + 3, 3, row["gamma_address"], ROW_BYTES // SRAM_WORD_BYTES)
     gamma_ack = gamma_done - 1
     edges = rms_edges(gamma_ack, row["extra_shift"])
