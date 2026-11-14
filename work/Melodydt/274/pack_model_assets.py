@@ -12,11 +12,13 @@ from safetensors import safe_open
 
 def chosen(name):
     return (
-        "vision" not in name and ".mtp." not in name and "multi_modal" not in name
+        "vision" not in name and not name.startswith("mtp.") and ".mtp." not in name and "multi_modal" not in name
         and name.endswith(".weight") and (
             name.endswith(("embed_tokens.weight", "lm_head.weight"))
             or ".layers." in name and (
                 name.endswith("_proj.weight") or name.endswith("router.layer.weight")
+                or name.endswith(("in_proj_qkv.weight", "in_proj_z.weight",
+                                  "in_proj_a.weight", "in_proj_b.weight"))
                 or name.endswith(("input_linear.weight", "output_linear.weight")))))
 
 

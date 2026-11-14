@@ -13,3 +13,9 @@
 - 下一步生成 Qwen3 首层部署指令、运行 Q/K Norm 与写确认后跨步 KV，再扩至 28 层。两步 Decode／短 Prefill 整模型吞吐仍待测，Issue 保持进行中。
 
 - 114376 的 1,024 维输入 RMS 和 128 维 Q/K Norm 使用真实 gamma 与独立向量，6/6 成功，214/214 DDR 回调对账。下一步串到真实 QKV 与跨步 KV，全部已提交作业均终态。
+
+## 2026-11-15（Asia/Shanghai）七模型短程回放
+
+- Qwen3 115055 正常结束，短 Prefill 13.481376 输入 token/s，Decode 3.585938 token/s，两个 token 均与零历史 FP32 一致。已保存日志、输出、审计和散列。
+- Llama 已完成短 Prefill，六个模型的整模型 Decode 作业已提交。Gemma 的残差定点饱和、64 维头填充及混合递推服务记录在[结果与复跑索引](../../work/Melodydt/274/RESULTS.md)。
+- [Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 进行中，[PR #275](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/275) 草稿。后续按模型核验实际退出码、两阶段回执、零历史数值及输入输出散列。登记 pending，Projects 看板待核验。

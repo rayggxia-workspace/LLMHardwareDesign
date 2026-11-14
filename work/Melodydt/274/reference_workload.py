@@ -62,13 +62,17 @@ def run(model_path, label, out, threads, export_receipt=None, *, zero_history=Fa
         initial_state = summarize_cache(past)
         if initial_state["length"] != 512:
             raise ValueError("checkpoint cache did not cover 512 input positions")
-        torch.save(past, out / "history512.pt")
         if zero_history:
-            if model.config.model_type != "qwen3":
-                raise ValueError("zero-history reference is currently defined for Qwen3")
             for layer in past.layers:
-                layer.keys.zero_()
-                layer.values.zero_()
+                for name in ("keys", "values", "conv_states", "recurrent_states"):
+                    states = getattr(layer, name, None)
+                    if isinstance(states, torch.Tensor):
+                        states.zero_()
+                    elif isinstance(states, (list, tuple)):
+                        for item in states:
+                            if isinstance(item, torch.Tensor):
+                                item.zero_()
+        torch.save(past, out / "history512.pt")
         del prefix
         step_tokens = []
         current = first

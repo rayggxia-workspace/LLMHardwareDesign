@@ -20,7 +20,8 @@ from test_qwen3_rms import weights
 U, P, CONTEXT, MID = 3, 0, 1, 2
 HIDDEN, HEAD, KV_HEADS, HEADS, FFN, VOCAB = 1024, 128, 8, 16, 3072, 151936
 EPS = round(1e-6 * 2**32)
-VECTOR, DMA, COPY, ACT, HEAD_OUT = 8, 9, 10, 11, 12
+VECTOR, DMA, COPY, ACT, HEAD_OUT, ROTARY, RESIDUAL = 8, 9, 10, 11, 12, 13, 14
+ATT_WIDE, ELEMENT, MOE, RECURRENT = 15, 16, 17, 18
 BASE_ABI = 0x02500002
 PROJ = 0x02505001
 PROJ_ABI = 0x02504D02
@@ -50,6 +51,16 @@ def seal(schema, opcode, abi, format, *values, offset=16):
     return raw
 
 
+def projection_record(address, columns, width, first, groups, word, route=0, vocab=False, backing=0):
+    payload = seal(HEAD_OUT if vocab else PROJ, 2, PROJ_ABI, "<QQIIHBBHHHBB", address, 0,
+                   columns, first, 8, groups, 0, width, 0, width, 1, int(vocab), offset=48)
+    pack_into("<6HQQ", payload, 84, 960, word, 0, 0, 0, 0, 0, 0)
+    payload[16] = route
+    pack_into("<Q", payload, 24, backing)
+    pack_into("<I", payload, 124, crc32(payload[:124]))
+    return payload
+
+
 @dataclass(frozen=True)
 class Region:
     address: int
@@ -58,11 +69,12 @@ class Region:
 
 
 class Layout:
-    def __init__(self, folder):
+    def __init__(self, folder, immutable_end=KV_START):
         self.folder = folder
         self.images = []
         self.address = TABLE
         self.proof = []
+        self.immutable_end = immutable_end
 
     def file(self, path, *, expected=None):
         path = path.resolve()
@@ -74,7 +86,7 @@ class Layout:
         self.images.append(Region(address, size, path))
         self.proof.append({"address": address, "bytes": size, "path": str(path), "sha256": digest})
         self.address += size
-        if self.address >= KV_START:
+        if self.address >= self.immutable_end:
             raise ValueError("immutable images intersect KV")
         return address
 
@@ -89,6 +101,8 @@ class Layout:
 
 
 class Compiler:
+    hidden, vocab, token_word, kv_row, kv_heads = HIDDEN, VOCAB, 512, 512, KV_HEADS
+
     def __init__(self, checkpoint, frozen, packed, reference, output, layers, history, mode):
         self.layout = Layout(output)
         self.checkpoint = checkpoint
@@ -100,7 +114,10 @@ class Compiler:
         self.calls = []
         self.gamma = {}
         self.positions = [history, history + 1]
-        self.kv_bytes = align((history + 2) * HEAD * 4, 4096)
+        self.kv_row = 512
+        self.pad_kv_head = HEAD
+        self.kv_heads = KV_HEADS
+        self.kv_bytes = align((history + 2) * self.kv_row, 4096)
         self.input_ids = json.loads((reference / "input-ids.json").read_text())
         self.reference = json.loads((reference / "reference.json").read_text())
         base = self.layout.file(frozen / "embedding.s32")
@@ -127,33 +144,38 @@ class Compiler:
 
     def rms(self, site, name, source, dest, words):
         if name not in self.gamma:
-            gamma = weights(self.checkpoint, name)
+            gamma = self.vector(name)
             if gamma.size != words * 4:
                 raise ValueError("gamma shape differs from compiled RMS")
             self.gamma[name] = self.layout.write("gamma-" + name + ".bin",
                                                  np.rint(gamma*65536).astype("<i4").tobytes())
-        gamma = 256 if site == U else 224
-        self.load(site, self.gamma[name], gamma, words)
-        self.append(site, seal(3, 3, VECTOR, "<4HI", source, gamma, dest, words, EPS))
+        self.rms_address(site, self.gamma[name], source, dest, words)
+
+    def rms_address(self, site, address, source, dest, words, gamma=None):
+        if gamma is None:
+            gamma = (0 if source else self.hidden//4) if site == U else 224
+        self.load(site, address, gamma, words)
+        self.append(site, seal(3, 3, VECTOR, "<4HI", source, gamma, dest, words,
+                               getattr(self, "eps", EPS)))
+
+    def final_norm(self):
+        self.rms(U, "model.norm.weight", 0, self.hidden//4, self.hidden//4)
+
+    def vector(self, name):
+        return weights(self.checkpoint, name)
 
     def add(self, left, right, dest, words):
         self.append(U, seal(3, ADD2, BASE_ABI, "<4H", left, right, dest, words))
 
-    def project(self, name, output_word, start=0, end=None, *, route=0, vocab=False):
+    def project(self, name, output_word, start=0, end=None, *, route=0, vocab=False, backing=0):
         address, columns, k = self.records[name]
         end = columns if end is None else end
         if not 0 <= start < end <= columns or (start | end) % 8:
             raise ValueError("projection target differs from whole N8 column groups")
-        schema = HEAD_OUT if vocab else PROJ
         for first in range(start, end, 128):
             groups = min(128, end - first) // 8
-            payload = seal(schema, 2, PROJ_ABI, "<QQIIHBBHHHBB", address, 0, columns,
-                           first, 8, groups, 0, k, 0, k, 1, int(vocab), offset=48)
-            pack_into("<6HQQ", payload, 84, 960, output_word+(0 if vocab else (first-start)//4), 0,
-                      0, 0, 0, 0, 0)
-            payload[16] = route
-            pack_into("<I", payload, 124, crc32(payload[:124]))
-            self.append(P, payload)
+            word = output_word if vocab else output_word+(first-start)//4
+            self.append(P, projection_record(address, columns, k, first, groups, word, route, vocab, backing))
 
     def coefficients(self, position):
         frequencies = 1_000_000.0 ** (-np.arange(0, 128, 2) / 128)
@@ -222,6 +244,7 @@ class Compiler:
         for position in self.positions:
             coeff = self.coefficients(position)
             self.append(U, self.add_embedding)
+            self.ingress()
             first = self.pages(f"pos{position}-ingress")
             layer_pages = []
             for layer in range(self.layers):
@@ -229,15 +252,26 @@ class Compiler:
                 layer_pages.append(self.pages(f"pos{position}-l{layer}"))
             vocab = []
             if self.mode == "decode":
-                self.rms(U, "model.norm.weight", 0, 256, 256)
-                self.project("model.embed_tokens.weight", 0, vocab=True)
+                self.final_norm()
+                self.project(self.head_weight, 0, vocab=True)
                 vocab = self.pages(f"pos{position}-head")
             phases.append({"position": position, "ingress": first, "layers": layer_pages, "vocabulary": vocab})
         self.layout.close()
-        regions = [(self.kv(layer, head, kind)+self.history*512, 1024)
-                   for layer in range(self.layers) for head in range(KV_HEADS) for kind in range(2)]
+        regions = [(self.kv(layer, head, kind)+self.history*self.kv_row, 2*self.kv_row)
+                   for layer in range(self.layers) if self.has_kv(layer)
+                   for head in range(self.kv_heads) for kind in range(2)]
         return {"mode": self.mode, "layers": self.layers, "history": self.history,
+                "hidden": self.hidden, "vocab": self.vocab, "token_word": self.token_word,
+                "kv_row": self.kv_row,
                 "local": {"address": local_address, "bytes": len(local), "crc": crc32(local)},
                 "first_decode_input": self.reference["decode"][0]["input"],
                 "prompt": self.prompt, "phases": phases, "images": self.layout.proof,
-                "state": regions}
+                "state": regions, "scratch": getattr(self, "scratch_regions", [])}
+
+    def ingress(self):
+        pass
+
+    def has_kv(self, layer):
+        return True
+
+    head_weight = "model.embed_tokens.weight"

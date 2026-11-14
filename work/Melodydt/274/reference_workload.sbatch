@@ -10,6 +10,11 @@ out="$PWD/ref-$SLURM_JOB_ID"
 mkdir "$out" "$out/cache"
 pids=()
 models=()
+history=()
+if [[ ${1:-} == --zero-history ]]; then
+    history=(--zero-history)
+    shift
+fi
 finish() {
     local i status
     for i in "${!pids[@]}"; do
@@ -34,7 +39,7 @@ for model in "$@"; do
         HF_HOME="$out/cache" PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS="$SLURM_CPUS_PER_TASK" \
         MKL_NUM_THREADS="$SLURM_CPUS_PER_TASK" OPENBLAS_NUM_THREADS=1 \
         "$py" -B reference_workload.py "$archive" "$model" "$out/$model" "$SLURM_CPUS_PER_TASK" \
-        "${checkpoint[@]}" > "$out/$model.log" 2>&1 &
+        "${checkpoint[@]}" "${history[@]}" > "$out/$model.log" 2>&1 &
     pids+=("$!")
     models+=("$model")
 done
