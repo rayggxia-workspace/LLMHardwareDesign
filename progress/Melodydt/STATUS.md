@@ -24,3 +24,9 @@
 - [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。C380 固定半窗口 A/B 113104/113105 均完成，正常 75,877→65,932 拍、背压 282,528→279,968 拍。同流量及逐字读回通过。相对第三轮大分片，正常减少 1.95%，背压增加 3.19%。
 - 512-bit TLM 同流量前四层外推 2.739536 tok/s / 5.504623 输入 tok/s。112976/112977 及 113070/113071 持久运行，恢复见 [第四轮回执](../../work/Melodydt/270/dot-read-04/README.md)。Melodydt 对账完整短程吞吐和误差后衔接 FFN 权重取数。新增共享端口故障注入、物理 STA 和 P512/D128 待执行。
 - 登记 PR #5 待合并，Projects 无配置，具权限维护者待核验和同步，独立审查人待指定。
+
+## 2026-11-14（Asia/Shanghai）FFN 权重供数
+
+- [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272) 由 Melodydt 接续。本轮在冻结 ATT1 的 512-bit 方案上做 FFN 四权重 bank A/B。前四层同程序、同流量及 Down 散列对照通过。两步 Decode 外推 2.931091 tok/s，短 Prefill 外推 6.327444 输入 tok/s，后者按 113071 的完整 ATT1 5.511216 输入 tok/s 重定基。
+- TLM 113164–113167 持久运行，原生归档 DDR 113181 完成 0:0，回包 2,245,632、在途峰值 63。原生 C639 三路 P 监测 113199 已进入回放，113195 的归档入口失败已修复。下一步根据原生每个 M bank 的填充与 EXEC 边沿定位 Gate/Up 尾延迟，并对账四项完整同比。见 [第五轮回执](../../work/Melodydt/270/ffn-weight-05/README.md) 和 [恢复交接](../../docs/handoffs/2026-11-14-issue-270-ffn-weight.md)。
+- 完整 P512/D128 与物理 STA 未执行，任务进行中，独立审查人待指定。登记 PR #5 待合并，Projects 缺配置待具权限维护者核验和同步。
