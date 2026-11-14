@@ -44,17 +44,33 @@ def commands(manifest, output, selected=()):
         window = case.get("kv_read_window", 1)
         budget = case.get("dma_fabric_budget", False)
         capture = case.get("capture_first_layer", False)
+        pipeline = case.get("pipeline_memory", False)
+        weight_fetch = case.get("rtl_weight_fetch", False)
+        attention_pipeline = case.get("attn_sram_pipeline", False)
+        response_slots = case.get("kv_response_slots", 0)
+        value_fetch = case.get("av_value_fetch", "legacy")
         if (type(width) is not int or width not in (128, 512) or
                 type(window) is not int or window not in range(1, 33) or
-                type(budget) is not bool or type(capture) is not bool):
+                any(type(flag) is not bool for flag in
+                    (budget, capture, pipeline, weight_fetch, attention_pipeline))):
             raise ValueError(f"{name}: invalid port width, window or boolean")
+        if type(response_slots) is not int or (response_slots and not window < response_slots <= 64):
+            raise ValueError(f"{name}: invalid KV response slot count")
+        if value_fetch not in ("legacy", "selected", "paired", "paired-ping-pong"):
+            raise ValueError(f"{name}: invalid AV value fetch mode")
+        if value_fetch == "paired-ping-pong" and not pipeline:
+            raise ValueError(f"{name}: paired AV ping-pong requires the memory pipeline")
+        if attention_pipeline and (not pipeline or not response_slots):
+            raise ValueError(f"{name}: ATT1 SRAM pipeline requires memory pipeline and KV response slots")
         mode_options = {
             "decode": {"kv_binding", "kv_sha256"},
             "prefill": {"prefill_tokens"},
             "checkpoint": {"checkpoint_pages", "capture_first_layer"},
             "request": set(),
         }
-        common = {"mode", "sram_port_bits", "dma_fabric_budget", "kv_read_window", "inputs"}
+        common = {"mode", "sram_port_bits", "dma_fabric_budget", "kv_read_window", "inputs",
+                  "pipeline_memory", "rtl_weight_fetch", "attn_sram_pipeline", "kv_response_slots",
+                  "av_value_fetch"}
         if mode not in mode_options or set(case) - common - mode_options[mode]:
             raise ValueError(f"{name}: options do not match the selected mode")
         required = {"decode": {"kv_binding", "kv_sha256"}, "checkpoint": {"checkpoint_pages"}}
@@ -68,6 +84,14 @@ def commands(manifest, output, selected=()):
                   "--kv-read-window", str(window)]
         if budget:
             replay.append("--dma-fabric-budget")
+        for enabled, flag in ((pipeline, "--pipeline-memory"), (weight_fetch, "--rtl-weight-fetch"),
+                              (attention_pipeline, "--attn-sram-pipeline")):
+            if enabled:
+                replay.append(flag)
+        if response_slots:
+            replay.extend(("--kv-response-slots", str(response_slots)))
+        if value_fetch != "legacy":
+            replay.extend(("--av-value-fetch", value_fetch))
         audit = []
         if mode == "decode":
             replay.extend(("--decode-kv-binding", path(case["kv_binding"]),

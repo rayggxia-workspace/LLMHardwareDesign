@@ -29,6 +29,19 @@
       "kv_read_window": 8,
       "sram_port_bits": 512
     },
+    "decode-attn-sram-pipeline": {
+      "mode": "decode",
+      "kv_binding": "inputs/binding.json",
+      "kv_sha256": "78347abd13135d71a678ff87b4760175ea81fb701a4edb022e080165321f2b4e",
+      "sram_port_bits": 512,
+      "dma_fabric_budget": true,
+      "pipeline_memory": true,
+      "kv_read_window": 8,
+      "kv_response_slots": 16,
+      "av_value_fetch": "selected",
+      "rtl_weight_fetch": true,
+      "attn_sram_pipeline": true
+    },
     "checkpoint": {
       "mode": "checkpoint",
       "checkpoint_pages": 9,
