@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-14 14:39 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 记录 U0 CALL、索引写确认、首读及读回，扩展 PR #260 的 RTL 审计，保持原有完成校验。用全图的 288 个原始 KVR1 描述符跑完真实 DDR 写回，两个阶段的实际回执驱动阶段控制器。KV 源和其余阶段结果仍来自各自测试端。下一步同一底座接实时 QKV、词表及 C0 索引发送。见[回执](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#实际索引与-kv-回执)。
+
 2026-11-14 14:28 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 从同一份图部署生成 128 条阶段记录和 127 条退休到 Gather 的索引交接。现有请求控制器等页提交、KV 和词表 token，再启动 U0。远端协议和实际 U0 组件回归通过。用 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 当前接口读回 184,927 页，TLM 执行首四页。整机还需接实际 KV 和 P0/C0 物理链，并核对 CALL 与 U0 索引 ACK 的 RTL 审计顺序。见[阶段交接](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md)。
 
 2026-11-14 14:02 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 从同一 Block V2 候选底座和全图请求生成 184,927 页的原生指令索引与 5,935 根 Algo2 候选网。Algo2 接口通过读回，639 个 Gather 页换用主底座拓扑的母控镜像且 U0 正常／背压回归通过。下一步接通实时 token/KV 提交和其余 14 类服务，完成 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 整机验收。见[交接](../../work/YUZE-LU/219/native_ingress/SAME_PLAN_NATIVE_REQUEST.md)。

@@ -92,7 +92,40 @@ def stitch(source):
     $display("PASS sequencer-to-Gather vocabulary=%0d kv_receipt=%0d retire=%0d call=%0d index_ack=%0d row_ack=%0d",
              token_source_at, kv_at, request_retire_at, call_at, index_commit_at, last_commit);
     $finish;''')
-    return source
+    monitor = """  logic trace_reserved=0, trace_index_read_pending=0;
+  logic [127:0] trace_index_word;
+  always @(posedge clk) if (!reset) begin
+    if(mc_start_valid && mc_start_ready)
+      $display("NATIVE_GATHER_START step=%0d page=0 generation=%0d token=%0d cycle=%0d",
+               page_step,page_generation,page_input_token,cycle);
+    if(mc_valid && mc_ready && mc_sop)
+      $display("NATIVE_GATHER_CALL step=%0d page=0 generation=%0d target=%0d cycle=%0d",
+               page_step,page_generation,mc_target,cycle);
+    if(link_reserved && !trace_reserved) begin
+      trace_reserved<=1;
+      $display("NATIVE_GATHER_RESERVE step=%0d page=0 generation=%0d word=%0d cycle=%0d",
+               page_step,page_generation,link_addr,cycle);
+    end
+    if(incoming_valid && incoming_ready) trace_index_word<=index_data;
+    if(incoming_ack && index_ack_ready && ack_enable)
+      $display("NATIVE_GATHER_INDEX_ACK step=%0d page=0 generation=%0d word=%0d data=%032x cycle=%0d",
+               page_step,index_tag,index_word,trace_index_word,cycle);
+    if(dut.local_group.gather_active && dut.local_group.l_req && dut.local_group.l_ready && !dut.local_group.l_wr) begin
+      trace_index_read_pending<=1;
+      $display("NATIVE_GATHER_INDEX_READ step=%0d page=0 generation=%0d word=%0d cycle=%0d",
+               page_step,page_generation,dut.local_group.l_addr,cycle);
+    end
+    if(trace_index_read_pending && dut.local_group.gather_active && dut.local_group.l_rsp && dut.local_group.l_take) begin
+      trace_index_read_pending<=0;
+      $display("NATIVE_GATHER_INDEX_DATA step=%0d page=0 generation=%0d word=%0d data=%032x cycle=%0d",
+               page_step,page_generation,index_word,dut.local_group.l_result,cycle);
+    end
+    if(mc_result && executor_done_ready)
+      $display("NATIVE_GATHER_TERMINAL step=%0d page=0 generation=%0d status=%0d cycle=%0d",
+               page_step,page_generation,mc_result_status,cycle);
+  end
+"""
+    return replace_one(source, 'endmodule', monitor+'endmodule')
 
 
 def main():

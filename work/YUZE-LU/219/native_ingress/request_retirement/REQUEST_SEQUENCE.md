@@ -30,3 +30,11 @@ Qwen2.5-3B 样本产生 128 条阶段记录和 127 条 decode 索引交接，覆
 ## 复现
 
 远端目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em/full-graph-zwl0Tr/merged-bmMd5X/native-request-6WI0tH/framework-r11-CatJ8r/p-native-audit-FMPaww/live-vocabulary-CgSH5M/joint-placement-CrmPRH/request-retirement`。用 `request-retirement.sbatch` 生成阶段表并跑协议回归，用 `request-gather.sbatch` 验证 MC 与 U0 的交接，用 `check_pr260_graph_input.py` 生成对当前 PR #260 的输入回执。将回执 manifest 交给 `pr260-graph-prefix.sbatch` 可以复跑四页。111676 的 `execution.json` SHA-256 为 `f31158d3f1b2c7f264ae66a05cf4646edfdaf0ea1a8b0c348654022a9ee39777`。`pr260-input-proof.json` SHA-256 为 `fda5fb332d16704ce775d633ce28d5c39a9fc9516bcb785b169c91317ab669cc`。管理结构检查使用当前检查脚本和远端管理结构快照，结果通过。
+
+## 实际索引与 KV 回执
+
+远端 111707 从已有 U0 路径记录 MC 启动、CALL、SRAM 字预留、写确认、首次读请求、首次读返回与成功页终端。正常和背压的写确认分别为 38,820 和 38,829 拍，首次读请求均为 38,907 拍。读回 128 位字匹配退休 token 81917 的约定编码。检查器拒绝漏 ACK、重复 ACK、提前读、读回错误数据和过期页世代。正常与背压证据 JSON 散列分别为 `8244ae001230cefa9fb83f9ae21cba16b6fdacbdd6820a90a92a8bc18da8afa2` 和 `1df284d2f87b2f81ecb43c47b28ea4e2598cd59416c0319a323fa187364b0f21`。
+
+`extend_pr260_gather_audit.py` 针对 `dd423e5` 暂存 RTL 审计扩展。只有与同一部署、图摘要、页世代和目标匹配的绑定页允许 CALL 后确认。其他页仍使用现有启动前写入校验。现有页数、CALL 数、KV、token 及数值验收继续适用。使用 `test_pr260_gather_audit.py` 对 111707 的真实 Gather 事件与测试页头、阶段事件混合验证，保留独立的旧路径回归，完整运行暂未使用该扩展。运行中的 TLM 109409 使用原版本。
+
+远端 111718 以同一全图原样编出的阶段 126、127 的 288 条 KVR1 描述符执行 P0 SRAM→DDR 写回。输入为按流和位置重排的封存 KV，并写入各描述符真实指定的 SRAM 字区间。两次运行各 576 笔描述符读、2,304 笔 DDR 写均完成回调和退休，读回数据逐字节匹配。正常的阶段回执在 42,391 与 84,851 拍，背压时在 51,219 与 102,150 拍。真实回执在后一拍驱动该阶段的完成。页完成和词表 token 由测试端提供，仍需和同一执行中的 live QKV 与词表对接。复现入口为 `request-kv-store.sbatch`，基于封存的 105338 组件输入和 111352 同计划 KV 指令回执。111718 的 `audit.json` SHA-256 为 `d1e2f0e6650857d8aeb375d7a015daf65943066d6887b54577d94f3fad7ba989`。
