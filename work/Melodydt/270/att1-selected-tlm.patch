@@ -1,0 +1,16 @@
+--- a/native_tlm_attention.py
++++ b/native_tlm_attention.py
+@@ -243,11 +243,11 @@
+                     pick = group % 4
+ 
+                     def plan(i):
+-                        row, beat = divmod(i, 2)
++                        row, beat = i, pick//2
+                         address = v_base + (first+row)*512 + (group//4)*128 + 64*beat
+                         return address, destination + 2*row if beat == pick//2 else None, (pick % 2)*32
+ 
+-                    prefetch(2*n, plan, tile_ready if refill_only else loaded)
++                    prefetch(n, plan, tile_ready if refill_only else loaded)
+ 
+             def start_av(group):
+                 sums = [0]*8

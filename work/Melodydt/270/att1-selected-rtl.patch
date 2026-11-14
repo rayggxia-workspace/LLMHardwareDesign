@@ -1,0 +1,172 @@
+--- a/project/rtl/block_local_native/s128_ddr_range_load.sv
++++ b/project/rtl/block_local_native/s128_ddr_range_load.sv
+@@ -2,7 +2,8 @@
+ // Refill one resident S128 span from 64-byte DDR bursts. A two-burst record
+ // can select one aligned S128 word pair for the V layout without rewriting data.
+ module s128_ddr_range_load #(
+-    parameter bit PIPELINE_WRITES = 1'b0
++    parameter bit PIPELINE_WRITES = 1'b0,
++    parameter bit STRIDED_PAIR = 1'b0
+ ) (
+     input logic clk, reset,
+     input logic launch_valid,
+@@ -41,15 +42,22 @@
+     wire [2:0] write_count = pair ? 3'd2 : 3'd4;
+     wire pipe_ack = s_rsp_valid && s_rsp_ready;
+     wire pipe_send = s_valid && s_ready;
+-    wire [9:0] ack_address = s_base + (pair ? {9'd0, acknowledged[0]} : {burst, acknowledged[1:0]});
++    wire [9:0] pair_offset = STRIDED_PAIR ? {1'b0, burst, 1'b0} : 10'd0;
++    wire [9:0] ack_address = s_base + (pair ? pair_offset + {9'd0, acknowledged[0]} :
++                                               {burst, acknowledged[1:0]});
+     wire bad_ack = pipe_ack && s_rsp_tag != {22'h12a000, ack_address};
+ 
+-    wire [11:0] launch_words = launch_pair ? 12'd2 : {2'b0, launch_bursts, 2'b0};
+-    wire [64:0] launch_end = {1'b0, launch_base} + {51'd0, launch_bursts, 6'd0};
++    wire strided_launch = STRIDED_PAIR && launch_pair;
++    wire [11:0] launch_words = launch_pair ? (STRIDED_PAIR ? {3'b0, launch_bursts, 1'b0} : 12'd2) :
++                                                {2'b0, launch_bursts, 2'b0};
++    wire [7:0] last_launch_burst = launch_bursts - 8'd1;
++    wire [64:0] launch_span = (strided_launch ? {48'd0, last_launch_burst, 9'd0} :
++                                             {51'd0, last_launch_burst, 6'd0}) + 65'd64;
++    wire [64:0] launch_end = {1'b0, launch_base} + launch_span;
+     wire legal = launch_base[5:0] == 0 && launch_bursts != 0 &&
+-        (!launch_pair || launch_bursts == 2) && launch_end <= (65'd1 << 64) &&
++        (!launch_pair || STRIDED_PAIR || launch_bursts == 2) && launch_end <= (65'd1 << 64) &&
+         {2'b0, launch_s_base} + launch_words <= 12'd1024;
+-    wire store_this_burst = !pair || burst[0] == pair_beat;
++    wire store_this_burst = !pair || STRIDED_PAIR || burst[0] == pair_beat;
+     wire last_word = pair ? word[0] : &word;
+     wire [1:0] data_lane = pair ? {pair_high, word[0]} : word;
+     wire last_burst = burst == bursts - 1'b1;
+@@ -57,13 +65,14 @@
+     assign launch_ready = !reset && state == IDLE;
+     assign done_valid = !reset && state == REPORT;
+     assign rd_valid = !reset && state == READ;
+-    assign rd_address = base + {50'd0, burst, 6'd0};
++    assign rd_address = base + (STRIDED_PAIR && pair ?
++                                                {47'd0, burst, 9'd0} : {50'd0, burst, 6'd0});
+     assign rd_tag = {56'd0, burst};
+     assign rd_rsp_ready = !reset && state == READ_WAIT;
+     assign s_valid = !reset && state == STORE && (!PIPELINE_WRITES ||
+         (sent < write_count && (sent - acknowledged < 3'd2 || pipe_ack)));
+     wire [1:0] write_word = PIPELINE_WRITES ? sent[1:0] : word;
+-    assign s_address = s_base + (pair ? {9'd0, write_word[0]} : {burst, write_word});
++    assign s_address = s_base + (pair ? pair_offset + {9'd0, write_word[0]} : {burst, write_word});
+     wire [1:0] write_lane = PIPELINE_WRITES ? (pair ? {pair_high, sent[0]} : sent[1:0]) : data_lane;
+     assign s_data = data[{write_lane, 7'd0}+:128];
+     assign s_tag = {22'h12a000, s_address};
+--- a/project/rtl/block_local_native/s128_attention_core_scope.sv
++++ b/project/rtl/block_local_native/s128_attention_core_scope.sv
+@@ -2,7 +2,8 @@
+ // Single-head Q16 causal attention. The LC supplies the finite window and KV region.
+ module s128_attention_core_scope #(
+     parameter logic [31:0] TOPOLOGY=0,
+-    parameter bit PIPELINE_KV_WRITES=1'b0
++    parameter bit PIPELINE_KV_WRITES=1'b0,
++    parameter bit SELECT_V_BEAT=1'b0
+ ) (
+     input logic clk,reset,
+     input logic service_valid,
+@@ -93,7 +94,8 @@
+     wire value_refill=state==V_REFILL||state==V_WAIT;
+     wire [15:0] v_position=first+filled;
+     wire [63:0] refill_base=value_refill ?
+-        v_base+{39'd0,v_position,9'd0}+{55'd0,group_index[3:2],7'd0} : k_base+{39'd0,first,9'd0};
++        v_base+{39'd0,v_position,9'd0}+{55'd0,group_index[3:2],7'd0}+
++        (SELECT_V_BEAT && group_index[1] ? 64'd64 : 64'd0) : k_base+{39'd0,first,9'd0};
+     wire [9:0] refill_s_base=value_refill ? work_base+{filled[8:0],1'b0} : work_base;
+     wire load_ready,load_done,load_error,load_s_valid,load_s_take,load_rd_take;
+     wire [9:0] load_s_address;
+@@ -106,10 +108,10 @@
+     logic [63:0] accepted_rd_tag,accepted_load_tag;
+     assign rd_tag={service_done_ticket,serial};
+     wire good_rd=rd_rsp_tag==accepted_rd_tag&&!rd_rsp_error;
+-    s128_ddr_range_load #(.PIPELINE_WRITES(PIPELINE_KV_WRITES)) load_span(
++    s128_ddr_range_load #(.PIPELINE_WRITES(PIPELINE_KV_WRITES),.STRIDED_PAIR(SELECT_V_BEAT)) load_span(
+         .clk,.reset(datapath_reset),.launch_valid(state==K_REFILL||state==V_REFILL),.launch_ready(load_ready),
+         .launch_base(refill_base),.launch_s_base(refill_s_base),
+-        .launch_bursts(value_refill ? 8'd2 : {1'b0,qk_columns,3'b0}),
++        .launch_bursts(value_refill ? (SELECT_V_BEAT ? av_length : 8'd2) : {1'b0,qk_columns,3'b0}),
+         .launch_pair(value_refill),.launch_pair_beat(group_index[1]),.launch_pair_high(group_index[0]),
+         .done_valid(load_done),.done_error(load_error),.done_ready(state==K_WAIT||state==V_WAIT),
+         .rd_valid,.rd_ready,.rd_address,.rd_tag(load_rd_tag),.rd_rsp_valid,.rd_rsp_ready(load_rd_take),
+@@ -260,7 +262,7 @@
+                     end else begin
+                         service_done_write_bytes<=service_done_write_bytes+32;
+                         if(group_index==15) begin
+-                            if(service_done_read_bytes!=32'(count)*2560 || service_done_write_bytes!=480) fault();
++                            if(service_done_read_bytes!=32'(count)*(SELECT_V_BEAT ? 1536 : 2560) || service_done_write_bytes!=480) fault();
+                             else begin
+                                 if(cancelled||cancel) service_done_status<=ABORTED;
+                                 state<=REPORT;
+@@ -301,7 +303,7 @@
+                 V_REFILL: if(load_ready) state<=V_WAIT;
+                 V_WAIT: if(load_done) begin
+                     if(load_error) fault();
+-                    else if(filled+16'd1=={8'd0,av_length}) state<=DOT_STEP;
++                    else if(SELECT_V_BEAT||filled+16'd1=={8'd0,av_length}) state<=DOT_STEP;
+                     else begin filled<=filled+1'b1; state<=V_REFILL; end
+                 end
+                 // The child terminal has drained accepted SRAM/DDR requests.
+--- a/project/experiments/block_local_native/test_native_attention_core_scope.sv
++++ b/project/experiments/block_local_native/test_native_attention_core_scope.sv
+@@ -1,5 +1,5 @@
+ `timescale 1ns/1ps
+-module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT=380);
++module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT=380, parameter bit SELECT_V_BEAT=1'b0);
+     logic clk, reset=1, start=0, ready, result_valid;
+     initial clk=0;
+     always #5 clk=~clk;
+@@ -16,7 +16,8 @@
+     logic [31:0] route_ticket,route_reads,route_writes,route_faults;
+     logic [15:0] route_status;
+     logic drained;
+-    localparam int DATA_READS=CONTEXT*40;
++    localparam int BEATS_PER_V_ROW=SELECT_V_BEAT ? 1 : 2;
++    localparam int DATA_READS=CONTEXT*(8+16*BEATS_PER_V_ROW);
+     localparam int DATA_BYTES=64*DATA_READS;
+     localparam int PROB_WORDS=(CONTEXT+3)/4;
+     logic pending,ddr_rsp,pending_data;
+@@ -74,7 +75,7 @@
+     wire allow_ack=mode==0 || cycle%5==0;
+     assign engine_ready=active && memory_ready && allow_request;
+     assign engine_rsp=active && memory_rsp && allow_ack;
+-    s128_attention_core_scope #(.TOPOLOGY(32'd25001),.PIPELINE_KV_WRITES(1)) scope(
++    s128_attention_core_scope #(.TOPOLOGY(32'd25001),.PIPELINE_KV_WRITES(1),.SELECT_V_BEAT(SELECT_V_BEAT)) scope(
+         .clk,.reset,.service_valid(p_valid),.service_ready(p_ready),.service_owner(p_owner),
+         .service_ticket(p_ticket),.service_descriptor(p_descriptor),.service_cancel_valid(p_cancel),
+         .service_cancel_ready(p_cancel_ready),.service_done_valid(p_done),.service_done_ready(p_done_ready),
+@@ -125,10 +126,10 @@
+                     assert(kv_address==key_base+64'(kv_requests)*64);
+                 end else begin
+                     index=kv_requests-CONTEXT*8;
+-                    group=index/(2*CONTEXT);
+-                    in_group=index%(2*CONTEXT);
+-                    assert(kv_address==value_base+64'(in_group/2)*512+
+-                           64'(group/4)*128+64'(in_group%2)*64);
++                    group=index/(BEATS_PER_V_ROW*CONTEXT);
++                    in_group=index%(BEATS_PER_V_ROW*CONTEXT);
++                    assert(kv_address==value_base+64'(in_group/BEATS_PER_V_ROW)*512+
++                           64'(group/4)*128+(SELECT_V_BEAT ? {63'd0,group[1]} : {63'd0,in_group[0]})*64);
+                 end
+                 ddr_read_enqueue(0,kv_address,kv_tag);
+                 ddr_weight_image_read(kv_address,payload);
+--- a/project/experiments/block_local_native/run_native_attention_core_scope.sh
++++ b/project/experiments/block_local_native/run_native_attention_core_scope.sh
+@@ -11,7 +11,7 @@
+  cd "$SLURM_SUBMIT_DIR"
+  exec srun --exact -n1 -c"$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
+   /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu \
+-  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK" \
++  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK,SELECT_V_BEAT=${SELECT_V_BEAT:-0}" \
+   /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif bash "$PWD/source/$EXP/run_native_attention_core_scope.sh" in-container "$PWD" "${1:-}"
+ fi
+ source /OpenROAD-flow-scripts/env.sh
+@@ -53,6 +53,7 @@
+ top=test_native_attention_core_scope
+ "$vlt" --binary --timing --assert -Wall --timescale-override 1ns/1ps --x-initial unique --x-assign unique \
+  -j "$SLURM_CPUS_PER_TASK" --top-module "$top" -GMOTHER_WORDS="$mother_words" -GCONTEXT="$context" \
++ "-GSELECT_V_BEAT=1'b${SELECT_V_BEAT:-0}" \
+  -Wno-PINCONNECTEMPTY -CFLAGS "-std=c++17 -isystem $dram/src -isystem $dram/ext/headers" \
+  -LDFLAGS "-L$dram -Wl,-rpath,$dram -ldramsim3" "$PWD/$EXP/ddr_read_bridge.cpp" --Mdir "$out/obj" \
+  "$P"/{native_s_lint,p_program_lint}.vlt "$EXP/real_s_lint.vlt" "$gate/sram-lint.vlt" \
