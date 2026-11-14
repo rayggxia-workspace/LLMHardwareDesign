@@ -41,7 +41,7 @@ class TileHandoffTest(unittest.TestCase):
         group = hardware['event_model']['tile_groups'][0]
         group['nodes'].append('consume2')
         group['axes']['z'] = 0
-        rewritten, _, _ = lower_tiles(model, [group])
+        rewritten, _, _, _ = lower_tiles(model, [group])
         nodes = {node['id']: node for node in rewritten['tasks']}
         self.assertEqual(nodes['consume::tile::1:2']['inputs'], ['x::tile::1:2'])
         self.assertEqual(nodes['consume2::tile::1:2']['inputs'], ['x::tile::1:2'])

@@ -129,7 +129,7 @@ class MissingImplementations(Unsupported):
         }
 
 
-def lower(model, hardware):
+def lower(model, hardware, *, tile_groups=None):
     """Produce candidates, without assigning any node to a particular Block.
 
     Recipes are executable hardware contracts keyed by a typed operator
@@ -138,11 +138,13 @@ def lower(model, hardware):
     """
     h = deepcopy(hardware)
     spec = h['event_model']
-    tile_specs, tile_order = {}, {}
-    if 'tile_groups' in spec:
+    tile_specs, tile_order, tile_parents = {}, {}, {}
+    if tile_groups is None:
+        tile_groups = spec.get('tile_groups')
+    if tile_groups is not None:
         from event_tiling import lower_tiles
 
-        model, tile_specs, tile_order = lower_tiles(model, spec['tile_groups'])
+        model, tile_specs, tile_order, tile_parents = lower_tiles(model, tile_groups)
     values = model['values']
     nodes = model['tasks']
     backing = set(spec.get('initial_backing', ()))
@@ -244,7 +246,10 @@ def lower(model, hardware):
                     stage['backed_outputs'] = list(dict.fromkeys((*stage.get('backed_outputs', ()), *written)))
         after = {producers[v] for v in inputs if v in producers}
         after.update(tile_order.get(name, ()))
-        tasks.append({'id': name, 'after': sorted(after), 'bindings': bindings})
+        task = {'id': name, 'after': sorted(after), 'bindings': bindings}
+        if name in tile_parents:
+            task['tile_parent'] = tile_parents[name]
+        tasks.append(task)
 
     missing = set(model['outputs']) - initial - producers.keys()
     if missing:

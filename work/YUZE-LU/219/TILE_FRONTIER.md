@@ -28,3 +28,22 @@
 - 113649，三组共享计算资源的负对照完成，`shared-113649.jsonl` SHA-256 `4418138c9a8e10f4460a69dd35f5028c2d90b557c4c2c59a17901bb388044633`。复用 `benchmark_tile_handoff_dp.problem`，将消费服务的资源声明改为 `{'Producer': 1}`。
 - 16 行输出 SHA-256 在 `general-113624-{3,7,11}.jsonl` 中分别为 `c4ba0872a0512942d77f771d93624168c4a7fd699c8527e4e7bcd70c34d7b69e`、`254ea69935de2a11a1aaa5c5c52a14d46706b29c9e45a43967f60b8bd9923230`、`21cded9cd339ba804d2d0c1cdbeead3db7c665bc603b38b330bb9336b6f6855b`。
 - 复现示例 `python -B project/experiments/block_synthesis/benchmark_tile_handoff_dp.py --rows 16 --case add-rmsnorm --slots 2`。可选 `--barrier`、`--width`。
+
+## 自动分块与部分排定深度
+
+类型化 `--event-graph` 默认扫描整图。对每个节点从登记的硬件配方匹配签名、输入输出轴和切片坐标；验证切片覆盖原范围；沿值依赖发现可共用同一切分网格的连通子图；核查边界拼接配方。使用有界枚举比较整算子方案和自动分块方案，按工期、DDR 字节和静态线束成本选择。手工指定 `tile_groups` 仍可用于固定布局对照。原生循环入口沿用其单独的 lowering。
+
+给定 DP 部分计划，原算子的 tile 有一部分已排且尚有未排 tile 时，该算子计为部分排定。按原图依赖的可达关系，统计同一依赖链上部分排定的原算子数。DP 在扩展前剪掉超过 `--event-tile-depth` 的动作，默认 2；0 关闭自动分块。限制作用于编译搜索的状态，运行期并行与 SRAM 生命周期仍由绑定和调度检查。搜索比较最多 `--event-tile-trials` 个自动布局，默认 8，另外保留普通整算子方案。
+
+远端作业 113827 使用无 `tile_groups` 的 16 行图，包含一个只登记整算子配方的 Identity 尾节点。行内归约保持完整，配方的时长和资源是评估假设。三种算子对的深度 0／1 工期分别是 MatMul→Softmax 240／165 拍、MatMul→ReLU 192／162 拍、Add→RMSNorm 192／147 拍。下面是带三个可切分算子的链，后面同样有普通 Identity。
+
+| 深度上限 | 工期（拍） | 选中布局的候选展开数 | 最大状态桶 |
+| --- | ---: | ---: | ---: |
+| 0（关闭自动切分） | 288 | 4 | 1 |
+| 1 | 168 | 50 | 1 |
+| 2 | 168 | 609 | 16 |
+| 3 | 168 | 617 | 19 |
+
+模型用例覆盖自动选择、不同 tile 尺寸、普通算子边界、无拼接配方时拒绝、整算子更快时保留，以及重新编译沿用深度。远端 113828 通过 423 项，113829 定向 10 项通过。全图真实配方覆盖率、原生执行和吞吐尚待验证。
+
+复现：`python -B project/experiments/block_synthesis/benchmark_auto_tile.py --rows 16 --chain --depth 1`。远端目录 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/tile-auto-9frEuf`。完整回归 `final-reg-113828.log` SHA-256 `fc0fbaff62b854ad386d5993c9210f3442b27e0827729a22f872f144dc359505`，三算子链对照 `final-113827-3.jsonl` SHA-256 `4651dd2b255c109159e532aa2e146a33fa35957b4ededa92caf4eb03b8041c8b`。
