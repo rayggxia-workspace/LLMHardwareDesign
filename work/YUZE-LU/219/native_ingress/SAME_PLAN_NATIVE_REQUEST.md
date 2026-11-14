@@ -2,7 +2,7 @@
 
 远端作业 111294 从同一个 Block V2 候选底座和保存的全图请求生成指令索引与上层布线输入。索引覆盖 184,927 页、8,273,243 次 CALL，其中 639 页有 U0 Gather 替换镜像。原母控程序、描述符表、各阶段描述符及替换镜像均在索引中登记摘要。原请求包仍是其他页的指令来源。
 
-Algo2 的原生 `verify_handoff` 已读回同计划的 6,395 个信号成员、5,935 根候选网和 12,330 个端点。输入同时包含 P0/P1/P2/U0 与 MC 和交换器的命令/返回线、三 P 的描述符/权重/fence 路径、U0 的 Gather DMA 路径，以及 C0→U0 索引传输。所有端点在声明的候选网格中有接入点。接口准入只说明端点、方向、网和来源一致，详细走线由 Algo2 执行。条目中保留 C0 索引生产端尚未绑定的条件。
+Algo2 的原生 `verify_handoff` 已读回同计划的 6,395 个信号成员、5,935 根候选网和 12,330 个端点。输入同时包含 P0/P1/P2/U0 与 MC 和交换器的命令/返回线、三 P 的描述符/权重/fence 路径、U0 的 Gather DMA 路径，以及 C0→U0 索引传输。静态网格检查在所有端点上找到了候选接入点。联合搜索随后要同时满足接入占用与布线约束。条目中保留 C0 索引生产端尚未绑定的条件。
 
 | 产物 | SHA-256 |
 | --- | --- |
@@ -17,6 +17,10 @@ Algo2 的原生 `verify_handoff` 已读回同计划的 6,395 个信号成员、5
 
 两项负对照拒绝了混用拓扑的程序与已重绑母控镜像被当成原文件的情况。项目结构检查在远端通过。使用 PR 当前版本的检查工具和远端已存的完整管理结构目录。
 
+## KV 指令覆盖
+
+远端 111352 把同一个指令索引和其底座摘要绑定到独立的 KV 计划。128 个阶段的图摘要逐项一致。每条 KVR1 描述符核对 CRC、K/V 类型、DDR 行地址、阶段和相应的写区域。每个流内的 639 行连续出现一次。全量共 144 条流，46,008 个 K 行、46,008 个 V 行，共 47,112,192 B。阶段 0 涵盖 512 个 prompt 位置，其后 127 个阶段各追加一行。回执 `kv-111352.json` 的 SHA-256 为 `e0b37384733213dd14c4e63495250c3a62e70222ccfb0df1fcad54b4e128b886`。负对照拒绝了重复行、错误 CRC 和缺失写区域。它证明指令侧覆盖和预期 ACK 数。实际写入与读回仍要由正式执行提供。
+
 ## 延续正式验收
 
 已登记候选物理服务的记录覆盖 4,417,407 次 CALL，这个计数来自路由/部署清单。仍有 14 类、3,855,836 次 CALL 缺精确的已登记派发或完成接口，其中包括 KV 相关接口、其他 P/U 服务和词表提交。词表到 Gather 的 127 条依赖仍需同底座的实时生产端。MC 有 32 位 READY 标量并可存入寄存器。P0 现有局控只发完成/错误，完成包的标量字段要求为零。请求退休还依赖正确的阶段号与活 KV 完成，不能用一个写进完成帧的 token 跳过。
@@ -25,4 +29,4 @@ Algo2 的原生 `verify_handoff` 已读回同计划的 6,395 个信号成员、5
 
 ## 远端入口
 
-工作目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em/full-graph-zwl0Tr/merged-bmMd5X/native-request-6WI0tH/framework-r11-CatJ8r/p-native-audit-FMPaww/live-vocabulary-CgSH5M/joint-placement-CrmPRH`。交接产物位于 `handoff-111294`；以 `algorithm2-input.json` 和同目录 provenance 文件运行 Algo2 `--handoff`。作业 111290 对字节相同的布线输入做了有界搜索。主控镜像对照位于 `gather-topology-111292`。使用 `request-handoff.sbatch`、`gather-topology.sbatch` 与 `live-gather-topology.sbatch` 复现。模型、走线数据库和日志均留在远端。
+工作目录为 `/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/framework-20261114-akeox2em/full-graph-zwl0Tr/merged-bmMd5X/native-request-6WI0tH/framework-r11-CatJ8r/p-native-audit-FMPaww/live-vocabulary-CgSH5M/joint-placement-CrmPRH`。交接产物位于 `handoff-111294`；以 `algorithm2-input.json` 和同目录 provenance 文件运行 Algo2 `--handoff`。作业 111290 对字节相同的输入做了有界搜索。5,935 根网中有 2 根通过几何检查，5,913 根用尽搜索预算，另有 20 根在尝试中未找到网格接入。该结果是部分布线，保留逐网诊断供 Algo2 继续。路由结果 SHA-256 为 `d87598418bf4c9e44873b165dffaf5aca7a1b7da84dcaf8f230a5dd16341e91f`。主控镜像对照位于 `gather-topology-111292`。使用 `request-handoff.sbatch`、`gather-topology.sbatch`、`live-gather-topology.sbatch` 与 `request-kv-program.sbatch` 复现。模型、走线数据库和日志均留在远端。
