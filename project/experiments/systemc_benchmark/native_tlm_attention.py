@@ -20,12 +20,15 @@ def softmax_lut():
 
 
 class Attention:
-    def __init__(self, clock, dram, memory, aperture, *, kv_window=1, pipeline=False):
+    def __init__(self, clock, dram, memory, aperture, *, kv_window=1, pipeline=False, value_fetch="legacy"):
         if not 1 <= kv_window <= 32:
             raise ValueError("KV read window must be between 1 and 32 beats")
         self.clock, self.dram, self.memory, self.aperture = clock, dram, memory, aperture
         self.sram = aperture.target
         self.kv_window = kv_window
+        if value_fetch not in ("legacy", "selected", "paired"):
+            raise ValueError("unknown AV fetch mode")
+        self.value_fetch = value_fetch
         self.pipeline = pipeline
         self.stats = Counter()
 
@@ -208,56 +211,121 @@ class Attention:
 
                 scale(0)
 
-            def av(group, first, sums, *, tile_ready=None, bank=0, refill_only=False):
-                if first == count:
-                    output = pack("<8i", *(s32(rne(value, 16)) for value in sums))
-                    write(out + 2*group, output, done if group == 15 else lambda: start_av(group+1))
-                    return
-                n = min(64 if self.pipeline else 128, count-first)
-                destination = work + 128*bank
+            def start_av(group):
+                paired = self.value_fetch == "paired"
+                selected = self.value_fetch != "legacy"
+                lanes = 16 if paired else 8
+                row_words = lanes // 4
+                tile = 32 if paired else (128 if self.pipeline else 256) // row_words
+                sums = [0] * lanes
 
-                def loaded():
-                    read(score+first//4, (n+3)//4,
-                         lambda probs: read(destination, 2*n, lambda values: reduce(probs, values)))
-
-                def refill(index):
-                    if index == n:
-                        loaded()
-                        return
-                    address = v_base + (first+index)*512 + (group//4)*128
-                    read_memory(address, 2, work + 2*index, lambda: refill(index+1), pick=group%4)
-
-                def reduce(probs, values):
-                    probability = unpack("<" + "i"*(len(probs)//4), probs)
-                    for row in range(n):
-                        for lane, value in enumerate(unpack_from("<8i", values, 32*row)):
-                            sums[lane] += probability[row]*value
-                    self.stats["av_dot_groups"] += 1
-                    self.aperture.edge(tile_ready or (lambda: av(group, first+n, sums)), n)
-
-                if self.pipeline and not refill_only:
-                    loaded()
-                elif self.kv_window == 1 and not self.pipeline:
-                    refill(0)
-                else:
+                def load(first, n, bank, ready):
+                    destination = work + 128 * bank
+                    group_address = v_base + (group // 4) * 128
                     pick = group % 4
 
-                    def plan(i):
-                        row, beat = divmod(i, 2)
-                        address = v_base + (first+row)*512 + (group//4)*128 + 64*beat
-                        return address, destination + 2*row if beat == pick//2 else None, (pick % 2)*32
+                    def plan(index):
+                        if selected:
+                            row, beat = index, pick // 2
+                        else:
+                            row, beat = divmod(index, 2)
+                        address = group_address + (first + row) * 512 + 64 * beat
+                        dst = destination + row_words * row if beat == pick // 2 else None
+                        return address, dst, None if paired else (pick % 2) * 32
 
-                    prefetch(2*n, plan, tile_ready if refill_only else loaded)
+                    beats = n if selected else 2 * n
+                    self.stats["av_read_requests"] += beats
+                    self.stats["av_legacy_read_requests"] += 2 * n * (lanes // 8)
+                    prefetch(beats, plan, ready)
 
-            def start_av(group):
-                sums = [0]*8
-                if self.pipeline:
-                    tiled(count, 64,
-                          lambda i, _, b, ack: av(group, i, sums, tile_ready=ack, bank=b, refill_only=True),
-                          lambda i, _, b, ack: av(group, i, sums, tile_ready=ack, bank=b),
-                          lambda: av(group, count, sums))
+                def consume(first, n, bank, ready):
+                    destination = work + 128 * bank
+
+                    def step_slice(half, complete):
+                        def dot(probs, values):
+                            probability = unpack("<" + "i" * (len(probs) // 4), probs)
+                            for row, weight in enumerate(probability[:n]):
+                                for lane, value in enumerate(unpack_from("<8i", values, 32 * row)):
+                                    sums[8 * half + lane] += weight * value
+                            self.stats["av_dot_groups"] += 1
+                            self.aperture.edge(save, n)
+
+                        def inputs(probs):
+                            if not paired:
+                                read(destination, row_words * n, lambda values: dot(probs, values))
+                                return
+                            rows = []
+
+                            def next_row(row):
+                                if row == n:
+                                    dot(probs, b"".join(rows))
+                                else:
+                                    def returned(data):
+                                        rows.append(data)
+                                        next_row(row + 1)
+                                    read(destination + row * row_words + 2 * half, 2, returned)
+                            next_row(0)
+
+                        def execute_slice():
+                            read(score + first // 4, (n + 3) // 4, inputs)
+
+                        def snapshot_io(payload, finished):
+                            self.stats["av_checkpoint_ops"] += 1
+                            image = []
+                            base = work + 128 + 7 * half
+
+                            def received(data):
+                                image.append(data)
+                                word(len(image))
+
+                            def word(index):
+                                if index == 7:
+                                    self.aperture.edge(lambda: finished(b"".join(image)), 4)
+                                elif payload is None:
+                                    read(base + index, 1, received)
+                                else:
+                                    write(base + index, payload[16 * index:16 * (index + 1)],
+                                          lambda: word(index + 1))
+                            self.aperture.edge(lambda: word(0), 4)
+
+                        def save():
+                            if not paired or first + n == count:
+                                complete()
+                                return
+                            # Model payload and handshakes for the existing S80 context image.
+                            image = b"".join(value.to_bytes(10, "little", signed=True)
+                                             for value in sums[8 * half:8 * half + 8])
+                            snapshot_io(image + bytes(32), lambda _: complete())
+
+                        def restored(image):
+                            sums[8 * half:8 * half + 8] = [
+                                int.from_bytes(image[i:i + 10], "little", signed=True)
+                                for i in range(0, 80, 10)]
+                            execute_slice()
+
+                        if paired and first:
+                            snapshot_io(None, restored)
+                        else:
+                            execute_slice()
+
+                    step_slice(0, (lambda: step_slice(1, ready)) if paired else ready)
+
+                def finish():
+                    output = pack(f"<{lanes}i", *(s32(rne(value, 16)) for value in sums))
+                    next_group = group + lanes // 8
+                    write(out + 2 * group, output, done if next_group == 16 else lambda: start_av(next_group))
+
+                def serial(first):
+                    if first == count:
+                        finish()
+                    else:
+                        n = min(tile, count - first)
+                        load(first, n, 0, lambda: consume(first, n, 0, lambda: serial(first + n)))
+
+                if self.pipeline and not paired:
+                    tiled(count, tile, load, consume, finish)
                 else:
-                    av(group, 0, sums)
+                    serial(0)
 
             if self.pipeline:
                 tiled(count, 4,

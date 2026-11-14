@@ -1,10 +1,135 @@
 """Service-2 native projection with live K128 windows and bounded weight records."""
 
-from collections import Counter
+from collections import Counter, deque
+from dataclasses import dataclass, field
 from struct import pack, unpack, unpack_from
 
 from native_tlm_timing import Transfer
 from native_tlm_u import rne
+
+
+@dataclass
+class WeightBank:
+    base: int
+    beats: int
+    ready: object
+    issued: int = 0
+    payload: dict = field(default_factory=dict)
+
+
+class WeightFetch:
+    """One M leaf's four W owners and bounded typed read path.
+
+    The shared DRAM model still arbitrates submissions across M clients.
+    """
+
+    def __init__(self, projection):
+        self.projection = projection
+        self.banks = {}
+        self.allocations = deque()
+        self.reserved = deque()
+        self.lanes = [deque() for _ in range(4)]
+        self.skid = deque()
+        self.alloc_cursor = self.issue_cursor = self.outstanding = 0
+        self.offer = None
+        self.scheduled = False
+        self.next_alloc = 0
+
+    def enqueue(self, base, size, ready):
+        if size not in (1088, 1152) or base % 64:
+            raise ValueError("invalid native W record")
+        if not self.allocations:
+            # Two ALLOC flits, native bank allocation, then DMA table install.
+            self.next_alloc = max(self.next_alloc, self.projection.clock.now //
+                                  self.projection.target.core_ps + 4)
+        self.allocations.append(WeightBank(base, size // 64, ready))
+        self.wake()
+
+    def release(self, bank):
+        del self.banks[bank]
+        self.wake()
+
+    def wake(self):
+        if not self.scheduled:
+            self.scheduled = True
+            self.projection.edge(self.step)
+
+    def step(self):
+        self.scheduled = False
+        p = self.projection
+        cycle = p.clock.now // p.target.core_ps
+        # A physical return is captured into the fabric skid before M sees it.
+        if self.skid:
+            bank, beat, _, address = self.skid.popleft()
+            owner = self.banks[bank]
+            owner.payload[beat] = p.memory(address)
+            self.outstanding -= 1
+            p.stats["weight_read_returns"] += 1
+            if len(owner.payload) == owner.beats:
+                data = b"".join(owner.payload[i] for i in range(owner.beats))
+                # Registered fill acknowledgement, then two return flits.
+                p.edge(lambda owner=owner, data=data, bank=bank:
+                       owner.ready(data, lambda: self.release(bank)), 4)
+
+        for lane in self.lanes:
+            if lane and lane[0][0]:
+                # Keep the skid bounded even when several lanes return at once.
+                channel = lane[0][3]
+                if sum(entry[2] == channel for entry in self.skid) < 3:
+                    _, bank, beat, _, address = lane.popleft()
+                    self.skid.append((bank, beat, channel, address))
+
+        if self.reserved and self.reserved[0][0] <= cycle:
+            _, bank, beat = self.reserved[0]
+            owner = self.banks[bank]
+            address = owner.base + 64 * beat
+            channel = owner.base >> 11 & 1
+            lane = next((lane for lane in self.lanes[2*channel:2*channel+2]
+                         if len(lane) < 16), None)
+            if lane is not None:
+                self.reserved.popleft()
+                entry = [False, bank, beat, channel, address]
+                lane.append(entry)
+
+                def returned(entry=entry):
+                    entry[0] = True
+                    self.wake()
+
+                p.dram.submit(Transfer(address), returned, channel=channel)
+
+        if self.offer is not None:
+            bank, beat = self.offer
+            self.banks[bank].issued += 1
+            self.issue_cursor = (bank + 1) % 4
+            # Fabric RESERVED and registered physical offer are separate edges.
+            self.reserved.append((cycle + 2, bank, beat))
+            self.outstanding += 1
+            p.stats["weight_read_issues"] += 1
+            p.stats["weight_peak_outstanding"] = max(
+                p.stats["weight_peak_outstanding"], self.outstanding)
+            self.offer = None
+
+        if self.outstanding < 32:
+            for offset in range(4):
+                bank = (self.issue_cursor + offset) % 4
+                owner = self.banks.get(bank)
+                if owner is not None and owner.issued < owner.beats:
+                    self.offer = bank, owner.issued
+                    break
+
+        if self.allocations and len(self.banks) < 4 and cycle >= self.next_alloc:
+            bank = next((self.alloc_cursor + offset) % 4 for offset in range(4)
+                        if (self.alloc_cursor + offset) % 4 not in self.banks)
+            self.banks[bank] = self.allocations.popleft()
+            self.alloc_cursor = (bank + 1) % 4
+            # The next ALLOC waits behind the two-flit command and registered
+            # allocation/ack ownership in m_native_leaf_s32.
+            self.next_alloc = cycle + 5
+
+        if (self.offer is not None or self.reserved or self.skid or
+                any(lane and lane[0][0] for lane in self.lanes) or
+                self.allocations and len(self.banks) < 4):
+            self.wake()
 
 
 def accumulate(weights, activation, shift, prefix, head16):
@@ -34,13 +159,14 @@ def accumulate(weights, activation, shift, prefix, head16):
 
 class Projection:
     def __init__(self, clock, dram, memory, source, target, *, source_word, scratch_word,
-                 scratch_sram=None):
+                 scratch_sram=None, rtl_weight_fetch=False):
         self.clock, self.dram, self.memory = clock, dram, memory
         self.source, self.target = source, target
         self.source_word, self.scratch_word = source_word, scratch_word
         self.scratch_sram = source if scratch_sram is None else scratch_sram
         self.stats = Counter()
         self.busy = False
+        self.weight_fetch = WeightFetch(self) if rtl_weight_fetch else None
 
     def edge(self, action, cycles=1):
         period = self.target.core_ps
@@ -118,7 +244,13 @@ class Projection:
                         group, way = divmod(entry, ways)
                         index = ((first + group * stride) // 8) * tiles + k
                         address = bases[way] + size * index
-                        self.fetch(address, size, lambda data, e=entry: ready(e, data))
+                        def callback(data, release=None, entry=entry):
+                            ready(entry, data, release)
+
+                        if self.weight_fetch is None:
+                            self.fetch(address, size, callback)
+                        else:
+                            self.weight_fetch.enqueue(address, size, callback)
                     if next_run == groups * ways:
                         self.edge(lambda: tile(k + 1))
                     elif not executing and slots[next_run] is not None:
@@ -127,14 +259,16 @@ class Projection:
                         # includes a modeled scale/result drain per M group.
                         self.edge(finish_group, 8 + 8 * (8 if head16 else 1))
 
-                def ready(group, data):
-                    slots[group] = data
+                def ready(group, data, release):
+                    slots[group] = data, release
                     advance()
 
                 def finish_group():
                     nonlocal next_run, executing
-                    data = slots.pop(next_run)
+                    data, release = slots.pop(next_run)
                     accumulate(data, activation, shift, prefixes[next_run], head16)
+                    if release is not None:
+                        release()
                     self.stats["weight_records_consumed"] += 1
                     next_run += 1
                     executing = False

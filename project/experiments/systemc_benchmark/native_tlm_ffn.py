@@ -18,10 +18,11 @@ def quantize(row):
 
 
 class FFN:
-    def __init__(self, clock, dram, memory, u, banks, dma, input_base):
+    def __init__(self, clock, dram, memory, u, banks, dma, input_base, *, rtl_weight_fetch=False):
         self.clock, self.u, self.banks = clock, u, banks
         self.pipeline_copy = dma.pipeline
-        self.projections = [Projection(clock, dram, memory, u, bank, source_word=0, scratch_word=512)
+        self.projections = [Projection(clock, dram, memory, u, bank, source_word=0,
+                                       scratch_word=512, rtl_weight_fetch=rtl_weight_fetch)
                             for bank in banks]
         self.x = {}
         self.mid = {}

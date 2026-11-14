@@ -108,6 +108,8 @@ def main():
     parser.add_argument("--kv-read-window", type=int, default=1, choices=range(1, 33))
     parser.add_argument("--sram-port-bits", type=int, default=128, choices=(128, 512))
     parser.add_argument("--pipeline-memory", action="store_true")
+    parser.add_argument("--rtl-weight-fetch", action="store_true")
+    parser.add_argument("--av-value-fetch", choices=("legacy", "selected", "paired"), default="legacy")
     args = parser.parse_args()
     if args.checkpoint_pages < 0:
         parser.error("--checkpoint-pages must be nonnegative")
@@ -175,9 +177,9 @@ def main():
     dma = NativeDMA(clock, dram, memory, core_ps=3334, pipeline=args.pipeline_memory)
     u_service, p_service = UArithmetic(clock, u), UArithmetic(clock, p0)
     projection = Projection(clock, dram, memory, u, p0, source_word=512, scratch_word=1008,
-                            scratch_sram=p0)
+                            scratch_sram=p0, rtl_weight_fetch=args.rtl_weight_fetch)
     attention = Attention(clock, dram, memory, projection, kv_window=args.kv_read_window,
-                          pipeline=args.pipeline_memory)
+                          pipeline=args.pipeline_memory, value_fetch=args.av_value_fetch)
     providers = {
         P: projection.provider,
         (3, 3, 7, 4): embedding(u, dram, memory, pipeline=args.pipeline_memory),
@@ -284,7 +286,8 @@ def main():
                 vocabulary = None
                 if (step, index) in ffns:
                     activation = ffns.pop((step, index))
-                    ffn = FFN(clock, dram, memory, u, banks, dma, activation)
+                    ffn = FFN(clock, dram, memory, u, banks, dma, activation,
+                              rtl_weight_fetch=args.rtl_weight_fetch)
                     if args.capture_first_layer and positions == 1 and layers == 0:
                         weights = unpack_from("<QQ", descriptor, 48)
                         down, = unpack_from("<Q", descriptor, len(descriptor)-128+48)
@@ -320,6 +323,8 @@ def main():
                     row[1] += dispatch - issue
                     row[2] += terminal - dispatch
 
+                av_before = attention.stats["av_read_requests"]
+                av_legacy_before = attention.stats["av_legacy_read_requests"]
                 run_page(page, topology=topology, descriptor_base=base, descriptor_bytes=size,
                          scheduler=scheduler, providers=page_providers,
                          after_wait=ffn.after_wait if ffn else None, timing=measure,
@@ -328,6 +333,8 @@ def main():
                     generation=page["generation"], step=step, page=index, start_ps=page_start,
                     ingress_end_ps=ingress_end, pm_end_ps=pm_end, dispatch_start_ps=dispatch_start,
                     end_ps=clock.now, ddr=dict(dram.stats-ddr_start),
+                    av_read_requests=attention.stats["av_read_requests"] - av_before,
+                    av_legacy_read_requests=attention.stats["av_legacy_read_requests"] - av_legacy_before,
                     mother_instruction_cycles=instruction_cycles,
                     mother_wait_ps=mother_wait_ps,
                     mid_barrier_ps=ffn.mid_barrier_ps if ffn else 0,
@@ -386,7 +393,8 @@ def main():
                       completed_layers_in_current_position=layers,
                       timing_calibrated=False, numerically_accepted=False,
                       sram_port_bits=args.sram_port_bits,
-                      pipeline_memory=args.pipeline_memory,
+                      pipeline_memory=args.pipeline_memory, av_value_fetch=args.av_value_fetch,
+                      rtl_weight_fetch=args.rtl_weight_fetch,
                       sram={name: dict(s.stats) for name, s in srams.items()},
                       attention_kv=dict(window=args.kv_read_window, **attention.stats),
                       dma_scope=("32 credits per channel and rolling issue limits with FIFO arbitration"

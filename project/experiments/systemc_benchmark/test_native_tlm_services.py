@@ -1,5 +1,6 @@
 """Check descriptor-driven data flow independently of calibrated DDR timings."""
 
+from collections import Counter
 from argparse import ArgumentParser
 from pathlib import Path
 from struct import pack, pack_into, unpack
@@ -226,7 +227,8 @@ class NativeTLMServicesTest(unittest.TestCase):
     def test_attention_ping_pong_keeps_results_and_ddr_addresses(self):
         positions = 69
         observed = []
-        for pipeline in (False, True):
+        for mode, pipeline in ((m, p) for m in ("legacy", "selected", "paired")
+                               for p in (False, True)):
             clock = Clock()
             dram = ReorderingDDR(clock)
             sram = S128(clock, core_ps=10, port_bits=512)
@@ -239,16 +241,18 @@ class NativeTLMServicesTest(unittest.TestCase):
                     (row+1)*(offset//4+lane+1) for lane in range(16)))
                 for base in (key, value) for row in range(positions) for offset in range(0, 512, 64)
             }
-            attention = Attention(clock, dram, history.__getitem__, aperture, kv_window=8, pipeline=pipeline)
+            attention = Attention(clock, dram, history.__getitem__, aperture, kv_window=8,
+                                  pipeline=pipeline, value_fetch=mode)
             descriptor = record("<6HIQQ", positions, positions-1, 0, 512, 544, 800,
                                 1 << 30, key, value)
             done = []
             attention.provider(descriptor)(lambda: done.append(True))
             clock.until(lambda: bool(done))
-            observed.append((
-                [sram.words[i] for i in range(800, 832)],
-                sorted(transfer.address for transfer in dram.offered)))
-        self.assertEqual(observed[0], observed[1])
+            observed.append([sram.words[i] for i in range(800, 832)])
+            requested = Counter(t.address for t in dram.offered)
+            self.assertEqual(requested, {addr: (1 if addr < value else
+                {"legacy": 4, "selected": 2, "paired": 1}[mode]) for addr in history})
+        self.assertTrue(all(result == observed[0] for result in observed[1:]))
 
 
 if __name__ == "__main__":
