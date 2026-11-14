@@ -135,35 +135,35 @@ def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependenc
             or type(tile_trials) is not int or tile_trials < 1):
         raise ValueError('tile depth must be nonnegative and tile trials positive')
     if native_loops is None:
-        from event_lowering import lower, signature
+        from event_lowering import _lower_layout, signature
         from event_tiling import discover_tiles, tile_layouts
 
         spec = hardware.get('event_model', {})
-        if tile_depth and 'tile_groups' not in spec and any(r.get('tile') for r in spec.get('recipes', ())):
+        if tile_depth and any(r.get('tile') for r in spec.get('recipes', ())):
             layouts = tile_layouts(discover_tiles(model, spec['recipes'], signature, tile_trials), tile_trials)
             if layouts:
                 attempts = []
                 selected, baseline_failure, best = None, None, None
-                for groups in [[], *layouts]:
+                for layout in [[], *layouts]:
                     try:
-                        ir, resolved = lower(model, hardware, tile_groups=groups)
+                        ir, resolved = _lower_layout(model, hardware, layout)
                     except Unsupported as error:
                         failure = {'status': 'blocked_lowering', 'reason': str(error)}
                         if isinstance(error, MissingImplementations):
                             failure['lowering_coverage'] = error.coverage
-                        if not groups:
+                        if not layout:
                             baseline_failure = failure
-                        attempts.append({'groups': groups, **failure})
+                        attempts.append({'layout': layout, **failure})
                         continue
                     result = compile_event_ir(ir, resolved, budget=budget, width=width,
                                               emit_dependencies=emit_dependencies, emit_outputs=True,
-                                              tile_limit=tile_depth if groups else None, **target)
+                                              tile_limit=tile_depth if layout else None, **target)
                     plan = result['plan']
-                    attempt = {'groups': groups, 'status': result['status'],
+                    attempt = {'layout': layout, 'status': result['status'],
                                'expanded': plan.get('expanded', 0),
                                'peak_bucket_states': plan.get('peak_bucket_states', 0),
                                'depth_pruned': plan.get('tile_depth_pruned', 0)}
-                    if not groups and result['status'] != 'planned':
+                    if not layout and result['status'] != 'planned':
                         baseline_failure = result
                     if result['status'] == 'planned':
                         score = (plan['makespan'], plan['external_read_bytes'] + plan['external_write_bytes'],
@@ -171,7 +171,7 @@ def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependenc
                         attempt['makespan'] = score[0]
                         if best is None or score < best:
                             best, selected = score, result
-                            selected['selected_tile_groups'] = groups
+                            selected['selected_tile_layout'] = layout
                     attempts.append(attempt)
                 if selected is None:
                     selected = baseline_failure
@@ -194,7 +194,6 @@ def compile_event_graph(model, hardware, *, budget=None, width=8, emit_dependenc
         return {'status': 'blocked_lowering', 'reason': str(error), **provenance}
     result = compile_event_ir(lowered, resolved, budget=budget, width=width,
                               emit_dependencies=emit_dependencies, emit_outputs=True,
-                              tile_limit=tile_depth if tile_depth and 'tile_groups' in resolved['event_model'] else None,
                               **target)
     result.update(provenance)
     if native_loops is not None:

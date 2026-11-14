@@ -13,8 +13,6 @@ def lower_tiles(model, groups):
     attributes, tensor signatures and slice coordinates. Outside operands
     remain whole. Any tiled value visible outside the group is joined.
     """
-    if not isinstance(groups, (list, tuple)):
-        raise Unsupported('tile_groups must be a list')
     graph = deepcopy(model)
     values = graph['values']
     nodes = {node['id']: node for node in graph['tasks']}

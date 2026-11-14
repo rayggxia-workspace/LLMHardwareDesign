@@ -129,7 +129,11 @@ class MissingImplementations(Unsupported):
         }
 
 
-def lower(model, hardware, *, tile_groups=None):
+def lower(model, hardware):
+    return _lower_layout(model, hardware, ())
+
+
+def _lower_layout(model, hardware, layout):
     """Produce candidates, without assigning any node to a particular Block.
 
     Recipes are executable hardware contracts keyed by a typed operator
@@ -139,12 +143,10 @@ def lower(model, hardware, *, tile_groups=None):
     h = deepcopy(hardware)
     spec = h['event_model']
     tile_specs, tile_order, tile_parents = {}, {}, {}
-    if tile_groups is None:
-        tile_groups = spec.get('tile_groups')
-    if tile_groups is not None:
+    if layout:
         from event_tiling import lower_tiles
 
-        model, tile_specs, tile_order, tile_parents = lower_tiles(model, tile_groups)
+        model, tile_specs, tile_order, tile_parents = lower_tiles(model, layout)
     values = model['values']
     nodes = model['tasks']
     backing = set(spec.get('initial_backing', ()))
