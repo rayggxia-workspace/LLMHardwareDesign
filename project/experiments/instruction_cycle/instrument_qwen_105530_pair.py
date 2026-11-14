@@ -28,9 +28,10 @@ def tap(kind, condition, **fields):
 def observer():
     copy = [
         tap("copy_start", f"{FRONT}.copy_valid && {FRONT}.copy_ready"),
-        tap("copy_read", f"{FRONT}.u_valid && {FRONT}.u_ready",
-            address=f"{FRONT}.u_address", tag=f"{FRONT}.u_tag"),
-        tap("copy_read_ack", f"{FRONT}.u_rsp && {FRONT}.u_rsp_ready", tag=f"{FRONT}.u_rsp_tag"),
+        tap("copy_read", f"{FRONT}.u_valid && {FRONT}.u_ready && {FRONT}.prompt_ps_req",
+            address=f"{NODE}.aux_address", tag=f"{FRONT}.u_tag"),
+        tap("copy_read_ack", f"{FRONT}.u_rsp && {FRONT}.u_rsp_ready && {FRONT}.prompt_ps_live",
+            tag=f"{FRONT}.u_rsp_tag"),
         tap("copy_write", f"{NODE}.cp_valid && {NODE}.cp_ready",
             address=f"{NODE}.cp_address", tag=f"{NODE}.cp_tag"),
         tap("copy_ack", f"{NODE}.cp_ack_valid && {NODE}.cp_ack_ready", tag=f"{NODE}.cp_ack_tag"),
@@ -62,8 +63,9 @@ def observer():
         tap("raw_accept", f"{CORE}.raw_valid && {CORE}.raw_ready", sequence=f"{M}.A_record"),
         tap("input_eop", f"{M}.tx_end && {M}.tx_source == 4'd3",
             sequence=f"{M}.tx_frame[95:64]", session=f"{M}.tx_frame[63:32]"),
-        tap("rf_offer", f"{M}.n_rsp_valid && !qwen_pair_rf_pending", sequence=f"{M}.n_rsp_record"),
-        tap("rf_eop", f"{M}.tx_end && {M}.tx_source == 4'd4",
+        tap("rf_offer", f"{M}.n_rsp_valid && {M}.n_rsp_kind == 3'd2 && !qwen_pair_rf_pending",
+            sequence=f"{M}.n_rsp_record"),
+        tap("rf_eop", f"{M}.tx_end && {M}.tx_source == 4'd4 && {M}.tx_frame[106:104] == 3'd2",
             sequence=f"{M}.tx_frame[95:64]", session=f"{M}.tx_frame[63:32]"),
         tap("guard_terminal", f"{EXEC}.g_terminal_valid && {EXEC}.g_terminal_ready",
             sequence=f"{EXEC}.g_terminal_ticket[63:32]", session=f"{EXEC}.g_terminal_ticket[31:0]"),
@@ -97,7 +99,7 @@ def observer():
                     qwen_pair_sequence <= {NODE}.lc_data[95:64];
                     qwen_pair_session <= {NODE}.lc_data[63:32];
                 end
-                qwen_pair_rf_pending <= {M}.n_rsp_valid && !{M}.n_rsp_ready;
+                qwen_pair_rf_pending <= {M}.n_rsp_valid && {M}.n_rsp_kind == 3'd2 && !{M}.n_rsp_ready;
 {''.join(copy)}{''.join(execution)}
                 if ({FRONT}.mr_valid && {FRONT}.mr_ready) begin
                     case ({FRONT}.mr_address)

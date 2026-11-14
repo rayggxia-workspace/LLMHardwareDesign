@@ -97,7 +97,7 @@ def compare(predictions, replay, baseline):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    commands = parser.add_subparsers(dest="command", required=True)
+    commands = parser.add_subparsers(dest="command")
     prepare = commands.add_parser("prepare-runner")
     prepare.add_argument("runner", type=Path)
     check = commands.add_parser("compare")
@@ -106,6 +106,8 @@ def main():
     accept = commands.add_parser("require-match")
     accept.add_argument("audit", type=Path)
     args = parser.parse_args()
+    if args.command is None:
+        parser.error("a command is required")
     if args.command == "prepare-runner":
         prepare_runner(args.runner)
     elif args.command == "compare":
