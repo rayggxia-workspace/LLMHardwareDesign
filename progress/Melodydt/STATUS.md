@@ -18,3 +18,9 @@
 - [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。上两轮 582/578 页完整对账，回包解耦轮 2.455286 tok/s / 5.502012 输入 tok/s。
 - C380 原生 A/B 112990/112991 数值与流量一致，正常 85,495→67,242 拍、背压 271,308 拍持平。113009 正常及两个错误标签排空用例通过。多块回填前四层外推 2.609134 tok/s / 5.502848 输入 tok/s。
 - 112976/112977 在 `/public/home/yuzelu/Melodydt/runs/issue-270/att1-refill-03/tlm-final` 持久运行。Melodydt 后续核对完整吞吐，再测共享 S 读写重叠。复现与散列见 [第三轮回执](../../work/Melodydt/270/refill-03/README.md)。登记 PR #5 待合并，看板待核验，物理时序未执行。
+
+## 2026-11-14（Asia/Shanghai）ATT1 双窗口回填与 Dot 读出
+
+- [Issue #270](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/270) / [草稿 PR #272](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/272)。C380 固定半窗口 A/B 113104/113105 均完成，正常 75,877→65,932 拍、背压 282,528→279,968 拍。同流量及逐字读回通过。相对第三轮大分片，正常减少 1.95%，背压增加 3.19%。
+- 512-bit TLM 同流量前四层外推 2.739536 tok/s / 5.504623 输入 tok/s。112976/112977 及 113070/113071 持久运行，恢复见 [第四轮回执](../../work/Melodydt/270/dot-read-04/README.md)。Melodydt 对账完整短程吞吐和误差后衔接 FFN 权重取数。新增共享端口故障注入、物理 STA 和 P512/D128 待执行。
+- 登记 PR #5 待合并，Projects 无配置，具权限维护者待核验和同步，独立审查人待指定。

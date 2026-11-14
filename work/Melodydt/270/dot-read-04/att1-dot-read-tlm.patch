@@ -1,0 +1,35 @@
+--- a/native_tlm_attention.py
++++ b/native_tlm_attention.py
+@@ -69,6 +69,12 @@
+             def read(start, words, done):
+                 self.aperture.read_span(self.sram, start, words, done)
+ 
++            def read_dot(start, words, done):
++                if self.pipeline:
++                    span(self.sram, start, words, self.aperture.edge, done)
++                else:
++                    read(start, words, done)
++
+             def write(start, payload, done):
+                 self.aperture.write_span(self.sram, start, payload, done)
+ 
+@@ -182,7 +188,7 @@
+                         self.aperture.edge(lambda: write(score + first // 4, pack(
+                             "<" + "i" * len(values), *values), tile_ready or (lambda: qk(first+n))), 128)
+ 
+-                    read(query, 32, lambda q: read(destination, 32*n, lambda keys: dot(q, keys)))
++                    read_dot(query, 32, lambda q: read_dot(destination, 32*n, lambda keys: dot(q, keys)))
+ 
+                 if self.pipeline and not refill_only:
+                     loaded()
+@@ -229,8 +235,8 @@
+                 destination = work + 128*bank
+ 
+                 def loaded():
+-                    read(score+first//4, (n+3)//4,
+-                         lambda probs: read(destination, 2*n, lambda values: reduce(probs, values)))
++                    read_dot(score+first//4, (n+3)//4,
++                             lambda probs: read_dot(destination, 2*n, lambda values: reduce(probs, values)))
+ 
+                 def refill(index):
+                     if index == n:
