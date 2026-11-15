@@ -1,0 +1,51 @@
+OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 2 thread(s).
+[INFO ODB-0227] LEF file: /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef, created 22 layers, 27 vias
+[INFO ODB-0227] LEF file: /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef, created 135 library cells
+ARRIVAL
+Startpoint: launch (rising edge-triggered flip-flop clocked by core)
+Endpoint: arrived (output port clocked by core)
+Path Group: core
+Path Type: max
+
+           Cap           Slew          Delay           Time   Description
+---------------------------------------------------------------------------------------------------
+                  0.049999997    0.000000000    0.000000000   clock core (rise edge)
+                                 0.000000000    0.000000000   clock network delay (ideal)
+                  0.049999997    0.000000000    0.000000000 ^ launch/CK (DFF_X1)
+   0.918144941    0.007221758    0.098052725    0.098052725 ^ launch/Q (DFF_X1)
+                  0.007221758    0.000000000    0.098052725 ^ src/A1 (AND2_X1)
+1369.226318359    3.000075102    3.271373272    3.369426012 ^ src/ZN (AND2_X1)
+                  3.002237558    0.090581104    3.460006952 ^ arrived (out)
+                                                3.460006952   data arrival time
+
+                  0.049999997    3.333333254    3.333333254   clock core (rise edge)
+                                 0.000000000    3.333333254   clock network delay (ideal)
+                                 0.000000000    3.333333254   clock reconvergence pessimism
+                                -2.833333492    0.499999821   output external delay
+                                                0.499999821   data required time
+---------------------------------------------------------------------------------------------------
+                                                0.499999821   data required time
+                                               -3.460006952   data arrival time
+---------------------------------------------------------------------------------------------------
+                                               -2.960007191   slack (VIOLATED)
+
+
+ELECTRICAL
+max slew
+
+Pin                                           Limit           Slew          Slack
+---------------------------------------------------------------------------------
+src/ZN                                  0.198534995    3.000075102   -2.801540136 (VIOLATED)
+
+max capacitance
+
+Pin                                           Limit            Cap          Slack
+---------------------------------------------------------------------------------
+src/ZN                                 60.577396393 1369.226318359 -1308.648925781 (VIOLATED)
+
+END_STA

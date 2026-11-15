@@ -1,0 +1,41 @@
+OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 2 thread(s).
+[INFO ODB-0227] LEF file: /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.tech.lef, created 22 layers, 27 vias
+[INFO ODB-0227] LEF file: /OpenROAD-flow-scripts/flow/platforms/nangate45/lef/NangateOpenCellLibrary.macro.mod.lef, created 135 library cells
+ARRIVAL
+Startpoint: launch (rising edge-triggered flip-flop clocked by core)
+Endpoint: arrived (output port clocked by core)
+Path Group: core
+Path Type: max
+
+           Cap           Slew          Delay           Time   Description
+---------------------------------------------------------------------------------------------------
+                  0.049999997    0.000000000    0.000000000   clock core (rise edge)
+                                 0.000000000    0.000000000   clock network delay (ideal)
+                  0.049999997    0.000000000    0.000000000 ^ launch/CK (DFF_X1)
+   0.918144941    0.007221758    0.098052725    0.098052725 ^ launch/Q (DFF_X1)
+                  0.007221758    0.000000000    0.098052725 ^ src/A1 (AND2_X1)
+  51.954025269    0.117688194    0.151947141    0.249999866 ^ src/ZN (AND2_X1)
+                  0.117688194    0.000114492    0.250114352 ^ relay/A (BUF_X32)
+1348.346069336    0.076003827    0.092048898    0.342163265 ^ relay/Z (BUF_X32)
+                  0.131444499    0.081092194    0.423255444 ^ arrived (out)
+                                                0.423255444   data arrival time
+
+                  0.049999997    3.333333254    3.333333254   clock core (rise edge)
+                                 0.000000000    3.333333254   clock network delay (ideal)
+                                 0.000000000    3.333333254   clock reconvergence pessimism
+                                -2.833333492    0.499999821   output external delay
+                                                0.499999821   data required time
+---------------------------------------------------------------------------------------------------
+                                                0.499999821   data required time
+                                               -0.423255444   data arrival time
+---------------------------------------------------------------------------------------------------
+                                                0.076744393   slack (MET)
+
+
+ELECTRICAL
+END_STA

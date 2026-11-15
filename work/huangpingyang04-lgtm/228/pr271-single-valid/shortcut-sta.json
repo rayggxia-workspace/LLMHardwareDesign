@@ -1,0 +1,249 @@
+{
+  "job": 116004,
+  "original_job": 115485,
+  "net": {
+    "driver": "U0/dma_req_valid",
+    "id": "net-b96c1ab2afde6d594ab09e28",
+    "sinks": [
+      "dma/c_req_valid[3]"
+    ]
+  },
+  "allocation": {
+    "repeater": "gap-04",
+    "sinks": [
+      "dma/c_req_valid[3]"
+    ]
+  },
+  "placement": "PR #271 A / 112878",
+  "model": "same PR #279 Nangate45 TT 300 MHz, 500 ps input budget, 1.5\u00d7 research RC and virtual BUF_X32",
+  "cases": {
+    "direct": {
+      "data arrival time": 3460.006952,
+      "data required time": 499.999821,
+      "slack": -2960.0071909999997,
+      "src/ZN": 3369.426012,
+      "arrived": 3460.006952,
+      "capacitance_violated": true,
+      "slew_violated": true,
+      "limit_ff": 60.577396393,
+      "measured_ff": 1369.226318359,
+      "segments_ps": {
+        "direct_wire": 90.58094000000028
+      },
+      "route": [
+        {
+          "length_um": 5823.2,
+          "vias": 6,
+          "wire_cap_ff": 1358.503934898,
+          "wire_res_ohm": 131.742,
+          "via10": [
+            {
+              "pin": "U0/dma_req_valid",
+              "at": [
+                4522590,
+                4779340
+              ]
+            },
+            {
+              "pin": "dma/c_req_valid[3]",
+              "at": [
+                13176190,
+                1795340
+              ]
+            }
+          ],
+          "via11_count": 4
+        }
+      ],
+      "all_wire_um": 5823.2,
+      "total_via11": 4
+    },
+    "buffered_original": {
+      "data arrival time": 423.25544399999995,
+      "data required time": 499.999821,
+      "slack": 76.74439299999999,
+      "src/ZN": 249.999866,
+      "relay/A": 250.114352,
+      "relay/Z": 342.16326499999997,
+      "arrived": 423.25544399999995,
+      "capacitance_violated": false,
+      "slew_violated": false,
+      "segments_ps": {
+        "front": 0.11448599999999942,
+        "buffer": 92.04891299999997,
+        "back": 81.09217899999999
+      },
+      "route": [
+        {
+          "length_um": 99.0,
+          "vias": 6,
+          "wire_cap_ff": 24.275472172499995,
+          "wire_res_ohm": 2.9475,
+          "via10": [
+            {
+              "pin": "U0/dma_req_valid",
+              "at": [
+                4522590,
+                4779340
+              ]
+            },
+            {
+              "pin": "gap-04/A",
+              "at": [
+                4586590,
+                4645340
+              ]
+            }
+          ],
+          "via11_count": 4
+        },
+        {
+          "length_um": 5737.8,
+          "vias": 6,
+          "wire_cap_ff": 1338.5984265795,
+          "wire_res_ohm": 129.8205,
+          "via10": [
+            {
+              "pin": "gap-04/Z",
+              "at": [
+                4603390,
+                4645340
+              ]
+            },
+            {
+              "pin": "dma/c_req_valid[3]",
+              "at": [
+                13176190,
+                1795340
+              ]
+            }
+          ],
+          "via11_count": 4
+        }
+      ],
+      "all_wire_um": 5836.8,
+      "total_via11": 8
+    },
+    "buffered_shortcut": {
+      "data arrival time": 422.069162,
+      "data required time": 499.999821,
+      "slack": 77.930667,
+      "src/ZN": 249.999866,
+      "relay/A": 250.114352,
+      "relay/Z": 341.709226,
+      "arrived": 422.069162,
+      "capacitance_violated": false,
+      "slew_violated": false,
+      "segments_ps": {
+        "front": 0.11448599999999942,
+        "buffer": 91.594874,
+        "back": 80.359936
+      },
+      "route": [
+        {
+          "length_um": 99.0,
+          "vias": 6,
+          "wire_cap_ff": 24.275472172499995,
+          "wire_res_ohm": 2.9475,
+          "via10": [
+            {
+              "pin": "U0/dma_req_valid",
+              "at": [
+                4522590,
+                4779340
+              ]
+            },
+            {
+              "pin": "gap-04/A",
+              "at": [
+                4586590,
+                4645340
+              ]
+            }
+          ],
+          "via11_count": 4
+        },
+        {
+          "length_um": 5711.4,
+          "vias": 4,
+          "wire_cap_ff": 1332.0449673334997,
+          "wire_res_ohm": 128.98649999999998,
+          "via10": [
+            {
+              "pin": "gap-04/Z",
+              "at": [
+                4603390,
+                4645340
+              ]
+            },
+            {
+              "pin": "dma/c_req_valid[3]",
+              "at": [
+                13176190,
+                1795340
+              ]
+            }
+          ],
+          "via11_count": 2
+        }
+      ],
+      "all_wire_um": 5810.4,
+      "total_via11": 6
+    }
+  },
+  "improvements": {
+    "wire_um_saved_vs_original_buffered": 26.400000000000546,
+    "output_stage_wire_delay_saved_ps": 0.7322429999999827,
+    "arrival_advance_vs_original_buffered_ps": 1.1862819999999488,
+    "slack_gain_vs_original_buffered_ps": 1.1862740000000116,
+    "arrival_advance_vs_direct_ps": 3037.93779
+  },
+  "geometry_checks": {
+    "direct": {
+      "passed": true,
+      "nets_checked": 1,
+      "wire_length_dbu": 11646400,
+      "via10_count": 2,
+      "via11_count": 4,
+      "scope": "declared two-layer rectangular rules and M10 enclosure; not foundry DRC/RC/STA",
+      "logical_nets_checked": 1,
+      "used_virtual": []
+    },
+    "buffered_original": {
+      "passed": true,
+      "nets_checked": 2,
+      "wire_length_dbu": 11673600,
+      "via10_count": 4,
+      "via11_count": 8,
+      "scope": "declared two-layer rectangular rules and M10 enclosure; not foundry DRC/RC/STA",
+      "logical_nets_checked": 1,
+      "used_virtual": [
+        "gap-04"
+      ]
+    },
+    "buffered_shortcut": {
+      "passed": true,
+      "nets_checked": 2,
+      "wire_length_dbu": 11620800,
+      "via10_count": 4,
+      "via11_count": 6,
+      "scope": "declared two-layer rectangular rules and M10 enclosure; not foundry DRC/RC/STA",
+      "logical_nets_checked": 1,
+      "used_virtual": [
+        "gap-04"
+      ]
+    }
+  },
+  "original_sha256": {
+    "spec.json": "59d6a1f0740759e8b490221b35c49508322a91728063cc640a659a38708ce4d4",
+    "inventory.json": "1b3ae66c3107fa26902b940637187b0d38de7c015ef3d6a0f3a6e1d2c81b88ee",
+    "direct.json": "0a99d807a374db74a177380694d9e498dc934e317a2a0ceb380c7a3a517febca",
+    "buffered.json": "4e0a53aceeee044bbc378d9effe80682e1c6b2e66d8858df279184238fe1c569"
+  },
+  "sha256": {
+    "buffered-shortcut.json": "e8ab67637f52355938d06c728bab26b8d20670f64546135281a95091946220fb",
+    "direct/sta.log": "fc6ac580917bc566b75633707101aade2f5601b63cddcc1151685938a5125f40",
+    "buffered_original/sta.log": "70fceeb8beaccc69ef8938044a5fd432f46b4c63f8fb630bfc0014af504b6cc4",
+    "buffered_shortcut/sta.log": "4ac98f72e3f7d4a8496ac001e67fe6831eb6a8d94442434fd0c85ee9ee323d57"
+  }
+}
