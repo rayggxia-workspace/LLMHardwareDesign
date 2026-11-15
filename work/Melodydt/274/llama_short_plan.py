@@ -14,6 +14,7 @@ from qwen3_short_plan import (
 class LlamaCompiler(Compiler):
     hidden, vocab, token_word = 2048, 128256, 512
     model_type, head_size, heads, kv_heads, ffn = "llama", 64, 32, 8, 8192
+    compact_kv64 = False
 
     def __init__(self, checkpoint, packed, reference, output, layers, history, mode):
         self.layout = Layout(output)
@@ -70,6 +71,23 @@ class LlamaCompiler(Compiler):
     def rotary64(self, source):
         self.append(P, seal(ROTARY, 1, VECTOR, "<5H", source, 256, 272, 320, 16))
 
+    def cache_k64(self, address, position):
+        self.rotary64(160)
+        self.store(P, address+position*self.kv_row, 320, self.kv_row//16)
+
+    def cache_v64(self, address, position):
+        source = 192
+        if not self.compact_kv64:
+            self.append(P, seal(ROTARY, 2, VECTOR, "<2H", source, 320))
+            source = 320
+        self.store(P, address+position*self.kv_row, source, self.kv_row//16)
+
+    def attend64(self, position, scale, k, v):
+        opcode = 2 if self.compact_kv64 else 1
+        self.rotary64(128)
+        self.append(P, seal(ATT1, opcode, BASE_ABI, "<6HIQQ", position+1, position, 320,
+                            384, 544, 832, scale, k, v))
+
     def layer(self, layer, position, coeff):
         pre = f"model.layers.{layer}."
         self.rms(U, pre+"input_layernorm.weight", 0, 512, 512)
@@ -78,16 +96,12 @@ class LlamaCompiler(Compiler):
             k, v = self.kv(layer, head, 0), self.kv(layer, head, 1)
             lo, hi = head*64, (head+1)*64
             self.project(pre+"self_attn.k_proj.weight", 160, lo, hi)
-            self.rotary64(160)
-            self.store(P, k+position*512, 320, 32)
+            self.cache_k64(k, position)
             self.project(pre+"self_attn.v_proj.weight", 192, lo, hi)
-            self.append(P, seal(ROTARY, 2, VECTOR, "<2H", 192, 320))
-            self.store(P, v+position*512, 320, 32)
+            self.cache_v64(v, position)
             for q in range(4*head, 4*head+4):
                 self.project(pre+"self_attn.q_proj.weight", 128, q*64, (q+1)*64)
-                self.rotary64(128)
-                self.append(P, seal(ATT1, 1, BASE_ABI, "<6HIQQ", position+1, position, 320,
-                                    384, 544, 832, round(2**30/sqrt(64)), k, v))
+                self.attend64(position, round(2**30/sqrt(64)), k, v)
                 self.copy(P, CONTEXT, 832, q*16, 16)
         self.project(pre+"self_attn.o_proj.weight", 0, route=1)
         self.copy(P, U, 0, 512, 512)

@@ -17,6 +17,7 @@ class PhiCompiler(LlamaCompiler):
     model_type, hidden, head_size, heads, kv_heads, ffn, vocab = "phi3", 3072, 128, 24, 8, 8192, 200064
     token_word = 960
     immutable_end = 1 << 33
+    ffn_context_cache = False
 
     def __init__(self, checkpoint, packed, reference, output, layers, history, mode):
         self.layout = Layout(output, self.immutable_end)
@@ -106,6 +107,15 @@ class PhiCompiler(LlamaCompiler):
         self.mid_buffer = (3 << 32) + ((position-self.history)*self.layers+layer)*size
         self.scratch_regions.append((self.mid_buffer, size))
 
+    def store_mid_tile(self, first):
+        if self.ffn_context_cache and first < 4096:
+            self.copy(P, CONTEXT, 64, first//4, 32)
+        else:
+            self.store(P, self.mid_buffer + first*4, 64, 32)
+
+    def project_spilled_mid(self, tensor):
+        self.project(tensor, 0, route=5 if self.ffn_context_cache else 4, backing=self.mid_buffer)
+
     def layer(self, layer, position, coeff):
         pre = f"model.layers.{layer}."
         self.allocate_mid(layer, position)
@@ -135,8 +145,6 @@ class PhiCompiler(LlamaCompiler):
             self.project(fused, 0, first, first+128)
             self.project(fused, 32, self.ffn+first, self.ffn+first+128)
             self.append(P, seal(ACT, 1, VECTOR, "<3H", 0, 32, 64))
-            # Gamma storage is no longer needed; keep one half in DDR-backed slots.
-            address = self.mid_buffer+first*4
-            self.store(P, address, 64, 32)
-        self.project(pre+"mlp.down_proj.weight", 0, route=4, backing=self.mid_buffer)
+            self.store_mid_tile(first)
+        self.project_spilled_mid(pre+"mlp.down_proj.weight")
         self.residual()

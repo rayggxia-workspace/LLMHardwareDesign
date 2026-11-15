@@ -4,6 +4,8 @@
 
 七模型整层短程回放、数值对照、运行和输出索引见 [RESULTS.md](RESULTS.md)。下文保留从输入准备到初次整层回放的时间顺序记录。
 
+[512-bit SRAM 吞吐优化](OPTIMIZATION.md)记录分项时间、模型差距及优化 A/B。
+
 ## 服务器回执
 
 服务器登录 `yuzelu@10.129.166.172`，任务根 `/public/home/yuzelu/Melodydt/runs/issue-274`。

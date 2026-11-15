@@ -50,18 +50,40 @@ esac
 shift
 out="$PWD/run-$SLURM_JOB_ID"
 mkdir "$out"
-pids=()
-for mode in "$@"; do
-    count=$layers
-    if [[ $mode == pilot ]]; then mode=prefill; count=1; fi
+projection_math=()
+if [[ ${MDT_274_NATIVE_MATH:-0} == 1 ]]; then
+    g++ --version > "$out/projection-build.txt"
+    g++ -std=c++17 -O3 -Wall -Wextra -Werror -fPIC -shared projection_math.cpp -o "$out/projection_math.so"
+    projection_math=("SHORT_PROJECTION_MATH=$out/projection_math.so")
+fi
+sif=/public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif
+srun_python() {
     srun --exact -N1 -n1 -c "$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
       /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu \
-      /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif \
-      env PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 LD_LIBRARY_PATH="$compat" \
+      "$sif" env PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 LD_LIBRARY_PATH="$compat" \
+      "${projection_math[@]}" \
       PYTHONPATH="$PWD:$bridge:$t:$j/systemc_benchmark:$j/block_local_native:$b/block_local_native:$b/mother_control_native:$b/shared_x_control:$a/algo1/project/experiments/block_synthesis" \
-      "$py" -B fast_qwen3_short.py "$input" "$r/qwen3-gather-01/run-114290" "$packed" "$reference" \
+      "$py" -B "$@"
+}
+if [[ ${MDT_274_VERIFY_MATH:-0} == 1 ]]; then
+    srun_python projection_math.py "$out/projection_math.so" > "$out/projection-verify.log" 2>&1
+fi
+pids=()
+for spec in "$@"; do
+    IFS=: read -r mode window cache <<< "$spec"
+    window="${window:-1}"
+    options=()
+    if [[ "${cache:-}" == cache ]]; then options+=(--ffn-context-cache); fi
+    if [[ "${cache:-}" == kv64 ]]; then options+=(--compact-kv64); fi
+    count=$layers
+    if [[ $mode == pilot ]]; then mode=prefill; count=1; fi
+    if [[ $mode == slice ]]; then mode=prefill; count=4; fi
+    name="${spec%%:*}-w$window${cache:+-$cache}"
+    if [[ $spec == "$mode" ]]; then name=$mode; fi
+    if [[ $spec == pilot || $spec == slice ]]; then name=$mode; fi
+    srun_python fast_qwen3_short.py "$input" "$r/qwen3-gather-01/run-114290" "$packed" "$reference" \
       "$bridge/run-113164.dram.so" "$p/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini" \
-      "$out/$mode" --model "$model" --mode "$mode" --layers "$count" > "$out/$mode.log" 2>&1 &
+      "$out/$name" --model "$model" --mode "$mode" --layers "$count" --weight-window "$window" "${options[@]}" > "$out/$name.log" 2>&1 &
     pids+=("$!")
 done
 status=0

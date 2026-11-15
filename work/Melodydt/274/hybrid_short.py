@@ -56,13 +56,14 @@ class HybridCompiler(PhiCompiler):
     def dense_ffn(self, prefix, layer, position, gate_gain=1., out_gain=1.):
         size = self.ffn*4
         base = FFN + ((position-self.history)*self.layers+layer)*size
+        self.mid_buffer = base
         self.scratch_regions.append((base, size))
         for first in range(0, self.ffn, 128):
             self.project(prefix+"gate_proj.weight", 0, first, first+128)
             self.project(prefix+"up_proj.weight", 32, first, first+128)
             self.append(P, seal(ACT, 4, VECTOR, "<3HI", 0, 32, 64, round(gate_gain*65536)))
-            self.store(P, base+first*4, 64, 32)
-        self.project(prefix+"down_proj.weight", 0, route=4, backing=base)
+            self.store_mid_tile(first)
+        self.project_spilled_mid(prefix+"down_proj.weight")
         self.residual_gain(out_gain)
 
     def spill_projection(self, tensor, address, count, gain=1.):

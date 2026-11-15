@@ -17,12 +17,13 @@ from native_tlm_projection import Projection
 from native_tlm_timing import Clock, Dram, Images, S128, Scheduler, Transfer
 from native_tlm_u import UArithmetic, rne
 from reference import packet
+from projection_window import WindowedProjection
 
 from qwen3_gather import embedding
 from qwen3_rms import RMS
 from qwen3_short_plan import (
     ACT, ADD2, ATT1, ATT_WIDE, BASE_ABI, CONTEXT, COPY, Compiler, DMA, ELEMENT, HEAD_OUT, HIDDEN, LOAD,
-    MID, MOE, P, PROJ, PROJ_ABI, RECURRENT, RESIDUAL, ROTARY, STORE, TOPOLOGY, U, VECTOR, VOCAB, hash_file,
+    MID, MOE, P, PROJ, PROJ_ABI, RECURRENT, RESIDUAL, ROTARY, STORE, TOPOLOGY, U, VECTOR, VOCAB, align, hash_file,
 )
 
 
@@ -86,7 +87,7 @@ class KVMemory(CommittedMemory):
 
 
 class Execution:
-    def __init__(self, plan, assets, library, ini, output):
+    def __init__(self, plan, assets, library, ini, output, weight_window=1):
         self.plan = plan
         self.assets = assets
         self.output = output
@@ -101,12 +102,17 @@ class Execution:
         self.token_word = plan.get("token_word", 512)
         self.n = [RMS(self.clock, s) for s in self.sram]
         self.e = [UArithmetic(self.clock, s) for s in self.sram]
-        self.proj = [Projection(self.clock, self.dram, self.memory, self.sram[src], self.sram[P],
-                                source_word=word, scratch_word=944, scratch_sram=self.sram[P])
+        self.weight_window = weight_window
+        projection = Projection if weight_window == 1 else WindowedProjection
+        projection_args = {} if weight_window == 1 else {"weight_window": weight_window}
+        self.proj = [projection(self.clock, self.dram, self.memory, self.sram[src], self.sram[P],
+                                source_word=word, scratch_word=944, scratch_sram=self.sram[P], **projection_args)
                      for src, word in ((U if self.hidden <= 2048 else MID, self.hidden//4 if self.hidden <= 2048 else 0),
                                        (CONTEXT, 0), (MID, 0))]
         self.attn = Attention(self.clock, self.dram, self.memory, self.proj[0], kv_window=8)
         self.calls = Counter()
+        self.service_times = {}
+        self.service_group = None
         self.token = None
         self.logits = []
         self.experts = []
@@ -128,7 +134,7 @@ class Execution:
     def bind_providers(self):
         def match(record):
             source = record[16]
-            if source > 4 or any(record[17:24]) or any(record[32:48]):
+            if source > 5 or any(record[17:24]) or any(record[32:48]):
                 raise ValueError("invalid projection source")
             return self.proj[min(source, 2)]
 
@@ -140,7 +146,7 @@ class Execution:
             width, = unpack_from("<H", record, 76)
             if source == 3 and width != 8192:
                 raise ValueError("split Mid route requires exactly 8192 coefficients")
-            if source == 4 and width not in (4096, 6144, 8192, 9216, 10240):
+            if source in (4, 5) and width not in (4096, 6144, 8192, 9216, 10240):
                 raise ValueError("DDR Mid route has an unsupported width")
 
             def tile(k, done):
@@ -156,7 +162,7 @@ class Execution:
                               lambda: proj.read_span(self.sram[P], 944, 16,
                               lambda data: done(data, shift))))
 
-                if source == 3:
+                if source == 3 or source == 5 and k < 32:
                     proj.read_span(self.sram[site], word, 32,
                                    lambda _: proj.read_span(self.sram[site], word, 32, convert))
                 else:
@@ -387,6 +393,9 @@ class Execution:
         if self.hidden == 2560:
             from attention_wide import WideAttention
             providers[P, ATT_WIDE, VECTOR, 1] = WideAttention(self.proj[0]).bind
+        if self.plan["kv_row"] == 256:
+            from attention_compact import CompactAttention64
+            providers[P, ATT1, BASE_ABI, 2] = CompactAttention64(self.proj[0]).bind
         if self.plan.get("moe"):
             from granite_short import Router
             providers[P, MOE, VECTOR, 1] = Router(self, activation).bind
@@ -405,9 +414,16 @@ class Execution:
         if not issue_ps < dispatch_ps <= complete_ps:
             raise ValueError("noncausal CALL completion")
         self.calls[signature] += 1
+        totals = self.service_times.setdefault((self.service_group, signature), [0, 0, 0])
+        totals[0] += 1
+        totals[1] += dispatch_ps - issue_ps
+        totals[2] += complete_ps - dispatch_ps
 
     def pages(self, pages):
         for item in pages:
+            parts = item["path"].split("-", 2)
+            phase = parts[1] if parts[1] in ("ingress", "head") else "layers"
+            self.service_group = f"{parts[0]}-{phase}"
             path = self.assets / item["path"]
             self.scheduler.install_pm(item["address"], item["image_bytes"], mother=True)
             mc, _, raw = parse_pm_image(path.read_bytes(), path, base=item["address"],
@@ -491,6 +507,12 @@ class Execution:
                   "cross_step_reads": len(self.memory.reread),
                   "pages": len(self.timing), "calls": [{"signature": k, "count": v} for k, v in sorted(self.calls.items())],
                   "ddr": counts, "timing_calibrated": False, "rtl_qualified": False}
+        result["weight_window"] = self.weight_window
+        result["projection"] = [dict(p.stats) for p in self.proj]
+        result["services"] = [{"group": group, "signature": signature, "count": count,
+                               "dispatch_ps": dispatch, "service_ps": service}
+                              for (group, signature), (count, dispatch, service) in
+                              sorted(self.service_times.items())]
         if decode:
             ps = retirements[1]["time_ps"] - retirements[0]["time_ps"]
         else:
@@ -506,7 +528,14 @@ def main():
     parser.add_argument("--mode", choices=("decode", "prefill"), required=True)
     parser.add_argument("--model", choices=("qwen3", "llama", "phi", "gemma", "granite", "qwen35", "falcon"), default="qwen3")
     parser.add_argument("--layers", type=int)
+    parser.add_argument("--weight-window", type=int, choices=(1, 2, 4, 8), default=1)
+    parser.add_argument("--ffn-context-cache", action="store_true")
+    parser.add_argument("--compact-kv64", action="store_true")
     args = parser.parse_args()
+    if args.ffn_context_cache and args.model not in ("phi", "gemma", "qwen35", "falcon"):
+        parser.error("FFN context cache requires a DDR-backed Mid mapping")
+    if args.compact_kv64 and args.model not in ("llama", "granite"):
+        parser.error("compact KV requires 64-element attention heads")
     full = {"qwen3": 28, "llama": 16, "phi": 32, "gemma": 34, "granite": 32,
             "qwen35": 32, "falcon": 32}[args.model]
     layers = full if args.layers is None else args.layers
@@ -539,11 +568,19 @@ def main():
         from hybrid_short import FalconCompiler, Qwen35Compiler
         model = Qwen35Compiler if args.model == "qwen35" else FalconCompiler
         compiler = model(args.checkpoint, args.packed, args.reference, assets, layers, history, args.mode)
+    if args.ffn_context_cache:
+        compiler.ffn_context_cache = True
+    if args.compact_kv64:
+        compiler.compact_kv64 = True
+        compiler.kv_row = 256
+        compiler.kv_bytes = align((history+2)*compiler.kv_row, 4096)
     plan = compiler.compile()
     (assets / "plan.json").write_text(json.dumps(plan, indent=2) + "\n")
-    result = Execution(plan, assets, args.library, args.ini, args.output).run()
+    result = Execution(plan, assets, args.library, args.ini, args.output, args.weight_window).run()
     result.update(plan_sha256=hash_file(assets / "plan.json"),
                   model=args.model,
+                  ffn_context_cache=args.ffn_context_cache,
+                  compact_kv64=args.compact_kv64,
                   workload="serial projection and modeled SRAM COPY candidate; zero historical KV")
     (args.output / "result.json").write_text(json.dumps(result, indent=2) + "\n")
 

@@ -6,7 +6,7 @@ from native_tlm_u import rne
 
 from phi_short_plan import PhiCompiler
 from qwen3_short_plan import (
-    ACT, ATT1, BASE_ABI, CONTEXT, COPY, ELEMENT, KV_START, MID, MOE, P, RESIDUAL, ROTARY,
+    ACT, CONTEXT, COPY, ELEMENT, KV_START, MID, MOE, P, RESIDUAL,
     U, VECTOR, projection_record, seal,
 )
 
@@ -49,16 +49,12 @@ class GraniteCompiler(PhiCompiler):
             k, v = self.kv(layer, head, 0), self.kv(layer, head, 1)
             lo, hi = head*64, (head+1)*64
             self.project(pre+"self_attn.k_proj.weight", 160, lo, hi)
-            self.rotary64(160)
-            self.store(P, k+position*512, 320, 32)
+            self.cache_k64(k, position)
             self.project(pre+"self_attn.v_proj.weight", 192, lo, hi)
-            self.append(P, seal(ROTARY, 2, VECTOR, "<2H", 192, 320))
-            self.store(P, v+position*512, 320, 32)
+            self.cache_v64(v, position)
             for q in range(3*head, 3*head+3):
                 self.project(pre+"self_attn.q_proj.weight", 128, q*64, (q+1)*64)
-                self.rotary64(128)
-                self.append(P, seal(ATT1, 1, BASE_ABI, "<6HIQQ", position+1, position, 320,
-                                    384, 544, 832, round(2**30*self.config["attention_multiplier"]), k, v))
+                self.attend64(position, round(2**30*self.config["attention_multiplier"]), k, v)
                 self.copy(P, CONTEXT, 832, q*16, 16)
         self.project(pre+"self_attn.o_proj.weight", 0, route=1)
         self.residual()

@@ -1,5 +1,7 @@
 """Use #270's cycle-preserving batched DDR adapter with the short replay."""
 import heapq
+import os
+from pathlib import Path
 import sys
 
 from fast_tlm_replay import DramBridge, TICK_PS
@@ -29,6 +31,10 @@ class BatchedClock(Clock):
 
 
 if __name__ == "__main__":
+    if os.environ.get("SHORT_PROJECTION_MATH"):
+        import native_tlm_projection
+        from projection_math import NativeAccumulator
+        native_tlm_projection.accumulate = NativeAccumulator(Path(os.environ["SHORT_PROJECTION_MATH"]))
     replay.Clock = BatchedClock
     replay.Dram = DramBridge
     sys.argv[0] = replay.__file__
