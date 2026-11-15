@@ -21,10 +21,8 @@ sha256sum -c "$work/activity-source.sha256"
 (cd "$old" && sha256sum -c ffn-wait.sha256)
 for mode in 0 1; do
     raw=$audit/ffn-wait-$mode.log
-    comparable=$audit/ffn-wait-aligned-$mode.log
     grep -E '^(M_WEIGHT|FFN_LC|FFN_EXEC|FFN_SCOPE|FFN_WAIT) ' "$out/replay-$mode.log" > "$raw"
-    sed -E 's/^(M_WEIGHT|FFN_LC|FFN_EXEC) TOP\./\1 /' "$raw" > "$comparable"
-    cmp "$old/ffn-wait-$mode.log" "$comparable"
+    python3 -B compare_c639_events.py "$old/ffn-wait-$mode.log" "$raw" > "$audit/events-$mode.json"
     diff <(grep '^PASS q projection ' "$old/replay-$mode.log") <(grep '^PASS q projection ' "$out/replay-$mode.log")
     for f in transactions.tsv write-transactions.tsv activation-transactions.tsv committed-kv.bin; do
         cmp "$old/DDR-$mode/$f" "$out/DDR-$mode/$f"
@@ -35,5 +33,5 @@ for mode in 0 1; do
     grep -E '^(C639_ACTIVITY|PASS q projection) ' "$out/replay-$mode.log"
 done
 sha256sum "$work/activity-source.sha256" "$out/proof.sha256" "$out"/DDR-*/ffn-*.fst \
-    "$audit"/*.log "$PWD/audit-input.sha256" > "$audit/activity-results.sha256"
+    "$audit"/*.log "$audit"/events-*.json "$PWD/audit-input.sha256" > "$audit/activity-results.sha256"
 sha256sum -c "$audit/activity-results.sha256"
