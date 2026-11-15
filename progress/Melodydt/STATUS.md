@@ -76,3 +76,7 @@
 - 116938 COMPLETED 0:0。P SRAM 的 512-bit feeder 读以四 bank 同地址选通通过原生 RTL 和布线网表验证。母控及局控 PM 实际读写为 128-bit，上游 DDR 回包为 512-bit。真实宽写和控制链路物理标定待做。
 - C639 G32 116937 在 c64/node9 以 12 核运行，正常工况 2,654,967 周期和两窗已读回。预检 116942 首窗标注覆盖 99.83%。四窗功耗 116943 以 `afterok:116937` 等待。M60 的当前快照等价及其他分块待验证。 [结果和 SHA-256](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/bc7ac38b5aaa8fa8d908ca6da999ed45ddbcbe76/work/Melodydt/280/PAIRED_SRAM_AND_C639.md) · [长作业接续](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/49ce662ad40155d02184ea731476aa29928755b6/docs/handoffs/2026-11-15-issue-280-c639-g32-power.md)
 - #280 进行中，PR #281 草稿，独立审查人待指定。项目登记待合并，Projects 缺配置待维护者核验。
+
+## 终态更新（Asia/Shanghai）
+
+116937 和 116943 均 COMPLETED 0:0 并通过 SHA-256。四个 FFN 首 CALL 窗口的 G32 握手均为 0。补采 116950 从首次 G32 输入握手触发，两种工况各 64 次输入、64 次输出，功耗分别为 1.380787／1.377006 mW，DDR 前缀对账通过。作业 116950 在 c64/node12 用 2 核运行 4 分 59 秒并以 0:0 退出。后续从 M 与当前快照的等价证据、实际 512-bit SRAM／PM 写路径及控制链路功耗继续。 [终态、结果散列和复跑](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/524d0f1ae7e03a38114ae356bc4f4c8f81b0e253/work/Melodydt/280/C639_G32_POWER.md)
