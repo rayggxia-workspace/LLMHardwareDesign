@@ -64,6 +64,11 @@ old_template = template.read_text()
 assert old_template.endswith(suffix)
 template.write_text(old_template[:-len(suffix)] + '`ifndef SYNTHESIS' + probe)
 assert generate() == exact
+driver = exp / 'leaf.cpp'
+text = driver.read_text()
+anchor = 'int main(int argc,char**argv){try{'
+assert text.count(anchor) == 1 and 'Verilated::commandArgs' not in text
+driver.write_text(text.replace(anchor, anchor + 'Verilated::commandArgs(argc,argv);'))
 for module, info in json.loads(proof.read_text())['rtl'].items():
     file = rtl / (module + '.sv')
     assert hashlib.sha256((source / file).read_bytes()).hexdigest() == info['c639']
