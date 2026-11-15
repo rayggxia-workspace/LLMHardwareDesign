@@ -63,3 +63,9 @@
 - 2026-11-15（Asia/Shanghai）Qwen3 同底座 P0／三 P 的 116787 终态 `COMPLETED 0:0`，两组 FP32 与层输出一致。三 P 短 Prefill／两退休 Decode 吞吐 +43.22%／+13.14%，DDR mJ/token −26.44%／−11.00%。C639 原生采样 116856 已运行，116858 等待前置终态对账。 [Qwen3 A/B](../../work/Melodydt/280/QWEN3_P0_AB.md) · [C639 接续](../../docs/handoffs/2026-11-15-issue-280-c639-activity.md)
 
 - 2026-11-15（Asia/Shanghai）C639 四份波形由 116887 验收，两工况逐源同拍数据、时刻与完整 DDR／KV 对账通过。116893 在真实 FST 与 #200 布线 `local_s_base` 之间绑定 10 端口、273 位，C639 三路 RTL 层级已读回。下一步为匹配门级重放和 512-bit 路径标定。 [作业与结果](../../work/Melodydt/280/GATE_BINDING_02.md)
+
+## 2026-11-15（Asia/Shanghai）C380 布线 SRAM 功耗
+
+- 116908 在 c64/node9 用 8 核，65 秒 COMPLETED 0:0。布线 `local_s_base` 两种工况的全量读回、DDR 事务、周期和采样窗口与冻结基准一致。
+- 116918 在 c64/node9 用 4 核，12 秒 COMPLETED 0:0。100 MHz 下，两个 20.48 µs 活动窗口的 128-bit SRAM 平均总功耗为 35.663966 和 34.209967 mW，标注 17,309 个引脚、143 个待核实。服务器日志、首次失败、结果 SHA-256 和接续命令已归档。 [C380 回执](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/cdc1acdc83594a8240ace568a002af9fc41411fc/work/Melodydt/280/C380_ROUTED_POWER.md)
+- 下一步补 C380 配对空闲并核实未标注引脚，随后绑定 C639 物理分块和标定真实 512-bit SRAM／PM。#280 进行中。PR #281 草稿，独立审查人待指定，登记待合并，Projects 缺配置待权责人核验。
