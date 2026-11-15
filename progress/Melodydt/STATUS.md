@@ -53,3 +53,5 @@
 - 已补齐 [Qwen3 DDR Slurm 入口](../../work/Melodydt/280/run_qwen3_ddr_pilot.py)，本地验证分窗参数、依赖散列失败时终止、原容器审计和结果输出路径。批量 SSH 认证重试仍失败，当前没有试点作业。 [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)
 
 - 2026-11-15（Asia/Shanghai）显式选择本地匹配身份后，SSH 公钥认证已恢复。服务器原 DDR 桥与配置 SHA-256 对齐。首作业 116477 的探针编译通过，留存因漏拷 `projection_math.cpp` 的启动失败。修订作业 116481 在 c96/node15 以 2×12 核进入模型回放。见 [作业追踪与验收命令](../../docs/handoffs/2026-11-15-issue-280-ddr-energy-pilot.md)。下一步核验两阶段和能耗结果，#280 已恢复进行中。
+
+- 2026-11-15（Asia/Shanghai）Qwen3 双通道 DDR 试点通过。回放 116481 两模型步骤 `0:0`，原审计路径错误由 116496 补跑 `0:0`。短 Prefill 114.940 mJ/输入 token，Decode 两退休间 332.855 mJ/输出 token，FP32 top-1 两步通过。1,068 项回放输出及最终清单已验。下一步由 Melodydt 从同行 DDR 路由的单 P／三 P 对照继续。 [分窗结果与复现](../../work/Melodydt/280/QWEN3_DDR_PILOT.md)
