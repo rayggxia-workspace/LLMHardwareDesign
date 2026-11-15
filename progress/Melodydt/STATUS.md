@@ -61,3 +61,5 @@
 - 2026-11-15（Asia/Shanghai）S128 门级配对窗口 116809 复现原功耗，C380 正常和背压 116817 取得两份已验收 RTL FST，两个作业均 `COMPLETED 0:0`。C380 实际为 128-bit 普通端口；后续从门级关联、C639 和 512-bit 路径校准继续，P0 116787 仍排队。 [证据与恢复命令](../../work/Melodydt/280/GATE_ACTIVITY_01.md)
 
 - 2026-11-15（Asia/Shanghai）Qwen3 同底座 P0／三 P 的 116787 终态 `COMPLETED 0:0`，两组 FP32 与层输出一致。三 P 短 Prefill／两退休 Decode 吞吐 +43.22%／+13.14%，DDR mJ/token −26.44%／−11.00%。C639 原生采样 116856 已运行，116858 等待前置终态对账。 [Qwen3 A/B](../../work/Melodydt/280/QWEN3_P0_AB.md) · [C639 接续](../../docs/handoffs/2026-11-15-issue-280-c639-activity.md)
+
+- 2026-11-15（Asia/Shanghai）C639 四份波形由 116887 验收，两工况逐源同拍数据、时刻与完整 DDR／KV 对账通过。116893 在真实 FST 与 #200 布线 `local_s_base` 之间绑定 10 端口、273 位，C639 三路 RTL 层级已读回。下一步为匹配门级重放和 512-bit 路径标定。 [作业与结果](../../work/Melodydt/280/GATE_BINDING_02.md)
