@@ -117,6 +117,15 @@ sample, schedule = map(Path, sys.argv[1:3])
 phase, scope = sys.argv[3], sys.argv[4].split("/")
 start, end = next([int(x) for x in line.split()[1:]] for line in schedule.read_text().splitlines() if line.split()[0] == phase)
 target_ports = {"clk", "in_valid", "in_ready", "out_valid", "out_ready"}
+counts = {"input_accepts": 0, "output_accepts": 0}
+values = {}
+
+def sample_edge(before, after, ports):
+    if before.get(ports.get("clk")) == "0" and after.get(ports.get("clk")) == "1":
+        for prefix, field in (("in", "input_accepts"), ("out", "output_accepts")):
+            if all(before.get(ports[prefix + "_" + suffix]) == "1" for suffix in ("valid", "ready")):
+                counts[field] += 1
+
 with (sample / "raw.vcd").open() as src, (sample / "gate.vcd").open("w") as dst:
     paths = []
     selected = []
@@ -124,6 +133,7 @@ with (sample / "raw.vcd").open() as src, (sample / "gate.vcd").open("w") as dst:
     time = None
     last = None
     clock = []
+    before = {}
     for line in src:
         fields = line.split()
         command = fields[0] if fields else ""
@@ -152,15 +162,24 @@ with (sample / "raw.vcd").open() as src, (sample / "gate.vcd").open("w") as dst:
                 fields[1] = "wire"
                 line = " ".join(fields) + "\n"
         elif line.startswith("#"):
+            sample_edge(before, values, ids)
+            before = values.copy()
             time = int(line[1:])
-        elif line[:1] in ("0", "1") and line[1:].strip() == ids.get("clk") and line[0] != last:
-            clock.append(time)
-            last = line[0]
+        elif line[:1] in ("0", "1", "x", "z"):
+            identifier = line[1:].strip()
+            if identifier in ids.values():
+                values[identifier] = line[0]
+                if identifier == ids.get("clk") and line[0] != last:
+                    clock.append(time)
+                    last = line[0]
         dst.write(line)
+    sample_edge(before, values, ids)
 if set(ids) != target_ports or clock != list(range(start, end + 1, 5000)) or time != end:
     raise ValueError("G32 clock, ports or frozen window did not match")
 (sample / "functional.json").write_text(json.dumps({"timing": {"passed": True, "window_ps": end - start,
-    "clock_period_ps": 10000, "clock_transitions": len(clock) - 1, "first_ps": start, "last_ps": end}}, indent=2) + "\n")
+    "clock_period_ps": 10000, "clock_transitions": len(clock) - 1, "first_ps": start, "last_ps": end},
+    "handshakes_after_first_timestamp": counts}, indent=2) + "\n")
+print(phase, counts)
 PY
     python3 -B "$analyzer" "$out/physical-100mhz" "$lib" "$sample/gate.vcd" "$sample/functional.json" \
       "$sample/openroad" --scope "$scope" --cores "$cores" --escape-sta-backslashes --sample-label 'C639 G32 leaf'
