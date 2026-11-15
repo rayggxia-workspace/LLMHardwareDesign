@@ -80,3 +80,9 @@
 ## 终态更新（Asia/Shanghai）
 
 116937 和 116943 均 COMPLETED 0:0 并通过 SHA-256。四个 FFN 首 CALL 窗口的 G32 握手均为 0。补采 116950 从首次 G32 输入握手触发，两种工况各 64 次输入、64 次输出，功耗分别为 1.380787／1.377006 mW，DDR 前缀对账通过。作业 116950 在 c64/node12 用 2 核运行 4 分 59 秒并以 0:0 退出。后续从 M 与当前快照的等价证据、实际 512-bit SRAM／PM 写路径及控制链路功耗继续。 [终态、结果散列和复跑](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/524d0f1ae7e03a38114ae356bc4f4c8f81b0e253/work/Melodydt/280/C639_G32_POWER.md)
+
+## 2026-11-15（Asia/Shanghai）C639 M 实际送布线源与同源实现
+
+- 116953 完成 M60 与 C639 权重模块的合法事务对照，两版均接受 START，只有 M60 同拍接受 ALLOC。实际送布线的 M60 与 C639 均为单执行槽，已更新早期基于集成副本的比较。
+- 116958 完成六个窗、三路 P 共 147,456 个周期的真实活动审计，3,472 次 ALLOC 和 3,423 次 START，未发现双 valid 同拍。116956 的 18 项 C639 同源叶块回归通过，Nangate45 映射在 c64/node9 12 核执行，116957 布线等待成功依赖。 [回执与 SHA-256](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/fd36ac818d6e5bc83fcf435177e15d281cd715f1/work/Melodydt/280/C639_M_PHYSICAL.md) · [作业接续](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/cfa5a4efba106992c47cf1ba537ec94e1268abe9/docs/handoffs/2026-11-15-issue-280-c639-m-physical.md)
+- 后续需映射、布线、物理和门级验收、M 实际功耗，再补 512-bit 写与控制链路。#280 进行中，PR #281 草稿，独立审查人待指定。登记待合并，Projects 缺配置待维护者核验。
