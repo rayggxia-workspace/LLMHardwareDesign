@@ -45,7 +45,7 @@ printf '%s  %s\n' \
     ef69b74b329a39c75987dc1c292c13321db396e0744fc774ad4272d8edc6cee0 "$delivery/6_final.spef" \
     d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65 "$delivery/6_final.sdc" > "$out/physical.sha256"
 sha256sum -c "$out/physical.sha256"
-for ext in v odb spef; do ln -s "$delivery/6_final.$ext" "$out/physical-100mhz/"; done
+for ext in v odb spef; do ln -s "$delivery/6_final.$ext" "$out/physical-100mhz/6_final.$ext"; done
 grep -Fx 'create_clock -name core -period 3.33333333333 [get_ports clk]' "$delivery/6_final.sdc"
 sed '/^create_clock -name core -period /s/3\.33333333333/10.0000/' "$delivery/6_final.sdc" > "$out/physical-100mhz/6_final.sdc"
 openroad -version > "$out/openroad-version.txt"
