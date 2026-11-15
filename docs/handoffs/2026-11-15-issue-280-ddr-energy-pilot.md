@@ -11,12 +11,14 @@ SSH 已恢复。默认身份列表未选中对应的本地身份，显式指定�
 ```bash
 cd /public/home/yuzelu/Melodydt/runs/issue-280/ddr-pilot-02
 squeue -j 116481
-sacct -X -j 116481 --format=JobID,State,ExitCode,AllocCPUS,NodeList,Elapsed
+sacct -j 116481,116496 --format=JobID,State,ExitCode,AllocCPUS,NodeList,Elapsed
 tail -n 30 slurm-116481.log
-sha256sum -c pilot-116481/pilot-results.sha256
+sha256sum -c audit-116481-116496/pilot-results.sha256
 cat pilot-116481/ddr-prefill.json pilot-116481/ddr-decode.json
 ```
 
-Melodydt 续办时先确认 116481 退出码与结果清单，再读取 `audit-three-p.json`、两个能耗窗口和原冻结速度基线。仅在两阶段与 FP32 及终态统计对账后发布模型数值。
+两阶段模型步骤 `116481.3`、`116481.4` 已以 `COMPLETED 0:0` 结束，DDR 窗口与冻结速度基线对账通过。父作业因最后一个独立审计步骤引用错误目录而 `FAILED 1:0`。在同一提交目录通过 `sbatch --parsable audit_qwen3_116481.sbatch` 提交补审 `116496`（`mdt-280audit`），c64/node1、10 核、21 秒 `COMPLETED 0:0`。补审日志 `slurm-audit-116496.log`，审计与结果清单在 `audit-116481-116496/`。1,068 项回放产物与最终清单均通过 SHA-256。 [Qwen3 回执](../../work/Melodydt/280/QWEN3_DDR_PILOT.md)
+
+Melodydt 续办时先以本次三 P 结果和实测 FFN Mid DDR 路由为基线，构建同底座 P0 单路对照。
 
 后续为单 P／三 P 消融、代表组件门级标定、七模型逐项扩测、能耗覆盖和不确定度汇总。看板缺项目配置，实际条目待具权限维护者核验。
