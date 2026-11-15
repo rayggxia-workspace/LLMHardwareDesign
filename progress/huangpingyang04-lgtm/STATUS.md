@@ -36,3 +36,8 @@
 
 - [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250：固定方案 A 与旧 320 根逃逸路径，M7–M10 新增至少 340 根可核验的底层逃逸，最大试跑新增 559 根。CUGR 第二阶段保留拥挤引脚预留。最佳作业 116336 布通 734 / 1,834 根，较上轮净增 46 根，尚余 1,100 根。
 - 最佳配置的交换器顶层过框需求降到 249 根，低于 342 根容量上限。剩余为接入失败 375 根和迷宫路径失败 725 根。工艺及时序验收待实施。[报告和服务器证据](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/full-1834/more-escape/README.md)
+
+## 2026-11-15（中国标准时间）
+
+- [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250：用 CUGR 作者原版 `MazeRoute::route()` 单独复跑完整 1,834 网。原始落点 406 根，660 和 879 根逃逸版本分别为 581 和 574 根。三组均通过独立几何核验。
+- 按实际主轨与引脚窗口复算，三组 U0 外框均有 1,076 根必过网，最多 1,046 个位置。工艺和全量时序待验收。[方法、服务器回执与截面复算](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/full-1834/reference-stage2/README.md)
