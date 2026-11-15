@@ -9,13 +9,14 @@
 | 版图 | 独立叶宏 | M10 信号接点 | 回执及范围 |
 | --- | --- | ---: | --- |
 | P2545 | M60、G32、S_base | 2,545 | [窄口子集](evidence/p2545.json)，原版 DRC 0，TT 300 MHz setup / hold +36.863 / +0.233 ps |
+| P（`S_P`，普通口） | M60、G32、S_P | — | [独立时序回执](evidence/p-sp-ordinary.json)，300 MHz 回放 setup / hold +1.173 / +0.787 ps |
 | U39 v02 | N32、E16、S_base、程序 SRAM | 2,345 | [独立回执](evidence/u39.json)，原版 DRC 0，TT 300 MHz setup / hold +17.840 / +0.566 ps |
 | C V3 | R256、E16、E32、G16、S_base、程序 SRAM | 1,350 | [独立回执](evidence/c-v3.json)，原版 DRC 0，TT 300 MHz setup / hold +272.389 / +6.445 ps |
 | F19 | E16、E32、G16、S_base、程序 SRAM | 1,350 | [独立回执](evidence/f19.json)，原版 DRC 0，TT 300 MHz setup / hold +462.551 / +26.886 ps |
 | J03 | E32、T6、S_base、程序 SRAM | 1,611 | [独立回执](evidence/j03.json)，原版 DRC 0，TT 300 MHz setup / hold +128.308 / +18.263 ps |
 | MC06 | 四个程序 SRAM bank | 1,761 | [独立回执](evidence/mc06.json)，原版 DRC 0，已回收核验 210 个包内文件 |
 
-P2545 新增 207 个 FFN Mid 接点。回执列出实时主机启动、实时 K-window、相邻 P 完整范围和最后 86 个 M FENCE 接点仍待补齐。正式 S_P 版 P 另行验收。J03 两路各 128 位的外部读回 `io_rsp_data` 留在 M6，当前回执覆盖写入、写确认和 T 输出。C、F 在 M5/M6 保留观察信号。
+P2545 新增 207 个 FFN Mid 接点。回执列出实时主机启动、实时 K-window、相邻 P 完整范围和最后 86 个 M FENCE 接点仍待补齐。`S_P` 普通口版与 P2545 并列，激活由普通 128 位读口两字拼接供 M，权重走 512 位 DDR 路径。时序回执仅覆盖该 P 候选；九组联合装配及 `S_P` 专用 A/B 供数服务仍需单独验收。版图面板及图源清单中的 P 仍是 P2545。J03 两路各 128 位的外部读回 `io_rsp_data` 留在 M6，当前回执覆盖写入、写确认和 T 输出。C、F 在 M5/M6 保留观察信号。
 
 ## 对应独立叶宏
 

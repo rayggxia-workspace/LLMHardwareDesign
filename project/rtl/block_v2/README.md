@@ -4,7 +4,8 @@
 
 | 组 | 源码入口 | 实际宏 |
 | --- | --- | --- |
-| P | [p](p/) | M60、G32、16 KiB S_base |
+| P（P2545） | [p](p/) | M60、G32、16 KiB S_base |
+| P（`S_P`，普通口候选） | [独立后端时序回执](../../../docs/experiments/assets/five-leaf-bases-v2/evidence/p-sp-ordinary.json) | M60、G32、16 KiB S_P |
 | U | [u](u/) | N32、E16、16 KiB S_base、程序 SRAM |
 | C | [c](c/) | R256、E16、E32、G16、16 KiB S_base、程序 SRAM |
 | F | [f](f/) | E16、E32、G16、16 KiB S_base、程序 SRAM |
@@ -14,4 +15,4 @@
 
 [本批更新的叶宏](macros/)包括 M60、N32、G32 和 E32。S_base、E16、G16、R256 和 T6 沿用原实现，源码入口在清单中。MC06 单列在同一清单中，指向其独立交付包内的源码归档。
 
-P、U 的清单收录可追溯的上游映射 RTL，P2545、U39 的最终网表和物理 ECO 以各自回执哈希为准。P2545 使用 S_base，正式 S_P 的候选另有物理验收范围。九组联合底座尚未冻结。详见[版图图册](../../../docs/experiments/assets/five-leaf-bases-v2/README.md)。
+P、U 的清单收录可追溯的上游映射 RTL，P2545、U39 的最终网表和物理 ECO 以各自回执哈希为准。本目录的 `p/` 源码快照与源码清单仍对应 P2545；并列的 `S_P` 版单独绑定其后端回执。九组联合底座尚未冻结。详见[版图图册](../../../docs/experiments/assets/five-leaf-bases-v2/README.md)。
