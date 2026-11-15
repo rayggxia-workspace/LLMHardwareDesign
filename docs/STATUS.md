@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-15，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 通过 C380 布线 SRAM 的完整门级回放。普通 128-bit SRAM 端口在 100 MHz 的两个 20.48 µs 活动窗口分别估算 35.664 与 34.210 mW，标注覆盖率 99.18%。空闲差分、C639 物理绑定和真实 512-bit SRAM／PM 校准待完成。 [门级回放与功耗回执](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/cdc1acdc83594a8240ace568a002af9fc41411fc/work/Melodydt/280/C380_ROUTED_POWER.md)
+
 2026-11-15，Issue #274 完成七模型 512-bit TLM 三 P 并行 FFN 和代表性历史复测。七模型两步 top-1 均与同历史 FP32 一致，Gemma 使用 Q12 残差和后归一化写回。短 Prefill、Decode、独立验收和复跑见[结果记录](../work/Melodydt/274/THREE_P_LIVE.md)。PR #275 为草稿，整机 RTL／物理时序验证仍待完成。
 
 2026-11-15，[Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 完成接入 PR #272 保留调度后的七模型 512-bit 全层 TLM 重测。6 个模型的两步 Decode 提速，七模型短 Prefill 降速。独立 C380 注意力和 C639 FFN 原生 RTL 夹具复跑通过。全层吞吐、作业及散列见[重测记录](../work/Melodydt/274/PR272_RETEST.md)。草稿 PR #275 待审查，整模型 RTL／物理及尚余数值资格待完成。
