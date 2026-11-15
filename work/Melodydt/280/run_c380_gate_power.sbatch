@@ -42,8 +42,9 @@ int main(int argc, char **argv) {
         fstReaderGetEndTime(fst) - fstReaderGetStartTime(fst) != 20480000) return 3;
     FILE *vcd = fopen(argv[2], "w");
     if (!vcd) return 4;
+    if (!fstReaderProcessHier(fst, vcd)) return 5;
     fstReaderSetFacProcessMaskAll(fst);
-    const int ok = fstReaderProcessHier(fst, vcd) && fstReaderIterBlocks(fst, NULL, NULL, vcd);
+    const int ok = fstReaderIterBlocks(fst, NULL, NULL, vcd);
     const int write_failed = ferror(vcd);
     fstReaderClose(fst);
     const int close_failed = fclose(vcd);
