@@ -31,3 +31,8 @@
 
 - [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250：固定方案 A 整板摆位，交换器 320 根网用 M9/M10 路径引到框外。CUGR 第二阶段加拥挤引脚预留后，最佳作业 116262 布通 688 / 1,834 根，其中 200 根经新落点端到端布通，尚余 1,146 根。
 - 交换器剩余 589 根顶层必过网，截面容量至多 342 根，仍短缺至少 247 个过框通道。全量工艺及电气验收待实施。[报告与证据](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/full-1834/escape/README.md)
+
+## 2026-11-15（中国标准时间）
+
+- [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250：固定方案 A 与旧 320 根逃逸路径，M7–M10 新增至少 340 根可核验的底层逃逸，最大试跑新增 559 根。CUGR 第二阶段保留拥挤引脚预留。最佳作业 116336 布通 734 / 1,834 根，较上轮净增 46 根，尚余 1,100 根。
+- 最佳配置的交换器顶层过框需求降到 249 根，低于 342 根容量上限。剩余为接入失败 375 根和迷宫路径失败 725 根。工艺及时序验收待实施。[报告和服务器证据](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/full-1834/more-escape/README.md)
