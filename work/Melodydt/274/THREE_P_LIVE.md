@@ -32,6 +32,9 @@ tail -n 2 run-115618-*/*.log run-115619-*/*.log
 | Qwen3-0.6B | 23.449462 | 7.151345 | 两步 token 一致。logits 相对 L2 0.82%／1.07%。 |
 | Llama-3.2-1B | 15.534217 | 5.674618 | 两步 token 一致。logits 相对 L2 0.61%／1.07%。 |
 | Granite MoE | 16.073199 | 6.940185 | 两步 token 一致。logits 相对 L2 4.56%／2.62%。 |
+| Phi-4-mini | 4.963337 | 2.028011 | 两步 token 一致。logits 相对 L2 0.44%／0.34%。 |
+| Qwen3.5-4B | 4.011233 | 2.194038 | 两步 token 一致。logits 相对 L2 1.11%／0.79%。 |
+| Falcon-H1-3B | 4.297764 | 3.020079 | 两步 token 一致。logits 相对 L2 0.35%／0.34%。 |
 
 115617 `COMPLETED 0:0`，七个模型的 FP32 两步 logits 与冻结参考复核后输出层级轨迹。完整 Prefill 和 Decode 各自产物与状态以对应模型目录内的 `result.json` 为准。
 
@@ -47,3 +50,24 @@ Gemma 原 Q16 方案在位置 0 第 5 层的 FP32 幅值已超过 51,000，四�
 | Falcon | 0 | 589,824 | 33,552,761 | `f3c8a4aea5b0bd563d914448059e22db98f965f569f129ba0589bcf06dfea9be` |
 
 旧 FP32 清零入口漏掉字典中的卷积与递推缓存，故旧混合模型数值差同时包含起始状态变化。`reference_workload.py` 已修正对字典和队列的处理。保留旧归档和回执。新任务以实际 FP32 历史做来源、尺寸和读回校验。
+
+## 全层短 Prefill 的调度对照
+
+115618 于 node13 运行 39 分钟，`COMPLETED 0:0`。按原 S32/Q16 对照，七个模型两位置的末层残差与上一轮串行 P 逐字节匹配。短 Prefill 增幅分别为 Qwen3 39.789%、Llama 75.758%、Granite 57.123%、Phi 79.679%、Gemma 91.163%、Qwen3.5 60.095%、Falcon 41.923%。Gemma 原 Q16 仍有 47 次饱和，该数值仅用于隔离调度。分别核对 `pr272-tlm-01/run-115340` 至 `run-115346` 的 Prefill 与 `three-p-full-01/run-115618-<模型>` 的 `result.json`。
+
+## Gemma 溢出修订和复跑
+
+115660 的 Q12 残差在原饱和点通过。首位置第 32 层的后归一化分支仍以 Q16 写回，因此在进入 Q12 残差加法前触发 `native E service reported S32 clipping`。保留该失败记录。后 Attention 与后 FFN 的 RMS 现在直接以 Q12 写回，残差分支同格式相加。为投影提供输入的 RMS 仍输出 Q16。
+
+最新双阶段作业 116000 以 c96/node19、2×12 核运行，`three-p-gemma-q12-02`，源清单 SHA-256 `badf7b098fe4f821fd6e6c818d3e2bc292f5a725a0e6b8e2de7ba8496377e7b8`。
+
+```bash
+cd /public/home/yuzelu/Melodydt/runs/issue-274/three-p-gemma-q12-02
+squeue -j 116000
+sacct -X -j 116000 --format=JobID,State,ExitCode,AllocCPUS,NodeList,Elapsed
+tail -n 10 slurm-116000.log run-116000/*.log
+```
+
+第一版 Q12 的 Decode 已结束，2.198041 tok/s，两次 token `496 → 64745` 与同历史 FP32 一致，logits 相对 L2 为 0.44%／0.92%，饱和 0 次。全 Q16 同历史版本保持相同 token，但 logits 相对 L2 为 116.73%／71.86%，饱和 34 次。115660 整批因 Prefill 的 RNE 输出写回溢出为 `FAILED 1:0`。此 Decode 用于证明残差改版，最终两阶段统一采用 116000。
+
+同系列全层 115619 在 node14 于 58 分 31 秒完成，`COMPLETED 0:0`。六个已选模型的两步 token 对齐，输出清单已逐项验 SHA-256，回执位于任务根 `audits/three-p-run-115618-<模型>-sha.log` 和 `audits/three-p-run-115619-<模型>-sha.log`。

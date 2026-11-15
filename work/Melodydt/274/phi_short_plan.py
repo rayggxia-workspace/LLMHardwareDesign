@@ -64,15 +64,16 @@ class PhiCompiler(LlamaCompiler):
                     return source.get_tensor(name).float().numpy()
         raise ValueError(f"missing vector {name}")
 
-    def norm_from(self, source, name, *, input_shift=0):
+    def norm_from(self, source, name, *, input_shift=0, output_shift=0):
         if name not in self.gamma:
             gamma = self.vector(name)
             self.gamma[name] = self.layout.write("gamma-"+name+".bin",
                                                  np.rint(gamma*65536).astype("<i4").tobytes())
         self.copy(source, MID, 0, 0, self.hidden//4)
         self.load(CONTEXT, self.gamma[name], 0, self.hidden//4)
-        if input_shift:
-            self.append(MID, seal(3, 6, VECTOR, "<4HIB", 0, 0, 0, self.hidden//4, self.eps, input_shift))
+        if input_shift or output_shift:
+            self.append(MID, seal(3, 6, VECTOR, "<4HIBB", 0, 0, 0, self.hidden//4, self.eps,
+                                  input_shift, output_shift))
         else:
             self.append(MID, seal(3, 5, VECTOR, "<4HI", 0, 0, 0, self.hidden//4, self.eps))
 

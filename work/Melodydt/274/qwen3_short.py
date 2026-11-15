@@ -395,8 +395,7 @@ class Execution:
                         return
 
                     def add(a, b):
-                        shift = 32-self.residual_fraction_bits if saturating else 16
-                        values = [x+rne(y*gain, shift) for x, y in zip(a, unpack("<4i", b))]
+                        values = [x+rne(y*gain, 16) for x, y in zip(a, unpack("<4i", b))]
                         if saturating:
                             clipped = [min((1 << 31)-1, max(-(1 << 31), x)) for x in values]
                             self.residual_saturations += sum(a != b for a, b in zip(values, clipped))
@@ -442,7 +441,7 @@ class Execution:
                      (MID, 3, VECTOR, 5): lambda record: self.n[MID].bind(
                          record, gamma_bank=self.sram[CONTEXT]),
                      (MID, 3, VECTOR, 6): lambda record: self.n[MID].bind(
-                         record, gamma_bank=self.sram[CONTEXT], shifted_input=True),
+                         record, gamma_bank=self.sram[CONTEXT], shifted_format=True),
                      (P, ACT, VECTOR, 1): activation,
                      (P, ACT, VECTOR, 2): lambda r: activation(r, gelu=True),
                      (P, ACT, VECTOR, 3): lambda r: activation(r, sigmoid=True),

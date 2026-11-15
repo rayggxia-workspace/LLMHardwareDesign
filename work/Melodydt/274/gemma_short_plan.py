@@ -86,7 +86,7 @@ class GemmaCompiler(PhiCompiler):
                 self.copy(P, CONTEXT, 832, q*64, 64)
                 self.load(P, coeff[kind], 704, 128)
         self.project(pre+"self_attn.o_proj.weight", 0, route=1)
-        self.norm_from(P, pre+"post_attention_layernorm.weight")
+        self.norm_from(P, pre+"post_attention_layernorm.weight", output_shift=16-self.residual_fraction_bits)
         self.append(U, seal(RESIDUAL, 4, VECTOR, "<3H", 0, 0, widths))
         self.normalize(pre+"pre_feedforward_layernorm.weight")
         if self.three_p:
@@ -100,5 +100,5 @@ class GemmaCompiler(PhiCompiler):
                 self.append(P, seal(ACT, 2, VECTOR, "<3H", 0, 32, 64))
                 self.store_mid_tile(first)
             self.project_spilled_mid(pre+"mlp.down_proj.weight")
-        self.norm_from(P, pre+"post_feedforward_layernorm.weight")
+        self.norm_from(P, pre+"post_feedforward_layernorm.weight", output_shift=16-self.residual_fraction_bits)
         self.append(U, seal(RESIDUAL, 4, VECTOR, "<3H", 0, 0, widths))
