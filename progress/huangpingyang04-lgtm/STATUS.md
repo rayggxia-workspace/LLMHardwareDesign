@@ -41,3 +41,8 @@
 
 - [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250：用 CUGR 作者原版 `MazeRoute::route()` 单独复跑完整 1,834 网。原始落点 406 根，660 和 879 根逃逸版本分别为 581 和 574 根。三组均通过独立几何核验。
 - 按实际主轨与引脚窗口复算，三组 U0 外框均有 1,076 根必过网，最多 1,046 个位置。工艺和全量时序待验收。[方法、服务器回执与截面复算](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/full-1834/reference-stage2/README.md)
+
+## 2026-11-15（中国标准时间）
+
+- [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250。固定 PR #271 方案 A 摆位，U0 从下层向四边引出 280 根，交换器、C0、DMA、三个 P 模块和母控也引出拥挤接点。最佳布局有 1,960 个经核验的新 M10 接点。
+- CUGR 最后阶段全量复跑并独立核验。最佳作业 116821 布通 1,130 / 1,834 根，较带预留的上轮净增 396 根，剩 704 根。最好结果中 763 根经过新接点。U0 和 C0 已知容量缺口消除。待解决剩余接入与轨道冲突，工艺和全量时序待验收。[报告与逐网证据](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/full-1834/multiblock/README.md)
