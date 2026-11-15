@@ -44,3 +44,8 @@
 - Gemma Q12 修正残差与后归一化写回的限幅，旧混合模型的 FP32 零历史清理已修正。范围为 512-bit TLM，整机 RTL／物理校准待续。Issue #274 进行中、PR #275 草稿，审查人待指定，登记 pending，Projects 无配置。
 
 - 2026-11-15（Asia/Shanghai）发布[七模型速度评估交接](../../docs/handoffs/2026-11-15-issue-274-speed-evaluation.md)，集中记录最终速度、实际生效的模型专项路径和冻结复跑入口。项目结构检查通过，七组速率与最终回执逐项一致。下一步为增加分窗活动计数以接入能耗评估，整模型 RTL／物理校准仍待完成。
+
+## 2026-11-15（Asia/Shanghai）七模型 DDR 能耗试点
+
+- [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 以 #274 的已验收短窗为输入。已实现 [DDR 快照和分窗汇总](../../work/Melodydt/280/README.md)，本地混合读写开启前后 640 个回调及原生终态统计一致。
+- 服务器指纹已核对，当前批量 SSH 身份认证待 Melodydt 恢复。下一步在同版本服务器库上做 Qwen3 全层 Prefill 与 Decode 分窗回归，随后做单 P／三 P 消融、门级标定与七模型扩测。 [恢复入口](../../docs/handoffs/2026-11-15-issue-280-ddr-energy-pilot.md)
