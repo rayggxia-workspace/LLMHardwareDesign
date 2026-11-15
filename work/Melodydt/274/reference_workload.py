@@ -1,5 +1,6 @@
 """Generate short-workload reference inputs from frozen real checkpoints."""
 import argparse
+from collections import deque
 import hashlib
 import json
 from pathlib import Path
@@ -23,6 +24,24 @@ def summarize_cache(cache):
         "length": int(cache.get_seq_length()),
         "layers": [type(layer).__name__ for layer in cache.layers],
     }
+
+
+def zero_cache(cache):
+    for layer in cache.layers:
+        for name in ("keys", "values", "conv_states", "recurrent_states"):
+            state = getattr(layer, name, None)
+            if state is None:
+                continue
+            if isinstance(state, torch.Tensor):
+                state = (state,)
+            elif isinstance(state, dict):
+                state = state.values()
+            elif not isinstance(state, (tuple, list, deque)):
+                raise ValueError(f"unrecognized {name} cache container: {type(state).__name__}")
+            for tensor in state:
+                if not isinstance(tensor, torch.Tensor):
+                    raise ValueError(f"unrecognized {name} cache entry")
+                tensor.zero_()
 
 
 def data_path(archive, name):
@@ -63,15 +82,7 @@ def run(model_path, label, out, threads, export_receipt=None, *, zero_history=Fa
         if initial_state["length"] != 512:
             raise ValueError("checkpoint cache did not cover 512 input positions")
         if zero_history:
-            for layer in past.layers:
-                for name in ("keys", "values", "conv_states", "recurrent_states"):
-                    states = getattr(layer, name, None)
-                    if isinstance(states, torch.Tensor):
-                        states.zero_()
-                    elif isinstance(states, (list, tuple)):
-                        for item in states:
-                            if isinstance(item, torch.Tensor):
-                                item.zero_()
+            zero_cache(past)
         torch.save(past, out / "history512.pt")
         del prefix
         step_tokens = []
