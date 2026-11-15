@@ -84,5 +84,5 @@
 ## 2026-11-15（Asia/Shanghai）C639 M 实际送布线源与同源实现
 
 - 116953 完成 M60 与 C639 权重模块的合法事务对照，两版均接受 START，只有 M60 同拍接受 ALLOC。实际送布线的 M60 与 C639 均为单执行槽，已更新早期基于集成副本的比较。
-- 116958 完成六个窗、三路 P 共 147,456 个周期的真实活动审计，3,472 次 ALLOC 和 3,423 次 START，未发现双 valid 同拍。116956 的 18 项 C639 同源叶块回归通过，Nangate45 映射在 c64/node9 12 核执行，116957 布线等待成功依赖。 [回执与 SHA-256](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/fd36ac818d6e5bc83fcf435177e15d281cd715f1/work/Melodydt/280/C639_M_PHYSICAL.md) · [作业接续](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/cfa5a4efba106992c47cf1ba537ec94e1268abe9/docs/handoffs/2026-11-15-issue-280-c639-m-physical.md)
+- 116958 完成六个窗、三路 P 共 147,456 个周期的真实活动审计，3,472 次 ALLOC 和 3,423 次 START，未发现双 valid 同拍。116956 的 18 项 C639 同源叶块回归通过，Nangate45 映射 116956 已在 c64/node9 用 12 核、9 分 55 秒 COMPLETED 0:0，映射 406,959 个单元、723,919.532 µm²。首个布线参数指向错误目录，修订作业 116976 已在 c64/node9 12 核运行。 [回执与 SHA-256](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/8a58ca82721a50939f2e4e4e988d4a556b7a6e5a/work/Melodydt/280/C639_M_PHYSICAL.md) · [作业接续](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/cfa5a4efba106992c47cf1ba537ec94e1268abe9/docs/handoffs/2026-11-15-issue-280-c639-m-physical.md)
 - 后续需映射、布线、物理和门级验收、M 实际功耗，再补 512-bit 写与控制链路。#280 进行中，PR #281 草稿，独立审查人待指定。登记待合并，Projects 缺配置待维护者核验。
