@@ -1,0 +1,209 @@
+--- stage2-router.cpp
++++ stage2-reserve.cpp
+@@ -76,6 +76,7 @@
+                 if (found==bins.end()) continue;
+                 for(int i:found->second) {
+                     const auto& s=shapes[i];
++                    if (s.owner == -2) continue;
+                     if (s.owner==owner && (layer!=2 || (x0==s.x0 && y0==s.y0))) continue;
+                     if (max(x0-s.x1,s.x0-x1)<d && max(y0-s.y1,s.y0-y1)<d) {
+                         if(!blockers) return s.owner;
+@@ -196,23 +197,26 @@
+         return {x0 + p / ny * pitch, y0 + p % ny * pitch, v % 2};
+     }
+ 
+-    void occupy(Node a, Node b, int layer) {
++    void occupy(Node a, Node b, int layer, int delta=1) {
+         for_shape(a, b, layer, [&](int kind, int x, int y) {
+             const int p = x * ny + y;
+-            if (blocked[kind][p]++ != 0 || kind == via) return;
++            auto& count = blocked[kind][p];
++            const bool was_blocked = count != 0;
++            count += delta;
++            if (was_blocked == (count != 0) || kind == via) return;
+             // Every available edge samples five parallel track positions around it.
+             for (int d = -2; d <= 2; ++d) {
+                 const int row = y + (kind == horizontal ? d : 0);
+                 const int col = x + (kind == vertical ? d : 0);
+                 if (row >= 0 && row < ny && col >= 0 && col < nx)
+-                    ++demand[kind][col * ny + row];
++                    demand[kind][col * ny + row] += delta;
+             }
+         });
+     }
+-    void occupy(const Route& route) {
+-        for (auto w : route.wires) occupy(w.a, w.b, w.a.layer);
++    void occupy(const Route& route, int delta = 1) {
++        for (auto w : route.wires) occupy(w.a, w.b, w.a.layer, delta);
+         for (auto p : route.vias)
+-            for (int layer = 0; layer <= 2; ++layer) occupy(p, p, layer);
++            for (int layer = 0; layer <= 2; ++layer) occupy(p, p, layer, delta);
+     }
+     void use_pads(const Net& net) {
+         for (auto [kind, p] : touched) own[kind][p] = 0;
+@@ -479,12 +483,19 @@
+ 
+ enum class Outcome : size_t { routed, driver_access, sink_access, maze_exhausted };
+ 
+-Outcome route_net(const Net& net, const Occupancy& occupied, DetailedMaze& maze, Route& route) {
+-    const auto launch = portals(net.pins.front(), net, occupied, {}, numeric_limits<int>::max());
++Outcome route_net(const Net& net, const Occupancy& occupied, DetailedMaze& maze, Route& route,
++                  const Access& reserved, const Route& stubs) {
++    auto port = [&](size_t pin, const vector<Node>& vias) -> Access {
++        if (!reserved.empty() && !reserved[pin].empty()) return {reserved[pin]};
++        return portals(net.pins[pin], net, occupied, vias, numeric_limits<int>::max());
++    };
++    const auto launch = port(0, stubs.vias);
+     if (launch.empty()) return Outcome::driver_access;
+     vector<Node> tree;
+     for (size_t pin = 1; pin < net.pins.size(); ++pin) {
+-        const auto targets = portals(net.pins[pin], net, occupied, route.vias, numeric_limits<int>::max());
++        auto protected_vias = stubs.vias;
++        protected_vias.insert(protected_vias.end(),route.vias.begin(),route.vias.end());
++        const auto targets = port(pin, protected_vias);
+         if (targets.empty()) return Outcome::sink_access;
+         Access sources;
+         if (tree.empty()) {
+@@ -496,7 +507,7 @@
+             }), tree.end());
+             for (auto node : tree) sources.push_back({node});
+         }
+-        const auto path = maze.search(sources, targets, route.vias);
++        const auto path = maze.search(sources, targets, protected_vias);
+         if (path.empty()) return Outcome::maze_exhausted;
+         append_path(route, net, path);
+         for (auto node : path) if (on_track(node)) tree.push_back(node);
+@@ -522,12 +533,94 @@
+     }
+ }
+ 
++
++vector<Route> reserve_ports(const vector<Net>& nets, Occupancy& occupied, TrackGraph& graph,
++                            vector<Access>& reserved, vector<pair<size_t,size_t>>& ranges,
++                            int threshold, size_t& count) {
++    vector<Route> result(nets.size());
++    if (threshold <= 0) return result;
++    constexpr int radius = 4*pitch;
++    struct Item { int density, net, pin; };
++    unordered_map<int,vector<pair<int,Node>>> bins;
++    auto cell = [](int x,int y) { return x*5000+y; };
++    for (const auto& net:nets)
++        for(auto p:net.pins) bins[cell(p.x/radius,p.y/radius)].push_back({net.id,p});
++    vector<Item> order;
++    for(const auto& net:nets) {
++        reserved[net.id].resize(net.pins.size());
++        for(size_t pin=0;pin<net.pins.size();++pin) {
++            auto p=net.pins[pin];
++            int density=0;
++            for(int x=max(0,p.x/radius-1);x<=p.x/radius+1;++x)
++                for(int y=max(0,p.y/radius-1);y<=p.y/radius+1;++y) {
++                    auto it=bins.find(cell(x,y));
++                    if(it==bins.end()) continue;
++                    for(auto [owner,q]:it->second)
++                        if(owner!=net.id && abs(p.x-q.x)<=radius && abs(p.y-q.y)<=radius) ++density;
++                }
++            if(density>=threshold) order.push_back({density,net.id,int(pin)});
++        }
++    }
++    stable_sort(order.begin(),order.end(),[](Item a,Item b) {return a.density>b.density;});
++    // Reservation shapes live in a separate occupancy during the pin-level allocation.
++    Occupancy trial=occupied;
++    for(auto entry:order) {
++        const auto& net=nets[entry.net];
++        auto& owned=result[entry.net];
++        const auto pin=net.pins[entry.pin];
++        const auto peer=net.pins[entry.pin==0?1:0];
++        auto paths=portals(pin,net,trial,owned.vias,numeric_limits<int>::max());
++        vector<Node> chosen;
++        int best=numeric_limits<int>::max();
++        for(const auto& path:paths) {
++            auto tip=path.back();
++            const auto used=cuts(path);
++            for(int layer:{tip.layer,1-tip.layer}) {
++                auto start=tip;
++                start.layer=layer;
++                if(layer!=tip.layer) {
++                    if(trial.blocked(net.id,tip,start)!=-1 ||
++                       !vias_fit(used,{start}) || !vias_fit(owned.vias,{start})) continue;
++                }
++                for(int d:{-pitch,pitch}) {
++                    auto end=start;
++                    (layer?end.y:end.x)+=d;
++                    if(!trial.fits(end) || trial.blocked(net.id,start,end)!=-1) continue;
++                    const int score=int(access_cost(path)/cost_scale)+
++                                    md(end,peer)-md(pin,peer)+(layer!=tip.layer?28:0);
++                    if(score>=best) continue;
++                    chosen=path;
++                    if(layer!=tip.layer) chosen.push_back(start);
++                    chosen.push_back(end);
++                    best=score;
++                }
++            }
++        }
++        if (chosen.empty()) continue;
++        Route stub;
++        append_path(stub,net,chosen);
++        trial.add_route(net.id,stub);
++        owned.wires.insert(owned.wires.end(),stub.wires.begin(),stub.wires.end());
++        owned.vias.insert(owned.vias.end(),stub.vias.begin(),stub.vias.end());
++        reserved[net.id][entry.pin]=move(chosen);
++        ++count;
++    }
++    for (const auto& net:nets) {
++        ranges[net.id].first=occupied.shapes.size();
++        occupied.add_route(net.id,result[net.id]);
++        ranges[net.id].second=occupied.shapes.size();
++        graph.occupy(result[net.id]);
++    }
++    cerr<<"reserved "<<count<<" examined "<<order.size()<<" threshold "<<threshold<<'\n';
++    return result;
++}
+ int main(int argc, char** argv) {
+-    if (argc != 4) {
+-        cerr << "usage: stage2-router graph.txt paths.txt short|long|pin-access\n";
++    if (argc != 5) {
++        cerr << "usage: stage2-reserve graph.txt paths.txt short|long|pin-access reservation-density\n";
+         return 1;
+     }
+     const string ordering = argv[3];
++    const int threshold = stoi(argv[4]);
+     if (ordering != "short" && ordering != "long" && ordering != "pin-access") return 1;
+     ifstream input(argv[1]);
+     int count = 0;
+@@ -573,17 +666,26 @@
+         return span[a] < span[b];
+     });
+ 
++    vector<Access> reserved(nets.size());
++    vector<pair<size_t,size_t>> reservation_ranges(nets.size());
++    size_t reserved_count=0;
++    const auto stubs=reserve_ports(nets,occupied,graph,reserved,reservation_ranges,threshold,reserved_count);
++    size_t used_stub_pins=0;
+     DetailedMaze maze(graph);
+     vector<Route> routes(count);
+     array<int, 4> totals{};
+     for (int processed = 0; processed < count; ++processed) {
+         const int id = order[processed];
+         graph.use_pads(nets[id]);
++        auto& route = routes[id];
++        const auto [first,last]=reservation_ranges[id];
++        for(size_t i=first;i<last;++i) occupied.shapes[i].owner=-2;
++        graph.occupy(stubs[id],-1);
+         if (graph.points < 1000) audit_edges(nets[id], occupied, graph);
+-        auto& route = routes[id];
+-        const auto result = route_net(nets[id], occupied, maze, route);
++        const auto result = route_net(nets[id], occupied, maze, route,reserved[id],stubs[id]);
+         ++totals[size_t(result)];
+         if (result == Outcome::routed) {
++            for(const auto& p:reserved[id]) if(!p.empty()) ++used_stub_pins;
+             occupied.add_route(id, route);
+             graph.occupy(route);
+         } else {
+@@ -593,6 +695,7 @@
+             cerr << "processed " << processed + 1 << " routed " << totals[0]
+                  << " expanded " << maze.expanded << '\n';
+     }
++    cerr<<"reservation_used "<<used_stub_pins<<" / "<<reserved_count<<'\n';
+     write_routes(argv[2], routes);
+     cerr << "done " << totals[0] << " / " << count << " driver_access=" << totals[1]
+          << " sink_access=" << totals[2] << " maze_exhausted=" << totals[3]
