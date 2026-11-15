@@ -13,6 +13,9 @@ def main():
  p.add_argument('--output',type=Path,required=True)
  p.add_argument('--width',type=int,default=8)
  p.add_argument('--depth',type=int,default=2)
+ p.add_argument('--stage-resources',action='store_true')
+ p.add_argument('--diverse-search',action='store_true')
+ p.add_argument('--objective',choices=['ddr_bytes','finish_proxy'],default='ddr_bytes')
  p.add_argument('--incumbent-plan',type=Path)
  p.add_argument('--export-value',action='append',default=[],help='persistent state root that must commit to DDR')
  a=p.parse_args();manifest=json.loads((a.candidate_directory/'manifest.json').read_text())
@@ -23,7 +26,7 @@ def main():
  if frontend.joint:
   from native_joint_search import select as joint_select,digest
   exports=sorted(set(data[0]['outputs'])|set(a.export_value))
-  plan=joint_select(frontend,a.candidate_directory,width=a.width,depth=a.depth,exports=exports,progress=lambda s:print(s,flush=True))
+  plan=joint_select(frontend,a.candidate_directory,width=a.width,depth=a.depth,exports=exports,stage_resources=a.stage_resources,diverse=a.diverse_search,objective=a.objective,progress=lambda s:print(s,flush=True))
   plan['exported_values']=exports;plan.pop('plan_sha256');plan['plan_sha256']=digest(plan)
  else:plan=select(frontend,a.candidate_directory,width=a.width,progress=lambda s:print(s,flush=True))
  a.output.mkdir(parents=True,exist_ok=True)

@@ -1,7 +1,8 @@
 """Encode dependency-correct CALL/WAIT actions, including live streamed scopes."""
 from collections import defaultdict
 
-def actions(calls):
+def actions(calls,*,wait_policy='all'):
+    if wait_policy not in ('all','predicted_first'):raise ValueError('unknown WAIT policy')
     count=len(calls);after=[set(c['after']) for c in calls]
     starts=[set(c.get('requires_started',[])) for c in calls]
     done_edges=[set(c.get('completion_after',[])) for c in calls]
@@ -36,6 +37,9 @@ def actions(calls):
             return all(finishable(p,stack|{i}) for p in done_edges[i])
         retiring=[i for i in live.values() if finishable(i)]
         if not retiring:raise ValueError('native completion deadlock; unissued supply or cyclic start/wait')
+        if wait_policy=='predicted_first':
+            if any('finish_proxy' not in calls[i] for i in retiring):raise ValueError('missing completion estimate')
+            retiring=[min(retiring,key=lambda i:(calls[i]['finish_proxy'],i))]
         mask=sum(1<<calls[i]['target'] for i in retiring)
         result.append({'op':'WAIT','mask':mask,'calls':sorted(retiring)})
         for i in retiring:

@@ -130,3 +130,15 @@ See [current integration scope](audits/JOINT_FRONTIER_STATUS.md) and
 short-request execution uses `audits/run_joint_request.sbatch`, comparing final
 outputs and declared KV against the independent integer reference. It must not
 require elided intermediate DDR copies or substitute a different execution plan.
+
+The next scheduling revision adds selection flags `--stage-resources`,
+`--diverse-search`, and `--objective finish_proxy`. Its CALL dependency graph
+releases each owner after its own last stage and retains shared-workspace leases.
+The mother program waits on individual predicted completions to avoid joining
+unrelated live commands into one barrier. This uses existing WAIT mask semantics.
+
+Producer mappings/ranges are chosen before dependent consumer ranges. Independent
+branches can be chosen in either order; construction order does not serialize
+their hardware execution. See [stage scheduling status](audits/STAGE_FRONTIER_STATUS.md).
+Full TLM acceptance of this revision is pending; the time objective is a structural
+proxy, not calibrated latency.

@@ -59,7 +59,9 @@ def package(plan,out,topology,product_wiring=None):
                 raise ValueError('selected call has no declared RTL route')
     else:
         calls=attach({'calls':calls})['calls']
-    stream,cuts=actions(calls);proof=verify_actions(calls,stream)
+    wait_policy='predicted_first' if plan.get('search_plan',{}).get('stage_resources') else 'all'
+    stream,cuts=actions(calls,wait_policy=wait_policy);proof=verify_actions(calls,stream)
+    proof['wait_policy']=wait_policy
     descriptor_base=(plan['storage']['end_address']+127)//128*128
     order=[a['call_index'] for a in stream if a['op']=='CALL']
     descriptors=b''.join(bytes.fromhex(calls[i]['descriptor_hex']) for i in order)

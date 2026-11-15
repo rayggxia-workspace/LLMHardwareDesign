@@ -27,7 +27,9 @@ class History:
  binding:str
  keep:bool
 
-def select(frontend,directory,*,depth=2,width=4,ready_limit=4,exports=(),progress=print):
+def select(frontend,directory,*,depth=2,width=4,ready_limit=4,exports=(),progress=print,stage_resources=False,diverse=False,objective='ddr_bytes'):
+ if objective not in ('ddr_bytes','finish_proxy'):raise ValueError('unknown objective')
+ if diverse and width<3:raise ValueError('diverse beam needs width >= 3')
  if not frontend.joint or frontend.range_tiles!=1:raise ValueError('joint native ranges required')
  directory=Path(directory);manifest=json.loads((directory/'manifest.json').read_text())
  if manifest['graph_sha256']!=frontend.graph_hash or manifest['storage']!=frontend.storage or manifest['hardware']!=frontend.hardware:raise ValueError('candidate inputs differ')
@@ -123,8 +125,14 @@ def select(frontend,directory,*,depth=2,width=4,ready_limit=4,exports=(),progres
       encoded,state,events=transform(candidate,label['state'],keep=keep,produced=produced,users=users,done=done,exports=export_pages)
       work=measure(encoded);owners={c['group'] for c in encoded['calls']}|set(candidate['groups'])
       resource_keys=owners|set(candidate['_workspace_keys'])
-      start=max([label['ends'][p] for p in frontend.after[names[i]]]+[label['resources'].get(o,0) for o in resource_keys]+[0])
-      end=start+work['work_units'];resources={**label['resources'],**{o:end for o in resource_keys}}
+      if stage_resources:
+       from native_stage_schedule import reserve
+       predecessor=max((label['ends'][p] for p in frontend.after[names[i]]),default=0)
+       reservation=reserve(encoded['calls'],label['resources'],predecessor,candidate['_workspace_keys'])
+       start,end,resources=reservation['start'],reservation['end'],reservation['resources']
+      else:
+       start=max([label['ends'][p] for p in frontend.after[names[i]]]+[label['resources'].get(o,0) for o in resource_keys]+[0])
+       end=start+work['work_units'];resources={**label['resources'],**{o:end for o in resource_keys}}
       ends={**label['ends'],names[i]:end}
       # Retain only completion times still referenced by an unscheduled consumer.
       for parent in frontend.after[names[i]]:
@@ -142,15 +150,20 @@ def select(frontend,directory,*,depth=2,width=4,ready_limit=4,exports=(),progres
   if not next_beam:raise ValueError('joint frontier exhausted at '+str(step))
   # DDR objective. Remaining baseline normalizes unequal work at equal task count.
   next_beam.sort(key=lambda s:(s['bytes']+s['remaining_bytes'],s.get('handoff_priority',0),-s.get('ready_resident_credit',0),s['time']+s['remaining']//9))
-  beam=next_beam[:width]
+  if diverse:
+   from native_diverse_beam import retain
+   beam=retain(next_beam,width,capacities)
+  else:beam=next_beam[:width]
   if step%100==0:progress(json.dumps({'joint_step':step,'of':count,'expanded':expanded,'ddr_proxy':beam[0]['bytes']}))
- best=min(beam,key=lambda s:(s['bytes'],s['time']))
+ best=min(beam,key=(lambda s:(s['time'],s['bytes'])) if objective=='finish_proxy' else (lambda s:(s['bytes'],s['time'])))
  actions=[];history=best['history']
  while history:actions.append(history);history=history.previous
  actions.reverse()
- return emit(frontend,actions,tasks,rows,candidates,produced,users,export_pages,depth,width,expanded,best,progress=progress)
+ return emit(frontend,actions,tasks,rows,candidates,produced,users,export_pages,depth,width,expanded,best,progress=progress,stage_resources=stage_resources,diverse=diverse,objective=objective)
 
-def emit(frontend,actions,tasks,rows,candidates,produced,users,exports,depth,width,expanded,best,progress=print):
+def emit(frontend,actions,tasks,rows,candidates,produced,users,exports,depth,width,expanded,best,progress=print,stage_resources=False,diverse=False,objective='ddr_bytes'):
+ from native_stage_schedule import verify_construction
+ construction=verify_construction([tasks[a.task]['id'] for a in actions],{tasks[a.task]['id']:frontend.after[tasks[a.task]['id']] for a in actions})
  state={'memory':{},'backed':0};done=0;identities=dict(frontend.initial_ids)
  calls=[];selected=[];events=[];ends={};owner_ends={};connections={}
  for action in actions:
@@ -174,15 +187,20 @@ def emit(frontend,actions,tasks,rows,candidates,produced,users,exports,depth,wid
   external=set()
   for parent in frontend.after[task['id']]:external.update(ends[parent])
   resource_keys=owners|set(original['_workspace_keys'])
-  for owner in resource_keys:external.update(owner_ends.get(owner,()))
   first=len(calls)
-  for call in c['calls']:
-   copy=dict(call,index=len(calls),source_task=task['id'])
-   copy['after']=[first+j for j in call['after']] if call['after'] else sorted(external)
-   calls.append(copy)
-  terminal={len(calls)-1} if c['calls'] else external
+  if stage_resources:
+   from native_stage_schedule import dependencies
+   rows,owner_ends,terminal=dependencies(c['calls'],first,external,owner_ends,original['_workspace_keys'])
+   calls.extend(dict(call,source_task=task['id']) for call in rows)
+  else:
+   for owner in resource_keys:external.update(owner_ends.get(owner,()))
+   for call in c['calls']:
+    copy=dict(call,index=len(calls),source_task=task['id'])
+    copy['after']=[first+j for j in call['after']] if call['after'] else sorted(external)
+    calls.append(copy)
+   terminal={len(calls)-1} if c['calls'] else external
+   for owner in resource_keys:owner_ends[owner]=terminal
   ends[task['id']]=terminal
-  for owner in resource_keys:owner_ends[owner]=terminal
   for edge in original.get('connections',[]):connections[digest(edge)]=edge
   cost=measure(c);events.append({'source_task':task['id'],'events':trace})
   selected.append({'source_task':task['id'],'binding':action.binding,'keep':action.keep,
@@ -197,14 +215,19 @@ def emit(frontend,actions,tasks,rows,candidates,produced,users,exports,depth,wid
   if len(selected)%1000==0:progress(json.dumps({'emitted_ranges':len(selected),'of':len(actions),'calls':len(calls)}))
  actual_bytes=sum(x['work_estimate']['ddr_read_bytes_upper']+x['work_estimate']['ddr_write_bytes'] for x in selected)
  if actual_bytes!=best['bytes']:raise ValueError('selected native replay differs from searched traffic')
+ if stage_resources:
+  from native_stage_schedule import completion_hints
+  hints=completion_hints(calls)
+  if max(hints,default=0)!=best['time']:raise ValueError('emitted CALL DAG differs from stage resource schedule')
+  for call,hint in zip(calls,hints):call['finish_proxy']=hint
  result={'schema':'macro-native-selected-plan/1','graph_sha256':frontend.graph_hash,'selection':selected,
   'calls':calls,'storage':frontend.storage,'hardware':frontend.hardware,
   'wiring':{'connections':list(connections.values()),'physical_binding_complete':False,
             'scope':'selected actual macro endpoint requirements; product assembly binding required'},
   'search_hardware':{'topology_id':frontend.hardware['native_dispatch_overlay']['topology_id']},
   'search_plan':{'status':'planned','algorithm':'joint-native-dirty-range-beam/1','depth':depth,'width':width,
-   'depth_unit':'source_graph_operator','expanded':expanded,'ddr_bytes_upper':actual_bytes,'makespan_proxy':best['time'],'global_optimum_proven':False},
-  'search_verification':{'emission_traffic_matches_search':True,'independent_execution_pending':True},
+   'stage_resources':stage_resources,'diverse_beam':diverse,'objective':objective,'depth_unit':'source_graph_operator','expanded':expanded,'ddr_bytes_upper':actual_bytes,'makespan_proxy':best['time'],'global_optimum_proven':False},
+  'search_verification':{'construction':construction,'emission_traffic_matches_search':True,'stage_schedule_matches_emitted_DAG':stage_resources,'independent_execution_pending':True},
   'dirty_lifecycle':events,'exported_pages':sorted(exports),'delivery_accepted':False,'timing_calibrated':False,
   'timing_scope':'structural work proxy; no cycle/throughput claim','wire_optimization_performed':False,
   'range_tiles':1,'range_parts':frontend.range_parts,'joint':True,

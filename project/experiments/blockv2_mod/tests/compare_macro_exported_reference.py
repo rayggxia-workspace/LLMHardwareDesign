@@ -37,7 +37,7 @@ for name in names:
  if filehash(path)!=row['sha256']:raise ValueError('reference value seal')
  expected=path.read_bytes()
  if len(expected)!=row['bytes']:raise ValueError('reference extent')
- region=np['storage.json']['regions'][name]
+ region=json.loads(np['storage.json'])['regions'][name]
  if region['base']!=row['base'] or region['bytes']!=row['bytes']:raise ValueError('reference layout')
  actual=bytearray()
  for offset in range(0,row['bytes'],64):
