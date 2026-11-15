@@ -29,7 +29,7 @@
 
 在 C639 快照与 #250 交付源之间逐字节核对 `g_s32.sv`、`g_s128_frontend.sv` 及 Nangate 行为库。G32 最终布线工件由 `issue250-p-final-native-diode-gate-GlrL0V/g-final.v` 追溯到 `LLMHardwareDesign/issue-250-g-physical-20261111-08/delivery/6_final.v`。该目录保存同批布线的 ODB、SPEF、SDC 和交付 JSON。C639 G32 的 RTL 作用域为 `TOP/test_native_decode638_product_replay/feed_forward/dut/G`。采样为正常／背压各 81.92 µs 的 Gate/Up 和 Down。
 
-`116937` 读回为 c64/node9 12 核运行。正常工况报告 `PASS q projection`，44 tiles、1,408 输出词、195,485 DDR 读、2,654,967 周期，已保存 11,733,162 B 的 Gate/Up 与 14,658,052 B 的 Down FST。背压及全作业终态对账待完成。`116942` 的首窗预检在 c64/node12 用 4 核、12 秒 `COMPLETED 0:0`，77,423 个引脚已标注、135 个未标注，覆盖率 99.8259%。正常 Gate/Up 窗 G32 暂估 1.323520 mW，正式四窗会统计实际 G32 事务。预检结果清单 SHA-256 为 `764db93374041a6297568b99e0666a690df357cf1ac1ceff73562a7b62e2c97c`。首轮 `116941` 退出于链接地址构造，已为每个物理文件使用显式目标名。
+`116937` 读回为 c64/node9 12 核运行。正常工况报告 `PASS q projection`，44 tiles、1,408 输出词、195,485 DDR 读、2,654,967 周期，已保存 11,733,162 B 的 Gate/Up 与 14,658,052 B 的 Down FST。背压及全作业终态对账待完成。`116942` 的首窗预检在 c64/node12 用 4 核、12 秒 `COMPLETED 0:0`，77,423 个引脚已标注、135 个未标注，覆盖率 99.8259%。预检 VCD 已独立统计 G32 端口握手，正常 Gate/Up 窗 G32 的输入和输出握手均为 0，1.323520 mW 只覆盖该窗的静息状态。正式四窗分别记录实际事务。若没有覆盖 G32 运算，补采从首次 G32 输入握手开始的窗口。预检结果清单 SHA-256 为 `764db93374041a6297568b99e0666a690df357cf1ac1ceff73562a7b62e2c97c`。首轮 `116941` 退出于链接地址构造，已为每个物理文件使用显式目标名。
 
 M60 输入文件 `m_native_leaf_s32.sv` 的差异包含事件探针。`m_native_s32.sv` 的差异还包含槽位状态、队列元数据及退休逻辑，影响物理实现。现有 M60 保留为候选，待同源重走物理或完成针对当前快照的等价证明。C639 快照的 `weight_records.sv` 声明 `reg [511:0] data [0:3][0:17]`，对应活动层级为 `weights/registers`。这个 512-bit fill 入口目前归入寄存器活动。C639 相同代码的局部 `local_s_base` 继续按普通 128-bit 存储端口解释。
 
