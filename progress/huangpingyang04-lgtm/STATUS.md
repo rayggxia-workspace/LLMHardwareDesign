@@ -16,3 +16,8 @@
 
 - #250 / #228：仅用方案 A 的完整 1,834 网输入复跑，包含全部 650 根 U0↔DMA 网。作业 115451 布通 407 根并通过研究规则几何验证，其中 201 根属于 U0↔DMA。
 - 作业 115463 及独立复算确认交换器外框 909 根必过网与 342 根容量上限。全量待解决，下一步需调整下层逃逸及 M10 落点交接。见 [PR #276 完整网复跑](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/full-1834/README.md)。
+
+## 2026-11-15 15:43（中国标准时间）
+
+- [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250：同一方案 A 完整 1,834 网用 CUGR 式两级 Dijkstra 重跑。三份路线通过独立几何核验，最佳作业 115549 布通 436 根，较加权 A* 增加 29 根，尚余 1,398 根。
+- 交换器外框仍受 909 根必过网和 342 根容量上限约束。底座逃逸和全量物理验收待实施。[代码、报告与回执](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/full-1834/dijkstra/README.md)
