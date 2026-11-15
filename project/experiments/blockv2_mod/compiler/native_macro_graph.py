@@ -34,7 +34,7 @@ def graph_dependencies(recipes):
  for name in tasks:visit(name)
  return tasks,resolved,order
 class Frontend:
- def __init__(self,graph,recipes,layouts,hardware,services,topology):
+ def __init__(self,graph,recipes,layouts,hardware,services,topology,*,range_tiles=0,joint=False):
   hashes={d['source_model_sha256'] for d in (graph,recipes,layouts)}
   if len(hashes)!=1:raise ValueError('graph/recipe/layout source mismatch')
   self.control_admission=admit_controls(hardware)
@@ -42,13 +42,22 @@ class Frontend:
   if set(hardware['control_groups'])!=set(CANONICAL_OWNERS):raise ValueError('nine control owners required')
   self.hardware['native_dispatch_overlay']=profile(self.hardware,topology,{n:i for i,n in enumerate(CANONICAL_OWNERS)})
   self.storage=allocations(graph,recipes,layouts,{'virtual_memory':{'address_bits':48}})
+  self.joint=joint
+  if joint:
+   from native_joint_recipes import lower
+   recipes=lower(recipes)
   self.tasks,self.after,self.order=graph_dependencies(recipes)
+  self.range_tiles=range_tiles;self.range_parts={}
+  if range_tiles:
+   from native_range_frontier import expand
+   self.tasks,self.after,self.order,self.range_parts=expand(self.tasks,self.after,self.order,tiles_per_range=range_tiles)
   self.bindings={s['module']:bindings(s,self.hardware,self.hardware['control_groups']) for s in services}
   self.graph_hash=graph['source_model_sha256']
   self.initial_ids={'first_session':1,'generation':1,'job':1,'epoch':1,'tensor':1,'version':1,
                     'rf_object_base':0,'record_sequence_base':0}
  def options(self,task):
   b=self.bindings;k=task['kind']
+  if k=='Gated':return [{'binding':x} for x in b['gated_s32_service_controller']]
   if k=='MatMul':return [{'binding':x} for x in b['projection_local_service_controller']]
   if k=='SwiGLUFFN':return [{'projection_binding':p,'gated_binding':g} for p in b['projection_local_service_controller'] for g in b['gated_s32_service_controller']]
   if k=='Attention':return [{'dot_binding':e,'n_binding':n} for e in b['e32_dot_service_controller'] for n in b['n32_service_controller']]
@@ -62,7 +71,7 @@ class Frontend:
            if any(r['schema']==schema for r in t['routes'])]
   raise ValueError('no corrected native candidate family '+k)
  def encode(self,task,option,identities=None):
-  k=task['kind'];s=self.storage;workspace=s['candidate_workspaces'].get(task['id'])
+  k=task['kind'];s=self.storage;workspace=s['candidate_workspaces'].get(task.get('storage_parent',task.get('range_parent',task['id'])))
   regions={n:r for n,r in s['regions'].items() if workspace is None or n!=workspace['value']}
   common={'regions':regions,'hardware':self.hardware,**option}
   if k in ('MatMul','SwiGLUFFN'):
@@ -70,6 +79,9 @@ class Frontend:
     identities=dict(identities or self.initial_ids),workspace=workspace)
   elif k in ('Attention','RMSNorm'):
    result=(attention if k=='Attention' else rms)(task,**common,workspace=workspace)
+  elif k=='Gated':
+   from native_macro_gated_candidates import candidate
+   result=candidate(task,**common)
   else:result={'Add':add,'RoPE':rope,'Gather':gather,'Concat':concat}[k](task,**common)
   return admit(result,self.hardware)
  def export(self,out,progress=print):
@@ -98,6 +110,7 @@ class Frontend:
    if counts['tasks']%50==0:progress(json.dumps(dict(counts)))
   manifest={'schema':'macro-native-candidate-graph/1','graph_sha256':self.graph_hash,'tasks':rows,
    'counts':dict(counts),'storage':self.storage,'hardware':self.hardware,
+   'joint':self.joint,'range_tiles':self.range_tiles,'range_parts':self.range_parts,
    'whole_plan_accepted':False,'scope':'unselected candidates from one graph/base/storage; global DP, wiring and execution pending'}
   (out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
   progress(json.dumps(dict(counts)));return manifest

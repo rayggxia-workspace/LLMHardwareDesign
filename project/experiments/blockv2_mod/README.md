@@ -101,3 +101,32 @@ evidence/history/README-before-pr185-627b3e6105fd.md
 hardware/pr185-historical-source-disposition.json records the legacy RTL policy.
 Forty-five historical/rejected sources are excluded from current production
 elaboration. Their retained evidence does not admit them into the new base.
+
+## Joint dirty range frontier (integration under evaluation)
+
+The opt-in frontend flags `--joint --range-tiles 1` expose actual native commit
+units. Selection then jointly searches ready source ranges, registered service
+bindings, SRAM placement, retention and explicit DDR commits. `--depth` bounds
+unfinished source-operator ancestry; `--width` bounds the search beam.
+
+`--export-value VALUE` declares persistent state in addition to graph outputs.
+These live-outs must have committed DDR copies. Short prefill evaluation exports
+the 72 KV roots consumed by decode; decode includes its 72 present-KV outputs.
+Do not omit state merely because it is not named as a final logit output.
+
+`--incumbent-plan PATH` preserves an executable plan from the identical graph,
+hardware and allocation as a fallback under the stated structural objective.
+The searched candidate remains saved separately. This objective is DDR traffic
+followed by structural work; it is not calibrated throughput.
+
+Dirty data may be consumed locally without DWS/DRL, spilled by real existing
+commands when required, or released after its last reader. Rewritten descriptors
+are checked against the actual hardware routes and SRAM capacity before emission.
+MPR1 still requires a full-K DDR input, so it cannot consume a dirty SRAM input
+or continue a partial K reduction merely because the search permits overlap.
+
+See [current integration scope](audits/JOINT_FRONTIER_STATUS.md) and
+[RTL continuation responsibilities](audits/RANGE_RTL_ALIGNMENT.md). The complete
+short-request execution uses `audits/run_joint_request.sbatch`, comparing final
+outputs and declared KV against the independent integer reference. It must not
+require elided intermediate DDR copies or substitute a different execution plan.

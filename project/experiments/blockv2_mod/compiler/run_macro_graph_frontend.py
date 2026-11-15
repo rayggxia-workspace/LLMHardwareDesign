@@ -10,15 +10,17 @@ def main():
  p.add_argument('--hardware',type=Path,required=True)
  p.add_argument('--services',type=Path,required=True)
  p.add_argument('--output',type=Path,required=True)
+ p.add_argument('--range-tiles',type=int,default=0)
+ p.add_argument('--joint',action='store_true',help='joint native dirty range frontier; requires --range-tiles 1')
  p.add_argument('--topology',type=int,default=18503)
  a=p.parse_args()
  names=['native-recipe-graph.json','native-operand-recipes.json','native-value-layout.json']
  data=[json.loads((a.graph_directory/n).read_text()) for n in names]
  hardware=json.loads(a.hardware.read_text());services=json.loads(a.services.read_text())['services']
- frontend=Frontend(*data,hardware,services,a.topology)
+ frontend=Frontend(*data,hardware,services,a.topology,range_tiles=a.range_tiles,joint=a.joint)
  frontend.export(a.output,progress=lambda line:print(line,flush=True))
  inputs=[a.graph_directory/n for n in names]+[a.hardware,a.services]
- sources=list((ROOT/'compiler').glob('native_macro_*.py'))+[Path(__file__),
+ sources=list((ROOT/'compiler').glob('native_*.py'))+[Path(__file__),
   ROOT/'compiler/native_candidate_resources.py',ROOT/'compiler/native_local_projection_candidates.py',
   ROOT/'hardware/check_pr185_control_admission.py',ROOT/'hardware/check_parent_service_structure.py',
   ROOT/'hardware/native_resource_bindings.py',ROOT/'hardware/native_control_routes.py',ROOT/'hardware/service_resources.py']

@@ -40,13 +40,26 @@ def select(frontend,candidate_directory,*,width=8,progress=print):
  progress('Starting bounded macro/LC DP')
  schedule=search(tasks,hw,width=width,ready_limit=4,wire_lookahead=False)
  if schedule['status']!='planned':raise ValueError('DP did not find a plan: '+str(schedule))
+ cold_proof=verify(tasks,hw,schedule)
+ if frontend.range_tiles:
+  from functools import lru_cache
+  from native_resident_binding_search import refine
+  files={r['id']:directory/r['candidate_file'] for r in manifest['tasks'] if r['kind']!='View'}
+  @lru_cache(maxsize=64)
+  def choices(name):
+   with gzip.open(files[name],'rt') as stream:return {c['binding']:c for c in map(json.loads,stream)}
+  tasks,schedule=refine(tasks,schedule,lambda n,b:choices(n)[b],width=min(width,4))
  proof=verify(tasks,hw,schedule)
- ids=dict(frontend.initial_ids);calls=[];selected=[];ends={};resource_ends={};connections={}
+ ids=dict(frontend.initial_ids);resident_state={};residency=[];calls=[];selected=[];ends={};resource_ends={};connections={}
  for row in schedule['tasks']:
   key=(row['id'],row['binding']);task=frontend.tasks[row['id']]
   c=frontend.encode(task,option_by[key],ids)
   if c['binding']!=row['binding']:raise ValueError('selected encoding changed binding')
   ids.update(c.get('next_identities',{}))
+  if frontend.range_tiles:
+   from native_range_residency import rewrite
+   c,resident_state=rewrite(c,resident_state)
+   residency.append({'task':row['id'],'elisions':c['resident_load_elisions']})
   external=set()
   for parent in frontend.after[row['id']]:external.update(ends[parent])
   for resource in resource_by[key]:external.update(resource_ends.get(resource,()))
@@ -69,6 +82,8 @@ def select(frontend,candidate_directory,*,width=8,progress=print):
   'selection':selected,'calls':calls,'storage':frontend.storage,'hardware':base,'wiring':wiring,
   'search_plan':schedule,'search_verification':proof,'search_tasks':tasks,'search_hardware':hw,
   'view_aliases':{n:t['alias'] for n,t in frontend.tasks.items() if t['kind']=='View'},
+  'range_tiles':frontend.range_tiles,'range_parts':frontend.range_parts,
+  'residency':residency,'residency_search_priced':bool(frontend.range_tiles),
   'delivery_accepted':False,'timing_calibrated':False,
   'timing_scope':'structural work proxy for DP; completion-controlled executable order; TLM timing still required',
   'wire_optimization_performed':False}
