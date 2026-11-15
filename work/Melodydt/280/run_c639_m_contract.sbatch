@@ -84,7 +84,8 @@ controls = {
     'issue_valid': 'issue_valid', 'issue_generation': 'generation', 'issue_key': "128'd11",
     'issue_record': "32'd21", 'issue_beat': 'beat', 'fill_valid': 'fill_valid',
     'fill_generation': 'generation', 'fill_key': "128'd11", 'fill_record': "32'd21",
-    'fill_beat': 'beat', 'fill_last': "beat == 5'd16", 'fill_ack_ready': "1'b1",
+    'fill_beat': 'beat', 'fill_last': "beat == 5'd16", 'fill_data': "beat == 5'd16 ? 512'h3c003c003c003c00 : 512'b0",
+    'fill_ack_ready': "1'b1",
     'start_valid': 'start_valid', 'start_generation': 'generation', 'start_key': "128'd11",
     'start_record': "32'd21", 'start_use': "16'd1", 'fault_ready': "1'b1",
 }
