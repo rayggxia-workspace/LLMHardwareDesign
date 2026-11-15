@@ -49,7 +49,6 @@ module s128_kv_store_scope #(
     typedef enum logic [1:0] {IDLE, WAIT_ROW, REPORT} state_t;
     state_t state;
     logic cancelled;
-    logic [63:0] expected_tag;
 
     wire [31:0] schema = service_descriptor[31:0];
     wire is_kv = schema == KV_SCHEMA;
@@ -75,43 +74,24 @@ module s128_kv_store_scope #(
     // The LC fetch checks the descriptor CRC.
     wire _unused_crc = ^service_descriptor[1023:992];
 
-    wire row_ready, row_busy, row_done_valid, row_done_error;
-    wire [63:0] row_done_tag;
-    wire burst_valid, burst_ready, burst_done_valid, burst_done_ready, burst_done_error;
-    wire [9:0] burst_word;
-    wire [63:0] burst_address, burst_tag, burst_done_tag;
-    wire accept = service_valid && service_ready;
-    wire abort_now = service_cancel_valid && service_cancel_ready;
-
-    assign service_ready = !reset && state == IDLE && row_ready;
-    assign service_done_valid = !reset && state == REPORT;
-    // Once issued, an entire row drains through physical completions. A
-    // cancellation during REPORT is accepted with the settled terminal held.
-    assign service_cancel_ready = !reset && state != IDLE;
-
-    s128_kv_row_transfer #(.BURSTS(MAX_BURSTS), .VARIABLE_BURSTS(SHARED_STORE || COUNTED_STORE)) row(
-        .clk, .reset, .cmd_valid(accept && valid_descriptor), .cmd_ready(row_ready), .busy(row_busy),
-        .cmd_bursts(bursts), .cmd_sram_word(source_word[9:0]), .cmd_ddr_address(ddr_address), .cmd_tag(first_tag),
-        .done_valid(row_done_valid), .done_ready(state == WAIT_ROW), .done_tag(row_done_tag),
-        .done_error(row_done_error), .burst_valid, .burst_ready,
-        .burst_sram_word(burst_word), .burst_ddr_address(burst_address), .burst_tag,
-        .burst_done_valid, .burst_done_ready, .burst_done_tag, .burst_done_error);
-    wire _unused_busy = row_busy;
-
-    s128_ddr64_store burst(
-        .clk, .reset, .cmd_valid(burst_valid), .cmd_ready(burst_ready),
-        .cmd_source_word(burst_word), .cmd_ddr_address(burst_address), .cmd_tag(burst_tag),
-        .done_valid(burst_done_valid), .done_ready(burst_done_ready), .done_tag(burst_done_tag),
-        .done_error(burst_done_error),
-        .s_req_valid, .s_req_ready, .s_req_address, .s_rsp_valid, .s_rsp_ready, .s_rsp_data, .s_rsp_error,
-        .wr_valid, .wr_ready, .wr_address, .wr_tag, .wr_data,
-        .wr_done_valid, .wr_done_ready, .wr_done_tag, .wr_done_error);
+    wire row_ready,row_done_valid,row_done_error;
+    wire accept=service_valid&&service_ready;
+    wire abort_now=service_cancel_valid&&service_cancel_ready;
+    assign service_ready=!reset&&state==IDLE&&row_ready;
+    assign service_done_valid=!reset&&state==REPORT;
+    assign service_cancel_ready=!reset&&state!=IDLE;
+    // Cancellation retains the existing drain-whole-row contract.
+    s128_store_pipeline row(
+      .clk,.reset,.cmd_valid(accept&&valid_descriptor),.cmd_ready(row_ready),
+      .cmd_bursts(bursts),.cmd_word(source_word[9:0]),.cmd_address(ddr_address),.cmd_tag(first_tag),
+      .done_valid(row_done_valid),.done_ready(state==WAIT_ROW),.done_error(row_done_error),
+      .s_req_valid,.s_req_ready,.s_req_address,.s_rsp_valid,.s_rsp_ready,.s_rsp_data,.s_rsp_error,
+      .wr_valid,.wr_ready,.wr_address,.wr_tag,.wr_data,.wr_done_valid,.wr_done_ready,.wr_done_tag,.wr_done_error);
 
     always_ff @(posedge clk) begin
         if (reset) begin
             state <= IDLE;
             cancelled <= 0;
-            expected_tag <= 0;
             service_done_owner <= 0;
             service_done_ticket <= 0;
             service_done_status <= 0;
@@ -125,7 +105,6 @@ module s128_kv_store_scope #(
                     service_done_status <= valid_descriptor ? 16'd0 : BAD_DESCRIPTOR;
                     service_done_read_bytes <= 0;
                     service_done_write_bytes <= 0;
-                    expected_tag <= first_tag;
                     cancelled <= 0;
                     state <= valid_descriptor ? WAIT_ROW : REPORT;
                 end
@@ -133,10 +112,10 @@ module s128_kv_store_scope #(
                     if (abort_now) cancelled <= 1;
                     if (s_rsp_valid && s_rsp_ready && !s_rsp_error)
                         service_done_read_bytes <= service_done_read_bytes + 32'd16;
-                    if (burst_done_valid && burst_done_ready && !burst_done_error && burst_done_tag == burst_tag)
+                    if (wr_done_valid && wr_done_ready && !wr_done_error && wr_done_tag == wr_tag)
                         service_done_write_bytes <= service_done_write_bytes + 32'd64;
                     if (row_done_valid) begin
-                        if (row_done_error || row_done_tag != expected_tag) service_done_status <= TRANSFER_FAULT;
+                        if (row_done_error) service_done_status <= TRANSFER_FAULT;
                         else if (cancelled || abort_now) service_done_status <= ABORTED;
                         state <= REPORT;
                     end

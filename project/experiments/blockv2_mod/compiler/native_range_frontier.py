@@ -11,7 +11,7 @@ SPLITTABLE={'MatMul','Add','RoPE','RMSNorm','Attention','Gather','Gated'}
 def accesses(tile):
  return tile.get('read',[])+tile.get('key_rows',[])+tile.get('value_rows',[])
 
-def expand(tasks,after,order,*,tiles_per_range=1):
+def expand(tasks,after,order,*,tiles_per_range=1,serialize_ranges=True):
  if type(tiles_per_range) is not int or tiles_per_range<1:raise ValueError('positive range size')
  expanded={};parts={};writes=defaultdict(list)
  for name in order:
@@ -46,8 +46,10 @@ def expand(tasks,after,order,*,tiles_per_range=1):
       if access['root'] in writes and covered!=hi-lo:raise ValueError('unpublished operand range '+access['root'])
    # Preserve control-only dependencies and unsupported/opaque operand relations.
    for parent in original-matched:parents.update(parts[parent])
-   # Existing candidates reuse parent-owned workspaces; do not alias two scopes.
-   if i:parents.add(parts[name][i-1])
+   # Full-K MatMul output ranges have no data dependency on each other.
+   # In joint stage mode actual workspace leases protect their scratch reuse.
+   # Other service families retain their conservative sequencing for now.
+   if i and (serialize_ranges or node["kind"] != "MatMul"):parents.add(parts[name][i-1])
    if key in parents:raise ValueError('self-dependent range')
    deps[key]=sorted(parents);node['after']=deps[key];new_order.append(key)
  return expanded,deps,new_order,parts

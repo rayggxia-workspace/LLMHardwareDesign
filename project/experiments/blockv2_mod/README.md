@@ -1,144 +1,75 @@
-# blockv2-mod: current macro-native Algo1 flow
+# blockv2-mod: graph to macro-native instructions
 
-This remote working directory belongs to Issue 219. Architecture authority is
-PR185 commit 234d4005a049c8cbe404710757d44871a571c598.
+Issue #219 / PR #269. PR185 defines the architecture: functional macros are hard
+boundaries; P/U/C/F/J identify control ownership. Every data connection, including
+same-owner connections, requires an explicit selected endpoint binding.
 
-## Architecture and inputs
+## Current inputs and execution path
 
-The nine P/U/C/F/J groups are control owners, never composite hard macros.
-Thirty functional macro instances are declared independently. Parent controls,
-program stores, selectors and transport resources are explicit. Data links,
-including same-owner links, require selected endpoint bindings; no U/P data
-connection is assumed.
+The admitted command-pipeline/1 base is
+evidence/command-pipeline/hardware.json
+(blockv2-mod-pr185-memory-3fa694340b33bf0b); its service inventory is
+evidence/command-pipeline/services.json.
 
-Current inputs:
-- [Hardware](hardware/blockv2-mod-shared-memory.json), base
-  blockv2-mod-pr185-memory-c6ef5d0bffff12ab.
-- [Service contracts](hardware/service-controller-contracts.json).
-- One graph directory containing native-recipe-graph.json,
-  native-operand-recipes.json and native-value-layout.json, bound to the same
-  source model. These are graph/operand/index descriptions, not archived plans.
+Input a model graph directory containing native-recipe-graph.json,
+native-operand-recipes.json and native-value-layout.json alongside this hardware.
+Algo1 constructs a selected plan. Materialization joins the plans' selected
+connections and checks the complete RTL assembly. Packaging emits mother/local
+programs, CALL/WAIT dependencies, descriptors, address layouts, deployment records
+and candidate-wiring.json from that same plan. TLM executes the sealed package;
+it does not choose a replacement mapping or hardware implementation.
 
-The old blockv2-mod-nine.json and algo1/blockv2-mod.json inventories are historical.
+Generic graph entry points:
+compiler/run_macro_graph_frontend.py, compiler/run_macro_selection.py,
+compiler/materialize_native_product.py, compiler/package_native_plan.py.
+Runtime entry: tlm/run_macro_package.py.
+Use the remote Python/module paths in reproducibility/environment.json.
 
-## Compilation
+## Command-internal pipelines
 
-Run computation inside a Slurm allocation with the Python/module paths from
-reproducibility/environment.json.
+The production path overlaps activation reads and SRAM commits, observes scaling
+statistics during loading, converts through two packing/response slots, reads A
+with two credits, models the M core's existing 32 weight credits, prefetches the
+next K128 into the existing source window, and prepares the next writeback burst
+while the previous DDR write completes. Dot has separate A/B cache lines.
 
-~~~sh
-python compiler/run_macro_graph_frontend.py --graph-directory "$graph" --hardware hardware/blockv2-mod-shared-memory.json --services hardware/service-controller-contracts.json --output "$out/candidates"
-python compiler/run_macro_selection.py --graph-directory "$graph" --candidate-directory "$out/candidates" --hardware hardware/blockv2-mod-shared-memory.json --services hardware/service-controller-contracts.json --output "$out/plan"
-~~~
+Old selectable serial branches and corresponding generator templates have been
+removed. An old pipeline contract is rejected during product binding, packaging
+and execution. Real mathematical dependencies, ownership, finite capacities and
+final commit waits remain. See audits/COMMAND_PIPELINE_REVIEW.md.
 
-Selection emits native service descriptors, CALL dependencies, resource
-reservations and required connections. Ranking currently uses an uncalibrated
-work proxy, not measured cycles.
+## Validation and current status
 
-compiler/materialize_native_product.py combines selected plans into static
-macro/parent endpoint wiring and generates the selected RTL assembly. It requires
-source-matching complete assembly evidence. A different connection set requires
-its own elaboration; an old product receipt cannot approve it. The resulting
-candidate-wiring.json has schema native-product-wiring/1.
+Fresh complete assembly admits 30 functional macros, nine local controllers and
+242 parent control instances; hidden functional-macro negative checks pass.
+evidence/command-pipeline/final-capacity.json binds 18 behavior capabilities to
+actual RTL tests and the assembled source closure.
 
-~~~sh
-python compiler/package_native_plan.py "$out/plan/plan.json" "$out/package" "$product/candidate-wiring.json"
-~~~
+The combined regression job 115472 passed all 23 entries, covering production
+TLM numeric paths, RTL reordered responses, backpressure, cancellation/error
+drain, unknown-tag isolation, and deterministic regeneration.
 
-The package contains mother images, a finite local EXEC/WAIT/RETURN kernel,
-descriptors, deployment transactions, hardware and same-plan candidate wiring.
-The runtime rejects incomplete RTL wiring and unsupported local kernel programs.
-These compilation stages do not substitute archived stage machine code.
+Full history512/history513 compilation, same-plan instruction/wiring packaging,
+and two causally chained decode executions are in progress. Current job records:
+evidence/command-pipeline/full-decode512-two-step/jobs.json.
+Initial history is frozen zero, first token is 840, and the second step consumes
+the first step's committed KV and sampled token. Each full graph is checked
+against an independent integer reference. No prefill or 128-step decode is run.
 
-## Current complete graph artifacts
+Run this complete target using audits/command_pipeline_submit.py with explicit
+--hardware, --services and a new --output directory, inside the authorized remote
+environment. See audits/command_pipeline_README.md for admission and dependencies.
 
-All paths below are under evidence/architecture-revision-185/.
+## Evidence limits
 
-| Artifact | Evidence scope |
-| --- | --- |
-| shared-memory-graphs-114904 | Full 36-layer prefill and short decode selected plans |
-| shared-memory-product-114907 | Same-plan macro/parent candidate endpoint wiring |
-| shared-memory-bound-packages-114908 | 141490/70457 CALLs and 13/4 mother pages |
-| selected-nine-assembly-114958 | Thirty-macro/nine-controller complete elaboration |
-| pr185-admission-114959 | Structural admission and 51 rejected violation cases |
-| current-evaluation-pipeline.json | Current jobs, dependencies and result paths |
-| REVIEW.md and status.json | Evidence history and incomplete work |
+Full two-step numeric/performance acceptance is pending. Earlier history2 timings
+cannot be used as a history512 baseline or a claimed speedup for this change.
+TLM timing is uncalibrated. External phase installation/loading time is excluded
+and reported; modeled retirement totals are not measured continuous hardware
+throughput. No physical implementation/PPA acceptance is claimed.
 
-Candidate RTL wiring is not physical routing/PPA acceptance.
-
-## Evaluation and current limits
-
-tlm/run_macro_package.py consumes a sealed selected package and graph-bound
-runtime images. It models actual SRAM instances and shared read/write transport.
-tlm/run_native_package.py is the older diagnostic-zero evaluator.
-
-Short Qwen evaluation uses full two-token prefill and one history-two decode,
-real weights and prefill-produced KV. The untimed graph oracle is an independent
-numerical reference; its wall time is never reported as TLM throughput.
-Every produced tensor must match the reference byte-for-byte.
-
-Program loading and external stage input preparation/sampling are excluded from
-reported kernel time. Macro timing remains uncalibrated. No continuous-request
-throughput or physical timing acceptance is claimed. Complete short Qwen functional acceptance is recorded in
-evidence/architecture-revision-185/Qwen-short-acceptance-115200.json.
-Both full stages and all 1374 reference tensors passed. The remaining 20
-benchmark graphs were attempted; all stop in layout/operand lowering, before
-candidate selection. See evidence/architecture-revision-185/RESULTS_ZH.md and
-remaining-benchmark-conversion-115202/summary.json. This is not broad model
-accuracy, physical timing, or remaining-benchmark acceptance. P512/D128 128-token runs are
-explicitly excluded.
-
-## Historical entry points
-
-algo1_blockv2_mod.py is the retired symbolic prototype, which emits no hardware
-instruction package. It requires --legacy-symbolic-diagnostic. algo1.sbatch now
-exits with a retirement error. legacy_symbolic_diagnostic.sbatch retains explicit
-historical reproduction. Archived stage diagnostics are not the current compiler.
-
-The previous README is preserved in:
-evidence/history/README-before-pr185-627b3e6105fd.md
-
-hardware/pr185-historical-source-disposition.json records the legacy RTL policy.
-Forty-five historical/rejected sources are excluded from current production
-elaboration. Their retained evidence does not admit them into the new base.
-
-## Joint dirty range frontier (integration under evaluation)
-
-The opt-in frontend flags `--joint --range-tiles 1` expose actual native commit
-units. Selection then jointly searches ready source ranges, registered service
-bindings, SRAM placement, retention and explicit DDR commits. `--depth` bounds
-unfinished source-operator ancestry; `--width` bounds the search beam.
-
-`--export-value VALUE` declares persistent state in addition to graph outputs.
-These live-outs must have committed DDR copies. Short prefill evaluation exports
-the 72 KV roots consumed by decode; decode includes its 72 present-KV outputs.
-Do not omit state merely because it is not named as a final logit output.
-
-`--incumbent-plan PATH` preserves an executable plan from the identical graph,
-hardware and allocation as a fallback under the stated structural objective.
-The searched candidate remains saved separately. This objective is DDR traffic
-followed by structural work; it is not calibrated throughput.
-
-Dirty data may be consumed locally without DWS/DRL, spilled by real existing
-commands when required, or released after its last reader. Rewritten descriptors
-are checked against the actual hardware routes and SRAM capacity before emission.
-MPR1 still requires a full-K DDR input, so it cannot consume a dirty SRAM input
-or continue a partial K reduction merely because the search permits overlap.
-
-See [current integration scope](audits/JOINT_FRONTIER_STATUS.md) and
-[RTL continuation responsibilities](audits/RANGE_RTL_ALIGNMENT.md). The complete
-short-request execution uses `audits/run_joint_request.sbatch`, comparing final
-outputs and declared KV against the independent integer reference. It must not
-require elided intermediate DDR copies or substitute a different execution plan.
-
-The next scheduling revision adds selection flags `--stage-resources`,
-`--diverse-search`, and `--objective finish_proxy`. Its CALL dependency graph
-releases each owner after its own last stage and retains shared-workspace leases.
-The mother program waits on individual predicted completions to avoid joining
-unrelated live commands into one barrier. This uses existing WAIT mask semantics.
-
-Producer mappings/ranges are chosen before dependent consumer ranges. Independent
-branches can be chosen in either order; construction order does not serialize
-their hardware execution. See [stage scheduling status](audits/STAGE_FRONTIER_STATUS.md).
-Full TLM acceptance of this revision is pending; the time objective is a structural
-proxy, not calibrated latency.
+Historical receipts remain under evidence/architecture-revision-185 and
+evidence/joint-frontier. Their graph, hardware and source bindings identify their
+scope; they do not admit current modified RTL. Complete plans, binaries, weights
+and runtime images stay on the remote server; lightweight source and evidence
+are published through PR #269.

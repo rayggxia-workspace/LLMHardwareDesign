@@ -5,7 +5,8 @@ ordering uses completion signals, never these estimates. Unknown wire lengths
 and unmodeled DDR contention are not treated as validated zero-cost hardware.
 """
 import struct
-def measure(candidate):
+def measure(candidate,*,cost_model='structural/1'):
+ if cost_model not in ('structural/1','service-payload/2'):raise ValueError('unknown work cost model')
  totals={'descriptor_bytes':0,'ddr_read_bytes_upper':0,'ddr_write_bytes':0,
          'sram_words':0,'arithmetic_elements':0};ends=[]
  for call in candidate['calls']:
@@ -33,11 +34,20 @@ def measure(candidate):
    n=struct.unpack_from('<H',raw,22)[0];sram=3*n;ops=8*n
   elif schema==0x3152504d:
    k=struct.unpack_from('<H',raw,76)[0];groups=raw[74];records=groups*(k//128)
-   read=records*(1152+512);sram=records*80+groups*2;ops=groups*8*k
+   if cost_model=='structural/1':
+    read=records*(1152+512);sram=records*80+groups*2
+   else:
+    # MPR1 loads each K128 activation once, then all output groups share it.
+    # Local service: source write/scan/convert = 32*3 words; packed write/read = 16*2.
+    # Weight records differ between ordinary and head16 descriptors.
+    if raw[82]!=1:raise ValueError('service-payload/2 requires admitted one-way MPR1')
+    read=records*(1152 if raw[83] else 1088)+(k//128)*512
+    sram=(k//128)*128+groups*2
+   ops=groups*8*k
   else:raise ValueError('missing structural cost for '+hex(schema))
   totals['ddr_read_bytes_upper']+=read;totals['ddr_write_bytes']+=write
   totals['sram_words']+=sram;totals['arithmetic_elements']+=ops
   duration=8+(read+write+15)//16+sram+ops
   ends.append(duration+max((ends[d] for d in call['after']),default=0))
  return {'work_units':max(ends,default=1),**totals,'timing_calibrated':False,
-  'scope':'unit-weight structural work ranking; no runtime-cycle or throughput claim'}
+  'cost_model':cost_model,'scope':'unit-weight structural work ranking; no runtime-cycle or throughput claim'}

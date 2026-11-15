@@ -33,19 +33,24 @@ module projection_local_source(
  reg [127:0] key;
  reg [63:0] source_address;
  reg [15:0] full_k,k;
+ reg fetch_active,fetch_cached;
+ reg [15:0] fetch_k;
  reg [9:0] source_word,a_word;
  reg [31:0] session;
  reg [5:0] shift;
  wire loader_ready,loader_done,loader_error;
  wire [63:0] loader_rd_tag;
- assign rd_tag={8'd0,session,window_generation,loader_rd_tag[7:0]};
+ wire [15:0] fetch_generation=(fetch_k>>7)+16'd1;
+ assign rd_tag={8'd0,session,fetch_generation,loader_rd_tag[7:0]};
+ wire response_identity_ok=rd_rsp_tag[63:8]=={8'd0,session,fetch_generation};
  wire quantizer_ready,quantizer_done,quantizer_error,quantizer_cancelled;
  wire [127:0] quantizer_owner;
  wire [15:0] quantizer_k,quantizer_mask;
  wire [4:0] quantizer_words;
  wire [5:0] quantizer_shift;
  wire [31:0] rejected;
- wire stop=cancelled||scope_cancel;
+ wire observed_valid;wire [5:0] observed_shift;
+ wire stop=cancelled||scope_cancel||failed;
  wire requested=active&&need_valid&&(state==EMPTY||(state==PUBLISHED&&proof_seen&&need_k!=k));
  wire bad_request=need_key!=key||need_k[6:0]!=0||need_k>=full_k||
    (state==EMPTY ? need_k!=0 : need_k!=k+16'd128);
@@ -57,21 +62,30 @@ module projection_local_source(
  assign window_ticket={16'd0,window_generation};
  assign window_shift=shift;
  assign proof_ready=active&&state==PUBLISHED;
- assign drained=state==EMPTY||state==PUBLISHED;
- s128_ddr_range_load #(.PIPELINE_WRITES(1'b1)) loader(
-  .clk,.reset,.launch_valid(state==FETCH&&!stop),.launch_ready(loader_ready),
-  .launch_base(source_address+{46'd0,k,2'd0}),.launch_s_base(source_word),
+ // A published A16 window occupies a_word. Its S32 source_word can
+ // refill the next K128 without overwriting the active A input.
+ wire [16:0] next_k={1'b0,k}+17'd128;
+ wire prefetch_allowed=state==PUBLISHED&&next_k<{1'b0,full_k};
+ wire loader_launch=active&&!stop&&!failed&&!fetch_active&&!fetch_cached&&
+                    (state==FETCH||prefetch_allowed);
+ wire [15:0] launch_k=state==FETCH?k:next_k[15:0];
+ assign drained=(state==EMPTY||state==PUBLISHED)&&!fetch_active&&!loader_launch;
+ s128_ddr_range_load loader(
+  .clk,.reset,.cancel(stop),.launch_valid(loader_launch),.launch_ready(loader_ready),
+  .launch_base(source_address+{46'd0,launch_k,2'd0}),.launch_s_base(source_word),
   .launch_bursts(8'd8),.launch_pair(1'b0),.launch_pair_beat(1'b0),.launch_pair_high(1'b0),
-  .done_valid(loader_done),.done_error(loader_error),.done_ready(state==FETCH_WAIT),
+  .done_valid(loader_done),.done_error(loader_error),.done_ready(fetch_active),
   .rd_valid,.rd_ready,.rd_address,.rd_tag(loader_rd_tag),.rd_rsp_valid,.rd_rsp_ready,
-  .rd_rsp_tag(rd_rsp_error||rd_rsp_tag!=rd_tag ? loader_rd_tag^64'd1 : loader_rd_tag),.rd_rsp_data,
+  .rd_rsp_tag(!response_identity_ok ? 64'hffffffffffffffff : {56'd0,rd_rsp_tag[7:0]}),.rd_rsp_data,.rd_rsp_error,
   .s_valid(load_valid),.s_ready(load_ready),.s_address(load_address),.s_data(load_data),.s_tag(load_tag),
   .s_rsp_valid(load_rsp_valid),.s_rsp_ready(load_rsp_ready),
-  .s_rsp_tag(load_rsp_error ? (load_rsp_tag | 32'h80000000) : load_rsp_tag));
+  .s_rsp_tag(load_rsp_tag),.s_rsp_error(load_rsp_error));
  s32_a16_tile_quantizer #(.SESSION_IDS(1'b1)) quantizer(
   .clk,.reset,.cmd_valid(state==QUANT&&!stop),.cmd_ready(quantizer_ready),
   .cmd_key(key),.cmd_generation(window_generation),.cmd_kk(k),.cmd_session(session),
-  .cmd_source(source_word),.cmd_destination(a_word),.cmd_shift_known(1'b0),.cmd_shift(6'd0),
+  .cmd_source(source_word),.cmd_destination(a_word),.cmd_shift_known(1'b1),.cmd_shift(observed_shift),
+  .observe_start(loader_launch&&loader_ready),.observe_valid(load_valid&&load_ready),
+  .observe_data(load_data),.observed_valid,.observed_shift,
   .cancel_valid(stop),.cancel_key(key),
   .s_valid(quant_valid),.s_ready(quant_ready),.s_write(quant_write),
   .s_address(quant_address),.s_data(quant_data),.s_tag(quant_tag),
@@ -84,11 +98,11 @@ module projection_local_source(
  always @(posedge clk)begin
   if(reset)begin
    state<=EMPTY;active<=0;cancelled<=0;proof_seen<=0;failed<=0;key<=0;source_address<=0;
-   full_k<=0;k<=0;source_word<=0;a_word<=0;session<=0;shift<=0;
+   full_k<=0;k<=0;fetch_active<=0;fetch_cached<=0;fetch_k<=0;source_word<=0;a_word<=0;session<=0;shift<=0;
   end else begin
    if(scope_start&&active)failed<=1;
    else if(scope_start)begin
-    active<=1;cancelled<=0;proof_seen<=0;
+    active<=1;cancelled<=0;proof_seen<=0;fetch_cached<=0;
     failed<=session==32'hffffffff||scope_full_k==0||scope_full_k[6:0]!=0||
       scope_source_address[5:0]!=0||scope_source_address[63:48]!=0||
       {1'b0,scope_source_address}+{47'd0,scope_full_k,2'd0}>(65'd1<<48)||
@@ -99,6 +113,15 @@ module projection_local_source(
     source_word<=scope_source_word;a_word<=scope_a_word;session<=session+32'd1;state<=EMPTY;
    end else begin
     if(scope_cancel)cancelled<=1;
+    if(fetch_active&&rd_rsp_valid&&(rd_rsp_error||!response_identity_ok))failed<=1;
+    if(loader_launch&&loader_ready)begin
+     fetch_active<=1;fetch_k<=launch_k;
+    end
+    if(loader_done&&fetch_active)begin
+     fetch_active<=0;fetch_cached<=!loader_error&&!stop;
+     if(loader_error)failed<=1;
+    end
+    if(stop&&!fetch_active)fetch_cached<=0;
     if(scope_end&&drained)begin active<=0;state<=EMPTY;end
     else if(requested&&!stop&&!failed)begin
      if(bad_request)failed<=1;
@@ -109,12 +132,15 @@ module projection_local_source(
      if(proof_error||!proof_source_drained||proof_shift!=shift)failed<=1;
     end
     case(state)
-     FETCH:if(stop)state<=EMPTY;else if(loader_ready)state<=FETCH_WAIT;
-     FETCH_WAIT:if(loader_done)begin
-      if(loader_error)failed<=1;
-      state<=loader_error||stop ? EMPTY : QUANT;
+     FETCH,FETCH_WAIT:begin
+      if(stop&&!fetch_active)state<=EMPTY;
+      else if(fetch_cached)begin
+       if(fetch_k!=k)begin failed<=1;state<=EMPTY;end
+       else begin fetch_cached<=0;state<=stop?EMPTY:QUANT;end
+      end else if(loader_launch&&loader_ready)state<=FETCH_WAIT;
      end
-     QUANT:if(stop)state<=EMPTY;else if(quantizer_ready)state<=QUANT_WAIT;
+     QUANT:if(stop)state<=EMPTY;else if(!observed_valid)begin failed<=1;state<=EMPTY;end
+           else if(quantizer_ready)state<=QUANT_WAIT;
      QUANT_WAIT:if(quantizer_done)begin
       if(quantizer_error||quantizer_cancelled||quantizer_owner!=key||quantizer_k!=k||
          quantizer_words!=16||quantizer_mask!=16'hffff)begin failed<=1;state<=EMPTY;end

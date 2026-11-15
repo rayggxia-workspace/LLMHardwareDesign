@@ -1,0 +1,136 @@
+
+ wire [15:0] src_word=service_descriptor[960+:16];
+ wire [15:0] dst_word=service_descriptor[672+:16];
+ wire [15:0] out_word=service_descriptor[688+:16];
+ wire [15:0] full_k=service_descriptor[608+:16];
+ wire [10:0] output_words={6'd0,service_descriptor[592+:5]}<<1;
+ wire [16:0] src_end={1'b0,src_word}+17'd32;
+ wire [16:0] dst_end={1'b0,dst_word}+17'd16;
+ wire [16:0] out_end={1'b0,out_word}+{6'd0,output_words};
+ wire outer_legal=TOPOLOGY!=0&&service_descriptor[31:0]==32'h3152504d&&
+   service_descriptor[32+:16]==128&&service_descriptor[48+:16]==2&&
+   service_descriptor[64+:32]==32'h02504d03&&service_descriptor[96+:32]==TOPOLOGY&&
+   service_descriptor[976+:16]==0&&service_descriptor[896+:6]==0&&
+   service_descriptor[944+:16]==0&&
+   ({1'b0,service_descriptor[896+:64]}+{47'd0,full_k,2'd0}<=(65'd1<<48))&&
+   service_descriptor[656+:2]==1&&src_end<=1024&&dst_end<=1024&&out_end<=1024&&
+   (src_end<={1'b0,dst_word}||dst_end<={1'b0,src_word})&&
+   (src_end<={1'b0,out_word}||out_end<={1'b0,src_word});
+ wire [1023:0] inner_descriptor={service_descriptor[1023:992],96'd0,
+                               service_descriptor[895:96],32'h02504d02,
+                               service_descriptor[63:32],32'h02505001};
+ reg occupied,rejected,cancelled;
+ reg [127:0] rejected_owner;
+ reg [31:0] rejected_ticket,input_read_bytes,staging_write_bytes;
+ wire p_ready,p_done,p_cancel_ready;
+ wire [127:0] p_owner;wire [31:0] p_ticket,p_reads,p_writes;
+ wire [15:0] p_status;
+ wire source_drained,source_window_valid;
+ wire [1:0] owners;
+ wire settled=source_drained&&owners==0;
+ wire start=service_valid&&service_ready&&outer_legal;
+ wire finish=service_done_valid&&service_done_ready;
+ wire cancel=cancelled||service_cancel_valid||source_failed;
+ assign service_ready=!reset&&!occupied&&(outer_legal?p_ready:1'b1);
+ assign service_done_valid=!reset&&occupied&&(rejected||(p_done&&settled));
+ assign service_done_owner=rejected?rejected_owner:p_owner;
+ assign service_done_ticket=rejected?rejected_ticket:p_ticket;
+ assign service_done_status=rejected?16'h0320:source_failed?16'h0322:p_status;
+ assign service_done_read_bytes=rejected?0:p_reads+input_read_bytes;
+ assign service_done_write_bytes=rejected?0:p_writes+staging_write_bytes;
+ assign service_cancel_ready=!reset&&occupied&&!rejected&&p_cancel_ready;
+ wire window_need_valid;wire [15:0] window_need_k;wire [127:0] window_need_key;
+ wire [127:0] window_key;wire [15:0] window_generation,window_k;
+ wire [31:0] window_session,window_ticket;wire [5:0] window_shift;
+ wire proof_valid,proof_ready,proof_error,proof_drained;wire [5:0] proof_shift;
+ wire [127:0] proof_key;wire [15:0] proof_generation,proof_k,proof_a_generation;
+ wire [31:0] proof_session,proof_ticket;wire proof_slot;
+ wire [127:0] scale_lookup_key;wire [15:0] scale_lookup_kk;
+ wire scale_valid=source_window_valid&&scale_lookup_key==window_key&&scale_lookup_kk==window_k;
+ wire ar_valid,ar_ready,ar_rsp_valid,ar_rsp_ready;wire [9:0] ar_address;
+ wire [31:0] ar_tag,ar_rsp_tag;wire [127:0] ar_rsp_data;
+ wire sw_valid,sw_ready,sw_ack_valid,sw_ack_ready,sw_word;
+ wire [511:0] sw_ticket;wire [9:0] sw_address;wire [127:0] sw_data;
+ wire quiescent;wire [1:0] A_live,result_occupied,command_occupied;
+ projection_stream_controller #(.TOPOLOGY(TOPOLOGY)) execution(
+ .clk,.reset,.service_valid(service_valid&&!occupied&&outer_legal),.service_ready(p_ready),.service_owner,.service_ticket,
+ .service_descriptor(inner_descriptor),.service_cancel_valid(cancel&&occupied),.service_cancel_ready(p_cancel_ready),
+ .service_done_valid(p_done),.service_done_ready(service_done_ready&&settled&&!rejected),
+ .service_done_owner(p_owner),.service_done_ticket(p_ticket),.service_done_status(p_status),
+ .service_done_read_bytes(p_reads),.service_done_write_bytes(p_writes),
+ .window_need_valid,.window_need_k,.window_need_key,
+ .stream_window_valid(source_window_valid),.stream_window_key(window_key),
+ .stream_window_generation(window_generation),.stream_window_k_elements(window_k),
+ .stream_window_session(window_session),.stream_window_ticket(window_ticket),
+ .copy_progress_valid(source_window_valid),.copy_progress_generation(window_generation),
+ .copy_progress_session(window_session),.copy_progress_ticket(window_ticket),
+ .copy_progress_k_elements(window_k),.copy_key(window_key),.copy_committed_prefix(11'd16),
+ .a_load_proof_valid(proof_valid),.a_load_proof_ready(proof_ready),.a_load_proof_key(proof_key),
+ .a_load_proof_window_generation(proof_generation),.a_load_proof_window_session(proof_session),
+ .a_load_proof_window_ticket(proof_ticket),.a_load_proof_k_elements(proof_k),
+ .a_load_proof_A_generation(proof_a_generation),.a_load_proof_A_slot(proof_slot),
+ .a_load_proof_error(proof_error),.a_load_proof_shift(proof_shift),.a_source_reads_drained(proof_drained),
+ .scale_lookup_key,.scale_lookup_kk,.scale_lookup_valid(scale_valid),.scale_lookup_shift(window_shift),
+ .ar_valid,.ar_ready,.ar_address,.ar_tag,.ar_rsp_valid,.ar_rsp_ready,.ar_rsp_tag,.ar_rsp_data,
+ .sw_valid,.sw_ready,.sw_ticket,.sw_word,.sw_address,.sw_data,
+ .sw_ack_valid,.sw_ack_ready,.sw_ack_ticket(sw_ticket),.sw_ack_word(sw_ack_word),.sw_ack_error(s_rsp_error),
+ .lc_valid(resource_m_lc_valid),.lc_ready(resource_m_lc_ready),.lc_sop(resource_m_lc_sop),
+ .lc_eop(resource_m_lc_eop),.lc_data(resource_m_lc_data),
+ .lr_valid(resource_m_lr_valid),.lr_ready(resource_m_lr_ready),.lr_sop(resource_m_lr_sop),
+ .lr_eop(resource_m_lr_eop),.lr_data(resource_m_lr_data),
+ .a_valid(resource_m_a_valid),.a_ready(resource_m_a_ready),.a_data(resource_m_a_data),
+ .a_session(resource_m_a_session),.a_beat(resource_m_a_beat),
+ .quiescent,.quarantine,.protocol_faults,.A_live,.result_occupied,.command_occupied);
+ wire load_valid,load_ready,load_rsp_valid,load_rsp_ready;
+ wire [9:0] load_address;wire [127:0] load_data;wire [31:0] load_tag,load_rsp_tag;
+ wire quant_valid,quant_ready,quant_write,quant_rsp_valid,quant_rsp_ready;
+ wire [9:0] quant_address;wire [127:0] quant_data,quant_rsp_data;wire [31:0] quant_tag,quant_rsp_tag;
+ projection_local_source source(
+ .clk,.reset,.scope_start(start),.scope_end(finish&&!rejected),.scope_cancel(cancel&&occupied),
+ .scope_key(service_descriptor[128+:128]),.scope_source_address(service_descriptor[896+:64]),
+ .scope_full_k(full_k),.scope_source_word(src_word[9:0]),.scope_a_word(dst_word[9:0]),
+ .need_valid(window_need_valid),.need_k(window_need_k),.need_key(window_need_key),
+ .window_valid(source_window_valid),.window_key,.window_generation,.window_k,.window_session,.window_ticket,.window_shift,
+ .proof_valid,.proof_ready,
+ .proof_error(proof_error||proof_key!=window_key||proof_generation!=window_generation||
+              proof_k!=window_k||proof_session!=window_session||proof_ticket!=window_ticket),
+ .proof_source_drained(proof_drained),.proof_shift,
+ .failed(source_failed),.drained(source_drained),
+ .rd_valid,.rd_ready,.rd_address,.rd_tag,.rd_rsp_valid,.rd_rsp_ready,.rd_rsp_tag,.rd_rsp_data,.rd_rsp_error,
+ .load_valid,.load_ready,.load_address,.load_data,.load_tag,.load_rsp_valid,.load_rsp_ready,.load_rsp_tag,
+ .load_rsp_error(s_rsp_error),.quant_valid,.quant_ready,.quant_write,.quant_address,.quant_data,.quant_tag,
+ .quant_rsp_valid,.quant_rsp_ready,.quant_rsp_tag,.quant_rsp_data,.quant_rsp_error(s_rsp_error));
+ wire [3:0] response_valid,client_ready;
+ wire [127:0] response_tags,response_data;
+ wire sw_ack_word;
+ native_s128_mux4 memory_requests(.clk,.reset,
+ .c_valid({load_valid,quant_valid,ar_valid,sw_valid}),.c_write({1'b1,quant_write,1'b0,1'b1}),
+ .c_address({load_address,quant_address,ar_address,sw_address}),
+ .c_data({load_data,quant_data,128'd0,sw_data}),.c_tag({load_tag,quant_tag,ar_tag,31'd0,sw_word}),
+ .c_ready(client_ready),.c_response_valid(response_valid),
+ .c_response_ready({load_rsp_ready,quant_rsp_ready,ar_rsp_ready,sw_ack_ready}),
+ .c_response_data(response_data),.c_response_tag(response_tags),.owners_occupied(owners),
+ .req_valid(s_req_valid),.req_write(s_req_write),.req_address(s_req_address),.req_data(s_req_data),
+ .req_ready(s_req_ready),.rsp_valid(s_rsp_valid),.rsp_ready(s_rsp_ready),.rsp_data(s_rsp_data));
+ assign {load_ready,quant_ready,ar_ready,sw_ready}=client_ready;
+ assign {load_rsp_valid,quant_rsp_valid,ar_rsp_valid,sw_ack_valid}=response_valid;
+ assign {load_rsp_tag,quant_rsp_tag,ar_rsp_tag}=response_tags[127:32];
+ assign sw_ack_word=response_tags[0];
+ assign quant_rsp_data=response_data;assign ar_rsp_data=response_data;
+ always @(posedge clk)begin
+  if(reset)begin occupied<=0;rejected<=0;cancelled<=0;rejected_owner<=0;rejected_ticket<=0;input_read_bytes<=0;staging_write_bytes<=0;end
+  else begin
+   if(service_valid&&service_ready)begin
+    occupied<=1;rejected<=!outer_legal;cancelled<=0;rejected_owner<=service_owner;rejected_ticket<=service_ticket;
+    input_read_bytes<=0;staging_write_bytes<=0;
+   end else begin
+    if(rd_rsp_valid&&rd_rsp_ready)input_read_bytes<=input_read_bytes+64;
+    staging_write_bytes<=staging_write_bytes+
+       ((load_rsp_valid&&load_rsp_ready)?32'd16:32'd0)+
+       ((quant_rsp_valid&&quant_rsp_ready&&quant_rsp_tag[15:14]==3)?32'd16:32'd0);
+   end
+   if(service_cancel_valid&&service_cancel_ready)cancelled<=1;
+   if(finish)begin occupied<=0;rejected<=0;end
+  end
+ end
+endmodule

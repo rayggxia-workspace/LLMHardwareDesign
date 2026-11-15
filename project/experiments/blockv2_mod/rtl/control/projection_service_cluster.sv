@@ -156,26 +156,45 @@ module projection_service_cluster #(parameter logic [31:0] TOPOLOGY=0)(
  assign p_s_rsp_valid=c_valid[0];assign l_s_rsp_valid=c_valid[1];assign w_s_rsp_valid=c_valid[2];
  assign p_s_rsp_data=c_data;assign w_s_rsp_data=c_data;assign l_s_rsp_tag=c_tag[63:32];
  assign p_s_rsp_error=s_rsp_error;assign l_s_rsp_error=s_rsp_error;assign w_s_rsp_error=s_rsp_error;
- // Both admitted read services are serial. One held response keeps its owner.
- reg read_busy,read_owner;
+ // Four bounded read slots retain original tags and owners across reordered returns.
+ reg [3:0] read_used,read_sent;
+ reg [1:0] read_tail,read_issue;
+ reg [63:0] read_sequence;
+ reg [63:0] read_original[0:3],read_token[0:3],read_address[0:3];
+ reg [3:0] read_owner;
  wire choose_load=!p_rd_valid;
- assign rd_valid=!reset&&!read_busy&&(p_rd_valid||l_rd_valid);
- assign rd_address=choose_load?l_rd_address:p_rd_address;
- assign rd_tag=choose_load?l_rd_tag:p_rd_tag;
- assign p_rd_ready=!reset&&!read_busy&&!choose_load&&rd_ready;
- assign l_rd_ready=!reset&&!read_busy&&choose_load&&rd_ready;
- assign p_rd_rsp_valid=rd_rsp_valid&&read_busy&&!read_owner;
- assign l_rd_rsp_valid=rd_rsp_valid&&read_busy&&read_owner;
- assign p_rd_rsp_tag=rd_rsp_tag;assign l_rd_rsp_tag=rd_rsp_tag;
+ wire accept_read=!reset&&!read_used[read_tail];
+ assign p_rd_ready=accept_read&&!choose_load;
+ assign l_rd_ready=accept_read&&choose_load;
+ assign rd_valid=!reset&&read_used[read_issue]&&!read_sent[read_issue];
+ assign rd_address=read_address[read_issue];
+ assign rd_tag=read_token[read_issue];
+ reg response_match;reg [1:0] response_slot;
+ integer ri;
+ always @*begin
+  response_match=0;response_slot=0;
+  for(integer j=0;j<4;j=j+1)
+   if(read_used[j]&&read_sent[j]&&read_token[j]==rd_rsp_tag)begin response_match=1;response_slot=j;end
+ end
+ assign p_rd_rsp_valid=!reset&&rd_rsp_valid&&response_match&&!read_owner[response_slot];
+ assign l_rd_rsp_valid=!reset&&rd_rsp_valid&&response_match&&read_owner[response_slot];
+ assign p_rd_rsp_tag=read_original[response_slot];assign l_rd_rsp_tag=read_original[response_slot];
  assign p_rd_rsp_data=rd_rsp_data;assign l_rd_rsp_data=rd_rsp_data;
  assign p_rd_rsp_error=rd_rsp_error;assign l_rd_rsp_error=rd_rsp_error;
- assign rd_rsp_ready=read_busy&&(read_owner?l_rd_rsp_ready:p_rd_rsp_ready);
+ assign rd_rsp_ready=!reset&&response_match&&(read_owner[response_slot]?l_rd_rsp_ready:p_rd_rsp_ready);
  always @(posedge clk)begin
-  if(reset)begin read_busy<=0;read_owner<=0;end
-  else begin
-   if(rd_valid&&rd_ready)begin read_busy<=1;read_owner<=choose_load;end
-   if(rd_rsp_valid&&rd_rsp_ready)read_busy<=0;
+  if(reset)begin
+   read_used<=0;read_sent<=0;read_tail<=0;read_issue<=0;read_sequence<=0;read_owner<=0;
+   for(ri=0;ri<4;ri=ri+1)begin read_original[ri]<=0;read_token[ri]<=0;read_address[ri]<=0;end
+  end else begin
+   if((p_rd_valid&&p_rd_ready)||(l_rd_valid&&l_rd_ready))begin
+    read_used[read_tail]<=1;read_sent[read_tail]<=0;read_owner[read_tail]<=choose_load;
+    read_original[read_tail]<=choose_load?l_rd_tag:p_rd_tag;
+    read_address[read_tail]<=choose_load?l_rd_address:p_rd_address;
+    read_token[read_tail]<=read_sequence;read_sequence<=read_sequence+1;read_tail<=read_tail+1;
+   end
+   if(rd_valid&&rd_ready)begin read_sent[read_issue]<=1;read_issue<=read_issue+1;end
+   if(rd_rsp_valid&&rd_rsp_ready)begin read_used[response_slot]<=0;read_sent[response_slot]<=0;end
   end
  end
 endmodule
-

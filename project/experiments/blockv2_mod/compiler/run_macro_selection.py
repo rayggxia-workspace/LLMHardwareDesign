@@ -15,6 +15,7 @@ def main():
  p.add_argument('--depth',type=int,default=2)
  p.add_argument('--stage-resources',action='store_true')
  p.add_argument('--diverse-search',action='store_true')
+ p.add_argument('--cost-model',choices=['structural/1','service-payload/2'],default='structural/1')
  p.add_argument('--objective',choices=['ddr_bytes','finish_proxy'],default='ddr_bytes')
  p.add_argument('--incumbent-plan',type=Path)
  p.add_argument('--export-value',action='append',default=[],help='persistent state root that must commit to DDR')
@@ -22,11 +23,11 @@ def main():
  data=[json.loads((a.graph_directory/n).read_text()) for n in [
  'native-recipe-graph.json','native-operand-recipes.json','native-value-layout.json']]
  hardware=json.loads(a.hardware.read_text());services=json.loads(a.services.read_text())['services']
- frontend=Frontend(*data,hardware,services,manifest['hardware']['native_dispatch_overlay']['topology_id'],range_tiles=manifest.get('range_tiles',0),joint=manifest.get('joint',False))
+ frontend=Frontend(*data,hardware,services,manifest['hardware']['native_dispatch_overlay']['topology_id'],range_tiles=manifest.get('range_tiles',0),joint=manifest.get('joint',False),independent_ranges=manifest.get('independent_ranges',False))
  if frontend.joint:
   from native_joint_search import select as joint_select,digest
   exports=sorted(set(data[0]['outputs'])|set(a.export_value))
-  plan=joint_select(frontend,a.candidate_directory,width=a.width,depth=a.depth,exports=exports,stage_resources=a.stage_resources,diverse=a.diverse_search,objective=a.objective,progress=lambda s:print(s,flush=True))
+  plan=joint_select(frontend,a.candidate_directory,width=a.width,depth=a.depth,exports=exports,stage_resources=a.stage_resources,diverse=a.diverse_search,objective=a.objective,cost_model=a.cost_model,progress=lambda s:print(s,flush=True))
   plan['exported_values']=exports;plan.pop('plan_sha256');plan['plan_sha256']=digest(plan)
  else:plan=select(frontend,a.candidate_directory,width=a.width,progress=lambda s:print(s,flush=True))
  a.output.mkdir(parents=True,exist_ok=True)

@@ -29,6 +29,12 @@ class Runner:
     def committed():commit();callback()
     transfer=Transfer(address,payload.payload);transfer.tag=tag
     self.write.submit(transfer,committed)
+   elif op=='load_pipeline':
+    from macro_activation_pipeline import ActivationLoad
+    ActivationLoad(self).start(*args,done=lambda:callback())
+   elif op=='store_pipeline':
+    from macro_store_pipeline import StorePipeline
+    StorePipeline(self).start(*args,done=lambda:callback())
    elif op=='cycles':self.edge(lambda:resume(),args[0])
    else:raise ValueError('unimplemented hardware action '+op)
   self.edge(resume)
@@ -44,10 +50,6 @@ def write_words(first,data):
  if len(data)%16:raise ValueError('whole SRAM words required')
  for i in range(0,len(data),16):yield ('swrite',first+i//16,data.slice(i,16))
 def load_span(address,word,size):
- for i in range(0,size,64):
-  data=yield ('read',address+i)
-  yield from write_words(word+i//16,data)
+ yield ('load_pipeline',address,word,size)
 def store_span(word,address,size,tag=None):
- for i in range(0,size,64):
-  data=yield from read_words(word+i//16,4)
-  yield ('write',address+i,data,(address//64 if tag is None else tag)+i//64)
+ yield ('store_pipeline',word,address,size,tag)

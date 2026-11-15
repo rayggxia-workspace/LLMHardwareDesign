@@ -5,13 +5,14 @@ from native_static_wiring_union import merge
 from materialize_native_product import materialize
 from native_machine_package import package
 root=Path(__file__).resolve().parents[1];plans=Path(sys.argv[1]);out=Path(sys.argv[2])
-p=[json.loads((plans/phase/'plan.json').read_text()) for phase in ('prefill','decode')]
+phases=sys.argv[4:] or ['prefill','decode']
+p=[json.loads((plans/phase/'plan.json').read_text()) for phase in phases]
 if sys.argv[3]=='prepare':
  out.mkdir(parents=True,exist_ok=False)
  (out/'selected.json').write_text(json.dumps(merge([build(x) for x in p]),indent=2)+'\n')
 else:
  wiring=materialize(p,out/'product',root/'hardware/blockv2-mod-shared-memory.json',sys.argv[3])
- for phase,plan in zip(('prefill','decode'),p):
+ for phase,plan in zip(phases,p):
   package(plan,out/(phase+'-package'),18503,wiring)
   old=root/'evidence/architecture-revision-185/shared-memory-bound-packages-114908'/(phase+'-package')
   old_storage=json.loads((old/'storage.json').read_text())

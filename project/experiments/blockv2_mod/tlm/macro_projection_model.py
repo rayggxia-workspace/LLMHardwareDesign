@@ -5,7 +5,7 @@ Local source staging is supplied by macro_projection_service, never a U/P link.
 Timing remains a service model pending RTL calibration.
 """
 
-from collections import Counter
+from collections import Counter, deque
 from struct import pack, unpack, unpack_from
 
 from native_tlm_timing import Transfer
@@ -44,6 +44,7 @@ class Projection:
         self.scratch_sram = source if scratch_sram is None else scratch_sram
         self.stats = Counter()
         self.busy = False
+        self.fetch_queue=deque();self.fetch_pending=0;self.fetch_scheduled=False
 
     def edge(self, action, cycles=1):
         period = self.target.core_ps
@@ -105,8 +106,17 @@ class Projection:
                 self.read_span(self.source, start_word, 32, scan)
 
             def stage(k, packed, shift):
-                self.write_span(self.target, input_s, packed, lambda: self.read_span(
-                    self.target, input_s, 16, lambda data: run_records(k, unpack("<128h", data), shift)))
+                def published():
+                    if packed_tile is not None and k+1<tiles:
+                        packed_tile.prefetch(k+1)
+                    self.read_span(self.target,input_s,16,
+                        lambda data:run_records(k,unpack("<128h",data),shift))
+                if packed_tile is None:
+                    self.write_span(self.target,input_s,packed,published)
+                else:
+                    if packed_tile.ready_in_sram is not True:
+                        raise ValueError('packed activation must be committed in target SRAM')
+                    published()
 
             def run_records(k, activation, shift):
                 slots = {}
@@ -158,19 +168,36 @@ class Projection:
         return execute
 
     def read_span(self, sram, start, words, done):
-        parts = []
-
-        def step():
-            if len(parts) == words:
-                done(b"".join(parts))
+        parts = [None] * words
+        issued = returned = pending = 0
+        scheduled = False
+        def schedule():
+            nonlocal scheduled
+            if not scheduled and issued < words and pending < 2:
+                scheduled = True
+                self.edge(issue, 2)
+        def issue():
+            nonlocal issued, pending, scheduled
+            scheduled = False
+            if issued == words or pending == 2:
                 return
-
-            def returned(data):
-                parts.append(data)
-                self.edge(step)
-
-            sram.access(start + len(parts), returned)
-        step()
+            index = issued
+            issued += 1
+            pending += 1
+            def complete(data):
+                nonlocal pending, returned
+                if parts[index] is not None:
+                    raise ValueError('duplicate A SRAM return')
+                parts[index] = data
+                pending -= 1
+                returned += 1
+                if returned == words:
+                    done(b''.join(parts))
+                else:
+                    schedule()
+            sram.access(start + index, complete)
+            schedule()
+        schedule()
 
     def write_span(self, sram, start, data, done):
         def step(offset):
@@ -182,19 +209,34 @@ class Projection:
         step(0)
 
     def fetch(self, base, size, done):
-        parts = []
+        """M weight banks issue tagged beats without waiting for previous returns."""
+        if size not in (1088,1152) or base%64:raise ValueError("weight record extent")
+        request={"base":base,"parts":[None]*(size//64),"next":0,"returned":0,"done":done}
+        self.fetch_queue.append(request)
+        self._schedule_fetch()
 
-        def beat():
-            offset = len(parts) * 64
-            if offset == size:
-                done(b"".join(parts))
-                return
-            address = base + offset
+    def _schedule_fetch(self):
+        if self.fetch_queue and self.fetch_pending<32 and not self.fetch_scheduled:
+            self.fetch_scheduled=True
+            self.edge(self._issue_fetch)
 
-            def returned():
-                self.stats["weight_read_returns"] += 1
-                parts.append(self.memory(address))
-                beat()
-
-            self.dram.submit(Transfer(address), returned, channel=(base >> 11) & 1)
-        beat()
+    def _issue_fetch(self):
+        self.fetch_scheduled=False
+        if not self.fetch_queue or self.fetch_pending>=32:return
+        request=self.fetch_queue.popleft()
+        index=request["next"];request["next"]+=1
+        if request["next"]<len(request["parts"]):self.fetch_queue.append(request)
+        address=request["base"]+index*64
+        self.fetch_pending+=1
+        self.stats["weight_read_peak_outstanding"]=max(
+            self.stats["weight_read_peak_outstanding"],self.fetch_pending)
+        def returned():
+            if request["parts"][index] is not None:raise ValueError("duplicate weight response")
+            request["parts"][index]=self.memory(address)
+            request["returned"]+=1;self.fetch_pending-=1
+            self.stats["weight_read_returns"]+=1
+            if request["returned"]==len(request["parts"]):
+                request["done"](b"".join(request["parts"]))
+            self._schedule_fetch()
+        self.dram.submit(Transfer(address),returned,channel=(request["base"]>>11)&1)
+        self._schedule_fetch()

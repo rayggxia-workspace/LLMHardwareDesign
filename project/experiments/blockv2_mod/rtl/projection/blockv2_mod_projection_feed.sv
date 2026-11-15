@@ -131,6 +131,7 @@ module blockv2_mod_projection_feed #(parameter logic [31:0] TOPOLOGY=25001)(
   .release_ready({2'b11,release_ready}),.lease_release(release_window),
   .done_valid(seq_done),.done_error(seq_error),.done_ready(done_ready&&occupied&&!bad));
  s32_a16_tile_quantizer #(.SESSION_IDS(1'b1)) quant(
+  .observe_start(1'b0),.observe_valid(1'b0),.observe_data(128'd0),.observed_valid(),.observed_shift(),
   .clk,.reset,.cmd_valid(quant_valid),.cmd_ready(quant_ready),.cmd_key(input_key),
   .cmd_generation(lease_generation),.cmd_kk(lease_k),.cmd_session(session),
   .cmd_source(source_base+10'((lease_k-first_k)>>2)),.cmd_destination(scratch_base),

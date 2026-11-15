@@ -1,5 +1,7 @@
 """Validate the executable package/product/base join without claiming physical timing."""
 def validate(wiring,plan_sha256,hardware):
+ from command_pipeline_contract import validate_service_pipeline
+ validate_service_pipeline(hardware)
  if wiring.get('schema')!='native-product-wiring/1' or wiring.get('rtl_binding_complete') is not True:
   raise ValueError('complete selected RTL product wiring is required')
  if plan_sha256 not in wiring.get('plan_sha256',[]):

@@ -43,6 +43,8 @@ def package(plan,out,topology,product_wiring=None):
         if not modern:raise ValueError('product binding requires a macro-native plan')
         validate(product_wiring,plan['plan_sha256'],plan['hardware'])
     if modern:
+        from command_pipeline_contract import validate_service_pipeline
+        validate_service_pipeline(plan['hardware'])
         from check_pr185_control_admission import validate as admit_controls
         admit_controls(plan['hardware'])
         semantic={k:v for k,v in plan.items() if k!='plan_sha256'}

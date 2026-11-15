@@ -7,6 +7,10 @@ ROOT=Path(__file__).resolve().parents[1]
 src=ROOT/'rtl/control/native_shared_read_plane.sv'
 s=src.read_text()
 s=s.replace('native_shared_read_plane','native_shared_memory_plane')
+# Replace only the inherited read adapters, before appending ordered write clients.
+old_adapter='native64_dma_serial_client #(.SERIAL_LIMIT(SERVICE_SERIAL_LIMIT)) serial'
+assert old_adapter in s
+s=s.replace(old_adapter,'native64_dma_read_window_client #(.SERIAL_LIMIT(SERVICE_SERIAL_LIMIT),.OUTSTANDING(4)) read_window')
 s=s.replace('native_shared_read_dma #','native_shared_memory_dma #')
 s=s.replace('.debug_generation(debug_generation)', '.debug_generation(debug_generation),.transport_idle(transport_idle)')
 # Internal packed c_* wires only; the public typed LC/M client interface stays 12.
@@ -86,11 +90,13 @@ old=json.loads((ROOT/'hardware/shared-read-plane.json').read_text())
 old.update(schema='shared-memory-plane/1')
 old['sources'].pop(str(ROOT/'rtl/control/native_shared_read_dma.sv'))
 old['sources'].pop(str(src))
-for p in (target,ROOT/'rtl/control/native_shared_memory_dma.sv'):
+for p in (target,ROOT/'rtl/control/native_shared_memory_dma.sv',ROOT/'rtl/control/native64_dma_read_window_client.sv'):
  old['sources'][str(p)]=sha256(p.read_bytes()).hexdigest()
-old['instances']={'native_shared_memory_dma':1,'native64_dma_serial_client':18}
+old['instances']={'native_shared_memory_dma':1,'native64_dma_serial_client':9,'native64_dma_read_window_client':9}
 old['write_client_map']={o:c+9 for o,c in old['service_client_map'].items()}
 old['write_payload_bytes']=9*64
+old['read_slots_per_owner']=4
+old['write_slots_per_owner']=1
 old['write_completion']='backend commit ACK; response payload bit0 carries write error, no early source completion'
 old['shared_resource_contract']='read and write share the same 64 entries, 6 return skids and 4/3 issue budget per channel'
 old['backend_interface']='four combined read/write lanes; write selector and payload are actual registered-parent signals'

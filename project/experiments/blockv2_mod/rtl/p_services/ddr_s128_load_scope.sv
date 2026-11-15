@@ -47,10 +47,8 @@ module ddr_s128_load_scope #(
     typedef enum logic [1:0] {IDLE, ACTIVE, REPORT} state_t;
     state_t state;
     logic cancelled;
-    logic [9:0] destination;
     logic launch_ready, done_valid, done_error;
     logic [63:0] loader_read_tag;
-    logic [8:0] loader_address;
     // A physical client may serve multiple LCs with independent ticket
     // namespaces. Each command owns 128 serials on the 31-bit DMA interface.
     logic [23:0] dma_sequence;
@@ -69,8 +67,8 @@ module ddr_s128_load_scope #(
     wire accept = service_valid && service_ready;
     wire launch = accept && valid_descriptor && !exhausted;
     wire abort_now = service_cancel_valid && service_cancel_ready;
-    wire read_matched = !rd_rsp_error && rd_rsp_tag==rd_tag;
-    wire write_matched = !s_rsp_error && s_rsp_tag==s_tag;
+    wire read_matched = !rd_rsp_error && rd_rsp_tag[63:7]==rd_tag[63:7];
+    wire write_matched = !s_rsp_error; // The loader checks each acknowledged address tag.
 
     assign service_ready = !reset && state==IDLE && launch_ready;
     assign service_done_valid = !reset && state==REPORT;
@@ -78,35 +76,22 @@ module ddr_s128_load_scope #(
     // Accept a late cancel while holding the already settled terminal.
     assign service_cancel_ready = !reset && state!=IDLE;
     assign rd_tag = {25'd0,(LOCAL_DMA_SEQUENCE ? {8'd0,dma_sequence} : service_done_ticket),7'd0} | loader_read_tag;
-    generate if (ROW512) begin: row
-        wire _unused=^{destination,loader_address};
-        assign loader_address='0;
         s128_ddr_range_load loader(
-            .clk,.reset,.launch_valid(launch),.launch_ready(launch_ready),
-            .launch_base(source_base),.launch_s_base(destination_word[9:0]),.launch_bursts(8'd8),
+            .clk,.reset,.cancel(cancelled||abort_now),.launch_valid(launch),.launch_ready(launch_ready),
+            .launch_base(source_base),.launch_s_base(destination_word[9:0]),.launch_bursts(ROW512 ? 8'd8 : 8'd128),
             .launch_pair(1'b0),.launch_pair_beat(1'b0),.launch_pair_high(1'b0),
             .done_valid,.done_error,.done_ready(state==ACTIVE),
             .rd_valid,.rd_ready,.rd_address,.rd_tag(loader_read_tag),.rd_rsp_valid,.rd_rsp_ready,
-            .rd_rsp_tag(read_matched ? loader_read_tag : loader_read_tag ^ 64'd1),.rd_rsp_data,
+            .rd_rsp_error(rd_rsp_error),
+            .rd_rsp_tag(rd_rsp_tag[63:7]==rd_tag[63:7] ? {57'd0,rd_rsp_tag[6:0]} : 64'hffff_ffff_ffff_ffff),.rd_rsp_data,
             .s_valid,.s_ready,.s_address,.s_data,.s_tag,.s_rsp_valid,.s_rsp_ready,
-            .s_rsp_tag(s_rsp_error ? s_tag ^ 32'd1 : s_rsp_tag));
-    end else begin: tile
-        assign s_address = destination + {1'b0,loader_address};
-        ffn_x_ddr_load #(.RELEASE_ON_ERROR(1'b1)) loader(
-            .clk,.reset,.launch_valid(launch),.launch_ready,.launch_base(source_base),
-            .done_valid,.done_error,.done_ready(state==ACTIVE),
-            .rd_valid,.rd_ready,.rd_address,.rd_tag(loader_read_tag),.rd_rsp_valid,.rd_rsp_ready,
-            .rd_rsp_tag(read_matched ? loader_read_tag : loader_read_tag ^ 64'd1),.rd_rsp_data,
-            .s_valid,.s_ready,.s_address(loader_address),.s_data,.s_tag,.s_rsp_valid,.s_rsp_ready,
-            .s_rsp_tag(s_rsp_error ? s_tag ^ 32'd1 : s_rsp_tag));
-    end endgenerate
+            .s_rsp_error,.s_rsp_tag(s_rsp_tag));
 
     always_ff @(posedge clk) begin
         if (reset) begin
             state <= IDLE;
             dma_sequence <= 0;
             cancelled <= 0;
-            destination <= 0;
             service_done_owner <= 0;
             service_done_ticket <= 0;
             service_done_status <= 0;
@@ -116,7 +101,6 @@ module ddr_s128_load_scope #(
             case (state)
                 IDLE: if (accept) begin
                     cancelled <= 0;
-                    destination <= destination_word[9:0];
                     service_done_owner <= service_owner;
                     service_done_ticket <= service_ticket;
                     service_done_status <= !valid_descriptor ? BAD_DESCRIPTOR :

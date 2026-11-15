@@ -1,0 +1,75 @@
+{
+  "schema": "command-pipeline-capacity/1",
+  "passed": true,
+  "source_sha256": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native64_dma_read_window_client.sv": "e5e542c6e9954c484f4f31f82ed2b4d441abecc53d58b9ef75c4d6c2bf94cfff",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_shared_memory_plane.sv": "d1948a2bd68261bf87e0783c2ca5955ccd6dc080670ea4f8c8f7ea2e497c3545",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_shared_memory_dma.sv": "253dcddcea5b156ee7608624a1ec8870902c2406646bb0e3c7ca944b19b9c7c1",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/projection_service_cluster.sv": "6c311df1121db12100b88496da97dc10dbb553b269aa496df7bd4a38b26f65ab",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/p_services/s128_ddr_range_load.sv": "33025e1f78a009644cb8e151357762833444a238bef757cf99fd605d8e1a891e",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/p_services/ddr_s128_load_scope.sv": "dc9d7b40dc81ca0ff1108be1103aeaad880ecf483e6e7534265f89cfa3038164",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/n32_service_cluster.sv": "a855c051a80cc21b11a0d9b0da45668a0453fb9dbe4fafc718aefee15d9dca24",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/e32_service_cluster.sv": "c271c02c7771ccffa80f20566f2a8d0c57a03d12fe1e2e9b0952cebcdbf4519b",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/services/indexed_gather_service_controller.sv": "24380bc97c563ea883742ded5de358a2425d4d2f541267287986bf592876b95b",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/services/projection_local_source.sv": "ab914d6e59c5401659d1c90d776b8e708f2eb9800c75ea7e2355c60c4a000e64",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/projection/s32_a16_tile_quantizer.sv": "bfae4990b77a9a2decfa783bd600029480f056ffb63857b13027a02c86ff5ed3",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/services/private_a_tile_abort_frontend.sv": "7c1b68cec4d3113c45cdff51f9cbfe961d499f15760a57e33acff689c43231fb",
+    "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/w8a16_v1/weight_records.sv": "80fa5a6c3e1c9d23c59d69a14f9023468903d00fdf0922b0bd7b7cc261b791ab",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/services/e32_dot_service_controller.sv": "ff59b59961aa820036db82c258cb5b1c9dcf4d1fb127fefe2e919164c026bac2",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/macros/e_s32_mac_ap64.sv": "58bd0b05b98f826a8595f5e096e051dae7e8c94418e5ac139771fc8b9d581bdd",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/macros/e_s32_mac_native.sv": "4d2418fea7ad7d18a065766775105c0e985506c44ec65126a82b5dd3b8d0d745",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/p_services/s128_store_pipeline.sv": "ee0a6f0b760b490b0a4eac032d56630f55cf21d3e8fc5c7a68059964b423e437",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/p_services/s128_kv_store_scope.sv": "d9466e4359cebf733eff48a9c1af90ed503b4560ad33b0a8c99231740f438665"
+  },
+  "read_slots_per_owner": 4,
+  "write_slots_per_owner": 1,
+  "service_pipeline": {
+    "revision": "command-pipeline/1",
+    "activation_read_slots": 2,
+    "activation_write_slots": 2,
+    "weight_read_credits": 32,
+    "activation_prefetch_windows": 1,
+    "a_source_read_credits": 2,
+    "activation_stats_on_load": true,
+    "quantization_read_words": 32,
+    "quantization_write_words": 16,
+    "quantization_response_slots": 2,
+    "quantization_pack_slots": 2,
+    "store_buffer_slots": 2,
+    "store_sram_read_credits": 2,
+    "store_ddr_write_credits": 1,
+    "dot_operand_cache_lines": 2,
+    "n_service_read_credits": 4,
+    "e_service_read_credits": 4,
+    "gather_activation_pipeline": true,
+    "activation_scope_pipeline": true
+  },
+  "proofs": [
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/evidence/command-pipeline/activation-capacity.json",
+      "sha256": "d19db1cbfde25825ccf71bdac56258b4fe2424f57b1f7b26b150536420fc331c"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/evidence/command-pipeline/source-115449.json",
+      "sha256": "8119e7adda000df25d6c53940c42b59a51cd3112075433809fd37aa69052bb83"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/evidence/command-pipeline/a-prefetch-115421.json",
+      "sha256": "808bb32d7dc7a33ad1afb01779211fcd257dfc5c5971f9ff0fcdaab04a6c787c"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/evidence/command-pipeline/weight-rtl-115391.json",
+      "sha256": "f6aa6dbbb53b179a2952198f884267fa9ab4f3c1f58a0d60ac8a8b6b3f24c73a"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/evidence/command-pipeline/dot-115390.json",
+      "sha256": "89bf0c1a461627e6dd01a0a0591bbce216fff4aedc690e93cf8e5fc312d5fe7c"
+    },
+    {
+      "path": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/evidence/command-pipeline/store-115446.json",
+      "sha256": "93a9f3a335abf45e66cb5c681e8da86e4b74d4f00b372820d5d5e950faf58a88"
+    }
+  ],
+  "assembly_receipt_sha256": "f0a6cfc74b194bc4694b8a6836f91ddde664da40d8cdb5aa1616aa3b91482906",
+  "scope": "RTL behavior plus exact full-assembly source closure; full model execution separately required"
+}

@@ -9,6 +9,60 @@ def call(owner,after=()):
 D=measure({'calls':[call('P0')]})['work_units']
 
 class StageTests(unittest.TestCase):
+ def test_independent_matrix_ranges_preserve_child_data_edges(self):
+  from native_range_frontier import expand
+  def tile(value,offset,source=None):
+   out={'write':{'value':value,'element_offset':offset,'elements':128}}
+   if source:out['read']=[{'root':source,'segments':[{'source_element':offset,'elements':128}]}]
+   return out
+  tasks={'A':{'kind':'MatMul','tiles':[tile('a',0),tile('a',128)]},
+         'B':{'kind':'Add','tiles':[tile('b',0,'a'),tile('b',128,'a')]}}
+  _,deps,_,parts=expand(tasks,{'A':[],'B':['A']},['A','B'],serialize_ranges=False)
+  a0,a1=parts['A'];b0,b1=parts['B']
+  self.assertEqual(deps[a0],[]);self.assertEqual(deps[a1],[])
+  self.assertEqual(deps[b0],[a0]);self.assertIn(a1,deps[b1])
+  self.assertNotIn(a1,deps[b0])
+  _,legacy,_,_=expand(tasks,{'A':[],'B':['A']},['A','B'])
+  self.assertIn(a0,legacy[a1])
+ def test_mpr_payload_reuses_activation_across_groups(self):
+  def descriptor(groups,head16):
+   raw=bytearray(128);struct.pack_into('<I',raw,0,0x3152504d)
+   raw[74]=groups;struct.pack_into('<H',raw,76,256);raw[82]=1;raw[83]=head16
+   return {'calls':[{'descriptor_hex':raw.hex(),'group':'P0','after':[]}]}
+  one=measure(descriptor(1,0),cost_model='service-payload/2')
+  sixteen=measure(descriptor(16,0),cost_model='service-payload/2')
+  head=measure(descriptor(16,1),cost_model='service-payload/2')
+  # Additional output groups require weights, not another copy of input per group.
+  self.assertEqual(sixteen['ddr_read_bytes_upper']-one['ddr_read_bytes_upper'],15*2*1088)
+  self.assertEqual(head['ddr_read_bytes_upper']-sixteen['ddr_read_bytes_upper'],16*2*64)
+  self.assertEqual(sixteen['sram_words']-one['sram_words'],15*2)
+  old=measure(descriptor(16,0))
+  self.assertGreater(old['ddr_read_bytes_upper'],sixteen['ddr_read_bytes_upper'])
+ def test_new_cost_reservation_matches_emitted_hints(self):
+  from native_stage_schedule import completion_hints
+  raw=bytearray(128);struct.pack_into('<I',raw,0,0x3152504d)
+  raw[74]=16;struct.pack_into('<H',raw,76,128);raw[82]=1
+  c={'descriptor_hex':raw.hex(),'group':'P0','after':[]}
+  r=reserve([c],{},cost_model='service-payload/2')
+  rows,_,_=dependencies([c],0,(),{})
+  self.assertEqual(r['end'],completion_hints(rows,cost_model='service-payload/2')[-1])
+ def test_source_depth_cache_matches_full_progress_oracle(self):
+  from native_source_depth import SourceDepth
+  import random
+  rng=random.Random(219)
+  for _ in range(20):
+   names=list(range(8));deps={p:[q for q in names[:p] if rng.random()<.25] for p in names}
+   parents=[p for p in names for _ in range(rng.randint(1,5))]
+   parts={p:sum(1<<i for i,v in enumerate(parents) if v==p) for p in names}
+   oracle=SourceDepth(names,deps,parts,parents,2)
+   order=list(range(len(parents)));rng.shuffle(order);done=opened=0
+   for task in order:
+    opened=oracle.advance(opened,done,task);done|=1<<task
+    exact=sum(1<<p for p in names if done&parts[p] and done&parts[p]!=parts[p])
+    self.assertEqual(opened,exact)
+    longest={}
+    for p in names:longest[p]=int(bool(exact>>p&1))+max((longest[q] for q in deps[p]),default=0)
+    self.assertEqual(oracle.legal(opened),max(longest.values())<=2)
  def test_independent_ready_work_overlaps(self):
   a=reserve([call('P0')],{})
   c=reserve([call('P2')],a['resources'])

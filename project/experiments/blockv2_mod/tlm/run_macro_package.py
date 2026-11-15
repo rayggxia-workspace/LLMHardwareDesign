@@ -31,7 +31,7 @@ def main():
  providers,models,provider_stats=build(hardware,wiring,manifest['plan_sha256'],
   clock=clock,transport=transport,memory=memory,srams=srams,g_packet=g.packet,core_ps=a.core_ps)
  scheduler=MacroScheduler(clock,transport,memory,core_ps=a.core_ps)
- calls=Counter();elapsed=Counter();started=time.monotonic()
+ calls=Counter();elapsed=Counter();service_busy=Counter();dispatch_wait=Counter();started=time.monotonic()
  report={'plan_sha256':manifest['plan_sha256'],'base_id':hardware['base_id'],
   'asset_manifest_sha256':filehash(a.assets),
   'package_manifest_sha256':filehash(a.package/'manifest.json'),
@@ -43,9 +43,14 @@ def main():
   'timing_calibrated':False,'numerically_accepted':False,'delivery_accepted':False}
  def timing(key,issue,dispatch,done):
   calls[str(key)]+=1;elapsed[str(key)]+=done-issue
+  service_busy[str(key)]+=done-dispatch;dispatch_wait[str(key)]+=dispatch-issue
   count=sum(calls.values())
   if count%500==0:print(json.dumps({'completed_calls':count,'of':manifest['native_calls'],
-   'time_ps':clock.now,'wall_seconds':time.monotonic()-started}),flush=True)
+   'time_ps':clock.now,'wall_seconds':time.monotonic()-started,
+   'service_active_ps_completed_calls':dict(service_busy),
+   'dispatch_wait_ps_completed_calls':dict(dispatch_wait),
+   'DDR':dict(backend.stats),'transport':dict(transport.stats),
+   'SRAM':{n:dict(v.stats) for n,v in srams.items()}}),flush=True)
  try:
   result=execute(a.package,scheduler=scheduler,providers=providers,timing=timing)
   clock.until(transport.drained);transport.close()
@@ -65,7 +70,8 @@ def main():
   report.update(status='failed',error=repr(e));raise
  finally:
   report.update(completed_calls=sum(calls.values()),time_ps=clock.now,wall_seconds=time.monotonic()-started,
-   active_calls=scheduler.active,service_calls=dict(calls),service_elapsed_ps=dict(elapsed),transport=dict(transport.stats),
+   active_calls=scheduler.active,service_calls=dict(calls),service_elapsed_ps=dict(elapsed),service_active_ps=dict(service_busy),
+   dispatch_wait_ps=dict(dispatch_wait),transport=dict(transport.stats),
    DDR=dict(backend.stats),SRAM={n:dict(s.stats) for n,s in srams.items()},memory=dict(memory.stats))
   (a.output/'receipt.json').write_text(json.dumps(report,indent=2)+'\n')
  print(json.dumps(report),flush=True)

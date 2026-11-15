@@ -50,7 +50,7 @@ def inspect(tree,manifest):
  counts=Counter(modules[c.get('submodname')].get('origName') for c in cells.values())
  for module,count in {'lc_native_scope_controller':9,'lc_program_store_1k':9,
  'mother_control_native64_transport128':1,'control_pm':1,'mc_lc_packet128_switch':1,
- 'native_shared_memory_dma':1,'native64_dma_serial_client':18}.items():
+ 'native_shared_memory_dma':1,'native64_dma_serial_client':9,'native64_dma_read_window_client':9}.items():
   if counts[module]!=count:raise ValueError('incorrect parent resource count '+module)
  return {'functional_instances':actual,'LC_targets':owners,'instance_counts':dict(counts)}
 def main():

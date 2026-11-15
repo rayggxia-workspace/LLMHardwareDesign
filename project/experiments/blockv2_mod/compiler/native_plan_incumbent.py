@@ -9,7 +9,7 @@ def choose(candidate,incumbent):
  for key in ('graph_sha256','hardware','storage'):
   if candidate[key]!=incumbent[key]:raise ValueError('incumbent input mismatch: '+key)
  def cost(p):
-  totals=[measure({'calls':[dict(c,index=0,after=[])]}) for c in p['calls']]
+  totals=[measure({'calls':[dict(c,index=0,after=[])]},cost_model=candidate.get('search_plan',{}).get('cost_model','structural/1')) for c in p['calls']]
   return (sum(c['ddr_read_bytes_upper']+c['ddr_write_bytes'] for c in totals),
           sum(c['work_units'] for c in totals))
  a,b=cost(candidate),cost(incumbent)

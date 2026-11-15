@@ -2,8 +2,7 @@
   "schema": "nine-control-plane/1",
   "hard_boundary": false,
   "plan_sha256": [
-    "7ac41e9e713f2869e1528091f4851cc73950bb951e49fadbb501505751624b75",
-    "80dcdf29233e05b2bc586293a4c497d1f524745bc4db3a4465a5317ab68670f6"
+    "128c70f1938f8658891a47911b21bbdac5359b4a6266ee69185b954e99101f09"
   ],
   "owners": [
     "P0",
@@ -19,6 +18,7 @@
   "selected_data_owners": [
     "C0",
     "F0",
+    "J0",
     "P0",
     "P1",
     "P2",
@@ -33,12 +33,12 @@
     "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/mother_control_native/mother_control_native64_transport128.sv": "14f0abc6a248de8f32a1a8afce4fb8fb639a191cf2579373300960bf09e2acfa",
     "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/experiments/shared_x_control/rtl/lc_native_scope_controller.sv": "eda88c6e0454bba66d430d9a9eeb60f39f8e1bf2ce1c13da51f84ee20a1670c6",
     "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/mother_control_native/mc_lc_packet128_switch.sv": "f742f2e3cce22892afc0435a62d61caa522dcbd18e0e4f1b8d535dc52c5c46f5",
-    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_shared_memory_plane.sv": "7f06f4e5a242e969c4b7b98930032499cd9a540fd60bef6125e5ac76dcd30a1a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_shared_memory_plane.sv": "d1948a2bd68261bf87e0783c2ca5955ccd6dc080670ea4f8c8f7ea2e497c3545",
     "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/w8a16_v1/m_native_leaf_s32.sv": "aaddefce1198feec79c7e265103fabbd1bfed3b0f4cddb5bed2150e8c1cf6eeb",
     "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_p_owner_control.sv": "0cfedbc1559ddf8b3409beddc746471dfe41542a14181e6fa02124c84474e650",
     "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_e_owner_control.sv": "3d8f4090bfc8a3bebc12999272b402089a0298e2331e5f6c1fda76aa160439e4",
     "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_n_owner_control.sv": "e6742266b91360d0df3d293f63dfed44d861a5883ca0d3ff70523f54da971bf3",
-    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_nine_control_plane.sv": "2fb6b0b5eb63e5219cc4c7c7790399469c0062436c7da9f512973bb4ee3e76ae"
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_nine_control_plane.sv": "bd45c860c38626953b7d638500659c575a55739043ae5ca7c85d132f126d7260"
   },
   "selected_memory_links": [
     {
@@ -758,6 +758,150 @@
       "service_pin": "wr_done_error",
       "memory_pin": "write_done_error",
       "lane": 4,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "rd_valid",
+      "memory_pin": "service_req_valid",
+      "lane": 5,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "rd_ready",
+      "memory_pin": "service_req_ready",
+      "lane": 5,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "rd_address",
+      "memory_pin": "service_req_address",
+      "lane": 5,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "rd_tag",
+      "memory_pin": "service_req_tag",
+      "lane": 5,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "rd_rsp_valid",
+      "memory_pin": "service_rsp_valid",
+      "lane": 5,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "rd_rsp_ready",
+      "memory_pin": "service_rsp_ready",
+      "lane": 5,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "rd_rsp_tag",
+      "memory_pin": "service_rsp_tag",
+      "lane": 5,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "rd_rsp_data",
+      "memory_pin": "service_rsp_data",
+      "lane": 5,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "rd_rsp_error",
+      "memory_pin": "service_rsp_error",
+      "lane": 5,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "wr_valid",
+      "memory_pin": "write_req_valid",
+      "lane": 5,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "wr_ready",
+      "memory_pin": "write_req_ready",
+      "lane": 5,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "wr_address",
+      "memory_pin": "write_req_address",
+      "lane": 5,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "wr_tag",
+      "memory_pin": "write_req_tag",
+      "lane": 5,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "wr_data",
+      "memory_pin": "write_req_data",
+      "lane": 5,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "wr_done_valid",
+      "memory_pin": "write_done_valid",
+      "lane": 5,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "wr_done_ready",
+      "memory_pin": "write_done_ready",
+      "lane": 5,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "wr_done_tag",
+      "memory_pin": "write_done_tag",
+      "lane": 5,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "J0",
+      "service_pin": "wr_done_error",
+      "memory_pin": "write_done_error",
+      "lane": 5,
       "width": 1,
       "class": "candidate_selected"
     },

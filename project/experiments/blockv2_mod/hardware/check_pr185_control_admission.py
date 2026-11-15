@@ -12,8 +12,6 @@ from macro_inventory import build as baseline, build_mod
 from check_parent_service_structure import FORBIDDEN
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'evidence/architecture-revision-185'
-RECEIPT=OUT/'native-owner-control-structure-receipt.json'
-XML_DIR=OUT/'native-owner-controls-114847'
 
 def check_hierarchy(tree, hardware, expected):
     modules={m.get('name'):m.get('origName') for m in tree.findall('./netlist/module')}
@@ -32,7 +30,17 @@ def check_hierarchy(tree, hardware, expected):
         raise ValueError('one real LC and finite 1 KiB PM required per control owner')
     return counts
 
-def validate(hardware):
+def validate(hardware,*,receipt_path=None,xml_directory=None):
+    evidence=hardware.get('control_admission_evidence',{})
+    explicit_receipt=receipt_path is not None
+    receipt_path=receipt_path or evidence.get('receipt')
+    xml_directory=xml_directory or evidence.get('xml_directory')
+    if not receipt_path or not xml_directory:
+        raise ValueError('explicit fresh control elaboration receipt/XML directory required')
+    receipt_path=Path(receipt_path);xml_directory=Path(xml_directory)
+    if not explicit_receipt and evidence.get('receipt_sha256') and sha256(receipt_path.read_bytes()).hexdigest()!=evidence['receipt_sha256']:
+        raise ValueError('control receipt seal mismatch')
+
     reference=baseline()
     if set(hardware['control_groups'])!=set(reference['control_groups']):
         raise ValueError('PR185 requires the original nine control owners')
@@ -51,7 +59,9 @@ def validate(hardware):
             raise ValueError('unregistered macro revision: '+name)
         if macro.get('hard_boundary') is not True or macro['control_owner']!=old['control_owner']:
             raise ValueError('invalid functional macro boundary or ownership: '+name)
-    receipt=json.loads(RECEIPT.read_text())
+    receipt=json.loads(receipt_path.read_text())
+    if {r['family'] for r in receipt['rows']}!={'p','n','e'} or len(receipt['rows'])!=3:
+        raise ValueError('all three control families required')
     # Hashes are frozen evidence, never generated from current sources here.
     source_hashes={}
     for name,h in receipt['sources'].items():
@@ -64,7 +74,7 @@ def validate(hardware):
     parents=[]
     active=set()
     for row in receipt['rows']:
-        path=XML_DIR/(row['family']+'.xml')
+        path=xml_directory/(row['family']+'.xml')
         if sha256(path.read_bytes()).hexdigest()!=row['xml_sha256']:
             raise ValueError('modified elaboration evidence: '+str(path))
         tree=ET.parse(path).getroot()
@@ -88,7 +98,13 @@ def validate(hardware):
             'scope':'recorded control hierarchies only; data wiring, full assembly and execution still required'}
 
 if __name__=='__main__':
-    result=validate(json.loads((ROOT/'hardware/blockv2-mod-macros.json').read_text()))
+    import argparse
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--hardware',type=Path,required=True)
+    parser.add_argument('--receipt',type=Path,required=True)
+    parser.add_argument('--xml-directory',type=Path,required=True)
+    args=parser.parse_args()
+    result=validate(json.loads(args.hardware.read_text()),receipt_path=args.receipt,xml_directory=args.xml_directory)
     target=OUT/'current-control-admission.json'
     target.write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps({'parents':len(result['parents']),

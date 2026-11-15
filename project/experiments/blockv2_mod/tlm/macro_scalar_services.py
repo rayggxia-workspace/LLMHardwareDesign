@@ -107,13 +107,15 @@ def dot(raw):
  same_descriptor(raw,dot_encode(topology=topology,k=k,columns=columns,shift=shift,result_word=word,
   a_address=a,b_address=b,a_stride=astride,b_k_stride=bstride,b_column_stride=cstride,
   scale=scale if enabled else None,scale_shift=scale_shift))
- cache_address=None;cache=None;acc=[0]*columns
+ cache_addresses=[None,None];caches=[None,None];acc=[0]*columns
  yield ('cycles',6)
  for pos in range(k):
   values=[]
-  for addr in [a+pos*astride]+[b+pos*bstride+lane*cstride for lane in range(columns)]:
-   if cache_address!=addr//64*64:
-    cache_address=addr//64*64;cache=yield ('read',cache_address)
+  for operand,addr in enumerate([a+pos*astride]+[b+pos*bstride+lane*cstride for lane in range(columns)]):
+   line=addr//64*64;slot=0 if operand==0 else 1
+   if line in cache_addresses:cache=caches[cache_addresses.index(line)]
+   else:
+    cache=yield ('read',line);cache_addresses[slot]=line;caches[slot]=cache
    values.append(struct.unpack('<i',cache.slice(addr%64,4).require())[0])
    yield ('cycles',1)
   for lane in range(columns):

@@ -2,7 +2,6 @@
 // Single-head Q16 causal attention. The LC supplies the finite window and KV region.
 module s128_attention_core_scope #(
     parameter logic [31:0] TOPOLOGY=0,
-    parameter bit PIPELINE_KV_WRITES=1'b0,
     parameter int V_READS_PER_16=4
 ) (
     input logic clk,reset,
@@ -110,21 +109,25 @@ module s128_attention_core_scope #(
     logic [31:0] load_s_tags[2];
     logic load_s_head,load_s_tail;
     wire [31:0] accepted_s_tag=load_s_tags[load_s_head];
-    logic [63:0] accepted_rd_tag,accepted_load_tag;
+    logic [63:0] accepted_rd_tag[0:1],accepted_load_tag[0:1];
+    logic [1:0] read_pending;
+    wire match0=read_pending[0]&&rd_rsp_tag==accepted_rd_tag[0];
+    wire match1=read_pending[1]&&rd_rsp_tag==accepted_rd_tag[1];
+    wire response_slot=match1;
     assign rd_tag={service_done_ticket,serial};
-    wire good_rd=rd_rsp_tag==accepted_rd_tag&&!rd_rsp_error;
-    s128_ddr_range_load #(.PIPELINE_WRITES(PIPELINE_KV_WRITES)) load_span(
-        .clk,.reset(datapath_reset),.launch_valid(state==K_REFILL||state==V_REFILL),.launch_ready(load_ready),
+    wire good_rd=match0||match1;
+    s128_ddr_range_load load_span(
+        .clk,.reset(datapath_reset),.cancel(cancelled||cancel),.launch_valid(state==K_REFILL||state==V_REFILL),.launch_ready(load_ready),
         .launch_base(refill_base),.launch_s_base(refill_s_base),
         .launch_bursts(value_refill ? (V_READS_PER_16==4 ? 8'd2 : 8'd1) : {1'b0,qk_columns,3'b0}),
         .launch_pair(value_refill&&!REUSE_V),.launch_pair_beat(V_READS_PER_16==4&&group_index[1]),
         .launch_pair_high(group_index[0]),
         .done_valid(load_done),.done_error(load_error),.done_ready(state==K_WAIT||state==V_WAIT),
-        .rd_valid,.rd_ready,.rd_address,.rd_tag(load_rd_tag),.rd_rsp_valid,.rd_rsp_ready(load_rd_take),
-        .rd_rsp_tag(good_rd ? accepted_load_tag : accepted_load_tag ^ 64'd1),.rd_rsp_data,
+        .rd_valid,.rd_ready,.rd_address,.rd_tag(load_rd_tag),.rd_rsp_error(rd_rsp_error),.rd_rsp_valid,.rd_rsp_ready(load_rd_take),
+        .rd_rsp_tag(good_rd ? accepted_load_tag[response_slot] : 64'hffff_ffff_ffff_ffff),.rd_rsp_data,
         .s_valid(load_s_valid),.s_ready(load_active&&s_req_ready),.s_address(load_s_address),
         .s_data(load_s_data),.s_tag(load_s_tag),.s_rsp_valid(load_active&&s_rsp_valid),
-        .s_rsp_ready(load_s_take),.s_rsp_tag(s_rsp_error ? accepted_s_tag ^ 32'd1 : accepted_s_tag));
+        .s_rsp_ready(load_s_take),.s_rsp_error,.s_rsp_tag(accepted_s_tag));
     assign rd_rsp_ready=load_rd_take;
 
     wire dot_snapshot=state==V_SAVE||state==V_SAVE_WAIT||state==V_RESTORE||state==V_RESTORE_WAIT;
@@ -233,7 +236,7 @@ module s128_attention_core_scope #(
             coefficient<=0; serial<=0; scale_input<=0; scale_output<=0; scale_send<=0; scale_high<=0;
             load_s_tags[0]<=0; load_s_tags[1]<=0;
             load_s_head<=0; load_s_tail<=0;
-            accepted_rd_tag<=0; accepted_load_tag<=0;
+            accepted_rd_tag[0]<=0;accepted_rd_tag[1]<=0;accepted_load_tag[0]<=0;accepted_load_tag[1]<=0;read_pending<=0;
             service_done_owner<=0; service_done_ticket<=0; service_done_status<=0;
             service_done_read_bytes<=0; service_done_write_bytes<=0;
         end else begin
@@ -243,9 +246,10 @@ module s128_attention_core_scope #(
                 load_s_tail<=!load_s_tail;
             end
             if(load_active&&s_rsp_valid&&load_s_take) load_s_head<=!load_s_head;
+            if(rd_rsp_valid&&rd_rsp_ready&&good_rd)read_pending[response_slot]<=0;
             if(rd_valid&&rd_ready) begin
-                accepted_rd_tag<=rd_tag;
-                accepted_load_tag<=load_rd_tag;
+                accepted_rd_tag[load_rd_tag[0]]<=rd_tag;read_pending[load_rd_tag[0]]<=1;
+                accepted_load_tag[load_rd_tag[0]]<=load_rd_tag;
                 serial<=serial+1'b1;
             end
             if(rd_rsp_valid&&rd_rsp_ready&&good_rd) service_done_read_bytes<=service_done_read_bytes+64;

@@ -11,13 +11,14 @@ def main():
  p.add_argument('--services',type=Path,required=True)
  p.add_argument('--output',type=Path,required=True)
  p.add_argument('--range-tiles',type=int,default=0)
+ p.add_argument('--independent-ranges',action='store_true',help='remove false full-K MatMul output-range edges; requires joint stage-resource search')
  p.add_argument('--joint',action='store_true',help='joint native dirty range frontier; requires --range-tiles 1')
  p.add_argument('--topology',type=int,default=18503)
  a=p.parse_args()
  names=['native-recipe-graph.json','native-operand-recipes.json','native-value-layout.json']
  data=[json.loads((a.graph_directory/n).read_text()) for n in names]
  hardware=json.loads(a.hardware.read_text());services=json.loads(a.services.read_text())['services']
- frontend=Frontend(*data,hardware,services,a.topology,range_tiles=a.range_tiles,joint=a.joint)
+ frontend=Frontend(*data,hardware,services,a.topology,range_tiles=a.range_tiles,joint=a.joint,independent_ranges=a.independent_ranges)
  frontend.export(a.output,progress=lambda line:print(line,flush=True))
  inputs=[a.graph_directory/n for n in names]+[a.hardware,a.services]
  sources=list((ROOT/'compiler').glob('native_*.py'))+[Path(__file__),

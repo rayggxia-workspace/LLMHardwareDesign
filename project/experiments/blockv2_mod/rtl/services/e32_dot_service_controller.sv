@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 // Parent control/format adapter. Arithmetic is performed only by the selected
-// E32 MAC macro. One DDR cache line and one outstanding read; no hidden dot core.
+// E32 MAC macro. Independent A/B DDR cache lines and one outstanding read; no hidden dot core.
 module e32_dot_service_controller #(parameter logic [31:0] TOPOLOGY=0)(
  input wire clk,reset,
  input wire service_valid,output wire service_ready,
@@ -29,7 +29,7 @@ module e32_dot_service_controller #(parameter logic [31:0] TOPOLOGY=0)(
  localparam [15:0] BAD_DESC=16'h0340,ABORTED=16'h0341,DDR_FAULT=16'h0342,E_FAULT=16'h0343,
   SRAM_FAULT=16'h0344,ADDRESS_FAULT=16'h0345;
  reg [4:0] state,return_state;
- reg cancelled,macro_live,cache_valid,out_high,e_error;
+ reg cancelled,macro_live,cache_a_valid,cache_b_valid,out_high,e_error;
  reg [1:0] beat,lane;
  reg [15:0] full_k,k;
  reg [2:0] columns;
@@ -37,8 +37,8 @@ module e32_dot_service_controller #(parameter logic [31:0] TOPOLOGY=0)(
  reg [9:0] result_word;
  reg scale_enabled;
  reg [31:0] coefficient,a_stride,b_k_stride,b_column_stride,a_value;
- reg [63:0] a_address,b_address,b_lane_address,read_address,cache_address;
- reg [511:0] cache_data;
+ reg [63:0] a_address,b_address,b_lane_address,read_address,cache_a_address,cache_b_address;
+ reg [511:0] cache_a_data,cache_b_data;
  reg [127:0] b_values,result;
  reg [31:0] session,read_sequence;
  wire [15:0] d_k=service_descriptor[128+:16],d_result=service_descriptor[160+:16];
@@ -82,17 +82,20 @@ module e32_dot_service_controller #(parameter logic [31:0] TOPOLOGY=0)(
  assign resource_e_in_minus=0;
  assign resource_e_out_ready=!reset&&waiting;
  wire [63:0] operand_address=state==A_READ?a_address:b_lane_address;
- wire cache_hit=cache_valid&&cache_address=={operand_address[63:6],6'd0};
- wire [31:0] cached_value=cache_data[32*operand_address[5:2]+:32];
+ wire cache_a_hit=cache_a_valid&&cache_a_address=={operand_address[63:6],6'd0};
+ wire cache_b_hit=cache_b_valid&&cache_b_address=={operand_address[63:6],6'd0};
+ wire cache_hit=cache_a_hit||cache_b_hit;
+ wire [511:0] selected_cache=cache_a_hit?cache_a_data:cache_b_data;
+ wire [31:0] cached_value=selected_cache[32*operand_address[5:2]+:32];
  wire [64:0] next_a={1'b0,a_address}+{33'd0,a_stride};
  wire [64:0] next_b={1'b0,b_address}+{33'd0,b_k_stride};
  wire [64:0] next_lane={1'b0,b_lane_address}+{33'd0,b_column_stride};
  always @(posedge clk)begin
   if(reset)begin
-   state<=IDLE;return_state<=A_READ;cancelled<=0;macro_live<=0;cache_valid<=0;out_high<=0;e_error<=0;
+   state<=IDLE;return_state<=A_READ;cancelled<=0;macro_live<=0;cache_a_valid<=0;cache_b_valid<=0;out_high<=0;e_error<=0;
    beat<=0;lane<=0;full_k<=0;k<=0;columns<=0;shift<=0;scale_shift<=0;result_word<=0;scale_enabled<=0;
    coefficient<=0;a_stride<=0;b_k_stride<=0;b_column_stride<=0;a_value<=0;
-   a_address<=0;b_address<=0;b_lane_address<=0;read_address<=0;cache_address<=0;cache_data<=0;
+   a_address<=0;b_address<=0;b_lane_address<=0;read_address<=0;cache_a_address<=0;cache_b_address<=0;cache_a_data<=0;cache_b_data<=0;
    b_values<=0;result<=0;session<=0;read_sequence<=0;
    service_done_owner<=0;service_done_ticket<=0;service_done_status<=0;
    service_done_read_bytes<=0;service_done_write_bytes<=0;
@@ -150,7 +153,7 @@ module e32_dot_service_controller #(parameter logic [31:0] TOPOLOGY=0)(
     IDLE:if(service_valid&&service_ready)begin
      service_done_owner<=service_owner;service_done_ticket<=service_ticket;
      service_done_status<=legal?0:BAD_DESC;service_done_read_bytes<=0;service_done_write_bytes<=0;
-     cancelled<=0;macro_live<=0;cache_valid<=0;beat<=0;out_high<=0;e_error<=0;result<=0;
+     cancelled<=0;macro_live<=0;cache_a_valid<=0;cache_b_valid<=0;beat<=0;out_high<=0;e_error<=0;result<=0;
      full_k<=d_k;k<=0;columns<=d_columns[2:0];shift<=d_shift[5:0];result_word<=d_result[9:0];
      a_address<=d_a;b_address<=d_b;b_lane_address<=d_b;
      a_stride<=service_descriptor[320+:32];b_k_stride<=service_descriptor[352+:32];
@@ -180,7 +183,11 @@ module e32_dot_service_controller #(parameter logic [31:0] TOPOLOGY=0)(
      read_sequence<=read_sequence+1'b1;
      if(rd_rsp_error||rd_rsp_tag!=rd_tag)begin service_done_status<=DDR_FAULT;state<=ABORT_SEND;end
      else if(cancel_now)begin service_done_status<=ABORTED;state<=ABORT_SEND;end
-     else begin cache_valid<=1;cache_address<=read_address;cache_data<=rd_rsp_data;state<=return_state;end
+     else begin
+      if(return_state==A_READ)begin cache_a_valid<=1;cache_a_address<=read_address;cache_a_data<=rd_rsp_data;end
+      else begin cache_b_valid<=1;cache_b_address<=read_address;cache_b_data<=rd_rsp_data;end
+      state<=return_state;
+     end
     end
     WRITE_REQ:if(s_req_valid&&s_req_ready)state<=WRITE_WAIT;
     WRITE_WAIT:if(s_rsp_valid&&s_rsp_ready)begin

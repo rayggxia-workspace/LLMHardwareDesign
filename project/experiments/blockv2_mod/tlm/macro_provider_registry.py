@@ -4,8 +4,10 @@ from native_product_binding import validate
 from macro_service_runner import Runner
 from macro_projection_service import LocalProjection
 import macro_scalar_services as scalar
+from command_pipeline_contract import validate_service_pipeline
 
 def build(hardware,wiring,plan_sha256,*,clock,transport,memory,srams,g_packet,core_ps):
+ validate_service_pipeline(hardware)
  validate(wiring,plan_sha256,hardware)
  sites={n for n,m in hardware['macro_instances'].items() if m['role']=='S'}
  if set(srams)!=sites:raise ValueError('one actual model for each declared SRAM macro is required')

@@ -3,8 +3,7 @@
   "hard_boundary": false,
   "base_id": "blockv2-mod-pr185-memory-c6ef5d0bffff12ab",
   "plan_sha256": [
-    "7ac41e9e713f2869e1528091f4851cc73950bb951e49fadbb501505751624b75",
-    "80dcdf29233e05b2bc586293a4c497d1f524745bc4db3a4465a5317ab68670f6"
+    "128c70f1938f8658891a47911b21bbdac5359b4a6266ee69185b954e99101f09"
   ],
   "functional_instances": {
     "P0.M": "m_native_leaf_s32",
@@ -39,7 +38,7 @@
     "J1.T": "transaction6k"
   },
   "sources": {
-    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_nine_control_plane.sv": "2fb6b0b5eb63e5219cc4c7c7790399469c0062436c7da9f512973bb4ee3e76ae",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_nine_control_plane.sv": "bd45c860c38626953b7d638500659c575a55739043ae5ca7c85d132f126d7260",
     "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/w8a16_v1/m_native_leaf_s32.sv": "aaddefce1198feec79c7e265103fabbd1bfed3b0f4cddb5bed2150e8c1cf6eeb",
     "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/w8a16_v1/g_s32.sv": "119f5e81ee271164aab41e7e60181cb75adb6269a20abb6d88e2680ce2efe8d2",
     "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/s_sram/local_s_p.sv": "08780f5d99b9b816c0250b74595fc68354b360a225a4be526dab28afbdb69112",
@@ -50,7 +49,7 @@
     "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/block_v2/block_v2_g.sv": "7cb5da1d1625c97f8c8486d9c9eeef97076d6a1974d41229e3280b6df37a8ad7",
     "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/macros/e_s32_mac_ap64.sv": "58bd0b05b98f826a8595f5e096e051dae7e8c94418e5ac139771fc8b9d581bdd",
     "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/block_v1/transaction6k.sv": "0b07833dffc28169ba70beafabad3d7503a31989f46fcbdcf03b15ba9026b3ef",
-    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/native_selected_nine_assembly.sv": "ba39926c1ba437695150ba26609369dfb162644fce18ffe1bb50f3687bee68c8"
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/native_selected_nine_assembly.sv": "322655189f2ed7c16cc89159c3d961aca8ba1f166999c7710ef7441ac0d7ff1a"
   },
   "selected_data_connections": [
     {
@@ -576,13 +575,273 @@
     {
       "driver": [
         "controls",
+        "J0_service_resource_e_in_valid"
+      ],
+      "sink": [
+        "J0.E32",
+        "in_valid"
+      ],
+      "net": "selected_40",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "J0.E32",
+        "in_ready"
+      ],
+      "sink": [
+        "controls",
+        "J0_service_resource_e_in_ready"
+      ],
+      "net": "selected_41",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "J0_service_resource_e_in_data"
+      ],
+      "sink": [
+        "J0.E32",
+        "in_data"
+      ],
+      "net": "selected_42",
+      "shape": "[63:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "J0_service_resource_e_in_op"
+      ],
+      "sink": [
+        "J0.E32",
+        "in_op"
+      ],
+      "net": "selected_43",
+      "shape": "[3:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "J0_service_resource_e_in_mask"
+      ],
+      "sink": [
+        "J0.E32",
+        "in_mask"
+      ],
+      "net": "selected_44",
+      "shape": "[3:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "J0_service_resource_e_in_shift"
+      ],
+      "sink": [
+        "J0.E32",
+        "in_shift"
+      ],
+      "net": "selected_45",
+      "shape": "[7:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "J0_service_resource_e_in_minus"
+      ],
+      "sink": [
+        "J0.E32",
+        "in_minus"
+      ],
+      "net": "selected_46",
+      "shape": "[2:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "J0.E32",
+        "out_valid"
+      ],
+      "sink": [
+        "controls",
+        "J0_service_resource_e_out_valid"
+      ],
+      "net": "selected_47",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "J0_service_resource_e_out_ready"
+      ],
+      "sink": [
+        "J0.E32",
+        "out_ready"
+      ],
+      "net": "selected_48",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "J0.E32",
+        "out_data"
+      ],
+      "sink": [
+        "controls",
+        "J0_service_resource_e_out_data"
+      ],
+      "net": "selected_49",
+      "shape": "[63:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "J0.E32",
+        "out_clipped"
+      ],
+      "sink": [
+        "controls",
+        "J0_service_resource_e_out_clipped"
+      ],
+      "net": "selected_50",
+      "shape": "[3:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "J0.E32",
+        "out_error"
+      ],
+      "sink": [
+        "controls",
+        "J0_service_resource_e_out_error"
+      ],
+      "net": "selected_51",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "J0_service_s_req_valid"
+      ],
+      "sink": [
+        "J0.S",
+        "req_valid"
+      ],
+      "net": "selected_52",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "J0_service_s_req_write"
+      ],
+      "sink": [
+        "J0.S",
+        "req_write"
+      ],
+      "net": "selected_53",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "J0.S",
+        "req_ready"
+      ],
+      "sink": [
+        "controls",
+        "J0_service_s_req_ready"
+      ],
+      "net": "selected_54",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "J0_service_s_req_address"
+      ],
+      "sink": [
+        "J0.S",
+        "req_addr"
+      ],
+      "net": "selected_55",
+      "shape": "[9:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "J0_service_s_req_data"
+      ],
+      "sink": [
+        "J0.S",
+        "req_data"
+      ],
+      "net": "selected_56",
+      "shape": "[127:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "J0.S",
+        "rsp_valid"
+      ],
+      "sink": [
+        "controls",
+        "J0_service_s_rsp_valid"
+      ],
+      "net": "selected_57",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "J0_service_s_rsp_ready"
+      ],
+      "sink": [
+        "J0.S",
+        "rsp_ready"
+      ],
+      "net": "selected_58",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "J0.S",
+        "rsp_data"
+      ],
+      "sink": [
+        "controls",
+        "J0_service_s_rsp_data"
+      ],
+      "net": "selected_59",
+      "shape": "[127:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
         "P0_service_resource_m_lc_valid"
       ],
       "sink": [
         "P0.M",
         "lc_valid"
       ],
-      "net": "selected_40",
+      "net": "selected_60",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -595,7 +854,7 @@
         "controls",
         "P0_service_resource_m_lc_ready"
       ],
-      "net": "selected_41",
+      "net": "selected_61",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -608,7 +867,7 @@
         "P0.M",
         "lc_sop"
       ],
-      "net": "selected_42",
+      "net": "selected_62",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -621,7 +880,7 @@
         "P0.M",
         "lc_eop"
       ],
-      "net": "selected_43",
+      "net": "selected_63",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -634,7 +893,7 @@
         "P0.M",
         "lc_data"
       ],
-      "net": "selected_44",
+      "net": "selected_64",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -647,7 +906,7 @@
         "controls",
         "P0_service_resource_m_lr_valid"
       ],
-      "net": "selected_45",
+      "net": "selected_65",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -660,7 +919,7 @@
         "P0.M",
         "lr_ready"
       ],
-      "net": "selected_46",
+      "net": "selected_66",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -673,7 +932,7 @@
         "controls",
         "P0_service_resource_m_lr_sop"
       ],
-      "net": "selected_47",
+      "net": "selected_67",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -686,7 +945,7 @@
         "controls",
         "P0_service_resource_m_lr_eop"
       ],
-      "net": "selected_48",
+      "net": "selected_68",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -699,7 +958,7 @@
         "controls",
         "P0_service_resource_m_lr_data"
       ],
-      "net": "selected_49",
+      "net": "selected_69",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -712,7 +971,7 @@
         "P0.M",
         "a_valid"
       ],
-      "net": "selected_50",
+      "net": "selected_70",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -725,7 +984,7 @@
         "controls",
         "P0_service_resource_m_a_ready"
       ],
-      "net": "selected_51",
+      "net": "selected_71",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -738,7 +997,7 @@
         "P0.M",
         "a_data"
       ],
-      "net": "selected_52",
+      "net": "selected_72",
       "shape": "[255:0] ",
       "selection": "same-plan data edge"
     },
@@ -751,7 +1010,7 @@
         "P0.M",
         "a_session"
       ],
-      "net": "selected_53",
+      "net": "selected_73",
       "shape": "[31:0] ",
       "selection": "same-plan data edge"
     },
@@ -764,7 +1023,7 @@
         "P0.M",
         "a_beat"
       ],
-      "net": "selected_54",
+      "net": "selected_74",
       "shape": "[2:0] ",
       "selection": "same-plan data edge"
     },
@@ -777,7 +1036,7 @@
         "P0.G",
         "in_valid"
       ],
-      "net": "selected_55",
+      "net": "selected_75",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -790,7 +1049,7 @@
         "controls",
         "P0_service_resource_g_in_ready"
       ],
-      "net": "selected_56",
+      "net": "selected_76",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -803,7 +1062,7 @@
         "P0.G",
         "in_gate"
       ],
-      "net": "selected_57",
+      "net": "selected_77",
       "shape": "[63:0] ",
       "selection": "same-plan data edge"
     },
@@ -816,7 +1075,7 @@
         "P0.G",
         "in_up"
       ],
-      "net": "selected_58",
+      "net": "selected_78",
       "shape": "[63:0] ",
       "selection": "same-plan data edge"
     },
@@ -829,7 +1088,7 @@
         "P0.G",
         "in_gated"
       ],
-      "net": "selected_59",
+      "net": "selected_79",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -842,7 +1101,7 @@
         "P0.G",
         "in_mask"
       ],
-      "net": "selected_60",
+      "net": "selected_80",
       "shape": "[1:0] ",
       "selection": "same-plan data edge"
     },
@@ -855,7 +1114,7 @@
         "controls",
         "P0_service_resource_g_out_valid"
       ],
-      "net": "selected_61",
+      "net": "selected_81",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -868,7 +1127,7 @@
         "P0.G",
         "out_ready"
       ],
-      "net": "selected_62",
+      "net": "selected_82",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -881,7 +1140,7 @@
         "controls",
         "P0_service_resource_g_out_data"
       ],
-      "net": "selected_63",
+      "net": "selected_83",
       "shape": "[63:0] ",
       "selection": "same-plan data edge"
     },
@@ -894,7 +1153,7 @@
         "controls",
         "P0_service_resource_g_out_mask"
       ],
-      "net": "selected_64",
+      "net": "selected_84",
       "shape": "[1:0] ",
       "selection": "same-plan data edge"
     },
@@ -907,7 +1166,7 @@
         "controls",
         "P0_service_resource_g_out_error"
       ],
-      "net": "selected_65",
+      "net": "selected_85",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -920,7 +1179,7 @@
         "P0.S",
         "req_valid"
       ],
-      "net": "selected_66",
+      "net": "selected_86",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -933,7 +1192,7 @@
         "P0.S",
         "req_write"
       ],
-      "net": "selected_67",
+      "net": "selected_87",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -946,7 +1205,7 @@
         "controls",
         "P0_service_s_req_ready"
       ],
-      "net": "selected_68",
+      "net": "selected_88",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -959,7 +1218,7 @@
         "P0.S",
         "req_addr"
       ],
-      "net": "selected_69",
+      "net": "selected_89",
       "shape": "[9:0] ",
       "selection": "same-plan data edge"
     },
@@ -972,7 +1231,7 @@
         "P0.S",
         "req_data"
       ],
-      "net": "selected_70",
+      "net": "selected_90",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -985,7 +1244,7 @@
         "controls",
         "P0_service_s_rsp_valid"
       ],
-      "net": "selected_71",
+      "net": "selected_91",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -998,7 +1257,7 @@
         "P0.S",
         "rsp_ready"
       ],
-      "net": "selected_72",
+      "net": "selected_92",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1011,7 +1270,7 @@
         "controls",
         "P0_service_s_rsp_data"
       ],
-      "net": "selected_73",
+      "net": "selected_93",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -1024,7 +1283,7 @@
         "P1.M",
         "lc_valid"
       ],
-      "net": "selected_74",
+      "net": "selected_94",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1037,7 +1296,7 @@
         "controls",
         "P1_service_resource_m_lc_ready"
       ],
-      "net": "selected_75",
+      "net": "selected_95",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1050,7 +1309,7 @@
         "P1.M",
         "lc_sop"
       ],
-      "net": "selected_76",
+      "net": "selected_96",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1063,7 +1322,7 @@
         "P1.M",
         "lc_eop"
       ],
-      "net": "selected_77",
+      "net": "selected_97",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1076,7 +1335,7 @@
         "P1.M",
         "lc_data"
       ],
-      "net": "selected_78",
+      "net": "selected_98",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -1089,7 +1348,7 @@
         "controls",
         "P1_service_resource_m_lr_valid"
       ],
-      "net": "selected_79",
+      "net": "selected_99",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1102,7 +1361,7 @@
         "P1.M",
         "lr_ready"
       ],
-      "net": "selected_80",
+      "net": "selected_100",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1115,7 +1374,7 @@
         "controls",
         "P1_service_resource_m_lr_sop"
       ],
-      "net": "selected_81",
+      "net": "selected_101",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1128,7 +1387,7 @@
         "controls",
         "P1_service_resource_m_lr_eop"
       ],
-      "net": "selected_82",
+      "net": "selected_102",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1141,7 +1400,7 @@
         "controls",
         "P1_service_resource_m_lr_data"
       ],
-      "net": "selected_83",
+      "net": "selected_103",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -1154,7 +1413,7 @@
         "P1.M",
         "a_valid"
       ],
-      "net": "selected_84",
+      "net": "selected_104",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1167,7 +1426,7 @@
         "controls",
         "P1_service_resource_m_a_ready"
       ],
-      "net": "selected_85",
+      "net": "selected_105",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1180,7 +1439,7 @@
         "P1.M",
         "a_data"
       ],
-      "net": "selected_86",
+      "net": "selected_106",
       "shape": "[255:0] ",
       "selection": "same-plan data edge"
     },
@@ -1193,7 +1452,7 @@
         "P1.M",
         "a_session"
       ],
-      "net": "selected_87",
+      "net": "selected_107",
       "shape": "[31:0] ",
       "selection": "same-plan data edge"
     },
@@ -1206,8 +1465,151 @@
         "P1.M",
         "a_beat"
       ],
-      "net": "selected_88",
+      "net": "selected_108",
       "shape": "[2:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "P1_service_resource_g_in_valid"
+      ],
+      "sink": [
+        "P1.G",
+        "in_valid"
+      ],
+      "net": "selected_109",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "P1.G",
+        "in_ready"
+      ],
+      "sink": [
+        "controls",
+        "P1_service_resource_g_in_ready"
+      ],
+      "net": "selected_110",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "P1_service_resource_g_in_gate"
+      ],
+      "sink": [
+        "P1.G",
+        "in_gate"
+      ],
+      "net": "selected_111",
+      "shape": "[63:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "P1_service_resource_g_in_up"
+      ],
+      "sink": [
+        "P1.G",
+        "in_up"
+      ],
+      "net": "selected_112",
+      "shape": "[63:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "P1_service_resource_g_in_gated"
+      ],
+      "sink": [
+        "P1.G",
+        "in_gated"
+      ],
+      "net": "selected_113",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "P1_service_resource_g_in_mask"
+      ],
+      "sink": [
+        "P1.G",
+        "in_mask"
+      ],
+      "net": "selected_114",
+      "shape": "[1:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "P1.G",
+        "out_valid"
+      ],
+      "sink": [
+        "controls",
+        "P1_service_resource_g_out_valid"
+      ],
+      "net": "selected_115",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "controls",
+        "P1_service_resource_g_out_ready"
+      ],
+      "sink": [
+        "P1.G",
+        "out_ready"
+      ],
+      "net": "selected_116",
+      "shape": "",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "P1.G",
+        "out_data"
+      ],
+      "sink": [
+        "controls",
+        "P1_service_resource_g_out_data"
+      ],
+      "net": "selected_117",
+      "shape": "[63:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "P1.G",
+        "out_mask"
+      ],
+      "sink": [
+        "controls",
+        "P1_service_resource_g_out_mask"
+      ],
+      "net": "selected_118",
+      "shape": "[1:0] ",
+      "selection": "same-plan data edge"
+    },
+    {
+      "driver": [
+        "P1.G",
+        "out_error"
+      ],
+      "sink": [
+        "controls",
+        "P1_service_resource_g_out_error"
+      ],
+      "net": "selected_119",
+      "shape": "",
       "selection": "same-plan data edge"
     },
     {
@@ -1219,7 +1621,7 @@
         "P1.S",
         "req_valid"
       ],
-      "net": "selected_89",
+      "net": "selected_120",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1232,7 +1634,7 @@
         "P1.S",
         "req_write"
       ],
-      "net": "selected_90",
+      "net": "selected_121",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1245,7 +1647,7 @@
         "controls",
         "P1_service_s_req_ready"
       ],
-      "net": "selected_91",
+      "net": "selected_122",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1258,7 +1660,7 @@
         "P1.S",
         "req_addr"
       ],
-      "net": "selected_92",
+      "net": "selected_123",
       "shape": "[9:0] ",
       "selection": "same-plan data edge"
     },
@@ -1271,7 +1673,7 @@
         "P1.S",
         "req_data"
       ],
-      "net": "selected_93",
+      "net": "selected_124",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -1284,7 +1686,7 @@
         "controls",
         "P1_service_s_rsp_valid"
       ],
-      "net": "selected_94",
+      "net": "selected_125",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1297,7 +1699,7 @@
         "P1.S",
         "rsp_ready"
       ],
-      "net": "selected_95",
+      "net": "selected_126",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1310,7 +1712,7 @@
         "controls",
         "P1_service_s_rsp_data"
       ],
-      "net": "selected_96",
+      "net": "selected_127",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -1323,7 +1725,7 @@
         "P2.M",
         "lc_valid"
       ],
-      "net": "selected_97",
+      "net": "selected_128",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1336,7 +1738,7 @@
         "controls",
         "P2_service_resource_m_lc_ready"
       ],
-      "net": "selected_98",
+      "net": "selected_129",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1349,7 +1751,7 @@
         "P2.M",
         "lc_sop"
       ],
-      "net": "selected_99",
+      "net": "selected_130",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1362,7 +1764,7 @@
         "P2.M",
         "lc_eop"
       ],
-      "net": "selected_100",
+      "net": "selected_131",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1375,7 +1777,7 @@
         "P2.M",
         "lc_data"
       ],
-      "net": "selected_101",
+      "net": "selected_132",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -1388,7 +1790,7 @@
         "controls",
         "P2_service_resource_m_lr_valid"
       ],
-      "net": "selected_102",
+      "net": "selected_133",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1401,7 +1803,7 @@
         "P2.M",
         "lr_ready"
       ],
-      "net": "selected_103",
+      "net": "selected_134",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1414,7 +1816,7 @@
         "controls",
         "P2_service_resource_m_lr_sop"
       ],
-      "net": "selected_104",
+      "net": "selected_135",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1427,7 +1829,7 @@
         "controls",
         "P2_service_resource_m_lr_eop"
       ],
-      "net": "selected_105",
+      "net": "selected_136",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1440,7 +1842,7 @@
         "controls",
         "P2_service_resource_m_lr_data"
       ],
-      "net": "selected_106",
+      "net": "selected_137",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -1453,7 +1855,7 @@
         "P2.M",
         "a_valid"
       ],
-      "net": "selected_107",
+      "net": "selected_138",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1466,7 +1868,7 @@
         "controls",
         "P2_service_resource_m_a_ready"
       ],
-      "net": "selected_108",
+      "net": "selected_139",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1479,7 +1881,7 @@
         "P2.M",
         "a_data"
       ],
-      "net": "selected_109",
+      "net": "selected_140",
       "shape": "[255:0] ",
       "selection": "same-plan data edge"
     },
@@ -1492,7 +1894,7 @@
         "P2.M",
         "a_session"
       ],
-      "net": "selected_110",
+      "net": "selected_141",
       "shape": "[31:0] ",
       "selection": "same-plan data edge"
     },
@@ -1505,7 +1907,7 @@
         "P2.M",
         "a_beat"
       ],
-      "net": "selected_111",
+      "net": "selected_142",
       "shape": "[2:0] ",
       "selection": "same-plan data edge"
     },
@@ -1518,7 +1920,7 @@
         "P2.S",
         "req_valid"
       ],
-      "net": "selected_112",
+      "net": "selected_143",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1531,7 +1933,7 @@
         "P2.S",
         "req_write"
       ],
-      "net": "selected_113",
+      "net": "selected_144",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1544,7 +1946,7 @@
         "controls",
         "P2_service_s_req_ready"
       ],
-      "net": "selected_114",
+      "net": "selected_145",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1557,7 +1959,7 @@
         "P2.S",
         "req_addr"
       ],
-      "net": "selected_115",
+      "net": "selected_146",
       "shape": "[9:0] ",
       "selection": "same-plan data edge"
     },
@@ -1570,7 +1972,7 @@
         "P2.S",
         "req_data"
       ],
-      "net": "selected_116",
+      "net": "selected_147",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -1583,7 +1985,7 @@
         "controls",
         "P2_service_s_rsp_valid"
       ],
-      "net": "selected_117",
+      "net": "selected_148",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1596,7 +1998,7 @@
         "P2.S",
         "rsp_ready"
       ],
-      "net": "selected_118",
+      "net": "selected_149",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1609,7 +2011,7 @@
         "controls",
         "P2_service_s_rsp_data"
       ],
-      "net": "selected_119",
+      "net": "selected_150",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -1622,7 +2024,7 @@
         "U0.N",
         "cmd_valid"
       ],
-      "net": "selected_120",
+      "net": "selected_151",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1635,7 +2037,7 @@
         "controls",
         "U0_service_resource_n_cmd_ready"
       ],
-      "net": "selected_121",
+      "net": "selected_152",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1648,7 +2050,7 @@
         "U0.N",
         "cmd_tag"
       ],
-      "net": "selected_122",
+      "net": "selected_153",
       "shape": "[31:0] ",
       "selection": "same-plan data edge"
     },
@@ -1661,7 +2063,7 @@
         "U0.N",
         "cmd_mode"
       ],
-      "net": "selected_123",
+      "net": "selected_154",
       "shape": "[1:0] ",
       "selection": "same-plan data edge"
     },
@@ -1674,7 +2076,7 @@
         "U0.N",
         "cmd_base"
       ],
-      "net": "selected_124",
+      "net": "selected_155",
       "shape": "[9:0] ",
       "selection": "same-plan data edge"
     },
@@ -1687,7 +2089,7 @@
         "U0.N",
         "cmd_count"
       ],
-      "net": "selected_125",
+      "net": "selected_156",
       "shape": "[12:0] ",
       "selection": "same-plan data edge"
     },
@@ -1700,7 +2102,7 @@
         "U0.N",
         "cmd_committed"
       ],
-      "net": "selected_126",
+      "net": "selected_157",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1713,7 +2115,7 @@
         "U0.N",
         "abort_valid"
       ],
-      "net": "selected_127",
+      "net": "selected_158",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1726,7 +2128,7 @@
         "controls",
         "U0_service_resource_n_abort_ready"
       ],
-      "net": "selected_128",
+      "net": "selected_159",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1739,7 +2141,7 @@
         "U0.N",
         "abort_tag"
       ],
-      "net": "selected_129",
+      "net": "selected_160",
       "shape": "[31:0] ",
       "selection": "same-plan data edge"
     },
@@ -1752,7 +2154,7 @@
         "controls",
         "U0_service_resource_n_rsp_valid"
       ],
-      "net": "selected_130",
+      "net": "selected_161",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1765,7 +2167,7 @@
         "U0.N",
         "rsp_ready"
       ],
-      "net": "selected_131",
+      "net": "selected_162",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1778,7 +2180,7 @@
         "controls",
         "U0_service_resource_n_rsp_tag"
       ],
-      "net": "selected_132",
+      "net": "selected_163",
       "shape": "[31:0] ",
       "selection": "same-plan data edge"
     },
@@ -1791,7 +2193,7 @@
         "controls",
         "U0_service_resource_n_rsp_error"
       ],
-      "net": "selected_133",
+      "net": "selected_164",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1804,7 +2206,7 @@
         "controls",
         "U0_service_resource_n_rsp_aborted"
       ],
-      "net": "selected_134",
+      "net": "selected_165",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1817,7 +2219,7 @@
         "controls",
         "U0_service_resource_n_rsp_writes"
       ],
-      "net": "selected_135",
+      "net": "selected_166",
       "shape": "[11:0] ",
       "selection": "same-plan data edge"
     },
@@ -1830,7 +2232,7 @@
         "controls",
         "U0_service_resource_n_s_req_valid"
       ],
-      "net": "selected_136",
+      "net": "selected_167",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1843,7 +2245,7 @@
         "controls",
         "U0_service_resource_n_s_req_write"
       ],
-      "net": "selected_137",
+      "net": "selected_168",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1856,7 +2258,7 @@
         "U0.N",
         "s_req_ready"
       ],
-      "net": "selected_138",
+      "net": "selected_169",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1869,7 +2271,7 @@
         "controls",
         "U0_service_resource_n_s_req_address"
       ],
-      "net": "selected_139",
+      "net": "selected_170",
       "shape": "[9:0] ",
       "selection": "same-plan data edge"
     },
@@ -1882,7 +2284,7 @@
         "controls",
         "U0_service_resource_n_s_req_data"
       ],
-      "net": "selected_140",
+      "net": "selected_171",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -1895,7 +2297,7 @@
         "U0.N",
         "s_rsp_valid"
       ],
-      "net": "selected_141",
+      "net": "selected_172",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1908,7 +2310,7 @@
         "controls",
         "U0_service_resource_n_s_rsp_ready"
       ],
-      "net": "selected_142",
+      "net": "selected_173",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1921,7 +2323,7 @@
         "U0.N",
         "s_rsp_data"
       ],
-      "net": "selected_143",
+      "net": "selected_174",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -1934,7 +2336,7 @@
         "U0.N",
         "s_rsp_error"
       ],
-      "net": "selected_144",
+      "net": "selected_175",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1947,7 +2349,7 @@
         "U0.S",
         "req_valid"
       ],
-      "net": "selected_145",
+      "net": "selected_176",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1960,7 +2362,7 @@
         "U0.S",
         "req_write"
       ],
-      "net": "selected_146",
+      "net": "selected_177",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1973,7 +2375,7 @@
         "controls",
         "U0_service_s_req_ready"
       ],
-      "net": "selected_147",
+      "net": "selected_178",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -1986,7 +2388,7 @@
         "U0.S",
         "req_addr"
       ],
-      "net": "selected_148",
+      "net": "selected_179",
       "shape": "[9:0] ",
       "selection": "same-plan data edge"
     },
@@ -1999,7 +2401,7 @@
         "U0.S",
         "req_data"
       ],
-      "net": "selected_149",
+      "net": "selected_180",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -2012,7 +2414,7 @@
         "controls",
         "U0_service_s_rsp_valid"
       ],
-      "net": "selected_150",
+      "net": "selected_181",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -2025,7 +2427,7 @@
         "U0.S",
         "rsp_ready"
       ],
-      "net": "selected_151",
+      "net": "selected_182",
       "shape": "",
       "selection": "same-plan data edge"
     },
@@ -2038,7 +2440,7 @@
         "controls",
         "U0_service_s_rsp_data"
       ],
-      "net": "selected_152",
+      "net": "selected_183",
       "shape": "[127:0] ",
       "selection": "same-plan data edge"
     },
@@ -2053,7 +2455,7 @@
           "mc_req_valid"
         ]
       ],
-      "net": "selected_153",
+      "net": "selected_184",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2068,7 +2470,7 @@
           "mc_req_ready"
         ]
       ],
-      "net": "selected_154",
+      "net": "selected_185",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2083,7 +2485,7 @@
           "mc_req_address"
         ]
       ],
-      "net": "selected_155",
+      "net": "selected_186",
       "shape": "[63:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2098,7 +2500,7 @@
           "mc_req_tag"
         ]
       ],
-      "net": "selected_156",
+      "net": "selected_187",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2113,7 +2515,7 @@
           "mc_req_channel"
         ]
       ],
-      "net": "selected_157",
+      "net": "selected_188",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2128,7 +2530,7 @@
           "mc_req_record_beats"
         ]
       ],
-      "net": "selected_158",
+      "net": "selected_189",
       "shape": "[4:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2143,7 +2545,7 @@
           "mc_rsp_valid"
         ]
       ],
-      "net": "selected_159",
+      "net": "selected_190",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2158,7 +2560,7 @@
           "mc_rsp_ready"
         ]
       ],
-      "net": "selected_160",
+      "net": "selected_191",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2173,7 +2575,7 @@
           "mc_rsp_tag"
         ]
       ],
-      "net": "selected_161",
+      "net": "selected_192",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2188,7 +2590,7 @@
           "mc_rsp_data"
         ]
       ],
-      "net": "selected_162",
+      "net": "selected_193",
       "shape": "[511:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2203,7 +2605,7 @@
           "mc_close_valid"
         ]
       ],
-      "net": "selected_163",
+      "net": "selected_194",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2218,7 +2620,7 @@
           "mc_close_ready"
         ]
       ],
-      "net": "selected_164",
+      "net": "selected_195",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2233,7 +2635,7 @@
           "mc_close_tag_base"
         ]
       ],
-      "net": "selected_165",
+      "net": "selected_196",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2248,7 +2650,7 @@
           "mc_fence_req_valid"
         ]
       ],
-      "net": "selected_166",
+      "net": "selected_197",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2263,7 +2665,7 @@
           "mc_fence_req_ready"
         ]
       ],
-      "net": "selected_167",
+      "net": "selected_198",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2278,7 +2680,7 @@
           "mc_fence_req_cookie"
         ]
       ],
-      "net": "selected_168",
+      "net": "selected_199",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2293,7 +2695,7 @@
           "mc_fence_req_epoch"
         ]
       ],
-      "net": "selected_169",
+      "net": "selected_200",
       "shape": "[8:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2308,7 +2710,7 @@
           "mc_fence_done_valid"
         ]
       ],
-      "net": "selected_170",
+      "net": "selected_201",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2323,7 +2725,7 @@
           "mc_fence_done_ready"
         ]
       ],
-      "net": "selected_171",
+      "net": "selected_202",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2338,7 +2740,7 @@
           "mc_fence_done_cookie"
         ]
       ],
-      "net": "selected_172",
+      "net": "selected_203",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2353,7 +2755,7 @@
           "mc_fence_done_epoch"
         ]
       ],
-      "net": "selected_173",
+      "net": "selected_204",
       "shape": "[8:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2368,7 +2770,7 @@
           "mc_req_valid"
         ]
       ],
-      "net": "selected_174",
+      "net": "selected_205",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2383,7 +2785,7 @@
           "mc_req_ready"
         ]
       ],
-      "net": "selected_175",
+      "net": "selected_206",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2398,7 +2800,7 @@
           "mc_req_address"
         ]
       ],
-      "net": "selected_176",
+      "net": "selected_207",
       "shape": "[63:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2413,7 +2815,7 @@
           "mc_req_tag"
         ]
       ],
-      "net": "selected_177",
+      "net": "selected_208",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2428,7 +2830,7 @@
           "mc_req_channel"
         ]
       ],
-      "net": "selected_178",
+      "net": "selected_209",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2443,7 +2845,7 @@
           "mc_req_record_beats"
         ]
       ],
-      "net": "selected_179",
+      "net": "selected_210",
       "shape": "[4:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2458,7 +2860,7 @@
           "mc_rsp_valid"
         ]
       ],
-      "net": "selected_180",
+      "net": "selected_211",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2473,7 +2875,7 @@
           "mc_rsp_ready"
         ]
       ],
-      "net": "selected_181",
+      "net": "selected_212",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2488,7 +2890,7 @@
           "mc_rsp_tag"
         ]
       ],
-      "net": "selected_182",
+      "net": "selected_213",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2503,7 +2905,7 @@
           "mc_rsp_data"
         ]
       ],
-      "net": "selected_183",
+      "net": "selected_214",
       "shape": "[511:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2518,7 +2920,7 @@
           "mc_close_valid"
         ]
       ],
-      "net": "selected_184",
+      "net": "selected_215",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2533,7 +2935,7 @@
           "mc_close_ready"
         ]
       ],
-      "net": "selected_185",
+      "net": "selected_216",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2548,7 +2950,7 @@
           "mc_close_tag_base"
         ]
       ],
-      "net": "selected_186",
+      "net": "selected_217",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2563,7 +2965,7 @@
           "mc_fence_req_valid"
         ]
       ],
-      "net": "selected_187",
+      "net": "selected_218",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2578,7 +2980,7 @@
           "mc_fence_req_ready"
         ]
       ],
-      "net": "selected_188",
+      "net": "selected_219",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2593,7 +2995,7 @@
           "mc_fence_req_cookie"
         ]
       ],
-      "net": "selected_189",
+      "net": "selected_220",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2608,7 +3010,7 @@
           "mc_fence_req_epoch"
         ]
       ],
-      "net": "selected_190",
+      "net": "selected_221",
       "shape": "[8:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2623,7 +3025,7 @@
           "mc_fence_done_valid"
         ]
       ],
-      "net": "selected_191",
+      "net": "selected_222",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2638,7 +3040,7 @@
           "mc_fence_done_ready"
         ]
       ],
-      "net": "selected_192",
+      "net": "selected_223",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2653,7 +3055,7 @@
           "mc_fence_done_cookie"
         ]
       ],
-      "net": "selected_193",
+      "net": "selected_224",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2668,7 +3070,7 @@
           "mc_fence_done_epoch"
         ]
       ],
-      "net": "selected_194",
+      "net": "selected_225",
       "shape": "[8:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2683,7 +3085,7 @@
           "mc_req_valid"
         ]
       ],
-      "net": "selected_195",
+      "net": "selected_226",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2698,7 +3100,7 @@
           "mc_req_ready"
         ]
       ],
-      "net": "selected_196",
+      "net": "selected_227",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2713,7 +3115,7 @@
           "mc_req_address"
         ]
       ],
-      "net": "selected_197",
+      "net": "selected_228",
       "shape": "[63:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2728,7 +3130,7 @@
           "mc_req_tag"
         ]
       ],
-      "net": "selected_198",
+      "net": "selected_229",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2743,7 +3145,7 @@
           "mc_req_channel"
         ]
       ],
-      "net": "selected_199",
+      "net": "selected_230",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2758,7 +3160,7 @@
           "mc_req_record_beats"
         ]
       ],
-      "net": "selected_200",
+      "net": "selected_231",
       "shape": "[4:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2773,7 +3175,7 @@
           "mc_rsp_valid"
         ]
       ],
-      "net": "selected_201",
+      "net": "selected_232",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2788,7 +3190,7 @@
           "mc_rsp_ready"
         ]
       ],
-      "net": "selected_202",
+      "net": "selected_233",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2803,7 +3205,7 @@
           "mc_rsp_tag"
         ]
       ],
-      "net": "selected_203",
+      "net": "selected_234",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2818,7 +3220,7 @@
           "mc_rsp_data"
         ]
       ],
-      "net": "selected_204",
+      "net": "selected_235",
       "shape": "[511:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2833,7 +3235,7 @@
           "mc_close_valid"
         ]
       ],
-      "net": "selected_205",
+      "net": "selected_236",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2848,7 +3250,7 @@
           "mc_close_ready"
         ]
       ],
-      "net": "selected_206",
+      "net": "selected_237",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2863,7 +3265,7 @@
           "mc_close_tag_base"
         ]
       ],
-      "net": "selected_207",
+      "net": "selected_238",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2878,7 +3280,7 @@
           "mc_fence_req_valid"
         ]
       ],
-      "net": "selected_208",
+      "net": "selected_239",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2893,7 +3295,7 @@
           "mc_fence_req_ready"
         ]
       ],
-      "net": "selected_209",
+      "net": "selected_240",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2908,7 +3310,7 @@
           "mc_fence_req_cookie"
         ]
       ],
-      "net": "selected_210",
+      "net": "selected_241",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2923,7 +3325,7 @@
           "mc_fence_req_epoch"
         ]
       ],
-      "net": "selected_211",
+      "net": "selected_242",
       "shape": "[8:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2938,7 +3340,7 @@
           "mc_fence_done_valid"
         ]
       ],
-      "net": "selected_212",
+      "net": "selected_243",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2953,7 +3355,7 @@
           "mc_fence_done_ready"
         ]
       ],
-      "net": "selected_213",
+      "net": "selected_244",
       "shape": "",
       "selection": "same-plan M DMA edge"
     },
@@ -2968,7 +3370,7 @@
           "mc_fence_done_cookie"
         ]
       ],
-      "net": "selected_214",
+      "net": "selected_245",
       "shape": "[31:0] ",
       "selection": "same-plan M DMA edge"
     },
@@ -2983,7 +3385,7 @@
           "mc_fence_done_epoch"
         ]
       ],
-      "net": "selected_215",
+      "net": "selected_246",
       "shape": "[8:0] ",
       "selection": "same-plan M DMA edge"
     }
@@ -3001,6 +3403,14 @@
       "endpoint": [
         "controls",
         "F0_service_s_rsp_error"
+      ],
+      "value": 0,
+      "reason": "selected SRAM macro exposes no error response pin"
+    },
+    {
+      "endpoint": [
+        "controls",
+        "J0_service_s_rsp_error"
       ],
       "value": 0,
       "reason": "selected SRAM macro exposes no error response pin"
@@ -3378,94 +3788,6 @@
     {
       "endpoint": [
         "controls",
-        "P1_service_resource_g_in_valid"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "P1_service_resource_g_in_ready"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "P1_service_resource_g_in_gate"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "P1_service_resource_g_in_up"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "P1_service_resource_g_in_gated"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "P1_service_resource_g_in_mask"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "P1_service_resource_g_out_valid"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "P1_service_resource_g_out_ready"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "P1_service_resource_g_out_data"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "P1_service_resource_g_out_mask"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "P1_service_resource_g_out_error"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
         "P2_service_source_failed"
       ],
       "reason": "no selected product edge",
@@ -3571,174 +3893,6 @@
       "endpoint": [
         "controls",
         "P2_service_resource_g_out_error"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_s_req_valid"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_s_req_write"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_s_req_ready"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_s_req_address"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_s_req_data"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_s_rsp_valid"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_s_rsp_ready"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_s_rsp_data"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_s_rsp_error"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_in_valid"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_in_ready"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_in_data"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_in_op"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_in_mask"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_in_shift"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_in_minus"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_out_valid"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_out_ready"
-      ],
-      "reason": "no selected product edge",
-      "value": null
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_out_data"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_out_clipped"
-      ],
-      "reason": "no selected product edge",
-      "value": 0
-    },
-    {
-      "endpoint": [
-        "controls",
-        "J0_service_resource_e_out_error"
       ],
       "reason": "no selected product edge",
       "value": 0
@@ -4182,54 +4336,6 @@
       ],
       "reason": "no selected product edge",
       "value": 0
-    },
-    {
-      "endpoint": [
-        "P1.G",
-        "in_valid"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "P1.G",
-        "in_gate"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "P1.G",
-        "in_up"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "P1.G",
-        "in_gated"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "P1.G",
-        "in_mask"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "P1.G",
-        "out_ready"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
     },
     {
       "endpoint": [
@@ -4801,102 +4907,6 @@
     },
     {
       "endpoint": [
-        "J0.E32",
-        "in_valid"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "J0.E32",
-        "in_data"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "J0.E32",
-        "in_op"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "J0.E32",
-        "in_mask"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "J0.E32",
-        "in_shift"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "J0.E32",
-        "in_minus"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "J0.E32",
-        "out_ready"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "J0.S",
-        "req_valid"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "J0.S",
-        "req_write"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "J0.S",
-        "req_addr"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "J0.S",
-        "req_data"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
-        "J0.S",
-        "rsp_ready"
-      ],
-      "value": 0,
-      "reason": "inactive macro in this product plan; not a fixed base edge"
-    },
-    {
-      "endpoint": [
         "J0.T",
         "begin_valid"
       ],
@@ -5172,8 +5182,7 @@
     "schema": "nine-control-plane/1",
     "hard_boundary": false,
     "plan_sha256": [
-      "7ac41e9e713f2869e1528091f4851cc73950bb951e49fadbb501505751624b75",
-      "80dcdf29233e05b2bc586293a4c497d1f524745bc4db3a4465a5317ab68670f6"
+      "128c70f1938f8658891a47911b21bbdac5359b4a6266ee69185b954e99101f09"
     ],
     "owners": [
       "P0",
@@ -5189,6 +5198,7 @@
     "selected_data_owners": [
       "C0",
       "F0",
+      "J0",
       "P0",
       "P1",
       "P2",
@@ -5203,12 +5213,12 @@
       "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/mother_control_native/mother_control_native64_transport128.sv": "14f0abc6a248de8f32a1a8afce4fb8fb639a191cf2579373300960bf09e2acfa",
       "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/experiments/shared_x_control/rtl/lc_native_scope_controller.sv": "eda88c6e0454bba66d430d9a9eeb60f39f8e1bf2ce1c13da51f84ee20a1670c6",
       "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/mother_control_native/mc_lc_packet128_switch.sv": "f742f2e3cce22892afc0435a62d61caa522dcbd18e0e4f1b8d535dc52c5c46f5",
-      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_shared_memory_plane.sv": "7f06f4e5a242e969c4b7b98930032499cd9a540fd60bef6125e5ac76dcd30a1a",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_shared_memory_plane.sv": "d1948a2bd68261bf87e0783c2ca5955ccd6dc080670ea4f8c8f7ea2e497c3545",
       "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/w8a16_v1/m_native_leaf_s32.sv": "aaddefce1198feec79c7e265103fabbd1bfed3b0f4cddb5bed2150e8c1cf6eeb",
       "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_p_owner_control.sv": "0cfedbc1559ddf8b3409beddc746471dfe41542a14181e6fa02124c84474e650",
       "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_e_owner_control.sv": "3d8f4090bfc8a3bebc12999272b402089a0298e2331e5f6c1fda76aa160439e4",
       "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_n_owner_control.sv": "e6742266b91360d0df3d293f63dfed44d861a5883ca0d3ff70523f54da971bf3",
-      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_nine_control_plane.sv": "2fb6b0b5eb63e5219cc4c7c7790399469c0062436c7da9f512973bb4ee3e76ae"
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_nine_control_plane.sv": "bd45c860c38626953b7d638500659c575a55739043ae5ca7c85d132f126d7260"
     },
     "selected_memory_links": [
       {
@@ -5928,6 +5938,150 @@
         "service_pin": "wr_done_error",
         "memory_pin": "write_done_error",
         "lane": 4,
+        "width": 1,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "rd_valid",
+        "memory_pin": "service_req_valid",
+        "lane": 5,
+        "width": 1,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "rd_ready",
+        "memory_pin": "service_req_ready",
+        "lane": 5,
+        "width": 1,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "rd_address",
+        "memory_pin": "service_req_address",
+        "lane": 5,
+        "width": 64,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "rd_tag",
+        "memory_pin": "service_req_tag",
+        "lane": 5,
+        "width": 64,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "rd_rsp_valid",
+        "memory_pin": "service_rsp_valid",
+        "lane": 5,
+        "width": 1,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "rd_rsp_ready",
+        "memory_pin": "service_rsp_ready",
+        "lane": 5,
+        "width": 1,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "rd_rsp_tag",
+        "memory_pin": "service_rsp_tag",
+        "lane": 5,
+        "width": 64,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "rd_rsp_data",
+        "memory_pin": "service_rsp_data",
+        "lane": 5,
+        "width": 512,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "rd_rsp_error",
+        "memory_pin": "service_rsp_error",
+        "lane": 5,
+        "width": 1,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "wr_valid",
+        "memory_pin": "write_req_valid",
+        "lane": 5,
+        "width": 1,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "wr_ready",
+        "memory_pin": "write_req_ready",
+        "lane": 5,
+        "width": 1,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "wr_address",
+        "memory_pin": "write_req_address",
+        "lane": 5,
+        "width": 64,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "wr_tag",
+        "memory_pin": "write_req_tag",
+        "lane": 5,
+        "width": 64,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "wr_data",
+        "memory_pin": "write_req_data",
+        "lane": 5,
+        "width": 512,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "wr_done_valid",
+        "memory_pin": "write_done_valid",
+        "lane": 5,
+        "width": 1,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "wr_done_ready",
+        "memory_pin": "write_done_ready",
+        "lane": 5,
+        "width": 1,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "wr_done_tag",
+        "memory_pin": "write_done_tag",
+        "lane": 5,
+        "width": 64,
+        "class": "candidate_selected"
+      },
+      {
+        "owner": "J0",
+        "service_pin": "wr_done_error",
+        "memory_pin": "write_done_error",
+        "lane": 5,
         "width": 1,
         "class": "candidate_selected"
       },
@@ -8461,7 +8615,6 @@
   "physical_hierarchy": "only functional macro instances are hard boundaries; controls are parent standard cells",
   "selection_scope": "union of explicit prefill/decode candidate edges; no inferred inter-owner data connection",
   "whole_base_accepted": false,
-  "elaboration_accepted": true,
-  "numerical_execution_accepted": false,
-  "elaboration_receipt_sha256": "5d04ba5b9f10529f701d0b9390f0abd20353a11233b85f42e11164dad459d027"
+  "elaboration_accepted": false,
+  "numerical_execution_accepted": false
 }

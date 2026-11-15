@@ -91,7 +91,7 @@ module projection_local_service_controller #(parameter logic [31:0] TOPOLOGY=0)(
  wire sw_valid,sw_ready,sw_ack_valid,sw_ack_ready,sw_word;
  wire [511:0] sw_ticket;wire [9:0] sw_address;wire [127:0] sw_data;
  wire quiescent;wire [1:0] A_live,result_occupied,command_occupied;
- projection_stream_controller #(.TOPOLOGY(TOPOLOGY),.FOUR_BANK_LOOKAHEAD(1'b1),.EARLY_EXEC(1'b1)) execution(
+ projection_stream_controller #(.TOPOLOGY(TOPOLOGY)) execution(
  .clk,.reset,.service_valid(service_valid&&!occupied&&outer_legal),.service_ready(p_ready),.service_owner,.service_ticket,
  .service_descriptor(inner_descriptor),.service_cancel_valid(cancel&&occupied),.service_cancel_ready(p_cancel_ready),
  .service_done_valid(p_done),.service_done_ready(service_done_ready&&settled&&!rejected),

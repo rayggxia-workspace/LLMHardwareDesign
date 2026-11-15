@@ -8,6 +8,10 @@ module s32_a16_tile_quantizer #(
  parameter bit SESSION_IDS=1'b0
 ) (
  input wire clk, reset,
+ input wire observe_start, observe_valid,
+ input wire [127:0] observe_data,
+ output wire observed_valid,
+ output wire [5:0] observed_shift,
  input wire cmd_valid, output wire cmd_ready,
  input wire [127:0] cmd_key,
  input wire [15:0] cmd_generation, cmd_kk,
@@ -83,6 +87,20 @@ module s32_a16_tile_quantizer #(
    end
   end
  endfunction
+ // Observe accepted producer words without a second SRAM statistics pass.
+ // This is the same format adapter's magnitude/shift logic, not a new macro.
+ reg [31:0] observed_maximum;
+ reg [5:0] observed_words;
+ wire [31:0] observed_word_max=maximum_word(observe_data);
+ assign observed_valid=observed_words==32;
+ assign observed_shift=choose_shift(observed_maximum);
+ always @(posedge clk)begin
+  if(reset||observe_start)begin observed_maximum<=0;observed_words<=0;end
+  else if(observe_valid&&observed_words<32)begin
+   observed_words<=observed_words+1'b1;
+   if(observed_word_max>observed_maximum)observed_maximum<=observed_word_max;
+  end
+ end
  // Return {overflow, four signed A16 values}. Magnitude arithmetic implements
  // symmetric ties-to-even, including INT_MIN, without signed shift ambiguity.
  function automatic [64:0] quantize_word(input [127:0] word_data,input [5:0] amount);

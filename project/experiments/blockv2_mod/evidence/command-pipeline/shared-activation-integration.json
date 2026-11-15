@@ -1,0 +1,44 @@
+{
+  "schema": "command-pipeline-integration/1",
+  "passed": true,
+  "rtl": {
+    "capacity_receipt": "evidence/command-pipeline/activation-capacity.json",
+    "sha256": "d19db1cbfde25825ccf71bdac56258b4fe2424f57b1f7b26b150536420fc331c",
+    "job": 115383,
+    "scope": "actual shared memory plane and DMA; physical DDR is delayed/reordered test endpoint"
+  },
+  "tlm": {
+    "job": 115437,
+    "source_sha256": {
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tlm/macro_activation_pipeline.py": "2efecfb84e15691d3c972233d2a541fa67a06b2ebb96958350378e1cf7e405f4",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tlm/macro_service_runner.py": "d5caf096d9d2cd6a840d72fc4385cb8b59dcaf1442cf6dd4a2ae38d5bcbb6096",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tlm/macro_memory_transport.py": "8562798b459c083e12faea7f563656efea2756dd082b3fdf6d41adbb04d4811c",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tlm/macro_memory.py": "58a86e008acf11463f2401e1f72e88d8810b173e709a3bd367429f5e37c4bd33",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tlm/tlm_sram_profile.py": "3c57c77aa8718b4c97547533927c23af043288caa1dcc569ac8ab8a3818f3370",
+      "/public/home/yuzelu/project-circuit/issue260-tlm-request-Xuwu5O/native_tlm_timing.py": "eac4eccd6aa80f105c5da3536cb75ff017686c80a71a981f7679d12ee1779602",
+      "tests/test_shared_activation_pipeline.py": "573ac9a4a58bea58500eae60f2916274b2a6f1acacf9db50f1d4734232fb757b",
+      "tests/shared_activation_pipeline.sbatch": "922ee771ace8a76b3bb83d5a9e777e25a3c0fd21714f9fdd03bb892c5e55d95a",
+      "tlm/macro_scalar_services.py": "59e24a0ebfcf545bfb161da588a3cacee573de439f7fa020f1fe89529cdfd8ae",
+      "compiler/indexed_gather_descriptor.py": "b4d152eb09556aacec9466cdd55974d2ff7e515993df6f766f39226aa0849524"
+    },
+    "evidence": {
+      "evidence/command-pipeline/shared-activation-115437.log": "af8e4a4975d8bc27822649241d6542883da3b6960f641e5ad0f48886ba5467f3"
+    },
+    "implementation": "production SharedMemory + ActivationLoad + MacroSram; synthetic delayed/reordered DDR backend",
+    "read_requests": 104,
+    "peak_channel_entries": 32,
+    "activation_read_slots": 2,
+    "activation_write_slots": 2,
+    "max_issue_per_cycle": 2,
+    "max_issue_per_three_cycles": 4,
+    "source_contract_read_slots": 4,
+    "source_contract_write_slots": 1,
+    "scope": "transport/loader protocol and bounded overlap, not calibrated performance or decode acceptance",
+    "runner_services": [
+      "dma512",
+      "gather16384_negative_index",
+      "gather512_slice_offset"
+    ],
+    "observer_once_per_word_verified": true
+  }
+}

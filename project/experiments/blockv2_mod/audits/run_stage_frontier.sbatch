@@ -7,4 +7,4 @@ set -euo pipefail
 export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1
 python=/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python
 export PYTHONPATH="$PWD/hardware:$("$python" -c 'import json,os;d=json.load(open("reproducibility/environment.json"));print(os.pathsep.join(d["module_roots"]+d["extra_python_roots"]))')"
-"$python" -B audits/run_stage_frontier.py "evidence/joint-frontier/stage-diverse"
+"$python" -B audits/run_stage_frontier.py "${1:-evidence/joint-frontier/stage-diverse}" "${@:2}"

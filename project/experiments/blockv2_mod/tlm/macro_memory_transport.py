@@ -16,6 +16,9 @@ class SharedMemory:
       t['return_skids_per_channel'],t['issue_limit_per_3_cycles_per_channel'])!=(2,2,64,32,3,4):
    raise ValueError('unsupported declared transport contract')
   if len(contract['memory_clients'])!=30:raise ValueError('complete registered read/write client table required')
+  if (contract.get('read_slots_per_owner'),contract.get('write_slots_per_owner'))!=(4,1):
+   raise ValueError('current shared native source adapters require four read slots and one write slot')
+  self.source_limits=[2]*9+[32]*3+[contract['read_slots_per_owner']]*9+[contract['write_slots_per_owner']]*9
   self.clock,self.backend,self.core_ps=clock,backend,core_ps
   self.queues=[deque() for _ in range(30)];self.pending=[0]*30
   self.channel_active=[0,0];self.returns=[deque(),deque()]
@@ -28,7 +31,7 @@ class SharedMemory:
   if transfer.payload is not None and len(transfer.payload)!=64:raise ValueError('64B write payload required')
   if (transfer.payload is not None)!=(client>=21):raise ValueError('read/write client class mismatch')
   # Descriptor requests arrive as two beats; M has at most four open records.
-  limit=2 if client<9 else 32 if client<12 else 1
+  limit=self.source_limits[client]
   if len(self.queues[client])+self.pending[client]>=limit:
    raise ValueError('provider exceeded its finite native source window')
   channel=(transfer.address>>11)&1 if channel is None else channel

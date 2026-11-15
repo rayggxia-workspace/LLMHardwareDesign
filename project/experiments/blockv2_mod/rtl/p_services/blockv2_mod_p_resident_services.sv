@@ -176,7 +176,7 @@ module blockv2_mod_p_resident_services (
   .wr_tag(store_wr_tag),.wr_data(store_wr_data),.wr_done_valid(selected==4 && resident_wr_done_valid),
   .wr_done_ready(store_wr_take),.wr_done_tag(resident_wr_done_tag),.wr_done_error(resident_wr_done_error)
  );
- s128_attention_core_scope #(.TOPOLOGY(25001),.PIPELINE_KV_WRITES(1'b1),.V_READS_PER_16(4)) attention (
+ s128_attention_core_scope #(.TOPOLOGY(25001),.V_READS_PER_16(4)) attention (
   .clk,.reset,.service_valid(service_valid && !active && selected_offer==5),
   .service_ready(qkv_ready[5]),.service_owner,.service_ticket,.service_descriptor,
   .service_cancel_valid(service_cancel_valid && active && selected==5),

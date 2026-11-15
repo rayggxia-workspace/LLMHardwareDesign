@@ -1,0 +1,1136 @@
+{
+  "schema": "macro-service-controllers/1",
+  "services": [
+    {
+      "module": "add_s32_service_controller",
+      "rtl": "rtl/services/add_s32_service_controller.sv",
+      "source": "rtl/u0/u_resident_add.sv",
+      "source_sha256": "7ead0d5c5f5492fe3ccef295fde2b40ef1b44b8a6838ecda0a6046075126e8c9",
+      "hard_boundary": false,
+      "control_owner": "assigned by Algo1 subject to registered controller capability",
+      "resource_requirements": [
+        {
+          "resource": "e",
+          "required_native_master": "e_s32_ap64",
+          "selection": "Algo1 instance binding required",
+          "ports": [
+            {
+              "service_pin": "resource_e_in_valid",
+              "macro_pin": "in_valid",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_in_ready",
+              "macro_pin": "in_ready",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_in_data",
+              "macro_pin": "in_data",
+              "direction": "output",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_e_in_op",
+              "macro_pin": "in_op",
+              "direction": "output",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_in_mask",
+              "macro_pin": "in_mask",
+              "direction": "output",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_in_shift",
+              "macro_pin": "in_shift",
+              "direction": "output",
+              "shape": "[7:0]"
+            },
+            {
+              "service_pin": "resource_e_in_minus",
+              "macro_pin": "in_minus",
+              "direction": "output",
+              "shape": "[2:0]"
+            },
+            {
+              "service_pin": "resource_e_out_valid",
+              "macro_pin": "out_valid",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_out_ready",
+              "macro_pin": "out_ready",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_out_data",
+              "macro_pin": "out_data",
+              "direction": "input",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_e_out_clipped",
+              "macro_pin": "out_clipped",
+              "direction": "input",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_out_error",
+              "macro_pin": "out_error",
+              "direction": "input",
+              "shape": "scalar"
+            }
+          ],
+          "exclusive_until": "service completion and all accepted responses drained"
+        }
+      ],
+      "admission": "full native service interface elaborated in 114580; numerical and parent integration pending",
+      "fixed_product_connections": [],
+      "descriptor": {
+        "schema": 3,
+        "abi": 7,
+        "opcode": 2,
+        "topology": "parameter"
+      },
+      "rtl_sha256": "eb9efaf92b95d9a9fe9b655aee8ca05b5e6a6278fb8a351fb6c9382c0b7f7acb",
+      "sram_error_policy": "propagate actual response error; S_base no-error tie only at selected macro binding",
+      "structural_admission_receipt": "evidence/architecture-revision-185/selected-nine-assembly-115465/receipt.json"
+    },
+    {
+      "module": "rope_s32_service_controller",
+      "rtl": "rtl/services/rope_s32_service_controller.sv",
+      "source": "rtl/p_services/rope_e32_s128_commit.sv",
+      "source_sha256": "e4fb576487e258329002720bb4cc3e289087f4fbf9b3f6eec16b8b0a41f70fea",
+      "hard_boundary": false,
+      "control_owner": "assigned by Algo1 subject to registered controller capability",
+      "resource_requirements": [
+        {
+          "resource": "e",
+          "required_native_master": "e_s32_ap64",
+          "selection": "Algo1 instance binding required",
+          "ports": [
+            {
+              "service_pin": "resource_e_in_valid",
+              "macro_pin": "in_valid",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_in_ready",
+              "macro_pin": "in_ready",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_in_data",
+              "macro_pin": "in_data",
+              "direction": "output",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_e_in_op",
+              "macro_pin": "in_op",
+              "direction": "output",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_in_mask",
+              "macro_pin": "in_mask",
+              "direction": "output",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_in_shift",
+              "macro_pin": "in_shift",
+              "direction": "output",
+              "shape": "[7:0]"
+            },
+            {
+              "service_pin": "resource_e_in_minus",
+              "macro_pin": "in_minus",
+              "direction": "output",
+              "shape": "[2:0]"
+            },
+            {
+              "service_pin": "resource_e_out_valid",
+              "macro_pin": "out_valid",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_out_ready",
+              "macro_pin": "out_ready",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_out_data",
+              "macro_pin": "out_data",
+              "direction": "input",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_e_out_clipped",
+              "macro_pin": "out_clipped",
+              "direction": "input",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_out_error",
+              "macro_pin": "out_error",
+              "direction": "input",
+              "shape": "scalar"
+            }
+          ],
+          "exclusive_until": "service completion and all accepted responses drained"
+        }
+      ],
+      "admission": "not executable until all requirements bind to actual macro implementations",
+      "fixed_product_connections": [],
+      "rtl_sha256": "4711628544954dc971442064d2bea75b920c1a5d0e2a095e8a2e94c46f3bba27",
+      "structural_admission_receipt": "evidence/architecture-revision-185/selected-nine-assembly-115465/receipt.json"
+    },
+    {
+      "module": "gated_s32_service_controller",
+      "rtl": "rtl/services/gated_s32_service_controller.sv",
+      "source": "rtl/p_services/gated_s32_scope.sv",
+      "source_sha256": "4f79875dd77470f8b27866fb33089e39266734e2388050db398e69e0619568e8",
+      "hard_boundary": false,
+      "control_owner": "assigned by Algo1 subject to registered controller capability",
+      "resource_requirements": [
+        {
+          "resource": "g",
+          "required_native_master": "g_s32",
+          "selection": "Algo1 instance binding required",
+          "ports": [
+            {
+              "service_pin": "resource_g_in_valid",
+              "macro_pin": "in_valid",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_g_in_ready",
+              "macro_pin": "in_ready",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_g_in_gate",
+              "macro_pin": "in_gate",
+              "direction": "output",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_g_in_up",
+              "macro_pin": "in_up",
+              "direction": "output",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_g_in_gated",
+              "macro_pin": "in_gated",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_g_in_mask",
+              "macro_pin": "in_mask",
+              "direction": "output",
+              "shape": "[1:0]"
+            },
+            {
+              "service_pin": "resource_g_out_valid",
+              "macro_pin": "out_valid",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_g_out_ready",
+              "macro_pin": "out_ready",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_g_out_data",
+              "macro_pin": "out_data",
+              "direction": "input",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_g_out_mask",
+              "macro_pin": "out_mask",
+              "direction": "input",
+              "shape": "[1:0]"
+            },
+            {
+              "service_pin": "resource_g_out_error",
+              "macro_pin": "out_error",
+              "direction": "input",
+              "shape": "scalar"
+            }
+          ],
+          "exclusive_until": "service completion and all accepted responses drained"
+        }
+      ],
+      "admission": "not executable until all requirements bind to actual macro implementations",
+      "fixed_product_connections": [],
+      "rtl_sha256": "22a61f271caaa0403278bce83d796fcce884f2467ea612830cc397a488a377ad",
+      "structural_admission_receipt": "evidence/architecture-revision-185/selected-nine-assembly-115465/receipt.json"
+    },
+    {
+      "module": "rms_apply_s32_service_controller",
+      "rtl": "rtl/services/rms_apply_s32_service_controller.sv",
+      "source": "rtl/u0/s32_rms_apply_s128.sv",
+      "source_sha256": "b805541c6e338ca69595de69ecead5053fbb38659df5862bcb362a0a3a4a23b5",
+      "hard_boundary": false,
+      "control_owner": "selected registered owner",
+      "resource_requirements": [
+        {
+          "resource": "e",
+          "required_native_master": "e_s32_ap64",
+          "ports": [
+            {
+              "service_pin": "resource_e_in_valid",
+              "macro_pin": "in_valid",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_in_ready",
+              "macro_pin": "in_ready",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_in_data",
+              "macro_pin": "in_data",
+              "direction": "output",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_e_in_op",
+              "macro_pin": "in_op",
+              "direction": "output",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_in_mask",
+              "macro_pin": "in_mask",
+              "direction": "output",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_in_shift",
+              "macro_pin": "in_shift",
+              "direction": "output",
+              "shape": "[7:0]"
+            },
+            {
+              "service_pin": "resource_e_in_minus",
+              "macro_pin": "in_minus",
+              "direction": "output",
+              "shape": "[2:0]"
+            },
+            {
+              "service_pin": "resource_e_out_valid",
+              "macro_pin": "out_valid",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_out_ready",
+              "macro_pin": "out_ready",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_out_data",
+              "macro_pin": "out_data",
+              "direction": "input",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_e_out_clipped",
+              "macro_pin": "out_clipped",
+              "direction": "input",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_out_error",
+              "macro_pin": "out_error",
+              "direction": "input",
+              "shape": "scalar"
+            }
+          ],
+          "exclusive_until": "last result consumed"
+        }
+      ],
+      "admission": "requires command encoder, selected macro and finite SRAM binding",
+      "fixed_product_connections": [],
+      "rtl_sha256": "529082a63e8a93fa916637c83b5906caa068f1e509be261321a33243a1735266",
+      "structural_admission_receipt": "evidence/architecture-revision-185/selected-nine-assembly-115465/receipt.json"
+    },
+    {
+      "module": "n32_service_controller",
+      "rtl": "rtl/services/n32_service_controller.sv",
+      "source_sha256": "e6289b377fde6a006f57fbfe00ac1c601a87e5fd577fdcd4959bbdfb1807eec9",
+      "hard_boundary": false,
+      "control_owner": "selected N macro owner",
+      "resource_requirements": [
+        {
+          "resource": "n",
+          "required_native_master": "n_s32_mod",
+          "ports": [
+            {
+              "service_pin": "resource_n_cmd_valid",
+              "macro_pin": "cmd_valid",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_cmd_ready",
+              "macro_pin": "cmd_ready",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_cmd_tag",
+              "macro_pin": "cmd_tag",
+              "direction": "output",
+              "shape": "[31:0]"
+            },
+            {
+              "service_pin": "resource_n_cmd_mode",
+              "macro_pin": "cmd_mode",
+              "direction": "output",
+              "shape": "[1:0]"
+            },
+            {
+              "service_pin": "resource_n_cmd_base",
+              "macro_pin": "cmd_base",
+              "direction": "output",
+              "shape": "[9:0]"
+            },
+            {
+              "service_pin": "resource_n_cmd_count",
+              "macro_pin": "cmd_count",
+              "direction": "output",
+              "shape": "[12:0]"
+            },
+            {
+              "service_pin": "resource_n_cmd_committed",
+              "macro_pin": "cmd_committed",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_abort_valid",
+              "macro_pin": "abort_valid",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_abort_ready",
+              "macro_pin": "abort_ready",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_abort_tag",
+              "macro_pin": "abort_tag",
+              "direction": "output",
+              "shape": "[31:0]"
+            },
+            {
+              "service_pin": "resource_n_rsp_valid",
+              "macro_pin": "rsp_valid",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_rsp_ready",
+              "macro_pin": "rsp_ready",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_rsp_tag",
+              "macro_pin": "rsp_tag",
+              "direction": "input",
+              "shape": "[31:0]"
+            },
+            {
+              "service_pin": "resource_n_rsp_error",
+              "macro_pin": "rsp_error",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_rsp_aborted",
+              "macro_pin": "rsp_aborted",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_rsp_writes",
+              "macro_pin": "rsp_writes",
+              "direction": "input",
+              "shape": "[11:0]"
+            },
+            {
+              "service_pin": "resource_n_s_req_valid",
+              "macro_pin": "s_req_valid",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_s_req_ready",
+              "macro_pin": "s_req_ready",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_s_req_write",
+              "macro_pin": "s_req_write",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_s_req_address",
+              "macro_pin": "s_req_address",
+              "direction": "input",
+              "shape": "[9:0]"
+            },
+            {
+              "service_pin": "resource_n_s_req_data",
+              "macro_pin": "s_req_data",
+              "direction": "input",
+              "shape": "[127:0]"
+            },
+            {
+              "service_pin": "resource_n_s_rsp_valid",
+              "macro_pin": "s_rsp_valid",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_s_rsp_ready",
+              "macro_pin": "s_rsp_ready",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_n_s_rsp_data",
+              "macro_pin": "s_rsp_data",
+              "direction": "output",
+              "shape": "[127:0]"
+            },
+            {
+              "service_pin": "resource_n_s_rsp_error",
+              "macro_pin": "s_rsp_error",
+              "direction": "output",
+              "shape": "scalar"
+            }
+          ],
+          "exclusive_until": "macro response and SRAM result commit"
+        }
+      ],
+      "descriptor": {
+        "schema": "NSV1",
+        "abi": 38817283,
+        "opcodes": {
+          "Softmax": 1,
+          "RMSFactor": 2,
+          "Argmax": 3
+        }
+      },
+      "admission": "unit RTL verified; LC dispatch and full plan binding pending",
+      "fixed_product_connections": [],
+      "rtl_sha256": "e6289b377fde6a006f57fbfe00ac1c601a87e5fd577fdcd4959bbdfb1807eec9",
+      "structural_admission_receipt": "evidence/architecture-revision-185/selected-nine-assembly-115465/receipt.json"
+    },
+    {
+      "module": "projection_local_service_controller",
+      "rtl": "rtl/services/projection_local_service_controller.sv",
+      "rtl_sha256": "28f4fd0c664f6a2db76525f3172264fe666202989e39b3d842e8efae949c6553",
+      "hard_boundary": false,
+      "resource_requirements": [
+        {
+          "resource": "m",
+          "required_native_master": "m_native_leaf_s32",
+          "selection": "Algo1 must select explicit macro-to-parent-controller connections",
+          "native_source": "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/w8a16_v1/m_native_leaf_s32.sv",
+          "native_source_sha256": "aaddefce1198feec79c7e265103fabbd1bfed3b0f4cddb5bed2150e8c1cf6eeb",
+          "ports": [
+            {
+              "service_pin": "resource_m_lc_valid",
+              "macro_pin": "lc_valid",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_lc_ready",
+              "macro_pin": "lc_ready",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_lc_sop",
+              "macro_pin": "lc_sop",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_lc_eop",
+              "macro_pin": "lc_eop",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_lc_data",
+              "macro_pin": "lc_data",
+              "direction": "output",
+              "shape": "[127:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_lr_valid",
+              "macro_pin": "lr_valid",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_lr_ready",
+              "macro_pin": "lr_ready",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_lr_sop",
+              "macro_pin": "lr_sop",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_lr_eop",
+              "macro_pin": "lr_eop",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_lr_data",
+              "macro_pin": "lr_data",
+              "direction": "input",
+              "shape": "[127:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_a_valid",
+              "macro_pin": "a_valid",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_a_ready",
+              "macro_pin": "a_ready",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_a_data",
+              "macro_pin": "a_data",
+              "direction": "output",
+              "shape": "[255:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_a_session",
+              "macro_pin": "a_session",
+              "direction": "output",
+              "shape": "[31:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_m_a_beat",
+              "macro_pin": "a_beat",
+              "direction": "output",
+              "shape": "[2:0] ",
+              "signed": ""
+            }
+          ]
+        },
+        {
+          "resource": "s",
+          "required_native_master": "local_s_p",
+          "selection": "Algo1 must select explicit macro-to-parent-controller connections",
+          "native_source": "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/s_sram/local_s_p.sv",
+          "native_source_sha256": "08780f5d99b9b816c0250b74595fc68354b360a225a4be526dab28afbdb69112",
+          "ports": [
+            {
+              "service_pin": "s_req_valid",
+              "macro_pin": "req_valid",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_req_write",
+              "macro_pin": "req_write",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_req_ready",
+              "macro_pin": "req_ready",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_req_address",
+              "macro_pin": "req_addr",
+              "direction": "output",
+              "shape": "[9:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_req_data",
+              "macro_pin": "req_data",
+              "direction": "output",
+              "shape": "[127:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_rsp_valid",
+              "macro_pin": "rsp_valid",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_rsp_ready",
+              "macro_pin": "rsp_ready",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_rsp_data",
+              "macro_pin": "rsp_data",
+              "direction": "input",
+              "shape": "[127:0] ",
+              "signed": ""
+            }
+          ]
+        }
+      ],
+      "execution_admitted": false,
+      "unresolved_requirements": [
+        "LC MPR1 dispatch and complete graph candidate integration",
+        "finite DDR activation and M weight client arbitration",
+        "SRAM arbitration with other selected services and feeder exclusion",
+        "unused S_P feeder pins tied or assigned by actual parent assembly",
+        "full projection numerical verification with real M and S_P",
+        "plan-selected endpoint realization"
+      ],
+      "assumed_connections": [],
+      "sram_response_error_policy": "S_P has no error pin; tie s_rsp_error low only at verified S_P binding",
+      "scope": "unselected structural option, not an executable whole-graph candidate",
+      "structural_admission_receipt": "evidence/architecture-revision-185/selected-nine-assembly-115465/receipt.json"
+    },
+    {
+      "module": "e32_dot_service_controller",
+      "rtl": "rtl/services/e32_dot_service_controller.sv",
+      "rtl_sha256": "ff59b59961aa820036db82c258cb5b1c9dcf4d1fb127fefe2e919164c026bac2",
+      "hard_boundary": false,
+      "resource_requirements": [
+        {
+          "resource": "e",
+          "required_native_master": "e_s32_mac_ap64",
+          "ports": [
+            {
+              "service_pin": "resource_e_in_valid",
+              "macro_pin": "in_valid",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_e_in_ready",
+              "macro_pin": "in_ready",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_e_in_data",
+              "macro_pin": "in_data",
+              "direction": "output",
+              "shape": "[63:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_e_in_op",
+              "macro_pin": "in_op",
+              "direction": "output",
+              "shape": "[3:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_e_in_mask",
+              "macro_pin": "in_mask",
+              "direction": "output",
+              "shape": "[3:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_e_in_shift",
+              "macro_pin": "in_shift",
+              "direction": "output",
+              "shape": "[7:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_e_in_minus",
+              "macro_pin": "in_minus",
+              "direction": "output",
+              "shape": "[2:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_e_out_valid",
+              "macro_pin": "out_valid",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_e_out_ready",
+              "macro_pin": "out_ready",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_e_out_data",
+              "macro_pin": "out_data",
+              "direction": "input",
+              "shape": "[63:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_e_out_clipped",
+              "macro_pin": "out_clipped",
+              "direction": "input",
+              "shape": "[3:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "resource_e_out_error",
+              "macro_pin": "out_error",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            }
+          ]
+        },
+        {
+          "resource": "s",
+          "required_native_master": "local_s_base",
+          "ports": [
+            {
+              "service_pin": "s_req_valid",
+              "macro_pin": "req_valid",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_req_write",
+              "macro_pin": "req_write",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_req_ready",
+              "macro_pin": "req_ready",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_req_address",
+              "macro_pin": "req_addr",
+              "direction": "output",
+              "shape": "[9:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_req_data",
+              "macro_pin": "req_data",
+              "direction": "output",
+              "shape": "[127:0] ",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_rsp_valid",
+              "macro_pin": "rsp_valid",
+              "direction": "input",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_rsp_ready",
+              "macro_pin": "rsp_ready",
+              "direction": "output",
+              "shape": "",
+              "signed": ""
+            },
+            {
+              "service_pin": "s_rsp_data",
+              "macro_pin": "rsp_data",
+              "direction": "input",
+              "shape": "[127:0] ",
+              "signed": ""
+            }
+          ]
+        }
+      ],
+      "descriptor": {
+        "schema": 826559813,
+        "abi": 38814979,
+        "opcode": 1
+      },
+      "completion": "result stored ACK; all accepted DDR reads and E results drained",
+      "parent_resources": {
+        "ddr_outstanding_reads": 1,
+        "cache_lines": 1,
+        "cache_line_bytes": 64,
+        "e_operand_words": 1,
+        "e_result_words": 1
+      },
+      "required_exclusivity": "E32 MAC context through END/ABORT result; SRAM destination until write ACK",
+      "admission": "actual E/S fixture numeric pass 114666; full owner dispatcher and graph admission pending",
+      "assumed_product_connections": [],
+      "structural_admission_receipt": "evidence/architecture-revision-185/selected-nine-assembly-115465/receipt.json"
+    },
+    {
+      "module": "rope_native_service_controller",
+      "rtl": "rtl/services/rope_native_service_controller.sv",
+      "source": "rtl/p_services/rope_e32_s128_commit.sv",
+      "source_sha256": "e4fb576487e258329002720bb4cc3e289087f4fbf9b3f6eec16b8b0a41f70fea",
+      "hard_boundary": false,
+      "control_owner": "assigned by Algo1 subject to registered controller capability",
+      "resource_requirements": [
+        {
+          "resource": "e",
+          "required_native_master": "e_s32_ap64",
+          "selection": "Algo1 instance binding required",
+          "ports": [
+            {
+              "service_pin": "resource_e_in_valid",
+              "macro_pin": "in_valid",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_in_ready",
+              "macro_pin": "in_ready",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_in_data",
+              "macro_pin": "in_data",
+              "direction": "output",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_e_in_op",
+              "macro_pin": "in_op",
+              "direction": "output",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_in_mask",
+              "macro_pin": "in_mask",
+              "direction": "output",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_in_shift",
+              "macro_pin": "in_shift",
+              "direction": "output",
+              "shape": "[7:0]"
+            },
+            {
+              "service_pin": "resource_e_in_minus",
+              "macro_pin": "in_minus",
+              "direction": "output",
+              "shape": "[2:0]"
+            },
+            {
+              "service_pin": "resource_e_out_valid",
+              "macro_pin": "out_valid",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_out_ready",
+              "macro_pin": "out_ready",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_out_data",
+              "macro_pin": "out_data",
+              "direction": "input",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_e_out_clipped",
+              "macro_pin": "out_clipped",
+              "direction": "input",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_out_error",
+              "macro_pin": "out_error",
+              "direction": "input",
+              "shape": "scalar"
+            }
+          ],
+          "exclusive_until": "service completion and all accepted responses drained"
+        }
+      ],
+      "admission": "not executable until all requirements bind to actual macro implementations",
+      "fixed_product_connections": [],
+      "descriptor": {
+        "schema": 826626130,
+        "abi": 38797314,
+        "opcode": 1
+      },
+      "scope": "native descriptor wrapper over selected E; full graph and physical binding pending",
+      "rtl_sha256": "f1661482377e5ef1782ea104f14e8b550ee0d935424c8e61f15b6077e56cfeba",
+      "structural_admission_receipt": "evidence/architecture-revision-185/selected-nine-assembly-115465/receipt.json"
+    },
+    {
+      "module": "rms_apply_native_service_controller",
+      "rtl": "rtl/services/rms_apply_native_service_controller.sv",
+      "source": "rtl/u0/s32_rms_apply_s128.sv",
+      "source_sha256": "b805541c6e338ca69595de69ecead5053fbb38659df5862bcb362a0a3a4a23b5",
+      "hard_boundary": false,
+      "control_owner": "selected registered owner",
+      "resource_requirements": [
+        {
+          "resource": "e",
+          "required_native_master": "e_s32_ap64",
+          "ports": [
+            {
+              "service_pin": "resource_e_in_valid",
+              "macro_pin": "in_valid",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_in_ready",
+              "macro_pin": "in_ready",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_in_data",
+              "macro_pin": "in_data",
+              "direction": "output",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_e_in_op",
+              "macro_pin": "in_op",
+              "direction": "output",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_in_mask",
+              "macro_pin": "in_mask",
+              "direction": "output",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_in_shift",
+              "macro_pin": "in_shift",
+              "direction": "output",
+              "shape": "[7:0]"
+            },
+            {
+              "service_pin": "resource_e_in_minus",
+              "macro_pin": "in_minus",
+              "direction": "output",
+              "shape": "[2:0]"
+            },
+            {
+              "service_pin": "resource_e_out_valid",
+              "macro_pin": "out_valid",
+              "direction": "input",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_out_ready",
+              "macro_pin": "out_ready",
+              "direction": "output",
+              "shape": "scalar"
+            },
+            {
+              "service_pin": "resource_e_out_data",
+              "macro_pin": "out_data",
+              "direction": "input",
+              "shape": "[63:0]"
+            },
+            {
+              "service_pin": "resource_e_out_clipped",
+              "macro_pin": "out_clipped",
+              "direction": "input",
+              "shape": "[3:0]"
+            },
+            {
+              "service_pin": "resource_e_out_error",
+              "macro_pin": "out_error",
+              "direction": "input",
+              "shape": "scalar"
+            }
+          ],
+          "exclusive_until": "last result consumed"
+        }
+      ],
+      "admission": "requires command encoder, selected macro and finite SRAM binding",
+      "fixed_product_connections": [],
+      "descriptor": {
+        "schema": 826363218,
+        "abi": 38814980,
+        "opcode": 1
+      },
+      "scope": "native descriptor wrapper over selected E; full graph and physical binding pending",
+      "rtl_sha256": "8e926ffd2b2c092c47240c70972395e1477d8cf0e035502151c849a3f2b09f80",
+      "structural_admission_receipt": "evidence/architecture-revision-185/selected-nine-assembly-115465/receipt.json"
+    }
+  ]
+}

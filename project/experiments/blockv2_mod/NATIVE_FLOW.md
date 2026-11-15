@@ -1,30 +1,17 @@
-# 当前算子图到宏级指令与候选连线流程
+# 当前图到指令与连线流程
 
-架构依据是 PR185：P/U/C/F/J 是控制归属，功能宏才是硬边界；包括同组内部路径在内的数据连接都需要明确的产品端点绑定。当前底座为 hardware/blockv2-mod-shared-memory.json。
+PR185规定：功能宏才是硬边界，P/U/C/F/J是控制归属；同组内部的数据路径也必须有明确端点绑定，不预设U/P连接。
 
-## 两类输入与编译过程
+当前已准入底座：evidence/command-pipeline/hardware.json。
+对应服务清单：evidence/command-pipeline/services.json。
+版本command-pipeline/1，底座ID blockv2-mod-pr185-memory-3fa694340b33bf0b。
 
-- 硬件：宏、控制归属、服务 ABI、有限存储/仲裁和真实端点。
-- 算子图：同源 native-recipe-graph.json、native-operand-recipes.json、native-value-layout.json。它们是图和操作数描述，不是历史执行计划。
+输入模型算子图与底座，Algo1搜索并构造执行计划；从同一计划生成母局控程序、描述符、地址分配、依赖与候选连线。候选连线须通过完整RTL装配检查。TLM执行该指令包，不自行重选算子映射或替换底座能力。通用编译入口见README.md。
 
-在 Slurm 任务中使用 reproducibility/environment.json 指定的 Python/module roots。当前命令和参数见 README.md：
+本轮解决命令内部供数、计算和返回的过度串行化：激活搬入、加载时统计、量化、A读取、权重读取、下一K块预取、写回准备及点积输入缓存。真实数学依赖与最终提交条件保留。被替代的串行开关及其生成模板已删除；旧能力合同在打包和执行时会被拒绝。
 
-1. compiler/run_macro_graph_frontend.py 生成合法宏服务候选。
-2. compiler/run_macro_selection.py 选择同一图的完整计划。
-3. compiler/materialize_native_product.py 合并产品阶段所需静态连接，生成宏/父层单元端点绑定。选中装配必须有对应源码哈希一致的完整 elaboration 证据。
-4. compiler/package_native_plan.py 生成母控页、有限局控内核、描述符、部署序列、地址分配和同计划 candidate-wiring.json。
-5. tlm/run_macro_package.py 执行封存指令包；运行数据和 SRAM 参数需与目标底座绑定。TLM 不重新映射算子或替换选中计划。
+完整装配已验证30个功能宏、9个局控、242个控制实例；18项行为能力与实际RTL测试及源码闭包绑定。统一回归115472的23个入口通过，覆盖数值、乱序、背压、取消、错误与未知确认隔离，以及生成器重新生成一致性。
 
-## 当前验证结果
+完整目标为512历史KV的连续两步decode，初始历史为零、首token为840，第二步消费第一步的新增KV和输出token。当前全图编译、封包与TLM执行链仍在进行，尚未完成完整目标验收。入口与状态见audits/command_pipeline_README.md及evidence/command-pipeline/full-decode512-two-step/jobs.json。
 
-完整 36 层 Qwen2.5-3B 两 token prefill 和一步自产 KV decode 已执行全部 141490/70457 次调用；651/723 个产出张量与独立定点参考逐字节一致。验收记录为 evidence/architecture-revision-185/Qwen-short-acceptance-115200.json。
-
-剩余 benchmark 的 20 张单层图均已尝试，但均停在尺寸解析或 operand lowering，尚无一张进入完整选择计划。具体责任和证据见 evidence/architecture-revision-185/RESULTS_ZH.md。
-
-时序是未校准 TLM 预测，排除程序装载与外部阶段准备，不代表物理验收、广泛模型精度或连续请求稳态吞吐。未运行 P512/D128。
-
-## 历史入口
-
-run_flow.py/run_flow.sbatch 是旧底座诊断入口，必须显式 --legacy-diagnostic，并仍受冻结源码校验约束。algo1_full_model.sbatch、full_instruction_flow.sbatch 和 algo1.sbatch 默认拒绝运行。旧说明和实现保存在 evidence/history。
-
-旧归档页、固定 U/P 供数路径、旧 symbolic RUN_LOOP 结果和 diagnostic-zero 回放，均不能代替当前两输入编译、候选连线或完整实数值评估。
+不运行prefill或128次decode。此前history2的性能结果不作为本轮基线。时序尚未校准，外部阶段安装时间不计入模型退休时刻；不宣称物理实现、端到端加速比例或连续硬件请求吞吐验收。完整二进制、权重和日志留在远端，PR只提交源码与轻量证据。

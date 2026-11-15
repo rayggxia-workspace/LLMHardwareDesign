@@ -34,7 +34,7 @@ def graph_dependencies(recipes):
  for name in tasks:visit(name)
  return tasks,resolved,order
 class Frontend:
- def __init__(self,graph,recipes,layouts,hardware,services,topology,*,range_tiles=0,joint=False):
+ def __init__(self,graph,recipes,layouts,hardware,services,topology,*,range_tiles=0,joint=False,independent_ranges=False):
   hashes={d['source_model_sha256'] for d in (graph,recipes,layouts)}
   if len(hashes)!=1:raise ValueError('graph/recipe/layout source mismatch')
   self.control_admission=admit_controls(hardware)
@@ -42,7 +42,8 @@ class Frontend:
   if set(hardware['control_groups'])!=set(CANONICAL_OWNERS):raise ValueError('nine control owners required')
   self.hardware['native_dispatch_overlay']=profile(self.hardware,topology,{n:i for i,n in enumerate(CANONICAL_OWNERS)})
   self.storage=allocations(graph,recipes,layouts,{'virtual_memory':{'address_bits':48}})
-  self.joint=joint
+  self.joint=joint;self.independent_ranges=independent_ranges
+  if independent_ranges and not joint:raise ValueError('independent ranges require explicit joint workspace leases')
   if joint:
    from native_joint_recipes import lower
    recipes=lower(recipes)
@@ -50,7 +51,7 @@ class Frontend:
   self.range_tiles=range_tiles;self.range_parts={}
   if range_tiles:
    from native_range_frontier import expand
-   self.tasks,self.after,self.order,self.range_parts=expand(self.tasks,self.after,self.order,tiles_per_range=range_tiles)
+   self.tasks,self.after,self.order,self.range_parts=expand(self.tasks,self.after,self.order,tiles_per_range=range_tiles,serialize_ranges=not independent_ranges)
   self.bindings={s['module']:bindings(s,self.hardware,self.hardware['control_groups']) for s in services}
   self.graph_hash=graph['source_model_sha256']
   self.initial_ids={'first_session':1,'generation':1,'job':1,'epoch':1,'tensor':1,'version':1,
@@ -110,7 +111,7 @@ class Frontend:
    if counts['tasks']%50==0:progress(json.dumps(dict(counts)))
   manifest={'schema':'macro-native-candidate-graph/1','graph_sha256':self.graph_hash,'tasks':rows,
    'counts':dict(counts),'storage':self.storage,'hardware':self.hardware,
-   'joint':self.joint,'range_tiles':self.range_tiles,'range_parts':self.range_parts,
+   'independent_ranges':self.independent_ranges,'joint':self.joint,'range_tiles':self.range_tiles,'range_parts':self.range_parts,
    'whole_plan_accepted':False,'scope':'unselected candidates from one graph/base/storage; global DP, wiring and execution pending'}
   (out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
   progress(json.dumps(dict(counts)));return manifest

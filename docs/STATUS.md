@@ -1,5 +1,18 @@
 # 当前状态
 
+2026-11-15 CST。Issue #219 / [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269)：正在完成命令内部供数、计算与返回流水修改。新版控制与完整装配准入通过：30个功能宏、9个局控、242个控制实例；18项能力绑定实际RTL行为证据。统一回归115472的23个入口全部通过，包含正常数值、乱序、背压、取消/错误排空、未知确认隔离及生成器防回退。
+
+完整目标链为历史512/513的两步连续decode：115473/115474全图编译并行，115475同计划连线与指令包封装，115476执行及独立数值比较。初始历史KV为零、首token840、第二步继承第一步真实新增KV和输出token。当前尚未完成整请求验收；不运行prefill或128次decode。
+
+[当前底座与运行入口](../project/experiments/blockv2_mod/audits/command_pipeline_README.md) · [修改与证据边界](../project/experiments/blockv2_mod/audits/COMMAND_PIPELINE_REVIEW.md)。本轮修改RTL控制与TLM，保留宏硬边界、显式连线选择；不扩大SRAM位宽、不默认U/P连接。无同场景旧流水完整基线，因此不报告端到端加速比例。Issue保持in_progress、PR draft，独立审查待指定；看板配置缺失，状态unverified/同步pending。
+
+## 历史记录（不代表本轮验收）
+
+此前history2单步及其21.6%/28.0%模型收益偏离本轮场景，不能用于KV512两步结论。以下记录保留其当时状态。
+
+2026-11-15 CST。#219 / PR #269 的 Algo1 脏驻留范围搜索完成一次完整36层 decode（历史长度2）验证：55,589条指令、logits和72份KV逐字节一致；同配置TLM时间807.1→632.6ms，总DDR仅减少约0.28%。后续阶段调度、独立矩阵范围和修正计数模型仍在比较，本轮仅decode、未改功能RTL。此轮远端源码与证据待GitHub连接器恢复后发布，不视为PR已更新。
+
+
 2026-11-15 CST。#219 / [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269)：按 PR185 恢复控制归属与宏硬边界，显式绑定同计划指令和候选端点连线。完整 36 层 Qwen 两 token prefill + 一步自产 KV decode 的 141490/70457 次调用全部执行，651/723 个产出张量逐字节一致。剩余 20 张 benchmark 图均已尝试，全部停在尺寸解析或 operand lowering，尚未进入候选选择。时序未校准；不代表物理、广泛精度或稳态吞吐验收。源码及[结果](../project/experiments/blockv2_mod/evidence/architecture-revision-185/RESULTS_ZH.md)提交本 PR 审查，Issue #219 更广泛优化目标保持 in_progress。
 
 2026-11-09：#219/PR220[迭代23/24](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_24.md)实现原生逐行地址选择、动态high16消费者覆盖及逐term混合K检查。
