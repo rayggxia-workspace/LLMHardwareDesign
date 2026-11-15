@@ -35,7 +35,7 @@ def compare(reference, fp32, candidate):
         gold_raw = (fp32 / gold_name).read_bytes()
         if sha256(raw).hexdigest() != item["sha256"] or sha256(gold_raw).hexdigest() != targets[gold_name]:
             raise ValueError("residual snapshot SHA-256 mismatch")
-        values = np.frombuffer(raw, dtype="<i4").astype(np.float64)/65536
+        values = np.frombuffer(raw, dtype="<i4").astype(np.float64)/(1 << trace.get("fraction_bits", 16))
         gold = np.frombuffer(gold_raw, dtype="<f4").astype(np.float64)
         if values.shape != gold.shape or not np.isfinite(gold).all():
             raise ValueError("hidden shape or values differ")

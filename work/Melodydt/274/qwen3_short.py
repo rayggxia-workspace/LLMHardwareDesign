@@ -118,6 +118,7 @@ class Execution:
         self.hidden = plan.get("hidden", HIDDEN)
         self.vocab = plan.get("vocab", VOCAB)
         self.token_word = plan.get("token_word", 512)
+        self.residual_fraction_bits = plan.get("residual_fraction_bits", 16)
         self.n = [RMS(self.clock, s) for s in self.sram]
         self.e = [UArithmetic(self.clock, s) for s in self.sram]
         self.weight_window = weight_window
@@ -394,7 +395,8 @@ class Execution:
                         return
 
                     def add(a, b):
-                        values = [x+rne(y*gain, 16) for x, y in zip(a, unpack("<4i", b))]
+                        shift = 32-self.residual_fraction_bits if saturating else 16
+                        values = [x+rne(y*gain, shift) for x, y in zip(a, unpack("<4i", b))]
                         if saturating:
                             clipped = [min((1 << 31)-1, max(-(1 << 31), x)) for x in values]
                             self.residual_saturations += sum(a != b for a, b in zip(values, clipped))
@@ -439,6 +441,8 @@ class Execution:
                      (P, ELEMENT, VECTOR, 2): lambda r: scale(r, site=P, ranged=True),
                      (MID, 3, VECTOR, 5): lambda record: self.n[MID].bind(
                          record, gamma_bank=self.sram[CONTEXT]),
+                     (MID, 3, VECTOR, 6): lambda record: self.n[MID].bind(
+                         record, gamma_bank=self.sram[CONTEXT], shifted_input=True),
                      (P, ACT, VECTOR, 1): activation,
                      (P, ACT, VECTOR, 2): lambda r: activation(r, gelu=True),
                      (P, ACT, VECTOR, 3): lambda r: activation(r, sigmoid=True),
@@ -557,7 +561,7 @@ class Execution:
                 self.pages(layer)
                 if trace_layers:
                     data = b"".join(self.sram[U].words[word] for word in range(self.hidden//4))
-                    name = f"{self.plan['mode']}-{step}-layer-{index}.q16"
+                    name = f"{self.plan['mode']}-{step}-layer-{index}.s32"
                     (self.output / name).write_bytes(data)
                     layer_frames.append({"file": name, "input": input_id,
                                          "sha256": sha256(data).hexdigest(),
@@ -587,6 +591,7 @@ class Execution:
         if trace_layers:
             (self.output / "layer-trace.json").write_text(json.dumps({
                 "initial_state_sha256": self.plan.get("representative_history", {}).get("source_sha256"),
+                "fraction_bits": self.residual_fraction_bits,
                 "frames": layer_frames,
             }, indent=2) + "\n")
         if counts["reads"] + counts["writes"] != counts["callbacks"]:
@@ -648,11 +653,15 @@ def main():
     parser.add_argument("--three-p", action="store_true", help="issue FFN tiles to three local targets")
     parser.add_argument("--trace-layers", action="store_true",
                         help="write residual snapshots after layer WAIT, without clock events")
+    parser.add_argument("--gemma-wide-residual", action="store_true",
+                        help="use S32/Q12 residuals and scale-aware normalization for Gemma")
     args = parser.parse_args()
     if args.representative_history and args.mode != "decode":
         parser.error("representative history requires decode mode")
     if args.three_p and args.pr272_profile != "combined":
         parser.error("three-P requires the combined PR #272 service profile")
+    if args.gemma_wide_residual and args.model != "gemma":
+        parser.error("wide residual is specific to Gemma")
     if args.ffn_context_cache and args.model not in ("phi", "gemma", "qwen35", "falcon"):
         parser.error("FFN context cache requires a DDR-backed Mid mapping")
     if args.compact_kv64 and args.model not in ("llama", "granite"):
@@ -702,7 +711,11 @@ def main():
         compiler.parallel_waves = {}
         if not hasattr(compiler, "scratch_regions"):
             compiler.scratch_regions = []
+    if args.gemma_wide_residual:
+        compiler.residual_fraction_bits = 12
     plan = compiler.compile()
+    if args.gemma_wide_residual:
+        plan["residual_fraction_bits"] = 12
     if args.three_p:
         plan["three_p"] = True
     if args.tiled_attention128:
@@ -726,6 +739,7 @@ def main():
                   tiled_attention128=args.tiled_attention128,
                   history_payload="live FP32" if args.representative_history else "zeros",
                   history_beats=execution.memory.history_beats,
+                  residual_fraction_bits=execution.residual_fraction_bits,
                   workload="three-P FFN TLM" if args.three_p else "serial projection and modeled SRAM COPY candidate")
     if args.three_p:
         result["ffn_by_target"] = {site: dict(unit.stats) for site, unit in execution.ffn_lane_proj.items()}

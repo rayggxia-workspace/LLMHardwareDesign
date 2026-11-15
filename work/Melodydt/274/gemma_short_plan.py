@@ -13,6 +13,7 @@ class GemmaCompiler(PhiCompiler):
     model_type, hidden, head_size, heads, kv_heads, ffn, vocab = "gemma3_text", 2560, 256, 8, 4, 10240, 262208
     token_word = 960
     kv_row = 1024
+    residual_fraction_bits = 16
 
     def __init__(self, *args):
         super().__init__(*args)
@@ -44,7 +45,11 @@ class GemmaCompiler(PhiCompiler):
         return KV_START+((layer*self.kv_heads+head)*2+kind)*self.kv_bytes
 
     def ingress(self):
-        self.append(U, seal(ELEMENT, 1, VECTOR, "<HI", self.hidden//4, round(sqrt(self.hidden)*65536)))
+        self.append(U, seal(ELEMENT, 1, VECTOR, "<HI", self.hidden//4,
+                            round(sqrt(self.hidden)*(1 << self.residual_fraction_bits))))
+
+    def normalize(self, name):
+        self.norm_from(U, name, input_shift=16-self.residual_fraction_bits)
 
     def final_norm(self):
         self.normalize("language_model.model.norm.weight")

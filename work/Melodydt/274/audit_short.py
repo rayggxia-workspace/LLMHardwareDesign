@@ -11,7 +11,7 @@ def hash_file(path):
     return sha256(path.read_bytes()).hexdigest()
 
 
-def prefill_difference(path, model, reference):
+def prefill_difference(path, model, reference, fraction_bits=16):
     import torch
     from safetensors import safe_open
 
@@ -30,7 +30,7 @@ def prefill_difference(path, model, reference):
             if key in source.keys():
                 weight = source.get_tensor(key).float().numpy()
                 break
-    state = np.fromfile(path, dtype="<i4")/65536
+    state = np.fromfile(path, dtype="<i4")/(1 << fraction_bits)
     gold = torch.load(reference / "prefill-post-norm.pt", weights_only=True).numpy().reshape(-1)
     if weight is None or weight.shape != state.shape or state.shape != gold.shape:
         raise ValueError("prefill final residual and reference normalization shapes disagree")
@@ -132,7 +132,8 @@ def audit(run, layers, vocab, mode, reference=None, aligned_reference=None):
         raise ValueError("wrong final-residual timing boundary")
     elif reference is not None:
         model = res.get("model", "qwen3")
-        numeric.append(prefill_difference(run / "residual-1.bin", model, reference))
+        numeric.append(prefill_difference(run / "residual-1.bin", model, reference,
+                                          res.get("residual_fraction_bits", 16)))
     return {"mode": mode, "layers": layers, "pages": pages, "calls": calls,
             "interval_ps": res["interval_ps"], "tok_s": res["tok_s"], "retirements": res["retirements"],
             "numeric": numeric, "residual_saturations": res.get("residual_saturations"),

@@ -80,6 +80,7 @@ for spec in "$@"; do
     if [[ $profile != off ]]; then options+=(--pr272-profile "$profile"); fi
     if [[ ${MDT_274_THREE_P:-0} == 1 ]]; then options+=(--three-p); fi
     if [[ ${MDT_274_TRACE_LAYERS:-0} == 1 ]]; then options+=(--trace-layers); fi
+    if [[ ${MDT_274_GEMMA_WIDE_RESIDUAL:-0} == 1 ]]; then options+=(--gemma-wide-residual); fi
     count=$layers
     if [[ $mode == pilot ]]; then mode=prefill; count=1; fi
     if [[ $mode == slice ]]; then mode=prefill; count=4; fi
