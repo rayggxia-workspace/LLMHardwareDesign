@@ -25,7 +25,9 @@ M60 的交付网表来自 `issue250-m-physical-20261111-60/tasks/delivery/6_fina
 
 从 C639 冻结版本逐字节复制六个 M 源文件。沿用 #250 的向量、六个种子和三种初态，18 个叶块功能回归已全部通过。修订前的 `116954` 因旧 C++ 驱动没有为 Verilator 注册参数、遇到冻结 RTL 的探针时退出，依赖 `116955` 随后取消。修订只为测试驱动注册 `commandArgs`，并使生成模板在测试目录重现带探针的原始叶块，六个 M 设计文件、向量和断言均按原样使用。
 
-`116956` 按 #250 旧 M 流程用 Yosys／ABC 进行 Nangate45 映射。布线 `116957` 在映射与清单校验通过后按 Slurm `afterok` 启动，复用 #47 edge1390 的 1,390 µm 尺寸、14 µm 边距、0.55 放置密度、300 MHz 约束与相同余量设置。布线作业的产物先按候选处理，后续核验实际布线、时序、电气、DRC、寄生、门级等价和真实工作负载下的功耗。
+`116956` 在 c64/node9 用 12 核运行 9 分 55 秒，`COMPLETED 0:0`。沿用 #250 的 Yosys／ABC Nangate45 流程，当前 M 映射面积 723,919.532 µm²、单元 406,959 个。原 M60 映射为 722,942.248 µm²、407,125 个单元。两版 1,330 位公开端口的名称、方向及宽度完全一致。映射面积只计映射后的标准单元。`mapping-results.sha256` 的 SHA-256 为 `0fc17d5e1c00eb1b3d5e5c73f6ade85723f556bc9472e24dd12825fc3b63ac95`，`mapped.v` 的 SHA-256 为 `a83e06a0b0dabe498f92348e31443d3149d2cfec76d745c92fdc758264b6970c`。
+
+首个布线 `116957` 在映射验收后启动，因调用传入 `mapping/m_native_leaf_s32`、而布线入口需要 `mapping` 父目录而退出。修订布线 `116976` 已在 c64/node9 用 12 核运行，映射清单校验通过，OpenROAD 已生成网表结构工件。按 #47 edge1390 配置复用 1,390 µm 尺寸、14 µm 边距、0.55 放置密度、300 MHz 约束与相同余量。后续验收实际布线、时序、电气、DRC、寄生、门级功能和真实工作负载功耗。
 
 ## 服务器和复跑
 
@@ -36,19 +38,28 @@ M60 的交付网表来自 `issue250-m-physical-20261111-60/tasks/delivery/6_fina
 | 116953 | `c639-m-contract-02` | `run_c639_m_contract.sbatch` | `87fb5bcd6a8d4413f991abf1d8c588b37303e693` |
 | 116958 | `c639-m-wave-audit-01` | `run_c639_m_wave_audit.sbatch` | `9569071418e87d400902108dcf4aa5e90a532af7` |
 | 116956、116957 | `c639-m-physical-02` | `run_c639_m_physical.sbatch` | `e0bee1338fb214bc53bbeee8806aef415c17e333` |
+| 116976 | `c639-m-physical-03` | `run_c639_m_physical.sbatch` | `4d3f3535e5989d00242b7485c89962a9993f698c` |
 
-作业 116957 从映射同一目录执行 `sbatch --parsable --job-name=mdt-280mroute --time=04:30:00 --dependency=afterok:116956 --kill-on-invalid-dep=yes run_c639_m_physical.sbatch route 116956`。前三个作业以 `sbatch --parsable <脚本>` 启动。目录中的 `source-commit.txt` 与 `bundle.sha256` 固定实际提交脚本。
+前三个作业以 `sbatch --parsable <脚本>` 启动。取消或失败的旧作业分别保留日志。目录中的 `source-commit.txt` 与 `bundle.sha256` 固定实际提交脚本。
 
 ```bash
 cd /public/home/yuzelu/Melodydt/runs/issue-280
-squeue -j 116956,116957 -o '%i|%j|%P|%T|%C|%N|%R'
-sacct -j 116953,116956,116957,116958 -o JobID,State,ExitCode,Elapsed,NodeList
+squeue -j 116976 -o '%i|%j|%P|%T|%C|%N|%R'
+sacct -j 116953,116956,116957,116958,116976 -o JobID,State,ExitCode,Elapsed,NodeList
 tail -n 30 c639-m-physical-02/slurm-116956.log
-tail -n 30 c639-m-physical-02/route-116957/route.log
+tail -n 30 c639-m-physical-03/slurm-116976.log
+tail -n 30 c639-m-physical-03/route-116976/route.log
 sha256sum -c c639-m-contract-02/contract-116953/contract-results.sha256
 sha256sum -c c639-m-wave-audit-01/wave-116958/wave-results.sha256
 (cd c639-m-physical-02/map-116956 && sha256sum -c mapping-results.sha256)
-sha256sum -c c639-m-physical-02/route-116957/route-results.sha256
+sha256sum -c c639-m-physical-03/route-116976/route-results.sha256
+```
+
+修订布线的实际启动命令如下。
+
+```bash
+cd /public/home/yuzelu/Melodydt/runs/issue-280/c639-m-physical-03
+sbatch --parsable --job-name=mdt-280mroute --time=04:30:00 run_c639_m_physical.sbatch route /public/home/yuzelu/Melodydt/runs/issue-280/c639-m-physical-02/map-116956
 ```
 
 后续先验收同源 M 布线和门级功能，按 C639 各 P 的实际握手采样 M 功耗，再补真实 512-bit SRAM／PM 写入、母控、局控、DMA、互连、时钟等物理分项。之后完成 Granite／Phi／Falcon 专项 A/B、七模型和 Qwen2.5-3B 同口径扩测与系统能耗、误差汇总。#280 进行中，PR #281 草稿，登记待合并，Projects 缺配置待维护者核验。
