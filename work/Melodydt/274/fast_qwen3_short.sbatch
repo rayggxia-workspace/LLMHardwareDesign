@@ -75,6 +75,7 @@ for spec in "$@"; do
     options=()
     if [[ "${cache:-}" == cache ]]; then options+=(--ffn-context-cache); fi
     if [[ "${cache:-}" == kv64 ]]; then options+=(--compact-kv64); fi
+    if [[ "${cache:-}" == tile128 ]]; then options+=(--tiled-attention128); fi
     count=$layers
     if [[ $mode == pilot ]]; then mode=prefill; count=1; fi
     if [[ $mode == slice ]]; then mode=prefill; count=4; fi

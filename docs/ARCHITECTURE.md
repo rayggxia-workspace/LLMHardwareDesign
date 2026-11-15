@@ -1,6 +1,6 @@
 # 架构与运行
 
-[七模型短程 TLM 回放](../work/Melodydt/274/RESULTS.md)记录真实权重生成、两步 Decode、两位置 Prefill、Slurm 和状态审计的复跑入口。模型专用服务及定点数值边界随实测回执记录。
+[七模型短程 TLM 回放](../work/Melodydt/274/RESULTS.md)记录真实权重生成、两步 Decode、两位置 Prefill、Slurm 和状态审计的复跑入口。模型专用服务及定点数值边界随实测回执记录。[优化 A/B](../work/Melodydt/274/OPTIMIZATION.md) 给出权重窗口、KV 行与 V 读取、FFN 缓存和逐字节回放对照的命令。
 
 Qwen2.5-3B 的 [指令驱动事务级评估](../project/experiments/systemc_benchmark/README.md)提供配置化运行入口，覆盖两步 decode、短 prefill、诊断前缀、完整请求回放、128/512-bit 对照及短程吞吐审计。
 

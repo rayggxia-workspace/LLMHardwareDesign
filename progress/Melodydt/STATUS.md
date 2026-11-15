@@ -29,3 +29,5 @@
 - 全部模型的权重窗口四层或首层 A/B 已结束，结果逐位和状态证据见[优化记录](../../work/Melodydt/274/OPTIMIZATION.md)。另完成 FFN Context 缓存及 64 维 KV 前缀 A/B。
 - Qwen3 全层 Prefill 17.897215 输入 token/s，较基线提高 32.76%。Decode 115262 运行中，其余六模型的整层作业 115282–115287 已进入 RUNNING。待核验两步词表、状态、DDR 对账及整层增幅。
 - [Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 继续进行中，[PR #275](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/275) 草稿。登记 pending，Projects 看板无项目配置，审查人待指定。
+
+- 首轮优化整层 Slurm 115262、115282–115288 均正常退出。七模型用 512-bit SRAM 完成两阶段 A/B，候选和原基线最终残差、词表 logits 逐字节一致。短 Prefill 提升 33.89%–53.98%，两步 Decode 提升 20.82%–97.53%。输出清单已复验。另完成 Qwen3 独立 V 读取复用，Decode 达 4.948742 token/s。见[完整优化记录](../../work/Melodydt/274/OPTIMIZATION.md)。PR 保持草稿，Issue 进行中，基线数值资格与 RTL／物理校准待完成。

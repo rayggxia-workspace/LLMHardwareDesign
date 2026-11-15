@@ -91,7 +91,7 @@ def compare(before, after, same_plan=False):
             raise ValueError(f"compiled input or state differs: {k}")
     if row_ratio == 1 and ap["state"] != bp["state"]:
         raise ValueError("compiled state address differs")
-    if row_ratio == 2 and (ap["kv_row"], bp["kv_row"], len(ap["state"])) != (512, 256, len(bp["state"])):
+    if row_ratio == 2 and (ap.get("kv_row", 512), bp["kv_row"], len(ap["state"])) != (512, 256, len(bp["state"])):
         raise ValueError("compact KV must use half the row bytes")
     if inference_images(ap) != inference_images(bp):
         raise ValueError("checkpoint data, inputs, or constants differ")

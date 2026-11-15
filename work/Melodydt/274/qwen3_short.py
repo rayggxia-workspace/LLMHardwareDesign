@@ -393,9 +393,10 @@ class Execution:
         if self.hidden == 2560:
             from attention_wide import WideAttention
             providers[P, ATT_WIDE, VECTOR, 1] = WideAttention(self.proj[0]).bind
-        if self.plan["kv_row"] == 256:
-            from attention_compact import CompactAttention64
-            providers[P, ATT1, BASE_ABI, 2] = CompactAttention64(self.proj[0]).bind
+        if self.plan["kv_row"] == 256 or self.plan.get("tiled_attention128"):
+            from attention_compact import TiledAttention
+            width = self.plan["kv_row"]//4
+            providers[P, ATT1, BASE_ABI, 2 if width == 64 else 1] = TiledAttention(self.proj[0], width).bind
         if self.plan.get("moe"):
             from granite_short import Router
             providers[P, MOE, VECTOR, 1] = Router(self, activation).bind
@@ -531,11 +532,14 @@ def main():
     parser.add_argument("--weight-window", type=int, choices=(1, 2, 4, 8), default=1)
     parser.add_argument("--ffn-context-cache", action="store_true")
     parser.add_argument("--compact-kv64", action="store_true")
+    parser.add_argument("--tiled-attention128", action="store_true")
     args = parser.parse_args()
     if args.ffn_context_cache and args.model not in ("phi", "gemma", "qwen35", "falcon"):
         parser.error("FFN context cache requires a DDR-backed Mid mapping")
     if args.compact_kv64 and args.model not in ("llama", "granite"):
         parser.error("compact KV requires 64-element attention heads")
+    if args.tiled_attention128 and args.model != "qwen3":
+        parser.error("the 128-element V reuse experiment is configured for Qwen3")
     full = {"qwen3": 28, "llama": 16, "phi": 32, "gemma": 34, "granite": 32,
             "qwen35": 32, "falcon": 32}[args.model]
     layers = full if args.layers is None else args.layers
@@ -575,12 +579,15 @@ def main():
         compiler.kv_row = 256
         compiler.kv_bytes = align((history+2)*compiler.kv_row, 4096)
     plan = compiler.compile()
+    if args.tiled_attention128:
+        plan["tiled_attention128"] = True
     (assets / "plan.json").write_text(json.dumps(plan, indent=2) + "\n")
     result = Execution(plan, assets, args.library, args.ini, args.output, args.weight_window).run()
     result.update(plan_sha256=hash_file(assets / "plan.json"),
                   model=args.model,
                   ffn_context_cache=args.ffn_context_cache,
                   compact_kv64=args.compact_kv64,
+                  tiled_attention128=args.tiled_attention128,
                   workload="serial projection and modeled SRAM COPY candidate; zero historical KV")
     (args.output / "result.json").write_text(json.dumps(result, indent=2) + "\n")
 

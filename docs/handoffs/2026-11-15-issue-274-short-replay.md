@@ -16,3 +16,7 @@ sha256sum -c qwen3-short-fast-01/run-115055/output.sha256
 ```
 
 若继续推进数值资格，由 Melodydt 从 `audits/` 的首次分歧入手，复用 115197 的 Granite 路由及 115250 的同输入 FP32 对照。Gemma 的残差饱和、候选 GDN/Mamba2 时序与数值、独立 RTL 和物理时序校准均有待处理。项目结构、Python 编译、冻结脚本 Bash 语法、来源及输出清单核验通过。独立审查人待指定，登记沿用 [PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) pending。项目缺 `config/board.json`，由具备 Projects 权限的维护者核验任务卡和字段并同步。
+
+## 优化回放续办
+
+七模型优化作业 `115262`、`115282–115288` 均已结束并核验。冻结的源码目录、全层 A/B、SHA-256 及追踪命令见 [优化记录](../../work/Melodydt/274/OPTIMIZATION.md)。恢复时先核验 PR #275 当前 HEAD 并读回对应服务器运行的 `output.sha256`。本次保留草稿和 Issue 进行中状态，尚需数值及 RTL 校准时使用上节的独立参考。
