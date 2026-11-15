@@ -130,8 +130,14 @@ with raw.open() as source, (sample / "gate.vcd").open("w") as dest:
             stack.append(fields[2])
         elif fields[:1] == ["$upscope"]:
             stack.pop()
-        elif fields[:1] == ["$var"] and stack == scope and fields[4] == "clk":
-            clk_id = fields[3]
+        elif fields[:1] == ["$var"]:
+            if stack == scope and fields[4] == "clk":
+                clk_id = fields[3]
+            # GTKWave emits SystemVerilog logic declarations. OpenSTA accepts
+            # the equivalent VCD wire declaration with the same ID and range.
+            if fields[1] == "logic":
+                fields[1] = "wire"
+                line = " ".join(fields) + "\n"
         elif line.startswith("#"):
             time = int(line[1:])
         elif line[:1] in ("0", "1") and line[1:].strip() == clk_id and line[0] != clock_value:
