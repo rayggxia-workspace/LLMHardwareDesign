@@ -49,3 +49,5 @@
 
 - [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 以 #274 的已验收短窗为输入。已实现 [DDR 快照和分窗汇总](../../work/Melodydt/280/README.md)，本地混合读写开启前后 640 个回调及原生终态统计一致。
 - 服务器指纹已核对，当前批量 SSH 身份认证待 Melodydt 恢复。下一步在同版本服务器库上做 Qwen3 全层 Prefill 与 Decode 分窗回归，随后做单 P／三 P 消融、门级标定与七模型扩测。 [恢复入口](../../docs/handoffs/2026-11-15-issue-280-ddr-energy-pilot.md)
+
+- 已补齐 [Qwen3 DDR Slurm 入口](../../work/Melodydt/280/run_qwen3_ddr_pilot.py)，本地验证分窗参数、依赖散列失败时终止、原容器审计和结果输出路径。批量 SSH 认证重试仍失败，当前没有试点作业。 [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)
