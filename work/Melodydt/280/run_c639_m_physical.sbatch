@@ -24,7 +24,12 @@ cd "$bundle"
 sha256sum -c bundle.sha256
 
 if [[ ${1:-} == route ]]; then
-    map=$bundle/map-${2:?mapping job ID required}
+    map=${2:?mapping job ID or archive directory required}
+    if [[ $map != /* ]]; then map=$bundle/map-$map; fi
+    if [[ $map != "$runs"/c639-m-physical-*/map-* ]]; then
+        printf 'mapping archive must be in %s\n' "$runs" >&2
+        exit 2
+    fi
     (cd "$map" && sha256sum -c mapping-results.sha256)
     dest=$bundle/route-$job
     mkdir "$dest"
@@ -94,7 +99,7 @@ container() {
       bash -c 'set -euo pipefail; source /OpenROAD-flow-scripts/env.sh; exec "$@"' bash "$@"
 }
 if [[ ${1:-} == route ]]; then
-    container 12 python3 -B "$work/source/$exp/m_route.py" --mapping "$work/mapping/m_native_leaf_s32" \
+    container 12 python3 -B "$work/source/$exp/m_route.py" --mapping "$work/mapping" \
       --out "$dest/native" --side 1390 --bands 2 --margin 14 --density 0.55 --pin-profile edge \
       --setup-margin 0.100 --hold-margin 0.03 --grt-hold-buffer-percent 2 > "$dest/route.log" 2>&1
     test -f "$dest/native/receipt.json"
