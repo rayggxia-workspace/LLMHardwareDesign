@@ -1,5 +1,10 @@
 """Bounded, diverse retention without dominance across incompatible chip states."""
-import json
+def freeze(value):
+ if isinstance(value,dict):
+  return tuple((k,freeze(v)) for k,v in sorted(value.items(),key=lambda pair:(type(pair[0]).__name__,pair[0])))
+ if isinstance(value,(list,tuple)):return tuple(freeze(v) for v in value)
+ if isinstance(value,set):return frozenset(freeze(v) for v in value)
+ return value
 
 def pressure(label,capacities):
  counts={owner:sum(v['dirty'] for v in pages.values())*32
@@ -22,8 +27,7 @@ def retain(labels,width,capacities):
     label=rows[indices[k]];indices[k]+=1
     # Exact equivalence only. Different mappings, buffers, readiness, times or
     # backed copies must not be discarded merely for sharing an operator count.
-    key=json.dumps({n:v for n,v in label.items() if n not in ('history','handoff_priority','ready_resident_credit')},
-                   sort_keys=True,separators=(',',':'))
+    key=freeze({n:v for n,v in label.items() if n not in ('history','handoff_priority','ready_resident_credit')})
     if key in seen:continue
     seen.add(key);chosen.append(label);added=True;break
    if len(chosen)==width:break

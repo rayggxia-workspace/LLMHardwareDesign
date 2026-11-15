@@ -58,6 +58,11 @@ class StageTests(unittest.TestCase):
   start_b=next(i for i,a in enumerate(program) if a['op']=='CALL' and a['call_index']==2)
   wait_c=next(i for i,a in enumerate(program) if a['op']=='WAIT' and a['mask']==4)
   self.assertLess(wait_a,start_b);self.assertLess(start_b,wait_c)
+ def test_full_graph_masks_do_not_require_decimal_serialization(self):
+  label={'time':1,'bytes':1,'remaining':0,'remaining_bytes':0,'done':1<<31034,
+   'ready':(),'ends':{},'resources':{},'history':None,
+   'state':{'backed':1<<100000,'memory':{}}}
+  self.assertEqual(len(retain([label,label,label],3,{'P0':1024})),1)
  def test_distinct_tradeoffs_are_retained(self):
   def label(t,b,dirty):
    return {'time':t,'bytes':b,'remaining':0,'remaining_bytes':0,'done':1,'ready':(),

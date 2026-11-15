@@ -30,6 +30,8 @@ source M execution and cross-command K continuation remain separate capability
 gaps. No implicit U/P path, extra accumulator bank or physical block boundary
 is introduced.
 
-Validation: 11 independent scheduling/control/construction tests passed in job
-115255. Full graph stage/diversity search is job 115257; full instruction-package
+Validation: 12 independent scheduling/control/construction tests passed in job
+115275. Full graph stage/diversity search is job 115276; full instruction-package
 execution is still pending. The prior dirty frontier remains a separate baseline.
+
+Full-graph run 115257 exposed Python decimal integer serialization limits in state deduplication. Structural tuple keys replace JSON keys; the regression covers 31,034-bit task masks and 100,000-bit backing masks. No global interpreter limit was disabled.
