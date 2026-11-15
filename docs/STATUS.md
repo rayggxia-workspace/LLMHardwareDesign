@@ -1,6 +1,6 @@
 # 当前状态
 
-2026-11-15，Issue #280 已确认 C639 与实际布线 M60 的权重分配握手差异，六个原生活动窗未触发同拍冲突。当前 C639 的 M 叶块 18 项独立回归通过，同源映射进行中，布线等待映射验收。 [握手测试及同源实现](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/fd36ac818d6e5bc83fcf435177e15d281cd715f1/work/Melodydt/280/C639_M_PHYSICAL.md)
+2026-11-15，Issue #280 已确认 C639 与实际布线 M60 的权重分配握手差异，六个原生活动窗未触发同拍冲突。当前 C639 的 M 叶块 18 项独立回归通过，同源映射通过，修订布线 116976 已开始。 [握手测试及同源实现](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/8a58ca82721a50939f2e4e4e988d4a556b7a6e5a/work/Melodydt/280/C639_M_PHYSICAL.md)
 
 2026-11-15，Issue #280 的 C639 G32 两种工况门级回放完成。首次有效握手触发的两个 81.92 µs 窗口均有 64 笔 G32 输入和输出，普通／背压 G32 平均总功耗为 1.381／1.377 mW。M 同源布线、512-bit 写和控制链路校准待做。 [结果与追溯](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/524d0f1ae7e03a38114ae356bc4f4c8f81b0e253/work/Melodydt/280/C639_G32_POWER.md)
 
