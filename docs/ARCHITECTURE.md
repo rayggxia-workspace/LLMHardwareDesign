@@ -1,5 +1,7 @@
 # 架构与运行
 
+[七模型短程 TLM 回放](../work/Melodydt/274/RESULTS.md)记录真实权重生成、两步 Decode、两位置 Prefill、Slurm 和状态审计的复跑入口。模型专用服务及定点数值边界随实测回执记录。[优化 A/B](../work/Melodydt/274/OPTIMIZATION.md) 给出权重窗口、KV 行与 V 读取、FFN 缓存和逐字节回放对照的命令。
+
 Qwen2.5-3B 的 [指令驱动事务级评估](../project/experiments/systemc_benchmark/README.md)提供配置化运行入口，覆盖两步 decode、短 prefill、诊断前缀、完整请求回放、128/512-bit 对照及短程吞吐审计。
 
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
@@ -174,3 +176,19 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+
+## Issue #274：七模型 512-bit SRAM 短程吞吐
+
+[基线、冻结输入和环境](../work/Melodydt/274/RESULTS.md)与 [PR #272 调度重测](../work/Melodydt/274/PR272_RETEST.md)保留源码、输入和输出散列。复跑进入授权服务器任务根的 `pr272-tlm-01`，先校验 `source.sha256`、`upstream.sha256` 和 `pr272-source.sha256`，用 Slurm 提交新的作业。在 `fast_qwen3_short.sbatch` 的阶段规格末尾加 `:combined` 启用两项，`:attention` 或 `:ffn` 启用单项。保持原模型的 `tile128`、`kv64` 或 `cache` 映射。
+
+```bash
+sbatch --parsable -p c96 -N1 -n2 -c12 -t 06:00:00 --export=ALL,MDT_274_NATIVE_MATH=1 \
+  -o slurm-%j.log fast_qwen3_short.sbatch qwen3 prefill:4:tile128:combined decode:4:tile128:combined
+python3 ../audits/compare-pr272-v2.py BASELINE_RUN CANDIDATE_RUN --same-program
+```
+
+分析采用 TLM 模拟时间。编译程序与两位置残差、两次全词表 logits、token 反馈及状态事务要求对账，ATT1 变化的 DDR 读数单列。原生 C380 和 C639 验证独立夹具，整模型物理时序另验。
+
+### 三 P FFN 与代表性历史
+
+[三 P 全层复测](../work/Melodydt/274/THREE_P_LIVE.md)记录原冻结参考缓存、三目标 CALL/WAIT、动态 MoE 批次、Gemma Q12 与数值验收。准备 512 位置历史用 `fast_qwen3_short.sbatch MODEL prepare-live:4:MAPPING:combined`。在匹配的冻结运行目录用 `three_p_suite.sbatch prefill`、`three_p_suite.sbatch decode-live` 和 `three_p_suite.sbatch fp32` 分别提交全层实验。独立核对入口为 `audit_three_p.py REFERENCE FP32_TRACE PREFILL DECODE`。Gemma Q12 的命令及源码清单见结果记录。计时范围为 512-bit TLM。
