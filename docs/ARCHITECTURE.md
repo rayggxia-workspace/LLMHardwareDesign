@@ -188,3 +188,7 @@ python3 ../audits/compare-pr272-v2.py BASELINE_RUN CANDIDATE_RUN --same-program
 ```
 
 分析采用 TLM 模拟时间。编译程序与两位置残差、两次全词表 logits、token 反馈及状态事务要求对账，ATT1 变化的 DDR 读数单列。原生 C380 和 C639 验证独立夹具，整模型物理时序另验。
+
+### 三 P FFN 与代表性历史
+
+[三 P 全层复测](../work/Melodydt/274/THREE_P_LIVE.md)记录原冻结参考缓存、三目标 CALL/WAIT、动态 MoE 批次、Gemma Q12 与数值验收。准备 512 位置历史用 `fast_qwen3_short.sbatch MODEL prepare-live:4:MAPPING:combined`。在匹配的冻结运行目录用 `three_p_suite.sbatch prefill`、`three_p_suite.sbatch decode-live` 和 `three_p_suite.sbatch fp32` 分别提交全层实验。独立核对入口为 `audit_three_p.py REFERENCE FP32_TRACE PREFILL DECODE`。Gemma Q12 的命令及源码清单见结果记录。计时范围为 512-bit TLM。

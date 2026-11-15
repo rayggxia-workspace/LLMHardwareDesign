@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-15，Issue #274 完成七模型 512-bit TLM 三 P 并行 FFN 和代表性历史复测。七模型两步 top-1 均与同历史 FP32 一致，Gemma 使用 Q12 残差和后归一化写回。短 Prefill、Decode、独立验收和复跑见[结果记录](../work/Melodydt/274/THREE_P_LIVE.md)。PR #275 为草稿，整机 RTL／物理时序验证仍待完成。
+
 2026-11-15，[Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 完成接入 PR #272 保留调度后的七模型 512-bit 全层 TLM 重测。6 个模型的两步 Decode 提速，七模型短 Prefill 降速。独立 C380 注意力和 C639 FFN 原生 RTL 夹具复跑通过。全层吞吐、作业及散列见[重测记录](../work/Melodydt/274/PR272_RETEST.md)。草稿 PR #275 待审查，整模型 RTL／物理及尚余数值资格待完成。
 
 2026-11-15，[Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 已完成七模型的短 Prefill 与两步 Decode 候选 TLM 回放，全部采用 512-bit SRAM 端口。吞吐、状态对账与 FP32 分歧详见[结果索引](../work/Melodydt/274/RESULTS.md)。[PR #275](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/275) 为草稿，第一轮七模型全层优化 A/B 已完成，短 Prefill 提升 33.89%–53.98%，两步 Decode 提升 20.82%–97.53%。测量使用 512-bit SRAM，优化前后两位置残差和完整词表 logits 逐字节一致。[优化结果](../work/Melodydt/274/OPTIMIZATION.md)保留分项及 SHA-256。数值资格、RTL 和物理时序校准待完成。

@@ -36,3 +36,7 @@ sha256sum -c pr272-tlm-01/run-115340/output.sha256
 ## 三 P 调度与代表性历史续办
 
 源码继承 `fc1327ec4d3a27bcea00a04cc0e6c4e6942fd05c`，服务器运行目录 `three-p-full-01`。请优先核验 115617/115618/115619 的真实状态和结果散列。先生成同模型、同输入上下文的逐层 FP32 对照，区分原候选的算术误差与三 P 分片引发的变化。复跑命令和未完成项见[全层作业索引](../../work/Melodydt/274/THREE_P_LIVE.md)。Melodydt 续办数值修复与吞吐验收。
+
+### 三 P 回放终态
+
+115618、115619 和最终 Gemma 116000 均为 COMPLETED 0:0，独立验收 116181/116182 完成。115660 的 Prefill 故障保留，最终用 116000。远端数值、模型输出和 SHA 见[三 P 回执](../../work/Melodydt/274/THREE_P_LIVE.md)。恢复时先核对 PR #275 当前 HEAD，从 `three-p-full-01` 和 `three-p-gemma-q12-02` 校验源与输出清单。由 Melodydt 从 512-bit 同拓扑 RTL 与物理验证续办。没有活动的本轮 Slurm 作业。登记 pending，缺看板配置及独立审查。
