@@ -72,9 +72,7 @@ out=$work/replay-$SLURM_JOB_ID
 (cd "$out" && sha256sum --quiet -c proof.sha256)
 for mode in 0 1; do
     grep -E '^(M_WEIGHT|FFN_LC|FFN_EXEC|FFN_SCOPE|FFN_WAIT) ' "$out/replay-$mode.log" > "$out/ffn-wait-$mode.log"
-    # The explicit C++ timing driver adds one Verilator root scope to displayed hierarchy names.
-    sed -E 's/^(M_WEIGHT|FFN_LC|FFN_EXEC) TOP\./\1 /' "$out/ffn-wait-$mode.log" > "$out/ffn-wait-aligned-$mode.log"
-    cmp "$old/ffn-wait-$mode.log" "$out/ffn-wait-aligned-$mode.log"
+    python3 -B "$bundle/compare_c639_events.py" "$old/ffn-wait-$mode.log" "$out/ffn-wait-$mode.log" > "$out/events-$mode.json"
     diff <(grep '^PASS q projection ' "$old/replay-$mode.log") <(grep '^PASS q projection ' "$out/replay-$mode.log")
     for f in transactions.tsv write-transactions.tsv activation-transactions.tsv committed-kv.bin; do
         cmp "$old/DDR-$mode/$f" "$out/DDR-$mode/$f"
@@ -83,5 +81,6 @@ for mode in 0 1; do
     test -s "$out/DDR-$mode/ffn-gate-up.fst"
     test -s "$out/DDR-$mode/ffn-down.fst"
 done
-sha256sum "$work/activity-source.sha256" "$out/proof.sha256" "$out"/DDR-*/ffn-*.fst "$out"/ffn-wait-*.log > "$work/activity-results.sha256"
+sha256sum "$work/activity-source.sha256" "$out/proof.sha256" "$out"/DDR-*/ffn-*.fst "$out"/ffn-wait-*.log \
+    "$out"/events-*.json > "$work/activity-results.sha256"
 sha256sum -c "$work/activity-results.sha256"
