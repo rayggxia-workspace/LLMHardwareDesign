@@ -55,7 +55,7 @@ import sys
 runner = Path(sys.argv[1])
 text = runner.read_text()
 original = '"$S"/{local_s_base,block_feed_s16k_sram}.sv "$bank"'
-routed = '"$EXP"/{c380_gate_lint.vlt,local_s_base.v,bank-functional.v}'
+routed = '"$S/block_feed_s16k_sram.sv" "$EXP"/{c380_gate_lint.vlt,local_s_base.v,bank-functional.v}'
 if text.count(original) != 1:
     raise ValueError("ambiguous C380 RTL compile inputs")
 runner.write_text(text.replace(original, routed))
