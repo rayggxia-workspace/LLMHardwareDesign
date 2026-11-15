@@ -2,6 +2,8 @@
 
 2026-11-14（Asia/Shanghai）。负责人 Melodydt。[Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274)，任务分支 `task/274-seven-model-short-throughput` 继承 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 的 `55620f173f2ad540efade8a552c35e9dba0f43c0`。
 
+七模型整层短程回放、数值对照、运行和输出索引见 [RESULTS.md](RESULTS.md)。下文保留从输入准备到初次整层回放的时间顺序记录。
+
 ## 服务器回执
 
 服务器登录 `yuzelu@10.129.166.172`，任务根 `/public/home/yuzelu/Melodydt/runs/issue-274`。

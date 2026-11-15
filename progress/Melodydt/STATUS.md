@@ -21,3 +21,5 @@
 - [Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 进行中，[PR #275](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/275) 草稿。后续按模型核验实际退出码、两阶段回执、零历史数值及输入输出散列。登记 pending，Projects 看板待核验。
 
 - Qwen3 逐周期和加速回放两个阶段时间、状态、logits 与 DDR 计数均一致。Llama 两阶段完成，短 Prefill 7.178705 输入 token/s，Decode 2.523063 token/s，FP32 两个 top-1 一致。Granite 两阶段完成，短 Prefill 8.055319 输入 token/s，Decode 2.376006 token/s，第二步 top-1 分歧已登记，另有路由诊断。Phi 的 Prefill 2.165252 输入 token/s，Decode 继续运行。
+
+- 七个模型的两个全层回放阶段均已审计，统一使用 512-bit SRAM 端口和 512-bit 程序存储写宽。所有 Slurm 作业终态，日志和输出备查。包括阶段重跑在内的实际回执见[结果索引](../../work/Melodydt/274/RESULTS.md)。Qwen3、Llama、Phi 两步 top-1 均与 FP32 一致。Granite、Gemma、Qwen3.5 和 Falcon 有数值分歧，已补路由和同输入对照。PR 保持草稿，Issue 进行中，待数值资格、RTL／物理校准和独立审查。

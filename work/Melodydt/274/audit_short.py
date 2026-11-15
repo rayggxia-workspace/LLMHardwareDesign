@@ -43,7 +43,7 @@ def prefill_difference(path, model, reference):
             "cosine": float(modeled@gold/(np.linalg.norm(modeled)*np.linalg.norm(gold)))}
 
 
-def audit(run, layers, vocab, mode, reference=None):
+def audit(run, layers, vocab, mode, reference=None, aligned_reference=None):
     res = json.loads((run / "result.json").read_text())
     plan = json.loads((run / "assets/plan.json").read_text())
     history = 512 if mode == "decode" else 0
@@ -111,6 +111,19 @@ def audit(run, layers, vocab, mode, reference=None):
                 relative = np.linalg.norm(logits/65536-golden)/np.linalg.norm(golden)
                 numeric.append({"step": i, "top1_equal": retired["selected"] == target["selected"],
                                 "relative_l2": float(relative)})
+        if aligned_reference is not None:
+            import torch
+            aligned = json.loads((aligned_reference / "comparison-input.json").read_text())
+            path = aligned_reference / "decode-1-aligned-logits.pt"
+            if (aligned["candidate_first_logits_sha256"] != a["logits_sha256"] or
+                    aligned["second_token"] != b["input"] or aligned["fp32_logits_sha256"] != hash_file(path)):
+                raise ValueError("aligned FP32 reference differs from this replay")
+            golden = torch.load(path, weights_only=True).numpy().reshape(-1)
+            logits = np.fromfile(run / "logits-1.bin", dtype="<i4")/65536
+            numeric.append({"step": 1, "scope": "same candidate feedback token",
+                            "reference_selected": aligned["fp32_selected"],
+                            "top1_equal": b["selected"] == aligned["fp32_selected"],
+                            "relative_l2": float(np.linalg.norm(logits-golden)/np.linalg.norm(golden))})
     elif res["interval_ps"] != res["boundary"][-1]["complete_ps"]:
         raise ValueError("wrong final-residual timing boundary")
     elif reference is not None:
@@ -131,4 +144,5 @@ if __name__ == "__main__":
     p.add_argument("--vocab", type=int, required=True)
     p.add_argument("--mode", choices=("decode", "prefill"), required=True)
     p.add_argument("--reference", type=Path)
+    p.add_argument("--aligned-reference", type=Path)
     print(json.dumps(audit(**vars(p.parse_args())), indent=2))
