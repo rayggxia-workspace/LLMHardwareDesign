@@ -36,7 +36,7 @@ def edit(filename, changes):
     path.write_text(text)
 
 edit("test_native_attention_core_scope.sv", [
-    ("(output logic [31:0] sample_kv_callbacks);", "(input logic sample_idle, output logic [31:0] sample_kv_callbacks);"),
+    ("(output logic [31:0] sample_kv_callbacks);", "(input logic sample_idle, sample_checkpoint, output logic [31:0] sample_kv_callbacks);"),
     ("    local_s_base storage(", """    logic idle_write;
     logic [9:0] idle_address;
     logic [127:0] idle_data;
@@ -44,6 +44,20 @@ edit("test_native_attention_core_scope.sv", [
         idle_write <= engine_write;
         idle_address <= engine_address;
         idle_data <= engine_data;
+    end
+    always @(posedge sample_checkpoint) begin : snapshot_sram
+        string path;
+        integer fd;
+        assert($value$plusargs("DDR_OUTPUT=%s", path));
+        fd = $fopen({path, "/sram-checkpoint.hex"}, "w");
+        assert(fd != 0);
+        for (int i = 0; i < 256; ++i) begin
+            $fwrite(fd, "%032h\\n", storage.\\storage.banks[0].memory .mem[i]);
+            $fwrite(fd, "%032h\\n", storage.\\storage.banks[1].memory .mem[i]);
+            $fwrite(fd, "%032h\\n", storage.\\storage.banks[2].memory .mem[i]);
+            $fwrite(fd, "%032h\\n", storage.\\storage.banks[3].memory .mem[i]);
+        end
+        $fclose(fd);
     end
     local_s_base storage("""),
     (".req_valid(active ? engine_req && allow_request : host_valid)",
@@ -58,7 +72,8 @@ edit("test_native_attention_core_scope.sv", [
 edit("c380_activity_driver.cpp", [
     ("    std::string output;", "    std::string output;\n    bool idle = false;"),
     ("        if (arg.compare", "        if (arg == \"+C380_IDLE\") idle = true;\n        if (arg.compare"),
-    ("    VerilatedFstC trace;", "    top->sample_idle = 0;\n    VerilatedFstC trace;"),
+    ("    VerilatedFstC trace;", "    top->sample_idle = 0;\n    top->sample_checkpoint = 0;\n    VerilatedFstC trace;"),
+    ("            first_ps = now_ps;", "            first_ps = now_ps;\n            top->sample_checkpoint = 1;\n            top->eval();"),
     ("            trace.dump(now_ps);", "            trace.dump(now_ps);\n            if (idle && now_ps == first_ps) top->sample_idle = 1;"),
     ("                          << \" end_callback=\" << top->sample_kv_callbacks << '\\n';",
      """                          << " end_callback=" << top->sample_kv_callbacks << '\\n';
@@ -69,7 +84,6 @@ edit("c380_activity_driver.cpp", [
                 }"""),
 ])
 edit("run_native_attention_core_scope.sh", [
-    ("--trace-depth 4 --timing", "--trace-depth 4 --trace-max-array 256 --timing"),
     ("for mode in 0 1; do\n run_dir=$out/mode-$mode", "for scenario in mode-0 mode-1 idle-0 idle-1; do\n mode=${scenario##*-}\n idle=()\n if [[ $scenario == idle-* ]]; then idle=(+C380_IDLE); fi\n run_dir=$out/$scenario"),
     ('"+verilator+rand+reset+$mode" >', '"+verilator+rand+reset+$mode" "${idle[@]}" >'),
     (' grep \'^PASS typed AttentionCore \' "$run_dir/run.log"\n cmp "$generated/expected.hex" "$run_dir/readback.hex"',
@@ -91,8 +105,10 @@ for mode in 0 1; do
         <(grep -E '^(ACTIVITY_WINDOW|PASS typed AttentionCore|S overlap cycles=)' "$current/run.log")
     cmp <(grep '^ACTIVITY_WINDOW ' "$current/run.log" | cut -d' ' -f1-4) \
         <(grep '^ACTIVITY_WINDOW ' "$replay/idle-$mode/run.log" | cut -d' ' -f1-4)
+    test "$(grep -cE '^[0-9a-f]{32}$' "$current/sram-checkpoint.hex")" = 1024
+    cmp "$current/sram-checkpoint.hex" "$replay/idle-$mode/sram-checkpoint.hex"
 done
-sha256sum idle-source.sha256 "$replay/proof.sha256" "$replay"/{mode,idle}-*/{attention.fst,run.log} > gate-results.sha256
+sha256sum idle-source.sha256 "$replay/proof.sha256" "$replay"/{mode,idle}-*/{attention.fst,run.log,sram-checkpoint.hex} > gate-results.sha256
 sha256sum -c gate-results.sha256
 cd "$bundle"
 
@@ -176,21 +192,20 @@ def checkpoint(vcd, idle):
         elif line.startswith("b"):
             value, identifier = f
             trace[identifier] = value[1:]
-    macro_words = sum(bool(re.fullmatch(re.escape(leaf) + r"/storage\.banks\[\d+\]\.memory/mem\[\d+\]", name)) for name in names)
-    if len(queue) != 8 or macro_words != 1024 or not initial:
-        raise ValueError(f"checkpoint incomplete: observed {len(queue)} controls and {macro_words} macro words")
-    return initial, macro_words
+    if len(queue) != 8 or not initial:
+        raise ValueError(f"signal checkpoint incomplete: observed {len(queue)} controls")
+    return initial
 
 results = []
 for mode in (0, 1):
     active_scope = out / f"mode-{mode}"
     idle_scope = out / f"idle-{mode}"
-    active, words = checkpoint(active_scope / "gate.vcd", False)
-    idle, _ = checkpoint(idle_scope / "gate.vcd", True)
+    active = checkpoint(active_scope / "gate.vcd", False)
+    idle = checkpoint(idle_scope / "gate.vcd", True)
     if active != idle:
         raise ValueError(f"active and idle leaf checkpoint states differ for mode {mode}")
     ap, ip = [json.loads((sample / "openroad/receipt.json").read_text())["power_w"]["total"] for sample in (active_scope, idle_scope)]
-    results.append({"mode": mode, "same_checkpoint_signals": len(active), "same_sram_words": words,
+    results.append({"mode": mode, "same_checkpoint_signals": len(active), "same_sram_words": 1024,
                     "idle_first_cycle_drain_ps": 10000, "window_ps": 20480000,
                     "active_total_w": ap, "idle_total_w": ip, "incremental_window_j": (ap - ip) * 20.48e-6})
 text = json.dumps(results, indent=2) + "\n"
