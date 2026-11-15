@@ -37,13 +37,19 @@ def edit(filename, changes):
 
 edit("test_native_attention_core_scope.sv", [
     ("(output logic [31:0] sample_kv_callbacks);", "(input logic sample_idle, output logic [31:0] sample_kv_callbacks);"),
-    ("    local_s_base storage(", """    logic idle_write = 0;
-    logic [9:0] idle_address = '0;
-    logic [127:0] idle_data = '0;
-    always_ff @(posedge sample_idle) begin
-        idle_write <= engine_write;
-        idle_address <= engine_address;
-        idle_data <= engine_data;
+    ("    local_s_base storage(", """    logic idle_write;
+    logic [9:0] idle_address;
+    logic [127:0] idle_data;
+    always_ff @(posedge sample_idle or posedge reset) begin
+        if (reset) begin
+            idle_write <= 0;
+            idle_address <= '0;
+            idle_data <= '0;
+        end else begin
+            idle_write <= engine_write;
+            idle_address <= engine_address;
+            idle_data <= engine_data;
+        end
     end
     local_s_base storage("""),
     (".req_valid(active ? engine_req && allow_request : host_valid)",
