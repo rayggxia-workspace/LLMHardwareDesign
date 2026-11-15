@@ -1,0 +1,319 @@
+{
+  "scope": "all tasks audited; isolated candidate probes do not prove whole-graph compilation",
+  "results": [
+    {
+      "case": "qwen25-raw",
+      "invalid_values": 57,
+      "stages": {
+        "layout_blocked": 86
+      },
+      "failure_kinds": {},
+      "candidate_failures": {}
+    },
+    {
+      "case": "qwen25-simplified",
+      "invalid_values": 0,
+      "stages": {
+        "candidate_probe": 10,
+        "address_view_only": 22,
+        "isolated_task_failure": 10
+      },
+      "failure_kinds": {
+        "Gemm: missing operand recipe: Gemm": 3,
+        "Mul: missing operand recipe: Mul": 4,
+        "Neg: missing operand recipe: Neg": 2,
+        "Attention: constant required: mask": 1
+      },
+      "candidate_failures": {
+        "Concat: Concat output row extent": 18
+      }
+    },
+    {
+      "case": "qwen3-raw",
+      "invalid_values": 75,
+      "stages": {
+        "layout_blocked": 101
+      },
+      "failure_kinds": {},
+      "candidate_failures": {}
+    },
+    {
+      "case": "qwen3-simplified",
+      "invalid_values": 0,
+      "stages": {
+        "candidate_probe": 15,
+        "address_view_only": 21,
+        "isolated_task_failure": 7
+      },
+      "failure_kinds": {
+        "Mul: missing operand recipe: Mul": 4,
+        "Neg: missing operand recipe: Neg": 2,
+        "Attention: constant required: mask": 1
+      },
+      "candidate_failures": {
+        "Concat: Concat output row extent": 18
+      }
+    },
+    {
+      "case": "llama-raw",
+      "invalid_values": 57,
+      "stages": {
+        "layout_blocked": 83
+      },
+      "failure_kinds": {},
+      "candidate_failures": {}
+    },
+    {
+      "case": "llama-simplified",
+      "invalid_values": 0,
+      "stages": {
+        "isolated_task_failure": 17,
+        "candidate_probe": 13,
+        "address_view_only": 21
+      },
+      "failure_kinds": {
+        "Pow: missing operand recipe: Pow": 2,
+        "ReduceMean: missing operand recipe: ReduceMean": 2,
+        "Sqrt: missing operand recipe: Sqrt": 2,
+        "Div: missing operand recipe: Div": 2,
+        "Mul: missing operand recipe: Mul": 6,
+        "Neg: missing operand recipe: Neg": 2,
+        "Attention: constant required: mask": 1
+      },
+      "candidate_failures": {
+        "Add: Add row geometry": 16,
+        "Concat: Concat output row extent": 18,
+        "MatMul: packing requires registered subrow transfer for non-128 segments": 3
+      }
+    },
+    {
+      "case": "gemma_local-raw",
+      "invalid_values": 95,
+      "stages": {
+        "layout_blocked": 107
+      },
+      "failure_kinds": {},
+      "candidate_failures": {}
+    },
+    {
+      "case": "gemma_local-simplified",
+      "invalid_values": 0,
+      "stages": {
+        "candidate_probe": 21,
+        "address_view_only": 21,
+        "isolated_task_failure": 15
+      },
+      "failure_kinds": {
+        "Mul: missing operand recipe: Mul": 11,
+        "Neg: missing operand recipe: Neg": 2,
+        "Attention: constant required: mask": 1,
+        "Tanh: missing operand recipe: Tanh": 1
+      },
+      "candidate_failures": {
+        "Add: Add row needs explicit segmented materialization": 4
+      }
+    },
+    {
+      "case": "gemma_global-raw",
+      "invalid_values": 95,
+      "stages": {
+        "layout_blocked": 107
+      },
+      "failure_kinds": {},
+      "candidate_failures": {}
+    },
+    {
+      "case": "gemma_global-simplified",
+      "invalid_values": 0,
+      "stages": {
+        "candidate_probe": 21,
+        "address_view_only": 21,
+        "isolated_task_failure": 15
+      },
+      "failure_kinds": {
+        "Mul: missing operand recipe: Mul": 11,
+        "Neg: missing operand recipe: Neg": 2,
+        "Attention: constant required: mask": 1,
+        "Tanh: missing operand recipe: Tanh": 1
+      },
+      "candidate_failures": {
+        "Add: Add row needs explicit segmented materialization": 4
+      }
+    },
+    {
+      "case": "phi-raw",
+      "invalid_values": 67,
+      "stages": {
+        "layout_blocked": 101
+      },
+      "failure_kinds": {},
+      "candidate_failures": {}
+    },
+    {
+      "case": "phi-simplified",
+      "invalid_values": 0,
+      "stages": {
+        "candidate_probe": 14,
+        "address_view_only": 30,
+        "isolated_task_failure": 9
+      },
+      "failure_kinds": {
+        "Mul: missing operand recipe: Mul": 5,
+        "Neg: missing operand recipe: Neg": 2,
+        "Attention: constant required: mask": 1,
+        "SiLU: missing operand recipe: SiLU": 1
+      },
+      "candidate_failures": {
+        "Concat: Concat output row extent": 36,
+        "Add: Add row geometry": 8
+      }
+    },
+    {
+      "case": "qwen35_global-raw",
+      "invalid_values": 84,
+      "stages": {
+        "layout_blocked": 109
+      },
+      "failure_kinds": {},
+      "candidate_failures": {}
+    },
+    {
+      "case": "qwen35_global-simplified",
+      "invalid_values": 0,
+      "stages": {
+        "candidate_probe": 17,
+        "address_view_only": 28,
+        "isolated_task_failure": 9
+      },
+      "failure_kinds": {
+        "Mul: missing operand recipe: Mul": 5,
+        "Neg: missing operand recipe: Neg": 2,
+        "Sigmoid: missing operand recipe: Sigmoid": 1,
+        "Attention: constant required: mask": 1
+      },
+      "candidate_failures": {
+        "Concat: Concat output row extent": 36,
+        "Add: Add row geometry": 8
+      }
+    },
+    {
+      "case": "qwen35_linear-raw",
+      "invalid_values": 117,
+      "stages": {
+        "layout_blocked": 201
+      },
+      "failure_kinds": {},
+      "candidate_failures": {}
+    },
+    {
+      "case": "qwen35_linear-simplified",
+      "invalid_values": 0,
+      "stages": {
+        "candidate_probe": 14,
+        "isolated_task_failure": 52,
+        "address_view_only": 31
+      },
+      "failure_kinds": {
+        "Sigmoid: missing operand recipe: Sigmoid": 1,
+        "Gather: native row gather shape": 10,
+        "Conv: missing operand recipe: Conv": 1,
+        "SiLU: missing operand recipe: SiLU": 2,
+        "Split: too many values to unpack (expected 1)": 1,
+        "Gemm: missing operand recipe: Gemm": 1,
+        "Softplus: missing operand recipe: Softplus": 1,
+        "Mul: missing operand recipe: Mul": 16,
+        "Exp: missing operand recipe: Exp": 2,
+        "Tile: missing operand recipe: Tile": 2,
+        "ReduceSum: missing operand recipe: ReduceSum": 6,
+        "Sqrt: missing operand recipe: Sqrt": 2,
+        "Div: missing operand recipe: Div": 3,
+        "Sub: missing operand recipe: Sub": 2,
+        "ScatterND: missing operand recipe: ScatterND": 2
+      },
+      "candidate_failures": {
+        "MatMul: projection output tile contract": 3,
+        "Add: Add row geometry": 8
+      }
+    },
+    {
+      "case": "granite-raw",
+      "invalid_values": 77,
+      "stages": {
+        "layout_blocked": 114
+      },
+      "failure_kinds": {},
+      "candidate_failures": {}
+    },
+    {
+      "case": "granite-simplified",
+      "invalid_values": 0,
+      "stages": {
+        "candidate_probe": 13,
+        "address_view_only": 30,
+        "isolated_task_failure": 19
+      },
+      "failure_kinds": {
+        "Mul: missing operand recipe: Mul": 8,
+        "Neg: missing operand recipe: Neg": 2,
+        "Attention: constant required: mask": 1,
+        "TopK: too many values to unpack (expected 1)": 1,
+        "Gather: native row gather shape": 2,
+        "Softmax: missing operand recipe: Softmax": 1,
+        "MatMul: too many values to unpack (expected 2)": 2,
+        "SiLU: missing operand recipe: SiLU": 1,
+        "ReduceSum: missing operand recipe: ReduceSum": 1
+      },
+      "candidate_failures": {
+        "Concat: Concat output row extent": 18,
+        "Add: Add row geometry": 8,
+        "MatMul: packing requires registered subrow transfer for non-128 segments": 3,
+        "MatMul: projection output tile contract": 3
+      }
+    },
+    {
+      "case": "falcon-raw",
+      "invalid_values": 212,
+      "stages": {
+        "layout_blocked": 419
+      },
+      "failure_kinds": {},
+      "candidate_failures": {}
+    },
+    {
+      "case": "falcon-simplified",
+      "invalid_values": 0,
+      "stages": {
+        "candidate_probe": 23,
+        "isolated_task_failure": 62,
+        "address_view_only": 52
+      },
+      "failure_kinds": {
+        "Mul: missing operand recipe: Mul": 21,
+        "Split: too many values to unpack (expected 1)": 2,
+        "Softplus: missing operand recipe: Softplus": 1,
+        "Clip: missing operand recipe: Clip": 1,
+        "Pad: missing operand recipe: Pad": 6,
+        "Conv: missing operand recipe: Conv": 1,
+        "SiLU: missing operand recipe: SiLU": 3,
+        "CumSum: missing operand recipe: CumSum": 3,
+        "Exp: missing operand recipe: Exp": 4,
+        "Gather: native row gather shape": 1,
+        "Sub: missing operand recipe: Sub": 1,
+        "Where: missing operand recipe: Where": 4,
+        "Neg: missing operand recipe: Neg": 2,
+        "Attention: constant required: mask": 1,
+        "Tile: missing operand recipe: Tile": 2,
+        "Einsum: missing operand recipe: Einsum": 5,
+        "Pow: missing operand recipe: Pow": 1,
+        "ReduceMean: missing operand recipe: ReduceMean": 1,
+        "Sqrt: missing operand recipe: Sqrt": 1,
+        "Div: missing operand recipe: Div": 1
+      },
+      "candidate_failures": {
+        "MatMul: DDR store needs declared aligned whole-row backing and burst tags": 3,
+        "Add: Add row geometry": 8,
+        "Concat: Concat output row extent": 18
+      }
+    }
+  ]
+}
