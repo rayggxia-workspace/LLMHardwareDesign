@@ -59,3 +59,5 @@
 - 2026-11-15（Asia/Shanghai）已提交同配置 P0 对照 116787。三 P 沿用 116481 验收结果，本地调度及 FFN DDR 写回／回读路径对账通过。c96,c64 两个单线程阶段各 1 核，排队中，待 Melodydt 核验 Slurm 终态、FP32 与逐窗能耗。 [提交与接续](../../docs/handoffs/2026-11-15-issue-280-p0-ab.md)
 
 - 2026-11-15（Asia/Shanghai）S128 门级配对窗口 116809 复现原功耗，C380 正常和背压 116817 取得两份已验收 RTL FST，两个作业均 `COMPLETED 0:0`。C380 实际为 128-bit 普通端口；后续从门级关联、C639 和 512-bit 路径校准继续，P0 116787 仍排队。 [证据与恢复命令](../../work/Melodydt/280/GATE_ACTIVITY_01.md)
+
+- 2026-11-15（Asia/Shanghai）Qwen3 同底座 P0／三 P 的 116787 终态 `COMPLETED 0:0`，两组 FP32 与层输出一致。三 P 短 Prefill／两退休 Decode 吞吐 +43.22%／+13.14%，DDR mJ/token −26.44%／−11.00%。C639 原生采样 116856 已运行，116858 等待前置终态对账。 [Qwen3 A/B](../../work/Melodydt/280/QWEN3_P0_AB.md) · [C639 接续](../../docs/handoffs/2026-11-15-issue-280-c639-activity.md)
