@@ -34,6 +34,6 @@
 
 ## 2026-11-15（Asia/Shanghai）PR #272 调度重测
 
-- PR #272 固定 ebd590de，接入保留的 ATT1 流水与 FFN 四权重 bank。作业 115329/115330 的原生 C380 夹具回执通过。C639 115347 和七模型 512-bit 全层重测 115340–115346 运行中。
-- 七组四层程序和最终残差与上一轮逐字节一致。Qwen3 四层单因素 ATT1 +0.26%，FFN −7.28%。[冻结版本、审计和全层复跑](../../work/Melodydt/274/PR272_RETEST.md)。
-- [Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 进行中，[PR #275](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/275) 草稿。登记 pending，Projects 无配置待核验及同步。
+- 代码 `209482b226456a7fdc328692470b26ef42ac05e6` 接入 ATT1 双窗口和四权重 bank。115340–115346 在 512-bit SRAM 下完成 14 个全层阶段，3,601 项输出清单和程序、残差、logits、反馈及状态事务均通过对账。6 个模型的 Decode 提速，七模型短 Prefill 降速。详见[重测和复跑记录](../../work/Melodydt/274/PR272_RETEST.md)。
+- C380 原生 RTL 115329/115330 正常／背压周期减少 13.11%／0.91%。C639 原生 FFN 115347 正常／背压周期与 PR #272 归档一致，98 项散列通过。
+- [Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 进行中，[PR #275](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/275) 草稿。由 Melodydt 续办数值资格和整模型 RTL／物理校准，审查人待指定。登记 pending，Projects 缺看板配置，已留交接。

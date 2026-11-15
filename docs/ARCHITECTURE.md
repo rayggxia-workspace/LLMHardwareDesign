@@ -176,3 +176,15 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+
+## Issue #274：七模型 512-bit SRAM 短程吞吐
+
+[基线、冻结输入和环境](../work/Melodydt/274/RESULTS.md)与 [PR #272 调度重测](../work/Melodydt/274/PR272_RETEST.md)保留源码、输入和输出散列。复跑进入授权服务器任务根的 `pr272-tlm-01`，先校验 `source.sha256`、`upstream.sha256` 和 `pr272-source.sha256`，用 Slurm 提交新的作业。在 `fast_qwen3_short.sbatch` 的阶段规格末尾加 `:combined` 启用两项，`:attention` 或 `:ffn` 启用单项。保持原模型的 `tile128`、`kv64` 或 `cache` 映射。
+
+```bash
+sbatch --parsable -p c96 -N1 -n2 -c12 -t 06:00:00 --export=ALL,MDT_274_NATIVE_MATH=1 \
+  -o slurm-%j.log fast_qwen3_short.sbatch qwen3 prefill:4:tile128:combined decode:4:tile128:combined
+python3 ../audits/compare-pr272-v2.py BASELINE_RUN CANDIDATE_RUN --same-program
+```
+
+分析采用 TLM 模拟时间。编译程序与两位置残差、两次全词表 logits、token 反馈及状态事务要求对账，ATT1 变化的 DDR 读数单列。原生 C380 和 C639 验证独立夹具，整模型物理时序另验。

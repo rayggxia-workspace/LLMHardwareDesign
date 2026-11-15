@@ -20,3 +20,15 @@ sha256sum -c qwen3-short-fast-01/run-115055/output.sha256
 ## 优化回放续办
 
 七模型优化作业 `115262`、`115282–115288` 均已结束并核验。冻结的源码目录、全层 A/B、SHA-256 及追踪命令见 [优化记录](../../work/Melodydt/274/OPTIMIZATION.md)。恢复时先核验 PR #275 当前 HEAD 并读回对应服务器运行的 `output.sha256`。本次保留草稿和 Issue 进行中状态，尚需数值及 RTL 校准时使用上节的独立参考。
+
+## PR #272 调度重测交接
+
+任务分支已上传接入代码 `209482b226456a7fdc328692470b26ef42ac05e6`。本地报告位于 `work/Melodydt/274/PR272_RETEST.md`，Run 与审计在原任务根的 `pr272-tlm-01/run-115340` 至 `run-115346` 和 `audits/pr272-*-full-*.json`。原生结果见 `pr272-native-01/native-audit.json`（115329/115330）和 `pr272-ffn-native-01/native-ffn-audit.json`（115347）。所有这些作业均为 COMPLETED 0:0。115325/115326 的依赖缺失失败由后续两次 C380 重跑替代，原回执保留。
+
+```bash
+cd /public/home/yuzelu/Melodydt/runs/issue-274
+sacct -X -j 115329,115330,115340,115341,115342,115343,115344,115345,115346,115347 --format=JobID,State,ExitCode,AllocCPUS,NodeList,Elapsed
+sha256sum -c pr272-tlm-01/run-115340/output.sha256
+```
+
+继续时先读 [PR #275](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/275) HEAD 和[逐模型重测回执](../../work/Melodydt/274/PR272_RETEST.md)，核对冻结的程序与双阶段输出。由 Melodydt 从既有 FP32 结果定位剩余分歧，整模型 RTL／物理校准待安排。若要评估 ATT1 单独接入，当前冻结脚本已有 `:attention` 入口，可在同一映射和输入上独立复跑。审查人待指定。登记 PR #5 pending。项目仍缺 `config/board.json`，由具权限维护者配置、核验实际任务卡及同步字段。
