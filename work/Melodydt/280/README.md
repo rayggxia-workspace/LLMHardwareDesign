@@ -19,6 +19,27 @@
 - 编译和最小回归通过后，在新目录把 `MDT_280_DDR_LIBRARY` 指向新库绝对路径。按 `sbatch --parsable -p c96 -N1 -n2 -c12 -t 06:00:00 --job-name=mdt-280qwen3 -o slurm-%j.log --export=ALL,MDT_274_NATIVE_MATH=1,MDT_274_THREE_P=1,MDT_274_TRACE_LAYERS=1 fast_qwen3_short.sbatch qwen3 prefill:4:tile128:combined decode-live:4:tile128:combined` 提交。实际提交后记录作业号、状态、节点和目录。产物在 `run-<作业号>/{prefill-w4-tile128-pr272-combined,decode-live-w4-tile128-pr272-combined}`。
 - 每阶段运行 `python3 -B ddr_window_energy.py CANDIDATE --baseline FROZEN_BASELINE`，核对时间、残差、logits、退休、逐层轨迹及请求。随后用 #274 的 `audit_three_p.py` 独立核验 FP32、跨步状态和三路供数。作业和审计通过后发布 DDR 芯片估算及其适用边界。
 
+### 一次提交完成试点与审计
+
+SSH 恢复后，把任务分支同一提交上的 `run_qwen3_ddr_pilot.py`、`stage_ddr_probe.py`、`ddr_snapshot.inc`、`ddr_window_energy.py` 传到本人 `/public/home/yuzelu/Melodydt/runs/issue-280/ddr-pilot-01`，将实际来源的完整 commit 写到 `source-commit.txt`。在该目录提交。
+
+```bash
+sha256sum source-commit.txt run_qwen3_ddr_pilot.py stage_ddr_probe.py ddr_snapshot.inc ddr_window_energy.py > bundle.sha256
+sbatch --parsable run_qwen3_ddr_pilot.py
+```
+
+脚本默认 c96 单节点，两个任务各 12 核。先核验归档、DDR 配置与旧桥的 SHA-256，再构建独立库，然后以相同回放参数运行 Qwen3 两阶段。两阶段都必须通过同速度基线的严格对账，FP32 独立验收沿用原容器。日志在 `slurm-<JOB>.log`，两阶段能耗、验收和散列保存在 `pilot-<JOB>/`。
+
+```bash
+squeue -j "$JOB"
+sacct -X -j "$JOB" --format=JobID,State,ExitCode,Partition,AllocCPUS,NodeList,Elapsed
+tail -n 20 "slurm-$JOB.log"
+sha256sum -c "pilot-$JOB/pilot-results.sha256"
+cat "pilot-$JOB/ddr-prefill.json" "pilot-$JOB/ddr-decode.json"
+```
+
+本地已验证调度入口的参数拼装、两组冻结基线路径、容器内 FP32 审计和摘要不符时终止。Slurm、服务器编译及真实模型回放待完成。
+
 ## 剩余步骤
 
 1. 恢复服务器认证，构建与冻结库匹配的版本，完成 Qwen3 两阶段分窗回归与 DDR 报告。
