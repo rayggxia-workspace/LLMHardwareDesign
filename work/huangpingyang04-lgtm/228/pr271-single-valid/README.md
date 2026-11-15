@@ -2,6 +2,12 @@
 
 使用 [PR #271](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/271) 方案 A 的作业 112878 摆位与作业 114252 的 M10 端点。场景中只布 `net-b96c1ab2afde6d594ab09e28`，源为 `U0/dma_req_valid`，汇为 `dma/c_req_valid[3]`。场景保留 M10 接点目录以及原层宽、间距、网格和过孔规则。
 
+## 布线路径对比
+
+![PR #271 方案 A 的 VALID 直连与加中继路径，含起点、中继和终点放大图](pr271-valid-routing.png)
+
+图中走线取自 Slurm 作业 **115485** 的布线输出，按 #271 方案 A 的坐标绘制。左图为直连，右图经虚拟中继 `gap-04`（`BUF_X32`）。下方放大起点与中继 A/Z 接点，以及两条路径的终点接入。
+
 | | 直连 | 用 gap-04 的虚拟 BUF_X32 |
 | --- | ---: | ---: |
 | M11/M12 实际路线长度 | 5823.2 µm | 99.0 + 5737.8 µm |
