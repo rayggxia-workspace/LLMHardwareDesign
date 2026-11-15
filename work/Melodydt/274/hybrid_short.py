@@ -54,6 +54,11 @@ class HybridCompiler(PhiCompiler):
         self.append(U, seal(RESIDUAL, 3, VECTOR, "<3HI", 0, 0, self.hidden//4, round(gain*65536)))
 
     def dense_ffn(self, prefix, layer, position, gate_gain=1., out_gain=1.):
+        if self.three_p:
+            self.three_p_ffn(prefix+"gate_proj.weight", prefix+"up_proj.weight",
+                             prefix+"down_proj.weight", self.ffn, layer, position, opcode=4, gain=gate_gain)
+            self.residual_gain(out_gain)
+            return
         size = self.ffn*4
         base = FFN + ((position-self.history)*self.layers+layer)*size
         self.mid_buffer = base

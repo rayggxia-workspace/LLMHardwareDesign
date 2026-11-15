@@ -37,3 +37,8 @@
 - 代码 `209482b226456a7fdc328692470b26ef42ac05e6` 接入 ATT1 双窗口和四权重 bank。115340–115346 在 512-bit SRAM 下完成 14 个全层阶段，3,601 项输出清单和程序、残差、logits、反馈及状态事务均通过对账。6 个模型的 Decode 提速，七模型短 Prefill 降速。详见[重测和复跑记录](../../work/Melodydt/274/PR272_RETEST.md)。
 - C380 原生 RTL 115329/115330 正常／背压周期减少 13.11%／0.91%。C639 原生 FFN 115347 正常／背压周期与 PR #272 归档一致，98 项散列通过。
 - [Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 进行中，[PR #275](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/275) 草稿。由 Melodydt 续办数值资格和整模型 RTL／物理校准，审查人待指定。登记 pending，Projects 缺看板配置，已留交接。
+
+## 2026-11-15（Asia/Shanghai）七模型三 P 与非零历史
+
+- 代表性历史工件 115573 已全部通过，三 P 两位置首层 115605 七项成功。全层 115618/115619 和配套 FP32 层级对照 115617 已启动，入口见[回执和复跑](../../work/Melodydt/274/THREE_P_LIVE.md)。
+- 测量及修复尚未结束。Melodydt 继续核对逐层数值、两次退休和状态回读。Issue #274 进行中、PR #275 草稿，登记 pending，Projects 缺配置。

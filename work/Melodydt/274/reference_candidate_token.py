@@ -14,8 +14,14 @@ def main(reference, candidate, output, threads):
     torch.set_num_interop_threads(1)
     ref = json.loads((reference / "reference.json").read_text())
     first = json.loads((candidate / "progress.json").read_text())["retirements"][0]
-    if ref["history_payload"] != "zeros" or first["input"] != ref["decode"][0]["input"]:
+    result = json.loads((candidate / "result.json").read_text())
+    if (ref.get("history_payload", "live FP32") != result.get("history_payload", "zeros") or
+            first["input"] != ref["decode"][0]["input"]):
         raise ValueError("incompatible initial state or input token")
+    if result.get("history_payload") == "live FP32" and (
+            ref["outputs"]["history512.pt"] != result.get("history_source_sha256") or
+            sha(reference / "history512.pt") != result.get("history_source_sha256")):
+        raise ValueError("mismatched representative input cache")
     model = AutoModelForCausalLM.from_pretrained(
         ref["checkpoint"], local_files_only=True, trust_remote_code=False,
         dtype=torch.float32, attn_implementation="eager",

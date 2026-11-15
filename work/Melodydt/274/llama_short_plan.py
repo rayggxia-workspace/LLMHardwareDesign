@@ -107,12 +107,16 @@ class LlamaCompiler(Compiler):
         self.copy(P, U, 0, 512, 512)
         self.add(0, 512, 0, 512)
         self.rms(U, pre+"post_attention_layernorm.weight", 0, 512, 512)
-        # Place two 4096-wide Mid fragments in separate 16KiB stores.
-        for first in range(0, 8192, 128):
-            self.project(pre+"mlp.gate_proj.weight", 0, first, first+128)
-            self.project(pre+"mlp.up_proj.weight", 32, first, first+128)
-            self.append(P, seal(ACT, 1, VECTOR, "<3H", 0, 32, 64))
-            self.copy(P, CONTEXT if first < 4096 else MID, 64, (first%4096)//4, 32)
-        self.project(pre+"mlp.down_proj.weight", 0, route=3)
+        if self.three_p:
+            self.three_p_ffn(pre+"mlp.gate_proj.weight", pre+"mlp.up_proj.weight",
+                             pre+"mlp.down_proj.weight", self.ffn, layer, position)
+        else:
+            # Place two 4096-wide Mid fragments in separate 16KiB stores.
+            for first in range(0, 8192, 128):
+                self.project(pre+"mlp.gate_proj.weight", 0, first, first+128)
+                self.project(pre+"mlp.up_proj.weight", 32, first, first+128)
+                self.append(P, seal(ACT, 1, VECTOR, "<3H", 0, 32, 64))
+                self.copy(P, CONTEXT if first < 4096 else MID, 64, (first%4096)//4, 32)
+            self.project(pre+"mlp.down_proj.weight", 0, route=3)
         self.copy(P, U, 0, 512, 512)
         self.add(0, 512, 0, 512)

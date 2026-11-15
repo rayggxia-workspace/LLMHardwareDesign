@@ -48,7 +48,7 @@ falcon|qwen35)
 *) exit 2 ;;
 esac
 shift
-out="$PWD/run-$SLURM_JOB_ID"
+out="$PWD/run-$SLURM_JOB_ID${MDT_274_RUN_SUFFIX:+-$MDT_274_RUN_SUFFIX}"
 mkdir "$out"
 projection_math=()
 if [[ ${MDT_274_NATIVE_MATH:-0} == 1 ]]; then
@@ -78,9 +78,16 @@ for spec in "$@"; do
     if [[ "${cache:-}" == kv64 ]]; then options+=(--compact-kv64); fi
     if [[ "${cache:-}" == tile128 ]]; then options+=(--tiled-attention128); fi
     if [[ $profile != off ]]; then options+=(--pr272-profile "$profile"); fi
+    if [[ ${MDT_274_THREE_P:-0} == 1 ]]; then options+=(--three-p); fi
+    if [[ ${MDT_274_TRACE_LAYERS:-0} == 1 ]]; then options+=(--trace-layers); fi
     count=$layers
     if [[ $mode == pilot ]]; then mode=prefill; count=1; fi
     if [[ $mode == slice ]]; then mode=prefill; count=4; fi
+    if [[ $mode == prepare-live ]]; then options+=(--prepare-only); fi
+    if [[ $mode == decode-live || $mode == prepare-live ]]; then
+        mode=decode
+        options+=(--representative-history)
+    fi
     name="${spec%%:*}-w$window${cache:+-$cache}"
     if [[ $profile != off ]]; then name="$name-pr272-$profile"; fi
     if [[ $spec == "$mode" ]]; then name=$mode; fi

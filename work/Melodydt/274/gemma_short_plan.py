@@ -84,12 +84,16 @@ class GemmaCompiler(PhiCompiler):
         self.norm_from(P, pre+"post_attention_layernorm.weight")
         self.append(U, seal(RESIDUAL, 4, VECTOR, "<3H", 0, 0, widths))
         self.normalize(pre+"pre_feedforward_layernorm.weight")
-        self.allocate_mid(layer, position)
-        for first in range(0, self.ffn, 128):
-            self.project(pre+"mlp.gate_proj.weight", 0, first, first+128)
-            self.project(pre+"mlp.up_proj.weight", 32, first, first+128)
-            self.append(P, seal(ACT, 2, VECTOR, "<3H", 0, 32, 64))
-            self.store_mid_tile(first)
-        self.project_spilled_mid(pre+"mlp.down_proj.weight")
+        if self.three_p:
+            self.three_p_ffn(pre+"mlp.gate_proj.weight", pre+"mlp.up_proj.weight",
+                             pre+"mlp.down_proj.weight", self.ffn, layer, position, opcode=2)
+        else:
+            self.allocate_mid(layer, position)
+            for first in range(0, self.ffn, 128):
+                self.project(pre+"mlp.gate_proj.weight", 0, first, first+128)
+                self.project(pre+"mlp.up_proj.weight", 32, first, first+128)
+                self.append(P, seal(ACT, 2, VECTOR, "<3H", 0, 32, 64))
+                self.store_mid_tile(first)
+            self.project_spilled_mid(pre+"mlp.down_proj.weight")
         self.norm_from(P, pre+"post_feedforward_layernorm.weight")
         self.append(U, seal(RESIDUAL, 4, VECTOR, "<3H", 0, 0, widths))

@@ -102,6 +102,7 @@ class Layout:
 
 class Compiler:
     hidden, vocab, token_word, kv_row, kv_heads = HIDDEN, VOCAB, 512, 512, KV_HEADS
+    three_p = False
 
     def __init__(self, checkpoint, frozen, packed, reference, output, layers, history, mode):
         self.layout = Layout(output)
@@ -177,6 +178,47 @@ class Compiler:
             word = output_word if vocab else output_word+(first-start)//4
             self.append(P, projection_record(address, columns, k, first, groups, word, route, vocab, backing))
 
+    def wave(self, records):
+        """Lower one FFN batch to independent CALLs and a common WAIT mask."""
+        if len(records) > 1:
+            self.parallel_waves[len(self.calls)] = len(records)
+        self.calls.extend(records)
+
+    def three_p_ffn(self, gate, up, down, width, layer, position, *, opcode=1, gain=1., up_start=0):
+        """Shard Gate/Up and Down by output tile across P0/P1/P2."""
+        if self.hidden % 128 or width % 128 or self.hidden > 3072:
+            raise ValueError("FFN dimensions exceed the three-P allocation")
+        source = U if self.hidden <= 2048 else MID
+        word = self.hidden//4 if source == U else 0
+        for site in (P, CONTEXT, MID):
+            if source != site:
+                self.copy(source, site, word, 0, self.hidden//4)
+        backing = (15 << 30) + ((position-self.history)*self.layers+layer)*width*4
+        self.scratch_regions.append((backing, width*4))
+
+        def descriptor(name, first, word, route=0):
+            base, columns, inner = self.records[name]
+            if first < 0 or first+128 > columns:
+                raise ValueError("three-P tile exceeds the packed projection")
+            return projection_record(base, columns, inner, first, 16, word, route,
+                                     backing=backing if route == 4 else 0)
+
+        for first in range(0, width, 384):
+            items = list(zip((P, CONTEXT, MID), range(first, min(first+384, width), 128)))
+            self.wave([(site, descriptor(gate, tile, 768)) for site, tile in items])
+            self.wave([(site, descriptor(up, up_start+tile, 800)) for site, tile in items])
+            activate = (seal(ACT, opcode, VECTOR, "<3HI", 768, 800, 832, round(gain*65536))
+                        if opcode == 4 else seal(ACT, opcode, VECTOR, "<3H", 768, 800, 832))
+            self.wave([(site, activate) for site, _ in items])
+            for site, tile in items:
+                self.store(site, backing+tile*4, 832, 32)
+        for first in range(0, self.hidden, 384):
+            items = list(zip((P, CONTEXT, MID), range(first, min(first+384, self.hidden), 128)))
+            self.wave([(site, descriptor(down, tile, tile//4 if site == P else 768, 4))
+                       for site, tile in items])
+            for site, tile in items[1:]:
+                self.copy(site, P, 768, tile//4, 32)
+
     def coefficients(self, position):
         frequencies = 1_000_000.0 ** (-np.arange(0, 128, 2) / 128)
         angle = np.tile(position * frequencies, 2)
@@ -215,21 +257,32 @@ class Compiler:
         self.copy(P, U, 0, 256, 256)
         self.add(0, 256, 0, 256)
         self.rms(U, prefix+"post_attention_layernorm.weight", 0, 256, 256)
-        for first in range(0, FFN, 128):
-            self.project(prefix+"mlp.gate_proj.weight", 0, first, first+128)
-            self.project(prefix+"mlp.up_proj.weight", 32, first, first+128)
-            self.append(P, seal(ACT, 1, VECTOR, "<3H", 0, 32, 64))
-            self.copy(P, MID, 64, first//4, 32)
-        self.project(prefix+"mlp.down_proj.weight", 0, route=2)
+        if self.three_p:
+            self.three_p_ffn(prefix+"mlp.gate_proj.weight", prefix+"mlp.up_proj.weight",
+                             prefix+"mlp.down_proj.weight", FFN, layer, position)
+        else:
+            for first in range(0, FFN, 128):
+                self.project(prefix+"mlp.gate_proj.weight", 0, first, first+128)
+                self.project(prefix+"mlp.up_proj.weight", 32, first, first+128)
+                self.append(P, seal(ACT, 1, VECTOR, "<3H", 0, 32, 64))
+                self.copy(P, MID, 64, first//4, 32)
+            self.project(prefix+"mlp.down_proj.weight", 0, route=2)
         self.copy(P, U, 0, 256, 256)
         self.add(0, 256, 0, 256)
 
     def pages(self, tag):
         self.layout.address = align(self.layout.address, 128)
         descriptor_base = self.layout.write(tag+"-descriptors.bin", b"".join(raw for _, raw in self.calls))
-        groups = [(site,) for site, _ in self.calls]
+        groups = []
+        offset = 0
+        while offset < len(self.calls):
+            count = self.parallel_waves.get(offset, 1) if self.three_p else 1
+            groups.append(tuple(site for site, _ in self.calls[offset:offset+count]))
+            offset += count
         pages = emit_mother_pages(groups, descriptor_base, TOPOLOGY, assemble_cases, expand)
         self.calls.clear()
+        if self.three_p:
+            self.parallel_waves.clear()
         return [dict(path=f"{tag}-mc-{i}.bin",
                      address=self.layout.write(f"{tag}-mc-{i}.bin", page["image"]),
                      image_bytes=len(page["image"]), crc=crc32(page["image"]),

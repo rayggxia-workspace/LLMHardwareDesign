@@ -66,7 +66,18 @@ class GraniteCompiler(PhiCompiler):
                          for expert in range(40))
         address = self.layout.write(f"experts-{position}-{layer}.bin", table)
         self.load(P, address, 64, 40)
-        self.append(P, seal(MOE, 1, VECTOR, "<4H", position, layer, 40, 8))
+        self.append(P, seal(MOE, 2 if self.three_p else 1, VECTOR, "<4H", position, layer, 40, 8))
+        if self.three_p:
+            for site in (P, CONTEXT, MID):
+                self.copy(U, site, 384, 0, 384)
+                if site != P:
+                    self.copy(P, site, 896, 896, 16)
+            for first in (0, 3, 6):
+                count = min(3, 8-first)
+                self.wave([(site, seal(MOE, 3, VECTOR, "<H", first+offset))
+                           for offset, site in enumerate((P, CONTEXT, MID)[:count])])
+                self.append(U, seal(MOE, 4, VECTOR, "<2H", first, count))
+            self.copy(U, P, 384, 0, 384)
         self.residual()
 
 
@@ -78,6 +89,15 @@ class Router:
         self.expert_proj = getattr(execution, "ffn_proj", None) or execution.proj
         self.activate = activation
 
+    def select(self, raw, position, layer, experts, top):
+        scores = np.frombuffer(raw, dtype="<i4").astype(np.float64)
+        chosen = np.lexsort((np.arange(experts), -scores))[:top]
+        coeff = np.exp((scores[chosen]-scores[chosen[0]])/65536)
+        p = np.rint(coeff/coeff.sum()*65536).astype(np.int64)
+        self.execution.experts.append({"position": position, "layer": layer,
+                                       "ids": chosen.tolist(), "probabilities_q16": p.tolist()})
+        return sorted(zip(chosen.tolist(), p.tolist()))
+
     def bind(self, record):
         position, layer, experts, top = unpack_from("<4H", record, 16)
         if (experts, top) != (40, 8) or any(record[24:124]):
@@ -88,13 +108,7 @@ class Router:
 
         def run(done):
             def route(raw, table):
-                scores = np.frombuffer(raw, dtype="<i4").astype(np.float64)
-                chosen = np.lexsort((np.arange(experts), -scores))[:top]
-                coeff = np.exp((scores[chosen]-scores[chosen[0]])/65536)
-                p = np.rint(coeff/coeff.sum()*65536).astype(np.int64)
-                self.execution.experts.append({"position": position, "layer": layer,
-                                               "ids": chosen.tolist(), "probabilities_q16": p.tolist()})
-                ordered = sorted(zip(chosen.tolist(), p.tolist()))
+                ordered = self.select(raw, position, layer, experts, top)
                 unit.edge(lambda: expert(ordered, table, 0), 160)
 
             def expert(ordered, table, index):
@@ -143,4 +157,98 @@ class Router:
 
             unit.read_span(target, 0, 10, lambda scores:
                            unit.read_span(target, 64, 40, lambda table: route(scores, table)))
+        return run
+
+
+class ParallelRouter(Router):
+    """Dispatch token-dependent expert tiles with real three-target CALL waves."""
+
+    def bind_selection(self, record):
+        position, layer, experts, top = unpack_from("<4H", record, 16)
+        if (experts, top) != (40, 8) or any(record[24:124]):
+            raise ValueError("invalid three-P expert selection descriptor")
+        unit, ram = self.proj[0], self.ram[P]
+
+        def run(done):
+            def select(raw, table):
+                ordered = self.select(raw, position, layer, experts, top)
+                packed = b"".join(pack("<QQi12x", *unpack_from("<QQ", table, 16*i), p)
+                                  for i, p in ordered)
+                unit.edge(lambda: unit.write_span(ram, 896, packed, done), 160)
+            unit.read_span(ram, 0, 10, lambda scores:
+                           unit.read_span(ram, 64, 40, lambda table: select(scores, table)))
+        return run
+
+    def bind_expert(self, record, site):
+        slot, = unpack_from("<H", record, 16)
+        if slot >= 8 or any(record[18:124]):
+            raise ValueError("invalid parallel expert descriptor")
+        unit = self.execution.ffn_lane_proj[site]
+        down = self.execution.moe_lane_down[site]
+        target = self.ram[site]
+
+        def run(done):
+            def expert(raw):
+                left, right, _ = unpack_from("<QQi", raw)
+                if left not in self.execution.ffn_bases or right not in self.execution.ffn_bases:
+                    raise ValueError("unbound expert matrix")
+
+                def activated(tile):
+                    if tile == 4:
+                        output(0)
+                        return
+                    gate = projection_record(left, 1024, 1536, tile*128, 16, 384)
+                    up = projection_record(left, 1024, 1536, 512+tile*128, 16, 416)
+                    act = seal(ACT, 1, VECTOR, "<3H", 384, 416, 448)
+                    unit.provider(gate)(lambda: unit.provider(up)(
+                        lambda: self.activate(act, site=site)(lambda: unit.read_span(
+                            target, 448, 32, lambda data: unit.write_span(
+                                target, 768+tile*32, data, lambda: activated(tile+1))))))
+
+                def output(tile):
+                    if tile == 12:
+                        done()
+                        return
+                    op = projection_record(right, 1536, 512, tile*128, 16, 384+tile*32)
+                    down.provider(op)(lambda: output(tile+1))
+
+                activated(0)
+            unit.read_span(target, 896+2*slot, 2, expert)
+        return run
+
+    def bind_sum(self, record):
+        first, count = unpack_from("<2H", record, 16)
+        if (first, count) not in ((0, 3), (3, 3), (6, 2)) or any(record[20:124]):
+            raise ValueError("invalid expert sum descriptor")
+        unit, target = self.proj[0], self.ram[U]
+        lanes = (P, CONTEXT, MID)
+
+        def run(done):
+            def lane(offset, table):
+                if offset == count:
+                    done()
+                    return
+                probability, = unpack_from("<i", table, 32*offset+16)
+
+                def tile(index):
+                    if index == 12:
+                        lane(offset+1, table)
+                        return
+                    at = 384+index*32
+
+                    def add(raw):
+                        new = unpack("<128i", raw)
+
+                        def write(old):
+                            data = pack("<128i", *(a+rne(b*probability, 16)
+                                                   for a, b in zip(unpack("<128i", old), new)))
+                            unit.edge(lambda: unit.write_span(target, at, data, lambda: tile(index+1)), 96)
+                        if first == 0 and offset == 0:
+                            write(bytes(512))
+                        else:
+                            unit.read_span(target, at, 32, write)
+
+                    unit.read_span(self.ram[lanes[offset]], at, 32, add)
+                tile(0)
+            unit.read_span(self.ram[P], 896+2*first, 2*count, lambda table: lane(0, table))
         return run

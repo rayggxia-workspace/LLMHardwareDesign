@@ -31,7 +31,7 @@ CORE_PS = 3334
 
 
 class KVMemory(CommittedMemory):
-    def __init__(self, images, plan):
+    def __init__(self, images, plan, assets):
         super().__init__(images, [(base, size, base//64)
                                  for base, size in plan["state"] + plan.get("scratch", [])])
         self.history = plan["history"]
@@ -42,6 +42,13 @@ class KVMemory(CommittedMemory):
         self.first_history = self.historical[0][0] if self.historical else 1 << 34
         self.initial = sorted(plan.get("initial", []))
         self.initial_bases = [lo for lo, _ in self.initial]
+        self.history_images = None
+        self.history_beats = 0
+        if "representative_history" in plan:
+            from live_history import map_images
+            expected = {lo: hi-lo for lo, hi in self.historical}
+            expected.update(self.initial)
+            self.history_images = map_images(assets, plan["representative_history"], expected)
         self.recurrent_regions = plan.get("recurrent_regions", [])
         self.step = 0
         self.reread = set()
@@ -50,11 +57,11 @@ class KVMemory(CommittedMemory):
     def __call__(self, address):
         i = bisect_right(self.initial_bases, address)-1
         if i >= 0 and address < sum(self.initial[i]):
-            return bytes(64)
+            return self.read_history(self.initial[i][0], address)
         if self.history and address >= self.first_history and self.binding(address) is None:
             index = bisect_right(self.historical_bases, address)-1
-            if address < self.historical[index][1]:
-                return bytes(64)
+            if index >= 0 and address < self.historical[index][1]:
+                return self.read_history(self.historical[index][0], address)
             raise ValueError(f"read from unbound history or padding {address:#x}")
         data = super().__call__(address)
         if self.step == 1 and self.recurrent_regions and address in self.recurrent_previous:
@@ -63,6 +70,17 @@ class KVMemory(CommittedMemory):
             start = address & -self.row
             if start in self.bounds:
                 self.reread.add(address)
+        return data
+
+    def read_history(self, base, address):
+        if self.history_images is None:
+            return bytes(64)
+        if address % 64:
+            raise ValueError("unaligned representative history read")
+        data = self.history_images[base][address-base:address-base+64]
+        if len(data) != 64:
+            raise ValueError("representative history read exceeded the image")
+        self.history_beats += 1
         return data
 
     def check_step(self):
@@ -92,7 +110,7 @@ class Execution:
         self.assets = assets
         self.output = output
         self.clock = Clock()
-        self.memory = KVMemory(Images(assets / "ddr-initial.tsv"), plan)
+        self.memory = KVMemory(Images(assets / "ddr-initial.tsv"), plan, assets)
         self.dram = Dram(self.clock, library, ini, output, credits=32, core_ps=CORE_PS)
         self.sram = [S128(self.clock, core_ps=CORE_PS, port_bits=512) for _ in range(4)]
         self.scheduler = Scheduler(self.clock, self.dram, self.memory, core_ps=CORE_PS, pm_write_bits=512)
@@ -112,6 +130,8 @@ class Execution:
         self.pr272_profile = pr272_profile
         self.pipeline_attention = pr272_profile in ("attention", "combined")
         self.ffn_proj = None
+        self.ffn_lane_proj = {}
+        self.moe_lane_down = {}
         self.ffn_bases = set()
         if pr272_profile in ("ffn", "combined"):
             from pr272_weight import is_ffn_weight, make_ffn_projections
@@ -119,6 +139,17 @@ class Execution:
             self.ffn_bases = {item["address"] for item in plan["images"] if is_ffn_weight(item["path"])}
             if not self.ffn_bases:
                 raise ValueError("the PR #272 FFN profile lacks packed FFN images")
+            if plan.get("three_p"):
+                lanes = (P, CONTEXT, MID)
+                bases = [Projection(self.clock, self.dram, self.memory, self.sram[site], self.sram[site],
+                                    source_word=0, scratch_word=944, scratch_sram=self.sram[site])
+                         for site in lanes]
+                self.ffn_lane_proj = dict(zip(lanes, make_ffn_projections(bases)))
+                if plan.get("moe"):
+                    down = [Projection(self.clock, self.dram, self.memory, self.sram[site], self.sram[site],
+                                       source_word=768, scratch_word=944, scratch_sram=self.sram[site])
+                            for site in lanes]
+                    self.moe_lane_down = dict(zip(lanes, make_ffn_projections(down)))
 
         if self.pipeline_attention:
             from pr272_native_attention import Attention as ArchiveAttention
@@ -156,15 +187,22 @@ class Execution:
             engines = self.ffn_proj if base in self.ffn_bases else self.proj
             return engines[min(source, 2)]
 
-        def project(record):
-            proj = match(record)
+        def project(record, site=P, parallel=False):
+            if parallel:
+                base, = unpack_from("<Q", record, 48)
+                if base not in self.ffn_bases or record[16] not in (0, 4):
+                    raise ValueError("unexpected matrix in a three-P FFN wave")
+                proj = self.ffn_lane_proj[site]
+            else:
+                proj = match(record)
+            ram = self.sram[site]
             source = record[16]
             if source < 3:
                 return proj.provider(record)
             width, = unpack_from("<H", record, 76)
             if source == 3 and width != 8192:
                 raise ValueError("split Mid route requires exactly 8192 coefficients")
-            if source in (4, 5) and width not in (4096, 6144, 8192, 9216, 10240):
+            if source in (4, 5) and width not in (3072, 4096, 6144, 8192, 9216, 10240):
                 raise ValueError("DDR Mid route has an unsupported width")
 
             def tile(k, done):
@@ -176,8 +214,8 @@ class Execution:
                     peak = max(map(abs, values))
                     shift = next(s for s in range(18) if peak <= 32767 << s)
                     packed = pack("<128h", *(rne(v, shift) for v in values))
-                    proj.edge(lambda: proj.write_span(self.sram[P], 944, packed,
-                              lambda: proj.read_span(self.sram[P], 944, 16,
+                    proj.edge(lambda: proj.write_span(ram, 944, packed,
+                              lambda: proj.read_span(ram, 944, 16,
                               lambda data: done(data, shift))))
 
                 if source == 3 or source == 5 and k < 32:
@@ -187,9 +225,9 @@ class Execution:
                     address, = unpack_from("<Q", record, 24)
                     native = bytearray(128)
                     native[16:32] = pack("<H6xQ", 896, address + k*512)
-                    self.dma.provider(self.sram[P], size=512, channel=1)(native)(
-                        lambda: proj.read_span(self.sram[P], 896, 32,
-                                lambda _: proj.read_span(self.sram[P], 896, 32, convert)))
+                    self.dma.provider(ram, size=512, channel=1)(native)(
+                        lambda: proj.read_span(ram, 896, 32,
+                                lambda _: proj.read_span(ram, 896, 32, convert)))
             return proj.provider(record, packed_tile=tile)
 
         def vocab(record):
@@ -245,14 +283,14 @@ class Execution:
                 return execute
             return bind
 
-        def activation(record, *, gelu=False, sigmoid=False, scaled=False):
+        def activation(record, *, gelu=False, sigmoid=False, scaled=False, site=P):
             gate, up, out = unpack_from("<3H", record, 16)
             gain = unpack_from("<I", record, 22)[0] if scaled else 65536
             words = 64 if sigmoid else 32
             if (max(gate, up, out)+words > 1024 or any(record[26 if scaled else 22:124]) or
                     min(abs(gate-up), abs(gate-out), abs(up-out)) < words):
                 raise ValueError("invalid G32 component aperture")
-            arith = self.e[P]
+            arith = self.e[site]
 
             def begin(done):
                 def word(index):
@@ -420,8 +458,15 @@ class Execution:
             self.attention_services["tiled_attn"] = tiled
             providers[P, ATT1, BASE_ABI, 2 if width == 64 else 1] = tiled.bind
         if self.plan.get("moe"):
-            from granite_short import Router
-            providers[P, MOE, VECTOR, 1] = Router(self, activation).bind
+            from granite_short import ParallelRouter, Router
+            if self.plan.get("three_p"):
+                router = ParallelRouter(self, activation)
+                providers[P, MOE, VECTOR, 2] = router.bind_selection
+                providers[U, MOE, VECTOR, 4] = router.bind_sum
+                for site in (P, CONTEXT, MID):
+                    providers[site, MOE, VECTOR, 3] = lambda record, target=site: router.bind_expert(record, target)
+            else:
+                providers[P, MOE, VECTOR, 1] = Router(self, activation).bind
         if self.plan.get("recurrent"):
             from hybrid_short import Recurrent
             providers[P, RECURRENT, VECTOR, 1] = Recurrent(self).bind
@@ -431,6 +476,20 @@ class Execution:
             providers[site, DMA, VECTOR, STORE] = dma(site, True)
         for site in (CONTEXT, MID, U):
             providers[site, COPY, VECTOR, 1] = local_copy(site)
+        if self.plan.get("three_p"):
+            providers[P, COPY, VECTOR, 1] = local_copy(P)
+            for site in (P, CONTEXT, MID):
+                ordinary = providers[P, PROJ, PROJ_ABI, 2] if site == P else None
+                def bind_project(record, target=site, default=ordinary):
+                    base, = unpack_from("<Q", record, 48)
+                    if default and base not in self.ffn_bases:
+                        return default(record)
+                    return project(record, site=target, parallel=True)
+                providers[site, PROJ, PROJ_ABI, 2] = bind_project
+                for opcode in (1, 2, 4):
+                    providers[site, ACT, VECTOR, opcode] = (
+                        lambda record, target=site, op=opcode: activation(
+                            record, gelu=op == 2, scaled=op == 4, site=target))
         return providers
 
     def count_call(self, signature, issue_ps, dispatch_ps, complete_ps):
@@ -460,13 +519,14 @@ class Execution:
                      instruction=lambda op: self.cycles(6+(op == 0x10)), timing=self.count_call)
             self.timing.append({"page": item["path"], "start_ps": start, "complete_ps": self.clock.now})
 
-    def run(self):
+    def run(self, *, trace_layers=False):
         addr = self.plan["local"]["address"]
         size = self.plan["local"]["bytes"]
         path = self.assets / "local.bin"
         _, _, raw = parse_pm_image(path.read_bytes(), path, base=addr, count=size,
                                    crc=self.plan["local"]["crc"], role="local", topology=TOPOLOGY)
         retirements, boundary = [], []
+        layer_frames = []
         decode = self.plan["mode"] == "decode"
         self.token = self.plan["first_decode_input"]
         # CONTEXT and MID model SRAM ingress controllers for the bounded copies.
@@ -495,6 +555,13 @@ class Execution:
             self.pages(phase["ingress"])
             for index, layer in enumerate(phase["layers"]):
                 self.pages(layer)
+                if trace_layers:
+                    data = b"".join(self.sram[U].words[word] for word in range(self.hidden//4))
+                    name = f"{self.plan['mode']}-{step}-layer-{index}.q16"
+                    (self.output / name).write_bytes(data)
+                    layer_frames.append({"file": name, "input": input_id,
+                                         "sha256": sha256(data).hexdigest(),
+                                         "saturations": self.residual_saturations})
                 print(f"position {phase['position']} layer {index} complete at {self.clock.now} ps", flush=True)
             self.memory.check_step()
             finish = self.clock.now
@@ -517,6 +584,11 @@ class Execution:
                 "boundary": boundary, "retirements": retirements, "pages": self.timing
             }, indent=2))
         counts = dict(self.dram.stats)
+        if trace_layers:
+            (self.output / "layer-trace.json").write_text(json.dumps({
+                "initial_state_sha256": self.plan.get("representative_history", {}).get("source_sha256"),
+                "frames": layer_frames,
+            }, indent=2) + "\n")
         if counts["reads"] + counts["writes"] != counts["callbacks"]:
             raise ValueError("DDR callbacks did not reconcile")
         self.dram.close()
@@ -536,7 +608,14 @@ class Execution:
         result["ffn_projection"] = [dict(p.stats) for p in self.ffn_proj] if self.ffn_proj else []
         result["attention_services"] = {kind: dict(service.stats)
                                         for kind, service in self.attention_services.items()}
-        if self.ffn_proj and not any(p.stats["weight_records_consumed"] for p in self.ffn_proj):
+        ffn_lanes = list(self.ffn_lane_proj.values()) + list(self.moe_lane_down.values())
+        if ffn_lanes:
+            for unit in ffn_lanes:
+                service = unit.stats
+                if not (service["weight_records_consumed"] and
+                        0 < service["weight_read_issues"] == service["weight_read_returns"]):
+                    raise ValueError("three-P FFN lane consumed no records or left weight reads outstanding")
+        elif self.ffn_proj and not any(p.stats["weight_records_consumed"] for p in self.ffn_proj):
             raise ValueError("the PR #272 FFN profile consumed no weight records")
         result["services"] = [{"group": group, "signature": signature, "count": count,
                                "dispatch_ps": dispatch, "service_ps": service}
@@ -562,7 +641,18 @@ def main():
     parser.add_argument("--compact-kv64", action="store_true")
     parser.add_argument("--tiled-attention128", action="store_true")
     parser.add_argument("--pr272-profile", choices=("off", "attention", "ffn", "combined"), default="off")
+    parser.add_argument("--representative-history", action="store_true",
+                        help="seed decode from this model's frozen 512-position FP32 cache")
+    parser.add_argument("--prepare-only", action="store_true",
+                        help="compile and verify the program and seed images without timing")
+    parser.add_argument("--three-p", action="store_true", help="issue FFN tiles to three local targets")
+    parser.add_argument("--trace-layers", action="store_true",
+                        help="write residual snapshots after layer WAIT, without clock events")
     args = parser.parse_args()
+    if args.representative_history and args.mode != "decode":
+        parser.error("representative history requires decode mode")
+    if args.three_p and args.pr272_profile != "combined":
+        parser.error("three-P requires the combined PR #272 service profile")
     if args.ffn_context_cache and args.model not in ("phi", "gemma", "qwen35", "falcon"):
         parser.error("FFN context cache requires a DDR-backed Mid mapping")
     if args.compact_kv64 and args.model not in ("llama", "granite"):
@@ -607,18 +697,43 @@ def main():
         compiler.compact_kv64 = True
         compiler.kv_row = 256
         compiler.kv_bytes = align((history+2)*compiler.kv_row, 4096)
+    if args.three_p:
+        compiler.three_p = True
+        compiler.parallel_waves = {}
+        if not hasattr(compiler, "scratch_regions"):
+            compiler.scratch_regions = []
     plan = compiler.compile()
+    if args.three_p:
+        plan["three_p"] = True
     if args.tiled_attention128:
         plan["tiled_attention128"] = True
+    if args.representative_history:
+        from live_history import materialize
+        plan["representative_history"] = materialize(args.reference, compiler, plan, args.model, assets)
     (assets / "plan.json").write_text(json.dumps(plan, indent=2) + "\n")
-    result = Execution(plan, assets, args.library, args.ini, args.output,
-                       args.weight_window, args.pr272_profile).run()
+    if args.prepare_only:
+        KVMemory(Images(assets / "ddr-initial.tsv"), plan, assets)
+        return
+    execution = Execution(plan, assets, args.library, args.ini, args.output,
+                          args.weight_window, args.pr272_profile)
+    result = execution.run(trace_layers=args.trace_layers)
+    if args.representative_history and not execution.memory.history_beats:
+        raise ValueError("no representative history was consumed")
     result.update(plan_sha256=hash_file(assets / "plan.json"),
                   model=args.model,
                   ffn_context_cache=args.ffn_context_cache,
                   compact_kv64=args.compact_kv64,
                   tiled_attention128=args.tiled_attention128,
-                  workload="serial projection and modeled SRAM COPY candidate; zero historical KV")
+                  history_payload="live FP32" if args.representative_history else "zeros",
+                  history_beats=execution.memory.history_beats,
+                  workload="three-P FFN TLM" if args.three_p else "serial projection and modeled SRAM COPY candidate")
+    if args.three_p:
+        result["ffn_by_target"] = {site: dict(unit.stats) for site, unit in execution.ffn_lane_proj.items()}
+        if execution.moe_lane_down:
+            result["expert_down_by_target"] = {site: dict(unit.stats)
+                                               for site, unit in execution.moe_lane_down.items()}
+    if args.representative_history:
+        result["history_source_sha256"] = plan["representative_history"]["source_sha256"]
     (args.output / "result.json").write_text(json.dumps(result, indent=2) + "\n")
 
 

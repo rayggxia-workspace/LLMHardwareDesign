@@ -93,8 +93,12 @@ def audit(run, layers, vocab, mode, reference=None, aligned_reference=None):
             raise ValueError("invalid decode retirement or feedback")
         if reference is not None:
             receipt = json.loads((reference / "reference.json").read_text())
-            if receipt["history_payload"] != "zeros":
+            if receipt.get("history_payload", "live FP32") != res.get("history_payload", "zeros"):
                 raise ValueError("FP32 reference has different initial KV semantics")
+            if res.get("history_payload") == "live FP32" and (
+                    receipt["outputs"]["history512.pt"] != res.get("history_source_sha256") or
+                    not res.get("history_beats")):
+                raise ValueError("replay did not consume the matching representative history")
         for i, retired in enumerate((a, b)):
             path = run / f"logits-{i}.bin"
             logits = np.fromfile(path, dtype="<i4")

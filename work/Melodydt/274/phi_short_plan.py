@@ -118,7 +118,8 @@ class PhiCompiler(LlamaCompiler):
 
     def layer(self, layer, position, coeff):
         pre = f"model.layers.{layer}."
-        self.allocate_mid(layer, position)
+        if not self.three_p:
+            self.allocate_mid(layer, position)
         self.normalize(pre+"input_layernorm.weight")
         self.load(P, coeff, 256, 64)
         qkv = pre+"self_attn.qkv_proj.weight"
@@ -141,10 +142,14 @@ class PhiCompiler(LlamaCompiler):
         self.residual()
         self.normalize(pre+"post_attention_layernorm.weight")
         fused = pre+"mlp.gate_up_proj.weight"
-        for first in range(0, self.ffn, 128):
-            self.project(fused, 0, first, first+128)
-            self.project(fused, 32, self.ffn+first, self.ffn+first+128)
-            self.append(P, seal(ACT, 1, VECTOR, "<3H", 0, 32, 64))
-            self.store_mid_tile(first)
-        self.project_spilled_mid(pre+"mlp.down_proj.weight")
+        if self.three_p:
+            self.three_p_ffn(fused, fused, pre+"mlp.down_proj.weight", self.ffn,
+                             layer, position, up_start=self.ffn)
+        else:
+            for first in range(0, self.ffn, 128):
+                self.project(fused, 0, first, first+128)
+                self.project(fused, 32, self.ffn+first, self.ffn+first+128)
+                self.append(P, seal(ACT, 1, VECTOR, "<3H", 0, 32, 64))
+                self.store_mid_tile(first)
+            self.project_spilled_mid(pre+"mlp.down_proj.weight")
         self.residual()

@@ -32,3 +32,7 @@ sha256sum -c pr272-tlm-01/run-115340/output.sha256
 ```
 
 继续时先读 [PR #275](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/275) HEAD 和[逐模型重测回执](../../work/Melodydt/274/PR272_RETEST.md)，核对冻结的程序与双阶段输出。由 Melodydt 从既有 FP32 结果定位剩余分歧，整模型 RTL／物理校准待安排。若要评估 ATT1 单独接入，当前冻结脚本已有 `:attention` 入口，可在同一映射和输入上独立复跑。审查人待指定。登记 PR #5 pending。项目仍缺 `config/board.json`，由具权限维护者配置、核验实际任务卡及同步字段。
+
+## 三 P 调度与代表性历史续办
+
+源码继承 `fc1327ec4d3a27bcea00a04cc0e6c4e6942fd05c`，服务器运行目录 `three-p-full-01`。请优先核验 115617/115618/115619 的真实状态和结果散列。先生成同模型、同输入上下文的逐层 FP32 对照，区分原候选的算术误差与三 P 分片引发的变化。复跑命令和未完成项见[全层作业索引](../../work/Melodydt/274/THREE_P_LIVE.md)。Melodydt 续办数值修复与吞吐验收。
