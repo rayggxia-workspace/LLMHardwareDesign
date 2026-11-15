@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-15，Issue #280 的 C639 G32 两种工况门级回放完成。首次有效握手触发的两个 81.92 µs 窗口均有 64 笔 G32 输入和输出，普通／背压 G32 平均总功耗为 1.381／1.377 mW。M 同源布线、512-bit 写和控制链路校准待做。 [结果与追溯](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/524d0f1ae7e03a38114ae356bc4f4c8f81b0e253/work/Melodydt/280/C639_G32_POWER.md)
+
 2026-11-15，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成 C380 普通 128-bit SRAM 的同初态空闲对照，正常／背压窗口增量 37.945／8.170 nJ。P SRAM 的 512-bit feeder 读四 bank 同址选通通过门级验证，实测 PM 接口仍为 128-bit。C639 G32 正常工况门级回放已读回，背压及四窗功耗作业持续执行。 [结果与作业追踪](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/bc7ac38b5aaa8fa8d908ca6da999ed45ddbcbe76/work/Melodydt/280/PAIRED_SRAM_AND_C639.md)
 
 2026-11-15，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 通过 C380 布线 SRAM 的完整门级回放。普通 128-bit SRAM 端口在 100 MHz 的两个 20.48 µs 活动窗口分别估算 35.664 与 34.210 mW，标注覆盖率 99.18%。空闲差分、C639 物理绑定和真实 512-bit SRAM／PM 校准待完成。 [门级回放与功耗回执](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/cdc1acdc83594a8240ace568a002af9fc41411fc/work/Melodydt/280/C380_ROUTED_POWER.md)
