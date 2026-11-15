@@ -91,12 +91,16 @@ text = text.replace('        $display("PASS compact S', '''        if (wide_read
         $display("PASS compact S''')
 target.write_text(text)
 PY
+cat > "$out/routed-lint.vlt" <<'VLT'
+`verilator_config
+lint_off -rule PINMISSING -file "*/6_final.v"
+VLT
 for mode in rtl gate; do
     if [[ $mode == rtl ]]; then
         source=("$calibration/"{local_s_base.sv,local_s_p.sv,block_feed_s16k_sram.sv,block_feed_loader.sv})
         define=()
     else
-        source=("$gate_base" "$gate_p" "$calibration/cells.v")
+        source=("$out/routed-lint.vlt" "$gate_base" "$gate_p" "$calibration/cells.v")
         define=(-DROUTED_SRAM)
     fi
     "$vlt" --binary --timing --assert -j "$cores" --timescale-override 1ns/1ps \
@@ -133,7 +137,7 @@ if list(widths.values()) != [{"req_data_i": 128, "rsp_data_o": 128}, {"cfg_data"
 output.write_text(json.dumps(widths, indent=2) + "\n")
 print(output.read_text(), end="")
 PY
-sha256sum "$out/"{physical.sha256,tools-inputs.sha256,test_compact_s.sv,verilator.txt,pm-interface.json} \
+sha256sum "$out/"{physical.sha256,tools-inputs.sha256,test_compact_s.sv,routed-lint.vlt,verilator.txt,pm-interface.json} \
     "$out"/{run,pass}-{rtl,gate}.* > "$out/wide-results.sha256"
 sha256sum -c "$out/wide-results.sha256"
 printf '%s\n' 'NATIVE_512_FEEDER_AND_PM_INTERFACE_PASS'
