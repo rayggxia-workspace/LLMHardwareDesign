@@ -69,3 +69,10 @@
 - 116908 在 c64/node9 用 8 核，65 秒 COMPLETED 0:0。布线 `local_s_base` 两种工况的全量读回、DDR 事务、周期和采样窗口与冻结基准一致。
 - 116918 在 c64/node9 用 4 核，12 秒 COMPLETED 0:0。100 MHz 下，两个 20.48 µs 活动窗口的 128-bit SRAM 平均总功耗为 35.663966 和 34.209967 mW，标注 17,309 个引脚、143 个待核实。服务器日志、首次失败、结果 SHA-256 和接续命令已归档。 [C380 回执](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/cdc1acdc83594a8240ace568a002af9fc41411fc/work/Melodydt/280/C380_ROUTED_POWER.md)
 - 下一步补 C380 配对空闲并核实未标注引脚，随后绑定 C639 物理分块和标定真实 512-bit SRAM／PM。#280 进行中。PR #281 草稿，独立审查人待指定，登记待合并，Projects 缺配置待权责人核验。
+
+## 2026-11-15（Asia/Shanghai）配对 SRAM 功耗与 C639 G32
+
+- 116935、116939 均 COMPLETED 0:0。C380 普通 128-bit SRAM 同初态 20.48 µs 窗的正常／背压增量为 37.945404／8.170166 nJ。四窗相同的 143 个缺项均为输入天线二极管 A 引脚。
+- 116938 COMPLETED 0:0。P SRAM 的 512-bit feeder 读以四 bank 同地址选通通过原生 RTL 和布线网表验证。母控及局控 PM 实际读写为 128-bit，上游 DDR 回包为 512-bit。真实宽写和控制链路物理标定待做。
+- C639 G32 116937 在 c64/node9 以 12 核运行，正常工况 2,654,967 周期和两窗已读回。预检 116942 首窗标注覆盖 99.83%。四窗功耗 116943 以 `afterok:116937` 等待。M60 的当前快照等价及其他分块待验证。 [结果和 SHA-256](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/bc7ac38b5aaa8fa8d908ca6da999ed45ddbcbe76/work/Melodydt/280/PAIRED_SRAM_AND_C639.md) · [长作业接续](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/49ce662ad40155d02184ea731476aa29928755b6/docs/handoffs/2026-11-15-issue-280-c639-g32-power.md)
+- #280 进行中，PR #281 草稿，独立审查人待指定。项目登记待合并，Projects 缺配置待维护者核验。
