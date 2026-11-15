@@ -1,0 +1,198 @@
+{
+  "schema": "shared-read-dma-revision/1",
+  "implementation": "native_shared_read_dma",
+  "hard_boundary": false,
+  "implementation_kind": "parent_standard_cells",
+  "upstream": {
+    "path": "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/mother_control_native/mc_dma_fabric_typed_p.sv",
+    "sha256": "74c68493d5bd1f0c1310eab9d7c634384e8871f8a0d91b0ac4dc0dc0907b9b70"
+  },
+  "source": "rtl/control/native_shared_read_dma.sv",
+  "sha256": "ddb751670095832381b2318dcf1e301d455444698e8db9a32fa18164f1dea702",
+  "clients": [
+    {
+      "client": 0,
+      "owner": "P0",
+      "kind": "LC_descriptor",
+      "record_bytes": 128
+    },
+    {
+      "client": 1,
+      "owner": "P1",
+      "kind": "LC_descriptor",
+      "record_bytes": 128
+    },
+    {
+      "client": 2,
+      "owner": "P2",
+      "kind": "LC_descriptor",
+      "record_bytes": 128
+    },
+    {
+      "client": 3,
+      "owner": "C0",
+      "kind": "LC_descriptor",
+      "record_bytes": 128
+    },
+    {
+      "client": 4,
+      "owner": "U0",
+      "kind": "LC_descriptor",
+      "record_bytes": 128
+    },
+    {
+      "client": 5,
+      "owner": "J0",
+      "kind": "LC_descriptor",
+      "record_bytes": 128
+    },
+    {
+      "client": 6,
+      "owner": "F0",
+      "kind": "LC_descriptor",
+      "record_bytes": 128
+    },
+    {
+      "client": 7,
+      "owner": "U1",
+      "kind": "LC_descriptor",
+      "record_bytes": 128
+    },
+    {
+      "client": 8,
+      "owner": "J1",
+      "kind": "LC_descriptor",
+      "record_bytes": 128
+    },
+    {
+      "client": 9,
+      "owner": "P0",
+      "kind": "M_weight",
+      "record_beats": [
+        17,
+        18
+      ]
+    },
+    {
+      "client": 10,
+      "owner": "P1",
+      "kind": "M_weight",
+      "record_beats": [
+        17,
+        18
+      ]
+    },
+    {
+      "client": 11,
+      "owner": "P2",
+      "kind": "M_weight",
+      "record_beats": [
+        17,
+        18
+      ]
+    },
+    {
+      "client": 12,
+      "owner": "P0",
+      "kind": "service",
+      "record_bytes": 64,
+      "tag_adapter_required": true
+    },
+    {
+      "client": 13,
+      "owner": "P1",
+      "kind": "service",
+      "record_bytes": 64,
+      "tag_adapter_required": true
+    },
+    {
+      "client": 14,
+      "owner": "P2",
+      "kind": "service",
+      "record_bytes": 64,
+      "tag_adapter_required": true
+    },
+    {
+      "client": 15,
+      "owner": "C0",
+      "kind": "service",
+      "record_bytes": 64,
+      "tag_adapter_required": true
+    },
+    {
+      "client": 16,
+      "owner": "U0",
+      "kind": "service",
+      "record_bytes": 64,
+      "tag_adapter_required": true
+    },
+    {
+      "client": 17,
+      "owner": "J0",
+      "kind": "service",
+      "record_bytes": 64,
+      "tag_adapter_required": true
+    },
+    {
+      "client": 18,
+      "owner": "F0",
+      "kind": "service",
+      "record_bytes": 64,
+      "tag_adapter_required": true
+    },
+    {
+      "client": 19,
+      "owner": "U1",
+      "kind": "service",
+      "record_bytes": 64,
+      "tag_adapter_required": true
+    },
+    {
+      "client": 20,
+      "owner": "J1",
+      "kind": "service",
+      "record_bytes": 64,
+      "tag_adapter_required": true
+    }
+  ],
+  "transport": {
+    "channels": 2,
+    "lanes_per_channel": 2,
+    "beat_bytes": 64,
+    "entries_per_channel": 32,
+    "descriptors_per_channel": 32,
+    "return_skids_per_channel": 3,
+    "issue_limit_per_3_cycles_per_channel": 4
+  },
+  "delta": {
+    "client_count": [
+      12,
+      21
+    ],
+    "client_identity_bits": [
+      4,
+      5
+    ],
+    "external_DDR_tag_bits": [
+      64,
+      64
+    ],
+    "external_DDR_data_bits": [
+      512,
+      512
+    ],
+    "transport_entries": [
+      64,
+      64
+    ],
+    "return_payload_bytes": [
+      384,
+      384
+    ],
+    "synthesis_area": null,
+    "physical_acceptance": false
+  },
+  "registered_in_complete_base": false,
+  "functional_acceptance": false,
+  "scope": "candidate parent transport; source adapters, write transport and joined control execution pending"
+}

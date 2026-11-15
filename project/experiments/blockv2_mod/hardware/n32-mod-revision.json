@@ -1,0 +1,32 @@
+{
+  "schema": "macro-mod-revision/1",
+  "profile": "N32-reduction-mod-v1",
+  "master": "n_s32_mod",
+  "source_profile": "N32",
+  "source": "rtl/p_services/n_s32_softmax_s128.sv",
+  "source_sha256": "1923c33c602292131efe8d50d69e685402be11416fb4d29de41c430a076ba48f",
+  "rtl": "rtl/macros/n_s32_mod.sv",
+  "rtl_sha256": "bb8adfa1c4e0378f4577e267dfb0c38f7b384197b61480febc7e28f528174715",
+  "internal_engine_rtl": "rtl/macros/n_s32_reduction_engine.sv",
+  "internal_engine_sha256": "51ad31005bd0de4fa712bb12c2a919dbbfff0877747850e467f2d2497803a280",
+  "resource_changes": {
+    "divider_root_instances": "1 -> 1",
+    "scale_square_multiplier_lanes": "2 -> 2",
+    "added_state": "RMS range, sum-of-squares, count, epsilon and factor response",
+    "additional_arithmetic_macro_instances": 0
+  },
+  "interface_changes": {
+    "additional_input_bits": 2,
+    "additional_output_bits": 0,
+    "sram_data_bits": "128 -> 128",
+    "softmax_abi": "preserved when cmd_mode=0",
+    "scalar_response": "16-byte result committed through existing SRAM port",
+    "configuration": "mode 3 counted command/response using existing tag/base/count pins"
+  },
+  "status": "RTL unit verified; whole-base integration and graph evaluation pending",
+  "physical_views": "not generated; no inherited physical acceptance",
+  "unit_evidence": {
+    "path": "evidence/architecture-revision-185/n32-mod-receipt.json",
+    "sha256": "4be10b4a751a28bc4a8ea41602e5340361e7b266424c2f6955bb27f653d9472f"
+  }
+}

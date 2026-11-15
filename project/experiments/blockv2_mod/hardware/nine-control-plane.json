@@ -1,0 +1,3290 @@
+{
+  "schema": "nine-control-plane/1",
+  "hard_boundary": false,
+  "plan_sha256": [
+    "7ac41e9e713f2869e1528091f4851cc73950bb951e49fadbb501505751624b75",
+    "80dcdf29233e05b2bc586293a4c497d1f524745bc4db3a4465a5317ab68670f6"
+  ],
+  "owners": [
+    "P0",
+    "P1",
+    "P2",
+    "C0",
+    "U0",
+    "J0",
+    "F0",
+    "U1",
+    "J1"
+  ],
+  "selected_data_owners": [
+    "C0",
+    "F0",
+    "P0",
+    "P1",
+    "P2",
+    "U0"
+  ],
+  "selected_M_owners": [
+    "P0",
+    "P1",
+    "P2"
+  ],
+  "sources": {
+    "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/mother_control_native/mother_control_native64_transport128.sv": "14f0abc6a248de8f32a1a8afce4fb8fb639a191cf2579373300960bf09e2acfa",
+    "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/experiments/shared_x_control/rtl/lc_native_scope_controller.sv": "eda88c6e0454bba66d430d9a9eeb60f39f8e1bf2ce1c13da51f84ee20a1670c6",
+    "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/mother_control_native/mc_lc_packet128_switch.sv": "f742f2e3cce22892afc0435a62d61caa522dcbd18e0e4f1b8d535dc52c5c46f5",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_shared_memory_plane.sv": "7f06f4e5a242e969c4b7b98930032499cd9a540fd60bef6125e5ac76dcd30a1a",
+    "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/rtl/w8a16_v1/m_native_leaf_s32.sv": "aaddefce1198feec79c7e265103fabbd1bfed3b0f4cddb5bed2150e8c1cf6eeb",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_p_owner_control.sv": "0cfedbc1559ddf8b3409beddc746471dfe41542a14181e6fa02124c84474e650",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_e_owner_control.sv": "3d8f4090bfc8a3bebc12999272b402089a0298e2331e5f6c1fda76aa160439e4",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_n_owner_control.sv": "e6742266b91360d0df3d293f63dfed44d861a5883ca0d3ff70523f54da971bf3",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/control/native_nine_control_plane.sv": "2fb6b0b5eb63e5219cc4c7c7790399469c0062436c7da9f512973bb4ee3e76ae"
+  },
+  "selected_memory_links": [
+    {
+      "owner": "P0",
+      "service_pin": "rd_valid",
+      "memory_pin": "service_req_valid",
+      "lane": 0,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "rd_ready",
+      "memory_pin": "service_req_ready",
+      "lane": 0,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "rd_address",
+      "memory_pin": "service_req_address",
+      "lane": 0,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "rd_tag",
+      "memory_pin": "service_req_tag",
+      "lane": 0,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "rd_rsp_valid",
+      "memory_pin": "service_rsp_valid",
+      "lane": 0,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "rd_rsp_ready",
+      "memory_pin": "service_rsp_ready",
+      "lane": 0,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "rd_rsp_tag",
+      "memory_pin": "service_rsp_tag",
+      "lane": 0,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "rd_rsp_data",
+      "memory_pin": "service_rsp_data",
+      "lane": 0,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "rd_rsp_error",
+      "memory_pin": "service_rsp_error",
+      "lane": 0,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "wr_valid",
+      "memory_pin": "write_req_valid",
+      "lane": 0,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "wr_ready",
+      "memory_pin": "write_req_ready",
+      "lane": 0,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "wr_address",
+      "memory_pin": "write_req_address",
+      "lane": 0,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "wr_tag",
+      "memory_pin": "write_req_tag",
+      "lane": 0,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "wr_data",
+      "memory_pin": "write_req_data",
+      "lane": 0,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "wr_done_valid",
+      "memory_pin": "write_done_valid",
+      "lane": 0,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "wr_done_ready",
+      "memory_pin": "write_done_ready",
+      "lane": 0,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "wr_done_tag",
+      "memory_pin": "write_done_tag",
+      "lane": 0,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "service_pin": "wr_done_error",
+      "memory_pin": "write_done_error",
+      "lane": 0,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "rd_valid",
+      "memory_pin": "service_req_valid",
+      "lane": 1,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "rd_ready",
+      "memory_pin": "service_req_ready",
+      "lane": 1,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "rd_address",
+      "memory_pin": "service_req_address",
+      "lane": 1,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "rd_tag",
+      "memory_pin": "service_req_tag",
+      "lane": 1,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "rd_rsp_valid",
+      "memory_pin": "service_rsp_valid",
+      "lane": 1,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "rd_rsp_ready",
+      "memory_pin": "service_rsp_ready",
+      "lane": 1,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "rd_rsp_tag",
+      "memory_pin": "service_rsp_tag",
+      "lane": 1,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "rd_rsp_data",
+      "memory_pin": "service_rsp_data",
+      "lane": 1,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "rd_rsp_error",
+      "memory_pin": "service_rsp_error",
+      "lane": 1,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "wr_valid",
+      "memory_pin": "write_req_valid",
+      "lane": 1,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "wr_ready",
+      "memory_pin": "write_req_ready",
+      "lane": 1,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "wr_address",
+      "memory_pin": "write_req_address",
+      "lane": 1,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "wr_tag",
+      "memory_pin": "write_req_tag",
+      "lane": 1,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "wr_data",
+      "memory_pin": "write_req_data",
+      "lane": 1,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "wr_done_valid",
+      "memory_pin": "write_done_valid",
+      "lane": 1,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "wr_done_ready",
+      "memory_pin": "write_done_ready",
+      "lane": 1,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "wr_done_tag",
+      "memory_pin": "write_done_tag",
+      "lane": 1,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "service_pin": "wr_done_error",
+      "memory_pin": "write_done_error",
+      "lane": 1,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "rd_valid",
+      "memory_pin": "service_req_valid",
+      "lane": 2,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "rd_ready",
+      "memory_pin": "service_req_ready",
+      "lane": 2,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "rd_address",
+      "memory_pin": "service_req_address",
+      "lane": 2,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "rd_tag",
+      "memory_pin": "service_req_tag",
+      "lane": 2,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "rd_rsp_valid",
+      "memory_pin": "service_rsp_valid",
+      "lane": 2,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "rd_rsp_ready",
+      "memory_pin": "service_rsp_ready",
+      "lane": 2,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "rd_rsp_tag",
+      "memory_pin": "service_rsp_tag",
+      "lane": 2,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "rd_rsp_data",
+      "memory_pin": "service_rsp_data",
+      "lane": 2,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "rd_rsp_error",
+      "memory_pin": "service_rsp_error",
+      "lane": 2,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "wr_valid",
+      "memory_pin": "write_req_valid",
+      "lane": 2,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "wr_ready",
+      "memory_pin": "write_req_ready",
+      "lane": 2,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "wr_address",
+      "memory_pin": "write_req_address",
+      "lane": 2,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "wr_tag",
+      "memory_pin": "write_req_tag",
+      "lane": 2,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "wr_data",
+      "memory_pin": "write_req_data",
+      "lane": 2,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "wr_done_valid",
+      "memory_pin": "write_done_valid",
+      "lane": 2,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "wr_done_ready",
+      "memory_pin": "write_done_ready",
+      "lane": 2,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "wr_done_tag",
+      "memory_pin": "write_done_tag",
+      "lane": 2,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "service_pin": "wr_done_error",
+      "memory_pin": "write_done_error",
+      "lane": 2,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "rd_valid",
+      "memory_pin": "service_req_valid",
+      "lane": 3,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "rd_ready",
+      "memory_pin": "service_req_ready",
+      "lane": 3,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "rd_address",
+      "memory_pin": "service_req_address",
+      "lane": 3,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "rd_tag",
+      "memory_pin": "service_req_tag",
+      "lane": 3,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "rd_rsp_valid",
+      "memory_pin": "service_rsp_valid",
+      "lane": 3,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "rd_rsp_ready",
+      "memory_pin": "service_rsp_ready",
+      "lane": 3,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "rd_rsp_tag",
+      "memory_pin": "service_rsp_tag",
+      "lane": 3,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "rd_rsp_data",
+      "memory_pin": "service_rsp_data",
+      "lane": 3,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "rd_rsp_error",
+      "memory_pin": "service_rsp_error",
+      "lane": 3,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "wr_valid",
+      "memory_pin": "write_req_valid",
+      "lane": 3,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "wr_ready",
+      "memory_pin": "write_req_ready",
+      "lane": 3,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "wr_address",
+      "memory_pin": "write_req_address",
+      "lane": 3,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "wr_tag",
+      "memory_pin": "write_req_tag",
+      "lane": 3,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "wr_data",
+      "memory_pin": "write_req_data",
+      "lane": 3,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "wr_done_valid",
+      "memory_pin": "write_done_valid",
+      "lane": 3,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "wr_done_ready",
+      "memory_pin": "write_done_ready",
+      "lane": 3,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "wr_done_tag",
+      "memory_pin": "write_done_tag",
+      "lane": 3,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "C0",
+      "service_pin": "wr_done_error",
+      "memory_pin": "write_done_error",
+      "lane": 3,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "rd_valid",
+      "memory_pin": "service_req_valid",
+      "lane": 4,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "rd_ready",
+      "memory_pin": "service_req_ready",
+      "lane": 4,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "rd_address",
+      "memory_pin": "service_req_address",
+      "lane": 4,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "rd_tag",
+      "memory_pin": "service_req_tag",
+      "lane": 4,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "rd_rsp_valid",
+      "memory_pin": "service_rsp_valid",
+      "lane": 4,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "rd_rsp_ready",
+      "memory_pin": "service_rsp_ready",
+      "lane": 4,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "rd_rsp_tag",
+      "memory_pin": "service_rsp_tag",
+      "lane": 4,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "rd_rsp_data",
+      "memory_pin": "service_rsp_data",
+      "lane": 4,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "rd_rsp_error",
+      "memory_pin": "service_rsp_error",
+      "lane": 4,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "wr_valid",
+      "memory_pin": "write_req_valid",
+      "lane": 4,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "wr_ready",
+      "memory_pin": "write_req_ready",
+      "lane": 4,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "wr_address",
+      "memory_pin": "write_req_address",
+      "lane": 4,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "wr_tag",
+      "memory_pin": "write_req_tag",
+      "lane": 4,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "wr_data",
+      "memory_pin": "write_req_data",
+      "lane": 4,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "wr_done_valid",
+      "memory_pin": "write_done_valid",
+      "lane": 4,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "wr_done_ready",
+      "memory_pin": "write_done_ready",
+      "lane": 4,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "wr_done_tag",
+      "memory_pin": "write_done_tag",
+      "lane": 4,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "U0",
+      "service_pin": "wr_done_error",
+      "memory_pin": "write_done_error",
+      "lane": 4,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "rd_valid",
+      "memory_pin": "service_req_valid",
+      "lane": 6,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "rd_ready",
+      "memory_pin": "service_req_ready",
+      "lane": 6,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "rd_address",
+      "memory_pin": "service_req_address",
+      "lane": 6,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "rd_tag",
+      "memory_pin": "service_req_tag",
+      "lane": 6,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "rd_rsp_valid",
+      "memory_pin": "service_rsp_valid",
+      "lane": 6,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "rd_rsp_ready",
+      "memory_pin": "service_rsp_ready",
+      "lane": 6,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "rd_rsp_tag",
+      "memory_pin": "service_rsp_tag",
+      "lane": 6,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "rd_rsp_data",
+      "memory_pin": "service_rsp_data",
+      "lane": 6,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "rd_rsp_error",
+      "memory_pin": "service_rsp_error",
+      "lane": 6,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "wr_valid",
+      "memory_pin": "write_req_valid",
+      "lane": 6,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "wr_ready",
+      "memory_pin": "write_req_ready",
+      "lane": 6,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "wr_address",
+      "memory_pin": "write_req_address",
+      "lane": 6,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "wr_tag",
+      "memory_pin": "write_req_tag",
+      "lane": 6,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "wr_data",
+      "memory_pin": "write_req_data",
+      "lane": 6,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "wr_done_valid",
+      "memory_pin": "write_done_valid",
+      "lane": 6,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "wr_done_ready",
+      "memory_pin": "write_done_ready",
+      "lane": 6,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "wr_done_tag",
+      "memory_pin": "write_done_tag",
+      "lane": 6,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "F0",
+      "service_pin": "wr_done_error",
+      "memory_pin": "write_done_error",
+      "lane": 6,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_req_valid",
+      "memory_pin": "c_req_valid",
+      "lane": 9,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_req_ready",
+      "memory_pin": "c_req_ready",
+      "lane": 9,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_req_address",
+      "memory_pin": "c_req_address",
+      "lane": 9,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_req_tag",
+      "memory_pin": "c_req_tag",
+      "lane": 9,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_req_channel",
+      "memory_pin": "c_req_channel",
+      "lane": 9,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_req_record_beats",
+      "memory_pin": "c_req_record_beats",
+      "lane": 9,
+      "width": 5,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_rsp_valid",
+      "memory_pin": "c_rsp_valid",
+      "lane": 9,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_rsp_ready",
+      "memory_pin": "c_rsp_ready",
+      "lane": 9,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_rsp_tag",
+      "memory_pin": "c_rsp_tag",
+      "lane": 9,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_rsp_data",
+      "memory_pin": "c_rsp_data",
+      "lane": 9,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_close_valid",
+      "memory_pin": "c_close_valid",
+      "lane": 9,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_close_ready",
+      "memory_pin": "c_close_ready",
+      "lane": 9,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_close_tag_base",
+      "memory_pin": "c_close_tag_base",
+      "lane": 9,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_fence_req_valid",
+      "memory_pin": "c_fence_valid",
+      "lane": 9,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_fence_req_ready",
+      "memory_pin": "c_fence_ready",
+      "lane": 9,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_fence_req_cookie",
+      "memory_pin": "c_fence_cookie",
+      "lane": 9,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_fence_req_epoch",
+      "memory_pin": "c_fence_epoch",
+      "lane": 9,
+      "width": 9,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_fence_done_valid",
+      "memory_pin": "c_fence_done_valid",
+      "lane": 9,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_fence_done_ready",
+      "memory_pin": "c_fence_done_ready",
+      "lane": 9,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_fence_done_cookie",
+      "memory_pin": "c_fence_done_cookie",
+      "lane": 9,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P0",
+      "macro_pin": "mc_fence_done_epoch",
+      "memory_pin": "c_fence_done_epoch",
+      "lane": 9,
+      "width": 9,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_req_valid",
+      "memory_pin": "c_req_valid",
+      "lane": 10,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_req_ready",
+      "memory_pin": "c_req_ready",
+      "lane": 10,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_req_address",
+      "memory_pin": "c_req_address",
+      "lane": 10,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_req_tag",
+      "memory_pin": "c_req_tag",
+      "lane": 10,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_req_channel",
+      "memory_pin": "c_req_channel",
+      "lane": 10,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_req_record_beats",
+      "memory_pin": "c_req_record_beats",
+      "lane": 10,
+      "width": 5,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_rsp_valid",
+      "memory_pin": "c_rsp_valid",
+      "lane": 10,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_rsp_ready",
+      "memory_pin": "c_rsp_ready",
+      "lane": 10,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_rsp_tag",
+      "memory_pin": "c_rsp_tag",
+      "lane": 10,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_rsp_data",
+      "memory_pin": "c_rsp_data",
+      "lane": 10,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_close_valid",
+      "memory_pin": "c_close_valid",
+      "lane": 10,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_close_ready",
+      "memory_pin": "c_close_ready",
+      "lane": 10,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_close_tag_base",
+      "memory_pin": "c_close_tag_base",
+      "lane": 10,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_fence_req_valid",
+      "memory_pin": "c_fence_valid",
+      "lane": 10,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_fence_req_ready",
+      "memory_pin": "c_fence_ready",
+      "lane": 10,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_fence_req_cookie",
+      "memory_pin": "c_fence_cookie",
+      "lane": 10,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_fence_req_epoch",
+      "memory_pin": "c_fence_epoch",
+      "lane": 10,
+      "width": 9,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_fence_done_valid",
+      "memory_pin": "c_fence_done_valid",
+      "lane": 10,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_fence_done_ready",
+      "memory_pin": "c_fence_done_ready",
+      "lane": 10,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_fence_done_cookie",
+      "memory_pin": "c_fence_done_cookie",
+      "lane": 10,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P1",
+      "macro_pin": "mc_fence_done_epoch",
+      "memory_pin": "c_fence_done_epoch",
+      "lane": 10,
+      "width": 9,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_req_valid",
+      "memory_pin": "c_req_valid",
+      "lane": 11,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_req_ready",
+      "memory_pin": "c_req_ready",
+      "lane": 11,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_req_address",
+      "memory_pin": "c_req_address",
+      "lane": 11,
+      "width": 64,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_req_tag",
+      "memory_pin": "c_req_tag",
+      "lane": 11,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_req_channel",
+      "memory_pin": "c_req_channel",
+      "lane": 11,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_req_record_beats",
+      "memory_pin": "c_req_record_beats",
+      "lane": 11,
+      "width": 5,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_rsp_valid",
+      "memory_pin": "c_rsp_valid",
+      "lane": 11,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_rsp_ready",
+      "memory_pin": "c_rsp_ready",
+      "lane": 11,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_rsp_tag",
+      "memory_pin": "c_rsp_tag",
+      "lane": 11,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_rsp_data",
+      "memory_pin": "c_rsp_data",
+      "lane": 11,
+      "width": 512,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_close_valid",
+      "memory_pin": "c_close_valid",
+      "lane": 11,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_close_ready",
+      "memory_pin": "c_close_ready",
+      "lane": 11,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_close_tag_base",
+      "memory_pin": "c_close_tag_base",
+      "lane": 11,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_fence_req_valid",
+      "memory_pin": "c_fence_valid",
+      "lane": 11,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_fence_req_ready",
+      "memory_pin": "c_fence_ready",
+      "lane": 11,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_fence_req_cookie",
+      "memory_pin": "c_fence_cookie",
+      "lane": 11,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_fence_req_epoch",
+      "memory_pin": "c_fence_epoch",
+      "lane": 11,
+      "width": 9,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_fence_done_valid",
+      "memory_pin": "c_fence_done_valid",
+      "lane": 11,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_fence_done_ready",
+      "memory_pin": "c_fence_done_ready",
+      "lane": 11,
+      "width": 1,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_fence_done_cookie",
+      "memory_pin": "c_fence_done_cookie",
+      "lane": 11,
+      "width": 32,
+      "class": "candidate_selected"
+    },
+    {
+      "owner": "P2",
+      "macro_pin": "mc_fence_done_epoch",
+      "memory_pin": "c_fence_done_epoch",
+      "lane": 11,
+      "width": 9,
+      "class": "candidate_selected"
+    }
+  ],
+  "unbound_functional_macro_ports": [
+    {
+      "owner": "P0",
+      "port": "service_resource_m_lc_valid",
+      "external": "P0_service_resource_m_lc_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_lc_ready",
+      "external": "P0_service_resource_m_lc_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_lc_sop",
+      "external": "P0_service_resource_m_lc_sop",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_lc_eop",
+      "external": "P0_service_resource_m_lc_eop",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_lc_data",
+      "external": "P0_service_resource_m_lc_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_lr_valid",
+      "external": "P0_service_resource_m_lr_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_lr_ready",
+      "external": "P0_service_resource_m_lr_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_lr_sop",
+      "external": "P0_service_resource_m_lr_sop",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_lr_eop",
+      "external": "P0_service_resource_m_lr_eop",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_lr_data",
+      "external": "P0_service_resource_m_lr_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_a_valid",
+      "external": "P0_service_resource_m_a_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_a_ready",
+      "external": "P0_service_resource_m_a_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_a_data",
+      "external": "P0_service_resource_m_a_data",
+      "direction": "output",
+      "width": 256
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_a_session",
+      "external": "P0_service_resource_m_a_session",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_m_a_beat",
+      "external": "P0_service_resource_m_a_beat",
+      "direction": "output",
+      "width": 3
+    },
+    {
+      "owner": "P0",
+      "port": "service_s_req_valid",
+      "external": "P0_service_s_req_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_s_req_write",
+      "external": "P0_service_s_req_write",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_s_req_ready",
+      "external": "P0_service_s_req_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_s_req_address",
+      "external": "P0_service_s_req_address",
+      "direction": "output",
+      "width": 10
+    },
+    {
+      "owner": "P0",
+      "port": "service_s_req_data",
+      "external": "P0_service_s_req_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "P0",
+      "port": "service_s_rsp_valid",
+      "external": "P0_service_s_rsp_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_s_rsp_ready",
+      "external": "P0_service_s_rsp_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_s_rsp_data",
+      "external": "P0_service_s_rsp_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "P0",
+      "port": "service_s_rsp_error",
+      "external": "P0_service_s_rsp_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_source_failed",
+      "external": "P0_service_source_failed",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_quarantine",
+      "external": "P0_service_quarantine",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_protocol_faults",
+      "external": "P0_service_protocol_faults",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_g_in_valid",
+      "external": "P0_service_resource_g_in_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_g_in_ready",
+      "external": "P0_service_resource_g_in_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_g_in_gate",
+      "external": "P0_service_resource_g_in_gate",
+      "direction": "output",
+      "width": 64
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_g_in_up",
+      "external": "P0_service_resource_g_in_up",
+      "direction": "output",
+      "width": 64
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_g_in_gated",
+      "external": "P0_service_resource_g_in_gated",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_g_in_mask",
+      "external": "P0_service_resource_g_in_mask",
+      "direction": "output",
+      "width": 2
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_g_out_valid",
+      "external": "P0_service_resource_g_out_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_g_out_ready",
+      "external": "P0_service_resource_g_out_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_g_out_data",
+      "external": "P0_service_resource_g_out_data",
+      "direction": "input",
+      "width": 64
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_g_out_mask",
+      "external": "P0_service_resource_g_out_mask",
+      "direction": "input",
+      "width": 2
+    },
+    {
+      "owner": "P0",
+      "port": "service_resource_g_out_error",
+      "external": "P0_service_resource_g_out_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_lc_valid",
+      "external": "P1_service_resource_m_lc_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_lc_ready",
+      "external": "P1_service_resource_m_lc_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_lc_sop",
+      "external": "P1_service_resource_m_lc_sop",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_lc_eop",
+      "external": "P1_service_resource_m_lc_eop",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_lc_data",
+      "external": "P1_service_resource_m_lc_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_lr_valid",
+      "external": "P1_service_resource_m_lr_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_lr_ready",
+      "external": "P1_service_resource_m_lr_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_lr_sop",
+      "external": "P1_service_resource_m_lr_sop",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_lr_eop",
+      "external": "P1_service_resource_m_lr_eop",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_lr_data",
+      "external": "P1_service_resource_m_lr_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_a_valid",
+      "external": "P1_service_resource_m_a_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_a_ready",
+      "external": "P1_service_resource_m_a_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_a_data",
+      "external": "P1_service_resource_m_a_data",
+      "direction": "output",
+      "width": 256
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_a_session",
+      "external": "P1_service_resource_m_a_session",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_m_a_beat",
+      "external": "P1_service_resource_m_a_beat",
+      "direction": "output",
+      "width": 3
+    },
+    {
+      "owner": "P1",
+      "port": "service_s_req_valid",
+      "external": "P1_service_s_req_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_s_req_write",
+      "external": "P1_service_s_req_write",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_s_req_ready",
+      "external": "P1_service_s_req_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_s_req_address",
+      "external": "P1_service_s_req_address",
+      "direction": "output",
+      "width": 10
+    },
+    {
+      "owner": "P1",
+      "port": "service_s_req_data",
+      "external": "P1_service_s_req_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "P1",
+      "port": "service_s_rsp_valid",
+      "external": "P1_service_s_rsp_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_s_rsp_ready",
+      "external": "P1_service_s_rsp_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_s_rsp_data",
+      "external": "P1_service_s_rsp_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "P1",
+      "port": "service_s_rsp_error",
+      "external": "P1_service_s_rsp_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_source_failed",
+      "external": "P1_service_source_failed",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_quarantine",
+      "external": "P1_service_quarantine",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_protocol_faults",
+      "external": "P1_service_protocol_faults",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_g_in_valid",
+      "external": "P1_service_resource_g_in_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_g_in_ready",
+      "external": "P1_service_resource_g_in_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_g_in_gate",
+      "external": "P1_service_resource_g_in_gate",
+      "direction": "output",
+      "width": 64
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_g_in_up",
+      "external": "P1_service_resource_g_in_up",
+      "direction": "output",
+      "width": 64
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_g_in_gated",
+      "external": "P1_service_resource_g_in_gated",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_g_in_mask",
+      "external": "P1_service_resource_g_in_mask",
+      "direction": "output",
+      "width": 2
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_g_out_valid",
+      "external": "P1_service_resource_g_out_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_g_out_ready",
+      "external": "P1_service_resource_g_out_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_g_out_data",
+      "external": "P1_service_resource_g_out_data",
+      "direction": "input",
+      "width": 64
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_g_out_mask",
+      "external": "P1_service_resource_g_out_mask",
+      "direction": "input",
+      "width": 2
+    },
+    {
+      "owner": "P1",
+      "port": "service_resource_g_out_error",
+      "external": "P1_service_resource_g_out_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_lc_valid",
+      "external": "P2_service_resource_m_lc_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_lc_ready",
+      "external": "P2_service_resource_m_lc_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_lc_sop",
+      "external": "P2_service_resource_m_lc_sop",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_lc_eop",
+      "external": "P2_service_resource_m_lc_eop",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_lc_data",
+      "external": "P2_service_resource_m_lc_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_lr_valid",
+      "external": "P2_service_resource_m_lr_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_lr_ready",
+      "external": "P2_service_resource_m_lr_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_lr_sop",
+      "external": "P2_service_resource_m_lr_sop",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_lr_eop",
+      "external": "P2_service_resource_m_lr_eop",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_lr_data",
+      "external": "P2_service_resource_m_lr_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_a_valid",
+      "external": "P2_service_resource_m_a_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_a_ready",
+      "external": "P2_service_resource_m_a_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_a_data",
+      "external": "P2_service_resource_m_a_data",
+      "direction": "output",
+      "width": 256
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_a_session",
+      "external": "P2_service_resource_m_a_session",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_m_a_beat",
+      "external": "P2_service_resource_m_a_beat",
+      "direction": "output",
+      "width": 3
+    },
+    {
+      "owner": "P2",
+      "port": "service_s_req_valid",
+      "external": "P2_service_s_req_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_s_req_write",
+      "external": "P2_service_s_req_write",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_s_req_ready",
+      "external": "P2_service_s_req_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_s_req_address",
+      "external": "P2_service_s_req_address",
+      "direction": "output",
+      "width": 10
+    },
+    {
+      "owner": "P2",
+      "port": "service_s_req_data",
+      "external": "P2_service_s_req_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "P2",
+      "port": "service_s_rsp_valid",
+      "external": "P2_service_s_rsp_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_s_rsp_ready",
+      "external": "P2_service_s_rsp_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_s_rsp_data",
+      "external": "P2_service_s_rsp_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "P2",
+      "port": "service_s_rsp_error",
+      "external": "P2_service_s_rsp_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_source_failed",
+      "external": "P2_service_source_failed",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_quarantine",
+      "external": "P2_service_quarantine",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_protocol_faults",
+      "external": "P2_service_protocol_faults",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_g_in_valid",
+      "external": "P2_service_resource_g_in_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_g_in_ready",
+      "external": "P2_service_resource_g_in_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_g_in_gate",
+      "external": "P2_service_resource_g_in_gate",
+      "direction": "output",
+      "width": 64
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_g_in_up",
+      "external": "P2_service_resource_g_in_up",
+      "direction": "output",
+      "width": 64
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_g_in_gated",
+      "external": "P2_service_resource_g_in_gated",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_g_in_mask",
+      "external": "P2_service_resource_g_in_mask",
+      "direction": "output",
+      "width": 2
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_g_out_valid",
+      "external": "P2_service_resource_g_out_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_g_out_ready",
+      "external": "P2_service_resource_g_out_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_g_out_data",
+      "external": "P2_service_resource_g_out_data",
+      "direction": "input",
+      "width": 64
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_g_out_mask",
+      "external": "P2_service_resource_g_out_mask",
+      "direction": "input",
+      "width": 2
+    },
+    {
+      "owner": "P2",
+      "port": "service_resource_g_out_error",
+      "external": "P2_service_resource_g_out_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "C0",
+      "port": "service_s_req_valid",
+      "external": "C0_service_s_req_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "C0",
+      "port": "service_s_req_write",
+      "external": "C0_service_s_req_write",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "C0",
+      "port": "service_s_req_ready",
+      "external": "C0_service_s_req_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "C0",
+      "port": "service_s_req_address",
+      "external": "C0_service_s_req_address",
+      "direction": "output",
+      "width": 10
+    },
+    {
+      "owner": "C0",
+      "port": "service_s_req_data",
+      "external": "C0_service_s_req_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "C0",
+      "port": "service_s_rsp_valid",
+      "external": "C0_service_s_rsp_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "C0",
+      "port": "service_s_rsp_ready",
+      "external": "C0_service_s_rsp_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "C0",
+      "port": "service_s_rsp_data",
+      "external": "C0_service_s_rsp_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "C0",
+      "port": "service_s_rsp_error",
+      "external": "C0_service_s_rsp_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_in_valid",
+      "external": "C0_service_resource_e_in_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_in_ready",
+      "external": "C0_service_resource_e_in_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_in_data",
+      "external": "C0_service_resource_e_in_data",
+      "direction": "output",
+      "width": 64
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_in_op",
+      "external": "C0_service_resource_e_in_op",
+      "direction": "output",
+      "width": 4
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_in_mask",
+      "external": "C0_service_resource_e_in_mask",
+      "direction": "output",
+      "width": 4
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_in_shift",
+      "external": "C0_service_resource_e_in_shift",
+      "direction": "output",
+      "width": 8
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_in_minus",
+      "external": "C0_service_resource_e_in_minus",
+      "direction": "output",
+      "width": 3
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_out_valid",
+      "external": "C0_service_resource_e_out_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_out_ready",
+      "external": "C0_service_resource_e_out_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_out_data",
+      "external": "C0_service_resource_e_out_data",
+      "direction": "input",
+      "width": 64
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_out_clipped",
+      "external": "C0_service_resource_e_out_clipped",
+      "direction": "input",
+      "width": 4
+    },
+    {
+      "owner": "C0",
+      "port": "service_resource_e_out_error",
+      "external": "C0_service_resource_e_out_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_s_req_valid",
+      "external": "U0_service_s_req_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_s_req_write",
+      "external": "U0_service_s_req_write",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_s_req_ready",
+      "external": "U0_service_s_req_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_s_req_address",
+      "external": "U0_service_s_req_address",
+      "direction": "output",
+      "width": 10
+    },
+    {
+      "owner": "U0",
+      "port": "service_s_req_data",
+      "external": "U0_service_s_req_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "U0",
+      "port": "service_s_rsp_valid",
+      "external": "U0_service_s_rsp_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_s_rsp_ready",
+      "external": "U0_service_s_rsp_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_s_rsp_data",
+      "external": "U0_service_s_rsp_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "U0",
+      "port": "service_s_rsp_error",
+      "external": "U0_service_s_rsp_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_cmd_valid",
+      "external": "U0_service_resource_n_cmd_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_cmd_ready",
+      "external": "U0_service_resource_n_cmd_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_cmd_tag",
+      "external": "U0_service_resource_n_cmd_tag",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_cmd_mode",
+      "external": "U0_service_resource_n_cmd_mode",
+      "direction": "output",
+      "width": 2
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_cmd_base",
+      "external": "U0_service_resource_n_cmd_base",
+      "direction": "output",
+      "width": 10
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_cmd_count",
+      "external": "U0_service_resource_n_cmd_count",
+      "direction": "output",
+      "width": 13
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_cmd_committed",
+      "external": "U0_service_resource_n_cmd_committed",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_abort_valid",
+      "external": "U0_service_resource_n_abort_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_abort_ready",
+      "external": "U0_service_resource_n_abort_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_abort_tag",
+      "external": "U0_service_resource_n_abort_tag",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_rsp_valid",
+      "external": "U0_service_resource_n_rsp_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_rsp_ready",
+      "external": "U0_service_resource_n_rsp_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_rsp_tag",
+      "external": "U0_service_resource_n_rsp_tag",
+      "direction": "input",
+      "width": 32
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_rsp_error",
+      "external": "U0_service_resource_n_rsp_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_rsp_aborted",
+      "external": "U0_service_resource_n_rsp_aborted",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_rsp_writes",
+      "external": "U0_service_resource_n_rsp_writes",
+      "direction": "input",
+      "width": 12
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_s_req_valid",
+      "external": "U0_service_resource_n_s_req_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_s_req_write",
+      "external": "U0_service_resource_n_s_req_write",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_s_req_ready",
+      "external": "U0_service_resource_n_s_req_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_s_req_address",
+      "external": "U0_service_resource_n_s_req_address",
+      "direction": "input",
+      "width": 10
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_s_req_data",
+      "external": "U0_service_resource_n_s_req_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_s_rsp_valid",
+      "external": "U0_service_resource_n_s_rsp_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_s_rsp_ready",
+      "external": "U0_service_resource_n_s_rsp_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_s_rsp_data",
+      "external": "U0_service_resource_n_s_rsp_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "U0",
+      "port": "service_resource_n_s_rsp_error",
+      "external": "U0_service_resource_n_s_rsp_error",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J0",
+      "port": "service_s_req_valid",
+      "external": "J0_service_s_req_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J0",
+      "port": "service_s_req_write",
+      "external": "J0_service_s_req_write",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J0",
+      "port": "service_s_req_ready",
+      "external": "J0_service_s_req_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "J0",
+      "port": "service_s_req_address",
+      "external": "J0_service_s_req_address",
+      "direction": "output",
+      "width": 10
+    },
+    {
+      "owner": "J0",
+      "port": "service_s_req_data",
+      "external": "J0_service_s_req_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "J0",
+      "port": "service_s_rsp_valid",
+      "external": "J0_service_s_rsp_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "J0",
+      "port": "service_s_rsp_ready",
+      "external": "J0_service_s_rsp_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J0",
+      "port": "service_s_rsp_data",
+      "external": "J0_service_s_rsp_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "J0",
+      "port": "service_s_rsp_error",
+      "external": "J0_service_s_rsp_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_in_valid",
+      "external": "J0_service_resource_e_in_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_in_ready",
+      "external": "J0_service_resource_e_in_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_in_data",
+      "external": "J0_service_resource_e_in_data",
+      "direction": "output",
+      "width": 64
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_in_op",
+      "external": "J0_service_resource_e_in_op",
+      "direction": "output",
+      "width": 4
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_in_mask",
+      "external": "J0_service_resource_e_in_mask",
+      "direction": "output",
+      "width": 4
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_in_shift",
+      "external": "J0_service_resource_e_in_shift",
+      "direction": "output",
+      "width": 8
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_in_minus",
+      "external": "J0_service_resource_e_in_minus",
+      "direction": "output",
+      "width": 3
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_out_valid",
+      "external": "J0_service_resource_e_out_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_out_ready",
+      "external": "J0_service_resource_e_out_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_out_data",
+      "external": "J0_service_resource_e_out_data",
+      "direction": "input",
+      "width": 64
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_out_clipped",
+      "external": "J0_service_resource_e_out_clipped",
+      "direction": "input",
+      "width": 4
+    },
+    {
+      "owner": "J0",
+      "port": "service_resource_e_out_error",
+      "external": "J0_service_resource_e_out_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "F0",
+      "port": "service_s_req_valid",
+      "external": "F0_service_s_req_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "F0",
+      "port": "service_s_req_write",
+      "external": "F0_service_s_req_write",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "F0",
+      "port": "service_s_req_ready",
+      "external": "F0_service_s_req_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "F0",
+      "port": "service_s_req_address",
+      "external": "F0_service_s_req_address",
+      "direction": "output",
+      "width": 10
+    },
+    {
+      "owner": "F0",
+      "port": "service_s_req_data",
+      "external": "F0_service_s_req_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "F0",
+      "port": "service_s_rsp_valid",
+      "external": "F0_service_s_rsp_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "F0",
+      "port": "service_s_rsp_ready",
+      "external": "F0_service_s_rsp_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "F0",
+      "port": "service_s_rsp_data",
+      "external": "F0_service_s_rsp_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "F0",
+      "port": "service_s_rsp_error",
+      "external": "F0_service_s_rsp_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_in_valid",
+      "external": "F0_service_resource_e_in_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_in_ready",
+      "external": "F0_service_resource_e_in_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_in_data",
+      "external": "F0_service_resource_e_in_data",
+      "direction": "output",
+      "width": 64
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_in_op",
+      "external": "F0_service_resource_e_in_op",
+      "direction": "output",
+      "width": 4
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_in_mask",
+      "external": "F0_service_resource_e_in_mask",
+      "direction": "output",
+      "width": 4
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_in_shift",
+      "external": "F0_service_resource_e_in_shift",
+      "direction": "output",
+      "width": 8
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_in_minus",
+      "external": "F0_service_resource_e_in_minus",
+      "direction": "output",
+      "width": 3
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_out_valid",
+      "external": "F0_service_resource_e_out_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_out_ready",
+      "external": "F0_service_resource_e_out_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_out_data",
+      "external": "F0_service_resource_e_out_data",
+      "direction": "input",
+      "width": 64
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_out_clipped",
+      "external": "F0_service_resource_e_out_clipped",
+      "direction": "input",
+      "width": 4
+    },
+    {
+      "owner": "F0",
+      "port": "service_resource_e_out_error",
+      "external": "F0_service_resource_e_out_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_s_req_valid",
+      "external": "U1_service_s_req_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_s_req_write",
+      "external": "U1_service_s_req_write",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_s_req_ready",
+      "external": "U1_service_s_req_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_s_req_address",
+      "external": "U1_service_s_req_address",
+      "direction": "output",
+      "width": 10
+    },
+    {
+      "owner": "U1",
+      "port": "service_s_req_data",
+      "external": "U1_service_s_req_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "U1",
+      "port": "service_s_rsp_valid",
+      "external": "U1_service_s_rsp_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_s_rsp_ready",
+      "external": "U1_service_s_rsp_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_s_rsp_data",
+      "external": "U1_service_s_rsp_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "U1",
+      "port": "service_s_rsp_error",
+      "external": "U1_service_s_rsp_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_cmd_valid",
+      "external": "U1_service_resource_n_cmd_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_cmd_ready",
+      "external": "U1_service_resource_n_cmd_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_cmd_tag",
+      "external": "U1_service_resource_n_cmd_tag",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_cmd_mode",
+      "external": "U1_service_resource_n_cmd_mode",
+      "direction": "output",
+      "width": 2
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_cmd_base",
+      "external": "U1_service_resource_n_cmd_base",
+      "direction": "output",
+      "width": 10
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_cmd_count",
+      "external": "U1_service_resource_n_cmd_count",
+      "direction": "output",
+      "width": 13
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_cmd_committed",
+      "external": "U1_service_resource_n_cmd_committed",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_abort_valid",
+      "external": "U1_service_resource_n_abort_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_abort_ready",
+      "external": "U1_service_resource_n_abort_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_abort_tag",
+      "external": "U1_service_resource_n_abort_tag",
+      "direction": "output",
+      "width": 32
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_rsp_valid",
+      "external": "U1_service_resource_n_rsp_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_rsp_ready",
+      "external": "U1_service_resource_n_rsp_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_rsp_tag",
+      "external": "U1_service_resource_n_rsp_tag",
+      "direction": "input",
+      "width": 32
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_rsp_error",
+      "external": "U1_service_resource_n_rsp_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_rsp_aborted",
+      "external": "U1_service_resource_n_rsp_aborted",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_rsp_writes",
+      "external": "U1_service_resource_n_rsp_writes",
+      "direction": "input",
+      "width": 12
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_s_req_valid",
+      "external": "U1_service_resource_n_s_req_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_s_req_write",
+      "external": "U1_service_resource_n_s_req_write",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_s_req_ready",
+      "external": "U1_service_resource_n_s_req_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_s_req_address",
+      "external": "U1_service_resource_n_s_req_address",
+      "direction": "input",
+      "width": 10
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_s_req_data",
+      "external": "U1_service_resource_n_s_req_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_s_rsp_valid",
+      "external": "U1_service_resource_n_s_rsp_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_s_rsp_ready",
+      "external": "U1_service_resource_n_s_rsp_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_s_rsp_data",
+      "external": "U1_service_resource_n_s_rsp_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "U1",
+      "port": "service_resource_n_s_rsp_error",
+      "external": "U1_service_resource_n_s_rsp_error",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J1",
+      "port": "service_s_req_valid",
+      "external": "J1_service_s_req_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J1",
+      "port": "service_s_req_write",
+      "external": "J1_service_s_req_write",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J1",
+      "port": "service_s_req_ready",
+      "external": "J1_service_s_req_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "J1",
+      "port": "service_s_req_address",
+      "external": "J1_service_s_req_address",
+      "direction": "output",
+      "width": 10
+    },
+    {
+      "owner": "J1",
+      "port": "service_s_req_data",
+      "external": "J1_service_s_req_data",
+      "direction": "output",
+      "width": 128
+    },
+    {
+      "owner": "J1",
+      "port": "service_s_rsp_valid",
+      "external": "J1_service_s_rsp_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "J1",
+      "port": "service_s_rsp_ready",
+      "external": "J1_service_s_rsp_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J1",
+      "port": "service_s_rsp_data",
+      "external": "J1_service_s_rsp_data",
+      "direction": "input",
+      "width": 128
+    },
+    {
+      "owner": "J1",
+      "port": "service_s_rsp_error",
+      "external": "J1_service_s_rsp_error",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_in_valid",
+      "external": "J1_service_resource_e_in_valid",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_in_ready",
+      "external": "J1_service_resource_e_in_ready",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_in_data",
+      "external": "J1_service_resource_e_in_data",
+      "direction": "output",
+      "width": 64
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_in_op",
+      "external": "J1_service_resource_e_in_op",
+      "direction": "output",
+      "width": 4
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_in_mask",
+      "external": "J1_service_resource_e_in_mask",
+      "direction": "output",
+      "width": 4
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_in_shift",
+      "external": "J1_service_resource_e_in_shift",
+      "direction": "output",
+      "width": 8
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_in_minus",
+      "external": "J1_service_resource_e_in_minus",
+      "direction": "output",
+      "width": 3
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_out_valid",
+      "external": "J1_service_resource_e_out_valid",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_out_ready",
+      "external": "J1_service_resource_e_out_ready",
+      "direction": "output",
+      "width": 1
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_out_data",
+      "external": "J1_service_resource_e_out_data",
+      "direction": "input",
+      "width": 64
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_out_clipped",
+      "external": "J1_service_resource_e_out_clipped",
+      "direction": "input",
+      "width": 4
+    },
+    {
+      "owner": "J1",
+      "port": "service_resource_e_out_error",
+      "external": "J1_service_resource_e_out_error",
+      "direction": "input",
+      "width": 1
+    }
+  ],
+  "PM_capacity_bytes": {
+    "mother": 16384,
+    "each_local": 1024
+  },
+  "MC_service_stall_limit": 100000000,
+  "switch_revision": {
+    "old_profile": "switch03",
+    "new_RTL": "mc_lc_packet128_switch ENDPOINTS=9",
+    "physical_acceptance": false
+  },
+  "scope": "actual MC, nine LC/service controls, switch and shared transport; functional macro endpoint assembly pending",
+  "whole_base_accepted": false,
+  "numerical_execution_accepted": false
+}

@@ -1,0 +1,1814 @@
+{
+  "schema": "native-owner-controls/1",
+  "controls": [
+    {
+      "family": "p",
+      "module": "native_p_owner_control",
+      "hard_boundary": false,
+      "source": "rtl/control/native_p_owner_control.sv",
+      "sha256": "0cfedbc1559ddf8b3409beddc746471dfe41542a14181e6fa02124c84474e650",
+      "lc_source": "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/experiments/shared_x_control/rtl/lc_native_scope_controller.sv",
+      "lc_sha256": "eda88c6e0454bba66d430d9a9eeb60f39f8e1bf2ce1c13da51f84ee20a1670c6",
+      "service_source": "rtl/control/projection_service_cluster.sv",
+      "service_sha256": "6032e886879592f7ee9f832f847be5942df58ead10cbb5d8abdeffbea3510c81",
+      "internal_service_connections": [
+        {
+          "lc_pin": "service_cancel_ready",
+          "service_pin": "service_cancel_ready",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_cancel_valid",
+          "service_pin": "service_cancel_valid",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_descriptor",
+          "service_pin": "service_descriptor",
+          "shape": "[1023:0] "
+        },
+        {
+          "lc_pin": "service_done_owner",
+          "service_pin": "service_done_owner",
+          "shape": "[127:0] "
+        },
+        {
+          "lc_pin": "service_done_read_bytes",
+          "service_pin": "service_done_read_bytes",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_done_ready",
+          "service_pin": "service_done_ready",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_done_status",
+          "service_pin": "service_done_status",
+          "shape": "[15:0] "
+        },
+        {
+          "lc_pin": "service_done_ticket",
+          "service_pin": "service_done_ticket",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_done_valid",
+          "service_pin": "service_done_valid",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_done_write_bytes",
+          "service_pin": "service_done_write_bytes",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_owner",
+          "service_pin": "service_owner",
+          "shape": "[127:0] "
+        },
+        {
+          "lc_pin": "service_ready",
+          "service_pin": "service_ready",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_ticket",
+          "service_pin": "service_ticket",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_valid",
+          "service_pin": "service_valid",
+          "shape": ""
+        }
+      ],
+      "external_ports": {
+        "clk": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "reset": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_session_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_session_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_session_generation": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_session_topology": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_transport_drained": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_op": {
+          "direction": "input",
+          "shape": "[1:0] ",
+          "signed": ""
+        },
+        "lc_cfg_generation": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_abi": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_capacity": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_crc": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_bytes": {
+          "direction": "input",
+          "shape": "[15:0] ",
+          "signed": ""
+        },
+        "lc_cfg_address": {
+          "direction": "input",
+          "shape": "[13:0] ",
+          "signed": ""
+        },
+        "lc_cfg_data": {
+          "direction": "input",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "lc_cfg_rsp_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_rsp_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_status": {
+          "direction": "output",
+          "shape": "[7:0] ",
+          "signed": ""
+        },
+        "lc_cfg_actual_crc": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_certified": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_prepared": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_data": {
+          "direction": "input",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "lc_rx_sop": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_eop": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_target": {
+          "direction": "input",
+          "shape": "[7:0] ",
+          "signed": ""
+        },
+        "lc_tx_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_data": {
+          "direction": "output",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "lc_tx_sop": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_eop": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_source": {
+          "direction": "output",
+          "shape": "[7:0] ",
+          "signed": ""
+        },
+        "lc_mc_req_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_req_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_req_address": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "lc_mc_req_tag": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_mc_req_channel": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_req_record_beats": {
+          "direction": "output",
+          "shape": "[4:0] ",
+          "signed": ""
+        },
+        "lc_mc_close_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_close_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_close_tag_base": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_mc_rsp_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_rsp_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_rsp_tag": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_mc_rsp_data": {
+          "direction": "input",
+          "shape": "[511:0] ",
+          "signed": ""
+        },
+        "lc_idle": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_protocol_fault_cycles": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_pm_trace_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_pm_trace_address": {
+          "direction": "output",
+          "shape": "[13:0] ",
+          "signed": ""
+        },
+        "lc_retired_instructions": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "service_resource_m_lc_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_m_lc_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_m_lc_sop": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_m_lc_eop": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_m_lc_data": {
+          "direction": "output",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "service_resource_m_lr_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_m_lr_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_m_lr_sop": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_m_lr_eop": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_m_lr_data": {
+          "direction": "input",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "service_resource_m_a_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_m_a_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_m_a_data": {
+          "direction": "output",
+          "shape": "[255:0] ",
+          "signed": ""
+        },
+        "service_resource_m_a_session": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "service_resource_m_a_beat": {
+          "direction": "output",
+          "shape": "[2:0] ",
+          "signed": ""
+        },
+        "service_s_req_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_req_write": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_req_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_req_address": {
+          "direction": "output",
+          "shape": "[9:0] ",
+          "signed": ""
+        },
+        "service_s_req_data": {
+          "direction": "output",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "service_s_rsp_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_rsp_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_rsp_data": {
+          "direction": "input",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "service_s_rsp_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_address": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_rd_tag": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_rd_rsp_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_rsp_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_rsp_tag": {
+          "direction": "input",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_rd_rsp_data": {
+          "direction": "input",
+          "shape": "[511:0] ",
+          "signed": ""
+        },
+        "service_rd_rsp_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_source_failed": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_quarantine": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_protocol_faults": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "service_resource_g_in_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_g_in_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_g_in_gate": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_resource_g_in_up": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_resource_g_in_gated": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_g_in_mask": {
+          "direction": "output",
+          "shape": "[1:0] ",
+          "signed": ""
+        },
+        "service_resource_g_out_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_g_out_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_g_out_data": {
+          "direction": "input",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_resource_g_out_mask": {
+          "direction": "input",
+          "shape": "[1:0] ",
+          "signed": ""
+        },
+        "service_resource_g_out_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_address": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_wr_tag": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_wr_data": {
+          "direction": "output",
+          "shape": "[511:0] ",
+          "signed": ""
+        },
+        "service_wr_done_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_done_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_done_tag": {
+          "direction": "input",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_wr_done_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        }
+      },
+      "pending": [
+        "LC scope DMA and service read DMA sharing/format adaptation",
+        "shared write DMA",
+        "MC switch/config/session wiring",
+        "selected macro/SRAM endpoints",
+        "joined execution"
+      ],
+      "whole_base_accepted": false
+    },
+    {
+      "family": "n",
+      "module": "native_n_owner_control",
+      "hard_boundary": false,
+      "source": "rtl/control/native_n_owner_control.sv",
+      "sha256": "e6742266b91360d0df3d293f63dfed44d861a5883ca0d3ff70523f54da971bf3",
+      "lc_source": "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/experiments/shared_x_control/rtl/lc_native_scope_controller.sv",
+      "lc_sha256": "eda88c6e0454bba66d430d9a9eeb60f39f8e1bf2ce1c13da51f84ee20a1670c6",
+      "service_source": "rtl/control/n32_service_cluster.sv",
+      "service_sha256": "da309c818c93a4b297711d6f63378b4471c9853cc05f13e6b9828487a3ca4deb",
+      "internal_service_connections": [
+        {
+          "lc_pin": "service_cancel_ready",
+          "service_pin": "service_cancel_ready",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_cancel_valid",
+          "service_pin": "service_cancel_valid",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_descriptor",
+          "service_pin": "service_descriptor",
+          "shape": "[1023:0] "
+        },
+        {
+          "lc_pin": "service_done_owner",
+          "service_pin": "service_done_owner",
+          "shape": "[127:0] "
+        },
+        {
+          "lc_pin": "service_done_read_bytes",
+          "service_pin": "service_done_read_bytes",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_done_ready",
+          "service_pin": "service_done_ready",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_done_status",
+          "service_pin": "service_done_status",
+          "shape": "[15:0] "
+        },
+        {
+          "lc_pin": "service_done_ticket",
+          "service_pin": "service_done_ticket",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_done_valid",
+          "service_pin": "service_done_valid",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_done_write_bytes",
+          "service_pin": "service_done_write_bytes",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_owner",
+          "service_pin": "service_owner",
+          "shape": "[127:0] "
+        },
+        {
+          "lc_pin": "service_ready",
+          "service_pin": "service_ready",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_ticket",
+          "service_pin": "service_ticket",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_valid",
+          "service_pin": "service_valid",
+          "shape": ""
+        }
+      ],
+      "external_ports": {
+        "clk": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "reset": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_session_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_session_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_session_generation": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_session_topology": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_transport_drained": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_op": {
+          "direction": "input",
+          "shape": "[1:0] ",
+          "signed": ""
+        },
+        "lc_cfg_generation": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_abi": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_capacity": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_crc": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_bytes": {
+          "direction": "input",
+          "shape": "[15:0] ",
+          "signed": ""
+        },
+        "lc_cfg_address": {
+          "direction": "input",
+          "shape": "[13:0] ",
+          "signed": ""
+        },
+        "lc_cfg_data": {
+          "direction": "input",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "lc_cfg_rsp_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_rsp_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_status": {
+          "direction": "output",
+          "shape": "[7:0] ",
+          "signed": ""
+        },
+        "lc_cfg_actual_crc": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_certified": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_prepared": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_data": {
+          "direction": "input",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "lc_rx_sop": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_eop": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_target": {
+          "direction": "input",
+          "shape": "[7:0] ",
+          "signed": ""
+        },
+        "lc_tx_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_data": {
+          "direction": "output",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "lc_tx_sop": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_eop": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_source": {
+          "direction": "output",
+          "shape": "[7:0] ",
+          "signed": ""
+        },
+        "lc_mc_req_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_req_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_req_address": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "lc_mc_req_tag": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_mc_req_channel": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_req_record_beats": {
+          "direction": "output",
+          "shape": "[4:0] ",
+          "signed": ""
+        },
+        "lc_mc_close_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_close_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_close_tag_base": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_mc_rsp_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_rsp_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_rsp_tag": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_mc_rsp_data": {
+          "direction": "input",
+          "shape": "[511:0] ",
+          "signed": ""
+        },
+        "lc_idle": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_protocol_fault_cycles": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_pm_trace_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_pm_trace_address": {
+          "direction": "output",
+          "shape": "[13:0] ",
+          "signed": ""
+        },
+        "lc_retired_instructions": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "service_s_req_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_req_write": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_req_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_req_address": {
+          "direction": "output",
+          "shape": "[9:0] ",
+          "signed": ""
+        },
+        "service_s_req_data": {
+          "direction": "output",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "service_s_rsp_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_rsp_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_rsp_data": {
+          "direction": "input",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "service_s_rsp_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_cmd_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_cmd_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_cmd_tag": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "service_resource_n_cmd_mode": {
+          "direction": "output",
+          "shape": "[1:0] ",
+          "signed": ""
+        },
+        "service_resource_n_cmd_base": {
+          "direction": "output",
+          "shape": "[9:0] ",
+          "signed": ""
+        },
+        "service_resource_n_cmd_count": {
+          "direction": "output",
+          "shape": "[12:0] ",
+          "signed": ""
+        },
+        "service_resource_n_cmd_committed": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_abort_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_abort_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_abort_tag": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "service_resource_n_rsp_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_rsp_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_rsp_tag": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "service_resource_n_rsp_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_rsp_aborted": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_rsp_writes": {
+          "direction": "input",
+          "shape": "[11:0] ",
+          "signed": ""
+        },
+        "service_resource_n_s_req_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_s_req_write": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_s_req_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_s_req_address": {
+          "direction": "input",
+          "shape": "[9:0] ",
+          "signed": ""
+        },
+        "service_resource_n_s_req_data": {
+          "direction": "input",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "service_resource_n_s_rsp_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_s_rsp_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_n_s_rsp_data": {
+          "direction": "output",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "service_resource_n_s_rsp_error": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_address": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_rd_tag": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_rd_rsp_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_rsp_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_rsp_tag": {
+          "direction": "input",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_rd_rsp_data": {
+          "direction": "input",
+          "shape": "[511:0] ",
+          "signed": ""
+        },
+        "service_rd_rsp_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_address": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_wr_tag": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_wr_data": {
+          "direction": "output",
+          "shape": "[511:0] ",
+          "signed": ""
+        },
+        "service_wr_done_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_done_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_done_tag": {
+          "direction": "input",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_wr_done_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        }
+      },
+      "pending": [
+        "LC scope DMA and service read DMA sharing/format adaptation",
+        "shared write DMA",
+        "MC switch/config/session wiring",
+        "selected macro/SRAM endpoints",
+        "joined execution"
+      ],
+      "whole_base_accepted": false
+    },
+    {
+      "family": "e",
+      "module": "native_e_owner_control",
+      "hard_boundary": false,
+      "source": "rtl/control/native_e_owner_control.sv",
+      "sha256": "3d8f4090bfc8a3bebc12999272b402089a0298e2331e5f6c1fda76aa160439e4",
+      "lc_source": "/public/home/yuzelu/project-circuit/issue260-product-retirement-V6JR7Km4/source/project/experiments/shared_x_control/rtl/lc_native_scope_controller.sv",
+      "lc_sha256": "eda88c6e0454bba66d430d9a9eeb60f39f8e1bf2ce1c13da51f84ee20a1670c6",
+      "service_source": "rtl/control/e32_service_cluster.sv",
+      "service_sha256": "f82237d0aba9bdfa3ad4855492518df60679d068df7e69e0cf8b445289d2234d",
+      "internal_service_connections": [
+        {
+          "lc_pin": "service_cancel_ready",
+          "service_pin": "service_cancel_ready",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_cancel_valid",
+          "service_pin": "service_cancel_valid",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_descriptor",
+          "service_pin": "service_descriptor",
+          "shape": "[1023:0] "
+        },
+        {
+          "lc_pin": "service_done_owner",
+          "service_pin": "service_done_owner",
+          "shape": "[127:0] "
+        },
+        {
+          "lc_pin": "service_done_read_bytes",
+          "service_pin": "service_done_read_bytes",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_done_ready",
+          "service_pin": "service_done_ready",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_done_status",
+          "service_pin": "service_done_status",
+          "shape": "[15:0] "
+        },
+        {
+          "lc_pin": "service_done_ticket",
+          "service_pin": "service_done_ticket",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_done_valid",
+          "service_pin": "service_done_valid",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_done_write_bytes",
+          "service_pin": "service_done_write_bytes",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_owner",
+          "service_pin": "service_owner",
+          "shape": "[127:0] "
+        },
+        {
+          "lc_pin": "service_ready",
+          "service_pin": "service_ready",
+          "shape": ""
+        },
+        {
+          "lc_pin": "service_ticket",
+          "service_pin": "service_ticket",
+          "shape": "[31:0] "
+        },
+        {
+          "lc_pin": "service_valid",
+          "service_pin": "service_valid",
+          "shape": ""
+        }
+      ],
+      "external_ports": {
+        "clk": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "reset": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_session_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_session_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_session_generation": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_session_topology": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_transport_drained": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_op": {
+          "direction": "input",
+          "shape": "[1:0] ",
+          "signed": ""
+        },
+        "lc_cfg_generation": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_abi": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_capacity": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_crc": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_cfg_bytes": {
+          "direction": "input",
+          "shape": "[15:0] ",
+          "signed": ""
+        },
+        "lc_cfg_address": {
+          "direction": "input",
+          "shape": "[13:0] ",
+          "signed": ""
+        },
+        "lc_cfg_data": {
+          "direction": "input",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "lc_cfg_rsp_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_rsp_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_cfg_status": {
+          "direction": "output",
+          "shape": "[7:0] ",
+          "signed": ""
+        },
+        "lc_cfg_actual_crc": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_certified": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_prepared": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_data": {
+          "direction": "input",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "lc_rx_sop": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_eop": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_rx_target": {
+          "direction": "input",
+          "shape": "[7:0] ",
+          "signed": ""
+        },
+        "lc_tx_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_data": {
+          "direction": "output",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "lc_tx_sop": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_eop": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_tx_source": {
+          "direction": "output",
+          "shape": "[7:0] ",
+          "signed": ""
+        },
+        "lc_mc_req_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_req_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_req_address": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "lc_mc_req_tag": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_mc_req_channel": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_req_record_beats": {
+          "direction": "output",
+          "shape": "[4:0] ",
+          "signed": ""
+        },
+        "lc_mc_close_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_close_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_close_tag_base": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_mc_rsp_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_rsp_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_mc_rsp_tag": {
+          "direction": "input",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_mc_rsp_data": {
+          "direction": "input",
+          "shape": "[511:0] ",
+          "signed": ""
+        },
+        "lc_idle": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_protocol_fault_cycles": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "lc_pm_trace_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "lc_pm_trace_address": {
+          "direction": "output",
+          "shape": "[13:0] ",
+          "signed": ""
+        },
+        "lc_retired_instructions": {
+          "direction": "output",
+          "shape": "[31:0] ",
+          "signed": ""
+        },
+        "service_rd_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_address": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_rd_tag": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_rd_rsp_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_rsp_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_rd_rsp_tag": {
+          "direction": "input",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_rd_rsp_data": {
+          "direction": "input",
+          "shape": "[511:0] ",
+          "signed": ""
+        },
+        "service_rd_rsp_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_req_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_req_write": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_req_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_req_address": {
+          "direction": "output",
+          "shape": "[9:0] ",
+          "signed": ""
+        },
+        "service_s_req_data": {
+          "direction": "output",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "service_s_rsp_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_rsp_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_s_rsp_data": {
+          "direction": "input",
+          "shape": "[127:0] ",
+          "signed": ""
+        },
+        "service_s_rsp_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_e_in_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_e_in_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_e_in_data": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_resource_e_in_op": {
+          "direction": "output",
+          "shape": "[3:0] ",
+          "signed": ""
+        },
+        "service_resource_e_in_mask": {
+          "direction": "output",
+          "shape": "[3:0] ",
+          "signed": ""
+        },
+        "service_resource_e_in_shift": {
+          "direction": "output",
+          "shape": "[7:0] ",
+          "signed": ""
+        },
+        "service_resource_e_in_minus": {
+          "direction": "output",
+          "shape": "[2:0] ",
+          "signed": ""
+        },
+        "service_resource_e_out_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_e_out_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_resource_e_out_data": {
+          "direction": "input",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_resource_e_out_clipped": {
+          "direction": "input",
+          "shape": "[3:0] ",
+          "signed": ""
+        },
+        "service_resource_e_out_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_valid": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_ready": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_address": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_wr_tag": {
+          "direction": "output",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_wr_data": {
+          "direction": "output",
+          "shape": "[511:0] ",
+          "signed": ""
+        },
+        "service_wr_done_valid": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_done_ready": {
+          "direction": "output",
+          "shape": "",
+          "signed": ""
+        },
+        "service_wr_done_tag": {
+          "direction": "input",
+          "shape": "[63:0] ",
+          "signed": ""
+        },
+        "service_wr_done_error": {
+          "direction": "input",
+          "shape": "",
+          "signed": ""
+        }
+      },
+      "pending": [
+        "LC scope DMA and service read DMA sharing/format adaptation",
+        "shared write DMA",
+        "MC switch/config/session wiring",
+        "selected macro/SRAM endpoints",
+        "joined execution"
+      ],
+      "whole_base_accepted": false
+    }
+  ]
+}

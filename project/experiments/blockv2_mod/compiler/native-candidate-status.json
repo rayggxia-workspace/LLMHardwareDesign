@@ -1,0 +1,38 @@
+{
+  "status": "allocated_native_candidates_extended",
+  "delivery_accepted": false,
+  "source_sha256": {
+    "compiler/native_p_candidates.py": "d52b8877c8407b5988ef1ff04ef85a7fb7ff0ad0e543363c4b7c8789364c3d9e",
+    "compiler/native_projection_candidates.py": "23b57bf711bc0e975c66acfe8dc77a569b70ca71648dc1cda989d979bc443ad3",
+    "compiler/native_gather_candidates.py": "58c3d75482cb6c692f35a5502287bdbc8db661efb257ec206b5062bf52bc3d02",
+    "compiler/native_wiring.py": "fedb5f04e2159fd4a38018c2708e6a52bc9b3d9924ad781c675d292142a0d040",
+    "compiler/native_u_candidates.py": "6aee13bf411c42b3b9fd0ba7f45afb559f20f8ba2970918e13cd558fcfd56c54",
+    "compiler/native_transfer_program.py": "864887fb47503482446aff2677d73ee51b15c911a19d0f3247642c3970bfce22"
+  },
+  "evidence": {
+    "rope_attention": "evidence/native-p-candidates-114149/report.json",
+    "gather_rms_add": "evidence/native-transfers-114156/report.json",
+    "projection_and_static_wiring": "evidence/native-projection-candidates-114158/report.json"
+  },
+  "scope": "Descriptor generation from graph-derived operand recipes at diagnostic storage/weight bindings. Transfer and compute-operand identities and candidate dependency DAGs checked. Arithmetic execution, deployment assets and global plan not accepted.",
+  "required_before_global_delivery": [
+    "joined execution of descriptor G32 and chunked U/P projection path; canonical native FFN no longer uses the legacy stripe-control wrapper",
+    "actual runtime numerical storage/weight bindings or explicitly labeled timing-only data scenario",
+    "global Algo1 selection and deployment-ordered identity allocation",
+    "same-plan machine packaging with static wiring conflict enforcement",
+    "joined RTL dispatch checks and PR260 fast TLM execution"
+  ],
+  "ffn_control_observation": {
+    "wrapper": "rtl/blockv2_mod_p0.sv",
+    "component": "ffn_gate_up_mid",
+    "external_signals": [
+      "ffn_start_valid",
+      "ffn_stripe_commit_valid",
+      "ffn_mid_ready",
+      "down_phase",
+      "copy_stage"
+    ],
+    "requirement": "Drive the existing component using actual compiled commands/RTL control; descriptor arithmetic alone does not satisfy the FFN candidate."
+  },
+  "ffn_native_recipe": "compiler/ffn-native-status.json"
+}

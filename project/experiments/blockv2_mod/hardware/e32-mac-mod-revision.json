@@ -1,0 +1,33 @@
+{
+  "profile": "E32-mac80-mod-v1",
+  "master": "e_s32_mac_ap64",
+  "baseline_master": "e_s32_ap64",
+  "extra_external_pins": 0,
+  "extra_macro_instances": 0,
+  "opcodes": {
+    "12": "BEGIN: in_data[15:0] is nonzero full K, remaining data zero; mask and final shift",
+    "13": "STEP: two four-lane S32 operands, exact signed products accumulated in S80",
+    "14": "END: require exactly K steps; one RNE and S32 saturation per active lane",
+    "15": "ABORT: clear accumulation ownership"
+  },
+  "capacity": {
+    "contexts": 1,
+    "lanes_per_context": 4,
+    "accumulator_bits_per_lane": 80,
+    "max_k": 65535
+  },
+  "arithmetic": "reuse original two product lanes; added S80 accumulation and final rounding",
+  "old_operations": "0..11 unchanged when no MAC context is owned; reject while MAC owns macro",
+  "required_lease": "exclusive E32 ownership from BEGIN acceptance through END or ABORT result consumption",
+  "status": "macro and exclusive selector RTL unit verified; Attention service and whole-base integration pending",
+  "physical_views": null,
+  "timing_calibrated": false,
+  "baseline_sources": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/u0/e_s32_native.sv": "50ce3230a6a7738a7bec4816250eb68647da477b9bbd64de69c1dc71fae81751",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/u0/e_s32_ap64.sv": "c9ba4cf469bcd8feb199d49f845348180c1935d28edd2f48acb517f84fe0675b"
+  },
+  "unit_evidence": {
+    "path": "evidence/architecture-revision-185/e32-mac-mod-receipt.json",
+    "sha256": "85b5cba9433f5065125493d9a0364a35d96926cb93ea2257403cedaa1d6df269"
+  }
+}

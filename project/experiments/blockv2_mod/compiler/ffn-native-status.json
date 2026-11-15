@@ -1,0 +1,31 @@
+{
+  "status": "native_FFN_recipe_encoded",
+  "delivery_accepted": false,
+  "implementation": "Gate MatMul, Up MatMul, descriptor-controlled G32 SiLU-times-Up, Down MatMul with bounded K supply commands",
+  "rtl_evidence": {
+    "gated_activation": "evidence/gated-scope-114170/run.log",
+    "ranged_feed": "evidence/projection-range-114171/run.log",
+    "P_shell_lint": "evidence/p-gated-lint-114168.log",
+    "U_shell_lint": "evidence/u-native-lint-114169.log"
+  },
+  "compiler_evidence": "evidence/native-ffn-candidates-114185/report.json",
+  "projection_regression": "evidence/native-projection-candidates-114186/report.json",
+  "source_sha256": {
+    "rtl/p_services/gated_s32_scope.sv": "4f79875dd77470f8b27866fb33089e39266734e2388050db398e69e0619568e8",
+    "rtl/p_services/blockv2_mod_p_resident_services.sv": "04e23b1a7f0946104f7b86a9aa86114f7762fedef9dbcac5ddec237b433191ab",
+    "rtl/blockv2_mod_p_native_lc.sv": "c0f8af4ac6c1bfb1d68f2f13c7d40b2f3deae9a57cdd1e400ac8ec67b57b5c6e",
+    "rtl/projection/ffn_k_window_sequencer.sv": "2c9062d851717fc1fc57f6585383596612ceae49ba923ab6ce266fa83f06d4d9",
+    "rtl/projection/blockv2_mod_projection_feed.sv": "3e4ad2ea9b11aca7b822d35a54352519749a063732ab64be954bf45524a9ef9a",
+    "rtl/u0/u_projection_feed.sv": "1f1cbcdc7625b6c59a5ba2b7f8c3a754a2ea04f37be9ef67f246f0533a962c66",
+    "compiler/native_ffn_candidates.py": "64c0a2b9fa89dbce8b2847f3f3a6ec0e61dd7c93cc614e8334d3741339bc8eb9",
+    "compiler/native_projection_candidates.py": "4662ec35c59d4685979152dca1bdd5babe048539d3ae1b02c8f3c11df9405a0d"
+  },
+  "scope": "Complete allocated FFN command DAG generation with component RTL evidence. Diagnostic storage/weight metadata; not a selected global plan, full joined RTL run or TLM execution.",
+  "remaining": [
+    "joined P computation and chunked U supply execution",
+    "deployment numerical/storage binding",
+    "global Algo1 native candidate selection and identity relocation",
+    "same-plan full instruction/wiring package",
+    "PR260 fast evaluation"
+  ]
+}

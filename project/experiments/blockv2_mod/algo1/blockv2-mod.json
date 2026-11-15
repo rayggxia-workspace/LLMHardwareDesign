@@ -1,0 +1,818 @@
+{
+  "schema": "blockv2-rtl-target-routes/1",
+  "topology_id": 25001,
+  "logical_interfaces": [
+    "P0.fence",
+    "P0.instruction_vocabulary_phase",
+    "P0.resident_add",
+    "P0.resident_attention",
+    "P0.resident_ddr_read",
+    "P0.resident_ddr_write",
+    "P0.resident_rope",
+    "P0.scope_descriptor",
+    "P0.sram_commit",
+    "P0.three_p_ddr_store",
+    "P0.weight_read",
+    "P1.scope_descriptor_commit",
+    "P2.scope_descriptor_commit",
+    "U0.direct_ddr_load",
+    "U0.indexed_gather_ddr_sram",
+    "U0.resident_add",
+    "U0.resident_ddr_write",
+    "U0.resident_s32_rms",
+    "U1.direct_ddr_load",
+    "U1.indexed_gather_ddr_sram",
+    "U1.resident_add",
+    "U1.resident_ddr_write",
+    "U1.resident_s32_rms",
+    "U0.projection_feed",
+    "U1.projection_feed"
+  ],
+  "targets": [
+    {
+      "id": 0,
+      "group": "P0",
+      "routes": [
+        {
+          "schema": 38817793,
+          "abi": 38817026,
+          "opcode": 2,
+          "completions": [
+            "scope_committed",
+            "service_done",
+            "ffn_partial_results_committed"
+          ],
+          "requires": [
+            "P0.scope_descriptor",
+            "P0.weight_read",
+            "P0.fence",
+            "P0.sram_commit"
+          ]
+        },
+        {
+          "schema": 3,
+          "abi": 7,
+          "opcode": 2,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P0.resident_add"
+          ]
+        },
+        {
+          "schema": 826626130,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P0.resident_rope"
+          ]
+        },
+        {
+          "schema": 827085380,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "P0.resident_ddr_read"
+          ]
+        },
+        {
+          "schema": 827479627,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "P0.resident_ddr_write"
+          ]
+        },
+        {
+          "schema": 827479627,
+          "abi": 38797314,
+          "opcode": 2,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "P0.resident_ddr_write"
+          ]
+        },
+        {
+          "schema": 827545412,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "P0.resident_ddr_write"
+          ]
+        },
+        {
+          "schema": 827610177,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P0.resident_attention"
+          ]
+        },
+        {
+          "schema": 944981062,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "P0.three_p_ddr_store"
+          ]
+        },
+        {
+          "schema": 38817793,
+          "abi": 38817026,
+          "opcode": 3,
+          "completions": [
+            "tile_consumed",
+            "service_done"
+          ],
+          "requires": [
+            "P0.instruction_vocabulary_phase"
+          ]
+        },
+        {
+          "schema": 827151175,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P0.G"
+          ]
+        }
+      ],
+      "rtl_module": "blockv2_mod_p0",
+      "control": {
+        "module": "blockv2_mod_p_native_lc",
+        "parameter_TARGET": 0,
+        "scope": "native P service shell including its G32 leaf; old externally controlled FFN wrapper is diagnostic"
+      }
+    },
+    {
+      "id": 3,
+      "group": "U0",
+      "routes": [
+        {
+          "schema": 826823751,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U0.indexed_gather_ddr_sram"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 944525892,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U0.direct_ddr_load"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 3,
+          "abi": 7,
+          "opcode": 3,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U0.resident_s32_rms"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 3,
+          "abi": 7,
+          "opcode": 2,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U0.resident_add"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 944985924,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U0.resident_ddr_write"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 1145390672,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U0.projection_feed"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 826494020,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U0.counted_ddr_load"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 826495812,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U0.counted_ddr_store"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 1145390672,
+          "abi": 38797314,
+          "opcode": 2,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U0.projection_feed_ranged"
+          ]
+        }
+      ],
+      "legacy_compact_routes": [
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 260,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U0.indexed_gather_ddr_sram"
+          ]
+        },
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 261,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U0.direct_ddr_load"
+          ]
+        },
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 262,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U0.resident_s32_rms"
+          ]
+        },
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 263,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U0.resident_add"
+          ]
+        },
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 264,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U0.resident_ddr_write"
+          ]
+        },
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 265,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U0.projection_feed"
+          ]
+        }
+      ],
+      "control": {
+        "module": "blockv2_mod_u_native_lc",
+        "parameter_TARGET": 3,
+        "abi": 38797314,
+        "capacity": 38862849,
+        "program_lifetime": "one fixed descriptor-fetch kernel per deployment; operands supplied by CALL descriptors",
+        "evidence": "evidence/u-native-114068/run.log",
+        "evidence_scope": "fixed-kernel DDR load, ADD and DDR commit with numeric checks; other service adapters require integration coverage"
+      }
+    },
+    {
+      "id": 1,
+      "group": "P1",
+      "rtl_module": "blockv2_mod_p_native_lc",
+      "parameters": {
+        "TARGET": 1
+      },
+      "routes": [
+        {
+          "schema": 38817793,
+          "abi": 38817026,
+          "opcode": 2,
+          "completions": [
+            "scope_committed",
+            "ffn_partial_results_committed"
+          ],
+          "requires": [
+            "P1.scope_descriptor_commit"
+          ]
+        },
+        {
+          "schema": 3,
+          "abi": 7,
+          "opcode": 2,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P1.resident_add"
+          ]
+        },
+        {
+          "schema": 826626130,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P1.resident_rope"
+          ]
+        },
+        {
+          "schema": 827085380,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "P1.resident_ddr_read"
+          ]
+        },
+        {
+          "schema": 827545412,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "P1.resident_ddr_write"
+          ]
+        },
+        {
+          "schema": 827610177,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P1.resident_attention"
+          ]
+        },
+        {
+          "schema": 827151175,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P1.G"
+          ]
+        }
+      ],
+      "control": {
+        "module": "blockv2_mod_p_native_lc",
+        "parameter_TARGET": 1,
+        "scope": "same parameterized native P service shell and G32 leaf"
+      }
+    },
+    {
+      "id": 2,
+      "group": "P2",
+      "rtl_module": "blockv2_mod_p_native_lc",
+      "parameters": {
+        "TARGET": 2
+      },
+      "routes": [
+        {
+          "schema": 38817793,
+          "abi": 38817026,
+          "opcode": 2,
+          "completions": [
+            "scope_committed",
+            "ffn_partial_results_committed"
+          ],
+          "requires": [
+            "P2.scope_descriptor_commit"
+          ]
+        },
+        {
+          "schema": 3,
+          "abi": 7,
+          "opcode": 2,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P2.resident_add"
+          ]
+        },
+        {
+          "schema": 826626130,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P2.resident_rope"
+          ]
+        },
+        {
+          "schema": 827085380,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "P2.resident_ddr_read"
+          ]
+        },
+        {
+          "schema": 827545412,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "P2.resident_ddr_write"
+          ]
+        },
+        {
+          "schema": 827610177,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P2.resident_attention"
+          ]
+        },
+        {
+          "schema": 827151175,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "P2.G"
+          ]
+        }
+      ],
+      "control": {
+        "module": "blockv2_mod_p_native_lc",
+        "parameter_TARGET": 2,
+        "scope": "same parameterized native P service shell and G32 leaf"
+      }
+    },
+    {
+      "id": 4,
+      "group": "U1",
+      "routes": [
+        {
+          "schema": 826823751,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U1.indexed_gather_ddr_sram"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 944525892,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U1.direct_ddr_load"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 3,
+          "abi": 7,
+          "opcode": 3,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U1.resident_s32_rms"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 3,
+          "abi": 7,
+          "opcode": 2,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U1.resident_add"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 944985924,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U1.resident_ddr_write"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 1145390672,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U1.projection_feed"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 826494020,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U1.counted_ddr_load"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 826495812,
+          "abi": 38797314,
+          "opcode": 1,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U1.counted_ddr_store"
+          ],
+          "rtl_dispatch": "u_native_descriptor -> u_n32_controlled_64 EXTERNAL_SERVICE"
+        },
+        {
+          "schema": 1145390672,
+          "abi": 38797314,
+          "opcode": 2,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U1.projection_feed_ranged"
+          ]
+        }
+      ],
+      "legacy_compact_routes": [
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 260,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U1.indexed_gather_ddr_sram"
+          ]
+        },
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 261,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U1.direct_ddr_load"
+          ]
+        },
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 262,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U1.resident_s32_rms"
+          ]
+        },
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 263,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U1.resident_add"
+          ]
+        },
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 264,
+          "completions": [
+            "destination_commit_ack"
+          ],
+          "requires": [
+            "U1.resident_ddr_write"
+          ]
+        },
+        {
+          "schema": 1,
+          "abi": 26411009,
+          "opcode": 265,
+          "completions": [
+            "service_done"
+          ],
+          "requires": [
+            "U1.projection_feed"
+          ]
+        }
+      ],
+      "control": {
+        "module": "blockv2_mod_u_native_lc",
+        "parameter_TARGET": 4,
+        "abi": 38797314,
+        "capacity": 38862849,
+        "program_lifetime": "one fixed descriptor-fetch kernel per deployment; operands supplied by CALL descriptors",
+        "evidence": "evidence/u-native-114069/run.log",
+        "evidence_scope": "fixed-kernel DDR load, ADD and DDR commit with numeric checks; other service adapters require integration coverage"
+      }
+    }
+  ],
+  "rtl_sources_sha256": {
+    "blockv2_mod_p0.sv": "fbb55cd34d8402b4226c64c95f96ec00bb15cfe4268d382a826da84cdab1a3a4",
+    "blockv2_mod_p_native_lc.sv": "c0f8af4ac6c1bfb1d68f2f13c7d40b2f3deae9a57cdd1e400ac8ec67b57b5c6e",
+    "native_vocabulary_product_terminal.sv": "3b50343641bb24d78e5544e66263fb356f030260143755f768da8aa1ab8434b4",
+    "p_native_lc_coplacement.sv": "7003a483c0da7a2f56667383dbb7d2ec0e0c3cd293716156b18ab791bffcf7dc",
+    "p_static_output_lease.sv": "86186269d024bdc8972b5b118d5ce2bbab60be4fa96722173d82337584ee2557",
+    "s128_vocabulary_retire.sv": "fdc13fa7f793804368ac37c3403192784a09a774686f07064986ba860c1cddd0",
+    "s128_vocabulary_tile_consumer.sv": "94d42412765695cecd090115fcc3a8f77a4301f988ead5582ca1374badc64e89",
+    "s32_token_argmax.sv": "9d3d1a285f6954eb837ef18898bc46f57c27788d960242a2be0086329b187865",
+    "u0/u_indexed_gather.sv": "2b9d8857ba57c29676a5f97cc6c4ef190ab6da69410d84a546ae38df23ab00bc",
+    "u0/u_n32_controlled_64.sv": "87e673a8bb52d56c129bbdb7e4d66185104ca5f580f2f06d65d98a423004d3bd",
+    "u0/u_n32_legacy_dispatch.svh": "b92e7127747b66b715bbdd06002ce5061d09646861b12e3370bc7cb08101688d",
+    "u0/wrapper.sv": "51d5298f9e15c8839708c709828bd3e5a49425769ac7d7d92c759d8c7fa62772",
+    "u0/block_v2_n.sv": "0ddd23ec62631f64d689678b026a508944928fdb1cedf26ef73900f5e58fd861",
+    "u0/block_v2_n_exp.svh": "a421489100aa883f645baeabfcefa1f4022010059d956f9770f44f2817c2a0ab",
+    "u0/block_v2_n_group.sv": "d6a4bc66bc525ee74962bb918bf57d72bfa20ecdf224ca78df785ea5b0a8e232",
+    "u0/e_s32_ap64.sv": "c9ba4cf469bcd8feb199d49f845348180c1935d28edd2f48acb517f84fe0675b",
+    "u0/e_s32_native.sv": "50ce3230a6a7738a7bec4816250eb68647da477b9bbd64de69c1dc71fae81751",
+    "u0/s32_rms_apply_s128.sv": "b805541c6e338ca69595de69ecead5053fbb38659df5862bcb362a0a3a4a23b5",
+    "u0/s32_rms_factor_s128.sv": "989ab9e4336e8ae3868596468ee90b91cd345329987b675d93b9af3d18ece519",
+    "u0/s32_rms_range_scan.sv": "b2e7830728378eae6e6472a091fc30cfee3114013824c063786df6fbca34f508",
+    "u0/u_resident_rms.sv": "86b316e16446d9c38ff2545772cf8a4fb1debace5d0d91e52be02652e134c1a1",
+    "p_services/rope_e32_ap64.sv": "a64ed117324536643bc5470a18fc464dcaf08d660e71b4b34c07f1cf6f53c21b",
+    "p_services/s128_ddr_range_load.sv": "88d76f3f1532c9b6bfb9c29d28e922147f0e4cbb68ad91574d0d1dfa2d40ef26",
+    "p_services/blockv2_mod_p_resident_services.sv": "04e23b1a7f0946104f7b86a9aa86114f7762fedef9dbcac5ddec237b433191ab",
+    "p_services/dot_s32_stage64.sv": "eb2d0f39a7daf7ae48e557d27a8fa49acdc5c086bdd0031754c68fef3583912f",
+    "p_services/s32_add_scope.sv": "840b186950166fd8629a9706a5279f1e08e56bcf8a534c44b61a13a80ba156f0",
+    "p_services/s128_rope_scope.sv": "0e5a31cbe5575db297883d62284183d6085236fdf9c5b687b83539b998bd8014",
+    "p_services/dot_s32_core.sv": "73b05f1407945fa6aa4986117a1bb35d939f97487d053827019710e77e06b7ff",
+    "p_services/s128_kv_store_scope.sv": "fa00eb3c35d35ad81c9fc8697e92eaca4f6a52044359ea66b06a07140eb963c0",
+    "p_services/s128_kv_row_transfer.sv": "1694adce8af14500f3933bfb40ad624484434e1e34b912133d00b388b495469d",
+    "p_services/projection_bias_e32_s128.sv": "3f8b923eb991397c250f90e275cb92f39abbd7e62c252f2339227bff1b179051",
+    "p_services/dot_s32_s128.sv": "7471de050ee4d7f7055cdbae3c8969d2512ccd6d1eba03352bce1b6c8c5cb37e",
+    "p_services/n_s32_softmax_s128.sv": "1923c33c602292131efe8d50d69e685402be11416fb4d29de41c430a076ba48f",
+    "p_services/rope_e32_s128_commit.sv": "e4fb576487e258329002720bb4cc3e289087f4fbf9b3f6eec16b8b0a41f70fea",
+    "p_services/ddr_s128_load_scope.sv": "1b343ced406c2ca78d45fc6c0fb736b46c08814a446b4ca91305877335313089",
+    "p_services/s128_attention_core_scope.sv": "90da6c1b3b5b5b3568deb7f2f3ade23faeb3bad91ff3a4b706f9368a60aec93d",
+    "p_services/dot_s80_checkpoint.sv": "9edb61cb951bccff0fb3947dbb765e530cb2726a6dba9d60dbf48813df50256d",
+    "p_services/s128_rope_leased_row.sv": "d5769b44d0e7b9fe2c5cd0a65182672fbe5fcf0e8441ec49418d4e1d96399d2a",
+    "p_services/ffn_down_store.sv": "58c7a99459bc38840ef4caac81ae4a46ce656165132ed10fdc706d5892c08d21",
+    "p_services/ffn_down_store_scope.sv": "3252cfd565cbc8eecf43de18f144e593841f6ed0a28b32c2a6e16ad30143bc8b",
+    "u0/u_resident_store.sv": "f43fe8b639555525d208cccc733d60dd805293c67920a4e533b19939bfeff397",
+    "u0/u_resident_rms_core.sv": "582ef080ffa10fa5cb5817d618cd25b89a5b0344ee49ef176f7f2c32754b783a",
+    "u0/u_resident_add.sv": "7ead0d5c5f5492fe3ccef295fde2b40ef1b44b8a6838ecda0a6046075126e8c9",
+    "u0/u_projection_feed.sv": "1f1cbcdc7625b6c59a5ba2b7f8c3a754a2ea04f37be9ef67f246f0533a962c66",
+    "projection/early_copy_3p.sv": "b3a20d70ce981ac7016637c2a64fd224f4538220061830cd810b9141b05ef7f1",
+    "projection/s32_a16_tile_quantizer.sv": "3ffe5a8805e90681fb87339fd626bc39945e0ea663b9668bcf859ae67859e32e",
+    "projection/early_copy_epoch_3p.sv": "14e121267eefb408a568ab8d6a2245a524beb909811c4a945e782c778b04566f",
+    "projection/copy_scale_header_tx.sv": "ec8508d2fcdf6ee6747d46d8fc09a72db5df719ec8da62bf1dd7e401d5b1bdf2",
+    "projection/ffn_k_window_sequencer.sv": "2c9062d851717fc1fc57f6585383596612ceae49ba923ab6ce266fa83f06d4d9",
+    "projection/copy_scale_header_rx.sv": "5419fcb6f950d6523f97a3fe1a7793e336584333cdb44ecf24c03867bd361709",
+    "projection/blockv2_mod_projection_feed.sv": "3e4ad2ea9b11aca7b822d35a54352519749a063732ab64be954bf45524a9ef9a",
+    "test_s128_vocabulary_retire.sv": "bcd6e3cdd6878af31e2c065d10416d1190bd08dd55f9d3765f65c7350a7d5c87",
+    "blockv2_mod_u_native_lc.sv": "ed470044b740fb10c340d6f285b82ed7bd3c2c52d617daa41b2a15faa999e32f",
+    "u0/u_native_descriptor.sv": "1a036ac902798af59a8ddd6bf659d4c910258289e5e6eef7c5f67fc7a167eb21",
+    "cfj/ucf_native_service.sv": "a5d23cbef54ee0bcdb601cbe0fad2a8227127b03dd7026715a58c72869db1cfa",
+    "p_services/gated_s32_scope.sv": "4f79875dd77470f8b27866fb33089e39266734e2388050db398e69e0619568e8"
+  },
+  "rtl_instance_parameters": {
+    "U1": {
+      "module": "u_n32_native_frame_64",
+      "GLOBAL_TARGET": 4,
+      "LEGACY_BLOCK_ID": 4,
+      "LEGACY_TOPOLOGY": 25001,
+      "evidence": "evidence/u1-lint-113981.log",
+      "validation_scope": "parameterized RTL elaboration; full graph execution pending"
+    }
+  },
+  "projection_feed_contract": {
+    "native_descriptor_schema": 1145390672,
+    "native_abi": 38797314,
+    "compact_opcode": 265,
+    "source_elements_per_tile": 128,
+    "scratch_words": 16,
+    "session_rule": "strictly increasing per command; generation increases inside one command; all old transactions drain before session change",
+    "joined_p_requirement": "use rtl/projection/copy_scale_header_rx.sv for session-aware leases",
+    "proof": "evidence/u0-feed-114043/run.log",
+    "full_model_supply_workload": "evidence/projection-feed-full-114053/workload.json",
+    "validation_scope": "local instruction execution and activation supply; full P arithmetic and full-model TLM integration pending"
+  }
+}

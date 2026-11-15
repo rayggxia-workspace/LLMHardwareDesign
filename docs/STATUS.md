@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-15 CST。#219 / [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269)：按 PR185 恢复控制归属与宏硬边界，显式绑定同计划指令和候选端点连线。完整 36 层 Qwen 两 token prefill + 一步自产 KV decode 的 141490/70457 次调用全部执行，651/723 个产出张量逐字节一致。剩余 20 张 benchmark 图均已尝试，全部停在尺寸解析或 operand lowering，尚未进入候选选择。时序未校准；不代表物理、广泛精度或稳态吞吐验收。源码及[结果](../project/experiments/blockv2_mod/evidence/architecture-revision-185/RESULTS_ZH.md)提交本 PR 审查，Issue #219 更广泛优化目标保持 in_progress。
+
 2026-11-09：#219/PR220[迭代23/24](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_24.md)实现原生逐行地址选择、动态high16消费者覆盖及逐term混合K检查。
 两行冷切片相对最终强旧贪心少7.421%模型时间，但新DP仍慢于新强贪心0.0441%；不是整模型或20%算法结论。
 Windows/Linux最终各319测试；84合成及36此前真实模型边界的完整程序RTL，四初态和实际错行/错K负对照通过，首版故障未检出及地址预算修正均保留。

@@ -1,0 +1,1743 @@
+{
+  "schema": "benchmark-Algo1-conversion/1",
+  "catalog_sha256": "52a675c7699b9626ce84af2f57068d1c2f4305c58b3ed6cfff55c0cbfb5e7fc3",
+  "qwen_acceptance_sha256": "341df792fc9dc4db8b5a96e8b7d5df86b5bf8c7d9f22c40ead11450143b11ea8",
+  "runner_sha256": "eea3993c8b81de3f6d2c3d8bd2460bc9e7395568509930be01a9ac464e6e7928",
+  "workers": 2,
+  "attempted": 20,
+  "expected": 20,
+  "results": [
+    {
+      "case": {
+        "flavor": "raw",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/falcon/raw.onnx",
+        "recorded_onnx_sha256": "edf50ed2563af36ca41d5b90ccaa0c7f48d3eae9077d18e3f5374201cba9e05a",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 351890495,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/falcon/raw.graph.json",
+        "graph_metadata_sha256": "074628cbc685b283c428055d3254576da4e442bfffd0e924174466861300caec",
+        "operator_histogram": {
+          "Cast": 38,
+          "Constant": 394,
+          "Pow": 3,
+          "ReduceMean": 3,
+          "Add": 12,
+          "Sqrt": 3,
+          "Div": 3,
+          "Mul": 40,
+          "Transpose": 27,
+          "MatMul": 11,
+          "Exp": 5,
+          "Neg": 3,
+          "Split": 2,
+          "Squeeze": 3,
+          "Unsqueeze": 216,
+          "Conv": 1,
+          "Slice": 21,
+          "Sigmoid": 3,
+          "Concat": 44,
+          "Reshape": 36,
+          "Softplus": 1,
+          "Clip": 1,
+          "Tile": 2,
+          "Shape": 36,
+          "Mod": 2,
+          "Sub": 8,
+          "Gather": 28,
+          "ConstantOfShape": 13,
+          "Pad": 6,
+          "CumSum": 3,
+          "Equal": 4,
+          "Where": 8,
+          "Expand": 4,
+          "Trilu": 4,
+          "Not": 4,
+          "Einsum": 5,
+          "Softmax": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "falcon",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "edf50ed2563af36ca41d5b90ccaa0c7f48d3eae9077d18e3f5374201cba9e05a",
+      "imported_operations": 422,
+      "recipe_kinds": {
+        "Cast": 33,
+        "Pow": 3,
+        "ReduceMean": 3,
+        "Add": 12,
+        "Sqrt": 3,
+        "Div": 3,
+        "Mul": 37,
+        "Concat": 44,
+        "Exp": 5,
+        "Mod": 2,
+        "Neg": 3,
+        "Shape": 36,
+        "Gather": 28,
+        "Sub": 8,
+        "ConstantOfShape": 13,
+        "View": 130,
+        "MatMul": 11,
+        "Split": 2,
+        "Softplus": 1,
+        "Clip": 1,
+        "Pad": 6,
+        "Conv": 1,
+        "SiLU": 3,
+        "CumSum": 3,
+        "Equal": 4,
+        "Trilu": 4,
+        "Not": 4,
+        "Tile": 2,
+        "Einsum": 5,
+        "Where": 8,
+        "Softmax": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [
+          {
+            "operation": "/layer/self_attn/Softmax",
+            "reason": "unsupported MatMul operation /layer/self_attn/Cast"
+          }
+        ],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "unsupported concrete shape for /layer/self_attn/Transpose_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "unsupported concrete shape for /layer/self_attn/Mul_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "bind positive runtime dimensions before layout",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 56, in worker\n    layout = build_layout(graph)\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 30, in build\n    layouts={name:{'root':name,'shape':shape_of(values,name),'steps':[]}\n                                       ^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 25, in shape_of\n    raise ValueError('bind positive runtime dimensions before layout')\nValueError: bind positive runtime dimensions before layout\n",
+      "last_stage": "value_layout",
+      "responsibility_scope": "Algo1 tensor layout lowering",
+      "case_name": "falcon-raw",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "simplified",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/falcon/simplified.onnx",
+        "recorded_onnx_sha256": "a45ab62cb142eef6929bba20eb0c3f8e03115624999a5a8807b2f769ab19cd8f",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 356030535,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/falcon/simplified.graph.json",
+        "graph_metadata_sha256": "3ab98080d1abc821691753cdf8def1ed42342bbd904b9d947a56077ab76c1cf6",
+        "operator_histogram": {
+          "Constant": 17,
+          "Pow": 3,
+          "ReduceMean": 3,
+          "Add": 12,
+          "Sqrt": 3,
+          "Div": 3,
+          "Mul": 29,
+          "MatMul": 11,
+          "Split": 2,
+          "Transpose": 12,
+          "Conv": 1,
+          "Slice": 8,
+          "Sigmoid": 3,
+          "Reshape": 19,
+          "Softplus": 1,
+          "Clip": 1,
+          "Tile": 2,
+          "Pad": 6,
+          "Unsqueeze": 9,
+          "CumSum": 3,
+          "Expand": 4,
+          "Where": 4,
+          "Exp": 4,
+          "Einsum": 5,
+          "Sub": 1,
+          "Concat": 3,
+          "Gather": 1,
+          "Neg": 2,
+          "Softmax": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "falcon",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "a45ab62cb142eef6929bba20eb0c3f8e03115624999a5a8807b2f769ab19cd8f",
+      "imported_operations": 156,
+      "recipe_kinds": {
+        "RMSNorm": 2,
+        "Mul": 21,
+        "MatMul": 9,
+        "Split": 2,
+        "Add": 9,
+        "Softplus": 1,
+        "Clip": 1,
+        "Pad": 6,
+        "View": 52,
+        "Conv": 1,
+        "SiLU": 3,
+        "CumSum": 3,
+        "Exp": 4,
+        "Gather": 1,
+        "Sub": 1,
+        "Where": 4,
+        "Neg": 2,
+        "Concat": 3,
+        "Attention": 1,
+        "Tile": 2,
+        "Einsum": 5,
+        "Pow": 1,
+        "ReduceMean": 1,
+        "Sqrt": 1,
+        "Div": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "missing operand recipe: Mul",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 61, in worker\n    recipes = lower(graph, layout)\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/operand_recipes.py\", line 146, in lower\n    else:raise ValueError('missing operand recipe: '+kind)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: missing operand recipe: Mul\n",
+      "last_stage": "operand_lowering",
+      "responsibility_scope": "Algo1 operand lowering",
+      "case_name": "falcon-simplified",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "raw",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/gemma_global/raw.onnx",
+        "recorded_onnx_sha256": "e38e16aa06272d599beec27cc5538a7a2dc211a4184f731903d4c5a64eea6ad7",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 377572960,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/gemma_global/raw.graph.json",
+        "graph_metadata_sha256": "c6f2dd45eec1889cfdd18358e557e2234aa6b14837def922c17cf67813a3bbe8",
+        "operator_histogram": {
+          "Cast": 14,
+          "Constant": 107,
+          "Pow": 6,
+          "ReduceMean": 6,
+          "Add": 19,
+          "Sqrt": 6,
+          "Div": 6,
+          "Mul": 26,
+          "Transpose": 12,
+          "MatMul": 9,
+          "Unsqueeze": 53,
+          "Concat": 10,
+          "Reshape": 8,
+          "Slice": 4,
+          "Neg": 2,
+          "Shape": 2,
+          "ConstantOfShape": 2,
+          "Equal": 2,
+          "Where": 2,
+          "Expand": 2,
+          "Softmax": 1,
+          "Tanh": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "gemma_global",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "e38e16aa06272d599beec27cc5538a7a2dc211a4184f731903d4c5a64eea6ad7",
+      "imported_operations": 131,
+      "recipe_kinds": {
+        "Add": 15,
+        "Cast": 8,
+        "RMSNorm": 4,
+        "Concat": 10,
+        "View": 23,
+        "Shape": 2,
+        "ConstantOfShape": 2,
+        "Mul": 18,
+        "Equal": 2,
+        "Where": 2,
+        "MatMul": 9,
+        "Pow": 2,
+        "ReduceMean": 2,
+        "Sqrt": 2,
+        "Div": 2,
+        "Neg": 2,
+        "Softmax": 1,
+        "Tanh": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [
+          {
+            "operation": "/layer/self_attn/Softmax",
+            "reason": "unsupported MatMul operation /layer/self_attn/Cast"
+          }
+        ],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "unsupported concrete shape for /layer/self_attn/q_norm/Mul_1_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "unsupported concrete shape for /layer/self_attn/k_norm/Mul_1_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "bind positive runtime dimensions before layout",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 56, in worker\n    layout = build_layout(graph)\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 30, in build\n    layouts={name:{'root':name,'shape':shape_of(values,name),'steps':[]}\n                                       ^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 25, in shape_of\n    raise ValueError('bind positive runtime dimensions before layout')\nValueError: bind positive runtime dimensions before layout\n",
+      "last_stage": "value_layout",
+      "responsibility_scope": "Algo1 tensor layout lowering",
+      "case_name": "gemma_global-raw",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "simplified",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/gemma_global/simplified.onnx",
+        "recorded_onnx_sha256": "6eea4f54399abc58ab99a1b394ea8d1fa1554f5af53d5f3ea8233e9794b3cc3c",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 377558319,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/gemma_global/simplified.graph.json",
+        "graph_metadata_sha256": "a11ddd70605d44f96f75a3bad673033dc65c48b47edad4e5b14ca8abc5cf08b6",
+        "operator_histogram": {
+          "Constant": 13,
+          "Pow": 6,
+          "ReduceMean": 6,
+          "Add": 13,
+          "Sqrt": 6,
+          "Div": 6,
+          "Mul": 24,
+          "MatMul": 9,
+          "Reshape": 6,
+          "Transpose": 5,
+          "Unsqueeze": 4,
+          "Slice": 4,
+          "Neg": 2,
+          "Concat": 2,
+          "Expand": 2,
+          "Softmax": 1,
+          "Tanh": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "gemma_global",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "6eea4f54399abc58ab99a1b394ea8d1fa1554f5af53d5f3ea8233e9794b3cc3c",
+      "imported_operations": 97,
+      "recipe_kinds": {
+        "RMSNorm": 6,
+        "View": 21,
+        "MatMul": 7,
+        "Mul": 11,
+        "Neg": 2,
+        "Concat": 2,
+        "Add": 6,
+        "Attention": 1,
+        "Tanh": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "missing operand recipe: Mul",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 61, in worker\n    recipes = lower(graph, layout)\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/operand_recipes.py\", line 146, in lower\n    else:raise ValueError('missing operand recipe: '+kind)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: missing operand recipe: Mul\n",
+      "last_stage": "operand_lowering",
+      "responsibility_scope": "Algo1 operand lowering",
+      "case_name": "gemma_global-simplified",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "raw",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/gemma_local/raw.onnx",
+        "recorded_onnx_sha256": "ff008d9f5c32e254583c783a85047e450f0a18e846b9a229410a6a3831faa4e3",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 377572960,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/gemma_local/raw.graph.json",
+        "graph_metadata_sha256": "c6f2dd45eec1889cfdd18358e557e2234aa6b14837def922c17cf67813a3bbe8",
+        "operator_histogram": {
+          "Cast": 14,
+          "Constant": 107,
+          "Pow": 6,
+          "ReduceMean": 6,
+          "Add": 19,
+          "Sqrt": 6,
+          "Div": 6,
+          "Mul": 26,
+          "Transpose": 12,
+          "MatMul": 9,
+          "Unsqueeze": 53,
+          "Concat": 10,
+          "Reshape": 8,
+          "Slice": 4,
+          "Neg": 2,
+          "Shape": 2,
+          "ConstantOfShape": 2,
+          "Equal": 2,
+          "Where": 2,
+          "Expand": 2,
+          "Softmax": 1,
+          "Tanh": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "gemma_local",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "ff008d9f5c32e254583c783a85047e450f0a18e846b9a229410a6a3831faa4e3",
+      "imported_operations": 131,
+      "recipe_kinds": {
+        "Add": 15,
+        "Cast": 8,
+        "RMSNorm": 4,
+        "Concat": 10,
+        "View": 23,
+        "Shape": 2,
+        "ConstantOfShape": 2,
+        "Mul": 18,
+        "Equal": 2,
+        "Where": 2,
+        "MatMul": 9,
+        "Pow": 2,
+        "ReduceMean": 2,
+        "Sqrt": 2,
+        "Div": 2,
+        "Neg": 2,
+        "Softmax": 1,
+        "Tanh": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [
+          {
+            "operation": "/layer/self_attn/Softmax",
+            "reason": "unsupported MatMul operation /layer/self_attn/Cast"
+          }
+        ],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "unsupported concrete shape for /layer/self_attn/q_norm/Mul_1_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "unsupported concrete shape for /layer/self_attn/k_norm/Mul_1_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "bind positive runtime dimensions before layout",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 56, in worker\n    layout = build_layout(graph)\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 30, in build\n    layouts={name:{'root':name,'shape':shape_of(values,name),'steps':[]}\n                                       ^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 25, in shape_of\n    raise ValueError('bind positive runtime dimensions before layout')\nValueError: bind positive runtime dimensions before layout\n",
+      "last_stage": "value_layout",
+      "responsibility_scope": "Algo1 tensor layout lowering",
+      "case_name": "gemma_local-raw",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "simplified",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/gemma_local/simplified.onnx",
+        "recorded_onnx_sha256": "b8b399483ffea42b9cab9ab22e5a26122f917c7bd7e45e61ac40799783da5d7f",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 377558319,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/gemma_local/simplified.graph.json",
+        "graph_metadata_sha256": "a11ddd70605d44f96f75a3bad673033dc65c48b47edad4e5b14ca8abc5cf08b6",
+        "operator_histogram": {
+          "Constant": 13,
+          "Pow": 6,
+          "ReduceMean": 6,
+          "Add": 13,
+          "Sqrt": 6,
+          "Div": 6,
+          "Mul": 24,
+          "MatMul": 9,
+          "Reshape": 6,
+          "Transpose": 5,
+          "Unsqueeze": 4,
+          "Slice": 4,
+          "Neg": 2,
+          "Concat": 2,
+          "Expand": 2,
+          "Softmax": 1,
+          "Tanh": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "gemma_local",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "b8b399483ffea42b9cab9ab22e5a26122f917c7bd7e45e61ac40799783da5d7f",
+      "imported_operations": 97,
+      "recipe_kinds": {
+        "RMSNorm": 6,
+        "View": 21,
+        "MatMul": 7,
+        "Mul": 11,
+        "Neg": 2,
+        "Concat": 2,
+        "Add": 6,
+        "Attention": 1,
+        "Tanh": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "missing operand recipe: Mul",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 61, in worker\n    recipes = lower(graph, layout)\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/operand_recipes.py\", line 146, in lower\n    else:raise ValueError('missing operand recipe: '+kind)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: missing operand recipe: Mul\n",
+      "last_stage": "operand_lowering",
+      "responsibility_scope": "Algo1 operand lowering",
+      "case_name": "gemma_local-simplified",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "raw",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native03/granite/raw.onnx",
+        "recorded_onnx_sha256": "caf9e3cc5bfd52b52d657583272e2fbfb042b3f075f8d7ff2452ee03d723cb8e",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 402952454,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native03/granite/raw.graph.json",
+        "graph_metadata_sha256": "f7565734903892ac836046cd113495be825844faba40d2032f98531142279a9f",
+        "operator_histogram": {
+          "Cast": 7,
+          "Constant": 110,
+          "Pow": 2,
+          "ReduceMean": 2,
+          "Add": 8,
+          "Sqrt": 2,
+          "Div": 3,
+          "Mul": 18,
+          "Transpose": 10,
+          "MatMul": 9,
+          "Unsqueeze": 62,
+          "Concat": 12,
+          "Reshape": 11,
+          "Slice": 6,
+          "Neg": 2,
+          "Shape": 3,
+          "ConstantOfShape": 2,
+          "Equal": 2,
+          "Where": 2,
+          "Expand": 2,
+          "Softmax": 2,
+          "TopK": 1,
+          "Gather": 3,
+          "Squeeze": 2,
+          "Sigmoid": 1,
+          "ReduceSum": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "granite",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "caf9e3cc5bfd52b52d657583272e2fbfb042b3f075f8d7ff2452ee03d723cb8e",
+      "imported_operations": 115,
+      "recipe_kinds": {
+        "Concat": 12,
+        "Cast": 7,
+        "Pow": 2,
+        "ReduceMean": 2,
+        "Add": 8,
+        "Sqrt": 2,
+        "Div": 3,
+        "Mul": 17,
+        "View": 33,
+        "Shape": 3,
+        "ConstantOfShape": 2,
+        "Equal": 2,
+        "Where": 2,
+        "MatMul": 9,
+        "Neg": 2,
+        "Softmax": 2,
+        "TopK": 1,
+        "Gather": 3,
+        "SiLU": 1,
+        "ReduceSum": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [
+          {
+            "operation": "/layer/self_attn/Softmax",
+            "reason": "unsupported MatMul operation /layer/self_attn/Cast"
+          },
+          {
+            "operation": "/layer/block_sparse_moe/router/Softmax",
+            "reason": "unsupported Mul operation /layer/block_sparse_moe/router/TopK"
+          }
+        ],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "unsupported concrete shape for /layer/self_attn/Transpose_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "unsupported concrete shape for /layer/self_attn/Transpose_1_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "bind positive runtime dimensions before layout",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 56, in worker\n    layout = build_layout(graph)\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 30, in build\n    layouts={name:{'root':name,'shape':shape_of(values,name),'steps':[]}\n                                       ^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 25, in shape_of\n    raise ValueError('bind positive runtime dimensions before layout')\nValueError: bind positive runtime dimensions before layout\n",
+      "last_stage": "value_layout",
+      "responsibility_scope": "Algo1 tensor layout lowering",
+      "case_name": "granite-raw",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "simplified",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native03/granite/simplified.onnx",
+        "recorded_onnx_sha256": "1650bbcd08c840053ef72000f6e7ec5182e1efb2ef3b373f7282a061abe157b1",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 402934515,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native03/granite/simplified.graph.json",
+        "graph_metadata_sha256": "34ffabe294b2bdf1a4d7275d70c63ebbd27158354157950e1bd70c0990534a16",
+        "operator_histogram": {
+          "Constant": 5,
+          "Pow": 2,
+          "ReduceMean": 2,
+          "Add": 7,
+          "Sqrt": 2,
+          "Div": 2,
+          "Mul": 14,
+          "MatMul": 9,
+          "Reshape": 9,
+          "Transpose": 5,
+          "Unsqueeze": 6,
+          "Slice": 6,
+          "Neg": 2,
+          "Concat": 2,
+          "Expand": 2,
+          "Softmax": 2,
+          "TopK": 1,
+          "Gather": 2,
+          "Squeeze": 2,
+          "Sigmoid": 1,
+          "ReduceSum": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "granite",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "1650bbcd08c840053ef72000f6e7ec5182e1efb2ef3b373f7282a061abe157b1",
+      "imported_operations": 79,
+      "recipe_kinds": {
+        "RMSNorm": 2,
+        "View": 30,
+        "MatMul": 7,
+        "Mul": 8,
+        "Neg": 2,
+        "Concat": 2,
+        "Add": 4,
+        "Attention": 1,
+        "TopK": 1,
+        "Gather": 2,
+        "Softmax": 1,
+        "SiLU": 1,
+        "ReduceSum": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [
+          {
+            "operation": "/layer/block_sparse_moe/router/Softmax",
+            "reason": "unsupported Mul operation /layer/block_sparse_moe/router/TopK"
+          }
+        ],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "missing operand recipe: Mul",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 61, in worker\n    recipes = lower(graph, layout)\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/operand_recipes.py\", line 146, in lower\n    else:raise ValueError('missing operand recipe: '+kind)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: missing operand recipe: Mul\n",
+      "last_stage": "operand_lowering",
+      "responsibility_scope": "Algo1 operand lowering",
+      "case_name": "granite-simplified",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "raw",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/llama/raw.onnx",
+        "recorded_onnx_sha256": "adcaa809e340fb3d6b52464654e73f56b5c1d4f4f21feb858359dc882fe93d3c",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 243309627,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/llama/raw.graph.json",
+        "graph_metadata_sha256": "f76d8c8272fbd16b02ae93818dd0ffa4a235ef78410e5ccf9f483610425f4d12",
+        "operator_histogram": {
+          "Identity": 1,
+          "Cast": 6,
+          "Constant": 85,
+          "Pow": 2,
+          "ReduceMean": 2,
+          "Add": 7,
+          "Sqrt": 2,
+          "Div": 2,
+          "Mul": 13,
+          "Transpose": 12,
+          "MatMul": 9,
+          "Unsqueeze": 53,
+          "Concat": 10,
+          "Reshape": 8,
+          "Slice": 4,
+          "Neg": 2,
+          "Shape": 2,
+          "ConstantOfShape": 2,
+          "Equal": 2,
+          "Where": 2,
+          "Expand": 2,
+          "Softmax": 1,
+          "Sigmoid": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "llama",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": false
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "adcaa809e340fb3d6b52464654e73f56b5c1d4f4f21feb858359dc882fe93d3c",
+      "imported_operations": 88,
+      "recipe_kinds": {
+        "Cast": 6,
+        "Pow": 2,
+        "ReduceMean": 2,
+        "Add": 7,
+        "Sqrt": 2,
+        "Div": 2,
+        "Mul": 11,
+        "Concat": 10,
+        "View": 23,
+        "Shape": 2,
+        "ConstantOfShape": 2,
+        "Equal": 2,
+        "Where": 2,
+        "MatMul": 6,
+        "Neg": 2,
+        "Softmax": 1,
+        "SwiGLUFFN": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [
+          {
+            "operation": "/layer/self_attn/Softmax",
+            "reason": "unsupported MatMul operation /layer/self_attn/Cast"
+          }
+        ],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "unsupported concrete shape for /layer/self_attn/Transpose_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "unsupported concrete shape for /layer/self_attn/Transpose_1_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "bind positive runtime dimensions before layout",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 56, in worker\n    layout = build_layout(graph)\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 30, in build\n    layouts={name:{'root':name,'shape':shape_of(values,name),'steps':[]}\n                                       ^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 25, in shape_of\n    raise ValueError('bind positive runtime dimensions before layout')\nValueError: bind positive runtime dimensions before layout\n",
+      "last_stage": "value_layout",
+      "responsibility_scope": "Algo1 tensor layout lowering",
+      "case_name": "llama-raw",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "simplified",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/llama/simplified.onnx",
+        "recorded_onnx_sha256": "941e444aa7256f1b6b6274e2a529759a51ab73e25686704c760b62008686c4b4",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 243286992,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/llama/simplified.graph.json",
+        "graph_metadata_sha256": "35f50b408c630f178e0743db986730b8abaebe416f0182056601370c81a684dd",
+        "operator_histogram": {
+          "Constant": 4,
+          "Pow": 2,
+          "ReduceMean": 2,
+          "Add": 7,
+          "Sqrt": 2,
+          "Div": 2,
+          "Mul": 9,
+          "MatMul": 9,
+          "Reshape": 6,
+          "Transpose": 5,
+          "Unsqueeze": 4,
+          "Slice": 4,
+          "Neg": 2,
+          "Concat": 2,
+          "Expand": 2,
+          "Softmax": 1,
+          "Sigmoid": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "llama",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": false
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "941e444aa7256f1b6b6274e2a529759a51ab73e25686704c760b62008686c4b4",
+      "imported_operations": 60,
+      "recipe_kinds": {
+        "Pow": 2,
+        "ReduceMean": 2,
+        "Add": 6,
+        "Sqrt": 2,
+        "Div": 2,
+        "Mul": 6,
+        "View": 21,
+        "MatMul": 4,
+        "Neg": 2,
+        "Concat": 2,
+        "Attention": 1,
+        "SwiGLUFFN": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "missing operand recipe: Pow",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 61, in worker\n    recipes = lower(graph, layout)\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/operand_recipes.py\", line 146, in lower\n    else:raise ValueError('missing operand recipe: '+kind)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: missing operand recipe: Pow\n",
+      "last_stage": "operand_lowering",
+      "responsibility_scope": "Algo1 operand lowering",
+      "case_name": "llama-simplified",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "raw",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/phi/raw.onnx",
+        "recorded_onnx_sha256": "b2c10da31c94b2ca72b25d876be9ca2554e852fb6a0fabb508c831f48ebca895",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 402720314,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/phi/raw.graph.json",
+        "graph_metadata_sha256": "df228de6e2c7db55b45b6a8853d962d6c9328238726c5b0edac673033cd8cbd8",
+        "operator_histogram": {
+          "Cast": 6,
+          "Constant": 122,
+          "Pow": 2,
+          "ReduceMean": 2,
+          "Add": 8,
+          "Sqrt": 2,
+          "Div": 3,
+          "Mul": 15,
+          "Transpose": 9,
+          "MatMul": 6,
+          "Unsqueeze": 81,
+          "Slice": 13,
+          "Concat": 12,
+          "Reshape": 8,
+          "Neg": 2,
+          "Shape": 3,
+          "ConstantOfShape": 2,
+          "Equal": 2,
+          "Where": 2,
+          "Expand": 2,
+          "Softmax": 1,
+          "Gather": 1,
+          "Sigmoid": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "phi",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "b2c10da31c94b2ca72b25d876be9ca2554e852fb6a0fabb508c831f48ebca895",
+      "imported_operations": 102,
+      "recipe_kinds": {
+        "Cast": 6,
+        "Pow": 2,
+        "ReduceMean": 2,
+        "Add": 8,
+        "Sqrt": 2,
+        "Div": 3,
+        "Mul": 14,
+        "Concat": 12,
+        "View": 32,
+        "Shape": 3,
+        "ConstantOfShape": 2,
+        "Equal": 2,
+        "Where": 2,
+        "MatMul": 6,
+        "Neg": 2,
+        "Softmax": 1,
+        "Gather": 1,
+        "SiLU": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [
+          {
+            "operation": "/layer/self_attn/Softmax",
+            "reason": "unsupported MatMul operation /layer/self_attn/Cast"
+          }
+        ],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "unsupported concrete shape for /layer/self_attn/Slice_3_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_5",
+            "reason": "unsupported concrete shape for /layer/self_attn/Slice_5_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "bind positive runtime dimensions before layout",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 56, in worker\n    layout = build_layout(graph)\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 30, in build\n    layouts={name:{'root':name,'shape':shape_of(values,name),'steps':[]}\n                                       ^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 25, in shape_of\n    raise ValueError('bind positive runtime dimensions before layout')\nValueError: bind positive runtime dimensions before layout\n",
+      "last_stage": "value_layout",
+      "responsibility_scope": "Algo1 tensor layout lowering",
+      "case_name": "phi-raw",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "simplified",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/phi/simplified.onnx",
+        "recorded_onnx_sha256": "18ef3b33763809ccec4b59fcaf58193b3f57a42e6581ed305fda4e80a067388d",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 402697115,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/phi/simplified.graph.json",
+        "graph_metadata_sha256": "01cdbbd9ae82f2c366dd4349e90176e8fb390551e666208321ecf6fdbf8009ce",
+        "operator_histogram": {
+          "Constant": 4,
+          "Pow": 2,
+          "ReduceMean": 2,
+          "Add": 7,
+          "Sqrt": 2,
+          "Div": 2,
+          "Mul": 11,
+          "MatMul": 6,
+          "Slice": 13,
+          "Reshape": 6,
+          "Transpose": 5,
+          "Unsqueeze": 4,
+          "Neg": 2,
+          "Concat": 4,
+          "Expand": 2,
+          "Softmax": 1,
+          "Sigmoid": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "phi",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "18ef3b33763809ccec4b59fcaf58193b3f57a42e6581ed305fda4e80a067388d",
+      "imported_operations": 70,
+      "recipe_kinds": {
+        "RMSNorm": 2,
+        "View": 30,
+        "MatMul": 4,
+        "Mul": 5,
+        "Neg": 2,
+        "Concat": 4,
+        "Add": 4,
+        "Attention": 1,
+        "SiLU": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_25_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_5",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_25_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "missing operand recipe: Mul",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 61, in worker\n    recipes = lower(graph, layout)\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/operand_recipes.py\", line 146, in lower\n    else:raise ValueError('missing operand recipe: '+kind)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: missing operand recipe: Mul\n",
+      "last_stage": "operand_lowering",
+      "responsibility_scope": "Algo1 operand lowering",
+      "case_name": "phi-simplified",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "raw",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen25/raw.onnx",
+        "recorded_onnx_sha256": "666438972c734451ff37128e8a9301f85b615a67ebd04b7c7e1a240d31370c00",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 308340276,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen25/raw.graph.json",
+        "graph_metadata_sha256": "04d746fa02079d36b0c1eb7b9ab049f12e3a33619e5d69220cd411ea59ae6893",
+        "operator_histogram": {
+          "Cast": 6,
+          "Constant": 85,
+          "Pow": 2,
+          "ReduceMean": 2,
+          "Add": 10,
+          "Sqrt": 2,
+          "Div": 2,
+          "Mul": 13,
+          "Transpose": 12,
+          "MatMul": 9,
+          "Unsqueeze": 53,
+          "Concat": 10,
+          "Reshape": 8,
+          "Slice": 4,
+          "Neg": 2,
+          "Shape": 2,
+          "ConstantOfShape": 2,
+          "Equal": 2,
+          "Where": 2,
+          "Expand": 2,
+          "Softmax": 1,
+          "Sigmoid": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "qwen25",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "666438972c734451ff37128e8a9301f85b615a67ebd04b7c7e1a240d31370c00",
+      "imported_operations": 91,
+      "recipe_kinds": {
+        "Cast": 6,
+        "Pow": 2,
+        "ReduceMean": 2,
+        "Add": 10,
+        "Sqrt": 2,
+        "Div": 2,
+        "Mul": 11,
+        "Concat": 10,
+        "View": 23,
+        "Shape": 2,
+        "ConstantOfShape": 2,
+        "Equal": 2,
+        "Where": 2,
+        "MatMul": 6,
+        "Neg": 2,
+        "Softmax": 1,
+        "SwiGLUFFN": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [
+          {
+            "operation": "/layer/self_attn/Softmax",
+            "reason": "unsupported MatMul operation /layer/self_attn/Cast"
+          }
+        ],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "unsupported concrete shape for /layer/self_attn/Transpose_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "unsupported concrete shape for /layer/self_attn/Transpose_1_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "bind positive runtime dimensions before layout",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 56, in worker\n    layout = build_layout(graph)\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 30, in build\n    layouts={name:{'root':name,'shape':shape_of(values,name),'steps':[]}\n                                       ^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 25, in shape_of\n    raise ValueError('bind positive runtime dimensions before layout')\nValueError: bind positive runtime dimensions before layout\n",
+      "last_stage": "value_layout",
+      "responsibility_scope": "Algo1 tensor layout lowering",
+      "case_name": "qwen25-raw",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "simplified",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen25/simplified.onnx",
+        "recorded_onnx_sha256": "1ebd9779e6baafa6c625912f10de37ea9c09d975772e1238051136dc0bd6189c",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 308325999,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen25/simplified.graph.json",
+        "graph_metadata_sha256": "c6ddcf5382d5f1af2293a68af665965e5db3f73c2434072a1d7298b736a5f296",
+        "operator_histogram": {
+          "Constant": 4,
+          "Pow": 2,
+          "ReduceMean": 2,
+          "Add": 7,
+          "Sqrt": 2,
+          "Div": 2,
+          "Mul": 11,
+          "Reshape": 7,
+          "Gemm": 3,
+          "Transpose": 5,
+          "Unsqueeze": 4,
+          "Slice": 4,
+          "Neg": 2,
+          "Concat": 2,
+          "Expand": 2,
+          "MatMul": 6,
+          "Softmax": 1,
+          "Sigmoid": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "qwen25",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "1ebd9779e6baafa6c625912f10de37ea9c09d975772e1238051136dc0bd6189c",
+      "imported_operations": 63,
+      "recipe_kinds": {
+        "RMSNorm": 2,
+        "View": 22,
+        "Gemm": 3,
+        "Mul": 4,
+        "Neg": 2,
+        "Concat": 2,
+        "Add": 4,
+        "Attention": 1,
+        "MatMul": 1,
+        "SwiGLUFFN": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "missing operand recipe: Gemm",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 61, in worker\n    recipes = lower(graph, layout)\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/operand_recipes.py\", line 146, in lower\n    else:raise ValueError('missing operand recipe: '+kind)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: missing operand recipe: Gemm\n",
+      "last_stage": "operand_lowering",
+      "responsibility_scope": "Algo1 operand lowering",
+      "case_name": "qwen25-simplified",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "raw",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen3/raw.onnx",
+        "recorded_onnx_sha256": "e873f0fc6e4f6d33e03b0686254aaf3136a6252a9730e56c343a72e8dd1e9a20",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 62958983,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen3/raw.graph.json",
+        "graph_metadata_sha256": "6bc7a639bcc45e238e54fa1839ff952ab7b88393eb0570226e51c653989cf1fb",
+        "operator_histogram": {
+          "Cast": 10,
+          "Constant": 91,
+          "Pow": 4,
+          "ReduceMean": 4,
+          "Add": 9,
+          "Sqrt": 4,
+          "Div": 4,
+          "Mul": 17,
+          "Transpose": 12,
+          "MatMul": 9,
+          "Unsqueeze": 53,
+          "Concat": 10,
+          "Reshape": 8,
+          "Slice": 4,
+          "Neg": 2,
+          "Shape": 2,
+          "ConstantOfShape": 2,
+          "Equal": 2,
+          "Where": 2,
+          "Expand": 2,
+          "Softmax": 1,
+          "Sigmoid": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "qwen3",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "e873f0fc6e4f6d33e03b0686254aaf3136a6252a9730e56c343a72e8dd1e9a20",
+      "imported_operations": 106,
+      "recipe_kinds": {
+        "Cast": 10,
+        "Pow": 4,
+        "ReduceMean": 4,
+        "Add": 9,
+        "Sqrt": 4,
+        "Div": 4,
+        "Mul": 15,
+        "Concat": 10,
+        "View": 23,
+        "Shape": 2,
+        "ConstantOfShape": 2,
+        "Equal": 2,
+        "Where": 2,
+        "MatMul": 6,
+        "Neg": 2,
+        "Softmax": 1,
+        "SwiGLUFFN": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [
+          {
+            "operation": "/layer/self_attn/Softmax",
+            "reason": "unsupported MatMul operation /layer/self_attn/Cast"
+          }
+        ],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "unsupported concrete shape for /layer/self_attn/Transpose_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "unsupported concrete shape for /layer/self_attn/Transpose_1_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "bind positive runtime dimensions before layout",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 56, in worker\n    layout = build_layout(graph)\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 30, in build\n    layouts={name:{'root':name,'shape':shape_of(values,name),'steps':[]}\n                                       ^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 25, in shape_of\n    raise ValueError('bind positive runtime dimensions before layout')\nValueError: bind positive runtime dimensions before layout\n",
+      "last_stage": "value_layout",
+      "responsibility_scope": "Algo1 tensor layout lowering",
+      "case_name": "qwen3-raw",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "simplified",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen3/simplified.onnx",
+        "recorded_onnx_sha256": "f767eeca8a426ce133d65cc0e9f77ec9cc5458657ca9df769f70e8c96cfa4161",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 62944884,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen3/simplified.graph.json",
+        "graph_metadata_sha256": "3aab1ab5252983095e7e2ebcfe935e351677ed1b33cc6495b5e9f49894f45a85",
+        "operator_histogram": {
+          "Constant": 4,
+          "Pow": 4,
+          "ReduceMean": 4,
+          "Add": 9,
+          "Sqrt": 4,
+          "Div": 4,
+          "Mul": 15,
+          "MatMul": 9,
+          "Reshape": 6,
+          "Transpose": 5,
+          "Unsqueeze": 4,
+          "Slice": 4,
+          "Neg": 2,
+          "Concat": 2,
+          "Expand": 2,
+          "Softmax": 1,
+          "Sigmoid": 1
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "qwen3",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "f767eeca8a426ce133d65cc0e9f77ec9cc5458657ca9df769f70e8c96cfa4161",
+      "imported_operations": 76,
+      "recipe_kinds": {
+        "RMSNorm": 4,
+        "View": 21,
+        "MatMul": 4,
+        "Mul": 4,
+        "Neg": 2,
+        "Concat": 2,
+        "Add": 4,
+        "Attention": 1,
+        "SwiGLUFFN": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_3",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_4",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_13_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "missing operand recipe: Mul",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 61, in worker\n    recipes = lower(graph, layout)\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/operand_recipes.py\", line 146, in lower\n    else:raise ValueError('missing operand recipe: '+kind)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: missing operand recipe: Mul\n",
+      "last_stage": "operand_lowering",
+      "responsibility_scope": "Algo1 operand lowering",
+      "case_name": "qwen3-simplified",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "raw",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen35_global/raw.onnx",
+        "recorded_onnx_sha256": "3b328bfe2f08887eb21414a08c987d7ede6088f2c6853d13e6383b5a63e46f85",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 429985449,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen35_global/raw.graph.json",
+        "graph_metadata_sha256": "2c862553b4e75fe2deaa6ca7309478aae95a6ee4da2d054042395c57083ce70c",
+        "operator_histogram": {
+          "Cast": 10,
+          "Constant": 126,
+          "Pow": 4,
+          "ReduceMean": 4,
+          "Add": 14,
+          "Sqrt": 4,
+          "Div": 5,
+          "Mul": 20,
+          "Transpose": 12,
+          "MatMul": 9,
+          "Unsqueeze": 76,
+          "Concat": 14,
+          "Reshape": 10,
+          "Shape": 3,
+          "Gather": 1,
+          "Slice": 10,
+          "Neg": 2,
+          "ConstantOfShape": 2,
+          "Equal": 2,
+          "Where": 2,
+          "Expand": 2,
+          "Softmax": 1,
+          "Sigmoid": 2
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "qwen35_global",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "3b328bfe2f08887eb21414a08c987d7ede6088f2c6853d13e6383b5a63e46f85",
+      "imported_operations": 126,
+      "recipe_kinds": {
+        "Add": 12,
+        "Cast": 6,
+        "RMSNorm": 2,
+        "Concat": 14,
+        "View": 31,
+        "Shape": 3,
+        "ConstantOfShape": 2,
+        "Mul": 14,
+        "Equal": 2,
+        "Where": 2,
+        "MatMul": 6,
+        "Pow": 2,
+        "ReduceMean": 2,
+        "Sqrt": 2,
+        "Div": 3,
+        "Neg": 2,
+        "Gather": 1,
+        "Sigmoid": 1,
+        "Softmax": 1,
+        "SwiGLUFFN": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [
+          {
+            "operation": "/layer/self_attn/Softmax",
+            "reason": "unsupported MatMul operation /layer/self_attn/Cast"
+          }
+        ],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_6",
+            "reason": "unsupported concrete shape for /layer/self_attn/Slice_2_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_7",
+            "reason": "unsupported concrete shape for /layer/self_attn/Slice_4_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "bind positive runtime dimensions before layout",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 56, in worker\n    layout = build_layout(graph)\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 30, in build\n    layouts={name:{'root':name,'shape':shape_of(values,name),'steps':[]}\n                                       ^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 25, in shape_of\n    raise ValueError('bind positive runtime dimensions before layout')\nValueError: bind positive runtime dimensions before layout\n",
+      "last_stage": "value_layout",
+      "responsibility_scope": "Algo1 tensor layout lowering",
+      "case_name": "qwen35_global-raw",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "simplified",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen35_global/simplified.onnx",
+        "recorded_onnx_sha256": "1e1cddad2d94f92e57a7d98476cfe49dc4dab9035c3e4007c14963a293631ab0",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 429962886,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native02/qwen35_global/simplified.graph.json",
+        "graph_metadata_sha256": "bbc526d8a62b43e6242676e26bad2ef37cb2da96ed62db29a9ec603dcaa84e8c",
+        "operator_histogram": {
+          "Constant": 8,
+          "Pow": 4,
+          "ReduceMean": 4,
+          "Add": 9,
+          "Sqrt": 4,
+          "Div": 4,
+          "Mul": 16,
+          "MatMul": 9,
+          "Reshape": 7,
+          "Slice": 10,
+          "Transpose": 5,
+          "Unsqueeze": 4,
+          "Neg": 2,
+          "Concat": 4,
+          "Expand": 2,
+          "Softmax": 1,
+          "Sigmoid": 2
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "qwen35_global",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "1e1cddad2d94f92e57a7d98476cfe49dc4dab9035c3e4007c14963a293631ab0",
+      "imported_operations": 87,
+      "recipe_kinds": {
+        "RMSNorm": 4,
+        "View": 28,
+        "MatMul": 4,
+        "Mul": 5,
+        "Neg": 2,
+        "Concat": 4,
+        "Add": 4,
+        "Sigmoid": 1,
+        "Attention": 1,
+        "SwiGLUFFN": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [],
+        "rope_unmatched": [
+          {
+            "operation": "/layer/self_attn/Concat_6",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_23_output_0"
+          },
+          {
+            "operation": "/layer/self_attn/Concat_7",
+            "reason": "RoPE coefficient is not a sealed initializer: /layer/self_attn/Unsqueeze_23_output_0"
+          }
+        ]
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "missing operand recipe: Mul",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 61, in worker\n    recipes = lower(graph, layout)\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/operand_recipes.py\", line 146, in lower\n    else:raise ValueError('missing operand recipe: '+kind)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: missing operand recipe: Mul\n",
+      "last_stage": "operand_lowering",
+      "responsibility_scope": "Algo1 operand lowering",
+      "case_name": "qwen35_global-simplified",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "raw",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/qwen35_linear/raw.onnx",
+        "recorded_onnx_sha256": "57d8ce9b8c6d977f2e309b2c8da20dc2eb2b10b0e696197d0bb60ae9eee9e7ab",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 453895815,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/qwen35_linear/raw.graph.json",
+        "graph_metadata_sha256": "dc31c95f29e2273445491dde1710cd8aa5e5851ea24e39b4972c0c09f1040994",
+        "operator_histogram": {
+          "Cast": 18,
+          "Constant": 118,
+          "Pow": 4,
+          "ReduceMean": 3,
+          "Add": 16,
+          "Sqrt": 5,
+          "Div": 6,
+          "Mul": 32,
+          "Transpose": 16,
+          "MatMul": 8,
+          "Unsqueeze": 44,
+          "Concat": 11,
+          "Reshape": 11,
+          "Squeeze": 1,
+          "Conv": 1,
+          "Slice": 7,
+          "Sigmoid": 4,
+          "Split": 1,
+          "Exp": 3,
+          "Neg": 1,
+          "Softplus": 1,
+          "Tile": 2,
+          "Shape": 14,
+          "ReduceSum": 6,
+          "Gather": 11,
+          "Sub": 2,
+          "Expand": 8,
+          "ConstantOfShape": 6,
+          "Equal": 6,
+          "Where": 6,
+          "ScatterND": 2
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "qwen35_linear",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "57d8ce9b8c6d977f2e309b2c8da20dc2eb2b10b0e696197d0bb60ae9eee9e7ab",
+      "imported_operations": 220,
+      "recipe_kinds": {
+        "Add": 14,
+        "Cast": 15,
+        "RMSNorm": 2,
+        "Concat": 11,
+        "Exp": 3,
+        "Neg": 1,
+        "Pow": 2,
+        "Shape": 14,
+        "ConstantOfShape": 6,
+        "Mul": 24,
+        "Equal": 6,
+        "View": 54,
+        "Where": 6,
+        "MatMul": 5,
+        "Softplus": 1,
+        "Gather": 11,
+        "Sigmoid": 1,
+        "Conv": 1,
+        "SiLU": 2,
+        "Split": 1,
+        "Tile": 2,
+        "ReduceSum": 6,
+        "Sqrt": 3,
+        "Div": 4,
+        "Sub": 2,
+        "ScatterND": 2,
+        "ReduceMean": 1,
+        "SwiGLUFFN": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [],
+        "rope_unmatched": []
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "bind positive runtime dimensions before layout",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 56, in worker\n    layout = build_layout(graph)\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 30, in build\n    layouts={name:{'root':name,'shape':shape_of(values,name),'steps':[]}\n                                       ^^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/value_layout.py\", line 25, in shape_of\n    raise ValueError('bind positive runtime dimensions before layout')\nValueError: bind positive runtime dimensions before layout\n",
+      "last_stage": "value_layout",
+      "responsibility_scope": "Algo1 tensor layout lowering",
+      "case_name": "qwen35_linear-raw",
+      "process_exit": 0
+    },
+    {
+      "case": {
+        "flavor": "simplified",
+        "onnx": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/qwen35_linear/simplified.onnx",
+        "recorded_onnx_sha256": "1e7ed9ece3477e47ec84435dd12bedf7948840e6cb089ec852395d3c6d81bf55",
+        "onnx_exists": true,
+        "recorded_onnx_bytes": 453858478,
+        "graph_metadata": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/results/native04/qwen35_linear/simplified.graph.json",
+        "graph_metadata_sha256": "49eb020672ef6b8c4fd44a677e40ce44d3e92c28864c09956de24e2c92c13dc6",
+        "operator_histogram": {
+          "Constant": 10,
+          "Pow": 3,
+          "ReduceMean": 3,
+          "Add": 9,
+          "Sqrt": 5,
+          "Div": 6,
+          "Mul": 26,
+          "MatMul": 7,
+          "Transpose": 8,
+          "Conv": 1,
+          "Slice": 1,
+          "Sigmoid": 4,
+          "Split": 1,
+          "Reshape": 12,
+          "Gemm": 1,
+          "Softplus": 1,
+          "Tile": 2,
+          "ReduceSum": 6,
+          "Gather": 10,
+          "Exp": 2,
+          "Unsqueeze": 10,
+          "Sub": 2,
+          "ScatterND": 2
+        },
+        "onnx_bytes_rehashed_this_step": false,
+        "model_layer": "qwen35_linear",
+        "source_scope": "Native full decoder layer; actual config and checkpoint tensors where available; B1 S2 FP32 eager prefill; dropout disabled. Not a full-network or cached-state export.",
+        "checkpoint_loaded": true
+      },
+      "complete_plan": false,
+      "machine_package_complete": false,
+      "TLM_accepted": false,
+      "scope": "single decoder-layer graph conversion",
+      "onnx_sha256": "1e7ed9ece3477e47ec84435dd12bedf7948840e6cb089ec852395d3c6d81bf55",
+      "imported_operations": 122,
+      "recipe_kinds": {
+        "RMSNorm": 3,
+        "MatMul": 4,
+        "Sigmoid": 1,
+        "View": 31,
+        "Gather": 10,
+        "Conv": 1,
+        "SiLU": 2,
+        "Split": 1,
+        "Gemm": 1,
+        "Softplus": 1,
+        "Mul": 16,
+        "Exp": 2,
+        "Tile": 2,
+        "ReduceSum": 6,
+        "Add": 6,
+        "Sqrt": 2,
+        "Div": 3,
+        "Sub": 2,
+        "ScatterND": 2,
+        "SwiGLUFFN": 1
+      },
+      "recognition_notes": {
+        "attention_unmatched": [],
+        "rope_unmatched": []
+      },
+      "status": "gap",
+      "error_type": "ValueError",
+      "error": "missing operand recipe: Sigmoid",
+      "traceback": "Traceback (most recent call last):\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/tests/convert_remaining_benchmarks.py\", line 61, in worker\n    recipes = lower(graph, layout)\n              ^^^^^^^^^^^^^^^^^^^^\n  File \"/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/compiler/operand_recipes.py\", line 146, in lower\n    else:raise ValueError('missing operand recipe: '+kind)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: missing operand recipe: Sigmoid\n",
+      "last_stage": "operand_lowering",
+      "responsibility_scope": "Algo1 operand lowering",
+      "case_name": "qwen35_linear-simplified",
+      "process_exit": 0
+    }
+  ],
+  "numerical_acceptance": false,
+  "TLM_acceptance": false
+}

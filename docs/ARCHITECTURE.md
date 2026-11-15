@@ -1,5 +1,11 @@
 # 架构与运行
 
+## PR185 修正后的宏级 Algo1 实验
+
+当前源码位于 [project/experiments/blockv2_mod](../project/experiments/blockv2_mod/README.md)。硬件输入为 blockv2-mod-shared-memory.json，图输入为同源 recipe graph、operand recipes 和 value layout；先生成候选、选择计划，再生成实际端点静态连接与机器包。完整命令与外部依赖见该目录 README.md / NATIVE_FLOW.md。实验保留经过验证的远端绝对路径，尚未声称独立安装可移植性。
+
+已完成两 token prefill 和一次自产 KV decode 的全图 TLM 功能验收。所有重型计算、模型和二进制工件保留远端；仓库提交源码、小型回执和逐文件制品索引。旧固定 U/P 供数、symbolic RUN_LOOP 和归档页诊断不能替代当前计划。详细边界见 [RESULTS_ZH.md](../project/experiments/blockv2_mod/evidence/architecture-revision-185/RESULTS_ZH.md)。
+
 2026-11-13 CST。#219 的[芯片状态重放](../project/experiments/block_synthesis/STATE_DEPENDENT_COST_PLAN.md)通过 `run.py --event-ir` 及硬件 JSON 的 `event_model.timing = "replay"` 启用。方案文档列出 SRAM 窗口阶段合同、冻结 FFN 回归和四 bank 原生探针的复现命令。
 
 2026-11-09迭代21：[就绪DAG合同](../project/experiments/block_synthesis/RESIDENT_READY.md)。

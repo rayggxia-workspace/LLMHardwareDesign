@@ -1,0 +1,28 @@
+{
+  "status": "fixed_U_native_descriptor_path_verified",
+  "delivery_accepted": false,
+  "source_sha256": {
+    "rtl/blockv2_mod_u_native_lc.sv": "ed470044b740fb10c340d6f285b82ed7bd3c2c52d617daa41b2a15faa999e32f",
+    "rtl/u0/u_native_descriptor.sv": "19e6b6712c64b581db632edddb65a3d88123f8d6e91f38dcdd326f6b412c9a99",
+    "rtl/u0/u_n32_controlled_64.sv": "87e673a8bb52d56c129bbdb7e4d66185104ca5f580f2f06d65d98a423004d3bd",
+    "rtl/u0/wrapper.sv": "51d5298f9e15c8839708c709828bd3e5a49425769ac7d7d92c759d8c7fa62772",
+    "compiler/native_backend.py": "0a052c0473a6e482c3c2d6eb0018893672a82ae9d8ed7104b1b0a5269d6c54fd",
+    "compiler/native_local_kernel.py": "6d0f31d9f9b99084604b75d36c6c4f04f7df1002cb18d0578a2b5b351f055ed0",
+    "algo1/blockv2-mod.json": "87b157cddf33dfe212d100ccb64ad348b1ca8255689c10b80d3b86478584f7bc",
+    "hardware/blockv2-mod-nine.json": "7446b3f8139b263592c2481e974f0d56d358b92170e15a5a45245b3409d7ebb3"
+  },
+  "evidence": {
+    "U0": "evidence/u-native-114068/run.log",
+    "U1": "evidence/u-native-114069/run.log",
+    "compiler_generated_kernel": "evidence/u-native-compiler-kernel-114080.log",
+    "full_graph_rms_add_descriptor_encoding": "evidence/native-backend-114070/report.json"
+  },
+  "proved": "One fixed local program per U instance; repeated native CALL descriptor fetch, real SRAM ADD and confirmed DDR write with numeric comparison. Graph RMS/Add encoding uses raw descriptors.",
+  "not_proved": [
+    "full-graph native candidate selection and address allocation",
+    "all other U services through new frontend",
+    "joined U feed and P arithmetic",
+    "same-plan machine package and candidate wiring",
+    "PR260 fast TLM execution of that package"
+  ]
+}

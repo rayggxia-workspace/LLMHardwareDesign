@@ -1,0 +1,1361 @@
+{
+  "scope": "candidate endpoint catalog; no selected global plan yet",
+  "links": [
+    {
+      "schema": "blockv2-mod-projection-feed-link/1",
+      "source": "U0",
+      "target": "P0",
+      "signals": [
+        {
+          "driver": "P0.window_need_valid",
+          "sink": "U0.feed_window_need_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.window_need_k",
+          "sink": "U0.feed_window_need_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "P0.window_need_key",
+          "sink": "U0.feed_window_need_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U0.feed_lease_valid",
+          "sink": "P0.lease_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.lease_ready",
+          "sink": "U0.feed_lease_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_lease_key",
+          "sink": "P0.lease_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U0.feed_lease_generation",
+          "sink": "P0.lease_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_lease_k",
+          "sink": "P0.lease_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_lease_session",
+          "sink": "P0.lease_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_lease_ticket",
+          "sink": "P0.lease_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_release_window",
+          "sink": "P0.release_window",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.release_ready",
+          "sink": "U0.feed_release_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.window_enabled",
+          "sink": "U0.feed_window_enabled",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_header_valid",
+          "sink": "P0.header_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.header_ready",
+          "sink": "U0.feed_header_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_header_tag",
+          "sink": "P0.header_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_header_data",
+          "sink": "P0.header_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P0.header_ack_valid",
+          "sink": "U0.feed_header_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_header_ack_ready",
+          "sink": "P0.header_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.header_ack_tag",
+          "sink": "U0.feed_header_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "P0.header_ack_error",
+          "sink": "U0.feed_header_ack_error",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_cp_valid",
+          "sink": "P0.cp_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.cp_ready",
+          "sink": "U0.feed_cp_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_cp_address",
+          "sink": "P0.cp_address",
+          "width_bits": 10
+        },
+        {
+          "driver": "U0.feed_cp_tag",
+          "sink": "P0.cp_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_cp_data",
+          "sink": "P0.cp_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P0.cp_ack_valid",
+          "sink": "U0.feed_cp_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_cp_ack_ready",
+          "sink": "P0.cp_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.cp_ack_tag",
+          "sink": "U0.feed_cp_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_copy_drained",
+          "sink": "P0.copy_drained",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_copy_progress_valid",
+          "sink": "P0.copy_progress_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_copy_key",
+          "sink": "P0.copy_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U0.feed_copy_generation",
+          "sink": "P0.copy_progress_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_copy_k",
+          "sink": "P0.copy_progress_k_elements",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_copy_session",
+          "sink": "P0.copy_progress_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_copy_ticket",
+          "sink": "P0.copy_progress_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_copy_committed_prefix",
+          "sink": "P0.copy_committed_prefix",
+          "width_bits": 11
+        },
+        {
+          "driver": "P0.a_load_proof_valid",
+          "sink": "U0.feed_proof_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_proof_ready",
+          "sink": "P0.a_load_proof_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.a_load_proof_shift",
+          "sink": "U0.feed_proof_shift",
+          "width_bits": 6
+        },
+        {
+          "driver": "P0.a_source_reads_drained",
+          "sink": "U0.feed_source_reads_drained",
+          "width_bits": 1
+        }
+      ],
+      "constant_inputs": [
+        {
+          "sink": "U0.feed_cp_ack_error",
+          "value": 0,
+          "reason": "selected P COPY SRAM response has no error sideband"
+        }
+      ],
+      "claims": [
+        "U0.LC.service",
+        "U0.S.IO",
+        "P0.LC.service",
+        "P0.S.IO"
+      ],
+      "completion": "feed finished after all P input-window releases; mother must also wait for P scope completion"
+    },
+    {
+      "schema": "blockv2-mod-projection-feed-link/1",
+      "source": "U0",
+      "target": "P1",
+      "signals": [
+        {
+          "driver": "P1.window_need_valid",
+          "sink": "U0.feed_window_need_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.window_need_k",
+          "sink": "U0.feed_window_need_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "P1.window_need_key",
+          "sink": "U0.feed_window_need_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U0.feed_lease_valid",
+          "sink": "P1.lease_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.lease_ready",
+          "sink": "U0.feed_lease_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_lease_key",
+          "sink": "P1.lease_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U0.feed_lease_generation",
+          "sink": "P1.lease_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_lease_k",
+          "sink": "P1.lease_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_lease_session",
+          "sink": "P1.lease_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_lease_ticket",
+          "sink": "P1.lease_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_release_window",
+          "sink": "P1.release_window",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.release_ready",
+          "sink": "U0.feed_release_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.window_enabled",
+          "sink": "U0.feed_window_enabled",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_header_valid",
+          "sink": "P1.header_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.header_ready",
+          "sink": "U0.feed_header_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_header_tag",
+          "sink": "P1.header_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_header_data",
+          "sink": "P1.header_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P1.header_ack_valid",
+          "sink": "U0.feed_header_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_header_ack_ready",
+          "sink": "P1.header_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.header_ack_tag",
+          "sink": "U0.feed_header_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "P1.header_ack_error",
+          "sink": "U0.feed_header_ack_error",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_cp_valid",
+          "sink": "P1.cp_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.cp_ready",
+          "sink": "U0.feed_cp_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_cp_address",
+          "sink": "P1.cp_address",
+          "width_bits": 10
+        },
+        {
+          "driver": "U0.feed_cp_tag",
+          "sink": "P1.cp_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_cp_data",
+          "sink": "P1.cp_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P1.cp_ack_valid",
+          "sink": "U0.feed_cp_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_cp_ack_ready",
+          "sink": "P1.cp_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.cp_ack_tag",
+          "sink": "U0.feed_cp_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_copy_drained",
+          "sink": "P1.copy_drained",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_copy_progress_valid",
+          "sink": "P1.copy_progress_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_copy_key",
+          "sink": "P1.copy_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U0.feed_copy_generation",
+          "sink": "P1.copy_progress_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_copy_k",
+          "sink": "P1.copy_progress_k_elements",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_copy_session",
+          "sink": "P1.copy_progress_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_copy_ticket",
+          "sink": "P1.copy_progress_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_copy_committed_prefix",
+          "sink": "P1.copy_committed_prefix",
+          "width_bits": 11
+        },
+        {
+          "driver": "P1.a_load_proof_valid",
+          "sink": "U0.feed_proof_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_proof_ready",
+          "sink": "P1.a_load_proof_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.a_load_proof_shift",
+          "sink": "U0.feed_proof_shift",
+          "width_bits": 6
+        },
+        {
+          "driver": "P1.a_source_reads_drained",
+          "sink": "U0.feed_source_reads_drained",
+          "width_bits": 1
+        }
+      ],
+      "constant_inputs": [
+        {
+          "sink": "U0.feed_cp_ack_error",
+          "value": 0,
+          "reason": "selected P COPY SRAM response has no error sideband"
+        }
+      ],
+      "claims": [
+        "U0.LC.service",
+        "U0.S.IO",
+        "P1.LC.service",
+        "P1.S.IO"
+      ],
+      "completion": "feed finished after all P input-window releases; mother must also wait for P scope completion"
+    },
+    {
+      "schema": "blockv2-mod-projection-feed-link/1",
+      "source": "U0",
+      "target": "P2",
+      "signals": [
+        {
+          "driver": "P2.window_need_valid",
+          "sink": "U0.feed_window_need_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.window_need_k",
+          "sink": "U0.feed_window_need_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "P2.window_need_key",
+          "sink": "U0.feed_window_need_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U0.feed_lease_valid",
+          "sink": "P2.lease_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.lease_ready",
+          "sink": "U0.feed_lease_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_lease_key",
+          "sink": "P2.lease_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U0.feed_lease_generation",
+          "sink": "P2.lease_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_lease_k",
+          "sink": "P2.lease_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_lease_session",
+          "sink": "P2.lease_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_lease_ticket",
+          "sink": "P2.lease_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_release_window",
+          "sink": "P2.release_window",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.release_ready",
+          "sink": "U0.feed_release_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.window_enabled",
+          "sink": "U0.feed_window_enabled",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_header_valid",
+          "sink": "P2.header_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.header_ready",
+          "sink": "U0.feed_header_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_header_tag",
+          "sink": "P2.header_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_header_data",
+          "sink": "P2.header_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P2.header_ack_valid",
+          "sink": "U0.feed_header_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_header_ack_ready",
+          "sink": "P2.header_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.header_ack_tag",
+          "sink": "U0.feed_header_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "P2.header_ack_error",
+          "sink": "U0.feed_header_ack_error",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_cp_valid",
+          "sink": "P2.cp_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.cp_ready",
+          "sink": "U0.feed_cp_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_cp_address",
+          "sink": "P2.cp_address",
+          "width_bits": 10
+        },
+        {
+          "driver": "U0.feed_cp_tag",
+          "sink": "P2.cp_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_cp_data",
+          "sink": "P2.cp_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P2.cp_ack_valid",
+          "sink": "U0.feed_cp_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_cp_ack_ready",
+          "sink": "P2.cp_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.cp_ack_tag",
+          "sink": "U0.feed_cp_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_copy_drained",
+          "sink": "P2.copy_drained",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_copy_progress_valid",
+          "sink": "P2.copy_progress_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_copy_key",
+          "sink": "P2.copy_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U0.feed_copy_generation",
+          "sink": "P2.copy_progress_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_copy_k",
+          "sink": "P2.copy_progress_k_elements",
+          "width_bits": 16
+        },
+        {
+          "driver": "U0.feed_copy_session",
+          "sink": "P2.copy_progress_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_copy_ticket",
+          "sink": "P2.copy_progress_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U0.feed_copy_committed_prefix",
+          "sink": "P2.copy_committed_prefix",
+          "width_bits": 11
+        },
+        {
+          "driver": "P2.a_load_proof_valid",
+          "sink": "U0.feed_proof_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U0.feed_proof_ready",
+          "sink": "P2.a_load_proof_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.a_load_proof_shift",
+          "sink": "U0.feed_proof_shift",
+          "width_bits": 6
+        },
+        {
+          "driver": "P2.a_source_reads_drained",
+          "sink": "U0.feed_source_reads_drained",
+          "width_bits": 1
+        }
+      ],
+      "constant_inputs": [
+        {
+          "sink": "U0.feed_cp_ack_error",
+          "value": 0,
+          "reason": "selected P COPY SRAM response has no error sideband"
+        }
+      ],
+      "claims": [
+        "U0.LC.service",
+        "U0.S.IO",
+        "P2.LC.service",
+        "P2.S.IO"
+      ],
+      "completion": "feed finished after all P input-window releases; mother must also wait for P scope completion"
+    },
+    {
+      "schema": "blockv2-mod-projection-feed-link/1",
+      "source": "U1",
+      "target": "P0",
+      "signals": [
+        {
+          "driver": "P0.window_need_valid",
+          "sink": "U1.feed_window_need_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.window_need_k",
+          "sink": "U1.feed_window_need_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "P0.window_need_key",
+          "sink": "U1.feed_window_need_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U1.feed_lease_valid",
+          "sink": "P0.lease_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.lease_ready",
+          "sink": "U1.feed_lease_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_lease_key",
+          "sink": "P0.lease_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U1.feed_lease_generation",
+          "sink": "P0.lease_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_lease_k",
+          "sink": "P0.lease_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_lease_session",
+          "sink": "P0.lease_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_lease_ticket",
+          "sink": "P0.lease_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_release_window",
+          "sink": "P0.release_window",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.release_ready",
+          "sink": "U1.feed_release_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.window_enabled",
+          "sink": "U1.feed_window_enabled",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_header_valid",
+          "sink": "P0.header_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.header_ready",
+          "sink": "U1.feed_header_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_header_tag",
+          "sink": "P0.header_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_header_data",
+          "sink": "P0.header_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P0.header_ack_valid",
+          "sink": "U1.feed_header_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_header_ack_ready",
+          "sink": "P0.header_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.header_ack_tag",
+          "sink": "U1.feed_header_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "P0.header_ack_error",
+          "sink": "U1.feed_header_ack_error",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_cp_valid",
+          "sink": "P0.cp_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.cp_ready",
+          "sink": "U1.feed_cp_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_cp_address",
+          "sink": "P0.cp_address",
+          "width_bits": 10
+        },
+        {
+          "driver": "U1.feed_cp_tag",
+          "sink": "P0.cp_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_cp_data",
+          "sink": "P0.cp_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P0.cp_ack_valid",
+          "sink": "U1.feed_cp_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_cp_ack_ready",
+          "sink": "P0.cp_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.cp_ack_tag",
+          "sink": "U1.feed_cp_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_copy_drained",
+          "sink": "P0.copy_drained",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_copy_progress_valid",
+          "sink": "P0.copy_progress_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_copy_key",
+          "sink": "P0.copy_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U1.feed_copy_generation",
+          "sink": "P0.copy_progress_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_copy_k",
+          "sink": "P0.copy_progress_k_elements",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_copy_session",
+          "sink": "P0.copy_progress_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_copy_ticket",
+          "sink": "P0.copy_progress_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_copy_committed_prefix",
+          "sink": "P0.copy_committed_prefix",
+          "width_bits": 11
+        },
+        {
+          "driver": "P0.a_load_proof_valid",
+          "sink": "U1.feed_proof_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_proof_ready",
+          "sink": "P0.a_load_proof_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P0.a_load_proof_shift",
+          "sink": "U1.feed_proof_shift",
+          "width_bits": 6
+        },
+        {
+          "driver": "P0.a_source_reads_drained",
+          "sink": "U1.feed_source_reads_drained",
+          "width_bits": 1
+        }
+      ],
+      "constant_inputs": [
+        {
+          "sink": "U1.feed_cp_ack_error",
+          "value": 0,
+          "reason": "selected P COPY SRAM response has no error sideband"
+        }
+      ],
+      "claims": [
+        "U1.LC.service",
+        "U1.S.IO",
+        "P0.LC.service",
+        "P0.S.IO"
+      ],
+      "completion": "feed finished after all P input-window releases; mother must also wait for P scope completion"
+    },
+    {
+      "schema": "blockv2-mod-projection-feed-link/1",
+      "source": "U1",
+      "target": "P1",
+      "signals": [
+        {
+          "driver": "P1.window_need_valid",
+          "sink": "U1.feed_window_need_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.window_need_k",
+          "sink": "U1.feed_window_need_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "P1.window_need_key",
+          "sink": "U1.feed_window_need_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U1.feed_lease_valid",
+          "sink": "P1.lease_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.lease_ready",
+          "sink": "U1.feed_lease_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_lease_key",
+          "sink": "P1.lease_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U1.feed_lease_generation",
+          "sink": "P1.lease_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_lease_k",
+          "sink": "P1.lease_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_lease_session",
+          "sink": "P1.lease_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_lease_ticket",
+          "sink": "P1.lease_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_release_window",
+          "sink": "P1.release_window",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.release_ready",
+          "sink": "U1.feed_release_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.window_enabled",
+          "sink": "U1.feed_window_enabled",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_header_valid",
+          "sink": "P1.header_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.header_ready",
+          "sink": "U1.feed_header_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_header_tag",
+          "sink": "P1.header_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_header_data",
+          "sink": "P1.header_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P1.header_ack_valid",
+          "sink": "U1.feed_header_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_header_ack_ready",
+          "sink": "P1.header_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.header_ack_tag",
+          "sink": "U1.feed_header_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "P1.header_ack_error",
+          "sink": "U1.feed_header_ack_error",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_cp_valid",
+          "sink": "P1.cp_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.cp_ready",
+          "sink": "U1.feed_cp_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_cp_address",
+          "sink": "P1.cp_address",
+          "width_bits": 10
+        },
+        {
+          "driver": "U1.feed_cp_tag",
+          "sink": "P1.cp_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_cp_data",
+          "sink": "P1.cp_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P1.cp_ack_valid",
+          "sink": "U1.feed_cp_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_cp_ack_ready",
+          "sink": "P1.cp_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.cp_ack_tag",
+          "sink": "U1.feed_cp_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_copy_drained",
+          "sink": "P1.copy_drained",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_copy_progress_valid",
+          "sink": "P1.copy_progress_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_copy_key",
+          "sink": "P1.copy_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U1.feed_copy_generation",
+          "sink": "P1.copy_progress_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_copy_k",
+          "sink": "P1.copy_progress_k_elements",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_copy_session",
+          "sink": "P1.copy_progress_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_copy_ticket",
+          "sink": "P1.copy_progress_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_copy_committed_prefix",
+          "sink": "P1.copy_committed_prefix",
+          "width_bits": 11
+        },
+        {
+          "driver": "P1.a_load_proof_valid",
+          "sink": "U1.feed_proof_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_proof_ready",
+          "sink": "P1.a_load_proof_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P1.a_load_proof_shift",
+          "sink": "U1.feed_proof_shift",
+          "width_bits": 6
+        },
+        {
+          "driver": "P1.a_source_reads_drained",
+          "sink": "U1.feed_source_reads_drained",
+          "width_bits": 1
+        }
+      ],
+      "constant_inputs": [
+        {
+          "sink": "U1.feed_cp_ack_error",
+          "value": 0,
+          "reason": "selected P COPY SRAM response has no error sideband"
+        }
+      ],
+      "claims": [
+        "U1.LC.service",
+        "U1.S.IO",
+        "P1.LC.service",
+        "P1.S.IO"
+      ],
+      "completion": "feed finished after all P input-window releases; mother must also wait for P scope completion"
+    },
+    {
+      "schema": "blockv2-mod-projection-feed-link/1",
+      "source": "U1",
+      "target": "P2",
+      "signals": [
+        {
+          "driver": "P2.window_need_valid",
+          "sink": "U1.feed_window_need_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.window_need_k",
+          "sink": "U1.feed_window_need_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "P2.window_need_key",
+          "sink": "U1.feed_window_need_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U1.feed_lease_valid",
+          "sink": "P2.lease_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.lease_ready",
+          "sink": "U1.feed_lease_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_lease_key",
+          "sink": "P2.lease_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U1.feed_lease_generation",
+          "sink": "P2.lease_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_lease_k",
+          "sink": "P2.lease_k",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_lease_session",
+          "sink": "P2.lease_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_lease_ticket",
+          "sink": "P2.lease_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_release_window",
+          "sink": "P2.release_window",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.release_ready",
+          "sink": "U1.feed_release_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.window_enabled",
+          "sink": "U1.feed_window_enabled",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_header_valid",
+          "sink": "P2.header_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.header_ready",
+          "sink": "U1.feed_header_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_header_tag",
+          "sink": "P2.header_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_header_data",
+          "sink": "P2.header_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P2.header_ack_valid",
+          "sink": "U1.feed_header_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_header_ack_ready",
+          "sink": "P2.header_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.header_ack_tag",
+          "sink": "U1.feed_header_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "P2.header_ack_error",
+          "sink": "U1.feed_header_ack_error",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_cp_valid",
+          "sink": "P2.cp_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.cp_ready",
+          "sink": "U1.feed_cp_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_cp_address",
+          "sink": "P2.cp_address",
+          "width_bits": 10
+        },
+        {
+          "driver": "U1.feed_cp_tag",
+          "sink": "P2.cp_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_cp_data",
+          "sink": "P2.cp_data",
+          "width_bits": 128
+        },
+        {
+          "driver": "P2.cp_ack_valid",
+          "sink": "U1.feed_cp_ack_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_cp_ack_ready",
+          "sink": "P2.cp_ack_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.cp_ack_tag",
+          "sink": "U1.feed_cp_ack_tag",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_copy_drained",
+          "sink": "P2.copy_drained",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_copy_progress_valid",
+          "sink": "P2.copy_progress_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_copy_key",
+          "sink": "P2.copy_key",
+          "width_bits": 128
+        },
+        {
+          "driver": "U1.feed_copy_generation",
+          "sink": "P2.copy_progress_generation",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_copy_k",
+          "sink": "P2.copy_progress_k_elements",
+          "width_bits": 16
+        },
+        {
+          "driver": "U1.feed_copy_session",
+          "sink": "P2.copy_progress_session",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_copy_ticket",
+          "sink": "P2.copy_progress_ticket",
+          "width_bits": 32
+        },
+        {
+          "driver": "U1.feed_copy_committed_prefix",
+          "sink": "P2.copy_committed_prefix",
+          "width_bits": 11
+        },
+        {
+          "driver": "P2.a_load_proof_valid",
+          "sink": "U1.feed_proof_valid",
+          "width_bits": 1
+        },
+        {
+          "driver": "U1.feed_proof_ready",
+          "sink": "P2.a_load_proof_ready",
+          "width_bits": 1
+        },
+        {
+          "driver": "P2.a_load_proof_shift",
+          "sink": "U1.feed_proof_shift",
+          "width_bits": 6
+        },
+        {
+          "driver": "P2.a_source_reads_drained",
+          "sink": "U1.feed_source_reads_drained",
+          "width_bits": 1
+        }
+      ],
+      "constant_inputs": [
+        {
+          "sink": "U1.feed_cp_ack_error",
+          "value": 0,
+          "reason": "selected P COPY SRAM response has no error sideband"
+        }
+      ],
+      "claims": [
+        "U1.LC.service",
+        "U1.S.IO",
+        "P2.LC.service",
+        "P2.S.IO"
+      ],
+      "completion": "feed finished after all P input-window releases; mother must also wait for P scope completion"
+    }
+  ]
+}

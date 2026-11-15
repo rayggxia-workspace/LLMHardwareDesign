@@ -1,0 +1,1365 @@
+{
+  "schema": "blockv2-mod-macro-inventory/2",
+  "contract_revision": "five-block-v1/2026-11-13",
+  "contract_sha256": "d7ec2f5c4552b53feb843ce2c64b971ca4000b930989064c4298b9d652e6b205",
+  "control_groups": {
+    "P0": {
+      "family": "P",
+      "hard_boundary": false,
+      "macros": [
+        "P0.M",
+        "P0.G",
+        "P0.S"
+      ],
+      "private_sram": "P0.S",
+      "controller": "P0.LC",
+      "implementation_id": "P-S_P-ordinary-r1"
+    },
+    "P1": {
+      "family": "P",
+      "hard_boundary": false,
+      "macros": [
+        "P1.M",
+        "P1.G",
+        "P1.S"
+      ],
+      "private_sram": "P1.S",
+      "controller": "P1.LC",
+      "implementation_id": "P-S_P-ordinary-r1"
+    },
+    "P2": {
+      "family": "P",
+      "hard_boundary": false,
+      "macros": [
+        "P2.M",
+        "P2.G",
+        "P2.S"
+      ],
+      "private_sram": "P2.S",
+      "controller": "P2.LC",
+      "implementation_id": "P-S_P-ordinary-r1"
+    },
+    "U0": {
+      "family": "U",
+      "hard_boundary": false,
+      "macros": [
+        "U0.N",
+        "U0.E",
+        "U0.S"
+      ],
+      "private_sram": "U0.S",
+      "controller": "U0.LC",
+      "implementation_id": "U39-v02"
+    },
+    "U1": {
+      "family": "U",
+      "hard_boundary": false,
+      "macros": [
+        "U1.N",
+        "U1.E",
+        "U1.S"
+      ],
+      "private_sram": "U1.S",
+      "controller": "U1.LC",
+      "implementation_id": "U39-v02"
+    },
+    "C0": {
+      "family": "C",
+      "hard_boundary": false,
+      "macros": [
+        "C0.R",
+        "C0.G",
+        "C0.E",
+        "C0.E32",
+        "C0.S"
+      ],
+      "private_sram": "C0.S",
+      "controller": "C0.LC",
+      "implementation_id": "C-V3"
+    },
+    "F0": {
+      "family": "F",
+      "hard_boundary": false,
+      "macros": [
+        "F0.G",
+        "F0.E",
+        "F0.E32",
+        "F0.S"
+      ],
+      "private_sram": "F0.S",
+      "controller": "F0.LC",
+      "implementation_id": "F19"
+    },
+    "J0": {
+      "family": "J",
+      "hard_boundary": false,
+      "macros": [
+        "J0.E32",
+        "J0.S",
+        "J0.T"
+      ],
+      "private_sram": "J0.S",
+      "controller": "J0.LC",
+      "implementation_id": "J03"
+    },
+    "J1": {
+      "family": "J",
+      "hard_boundary": false,
+      "macros": [
+        "J1.E32",
+        "J1.S",
+        "J1.T"
+      ],
+      "private_sram": "J1.S",
+      "controller": "J1.LC",
+      "implementation_id": "J03"
+    }
+  },
+  "macro_instances": {
+    "P0.M": {
+      "instance": "P0.M",
+      "control_owner": "P0",
+      "role": "M",
+      "profile": "M60",
+      "master": "m_native_leaf_s32",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "m_native_leaf_s32",
+        "native_signal_bits": 1330,
+        "outline_um": [
+          1390,
+          1390
+        ],
+        "abi": "0x02504d02",
+        "receipt": {
+          "project_storage_path": "issue250-m-physical-20261111-60/single-macro-package.json",
+          "sha256": "0e70167fb5569dbacadedd8362f6edabc8bd033674693f318383a3a4c44b936e"
+        },
+        "odb_sha256": "df2b2c55d066929c44496fc7d9891403d3a8e3d7654569764a3fd329d3b1ed9f",
+        "signal_width_bits": {
+          "a_data": 256,
+          "mc_rsp_data": 512,
+          "lc_data": 128
+        }
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "P0.G": {
+      "instance": "P0.G",
+      "control_owner": "P0",
+      "role": "G",
+      "profile": "G32",
+      "master": "g_s32",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "g_s32",
+        "outline_um": [
+          240,
+          240
+        ],
+        "native_signal_bits": 204,
+        "evidence_commit": "d57573d88",
+        "evidence_path": "work/YUZE-LU/250/physical/g32-results.json",
+        "odb_sha256": "bd2a412c60721453079da42afd232c6b7fb95d73b7cbe27329c7b09aa7e15189"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "P0.S": {
+      "instance": "P0.S",
+      "control_owner": "P0",
+      "role": "S",
+      "profile": "S_P",
+      "master": "local_s_p",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "local_s_p",
+        "outline_um": [
+          900,
+          540
+        ],
+        "native_signal_bits": 965,
+        "capacity_bytes": 16384,
+        "pin_csv": "docs/experiments/assets/compact-local-s/S-P-pins.csv",
+        "receipt": {
+          "project_storage_path": "LLMHardwareDesign/issue-200-compact-local-s/final-gates/p-audit/audit.json",
+          "sha256": "2db9f89c534801ae10bbc5af65d621021e59f9b9502fcef74dbaef28456aa413"
+        },
+        "odb_sha256": "fc80d8c2a59ac1851b233907afff0ba0e2eccf60b03761a58cae9d4722b54e72",
+        "signal_width_bits": {
+          "req_data": 128,
+          "rsp_data": 128,
+          "a_data": 128,
+          "b_data": 512
+        },
+        "pin_csv_git_blob": "c5c1b0ac27b31fccb189b566449e1d9fa24bd1e3"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "P1.M": {
+      "instance": "P1.M",
+      "control_owner": "P1",
+      "role": "M",
+      "profile": "M60",
+      "master": "m_native_leaf_s32",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "m_native_leaf_s32",
+        "native_signal_bits": 1330,
+        "outline_um": [
+          1390,
+          1390
+        ],
+        "abi": "0x02504d02",
+        "receipt": {
+          "project_storage_path": "issue250-m-physical-20261111-60/single-macro-package.json",
+          "sha256": "0e70167fb5569dbacadedd8362f6edabc8bd033674693f318383a3a4c44b936e"
+        },
+        "odb_sha256": "df2b2c55d066929c44496fc7d9891403d3a8e3d7654569764a3fd329d3b1ed9f",
+        "signal_width_bits": {
+          "a_data": 256,
+          "mc_rsp_data": 512,
+          "lc_data": 128
+        }
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "P1.G": {
+      "instance": "P1.G",
+      "control_owner": "P1",
+      "role": "G",
+      "profile": "G32",
+      "master": "g_s32",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "g_s32",
+        "outline_um": [
+          240,
+          240
+        ],
+        "native_signal_bits": 204,
+        "evidence_commit": "d57573d88",
+        "evidence_path": "work/YUZE-LU/250/physical/g32-results.json",
+        "odb_sha256": "bd2a412c60721453079da42afd232c6b7fb95d73b7cbe27329c7b09aa7e15189"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "P1.S": {
+      "instance": "P1.S",
+      "control_owner": "P1",
+      "role": "S",
+      "profile": "S_P",
+      "master": "local_s_p",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "local_s_p",
+        "outline_um": [
+          900,
+          540
+        ],
+        "native_signal_bits": 965,
+        "capacity_bytes": 16384,
+        "pin_csv": "docs/experiments/assets/compact-local-s/S-P-pins.csv",
+        "receipt": {
+          "project_storage_path": "LLMHardwareDesign/issue-200-compact-local-s/final-gates/p-audit/audit.json",
+          "sha256": "2db9f89c534801ae10bbc5af65d621021e59f9b9502fcef74dbaef28456aa413"
+        },
+        "odb_sha256": "fc80d8c2a59ac1851b233907afff0ba0e2eccf60b03761a58cae9d4722b54e72",
+        "signal_width_bits": {
+          "req_data": 128,
+          "rsp_data": 128,
+          "a_data": 128,
+          "b_data": 512
+        },
+        "pin_csv_git_blob": "c5c1b0ac27b31fccb189b566449e1d9fa24bd1e3"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "P2.M": {
+      "instance": "P2.M",
+      "control_owner": "P2",
+      "role": "M",
+      "profile": "M60",
+      "master": "m_native_leaf_s32",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "m_native_leaf_s32",
+        "native_signal_bits": 1330,
+        "outline_um": [
+          1390,
+          1390
+        ],
+        "abi": "0x02504d02",
+        "receipt": {
+          "project_storage_path": "issue250-m-physical-20261111-60/single-macro-package.json",
+          "sha256": "0e70167fb5569dbacadedd8362f6edabc8bd033674693f318383a3a4c44b936e"
+        },
+        "odb_sha256": "df2b2c55d066929c44496fc7d9891403d3a8e3d7654569764a3fd329d3b1ed9f",
+        "signal_width_bits": {
+          "a_data": 256,
+          "mc_rsp_data": 512,
+          "lc_data": 128
+        }
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "P2.G": {
+      "instance": "P2.G",
+      "control_owner": "P2",
+      "role": "G",
+      "profile": "G32",
+      "master": "g_s32",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "g_s32",
+        "outline_um": [
+          240,
+          240
+        ],
+        "native_signal_bits": 204,
+        "evidence_commit": "d57573d88",
+        "evidence_path": "work/YUZE-LU/250/physical/g32-results.json",
+        "odb_sha256": "bd2a412c60721453079da42afd232c6b7fb95d73b7cbe27329c7b09aa7e15189"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "P2.S": {
+      "instance": "P2.S",
+      "control_owner": "P2",
+      "role": "S",
+      "profile": "S_P",
+      "master": "local_s_p",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "local_s_p",
+        "outline_um": [
+          900,
+          540
+        ],
+        "native_signal_bits": 965,
+        "capacity_bytes": 16384,
+        "pin_csv": "docs/experiments/assets/compact-local-s/S-P-pins.csv",
+        "receipt": {
+          "project_storage_path": "LLMHardwareDesign/issue-200-compact-local-s/final-gates/p-audit/audit.json",
+          "sha256": "2db9f89c534801ae10bbc5af65d621021e59f9b9502fcef74dbaef28456aa413"
+        },
+        "odb_sha256": "fc80d8c2a59ac1851b233907afff0ba0e2eccf60b03761a58cae9d4722b54e72",
+        "signal_width_bits": {
+          "req_data": 128,
+          "rsp_data": 128,
+          "a_data": 128,
+          "b_data": 512
+        },
+        "pin_csv_git_blob": "c5c1b0ac27b31fccb189b566449e1d9fa24bd1e3"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "U0.N": {
+      "instance": "U0.N",
+      "control_owner": "U0",
+      "role": "N",
+      "profile": "N32-reduction-mod-v1",
+      "master": "n_s32_mod",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "n_s32_softmax_s128",
+        "outline_um": [
+          336,
+          336
+        ],
+        "leaf_delivery_commit": "a06fd03c5",
+        "integration_commit": "5c8f9ea89"
+      },
+      "rtl_binding_status": "macro unit tested; full parent assembly pending",
+      "baseline_profile": "N32",
+      "mod_revision": {
+        "schema": "macro-mod-revision/1",
+        "profile": "N32-reduction-mod-v1",
+        "master": "n_s32_mod",
+        "source_profile": "N32",
+        "source": "rtl/p_services/n_s32_softmax_s128.sv",
+        "source_sha256": "1923c33c602292131efe8d50d69e685402be11416fb4d29de41c430a076ba48f",
+        "rtl": "rtl/macros/n_s32_mod.sv",
+        "rtl_sha256": "bb8adfa1c4e0378f4577e267dfb0c38f7b384197b61480febc7e28f528174715",
+        "internal_engine_rtl": "rtl/macros/n_s32_reduction_engine.sv",
+        "internal_engine_sha256": "51ad31005bd0de4fa712bb12c2a919dbbfff0877747850e467f2d2497803a280",
+        "resource_changes": {
+          "divider_root_instances": "1 -> 1",
+          "scale_square_multiplier_lanes": "2 -> 2",
+          "added_state": "RMS range, sum-of-squares, count, epsilon and factor response",
+          "additional_arithmetic_macro_instances": 0
+        },
+        "interface_changes": {
+          "additional_input_bits": 2,
+          "additional_output_bits": 0,
+          "sram_data_bits": "128 -> 128",
+          "softmax_abi": "preserved when cmd_mode=0",
+          "scalar_response": "16-byte result committed through existing SRAM port",
+          "configuration": "mode 3 counted command/response using existing tag/base/count pins"
+        },
+        "status": "RTL unit verified; whole-base integration and graph evaluation pending",
+        "physical_views": "not generated; no inherited physical acceptance",
+        "unit_evidence": {
+          "path": "evidence/architecture-revision-185/n32-mod-receipt.json",
+          "sha256": "4be10b4a751a28bc4a8ea41602e5340361e7b266424c2f6955bb27f653d9472f"
+        }
+      },
+      "inherited_physical_acceptance": false,
+      "physical_views": null
+    },
+    "U0.E": {
+      "instance": "U0.E",
+      "control_owner": "U0",
+      "role": "E",
+      "profile": "E16",
+      "master": "block_v2_e_compact",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "block_v2_e_compact",
+        "outline_um": [
+          340,
+          340
+        ],
+        "native_signal_bits": 273,
+        "pin_csv": "docs/experiments/assets/compact-ge/E-pins.csv",
+        "pin_csv_git_blob": "5fe9cc472a3495a26b3d2e1d34e5f88fba1d9c14"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "U0.S": {
+      "instance": "U0.S",
+      "control_owner": "U0",
+      "role": "S",
+      "profile": "S_base",
+      "master": "local_s_base",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "local_s_base",
+        "outline_um": [
+          880,
+          520
+        ],
+        "native_signal_bits": 273,
+        "capacity_bytes": 16384,
+        "pin_csv": "docs/experiments/assets/compact-local-s/S-base-pins.csv",
+        "receipt": {
+          "project_storage_path": "LLMHardwareDesign/issue-200-compact-local-s/audit08/base0/audit.json",
+          "sha256": "8180944606ebdd618d16f461804cc45eb778d6750c8d6859a8649ccaac7897cf"
+        },
+        "odb_sha256": "634b808ec827ca17fc5be66a6d109ee4ba181f8ddc288a0fc731156fcf1974af",
+        "signal_width_bits": {
+          "req_data": 128,
+          "rsp_data": 128
+        },
+        "pin_csv_git_blob": "54bb52e24c077b8e07a316918090ede6b8193ef9"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "U1.N": {
+      "instance": "U1.N",
+      "control_owner": "U1",
+      "role": "N",
+      "profile": "N32-reduction-mod-v1",
+      "master": "n_s32_mod",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "n_s32_softmax_s128",
+        "outline_um": [
+          336,
+          336
+        ],
+        "leaf_delivery_commit": "a06fd03c5",
+        "integration_commit": "5c8f9ea89"
+      },
+      "rtl_binding_status": "macro unit tested; full parent assembly pending",
+      "baseline_profile": "N32",
+      "mod_revision": {
+        "schema": "macro-mod-revision/1",
+        "profile": "N32-reduction-mod-v1",
+        "master": "n_s32_mod",
+        "source_profile": "N32",
+        "source": "rtl/p_services/n_s32_softmax_s128.sv",
+        "source_sha256": "1923c33c602292131efe8d50d69e685402be11416fb4d29de41c430a076ba48f",
+        "rtl": "rtl/macros/n_s32_mod.sv",
+        "rtl_sha256": "bb8adfa1c4e0378f4577e267dfb0c38f7b384197b61480febc7e28f528174715",
+        "internal_engine_rtl": "rtl/macros/n_s32_reduction_engine.sv",
+        "internal_engine_sha256": "51ad31005bd0de4fa712bb12c2a919dbbfff0877747850e467f2d2497803a280",
+        "resource_changes": {
+          "divider_root_instances": "1 -> 1",
+          "scale_square_multiplier_lanes": "2 -> 2",
+          "added_state": "RMS range, sum-of-squares, count, epsilon and factor response",
+          "additional_arithmetic_macro_instances": 0
+        },
+        "interface_changes": {
+          "additional_input_bits": 2,
+          "additional_output_bits": 0,
+          "sram_data_bits": "128 -> 128",
+          "softmax_abi": "preserved when cmd_mode=0",
+          "scalar_response": "16-byte result committed through existing SRAM port",
+          "configuration": "mode 3 counted command/response using existing tag/base/count pins"
+        },
+        "status": "RTL unit verified; whole-base integration and graph evaluation pending",
+        "physical_views": "not generated; no inherited physical acceptance",
+        "unit_evidence": {
+          "path": "evidence/architecture-revision-185/n32-mod-receipt.json",
+          "sha256": "4be10b4a751a28bc4a8ea41602e5340361e7b266424c2f6955bb27f653d9472f"
+        }
+      },
+      "inherited_physical_acceptance": false,
+      "physical_views": null
+    },
+    "U1.E": {
+      "instance": "U1.E",
+      "control_owner": "U1",
+      "role": "E",
+      "profile": "E16",
+      "master": "block_v2_e_compact",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "block_v2_e_compact",
+        "outline_um": [
+          340,
+          340
+        ],
+        "native_signal_bits": 273,
+        "pin_csv": "docs/experiments/assets/compact-ge/E-pins.csv",
+        "pin_csv_git_blob": "5fe9cc472a3495a26b3d2e1d34e5f88fba1d9c14"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "U1.S": {
+      "instance": "U1.S",
+      "control_owner": "U1",
+      "role": "S",
+      "profile": "S_base",
+      "master": "local_s_base",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "local_s_base",
+        "outline_um": [
+          880,
+          520
+        ],
+        "native_signal_bits": 273,
+        "capacity_bytes": 16384,
+        "pin_csv": "docs/experiments/assets/compact-local-s/S-base-pins.csv",
+        "receipt": {
+          "project_storage_path": "LLMHardwareDesign/issue-200-compact-local-s/audit08/base0/audit.json",
+          "sha256": "8180944606ebdd618d16f461804cc45eb778d6750c8d6859a8649ccaac7897cf"
+        },
+        "odb_sha256": "634b808ec827ca17fc5be66a6d109ee4ba181f8ddc288a0fc731156fcf1974af",
+        "signal_width_bits": {
+          "req_data": 128,
+          "rsp_data": 128
+        },
+        "pin_csv_git_blob": "54bb52e24c077b8e07a316918090ede6b8193ef9"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "C0.R": {
+      "instance": "C0.R",
+      "control_owner": "C0",
+      "role": "R",
+      "profile": "R256",
+      "master": "r_stream_local",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "r_stream_local",
+        "outline_um": [
+          1000,
+          1000
+        ],
+        "words_parameter": 256,
+        "main_delivery_commit": "10ea8a736"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "C0.G": {
+      "instance": "C0.G",
+      "control_owner": "C0",
+      "role": "G",
+      "profile": "G16",
+      "master": "block_v2_g",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "block_v2_g",
+        "outline_um": [
+          220,
+          220
+        ],
+        "native_signal_bits": 108,
+        "pin_csv": "docs/experiments/assets/compact-ge/G-pins.csv",
+        "pin_csv_git_blob": "135e201db559517f95d61a85fb23737ac3e1564c"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "C0.E": {
+      "instance": "C0.E",
+      "control_owner": "C0",
+      "role": "E",
+      "profile": "E16",
+      "master": "block_v2_e_compact",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "block_v2_e_compact",
+        "outline_um": [
+          340,
+          340
+        ],
+        "native_signal_bits": 273,
+        "pin_csv": "docs/experiments/assets/compact-ge/E-pins.csv",
+        "pin_csv_git_blob": "5fe9cc472a3495a26b3d2e1d34e5f88fba1d9c14"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "C0.E32": {
+      "instance": "C0.E32",
+      "control_owner": "C0",
+      "role": "E32",
+      "profile": "E32-mac80-mod-v1",
+      "master": "e_s32_mac_ap64",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "e_s32_ap64",
+        "outline_um": [
+          234,
+          234
+        ],
+        "native_signal_bits": 158,
+        "integration_commits": [
+          "97d251d3e",
+          "f8e1a99e4"
+        ],
+        "signal_width_bits": {
+          "in_data": 64,
+          "out_data": 64
+        },
+        "receipt": {
+          "project_storage_path": "issue250-ephys-20261111-03/delivery/delivery.json",
+          "sha256": "5a35c246f15b2b6c52f320dfa808c141e68b041fa10fb896bbe4dd431baa23e8"
+        },
+        "odb_sha256": "94529958917d21a2c04684e3e0e4928ec6a0b63975f162ee372918c5a5c4d643"
+      },
+      "rtl_binding_status": "macro and dot service unit tested; full parent assembly pending",
+      "baseline_profile": "E32",
+      "mod_revision": {
+        "profile": "E32-mac80-mod-v1",
+        "master": "e_s32_mac_ap64",
+        "baseline_master": "e_s32_ap64",
+        "extra_external_pins": 0,
+        "extra_macro_instances": 0,
+        "opcodes": {
+          "12": "BEGIN: in_data[15:0] is nonzero full K, remaining data zero; mask and final shift",
+          "13": "STEP: two four-lane S32 operands, exact signed products accumulated in S80",
+          "14": "END: require exactly K steps; one RNE and S32 saturation per active lane",
+          "15": "ABORT: clear accumulation ownership"
+        },
+        "capacity": {
+          "contexts": 1,
+          "lanes_per_context": 4,
+          "accumulator_bits_per_lane": 80,
+          "max_k": 65535
+        },
+        "arithmetic": "reuse original two product lanes; added S80 accumulation and final rounding",
+        "old_operations": "0..11 unchanged when no MAC context is owned; reject while MAC owns macro",
+        "required_lease": "exclusive E32 ownership from BEGIN acceptance through END or ABORT result consumption",
+        "status": "macro and exclusive selector RTL unit verified; Attention service and whole-base integration pending",
+        "physical_views": null,
+        "timing_calibrated": false,
+        "baseline_sources": {
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/u0/e_s32_native.sv": "50ce3230a6a7738a7bec4816250eb68647da477b9bbd64de69c1dc71fae81751",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/u0/e_s32_ap64.sv": "c9ba4cf469bcd8feb199d49f845348180c1935d28edd2f48acb517f84fe0675b"
+        },
+        "unit_evidence": {
+          "path": "evidence/architecture-revision-185/e32-mac-mod-receipt.json",
+          "sha256": "85b5cba9433f5065125493d9a0364a35d96926cb93ea2257403cedaa1d6df269"
+        }
+      },
+      "compatible_native_masters": [
+        "e_s32_ap64"
+      ],
+      "compatibility_scope": "identical pins and old operations under an exclusive macro lease",
+      "inherited_physical_acceptance": false,
+      "physical_views": null
+    },
+    "C0.S": {
+      "instance": "C0.S",
+      "control_owner": "C0",
+      "role": "S",
+      "profile": "S_base",
+      "master": "local_s_base",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "local_s_base",
+        "outline_um": [
+          880,
+          520
+        ],
+        "native_signal_bits": 273,
+        "capacity_bytes": 16384,
+        "pin_csv": "docs/experiments/assets/compact-local-s/S-base-pins.csv",
+        "receipt": {
+          "project_storage_path": "LLMHardwareDesign/issue-200-compact-local-s/audit08/base0/audit.json",
+          "sha256": "8180944606ebdd618d16f461804cc45eb778d6750c8d6859a8649ccaac7897cf"
+        },
+        "odb_sha256": "634b808ec827ca17fc5be66a6d109ee4ba181f8ddc288a0fc731156fcf1974af",
+        "signal_width_bits": {
+          "req_data": 128,
+          "rsp_data": 128
+        },
+        "pin_csv_git_blob": "54bb52e24c077b8e07a316918090ede6b8193ef9"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "F0.G": {
+      "instance": "F0.G",
+      "control_owner": "F0",
+      "role": "G",
+      "profile": "G16",
+      "master": "block_v2_g",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "block_v2_g",
+        "outline_um": [
+          220,
+          220
+        ],
+        "native_signal_bits": 108,
+        "pin_csv": "docs/experiments/assets/compact-ge/G-pins.csv",
+        "pin_csv_git_blob": "135e201db559517f95d61a85fb23737ac3e1564c"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "F0.E": {
+      "instance": "F0.E",
+      "control_owner": "F0",
+      "role": "E",
+      "profile": "E16",
+      "master": "block_v2_e_compact",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "block_v2_e_compact",
+        "outline_um": [
+          340,
+          340
+        ],
+        "native_signal_bits": 273,
+        "pin_csv": "docs/experiments/assets/compact-ge/E-pins.csv",
+        "pin_csv_git_blob": "5fe9cc472a3495a26b3d2e1d34e5f88fba1d9c14"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "F0.E32": {
+      "instance": "F0.E32",
+      "control_owner": "F0",
+      "role": "E32",
+      "profile": "E32-mac80-mod-v1",
+      "master": "e_s32_mac_ap64",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "e_s32_ap64",
+        "outline_um": [
+          234,
+          234
+        ],
+        "native_signal_bits": 158,
+        "integration_commits": [
+          "97d251d3e",
+          "f8e1a99e4"
+        ],
+        "signal_width_bits": {
+          "in_data": 64,
+          "out_data": 64
+        },
+        "receipt": {
+          "project_storage_path": "issue250-ephys-20261111-03/delivery/delivery.json",
+          "sha256": "5a35c246f15b2b6c52f320dfa808c141e68b041fa10fb896bbe4dd431baa23e8"
+        },
+        "odb_sha256": "94529958917d21a2c04684e3e0e4928ec6a0b63975f162ee372918c5a5c4d643"
+      },
+      "rtl_binding_status": "macro and dot service unit tested; full parent assembly pending",
+      "baseline_profile": "E32",
+      "mod_revision": {
+        "profile": "E32-mac80-mod-v1",
+        "master": "e_s32_mac_ap64",
+        "baseline_master": "e_s32_ap64",
+        "extra_external_pins": 0,
+        "extra_macro_instances": 0,
+        "opcodes": {
+          "12": "BEGIN: in_data[15:0] is nonzero full K, remaining data zero; mask and final shift",
+          "13": "STEP: two four-lane S32 operands, exact signed products accumulated in S80",
+          "14": "END: require exactly K steps; one RNE and S32 saturation per active lane",
+          "15": "ABORT: clear accumulation ownership"
+        },
+        "capacity": {
+          "contexts": 1,
+          "lanes_per_context": 4,
+          "accumulator_bits_per_lane": 80,
+          "max_k": 65535
+        },
+        "arithmetic": "reuse original two product lanes; added S80 accumulation and final rounding",
+        "old_operations": "0..11 unchanged when no MAC context is owned; reject while MAC owns macro",
+        "required_lease": "exclusive E32 ownership from BEGIN acceptance through END or ABORT result consumption",
+        "status": "macro and exclusive selector RTL unit verified; Attention service and whole-base integration pending",
+        "physical_views": null,
+        "timing_calibrated": false,
+        "baseline_sources": {
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/u0/e_s32_native.sv": "50ce3230a6a7738a7bec4816250eb68647da477b9bbd64de69c1dc71fae81751",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/u0/e_s32_ap64.sv": "c9ba4cf469bcd8feb199d49f845348180c1935d28edd2f48acb517f84fe0675b"
+        },
+        "unit_evidence": {
+          "path": "evidence/architecture-revision-185/e32-mac-mod-receipt.json",
+          "sha256": "85b5cba9433f5065125493d9a0364a35d96926cb93ea2257403cedaa1d6df269"
+        }
+      },
+      "compatible_native_masters": [
+        "e_s32_ap64"
+      ],
+      "compatibility_scope": "identical pins and old operations under an exclusive macro lease",
+      "inherited_physical_acceptance": false,
+      "physical_views": null
+    },
+    "F0.S": {
+      "instance": "F0.S",
+      "control_owner": "F0",
+      "role": "S",
+      "profile": "S_base",
+      "master": "local_s_base",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "local_s_base",
+        "outline_um": [
+          880,
+          520
+        ],
+        "native_signal_bits": 273,
+        "capacity_bytes": 16384,
+        "pin_csv": "docs/experiments/assets/compact-local-s/S-base-pins.csv",
+        "receipt": {
+          "project_storage_path": "LLMHardwareDesign/issue-200-compact-local-s/audit08/base0/audit.json",
+          "sha256": "8180944606ebdd618d16f461804cc45eb778d6750c8d6859a8649ccaac7897cf"
+        },
+        "odb_sha256": "634b808ec827ca17fc5be66a6d109ee4ba181f8ddc288a0fc731156fcf1974af",
+        "signal_width_bits": {
+          "req_data": 128,
+          "rsp_data": 128
+        },
+        "pin_csv_git_blob": "54bb52e24c077b8e07a316918090ede6b8193ef9"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "J0.E32": {
+      "instance": "J0.E32",
+      "control_owner": "J0",
+      "role": "E32",
+      "profile": "E32-mac80-mod-v1",
+      "master": "e_s32_mac_ap64",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "e_s32_ap64",
+        "outline_um": [
+          234,
+          234
+        ],
+        "native_signal_bits": 158,
+        "integration_commits": [
+          "97d251d3e",
+          "f8e1a99e4"
+        ],
+        "signal_width_bits": {
+          "in_data": 64,
+          "out_data": 64
+        },
+        "receipt": {
+          "project_storage_path": "issue250-ephys-20261111-03/delivery/delivery.json",
+          "sha256": "5a35c246f15b2b6c52f320dfa808c141e68b041fa10fb896bbe4dd431baa23e8"
+        },
+        "odb_sha256": "94529958917d21a2c04684e3e0e4928ec6a0b63975f162ee372918c5a5c4d643"
+      },
+      "rtl_binding_status": "macro and dot service unit tested; full parent assembly pending",
+      "baseline_profile": "E32",
+      "mod_revision": {
+        "profile": "E32-mac80-mod-v1",
+        "master": "e_s32_mac_ap64",
+        "baseline_master": "e_s32_ap64",
+        "extra_external_pins": 0,
+        "extra_macro_instances": 0,
+        "opcodes": {
+          "12": "BEGIN: in_data[15:0] is nonzero full K, remaining data zero; mask and final shift",
+          "13": "STEP: two four-lane S32 operands, exact signed products accumulated in S80",
+          "14": "END: require exactly K steps; one RNE and S32 saturation per active lane",
+          "15": "ABORT: clear accumulation ownership"
+        },
+        "capacity": {
+          "contexts": 1,
+          "lanes_per_context": 4,
+          "accumulator_bits_per_lane": 80,
+          "max_k": 65535
+        },
+        "arithmetic": "reuse original two product lanes; added S80 accumulation and final rounding",
+        "old_operations": "0..11 unchanged when no MAC context is owned; reject while MAC owns macro",
+        "required_lease": "exclusive E32 ownership from BEGIN acceptance through END or ABORT result consumption",
+        "status": "macro and exclusive selector RTL unit verified; Attention service and whole-base integration pending",
+        "physical_views": null,
+        "timing_calibrated": false,
+        "baseline_sources": {
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/u0/e_s32_native.sv": "50ce3230a6a7738a7bec4816250eb68647da477b9bbd64de69c1dc71fae81751",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/u0/e_s32_ap64.sv": "c9ba4cf469bcd8feb199d49f845348180c1935d28edd2f48acb517f84fe0675b"
+        },
+        "unit_evidence": {
+          "path": "evidence/architecture-revision-185/e32-mac-mod-receipt.json",
+          "sha256": "85b5cba9433f5065125493d9a0364a35d96926cb93ea2257403cedaa1d6df269"
+        }
+      },
+      "compatible_native_masters": [
+        "e_s32_ap64"
+      ],
+      "compatibility_scope": "identical pins and old operations under an exclusive macro lease",
+      "inherited_physical_acceptance": false,
+      "physical_views": null
+    },
+    "J0.S": {
+      "instance": "J0.S",
+      "control_owner": "J0",
+      "role": "S",
+      "profile": "S_base",
+      "master": "local_s_base",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "local_s_base",
+        "outline_um": [
+          880,
+          520
+        ],
+        "native_signal_bits": 273,
+        "capacity_bytes": 16384,
+        "pin_csv": "docs/experiments/assets/compact-local-s/S-base-pins.csv",
+        "receipt": {
+          "project_storage_path": "LLMHardwareDesign/issue-200-compact-local-s/audit08/base0/audit.json",
+          "sha256": "8180944606ebdd618d16f461804cc45eb778d6750c8d6859a8649ccaac7897cf"
+        },
+        "odb_sha256": "634b808ec827ca17fc5be66a6d109ee4ba181f8ddc288a0fc731156fcf1974af",
+        "signal_width_bits": {
+          "req_data": 128,
+          "rsp_data": 128
+        },
+        "pin_csv_git_blob": "54bb52e24c077b8e07a316918090ede6b8193ef9"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "J0.T": {
+      "instance": "J0.T",
+      "control_owner": "J0",
+      "role": "T",
+      "profile": "T6",
+      "master": "transaction6k",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "transaction6k",
+        "outline_um": [
+          1040,
+          1040
+        ],
+        "capacity_bytes": 6144,
+        "main_receipt": "work/YUZE-LU/143/release-six/T/evidence/original-delivery-receipt.json"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "J1.E32": {
+      "instance": "J1.E32",
+      "control_owner": "J1",
+      "role": "E32",
+      "profile": "E32-mac80-mod-v1",
+      "master": "e_s32_mac_ap64",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "e_s32_ap64",
+        "outline_um": [
+          234,
+          234
+        ],
+        "native_signal_bits": 158,
+        "integration_commits": [
+          "97d251d3e",
+          "f8e1a99e4"
+        ],
+        "signal_width_bits": {
+          "in_data": 64,
+          "out_data": 64
+        },
+        "receipt": {
+          "project_storage_path": "issue250-ephys-20261111-03/delivery/delivery.json",
+          "sha256": "5a35c246f15b2b6c52f320dfa808c141e68b041fa10fb896bbe4dd431baa23e8"
+        },
+        "odb_sha256": "94529958917d21a2c04684e3e0e4928ec6a0b63975f162ee372918c5a5c4d643"
+      },
+      "rtl_binding_status": "macro and dot service unit tested; full parent assembly pending",
+      "baseline_profile": "E32",
+      "mod_revision": {
+        "profile": "E32-mac80-mod-v1",
+        "master": "e_s32_mac_ap64",
+        "baseline_master": "e_s32_ap64",
+        "extra_external_pins": 0,
+        "extra_macro_instances": 0,
+        "opcodes": {
+          "12": "BEGIN: in_data[15:0] is nonzero full K, remaining data zero; mask and final shift",
+          "13": "STEP: two four-lane S32 operands, exact signed products accumulated in S80",
+          "14": "END: require exactly K steps; one RNE and S32 saturation per active lane",
+          "15": "ABORT: clear accumulation ownership"
+        },
+        "capacity": {
+          "contexts": 1,
+          "lanes_per_context": 4,
+          "accumulator_bits_per_lane": 80,
+          "max_k": 65535
+        },
+        "arithmetic": "reuse original two product lanes; added S80 accumulation and final rounding",
+        "old_operations": "0..11 unchanged when no MAC context is owned; reject while MAC owns macro",
+        "required_lease": "exclusive E32 ownership from BEGIN acceptance through END or ABORT result consumption",
+        "status": "macro and exclusive selector RTL unit verified; Attention service and whole-base integration pending",
+        "physical_views": null,
+        "timing_calibrated": false,
+        "baseline_sources": {
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/u0/e_s32_native.sv": "50ce3230a6a7738a7bec4816250eb68647da477b9bbd64de69c1dc71fae81751",
+          "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/blockv2-mod/rtl/u0/e_s32_ap64.sv": "c9ba4cf469bcd8feb199d49f845348180c1935d28edd2f48acb517f84fe0675b"
+        },
+        "unit_evidence": {
+          "path": "evidence/architecture-revision-185/e32-mac-mod-receipt.json",
+          "sha256": "85b5cba9433f5065125493d9a0364a35d96926cb93ea2257403cedaa1d6df269"
+        }
+      },
+      "compatible_native_masters": [
+        "e_s32_ap64"
+      ],
+      "compatibility_scope": "identical pins and old operations under an exclusive macro lease",
+      "inherited_physical_acceptance": false,
+      "physical_views": null
+    },
+    "J1.S": {
+      "instance": "J1.S",
+      "control_owner": "J1",
+      "role": "S",
+      "profile": "S_base",
+      "master": "local_s_base",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "local_s_base",
+        "outline_um": [
+          880,
+          520
+        ],
+        "native_signal_bits": 273,
+        "capacity_bytes": 16384,
+        "pin_csv": "docs/experiments/assets/compact-local-s/S-base-pins.csv",
+        "receipt": {
+          "project_storage_path": "LLMHardwareDesign/issue-200-compact-local-s/audit08/base0/audit.json",
+          "sha256": "8180944606ebdd618d16f461804cc45eb778d6750c8d6859a8649ccaac7897cf"
+        },
+        "odb_sha256": "634b808ec827ca17fc5be66a6d109ee4ba181f8ddc288a0fc731156fcf1974af",
+        "signal_width_bits": {
+          "req_data": 128,
+          "rsp_data": 128
+        },
+        "pin_csv_git_blob": "54bb52e24c077b8e07a316918090ede6b8193ef9"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    },
+    "J1.T": {
+      "instance": "J1.T",
+      "control_owner": "J1",
+      "role": "T",
+      "profile": "T6",
+      "master": "transaction6k",
+      "hard_boundary": true,
+      "source_profile": {
+        "master": "transaction6k",
+        "outline_um": [
+          1040,
+          1040
+        ],
+        "capacity_bytes": 6144,
+        "main_receipt": "work/YUZE-LU/143/release-six/T/evidence/original-delivery-receipt.json"
+      },
+      "rtl_binding_status": "requires_mod_instance_binding"
+    }
+  },
+  "controllers": {
+    "P0.LC": {
+      "control_owner": "P0",
+      "implementation": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 1024,
+        "backing": "registers",
+        "scope": "candidate"
+      }
+    },
+    "P1.LC": {
+      "control_owner": "P1",
+      "implementation": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 1024,
+        "backing": "registers",
+        "scope": "candidate"
+      }
+    },
+    "P2.LC": {
+      "control_owner": "P2",
+      "implementation": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 1024,
+        "backing": "registers",
+        "scope": "candidate"
+      }
+    },
+    "U0.LC": {
+      "control_owner": "U0",
+      "implementation": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 4096,
+        "backing": "SRAM",
+        "scope": "candidate"
+      }
+    },
+    "U1.LC": {
+      "control_owner": "U1",
+      "implementation": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 4096,
+        "backing": "SRAM",
+        "scope": "candidate"
+      }
+    },
+    "C0.LC": {
+      "control_owner": "C0",
+      "implementation": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 4096,
+        "backing": "SRAM",
+        "scope": "candidate"
+      }
+    },
+    "F0.LC": {
+      "control_owner": "F0",
+      "implementation": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 4096,
+        "backing": "SRAM",
+        "scope": "candidate"
+      }
+    },
+    "J0.LC": {
+      "control_owner": "J0",
+      "implementation": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 4096,
+        "backing": "SRAM",
+        "scope": "candidate"
+      }
+    },
+    "J1.LC": {
+      "control_owner": "J1",
+      "implementation": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 4096,
+        "backing": "SRAM",
+        "scope": "candidate"
+      }
+    }
+  },
+  "system_resources": {
+    "mother_controller": {
+      "profile": "MC06",
+      "master": "mother_control_native64_transport128",
+      "source_commit": "ab7611d43e4c007cc966ab5e61903118d33fcb4a",
+      "odb_sha256": "e15dfccb42f3613451c8512c356d10dd6493f7e5eb2c93f4fa55304fa7556610",
+      "program_memory_bytes": 16384,
+      "framed_transport_bits": 128
+    },
+    "control_switch": {
+      "profile": "switch03",
+      "master": "control_switch9",
+      "odb_sha256": "c6fb8fb8c4ea32fabb52bf16ca64e253578d27b69ceaebfee81e4b39c8e857d5"
+    },
+    "ddr": {
+      "transfer_bits": 512,
+      "aggregate_budget_bytes_per_second": 51200000000,
+      "physical_state": "closure_in_progress"
+    },
+    "repeaters": {
+      "inventory_schema": "upper-repeaters/1",
+      "separate_input": true,
+      "virtual_instances_eligible_for_physical_export": false
+    }
+  },
+  "adapter_instances": {
+    "C0.E32.service_selector": {
+      "kind": "parent_standard_cell_adapter",
+      "rtl_module": "e32_service_selector",
+      "rtl_source": "rtl/resources/e32_service_selector.sv",
+      "rtl_sha256": "a7362118b3b7cd953e6b962c7cca0f24f04dc2d838ae36876db465036a322650",
+      "control_owner": "C0",
+      "parameters": {
+        "CLIENTS": 4,
+        "MAC_CONTEXT": 1
+      },
+      "client_slots": {
+        "add_s32_service_controller": 0,
+        "rope_s32_service_controller": 1,
+        "rope_native_service_controller": 1,
+        "rms_apply_s32_service_controller": 2,
+        "rms_apply_native_service_controller": 2,
+        "e32_dot_service_controller": 3
+      },
+      "macro": "C0.E32",
+      "arbitration": "fixed priority; both result beats; MAC context held from BEGIN through END/ABORT when enabled",
+      "capacity": 1,
+      "status": "RTL candidate; no area/timing calibration"
+    },
+    "C0.S.elementwise_selector": {
+      "kind": "parent_standard_cell_adapter",
+      "rtl_module": "s128_service_selector",
+      "rtl_source": "rtl/resources/s128_service_selector.sv",
+      "rtl_sha256": "af4a3c7d2bbf59ef49abacc5a236d9f6df46456caf1012e1384c1d548316f8d5",
+      "control_owner": "C0",
+      "parameters": {
+        "CLIENTS": 3
+      },
+      "client_slots": {
+        "add_s32_service_controller": 0,
+        "rope_native_service_controller": 1,
+        "rms_apply_native_service_controller": 2
+      },
+      "capacity": 1,
+      "arbitration": "fixed priority; retained owner through accepted SRAM response",
+      "status": "explicit parent build resource; physical binding and calibration pending"
+    },
+    "F0.E32.service_selector": {
+      "kind": "parent_standard_cell_adapter",
+      "rtl_module": "e32_service_selector",
+      "rtl_source": "rtl/resources/e32_service_selector.sv",
+      "rtl_sha256": "a7362118b3b7cd953e6b962c7cca0f24f04dc2d838ae36876db465036a322650",
+      "control_owner": "F0",
+      "parameters": {
+        "CLIENTS": 4,
+        "MAC_CONTEXT": 1
+      },
+      "client_slots": {
+        "add_s32_service_controller": 0,
+        "rope_s32_service_controller": 1,
+        "rope_native_service_controller": 1,
+        "rms_apply_s32_service_controller": 2,
+        "rms_apply_native_service_controller": 2,
+        "e32_dot_service_controller": 3
+      },
+      "macro": "F0.E32",
+      "arbitration": "fixed priority; both result beats; MAC context held from BEGIN through END/ABORT when enabled",
+      "capacity": 1,
+      "status": "RTL candidate; no area/timing calibration"
+    },
+    "F0.S.elementwise_selector": {
+      "kind": "parent_standard_cell_adapter",
+      "rtl_module": "s128_service_selector",
+      "rtl_source": "rtl/resources/s128_service_selector.sv",
+      "rtl_sha256": "af4a3c7d2bbf59ef49abacc5a236d9f6df46456caf1012e1384c1d548316f8d5",
+      "control_owner": "F0",
+      "parameters": {
+        "CLIENTS": 3
+      },
+      "client_slots": {
+        "add_s32_service_controller": 0,
+        "rope_native_service_controller": 1,
+        "rms_apply_native_service_controller": 2
+      },
+      "capacity": 1,
+      "arbitration": "fixed priority; retained owner through accepted SRAM response",
+      "status": "explicit parent build resource; physical binding and calibration pending"
+    },
+    "J0.E32.service_selector": {
+      "kind": "parent_standard_cell_adapter",
+      "rtl_module": "e32_service_selector",
+      "rtl_source": "rtl/resources/e32_service_selector.sv",
+      "rtl_sha256": "a7362118b3b7cd953e6b962c7cca0f24f04dc2d838ae36876db465036a322650",
+      "control_owner": "J0",
+      "parameters": {
+        "CLIENTS": 4,
+        "MAC_CONTEXT": 1
+      },
+      "client_slots": {
+        "add_s32_service_controller": 0,
+        "rope_s32_service_controller": 1,
+        "rope_native_service_controller": 1,
+        "rms_apply_s32_service_controller": 2,
+        "rms_apply_native_service_controller": 2,
+        "e32_dot_service_controller": 3
+      },
+      "macro": "J0.E32",
+      "arbitration": "fixed priority; both result beats; MAC context held from BEGIN through END/ABORT when enabled",
+      "capacity": 1,
+      "status": "RTL candidate; no area/timing calibration"
+    },
+    "J0.S.elementwise_selector": {
+      "kind": "parent_standard_cell_adapter",
+      "rtl_module": "s128_service_selector",
+      "rtl_source": "rtl/resources/s128_service_selector.sv",
+      "rtl_sha256": "af4a3c7d2bbf59ef49abacc5a236d9f6df46456caf1012e1384c1d548316f8d5",
+      "control_owner": "J0",
+      "parameters": {
+        "CLIENTS": 3
+      },
+      "client_slots": {
+        "add_s32_service_controller": 0,
+        "rope_native_service_controller": 1,
+        "rms_apply_native_service_controller": 2
+      },
+      "capacity": 1,
+      "arbitration": "fixed priority; retained owner through accepted SRAM response",
+      "status": "explicit parent build resource; physical binding and calibration pending"
+    },
+    "J1.E32.service_selector": {
+      "kind": "parent_standard_cell_adapter",
+      "rtl_module": "e32_service_selector",
+      "rtl_source": "rtl/resources/e32_service_selector.sv",
+      "rtl_sha256": "a7362118b3b7cd953e6b962c7cca0f24f04dc2d838ae36876db465036a322650",
+      "control_owner": "J1",
+      "parameters": {
+        "CLIENTS": 4,
+        "MAC_CONTEXT": 1
+      },
+      "client_slots": {
+        "add_s32_service_controller": 0,
+        "rope_s32_service_controller": 1,
+        "rope_native_service_controller": 1,
+        "rms_apply_s32_service_controller": 2,
+        "rms_apply_native_service_controller": 2,
+        "e32_dot_service_controller": 3
+      },
+      "macro": "J1.E32",
+      "arbitration": "fixed priority; both result beats; MAC context held from BEGIN through END/ABORT when enabled",
+      "capacity": 1,
+      "status": "RTL candidate; no area/timing calibration"
+    },
+    "J1.S.elementwise_selector": {
+      "kind": "parent_standard_cell_adapter",
+      "rtl_module": "s128_service_selector",
+      "rtl_source": "rtl/resources/s128_service_selector.sv",
+      "rtl_sha256": "af4a3c7d2bbf59ef49abacc5a236d9f6df46456caf1012e1384c1d548316f8d5",
+      "control_owner": "J1",
+      "parameters": {
+        "CLIENTS": 3
+      },
+      "client_slots": {
+        "add_s32_service_controller": 0,
+        "rope_native_service_controller": 1,
+        "rms_apply_native_service_controller": 2
+      },
+      "capacity": 1,
+      "arbitration": "fixed priority; retained owner through accepted SRAM response",
+      "status": "explicit parent build resource; physical binding and calibration pending"
+    }
+  },
+  "fixed_connections": [],
+  "candidate_connections": [],
+  "connection_registration_status": "not_yet_bound",
+  "scope": "Authoritative functional inventory; empty connection lists are not a claim that the hardware has no fixed control/service wires.",
+  "mod_elaboration_accepted": false,
+  "mod_revision": "macro-services-v2-candidate"
+}

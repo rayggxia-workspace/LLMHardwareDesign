@@ -1,0 +1,87 @@
+{
+  "schema": "native-Qwen-evaluation-pipeline/1",
+  "jobs": [
+    {
+      "job": 115069,
+      "purpose": "complete real-data short prefill",
+      "depends_on": [],
+      "result": "macro-prefill-115069/receipt.json"
+    },
+    {
+      "job": 115071,
+      "purpose": "651-tensor exact check, FP32 metrics, real-KV decode scene",
+      "depends_on": [
+        115069,
+        115054
+      ],
+      "result": "macro-decode-assets-115071/assets.json"
+    },
+    {
+      "job": 115084,
+      "purpose": "complete real-KV decode instruction execution",
+      "depends_on": [
+        115071
+      ],
+      "result": "macro-decode-115084/receipt.json"
+    },
+    {
+      "job": 115085,
+      "purpose": "independent fixed-point decode oracle",
+      "depends_on": [
+        115071
+      ],
+      "result": "graph-numeric-reference-115085/receipt.json"
+    },
+    {
+      "job": 115086,
+      "purpose": "every produced decode tensor exact comparison",
+      "depends_on": [
+        115084,
+        115085
+      ],
+      "result": "decode-bit-exact-115086.json"
+    },
+    {
+      "job": 115098,
+      "purpose": "independent FP32 prefill+decode with actual selected next input token",
+      "depends_on": [
+        115071
+      ],
+      "result": "macro-decode-reference-115098/receipt.json"
+    },
+    {
+      "job": 115100,
+      "purpose": "full decode logits FP32 quality comparison",
+      "depends_on": [
+        115084,
+        115098
+      ],
+      "result": "decode-FP32-comparison-115100.json"
+    }
+  ],
+  "source_sha256": {
+    "tests/run_macro_decode.sbatch": "8af57204f4fb33680126d338a3bd060a4550988d2ea812a133cc9b7f85da84d4",
+    "tests/native_decode_numeric_reference.sbatch": "d90d0a92d93e7f862b56654fd6c12484f946547f89888d4596ffa8a4e257942c",
+    "tests/check_macro_decode_result.sbatch": "d2f6a941b7687233874573439964521d999e600d67c62102fa184f7de6c8d080",
+    "tests/reference_macro_decode.py": "b7f0614718139cb308cc8fb5fc05e87313b0914197ccf3dfdc4008b30d6b04b4",
+    "tests/reference_macro_decode.sbatch": "4b747307efbd4b84adb94d04aae588b9b17ec42c0ffc0e72c7b3f34d5fca4e68",
+    "tests/compare_macro_decode_fp32.sbatch": "a5ff6137a4390d40aa97d44d2e12f92047ddb82d5ceaf96c59bda0f3c0564fdb",
+    "tests/compare_macro_prefill.py": "8b936bb655097ab3834e4f700ac7b772ef1c765b0506beea814b807598588211",
+    "tests/compare_macro_committed_reference.py": "cd1ab319c293c593b7b5fb2d27be50cc3f75108ba8c8b77c6cdd09c78f60d026"
+  },
+  "scope": "two-token full prefill and one full decode; no P512/D128 workload",
+  "Qwen_accepted": true,
+  "remaining_benchmarks_started": true,
+  "timing_scope": "preinstalled programs and externally loaded phase inputs; no host stage-transition timing or calibrated physical timing claim",
+  "comparison_admission": {
+    "requires_nonempty_reference": true,
+    "requires_completed_call_count": true,
+    "binds_execution_reference_and_state": true,
+    "runtime_changed": false,
+    "full_comparison_pending": true
+  },
+  "acceptance_scope": "complete 36-layer B1 S2 prefill plus one history-two decode; exact integer tensor results and observed three-position FP32 top-1 agreement",
+  "acceptance_receipt": "Qwen-short-acceptance-115200.json",
+  "remaining_benchmark_summary": "remaining-benchmark-conversion-115202/summary.json",
+  "remaining_benchmarks_accepted": false
+}

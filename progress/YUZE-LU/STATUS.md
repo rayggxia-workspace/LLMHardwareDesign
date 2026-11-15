@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+2026-11-15 CST。#219 / [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269)：按 PR185 恢复控制归属与宏硬边界，显式绑定同计划指令和候选端点连线。完整 36 层 Qwen 两 token prefill + 一步自产 KV decode 的 141490/70457 次调用全部执行，651/723 个产出张量逐字节一致。剩余 20 张 benchmark 图均已尝试，全部停在尺寸解析或 operand lowering，尚未进入候选选择。时序未校准；不代表物理、广泛精度或稳态吞吐验收。源码及[结果](../../project/experiments/blockv2_mod/evidence/architecture-revision-185/RESULTS_ZH.md)提交本 PR 审查，Issue #219 更广泛优化目标保持 in_progress。
+
+下一步：独立审查本次增量；后续前端尺寸与降级缺口另按证据推进。负责人 YUZE-LU；待指定独立审查人，不自行合并。仓库 config/board.json 在当前 head 不存在，看板 unverified/同步 pending；本次没有扩大到历史 Issue #219 的 20% 优化/物理评估目标。
+
 2026-11-14 16:39 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加外部指定的 SRAM 实例、容量和读写位宽。112358、112359 用同一底座分别读回 128-bit 和 512-bit 读配置，核对对齐事务换算和 Gather 单字写约束。远端 10 项测试通过，目标底座执行仍待接入。[参数及回执](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#sram-容量和端口位宽由外部配置)。
 
 2026-11-14 16:25 CST。#219 的 [PR #269](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/269) 增加 Algo1 指令包、同计划连线与独立底座的 TLM 准入检查。远端 112167 核对 184,927 页与 639 页 Gather 替换，定位 12 类派发缺口、2 类完成信号缺口，以及 7 类等待 TLM 实现的候选服务。PR #260 原短程作业按诊断记录。下一步用目标绑定的资源时序与单页 Gather 验证实际指令执行。[回执及复现](../../work/YUZE-LU/219/native_ingress/request_retirement/REQUEST_SEQUENCE.md#对同计划底座的-tlm-准入)。
