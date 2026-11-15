@@ -19,6 +19,7 @@ SERVER_ROOT = Path("/public/home/yuzelu")
 PROJECT = SERVER_ROOT / "project-circuit"
 RUNS = SERVER_ROOT / "Melodydt/runs"
 FROZEN = RUNS / "issue-274/three-p-full-01"
+AUDIT_ARCHIVE = RUNS / "issue-274/three-p-audit-01"
 BRIDGE = RUNS / "issue-270/ffn-weight-05/tlm"
 DRAM = PROJECT / "issue234-ddr-quiet-JDehtRNz/quiet/source"
 CONFIG = PROJECT / "issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini"
@@ -95,7 +96,10 @@ def main():
     check_sha(BRIDGE / "run-113164.dram.so",
               "1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b")
     check_sha(CONFIG, "748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766")
+    check_sha(AUDIT_ARCHIVE / "source.sha256",
+              "bfbc4bc32cf741ad41437afedc866a4d44878a8e278b55963e3039949ebbaea6")
     run("sha256sum", "-c", "source.sha256", cwd=BRIDGE)
+    run("sha256sum", "-c", "source.sha256", cwd=AUDIT_ARCHIVE)
     for name in ("source.sha256", "upstream.sha256", BASE_PREFILL + "/output.sha256",
                  BASE_DECODE + "/output.sha256"):
         run("sha256sum", "-c", name, cwd=FROZEN)
@@ -113,7 +117,8 @@ def main():
                    replay)
     write_manifest(work / "pilot-inputs.sha256",
                    (commit_file, bundle / "bundle.sha256", FROZEN / "source.sha256",
-                    FROZEN / "upstream.sha256", IMAGE, CONFIG, dram_library, library), work)
+                    FROZEN / "upstream.sha256", AUDIT_ARCHIVE / "source.sha256",
+                    IMAGE, CONFIG, dram_library, library), work)
     env = dict(os.environ, SLURM_SUBMIT_DIR=str(replay), MDT_280_DDR_LIBRARY=str(library),
                MDT_274_NATIVE_MATH="1", MDT_274_THREE_P="1", MDT_274_TRACE_LAYERS="1",
                MDT_274_RUN_SUFFIX="", MDT_274_VERIFY_MATH="0", MDT_274_GEMMA_WIDE_RESIDUAL="0")
@@ -132,7 +137,7 @@ def main():
     with audit.open("w", encoding="utf-8") as stream:
         run(*container_step(cpus), "env", f"LD_LIBRARY_PATH={COMPAT}",
             "OPENBLAS_NUM_THREADS=1", "OMP_NUM_THREADS=1", AUDIT_PYTHON, "-B",
-            FROZEN / "audit_three_p.py",
+            AUDIT_ARCHIVE / "audit_three_p.py",
             RUNS / "issue-274/reference-workloads-01/ref-114294/qwen3",
             FROZEN / "fp32-115617-qwen3", output / PREFILL, output / DECODE,
             cwd=work, stdout=stream)
