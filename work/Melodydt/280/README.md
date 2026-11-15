@@ -11,7 +11,7 @@
 
 ## 服务器恢复入口
 
-目标 `yuzelu@10.129.166.172`，经项目留存的 ED25519 指纹核验成功。当前会话批量身份认证失败，尚未取得登录会话，Slurm 尚无本任务作业。由 Melodydt 启用项目原有的已授权 SSH 登录身份后复试。恢复后第一步读回原运行清单和实际源目录，再在个人新运行目录准备探针。 [远程使用规则](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/d8f775b661c511d6450d5cbe63f4519563114895/docs/REMOTE_RULES.md)
+服务器 `yuzelu@10.129.166.172` 已恢复公钥登录。Qwen3 试点回放 116481 的两个模型步骤和 DDR 分窗对账均成功，独立 FP32 由补跑 116496 验收通过。 [本轮终态、分窗数值和散列](QWEN3_DDR_PILOT.md)
 
 - Qwen3-0.6B 冻结回放目录为 `/public/home/yuzelu/Melodydt/runs/issue-274/three-p-full-01`，对照作业为短 Prefill `115618` 和 Decode `115619`。首先校验 `source.sha256`、`upstream.sha256` 和两个运行的 `output.sha256`。
 - 构建源与桥接脚本按 #270 作业 113164 的冻结依赖读回。原桥的 SHA-256 为 `1e74820e1cbe48b447e29fd9f98f55c54b4bd4f3fb493b0f2d8e1317c3cd8c1b`，原 DDR 配置 SHA-256 为 `748ba1a2e06c26f4a71f27a9a98060ecf00432376ad417deae1ab92afdcb0766`。本地回归采用独立器件配置和编译环境，服务器使用原依赖另行核验。 [冻结构建入口](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/ebd590def47d2da6b46f04a68931c1d47f11538e/work/Melodydt/270/ffn-weight-05/run_ffn_tlm.sbatch)
@@ -42,10 +42,9 @@ cat "pilot-$JOB/ddr-prefill.json" "pilot-$JOB/ddr-decode.json"
 
 ## 剩余步骤
 
-1. 恢复服务器认证，构建与冻结库匹配的版本，完成 Qwen3 两阶段分窗回归与 DDR 报告。
-2. 固定同一三 P 底座及 FFN Mid 的 DDR 路径，测 P0 调度对照和三 P 并行，并核对两种调度的数值和状态。
-3. 标定 C380 ATT1、C639 三 P FFN、512-bit 数据 SRAM／PM、母控／局控、DMA、互连和时钟。核对 512-bit 宽写与物理 bank 实现，并对门级活动设留出窗口。
-4. 用 Granite 的专家并发与 Phi、Falcon 的 V 读取对照复核归因，再扩到七模型。每完成一模型归档并汇报两阶段速度、DDR mJ/token、平均 W 和片上覆盖，Qwen2.5-3B 作为独立同口径参考。
-5. 所有分项覆盖齐备后汇总全系统 mJ/token 和误差。PHY、板级 I/O 与终端能耗按证据单列。
+1. 固定同一三 P 底座及 FFN Mid 的 DDR 路径，测 P0 调度对照和三 P 并行，并核对两种调度的数值和状态。
+2. 标定 C380 ATT1、C639 三 P FFN、512-bit 数据 SRAM／PM、母控／局控、DMA、互连和时钟。核对 512-bit 宽写与物理 bank 实现，并对门级活动设留出窗口。
+3. 用 Granite 的专家并发与 Phi、Falcon 的 V 读取对照复核归因，再扩到七模型。每完成一模型归档并汇报两阶段速度、DDR mJ/token、平均 W 和片上覆盖，Qwen2.5-3B 作为独立同口径参考。
+4. 所有分项覆盖齐备后汇总全系统 mJ/token 和误差。PHY、板级 I/O 与终端能耗按证据单列。
 
 规则版本 `rayggxia-project-collab` 1.0.0。项目管理结构检查和本地器件回归通过。登记 [PR #5](https://github.com/rayggxia-workspace/management-hub/pull/5) 待合并。当前项目缺 `config/board.json`，看板仍待具权限维护者核验。
