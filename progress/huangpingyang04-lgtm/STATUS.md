@@ -21,3 +21,8 @@
 
 - [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250：同一方案 A 完整 1,834 网用 CUGR 式两级 Dijkstra 重跑。三份路线通过独立几何核验，最佳作业 115549 布通 436 根，较加权 A* 增加 29 根，尚余 1,398 根。
 - 交换器外框仍受 909 根必过网和 342 根容量上限约束。底座逃逸和全量物理验收待实施。[代码、报告与回执](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/full-1834/dijkstra/README.md)
+
+## 2026-11-15 16:40（中国标准时间）
+
+- [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250：完整方案 A 改用 CUGR 第二阶段整板细粒度 Dijkstra。三组输出通过独立几何核验，最佳作业 115857 布通 501 / 1,834 根，较上一轮增加 65 根，尚余 1,333 根。
+- 作业 115864 复算交换器外框 909 根必过网与 342 根容量上限。全量连通和工艺及时序验收待实施。[复跑报告与证据](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/full-1834/stage2/README.md)

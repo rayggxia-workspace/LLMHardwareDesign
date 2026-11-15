@@ -2,6 +2,8 @@
 
 2026-11-15（中国标准时间） · [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) · Refs #250、#228
 
+本页记录两级搜索的历史对照。最新结果见 [仅 CUGR 第二阶段的整板细粒度 Dijkstra](../stage2/README.md)。
+
 保留作业 112878 的方案 A 摆位和作业 114252 的完整交接。输入含 1,834 根顶层逻辑网，其中 U0↔DMA 650 根。沿用相同的 M10 落点、引脚窗口、M11 横向与 M12 纵向规则。布线从空的后制层开始。
 
 ## 方法
