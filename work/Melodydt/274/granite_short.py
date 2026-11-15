@@ -75,6 +75,7 @@ class Router:
         self.execution = execution
         self.ram = execution.sram
         self.proj = execution.proj
+        self.expert_proj = getattr(execution, "ffn_proj", None) or execution.proj
         self.activate = activation
 
     def bind(self, record):
@@ -82,6 +83,7 @@ class Router:
         if (experts, top) != (40, 8) or any(record[24:124]):
             raise ValueError("invalid Granite MoE descriptor")
         unit, target = self.proj[0], self.ram[P]
+        gate_up = self.expert_proj[0]
         partial_words = 384
 
         def run(done):
@@ -111,7 +113,7 @@ class Router:
                     up = projection_record(left, 1024, 1536, 512+tile*128, 16, 32)
                     g = seal(ACT, 1, VECTOR, "<3H", 0, 32, 64)
                     transfer = seal(COPY, 1, VECTOR, "<B3H", P, 64, tile*32, 32)
-                    unit.provider(gate)(lambda: unit.provider(up)(lambda: self.activate(g)(
+                    gate_up.provider(gate)(lambda: gate_up.provider(up)(lambda: self.activate(g)(
                         lambda: self.execution.providers[MID, COPY, VECTOR, 1](transfer)(
                             lambda: activated(tile+1)))))
 
@@ -120,7 +122,7 @@ class Router:
                         expert(ordered, table, index+1)
                         return
                     op = projection_record(right, 1536, 512, tile*128, 16, 0, route=2)
-                    engine = self.proj[2]
+                    engine = self.expert_proj[2]
 
                     def add(raw):
                         new = np.frombuffer(raw, dtype="<i4").tolist()

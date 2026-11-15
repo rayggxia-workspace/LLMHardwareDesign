@@ -87,7 +87,7 @@ class KVMemory(CommittedMemory):
 
 
 class Execution:
-    def __init__(self, plan, assets, library, ini, output, weight_window=1):
+    def __init__(self, plan, assets, library, ini, output, weight_window=1, pr272_profile="off"):
         self.plan = plan
         self.assets = assets
         self.output = output
@@ -109,7 +109,23 @@ class Execution:
                                 source_word=word, scratch_word=944, scratch_sram=self.sram[P], **projection_args)
                      for src, word in ((U if self.hidden <= 2048 else MID, self.hidden//4 if self.hidden <= 2048 else 0),
                                        (CONTEXT, 0), (MID, 0))]
-        self.attn = Attention(self.clock, self.dram, self.memory, self.proj[0], kv_window=8)
+        self.pr272_profile = pr272_profile
+        self.pipeline_attention = pr272_profile in ("attention", "combined")
+        self.ffn_proj = None
+        self.ffn_bases = set()
+        if pr272_profile in ("ffn", "combined"):
+            from pr272_weight import is_ffn_weight, make_ffn_projections
+            self.ffn_proj = make_ffn_projections(self.proj)
+            self.ffn_bases = {item["address"] for item in plan["images"] if is_ffn_weight(item["path"])}
+            if not self.ffn_bases:
+                raise ValueError("the PR #272 FFN profile lacks packed FFN images")
+
+        if self.pipeline_attention:
+            from pr272_native_attention import Attention as ArchiveAttention
+            self.attn = ArchiveAttention(self.clock, self.dram, self.memory, self.proj[0], kv_window=8, pipeline=True)
+        else:
+            self.attn = Attention(self.clock, self.dram, self.memory, self.proj[0], kv_window=8)
+        self.attention_services = {"native_att1": self.attn}
         self.calls = Counter()
         self.service_times = {}
         self.service_group = None
@@ -136,7 +152,9 @@ class Execution:
             source = record[16]
             if source > 5 or any(record[17:24]) or any(record[32:48]):
                 raise ValueError("invalid projection source")
-            return self.proj[min(source, 2)]
+            base, = unpack_from("<Q", record, 48)
+            engines = self.ffn_proj if base in self.ffn_bases else self.proj
+            return engines[min(source, 2)]
 
         def project(record):
             proj = match(record)
@@ -392,11 +410,15 @@ class Execution:
                      (U, 3, BASE_ABI, ADD2): self.e[U].add}
         if self.hidden == 2560:
             from attention_wide import WideAttention
-            providers[P, ATT_WIDE, VECTOR, 1] = WideAttention(self.proj[0]).bind
+            wide = WideAttention(self.proj[0], pipeline=self.pipeline_attention)
+            self.attention_services["wide_attn"] = wide
+            providers[P, ATT_WIDE, VECTOR, 1] = wide.bind
         if self.plan["kv_row"] == 256 or self.plan.get("tiled_attention128"):
             from attention_compact import TiledAttention
             width = self.plan["kv_row"]//4
-            providers[P, ATT1, BASE_ABI, 2 if width == 64 else 1] = TiledAttention(self.proj[0], width).bind
+            tiled = TiledAttention(self.proj[0], width, pipeline=self.pipeline_attention)
+            self.attention_services["tiled_attn"] = tiled
+            providers[P, ATT1, BASE_ABI, 2 if width == 64 else 1] = tiled.bind
         if self.plan.get("moe"):
             from granite_short import Router
             providers[P, MOE, VECTOR, 1] = Router(self, activation).bind
@@ -510,6 +532,12 @@ class Execution:
                   "ddr": counts, "timing_calibrated": False, "rtl_qualified": False}
         result["weight_window"] = self.weight_window
         result["projection"] = [dict(p.stats) for p in self.proj]
+        result["pr272_profile"] = self.pr272_profile
+        result["ffn_projection"] = [dict(p.stats) for p in self.ffn_proj] if self.ffn_proj else []
+        result["attention_services"] = {kind: dict(service.stats)
+                                        for kind, service in self.attention_services.items()}
+        if self.ffn_proj and not any(p.stats["weight_records_consumed"] for p in self.ffn_proj):
+            raise ValueError("the PR #272 FFN profile consumed no weight records")
         result["services"] = [{"group": group, "signature": signature, "count": count,
                                "dispatch_ps": dispatch, "service_ps": service}
                               for (group, signature), (count, dispatch, service) in
@@ -533,6 +561,7 @@ def main():
     parser.add_argument("--ffn-context-cache", action="store_true")
     parser.add_argument("--compact-kv64", action="store_true")
     parser.add_argument("--tiled-attention128", action="store_true")
+    parser.add_argument("--pr272-profile", choices=("off", "attention", "ffn", "combined"), default="off")
     args = parser.parse_args()
     if args.ffn_context_cache and args.model not in ("phi", "gemma", "qwen35", "falcon"):
         parser.error("FFN context cache requires a DDR-backed Mid mapping")
@@ -582,7 +611,8 @@ def main():
     if args.tiled_attention128:
         plan["tiled_attention128"] = True
     (assets / "plan.json").write_text(json.dumps(plan, indent=2) + "\n")
-    result = Execution(plan, assets, args.library, args.ini, args.output, args.weight_window).run()
+    result = Execution(plan, assets, args.library, args.ini, args.output,
+                       args.weight_window, args.pr272_profile).run()
     result.update(plan_sha256=hash_file(assets / "plan.json"),
                   model=args.model,
                   ffn_context_cache=args.ffn_context_cache,

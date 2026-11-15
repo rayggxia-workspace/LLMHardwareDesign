@@ -6,6 +6,8 @@
 
 [512-bit SRAM 吞吐优化](OPTIMIZATION.md)记录分项时间、模型差距及优化 A/B。
 
+[PR #272 调度重测](PR272_RETEST.md)记录采用的 RTL 调度、原生夹具回归与七模型 512-bit 回放。
+
 ## 服务器回执
 
 服务器登录 `yuzelu@10.129.166.172`，任务根 `/public/home/yuzelu/Melodydt/runs/issue-274`。

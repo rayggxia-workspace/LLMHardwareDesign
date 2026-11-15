@@ -1,5 +1,6 @@
 """ATT1 arithmetic with one V read per row in an eight-row SRAM window."""
 from struct import pack, unpack, unpack_from
+from collections import Counter
 
 from native_tlm_attention import softmax_lut
 from native_tlm_timing import Transfer
@@ -8,12 +9,14 @@ from check_softmax import reference
 
 
 class TiledAttention:
-    def __init__(self, projection, width):
+    def __init__(self, projection, width, *, pipeline=False):
         if width not in (64, 128):
             raise ValueError("unsupported tiled attention head dimension")
         self.proj = projection
         self.ram = projection.target
         self.width = width
+        self.pipeline = pipeline
+        self.stats = Counter()
 
     def bind(self, record):
         count, position, query_word, score, work, output, scale, key, value = unpack_from("<6HIQQ", record, 16)
@@ -28,6 +31,10 @@ class TiledAttention:
                 any(a+n > b for (a,n),(b,_) in zip(spans, spans[1:])) or sum(spans[-1]) > 1024):
             raise ValueError("invalid compact attention extent")
         proj, ram = self.proj, self.ram
+        operand = None
+        if self.pipeline:
+            from attention_refill import PipelinedOperands
+            operand = PipelinedOperands(proj, work, row_words, 4, self.stats)
 
         def execute(done):
             def refill(base, first, rows, finished):
@@ -66,21 +73,30 @@ class TiledAttention:
 
                 fill()
 
+            def scores(first, rows, query, raw, finished, tile_cycles):
+                values = [s32(rne(sum(a*b for a,b in zip(query, row)), 16))
+                          for row in (unpack_from(vector, raw, i*row_bytes) for i in range(rows))]
+                values.extend([0]*(-rows%4))
+                data = pack(f"<{len(values)}i", *values)
+                proj.edge(lambda: proj.write_span(ram, score+first//4, data, finished), tile_cycles)
+
             def qk(first, query):
                 if first == count:
                     normalize()
                     return
                 rows = min(8, count-first)
+                refill(key, first, rows, lambda raw:
+                       scores(first, rows, query, raw, lambda: qk(first+rows, query), 128))
 
-                def dot(raw):
-                    scores = [s32(rne(sum(a*b for a,b in zip(query, row)), 16))
-                              for row in (unpack_from(vector, raw, i*row_bytes) for i in range(rows))]
-                    scores.extend([0]*(-rows%4))
-                    data = pack(f"<{len(scores)}i", *scores)
-                    proj.edge(lambda: proj.write_span(ram, score+first//4, data,
-                              lambda: qk(first+rows, query)), 128)
-
-                refill(key, first, rows, dot)
+            def start_query(raw):
+                query = unpack(vector, raw)
+                if operand is None:
+                    qk(0, query)
+                else:
+                    def consume(first, rows, word, finished):
+                        operand.read(word, rows*row_words, lambda data:
+                                     scores(first, rows, query, data, finished, 64))
+                    operand.replay(key, count, consume, normalize)
 
             def normalize():
                 words = (count+3)//4
@@ -93,30 +109,48 @@ class TiledAttention:
                     values = pack(f"<{words*4}i", *probs)
                     proj.edge(lambda: proj.write_span(ram, score, pack(f"<{words*4}i", *exp),
                               lambda: proj.read_span(ram, score, words, lambda _:
-                              proj.edge(lambda: proj.write_span(ram, score, values, lambda: av(0, [0]*width)), 64))),
+                              proj.edge(lambda: proj.write_span(ram, score, values, start_av), 64))),
                               words*9)
 
                 proj.read_span(ram, score, words, softmax)
 
             def av(first, totals):
                 if first == count:
-                    data = pack(vector, *(s32(rne(v, 16)) for v in totals))
-                    proj.write_span(ram, output, data, done)
+                    output_av(totals)
                     return
                 rows = min(8, count-first)
 
                 def probabilities(raw):
                     p = unpack(f"<{len(raw)//4}i", raw)
 
-                    def multiply(values):
-                        for row in range(rows):
-                            for lane, v in enumerate(unpack_from(vector, values, row_bytes*row)):
-                                totals[lane] += p[row]*v
-                        proj.edge(lambda: av(first+rows, totals), rows*(width//8))
-
-                    refill(value, first, rows, multiply)
+                    refill(value, first, rows, lambda values:
+                           dot_values(values, p, rows, totals, lambda: av(first+rows, totals)))
 
                 proj.read_span(ram, score+first//4, (rows+3)//4, probabilities)
 
-            proj.read_span(ram, query_word, row_words, lambda raw: qk(0, unpack(vector, raw)))
+            def dot_values(values, probabilities, rows, totals, finished):
+                for row in range(rows):
+                    for lane, v in enumerate(unpack_from(vector, values, row_bytes*row)):
+                        totals[lane] += probabilities[row]*v
+                proj.edge(finished, rows*(width//8))
+
+            def output_av(totals):
+                data = pack(vector, *(s32(rne(v, 16)) for v in totals))
+                proj.write_span(ram, output, data, done)
+
+            def start_av():
+                totals = [0]*width
+                if operand is None:
+                    av(0, totals)
+                else:
+                    def consume(first, rows, word, finished):
+                        def probabilities(raw):
+                            p = unpack(f"<{len(raw)//4}i", raw)
+                            operand.read(word, rows*row_words, lambda values:
+                                         dot_values(values, p, rows, totals, finished))
+
+                        operand.read(score+first//4, (rows+3)//4, probabilities)
+                    operand.replay(value, count, consume, lambda: output_av(totals))
+
+            proj.read_span(ram, query_word, row_words, start_query)
         return execute

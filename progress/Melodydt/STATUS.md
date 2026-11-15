@@ -31,3 +31,9 @@
 - [Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 继续进行中，[PR #275](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/275) 草稿。登记 pending，Projects 看板无项目配置，审查人待指定。
 
 - 首轮优化整层 Slurm 115262、115282–115288 均正常退出。七模型用 512-bit SRAM 完成两阶段 A/B，候选和原基线最终残差、词表 logits 逐字节一致。短 Prefill 提升 33.89%–53.98%，两步 Decode 提升 20.82%–97.53%。输出清单已复验。另完成 Qwen3 独立 V 读取复用，Decode 达 4.948742 token/s。见[完整优化记录](../../work/Melodydt/274/OPTIMIZATION.md)。PR 保持草稿，Issue 进行中，基线数值资格与 RTL／物理校准待完成。
+
+## 2026-11-15（Asia/Shanghai）PR #272 调度重测
+
+- PR #272 固定 ebd590de，接入保留的 ATT1 流水与 FFN 四权重 bank。作业 115329/115330 的原生 C380 夹具回执通过。C639 115347 和七模型 512-bit 全层重测 115340–115346 运行中。
+- 七组四层程序和最终残差与上一轮逐字节一致。Qwen3 四层单因素 ATT1 +0.26%，FFN −7.28%。[冻结版本、审计和全层复跑](../../work/Melodydt/274/PR272_RETEST.md)。
+- [Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 进行中，[PR #275](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/275) 草稿。登记 pending，Projects 无配置待核验及同步。

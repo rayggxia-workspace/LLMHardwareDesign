@@ -53,6 +53,30 @@ def inference_images(plan):
     return sorted(images)
 
 
+def check_pr272(result):
+    profile = result.get("pr272_profile")
+    if profile in ("ffn", "combined"):
+        engines = [p for p in result["ffn_projection"] if p.get("weight_records_consumed")]
+        if not engines or any(not 0 < p["weight_read_issues"] == p["weight_read_returns"] or
+                              not 0 < p["weight_peak_outstanding"] <= 32 for p in engines):
+            raise ValueError("PR #272 FFN requests or credits do not reconcile")
+    if profile in ("attention", "combined"):
+        services = result["attention_services"]
+        if not any(services.values()):
+            raise ValueError("PR #272 attention profile has no timed attention")
+        for service in services.values():
+            if "ddr_issued" in service and (
+                    service["ddr_issued"] != service["ddr_returned"] or
+                    service["ddr_returned"] != service["s_write_acks"] or
+                    service["ddr_peak_inflight"] > 8 or service["reply_slots_peak"] > 16 or
+                    service["s_write_peak"] > 4):
+                raise ValueError("adapted PR #272 attention did not drain or exceeded its slots")
+            if "kv_window_peak" in service and (
+                    service["kv_window_peak"] > 8 or service["kv_reserved_slots_peak"] > 16 or
+                    service["kv_sram_write_peak"] > 4):
+                raise ValueError("archived PR #272 attention exceeded its slots")
+
+
 def measure(result, diary):
     rows = Counter()
     weights = Counter()
@@ -66,16 +90,21 @@ def measure(result, diary):
         position, family = entry["group"].split("-", 1)
         if (not decode or position == "pos513") and family == "layers":
             weights[str(entry["signature"][1])] += entry["service_ps"]
-    return {"interval_ps": result["interval_ps"], "tok_s": result["tok_s"], "page_ps": dict(rows),
+    measured = {"interval_ps": result["interval_ps"], "tok_s": result["tok_s"], "page_ps": dict(rows),
             "layer_service_ps_by_schema": dict(weights), "ddr": result["ddr"],
             "weight_window": result.get("weight_window", 1),
             "ffn_context_cache": result.get("ffn_context_cache", False),
             "compact_kv64": result.get("compact_kv64", False)}
+    if result.get("pr272_profile") not in (None, "off"):
+        measured.update(pr272_profile=result["pr272_profile"], ffn_projection=result["ffn_projection"],
+                        attention_services=result["attention_services"])
+    return measured
 
 
-def compare(before, after, same_plan=False):
+def compare(before, after, same_plan=False, same_program=False):
     a, ap, ad = snapshot(before)
     b, bp, bd = snapshot(after)
+    check_pr272(b)
     for k in ("mode", "layers", "history"):
         if a[k] != b[k]:
             raise ValueError(f"workload or state differs: {k}")
@@ -95,11 +124,12 @@ def compare(before, after, same_plan=False):
         raise ValueError("compact KV must use half the row bytes")
     if inference_images(ap) != inference_images(bp):
         raise ValueError("checkpoint data, inputs, or constants differ")
-    if same_plan:
+    if same_plan or same_program:
         images = lambda p: [(i["address"], i["bytes"], i["sha256"]) for i in p["images"]]
-        if (images(ap) != images(bp) or a["calls"] != b["calls"] or
-                any(a["ddr"][k] != b["ddr"][k] for k in ("reads", "writes", "callbacks"))):
-            raise ValueError("weight-only comparison requires identical programs and transaction totals")
+        if images(ap) != images(bp) or a["calls"] != b["calls"]:
+            raise ValueError("compiled program images or calls differ")
+    if same_plan and any(a["ddr"][k] != b["ddr"][k] for k in ("reads", "writes", "callbacks")):
+        raise ValueError("weight-only comparison requires identical transaction totals")
     for category, keys in (("boundary", ("input_id", "sha256")),
                            ("retirements", ("input", "selected", "vocab", "logits_sha256"))):
         values = lambda result: [tuple(row[key] for key in keys) for row in result[category]]
@@ -117,9 +147,10 @@ if __name__ == "__main__":
     parser.add_argument("before", type=Path)
     parser.add_argument("after", type=Path, nargs="?")
     parser.add_argument("--same-plan", action="store_true")
+    parser.add_argument("--same-program", action="store_true")
     args = parser.parse_args()
     if args.after:
-        output = compare(args.before, args.after, args.same_plan)
+        output = compare(args.before, args.after, args.same_plan, args.same_program)
     else:
         result, _, diary = snapshot(args.before)
         output = measure(result, diary)

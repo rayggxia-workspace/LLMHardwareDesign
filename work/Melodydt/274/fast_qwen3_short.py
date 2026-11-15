@@ -34,7 +34,11 @@ if __name__ == "__main__":
     if os.environ.get("SHORT_PROJECTION_MATH"):
         import native_tlm_projection
         from projection_math import NativeAccumulator
-        native_tlm_projection.accumulate = NativeAccumulator(Path(os.environ["SHORT_PROJECTION_MATH"]))
+        arithmetic = NativeAccumulator(Path(os.environ["SHORT_PROJECTION_MATH"]))
+        native_tlm_projection.accumulate = arithmetic
+        if "--pr272-profile" in sys.argv and sys.argv[sys.argv.index("--pr272-profile")+1] != "off":
+            import pr272_native_projection
+            pr272_native_projection.accumulate = arithmetic
     replay.Clock = BatchedClock
     replay.Dram = DramBridge
     sys.argv[0] = replay.__file__

@@ -70,16 +70,19 @@ if [[ ${MDT_274_VERIFY_MATH:-0} == 1 ]]; then
 fi
 pids=()
 for spec in "$@"; do
-    IFS=: read -r mode window cache <<< "$spec"
+    IFS=: read -r mode window cache profile <<< "$spec"
     window="${window:-1}"
+    profile="${profile:-off}"
     options=()
     if [[ "${cache:-}" == cache ]]; then options+=(--ffn-context-cache); fi
     if [[ "${cache:-}" == kv64 ]]; then options+=(--compact-kv64); fi
     if [[ "${cache:-}" == tile128 ]]; then options+=(--tiled-attention128); fi
+    if [[ $profile != off ]]; then options+=(--pr272-profile "$profile"); fi
     count=$layers
     if [[ $mode == pilot ]]; then mode=prefill; count=1; fi
     if [[ $mode == slice ]]; then mode=prefill; count=4; fi
     name="${spec%%:*}-w$window${cache:+-$cache}"
+    if [[ $profile != off ]]; then name="$name-pr272-$profile"; fi
     if [[ $spec == "$mode" ]]; then name=$mode; fi
     if [[ $spec == pilot || $spec == slice ]]; then name=$mode; fi
     srun_python fast_qwen3_short.py "$input" "$r/qwen3-gather-01/run-114290" "$packed" "$reference" \
