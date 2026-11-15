@@ -106,6 +106,7 @@ def main():
     for source in FROZEN.glob("*.py"):
         if not (replay / source.name).exists():
             shutil.copy2(source, replay)
+    shutil.copy2(FROZEN / "projection_math.cpp", replay)
     shutil.copy2(FROZEN / "upstream.sha256", replay)
     write_manifest(replay / "source.sha256",
                    sorted(p.name for p in replay.iterdir() if p.suffix in (".py", ".cpp", ".sbatch")),
