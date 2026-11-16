@@ -1,0 +1,161 @@
+diff --git a/project/experiments/upper_router/geometry.py b/project/experiments/upper_router/geometry.py
+index 2c7ab1d..bf329dd 100644
+--- a/project/experiments/upper_router/geometry.py
++++ b/project/experiments/upper_router/geometry.py
+@@ -206,14 +206,44 @@ class RoutingGrid:
+                     yield (*end, layer)
+
+
+-def net_priority(spec):
+-    """Use declared bundles as soft capacity hints without requiring bus names."""
++def move_shapes(a, b, tech):
++    if a[2] != b[2]:
++        return via_shapes('via11', a[:2], tech)
++    return [segment_shape('M'+str(a[2]), a[:2], b[:2], tech)]
++
++
++def count_exits(points, grid, occupancy, owner):
++    """Count legal first moves; a fine and coarse step in one direction share an exit."""
++    exits = set()
++    for start in points:
++        x, y, layer = start
++        for end in grid.moves(start):
++            u, v, other_layer = end
++            if occupancy.legal(move_shapes(start, end, occupancy.tech), owner):
++                exits.add((x, y, (u > x)-(u < x), (v > y)-(v < y), other_layer-layer))
++    return len(exits)
++
++
++def net_priority(spec, native):
++    """Put nets with fewer legal exits first, using bundles to break ties."""
+     nets = {n['id']: n for n in spec['nets']}
+     tech = spec['technology']
+     used = {pin for n in nets.values() for pin in [n['driver'], *n['sinks']]}
+     access = {pin: set(access_points(spec['pins'][pin], tech)) for pin in used}
+-    scarcity = {name: min(len(access[p]) for p in [n['driver'], *n['sinks']])
+-                for name, n in nets.items()}
++    fixed = Occupancy(tech)
++    fixed.add([(o['layer'], o['rect']) for o in spec.get('obstacles', [])], None)
++    scarcity = {}
++    for name, net in nets.items():
++        pins = [net['driver'], *net['sinks']]
++        own_pins = set(pins)
++        grid = RoutingGrid(tech, (spec['pins'][p] for p in pins))
++        exits = []
++        for pin in pins:
++            starts = [(x, y, 11) for x, y in access[pin]
++                      if native.exclusive((x, y), own_pins)
++                      and fixed.legal(via_shapes('via10', (x, y), tech), name)]
++            exits.append(count_exits(starts, grid, fixed, name))
++        scarcity[name] = min(exits)
+     pressure = {name: 0 for name in nets}
+     assigned = set()
+     ids = set()
+diff --git a/project/experiments/upper_router/resource_search.py b/project/experiments/upper_router/resource_search.py
+index 568ec24..87d1130 100644
+--- a/project/experiments/upper_router/resource_search.py
++++ b/project/experiments/upper_router/resource_search.py
+@@ -114,7 +114,7 @@ def route_resources(spec, data, *, rounds=8, max_expansions=100000, seed=0, cand
+     validate_opts = projection(spec, data, {n: None for n in nets}, {})
+     validate(validate_opts)
+     indices = {n: i for i, n in enumerate(sorted(nets))}
+-    priority = net_priority(spec).__getitem__
++    priority = net_priority(expanded_spec, native).__getitem__
+     order = sorted(nets, key=priority)
+     history = defaultdict(int)
+     locked = {}
+diff --git a/project/experiments/upper_router/search.py b/project/experiments/upper_router/search.py
+index e6dceba..6db7ba9 100644
+--- a/project/experiments/upper_router/search.py
++++ b/project/experiments/upper_router/search.py
+@@ -3,8 +3,8 @@ from collections import defaultdict
+ from heapq import heappush, heappop
+ import random
+
+-from geometry import (NativePins, Occupancy, RoutingGrid, access_points, box, segment_shape,
+-                      net_priority, too_close, via_shapes, validate, need)
++from geometry import (NativePins, Occupancy, RoutingGrid, access_points, box, count_exits,
++                      move_shapes, net_priority, segment_shape, too_close, via_shapes, validate, need)
+
+
+ def route_shapes(route, tech):
+@@ -58,7 +58,7 @@ def connect(starts, goals, tech, occupancy, owner, history, limit, *,
+         x, y, layer = node
+         for nxt in grid.moves(node):
+             switching = nxt[2] != layer
+-            shapes = via_shapes('via11', (x, y), tech) if switching else [segment_shape('M'+str(layer), (x, y), nxt[:2], tech)]
++            shapes = move_shapes(node, nxt, tech)
+             if switching and fine:
+                 cut = shapes[0][1]
+                 if any(too_close(cut, old, tech['via11']['spacing']) for old in cuts[node]):
+@@ -99,10 +99,13 @@ def route_net(net, spec, occupancy, history, limit, native, blockers=None):
+         return result, None, 0, blocked
+     if not starts:
+         return None, 'grid_access_not_found', 0, blocked
+-    # Scarce accesses first within a tree. No model/Block names participate.
+-    sinks = sorted(net['sinks'], key=lambda p: (len(candidates(p)), p))
+-    for sink in sinks:
+-        goals = candidates(sink)
++    remaining = set(net['sinks'])
++    while remaining:
++        options = {pin: candidates(pin) for pin in remaining}
++        sink = (min(remaining, key=lambda pin: (count_exits(options[pin], grid, occupancy, name), pin))
++                if len(remaining) > 1 else next(iter(remaining)))
++        remaining.remove(sink)
++        goals = options[sink]
+         if not goals:
+             return None, 'grid_access_not_found', expanded, blocked
+         path, used, failures = connect(tree or starts, goals, tech, occupancy, name, history,
+@@ -135,7 +138,7 @@ def route(spec, *, rounds=8, max_expansions=100000, seed=0):
+     native = NativePins(spec)
+     history = defaultdict(int)
+     nets = {n['id']: n for n in spec['nets']}
+-    priority = net_priority(spec).__getitem__
++    priority = net_priority(spec, native).__getitem__
+     order = sorted(nets, key=priority)
+     rng = random.Random(seed)
+     attempts = []
+diff --git a/project/experiments/upper_router/test_router.py b/project/experiments/upper_router/test_router.py
+index b0a3dcf..951245d 100644
+--- a/project/experiments/upper_router/test_router.py
++++ b/project/experiments/upper_router/test_router.py
+@@ -8,6 +8,7 @@ import unittest
+
+ from search import route
+ from check import verify
++from resource_search import route_resources
+
+
+ def sample():
+@@ -56,6 +57,31 @@ class RouterTests(unittest.TestCase):
+         self.assertEqual(r['geometry_check']['via10_count'], 3)
+         self.assertLessEqual(r['geometry_check']['wire_length_dbu'], 128)
+
++    def test_short_net_with_fewer_legal_exits_is_routed_first(self):
++        spec = sample()
++        spec['pins'].update(long_source=[[14, 30, 18, 34]], long_sink=[[62, 62, 66, 66]],
++                            short_sink=[[22, 6, 26, 10]])
++        spec['nets'] = [
++            {'id': 'a-long', 'driver': 'long_source', 'sinks': ['long_sink']},
++            {'id': 'z-short', 'driver': 'source', 'sinks': ['short_sink']},
++        ]
++        spec['obstacles'] = [{'layer': 'V11', 'rect': [7, 7, 9, 9]}]
++        resources = {'schema_version': 'upper-repeaters/1', 'units': 'dbu', 'repeaters': []}
++        for result in (route(spec, rounds=1), route_resources(spec, resources, rounds=1)):
++            self.assertFalse(result['failed'])
++            self.assertTrue(result['geometry_check']['passed'])
++            self.assertEqual(result['attempts'][0]['order'], ['z-short', 'a-long'])
++
++    def test_near_sink_with_fewer_legal_exits_joins_tree_first(self):
++        spec = sample()
++        spec['pins']['z-near'] = [[6, 14, 10, 18]]
++        spec['nets'][0]['sinks'].append('z-near')
++        spec['obstacles'] = [{'layer': 'V11', 'rect': [7, 15, 9, 17]}]
++        result = route(spec, rounds=1)
++        self.assertTrue(result['geometry_check']['passed'])
++        wire = result['routes']['bus.bit.any_name']
++        self.assertEqual([via['pin'] for via in wire['via10']], ['source', 'z-near', 'sink'])
++
+     def test_ripup_rescues_blocked_terminal(self):
+         spec = sample()
+         spec['pins'] = {'a0': [[6, 6, 10, 10]], 'a1': [[70, 6, 74, 10]],
