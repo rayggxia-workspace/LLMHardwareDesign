@@ -71,7 +71,8 @@ export DESIGN_NICKNAME = mdt_c639_switch
 export SYNTH_HDL_FRONTEND = slang
 export VERILOG_FILES = $switch $out/top.sv
 export SDC_FILE = $out/target.sdc
-export CORE_UTILIZATION = 35
+export DIE_AREA = 0 0 120 120
+export CORE_AREA = 4 4 116 116
 export PLACE_DENSITY = 0.55
 EOF
 make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$out/config.mk" WORK_HOME="$out/flow" NUM_CORES="$cores" \
