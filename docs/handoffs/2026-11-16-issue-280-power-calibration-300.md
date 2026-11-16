@@ -43,3 +43,29 @@ tail -n 20 c639-pm-power-300-03/result-117751/flow.log
 ```
 
 `python scripts/check_project.py` 通过，服务器 Bash 语法、真实 Slurm、配对功能和已完成结果 SHA-256 已核对。负责人 Melodydt。#280 进行中，PR 草稿，登记 PR #5 待合并，Projects 缺配置待有权限维护者核验。当前未配置自动跟踪。
+
+## 局控 PM 配对功耗完成
+
+117751 的最终布线工件通过散列、DRC 0、TT 300 MHz setup/hold +1.09843 ns/+6.78355 ps，以及后端逻辑等价检查。其活跃门级回放通过 6 次 DDR 回包、22 次 128-bit 写确认，DDR 事务与 103489 逐字节相同。长空闲回放异常退出，留存波形到 40.36 µs，涵盖所需的前 1.1 µs。补测 117831 在 c64/node12 4 核、19 秒、COMPLETED 0:0，验证起点前 26,015 个局控 PM 信号 ID 的值一致，配对空闲窗内配置、DDR、PM 请求及相关计数均静止。
+
+| 300 MHz 指标 | 结果 |
+| --- | ---: |
+| 对应窗口 | 103 拍，343.333 ns |
+| 活跃平均功耗 | 30.888380 mW |
+| 空闲平均功耗 | 30.802595 mW |
+| 活跃能量 | 10.605000 nJ |
+| 空闲能量 | 10.575547 nJ |
+| 活跃减空闲 | 0.029453 nJ/窗、1.338780 pJ/写 |
+
+两窗均直接标注 45,389 个引脚，104,258 个引脚未直接标注，覆盖 30.33%。活跃减空闲的差值约为总能量的 0.28%，受传播活动、夹具和负载影响，登记为当前窗口估算。实测范围为 LC 程序存储的寄存器阵列实现。
+
+代码 commit `99f3da6cbc28a8680664fbabf16130907d131e03`。服务器 `yuzelu@10.129.166.172`，目录 `/public/home/yuzelu/Melodydt/runs/issue-280/c639-pm-saved-300-01`。命令 `sbatch --parsable run_c639_pm_saved_power_300.sbatch`，作业名 `mdt-280pmfix300`。脚本包清单 SHA-256 `5fedc6d3897ee3c731ec60a03ae33274beaef8eab2953a46c48fefccd1e0c97f`，结果清单 SHA-256 `1d9cd81ab0a28e0fc06583d8b468908cbd4249a8888555a5157f5c75cc29efea`。117729 仍在 c96/node15 运行，下一步读回门级回放，补 M 空闲及控制等剩余分项。时序后续仍影响修复版同窗对照。
+
+```bash
+ssh yuzelu@10.129.166.172
+cd /public/home/yuzelu/Melodydt/runs/issue-280/c639-pm-saved-300-01
+squeue -j 117729,117831 -o '%i|%j|%P|%T|%C|%N|%R'
+sacct -j 117729,117831 -o JobID,JobName,State,ExitCode,Elapsed,NodeList
+tail -n 30 slurm-117831.log
+(cd result-117831 && sha256sum -c results.sha256 && cat summary.json)
+```
