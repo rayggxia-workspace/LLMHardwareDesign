@@ -98,5 +98,5 @@
 ## 2026-11-16（Asia/Shanghai）推进三项 300 MHz 门级标定
 
 - 117743 完成 512-bit 四 bank 读和 128-bit 单 bank 写的配对门级功耗，8.773／17.236 pJ/次。117749 完成 C380 和 G32 10 窗（含独立活跃窗），成果清单已验散列。
-- 117729 在 c96/node15 编译 C639 三路布线 M 门级回放。117751 在 c96/node15 以原始 LC PM RTL 进行 ABC 映射，后续回放 22 次写确认。M 活跃／空闲和局控 PM 待验收。其余计算、母控、局控、DMA、互连和系统时钟继续绑定。
+- 117729 在 c96/node15 编译 C639 三路布线 M 门级回放。117751 在 c96/node15 完成原始 LC PM RTL 综合并进入全局布线，后续回放 22 次写确认。M 时序 ECO 117651 因 hold 缓冲上限退出，尚无修复后网表。M 活跃／空闲和局控 PM 待验收。其余计算、母控、局控、DMA、互连和系统时钟继续绑定。
 - 真实作业、复跑命令、回执和待办见 [三项标定接续](../../docs/handoffs/2026-11-16-issue-280-power-calibration-300.md)。 [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 进行中，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) 草稿。
