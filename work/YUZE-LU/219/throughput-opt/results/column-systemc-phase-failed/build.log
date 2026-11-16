@@ -1,0 +1,22 @@
+In file included from /public/home/yuzelu/opt/systemc-3.0.2-issue219/include/sysc/kernel/sc_initializer_function.h:35,
+                 from /public/home/yuzelu/opt/systemc-3.0.2-issue219/include/systemc:75,
+                 from systemc_phase.cpp:3:
+/public/home/yuzelu/opt/systemc-3.0.2-issue219/include/sysc/kernel/sc_module.h:418:28: error: 'sc_core::sc_has_process_used' is deprecated: SC_HAS_PROCESS(user_module_name) is obsolete in IEEE 1666-2023, define SC_ALLOW_DEPRECATED_IEEE_API to suppress. [-Werror=deprecated-declarations]
+  418 |     static_assert(sc_core::sc_has_process_used, "no-op to avoid stray ';'")
+      |                            ^~~~~~~~~~~~~~~~~~~
+systemc_phase.cpp:39:5: note: in expansion of macro 'SC_HAS_PROCESS'
+   39 |     SC_HAS_PROCESS(Channel);
+      |     ^~~~~~~~~~~~~~
+/public/home/yuzelu/opt/systemc-3.0.2-issue219/include/sysc/kernel/sc_module.h:416:30: note: declared here
+  416 | static inline constexpr bool sc_has_process_used = true;
+      |                              ^~~~~~~~~~~~~~~~~~~
+/public/home/yuzelu/opt/systemc-3.0.2-issue219/include/sysc/kernel/sc_module.h:418:28: error: 'sc_core::sc_has_process_used' is deprecated: SC_HAS_PROCESS(user_module_name) is obsolete in IEEE 1666-2023, define SC_ALLOW_DEPRECATED_IEEE_API to suppress. [-Werror=deprecated-declarations]
+  418 |     static_assert(sc_core::sc_has_process_used, "no-op to avoid stray ';'")
+      |                            ^~~~~~~~~~~~~~~~~~~
+systemc_phase.cpp:77:5: note: in expansion of macro 'SC_HAS_PROCESS'
+   77 |     SC_HAS_PROCESS(Worker);
+      |     ^~~~~~~~~~~~~~
+/public/home/yuzelu/opt/systemc-3.0.2-issue219/include/sysc/kernel/sc_module.h:416:30: note: declared here
+  416 | static inline constexpr bool sc_has_process_used = true;
+      |                              ^~~~~~~~~~~~~~~~~~~
+cc1plus: all warnings being treated as errors

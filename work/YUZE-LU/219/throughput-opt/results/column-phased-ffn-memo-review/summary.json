@@ -1,0 +1,176 @@
+{
+  "passed": true,
+  "source": "work\\YUZE-LU\\219\\throughput-opt\\results\\column-phased-ffn-base-v2\\ir.json",
+  "wire_budget": 18,
+  "selected_source": "conditional-dp",
+  "candidates": {
+    "incumbent": {
+      "makespan": 11261130658,
+      "external_words": 593160141,
+      "wire_cost": 18,
+      "expanded": 5946,
+      "pruned": 1929
+    },
+    "greedy": {
+      "makespan": 11261130658,
+      "external_words": 593160141,
+      "wire_cost": 18,
+      "expanded": 5946,
+      "pruned": 1929
+    },
+    "old-dp": {
+      "makespan": 14177752236,
+      "external_words": 593158110,
+      "wire_cost": 18,
+      "expanded": 43696,
+      "pruned": 5556
+    },
+    "heft": {
+      "makespan": 11261130658,
+      "external_words": 593160141,
+      "wire_cost": 18,
+      "expanded": 4276,
+      "pruned": 1330
+    },
+    "conditional-greedy": {
+      "makespan": 11261130658,
+      "external_words": 593160141,
+      "wire_cost": 18,
+      "expanded": 5946,
+      "pruned": 1929
+    },
+    "conditional-dp": {
+      "makespan": 11251314454,
+      "external_words": 593161155,
+      "wire_cost": 18,
+      "expanded": 44408,
+      "pruned": 7886
+    }
+  },
+  "search_seconds": {
+    "greedy": 3.905999999959022,
+    "old-dp": 0.7339999999385327,
+    "heft": 0.1880000000819564,
+    "conditional-greedy": 0.29699999978765845,
+    "conditional-dp": 10.625
+  },
+  "native_audit": {
+    "passed": true,
+    "kernels": 74,
+    "bindings": 2705,
+    "primitive_instructions": 88,
+    "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+  },
+  "plan_audits": {
+    "incumbent": {
+      "passed": true,
+      "peak_words": {
+        "P1.S": 1023,
+        "P2.S": 1023,
+        "P0.S": 1023,
+        "U0.S": 8
+      },
+      "external_words": 593160141,
+      "static_nets": 18,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate",
+      "cooperative_phase_audit": {
+        "cooperative_compounds": 3,
+        "scope": "independent phase reconstruction plus conservative full-union reservation proof; not RTL arbitration"
+      }
+    },
+    "greedy": {
+      "passed": true,
+      "peak_words": {
+        "P1.S": 1023,
+        "P2.S": 1023,
+        "P0.S": 1023,
+        "U0.S": 8
+      },
+      "external_words": 593160141,
+      "static_nets": 18,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate",
+      "cooperative_phase_audit": {
+        "cooperative_compounds": 3,
+        "scope": "independent phase reconstruction plus conservative full-union reservation proof; not RTL arbitration"
+      }
+    },
+    "old-dp": {
+      "passed": true,
+      "peak_words": {
+        "P0.S": 1023,
+        "P1.S": 1023,
+        "C0.S": 8,
+        "U0.S": 8
+      },
+      "external_words": 593158110,
+      "static_nets": 18,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+    },
+    "heft": {
+      "passed": true,
+      "peak_words": {
+        "P0.S": 1023,
+        "P1.S": 1023,
+        "P2.S": 1023,
+        "U0.S": 8
+      },
+      "external_words": 593160141,
+      "static_nets": 18,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate",
+      "cooperative_phase_audit": {
+        "cooperative_compounds": 3,
+        "scope": "independent phase reconstruction plus conservative full-union reservation proof; not RTL arbitration"
+      }
+    },
+    "conditional-greedy": {
+      "passed": true,
+      "peak_words": {
+        "P1.S": 1023,
+        "P2.S": 1023,
+        "P0.S": 1023,
+        "U0.S": 8
+      },
+      "external_words": 593160141,
+      "static_nets": 18,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate",
+      "cooperative_phase_audit": {
+        "cooperative_compounds": 3,
+        "scope": "independent phase reconstruction plus conservative full-union reservation proof; not RTL arbitration"
+      }
+    },
+    "conditional-dp": {
+      "passed": true,
+      "peak_words": {
+        "P1.S": 1023,
+        "P0.S": 1023,
+        "P2.S": 1023,
+        "U0.S": 8
+      },
+      "external_words": 593161155,
+      "static_nets": 18,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate",
+      "cooperative_phase_audit": {
+        "cooperative_compounds": 3,
+        "scope": "independent phase reconstruction plus conservative full-union reservation proof; not RTL arbitration"
+      }
+    }
+  },
+  "hardware_physical_fields_sha256": "e00452dc607129253767f2f4eccbdac34f5198b62d30c623abc21b6ed0e3aa2f",
+  "phased_compound_scope": {
+    "added_bindings": 84,
+    "protocol": {
+      "kind": "isolated-compound-fcfs-v1",
+      "reservation": "all-union-resources-through-final-ACK"
+    },
+    "scope": "constant native/descriptor phase costs; finite S and original scalar arithmetic unchanged",
+    "excluded": "heterogeneous K-prefix recipes (old serial choices retained), other-task overlap within a compound reservation, real banks/rows/queues, tile packing, RTL qualification"
+  },
+  "gain_against_strongest_tested_same_pool_baseline_fraction": 0.0008716890246741604,
+  "scope": "native-profile model; original scalar work/traffic, no tile; no full-weight/SystemC/RTL/physical/energy qualification"
+}

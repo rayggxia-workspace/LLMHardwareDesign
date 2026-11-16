@@ -1,0 +1,7 @@
+`verilator_config
+// Frozen qualified transaction6k has a 10-bit count and 384 physical entries.
+// Retain the two baseline index diagnostics. Tests exercise the last entry,
+// reject Begin(0/385/1023), and check that writes/reads cannot exceed the lease.
+// No blanket width suppression and no RTL changes.
+lint_off -rule WIDTHTRUNC -file "*/transaction6k.sv" -lines 56
+lint_off -rule WIDTHTRUNC -file "*/transaction6k.sv" -lines 61

@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=yzl-pointwise
+#SBATCH --partition=c64,c96
+#SBATCH --cpus-per-task=4
+#SBATCH --time=0
+set -euo pipefail
+root=$(realpath "$1")
+case "$root" in /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/*) ;; *) exit 2;; esac
+cd "$root"
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK OPENBLAS_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export PYTHONPATH=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/cp-environment-v2/deps:/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/deps
+python=/public/home/yuzelu/RuizhiLiang/issue61-server-models-20261023/venv-modern/bin/python
+sha256sum *.py *.cpp "$2" "$3" > input.sha256
+"$python" -B -m unittest discover -p 'test_*.py' -q > tests.log 2>&1
+"$python" -u -B pointwise_survey.py "$2" "$3" generated --kernel-prefix '/model/model/layers.0/mlp/' --wire-budget 18 > survey.log 2>&1
+"$python" -u -B tile_review.py generated/ir.json review --registered-ir --wire-budget 18 --width 8 --policies greedy old-dp heft conditional-greedy conditional-dp resource-greedy resource-dp > review.log 2>&1
+sha256sum generated/* review/* tests.log survey.log review.log > output.sha256

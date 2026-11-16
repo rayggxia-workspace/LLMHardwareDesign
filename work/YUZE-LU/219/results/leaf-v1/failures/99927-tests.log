@@ -1,0 +1,57 @@
+test_context_does_not_migrate_between_k_partitions (test_contexts.TestContexts.test_context_does_not_migrate_between_k_partitions) ... ERROR
+test_context_held_across_gap_and_blocks_competing_program (test_contexts.TestContexts.test_context_held_across_gap_and_blocks_competing_program) ... ok
+test_context_seed_groups_commands_without_dropping_precedence (test_contexts.TestContexts.test_context_seed_groups_commands_without_dropping_precedence) ... ok
+test_independent_verifier_rejects_context_migration (test_contexts.TestContexts.test_independent_verifier_rejects_context_migration) ... ok
+test_negative_rne_ties_and_compact_record_roundtrip (test_contexts.TestContexts.test_negative_rne_ties_and_compact_record_roundtrip) ... ok
+test_chain_dp_keeps_separate_and_qualified_fusion (test_frontend.TestFrontend.test_chain_dp_keeps_separate_and_qualified_fusion) ... ok
+test_compile_outputs_share_the_verified_plan (test_frontend.TestFrontend.test_compile_outputs_share_the_verified_plan) ... ok
+test_fanout_cannot_disappear_inside_fusion (test_frontend.TestFrontend.test_fanout_cannot_disappear_inside_fusion) ... ok
+test_padding_not_silently_invented (test_frontend.TestFrontend.test_padding_not_silently_invented) ... ok
+test_registered_tiling_streams_external_tensor (test_frontend.TestFrontend.test_registered_tiling_streams_external_tensor) ... ok
+test_capacity_and_instance_rename_do_not_change_the_algorithm (test_memory.TestVirtualMemory.test_capacity_and_instance_rename_do_not_change_the_algorithm) ... ok
+test_channel_claim_and_completion_are_independently_checked (test_memory.TestVirtualMemory.test_channel_claim_and_completion_are_independently_checked) ... ok
+test_compute_and_copy_static_driver_conflict_changes_binding (test_memory.TestVirtualMemory.test_compute_and_copy_static_driver_conflict_changes_binding) ... ok
+test_compute_connections_are_required_even_when_there_is_no_copy (test_memory.TestVirtualMemory.test_compute_connections_are_required_even_when_there_is_no_copy) ... ok
+test_credit_queue_and_latency_are_real_model_inputs (test_memory.TestVirtualMemory.test_credit_queue_and_latency_are_real_model_inputs) ... ok
+test_full_normalization_rows_preserve_shared_weights (test_memory.TestVirtualMemory.test_full_normalization_rows_preserve_shared_weights) ... ok
+test_parallel_streams_overlap_compute_but_share_memory_channel (test_memory.TestVirtualMemory.test_parallel_streams_overlap_compute_but_share_memory_channel) ... ok
+test_source_drift_and_invalid_configuration_are_rejected (test_memory.TestVirtualMemory.test_source_drift_and_invalid_configuration_are_rejected) ... ok
+test_zero_preconnections_needs_no_native_dma_or_pins (test_memory.TestVirtualMemory.test_zero_preconnections_needs_no_native_dma_or_pins) ... ok
+test_arbitrary_resource_names_and_capacities (test_solver.TestPlanner.test_arbitrary_resource_names_and_capacities) ... ok
+test_clean_external_copy_avoids_store (test_solver.TestPlanner.test_clean_external_copy_avoids_store) ... ok
+test_data_before_compute_and_ack_lease (test_solver.TestPlanner.test_data_before_compute_and_ack_lease) ... ok
+test_external_capacity_and_address_replay (test_solver.TestPlanner.test_external_capacity_and_address_replay) ... ok
+test_lns_keeps_legal_incumbent (test_solver.TestPlanner.test_lns_keeps_legal_incumbent) ... ok
+test_no_route_is_infeasible_not_magic_copy (test_solver.TestPlanner.test_no_route_is_infeasible_not_magic_copy) ... ok
+test_real_capacity_of_tile_not_entire_tensor (test_solver.TestPlanner.test_real_capacity_of_tile_not_entire_tensor) ... ok
+test_resource_replay_does_not_trust_claim_rows (test_solver.TestPlanner.test_resource_replay_does_not_trust_claim_rows) ... ok
+test_schedule_and_output_ack (test_solver.TestPlanner.test_schedule_and_output_ack) ... ok
+test_shared_materialization_counts_one_load (test_solver.TestPlanner.test_shared_materialization_counts_one_load) ... ok
+test_small_chain_matches_independent_closed_form_reference (test_solver.TestPlanner.test_small_chain_matches_independent_closed_form_reference) ... ok
+test_spill_is_real_store_then_load (test_solver.TestPlanner.test_spill_is_real_store_then_load) ... ok
+test_stale_copy_and_cyclic_graph_rejected (test_solver.TestPlanner.test_stale_copy_and_cyclic_graph_rejected) ... ok
+test_static_union_not_execution_count (test_solver.TestPlanner.test_static_union_not_execution_count) ... ok
+test_storage_address_collision_detected (test_solver.TestPlanner.test_storage_address_collision_detected) ... ok
+test_tied_cross_layer_binding_neighborhood (test_solver.TestPlanner.test_tied_cross_layer_binding_neighborhood) ... ok
+test_tile_signature_and_static_pin_conflict (test_solver.TestPlanner.test_tile_signature_and_static_pin_conflict) ... ok
+test_unknown_operator_attribute_never_silently_ignored (test_solver.TestPlanner.test_unknown_operator_attribute_never_silently_ignored) ... ok
+test_unsupported_numeric_never_falls_back (test_solver.TestPlanner.test_unsupported_numeric_never_falls_back) ... ok
+test_whole_static_net_family_is_not_cut_at_layer_boundary (test_solver.TestPlanner.test_whole_static_net_family_is_not_cut_at_layer_boundary) ... ok
+
+======================================================================
+ERROR: test_context_does_not_migrate_between_k_partitions (test_contexts.TestContexts.test_context_does_not_migrate_between_k_partitions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-19-contexts/test_contexts.py", line 26, in test_context_does_not_migrate_between_k_partitions
+    impossible = Planner(g, h, fixed={'a': 'left', 'b': 'right'}).solve(2, 1)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-19-contexts/solver.py", line 132, in __init__
+    self._contexts()
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-19-contexts/solver.py", line 249, in _contexts
+    raise ValueError('state group has no common physical context')
+ValueError: state group has no common physical context
+
+----------------------------------------------------------------------
+Ran 39 tests in 3.487s
+
+FAILED (errors=1)

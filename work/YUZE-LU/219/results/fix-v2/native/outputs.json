@@ -1,0 +1,179 @@
+{
+  "program_ir": {
+    "requests": [
+      {
+        "id": "rms@row0",
+        "kind": "service",
+        "service": "U0.RMSNorm.2048",
+        "owner": null,
+        "wait_for": [
+          "initial:epsilon@row0",
+          "initial:gamma@row0",
+          "initial:x@row0"
+        ],
+        "inputs": [
+          {
+            "value": "x@row0",
+            "site": "U0.S",
+            "address_words": 0,
+            "words": 256,
+            "available_event": "initial:x@row0"
+          },
+          {
+            "value": "gamma@row0",
+            "site": "U0.S",
+            "address_words": 256,
+            "words": 256,
+            "available_event": "initial:gamma@row0"
+          },
+          {
+            "value": "epsilon@row0",
+            "site": "U0.S",
+            "address_words": 512,
+            "words": 1,
+            "available_event": "initial:epsilon@row0"
+          }
+        ],
+        "outputs": [
+          {
+            "value": "normalized@row0",
+            "site": "U0.S",
+            "address_words": 515,
+            "words": 256
+          }
+        ],
+        "complete_event": "done:rms@row0",
+        "planned_interval": [
+          0,
+          12466
+        ]
+      },
+      {
+        "id": "soft@row0",
+        "kind": "service",
+        "service": "U0.Softmax.16",
+        "owner": null,
+        "wait_for": [
+          "initial:scores@row0"
+        ],
+        "inputs": [
+          {
+            "value": "scores@row0",
+            "site": "U0.S",
+            "address_words": 513,
+            "words": 2,
+            "available_event": "initial:scores@row0"
+          }
+        ],
+        "outputs": [
+          {
+            "value": "probability@row0",
+            "site": "U0.S",
+            "address_words": 256,
+            "words": 2
+          }
+        ],
+        "complete_event": "done:soft@row0",
+        "planned_interval": [
+          12466,
+          12672
+        ]
+      },
+      {
+        "id": "residual@row0",
+        "kind": "service",
+        "service": "U0.AddSat.row2048",
+        "owner": null,
+        "wait_for": [
+          "done:rms@row0",
+          "initial:x@row0"
+        ],
+        "inputs": [
+          {
+            "value": "normalized@row0",
+            "site": "U0.S",
+            "address_words": 515,
+            "words": 256,
+            "available_event": "done:rms@row0"
+          },
+          {
+            "value": "x@row0",
+            "site": "U0.S",
+            "address_words": 0,
+            "words": 256,
+            "available_event": "initial:x@row0"
+          }
+        ],
+        "outputs": [
+          {
+            "value": "y@row0",
+            "site": "U0.S",
+            "address_words": 258,
+            "words": 256
+          }
+        ],
+        "complete_event": "done:residual@row0",
+        "planned_interval": [
+          12672,
+          17792
+        ]
+      }
+    ],
+    "status": "algorithm output; native encoding deferred",
+    "is_executable_image": false,
+    "native_encoding_is_acceptance_prerequisite": false
+  },
+  "wiring": {
+    "nets": [
+      {
+        "id": "U0.E.read",
+        "cost": 1,
+        "cost_unit": "logical channel bundle",
+        "fixed": false,
+        "logical_driver": "U0.S.operand_response",
+        "logical_sinks": [
+          "U0.E.operand"
+        ],
+        "binding_scope": "logical endpoint demand; physical pin binding deferred"
+      },
+      {
+        "id": "U0.E.write",
+        "cost": 1,
+        "cost_unit": "logical channel bundle",
+        "fixed": false,
+        "logical_driver": "U0.E.result",
+        "logical_sinks": [
+          "U0.S.write_request"
+        ],
+        "binding_scope": "logical endpoint demand; physical pin binding deferred"
+      },
+      {
+        "id": "U0.N.read",
+        "cost": 1,
+        "cost_unit": "logical channel bundle",
+        "fixed": false,
+        "logical_driver": "U0.S.operand_response",
+        "logical_sinks": [
+          "U0.N.operand"
+        ],
+        "binding_scope": "logical endpoint demand; physical pin binding deferred"
+      },
+      {
+        "id": "U0.N.write",
+        "cost": 1,
+        "cost_unit": "logical channel bundle",
+        "fixed": false,
+        "logical_driver": "U0.N.result",
+        "logical_sinks": [
+          "U0.S.write_request"
+        ],
+        "binding_scope": "logical endpoint demand; physical pin binding deferred"
+      }
+    ],
+    "selected_routes": [],
+    "interfaces": [],
+    "all_pins_bound": false,
+    "physical_signoff": false,
+    "routing_is_acceptance_prerequisite": false
+  }
+}

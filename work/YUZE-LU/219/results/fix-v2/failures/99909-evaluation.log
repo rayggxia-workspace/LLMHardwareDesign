@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-11-evaluate/evaluate_memory.py", line 78, in <module>
+    main()
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-11-evaluate/evaluate_memory.py", line 53, in main
+    optimized = optimize(g, h, wire_budget=budget, initial=seed, seconds=4, rounds=3)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-11-evaluate/solver.py", line 570, in optimize
+    candidate = parallel_seed(graph, hardware, bindings, wire_budget)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-11-evaluate/parallel.py", line 121, in parallel_seed
+    verify(graph, hardware, result, budget)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-11-evaluate/verify.py", line 155, in verify
+    require(cost == plan['wire_cost'] and (budget is None or cost <= budget), 'static wire budget differs')
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-11-evaluate/verify.py", line 11, in require
+    raise InvalidPlan(message)
+verify.InvalidPlan: static wire budget differs

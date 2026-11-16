@@ -1,0 +1,57 @@
+{
+  "source": "work\\YUZE-LU\\219\\throughput-opt\\inputs\\five-groups-ir.json",
+  "source_sha256": "5cfe32f9237b195524fd6b7291340003c1ab88e712e89677ae40d8478438db40",
+  "kernel_prefix": "/model/model/layers.0/mlp/",
+  "primitive_count": 88,
+  "stages": 74,
+  "wire_budget": 18,
+  "before": 18395391128,
+  "same_pool_greedy": 14737939628,
+  "selected": 14177752236,
+  "gain_against_stronger_baseline_fraction": 0.038009885108751806,
+  "selected_compounds": [
+    "v287",
+    "v202",
+    "v289"
+  ],
+  "column_shard_scope": {
+    "eligible_tasks": 3,
+    "added_bindings": 408,
+    "max_shards": 4,
+    "max_static_bindings_per_task": 512,
+    "truncated_families": 0,
+    "frontier_partition_bindings": 48,
+    "partitions": "balanced, channel balanced, and frontier-affine waterfill on disjoint resources; all child issue orders",
+    "cache_choices": "stream or largest legal read-only prefix per child; dynamic preserve/shrink/discard",
+    "scope": "full-K disjoint output columns; prepared A shared; S16 B; native arithmetic unchanged",
+    "excluded": "K partitions, dirty output residency, intra-service overlap, arbitrary partitions, LC encoding"
+  },
+  "cost_before": {
+    "passed": true,
+    "kernels": 74,
+    "bindings": 1361,
+    "primitive_instructions": 88,
+    "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+  },
+  "cost_after": {
+    "passed": true,
+    "kernels": 74,
+    "bindings": 2465,
+    "primitive_instructions": 88,
+    "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+  },
+  "audit": {
+    "passed": true,
+    "peak_words": {
+      "P0.S": 1023,
+      "P1.S": 1023,
+      "C0.S": 8,
+      "U0.S": 8
+    },
+    "external_words": 593158110,
+    "static_nets": 18,
+    "checked_static_conflict_pairs": 0,
+    "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+  },
+  "scope": "real source subgraph / native-profile model only; not full model, numeric replay, system timing or token/s"
+}

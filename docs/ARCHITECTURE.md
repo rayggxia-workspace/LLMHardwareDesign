@@ -1,5 +1,109 @@
 # 架构与运行
 
+2026-11-09迭代21：[就绪DAG合同](../project/experiments/block_synthesis/RESIDENT_READY.md)。
+`resident_ready_survey.py IMMUTABLE_TILE_JSON REGISTERED_IR FRESH_OUTPUT --width 8` 使用同一有限S转移比较严格贪心与就绪DP。
+`audit_batch_terminal.py TERMINAL_BATCH_DIRECTORY REGISTERED_IR FRESH_AUDIT` 在任务助手目录，核对终态SHA和全部原整数算子输出。
+Windows/Linux及独立服务器各309项通过；完整新程序RTL/权重批循环/全图注册/系统资格未完成，不能外推token/s。
+
+2026-11-09迭代19/20：[事件重叠合同](../project/experiments/block_synthesis/RESIDENT_OVERLAP.md)、[多行布局合同](../project/experiments/block_synthesis/RESIDENT_BATCH.md)。
+
+```text
+python -B -m unittest discover -s project/experiments/block_synthesis -p "test_*.py" -q
+python -B project/experiments/block_synthesis/resident_overlap_survey.py REGISTERED_IR FRESH_OUTPUT --mode dp --width 8 --wire-budget 18 --backbone OLD_SELECTED
+python -B project/experiments/block_synthesis/resident_batch_survey.py REGISTERED_IR OLD_SELECTED ROW_QUALIFICATION FRESH_OUTPUT --rows 2 4 8 --width 8
+python -B work/YUZE-LU/219/throughput-opt/audit_round19.py RUNTIME19 FRESH_AUDIT --dp-directory FINAL_DP_POOL --greedy-directory FINAL_GREEDY_POOL
+python -B work/YUZE-LU/219/throughput-opt/audit_round20.py RUNTIME20 FRESH_AUDIT --tiles RECOVERED_TILE_DIRECTORY --ir REGISTERED_IR
+```
+
+`resident_row_probe.prepare`从冻结原生探针/银行和明确输出格式产生新服务验证，`run_row_services.py`在固定WSL Icarus12运行三初态及错行负对照。
+双平台305项通过；完整批程序RTL、实际权重批循环、SystemC/系统时间能耗仍未完成。
+事件重叠完整FFN少4.43044%模型时间而流量不变；冷tile多行目前有负结果，见迭代19/20报告，不计算法20%。
+
+
+2026-11-09迭代16：[跨元素只读连续合同](../project/experiments/block_synthesis/RESIDENT_CONTINUATION.md)。
+`resident_cover_survey.py CLOSED_IR FROZEN_PROFILE_PROOF FRESH_OUTPUT --width 8 --wire-budget 18 --cover-lengths 2 4 8 --continuation`
+保留冷候选，新增实际冷/过渡/周期程序，独立核验有限S前序和整循环成本。`resident_cover_compare.py REGISTERED_IR FRESH_OUTPUT`复用冻结池独立比较策略。
+`resident_continuation_probe.py prepare FROZEN_RESIDENT_PROOF FRESH_OUTPUT`生成连续RTL链，任务助手`run_continuation_probe.py`在固定WSL工具运行三初态及负对照。
+Windows/Linux各269项；FFN新共同方式少3.47246%，同池DP额外0。实际权重连续方案/系统性能范围见迭代16，不继承未终态资格。
+
+2026-11-09迭代15（本地阶段）：[凸覆盖驻留与实测成本](../project/experiments/block_synthesis/RESIDENT_COVERS.md)。
+`resident_cover_survey.py CLOSED_IR FROZEN_PROFILE_PROOF FRESH_OUTPUT --width 8 --wire-budget 18 --cover-lengths 2 4 8`
+将原子与多task驻留实现放在同一完成集合前沿，独立核对覆盖、成本、有限S、缓存失效和静态并集。
+`resident_model_loops.py`将每个选中元素的有限S事件回放接入完整整数图；实际3B资格待服务器终态，不继承系统RTL/时间能耗。
+Windows/Linux各261项通过；同池FFN排序5.39681367%，新DP额外0。
+
+2026-11-09迭代14：[原生SSA/有限S驻留](../project/experiments/block_synthesis/RESIDENT_RECORDS.md)，
+[证据与边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_14.md)。
+`resident_survey.py CLOSED_IR NATIVE_REGIONS OUTPUT`比较同池复制成本和有限S回放；
+`resident_probe.py prepare FROZEN_COLUMN_PROOF BANK CLOSED_IR NATIVE_REGIONS FRESH_OUTPUT`生成实际M/E/S指令探针。
+Windows/Linux各248项；三初态各168程序及负对照通过。它尚未注册完整调度器，不是整模型驻留/校准时间/能耗或算法20%。
+
+2026-11-09迭代13：[原生S32加法聚合原型](../project/experiments/block_synthesis/S32_ADD_AGGREGATE.md)，
+[结果与边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_13.md)。
+`add_tile_survey.py CHECKED_IR CHECKED_PLAN ADD_PROOF NEW_REPORT`仅调查含完整准备的成本，不生成调度。
+原P/M/S/feeder三初态各384例及负对照、Windows/Linux各234项通过；尚未注册综合候选，也非一般驻留/算法20%。
+
+2026-11-09迭代12：[未就绪任务资源下界与单金属诊断](../project/experiments/block_synthesis/FUTURE_RESOURCE_TAIL.md)，
+[结果/边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_12.md)。
+`tile_review.py IR NEW_OUTPUT --registered-ir --incumbent BEST_PLAN --same-pool-baseline STRONG_BASELINE --incumbent-backbone --wire-budget 18 --width 8 --policies future-greedy future-dp`
+`topology_diagnostics.py IR PLAN OUTPUT --wire-budget 18`完整枚举静态并集后给条件下界，截断只回退原下界。
+Windows/Linux各231项；真实FFN额外0，完整新greedy更差；101509完整phase池终态、条件DP额外0.0000192676%，101526其自身三输入数值逐位通过。
+101516新搜索/101525诊断继续核验，不改动作池/硬件。
+
+2026-11-09迭代11：[原生tile阶段协作](../project/experiments/block_synthesis/TILE_PHASES.md)及
+[结果/失败/待验范围](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_11.md)。
+`tile_review.py REGISTERED_IR NEW_OUTPUT --registered-ir --tile-phase-partitions --incumbent STRONG_PLAN --wire-budget 18 --width 8 --write-ir`
+保留全部旧候选后，向所有基线提供相同描述符FCFS协作；孩子独立M/S/局控/可选E，父服务全程持有资源并集。
+`tile_partition_probe.py QUALIFIED_NATIVE_HOST_WORKER NEW_OUTPUT --phased`做literal/native有限S子服务数值。
+Windows/Linux各221项；FFN共同后端改善3.07596%但同池搜索额外0，流量多48；新整网贪心少17.39470%但流量多4048，
+不能算算法20%或访存减少。101511新贪心三输入逐位数值已终态通过；101509策略/101513同池好前缀仍核验，普通池101506终态额外0。
+
+2026-11-09迭代10：[多M原生tile/关键链诊断](../project/experiments/block_synthesis/TILE_PARTITIONS.md)及
+[结果/范围](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_10.md)。
+`tile_review.py IR NEW_OUTPUT --registered-ir --tile-partitions --incumbent STRONG_PLAN --wire-budget 18 --width 8 --write-ir`
+向全部基线提供相同有界分片池；`selected_order_profile.py IR PLAN OUTPUT`解释已选资源顺序关键链，
+`search_diagnostics.py IR PLAN OUTPUT`另给候选族下界。两者范围不同，均非实测硬件性能。
+Windows/Linux各214项，4个literal/native有限S双回放及负对照；真实FFN额外0，全图101506仍待验。
+
+2026-11-09迭代9：[阶段窗口/前沿状态合同](../project/experiments/block_synthesis/WINDOW_CALENDAR.md)及
+[真实正负结果和复跑入口](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_9.md)。
+`tile_review.py --registered-ir --materialized-windows --incumbent BEST_PLAN --incumbent-order`
+向全部基线开放新配方/给定顺序，`--incumbent-backbone`另做同宽度前缀保留消融；
+额外外存临时区/16次LOAD、完整区间日历、独立原生成本/S/资源/静态网检查保留，非理想重叠。
+当前Windows/Linux各204项；三组指定SRAM初态各347例原生重排及负对照、68例有限S数值通过。
+真实FFN额外0，完整图两份冻结作业仍待终态；未增加系统、KV、能耗或token/s资格。
+
+2026-11-09：[迭代5](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_5.md)。
+`phase_review.py IR NEW_OUTPUT --incumbent PLAN --wire-budget 18 --write-ir`比较共同阶段后端下的贪心、旧DP、
+HEFT式、条件尾部贪心/DP；[阶段协议](../project/experiments/block_synthesis/PHASE_COMPOUNDS.md)仍保守持有父服务全部资源，
+不是一般跨任务事件调度。`--policies resource-greedy resource-dp`仅用于显式资源尾部消融，负结果不默认启用。
+本地与独立Linux最终源各157项测试通过。原生多行[探针及复跑](../project/experiments/block_synthesis/ROW_TILE.md)
+验证不变M/P/S/feeder的真实供数、完整累加和ACK；尚未登记全图tile，不把测试台周期当校准系统性能。
+
+2026-11-09：[列分片/前沿成本合同](../project/experiments/block_synthesis/COLUMN_SHARDS.md)与[迭代3证据](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_3.md)。
+`full_plan.py --prepare-reuse --primitive-stages --read-cache --state-cost --column-shards`生成共同候选；
+`column-plan.sbatch ROOT STAGED_IR_DIRECTORY INCUMBENT_DIRECTORY SCENARIO`比较同池贪心、HEFT式及有界DP；
+`column_slice.py SOURCE_IR NEW_OUTPUT --kernel-prefix PREFIX --wire-budget 18`复跑切片，`--full-graph`保留完整输出。
+`python -B project/experiments/block_synthesis/phase_accounting.py IR PLAN OUTPUT`先独立审计再分解实际描述符需求。
+`systemc-phase.sbatch ROOT IR GROUP0 GROUP1`在新Slurm目录编译官方SystemC3.0.2模型，逐阶段对照整服务锁/描述符释放两种模式；
+该脚本依赖任务已安装库及ORFS容器，不是完整系统或能耗验收。正式脚本经本任务launch_fix.py冻结，绝对依赖/源SHA见各receipt.json。
+本地`python -B -m unittest discover -s project/experiments/block_synthesis -p 'test_*.py' -q`现134项；完整数值沿用reuse-replay.sbatch。
+仅微实验使用符号tick=1ns，不据此换算300MHz、decode token/s或能量。
+
+2026-11-09：[阶段化及SystemC准备](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_2.md)。`full_plan.py --prepare-reuse --primitive-stages --read-cache --state-cost`使用原始原语依赖和独立准备服务，贪心/DP共用能力；`primitive-stage-plan.sbatch`生成计划，`primitive-stage-audit.sbatch ROOT BEFORE AFTER`核对工作量守恒及原始/当前连接预算，数值沿用`reuse-replay.sbatch`。122项及完整预算复核通过；`wire_lookahead=False`保留旧搜索作对照，`optimize(..., incumbents=...)`独立核验并保留已知可行方案。`systemc-environment.sbatch`只安装官方3.0.2并检查事件/FIFO，尚不提供系统时间/能耗或token/s。
+
+2026-11-09：`python -B project/experiments/block_synthesis/search_diagnostics.py IR PLAN OUTPUT`计算相同原子候选族的强制资源/依赖链乐观下界，先独立核验计划。五组/九组结果及112项回归见[算法迭代1](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_1.md)；下界不约束更细阶段、分片/驻留或硬件，不作系统性能上限。
+
+2026-11-08：PR220 [Dot准备复用合同](../project/experiments/block_synthesis/PREPARATION_REUSE.md)与[完整3B结果](../work/YUZE-LU/219/throughput-opt/RESULTS.md)。`full_plan.py --prepare-reuse --read-cache --state-cost`启用通用A分量准备外提，显式外存区域与独立成本/数值检查；入口prepare-reuse-plan.sbatch、prepare-reuse-audit.sbatch，数值沿用reuse-replay.sbatch。110项及六次完整回放通过，同资源/束数模型代价下降约60%，不是DP搜索单独收益或芯片实测。
+
+2026-11-08：[PR220统一转移求值](../work/YUZE-LU/219/STATE_COST_RESULTS.md)。`full_plan.py --read-cache --state-cost`启用部分前缀命中和显式保留策略，宽度1/8共用纯函数转移。完整3B六次回放及105项测试通过；五组/同预算不变，九组模型代价略退化，详见结果。
+
+Issue219新增只读Dot分片：[算法/状态](../project/experiments/block_synthesis/DOT_CACHE.md)、[完整3B结果](../work/YUZE-LU/219/READ_CACHE_RESULTS.md)。`full_plan.py --read-cache` 从硬件清单生成候选；`dot_cache_replay.py` 使用有限S分量数组回放。服务器新attempt入口：`reuse-plan.sbatch ROOT MODEL HARDWARE NUMERIC_TRACE QUALIFICATION PROGRAM`、`reuse-replay.sbatch ROOT IR PLAN WEIGHTS CALIBRATION LOGITS HEADERS`、`reuse-audit.sbatch ROOT PLAN_DIRECTORY`、`reuse-compare.sbatch ROOT BEFORE AFTER`；由本任务launch_fix.py冻结提交Slurm，绝对依赖/SHA见回执。普通full-plan保留旧基线；整网控制编码和真实布线另阶段验收。
+
+Issue219审查修复／控制后端：[范围、来源和回执](../work/YUZE-LU/219/MUTEX_CONTROL_RESULTS.md)。`loop_dp.py` 与独立检查器核对完整静态连接互斥；`static_conflict_probe.py` 复现串行任务也不能使用互斥金属。`control_backend.py` 登记实际 U_64 控制子集并使用官方汇编器生成镜像，`control_replay_plan.py`／`control_verify.py` 在当前母控与两组局控回放数值、实际 S ACK 和源释放。服务器新 attempt 入口：`test.sbatch ROOT CP_ENV_ROOT`、`control-replay.sbatch ROOT NATIVE_QUALIFICATION current`；均经 `work/YUZE-LU/219/launch_fix.py` 冻结。控制源缓存按固定 commit/SHA 恢复，见结果索引；局控 PM 沿用验收夹具模型，当前母控 PM 和局部数据 S 用实际 SRAM RTL。固定放置小图不等于任意整网 DP 已能编码或物理闭合。
+
+Issue219完整3B后端见[当前实现](../project/experiments/block_synthesis/README.md)和[实际结果](../work/YUZE-LU/219/FULL_RESULTS.md)。`wide_program.py`生成可执行整数IR，`wide_validate.py`序列化后回放完整真实权重；`streaming_ir.py`从相同原语产生有限原生命令/搬运，`loop_dp.py`安排实例、时间和静态网并集。`verify_primitive_cost.py`与`stream_addresses.py`、`verify_loop_dp.py`独立核对。服务器入口为`wide-replay.sbatch ROOT MODEL WEIGHTS CALIBRATION LOGITS HEADERS`、`full-plan.sbatch ROOT MODEL HARDWARE NUMERIC_TRACE QUALIFICATION PROGRAM`和`test.sbatch ROOT ENV_ROOT`，通过本任务`launch_fix.py`冻结并提交Slurm；实际绝对依赖、SHA、终态见结果。整网后端全部spill、未做tile/cache优化，和较早细粒度覆盖/CP实验的搜索范围分开记录。
+
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
 
 ## 研究系统边界
@@ -92,6 +196,10 @@ python project/experiments/opentpu_compare/compare.py project/experiments/opentp
 
 ## 本地阅读与验证
 
+Issue219 最新范围修订及服务器34项检查、原生N/E程序、虚拟外存对照见[FIX_RESULTS](../work/YUZE-LU/219/FIX_RESULTS.md)。`block_synthesis/memory.py`接入#182来源模型，数据预连可为0；原生控制镜像、DMA回放和物理不是算法评估前置条件。`native-rows.sbatch`、`memory-evaluation.sbatch`及回收/图册命令见该目录README。
+
+Issue219 后续使用 [block_synthesis](../project/experiments/block_synthesis/README.md)：`python -B -m unittest discover -v -p 'test_*.py'` 在该目录或其 Slurm 冻结目录运行；`python -B project/experiments/block_synthesis/run.py model.onnx hardware.json new-output --audit-only` 检查真实覆盖。服务器 Slurm/离线安装/原生测量与生成程序复跑命令见该 README，实际证据见 [JOINT_RESULTS](../work/YUZE-LU/219/JOINT_RESULTS.md)。旧 `block_search` 的假设服务与0.6B结果保留历史，不作为正式验收；当前亦未宣称完成整网原生综合。
+
 - 阅读：从仓库根目录直接打开 `ref-project/llm-routing/总报告.html` 或 `ref-project/llm-routing/线长报告.html`；其图片和下载链接使用包内相对路径。
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
 - 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。
@@ -132,9 +240,16 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 
 ## 数据与外部依赖
 
+Block前沿搜索原型（#219）：`python -B -m unittest discover -s project/experiments/block_search -v`。输入/输出、服务器复现、模型范围与假设成本边界见[原型说明](../project/experiments/block_search/README.md)，服务器实际运行与输入/输出哈希见[工作记录](../work/YUZE-LU/219/README.md)。当前不支持自动分片/spill或生成原生控制镜像，不将分析成功视为RTL/物理验收。
+
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 
 新增实验应记录代码 commit、工具和配置版本、输入数据版本、输出位置及 SHA-256。大体积物理数据库、原始日志和工具环境应使用项目约定且有权限控制的共享存储，并在仓库中保留可核对的索引。本轮已获授权的集群目录见上文；更长期的共享存储和访问策略仍需明确。不得将凭据写入仓库。
+
+Issue219原生叶宏编译后续：`native-probe.sbatch ROOT PR198_REFERENCE QUALIFICATION`测量实际命令，`native-sio.sbatch ROOT QUALIFICATION`验证两类SRAM，`leaf-replay.sbatch ROOT PROBE SIO QUALIFICATION PR182_SOURCE PR198_REFERENCE [FULL_ONNX]`完成算法测试、编译、三初态原生回放和图册；均在自己的Slurm冻结目录执行。详细来源、实际终态和边界见[叶宏规则结果](../work/YUZE-LU/219/LEAF_RESULTS.md)。
+## P/U 独立叶宏底座
+
+P 使用独立 M、紧凑 G、S_P。U 使用独立 N、紧凑 E、S_base。真实 SRAM、母局控控制链和 M1–M10 物理复跑见 [P/U 实验](../project/experiments/pu_leaf_base/README.md)。
 
 ## P/U 独立叶宏底座
 
@@ -172,3 +287,87 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+
+五类 P/U/C/F/J 的 `_128` / `_64` 当前摆放图、逐版本归档图源与验收入口集中在[五类独立叶宏组图册](experiments/assets/five-leaf-bases/README.md)。U 当前修复后的独立验收及重放范围见[最终回执](../work/YUZE-LU/212/u-native-fix.md)。
+
+## Issue #223：母控独立实现与五类控制兼容性
+
+源码、固定版本和验收边界见 `project/experiments/mother_control_v1/README.md`；源锁为 #180 81663a1e。先64位完成独立物理及实际Block一致性，再128位。以下命令在获授权集群的全新目录执行，EDA须放在Slurm计算任务；不在登录节点运行。每个P&R候选10核，RTL/独立审计4核。工具、真实SRAM与工艺均依赖现有授权环境，不宣称仅凭仓库可重建全部外部依赖。
+
+```bash
+# SOURCE包含仓库project子树及锁定的control180软件参考；每次新建输出目录。
+# Slurm数组0–1（每项10核）调用：
+bash SOURCE/project/experiments/mother_control_v1/physical.sh NEW_PHYSICAL SOURCE
+# 4核计算任务调用：
+bash SOURCE/project/experiments/mother_control_v1/regression.sh NEW_RTL SOURCE
+bash SOURCE/project/experiments/mother_control_v1/audit.sh NEW_PREFLIGHT SOURCE PHYSICAL_CANDIDATE preflight
+bash SOURCE/project/experiments/mother_control_v1/audit.sh NEW_FULL_AUDIT SOURCE PHYSICAL_CANDIDATE full
+bash SOURCE/project/experiments/mother_control_v1/gate.sh NEW_GATE SOURCE PHYSICAL_CANDIDATE
+```
+
+`physical.sh`需Slurm数组索引和原生银行generation.json，路径已固定在执行源。只在输入RTL散列完全相同时允许显式复用映射网表。预检不会标记完整物理通过；full使用未改原版完整GDS规则。最终网表回归与提取STA分别验收。原周期3.333333333ns经ORFS write_sdc写成3.3333ns，略严格；审计记录读回周期且不接受更慢周期，同时逐位核对I/O延迟、转换、负载及setup/hold不确定度。
+
+`consistency.py`入口强制要求full audit与对应格式最终网表功能回执均通过，再以同一物理母控连接实际P/U/C/F/J局控和服务RTL。CFJ原紧凑源需逐项满足247文件锁，P/U保留既有局控；U绑定#221已验收31文件源。私有S是真实SRAM，LC程序存储仍为行为夹具。64位全部通过后，128位gate再强制校验已合格64位清单和同一组六文件；核心按镜像版本动态取指，未更改有源RTL或物理实现。
+
+```bash
+# 新目录、Slurm 4核；先前64位清单必须已完整合格。
+bash SOURCE/project/experiments/mother_control_v1/regression.sh NEW_RTL128 SOURCE 128
+bash SOURCE/project/experiments/mother_control_v1/gate.sh NEW_GATE128 SOURCE CANDIDATE 128 QUALIFIED64_MANIFEST
+# KIND含C-roundtrip、CF-duplex、U-duplex和U-fma-duplex；最后一项选择镜像/局控格式。
+bash SOURCE/project/experiments/mother_control_v1/consistency.sh NEW_BIND SOURCE AUDIT_JSON GATE_JSON CELLS_SV KIND 128
+# 本机只读校验，不执行归档内容，自动识别两种格式。
+python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --receipt NEW_RECEIPT.json
+```
+
+两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+# 2026-11-09：外存访问与有限S优化入口
+
+迭代22：[有效字合同](../project/experiments/block_synthesis/RESIDENT_OPERAND_MASK.md)限定未改动RTL的N1/K1,K2多行读范围。
+`resident_mask_survey.py IMMUTABLE_TILE IR MASK_QUALIFICATION NEW_OUTPUT --width 8`保留旧模式，比较启用相同能力的强贪心与DP；合同缺失时不放宽读约束。
+`run_mask_services.py PREPARED_PROBE`核对四态各288服务；`run_batch_programs.py PREPARED_COMPLETE_PROGRAMS`核对完整程序四态及实际错行故障。
+上述两个执行器位于`work/YUZE-LU/219/throughput-opt/`；探针准备入口在`resident_mask_probe.py`及`resident_batch_probe.py`。
+`python work/YUZE-LU/219/throughput-opt/analyse_resident_traffic.py PROGRAMS_JSON FRESH_RESULT`先执行所有输入的独立有限S回放，再分类已有副本、地址变化、后备存储和边界提交。
+现行完整算法测试命令仍为`python -m unittest discover -s project/experiments/block_synthesis -p 'test_*.py'`，Windows/Linux及冻结服务器各312通过。
+Windows测试需可写临时目录；真实SRAM服务证据、冷tile结果与未完成系统范围见[迭代22](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_22.md)。
+
+迭代23/24：[逐行地址](../project/experiments/block_synthesis/RESIDENT_SCATTER.md)与[动态high16原生覆盖](../project/experiments/block_synthesis/NATIVE_LANE_COVER.md)。
+`native_lane_survey.py IMMUTABLE_PROGRAM_POOL SOURCE_IR FRESH_OUTPUT --width 2` 保留原池，比较相同硬件服务的强贪心/DP。
+`python -m unittest test_native_lane_cover test_resident_scatter test_traffic_accounting -q` 核对来源、混合K、原生地址选择与流量守恒。
+独立证据复核器位于`work/YUZE-LU/219/throughput-opt/`：`audit_lane_round.py --help`、`audit_actual_lane.py --help`；输入/路径清单见[报告24](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_24.md)和归档manifest。
+`traffic_accounting.py REGISTERED_IR SELECTED_PLAN NEW_JSON`先执行原生成本、驻留覆盖、完整依赖/调度检查，再展开实际子服务分类；未证明物理DRAM访问。
+最终双平台319测试；完整程序RTL由`resident_batch_probe.py`与`run_batch_programs.py`生成/执行，`run_native_k_fault.py`补实际错K负对照。
+
+2026-11-09迭代18：[条件原生表达式复用合同](../project/experiments/block_synthesis/NATIVE_REUSE.md)
+和[结果/证据边界](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_18.md)。
+`resident_cover_survey.py IR QUALIFIED_PROOF NEW_OUTPUT --continuation --value-reuse`保留旧候选，并增加条件复用/重算。
+`native_reuse_probe.py ORIGIN_RTL CONTROLS_ACTUAL_BOUNDARIES CUT_IR REGIONS NEW_PROBE`生成真实P/M/E/S程序及负对照；
+`python work/YUZE-LU/219/throughput-opt/run_reuse_probe.py NEW_PROBE`使用本机固定WSL Icarus12工具执行三初态及两故障。
+Windows/Linux最终各289项，仍用`python -m unittest discover -s project/experiments/block_synthesis -p 'test_*.py'`。
+事件模型不授予完整MC/LC/DMA/SystemC、物理、能耗或token/s资格。
+
+PR220新增[外存/驻留合同](../project/experiments/block_synthesis/MEMORY_REUSE.md)，
+`python project/experiments/block_synthesis/traffic_accounting.py <IR> <plan> <result.json>`
+先独立验证原成本和选中计划再分类真实逻辑记录；不代表物理DRAM流量。
+`python project/experiments/block_synthesis/phase_survey.py <IR> <新输出目录>`
+对登记的孤立Dot候选做常量阶段/循环精确模拟；`phase-survey.sbatch`另做有界派生SystemC逐事件核对。
+145项检查命令仍为本目录全部`test_*.py`；需requirements.txt中的固定依赖。
+全图阶段前沿、实际tile打包/供数、脏结果驻留及系统token/s尚未完成，见[迭代4](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_4.md)。
+
+2026-11-09补充：[原生多行](../project/experiments/block_synthesis/ROW_TILE.md)184例、
+[原生多列与S32转换](../project/experiments/block_synthesis/COLUMN_TILE.md)347例四态RTL通过。
+`column_tile_probe.py prepare --source-root ROOT --bank-model BANK --rtl-ref COMMIT --output NEW --long-k 2048`
+冻结不变RTL及输入；在NEW用Icarus12 `-g2012 -Irtl/block_v2 -I. -s tb_column_tile_probe -o probe.vvp -f compile.f`，
+再`vvp probe.vvp > simulate.log`，`column_tile_probe.py analyse NEW NEW/simulate.log`。
+成本配方`tile_recipe.py`包含实际E/M转换和显式虚拟外存复制；尚未接入完整综合候选。
+Windows与独立Linux各169项：`python -m unittest discover -s project/experiments/block_synthesis -p 'test_*.py'`。
+前轮阶段计划101213完整3B三输入数值逐位通过，具体证据和边界见[迭代6](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_6.md)。
+
+2026-11-09迭代8更新：受限tile已进入共同候选并显式处理旧S前缀失效，完整3B贪心/DP各三次整数数值通过。
+历史NExp的原生Stats模板另有语义缺口，不能由向量数值替代；现行[NExp合同](../project/experiments/block_synthesis/NEXP_CONTRACT.md)
+使用两次显式Stats，三个初态各653例N RTL与旧模板负对照通过。
+`recompile_ir.py OLD_IR NEW_DIRECTORY`从保存的同一向量程序重新生成服务并审计，所有计划需重新调度。
+`reuse_validate.py --tile-worker WORKER IR PLAN CALIBRATION ACTIVATIONS LOGITS NEW_OUTPUT ORACLE`可选用C++有限S宿主加速，
+`native_tile_probe.py WORKER NEW_OUTPUT`检查68个独立数值/计数例；不因此新增RTL、计时或能耗资格。
+当前完整检查为187项，命令同上；[价格下界](../project/experiments/block_synthesis/WORK_PRICE_BOUND.md)仅消融，
+`utilization.py`另给tile E整段预约与实际串行E段模型账，差额不是可直接回收的周期。
+范围、原件和仍未完成项见[迭代8](../work/YUZE-LU/219/throughput-opt/ALGORITHM_ROUND_8.md)。

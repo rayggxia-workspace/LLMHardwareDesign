@@ -1,0 +1,15 @@
+native_probe.cpp: In lambda function:
+native_probe.cpp:215:5: error: this 'if' clause does not guard... [-Werror=misleading-indentation]
+  215 |     if(half==0)b.data[0]=uint64_t(1)<<16;m.execute(b);}
+      |     ^~
+native_probe.cpp:215:42: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  215 |     if(half==0)b.data[0]=uint64_t(1)<<16;m.execute(b);}
+      |                                          ^
+native_probe.cpp: In function 'int main(int, char**)':
+native_probe.cpp:235:6: error: this 'if' clause does not guard... [-Werror=misleading-indentation]
+  235 |      if(half==0)b.data[0]=uint16_t(bb[k][bp]);m.execute(b);}
+      |      ^~
+native_probe.cpp:235:47: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  235 |      if(half==0)b.data[0]=uint16_t(bb[k][bp]);m.execute(b);}
+      |                                               ^
+cc1plus: all warnings being treated as errors

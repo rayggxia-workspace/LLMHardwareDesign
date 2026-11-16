@@ -1,0 +1,290 @@
+{
+  "tasks": [
+    {
+      "id": "norm",
+      "op": "RMSNorm",
+      "numeric": "native typed records",
+      "inputs": [
+        "x",
+        "gamma",
+        "epsilon"
+      ],
+      "outputs": [
+        "normalized"
+      ]
+    },
+    {
+      "id": "project",
+      "op": "MatMul",
+      "numeric": "native typed records",
+      "inputs": [
+        "normalized",
+        "w"
+      ],
+      "outputs": [
+        "projected"
+      ]
+    },
+    {
+      "id": "act",
+      "op": "SiLU",
+      "numeric": "native typed records",
+      "inputs": [
+        "projected"
+      ],
+      "outputs": [
+        "activated"
+      ]
+    },
+    {
+      "id": "add",
+      "op": "Add",
+      "numeric": "native typed records",
+      "inputs": [
+        "activated",
+        "residual"
+      ],
+      "outputs": [
+        "sum"
+      ]
+    },
+    {
+      "id": "finish",
+      "op": "Handoff",
+      "numeric": "native typed records",
+      "inputs": [
+        "sum"
+      ],
+      "outputs": [
+        "out"
+      ]
+    },
+    {
+      "id": "recurrent",
+      "op": "GDNUpdate",
+      "numeric": "native typed records",
+      "inputs": [
+        "old",
+        "key",
+        "query",
+        "rx",
+        "params"
+      ],
+      "outputs": [
+        "next",
+        "ry"
+      ]
+    },
+    {
+      "id": "narrow",
+      "op": "Requantize",
+      "numeric": "native typed records",
+      "inputs": [
+        "ry"
+      ],
+      "outputs": [
+        "small"
+      ]
+    }
+  ],
+  "values": {
+    "x": {
+      "shape": [
+        1,
+        8
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -10,
+        "lanes": 2
+      }
+    },
+    "gamma": {
+      "shape": [
+        8
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -10,
+        "lanes": 2
+      }
+    },
+    "normalized": {
+      "shape": [
+        1,
+        8
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -10,
+        "lanes": 2
+      }
+    },
+    "w": {
+      "shape": [
+        8,
+        4
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -10,
+        "lanes": 2
+      }
+    },
+    "projected": {
+      "shape": [
+        1,
+        4
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -10,
+        "lanes": 2
+      }
+    },
+    "activated": {
+      "shape": [
+        1,
+        4
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -10,
+        "lanes": 2
+      }
+    },
+    "residual": {
+      "shape": [
+        1,
+        4
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -10,
+        "lanes": 2
+      }
+    },
+    "sum": {
+      "shape": [
+        1,
+        4
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -10,
+        "lanes": 2
+      }
+    },
+    "out": {
+      "shape": [
+        1,
+        4
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -10,
+        "lanes": 2
+      }
+    },
+    "epsilon": {
+      "shape": [],
+      "format": {
+        "bits": 32,
+        "exponent": 0,
+        "lanes": 1
+      }
+    },
+    "old": {
+      "shape": [
+        128,
+        2
+      ],
+      "format": {
+        "bits": 32,
+        "exponent": -16,
+        "lanes": 2
+      }
+    },
+    "rx": {
+      "shape": [
+        2
+      ],
+      "format": {
+        "bits": 32,
+        "exponent": -16,
+        "lanes": 2
+      }
+    },
+    "next": {
+      "shape": [
+        128,
+        2
+      ],
+      "format": {
+        "bits": 32,
+        "exponent": -16,
+        "lanes": 2
+      }
+    },
+    "ry": {
+      "shape": [
+        2
+      ],
+      "format": {
+        "bits": 32,
+        "exponent": -16,
+        "lanes": 2
+      }
+    },
+    "key": {
+      "shape": [
+        128
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -14,
+        "lanes": 8
+      }
+    },
+    "query": {
+      "shape": [
+        128
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -14,
+        "lanes": 8
+      }
+    },
+    "params": {
+      "shape": [
+        2
+      ],
+      "format": {
+        "bits": 32,
+        "exponent": -31,
+        "lanes": 2,
+        "unsigned": true
+      }
+    },
+    "small": {
+      "shape": [
+        2
+      ],
+      "format": {
+        "bits": 16,
+        "exponent": -10,
+        "lanes": 2
+      }
+    }
+  },
+  "outputs": [
+    "out",
+    "next",
+    "small"
+  ],
+  "weights": [
+    "w"
+  ],
+  "source": "actual native integration case; not a parameter-count LLM benchmark"
+}

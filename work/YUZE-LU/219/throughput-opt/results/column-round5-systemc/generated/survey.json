@@ -1,0 +1,4069 @@
+{
+  "passed": true,
+  "isolated_services": [
+    {
+      "workers": 2,
+      "candidate_selection": "first_registered",
+      "source_task": "v18",
+      "binding": "column-shards[M=P0;columns=0:1024;M-read-cache=169|M=P1;columns=1024:2048;M-read-cache=169]",
+      "groups": [
+        "P0",
+        "P1"
+      ],
+      "columns": [
+        [
+          0,
+          1024
+        ],
+        [
+          1024,
+          2048
+        ]
+      ],
+      "whole_service_ticks": 767844172,
+      "phase_timing": {
+        "executed_events": 5358,
+        "fast_forward_jumps": 32,
+        "skipped_ticks": 1535656004,
+        "skipped_events": 232813312,
+        "makespan": 767844172,
+        "worker_completion": {
+          "0": 767844172,
+          "1": 767844172
+        },
+        "phase_counts": {
+          "external-load-until-S-commit": 31479790,
+          "M_SCALE": 25165824,
+          "S-operand-read": 75497472,
+          "M_LOAD": 75497472,
+          "M": 25165824,
+          "M_READ": 4096,
+          "S-result-write": 4096,
+          "external-store-until-ACK": 4096
+        },
+        "worker_phase_counts": [
+          116409335,
+          116409335
+        ],
+        "independent_components": [
+          {
+            "workers": [
+              0
+            ],
+            "makespan": 767844172
+          },
+          {
+            "workers": [
+              1
+            ],
+            "makespan": 767844172
+          }
+        ],
+        "scope": "exact channel-disjoint timing components, distinct LC/M/S workers; skipped_ticks sums component time"
+      },
+      "relation": "isolated phase execution no slower than conservative service order",
+      "traffic_words": 31483886,
+      "programs": [
+        {
+          "sequence": [
+            {
+              "channel": 0,
+              "ticks": 20,
+              "kind": "external-load-until-S-commit"
+            },
+            {
+              "repeat": 1014,
+              "body": {
+                "channel": 0,
+                "ticks": 20,
+                "kind": "external-load-until-S-commit"
+              }
+            },
+            {
+              "repeat": 2048,
+              "body": {
+                "sequence": [
+                  {
+                    "repeat": 169,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "repeat": 1879,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "sequence": [
+                      {
+                        "repeat": 0,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": 0,
+                              "ticks": 20,
+                              "kind": "external-load-until-S-commit"
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-operand-read"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "channel": -1,
+                        "ticks": 5,
+                        "kind": "M_READ"
+                      },
+                      {
+                        "repeat": 1,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-result-write"
+                            },
+                            {
+                              "channel": 0,
+                              "ticks": 22,
+                              "kind": "external-store-until-ACK"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "sequence": [
+            {
+              "channel": 1,
+              "ticks": 20,
+              "kind": "external-load-until-S-commit"
+            },
+            {
+              "repeat": 1014,
+              "body": {
+                "channel": 1,
+                "ticks": 20,
+                "kind": "external-load-until-S-commit"
+              }
+            },
+            {
+              "repeat": 2048,
+              "body": {
+                "sequence": [
+                  {
+                    "repeat": 169,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "repeat": 1879,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "sequence": [
+                      {
+                        "repeat": 0,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": 1,
+                              "ticks": 20,
+                              "kind": "external-load-until-S-commit"
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-operand-read"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "channel": -1,
+                        "ticks": 5,
+                        "kind": "M_READ"
+                      },
+                      {
+                        "repeat": 1,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-result-write"
+                            },
+                            {
+                              "channel": 1,
+                              "ticks": 22,
+                              "kind": "external-store-until-ACK"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workers": 3,
+      "candidate_selection": "first_registered",
+      "source_task": "v18",
+      "binding": "column-shards[M=P0;columns=0:512;M-read-cache=169|M=P1;columns=512:1536;M-read-cache=169|M=P2;columns=1536:2048;M-read-cache=169]",
+      "groups": [
+        "P0",
+        "P1",
+        "P2"
+      ],
+      "columns": [
+        [
+          0,
+          512
+        ],
+        [
+          512,
+          1536
+        ],
+        [
+          1536,
+          2048
+        ]
+      ],
+      "whole_service_ticks": 767864472,
+      "phase_timing": {
+        "executed_events": 8037,
+        "fast_forward_jumps": 32,
+        "skipped_ticks": 1182565216,
+        "skipped_events": 232811648,
+        "makespan": 767844172,
+        "worker_completion": {
+          "0": 414754434,
+          "2": 414754456,
+          "1": 767844172
+        },
+        "phase_counts": {
+          "external-load-until-S-commit": 31480805,
+          "M_SCALE": 25165824,
+          "S-operand-read": 75497472,
+          "M_LOAD": 75497472,
+          "M": 25165824,
+          "M_READ": 4096,
+          "S-result-write": 4096,
+          "external-store-until-ACK": 4096
+        },
+        "worker_phase_counts": [
+          58205175,
+          116409335,
+          58205175
+        ],
+        "independent_components": [
+          {
+            "workers": [
+              0,
+              2
+            ],
+            "makespan": 414754456
+          },
+          {
+            "workers": [
+              1
+            ],
+            "makespan": 767844172
+          }
+        ],
+        "scope": "exact channel-disjoint timing components, distinct LC/M/S workers; skipped_ticks sums component time"
+      },
+      "relation": "isolated phase execution no slower than conservative service order",
+      "traffic_words": 31484901,
+      "programs": [
+        {
+          "sequence": [
+            {
+              "channel": 0,
+              "ticks": 20,
+              "kind": "external-load-until-S-commit"
+            },
+            {
+              "repeat": 1014,
+              "body": {
+                "channel": 0,
+                "ticks": 20,
+                "kind": "external-load-until-S-commit"
+              }
+            },
+            {
+              "repeat": 1024,
+              "body": {
+                "sequence": [
+                  {
+                    "repeat": 169,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "repeat": 1879,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "sequence": [
+                      {
+                        "repeat": 0,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": 0,
+                              "ticks": 20,
+                              "kind": "external-load-until-S-commit"
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-operand-read"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "channel": -1,
+                        "ticks": 5,
+                        "kind": "M_READ"
+                      },
+                      {
+                        "repeat": 1,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-result-write"
+                            },
+                            {
+                              "channel": 0,
+                              "ticks": 22,
+                              "kind": "external-store-until-ACK"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "sequence": [
+            {
+              "channel": 1,
+              "ticks": 20,
+              "kind": "external-load-until-S-commit"
+            },
+            {
+              "repeat": 1014,
+              "body": {
+                "channel": 1,
+                "ticks": 20,
+                "kind": "external-load-until-S-commit"
+              }
+            },
+            {
+              "repeat": 2048,
+              "body": {
+                "sequence": [
+                  {
+                    "repeat": 169,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "repeat": 1879,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "sequence": [
+                      {
+                        "repeat": 0,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": 1,
+                              "ticks": 20,
+                              "kind": "external-load-until-S-commit"
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-operand-read"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "channel": -1,
+                        "ticks": 5,
+                        "kind": "M_READ"
+                      },
+                      {
+                        "repeat": 1,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-result-write"
+                            },
+                            {
+                              "channel": 1,
+                              "ticks": 22,
+                              "kind": "external-store-until-ACK"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "sequence": [
+            {
+              "channel": 0,
+              "ticks": 20,
+              "kind": "external-load-until-S-commit"
+            },
+            {
+              "repeat": 1014,
+              "body": {
+                "channel": 0,
+                "ticks": 20,
+                "kind": "external-load-until-S-commit"
+              }
+            },
+            {
+              "repeat": 1024,
+              "body": {
+                "sequence": [
+                  {
+                    "repeat": 169,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "repeat": 1879,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "sequence": [
+                      {
+                        "repeat": 0,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": 0,
+                              "ticks": 20,
+                              "kind": "external-load-until-S-commit"
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-operand-read"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "channel": -1,
+                        "ticks": 5,
+                        "kind": "M_READ"
+                      },
+                      {
+                        "repeat": 1,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-result-write"
+                            },
+                            {
+                              "channel": 0,
+                              "ticks": 22,
+                              "kind": "external-store-until-ACK"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "workers": 3,
+      "candidate_selection": "minimum_column_width_spread",
+      "source_task": "v18",
+      "binding": "column-shards[M=P0;columns=0:683;M-read-cache=169|M=P1;columns=683:1366;M-read-cache=169|M=P2;columns=1366:2048;M-read-cache=169]",
+      "groups": [
+        "P0",
+        "P1",
+        "P2"
+      ],
+      "columns": [
+        [
+          0,
+          683
+        ],
+        [
+          683,
+          1366
+        ],
+        [
+          1366,
+          2048
+        ]
+      ],
+      "whole_service_ticks": 1023555820,
+      "phase_timing": {
+        "executed_events": 8785,
+        "fast_forward_jumps": 36,
+        "skipped_ticks": 1065317172,
+        "skipped_events": 232810900,
+        "makespan": 553202238,
+        "worker_completion": {
+          "0": 553202238,
+          "2": 552452416,
+          "1": 512152824
+        },
+        "phase_counts": {
+          "external-load-until-S-commit": 31480805,
+          "M_SCALE": 25165824,
+          "S-operand-read": 75497472,
+          "M_LOAD": 75497472,
+          "M": 25165824,
+          "M_READ": 4096,
+          "S-result-write": 4096,
+          "external-store-until-ACK": 4096
+        },
+        "worker_phase_counts": [
+          77644455,
+          77644455,
+          77530775
+        ],
+        "independent_components": [
+          {
+            "workers": [
+              0,
+              2
+            ],
+            "makespan": 553202238
+          },
+          {
+            "workers": [
+              1
+            ],
+            "makespan": 512152824
+          }
+        ],
+        "scope": "exact channel-disjoint timing components, distinct LC/M/S workers; skipped_ticks sums component time"
+      },
+      "relation": "isolated phase execution no slower than conservative service order",
+      "traffic_words": 31484901,
+      "programs": [
+        {
+          "sequence": [
+            {
+              "channel": 0,
+              "ticks": 20,
+              "kind": "external-load-until-S-commit"
+            },
+            {
+              "repeat": 1014,
+              "body": {
+                "channel": 0,
+                "ticks": 20,
+                "kind": "external-load-until-S-commit"
+              }
+            },
+            {
+              "repeat": 1366,
+              "body": {
+                "sequence": [
+                  {
+                    "repeat": 169,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "repeat": 1879,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "sequence": [
+                      {
+                        "repeat": 0,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": 0,
+                              "ticks": 20,
+                              "kind": "external-load-until-S-commit"
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-operand-read"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "channel": -1,
+                        "ticks": 5,
+                        "kind": "M_READ"
+                      },
+                      {
+                        "repeat": 1,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-result-write"
+                            },
+                            {
+                              "channel": 0,
+                              "ticks": 22,
+                              "kind": "external-store-until-ACK"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "sequence": [
+            {
+              "channel": 1,
+              "ticks": 20,
+              "kind": "external-load-until-S-commit"
+            },
+            {
+              "repeat": 1014,
+              "body": {
+                "channel": 1,
+                "ticks": 20,
+                "kind": "external-load-until-S-commit"
+              }
+            },
+            {
+              "repeat": 1366,
+              "body": {
+                "sequence": [
+                  {
+                    "repeat": 169,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "repeat": 1879,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 1,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "sequence": [
+                      {
+                        "repeat": 0,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": 1,
+                              "ticks": 20,
+                              "kind": "external-load-until-S-commit"
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-operand-read"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "channel": -1,
+                        "ticks": 5,
+                        "kind": "M_READ"
+                      },
+                      {
+                        "repeat": 1,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-result-write"
+                            },
+                            {
+                              "channel": 1,
+                              "ticks": 22,
+                              "kind": "external-store-until-ACK"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "sequence": [
+            {
+              "channel": 0,
+              "ticks": 20,
+              "kind": "external-load-until-S-commit"
+            },
+            {
+              "repeat": 1014,
+              "body": {
+                "channel": 0,
+                "ticks": 20,
+                "kind": "external-load-until-S-commit"
+              }
+            },
+            {
+              "repeat": 1364,
+              "body": {
+                "sequence": [
+                  {
+                    "repeat": 169,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "repeat": 1879,
+                    "body": {
+                      "sequence": [
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        },
+                        {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 2,
+                              "kind": "M_SCALE"
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "channel": 0,
+                                  "ticks": 20,
+                                  "kind": "external-load-until-S-commit"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "sequence": [
+                                {
+                                  "sequence": []
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 3,
+                                  "kind": "S-operand-read"
+                                },
+                                {
+                                  "channel": -1,
+                                  "ticks": 1,
+                                  "kind": "M_LOAD"
+                                }
+                              ]
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 22,
+                              "kind": "M"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "sequence": [
+                      {
+                        "repeat": 0,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": 0,
+                              "ticks": 20,
+                              "kind": "external-load-until-S-commit"
+                            },
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-operand-read"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "channel": -1,
+                        "ticks": 5,
+                        "kind": "M_READ"
+                      },
+                      {
+                        "repeat": 1,
+                        "body": {
+                          "sequence": [
+                            {
+                              "channel": -1,
+                              "ticks": 3,
+                              "kind": "S-result-write"
+                            },
+                            {
+                              "channel": 0,
+                              "ticks": 22,
+                              "kind": "external-store-until-ACK"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "systemc_derivative": "same native cost and cache phase recipe, clipped R<=2/N<=5/K<=8; no numerical execution",
+  "scope": "exact symbolic constant-cost FCFS timing of isolated compounds; not new DP, full schedule or token/s",
+  "pending": "real bank/address/queue/LC arbitration, actual data, full graph and independently calibrated system model",
+  "algorithm_gain_claimed": false,
+  "selection_scope": "first registered and minimum column-width spread per worker count; NOT an exhaustive candidate optimum"
+}

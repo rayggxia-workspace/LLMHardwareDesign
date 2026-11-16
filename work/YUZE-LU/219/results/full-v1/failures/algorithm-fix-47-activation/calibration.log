@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-47-activation/calibrate_graph.py", line 63, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-47-activation/calibrate_graph.py", line 37, in main
+    feed[value.name]=np.asarray(np.load(entry['file'],mmap_mode='r'),dtype=np.float32)*math.ldexp(1.,entry['format']['exponent'])
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/operator-graphs-20261026/deps/numpy/lib/_npyio_impl.py", line 451, in load
+    fid = stack.enter_context(open(os.fspath(file), "rb"))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'generated/weights/fcd443ac9b03e52a95700c47.npy'

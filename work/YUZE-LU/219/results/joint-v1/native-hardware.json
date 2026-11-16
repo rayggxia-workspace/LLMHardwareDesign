@@ -1,0 +1,41 @@
+{
+  "external": "MEM",
+  "sites": {
+    "U0.S": {
+      "words": 1024
+    }
+  },
+  "resources": {
+    "U0.E": 1,
+    "U0.S.port": 1,
+    "U0.service-client": 1
+  },
+  "services": {
+    "U0.E.add": {
+      "op": "AddSat",
+      "numeric": "s16-saturate-no-rescale",
+      "site": "U0.S",
+      "ticks": 20,
+      "qualified": true,
+      "input_words": [
+        1,
+        1
+      ],
+      "output_words": [
+        1
+      ],
+      "resources": [
+        "U0.E",
+        "U0.S.port",
+        "U0.service-client"
+      ]
+    }
+  },
+  "routes": {},
+  "nets": {},
+  "evidence": {
+    "kind": "native group RTL, client-driver boundary",
+    "log_sha256": "d1c9e7fc0ed88963c2504ce9d3451c987b04e3ec4df078888878db45ccb941e2",
+    "scope": "No DDR/HBM, parent LC or physical/top-level timing qualification"
+  }
+}

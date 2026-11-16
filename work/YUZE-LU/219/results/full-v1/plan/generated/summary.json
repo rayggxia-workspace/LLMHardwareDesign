@@ -1,0 +1,223 @@
+{
+  "status": "complete_graph_planning_passed",
+  "results": [
+    {
+      "scenario": "five-groups",
+      "status": "planned",
+      "total_graph_nodes": 1803,
+      "streaming_kernels": 1083,
+      "address_views": 720,
+      "private_S_bytes": {
+        "P0.S": 16384,
+        "U0.S": 16384,
+        "C0.S": 16384,
+        "F0.S": 16384,
+        "J0.S": 16384
+      },
+      "zero_data_prelinks": true,
+      "baseline_bound": 3737404896734,
+      "search_bound": 3737404896734,
+      "baseline_wire_cost": 10,
+      "search_wire_cost": 10,
+      "external_transfer_words": 126259111012,
+      "required_external_bytes": 50514910656,
+      "external_capacity_qualified": false,
+      "compile_seconds": 19.339848573319614,
+      "audit": {
+        "passed": true,
+        "peak_words": {
+          "P0.S": 8,
+          "U0.S": 8
+        },
+        "external_words": 126259111012,
+        "static_nets": 10,
+        "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+      },
+      "baseline_audit": {
+        "passed": true,
+        "peak_words": {
+          "P0.S": 8,
+          "U0.S": 8
+        },
+        "external_words": 126259111012,
+        "static_nets": 10,
+        "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+      },
+      "address_check": {
+        "passed": true,
+        "sampled_record_addresses": 11580,
+        "scope": "shape, broadcasting, composed view and stride boundary checks; scalar records avoid free packing"
+      },
+      "primitive_address_check": {
+        "passed": true,
+        "sampled_record_addresses": 61659,
+        "scope": "emitted primitive operand and predicate address programs"
+      },
+      "search_statistics": {
+        "expanded": 58233,
+        "merged": 6203,
+        "pruned": 43369,
+        "width": 8
+      },
+      "native_cost_check": {
+        "passed": true,
+        "kernels": 1083,
+        "bindings": 4333,
+        "primitive_instructions": 8850,
+        "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+      },
+      "timing_scope": "conservative serial native-command plus per-word PR182 virtual memory bound; not system cycles",
+      "optimization_scope": "all values spilled; scalar records; no inter-kernel S cache or tiled reuse yet"
+    },
+    {
+      "scenario": "nine-groups-count-experiment",
+      "status": "planned",
+      "total_graph_nodes": 1803,
+      "streaming_kernels": 1083,
+      "address_views": 720,
+      "private_S_bytes": {
+        "P0.S": 16384,
+        "U0.S": 16384,
+        "C0.S": 16384,
+        "F0.S": 16384,
+        "J0.S": 16384,
+        "P1.S": 16384,
+        "P2.S": 16384,
+        "U1.S": 16384,
+        "J1.S": 16384
+      },
+      "zero_data_prelinks": true,
+      "baseline_bound": 3737404896734,
+      "search_bound": 3637280669150,
+      "baseline_wire_cost": 10,
+      "search_wire_cost": 18,
+      "external_transfer_words": 126259111012,
+      "required_external_bytes": 50514910656,
+      "external_capacity_qualified": false,
+      "compile_seconds": 83.55551775917411,
+      "audit": {
+        "passed": true,
+        "peak_words": {
+          "U0.S": 8,
+          "P1.S": 8,
+          "P0.S": 8,
+          "C0.S": 8
+        },
+        "external_words": 126259111012,
+        "static_nets": 18,
+        "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+      },
+      "baseline_audit": {
+        "passed": true,
+        "peak_words": {
+          "P0.S": 8,
+          "U0.S": 8
+        },
+        "external_words": 126259111012,
+        "static_nets": 10,
+        "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+      },
+      "address_check": {
+        "passed": true,
+        "sampled_record_addresses": 11580,
+        "scope": "shape, broadcasting, composed view and stride boundary checks; scalar records avoid free packing"
+      },
+      "primitive_address_check": {
+        "passed": true,
+        "sampled_record_addresses": 61659,
+        "scope": "emitted primitive operand and predicate address programs"
+      },
+      "search_statistics": {
+        "expanded": 270009,
+        "merged": 10832,
+        "pruned": 250513,
+        "width": 8
+      },
+      "native_cost_check": {
+        "passed": true,
+        "kernels": 1083,
+        "bindings": 22095,
+        "primitive_instructions": 8850,
+        "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+      },
+      "timing_scope": "conservative serial native-command plus per-word PR182 virtual memory bound; not system cycles",
+      "optimization_scope": "all values spilled; scalar records; no inter-kernel S cache or tiled reuse yet",
+      "equal_wire_budget": {
+        "budget": 10,
+        "bound": 3737404896734,
+        "wire_cost": 10,
+        "audit": {
+          "passed": true,
+          "peak_words": {
+            "P0.S": 8,
+            "U0.S": 8
+          },
+          "external_words": 126259111012,
+          "static_nets": 10,
+          "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+        }
+      }
+    }
+  ],
+  "op_counts": {
+    "Gather": 1,
+    "RMSNorm": 73,
+    "MatMul": 325,
+    "Add": 288,
+    "Reshape": 216,
+    "Transpose": 180,
+    "Mul": 216,
+    "Slice": 144,
+    "Neg": 72,
+    "Concat": 72,
+    "Unsqueeze": 72,
+    "Expand": 72,
+    "Softmax": 36,
+    "SiLU": 36
+  },
+  "numeric_checks": [
+    {
+      "ids": [
+        [
+          1,
+          2
+        ]
+      ],
+      "relative_l2": 0.00526517663210506,
+      "max_abs": 0.09432291984558105,
+      "top1_equal": true,
+      "passed": true
+    },
+    {
+      "ids": [
+        [
+          3,
+          4
+        ]
+      ],
+      "relative_l2": 0.007250722179259807,
+      "max_abs": 0.1273874044418335,
+      "top1_equal": true,
+      "passed": true
+    },
+    {
+      "ids": [
+        [
+          42,
+          43
+        ]
+      ],
+      "relative_l2": 0.005591736463103455,
+      "max_abs": 0.0813593864440918,
+      "top1_equal": true,
+      "passed": true
+    }
+  ],
+  "primitive_program_sha256": "5e5791f52458788ab0c143b003a3106fcded6eddcd577cf48343168d5739f2bc",
+  "evidence_boundary": "whole numerical reference and complete conservative loop plans; no binary/system RTL/physical claim",
+  "inputs": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/full-qwen25-3b-v1/complete/full.onnx": "0950df534497881f416a3f8b8fac1a265764ea2f4879943695a2d800a5c9158f",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-39-final/generated/input-hardware.json": "123506652653c080e925c1748fe3abb60fc1dc0340754db9df90bd143ce0508a",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-65-wide/generated/report.json": "781b7c13a77317919d604248160870053aea62f37fed1415321cfa1e4e3d8105"
+  }
+}

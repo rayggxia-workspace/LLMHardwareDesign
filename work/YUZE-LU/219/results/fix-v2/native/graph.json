@@ -1,0 +1,113 @@
+{
+  "tasks": [
+    {
+      "id": "rms@row0",
+      "op": "RMSNorm",
+      "numeric": "n-rms-q6.10-gamma-q6.10",
+      "domain": "",
+      "attributes": {},
+      "inputs": [
+        "x@row0",
+        "gamma@row0",
+        "epsilon@row0"
+      ],
+      "outputs": [
+        "normalized@row0"
+      ],
+      "alternatives": [
+        "U0.RMSNorm.2048"
+      ]
+    },
+    {
+      "id": "soft@row0",
+      "op": "Softmax",
+      "numeric": "n-softmax-q6.10-to-q1.14",
+      "domain": "",
+      "attributes": {},
+      "inputs": [
+        "scores@row0"
+      ],
+      "outputs": [
+        "probability@row0"
+      ],
+      "alternatives": [
+        "U0.Softmax.16"
+      ]
+    },
+    {
+      "id": "residual@row0",
+      "op": "AddSat",
+      "numeric": "s16-saturate-no-rescale",
+      "domain": "",
+      "attributes": {},
+      "inputs": [
+        "normalized@row0",
+        "x@row0"
+      ],
+      "outputs": [
+        "y@row0"
+      ],
+      "alternatives": [
+        "U0.AddSat.row2048"
+      ]
+    }
+  ],
+  "values": {
+    "x@row0": {
+      "words": 256,
+      "tensor": "x",
+      "row": 0,
+      "layout": "row",
+      "site": "U0.S"
+    },
+    "gamma@row0": {
+      "words": 256,
+      "tensor": "gamma",
+      "row": 0,
+      "layout": "shared-row",
+      "site": "U0.S"
+    },
+    "epsilon@row0": {
+      "words": 1,
+      "tensor": "epsilon",
+      "row": 0,
+      "layout": "scalar-word",
+      "site": "U0.S"
+    },
+    "normalized@row0": {
+      "words": 256,
+      "tensor": "normalized",
+      "row": 0,
+      "layout": "row",
+      "producer": "rms@row0"
+    },
+    "scores@row0": {
+      "words": 2,
+      "tensor": "scores",
+      "row": 0,
+      "layout": "row",
+      "site": "U0.S"
+    },
+    "probability@row0": {
+      "words": 2,
+      "tensor": "probability",
+      "row": 0,
+      "layout": "row",
+      "producer": "soft@row0",
+      "output_site": "U0.S"
+    },
+    "y@row0": {
+      "words": 256,
+      "tensor": "y",
+      "row": 0,
+      "layout": "row",
+      "producer": "residual@row0",
+      "output_site": "U0.S"
+    }
+  },
+  "outputs": [
+    "probability@row0",
+    "y@row0"
+  ],
+  "source": "native integer N interface semantics; not a relabeled FLOAT ONNX"
+}

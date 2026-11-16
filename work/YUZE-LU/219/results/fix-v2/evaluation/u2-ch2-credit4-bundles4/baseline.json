@@ -1,0 +1,569 @@
+{
+  "status": "HEURISTIC",
+  "best_bound": 0,
+  "tasks": {
+    "rms@row0": {
+      "service": "U0.RMSNorm.2048",
+      "site": "U0.S",
+      "start": 3129,
+      "end": 15595
+    },
+    "rms@row1": {
+      "service": "U0.RMSNorm.2048",
+      "site": "U0.S",
+      "start": 18458,
+      "end": 30924
+    },
+    "rms@row2": {
+      "service": "U0.RMSNorm.2048",
+      "site": "U0.S",
+      "start": 33787,
+      "end": 46253
+    },
+    "rms@row3": {
+      "service": "U0.RMSNorm.2048",
+      "site": "U0.S",
+      "start": 49116,
+      "end": 61582
+    }
+  },
+  "moves": [
+    {
+      "value": "x@row0",
+      "src": "MEM",
+      "dst": "U0.S",
+      "route": "virtual:load:U0.S:256",
+      "words": 256,
+      "copy_id": "seed-copy-0",
+      "start": 0,
+      "end": 1553,
+      "phases": [
+        {
+          "name": "load-until-commit",
+          "start": 0,
+          "end": 1553
+        }
+      ],
+      "final": false
+    },
+    {
+      "value": "gamma@row0",
+      "src": "MEM",
+      "dst": "U0.S",
+      "route": "virtual:load:U0.S:256",
+      "words": 256,
+      "copy_id": "seed-copy-1",
+      "start": 1553,
+      "end": 3106,
+      "phases": [
+        {
+          "name": "load-until-commit",
+          "start": 1553,
+          "end": 3106
+        }
+      ],
+      "final": false
+    },
+    {
+      "value": "epsilon@row0",
+      "src": "MEM",
+      "dst": "U0.S",
+      "route": "virtual:load:U0.S:1",
+      "words": 1,
+      "copy_id": "seed-copy-2",
+      "start": 3106,
+      "end": 3129,
+      "phases": [
+        {
+          "name": "load-until-commit",
+          "start": 3106,
+          "end": 3129
+        }
+      ],
+      "final": false
+    },
+    {
+      "value": "y@row0",
+      "src": "U0.S",
+      "dst": "MEM",
+      "route": "virtual:store:U0.S:256",
+      "words": 256,
+      "copy_id": "seed-copy-3",
+      "start": 15595,
+      "end": 16905,
+      "phases": [
+        {
+          "name": "store-until-commit",
+          "start": 15595,
+          "end": 16905
+        }
+      ],
+      "final": true
+    },
+    {
+      "value": "x@row1",
+      "src": "MEM",
+      "dst": "U0.S",
+      "route": "virtual:load:U0.S:256",
+      "words": 256,
+      "copy_id": "seed-copy-4",
+      "start": 16905,
+      "end": 18458,
+      "phases": [
+        {
+          "name": "load-until-commit",
+          "start": 16905,
+          "end": 18458
+        }
+      ],
+      "final": false
+    },
+    {
+      "value": "y@row1",
+      "src": "U0.S",
+      "dst": "MEM",
+      "route": "virtual:store:U0.S:256",
+      "words": 256,
+      "copy_id": "seed-copy-5",
+      "start": 30924,
+      "end": 32234,
+      "phases": [
+        {
+          "name": "store-until-commit",
+          "start": 30924,
+          "end": 32234
+        }
+      ],
+      "final": true
+    },
+    {
+      "value": "x@row2",
+      "src": "MEM",
+      "dst": "U0.S",
+      "route": "virtual:load:U0.S:256",
+      "words": 256,
+      "copy_id": "seed-copy-6",
+      "start": 32234,
+      "end": 33787,
+      "phases": [
+        {
+          "name": "load-until-commit",
+          "start": 32234,
+          "end": 33787
+        }
+      ],
+      "final": false
+    },
+    {
+      "value": "y@row2",
+      "src": "U0.S",
+      "dst": "MEM",
+      "route": "virtual:store:U0.S:256",
+      "words": 256,
+      "copy_id": "seed-copy-7",
+      "start": 46253,
+      "end": 47563,
+      "phases": [
+        {
+          "name": "store-until-commit",
+          "start": 46253,
+          "end": 47563
+        }
+      ],
+      "final": true
+    },
+    {
+      "value": "x@row3",
+      "src": "MEM",
+      "dst": "U0.S",
+      "route": "virtual:load:U0.S:256",
+      "words": 256,
+      "copy_id": "seed-copy-8",
+      "start": 47563,
+      "end": 49116,
+      "phases": [
+        {
+          "name": "load-until-commit",
+          "start": 47563,
+          "end": 49116
+        }
+      ],
+      "final": false
+    },
+    {
+      "value": "y@row3",
+      "src": "U0.S",
+      "dst": "MEM",
+      "route": "virtual:store:U0.S:256",
+      "words": 256,
+      "copy_id": "seed-copy-9",
+      "start": 61582,
+      "end": 62892,
+      "phases": [
+        {
+          "name": "store-until-commit",
+          "start": 61582,
+          "end": 62892
+        }
+      ],
+      "final": true
+    }
+  ],
+  "allocations": [
+    {
+      "id": "seed-alloc-0",
+      "value": "x@row0",
+      "site": "U0.S",
+      "words": 256,
+      "start": 0,
+      "end": 16905,
+      "address": 0,
+      "origin": "seed-copy-0"
+    },
+    {
+      "id": "seed-alloc-1",
+      "value": "gamma@row0",
+      "site": "U0.S",
+      "words": 256,
+      "start": 1553,
+      "end": 62892,
+      "address": 256,
+      "origin": "seed-copy-1"
+    },
+    {
+      "id": "seed-alloc-2",
+      "value": "epsilon@row0",
+      "site": "U0.S",
+      "words": 1,
+      "start": 3106,
+      "end": 62892,
+      "address": 512,
+      "origin": "seed-copy-2"
+    },
+    {
+      "id": "seed-alloc-3",
+      "value": "y@row0",
+      "site": "U0.S",
+      "words": 256,
+      "start": 3129,
+      "end": 16905,
+      "address": 513,
+      "origin": "producer:rms@row0"
+    },
+    {
+      "id": "seed-alloc-4",
+      "value": "x@row1",
+      "site": "U0.S",
+      "words": 256,
+      "start": 16905,
+      "end": 32234,
+      "address": 0,
+      "origin": "seed-copy-4"
+    },
+    {
+      "id": "seed-alloc-5",
+      "value": "y@row1",
+      "site": "U0.S",
+      "words": 256,
+      "start": 18458,
+      "end": 32234,
+      "address": 513,
+      "origin": "producer:rms@row1"
+    },
+    {
+      "id": "seed-alloc-6",
+      "value": "x@row2",
+      "site": "U0.S",
+      "words": 256,
+      "start": 32234,
+      "end": 47563,
+      "address": 0,
+      "origin": "seed-copy-6"
+    },
+    {
+      "id": "seed-alloc-7",
+      "value": "y@row2",
+      "site": "U0.S",
+      "words": 256,
+      "start": 33787,
+      "end": 47563,
+      "address": 513,
+      "origin": "producer:rms@row2"
+    },
+    {
+      "id": "seed-alloc-8",
+      "value": "x@row3",
+      "site": "U0.S",
+      "words": 256,
+      "start": 47563,
+      "end": 62892,
+      "address": 0,
+      "origin": "seed-copy-8"
+    },
+    {
+      "id": "seed-alloc-9",
+      "value": "y@row3",
+      "site": "U0.S",
+      "words": 256,
+      "start": 49116,
+      "end": 62892,
+      "address": 513,
+      "origin": "producer:rms@row3"
+    }
+  ],
+  "claims": [
+    {
+      "resource": "virtual-memory.channel.0",
+      "start": 0,
+      "end": 1553,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 0,
+      "end": 1553,
+      "demand": 1
+    },
+    {
+      "resource": "virtual-memory.channel.0",
+      "start": 1553,
+      "end": 3106,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 1553,
+      "end": 3106,
+      "demand": 1
+    },
+    {
+      "resource": "virtual-memory.channel.0",
+      "start": 3106,
+      "end": 3129,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 3106,
+      "end": 3129,
+      "demand": 1
+    },
+    {
+      "resource": "U0.N",
+      "start": 3129,
+      "end": 15595,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 3129,
+      "end": 15595,
+      "demand": 1
+    },
+    {
+      "resource": "U0.client",
+      "start": 3129,
+      "end": 15595,
+      "demand": 1
+    },
+    {
+      "resource": "virtual-memory.channel.0",
+      "start": 15595,
+      "end": 16905,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 15595,
+      "end": 16905,
+      "demand": 1
+    },
+    {
+      "resource": "virtual-memory.channel.0",
+      "start": 16905,
+      "end": 18458,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 16905,
+      "end": 18458,
+      "demand": 1
+    },
+    {
+      "resource": "U0.N",
+      "start": 18458,
+      "end": 30924,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 18458,
+      "end": 30924,
+      "demand": 1
+    },
+    {
+      "resource": "U0.client",
+      "start": 18458,
+      "end": 30924,
+      "demand": 1
+    },
+    {
+      "resource": "virtual-memory.channel.0",
+      "start": 30924,
+      "end": 32234,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 30924,
+      "end": 32234,
+      "demand": 1
+    },
+    {
+      "resource": "virtual-memory.channel.0",
+      "start": 32234,
+      "end": 33787,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 32234,
+      "end": 33787,
+      "demand": 1
+    },
+    {
+      "resource": "U0.N",
+      "start": 33787,
+      "end": 46253,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 33787,
+      "end": 46253,
+      "demand": 1
+    },
+    {
+      "resource": "U0.client",
+      "start": 33787,
+      "end": 46253,
+      "demand": 1
+    },
+    {
+      "resource": "virtual-memory.channel.0",
+      "start": 46253,
+      "end": 47563,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 46253,
+      "end": 47563,
+      "demand": 1
+    },
+    {
+      "resource": "virtual-memory.channel.0",
+      "start": 47563,
+      "end": 49116,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 47563,
+      "end": 49116,
+      "demand": 1
+    },
+    {
+      "resource": "U0.N",
+      "start": 49116,
+      "end": 61582,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 49116,
+      "end": 61582,
+      "demand": 1
+    },
+    {
+      "resource": "U0.client",
+      "start": 49116,
+      "end": 61582,
+      "demand": 1
+    },
+    {
+      "resource": "virtual-memory.channel.0",
+      "start": 61582,
+      "end": 62892,
+      "demand": 1
+    },
+    {
+      "resource": "U0.S.port",
+      "start": 61582,
+      "end": 62892,
+      "demand": 1
+    }
+  ],
+  "nets": [
+    "U0.N.read",
+    "U0.N.write"
+  ],
+  "wire_cost": 2,
+  "external_words": 2305,
+  "optimality_scope": "verified serial incumbent; no global optimality claim",
+  "makespan": 62892,
+  "seconds": 0.00026800017803907394,
+  "external_regions": [
+    {
+      "value": "epsilon@row0",
+      "address_words": 0,
+      "words": 1
+    },
+    {
+      "value": "gamma@row0",
+      "address_words": 1,
+      "words": 256
+    },
+    {
+      "value": "x@row0",
+      "address_words": 257,
+      "words": 256
+    },
+    {
+      "value": "x@row1",
+      "address_words": 513,
+      "words": 256
+    },
+    {
+      "value": "x@row2",
+      "address_words": 769,
+      "words": 256
+    },
+    {
+      "value": "x@row3",
+      "address_words": 1025,
+      "words": 256
+    },
+    {
+      "value": "y@row0",
+      "address_words": 1281,
+      "words": 256
+    },
+    {
+      "value": "y@row1",
+      "address_words": 1537,
+      "words": 256
+    },
+    {
+      "value": "y@row2",
+      "address_words": 1793,
+      "words": 256
+    },
+    {
+      "value": "y@row3",
+      "address_words": 2049,
+      "words": 256
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "audits": {
+    "native_cost": {
+      "passed": true,
+      "kernels": 1083,
+      "bindings": 15749,
+      "primitive_instructions": 8850,
+      "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+    },
+    "schedule": {
+      "passed": true,
+      "peak_words": {
+        "P0.S": 1023,
+        "U0.S": 8
+      },
+      "external_words": 26318235135,
+      "static_nets": 10,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+    }
+  },
+  "makespan": 1220294552058,
+  "serial_work": 1220294552058,
+  "cost_components": {
+    "external_load": 517137061500,
+    "external_store": 10150405320,
+    "core": 517845811338,
+    "local_io": 175161273900
+  },
+  "by_operator": {
+    "Gather": {
+      "external_load": 81920,
+      "external_store": 90112
+    },
+    "RMSNorm": {
+      "core": 458318090,
+      "local_io": 209105580,
+      "external_load": 1184620640,
+      "external_store": 230358216
+    },
+    "MatMul": {
+      "core": 500147779840,
+      "local_io": 166762861824,
+      "external_load": 470172869660,
+      "external_store": 215181824
+    },
+    "Add": {
+      "core": 313620480,
+      "local_io": 150128640,
+      "external_load": 820224000,
+      "external_store": 198696960
+    },
+    "Neg": {
+      "core": 10865664,
+      "local_io": 5225472,
+      "external_load": 28200960,
+      "external_store": 7299072
+    },
+    "Mul": {
+      "core": 311655168,
+      "local_io": 139933440,
+      "external_load": 795202560,
+      "external_store": 151455744
+    },
+    "Concat": {
+      "core": 21731328,
+      "local_io": 10450944,
+      "external_load": 59719680,
+      "external_store": 18247680
+    },
+    "Softmax": {
+      "core": 62971776,
+      "local_io": 29932416,
+      "external_load": 167431680,
+      "external_store": 35329536
+    },
+    "SiLU": {
+      "core": 16518868992,
+      "local_io": 7853635584,
+      "external_load": 43908710400,
+      "external_store": 9293746176
+    }
+  },
+  "resources": {
+    "P0.LC.service": {
+      "reserved_ticks": 1220294552058,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 1.0,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P0.S.IO": {
+      "reserved_ticks": 1220294552058,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 1.0,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "virtual-memory.channel.0": {
+      "reserved_ticks": 1220294552058,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 1.0,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P0.M": {
+      "reserved_ticks": 1220294380026,
+      "useful_core_ticks": 516054354638,
+      "reserved_fraction_of_makespan": 0.9999998590242006,
+      "useful_core_fraction_of_makespan": 0.42289327094649865
+    },
+    "P0.M.context": {
+      "reserved_ticks": 1220294380026,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9999998590242006,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "U0.E": {
+      "reserved_ticks": 1220294380026,
+      "useful_core_ticks": 1780597924,
+      "reserved_fraction_of_makespan": 0.9999998590242006,
+      "useful_core_fraction_of_makespan": 0.0014591542025628654
+    },
+    "U0.LC.service": {
+      "reserved_ticks": 1220294380026,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9999998590242006,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "U0.N": {
+      "reserved_ticks": 79953029086,
+      "useful_core_ticks": 10858776,
+      "reserved_fraction_of_makespan": 0.06551945098104467,
+      "useful_core_fraction_of_makespan": 8.898487649303123e-06
+    },
+    "U0.N.context": {
+      "reserved_ticks": 79953029086,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.06551945098104467,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "U0.S.IO": {
+      "reserved_ticks": 1220294380026,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9999998590242006,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "virtual-memory.channel.1": {
+      "reserved_ticks": 1220294380026,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9999998590242006,
+      "useful_core_fraction_of_makespan": 0.0
+    }
+  },
+  "operand_preparation_hoist": {
+    "saved_serial_cost_bound": 0,
+    "candidates": []
+  },
+  "scope": "measured native core and local IO plus virtual memory model; not chip utilization; hoist is not validated speedup",
+  "inputs": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-224-preparation-reuse-plan/generated/five-groups-ir.json": "3ae8f1c2f8b44e10ed63ea8886f589bdf34ca98cdea99008fb3a63972e3c03f3",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-224-preparation-reuse-plan/generated/five-groups-plan.json": "5abb2b3d1d1a45fcf02304049b14baaa8f1625539d580a2dd840e3911640113a"
+  }
+}

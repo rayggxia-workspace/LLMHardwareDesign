@@ -1,0 +1,404 @@
+======================================================================
+ERROR: test_context_does_not_migrate_between_k_partitions (test_contexts.TestContexts.test_context_does_not_migrate_between_k_partitions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_contexts.py", line 23, in test_context_does_not_migrate_between_k_partitions
+    p = Planner(g, h).solve(2, 1)
+        ^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_context_held_across_gap_and_blocks_competing_program (test_contexts.TestContexts.test_context_held_across_gap_and_blocks_competing_program)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_contexts.py", line 43, in test_context_held_across_gap_and_blocks_competing_program
+    p = Planner(g, h, fixed={'a': 'left', 'b': 'left', 'other': 'left'}).solve(2, 1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_independent_verifier_rejects_context_migration (test_contexts.TestContexts.test_independent_verifier_rejects_context_migration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_contexts.py", line 31, in test_independent_verifier_rejects_context_migration
+    p = Planner(g, h, fixed={'a': 'left', 'b': 'right'}).solve(2, 1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_chain_dp_keeps_separate_and_qualified_fusion (test_frontend.TestFrontend.test_chain_dp_keeps_separate_and_qualified_fusion)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_frontend.py", line 44, in test_chain_dp_keeps_separate_and_qualified_fusion
+    p = Planner(c, h).solve(seconds=4)
+        ^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_compile_outputs_share_the_verified_plan (test_frontend.TestFrontend.test_compile_outputs_share_the_verified_plan)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_frontend.py", line 60, in test_compile_outputs_share_the_verified_plan
+    result = compile_model(g, h, seconds=1, rounds=1)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/run.py", line 33, in compile_model
+    result = optimize(graph, resolved, wire_budget=budget, seconds=seconds, rounds=rounds, workers=workers)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 703, in optimize
+    trial = Planner(graph, hardware, wire_budget, fixed=fixed, hint=best, tied=tied).solve(seconds, workers)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_registered_tiling_streams_external_tensor (test_frontend.TestFrontend.test_registered_tiling_streams_external_tensor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_frontend.py", line 22, in test_registered_tiling_streams_external_tensor
+    p = optimize(tiled, h, seconds=1, rounds=1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 703, in optimize
+    trial = Planner(graph, hardware, wire_budget, fixed=fixed, hint=best, tied=tied).solve(seconds, workers)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_indexed_load_scheduling_capacity_traffic_and_manifest (test_indexed_memory.TestIndexedMemory.test_indexed_load_scheduling_capacity_traffic_and_manifest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 611, in optimize
+    best = serial_seed(graph, hardware, bindings, wire_budget)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/seed.py", line 216, in serial_seed
+    plan['external_regions'] = external_regions(graph, hardware, plan)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/seed.py", line 33, in external_regions
+    raise SeedFailure('stable external region allocation exceeds declared memory capacity')
+seed.SeedFailure: stable external region allocation exceeds declared memory capacity
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_indexed_memory.py", line 49, in test_indexed_load_scheduling_capacity_traffic_and_manifest
+    self.assertEqual(compile_model(m,h,seconds=.1,rounds=0,cover_limit=1)['status'],'no_verified_plan')
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/run.py", line 33, in compile_model
+    result = optimize(graph, resolved, wire_budget=budget, seconds=seconds, rounds=rounds, workers=workers)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 613, in optimize
+    best = Planner(graph, hardware, wire_budget, fixed=bindings).solve(seconds, workers)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_compute_and_copy_static_driver_conflict_changes_binding (test_memory.TestVirtualMemory.test_compute_and_copy_static_driver_conflict_changes_binding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 611, in optimize
+    best = serial_seed(graph, hardware, bindings, wire_budget)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/seed.py", line 178, in serial_seed
+    route_for(source, site, graph['values'][name]['words'])
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/seed.py", line 86, in route_for
+    raise SeedFailure(f'no legal seed copy {src}->{dst}, {words} words')
+seed.SeedFailure: no legal seed copy MEM->left, 2 words
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_memory.py", line 136, in test_compute_and_copy_static_driver_conflict_changes_binding
+    p = optimize(g, h, seconds=2, rounds=0)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 613, in optimize
+    best = Planner(graph, hardware, wire_budget, fixed=bindings).solve(seconds, workers)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_compute_connections_are_required_even_when_there_is_no_copy (test_memory.TestVirtualMemory.test_compute_connections_are_required_even_when_there_is_no_copy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_memory.py", line 105, in test_compute_connections_are_required_even_when_there_is_no_copy
+    p = Planner(g, h).solve(seconds=2)
+        ^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_zero_preconnections_needs_no_native_dma_or_pins (test_memory.TestVirtualMemory.test_zero_preconnections_needs_no_native_dma_or_pins)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_memory.py", line 34, in test_zero_preconnections_needs_no_native_dma_or_pins
+    result = compile_model(g, h, seconds=1, rounds=1)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/run.py", line 33, in compile_model
+    result = optimize(graph, resolved, wire_budget=budget, seconds=seconds, rounds=rounds, workers=workers)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 703, in optimize
+    trial = Planner(graph, hardware, wire_budget, fixed=fixed, hint=best, tied=tied).solve(seconds, workers)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_arbitrary_resource_names_and_capacities (test_solver.TestPlanner.test_arbitrary_resource_names_and_capacities)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 157, in test_arbitrary_resource_names_and_capacities
+    p = self.solve(g, h)
+        ^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 41, in solve
+    plan = Planner(graph, hw, **kwargs).solve(seconds=8)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_clean_external_copy_avoids_store (test_solver.TestPlanner.test_clean_external_copy_avoids_store)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 115, in test_clean_external_copy_avoids_store
+    Planner(g, h)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_data_before_compute_and_ack_lease (test_solver.TestPlanner.test_data_before_compute_and_ack_lease)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 55, in test_data_before_compute_and_ack_lease
+    p = self.solve(g, h, fixed={'a': 'left', 'b': 'right'})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 41, in solve
+    plan = Planner(graph, hw, **kwargs).solve(seconds=8)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_external_capacity_and_address_replay (test_solver.TestPlanner.test_external_capacity_and_address_replay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 222, in test_external_capacity_and_address_replay
+    p = Planner(g, h).solve(seconds=3)
+        ^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_lns_keeps_legal_incumbent (test_solver.TestPlanner.test_lns_keeps_legal_incumbent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 162, in test_lns_keeps_legal_incumbent
+    p = self.solve(g, h, fixed={'a': 'left', 'b': 'right'})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 41, in solve
+    plan = Planner(graph, hw, **kwargs).solve(seconds=8)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_no_route_is_infeasible_not_magic_copy (test_solver.TestPlanner.test_no_route_is_infeasible_not_magic_copy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 140, in test_no_route_is_infeasible_not_magic_copy
+    p = Planner(g, h).solve(seconds=3)
+        ^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_resource_replay_does_not_trust_claim_rows (test_solver.TestPlanner.test_resource_replay_does_not_trust_claim_rows)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 145, in test_resource_replay_does_not_trust_claim_rows
+    p = self.solve(g, h, fixed={'a': 'left', 'b': 'left'})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 41, in solve
+    plan = Planner(graph, hw, **kwargs).solve(seconds=8)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_schedule_and_output_ack (test_solver.TestPlanner.test_schedule_and_output_ack)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 48, in test_schedule_and_output_ack
+    plan = self.solve(g, h)
+           ^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 41, in solve
+    plan = Planner(graph, hw, **kwargs).solve(seconds=8)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_shared_materialization_counts_one_load (test_solver.TestPlanner.test_shared_materialization_counts_one_load)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 170, in test_shared_materialization_counts_one_load
+    p = self.solve(g, h, fixed={'a': 'left', 'b': 'left'})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 41, in solve
+    plan = Planner(graph, hw, **kwargs).solve(seconds=8)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_small_chain_matches_independent_closed_form_reference (test_solver.TestPlanner.test_small_chain_matches_independent_closed_form_reference)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 184, in test_small_chain_matches_independent_closed_form_reference
+    p = self.solve(g, h)
+        ^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 41, in solve
+    plan = Planner(graph, hw, **kwargs).solve(seconds=8)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_spill_is_real_store_then_load (test_solver.TestPlanner.test_spill_is_real_store_then_load)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 90, in test_spill_is_real_store_then_load
+    p = self.solve(g, h, fixed={'a': 'left', 'b': 'scratch', 'c': 'left'})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 41, in solve
+    plan = Planner(graph, hw, **kwargs).solve(seconds=8)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_stale_copy_and_cyclic_graph_rejected (test_solver.TestPlanner.test_stale_copy_and_cyclic_graph_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 98, in test_stale_copy_and_cyclic_graph_rejected
+    p = self.solve(g, h, fixed={'a': 'left', 'b': 'right'})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 41, in solve
+    plan = Planner(graph, hw, **kwargs).solve(seconds=8)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_static_union_not_execution_count (test_solver.TestPlanner.test_static_union_not_execution_count)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 133, in test_static_union_not_execution_count
+    p = self.solve(g, h, fixed={'a': 'left', 'b': 'right', 'c': 'right'})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 41, in solve
+    plan = Planner(graph, hw, **kwargs).solve(seconds=8)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_storage_address_collision_detected (test_solver.TestPlanner.test_storage_address_collision_detected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 70, in test_storage_address_collision_detected
+    p = self.solve(g, h, fixed={'a': 'left', 'b': 'left'})
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 41, in solve
+    plan = Planner(graph, hw, **kwargs).solve(seconds=8)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_tied_cross_layer_binding_neighborhood (test_solver.TestPlanner.test_tied_cross_layer_binding_neighborhood)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 235, in test_tied_cross_layer_binding_neighborhood
+    p = Planner(g, h, tied=[['a', 'b']]).solve(seconds=4)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_tile_signature_and_static_pin_conflict (test_solver.TestPlanner.test_tile_signature_and_static_pin_conflict)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 193, in test_tile_signature_and_static_pin_conflict
+    Planner(g, h)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_unknown_operator_attribute_never_silently_ignored (test_solver.TestPlanner.test_unknown_operator_attribute_never_silently_ignored)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 127, in test_unknown_operator_attribute_never_silently_ignored
+    Planner(g, h)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_unsupported_numeric_never_falls_back (test_solver.TestPlanner.test_unsupported_numeric_never_falls_back)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 121, in test_unsupported_numeric_never_falls_back
+    Planner(g, h)
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+======================================================================
+ERROR: test_whole_static_net_family_is_not_cut_at_layer_boundary (test_solver.TestPlanner.test_whole_static_net_family_is_not_cut_at_layer_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/test_solver.py", line 253, in test_whole_static_net_family_is_not_cut_at_layer_boundary
+    p = optimize(g, h, initial=initial, seconds=0.05, rounds=1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 703, in optimize
+    trial = Planner(graph, hardware, wire_budget, fixed=fixed, hint=best, tied=tied).solve(seconds, workers)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-254-traffic-audit/solver.py", line 102, in __init__
+    from ortools.sat.python import cp_model
+ModuleNotFoundError: No module named 'ortools'
+
+----------------------------------------------------------------------
+Ran 136 tests in 1.507s
+
+FAILED (errors=29)

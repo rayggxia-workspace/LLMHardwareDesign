@@ -1,0 +1,1446 @@
+{
+  "status": "planned",
+  "tasks": [
+    {
+      "id": "v202#prepare-A",
+      "binding": "M=P0/E=C0",
+      "start": 0,
+      "end": 1245184,
+      "site": "P0.S"
+    },
+    {
+      "id": "v287#prepare-A",
+      "binding": "M=P1/E=U0",
+      "start": 0,
+      "end": 1245184,
+      "site": "P1.S"
+    },
+    {
+      "id": "v287",
+      "binding": "column-shards[M=P0;columns=0:5504;M-read-cache=169|M=P1;columns=5504:11008;M-read-cache=169]",
+      "start": 1245184,
+      "end": 4128318796,
+      "site": "P0.S",
+      "evaluation": {
+        "cost_model": "dot-column-shards-v1",
+        "services": [
+          {
+            "id": "v287#columns-0",
+            "binding": "M=P0;columns=0:5504;M-read-cache=169",
+            "site": "P0.S",
+            "start": 1245184,
+            "end": 4128318796,
+            "cache_hit": false,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 0,
+              "loaded_prefix": 169,
+              "retained_prefix": 169,
+              "external_read_words": 84597495,
+              "external_write_words": 11008,
+              "scratch_by_site": {
+                "P0.S": 1023
+              },
+              "duration": 4127073612,
+              "delta_makespan": 4127073612
+            }
+          },
+          {
+            "id": "v287#columns-1",
+            "binding": "M=P1;columns=5504:11008;M-read-cache=169",
+            "site": "P1.S",
+            "start": 1245184,
+            "end": 4128318796,
+            "cache_hit": false,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 0,
+              "loaded_prefix": 169,
+              "retained_prefix": 169,
+              "external_read_words": 84597495,
+              "external_write_words": 11008,
+              "scratch_by_site": {
+                "P1.S": 1023
+              },
+              "duration": 4127073612,
+              "delta_makespan": 0
+            }
+          }
+        ],
+        "delta_makespan": 4127073612
+      }
+    },
+    {
+      "id": "v202",
+      "binding": "column-shards[M=P0;columns=0:5504;M-read-cache=169|M=P1;columns=5504:11008;M-read-cache=169]",
+      "start": 4128318796,
+      "end": 8255372128,
+      "site": "P0.S",
+      "evaluation": {
+        "cost_model": "dot-column-shards-v1",
+        "services": [
+          {
+            "id": "v202#columns-0",
+            "binding": "M=P0;columns=0:5504;M-read-cache=169",
+            "site": "P0.S",
+            "start": 4128318796,
+            "end": 8255372128,
+            "cache_hit": true,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 169,
+              "loaded_prefix": 0,
+              "retained_prefix": 169,
+              "external_read_words": 84596481,
+              "external_write_words": 11008,
+              "scratch_by_site": {
+                "P0.S": 1023
+              },
+              "duration": 4127053332,
+              "delta_makespan": 4127053332
+            }
+          },
+          {
+            "id": "v202#columns-1",
+            "binding": "M=P1;columns=5504:11008;M-read-cache=169",
+            "site": "P1.S",
+            "start": 4128318796,
+            "end": 8255372128,
+            "cache_hit": true,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 169,
+              "loaded_prefix": 0,
+              "retained_prefix": 169,
+              "external_read_words": 84596481,
+              "external_write_words": 11008,
+              "scratch_by_site": {
+                "P1.S": 1023
+              },
+              "duration": 4127053332,
+              "delta_makespan": 0
+            }
+          }
+        ],
+        "delta_makespan": 4127053332
+      }
+    },
+    {
+      "id": "v262",
+      "binding": "M=P0/E=C0",
+      "start": 8255372128,
+      "end": 8269066080,
+      "site": "P0.S"
+    },
+    {
+      "id": "v263",
+      "binding": "M=P0/E=C0",
+      "start": 8269066080,
+      "end": 8282760032,
+      "site": "P0.S"
+    },
+    {
+      "id": "v203",
+      "binding": "M=P1/E=U0",
+      "start": 8255372128,
+      "end": 8288440160,
+      "site": "P1.S"
+    },
+    {
+      "id": "v284",
+      "binding": "M=P0/E=C0",
+      "start": 8282760032,
+      "end": 8313406304,
+      "site": "P0.S"
+    },
+    {
+      "id": "v204",
+      "binding": "M=P1/E=U0",
+      "start": 8288440160,
+      "end": 8330534752,
+      "site": "P1.S"
+    },
+    {
+      "id": "v264",
+      "binding": "M=P0/E=C0",
+      "start": 8313406304,
+      "end": 8355500896,
+      "site": "P0.S"
+    },
+    {
+      "id": "v205",
+      "binding": "M=P1/E=U0",
+      "start": 8330534752,
+      "end": 8362876256,
+      "site": "P1.S"
+    },
+    {
+      "id": "v265",
+      "binding": "M=P0/E=C0",
+      "start": 8355500896,
+      "end": 8388568928,
+      "site": "P0.S"
+    },
+    {
+      "id": "v207",
+      "binding": "M=P1/E=U0",
+      "start": 8362876256,
+      "end": 8389933920,
+      "site": "P1.S"
+    },
+    {
+      "id": "v209",
+      "binding": "M=P0/E=C0",
+      "start": 8389933920,
+      "end": 8403627872,
+      "site": "P0.S"
+    },
+    {
+      "id": "v267",
+      "binding": "M=P1/E=U0",
+      "start": 8389933920,
+      "end": 8416661344,
+      "site": "P1.S"
+    },
+    {
+      "id": "v210",
+      "binding": "M=P0/E=C0",
+      "start": 8403627872,
+      "end": 8436695904,
+      "site": "P0.S"
+    },
+    {
+      "id": "v269",
+      "binding": "M=P1/E=U0",
+      "start": 8416661344,
+      "end": 8458755936,
+      "site": "P1.S"
+    },
+    {
+      "id": "v212",
+      "binding": "M=P0/E=C0",
+      "start": 8436695904,
+      "end": 8476456800,
+      "site": "P0.S"
+    },
+    {
+      "id": "v271",
+      "binding": "M=P1/E=U0",
+      "start": 8458755936,
+      "end": 8500850528,
+      "site": "P1.S"
+    },
+    {
+      "id": "v213",
+      "binding": "M=P0/E=C0",
+      "start": 8476456800,
+      "end": 8509524832,
+      "site": "P0.S"
+    },
+    {
+      "id": "v272",
+      "binding": "M=P1/E=U0",
+      "start": 8500850528,
+      "end": 8514544480,
+      "site": "P1.S"
+    },
+    {
+      "id": "v273",
+      "binding": "N=U0",
+      "start": 8514544480,
+      "end": 8516371808,
+      "site": "U0.S"
+    },
+    {
+      "id": "v275",
+      "binding": "M=P1/E=U0",
+      "start": 8516371808,
+      "end": 8530065760,
+      "site": "P1.S"
+    },
+    {
+      "id": "v214",
+      "binding": "M=P0/E=C0",
+      "start": 8509524832,
+      "end": 8549285728,
+      "site": "P0.S"
+    },
+    {
+      "id": "v276",
+      "binding": "M=P1/E=U0",
+      "start": 8530065760,
+      "end": 8563133792,
+      "site": "P1.S"
+    },
+    {
+      "id": "v215",
+      "binding": "M=P0/E=C0",
+      "start": 8549285728,
+      "end": 8582353760,
+      "site": "P0.S"
+    },
+    {
+      "id": "v277",
+      "binding": "M=P1/E=U0",
+      "start": 8563133792,
+      "end": 8596201824,
+      "site": "P1.S"
+    },
+    {
+      "id": "v217",
+      "binding": "M=P0/E=C0",
+      "start": 8582353760,
+      "end": 8622114656,
+      "site": "P0.S"
+    },
+    {
+      "id": "v278",
+      "binding": "M=P1/E=U0",
+      "start": 8596201824,
+      "end": 8629269856,
+      "site": "P1.S"
+    },
+    {
+      "id": "v218",
+      "binding": "M=P0/E=C0",
+      "start": 8622114656,
+      "end": 8655182688,
+      "site": "P0.S"
+    },
+    {
+      "id": "v279",
+      "binding": "M=P1/E=U0",
+      "start": 8629269856,
+      "end": 8682064224,
+      "site": "P1.S"
+    },
+    {
+      "id": "v219",
+      "binding": "M=P0/E=C0",
+      "start": 8655182688,
+      "end": 8694943584,
+      "site": "P0.S"
+    },
+    {
+      "id": "v281",
+      "binding": "M=P1/E=U0",
+      "start": 8682064224,
+      "end": 8695758176,
+      "site": "P1.S"
+    },
+    {
+      "id": "v282",
+      "binding": "M=P1/E=U0",
+      "start": 8695758176,
+      "end": 8722485600,
+      "site": "P1.S"
+    },
+    {
+      "id": "v220",
+      "binding": "M=P0/E=C0",
+      "start": 8694943584,
+      "end": 8728011616,
+      "site": "P0.S"
+    },
+    {
+      "id": "v280",
+      "binding": "M=P1/E=U0",
+      "start": 8722485600,
+      "end": 8755553632,
+      "site": "P1.S"
+    },
+    {
+      "id": "v222",
+      "binding": "M=P0/E=C0",
+      "start": 8728011616,
+      "end": 8767772512,
+      "site": "P0.S"
+    },
+    {
+      "id": "v283",
+      "binding": "M=P1/E=U0",
+      "start": 8755553632,
+      "end": 8788621664,
+      "site": "P1.S"
+    },
+    {
+      "id": "v223",
+      "binding": "M=P0/E=C0",
+      "start": 8767772512,
+      "end": 8800840544,
+      "site": "P0.S"
+    },
+    {
+      "id": "v285",
+      "binding": "M=P1/E=U0",
+      "start": 8788621664,
+      "end": 8815679328,
+      "site": "P1.S"
+    },
+    {
+      "id": "v224",
+      "binding": "M=P0/E=C0",
+      "start": 8800840544,
+      "end": 8840601440,
+      "site": "P0.S"
+    },
+    {
+      "id": "v225",
+      "binding": "M=P0/E=U0",
+      "start": 8840601440,
+      "end": 8873669472,
+      "site": "P0.S"
+    },
+    {
+      "id": "v227",
+      "binding": "M=P0/E=U0",
+      "start": 8873669472,
+      "end": 8913430368,
+      "site": "P0.S"
+    },
+    {
+      "id": "v228",
+      "binding": "M=P0/E=U0",
+      "start": 8913430368,
+      "end": 8946498400,
+      "site": "P0.S"
+    },
+    {
+      "id": "v229",
+      "binding": "M=P0/E=U0",
+      "start": 8946498400,
+      "end": 8986259296,
+      "site": "P0.S"
+    },
+    {
+      "id": "v230",
+      "binding": "M=P0/E=U0",
+      "start": 8986259296,
+      "end": 9019327328,
+      "site": "P0.S"
+    },
+    {
+      "id": "v232",
+      "binding": "M=P0/E=U0",
+      "start": 9019327328,
+      "end": 9059088224,
+      "site": "P0.S"
+    },
+    {
+      "id": "v233",
+      "binding": "M=P0/E=U0",
+      "start": 9059088224,
+      "end": 9092156256,
+      "site": "P0.S"
+    },
+    {
+      "id": "v234",
+      "binding": "M=P0/E=U0",
+      "start": 9092156256,
+      "end": 9131917152,
+      "site": "P0.S"
+    },
+    {
+      "id": "v235",
+      "binding": "M=P0/E=U0",
+      "start": 9131917152,
+      "end": 9164985184,
+      "site": "P0.S"
+    },
+    {
+      "id": "v237",
+      "binding": "M=P0/E=U0",
+      "start": 9164985184,
+      "end": 9204746080,
+      "site": "P0.S"
+    },
+    {
+      "id": "v238",
+      "binding": "M=P0/E=U0",
+      "start": 9204746080,
+      "end": 9237814112,
+      "site": "P0.S"
+    },
+    {
+      "id": "v239",
+      "binding": "M=P0/E=U0",
+      "start": 9237814112,
+      "end": 9277575008,
+      "site": "P0.S"
+    },
+    {
+      "id": "v240",
+      "binding": "M=P0/E=U0",
+      "start": 9277575008,
+      "end": 9310643040,
+      "site": "P0.S"
+    },
+    {
+      "id": "v242",
+      "binding": "M=P0/E=U0",
+      "start": 9310643040,
+      "end": 9350403936,
+      "site": "P0.S"
+    },
+    {
+      "id": "v243",
+      "binding": "M=P0/E=U0",
+      "start": 9350403936,
+      "end": 9383471968,
+      "site": "P0.S"
+    },
+    {
+      "id": "v244",
+      "binding": "M=P0/E=U0",
+      "start": 9383471968,
+      "end": 9423232864,
+      "site": "P0.S"
+    },
+    {
+      "id": "v245",
+      "binding": "M=P0/E=U0",
+      "start": 9423232864,
+      "end": 9456300896,
+      "site": "P0.S"
+    },
+    {
+      "id": "v247",
+      "binding": "M=P0/E=U0",
+      "start": 9456300896,
+      "end": 9496061792,
+      "site": "P0.S"
+    },
+    {
+      "id": "v248",
+      "binding": "M=P0/E=U0",
+      "start": 9496061792,
+      "end": 9529129824,
+      "site": "P0.S"
+    },
+    {
+      "id": "v249",
+      "binding": "M=P0/E=U0",
+      "start": 9529129824,
+      "end": 9568890720,
+      "site": "P0.S"
+    },
+    {
+      "id": "v250",
+      "binding": "M=P0/E=U0",
+      "start": 9568890720,
+      "end": 9601958752,
+      "site": "P0.S"
+    },
+    {
+      "id": "v252",
+      "binding": "M=P0/E=U0",
+      "start": 9601958752,
+      "end": 9641719648,
+      "site": "P0.S"
+    },
+    {
+      "id": "v253",
+      "binding": "M=P0/E=U0",
+      "start": 9641719648,
+      "end": 9674787680,
+      "site": "P0.S"
+    },
+    {
+      "id": "v254",
+      "binding": "M=P0/E=U0",
+      "start": 9674787680,
+      "end": 9714548576,
+      "site": "P0.S"
+    },
+    {
+      "id": "v255",
+      "binding": "M=P0/E=U0",
+      "start": 9714548576,
+      "end": 9747616608,
+      "site": "P0.S"
+    },
+    {
+      "id": "v257",
+      "binding": "M=P0/E=U0",
+      "start": 9747616608,
+      "end": 9787377504,
+      "site": "P0.S"
+    },
+    {
+      "id": "v258",
+      "binding": "M=P0/E=U0",
+      "start": 9787377504,
+      "end": 9820445536,
+      "site": "P0.S"
+    },
+    {
+      "id": "v260",
+      "binding": "M=P0/E=U0",
+      "start": 9820445536,
+      "end": 9860206432,
+      "site": "P0.S"
+    },
+    {
+      "id": "v261",
+      "binding": "M=P0/E=U0",
+      "start": 9860206432,
+      "end": 9893274464,
+      "site": "P0.S"
+    },
+    {
+      "id": "v286",
+      "binding": "M=P0/E=U0",
+      "start": 9893274464,
+      "end": 9920332128,
+      "site": "P0.S"
+    },
+    {
+      "id": "v288",
+      "binding": "M=P0/E=U0",
+      "start": 9920332128,
+      "end": 9953400160,
+      "site": "P0.S"
+    },
+    {
+      "id": "v289#prepare-A",
+      "binding": "M=P0/E=U0",
+      "start": 9953400160,
+      "end": 9960093024,
+      "site": "P0.S"
+    },
+    {
+      "id": "v289",
+      "binding": "column-shards[M=P0;columns=0:1024;M-read-cache=169|M=P1;columns=1024:2048;M-read-cache=169]",
+      "start": 9960093024,
+      "end": 14177752236,
+      "site": "P0.S",
+      "evaluation": {
+        "cost_model": "dot-column-shards-v1",
+        "services": [
+          {
+            "id": "v289#columns-0",
+            "binding": "M=P0;columns=0:1024;M-read-cache=169",
+            "site": "P0.S",
+            "start": 9960093024,
+            "end": 14177752236,
+            "cache_hit": false,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 0,
+              "loaded_prefix": 169,
+              "retained_prefix": 169,
+              "external_read_words": 89140215,
+              "external_write_words": 2048,
+              "scratch_by_site": {
+                "P0.S": 1023
+              },
+              "duration": 4217659212,
+              "delta_makespan": 4217659212
+            }
+          },
+          {
+            "id": "v289#columns-1",
+            "binding": "M=P1;columns=1024:2048;M-read-cache=169",
+            "site": "P1.S",
+            "start": 9960093024,
+            "end": 14177752236,
+            "cache_hit": false,
+            "evaluation": {
+              "cost_model": "dot-prefix-state-v2",
+              "retention": "preserve",
+              "reused_prefix": 0,
+              "loaded_prefix": 169,
+              "retained_prefix": 169,
+              "external_read_words": 89140215,
+              "external_write_words": 2048,
+              "scratch_by_site": {
+                "P1.S": 1023
+              },
+              "duration": 4217659212,
+              "delta_makespan": 0
+            }
+          }
+        ],
+        "delta_makespan": 4217659212
+      }
+    }
+  ],
+  "makespan": 14177752236,
+  "external_words": 593158110,
+  "nets": [
+    "C0.E.read",
+    "C0.E.write",
+    "C0.S.io.load",
+    "C0.S.io.store",
+    "P0.M.read",
+    "P0.M.write",
+    "P0.S.io.load",
+    "P0.S.io.store",
+    "P1.M.read",
+    "P1.M.write",
+    "P1.S.io.load",
+    "P1.S.io.store",
+    "U0.E.read",
+    "U0.E.write",
+    "U0.N.read",
+    "U0.N.write",
+    "U0.S.io.load",
+    "U0.S.io.store"
+  ],
+  "wire_cost": 18,
+  "width": 8,
+  "ready_limit": 4,
+  "expanded": 38544,
+  "merged": 2469,
+  "pruned": 5467,
+  "rejected_static_conflicts": 0,
+  "rejected_wire_completions": 1812,
+  "wire_completion_covers": 36,
+  "read_cache_hits": 2,
+  "read_cache_calls": 6,
+  "final_read_cache": {
+    "P0.S": [
+      "[\"v288\",[1,2],11008,3]",
+      169,
+      1014
+    ],
+    "P1.S": [
+      "[\"v288\",[1,2],11008,3]",
+      169,
+      1014
+    ]
+  },
+  "optimality": "bounded frontier DP with append-only resource calendars; no global optimality guarantee",
+  "selected_source": "frontier",
+  "incumbent_count": 2,
+  "baseline": {
+    "status": "planned",
+    "tasks": [
+      {
+        "id": "v202#prepare-A",
+        "binding": "M=P0/E=U0",
+        "start": 0,
+        "end": 1245184,
+        "site": "P0.S"
+      },
+      {
+        "id": "v287#prepare-A",
+        "binding": "M=P0/E=U0",
+        "start": 1245184,
+        "end": 2490368,
+        "site": "P0.S"
+      },
+      {
+        "id": "v287",
+        "binding": "column-shards[M=P0;columns=0:5504;M-read-cache=169|M=P1;columns=5504:11008;M-read-cache=169]",
+        "start": 2490368,
+        "end": 4129563980,
+        "site": "P0.S",
+        "evaluation": {
+          "cost_model": "dot-column-shards-v1",
+          "services": [
+            {
+              "id": "v287#columns-0",
+              "binding": "M=P0;columns=0:5504;M-read-cache=169",
+              "site": "P0.S",
+              "start": 2490368,
+              "end": 4129563980,
+              "cache_hit": false,
+              "evaluation": {
+                "cost_model": "dot-prefix-state-v2",
+                "retention": "preserve",
+                "reused_prefix": 0,
+                "loaded_prefix": 169,
+                "retained_prefix": 169,
+                "external_read_words": 84597495,
+                "external_write_words": 11008,
+                "scratch_by_site": {
+                  "P0.S": 1023
+                },
+                "duration": 4127073612,
+                "delta_makespan": 4127073612
+              }
+            },
+            {
+              "id": "v287#columns-1",
+              "binding": "M=P1;columns=5504:11008;M-read-cache=169",
+              "site": "P1.S",
+              "start": 2490368,
+              "end": 4129563980,
+              "cache_hit": false,
+              "evaluation": {
+                "cost_model": "dot-prefix-state-v2",
+                "retention": "preserve",
+                "reused_prefix": 0,
+                "loaded_prefix": 169,
+                "retained_prefix": 169,
+                "external_read_words": 84597495,
+                "external_write_words": 11008,
+                "scratch_by_site": {
+                  "P1.S": 1023
+                },
+                "duration": 4127073612,
+                "delta_makespan": 0
+              }
+            }
+          ],
+          "delta_makespan": 4127073612
+        }
+      },
+      {
+        "id": "v202",
+        "binding": "column-shards[M=P0;columns=0:5504;M-read-cache=169|M=P1;columns=5504:11008;M-read-cache=169]",
+        "start": 4129563980,
+        "end": 8256617312,
+        "site": "P0.S",
+        "evaluation": {
+          "cost_model": "dot-column-shards-v1",
+          "services": [
+            {
+              "id": "v202#columns-0",
+              "binding": "M=P0;columns=0:5504;M-read-cache=169",
+              "site": "P0.S",
+              "start": 4129563980,
+              "end": 8256617312,
+              "cache_hit": true,
+              "evaluation": {
+                "cost_model": "dot-prefix-state-v2",
+                "retention": "preserve",
+                "reused_prefix": 169,
+                "loaded_prefix": 0,
+                "retained_prefix": 169,
+                "external_read_words": 84596481,
+                "external_write_words": 11008,
+                "scratch_by_site": {
+                  "P0.S": 1023
+                },
+                "duration": 4127053332,
+                "delta_makespan": 4127053332
+              }
+            },
+            {
+              "id": "v202#columns-1",
+              "binding": "M=P1;columns=5504:11008;M-read-cache=169",
+              "site": "P1.S",
+              "start": 4129563980,
+              "end": 8256617312,
+              "cache_hit": true,
+              "evaluation": {
+                "cost_model": "dot-prefix-state-v2",
+                "retention": "preserve",
+                "reused_prefix": 169,
+                "loaded_prefix": 0,
+                "retained_prefix": 169,
+                "external_read_words": 84596481,
+                "external_write_words": 11008,
+                "scratch_by_site": {
+                  "P1.S": 1023
+                },
+                "duration": 4127053332,
+                "delta_makespan": 0
+              }
+            }
+          ],
+          "delta_makespan": 4127053332
+        }
+      },
+      {
+        "id": "v262",
+        "binding": "M=P0/E=U0",
+        "start": 8256617312,
+        "end": 8270311264,
+        "site": "P0.S"
+      },
+      {
+        "id": "v263",
+        "binding": "M=P0/E=U0",
+        "start": 8270311264,
+        "end": 8284005216,
+        "site": "P0.S"
+      },
+      {
+        "id": "v284",
+        "binding": "M=P0/E=U0",
+        "start": 8284005216,
+        "end": 8314651488,
+        "site": "P0.S"
+      },
+      {
+        "id": "v264",
+        "binding": "M=P0/E=U0",
+        "start": 8314651488,
+        "end": 8356746080,
+        "site": "P0.S"
+      },
+      {
+        "id": "v265",
+        "binding": "M=P0/E=U0",
+        "start": 8356746080,
+        "end": 8389814112,
+        "site": "P0.S"
+      },
+      {
+        "id": "v267",
+        "binding": "M=P0/E=U0",
+        "start": 8389814112,
+        "end": 8416541536,
+        "site": "P0.S"
+      },
+      {
+        "id": "v269",
+        "binding": "M=P0/E=U0",
+        "start": 8416541536,
+        "end": 8458636128,
+        "site": "P0.S"
+      },
+      {
+        "id": "v271",
+        "binding": "M=P0/E=U0",
+        "start": 8458636128,
+        "end": 8500730720,
+        "site": "P0.S"
+      },
+      {
+        "id": "v272",
+        "binding": "M=P0/E=U0",
+        "start": 8500730720,
+        "end": 8514424672,
+        "site": "P0.S"
+      },
+      {
+        "id": "v273",
+        "binding": "N=U0",
+        "start": 8514424672,
+        "end": 8516252000,
+        "site": "U0.S"
+      },
+      {
+        "id": "v275",
+        "binding": "M=P0/E=U0",
+        "start": 8516252000,
+        "end": 8529945952,
+        "site": "P0.S"
+      },
+      {
+        "id": "v276",
+        "binding": "M=P0/E=U0",
+        "start": 8529945952,
+        "end": 8563013984,
+        "site": "P0.S"
+      },
+      {
+        "id": "v277",
+        "binding": "M=P0/E=U0",
+        "start": 8563013984,
+        "end": 8596082016,
+        "site": "P0.S"
+      },
+      {
+        "id": "v278",
+        "binding": "M=P0/E=U0",
+        "start": 8596082016,
+        "end": 8629150048,
+        "site": "P0.S"
+      },
+      {
+        "id": "v279",
+        "binding": "M=P0/E=U0",
+        "start": 8629150048,
+        "end": 8681944416,
+        "site": "P0.S"
+      },
+      {
+        "id": "v281",
+        "binding": "M=P0/E=U0",
+        "start": 8681944416,
+        "end": 8695638368,
+        "site": "P0.S"
+      },
+      {
+        "id": "v282",
+        "binding": "M=P0/E=U0",
+        "start": 8695638368,
+        "end": 8722365792,
+        "site": "P0.S"
+      },
+      {
+        "id": "v280",
+        "binding": "M=P0/E=U0",
+        "start": 8722365792,
+        "end": 8755433824,
+        "site": "P0.S"
+      },
+      {
+        "id": "v283",
+        "binding": "M=P0/E=U0",
+        "start": 8755433824,
+        "end": 8788501856,
+        "site": "P0.S"
+      },
+      {
+        "id": "v285",
+        "binding": "M=P0/E=U0",
+        "start": 8788501856,
+        "end": 8815559520,
+        "site": "P0.S"
+      },
+      {
+        "id": "v203",
+        "binding": "M=P0/E=U0",
+        "start": 8815559520,
+        "end": 8848627552,
+        "site": "P0.S"
+      },
+      {
+        "id": "v204",
+        "binding": "M=P0/E=U0",
+        "start": 8848627552,
+        "end": 8890722144,
+        "site": "P0.S"
+      },
+      {
+        "id": "v205",
+        "binding": "M=P0/E=U0",
+        "start": 8890722144,
+        "end": 8923063648,
+        "site": "P0.S"
+      },
+      {
+        "id": "v207",
+        "binding": "M=P0/E=U0",
+        "start": 8923063648,
+        "end": 8950121312,
+        "site": "P0.S"
+      },
+      {
+        "id": "v209",
+        "binding": "M=P0/E=U0",
+        "start": 8950121312,
+        "end": 8963815264,
+        "site": "P0.S"
+      },
+      {
+        "id": "v210",
+        "binding": "M=P0/E=U0",
+        "start": 8963815264,
+        "end": 8996883296,
+        "site": "P0.S"
+      },
+      {
+        "id": "v212",
+        "binding": "M=P0/E=U0",
+        "start": 8996883296,
+        "end": 9036644192,
+        "site": "P0.S"
+      },
+      {
+        "id": "v213",
+        "binding": "M=P0/E=U0",
+        "start": 9036644192,
+        "end": 9069712224,
+        "site": "P0.S"
+      },
+      {
+        "id": "v214",
+        "binding": "M=P0/E=U0",
+        "start": 9069712224,
+        "end": 9109473120,
+        "site": "P0.S"
+      },
+      {
+        "id": "v215",
+        "binding": "M=P0/E=U0",
+        "start": 9109473120,
+        "end": 9142541152,
+        "site": "P0.S"
+      },
+      {
+        "id": "v217",
+        "binding": "M=P0/E=U0",
+        "start": 9142541152,
+        "end": 9182302048,
+        "site": "P0.S"
+      },
+      {
+        "id": "v218",
+        "binding": "M=P0/E=U0",
+        "start": 9182302048,
+        "end": 9215370080,
+        "site": "P0.S"
+      },
+      {
+        "id": "v219",
+        "binding": "M=P0/E=U0",
+        "start": 9215370080,
+        "end": 9255130976,
+        "site": "P0.S"
+      },
+      {
+        "id": "v220",
+        "binding": "M=P0/E=U0",
+        "start": 9255130976,
+        "end": 9288199008,
+        "site": "P0.S"
+      },
+      {
+        "id": "v222",
+        "binding": "M=P0/E=U0",
+        "start": 9288199008,
+        "end": 9327959904,
+        "site": "P0.S"
+      },
+      {
+        "id": "v223",
+        "binding": "M=P0/E=U0",
+        "start": 9327959904,
+        "end": 9361027936,
+        "site": "P0.S"
+      },
+      {
+        "id": "v224",
+        "binding": "M=P0/E=U0",
+        "start": 9361027936,
+        "end": 9400788832,
+        "site": "P0.S"
+      },
+      {
+        "id": "v225",
+        "binding": "M=P0/E=U0",
+        "start": 9400788832,
+        "end": 9433856864,
+        "site": "P0.S"
+      },
+      {
+        "id": "v227",
+        "binding": "M=P0/E=U0",
+        "start": 9433856864,
+        "end": 9473617760,
+        "site": "P0.S"
+      },
+      {
+        "id": "v228",
+        "binding": "M=P0/E=U0",
+        "start": 9473617760,
+        "end": 9506685792,
+        "site": "P0.S"
+      },
+      {
+        "id": "v229",
+        "binding": "M=P0/E=U0",
+        "start": 9506685792,
+        "end": 9546446688,
+        "site": "P0.S"
+      },
+      {
+        "id": "v230",
+        "binding": "M=P0/E=U0",
+        "start": 9546446688,
+        "end": 9579514720,
+        "site": "P0.S"
+      },
+      {
+        "id": "v232",
+        "binding": "M=P0/E=U0",
+        "start": 9579514720,
+        "end": 9619275616,
+        "site": "P0.S"
+      },
+      {
+        "id": "v233",
+        "binding": "M=P0/E=U0",
+        "start": 9619275616,
+        "end": 9652343648,
+        "site": "P0.S"
+      },
+      {
+        "id": "v234",
+        "binding": "M=P0/E=U0",
+        "start": 9652343648,
+        "end": 9692104544,
+        "site": "P0.S"
+      },
+      {
+        "id": "v235",
+        "binding": "M=P0/E=U0",
+        "start": 9692104544,
+        "end": 9725172576,
+        "site": "P0.S"
+      },
+      {
+        "id": "v237",
+        "binding": "M=P0/E=U0",
+        "start": 9725172576,
+        "end": 9764933472,
+        "site": "P0.S"
+      },
+      {
+        "id": "v238",
+        "binding": "M=P0/E=U0",
+        "start": 9764933472,
+        "end": 9798001504,
+        "site": "P0.S"
+      },
+      {
+        "id": "v239",
+        "binding": "M=P0/E=U0",
+        "start": 9798001504,
+        "end": 9837762400,
+        "site": "P0.S"
+      },
+      {
+        "id": "v240",
+        "binding": "M=P0/E=U0",
+        "start": 9837762400,
+        "end": 9870830432,
+        "site": "P0.S"
+      },
+      {
+        "id": "v242",
+        "binding": "M=P0/E=U0",
+        "start": 9870830432,
+        "end": 9910591328,
+        "site": "P0.S"
+      },
+      {
+        "id": "v243",
+        "binding": "M=P0/E=U0",
+        "start": 9910591328,
+        "end": 9943659360,
+        "site": "P0.S"
+      },
+      {
+        "id": "v244",
+        "binding": "M=P0/E=U0",
+        "start": 9943659360,
+        "end": 9983420256,
+        "site": "P0.S"
+      },
+      {
+        "id": "v245",
+        "binding": "M=P0/E=U0",
+        "start": 9983420256,
+        "end": 10016488288,
+        "site": "P0.S"
+      },
+      {
+        "id": "v247",
+        "binding": "M=P0/E=U0",
+        "start": 10016488288,
+        "end": 10056249184,
+        "site": "P0.S"
+      },
+      {
+        "id": "v248",
+        "binding": "M=P0/E=U0",
+        "start": 10056249184,
+        "end": 10089317216,
+        "site": "P0.S"
+      },
+      {
+        "id": "v249",
+        "binding": "M=P0/E=U0",
+        "start": 10089317216,
+        "end": 10129078112,
+        "site": "P0.S"
+      },
+      {
+        "id": "v250",
+        "binding": "M=P0/E=U0",
+        "start": 10129078112,
+        "end": 10162146144,
+        "site": "P0.S"
+      },
+      {
+        "id": "v252",
+        "binding": "M=P0/E=U0",
+        "start": 10162146144,
+        "end": 10201907040,
+        "site": "P0.S"
+      },
+      {
+        "id": "v253",
+        "binding": "M=P0/E=U0",
+        "start": 10201907040,
+        "end": 10234975072,
+        "site": "P0.S"
+      },
+      {
+        "id": "v254",
+        "binding": "M=P0/E=U0",
+        "start": 10234975072,
+        "end": 10274735968,
+        "site": "P0.S"
+      },
+      {
+        "id": "v255",
+        "binding": "M=P0/E=U0",
+        "start": 10274735968,
+        "end": 10307804000,
+        "site": "P0.S"
+      },
+      {
+        "id": "v257",
+        "binding": "M=P0/E=U0",
+        "start": 10307804000,
+        "end": 10347564896,
+        "site": "P0.S"
+      },
+      {
+        "id": "v258",
+        "binding": "M=P0/E=U0",
+        "start": 10347564896,
+        "end": 10380632928,
+        "site": "P0.S"
+      },
+      {
+        "id": "v260",
+        "binding": "M=P0/E=U0",
+        "start": 10380632928,
+        "end": 10420393824,
+        "site": "P0.S"
+      },
+      {
+        "id": "v261",
+        "binding": "M=P0/E=U0",
+        "start": 10420393824,
+        "end": 10453461856,
+        "site": "P0.S"
+      },
+      {
+        "id": "v286",
+        "binding": "M=P0/E=U0",
+        "start": 10453461856,
+        "end": 10480519520,
+        "site": "P0.S"
+      },
+      {
+        "id": "v288",
+        "binding": "M=P0/E=U0",
+        "start": 10480519520,
+        "end": 10513587552,
+        "site": "P0.S"
+      },
+      {
+        "id": "v289#prepare-A",
+        "binding": "M=P0/E=U0",
+        "start": 10513587552,
+        "end": 10520280416,
+        "site": "P0.S"
+      },
+      {
+        "id": "v289",
+        "binding": "column-shards[M=P0;columns=0:1024;M-read-cache=169|M=P1;columns=1024:2048;M-read-cache=169]",
+        "start": 10520280416,
+        "end": 14737939628,
+        "site": "P0.S",
+        "evaluation": {
+          "cost_model": "dot-column-shards-v1",
+          "services": [
+            {
+              "id": "v289#columns-0",
+              "binding": "M=P0;columns=0:1024;M-read-cache=169",
+              "site": "P0.S",
+              "start": 10520280416,
+              "end": 14737939628,
+              "cache_hit": false,
+              "evaluation": {
+                "cost_model": "dot-prefix-state-v2",
+                "retention": "preserve",
+                "reused_prefix": 0,
+                "loaded_prefix": 169,
+                "retained_prefix": 169,
+                "external_read_words": 89140215,
+                "external_write_words": 2048,
+                "scratch_by_site": {
+                  "P0.S": 1023
+                },
+                "duration": 4217659212,
+                "delta_makespan": 4217659212
+              }
+            },
+            {
+              "id": "v289#columns-1",
+              "binding": "M=P1;columns=1024:2048;M-read-cache=169",
+              "site": "P1.S",
+              "start": 10520280416,
+              "end": 14737939628,
+              "cache_hit": false,
+              "evaluation": {
+                "cost_model": "dot-prefix-state-v2",
+                "retention": "preserve",
+                "reused_prefix": 0,
+                "loaded_prefix": 169,
+                "retained_prefix": 169,
+                "external_read_words": 89140215,
+                "external_write_words": 2048,
+                "scratch_by_site": {
+                  "P1.S": 1023
+                },
+                "duration": 4217659212,
+                "delta_makespan": 0
+              }
+            }
+          ],
+          "delta_makespan": 4217659212
+        }
+      }
+    ],
+    "makespan": 14737939628,
+    "external_words": 593158110,
+    "nets": [
+      "P0.M.read",
+      "P0.M.write",
+      "P0.S.io.load",
+      "P0.S.io.store",
+      "P1.M.read",
+      "P1.M.write",
+      "P1.S.io.load",
+      "P1.S.io.store",
+      "U0.E.read",
+      "U0.E.write",
+      "U0.N.read",
+      "U0.N.write",
+      "U0.S.io.load",
+      "U0.S.io.store"
+    ],
+    "wire_cost": 14,
+    "width": 1,
+    "ready_limit": 4,
+    "expanded": 4734,
+    "merged": 1694,
+    "pruned": 2496,
+    "rejected_static_conflicts": 0,
+    "rejected_wire_completions": 0,
+    "wire_completion_covers": 36,
+    "read_cache_hits": 2,
+    "read_cache_calls": 6,
+    "final_read_cache": {
+      "P0.S": [
+        "[\"v288\",[1,2],11008,3]",
+        169,
+        1014
+      ],
+      "P1.S": [
+        "[\"v288\",[1,2],11008,3]",
+        169,
+        1014
+      ]
+    },
+    "optimality": "bounded frontier DP with append-only resource calendars; no global optimality guarantee"
+  },
+  "search_statistics": {
+    "status": "planned",
+    "expanded": 38544,
+    "merged": 2469,
+    "pruned": 5467,
+    "width": 8,
+    "rejected_static_conflicts": 0,
+    "rejected_wire_completions": 1812,
+    "wire_completion_covers": 36
+  }
+}

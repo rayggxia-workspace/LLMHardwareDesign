@@ -1,0 +1,98 @@
+{
+  "custom_links": [
+    {
+      "id": "U0->U1",
+      "src": "U0",
+      "dst": "U1",
+      "fields": [
+        {
+          "name": "data",
+          "bits": 128,
+          "direction": "forward"
+        },
+        {
+          "name": "address",
+          "bits": 10,
+          "direction": "forward"
+        },
+        {
+          "name": "valid",
+          "bits": 1,
+          "direction": "forward"
+        },
+        {
+          "name": "ready",
+          "bits": 1,
+          "direction": "reverse"
+        },
+        {
+          "name": "stored_ack",
+          "bits": 1,
+          "direction": "reverse"
+        },
+        {
+          "name": "ack_ready",
+          "bits": 1,
+          "direction": "forward"
+        }
+      ],
+      "physical_status": "simulation connection requirement; no M11/M12 qualification"
+    },
+    {
+      "id": "U1->U0",
+      "src": "U1",
+      "dst": "U0",
+      "fields": [
+        {
+          "name": "data",
+          "bits": 128,
+          "direction": "forward"
+        },
+        {
+          "name": "address",
+          "bits": 10,
+          "direction": "forward"
+        },
+        {
+          "name": "valid",
+          "bits": 1,
+          "direction": "forward"
+        },
+        {
+          "name": "ready",
+          "bits": 1,
+          "direction": "reverse"
+        },
+        {
+          "name": "stored_ack",
+          "bits": 1,
+          "direction": "reverse"
+        },
+        {
+          "name": "ack_ready",
+          "bits": 1,
+          "direction": "forward"
+        }
+      ],
+      "physical_status": "simulation connection requirement; no M11/M12 qualification"
+    }
+  ],
+  "preconnected_demands": [
+    "U0.E.read",
+    "U0.E.write",
+    "U1.E.read",
+    "U1.E.write"
+  ],
+  "control_links": {
+    "distribution": "MC task_valid/ready/target/packet to the two LCs; LC return_valid/ready/packet to MC",
+    "binding": "actual tb_network MC/LC port declarations and target gating in the frozen fixture"
+  },
+  "all_plan_demands": [
+    "U0->U1",
+    "U0.E.read",
+    "U0.E.write",
+    "U1->U0",
+    "U1.E.read",
+    "U1.E.write"
+  ]
+}

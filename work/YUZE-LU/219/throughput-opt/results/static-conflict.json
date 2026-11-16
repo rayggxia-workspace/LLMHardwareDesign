@@ -1,0 +1,108 @@
+{
+  "status": "passed",
+  "legal_alternative": {
+    "status": "planned",
+    "tasks": [
+      {
+        "id": "first",
+        "binding": "use_a",
+        "start": 0,
+        "end": 1,
+        "site": "S"
+      },
+      {
+        "id": "second",
+        "binding": "legal_c",
+        "start": 1,
+        "end": 3,
+        "site": "S"
+      }
+    ],
+    "makespan": 3,
+    "external_words": 2,
+    "nets": [
+      "a",
+      "c"
+    ],
+    "wire_cost": 2,
+    "width": 1,
+    "ready_limit": 4,
+    "expanded": 3,
+    "merged": 0,
+    "pruned": 0,
+    "rejected_static_conflicts": 1,
+    "read_cache_hits": 0,
+    "read_cache_calls": 0,
+    "final_read_cache": {},
+    "optimality": "bounded frontier DP with append-only resource calendars; no global optimality guarantee",
+    "baseline": {
+      "status": "planned",
+      "tasks": [
+        {
+          "id": "first",
+          "binding": "use_a",
+          "start": 0,
+          "end": 1,
+          "site": "S"
+        },
+        {
+          "id": "second",
+          "binding": "legal_c",
+          "start": 1,
+          "end": 3,
+          "site": "S"
+        }
+      ],
+      "makespan": 3,
+      "external_words": 2,
+      "nets": [
+        "a",
+        "c"
+      ],
+      "wire_cost": 2,
+      "width": 1,
+      "ready_limit": 4,
+      "expanded": 3,
+      "merged": 0,
+      "pruned": 0,
+      "rejected_static_conflicts": 1,
+      "read_cache_hits": 0,
+      "read_cache_calls": 0,
+      "final_read_cache": {},
+      "optimality": "bounded frontier DP with append-only resource calendars; no global optimality guarantee"
+    },
+    "search_statistics": {
+      "expanded": 3,
+      "merged": 0,
+      "pruned": 0,
+      "width": 8,
+      "rejected_static_conflicts": 1
+    }
+  },
+  "legal_check": {
+    "passed": true,
+    "peak_words": {
+      "S": 1
+    },
+    "external_words": 2,
+    "static_nets": 2,
+    "checked_static_conflict_pairs": 1,
+    "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate"
+  },
+  "forged_plan_rejection": "incompatible static connection demands: a / b",
+  "no_legal_alternative": {
+    "status": "no_plan_in_bounded_search",
+    "baseline": {
+      "status": "no_plan_in_bounded_search",
+      "depth": 1,
+      "expanded": 2,
+      "rejected_static_conflicts": 1
+    },
+    "search": {
+      "status": "no_plan_in_bounded_search",
+      "depth": 1,
+      "expanded": 2,
+      "rejected_static_conflicts": 1
+    }
+  }
+}

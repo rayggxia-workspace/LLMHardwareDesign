@@ -1,0 +1,214 @@
+{
+  "audits": {
+    "native_cost": {
+      "passed": true,
+      "kernels": 74,
+      "bindings": 2705,
+      "primitive_instructions": 88,
+      "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+    },
+    "schedule": {
+      "passed": true,
+      "peak_words": {
+        "P1.S": 1023,
+        "P0.S": 1023,
+        "P2.S": 1023,
+        "U0.S": 8
+      },
+      "external_words": 593161155,
+      "static_nets": 18,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate",
+      "cooperative_phase_audit": {
+        "cooperative_compounds": 3,
+        "scope": "independent phase reconstruction plus conservative full-union reservation proof; not RTL arbitration"
+      }
+    }
+  },
+  "makespan": 11251314454,
+  "serial_work": 27209786684,
+  "cost_components": {
+    "core": 11440321024,
+    "local_io": 3881659392,
+    "external_load": 11617391420,
+    "external_store": 270414848
+  },
+  "arbitration_wait_work": 1336502666,
+  "by_operator": {
+    "Dot": {
+      "core": 10958170624,
+      "local_io": 3653331456,
+      "external_load": 10338261820,
+      "external_store": 3052544
+    },
+    "Convert": {
+      "core": 8652288,
+      "local_io": 4161024,
+      "external_load": 22456320,
+      "external_store": 5812224
+    },
+    "Product": {
+      "core": 224453120,
+      "local_io": 99930624,
+      "external_load": 571535360,
+      "external_store": 104135680
+    },
+    "Compare": {
+      "core": 12020736,
+      "local_io": 6538752,
+      "external_load": 35225600,
+      "external_store": 9202688
+    },
+    "Maximum": {
+      "core": 24437760,
+      "local_io": 13077504,
+      "external_load": 71331840,
+      "external_store": 17436672
+    },
+    "Add": {
+      "core": 191164928,
+      "local_io": 91344384,
+      "external_load": 509009920,
+      "external_store": 109947904
+    },
+    "Minimum": {
+      "core": 8145920,
+      "local_io": 4359168,
+      "external_load": 23777280,
+      "external_store": 5812224
+    },
+    "NExp": {
+      "core": 264192,
+      "local_io": 198144,
+      "external_load": 880640,
+      "external_store": 484352
+    },
+    "Select": {
+      "core": 13011456,
+      "local_io": 8718336,
+      "external_load": 44912640,
+      "external_store": 14530560
+    }
+  },
+  "resources": {
+    "P0.LC.service": {
+      "reserved_ticks": 11249487126,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9998375898205075,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P0.M": {
+      "reserved_ticks": 11249487126,
+      "useful_core_ticks": 4088759654,
+      "reserved_fraction_of_makespan": 0.9998375898205075,
+      "useful_core_fraction_of_makespan": 0.3634028424604548
+    },
+    "P0.M.context": {
+      "reserved_ticks": 11249487126,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9998375898205075,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P0.S.IO": {
+      "reserved_ticks": 11249487126,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9998375898205075,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "U0.E": {
+      "reserved_ticks": 2264326144,
+      "useful_core_ticks": 47793152,
+      "reserved_fraction_of_makespan": 0.2012499209099076,
+      "useful_core_fraction_of_makespan": 0.004247783865200644
+    },
+    "U0.LC.service": {
+      "reserved_ticks": 2266153472,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.20141233108940002,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "U0.S.IO": {
+      "reserved_ticks": 2266153472,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.20141233108940002,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "virtual-memory.channel.0": {
+      "reserved_ticks": 11249487126,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.9998375898205075,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "virtual-memory.channel.1": {
+      "reserved_ticks": 11251314454,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 1.0,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "U0.N": {
+      "reserved_ticks": 1827328,
+      "useful_core_ticks": 264192,
+      "reserved_fraction_of_makespan": 0.00016241017949243782,
+      "useful_core_fraction_of_makespan": 2.348098980613559e-05
+    },
+    "U0.N.context": {
+      "reserved_ticks": 1827328,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.00016241017949243782,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P1.LC.service": {
+      "reserved_ticks": 8985160982,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.7985876689106,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P1.M": {
+      "reserved_ticks": 8985160982,
+      "useful_core_ticks": 3652643666,
+      "reserved_fraction_of_makespan": 0.7985876689106,
+      "useful_core_fraction_of_makespan": 0.324641505748818
+    },
+    "P1.M.context": {
+      "reserved_ticks": 8985160982,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.7985876689106,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P1.S.IO": {
+      "reserved_ticks": 8985160982,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.7985876689106,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P2.LC.service": {
+      "reserved_ticks": 8985160982,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.7985876689106,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P2.M": {
+      "reserved_ticks": 8985160982,
+      "useful_core_ticks": 3650860360,
+      "reserved_fraction_of_makespan": 0.7985876689106,
+      "useful_core_fraction_of_makespan": 0.3244830081788415
+    },
+    "P2.M.context": {
+      "reserved_ticks": 8985160982,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.7985876689106,
+      "useful_core_fraction_of_makespan": 0.0
+    },
+    "P2.S.IO": {
+      "reserved_ticks": 8985160982,
+      "useful_core_ticks": 0,
+      "reserved_fraction_of_makespan": 0.7985876689106,
+      "useful_core_fraction_of_makespan": 0.0
+    }
+  },
+  "operand_preparation_hoist": {
+    "saved_serial_cost_bound": 0,
+    "candidates": []
+  },
+  "scope": "measured native core and local IO plus virtual memory model; not chip utilization; hoist is not validated speedup"
+}

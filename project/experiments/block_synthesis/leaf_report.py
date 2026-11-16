@@ -1,0 +1,32 @@
+"""Visualize actual typed input, independent macros, state and plan output."""
+import argparse
+import json
+from pathlib import Path
+
+
+def main():
+    p=argparse.ArgumentParser();p.add_argument('generated',type=Path);a=p.parse_args()
+    data={name:json.loads((a.generated/(file+'.json')).read_text()) for name,file in
+          [('model','input-model'),('hardware','input-hardware'),('result','result'),('summary','summary')]}
+    payload=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
+    page='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>真实叶宏转换与综合计划</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#f5f7fa;color:#1e3048;font:15px/1.65 system-ui,sans-serif}main{max-width:1140px;margin:24px auto;padding:0 18px}h1{font-size:27px}h2{font-size:20px;margin-top:28px}.scroll{overflow:auto;background:white;border:1px solid #dce3ed}svg{display:block;width:100%;min-width:950px}svg text{font:13px system-ui;fill:#263b51}table{border-collapse:collapse;width:100%;background:white}th,td{padding:9px 12px;border-bottom:1px solid #e0e5ed;text-align:left;white-space:nowrap}select{padding:8px;font:inherit;max-width:100%}pre{overflow:auto;background:#edf1f7;padding:16px;font:13px/1.6 monospace;max-height:440px}.note{background:#e7eef7;border-left:4px solid #587daa;padding:12px}a{color:#245d99}</style>
+<main><h1>真实叶宏转换与综合计划</h1><p class="note">这是编译器集成测试：五类控制分组、各16 KiB私有S、零数据预连。生成计划在真实 M/N/E/G/R256/T 上完成三初态数值回放；搬运采用PR182虚拟接口。它没有替代完整3B模型评估，也没有宣称组合控制器、DMA或物理时序已验收。</p>
+<h2>输入：模型要计算什么</h2><div class="scroll" id="model"></div><p>格式是显式整数和二进制尺度。M沿K分片保留S64累加，到最终读出才舍入；R把128行状态分四片，保留跨片点积。格式变化通过真实E命令完成。</p>
+<h2>输入：有哪些独立硬件资源</h2><div class="scroll" id="hardware"></div><p>虚线表示控制归属；不表示一颗封装大硬宏。功能宏与私有S的读写也是本次产生的连接需求。底座位置与端点的最终几何绑定未包含在这里。</p>
+<div class="scroll"><table><thead><tr><th>项目</th><th>结果</th></tr></thead><tbody id="summary"></tbody></table></div>
+<h2>输出：计算、搬运和宏状态</h2><p><label>查看 <select id="filter"><option value="service">计算命令</option><option value="memory">外存读写</option><option value="state">跨命令保留的宏状态</option></select></label></p><div class="scroll" id="timeline"></div>
+<h2>输出：具体命令和地址</h2><p><select id="task"></select></p><pre id="program"></pre><p><a href="input-model.json">模型输入</a> · <a href="input-hardware.json">硬件输入</a> · <a href="result.json">完整计划、独立检查与连接需求</a> · <a href="generated_plan.hpp">生成的原生回放代码</a></p>
+<h2>证据边界</h2><p>38项任务、7份分片输出分别与完整算子参考核对。R另检查1–32、33、64、127、128、256行；所有计算使用实际叶宏命令。S/P两类16 KiB SRAM按实际银行模型检查四银行首尾地址并测量普通读写时间。调度时间由已测命令和S IO组成，外存时间为声明的虚拟模型；没有用各自时钟运行的原生回放时间冒充全系统周期。</p><p>完整Qwen2.5-3B的FLOAT图尚需量化、动态矩阵布局、位置编码及其余图转换。当前有明确格式的原生图已能走这些规则；普通FLOAT模型不会被重贴为INT16。</p></main>
+<script type="application/json" id="data">PAYLOAD</script><script>
+const d=JSON.parse(document.getElementById('data').textContent),el=s=>document.getElementById(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let m=d.model,producer=new Map(m.tasks.flatMap(t=>t.outputs.map(v=>[v,t.id]))),level=new Map();for(let t of m.tasks)level.set(t.id,Math.max(0,...t.inputs.filter(v=>producer.has(v)).map(v=>1+(level.get(producer.get(v))||0))));let counts={},positions=new Map();for(let t of m.tasks){let l=level.get(t.id),r=counts[l]||0;counts[l]=r+1;positions.set(t.id,{x:20+l*195,y:25+r*105})}let s='<svg viewBox="0 0 1050 245" role="img" aria-label="输入计算依赖图">';for(let t of m.tasks){let p=positions.get(t.id);for(let v of t.inputs){if(producer.has(v)){let q=positions.get(producer.get(v));s+='<path d="M'+(q.x+165)+' '+(q.y+30)+' L'+p.x+' '+(p.y+30)+'" fill="none" stroke="#6b85a4"/>'}}s+='<rect x="'+p.x+'" y="'+p.y+'" width="165" height="65" rx="5" fill="#deebfa"/><text x="'+(p.x+10)+'" y="'+(p.y+25)+'">'+esc(t.id)+'</text><text x="'+(p.x+10)+'" y="'+(p.y+48)+'">'+esc(t.op)+'</text>'}el('model').innerHTML=s+'</svg>';
+s='<svg viewBox="0 0 1050 205" role="img" aria-label="五类控制分组和独立宏">';Object.entries(d.hardware.leaf_inventory).forEach(([name,g],i)=>{let x=15+i*208;s+='<rect x="'+x+'" y="15" width="195" height="170" rx="18" fill="none" stroke="#91a5be" stroke-dasharray="6 4"/><text x="'+(x+12)+'" y="40">'+esc(name+' / LC')+'</text>';g.macros.forEach((n,k)=>{let px=x+12+(k%2)*85,py=55+Math.floor(k/2)*48;s+='<rect x="'+px+'" y="'+py+'" width="75" height="35" fill="#e1edf5"/><text x="'+(px+10)+'" y="'+(py+23)+'">'+esc(n)+'</text>'});s+='<text x="'+(x+12)+'" y="166">私有 S · '+(g.words*16/1024)+' KiB</text>'});el('hardware').innerHTML=s+'</svg>';
+let p=d.result.plan,rows=[['模型输入',m.tasks.length+' 个算子'],['生成任务',Object.keys(p.tasks).length],['保留状态',d.result.graph.state_groups.length+' 组'],['计划完成时间',p.makespan+' 模型周期'],['外存传输',p.external_words+' × 128 bit'],['峰值局部存储',Object.entries(d.result.verification.peak_words).map(([k,v])=>k+': '+v*16+' B').join('；')],['独立检查',d.result.verification.passed?'通过':'失败'],['静态预连',0]];el('summary').innerHTML=rows.map(([a,b])=>'<tr><th>'+esc(a)+'</th><td>'+esc(b)+'</td></tr>').join('');
+function timeline(){let type=el('filter').value,r=type==='service'?Object.entries(p.tasks).map(([id,t])=>({...t,label:id+' · '+t.site})):type==='memory'?p.moves.map(t=>({...t,label:t.src+'→'+t.dst+' '+t.words+'w'})):d.result.graph.state_groups.map(g=>{let ts=g.tasks.map(t=>p.tasks[t]);return {label:g.id,start:Math.min(...ts.map(t=>t.start)),end:Math.max(...ts.map(t=>t.end))}}),h=45+r.length*29,s='<svg viewBox="0 0 1100 '+h+'" role="img" aria-label="计划时间轴">';for(let i=0;i<5;i++){let x=350+i*180;s+='<path d="M'+x+' 20 V'+h+'" stroke="#dfe6ef"/><text x="'+x+'" y="15">'+Math.round(i*p.makespan/4)+'</text>'}r.forEach((t,i)=>{let y=30+i*29;s+='<text x="7" y="'+(y+16)+'">'+esc(t.label)+'</text><rect x="'+(350+720*t.start/p.makespan)+'" y="'+y+'" width="'+Math.max(1,720*(t.end-t.start)/p.makespan)+'" height="20" fill="'+(type==='memory'?'#659b8d':type==='state'?'#9b79aa':'#4f80b0')+'"><title>'+esc(t.label+' ['+t.start+','+t.end+')')+'</title></rect>'});el('timeline').innerHTML=s+'</svg>'}el('filter').onchange=timeline;timeline();
+let requests=d.result.outputs.program_ir.requests.filter(r=>r.kind==='service');el('task').innerHTML=requests.map(r=>'<option value="'+esc(r.id)+'">'+esc(r.id+' / '+r.service.split(':')[0])+'</option>').join('');function program(){el('program').textContent=JSON.stringify(requests.find(r=>r.id===el('task').value),null,2)}el('task').onchange=program;program();
+</script></html>'''
+    (a.generated/'report.html').write_text(page.replace('PAYLOAD',payload),encoding='utf-8')
+
+
+if __name__=='__main__':main()
