@@ -8,7 +8,7 @@
 
 - 117838 在 c64/node1 读原 116976 最终 ODB、SDC、SPEF，复现最差 setup **−1.121800 ns**、hold **−53.419 ps**。留存最大/最小路径报告。四个 hold 端点为源 `a_session[2]` 到 121693，`a_data[209]` 到 123476／124633，`a_data[23]` 到 125313，完整名称见 `baseline-extracted-hold.rpt`。OpenROAD 在提取态 setup 修复进入第一轮时 signal 11，作业 FAILED 11:0。
 - 117847 从保存的 5_1 GRT 检查点重新估算寄生，最差 setup 估算 −1.054462 ns，最差 hold +29.507 ps。完成 setup 尺寸优化（调整了 9 个单元），仍有 setup 违例。于增量布线入口发生 signal 11，尚未完成 hold 更新和详细布线。
-- 117855（`mdt-280meco5`）在 c64/node1、12 核运行。提交目录 `c639-m-grt-eco-03`，命令 `sbatch --parsable run_c639_m_grt_eco.sbatch`，脚本包清单 SHA-256 `268f4444953827eb080086e5996a2bd1f7f0067bdb525d6a0b4ddfe2eafd5be5`。开始 setup 优化后另用进程在 OpenDB 仅修改确认违例的四个 D 输入，计划插 3／1／1／1 级 BUF_X1，并完整重跑详细布线和提取。OpenDB 插缓冲在现有小型数据库的内存预检通过，原版 ODB 与 SDC 的 SHA-256 已复核。功能源和 300 MHz 时序约束来自同一冻结版。
+- 117855（`mdt-280meco5`）在 c64/node1、12 核运行。提交目录 `c639-m-grt-eco-03`，命令 `sbatch --parsable run_c639_m_grt_eco.sbatch`，脚本包清单 SHA-256 `268f4444953827eb080086e5996a2bd1f7f0067bdb525d6a0b4ddfe2eafd5be5`。完成 setup 尺寸优化，GRT 估算 WNS 从 −1.054462 ns 变为 −1.051277 ns，`a_ready` 仍有违例。另用进程在 OpenDB 只修改四个 D 输入，已实际插入 3／1／1／1 级 BUF_X1，进入引脚可达性和全量重布线。OpenDB 插缓冲在现有小型数据库的内存预检通过，原版 ODB 与 SDC 的 SHA-256 已复核。功能源和 300 MHz 时序约束来自同一冻结版。
 
 验收看最终提取的 WNS、TNS、违例数与电气、DRC、逻辑等价及 C639 代表事务。若 setup 仍由 `a_ready` 主导，依据新旧路径对照定位逻辑锥，再评估保留原握手语义的 RTL 组合链重构。
 
