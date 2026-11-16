@@ -102,3 +102,9 @@
 - 真实作业、复跑命令、回执和待办见 [三项标定接续](../../docs/handoffs/2026-11-16-issue-280-power-calibration-300.md)。 [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 进行中，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) 草稿。
 
 - 局控 PM 配对功耗 117831（c64/node12、4 核、19 秒、COMPLETED 0:0）已核验。300 MHz 103 拍，活跃/空闲 30.888/30.803 mW，增量 1.339 pJ/写，直接标注 30.33%。接续 117729 和其余片上分项。 [PM 窗口与结果](../../docs/handoffs/2026-11-16-issue-280-power-calibration-300.md#局控-pm-配对功耗完成)
+
+## 2026-11-16（Asia/Shanghai）并行续跑 M ECO 和四端点交换机
+
+- 冻结 M 的提取路径复现 setup −1.122 ns、hold −53.4 ps，定位四个 hold 端点。117855 在 c64/node1 运行，准备将定向修改后的数据库重新布线提取，117729 在 c96/node15 继续门级编译。
+- 117841 验收四端点交换机 300 MHz 物理工件及空闲参考，117856 验收正常／背压实际活跃捕获，各 20 个握手周期、约 78.550 µW。空闲参考 78.328–78.398 µW。内部活动传播估算。
+- 继续验收 M ECO 和门级回放，补其余片上活动。 [作业和接续](../../docs/handoffs/2026-11-16-issue-280-m-eco-switch-300.md)。
