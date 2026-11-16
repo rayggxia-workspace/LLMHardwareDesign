@@ -5,7 +5,7 @@ import re
 import sys
 
 
-def extract(netlist, raw, output, target, first, last):
+def extract(netlist, raw, output, target, first, last, frequency):
     port_pattern = r"^\s*(input|output)\s+(?:\[(\d+):(\d+)\]\s+)?(\w+);"
     ports = {}
     for line in netlist.open():
@@ -16,6 +16,13 @@ def extract(netlist, raw, output, target, first, last):
             break
     if sum(width for _, width in ports.values()) != 1330:
         raise ValueError("unexpected routed M interface size")
+
+    if frequency not in (100, 300):
+        raise ValueError("expected 100 or 300 MHz")
+    source_clock_mhz = 100
+
+    def retime(time):
+        return ((time - first) * source_clock_mhz + frequency // 2) // frequency
 
     selected = {}
     paths = []
@@ -50,7 +57,7 @@ def extract(netlist, raw, output, target, first, last):
         for line in src:
             if line.startswith("#"):
                 time = int(line[1:])
-                dst.write(f"#{time - first}\n")
+                dst.write(f"#{retime(time)}\n")
                 continue
             fields = line.split()
             if not fields:
@@ -71,12 +78,13 @@ def extract(netlist, raw, output, target, first, last):
                 dst.write(line)
         if time != last or clock != list(range(first, last + 1, 5000)) or set(known) != identifiers:
             raise ValueError(f"unexpected clock, timestamp or coverage: {time=} {len(clock)=}")
-    receipt = {"rtl_scope": target, "window_ps": last - first, "clock_period_ps": 10000,
+    receipt = {"rtl_scope": target, "window_ps": retime(last), "clock_hz": frequency * 1000000,
+               "source_period_ps": 10000, "timestamp_resolution_ps": 1,
                "port_bits": {direction: sum(width for kind, width in ports.values() if kind == direction)
                              for direction in ("input", "output")}}
     output.with_suffix(".json").write_text(json.dumps(receipt, indent=2) + "\n")
 
 
 if __name__ == "__main__":
-    netlist, raw, output, target, first, last = sys.argv[1:]
-    extract(Path(netlist), Path(raw), Path(output), target, int(first), int(last))
+    netlist, raw, output, target, first, last, frequency = sys.argv[1:]
+    extract(Path(netlist), Path(raw), Path(output), target, int(first), int(last), int(frequency))

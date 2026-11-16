@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=mdt-280mpwr
+#SBATCH --job-name=mdt-280m300
 #SBATCH --partition=c64,c96
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -15,7 +15,7 @@ if [[ ${1:-} != inside ]]; then
     exec srun --exact -N1 -n1 -c "$SLURM_CPUS_PER_TASK" \
         /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind "$base" \
         --env "SLURM_SUBMIT_DIR=$bundle" "$base/opt/eda/containers/orfs-current-repacked.sif" \
-        bash "$bundle/run_c639_m_port_power.sbatch" inside "$SLURM_JOB_ID"
+        bash "$bundle/run_c639_m_port_power.sbatch" inside "$SLURM_JOB_ID" "${1:-300}"
 fi
 source /OpenROAD-flow-scripts/env.sh
 runs=$base/Melodydt/runs/issue-280
@@ -29,22 +29,26 @@ scopes=$runs/gate-binding-01/bind-116893/fst_scope_table
 audit=$runs/c639-m-wave-audit-01/wave-116958
 lib=/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
 out=$bundle/power-$2
+frequency=$3
 mkdir "$out"
 (cd "$route" && sha256sum -c route-results.sha256)
 sha256sum -c "$audit/wave-inputs.sha256"
 sha256sum "$physical"/6_final.{odb,v,sdc,spef} "$extractor" "$scopes" "$(command -v openroad)" "$lib" \
     "$audit/wave-inputs.sha256" "$main"/activity-{0,1}.txt > "$out/inputs.sha256"
 openroad -version > "$out/openroad-version.txt"
-python3 - "$physical/6_final.sdc" "$out/at-100mhz.sdc" <<'PY'
+python3 - "$physical/6_final.sdc" "$out/power.sdc" "$frequency" <<'PY'
 from pathlib import Path
 import re
 import sys
 
 text = Path(sys.argv[1]).read_text()
-ref, count = re.subn(r"(?m)^(create_clock -name core -period )3\.333[0-9]* ", r"\g<1>10.0000 ", text)
-if count != 1:
-    raise ValueError("unexpected original clock")
-Path(sys.argv[2]).write_text(ref)
+frequency = int(sys.argv[3])
+clock = r"(?m)^(create_clock -name core -period )3\.333[0-9]* "
+if len(re.findall(clock, text)) != 1 or frequency not in (100, 300):
+    raise ValueError("expected original 300 MHz physical SDC and a supported analysis frequency")
+if frequency == 100:
+    text = re.sub(clock, r"\g<1>10.0000 ", text)
+Path(sys.argv[2]).write_text(text)
 PY
 run_power() {
     local phase_dir=$1 lane=$2 wave=$3 scope=$4 first=$5 last=$6
@@ -52,12 +56,12 @@ run_power() {
     mkdir "$sample"
     "$extractor" "$wave" "$sample/raw.vcd" "$scope" > "$sample/extract.log"
     python3 "$bundle/extract_c639_m_ports.py" "$physical/6_final.v" "$sample/raw.vcd" \
-        "$sample/port.vcd" "$scope" "$first" "$last"
+        "$sample/port.vcd" "$scope" "$first" "$last" "$frequency"
     rm "$sample/raw.vcd"
     cat > "$sample/power.tcl" <<TCL
 read_liberty {$lib}
 read_db {$physical/6_final.odb}
-read_sdc {$out/at-100mhz.sdc}
+read_sdc {$out/power.sdc}
 read_spef {$physical/6_final.spef}
 set_propagated_clock [all_clocks]
 read_vcd -scope dut {$sample/port.vcd}
@@ -94,13 +98,14 @@ for mode in 0 1; do
         ((failed == 0))
     done
 done
-python3 - "$out" <<'PY'
+python3 - "$out" "$frequency" <<'PY'
 import json
 from pathlib import Path
 import re
 import sys
 
 out = Path(sys.argv[1])
+frequency = int(sys.argv[2])
 rows = []
 for log in sorted(out.glob("mode-*/*/power.log")):
     text = log.read_text()
@@ -108,6 +113,8 @@ for log in sorted(out.glob("mode-*/*/power.log")):
     internal, switching, leakage, total = next(iter(re.findall(
         r"(?m)^Total\s+([\d.eE+-]+)\s+([\d.eE+-]+)\s+([\d.eE+-]+)\s+([\d.eE+-]+)", text)))
     timing = json.loads(log.with_name("port.json").read_text())
+    if timing["clock_hz"] != frequency * 1000000:
+        raise ValueError(f"wrong VCD analysis frequency: {log}")
     if int(count) != sum(timing["port_bits"].values()):
         raise ValueError(f"expected all M boundary pins to annotate, observed {count}: {log}")
     rows.append({"window": str(log.parent.relative_to(out)), "annotated_pin_count": int(count),
@@ -116,9 +123,9 @@ for log in sorted(out.glob("mode-*/*/power.log")):
 if len(rows) != 12:
     raise ValueError("expected 12 window/lane combinations")
 (out / "power.json").write_text(json.dumps({"method": "C639 RTL port VCD and propagated internal activity",
-    "clock_hz": 100000000, "scope": "pre-ECO exploratory routed M only", "rows": rows}, indent=2) + "\n")
+    "clock_hz": frequency * 1000000, "scope": "pre-ECO exploratory routed M only", "rows": rows}, indent=2) + "\n")
 PY
 cd "$out"
-sha256sum inputs.sha256 openroad-version.txt at-100mhz.sdc power.json mode-*/*/{port.vcd,port.json,power.tcl,power.log} > power-results.sha256
+sha256sum inputs.sha256 openroad-version.txt power.sdc power.json mode-*/*/{port.vcd,port.json,power.tcl,power.log} > power-results.sha256
 sha256sum -c power-results.sha256
 printf '%s\n' MDT_C639_M_PORT_POWER_PASS
