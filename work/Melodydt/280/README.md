@@ -40,6 +40,12 @@ cat "pilot-$JOB/ddr-prefill.json" "pilot-$JOB/ddr-decode.json"
 
 本地已验证调度入口的参数拼装、两组冻结基线路径、容器内 FP32 审计和摘要不符时终止。Slurm、服务器编译及真实模型回放待完成。
 
+## 2026-11-16 Qwen3 三窗功耗进展（Asia/Shanghai）
+
+- 非 DMA 已覆盖小计为双通道 DDR 芯片与 300 MHz G32 FFN 活跃增量。短 Prefill 114.9417–114.9420 mJ/输入 token，首 token 332.7932–332.7934 mJ，两次退休间 332.8565–332.8567 mJ/输出 token。其他片上分项待按相同窗口对齐。 [口径、结果和复跑](../../../docs/handoffs/2026-11-16-issue-280-qwen3-non-dma-subtotal.md)
+- Qwen3 作业 118132 已用 `--time=0` 提交并读回 `UNLIMITED`。15:24 仍按优先级排队，节点待分配。已从冻结快照归档三窗 DDR 器件完成计数。片上 DMA 的提交、接收、在途和等待由 118132 补采。 [计数、脚本验证和作业追踪](../../../docs/handoffs/2026-11-16-issue-280-qwen3-dma-windows.md)
+- 117939 和 117729 已按指示取消，DMA 物理／功耗与 M 实际门级活动仍缺标定。117940 局控取指 hold 修复遇缓冲上限，117855 M ECO 最终等价检查异常退出。先回收并核对 118132 的三窗事务，再补 DMA 和其他片上分项。 [终态和日志散列](../../../docs/handoffs/2026-11-16-issue-280-qwen3-dma-windows.md)
+
 ## 剩余步骤
 
 1. 固定同一三 P 底座及 FFN Mid 的 DDR 路径，测 P0 调度对照和三 P 并行，并核对两种调度的数值和状态。

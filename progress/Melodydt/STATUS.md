@@ -108,3 +108,9 @@
 - 冻结 M 的提取路径复现 setup −1.122 ns、hold −53.4 ps，定位四个 hold 端点。117855 在 c64/node1 运行，已在四个 D 输入插入共 6 个缓冲并开始重新布线，GRT setup 仍约 −1.051 ns，117729 在 c96/node15 继续门级编译。
 - 117841 验收四端点交换机 300 MHz 物理工件及空闲参考，117856 验收正常／背压实际活跃捕获，各 20 个握手周期、约 78.550 µW。空闲参考 78.328–78.398 µW。内部活动传播估算。
 - 继续验收 M ECO 和门级回放，补其余片上活动。 [作业和接续](../../docs/handoffs/2026-11-16-issue-280-m-eco-switch-300.md)。
+
+## 2026-11-16（Asia/Shanghai）归档 Qwen3 已覆盖功耗和 DMA 三窗补采
+
+- [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 进行中，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) 草稿。已核验服务器清单。Qwen3 三窗已覆盖小计仅含双通道 DDR 芯片及 G32 活跃增量：短 Prefill 114.9417–114.9420 mJ/输入 token，首 token 332.7932–332.7934 mJ，两次退休间 332.8565–332.8567 mJ/输出 token。 [小计回执](../../docs/handoffs/2026-11-16-issue-280-qwen3-non-dma-subtotal.md)
+- 117939（DMA 综合）和 117729（M 门级活动）已于 15:17:54 取消。117940（局控取指）在 hold 缓冲达上限处失败。117855（M ECO）在最终等价阶段异常退出，候选网表尚未验收。118132（三窗 DMA 事务）15:24 仍为 `PENDING (Priority)`，时限 `UNLIMITED`。封存包、归档 DDR 完成数与脚本散列通过；新回放等待调度。 [作业终态、追踪与验证](../../docs/handoffs/2026-11-16-issue-280-qwen3-dma-windows.md)
+- Melodydt 后续核验 118132 三窗提交、接收、完成及边界积压，再补片上 DMA 功耗标定和 M 活动驻留。登记 PR #5 待合并，项目未配置专属看板，组织总览的 #280 条目待管理员核验。
