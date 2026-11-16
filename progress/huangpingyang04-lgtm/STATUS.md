@@ -51,3 +51,8 @@
 
 - [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250。按 PR #271 方案 A 原摆位，从零条 M11/M12 线段开始重布 1,184 根。布前查完 2,858 个端点，另有 31 个拥挤端点通过引出校验后换用新 M10 接点。
 - CUGR 最后阶段作业 118129 通过独立连通和几何核验，布通 849 根，剩 335 根。继续处理主通道和接入空间，工艺与全量时序待验收。[整板报告与逐网清单](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/clean-1184/README.md)
+
+## 2026-11-16 15:45（中国标准时间）
+
+- [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250。用相同 PR #271 方案 A 摆位、M10 接点、空顶层和 CUGR 末级配置做 1,184 根网的配对作业。固定轨道 118195.1 布通 759 根、耗时 628.39 秒。八处拥堵区加候选的 118195.0 布通 754 根、耗时 702.60 秒。两组独立几何检查均通过。
+- B 独有布通 103 根，其中 2 根使用新增线位或 V11。A 独有布通 108 根。工艺和全量时序仍待验收。[方法、结果与逐网对照](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/local-track-ab/README.md)

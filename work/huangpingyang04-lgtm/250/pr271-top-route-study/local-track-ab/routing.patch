@@ -1,0 +1,103 @@
+--- local-engine.cpp
++++ local-engine.cpp
+@@ -48,0 +49 @@
++#include "local-tracks.inc"
+@@ -51,0 +53 @@
++    if (local_tracks && local_tracks->allows(a,b)) return true;
+@@ -253,0 +256,7 @@
++    uint32_t local_cost(Node a,Node b) const {
++        const int x=min(nx-1,max(0,(min(a.x,b.x)-x0)/pitch));
++        const int y=min(ny-1,max(0,(min(a.y,b.y)-y0)/pitch));
++        const int i=x*ny+y;
++        if(a.layer!=b.layer)return via_cost[demand[horizontal][i]][demand[vertical][i]];
++        return (wire_cost[demand[a.layer][i]]*md(a,b)+pitch/2)/pitch;
++    }
+@@ -323,2 +332,2 @@
+-enum Direction { main_minus, main_plus, vertical_move, fine_minus, fine_plus };
+-constexpr array<Direction,5> directions{main_minus,main_plus,vertical_move,fine_minus,fine_plus};
++enum Direction { main_minus, main_plus, vertical_move, fine_minus, fine_plus, local_minus, local_plus, local_via };
++constexpr array<Direction,8> directions{main_minus,main_plus,vertical_move,fine_minus,fine_plus,local_minus,local_plus,local_via};
+@@ -329,0 +339 @@
++    const int persistent;
+@@ -341,0 +352,8 @@
++    const Occupancy* fixed_now=nullptr;
++    const Occupancy* provisional_now=nullptr;
++    unsigned price=0;
++
++    const Node* local_neighbor(int u,Direction d) const {
++        if(!local_tracks||u>=persistent)return nullptr;
++        return u<base?local_tracks->neighbor(d-local_minus,u,true):local_tracks->neighbor(d-local_minus,u-base,false);
++    }
+@@ -344,0 +363,4 @@
++        if(local_tracks) {
++            const auto found=local_tracks->off_vertex.find(key(n));
++            if(found!=local_tracks->off_vertex.end())return base+found->second;
++        }
+@@ -347 +369 @@
+-        int id=base+int(off_track.size());
++        int id=persistent+int(off_track.size());
+@@ -377 +399,2 @@
+-        : tracks(g),base(2*g.points),extra_index(base,-1),pin_index(base,-1),via_length(via),guide_margin(margin) {}
++        : tracks(g),base(2*g.points),persistent(base+(local_tracks?local_tracks->off_points.size():0)),
++          extra_index(persistent,-1),pin_index(persistent,-1),via_length(via),guide_margin(margin) {}
+@@ -381,4 +404,4 @@
+-        for(int u:attached) if(u<base) extra_index[u]=-1;
+-        for(int u:pin_vertices) if(u<base) pin_index[u]=-1;
+-        extra_index.resize(base);
+-        pin_index.resize(base);
++        for(int u:attached) if(u<persistent) extra_index[u]=-1;
++        for(int u:pin_vertices) if(u<persistent) pin_index[u]=-1;
++        extra_index.resize(persistent);
++        pin_index.resize(persistent);
+@@ -391,0 +415 @@
++        fixed_now=&fixed; provisional_now=provisional; price=penalty;
+@@ -430,0 +455,3 @@
++                if(local_tracks)for(auto p:local_tracks->off_points)
++                    if(p.layer==w.a.layer&&((p.layer==0&&p.y==w.a.y&&min(w.a.x,w.b.x)<=p.x&&p.x<=max(w.a.x,w.b.x))||
++                                           (p.layer==1&&p.x==w.a.x&&min(w.a.y,w.b.y)<=p.y&&p.y<=max(w.a.y,w.b.y))))start(p);
+@@ -444 +471 @@
+-    int getNodeNum() const {return base+int(off_track.size());}
++    int getNodeNum() const {return persistent+int(off_track.size());}
+@@ -447 +474,5 @@
+-    Node point(int u) const {return u<base?tracks.node(u):off_track[u-base];}
++    Node point(int u) const {
++        if(u<base)return tracks.node(u);
++        if(u<persistent)return local_tracks->off_points[u-base];
++        return off_track[u-persistent];
++    }
+@@ -457 +488,7 @@
+-        if(d==vertical_move&&!forbidden_vias.empty()&&forbidden_vias.count(u))return false;
++        if((d==vertical_move||d==local_via)&&!forbidden_vias.empty()&&forbidden_vias.count(u))return false;
++        if(d>=local_minus) {
++            const auto other=local_neighbor(u,d);
++            if(!other)return false;
++            const auto a=point(u);
++            return contains(guide,a,*other)&&fixed_now->blocked(owner,a,*other)==-1;
++        }
+@@ -476,0 +514,4 @@
++        if(d>=local_minus) {
++            const auto n=*local_neighbor(u,d);
++            return on_track(n)?tracks.vertex(n):base+local_tracks->off_vertex.at(key(n));
++        }
+@@ -482,0 +524,4 @@
++        if(d>=local_minus) {
++            const auto a=point(u), b=*local_neighbor(u,d);
++            return tracks.local_cost(a,b)+(provisional_now&&provisional_now->blocked(owner,a,b)!=-1?price:0);
++        }
+@@ -498,3 +543,3 @@
+-            for(auto dir:{fine_minus,fine_plus,vertical_move}) {
+-                const int v=extra_edge(queue[head],dir);
+-                if(v<0) continue;
++            for(auto dir:{fine_minus,fine_plus,vertical_move,local_minus,local_plus,local_via}) {
++                if(!hasEdge(queue[head],dir))continue;
++                const int v=getEdgeEndPoint(queue[head],dir);
+--- route-ab.cpp
++++ route-ab.cpp
+@@ -3 +3 @@
+-#include "trunk-engine.cpp"
++#include "local-engine.cpp"
+@@ -9 +9 @@
+-    if(argc!=9)return 2;
++    if(argc!=10)return 2;
+@@ -11,0 +12 @@
++    if(string(argv[9])!="-") local_tracks=make_unique<LocalTracks>(argv[9]);
