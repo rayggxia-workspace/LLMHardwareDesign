@@ -50,6 +50,7 @@ export DESIGN_NAME = lc_program_store_1k
 export DESIGN_NICKNAME = mdt_pm_store
 export VERILOG_FILES = $out/lc_program_store_1k.sv
 export SYNTH_HDL_FRONTEND = slang
+export SYNTH_MEMORY_MAX_BITS = 8192
 export SDC_FILE = $out/target.sdc
 export CORE_UTILIZATION = 35
 export PLACE_DENSITY = 0.55
