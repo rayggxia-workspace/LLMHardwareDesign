@@ -61,3 +61,8 @@
 
 - [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250。沿用方案 A 和同一套 M10/V10 接点，CUGR 最后一阶段从空板重布 1,184 根。按 1,674 个连接的采样可用路线安排优先级，覆盖长线和短支线。作业 118301 独立核验布通 825 根，较 849 根空板对照少 24 根。
 - 作业 118302 复查剩余 359 根，其中主通道 275、接点入口 77、V11 间距 7。后续仍需解决 U0 一带通道和密集端点的同时占用，工艺与全量时序待验收。[报告与逐网证据](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/scarce-1184/README.md)
+
+## 2026-11-16（中国标准时间）
+
+- [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250。保持方案 A 摆位，按 77 根入口问题定向处理。作业 118345 为 70 个接点预留 M11 入口，其中 1 个 C0 接点通过下层扇出换用新 M10。其余 7 根定位为同列 V11 孔距不足并复试。
+- CUGR 最后一阶段空板作业 118410 独立核验布通 831 / 1,184 根，较 825 根对照净增 6 根，重点网布通 70 / 77 根。作业 118411 复查剩余 353 根，主要卡在 U0 一带的共享主轨。[报告与逐网证据](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/focus-77/README.md)
