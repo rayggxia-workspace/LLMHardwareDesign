@@ -92,6 +92,8 @@ python project/experiments/opentpu_compare/compare.py project/experiments/opentp
 
 ## 本地阅读与验证
 
+- 备用 buffer 预布与 M10 引出：在 ORFS/Nangate45 容器内运行 `bash project/experiments/spare_buffers/run.sh <base-manifest.json> <新输出目录>`，或运行 `bash project/experiments/spare_buffers/smoke_test.sh <新输出目录>` 做小型新布局回归。输入格式、PR271 复跑、输出及资格边界见[备用 buffer 工具说明](../project/experiments/spare_buffers/README.md)。
+
 - 阅读：从仓库根目录直接打开 `ref-project/llm-routing/总报告.html` 或 `ref-project/llm-routing/线长报告.html`；其图片和下载链接使用包内相对路径。
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
 - 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。
