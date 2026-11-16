@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=mdt-280meco3
+#SBATCH --job-name=mdt-280meco4
 #SBATCH --partition=c64,c96
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -70,10 +70,11 @@ timing_snapshot "$out/baseline-global-route"
 puts {GRT_SETUP_ECO_BEGIN}
 repair_timing -setup -setup_margin 0.020 -repair_tns 100 -max_passes 20 \
     -max_iterations 2000 -max_repairs_per_pass 4 -verbose
+puts {POST_SETUP_GRT}
+timing_snapshot "$out/post-setup-global-route"
 puts {LOCAL_DATA_HOLD_ECO_BEGIN}
 # Only the four data pins with negative extracted hold slack in 116976.
 # The lowest-slack session pin receives three small delay stages.
-global_route -start_incremental
 foreach target {
   {{$auto$ff.cc:337:slice$121693/D} 3}
   {{$auto$ff.cc:337:slice$123476/D} 1}
@@ -92,8 +93,9 @@ foreach target {
 }
 detailed_placement
 check_placement -verbose
-global_route -end_incremental -congestion_report_file "$out/congestion.rpt"
-write_guides "$work/route.guide"
+set_routing_layers -signal metal1-metal10 -clock metal4-metal10
+pin_access -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10
+global_route -congestion_iterations 30 -guide_file "$work/route.guide" -congestion_report_file "$out/congestion.rpt" -verbose
 estimate_parasitics -global_routing
 timing_snapshot "$out/post-eco-global-route"
 write_db "$work/5_1_grt.odb"
@@ -108,7 +110,7 @@ make_flow do-5_2_route do-5_3_fillcell do-5_route do-5_route.sdc > "$out/detail-
 make_flow do-finish > "$out/finish.log" 2>&1
 metrics=$out/flow/logs/$key/6_report.json
 cd "$out"
-sha256sum eco.tcl config.mk inputs.sha256 openroad.sha256 baseline-extracted-*.rpt baseline-global-route-*.rpt post-eco-global-route-*.rpt \
+sha256sum eco.tcl config.mk inputs.sha256 openroad.sha256 baseline-extracted-*.rpt baseline-global-route-*.rpt post-setup-global-route-*.rpt post-eco-global-route-*.rpt \
     "$work"/6_final.{v,odb,sdc,spef} "$metrics" "$out/flow/reports/$key/"{6_finish.rpt,5_route_drc.rpt} > results.sha256
 sha256sum -c results.sha256
 python3 - "$metrics" <<'PY'
