@@ -128,3 +128,9 @@
 
 - 118207 于 15:57:00 在旧服务器取消。保留短 Prefill 与首 token 的局部核验，第二次退休及三窗总回执待补。
 - BSCC-T6 登录和目标目录验证通过，`v6_384` 的 `--time=0` 提交预检通过。下一步由 Melodydt 迁移冻结工件并核验依赖，再提交新回放。 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [迁移交接](../../docs/handoffs/2026-11-16-issue-280-bscc-t6.md)
+
+## 2026-11-16（Asia/Shanghai）BSCC-T6 并行回放与 DMA 物理实现
+
+- 38769328 完成新机 ORFS 运行环境。冻结 Qwen3 输入、原指令流和代表性 KV 镜像 SHA-256 已核验。
+- 38769452 在 m3ca2408 并行回放 Prefill 和 Decode。38769386 与 38769388 已在计算节点进入共享读和阶段切换综合。38769390 完成 512-bit FFN 写回物理实现，300 MHz setup/hold 为 +368.527/+6.771 ps，详细布线 DRC 0。所有作业为 `UNLIMITED`。
+- Melodydt 下一步读回三窗和两项读侧物理终态，再补齐 DMA 活动与功耗。 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [作业和校验](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-parallel.md)

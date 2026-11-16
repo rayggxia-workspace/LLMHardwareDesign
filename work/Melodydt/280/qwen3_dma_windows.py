@@ -1,5 +1,6 @@
 """Instrument and audit DMA/DDR transport events in the frozen Qwen3 TLM."""
 import argparse
+from hashlib import sha256
 import json
 from pathlib import Path
 
@@ -84,11 +85,50 @@ def get_json(path):
     return json.loads(path.read_bytes())
 
 
+def file_sha256(path):
+    digest = sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def check_plan_equivalence(old, new, reference, observed):
+    assets = [(root / "assets").resolve() for root in (old, new)]
+    plans = []
+    for directory, result in zip(assets, (reference, observed)):
+        plan = directory / "plan.json"
+        if file_sha256(plan) != result["plan_sha256"]:
+            raise ValueError(f"plan hash differs from replay result: {plan}")
+        plans.append(get_json(plan))
+
+    before, after = plans
+    if len(before["images"]) != len(after["images"]):
+        raise ValueError("compiled plan image count differs")
+    for old_image, new_image in zip(before["images"], after["images"]):
+        if old_image["path"] == new_image["path"]:
+            continue
+        relative = []
+        for image, directory in zip((old_image, new_image), assets):
+            path = Path(image["path"]).resolve()
+            relative.append(path.relative_to(directory))
+            if path.stat().st_size != image["bytes"] or file_sha256(path) != image["sha256"]:
+                raise ValueError(f"relocated plan asset changed: {path}")
+            image["path"] = str(relative[-1])
+        if relative[0] != relative[1]:
+            raise ValueError("compiled plan asset was relocated to a different relative path")
+
+    if before != after:
+        raise ValueError("compiled plans differ after checking relocated asset contents")
+
+
 def compare_replay(old, new, mode):
     reference = get_json(old / "result.json")
     observed = get_json(new / "result.json")
-    if reference != observed or get_json(old / "layer-trace.json") != get_json(new / "layer-trace.json"):
-        changed = [key for key in set(reference) | set(observed) if reference.get(key) != observed.get(key)]
+    check_plan_equivalence(old, new, reference, observed)
+    changed = sorted(key for key in (reference.keys() | observed.keys()) - {"plan_sha256"}
+                     if key not in reference or key not in observed or reference[key] != observed[key])
+    if changed or get_json(old / "layer-trace.json") != get_json(new / "layer-trace.json"):
         raise ValueError(f"instrumentation changed the {mode} replay or layer trace: {changed}")
     expected = ("start", "prefill_end", "end") if mode == "prefill" else ("start", "retire_1", "retire_2", "end")
     snapshots = {}
