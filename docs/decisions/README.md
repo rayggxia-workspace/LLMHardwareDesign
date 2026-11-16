@@ -12,3 +12,5 @@
 - [0005：V 三宏划分与首版独立 R 保留](0005-compute-block-v-split-r.md)（accepted，用户确认的当前规划；规格/实现/物理资格另行验收）
 
 - [0006：母控双格式共享物理实现与分别验证](0006-mother-control-dual-format.md)（已实施并通过所列工程门，待代码审查）
+
+- [0007：Block V2 预制底座排布提案](0007-block-v2-base-floorplan-proposal.md)（proposed，待九组联合物理验证）
