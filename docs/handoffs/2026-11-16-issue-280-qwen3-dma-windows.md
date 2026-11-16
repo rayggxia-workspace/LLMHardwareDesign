@@ -1,6 +1,14 @@
 # Issue #280 Qwen3 DMA 三窗口补采
 
-2026-11-16（Asia/Shanghai）。仓库 `rayggxia-workspace/LLMHardwareDesign`，项目 `llm-hardware-design`，负责人 Melodydt，分支 `task/280-seven-model-energy`。当前线上草稿 PR HEAD 为 `91812f2891ba9ec563fb5a41aff71920129fe761`。冻结回放来源为 DDR 试点脚本提交 `ac2a7265d4510e0fc73164a83ebb5355da586a88` 和作业 116481 的两个成功阶段。新探针文件在 Windows 管理目录和服务器提交目录，按真实文件 SHA-256 标识。 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [冻结 DDR 回执](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/049bd82218920e0b3786dfc9dfc7a0ed3534d3b5/work/Melodydt/280/QWEN3_DDR_PILOT.md)
+2026-11-16（Asia/Shanghai）。仓库 `rayggxia-workspace/LLMHardwareDesign`，项目 `llm-hardware-design`，负责人 Melodydt，分支 `task/280-seven-model-energy`。共享 DMA 标定脚本的归档代码为 `91812f2891ba9ec563fb5a41aff71920129fe761`。冻结回放来源为 DDR 试点脚本提交 `ac2a7265d4510e0fc73164a83ebb5355da586a88` 和作业 116481 的两个成功阶段。新探针文件在 Windows 管理目录和服务器提交目录，按真实文件 SHA-256 标识。 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [冻结 DDR 回执](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/049bd82218920e0b3786dfc9dfc7a0ed3534d3b5/work/Melodydt/280/QWEN3_DDR_PILOT.md)
+
+## 2026-11-16 15:34（Asia/Shanghai）重新提交 118207
+
+按用户要求，用原封存包重新提交 Qwen3 DMA 三窗补采。冻结源码 `ac2a7265d4510e0fc73164a83ebb5355da586a88`，补采探针和入口脚本见下方散列，仓库归档提交 `01fd0df0c62e9c230089dcede56f223bd5da8d04`。服务器 `yuzelu@10.129.166.172`，提交目录 `/public/home/yuzelu/Melodydt/runs/issue-280/qwen3-dma-windows-01`。命令 `sbatch --parsable --time=0 run_qwen3_dma_windows.sbatch`，作业 `118207 mdt-280dmawin`，申请 c64/c96 一节点、2×12 核。提交时读回 `TimeLimit=UNLIMITED`、`PENDING (Priority)`、开始时间 `N/A`，节点待分配。
+
+新作业核验后执行 `scancel 118132`，`sacct -X` 确认旧作业于 15:34:35 进入 `CANCELLED`。服务器保留 `resubmit-118132.tsv`，`job-id.txt` 指向 118207。新日志 `slurm-118207.log`，成果 `result-118207/`。提交前通过封存包 SHA-256 与 `bash -n` 检查。Melodydt 在作业完成后核验完整结果清单及冻结三窗口事务对账。
+
+后续本项目由 Melodydt 提交的 Slurm 作业统一使用 `sbatch --time=0`，新脚本使用 `#SBATCH --time=0`，优先选择已核验支持无限时限的 c64/c96，并在每次提交后读回 `TimeLimit=UNLIMITED`。复用既有脚本时以命令行 `--time=0` 覆盖旧时限。
 
 ## 时限读回
 
@@ -27,7 +35,7 @@ c64 和 c96 的分区时限为 `infinite`。对已运行的两项本人任务实
   1bd9dde9f127eae7a604612a55fda85bebfe255a962c8060b5f94fe117846053  c639-m-gate-300-02/result-117729/runner.log
 ```
 
-## 新作业 118132
+## 原作业 118132（已取消）
 
 登录 `yuzelu@10.129.166.172`，提交目录 `/public/home/yuzelu/Melodydt/runs/issue-280/qwen3-dma-windows-01`。作业名 `mdt-280dmawin`，请求 c64/c96 一节点、2×12 核。提交命令 `sbatch --parsable --time=0 run_qwen3_dma_windows.sbatch`。日志 `slurm-118132.log`，成果写入 `result-118132/`。15:11:09 读回 `PENDING (Priority)`，节点待分配。`squeue --start` 当时预估北京时间 2026-11-23 06:56:21，随调度变化。
 
@@ -39,13 +47,13 @@ c64 和 c96 的分区时限为 `infinite`。对已运行的两项本人任务实
 ```bash
 ssh yuzelu@10.129.166.172
 cd /public/home/yuzelu/Melodydt/runs/issue-280/qwen3-dma-windows-01
-squeue -j 118132,117939,117729 -o '%i|%j|%T|%P|%N|%M|%l|%R'
-squeue --start -j 118132 -o '%i|%T|%S|%R'
-sacct -j 118132,117939,117729 -o JobID,JobName,State,ExitCode,Elapsed,Timelimit,NodeList
+squeue -j 118207 -o '%i|%j|%T|%P|%N|%M|%l|%R'
+squeue --start -j 118207 -o '%i|%T|%S|%R'
+sacct -j 118207,118132,117939,117729 -o JobID,JobName,State,ExitCode,Elapsed,Timelimit,NodeList
 sha256sum -c archived-ddr-completions.sha256
-tail -n 25 slurm-118132.log
-tail -n 25 result-118132/replay-launch.log
-(cd result-118132 && sha256sum -c results.sha256 && cat dma-windows.json)
+tail -n 25 slurm-118207.log
+tail -n 25 result-118207/replay-launch.log
+(cd result-118207 && sha256sum -c results.sha256 && cat dma-windows.json)
 ```
 
 ## 冻结快照中的 DDR 事务完成数
@@ -66,7 +74,7 @@ tail -n 25 result-118132/replay-launch.log
 
 ## 剩余步骤
 
-1. 读回 118132 实际节点与终态，核验散列和三窗计数，并逐窗汇报。
+1. 读回 118207 实际节点与终态，核验散列和三窗计数，并逐窗汇报。
 2. 取得共享读 DMA、阶段切换及 512-bit 写回的同源网表及物理工件。补 6,144-bit 返回活动，标定空闲、正常、背压与并发窗口。
 3. 将 DMA、其余片上分项和 DDR 芯片在三个同一窗口合并，之后扩至其他模型。PHY 与板级另计。
 

@@ -1,5 +1,9 @@
 # Melodydt 的进度
 
+## Melodydt 的 Slurm 提交约定
+
+后续在本项目提交的作业统一请求无限时限。新脚本写 `#SBATCH --time=0`，提交时显式加 `sbatch --time=0`，并读回 `TimeLimit=UNLIMITED`。在本服务器使用支持无限时限的 c64/c96 分区。
+
 ## 2026-11-14（Asia/Shanghai）七模型短程吞吐准备
 
 - [Issue #274](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/274) 进行中，任务分支自 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 的 `55620f17` 建立。六模型归档核验通过。Qwen3 功能复跑 114275 与归档逐字节一致。指令驱动 Gather 114290 两位置通过，DDR 读取与回调 144/144。
@@ -114,3 +118,8 @@
 - [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 进行中，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) 草稿。已核验服务器清单。Qwen3 三窗已覆盖小计仅含双通道 DDR 芯片及 G32 活跃增量：短 Prefill 114.9417–114.9420 mJ/输入 token，首 token 332.7932–332.7934 mJ，两次退休间 332.8565–332.8567 mJ/输出 token。 [小计回执](../../docs/handoffs/2026-11-16-issue-280-qwen3-non-dma-subtotal.md)
 - 117939（DMA 综合）和 117729（M 门级活动）已于 15:17:54 取消。117940（局控取指）在 hold 缓冲达上限处失败。117855（M ECO）在最终等价阶段异常退出，候选网表尚未验收。118132（三窗 DMA 事务）15:24 仍为 `PENDING (Priority)`，时限 `UNLIMITED`。封存包、归档 DDR 完成数与脚本散列通过；新回放等待调度。 [作业终态、追踪与验证](../../docs/handoffs/2026-11-16-issue-280-qwen3-dma-windows.md)
 - Melodydt 后续核验 118132 三窗提交、接收、完成及边界积压，再补片上 DMA 功耗标定和 M 活动驻留。登记 PR #5 待合并，项目未配置专属看板，组织总览的 #280 条目待管理员核验。
+
+## 2026-11-16（Asia/Shanghai）以无限时限重新提交 Qwen3 DMA 三窗
+
+- [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 进行中，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) 保持草稿。原提交封存包 SHA-256 和 Bash 语法通过，118207 已受理为 `PENDING (Priority)`，时限 `UNLIMITED`，节点待分配。118132 已于 15:34:35 取消。
+- Melodydt 下一步读回 118207 的终态和结果，核验三窗 DMA 事务与冻结基线。登记 PR #5 待合并，组织 Projects 条目待具权限管理员核验。 [提交与追踪](../../docs/handoffs/2026-11-16-issue-280-qwen3-dma-windows.md)
