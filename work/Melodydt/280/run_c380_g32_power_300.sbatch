@@ -32,8 +32,9 @@ sha256sum "$(command -v openroad)" > "$out/openroad.sha256"
 bank=$project/issue-155/bank-views-011/generation/bank/s_sram_256x128_freepdk45_TT_1p1V_25C.lib
 c380=$runs/gate-c380-idle-04/power-116935
 g32=$runs/c639-g32-power-03/power-116943
-sha256sum -c "$c380/power-results.sha256" "$g32/power-results.sha256" > "$out/archive-check.log"
-python3 -B - "$bundle" "$out" "$c380" "$g32" "$bank" "$cores" <<'PY'
+holdout=$runs/c639-g32-active-01/power-116950
+sha256sum -c "$c380/power-results.sha256" "$g32/power-results.sha256" "$holdout/power-results.sha256" > "$out/archive-check.log"
+python3 -B - "$bundle" "$out" "$c380" "$g32" "$bank" "$cores" "$holdout" <<'PY'
 import concurrent.futures
 import json
 from pathlib import Path
@@ -62,6 +63,12 @@ def run(case):
 
 cases = [("c380", c380 / name, (bank,)) for name in ("mode-0", "mode-1", "idle-0", "idle-1")]
 cases += [("g32", g32 / f"mode-{mode}-{phase}", ()) for mode in (0, 1) for phase in ("gate-up", "down")]
+holdout = Path(sys.argv[7])
+holdout_cases = [(case["mode"], case["accepted_inputs_including_first_edge"])
+                 for case in json.loads((holdout / "summary.json").read_text())]
+if sorted(holdout_cases) != [(0, 64), (1, 64)]:
+    raise ValueError("unexpected held-out G32 handshake counts")
+cases += [("g32", holdout / f"mode-{mode}-g32-active", ()) for mode, _ in holdout_cases]
 with concurrent.futures.ThreadPoolExecutor(max_workers=int(sys.argv[6]) // 3) as pool:
     results = {(label, case): data for label, case, data in pool.map(run, cases)}
 summary = {f"{label}/{case}": {key: value for key, value in data.items()
