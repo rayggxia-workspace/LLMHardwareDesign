@@ -58,6 +58,15 @@ case "$5" in
         sources="$out/$top.sv $bundle/s128_kv_row_transfer.sv $bundle/s128_ddr64_store.sv"
         side=700
         ;;
+    write-span)
+        top=s128_kv_store_scope
+        sed -e "s/parameter logic \[31:0\] TOPOLOGY = 0,/parameter logic [31:0] TOPOLOGY = 32'd25001,/" \
+            -e "s/parameter bit SHARED_STORE = 1'b0/parameter bit SHARED_STORE = 1'b1/" \
+            "$bundle/$top.sv" > "$out/$top.sv"
+        grep -Fq "parameter bit SHARED_STORE = 1'b1" "$out/$top.sv"
+        sources="$out/$top.sv $bundle/s128_kv_row_transfer.sv $bundle/s128_ddr64_store.sv"
+        side=700
+        ;;
     *) exit 2 ;;
 esac
 openroad -version > "$out/openroad-version.txt"

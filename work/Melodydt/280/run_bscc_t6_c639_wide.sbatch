@@ -13,6 +13,8 @@ original=$legacy/Melodydt/runs/issue-280/c639-g32-gate-01/c639-g32-116937
 if [[ ${1:-} != inside ]]; then
     bundle=${SLURM_SUBMIT_DIR:?}
     cd "$bundle"
+    profile=${1:-writer}
+    [[ $profile == writer || $profile == m-exec ]]
     sha256sum -c bundle.sha256
     opt=$HOME/LLMHardware/opt
     set +u
@@ -22,7 +24,7 @@ if [[ ${1:-} != inside ]]; then
     exec srun --ntasks=1 --cpus-per-task="$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
         singularity exec --cleanenv --bind "$(dirname "$bundle")" --bind "$opt" --bind "$bundle/sourcefs:$legacy:ro" \
         "$opt/orfs-current-repacked.rootfs" bash "$bundle/run_bscc_t6_c639_wide.sbatch" inside \
-        "$bundle" "$opt" "$SLURM_JOB_ID" "$SLURM_CPUS_PER_TASK"
+        "$bundle" "$opt" "$SLURM_JOB_ID" "$SLURM_CPUS_PER_TASK" "$profile"
 fi
 
 bundle=$2
@@ -33,13 +35,18 @@ export C639_GENERATED=$original/replay-116937/generated
 export VERILATOR_ROOT=$opt/verilator-5.042/share/verilator
 export C639_VERILATOR=$opt/verilator-5.042/bin/verilator
 run=$bundle/wide-$SLURM_JOB_ID
+profile=$6
 mkdir "$run"
 cp -a "$original/"{source,source.tar,activity-0.txt,activity-1.txt} "$run/"
 runner=$run/source/project/experiments/block_local_native/run_decode638_q_tile_replay.sh
-python3 -B "$bundle/prepare_bscc_t6_c639_wide.py" "$runner"
+m_leaf=$run/source/project/rtl/w8a16_v1/m_native_leaf_s32.sv
+if [[ $profile == m-exec ]]; then
+    python3 -B "$bundle/prepare_c639_m_exec_ready.py" "$m_leaf" "$run/exec-ready-guard.v"
+fi
+python3 -B "$bundle/prepare_bscc_t6_c639_wide.py" "$runner" "$profile"
 bash -n "$runner"
 sha256sum "$runner" "$(dirname "$runner")/"{test_native_decode638_product_replay.sv,c639_activity_driver.cpp} \
-    "$C639_VERILATOR" "$C639_GENERATED/program.json" > "$run/inputs.sha256"
+    "$C639_VERILATOR" "$C639_GENERATED/program.json" "$m_leaf" > "$run/inputs.sha256"
 bash "$runner" "$run" unused-prepared history-final-product-ffn-repeat 636 2
 out=$run/replay-$SLURM_JOB_ID
 (cd "$out" && sha256sum --quiet -c proof.sha256)

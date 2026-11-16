@@ -24,6 +24,17 @@ for before, after in (
     ('find generated -maxdepth 1', 'find -H generated -maxdepth 1'),
 ):
     text = replace_once(text, before, after)
+if sys.argv[2:] == ["m-exec"]:
+    text = replace_once(text, ' for mode in "${modes[@]}"; do run_mode "$mode"; done', ''' pids=()
+ for mode in "${modes[@]}"; do
+  run_mode "$mode" &
+  pids+=("$!")
+ done
+ failed=0
+ for pid in "${pids[@]}"; do
+  if ! wait "$pid"; then failed=1; fi
+ done
+ if ((failed)); then exit 1; fi''')
 path.write_text(text)
 
 top = path.with_name("test_native_decode638_product_replay.sv")

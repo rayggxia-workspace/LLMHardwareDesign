@@ -147,3 +147,10 @@
 - Qwen3 38782605 完成三窗 DDR／S128／M／PM 对账。每个 Decode 窗口的 8,960 笔 DDR 写分为 KV 3,584 与 FFN backing 5,376 笔。56 次残差由 U/SRAM 执行。完整 DMA 和片内总功耗仍待校准。
 - M 缓冲器换档 setup 仅改善 4.754 ps。原路径 `word3[54] → a_ready` 已定位，EXEC 专用校验通过严格 lint 与组合 SAT 证明。Melodydt 后续进行功能回归和 300 MHz 重布线，读回 38769386／38769388 并做读侧校准，再测 KV／FFN backing 写侧与其余片内分项。
 - [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [结果与恢复命令](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-independent-calibration.md)。进行中，登记 PR #5 待合并，Projects 待具权限维护者核验。
+
+## 2026-11-16（Asia/Shanghai）Qwen3 写侧与片内物理标定
+
+- 38792114 的共享写侧完成 300 MHz 路由，38792400／38792563 验证 K、V 和 FFN 中间激活两工况各八笔写，配对估算 23.15–23.40 pJ/64 B。真实地址配确定性替代数据，待补负载敏感性。
+- 38792815 通过 512-bit SRAM 四 bank、PM 拆拍、256-word U 残差。38793273 的 PM 桥 300 MHz 通过，1,664 字节真实页活跃增量 0.631–0.663 nJ/页。数组、互连与宽写尚待归属。
+- M 候选 38792112 的两工况产品回归通过，物理作业 38792357 仍在映射。38793408 已为读 DMA 两种物理边界准备 12 份 VCD，Melodydt 等 38769386／38769388 交付网表与寄生后做最终读标定，再合并三窗。
+- [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [本轮回执](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-physical-calibration.md)。任务进行中，登记 PR #5 待合并，看板待管理员核验。
