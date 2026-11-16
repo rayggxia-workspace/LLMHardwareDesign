@@ -5,7 +5,7 @@ import re
 import sys
 
 
-def extract(netlist, raw, output, target, first, last, frequency, expected_port_bits=1330):
+def extract(netlist, raw, output, target, first, last, frequency, expected_port_bits=1330, untraced_ports=()):
     port_pattern = r"^\s*(input|output)\s+(?:\[(\d+):(\d+)\]\s+)?(\w+);"
     ports = {}
     for line in netlist.open():
@@ -14,8 +14,12 @@ def extract(netlist, raw, output, target, first, last, frequency, expected_port_
             ports[name] = (direction, int(high) - int(low) + 1 if high else 1)
         elif re.match(r"^\s*wire ", line):
             break
-    if sum(width for _, width in ports.values()) != expected_port_bits:
-        raise ValueError(f"unexpected routed interface size, expected {expected_port_bits} bits")
+    routed_bits = sum(width for _, width in ports.values())
+    if not ports or (expected_port_bits is not None and routed_bits != expected_port_bits):
+        raise ValueError(f"unexpected routed interface size: {routed_bits}, expected {expected_port_bits} bits")
+    for name in untraced_ports:
+        if name not in ports or ports[name][0] != "output":
+            raise ValueError(f"untraced port must be a routed output: {name}")
 
     if frequency not in (100, 300):
         raise ValueError("expected 100 or 300 MHz")
@@ -47,8 +51,9 @@ def extract(netlist, raw, output, target, first, last, frequency, expected_port_
                 dst.write(" ".join(fields) + "\n")
             elif command == "$enddefinitions":
                 break
-        if set(selected) != set(ports):
-            raise ValueError(f"missing ports: {set(ports) - set(selected)}")
+        missing = set(ports) - set(selected)
+        if missing - set(untraced_ports):
+            raise ValueError(f"missing required ports: {missing - set(untraced_ports)}")
         dst.write("$upscope $end\n$enddefinitions $end\n")
         identifiers = set(selected.values())
         time = None
@@ -80,7 +85,9 @@ def extract(netlist, raw, output, target, first, last, frequency, expected_port_
             raise ValueError(f"unexpected clock, timestamp or coverage: {time=} {len(clock)=}")
     receipt = {"rtl_scope": target, "window_ps": retime(last), "clock_hz": frequency * 1000000,
                "source_period_ps": 10000, "timestamp_resolution_ps": 1,
-               "port_bits": {direction: sum(width for kind, width in ports.values() if kind == direction)
+               "routed_port_bits": routed_bits,
+               "untraced_port_bits": {name: ports[name][1] for name in sorted(missing)},
+               "port_bits": {direction: sum(ports[name][1] for name in selected if ports[name][0] == direction)
                              for direction in ("input", "output")}}
     output.with_suffix(".json").write_text(json.dumps(receipt, indent=2) + "\n")
 
