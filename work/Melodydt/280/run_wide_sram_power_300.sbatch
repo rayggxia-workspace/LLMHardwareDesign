@@ -8,7 +8,11 @@
 #SBATCH --output=slurm-%j.log
 set -euo pipefail
 base=/public/home/yuzelu
-bundle=$SLURM_SUBMIT_DIR
+if [[ ${1:-} == inside ]]; then
+    bundle=$2
+else
+    bundle=${SLURM_SUBMIT_DIR:?}
+fi
 cd "$bundle"
 if [[ ${1:-} != inside ]]; then
     sha256sum -c bundle.sha256
