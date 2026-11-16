@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --job-name=mdt-280meco4
+#SBATCH --job-name=mdt-280meco5
 #SBATCH --partition=c64,c96
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -38,7 +38,9 @@ sha256sum "$physical/1_2_yosys.v" "$base_config" "$route/route-results.sha256" >
 archive=$runs/c639-m-extracted-eco-01/result-117838
 sha256sum "$physical"/5_1_grt.{odb,sdc} "$archive"/baseline-extracted-*.rpt >> "$out/inputs.sha256"
 cp "$archive"/baseline-extracted-*.rpt "$out/"
-cp "$base_config" "$out/config.mk"
+sed '/^export PRE_GLOBAL_ROUTE_TCL =/d' "$base_config" > "$out/config.mk"
+printf '%s\n' 'detailed_placement' 'check_placement -verbose' > "$out/legalize.tcl"
+printf '\nexport SKIP_INCREMENTAL_REPAIR = 1\nexport PRE_GLOBAL_ROUTE_TCL = %s/legalize.tcl\n' "$out" >> "$out/config.mk"
 for folder in results reports logs objects; do mkdir -p "$out/flow/$folder/$key"; done
 work=$out/flow/results/$key
 cp -p "$physical/1_2_yosys.v" "$work/"
@@ -72,45 +74,60 @@ repair_timing -setup -setup_margin 0.020 -repair_tns 100 -max_passes 20 \
     -max_iterations 2000 -max_repairs_per_pass 4 -verbose
 puts {POST_SETUP_GRT}
 timing_snapshot "$out/post-setup-global-route"
-puts {LOCAL_DATA_HOLD_ECO_BEGIN}
-# Only the four data pins with negative extracted hold slack in 116976.
-# The lowest-slack session pin receives three small delay stages.
+write_db "$out/setup-checkpoint.odb"
+write_sdc -no_timestamp "$work/4_cts.sdc"
+TCL
+cat > "$out/hold-sites.tcl" <<'TCL'
+set out $::env(C639_ECO_OUT)
+set work $::env(C639_ECO_WORK)
+read_db "$out/setup-checkpoint.odb"
+set block [ord::get_db_block]
+set master [[ord::get_db] findMaster BUF_X1]
+if {$master == "NULL"} { error "Missing BUF_X1 in the original database" }
+# These are the data pins at the four negative endpoints reported by
+# 117838 with extracted parasitics. Keep the edits local to those sinks.
 foreach target {
-  {{$auto$ff.cc:337:slice$121693/D} 3}
-  {{$auto$ff.cc:337:slice$123476/D} 1}
-  {{$auto$ff.cc:337:slice$124633/D} 1}
-  {{$auto$ff.cc:337:slice$125313/D} 1}
+  {{$auto$ff.cc:337:slice$121693} 3}
+  {{$auto$ff.cc:337:slice$123476} 1}
+  {{$auto$ff.cc:337:slice$124633} 1}
+  {{$auto$ff.cc:337:slice$125313} 1}
 } {
-  lassign $target pattern stages
-  set pin [get_pins -quiet $pattern]
-  if {[llength $pin] != 1} {
-    error "Expected one matching data pin for $pattern, found [llength $pin]"
-  }
+  lassign $target name stages
+  set inst [$block findInst $name]
+  if {$inst == "NULL"} { error "Cannot find extracted hold endpoint $name" }
+  set sink [$inst findITerm D]
+  if {$sink == "NULL"} { error "No D pin on extracted hold endpoint $name" }
+  set driver [$sink getNet]
+  if {$driver == "NULL"} { error "No data net for extracted hold endpoint $name" }
+  lassign [$inst getLocation] x y
   for {set index 0} {$index < $stages} {incr index} {
-    insert_buffer -buffer_cell BUF_X1 -load_pins $pin
+    set id "mdt_hold_[string range $name end-5 end]_$index"
+    set buffer [odb::dbInst_create $block $master $id]
+    set net [odb::dbNet_create $block "net_$id"]
+    [$buffer findITerm A] connect $driver
+    [$buffer findITerm Z] connect $net
+    $buffer setLocation $x $y
+    $buffer setPlacementStatus PLACED
+    set driver $net
   }
-  puts "LOCAL_DATA_HOLD_ECO $pattern stages=$stages"
+  $sink disconnect
+  $sink connect $driver
+  if {[llength [$driver getITerms]] != 2} { error "Hold endpoint fanout check failed: $name" }
+  puts "LOCAL_DATA_HOLD_ECO $name stages=$stages"
 }
-detailed_placement
-check_placement -verbose
-set_routing_layers -signal metal1-metal10 -clock metal4-metal10
-pin_access -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10
-global_route -congestion_iterations 30 -guide_file "$work/route.guide" -congestion_report_file "$out/congestion.rpt" -verbose
-estimate_parasitics -global_routing
-timing_snapshot "$out/post-eco-global-route"
-write_db "$work/5_1_grt.odb"
-write_sdc -no_timestamp "$work/5_1_grt.sdc"
+write_db "$work/4_cts.odb"
 TCL
 export C639_ECO_INPUT="$physical" C639_ECO_OUT="$out" C639_ECO_WORK="$work"
 openroad -no_init -threads "$cores" -exit "$out/eco.tcl" > "$out/eco.log" 2>&1
+openroad -no_init -threads "$cores" -exit "$out/hold-sites.tcl" > "$out/hold-sites.log" 2>&1
 make_flow() {
   make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$out/config.mk" WORK_HOME="$out/flow" NUM_CORES="$cores" "$@"
 }
-make_flow do-5_2_route do-5_3_fillcell do-5_route do-5_route.sdc > "$out/detail-route.log" 2>&1
+make_flow do-route > "$out/detail-route.log" 2>&1
 make_flow do-finish > "$out/finish.log" 2>&1
 metrics=$out/flow/logs/$key/6_report.json
 cd "$out"
-sha256sum eco.tcl config.mk inputs.sha256 openroad.sha256 baseline-extracted-*.rpt baseline-global-route-*.rpt post-setup-global-route-*.rpt post-eco-global-route-*.rpt \
+sha256sum eco.tcl hold-sites.tcl hold-sites.log legalize.tcl config.mk inputs.sha256 openroad.sha256 baseline-extracted-*.rpt baseline-global-route-*.rpt post-setup-global-route-*.rpt \
     "$work"/6_final.{v,odb,sdc,spef} "$metrics" "$out/flow/reports/$key/"{6_finish.rpt,5_route_drc.rpt} > results.sha256
 sha256sum -c results.sha256
 python3 - "$metrics" <<'PY'
