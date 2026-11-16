@@ -151,7 +151,7 @@ for mode in read write idle; do
   first=$(awk '/^POWER_START_PS /{print $2}' "$out/$mode.log")
   last=$(awk '/^POWER_END_PS /{print $2}' "$out/$mode.log")
   [[ $((last - first)) == 20480000 ]]
-  python3 -B "$bundle/gate_power_300.py" "$out/$mode.vcd" "$physical" TOP/test_compact_s/p \
+  python3 -B "$bundle/gate_power_300.py" "$out/$mode.vcd" "$physical" test_compact_s/p \
       "$out/$mode" 20000 "$first" "$last" --cores 4 --lib "$bank" --escape --clip
 done
 python3 - "$out" <<'PY'
