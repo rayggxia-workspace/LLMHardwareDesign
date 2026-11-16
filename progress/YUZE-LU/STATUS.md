@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-13（CST）九组共同底座选型
+
+[Issue #184](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/184) / [PR #185](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/185) 登记[正式候选宏及端点准入](../../docs/local-blocks/PRODUCT_BASE_V1.md)。P 改为绑定 S_P 的普通口等价对照，保留 M60 原生 A256 和真 64 B DDR 返回。九组 30 颗独立功能叶宏及 10 颗程序 SRAM bank 已联合试排。真实母控／局控网和三 P 的 64 B DMA／FENCE 已完成联合 DEF 逐位绑定审计。联合供电与详细布线、64 B DMA 时序和同源模型闭环继续验收，见共同底座物理与连接回执。登记 pending，看板核验见 PR 回执。
+
 ## 2026-11-08（CST）U 原生入口和双向发送修复
 
 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) → `in_review`；[PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 待独立审查。独立 TX 槽和普通三源入口修复后，两版重新综合并通过完整原版 GDS DRC 0、TT 300 MHz、电气/PG及三档代表上层 RC。U_128 setup/hold +255.014/+14.595 ps，U_64 +73.082/+0.212 ps；最终网表 48/48、78/78 全部通过。两包及全部 1,389/2,101 文件回收核验成功，31 硬件源文件与审查代码一致。[最终回执](../../work/YUZE-LU/212/u-native-fix.md)。P 不变。用户已授权将 #221 合入 main；五类图册 U 两版已绑定新验收包，P/C/F/J 图源不变。实际合并状态以 PR 在线回执为准，Issue 在线 assignee 未指定。登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，复用接入交接 Issue7。

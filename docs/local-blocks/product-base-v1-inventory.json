@@ -1,0 +1,317 @@
+{
+  "schema_version": "five-block-product-inventory/1",
+  "contract_revision": "five-block-v1/2026-11-13",
+  "state": "layout_candidate",
+  "main_baseline": "c4d7b960599b9d292f27eb4429d5f226a7156c95",
+  "technology": {
+    "name": "Nangate45",
+    "corner": "TT",
+    "voltage_v": 1.1,
+    "temperature_c": 25,
+    "clock_mhz": 300,
+    "native_routing_layers": [
+      1,
+      10
+    ],
+    "postfab_routing_layers": [
+      11,
+      12
+    ]
+  },
+  "templates": {
+    "P": {
+      "instances": [
+        "P0",
+        "P1",
+        "P2"
+      ],
+      "implementation_id": "P-S_P-ordinary-r1",
+      "leaf_roles": {
+        "M": "M60",
+        "G": "G32",
+        "S": "S_P"
+      },
+      "local_controller": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 1024,
+        "backing": "registers",
+        "scope": "candidate"
+      }
+    },
+    "U": {
+      "instances": [
+        "U0",
+        "U1"
+      ],
+      "implementation_id": "U39-v02",
+      "leaf_roles": {
+        "N": "N32",
+        "E": "E16",
+        "S": "S_base"
+      },
+      "local_controller": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 4096,
+        "backing": "SRAM",
+        "scope": "candidate"
+      }
+    },
+    "C": {
+      "instances": [
+        "C0"
+      ],
+      "implementation_id": "C-V3",
+      "leaf_roles": {
+        "R": "R256",
+        "G": "G16",
+        "E": "E16",
+        "E32": "E32",
+        "S": "S_base"
+      },
+      "local_controller": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 4096,
+        "backing": "SRAM",
+        "scope": "candidate"
+      }
+    },
+    "F": {
+      "instances": [
+        "F0"
+      ],
+      "implementation_id": "F19",
+      "leaf_roles": {
+        "G": "G16",
+        "E": "E16",
+        "E32": "E32",
+        "S": "S_base"
+      },
+      "local_controller": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 4096,
+        "backing": "SRAM",
+        "scope": "candidate"
+      }
+    },
+    "J": {
+      "instances": [
+        "J0",
+        "J1"
+      ],
+      "implementation_id": "J03",
+      "leaf_roles": {
+        "E32": "E32",
+        "S": "S_base",
+        "T": "T6"
+      },
+      "local_controller": "parent_standard_cells",
+      "program_memory": {
+        "capacity_bytes": 4096,
+        "backing": "SRAM",
+        "scope": "candidate"
+      }
+    }
+  },
+  "leaf_profiles": {
+    "M60": {
+      "master": "m_native_leaf_s32",
+      "native_signal_bits": 1330,
+      "outline_um": [
+        1390,
+        1390
+      ],
+      "abi": "0x02504d02",
+      "receipt": {
+        "project_storage_path": "issue250-m-physical-20261111-60/single-macro-package.json",
+        "sha256": "0e70167fb5569dbacadedd8362f6edabc8bd033674693f318383a3a4c44b936e"
+      },
+      "odb_sha256": "df2b2c55d066929c44496fc7d9891403d3a8e3d7654569764a3fd329d3b1ed9f",
+      "signal_width_bits": {
+        "a_data": 256,
+        "mc_rsp_data": 512,
+        "lc_data": 128
+      }
+    },
+    "G32": {
+      "master": "g_s32",
+      "outline_um": [
+        240,
+        240
+      ],
+      "native_signal_bits": 204,
+      "evidence_commit": "d57573d88",
+      "evidence_path": "work/YUZE-LU/250/physical/g32-results.json",
+      "odb_sha256": "bd2a412c60721453079da42afd232c6b7fb95d73b7cbe27329c7b09aa7e15189"
+    },
+    "N32": {
+      "master": "n_s32_softmax_s128",
+      "outline_um": [
+        336,
+        336
+      ],
+      "leaf_delivery_commit": "a06fd03c5",
+      "integration_commit": "5c8f9ea89"
+    },
+    "G16": {
+      "master": "block_v2_g",
+      "outline_um": [
+        220,
+        220
+      ],
+      "native_signal_bits": 108,
+      "pin_csv": "docs/experiments/assets/compact-ge/G-pins.csv",
+      "pin_csv_git_blob": "135e201db559517f95d61a85fb23737ac3e1564c"
+    },
+    "E16": {
+      "master": "block_v2_e_compact",
+      "outline_um": [
+        340,
+        340
+      ],
+      "native_signal_bits": 273,
+      "pin_csv": "docs/experiments/assets/compact-ge/E-pins.csv",
+      "pin_csv_git_blob": "5fe9cc472a3495a26b3d2e1d34e5f88fba1d9c14"
+    },
+    "E32": {
+      "master": "e_s32_ap64",
+      "outline_um": [
+        234,
+        234
+      ],
+      "native_signal_bits": 158,
+      "integration_commits": [
+        "97d251d3e",
+        "f8e1a99e4"
+      ],
+      "signal_width_bits": {
+        "in_data": 64,
+        "out_data": 64
+      },
+      "receipt": {
+        "project_storage_path": "issue250-ephys-20261111-03/delivery/delivery.json",
+        "sha256": "5a35c246f15b2b6c52f320dfa808c141e68b041fa10fb896bbe4dd431baa23e8"
+      },
+      "odb_sha256": "94529958917d21a2c04684e3e0e4928ec6a0b63975f162ee372918c5a5c4d643"
+    },
+    "R256": {
+      "master": "r_stream_local",
+      "outline_um": [
+        1000,
+        1000
+      ],
+      "words_parameter": 256,
+      "main_delivery_commit": "10ea8a736"
+    },
+    "S_P": {
+      "master": "local_s_p",
+      "outline_um": [
+        900,
+        540
+      ],
+      "native_signal_bits": 965,
+      "capacity_bytes": 16384,
+      "pin_csv": "docs/experiments/assets/compact-local-s/S-P-pins.csv",
+      "receipt": {
+        "project_storage_path": "LLMHardwareDesign/issue-200-compact-local-s/final-gates/p-audit/audit.json",
+        "sha256": "2db9f89c534801ae10bbc5af65d621021e59f9b9502fcef74dbaef28456aa413"
+      },
+      "odb_sha256": "fc80d8c2a59ac1851b233907afff0ba0e2eccf60b03761a58cae9d4722b54e72",
+      "signal_width_bits": {
+        "req_data": 128,
+        "rsp_data": 128,
+        "a_data": 128,
+        "b_data": 512
+      },
+      "pin_csv_git_blob": "c5c1b0ac27b31fccb189b566449e1d9fa24bd1e3"
+    },
+    "S_base": {
+      "master": "local_s_base",
+      "outline_um": [
+        880,
+        520
+      ],
+      "native_signal_bits": 273,
+      "capacity_bytes": 16384,
+      "pin_csv": "docs/experiments/assets/compact-local-s/S-base-pins.csv",
+      "receipt": {
+        "project_storage_path": "LLMHardwareDesign/issue-200-compact-local-s/audit08/base0/audit.json",
+        "sha256": "8180944606ebdd618d16f461804cc45eb778d6750c8d6859a8649ccaac7897cf"
+      },
+      "odb_sha256": "634b808ec827ca17fc5be66a6d109ee4ba181f8ddc288a0fc731156fcf1974af",
+      "signal_width_bits": {
+        "req_data": 128,
+        "rsp_data": 128
+      },
+      "pin_csv_git_blob": "54bb52e24c077b8e07a316918090ede6b8193ef9"
+    },
+    "T6": {
+      "master": "transaction6k",
+      "outline_um": [
+        1040,
+        1040
+      ],
+      "capacity_bytes": 6144,
+      "main_receipt": "work/YUZE-LU/143/release-six/T/evidence/original-delivery-receipt.json"
+    }
+  },
+  "counts": {
+    "functional_leaf_instances": 30,
+    "local_controllers": 9,
+    "private_s_bytes": 147456,
+    "transaction_t_bytes": 12288
+  },
+  "system_resources": {
+    "mother_controller": {
+      "profile": "MC06",
+      "master": "mother_control_native64_transport128",
+      "source_commit": "ab7611d43e4c007cc966ab5e61903118d33fcb4a",
+      "odb_sha256": "e15dfccb42f3613451c8512c356d10dd6493f7e5eb2c93f4fa55304fa7556610",
+      "program_memory_bytes": 16384,
+      "framed_transport_bits": 128
+    },
+    "control_switch": {
+      "profile": "switch03",
+      "master": "control_switch9",
+      "odb_sha256": "c6fb8fb8c4ea32fabb52bf16ca64e253578d27b69ceaebfee81e4b39c8e857d5"
+    },
+    "ddr": {
+      "transfer_bits": 512,
+      "aggregate_budget_bytes_per_second": 51200000000,
+      "physical_state": "closure_in_progress"
+    },
+    "repeaters": {
+      "inventory_schema": "upper-repeaters/1",
+      "separate_input": true,
+      "virtual_instances_eligible_for_physical_export": false
+    }
+  },
+  "p_supply": {
+    "registered_activation_path": "ordinary-S128-two-word-A256",
+    "registered_weight_path": "typed-DDR-W512",
+    "feeder_service_state": "unregistered_until_validated",
+    "reference_replay": {
+      "job": 105610,
+      "cases": 6,
+      "project_storage_path": "issue250-p-formal-sp-ordinary-20261113-01/comparison.json",
+      "sha256": "581443555e9b798e436d876a93692e675efca03d791c5e11237c7874f4300e9a"
+    },
+    "mapped_leaf_replay": {
+      "job": 105627,
+      "cases": 6,
+      "project_storage_path": "issue250-p-formal-sp-ordinary-mapped-20261113-01/comparison.json",
+      "sha256": "581443555e9b798e436d876a93692e675efca03d791c5e11237c7874f4300e9a"
+    }
+  },
+  "physical_binding": {
+    "required_source": "joint_odb",
+    "state": "pending",
+    "algo1_head": "c3a14445ad0a10d59755b2bd455c880fd4e48517",
+    "algo2_head": "77f840a1992e19a89c46ebca5458268f65b50b3a",
+    "control_fixture": {
+      "project_storage_path": "issue250-mc-nine-packet-link-physical-inventory-20261113-05-stronger-p-final-u/packet-route-contract.json",
+      "sha256": "6ed6d325adb4314892082831279bde08983ce9fa153e0e7e317b1830f4cd8be6",
+      "terminal_edges": 2613,
+      "electrical_nets": 1631
+    }
+  }
+}
