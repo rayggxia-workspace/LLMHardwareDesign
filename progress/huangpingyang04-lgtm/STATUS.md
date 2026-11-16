@@ -46,3 +46,8 @@
 
 - [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250。固定 PR #271 方案 A 摆位，U0 从下层向四边引出 280 根，交换器、C0、DMA、三个 P 模块和母控也引出拥挤接点。最佳布局有 1,960 个经核验的新 M10 接点。
 - CUGR 最后阶段全量复跑并独立核验。最佳作业 116821 布通 1,130 / 1,834 根，较带预留的上轮净增 396 根，剩 704 根。最好结果中 763 根经过新接点。U0 和 C0 已知容量缺口消除。待解决剩余接入与轨道冲突，工艺和全量时序待验收。[报告与逐网证据](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/full-1834/multiblock/README.md)
+
+## 2026-11-16（中国标准时间）
+
+- [PR #276](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/276) / #250。按 PR #271 方案 A 原摆位，从零条 M11/M12 线段开始重布 1,184 根。布前查完 2,858 个端点，另有 31 个拥挤端点通过引出校验后换用新 M10 接点。
+- CUGR 最后阶段作业 118129 通过独立连通和几何核验，布通 849 根，剩 335 根。继续处理主通道和接入空间，工艺与全量时序待验收。[整板报告与逐网清单](../../work/huangpingyang04-lgtm/250/pr271-top-route-study/clean-1184/README.md)
