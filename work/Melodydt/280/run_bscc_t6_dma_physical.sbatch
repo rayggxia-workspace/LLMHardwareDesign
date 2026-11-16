@@ -46,6 +46,18 @@ case "$5" in
         sources="$bundle/ffn_down_store_scope.sv $bundle/ffn_down_store.sv $bundle/s128_ddr64_store.sv"
         side=650
         ;;
+    residual)
+        top=s128_kv_store_scope
+        grep -Fq "TOPOLOGY=32'd25001" "$bundle/native_ffn_residual_fixture.sv"
+        grep -Fq "s128_kv_store_scope #(.TOPOLOGY(TOPOLOGY),.ACTIVATION_ROW(1'b1)) store(" "$bundle/native_ffn_residual_fixture.sv"
+        sed -e "s/parameter logic \[31:0\] TOPOLOGY = 0,/parameter logic [31:0] TOPOLOGY = 32'd25001,/" \
+            -e "s/parameter bit ACTIVATION_ROW = 1'b0,/parameter bit ACTIVATION_ROW = 1'b1,/" \
+            "$bundle/$top.sv" > "$out/$top.sv"
+        grep -Fq "parameter logic [31:0] TOPOLOGY = 32'd25001," "$out/$top.sv"
+        grep -Fq "parameter bit ACTIVATION_ROW = 1'b1," "$out/$top.sv"
+        sources="$out/$top.sv $bundle/s128_kv_row_transfer.sv $bundle/s128_ddr64_store.sv"
+        side=700
+        ;;
     *) exit 2 ;;
 esac
 openroad -version > "$out/openroad-version.txt"

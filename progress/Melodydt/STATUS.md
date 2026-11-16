@@ -134,3 +134,9 @@
 - 38769328 完成新机 ORFS 运行环境。冻结 Qwen3 输入、原指令流和代表性 KV 镜像 SHA-256 已核验。
 - 38769452 在 m3ca2408 并行回放 Prefill 和 Decode。38769386 与 38769388 已在计算节点进入共享读和阶段切换综合。38769390 完成 512-bit FFN 写回物理实现，300 MHz setup/hold 为 +368.527/+6.771 ps，详细布线 DRC 0。所有作业为 `UNLIMITED`。
 - Melodydt 下一步读回三窗和两项读侧物理终态，再补齐 DMA 活动与功耗。 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [作业和校验](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-parallel.md)
+
+## 2026-11-16（Asia/Shanghai）Qwen3 三窗验收及 DMA 标定准备
+
+- 38769452 在 BSCC-T6 完成 Qwen3 三窗回放并通过对账。38770731 完成写回无握手参考，3.950–3.967 mW。38771074 完成残差写回网表与物理验收，300 MHz DRC 0，setup/hold 裕量 +989.615/+1.093 ps。
+- 38772137 运行宽回包与活跃写回捕获，38772138 等待其通过后测活跃写回功耗。38769386、38769388 继续读侧综合。38771837 复现 M 的 300 MHz 原始时序违例，保留修复路径。三窗汇总脚本已对齐 DMA 事务、DDR＋G32 小计及 TLM 服务调用。
+- Melodydt 继续验收波形、标定和读侧物理，再补整模型分项。 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [作业与结果](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-dma-power-prep.md)
