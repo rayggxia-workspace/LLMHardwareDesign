@@ -1,5 +1,21 @@
 # YUZE-LU 的进度
 
+## 2026-11-14（CST）ATT1 局部 SRAM 流水对照
+
+[PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 增加候选 TLM 的 ATT1 SRAM 回填和取数流水。前十层 decode 的 Attention 页合计 39.106→27.293 ms，母控指令、局控调用、DDR 与 SRAM 访问量一致。候选作业 112069/112070 运行两步 decode 和短 prefill，112116/112117 待两组完成后核对吞吐。硬件实现及正式 P512/D128 仍待验收。 [配置与对照](../../work/YUZE-LU/234/AV_WEIGHT_EXPERIMENT.md#att1-的-sram-请求流水)
+
+## 2026-11-14（CST）短程吞吐回执与复现入口
+
+[PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 补充[配置化回放入口](../../project/experiments/systemc_benchmark/README.md)和[从 0.957 tok/s 起的瓶颈分析与证据](../../work/YUZE-LU/234/native-sram-width/PERFORMANCE_ANALYSIS.md)。[内存流水对照](../../work/YUZE-LU/234/MEMORY_PIPELINE_EXPERIMENT.md)已通过 Attention 双写在途组件回归，512-bit 的两步 decode 和短 prefill 已完成 TLM 对照审计，分别为 2.3390 和 5.5065 tok/s。V 复用待测。宽口 RTL、300 MHz 物理时序及正式 P512/D128 联合验收仍待完成。Issue #234 继续进行，审查人待指定，看板同步待核验。
+
+## 2026-11-13（CST）指令驱动的吞吐评估
+
+[Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) 的 [PR #260](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/260) 已补入[事务级回放、短程吞吐审计和复现命令](../../project/experiments/systemc_benchmark/README.md)。下一步核对短程实验回执并校准宽口 RTL。正式 P512/D128 联合验收仍在进行。看板配置待核验。
+
+## 2026-11-12（CST）Qwen2.5-3B 整机吞吐交接
+
+[Issue #234](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/234) 仍在执行，后续接手人待指定。[实施与验收交接](../../docs/handoffs/2026-11-12-issue-234-whole-system-throughput.md)记录远程作业 101602、103217、103220，以及真实控制、算子、SRAM 和 DDR 联合仿真的待接通路径。整机吞吐和能耗未验收。
+
 ## 2026-11-08（CST）U 原生入口和双向发送修复
 
 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) → `in_review`；[PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 待独立审查。独立 TX 槽和普通三源入口修复后，两版重新综合并通过完整原版 GDS DRC 0、TT 300 MHz、电气/PG及三档代表上层 RC。U_128 setup/hold +255.014/+14.595 ps，U_64 +73.082/+0.212 ps；最终网表 48/48、78/78 全部通过。两包及全部 1,389/2,101 文件回收核验成功，31 硬件源文件与审查代码一致。[最终回执](../../work/YUZE-LU/212/u-native-fix.md)。P 不变。用户已授权将 #221 合入 main；五类图册 U 两版已绑定新验收包，P/C/F/J 图源不变。实际合并状态以 PR 在线回执为准，Issue 在线 assignee 未指定。登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，复用接入交接 Issue7。

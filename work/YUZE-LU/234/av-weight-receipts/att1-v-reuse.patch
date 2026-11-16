@@ -1,0 +1,459 @@
+diff --git a/project/experiments/block_local_native/run_native_attention_core_scope.sh b/project/experiments/block_local_native/run_native_attention_core_scope.sh
+index f96d079eb..a22b4bac4 100644
+--- a/project/experiments/block_local_native/run_native_attention_core_scope.sh
++++ b/project/experiments/block_local_native/run_native_attention_core_scope.sh
+@@ -11,7 +11,7 @@ if [[ ${1:-} != in-container ]]; then
+  cd "$SLURM_SUBMIT_DIR"
+  exec srun --exact -n1 -c"$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
+   /public/software/singularity-ce-4.3.4/bin/singularity exec --cleanenv --bind /public/home/yuzelu \
+-  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK" \
++  --env "SLURM_JOB_ID=$SLURM_JOB_ID,SLURM_CPUS_PER_TASK=$SLURM_CPUS_PER_TASK,PIPELINE_KV_WRITES=${PIPELINE_KV_WRITES:-0},V_READS_PER_16=${V_READS_PER_16:-4}" \
+   /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif bash "$PWD/source/$EXP/run_native_attention_core_scope.sh" in-container "$PWD" "${1:-}"
+ fi
+ source /OpenROAD-flow-scripts/env.sh
+@@ -53,6 +53,7 @@ MC=project/rtl/mother_control_native
+ top=test_native_attention_core_scope
+ "$vlt" --binary --timing --assert -Wall --timescale-override 1ns/1ps --x-initial unique --x-assign unique \
+  -j "$SLURM_CPUS_PER_TASK" --top-module "$top" -GMOTHER_WORDS="$mother_words" -GCONTEXT="$context" \
++ "-GPIPELINE_KV_WRITES=1'b${PIPELINE_KV_WRITES:-0}" "-GV_READS_PER_16=${V_READS_PER_16:-4}" \
+  -Wno-PINCONNECTEMPTY -CFLAGS "-std=c++17 -isystem $dram/src -isystem $dram/ext/headers" \
+  -LDFLAGS "-L$dram -Wl,-rpath,$dram -ldramsim3" "$PWD/$EXP/ddr_read_bridge.cpp" --Mdir "$out/obj" \
+  "$P"/{native_s_lint,p_program_lint}.vlt "$EXP/real_s_lint.vlt" "$gate/sram-lint.vlt" \
+diff --git a/project/experiments/block_local_native/test_native_attention_core_scope.sv b/project/experiments/block_local_native/test_native_attention_core_scope.sv
+index cfc60fd51..c30a9c988 100644
+--- a/project/experiments/block_local_native/test_native_attention_core_scope.sv
++++ b/project/experiments/block_local_native/test_native_attention_core_scope.sv
+@@ -1,5 +1,9 @@
+ `timescale 1ns/1ps
+-module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT=380);
++module test_native_attention_core_scope #(
++    parameter int MOTHER_WORDS=15, CONTEXT=380,
++    parameter bit PIPELINE_KV_WRITES=1'b0,
++    parameter int V_READS_PER_16=4
++);
+     logic clk, reset=1, start=0, ready, result_valid;
+     initial clk=0;
+     always #5 clk=~clk;
+@@ -16,7 +20,7 @@ module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT
+     logic [31:0] route_ticket,route_reads,route_writes,route_faults;
+     logic [15:0] route_status;
+     logic drained;
+-    localparam int DATA_READS=CONTEXT*40;
++    localparam int DATA_READS=CONTEXT*(8+8*V_READS_PER_16);
+     localparam int DATA_BYTES=64*DATA_READS;
+     localparam int PROB_WORDS=(CONTEXT+3)/4;
+     logic pending,ddr_rsp,pending_data;
+@@ -26,7 +30,7 @@ module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT
+     logic [63:0] base,ret_tag;
+     logic [511:0] ret_data;
+     logic [31:0] completed;
+-    int unsigned cycle,mode,descriptor_reads,descriptor_callbacks;
++    int unsigned cycle,mode,descriptor_reads,descriptor_callbacks,checkpoint_cycles;
+     assign drained=!pending;
+     assign dr_ready={2'b00, !reset && !pending && (mode==0 || cycle%5!=0)};
+     assign ddr_rsp=!reset && pending && completed[0];
+@@ -74,7 +78,8 @@ module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT
+     wire allow_ack=mode==0 || cycle%5==0;
+     assign engine_ready=active && memory_ready && allow_request;
+     assign engine_rsp=active && memory_rsp && allow_ack;
+-    s128_attention_core_scope #(.TOPOLOGY(32'd25001)) scope(
++    s128_attention_core_scope #(.TOPOLOGY(32'd25001),.PIPELINE_KV_WRITES(PIPELINE_KV_WRITES),
++                               .V_READS_PER_16(V_READS_PER_16)) scope(
+         .clk,.reset,.service_valid(p_valid),.service_ready(p_ready),.service_owner(p_owner),
+         .service_ticket(p_ticket),.service_descriptor(p_descriptor),.service_cancel_valid(p_cancel),
+         .service_cancel_ready(p_cancel_ready),.service_done_valid(p_done),.service_done_ready(p_done_ready),
+@@ -104,6 +109,7 @@ module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT
+         if(reset) begin
+             pending<=0;pending_data<=0;kv_requests<=0;kv_callbacks<=0;completed<=0;ret_tag<=0;ret_data<=0;cycle<=0;
+             descriptor_reads<=0;descriptor_callbacks<=0;requests<=0;acks<=0;calls<=0;retired<=0;
++            checkpoint_cycles<=0;
+         end else begin
+             cycle<=cycle+1;
+             completed<=ddr_read_step();
+@@ -116,6 +122,7 @@ module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT
+                 ret_tag<={32'd0,dr_tag[31:0]};ret_data<=payload;pending<=1;pending_data<=0;
+                 descriptor_reads<=descriptor_reads+1;
+             end
++            if(scope.dot_snapshot) checkpoint_cycles<=checkpoint_cycles+1;
+             if(kv_valid && kv_ready) begin
+                 bit [511:0] payload;
+                 int unsigned index, group, in_group;
+@@ -125,10 +132,17 @@ module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT
+                     assert(kv_address==key_base+64'(kv_requests)*64);
+                 end else begin
+                     index=kv_requests-CONTEXT*8;
+-                    group=index/(2*CONTEXT);
+-                    in_group=index%(2*CONTEXT);
+-                    assert(kv_address==value_base+64'(in_group/2)*512+
+-                           64'(group/4)*128+64'(in_group%2)*64);
++                    if(V_READS_PER_16==4) begin
++                        group=index/(2*CONTEXT);
++                        in_group=index%(2*CONTEXT);
++                        assert(kv_address==value_base+64'(in_group/2)*512+
++                               64'(group/4)*128+64'(in_group%2)*64);
++                    end else begin
++                        group=index/CONTEXT;
++                        in_group=index%CONTEXT;
++                        assert(kv_address==value_base+64'(in_group)*512+
++                               (V_READS_PER_16==1 ? 64'(group) : (64'(group)>>1))*64);
++                    end
+                 end
+                 ddr_read_enqueue(0,kv_address,kv_tag);
+                 ddr_weight_image_read(kv_address,payload);
+@@ -206,6 +220,7 @@ module test_native_attention_core_scope #(parameter int MOTHER_WORDS=15, CONTEXT
+         ddr_read_finish();
+         $display("PASS typed AttentionCore mode=%0d cycles=%0d descriptors=%0d KV_callbacks=%0d SRAM_acks=%0d reads=%0d writes=%0d",
+                  mode,cycle,descriptor_callbacks,kv_callbacks,acks,terminal_reads,terminal_writes);
++        $display("ATT1_V_REUSE beats_per_16=%0d checkpoint_cycles=%0d",V_READS_PER_16,checkpoint_cycles);
+         $finish;
+     end
+     initial begin
+diff --git a/project/rtl/block_local_native/s128_attention_core_scope.sv b/project/rtl/block_local_native/s128_attention_core_scope.sv
+index 0033cdbef..a957f9084 100644
+--- a/project/rtl/block_local_native/s128_attention_core_scope.sv
++++ b/project/rtl/block_local_native/s128_attention_core_scope.sv
+@@ -1,7 +1,9 @@
+ `timescale 1ns/1ps
+ // Single-head Q16 causal attention. The LC supplies the finite window and KV region.
+ module s128_attention_core_scope #(
+-    parameter logic [31:0] TOPOLOGY=0
++    parameter logic [31:0] TOPOLOGY=0,
++    parameter bit PIPELINE_KV_WRITES=1'b0,
++    parameter int V_READS_PER_16=4
+ ) (
+     input logic clk,reset,
+     input logic service_valid,
+@@ -39,7 +41,7 @@ module s128_attention_core_scope #(
+     typedef enum logic [4:0] {
+         IDLE,K_REFILL,K_WAIT,DOT_BEGIN,DOT_BEGIN_WAIT,DOT_STEP,DOT_WAIT,
+         SCALE_READ,SCALE_READ_WAIT,SCALE_SEND,SCALE_RESULT,SCALE_WRITE,SCALE_ACK,
+-        N_START,N_WAIT,V_REFILL,V_WAIT,RECOVER,REPORT
++        N_START,N_WAIT,V_REFILL,V_WAIT,V_SAVE,V_SAVE_WAIT,V_RESTORE,V_RESTORE_WAIT,RECOVER,REPORT
+     } state_t;
+     state_t state;
+     logic [15:0] count,first,filled;
+@@ -86,28 +88,37 @@ module s128_attention_core_scope #(
+ 
+     wire [15:0] remaining=count-first;
+     wire [3:0] qk_columns=remaining>=8 ? 4'd8 : remaining[3:0];
+-    wire [7:0] av_length=remaining>=128 ? 8'd128 : remaining[7:0];
++    localparam bit REUSE_V=V_READS_PER_16==1;
++    initial assert(V_READS_PER_16 inside {1,2,4});
++    localparam logic [7:0] AV_CHUNK=REUSE_V ? 8'd32 : 8'd128;
++    wire [7:0] av_length=remaining>=16'(AV_CHUNK) ? AV_CHUNK : remaining[7:0];
+     wire [10:0] score_words=(11'(count)+11'd3)>>2;
+     wire load_active=state==K_REFILL||state==K_WAIT||state==V_REFILL||state==V_WAIT;
+     wire value_refill=state==V_REFILL||state==V_WAIT;
+     wire [15:0] v_position=first+filled;
++    wire [63:0] v_beat_offset={55'd0,group_index[3:2],7'd0}+
++        ((V_READS_PER_16!=4 && group_index[1]) ? 64'd64 : 64'd0);
+     wire [63:0] refill_base=value_refill ?
+-        v_base+{39'd0,v_position,9'd0}+{55'd0,group_index[3:2],7'd0} : k_base+{39'd0,first,9'd0};
+-    wire [9:0] refill_s_base=value_refill ? work_base+{filled[8:0],1'b0} : work_base;
++        v_base+{39'd0,v_position,9'd0}+v_beat_offset : k_base+{39'd0,first,9'd0};
++    wire [9:0] v_row_offset=REUSE_V ? {filled[7:0],2'b0} : {filled[8:0],1'b0};
++    wire [9:0] refill_s_base=value_refill ? work_base+v_row_offset : work_base;
+     wire load_ready,load_done,load_error,load_s_valid,load_s_take,load_rd_take;
+     wire [9:0] load_s_address;
+     wire [127:0] load_s_data;
+     wire [31:0] load_s_tag;
+     wire [63:0] load_rd_tag;
+-    logic [31:0] accepted_s_tag;
++    logic [31:0] load_s_tags[2];
++    logic load_s_head,load_s_tail;
++    wire [31:0] accepted_s_tag=load_s_tags[load_s_head];
+     logic [63:0] accepted_rd_tag,accepted_load_tag;
+     assign rd_tag={service_done_ticket,serial};
+     wire good_rd=rd_rsp_tag==accepted_rd_tag&&!rd_rsp_error;
+-    s128_ddr_range_load load_span(
++    s128_ddr_range_load #(.PIPELINE_WRITES(PIPELINE_KV_WRITES)) load_span(
+         .clk,.reset(datapath_reset),.launch_valid(state==K_REFILL||state==V_REFILL),.launch_ready(load_ready),
+         .launch_base(refill_base),.launch_s_base(refill_s_base),
+-        .launch_bursts(value_refill ? 8'd2 : {1'b0,qk_columns,3'b0}),
+-        .launch_pair(value_refill),.launch_pair_beat(group_index[1]),.launch_pair_high(group_index[0]),
++        .launch_bursts(value_refill ? (V_READS_PER_16==4 ? 8'd2 : 8'd1) : {1'b0,qk_columns,3'b0}),
++        .launch_pair(value_refill&&!REUSE_V),.launch_pair_beat(V_READS_PER_16==4&&group_index[1]),
++        .launch_pair_high(group_index[0]),
+         .done_valid(load_done),.done_error(load_error),.done_ready(state==K_WAIT||state==V_WAIT),
+         .rd_valid,.rd_ready,.rd_address,.rd_tag(load_rd_tag),.rd_rsp_valid,.rd_rsp_ready(load_rd_take),
+         .rd_rsp_tag(good_rd ? accepted_load_tag : accepted_load_tag ^ 64'd1),.rd_rsp_data,
+@@ -116,7 +127,9 @@ module s128_attention_core_scope #(
+         .s_rsp_ready(load_s_take),.s_rsp_tag(s_rsp_error ? accepted_s_tag ^ 32'd1 : accepted_s_tag));
+     assign rd_rsp_ready=load_rd_take;
+ 
+-    wire dot_active=state==DOT_BEGIN||state==DOT_BEGIN_WAIT||state==DOT_STEP||state==DOT_WAIT;
++    wire dot_snapshot=state==V_SAVE||state==V_SAVE_WAIT||state==V_RESTORE||state==V_RESTORE_WAIT;
++    wire dot_restore=state==V_RESTORE||state==V_RESTORE_WAIT;
++    wire dot_active=state==DOT_BEGIN||state==DOT_BEGIN_WAIT||state==DOT_STEP||state==DOT_WAIT||dot_snapshot;
+     wire dot_begin=state==DOT_BEGIN||state==DOT_BEGIN_WAIT;
+     wire dot_ready,dot_done,dot_error,dot_aborted,dot_final;
+     wire [1:0] dot_kind,dot_mask;
+@@ -126,15 +139,27 @@ module s128_attention_core_scope #(
+     wire [9:0] dot_s_address;
+     wire [127:0] dot_s_data;
+     wire [9:0] dot_result=av ? out_base+{5'd0,group_index,1'b0} : score_base+first[11:2];
+-    dot_s32_s128 #(.ROWS(1),.REFILL_NEXT(1'b1),.CHECKPOINT(1'b1)) dot(
+-        .clk,.reset(datapath_reset),.cmd_valid(state==DOT_BEGIN||state==DOT_STEP),.cmd_ready(dot_ready),
+-        .cmd_kind(dot_begin ? 2'd0 : 2'd1),.cmd_key(service_done_owner),.cmd_tag(serial),
+-        .cmd_full_k(av ? count : 16'd128),.cmd_k_offset(av&&!dot_begin ? first : 16'd0),
++    wire [9:0] snapshot_base=work_base+(group_index[0] ? 10'd135 : 10'd128);
++    wire [9:0] b_offset=dot_s_address-work_base;
++    // Dot sees its existing two-word rows. One physical four-word row serves
++    // the even and odd output groups in separate passes over the same span.
++    wire shared_v_word=REUSE_V&&av&&!dot_snapshot&&!dot_s_write&&b_offset<10'd64;
++    wire [9:0] physical_dot_address=shared_v_word ?
++        work_base+{b_offset[8:1],group_index[0],b_offset[0]} : dot_s_address;
++    dot_s32_s128 #(.ROWS(1),.REFILL_NEXT(1'b1),.CHECKPOINT(1'b1),
++                   .AV_MAX_K(32'(AV_CHUNK))) dot(
++        .clk,.reset(datapath_reset),.cmd_valid(state==DOT_BEGIN||state==DOT_STEP||
++                 state==V_SAVE||state==V_RESTORE),.cmd_ready(dot_ready),
++        .cmd_kind(dot_snapshot ? 2'd3 : dot_begin ? 2'd0 : 2'd1),.cmd_key(service_done_owner),.cmd_tag(serial),
++        .cmd_full_k(av ? count : 16'd128),
++        .cmd_k_offset(state==V_SAVE ? first+{8'd0,av_length} : av&&!dot_begin ? first : 16'd0),
+         .cmd_chunk_k(dot_begin ? 8'd0 : av ? av_length : 8'd128),.cmd_n(av ? 4'd8 : qk_columns),
+-        .cmd_rows(3'd1),.cmd_shift(6'd16),.cmd_layout(av),.cmd_a_base(av ? score_base+first[11:2] : q_base),
+-        .cmd_b_base(work_base),.cmd_result_base(dot_result),.cmd_sources_committed(1'b1),
++        .cmd_rows(3'd1),.cmd_shift(6'd16),.cmd_layout(dot_snapshot ? dot_restore : av),
++        .cmd_a_base(dot_snapshot ? snapshot_base : av ? score_base+first[11:2] : q_base),
++        .cmd_b_base(dot_snapshot ? 10'd1 : work_base),.cmd_result_base(dot_result),.cmd_sources_committed(1'b1),
+         .abort_valid(1'b0),.abort_key(128'd0),.abort_ready(),
+-        .rsp_valid(dot_done),.rsp_ready(state==DOT_BEGIN_WAIT||state==DOT_WAIT),.rsp_kind(dot_kind),
++        .rsp_valid(dot_done),.rsp_ready(state==DOT_BEGIN_WAIT||state==DOT_WAIT||
++                    state==V_SAVE_WAIT||state==V_RESTORE_WAIT),.rsp_kind(dot_kind),
+         .rsp_key(dot_key),.rsp_tag(dot_tag),.rsp_error(dot_error),.rsp_aborted(dot_aborted),
+         .rsp_done(dot_final),.rsp_written_mask(dot_mask),.s_req_valid(dot_s_valid),
+         .s_req_ready(dot_active&&s_req_ready),.s_req_write(dot_s_write),.s_req_address(dot_s_address),
+@@ -182,7 +207,7 @@ module s128_attention_core_scope #(
+         end else if(dot_active) begin
+             s_req_valid=dot_s_valid;
+             s_req_write=dot_s_write;
+-            s_req_address=dot_s_address;
++            s_req_address=physical_dot_address;
+             s_req_data=dot_s_data;
+             s_rsp_ready=dot_s_take;
+         end else if(norm_active) begin
+@@ -206,12 +231,18 @@ module s128_attention_core_scope #(
+             state<=IDLE; av<=0; cancelled<=0; count<=0; first<=0; filled<=0; group_index<=0;
+             q_base<=0; score_base<=0; work_base<=0; out_base<=0; score_word<=0; k_base<=0; v_base<=0;
+             coefficient<=0; serial<=0; scale_input<=0; scale_output<=0; scale_send<=0; scale_high<=0;
+-            accepted_s_tag<=0; accepted_rd_tag<=0; accepted_load_tag<=0;
++            load_s_tags[0]<=0; load_s_tags[1]<=0;
++            load_s_head<=0; load_s_tail<=0;
++            accepted_rd_tag<=0; accepted_load_tag<=0;
+             service_done_owner<=0; service_done_ticket<=0; service_done_status<=0;
+             service_done_read_bytes<=0; service_done_write_bytes<=0;
+         end else begin
+             if(cancel) cancelled<=1;
+-            if(load_s_valid&&load_active&&s_req_ready) accepted_s_tag<=load_s_tag;
++            if(load_s_valid&&load_active&&s_req_ready) begin
++                load_s_tags[load_s_tail]<=load_s_tag;
++                load_s_tail<=!load_s_tail;
++            end
++            if(load_active&&s_rsp_valid&&load_s_take) load_s_head<=!load_s_head;
+             if(rd_valid&&rd_ready) begin
+                 accepted_rd_tag<=rd_tag;
+                 accepted_load_tag<=load_rd_tag;
+@@ -237,7 +268,7 @@ module s128_attention_core_scope #(
+                 DOT_BEGIN: if(dot_ready) state<=DOT_BEGIN_WAIT;
+                 DOT_BEGIN_WAIT: if(dot_done) begin
+                     if(!dot_tag_ok||dot_kind!=0||dot_final||dot_mask!=0) fault();
+-                    else state<=av ? V_REFILL : DOT_STEP;
++                    else state<=!av||REUSE_V ? DOT_STEP : V_REFILL;
+                 end
+                 DOT_STEP: if(dot_ready) state<=DOT_WAIT;
+                 DOT_WAIT: if(dot_done) begin
+@@ -247,17 +278,24 @@ module s128_attention_core_scope #(
+                         if(remaining<=8) state<=SCALE_READ;
+                         else begin first<=first+8; state<=K_REFILL; end
+                     end else if(!final_chunk) begin
+-                        first<=first+{8'd0,av_length}; filled<=0; state<=V_REFILL;
++                        if(REUSE_V) state<=V_SAVE;
++                        else begin first<=first+{8'd0,av_length}; filled<=0; state<=V_REFILL; end
+                     end else begin
+                         service_done_write_bytes<=service_done_write_bytes+32;
+                         if(group_index==15) begin
+-                            if(service_done_read_bytes!=32'(count)*2560 || service_done_write_bytes!=480) fault();
++                            if(service_done_read_bytes!=32'(count)*(512+512*V_READS_PER_16) ||
++                                service_done_write_bytes!=480) fault();
+                             else begin
+                                 if(cancelled||cancel) service_done_status<=ABORTED;
+                                 state<=REPORT;
+                             end
+                         end else begin
+-                            group_index<=group_index+1'b1; first<=0; filled<=0; state<=DOT_BEGIN;
++                            group_index<=group_index+1'b1;
++                            if(REUSE_V&&!group_index[0]) state<=first==0 ? DOT_BEGIN : V_RESTORE;
++                            else begin
++                                first<=0; filled<=0;
++                                state<=REUSE_V ? V_REFILL : DOT_BEGIN;
++                            end
+                         end
+                     end
+                 end
+@@ -287,14 +325,34 @@ module s128_attention_core_scope #(
+                 N_START: if(norm_ready) state<=N_WAIT;
+                 N_WAIT: if(norm_done) begin
+                     if(norm_error||norm_aborted||norm_tag!=serial||norm_writes!={score_words,1'b0}) fault();
+-                    else begin av<=1; first<=0; filled<=0; state<=DOT_BEGIN; end
++                    else begin
++                        av<=1; first<=0; filled<=0;
++                        state<=REUSE_V ? V_REFILL : DOT_BEGIN;
++                    end
+                 end
+                 V_REFILL: if(load_ready) state<=V_WAIT;
+                 V_WAIT: if(load_done) begin
+                     if(load_error) fault();
+-                    else if(filled+16'd1=={8'd0,av_length}) state<=DOT_STEP;
++                    else if(filled+16'd1=={8'd0,av_length})
++                        state<=!REUSE_V ? DOT_STEP : first==0 ? DOT_BEGIN : V_RESTORE;
+                     else begin filled<=filled+1'b1; state<=V_REFILL; end
+                 end
++                V_SAVE: if(dot_ready) state<=V_SAVE_WAIT;
++                V_SAVE_WAIT: if(dot_done) begin
++                    if(!dot_tag_ok||dot_kind!=3||dot_final||dot_mask!=0) fault();
++                    else if(group_index[0]) begin
++                        group_index<=group_index-1'b1;
++                        first<=first+{8'd0,av_length}; filled<=0; state<=V_REFILL;
++                    end else begin
++                        group_index<=group_index+1'b1;
++                        state<=first==0 ? DOT_BEGIN : V_RESTORE;
++                    end
++                end
++                V_RESTORE: if(dot_ready) state<=V_RESTORE_WAIT;
++                V_RESTORE_WAIT: if(dot_done) begin
++                    if(!dot_tag_ok||dot_kind!=3||dot_final||dot_mask!=0) fault();
++                    else state<=DOT_STEP;
++                end
+                 // The child terminal has drained accepted SRAM/DDR requests.
+                 // Clear any AV accumulator or E output retained on a failed service.
+                 RECOVER: state<=REPORT;
+diff --git a/project/rtl/block_local_native/s128_ddr_range_load.sv b/project/rtl/block_local_native/s128_ddr_range_load.sv
+index a566fe4a1..8ce96fec3 100644
+--- a/project/rtl/block_local_native/s128_ddr_range_load.sv
++++ b/project/rtl/block_local_native/s128_ddr_range_load.sv
+@@ -1,7 +1,9 @@
+ `timescale 1ns/1ps
+ // Refill one resident S128 span from 64-byte DDR bursts. A two-burst record
+ // can select one aligned S128 word pair for the V layout without rewriting data.
+-module s128_ddr_range_load (
++module s128_ddr_range_load #(
++    parameter bit PIPELINE_WRITES = 1'b0
++) (
+     input logic clk, reset,
+     input logic launch_valid,
+     output logic launch_ready,
+@@ -35,11 +37,18 @@ module s128_ddr_range_load (
+     logic [1:0] word;
+     logic pair, pair_beat, pair_high;
+     logic [511:0] data;
++    logic [2:0] sent, acknowledged;
++    wire [2:0] write_count = pair ? 3'd2 : 3'd4;
++    wire pipe_ack = s_rsp_valid && s_rsp_ready;
++    wire pipe_send = s_valid && s_ready;
++    wire [9:0] ack_address = s_base + (pair ? {9'd0, acknowledged[0]} : {burst, acknowledged[1:0]});
++    wire bad_ack = pipe_ack && s_rsp_tag != {22'h12a000, ack_address};
+ 
+     wire [11:0] launch_words = launch_pair ? 12'd2 : {2'b0, launch_bursts, 2'b0};
+     wire [64:0] launch_end = {1'b0, launch_base} + {51'd0, launch_bursts, 6'd0};
+     wire legal = launch_base[5:0] == 0 && launch_bursts != 0 &&
+-        (!launch_pair || launch_bursts == 2) && launch_end <= (65'd1 << 64) &&
++        (!launch_pair || launch_bursts == 2 || (launch_bursts == 1 && !launch_pair_beat)) &&
++        launch_end <= (65'd1 << 64) &&
+         {2'b0, launch_s_base} + launch_words <= 12'd1024;
+     wire store_this_burst = !pair || burst[0] == pair_beat;
+     wire last_word = pair ? word[0] : &word;
+@@ -52,11 +61,15 @@ module s128_ddr_range_load (
+     assign rd_address = base + {50'd0, burst, 6'd0};
+     assign rd_tag = {56'd0, burst};
+     assign rd_rsp_ready = !reset && state == READ_WAIT;
+-    assign s_valid = !reset && state == STORE;
+-    assign s_address = s_base + (pair ? {9'd0, word[0]} : {burst, word});
+-    assign s_data = data[{data_lane, 7'd0}+:128];
++    assign s_valid = !reset && state == STORE && (!PIPELINE_WRITES ||
++        (sent < write_count && (sent - acknowledged < 3'd2 || pipe_ack)));
++    wire [1:0] write_word = PIPELINE_WRITES ? sent[1:0] : word;
++    assign s_address = s_base + (pair ? {9'd0, write_word[0]} : {burst, write_word});
++    wire [1:0] write_lane = PIPELINE_WRITES ? (pair ? {pair_high, sent[0]} : sent[1:0]) : data_lane;
++    assign s_data = data[{write_lane, 7'd0}+:128];
+     assign s_tag = {22'h12a000, s_address};
+-    assign s_rsp_ready = !reset && state == STORE_WAIT;
++    assign s_rsp_ready = !reset && (PIPELINE_WRITES
++        ? state == STORE && acknowledged < sent : state == STORE_WAIT);
+ 
+     always_ff @(posedge clk) begin
+         if (reset) begin
+@@ -70,6 +83,8 @@ module s128_ddr_range_load (
+             pair_beat <= 0;
+             pair_high <= 0;
+             data <= 0;
++            sent <= 0;
++            acknowledged <= 0;
+             done_error <= 0;
+         end else begin
+             case (state)
+@@ -92,6 +107,8 @@ module s128_ddr_range_load (
+                         state <= REPORT;
+                     end else if (store_this_burst) begin
+                         data <= rd_rsp_data;
++                        sent <= 0;
++                        acknowledged <= 0;
+                         state <= STORE;
+                     end else if (last_burst) begin
+                         state <= REPORT;
+@@ -100,7 +117,20 @@ module s128_ddr_range_load (
+                         state <= READ;
+                     end
+                 end
+-                STORE: if (s_valid && s_ready) state <= STORE_WAIT;
++                STORE: if (PIPELINE_WRITES) begin
++                    if (pipe_send) sent <= sent + 1'b1;
++                    if (pipe_ack) begin
++                        acknowledged <= acknowledged + 1'b1;
++                        if (bad_ack) done_error <= 1;
++                        if (acknowledged + 1'b1 == write_count) begin
++                            if (last_burst || done_error || bad_ack) state <= REPORT;
++                            else begin
++                                burst <= burst + 1'b1;
++                                state <= READ;
++                            end
++                        end
++                    end
++                end else if (s_valid && s_ready) state <= STORE_WAIT;
+                 STORE_WAIT: if (s_rsp_valid && s_rsp_ready) begin
+                     if (s_rsp_tag != s_tag) begin
+                         done_error <= 1;
+diff --git a/project/rtl/native_s32_dot/dot_s32_s128.sv b/project/rtl/native_s32_dot/dot_s32_s128.sv
+index cc9cf5d83..2d5e4234b 100644
+--- a/project/rtl/native_s32_dot/dot_s32_s128.sv
++++ b/project/rtl/native_s32_dot/dot_s32_s128.sv
+@@ -6,7 +6,8 @@
+ // Reset is a coherent service/S reset. A local cancel drains every accepted
+ // response and keeps an already offered request stable until it is accepted.
+ module dot_s32_s128 #(
+- parameter integer ROWS=1, parameter bit REFILL_NEXT=0,parameter bit CHECKPOINT=0
++ parameter integer ROWS=1, parameter bit REFILL_NEXT=0,parameter bit CHECKPOINT=0,
++ parameter integer AV_MAX_K=128
+ ) (
+  input wire clk,reset,
+  input wire cmd_valid,output wire cmd_ready,input wire [1:0] cmd_kind,
+@@ -166,15 +167,15 @@ module dot_s32_s128 #(
+    end
+   end
+  end
+- // All window sizes are physical reservations for a K128 chunk. A uses
+- // 32 S words per query; B uses 32 per column (N-major) or256 words K-major.
++ // QK reserves a K128 chunk. AV reserves the configured number of K rows.
+  // A/B/result cannot alias. Sources must have true producer ACK proof before
+  // CHUNK is offered; this flag is a contract input, not a guessed cache hit.
+- wire [12:0] a_end={3'd0,cmd_a_base}+13'(int'(rows)*32);
+- wire [12:0] b_end={3'd0,cmd_b_base}+(layout?13'd256:13'(int'(n)*32));
++ wire [12:0] a_end={3'd0,cmd_a_base}+13'(int'(rows)*(layout ? AV_MAX_K/4 : 32));
++ wire [12:0] b_end={3'd0,cmd_b_base}+(layout?13'(AV_MAX_K*2):13'(int'(n)*32));
+  wire [12:0] r_end={3'd0,result_base}+13'(int'(rows)*2);
+  wire chunk_bad=!owned||cmd_key!=key||!cmd_sources_committed||cmd_k_offset!=next_chunk||
+-  cmd_chunk_k==0||cmd_chunk_k>128||{1'b0,cmd_k_offset}+{9'd0,cmd_chunk_k}>{1'b0,full_k}||
++  cmd_chunk_k==0||cmd_chunk_k>(layout?8'(AV_MAX_K):8'd128)||
++  {1'b0,cmd_k_offset}+{9'd0,cmd_chunk_k}>{1'b0,full_k}||
+   ((cmd_chunk_k&8'd3)!=0&&{1'b0,cmd_k_offset}+{9'd0,cmd_chunk_k}!={1'b0,full_k})||
+   a_end>1024||b_end>1024||r_end>1024||
+   ({3'd0,cmd_a_base}<b_end&&{3'd0,cmd_b_base}<a_end)||
