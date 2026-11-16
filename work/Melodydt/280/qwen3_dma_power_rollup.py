@@ -15,7 +15,7 @@ def read(path):
     return json.loads(path.read_bytes())
 
 
-def summarize(transactions, subtotal, prefill, decode, calibration=None):
+def summarize(transactions, subtotal, prefill, decode, calibration=None, observations=None):
     coverage = {}
     for name in WINDOWS:
         dma = transactions[name]
@@ -43,6 +43,14 @@ def summarize(transactions, subtotal, prefill, decode, calibration=None):
                                   for signature, count in sorted(calls.items())],
                    ddr_g32_covered_power_w=watts, ddr_g32_covered_energy_mj_per_token=energy,
                    dma_power_w=None, dma_energy_mj_per_token=None)
+        if observations is not None:
+            observed = observations[0 if name == "prefill" else 1]["windows"][name]
+            bounds = observed["boundaries"]
+            if any(bounds[key] != dma[key] for key in ("start_ps", "end_ps", "elapsed_ps", "tokens")):
+                raise ValueError(f"misaligned component activity: {name}")
+            row["component_activity"] = {
+                key: observed[key] for key in ("sram_by_site", "modeled_m_by_site", "pm")
+            }
         if calibration is not None:
             cu = calibration["windows"][name]
             bounds = cu["energy_nj_range"]
@@ -64,12 +72,18 @@ if __name__ == "__main__":
     for name in ("transactions", "subtotal", "prefill", "decode", "output"):
         parser.add_argument(name, type=Path)
     parser.add_argument("--calibration", type=Path, help="DMA energy range in nJ per aligned window")
+    parser.add_argument("--component-observations", nargs=2, type=Path, metavar=("PREFILL", "DECODE"),
+                        help="Aligned SRAM, PM, and M event receipts")
     args = parser.parse_args()
     inputs = [args.transactions, args.subtotal, args.prefill, args.decode]
     summary = summarize(*(read(path) for path in inputs),
-                        calibration=read(args.calibration) if args.calibration else None)
+                        calibration=read(args.calibration) if args.calibration else None,
+                        observations=[read(path) for path in args.component_observations]
+                        if args.component_observations else None)
     if args.calibration:
         inputs.append(args.calibration)
+    if args.component_observations:
+        inputs.extend(args.component_observations)
     summary["inputs_sha256"] = {str(path): hashlib.sha256(path.read_bytes()).hexdigest() for path in inputs}
     with args.output.open("x", encoding="utf-8") as stream:
         json.dump(summary, stream, indent=2)

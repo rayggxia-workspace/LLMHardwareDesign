@@ -140,3 +140,10 @@
 - 38769452 在 BSCC-T6 完成 Qwen3 三窗回放并通过对账。38770731 完成写回无握手参考，3.950–3.967 mW。38771074 完成残差写回网表与物理验收，300 MHz DRC 0，setup/hold 裕量 +989.615/+1.093 ps。
 - 38772137 运行宽回包与活跃写回捕获，38772138 等待其通过后测活跃写回功耗。38769386、38769388 继续读侧综合。38771837 复现 M 的 300 MHz 原始时序违例，保留修复路径。三窗汇总脚本已对齐 DMA 事务、DDR＋G32 小计及 TLM 服务调用。
 - Melodydt 继续验收波形、标定和读侧物理，再补整模型分项。 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [作业与结果](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-dma-power-prep.md)
+
+## 2026-11-16（Asia/Shanghai）Qwen3 并行校准与写事务对账
+
+- C639 宽波形补验收完成，6 份 FST 回包宽度为 6,144 bit。FFN 两个配对窗口各退休 128 笔写，估算 4.803/4.871 pJ/笔。38782602 选到未启用的残差 DDR 路径，依赖 38782604 取消。
+- Qwen3 38782605 完成三窗 DDR／S128／M／PM 对账。每个 Decode 窗口的 8,960 笔 DDR 写分为 KV 3,584 与 FFN backing 5,376 笔。56 次残差由 U/SRAM 执行。完整 DMA 和片内总功耗仍待校准。
+- M 缓冲器换档 setup 仅改善 4.754 ps。原路径 `word3[54] → a_ready` 已定位，EXEC 专用校验通过严格 lint 与组合 SAT 证明。Melodydt 后续进行功能回归和 300 MHz 重布线，读回 38769386／38769388 并做读侧校准，再测 KV／FFN backing 写侧与其余片内分项。
+- [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [结果与恢复命令](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-independent-calibration.md)。进行中，登记 PR #5 待合并，Projects 待具权限维护者核验。

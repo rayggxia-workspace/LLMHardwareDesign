@@ -31,6 +31,10 @@ if [[ ${1:-} == inside ]]; then
             cp "$frozen/"*.{py,cpp} "$out/runner/"
             cp "$bundle/qwen3_dma_windows.py" "$out/runner/"
             python3 -B "$bundle/prepare_bscc_t6_qwen3_history.py" "$out/runner/live_history.py"
+            if [[ -f $bundle/qwen3_component_observation.py ]]; then
+                cp "$bundle/qwen3_component_observation.py" "$out/runner/"
+                python3 -B "$bundle/prepare_qwen3_component_observation.py" "$out/runner"
+            fi
             python3 -B "$bundle/qwen3_dma_windows.py" instrument "$frozen/fast_tlm_dram.cpp" "$out/instrumented_bridge.cpp"
             python3 -VV > "$out/python-version.txt"
             python3 -c 'import numpy; print(numpy.__version__)' > "$out/numpy-version.txt"
@@ -50,6 +54,7 @@ if [[ ${1:-} == inside ]]; then
             export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
             export SHORT_PROJECTION_MATH=$out/projection_math.so
             export QWEN3_FROZEN_HISTORY=$baseline/decode-live-w4-tile128-pr272-combined/assets
+            export QWEN3_COMPONENT_WINDOWS=$bundle/qualified-dma-windows.json
             export PYTHONPATH="$out/runner:$runs/issue-270/ffn-weight-05/tlm:$p/issue260-native-sram512-SMbOWTw6:$joint/systemc_benchmark:$joint/block_local_native:$experiments/block_local_native:$experiments/mother_control_native:$experiments/shared_x_control:$a/algo1/project/experiments/block_synthesis"
             python3 -B "$out/runner/fast_qwen3_short.py" \
                 "$p/LLMHardwareDesign/systemc-llm-issue153/sequence-qwen3-f4" "$qwen/qwen3-gather-01/run-114290" \
@@ -97,5 +102,8 @@ cd "$out"
 sha256sum "$bundle/replay-inputs.sha256" instrumented_bridge.cpp ddr-dma-probe.so projection_math.so \
     python-version.txt numpy-version.txt gpp-version.txt dma-windows.json \
     {prefill,decode-live}-w4-tile128-pr272-combined/{result,layer-trace,energy-*}.json > results.sha256
+if [[ -f $bundle/qwen3_component_observation.py ]]; then
+    sha256sum {prefill,decode-live}-w4-tile128-pr272-combined/component-observation.json >> results.sha256
+fi
 sha256sum -c results.sha256
 echo QWEN3_DMA_THREE_WINDOWS_PASS

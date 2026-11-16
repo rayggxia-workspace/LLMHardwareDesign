@@ -13,11 +13,15 @@ path = Path(sys.argv[1])
 text = path.read_text()
 start = text.index('"$model_env/bin/python" -B "$EXP/$prepare"')
 stop = text.index(' provider_sources+=(+define+NATIVE_FFN_RUNTIME_REARM', start)
-text = text[:start] + 'test -s "$g/program.json"\nif [[ "$scope" == history-final-product-ffn* ]]; then\n' + text[stop:]
+text = (text[:start] + 'test -s "$g/program.json"\nln -s "$g" "$case_dir/generated"\n'
+        'if [[ "$scope" == history-final-product-ffn* ]]; then\n' + text[stop:])
 for before, after in (
     ('g=$case_dir/generated', 'g=${C639_GENERATED:?}'),
     ('vlt=/public/home/yuzelu/opt/eda/verilator-5.042/bin/verilator', 'vlt=${C639_VERILATOR:?}'),
     ('--trace-fst --trace-depth 4', '--trace-fst --trace-depth 4 --trace-max-width 8192'),
+    ('"$model_env/bin/python" -B "$run/source/$EXP/audit_decode638_qkv_page.py"',
+     'python3 -B "$run/source/$EXP/audit_decode638_qkv_page.py"'),
+    ('find generated -maxdepth 1', 'find -H generated -maxdepth 1'),
 ):
     text = replace_once(text, before, after)
 path.write_text(text)
