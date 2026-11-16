@@ -5,7 +5,7 @@ import re
 import sys
 
 
-def extract(netlist, raw, output, target, first, last, frequency):
+def extract(netlist, raw, output, target, first, last, frequency, expected_port_bits=1330):
     port_pattern = r"^\s*(input|output)\s+(?:\[(\d+):(\d+)\]\s+)?(\w+);"
     ports = {}
     for line in netlist.open():
@@ -14,8 +14,8 @@ def extract(netlist, raw, output, target, first, last, frequency):
             ports[name] = (direction, int(high) - int(low) + 1 if high else 1)
         elif re.match(r"^\s*wire ", line):
             break
-    if sum(width for _, width in ports.values()) != 1330:
-        raise ValueError("unexpected routed M interface size")
+    if sum(width for _, width in ports.values()) != expected_port_bits:
+        raise ValueError(f"unexpected routed interface size, expected {expected_port_bits} bits")
 
     if frequency not in (100, 300):
         raise ValueError("expected 100 or 300 MHz")
