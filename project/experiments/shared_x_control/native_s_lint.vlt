@@ -1,0 +1,7 @@
+`verilator_config
+// Exact imported source scopes only. The base intentionally ties off its wide
+// interface. The bank's generated behavioral model intentionally captures inputs
+// with blocking assignments and updates memory/dout after functional delays.
+// Candidate mux/front/copy/testbench warnings remain fatal, including UNOPTFLAT.
+lint_off -rule PINCONNECTEMPTY -file "upstream/local_s_base.sv"
+lint_off -rule BLKSEQ -file "*/s_sram_256x128_freepdk45.v"

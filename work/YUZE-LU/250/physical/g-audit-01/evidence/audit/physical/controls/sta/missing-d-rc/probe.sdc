@@ -1,0 +1,10 @@
+set_cmd_units -time ns -capacitance fF -resistance kOhm -distance um
+create_clock -name core -period 10 [get_ports clk]
+set_clock_uncertainty .1 [get_clocks core]
+set_clock_transition .05 [get_clocks core]
+set_input_delay -clock core -max 1 [get_ports d]
+set_input_delay -clock core -min .5 [get_ports d]
+set_output_delay -clock core -max 1 [get_ports q]
+set_output_delay -clock core -min .2 [get_ports q]
+set_driving_cell -lib_cell BUF_X2 -pin Z [get_ports d]
+set_load 2 [get_ports q]

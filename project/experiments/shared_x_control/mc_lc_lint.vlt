@@ -1,0 +1,5 @@
+`verilator_config
+// The imported qualified MC reset is asynchronous, LC/register PM reset is
+// synchronous. This fixture holds both through complete clock edges and
+// requires actual transport drain before session rearm. No RTL warning waiver.
+lint_off -rule SYNCASYNCNET -file "*/shared_x_control/rtl/tb_mc_lc_native.sv"

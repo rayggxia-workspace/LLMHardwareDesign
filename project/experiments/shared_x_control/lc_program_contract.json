@@ -1,0 +1,39 @@
+{
+  "status": "mutable_PM_and_boot_unit_passed_not_native_LC_program_integration",
+  "module": "rtl/lc_program_store_1k.sv",
+  "image_ABI": "0x02500002",
+  "image_capacity_ID": "0x02510001",
+  "image_instruction_version": 2,
+  "instruction_bits": 64,
+  "PM_bytes": 1024,
+  "PM_implementation": "64 x 128 actual mutable registers; not qualified data SRAM and not zero-area constant ROM",
+  "PM_storage_bits": 8192,
+  "PM_response_register_bits": 128,
+  "scope_register_bytes_separate": 128,
+  "scope_registers_free_in_PM": false,
+  "boot": {
+    "config_operations": ["BEGIN", "sequential_WRITE128", "SEAL", "INVALIDATE"],
+    "new_isa_opcodes": false,
+    "BEGIN": "requires idle LC, actually drained transport and no held PM response; strictly newer generation, correct ABI/capacity, aligned128..1024B image",
+    "WRITE": "one exact sequential128bit word, actual memory-write receipt; no hole or address wrap",
+    "SEAL": "read every actual programmed byte with reflected IEEE CRC32 polynomial0xedb88320, initial/final XOR0xffffffff; one byte/cycle, no hidden instantaneous CRC",
+    "certification": "CRC must match host expected value and header magic/version/local-role/length/ABI/capacity must match; full instruction/table semantics remain interpreter validation",
+    "reset": "revokes certification; program bits need not be cleared. Global owner/reset and old transport-drain protocol remains mandatory outside this PM."
+  },
+  "kernel": {
+    "instructions": ["L_EXEC resource0 token0 descriptor0", "L_WAIT mask1", "L_END"],
+    "instruction_words": 3,
+    "instruction_bytes": 24,
+    "aligned_instruction_bytes": 32,
+    "header_bytes": 128,
+    "task_bytes": 64,
+    "execution_bytes": 128,
+    "image_bytes": 352,
+    "candidate_native_service": "0x0250; must be explicitly registered by native LC integration, old provider does not gain this service",
+    "CRC_readback_cycles": 352,
+    "does_not_implement_outer_Nchunk_or_FFN_loop": true
+  },
+  "runtime": "single128bit PM read port, one held response, aligned address strictly below certified image length; every fetch and response handshake remains real",
+  "old_U_C_full_image_compatibility": "not claimed; their1216/1072B old images exceed1KiB and are rejected. New scope kernels must fit and register their actual service/capability.",
+  "not_done": ["MC packetv2 to actual LC interpreter bridge", "LC boot/PREPARE interlock integration", "real typed scope fetch and native service", "five group program execution", "physical area and300MHz"]
+}

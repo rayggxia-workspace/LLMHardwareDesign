@@ -1,0 +1,30 @@
+{
+  "schema": "real-native-control-global-evidence/1",
+  "run": 57,
+  "job": 102329,
+  "source": "91f89e6cd",
+  "state": "FAILED",
+  "note": "Strict global FENCE fixture unused local diagnostic tag; no RTL waiver or functional result",
+  "allocation_CPUs": 60,
+  "elapsed_seconds": 2.0,
+  "TotalCPU_seconds": 2.0,
+  "package": "runs/issue250-control-prep-20261110-57.pack.tar.gz",
+  "package_sha256": "1b1cf0300718159495fe6fde3c630acb7a5a6dfd5c6b6d862fd48dc4289529f7",
+  "package_transport_manifest": "runs/issue250-control-prep-20261110-57.pack.tar.gz.manifest.json",
+  "package_transport_manifest_sha256": "5245167d4f62d7e9f5f096140285bbd809ad5436a9a6104cdd9705037a5208d6",
+  "package_members": 160,
+  "functional_clock_ns": 10,
+  "not_300MHz_STA": true,
+  "qualification": "LOCAL_CONTIG K128/256 static W8A16, explicit shift8/zero bias. Actual MC/LC PM, true four-bank S, M and global DMA only in named global fixtures. FENCE/cancel/admission fixtures retain their explicitly pinned backend. No streamed whole projection, whole FFN/model, five-provider, physical, energy or token/s qualification.",
+  "logs": [],
+  "failures": [
+    {
+      "path": "./results/build-p-global-fence.log",
+      "errors": [
+        "%Warning-UNUSEDSIGNAL: project/experiments/shared_x_control/rtl/tb_p_program_global_fence.sv:169:15: Signal is not used: 'dma_fault_local_tag'",
+        "%Error: Exiting due to 1 warning(s)"
+      ]
+    }
+  ],
+  "timing_from_real_RTL": []
+}

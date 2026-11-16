@@ -172,3 +172,7 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+
+## Issue250 流式窗口和完整费用诊断
+
+执行与离线复核命令见[progress04](experiments/issue-250-native-progress-04.md)。RTL仅在Slurm按c64六任务各10核；SystemC c96八任务各12核。`deploy_distributed_mid.py`/`deploy_p_scope_stream.py`冻结已提交源到新的拥有者远程目录；bank/工具SHA锁在runner。完整raw日志较大时`collect_range.py --receipt-cache CACHE`保留已授权集群原包和本机同字节镜像，Git留source/URI/字节/SHA；全审计须该镜像，索引不代替日志。旧provider默认拒绝service2，不能只换decoder而宣称实际程序可运行。

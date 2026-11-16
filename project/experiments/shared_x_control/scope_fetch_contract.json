@@ -1,0 +1,63 @@
+{
+  "status": "bounded_DDR_request_return_unit_passed_not_global_credit_or_native_LC_integration",
+  "module": "rtl/lc_scope_fetch128.sv",
+  "live_scope_limit": 1,
+  "scope_storage_bytes": 128,
+  "scope_storage_is_the_LC_parameter_registers": true,
+  "extra_descriptor_response_FIFO_bytes": 0,
+  "request": {
+    "scope_reference_bits": 64,
+    "scope_alignment_bytes": 128,
+    "scope_length_bytes": 128,
+    "actual_beat_bytes": 64,
+    "requests_per_scope": 2,
+    "maximum_inflight_beats": 2,
+    "tag_bits": {
+      "monotonic_serial31": [
+        1,
+        31
+      ],
+      "half": [
+        0,
+        1
+      ]
+    },
+    "record_beats": 2,
+    "channel": "reference[11]; entire aligned128B scope remains on its record channel",
+    "global_adapter": "MC must reserve one descriptor on first beat and one beat credit per actual64B acceptance; compete with W using the same per-channel32/32 pools. Not wired by this unit."
+  },
+  "CRC": {
+    "field_bytes": [
+      124,
+      127
+    ],
+    "covered_bytes": [
+      0,
+      123
+    ],
+    "kind": "reflected IEEE CRC32, polynomial0xedb88320, init/finalxor0xffffffff",
+    "real_scan_cycles": 124,
+    "per_scope_expected_CRC_from_host_or_MC_GPR": false,
+    "deployment_table_integrity": "separate whole-table SHA256 binding; inlineCRC is data integrity and not security authentication"
+  },
+  "ownership": "full MC/task owner128 and task ticket32 retained until fetch response is accepted AND matching explicit release; taking raw descriptor does not free scope storage",
+  "source_lifetime": "one monotonic31bit serial per accepted scope, no reuse within a session; exhaustion requires newer session initialization and actual external transport drain. Reset/rearm cannot assert that drain by itself.",
+  "cancel": "stop new requests; preserve any already proffered request until actual acceptance; drain every accepted64B return; reject wrong/duplicate/old serial without modifying expected data or credits; never execute a partial descriptor",
+  "typed_decode": "CRC success supplies raw128B to a separate provider-specific decoder. It must validate schema/version/capacity/topology/source key/object version/bounds before EXEC. CRC success alone is not typed admission.",
+  "not_done": [
+    "actual shared MC global descriptor/beat adapter",
+    "provider-specific typed scope decoder",
+    "MC packetv2 to LC runtime",
+    "five group native program execution",
+    "physical area and300MHz"
+  ],
+  "partial_cancel_CLOSE": {
+    "required_if": "some but not all two beats issued, after all held requests accepted and no more issue is possible",
+    "fields": {
+      "tag_base32": "{monotonic_serial31,0}",
+      "valid": "held through real global registry acceptance",
+      "ready": "real no-more-issue registration, not an unbounded queue"
+    },
+    "retirement": "all accepted returns AND matching partial CLOSE accepted; zero-issued scopes allocate no global descriptor; normal full record closes implicitly"
+  }
+}

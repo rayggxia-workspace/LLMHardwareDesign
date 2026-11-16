@@ -1,0 +1,33 @@
+{
+  "schema": "real-native-control-global-evidence/1",
+  "run": 51,
+  "job": 102301,
+  "source": "114cec2bd",
+  "state": "FAILED",
+  "note": "Strict actual global join exposed process-dependency UNOPTFLAT; no waiver or function result",
+  "allocation_CPUs": 60,
+  "elapsed_seconds": 4.0,
+  "TotalCPU_seconds": 1.7,
+  "package": "runs/issue250-control-prep-20261110-51.pack.tar.gz",
+  "package_sha256": "f9d93b4c2a6459652e99ccb2c4a9d7bf68286fb918ea99c2c460da93c3adbf30",
+  "package_transport_manifest": "runs/issue250-control-prep-20261110-51.pack.tar.gz.manifest.json",
+  "package_transport_manifest_sha256": "09918551194c5de4b85a17813c05b5e3f3837df0b99e2d617c834d6ab5aaf52b",
+  "package_members": 155,
+  "functional_clock_ns": 10,
+  "not_300MHz_STA": true,
+  "qualification": "LOCAL_CONTIG K128/256 static W8A16, explicit shift8/zero bias. Actual MC/LC PM, true four-bank S, M and global DMA only in named global fixtures. FENCE/cancel/admission fixtures retain their explicitly pinned backend. No streamed whole projection, whole FFN/model, five-provider, physical, energy or token/s qualification.",
+  "logs": [],
+  "failures": [
+    {
+      "path": "./results/build-p-fabric.log",
+      "errors": [
+        "%Warning-UNOPTFLAT: project/experiments/shared_x_control/rtl/tb_p_program_fabric.sv:164:26: Signal unoptimizable: Circular combinational logic: 'tb_p_program_fabric.d_req_ready'",
+        "%Warning-UNOPTFLAT: /public/home/yuzelu/project-circuit/issue250-control-prep-20261110-51/M_native/m_native_leaf_s32.sv:433:7: Signal unoptimizable: Circular combinational logic: 'tb_p_program_fabric.M.event_port_free'",
+        "%Warning-UNOPTFLAT: project/experiments/shared_x_control/rtl/tb_p_program_fabric.sv:108:62: Signal unoptimizable: Circular combinational logic: 'tb_p_program_fabric.mc_rsp_ready'",
+        "%Warning-UNOPTFLAT: /public/home/yuzelu/project-circuit/issue250-control-prep-20261110-51/M_native/weight_records.sv:122:7: Signal unoptimizable: Circular combinational logic: 'tb_p_program_fabric.M.native.weights.base_controls'",
+        "%Error: Exiting due to 4 warning(s)"
+      ]
+    }
+  ],
+  "timing_from_real_RTL": []
+}

@@ -1,0 +1,10 @@
+`verilator_config
+// Imported MC asynchronous reset and native LC synchronous reset intentionally
+// share this functional fixture; reset is held through complete clock edges.
+lint_off -rule SYNCASYNCNET -file "*/shared_x_control/rtl/tb_p_program_numeric.sv"
+lint_off -rule SYNCASYNCNET -file "*/shared_x_control/rtl/tb_p_program_fabric.sv"
+lint_off -rule SYNCASYNCNET -file "*/shared_x_control/rtl/tb_p_program_global_fence.sv"
+lint_off -rule SYNCASYNCNET -file "*/shared_x_control/rtl/tb_p_program_global_cancel.sv"
+lint_off -rule SYNCASYNCNET -file "*/shared_x_control/rtl/tb_p_stream_program.sv"
+lint_off -rule SYNCASYNCNET -file "*/shared_x_control/rtl/tb_p_m2_program.sv"
+lint_off -rule SYNCASYNCNET -file "*/shared_x_control/rtl/tb_p_m2_scope_wrap.sv"

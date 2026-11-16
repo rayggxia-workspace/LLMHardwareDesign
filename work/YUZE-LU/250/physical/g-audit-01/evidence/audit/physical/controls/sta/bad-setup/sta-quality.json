@@ -1,0 +1,66 @@
+{
+  "passed": false,
+  "checks": {
+    "endpoint_set_nonempty": true,
+    "all_endpoint_slacks_finite": true,
+    "all_setup_nonnegative": false,
+    "all_hold_nonnegative": true,
+    "native_setup_count_zero": false,
+    "native_hold_count_zero": true,
+    "native_check_setup_pass": true,
+    "native_time_ns": true,
+    "native_capacitance_ff": true,
+    "core_clock_propagated": true,
+    "connected_clock_positive_control": true,
+    "capacitance_count_zero": true,
+    "capacitance_margin_nonnegative": true,
+    "slew_count_zero": true,
+    "slew_margin_nonnegative": true,
+    "fanout_count_zero": true,
+    "fanout_margin_nonnegative": true,
+    "capacitance_and_slew_limits_exist": true
+  },
+  "endpoint_count": 2,
+  "reported_endpoint_count": 3,
+  "explicit_unused_internal_outputs": {
+    "u0/QN": {
+      "reason": "Internal output has no connected native flat fanout through any arcs",
+      "fanout": 0
+    }
+  },
+  "minimum_setup_ns": -1.087989,
+  "minimum_hold_ns": 0.181206,
+  "endpoints_without_finite_both_limits": [],
+  "native_summary": {
+    "setup_checks": 2.0,
+    "hold_checks": 0.0,
+    "connected_clock_fanout": 2.0,
+    "check_setup": 1.0,
+    "time_unit_seconds": 9.999999717180685e-10,
+    "capacitance_unit_farads": 1.0000000036274937e-15
+  },
+  "electrical": {
+    "capacitance": {
+      "count": 0,
+      "slack": 57.72999954223633,
+      "limit": 60.72999954223633,
+      "has_limit": true
+    },
+    "slew": {
+      "count": 0,
+      "slack": 0.18761658668518066,
+      "limit": 0.1985349953174591,
+      "has_limit": true
+    },
+    "fanout": {
+      "count": 0,
+      "slack": 1.0000000150474662e+30,
+      "limit": 1.0000000150474662e+30,
+      "has_limit": false
+    }
+  },
+  "clocks": {
+    "core": "1"
+  },
+  "scope": "Complete native STA only; physical routing/PG/geometry/RC coverage and exact final-netlist functionality remain independently required"
+}

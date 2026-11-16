@@ -1,0 +1,46 @@
+{
+  "status": "candidate_stream_parser_and_real_S_unit_not_production_LC_integration",
+  "module": "rtl/bounded_serial_m_guard.sv",
+  "generator": "derive_serial_guard.py",
+  "macro_response_abi": "0x02504d02",
+  "internal_guard_default_abi": "0x02500001",
+  "controller_packet_v2_abi_is_distinct": "0x02500002",
+  "provider": "P_S32_static_W8A16",
+  "service": {"resource": 0, "id": 32},
+  "storage": {
+    "command_metadata_slots": 2,
+    "result_slots": 2,
+    "result_slot_bytes": 32,
+    "extra_response_payload_FIFO_bytes": 0,
+    "parser_metadata": "state, reserved bit, input_seen, event8, status8, snapshot1"
+  },
+  "internal_full_ticket_layout": {
+    "MC_owner": [384, 128], "independent_RF_owner": [256, 128],
+    "independent_input_A_key": [128, 128], "service_identity": [0, 128],
+    "leaf_macro_pin_bus": false
+  },
+  "internal_command_payload_256_expected_response_layout": {
+    "session": [0, 32], "record": [32, 32], "RF_ticket": [64, 32],
+    "context": [96, 4], "n": [100, 4], "group_k": [104, 8],
+    "next_k": [112, 16], "full_k": [128, 16], "W_bank": [144, 2],
+    "W_generation": [146, 16], "use_sequence": [162, 16],
+    "A_slot": [178, 1], "A_generation": [179, 16], "kk": [195, 16],
+    "RF_kind": [211, 3], "reserved_zero": [214, 1],
+    "RF_final": [215, 1], "RF_snapshot": [216, 1],
+    "requires_INPUT_before_RF": [217, 1], "high_reserved_zero": [218, 38]
+  },
+  "lifetime": [
+    "Existing full command ticket/job owner is retained from native acceptance through real terminal take.",
+    "INPUT event3 matches session/record and full metadata. It ACKs only at actual EOP with recipient ready and does not complete range or free command/result storage.",
+    "RF event4 SOP matches the existing command. A snapshot reserves the existing result_tail before any payload is accepted; partial assembly counts against the same two result slots.",
+    "RF metadata must match context/n/group/nextK/fullK/ticket/Wbank/generation/use. Unknown or malformed frames drain without completing the command.",
+    "FINAL/SPILL low/high 128-bit words write directly into the reserved FIFO entry. High-word EOP capture and publication are one atomic edge.",
+    "CONTINUE has no result payload or S write; it still completes the record only after exact RF metadata and EOP.",
+    "Snapshot terminal requires two distinct actual S128 write ACKs. INPUT consumed and snapshot stored are independent events.",
+    "Matching ABORT event5 uses original EXEC session/record and four flits. Context/actual-nextK range and alignment, full input key and independent RFowner are checked in place. It does not become a snapshot or a range continuation at partial K16 prefix.",
+    "The guard exposes held native_abort_valid/ticket/nextK only after exact ABORT EOP. It retains the command until that observation is accepted and matching cancel_drained arrives. Withholding real A/W/DMA drain keeps the owner live.",
+    "Other native control frames pass straight to the bounded native scheduler; this parser does not validate their event-specific body or free an owner on them. In particular, unowned transport FAULT is not implicitly attributed to the active command.",
+    "cancel_drained_valid still requires production integration with A/raw flush, held transport and all actual DMA returns. The guard now independently requires the actual verified ABORT, but the remaining source-drain coordinator is not established by the unit fixture."
+  ],
+  "not_claimed": ["production LC microprogram", "actual M numeric execution", "full cancel/drain coordinator", "physical or 300MHz qualification"]
+}

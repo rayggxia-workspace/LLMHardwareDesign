@@ -1,0 +1,118 @@
+worst slack max 8.812011719
+worst slack min 0.181205839
+tns max 0.000000000
+tns min 0.000000000
+Startpoint: u0 (rising edge-triggered flip-flop clocked by core)
+Endpoint: q (output port clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.000000000    0.000000000 ^ u0/CK (DFF_X1)
+   0.081205495    0.081205592 v u0/Q (DFF_X1)
+   0.000000000    0.081205845 v q (out)
+                  0.081205845   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.099999994    0.099999994   clock uncertainty
+   0.000000000    0.099999994   clock reconvergence pessimism
+  -0.199999988   -0.099999994   output external delay
+                 -0.099999994   data required time
+-----------------------------------------------------------------------
+                 -0.099999994   data required time
+                 -0.081205845   data arrival time
+-----------------------------------------------------------------------
+                  0.181205839   slack (MET)
+
+
+Startpoint: d (input port clocked by core)
+Endpoint: u0 (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: min
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   0.500000000    0.500000000 ^ input external delay
+   0.001569911    0.501569927 ^ d (in)
+   0.000000000    0.501569927 ^ u0/D (DFF_X1)
+                  0.501569927   data arrival time
+
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.000000000    0.000000000 ^ u0/CK (DFF_X1)
+   0.099999994    0.100000091   clock uncertainty
+   0.000000000    0.100000091   clock reconvergence pessimism
+   0.004557988    0.104558080   library hold time
+                  0.104558080   data required time
+-----------------------------------------------------------------------
+                  0.104558080   data required time
+                 -0.501569927   data arrival time
+-----------------------------------------------------------------------
+                  0.397011817   slack (MET)
+
+
+Startpoint: u0 (rising edge-triggered flip-flop clocked by core)
+Endpoint: q (output port clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock source latency
+   0.000000000    0.000000000 ^ clk (in)
+   0.000000000    0.000000000 ^ u0/CK (DFF_X1)
+   0.087988220    0.087988317 ^ u0/Q (DFF_X1)
+   0.000000000    0.087988570 ^ q (out)
+                  0.087988570   data arrival time
+
+  10.000000000   10.000000000   clock core (rise edge)
+   0.000000000   10.000000000   clock network delay (propagated)
+  -0.099999994    9.900000572   clock uncertainty
+   0.000000000    9.900000572   clock reconvergence pessimism
+  -1.000000000    8.900000572   output external delay
+                  8.900000572   data required time
+-----------------------------------------------------------------------
+                  8.900000572   data required time
+                 -0.087988570   data arrival time
+-----------------------------------------------------------------------
+                  8.812011719   slack (MET)
+
+
+Startpoint: d (input port clocked by core)
+Endpoint: u0 (rising edge-triggered flip-flop clocked by core)
+Path Group: core
+Path Type: max
+
+         Delay           Time   Description
+-----------------------------------------------------------------------
+   0.000000000    0.000000000   clock core (rise edge)
+   0.000000000    0.000000000   clock network delay (propagated)
+   1.000000000    1.000000000 v input external delay
+   0.001150413    1.001150370 v d (in)
+   0.000000000    1.001150370 v u0/D (DFF_X1)
+                  1.001150370   data arrival time
+
+  10.000000000   10.000000000   clock core (rise edge)
+   0.000000000   10.000000000   clock source latency
+   0.000000000   10.000000000 ^ clk (in)
+   0.000000000   10.000000000 ^ u0/CK (DFF_X1)
+  -0.099999994    9.900000572   clock uncertainty
+   0.000000000    9.900000572   clock reconvergence pessimism
+  -0.038499571    9.861500740   library setup time
+                  9.861500740   data required time
+-----------------------------------------------------------------------
+                  9.861500740   data required time
+                 -1.001150370   data arrival time
+-----------------------------------------------------------------------
+                  8.860349655   slack (MET)
+
+

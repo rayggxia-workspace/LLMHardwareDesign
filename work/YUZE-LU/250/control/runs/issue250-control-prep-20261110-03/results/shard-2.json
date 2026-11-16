@@ -1,0 +1,71 @@
+{
+  "schema": "shared-x-control-audit/1",
+  "passed": true,
+  "coverage": "abstract_transaction_protocol_only_not_RTL_numeric_timing_or_physical",
+  "slurm_job_id": "102062",
+  "slurm_cpus_per_task": "10",
+  "slurm_node": "node10",
+  "shard": 2,
+  "shards": 6,
+  "python": "3.11.7",
+  "elapsed_seconds": 0.005510504357516766,
+  "process_CPU_seconds": 0.005483830000000002,
+  "source_sha256": {
+    "audit_protocol.py": "c50b04a1bd3176a0bf634e7a491c48845cd6127017337243f82e0ad570549d5e",
+    "run_audit.py": "9bfb23b33a770a9263ca0460c23836295f9fc0a2e254a7dbaee71ec89fb5544f"
+  },
+  "contract_sha256": "2f9ba9fc7da38b43214d42c8274aeebd4d6b6f72c1b128e621ccd2587464d012",
+  "cases": [
+    {
+      "name": "reject_header_capacity_version",
+      "passed": true,
+      "actual_rejection": "ABI/topology/capacity/numeric/layout mismatch",
+      "scope": "candidate_header_admission_not_binary_codec"
+    },
+    {
+      "name": "SEAL_before_fill_ACK",
+      "passed": true,
+      "expected_rejection": "SEAL before every write ACK",
+      "actual_rejection": "event 3 SEAL: SEAL before every write ACK",
+      "trace_sha256": "99ce1d381706ec662a0fab453e227c8bbfbf3832d02975bee6fba65f58b4ea5f",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "LOAD_after_END_READ",
+      "passed": true,
+      "expected_rejection": "reader is closed",
+      "actual_rejection": "event 32 LOAD_ACCEPT: reader is closed",
+      "trace_sha256": "2ef695c9db2a959105d4c1528edfe9fad0df06006bcadcdaf435b47c9d572481",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "prepared_command_cannot_accept_before_previous_retirement",
+      "passed": true,
+      "expected_rejection": "reader LOAD credit exceeded",
+      "actual_rejection": "event 13 LOAD_ACCEPT: reader LOAD credit exceeded",
+      "trace_sha256": "3e030b87b3b79f3994399d0bf9f470acb296471bc935e607935a16a9c12582a5",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "continue_group_must_be_contiguous",
+      "passed": true,
+      "expected_rejection": "group order/lifetime",
+      "actual_rejection": "event 102 M_ACCEPT: group order/lifetime",
+      "trace_sha256": "fffa3b2dfd52b775266195b61ae4d9d5b849b652d061e815945d50432b3c03cf",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "cancel_drain_retry_reset_refill_new_generation",
+      "passed": true,
+      "expected_rejection": null,
+      "actual_rejection": null,
+      "trace_sha256": "654c8851808c98449b6acf47dcbd0a5d40329a3037f73267469fc63806968827",
+      "counters_if_admitted": {
+        "fill_commits": 4,
+        "A_words_copied": 0,
+        "S_commits": 0,
+        "events": 8
+      }
+    }
+  ]
+}

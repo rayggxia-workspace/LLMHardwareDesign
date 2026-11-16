@@ -1,0 +1,390 @@
+{
+  "schema": "real-native-control-global-evidence/1",
+  "run": 59,
+  "job": 102332,
+  "source": "ea7732961",
+  "state": "FAILED",
+  "note": "Actual global cancellation reached correct fault17 and drain; fixture expected abort flag cleared before result ACK and overstated A reads",
+  "allocation_CPUs": 60,
+  "elapsed_seconds": 16.0,
+  "TotalCPU_seconds": 55.523,
+  "package": "runs/issue250-control-prep-20261110-59.pack.tar.gz",
+  "package_sha256": "59a83dd33f6912c897c71b03f728911014604e73dd7067dfcd6f9043e65ba1e9",
+  "package_transport_manifest": "runs/issue250-control-prep-20261110-59.pack.tar.gz.manifest.json",
+  "package_transport_manifest_sha256": "365f6d7be7123169575f0f46c2720284d80564bb77d950a9d50320e048d84a34",
+  "package_members": 175,
+  "functional_clock_ns": 10,
+  "not_300MHz_STA": true,
+  "qualification": "LOCAL_CONTIG K128/256 static W8A16, explicit shift8/zero bias. Actual MC/LC PM, true four-bank S, M and global DMA only in named global fixtures. FENCE/cancel/admission fixtures retain their explicitly pinned backend. No streamed whole projection, whole FFN/model, five-provider, physical, energy or token/s qualification.",
+  "logs": [],
+  "failures": [
+    {
+      "path": "./results/p-global-cancel-4-0.log",
+      "errors": [
+        "[20350000] %Fatal: tb_p_program_global_cancel.sv:759: Assertion failed in tb_p_program_global_cancel: real MC cancellation status17 calls3 cancel1 return3 fault1",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_global_cancel.sv:759: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./results/p-global-cancel-6-0.log",
+      "errors": [
+        "[20350000] %Fatal: tb_p_program_global_cancel.sv:759: Assertion failed in tb_p_program_global_cancel: real MC cancellation status17 calls3 cancel1 return3 fault1",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_global_cancel.sv:759: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./results/p-global-cancel-3-0.log",
+      "errors": [
+        "[20470000] %Fatal: tb_p_program_global_cancel.sv:759: Assertion failed in tb_p_program_global_cancel: real MC cancellation status17 calls3 cancel1 return3 fault1",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_global_cancel.sv:759: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./results/p-global-cancel-5-0.log",
+      "errors": [
+        "[20610000] %Fatal: tb_p_program_global_cancel.sv:759: Assertion failed in tb_p_program_global_cancel: real MC cancellation status17 calls3 cancel1 return3 fault1",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_global_cancel.sv:759: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./results/p-global-cancel-2-0.log",
+      "errors": [
+        "[20660000] %Fatal: tb_p_program_global_cancel.sv:759: Assertion failed in tb_p_program_global_cancel: real MC cancellation status17 calls3 cancel1 return3 fault1",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_global_cancel.sv:759: Verilog $stop"
+      ]
+    },
+    {
+      "path": "./results/p-global-cancel-1-0.log",
+      "errors": [
+        "[20190000] %Fatal: tb_p_program_global_cancel.sv:759: Assertion failed in tb_p_program_global_cancel: real MC cancellation status17 calls3 cancel1 return3 fault1",
+        "%Error: project/experiments/shared_x_control/rtl/tb_p_program_global_cancel.sv:759: Verilog $stop"
+      ]
+    }
+  ],
+  "timing_from_real_RTL": [
+    {
+      "path": "./results/p-global-cancel-1-0.csv",
+      "sha256": "a432ccd7e684371a32b0ccffbdff1b9bd44fa5a2b69bf7b44dc9e4f7fe32c820",
+      "rows": 624,
+      "event_counts": {
+        "DDR_PURGE_REQ": 1,
+        "DDR_PURGE_DONE": 1,
+        "MC_PM": 42,
+        "MC_CALL": 4,
+        "LC_PM": 68,
+        "DDR_BACKEND_REQ": 74,
+        "DDR_BACKEND_RSP": 74,
+        "SCOPE_RSP": 6,
+        "RECORD": 5,
+        "LC_M": 53,
+        "A_S_REQ": 48,
+        "M_LR": 56,
+        "DDR_REQ": 68,
+        "DDR_RSP": 68,
+        "A_M": 32,
+        "S_WRITE": 6,
+        "S_ACK": 6,
+        "COMPLETE": 5,
+        "LC_RETURN": 3,
+        "CASE_DONE": 3,
+        "INJECT_WRONG_SOURCE": 1
+      },
+      "case_cycles": [
+        {
+          "cycle": "1136",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "324",
+          "detail": "16",
+          "value": "2"
+        },
+        {
+          "cycle": "1605",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "418",
+          "detail": "32",
+          "value": "6"
+        },
+        {
+          "cycle": "2015",
+          "event": "CASE_DONE",
+          "case": "2",
+          "identity": "310",
+          "detail": "48",
+          "value": "6"
+        }
+      ]
+    },
+    {
+      "path": "./results/p-global-cancel-3-0.csv",
+      "sha256": "bfbfc8c5b360b5e09c2b38eff157359c4b51d887465e8f1864732fc28eff2373",
+      "rows": 624,
+      "event_counts": {
+        "DDR_PURGE_REQ": 1,
+        "DDR_PURGE_DONE": 1,
+        "MC_PM": 42,
+        "MC_CALL": 4,
+        "LC_PM": 68,
+        "DDR_BACKEND_REQ": 74,
+        "DDR_BACKEND_RSP": 74,
+        "SCOPE_RSP": 6,
+        "RECORD": 5,
+        "LC_M": 53,
+        "A_S_REQ": 48,
+        "M_LR": 56,
+        "DDR_REQ": 68,
+        "DDR_RSP": 68,
+        "A_M": 32,
+        "S_WRITE": 6,
+        "S_ACK": 6,
+        "COMPLETE": 5,
+        "LC_RETURN": 3,
+        "CASE_DONE": 3,
+        "INJECT_WRONG_SOURCE": 1
+      },
+      "case_cycles": [
+        {
+          "cycle": "1144",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "332",
+          "detail": "16",
+          "value": "2"
+        },
+        {
+          "cycle": "1623",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "428",
+          "detail": "32",
+          "value": "6"
+        },
+        {
+          "cycle": "2043",
+          "event": "CASE_DONE",
+          "case": "2",
+          "identity": "320",
+          "detail": "48",
+          "value": "6"
+        }
+      ]
+    },
+    {
+      "path": "./results/p-global-cancel-6-0.csv",
+      "sha256": "a6dedcd02c8e09e8161d4d9ebb3490c5bbc0760a3c14fed9d969db26c86f11f1",
+      "rows": 624,
+      "event_counts": {
+        "DDR_PURGE_REQ": 1,
+        "DDR_PURGE_DONE": 1,
+        "MC_PM": 42,
+        "MC_CALL": 4,
+        "LC_PM": 68,
+        "DDR_BACKEND_REQ": 74,
+        "DDR_BACKEND_RSP": 74,
+        "SCOPE_RSP": 6,
+        "RECORD": 5,
+        "LC_M": 53,
+        "A_S_REQ": 48,
+        "M_LR": 56,
+        "DDR_REQ": 68,
+        "DDR_RSP": 68,
+        "A_M": 32,
+        "S_WRITE": 6,
+        "S_ACK": 6,
+        "COMPLETE": 5,
+        "LC_RETURN": 3,
+        "CASE_DONE": 3,
+        "INJECT_WRONG_SOURCE": 1
+      },
+      "case_cycles": [
+        {
+          "cycle": "1141",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "329",
+          "detail": "16",
+          "value": "2"
+        },
+        {
+          "cycle": "1614",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "422",
+          "detail": "32",
+          "value": "6"
+        },
+        {
+          "cycle": "2031",
+          "event": "CASE_DONE",
+          "case": "2",
+          "identity": "317",
+          "detail": "48",
+          "value": "6"
+        }
+      ]
+    },
+    {
+      "path": "./results/p-global-cancel-2-0.csv",
+      "sha256": "084e0903b636295b85be1af73ef4f451edd278607e477f2e445fd30037964524",
+      "rows": 624,
+      "event_counts": {
+        "DDR_PURGE_REQ": 1,
+        "DDR_PURGE_DONE": 1,
+        "MC_PM": 42,
+        "MC_CALL": 4,
+        "LC_PM": 68,
+        "DDR_BACKEND_REQ": 74,
+        "DDR_BACKEND_RSP": 74,
+        "SCOPE_RSP": 6,
+        "RECORD": 5,
+        "LC_M": 53,
+        "A_S_REQ": 48,
+        "M_LR": 56,
+        "DDR_REQ": 68,
+        "DDR_RSP": 68,
+        "A_M": 32,
+        "S_WRITE": 6,
+        "S_ACK": 6,
+        "COMPLETE": 5,
+        "LC_RETURN": 3,
+        "CASE_DONE": 3,
+        "INJECT_WRONG_SOURCE": 1
+      },
+      "case_cycles": [
+        {
+          "cycle": "1150",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "338",
+          "detail": "16",
+          "value": "2"
+        },
+        {
+          "cycle": "1635",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "434",
+          "detail": "32",
+          "value": "6"
+        },
+        {
+          "cycle": "2062",
+          "event": "CASE_DONE",
+          "case": "2",
+          "identity": "327",
+          "detail": "48",
+          "value": "6"
+        }
+      ]
+    },
+    {
+      "path": "./results/p-global-cancel-5-0.csv",
+      "sha256": "5d040c5cd58515baa49d6b231ad7724e8ffcda0ac241a6139814ded6b0da09f9",
+      "rows": 624,
+      "event_counts": {
+        "DDR_PURGE_REQ": 1,
+        "DDR_PURGE_DONE": 1,
+        "MC_PM": 42,
+        "MC_CALL": 4,
+        "LC_PM": 68,
+        "DDR_BACKEND_REQ": 74,
+        "DDR_BACKEND_RSP": 74,
+        "SCOPE_RSP": 6,
+        "RECORD": 5,
+        "LC_M": 53,
+        "A_S_REQ": 48,
+        "M_LR": 56,
+        "DDR_REQ": 68,
+        "DDR_RSP": 68,
+        "A_M": 32,
+        "S_WRITE": 6,
+        "S_ACK": 6,
+        "COMPLETE": 5,
+        "LC_RETURN": 3,
+        "CASE_DONE": 3,
+        "INJECT_WRONG_SOURCE": 1
+      },
+      "case_cycles": [
+        {
+          "cycle": "1150",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "338",
+          "detail": "16",
+          "value": "2"
+        },
+        {
+          "cycle": "1630",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "429",
+          "detail": "32",
+          "value": "6"
+        },
+        {
+          "cycle": "2057",
+          "event": "CASE_DONE",
+          "case": "2",
+          "identity": "327",
+          "detail": "48",
+          "value": "6"
+        }
+      ]
+    },
+    {
+      "path": "./results/p-global-cancel-4-0.csv",
+      "sha256": "050b0548d8a1f78d59255215f7c3edd9b304d884561c4d6ffc3f99cce22260de",
+      "rows": 624,
+      "event_counts": {
+        "DDR_PURGE_REQ": 1,
+        "DDR_PURGE_DONE": 1,
+        "MC_PM": 42,
+        "MC_CALL": 4,
+        "LC_PM": 68,
+        "DDR_BACKEND_REQ": 74,
+        "DDR_BACKEND_RSP": 74,
+        "SCOPE_RSP": 6,
+        "RECORD": 5,
+        "LC_M": 53,
+        "A_S_REQ": 48,
+        "M_LR": 56,
+        "DDR_REQ": 68,
+        "DDR_RSP": 68,
+        "A_M": 32,
+        "S_WRITE": 6,
+        "S_ACK": 6,
+        "COMPLETE": 5,
+        "LC_RETURN": 3,
+        "CASE_DONE": 3,
+        "INJECT_WRONG_SOURCE": 1
+      },
+      "case_cycles": [
+        {
+          "cycle": "1140",
+          "event": "CASE_DONE",
+          "case": "0",
+          "identity": "328",
+          "detail": "16",
+          "value": "2"
+        },
+        {
+          "cycle": "1617",
+          "event": "CASE_DONE",
+          "case": "1",
+          "identity": "426",
+          "detail": "32",
+          "value": "6"
+        },
+        {
+          "cycle": "2031",
+          "event": "CASE_DONE",
+          "case": "2",
+          "identity": "314",
+          "detail": "48",
+          "value": "6"
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,39 @@
 # YUZE-LU 的进度
 
+2026-11-11更新：公共 S 的位宽复核确认旧 NoPool 9.223787 token/s 按 64 B/拍计费，仅改为 P/U 16 B/拍后同工作量为 7.595433。DDR 一直是 64 B beat。产品位宽先验证 P 的四银行对齐落地和 Dot 供数，保留现有 16 KiB 容量和窄口回归。见[位宽合同和同工作量回执](../../docs/experiments/issue-250-local-s-width.md)。
+
+
+2026-11-11更新：E32/G32 均完成最终 ODB 活动估算。G32 256 个 Qwen 双 lane 包的增量约 44.23 pJ/包。三 P 12 组全 FFN 探针显示 M 在供数期连续接收，主要耗时位于记录之间的发令、交接和等待。U.S 可选前读经 36 组完整及 48 组回绕验证，未扩大私有 S。整 token 能耗和系统物理仍在验收。见 [G32 回执](../../work/YUZE-LU/250/physical/g-energy-01/summary.json) 与 [FFN 回执](../../docs/experiments/issue-250-three-p-ffn.md)。
+
+2026-11-11更新：三P完整FFN真母控/局控/双通道DMA/16个原S bank两版各36项通过，合成整数权重与Qwen2.5-3B同尺寸。早发EXEC首个无背压样本860,202→849,914拍，36组节省0.52%–1.20%，搬运量相同。编程FFN与S80实测费用回校的SystemC估计5.999543 token/s，低于9.215647。整token实测、能耗、联合物理与DP待验收。见[回执](../../docs/experiments/issue-250-three-p-ffn.md)。
+
+2026-11-11更新：E32 AP64（234×234 µm）独立原 TT 300MHz、两种 DRC、最终网表/严格等价和 158 个研究 M10 接入通过；三P动态回传真实落地通过。已回校时间模型7.187736 token/s，AV未实现候选7.792632，均低于同条件9.215647。整层M/Down、系统物理、能耗和DP待验收。见[回执与范围](../../docs/experiments/issue-250-native-progress-06.md)。
+
+2026-11-11更新：原生S32完整decode512时间回放最佳候选7.098255 token/s，尚低于同条件9.215647；同16lane单slot驻留策略吞吐+16.74%，DP算法和部署未验收。真三P.S/G/量化86 Mid tile通过、上游M仍需接入。64-bit E真S通过，独立M/E和整系统原300MHz继续迭代。见[范围与回执](../../docs/experiments/issue-250-native-progress-05.md)。
+
+
+2026-11-11更新：完整scope动态15-pass实费诊断仅0.498712694 token/s，旧8.136179仍含动态占位，性能门未过；硬件#252独立处理。真量化/COPY/M/S与取消已测；三P86 Mid tile/六轮供数36PASS，同S预取死锁已修，S不扩容。typed2范围通过但实际outer未资格，M最终TT300MHz持续迭代。见[最新回执](../../docs/experiments/issue-250-native-progress-04.md)。
+
+2026-11-11补充：RF head II1/实际M回归、MC→LC真实PM/取参/range已测；M最终TT300MHz仍在迭代。已测guard费用回校条件结果8.136179，未达9.215647，dynamic/E/N与整系统仍未资格。详见[补充进展](../../docs/experiments/issue-250-native-progress-02.md)。
+
+## 2026-11-11：原生数据、scale与控制边界联合推进
+
+[Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) / [PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)继续实施。G32叶原TT300MHz、DRC0、最终ODB/等价及204端点研究接入通过；M完整短帧/DMA/有限RF已回归，产品P&R继续迭代。原生S128量化已从323/194降至95/60拍，真实scale目录与两A use联合回放通过；不增私有SRAM，新增寄存器和程序存储单列面积。九resident MC、真实128位传输、小LC PM及scope取参已有独立证据，但真实whole-FFN outer、控制循环、动态QK/AV/数值profile、联合物理和系统性能仍未验收。8.64697仍为待完整费用回校的条件迭代，低于旧9.21565目标；不将硬件改进记作DP收益。 详见[联合闭环台账](../../docs/experiments/issue-250-native-integration.md)。
+
+## 2026-11-11：原生存储与有限流水回校
+
+[Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)持续实施。首版方向为私有S内X、双256B A槽、同K复用和早复制，无新增共享池或4KiB X寄存器。历史NoPool9.223787已复现；公共S128诊断7.595433，同原生Xreg7.585591，尚低于旧条件目标9.215647，不宣称系统达标。真实四W银行、16×8 S32上下文/scale、G32及有限A/copy/双结果槽已有独立RTL测试；G紧凑物理和真实S流适配继续迭代。联合数值/程序、完整宏及LC/MC物理、系统计时能耗与DP仍待完成，失败/低性能结果全部保留。详见工作索引和合同。
+
+[工作索引](../../work/YUZE-LU/250/README.md)。登记PR5 pending，Projects unverified/同步pending，PR251 draft，Issue in_progress，独立审查人待指定。
+
+## 2026-11-11（CST）联合模型与S32算术推进
+
+Issue250仍实施中：已精确复现基线9.21564723269，有限队列共享X候选模型9.22603374894，继续原生S供数/有限双tile复用对照，不冻结额外共享池。main M/G/E/S紧凑物理基线14回执与5项预检通过；新组M/scale-RNE六seed两轮Slurm102063/102065通过并回收，102060编译失败及修复保留。仍缺实际模型向量、投影上下文/LC/MC、最终宏与300 MHz、系统与DP验收。按用户要求持续解决-迭代，不以部分PR或测试结束目标。[本轮入口](../../work/YUZE-LU/250/README.md)。
+
+## 2026-11-10（CST）共享X/S32底座联合实现
+
+[Issue250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) / [PR251](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/251)：已在隔离分支修订旧S128合同，明确51.2GB/s同条件9.21564723269 token/s性能门、私有S16 KiB不扩容/无LVT、共享池/权重单独面积、main紧凑最终利用率/端点和300 MHz验收。三个准备分支分别做联合性能、物理基线、控制服务；不是新宏已实现。已执行管理检查PASS，业务仿真/新EDA未完成。下一步先复现基线并评估共享X与S内X，再冻结资源推进RTL/物理和控制，最终DP适配。详见[工作索引](../../work/YUZE-LU/250/README.md)；未完成不done、不自合并。登记PR5 pending，缺board/Projects能力，状态unverified/同步pending，审查与管理员待指定。
+
 ## 2026-11-08（CST）U 原生入口和双向发送修复
 
 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) → `in_review`；[PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 待独立审查。独立 TX 槽和普通三源入口修复后，两版重新综合并通过完整原版 GDS DRC 0、TT 300 MHz、电气/PG及三档代表上层 RC。U_128 setup/hold +255.014/+14.595 ps，U_64 +73.082/+0.212 ps；最终网表 48/48、78/78 全部通过。两包及全部 1,389/2,101 文件回收核验成功，31 硬件源文件与审查代码一致。[最终回执](../../work/YUZE-LU/212/u-native-fix.md)。P 不变。用户已授权将 #221 合入 main；五类图册 U 两版已绑定新验收包，P/C/F/J 图源不变。实际合并状态以 PR 在线回执为准，Issue 在线 assignee 未指定。登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，复用接入交接 Issue7。

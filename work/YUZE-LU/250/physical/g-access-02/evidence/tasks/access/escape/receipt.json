@@ -1,0 +1,139 @@
+{
+  "passed": true,
+  "commands": [
+    {
+      "command": [
+        "openroad",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-10/tasks/access/escape/initial.tcl"
+      ],
+      "log": "initial.log",
+      "sha256": "e4679cd0ca1e7eaacda09a63fab90c17a4b2ba2394afed46ad4d5e5175514365",
+      "returncode": 0,
+      "seconds": 0.15335845947265625
+    },
+    {
+      "command": [
+        "openroad",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-10/tasks/access/escape/odb-reload.tcl"
+      ],
+      "log": "odb-reload.log",
+      "sha256": "e0a9445e058f6044ba42cc87a8b3b6db9fa162e00e816ac0db8eb07e252ed1bd",
+      "returncode": 0,
+      "seconds": 0.11397671699523926
+    },
+    {
+      "command": [
+        "openroad",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-10/tasks/access/escape/def-reload.tcl"
+      ],
+      "log": "def-reload.log",
+      "sha256": "f955f5af9a6d01ffe210ba9aea12dea8eb25c3876955d8d06d5d5e45a3f66092",
+      "returncode": 0,
+      "seconds": 0.11703085899353027
+    },
+    {
+      "command": [
+        "klayout",
+        "-b",
+        "-r",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-10/tasks/access/escape/gds-readback.py"
+      ],
+      "log": "gds-readback.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0,
+      "seconds": 15.2750985622406
+    }
+  ],
+  "start_unix": 1794330935.103609,
+  "native_anchors": {
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "full_deck_sha256": "4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147",
+    "source": "Main accepted M mapping receipt and main release-six/M/evidence/drc/five-macro-drc.json"
+  },
+  "profiles": {
+    "passed": true,
+    "profiles": {
+      "g_geometry.py": {
+        "original": "project/experiments/block_v2/actual_geometry.py",
+        "original_sha256": "ca6ef591331729c5e1ef5430c3d632779bc863ef10ffa7fb4061a0c7159ba31e",
+        "derived_sha256": "c83677c936b421fd36bd3bdba6b9c90a46231b1c062dc7704f01548bb94ded17",
+        "replacements": [
+          {
+            "before": "from io_slots import file_sha,slot",
+            "after": "from io_slots import file_sha\n    from g_slots import slot"
+          },
+          {
+            "before": "assert cpus==16 and kind in ('m','n','e','g','r','s','t')",
+            "after": "assert cpus in (10,12) and kind=='g'"
+          },
+          {
+            "before": "script='set_thread_count 16\\n",
+            "after": "script='set_thread_count '+str(cpus)+'\\n"
+          }
+        ]
+      },
+      "g_escape.py": {
+        "original": "project/experiments/block_feed_v1/escape.py",
+        "original_sha256": "3ecbcd7bb9fc56c9a1acd56315d8974f76b4762c74cfabbe82e5c4047840ad65",
+        "derived_sha256": "1980760235f99efc37c16cb476282d1f9ac29dfc5fd92528f983b081aad0b315",
+        "replacements": [
+          {
+            "before": "from deliver import accepted",
+            "after": "from g_deliver import accepted"
+          },
+          {
+            "before": "from pins import generate",
+            "after": "from g_pins import generate"
+          },
+          {
+            "before": "assert cpus==16 and kind in 'mvrst'",
+            "after": "assert cpus in (10,12) and kind=='g'"
+          },
+          {
+            "before": "script='set_thread_count 16\\n",
+            "after": "script='set_thread_count '+str(cpus)+'\\n"
+          }
+        ]
+      }
+    },
+    "scope": "Verify explicit G-only/allocated-CPU specializations of main access gates.\n\nNo geometry, rule, source-file or electrical checks are removed. Original\nmain files stay unchanged. The two local derived modules have an exact,\nmachine-checked textual diff: use 10/12 allocated CPUs, select G and its\naccepted-delivery adapter, and rebuild the explicit edge-staggered pin plan.\nThe same two advisory I/O slots use a new, narrower issue250-only namespace;\nthe historical issue143 helper correctly rejects new unrelated directories.\n"
+  },
+  "delivery_receipt_sha256": "bb8f0dc3fd646bc0b411d8b212466e30e5a4d426072e888bfba10616cf2fb76c",
+  "end_unix": 1794330953.8047261,
+  "outputs": {
+    "gds-readback.py": "6cf4764e8f9a7c7d5f757d0d00a382e5bda705803cd1c76c4b8447c96ef1985c",
+    "initial-ports.tsv": "378cfe172599b7fc8e6cb4d51c39107c9776ff6cbef0c6bde8c292af3d1663db",
+    "initial-geometry.tsv": "68046d5674d90dd6328387e9ac5029966c68c8a69e46d8eb546494ad3823460b",
+    "initial.log": "e4679cd0ca1e7eaacda09a63fab90c17a4b2ba2394afed46ad4d5e5175514365",
+    "def-reload-ports.tsv": "936e4e01415790c3095c042ec16a4ec3e79fc93fb5a86d2b4313bae8ccd62bd9",
+    "def-reload.tcl": "3939c70bdaafb475a253363d44c48b4cd7b320c5f9cf327e2a2474237d727bd0",
+    "initial.tcl": "419f358f802f1b14136687f7c954a9522f41967a366e4669ae5dbd29f9035238",
+    "actual-escape.json": "04fcdb50b50710b9c4ff430edb1f2aae42460a72b8f2808ef32f283da500649c",
+    "gds-inputs.json": "35a08a3d950fd20253947e8538b0ae9edd5e68510bdaf18dc1cc087b1c8e5dc7",
+    "gds-readback.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "joined.gds": "e438835c4dcd49b72283c194c32299d675130ddf7cfda61fca089ca0a1f2aea8",
+    "upper-roundtrip.def": "5ab8fe1e07b57379fa71203bffdfbdd59763ebe40d144e7e5ab02d5af20ad44f",
+    "def-reload-geometry.tsv": "efd4aaaba1dd9d532ef5775d2f30004e27c12feb2c557cb0cd71b3112194c2bd",
+    "upper.def": "34b5f108eadcc36fe3055c852a8d740f0663ca4bc0c42304893cab7dba47cc83",
+    "def-reload.log": "f955f5af9a6d01ffe210ba9aea12dea8eb25c3876955d8d06d5d5e45a3f66092",
+    "joined-readback.json": "dbac74ebe8a9bebb8b40d872f700a6170e3e578d639861e4f6175e66b55543db",
+    "upper.odb": "818c55e96567d99e25ff0af7bd1e92117ab3089ac9bad11a2db99bd349a164f3",
+    "revision300-escape.json": "835c0af1aa03f8a0684c21f11ac082e8db1f0f3a64428b05266202b48fe48a57",
+    "odb-reload-ports.tsv": "378cfe172599b7fc8e6cb4d51c39107c9776ff6cbef0c6bde8c292af3d1663db",
+    "odb-reload.log": "e0a9445e058f6044ba42cc87a8b3b6db9fa162e00e816ac0db8eb07e252ed1bd",
+    "odb-reload.tcl": "c4d6669f9893ddfad2c9289b128aee69b280c7241a03ed8f6aa03d0a1c528c14",
+    "odb-reload-geometry.tsv": "68046d5674d90dd6328387e9ac5029966c68c8a69e46d8eb546494ad3823460b",
+    "technology/research12.tech.lef": "7900c84841227beefe10c3dee846399470526b21edc81eb1953b4f920d4bb90a",
+    "technology/generation.json": "4c6e38ceeb10d650b63dde821066e4e7efd4165608e2d90d666a80c06f0aa461",
+    "technology/gds-map.json": "59d30c54264c201b0e83835482283c8a8a46df8ab921f1c3da19af62f0985f01",
+    "technology/new_tracks.tcl": "0df5903d016b29218cd1a60ec4cb66129fd354e5820e0e33859278004ca05741",
+    "technology/early-rc-estimates.json": "39457999ae1fd1964659b1c65b274b9a5ff7a04111a5b082d1616564f533ec1e",
+    "technology/native.tech.lef": "834a79295054cd4209178d1bade67c353863c47bb4b3c22ee38b862b7cec37f2"
+  }
+}

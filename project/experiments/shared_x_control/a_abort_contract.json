@@ -1,0 +1,19 @@
+{
+  "schema": "private-A-verified-abort/1",
+  "status": "actual-SRAM-protocol-unit-passed-not-yet-wired-to-real-M-ABORT",
+  "source": "7c1b911e6",
+  "old_qualified_sources_modified": false,
+  "new_modules": ["rtl/private_a_tile_abort_frontend.sv", "rtl/private_a_scaled_abort_frontend.sv"],
+  "payload": "unchanged2x256B A register tiles; scale wrapper retains exactly12 shift bits; no new SRAM/data FIFO",
+  "problem": "Old flush requires halted quiescence, including no active A use. A partial native M abort can stop accepting the remaining A operands, leaving old active permanently nonquiescent.",
+  "abort_valid_source": "Only a full matching M ABORT frame accepted at real serial EOP, including session/record/full input key/full RF owner, verified by the bounded serial guard and resolved to the live A lease. This is not a host Boolean permission.",
+  "identity": ["input-key128", "slot1", "slot-generation16", "kk16", "use-sequence16"],
+  "pending_use": "A scheduled matching W use that has not yet started may also be invalidated; it never increments issued or completed",
+  "stream_cut": "A valid matching verified ABORT offer under halt stops only its cancelled A stream while its lease remains live. This is the explicit receiver-abort protocol, not an ordinary withdrawal of a stalled ready/valid operand.",
+  "abort_ready": "Requires exact identity, halt, real no-more-issue/transport-return drain and actual pending source-read drain. Before this handshake active ownership remains; invalid identity cannot cut a new generation.",
+  "abort_accept": "Invalidate lease, clear only its active stream and scheduled W reference; never invent missing operand handshakes and never increment completed use count",
+  "FREE": "Only later halt+quiescent flush, after held load receipts and source responses drain. INVALID and zero visible A valid are not FREE.",
+  "model_scope": "Normal scope cancellation may instead drain an already accepted whole record to true numeric result/S ACK, then flush only unissued planned references. Raw mid-record abort recovery uses this separate full-identity path.",
+  "unit_evidence": {"Slurm": 102245, "runs": 18, "partial_A_operands": 3, "expected_total_operands": 8, "after_abort_issued": 1, "after_abort_completed": 0, "late_previous_generation_rejected": true, "actual_original_SRAM_banks": true, "physical300MHz": false},
+  "remaining": "Production P executor must wire the true verified M ABORT/EOP plus global DMA CLOSE/return drain to this API; the unit fixture's proof does not satisfy that integration requirement."
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "issue250-control-evidence/1",
+  "issue": "https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250",
+  "scope": "abstract_protocol_admission_not_production_RTL_numeric_cycles_energy_or_physical",
+  "allocation_policy": "c64 six tasks x ten CPUs; each protocol shard uses one Python process; no manufactured CPU workload",
+  "runs": [
+    {
+      "directory": "issue250-control-prep-20261110-01", "job": 102059,
+      "source_commit": "177f3ab3d7bb10c569a7aa2b468b6c50886e67c3",
+      "state": "FAILED", "elapsed_seconds": 1, "Slurm_TotalCPU_seconds": 0.010,
+      "allocation_CPUs": 60, "accepted_evidence": false,
+      "failure": "SLURM_SUBMIT_DIR was the ssh home; script cd overrode --chdir; sha256sum could not find sources; protocol suite not started"
+    },
+    {
+      "directory": "issue250-control-prep-20261110-02", "job": 102061,
+      "source_commit": "a25373ba2f2e2056d4ea933b05082c26ea459096",
+      "state": "FAILED", "elapsed_seconds": 1, "Slurm_TotalCPU_seconds": 0.419,
+      "allocation_CPUs": 60, "accepted_evidence": false,
+      "failure": "default /usr/bin/python3 is Python3.6; future annotations syntax unavailable; suite not started; fixed by explicit /usr/bin/python3.11"
+    },
+    {
+      "directory": "issue250-control-prep-20261110-03", "job": 102062,
+      "source_commit": "c7e292d10a5372809196e4435d8307351d826f27",
+      "state": "COMPLETED", "elapsed_seconds": 2, "Slurm_TotalCPU_seconds": 0.323,
+      "allocation_CPUs": 60, "accepted_evidence": true, "admission_cases": 35,
+      "Python": "3.11.7", "node": "node10"
+    },
+    {
+      "directory": "issue250-control-prep-20261110-04", "job": 102066,
+      "source_commit": "1b270648e04d6b4d2a312da09a32896c8f0b9c21",
+      "state": "COMPLETED", "elapsed_seconds": 2, "Slurm_TotalCPU_seconds": 0.337,
+      "allocation_CPUs": 60, "accepted_evidence": true, "admission_cases": 44,
+      "Python": "3.11.7", "node": "node10",
+      "added_scope": "nine PRIVATE_S128 two-slot A-prefetch alternative protocol cases; not multi-M lease reuse"
+    }
+  ],
+  "production_controller_or_program_integration": "not_started_by_this_preparation",
+  "registration": "pending management-hub PR5 per existing project receipt",
+  "board": "unverified; root delivery handles current Issue250/PR/Projects status",
+  "review": "pending independent review; no merge or done claim"
+}

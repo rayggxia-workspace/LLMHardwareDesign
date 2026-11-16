@@ -1,0 +1,85 @@
+{
+  "passed": true,
+  "commands": [
+    {
+      "command": [
+        "openroad",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-10/tasks/access/geometry/export.tcl"
+      ],
+      "log": "export.log",
+      "sha256": "e0a9445e058f6044ba42cc87a8b3b6db9fa162e00e816ac0db8eb07e252ed1bd",
+      "returncode": 0,
+      "seconds": 11.761383056640625
+    }
+  ],
+  "start_unix": 1794330920.4485319,
+  "native_anchors": {
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "full_deck_sha256": "4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147",
+    "source": "Main accepted M mapping receipt and main release-six/M/evidence/drc/five-macro-drc.json"
+  },
+  "profiles": {
+    "passed": true,
+    "profiles": {
+      "g_geometry.py": {
+        "original": "project/experiments/block_v2/actual_geometry.py",
+        "original_sha256": "ca6ef591331729c5e1ef5430c3d632779bc863ef10ffa7fb4061a0c7159ba31e",
+        "derived_sha256": "c83677c936b421fd36bd3bdba6b9c90a46231b1c062dc7704f01548bb94ded17",
+        "replacements": [
+          {
+            "before": "from io_slots import file_sha,slot",
+            "after": "from io_slots import file_sha\n    from g_slots import slot"
+          },
+          {
+            "before": "assert cpus==16 and kind in ('m','n','e','g','r','s','t')",
+            "after": "assert cpus in (10,12) and kind=='g'"
+          },
+          {
+            "before": "script='set_thread_count 16\\n",
+            "after": "script='set_thread_count '+str(cpus)+'\\n"
+          }
+        ]
+      },
+      "g_escape.py": {
+        "original": "project/experiments/block_feed_v1/escape.py",
+        "original_sha256": "3ecbcd7bb9fc56c9a1acd56315d8974f76b4762c74cfabbe82e5c4047840ad65",
+        "derived_sha256": "1980760235f99efc37c16cb476282d1f9ac29dfc5fd92528f983b081aad0b315",
+        "replacements": [
+          {
+            "before": "from deliver import accepted",
+            "after": "from g_deliver import accepted"
+          },
+          {
+            "before": "from pins import generate",
+            "after": "from g_pins import generate"
+          },
+          {
+            "before": "assert cpus==16 and kind in 'mvrst'",
+            "after": "assert cpus in (10,12) and kind=='g'"
+          },
+          {
+            "before": "script='set_thread_count 16\\n",
+            "after": "script='set_thread_count '+str(cpus)+'\\n"
+          }
+        ]
+      }
+    },
+    "scope": "Verify explicit G-only/allocated-CPU specializations of main access gates.\n\nNo geometry, rule, source-file or electrical checks are removed. Original\nmain files stay unchanged. The two local derived modules have an exact,\nmachine-checked textual diff: use 10/12 allocated CPUs, select G and its\naccepted-delivery adapter, and rebuild the explicit edge-staggered pin plan.\nThe same two advisory I/O slots use a new, narrower issue250-only namespace;\nthe historical issue143 helper correctly rejects new unrelated directories.\n"
+  },
+  "delivery_receipt_sha256": "bb8f0dc3fd646bc0b411d8b212466e30e5a4d426072e888bfba10616cf2fb76c",
+  "end_unix": 1794330935.0406554,
+  "outputs": {
+    "native-rect-completion.json": "ef8cd460cb988c6905dcd2c6efba5c57fedba11ed342825599eab159734ff68c",
+    "source-occupancy.tsv": "a58e0095ad249d445af4746eb35205b24df55196f7148ad30afb4a5667efc355",
+    "export.tcl": "17d489e24803882f51479a1b8e88d3363dfd21ce9b2d763adc3401a29ac2e216",
+    "five-macro-geometry.json": "16bcf7d668afd08e7d4ecf6d137b9f215f5ab84df98a3a79938470672a5f2467",
+    "native-summary.tsv": "75ff23b70869a102a64465ba922977f8d5f81ad8eeee5e66731ae0b7a30e5b23",
+    "export.log": "e0a9445e058f6044ba42cc87a8b3b6db9fa162e00e816ac0db8eb07e252ed1bd",
+    "candidate.lef": "491dafe6113f82338a1678fc0c35c7c134e7b7dcdd9187a239a258b193be0d5d",
+    "occupancy-summary.tsv": "ee251ef12a821e7f900e1f16cc3960c63f435e5ee37777b8cd0d1b1ba4abd9d7",
+    "m10-access.json": "e1661221f1eec2b3ab6cf6c63674b68391dba43450e35ea592c895fd3ee08077",
+    "native-pins.tsv": "26b376e8809fdb9b30b34b547bb48a0e75a4a83b0dc86ae65e88a4cdd8d68718"
+  }
+}

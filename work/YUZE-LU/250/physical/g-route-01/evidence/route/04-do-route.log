@@ -1,0 +1,1343 @@
+make: Entering directory '/OpenROAD-flow-scripts/flow'
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 5_1_grt global_route
+Running global_route.tcl, stage 5_1_grt
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/4_cts.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/4_cts.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+source /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/input-diodes.tcl
+detailed_placement
+[INFO DPL-0006] Core area: 43029.22 um^2
+[INFO DPL-0007] Movable instances area: 28453.49 um^2
+[INFO DPL-0008] Fixed instances area within core: 98.69 um^2
+[INFO DPL-0009] Utilization: 66.4%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 24199 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |       1855 |       315 |      1540
+        1 |       1234 |       186 |      1048
+        2 |        861 |       139 |       722
+        3 |        620 |       104 |       495
+        4 |        417 |        61 |       353
+        5 |        322 |        46 |       255
+        6 |        176 |        30 |       137
+        7 |         88 |        16 |        72
+        8 |         38 |         8 |        30
+        9 |         32 |         4 |        28
+       10 |         26 |         2 |        24
+       11 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 11.
+[INFO DPL-0500] Runtime: 0.17s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves                3526
+total displacement       1580.8 u
+average displacement        0.1 u
+max displacement           14.2 u
+original HPWL          181366.2 u
+legalized HPWL         182601.2 u
+delta HPWL                    1 %
+
+detailed_placement
+[INFO DPL-0006] Core area: 43029.22 um^2
+[INFO DPL-0007] Movable instances area: 28489.40 um^2
+[INFO DPL-0008] Fixed instances area within core: 98.69 um^2
+[INFO DPL-0009] Utilization: 66.4%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 24334 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |        243 |       121 |       122
+        1 |        110 |        50 |        60
+        2 |        152 |        30 |       122
+        3 |        150 |        32 |       118
+        4 |         93 |        17 |        76
+        5 |        100 |        16 |        84
+        6 |         32 |         8 |        24
+        7 |         36 |         6 |        30
+        8 |         16 |         4 |        12
+        9 |          4 |         2 |         2
+       10 |         26 |         4 |        22
+       14 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 14.
+[INFO DPL-0500] Runtime: 0.18s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves                3597
+total displacement        363.7 u
+average displacement        0.0 u
+max displacement            7.9 u
+original HPWL          182650.0 u
+legalized HPWL         182878.8 u
+delta HPWL                    0 %
+
+BV1_INPUT_DIODES count=135 area_um2=35.910000000000004 input_cap_ff=3.162915
+pin_access -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10
+[INFO DRT-0149] Reading tech and libs.
+
+Units:                2000
+Number of layers:     21
+Number of macros:     135
+Number of vias:       33
+Number of viarulegen: 19
+
+[INFO DRT-0150] Reading design.
+
+Design:                   g_s32
+Die area:                 ( 0 0 ) ( 480000 480000 )
+Number of track patterns: 20
+Number of DEF vias:       0
+Number of components:     24334
+Number of terminals:      206
+Number of snets:          2
+Number of nets:           24436
+
+[INFO DRT-0167] List of default vias:
+  Layer via1
+    default via: via1_7
+  Layer via2
+    default via: via2_5
+  Layer via3
+    default via: via3_2
+  Layer via4
+    default via: via4_0
+  Layer via5
+    default via: via5_0
+  Layer via6
+    default via: via6_0
+  Layer via7
+    default via: via7_0
+  Layer via8
+    default via: via8_0
+  Layer via9
+    default via: via9_0
+[INFO DRT-0162] Library cell analysis.
+[INFO DRT-0163] Instance analysis.
+[INFO DRT-0164] Number of unique instances = 90.
+[INFO DRT-0168] Init region query.
+[INFO DRT-0024]   Complete active.
+[INFO DRT-0024]   Complete Fr_VIA.
+[INFO DRT-0024]   Complete metal1.
+[INFO DRT-0024]   Complete via1.
+[INFO DRT-0024]   Complete metal2.
+[INFO DRT-0024]   Complete via2.
+[INFO DRT-0024]   Complete metal3.
+[INFO DRT-0024]   Complete via3.
+[INFO DRT-0024]   Complete metal4.
+[INFO DRT-0024]   Complete via4.
+[INFO DRT-0024]   Complete metal5.
+[INFO DRT-0024]   Complete via5.
+[INFO DRT-0024]   Complete metal6.
+[INFO DRT-0024]   Complete via6.
+[INFO DRT-0024]   Complete metal7.
+[INFO DRT-0024]   Complete via7.
+[INFO DRT-0024]   Complete metal8.
+[INFO DRT-0024]   Complete via8.
+[INFO DRT-0024]   Complete metal9.
+[INFO DRT-0024]   Complete via9.
+[INFO DRT-0024]   Complete metal10.
+[INFO DRT-0033] active shape region query size = 0.
+[INFO DRT-0033] FR_VIA shape region query size = 0.
+[INFO DRT-0033] metal1 shape region query size = 357539.
+[INFO DRT-0033] via1 shape region query size = 1788.
+[INFO DRT-0033] metal2 shape region query size = 1192.
+[INFO DRT-0033] via2 shape region query size = 1788.
+[INFO DRT-0033] metal3 shape region query size = 1192.
+[INFO DRT-0033] via3 shape region query size = 1788.
+[INFO DRT-0033] metal4 shape region query size = 660.
+[INFO DRT-0033] via4 shape region query size = 560.
+[INFO DRT-0033] metal5 shape region query size = 112.
+[INFO DRT-0033] via5 shape region query size = 560.
+[INFO DRT-0033] metal6 shape region query size = 112.
+[INFO DRT-0033] via6 shape region query size = 224.
+[INFO DRT-0033] metal7 shape region query size = 84.
+[INFO DRT-0033] via7 shape region query size = 0.
+[INFO DRT-0033] metal8 shape region query size = 0.
+[INFO DRT-0033] via8 shape region query size = 0.
+[INFO DRT-0033] metal9 shape region query size = 0.
+[INFO DRT-0033] via9 shape region query size = 0.
+[INFO DRT-0033] metal10 shape region query size = 204.
+[INFO DRT-0165] Start pin access.
+[INFO DRT-0078]   Complete 501 pins.
+[INFO DRT-0081]   Complete 90 unique inst patterns.
+[INFO DRT-0082]   Complete 10000 groups.
+[INFO DRT-0084]   Complete 11413 groups.
+#scanned instances     = 24334
+#unique  instances     = 90
+#stdCellGenAp          = 2424
+#stdCellValidPlanarAp  = 0
+#stdCellValidViaAp     = 1857
+#stdCellPinNoAp        = 0
+#stdCellPinCnt         = 77127
+#instTermValidViaApCnt = 0
+#macroGenAp            = 0
+#macroValidPlanarAp    = 0
+#macroValidViaAp       = 0
+#macroNoAp             = 0
+[INFO DRT-0166] Complete pin access.
+[INFO DRT-0267] cpu time = 00:01:24, elapsed time = 00:00:07, memory = 246.47 (MB), peak = 246.47 (MB)
+Took 8 seconds: pin_access -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10
+global_route -congestion_report_file /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/reports/nangate45/bv1_g_s32/base/congestion.rpt -congestion_iterations 30 -congestion_report_iter_step 5 -verbose
+[INFO GRT-0020] Min routing layer: metal1
+[INFO GRT-0021] Max routing layer: metal10
+[INFO GRT-0022] Global adjustment: 0%
+[INFO GRT-0023] Grid origin: (0, 0)
+[INFO GRT-0088] Layer metal1  Track-Pitch = 0.1400  line-2-Via Pitch: 0.1350
+[INFO GRT-0088] Layer metal2  Track-Pitch = 0.1900  line-2-Via Pitch: 0.1400
+[INFO GRT-0088] Layer metal3  Track-Pitch = 0.1400  line-2-Via Pitch: 0.1400
+[INFO GRT-0088] Layer metal4  Track-Pitch = 0.2800  line-2-Via Pitch: 0.2800
+[INFO GRT-0088] Layer metal5  Track-Pitch = 0.2800  line-2-Via Pitch: 0.2800
+[INFO GRT-0088] Layer metal6  Track-Pitch = 0.2800  line-2-Via Pitch: 0.2800
+[INFO GRT-0088] Layer metal7  Track-Pitch = 0.8000  line-2-Via Pitch: 0.8000
+[INFO GRT-0088] Layer metal8  Track-Pitch = 0.8000  line-2-Via Pitch: 0.8000
+[INFO GRT-0088] Layer metal9  Track-Pitch = 1.6000  line-2-Via Pitch: 1.6000
+[INFO GRT-0088] Layer metal10 Track-Pitch = 1.6000  line-2-Via Pitch: 1.6000
+[INFO GRT-0003] Macros: 0
+[INFO GRT-0004] Blockages: 81553
+[INFO GRT-0019] Found 99 clock nets.
+[INFO GRT-0001] Minimum degree: 2
+[INFO GRT-0002] Maximum degree: 51
+
+[INFO GRT-0053] Routing resources analysis:
+          Routing      Original      Derated      Resource
+Layer     Direction    Resources     Resources    Reduction (%)
+---------------------------------------------------------------
+metal1     Horizontal      35388         35388          0.00%
+metal2     Vertical       103065         48382          53.06%
+metal3     Horizontal     141642         69490          50.94%
+metal4     Vertical        69881         49480          29.19%
+metal5     Horizontal      70827         49983          29.43%
+metal6     Vertical        71014         50140          29.39%
+metal7     Horizontal      22408         15947          28.83%
+metal8     Vertical        24817         17845          28.09%
+metal9     Horizontal      12367          6972          43.62%
+metal10    Vertical        12367          6972          43.62%
+---------------------------------------------------------------
+
+[INFO GRT-0101] Running extra iterations to remove congestion.
+[INFO GRT-0102] Start extra iteration 1/30
+[INFO GRT-0102] Start extra iteration 2/30
+[INFO GRT-0197] Via related to pin nodes: 113724
+[INFO GRT-0198] Via related Steiner nodes: 1231
+[INFO GRT-0199] Via filling finished.
+[INFO GRT-0111] Final number of vias: 140797
+[INFO GRT-0112] Final usage 3D: 496083
+
+[INFO GRT-0096] Final congestion report:
+Layer         Resource        Demand        Usage (%)    Max H / Max V / Total Congestion
+---------------------------------------------------------------------------------------
+metal1           35388          2178            6.15%             0 /  0 /  0
+metal2           48382         25172           52.03%             0 /  0 /  0
+metal3           69490         28427           40.91%             0 /  0 /  0
+metal4           49480         10510           21.24%             0 /  0 /  0
+metal5           49983          4309            8.62%             0 /  0 /  0
+metal6           50140          2551            5.09%             0 /  0 /  0
+metal7           15947           238            1.49%             0 /  0 /  0
+metal8           17845           127            0.71%             0 /  0 /  0
+metal9            6972            85            1.22%             0 /  0 /  0
+metal10           6972            95            1.36%             0 /  0 /  0
+---------------------------------------------------------------------------------------
+Total           350599         73692           21.02%             0 /  0 /  0
+
+[INFO GRT-0018] Total wirelength: 329585 um
+[INFO GRT-0014] Routed nets: 24125
+[INFO GRT-0303] Global routing runtime = 00:00:00
+estimate_parasitics -global_routing
+Perform buffer insertion and gate resizing...
+repair_design -verbose -cap_margin 40
+Iteration |   Area    | Resized | Buffers | Nets repaired | Remaining
+---------------------------------------------------------------------
+        0 |     +0.0% |       0 |       0 |             0 |     24516
+     1000 |     +0.0% |       0 |       0 |             0 |     23516
+     2000 |     +0.0% |       0 |       0 |             0 |     22516
+     3000 |     +0.0% |       0 |       0 |             0 |     21516
+     4000 |     +0.0% |       0 |       0 |             0 |     20516
+     5000 |     +0.0% |       0 |       0 |             0 |     19516
+     6000 |     +0.0% |       0 |       0 |             0 |     18516
+     7000 |     +0.0% |       0 |       0 |             0 |     17516
+     8000 |     +0.0% |       0 |       0 |             1 |     16516
+     9000 |     +0.0% |       0 |       0 |             2 |     15516
+    10000 |     +0.0% |       0 |       0 |             2 |     14516
+    11000 |     +0.0% |       0 |       0 |             2 |     13516
+    12000 |     +0.0% |       0 |       0 |             3 |     12516
+    13000 |     +0.0% |       0 |       0 |             4 |     11516
+    14000 |     +0.0% |       0 |       0 |             5 |     10516
+    15000 |     +0.0% |       0 |       0 |             5 |      9516
+    16000 |     +0.0% |       0 |       1 |             7 |      8516
+    17000 |     +0.0% |       0 |       1 |             8 |      7516
+    18000 |     +0.0% |       0 |       1 |             8 |      6516
+    19000 |     +0.0% |       0 |       1 |             9 |      5516
+    20000 |     +0.0% |       0 |       1 |             9 |      4516
+    21000 |     +0.0% |       0 |       1 |             9 |      3516
+    22000 |     +0.0% |       0 |       1 |            11 |      2516
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63343 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63386 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63385 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63384 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63383 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63382 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63381 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63380 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63379 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63378 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63377 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63376 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63375 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63374 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63373 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63372 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63371 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63370 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63369 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63368 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63366 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63344 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63365 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63364 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63363 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63362 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63361 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63360 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63359 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63358 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63357 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63356 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63355 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63354 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63353 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63352 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63351 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63350 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63349 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63348 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63347 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63345 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63367 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63346 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63342 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64014 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64013 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64012 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64011 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64010 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64009 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64008 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64007 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64006 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64005 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64004 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64003 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64002 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64001 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$64000 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63999 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63998 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63997 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63996 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63995 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63994 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63993 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63992 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63991 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63990 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63989 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63988 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63987 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63986 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63985 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63984 only has one pin. Check if it is intended to be dangling.
+    23000 |     +0.0% |       0 |       1 |            16 |      1516
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63337 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63859 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63858 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63857 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63856 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63855 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63854 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63853 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63852 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63851 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63850 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63849 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63848 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63847 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63846 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63845 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63844 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63843 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63842 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63841 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63840 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63839 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63838 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63837 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63836 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63835 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63834 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63833 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63832 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63831 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63830 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63829 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63336 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63828 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63827 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63826 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63825 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63824 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63823 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63822 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63821 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63820 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63819 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63818 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63817 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63816 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63815 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63814 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63813 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63812 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63811 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63810 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63809 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63808 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63807 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63806 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63805 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63804 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63803 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63802 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63801 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63800 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63799 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63798 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63797 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63796 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63323 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63322 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63319 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63793 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63316 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63790 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63315 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63789 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63788 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63787 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63786 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63785 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63784 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63783 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63782 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63781 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63780 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63779 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63778 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63777 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63776 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63775 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63774 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63773 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63772 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63771 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63770 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63769 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63768 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63767 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63766 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63314 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63765 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63764 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63763 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63762 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63761 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63760 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63759 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63758 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63757 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63756 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63755 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63754 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63753 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63752 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63751 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63750 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63749 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63748 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63747 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63313 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63746 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63745 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63744 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63743 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63742 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63741 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63740 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63739 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63738 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63737 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63736 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63735 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63734 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63733 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63732 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63731 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63730 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63729 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63728 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63312 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63727 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63726 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63725 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63724 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63723 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63722 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63721 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63720 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63719 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63718 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63717 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63716 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63715 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63714 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63713 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63712 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63711 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63710 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63709 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63708 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63707 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63706 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63705 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63704 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63703 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63702 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63701 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63700 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63699 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63698 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63697 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63311 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63308 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63305 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63448 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63447 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63446 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63445 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63444 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63443 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63442 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63441 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63440 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63439 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63438 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63437 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63436 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63435 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63434 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63433 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63432 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63431 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63430 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63429 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63428 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63427 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63426 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63425 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63424 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63423 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63422 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63421 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63420 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63419 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63418 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63304 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63417 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63416 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63415 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63414 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63413 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63412 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63411 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63410 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63409 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63408 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63407 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63406 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63405 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63404 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63403 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63402 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63401 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63400 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63399 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63398 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63397 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63396 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63395 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63394 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63393 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63392 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63391 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63390 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63389 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63388 only has one pin. Check if it is intended to be dangling.
+[WARNING RSZ-0104] Net $auto$dfflibmap.cc:546:dfflibmap$63387 only has one pin. Check if it is intended to be dangling.
+    24000 |     +0.0% |       0 |       4 |            20 |       516
+    final |     +0.0% |       0 |       4 |            21 |         0
+---------------------------------------------------------------------
+[INFO RSZ-0036] Found 21 capacitance violations.
+[INFO RSZ-0038] Inserted 4 buffers in 21 nets.
+[INFO RSZ-0504] Runtime: 1.64s
+global_route -start_incremental
+detailed_placement
+[INFO DPL-0006] Core area: 43029.22 um^2
+[INFO DPL-0007] Movable instances area: 28496.05 um^2
+[INFO DPL-0008] Fixed instances area within core: 98.69 um^2
+[INFO DPL-0009] Utilization: 66.5%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 24338 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |         18 |         4 |        14
+        1 |         12 |         2 |        10
+        2 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 2.
+[INFO DPL-0500] Runtime: 0.09s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves                 362
+total displacement         16.3 u
+average displacement        0.0 u
+max displacement            2.8 u
+original HPWL          182922.8 u
+legalized HPWL         182941.3 u
+delta HPWL                    0 %
+
+global_route -end_incremental -congestion_report_file /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/reports/nangate45/bv1_g_s32/base/congestion_post_repair_design.rpt
+Repair setup and hold violations...
+estimate_parasitics -global_routing
+repair_timing -setup_margin 0 -hold_margin 0.02 -repair_tns 100 -verbose
+[INFO RSZ-0100] Repair move sequence: UnbufferMove SizeUpMove SwapPinsMove BufferMove CloneMove SplitLoadMove 
+[INFO RSZ-0098] No setup violations found
+[INFO RSZ-0505] Runtime: 0.35s
+[INFO RSZ-0046] Found 2 endpoints with hold violations.
+Iteration | Resized | Buffers | Cloned Gates |   Area   |   WNS   |   TNS   | Endpoint
+--------------------------------------------------------------------------------------
+        0 |       0 |       0 |            0 |    +0.0% |   0.019 |   0.000 | $auto$ff.cc:337:slice$10312/D
+    final |       0 |       2 |            0 |    +0.0% |   0.020 |   0.000 | $auto$ff.cc:337:slice$10355/D
+--------------------------------------------------------------------------------------
+[INFO RSZ-0032] Inserted 2 hold buffers.
+[INFO RSZ-0506] Runtime: 0.16s
+global_route -start_incremental
+detailed_placement
+[INFO DPL-0006] Core area: 43029.22 um^2
+[INFO DPL-0007] Movable instances area: 28497.64 um^2
+[INFO DPL-0008] Fixed instances area within core: 98.69 um^2
+[INFO DPL-0009] Utilization: 66.5%
+[INFO DPL-0005] Diamond search max displacement: +/- 500 sites horizontally, +/- 100 rows vertically.
+[INFO DPL-1102] Legalizing using negotiation legalizer.
+[INFO DPL-1103] Negotiation base search window: +/-20 sites horizontally, +/-5 rows vertically 
+	Automatic search window extension enabled.
+	Search window extendable up to the max displacement cap of +/-500 sites, +/-100 rows near walls.
+[INFO DPL-1104] NegotiationLegalizer DRC penalty: 5.
+[INFO DPL-0392] Negotiation cell height distribution (1 unique row-count(s)):
+[INFO DPL-0393]   height 1 row(s): 24340 cells
+          |      Total |  Illegal |  Illegal
+Iteration | Violations |    Cells |    Sites
+---------------------------------------------
+        0 |          8 |         2 |         6
+        1 |          0 |         0 |         0
+Negotiation phase 1 converged at iteration 1.
+[INFO DPL-0500] Runtime: 0.08s
+Detailed Placement Analysis
+---------------------------------
+legalizer            negotiation
+total moves                 133
+total displacement          4.6 u
+average displacement        0.0 u
+max displacement            3.7 u
+original HPWL          182944.7 u
+legalized HPWL         182944.4 u
+delta HPWL                    0 %
+
+check_placement -verbose
+global_route -end_incremental -congestion_report_file /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/reports/nangate45/bv1_g_s32/base/congestion_post_repair_timing.rpt
+estimate_parasitics -global_routing
+global_route -start_incremental
+global_route -end_incremental -congestion_report_file /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/reports/nangate45/bv1_g_s32/base/congestion_post_recover_power.rpt
+Repair antennas...
+[WARNING GRT-0246] No diode with LEF class CORE ANTENNACELL found.
+[INFO ANT-0002] Found 0 net violations.
+[INFO ANT-0001] Found 0 pin violations.
+Estimate parasitics...
+estimate_parasitics -global_routing
+Report metrics stage 5, global route...
+
+==========================================================================
+global route report_design_area
+--------------------------------------------------------------------------
+Design area 28596 um^2 66% utilization.
+[INFO FLW-0007] clock core period 3.333300
+[INFO FLW-0008] Clock core period 3.102
+[INFO FLW-0009] Clock core slack 0.068
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/updated_clks.sdc
+[INFO FLW-0011] Path endpoint path count 1148
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_1_grt.odb
+write_sdc -no_timestamp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_1_grt.sdc
+Elapsed time: 0:15.95[h:]min:sec. CPU time: user 103.59 sys 3.09 (668%). Peak memory: 590412KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+5_1_grt                .odb         15      107     6.69      576 6ab622d4c2
+5_1_grt                .sdc                                       5919e7bb8e
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 5_2_route detail_route
+Running detail_route.tcl, stage 5_2_route
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_1_grt.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_1_grt.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+detailed_route -output_drc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/reports/nangate45/bv1_g_s32/base/5_route_drc.rpt -output_maze /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/maze.log -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 -droute_end_iter 64 -verbose 1 -drc_report_iter_step 5 -via_access_layer metal10
+[INFO DRT-0149] Reading tech and libs.
+
+Units:                2000
+Number of layers:     21
+Number of macros:     135
+Number of vias:       33
+Number of viarulegen: 19
+
+[INFO DRT-0150] Reading design.
+
+Design:                   g_s32
+Die area:                 ( 0 0 ) ( 480000 480000 )
+Number of track patterns: 20
+Number of DEF vias:       0
+Number of components:     24340
+Number of terminals:      206
+Number of snets:          2
+Number of nets:           24442
+
+[INFO DRT-0167] List of default vias:
+  Layer via1
+    default via: via1_7
+  Layer via2
+    default via: via2_5
+  Layer via3
+    default via: via3_2
+  Layer via4
+    default via: via4_0
+  Layer via5
+    default via: via5_0
+  Layer via6
+    default via: via6_0
+  Layer via7
+    default via: via7_0
+  Layer via8
+    default via: via8_0
+  Layer via9
+    default via: via9_0
+[INFO DRT-0162] Library cell analysis.
+[INFO DRT-0163] Instance analysis.
+[INFO DRT-0164] Number of unique instances = 90.
+[INFO DRT-0168] Init region query.
+[INFO DRT-0024]   Complete active.
+[INFO DRT-0024]   Complete Fr_VIA.
+[INFO DRT-0024]   Complete metal1.
+[INFO DRT-0024]   Complete via1.
+[INFO DRT-0024]   Complete metal2.
+[INFO DRT-0024]   Complete via2.
+[INFO DRT-0024]   Complete metal3.
+[INFO DRT-0024]   Complete via3.
+[INFO DRT-0024]   Complete metal4.
+[INFO DRT-0024]   Complete via4.
+[INFO DRT-0024]   Complete metal5.
+[INFO DRT-0024]   Complete via5.
+[INFO DRT-0024]   Complete metal6.
+[INFO DRT-0024]   Complete via6.
+[INFO DRT-0024]   Complete metal7.
+[INFO DRT-0024]   Complete via7.
+[INFO DRT-0024]   Complete metal8.
+[INFO DRT-0024]   Complete via8.
+[INFO DRT-0024]   Complete metal9.
+[INFO DRT-0024]   Complete via9.
+[INFO DRT-0024]   Complete metal10.
+[INFO DRT-0033] active shape region query size = 0.
+[INFO DRT-0033] FR_VIA shape region query size = 0.
+[INFO DRT-0033] metal1 shape region query size = 357623.
+[INFO DRT-0033] via1 shape region query size = 1788.
+[INFO DRT-0033] metal2 shape region query size = 1192.
+[INFO DRT-0033] via2 shape region query size = 1788.
+[INFO DRT-0033] metal3 shape region query size = 1192.
+[INFO DRT-0033] via3 shape region query size = 1788.
+[INFO DRT-0033] metal4 shape region query size = 660.
+[INFO DRT-0033] via4 shape region query size = 560.
+[INFO DRT-0033] metal5 shape region query size = 112.
+[INFO DRT-0033] via5 shape region query size = 560.
+[INFO DRT-0033] metal6 shape region query size = 112.
+[INFO DRT-0033] via6 shape region query size = 224.
+[INFO DRT-0033] metal7 shape region query size = 84.
+[INFO DRT-0033] via7 shape region query size = 0.
+[INFO DRT-0033] metal8 shape region query size = 0.
+[INFO DRT-0033] via8 shape region query size = 0.
+[INFO DRT-0033] metal9 shape region query size = 0.
+[INFO DRT-0033] via9 shape region query size = 0.
+[INFO DRT-0033] metal10 shape region query size = 204.
+[INFO DRT-0165] Start pin access.
+[INFO DRT-0078]   Complete 501 pins.
+[INFO DRT-0081]   Complete 90 unique inst patterns.
+[INFO DRT-0082]   Complete 10000 groups.
+[INFO DRT-0084]   Complete 11417 groups.
+#scanned instances     = 24340
+#unique  instances     = 90
+#stdCellGenAp          = 2424
+#stdCellValidPlanarAp  = 0
+#stdCellValidViaAp     = 1857
+#stdCellPinNoAp        = 0
+#stdCellPinCnt         = 77139
+#instTermValidViaApCnt = 0
+#macroGenAp            = 0
+#macroValidPlanarAp    = 0
+#macroValidViaAp       = 0
+#macroNoAp             = 0
+[INFO DRT-0166] Complete pin access.
+[INFO DRT-0267] cpu time = 00:01:22, elapsed time = 00:00:07, memory = 389.43 (MB), peak = 389.43 (MB)
+[INFO DRT-0156] guideIn read 100000 guides.
+
+[INFO DRT-0157] Number of guides:     149771
+
+[INFO DRT-0169] Post process guides.
+[INFO DRT-0176] GCELLGRID X 0 DO 84 STEP 5700 ;
+[INFO DRT-0177] GCELLGRID Y 0 DO 84 STEP 5700 ;
+[INFO DRT-0026]   Complete 100000 origin guides.
+[INFO DRT-0028]   Complete active.
+[INFO DRT-0028]   Complete Fr_VIA.
+[INFO DRT-0028]   Complete metal1.
+[INFO DRT-0028]   Complete via1.
+[INFO DRT-0028]   Complete metal2.
+[INFO DRT-0028]   Complete via2.
+[INFO DRT-0028]   Complete metal3.
+[INFO DRT-0028]   Complete via3.
+[INFO DRT-0028]   Complete metal4.
+[INFO DRT-0028]   Complete via4.
+[INFO DRT-0028]   Complete metal5.
+[INFO DRT-0028]   Complete via5.
+[INFO DRT-0028]   Complete metal6.
+[INFO DRT-0028]   Complete via6.
+[INFO DRT-0028]   Complete metal7.
+[INFO DRT-0028]   Complete via7.
+[INFO DRT-0028]   Complete metal8.
+[INFO DRT-0028]   Complete via8.
+[INFO DRT-0028]   Complete metal9.
+[INFO DRT-0028]   Complete via9.
+[INFO DRT-0028]   Complete metal10.
+[INFO DRT-0178] Init guide query.
+[INFO DRT-0035]   Complete active (guide).
+[INFO DRT-0035]   Complete Fr_VIA (guide).
+[INFO DRT-0035]   Complete metal1 (guide).
+[INFO DRT-0035]   Complete via1 (guide).
+[INFO DRT-0035]   Complete metal2 (guide).
+[INFO DRT-0035]   Complete via2 (guide).
+[INFO DRT-0035]   Complete metal3 (guide).
+[INFO DRT-0035]   Complete via3 (guide).
+[INFO DRT-0035]   Complete metal4 (guide).
+[INFO DRT-0035]   Complete via4 (guide).
+[INFO DRT-0035]   Complete metal5 (guide).
+[INFO DRT-0035]   Complete via5 (guide).
+[INFO DRT-0035]   Complete metal6 (guide).
+[INFO DRT-0035]   Complete via6 (guide).
+[INFO DRT-0035]   Complete metal7 (guide).
+[INFO DRT-0035]   Complete via7 (guide).
+[INFO DRT-0035]   Complete metal8 (guide).
+[INFO DRT-0035]   Complete via8 (guide).
+[INFO DRT-0035]   Complete metal9 (guide).
+[INFO DRT-0035]   Complete via9 (guide).
+[INFO DRT-0035]   Complete metal10 (guide).
+[INFO DRT-0036] active guide region query size = 0.
+[INFO DRT-0036] FR_VIA guide region query size = 0.
+[INFO DRT-0036] metal1 guide region query size = 50858.
+[INFO DRT-0036] via1 guide region query size = 0.
+[INFO DRT-0036] metal2 guide region query size = 29717.
+[INFO DRT-0036] via2 guide region query size = 0.
+[INFO DRT-0036] metal3 guide region query size = 12344.
+[INFO DRT-0036] via3 guide region query size = 0.
+[INFO DRT-0036] metal4 guide region query size = 3748.
+[INFO DRT-0036] via4 guide region query size = 0.
+[INFO DRT-0036] metal5 guide region query size = 1402.
+[INFO DRT-0036] via5 guide region query size = 0.
+[INFO DRT-0036] metal6 guide region query size = 574.
+[INFO DRT-0036] via6 guide region query size = 0.
+[INFO DRT-0036] metal7 guide region query size = 250.
+[INFO DRT-0036] via7 guide region query size = 0.
+[INFO DRT-0036] metal8 guide region query size = 216.
+[INFO DRT-0036] via8 guide region query size = 0.
+[INFO DRT-0036] metal9 guide region query size = 207.
+[INFO DRT-0036] via9 guide region query size = 0.
+[INFO DRT-0036] metal10 guide region query size = 204.
+[INFO DRT-0179] Init gr pin query.
+[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 439.67 (MB), peak = 439.67 (MB)
+[INFO DRT-0245] skipped writing guide updates to database.
+[INFO DRT-0181] Start track assignment.
+[INFO DRT-0184] Done with 34459 vertical wires in 2 frboxes and 65061 horizontal wires in 2 frboxes.
+[INFO DRT-0186] Done with 10837 vertical wires in 2 frboxes and 18717 horizontal wires in 2 frboxes.
+[INFO DRT-0182] Complete track assignment.
+[INFO DRT-0267] cpu time = 00:00:06, elapsed time = 00:00:04, memory = 598.43 (MB), peak = 630.43 (MB)
+[INFO DRT-0187] Start routing data preparation.
+[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 598.43 (MB), peak = 630.43 (MB)
+[INFO DRT-0194] Start detail routing.
+[INFO DRT-0195] Start 0th optimization iteration.
+    Completing 10% with 0 violations.
+    elapsed time = 00:00:02, memory = 901.73 (MB).
+    Completing 20% with 0 violations.
+    elapsed time = 00:00:04, memory = 1050.09 (MB).
+    Completing 30% with 3030 violations.
+    elapsed time = 00:00:10, memory = 1160.52 (MB).
+    Completing 40% with 3030 violations.
+    elapsed time = 00:00:12, memory = 1166.71 (MB).
+    Completing 50% with 3030 violations.
+    elapsed time = 00:00:18, memory = 915.18 (MB).
+    Completing 60% with 5990 violations.
+    elapsed time = 00:00:21, memory = 1177.20 (MB).
+    Completing 70% with 5990 violations.
+    elapsed time = 00:00:24, memory = 1111.29 (MB).
+    Completing 80% with 8791 violations.
+    elapsed time = 00:00:30, memory = 1227.34 (MB).
+    Completing 90% with 8791 violations.
+    elapsed time = 00:00:34, memory = 1189.40 (MB).
+    Completing 100% with 11528 violations.
+    elapsed time = 00:00:37, memory = 969.40 (MB).
+[INFO DRT-0199]   Number of violations = 13187.
+Viol/Layer      metal1   via1 metal2   via2 metal3   via3 metal4   via4 metal5   via5 metal6   via6 metal7 me..10
+Cut Spacing          0    119      0     20      0      0      0      8      0      3      0      0      0      0
+Metal Spacing     3489      0    769      0     74      0      7      0      3      0      0      0      1     35
+NS Metal            18      0      0      0      0      0      0      0      0      0      0      0      0      0
+Recheck            556      0    664      0    396      0     24      0      6      0      9      0      4      0
+Short             3998     78   2630      8    207      1     34      0     14      0      2      4      6      0
+[INFO DRT-0267] cpu time = 00:04:45, elapsed time = 00:00:37, memory = 997.40 (MB), peak = 1257.34 (MB)
+Total wire length = 215292 um.
+Total wire length on LAYER metal1 = 4788 um.
+Total wire length on LAYER metal2 = 80156 um.
+Total wire length on LAYER metal3 = 81778 um.
+Total wire length on LAYER metal4 = 28669 um.
+Total wire length on LAYER metal5 = 11046 um.
+Total wire length on LAYER metal6 = 7051 um.
+Total wire length on LAYER metal7 = 568 um.
+Total wire length on LAYER metal8 = 383 um.
+Total wire length on LAYER metal9 = 188 um.
+Total wire length on LAYER metal10 = 662 um.
+Total number of vias = 153413.
+Up-via summary (total 153413):
+
+-----------------
+ active         0
+ metal1     82579
+ metal2     61696
+ metal3      5646
+ metal4      1766
+ metal5       830
+ metal6       260
+ metal7       222
+ metal8       210
+ metal9       204
+-----------------
+       153413
+
+
+[INFO DRT-0195] Start 1st optimization iteration.
+    Completing 10% with 13187 violations.
+    elapsed time = 00:00:00, memory = 1109.40 (MB).
+    Completing 20% with 13187 violations.
+    elapsed time = 00:00:02, memory = 1309.59 (MB).
+    Completing 30% with 10560 violations.
+    elapsed time = 00:00:08, memory = 1083.59 (MB).
+    Completing 40% with 10560 violations.
+    elapsed time = 00:00:10, memory = 1301.68 (MB).
+    Completing 50% with 10560 violations.
+    elapsed time = 00:00:12, memory = 1231.69 (MB).
+    Completing 60% with 8065 violations.
+    elapsed time = 00:00:15, memory = 1293.69 (MB).
+    Completing 70% with 8065 violations.
+    elapsed time = 00:00:17, memory = 1375.70 (MB).
+    Completing 80% with 4717 violations.
+    elapsed time = 00:00:24, memory = 1229.71 (MB).
+    Completing 90% with 4717 violations.
+    elapsed time = 00:00:26, memory = 1269.71 (MB).
+    Completing 100% with 1731 violations.
+    elapsed time = 00:00:31, memory = 971.71 (MB).
+[INFO DRT-0199]   Number of violations = 1731.
+Viol/Layer      metal1   via1 metal2   via2 metal3 metal5 me..10
+Cut Spacing          0      3      0      8      0      0      0
+Metal Spacing       32      0    260      0     10      0     33
+Short               36      0   1239      1    106      3      0
+[INFO DRT-0267] cpu time = 00:03:37, elapsed time = 00:00:32, memory = 973.71 (MB), peak = 1377.70 (MB)
+Total wire length = 211887 um.
+Total wire length on LAYER metal1 = 3346 um.
+Total wire length on LAYER metal2 = 77993 um.
+Total wire length on LAYER metal3 = 82219 um.
+Total wire length on LAYER metal4 = 28595 um.
+Total wire length on LAYER metal5 = 10903 um.
+Total wire length on LAYER metal6 = 7011 um.
+Total wire length on LAYER metal7 = 550 um.
+Total wire length on LAYER metal8 = 374 um.
+Total wire length on LAYER metal9 = 217 um.
+Total wire length on LAYER metal10 = 674 um.
+Total number of vias = 149349.
+Up-via summary (total 149349):
+
+-----------------
+ active         0
+ metal1     79706
+ metal2     60690
+ metal3      5555
+ metal4      1716
+ metal5       797
+ metal6       253
+ metal7       220
+ metal8       208
+ metal9       204
+-----------------
+       149349
+
+
+[INFO DRT-0195] Start 2nd optimization iteration.
+    Completing 10% with 1731 violations.
+    elapsed time = 00:00:00, memory = 973.71 (MB).
+    Completing 20% with 1731 violations.
+    elapsed time = 00:00:02, memory = 1363.72 (MB).
+    Completing 30% with 1704 violations.
+    elapsed time = 00:00:05, memory = 1249.73 (MB).
+    Completing 40% with 1704 violations.
+    elapsed time = 00:00:07, memory = 1297.73 (MB).
+    Completing 50% with 1704 violations.
+    elapsed time = 00:00:09, memory = 1347.73 (MB).
+    Completing 60% with 1794 violations.
+    elapsed time = 00:00:14, memory = 1309.73 (MB).
+    Completing 70% with 1794 violations.
+    elapsed time = 00:00:15, memory = 1369.73 (MB).
+    Completing 80% with 1722 violations.
+    elapsed time = 00:00:24, memory = 1181.91 (MB).
+    Completing 90% with 1722 violations.
+    elapsed time = 00:00:27, memory = 1293.91 (MB).
+    Completing 100% with 1625 violations.
+    elapsed time = 00:00:31, memory = 975.91 (MB).
+[INFO DRT-0199]   Number of violations = 1625.
+Viol/Layer      metal1   via1 metal2   via2 metal3 metal4   via4 metal5 me..10
+Cut Spacing          0      1      0      2      0      0      1      0      0
+Metal Spacing        6      0    286      0      7      0      0      0     34
+Short                6      0   1172      0    106      2      0      2      0
+[INFO DRT-0267] cpu time = 00:03:30, elapsed time = 00:00:32, memory = 1051.91 (MB), peak = 1377.70 (MB)
+Total wire length = 211567 um.
+Total wire length on LAYER metal1 = 3325 um.
+Total wire length on LAYER metal2 = 78002 um.
+Total wire length on LAYER metal3 = 82209 um.
+Total wire length on LAYER metal4 = 28384 um.
+Total wire length on LAYER metal5 = 10939 um.
+Total wire length on LAYER metal6 = 6974 um.
+Total wire length on LAYER metal7 = 539 um.
+Total wire length on LAYER metal8 = 367 um.
+Total wire length on LAYER metal9 = 161 um.
+Total wire length on LAYER metal10 = 663 um.
+Total number of vias = 149123.
+Up-via summary (total 149123):
+
+-----------------
+ active         0
+ metal1     79655
+ metal2     60619
+ metal3      5474
+ metal4      1709
+ metal5       789
+ metal6       249
+ metal7       218
+ metal8       206
+ metal9       204
+-----------------
+       149123
+
+
+[INFO DRT-0195] Start 3rd optimization iteration.
+    Completing 10% with 1625 violations.
+    elapsed time = 00:00:00, memory = 1345.91 (MB).
+    Completing 20% with 1625 violations.
+    elapsed time = 00:00:02, memory = 1395.91 (MB).
+    Completing 30% with 1193 violations.
+    elapsed time = 00:00:05, memory = 1251.91 (MB).
+    Completing 40% with 1193 violations.
+    elapsed time = 00:00:06, memory = 1297.91 (MB).
+    Completing 50% with 1193 violations.
+    elapsed time = 00:00:08, memory = 1191.91 (MB).
+    Completing 60% with 803 violations.
+    elapsed time = 00:00:09, memory = 1291.91 (MB).
+    Completing 70% with 803 violations.
+    elapsed time = 00:00:10, memory = 1315.91 (MB).
+    Completing 80% with 409 violations.
+    elapsed time = 00:00:14, memory = 1227.91 (MB).
+    Completing 90% with 409 violations.
+    elapsed time = 00:00:15, memory = 1329.91 (MB).
+    Completing 100% with 62 violations.
+    elapsed time = 00:00:17, memory = 1197.91 (MB).
+[INFO DRT-0199]   Number of violations = 62.
+Viol/Layer      metal1 metal2   via2 metal3 me..10
+Metal Spacing        0     16      0      2      2
+Short                1     37      1      3      0
+[INFO DRT-0267] cpu time = 00:01:50, elapsed time = 00:00:17, memory = 1201.91 (MB), peak = 1395.91 (MB)
+Total wire length = 211325 um.
+Total wire length on LAYER metal1 = 3150 um.
+Total wire length on LAYER metal2 = 75584 um.
+Total wire length on LAYER metal3 = 82778 um.
+Total wire length on LAYER metal4 = 30426 um.
+Total wire length on LAYER metal5 = 10829 um.
+Total wire length on LAYER metal6 = 6930 um.
+Total wire length on LAYER metal7 = 531 um.
+Total wire length on LAYER metal8 = 376 um.
+Total wire length on LAYER metal9 = 140 um.
+Total wire length on LAYER metal10 = 576 um.
+Total number of vias = 150437.
+Up-via summary (total 150437):
+
+-----------------
+ active         0
+ metal1     79472
+ metal2     61465
+ metal3      6140
+ metal4      1705
+ metal5       778
+ metal6       249
+ metal7       218
+ metal8       206
+ metal9       204
+-----------------
+       150437
+
+
+[INFO DRT-0195] Start 4th guides tiles iteration.
+    Completing 10% with 62 violations.
+    elapsed time = 00:00:00, memory = 1201.91 (MB).
+    Completing 20% with 62 violations.
+    elapsed time = 00:00:00, memory = 1201.91 (MB).
+    Completing 30% with 62 violations.
+    elapsed time = 00:00:00, memory = 1201.91 (MB).
+    Completing 40% with 62 violations.
+    elapsed time = 00:00:00, memory = 1201.91 (MB).
+    Completing 50% with 13 violations.
+    elapsed time = 00:00:01, memory = 1201.91 (MB).
+    Completing 60% with 13 violations.
+    elapsed time = 00:00:01, memory = 1201.91 (MB).
+    Completing 70% with 13 violations.
+    elapsed time = 00:00:01, memory = 1201.91 (MB).
+    Completing 80% with 13 violations.
+    elapsed time = 00:00:01, memory = 1201.91 (MB).
+    Completing 90% with 7 violations.
+    elapsed time = 00:00:01, memory = 1201.91 (MB).
+    Completing 100% with 2 violations.
+    elapsed time = 00:00:01, memory = 1201.91 (MB).
+[INFO DRT-0199]   Number of violations = 2.
+Viol/Layer      metal2 me..10
+Metal Spacing        1      1
+[INFO DRT-0267] cpu time = 00:00:02, elapsed time = 00:00:01, memory = 1259.91 (MB), peak = 1395.91 (MB)
+Total wire length = 211322 um.
+Total wire length on LAYER metal1 = 3148 um.
+Total wire length on LAYER metal2 = 75545 um.
+Total wire length on LAYER metal3 = 82792 um.
+Total wire length on LAYER metal4 = 30446 um.
+Total wire length on LAYER metal5 = 10836 um.
+Total wire length on LAYER metal6 = 6930 um.
+Total wire length on LAYER metal7 = 529 um.
+Total wire length on LAYER metal8 = 379 um.
+Total wire length on LAYER metal9 = 140 um.
+Total wire length on LAYER metal10 = 573 um.
+Total number of vias = 150462.
+Up-via summary (total 150462):
+
+-----------------
+ active         0
+ metal1     79472
+ metal2     61474
+ metal3      6155
+ metal4      1706
+ metal5       778
+ metal6       249
+ metal7       218
+ metal8       206
+ metal9       204
+-----------------
+       150462
+
+
+[INFO DRT-0195] Start 5th guides tiles iteration.
+    Completing 30% with 2 violations.
+    elapsed time = 00:00:00, memory = 1259.91 (MB).
+    Completing 60% with 2 violations.
+    elapsed time = 00:00:00, memory = 1259.91 (MB).
+    Completing 100% with 2 violations.
+    elapsed time = 00:00:00, memory = 1259.91 (MB).
+[INFO DRT-0199]   Number of violations = 2.
+Viol/Layer      metal2 me..10
+Metal Spacing        1      1
+[INFO DRT-0267] cpu time = 00:00:00, elapsed time = 00:00:00, memory = 1259.91 (MB), peak = 1395.91 (MB)
+Total wire length = 211322 um.
+Total wire length on LAYER metal1 = 3148 um.
+Total wire length on LAYER metal2 = 75545 um.
+Total wire length on LAYER metal3 = 82792 um.
+Total wire length on LAYER metal4 = 30446 um.
+Total wire length on LAYER metal5 = 10836 um.
+Total wire length on LAYER metal6 = 6930 um.
+Total wire length on LAYER metal7 = 529 um.
+Total wire length on LAYER metal8 = 379 um.
+Total wire length on LAYER metal9 = 140 um.
+Total wire length on LAYER metal10 = 573 um.
+Total number of vias = 150464.
+Up-via summary (total 150464):
+
+-----------------
+ active         0
+ metal1     79472
+ metal2     61476
+ metal3      6155
+ metal4      1706
+ metal5       778
+ metal6       249
+ metal7       218
+ metal8       206
+ metal9       204
+-----------------
+       150464
+
+
+[INFO DRT-0195] Start 6th stubborn tiles iteration.
+    Completing 10% with 2 violations.
+    elapsed time = 00:00:00, memory = 1259.91 (MB).
+    Completing 20% with 2 violations.
+    elapsed time = 00:00:00, memory = 1275.91 (MB).
+    Completing 30% with 2 violations.
+    elapsed time = 00:00:00, memory = 1275.91 (MB).
+    Completing 40% with 2 violations.
+    elapsed time = 00:00:01, memory = 1275.91 (MB).
+    Completing 50% with 2 violations.
+    elapsed time = 00:00:01, memory = 1295.91 (MB).
+    Completing 60% with 2 violations.
+    elapsed time = 00:00:01, memory = 1316.03 (MB).
+    Completing 70% with 2 violations.
+    elapsed time = 00:00:02, memory = 1462.19 (MB).
+    Completing 80% with 2 violations.
+    elapsed time = 00:00:02, memory = 1594.76 (MB).
+    Completing 90% with 2 violations.
+    elapsed time = 00:00:03, memory = 1618.76 (MB).
+    Completing 100% with 0 violations.
+    elapsed time = 00:00:05, memory = 1620.76 (MB).
+[INFO DRT-0199]   Number of violations = 0.
+[INFO DRT-0267] cpu time = 00:00:46, elapsed time = 00:00:05, memory = 1632.76 (MB), peak = 1654.76 (MB)
+Total wire length = 211326 um.
+Total wire length on LAYER metal1 = 3148 um.
+Total wire length on LAYER metal2 = 75544 um.
+Total wire length on LAYER metal3 = 82793 um.
+Total wire length on LAYER metal4 = 30446 um.
+Total wire length on LAYER metal5 = 10836 um.
+Total wire length on LAYER metal6 = 6930 um.
+Total wire length on LAYER metal7 = 531 um.
+Total wire length on LAYER metal8 = 384 um.
+Total wire length on LAYER metal9 = 137 um.
+Total wire length on LAYER metal10 = 573 um.
+Total number of vias = 150464.
+Up-via summary (total 150464):
+
+-----------------
+ active         0
+ metal1     79472
+ metal2     61476
+ metal3      6155
+ metal4      1706
+ metal5       778
+ metal6       249
+ metal7       218
+ metal8       206
+ metal9       204
+-----------------
+       150464
+
+
+[INFO DRT-0198] Complete detail routing.
+Total wire length = 211326 um.
+Total wire length on LAYER metal1 = 3148 um.
+Total wire length on LAYER metal2 = 75544 um.
+Total wire length on LAYER metal3 = 82793 um.
+Total wire length on LAYER metal4 = 30446 um.
+Total wire length on LAYER metal5 = 10836 um.
+Total wire length on LAYER metal6 = 6930 um.
+Total wire length on LAYER metal7 = 531 um.
+Total wire length on LAYER metal8 = 384 um.
+Total wire length on LAYER metal9 = 137 um.
+Total wire length on LAYER metal10 = 573 um.
+Total number of vias = 150464.
+Up-via summary (total 150464):
+
+-----------------
+ active         0
+ metal1     79472
+ metal2     61476
+ metal3      6155
+ metal4      1706
+ metal5       778
+ metal6       249
+ metal7       218
+ metal8       206
+ metal9       204
+-----------------
+       150464
+
+
+[INFO DRT-0267] cpu time = 00:14:33, elapsed time = 00:02:07, memory = 1632.76 (MB), peak = 1654.76 (MB)
+
+[INFO DRT-0180] Post processing.
+[INFO DRT-0501] Runtime: 139.59s
+Took 139 seconds: detailed_route -output_drc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/reports/nangate45/bv1_g_s32/base/5_route_drc.rpt -output_maze /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/maze.log -via_in_pin_bottom_layer metal10 -via_in_pin_top_layer metal10 -droute_end_iter 64 -verbose 1 -drc_report_iter_step 5 -via_access_layer metal10
+[WARNING GRT-0246] No diode with LEF class CORE ANTENNACELL found.
+[INFO ANT-0002] Found 0 net violations.
+[INFO ANT-0001] Found 0 pin violations.
+[INFO ANT-0002] Found 0 net violations.
+[INFO ANT-0001] Found 0 pin violations.
+Design area 28596 um^2 66% utilization.
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_2_route.odb
+Elapsed time: 2:21.41[h:]min:sec. CPU time: user 974.24 sys 0.93 (689%). Peak memory: 1694476KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+5_2_route              .odb        141      975     6.90     1654 d03c6c026f
+/OpenROAD-flow-scripts/flow/scripts/flow.sh 5_3_fillcell fillcell
+Running fillcell.tcl, stage 5_3_fillcell
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_2_route.odb
+read_sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_1_grt.sdc
+source /OpenROAD-flow-scripts/flow/platforms/nangate45/setRC.tcl
+filler_placement "FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32"
+[INFO DPL-0001] Placed 17540 filler instances.
+Design area 28596 um^2 66% utilization.
+write_db /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_3_fillcell.odb
+Elapsed time: 0:00.44[h:]min:sec. CPU time: user 0.38 sys 0.05 (98%). Peak memory: 192808KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+5_3_fillcell           .odb          0        0     0.98      188 b3a8c3be58
+cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_3_fillcell.odb /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_route.odb
+cp /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_1_grt.sdc /public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/5_route.sdc
+make: Leaving directory '/OpenROAD-flow-scripts/flow'

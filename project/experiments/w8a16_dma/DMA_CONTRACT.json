@@ -1,0 +1,131 @@
+{
+  "status": "production_RTL_candidate_unit_verified_not_system_or_physical_accepted",
+  "clock_mhz": 300,
+  "rtl": "project/rtl/mother_control_native/mc_dma_fabric.sv",
+  "registry": {
+    "scope_clients": {
+      "indices": [
+        0,
+        8
+      ],
+      "compute_target": "client index",
+      "local_tag": "scope_serial31/half1",
+      "record_beats": 2,
+      "base_alignment_B": 128
+    },
+    "weight_clients": {
+      "indices": [
+        9,
+        11
+      ],
+      "compute_target": "client-9",
+      "local_tag": "epoch9/bank2/generation16/beat5",
+      "record_beats": [
+        17,
+        18
+      ],
+      "base_alignment_B": 64
+    },
+    "unregistered": "COPY is local S only. Bias/KV must register type/lifetime/charges in these existing LC clients or change this contract; no free new DDR ports."
+  },
+  "client_bus": {
+    "request": "one valid/ready per client; address64,localtag32,channel1,record_beats5; exactly64B; client i field starts at i*width",
+    "response": "one valid/ready per client; localtag32,data512; client choice locks while held; no extra per-client data FIFO",
+    "close": "valid/ready,localtagbase32; scope low1=0,weight low5=0; accepts actual no-more-source-issue; partial closed descriptor waits all accepted beats returned or explicitly cancelled",
+    "cancel": "optional single localtag32 reservation cancellation; one finite held ACK/client; accepted only before backend offer, otherwise rejected ACK; no offered VALID can be withdrawn",
+    "fence": "request valid/ready,cookie32,epoch9; held matching done after true complete global beat/skid drain and actual backend purge; one finite fence owner; client must have no live own descriptors"
+  },
+  "backend": {
+    "request_lanes": 4,
+    "lane_channel": "floor(lane/2), two independent request ports/channel",
+    "request_fields": "held valid/ready,address64,globaltag64; each exactly64B",
+    "response_fields": "valid/ready,globaltag64,data512; same channel as issued; at least one core cycle after request acceptance; OOO accepted once",
+    "global_tag_bits": {
+      "class": [
+        0,
+        6
+      ],
+      "client": [
+        6,
+        4
+      ],
+      "slot": [
+        10,
+        6
+      ],
+      "serial": [
+        16,
+        16
+      ],
+      "transport_generation": [
+        32,
+        32
+      ]
+    },
+    "response_storage": "Configurable SKIDS_PER_CHANNEL 2/3/4 (four/six/eight total) shared landing within channel; each64B plus entry id. One physical response/client, held fair choice. Current source default3 per channel (384B), the smallest tested configuration passing the original pressure gate. Credit stays RETURNING until real client ACK.",
+    "fence": "global purge valid/ready with next generation32, matching held done; all offered/issued/returning data drain first; open logical descriptors may survive with already completed/cancelled bitmaps unchanged"
+  },
+  "service": {
+    "budget": "strict any three core cycles: <=4 actual backend request handshakes/channel; physical maximum2/channel/cycle; saturated steady pattern may be2,2,0",
+    "new_offer_invariant": "I[t-1]+I[t]+old_unACKed_offers+new_offers<=4; offered reservations<=2/channel; I[t+1]<=reserved_held[t+1] proves sliding3 bound",
+    "startup": "Reset enters F_DRAIN, blocks all source admission, then actual backend purge valid/ready and matching done before F_IDLE. previous issue counts0 and no offers; startup purge costs real cycles. Global reset abandons logical jobs together with LC/A/guards; it cannot resume pre-reset descriptors.",
+    "bandwidth": "2channels*4beats/3cycles*64B*300MHz =51.2GB/s; include exact finite service curve, held ports, and scope traffic in both SystemC comparisons",
+    "not_adopted": "The earlier mint[2,1,1]/token-cap2 draft is not implemented and must not be combined with rolling3 or charged twice."
+  },
+  "lifetime": {
+    "states": [
+      "FREE",
+      "RESERVED",
+      "OFFERED",
+      "ISSUED",
+      "RETURNING"
+    ],
+    "source_accept": "reserves actual beat entry and existing/new descriptor; <=2 reservations/channel/cycle, each client<=1",
+    "backend_offer": "separate later event; reserves service window, stable valid until real backend ACK",
+    "backend_issue": "actual DDR request ACK; ownership mapping cannot change",
+    "real_return": "matching ISSUED entry only; duplicate/stale/wrong-channel returns produce bounded unowned diagnostic and never refund another credit",
+    "client_return": "true payload ACK frees beat and marks descriptor returned; not merely DDR response capture",
+    "descriptor_retire": "closed AND accepted_bitmap==(returned_bitmap|explicit_cancelled_bitmap); no idle-based release",
+    "namespace_exhaustion": "serial16 cannot reuse. A freed max-serial entry pauses new source reservations, drains existing physical transport, requests actual backend purge, advances transport generation then resets serials. Finite production limit65535; separate limit3 unit configuration tests real exhaustion control. Open descriptors and their missing future beats are preserved."
+  },
+  "finite_resources": {
+    "beat_entries": 64,
+    "beat_entries_per_channel": 32,
+    "descriptor_entries": 64,
+    "descriptor_entries_per_channel": 32,
+    "beat_entry_bits": 125,
+    "descriptor_entry_bits": 166,
+    "DDR_offer_slots": 4,
+    "return_payload_B": 256,
+    "client_cancel_ACK_slots": 12,
+    "RF_or_private_SRAM_added": 0,
+    "area": "Beat/descriptor tables about2328B metadata, plus256B payload skids, per-client selection/cancel ACK and all tag/decode/arbiter/fence state are real registers/logic counted in MC fabric. No SRAM-free claim implies area-free. Internal packed logical ports are not an accepted physical macro pin interface.",
+    "return_payload_B_default": 384,
+    "return_payload_B_candidates": [
+      256,
+      384,
+      512
+    ],
+    "extra_default_return_payload_vs_first_qualified_B": 128,
+    "return_selection": "Fair per-client choice among all skids; per-channel shared landing, at most two new DDR captures/channel/cycle. All mux/decode/selector state counts as MC area."
+  },
+  "evidence": {
+    "first_passing_job": 102254,
+    "latest_4_fixed_lane_job": 102266,
+    "latest_4_fixed_lane_source": "be3536cbe709ce9be7086c900074c7db23a5ccea",
+    "shared8_job": 102288,
+    "shared8_source": "4c144fa9b96faac3217efa2d2d6873883c1963ca",
+    "shared8_coverage": "36 runs: six seeds x three initial states x serial65535/3; strict Wall, same12client directed ownership/cap/backpressure faults plus original3W random-OOO saturated pressure. Both production channels achieve measured trimmed4/3 real issues per cycle. Limited serial3 includes real purge pauses. Artifact SHA and independent event audits in weights/dma-11.",
+    "shared6_job": 102289,
+    "shared6_status": "36RTL runs and independent SHA/event/service audit passed; archive3412d898c42a2df1569a58db0afdb48e8fc2abce2a90ab9d483d05873d460dc8,3843330B",
+    "shared4_job": 102291,
+    "shared4_status": "Failed original97% service gate on all six seeds first run; original pressure unchanged. Ownership-only4slot evidence remains valid within its earlier scope.",
+    "failure_history": "dma-08 fixed-lane4 and dma-09 no-benefit pressure-aware issue candidate failed the original97% service gate (~87.23% on seed25021). dma-10 actual8slot RTL passed each first run but runner rejected extra PERF stdout; stdout framing fixed without pressure/RTL change, then dma-11 full36passed. These failures are preserved.",
+    "boundary": "Syntheticdeterministicunitpayloads inthisbranch; actualscope/M/Pjoint hasseparatecontrolagent evidence andmustremainsourcebound. NoMCphysical,energy,whole-modeltoken/sclaim.",
+    "latest_source": "0b60b134ebf59b912d5976f63abd37c9cca86003",
+    "registered_output_job": 102309,
+    "registered_output_status": "36strictunit plus independentSHA/conservation/service auditPASS; registeredowneroutputs split fromsourceplanning withoutaddeddata/latency; actualold-M/MC/LC/Sjoint separately bycontrolagent102312.",
+    "inflight_global_reset_job": 102315,
+    "inflight_global_reset_status": "36strictunit+independentSHA/event/service auditPASS. Onealreadyissued oldrecord explicitlyabandoned bycoordinatedlogicalreset, remainsinexternalpeer untilactualpurge; freshsourceVALID blockeduntilpurgedone.4453accepted=4451clientreturns+1cancel+1resetabandon;4452issued=4451clientreturns+1actualpurgedrop inseed25021."
+  }
+}

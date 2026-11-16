@@ -1,0 +1,109 @@
+{
+  "schema": "block-v1-input-only-logic-projection/1",
+  "passed": true,
+  "removed_instances": {
+    "projection_probe/protection": {
+      "hide_name": 0,
+      "type": "ANTENNA_X1",
+      "parameters": {},
+      "attributes": {
+        "module_not_derived": "00000000000000000000000000000001",
+        "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-05/audit/physical/controls/projection-1/wrong_clock.v:1.163-1.180"
+      },
+      "port_directions": {
+        "A": "input"
+      },
+      "connections": {
+        "A": [
+          3
+        ]
+      }
+    }
+  },
+  "removed_count": 1,
+  "original_graph_sha256": "2c32aab4f632181e90fa21c2945d9608e157ecf4164e41cf000b7041860f01b9",
+  "projected_graph_sha256": "3afbcdd2c8a6d0ea15682883b82fa1b86c5b41f94878cd09bf906684f347b197",
+  "exact_inverse_reconstruction": true,
+  "allowed_master": "ANTENNA_X1",
+  "liberty_signal_pins": {
+    "A": "input"
+  },
+  "scope": "Input-only, stateless, no-function ANTENNA_X1 Boolean removal only; physical and simulation views retain cells and real loads",
+  "used_model_audit": {
+    "passed": true,
+    "instantiated_masters": [
+      "ANTENNA_X1",
+      "DFF_X2",
+      "LOGIC1_X1",
+      "XOR2_X1"
+    ],
+    "unsupported_instantiated_statetable_or_state_function": [],
+    "scope": "Actual instantiated masters contain none of the statetable/state_function constructs warned unsupported by the native frontend; this is not a general frontend completeness proof"
+  },
+  "constant_functions": {
+    "schema": "block-v1-constant-boolean-projection/1",
+    "passed": true,
+    "validated_functions": {
+      "LOGIC0_X1": "0",
+      "LOGIC1_X1": "1"
+    },
+    "removed_instances": {
+      "projection_probe/constant_after": {
+        "hide_name": 0,
+        "type": "LOGIC1_X1",
+        "parameters": {},
+        "attributes": {
+          "module_not_derived": "00000000000000000000000000000001",
+          "src": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-05/audit/physical/controls/projection-1/wrong_clock.v:1.68-1.89"
+        },
+        "port_directions": {
+          "Z": "output"
+        },
+        "connections": {
+          "Z": [
+            6
+          ]
+        }
+      }
+    },
+    "removed_count": 1,
+    "rewritten_bit_positions": [
+      [
+        "projection_probe",
+        "netnames",
+        "t",
+        null,
+        0,
+        6
+      ],
+      [
+        "projection_probe",
+        "cells",
+        "g",
+        "B",
+        0,
+        6
+      ]
+    ],
+    "original_graph_sha256": "3afbcdd2c8a6d0ea15682883b82fa1b86c5b41f94878cd09bf906684f347b197",
+    "projected_graph_sha256": "340f7dd9192ccbe58a6b0fa3a83bfe633f943b5437b372bdfa7db2dd44a9859c",
+    "exact_inverse_reconstruction": true,
+    "scope": "Real Liberty single-output stateless function 0/1 substitution only; all physical resources retained; strict positive LEC/state-boundary correspondence remains mandatory"
+  },
+  "final_graph_sha256": "340f7dd9192ccbe58a6b0fa3a83bfe633f943b5437b372bdfa7db2dd44a9859c",
+  "emitted_structural_proof": {
+    "schema": "block-v1-structural-view-proof/1",
+    "passed": true,
+    "modules": {
+      "projection_probe": {
+        "cells": 2,
+        "cell_pin_bits_checked": 6,
+        "bit_id_bijection": 4
+      }
+    },
+    "escaped_module_identifiers": {}
+  },
+  "full_netlist_sha256": "f14e585106e232f5904d14adfced12f1fb23597739d5fca4ee52de8e480c3869",
+  "logic_netlist_sha256": "de4d6d949758b968f145851fd562f7ef8c264006e1e565abceea63c65a239bd8",
+  "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+}

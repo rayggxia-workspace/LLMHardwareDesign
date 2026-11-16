@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "operation": "drc",
+  "source": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route",
+  "native_anchors": {
+    "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "full_deck_sha256": "4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147",
+    "source": "Main accepted M mapping receipt and main release-six/M/evidence/drc/five-macro-drc.json"
+  },
+  "commands": [
+    {
+      "command": [
+        "openroad",
+        "-no_init",
+        "-exit",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-05/audit/drc/native-drc.tcl"
+      ],
+      "log": "native-drc.log",
+      "sha256": "4e15693f6e91880b68922b8078b1fbaec13088dfdfe002c59301b92559adb305",
+      "returncode": 0,
+      "seconds": 5.892351865768433
+    },
+    {
+      "command": [
+        "make",
+        "-C",
+        "/OpenROAD-flow-scripts/flow",
+        "DESIGN_CONFIG=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/config.mk",
+        "WORK_HOME=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow",
+        "NUM_CORES=12",
+        "do-gds"
+      ],
+      "log": "gds.log",
+      "sha256": "c0644fc12f6f6f1a63ba1afb6881892f1fbdd97a8007d5d33bf70dd2d8b67e01",
+      "returncode": 0,
+      "seconds": 3.4185612201690674
+    },
+    {
+      "command": [
+        "klayout",
+        "-b",
+        "-rd",
+        "in_gds=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-04/route/flow/results/nangate45/bv1_g_s32/base/6_final.gds",
+        "-rd",
+        "report_file=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-250-g-physical-20261111-05/audit/drc/full-deck.lyrdb",
+        "-r",
+        "/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc"
+      ],
+      "log": "full-deck.log",
+      "sha256": "51757b969bb4706abfb395b7f113f1e1f0901b0c430ef9b4d2a8af5d98cb5a27",
+      "returncode": 0,
+      "seconds": 127.1278464794159
+    }
+  ],
+  "start_unix": 1794330122.47056,
+  "end_unix": 1794330259.0341728,
+  "outputs": {
+    "drc.json": "5b802abe80d2319f5b8c12fc23667b095f615ec63f9a07e9b64eba60d07d17e9",
+    "native-whole-drc.rpt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-drc.log": "4e15693f6e91880b68922b8078b1fbaec13088dfdfe002c59301b92559adb305",
+    "native-drc.tcl": "958dce5cedc50ff4cb27e8d3eeeecda36a59aec8e7d2c94ac9206aa9ee794085",
+    "full-deck.log": "51757b969bb4706abfb395b7f113f1e1f0901b0c430ef9b4d2a8af5d98cb5a27",
+    "after.def": "29ab9e41ed4c6f09d18b59edeaab3d847d18fa9c1627aceb5368ef8eed438b74",
+    "gds.log": "c0644fc12f6f6f1a63ba1afb6881892f1fbdd97a8007d5d33bf70dd2d8b67e01",
+    "full-deck.lyrdb": "8a4ee2989a8e4e410395fc91e43861f31655f5983b79a2ebb65c23d2d54c1acd",
+    "before.def": "29ab9e41ed4c6f09d18b59edeaab3d847d18fa9c1627aceb5368ef8eed438b74"
+  }
+}

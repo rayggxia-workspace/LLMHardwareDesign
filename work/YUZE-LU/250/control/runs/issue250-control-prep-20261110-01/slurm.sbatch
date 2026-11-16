@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --job-name=yl-250ctrl
+#SBATCH --partition=c64
+#SBATCH --nodes=1
+#SBATCH --ntasks=6
+#SBATCH --cpus-per-task=10
+#SBATCH --time=00:10:00
+#SBATCH --output=slurm-%j.out
+set -euo pipefail
+cd "${SLURM_SUBMIT_DIR}"
+mkdir -p results
+python3 --version > results/python-version.txt
+sha256sum contract.json audit_protocol.py run_audit.py slurm.sbatch > results/source.sha256
+# User allocation policy is c64 6x10. These six independent protocol shards
+# each use one Python process; report actual CPU, do not manufacture CPU load.
+for shard in 0 1 2 3 4 5; do
+  srun --exclusive --ntasks=1 --cpus-per-task=10 \
+    python3 -B run_audit.py --shard "${shard}" --shards 6 \
+    --output "results/shard-${shard}.json" &
+done
+status=0
+for task in $(jobs -p); do
+  wait "${task}" || status=1
+done
+exit "${status}"

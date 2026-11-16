@@ -1,0 +1,30 @@
+{
+  "schema": "real-native-control-global-evidence/1",
+  "run": 84,
+  "job": 102406,
+  "source": "5f05540b2",
+  "state": "FAILED",
+  "note": "new actual P M2 side CONTEXT control reply was126-bit comparison; strict build caught, corrected high48 zero bits",
+  "allocation_CPUs": 60,
+  "elapsed_seconds": 3.0,
+  "TotalCPU_seconds": 0.905,
+  "package": "runs/run84.tar.gz",
+  "package_sha256": "5989dce4deb58b060dec4b25aff19b51d0bc577a6113f4c15c9600fb2f4c7977",
+  "package_transport_manifest": "runs/run84.tar.gz.manifest.json",
+  "package_transport_manifest_sha256": "d0a29172a1fef7a59f2d0c476773477423a02ff29b66b4b6e3236d8ef9111648",
+  "package_members": 168,
+  "functional_clock_ns": 10,
+  "not_300MHz_STA": true,
+  "qualification": "LOCAL_CONTIG K128/256 static W8A16, explicit shift8/zero bias. Actual MC/LC PM, true four-bank S, M and global DMA only in named global fixtures. FENCE/cancel/admission fixtures retain their explicitly pinned backend. No streamed whole projection, whole FFN/model, five-provider, physical, energy or token/s qualification.",
+  "logs": [],
+  "failures": [
+    {
+      "path": "./project/experiments/shared_x_control/results/build-p-copy-stream.log",
+      "errors": [
+        "%Warning-WIDTHEXPAND: rtl/p_native_stream_dual_candidate.sv:299:18: Operator EQ expects 128 bits on the RHS, but RHS's REPLICATE generates 126 bits.",
+        "%Error: Exiting due to 1 warning(s)"
+      ]
+    }
+  ],
+  "timing_from_real_RTL": []
+}

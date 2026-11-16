@@ -1,0 +1,30 @@
+{
+  "schema": "real-native-control-global-evidence/1",
+  "run": 82,
+  "job": 102401,
+  "source": "3fd1d18c0",
+  "state": "FAILED",
+  "note": "strict guard2 error metadata width was136 versus128, fixed exact44bit shape zero span",
+  "allocation_CPUs": 60,
+  "elapsed_seconds": 4.0,
+  "TotalCPU_seconds": 1.687,
+  "package": "runs/run82.tar.gz",
+  "package_sha256": "99f09484c840928fd8e974093118759bee4bc21389beec55fd83783b1078eced",
+  "package_transport_manifest": "runs/run82.tar.gz.manifest.json",
+  "package_transport_manifest_sha256": "f39e748a62ebd5b47aa263130c3a937116991767c44fa7dd825c02c7557d62af",
+  "package_members": 138,
+  "functional_clock_ns": 10,
+  "not_300MHz_STA": true,
+  "qualification": "LOCAL_CONTIG K128/256 static W8A16, explicit shift8/zero bias. Actual MC/LC PM, true four-bank S, M and global DMA only in named global fixtures. FENCE/cancel/admission fixtures retain their explicitly pinned backend. No streamed whole projection, whole FFN/model, five-provider, physical, energy or token/s qualification.",
+  "logs": [],
+  "failures": [
+    {
+      "path": "./project/experiments/shared_x_control/results/build-native_s.log",
+      "errors": [
+        "%Warning-WIDTHTRUNC: rtl/bounded_serial_m_guard2.sv:146:29: Operator ASSIGNW expects 128 bits on the Assign RHS, but Assign RHS's REPLICATE generates 136 bits.",
+        "%Error: Exiting due to 1 warning(s)"
+      ]
+    }
+  ],
+  "timing_from_real_RTL": []
+}

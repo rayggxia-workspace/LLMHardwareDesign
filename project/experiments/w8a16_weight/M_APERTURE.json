@@ -1,0 +1,526 @@
+{
+  "status": "implementation_contract_candidate_not_physical_acceptance",
+  "abi": "0x02504d02",
+  "clock_mhz": 300,
+  "command": {
+    "beat_bits": 128,
+    "max_pending_frames": 1,
+    "opcodes": {
+      "BEGIN_SCOPE": 1,
+      "ALLOC": 2,
+      "EXEC": 3,
+      "CONTEXT_SHORT": 4,
+      "RESTORE": 5,
+      "CANCEL_INPUT": 6,
+      "DRAIN_INPUT": 7,
+      "FENCE_TRANSPORT": 8
+    },
+    "runtime_shift": "0..17; computed by real U/E normalizer for K128 and committed before EXEC; native head's eight K16 groups share this one runtime A shift but retain eight independent FP16 W scales/RNEs",
+    "max_beats": 8,
+    "short_header": {
+      "magic16": [
+        0,
+        16
+      ],
+      "opcode": [
+        16,
+        4
+      ],
+      "length": [
+        20,
+        4
+      ],
+      "scope": [
+        24,
+        4
+      ],
+      "bank": [
+        28,
+        2
+      ],
+      "reserved": [
+        30,
+        2
+      ],
+      "session": [
+        32,
+        32
+      ],
+      "record": [
+        64,
+        32
+      ],
+      "scope_generation": [
+        96,
+        16
+      ],
+      "bank_generation_or_context_kind": [
+        112,
+        16
+      ]
+    },
+    "lengths": {
+      "BEGIN_SCOPE": 8,
+      "ALLOC": 2,
+      "EXEC": 2,
+      "CONTEXT_SHORT": 1,
+      "RESTORE": 8,
+      "CANCEL_INPUT": 1,
+      "DRAIN_INPUT": 1,
+      "FENCE_TRANSPORT": 1
+    },
+    "framing": "SOP exactly word0; EOP exactly word(length-1), where the sole permitted per-op length is lengths[opcode]; malformed frame yields one held fault",
+    "per_opcode": {
+      "BEGIN_SCOPE": {
+        "words": 8,
+        "word0": "short_header, bank=0, high16=0; scope_generation must advance exactly once",
+        "word1": "input-object job key128",
+        "word2": "independent output RF owner128",
+        "word3": {
+          "full_k": [
+            0,
+            16
+          ],
+          "n": [
+            16,
+            4
+          ],
+          "head16": [
+            20,
+            1
+          ],
+          "reserved": [
+            21,
+            107
+          ]
+        },
+        "word4": "zero",
+        "words5_6": "final bias S32x8",
+        "word7": {
+          "numeric_id": [
+            0,
+            32
+          ],
+          "layout_id": [
+            32,
+            32
+          ],
+          "reserved": [
+            64,
+            64
+          ]
+        }
+      },
+      "ALLOC": {
+        "words": 2,
+        "word0": "short_header, bank/high16=0",
+        "word1": {
+          "base_address": [
+            0,
+            64
+          ],
+          "reserved": [
+            64,
+            64
+          ]
+        }
+      },
+      "EXEC": {
+        "words": 2,
+        "word0": "short_header, bank/high16=0",
+        "word1": {
+          "bank": [
+            0,
+            2
+          ],
+          "bank_generation": [
+            2,
+            16
+          ],
+          "use": [
+            18,
+            16
+          ],
+          "k_offset": [
+            34,
+            16
+          ],
+          "kk": [
+            50,
+            16
+          ],
+          "A_slot": [
+            66,
+            1
+          ],
+          "A_generation": [
+            67,
+            16
+          ],
+          "runtime_A_shift": [
+            83,
+            6
+          ],
+          "result_ticket": [
+            89,
+            32
+          ],
+          "reserved": [
+            121,
+            7
+          ]
+        }
+      },
+      "CONTEXT_SHORT": {
+        "words": 1,
+        "word0": "short_header; bank=0, high16 low3 is CREATE0/SPILL3/DROP4; remaining13 bits zero; result ticket=session"
+      },
+      "RESTORE": {
+        "words": 8,
+        "word0": "short_header; bank/high16=0; result ticket=session",
+        "word1": "actual guard commit proof owner128",
+        "word2": "target RF owner128, must equal cached scope owner",
+        "word3": {
+          "k_offset": [
+            0,
+            16
+          ],
+          "full_k": [
+            16,
+            16
+          ],
+          "group_k": [
+            32,
+            8
+          ],
+          "n": [
+            40,
+            4
+          ],
+          "reserved": [
+            44,
+            84
+          ]
+        },
+        "word4": {
+          "requested_snapshot_ticket": [
+            0,
+            32
+          ],
+          "reserved": [
+            32,
+            96
+          ]
+        },
+        "words5_6": "actual S32 previous snapshot fetched through two real S128 reads",
+        "word7": {
+          "commit_ticket": [
+            0,
+            32
+          ],
+          "commit_valid": [
+            32,
+            1
+          ],
+          "commit_context": [
+            33,
+            4
+          ],
+          "commit_next_k": [
+            37,
+            16
+          ],
+          "commit_full_k": [
+            53,
+            16
+          ],
+          "commit_group_k": [
+            69,
+            8
+          ],
+          "commit_n": [
+            77,
+            4
+          ],
+          "reserved": [
+            81,
+            47
+          ]
+        }
+      },
+      "CANCEL_INPUT": {
+        "words": 1,
+        "word0": "short_header; bank bits28:29, bank_generation high16; scope-generation and record must match live Wdescriptor"
+      },
+      "DRAIN_INPUT": {
+        "words": 1,
+        "word0": "same target layout as CANCEL; waits actual issued returns and raw/A drain"
+      },
+      "FENCE_TRANSPORT": {
+        "words": 1,
+        "word0": "short_header; only session nonzero, record/scope/scope_generation/bank/high16 all zero; matching real MC purge then response"
+      }
+    },
+    "identity": "BEGIN key128 names input X/state job-object version; owner128 names distinct output projection/RF owner. gate/up can share key while having different owner. EXEC session maps cached key plus record, A_slot/generation,kk,use and shift; same X tile may be replayed under different gate/up sessions without aliasing RF owners.",
+    "bounded_reply": "One additional kind2/status8/valid1 command reply holds the existing128B command_frame until TX EOP. It shares no diagnostic payload slot. New LC frames cannot overwrite the held frame; native command dispatch does not depend on current malformed MC/A/fence traffic."
+  },
+  "response": {
+    "beat_bits": 128,
+    "fixed_beats": null,
+    "max_pending_frames": 1,
+    "framing": "SOP word0; length encoded flags[15:12]; EOP exactly last declared word; source ACK only on actual EOP acceptance",
+    "word0": {
+      "abi": [
+        0,
+        32
+      ],
+      "event": [
+        32,
+        8
+      ],
+      "status": [
+        40,
+        8
+      ],
+      "session": [
+        48,
+        32
+      ],
+      "record": [
+        80,
+        32
+      ],
+      "flags": [
+        112,
+        16
+      ]
+    },
+    "RF_word1": {
+      "context": [
+        0,
+        4
+      ],
+      "n": [
+        4,
+        4
+      ],
+      "group_k": [
+        8,
+        8
+      ],
+      "next_k": [
+        16,
+        16
+      ],
+      "full_k": [
+        32,
+        16
+      ],
+      "ticket": [
+        48,
+        32
+      ],
+      "bank": [
+        80,
+        2
+      ],
+      "bank_generation": [
+        82,
+        16
+      ],
+      "use_sequence": [
+        98,
+        16
+      ],
+      "reserved": [
+        114,
+        14
+      ]
+    },
+    "RF_word2_word3": "actual S32x8 only for FINAL/SPILL; RF-only continue/control/error uses two-word identity+metadata response and exposes no bogus S store data",
+    "INPUT_word1": {
+      "bank": [
+        0,
+        2
+      ],
+      "bank_generation": [
+        2,
+        16
+      ],
+      "use_sequence": [
+        18,
+        16
+      ],
+      "A_slot": [
+        34,
+        1
+      ],
+      "A_generation": [
+        35,
+        16
+      ],
+      "kk": [
+        51,
+        16
+      ],
+      "ticket": [
+        67,
+        32
+      ],
+      "reserved": [
+        99,
+        29
+      ]
+    },
+    "events": {
+      "ALLOC": 1,
+      "FILL": 2,
+      "INPUT_CONSUMED": 3,
+      "RF_RECORD": 4,
+      "ABORT": 5,
+      "DRAIN": 6,
+      "FAULT": 7,
+      "TRANSPORT_FENCE": 8,
+      "CANCEL_ACCEPTED": 9,
+      "BEGIN_SCOPE_ACK": 10
+    },
+    "session_rule": "LC finite descriptor owner resolves session+record+ticket to full job/object/RF owner; do not reuse a session until its frames, A lease and guard ACKs are drained; rollover requires coordinated epoch fence",
+    "snapshot_ACK": "RF FINAL/SPILL EOP captures into a reserved entry of external 2x32B guard; two separate true 128-bit S write ACKs commit the snapshot; RESTORE must match full owner/context/ticket/offset/fullK/group/n and actual guard commit",
+    "max_beats": 4,
+    "lengths": {
+      "ALLOC": 2,
+      "FILL": 2,
+      "INPUT_CONSUMED": 2,
+      "RF_FINAL_OR_SPILL": 4,
+      "RF_CONTINUE_OR_CONTROL_OR_ERROR": 2,
+      "ABORT": 4,
+      "DRAIN": 2,
+      "CANCEL_ACCEPTED": 2,
+      "FAULT": 3,
+      "TRANSPORT_FENCE": 2
+    },
+    "event_payloads": {
+      "ALLOC": "2words: header; bank2/gen16/scope4/scopegen16 metadata",
+      "FILL": "2words: header; bank2/gen16 metadata",
+      "INPUT_CONSUMED": "2words: header + INPUT_word1",
+      "RF_RECORD": "2word identity/meta for continue/control/error; 4words for FINAL/SPILL with actual S32 data",
+      "ABORT": "4words: header; context/actual-nextK; full input key128; full RFowner128",
+      "DRAIN": "2words: header; bank/gen",
+      "FAULT": "3words: header; event-specific reason/bank/gen; full bad key128",
+      "TRANSPORT_FENCE": "2words: header; new epoch9",
+      "CANCEL_ACCEPTED": "2words header + zero",
+      "BEGIN_SCOPE_ACK": "2words header + zero"
+    },
+    "RF_kind_reserved": {
+      "bits": "[10:8]",
+      "reserved_bit11": 0
+    },
+    "unowned_transport_fault": {
+      "events": "FAULT event7 status13 MC return,14 fence done,15 A stream",
+      "header": "session=0, record=0, full bad key word2=0; never attribute to current bank/A owner",
+      "word1_status13": "original mc_rsp_tag[31:0], high96 zero",
+      "word1_status14": "cookie[31:0], epoch[40:32], high87 zero",
+      "word1_status15": "a_session[31:0], beat[34:32], high93 zero",
+      "LC_policy": "bounded global transport diagnostic; do not complete or cancel a live guard command by current bank index"
+    }
+  },
+  "A": {
+    "data_bits": 256,
+    "session_bits": 32,
+    "beat_bits": 3,
+    "handshake": "ready/valid; one true K16 beat per cycle; session resolves key/record/slot/gen/kk/use; no 128-bit serialization of A",
+    "input_lease_release": "INPUT_CONSUMED response EOP after all eight true operand accepts",
+    "offer_rule": "Only offer a session after its complete matching EXEC frame EOP was accepted. The bounded EXEC dispatch wait deasserts A ready until native binding; unknown/stale sessions produce a bounded fault without M/W consumption."
+  },
+  "DMA": {
+    "request_address_bits": 64,
+    "request_tag_bits": 32,
+    "request_record_beats_bits": 5,
+    "request_channel_bits": 1,
+    "return_data_bits": 512,
+    "return_tag_bits": 32,
+    "tag": {
+      "beat": [
+        0,
+        5
+      ],
+      "bank_generation": [
+        5,
+        16
+      ],
+      "bank": [
+        21,
+        2
+      ],
+      "transport_epoch": [
+        23,
+        9
+      ]
+    },
+    "beat_bytes": 64,
+    "ordinary_beats": 17,
+    "head_beats": 18,
+    "channel": "(record_start_byte / 2048) % 2, constant for the entire record",
+    "credits": "32 per M as an upper bound; real MC has two independent channels, each 32 outstanding beats and 32 descriptors; actual request ready applies all global bounds",
+    "ordering": "record beats issue sequentially, records may interleave, returns may reorder; valid request is held stable; no phantom MC acceptance",
+    "late_return": "must match transport epoch+bank+generation+issued unseen beat; duplicate/stale produces a bounded fault without overwriting data or refunding credit",
+    "wrap": "bank-generation reuse at 65536 requires a completed matching actual MC FENCE purge before a new transport epoch; epoch wrap also requires the purge; never infer safety merely from outstanding=0",
+    "partial_close": {
+      "valid_ready": true,
+      "tag_base_bits": 32,
+      "tag_base": "epoch9/bank2/generation16/zero5; same descriptor identity as beat tags",
+      "normal_record": "last true source request of 17/18 closes issue set implicitly",
+      "cancel": "after all held requests accepted, no more requests permitted, and at least one issued beat: stable CLOSE until MC ready atomically registers no-more-issue",
+      "drain": "last issued return alone cannot retire; wait actual CLOSE accept and all issued returns; zero-issued cancel has no global descriptor to close",
+      "charged_state": "table_closed4 + close_locked1 + locked_close_bank2 and decode; three real physical port signals (34bits)"
+    },
+    "registered_request_offer": "One actual registered VALID/address64 plus existingbank2/beat5; address held until real MC ready. Same-cycle refill supports II1, with outstanding+current_accept<32 before another offer. Per-bank former base register reused as next-address cursor; four original-channel bits preserve record stripe across2KiB crossings. First request has one additional preparation cycle versus oldcombinational aperture. CANCEL waits a held offer and CLOSE/true issued returns."
+  },
+  "finite_state_budget": {
+    "native_W_data_B": 4608,
+    "native_RF_data_B": 512,
+    "native_scale_FIFO_B": 64,
+    "native_RF_response_metadata_entries": 4,
+    "native_RF_response_metadata_bits_per_entry": 37,
+    "native_RF_response_metadata_B": 18.5,
+    "native_RF_response_metadata_fields": "from_raw1,last_group1,kind3,ticket32; pointers2+2/count3 are additional; matches every real RF command/response, required for finite II1 head pipeline",
+    "command_frame_B": 128,
+    "response_frame_B": 64,
+    "W_descriptor_entries": 4,
+    "W_descriptor_fields": "full key128, record32, generation16, base64, epoch9, allocation-session32, head/n, issued/received bitmaps18 each, cancellation/issue cursor",
+    "request_lock_entries": 1,
+    "external_result_guard": "actual independent 2x32B; no hidden extra result queue or SRAM",
+    "physical_accounting": "all frames, tables, register data, combinational decode/mux and clock logic count in M; no copied physical success receipt",
+    "scope_entries": 16,
+    "scope_register_bits": 8800,
+    "scope_fields": "per RF context: valid1,generation16,key128,owner128,fullK16,n4,head1,bias256 =550 bits; BEGIN_SCOPE is amortized across that output projection K128 records",
+    "scope_next_k_register_bytes": 32,
+    "global_range_credits": "Independent LC range6 issued-ticket metadata candidate; W4, RF16, M1exec and external guard2 capacities stay distinct. An INPUT ACK releases a W bank only; it does not retire a FINAL/SPILL range ticket before true S ACK.",
+    "command_reply_bits": 11,
+    "request_registered_address_bits": 64,
+    "record_original_channel_bits": 4,
+    "request_cursor_extra_bytes": 0,
+    "reply_and_request_extra_bits": 79
+  },
+  "capabilities": {
+    "W8A16_static_projection": "candidate product profile",
+    "dynamic_S32xS32_QK_AV": "unsupported; no inherited old M coverage",
+    "attention_decomposition_candidate": "UNIMPLEMENTED/UNREGISTERED: signed32 A can use three balanced signed16 digits at radix 2^15; signed32 W can use five balanced signed8 digits at radix 2^7. This gives 15 A16xW8 partial dot passes, followed by exact shifted recombination. Worst-case K128 S32xS32 sum needs 71 signed bits, so current S32 RF alone cannot implement exact recombination; wider accumulator/format or a separately verified quantized numeric profile is necessary. No old dynamic32 timing/physical claim transfers."
+  },
+  "history_note": "ABI 0x02504d01 fixed8 sketch was never a product implementation and is intentionally absent from this machine contract",
+  "measured_candidate_timing": {
+    "source": "f08aefb93df071535f461da24b6829c5949bf5bf",
+    "job": 102307,
+    "scope": "18strict product-interface unit runs, actualguard withhostS RTT2/random3..9, no300MHz/systemqualification",
+    "core_to_INPUT_EOP_cycles": 11,
+    "core_to_CONTINUE_EOP_cycles": 16,
+    "core_to_FINAL_EOP_cycles": 18,
+    "actual_head_consecutive_guard_EXEC_II": 21,
+    "first_DMA_request_extra_cycles": 1,
+    "metadata_only_reply_source": "441df71b33bde41018e7ddb5568938af9117b182",
+    "metadata_only_job": 102303,
+    "normal_execution_prepare_extra_cycles": 0,
+    "faults_per_run": 10,
+    "quality_boundary": "34declared real-weight/source-slice records includingdirectheadderivation andNtail; nowhole-modelnewMid32qualification"
+  }
+}

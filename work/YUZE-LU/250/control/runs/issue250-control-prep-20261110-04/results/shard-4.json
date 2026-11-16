@@ -1,0 +1,82 @@
+{
+  "schema": "shared-x-control-audit/1",
+  "passed": true,
+  "coverage": "abstract_transaction_protocol_only_not_RTL_numeric_timing_or_physical",
+  "slurm_job_id": "102066",
+  "slurm_cpus_per_task": "10",
+  "slurm_node": "node10",
+  "shard": 4,
+  "shards": 6,
+  "python": "3.11.7",
+  "elapsed_seconds": 0.006148006767034531,
+  "process_CPU_seconds": 0.006112988,
+  "source_sha256": {
+    "audit_protocol.py": "c50b04a1bd3176a0bf634e7a491c48845cd6127017337243f82e0ad570549d5e",
+    "private_a_protocol.py": "a71e925468b6d5f74f09f86629ba043449b7bea98c96245200ec261af6e0bf0a",
+    "run_audit.py": "0e10098eb81048d07d036913e369ccc14b5141692abeb3dc8ee8dc25553f6c2b"
+  },
+  "contract_sha256": "2f9ba9fc7da38b43214d42c8274aeebd4d6b6f72c1b128e621ccd2587464d012",
+  "cases": [
+    {
+      "name": "reject_header_layout_id",
+      "passed": true,
+      "actual_rejection": "ABI/topology/capacity/numeric/layout mismatch",
+      "scope": "candidate_header_admission_not_binary_codec"
+    },
+    {
+      "name": "fill_outstanding_credit",
+      "passed": true,
+      "expected_rejection": "fill credit exceeded",
+      "actual_rejection": "event 3 FILL_ACCEPT: fill credit exceeded",
+      "trace_sha256": "9f769cc7a0a2d945e973aa78506659049b3aa029a839a842b12038fe3e9780be",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "LOAD_full_width_range_check",
+      "passed": true,
+      "expected_rejection": "LOAD range",
+      "actual_rejection": "event 10 LOAD_PREPARE: LOAD range",
+      "trace_sha256": "dd56d2d91f8a6da520f7028b293dd7662c57499becda7f321a7bd8c2dea89883",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "prepare_does_not_reserve_SRAM_read_credit",
+      "passed": true,
+      "expected_rejection": null,
+      "actual_rejection": null,
+      "trace_sha256": "1f6fffada14584bb49aa9e766861750b9ce7f685511ac260a66a2c23e8a79a12",
+      "counters_if_admitted": {
+        "fill_commits": 16,
+        "A_words_copied": 0,
+        "S_commits": 0,
+        "events": 17
+      }
+    },
+    {
+      "name": "destination_ready_is_not_commit",
+      "passed": true,
+      "expected_rejection": "write acceptance is not ACK",
+      "actual_rejection": "event 106 STORE_ACK: write acceptance is not ACK",
+      "trace_sha256": "2453e6508c31efa1ea47acea0f0c10e9f6d4d1892ccd111cafa746569c565378",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "cancel_preserves_accepted_LOAD_obligation",
+      "passed": true,
+      "expected_rejection": "reset before complete transport drain",
+      "actual_rejection": "event 13 RESET: reset before complete transport drain",
+      "trace_sha256": "b5d18bcd0ca92aad4e572e6da1035841a7772b52777ed6b268fd82d8b91eee88",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "private_A_waits_last_M_accept",
+      "passed": true,
+      "expected_rejection": "A release before last actual M consumption",
+      "actual_rejection": "event 80 A_RELEASE: A release before last actual M consumption",
+      "trace_sha256": "eb139a9a9b2edf8377b5ddcd191ae51bd01f56013a2908c07d595cb4d6a960eb",
+      "counters_if_admitted": null,
+      "scope": "private_S128_A256x2_alternative_protocol"
+    }
+  ],
+  "private_candidate_sha256": "4fea9b4351960be3b669cb9e6f668c7e54c1ef6c1b4bca3fc4b973f246381dc4"
+}

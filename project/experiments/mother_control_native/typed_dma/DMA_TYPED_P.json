@@ -1,0 +1,42 @@
+{
+  "schema": "typed-P-dma-candidate/1",
+  "source": "project/rtl/mother_control_native/mc_dma_fabric_typed_p.sv",
+  "base": "0b60b134e",
+  "runtime_admission": {
+    "target_clients": [
+      0,
+      1,
+      2
+    ],
+    "default": "legacy scope 128B in two 64B beats",
+    "native": "one 64B-aligned request, record_beats=1, tag bit0=0, channel=request address bit11, automatic close on actual source handshake",
+    "other_clients": "3..8 scope128, 9..11 W17/18 unchanged",
+    "mode": "p_mode_valid && p_mode_ready changes p_mode_active, after real startup purge and exact per-client transport/LC drain; no same-client mixed owners",
+    "proofs": "no live descriptor, reserved/offered/issued/returning beat, held response, pending close/cancel/fence or same-client diagnostic, plus hardware p_mode_client_drained",
+    "rejection": "p_req_rejected on bad source VALID+READY means no owner, credit, DDR request or awaited raw data; stage emits exact pre-return terminal",
+    "tag_lifetime": "per-native-client monotonically increasing serial31 in tag[31:1], retained across legacy/native switch, reset only exact own FENCE DONE acceptance or real startup purge; wrong-channel live base aliases are rejected on P",
+    "storage_control_bits": "3 mode +3 seen +3x31 serial =99 bits; no increase in beat/descriptor tables or payload"
+  },
+  "limits": {
+    "channels": 2,
+    "beats_per_channel": 32,
+    "descriptors_per_channel": 32,
+    "backend_lanes_per_channel": 2,
+    "per_channel_max_issues_in_any_three_cycles": 4,
+    "return_skids_total": 6,
+    "return_payload_bytes": 384,
+    "new_payload_bytes": 0
+  },
+  "qualification": {
+    "typed_only": "102475, 18 strict trials, 434 valid native 64B, 6 native rejections, 8 actual transitions, 5541 accepted = 5540 issued/returned +1 reserved cancellation per trial",
+    "production": "isolated candidate; does not replace existing mc_dma_fabric",
+    "real_three_P_stage_S": "102487, 18 strict trials, exact b37acf762 stage; 435 true native returns incl one early cancelled, 5 explicit pre-return rejections, 440 actual terminals, two owners reached in each P, six true bank readbacks. 5542 legal reserves=5541 returned+1 reserved cancel.",
+    "audit": "work/YUZE-LU/250/control/dma-stage-three-p-audit-102487.json"
+  },
+  "LC_stage_join": {
+    "external_stage_source": "b37acf76282f71aba8e908999f5a8430a34b7bbb",
+    "wrapper_extra_control_bits_per_P": 3,
+    "payload_bytes_added": 0,
+    "scope_reentry": "true mode handshake only after both stage DONE consumption and all fabric owners drain; command and fields remain held through eventual source READY"
+  }
+}

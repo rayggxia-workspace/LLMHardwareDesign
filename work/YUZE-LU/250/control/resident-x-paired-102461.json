@@ -1,0 +1,823 @@
+{
+  "schema": "resident-x-two-stripe-paired-timing/1",
+  "job": 102461,
+  "source": "aa9a4923f25e3fa23e9fe82f7f065a2a7fa003fe",
+  "limitation": "Synthetic one P N8+N8 per stripe, modeled finite DDR peer. Constant steady per-stripe extrapolation only, not measured at many stripes or at N64+N64.",
+  "modes": {
+    "0": "repeated source writes/quant/copy",
+    "1": "once resident in P.S existing 4096B window",
+    "2": "once resident in U.S existing 4096B window; repeated copy to P"
+  },
+  "samples": [
+    {
+      "seed": 1,
+      "init": 0,
+      "modes": {
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2700,
+          "second": 2703,
+          "accounted_total": 10478,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 130
+        },
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2772,
+          "second": 2771,
+          "accounted_total": 8616,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1360
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 70.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 28.6
+    },
+    {
+      "seed": 1,
+      "init": 1,
+      "modes": {
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 130
+        },
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2772,
+          "second": 2771,
+          "accounted_total": 8616,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1360
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2700,
+          "second": 2703,
+          "accounted_total": 10478,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 70.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 28.6
+    },
+    {
+      "seed": 1,
+      "init": 2,
+      "modes": {
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2700,
+          "second": 2703,
+          "accounted_total": 10478,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        },
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2772,
+          "second": 2771,
+          "accounted_total": 8616,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1360
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 130
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 70.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 28.6
+    },
+    {
+      "seed": 2,
+      "init": 0,
+      "modes": {
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2912,
+          "second": 2912,
+          "accounted_total": 10899,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        },
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2957,
+          "second": 2957,
+          "accounted_total": 8987,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1730
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 128
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 45.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 44.48888888888889
+    },
+    {
+      "seed": 2,
+      "init": 1,
+      "modes": {
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 128
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2912,
+          "second": 2912,
+          "accounted_total": 10899,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        },
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2957,
+          "second": 2957,
+          "accounted_total": 8987,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1730
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 45.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 44.48888888888889
+    },
+    {
+      "seed": 2,
+      "init": 2,
+      "modes": {
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2957,
+          "second": 2957,
+          "accounted_total": 8987,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1730
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2912,
+          "second": 2912,
+          "accounted_total": 10899,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 128
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 45.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 44.48888888888889
+    },
+    {
+      "seed": 3,
+      "init": 0,
+      "modes": {
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5245,
+          "second": 5243,
+          "accounted_total": 10488,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 158
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2842,
+          "second": 2842,
+          "accounted_total": 10759,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        },
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2911,
+          "second": 2911,
+          "accounted_total": 8895,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3685,
+          "post_copy_load_wait": 1629
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 69.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 29.014492753623188
+    },
+    {
+      "seed": 3,
+      "init": 1,
+      "modes": {
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2911,
+          "second": 2911,
+          "accounted_total": 8895,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3685,
+          "post_copy_load_wait": 1629
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5245,
+          "second": 5243,
+          "accounted_total": 10488,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 158
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2842,
+          "second": 2842,
+          "accounted_total": 10759,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 69.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 29.014492753623188
+    },
+    {
+      "seed": 3,
+      "init": 2,
+      "modes": {
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2842,
+          "second": 2842,
+          "accounted_total": 10759,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5245,
+          "second": 5243,
+          "accounted_total": 10488,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 158
+        },
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2911,
+          "second": 2911,
+          "accounted_total": 8895,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3685,
+          "post_copy_load_wait": 1629
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 69.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 29.014492753623188
+    },
+    {
+      "seed": 4,
+      "init": 0,
+      "modes": {
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2752,
+          "second": 2756,
+          "accounted_total": 8581,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1328
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2680,
+          "second": 2683,
+          "accounted_total": 10438,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 130
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 72.5,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 27.613793103448277
+    },
+    {
+      "seed": 4,
+      "init": 1,
+      "modes": {
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2752,
+          "second": 2756,
+          "accounted_total": 8581,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1328
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 130
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2680,
+          "second": 2683,
+          "accounted_total": 10438,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 72.5,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 27.613793103448277
+    },
+    {
+      "seed": 4,
+      "init": 2,
+      "modes": {
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2752,
+          "second": 2756,
+          "accounted_total": 8581,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1328
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 130
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2680,
+          "second": 2683,
+          "accounted_total": 10438,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 72.5,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 27.613793103448277
+    },
+    {
+      "seed": 5,
+      "init": 0,
+      "modes": {
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 128
+        },
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2957,
+          "second": 2957,
+          "accounted_total": 8987,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1730
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2912,
+          "second": 2912,
+          "accounted_total": 10899,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 45.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 44.48888888888889
+    },
+    {
+      "seed": 5,
+      "init": 1,
+      "modes": {
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2912,
+          "second": 2912,
+          "accounted_total": 10899,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 128
+        },
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2957,
+          "second": 2957,
+          "accounted_total": 8987,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1730
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 45.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 44.48888888888889
+    },
+    {
+      "seed": 5,
+      "init": 2,
+      "modes": {
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2957,
+          "second": 2957,
+          "accounted_total": 8987,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1730
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5227,
+          "second": 5227,
+          "accounted_total": 10454,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 128
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2912,
+          "second": 2912,
+          "accounted_total": 10899,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 45.0,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 44.48888888888889
+    },
+    {
+      "seed": 6,
+      "init": 0,
+      "modes": {
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2879,
+          "second": 2882,
+          "accounted_total": 8834,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1577
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5242,
+          "second": 5243,
+          "accounted_total": 10485,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 158
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2831,
+          "second": 2827,
+          "accounted_total": 10733,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 51.5,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 38.87378640776699
+    },
+    {
+      "seed": 6,
+      "init": 1,
+      "modes": {
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2831,
+          "second": 2827,
+          "accounted_total": 10733,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5242,
+          "second": 5243,
+          "accounted_total": 10485,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 158
+        },
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2879,
+          "second": 2882,
+          "accounted_total": 8834,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1577
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 51.5,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 38.87378640776699
+    },
+    {
+      "seed": 6,
+      "init": 2,
+      "modes": {
+        "2": {
+          "mode": 2,
+          "startup": 3073,
+          "first": 2879,
+          "second": 2882,
+          "accounted_total": 8834,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 1577
+        },
+        "0": {
+          "mode": 0,
+          "startup": 0,
+          "first": 5242,
+          "second": 5243,
+          "accounted_total": 10485,
+          "fixture_source_boot": 3072,
+          "quant": 3040,
+          "header": 256,
+          "copy": 3680,
+          "post_copy_load_wait": 158
+        },
+        "1": {
+          "mode": 1,
+          "startup": 5075,
+          "first": 2831,
+          "second": 2827,
+          "accounted_total": 10733,
+          "fixture_source_boot": 1536,
+          "quant": 1520,
+          "header": 128,
+          "copy": 1858,
+          "post_copy_load_wait": 0
+        }
+      },
+      "resident_P_savings_per_stripe_cycles": 51.5,
+      "resident_P_startup_extra_cycles": 2002,
+      "estimated_P_vs_U_break_even_stripes": 38.87378640776699
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "schema": "ffn-copy-local-epoch-evidence/1",
+  "runs": [
+    {
+      "job": 102590,
+      "commit": "f08af3c6ee7655a9a04bf6ab2389b95812de7d50",
+      "accounting": "102590|c96|CANCELLED by 10011|00:00:09|0:0|10|node14",
+      "uri": "yuzelu@10.129.166.172:/public/home/yuzelu/project-circuit/issue250-copy-rearm-20261111-01.receipts.tar.gz",
+      "sha256": "def67554a96b1e8eda43d424565f6a3ab2180bad43ba31f6a5b9dfc643985013",
+      "bytes": 250670,
+      "note": "Cancelled when the in-place partition change allocated 10 CPUs. No result admitted."
+    },
+    {
+      "job": 102592,
+      "commit": "69309023802c176d4e297abe743ab0dae891fdfd",
+      "accounting": "102592|c96|FAILED|00:00:06|1:0|96|node14",
+      "uri": "yuzelu@10.129.166.172:/public/home/yuzelu/project-circuit/issue250-copy-rearm-20261111-02.receipts.tar.gz",
+      "sha256": "105d54628b1a9e7fe97c2ecfa5722c0186105f46929996b78d010257d51e1fa2",
+      "bytes": 619046,
+      "note": "Strict compile rejected combinational reuse of masked scatter ready and two fixture initialization warnings."
+    },
+    {
+      "job": 102593,
+      "commit": "9dbc02adb1416ec1735b412dc72fe1fbf82d1482",
+      "accounting": "102593|c96|FAILED|00:00:20|1:0|96|node13",
+      "uri": "yuzelu@10.129.166.172:/public/home/yuzelu/project-circuit/issue250-copy-rearm-20261111-03.receipts.tar.gz",
+      "sha256": "c31a7061fc5a4bc2b4229c99bb53987755cf91fd0b077a64b0a5e37f05dc7d57",
+      "bytes": 4902349,
+      "note": "Strict compile passed. 36 log files passed; four pressure-mode trials stopped when the assertion counted a pressure-masked valid instead of the held S owner."
+    },
+    {
+      "job": 102596,
+      "commit": "dfdef7b5e0df8b0bcd85eeaeab2b52a1532388af",
+      "accounting": "102596|c96|COMPLETED|00:00:20|0:0|96|node13",
+      "uri": "yuzelu@10.129.166.172:/public/home/yuzelu/project-circuit/issue250-copy-rearm-20261111-04.receipts.tar.gz",
+      "sha256": "5debb029164b5c7c1ffa24693a0a671911d9aaac59f43525ff24437b61397ad8",
+      "bytes": 6159561,
+      "note": "Strict three-P near-wrap regression passed all 48 cases. True old S response owner blocked rearm seven cycles. Both old and new Mid SRAM data verified."
+    }
+  ],
+  "qualified": {
+    "pass_count": 48,
+    "run_cycles_by_scope": [
+      [
+        69201,
+        69503
+      ],
+      [
+        68940,
+        69544
+      ]
+    ],
+    "checked_members": 165,
+    "generated_sources": {
+      "early_copy_3p_rearm.sv": "9168b56d27050bef2ecce0fe82e234e1e963dd59620a394c35c1e477ed0f259c",
+      "early_copy_epoch_3p_rearm.sv": "a7ac4d6c6d203e9a939fddba9f13fd3f6e05e9f49c1e4d7610ea8d3042d4f7ab",
+      "copy_scale_header_tx_rearm.sv": "3bd6035875ee4f8b9df841004626abcc492a516029524e63c1abd44b9cce9260",
+      "copy_scale_header_rx_rearm.sv": "806eb5ed902aad35f4795bb2044579e2daac69295cae4d7ea9f87bb73eb57067",
+      "s32_a16_tile_quantizer_rearm.sv": "5bd6276e42cc757a7b477228dcceee13386b7f9529cb63483cb8b0ad2bdc82f8",
+      "s32_stripe_copy_rearm.sv": "5724f712fad20494275c71e98af125103d603cff830daa26b7328ec07dbc2482",
+      "ffn_stripe_commit_rearm.sv": "d083efb31bde570dff4bbded2ad81cfd778d3edc534a07ba1f7555a21e42d097",
+      "ffn_gate_up_mid_rearm.sv": "6cdec1eacd706d2fc5c8994f9951d3d34a7a967262c6a289470a2e3aeda0153c"
+    }
+  },
+  "scope": "Two 384-column FFN invocations through three exact M2 providers, 16 physical SRAM bank models, true COPY/scatter/Mid acknowledgements, six initial states/pressure combinations and eight seeds. Functional 10ns. Actual DDR is a finite synthetic peer. Product requires full 11008+Down+MC integration and physical signoff."
+}

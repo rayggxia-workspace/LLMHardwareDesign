@@ -1,0 +1,4214 @@
+{
+  "job": "102474",
+  "source": "747969c55c541b50b5f5651a26ee9cb3e443726e",
+  "source_manifest_sha256": "ec1b804a19580d3b11dd92860c83fbc54b405f9498421387261b7a75fbfdd277",
+  "source_run": "issue250-control-prep-20261110-102",
+  "archive_sha256": "0934facdb7f56069e7321ec33c321c3682d56ce967923ca3293f85e68a28b47d",
+  "scope": "One real P: N64 gate + N64 up, K2048, two scopes. Captured 32-entry finite DDR peer across both channels; no full chip performance claim.",
+  "effective_cycles": {
+    "min": 19507,
+    "p50": 20105,
+    "p95": 20491,
+    "max": 20491,
+    "total": 720948
+  },
+  "fixed_DDR_return_span": {
+    "min": 19406,
+    "p50": 19927,
+    "p95": 20198,
+    "max": 20198,
+    "total": 713862
+  },
+  "fixed_DDR_idle_cycles": {
+    "min": 10704,
+    "p50": 11225,
+    "p95": 11496,
+    "max": 11496,
+    "total": 400590
+  },
+  "fixed_DDR_replay_min_exec_span": {
+    "min": 19433,
+    "p50": 19954,
+    "p95": 20225,
+    "max": 20225,
+    "total": 714834
+  },
+  "rows": [
+    {
+      "seed": 1,
+      "init": 0,
+      "case": 0,
+      "trace_sha256": "eba0dbd8b3b1394b5205d07c237fa3d8c05a724c4f63ef879af408589796d119",
+      "log_sha256": "2aca2b97b7f8f797c466368ba79cbabb993d0445c7d14b4e790ccd00747453f8",
+      "cycles_start_to_terminal": 19900,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19608,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11416,
+      "cross_record_idle_beyond_2cyc": 10906,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 91,
+        "total": 11416
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 82,
+        "total": 9121
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 78,
+        "total": 8057
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 78,
+        "total": 1477
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6580
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1069
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 149,
+        "max": 172,
+        "total": 19470
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 19844,
+      "trace_first_DDR_return_cycle": 236,
+      "trace_last_DDR_return_cycle": 19844,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 19871,
+        "replay_first_return_to_last_EXEC_EOP": 19635,
+        "actual_first_return_to_last_EXEC_EOP": 19635,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 52,
+          "max": 106,
+          "total": 5103
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "init": 0,
+      "case": 1,
+      "trace_sha256": "eba0dbd8b3b1394b5205d07c237fa3d8c05a724c4f63ef879af408589796d119",
+      "log_sha256": "2aca2b97b7f8f797c466368ba79cbabb993d0445c7d14b4e790ccd00747453f8",
+      "cycles_start_to_terminal": 19711,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19610,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11418,
+      "cross_record_idle_beyond_2cyc": 10908,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 90,
+        "total": 11418
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 81,
+        "total": 9123
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 77,
+        "total": 8058
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 77,
+        "total": 1476
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6582
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1070
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 149,
+        "max": 172,
+        "total": 19473
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 39656,
+      "trace_first_DDR_return_cycle": 20046,
+      "trace_last_DDR_return_cycle": 39656,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 39683,
+        "replay_first_return_to_last_EXEC_EOP": 19637,
+        "actual_first_return_to_last_EXEC_EOP": 19637,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 52,
+          "max": 105,
+          "total": 5103
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "init": 1,
+      "case": 0,
+      "trace_sha256": "eba0dbd8b3b1394b5205d07c237fa3d8c05a724c4f63ef879af408589796d119",
+      "log_sha256": "360020af16bebe4f9ff7eaff71493243e33d1b6b0ae273e66ad5d9584e768589",
+      "cycles_start_to_terminal": 19900,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19608,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11416,
+      "cross_record_idle_beyond_2cyc": 10906,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 91,
+        "total": 11416
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 82,
+        "total": 9121
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 78,
+        "total": 8057
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 78,
+        "total": 1477
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6580
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1069
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 149,
+        "max": 172,
+        "total": 19470
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 19844,
+      "trace_first_DDR_return_cycle": 236,
+      "trace_last_DDR_return_cycle": 19844,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 19871,
+        "replay_first_return_to_last_EXEC_EOP": 19635,
+        "actual_first_return_to_last_EXEC_EOP": 19635,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 52,
+          "max": 106,
+          "total": 5103
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "init": 1,
+      "case": 1,
+      "trace_sha256": "eba0dbd8b3b1394b5205d07c237fa3d8c05a724c4f63ef879af408589796d119",
+      "log_sha256": "360020af16bebe4f9ff7eaff71493243e33d1b6b0ae273e66ad5d9584e768589",
+      "cycles_start_to_terminal": 19711,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19610,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11418,
+      "cross_record_idle_beyond_2cyc": 10908,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 90,
+        "total": 11418
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 81,
+        "total": 9123
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 77,
+        "total": 8058
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 77,
+        "total": 1476
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6582
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1070
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 149,
+        "max": 172,
+        "total": 19473
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 39656,
+      "trace_first_DDR_return_cycle": 20046,
+      "trace_last_DDR_return_cycle": 39656,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 39683,
+        "replay_first_return_to_last_EXEC_EOP": 19637,
+        "actual_first_return_to_last_EXEC_EOP": 19637,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 52,
+          "max": 105,
+          "total": 5103
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "init": 2,
+      "case": 0,
+      "trace_sha256": "eba0dbd8b3b1394b5205d07c237fa3d8c05a724c4f63ef879af408589796d119",
+      "log_sha256": "0b53e81fdfcfe2abdce30e592d1a4b604d3f4b06578a5956ef40d1a8159870ad",
+      "cycles_start_to_terminal": 19900,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19608,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11416,
+      "cross_record_idle_beyond_2cyc": 10906,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 91,
+        "total": 11416
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 82,
+        "total": 9121
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 78,
+        "total": 8057
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 78,
+        "total": 1477
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6580
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1069
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 149,
+        "max": 172,
+        "total": 19470
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 19844,
+      "trace_first_DDR_return_cycle": 236,
+      "trace_last_DDR_return_cycle": 19844,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 19871,
+        "replay_first_return_to_last_EXEC_EOP": 19635,
+        "actual_first_return_to_last_EXEC_EOP": 19635,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 52,
+          "max": 106,
+          "total": 5103
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "init": 2,
+      "case": 1,
+      "trace_sha256": "eba0dbd8b3b1394b5205d07c237fa3d8c05a724c4f63ef879af408589796d119",
+      "log_sha256": "0b53e81fdfcfe2abdce30e592d1a4b604d3f4b06578a5956ef40d1a8159870ad",
+      "cycles_start_to_terminal": 19711,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19610,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11418,
+      "cross_record_idle_beyond_2cyc": 10908,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 90,
+        "total": 11418
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 81,
+        "total": 9123
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 77,
+        "total": 8058
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 77,
+        "total": 1476
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6582
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1070
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 149,
+        "max": 172,
+        "total": 19473
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 39656,
+      "trace_first_DDR_return_cycle": 20046,
+      "trace_last_DDR_return_cycle": 39656,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 39683,
+        "replay_first_return_to_last_EXEC_EOP": 19637,
+        "actual_first_return_to_last_EXEC_EOP": 19637,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 52,
+          "max": 105,
+          "total": 5103
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "init": 0,
+      "case": 0,
+      "trace_sha256": "7cfbd354ef6ac35b4babfe39523af0ae4945508a9b518f16da7d7dfa9c179aac",
+      "log_sha256": "a1691316d749ae0359326fdf276fcffbed6f10919c2e16b1b51cba7e2f22d506",
+      "cycles_start_to_terminal": 20297,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20004,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11812,
+      "cross_record_idle_beyond_2cyc": 11302,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 91,
+        "total": 11812
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 81,
+        "total": 9262
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 59,
+        "max": 77,
+        "total": 8220
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 35,
+        "max": 77,
+        "total": 1638
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6582
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1046
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 163,
+        "max": 173,
+        "total": 19866
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 20240,
+      "trace_first_DDR_return_cycle": 236,
+      "trace_last_DDR_return_cycle": 20240,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20267,
+        "replay_first_return_to_last_EXEC_EOP": 20031,
+        "actual_first_return_to_last_EXEC_EOP": 20031,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 64,
+          "max": 106,
+          "total": 5357
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "init": 0,
+      "case": 1,
+      "trace_sha256": "7cfbd354ef6ac35b4babfe39523af0ae4945508a9b518f16da7d7dfa9c179aac",
+      "log_sha256": "a1691316d749ae0359326fdf276fcffbed6f10919c2e16b1b51cba7e2f22d506",
+      "cycles_start_to_terminal": 20105,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20004,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11812,
+      "cross_record_idle_beyond_2cyc": 11302,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 92,
+        "total": 11812
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 82,
+        "total": 9262
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 78,
+        "total": 8230
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 36,
+        "max": 78,
+        "total": 1654
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 58,
+        "max": 70,
+        "total": 6576
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 5,
+        "total": 1036
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 163,
+        "max": 173,
+        "total": 19865
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40450,
+      "trace_first_DDR_return_cycle": 20446,
+      "trace_last_DDR_return_cycle": 40450,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40477,
+        "replay_first_return_to_last_EXEC_EOP": 20031,
+        "actual_first_return_to_last_EXEC_EOP": 20031,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 65,
+          "max": 107,
+          "total": 5372
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "init": 1,
+      "case": 0,
+      "trace_sha256": "7cfbd354ef6ac35b4babfe39523af0ae4945508a9b518f16da7d7dfa9c179aac",
+      "log_sha256": "6bc46f788f8cac43ebabdcb957074bc9f302f5698fca70019bb287ea2c2e58b8",
+      "cycles_start_to_terminal": 20297,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20004,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11812,
+      "cross_record_idle_beyond_2cyc": 11302,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 91,
+        "total": 11812
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 81,
+        "total": 9262
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 59,
+        "max": 77,
+        "total": 8220
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 35,
+        "max": 77,
+        "total": 1638
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6582
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1046
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 163,
+        "max": 173,
+        "total": 19866
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 20240,
+      "trace_first_DDR_return_cycle": 236,
+      "trace_last_DDR_return_cycle": 20240,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20267,
+        "replay_first_return_to_last_EXEC_EOP": 20031,
+        "actual_first_return_to_last_EXEC_EOP": 20031,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 64,
+          "max": 106,
+          "total": 5357
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "init": 1,
+      "case": 1,
+      "trace_sha256": "7cfbd354ef6ac35b4babfe39523af0ae4945508a9b518f16da7d7dfa9c179aac",
+      "log_sha256": "6bc46f788f8cac43ebabdcb957074bc9f302f5698fca70019bb287ea2c2e58b8",
+      "cycles_start_to_terminal": 20105,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20004,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11812,
+      "cross_record_idle_beyond_2cyc": 11302,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 92,
+        "total": 11812
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 82,
+        "total": 9262
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 78,
+        "total": 8230
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 36,
+        "max": 78,
+        "total": 1654
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 58,
+        "max": 70,
+        "total": 6576
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 5,
+        "total": 1036
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 163,
+        "max": 173,
+        "total": 19865
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40450,
+      "trace_first_DDR_return_cycle": 20446,
+      "trace_last_DDR_return_cycle": 40450,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40477,
+        "replay_first_return_to_last_EXEC_EOP": 20031,
+        "actual_first_return_to_last_EXEC_EOP": 20031,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 65,
+          "max": 107,
+          "total": 5372
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "init": 2,
+      "case": 0,
+      "trace_sha256": "7cfbd354ef6ac35b4babfe39523af0ae4945508a9b518f16da7d7dfa9c179aac",
+      "log_sha256": "bf4cf18bf05a7031bd1bc8623bc07213a8f60021c0f10db90dff47cf97d3cb3f",
+      "cycles_start_to_terminal": 20297,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20004,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11812,
+      "cross_record_idle_beyond_2cyc": 11302,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 91,
+        "total": 11812
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 81,
+        "total": 9262
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 59,
+        "max": 77,
+        "total": 8220
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 35,
+        "max": 77,
+        "total": 1638
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6582
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1046
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 163,
+        "max": 173,
+        "total": 19866
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 20240,
+      "trace_first_DDR_return_cycle": 236,
+      "trace_last_DDR_return_cycle": 20240,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20267,
+        "replay_first_return_to_last_EXEC_EOP": 20031,
+        "actual_first_return_to_last_EXEC_EOP": 20031,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 64,
+          "max": 106,
+          "total": 5357
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "init": 2,
+      "case": 1,
+      "trace_sha256": "7cfbd354ef6ac35b4babfe39523af0ae4945508a9b518f16da7d7dfa9c179aac",
+      "log_sha256": "bf4cf18bf05a7031bd1bc8623bc07213a8f60021c0f10db90dff47cf97d3cb3f",
+      "cycles_start_to_terminal": 20105,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20004,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11812,
+      "cross_record_idle_beyond_2cyc": 11302,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 92,
+        "total": 11812
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 82,
+        "total": 9262
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 78,
+        "total": 8230
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 36,
+        "max": 78,
+        "total": 1654
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 58,
+        "max": 70,
+        "total": 6576
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 5,
+        "total": 1036
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 163,
+        "max": 173,
+        "total": 19865
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40450,
+      "trace_first_DDR_return_cycle": 20446,
+      "trace_last_DDR_return_cycle": 40450,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40477,
+        "replay_first_return_to_last_EXEC_EOP": 20031,
+        "actual_first_return_to_last_EXEC_EOP": 20031,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 65,
+          "max": 107,
+          "total": 5372
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "init": 0,
+      "case": 0,
+      "trace_sha256": "e774f216cd093db08baba4ef38c8d56d14e670888adc341c5983884446aa5358",
+      "log_sha256": "d275649f78cafc56f57d483be7e88121ab3c1c7aef8caf3b1958722c2a6fa20d",
+      "cycles_start_to_terminal": 20491,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20197,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 12005,
+      "cross_record_idle_beyond_2cyc": 11495,
+      "cross_record_gap": {
+        "min": 23,
+        "p50": 65,
+        "p95": 73,
+        "max": 91,
+        "total": 12005
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 80,
+        "total": 9200
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8129
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 29,
+        "max": 76,
+        "total": 1549
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6580
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 11,
+        "p50": 11,
+        "p95": 11,
+        "max": 11,
+        "total": 2816
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1075
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 159,
+        "max": 176,
+        "total": 20059
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 20434,
+      "trace_first_DDR_return_cycle": 237,
+      "trace_last_DDR_return_cycle": 20434,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20461,
+        "replay_first_return_to_last_EXEC_EOP": 20224,
+        "actual_first_return_to_last_EXEC_EOP": 20224,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 38,
+          "p95": 58,
+          "max": 106,
+          "total": 5389
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "init": 0,
+      "case": 1,
+      "trace_sha256": "e774f216cd093db08baba4ef38c8d56d14e670888adc341c5983884446aa5358",
+      "log_sha256": "d275649f78cafc56f57d483be7e88121ab3c1c7aef8caf3b1958722c2a6fa20d",
+      "cycles_start_to_terminal": 20300,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20198,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 12006,
+      "cross_record_idle_beyond_2cyc": 11496,
+      "cross_record_gap": {
+        "min": 23,
+        "p50": 65,
+        "p95": 73,
+        "max": 91,
+        "total": 12006
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 80,
+        "total": 9201
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8130
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 29,
+        "max": 76,
+        "total": 1550
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6580
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 11,
+        "p50": 11,
+        "p95": 11,
+        "max": 11,
+        "total": 2816
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1075
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 159,
+        "max": 176,
+        "total": 20060
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40835,
+      "trace_first_DDR_return_cycle": 20637,
+      "trace_last_DDR_return_cycle": 40835,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40862,
+        "replay_first_return_to_last_EXEC_EOP": 20225,
+        "actual_first_return_to_last_EXEC_EOP": 20225,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 38,
+          "p95": 59,
+          "max": 106,
+          "total": 5390
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "init": 1,
+      "case": 0,
+      "trace_sha256": "e774f216cd093db08baba4ef38c8d56d14e670888adc341c5983884446aa5358",
+      "log_sha256": "b874578b560d6425b7c49350c873f85e33843327b18d220c9f2ee963ab52f6d9",
+      "cycles_start_to_terminal": 20491,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20197,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 12005,
+      "cross_record_idle_beyond_2cyc": 11495,
+      "cross_record_gap": {
+        "min": 23,
+        "p50": 65,
+        "p95": 73,
+        "max": 91,
+        "total": 12005
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 80,
+        "total": 9200
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8129
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 29,
+        "max": 76,
+        "total": 1549
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6580
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 11,
+        "p50": 11,
+        "p95": 11,
+        "max": 11,
+        "total": 2816
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1075
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 159,
+        "max": 176,
+        "total": 20059
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 20434,
+      "trace_first_DDR_return_cycle": 237,
+      "trace_last_DDR_return_cycle": 20434,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20461,
+        "replay_first_return_to_last_EXEC_EOP": 20224,
+        "actual_first_return_to_last_EXEC_EOP": 20224,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 38,
+          "p95": 58,
+          "max": 106,
+          "total": 5389
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "init": 1,
+      "case": 1,
+      "trace_sha256": "e774f216cd093db08baba4ef38c8d56d14e670888adc341c5983884446aa5358",
+      "log_sha256": "b874578b560d6425b7c49350c873f85e33843327b18d220c9f2ee963ab52f6d9",
+      "cycles_start_to_terminal": 20300,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20198,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 12006,
+      "cross_record_idle_beyond_2cyc": 11496,
+      "cross_record_gap": {
+        "min": 23,
+        "p50": 65,
+        "p95": 73,
+        "max": 91,
+        "total": 12006
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 80,
+        "total": 9201
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8130
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 29,
+        "max": 76,
+        "total": 1550
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6580
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 11,
+        "p50": 11,
+        "p95": 11,
+        "max": 11,
+        "total": 2816
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1075
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 159,
+        "max": 176,
+        "total": 20060
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40835,
+      "trace_first_DDR_return_cycle": 20637,
+      "trace_last_DDR_return_cycle": 40835,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40862,
+        "replay_first_return_to_last_EXEC_EOP": 20225,
+        "actual_first_return_to_last_EXEC_EOP": 20225,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 38,
+          "p95": 59,
+          "max": 106,
+          "total": 5390
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "init": 2,
+      "case": 0,
+      "trace_sha256": "e774f216cd093db08baba4ef38c8d56d14e670888adc341c5983884446aa5358",
+      "log_sha256": "1cfc619785615797f8e72c74dd24b423d15fb7a2b99c3e5fe99768121b356ab1",
+      "cycles_start_to_terminal": 20491,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20197,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 12005,
+      "cross_record_idle_beyond_2cyc": 11495,
+      "cross_record_gap": {
+        "min": 23,
+        "p50": 65,
+        "p95": 73,
+        "max": 91,
+        "total": 12005
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 80,
+        "total": 9200
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8129
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 29,
+        "max": 76,
+        "total": 1549
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6580
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 11,
+        "p50": 11,
+        "p95": 11,
+        "max": 11,
+        "total": 2816
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1075
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 159,
+        "max": 176,
+        "total": 20059
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 20434,
+      "trace_first_DDR_return_cycle": 237,
+      "trace_last_DDR_return_cycle": 20434,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20461,
+        "replay_first_return_to_last_EXEC_EOP": 20224,
+        "actual_first_return_to_last_EXEC_EOP": 20224,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 38,
+          "p95": 58,
+          "max": 106,
+          "total": 5389
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "init": 2,
+      "case": 1,
+      "trace_sha256": "e774f216cd093db08baba4ef38c8d56d14e670888adc341c5983884446aa5358",
+      "log_sha256": "1cfc619785615797f8e72c74dd24b423d15fb7a2b99c3e5fe99768121b356ab1",
+      "cycles_start_to_terminal": 20300,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 20198,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 12006,
+      "cross_record_idle_beyond_2cyc": 11496,
+      "cross_record_gap": {
+        "min": 23,
+        "p50": 65,
+        "p95": 73,
+        "max": 91,
+        "total": 12006
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 80,
+        "total": 9201
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8130
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 29,
+        "max": 76,
+        "total": 1550
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6580
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 11,
+        "p50": 11,
+        "p95": 11,
+        "max": 11,
+        "total": 2816
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1075
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 159,
+        "max": 176,
+        "total": 20060
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40835,
+      "trace_first_DDR_return_cycle": 20637,
+      "trace_last_DDR_return_cycle": 40835,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40862,
+        "replay_first_return_to_last_EXEC_EOP": 20225,
+        "actual_first_return_to_last_EXEC_EOP": 20225,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 38,
+          "p95": 59,
+          "max": 106,
+          "total": 5390
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "init": 0,
+      "case": 0,
+      "trace_sha256": "85304b842468f275922fa6c9119a299cb087072d523ef90d25bb96159fb965a7",
+      "log_sha256": "1d08706957df5851457a0f67571efc22651c1eb6cdf0d17562d1a2268ad7666b",
+      "cycles_start_to_terminal": 19699,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19408,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11216,
+      "cross_record_idle_beyond_2cyc": 10706,
+      "cross_record_gap": {
+        "min": 20,
+        "p50": 62,
+        "p95": 71,
+        "max": 92,
+        "total": 11216
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 84,
+        "total": 9176
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 59,
+        "max": 80,
+        "total": 8075
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 80,
+        "total": 1488
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6587
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 8,
+        "p50": 8,
+        "p95": 8,
+        "max": 8,
+        "total": 2048
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1105
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 148,
+        "max": 170,
+        "total": 19269
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 19642,
+      "trace_first_DDR_return_cycle": 234,
+      "trace_last_DDR_return_cycle": 19642,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 19669,
+        "replay_first_return_to_last_EXEC_EOP": 19435,
+        "actual_first_return_to_last_EXEC_EOP": 19435,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 35,
+          "p95": 52,
+          "max": 107,
+          "total": 4981
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "init": 0,
+      "case": 1,
+      "trace_sha256": "85304b842468f275922fa6c9119a299cb087072d523ef90d25bb96159fb965a7",
+      "log_sha256": "1d08706957df5851457a0f67571efc22651c1eb6cdf0d17562d1a2268ad7666b",
+      "cycles_start_to_terminal": 19507,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19406,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11214,
+      "cross_record_idle_beyond_2cyc": 10704,
+      "cross_record_gap": {
+        "min": 20,
+        "p50": 62,
+        "p95": 71,
+        "max": 92,
+        "total": 11214
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 84,
+        "total": 9174
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 59,
+        "max": 79,
+        "total": 8072
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 79,
+        "total": 1487
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6585
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 8,
+        "p50": 8,
+        "p95": 8,
+        "max": 8,
+        "total": 2048
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1106
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 148,
+        "max": 170,
+        "total": 19267
+      },
+      "last_DDR_return_to_last_result_completion": 59,
+      "same_return_trace_cannot_complete_before_cycle": 39250,
+      "trace_first_DDR_return_cycle": 19844,
+      "trace_last_DDR_return_cycle": 39250,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 39277,
+        "replay_first_return_to_last_EXEC_EOP": 19433,
+        "actual_first_return_to_last_EXEC_EOP": 19433,
+        "actual_last_EXEC_EOP_to_last_complete": 32,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 35,
+          "p95": 52,
+          "max": 107,
+          "total": 4982
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "init": 1,
+      "case": 0,
+      "trace_sha256": "85304b842468f275922fa6c9119a299cb087072d523ef90d25bb96159fb965a7",
+      "log_sha256": "dcffdd6febec2b546ecc8538c4fa84d277f1b706c431b28532da7a404dc41f74",
+      "cycles_start_to_terminal": 19699,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19408,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11216,
+      "cross_record_idle_beyond_2cyc": 10706,
+      "cross_record_gap": {
+        "min": 20,
+        "p50": 62,
+        "p95": 71,
+        "max": 92,
+        "total": 11216
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 84,
+        "total": 9176
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 59,
+        "max": 80,
+        "total": 8075
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 80,
+        "total": 1488
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6587
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 8,
+        "p50": 8,
+        "p95": 8,
+        "max": 8,
+        "total": 2048
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1105
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 148,
+        "max": 170,
+        "total": 19269
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 19642,
+      "trace_first_DDR_return_cycle": 234,
+      "trace_last_DDR_return_cycle": 19642,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 19669,
+        "replay_first_return_to_last_EXEC_EOP": 19435,
+        "actual_first_return_to_last_EXEC_EOP": 19435,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 35,
+          "p95": 52,
+          "max": 107,
+          "total": 4981
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "init": 1,
+      "case": 1,
+      "trace_sha256": "85304b842468f275922fa6c9119a299cb087072d523ef90d25bb96159fb965a7",
+      "log_sha256": "dcffdd6febec2b546ecc8538c4fa84d277f1b706c431b28532da7a404dc41f74",
+      "cycles_start_to_terminal": 19507,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19406,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11214,
+      "cross_record_idle_beyond_2cyc": 10704,
+      "cross_record_gap": {
+        "min": 20,
+        "p50": 62,
+        "p95": 71,
+        "max": 92,
+        "total": 11214
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 84,
+        "total": 9174
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 59,
+        "max": 79,
+        "total": 8072
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 79,
+        "total": 1487
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6585
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 8,
+        "p50": 8,
+        "p95": 8,
+        "max": 8,
+        "total": 2048
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1106
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 148,
+        "max": 170,
+        "total": 19267
+      },
+      "last_DDR_return_to_last_result_completion": 59,
+      "same_return_trace_cannot_complete_before_cycle": 39250,
+      "trace_first_DDR_return_cycle": 19844,
+      "trace_last_DDR_return_cycle": 39250,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 39277,
+        "replay_first_return_to_last_EXEC_EOP": 19433,
+        "actual_first_return_to_last_EXEC_EOP": 19433,
+        "actual_last_EXEC_EOP_to_last_complete": 32,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 35,
+          "p95": 52,
+          "max": 107,
+          "total": 4982
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "init": 2,
+      "case": 0,
+      "trace_sha256": "85304b842468f275922fa6c9119a299cb087072d523ef90d25bb96159fb965a7",
+      "log_sha256": "b69cae8fad7a452c7f23954f60679550e1cf7a48b50e8bb3f2f75d9dd7df9532",
+      "cycles_start_to_terminal": 19699,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19408,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11216,
+      "cross_record_idle_beyond_2cyc": 10706,
+      "cross_record_gap": {
+        "min": 20,
+        "p50": 62,
+        "p95": 71,
+        "max": 92,
+        "total": 11216
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 84,
+        "total": 9176
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 59,
+        "max": 80,
+        "total": 8075
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 80,
+        "total": 1488
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6587
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 8,
+        "p50": 8,
+        "p95": 8,
+        "max": 8,
+        "total": 2048
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1105
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 148,
+        "max": 170,
+        "total": 19269
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 19642,
+      "trace_first_DDR_return_cycle": 234,
+      "trace_last_DDR_return_cycle": 19642,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 19669,
+        "replay_first_return_to_last_EXEC_EOP": 19435,
+        "actual_first_return_to_last_EXEC_EOP": 19435,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 35,
+          "p95": 52,
+          "max": 107,
+          "total": 4981
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "init": 2,
+      "case": 1,
+      "trace_sha256": "85304b842468f275922fa6c9119a299cb087072d523ef90d25bb96159fb965a7",
+      "log_sha256": "b69cae8fad7a452c7f23954f60679550e1cf7a48b50e8bb3f2f75d9dd7df9532",
+      "cycles_start_to_terminal": 19507,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19406,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11214,
+      "cross_record_idle_beyond_2cyc": 10704,
+      "cross_record_gap": {
+        "min": 20,
+        "p50": 62,
+        "p95": 71,
+        "max": 92,
+        "total": 11214
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 84,
+        "total": 9174
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 59,
+        "max": 79,
+        "total": 8072
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 28,
+        "max": 79,
+        "total": 1487
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 60,
+        "max": 70,
+        "total": 6585
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 8,
+        "p50": 8,
+        "p95": 8,
+        "max": 8,
+        "total": 2048
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1106
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 148,
+        "max": 170,
+        "total": 19267
+      },
+      "last_DDR_return_to_last_result_completion": 59,
+      "same_return_trace_cannot_complete_before_cycle": 39250,
+      "trace_first_DDR_return_cycle": 19844,
+      "trace_last_DDR_return_cycle": 39250,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 39277,
+        "replay_first_return_to_last_EXEC_EOP": 19433,
+        "actual_first_return_to_last_EXEC_EOP": 19433,
+        "actual_last_EXEC_EOP_to_last_complete": 32,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 35,
+          "p95": 52,
+          "max": 107,
+          "total": 4982
+        }
+      }
+    },
+    {
+      "seed": 5,
+      "init": 0,
+      "case": 0,
+      "trace_sha256": "362959c8a38dc41d0bb9fa0567e64048eda69ef40994554deaa9a2b933148ec8",
+      "log_sha256": "1f17e2326348aaf45a24ce1fa33481929c9f4defbd8a77a2e60774edc9bc5d95",
+      "cycles_start_to_terminal": 20123,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19832,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11640,
+      "cross_record_idle_beyond_2cyc": 11130,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 91,
+        "total": 11640
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 82,
+        "total": 9345
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 78,
+        "total": 8295
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 40,
+        "max": 78,
+        "total": 1714
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6581
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1054
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 165,
+        "max": 172,
+        "total": 19694
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 20067,
+      "trace_first_DDR_return_cycle": 235,
+      "trace_last_DDR_return_cycle": 20067,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20094,
+        "replay_first_return_to_last_EXEC_EOP": 19859,
+        "actual_first_return_to_last_EXEC_EOP": 19859,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 68,
+          "max": 106,
+          "total": 5328
+        }
+      }
+    },
+    {
+      "seed": 5,
+      "init": 0,
+      "case": 1,
+      "trace_sha256": "362959c8a38dc41d0bb9fa0567e64048eda69ef40994554deaa9a2b933148ec8",
+      "log_sha256": "1f17e2326348aaf45a24ce1fa33481929c9f4defbd8a77a2e60774edc9bc5d95",
+      "cycles_start_to_terminal": 19933,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19833,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11641,
+      "cross_record_idle_beyond_2cyc": 11131,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 93,
+        "total": 11641
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 84,
+        "total": 9346
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 79,
+        "total": 8276
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 39,
+        "max": 79,
+        "total": 1700
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 58,
+        "max": 70,
+        "total": 6576
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1074
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 165,
+        "max": 172,
+        "total": 19693
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40103,
+      "trace_first_DDR_return_cycle": 20270,
+      "trace_last_DDR_return_cycle": 40103,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40130,
+        "replay_first_return_to_last_EXEC_EOP": 19860,
+        "actual_first_return_to_last_EXEC_EOP": 19860,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 68,
+          "max": 108,
+          "total": 5332
+        }
+      }
+    },
+    {
+      "seed": 5,
+      "init": 1,
+      "case": 0,
+      "trace_sha256": "362959c8a38dc41d0bb9fa0567e64048eda69ef40994554deaa9a2b933148ec8",
+      "log_sha256": "e45cabe18becf668d50625197dba53ee422fe054fbf8428b7403a118b07007e2",
+      "cycles_start_to_terminal": 20123,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19832,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11640,
+      "cross_record_idle_beyond_2cyc": 11130,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 91,
+        "total": 11640
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 82,
+        "total": 9345
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 78,
+        "total": 8295
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 40,
+        "max": 78,
+        "total": 1714
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6581
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1054
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 165,
+        "max": 172,
+        "total": 19694
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 20067,
+      "trace_first_DDR_return_cycle": 235,
+      "trace_last_DDR_return_cycle": 20067,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20094,
+        "replay_first_return_to_last_EXEC_EOP": 19859,
+        "actual_first_return_to_last_EXEC_EOP": 19859,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 68,
+          "max": 106,
+          "total": 5328
+        }
+      }
+    },
+    {
+      "seed": 5,
+      "init": 1,
+      "case": 1,
+      "trace_sha256": "362959c8a38dc41d0bb9fa0567e64048eda69ef40994554deaa9a2b933148ec8",
+      "log_sha256": "e45cabe18becf668d50625197dba53ee422fe054fbf8428b7403a118b07007e2",
+      "cycles_start_to_terminal": 19933,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19833,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11641,
+      "cross_record_idle_beyond_2cyc": 11131,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 93,
+        "total": 11641
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 84,
+        "total": 9346
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 79,
+        "total": 8276
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 39,
+        "max": 79,
+        "total": 1700
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 58,
+        "max": 70,
+        "total": 6576
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1074
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 165,
+        "max": 172,
+        "total": 19693
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40103,
+      "trace_first_DDR_return_cycle": 20270,
+      "trace_last_DDR_return_cycle": 40103,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40130,
+        "replay_first_return_to_last_EXEC_EOP": 19860,
+        "actual_first_return_to_last_EXEC_EOP": 19860,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 68,
+          "max": 108,
+          "total": 5332
+        }
+      }
+    },
+    {
+      "seed": 5,
+      "init": 2,
+      "case": 0,
+      "trace_sha256": "362959c8a38dc41d0bb9fa0567e64048eda69ef40994554deaa9a2b933148ec8",
+      "log_sha256": "495ca5047fdbc25b09b02adf5c438c4529acb5f1a54bc69cb495b746852237b3",
+      "cycles_start_to_terminal": 20123,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19832,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11640,
+      "cross_record_idle_beyond_2cyc": 11130,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 91,
+        "total": 11640
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 82,
+        "total": 9345
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 78,
+        "total": 8295
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 40,
+        "max": 78,
+        "total": 1714
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6581
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1054
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 165,
+        "max": 172,
+        "total": 19694
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 20067,
+      "trace_first_DDR_return_cycle": 235,
+      "trace_last_DDR_return_cycle": 20067,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20094,
+        "replay_first_return_to_last_EXEC_EOP": 19859,
+        "actual_first_return_to_last_EXEC_EOP": 19859,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 68,
+          "max": 106,
+          "total": 5328
+        }
+      }
+    },
+    {
+      "seed": 5,
+      "init": 2,
+      "case": 1,
+      "trace_sha256": "362959c8a38dc41d0bb9fa0567e64048eda69ef40994554deaa9a2b933148ec8",
+      "log_sha256": "495ca5047fdbc25b09b02adf5c438c4529acb5f1a54bc69cb495b746852237b3",
+      "cycles_start_to_terminal": 19933,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        11,
+        11
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19833,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11641,
+      "cross_record_idle_beyond_2cyc": 11131,
+      "cross_record_gap": {
+        "min": 21,
+        "p50": 63,
+        "p95": 71,
+        "max": 93,
+        "total": 11641
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 62,
+        "max": 84,
+        "total": 9346
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 79,
+        "total": 8276
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 39,
+        "max": 79,
+        "total": 1700
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 58,
+        "max": 70,
+        "total": 6576
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 9,
+        "p50": 9,
+        "p95": 9,
+        "max": 9,
+        "total": 2304
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1074
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 165,
+        "max": 172,
+        "total": 19693
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40103,
+      "trace_first_DDR_return_cycle": 20270,
+      "trace_last_DDR_return_cycle": 40103,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40130,
+        "replay_first_return_to_last_EXEC_EOP": 19860,
+        "actual_first_return_to_last_EXEC_EOP": 19860,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 36,
+          "p95": 68,
+          "max": 108,
+          "total": 5332
+        }
+      }
+    },
+    {
+      "seed": 6,
+      "init": 0,
+      "case": 0,
+      "trace_sha256": "f619ec58e6e6bde6347ca3bc5e673b672d8ab6aa6ef760984c1f677a52756809",
+      "log_sha256": "e1669c2f3306e7f3df09f0fa68e9df83bde11a58b3fb8f693e21be6ecd09d51f",
+      "cycles_start_to_terminal": 20221,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19927,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11735,
+      "cross_record_idle_beyond_2cyc": 11225,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 90,
+        "total": 11735
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 80,
+        "total": 9185
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8148
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 31,
+        "max": 76,
+        "total": 1570
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6578
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1042
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 158,
+        "max": 173,
+        "total": 19790
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 20164,
+      "trace_first_DDR_return_cycle": 237,
+      "trace_last_DDR_return_cycle": 20164,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20191,
+        "replay_first_return_to_last_EXEC_EOP": 19954,
+        "actual_first_return_to_last_EXEC_EOP": 19954,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 60,
+          "max": 105,
+          "total": 5293
+        }
+      }
+    },
+    {
+      "seed": 6,
+      "init": 0,
+      "case": 1,
+      "trace_sha256": "f619ec58e6e6bde6347ca3bc5e673b672d8ab6aa6ef760984c1f677a52756809",
+      "log_sha256": "e1669c2f3306e7f3df09f0fa68e9df83bde11a58b3fb8f693e21be6ecd09d51f",
+      "cycles_start_to_terminal": 20029,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19927,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11735,
+      "cross_record_idle_beyond_2cyc": 11225,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 90,
+        "total": 11735
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 80,
+        "total": 9185
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8148
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 31,
+        "max": 76,
+        "total": 1569
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6579
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1042
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 158,
+        "max": 173,
+        "total": 19790
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40294,
+      "trace_first_DDR_return_cycle": 20367,
+      "trace_last_DDR_return_cycle": 40294,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40321,
+        "replay_first_return_to_last_EXEC_EOP": 19954,
+        "actual_first_return_to_last_EXEC_EOP": 19954,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 60,
+          "max": 105,
+          "total": 5293
+        }
+      }
+    },
+    {
+      "seed": 6,
+      "init": 1,
+      "case": 0,
+      "trace_sha256": "f619ec58e6e6bde6347ca3bc5e673b672d8ab6aa6ef760984c1f677a52756809",
+      "log_sha256": "9d5a947c40a44870ef4d40a80fdf6ac8728b8ad9b9123ef82d7c6843b0b74f59",
+      "cycles_start_to_terminal": 20221,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19927,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11735,
+      "cross_record_idle_beyond_2cyc": 11225,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 90,
+        "total": 11735
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 80,
+        "total": 9185
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8148
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 31,
+        "max": 76,
+        "total": 1570
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6578
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1042
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 158,
+        "max": 173,
+        "total": 19790
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 20164,
+      "trace_first_DDR_return_cycle": 237,
+      "trace_last_DDR_return_cycle": 20164,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20191,
+        "replay_first_return_to_last_EXEC_EOP": 19954,
+        "actual_first_return_to_last_EXEC_EOP": 19954,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 60,
+          "max": 105,
+          "total": 5293
+        }
+      }
+    },
+    {
+      "seed": 6,
+      "init": 1,
+      "case": 1,
+      "trace_sha256": "f619ec58e6e6bde6347ca3bc5e673b672d8ab6aa6ef760984c1f677a52756809",
+      "log_sha256": "9d5a947c40a44870ef4d40a80fdf6ac8728b8ad9b9123ef82d7c6843b0b74f59",
+      "cycles_start_to_terminal": 20029,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19927,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11735,
+      "cross_record_idle_beyond_2cyc": 11225,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 90,
+        "total": 11735
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 80,
+        "total": 9185
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8148
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 31,
+        "max": 76,
+        "total": 1569
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6579
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1042
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 158,
+        "max": 173,
+        "total": 19790
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40294,
+      "trace_first_DDR_return_cycle": 20367,
+      "trace_last_DDR_return_cycle": 40294,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40321,
+        "replay_first_return_to_last_EXEC_EOP": 19954,
+        "actual_first_return_to_last_EXEC_EOP": 19954,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 60,
+          "max": 105,
+          "total": 5293
+        }
+      }
+    },
+    {
+      "seed": 6,
+      "init": 2,
+      "case": 0,
+      "trace_sha256": "f619ec58e6e6bde6347ca3bc5e673b672d8ab6aa6ef760984c1f677a52756809",
+      "log_sha256": "365a195fe901d3848195f165475e32a707a427f606ada13e970ca4e39dac66b3",
+      "cycles_start_to_terminal": 20221,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19927,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11735,
+      "cross_record_idle_beyond_2cyc": 11225,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 90,
+        "total": 11735
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 80,
+        "total": 9185
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8148
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 31,
+        "max": 76,
+        "total": 1570
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6578
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1042
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 158,
+        "max": 173,
+        "total": 19790
+      },
+      "last_DDR_return_to_last_result_completion": 58,
+      "same_return_trace_cannot_complete_before_cycle": 20164,
+      "trace_first_DDR_return_cycle": 237,
+      "trace_last_DDR_return_cycle": 20164,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 20191,
+        "replay_first_return_to_last_EXEC_EOP": 19954,
+        "actual_first_return_to_last_EXEC_EOP": 19954,
+        "actual_last_EXEC_EOP_to_last_complete": 31,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 60,
+          "max": 105,
+          "total": 5293
+        }
+      }
+    },
+    {
+      "seed": 6,
+      "init": 2,
+      "case": 1,
+      "trace_sha256": "f619ec58e6e6bde6347ca3bc5e673b672d8ab6aa6ef760984c1f677a52756809",
+      "log_sha256": "365a195fe901d3848195f165475e32a707a427f606ada13e970ca4e39dac66b3",
+      "cycles_start_to_terminal": 20029,
+      "native_records": 256,
+      "exact_weight_bus_B": 278528,
+      "DDR_request_beat_count": 4352,
+      "DDR_RSP_count": 4352,
+      "result_S_ACK": 32,
+      "A_reads": 256,
+      "W_records_concurrently_transferring": 1,
+      "peak_fixture_outstanding_beats_by_channel": [
+        12,
+        12
+      ],
+      "observed_first_to_last_DDR_return_cycles": 19927,
+      "max_link_rate_no_gaps_return_span": 8702,
+      "within_W_record_return_cycles": 8192,
+      "within_W_record_gap": {
+        "min": 2,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "total": 8192
+      },
+      "cross_W_record_return_cycles": 11735,
+      "cross_record_idle_beyond_2cyc": 11225,
+      "cross_record_gap": {
+        "min": 22,
+        "p50": 64,
+        "p95": 73,
+        "max": 90,
+        "total": 11735
+      },
+      "previous_last_return_to_next_first_request": {
+        "min": 12,
+        "p50": 54,
+        "p95": 63,
+        "max": 80,
+        "total": 9185
+      },
+      "previous_last_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 50,
+        "p95": 58,
+        "max": 76,
+        "total": 8148
+      },
+      "within_prepared_pair_return_to_next_ALLOC_EOP": {
+        "min": 8,
+        "p50": 8,
+        "p95": 31,
+        "max": 76,
+        "total": 1569
+      },
+      "between_prepared_pairs_return_to_next_ALLOC_EOP": {
+        "min": 50,
+        "p50": 50,
+        "p95": 59,
+        "max": 70,
+        "total": 6579
+      },
+      "record_first_req_to_first_rsp": {
+        "min": 10,
+        "p50": 10,
+        "p95": 10,
+        "max": 10,
+        "total": 2560
+      },
+      "alloc_EOP_to_first_req": {
+        "min": 4,
+        "p50": 4,
+        "p95": 5,
+        "max": 5,
+        "total": 1042
+      },
+      "record_last_rsp_to_fill_EOP": {
+        "min": 4,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "total": 1024
+      },
+      "EXEC_EOP_spacing": {
+        "min": 17,
+        "p50": 17,
+        "p95": 158,
+        "max": 173,
+        "total": 19790
+      },
+      "last_DDR_return_to_last_result_completion": 57,
+      "same_return_trace_cannot_complete_before_cycle": 40294,
+      "trace_first_DDR_return_cycle": 20367,
+      "trace_last_DDR_return_cycle": 40294,
+      "fixed_return_replay": {
+        "captured_weight_events": 4352,
+        "captured_record_order_preserved": true,
+        "observed_min_last_return_to_fill_EOP": 4,
+        "observed_min_fill_EOP_to_EXEC_EOP": 23,
+        "observed_min_EXEC_EOP_spacing": 17,
+        "replay_last_EXEC_EOP_cycle": 40321,
+        "replay_first_return_to_last_EXEC_EOP": 19954,
+        "actual_first_return_to_last_EXEC_EOP": 19954,
+        "actual_last_EXEC_EOP_to_last_complete": 30,
+        "actual_EXEC_EOP_later_than_optimistic_replay": {
+          "min": 0,
+          "p50": 37,
+          "p95": 60,
+          "max": 105,
+          "total": 5293
+        }
+      }
+    }
+  ]
+}

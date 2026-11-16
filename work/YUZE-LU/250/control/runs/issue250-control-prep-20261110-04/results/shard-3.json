@@ -1,0 +1,77 @@
+{
+  "schema": "shared-x-control-audit/1",
+  "passed": true,
+  "coverage": "abstract_transaction_protocol_only_not_RTL_numeric_timing_or_physical",
+  "slurm_job_id": "102066",
+  "slurm_cpus_per_task": "10",
+  "slurm_node": "node10",
+  "shard": 3,
+  "shards": 6,
+  "python": "3.11.7",
+  "elapsed_seconds": 0.005712082609534264,
+  "process_CPU_seconds": 0.005682957000000002,
+  "source_sha256": {
+    "audit_protocol.py": "c50b04a1bd3176a0bf634e7a491c48845cd6127017337243f82e0ad570549d5e",
+    "private_a_protocol.py": "a71e925468b6d5f74f09f86629ba043449b7bea98c96245200ec261af6e0bf0a",
+    "run_audit.py": "0e10098eb81048d07d036913e369ccc14b5141692abeb3dc8ee8dc25553f6c2b"
+  },
+  "contract_sha256": "2f9ba9fc7da38b43214d42c8274aeebd4d6b6f72c1b128e621ccd2587464d012",
+  "cases": [
+    {
+      "name": "reject_header_numeric_profile",
+      "passed": true,
+      "actual_rejection": "ABI/topology/capacity/numeric/layout mismatch",
+      "scope": "candidate_header_admission_not_binary_codec"
+    },
+    {
+      "name": "request_ready_is_not_fill_ACK",
+      "passed": true,
+      "expected_rejection": "ready is not SRAM commit ACK",
+      "actual_rejection": "event 3 FILL_ACK: ready is not SRAM commit ACK",
+      "trace_sha256": "28c25f7f768c3d978174815330328ade6029ab01001b2d619a159f3130c5d058",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "A_done_without_B_ACK_is_not_LOAD_done",
+      "passed": true,
+      "expected_rejection": "LOAD join before A/B completion",
+      "actual_rejection": "event 12 LOAD_DONE: LOAD join before A/B completion",
+      "trace_sha256": "b2cb73f9276aff98ee76a2e24ed28281ccafc367b61255d0d0f8d91d023d4593",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "inflight_reads_already_reserve_all_four_FIFO_slots",
+      "passed": true,
+      "expected_rejection": "FIFO credit includes inflight reads",
+      "actual_rejection": "event 16 READ_RESERVE: FIFO credit includes inflight reads",
+      "trace_sha256": "78da48b793e1a125a56ee85f125b105be30598c7a462eda4d68fb6186dbb8a1b",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "source_result_requires_second_S_ACK",
+      "passed": true,
+      "expected_rejection": "release before every destination ACK",
+      "actual_rejection": "event 107 CONTEXT_RELEASE: release before every destination ACK",
+      "trace_sha256": "0f97d12513b73dd2f1abd0604ae1d0b222cbb26f35cf35d71b6514100633b159",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "reset_does_not_allow_identity_reuse",
+      "passed": true,
+      "expected_rejection": "identity generation/epoch reuse",
+      "actual_rejection": "event 5 BEGIN: identity generation/epoch reuse",
+      "trace_sha256": "cd08c02f9ce8715baf194fb4e95c3c4b5195170a9543de24d6fc982c7449bb87",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "private_W_wrong_kk_cannot_join",
+      "passed": true,
+      "expected_rejection": "W/A identity mismatch",
+      "actual_rejection": "event 71 W_READY: W/A identity mismatch",
+      "trace_sha256": "cdd231bf5a13efdb3513cd0b6a55a80a4abab920ae94df0c8952a505a0529743",
+      "counters_if_admitted": null,
+      "scope": "private_S128_A256x2_alternative_protocol"
+    }
+  ],
+  "private_candidate_sha256": "4fea9b4351960be3b669cb9e6f668c7e54c1ef6c1b4bca3fc4b973f246381dc4"
+}

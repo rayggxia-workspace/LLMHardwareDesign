@@ -1,0 +1,5 @@
+`verilator_config
+// Exact imported scopes only. Base deliberately disables the wide port;
+// generated bank model contains functional delay/blocking assignments.
+lint_off -rule PINCONNECTEMPTY -file "*/upstream/local_s_base.sv"
+lint_off -rule BLKSEQ -file "*/upstream/s_sram_256x128_freepdk45.v"

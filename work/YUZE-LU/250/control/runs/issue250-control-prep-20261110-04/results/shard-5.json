@@ -1,0 +1,76 @@
+{
+  "schema": "shared-x-control-audit/1",
+  "passed": true,
+  "coverage": "abstract_transaction_protocol_only_not_RTL_numeric_timing_or_physical",
+  "slurm_job_id": "102066",
+  "slurm_cpus_per_task": "10",
+  "slurm_node": "node10",
+  "shard": 5,
+  "shards": 6,
+  "python": "3.11.7",
+  "elapsed_seconds": 0.005069347098469734,
+  "process_CPU_seconds": 0.0050464789999999995,
+  "source_sha256": {
+    "audit_protocol.py": "c50b04a1bd3176a0bf634e7a491c48845cd6127017337243f82e0ad570549d5e",
+    "private_a_protocol.py": "a71e925468b6d5f74f09f86629ba043449b7bea98c96245200ec261af6e0bf0a",
+    "run_audit.py": "0e10098eb81048d07d036913e369ccc14b5141692abeb3dc8ee8dc25553f6c2b"
+  },
+  "contract_sha256": "2f9ba9fc7da38b43214d42c8274aeebd4d6b6f72c1b128e621ccd2587464d012",
+  "cases": [
+    {
+      "name": "first_read_does_not_end_repeated_use",
+      "passed": true,
+      "expected_rejection": "END_READ hides unissued use",
+      "actual_rejection": "event 31 END_READ: END_READ hides unissued use",
+      "trace_sha256": "a272e3e2b356b93112749d9853bbf7cf80472a59ddc7d507c698ac5c5ae93573",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "A_ready_is_not_operand_copy",
+      "passed": true,
+      "expected_rejection": "A ready is not copy",
+      "actual_rejection": "event 14 A_COPY: A ready is not copy",
+      "trace_sha256": "b9ca28fc713d690945102711c5ff70d38b86c4533e70b914c1f81d2cf564d2e5",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "K16_even_odd_half_order",
+      "passed": true,
+      "expected_rejection": "same-row K16 half/tag order",
+      "actual_rejection": "event 14 A_COPY: same-row K16 half/tag order",
+      "trace_sha256": "e54a9b7518923592b95dc9874b9041df579c885ee91123c2fdf94eed2fe6e680",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "reset_before_accepted_fill_commit",
+      "passed": true,
+      "expected_rejection": "reset before complete transport drain",
+      "actual_rejection": "event 3 RESET: reset before complete transport drain",
+      "trace_sha256": "141446e1ffe21fb219aeb604cd11dbd4ed684d67985e7b27ef82a156067387cf",
+      "counters_if_admitted": null
+    },
+    {
+      "name": "cancel_drains_accepted_A_B_and_LOAD_terminal",
+      "passed": true,
+      "expected_rejection": null,
+      "actual_rejection": null,
+      "trace_sha256": "c056386c2648d7bb8b98b8851d28aa2715ae53ed066dc61a7a83fb9aaed0cdd2",
+      "counters_if_admitted": {
+        "fill_commits": 16,
+        "A_words_copied": 16,
+        "S_commits": 0,
+        "events": 33
+      }
+    },
+    {
+      "name": "private_S_port_is_one_calendar",
+      "passed": true,
+      "expected_rejection": "native S port double-booked",
+      "actual_rejection": "event 3 S_OTHER_REQUEST: native S port double-booked",
+      "trace_sha256": "e32ebe90ad8fec4d1f09f71a4d163874e0e2b5e1d61d52447bc0c37426d5a201",
+      "counters_if_admitted": null,
+      "scope": "private_S128_A256x2_alternative_protocol"
+    }
+  ],
+  "private_candidate_sha256": "4fea9b4351960be3b669cb9e6f668c7e54c1ef6c1b4bca3fc4b973f246381dc4"
+}
