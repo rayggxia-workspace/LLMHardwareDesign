@@ -44,3 +44,30 @@ cat c639-m-port-power-01/power-117652/power.json
 ```
 
 后续由 Melodydt 读回两项终态和证据清单，对 ECO 做提取时序、DRC、电气、等价和代表事务复验，补同窗门级功耗及配对空闲。测 512-bit 四 bank 在同拍读下的功耗，补 SRAM／PM 实际写路径及母控、局控、DMA、互连和时钟。完成三个专项消融和七模型及 Qwen2.5-3B 复测后汇总系统能耗与误差。项目管理结构检查 `python scripts/check_project.py` 通过。服务器端 Bash 语法和实际容器 Python 3.10 语法检查通过。登记 PR #5 待合并，缺 `config/board.json`，Projects unverified，待维护者核验。#280 保持进行中，PR #281 草稿，独立审查人待指定。
+
+## 300 MHz 补测
+
+用户确认目标为 300 MHz。100 MHz 来自原始 C639 10 ns 波形，保留作对照。作业 117660（`mdt-280m300`）在 c64/node2 以 12 核运行 6 分 53 秒，`COMPLETED 0:0`。提交源码 `0dd44e032be4980fbfeedb712df03928b8fd22a6`，脚本包清单 SHA-256 `cc6a348e9a2ebba14533447dfca30bcdfcff29c0a6b86a03eb58ac51320c184b`。
+
+沿用 116976 的布线 ODB、SPEF 和原 300 MHz SDC，已逐字节核对 SDC。保持冻结 RTL VCD 的事件值及顺序，在 1 ps 精度把相对时间压缩为三分之一。各窗 8,192 拍、27.306667 µs，标注 1,330 个引脚，内部活动传播估算。100/300 MHz 时间轴与值保真测试都在实际容器中通过。下表单位 mW，含内部、开关与泄漏。
+
+| 工况／阶段 | P0 | P1 | P2 |
+| --- | ---: | ---: | ---: |
+| 正常 Gate/Up | 269.809 | 270.072 | 270.009 |
+| 正常 Down | 272.194 | 272.177 | 272.174 |
+| 背压 Gate/Up | 268.515 | 268.724 | 268.646 |
+| 背压 Down | 271.886 | 271.874 | 271.902 |
+
+单路窗口能量 7.332–7.433 µJ。结果为 ECO 前网表的 300 MHz 活动功耗估算，实际 300 MHz 功能、延迟驱动活动和 ECO 后功耗待验。功耗结果清单 SHA-256 `c196deecd021c65f653f80de4866410047aed45765f1b37b09db50e71423f6f5`，已逐项核对，`power.json` SHA-256 `baccf22942359bbf9b9947265902f228013a93fa72474795e5abf65b0135bda6`。117651 仍在 c64/node1 执行物理修复。后续以 300 MHz 作为 M 标定和 ECO 前后对照口径。
+
+```bash
+ssh yuzelu@10.129.166.172
+cd /public/home/yuzelu/Melodydt/runs/issue-280/c639-m-port-power-300-01
+squeue -j 117651,117660 -o '%i|%j|%P|%T|%C|%N|%R'
+sacct -j 117651,117660 -o JobID,JobName,State,ExitCode,Elapsed,NodeList
+tail -n 25 slurm-117660.log
+cat power-117660/power.json
+(cd power-117660 && sha256sum -c power-results.sha256)
+# 同口径复跑
+sbatch --parsable run_c639_m_port_power.sbatch 300
+```

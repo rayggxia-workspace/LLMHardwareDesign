@@ -92,3 +92,5 @@
 - [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。原 M 布线 116976 正常退出，300 MHz setup/hold 最差为 −1.122 ns/−53.4 ps。
 - 117651 在 c64/node1 以 12 核重新布线并修复时序。117652 在 c64/node2 以 12 核运行 6 分 48 秒，COMPLETED 0:0，并核验全部结果散列。正常/背压的 Gate/Up、Down 共 12 窗，100 MHz 单路 101.523–102.765 mW，1,330 个边界引脚全标注，内部活动传播估算。
 - Melodydt 读回 ECO 终态，验收 ECO 时序、DRC、电气与等价，再补门级活动、配对空闲和 512-bit SRAM／PM。源码、实际命令、日志和成功判据见 [并行作业交接](../../docs/handoffs/2026-11-16-issue-280-c639-m-eco-power.md)。登记待合并，Projects 待有权限维护者核验。
+
+- 300 MHz 复测 117660 在 c64/node2、12 核、6 分 53 秒 `COMPLETED 0:0`。原 SDC 和 12 窗结果散列已复核。C639 原布线 M 单路 268.515–272.194 mW，每个 27.306667 µs 窗为 7.332–7.433 µJ，内部活动传播估算。ECO 117651 仍在执行。后续 M 标定沿用 300 MHz。 [300 MHz 回执](../../docs/handoffs/2026-11-16-issue-280-c639-m-eco-power.md#300-mhz-补测)
