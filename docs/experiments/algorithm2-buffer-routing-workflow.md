@@ -2,7 +2,23 @@
 
 本文以 [方案 PR #258](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/258) 和 [实现 PR #259](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/259) 为准，先用一个驱动引脚 `S`、一个接收引脚 `T` 说明流程。M1–M10 底座和预置 buffer 已固定。算法从端点的合法 M10 接点进入上层，生成 M11/M12 走线及 via10/via11。可选 buffer 来自底座资源清单，清单包含输入、输出接点和可用的电气数据。 [冻结边界与输入清单](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/ddf9353d9b1538480423d2a14616a6558f31e46c/docs/plans/m11-m12-routing-plan.md#L24-L45)
 
-**流程**　直连试布 → 检查负载或接收布后违规 → 粗筛 buffer → 对入围方案分段试布 → 比较完整方案 → 重新提取并复测
+**流程**　排定布线次序 → 直连试布 → 检查负载或接收布后违规 → 粗筛 buffer → 对入围方案分段试布 → 比较完整方案 → 重新提取并复测
+
+## 0. 同等接入条件下，先布长网。多端点网先布主干
+
+整批网仍先按可用接点数量和现有线束拥挤程度排队。两项相同时，按**驱动端到最远接收端的曼哈顿距离从大到小**布线。距离是两端 M10 引脚代表中心的横向差加纵向差，用于排队。
+
+同一根多端点网内，先用 A* 接通距驱动端最远的接收端，形成主干。其余接收端按当前可用接点数量排序，接点少的先接。每条支路都从已经布好的整棵连线树出发，可以接到主干或已布支路，复用已有走线。两端点网只需连起驱动端和接收端。分配 buffer 时，各物理分段按相同规则选择本段主干。
+
+排序尽量给长网留出通道，同时保留少接点网的优先权。实际路线仍受占用、方向、间距和过孔约束。后续重布保留算法 2 原有的失败网优先和反馈修复。全板布通率需要在相同网表、摆位和规则下比较。
+
+实现见 [长网与主干优先补丁](algorithm2-trunk-first.patch)。补丁以 [PR #259 的 `4ebd2a2f`](https://github.com/rayggxia-workspace/LLMHardwareDesign/commit/4ebd2a2fc845ccc6a1c17ed1751f208bb5791a8f) 为基线，覆盖直连和有 buffer 的入口。应用后可在仓库根目录复跑 Python 布线回归。
+
+```bash
+git apply --check /path/to/algorithm2-trunk-first.patch
+git apply /path/to/algorithm2-trunk-first.patch
+PYTHONPATH=project/experiments/block_synthesis python -X utf8 -B -m unittest discover -s project/experiments/upper_router
+```
 
 ## 1. 先试两个引脚直连
 

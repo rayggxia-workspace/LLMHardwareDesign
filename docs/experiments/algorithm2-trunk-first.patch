@@ -1,0 +1,135 @@
+diff --git a/project/experiments/upper_router/geometry.py b/project/experiments/upper_router/geometry.py
+index 2c7ab1d..95f04bc 100644
+--- a/project/experiments/upper_router/geometry.py
++++ b/project/experiments/upper_router/geometry.py
+@@ -206,8 +206,15 @@ class RoutingGrid:
+                     yield (*end, layer)
+
+
++def pin_manhattan(a, b, pins):
++    """Rank by representative M10 rectangle centers in DBU."""
++    ax, ay = min((r[0] + r[2], r[1] + r[3]) for r in pins[a])
++    bx, by = min((r[0] + r[2], r[1] + r[3]) for r in pins[b])
++    return (abs(ax - bx) + abs(ay - by)) / 2
++
++
+ def net_priority(spec):
+-    """Use declared bundles as soft capacity hints without requiring bus names."""
++    """Reserve scarce access first, then prefer long spans among equally constrained nets."""
+     nets = {n['id']: n for n in spec['nets']}
+     tech = spec['technology']
+     used = {pin for n in nets.values() for pin in [n['driver'], *n['sinks']]}
+@@ -229,4 +236,6 @@ def net_priority(spec):
+         if sinks:
+             sinks_capacity = len(set.union(*(access[p] for p in sinks)))
+             pressure.update(dict.fromkeys(members, len(members)/max(1, min(len(drivers), sinks_capacity))))
+-    return {name: (scarcity[name], -pressure[name], name) for name in nets}
++    span = {name: max((pin_manhattan(n['driver'], p, spec['pins']) for p in n['sinks']), default=0)
++            for name, n in nets.items()}
++    return {name: (scarcity[name], -pressure[name], -span[name], name) for name in nets}
+diff --git a/project/experiments/upper_router/resource_search.py b/project/experiments/upper_router/resource_search.py
+index 568ec24..6512837 100644
+--- a/project/experiments/upper_router/resource_search.py
++++ b/project/experiments/upper_router/resource_search.py
+@@ -4,7 +4,7 @@ from itertools import chain
+ import random
+
+ from check import digest
+-from geometry import NativePins, Occupancy, need, net_priority, validate
++from geometry import NativePins, Occupancy, need, net_priority, pin_manhattan, validate
+ from repeaters import allocation_chain, check_allocations, inventory, physical_nets, projection
+ from search import route_net, route_shapes
+
+@@ -13,16 +13,6 @@ def length(route):
+     return sum(abs(s['a'][0]-s['b'][0])+abs(s['a'][1]-s['b'][1]) for s in route['segments'])
+
+
+-def position(pin, pins):
+-    return min((r[0]+r[2], r[1]+r[3]) for r in pins[pin])
+-
+-
+-def distance(a, b, pins):
+-    ax, ay = position(a, pins)
+-    bx, by = position(b, pins)
+-    return (abs(ax-bx)+abs(ay-by))/2
+-
+-
+ def choices(net, pins, resources, limit, max_repeaters):
+     yield None
+     if not net['sinks'] or not resources or not max_repeaters:
+@@ -38,8 +28,8 @@ def choices(net, pins, resources, limit, max_repeaters):
+                         continue
+                     route = prior+(name,)
+                     output = relay['output']['id']
+-                    incoming = legs+(distance(driver, relay['input']['id'], pins),)
+-                    last = max(distance(output, sink, pins) for sink in branch)
++                    incoming = legs+(pin_manhattan(driver, relay['input']['id'], pins),)
++                    last = max(pin_manhattan(output, sink, pins) for sink in branch)
+                     ranked.append((max(*incoming, last), sum(incoming)+last, route, output, incoming))
+             frontier = [(names, output, legs) for _, _, names, output, legs in sorted(ranked)[:limit]]
+             for names, _, _ in frontier:
+diff --git a/project/experiments/upper_router/search.py b/project/experiments/upper_router/search.py
+index e6dceba..4c1cb71 100644
+--- a/project/experiments/upper_router/search.py
++++ b/project/experiments/upper_router/search.py
+@@ -4,7 +4,7 @@ from heapq import heappush, heappop
+ import random
+
+ from geometry import (NativePins, Occupancy, RoutingGrid, access_points, box, segment_shape,
+-                      net_priority, too_close, via_shapes, validate, need)
++                      net_priority, pin_manhattan, too_close, via_shapes, validate, need)
+
+
+ def route_shapes(route, tech):
+@@ -99,9 +99,10 @@ def route_net(net, spec, occupancy, history, limit, native, blockers=None):
+         return result, None, 0, blocked
+     if not starts:
+         return None, 'grid_access_not_found', 0, blocked
+-    # Scarce accesses first within a tree. No model/Block names participate.
+-    sinks = sorted(net['sinks'], key=lambda p: (len(candidates(p)), p))
+-    for sink in sinks:
++    # Build the trunk to the farthest sink, then attach branches from its tree.
++    access_first = sorted(net['sinks'], key=lambda p: (len(candidates(p)), p))
++    trunk = max(access_first, key=lambda p: pin_manhattan(net['driver'], p, spec['pins']))
++    for sink in [trunk, *(p for p in access_first if p != trunk)]:
+         goals = candidates(sink)
+         if not goals:
+             return None, 'grid_access_not_found', expanded, blocked
+diff --git a/project/experiments/upper_router/test_router.py b/project/experiments/upper_router/test_router.py
+index b0a3dcf..c55e22b 100644
+--- a/project/experiments/upper_router/test_router.py
++++ b/project/experiments/upper_router/test_router.py
+@@ -8,6 +8,7 @@ import unittest
+
+ from search import route
+ from check import verify
++from resource_search import route_resources
+
+
+ def sample():
+@@ -49,12 +50,23 @@ class RouterTests(unittest.TestCase):
+
+     def test_multisink_tree(self):
+         spec = sample()
+-        spec['pins']['second'] = [[70, 6, 74, 10]]
+-        spec['nets'][0]['sinks'].append('second')
++        spec['pins']['near'] = [[70, 6, 74, 10]]
++        spec['nets'][0]['sinks'].insert(0, 'near')
+         r = route(spec)
+         self.assertEqual(r['status'], 'geometry_complete')
+         self.assertEqual(r['geometry_check']['via10_count'], 3)
+         self.assertLessEqual(r['geometry_check']['wire_length_dbu'], 128)
++        wire = r['routes']['bus.bit.any_name']
++        self.assertEqual([p['pin'] for p in wire['via10']], ['source', 'sink', 'near'])
++
++    def test_net_priority_prefers_long_span_on_same_access_capacity(self):
++        spec = sample()
++        spec['pins'].update(short_driver=[[14, 62, 18, 66]], short_sink=[[30, 62, 34, 66]])
++        spec['nets'].insert(0, {'id': 'a-short', 'driver': 'short_driver', 'sinks': ['short_sink']})
++        repeaters = {'schema_version': 'upper-repeaters/1', 'units': 'dbu', 'repeaters': []}
++        for result in (route(spec, rounds=1), route_resources(spec, repeaters, rounds=1)):
++            self.assertFalse(result['failed'])
++            self.assertEqual(result['attempts'][0]['order'], ['bus.bit.any_name', 'a-short'])
+
+     def test_ripup_rescues_blocked_terminal(self):
+         spec = sample()
