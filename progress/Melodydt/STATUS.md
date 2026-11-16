@@ -2,7 +2,7 @@
 
 ## Melodydt 的 Slurm 提交约定
 
-后续在本项目提交的作业统一请求无限时限。新脚本写 `#SBATCH --time=0`，提交时显式加 `sbatch --time=0`，并读回 `TimeLimit=UNLIMITED`。后续本项目仿真迁至 BSCC-T6 的 `~/LLMHardware/zenanyan`，在支持无限时限的 `v6_384` 分区提交。依赖目录为 `~/LLMHardware/opt`。 [服务器交接](../../docs/handoffs/2026-11-16-issue-280-bscc-t6.md)
+后续在本项目提交的作业统一请求无限时限。新脚本写 `#SBATCH --time=0`，提交时显式加 `sbatch --time=0`，并读回 `TimeLimit=UNLIMITED`。后续本项目仿真迁至 BSCC-T6 的 `~/LLMHardware/zenanyan`，在支持无限时限的 `v6_384` 分区提交。依赖目录为 `~/opt`，北京时间 16:07 复查尚未创建。 [服务器交接](../../docs/handoffs/2026-11-16-issue-280-bscc-t6.md)
 
 ## 2026-11-14（Asia/Shanghai）七模型短程吞吐准备
 
