@@ -35,6 +35,10 @@ if [[ ${1:-} == inside ]]; then
                 cp "$bundle/qwen3_component_observation.py" "$out/runner/"
                 python3 -B "$bundle/prepare_qwen3_component_observation.py" "$out/runner"
             fi
+            if [[ -f $bundle/qwen3_real_activity.py ]]; then
+                cp "$bundle/qwen3_real_activity.py" "$out/runner/"
+                python3 -B "$bundle/prepare_qwen3_real_activity.py" "$out/runner/qwen3_short.py"
+            fi
             python3 -B "$bundle/qwen3_dma_windows.py" instrument "$frozen/fast_tlm_dram.cpp" "$out/instrumented_bridge.cpp"
             python3 -VV > "$out/python-version.txt"
             python3 -c 'import numpy; print(numpy.__version__)' > "$out/numpy-version.txt"
@@ -104,6 +108,9 @@ sha256sum "$bundle/replay-inputs.sha256" instrumented_bridge.cpp ddr-dma-probe.s
     {prefill,decode-live}-w4-tile128-pr272-combined/{result,layer-trace,energy-*}.json > results.sha256
 if [[ -f $bundle/qwen3_component_observation.py ]]; then
     sha256sum {prefill,decode-live}-w4-tile128-pr272-combined/component-observation.json >> results.sha256
+fi
+if [[ -f $bundle/qwen3_real_activity.py ]]; then
+    sha256sum {prefill,decode-live}-w4-tile128-pr272-combined/{real-activity.json,ddr-write-payload.tsv} >> results.sha256
 fi
 sha256sum -c results.sha256
 echo QWEN3_DMA_THREE_WINDOWS_PASS

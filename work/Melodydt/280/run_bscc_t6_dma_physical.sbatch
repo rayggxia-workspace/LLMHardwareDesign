@@ -14,6 +14,8 @@ if [[ ${1:-} != inside ]]; then
     sha256sum -c physical-inputs.sha256
     image=$HOME/LLMHardware/opt/orfs-current-repacked.rootfs
     component=${1:-shared}
+    synthesis=${2:-default}
+    [[ $synthesis == default || $synthesis == no-share ]]
     # The site module initializer can read variables that are unset in batch jobs.
     set +u
     source /public3/soft/modules/module.sh
@@ -21,7 +23,7 @@ if [[ ${1:-} != inside ]]; then
     set -u
     exec srun --ntasks=1 --cpus-per-task="$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
         singularity exec --cleanenv --bind "$bundle" "$image" \
-        bash "$bundle/run_bscc_t6_dma_physical.sbatch" inside "$bundle" "$SLURM_JOB_ID" "$SLURM_CPUS_PER_TASK" "$component"
+        bash "$bundle/run_bscc_t6_dma_physical.sbatch" inside "$bundle" "$SLURM_JOB_ID" "$SLURM_CPUS_PER_TASK" "$component" "$synthesis"
 fi
 
 bundle=$2
@@ -83,6 +85,9 @@ export DIE_AREA = 0 0 $side $side
 export CORE_AREA = 10 10 $((side-10)) $((side-10))
 export PLACE_DENSITY = 0.55
 EOF
+if [[ $6 == no-share ]]; then
+    printf 'export SYNTH_ARGS = -noshare\n' >> "$out/config.mk"
+fi
 make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG="$out/config.mk" WORK_HOME="$out/flow" NUM_CORES="$cores" \
     finish > "$out/flow.log" 2>&1
 key=nangate45/$top/base

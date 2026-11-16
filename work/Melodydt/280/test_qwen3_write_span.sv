@@ -14,7 +14,9 @@ module test_qwen3_write_span;
     logic [511:0] wr_data;
     integer cycles=0, requests=0, writes=0, retired=0, stalls=0, mode=0;
     integer idle=0;
-    string descriptor_path, wave_path;
+    bit has_actual_data;
+    logic [127:0] actual_data[32];
+    string descriptor_path, wave_path, payload_path;
     s128_kv_store_scope dut(
         .clk,.reset,.service_valid,.service_ready,.service_descriptor,
         .service_owner(128'hffff),.service_ticket(32'd7),
@@ -29,6 +31,8 @@ module test_qwen3_write_span;
 
     function automatic logic [127:0] payload(input integer word_index);
         logic [31:0] x;
+        if (has_actual_data)
+            return actual_data[word_index-int'(service_descriptor[143:128])];
         x=32'h9e3779b9*(1+word_index) ^ service_descriptor[223:192];
         return {x^32'h01234567,~x,x<<3,x>>5};
     endfunction
@@ -69,6 +73,8 @@ module test_qwen3_write_span;
             $fatal(1,"missing paths");
         void'($value$plusargs("MODE=%d",mode));
         void'($value$plusargs("IDLE=%d",idle));
+        has_actual_data=$value$plusargs("PAYLOAD=%s",payload_path)!=0;
+        if (has_actual_data) $readmemh(payload_path,actual_data);
         $readmemh(descriptor_path,desc_mem);
         service_descriptor=desc_mem[0];
         $dumpfile(wave_path);

@@ -154,3 +154,10 @@
 - 38792815 通过 512-bit SRAM 四 bank、PM 拆拍、256-word U 残差。38793273 的 PM 桥 300 MHz 通过，1,664 字节真实页活跃增量 0.631–0.663 nJ/页。数组、互连与宽写尚待归属。
 - M 候选 38792112 的两工况产品回归通过，物理作业 38792357 仍在映射。38793408 已为读 DMA 两种物理边界准备 12 份 VCD，Melodydt 等 38769386／38769388 交付网表与寄生后做最终读标定，再合并三窗。
 - [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [本轮回执](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-physical-calibration.md)。任务进行中，登记 PR #5 待合并，看板待管理员核验。
+
+## 2026-11-16（Asia/Shanghai）真实写载荷与 PM／U 分项
+
+- 38794389 真实写回通过三窗对账。38795264／38795265／38795266 使用真实载荷，配对范围 22.52–24.46 pJ/64 B，覆盖 K/V/FFN 三类及两种工况。
+- 实际母控 1,616 字节页有 101 次 128-bit 写确认。局控阵列和 U 的字级控制、调度、算术已分别完成 300 MHz 标定。38795515 通过 SRAM 串行宽写和普通读对账，宏 TT 库和布线工件待从旧归档补齐。
+- M 的 18 份波形及非 DMA 控制六窗活动已备齐。38792357 进入 CTS。两项原读综合和两项跳过 SHARE 的对照持续执行，五条功耗链按物理结果等待。Melodydt 后续核验映射、时序/DRC、门级功耗和重叠层级，再输出三窗整模型结果。
+- [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [结果与恢复](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-actual-payload-and-leaf-calibration.md)。任务进行中，项目登记待合并，看板待管理员核验。
