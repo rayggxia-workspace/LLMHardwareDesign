@@ -2,7 +2,7 @@
 
 ## Melodydt 的 Slurm 提交约定
 
-后续在本项目提交的作业统一请求无限时限。新脚本写 `#SBATCH --time=0`，提交时显式加 `sbatch --time=0`，并读回 `TimeLimit=UNLIMITED`。在本服务器使用支持无限时限的 c64/c96 分区。
+后续在本项目提交的作业统一请求无限时限。新脚本写 `#SBATCH --time=0`，提交时显式加 `sbatch --time=0`，并读回 `TimeLimit=UNLIMITED`。后续本项目仿真迁至 BSCC-T6 的 `~/LLMHardware/zenanyan`，在支持无限时限的 `v6_384` 分区提交。依赖目录为 `~/LLMHardware/opt`。 [服务器交接](../../docs/handoffs/2026-11-16-issue-280-bscc-t6.md)
 
 ## 2026-11-14（Asia/Shanghai）七模型短程吞吐准备
 
@@ -123,3 +123,8 @@
 
 - [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 进行中，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) 保持草稿。原提交封存包 SHA-256 和 Bash 语法通过，118207 已受理为 `PENDING (Priority)`，时限 `UNLIMITED`，节点待分配。118132 已于 15:34:35 取消。
 - Melodydt 下一步读回 118207 的终态和结果，核验三窗 DMA 事务与冻结基线。登记 PR #5 待合并，组织 Projects 条目待具权限管理员核验。 [提交与追踪](../../docs/handoffs/2026-11-16-issue-280-qwen3-dma-windows.md)
+
+## 2026-11-16（Asia/Shanghai）停止旧回放并切换仿真服务器
+
+- 118207 于 15:57:00 在旧服务器取消。保留短 Prefill 与首 token 的局部核验，第二次退休及三窗总回执待补。
+- BSCC-T6 登录和目标目录验证通过，`v6_384` 的 `--time=0` 提交预检通过。下一步由 Melodydt 迁移冻结工件并核验依赖，再提交新回放。 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [迁移交接](../../docs/handoffs/2026-11-16-issue-280-bscc-t6.md)
