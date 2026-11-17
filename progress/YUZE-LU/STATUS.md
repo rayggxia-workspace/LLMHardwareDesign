@@ -2,6 +2,8 @@
 
 ## 2026-11-17（CST）A/B 非 P 端口 X8 升级
 
+最新里程碑：G/S叶宏及F父block完成后端验收，F TT名义300MHz setup +0.221605405ns、hold +0.002453537ns；完整GDS DRC0，电气/PG/天线/功能通过。C/U仍实施中。实际回执见[执行记录](../../work/YUZE-LU/289/README.md)，[PR #290](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/290)保持草稿；当前Issue in_progress。以下为早期执行记录。
+
 [Issue #289](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/289) 为 `in_progress`，分支 `task/289-ab-x8`；[执行记录](../../work/YUZE-LU/289/README.md)。已核对340个实际输出：C153、U153、G33、S1。A/B的C/U真实源为未完成详细布线验收的overlay CTS；B另引用的segment-C时序通过但完整DRC有106项，均不冒充后端合格版。G的34个相关M10端口在overlay-C与B清单形状一致，可显式重绑定层级。119533在node14以8任务×8核运行C/U后端补全及G/S升级候选；目前尚未完成最终验收。下一步完整DRC、提取STA/电气、功能等价、新宏视图与父block重验。PR待创建、审查人待指定；登记PR5 pending，Projects配置缺失、同步pending。
 
 ## 2026-11-08（CST）U 原生入口和双向发送修复

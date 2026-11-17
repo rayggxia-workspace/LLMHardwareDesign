@@ -1,0 +1,11 @@
+Refs #289
+
+将 A/B 两套布线所用的非 P 输出升级为 X8 或更强，并验证叶宏及父 block。实际范围为 C153、U153、G33、S1，共340个输出；保持原频率、信号端口形状及宏位置。
+
+已通过：G hold03、S minimal-localv4 叶宏，以及集成新 S 的 F 父 block。F 在 Nangate45 TT、名义300MHz、原0.1ns uncertainty下，setup +0.221605405ns、hold +0.002453537ns，完整原版GDS DRC、setup/hold及电气违例均为0；PG、天线、功能等价及状态/控制保持通过。hold仅2.454ps，不代表多PVT裕量。F的native checker含40个历史原样标记及4个逐项验证为同网宏端口接触的标记，不能称native报告为空。证据见 work/YUZE-LU/289/audit/evidence/F/accepted-parent.json。
+
+尚未完成：C、U父block。A/B实际C/U源是未完成后端的overlay CTS；本任务补全其后端。U完成正确宏PG后的初版DRT0，但提取后hold及电气有违例，四路ECO候选在继续详细布线。C组合逻辑正在进行经独立两态等价审查的优化，并按实际父级布局/CTS/寄生重新验收；恢复原信号端口的流程检查已拦住stock IO placement重排，正在修正重跑。新50fF接口测试契约不是顶层提取RC。
+
+远程大文件：/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117。已上传commit 29908a06fe7e44829b5b41248cab9d04176044ab并读回确认；后续结果继续追加。全部失败及调度中断记录保留。完整任务未完成，不关闭Issue、不合并PR，不声称A/B顶层RC时序通过。
+
+规则版本：rayggxia-project-collab 1.0.0。负责人YUZE-LU；Issue in_progress；草稿PR，审查人待指定。登记management-hub PR5 pending；缺少board配置，Projects unverified/同步pending。python scripts/check_project.py已通过，管理结构检查不能代替硬件验收。下一步由YUZE-LU继续C/U后端收敛及独立验收。
