@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 将真实载荷写 DMA 与 U ADD2 增量并入 Qwen3 三窗小计，完成旧版 M 保留作用域数据的等待对照及 C639 局控 PM 运行时的活动核验与后布线分项标定。已定位 SRAM 与母控 PM 的原工件归档，旧服务器身份认证待恢复，读 DMA 仍在映射。[结果与恢复](handoffs/2026-11-17-issue-280-bscc-t6-covered-power-and-bindings.md)
+
 2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成 Qwen3 旧版 M 的 18 窗 300 MHz 功耗及三窗参考估算。旧版留有 setup 和 hold 违例。新版 M 的 CTS 中止，读侧 DMA 仍在 ABC 映射，SRAM 与母控 PM 等待宏工件。[结果与恢复](handoffs/2026-11-17-issue-280-bscc-t6-m-baseline-power.md)
 
 2026-11-16，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成 Qwen3 真实载荷写侧重测、局控阵列和 U 算术／控制 300 MHz 标定。M 进入 CTS，读侧原综合及跳过 SHARE 对照持续运行，剩余 SRAM 和母控 PM 等待物理工件。[本轮结果](handoffs/2026-11-16-issue-280-bscc-t6-actual-payload-and-leaf-calibration.md)

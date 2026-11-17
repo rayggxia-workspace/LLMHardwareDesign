@@ -1,5 +1,12 @@
 # Melodydt 的进度
 
+## 2026-11-17（Asia/Shanghai）Qwen3 三窗小计与运行时 PM 活动
+
+- 三窗小计加入写 DMA 和 U ADD2 逻辑的活跃增量，分别为 146.948–147.069／437.037–437.158／437.198–437.319 mJ/token。PM 与 SRAM 仍单列参考，待实际实例和事件归属。
+- 38812748、38812890 和 38813039 均 `COMPLETED 0:0`。旧 M 保留 scope key／owner／bias 后的端口传播估算仍为 248.092 mW；C639 两工况的写侧活跃窗按局控站点为 23／22／22／0 次 PM 读。三个带载站点的阵列后布线估值为 30.7741–30.7766 mW/阵列。
+- 补局控静默和完整三窗取指，核对 G32 和控制时钟。SRAM 原宏和母控 PM 归档已定位，旧服务器授权身份待恢复。读 DMA 四项物理仍运行，后续功耗等待依赖。
+- [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [回执与复现](../../docs/handoffs/2026-11-17-issue-280-bscc-t6-covered-power-and-bindings.md)。任务进行中，项目登记待合并，看板待有权限维护者核验。
+
 ## 2026-11-17（Asia/Shanghai）Qwen3 旧版 M 功耗估算
 
 - 38809661／38809662／38809728／38809915 均 `COMPLETED 0:0`。旧版 116976 对应 TT 300 MHz setup −1.121800 ns、hold −0.053419 ns。单个 M 18 窗带载估算 263.415–272.194 mW，复位后开钟、无请求为 248.092 mW。
