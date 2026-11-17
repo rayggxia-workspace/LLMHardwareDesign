@@ -192,3 +192,16 @@ python3 ../audits/compare-pr272-v2.py BASELINE_RUN CANDIDATE_RUN --same-program
 ### 三 P FFN 与代表性历史
 
 [三 P 全层复测](../work/Melodydt/274/THREE_P_LIVE.md)记录原冻结参考缓存、三目标 CALL/WAIT、动态 MoE 批次、Gemma Q12 与数值验收。准备 512 位置历史用 `fast_qwen3_short.sbatch MODEL prepare-live:4:MAPPING:combined`。在匹配的冻结运行目录用 `three_p_suite.sbatch prefill`、`three_p_suite.sbatch decode-live` 和 `three_p_suite.sbatch fp32` 分别提交全层实验。独立核对入口为 `audit_three_p.py REFERENCE FP32_TRACE PREFILL DECODE`。Gemma Q12 的命令及源码清单见结果记录。计时范围为 512-bit TLM。
+
+
+## Issue #280 六模型 TLM 分项能耗复算
+
+模型回放沿用 #274 已验收的三 P、512-bit、真实 512 位置历史与完整冻结输出。小型结果/验收/计数输入在 `work/Melodydt/280/six-model-results/<model>/`；完整权重和逐层数值文件留授权服务器。`model` 为 llama、granite、phi、gemma、qwen35、falcon；仅在该模型结果实际归档后复算。
+
+```bash
+python scripts/check_project.py
+python work/Melodydt/280/six_model_tlm_power.py granite work/Melodydt/280/six-model-results/granite work/Melodydt/280 tmp/granite_tlm_power_recomputed.json
+python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-current.pdf
+```
+
+积分输出要求文件尚不存在，并拒绝未通过冻结输出/数值/DDR/SRAM 验收的输入。复算使用 Python 3.6+；PDF 使用 ReportLab 4.4.9、Deng.ttf/Dengb.ttf 字体并以 Poppler 目检。脚本的 SHA 核对和单位检查不能替代 RTL/300 MHz 物理验收。BSCC-T6 的不限时提交、归档 SHA、原始工件、运行版本和已知失败见[扩测交接](handoffs/2026-11-17-issue-280-six-model-energy.md)。

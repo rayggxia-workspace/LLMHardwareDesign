@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-17 16:26（Asia/Shanghai）Llama、Granite 已验收
+
+Llama 回放 38820601/积分 38820946 与 Granite 38820602/38820947 均 COMPLETED 0:0，冻结完整输出、DDR/SRAM 与源/结果散列通过，本地和服务器分项复算字节一致。稳态 Decode 已覆盖片上＋DDR 为 Llama 659.827–660.201、Granite 522.814–523.095 mJ/token；特殊算术、读 DMA 空闲、旧 M 时序等缺项保留。PDF v1.2 已有九页，加入两个模型及同口径汇总，目检和数值提取通过。
+
+剩余 Phi 38820798、Falcon 38821511、Gemma 38821513、Qwen3.5 38821601 运行，各 24 核、UNLIMITED，后续积分按 afterok 自动接续。继续逐个验收、复算、更新 PDF。[作业与恢复](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。#280 进行中、PR #281 草稿；登记 PR #5 pending，Projects 缺配置、未核验/同步 pending。处理人 Melodydt。
+
 ## 2026-11-17 16:14（Asia/Shanghai）Granite 能耗通过，五模型继续
 
 Granite 回放 38820602 与积分 38820947 均 COMPLETED 0:0。Prefill／首 Decode／稳态 Decode 的片上已覆盖＋DDR 为 250.734–251.012／522.456–522.737／522.814–523.095 mJ/token；加入同写读 DMA 动态代理后稳态 523.237–523.518。完整冻结输出、DDR/SRAM 对账、输入散列与本地/服务器复算通过。结果属于迁移标定覆盖小计，MoE 特殊算术、控制和旧 M 时序边界保留。

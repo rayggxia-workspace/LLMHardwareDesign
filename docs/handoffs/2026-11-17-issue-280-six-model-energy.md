@@ -129,3 +129,5 @@ Llama 回放 38820601 在 m3ca0704 运行 33:57，积分 38820946 在 m3ca0608 �
 结果 `work/Melodydt/280/llama_tlm_power_v1.json`，SHA-256 `ee3705e8423dd808bb3d60ad4611a061b8af9d06d1eb3f0aff4d3a3f1fd2d1c9`，可复算小型输入在 `six-model-results/llama/`。保留 64 维紧凑 KV、V 复用和稠密三 P 的 DDR Mid 路径，未改模型调度；256-bit 局部访问按串行 128-bit 参考、固定 TLM 时间估计。普通投影 M 额外情景仍在主表之外。
 
 PDF v1.1 已加入 Granite 并增加跨模型汇总页，七页 Poppler 目检通过；SHA-256 `5d4b3e8f77c4d05c212ae73f8343233e69555ea1b51b19a9045ae47104afde8d`。原 `output/pdf/seven-model-energy-evaluation.pdf` 写入及原子替换均返回拒绝访问，文件非只读且目录 ACL 允许修改，疑为本机打开程序占用；未强制关闭用户程序。仓库同名 `docs/experiments/seven-model-energy-evaluation.pdf` 正常更新，本机可用 `output/pdf/seven-model-energy-evaluation-current.pdf`。后续继续更新这两个可写路径并加入 Llama。Phi、Gemma、Qwen3.5、Falcon 回放及依赖积分继续。
+
+PDF v1.2 已加入 Llama，共九页，保留逐模型实现、缺项、读 DMA 情景及源码证据链接。新增页和汇总目检、数值提取与哈希检查通过，SHA-256 `7cbedf049d10eb1b3a5a23484ed9058f92168811ca79e097c1d90cf3a0801353`。Granite 数据提交 `4cd5c6c745373092d2075d8184809cf56f940042`；Llama 数据和 PDF v1.1 提交 `8fec367f54eb5964d7d4fdfc03c5167367228fa7`，PDF v1.1 已从 GitHub 读回核对完整内容。

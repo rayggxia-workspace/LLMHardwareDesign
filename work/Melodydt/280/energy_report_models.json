@@ -1,8 +1,8 @@
 {
-  "revision": "1.1",
+  "revision": "1.2",
   "updated": "2026-11-17",
   "owner": "Melodydt",
-  "source_commit": "4cd5c6c745373092d2075d8184809cf56f940042",
+  "source_commit": "8fec367f54eb5964d7d4fdfc03c5167367228fa7",
   "benchmark_commit": "fbff1bd0e455739f28d9b7dd00b97216fe7bb847",
   "models": [
     {
@@ -67,7 +67,29 @@
     },
     {
       "name": "Llama-3.2-1B",
-      "status": "能耗待评估"
+      "status": "已验收 TLM 迁移估算 v1",
+      "result": "llama_tlm_power_v1.json",
+      "result_sha256": "ee3705e8423dd808bb3d60ad4611a061b8af9d06d1eb3f0aff4d3a3f1fd2d1c9",
+      "source_commit": "8fec367f54eb5964d7d4fdfc03c5167367228fa7",
+      "configuration": "W8A16，16 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
+      "implementation": "真实 64 维紧凑 KV，256 B 行和 V 读取复用；稠密 FFN 按 128 元素 tile 分给三 P，Mid 经 DDR。",
+      "coverage": [
+        "256-bit 局部 SRAM 读按串行 128-bit 参考换算；逻辑端口仍为 512 bit。",
+        "共用 C639 条件配置：三 M、四 S_P、四局控 PM/取指、一个 G32/交换机和一组母控四宏；全窗开钟驻留尚待实物部署验证。",
+        "主表与 Qwen3 v1 同口径，只计 PR272 FFN 的 M 活跃增量。普通投影 M 忙时间已单独观测，额外参考值留在 JSON，未并入主表。",
+        "写 DMA 单价复用 Qwen3 真实载荷样本；其他位宽的串行映射和母控页按字换算保留在 JSON。未标定控制、算术、读 DMA 空闲及全局时钟/互连不能视为零。旧 M 300 MHz 时序仍未闭合。",
+        "本轮完整 result、逐层数值与输出文件均与冻结验收一致，DDR/SRAM 计数对账通过；沿用原同输入 FP32 对照，不代表本轮重新运行 FP32。"
+      ],
+      "sources": [
+        {
+          "label": "Llama-3.2-1B 三窗结果与 SHA-256",
+          "path": "work/Melodydt/280/llama_tlm_power_v1.json"
+        },
+        {
+          "label": "Llama-3.2-1B 回放、作业与复现",
+          "path": "docs/handoffs/2026-11-17-issue-280-six-model-energy.md"
+        }
+      ]
     }
   ]
 }
