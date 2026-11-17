@@ -44,7 +44,7 @@ ys = '\n'.join([
     'read_slang --top mc_native_controller -I{} {}'.format(rtl, out/source.name),
     'synth -top mc_native_controller -flatten -noabc -noshare',
     'dfflibmap -liberty {}'.format(lib),
-    'abc -fast -liberty {}'.format(lib),
+    'abc -liberty {}'.format(lib),
     'clean', 'check', 'stat -liberty {}'.format(lib),
     'write_verilog -noattr -noexpr {}'.format(out/'mapped.v'),
     'write_json {}'.format(out/'mapped.json')])+'\n'
