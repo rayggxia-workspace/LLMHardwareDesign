@@ -1,5 +1,7 @@
 # #271 方案 A 顶层 M11/M12 数据通路布线记录
 
+当前交付为[九底座原生接口版](../../../../docs/experiments/pr271-nine-native-data-links.md)：仅 P0/P1/P2/C0/U0/U1/F0/J0/J1，不增加 reader block；1,049 网、1,053 分支全部通过顶层几何检查。下文与此前 14 实例紧凑版均为历史记录。
+
 2026-11-17 后续四组联合闭合及压缩外框的结果见[紧凑版](../../../../docs/experiments/pr271-compact-data-links.md)。紧凑版通过 1,053／1,053 个分支的几何核验，下文保留前两轮实验记录。
 
 - 任务 [#250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)，底座 [#271 方案 A](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/271)，基线提交 `9d9a77b628ed4a2777ca403a8d94db8acb700676`。

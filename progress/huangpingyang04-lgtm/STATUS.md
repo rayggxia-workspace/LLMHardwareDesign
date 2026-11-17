@@ -1,5 +1,13 @@
 # huangpingyang04-lgtm 的进度
 
+## 2026-11-17 · #250 九底座原生接口版
+
+- 更新时间：2026-11-17（Asia/Shanghai）。[Issue #250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) · [PR #285](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/285)，提交待审查。
+- [当前报告](../../docs/experiments/pr271-nine-native-data-links.md)：只保留九个计算底座；四组 M11/M12 共 1,049 网、1,053 分支全部连通，外框 37.9085 mm²。没有独立 reader、dma、mc、sw 实例。
+- C0/P2 的 924 个相关端点与原生 ODB 回读一致；C0 512 网及 P2 新增 Down 206 网的局部 DRT 零违规，完整原生网表的逻辑连接在增量合并前后相同。定向 RTL 与 OASIS 回读通过。
+- 边界：P2 既有 S 供数网不在本轮局部 DRT 通过范围内；整机分片生命周期、跨窗口累加数值、全芯片物理与电气签核待完成。该联合任务仍在实施，不能由本次顶层连通结果标记 done。
+- 下一步：审查本次布局/接口变体，继续上述联合验收。审查人待指定；登记 PR #5 待合并，缺 board 配置和 Projects 能力，看板核验/同步待管理员处理。
+
 ## 2026-11-17 · #250 四组布线闭合与紧凑版
 
 - 更新时间 2026-11-17（中国标准时间）。[Issue #250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) · [PR #285](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/285)

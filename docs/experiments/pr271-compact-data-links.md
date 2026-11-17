@@ -1,5 +1,7 @@
 # #271 方案 A 四组数据通路的紧凑版
 
+> 历史版本：本页包含独立 reader 及外围块，共 14 个实例。按后续明确要求，当前交付已改为[仅九底座的原生接口版](pr271-nine-native-data-links.md)，四组顶层连线全部连通。本页保留原始结果供对照。
+
 本实验延续 [#271 方案 A](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/271) 的功能块组织和 [#285 的前两轮布线](../../work/huangpingyang04-lgtm/250/pr271-data-link-routing/README.md)，对应 [Issue #250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)。先用新版 C、U、P 的原生级视图闭合四组，再按 #279 示意图的相对排布压缩外框。P0、P1、P2 和 DMA 排在底部，C0、U0、U1 居中，F0 填入上排空位。
 
 | 指标 | 四组闭合初版 | 紧凑版 |
