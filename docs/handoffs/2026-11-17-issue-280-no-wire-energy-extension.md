@@ -41,7 +41,7 @@
 | 38825941 | mdt-280nw-sram / no-wire-power-01 | 同上 | 12 | COMPLETED 0:0，0:13，m3ca1908，6 窗 |
 | 38825995 | mdt-280qwen-m / no-wire-extension-01 | 9920979287dabbf11c4c9d686645d4ee87c85c79 | 24（2×12） | COMPLETED 0:0，24:55，m3ca0305 |
 | 38826075 | mdt-280nw-legacy / no-wire-legacy-power-01 | 44c42a96e7bfcca80039c941bafcb2d7f9123695 | 12 | COMPLETED 0:0，0:22，m3ca1202，10 窗及 PM 宏 |
-| 38826201 | mdt-280mc-nowire / native-mother-nowire-01 | 7105a177d92ff43b96ba7f0ba0681ebe026c701f | 12 | 严格连接检查和六窗功耗通过，终态见 no-wire-jobs.json |
+| 38826201 | mdt-280mc-nowire / native-mother-nowire-01 | 7105a177d92ff43b96ba7f0ba0681ebe026c701f | 12 | COMPLETED 0:0，1:39，m3ca2103，严格连接检查零问题、六窗功耗通过 |
 
 原生母控失败/未采用过程保留：38826026 因前向声明被 Slang 拒绝；38826074 因本版 Yosys 不支持 `abc -fast` 失败；38826139 进程 COMPLETED，但其连接检查未加载库定义，1253 个驱动警告未消解，因此不采纳该回执，改用 38826201 严格检查版本。
 
@@ -72,10 +72,13 @@ python scripts/check_project.py
 python work/Melodydt/280/verify_six_model_energy.py
 python work/Melodydt/280/seven_model_no_wire_power.py
 python work/Melodydt/280/verify_no_wire_energy.py
-python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-current.pdf
+python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-v2.pdf
+python work/Melodydt/280/verify_energy_report_pdf.py output/pdf/seven-model-energy-evaluation-v2.pdf
 ```
 
-管理结构、六模型原回执复算、七模型 21 窗输入 SHA/分项守恒/单位/DDR 分离/新增覆盖归属检查通过。PDF 使用既有 ReportLab/中文字体流程；本地复算不等同于再跑整模型 RTL 或物理签核。正式报告沿用 `docs/experiments/seven-model-energy-evaluation.pdf`，PDF 版本及视觉检查回执在发布文件和验证记录中。
+管理结构、六模型原回执复算、七模型 21 窗输入 SHA/分项守恒/单位/DDR 分离/新增覆盖归属检查通过。PDF v2.0 共十九页，ReportLab 4.4.9 / Python 3.12.14 / Deng 字体生成，Poppler 全页渲染并目检，未见裁切、覆盖或缺字。168 个主表值、504 个分项值、56 个覆盖变化值及 11 个链接结构检查通过，回执 `work/Melodydt/280/report-validation-v2.json`。本地复算不等同于再跑整模型 RTL 或物理签核。
+
+数据已上传任务分支，提交 `3ce71cc712439da45580e7c89f8533e6a5ff0d25`。正式报告沿用 `docs/experiments/seven-model-energy-evaluation.pdf`；本机旧 PDF 被打开占用，另存 `output/pdf/seven-model-energy-evaluation-v2.pdf`，没有关闭用户程序或改写被占用文件。PDF SHA-256：`12b51397a4eceab86934e801edfa055f22a8e91473b57ac309851babf9138bb9`。报告及文档提交以 PR 最新 head 为准，未合并到基分支或主干。最新 19:59 队列快照为 `no-wire-queue-latest.json`，四项旧综合仍运行约 27h16m / 20h28m，四项功耗等待依赖；尚无可靠剩余时间估计。
 
 仍缺的项目不能填零：
 

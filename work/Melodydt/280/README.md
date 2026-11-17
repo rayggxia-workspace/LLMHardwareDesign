@@ -1,6 +1,16 @@
 # 七模型短程能耗试点
 
-## 当前交付：七模型双口径报告 v1.6（2026-11-17）
+## 当前交付：七模型无布线寄生分项 v2（2026-11-17）
+
+[十九页报告](../../../docs/experiments/seven-model-energy-evaluation.pdf)补入普通投影 M、驻留、PM/描述符活动与九目标母控核心，分列片上和片上＋DDR。结果为 `*_tlm_power_v2_no_wire.json`，旧版 v1 保留。移除线网 RC 的影响与新增覆盖分别列出，未绑定硬件仍为未知。
+
+- [方法、源码版本、全部新作业、限制与后续](../../../docs/handoffs/2026-11-17-issue-280-no-wire-energy-extension.md)
+- [21 窗验证](no-wire-validation.json)、[PDF 数值验证](report-validation-v2.json)、[19:59 排队快照](no-wire-queue-latest.json)
+- [无寄生系数及源回执](no-wire-results/)、[Qwen3 普通 M 验收](qwen3-ordinary-results/acceptance.json)、[报告索引](energy_report_models.json)
+
+复算：`python work/Melodydt/280/seven_model_no_wire_power.py`，校验：`python work/Melodydt/280/verify_no_wire_energy.py`。PDF：`python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-v2.pdf`；逐值验证：`python work/Melodydt/280/verify_energy_report_pdf.py output/pdf/seven-model-energy-evaluation-v2.pdf`。PDF 需 ReportLab、pypdf 和中文字体；视觉验收与自动数值核验分别执行。
+
+## 历史交付：七模型双口径报告 v1.6（2026-11-17）
 
 [十八页报告](../../../docs/experiments/seven-model-energy-evaluation.pdf)现含 Qwen3、Qwen3.5、Gemma、Phi、Granite、Falcon、Llama，分别列片上已覆盖和片上＋DDR 的短 Prefill／首 Decode／第2步 Decode 能耗及平均功耗。第2步只是代表窗；读 DMA 代理、各模型独特实现和未标定项另列。六模型最后十二项回放/积分均 COMPLETED 0:0、UNLIMITED，完整数值与冻结基线一致，DDR/SRAM 和散列通过。
 

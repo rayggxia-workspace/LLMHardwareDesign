@@ -1,5 +1,13 @@
 # Melodydt 的进度
 
+## 2026-11-17 20:01（Asia/Shanghai）无布线寄生分项扩展 v2
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。数据提交 `3ce71cc712439da45580e7c89f8533e6a5ff0d25`。七模型补入九类受支持分项，保持冻结 TLM 时间、输出和 DDR 器件结果；完整三窗及每模型专项优化见[十九页 PDF](../../docs/experiments/seven-model-energy-evaluation.pdf)和[本轮交接](../../docs/handoffs/2026-11-17-issue-280-no-wire-energy-extension.md)。
+
+本轮七项最终服务器作业全部 COMPLETED 0:0、UNLIMITED。133 个既有无寄生活动窗、母控 PM 宏与九目标母控六窗已归档；母控严格连接检查零问题，Qwen3 普通/FFN M 忙时不重叠且冻结输出一致。实际执行管理检查、六模型原结果复算、七模型 21 窗守恒/单位/哈希验证；PDF 168 个主值、504 个分项值、56 个覆盖对照值和 11 个链接结构核验通过，十九页已渲染目检。
+
+19:59 四项旧读 DMA 综合仍 RUNNING，四项功耗 PENDING（Dependency），均 UNLIMITED。下一步取得匹配映射即可无 SPEF 标定读侧，再补特殊算术、控制外壳、部署/门控及全局互连等实际缺项。当前仍为已覆盖小计，非完整芯片功耗；不把去寄生称为时序闭合。Issue in_progress，PR 草稿/未合并，审查人待指定；登记 PR #5 pending，看板缺配置/工具、条目 unverified、同步 pending，待具权限维护者处理。
+
 ## 2026-11-17 18:01（Asia/Shanghai）七模型双口径能耗报告 v1.6
 
 Qwen3 参考加六个新增模型均有可复算三窗结果，六模型最终十二项回放/积分全部 COMPLETED 0:0、UNLIMITED。完整冻结输出、DDR/SRAM 和输入/输出 SHA 通过；本地 Python 3.7.0/3.12 积分与服务器 3.6.6 字节一致。PDF v1.6 十八页，按片上已覆盖／片上＋DDR 两类分别提供 mJ/token 与 W；168 个主表数值和全部页目检通过，读 DMA 代理另列。第2步 Decode 是代表窗，不宣称长序列稳态。

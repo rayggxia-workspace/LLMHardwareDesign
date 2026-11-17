@@ -1,5 +1,5 @@
 {
-  "revision": "1.6",
+  "revision": "2.0",
   "updated": "2026-11-17",
   "owner": "Melodydt",
   "report_scopes": {
@@ -7,182 +7,176 @@
     "on_chip_plus_ddr": "covered_subtotal：片上已覆盖小计加 DDR 器件，未计 DDR PHY 和板级 I/O",
     "read_dma_proxy": "代理属于片上动态增量；分别加入上述两类，另列敏感性，不混入基础小计"
   },
-  "source_commit": "52260a394d6473d80b940973150fbc47df530ab3",
+  "source_commit": "3ce71cc712439da45580e7c89f8533e6a5ff0d25",
   "benchmark_commit": "fbff1bd0e455739f28d9b7dd00b97216fe7bb847",
   "models": [
     {
       "name": "Qwen3-0.6B",
-      "status": "已出 TLM 分项估算 v1",
-      "result": "qwen3_tlm_power_v1.json",
-      "result_sha256": "d7d3a6bd0cff54f99e0343921f636b52db74b25b268300a65a0743ee06c85c17",
+      "status": "无寄生分项估算 v2（仍非完整）",
+      "result": "qwen3_tlm_power_v2_no_wire.json",
+      "result_sha256": "51b35c82b227be0b90c3794e96dfaf7509464e689d4bd7efc4cef014408f8182",
       "configuration": "W8A16，28 层，三路 P 并行 FFN，512-bit SRAM，双通道 DDR。Decode 从 512 个真实 KV 历史位置开始。",
-      "implementation": "四个数据 SRAM 站点各用一组 S_P，按整窗开钟估算。旧版 M 三路使用实测静默与活跃功耗及 TLM 忙时间，300 MHz setup WNS 为 -1.121800 ns，hold WNS 为 -0.053419 ns。",
+      "implementation": "四个数据 SRAM 站点各用一组 S_P，按整窗开钟估算。旧 M 三路单元网络去除线网 RC 后积分 FFN 和普通投影忙时，仍保留原缓冲器。原 300 MHz setup/hold WNS 为 -1.121800/-0.053419 ns。",
       "sources": [
         {
-          "label": "Qwen3 三窗积分、输入与复算",
-          "path": "docs/handoffs/2026-11-17-issue-280-qwen3-tlm-power-v1.md"
-        },
-        {
-          "label": "Qwen3 分项能耗 JSON",
-          "path": "work/Melodydt/280/qwen3_tlm_power_v1.json"
+          "label": "Qwen3-0.6B 三窗无寄生分项结果与 SHA-256",
+          "path": "work/Melodydt/280/qwen3_tlm_power_v2_no_wire.json"
         }
+      ],
+      "source_commit": "3ce71cc712439da45580e7c89f8533e6a5ff0d25",
+      "coverage": [
+        "RMS、softmax、RoPE 与额外缩放的独立算术功耗尚未标定。",
+        "条件部署：三 M、四 S_P、四局控 PM/取指、四母控 PM 宏，以及各一份 G32、交换机、写 DMA、U ADD2 链、PM 桥及九目标母控核心。全窗开钟与真实实例数尚待部署验证。",
+        "主表补入普通投影 M、驻留及局控启动/读取/描述符活动。普通 M 使用 C639 活跃减静默系数；九目标母控以六个边界活动样本的全窗功耗范围迁移，尚非逐模型占空比实测。",
+        "写 DMA 单价迁移自 Qwen3 真实载荷；部分 SRAM 拍宽按串行 128-bit 参考换算，逻辑端口仍为 512 bit。其他母控页长按字估算。未标定读 DMA、控制外壳、算术和全局时钟/互连不视为零。",
+        "全部系数不加载线网寄生；原网络仍有缓冲器与引脚电容，活动有零延迟及端口传播限制，不含延迟毛刺。旧 M 的 300 MHz 时序未闭合，标定端点不是整体误差范围。",
+        "沿用冻结的完整数值输出与 DDR/SRAM 对账、原同输入 FP32 验收；本轮新增 Qwen3 普通 M 忙时及不重叠检查，没有重跑七模型 FP32 或整模型门级仿真。"
       ]
     },
     {
       "name": "Qwen3.5-4B",
-      "status": "已验收 TLM 迁移估算 v1",
-      "result": "qwen35_tlm_power_v1.json",
-      "result_sha256": "f1c0dfdd378a6014a54718c3265a332ccff63064d14b7e62ef12ca2435aec9da",
-      "source_commit": "64646c4d8e0f8d3a94c3cf40e2f23e7a4aa74492",
+      "status": "无寄生分项估算 v2（仍非完整）",
+      "result": "qwen35_tlm_power_v2_no_wire.json",
+      "result_sha256": "abf57929d817a3a8b0c155fc768294baf7971793609eabf3cb53318330f1fa4d",
+      "source_commit": "3ce71cc712439da45580e7c89f8533e6a5ff0d25",
       "configuration": "W8A16，32 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
       "implementation": "8 层宽注意力与 24 层 GDN；真实键主历史转值主布局，卷积和递推状态按显式 DDR 事务恢复、读写。稠密 FFN 三 P 并行。",
       "coverage": [
         "GDN、卷积、sigmoid 与缩放算术未标定；对应 DDR 与已观测 SRAM 访问已计入。",
-        "共用 C639 条件配置：三 M、四 S_P、四局控 PM/取指、一个 G32/交换机和一组母控四宏；全窗开钟驻留尚待实物部署验证。",
-        "主表与 Qwen3 v1 同口径，只计 PR272 FFN 的 M 活跃增量。普通投影 M 忙时间已单独观测，额外参考值留在 JSON，未并入主表。",
-        "写 DMA 单价复用 Qwen3 真实载荷样本；其他位宽的串行映射和母控页按字换算保留在 JSON。未标定控制、算术、读 DMA 空闲及全局时钟/互连不能视为零。旧 M 300 MHz 时序仍未闭合。",
-        "本轮完整 result、逐层数值与输出文件均与冻结验收一致，DDR/SRAM 计数对账通过；沿用原同输入 FP32 对照，不代表本轮重新运行 FP32。"
+        "条件部署：三 M、四 S_P、四局控 PM/取指、四母控 PM 宏，以及各一份 G32、交换机、写 DMA、U ADD2 链、PM 桥及九目标母控核心。全窗开钟与真实实例数尚待部署验证。",
+        "主表补入普通投影 M、驻留及局控启动/读取/描述符活动。普通 M 使用 C639 活跃减静默系数；九目标母控以六个边界活动样本的全窗功耗范围迁移，尚非逐模型占空比实测。",
+        "写 DMA 单价迁移自 Qwen3 真实载荷；部分 SRAM 拍宽按串行 128-bit 参考换算，逻辑端口仍为 512 bit。其他母控页长按字估算。未标定读 DMA、控制外壳、算术和全局时钟/互连不视为零。",
+        "全部系数不加载线网寄生；原网络仍有缓冲器与引脚电容，活动有零延迟及端口传播限制，不含延迟毛刺。旧 M 的 300 MHz 时序未闭合，标定端点不是整体误差范围。",
+        "沿用冻结的完整数值输出与 DDR/SRAM 对账、原同输入 FP32 验收；本轮新增 Qwen3 普通 M 忙时及不重叠检查，没有重跑七模型 FP32 或整模型门级仿真。"
       ],
       "sources": [
         {
-          "label": "Qwen3.5-4B 三窗结果与 SHA-256",
-          "path": "work/Melodydt/280/qwen35_tlm_power_v1.json"
-        },
-        {
-          "label": "Qwen3.5-4B 回放、作业与复现",
-          "path": "docs/handoffs/2026-11-17-issue-280-six-model-energy.md"
+          "label": "Qwen3.5-4B 三窗无寄生分项结果与 SHA-256",
+          "path": "work/Melodydt/280/qwen35_tlm_power_v2_no_wire.json"
         }
       ]
     },
     {
       "name": "Gemma-3-4B",
-      "status": "已验收 TLM 迁移估算 v1",
-      "result": "gemma_tlm_power_v1.json",
-      "result_sha256": "1fb15db1f90f4005a2ca18a1edbdccf11da0374e3d167989735b44a6cde2359f",
-      "source_commit": "52260a394d6473d80b940973150fbc47df530ab3",
+      "status": "无寄生分项估算 v2（仍非完整）",
+      "result": "gemma_tlm_power_v2_no_wire.json",
+      "result_sha256": "3c55fe08cabc8fbe14440a02b4b27a97671273c95ec6aa5d9c417998e479af04",
+      "source_commit": "3ce71cc712439da45580e7c89f8533e6a5ff0d25",
       "configuration": "W8A16，34 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
       "implementation": "256 维宽注意力，整行 K/V 与双窗口；局部/全局注意力及 GELU 保留。残差及后分支 RMS 使用已验收的 Q12，投影输入仍为 Q16。",
       "coverage": [
         "GELU 没有匹配的门级能耗系数，未使用 SiLU 单价代替；表中的 G32 活跃增量不覆盖 GELU。",
-        "共用 C639 条件配置：三 M、四 S_P、四局控 PM/取指、一个 G32/交换机和一组母控四宏；全窗开钟驻留尚待实物部署验证。",
-        "主表与 Qwen3 v1 同口径，只计 PR272 FFN 的 M 活跃增量。普通投影 M 忙时间已单独观测，额外参考值留在 JSON，未并入主表。",
-        "写 DMA 单价复用 Qwen3 真实载荷样本；其他位宽的串行映射和母控页按字换算保留在 JSON。未标定控制、算术、读 DMA 空闲及全局时钟/互连不能视为零。旧 M 300 MHz 时序仍未闭合。",
-        "本轮完整 result、逐层数值与输出文件均与冻结验收一致，DDR/SRAM 计数对账通过；沿用原同输入 FP32 对照，不代表本轮重新运行 FP32。"
+        "条件部署：三 M、四 S_P、四局控 PM/取指、四母控 PM 宏，以及各一份 G32、交换机、写 DMA、U ADD2 链、PM 桥及九目标母控核心。全窗开钟与真实实例数尚待部署验证。",
+        "主表补入普通投影 M、驻留及局控启动/读取/描述符活动。普通 M 使用 C639 活跃减静默系数；九目标母控以六个边界活动样本的全窗功耗范围迁移，尚非逐模型占空比实测。",
+        "写 DMA 单价迁移自 Qwen3 真实载荷；部分 SRAM 拍宽按串行 128-bit 参考换算，逻辑端口仍为 512 bit。其他母控页长按字估算。未标定读 DMA、控制外壳、算术和全局时钟/互连不视为零。",
+        "全部系数不加载线网寄生；原网络仍有缓冲器与引脚电容，活动有零延迟及端口传播限制，不含延迟毛刺。旧 M 的 300 MHz 时序未闭合，标定端点不是整体误差范围。",
+        "沿用冻结的完整数值输出与 DDR/SRAM 对账、原同输入 FP32 验收；本轮新增 Qwen3 普通 M 忙时及不重叠检查，没有重跑七模型 FP32 或整模型门级仿真。"
       ],
       "sources": [
         {
-          "label": "Gemma-3-4B 三窗结果与 SHA-256",
-          "path": "work/Melodydt/280/gemma_tlm_power_v1.json"
-        },
-        {
-          "label": "Gemma-3-4B 回放、作业与复现",
-          "path": "docs/handoffs/2026-11-17-issue-280-six-model-energy.md"
+          "label": "Gemma-3-4B 三窗无寄生分项结果与 SHA-256",
+          "path": "work/Melodydt/280/gemma_tlm_power_v2_no_wire.json"
         }
       ]
     },
     {
       "name": "Phi-4-mini",
-      "status": "已验收 TLM 迁移估算 v1",
-      "result": "phi_tlm_power_v1.json",
-      "result_sha256": "b6287cdfd3f7b176ae4d1e70924e825cea05101e99faae7b00aafeef65252cdf",
-      "source_commit": "5a06901f66e0f8711dccedfcb3b1eaae984ac058",
+      "status": "无寄生分项估算 v2（仍非完整）",
+      "result": "phi_tlm_power_v2_no_wire.json",
+      "result_sha256": "222deba8d2c4fbe2f271ef1af7724371e4bd5e0c7508b31dcda51788a55774cf",
+      "source_commit": "3ce71cc712439da45580e7c89f8533e6a5ff0d25",
       "configuration": "W8A16，32 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
       "implementation": "融合 QKV 与 Gate/Up 按矩阵区间供数，128 维 ATT1、V 读取流水、partial LongRoPE；三 P 的 FFN Mid 使用 DDR。",
       "coverage": [
         "融合投影按实际事务观测；LongRoPE、归一化及额外缩放缺少独立算术标定。",
-        "共用 C639 条件配置：三 M、四 S_P、四局控 PM/取指、一个 G32/交换机和一组母控四宏；全窗开钟驻留尚待实物部署验证。",
-        "主表与 Qwen3 v1 同口径，只计 PR272 FFN 的 M 活跃增量。普通投影 M 忙时间已单独观测，额外参考值留在 JSON，未并入主表。",
-        "写 DMA 单价复用 Qwen3 真实载荷样本；其他位宽的串行映射和母控页按字换算保留在 JSON。未标定控制、算术、读 DMA 空闲及全局时钟/互连不能视为零。旧 M 300 MHz 时序仍未闭合。",
-        "本轮完整 result、逐层数值与输出文件均与冻结验收一致，DDR/SRAM 计数对账通过；沿用原同输入 FP32 对照，不代表本轮重新运行 FP32。"
+        "条件部署：三 M、四 S_P、四局控 PM/取指、四母控 PM 宏，以及各一份 G32、交换机、写 DMA、U ADD2 链、PM 桥及九目标母控核心。全窗开钟与真实实例数尚待部署验证。",
+        "主表补入普通投影 M、驻留及局控启动/读取/描述符活动。普通 M 使用 C639 活跃减静默系数；九目标母控以六个边界活动样本的全窗功耗范围迁移，尚非逐模型占空比实测。",
+        "写 DMA 单价迁移自 Qwen3 真实载荷；部分 SRAM 拍宽按串行 128-bit 参考换算，逻辑端口仍为 512 bit。其他母控页长按字估算。未标定读 DMA、控制外壳、算术和全局时钟/互连不视为零。",
+        "全部系数不加载线网寄生；原网络仍有缓冲器与引脚电容，活动有零延迟及端口传播限制，不含延迟毛刺。旧 M 的 300 MHz 时序未闭合，标定端点不是整体误差范围。",
+        "沿用冻结的完整数值输出与 DDR/SRAM 对账、原同输入 FP32 验收；本轮新增 Qwen3 普通 M 忙时及不重叠检查，没有重跑七模型 FP32 或整模型门级仿真。"
       ],
       "sources": [
         {
-          "label": "Phi-4-mini 三窗结果与 SHA-256",
-          "path": "work/Melodydt/280/phi_tlm_power_v1.json"
-        },
-        {
-          "label": "Phi-4-mini 回放、作业与复现",
-          "path": "docs/handoffs/2026-11-17-issue-280-six-model-energy.md"
+          "label": "Phi-4-mini 三窗无寄生分项结果与 SHA-256",
+          "path": "work/Melodydt/280/phi_tlm_power_v2_no_wire.json"
         }
       ]
     },
     {
       "name": "Granite",
-      "status": "已验收 TLM 迁移估算 v1",
-      "result": "granite_tlm_power_v1.json",
-      "result_sha256": "83895abc6a9d4b7780f71083136a1b5de89a71dba829eef870ea31cbbbba9fd1",
-      "source_commit": "4cd5c6c745373092d2075d8184809cf56f940042",
+      "status": "无寄生分项估算 v2（仍非完整）",
+      "result": "granite_tlm_power_v2_no_wire.json",
+      "result_sha256": "f132bf6d78c5334d50dc6dce353c54855ce659f36a5247af37b64c6ce20cba28",
+      "source_commit": "3ce71cc712439da45580e7c89f8533e6a5ff0d25",
       "configuration": "W8A16，32 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
       "implementation": "64 维紧凑 KV；实际 router 选择 8/40 专家，三 P 以 3/3/2 波次执行，专家 Mid 留在各自 SRAM，按原序加权汇总。",
       "coverage": [
         "嵌套专家激活已计数；router、softmax、加权汇总与缩放中无匹配标定的算术仍属缺项。",
-        "共用 C639 条件配置：三 M、四 S_P、四局控 PM/取指、一个 G32/交换机和一组母控四宏；全窗开钟驻留尚待实物部署验证。",
-        "主表与 Qwen3 v1 同口径，只计 PR272 FFN 的 M 活跃增量。普通投影 M 忙时间已单独观测，额外参考值留在 JSON，未并入主表。",
-        "写 DMA 单价复用 Qwen3 真实载荷样本；其他位宽的串行映射和母控页按字换算保留在 JSON。未标定控制、算术、读 DMA 空闲及全局时钟/互连不能视为零。旧 M 300 MHz 时序仍未闭合。",
-        "本轮完整 result、逐层数值与输出文件均与冻结验收一致，DDR/SRAM 计数对账通过；沿用原同输入 FP32 对照，不代表本轮重新运行 FP32。"
+        "条件部署：三 M、四 S_P、四局控 PM/取指、四母控 PM 宏，以及各一份 G32、交换机、写 DMA、U ADD2 链、PM 桥及九目标母控核心。全窗开钟与真实实例数尚待部署验证。",
+        "主表补入普通投影 M、驻留及局控启动/读取/描述符活动。普通 M 使用 C639 活跃减静默系数；九目标母控以六个边界活动样本的全窗功耗范围迁移，尚非逐模型占空比实测。",
+        "写 DMA 单价迁移自 Qwen3 真实载荷；部分 SRAM 拍宽按串行 128-bit 参考换算，逻辑端口仍为 512 bit。其他母控页长按字估算。未标定读 DMA、控制外壳、算术和全局时钟/互连不视为零。",
+        "全部系数不加载线网寄生；原网络仍有缓冲器与引脚电容，活动有零延迟及端口传播限制，不含延迟毛刺。旧 M 的 300 MHz 时序未闭合，标定端点不是整体误差范围。",
+        "沿用冻结的完整数值输出与 DDR/SRAM 对账、原同输入 FP32 验收；本轮新增 Qwen3 普通 M 忙时及不重叠检查，没有重跑七模型 FP32 或整模型门级仿真。"
       ],
       "sources": [
         {
-          "label": "Granite 三窗结果与 SHA-256",
-          "path": "work/Melodydt/280/granite_tlm_power_v1.json"
-        },
-        {
-          "label": "Granite 回放、作业与复现",
-          "path": "docs/handoffs/2026-11-17-issue-280-six-model-energy.md"
+          "label": "Granite 三窗无寄生分项结果与 SHA-256",
+          "path": "work/Melodydt/280/granite_tlm_power_v2_no_wire.json"
         }
       ]
     },
     {
       "name": "Falcon-H1-3B",
-      "status": "已验收 TLM 迁移估算 v1",
-      "result": "falcon_tlm_power_v1.json",
-      "result_sha256": "6dad6edadd5600f08f99eed2f941dd8962cee54073edaa9d7be9e5f87c9c14dd",
-      "source_commit": "c3190f047fcd1aef96371c7c5b8e0c6dd51de484",
+      "status": "无寄生分项估算 v2（仍非完整）",
+      "result": "falcon_tlm_power_v2_no_wire.json",
+      "result_sha256": "3c50a9bef7c0b0930098d71e4ddcbf970b835782da85773a7522ff9b8eb98027",
+      "source_commit": "3ce71cc712439da45580e7c89f8533e6a5ff0d25",
       "configuration": "W8A16，32 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
       "implementation": "各层保留 Mamba2 与注意力分支，先递推服务后 128 维 ATT1；V 读取流水及真实递推/卷积状态跨步。稠密 FFN 三 P 并行。",
       "coverage": [
         "Mamba2、卷积及额外缩放算术未标定；对应 DDR 与已观测 SRAM 访问已计入。",
-        "共用 C639 条件配置：三 M、四 S_P、四局控 PM/取指、一个 G32/交换机和一组母控四宏；全窗开钟驻留尚待实物部署验证。",
-        "主表与 Qwen3 v1 同口径，只计 PR272 FFN 的 M 活跃增量。普通投影 M 忙时间已单独观测，额外参考值留在 JSON，未并入主表。",
-        "写 DMA 单价复用 Qwen3 真实载荷样本；其他位宽的串行映射和母控页按字换算保留在 JSON。未标定控制、算术、读 DMA 空闲及全局时钟/互连不能视为零。旧 M 300 MHz 时序仍未闭合。",
-        "本轮完整 result、逐层数值与输出文件均与冻结验收一致，DDR/SRAM 计数对账通过；沿用原同输入 FP32 对照，不代表本轮重新运行 FP32。"
+        "条件部署：三 M、四 S_P、四局控 PM/取指、四母控 PM 宏，以及各一份 G32、交换机、写 DMA、U ADD2 链、PM 桥及九目标母控核心。全窗开钟与真实实例数尚待部署验证。",
+        "主表补入普通投影 M、驻留及局控启动/读取/描述符活动。普通 M 使用 C639 活跃减静默系数；九目标母控以六个边界活动样本的全窗功耗范围迁移，尚非逐模型占空比实测。",
+        "写 DMA 单价迁移自 Qwen3 真实载荷；部分 SRAM 拍宽按串行 128-bit 参考换算，逻辑端口仍为 512 bit。其他母控页长按字估算。未标定读 DMA、控制外壳、算术和全局时钟/互连不视为零。",
+        "全部系数不加载线网寄生；原网络仍有缓冲器与引脚电容，活动有零延迟及端口传播限制，不含延迟毛刺。旧 M 的 300 MHz 时序未闭合，标定端点不是整体误差范围。",
+        "沿用冻结的完整数值输出与 DDR/SRAM 对账、原同输入 FP32 验收；本轮新增 Qwen3 普通 M 忙时及不重叠检查，没有重跑七模型 FP32 或整模型门级仿真。"
       ],
       "sources": [
         {
-          "label": "Falcon-H1-3B 三窗结果与 SHA-256",
-          "path": "work/Melodydt/280/falcon_tlm_power_v1.json"
-        },
-        {
-          "label": "Falcon-H1-3B 回放、作业与复现",
-          "path": "docs/handoffs/2026-11-17-issue-280-six-model-energy.md"
+          "label": "Falcon-H1-3B 三窗无寄生分项结果与 SHA-256",
+          "path": "work/Melodydt/280/falcon_tlm_power_v2_no_wire.json"
         }
       ]
     },
     {
       "name": "Llama-3.2-1B",
-      "status": "已验收 TLM 迁移估算 v1",
-      "result": "llama_tlm_power_v1.json",
-      "result_sha256": "ee3705e8423dd808bb3d60ad4611a061b8af9d06d1eb3f0aff4d3a3f1fd2d1c9",
-      "source_commit": "8fec367f54eb5964d7d4fdfc03c5167367228fa7",
+      "status": "无寄生分项估算 v2（仍非完整）",
+      "result": "llama_tlm_power_v2_no_wire.json",
+      "result_sha256": "b664f81de1933c061a3f2a7ce4585de4a76a86517f544a79d2abbb165ac33991",
+      "source_commit": "3ce71cc712439da45580e7c89f8533e6a5ff0d25",
       "configuration": "W8A16，16 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
       "implementation": "真实 64 维紧凑 KV，256 B 行和 V 读取复用；稠密 FFN 按 128 元素 tile 分给三 P，Mid 经 DDR。",
       "coverage": [
         "256-bit 局部 SRAM 读按串行 128-bit 参考换算；逻辑端口仍为 512 bit。",
-        "共用 C639 条件配置：三 M、四 S_P、四局控 PM/取指、一个 G32/交换机和一组母控四宏；全窗开钟驻留尚待实物部署验证。",
-        "主表与 Qwen3 v1 同口径，只计 PR272 FFN 的 M 活跃增量。普通投影 M 忙时间已单独观测，额外参考值留在 JSON，未并入主表。",
-        "写 DMA 单价复用 Qwen3 真实载荷样本；其他位宽的串行映射和母控页按字换算保留在 JSON。未标定控制、算术、读 DMA 空闲及全局时钟/互连不能视为零。旧 M 300 MHz 时序仍未闭合。",
-        "本轮完整 result、逐层数值与输出文件均与冻结验收一致，DDR/SRAM 计数对账通过；沿用原同输入 FP32 对照，不代表本轮重新运行 FP32。"
+        "条件部署：三 M、四 S_P、四局控 PM/取指、四母控 PM 宏，以及各一份 G32、交换机、写 DMA、U ADD2 链、PM 桥及九目标母控核心。全窗开钟与真实实例数尚待部署验证。",
+        "主表补入普通投影 M、驻留及局控启动/读取/描述符活动。普通 M 使用 C639 活跃减静默系数；九目标母控以六个边界活动样本的全窗功耗范围迁移，尚非逐模型占空比实测。",
+        "写 DMA 单价迁移自 Qwen3 真实载荷；部分 SRAM 拍宽按串行 128-bit 参考换算，逻辑端口仍为 512 bit。其他母控页长按字估算。未标定读 DMA、控制外壳、算术和全局时钟/互连不视为零。",
+        "全部系数不加载线网寄生；原网络仍有缓冲器与引脚电容，活动有零延迟及端口传播限制，不含延迟毛刺。旧 M 的 300 MHz 时序未闭合，标定端点不是整体误差范围。",
+        "沿用冻结的完整数值输出与 DDR/SRAM 对账、原同输入 FP32 验收；本轮新增 Qwen3 普通 M 忙时及不重叠检查，没有重跑七模型 FP32 或整模型门级仿真。"
       ],
       "sources": [
         {
-          "label": "Llama-3.2-1B 三窗结果与 SHA-256",
-          "path": "work/Melodydt/280/llama_tlm_power_v1.json"
-        },
-        {
-          "label": "Llama-3.2-1B 回放、作业与复现",
-          "path": "docs/handoffs/2026-11-17-issue-280-six-model-energy.md"
+          "label": "Llama-3.2-1B 三窗无寄生分项结果与 SHA-256",
+          "path": "work/Melodydt/280/llama_tlm_power_v2_no_wire.json"
         }
       ]
+    }
+  ],
+  "wire_parasitics_loaded": false,
+  "sources": [
+    {
+      "label": "无寄生补项：方法、作业、验证与完整剩余步骤",
+      "path": "docs/handoffs/2026-11-17-issue-280-no-wire-energy-extension.md"
     }
   ]
 }

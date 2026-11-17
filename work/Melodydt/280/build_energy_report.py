@@ -60,7 +60,7 @@ def make_styles():
 
 
 def add(story, styles, text, style="body"):
-    story.append(Paragraph(escape(text), styles[style]))
+    story.append(Paragraph(escape(text.replace('\u2013', '-').replace('\u2014', '-').replace('\u2011', '-')), styles[style]))
 
 
 def link(story, styles, label, url):
@@ -169,7 +169,7 @@ def result_page(story, styles, model, result):
 def additions_page(story, styles, records):
     add(story, styles, "无布线寄生 / 新增覆盖", "eyebrow")
     add(story, styles, "本版补入了什么", "title")
-    add(story, styles, "新增普通投影 M 活跃项；写 DMA、U ADD2 链及 PM 传输桥的开钟驻留；PM 传输/局控启动 CRC；局控 PM 运行读取和描述符取指活动。九目标母控仅在取得匹配的综合活动结果后加入。")
+    add(story, styles, "新增普通投影 M 活跃项；写 DMA、U ADD2 链及 PM 传输桥的开钟驻留；PM 传输/局控启动 CRC；局控 PM 运行读取和描述符取指活动。九目标母控完成匹配综合与六窗活动核验，参考功耗已加入。")
     add(story, styles, "下表取第2步 Decode，单位 mJ/token。旧版含线网寄生，本版重新计算全部已有分项，因此总数下降不能解读为新增模块降低能耗。")
     rows=[]
     for model, result in records:
@@ -231,8 +231,8 @@ def dma_proxy(story, styles, result):
                      fmt(chip), fmt(subtotal["energy_mj_per_token"])))
     table(story, styles, ("窗口", "同写单价\npJ / 64 B", "动态增量\nmJ/token", "片上加代理\nmJ/token", "片上 + DDR\n加代理 mJ/token"),
           rows, (0.19, 0.15, 0.17, 0.24, 0.25))
-    add(story, styles, "0.5–2 倍读侧动态情景仍分别保留两类范围；这是所选代理的敏感性，不是整体误差界。", "note")
-    table(story, styles, ("窗口", "片上加代理\n0.5–2 倍 mJ/token", "片上 + DDR 加代理\n0.5–2 倍 mJ/token"),
+    add(story, styles, "0.5-2 倍读侧动态情景仍分别保留两类范围；这是所选代理的敏感性，不是整体误差界。", "note")
+    table(story, styles, ("窗口", "片上加代理\n0.5-2 倍 mJ/token", "片上 + DDR 加代理\n0.5-2 倍 mJ/token"),
           sensitivity_rows, (0.28, 0.36, 0.36))
     if all("ddr_transport_beats_64b" in row for row in terms):
         reads = " / ".join(f'{row["ddr_transport_beats_64b"]["read"]:,}' for row in terms)
@@ -253,6 +253,8 @@ def next_steps(story, styles, index, records):
         commit = model.get("source_commit", index["source_commit"])
         for item in model["sources"]:
             link(story, styles, item["label"], f'{REPO}/blob/{commit}/{item["path"]}')
+    for item in index.get('sources', []):
+        link(story, styles, item['label'], f'{REPO}/blob/{index["source_commit"]}/{item["path"]}')
     add(story, styles, f'评估证据版本 {index["source_commit"]}', "note")
 
 

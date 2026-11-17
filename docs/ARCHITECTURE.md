@@ -1,5 +1,20 @@
 # 架构与运行
 
+## Issue #280 无布线寄生分项复算（2026-11-17）
+
+从 `work/Melodydt/280/no-wire-results/` 的服务器校准回执和已验收模型计数生成七模型 v2，保留原始 v1。代码/配置/输入/输出 SHA 及原始远程位置见[本轮交接](handoffs/2026-11-17-issue-280-no-wire-energy-extension.md)。
+
+```bash
+python scripts/check_project.py
+python work/Melodydt/280/verify_six_model_energy.py
+python work/Melodydt/280/seven_model_no_wire_power.py
+python work/Melodydt/280/verify_no_wire_energy.py
+python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-v2.pdf
+python work/Melodydt/280/verify_energy_report_pdf.py output/pdf/seven-model-energy-evaluation-v2.pdf
+```
+
+后两条使用 ReportLab 4.4.9、pypdf、Deng.ttf/Dengb.ttf；Poppler 渲染全部十九页并单独目检。更新输入后先更新报告索引 SHA，不跳过校验。无 SPEF/无寄生估计，原网络保留已有单元与引脚电容。七模型验证只核对冻结时间/DDR、输入哈希、分项守恒、单位及归属；没有重跑七模型 FP32、整模型门级或 300 MHz 物理签核。
+
 [七模型短程 TLM 回放](../work/Melodydt/274/RESULTS.md)记录真实权重生成、两步 Decode、两位置 Prefill、Slurm 和状态审计的复跑入口。模型专用服务及定点数值边界随实测回执记录。[优化 A/B](../work/Melodydt/274/OPTIMIZATION.md) 给出权重窗口、KV 行与 V 读取、FFN 缓存和逐字节回放对照的命令。
 
 Qwen2.5-3B 的 [指令驱动事务级评估](../project/experiments/systemc_benchmark/README.md)提供配置化运行入口，覆盖两步 decode、短 prefill、诊断前缀、完整请求回放、128/512-bit 对照及短程吞吐审计。

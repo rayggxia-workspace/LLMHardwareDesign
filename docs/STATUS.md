@@ -1,5 +1,9 @@
 # 当前状态
 
+## 2026-11-17 七模型无布线寄生分项扩展 v2
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已将普通投影 M、写侧/U/PM 桥驻留、局控 PM 启动及读取、描述符活动和九目标母控核心加入七模型的 21 个窗口，并重新计算全部既有无布线寄生分项。片上与片上＋DDR 继续分别报告；新覆盖使第2步 Decode 的同口径片上小计增加约 4.65-17.91 mJ/token。PDF v2 为十九页，输入 SHA、分项守恒、单位及所有页目检通过。[结果、回执与剩余覆盖](handoffs/2026-11-17-issue-280-no-wire-energy-extension.md)。四项读 DMA 综合仍运行，特殊算术、控制外壳、真实拓扑/门控及 PHY 尚缺；旧 M 的 300 MHz 时序未闭合。任务继续进行中，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) 草稿未合并。
+
 2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成六模型能耗扩测的最终十二项回放/积分，加 Qwen3 参考形成七模型双口径报告 v1.6（十八页）。冻结数值、DDR/SRAM、输入/输出散列和跨 Python 积分通过；报告区分片上已覆盖与片上＋DDR，读 DMA 代理及特殊算术缺项另列。旧 M 的 300 MHz 时序和完整物理覆盖尚未验收，后续采用综合后直接标定路线。[报告与复现](handoffs/2026-11-17-issue-280-six-model-energy.md)。PR #281 草稿，#280 继续进行中。
 
 2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 的六模型能耗扩测已全部完成工件迁移。Granite 三窗通过冻结输出及 DDR/SRAM 对账，迁移分项估算与本地复算一致；其余五模型在 BSCC 不限时回放。结果、缺项和逐模型 PDF 更新见[扩测交接](handoffs/2026-11-17-issue-280-six-model-energy.md)。
