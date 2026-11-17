@@ -1,0 +1,15 @@
+#!/bin/bash
+#SBATCH --job-name=yzl-ab-ports
+#SBATCH --partition=debug,c64,c96
+#SBATCH --cpus-per-task=2
+#SBATCH --time=00:10:00
+set -euo pipefail
+cd /public/home/yuzelu/project-circuit/issue287-route-ab-20261117
+for family in C U; do
+ (
+ export INPUT_ODB=/public/home/yuzelu/project-circuit/algo2-current-blocks-20261116/physical-binding/endpoint-handoff/stress/blocks/$family/4_cts.odb
+ export OUTPUT_TSV=$PWD/$family-ports.tsv
+ /public/software/singularity-ce-4.3.4/bin/singularity exec --bind /public/home/yuzelu /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad -no_init -exit ports.tcl > $family-ports.log 2>&1
+ ) &
+done
+wait

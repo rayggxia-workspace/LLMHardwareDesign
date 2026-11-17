@@ -1,5 +1,11 @@
 # 当前状态
 
+2026-11-17，#287全量分布RC与统一合格C/U基准回放已完成1292/1292场景。200MHz setup全正，300MHz624/646负setup，643/646源端电容超限。参见[方法和数值验证](../work/YUZE-LU/287/distributed/README.md)。这是基准负载回放，不是当前A/B版本的系统验收。
+
+2026-11-17，#287 / PR #288已将A/B评估扩展至全部646条非P方案—线网记录：A-CU302/306、B-CU302/306、B-GS34/34超出各自真实驱动的Liberty电容上限。680唯一端点全部绑定实际模型，完整[明细与报告](../work/YUZE-LU/287/route-ab/FULL-REPORT.md)已落盘。负载统计全覆盖；200/300MHz完整STA仍未验收。
+
+2026-11-17，#287 / PR #288的A/B布线评估发现实际C/U为未验收CTS版；几何通过不能继承旧合格版时序。六条场探针已完成，C→U样本真实BUF_X1输出负载明显超库限制。完整联合验收需先确定合格物理基底，详见[证据](../work/YUZE-LU/287/route-ab/README.md)。
+
 2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 
 2026-11-08，用户授权将母控 [PR #224](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/224) 合入 main，并在[五类 Block 与母控统一入口](experiments/assets/five-leaf-bases/README.md)并列索引源码、图册及双格式验收包。工程证据不变；合并结果以 PR 在线回执为准，授权整合不冒充独立审查或九实例系统验收。

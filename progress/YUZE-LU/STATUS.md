@@ -1,5 +1,15 @@
 # YUZE-LU 的进度
 
+2026-11-17 CST，#287 / PR #288：完成646条真实线路的分布RC静态模型验证与同一合格C/U基准1292/1292个双频率STA回放。200MHz全部setup为正，300MHz624条为负，但643条源端电容超限；不可判当前A/B系统通过。[完整报告](../../work/YUZE-LU/287/distributed/README.md)。数值、覆盖、频率配对和旧基线控制已核验，待独立审查；登记pending、看板unverified/同步pending。
+
+2026-11-17 CST，#287 / PR #288全量更新：119532在c96/node13用64核、8任务并行，14分57秒完成646/646根非P方案—线网场计算；119540核对G宏实际原网络，119581完成覆盖/误差/守恒与哈希检查。680唯一端点全部绑定模型。A-CU302/306、B-CU302/306、B-GS34/34超库电容限制，其余8条记录仅已知负载未超限。[全量报告与646行明细](../../work/YUZE-LU/287/route-ab/FULL-REPORT.md)。完整STA仍受实际CTS基底资格及宏原驱动切断点约束。登记pending、看板unverified/同步pending，待独立审查。
+
+2026-11-17 CST，#287 / PR #288扩展A/B真实布线评估：119522几何复核通过，119524六并发场探针完成，119525核对真实驱动。C/U实际绑定未验收CTS版，完整联合STA受阻；抽样线路418.7–525.6fF超过BUF_X1的60.65fF限制。B G/S探针663.7–796.7fF且有原输入驱动切断问题。[证据与恢复入口](../../work/YUZE-LU/287/route-ab/README.md)。需先确定合格物理基底再继续STA；未恢复曾按用户要求取消的后端作业。登记pending、看板unverified/同步pending。
+
+## 2026-11-17（CST）合格C/U真实线路负载回放
+
+[Issue #287](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/287)：两端main六文件SHA绑定，119509复现独立基线；119515在debug node27分配16核、7场景并发完成14组原生收发口负载回放。0.336mm样本通过本夹具时序/电气检查；1.304–4.320mm所选样本有驱动过载，300MHz setup为负，200MHz仍电气违规。该结果是native_tx/rx的电气回放，不是存储数据接口协议闭环；outgoing/incoming接口仍需U切口正确接回后另验。[完整结果与范围](../../work/YUZE-LU/287/README.md)。原件及失败保留服务器，待独立审查；登记PR5 pending、无board配置，Projects unverified/同步pending，不关闭任务。
+
 ## 2026-11-08（CST）U 原生入口和双向发送修复
 
 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) → `in_review`；[PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 待独立审查。独立 TX 槽和普通三源入口修复后，两版重新综合并通过完整原版 GDS DRC 0、TT 300 MHz、电气/PG及三档代表上层 RC。U_128 setup/hold +255.014/+14.595 ps，U_64 +73.082/+0.212 ps；最终网表 48/48、78/78 全部通过。两包及全部 1,389/2,101 文件回收核验成功，31 硬件源文件与审查代码一致。[最终回执](../../work/YUZE-LU/212/u-native-fix.md)。P 不变。用户已授权将 #221 合入 main；五类图册 U 两版已绑定新验收包，P/C/F/J 图源不变。实际合并状态以 PR 在线回执为准，Issue 在线 assignee 未指定。登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，复用接入交接 Issue7。
