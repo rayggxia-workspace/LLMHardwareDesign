@@ -1,5 +1,9 @@
 # YUZE-LU 的进度
 
+## 2026-11-17（CST）A/B 非 P 端口 X8 升级
+
+[Issue #289](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/289) 为 `in_progress`，分支 `task/289-ab-x8`；[执行记录](../../work/YUZE-LU/289/README.md)。已核对340个实际输出：C153、U153、G33、S1。A/B的C/U真实源为未完成详细布线验收的overlay CTS；B另引用的segment-C时序通过但完整DRC有106项，均不冒充后端合格版。G的34个相关M10端口在overlay-C与B清单形状一致，可显式重绑定层级。119533在node14以8任务×8核运行C/U后端补全及G/S升级候选；目前尚未完成最终验收。下一步完整DRC、提取STA/电气、功能等价、新宏视图与父block重验。PR待创建、审查人待指定；登记PR5 pending，Projects配置缺失、同步pending。
+
 ## 2026-11-08（CST）U 原生入口和双向发送修复
 
 [Issue #212](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/212) → `in_review`；[PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 待独立审查。独立 TX 槽和普通三源入口修复后，两版重新综合并通过完整原版 GDS DRC 0、TT 300 MHz、电气/PG及三档代表上层 RC。U_128 setup/hold +255.014/+14.595 ps，U_64 +73.082/+0.212 ps；最终网表 48/48、78/78 全部通过。两包及全部 1,389/2,101 文件回收核验成功，31 硬件源文件与审查代码一致。[最终回执](../../work/YUZE-LU/212/u-native-fix.md)。P 不变。用户已授权将 #221 合入 main；五类图册 U 两版已绑定新验收包，P/C/F/J 图源不变。实际合并状态以 PR 在线回执为准，Issue 在线 assignee 未指定。登记 PR5 pending，缺 board 配置，Projects unverified/同步 pending，复用接入交接 Issue7。
