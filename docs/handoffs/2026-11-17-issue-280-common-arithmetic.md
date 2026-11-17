@@ -2,7 +2,60 @@
 
 2026-11-17，Asia/Shanghai。负责人 Melodydt。仓库 rayggxia-workspace/LLMHardwareDesign，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280)，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，分支 `task/280-seven-model-energy`；本机导出工作区 `D:/Study_material/Study_material/LLMHardwareDesign` 无 `.git`，通过 Melodydt GitHub 连接向任务分支交付。未更改模型部署或冻结数值；无完整模型新能耗可发布，PDF v2.1 数值暂不变。
 
-## 本轮完成与正在执行
+## 后续推进：七模型采样及成功依赖链（22:59）
+
+Llama prefill 已通过完整冻结结果、逐层数值、DDR/SRAM/N 计数与定点复算：64 次 RMS 服务，512 个 S128 word（2048 元素），捕获 2 组完整真实输入。38828633 在该阶段独立验收后于 22:47 解除对整个双阶段采样作业的等待，48 秒内 COMPLETED 0:0（m3ca0905）。两个真实输入的 N 原始因子 840227/850407 与 RTL 一致，300 MHz 增量分别 299.429079541/301.144850304 nJ/次；每个等长窗 10,816,667 ps，活动 35.50054505/35.65916792 mW，空闲 7.818350568 mW。输入捕获 SHA 为 `2e3380e91b0495a7f888fe1b07c57f1cc82c0fc38a040569357bbd01a9147322`。这些结果仅是 N 算术动态增量，尚未添加其他 RMS 子模块或驻留，不能作为模型完整小计。
+
+| 模型 | 采样作业 / 节点 | Prefill N | Decode N |
+| --- | --- | --- | --- |
+| Llama | 38828362 / m3ca1003，prefill 通过，decode 待最终退出 | 38828633 已通过 | 38828634 等待成功依赖 |
+| Granite | 38828902 / m3ca1604，RUNNING | 38828998 等待 | 38828999 等待 |
+| Phi | 38828903 / m3cd2608，RUNNING | 38829000 等待 | 38829001 等待 |
+| Gemma | 38828904 / m3ce0402，RUNNING | 38829002 等待 | 38829003 等待 |
+| Qwen3.5 | 38828905 / m3ce0506，RUNNING | 38829004 等待 | 38829005 等待 |
+| Falcon | 38828906 / m3ce1203，RUNNING | 38829006 等待 | 38829007 等待 |
+| Qwen3 | 38828968 / m3ca1907，RUNNING | 38829008 等待 | 38829009 等待 |
+
+全部 `v6_384`、UNLIMITED；采样作业各 2×12 核，N 标定每项 12 核，等待中的标定节点均未分配。采样 job 名为 `mdt-280arith-cap`，Qwen3 为 `mdt-280q3arith`；后续标定名为 `mdt-rms-<model>-<phase>`。五个新增模型复用采样 commit `91fd33eeed6b3b40ec4254970aace879392983a9`；N 标定均复用 `f6aa5c96916ecc0712d531c2f3b20e81935c0a8b`。Qwen3 适配 commit `308921b5ef6dce6efafc5000acbe6a1bb308277a`，已核对其原 RMS 与 Llama 冻结版本 SHA 均为 `78961329f7393134ee2878e675e89e88b81a8548c8ba02ecb99f13b1f38e7c2d`，保留其普通/FFN M 不重叠检查及冻结数值/DDR 验收。
+
+真实 Llama prefill 小型回执在 `work/Melodydt/280/llama-arithmetic-prefill/`（acceptance、arithmetic-capture-check、n-calibration、n-results.sha256）。完整输入保留服务器 `common-arithmetic-capture-01/run-38828362/prefill/arithmetic-observation.json`，本机亦下载同名文件但未上传该大段向量；其 SHA 可与 n-calibration 回执交叉核验。本地默认 Python 3.7 缺 `math.isqrt`，3.12 启动器不可运行，因此本地定点校验未成功执行；容器中同一校验器和 RTL 实测均已通过，不把本地 AST 检查称为数值验收。
+
+```bash
+# 实际已执行的五模型采样提交
+R=/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01
+cd "$R/common-arithmetic-capture-01"
+for spec in 38820602-granite 38820798-phi 38821513-gemma 38821601-qwen35 38821511-falcon; do
+  sbatch --parsable --time=0 run_arithmetic_capture.sbatch "$R/six-model-energy-01/run-$spec"
+done
+cd "$R/common-arithmetic-qwen3-01"
+sbatch --parsable --time=0 run_qwen3_arithmetic_capture.sbatch
+
+# 已受理的成功依赖链，接续时不要重复提交
+cd "$R/common-arithmetic-n-01"
+for spec in granite:38828902 phi:38828903 gemma:38828904 qwen35:38828905 falcon:38828906; do
+  model=${spec%:*}; parent=${spec#*:}
+  for phase in prefill decode; do
+    sbatch --parsable --time=0 --dependency=afterok:$parent --kill-on-invalid-dep=yes \
+      --job-name=mdt-rms-$model-$phase run_rms_n_calibration.sbatch \
+      --capture "$R/common-arithmetic-capture-01/run-$parent/$phase/arithmetic-observation.json"
+  done
+done
+for phase in prefill decode-live; do
+  sbatch --parsable --time=0 --dependency=afterok:38828968 --kill-on-invalid-dep=yes \
+    --job-name=mdt-rms-qwen3-$phase run_rms_n_calibration.sbatch \
+    --capture "$R/common-arithmetic-qwen3-01/qwen3-38828968/$phase-w4-tile128-pr272-combined/arithmetic-observation.json"
+done
+
+squeue -j 38828362,38828634,38828902,38828903,38828904,38828905,38828906,38828968,38828998,38828999,38829000,38829001,38829002,38829003,38829004,38829005,38829006,38829007,38829008,38829009
+# 任意上表 JOB 可用以下命令；N 日志/结果为：
+sacct -j JOB --format=JobID,JobName,State,ExitCode,Elapsed,NodeList,Timelimit
+tail -n 30 "$R/common-arithmetic-n-01/slurm-JOB.log"
+cat "$R/common-arithmetic-n-01/n-JOB/calibration.json"
+# 六模型采样日志/结果为 common-arithmetic-capture-01/run-JOB/{prefill,decode}/
+# Qwen3 采样日志/结果为 common-arithmetic-qwen3-01/qwen3-38828968/{prefill,decode-live}-w4-tile128-pr272-combined/
+```
+
+## 首批作业记录（原快照，最新状态以上表为准）
 
 | 作业 | 任务/版本 | 实际状态 | 资源与结果 |
 | --- | --- | --- | --- |
@@ -62,7 +115,7 @@ cd "$N/n-38828612" && sha256sum -c results.sha256
 
 1. 等待 38828362，核验 Llama 两阶段数值与 N 计数；失败则修观测器副本并重跑，不改冻结基线。
 2. 依赖任务 38828633/34 将自动尝试真实输入的 N 因子与功耗标定；结束后人工读回验收并比较样本间差异。不是自动聊天监测。
-3. 根据 Llama 已验收流程扩展到 Qwen3、Granite、Phi、Gemma、Qwen3.5、Falcon 的冻结运行器，保留版本差异；Qwen3 当前启动器结构不同，需单独适配，不能直接套六模型 launcher。
+3. Qwen3、Granite、Phi、Gemma、Qwen3.5、Falcon 的冻结运行器扩展及采样/依赖标定均已提交；依次核验数值、计数、N 因子、活动和 SHA。Qwen3 已独立适配，不直接套六模型 launcher。
 4. 完成公共 softmax、RoPE、缩放以及 RMS E/scan/apply 部分的真实输入捕获、数值合同/RTL 匹配、无布线寄生标定。初次映射的 E compact 仅为候选，不代表已匹配 S32 E。
 5. 按模型实际签名计数、驻留与并行实例积分；去掉重复 U/时钟/漏电归属。更新片上与片上＋DDR 两类分项、覆盖和剩余缺项，重新生成并逐页验收 PDF。
 6. 公共算术完成后，补 GELU，以及 Granite router/top-k、路由 softmax 和专家加权和；已有 M 投影不重复计费。

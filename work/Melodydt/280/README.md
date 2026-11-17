@@ -129,3 +129,6 @@ Qwen3、Granite、Llama、Falcon 已有可复算三窗结果；PDF v1.3 为十�
 ## 公共算术缺项标定（2026-11-17）
 
 [任务接续与全部剩余步骤](../../../docs/handoffs/2026-11-17-issue-280-common-arithmetic.md)。三个候选网表和 N 合成样例流程已通过；Llama 真实输入采样及 afterok 标定在执行，模型新增能耗尚未验收。`map_common_arithmetic.py`/`run_common_arithmetic_map.sbatch` 为候选综合；`arithmetic_observation.py`、`prepare_arithmetic_capture.py`、`verify_arithmetic_capture.py`、`run_arithmetic_capture.sbatch` 为冻结运行器观测；`tb_rms_n_activity.sv`、`calibrate_rms_n.py`、`run_rms_n_calibration.sbatch` 为 N 因子比对及 300 MHz 无寄生配对功耗。`rms-n-smoke-calibration.json` 只记录合成数据测试，不得用于模型积分。新回执保留输入/工具/输出 SHA，原始波形留授权服务器。
+
+
+七模型 RMS 采样和后继 N 标定均已提交（详见上方交接）。Qwen3 使用独立 `run_qwen3_arithmetic_capture.sbatch`，其他六模型使用 `run_arithmetic_capture.sbatch`。`llama-arithmetic-prefill/n-calibration.json` 是第一份真实模型输入的 N 核心回执，两样本约 299.43/301.14 nJ/RMS；完整输入 SHA 在回执中，完整向量留授权服务器及本机副本，未上传 Git。尚不包含完整 RMS 或模型驻留积分。

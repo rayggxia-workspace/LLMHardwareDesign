@@ -1,5 +1,10 @@
 # 当前状态
 
+## 2026-11-17 七模型 RMS 缺项链启动
+
+公共 RMS 的七模型采样及成功依赖 N 标定已提交，全部不限时。Llama prefill 的 64 次 RMS 重放/计数和两组真实输入 N RTL 因子已通过，得到约 299.43–301.14 nJ/次的 N 动态增量；不含 E、wrapper 与驻留，尚未回填模型小计。其余阶段继续运行，完整作业表与方法边界见[公共算术交接](handoffs/2026-11-17-issue-280-common-arithmetic.md)。Issue #280 in_progress，PR #281 草稿未合并。
+
+
 ## 2026-11-17 公共算术缺项标定启动
 
 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成 N/E/S32 softmax 候选映射和 N 的 RTL 因子、433 位边界活动、300 MHz 无布线寄生配对功耗短流程验证；合成样例不计入模型小计。Llama 冻结重放采样 38828362 正在运行，真实输入 N 标定 38828633/34 已建立成功依赖，均不限时。七模型新增算术能耗尚未验收，PDF v2.1 数值保持原状。[作业与后续顺序](handoffs/2026-11-17-issue-280-common-arithmetic.md)。PR #281 草稿未合并，任务 in_progress。

@@ -247,3 +247,6 @@ sbatch --time=0 run_rms_n_calibration.sbatch --capture "$capture/arithmetic-obse
 ```
 
 对应脚本在 `work/Melodydt/280/`。N 实测范围仅 BEGIN/STATS/FINALIZE/FACTOR 核心，不含 E、SRAM、scan/apply wrapper；边界活动传播估计不等同内部门级活动。真实输入按窗口/site/长度/epsilon/移位最多取两个完整样本，全部调用计数不抽样。冻结输出不一致、RTL 因子不一致、SHA 或活动覆盖不全即拒绝回填。报告保持 512-bit TLM 与 300 MHz 目标，不因微测试夹具的时钟而重定义模型速度。
+
+
+Qwen3 的已验收启动器独立使用 `prepare_qwen3_arithmetic_capture.py`、`qwen3_arithmetic_observation.py` 和 `run_qwen3_arithmetic_capture.sbatch`。在该 bundle 执行 `sbatch --time=0 run_qwen3_arithmetic_capture.sbatch`；不要用六模型 launcher 替代。复用 RMS 探针前严格比较冻结源码，保留原 M 不重叠、plan、逐层数值与 DDR 验收。定点校验器需要提供 `math.isqrt` 的 Python 环境，本机默认 3.7 不支持；已在服务器容器执行验证。

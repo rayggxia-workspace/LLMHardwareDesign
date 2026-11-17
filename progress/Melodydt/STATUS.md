@@ -1,5 +1,14 @@
 # Melodydt 的进度
 
+## 2026-11-17 22:59（Asia/Shanghai）七模型 RMS 链已提交，Llama prefill N 通过
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。Llama prefill 冻结重放和定点采样通过：64 次 RMS、2 组真实输入，N RTL 因子 840227/850407 一致。38828633 完成后得到 N 动态增量 299.429/301.145 nJ/RMS（300 MHz、无布线寄生、边界活动传播），只覆盖 N，不是完整 RMS/模型结果。
+
+Granite/Phi/Gemma/Qwen3.5/Falcon 采样作业 38828902–38828906 均 RUNNING；Qwen3 独立适配 38828968 在 m3ca1907 RUNNING，保留冻结数值和 M 占用检查。十二项后继 N 标定 38828998–38829009 已提交 afterok；Llama decode 标定为 38828634。全部 UNLIMITED；采样各 2×12 核，标定各 12 核。完整节点、SHA、来源/日志/结果、命令和剩余步骤在[统一交接](../../docs/handoffs/2026-11-17-issue-280-common-arithmetic.md)，真实回执在 [Llama prefill](../../work/Melodydt/280/llama-arithmetic-prefill/n-calibration.json)。Qwen3 源码提交 `308921b5ef6dce6efafc5000acbe6a1bb308277a`。
+
+下一步逐模型核验 N 结果，继续补公共 E/softmax/RoPE 后统一积分/PDF，再 GELU/路由、GDN/Mamba2。默认本地 Python 3.7 缺 isqrt，数值验证在服务器容器完成；本地 AST、回执输入 SHA 和管理结构通过。无聊天自动监测。负责人 Melodydt，任务 in_progress；PR 草稿、待指定审查人、未合并；登记 pending、看板 unverified/同步 pending。
+
+
 ## 2026-11-17 22:41（Asia/Shanghai）公共算术缺项开始实测
 
 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt，in_progress。按公共 RMS/softmax/RoPE/缩放 → GELU/路由 → GDN/Mamba2 顺序推进。38828028 三个候选映射完成：N 43,411、E 49,343、S32 softmax 19,649 cells。38828612 N 短流程通过 RTL 因子、433 位活动标注、300 MHz 无寄生配对功耗；只使用合成输入，不纳入模型结果。首次 38828546 因 VCD 总线声明失败，已修复并保留失败证据。
