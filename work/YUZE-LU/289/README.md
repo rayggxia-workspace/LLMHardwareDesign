@@ -32,7 +32,7 @@ G/S v3 clears obsolete ordinary signal dbWires after resizing and regenerates ro
 
 Candidate completion is not acceptance. Required evidence: exact source hashes, actual X8 coverage, preserved geometry/function, final ODB/DEF/netlist/GDS/SPEF, regenerated hard-macro views, original-frequency setup/hold/electrical checks, connectivity/PG/antenna and full unmodified DRC, and parent-block checks. Top-level A/B RC/STA is a subsequent scope and is not established by this backend task.
 
-Current state: in progress; no candidate accepted yet. PR not yet created. Management registration remains pending (existing management PR5); Projects synchronization unverified/pending because project board configuration is absent. Review owner pending designation.
+Current state: in progress; leaf results below are accepted only at leaf scope. [Draft PR290](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/290) tracks implementation. Management registration remains pending (existing management PR5); Projects synchronization unverified/pending because project board configuration is absent. Review owner pending designation.
 
 ## Subsequent execution
 
@@ -43,3 +43,15 @@ Current state: in progress; no candidate accepted yet. PR not yet created. Manag
 - v3 C/U IO contract: 4 ns clock, 0.1 ns uncertainty; nonclock input min/max delays 0.2/0.8 ns and BUF_X2 with 50 ps source slew; output min/max delays 0.2/0.8 ns; selected 153 outputs use 50 fF, other outputs 2 fF. This is a **new engineering test environment**, not extracted top-level loading. No blanket reset false paths. Additional 500/1000 fF sensitivity checks are separate.
 - Original-size-start candidates use the same optimizer restrictions as X8 candidates; the optimizer may strengthen their outputs. They must be compared by final measured cell distribution, not labeled a fixed-X1 control.
 - B's selected G macro physical pins match overlay-C exactly (34/34). The hierarchy changes from `local_group.services.engine[1].genblk1.activate.leaf` to `services.engine[1].genblk1.activate.leaf`; binding is explicit in the audit.
+
+## Leaf milestone and parent work
+
+G hold03 and the three S candidates have hash-bound accepted-leaf receipts under `gs/evidence/`. G hold03 at 300 MHz has setup/hold +0.525632679/+0.028771570 ns; preferred S hold08 has +0.174261272/+0.058656693 ns. Both complete GDS deck and independent native DRC are clear; exact timing/electrical counts, PG, antenna, state-boundary LEC, state/control-cone preservation and target X8 assertions pass. G hold08 was rejected despite a clear GDS deck because independent native DRC found two violations. Parent integration and real top-line timing remain separate.
+
+New leaf abstracts have the same die and pins but different OBS. Explicit new-master reconstruction is required. Detailed abstracts are exported separately from the more conservative bloated originals. C rebuild checks 223554 instances, all BPin/macro geometry and full net connectivity; DEF's 7455 LOCKED→FIRM tap status conversions are explicitly restored, then equality is asserted. v6 failed an incorrect GDS path; v7 exposed the DEF status conversion; v8 passes the full reconstruction gate. Failures are retained.
+
+Job119595 initially launched C-v6 and U-v5 (three seeds each); failed C steps were replaced by C-v8 steps inside the same allocation after pilot success. U-v5 permits ordinary weak internal buffers and ensures selected final outputs are X8; it supersedes the unnecessarily broad BUF_X1/X2/X4 optimizer exclusion. C uses the accepted G hold03 detailed LEF, new Liberty and actual GDS.
+
+F with new S initially has 2/1/1 hold violations for minimal/hold03/hold08; those parent attempts are not accepted. F ECO v2 h20/h50/h80 rebuild from the new S detailed LEF, restore original fixed statuses, and assert 170438 instances plus 74809 nets before repair. The h20 strategy initially needs only two hold buffers. All final physical/function/timing checks remain required.
+
+Obsolete X8 steps (119542.1/.2 and 119586.2/.4) were ended after inspecting their exact srun commands. Original-size-start C/U comparisons remain. New C/U candidates and F repair steps continue; no parent/block acceptance is claimed.

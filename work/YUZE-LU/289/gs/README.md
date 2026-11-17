@@ -37,4 +37,4 @@ S v3 candidate-only extracted slack results (ns):
 | hold03 | 0.175611302 | 0.031941757 |
 | hold08 | 0.174261272 | 0.058656693 |
 
-All three S candidates have passed state-boundary LEC. Full physical, state-preservation, and parent gates remain separate receipts; no overall acceptance is claimed here.
+All three S candidates have passed state-boundary LEC and preservation checks for 265 state instances. Independent setup/hold/capacitance/slew/fanout violation counts are all zero; VDD/VSS connectivity and antenna checks pass. Small receipts are in `evidence/`. Full GDS DRC and parent gates remain separate receipts; no overall acceptance is claimed here.

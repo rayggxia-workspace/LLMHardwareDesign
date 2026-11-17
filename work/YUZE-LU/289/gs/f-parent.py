@@ -9,6 +9,8 @@ assert json.loads((c/'formal/receipt.json').read_text())['passed']
 assert json.loads((c/'formal/state-preservation.json').read_text())['passed']
 phy=json.loads((q/'physical-receipt.json').read_text())
 assert phy['full_deck_items']==0 and phy['native_drc_empty']
+leaf_counts=dict(line.split() for line in (c/'independent-sta-counts.tsv').read_text().splitlines())
+assert set(leaf_counts)=={'setup','hold','capacitance','slew','fanout'} and all(int(v)==0 for v in leaf_counts.values()),leaf_counts
 old=Path('/public/home/yuzelu/project-circuit/main-blockv2-f300-side-01')
 suffix=Path('flow/results/nangate45/f-native-frame/base')
 res=out/suffix; res.mkdir(parents=True)
