@@ -1,0 +1,530 @@
+{
+  "schema_version": 1,
+  "checked_date": "2026-11-17",
+  "author": "research subagent /root/titanus_brim_power",
+  "scope": "Research ASIC/PIM; model size/precision/memory restrictions relaxed per parent task. All primary sources. No TOPS/TDP conversions.",
+  "comparison_rules": [
+    "Modeled performance is never labeled measured silicon.",
+    "Tokens/s is aggregate unless explicitly single-sequence. Batch and system size must remain visible.",
+    "Different token numerators, phase boundaries and energy boundaries must not be ranked together without normalization.",
+    "tokens/J conversions use explicitly reported energy/token or the matching throughput/energy pair, never peak TOPS or TDP."
+  ],
+  "works": [
+    {
+      "id": "LEAP",
+      "title": "LEAP: LLM Inference on Scalable PIM-NoC Architecture with Balanced Dataflow and Fine-Grained Parallelism",
+      "paper_url": "https://arxiv.org/html/2509.14781",
+      "pdf_url": "https://arxiv.org/pdf/2509.14781",
+      "publication": "arXiv:2509.14781, 2025 preprint",
+      "class": "RRAM PIM + NoC ASIC architecture",
+      "evidence_locator": "Tables I–III; Sections VI-A, VI-C and VI-D",
+      "evidence_level": "instruction-level simulation; digital RTL synthesis/PnR; borrowed RRAM macro model",
+      "technology": "Digital RTL at 45 nm, results scaled to 7 nm; 1 GHz",
+      "precision": "8-bit crossbar cells; 16-bit scratchpad/router datapath. Not sufficient evidence to call full model W8A8.",
+      "memory": "128×128 RRAM crossbar, 32 KB SRAM scratchpad and 256 B router buffer per macro",
+      "area_mm2": 0.1181,
+      "area_scope": "one macro, scaled to 7 nm; not complete accelerator/system area",
+      "energy_boundary": "Modeled PIM PE + scratchpad + router; no demonstrated wall-plug/host/off-chip-DRAM boundary.",
+      "rows": [
+        {
+          "model": "Llama 3-8B",
+          "phase": "paper-reported end-to-end",
+          "input_tokens": 1024,
+          "output_tokens": 1024,
+          "batch": null,
+          "tokens_per_second": 202.25,
+          "tokens_per_joule": 19.21,
+          "power_w": 10.53
+        },
+        {
+          "model": "Llama 2-13B",
+          "phase": "paper-reported end-to-end",
+          "input_tokens": 1024,
+          "output_tokens": 1024,
+          "batch": null,
+          "tokens_per_second": 120.62,
+          "tokens_per_joule": 11.45,
+          "power_w": 10.53
+        }
+      ],
+      "caveats": [
+        "The table does not explicitly define whether the throughput numerator includes input tokens. Do not relabel as decode-only.",
+        "Table I's 64-tile scale is labeled Llama 3.2-1B; full-system scale/area for 8B and 13B is not explicitly tabulated.",
+        "10.53 W is the common Table III system value, not independently documented model-specific measured power."
+      ]
+    },
+    {
+      "id": "CENT",
+      "title": "PIM Is All You Need: A CXL-Enabled GPU-Free System for Large Language Model Inference",
+      "paper_url": "https://arxiv.org/html/2502.07578",
+      "pdf_url": "https://arxiv.org/pdf/2502.07578",
+      "publication": "ASPLOS 2025; DOI 10.1145/3676641.3716267",
+      "class": "CXL-connected GDDR6-PIM + custom PNM/controller ASIC",
+      "evidence_locator": "Sections 5.5, 6, 7.1–7.2; Table 4; Figures 13 and 15; Artifact Appendix",
+      "evidence_level": "Modified Ramulator2/AiM simulation + activity-based power model; controller synthesis, not fabricated full-system measurement",
+      "technology": "GDDR6-PIM 1Y nm (14–16 nm); CXL controller synthesized at 28 nm then scaled to 7 nm; PIM 1 GHz",
+      "precision": "BF16",
+      "memory": "32 GDDR6-PIM channels/device; 32-device system has 512 GB and 512 TB/s INTERNAL PIM bandwidth, not external DDR bandwidth",
+      "area_mm2": 19,
+      "area_scope": "one CXL controller at 7 nm; excludes memory dies and total multi-device system",
+      "input_tokens": 512,
+      "output_tokens": 3584,
+      "energy_boundary": "DRAM commands/background, PIM MAC, buffers, memory/device controllers, RISC-V and vector units, DQ/PCIe communication. Host CPU top-k sampling exists; host/server energy is not identified as included.",
+      "source_data_url": "https://raw.githubusercontent.com/Yufeng98/CENT/main/cent_simulation/processed_results.csv",
+      "source_processing_url": "https://github.com/Yufeng98/CENT/blob/main/cent_simulation/run_sim.py",
+      "source_efficiency_formula_url": "https://github.com/Yufeng98/CENT/blob/main/figure_scripts/figure_15c.py",
+      "tokens_per_joule_derivation": "1000 / Energy per Token (mJ), exactly the transformation used by author Figure 15c script",
+      "token_numerator": "Prefill counts input tokens; decoding counts generated tokens; end2end combines all 4096 token positions. Reported TPS is arithmetic mean across sampled sequence lengths, not batch×token_count/total wall time.",
+      "rows": [
+        {
+          "model": "Llama2-7B",
+          "devices": 8,
+          "batch": 32,
+          "pipeline_stages": 32,
+          "tensor_parallelism": 1,
+          "phase": "decoding",
+          "tokens_per_second": 2850.5482024687904,
+          "energy_per_token_mj": 71.41997750473598,
+          "tokens_per_joule": 14.0016846117557,
+          "tokens_per_joule_status": "derived using author's Figure 15c formula",
+          "power_w": 234.6160948759941,
+          "total_latency_s": 41.35549496713889
+        },
+        {
+          "model": "Llama2-7B",
+          "devices": 8,
+          "batch": 32,
+          "pipeline_stages": 32,
+          "tensor_parallelism": 1,
+          "phase": "end2end",
+          "tokens_per_second": 3005.0137438295624,
+          "energy_per_token_mj": 70.27906009431382,
+          "tokens_per_joule": 14.228989384007265,
+          "tokens_per_joule_status": "derived using author's Figure 15c formula",
+          "power_w": 240.6071684584195,
+          "total_latency_s": 45.36905090644445
+        },
+        {
+          "model": "Llama2-7B",
+          "devices": 8,
+          "batch": 32,
+          "pipeline_stages": 32,
+          "tensor_parallelism": 1,
+          "phase": "prefill",
+          "tokens_per_second": 4086.272533354968,
+          "energy_per_token_mj": 62.29263822135864,
+          "tokens_per_joule": 16.053261325142017,
+          "tokens_per_joule_status": "derived using author's Figure 15c formula",
+          "power_w": 282.54468353539767,
+          "total_latency_s": 4.013555939305555
+        },
+        {
+          "model": "Llama2-13B",
+          "devices": 20,
+          "batch": 40,
+          "pipeline_stages": 40,
+          "tensor_parallelism": 1,
+          "phase": "decoding",
+          "tokens_per_second": 3931.419968777708,
+          "energy_per_token_mj": 138.06940348983943,
+          "tokens_per_joule": 7.242734267868336,
+          "tokens_per_joule_status": "derived using author's Figure 15c formula",
+          "power_w": 614.7187034613358,
+          "total_latency_s": 37.24922190475
+        },
+        {
+          "model": "Llama2-13B",
+          "devices": 20,
+          "batch": 40,
+          "pipeline_stages": 40,
+          "tensor_parallelism": 1,
+          "phase": "end2end",
+          "tokens_per_second": 4111.441216820385,
+          "energy_per_token_mj": 136.17841972503226,
+          "tokens_per_joule": 7.343307419921399,
+          "tokens_per_joule_status": "derived using author's Figure 15c formula",
+          "power_w": 627.9398246515727,
+          "total_latency_s": 41.064279205428576
+        },
+        {
+          "model": "Llama2-13B",
+          "devices": 20,
+          "batch": 40,
+          "pipeline_stages": 40,
+          "tensor_parallelism": 1,
+          "phase": "prefill",
+          "tokens_per_second": 5371.589953119132,
+          "energy_per_token_mj": 122.94153337138196,
+          "tokens_per_joule": 8.133947678846647,
+          "tokens_per_joule_status": "derived using author's Figure 15c formula",
+          "power_w": 720.4876729832306,
+          "total_latency_s": 3.815057300678572
+        },
+        {
+          "model": "Llama2-70B",
+          "devices": 32,
+          "batch": 80,
+          "pipeline_stages": 80,
+          "tensor_parallelism": 1,
+          "phase": "decoding",
+          "tokens_per_second": 1150.7837076321946,
+          "energy_per_token_mj": 698.6650206127755,
+          "tokens_per_joule": 1.4313010820592302,
+          "tokens_per_joule_status": "derived using author's Figure 15c formula",
+          "power_w": 861.901752583774,
+          "total_latency_s": 251.828570072625
+        },
+        {
+          "model": "Llama2-70B",
+          "devices": 32,
+          "batch": 80,
+          "pipeline_stages": 80,
+          "tensor_parallelism": 1,
+          "phase": "end2end",
+          "tokens_per_second": 1185.1364872703944,
+          "energy_per_token_mj": 692.9529355925071,
+          "tokens_per_joule": 1.4430994496689062,
+          "tokens_per_joule_status": "derived using author's Figure 15c formula",
+          "power_w": 874.2560501858256,
+          "total_latency_s": 280.56930504300004
+        },
+        {
+          "model": "Llama2-70B",
+          "devices": 32,
+          "batch": 80,
+          "pipeline_stages": 80,
+          "tensor_parallelism": 1,
+          "phase": "prefill",
+          "tokens_per_second": 1425.6059447377925,
+          "energy_per_token_mj": 652.9683404506279,
+          "tokens_per_joule": 1.5314678186539301,
+          "tokens_per_joule_status": "derived using author's Figure 15c formula",
+          "power_w": 960.7361334001864,
+          "total_latency_s": 28.740734970374994
+        }
+      ],
+      "caveats": [
+        "run_sim.py lines 377–392 averages sampled TPS, energy/token and power separately. Throughput includes PIM+CXL+nonlinear+embedding/I/O latency; power denominator at lines 223–224 is PIM trace latency. TPS/power does not reproduce Figure 15c efficiency and must not replace it.",
+        "The published CSV uses sampled sequence lengths (default gap 128); no new simulation was run.",
+        "Llama2-70B uses 27 active CXL devices within a 32-device configuration.",
+        "Figure data is the public author artifact linked by the paper; main is mutable, accessed 2026-11-17."
+      ]
+    },
+    {
+      "id": "Coffee",
+      "title": "Elastic Precision: Software–Hardware Co-Design of a Mixed-Precision Architecture for Long-Context LLM Inference",
+      "paper_url": "https://arxiv.org/html/2611.00915",
+      "pdf_url": "https://arxiv.org/pdf/2611.00915",
+      "publication": "arXiv:2611.00915, 2026 preprint",
+      "class": "Mixed-precision digital ASIC; 288-accelerator modeled system",
+      "evidence_locator": "Table 3; Section 6.1(b,c), Section 6.2",
+      "evidence_level": "SystemVerilog synthesis using ASAP7 and VCD activity; modeled system; commercial GPU comparison measured separately",
+      "technology": "ASAP7 predictive 7 nm, 1 GHz",
+      "precision": "Average 4-bit budget, INT2–INT5 nested mixed precision with Q5.3 shared exponents; FP16 prefill and method-specific decode",
+      "memory": "32 TB/s aggregate HBM bandwidth; model-specific available KV capacity matched to measured 4×B200; one weight copy",
+      "area_mm2": null,
+      "area_scope": "No total system die area used here; normalized core-area figures must not be substituted.",
+      "energy_boundary": "Compute/control, vector/scalar, precision selection/reconstruction, SRAM, HBM at 3.5 pJ/bit, static power and communication",
+      "token_numerator": "Decode output tokens aggregated across the displayed batch; matched one-token run subtraction isolates decode in baseline. These are not per-user TPS.",
+      "rows": [
+        {
+          "model": "Llama-3.1-8B",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "1.4K",
+          "output_tokens_label": "0.2K",
+          "batch": 4096,
+          "tokens_per_second": 153411,
+          "tokens_per_joule": 140.07,
+          "power_w": 1095.2452345255945,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "Llama-3.1-8B",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "114K",
+          "output_tokens_label": "5K",
+          "batch": 119,
+          "tokens_per_second": 17960,
+          "tokens_per_joule": 12.16,
+          "power_w": 1476.9736842105262,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "Llama-3.1-8B",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "90K",
+          "output_tokens_label": "8K",
+          "batch": 145,
+          "tokens_per_second": 21619,
+          "tokens_per_joule": 14.7,
+          "power_w": 1470.6802721088436,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "Llama-3.1-70B",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "1.4K",
+          "output_tokens_label": "0.2K",
+          "batch": 3170,
+          "tokens_per_second": 39919,
+          "tokens_per_joule": 30.48,
+          "power_w": 1309.6784776902887,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "Llama-3.1-70B",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "114K",
+          "output_tokens_label": "5K",
+          "batch": 42,
+          "tokens_per_second": 5175,
+          "tokens_per_joule": 3.7,
+          "power_w": 1398.6486486486485,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "Llama-3.1-70B",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "90K",
+          "output_tokens_label": "8K",
+          "batch": 51,
+          "tokens_per_second": 6246,
+          "tokens_per_joule": 4.42,
+          "power_w": 1413.1221719457014,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "Llama-4-Scout",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "1.4K",
+          "output_tokens_label": "0.2K",
+          "batch": 4096,
+          "tokens_per_second": 87173,
+          "tokens_per_joule": 74.38,
+          "power_w": 1171.9951599892445,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "Llama-4-Scout",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "114K",
+          "output_tokens_label": "5K",
+          "batch": 223,
+          "tokens_per_second": 24358,
+          "tokens_per_joule": 17.76,
+          "power_w": 1371.5090090090089,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "Llama-4-Scout",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "90K",
+          "output_tokens_label": "8K",
+          "batch": 261,
+          "tokens_per_second": 27221,
+          "tokens_per_joule": 19.64,
+          "power_w": 1385.9979633401222,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "GLM-4.6V",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "1.4K",
+          "output_tokens_label": "0.2K",
+          "batch": 4096,
+          "tokens_per_second": 95772,
+          "tokens_per_joule": 86.26,
+          "power_w": 1110.2712728958961,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "GLM-4.6V",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "114K",
+          "output_tokens_label": "5K",
+          "batch": 73,
+          "tokens_per_second": 8267,
+          "tokens_per_joule": 6.02,
+          "power_w": 1373.2558139534885,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "GLM-4.6V",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "90K",
+          "output_tokens_label": "8K",
+          "batch": 88,
+          "tokens_per_second": 10131,
+          "tokens_per_joule": 7.34,
+          "power_w": 1380.2452316076294,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "Qwen3-235B-A22B",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "1.4K",
+          "output_tokens_label": "0.2K",
+          "batch": 4096,
+          "tokens_per_second": 54374,
+          "tokens_per_joule": 54.27,
+          "power_w": 1001.9163442049014,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "Qwen3-235B-A22B",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "114K",
+          "output_tokens_label": "5K",
+          "batch": 62,
+          "tokens_per_second": 4759,
+          "tokens_per_joule": 3.81,
+          "power_w": 1249.0813648293963,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        },
+        {
+          "model": "Qwen3-235B-A22B",
+          "phase": "decode",
+          "devices": 288,
+          "input_tokens_label": "90K",
+          "output_tokens_label": "8K",
+          "batch": 76,
+          "tokens_per_second": 5860,
+          "tokens_per_joule": 4.67,
+          "power_w": 1254.8179871520342,
+          "power_status": "derived from matching Table 3 TPS / tokens/J, not independently reported power"
+        }
+      ],
+      "caveats": [
+        "Each row uses the largest memory-feasible batch; batches differ across systems and models.",
+        "PG-19 decode workloads; the K token notation is preserved as printed.",
+        "The PLENA numbers in this paper are the Coffee authors' reimplementation, not the original PLENA experiment.",
+        "Model size is not inferred for Llama-4-Scout or GLM-4.6V where absent from the table."
+      ]
+    },
+    {
+      "id": "HNLPU",
+      "title": "Hardwired-Neurons Language Processing Units as General-Purpose Cognitive Substrates",
+      "paper_url": "https://arxiv.org/html/2508.16151",
+      "pdf_url": "https://arxiv.org/pdf/2508.16151",
+      "publication": "arXiv:2508.16151, version consulted 2026",
+      "class": "Model-specific hardwired-weight ASIC",
+      "evidence_locator": "Table 1 and Table 2; Sections 5.2, 6.1–6.3 and 7.1–7.3",
+      "evidence_level": "Post-PnR/cycle simulation with PrimeTime PX SAIF and CNSim multi-chip modeling; not measured silicon",
+      "technology": "5 nm, 1 GHz; paper reports timing closure at SSG 0.675 V 125°C",
+      "precision": "FP4 hardwired gpt-oss 120B weights",
+      "memory": "Hardwired weights; on-chip attention buffers and HBM PHY; CXL 3.0 4×4 chip interconnect",
+      "area_mm2": 827.08,
+      "area_scope": "one chip; 16-chip total reported 13,232 mm²",
+      "energy_boundary": "Table 2 says total system power 6.9 kW. Table 1 chip power is 308.39 W including HBM PHY; the system figure must not be replaced with 16×chip power.",
+      "rows": [
+        {
+          "model": "gpt-oss 120B",
+          "phase": "system inference, prefill/decode split unspecified",
+          "devices": 16,
+          "sequence_tokens": 2048,
+          "input_tokens": null,
+          "output_tokens": null,
+          "batch": null,
+          "max_supported_batch": 216,
+          "tokens_per_second": 249960,
+          "power_w": 6900,
+          "tokens_per_joule": 36.226,
+          "tokens_per_joule_status": "Table 2 reports 36,226 tokens/kJ; divided by 1000"
+        }
+      ],
+      "caveats": [
+        "Each system tuned for maximum throughput; actual Table 2 batch is not explicitly given, only maximum supported 216.",
+        "2K token length does not specify input/output split; do not call this a matched 512/128 decode benchmark.",
+        "Large result depends on hardwiring one model's weights and 16 near-reticle chips; not a programmable single-chip result."
+      ]
+    },
+    {
+      "id": "DynaTE",
+      "title": "DynaTE: Accelerating Diffusion LLMs via Dynamic Token Execution",
+      "paper_url": "https://arxiv.org/html/2610.11284",
+      "pdf_url": "https://arxiv.org/pdf/2610.11284",
+      "publication": "arXiv:2610.11284, 2026 preprint",
+      "class": "Diffusion-LLM digital ASIC",
+      "evidence_locator": "Tables I, III and IV; Sections V-A and V-D.8",
+      "evidence_level": "RTL synthesis plus CACTI7 SRAM and Ramulator HBM2, cycle-accurate simulation; no silicon measurement",
+      "technology": "TSMC 28 nm, 1 GHz",
+      "precision": "W8A8/W8A4 adaptive mixed activation precision; not uniform W8A8",
+      "memory": "HBM2 512 GB/s; main buffers 256 KB activation + 128 KB weight + 64 KB QKV + 128 KB attention, plus small sampling buffers",
+      "area_mm2": 3.91,
+      "area_scope": "logic 2.12 + SRAM 1.79 mm²; HBM external",
+      "energy_boundary": "Total 7.36 W = logic 1.01 + SRAM 1.18 + external HBM 5.17 W",
+      "rows": [
+        {
+          "model": "LLaDA-8B and Dream-7B (combined average; not separate model measurements)",
+          "phase": "end-to-end diffusion generation",
+          "input_tokens": null,
+          "output_tokens": 256,
+          "batch": null,
+          "tokens_per_second": 24.89,
+          "tokens_per_joule": 3.38,
+          "power_w": 7.36,
+          "aggregation": "average over two models and GSM8K, MATH, HumanEval, MBPP, MMLU"
+        }
+      ],
+      "token_numerator": "Final generated tokens, not repeated denoising-token operations; part size 32, at most 32 denoising iterations/part with early termination",
+      "caveats": [
+        "Do not assign 24.89 TPS or 7.36 W separately to either model.",
+        "Input length and request batch are not stated for the combined table.",
+        "Original exact per-model absolute TPS is not provided in the extracted tables; per-model plots are relative."
+      ]
+    }
+  ],
+  "candidates_not_promoted": [
+    {
+      "id": "DIAMoND",
+      "title": "DIAMoND: Dynamic Inference for Adaptive Edge MOE with Heterogeneous In-NAND and Near-DRAM Compute Architecture",
+      "paper_url": "https://ieeexplore.ieee.org/document/11617910",
+      "doi": "10.1109/ISCA66397.2026.00078",
+      "publication": "ISCA 2026, pp. 985–1000",
+      "model": "Mixtral-8×7B",
+      "tokens_per_second": 197.3,
+      "tokens_per_joule_peak": 5.8,
+      "evidence": "Primary publisher abstract",
+      "reason": "Full experimental conditions and same-configuration relationship of TPS versus peak tokens/J not verified. Do not derive power as 197.3/5.8. Candidate sidebar only."
+    },
+    {
+      "id": "PLENA",
+      "title": "Combating the Memory Walls: Optimization Pathways for Long-Context Agentic LLM Inference",
+      "paper_url": "https://arxiv.org/html/2509.09505",
+      "evidence_locator": "Table XII; Section V-E",
+      "reason": "Original paper gives normalized TPS and normalized tokens/J, not absolute values. Absolute PLENA rows in Coffee Table 3 belong to a new 288-accelerator reimplementation, not original 16-accelerator PLENA."
+    },
+    {
+      "id": "SpecPIM",
+      "title": "SpecPIM: Accelerating Speculative Inference on PIM-Enabled System via Architecture-Dataflow Co-Exploration",
+      "paper_url": "https://doi.org/10.1145/3620666.3651352",
+      "evidence_locator": "Author publication page / publisher abstract",
+      "reason": "Verified primary source provides only relative speed/energy gains; secondary survey values 17.499 W and 9.944 tokens/J were deliberately not used."
+    },
+    {
+      "id": "PIM-GPT",
+      "paper_url": "https://arxiv.org/html/2310.09385",
+      "reason": "Main verified results were relative latency/energy. ASIC controller 304.59 mW is not complete system power, cannot combine with model throughput."
+    },
+    {
+      "id": "NeuPIMs",
+      "paper_url": "https://arxiv.org/html/2403.00579",
+      "reason": "Memory-component power is not full NPU+PIM system power. No verified absolute TPS plus same-boundary total energy pair extracted."
+    }
+  ]
+}
+
