@@ -1,0 +1,33 @@
+{
+  "revision": "1.0",
+  "updated": "2026-11-17",
+  "owner": "Melodydt",
+  "source_commit": "5b9e87561c41d9c0625071054d62d645c239f7fb",
+  "benchmark_commit": "fbff1bd0e455739f28d9b7dd00b97216fe7bb847",
+  "models": [
+    {
+      "name": "Qwen3-0.6B",
+      "status": "已出 TLM 分项估算 v1",
+      "result": "qwen3_tlm_power_v1.json",
+      "result_sha256": "d7d3a6bd0cff54f99e0343921f636b52db74b25b268300a65a0743ee06c85c17",
+      "configuration": "W8A16，28 层，三路 P 并行 FFN，512-bit SRAM，双通道 DDR。Decode 从 512 个真实 KV 历史位置开始。",
+      "implementation": "四个数据 SRAM 站点各用一组 S_P，按整窗开钟估算。旧版 M 三路使用实测静默与活跃功耗及 TLM 忙时间，300 MHz setup WNS 为 -1.121800 ns，hold WNS 为 -0.053419 ns。",
+      "sources": [
+        {
+          "label": "Qwen3 三窗积分、输入与复算",
+          "path": "docs/handoffs/2026-11-17-issue-280-qwen3-tlm-power-v1.md"
+        },
+        {
+          "label": "Qwen3 分项能耗 JSON",
+          "path": "work/Melodydt/280/qwen3_tlm_power_v1.json"
+        }
+      ]
+    },
+    {"name": "Qwen3.5-4B", "status": "能耗待评估"},
+    {"name": "Gemma-3-4B", "status": "能耗待评估"},
+    {"name": "Phi-4-mini", "status": "能耗待评估"},
+    {"name": "Granite", "status": "能耗待评估"},
+    {"name": "Falcon-H1-3B", "status": "能耗待评估"},
+    {"name": "Llama-3.2-1B", "status": "能耗待评估"}
+  ]
+}

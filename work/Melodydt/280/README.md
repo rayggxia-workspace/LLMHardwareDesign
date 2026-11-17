@@ -50,6 +50,22 @@ cat "pilot-$JOB/ddr-prefill.json" "pilot-$JOB/ddr-decode.json"
 
 [结果 JSON](qwen3_tlm_power_v1.json) 按冻结 TLM 时间和分项标定积分，列出片上已覆盖、DDR 器件和读 DMA 动态敏感性。[计算脚本](qwen3_tlm_power_v1.py) 与完整输入、SHA-256、复算命令见[三窗回执](../../../docs/handoffs/2026-11-17-issue-280-qwen3-tlm-power-v1.md)。后续读 DMA 以综合网表、Liberty、300 MHz SDC 和匹配 VCD 做布局前估算。
 
+## 持续更新的七模型功耗报告
+
+[当前 PDF](../../../docs/experiments/seven-model-energy-evaluation.pdf) 汇总评估方案、三窗指标、分项覆盖、读 DMA 暂估和综合后直接估功耗。第 1.0 版仅收录 Qwen3-0.6B 结果。
+
+每次发布一个新模型的功耗结果，或用合格的综合后标定替换已有代理值时，同一次提交都更新 PDF：
+
+1. 保存该模型的可核验结果 JSON。沿用 [Qwen3 v1](qwen3_tlm_power_v1.json) 的三窗结构，记录输入、模型配置、专项优化、覆盖范围、工具版本和散列。
+2. 更新 [报告索引](energy_report_models.json) 的版本、日期、模型状态、结果路径、SHA-256 和对应证据。数据页直接从 JSON 生成。
+3. 从仓库根目录执行下面的命令，逐页渲染核对数值、版面与来源链接。使用同一个 PDF 路径提交，PR 保留各版历史。
+
+```powershell
+python work/Melodydt/280/build_energy_report.py --output docs/experiments/seven-model-energy-evaluation.pdf
+```
+
+生成器依赖 Python 和 ReportLab，默认使用 Windows 等线字体。其他环境可通过 `--regular-font` 与 `--bold-font` 指定支持简体中文的 TrueType 字体。
+
 ## 剩余步骤
 
 1. 固定同一三 P 底座及 FFN Mid 的 DDR 路径，测 P0 调度对照和三 P 并行，并核对两种调度的数值和状态。

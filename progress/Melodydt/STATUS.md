@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-17（Asia/Shanghai）七模型功耗 PDF v1.0
+
+- [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。已发布[三页报告](../../docs/experiments/seven-model-energy-evaluation.pdf)，收录评估方法、Qwen3-0.6B 三窗结果、DMA 敏感性与综合后标定路线。其余六模型能耗待评估。
+- 以冻结 JSON 生成，两次构建 SHA-256 一致，三页 Poppler 渲染、数值和五个来源链接均核验。PDF SHA-256 `95729c90614df2fb9b572eca4d49aac9c2867770a6de3615c24edb6ae06e12fc`。
+- Melodydt 每出一份模型结果或以新标定替换代理时更新报告索引与同名 PDF。生成与复核见[任务入口](../../work/Melodydt/280/README.md)。登记待合并，Projects 待有权限维护者核验。
+
 ## 2026-11-17 13:10（Asia/Shanghai）Qwen3 TLM 分项能耗 v1
 
 - [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。300 MHz、三 P、512-bit SRAM、原冻结窗口。短 Prefill／首 token／稳态 Decode 的片上已覆盖＋DDR 分别为 164.944–165.067／496.224–496.350／496.440–496.566 mJ/token。加同写单价的读 DMA 动态代理后为 165.119–165.241／496.550–496.676／496.766–496.891 mJ/token。

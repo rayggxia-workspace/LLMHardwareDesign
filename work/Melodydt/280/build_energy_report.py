@@ -1,0 +1,245 @@
+"""Render the rolling #280 power evaluation report from its result index."""
+
+import argparse
+from hashlib import sha256
+from html import escape
+import json
+from math import isclose
+from pathlib import Path
+
+from reportlab import rl_config
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_RIGHT
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus import PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+
+REPO = "https://github.com/rayggxia-workspace/LLMHardwareDesign"
+WINDOWS = {"prefill": "短 Prefill", "first_token": "首 Decode token", "decode": "稳态 Decode"}
+COMPONENTS = {
+    "DDR 芯片": ("ddr_devices",),
+    "旧版 M 三路": ("m_clocked_idle_3x", "m_busy_increment"),
+    "数据 SRAM 四站点": ("s_p_clocked_idle_4x", "s_p_access_increment"),
+    "母控 PM 四宏": ("mother_pm_clocked_idle_4_macros", "mother_pm_page_install_and_readback_increment"),
+    "局控 PM 四份静默": ("lc_pm_loaded_quiet_4x",),
+    "局控描述符四份静默": ("lc_descriptor_fetch_quiet_4x",),
+    "G32 空闲及活跃增量": ("g32_down_idle_1x", "g32_active_increment"),
+    "U ADD2 逻辑增量": ("u_add2_logic_active_increment",),
+    "局部交换机静默": ("cohort_switch_idle_1x",),
+    "写 DMA 活跃增量": ("write_dma_active_increment",),
+}
+INK = colors.HexColor("#172A3C")
+MUTED = colors.HexColor("#43566A")
+ACCENT = colors.HexColor("#006D68")
+RULE = colors.HexColor("#D8E4EC")
+PAPER = colors.HexColor("#F1F6F9")
+WIDTH = A4[0] - 100
+
+
+def make_styles():
+    body = ParagraphStyle("body", fontName="CN", fontSize=10.5, leading=16, textColor=INK,
+                          wordWrap="CJK", spaceAfter=7)
+    return {
+        "body": body,
+        "title": ParagraphStyle("title", parent=body, fontName="CNBold", fontSize=29, leading=36, spaceAfter=10),
+        "section": ParagraphStyle("section", parent=body, fontName="CNBold", fontSize=15, leading=21,
+                                  spaceBefore=12, spaceAfter=5),
+        "eyebrow": ParagraphStyle("eyebrow", parent=body, fontName="CNBold", fontSize=10, textColor=ACCENT,
+                                  spaceAfter=5),
+        "note": ParagraphStyle("note", parent=body, fontSize=9, leading=13, textColor=MUTED),
+        "table": ParagraphStyle("table", parent=body, fontSize=9.5, leading=12.6, spaceAfter=0),
+        "value": ParagraphStyle("value", parent=body, fontSize=9.5, leading=12.6, spaceAfter=0, alignment=TA_RIGHT),
+        "tablehead": ParagraphStyle("tablehead", parent=body, fontName="CNBold", fontSize=9.2, leading=13,
+                                    textColor=colors.white, spaceAfter=0),
+    }
+
+
+def add(story, styles, text, style="body"):
+    story.append(Paragraph(escape(text), styles[style]))
+
+
+def link(story, styles, label, url):
+    story.append(Paragraph(f'<link href="{escape(url, quote=True)}" color="#006D68">{escape(label)}</link>', styles["note"]))
+
+
+def table(story, styles, columns, rows, ratios, numeric=True):
+    cells = [[Paragraph(escape(label).replace("\n", "<br/>"), styles["tablehead"]) for label in columns]]
+    for row in rows:
+        cells.append([Paragraph(escape(str(value)), styles["value" if numeric and i > 0 else "table"])
+                      for i, value in enumerate(row)])
+    grid = Table(cells, colWidths=[WIDTH * ratio for ratio in ratios], repeatRows=1, hAlign="LEFT")
+    grid.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), INK),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, PAPER]),
+        ("LINEBELOW", (0, -1), (-1, -1), 0.6, RULE),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 9),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 9),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+    ]))
+    story.extend([grid, Spacer(1, 7)])
+
+
+def fmt(bounds, digits=3):
+    lo, hi = (f"{value:.{digits}f}" for value in bounds)
+    return lo if lo == hi else f"{lo} - {hi}"
+
+
+def load_result(model, directory):
+    raw = (directory / model["result"]).read_bytes()
+    if sha256(raw).hexdigest() != model["result_sha256"]:
+        raise ValueError(f"result hash mismatch for {model['name']}")
+    result = json.loads(raw)
+    for window in WINDOWS:
+        row = result["windows"][window]
+        if (row["elapsed_ps"] <= 0 or row["tokens"] <= 0
+                or not isclose(row["tokens_per_second"], row["tokens"] * 1e12 / row["elapsed_ps"], rel_tol=1e-9)):
+            raise ValueError(f"window time or token count mismatch for {model['name']}: {window}")
+    return result
+
+
+def overview(story, styles, index):
+    add(story, styles, f"LLMHardwareDesign  /  Issue #280  /  v{index['revision']}", "eyebrow")
+    add(story, styles, "七模型功耗与能耗评估", "title")
+    add(story, styles, f"报告更新于 {index['updated']}（北京时间）  |  负责人 {index['owner']}", "note")
+    add(story, styles, "基准与采样窗口", "section")
+    add(story, styles, "以 #274 / PR #275 的模型短程回放为基础，继承 PR #260 的两步 Decode 和短 Prefill 结构。使用 300 MHz 分项标定、512-bit 数据 SRAM 和代表性真实历史。逐模型记录 FFN 部署、变更的调度与物理范围。")
+    add(story, styles, "发布短 Prefill、开始到首个 Decode 输出、两次 Decode 退休间三窗的实际时长、tok/s、平均 W 和 mJ/token。Prefill 按输入 token 归一化，Decode 按输出 token 归一化。")
+    add(story, styles, "分项积分", "section")
+    add(story, styles, "窗口能量 = 各分项开钟基线功耗 × 驻留时间 + 各事件数 × 单次活动增量。已有配对标定先扣匹配的静默基线。M 等采用忙/闲时间积分，SRAM 和 DMA 采用对账后的位宽及事务计数。DDR 芯片沿用双通道器件模型。")
+    add(story, styles, "平均功耗 = 窗口能量 ÷ 窗口时间。每 token 能耗 = 窗口能量 ÷ token 数。共享模块、局部时钟和漏电仅计一次。代理值随条件标注，缺项保留待标定。")
+    add(story, styles, "报告覆盖", "section")
+    table(story, styles, ("模型", "能耗证据"), [(m["name"], m["status"]) for m in index["models"]],
+          (0.46, 0.54), numeric=False)
+    link(story, styles, "七模型基准源版本 · Issue #274 / PR #275", f"{REPO}/blob/{index['benchmark_commit']}/work/Melodydt/274/README.md")
+    link(story, styles, "评估任务 · Issue #280", f"{REPO}/issues/280")
+    link(story, styles, "交付审查 · PR #281", f"{REPO}/pull/281")
+
+
+def result_page(story, styles, model, result):
+    add(story, styles, "模型结果  /  " + model["status"], "eyebrow")
+    add(story, styles, model["name"], "title")
+    add(story, styles, model["configuration"])
+    add(story, styles, model["implementation"], "note")
+    add(story, styles, "已覆盖能耗与平均功耗", "section")
+    rows = []
+    for window, name in WINDOWS.items():
+        row = result["windows"][window]
+        chip, combined = row["covered_on_chip_subtotal"], row["covered_subtotal"]
+        rows.append((name, f'{row["elapsed_ps"] / 1e9:.3f}', f'{row["tokens_per_second"]:.4f}',
+                     fmt(chip["energy_mj_per_token"]), fmt(combined["energy_mj_per_token"]),
+                     fmt(combined["average_power_w"], 4)))
+    table(story, styles, ("窗口", "时长 ms", "tok/s", "片上覆盖\nmJ/token", "片上 + DDR\nmJ/token", "片上 + DDR\n平均 W"),
+          rows, (0.193, 0.11, 0.104, 0.194, 0.207, 0.192))
+    add(story, styles, "短 Prefill 为 2 个输入 token，两个 Decode 窗各为 1 个输出 token。已覆盖区间来自标定样本端点，拓扑和驻留不确定性另列。", "note")
+    add(story, styles, "分项归属  /  mJ/token", "section")
+    results = [result["windows"][key]["components"] for key in WINDOWS]
+    groups = dict(COMPONENTS)
+    known = {key for keys in groups.values() for key in keys}
+    extra = sorted(set().union(*results) - known)
+    groups.update({key: (key,) for key in extra})
+    rows = []
+    for label, keys in groups.items():
+        values = []
+        for components in results:
+            available = [components[k]["energy_mj_per_token"] for k in keys if k in components]
+            values.append(fmt([sum(items) for items in zip(*available)], 6 if label.startswith("写 DMA") else 3)
+                          if available else "待标定")
+        if any(value != "待标定" for value in values):
+            rows.append((label, *values))
+    table(story, styles, ("分项", *WINDOWS.values()), rows, (0.37, 0.21, 0.21, 0.21))
+
+
+def dma_proxy(story, styles, result):
+    terms = [result["windows"][window] for window in WINDOWS]
+    if not all(row.get("read_dma_dynamic_sensitivity") for row in terms):
+        return
+    add(story, styles, "读 DMA 动态敏感性", "section")
+    add(story, styles, "以同窗口写侧 64 B 实测单价中点作为读侧动态代理，并对该单价取 0.5 和 2 倍。DDR 芯片已单独计入，读 DMA 的常驻空闲及漏电仍待标定。倍数只描述所选情景。")
+    rows = []
+    for name, row in zip(WINDOWS.values(), terms):
+        scenarios = row["read_dma_dynamic_sensitivity"]
+        midpoint = scenarios["same_write_cost"]
+        subtotal = midpoint["subtotal_with_read_dma_active_proxy"]
+        low = scenarios["half_write_cost"]["subtotal_with_read_dma_active_proxy"]["energy_mj_per_token"][0]
+        high = scenarios["twice_write_cost"]["subtotal_with_read_dma_active_proxy"]["energy_mj_per_token"][1]
+        rows.append((name.replace("首 Decode token", "首 Decode"), f'{midpoint["assumed_read_pj_per_64b"]:.3f}',
+                     fmt(midpoint["read_dma_active_proxy"]["energy_mj_per_token"]),
+                     fmt(subtotal["energy_mj_per_token"]), fmt(subtotal["average_power_w"], 4),
+                     fmt([low, high])))
+    table(story, styles, ("窗口", "同写单价\npJ / 64 B", "动态增量\nmJ/token", "加代理后\nmJ/token", "加代理后\n平均 W", "0.5-2 倍情景\nmJ/token"),
+          rows, (0.175, 0.117, 0.132, 0.198, 0.181, 0.197))
+    if all("ddr_transport_beats_64b" in row for row in terms):
+        reads = " / ".join(f'{row["ddr_transport_beats_64b"]["read"]:,}' for row in terms)
+        writes = " / ".join(f'{row["ddr_transport_beats_64b"]["write"]:,}' for row in terms)
+        add(story, styles, f"三窗对账的 64 B 事务数，读 {reads}，写 {writes}。", "note")
+    sensitivity = " / ".join(f'{row["remaining_100mw_residency_mj_per_token"]:.3f}' for row in terms)
+    add(story, styles, f"每增加 100 mW 未计入的整窗常驻功耗，三窗分别增加 {sensitivity} mJ/token。", "note")
+
+
+def next_steps(story, styles, index, records):
+    add(story, styles, "综合后直接估功耗", "section")
+    add(story, styles, "等读 DMA 技术映射网表输出后，在 OpenSTA 载入网表、Nangate45 TT Liberty 和 300 MHz SDC，读入端口匹配且时标转换后的 C639 VCD。记录活动标注率、传播活动、动态和漏电。无 SPEF 时以单元及引脚负载估算，可在布局布线完成前运行。")
+    add(story, styles, "配对静默、正常、背压和读写并发样本后，将读侧空闲及动态按相同窗口回填。阶段包装和其内部共享 fabric 只计一次。九目标母控、运行时取指、其余控制与计算、全局时钟和跨块互连待补。DDR PHY 和板级 I/O 单列。")
+    add(story, styles, "版本维护与复现", "section")
+    add(story, styles, "每完成一个模型或取得更强的标定证据，核验时窗、token、FP32 和事务对账，登记结果、输入和工具版本及 SHA-256，重建同名 PDF。不同覆盖范围、活动假设和各模型专项优化随各自结果记录。")
+    add(story, styles, "Qwen3 v1 的 BSCC-T6 与本地 Python 复算结果字节一致。原始活动和物理工件沿用授权存储，项目仓库保留结果、校验与复算入口。", "note")
+    for model, _ in records:
+        commit = model.get("source_commit", index["source_commit"])
+        for item in model["sources"]:
+            link(story, styles, item["label"], f'{REPO}/blob/{commit}/{item["path"]}')
+    add(story, styles, f'评估证据版本 {index["source_commit"]}', "note")
+
+
+def draw_page(canvas, document):
+    width, height = A4
+    canvas.setStrokeColor(ACCENT)
+    canvas.setLineWidth(1.4)
+    canvas.line(44, height - 44, width - 44, height - 44)
+    canvas.setStrokeColor(RULE)
+    canvas.setLineWidth(0.6)
+    canvas.line(44, 41, width - 44, 41)
+    canvas.setFont("CN", 8.5)
+    canvas.setFillColor(MUTED)
+    canvas.drawString(44, 26, "LLMHardwareDesign  /  Issue #280")
+    canvas.drawRightString(width - 44, 26, f"{document.page}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--index", type=Path, default=Path(__file__).with_name("energy_report_models.json"))
+    parser.add_argument("--output", type=Path, default=Path("output/pdf/seven-model-energy-evaluation.pdf"))
+    parser.add_argument("--regular-font", type=Path, default=Path("C:/Windows/Fonts/Deng.ttf"))
+    parser.add_argument("--bold-font", type=Path, default=Path("C:/Windows/Fonts/Dengb.ttf"))
+    args = parser.parse_args()
+    index = json.loads(args.index.read_bytes())
+    records = [(model, load_result(model, args.index.parent)) for model in index["models"] if "result" in model]
+    rl_config.invariant = 1
+    pdfmetrics.registerFont(TTFont("CN", str(args.regular_font)))
+    pdfmetrics.registerFont(TTFont("CNBold", str(args.bold_font)))
+    styles = make_styles()
+    story = []
+    overview(story, styles, index)
+    for model, result in records:
+        story.append(PageBreak())
+        result_page(story, styles, model, result)
+        if all(row.get("read_dma_dynamic_sensitivity") for row in result["windows"].values()):
+            story.append(PageBreak())
+            add(story, styles, "估算边界与后续标定", "eyebrow")
+            add(story, styles, model["name"], "title")
+            dma_proxy(story, styles, result)
+    if not records or not all(row.get("read_dma_dynamic_sensitivity") for row in records[-1][1]["windows"].values()):
+        story.append(PageBreak())
+    next_steps(story, styles, index, records)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    document = SimpleDocTemplate(str(args.output), pagesize=A4, leftMargin=44, rightMargin=44, topMargin=58,
+                                 bottomMargin=48, title="七模型功耗与能耗评估", author=index["owner"])
+    document.build(story, onFirstPage=draw_page, onLaterPages=draw_page)
+
+
+if __name__ == "__main__":
+    main()
