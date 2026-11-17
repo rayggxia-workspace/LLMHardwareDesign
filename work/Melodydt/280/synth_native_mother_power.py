@@ -45,7 +45,7 @@ ys = '\n'.join([
     'synth -top mc_native_controller -flatten -noabc -noshare',
     'dfflibmap -liberty {}'.format(lib),
     'abc -liberty {}'.format(lib),
-    'clean', 'check', 'stat -liberty {}'.format(lib),
+    'clean', 'read_liberty -lib {}'.format(lib), 'check -assert', 'stat -liberty {}'.format(lib),
     'write_verilog -noattr -noexpr {}'.format(out/'mapped.v'),
     'write_json {}'.format(out/'mapped.json')])+'\n'
 (out/'synth.ys').write_text(ys)
