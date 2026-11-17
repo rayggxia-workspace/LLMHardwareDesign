@@ -29,6 +29,7 @@ if [[ ${1:-} == inside ]]; then
             "$p/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini" "$out/$phase"
         python3 -B "$bundle/verify_arithmetic_capture.py" "$out/$phase/arithmetic-observation.json"
         python3 -B "$bundle/verify_operator_capture.py" "$out/$phase/operator-observation.json"
+        python3 -B "$bundle/audit_operator_bindings.py" "$out/$phase/operator-observation.json"
     fi
     exit
 fi
