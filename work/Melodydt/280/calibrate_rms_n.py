@@ -18,7 +18,7 @@ def digest(path):
     return sha256(path.read_bytes()).hexdigest()
 
 
-def clip_ports(raw, target, ports, first, last, testbench='tb_rms_n_activity', time_divisor=3):
+def clip_ports(raw, target, ports, first, last, testbench='tb_rms_n_activity', time_divisor=3, instance='dut'):
     """Clip initialized boundary activity; legacy N defaults retime 100 to 300 MHz."""
     if time_divisor < 1:
         raise ValueError('invalid waveform time divisor')
@@ -31,7 +31,7 @@ def clip_ports(raw, target, ports, first, last, testbench='tb_rms_n_activity', t
                 stack.append(fields[2])
             elif fields[:1] == ['$upscope']:
                 stack.pop()
-            elif fields[:1] == ['$var'] and stack[-2:] == [testbench, 'dut']:
+            elif fields[:1] == ['$var'] and stack[-2:] == [testbench, instance]:
                 if fields[4] in ports:
                     if int(fields[2]) != len(ports[fields[4]]['bits']):
                         raise ValueError('port width mismatch')
