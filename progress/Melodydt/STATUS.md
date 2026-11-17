@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-17（Asia/Shanghai）七模型速度条件估算
+
+负责人 Melodydt，[Issue #291](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/291) / [PR #292](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/292)。独立分支 task/291-seven-model-prefill-estimate，源码395fe768ceaed45ef2b822d9ce288e1f98f0fe0f。330个ATT与8个递推局部样本作业38826721已COMPLETED 0:0/30秒/UNLIMITED，冻结数值计时未改。报告逐模型提供短P、估计P512主体及含词表头、原Decode；Phi/Falcon非线性和Granite/混合状态不足已显眼标注。
+
+实际完成结构、原速度保留、显式512项求和、330样本流量公式、8样本状态写回、输入/输出SHA与报告数值核验。16/32-token独立序列验证按用户指令暂缓；本轮检查不替代它。下一步由Melodydt待用户指令恢复独立序列/路由/状态验证；整模型RTL/物理资格仍缺。报告[HTML](../../docs/experiments/seven-model-speed-evaluation.html)，[回执与复算](../../work/Melodydt/291/README.md)。PR草稿待审查/未合并，登记pending，缺看板配置与工具，unverified/pending。
+
 ## 2026-11-17 20:13（Asia/Shanghai）报告小计旁的缺项说明
 
 按用户要求更新 PDF v2.1，在七个模型的覆盖小计下方分别列出共同片上缺项、本模型未标定算术及 DDR PHY/板级范围，并说明主动排除的布线寄生与未知功耗的区别。能耗数据未改，未提交或重跑服务器任务。十九页已重新渲染目检，168 主值、504 分项值、56 覆盖对照值、11 链接和 21 段同页缺项说明核验通过。[报告](../../docs/experiments/seven-model-energy-evaluation.pdf) · [校验](../../work/Melodydt/280/report-validation-v2_1.json)。
@@ -281,3 +287,9 @@ Granite 回放 38820602 与积分 38820947 均 COMPLETED 0:0。Prefill／首 Dec
 - 实际母控 1,616 字节页有 101 次 128-bit 写确认。局控阵列和 U 的字级控制、调度、算术已分别完成 300 MHz 标定。38795515 通过 SRAM 串行宽写和普通读对账，宏 TT 库和布线工件待从旧归档补齐。
 - M 的 18 份波形及非 DMA 控制六窗活动已备齐。38792357 进入 CTS。两项原读综合和两项跳过 SHARE 的对照持续执行，五条功耗链按物理结果等待。Melodydt 后续核验映射、时序/DRC、门级功耗和重叠层级，再输出三窗整模型结果。
 - [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [结果与恢复](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-actual-payload-and-leaf-calibration.md)。任务进行中，项目登记待合并，看板待管理员核验。
+
+2026-11-17（Asia/Shanghai），#291追加24页[速度PDF](../../docs/experiments/seven-model-speed-evaluation.pdf)及生成脚本。1939单元格、8警示框、7模型关键值、2链接检查及24页目检通过。采样/估计输入不变，独立序列验证继续暂缓。PR #292进入待审查，仍草稿未合并；登记/看板限制不变。
+
+## 2026-11-17（Asia/Shanghai）七模型速度与功耗综合报告
+
+#291 / PR #292完成14页[综合PDF](../../docs/experiments/seven-model-speed-and-energy-evaluation.pdf)，保留短Prefill/Decode与P512条件估计，补局部误差百分比和28行功耗三单位表。9来源SHA、14时窗、168个Decimal换算端点、482个PDF文本条目通过，14页目检；论文中英文建议在第13页。完整P512误差/功耗仍未知，独立序列验证用户暂缓。无新服务器任务，未改#280原件或原论文。PR草稿in_review未合并，登记pending，看板unverified/pending；接续入口[综合报告说明](../../work/Melodydt/291/COMBINED.md)，负责人Melodydt。

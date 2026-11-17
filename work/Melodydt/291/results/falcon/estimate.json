@@ -1,0 +1,401 @@
+{
+  "model": "falcon",
+  "name": "Falcon-H1-3B",
+  "architecture": "32层，每层Mamba2与128维注意力；现有程序先递推再注意力，三P FFN。",
+  "source_commit": "395fe768ceaed45ef2b822d9ce288e1f98f0fe0f",
+  "sample_job": "38826721",
+  "short_prefill_input_tok_s": 4.297764298596348,
+  "short_prefill_ms": 465.358233036,
+  "decode_tok_s": 3.0200794495895904,
+  "decode_interval_ms": 331.117116848,
+  "first_prefill_including_boot_ms": 232.631240278,
+  "second_prefill_increment_ms": 232.726992758,
+  "decode_second_body_ms": 286.353545924,
+  "decode_tail_ms": 44.763570924,
+  "affine_slope_ps_per_context": 104739361.65234375,
+  "estimated_prefill_body_s": 132.80418705972465,
+  "estimated_prefill_to_logits_s": 132.84895063064866,
+  "estimated_input_tok_s_body": 3.8553001327416245,
+  "estimated_input_tok_s_to_logits": 3.854001085966275,
+  "attention_samples": 45,
+  "recurrent_samples": 4,
+  "component_max_deviation_percent": 10.156185810732254,
+  "curves": [
+    {
+      "layer": 0,
+      "max_abs_deviation_percent": 8.89424322097085,
+      "samples": [
+        {
+          "context": 1,
+          "actual_ps": 1957058,
+          "affine_ps": 1819814.8705882353,
+          "deviation_percent": 7.0127267261248605
+        },
+        {
+          "context": 2,
+          "actual_ps": 2147096,
+          "affine_ps": 2147096.0,
+          "deviation_percent": 0.0
+        },
+        {
+          "context": 4,
+          "actual_ps": 2627192,
+          "affine_ps": 2801658.2588235294,
+          "deviation_percent": -6.640788295013434
+        },
+        {
+          "context": 7,
+          "actual_ps": 3914116,
+          "affine_ps": 3783501.6470588236,
+          "deviation_percent": 3.337007716204026
+        },
+        {
+          "context": 8,
+          "actual_ps": 4444222,
+          "affine_ps": 4110782.7764705885,
+          "deviation_percent": 7.502758042451783
+        },
+        {
+          "context": 9,
+          "actual_ps": 5211042,
+          "affine_ps": 4438063.905882353,
+          "deviation_percent": 14.833465055887999
+        },
+        {
+          "context": 16,
+          "actual_ps": 7224778,
+          "affine_ps": 6729031.811764706,
+          "deviation_percent": 6.8617497760525525
+        },
+        {
+          "context": 32,
+          "actual_ps": 12562512,
+          "affine_ps": 11965529.88235294,
+          "deviation_percent": 4.752091919570379
+        },
+        {
+          "context": 64,
+          "actual_ps": 24058144,
+          "affine_ps": 22438526.02352941,
+          "deviation_percent": 6.73209860440851
+        },
+        {
+          "context": 65,
+          "actual_ps": 24988330,
+          "affine_ps": 22765807.152941175,
+          "deviation_percent": 8.89424322097085
+        },
+        {
+          "context": 128,
+          "actual_ps": 44855636,
+          "affine_ps": 43384518.30588235,
+          "deviation_percent": 3.2796719103874716
+        },
+        {
+          "context": 129,
+          "actual_ps": 45635792,
+          "affine_ps": 43711799.435294114,
+          "deviation_percent": 4.215972771341157
+        },
+        {
+          "context": 256,
+          "actual_ps": 86240578,
+          "affine_ps": 85276502.87058823,
+          "deviation_percent": 1.1178903849783706
+        },
+        {
+          "context": 257,
+          "actual_ps": 87364136,
+          "affine_ps": 85603784.0,
+          "deviation_percent": 2.014959548160586
+        },
+        {
+          "context": 512,
+          "actual_ps": 169060472,
+          "affine_ps": 169060472.0,
+          "deviation_percent": 0.0
+        }
+      ]
+    },
+    {
+      "layer": 16,
+      "max_abs_deviation_percent": 8.89424322097085,
+      "samples": [
+        {
+          "context": 1,
+          "actual_ps": 1957058,
+          "affine_ps": 1819814.8705882353,
+          "deviation_percent": 7.0127267261248605
+        },
+        {
+          "context": 2,
+          "actual_ps": 2147096,
+          "affine_ps": 2147096.0,
+          "deviation_percent": 0.0
+        },
+        {
+          "context": 4,
+          "actual_ps": 2627192,
+          "affine_ps": 2801658.2588235294,
+          "deviation_percent": -6.640788295013434
+        },
+        {
+          "context": 7,
+          "actual_ps": 3914116,
+          "affine_ps": 3783501.6470588236,
+          "deviation_percent": 3.337007716204026
+        },
+        {
+          "context": 8,
+          "actual_ps": 4444222,
+          "affine_ps": 4110782.7764705885,
+          "deviation_percent": 7.502758042451783
+        },
+        {
+          "context": 9,
+          "actual_ps": 5211042,
+          "affine_ps": 4438063.905882353,
+          "deviation_percent": 14.833465055887999
+        },
+        {
+          "context": 16,
+          "actual_ps": 7224778,
+          "affine_ps": 6729031.811764706,
+          "deviation_percent": 6.8617497760525525
+        },
+        {
+          "context": 32,
+          "actual_ps": 12562512,
+          "affine_ps": 11965529.88235294,
+          "deviation_percent": 4.752091919570379
+        },
+        {
+          "context": 64,
+          "actual_ps": 24058144,
+          "affine_ps": 22438526.02352941,
+          "deviation_percent": 6.73209860440851
+        },
+        {
+          "context": 65,
+          "actual_ps": 24988330,
+          "affine_ps": 22765807.152941175,
+          "deviation_percent": 8.89424322097085
+        },
+        {
+          "context": 128,
+          "actual_ps": 44855636,
+          "affine_ps": 43384518.30588235,
+          "deviation_percent": 3.2796719103874716
+        },
+        {
+          "context": 129,
+          "actual_ps": 45635792,
+          "affine_ps": 43711799.435294114,
+          "deviation_percent": 4.215972771341157
+        },
+        {
+          "context": 256,
+          "actual_ps": 86240578,
+          "affine_ps": 85276502.87058823,
+          "deviation_percent": 1.1178903849783706
+        },
+        {
+          "context": 257,
+          "actual_ps": 87364136,
+          "affine_ps": 85603784.0,
+          "deviation_percent": 2.014959548160586
+        },
+        {
+          "context": 512,
+          "actual_ps": 169060472,
+          "affine_ps": 169060472.0,
+          "deviation_percent": 0.0
+        }
+      ]
+    },
+    {
+      "layer": 31,
+      "max_abs_deviation_percent": 10.156185810732254,
+      "samples": [
+        {
+          "context": 1,
+          "actual_ps": 1957058,
+          "affine_ps": 1820350.925490196,
+          "deviation_percent": 6.9853358719978615
+        },
+        {
+          "context": 2,
+          "actual_ps": 2147096,
+          "affine_ps": 2147096.0,
+          "deviation_percent": 0.0
+        },
+        {
+          "context": 4,
+          "actual_ps": 2627192,
+          "affine_ps": 2800586.149019608,
+          "deviation_percent": -6.599980093560266
+        },
+        {
+          "context": 7,
+          "actual_ps": 3914116,
+          "affine_ps": 3780821.3725490198,
+          "deviation_percent": 3.405484851521525
+        },
+        {
+          "context": 8,
+          "actual_ps": 4084150,
+          "affine_ps": 4107566.4470588234,
+          "deviation_percent": -0.5733493397358919
+        },
+        {
+          "context": 9,
+          "actual_ps": 4934320,
+          "affine_ps": 4434311.521568628,
+          "deviation_percent": 10.133280339162681
+        },
+        {
+          "context": 16,
+          "actual_ps": 6838034,
+          "affine_ps": 6721527.043137255,
+          "deviation_percent": 1.703807802984672
+        },
+        {
+          "context": 32,
+          "actual_ps": 12822564,
+          "affine_ps": 11949448.235294119,
+          "deviation_percent": 6.809213545012382
+        },
+        {
+          "context": 64,
+          "actual_ps": 24074814,
+          "affine_ps": 22405290.619607843,
+          "deviation_percent": 6.934730130800415
+        },
+        {
+          "context": 65,
+          "actual_ps": 25301726,
+          "affine_ps": 22732035.694117647,
+          "deviation_percent": 10.156185810732254
+        },
+        {
+          "context": 128,
+          "actual_ps": 45932518,
+          "affine_ps": 43316975.38823529,
+          "deviation_percent": 5.694315760709453
+        },
+        {
+          "context": 129,
+          "actual_ps": 45979194,
+          "affine_ps": 43643720.4627451,
+          "deviation_percent": 5.07941382629478
+        },
+        {
+          "context": 256,
+          "actual_ps": 86183900,
+          "affine_ps": 85140344.9254902,
+          "deviation_percent": 1.2108468919482636
+        },
+        {
+          "context": 257,
+          "actual_ps": 87290788,
+          "affine_ps": 85467090.0,
+          "deviation_percent": 2.0892216026277595
+        },
+        {
+          "context": 512,
+          "actual_ps": 168787084,
+          "affine_ps": 168787084.0,
+          "deviation_percent": 0.0
+        }
+      ]
+    }
+  ],
+  "nonlinear_screen_exceeded": true,
+  "warnings": [
+    "注意力局部采样与两端直线偏差超过5%，仍按用户要求保留全层端点线性估算；不得将此预测写成完整Prefill实测。",
+    "混合模型条件估算：递推服务采用固定大小状态的零态/真实512末态局部探针；没有64/128/256真实递推快照或完整前缀回放。"
+  ],
+  "service_totals": {
+    "prefill_second": {
+      "attention": {
+        "calls": 320,
+        "cumulative_service_ps": 704944294,
+        "cumulative_dispatch_ps": 195605780
+      },
+      "recurrent": {
+        "calls": 32,
+        "cumulative_service_ps": 34593467310,
+        "cumulative_dispatch_ps": 19567246
+      },
+      "moe": {
+        "calls": 0,
+        "cumulative_service_ps": 0,
+        "cumulative_dispatch_ps": 0
+      },
+      "other": {
+        "calls": 14624,
+        "cumulative_service_ps": 317266977374,
+        "cumulative_dispatch_ps": 9052391538
+      }
+    },
+    "decode_second": {
+      "attention": {
+        "calls": 320,
+        "cumulative_service_ps": 54275679632,
+        "cumulative_dispatch_ps": 194615582
+      },
+      "recurrent": {
+        "calls": 32,
+        "cumulative_service_ps": 34595137644,
+        "cumulative_dispatch_ps": 19700606
+      },
+      "moe": {
+        "calls": 0,
+        "cumulative_service_ps": 0,
+        "cumulative_dispatch_ps": 0
+      },
+      "other": {
+        "calls": 14624,
+        "cumulative_service_ps": 317346776664,
+        "cumulative_dispatch_ps": 9027556758
+      }
+    }
+  },
+  "recurrent": [
+    {
+      "layer": 0,
+      "state": "zero",
+      "elapsed_ps": 1079289148,
+      "recurrent_write_beats": 66688
+    },
+    {
+      "layer": 0,
+      "state": "frozen512",
+      "elapsed_ps": 1079289148,
+      "recurrent_write_beats": 66688
+    },
+    {
+      "layer": 31,
+      "state": "zero",
+      "elapsed_ps": 1079289148,
+      "recurrent_write_beats": 66688
+    },
+    {
+      "layer": 31,
+      "state": "frozen512",
+      "elapsed_ps": 1079289148,
+      "recurrent_write_beats": 66688
+    }
+  ],
+  "frozen_expert_route_records": 0,
+  "frozen_expert_frequency": {},
+  "verified_input_sha256": {
+    "inputs\\falcon-prefill.json": "7c7cf5bdf3dc1b5b9b8246f76066222793d8db76c2e47fa2ea086c43b3e744ab",
+    "inputs\\falcon-decode.json": "43e99e42674b7a693b38247daa37ac28c4a5f382b79cc3c053998471391187e3",
+    "results\\falcon\\samples.json": "fd612ad79c689c82b2bf0c599d9b54e9919fe79a50ad54b0d088de3a7eefb23f"
+  },
+  "sampling_plan_matches_speed_plan": true,
+  "independent_sequence_validation": "deferred by user",
+  "full_model_rtl_qualified": false,
+  "full_model_timing_calibrated": false
+}

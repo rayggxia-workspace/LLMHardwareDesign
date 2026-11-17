@@ -1,0 +1,375 @@
+{
+  "model": "llama",
+  "name": "Llama3.2-1B",
+  "architecture": "16层稠密；64维紧凑KV、256 B行，三P FFN与V读取复用。",
+  "source_commit": "395fe768ceaed45ef2b822d9ce288e1f98f0fe0f",
+  "sample_job": "38826721",
+  "short_prefill_input_tok_s": 15.534216928727394,
+  "short_prefill_ms": 128.748041126,
+  "decode_tok_s": 5.674618371762607,
+  "decode_interval_ms": 176.22330428,
+  "first_prefill_including_boot_ms": 64.369724704,
+  "second_prefill_increment_ms": 64.378316422,
+  "decode_second_body_ms": 105.442420934,
+  "decode_tail_ms": 70.780883346,
+  "affine_slope_ps_per_context": 80203329.125,
+  "estimated_prefill_body_s": 43.41258421797912,
+  "estimated_prefill_to_logits_s": 43.48336510132513,
+  "estimated_input_tok_s_body": 11.793815300862866,
+  "estimated_input_tok_s_to_logits": 11.774617691315642,
+  "attention_samples": 45,
+  "recurrent_samples": 0,
+  "component_max_deviation_percent": 4.735705860096595,
+  "curves": [
+    {
+      "layer": 0,
+      "max_abs_deviation_percent": 4.673388083950953,
+      "samples": [
+        {
+          "context": 1,
+          "actual_ps": 783490,
+          "affine_ps": 734153.337254902,
+          "deviation_percent": 6.297037964121815
+        },
+        {
+          "context": 2,
+          "actual_ps": 890178,
+          "affine_ps": 890178.0,
+          "deviation_percent": 0.0
+        },
+        {
+          "context": 4,
+          "actual_ps": 1106888,
+          "affine_ps": 1202227.325490196,
+          "deviation_percent": -8.61327663595558
+        },
+        {
+          "context": 7,
+          "actual_ps": 1630326,
+          "affine_ps": 1670301.3137254901,
+          "deviation_percent": -2.4519828381250206
+        },
+        {
+          "context": 8,
+          "actual_ps": 1720344,
+          "affine_ps": 1826325.9764705882,
+          "deviation_percent": -6.160510715914273
+        },
+        {
+          "context": 9,
+          "actual_ps": 2077082,
+          "affine_ps": 1982350.6392156864,
+          "deviation_percent": 4.560790608378179
+        },
+        {
+          "context": 16,
+          "actual_ps": 2937254,
+          "affine_ps": 3074523.2784313727,
+          "deviation_percent": -4.673388083950953
+        },
+        {
+          "context": 32,
+          "actual_ps": 5414416,
+          "affine_ps": 5570917.882352941,
+          "deviation_percent": -2.890466531440154
+        },
+        {
+          "context": 64,
+          "actual_ps": 10712142,
+          "affine_ps": 10563707.090196079,
+          "deviation_percent": 1.3856697363041057
+        },
+        {
+          "context": 65,
+          "actual_ps": 11018870,
+          "affine_ps": 10719731.752941176,
+          "deviation_percent": 2.714781525318147
+        },
+        {
+          "context": 128,
+          "actual_ps": 20630792,
+          "affine_ps": 20549285.505882353,
+          "deviation_percent": 0.39507205597171163
+        },
+        {
+          "context": 129,
+          "actual_ps": 21004200,
+          "affine_ps": 20705310.168627452,
+          "deviation_percent": 1.4230003112356
+        },
+        {
+          "context": 256,
+          "actual_ps": 40704806,
+          "affine_ps": 40520442.337254904,
+          "deviation_percent": 0.45292848894819887
+        },
+        {
+          "context": 257,
+          "actual_ps": 40984862,
+          "affine_ps": 40676467.0,
+          "deviation_percent": 0.7524607500203367
+        },
+        {
+          "context": 512,
+          "actual_ps": 80462756,
+          "affine_ps": 80462756.0,
+          "deviation_percent": 0.0
+        }
+      ]
+    },
+    {
+      "layer": 8,
+      "max_abs_deviation_percent": 4.673388083950953,
+      "samples": [
+        {
+          "context": 1,
+          "actual_ps": 783490,
+          "affine_ps": 734153.337254902,
+          "deviation_percent": 6.297037964121815
+        },
+        {
+          "context": 2,
+          "actual_ps": 890178,
+          "affine_ps": 890178.0,
+          "deviation_percent": 0.0
+        },
+        {
+          "context": 4,
+          "actual_ps": 1106888,
+          "affine_ps": 1202227.325490196,
+          "deviation_percent": -8.61327663595558
+        },
+        {
+          "context": 7,
+          "actual_ps": 1630326,
+          "affine_ps": 1670301.3137254901,
+          "deviation_percent": -2.4519828381250206
+        },
+        {
+          "context": 8,
+          "actual_ps": 1720344,
+          "affine_ps": 1826325.9764705882,
+          "deviation_percent": -6.160510715914273
+        },
+        {
+          "context": 9,
+          "actual_ps": 2077082,
+          "affine_ps": 1982350.6392156864,
+          "deviation_percent": 4.560790608378179
+        },
+        {
+          "context": 16,
+          "actual_ps": 2937254,
+          "affine_ps": 3074523.2784313727,
+          "deviation_percent": -4.673388083950953
+        },
+        {
+          "context": 32,
+          "actual_ps": 5414416,
+          "affine_ps": 5570917.882352941,
+          "deviation_percent": -2.890466531440154
+        },
+        {
+          "context": 64,
+          "actual_ps": 10712142,
+          "affine_ps": 10563707.090196079,
+          "deviation_percent": 1.3856697363041057
+        },
+        {
+          "context": 65,
+          "actual_ps": 11018870,
+          "affine_ps": 10719731.752941176,
+          "deviation_percent": 2.714781525318147
+        },
+        {
+          "context": 128,
+          "actual_ps": 20630792,
+          "affine_ps": 20549285.505882353,
+          "deviation_percent": 0.39507205597171163
+        },
+        {
+          "context": 129,
+          "actual_ps": 21004200,
+          "affine_ps": 20705310.168627452,
+          "deviation_percent": 1.4230003112356
+        },
+        {
+          "context": 256,
+          "actual_ps": 40704806,
+          "affine_ps": 40520442.337254904,
+          "deviation_percent": 0.45292848894819887
+        },
+        {
+          "context": 257,
+          "actual_ps": 40984862,
+          "affine_ps": 40676467.0,
+          "deviation_percent": 0.7524607500203367
+        },
+        {
+          "context": 512,
+          "actual_ps": 80462756,
+          "affine_ps": 80462756.0,
+          "deviation_percent": 0.0
+        }
+      ]
+    },
+    {
+      "layer": 15,
+      "max_abs_deviation_percent": 4.735705860096595,
+      "samples": [
+        {
+          "context": 1,
+          "actual_ps": 783490,
+          "affine_ps": 734022.5921568627,
+          "deviation_percent": 6.313725490196081
+        },
+        {
+          "context": 2,
+          "actual_ps": 890178,
+          "affine_ps": 890178.0,
+          "deviation_percent": 0.0
+        },
+        {
+          "context": 4,
+          "actual_ps": 1106888,
+          "affine_ps": 1202488.8156862746,
+          "deviation_percent": -8.636900543349872
+        },
+        {
+          "context": 7,
+          "actual_ps": 1630326,
+          "affine_ps": 1670955.0392156863,
+          "deviation_percent": -2.492080676851517
+        },
+        {
+          "context": 8,
+          "actual_ps": 1720344,
+          "affine_ps": 1827110.4470588234,
+          "deviation_percent": -6.206110351117185
+        },
+        {
+          "context": 9,
+          "actual_ps": 2077082,
+          "affine_ps": 1983265.8549019608,
+          "deviation_percent": 4.516728039530417
+        },
+        {
+          "context": 16,
+          "actual_ps": 2937254,
+          "affine_ps": 3076353.7098039216,
+          "deviation_percent": -4.735705860096595
+        },
+        {
+          "context": 32,
+          "actual_ps": 5597786,
+          "affine_ps": 5574840.235294118,
+          "deviation_percent": 0.40990785831902843
+        },
+        {
+          "context": 64,
+          "actual_ps": 10352070,
+          "affine_ps": 10571813.28627451,
+          "deviation_percent": -2.122698999084333
+        },
+        {
+          "context": 65,
+          "actual_ps": 10748816,
+          "affine_ps": 10727968.694117647,
+          "deviation_percent": 0.19394978835206905
+        },
+        {
+          "context": 128,
+          "actual_ps": 20384076,
+          "affine_ps": 20565759.388235293,
+          "deviation_percent": -0.8913005830398852
+        },
+        {
+          "context": 129,
+          "actual_ps": 20864172,
+          "affine_ps": 20721914.796078432,
+          "deviation_percent": 0.6818253028280616
+        },
+        {
+          "context": 256,
+          "actual_ps": 40511434,
+          "affine_ps": 40553651.592156865,
+          "deviation_percent": -0.10421154718162952
+        },
+        {
+          "context": 257,
+          "actual_ps": 40801492,
+          "affine_ps": 40709807.0,
+          "deviation_percent": 0.2247099199215558
+        },
+        {
+          "context": 512,
+          "actual_ps": 80529436,
+          "affine_ps": 80529436.0,
+          "deviation_percent": 0.0
+        }
+      ]
+    }
+  ],
+  "nonlinear_screen_exceeded": false,
+  "warnings": [
+    "局部注意力采样未超过本报告5%筛查阈值；这不代表整段Prefill预测误差已通过5%验证。"
+  ],
+  "service_totals": {
+    "prefill_second": {
+      "attention": {
+        "calls": 512,
+        "cumulative_service_ps": 455917832,
+        "cumulative_dispatch_ps": 316813350
+      },
+      "recurrent": {
+        "calls": 0,
+        "cumulative_service_ps": 0,
+        "cumulative_dispatch_ps": 0
+      },
+      "moe": {
+        "calls": 0,
+        "cumulative_service_ps": 0,
+        "cumulative_dispatch_ps": 0
+      },
+      "other": {
+        "calls": 7136,
+        "cumulative_service_ps": 129351645156,
+        "cumulative_dispatch_ps": 4390232748
+      }
+    },
+    "decode_second": {
+      "attention": {
+        "calls": 512,
+        "cumulative_service_ps": 41497287798,
+        "cumulative_dispatch_ps": 316133214
+      },
+      "recurrent": {
+        "calls": 0,
+        "cumulative_service_ps": 0,
+        "cumulative_dispatch_ps": 0
+      },
+      "moe": {
+        "calls": 0,
+        "cumulative_service_ps": 0,
+        "cumulative_dispatch_ps": 0
+      },
+      "other": {
+        "calls": 7136,
+        "cumulative_service_ps": 129308393174,
+        "cumulative_dispatch_ps": 4401699470
+      }
+    }
+  },
+  "recurrent": [],
+  "frozen_expert_route_records": 0,
+  "frozen_expert_frequency": {},
+  "verified_input_sha256": {
+    "inputs\\llama-prefill.json": "165036073c51db39ae87b913cb56eef9a6aec829c38f248a3b0b966ce48f78bc",
+    "inputs\\llama-decode.json": "f2060c173e34f171293eda95ee85ae3bff97c54c0f5c2f76d1241f16fb4406e0",
+    "results\\llama\\samples.json": "6cdc211eaaf496cf1f1cf00fdb94454e2a53e6a5a05004cb06d536256cfee5ca"
+  },
+  "sampling_plan_matches_speed_plan": true,
+  "independent_sequence_validation": "deferred by user",
+  "full_model_rtl_qualified": false,
+  "full_model_timing_calibrated": false
+}

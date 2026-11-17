@@ -1,5 +1,9 @@
 # 当前状态
 
+## 2026-11-17 七模型512-token Prefill条件估算
+
+[Issue #291](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/291) / [PR #292](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/292) 完成计时拆分、端点建模及330个注意力/8个递推组件样本，七模型速度报告保留原短Prefill与Decode，新增512-token条件预测。Phi/Falcon局部直线偏差超过5%；MoE路由与混合状态限制显眼标注。用户暂缓16/32-token独立验证，预测误差未知；非完整512仿真实测。见[报告](experiments/seven-model-speed-evaluation.html)及[交接](handoffs/2026-11-17-issue-291-prefill-estimates.md)。旧能耗作业及工件未修改。
+
 ## 2026-11-17 七模型无布线寄生分项扩展 v2
 
 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已将普通投影 M、写侧/U/PM 桥驻留、局控 PM 启动及读取、描述符活动和九目标母控核心加入七模型的 21 个窗口，并重新计算全部既有无布线寄生分项。片上与片上＋DDR 继续分别报告；新覆盖使第2步 Decode 的同口径片上小计增加约 4.65-17.91 mJ/token。PDF v2 为十九页，输入 SHA、分项守恒、单位及所有页目检通过。[结果、回执与剩余覆盖](handoffs/2026-11-17-issue-280-no-wire-energy-extension.md)。四项读 DMA 综合仍运行，特殊算术、控制外壳、真实拓扑/门控及 PHY 尚缺；旧 M 的 300 MHz 时序未闭合。任务继续进行中，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) 草稿未合并。
@@ -74,3 +78,7 @@
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+2026-11-17，#291报告新增[24页PDF](experiments/seven-model-speed-evaluation.pdf)，保留七模型短Prefill/Decode及P512条件估计。39张表、1939个单元格、8个警示框和全部页面完成内容及视觉检查；未新增仿真，独立序列验证仍按用户指令暂缓。
+
+2026-11-17，#291新增[七模型速度与功耗综合PDF](experiments/seven-model-speed-and-energy-evaluation.pdf)，统一短Prefill/Decode与条件P512预测，并将当前已覆盖能耗换算为W、J/token、token/J。完整P512误差未知、局部偏差和功耗缺项单列；附论文中英文建议，未新增仿真。

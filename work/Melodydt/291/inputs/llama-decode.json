@@ -1,0 +1,866 @@
+{
+  "mode": "decode",
+  "layers": 16,
+  "history": 512,
+  "boundary": [
+    {
+      "step": 0,
+      "input_id": 7576,
+      "complete_ps": 105356417070,
+      "sha256": "e5e60f8b1ef29a5162cb1824d6c9fb37c472b90f0ef2eca238dc894ef4d3af34"
+    },
+    {
+      "step": 1,
+      "input_id": 264,
+      "complete_ps": 281579177908,
+      "sha256": "df58c08ae6045148d4d4fcf2585a6c83330838ddb2955722d0f20e6d3976d8a5"
+    }
+  ],
+  "retirements": [
+    {
+      "input": 7576,
+      "selected": 264,
+      "time_ps": 176136756974,
+      "vocab": 128256,
+      "logits_sha256": "d6becd1a0779fe4bf74d2a94ed8e0516ff079d6fe0f613b93e8858c2034bdf70"
+    },
+    {
+      "input": 264,
+      "selected": 73449,
+      "time_ps": 352360061254,
+      "vocab": 128256,
+      "logits_sha256": "54abe043fbbbff780aa7984bf49289bd566f5746b459aa98af5d9f1166232a9b"
+    }
+  ],
+  "writes_committed": 2048,
+  "expert_routes": [],
+  "residual_saturations": 0,
+  "recurrent_writes": 0,
+  "recurrent_cross_step_reads": 0,
+  "cross_step_reads": 1024,
+  "pages": 36,
+  "calls": [
+    {
+      "signature": [
+        0,
+        9,
+        8,
+        1
+      ],
+      "count": 1216
+    },
+    {
+      "signature": [
+        0,
+        9,
+        8,
+        2
+      ],
+      "count": 32
+    },
+    {
+      "signature": [
+        0,
+        10,
+        8,
+        1
+      ],
+      "count": 352
+    },
+    {
+      "signature": [
+        0,
+        11,
+        8,
+        1
+      ],
+      "count": 704
+    },
+    {
+      "signature": [
+        0,
+        12,
+        38817026,
+        2
+      ],
+      "count": 2004
+    },
+    {
+      "signature": [
+        0,
+        13,
+        8,
+        1
+      ],
+      "count": 1280
+    },
+    {
+      "signature": [
+        0,
+        38817793,
+        38817026,
+        2
+      ],
+      "count": 3648
+    },
+    {
+      "signature": [
+        0,
+        827610177,
+        38797314,
+        2
+      ],
+      "count": 1024
+    },
+    {
+      "signature": [
+        1,
+        9,
+        8,
+        1
+      ],
+      "count": 672
+    },
+    {
+      "signature": [
+        1,
+        10,
+        8,
+        1
+      ],
+      "count": 1056
+    },
+    {
+      "signature": [
+        1,
+        11,
+        8,
+        1
+      ],
+      "count": 672
+    },
+    {
+      "signature": [
+        1,
+        38817793,
+        38817026,
+        2
+      ],
+      "count": 1504
+    },
+    {
+      "signature": [
+        2,
+        9,
+        8,
+        1
+      ],
+      "count": 672
+    },
+    {
+      "signature": [
+        2,
+        10,
+        8,
+        1
+      ],
+      "count": 32
+    },
+    {
+      "signature": [
+        2,
+        11,
+        8,
+        1
+      ],
+      "count": 672
+    },
+    {
+      "signature": [
+        2,
+        38817793,
+        38817026,
+        2
+      ],
+      "count": 1504
+    },
+    {
+      "signature": [
+        3,
+        3,
+        8,
+        3
+      ],
+      "count": 66
+    },
+    {
+      "signature": [
+        3,
+        3,
+        8,
+        4
+      ],
+      "count": 2
+    },
+    {
+      "signature": [
+        3,
+        3,
+        38797314,
+        2
+      ],
+      "count": 64
+    },
+    {
+      "signature": [
+        3,
+        9,
+        8,
+        2
+      ],
+      "count": 66
+    },
+    {
+      "signature": [
+        3,
+        10,
+        8,
+        1
+      ],
+      "count": 64
+    }
+  ],
+  "ddr": {
+    "reads": 46056798,
+    "writes": 18432,
+    "callbacks": 46075230,
+    "ddr_queue_ps": 452832699576,
+    "ddr_inflight_ps": 2240215810560,
+    "dma_issue_throttle_ticks": 44359733,
+    "dma_credit_wait_ticks": 9550296,
+    "channel0_peak_queued": 75,
+    "channel1_peak_queued": 74,
+    "channel0_peak_active": 32,
+    "channel1_peak_active": 32
+  },
+  "timing_calibrated": false,
+  "rtl_qualified": false,
+  "weight_window": 4,
+  "projection": [
+    {
+      "weight_read_returns": 12576768,
+      "weight_records_consumed": 709632
+    },
+    {
+      "weight_read_returns": 2228224,
+      "weight_records_consumed": 131072
+    },
+    {}
+  ],
+  "pr272_profile": "combined",
+  "ffn_projection": [
+    {},
+    {},
+    {}
+  ],
+  "attention_services": {
+    "native_att1": {},
+    "tiled_attn": {
+      "ddr_issued": 4206592,
+      "ddr_peak_inflight": 8,
+      "reply_slots_peak": 12,
+      "ddr_returned": 4206592,
+      "s_write_peak": 4,
+      "s_write_acks": 4206592,
+      "overlapped_tiles": 262144
+    }
+  },
+  "services": [
+    {
+      "group": "pos512-head",
+      "signature": [
+        0,
+        12,
+        38817026,
+        2
+      ],
+      "count": 1002,
+      "dispatch_ps": 630696114,
+      "service_ps": 70004204708
+    },
+    {
+      "group": "pos512-head",
+      "signature": [
+        3,
+        3,
+        8,
+        3
+      ],
+      "count": 1,
+      "dispatch_ps": 610122,
+      "service_ps": 67150094
+    },
+    {
+      "group": "pos512-head",
+      "signature": [
+        3,
+        9,
+        8,
+        2
+      ],
+      "count": 1,
+      "dispatch_ps": 613014,
+      "service_ps": 4250850
+    },
+    {
+      "group": "pos512-ingress",
+      "signature": [
+        3,
+        3,
+        8,
+        4
+      ],
+      "count": 1,
+      "dispatch_ps": 610856,
+      "service_ps": 3434020
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        0,
+        9,
+        8,
+        1
+      ],
+      "count": 608,
+      "dispatch_ps": 377685522,
+      "service_ps": 123241310
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        0,
+        9,
+        8,
+        2
+      ],
+      "count": 16,
+      "dispatch_ps": 10092018,
+      "service_ps": 4164166
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        0,
+        10,
+        8,
+        1
+      ],
+      "count": 176,
+      "dispatch_ps": 109858634,
+      "service_ps": 66573312
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        0,
+        11,
+        8,
+        1
+      ],
+      "count": 352,
+      "dispatch_ps": 223461350,
+      "service_ps": 1165353024
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        0,
+        13,
+        8,
+        1
+      ],
+      "count": 640,
+      "dispatch_ps": 399509886,
+      "service_ps": 1357071360
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        0,
+        38817793,
+        38817026,
+        2
+      ],
+      "count": 1824,
+      "dispatch_ps": 1118196928,
+      "service_ps": 52615310958
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        0,
+        827610177,
+        38797314,
+        2
+      ],
+      "count": 512,
+      "dispatch_ps": 314242836,
+      "service_ps": 41441966736
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        1,
+        9,
+        8,
+        1
+      ],
+      "count": 336,
+      "dispatch_ps": 201947048,
+      "service_ps": 76015200
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        1,
+        10,
+        8,
+        1
+      ],
+      "count": 528,
+      "dispatch_ps": 328639048,
+      "service_ps": 81936384
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        1,
+        11,
+        8,
+        1
+      ],
+      "count": 336,
+      "dispatch_ps": 207478154,
+      "service_ps": 1112382432
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        1,
+        38817793,
+        38817026,
+        2
+      ],
+      "count": 752,
+      "dispatch_ps": 457791540,
+      "service_ps": 33994317504
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        2,
+        9,
+        8,
+        1
+      ],
+      "count": 336,
+      "dispatch_ps": 208665058,
+      "service_ps": 78812426
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        2,
+        10,
+        8,
+        1
+      ],
+      "count": 16,
+      "dispatch_ps": 10485430,
+      "service_ps": 40968192
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        2,
+        11,
+        8,
+        1
+      ],
+      "count": 336,
+      "dispatch_ps": 206177894,
+      "service_ps": 1112382432
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        2,
+        38817793,
+        38817026,
+        2
+      ],
+      "count": 752,
+      "dispatch_ps": 457894894,
+      "service_ps": 34099968630
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        3,
+        3,
+        8,
+        3
+      ],
+      "count": 32,
+      "dispatch_ps": 19350536,
+      "service_ps": 2148803008
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        3,
+        3,
+        38797314,
+        2
+      ],
+      "count": 32,
+      "dispatch_ps": 19297192,
+      "service_ps": 983343296
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        3,
+        9,
+        8,
+        2
+      ],
+      "count": 32,
+      "dispatch_ps": 19545752,
+      "service_ps": 128342330
+    },
+    {
+      "group": "pos512-layers",
+      "signature": [
+        3,
+        10,
+        8,
+        1
+      ],
+      "count": 32,
+      "dispatch_ps": 20224044,
+      "service_ps": 81936384
+    },
+    {
+      "group": "pos513-head",
+      "signature": [
+        0,
+        12,
+        38817026,
+        2
+      ],
+      "count": 1002,
+      "dispatch_ps": 630902822,
+      "service_ps": 70004934854
+    },
+    {
+      "group": "pos513-head",
+      "signature": [
+        3,
+        3,
+        8,
+        3
+      ],
+      "count": 1,
+      "dispatch_ps": 596786,
+      "service_ps": 67150094
+    },
+    {
+      "group": "pos513-head",
+      "signature": [
+        3,
+        9,
+        8,
+        2
+      ],
+      "count": 1,
+      "dispatch_ps": 613012,
+      "service_ps": 3870774
+    },
+    {
+      "group": "pos513-ingress",
+      "signature": [
+        3,
+        3,
+        8,
+        4
+      ],
+      "count": 1,
+      "dispatch_ps": 597142,
+      "service_ps": 3434020
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        0,
+        9,
+        8,
+        1
+      ],
+      "count": 608,
+      "dispatch_ps": 377095404,
+      "service_ps": 127065408
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        0,
+        9,
+        8,
+        2
+      ],
+      "count": 16,
+      "dispatch_ps": 9821964,
+      "service_ps": 4107488
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        0,
+        10,
+        8,
+        1
+      ],
+      "count": 176,
+      "dispatch_ps": 110558774,
+      "service_ps": 66573312
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        0,
+        11,
+        8,
+        1
+      ],
+      "count": 352,
+      "dispatch_ps": 224128150,
+      "service_ps": 1165353024
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        0,
+        13,
+        8,
+        1
+      ],
+      "count": 640,
+      "dispatch_ps": 398433004,
+      "service_ps": 1357071360
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        0,
+        38817793,
+        38817026,
+        2
+      ],
+      "count": 1824,
+      "dispatch_ps": 1122691160,
+      "service_ps": 52627456720
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        0,
+        827610177,
+        38797314,
+        2
+      ],
+      "count": 512,
+      "dispatch_ps": 316133214,
+      "service_ps": 41497287798
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        1,
+        9,
+        8,
+        1
+      ],
+      "count": 336,
+      "dispatch_ps": 201747008,
+      "service_ps": 77822228
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        1,
+        10,
+        8,
+        1
+      ],
+      "count": 528,
+      "dispatch_ps": 326068534,
+      "service_ps": 81936384
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        1,
+        11,
+        8,
+        1
+      ],
+      "count": 336,
+      "dispatch_ps": 208601712,
+      "service_ps": 1112382432
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        1,
+        38817793,
+        38817026,
+        2
+      ],
+      "count": 752,
+      "dispatch_ps": 459625240,
+      "service_ps": 33994567554
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        2,
+        9,
+        8,
+        1
+      ],
+      "count": 336,
+      "dispatch_ps": 205741140,
+      "service_ps": 77282120
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        2,
+        10,
+        8,
+        1
+      ],
+      "count": 16,
+      "dispatch_ps": 10328732,
+      "service_ps": 40968192
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        2,
+        11,
+        8,
+        1
+      ],
+      "count": 336,
+      "dispatch_ps": 208568372,
+      "service_ps": 1112382432
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        2,
+        38817793,
+        38817026,
+        2
+      ],
+      "count": 752,
+      "dispatch_ps": 459421866,
+      "service_ps": 34119495868
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        3,
+        3,
+        8,
+        3
+      ],
+      "count": 32,
+      "dispatch_ps": 20144028,
+      "service_ps": 2148803008
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        3,
+        3,
+        38797314,
+        2
+      ],
+      "count": 32,
+      "dispatch_ps": 19377208,
+      "service_ps": 983343296
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        3,
+        9,
+        8,
+        2
+      ],
+      "count": 32,
+      "dispatch_ps": 19546548,
+      "service_ps": 129845964
+    },
+    {
+      "group": "pos513-layers",
+      "signature": [
+        3,
+        10,
+        8,
+        1
+      ],
+      "count": 32,
+      "dispatch_ps": 19800626,
+      "service_ps": 81936384
+    }
+  ],
+  "interval_ps": 176223304280,
+  "tok_s": 5.674618371762607,
+  "plan_sha256": "75732cd589a1de1aabad0b487f38b8bbc76df9cdede0c8c0cb7b2f548463c418",
+  "model": "llama",
+  "ffn_context_cache": false,
+  "compact_kv64": true,
+  "tiled_attention128": false,
+  "workload": "three-P FFN TLM",
+  "history_payload": "live FP32",
+  "history_beats": 4194304,
+  "ffn_by_target": {
+    "0": {
+      "weight_read_issues": 9469952,
+      "weight_peak_outstanding": 32,
+      "weight_read_returns": 9469952,
+      "weight_wait_ps": 27007650450,
+      "weight_records_consumed": 557056
+    },
+    "1": {
+      "weight_read_issues": 8634368,
+      "weight_peak_outstanding": 32,
+      "weight_read_returns": 8634368,
+      "weight_wait_ps": 27059724196,
+      "weight_records_consumed": 507904
+    },
+    "2": {
+      "weight_read_issues": 8634368,
+      "weight_peak_outstanding": 32,
+      "weight_read_returns": 8634368,
+      "weight_wait_ps": 27384752522,
+      "weight_records_consumed": 507904
+    }
+  },
+  "history_source_sha256": "6a3629e9c2a5f242026b84193bcc8faf0050e4189eec0c42c4f69b9f262c2264"
+}

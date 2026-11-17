@@ -230,3 +230,19 @@ python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-
 ```
 
 管理结构检查与业务验证分开。第二条只验证六模型已发布小型回执、原清单 SHA、冻结输出验收状态，并重新积分和核对片上＋DDR；不会重跑模型、FP32 或物理实现。Python 3.7.0 与 3.12 已验证逐字节复现服务器 3.6.6 结果；积分器保留冻结的逐项求和顺序。PDF 需 ReportLab 和可用中文字体，可用脚本参数指定字体路径。原始工件、全部作业和剩余标定见[交接](handoffs/2026-11-17-issue-280-six-model-energy.md)。
+
+
+## 七模型512-token Prefill条件估算（Issue #291）
+
+保留 #274 全层短程回执，利用 #291 的局部上下文采样评估端点直线假设；报告在 `docs/experiments/seven-model-speed-evaluation.html`。原始数值、样本、参数、源码与服务器回执见 `work/Melodydt/291/README.md`。
+
+```powershell
+python -B work/Melodydt/291/build_speed_report.py --all
+python -B work/Melodydt/291/verify_report.py
+```
+
+后者只核对报告、求和、流量几何与散列；16/32-token独立序列验证按用户要求未执行，512估计不等于全模型实测或RTL签核。
+
+#291的PDF导出与文本核验：`python -B work/Melodydt/291/build_speed_pdf.py`、`python -B work/Melodydt/291/verify_speed_pdf.py`。依赖ReportLab 4.4.9、BeautifulSoup、pypdf和中文字体；用Poppler渲染并目检。生成器只读取冻结HTML，不重新仿真或计算估值。详见[PDF回执](../work/Melodydt/291/PDF.md)。
+
+#291速度与功耗综合导出：`python -B work/Melodydt/291/build_combined_report.py`，独立单位与PDF内容核验：`python -B work/Melodydt/291/verify_combined_report.py`。输入由combined-inputs.json锁定；三单位使用各自原窗口，P512误差和功耗未验证。依赖ReportLab/pypdf/Deng字体；用Poppler渲染目检。见[综合回执](../work/Melodydt/291/COMBINED.md)。
