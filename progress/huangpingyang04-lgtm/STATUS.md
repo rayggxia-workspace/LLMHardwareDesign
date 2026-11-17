@@ -9,6 +9,7 @@
 
 ## 2026-11-17 · #250 顶层 M11/M12 布线记录
 
+- 更新时间 2026-11-17（中国标准时间），关联 [Issue #250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250) 和 [PR #285](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/285)。
 - [过程、结果和证据](../../work/huangpingyang04-lgtm/250/pr271-data-link-routing/README.md)。调整底座后 Attention 与 P0→P1 Gate/Up 共 641/641 条布通。沿用 #271 原坐标试接四组，618/1,053 条布通，94 条下层引出受阻，341 条顶层待布。
 - 两版已重放独立几何检查，并核对 KLayout 回读回执与交付包哈希。定向 RTL 回归覆盖 Gate/Up 远端供数、E32 远端操作数和读前端窗口。
 - 待补正式 P 版图重导、每层 56 分片提交和释放回放、原坐标版接入及剩余布线、整芯片 DRC/LVS 和时序签核。任务与审查继续进行。
