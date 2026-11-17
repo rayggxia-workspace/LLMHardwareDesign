@@ -205,3 +205,13 @@ python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-
 ```
 
 积分输出要求文件尚不存在，并拒绝未通过冻结输出/数值/DDR/SRAM 验收的输入。复算使用 Python 3.6+；PDF 使用 ReportLab 4.4.9、Deng.ttf/Dengb.ttf 字体并以 Poppler 目检。脚本的 SHA 核对和单位检查不能替代 RTL/300 MHz 物理验收。BSCC-T6 的不限时提交、归档 SHA、原始工件、运行版本和已知失败见[扩测交接](handoffs/2026-11-17-issue-280-six-model-energy.md)。
+
+## 七模型能耗扩测复算（Issue #280，2026-11-17）
+
+```bash
+python scripts/check_project.py
+python work/Melodydt/280/verify_six_model_energy.py
+python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-current.pdf
+```
+
+管理结构检查与业务验证分开。第二条只验证六模型已发布小型回执、原清单 SHA、冻结输出验收状态，并重新积分和核对片上＋DDR；不会重跑模型、FP32 或物理实现。Python 3.7.0 与 3.12 已验证逐字节复现服务器 3.6.6 结果；积分器保留冻结的逐项求和顺序。PDF 需 ReportLab 和可用中文字体，可用脚本参数指定字体路径。原始工件、全部作业和剩余标定见[交接](handoffs/2026-11-17-issue-280-six-model-energy.md)。

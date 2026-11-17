@@ -205,3 +205,32 @@ Phi 证据提交 `5a06901f66e0f8711dccedfcb3b1eaae984ac058`；PDF v1.5 为十六
 不含读 DMA 动态代理。保留 256 维注意力、局部/全局双窗口及 Q12 残差/后分支 RMS；GELU 没有匹配能耗标定，没有用 SiLU 代替。结果 `work/Melodydt/280/gemma_tlm_power_v1.json`，SHA-256 `1fb15db1f90f4005a2ca18a1edbdccf11da0374e3d167989735b44a6cde2359f`；复算输入在 `six-model-results/gemma/`。服务器 `run-38821513-gemma/` 与 `power-38821514-gemma/`。
 
 六个新增模型的最终回放与积分全部完成。历史表中的“稳态 Decode”只是本次第二步代表窗口，不是长序列稳态统计。接续只需完成最终 PDF 与交付同步；更完整物理覆盖按后续标定路径另行推进，不阻塞本版参考小计。
+
+## 本轮最终交付与接续（2026-11-17 18:00，Asia/Shanghai）
+
+Gemma 证据提交 `52260a394d6473d80b940973150fbc47df530ab3`。七模型报告 v1.6 共十八页，正式路径 `docs/experiments/seven-model-energy-evaluation.pdf`，本机可用 `output/pdf/seven-model-energy-evaluation-current.pdf`。SHA-256 `ba9b83e26e6aa3cc3a6d88175e4d45df326feb0da212546b50847a27db1cde11`。两类指标各有汇总页，每模型均有三窗 mJ/token、W、分项、读 DMA 代理及独特实现/缺项。第2步代表窗不宣称长序列稳态。
+
+17:55:17 服务器最终快照见 `work/Melodydt/280/six-model-jobs-final.json`。六模型最后十二项回放及积分全为 COMPLETED 0:0、UNLIMITED；本轮没有遗留运行或排队的扩测作业。17:59 本地全量小型回执与复算证据见 `work/Melodydt/280/six-model-validation-v1_6.json`。全部十八页已渲染目检，七模型的 168 个主表数值和 17 个链接结构通过；文件上传后还须按 PR 最新 commit 读回。
+
+最终可复算校验：
+
+```bash
+python scripts/check_project.py
+python work/Melodydt/280/verify_six_model_energy.py
+python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-current.pdf
+```
+
+首条仅检查管理结构；第二条验证每模型 17 项小型回放文件的原清单、两阶段回执、服务器积分结果 SHA、完整积分字节及片上＋DDR 单位守恒，不会重跑模型或 FP32。完整权重、逐层大文件和原始物理工件仍在授权服务器。第三条需 ReportLab 与中文字体，具体参数见脚本。
+
+跨解释器检查发现：原分项求和在 Python 3.12 下出现 332 个浮点末位差异，最大相对差约 `1.2403e-15`；没有事务、模型输出或 FP32 差异。积分器改为显式按冻结顺序逐项相加后，Python 3.7.0 和 3.12 均与原 Python 3.6.6 服务器六份结果逐字节一致，未放宽检查、未改标定系数或已发布 JSON。验证脚本可供其他分支直接复用。
+
+### 剩余步骤及等待条件
+
+1. 已有读 DMA 综合继续。17:55 的 38769386、38769388、38795299、38795300 仍 RUNNING（分别已运行约 25h12m、25h12m、18h25m、18h25m）；38795516–38795519 仍 PENDING。均 UNLIMITED。当前阶段无法可靠给出剩余时间。结果只代表当时读回，不宣称聊天结束后自动监控。
+2. 映射网表形成后即可按用户选择，在布局布线前用对应 Liberty、300 MHz SDC 和端口/时标对齐的活动直接估功耗。核验同源性、组合/握手等价、活动标注率，补读 DMA 静默、正常、背压及读写并发配对样本。已有后布线依赖作业不作为快评的必要条件。
+3. 将读 DMA 动态和空闲替换代理，核对共享 fabric 及阶段包装只计一次。按模型实际活动复用相同硬件标定；不同网表/参数需另标定。逐位载荷变化不能由当前范围自动覆盖。
+4. 完整覆盖仍需普通投影 M 活跃项的最终归属、GELU/GDN/Mamba2/router 等特殊算术、九目标母控及运行取指、实例驻留/门控、全局时钟和跨块互连。DDR PHY、板级 I/O 继续单列。先补综合级证据即可，精细物理精度另行提高。
+5. 旧 M 的 300 MHz setup/hold 违例仍是条件限制。时序线需从既有放置工件恢复 CTS/hold 修复并验证；当前快评按用户接受的旧版继续，不能升级为 300 MHz 物理签核。
+6. 每获得新标定，重新积分、维护两类报告并更新同名 PDF。独立审查人待指定，PR #281 仍草稿、未合并；#280 保持 in_progress。登记 PR #5 pending，缺 config/board.json 与 Projects 工具，条目 unverified/同步 pending，待具权限维护者处理。
+
+负责人 Melodydt。恢复第一步：读 PR #281 最新 head 和本交接，按上方 `sacct` 命令读取当前作业；再检查四个读 DMA 综合目录是否已有可用映射网表，按第2步推进。任务分支为 `task/280-seven-model-energy`，本地目录 `D:/Study_material/Study_material/LLMHardwareDesign`；本地导出副本与在线分支分别核验，不把未合并成果视为 main。原始大文件只在服务器，仓库仅留小型复算材料。无完整模型 RTL/物理签核或新 FP32 重跑声明。

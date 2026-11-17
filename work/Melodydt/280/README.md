@@ -1,5 +1,17 @@
 # 七模型短程能耗试点
 
+## 当前交付：七模型双口径报告 v1.6（2026-11-17）
+
+[十八页报告](../../../docs/experiments/seven-model-energy-evaluation.pdf)现含 Qwen3、Qwen3.5、Gemma、Phi、Granite、Falcon、Llama，分别列片上已覆盖和片上＋DDR 的短 Prefill／首 Decode／第2步 Decode 能耗及平均功耗。第2步只是代表窗；读 DMA 代理、各模型独特实现和未标定项另列。六模型最后十二项回放/积分均 COMPLETED 0:0、UNLIMITED，完整数值与冻结基线一致，DDR/SRAM 和散列通过。
+
+- [逐模型作业、能耗、限制与全部剩余步骤](../../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)
+- [最终作业快照](six-model-jobs-final.json)，[本地复算及 PDF 校验](six-model-validation-v1_6.json)，[报告索引](energy_report_models.json)
+- 原始权重和逐层大文件保留授权服务器，小型复算输入在 `six-model-results/<model>/`。结果 JSON 位于本目录 `*_tlm_power_v1.json`。
+
+复用检查：`python work/Melodydt/280/verify_six_model_energy.py`。PDF 重建：`python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-current.pdf`（ReportLab 与中文字体）。显式冻结累加顺序后，Python 3.7.0/3.12 与服务器 3.6.6 的六份结果逐字节一致。此检查验证既有回执和能耗积分，不重跑模型或 FP32。
+
+目前只交付条件覆盖小计。四项既有读 DMA 综合仍运行，未来从映射网表直接补标定；特殊算术、控制、实例驻留与全局时钟/互连仍缺。旧 M 300 MHz 时序未闭合。Issue #280 继续进行中，PR #281 草稿待独立审查，登记 pending，看板未核验/同步 pending。下方保留历次阶段记录，当前状态以本节及最终交接为准。
+
 2026-11-15（Asia/Shanghai）。项目 `llm-hardware-design`，负责人 Melodydt。任务分支 `task/280-seven-model-energy` 从七模型速度分支的 `fbff1bd0e455739f28d9b7dd00b97216fe7bb847` 建立，速度证据提交为 `d8f775b661c511d6450d5cbe63f4519563114895`。 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [速度交接](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/f1e61ca7155b070bd1e5364778da8bdd499a7331/docs/handoffs/2026-11-15-issue-274-speed-evaluation.md)
 
 ## 已完成

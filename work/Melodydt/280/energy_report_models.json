@@ -1,5 +1,5 @@
 {
-  "revision": "1.5",
+  "revision": "1.6",
   "updated": "2026-11-17",
   "owner": "Melodydt",
   "report_scopes": {
@@ -7,7 +7,7 @@
     "on_chip_plus_ddr": "covered_subtotal：片上已覆盖小计加 DDR 器件，未计 DDR PHY 和板级 I/O",
     "read_dma_proxy": "代理属于片上动态增量；分别加入上述两类，另列敏感性，不混入基础小计"
   },
-  "source_commit": "5a06901f66e0f8711dccedfcb3b1eaae984ac058",
+  "source_commit": "52260a394d6473d80b940973150fbc47df530ab3",
   "benchmark_commit": "fbff1bd0e455739f28d9b7dd00b97216fe7bb847",
   "models": [
     {
@@ -56,7 +56,29 @@
     },
     {
       "name": "Gemma-3-4B",
-      "status": "能耗待评估"
+      "status": "已验收 TLM 迁移估算 v1",
+      "result": "gemma_tlm_power_v1.json",
+      "result_sha256": "1fb15db1f90f4005a2ca18a1edbdccf11da0374e3d167989735b44a6cde2359f",
+      "source_commit": "52260a394d6473d80b940973150fbc47df530ab3",
+      "configuration": "W8A16，34 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
+      "implementation": "256 维宽注意力，整行 K/V 与双窗口；局部/全局注意力及 GELU 保留。残差及后分支 RMS 使用已验收的 Q12，投影输入仍为 Q16。",
+      "coverage": [
+        "GELU 没有匹配的门级能耗系数，未使用 SiLU 单价代替；表中的 G32 活跃增量不覆盖 GELU。",
+        "共用 C639 条件配置：三 M、四 S_P、四局控 PM/取指、一个 G32/交换机和一组母控四宏；全窗开钟驻留尚待实物部署验证。",
+        "主表与 Qwen3 v1 同口径，只计 PR272 FFN 的 M 活跃增量。普通投影 M 忙时间已单独观测，额外参考值留在 JSON，未并入主表。",
+        "写 DMA 单价复用 Qwen3 真实载荷样本；其他位宽的串行映射和母控页按字换算保留在 JSON。未标定控制、算术、读 DMA 空闲及全局时钟/互连不能视为零。旧 M 300 MHz 时序仍未闭合。",
+        "本轮完整 result、逐层数值与输出文件均与冻结验收一致，DDR/SRAM 计数对账通过；沿用原同输入 FP32 对照，不代表本轮重新运行 FP32。"
+      ],
+      "sources": [
+        {
+          "label": "Gemma-3-4B 三窗结果与 SHA-256",
+          "path": "work/Melodydt/280/gemma_tlm_power_v1.json"
+        },
+        {
+          "label": "Gemma-3-4B 回放、作业与复现",
+          "path": "docs/handoffs/2026-11-17-issue-280-six-model-energy.md"
+        }
+      ]
     },
     {
       "name": "Phi-4-mini",

@@ -18,7 +18,7 @@ from reportlab.platypus import PageBreak, Paragraph, SimpleDocTemplate, Spacer, 
 
 
 REPO = "https://github.com/rayggxia-workspace/LLMHardwareDesign"
-WINDOWS = {"prefill": "短 Prefill", "first_token": "首 Decode token", "decode": "稳态 Decode"}
+WINDOWS = {"prefill": "短 Prefill", "first_token": "首 Decode token", "decode": "第2步 Decode"}
 COMPONENTS = {
     "DDR 芯片": ("ddr_devices",),
     "旧版 M 三路": ("m_clocked_idle_3x", "m_busy_increment"),
@@ -114,7 +114,7 @@ def overview(story, styles, index):
     add(story, styles, f"报告更新于 {index['updated']}（北京时间）  |  负责人 {index['owner']}", "note")
     add(story, styles, "基准与采样窗口", "section")
     add(story, styles, "以 #274 / PR #275 的模型短程回放为基础，继承 PR #260 的两步 Decode 和短 Prefill 结构。使用 300 MHz 分项标定、512-bit 数据 SRAM 和代表性真实历史。逐模型记录 FFN 部署、变更的调度与物理范围。")
-    add(story, styles, "发布短 Prefill、开始到首个 Decode 输出、两次 Decode 退休间三窗的实际时长、tok/s、平均 W 和 mJ/token。Prefill 按输入 token 归一化，Decode 按输出 token 归一化。")
+    add(story, styles, "发布短 Prefill、开始到首个 Decode 输出、两次 Decode 退休间三窗的实际时长、tok/s、平均 W 和 mJ/token。Prefill 按输入 token 归一化，Decode 按输出 token 归一化。第2步是代表窗口，不是长序列稳态统计。")
     add(story, styles, "分项积分", "section")
     add(story, styles, "窗口能量 = 各分项开钟基线功耗 × 驻留时间 + 各事件数 × 单次活动增量。已有配对标定先扣匹配的静默基线。M 等采用忙/闲时间积分，SRAM 和 DMA 采用对账后的位宽及事务计数。DDR 芯片沿用双通道器件模型。")
     add(story, styles, "平均功耗 = 窗口能量 ÷ 窗口时间。每 token 能耗 = 窗口能量 ÷ token 数。共享模块、局部时钟和漏电仅计一次。代理值随条件标注，缺项保留待标定。")
@@ -172,7 +172,7 @@ def comparison_page(story, styles, records, include_ddr):
         windows = result["windows"]
         energy = [fmt(windows[window][key]["energy_mj_per_token"]) for window in WINDOWS]
         rows.append((model["name"], *energy, fmt(windows["decode"][key]["average_power_w"], 4)))
-    table(story, styles, ("模型", "短 Prefill\nmJ/token", "首 Decode\nmJ/token", "稳态 Decode\nmJ/token", "稳态 Decode\n平均 W"),
+    table(story, styles, ("模型", "短 Prefill\nmJ/token", "首 Decode\nmJ/token", "第2步 Decode\nmJ/token", "第2步 Decode\n平均 W"),
           rows, (0.25, 0.185, 0.185, 0.185, 0.195))
     add(story, styles, "如何使用这张表", "section")
     events = "DDR、SRAM、PM、FFN 和残差" if include_ddr else "SRAM、PM、FFN 和残差等片上"
@@ -223,7 +223,7 @@ def next_steps(story, styles, index, records):
     add(story, styles, "配对静默、正常、背压和读写并发样本后，将读侧空闲及动态按相同窗口回填。阶段包装和其内部共享 fabric 只计一次。九目标母控、运行时取指、其余控制与计算、全局时钟和跨块互连待补。DDR PHY 和板级 I/O 单列。")
     add(story, styles, "版本维护与复现", "section")
     add(story, styles, "每完成一个模型或取得更强的标定证据，核验时窗、token、FP32 和事务对账，登记结果、输入和工具版本及 SHA-256，重建同名 PDF。不同覆盖范围、活动假设和各模型专项优化随各自结果记录。")
-    add(story, styles, "Qwen3 v1 的 BSCC-T6 与本地 Python 复算结果字节一致。原始活动和物理工件沿用授权存储，项目仓库保留结果、校验与复算入口。", "note")
+    add(story, styles, "七模型的 BSCC-T6 与本地 Python 复算结果字节一致。六个新增模型回放继承原同历史 FP32 验收，完整数值输出与冻结基线一致；本轮没有重新运行 FP32。原始活动和物理工件沿用授权存储，仓库保留结果、校验与复算入口。", "note")
     for model, _ in records:
         commit = model.get("source_commit", index["source_commit"])
         for item in model["sources"]:

@@ -19,6 +19,14 @@ def load(path):
     return json.loads(path.read_bytes())
 
 
+def ordered_sum(values):
+    """Preserve the frozen Python 3.6/3.7 accumulation across interpreters."""
+    total = 0
+    for value in values:
+        total += value
+    return total
+
+
 def pair(x):
     result = list(x) if isinstance(x, (tuple, list)) else [x, x]
     if len(result) != 2 or not 0 <= result[0] <= result[1]:
@@ -60,7 +68,7 @@ def calibration(directory):
         phases = page["increment"]
         if any(phases[k]["requests"] != n for k in ("write", "read")):
             raise ValueError("invalid PM calibration request count")
-        energy = sum(phases[k]["exact_clock_arc_pj"] for k in ("write", "read")) / 1000
+        energy = ordered_sum(phases[k]["exact_clock_arc_pj"] for k in ("write", "read")) / 1000
         energy += phases["write"]["duration_s"] * 1e9 * (
             page["cases"]["write-quiet"]["opensta_w"]["total"] - page["cases"]["read-quiet"]["opensta_w"]["total"])
         pm_rates[page["bytes"]] = energy
@@ -175,11 +183,11 @@ def integrate(model, run, cal):
             add_words = sum(n for key, n in events.items() if re.fullmatch(r"leaf_\d+_e_add_packets_cycles9", key))
             components["u_add2_logic_active_increment"] = [add_words * e for e in cal["add_per_word"]]
             components["write_dma_active_increment"] = [counts["write"] * e / 1000 for e in cal["write_pj"]]
-            total = [sum(c[edge] for c in components.values()) for edge in (0, 1)]
+            total = [ordered_sum(c[edge] for c in components.values()) for edge in (0, 1)]
             chip = [v - components["ddr_devices"][i] for i, v in enumerate(total)]
             sensitivity = {}
             for label, factor in (("half_write_cost", .5), ("same_write_cost", 1), ("twice_write_cost", 2)):
-                pj = sum(cal["write_pj"]) / 2 * factor
+                pj = ordered_sum(cal["write_pj"]) / 2 * factor
                 energy = counts["read"] * pj / 1000
                 sensitivity[label] = {"assumed_read_pj_per_64b": pj, "read_dma_active_proxy": metrics(energy, ps, tokens),
                                       "subtotal_with_read_dma_active_proxy": metrics([v + energy for v in total], ps, tokens)}

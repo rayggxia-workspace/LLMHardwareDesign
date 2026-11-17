@@ -1,6 +1,12 @@
 # Melodydt 的进度
 
-## 2026-11-17 18:00（Asia/Shanghai）六模型扩测全部验收
+## 2026-11-17 18:01（Asia/Shanghai）七模型双口径能耗报告 v1.6
+
+Qwen3 参考加六个新增模型均有可复算三窗结果，六模型最终十二项回放/积分全部 COMPLETED 0:0、UNLIMITED。完整冻结输出、DDR/SRAM 和输入/输出 SHA 通过；本地 Python 3.7.0/3.12 积分与服务器 3.6.6 字节一致。PDF v1.6 十八页，按片上已覆盖／片上＋DDR 两类分别提供 mJ/token 与 W；168 个主表数值和全部页目检通过，读 DMA 代理另列。第2步 Decode 是代表窗，不宣称长序列稳态。
+
+[最终结果、作业及全部接续步骤](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md) · [报告](../../docs/experiments/seven-model-energy-evaluation.pdf)。更完整覆盖仍待读 DMA、特殊算术、控制和拓扑归属；旧 M 300 MHz 时序未闭合。17:55 读取四项 DMA 综合仍运行、四项功耗等待依赖；继续采取综合后直接估功耗路线。Issue #280 in_progress，PR #281 草稿、未合并，独立审查人待指定；登记 PR #5 pending，Projects 缺配置/工具、未核验与同步 pending。负责人 Melodydt。
+
+## 2026-11-17 17:54（Asia/Shanghai）六模型扩测全部验收
 
 最后的 Gemma 38821513/38821514 均 COMPLETED 0:0，1421 项输入、完整冻结输出、DDR/SRAM、源/结果 SHA 与本地积分一致。第二步 Decode 片上 533.127–534.364、片上＋DDR 1744.723–1745.960 mJ/token，不含读 DMA 代理，GELU 等未标定项保留。六模型最终十二项回放/积分全部完成；Phi 已收入 PDF v1.5（十六页），下一步将 Gemma 纳入最终汇总及同步交付。[结果与恢复](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。#280 仍 in_progress，PR #281 草稿，完整物理覆盖待补；登记 pending，看板缺配置待核验。负责人 Melodydt。
 
