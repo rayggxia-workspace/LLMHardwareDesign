@@ -1,5 +1,9 @@
 # Melodydt 的进度
 
+## 2026-11-17 片上／片上＋DDR 分类报告
+
+按用户要求，PDF v1.2.1 明确分为片上已覆盖与片上已覆盖＋DDR 器件两类，两类分别展示 W、mJ/token，读 DMA 动态代理也分别列出。十页 PDF 目检、数值提取和逐窗片上＋DDR 加法核对通过；原始标定与三模型结果未变。Llama／Granite 已验收，Phi／Falcon／Gemma／Qwen3.5 继续不限时回放及依赖积分。下一步逐个验收并按两类更新报告。#280 进行中，PR #281 草稿；登记 pending，看板缺配置待核验。[结果和恢复](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。负责人 Melodydt。
+
 ## 2026-11-17 16:26（Asia/Shanghai）Llama、Granite 已验收
 
 Llama 回放 38820601/积分 38820946 与 Granite 38820602/38820947 均 COMPLETED 0:0，冻结完整输出、DDR/SRAM 与源/结果散列通过，本地和服务器分项复算字节一致。稳态 Decode 已覆盖片上＋DDR 为 Llama 659.827–660.201、Granite 522.814–523.095 mJ/token；特殊算术、读 DMA 空闲、旧 M 时序等缺项保留。PDF v1.2 已有九页，加入两个模型及同口径汇总，目检和数值提取通过。

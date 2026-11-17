@@ -131,3 +131,15 @@ Llama 回放 38820601 在 m3ca0704 运行 33:57，积分 38820946 在 m3ca0608 �
 PDF v1.1 已加入 Granite 并增加跨模型汇总页，七页 Poppler 目检通过；SHA-256 `5d4b3e8f77c4d05c212ae73f8343233e69555ea1b51b19a9045ae47104afde8d`。原 `output/pdf/seven-model-energy-evaluation.pdf` 写入及原子替换均返回拒绝访问，文件非只读且目录 ACL 允许修改，疑为本机打开程序占用；未强制关闭用户程序。仓库同名 `docs/experiments/seven-model-energy-evaluation.pdf` 正常更新，本机可用 `output/pdf/seven-model-energy-evaluation-current.pdf`。后续继续更新这两个可写路径并加入 Llama。Phi、Gemma、Qwen3.5、Falcon 回放及依赖积分继续。
 
 PDF v1.2 已加入 Llama，共九页，保留逐模型实现、缺项、读 DMA 情景及源码证据链接。新增页和汇总目检、数值提取与哈希检查通过，SHA-256 `7cbedf049d10eb1b3a5a23484ed9058f92168811ca79e097c1d90cf3a0801353`。Granite 数据提交 `4cd5c6c745373092d2075d8184809cf56f940042`；Llama 数据和 PDF v1.1 提交 `8fec367f54eb5964d7d4fdfc03c5167367228fa7`，PDF v1.1 已从 GitHub 读回核对完整内容。
+
+## 片上与片上＋DDR 两类报告
+
+按用户新增要求，所有后续结果必须同时报告 `covered_on_chip_subtotal`（片上已覆盖）与 `covered_subtotal`（片上已覆盖＋DDR 器件），两类分别展示 W 和 mJ/token。读 DMA 动态代理属于片上增量，分别加到两类小计，并与基础表分开；未标定片上项、PHY 和板级 I/O 继续列为缺项。
+
+| 模型 | 短 Prefill 片上 | 短 Prefill 片上＋DDR | 稳态 Decode 片上 | 稳态 Decode 片上＋DDR |
+| --- | ---: | ---: | ---: | ---: |
+| Qwen3 | 50.004–50.127 | 164.944–165.067 | 163.586–163.711 | 496.440–496.566 |
+| Granite | 73.149–73.428 | 250.734–251.012 | 168.837–169.118 | 522.814–523.095 |
+| Llama | 75.804–76.174 | 270.434–270.804 | 206.341–206.715 | 659.827–660.201 |
+
+单位 mJ/token，不含读 DMA 动态代理。首 Decode、两类平均功耗和分项见原 JSON 与 PDF。此次没有修改标定系数和模型结果，无需重新回放。PDF v1.2.1 共十页，分别提供两类汇总页和模型页的并列指标；生成器逐窗验证片上＋DDR＝组合小计（能量、每 token 能耗、平均功耗均对账），Poppler 目检和数值提取通过。PDF SHA-256 `4a17a0ea5dcfa1d82cf86ae3d61d87f2503527992f63f6414325b207409c7b0a`。
