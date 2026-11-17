@@ -1,5 +1,9 @@
 # Melodydt 的进度
 
+## 2026-11-17 18:00（Asia/Shanghai）六模型扩测全部验收
+
+最后的 Gemma 38821513/38821514 均 COMPLETED 0:0，1421 项输入、完整冻结输出、DDR/SRAM、源/结果 SHA 与本地积分一致。第二步 Decode 片上 533.127–534.364、片上＋DDR 1744.723–1745.960 mJ/token，不含读 DMA 代理，GELU 等未标定项保留。六模型最终十二项回放/积分全部完成；Phi 已收入 PDF v1.5（十六页），下一步将 Gemma 纳入最终汇总及同步交付。[结果与恢复](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。#280 仍 in_progress，PR #281 草稿，完整物理覆盖待补；登记 pending，看板缺配置待核验。负责人 Melodydt。
+
 ## 2026-11-17 17:48（Asia/Shanghai）Phi 三窗通过
 
 Phi 38820798/38820949 均 COMPLETED 0:0，1241 项输入、完整冻结输出、DDR/SRAM、源/结果 SHA 与本地积分一致。稳态 Decode 片上 577.551–578.672、片上＋DDR 1879.937–1881.058 mJ/token，不含读 DMA 代理；LongRoPE 和额外算术缺项保留。Qwen3.5 已收入双口径 PDF v1.4（十四页），Phi 和 Gemma 接续更新及归档。[结果与恢复](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。#280 in_progress，PR #281 草稿；登记 pending，看板缺配置待核验。负责人 Melodydt。
