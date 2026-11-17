@@ -127,6 +127,9 @@ def coefficients():
     c['native_mother_w']=None
     if native.exists():
         mother=load(native)
+        manifest=(root/'native-mother-results.sha256').read_text()
+        if digest(native)+'  calibration.json' not in manifest:
+            raise ValueError('native mother server manifest mismatch')
         if (mother['targets'],mother['STALL_LIMIT'],mother['SERVICE_STALL_LIMIT'],mother['clock_mhz'],mother['wire_parasitics_loaded'])!=(9,4096,4096,300,False):
             raise ValueError('wrong native mother configuration')
         c['native_mother_w']=bounds(v['power_w']['total'] for v in mother['windows'].values())
@@ -143,6 +146,14 @@ def stage_data(model):
     hashes={str(p.relative_to(HERE)):digest(p) for mode in data for p in (directory/mode).glob('*.json')}
     if model=='qwen3':
         accepted=load(directory/'acceptance.json')
+        manifest=(directory/'results.sha256').read_text()
+        pairs=[('acceptance.json','acceptance.json')]
+        for mode,prefix in (('prefill','prefill'),('decode','decode-live')):
+            for filename in ('result.json','component-observation.json'):
+                pairs.append((mode+'/'+filename,prefix+'-w4-tile128-pr272-combined/'+filename))
+        for local,remote in pairs:
+            if digest(directory/local)+'  '+remote not in manifest:
+                raise ValueError('Qwen3 server manifest mismatch: '+local)
         if not all(x['complete_result_equal'] and x['numerical_files_equal'] and x['ordinary_and_ffn_intervals_disjoint'] for x in accepted.values()):
             raise ValueError('Qwen3 observation was not accepted')
         hashes[str((directory/'acceptance.json').relative_to(HERE))]=digest(directory/'acceptance.json')
@@ -168,6 +179,7 @@ def integrate(model, c):
     if c['native_mother_w'] is None:missing.append('Nine-target mother core: no accepted synthesis power result yet.')
     assumptions=[
         'No wire SPEF or estimated wire RC is loaded. Existing mapped networks retain their actual buffers and pin capacitances; only the native mother core is newly synthesized.',
+        'Zero-delay activity does not include delay-induced glitches. M, control and write/U boundary propagation is not a full internal gate-level activity replay.',
         'Keep accepted TLM windows (3334 ps core step, nominal 300 MHz). Component powers use 300 MHz and do not establish timing closure.',
         'Conditional shared footprint: 3 M, 4 S_P, 4 LC PM/fetch, one G32, switch, write scope, U ADD chain and PM transport bridge, and 4 mother PM macros. Actual per-model deployment is not proven.',
         'Both FFN and ordinary projection M intervals use the same sampled C639 active-minus-idle coefficient. Ordinary arithmetic modes and model bit-pattern transfer remain unqualified.',

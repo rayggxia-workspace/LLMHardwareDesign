@@ -21,15 +21,17 @@ REPO = "https://github.com/rayggxia-workspace/LLMHardwareDesign"
 WINDOWS = {"prefill": "短 Prefill", "first_token": "首 Decode token", "decode": "第2步 Decode"}
 COMPONENTS = {
     "DDR 芯片": ("ddr_devices",),
-    "旧版 M 三路": ("m_clocked_idle_3x", "m_busy_increment"),
+    "M 三路（FFN + 普通投影）": ("m_clocked_idle_3x", "m_busy_increment", "m_ordinary_projection_increment"),
     "数据 SRAM 四站点": ("s_p_clocked_idle_4x", "s_p_access_increment"),
     "母控 PM 四宏": ("mother_pm_clocked_idle_4_macros", "mother_pm_page_install_and_readback_increment"),
-    "局控 PM 四份静默": ("lc_pm_loaded_quiet_4x",),
-    "局控描述符四份静默": ("lc_descriptor_fetch_quiet_4x",),
+    "九目标母控核心": ("native_mother_core_reference_1x",),
+    "局控 PM（驻留/启动/读取）": ("lc_pm_loaded_quiet_4x", "lc_pm_boot_crc_increment", "lc_pm_runtime_read_increment"),
+    "局控描述符（驻留/活动）": ("lc_descriptor_fetch_quiet_4x", "lc_descriptor_fetch_active_increment"),
     "G32 空闲及活跃增量": ("g32_down_idle_1x", "g32_active_increment"),
-    "U ADD2 逻辑增量": ("u_add2_logic_active_increment",),
+    "U ADD2 链（驻留/活动）": ("u_add2_logic_active_increment", "u_add_chain_clocked_idle_1x"),
     "局部交换机静默": ("cohort_switch_idle_1x",),
-    "写 DMA 活跃增量": ("write_dma_active_increment",),
+    "写 DMA（驻留/活动）": ("write_dma_active_increment", "write_dma_clocked_idle_1x"),
+    "PM 传输桥（驻留/装载）": ("pm_transport_clocked_idle_1x", "pm_transport_install_increment"),
 }
 INK = colors.HexColor("#172A3C")
 MUTED = colors.HexColor("#43566A")
@@ -112,6 +114,8 @@ def overview(story, styles, index):
     add(story, styles, f"LLMHardwareDesign  /  Issue #280  /  v{index['revision']}", "eyebrow")
     add(story, styles, "七模型功耗与能耗评估", "title")
     add(story, styles, f"报告更新于 {index['updated']}（北京时间）  |  负责人 {index['owner']}", "note")
+    if index.get('wire_parasitics_loaded') is False:
+        add(story, styles, "本版统一不加载布局布线寄生。复用网络仍保留已有单元、缓冲器和引脚电容；新母控仅综合映射。新增缺项与去寄生影响分开核算。", "note")
     add(story, styles, "基准与采样窗口", "section")
     add(story, styles, "以 #274 / PR #275 的模型短程回放为基础，继承 PR #260 的两步 Decode 和短 Prefill 结构。使用 300 MHz 分项标定、512-bit 数据 SRAM 和代表性真实历史。逐模型记录 FFN 部署、变更的调度与物理范围。")
     add(story, styles, "发布短 Prefill、开始到首个 Decode 输出、两次 Decode 退休间三窗的实际时长、tok/s、平均 W 和 mJ/token。Prefill 按输入 token 归一化，Decode 按输出 token 归一化。第2步是代表窗口，不是长序列稳态统计。")
@@ -155,11 +159,32 @@ def result_page(story, styles, model, result):
         values = []
         for components in results:
             available = [components[k]["energy_mj_per_token"] for k in keys if k in components]
-            values.append(fmt([sum(items) for items in zip(*available)], 6 if label.startswith("写 DMA") else 3)
+            values.append(fmt([sum(items) for items in zip(*available)], 6)
                           if available else "待标定")
         if any(value != "待标定" for value in values):
             rows.append((label, *values))
     table(story, styles, ("分项", *WINDOWS.values()), rows, (0.37, 0.21, 0.21, 0.21))
+
+
+def additions_page(story, styles, records):
+    add(story, styles, "无布线寄生 / 新增覆盖", "eyebrow")
+    add(story, styles, "本版补入了什么", "title")
+    add(story, styles, "新增普通投影 M 活跃项；写 DMA、U ADD2 链及 PM 传输桥的开钟驻留；PM 传输/局控启动 CRC；局控 PM 运行读取和描述符取指活动。九目标母控仅在取得匹配的综合活动结果后加入。")
+    add(story, styles, "下表取第2步 Decode，单位 mJ/token。旧版含线网寄生，本版重新计算全部已有分项，因此总数下降不能解读为新增模块降低能耗。")
+    rows=[]
+    for model, result in records:
+        row=result['windows']['decode']
+        old=row['prior_with_wire_covered_on_chip_subtotal']['energy_mj_per_token']
+        added=row['newly_included_subtotal']['energy_mj_per_token']
+        new=row['covered_on_chip_subtotal']['energy_mj_per_token']
+        same=[v-added[i] for i,v in enumerate(new)]
+        rows.append((model['name'],fmt(old),fmt(same),fmt(added),fmt(new)))
+    table(story,styles,("模型","旧片上小计\n含线网 RC","原分项\n去线网 RC","本次新增\n片上分项","新片上\n覆盖小计"),rows,(.24,.19,.19,.19,.19))
+    add(story,styles,"计数与归属", "section")
+    add(story,styles,"普通投影按各模型实际 M 忙区间计入，采用 C639 活跃减静默系数。局控每次顶层服务按 20 个元数据字加 3 次指令字读取、一次 128 B 描述符抓取估算；MoE 等服务内部算术不重复算作顶层 CALL。PM 启动只在实际安装的首窗计入。")
+    add(story,styles,"驻留仍采用条件部署：三 M、四数据 SRAM、四局控 PM/取指，以及共享的 G32、交换机、写侧、U 链、PM 传输桥和母控。真实实例数、门控与各模型特有部署仍待验证。", "note")
+    add(story,styles,"仍不能填成零的部分", "section")
+    add(story,styles,"读 DMA 实测功耗；母控运行取指与启动；局控外壳和分发；交换机实际流量；RMS、softmax、RoPE、缩放及特殊 GELU/GDN/Mamba2/router 算术；尚未综合的全局时钟/互连单元；DDR PHY 和板级 I/O。布线寄生是本版主动排除项，与这些未覆盖硬件分开。", "note")
 
 
 def comparison_page(story, styles, records, include_ddr):
@@ -220,10 +245,10 @@ def dma_proxy(story, styles, result):
 def next_steps(story, styles, index, records):
     add(story, styles, "综合后直接估功耗", "section")
     add(story, styles, "等读 DMA 技术映射网表输出后，在 OpenSTA 载入网表、Nangate45 TT Liberty 和 300 MHz SDC，读入端口匹配且时标转换后的 C639 VCD。记录活动标注率、传播活动、动态和漏电。无 SPEF 时以单元及引脚负载估算，可在布局布线完成前运行。")
-    add(story, styles, "配对静默、正常、背压和读写并发样本后，将读侧空闲及动态按相同窗口回填。阶段包装和其内部共享 fabric 只计一次。九目标母控、运行时取指、其余控制与计算、全局时钟和跨块互连待补。DDR PHY 和板级 I/O 单列。")
+    add(story, styles, "配对静默、正常、背压和读写并发样本后，将读侧空闲及动态按相同窗口回填。阶段包装和内部共享 fabric 只计一次。补齐母控运行取指/启动、局控外壳、其余控制与计算，再验证各模型实例数、门控及全局时钟单元。DDR PHY 和板级 I/O 单列；本版不要求布局布线寄生。")
     add(story, styles, "版本维护与复现", "section")
     add(story, styles, "每完成一个模型或取得更强的标定证据，核验时窗、token、FP32 和事务对账，登记结果、输入和工具版本及 SHA-256，重建同名 PDF。不同覆盖范围、活动假设和各模型专项优化随各自结果记录。")
-    add(story, styles, "七模型的 BSCC-T6 与本地 Python 复算结果字节一致。六个新增模型回放继承原同历史 FP32 验收，完整数值输出与冻结基线一致；本轮没有重新运行 FP32。原始活动和物理工件沿用授权存储，仓库保留结果、校验与复算入口。", "note")
+    add(story, styles, "七模型的原回放继承同历史 FP32 验收。新分项使用服务器重算的无寄生标定及验收的 TLM 时间/事件，本地进行分项守恒和双口径复算；不代表重新运行七模型 FP32 或整模型门级仿真。原始活动和网表留在授权服务器，仓库保留小型回执和复算入口。", "note")
     for model, _ in records:
         commit = model.get("source_commit", index["source_commit"])
         for item in model["sources"]:
@@ -264,6 +289,9 @@ def main():
         for include_ddr in (False, True):
             story.append(PageBreak())
             comparison_page(story, styles, records, include_ddr)
+    if records and all('newly_included_subtotal' in r['windows']['decode'] for _,r in records):
+        story.append(PageBreak())
+        additions_page(story,styles,records)
     for model, result in records:
         story.append(PageBreak())
         result_page(story, styles, model, result)
