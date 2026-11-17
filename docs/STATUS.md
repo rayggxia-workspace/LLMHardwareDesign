@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成 S_P／S_base 后布线 SRAM 等长配对功耗，以及母控三档真实页的四宏标定。三套 300 MHz 物理预检通过，下一步按实际实例和驻留积分到 Qwen3 三窗，读 DMA 仍待物理结果。[标定回执](handoffs/2026-11-17-issue-280-sram-mother-pm-calibration.md)
+
 2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已恢复旧归档访问。S128 bank、S_P／S_base 后布线和母控 PM 归档原件在 BSCC 解包并通过散列与网表实例核对，待结合实际活动执行功耗标定。[恢复回执](handoffs/2026-11-17-issue-280-macro-views-recovered.md)
 
 2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 将真实载荷写 DMA 与 U ADD2 增量并入 Qwen3 三窗小计，完成旧版 M 保留作用域数据的等待对照及 C639 局控 PM 运行时的活动核验与后布线分项标定。已定位 SRAM 与母控 PM 的原工件归档，旧服务器身份认证待恢复，读 DMA 仍在映射。[结果与恢复](handoffs/2026-11-17-issue-280-bscc-t6-covered-power-and-bindings.md)

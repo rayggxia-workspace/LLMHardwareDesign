@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-17（Asia/Shanghai）SRAM／母控 PM 300 MHz 标定
+
+- 38814143、38814341、38814342、38814399 均 `COMPLETED 0:0`。S_P／S_base 开钟静默 **56.6801／47.2607 mW**。S_P 四 bank 同址 512-bit 读 **16.000 pJ/次**，串行 512-bit 写 **69.294 pJ/组**；S_base 的串行 512-bit 写 **60.248 pJ/组**。
+- 母控真实 240／272／1,616 B 页的写入和读回为 15／17／101 次 ×128-bit，四宏漏电合计 **26.8718 mW**。保留逐沿内部增量和独立 OpenSTA 对照。
+- 接续按实际 Qwen3 站点、开钟驻留和 PM 页类别积分，补母控运行取指和共享时钟，等待读 DMA 标定。[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [标定与复现](../../docs/handoffs/2026-11-17-issue-280-sram-mother-pm-calibration.md)
+
 ## 2026-11-17（Asia/Shanghai）旧服务器 SRAM／母控 PM 工件已恢复
 
 - 显式指定项目已授权的本机 SSH 身份后，旧服务器共享归档读取通过。#155、#200、#223 的 11 个原件转入 BSCC `~/LLMHardware/zenanyan/issue-280-bscc-t6-01/incoming/macro-views/`，母控归档中六个文件已提取并逐项验 SHA-256。
