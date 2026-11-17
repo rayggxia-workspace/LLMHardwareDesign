@@ -4,6 +4,10 @@ User requires continuing until backend verification completes, not ending at sub
 
 ## Current facts
 
+- U119747/v14 is rejected: NDR v1 left unspecified M1–8 spacing0 and caused PG shorts (two variants also RCX segfault). Root uploaded `u-upper-ndr-hook-v2.tcl`, explicit native widths/spacings on all routing layers plus exact per-layer readback, only chosen upper gaps stricter. CU restarting from guard-ant-v1 PG-checked source. C119751 six D-only candidates routing; m.04/d.025 independent4CTS fresh fullcounts hold0/setup1 (~-49ps), still placementRC not final. C119752 proves64 noncache EQY partitions but8 cached arithmetic cones time out; no complete mapped proof yet, direct ABC CEC next.
+
+- Local checkpoint91ac2b165 committed, not pushed. Ordinary push resets; small-object REST blob transport and PR edit also stalled and their exact local processes were stopped. Readback still online f93e14e18 and older PR body. Prepared `pr-body-current.md` is not published. Avoid claiming sync. `publish_exact_objects.py` is a checked-SHA fallback but has not completed successfully.
+
 - Latest jobs: U119747 combines all15 remaining diodes,8 upper-spacing NDR/rips and targeted electrical/hold repairs in six8-CPU variants; pure database edits pass, routing/acceptance pending. C119742 keeps onlyr24/x16 andr32/x32 actual-route controls. Its525 residual hold endpoints are external-input-to-register D paths; internal reg-to-reg hold is closed at that checkpoint. Targeted D-branch repair is next, preserving two pure IO setup paths. Cached RTL-to-mapped proof119748 now uses actual state aliases and38 true interfaces; still pending, not passed.
 
 - **G/S leaves and F parent accepted.** Frozen F package `gs/candidate-S-minimal-localv4/parent-F-eco-h20-v4/release`. Full original GDS deck0, TT nominal300MHz setup+0.221605405ns/hold+0.002453537ns; electrical/PG/antenna/formal/state/geometry pass. Native44 markers comprise40 exact historical plus4 rigorously proven same-net macro contacts. Receipt `audit/evidence/F/accepted-parent.json`.
