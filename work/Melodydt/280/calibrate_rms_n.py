@@ -58,7 +58,8 @@ def clip_ports(raw, target, ports, first, last):
     with target.open('w') as stream:
         stream.write('$timescale 1ps $end\n$scope module dut $end\n')
         for name, (ident, width) in names.items():
-            stream.write('$var wire {} {} {} $end\n'.format(width, ident, name))
+            bus_range = ' [{}:0]'.format(int(width)-1) if int(width) > 1 else ''
+            stream.write('$var wire {} {} {}{} $end\n'.format(width, ident, name, bus_range))
         stream.write('$upscope $end\n$enddefinitions $end\n#0\n')
         for ident, value in selected.items():
             stream.write('b{} {}\n'.format(value, ident))
@@ -160,6 +161,8 @@ def main():
             annotation=re.findall(r'Annotated (\d+) pin activities\.',log)
             if len(totals)!=1 or len(annotation)!=1 or re.search(r'(?m)^(Error:|\[ERROR)',log):
                 raise ValueError('power output invalid')
+            if 'problem parsing bus' in log:
+                raise ValueError('VCD bus declaration rejected')
             if int(annotation[0]) < sum(len(p['bits']) for p in ports.values()):
                 raise ValueError('incomplete boundary annotation')
             powers[name]=dict(power_w=dict(zip(('internal','switching','leakage','total'),map(float,totals[0]))),
