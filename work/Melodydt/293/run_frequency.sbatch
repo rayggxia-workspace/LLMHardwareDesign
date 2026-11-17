@@ -16,8 +16,17 @@ if [[ ${1:-} == inside ]]; then
     joint=$p/issue260-tlm-joint-9BiJdfEg
     old=$HOME/LLMHardware/zenanyan/issue-291-prefill-01
     shared=$root/component-observation/replay-38782605
+    runner=$old/runner
+    case "$model" in
+        llama) runner=$root/six-model-energy-01/run-38820601-llama/runner;;
+        granite) runner=$root/six-model-energy-01/run-38820602-granite/runner;;
+        phi) runner=$root/six-model-energy-01/run-38820798-phi/runner;;
+        gemma) runner=$root/six-model-energy-01/run-38821513-gemma/runner;;
+        qwen35) runner=$root/six-model-energy-01/run-38821601-qwen35/runner;;
+        falcon) runner=$root/six-model-energy-01/run-38821511-falcon/runner;;
+    esac
     export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
-    export PYTHONPATH="$bundle:$old/runner:$runs/issue-270/ffn-weight-05/tlm:$p/issue260-native-sram512-SMbOWTw6:$joint/systemc_benchmark:$joint/block_local_native:$a/source/project/experiments/block_local_native:$a/source/project/experiments/mother_control_native:$a/source/project/experiments/shared_x_control:$a/algo1/project/experiments/block_synthesis"
+    export PYTHONPATH="$bundle:$runner:$runs/issue-270/ffn-weight-05/tlm:$p/issue260-native-sram512-SMbOWTw6:$joint/systemc_benchmark:$joint/block_local_native:$a/source/project/experiments/block_local_native:$a/source/project/experiments/mother_control_native:$a/source/project/experiments/shared_x_control:$a/algo1/project/experiments/block_synthesis"
     if [[ $model == prepare ]]; then
         g++ -std=c++17 -O3 -Wall -Wextra -Werror -fPIC -shared "$old/runner/projection_math.cpp" -o "$out/projection_math.so"
         python3 -VV > "$out/python-version.txt"
@@ -51,10 +60,14 @@ sha256sum --quiet -c scripts.sha256
 cp source-commit.txt "$out/source-commit.txt"
 printf 'JOB=%s NODE=%s TASKS=%s CORE_PS=3334,5000 DDR_PS=630 START=%s\n' "$SLURM_JOB_ID" "$SLURMD_NODENAME" "$SLURM_NTASKS" "$(date -Is)"
 run_one() {
+    extra=()
+    if [[ $1 != qwen3 ]]; then
+        extra=(--bind "$root/six-model-energy-01/sourcefs/Melodydt/runs/issue-274:/public/home/yuzelu/Melodydt/runs/issue-274:ro")
+    fi
     srun --exclusive --exact -N1 -n1 -c1 --cpu-bind=cores singularity exec --cleanenv \
         --bind "$root:$root:ro" --bind "$old:$old:ro" --bind "$bundle" \
         --bind "$root/replay/sourcefs:/public/home/yuzelu:ro" \
-        --bind "$root/six-model-energy-01/sourcefs/Melodydt/runs/issue-274:/public/home/yuzelu/Melodydt/runs/issue-274:ro" \
+        "${extra[@]}" \
         "$image" bash "$bundle/run_frequency.sbatch" inside "$1" "$2" "$3" "$4" "$bundle" "$root"
 }
 run_one prepare unused unused "$out"
