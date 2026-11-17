@@ -46,6 +46,10 @@ cat "pilot-$JOB/ddr-prefill.json" "pilot-$JOB/ddr-decode.json"
 - Qwen3 作业 118132 已用 `--time=0` 提交并读回 `UNLIMITED`。15:24 仍按优先级排队，节点待分配。已从冻结快照归档三窗 DDR 器件完成计数。片上 DMA 的提交、接收、在途和等待由 118132 补采。 [计数、脚本验证和作业追踪](../../../docs/handoffs/2026-11-16-issue-280-qwen3-dma-windows.md)
 - 117939 和 117729 已按指示取消，DMA 物理／功耗与 M 实际门级活动仍缺标定。117940 局控取指 hold 修复遇缓冲上限，117855 M ECO 最终等价检查异常退出。先回收并核对 118132 的三窗事务，再补 DMA 和其他片上分项。 [终态和日志散列](../../../docs/handoffs/2026-11-16-issue-280-qwen3-dma-windows.md)
 
+## 2026-11-17 Qwen3 TLM 分项能耗 v1（Asia/Shanghai）
+
+[结果 JSON](qwen3_tlm_power_v1.json) 按冻结 TLM 时间和分项标定积分，列出片上已覆盖、DDR 器件和读 DMA 动态敏感性。[计算脚本](qwen3_tlm_power_v1.py) 与完整输入、SHA-256、复算命令见[三窗回执](../../../docs/handoffs/2026-11-17-issue-280-qwen3-tlm-power-v1.md)。后续读 DMA 以综合网表、Liberty、300 MHz SDC 和匹配 VCD 做布局前估算。
+
 ## 剩余步骤
 
 1. 固定同一三 P 底座及 FFN Mid 的 DDR 路径，测 P0 调度对照和三 P 并行，并核对两种调度的数值和状态。

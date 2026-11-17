@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-17 13:10（Asia/Shanghai）Qwen3 TLM 分项能耗 v1
+
+- [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。300 MHz、三 P、512-bit SRAM、原冻结窗口。短 Prefill／首 token／稳态 Decode 的片上已覆盖＋DDR 分别为 164.944–165.067／496.224–496.350／496.440–496.566 mJ/token。加同写单价的读 DMA 动态代理后为 165.119–165.241／496.550–496.676／496.766–496.891 mJ/token。
+- BSCC-T6 与 Windows 本地复算字节一致，三窗时长、token 数、读写三阶段计数、分项与单位核验通过。局控描述符新增四站点静默基线。代理暂不覆盖读 DMA 空闲／漏电，旧 M 的 300 MHz 时序仍有违例。
+- Melodydt 接续从读 DMA 映射网表、Nangate45 TT Liberty、300 MHz SDC 和已验证波形直接估功耗，等价验证后替换代理。四条已有综合仍运行。九目标母控、运行取指、全局时钟和跨块互连待补。[结果及复算命令](../../docs/handoffs/2026-11-17-issue-280-qwen3-tlm-power-v1.md)。草稿待审查，登记待合并，Projects 待有权限者核验。
+
 ## 2026-11-17（Asia/Shanghai）局控与空闲参考积分
 
 - 38815532、38815974 完成。局控 PM 驻留静默 30.754–30.762 mW/阵列、读增量 17.485–23.914 pJ/次；局控描述符取指 24 个代表窗通过 300 MHz 和详细布线 DRC。
