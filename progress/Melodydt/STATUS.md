@@ -1,5 +1,10 @@
 # Melodydt 的进度
 
+## 2026-11-17（Asia/Shanghai）Qwen3 SRAM／母控 PM 参考积分
+
+- 复核三个时长、四个站点拍宽及逐 bank 守恒。真实 PM 日志对齐母控 58／30／30 页。四站点采用 S_P、全程开钟情景下，覆盖小计为 158.619–158.740／475.504–475.625／475.701–475.822 mJ/token。另给出 S_base 普通读串行敏感性。
+- Melodydt 接续确认实际部署、开钟驻留和 PM 运行时取指，读 DMA 四项物理仍在运行，四项后续功耗等待依赖。 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [口径与复现](../../docs/handoffs/2026-11-17-issue-280-qwen3-macro-window-reference.md)
+
 ## 2026-11-17（Asia/Shanghai）SRAM／母控 PM 300 MHz 标定
 
 - 38814143、38814341、38814342、38814399 均 `COMPLETED 0:0`。S_P／S_base 开钟静默 **56.6801／47.2607 mW**。S_P 四 bank 同址 512-bit 读 **16.000 pJ/次**，串行 512-bit 写 **69.294 pJ/组**；S_base 的串行 512-bit 写 **60.248 pJ/组**。

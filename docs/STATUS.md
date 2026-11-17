@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已按真实 PM 页类与四站点 TLM 次数生成 Qwen3 SRAM／母控 PM 三窗参考小计，两种 SRAM 配置保留固定时长情景。实际部署与开钟驻留待核对，读 DMA 仍待物理输出。[三窗数据与复现](handoffs/2026-11-17-issue-280-qwen3-macro-window-reference.md)
+
 2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成 S_P／S_base 后布线 SRAM 等长配对功耗，以及母控三档真实页的四宏标定。三套 300 MHz 物理预检通过，下一步按实际实例和驻留积分到 Qwen3 三窗，读 DMA 仍待物理结果。[标定回执](handoffs/2026-11-17-issue-280-sram-mother-pm-calibration.md)
 
 2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已恢复旧归档访问。S128 bank、S_P／S_base 后布线和母控 PM 归档原件在 BSCC 解包并通过散列与网表实例核对，待结合实际活动执行功耗标定。[恢复回执](handoffs/2026-11-17-issue-280-macro-views-recovered.md)
