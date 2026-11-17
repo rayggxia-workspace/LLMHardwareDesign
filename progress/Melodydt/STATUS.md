@@ -1,5 +1,12 @@
 # Melodydt 的进度
 
+## 2026-11-17 15:44（Asia/Shanghai）六模型能耗扩测运行
+
+六模型冻结工件已在旧服务器本人目录打包，合计 31.29 GB，逐模型 SHA 及恢复命令见[扩测交接](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。Llama 38820601（m3ca0704）与 Granite 38820602（m3ca1603）均 RUNNING、24 核、UNLIMITED；目标输入分别 713／3,961 项校验通过，实际进入逐层回放。初次 38820291 因漏载容器模块失败，记录保留；修订源码 `aec62a8b6fce24ec62cf0431309145502152ecb3` 已上传。其余四模型继续迁移和准备。尚未发布新增能耗结果。
+
+下一步：逐模型完成数值/事务/活动验收，应用已标定分项，记录特殊算子缺项并更新同名 PDF。项目管理检查、脚本 AST、Bash 语法和输入 SHA 已验证。#280 进行中，PR #281 草稿待独立审查；登记 PR #5 pending，看板缺配置、条目未核验/同步 pending。负责人 Melodydt。
+
+
 ## 2026-11-17 六模型 TLM 能耗扩测
 
 按用户授权连续扩测 Llama、Granite、Phi、Gemma、Qwen3.5、Falcon。复用已验收的完整模型执行计划和真实历史，先迁移文件，计算节点核验全部传输 SHA-256，然后重放短 Prefill 与两步 Decode。新入口要求完整 result、logits、残差与逐层文件一致，并分别核验 DDR 和 SRAM 计数。Granite 嵌套激活、Gemma GELU、PM 实际页长和普通投影 M 忙时独立计数；缺少匹配标定的算子不能作为零能耗处理。

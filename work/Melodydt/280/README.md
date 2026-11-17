@@ -83,3 +83,8 @@ python work/Melodydt/280/build_energy_report.py --output docs/experiments/seven-
 启动脚本 `run_six_model_energy.sbatch` 使用 v6_384、两个阶段各 12 核、`--time=0`。目录为 BSCC-T6 的 `~/LLMHardware/zenanyan/issue-280-bscc-t6-01/six-model-energy-01`。本次提交时 Llama 工件正在迁移，尚无新模型作业号或能耗结果。源版本与作业号以随后启动回执为准。每个模型三窗验收后更新同名 PDF。
 
 验证：本地四份 Python AST、`python scripts/check_project.py` 已通过。业务回放尚未执行。#280 进行中，PR #281 草稿待独立审查；登记 PR #5 pending，任务分支 `config/board.json` 404，Projects 条目未核验、同步 pending。
+
+
+## 六模型扩测入口
+
+2026-11-17，Llama、Granite 已在 BSCC-T6 进入不限时回放，其余模型迁移中。使用冻结计划和逐文件验证，不重新访问检查点。结果输出必须与已验收全层回放一致后才做分项积分。[启动、失败记录、工件散列和完整后续步骤](../../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。
