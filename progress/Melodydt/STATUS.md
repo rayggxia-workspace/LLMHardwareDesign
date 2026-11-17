@@ -1,5 +1,14 @@
 # Melodydt 的进度
 
+## 2026-11-17 22:41（Asia/Shanghai）公共算术缺项开始实测
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt，in_progress。按公共 RMS/softmax/RoPE/缩放 → GELU/路由 → GDN/Mamba2 顺序推进。38828028 三个候选映射完成：N 43,411、E 49,343、S32 softmax 19,649 cells。38828612 N 短流程通过 RTL 因子、433 位活动标注、300 MHz 无寄生配对功耗；只使用合成输入，不纳入模型结果。首次 38828546 因 VCD 总线声明失败，已修复并保留失败证据。
+
+Llama 真实 RMS 采样 38828362 在 m3ca1003 运行（prefill/decode 各 12 核），38828633/34 两项 N 标定等待其 afterok；全部 UNLIMITED。采样版本 `91fd33eeed6b3b40ec4254970aace879392983a9`，N 校准版本 `f6aa5c96916ecc0712d531c2f3b20e81935c0a8b`。管理结构、AST、Bash、综合/SHA、短样例已验证；七模型新增能耗尚未验收，PDF v2.1 数据未改。[追踪命令、路径、全部剩余步骤](../../docs/handoffs/2026-11-17-issue-280-common-arithmetic.md)。下一步先验收已提交作业，再推广至其他冻结运行器及补齐公共算术。
+
+PR 草稿未合并，审查人待指定；登记 PR #5 pending，看板缺配置/工具而 unverified、同步 pending。Slurm 依赖链已建立，未配置聊天自动监测。
+
+
 ## 2026-11-17 20:13（Asia/Shanghai）报告小计旁的缺项说明
 
 按用户要求更新 PDF v2.1，在七个模型的覆盖小计下方分别列出共同片上缺项、本模型未标定算术及 DDR PHY/板级范围，并说明主动排除的布线寄生与未知功耗的区别。能耗数据未改，未提交或重跑服务器任务。十九页已重新渲染目检，168 主值、504 分项值、56 覆盖对照值、11 链接和 21 段同页缺项说明核验通过。[报告](../../docs/experiments/seven-model-energy-evaluation.pdf) · [校验](../../work/Melodydt/280/report-validation-v2_1.json)。

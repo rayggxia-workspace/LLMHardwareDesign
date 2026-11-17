@@ -1,5 +1,10 @@
 # 当前状态
 
+## 2026-11-17 公共算术缺项标定启动
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成 N/E/S32 softmax 候选映射和 N 的 RTL 因子、433 位边界活动、300 MHz 无布线寄生配对功耗短流程验证；合成样例不计入模型小计。Llama 冻结重放采样 38828362 正在运行，真实输入 N 标定 38828633/34 已建立成功依赖，均不限时。七模型新增算术能耗尚未验收，PDF v2.1 数值保持原状。[作业与后续顺序](handoffs/2026-11-17-issue-280-common-arithmetic.md)。PR #281 草稿未合并，任务 in_progress。
+
+
 ## 2026-11-17 七模型无布线寄生分项扩展 v2
 
 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已将普通投影 M、写侧/U/PM 桥驻留、局控 PM 启动及读取、描述符活动和九目标母控核心加入七模型的 21 个窗口，并重新计算全部既有无布线寄生分项。片上与片上＋DDR 继续分别报告；新覆盖使第2步 Decode 的同口径片上小计增加约 4.65-17.91 mJ/token。PDF v2 为十九页，输入 SHA、分项守恒、单位及所有页目检通过。[结果、回执与剩余覆盖](handoffs/2026-11-17-issue-280-no-wire-energy-extension.md)。四项读 DMA 综合仍运行，特殊算术、控制外壳、真实拓扑/门控及 PHY 尚缺；旧 M 的 300 MHz 时序未闭合。任务继续进行中，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) 草稿未合并。

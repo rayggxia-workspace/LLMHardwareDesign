@@ -124,3 +124,8 @@ python work/Melodydt/280/build_energy_report.py --output docs/experiments/seven-
 ## 片上与片上＋DDR 扩测进度（2026-11-17 17:25 Asia/Shanghai）
 
 Qwen3、Granite、Llama、Falcon 已有可复算三窗结果；PDF v1.3 为十二页，两类能耗/平均功耗和读 DMA 代理分别列出。Llama、Granite、Falcon 六项最终回放及积分作业均 COMPLETED 0:0，输入/输出 SHA、冻结数值、DDR/SRAM 和本地积分一致。Phi、Gemma、Qwen3.5 仍不限时运行，未完成模型不填写能耗数值。完整原始工件留服务器，小型可复算输入在 `six-model-results/<model>/`。[逐模型结果、散列、命令与限制](../../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。
+
+
+## 公共算术缺项标定（2026-11-17）
+
+[任务接续与全部剩余步骤](../../../docs/handoffs/2026-11-17-issue-280-common-arithmetic.md)。三个候选网表和 N 合成样例流程已通过；Llama 真实输入采样及 afterok 标定在执行，模型新增能耗尚未验收。`map_common_arithmetic.py`/`run_common_arithmetic_map.sbatch` 为候选综合；`arithmetic_observation.py`、`prepare_arithmetic_capture.py`、`verify_arithmetic_capture.py`、`run_arithmetic_capture.sbatch` 为冻结运行器观测；`tb_rms_n_activity.sv`、`calibrate_rms_n.py`、`run_rms_n_calibration.sbatch` 为 N 因子比对及 300 MHz 无寄生配对功耗。`rms-n-smoke-calibration.json` 只记录合成数据测试，不得用于模型积分。新回执保留输入/工具/输出 SHA，原始波形留授权服务器。

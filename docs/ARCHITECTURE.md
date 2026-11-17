@@ -230,3 +230,20 @@ python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-
 ```
 
 管理结构检查与业务验证分开。第二条只验证六模型已发布小型回执、原清单 SHA、冻结输出验收状态，并重新积分和核对片上＋DDR；不会重跑模型、FP32 或物理实现。Python 3.7.0 与 3.12 已验证逐字节复现服务器 3.6.6 结果；积分器保留冻结的逐项求和顺序。PDF 需 ReportLab 和可用中文字体，可用脚本参数指定字体路径。原始工件、全部作业和剩余标定见[交接](handoffs/2026-11-17-issue-280-six-model-energy.md)。
+
+
+## 公共算术缺项标定（Issue #280）
+
+在 BSCC 授权目录使用本任务独立 bundle；完整启动命令、数据输入、工具版本/SHA 和结果路径见[公共算术交接](handoffs/2026-11-17-issue-280-common-arithmetic.md)。不要直接在登录节点运行模型仿真。
+
+```bash
+# N/E/softmax 候选映射；bundle 中冻结 RTL 的 SHA 已登记。
+sbatch --time=0 run_common_arithmetic_map.sbatch
+# accepted_source 必须指向该模型已验收的冻结 runner/数值结果目录。
+sbatch --time=0 run_arithmetic_capture.sbatch "$accepted_source"
+# 合成数据仅测试流程；真实捕获需先通过冻结输出和定点校验。
+sbatch --time=0 run_rms_n_calibration.sbatch --smoke
+sbatch --time=0 run_rms_n_calibration.sbatch --capture "$capture/arithmetic-observation.json"
+```
+
+对应脚本在 `work/Melodydt/280/`。N 实测范围仅 BEGIN/STATS/FINALIZE/FACTOR 核心，不含 E、SRAM、scan/apply wrapper；边界活动传播估计不等同内部门级活动。真实输入按窗口/site/长度/epsilon/移位最多取两个完整样本，全部调用计数不抽样。冻结输出不一致、RTL 因子不一致、SHA 或活动覆盖不全即拒绝回填。报告保持 512-bit TLM 与 300 MHz 目标，不因微测试夹具的时钟而重定义模型速度。
