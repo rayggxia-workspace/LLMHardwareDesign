@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-17 17:21（Asia/Shanghai）Falcon 三窗通过
+
+Falcon 38821511/38821512 均 COMPLETED 0:0，完整冻结输出、DDR/SRAM 计数、1177 项输入 SHA 和本地/服务器积分通过。Prefill 片上 272.884–273.585、片上＋DDR 944.175–944.876 mJ/token；稳态 Decode 片上 387.834–388.539、片上＋DDR 1286.079–1286.783。Mamba2/卷积等未标定算术仍为缺项，读 DMA 代理另列。
+
+Llama、Granite、Falcon 已通过本轮扩测；Phi、Gemma、Qwen3.5 仍不限时运行，逐个验收后积分并更新 PDF。[作业和复算入口](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。#280 in_progress，PR #281 草稿待独立审查；登记 PR #5 pending，Projects 缺配置待核验。负责人 Melodydt。
+
 ## 2026-11-17 片上／片上＋DDR 分类报告
 
 按用户要求，PDF v1.2.1 明确分为片上已覆盖与片上已覆盖＋DDR 器件两类，两类分别展示 W、mJ/token，读 DMA 动态代理也分别列出。十页 PDF 目检、数值提取和逐窗片上＋DDR 加法核对通过；原始标定与三模型结果未变。Llama／Granite 已验收，Phi／Falcon／Gemma／Qwen3.5 继续不限时回放及依赖积分。下一步逐个验收并按两类更新报告。#280 进行中，PR #281 草稿；登记 pending，看板缺配置待核验。[结果和恢复](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。负责人 Melodydt。
