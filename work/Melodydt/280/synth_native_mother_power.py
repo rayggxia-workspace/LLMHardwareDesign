@@ -29,7 +29,15 @@ if text.count(anchor) != 1:
 wrapper = (rtl / 'mother_control_native64.sv').read_text()
 if '.STALL_LIMIT(4096),.SERVICE_STALL_LIMIT(SERVICE_STALL_LIMIT)' not in wrapper:
     raise ValueError('actual mother instantiation changed')
-(out / source.name).write_text(text.replace(anchor, 'parameter integer unsigned STALL_LIMIT=4096'))
+text = text.replace(anchor, 'parameter integer unsigned STALL_LIMIT=4096')
+# Slang rejects this forward net reference. Split its declaration and driver;
+# preserve the exact combinational expression and every sequential assignment.
+forward = '  wire return_fire=return_accept && return_validated;'
+driver = '  wire return_validated='
+if text.count(forward) != 1 or text.count(driver) != 1:
+    raise ValueError('native mother forward declaration changed')
+text = text.replace(forward, '  wire return_validated;\n'+forward).replace(driver, '  assign return_validated=')
+(out / source.name).write_text(text)
 inputs = {str(p):digest(p) for p in [source, rtl/'mother_control_native64.sv',
     rtl/'mc_native_ports.svh', rtl/'native_instruction_fetch.svh', lib]}
 ys = '\n'.join([

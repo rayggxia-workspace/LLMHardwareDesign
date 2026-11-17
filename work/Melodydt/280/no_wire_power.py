@@ -33,6 +33,7 @@ def cases(root, family):
                     'real-span-power/span-38795265/*/power/receipt.json',
                     'pm-real-length/pm-38795749/*/power/receipt.json'],
         'sram': ['sram-macro-power/sram-38814341/s-p/*/receipt.json'],
+        'legacy': ['no-wire-legacy-power-01/cases/*/receipt.json'],
     }
     paths = sorted({p for pattern in patterns[family] for p in root.glob(pattern)})
     if not paths:
@@ -110,7 +111,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('root', type=Path)
     parser.add_argument('output', type=Path)
-    parser.add_argument('family', choices=('m','control','write_u','sram'))
+    parser.add_argument('family', choices=('m','control','write_u','sram','legacy'))
     parser.add_argument('--workers', type=int, default=4)
     args = parser.parse_args()
     paths = cases(args.root, args.family)
