@@ -92,3 +92,7 @@ python work/Melodydt/280/build_energy_report.py --output docs/experiments/seven-
 ## Granite 首份扩测能耗（2026-11-17）
 
 回放 38820602、积分 38820947 均 COMPLETED 0:0。三窗结果见 [granite_tlm_power_v1.json](granite_tlm_power_v1.json)，复算输入在 [six-model-results/granite](six-model-results/granite)。源/结果 SHA 与本地复算字节一致；未匹配标定的 MoE 算术及控制仍为缺项。全部六模型输入已迁移，五个剩余模型运行；后续逐模型验收并维护同名 PDF。[作业、成功判据与命令](../../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。
+
+## 片上与片上＋DDR 扩测进度（2026-11-17 17:25 Asia/Shanghai）
+
+Qwen3、Granite、Llama、Falcon 已有可复算三窗结果；PDF v1.3 为十二页，两类能耗/平均功耗和读 DMA 代理分别列出。Llama、Granite、Falcon 六项最终回放及积分作业均 COMPLETED 0:0，输入/输出 SHA、冻结数值、DDR/SRAM 和本地积分一致。Phi、Gemma、Qwen3.5 仍不限时运行，未完成模型不填写能耗数值。完整原始工件留服务器，小型可复算输入在 `six-model-results/<model>/`。[逐模型结果、散列、命令与限制](../../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。

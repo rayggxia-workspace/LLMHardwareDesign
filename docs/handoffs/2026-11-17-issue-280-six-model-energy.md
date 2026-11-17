@@ -157,3 +157,5 @@ PDF v1.2 已加入 Llama，共九页，保留逐模型实现、缺项、读 DMA 
 不含读 DMA 动态代理；该项单独位于结果 JSON 的 read_dma_dynamic_sensitivity。主表没有计入无匹配标定的 Mamba2、卷积与额外缩放算术，但其 DDR 与已观测 SRAM 访问已覆盖。保留冻结的递推后注意力执行、128 维 ATT1 的 V 读取流水、真实持久状态和三 P FFN。
 
 结果 `work/Melodydt/280/falcon_tlm_power_v1.json`，SHA-256 `6dad6edadd5600f08f99eed2f941dd8962cee54073edaa9d7be9e5f87c9c14dd`。复算输入在 `work/Melodydt/280/six-model-results/falcon/`，服务器原始回放 `run-38821511-falcon/`，积分 `power-38821512-falcon/`。本地复算沿用上述命令，将 granite 换为 falcon。Phi、Gemma、Qwen3.5 继续运行；随后逐个完成验收、积分、片上与片上＋DDR 复核及 PDF 更新。
+
+Falcon 证据提交 `c3190f047fcd1aef96371c7c5b8e0c6dd51de484`。PDF v1.3 已扩展到十二页，包含 Qwen3、Granite、Falcon、Llama 的两类能耗及代理情景；新增模型页、汇总与证据页目检、数值提取通过，SHA-256 `496d6dc78f55a2e25247c758623f79ed181eb94f9870d017d0b0929b7d14b049`。
