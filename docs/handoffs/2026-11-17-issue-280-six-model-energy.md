@@ -57,3 +57,61 @@ cat run-38820602-granite/{prefill,decode}/acceptance.json
 已执行：本地 Python AST、Qwen3 系数换算核对、项目管理检查；BSCC Bash 语法与脚本 SHA 已核对。管理检查不代替业务回放，未执行的模型回放/物理验收不计通过。审查人待指定，Issue 进行中，PR 草稿；项目登记 PR #5 pending，缺 `config/board.json`，Projects 条目未核验/同步 pending。
 
 本机目录 `D:/Study_material/Study_material/LLMHardwareDesign` 的管理文件可能旧于远端。后续写共享文档先读远端最新版本，保留无关改动；使用 Melodydt GitHub 连接，不借用其他账号。本机新增辅助代码、临时 SSH 调试和传输日志与已上传任务分支分别记录。恢复第一步：检查上述作业和传输状态，验收完成模型，再按本页入口续跑。处理人 Melodydt。
+
+
+## 15:53 后续作业接续
+
+Phi 回放 38820798 于 15:47:41 在 m3ca2002 开始，24 核、UNLIMITED，1241 个输入 SHA 校验通过。日志 slurm-38820798.log，结果 run-38820798-phi/。入口为 sbatch --parsable --time=0 --job-name=mdt-280e-phi run_six_model_energy.sbatch phi，源码仍为 aec62a8b6fce24ec62cf0431309145502152ecb3。
+
+已受理三项单核、不限时、afterok 依赖积分作业：38820946（Llama，依赖 38820601）、38820947（Granite，依赖 38820602）、38820949（Phi，依赖 38820798）。入口为 sbatch --parsable --time=0 --dependency=afterok:<回放号> --job-name=mdt-280p-<模型> run_six_energy_rollup.sbatch <模型> <回放号>，积分脚本源码 efccd9bd81851eaf2d55abaf0ea2a5cd5a72d876。日志 slurm-<积分号>.log，输出 power-<积分号>-<模型>/<模型>_tlm_power_v1.json。依赖就绪前节点待分配，不视为运行。先验回放 results.sha256，再检查 acceptance，最后积分并生成散列。
+
+跟踪全部新任务：squeue -j 38820601,38820602,38820798,38820946,38820947,38820949；历史终态使用 sacct -X -j 同一作业列表 --format=JobID,State,ExitCode,AllocCPUS,NodeList,Elapsed,Timelimit。
+
+
+## 16:11 全部迁移完成与首模型验收
+
+六个归档均以 scp -3 直达 BSCC，传输进程退出 0。Falcon 38821328 的归档和 1177 项输入通过，但两个 srun 步骤因 Unexpected message received 未开始，父作业 FAILED 1:0（70 秒）。其失效依赖 38821329 已取消，失败文件保留。使用相同代码排除 m3ca2201 后重提。
+
+| 模型 | 回放作业／节点 | 积分作业 | 16:11 状态 |
+| --- | --- | --- | --- |
+| Llama | 38820601 / m3ca0704 | 38820946 | Prefill 通过，Decode 运行 |
+| Granite | 38820602 / m3ca1603 | 38820947 / m3ca0308 | 两作业 COMPLETED 0:0，回放 30:05，积分 00:06 |
+| Phi | 38820798 / m3ca2002 | 38820949 | 两阶段运行 |
+| Falcon | 38821511 / m3ca0507 | 38821512 | 两阶段运行 |
+| Gemma | 38821513 / m3ca2204 | 38821514 | 两阶段运行 |
+| Qwen3.5 | 38821601 / m3ca0104 | 38821602 | RUNNING |
+
+新增三组使用同一服务器、任务目录、分区 v6_384、回放 2×12 核及积分 1 核，全部读回 UNLIMITED。回放源码 aec62a8b6fce24ec62cf0431309145502152ecb3，积分源码 efccd9bd81851eaf2d55abaf0ea2a5cd5a72d876。实际命令：
+
+```bash
+cd ~/LLMHardware/zenanyan/issue-280-bscc-t6-01/six-model-energy-01
+# model 分别为 falcon、gemma、qwen35；依赖号分别为 38821511、38821513、38821601
+sbatch --parsable --time=0 --exclude=m3ca2201 --job-name=mdt-280e-$model run_six_model_energy.sbatch "$model"
+sbatch --parsable --time=0 --dependency=afterok:$replay_job --job-name=mdt-280p-$model run_six_energy_rollup.sbatch "$model" "$replay_job"
+squeue -j 38820601,38820602,38820798,38821511,38821513,38821601,38820946,38820947,38820949,38821512,38821514,38821602
+sacct -X -j 38820601,38820602,38820798,38821511,38821513,38821601,38820946,38820947,38820949,38821512,38821514,38821602 --format=JobID,State,ExitCode,Elapsed,NodeList,Timelimit
+# 将变量替换为表内实际模型、回放及积分号
+ tail -n 20 slurm-$replay_job.log
+cat run-$replay_job-$model/{prefill,decode}/acceptance.json
+cat power-$power_job-$model/${model}_tlm_power_v1.json
+```
+
+### Granite 结果
+
+所有数值和计时与冻结 plan 相同，两个阶段通过完整 result、数值文件及 DDR/SRAM 对账。两阶段小型观测、工具版本、源码与源/输出清单保存于 `work/Melodydt/280/six-model-results/granite/`；原始层文件与权重留授权服务器。17 个下载文件与回放清单逐项核对；积分结果与服务器清单匹配，本地 Python 3.7.0 重算字节一致。
+
+| 窗口 | tok/s | 已覆盖片上＋DDR mJ/token | 平均 W | 加同写读 DMA 动态代理 mJ/token |
+| --- | ---: | ---: | ---: | ---: |
+| 短 Prefill | 16.073199 | 250.733745–251.012268 | 4.030093–4.034570 | 251.050874–251.329397 |
+| 首 Decode | 6.945634 | 522.456211–522.737333 | 3.628790–3.630742 | 522.878914–523.160036 |
+| 稳态 Decode | 6.940185 | 522.814140–523.095266 | 3.628427–3.630378 | 523.236987–523.518113 |
+
+结果 `work/Melodydt/280/granite_tlm_power_v1.json`，SHA-256 `83895abc6a9d4b7780f71083136a1b5de89a71dba829eef870ea31cbbbba9fd1`。64 维紧凑 KV、V 复用和真实 top-8 专家 3/3/2 并行保持冻结版本；嵌套激活实际计数。尚未覆盖 router、softmax、加权累加等未匹配算术的完整能耗；不是整芯片签核。
+
+本地复算（输出文件须不存在）：
+
+```bash
+python work/Melodydt/280/six_model_tlm_power.py granite work/Melodydt/280/six-model-results/granite work/Melodydt/280 tmp/granite_tlm_power_recomputed.json
+```
+
+剩余五模型的回放和 afterok 积分继续运行；每个完成后重验小型输入清单、复算与单位，并更新同名 PDF。物理缺项、旧 M 时序、登记和看板状态与上文一致。

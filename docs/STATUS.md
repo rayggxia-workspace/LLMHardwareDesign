@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 的六模型能耗扩测已全部完成工件迁移。Granite 三窗通过冻结输出及 DDR/SRAM 对账，迁移分项估算与本地复算一致；其余五模型在 BSCC 不限时回放。结果、缺项和逐模型 PDF 更新见[扩测交接](handoffs/2026-11-17-issue-280-six-model-energy.md)。
+
 2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成 Qwen3 三窗的 TLM 分项能耗 v1，补入四个局控描述符静默基线并单列读 DMA 动态敏感性。读 DMA 下一步以 300 MHz 综合映射网表直接估功耗，九目标母控和整机物理归属仍待补。[结果和接续](handoffs/2026-11-17-issue-280-qwen3-tlm-power-v1.md)
 
 2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成局控 PM 驻留静默、局控描述符取指 300 MHz 标定及 C639 共同时钟核验。Qwen3 参考小计补三类开钟空闲。读 DMA 待物理输出，九目标母控外围需匹配工件。[控制进展与接续](handoffs/2026-11-17-issue-280-qwen3-control-power-progress.md)

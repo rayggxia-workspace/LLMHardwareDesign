@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-17 16:14（Asia/Shanghai）Granite 能耗通过，五模型继续
+
+Granite 回放 38820602 与积分 38820947 均 COMPLETED 0:0。Prefill／首 Decode／稳态 Decode 的片上已覆盖＋DDR 为 250.734–251.012／522.456–522.737／522.814–523.095 mJ/token；加入同写读 DMA 动态代理后稳态 523.237–523.518。完整冻结输出、DDR/SRAM 对账、输入散列与本地/服务器复算通过。结果属于迁移标定覆盖小计，MoE 特殊算术、控制和旧 M 时序边界保留。
+
+六模型 31.29 GB 工件已全部直达 BSCC；Llama 38820601、Phi 38820798、Falcon 38821511、Gemma 38821513、Qwen3.5 38821601 继续回放，各 24 核、UNLIMITED。afterok 积分作业见[扩测交接](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。Falcon 首次 srun 步骤创建失败，留存后换节点重提。下一步逐模型验收、积分并更新同名 PDF。#280 进行中、PR #281 草稿待独立审查；登记 PR #5 pending，Projects 缺配置、未核验/同步 pending。负责人 Melodydt。
+
 ## 2026-11-17 15:44（Asia/Shanghai）六模型能耗扩测运行
 
 六模型冻结工件已在旧服务器本人目录打包，合计 31.29 GB，逐模型 SHA 及恢复命令见[扩测交接](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。Llama 38820601（m3ca0704）与 Granite 38820602（m3ca1603）均 RUNNING、24 核、UNLIMITED；目标输入分别 713／3,961 项校验通过，实际进入逐层回放。初次 38820291 因漏载容器模块失败，记录保留；修订源码 `aec62a8b6fce24ec62cf0431309145502152ecb3` 已上传。其余四模型继续迁移和准备。尚未发布新增能耗结果。
