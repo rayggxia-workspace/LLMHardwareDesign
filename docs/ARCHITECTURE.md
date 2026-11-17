@@ -94,6 +94,7 @@ python project/experiments/opentpu_compare/compare.py project/experiments/opentp
 
 - 阅读：从仓库根目录直接打开 `ref-project/llm-routing/总报告.html` 或 `ref-project/llm-routing/线长报告.html`；其图片和下载链接使用包内相对路径。
 - 管理结构检查：`python scripts/check_project.py`（Python 3.9+，无第三方包）。
+- [#271 四组顶层布线紧凑版](experiments/pr271-compact-data-links.md)附有独立几何复核命令，覆盖逐位连接、M11/M12 间距和前端 M10 落点。实体合版依赖授权服务器视图。
 - 本次用户授权的报告更新检查：`python work/YUZE-LU/3/sync_reports.py`（Python 3.9+，需要 `beautifulsoup4`）；只读核验两份报告的资源、锚点、清单及图片展示状态。该任务脚本不是例行维护入口；再次同步需用户明确要求，并传入 `--sync --source <源报告目录>`。
 - 初次接入的来源记录见 `docs/DATA_PROVENANCE.md`；后续例行检查不覆盖 `ref-project/`。
 - openTPU实际对照：先阅读[实验定义](experiments/issue-15-opentpu-comparison.md)，运行 `python project/experiments/opentpu_compare/collect.py` 获取已有作业状态，`python project/experiments/opentpu_compare/quality.py` 核对严格终态门槛。启动新实验用 `launch.py`，必须使用全新尝试名，先提交runner。所有新作业 `--time=0`，并实际核对UNLIMITED。完整命令见实验定义；仅本地仓库不足以重跑，仍依赖授权集群的冻结输入与容器。
@@ -131,6 +132,8 @@ Tcl hook 的过程内加载回归入口为 `tclsh project/experiments/block_hier
 运行器保存源 commit、工具版本与哈希、配置、Slurm 作业和实际退出码。大体积 ODB/GDS/网表/日志保留在获授权的远程实验目录；仓库只提交轻量索引、必要摘要与脚本。
 
 ## 数据与外部依赖
+
+#271 九底座原生接口布线的独立复核入口为 `python -B work/huangpingyang04-lgtm/250/pr271-data-link-routing/nine-native/verify_nine.py`。Linux/Verilator 定向回归入口为同目录的 `run_tests.sh NEW_OUTPUT_DIRECTORY`，服务器上在 Slurm 计算节点执行。[实验报告](experiments/pr271-nine-native-data-links.md)区分顶层连通、指定原生接口局部 DRT 与整芯片待验收范围；完整物理重建仍依赖授权服务器输入。
 
 模型分析目录的归档检查命令为 `python -B work/YUZE-LU/116/validate_archive.py`，核对文档/图册本地引用、导入产物 SHA、报告迁移及原 Issue #114 证据不变。此检查不重新运行模型、onnxsim、RTL 或物理实验。
 

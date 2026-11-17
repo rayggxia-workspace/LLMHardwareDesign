@@ -1,0 +1,241 @@
+{
+  "baseline": {
+    "repository": "rayggxia-workspace/LLMHardwareDesign",
+    "issue": 250,
+    "pull_request": 271,
+    "commit": "9d9a77b628ed4a2777ca403a8d94db8acb700676",
+    "scheme": "A"
+  },
+  "verification_date": "2026-11-17",
+  "reproducible_checks": [
+    "python -X utf8 -B scripts/check_project.py on the proposal baseline",
+    "Run each delivery engine/check.py against final/spec.json and final/route.json, and compare counts to final/summary.json and the saved KLayout receipts",
+    "ZIP integrity and SHA256SUMS entries verified; OAS SHA-256 matched the saved receipts"
+  ],
+  "adjusted_floorplan": {
+    "selected_branches": 641,
+    "routed_branches": 641,
+    "routed_unique_nets": 637,
+    "folder": "cu-p-top-route-20261116",
+    "archive": "CU-P-top-route-M11-M12.zip",
+    "archive_sha256": "38ae1f7c6731ea2d11d2611b273262ff8e95b4548936e0410c2181f117caf3c8",
+    "summary": {
+      "branches_by_group": {
+        "C0_U0:routed": 306,
+        "P0_P1_Gate:routed": 335
+      },
+      "routed_nets": 637,
+      "selected_branches": 641,
+      "selected_nets": 637,
+      "source_paths_sha256": "1b4a776cbde1e123f24764d4014c50ea1fa6a30e28a6345de7c29fc522ec7c82",
+      "status": "geometry_complete",
+      "validated": {
+        "nets_checked": 637,
+        "passed": true,
+        "scope": "declared two-layer rectangular rules and M10 enclosure; not foundry DRC/RC/STA",
+        "via10_count": 1278,
+        "via11_count": 3396,
+        "wire_length_dbu": 3323482000
+      },
+      "variant": "row-my"
+    },
+    "stream_receipt": {
+      "dbu_um": 0.0005,
+      "layer_map": {
+        "M10": 29,
+        "M11": 211,
+        "M12": 213,
+        "M7": 23,
+        "M8": 25,
+        "M9": 27,
+        "V10": 210,
+        "V11": 212,
+        "V7": 24,
+        "V8": 26,
+        "V9": 28
+      },
+      "lower": {
+        "children": 873,
+        "polygons_by_layer": {
+          "M10": 1684,
+          "M7": 39,
+          "M8": 432,
+          "M9": 1276,
+          "V7": 78,
+          "V8": 786,
+          "V9": 1694
+        },
+        "sha256": "6a4c32c0267843a77f166a58f96be690139b8e5b42526aa1e748b7db98d4b307"
+      },
+      "shape_round_trip": true,
+      "source_lower_sha256": "ac653ce5bcd6666cb6ec9f08dad739216fd89e84c89559f26b9459319d76a5d9",
+      "source_placement_sha256": "821fa95ad6be11b7a4adc13ef672b9e387a75c4267e94855a286438578c8e068",
+      "source_route_sha256": "cbbf9fc6670b8f8964b1205d01b529cdc2c58e446b2bdd676a538df8670d0ece",
+      "upper": {
+        "children": 637,
+        "polygons_by_layer": {
+          "M11": 2335,
+          "M12": 1698,
+          "V10": 1278,
+          "V11": 3396
+        },
+        "sha256": "a5541e04d644851353f9d8d994cfb5a896f57ffa7f8a4e38a291cc5f9377264e"
+      }
+    },
+    "archive_location": "deliveries/cu-p-top-route-20261116/CU-P-top-route-M11-M12.zip",
+    "relevant_files": {
+      "route": "final/route.json",
+      "connections": "final/connections.csv",
+      "summary": "final/summary.json",
+      "klayout": "final/stream-check.json",
+      "upper": "final/M11-M12.oas",
+      "lower": "final/M7-M10-landings.oas"
+    },
+    "jobs": [
+      {
+        "id": 118620,
+        "check": "repacked baseline placement",
+        "receipt": "evidence/repacked-118620.log"
+      },
+      {
+        "id": 118621,
+        "check": "P1 mirror trial",
+        "receipt": "evidence/row-my-118621.log"
+      },
+      {
+        "id": 118622,
+        "check": "P1 stagger trial",
+        "receipt": "evidence/stagger-118622.log"
+      },
+      {
+        "id": 118628,
+        "check": "mirrored conflict-group reroute",
+        "receipt": "evidence/close-row-my-118628.log"
+      },
+      {
+        "id": 118629,
+        "check": "staggered conflict-group reroute",
+        "receipt": "evidence/close-stagger-118629.log"
+      },
+      {
+        "id": 118634,
+        "check": "Gate/Up peer-read RTL regression",
+        "receipt": "evidence/p0-peer-test-118634.log"
+      },
+      {
+        "id": 118639,
+        "check": "641-branch geometry closure",
+        "receipt": "evidence/landing-last-118639.log"
+      },
+      {
+        "id": 118642,
+        "check": "KLayout OAS round-trip",
+        "receipt": "final/stream-check.json"
+      }
+    ]
+  },
+  "original_floorplan": {
+    "selected_branches": 1053,
+    "routed_branches": 618,
+    "routed_unique_nets": 618,
+    "native_m10_blocked": 94,
+    "unrouted_upper": 341,
+    "folder": "pr271-four-links-20261116",
+    "archive": "PR271-A-four-links.zip",
+    "archive_sha256": "18a9f0808076d118de2975ad086ce4f0aaa11738bfa4ab632e7618ea5d07ad1a",
+    "summary": {
+      "branches_by_group": {
+        "C0_U0:routed": 216,
+        "C0_U0:upper_search": 90,
+        "P0_P1_Gate:native_blocked": 94,
+        "P0_P1_Gate:routed": 178,
+        "P0_P1_Gate:upper_search": 63,
+        "P1_S_P2_M:routed": 112,
+        "P1_S_P2_M:upper_search": 94,
+        "P2_S_C0_E32:routed": 112,
+        "P2_S_C0_E32:upper_search": 94
+      },
+      "geometry": {
+        "nets_checked": 618,
+        "passed": true,
+        "scope": "declared two-layer rectangular rules and M10 enclosure; not foundry DRC/RC/STA",
+        "via10_count": 1320,
+        "via11_count": 2985,
+        "wire_length_dbu": 3327342800
+      },
+      "paths_sha256": "ed5a8f2af495842d0ba9b819fa9933cde240e9fc33dd62cdeb879f95d16b5407"
+    },
+    "stream_receipt": {
+      "added_readers": [
+        "C0_projection_reader",
+        "P2_down_reader"
+      ],
+      "full_m10_support_missing": [],
+      "original_A_block_instances_verified": 12,
+      "original_placement_sha256": "6cdb63981f539c8f02b35bbba592931be2eec9e3b0b67299828253b05415a744",
+      "output_hashes": {
+        "pr271-a-four-links-view.oas": "a7c72f2486411b27194bc867017bc737863a63151556e26a784e91e897eed685",
+        "signal-overlay.oas": "f3de2cdcba4aea2815b7081eedb9164f73675ba34079c38d32d4c6f597f0e491"
+      },
+      "overlay_shape_readback": true,
+      "streamed_P1_ECO_leadouts": 32,
+      "streamed_upper_nets": 618
+    },
+    "archive_location": "deliveries/pr271-four-links-20261116/PR271-A-four-links.zip",
+    "relevant_files": {
+      "demand": "final/demand.json",
+      "route": "final/route.json",
+      "connections": "final/connections.csv",
+      "summary": "final/summary.json",
+      "klayout": "final/stream-receipt.json",
+      "overlay": "final/signal-overlay.oas"
+    },
+    "jobs": [
+      {
+        "id": 118652,
+        "check": "P1 M10 leadout trial; post-route hash command used an obsolete filename",
+        "receipt": "evidence/p1-m10-118652.log"
+      },
+      {
+        "id": 118653,
+        "check": "two-window reader RTL regression",
+        "receipt": "evidence/frontends-118653.log"
+      },
+      {
+        "id": 118660,
+        "check": "E32 remote operand RTL regression",
+        "receipt": "evidence/e32-118660.log"
+      },
+      {
+        "id": 118662,
+        "check": "recovered P1 ODB port export",
+        "receipt": "evidence/p1-dump-118662.log"
+      },
+      {
+        "id": 118663,
+        "check": "native U0 M10 access export",
+        "receipt": "evidence/u0-m10-118663.log"
+      },
+      {
+        "id": 118668,
+        "check": "added readers remap and local detailed routing",
+        "receipt": "evidence/readers-118668.log"
+      },
+      {
+        "id": 118669,
+        "check": "reader pin export",
+        "receipt": "evidence/reader-dump-118669.log"
+      },
+      {
+        "id": 118670,
+        "check": "618-route locked snapshot captured before exploratory job cancellation",
+        "receipt": "evidence/four-links-118670.log"
+      },
+      {
+        "id": 118677,
+        "check": "successful KLayout merged stream export and readback",
+        "receipt": "evidence/stream-final-118677.log"
+      }
+    ]
+  }
+}
