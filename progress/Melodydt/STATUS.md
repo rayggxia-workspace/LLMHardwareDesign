@@ -38,3 +38,11 @@
 - 实际验证：管理结构PASS；算式/数值/来源检查通过；33页Poppler视觉检查和80外链及索引核对通过。PDF SHA-256 `becfb58612e2fd912bea15830d233beea81f5ee7fd99ebe46d4d38e263f1cd05`。未做新仿真、板测或物理验收。
 - 分支task/261-llm-asic-benchmarks，基线9a7309d0b5325a4f69cbc4cbdbd9463ab2890e4b；独立任务目录work/Melodydt/261/speed_energy_report。线上提交与CI以PR最新回执为准。
 - 下一步：独立审查文献数据、能量边界和图读数，审查人待指定。Issue保持in_review；登记PR5读回仍待合并；缺board.json和Projects操作能力，看板未核验/同步待维护者处理。
+
+## 2026-11-17 J/token补充（Asia/Shanghai，UTC+08:00）
+
+- [Issue #261](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/261) / [PR #262](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/262)：为33页报告中的111组能效记录增加J/token列及倒数推导说明；总记录仍为133组，22组缺值不补算。
+- 采用同记录的J/token = 1 / tokens/J；保留模型、阶段、能量边界、批量、设备数量、原报舍入、估读和条件换算。CENT保留原作者聚合公式；平均能效倒数不称为逐请求能耗算术平均。
+- 实际验证：管理结构PASS；111条倒数和22条缺值一致性通过；24条ProQuant与9条CENT原始能量回算通过；33页逐页渲染检查及两页换行修正后复查通过，80外链。PDF SHA-256 `5e7a68c3d3765da46baefc246d24d4939164520dedfa13d2b171926d897f9b29`。无新服务器仿真或板测。
+- 分支task/261-llm-asic-benchmarks，本次基线33c9743b8a50362501accb56bba08796e6e0f88d；任务目录work/Melodydt/261/speed_energy_report，本地输出output/pdf。线上commit/检查结果见PR回执。
+- 下一步：待指定独立审查人复核。Issue保持in_review；登记PR5仍pending；看板实际状态unverified、同步pending，待具权限维护者处理。恢复先读取Issue/PR最新head及manifest。

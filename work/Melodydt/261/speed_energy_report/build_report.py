@@ -40,7 +40,7 @@ for id,rs,title,kind,notes in [
 ch=read('chime')
 add(dict(id='E02',title='CHIME: Chiplet-based Heterogeneous Near-Memory Acceleration for Edge Multimodal LLM Inference',kind='DRAM/RRAM NMP',url=ch['rows'][0]['source'],locator='arXiv:2601.19908v1；表 II-V、图 6-7',
  hardware='40 nm逻辑综合缩放7 nm；1 GHz；35 nm DRAM 200层+28 nm CNFET RRAM 8层。两块逻辑die 28.71/24.85 mm²。',
- boundary='作者总体报233-533 tokens/s及116.5-266.5 tokens/J。表V的2 W、图6约1.3-1.7 W及图7分项约6.8 W不一致，逐模型能效不推算。',
+ boundary='作者总体报233-533 tokens/s及116.5-266.5 tokens/J；仅对该区间取倒数为约0.00375-0.00858 J/token，不能分配到各模型。表V的2 W、图6约1.3-1.7 W及图7分项约6.8 W不一致，逐模型能效不推算。',
  notes='FP16；512×512图像+128文本token，输出488；batch未明。吞吐未明确分离prefill/decode，图估读仅列两位有效数。',
  rows=[dict(model=r['model'],precision='FP16',stage='MLLM生成',tps=r['tps'],tpj=None,power=None,conditions='图像+128文本；488输出',method='图估读') for r in ch['rows']]))
 
@@ -98,10 +98,13 @@ add(dict(id='G02',title='4×B200 GPU 实测参考（来自 Coffee / Elastic Prec
  notes='最大可容纳batch；NVFP4推理与KV缓存。保留PG-19工作量和K长度标签。此处是同一论文里的实测GPU参照，不能把论文的288加速器模型说成B200实测。',rows=rr))
 
 for p in papers:
-    for r in p['rows']:r['paper_id']=p['id'];r['paper_url']=p['url']
+    for r in p['rows']:
+        r['paper_id']=p['id'];r['paper_url']=p['url']
+        r['j_per_token']=None if r['tpj'] is None else 1/r['tpj']
+        r['j_per_token_derivation']='未报告' if r['tpj'] is None else '1 / 本记录未作显示舍入的tpj；继承原阶段、能量边界、图估读/条件换算和聚合口径'
 allrows=[r for p in papers for r in p['rows']]
-data=dict(title='大模型推理速度与能效综述',date='2026-11-17',issue=261,base_commit='9a7309d0b5325a4f69cbc4cbdbd9463ab2890e4b',
-  units={'tps':'tokens/s, stage-specific','tpj':'tokens/J, energy-efficiency, higher is better','power':'W, scope-specific'},papers=papers,rows=allrows,
+data=dict(title='大模型推理速度与能效综述',date='2026-11-17',issue=261,base_commit='33c9743b8a50362501accb56bba08796e6e0f88d',
+  units={'tps':'tokens/s, stage-specific','tpj':'tokens/J, energy-efficiency, higher is better','j_per_token':'J/token, reciprocal of stored tpj, lower is better','power':'W, scope-specific'},papers=papers,rows=allrows,
   caveat='文献数据摘录/换算，不是本项目新仿真；不同模型、阶段、批量和功耗边界不能混排。')
 (OUT/'issue-261-llm-speed-energy-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
 
@@ -134,6 +137,9 @@ def fmt(v):
     if abs(v)>=1:return f'{v:.2f}'.rstrip('0').rstrip('.')
     return f'{v:.4f}'.rstrip('0').rstrip('.')
 
+def jfmt(v):
+    return '未报告' if v is None else '≈'+format(v,'.3g')
+
 class Mark(Flowable):
     def __init__(self,k,label):super().__init__();self.k=k;self.label=label;self.width=0;self.height=0
     def draw(self):
@@ -141,7 +147,7 @@ class Mark(Flowable):
 def onpage(c,d):
     c.saveState();c.setStrokeColor(colors.HexColor('#D6E2E9'));c.line(M,H-29,W-M,H-29)
     c.setFillColor(MUTED);c.setFont('CJK',8);c.drawString(M,H-21,'LLM 推理速度与能效 | 文献证据汇总 · 2026-11-17')
-    c.drawRightString(W-M,20,f'{d.page:02d}');c.drawString(M,20,'tokens/J 越高越省能量 · 阶段、批量与能量边界须同时阅读')
+    c.drawRightString(W-M,20,f'{d.page:02d}');c.drawString(M,20,'J/token 越低越省能量 · tokens/J 越高越省能量 · 保留阶段与能量边界')
     c.restoreState()
 
 def metrics(p,rs=None):
@@ -156,8 +162,10 @@ def metrics(p,rs=None):
         if p['id']=='G01':precision='W4A16'
         phase=r.get('stage','')
         phase=phase.replace('作者表列Throughput；严格分母/阶段边界未明','表列吞吐*').replace('输出tokens/E2E时间','端到端').replace('decoder层，总吞吐','decoder层/总吞吐')
-        rows.append([r['model'],precision,phase,approx+fmt(r['tps']),approx+fmt(r['tpj']) if r['tpj'] is not None else '未报告',fmt(r.get('power')),cond])
-    return table(['模型','精度','阶段','tokens/s','tokens/J','功耗 W','测试条件 / 说明'],rows,[130,75,70,65,65,62,CW-467])
+        phase=phase.replace('peak decode','峰值解码').replace('扩散生成平均','扩散均值')
+        model='LLaDA-8B / Dream-7B' if p['id']=='A05' else r['model']
+        rows.append([model,precision,phase,approx+fmt(r['tps']),approx+fmt(r['tpj']) if r['tpj'] is not None else '未报告',jfmt(r['j_per_token']),fmt(r.get('power')),cond])
+    return table(['模型','精度','阶段','tokens/s','tokens/J','J/token','功耗 W','测试条件 / 说明'],rows,[122,68,66,60,60,70,54,CW-500])
 def details(p,rs=None,subtitle=None,compact=False,anchor=True):
     elems=[]
     short={'A02':'CENT','A03':'Coffee','A04':'HNLPU','G01':'Jetson GPU 实测参考','G02':'4×B200 GPU 实测参考'}.get(p['id'],p['title'].split(':')[0])
@@ -211,22 +219,24 @@ def make_story():
     s.append(Spacer(1,36));text('研究型硬件 · 可核对的模型与能量边界','h2')
     s.append(P('大模型推理\n速度与能效综述','big'))
     text('ASIC / CIM / PIM / FPGA / GPU','h2')
-    text(f'32 项论文工作 · {len(allrows)} 组模型、配置与阶段记录 · 统一使用 tokens/s 与 tokens/J')
+    text(f'32 项论文工作 · {len(allrows)} 组模型、配置与阶段记录 · tokens/s、tokens/J 与 J/token')
     text('范围已放宽：覆盖小于1B至百B级及MoE模型、多种数值精度与存储系统。科研加速器为主体，论文中的GPU实测作为参照。')
     text('本报告记录论文原始条件，不把架构仿真、芯片估计和板卡实测合并成性能排行榜。缺少可匹配能量的记录明确留空。')
     s.append(Spacer(1,15));text('检索与复核：2026-11-17（Asia/Shanghai） | 项目 Issue #261 / PR #262','small')
-    text('更新版补充 tokens/J、扩展模型规模，并修订此前汇总中若干功耗与阶段口径。无新服务器仿真、流片或板测。','small');page()
+    text('本次新增111组 J/token：由同一记录的tokens/J取倒数，保留全部证据边界。无新服务器仿真、流片或板测。','small');page()
     title('指标与计算方法','method')
-    text('tokens/J 是能效：同样1焦耳能够完成多少个 token，数值越大越省能量。它的倒数才是每 token 能耗（J/token）。阶段和分子必须一起写明。')
+    text('J/token = 1 ÷ (tokens/J)，表示每个token消耗多少焦耳，越低越省能量；tokens/J是能效，越高越好。两者继承同一阶段、模型、batch和能量边界。')
     s.append(table(['指标','分子 / 分母','怎样解释'],[
       ['Decode 吞吐','生成的 token 数 / 对应 decode 时间','若从首个输出到末个输出计时，分子通常是 Nout-1 个间隔；按实际计时边界记录。'],
       ['Prefill 吞吐','处理的输入 token 数 / prefill 时间','完成条件：最后输入位置的 logits 就绪，后续 decode 所需 KV 可读取。视觉 token 与纯文本 token 分开。'],
       ['端到端生成吞吐','输出 token 数 / 整次请求时间','分母通常含 prefill；CENT 等原文使用输入+输出总数时，本报告另加 * 标记。'],
       ['阶段能效','相应 token 数 / 同窗口能量积分','能量 E=∫P(t)dt；分母与吞吐相同窗口且同边界时，tokens/J=(tokens/s)/W。'],
+      ['每token能耗','J/token = E(J)/N = 1/(tokens/J)','同窗口功率与吞吐可配对时，也等于W/(tokens/s)。prefill的N是输入token；decode的N是输出token。'],
       ['原始延迟/能量换算','N×1000/t(ms)；N×1000/E(mJ)','decode单步N=1。只给TDP、TOPS/W、某算子pJ/MAC时，不推算整模型tokens/J。'],
     ],[105,220,CW-325]));s.append(Spacer(1,10))
     text('平均值的陷阱：mean(TPS)/mean(P) 不一定等于 token总数/总能量，更不一定等于 mean(TPS/P)。本文优先采用同测试点能量；CENT保留作者的专用聚合公式。')
-    text('标记：≈为图读数；“换算”保留原始算式；“条件换算”表示将总体功耗用于指定速度点、尚非同窗口验证；“未报告”表示公开证据不足。功耗列按各论文范围填写，不默认包含DDR或主机。','small');page()
+    text('J/token一律从数据文件中尚未作显示舍入的tpj计算，显示约3位有效数字；原报整数或图读数的精度限制不变。其≈表示换算后的近似显示，并不新增实测证据。CENT沿用作者聚合能量，TerEffic沿用原报已舍入能效；平均能效的倒数不冒充逐请求能耗算术平均。','small')
+    text('其他标记：原列≈为图读数；“条件换算”继承总体功耗未匹配同窗口的限制；“未报告”继续留空。功耗不默认包含DDR或主机。','small');page()
     title('代表结果速览：按条件阅读','overview')
     rows=[
      ['ProQuant [R01]','Qwen2.5-VL-3B W8A8','decode','8.00','2.03','芯片实测+DDR模型；V256+T256'],
@@ -242,7 +252,12 @@ def make_story():
      ['Coffee [A03]','Llama3.1-8B平均4bit','decode','153411','140.07','288加速器模型；B4096；1.4K/0.2K'],
      ['HNLPU [A04]','gpt-oss120B FP4','系统推理*','249960','36.226','16芯片；6.9kW；固定权重；阶段未拆分'],
     ]
-    s.append(table(['工作','模型 / 精度','阶段','tokens/s','tokens/J','条件与限制'],rows,[102,150,75,72,70,CW-469]))
+    reps=[next(r for r in byid['R01']['rows'] if r['model']=='Qwen2.5-VL-3B' and r['precision']=='W8A8' and r['stage']=='decode'),
+          next(r for r in byid['E01']['rows'] if r['model']=='Llama3.2-3B' and r['precision']=='INT4'),
+          byid['R03']['rows'][0],byid['R04']['rows'][0],byid['A01']['rows'][0],byid['A02']['rows'][0],
+          byid['F01']['rows'][4],byid['F03']['rows'][0],byid['F04']['rows'][2],byid['G01']['rows'][1],byid['A03']['rows'][0],byid['A04']['rows'][0]]
+    for row,r in zip(rows,reps):row.insert(5,jfmt(r['j_per_token']))
+    s.append(table(['工作','模型 / 精度','阶段','tokens/s','tokens/J','J/token','条件与限制'],rows,[100,145,70,68,60,70,CW-513]))
     text('* 表示正文还有统计或功耗边界限制。此表只用于定位，不代表同模型、同质量、同系统规模的优劣排序。详细表优先于此处舍入数。','small');page()
     title('同一平台内：低比特如何改变速度与能效','within')
     text('ProQuant 的三个模型均取相同 V256+T256 输入，以原表单步延迟和能量换算。三幅图各自展示同模型精度变化；坐标为 decode 输出指标。[R01]')
@@ -254,7 +269,7 @@ def make_story():
         p=byid['R01'];rs=[r for r in p['rows'] if r['stage']==stage]
         s.extend(details(p,rs,subtitle=stage+' 逐模型数据',anchor=stage=='decode'))
         if stage=='decode':text('原始 ms/mJ 随附于数据文件；例如Qwen2.5-VL-3B W8A8：125.07 ms、492.73 mJ，速度=1000/125.07，能效=1000/492.73。','small')
-        else:text('此页tokens/J的分子也是视觉+文本输入token，不是生成token。示例：Qwen2.5-VL-3B W8A8，512/1.5824=323.56输入tokens/s，512/2.69007=190.33输入tokens/J。','small')
+        else:text('此页能量按视觉+文本输入token计，非生成token。例：Qwen2.5-VL-3B W8A8，512/1.5824=323.56输入tokens/s，512/2.69007=190.33输入tokens/J；2.69007/512≈0.00525 J/输入token。','small')
         page()
     title('两篇 VitaLLM：保留各自运行点')
     for id in ['R02','R03']:s.extend(details(byid[id],compact=True))
@@ -301,7 +316,7 @@ def make_story():
     page()
     missing=[p for p in papers if p.get('missing')]
     for start in range(0,len(missing),3):
-        title('已有工作的保留项：为什么没有填 tokens/J')
+        title('已有工作的保留项：能效与每token能耗缺项')
         for p in missing[start:start+3]:
             s.append(Mark(p['id'],f"[{p['id']}] {p['title'].split(':')[0]}"))
             text(f"[{p['id']}] {p['title']}",'h2');text(p['models']+' | '+p['hardware'],'small');text(p['notes'])
@@ -335,7 +350,7 @@ def make_story():
         if start+9<len(order):page()
     page();title('数据追溯与更正记录','audit')
     text('本报告接续项目Issue #261 / PR #262。旧版21篇ASIC调研保留，本版将范围扩大至32项论文工作；GPU参照复用EdgeCIM和Coffee论文，不重复计为新论文。')
-    text(f'数据文件含{len(allrows)}行阶段/模型/配置记录，其中{sum(r["tpj"] is not None for r in allrows)}行有原报、换算或条件能效。CHIME仅保留论文总体能效区间，逐模型值为空；DynaTE标为跨模型平均。')
+    text(f'数据文件含{len(allrows)}行阶段/模型/配置记录，其中{sum(r["tpj"] is not None for r in allrows)}行有原报、换算或条件能效，均新增J/token倒数值；其余22行留空。CHIME仅对作者总体区间取倒数，不分配到模型；DynaTE保留跨模型聚合标签。')
     s.append(table(['本次核对发现','报告处理'],[
       ['EdgeCIM不同版本图例与数据','速度和能效使用v1配对；GPU采用v2实测，明确版本与边界。'],
       ['VitaLLM长版能效与速度/功耗不一致','原文1098.38保留在备注；表中以70.70/0.06597=1071.70作明确换算。'],
@@ -345,7 +360,7 @@ def make_story():
       ['PALUTE、TerEffic的特殊前提','保留PALUTE器件假设与不完整工况；TerEffic标decoder层和RNN变体，均不当标准dense LLM整机实测。'],
     ],[230,CW-230]));s.append(Spacer(1,10))
     text('来源均为论文、作者项目或作者公开数据；引用版本和访问日期见索引与随附JSON。作者仓库main链接可能变化，本次提取原值已保存在本地报告数据中。未开展新的服务器仿真或测量。')
-    text('项目追溯基线：9a7309d0b5325a4f69cbc4cbdbd9463ab2890e4b；研究分支task/261-llm-asic-benchmarks。报告属于待独立审查的文献交付，不代表芯片物理验收或PR已合并。','small')
+    text('本次J/token补充基于交付commit 33c9743b8a50362501accb56bba08796e6e0f88d；研究分支task/261-llm-asic-benchmarks。待独立审查，不代表芯片物理验收或PR已合并。','small')
     return s
 
 pages={};previous_pages={}
@@ -361,15 +376,22 @@ assert len(allrows)==133,len(allrows)
 assert all(p['id'] in textall for p in papers)
 assert all(r['tps'] is not None and r['tps']>0 for r in allrows)
 assert all(r['tpj'] is None or r['tpj']>0 for r in allrows)
+assert sum(r['j_per_token'] is not None for r in allrows)==111
+for r in allrows:
+    assert (r['j_per_token'] is None)==(r['tpj'] is None)
+    if r['tpj'] is not None:assert math.isclose(r['j_per_token']*r['tpj'],1,rel_tol=1e-12)
 for r in byid['R01']['rows']:
     assert abs(r['tps']*r['latency_ms']/1000-r['numerator_tokens'])<1e-7
     assert abs(r['tpj']*r['energy_mj']/1000-r['numerator_tokens'])<1e-7
-manifest=dict(date='2026-11-17',pages=len(reader.pages),records=len(allrows),efficiency_rows=sum(r['tpj'] is not None for r in allrows),source_entries=len(papers),distinct_paper_works=32,
+    assert math.isclose(r['j_per_token'],r['energy_mj']/1000/r['numerator_tokens'],rel_tol=1e-12)
+for r in byid['A02']['rows']:
+    assert math.isclose(r['j_per_token'],r['energy_per_token_mj']/1000,rel_tol=1e-12)
+manifest=dict(date='2026-11-17',pages=len(reader.pages),records=len(allrows),efficiency_rows=sum(r['tpj'] is not None for r in allrows),j_per_token_rows=sum(r['j_per_token'] is not None for r in allrows),source_entries=len(papers),distinct_paper_works=32,
   external_links=sum(a.get_object().get('/A',{}).get('/URI') is not None for p in reader.pages for a in p.get('/Annots',[])),
   pdf_sha256=hashlib.sha256(pdf.read_bytes()).hexdigest(),page_map=pages,
   source_sha256={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in SOURCES.glob('*.json')},
   generator_sha256={n:hashlib.sha256((BASE/n).read_bytes()).hexdigest() for n in ['build_report.py','root_data.py']},
-  versions={'python':sys.version,'reportlab':__import__('reportlab').Version,'pypdf':__import__('pypdf').__version__},checks='source identifiers, positive numeric values and ProQuant conversions passed; visual QA recorded separately in delivery note')
+  versions={'python':sys.version,'reportlab':__import__('reportlab').Version,'pypdf':__import__('pypdf').__version__},checks='133 source/record checks, 111 reciprocal conversions, 24 ProQuant raw-energy checks and 9 CENT raw-energy checks passed; visual QA recorded in delivery note')
 (OUT/'issue-261-llm-speed-energy-manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
 (BASE/'extracted_report.txt').write_text(textall,encoding='utf-8')
 print(json.dumps({k:manifest[k] for k in ['pages','records','efficiency_rows','source_entries','pdf_sha256','external_links']},ensure_ascii=False))
