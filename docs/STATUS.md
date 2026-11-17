@@ -1,6 +1,6 @@
 # 当前状态
 
-2026-11-17，[Issue #289](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/289) / [草稿 PR #290](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/290) 执行 A/B 非 P 接口的340个输出驱动X8升级。G hold03、S局部ECO叶宏及F父block已有300MHz后端通过回执；F setup +0.221605405ns、hold +0.002453537ns，完整GDS DRC0、PG/电气/功能保持通过。C/U尚未通过。A/B的C/U实际源为未完成详细布线验收的overlay CTS，正补全后端；新建50fF接口测试契约与真实顶层RC验收分开。新宏OBS变化已通过父ODB重建与实际GDS复核处理；C/U继续独立实现和验收。详见[执行记录](../work/YUZE-LU/289/README.md)；Issue保持in_progress。
+2026-11-18，[Issue #289](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/289) / [草稿 PR #290](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/290) 继续完成 A/B 非 P 接口的 340 个输出驱动 X8 升级。G/S 叶宏和 F 父 block 已验收，F TT 名义 300 MHz setup/hold 裕量为 +221.605/+2.454 ps。U 新增后端验收通过，153 个目标输出均为 BUF_X8，在 TT 250 MHz、目标输出 50 fF 契约下，setup/hold 裕量为 +78.051/+3.471 ps，完整原版 GDS DRC 和五类时序/电气违例均为零，PG、功能和视图检查通过。C 继续详细布线和等价算术优化。实际顶层 RC 和多 PVT 验证仍待后续进行。详见[执行记录及回执](../work/YUZE-LU/289/README.md)，Issue 保持 in_progress。
 
 2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 
