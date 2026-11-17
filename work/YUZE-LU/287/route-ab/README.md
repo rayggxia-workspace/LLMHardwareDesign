@@ -1,5 +1,7 @@
 # A/B真实走线：几何、负载探针与端点资格
 
+**全量更新：已完成646/646条非P方案—线网记录。请以[全量报告](FULL-REPORT.md)、[646行明细表](all-nets.html)和[CSV](all-nets.csv)作为总体统计依据。A-CU302/306、B-CU302/306、B-GS34/34超过真实驱动的库电容上限。下面保留首轮六条探针的历史过程，不再作为总体覆盖结论。**
+
 2026-11-17，YUZE-LU，Refs #287 / PR #288。固定main 00b288f00e6d64e29ce9ba2ff2a5edb01bc58291。远程原件 `/public/home/yuzelu/project-circuit/issue287-route-ab-20261117`。
 
 ## 结论

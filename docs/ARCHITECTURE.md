@@ -1,5 +1,7 @@
 # 架构与运行
 
+全量非P A/B连线统计运行：`work/YUZE-LU/287/route-ab/full_field.sbatch`在单节点8任务并行处理646条真实网；`finish_all.sbatch`执行汇总、覆盖/误差/守恒检查和输入输出哈希。逐网真实单元绑定用`bind_all.py`，说明及数据见[全量报告](../work/YUZE-LU/287/route-ab/FULL-REPORT.md)。
+
 A/B真实上层布线的几何审计、静态场探针、实际ODB驱动核对运行入口见[Issue287说明](../work/YUZE-LU/287/route-ab/README.md)。脚本在Slurm节点执行；当前是研究负载探针，尚非完整联合STA。
 
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
