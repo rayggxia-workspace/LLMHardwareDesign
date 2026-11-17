@@ -1,0 +1,417 @@
+{
+  "model": "granite",
+  "name": "Granite3.1-3B-A800M",
+  "architecture": "32层MoE；64维KV，每token动态选择8/40专家，三P按3/3/2波次执行。",
+  "source_commit": "395fe768ceaed45ef2b822d9ce288e1f98f0fe0f",
+  "sample_job": "38826721",
+  "short_prefill_input_tok_s": 16.07319891170185,
+  "short_prefill_ms": 124.430737838,
+  "decode_tok_s": 6.94018465318238,
+  "decode_interval_ms": 144.088385248,
+  "first_prefill_including_boot_ms": 62.140298908,
+  "second_prefill_increment_ms": 62.29043893,
+  "decode_second_body_ms": 123.737955976,
+  "decode_tail_ms": 20.350429272,
+  "affine_slope_ps_per_context": 120014681.73046875,
+  "estimated_prefill_body_s": 47.531067695026735,
+  "estimated_prefill_to_logits_s": 47.551418124298735,
+  "estimated_input_tok_s_body": 10.771901933386856,
+  "estimated_input_tok_s_to_logits": 10.767291916755022,
+  "attention_samples": 45,
+  "recurrent_samples": 0,
+  "component_max_deviation_percent": 4.735705860096595,
+  "curves": [
+    {
+      "layer": 0,
+      "max_abs_deviation_percent": 4.673388083950953,
+      "samples": [
+        {
+          "context": 1,
+          "actual_ps": 783490,
+          "affine_ps": 734153.337254902,
+          "deviation_percent": 6.297037964121815
+        },
+        {
+          "context": 2,
+          "actual_ps": 890178,
+          "affine_ps": 890178.0,
+          "deviation_percent": 0.0
+        },
+        {
+          "context": 4,
+          "actual_ps": 1106888,
+          "affine_ps": 1202227.325490196,
+          "deviation_percent": -8.61327663595558
+        },
+        {
+          "context": 7,
+          "actual_ps": 1630326,
+          "affine_ps": 1670301.3137254901,
+          "deviation_percent": -2.4519828381250206
+        },
+        {
+          "context": 8,
+          "actual_ps": 1720344,
+          "affine_ps": 1826325.9764705882,
+          "deviation_percent": -6.160510715914273
+        },
+        {
+          "context": 9,
+          "actual_ps": 2077082,
+          "affine_ps": 1982350.6392156864,
+          "deviation_percent": 4.560790608378179
+        },
+        {
+          "context": 16,
+          "actual_ps": 2937254,
+          "affine_ps": 3074523.2784313727,
+          "deviation_percent": -4.673388083950953
+        },
+        {
+          "context": 32,
+          "actual_ps": 5414416,
+          "affine_ps": 5570917.882352941,
+          "deviation_percent": -2.890466531440154
+        },
+        {
+          "context": 64,
+          "actual_ps": 10712142,
+          "affine_ps": 10563707.090196079,
+          "deviation_percent": 1.3856697363041057
+        },
+        {
+          "context": 65,
+          "actual_ps": 11018870,
+          "affine_ps": 10719731.752941176,
+          "deviation_percent": 2.714781525318147
+        },
+        {
+          "context": 128,
+          "actual_ps": 20630792,
+          "affine_ps": 20549285.505882353,
+          "deviation_percent": 0.39507205597171163
+        },
+        {
+          "context": 129,
+          "actual_ps": 21004200,
+          "affine_ps": 20705310.168627452,
+          "deviation_percent": 1.4230003112356
+        },
+        {
+          "context": 256,
+          "actual_ps": 40704806,
+          "affine_ps": 40520442.337254904,
+          "deviation_percent": 0.45292848894819887
+        },
+        {
+          "context": 257,
+          "actual_ps": 40984862,
+          "affine_ps": 40676467.0,
+          "deviation_percent": 0.7524607500203367
+        },
+        {
+          "context": 512,
+          "actual_ps": 80462756,
+          "affine_ps": 80462756.0,
+          "deviation_percent": 0.0
+        }
+      ]
+    },
+    {
+      "layer": 16,
+      "max_abs_deviation_percent": 4.673388083950953,
+      "samples": [
+        {
+          "context": 1,
+          "actual_ps": 783490,
+          "affine_ps": 734153.337254902,
+          "deviation_percent": 6.297037964121815
+        },
+        {
+          "context": 2,
+          "actual_ps": 890178,
+          "affine_ps": 890178.0,
+          "deviation_percent": 0.0
+        },
+        {
+          "context": 4,
+          "actual_ps": 1106888,
+          "affine_ps": 1202227.325490196,
+          "deviation_percent": -8.61327663595558
+        },
+        {
+          "context": 7,
+          "actual_ps": 1630326,
+          "affine_ps": 1670301.3137254901,
+          "deviation_percent": -2.4519828381250206
+        },
+        {
+          "context": 8,
+          "actual_ps": 1720344,
+          "affine_ps": 1826325.9764705882,
+          "deviation_percent": -6.160510715914273
+        },
+        {
+          "context": 9,
+          "actual_ps": 2077082,
+          "affine_ps": 1982350.6392156864,
+          "deviation_percent": 4.560790608378179
+        },
+        {
+          "context": 16,
+          "actual_ps": 2937254,
+          "affine_ps": 3074523.2784313727,
+          "deviation_percent": -4.673388083950953
+        },
+        {
+          "context": 32,
+          "actual_ps": 5414416,
+          "affine_ps": 5570917.882352941,
+          "deviation_percent": -2.890466531440154
+        },
+        {
+          "context": 64,
+          "actual_ps": 10712142,
+          "affine_ps": 10563707.090196079,
+          "deviation_percent": 1.3856697363041057
+        },
+        {
+          "context": 65,
+          "actual_ps": 11018870,
+          "affine_ps": 10719731.752941176,
+          "deviation_percent": 2.714781525318147
+        },
+        {
+          "context": 128,
+          "actual_ps": 20630792,
+          "affine_ps": 20549285.505882353,
+          "deviation_percent": 0.39507205597171163
+        },
+        {
+          "context": 129,
+          "actual_ps": 21004200,
+          "affine_ps": 20705310.168627452,
+          "deviation_percent": 1.4230003112356
+        },
+        {
+          "context": 256,
+          "actual_ps": 40704806,
+          "affine_ps": 40520442.337254904,
+          "deviation_percent": 0.45292848894819887
+        },
+        {
+          "context": 257,
+          "actual_ps": 40984862,
+          "affine_ps": 40676467.0,
+          "deviation_percent": 0.7524607500203367
+        },
+        {
+          "context": 512,
+          "actual_ps": 80462756,
+          "affine_ps": 80462756.0,
+          "deviation_percent": 0.0
+        }
+      ]
+    },
+    {
+      "layer": 31,
+      "max_abs_deviation_percent": 4.735705860096595,
+      "samples": [
+        {
+          "context": 1,
+          "actual_ps": 783490,
+          "affine_ps": 734022.5921568627,
+          "deviation_percent": 6.313725490196081
+        },
+        {
+          "context": 2,
+          "actual_ps": 890178,
+          "affine_ps": 890178.0,
+          "deviation_percent": 0.0
+        },
+        {
+          "context": 4,
+          "actual_ps": 1106888,
+          "affine_ps": 1202488.8156862746,
+          "deviation_percent": -8.636900543349872
+        },
+        {
+          "context": 7,
+          "actual_ps": 1630326,
+          "affine_ps": 1670955.0392156863,
+          "deviation_percent": -2.492080676851517
+        },
+        {
+          "context": 8,
+          "actual_ps": 1720344,
+          "affine_ps": 1827110.4470588234,
+          "deviation_percent": -6.206110351117185
+        },
+        {
+          "context": 9,
+          "actual_ps": 2077082,
+          "affine_ps": 1983265.8549019608,
+          "deviation_percent": 4.516728039530417
+        },
+        {
+          "context": 16,
+          "actual_ps": 2937254,
+          "affine_ps": 3076353.7098039216,
+          "deviation_percent": -4.735705860096595
+        },
+        {
+          "context": 32,
+          "actual_ps": 5597786,
+          "affine_ps": 5574840.235294118,
+          "deviation_percent": 0.40990785831902843
+        },
+        {
+          "context": 64,
+          "actual_ps": 10352070,
+          "affine_ps": 10571813.28627451,
+          "deviation_percent": -2.122698999084333
+        },
+        {
+          "context": 65,
+          "actual_ps": 10748816,
+          "affine_ps": 10727968.694117647,
+          "deviation_percent": 0.19394978835206905
+        },
+        {
+          "context": 128,
+          "actual_ps": 20384076,
+          "affine_ps": 20565759.388235293,
+          "deviation_percent": -0.8913005830398852
+        },
+        {
+          "context": 129,
+          "actual_ps": 20864172,
+          "affine_ps": 20721914.796078432,
+          "deviation_percent": 0.6818253028280616
+        },
+        {
+          "context": 256,
+          "actual_ps": 40511434,
+          "affine_ps": 40553651.592156865,
+          "deviation_percent": -0.10421154718162952
+        },
+        {
+          "context": 257,
+          "actual_ps": 40801492,
+          "affine_ps": 40709807.0,
+          "deviation_percent": 0.2247099199215558
+        },
+        {
+          "context": 512,
+          "actual_ps": 80529436,
+          "affine_ps": 80529436.0,
+          "deviation_percent": 0.0
+        }
+      ]
+    }
+  ],
+  "nonlinear_screen_exceeded": false,
+  "warnings": [
+    "局部注意力采样未超过本报告5%筛查阈值；这不代表整段Prefill预测误差已通过5%验证。",
+    "MoE条件估算：仅有冻结的4个位置路由；未新增专家组合/长提示词路由扫描，输入相关DDR与波次等待不确定，继续使用线性估算。"
+  ],
+  "service_totals": {
+    "prefill_second": {
+      "attention": {
+        "calls": 768,
+        "cumulative_service_ps": 690981502,
+        "cumulative_dispatch_ps": 476875356
+      },
+      "recurrent": {
+        "calls": 0,
+        "cumulative_service_ps": 0,
+        "cumulative_dispatch_ps": 0
+      },
+      "moe": {
+        "calls": 384,
+        "cumulative_service_ps": 76575452028,
+        "cumulative_dispatch_ps": 236573972
+      },
+      "other": {
+        "calls": 4448,
+        "cumulative_service_ps": 27999508782,
+        "cumulative_dispatch_ps": 2738851876
+      }
+    },
+    "decode_second": {
+      "attention": {
+        "calls": 768,
+        "cumulative_service_ps": 62218297838,
+        "cumulative_dispatch_ps": 474564894
+      },
+      "recurrent": {
+        "calls": 0,
+        "cumulative_service_ps": 0,
+        "cumulative_dispatch_ps": 0
+      },
+      "moe": {
+        "calls": 384,
+        "cumulative_service_ps": 76492515444,
+        "cumulative_dispatch_ps": 235390402
+      },
+      "other": {
+        "calls": 4448,
+        "cumulative_service_ps": 27953279538,
+        "cumulative_dispatch_ps": 2739486062
+      }
+    }
+  },
+  "recurrent": [],
+  "frozen_expert_route_records": 128,
+  "frozen_expert_frequency": {
+    "0": 24,
+    "1": 27,
+    "2": 33,
+    "3": 23,
+    "4": 30,
+    "5": 33,
+    "6": 28,
+    "7": 30,
+    "8": 35,
+    "9": 28,
+    "10": 19,
+    "11": 25,
+    "12": 18,
+    "13": 23,
+    "14": 25,
+    "15": 21,
+    "16": 32,
+    "17": 24,
+    "18": 21,
+    "19": 27,
+    "20": 28,
+    "21": 15,
+    "22": 31,
+    "23": 16,
+    "24": 25,
+    "25": 15,
+    "26": 24,
+    "27": 21,
+    "28": 19,
+    "29": 29,
+    "30": 28,
+    "31": 26,
+    "32": 35,
+    "33": 28,
+    "34": 23,
+    "35": 30,
+    "36": 21,
+    "37": 20,
+    "38": 33,
+    "39": 31
+  },
+  "verified_input_sha256": {
+    "inputs\\granite-prefill.json": "8d0fd14a5957110d7952bc1592959cca63ac202d3eb51b8ed347eec7976a2802",
+    "inputs\\granite-decode.json": "266abdfb256ed375a389431259b63ad11fd62465173f3498d174dac9e5fb5fe3",
+    "results\\granite\\samples.json": "0219a3cd641a8682908a67ab709a6024d3fe50dcd1647c342ea2021c78cc224b"
+  },
+  "sampling_plan_matches_speed_plan": true,
+  "independent_sequence_validation": "deferred by user",
+  "full_model_rtl_qualified": false,
+  "full_model_timing_calibrated": false
+}

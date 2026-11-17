@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-17（Asia/Shanghai）七模型速度条件估算
+
+负责人 Melodydt，[Issue #291](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/291) / [PR #292](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/292)。独立分支 task/291-seven-model-prefill-estimate，源码395fe768ceaed45ef2b822d9ce288e1f98f0fe0f。330个ATT与8个递推局部样本作业38826721已COMPLETED 0:0/30秒/UNLIMITED，冻结数值计时未改。报告逐模型提供短P、估计P512主体及含词表头、原Decode；Phi/Falcon非线性和Granite/混合状态不足已显眼标注。
+
+实际完成结构、原速度保留、显式512项求和、330样本流量公式、8样本状态写回、输入/输出SHA与报告数值核验。16/32-token独立序列验证按用户指令暂缓；本轮检查不替代它。下一步由Melodydt待用户指令恢复独立序列/路由/状态验证；整模型RTL/物理资格仍缺。报告[HTML](../../docs/experiments/seven-model-speed-evaluation.html)，[回执与复算](../../work/Melodydt/291/README.md)。PR草稿待审查/未合并，登记pending，缺看板配置与工具，unverified/pending。
+
 ## 2026-11-17 20:01（Asia/Shanghai）无布线寄生分项扩展 v2
 
 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。数据提交 `3ce71cc712439da45580e7c89f8533e6a5ff0d25`。七模型补入九类受支持分项，保持冻结 TLM 时间、输出和 DDR 器件结果；完整三窗及每模型专项优化见[十九页 PDF](../../docs/experiments/seven-model-energy-evaluation.pdf)和[本轮交接](../../docs/handoffs/2026-11-17-issue-280-no-wire-energy-extension.md)。
