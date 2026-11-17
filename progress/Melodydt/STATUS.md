@@ -1,5 +1,12 @@
 # Melodydt 的进度
 
+## 2026-11-17 23:02（Asia/Shanghai）Llama 三窗 N 完成
+
+38828362 采样及 38828633/34 标定全部 COMPLETED 0:0。三窗 130 次 RMS、6 组真实输入的定点与 N RTL 因子一致；433 位活动标注和全部 SHA 通过。样本 N 动态增量：prefill 299.43–301.14、首 token 292.09–301.02、第二 token 292.84–300.20 nJ/RMS，极值不是置信区间。仅 N 核心，尚未纳入完整 RMS 或模型小计；PDF 总值不变。
+
+[完整回执、其余六模型运行链及剩余步骤](../../docs/handoffs/2026-11-17-issue-280-common-arithmetic.md)。下一步验收其余六模型 N，再补公共 E/softmax/RoPE 与驻留积分，随后 GELU/路由、GDN/Mamba2。Issue #280 in_progress，PR #281 草稿未合并；负责人 Melodydt。登记 pending，看板 unverified/同步 pending；未配置聊天自动监测。
+
+
 ## 2026-11-17 22:59（Asia/Shanghai）七模型 RMS 链已提交，Llama prefill N 通过
 
 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。Llama prefill 冻结重放和定点采样通过：64 次 RMS、2 组真实输入，N RTL 因子 840227/850407 一致。38828633 完成后得到 N 动态增量 299.429/301.145 nJ/RMS（300 MHz、无布线寄生、边界活动传播），只覆盖 N，不是完整 RMS/模型结果。

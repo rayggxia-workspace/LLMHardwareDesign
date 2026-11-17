@@ -1,5 +1,8 @@
 # 当前状态
 
+2026-11-17 23:02，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 的 Llama 三窗 N 核心真实输入标定已通过：130 次 RMS、6 组样本的定点/RTL 因子、433 位活动标注和 SHA 完整。其余六模型采样/成功依赖标定继续运行。此为 N 算术子项，尚不等于完整 RMS 或模型能耗；完整步骤与证据见[接续记录](handoffs/2026-11-17-issue-280-common-arithmetic.md)。
+
+
 ## 2026-11-17 七模型 RMS 缺项链启动
 
 公共 RMS 的七模型采样及成功依赖 N 标定已提交，全部不限时。Llama prefill 的 64 次 RMS 重放/计数和两组真实输入 N RTL 因子已通过，得到约 299.43–301.14 nJ/次的 N 动态增量；不含 E、wrapper 与驻留，尚未回填模型小计。其余阶段继续运行，完整作业表与方法边界见[公共算术交接](handoffs/2026-11-17-issue-280-common-arithmetic.md)。Issue #280 in_progress，PR #281 草稿未合并。

@@ -2,7 +2,19 @@
 
 2026-11-17，Asia/Shanghai。负责人 Melodydt。仓库 rayggxia-workspace/LLMHardwareDesign，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280)，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，分支 `task/280-seven-model-energy`；本机导出工作区 `D:/Study_material/Study_material/LLMHardwareDesign` 无 `.git`，通过 Melodydt GitHub 连接向任务分支交付。未更改模型部署或冻结数值；无完整模型新能耗可发布，PDF v2.1 数值暂不变。
 
-## 后续推进：七模型采样及成功依赖链（22:59）
+## Llama 三窗 N 完成（23:02 读回）
+
+38828362 已 COMPLETED 0:0，耗时 33:36；decode 完整冻结重放、66 次 RMS 和四组真实输入定点校验通过。38828634 在 m3ca0301 自动运行 1:20，COMPLETED 0:0，四组 N RTL 因子全部一致，活动/空闲均 433 位标注。三窗累计 130 次 RMS、6 组样本。服务器 Python 为 3.10.12。
+
+| 窗口 | 两样本的 N 增量 nJ/RMS | 未移位 N 因子 |
+| --- | --- | --- |
+| Prefill | 299.429079541 / 301.144850304 | 840227 / 850407 |
+| 首个 decode token | 292.087531390 / 301.024649552 | 736705 / 616175 |
+| 第二个 decode token | 292.835128683 / 300.202546407 | 813520 / 626623 |
+
+样本极值不是误差/置信区间。N 核心已走通真实模型数据 → 定点验证 → RTL 因子 → 边界活动传播功耗；其他 RMS 子模块、驻留和实例积分仍待完成。Decode 捕获 SHA `54b80fceb6f3c867e237d9e7bb294f262d3066d55bcf95f096cc6fa8768b7beb`，小型回执在 `work/Melodydt/280/llama-arithmetic-decode/`；完整向量仍保留服务器及本机副本，不上传 Git。两阶段清单在 `llama-arithmetic-results.sha256`。其余六模型的采样/标定链见下一表，仍需等待实际验收。
+
+## 后续推进：七模型采样及成功依赖链（22:59 快照）
 
 Llama prefill 已通过完整冻结结果、逐层数值、DDR/SRAM/N 计数与定点复算：64 次 RMS 服务，512 个 S128 word（2048 元素），捕获 2 组完整真实输入。38828633 在该阶段独立验收后于 22:47 解除对整个双阶段采样作业的等待，48 秒内 COMPLETED 0:0（m3ca0905）。两个真实输入的 N 原始因子 840227/850407 与 RTL 一致，300 MHz 增量分别 299.429079541/301.144850304 nJ/次；每个等长窗 10,816,667 ps，活动 35.50054505/35.65916792 mW，空闲 7.818350568 mW。输入捕获 SHA 为 `2e3380e91b0495a7f888fe1b07c57f1cc82c0fc38a040569357bbd01a9147322`。这些结果仅是 N 算术动态增量，尚未添加其他 RMS 子模块或驻留，不能作为模型完整小计。
 
@@ -113,8 +125,8 @@ cd "$N/n-38828612" && sha256sum -c results.sha256
 
 ## 接下来所有步骤（依顺序）
 
-1. 等待 38828362，核验 Llama 两阶段数值与 N 计数；失败则修观测器副本并重跑，不改冻结基线。
-2. 依赖任务 38828633/34 将自动尝试真实输入的 N 因子与功耗标定；结束后人工读回验收并比较样本间差异。不是自动聊天监测。
+1. Llama 38828362 与 N 标定 38828633/34 已全部通过；保留原始输入、三窗计数/采样策略、因子、活动覆盖与 SHA 回执。不要重复提交。
+2. 等待并逐个验收其余六模型的采样/标定成功依赖链；失败则修观测器副本或输入/RTL 绑定并重跑，不改冻结基线。Slurm 依赖不是自动聊天监测。
 3. Qwen3、Granite、Phi、Gemma、Qwen3.5、Falcon 的冻结运行器扩展及采样/依赖标定均已提交；依次核验数值、计数、N 因子、活动和 SHA。Qwen3 已独立适配，不直接套六模型 launcher。
 4. 完成公共 softmax、RoPE、缩放以及 RMS E/scan/apply 部分的真实输入捕获、数值合同/RTL 匹配、无布线寄生标定。初次映射的 E compact 仅为候选，不代表已匹配 S32 E。
 5. 按模型实际签名计数、驻留与并行实例积分；去掉重复 U/时钟/漏电归属。更新片上与片上＋DDR 两类分项、覆盖和剩余缺项，重新生成并逐页验收 PDF。
