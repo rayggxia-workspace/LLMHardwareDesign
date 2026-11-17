@@ -46,6 +46,11 @@ bundle=${SLURM_SUBMIT_DIR:?}
 root=$(dirname "$bundle")
 out=$bundle/run-$SLURM_JOB_ID-$model
 image=$HOME/LLMHardware/opt/orfs-current-repacked.rootfs
+# Match the accepted Qwen3 batch environment on BSCC compute nodes.
+set +u
+source /public3/soft/modules/module.sh
+module load singularity/3.7.0
+set -u
 mkdir "$out"
 cp "$bundle/source-commit.txt" "$out/source-commit.txt"
 cp "$bundle/scripts.sha256" "$out/scripts.sha256"
