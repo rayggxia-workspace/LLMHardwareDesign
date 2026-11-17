@@ -1,0 +1,121 @@
+{
+  "retrieved_date": "2026-11-17",
+  "schema_note": "params单位B；tps图估读，tpj缺少可靠逐模型配对数据填null",
+  "rows": [
+    {
+      "work": "CHIME",
+      "model": "FastVLM-0.6B",
+      "params": 0.6,
+      "precision": "FP16",
+      "stage": "MLLM生成吞吐；prefill/decode时间分母未明确拆分",
+      "batch": null,
+      "input": "512×512 astronaut image + 128 text tokens",
+      "output": 488,
+      "tps": 530,
+      "tpj": null,
+      "evidence": "自研仿真+NeuroSim+RTL综合缩放；Fig.6(b)栅格散点图估读，速度应标≈",
+      "memory": "M3D DRAM 200层、5tier，每tier1.25GB；M3D RRAM 8层、2GB，RRAM接口512GB/s",
+      "process": "逻辑40nm综合缩放7nm；RRAM器件28nm CNFET、DRAM器件35nm",
+      "source": "https://arxiv.org/pdf/2601.19908v1#page=6",
+      "locator": "Fig.6(b)、Table V；模型Table II与§IV-A在第5页",
+      "boundary": "逐模型能效未单列；作者报告的总体能效范围与2W功率一致，但Fig.6(b)功率点和Fig.7功耗分解存在内部差异，因此保留tpj为空",
+      "notes": "LLM backbone=Qwen2-0.5B；batch未明确报告。本文按VQA任务评估全MLLM，吞吐未明确规定是否只计decode。不同工艺数字分别指逻辑缩放与存储器件。"
+    },
+    {
+      "work": "CHIME",
+      "model": "FastVLM-1.7B",
+      "params": 1.7,
+      "precision": "FP16",
+      "stage": "MLLM生成吞吐；prefill/decode时间分母未明确拆分",
+      "batch": null,
+      "input": "512×512 astronaut image + 128 text tokens",
+      "output": 488,
+      "tps": 290,
+      "tpj": null,
+      "evidence": "自研仿真+NeuroSim+RTL综合缩放；Fig.6(b)栅格散点图估读，速度应标≈",
+      "memory": "M3D DRAM 200层、5tier，每tier1.25GB；M3D RRAM 8层、2GB，RRAM接口512GB/s",
+      "process": "逻辑40nm综合缩放7nm；RRAM器件28nm CNFET、DRAM器件35nm",
+      "source": "https://arxiv.org/pdf/2601.19908v1#page=6",
+      "locator": "Fig.6(b)、Table V；模型Table II与§IV-A在第5页",
+      "boundary": "逐模型能效未单列；作者报告的总体能效范围与2W功率一致，但Fig.6(b)功率点和Fig.7功耗分解存在内部差异，因此保留tpj为空",
+      "notes": "LLM backbone=Qwen2-1.5B；batch未明确报告。本文按VQA任务评估全MLLM，吞吐未明确规定是否只计decode。不同工艺数字分别指逻辑缩放与存储器件。"
+    },
+    {
+      "work": "CHIME",
+      "model": "MobileVLM-1.7B",
+      "params": 1.7,
+      "precision": "FP16",
+      "stage": "MLLM生成吞吐；prefill/decode时间分母未明确拆分",
+      "batch": null,
+      "input": "512×512 astronaut image + 128 text tokens",
+      "output": 488,
+      "tps": 450,
+      "tpj": null,
+      "evidence": "自研仿真+NeuroSim+RTL综合缩放；Fig.6(b)栅格散点图估读，速度应标≈",
+      "memory": "M3D DRAM 200层、5tier，每tier1.25GB；M3D RRAM 8层、2GB，RRAM接口512GB/s",
+      "process": "逻辑40nm综合缩放7nm；RRAM器件28nm CNFET、DRAM器件35nm",
+      "source": "https://arxiv.org/pdf/2601.19908v1#page=6",
+      "locator": "Fig.6(b)、Table V；模型Table II与§IV-A在第5页",
+      "boundary": "逐模型能效未单列；作者报告的总体能效范围与2W功率一致，但Fig.6(b)功率点和Fig.7功耗分解存在内部差异，因此保留tpj为空",
+      "notes": "LLM backbone=LLaMA-1.4B；batch未明确报告。本文按VQA任务评估全MLLM，吞吐未明确规定是否只计decode。不同工艺数字分别指逻辑缩放与存储器件。"
+    },
+    {
+      "work": "CHIME",
+      "model": "MobileVLM-3B",
+      "params": 3,
+      "precision": "FP16",
+      "stage": "MLLM生成吞吐；prefill/decode时间分母未明确拆分",
+      "batch": null,
+      "input": "512×512 astronaut image + 128 text tokens",
+      "output": 488,
+      "tps": 230,
+      "tpj": null,
+      "evidence": "自研仿真+NeuroSim+RTL综合缩放；Fig.6(b)栅格散点图估读，速度应标≈",
+      "memory": "M3D DRAM 200层、5tier，每tier1.25GB；M3D RRAM 8层、2GB，RRAM接口512GB/s",
+      "process": "逻辑40nm综合缩放7nm；RRAM器件28nm CNFET、DRAM器件35nm",
+      "source": "https://arxiv.org/pdf/2601.19908v1#page=6",
+      "locator": "Fig.6(b)、Table V；模型Table II与§IV-A在第5页",
+      "boundary": "逐模型能效未单列；作者报告的总体能效范围与2W功率一致，但Fig.6(b)功率点和Fig.7功耗分解存在内部差异，因此保留tpj为空",
+      "notes": "LLM backbone=LLaMA-2.7B；batch未明确报告。本文按VQA任务评估全MLLM，吞吐未明确规定是否只计decode。不同工艺数字分别指逻辑缩放与存储器件。"
+    }
+  ],
+  "author_reported_aggregate": {
+    "tps_range": [
+      233,
+      533
+    ],
+    "tpj_range": [
+      116.5,
+      266.5
+    ],
+    "power_w": 2,
+    "source": "https://arxiv.org/pdf/2601.19908v1#page=6",
+    "locator": "Table V",
+    "evidence": "作者报告的总体范围；未逐模型配对",
+    "boundary": "Table V的2W与Fig.6(b)散点功率和Fig.7功耗分解存在差异"
+  },
+  "evidence_notes": [
+    "Fig.6(b)按标签顺序识别点，FastVLM0.6B在最高约530tok/s，MobileVLM1.7B约450，FastVLM1.7B约290，MobileVLM3B最低约230。",
+    "Table V作者总体范围233–533tok/s和116.5–266.5tok/J。不能将总体端点随意配给各模型的能效。",
+    "Fig.7(c)FastVLM0.6B功率分项0.60+0.61+2.17+2.46+1.03=6.87W；Fig.7(d)MobileVLM1.7B为0.51+0.62+2.18+2.46+1.02=6.79W，均与Table V的2W有差异。",
+    "Fig.6(b)散点x坐标估读约1.3–1.7W，也未与Table V的2W完全吻合。未据这些数值生成逐模型tokens/J。",
+    "Table III/IV列RRAM/DRAM NMP peak power2.584W/0.671W，峰值参数也不可直接作为吞吐试验平均功率。",
+    "输入图像512×512，128文本tokens，默认488输出tokens。40nm CMOS PDK下1GHz综合，缩放7nm，非流片实测。"
+  ],
+  "source_evidence": [
+    {
+      "source": "https://arxiv.org/html/2601.19908v1#S4.SS1",
+      "locator": "§IV-A, Table II–IV",
+      "fact": "默认VQA输入输出、模型backbone、FP16及硬件和仿真配置"
+    },
+    {
+      "source": "https://arxiv.org/pdf/2601.19908v1#page=6",
+      "locator": "Fig.6–7 and Table V",
+      "fact": "图示吞吐和功率、作者范围、功率分解内部差异"
+    }
+  ],
+  "local_verification_images": [
+    "C:\\Users\\Administrator\\.codex\\visualizations\\2026\\11\\12\\01a1cf68-c2d6-71e2-9ffe-213316929684\\chime-v1-page6.png",
+    "C:\\Users\\Administrator\\.codex\\visualizations\\2026\\11\\12\\01a1cf68-c2d6-71e2-9ffe-213316929684\\chime-fig6-original.jpg"
+  ]
+}

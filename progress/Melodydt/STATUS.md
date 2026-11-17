@@ -29,3 +29,12 @@
 - 将调研快照 `893622cb1919c1c5b86734cdd9f5f50ccf4028ec` 整理为 21 篇论文索引、逐模型数据与 PPA。根据原图补齐 EdgeCIM INT8 和逐模型面积、Pimba 四个 2.7B 模型的批量吞吐，均标为图读数。
 - PDF 由 ReportLab 4.4.9 生成，SHA-256 `39bd02b431bccf6c02101992ff8f675528d3560b1a1daf360c8c4089ea758a8b`。Poppler 逐页渲染、pypdf 6.21.4 核验页数及链接，项目结构检查通过。文献整理未执行新仿真或板测。
 - 独立审查待执行。登记 PR #5 待合并，Projects 实际条目未核验，待具权限维护者处理。
+
+
+## 2026-11-17（Asia/Shanghai，UTC+08:00）
+
+- [Issue #261](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/261) / [PR #262](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/262)：按用户扩大范围，交付[33页速度与能效报告](../../docs/experiments/issue-261-llm-speed-energy-report.pdf)、133行数据、来源与复现包。32项论文工作，111组有原报或带限定的tokens/J。
+- 保留精度、模型、batch、阶段、输入/输出、内存和能量边界；修订CENT、Hummingbird、VitaLLM、CHIME等口径。旧版21项ASIC报告保留。
+- 实际验证：管理结构PASS；算式/数值/来源检查通过；33页Poppler视觉检查和80外链及索引核对通过。PDF SHA-256 `becfb58612e2fd912bea15830d233beea81f5ee7fd99ebe46d4d38e263f1cd05`。未做新仿真、板测或物理验收。
+- 分支task/261-llm-asic-benchmarks，基线9a7309d0b5325a4f69cbc4cbdbd9463ab2890e4b；独立任务目录work/Melodydt/261/speed_energy_report。线上提交与CI以PR最新回执为准。
+- 下一步：独立审查文献数据、能量边界和图读数，审查人待指定。Issue保持in_review；登记PR5读回仍待合并；缺board.json和Projects操作能力，看板未核验/同步待维护者处理。
