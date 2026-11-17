@@ -155,7 +155,7 @@ def sample(plan, assets, images, item, context, state, out, library, ini):
     clock.until(lambda: bool(complete))
     elapsed = clock.now
     stats = dict(dram.stats)
-    if stats['reads'] + stats['writes'] != stats['callbacks'] or dram.pending:
+    if stats.get('reads', 0) + stats.get('writes', 0) != stats.get('callbacks', 0) or dram.pending:
         raise ValueError('sample DMA did not drain')
     dram.close()
     output = b''.join(ram[1 if item['schema'] == 18 else 0].words[i]
