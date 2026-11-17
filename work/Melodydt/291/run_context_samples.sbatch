@@ -43,7 +43,7 @@ printf 'JOB=%s NODE=%s CPUS=%s START=%s\n' "$SLURM_JOB_ID" "$SLURMD_NODENAME" "$
 pids=()
 for model in qwen3 llama phi gemma granite qwen35 falcon; do
     srun --exclusive --exact -N1 -n1 -c1 --cpu-bind=cores singularity exec --cleanenv \
-        --bind "$root:ro" --bind "$bundle" \
+        --bind "$root:$root:ro" --bind "$bundle" \
         --bind "$root/replay/sourcefs:/public/home/yuzelu:ro" \
         --bind "$root/six-model-energy-01/sourcefs/Melodydt/runs/issue-274:/public/home/yuzelu/Melodydt/runs/issue-274:ro" \
         "$image" bash "$bundle/run_context_samples.sbatch" inside "$model" "$out/$model" "$bundle" "$root" \
