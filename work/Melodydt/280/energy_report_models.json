@@ -1,5 +1,5 @@
 {
-  "revision": "2.0",
+  "revision": "2.1",
   "updated": "2026-11-17",
   "owner": "Melodydt",
   "report_scopes": {
@@ -31,6 +31,11 @@
         "写 DMA 单价迁移自 Qwen3 真实载荷；部分 SRAM 拍宽按串行 128-bit 参考换算，逻辑端口仍为 512 bit。其他母控页长按字估算。未标定读 DMA、控制外壳、算术和全局时钟/互连不视为零。",
         "全部系数不加载线网寄生；原网络仍有缓冲器与引脚电容，活动有零延迟及端口传播限制，不含延迟毛刺。旧 M 的 300 MHz 时序未闭合，标定端点不是整体误差范围。",
         "沿用冻结的完整数值输出与 DDR/SRAM 对账、原同输入 FP32 验收；本轮新增 Qwen3 普通 M 忙时及不重叠检查，没有重跑七模型 FP32 或整模型门级仿真。"
+      ],
+      "subtotal_exclusions": [
+        "共同片上缺项：读 DMA 动态、空闲及漏电；母控运行取指/启动；局控外壳/分发；交换机流量；未绑定的全局时钟/互连单元。",
+        "本模型算术缺项：RMS、softmax、RoPE 及额外缩放的独立算术功耗。",
+        "两类小计均缺上述项目及 DDR PHY/板级 I/O；DDR 器件仅计入“片上＋DDR”。布线寄生按本版口径主动排除。缺项不代表零功耗。"
       ]
     },
     {
@@ -54,6 +59,11 @@
           "label": "Qwen3.5-4B 三窗无寄生分项结果与 SHA-256",
           "path": "work/Melodydt/280/qwen35_tlm_power_v2_no_wire.json"
         }
+      ],
+      "subtotal_exclusions": [
+        "共同片上缺项：读 DMA 动态、空闲及漏电；母控运行取指/启动；局控外壳/分发；交换机流量；未绑定的全局时钟/互连单元。",
+        "本模型算术缺项：GDN、卷积、sigmoid、RMS、softmax、RoPE 及额外缩放；相关已观测存储访问已计入。",
+        "两类小计均缺上述项目及 DDR PHY/板级 I/O；DDR 器件仅计入“片上＋DDR”。布线寄生按本版口径主动排除。缺项不代表零功耗。"
       ]
     },
     {
@@ -77,6 +87,11 @@
           "label": "Gemma-3-4B 三窗无寄生分项结果与 SHA-256",
           "path": "work/Melodydt/280/gemma_tlm_power_v2_no_wire.json"
         }
+      ],
+      "subtotal_exclusions": [
+        "共同片上缺项：读 DMA 动态、空闲及漏电；母控运行取指/启动；局控外壳/分发；交换机流量；未绑定的全局时钟/互连单元。",
+        "本模型算术缺项：GELU、RMS、softmax、RoPE 及额外缩放；G32 的 SiLU 系数不覆盖 GELU。",
+        "两类小计均缺上述项目及 DDR PHY/板级 I/O；DDR 器件仅计入“片上＋DDR”。布线寄生按本版口径主动排除。缺项不代表零功耗。"
       ]
     },
     {
@@ -100,6 +115,11 @@
           "label": "Phi-4-mini 三窗无寄生分项结果与 SHA-256",
           "path": "work/Melodydt/280/phi_tlm_power_v2_no_wire.json"
         }
+      ],
+      "subtotal_exclusions": [
+        "共同片上缺项：读 DMA 动态、空闲及漏电；母控运行取指/启动；局控外壳/分发；交换机流量；未绑定的全局时钟/互连单元。",
+        "本模型算术缺项：partial LongRoPE、RMS、softmax 及额外缩放的独立算术功耗。",
+        "两类小计均缺上述项目及 DDR PHY/板级 I/O；DDR 器件仅计入“片上＋DDR”。布线寄生按本版口径主动排除。缺项不代表零功耗。"
       ]
     },
     {
@@ -123,6 +143,11 @@
           "label": "Granite 三窗无寄生分项结果与 SHA-256",
           "path": "work/Melodydt/280/granite_tlm_power_v2_no_wire.json"
         }
+      ],
+      "subtotal_exclusions": [
+        "共同片上缺项：读 DMA 动态、空闲及漏电；母控运行取指/启动；局控外壳/分发；交换机流量；未绑定的全局时钟/互连单元。",
+        "本模型算术缺项：router、专家加权汇总、RMS、softmax、RoPE 及额外缩放。",
+        "两类小计均缺上述项目及 DDR PHY/板级 I/O；DDR 器件仅计入“片上＋DDR”。布线寄生按本版口径主动排除。缺项不代表零功耗。"
       ]
     },
     {
@@ -146,6 +171,11 @@
           "label": "Falcon-H1-3B 三窗无寄生分项结果与 SHA-256",
           "path": "work/Melodydt/280/falcon_tlm_power_v2_no_wire.json"
         }
+      ],
+      "subtotal_exclusions": [
+        "共同片上缺项：读 DMA 动态、空闲及漏电；母控运行取指/启动；局控外壳/分发；交换机流量；未绑定的全局时钟/互连单元。",
+        "本模型算术缺项：Mamba2、卷积、RMS、softmax、RoPE 及额外缩放；相关已观测存储访问已计入。",
+        "两类小计均缺上述项目及 DDR PHY/板级 I/O；DDR 器件仅计入“片上＋DDR”。布线寄生按本版口径主动排除。缺项不代表零功耗。"
       ]
     },
     {
@@ -169,6 +199,11 @@
           "label": "Llama-3.2-1B 三窗无寄生分项结果与 SHA-256",
           "path": "work/Melodydt/280/llama_tlm_power_v2_no_wire.json"
         }
+      ],
+      "subtotal_exclusions": [
+        "共同片上缺项：读 DMA 动态、空闲及漏电；母控运行取指/启动；局控外壳/分发；交换机流量；未绑定的全局时钟/互连单元。",
+        "本模型算术缺项：RMS、softmax、RoPE 及额外缩放的独立算术功耗。",
+        "两类小计均缺上述项目及 DDR PHY/板级 I/O；DDR 器件仅计入“片上＋DDR”。布线寄生按本版口径主动排除。缺项不代表零功耗。"
       ]
     }
   ],

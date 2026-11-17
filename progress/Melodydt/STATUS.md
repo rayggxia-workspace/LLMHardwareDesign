@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-17 20:13（Asia/Shanghai）报告小计旁的缺项说明
+
+按用户要求更新 PDF v2.1，在七个模型的覆盖小计下方分别列出共同片上缺项、本模型未标定算术及 DDR PHY/板级范围，并说明主动排除的布线寄生与未知功耗的区别。能耗数据未改，未提交或重跑服务器任务。十九页已重新渲染目检，168 主值、504 分项值、56 覆盖对照值、11 链接和 21 段同页缺项说明核验通过。[报告](../../docs/experiments/seven-model-energy-evaluation.pdf) · [校验](../../work/Melodydt/280/report-validation-v2_1.json)。
+
+关联 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。任务 in_progress、草稿未合并，审查人待指定。负责人 Melodydt；下一步仍为实际缺项标定。登记 PR #5 pending，config/board.json 读取失败且缺 Projects 工具，看板 unverified/同步 pending，待有权限维护者处理。
+
 ## 2026-11-17 20:01（Asia/Shanghai）无布线寄生分项扩展 v2
 
 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。数据提交 `3ce71cc712439da45580e7c89f8533e6a5ff0d25`。七模型补入九类受支持分项，保持冻结 TLM 时间、输出和 DDR 器件结果；完整三窗及每模型专项优化见[十九页 PDF](../../docs/experiments/seven-model-energy-evaluation.pdf)和[本轮交接](../../docs/handoffs/2026-11-17-issue-280-no-wire-energy-extension.md)。
