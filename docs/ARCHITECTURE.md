@@ -1,5 +1,7 @@
 # 架构与运行
 
+A/B真实上层布线的几何审计、静态场探针、实际ODB驱动核对运行入口见[Issue287说明](../work/YUZE-LU/287/route-ab/README.md)。脚本在Slurm节点执行；当前是研究负载探针，尚非完整联合STA。
+
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
 
 ## 研究系统边界

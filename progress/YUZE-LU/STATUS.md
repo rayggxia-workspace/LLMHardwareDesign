@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-17 CST，#287 / PR #288扩展A/B真实布线评估：119522几何复核通过，119524六并发场探针完成，119525核对真实驱动。C/U实际绑定未验收CTS版，完整联合STA受阻；抽样线路418.7–525.6fF超过BUF_X1的60.65fF限制。B G/S探针663.7–796.7fF且有原输入驱动切断问题。[证据与恢复入口](../../work/YUZE-LU/287/route-ab/README.md)。需先确定合格物理基底再继续STA；未恢复曾按用户要求取消的后端作业。登记pending、看板unverified/同步pending。
+
 ## 2026-11-17（CST）合格C/U真实线路负载回放
 
 [Issue #287](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/287)：两端main六文件SHA绑定，119509复现独立基线；119515在debug node27分配16核、7场景并发完成14组原生收发口负载回放。0.336mm样本通过本夹具时序/电气检查；1.304–4.320mm所选样本有驱动过载，300MHz setup为负，200MHz仍电气违规。该结果是native_tx/rx的电气回放，不是存储数据接口协议闭环；outgoing/incoming接口仍需U切口正确接回后另验。[完整结果与范围](../../work/YUZE-LU/287/README.md)。原件及失败保留服务器，待独立审查；登记PR5 pending、无board配置，Projects unverified/同步pending，不关闭任务。
