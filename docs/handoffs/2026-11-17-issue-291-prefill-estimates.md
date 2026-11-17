@@ -22,3 +22,9 @@
 交付时读回基分支已前进到78812ea98ddc5714ea3e71d789b9800a4641bb7e；将其完整树合入本任务分支，保留主线PDF v2.1及新增进度。速度数据与采样源码不变。报告数据提交0441c9950eca5f3c21d240835e936a928ff18664；ZIP SHA-256为9b3dc6b784d8fc972a71b3e51bf912b1ab7d7749cf88de727fcc09c022b8884f。HTML/JSON/ZIP/清单远端Git blob SHA与本地一致。任务状态in_review，PR仍草稿未合并。
 
 用户追加PDF交付已完成：24页/39表，SHA-256 839d0d379507f680bd49fac300b0fbe5d34aef694c97692362af12ad2209fbf1。1939单元格、8警示框、7模型和2链接核验通过；全部页面渲染目检。生成脚本与依赖见work/Melodydt/291/PDF.md；源HTML/JSON及原ZIP均保持不变。此次只追加文档输出。
+
+## 追加速度与功耗综合PDF
+
+用户追加七模型速度/功耗统一报告和论文验证段落，已复用本任务完成14页PDF。速度输入为0550231版本，功耗索引为78812ea的v2.1，未改原速度/能耗。三单位W、J/token、token/J覆盖短P2和第二步Decode，分别列片上与片上＋DDR；完整P512误差、完整P512功耗仍未知。PDF SHA-256 11187931d2dea7129febba62bbf696301ddddd36a499bbfac36a0a68aa73f836。9来源、14时窗、168端点与482PDF文本项通过；14页渲染目检。第13页是中英文论文建议，原DOCX未修改。
+
+恢复先读work/Melodydt/291/COMBINED.md、combined-inputs.json与combined-validation.json；若源数据有新版本，先明确更换口径再更新清单，不直接混用。独立序列验证仍待用户指令。无需远程续跑，本轮无新作业。负责人Melodydt；PR草稿in_review，登记/看板限制不变。

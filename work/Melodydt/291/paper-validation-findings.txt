@@ -1,0 +1,7 @@
+验证与主要发现
+
+我们在统一的三路P并行FFN与512-bit SRAM配置下，对覆盖稠密Transformer、混合专家及注意力与递推混合架构的七个大模型进行了全层系统级仿真。两输入token的短Prefill吞吐为4.01-23.45 token/s，从真实512位置历史开始的两步Decode代表窗口吞吐为2.03-7.15 token/s。结合电路级分项标定与DDR器件模型，在当前已覆盖的片上模块加DDR器件口径下，短Prefill和Decode能耗分别估计为0.163-1.033 J/输入token和0.491-1.864 J/输出token；DDR器件约占已覆盖能耗的67.7%-73.0%，表明存储访问是后续性能与能耗优化的重要关注点。这些结果验证了该映射与调度流程在系统仿真层面对不同模型架构的适用性，并量化了当前实现的执行效率与已覆盖能耗。
+
+English
+
+We evaluate seven LLMs spanning dense Transformers, mixture-of-experts models, and hybrid attention-recurrent architectures through full-layer system-level simulation under a common three-P parallel-FFN configuration with 512-bit SRAM interfaces. The two-input-token prefill tests achieve 4.01-23.45 input tokens/s, while the representative interval in two-step decoding from 512 positions of real history achieves 2.03-7.15 output tokens/s. Combining circuit-level component calibration with a DDR device model, estimated energy for the currently covered on-chip components plus DDR devices ranges from 0.163 to 1.033 J/input token for short prefill and from 0.491 to 1.864 J/output token for decoding. DDR devices account for approximately 67.7%-73.0% of this covered energy, identifying memory access as an important target for further performance and energy optimization. These results demonstrate the applicability of the mapping and scheduling flow across model architectures at the system-simulation level and quantify the execution efficiency and covered energy of the current implementation.

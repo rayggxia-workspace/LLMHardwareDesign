@@ -80,3 +80,5 @@
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
 
 2026-11-17，#291报告新增[24页PDF](experiments/seven-model-speed-evaluation.pdf)，保留七模型短Prefill/Decode及P512条件估计。39张表、1939个单元格、8个警示框和全部页面完成内容及视觉检查；未新增仿真，独立序列验证仍按用户指令暂缓。
+
+2026-11-17，#291新增[七模型速度与功耗综合PDF](experiments/seven-model-speed-and-energy-evaluation.pdf)，统一短Prefill/Decode与条件P512预测，并将当前已覆盖能耗换算为W、J/token、token/J。完整P512误差未知、局部偏差和功耗缺项单列；附论文中英文建议，未新增仿真。

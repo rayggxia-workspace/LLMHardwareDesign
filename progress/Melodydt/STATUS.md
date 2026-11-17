@@ -289,3 +289,7 @@ Granite 回放 38820602 与积分 38820947 均 COMPLETED 0:0。Prefill／首 Dec
 - [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [结果与恢复](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-actual-payload-and-leaf-calibration.md)。任务进行中，项目登记待合并，看板待管理员核验。
 
 2026-11-17（Asia/Shanghai），#291追加24页[速度PDF](../../docs/experiments/seven-model-speed-evaluation.pdf)及生成脚本。1939单元格、8警示框、7模型关键值、2链接检查及24页目检通过。采样/估计输入不变，独立序列验证继续暂缓。PR #292进入待审查，仍草稿未合并；登记/看板限制不变。
+
+## 2026-11-17（Asia/Shanghai）七模型速度与功耗综合报告
+
+#291 / PR #292完成14页[综合PDF](../../docs/experiments/seven-model-speed-and-energy-evaluation.pdf)，保留短Prefill/Decode与P512条件估计，补局部误差百分比和28行功耗三单位表。9来源SHA、14时窗、168个Decimal换算端点、482个PDF文本条目通过，14页目检；论文中英文建议在第13页。完整P512误差/功耗仍未知，独立序列验证用户暂缓。无新服务器任务，未改#280原件或原论文。PR草稿in_review未合并，登记pending，看板unverified/pending；接续入口[综合报告说明](../../work/Melodydt/291/COMBINED.md)，负责人Melodydt。

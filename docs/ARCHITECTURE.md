@@ -244,3 +244,5 @@ python -B work/Melodydt/291/verify_report.py
 后者只核对报告、求和、流量几何与散列；16/32-token独立序列验证按用户要求未执行，512估计不等于全模型实测或RTL签核。
 
 #291的PDF导出与文本核验：`python -B work/Melodydt/291/build_speed_pdf.py`、`python -B work/Melodydt/291/verify_speed_pdf.py`。依赖ReportLab 4.4.9、BeautifulSoup、pypdf和中文字体；用Poppler渲染并目检。生成器只读取冻结HTML，不重新仿真或计算估值。详见[PDF回执](../work/Melodydt/291/PDF.md)。
+
+#291速度与功耗综合导出：`python -B work/Melodydt/291/build_combined_report.py`，独立单位与PDF内容核验：`python -B work/Melodydt/291/verify_combined_report.py`。输入由combined-inputs.json锁定；三单位使用各自原窗口，P512误差和功耗未验证。依赖ReportLab/pypdf/Deng字体；用Poppler渲染目检。见[综合回执](../work/Melodydt/291/COMBINED.md)。
