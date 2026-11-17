@@ -1,5 +1,12 @@
 # Melodydt 的进度
 
+## 2026-11-17（Asia/Shanghai）Qwen3 旧版 M 功耗估算
+
+- 38809661／38809662／38809728／38809915 均 `COMPLETED 0:0`。旧版 116976 对应 TT 300 MHz setup −1.121800 ns、hold −0.053419 ns。单个 M 18 窗带载估算 263.415–272.194 mW，复位后开钟、无请求为 248.092 mW。
+- Qwen3 短 Prefill／首 Decode token／稳态 Decode 的 M 参考分别为 31.95–32.07／104.19–104.31／104.29–104.41 mJ/token。另列 DDR 器件与 G32 活跃增量加 M 的小计。旧版估算沿用三路开钟与 C639 FFN 样本，使用复位后空载作等待期参照。
+- Melodydt 继续归并写 DMA、U、PM 与局控；读 DMA 38769386／38769388／38795299／38795300 在 ABC，38795516–38795519 等待依赖。SRAM／母控 PM 原宏缺档。新版 M 38792357 止于 CTS hold 缓冲插入，后续从 3_place.odb 恢复物理验收。
+- [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [回执与复现](../../docs/handoffs/2026-11-17-issue-280-bscc-t6-m-baseline-power.md)。任务进行中，项目登记待合并，看板待有权限维护者核验。
+
 ## Melodydt 的 Slurm 提交约定
 
 后续在本项目提交的作业统一请求无限时限。新脚本写 `#SBATCH --time=0`，提交时显式加 `sbatch --time=0`，并读回 `TimeLimit=UNLIMITED`。后续本项目仿真迁至 BSCC-T6 的 `~/LLMHardware/zenanyan`，在支持无限时限的 `v6_384` 分区提交。运行中需要新装的开源包统一安装到 `~/LLMHardware/opt`。 [服务器交接](../../docs/handoffs/2026-11-16-issue-280-bscc-t6.md)
