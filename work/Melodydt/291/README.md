@@ -53,3 +53,8 @@ cd "$R/run-38826721" && sha256sum -c results.sha256
 本轮报告/算术/流量/散列检查不等于用户暂缓的独立序列验证。审查人待指定，PR不自合并，Issue不标done。规则 `rayggxia-project-collab 1.0.0`；登记沿用management-hub PR #5 pending；缺 `config/board.json` 和Projects工具，看板条目unverified/同步pending，待具权限维护者处理。
 
 恢复第一步：读取PR #292与本目录报告，核验样本散列，再按用户后续指令开展独立序列验证或更细粒度非线性建模。
+
+
+## 论文 Word 双表
+
+追加[一页可编辑Word双表](../../../docs/experiments/seven-model-dac-tables.docx)：七模型短Prefill/估计512-token Prefill/Decode速度（token/s），片上/片上＋DDR的Decode/短Prefill能耗（J/token）。原稿风格、跨双栏三线表，保留区间和证据边界。[生成、验证与接续](WORD_TABLES.md)；源数据未更改。

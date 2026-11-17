@@ -293,3 +293,10 @@ Granite 回放 38820602 与积分 38820947 均 COMPLETED 0:0。Prefill／首 Dec
 ## 2026-11-17（Asia/Shanghai）七模型速度与功耗综合报告
 
 #291 / PR #292完成14页[综合PDF](../../docs/experiments/seven-model-speed-and-energy-evaluation.pdf)，保留短Prefill/Decode与P512条件估计，补局部误差百分比和28行功耗三单位表。9来源SHA、14时窗、168个Decimal换算端点、482个PDF文本条目通过，14页目检；论文中英文建议在第13页。完整P512误差/功耗仍未知，独立序列验证用户暂缓。无新服务器任务，未改#280原件或原论文。PR草稿in_review未合并，登记pending，看板unverified/pending；接续入口[综合报告说明](../../work/Melodydt/291/COMBINED.md)，负责人Melodydt。
+
+
+## 2026-11-17（Asia/Shanghai）论文 Word 双表
+
+按用户指定矩阵提供一页原生可编辑[Word双表](../../docs/experiments/seven-model-dac-tables.docx)，七模型速度三行（短Prefill、估计512-token Prefill、Decode）与双口径能耗四行（片上/片上＋DDR，各Decode/短Prefill），单位token/s与J/token。沿用原稿三线表、TNR8pt与跨双栏宽度，保留标定区间及估计/覆盖表注；原稿和冻结数据未改。
+
+21个速度值、28个能耗区间/56端点、1页Word渲染目检与管理结构检查通过；[构建、SHA和接续](../../work/Melodydt/291/WORD_TABLES.md)。无新仿真；负责人Melodydt，#291 / PR #292草稿in_review、未合并、审查人待指定。登记pending，看板无配置/工具、条目unverified/同步pending；下一步按用户指令更新文稿或由维护者审查。

@@ -28,3 +28,8 @@
 用户追加七模型速度/功耗统一报告和论文验证段落，已复用本任务完成14页PDF。速度输入为0550231版本，功耗索引为78812ea的v2.1，未改原速度/能耗。三单位W、J/token、token/J覆盖短P2和第二步Decode，分别列片上与片上＋DDR；完整P512误差、完整P512功耗仍未知。PDF SHA-256 11187931d2dea7129febba62bbf696301ddddd36a499bbfac36a0a68aa73f836。9来源、14时窗、168端点与482PDF文本项通过；14页渲染目检。第13页是中英文论文建议，原DOCX未修改。
 
 恢复先读work/Melodydt/291/COMBINED.md、combined-inputs.json与combined-validation.json；若源数据有新版本，先明确更换口径再更新清单，不直接混用。独立序列验证仍待用户指令。无需远程续跑，本轮无新作业。负责人Melodydt；PR草稿in_review，登记/看板限制不变。
+
+
+## 论文 Word 双表接续
+
+2026-11-17（Asia/Shanghai），本任务追加docs/experiments/seven-model-dac-tables.docx，一页两个可编辑三线表。21速度单元格、28能耗区间及最终Word渲染检查通过，SHA-256 e5881fac9aebcbf4b047d0a0dcf35276d3e943747161e5479054b39626d5e9bf。原稿/冻结combined-results.json未改，无新服务器任务。构建前head为074533d74ae5bdd1af5361449674b91edd0884b3，最终提交以PR #292为准。本地output/docx与work/Melodydt/291已生成，公共文件仅publication/word-tables隔离准备并走任务分支上传；本地根目录无.git。恢复第一步读work/Melodydt/291/WORD_TABLES.md和word-tables-manifest.json，再核对PR最新head。负责人Melodydt；独立验证暂缓，审查人待指定，PR草稿in_review/未合并，登记pending，看板unverified/同步pending。

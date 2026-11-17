@@ -246,3 +246,8 @@ python -B work/Melodydt/291/verify_report.py
 #291的PDF导出与文本核验：`python -B work/Melodydt/291/build_speed_pdf.py`、`python -B work/Melodydt/291/verify_speed_pdf.py`。依赖ReportLab 4.4.9、BeautifulSoup、pypdf和中文字体；用Poppler渲染并目检。生成器只读取冻结HTML，不重新仿真或计算估值。详见[PDF回执](../work/Melodydt/291/PDF.md)。
 
 #291速度与功耗综合导出：`python -B work/Melodydt/291/build_combined_report.py`，独立单位与PDF内容核验：`python -B work/Melodydt/291/verify_combined_report.py`。输入由combined-inputs.json锁定；三单位使用各自原窗口，P512误差和功耗未验证。依赖ReportLab/pypdf/Deng字体；用Poppler渲染目检。见[综合回执](../work/Melodydt/291/COMBINED.md)。
+
+
+## 七模型论文 Word 表格（Issue #291）
+
+冻结数据复用combined-results.json，不新增仿真。用bundled Python执行`work/Melodydt/291/build_dac_tables.py --reference D:/Download/v2-IEEE-integrated.docx`生成本地output/docx/seven-model-dac-tables.docx；Word只读导出临时PDF后运行`work/Melodydt/291/verify_dac_tables.py --pdf <PDF路径>`核对原生单元格和可见文本。正式成果在docs/experiments/seven-model-dac-tables.docx；原稿来源散列、依赖、渲染替代路径和完整命令见[双表说明](../work/Melodydt/291/WORD_TABLES.md)。
