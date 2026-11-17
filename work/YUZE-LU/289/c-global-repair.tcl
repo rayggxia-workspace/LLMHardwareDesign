@@ -1,15 +1,18 @@
 set_thread_count 8
 set root /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117
 set platform /OpenROAD-flow-scripts/flow/platforms/nangate45
-set source $root/cu/runs/C-v20-native-clock4
+set source $::env(C_REPAIR_SOURCE)
 read_liberty $platform/lib/NangateOpenCellLibrary_typical.lib
 foreach lib $::env(CU_LIBS) {read_liberty $lib}
-read_db $source/global-candidate.odb
-read_sdc $source/route-source.sdc
+read_db $source/$::env(C_REPAIR_ODB)
+read_sdc $source/$::env(C_REPAIR_SDC)
 set_propagated_clock [all_clocks]
 source $platform/setRC.tcl
 source $root/cu/geometry.tcl
 geometry_snapshot geometry-before.tsv
+if {$::env(C_REPAIR_DOT_GUARD) eq "1"} {
+    source $root/cu/c-dot-actual-cut-guard-v1.tcl
+}
 set block [ord::get_db_block]
 set_dont_use {TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1 OAI221_X4}
 set f [open $root/cu/C-outputs.txt]
@@ -50,12 +53,17 @@ set_global_routing_layer_adjustment metal2-metal10 0.0
 global_route -use_cugr -congestion_iterations 3 -verbose -congestion_report_file before-congestion.rpt
 estimate_parasitics -global_routing
 save_reports before
-repair_design -cap_margin $::env(C_REPAIR_MARGIN) -slew_margin $::env(C_REPAIR_MARGIN)
+if {$::env(C_REPAIR_MODE) eq "hold"} {
+    source [file join [file dirname [info script]] c-target-min-delay.tcl]
+} else {
+    repair_design -cap_margin $::env(C_REPAIR_MARGIN) -slew_margin $::env(C_REPAIR_MARGIN)
+}
 if {$::env(C_REPAIR_MODE) eq "setup"} {
     repair_timing -setup -setup_margin .030 -repair_tns 100 -verbose
 }
 detailed_placement
 check_placement -verbose
+global_connect
 geometry_snapshot geometry-after.tsv
 exec cmp geometry-before.tsv geometry-after.tsv
 foreach entry $selected {

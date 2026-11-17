@@ -1,0 +1,11 @@
+{
+  "reference": "loader-cached-shared-AB-v2.sv",
+  "reference_sha": "9ecfbcdb016b21651af673f73f52cf310ef7c06731a2f161382ace3353ae6bd5",
+  "candidate": "loader-cached-shared-AB-balanced.sv",
+  "candidate_sha": "e08142c84eb17920b44abb0440ff53582521468e9342c74666c4dcb85cb56a8d",
+  "exact_single_normalized_text_substitution": {
+    "from": "bb+({48'd0,f}*{32'd0,bst})+({53'd0,base_row}*{32'd0,bst})+({61'd0,row_step}*{32'd0,bst})+({61'd0,lane_col}*{32'd0,cst})",
+    "to": "(bb+({48'd0,f}*{32'd0,bst}))+(({53'd0,base_row}*{32'd0,bst})+(({61'd0,row_step}*{32'd0,bst})+({61'd0,lane_col}*{32'd0,cst})))"
+  },
+  "proof": "Every operand/product/addition is unsigned64. Pure reassociation in Z/(2^64); no intermediate narrowing, signed extension, state or cycle change. All row/column prefix, A branch and all other source identical; prior complete layout SAT119821 and reviewed modulo distribution apply unchanged."
+}
