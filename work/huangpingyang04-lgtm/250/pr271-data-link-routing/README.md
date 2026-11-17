@@ -1,5 +1,7 @@
 # #271 方案 A 顶层 M11/M12 数据通路布线记录
 
+2026-11-17 后续四组联合闭合及压缩外框的结果见[紧凑版](../../../../docs/experiments/pr271-compact-data-links.md)。紧凑版通过 1,053／1,053 个分支的几何核验，下文保留前两轮实验记录。
+
 - 任务 [#250](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/250)，底座 [#271 方案 A](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/271)，基线提交 `9d9a77b628ed4a2777ca403a8d94db8acb700676`。
 - 实验完成于 2026-11-16，2026-11-17 整理过程、验证及交接记录。
 - 调整坐标的底座完成 Attention 双向和 P0→P1 Gate/Up 两组 M11/M12 布线，共 641/641 条点到点连接、637 根唯一网。保留 #271 原坐标的底座尝试四组，锁定快照共布通 618/1,053 条点到点连接。
