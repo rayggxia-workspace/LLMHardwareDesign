@@ -1,4 +1,26 @@
-# Active continuation — 2026-11-17 CST
+# Active continuation — latest 2026-11-17 CST
+
+User requires continuing until backend verification completes, not ending at submission or partial progress. Owner YUZE-LU; remote yuzelu@10.129.166.172; root `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117`. Issue289 in_progress, draft PR290, branch task/289-ab-x8. Scope340 non-P outputs: C153/U153/G33/S1. Original nominal clocks, signal BPin geometry, macro placement and cycle-visible behavior remain fixed.
+
+## Current facts
+
+- Latest jobs: U119747 combines all15 remaining diodes,8 upper-spacing NDR/rips and targeted electrical/hold repairs in six8-CPU variants; pure database edits pass, routing/acceptance pending. C119742 keeps onlyr24/x16 andr32/x32 actual-route controls. Its525 residual hold endpoints are external-input-to-register D paths; internal reg-to-reg hold is closed at that checkpoint. Targeted D-branch repair is next, preserving two pure IO setup paths. Cached RTL-to-mapped proof119748 now uses actual state aliases and38 true interfaces; still pending, not passed.
+
+- **G/S leaves and F parent accepted.** Frozen F package `gs/candidate-S-minimal-localv4/parent-F-eco-h20-v4/release`. Full original GDS deck0, TT nominal300MHz setup+0.221605405ns/hold+0.002453537ns; electrical/PG/antenna/formal/state/geometry pass. Native44 markers comprise40 exact historical plus4 rigorously proven same-net macro contacts. Receipt `audit/evidence/F/accepted-parent.json`.
+- **U not accepted yet.** Seed `cu/runs/U-v13-electrical-f50-x4` independently passes fresh five counts0, setup~+44.321ps/hold~+1.723ps,153X8, signal geometry/PG/data/state/clock-reset proofs. Full physical closure remains. Read `U-PHYSICAL-CLOSURE.md`. Old S/E source-alone spacing0 and source=merged; reported leaf-local markers are parent-context interactions, not bad leaf GDS.
+- Root **119729**, `u-physical/candidate-guard-v1`:1897 actual leaf via cut OBS added,10 precisely identified redundant PG stacks/30via objects removed with both rails connected;546 macro nets rerouting. No leaf material or pin changes. Then RCX/fresh checks/upper spacing diagnosis.
+- Endpoint **119734**, `audit/U-antenna/candidate-guard-ant-v1`: starts from root's exact `guarded-before-route.odb`;1149 precisely mapped nets receive actual ANTENNA_X1, then legalization/reroute/RCX/fresh checks/GDS/antenna diagnosis. Current f50 antenna diagnosis1293 polygons→1149 unique nets, no mapping ambiguity. Native ANT0 is insufficient: diode LEF diffusion area0 while actual GDS A-to-diode connection is verified. Final full unchanged deck remains mandatory.
+- **C not accepted.** Combinational/cluster variants failed. Root119685 noadder distributed/combined canceled only after saved failed post-CTS checkpoints and exact allocation audit; CU stopped failed onehot119690 separately. No external steps depended on those allocations.
+- CU **119722**, `cu/runs/C-v16-genericadder-cached`: capture addresses at the existing allocation edge;512 auxiliary RTL bits (496 retained in FAST), no new externally visible cycle. Independent reset-base/one-step lifecycle induction plus exact source binding: `audit/C-CACHED-LOADER-REVIEW.md`, `C-cached-loader-proof-binding.json`. Root permits this equivalent internal optimization; combination-only was our earlier implementation choice. Actual parent CTS setup repair ends with2 violations, WNS~-0.046ns at trace_retire_o; multi-ns loader path resolved. Hold/reset-removal and routing still required. CU should inject verified same-source S/E cut OBS before routing.
+- Loader-review owns C proof chain. Original source/config binding and original synth→original CTS data/control proofs pass. New cross-arithmetic proofs remain running, not passed; handle extra padding state explicitly, no boundary-mismatch permissiveness. Cached proof chain is original→cached lifecycle equivalence, then actual same-candidate synthesis→final including retained auxiliary state. EQY partitioning was built/smoke-tested;119736 first cached mapping proof ongoing.
+
+Root handles U spacing, endpoint antenna/independent U acceptance, CU C implementation and timing, loader-review function proof. All critical jobs have independent batch lifetimes. Never reuse an expiring static allocation for extra critical steps; inspect actual job/step ownership before cancellation.
+
+Latest published commit before these notes: f93e14e18c6892f9afefccccc3e06505a6de1e32; newer local commits/evidence need verified push. Git connectivity intermittent. Task .gitattributes preserves hash-bound HDL/evidence bytes and Linux script line endings. Registration PR5 pending; Projects missing board configuration, unverified/pending. Management checker is not hardware acceptance. Do not self-merge or imply A/B top RC or multi-PVT timing closure.
+
+## Historical notes — superseded
+
+Old job numbers, incomplete F status, and external-step reuse suggestions below are historical, not current instructions.
 
 Scheduling incident: cancelling the final original baseline workers119542.0/.5 caused that batch allocation to terminate and Slurm cancelled extra steps17/18/19/22/23/25. Root authorized the cancellation and missed this lifecycle dependency. CU is authorized to submit a new standalone six-task batch and recover from saved checkpoints, retaining interruption logs. Do not reuse a nearly-finished static batch for critical extra steps. F agent has likewise been told to move subsequent work off dependency on119586's remaining original baseline.
 

@@ -1,0 +1,63 @@
+[gold]
+read_verilog -sv /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/cu/loader-cached.sv
+synth -top e32_tiled_dot_loader -flatten -noabc
+
+[gate]
+read_liberty -ignore_miss_func /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/cu/loader-fast3-cached/mapped.v
+prep -top e32_tiled_dot_loader -flatten
+opt
+
+[match e32_tiled_dot_loader]
+gold-nomatch *func*
+gate-nomatch *func*
+gold-nomatch lane_*
+gate-nomatch lane_*
+gold-nomatch candidate
+gate-nomatch candidate
+gold-nomatch hit
+gate-nomatch hit
+gold-nomatch pad
+gate-nomatch pad
+gold-nomatch waiting
+gate-nomatch waiting
+gold-nomatch cp
+gate-nomatch cp
+gold-nomatch cl
+gate-nomatch cl
+gold-nomatch cc
+gate-nomatch cc
+gold-nomatch hc
+gate-nomatch hc
+gold-nomatch address
+gate-nomatch address
+gold-nomatch free_owner
+gate-nomatch free_owner
+gold-nomatch stop
+gate-nomatch stop
+gold-nomatch m0
+gate-nomatch m0
+gold-nomatch m1
+gate-nomatch m1
+gold-nomatch match
+gate-nomatch match
+gold-nomatch response_slot
+gate-nomatch response_slot
+gold-nomatch rf
+gate-nomatch rf
+gold-nomatch sf
+gate-nomatch sf
+gold-nomatch chosen_write
+gate-nomatch chosen_write
+
+gold-nomatch pending
+gate-nomatch pending
+gold-nomatch offer_address
+gate-nomatch offer_address
+gold-nomatch offer_tag
+gate-nomatch offer_tag
+
+[strategy simple]
+use sat
+depth 10
+timeout 120

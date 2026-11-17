@@ -1,0 +1,16 @@
+[gold]
+read_verilog -sv /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/cu/loader-cached.sv
+prep -top e32_tiled_dot_loader
+memory_map
+opt
+
+[gate]
+read_liberty -ignore_miss_func /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/cu/loader-fast3-cached/mapped.v
+prep -top e32_tiled_dot_loader -flatten
+opt
+
+[strategy simple]
+use sat
+depth 5
+timeout 120

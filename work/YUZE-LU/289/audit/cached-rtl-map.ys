@@ -1,0 +1,23 @@
+read_verilog -sv /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/cu/loader-cached.sv
+hierarchy -check -top e32_tiled_dot_loader
+proc
+memory
+opt
+rename e32_tiled_dot_loader gold
+design -stash gold
+design -reset
+read_liberty /OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+read_verilog /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/cu/loader-fast3-cached/mapped.v
+hierarchy -check -top e32_tiled_dot_loader
+flatten
+opt
+rename e32_tiled_dot_loader gate
+design -stash gate
+design -reset
+design -copy-from gold -as gold gold
+design -copy-from gate -as gate gate
+equiv_make gold gate equiv
+hierarchy -top equiv
+equiv_simple
+equiv_induct -seq 4
+equiv_status -assert

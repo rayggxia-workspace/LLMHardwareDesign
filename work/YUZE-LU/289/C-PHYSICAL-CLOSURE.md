@@ -22,3 +22,9 @@ The standalone module diagnostic used generic Yosys synthesis and ABC. The actua
 - 119685 runs two fresh parent syntheses, `distributed` and `distributed-parallel`, using `cu/run-c-fresh-v14-template.sh`, with empty `ADDER_MAP_FILE`, the verified fixed-pin/PDN hooks, and unchanged timing contract. Outputs: `cu/runs/C-v14-genericadder-{distributed,distributed-parallel}`. Root owns these jobs; CU does not submit duplicates. Formal and backend checks still apply to actual final candidates.
 
 No timing exception, clock reduction, extra pipeline stage or state change is introduced by either experiment.
+
+## Observed no-adder result and sequentially equivalent cache candidate
+
+Both 119685 no-adder parents reached saved post-CTS checkpoints with negative setup and hold TNS (combined setup TNS -1099.03 ns, distributed -1147.56 ns). Removing FA/HA pre-mapping did not close the real parent. After confirming the allocation contained only its two main steps and no borrowed work, root canceled further physical continuation; all checkpoints and logs remain. This is a negative result, not acceptance.
+
+The task still requires unchanged externally observable cycle behavior. The previously selected combination-only approach was an implementation choice, not a user prohibition on auxiliary internal state. The new cached-loader candidate uses the already existing allocation edge to capture lane addresses, without adding an externally visible cycle. It introduces 512 RTL auxiliary state bits (synthesis may prune unread low bits). Independent reset-base/one-step induction proves the valid-slot address-key invariant, and exact source binding verifies every guarded use and preservation of original state updates. See `audit/C-CACHED-LOADER-REVIEW.md` and `C-cached-loader-proof-binding.json`. This does not replace actual synthesized-design and backend checks. CU owns independent cached-parent job119722; it remains in progress.

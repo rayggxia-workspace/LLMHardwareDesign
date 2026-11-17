@@ -1,0 +1,5 @@
+import json,sys,hashlib
+from pathlib import Path
+r=Path('/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117');sys.path.insert(0,str(r/'audit'));from compare_lef import parse
+old=Path('/public/home/yuzelu/project-circuit/yzl-u-segment-softmax-250-20261116/physical/local_s_base-detail.lef');new=r/'gs/candidate-S-minimal-localv4/parent-abstract-v3/local_s_base.lef';a,b=map(parse,[old,new]);o=dict(old=str(old),new=str(new),size_equal=a['size']==b['size'],pins_equal=a['pins']==b['pins'],terms_equal=a['terms']==b['terms'],obs_exact=a['obs']==b['obs'],pin_differences={k:dict(old=a['pins'].get(k),new=b['pins'].get(k)) for k in set(a['pins'])|set(b['pins']) if a['pins'].get(k)!=b['pins'].get(k)},term_differences={k:dict(old=a['terms'].get(k),new=b['terms'].get(k)) for k in set(a['terms'])|set(b['terms']) if a['terms'].get(k)!=b['terms'].get(k)},hashes={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in (old,new)})
+(r/'audit/U-S-minimal-interface.json').write_text(json.dumps(o,indent=2));print(json.dumps(o,indent=2))

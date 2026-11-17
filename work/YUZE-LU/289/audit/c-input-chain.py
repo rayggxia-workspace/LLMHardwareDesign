@@ -16,6 +16,7 @@ assert Path(normalized).read_text()==Path(raw).read_text().replace('r_stream_loc
 expected[normalized]=sha(normalized)
 result={'original_sources_manifest_sha':sha(old/'sources.json'),'all_original_sources_match_recorded_hashes':True,'original_files':records,'original_r_binding_normalization':{'raw':raw,'normalized':normalized,'normalized_sha':sha(normalized),'change':'remove fixed WORDS256 override for qualified hardmacro Liberty blackbox'},'runs':{}}
 known={'C-v14-genericadder-distributed':'2c0c51de8d1dd776a295cd3221b38c21b66f8191a93ebcfcaed4c41cff3e35c2','C-v14-genericadder-distributed-parallel':'2aaa6e239aa20b50c7ab3703531263146527e04046f1bdf8fe439d66e6161a0e','C-v15-genericadder-onehot-v2':'020538508ff7db6461afab28f73726867e5900fde2255a4a311789b105040567'}
+known['C-v16-genericadder-cached']='a0f71497ee0c873649c41d64122e2a906775caaed90dc615a686be053625d0f9'
 for name,h in known.items():
  run=base/'cu/runs'/name
  newfiles=files(run/'config.mk')
@@ -29,4 +30,4 @@ for name,h in known.items():
    delta.append({'old':a,'old_sha':sha(a),'new':b,'new_sha':sha(b)})
  assert len(delta)==1
  result['runs'][name]={'only_rtl_change':delta,'config_sha':sha(run/'config.mk'),'manifest_sha':sha(run/'inputs-manifest.json')}
-(base/'audit/C-rtl-input-chain.json').write_text(json.dumps(result,indent=2));print('PASS original manifest exact and all3 candidates only reviewed loader differs')
+(base/'audit/C-rtl-input-chain.json').write_text(json.dumps(result,indent=2));print('PASS original manifest exact and all4 candidates only reviewed loader differs')
