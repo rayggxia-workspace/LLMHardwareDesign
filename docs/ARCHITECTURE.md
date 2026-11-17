@@ -251,3 +251,8 @@ python -B work/Melodydt/291/verify_report.py
 ## 七模型论文 Word 表格（Issue #291）
 
 冻结数据复用combined-results.json，不新增仿真。用bundled Python执行`work/Melodydt/291/build_dac_tables.py --reference D:/Download/v2-IEEE-integrated.docx`生成本地output/docx/seven-model-dac-tables.docx；Word只读导出临时PDF后运行`work/Melodydt/291/verify_dac_tables.py --pdf <PDF路径>`核对原生单元格和可见文本。正式成果在docs/experiments/seven-model-dac-tables.docx；原稿来源散列、依赖、渲染替代路径和完整命令见[双表说明](../work/Melodydt/291/WORD_TABLES.md)。
+
+
+### 七模型合并表（2026-11-18）
+
+`work/Melodydt/291/build_dac_combined_table.py`复用旧双表风格及冻结combined-results.json，生成output/docx/seven-model-dac-combined-table.docx。Word只读导出临时PDF后执行`work/Melodydt/291/verify_dac_combined_table.py`；42主值按Prefill/Decode排列，能耗只取既有下端点。阶段窗口差异、依赖和复现命令见[合并表说明](../work/Melodydt/291/MERGED_WORD_TABLE.md)。正式Word在docs/experiments/同名路径，不覆盖旧双表。

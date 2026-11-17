@@ -58,3 +58,8 @@ cd "$R/run-38826721" && sha256sum -c results.sha256
 ## 论文 Word 双表
 
 追加[一页可编辑Word双表](../../../docs/experiments/seven-model-dac-tables.docx)：七模型短Prefill/估计512-token Prefill/Decode速度（token/s），片上/片上＋DDR的Decode/短Prefill能耗（J/token）。原稿风格、跨双栏三线表，保留区间和证据边界。[生成、验证与接续](WORD_TABLES.md)；源数据未更改。
+
+
+## 七模型合并Word表（2026-11-18）
+
+新增[合并表](../../../docs/experiments/seven-model-dac-combined-table.docx)，七模型各Prefill/Decode两列、三个指标；Prefill速度用512-token估计，能耗用短P2/Decode标定区间下限。加粗表注区分窗口，旧双表保留。[构建和接续](MERGED_WORD_TABLE.md)。

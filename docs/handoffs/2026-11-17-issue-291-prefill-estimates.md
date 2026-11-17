@@ -33,3 +33,8 @@
 ## 论文 Word 双表接续
 
 2026-11-17（Asia/Shanghai），本任务追加docs/experiments/seven-model-dac-tables.docx，一页两个可编辑三线表。21速度单元格、28能耗区间及最终Word渲染检查通过，SHA-256 e5881fac9aebcbf4b047d0a0dcf35276d3e943747161e5479054b39626d5e9bf。原稿/冻结combined-results.json未改，无新服务器任务。构建前head为074533d74ae5bdd1af5361449674b91edd0884b3，最终提交以PR #292为准。本地output/docx与work/Melodydt/291已生成，公共文件仅publication/word-tables隔离准备并走任务分支上传；本地根目录无.git。恢复第一步读work/Melodydt/291/WORD_TABLES.md和word-tables-manifest.json，再核对PR最新head。负责人Melodydt；独立验证暂缓，审查人待指定，PR草稿in_review/未合并，登记pending，看板unverified/同步pending。
+
+
+## 2026-11-18 合并Word表
+
+用户要求已落实为docs/experiments/seven-model-dac-combined-table.docx：七模型、各Prefill/Decode两列、吞吐和两类能耗三行。Prefill吞吐为512-token估计，Prefill能耗仍是短P2；能耗选既有区间下端点，二者不可直接组合为同窗功率。原双表和冻结数据未改。42主值、7跨列表头、14阶段列、源SHA、Word1页及全页目检通过，DOCX SHA-256 cbcb2d94925054f2a0b7a0398222896056f033d91dfed7176f43d45ac3e61167。准备时head31d6e0011f3f06c8d0bf1106db2fc9cec95b0c0c，最终提交以PR292为准。恢复先读work/Melodydt/291/MERGED_WORD_TABLE.md及merged-table-manifest.json，再核对PR最新head。本地无.git参考副本，新增仅任务目录与output/docx，共享文件publication/merged-table隔离；没有新服务器任务或监测。负责人Melodydt；PR草稿in_review/未合并，审查人待指定，登记pending，看板404/无Projects工具、unverified/同步pending。
