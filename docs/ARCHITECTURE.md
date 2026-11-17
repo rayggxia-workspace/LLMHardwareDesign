@@ -250,3 +250,10 @@ sbatch --time=0 run_rms_n_calibration.sbatch --capture "$capture/arithmetic-obse
 
 
 Qwen3 的已验收启动器独立使用 `prepare_qwen3_arithmetic_capture.py`、`qwen3_arithmetic_observation.py` 和 `run_qwen3_arithmetic_capture.sbatch`。在该 bundle 执行 `sbatch --time=0 run_qwen3_arithmetic_capture.sbatch`；不要用六模型 launcher 替代。复用 RMS 探针前严格比较冻结源码，保留原 M 不重叠、plan、逐层数值与 DDR 验收。定点校验器需要提供 `math.isqrt` 的 Python 环境，本机默认 3.7 不支持；已在服务器容器执行验证。
+
+
+### Issue #280 算术缺项 2–4 观察与 E32 标定
+
+`work/Melodydt/280/OPERATOR_BINDINGS.md` 记录实际 TLM/RTL 格式关系。新脚本 `run_operator_capture.sbatch` 在已验收六模型目录上生成独立观察副本；`verify_operator_capture.py` 复算实际操作数，`audit_operator_bindings.py` 仅做格式及候选定点审计。先 `run_operator_preflight.sbatch`，再按本轮交接提交六项采样；所有 `sbatch --time=0`，每项 prefill/decode 各 12 核。
+
+`run_rms_e32_check.sbatch <capture...>` 使用真实两阶段 RMS 乘法检查 compact E32；`run_e32_wrapper_map.sbatch` 单独映射 E32/scan/apply/RoPE，`run_rms_e32_power.sbatch <mapped-E32-dir> <capture...>` 做活动/空闲配对无寄生标定。运行前核验 bundle 的 `inputs.sha256` 和 capture 验收；脚本保留网表/库/活动 SHA。E32 18 周期实测尚未和 TLM 9 周期叶节点绑定，不能直接更新整模型速度或能耗总值。E32/包装逻辑边界、命令、真实路径、成功判据和剩余步骤见 [2026-11-17 交接](handoffs/2026-11-17-issue-280-operator-expansion.md)。

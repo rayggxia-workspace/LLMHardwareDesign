@@ -1,5 +1,14 @@
 # Melodydt 的进度
 
+## 2026-11-18 00:04（Asia/Shanghai）算术缺项 2–4 推进
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。Llama/Qwen3/Granite 14,208 个真实 RMS E32 乘法包逐项通过；连续无阻塞实测 18 周期，而 TLM 叶节点为 9，完整调度仍待校准。E32/scan/apply/RoPE 四项综合映射完成；Llama 三窗 6 样本 E32 动态增量 26.032–26.265 µJ/次 RMS，158 位边界活动、配对等长窗、数值和 SHA 均通过。这是无布线寄生边界传播估计，不是完整 RMS 或整模型结果，PDF 小计未改。
+
+六模型扩展算子采样 38830188–93 均 RUNNING、各 2×12 核、UNLIMITED；包含公共 softmax/RoPE/缩放、Gemma GELU、Granite top-k/专家和、GDN/Mamba2/卷积/因子/门控。已增加格式/候选定点误差审计，不宣称候选 Python 审计等于 RTL 验收。源码与实际命令、节点、输入/输出 SHA、剩余步骤见[本轮交接](../../docs/handoffs/2026-11-17-issue-280-operator-expansion.md)及[绑定矩阵](../../work/Melodydt/280/OPERATOR_BINDINGS.md)。Granite/Qwen3 后继 38830711/12 也已 COMPLETED 0:0，6/12 样本通过；三模型累计 24 个 E32 功耗样本。下一步验收采样，补其余四模型 E32、包装逻辑及特殊算子的 RTL/周期/功耗，统一实例驻留后更新片上/片上+DDR 和 PDF。
+
+管理检查/AST/Bash/短 RTL/映射/六样本功耗已执行。Issue in_progress，PR 草稿未合并，审查人待指定；登记 pending、看板 unverified/同步 pending。未配置聊天自动监测；服务器作业持续运行，用户再次唤起时按交接首条命令恢复。
+
+
 ## 2026-11-17 23:02（Asia/Shanghai）Llama 三窗 N 完成
 
 38828362 采样及 38828633/34 标定全部 COMPLETED 0:0。三窗 130 次 RMS、6 组真实输入的定点与 N RTL 因子一致；433 位活动标注和全部 SHA 通过。样本 N 动态增量：prefill 299.43–301.14、首 token 292.09–301.02、第二 token 292.84–300.20 nJ/RMS，极值不是置信区间。仅 N 核心，尚未纳入完整 RMS 或模型小计；PDF 总值不变。

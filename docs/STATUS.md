@@ -87,3 +87,8 @@
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+
+### 2026-11-17：七模型算术覆盖扩展
+
+Issue #280 的 Llama/Qwen3/Granite 真实 RMS E32 共 14,208 包数值一致，四项 E32/scan/apply/RoPE 映射完成，Llama/Qwen3/Granite 共 24 样本 E32 无寄生分项标定通过。发现 compact E32 连续无阻塞 18 周期与 TLM 9 周期叶节点存在待校准差异；整模型新速度/能耗未验收，PDF 小计不变。六模型特殊算子采样 38830188–93 已实际 RUNNING；[证据与后续步骤](handoffs/2026-11-17-issue-280-operator-expansion.md)。任务仍 in_progress，草稿 PR #281 未合并，不构成物理签核。
