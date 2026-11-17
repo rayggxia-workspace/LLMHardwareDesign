@@ -1,5 +1,7 @@
 # 当前状态
 
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成局控 PM 驻留静默、局控描述符取指 300 MHz 标定及 C639 共同时钟核验。Qwen3 参考小计补三类开钟空闲。读 DMA 待物理输出，九目标母控外围需匹配工件。[控制进展与接续](handoffs/2026-11-17-issue-280-qwen3-control-power-progress.md)
+
 2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已按真实 PM 页类与四站点 TLM 次数生成 Qwen3 SRAM／母控 PM 三窗参考小计，两种 SRAM 配置保留固定时长情景。实际部署与开钟驻留待核对，读 DMA 仍待物理输出。[三窗数据与复现](handoffs/2026-11-17-issue-280-qwen3-macro-window-reference.md)
 
 2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成 S_P／S_base 后布线 SRAM 等长配对功耗，以及母控三档真实页的四宏标定。三套 300 MHz 物理预检通过，下一步按实际实例和驻留积分到 Qwen3 三窗，读 DMA 仍待物理结果。[标定回执](handoffs/2026-11-17-issue-280-sram-mother-pm-calibration.md)

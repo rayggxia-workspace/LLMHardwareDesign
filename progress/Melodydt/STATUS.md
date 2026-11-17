@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-17（Asia/Shanghai）局控与空闲参考积分
+
+- 38815532、38815974 完成。局控 PM 驻留静默 30.754–30.762 mW/阵列、读增量 17.485–23.914 pJ/次；局控描述符取指 24 个代表窗通过 300 MHz 和详细布线 DRC。
+- S_P 全程开钟情景加入 G32、交换机及四局控 PM 空闲后，短 Prefill／首 token／稳态 Decode 为 163.983–164.105／493.074–493.199／493.287–493.412 mJ/token。
+- Melodydt 接续读 DMA、真实整窗取指、九目标母控外围以及整机时钟互连。38815787 揭示旧 #223 物理与 C639 活跃母控端口宽度差异。[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [证据与复现](../../docs/handoffs/2026-11-17-issue-280-qwen3-control-power-progress.md)
+
 ## 2026-11-17（Asia/Shanghai）Qwen3 SRAM／母控 PM 参考积分
 
 - 复核三个时长、四个站点拍宽及逐 bank 守恒。真实 PM 日志对齐母控 58／30／30 页。四站点采用 S_P、全程开钟情景下，覆盖小计为 158.619–158.740／475.504–475.625／475.701–475.822 mJ/token。另给出 S_base 普通读串行敏感性。
