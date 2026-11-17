@@ -1,6 +1,6 @@
 # 当前状态
 
-2026-11-18 00:56（Asia/Shanghai），[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成七模型 N/E32/scan 各 66 组真实输入标定；apply 36 组通过、30 个大向量显式排除；Llama/Granite softmax 16、RoPE 12 组通过。27 份结果/262 样本的 RTL 数值、配对活动与 SHA 已归档。E32 的 TLM 9 周期与 RTL 18 周期差已按 30 个窗口/site 对账，尚未校正系统调度或回填模型小计。四模型扩展采样继续运行，后继 38832101/38832112 等成功依赖，均 UNLIMITED。[实测表、作业追踪和全部剩余步骤](handoffs/2026-11-18-issue-280-public-arithmetic-calibration.md)。Issue in_progress、PR #281 草稿未合并；PDF v2.1 小计暂不变。
+2026-11-18 00:56（Asia/Shanghai），[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成七模型 N/E32/scan 各 66 组真实输入标定；apply 36 组通过、30 个大向量显式排除；Llama/Granite softmax 16、RoPE 12 组通过。27 份结果/262 样本的 RTL 数值、配对活动与 SHA 已归档。E32 的 TLM 9 周期与 RTL 18 周期差已按 30 个窗口/site 对账，尚未校正系统调度或回填模型小计。Falcon 扩展采样已完成，74 个算子样本和冻结对账通过；系数超出现有 S16 Q14 范围，R 绑定需修改格式并验证。其余三模型采样继续运行，后继 38832101/38832112 等成功依赖，均 UNLIMITED。[实测表、作业追踪和全部剩余步骤](handoffs/2026-11-18-issue-280-public-arithmetic-calibration.md)。Issue in_progress、PR #281 草稿未合并；PDF v2.1 小计暂不变。
 
 2026-11-17 23:02，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 的 Llama 三窗 N 核心真实输入标定已通过：130 次 RMS、6 组样本的定点/RTL 因子、433 位活动标注和 SHA 完整。其余六模型采样/成功依赖标定继续运行。此为 N 算术子项，尚不等于完整 RMS 或模型能耗；完整步骤与证据见[接续记录](handoffs/2026-11-17-issue-280-common-arithmetic.md)。
 

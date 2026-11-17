@@ -1,0 +1,70 @@
+{
+  "scope": "sampled format feasibility and candidate staged arithmetic; not RTL equivalence, model accuracy or energy acceptance",
+  "capture_sha256": "7e98ddfc55dbf68a6ba851cb8547400f0797b88fd776f1cfe30f6381b01b0740",
+  "samples": [
+    {
+      "signature": "prefill:recurrent_factors:site0:{\"gdn\": false}",
+      "kind": "recurrent_factors",
+      "result": {
+        "status": "floating_service_unbound",
+        "remaining": "Softplus/EXP or normalization/gate RTL binding and staged rounding missing"
+      }
+    },
+    {
+      "signature": "prefill:conv4:site0:{\"channels\": 128, \"gdn\": false}",
+      "kind": "conv4",
+      "result": {
+        "status": "coefficient_range_incompatible",
+        "s16_q14_out_of_range": 141
+      }
+    },
+    {
+      "signature": "prefill:conv4:site0:{\"channels\": 128, \"gdn\": false}",
+      "kind": "conv4",
+      "result": {
+        "status": "coefficient_range_incompatible",
+        "s16_q14_out_of_range": 144
+      }
+    },
+    {
+      "signature": "prefill:mamba_state:site0:{\"count\": 16, \"depth\": 256}",
+      "kind": "mamba_state",
+      "result": {
+        "status": "coefficient_range_incompatible",
+        "s16_q14_out_of_range": 27
+      }
+    },
+    {
+      "signature": "prefill:mamba_state:site0:{\"count\": 16, \"depth\": 256}",
+      "kind": "mamba_state",
+      "result": {
+        "status": "coefficient_range_incompatible",
+        "s16_q14_out_of_range": 27
+      }
+    },
+    {
+      "signature": "prefill:recurrent_norm_gate:site0:{\"gdn\": false}",
+      "kind": "recurrent_norm_gate",
+      "result": {
+        "status": "floating_service_unbound",
+        "remaining": "Softplus/EXP or normalization/gate RTL binding and staged rounding missing"
+      }
+    },
+    {
+      "signature": "prefill:recurrent_factors:site0:{\"gdn\": false}",
+      "kind": "recurrent_factors",
+      "result": {
+        "status": "floating_service_unbound",
+        "remaining": "Softplus/EXP or normalization/gate RTL binding and staged rounding missing"
+      }
+    },
+    {
+      "signature": "prefill:recurrent_norm_gate:site0:{\"gdn\": false}",
+      "kind": "recurrent_norm_gate",
+      "result": {
+        "status": "floating_service_unbound",
+        "remaining": "Softplus/EXP or normalization/gate RTL binding and staged rounding missing"
+      }
+    }
+  ]
+}

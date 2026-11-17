@@ -4,7 +4,7 @@
 
 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。七模型 N/E32/scan 各 66 样本已通过；apply 36 组通过/30 组大向量排除，Llama/Granite softmax 16、RoPE 12 组通过；27 份结果/262 样本数值、活动、SHA 已归档。新脚本/测试版本 a632159、b94d221，计数账本核对 30 个窗口/site；管理检查 PASS，不代表系统或物理验收。
 
-四项采样 38830190–93 仍 RUNNING；38832101 softmax、38832112 RoPE 已受理且等成功依赖。全部不限时；DMA 旧四项综合仍运行。下一步：验收采样/后继，补大向量跨 bank/分块及特殊算子 RTL/数值，合并资源驻留和 TLM/RTL 时序口径，最后更新片上/片上＋DDR 与 PDF。现有 E32/apply 有包含关系，尚未积分为模型总值。完整命令、版本、SHA、节点及恢复第一步见[本轮交接](../../docs/handoffs/2026-11-18-issue-280-public-arithmetic-calibration.md)。
+Falcon 38830193 已 COMPLETED 0:0、74 样本复算及冻结对账通过；卷积/key/query 系数超出 S16 Q14，需更改格式并重新验证。其余三项采样 38830190–92 仍 RUNNING；38832101 softmax、38832112 RoPE 已受理且等成功依赖。全部不限时；DMA 旧四项综合仍运行。下一步：验收采样/后继，补大向量跨 bank/分块及特殊算子 RTL/数值，合并资源驻留和 TLM/RTL 时序口径，最后更新片上/片上＋DDR 与 PDF。现有 E32/apply 有包含关系，尚未积分为模型总值。完整命令、版本、SHA、节点及恢复第一步见[本轮交接](../../docs/handoffs/2026-11-18-issue-280-public-arithmetic-calibration.md)。
 
 Issue in_progress、PR 草稿未合并，审查人待指定；登记 pending、看板 unverified/同步 pending。无聊天自动监测，Slurm 日志和结果独立保存。
 
