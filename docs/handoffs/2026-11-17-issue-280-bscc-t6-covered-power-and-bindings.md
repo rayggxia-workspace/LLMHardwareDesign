@@ -22,6 +22,8 @@
 
 ## SRAM／母控 PM 工件
 
+10:52 已恢复旧服务器访问，完成 11 个原件的 BSCC 上传和校验，另核对了 6 个母控物理文件。以下保留本轮早些时候的归档路径和旧访问状态。[恢复回执与可读路径](2026-11-17-issue-280-macro-views-recovered.md)
+
 归档服务器 `yuzelu@10.129.166.172`，项目共用根 `/public/home/yuzelu/project-circuit/LLMHardwareDesign`。已用保存的公共主机指纹核对，现有 SSH 身份被服务器拒绝，尚未取回工件。当前 BSCC 任务材料中只有匹配宏的功能 Verilog。恢复已授权身份后，由 Melodydt 在项目根按下列位置读取并比对 SHA-256。
 
 | 范围 | 归档位置（相对共同项目根） | 用于恢复的 SHA-256 |

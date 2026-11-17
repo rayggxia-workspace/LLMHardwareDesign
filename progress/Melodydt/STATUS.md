@@ -1,5 +1,10 @@
 # Melodydt 的进度
 
+## 2026-11-17（Asia/Shanghai）旧服务器 SRAM／母控 PM 工件已恢复
+
+- 显式指定项目已授权的本机 SSH 身份后，旧服务器共享归档读取通过。#155、#200、#223 的 11 个原件转入 BSCC `~/LLMHardware/zenanyan/issue-280-bscc-t6-01/incoming/macro-views/`，母控归档中六个文件已提取并逐项验 SHA-256。
+- S_P、S_base 各四个 S128 bank，母控 `program_store` 下四个 S128 bank。Melodydt 接续按多拍宽与实际活动标定功耗，回执保留源路径、输入散列和校验命令。 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [恢复回执](../../docs/handoffs/2026-11-17-issue-280-macro-views-recovered.md)
+
 ## 2026-11-17（Asia/Shanghai）Qwen3 三窗小计与运行时 PM 活动
 
 - 三窗小计加入写 DMA 和 U ADD2 逻辑的活跃增量，分别为 146.948–147.069／437.037–437.158／437.198–437.319 mJ/token。PM 与 SRAM 仍单列参考，待实际实例和事件归属。
