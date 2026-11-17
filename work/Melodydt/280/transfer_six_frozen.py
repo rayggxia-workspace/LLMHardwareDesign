@@ -1,8 +1,10 @@
-"""Transfer only the frozen six-model execution closure over verified SSH.
+"""Legacy per-file transfer of the frozen six-model closure over verified SSH.
 
 The destination password is read interactively and is never persisted. Run with
-the optional local Paramiko dependency directory on PYTHONPATH. Existing final
-files are checked before reuse; incomplete files have a .transfer-part suffix.
+the optional local Paramiko dependency directory on PYTHONPATH. Final files are
+fully checked by the compute-node preflight; incomplete files have a
+.transfer-part suffix. Prefer stage_remote_energy_archives.py and native scp -3
+when the gateway stalls this per-file SFTP path.
 """
 import argparse
 from datetime import datetime, timezone
@@ -83,9 +85,12 @@ def main():
                   key_filename="C:/Users/Administrator/.ssh/id_ed25519_server_ops_20261030")
     new = connect("ssh.cn-zhongwei-1.paracloud.com", "t6s011227@BSCC-T6",
                   workspace / "tmp/issue280-bscc-t6/macro-views-20261117/bscc-gateway-known_hosts",
-                  password=password)
+                  password=password, compress=True)
     del password
-    source, target = old.open_sftp(), new.open_sftp()
+    source = paramiko.SFTPClient.from_transport(old.get_transport(), window_size=64*1024*1024)
+    target = paramiko.SFTPClient.from_transport(new.get_transport(), window_size=64*1024*1024)
+    source.get_channel().settimeout(90)
+    target.get_channel().settimeout(90)
     made = set()
 
     def mkdir(path):
@@ -135,19 +140,23 @@ def main():
                 if source_hash is None:
                     with source.open(path) as f:
                         source_hash = sha256(f.read()).hexdigest()
-                target_hash = execute(new, "sha256sum " + shlex.quote(dest)).split()[0]
-                if source_hash == target_hash:
-                    manifest.append({"source": path, "bytes": size, "sha256": source_hash})
-                    total += size
-                    continue
+                # The compute-node preflight must hash every destination before
+                # replay. Reuse here does not declare the transfer accepted.
+                manifest.append({"source": path, "bytes": size, "sha256": source_hash})
+                total += size
+                continue
             digest = sha256()
             with target.open(dest + ".transfer-part", "wb") as output:
                 output.set_pipelined(True)
 
                 class Sink:
                     def write(self, data):
+                        nonlocal last_report
                         digest.update(data)
                         output.write(data)
+                        if time.monotonic() - last_report > 30:
+                            report(model=model, phase="transfer", bytes_done=total+output.tell(), bytes_total=sum(files.values()))
+                            last_report = time.monotonic()
                 source.getfo(path, Sink(), prefetch=True, max_concurrent_prefetch_requests=32)
             actual = digest.hexdigest()
             if path in expected and actual != expected[path]:

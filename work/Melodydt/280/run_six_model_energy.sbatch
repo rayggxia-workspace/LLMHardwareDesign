@@ -52,6 +52,12 @@ cp "$bundle/scripts.sha256" "$out/scripts.sha256"
 cd "$bundle"
 sha256sum --quiet -c scripts.sha256
 printf 'MODEL=%s JOB=%s NODE=%s CPUS_PER_STAGE=%s START=%s\n' "$model" "$SLURM_JOB_ID" "$SLURMD_NODENAME" "$SLURM_CPUS_PER_TASK" "$(date -Is)"
+if [[ -f $bundle/$model.tar ]]; then
+    sha256sum --quiet -c "$model.tar.sha256"
+    mkdir -p "$bundle/sourcefs"
+    tar --skip-old-files -xf "$model.tar" -C "$bundle/sourcefs"
+    echo "MODEL_ARCHIVE_VERIFIED_AND_EXTRACTED $model"
+fi
 run_stage() {
     srun --exact --ntasks=1 --cpus-per-task="$SLURM_CPUS_PER_TASK" --cpu-bind=cores \
         singularity exec --cleanenv --bind "$root" \
