@@ -7,8 +7,14 @@ records=json.loads((old/'sources.json').read_text())
 expected={x['path']:x['sha256'] for x in records}
 for path,h in expected.items():assert sha(path)==h,(path,'baseline drift')
 def files(cfg):return re.findall(r'^export VERILOG_FILES\s*=\s*(.*)$',cfg.read_text(),re.M)[-1].split()
-oldfiles=files(old/'config.mk');assert set(oldfiles)==set(expected)
-result={'original_sources_manifest_sha':sha(old/'sources.json'),'all_original_sources_match_recorded_hashes':True,'original_files':records,'runs':{}}
+oldfiles=files(old/'config.mk')
+missing=set(oldfiles)-set(expected);extra=set(expected)-set(oldfiles)
+assert len(missing)==len(extra)==1
+normalized=next(iter(missing));raw=next(iter(extra))
+assert Path(normalized).name==Path(raw).name=='ucf_r256_service.sv'
+assert Path(normalized).read_text()==Path(raw).read_text().replace('r_stream_local #(.WORDS(256)) leaf','r_stream_local leaf')
+expected[normalized]=sha(normalized)
+result={'original_sources_manifest_sha':sha(old/'sources.json'),'all_original_sources_match_recorded_hashes':True,'original_files':records,'original_r_binding_normalization':{'raw':raw,'normalized':normalized,'normalized_sha':sha(normalized),'change':'remove fixed WORDS256 override for qualified hardmacro Liberty blackbox'},'runs':{}}
 known={'C-v14-genericadder-distributed':'2c0c51de8d1dd776a295cd3221b38c21b66f8191a93ebcfcaed4c41cff3e35c2','C-v14-genericadder-distributed-parallel':'2aaa6e239aa20b50c7ab3703531263146527e04046f1bdf8fe439d66e6161a0e','C-v15-genericadder-onehot-v2':'020538508ff7db6461afab28f73726867e5900fde2255a4a311789b105040567'}
 for name,h in known.items():
  run=base/'cu/runs'/name
