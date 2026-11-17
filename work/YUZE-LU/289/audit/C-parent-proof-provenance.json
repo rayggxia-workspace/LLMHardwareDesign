@@ -1,0 +1,38 @@
+{
+  "task": "Issue289 actual C cached parent proof chain",
+  "input_files_sha256": {
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/cu/runs/C-v16-genericadder-cached/config.mk": "faec62cb29a243a0e3147414f2248e8e05e87bfed6b64e254ee378ee1fd2c50f",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/cu/runs/C-v16-genericadder-cached/inputs-manifest.json": "95f33075450d1411fd5a3bf6a406a18ff54f804606fb72cbb46f56c17aaec141",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/cu/loader-cached.sv": "a0f71497ee0c873649c41d64122e2a906775caaed90dc615a686be053625d0f9",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/synth-original.tcl": "86b33cb3d9acb146da0861289f0627886fbf96d0101b2b54eee6470189f87b96",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/synth-cec-byte-fixed.tcl": "bee574528b642a93df152ee82a19f2d2a22fbd90cdfbbe241912f41ed4bc61ce",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/c-parent-cec-byte-fixed.sbatch": "4124833f5821ec8ed26dd0d05bcbfb9bf5acc86731e8be8577b0f413e1db1d88",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/run_parent_cec.py": "5cf5af2a76964b69e4c8c05e21f9c11382d880ca9cbeb62919900fc2e1a5c5a6",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/verify_parent_dffmap.py": "5b362982bf1dfb1c38354fa8ff9c338a3a481174ea39487a74d39c090690c5ed",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/c-control-tags.py": "8dc33fe5df13d86d83976ccd92f21850d545bcd9569a9110df9660fbfdfc595a",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/c-formal.py": "a4ae201b594d1c03ce8f4ec1d6d8b87791c7f6afd95fbde92b8620d61aa27434",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-parent-cec-119769.log": "18b49b45fcb75d82437d2c7b163ee76e040e827e2574ce816d37f4b0e403ebb9",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-parent-ffcheck-119789.log": "5725ddd9226381381b2af74b2acbf0d6fd3d064595a1f54dfd696dbdf8efcc4e"
+  },
+  "original_synthesis_command": "make -C /OpenROAD-flow-scripts/flow DESIGN_CONFIG=<actual>/config.mk WORK_HOME=<replay>/flow NUM_CORES=8 SYNTH_SCRIPT=<audit>/synth-cec-byte-fixed.tcl synth",
+  "instrumentation": "Exact single abc call replacement: chdir into own writable folder; abc -nocleanup -showtmp, same original abc_args; restore cwd. No JSON observer in byte-identical replay.",
+  "pending": [
+    "Observer mapped\u2192actual mapped explicit state/control119803",
+    "Canonical RTL\u2192generic pre-DFF full equivalence supplement119836",
+    "Final routed candidate\u2192actual synth data/state/control when final exists"
+  ],
+  "trusted_boundary": "Yosys parsing, process/memory lowering and generic optimization; source-level loader rewrite proof is independently decomposed, ABC mapping and dfflibmap checked separately. Does not claim end-to-end RTL equivalence SAT completion.",
+  "completed": [
+    "Actual parent ABC CEC119786",
+    "Observer FF-stage synthesis ABC CEC119794",
+    "Actual mapped\u2192v18CTS data/state/control119792",
+    "Parent observed FF lowering119789"
+  ],
+  "additional_hashes": {
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-proof-tool-version-119800.log": "8c8dd518f624950ca628815b8ec107fe48ff1e4a1c0d99ef2d9e783e2d0b2c1d",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-v16-synth-replay-byte-fixed/cec-receipt.json": "cbcd9df5a7e7b40921bd59c083e2a52ac54131a6571c8248b86868951c8eab8a",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-v16-synth-replay/cec-receipt.json": "39d9537d4c63c019037fd50dde1675a663269764abca9a4475bb452cca645bbf",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-cached-synth-to-v18cts/formal/receipt.json": "b8ebd45d2bc84457b67730af5613847162093ee7bb619dd86e19f9a59fd3c3fe",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-cached-synth-to-v18cts/controls-tag-v2/receipt.json": "319a77f4826daeefacc56ad8387162b6847af9545b2cd72239982cd8a2c8715e"
+  }
+}

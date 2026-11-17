@@ -2,7 +2,7 @@
 set -euo pipefail
 root=/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117
 run=$(realpath "$1")
-case "$run" in "$root"/cu/runs/U-*|"$root"/audit/U-antenna/candidate-*|"$root"/u-physical/candidate-*) ;; *) exit 2;; esac
+case "$run" in "$root"/cu/runs/U-*|"$root"/audit/U-antenna/candidate-*|"$root"/u-physical/candidate-*|"$root"/audit/U-v15-pg-diagnostic) ;; *) exit 2;; esac
 out=$root/audit/focused-$(basename "$run")
 mkdir "$out"
 res=$(find "$run/flow/results/nangate45" -mindepth 2 -maxdepth 2 -type d | head -1)

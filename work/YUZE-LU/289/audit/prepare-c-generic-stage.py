@@ -1,0 +1,51 @@
+import sys,json,re,hashlib,subprocess
+from pathlib import Path
+p=Path('/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit')
+run=Path(sys.argv[1]).resolve();v=p/(run.name+'-generic-stage-views');v.mkdir()
+config=(run/'config.mk').read_text();top=re.search(r'^export DESIGN_NAME\s*=\s*(\S+)',config,re.M)[1]
+libs=re.findall(r'^export ADDITIONAL_LIBS\s*=\s*(.*)$',config,re.M)[-1].split();types=set()
+for f in libs:types.update(re.findall(r'\bcell\s*\(\s*"?([^"\s)]+)',Path(f).read_text()))
+res=run/'flow/results/nangate45/c-overlay-current/base'
+std='/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib'
+scripts={'gold':f'read_json {p}/C-v16-genericadder-cached-rtlmap-views/gold-uncut.json\n', 'gate':f'read_json {p}/C-v16-synth-replay/abc/before-dff.json\n'}
+ds=[];qs=[];boundaries=[]
+for lab in ('gold','gate'):
+ ys=v/(lab+'.ys');ys.write_text(scripts[lab]+f'write_json {v}/{lab}-uncut.json\n')
+ with (v/(lab+'.log')).open('w') as log:subprocess.run(['yosys','-s',str(ys)],stdout=log,stderr=subprocess.STDOUT,check=True)
+ d=json.loads((v/(lab+'-uncut.json')).read_text());m=d['modules'][top];boundary=[]
+ for i,n in enumerate(sorted(n for n,c in m['cells'].items() if c['type'] in types)):
+  c=m['cells'].pop(n);assert not c['parameters'];signature=[]
+  for pin,direction in sorted(c['port_directions'].items()):
+   assert direction in ('input','output');bits=c['connections'][pin];key=f'__macro_{i}_{pin}';assert key not in m['ports'] and key not in m['netnames']
+   signature.append((pin,direction,len(bits)));m['ports'][key]={'direction':'output' if direction=='input' else 'input','bits':bits};m['netnames'][key]={'hide_name':0,'bits':bits,'attributes':{}}
+  boundary.append((n,c['type'],signature))
+ assert boundary;boundaries.append(boundary)
+ assert all(c['type'].startswith('$') for c in m['cells'].values()),{c['type'] for c in m['cells'].values() if not c['type'].startswith('$')}
+ (v/(lab+'.json')).write_text(json.dumps({'modules':{top:m}}));ds.append(m)
+ q={b for c in m['cells'].values() if c['type'].startswith(('$_DFF','$_SDFF','$_DLATCH','$dff','$adff','$sdff','$ff','$dffe')) for b in c['connections'].get('Q',[]) if isinstance(b,int)}
+ assert q;changed=True
+ while changed:
+  changed=False
+  for c in m['cells'].values():
+   if c['type'] in ('$not','$_NOT_','$buf','$_BUF_') and all(b in q for b in c['connections']['A']):
+    for b in c['connections']['Y']:
+     if isinstance(b,int) and b not in q:q.add(b);changed=True
+ qs.append(q)
+assert boundaries[0]==boundaries[1]
+assert set(ds[0]['ports'])==set(ds[1]['ports'])
+for n in ds[0]['ports']:assert ds[0]['ports'][n]['direction']==ds[1]['ports'][n]['direction'] and len(ds[0]['ports'][n]['bits'])==len(ds[1]['ports'][n]['bits'])
+selected=sorted(ds[0]['ports']);covered=[{b for w in d['ports'].values() for b in w['bits'] if isinstance(b,int)} for d in ds];internal=[]
+for n,w in sorted(ds[0]['netnames'].items(),key=lambda kv:(-len(kv[1]['bits']),kv[0])):
+ if n in selected or n.startswith(('_','$')) or '$' in n or n not in ds[1]['netnames']:continue
+ arr=[w['bits'],ds[1]['netnames'][n]['bits']]
+ if len(arr[0])!=len(arr[1]):continue
+ ints=[{b for b in a if isinstance(b,int)} for a in arr]
+ if not all(x and x<=q and not(x&seen) for x,q,seen in zip(ints,qs,covered)):continue
+ internal.append(n)
+ for seen,x in zip(covered,ints):seen.update(x)
+selected+=internal
+s=f'[gold]\nread_json {v}/gold.json\n[gate]\nread_json {v}/gate.json\n[match {top}]\n'+''.join(f'final-gold-match {n}\n' for n in selected)
+s+=f'gold-nomatch *\ngate-nomatch *\n[collect {top}]\nsolo *\njoin *\n[strategy simple]\nuse sat\ndepth 3\ntimeout 180\n'
+(v/'proof.eqy').write_text(s)
+(v/'binding.json').write_text(json.dumps({'all_ports':sorted(ds[0]['ports']),'state_aliases':internal,'macro_boundaries':boundaries[0],'source_hashes':{str(f):hashlib.sha256(f.read_bytes()).hexdigest() for f in [res/'1_1_yosys_canonicalize.rtlil',res/'1_synth_lec.v',run/'config.mk',run/'loader-candidate.sv']},'scope':'All actual top and macro ports preserved; only optional proof matchpoints selected from FF Q/inversion aliases. No logic/state/port removal except explicit macro cut with all pins observed.'},indent=2))
+print('PREPARED',v,'PORTS',len(ds[0]['ports']),'STATE_ALIASES',len(internal))

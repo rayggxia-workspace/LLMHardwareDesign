@@ -1,0 +1,10 @@
+[gold]
+read_verilog /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/eqy-tool-source/eqy-0.68/examples/simple/counter.sv
+prep -top counter
+[gate]
+read_verilog /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/eqy-tool-source/eqy-0.68/examples/simple/counter.sv
+synth -top counter
+[strategy pdr]
+use sby
+engine abc pdr
+timeout 60
