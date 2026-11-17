@@ -1,5 +1,11 @@
 # 七模型短程能耗试点
 
+## 报告 v2.1：逐模型小计旁列出缺项（2026-11-17）
+
+[十九页 PDF](../../../docs/experiments/seven-model-energy-evaluation.pdf)在每个模型的覆盖小计下方直接列出共同片上缺项、模型算术缺项及 DDR PHY/板级范围，布线寄生单独注明为主动排除项。能耗结果沿用 v2，数据文件未改。
+
+说明由 `energy_report_models.json` 的 `subtotal_exclusions` 维护，构建时自动放在本模型主表下方。生成：`python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-v2_1.pdf`；核验：`python work/Melodydt/280/verify_energy_report_pdf.py output/pdf/seven-model-energy-evaluation-v2_1.pdf --output work/Melodydt/280/report-validation-v2_1.json`。[本次校验回执](report-validation-v2_1.json)；21 段缺项已另核对与本模型小计同页，全部十九页目检通过。
+
 ## 当前交付：七模型无布线寄生分项 v2（2026-11-17）
 
 [十九页报告](../../../docs/experiments/seven-model-energy-evaluation.pdf)补入普通投影 M、驻留、PM/描述符活动与九目标母控核心，分列片上和片上＋DDR。结果为 `*_tlm_power_v2_no_wire.json`，旧版 v1 保留。移除线网 RC 的影响与新增覆盖分别列出，未绑定硬件仍为未知。

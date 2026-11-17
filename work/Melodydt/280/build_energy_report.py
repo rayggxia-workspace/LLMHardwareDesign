@@ -67,7 +67,7 @@ def link(story, styles, label, url):
     story.append(Paragraph(f'<link href="{escape(url, quote=True)}" color="#006D68">{escape(label)}</link>', styles["note"]))
 
 
-def table(story, styles, columns, rows, ratios, numeric=True):
+def table(story, styles, columns, rows, ratios, numeric=True, vertical_padding=5):
     cells = [[Paragraph(escape(label).replace("\n", "<br/>"), styles["tablehead"]) for label in columns]]
     for row in rows:
         cells.append([Paragraph(escape(str(value)), styles["value" if numeric and i > 0 else "table"])
@@ -80,8 +80,8 @@ def table(story, styles, columns, rows, ratios, numeric=True):
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
         ("LEFTPADDING", (0, 0), (-1, -1), 9),
         ("RIGHTPADDING", (0, 0), (-1, -1), 9),
-        ("TOPPADDING", (0, 0), (-1, -1), 5),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ("TOPPADDING", (0, 0), (-1, -1), vertical_padding),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), vertical_padding),
     ]))
     story.extend([grid, Spacer(1, 7)])
 
@@ -148,6 +148,10 @@ def result_page(story, styles, model, result):
     table(story, styles, ("窗口", "时长 ms", "tok/s", "片上覆盖\nmJ/token", "片上覆盖\n平均 W", "片上+DDR\nmJ/token", "片上+DDR\n平均 W"),
           rows, (0.16, 0.11, 0.10, 0.18, 0.12, 0.20, 0.13))
     add(story, styles, "短 Prefill 为 2 个输入 token，两个 Decode 窗各为 1 个输出 token。已覆盖区间来自标定样本端点，拓扑和驻留不确定性另列。", "note")
+    if model.get('subtotal_exclusions'):
+        add(story, styles, "上述覆盖小计未包含", "eyebrow")
+        for paragraph in model['subtotal_exclusions']:
+            add(story, styles, paragraph, "note")
     add(story, styles, "分项归属  /  mJ/token", "section")
     results = [result["windows"][key]["components"] for key in WINDOWS]
     groups = dict(COMPONENTS)
@@ -163,7 +167,7 @@ def result_page(story, styles, model, result):
                           if available else "待标定")
         if any(value != "待标定" for value in values):
             rows.append((label, *values))
-    table(story, styles, ("分项", *WINDOWS.values()), rows, (0.37, 0.21, 0.21, 0.21))
+    table(story, styles, ("分项", *WINDOWS.values()), rows, (0.37, 0.21, 0.21, 0.21), vertical_padding=2)
 
 
 def additions_page(story, styles, records):
