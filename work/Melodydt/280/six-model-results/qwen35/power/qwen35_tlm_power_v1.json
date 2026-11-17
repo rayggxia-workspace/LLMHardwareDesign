@@ -1,0 +1,1165 @@
+{
+  "model": "Qwen3.5-4B",
+  "target_clock_mhz": 300,
+  "sram_scenario": "s_p_parallel_read",
+  "scope": "Partial chip plus DDR device energy, transferred component reference at accepted frozen TLM time",
+  "assumptions": [
+    "Fixed frozen TLM time, 3334 ps core period (nominal 300 MHz); component calibrations target 300 MHz.",
+    "Use the same conditional C639 footprint as Qwen3: three clocked M, four S_P, four local PM/fetch leaves, one G32/switch and four mother PM SRAM macros.",
+    "The main M increment covers PR272 FFN groups to match Qwen3 v1; ordinary projection intervals are separately reported.",
+    "Transfer Qwen3/C639 event coefficients to each model's observed counts; these are not per-model gate-level power measurements.",
+    "512-bit SRAM reads use the measured four-bank feeder; partial 256/384-bit reads and 384-bit writes use serial 128-bit references at fixed TLM time.",
+    "Unmeasured mother PM page lengths use the range of measured per-word page-install/readback costs; exact tested lengths retain their measured cost.",
+    "Use the pooled Qwen3 real-payload write-DMA cost. Other-model bit patterns and activity variation are not bounded by this range.",
+    "G32 active cost applies to plain/scaled SiLU only; GELU, sigmoid, scaling and recurrent arithmetic have uncalibrated work listed separately.",
+    "Sample endpoints and optional read-DMA factors are sensitivity cases, not confidence intervals or timing signoff."
+  ],
+  "not_included": [
+    "DMA clocked idle, leakage and unmapped read/control activity",
+    "Local and mother PM runtime reads, local PM boot/CRC and PM transport outside the attributed macros",
+    "Local descriptor-fetch active increment and nine-target mother controller shell",
+    "Remaining compute and control, cross-block interconnect and global clock tree",
+    "DDR PHY and board I/O",
+    "Ordinary (non-PR272) projection M active increment is outside the main comparable subtotal; see separate interval scenario.",
+    "GELU/sigmoid active logic, scaling, normalization, rotary and other arithmetic without matching event calibration.",
+    "Model-specific physical topology, activity, clock gating and exact resource multiplicity remain to be validated.",
+    "GDN/Mamba2 convolution and recurrent update compute activity is uncalibrated; its DDR traffic and observed SRAM accesses are included."
+  ],
+  "m_timing_wns_ns": {
+    "setup": -1.1218,
+    "hold": -0.053419
+  },
+  "input_sha256": {
+    "qwen3_tlm_power_v1.json": "d7d3a6bd0cff54f99e0343921f636b52db74b25b268300a65a0743ee06c85c17",
+    "qwen3_m_baseline_reference.json": "f4b8c716aaff7ef5f4d2321fe34725e0a7b6a8454e6dcf7dd98d24d4f7dc1382",
+    "qwen3_s_p_macro_calibration.json": "c51d83f2724a126b5576e25e35ece51e55a2f0e826c6218cd9e440e7e2ee278f",
+    "qwen3_mother_pm_macro_calibration.json": "4af23e453fda1c0523e23d6b76d881dce0e3df57a2a90060a81bf85e6ce4dec2",
+    "prefill/acceptance.json": "6f2d26256d25ecda0f36657914a1defaf01106c602df85084a02d57bd6d259db",
+    "prefill/result.json": "fc8c5a4985c823fa16bd8cd1f00a72fb7da43b1ca253b0fb11c4ad53cfe01013",
+    "prefill/component-observation.json": "0f689d77031179cebab94f8665a841eb08bd14639534c08dfb0c5d9f3d2c8132",
+    "prefill/dma-windows.json": "8b473d8b6e55f2f81f6624ed4e7373c9c3da546e9fafedbe9fa657be59cb2293",
+    "prefill/ddr-window-energy.json": "a399c7fa100e93dc35318a3c093f1c13f98e94be7580a176a67f8f3f6db3deb4",
+    "decode/acceptance.json": "d8ec2d5c31375de4fa2ec315da1f8f7b8ab490e41ab1b6eb26676d6e12688f5f",
+    "decode/result.json": "307135cf3116990bfd34b8d963e0399df78d27f3041e169c0de2bc85316ea522",
+    "decode/component-observation.json": "6ef4b3c4c32c9491e069014428737293a9fa8fee4701b108fd9ceda0090c84ba",
+    "decode/dma-windows.json": "441bc40eb972454884aba5ed97e95abf285d62121c06047f55b047e1aa61d348",
+    "decode/ddr-window-energy.json": "dbfc3716618b7e6c84e0d0e847923708c3f413f706233349f4b180684e27c8ee"
+  },
+  "windows": {
+    "prefill": {
+      "elapsed_ps": 498599810022,
+      "tokens": 2,
+      "token_kind": "input",
+      "tokens_per_second": 4.0112329764260295,
+      "ddr_transport_beats_64b": {
+        "read": 121170054,
+        "write": 1747136
+      },
+      "write_dma_transferred_pj_per_64b": [
+        22.979345593519263,
+        24.248115589189023
+      ],
+      "m_modeled_busy_ps_by_site": [
+        79969910784,
+        79969910784,
+        76036964352
+      ],
+      "ordinary_projection_m_busy_ps_by_site": [
+        135574532218,
+        0,
+        0
+      ],
+      "ordinary_projection_m_additional_reference": {
+        "energy_nj_per_window": [
+          2077357.7980715516,
+          3267589.4064922407
+        ],
+        "average_power_w": [
+          0.004166383051730186,
+          0.006553531190371018
+        ],
+        "energy_mj_per_token": [
+          1.0386788990357758,
+          1.6337947032461204
+        ]
+      },
+      "activation_32word_equivalent_calls": {
+        "scaled_silu": 4608.0,
+        "sigmoid": 512.0
+      },
+      "add_four_element_words": 81920,
+      "serial_partial_sram_operations": {},
+      "per_word_extrapolated_mother_pm_pages": {
+        "1104": 48,
+        "2416": 16
+      },
+      "components": {
+        "ddr_devices": {
+          "energy_nj_per_window": [
+            1497397179.091968,
+            1497397179.091968
+          ],
+          "average_power_w": [
+            3.0032044717905078,
+            3.0032044717905078
+          ],
+          "energy_mj_per_token": [
+            748.6985895459841,
+            748.6985895459841
+          ]
+        },
+        "m_clocked_idle_3x": {
+          "energy_nj_per_window": [
+            371096534.54392177,
+            371096534.54392177
+          ],
+          "average_power_w": [
+            0.7442773284,
+            0.7442773284
+          ],
+          "energy_mj_per_token": [
+            185.5482672719609,
+            185.5482672719609
+          ]
+        },
+        "m_busy_increment": {
+          "energy_nj_per_window": [
+            3615783.9409435117,
+            5687463.812232907
+          ],
+          "average_power_w": [
+            0.00725187588977214,
+            0.011406871197929169
+          ],
+          "energy_mj_per_token": [
+            1.8078919704717558,
+            2.8437319061164534
+          ]
+        },
+        "s_p_clocked_idle_4x": {
+          "energy_nj_per_window": [
+            113042833.88795127,
+            113042833.88795127
+          ],
+          "average_power_w": [
+            0.22672057152,
+            0.22672057152
+          ],
+          "energy_mj_per_token": [
+            56.52141694397564,
+            56.52141694397564
+          ]
+        },
+        "s_p_access_increment": {
+          "energy_nj_per_window": [
+            511039.0983137851,
+            511039.0983137851
+          ],
+          "average_power_w": [
+            0.0010249484416996392,
+            0.0010249484416996392
+          ],
+          "energy_mj_per_token": [
+            0.25551954915689257,
+            0.25551954915689257
+          ]
+        },
+        "g32_down_idle_1x": {
+          "energy_nj_per_window": [
+            1330387.957857977,
+            1330387.957857977
+          ],
+          "average_power_w": [
+            0.002668248024,
+            0.002668248024
+          ],
+          "energy_mj_per_token": [
+            0.6651939789289885,
+            0.6651939789289885
+          ]
+        },
+        "cohort_switch_idle_1x": {
+          "energy_nj_per_window": [
+            39054.201314324695,
+            39089.20586799314
+          ],
+          "average_power_w": [
+            7.832775009e-05,
+            7.839795579999998e-05
+          ],
+          "energy_mj_per_token": [
+            0.019527100657162347,
+            0.019544602933996572
+          ]
+        },
+        "lc_pm_loaded_quiet_4x": {
+          "energy_nj_per_window": [
+            61335702.116014205,
+            61351505.11732891
+          ],
+          "average_power_w": [
+            0.12301589548,
+            0.12304759024000002
+          ],
+          "energy_mj_per_token": [
+            30.667851058007102,
+            30.675752558664456
+          ]
+        },
+        "lc_descriptor_fetch_quiet_4x": {
+          "energy_nj_per_window": [
+            11244007.030523004,
+            11244018.17522596
+          ],
+          "average_power_w": [
+            0.022551165893999997,
+            0.022551188246
+          ],
+          "energy_mj_per_token": [
+            5.622003515261502,
+            5.62200908761298
+          ]
+        },
+        "mother_pm_clocked_idle_4_macros": {
+          "energy_nj_per_window": [
+            22925921.535960387,
+            22925921.535960387
+          ],
+          "average_power_w": [
+            0.04598060624,
+            0.04598060624
+          ],
+          "energy_mj_per_token": [
+            11.462960767980194,
+            11.462960767980194
+          ]
+        },
+        "mother_pm_page_install_and_readback_increment": {
+          "energy_nj_per_window": [
+            65.66581899812957,
+            65.66582376712513
+          ],
+          "average_power_w": [
+            1.317004492946601e-07,
+            1.3170045885943622e-07
+          ],
+          "energy_mj_per_token": [
+            3.2832909499064786e-05,
+            3.283291188356256e-05
+          ]
+        },
+        "g32_active_increment": {
+          "energy_nj_per_window": [
+            12788.32039310193,
+            14223.984490540104
+          ],
+          "average_power_w": [
+            2.5648466236955977e-05,
+            2.8527857822313433e-05
+          ],
+          "energy_mj_per_token": [
+            0.006394160196550965,
+            0.007111992245270052
+          ]
+        },
+        "u_add2_logic_active_increment": {
+          "energy_nj_per_window": [
+            314950.2408834418,
+            314950.2408834418
+          ],
+          "average_power_w": [
+            0.0006316693960824916,
+            0.0006316693960824916
+          ],
+          "energy_mj_per_token": [
+            0.1574751204417209,
+            0.1574751204417209
+          ]
+        },
+        "write_dma_active_increment": {
+          "energy_nj_per_window": [
+            40148.041942878874,
+            42364.755678033354
+          ],
+          "average_power_w": [
+            8.052157489010554e-05,
+            8.496745250697963e-05
+          ],
+          "energy_mj_per_token": [
+            0.020074020971439437,
+            0.021182377839016678
+          ]
+        }
+      },
+      "covered_on_chip_subtotal": {
+        "energy_nj_per_window": [
+          585509216.5818386,
+          587600397.9815369
+        ],
+        "average_power_w": [
+          1.1743069387772207,
+          1.1785010466722998
+        ],
+        "energy_mj_per_token": [
+          292.7546082909193,
+          293.8001989907684
+        ]
+      },
+      "covered_subtotal": {
+        "energy_nj_per_window": [
+          2082906395.6738067,
+          2084997577.073505
+        ],
+        "average_power_w": [
+          4.177511410567728,
+          4.181705518462808
+        ],
+        "energy_mj_per_token": [
+          1041.4531978369034,
+          1042.4987885367525
+        ]
+      },
+      "read_dma_dynamic_sensitivity": {
+        "half_write_cost": {
+          "assumed_read_pj_per_64b": 11.80686529567707,
+          "read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              1430638.5054479165,
+              1430638.5054479165
+            ],
+            "average_power_w": [
+              0.0028693121751987662,
+              0.0028693121751987662
+            ],
+            "energy_mj_per_token": [
+              0.7153192527239582,
+              0.7153192527239582
+            ]
+          },
+          "subtotal_with_read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              2084337034.1792545,
+              2086428215.5789528
+            ],
+            "average_power_w": [
+              4.180380722742927,
+              4.184574830638007
+            ],
+            "energy_mj_per_token": [
+              1042.1685170896274,
+              1043.2141077894764
+            ]
+          }
+        },
+        "same_write_cost": {
+          "assumed_read_pj_per_64b": 23.61373059135414,
+          "read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              2861277.010895833,
+              2861277.010895833
+            ],
+            "average_power_w": [
+              0.0057386243503975325,
+              0.0057386243503975325
+            ],
+            "energy_mj_per_token": [
+              1.4306385054479165,
+              1.4306385054479165
+            ]
+          },
+          "subtotal_with_read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              2085767672.6847024,
+              2087858854.0844007
+            ],
+            "average_power_w": [
+              4.183250034918125,
+              4.187444142813205
+            ],
+            "energy_mj_per_token": [
+              1042.8838363423513,
+              1043.9294270422004
+            ]
+          }
+        },
+        "twice_write_cost": {
+          "assumed_read_pj_per_64b": 47.22746118270828,
+          "read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              5722554.021791666,
+              5722554.021791666
+            ],
+            "average_power_w": [
+              0.011477248700795065,
+              0.011477248700795065
+            ],
+            "energy_mj_per_token": [
+              2.861277010895833,
+              2.861277010895833
+            ]
+          },
+          "subtotal_with_read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              2088628949.6955984,
+              2090720131.0952966
+            ],
+            "average_power_w": [
+              4.1889886592685235,
+              4.193182767163603
+            ],
+            "energy_mj_per_token": [
+              1044.3144748477991,
+              1045.3600655476482
+            ]
+          }
+        }
+      },
+      "read_dma_idle_w": null,
+      "remaining_100mw_residency_mj_per_token": 24.9299905011
+    },
+    "first_token": {
+      "elapsed_ps": 455610793938,
+      "tokens": 1,
+      "token_kind": "output",
+      "tokens_per_second": 2.1948558140088337,
+      "ddr_transport_beats_64b": {
+        "read": 73858594,
+        "write": 873568
+      },
+      "write_dma_transferred_pj_per_64b": [
+        22.979345593519263,
+        24.248115589189023
+      ],
+      "m_modeled_busy_ps_by_site": [
+        39984955392,
+        39984955392,
+        38018482176
+      ],
+      "ordinary_projection_m_busy_ps_by_site": [
+        216744403948,
+        0,
+        0
+      ],
+      "ordinary_projection_m_additional_reference": {
+        "energy_nj_per_window": [
+          3321093.352590366,
+          5223928.909584165
+        ],
+        "average_power_w": [
+          0.007289321053799054,
+          0.01146577073916963
+        ],
+        "energy_mj_per_token": [
+          3.3210933525903656,
+          5.223928909584164
+        ]
+      },
+      "activation_32word_equivalent_calls": {
+        "scaled_silu": 2304.0,
+        "sigmoid": 256.0
+      },
+      "add_four_element_words": 40960,
+      "serial_partial_sram_operations": {},
+      "per_word_extrapolated_mother_pm_pages": {
+        "1104": 24,
+        "2416": 8,
+        "352": 1
+      },
+      "components": {
+        "ddr_devices": {
+          "energy_nj_per_window": [
+            1243446358.091616,
+            1243446358.091616
+          ],
+          "average_power_w": [
+            2.7291854684654937,
+            2.7291854684654937
+          ],
+          "energy_mj_per_token": [
+            1243.4463580916158,
+            1243.4463580916158
+          ]
+        },
+        "m_clocked_idle_3x": {
+          "energy_nj_per_window": [
+            339100784.50237757,
+            339100784.50237757
+          ],
+          "average_power_w": [
+            0.7442773284,
+            0.7442773284
+          ],
+          "energy_mj_per_token": [
+            339.10078450237756,
+            339.10078450237756
+          ]
+        },
+        "m_busy_increment": {
+          "energy_nj_per_window": [
+            1807891.9704717558,
+            2843731.9061164535
+          ],
+          "average_power_w": [
+            0.00396806220248982,
+            0.006241581507622121
+          ],
+          "energy_mj_per_token": [
+            1.8078919704717558,
+            2.8437319061164534
+          ]
+        },
+        "s_p_clocked_idle_4x": {
+          "energy_nj_per_window": [
+            103296339.5923043,
+            103296339.5923043
+          ],
+          "average_power_w": [
+            0.22672057152,
+            0.22672057152
+          ],
+          "energy_mj_per_token": [
+            103.2963395923043,
+            103.2963395923043
+          ]
+        },
+        "s_p_access_increment": {
+          "energy_nj_per_window": [
+            473894.3542707977,
+            473894.3542707977
+          ],
+          "average_power_w": [
+            0.0010401297786972223,
+            0.0010401297786972223
+          ],
+          "energy_mj_per_token": [
+            0.4738943542707977,
+            0.4738943542707977
+          ]
+        },
+        "g32_down_idle_1x": {
+          "energy_nj_per_window": [
+            1215682.6006381398,
+            1215682.6006381398
+          ],
+          "average_power_w": [
+            0.002668248024,
+            0.002668248024
+          ],
+          "energy_mj_per_token": [
+            1.2156826006381398,
+            1.2156826006381398
+          ]
+        },
+        "cohort_switch_idle_1x": {
+          "energy_nj_per_window": [
+            35686.96840588215,
+            35718.954885154235
+          ],
+          "average_power_w": [
+            7.832775009e-05,
+            7.839795580000001e-05
+          ],
+          "energy_mj_per_token": [
+            0.035686968405882154,
+            0.03571895488515423
+          ]
+        },
+        "lc_pm_loaded_quiet_4x": {
+          "energy_nj_per_window": [
+            56047369.806636825,
+            56061810.28140411
+          ],
+          "average_power_w": [
+            0.12301589548,
+            0.12304759024000002
+          ],
+          "energy_mj_per_token": [
+            56.04736980663682,
+            56.06181028140411
+          ]
+        },
+        "lc_descriptor_fetch_quiet_4x": {
+          "energy_nj_per_window": [
+            10274554.597192887,
+            10274564.781005355
+          ],
+          "average_power_w": [
+            0.022551165893999997,
+            0.022551188246
+          ],
+          "energy_mj_per_token": [
+            10.274554597192887,
+            10.274564781005354
+          ]
+        },
+        "mother_pm_clocked_idle_4_macros": {
+          "energy_nj_per_window": [
+            20949260.51475696,
+            20949260.51475696
+          ],
+          "average_power_w": [
+            0.04598060624,
+            0.04598060624
+          ],
+          "energy_mj_per_token": [
+            20.949260514756958,
+            20.949260514756958
+          ]
+        },
+        "mother_pm_page_install_and_readback_increment": {
+          "energy_nj_per_window": [
+            33.083803562525944,
+            33.083805965340396
+          ],
+          "average_power_w": [
+            7.261417859873624e-08,
+            7.26141838725675e-08
+          ],
+          "energy_mj_per_token": [
+            3.308380356252594e-05,
+            3.3083805965340394e-05
+          ]
+        },
+        "g32_active_increment": {
+          "energy_nj_per_window": [
+            6394.160196550965,
+            7111.992245270052
+          ],
+          "average_power_w": [
+            1.4034259683103754e-05,
+            1.560979752871671e-05
+          ],
+          "energy_mj_per_token": [
+            0.006394160196550965,
+            0.007111992245270052
+          ]
+        },
+        "u_add2_logic_active_increment": {
+          "energy_nj_per_window": [
+            157475.1204417209,
+            157475.1204417209
+          ],
+          "average_power_w": [
+            0.0003456351836632525,
+            0.0003456351836632525
+          ],
+          "energy_mj_per_token": [
+            0.1574751204417209,
+            0.1574751204417209
+          ]
+        },
+        "write_dma_active_increment": {
+          "energy_nj_per_window": [
+            20074.020971439437,
+            21182.377839016677
+          ],
+          "average_power_w": [
+            4.4059581639699105e-05,
+            4.649226515449762e-05
+          ],
+          "energy_mj_per_token": [
+            0.020074020971439437,
+            0.021182377839016678
+          ]
+        }
+      },
+      "covered_on_chip_subtotal": {
+        "energy_nj_per_window": [
+          533385441.29246855,
+          534437590.06209064
+        ],
+        "average_power_w": [
+          1.170704136928442,
+          1.1730134517726494
+        ],
+        "energy_mj_per_token": [
+          533.3854412924685,
+          534.4375900620906
+        ]
+      },
+      "covered_subtotal": {
+        "energy_nj_per_window": [
+          1776831799.3840845,
+          1777883948.1537066
+        ],
+        "average_power_w": [
+          3.8998896053939354,
+          3.902198920238143
+        ],
+        "energy_mj_per_token": [
+          1776.8317993840844,
+          1777.8839481537066
+        ]
+      },
+      "read_dma_dynamic_sensitivity": {
+        "half_write_cost": {
+          "assumed_read_pj_per_64b": 11.80686529567707,
+          "read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              872038.4702861026,
+              872038.4702861026
+            ],
+            "average_power_w": [
+              0.001913998706546822,
+              0.001913998706546822
+            ],
+            "energy_mj_per_token": [
+              0.8720384702861026,
+              0.8720384702861026
+            ]
+          },
+          "subtotal_with_read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              1777703837.8543706,
+              1778755986.6239927
+            ],
+            "average_power_w": [
+              3.901803604100482,
+              3.9041129189446897
+            ],
+            "energy_mj_per_token": [
+              1777.7038378543707,
+              1778.7559866239926
+            ]
+          }
+        },
+        "same_write_cost": {
+          "assumed_read_pj_per_64b": 23.61373059135414,
+          "read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              1744076.9405722052,
+              1744076.9405722052
+            ],
+            "average_power_w": [
+              0.003827997413093644,
+              0.003827997413093644
+            ],
+            "energy_mj_per_token": [
+              1.7440769405722052,
+              1.7440769405722052
+            ]
+          },
+          "subtotal_with_read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              1778575876.3246567,
+              1779628025.0942788
+            ],
+            "average_power_w": [
+              3.903717602807029,
+              3.9060269176512366
+            ],
+            "energy_mj_per_token": [
+              1778.5758763246567,
+              1779.6280250942789
+            ]
+          }
+        },
+        "twice_write_cost": {
+          "assumed_read_pj_per_64b": 47.22746118270828,
+          "read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              3488153.8811444105,
+              3488153.8811444105
+            ],
+            "average_power_w": [
+              0.007655994826187288,
+              0.007655994826187288
+            ],
+            "energy_mj_per_token": [
+              3.4881538811444104,
+              3.4881538811444104
+            ]
+          },
+          "subtotal_with_read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              1780319953.265229,
+              1781372102.034851
+            ],
+            "average_power_w": [
+              3.907545600220123,
+              3.9098549150643302
+            ],
+            "energy_mj_per_token": [
+              1780.319953265229,
+              1781.372102034851
+            ]
+          }
+        }
+      },
+      "read_dma_idle_w": null,
+      "remaining_100mw_residency_mj_per_token": 45.5610793938
+    },
+    "decode": {
+      "elapsed_ps": 455780544548,
+      "tokens": 1,
+      "token_kind": "output",
+      "tokens_per_second": 2.1940383633349363,
+      "ddr_transport_beats_64b": {
+        "read": 73862666,
+        "write": 873568
+      },
+      "write_dma_transferred_pj_per_64b": [
+        22.979345593519263,
+        24.248115589189023
+      ],
+      "m_modeled_busy_ps_by_site": [
+        39984955392,
+        39984955392,
+        38018482176
+      ],
+      "ordinary_projection_m_busy_ps_by_site": [
+        216744618972,
+        0,
+        0
+      ],
+      "ordinary_projection_m_additional_reference": {
+        "energy_nj_per_window": [
+          3321096.647322613,
+          5223934.092048253
+        ],
+        "average_power_w": [
+          0.0072866134525688495,
+          0.011461511805487126
+        ],
+        "energy_mj_per_token": [
+          3.3210966473226127,
+          5.223934092048253
+        ]
+      },
+      "activation_32word_equivalent_calls": {
+        "scaled_silu": 2304.0,
+        "sigmoid": 256.0
+      },
+      "add_four_element_words": 40960,
+      "serial_partial_sram_operations": {},
+      "per_word_extrapolated_mother_pm_pages": {
+        "1104": 24,
+        "2416": 8,
+        "352": 1
+      },
+      "components": {
+        "ddr_devices": {
+          "energy_nj_per_window": [
+            1243935176.805216,
+            1243935176.805216
+          ],
+          "average_power_w": [
+            2.729241499412471,
+            2.729241499412471
+          ],
+          "energy_mj_per_token": [
+            1243.935176805216,
+            1243.935176805216
+          ]
+        },
+        "m_clocked_idle_3x": {
+          "energy_nj_per_window": [
+            339227126.03288263,
+            339227126.03288263
+          ],
+          "average_power_w": [
+            0.7442773284,
+            0.7442773284
+          ],
+          "energy_mj_per_token": [
+            339.2271260328826,
+            339.2271260328826
+          ]
+        },
+        "m_busy_increment": {
+          "energy_nj_per_window": [
+            1807891.9704717558,
+            2843731.9061164535
+          ],
+          "average_power_w": [
+            0.003966584339980224,
+            0.006239256897059083
+          ],
+          "energy_mj_per_token": [
+            1.8078919704717558,
+            2.8437319061164534
+          ]
+        },
+        "s_p_clocked_idle_4x": {
+          "energy_nj_per_window": [
+            103334825.54761939,
+            103334825.54761939
+          ],
+          "average_power_w": [
+            0.22672057152,
+            0.22672057152
+          ],
+          "energy_mj_per_token": [
+            103.33482554761939,
+            103.33482554761939
+          ]
+        },
+        "s_p_access_increment": {
+          "energy_nj_per_window": [
+            474243.71794699435,
+            474243.71794699435
+          ],
+          "average_power_w": [
+            0.0010405089107462988,
+            0.0010405089107462988
+          ],
+          "energy_mj_per_token": [
+            0.4742437179469943,
+            0.4742437179469943
+          ]
+        },
+        "g32_down_idle_1x": {
+          "energy_nj_per_window": [
+            1216135.537367845,
+            1216135.537367845
+          ],
+          "average_power_w": [
+            0.002668248024,
+            0.002668248024
+          ],
+          "energy_mj_per_token": [
+            1.2161355373678449,
+            1.2161355373678449
+          ]
+        },
+        "cohort_switch_idle_1x": {
+          "energy_nj_per_window": [
+            35700.26458923986,
+            35732.26298597403
+          ],
+          "average_power_w": [
+            7.832775009000001e-05,
+            7.839795579999998e-05
+          ],
+          "energy_mj_per_token": [
+            0.03570026458923986,
+            0.035732262985974025
+          ]
+        },
+        "lc_pm_loaded_quiet_4x": {
+          "energy_nj_per_window": [
+            56068251.82993425,
+            56082697.68490638
+          ],
+          "average_power_w": [
+            0.12301589548,
+            0.12304759024000002
+          ],
+          "energy_mj_per_token": [
+            56.06825182993425,
+            56.08269768490638
+          ]
+        },
+        "lc_descriptor_fetch_quiet_4x": {
+          "energy_nj_per_window": [
+            10278382.671359604,
+            10278392.858966338
+          ],
+          "average_power_w": [
+            0.022551165893999997,
+            0.022551188246
+          ],
+          "energy_mj_per_token": [
+            10.278382671359605,
+            10.278392858966338
+          ]
+        },
+        "mother_pm_clocked_idle_4_macros": {
+          "energy_nj_per_window": [
+            20957065.750714365,
+            20957065.750714365
+          ],
+          "average_power_w": [
+            0.04598060624,
+            0.04598060624
+          ],
+          "energy_mj_per_token": [
+            20.957065750714364,
+            20.957065750714364
+          ]
+        },
+        "mother_pm_page_install_and_readback_increment": {
+          "energy_nj_per_window": [
+            33.083803562525944,
+            33.083805965340396
+          ],
+          "average_power_w": [
+            7.258713422121896e-08,
+            7.258713949308606e-08
+          ],
+          "energy_mj_per_token": [
+            3.308380356252594e-05,
+            3.3083805965340394e-05
+          ]
+        },
+        "g32_active_increment": {
+          "energy_nj_per_window": [
+            6394.160196550965,
+            7111.992245270052
+          ],
+          "average_power_w": [
+            1.4029032772542075e-05,
+            1.5603983825863065e-05
+          ],
+          "energy_mj_per_token": [
+            0.006394160196550965,
+            0.007111992245270052
+          ]
+        },
+        "u_add2_logic_active_increment": {
+          "energy_nj_per_window": [
+            157475.1204417209,
+            157475.1204417209
+          ],
+          "average_power_w": [
+            0.0003455064555199253,
+            0.0003455064555199253
+          ],
+          "energy_mj_per_token": [
+            0.1574751204417209,
+            0.1574751204417209
+          ]
+        },
+        "write_dma_active_increment": {
+          "energy_nj_per_window": [
+            20074.020971439437,
+            21182.377839016677
+          ],
+          "average_power_w": [
+            4.404317211772817e-05,
+            4.647494960545838e-05
+          ],
+          "energy_mj_per_token": [
+            0.020074020971439437,
+            0.021182377839016678
+          ]
+        }
+      },
+      "covered_on_chip_subtotal": {
+        "energy_nj_per_window": [
+          533583599.70829964,
+          534635753.8738384
+        ],
+        "average_power_w": [
+          1.1707028878063617,
+          1.1730113544096963
+        ],
+        "energy_mj_per_token": [
+          533.5835997082996,
+          534.6357538738384
+        ]
+      },
+      "covered_subtotal": {
+        "energy_nj_per_window": [
+          1777518776.5135157,
+          1778570930.6790545
+        ],
+        "average_power_w": [
+          3.8999443872188326,
+          3.9022528538221675
+        ],
+        "energy_mj_per_token": [
+          1777.5187765135156,
+          1778.5709306790545
+        ]
+      },
+      "read_dma_dynamic_sensitivity": {
+        "half_write_cost": {
+          "assumed_read_pj_per_64b": 11.80686529567707,
+          "read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              872086.5478415868,
+              872086.5478415868
+            ],
+            "average_power_w": [
+              0.0019133913421127697,
+              0.0019133913421127697
+            ],
+            "energy_mj_per_token": [
+              0.8720865478415868,
+              0.8720865478415868
+            ]
+          },
+          "subtotal_with_read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              1778390863.0613573,
+              1779443017.226896
+            ],
+            "average_power_w": [
+              3.901857778560945,
+              3.90416624516428
+            ],
+            "energy_mj_per_token": [
+              1778.3908630613573,
+              1779.443017226896
+            ]
+          }
+        },
+        "same_write_cost": {
+          "assumed_read_pj_per_64b": 23.61373059135414,
+          "read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              1744173.0956831735,
+              1744173.0956831735
+            ],
+            "average_power_w": [
+              0.0038267826842255394,
+              0.0038267826842255394
+            ],
+            "energy_mj_per_token": [
+              1.7441730956831736,
+              1.7441730956831736
+            ]
+          },
+          "subtotal_with_read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              1779262949.6091988,
+              1780315103.7747376
+            ],
+            "average_power_w": [
+              3.9037711699030577,
+              3.9060796365063926
+            ],
+            "energy_mj_per_token": [
+              1779.2629496091988,
+              1780.3151037747375
+            ]
+          }
+        },
+        "twice_write_cost": {
+          "assumed_read_pj_per_64b": 47.22746118270828,
+          "read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              3488346.191366347,
+              3488346.191366347
+            ],
+            "average_power_w": [
+              0.007653565368451079,
+              0.007653565368451079
+            ],
+            "energy_mj_per_token": [
+              3.488346191366347,
+              3.488346191366347
+            ]
+          },
+          "subtotal_with_read_dma_active_proxy": {
+            "energy_nj_per_window": [
+              1781007122.7048821,
+              1782059276.870421
+            ],
+            "average_power_w": [
+              3.9075979525872837,
+              3.9099064191906185
+            ],
+            "energy_mj_per_token": [
+              1781.0071227048822,
+              1782.059276870421
+            ]
+          }
+        }
+      },
+      "read_dma_idle_w": null,
+      "remaining_100mw_residency_mj_per_token": 45.578054454800004
+    }
+  }
+}

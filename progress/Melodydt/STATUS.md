@@ -1,5 +1,11 @@
 # Melodydt 的进度
 
+## 2026-11-17 17:40（Asia/Shanghai）Qwen3.5 三窗通过
+
+Qwen3.5 38821601/38821602 均 COMPLETED 0:0，1065 项输入、完整冻结输出、DDR/SRAM、源/结果 SHA 和本地/服务器积分一致。稳态 Decode 片上 533.584–534.636、片上＋DDR 1777.519–1778.571 mJ/token，不含读 DMA 代理。GDN/卷积/非线性等未标定算术保留缺项。
+
+Llama、Granite、Falcon、Qwen3.5 已完成本轮扩测；Phi、Gemma 的最终验收与积分继续，随后逐个更新双口径 PDF。[回执与复算](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。#280 in_progress，PR #281 草稿；登记 PR #5 pending，Projects 缺配置待核验。负责人 Melodydt。
+
 ## 2026-11-17 17:21（Asia/Shanghai）Falcon 三窗通过
 
 Falcon 38821511/38821512 均 COMPLETED 0:0，完整冻结输出、DDR/SRAM 计数、1177 项输入 SHA 和本地/服务器积分通过。Prefill 片上 272.884–273.585、片上＋DDR 944.175–944.876 mJ/token；稳态 Decode 片上 387.834–388.539、片上＋DDR 1286.079–1286.783。Mamba2/卷积等未标定算术仍为缺项，读 DMA 代理另列。

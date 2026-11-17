@@ -159,3 +159,17 @@ PDF v1.2 已加入 Llama，共九页，保留逐模型实现、缺项、读 DMA 
 结果 `work/Melodydt/280/falcon_tlm_power_v1.json`，SHA-256 `6dad6edadd5600f08f99eed2f941dd8962cee54073edaa9d7be9e5f87c9c14dd`。复算输入在 `work/Melodydt/280/six-model-results/falcon/`，服务器原始回放 `run-38821511-falcon/`，积分 `power-38821512-falcon/`。本地复算沿用上述命令，将 granite 换为 falcon。Phi、Gemma、Qwen3.5 继续运行；随后逐个完成验收、积分、片上与片上＋DDR 复核及 PDF 更新。
 
 Falcon 证据提交 `c3190f047fcd1aef96371c7c5b8e0c6dd51de484`。PDF v1.3 已扩展到十二页，包含 Qwen3、Granite、Falcon、Llama 的两类能耗及代理情景；新增模型页、汇总与证据页目检、数值提取通过，SHA-256 `496d6dc78f55a2e25247c758623f79ed181eb94f9870d017d0b0929b7d14b049`。
+
+## Qwen3.5 双阶段与三窗能耗
+
+17:40 核验回放 38821601 在 m3ca0104 用时 01:30:28，积分 38821602 在 m3ca1001 用时 00:00:03，均 COMPLETED 0:0、UNLIMITED。1065 项输入 SHA、两阶段完整冻结 result/逐层数值/输出、DDR 终态及 SRAM 计数通过，17 个读回文件核对清单，本地与服务器积分字节一致。
+
+| 窗口 | tok/s | 片上已覆盖 mJ/token | 片上＋DDR mJ/token | 片上平均 W | 片上＋DDR 平均 W |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 短 Prefill | 4.011233 | 292.754608–293.800199 | 1041.453198–1042.498789 | 1.174307–1.178501 | 4.177511–4.181706 |
+| 首 Decode | 2.194856 | 533.385441–534.437590 | 1776.831799–1777.883948 | 1.170704–1.173013 | 3.899890–3.902199 |
+| 稳态 Decode | 2.194038 | 533.583600–534.635754 | 1777.518777–1778.570931 | 1.170703–1.173011 | 3.899944–3.902253 |
+
+不含读 DMA 动态代理。保留 8 层 256 维宽注意力、24 层 GDN、真实卷积/递推历史和三 P FFN；GDN、卷积、sigmoid/缩放等无匹配标定的算术不计为零，其 DDR 与观测 SRAM 访问已覆盖。
+
+结果 `work/Melodydt/280/qwen35_tlm_power_v1.json`，SHA-256 `f1c0dfdd378a6014a54718c3265a332ccff63064d14b7e62ef12ca2435aec9da`。复算输入在 `six-model-results/qwen35/`；服务器 `run-38821601-qwen35/` 与 `power-38821602-qwen35/`。下一步加入同名 PDF，继续 Phi、Gemma 的最终验收、积分与两类结果更新。
