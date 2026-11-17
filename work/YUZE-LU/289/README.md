@@ -1,5 +1,11 @@
 # A/B interface X8 implementation — Issue 289
 
+## Confirmed F milestone
+
+F with the accepted **S minimal-localv4** X8 leaf has completed backend acceptance. Evidence: [accepted-parent.json](audit/evidence/F/accepted-parent.json). Nangate45 TT, nominal300MHz, original0.1ns uncertainty; actual serialized period3.3333ns. Setup+0.221605405ns, hold+0.002453537ns. Timing/electrical violation counts, full foundry GDS DRC and antenna are zero; PG, formal equivalence, state/control preservation and signal/power BPin/macro geometry checks pass. Native-route checker markers are40 exact historical matches plus4 individually proven same-net physical macro contacts; two old markers disappear. Do not label this checker report empty. Hold margin is only2.454ps and this does not establish other PVT corners or A/B top RC timing.
+
+Frozen remote package: `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/gs/candidate-S-minimal-localv4/parent-F-eco-h20-v4/release/`. Accepted receipt SHA256 `60cbc5d7574e07d8fdfbd7646cfbbe25785c3821ead2da9a4967d40b34c0aa5e`. C and U remain in progress; the overall task is not complete.
+
 Task: https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/289
 
 Owner: YUZE-LU. Work branch: `task/289-ab-x8`; base main `00b288f00e6d64e29ce9ba2ff2a5edb01bc58291`.

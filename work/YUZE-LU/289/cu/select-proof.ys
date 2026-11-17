@@ -1,0 +1,7 @@
+read_verilog -sv select-gold.sv select-gate.sv
+proc
+opt
+equiv_make gold gate equiv
+hierarchy -top equiv
+equiv_simple
+equiv_status -assert

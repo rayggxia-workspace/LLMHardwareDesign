@@ -1,5 +1,7 @@
 # Active continuation — 2026-11-17 CST
 
+Scheduling incident: cancelling the final original baseline workers119542.0/.5 caused that batch allocation to terminate and Slurm cancelled extra steps17/18/19/22/23/25. Root authorized the cancellation and missed this lifecycle dependency. CU is authorized to submit a new standalone six-task batch and recover from saved checkpoints, retaining interruption logs. Do not reuse a nearly-finished static batch for critical extra steps. F agent has likewise been told to move subsequent work off dependency on119586's remaining original baseline.
+
 Latest continuation: S-minimal-localv4 accepted at leaf scope. Its F h20 candidate has zero STA/electrical violations, PG/antenna pass, formal/state pass, but independent native DRC has44 violations; endpoint_audit is repairing and preparing full-GDS diagnostic. Do not equate completed DRC command with zero violations. U-v6 is in detailed routing (last seen62 violations). C agent is implementing formally equivalent eight-lane parallel candidate computation plus priority selection in e32_tiled_dot_loader.sv; preserve no-eligible fallback and cycle behavior. Current local commitbcc73cd3e could not be pushed due repeated GitHub connection resets/timeouts; remote PR still has earlier commit unless subsequently verified.
 
 Issue289/PR290 remain in progress. No complete parent/block release exists.

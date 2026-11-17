@@ -1,0 +1,344 @@
+{
+  "passed": true,
+  "proof": {
+    "passed": true,
+    "checks": {
+      "explicit_unsat": true,
+      "explicit_identical": true,
+      "no_difference": true,
+      "one_normalization_block": true,
+      "complete_counts": true,
+      "positive_inputs": true,
+      "positive_outputs": true,
+      "no_unmatched_boundaries": true,
+      "all_inputs_matched": true,
+      "all_outputs_matched": true
+    },
+    "counts": {
+      "common inputs": 17293,
+      "diff0 inputs": 0,
+      "diff1 inputs": 0,
+      "common outputs": 22749,
+      "diff0 outputs": 0,
+      "diff1 outputs": 0,
+      "PIs0": 17293,
+      "PIs1": 17293,
+      "POs0": 22749,
+      "POs1": 22749
+    },
+    "scope": "Native LEC combinational/state-boundary correspondence; reset/initial-state semantics and full mapped behavioral regression remain separate"
+  },
+  "macro_boundary": [
+    [
+      "local_group.services.engine[0].element.arithmetic.leaf",
+      "block_v2_e_compact",
+      [
+        [
+          "clk",
+          "input",
+          1
+        ],
+        [
+          "in_data",
+          "input",
+          128
+        ],
+        [
+          "in_op",
+          "input",
+          4
+        ],
+        [
+          "in_ready",
+          "output",
+          1
+        ],
+        [
+          "in_shift",
+          "input",
+          5
+        ],
+        [
+          "in_valid",
+          "input",
+          1
+        ],
+        [
+          "out_data",
+          "output",
+          128
+        ],
+        [
+          "out_error",
+          "output",
+          1
+        ],
+        [
+          "out_ready",
+          "input",
+          1
+        ],
+        [
+          "out_saturated",
+          "output",
+          1
+        ],
+        [
+          "out_valid",
+          "output",
+          1
+        ],
+        [
+          "reset",
+          "input",
+          1
+        ]
+      ]
+    ],
+    [
+      "local_group.services.engine[0].element.e32.aperture.leaf",
+      "e_s32_ap64",
+      [
+        [
+          "clk",
+          "input",
+          1
+        ],
+        [
+          "in_data",
+          "input",
+          64
+        ],
+        [
+          "in_mask",
+          "input",
+          4
+        ],
+        [
+          "in_minus",
+          "input",
+          3
+        ],
+        [
+          "in_op",
+          "input",
+          4
+        ],
+        [
+          "in_ready",
+          "output",
+          1
+        ],
+        [
+          "in_shift",
+          "input",
+          8
+        ],
+        [
+          "in_valid",
+          "input",
+          1
+        ],
+        [
+          "out_clipped",
+          "output",
+          4
+        ],
+        [
+          "out_data",
+          "output",
+          64
+        ],
+        [
+          "out_error",
+          "output",
+          1
+        ],
+        [
+          "out_ready",
+          "input",
+          1
+        ],
+        [
+          "out_valid",
+          "output",
+          1
+        ],
+        [
+          "reset",
+          "input",
+          1
+        ]
+      ]
+    ],
+    [
+      "local_group.services.engine[1].genblk1.activate.leaf",
+      "block_v2_g",
+      [
+        [
+          "clk",
+          "input",
+          1
+        ],
+        [
+          "in_fn",
+          "input",
+          3
+        ],
+        [
+          "in_gate",
+          "input",
+          32
+        ],
+        [
+          "in_gated",
+          "input",
+          1
+        ],
+        [
+          "in_ready",
+          "output",
+          1
+        ],
+        [
+          "in_valid",
+          "input",
+          1
+        ],
+        [
+          "in_x",
+          "input",
+          32
+        ],
+        [
+          "out_data",
+          "output",
+          32
+        ],
+        [
+          "out_error",
+          "output",
+          1
+        ],
+        [
+          "out_ready",
+          "input",
+          1
+        ],
+        [
+          "out_saturated",
+          "output",
+          1
+        ],
+        [
+          "out_valid",
+          "output",
+          1
+        ],
+        [
+          "reset",
+          "input",
+          1
+        ]
+      ]
+    ],
+    [
+      "local_group.services.store.leaf",
+      "local_s_base",
+      [
+        [
+          "clk",
+          "input",
+          1
+        ],
+        [
+          "req_addr",
+          "input",
+          10
+        ],
+        [
+          "req_data",
+          "input",
+          128
+        ],
+        [
+          "req_ready",
+          "output",
+          1
+        ],
+        [
+          "req_valid",
+          "input",
+          1
+        ],
+        [
+          "req_write",
+          "input",
+          1
+        ],
+        [
+          "reset",
+          "input",
+          1
+        ],
+        [
+          "rsp_data",
+          "output",
+          128
+        ],
+        [
+          "rsp_ready",
+          "input",
+          1
+        ],
+        [
+          "rsp_valid",
+          "output",
+          1
+        ]
+      ]
+    ],
+    [
+      "program_store.single_bank.storage",
+      "s_sram_256x128_freepdk45",
+      [
+        [
+          "addr0",
+          "input",
+          8
+        ],
+        [
+          "clk0",
+          "input",
+          1
+        ],
+        [
+          "csb0",
+          "input",
+          1
+        ],
+        [
+          "din0",
+          "input",
+          128
+        ],
+        [
+          "dout0",
+          "output",
+          128
+        ],
+        [
+          "web0",
+          "input",
+          1
+        ]
+      ]
+    ]
+  ],
+  "scope": "F combinational/state-boundary correspondence including every macro input/output; state/control preservation remains separate",
+  "hashes": {
+    "/public/home/yuzelu/project-circuit/main-blockv2-f300-side-01/flow/results/nangate45/f-native-frame/base/6_final.v": "cdf485344eb4ae427e7b6218c60eb4d41c7c2e1e8cf99a8130333aa78e11096a",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/gs/candidate-S-minimal-localv4/parent-F-eco-h20-v4/candidate.v": "e929bf2703f5a752c97a20372d2a8582b0f486f53509d3a3b9933689835f142f",
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+  }
+}
