@@ -1,5 +1,9 @@
 # Melodydt 的进度
 
+## 2026-11-17 17:48（Asia/Shanghai）Phi 三窗通过
+
+Phi 38820798/38820949 均 COMPLETED 0:0，1241 项输入、完整冻结输出、DDR/SRAM、源/结果 SHA 与本地积分一致。稳态 Decode 片上 577.551–578.672、片上＋DDR 1879.937–1881.058 mJ/token，不含读 DMA 代理；LongRoPE 和额外算术缺项保留。Qwen3.5 已收入双口径 PDF v1.4（十四页），Phi 和 Gemma 接续更新及归档。[结果与恢复](../../docs/handoffs/2026-11-17-issue-280-six-model-energy.md)。#280 in_progress，PR #281 草稿；登记 pending，看板缺配置待核验。负责人 Melodydt。
+
 ## 2026-11-17 17:40（Asia/Shanghai）Qwen3.5 三窗通过
 
 Qwen3.5 38821601/38821602 均 COMPLETED 0:0，1065 项输入、完整冻结输出、DDR/SRAM、源/结果 SHA 和本地/服务器积分一致。稳态 Decode 片上 533.584–534.636、片上＋DDR 1777.519–1778.571 mJ/token，不含读 DMA 代理。GDN/卷积/非线性等未标定算术保留缺项。
