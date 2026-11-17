@@ -112,6 +112,7 @@ def overview(story, styles, index):
     add(story, styles, "分项积分", "section")
     add(story, styles, "窗口能量 = 各分项开钟基线功耗 × 驻留时间 + 各事件数 × 单次活动增量。已有配对标定先扣匹配的静默基线。M 等采用忙/闲时间积分，SRAM 和 DMA 采用对账后的位宽及事务计数。DDR 芯片沿用双通道器件模型。")
     add(story, styles, "平均功耗 = 窗口能量 ÷ 窗口时间。每 token 能耗 = 窗口能量 ÷ token 数。共享模块、局部时钟和漏电仅计一次。代理值随条件标注，缺项保留待标定。")
+    add(story, styles, "跨模型扩测复用已标定叶块的系数，并使用各模型重新观测的事件数与时间。新增模型结果属于迁移估算；特殊激活、循环计算等缺少匹配标定的工作单列，不能将已覆盖小计当作完整模型总能耗。", "note")
     add(story, styles, "报告覆盖", "section")
     table(story, styles, ("模型", "能耗证据"), [(m["name"], m["status"]) for m in index["models"]],
           (0.46, 0.54), numeric=False)
@@ -154,12 +155,32 @@ def result_page(story, styles, model, result):
     table(story, styles, ("分项", *WINDOWS.values()), rows, (0.37, 0.21, 0.21, 0.21))
 
 
+def comparison_page(story, styles, records):
+    add(story, styles, "同口径汇总  /  已覆盖片上 + DDR 器件", "eyebrow")
+    add(story, styles, "已发布模型结果", "title")
+    add(story, styles, "下表保留各模型的实测 TLM 窗口与分项标定范围，不加入读 DMA 动态代理。短 Prefill 按输入 token，Decode 按输出 token 归一化。单位均为 mJ/token，最后一列为两次退休间窗口的平均 W。")
+    rows = []
+    for model, result in records:
+        windows = result["windows"]
+        energy = [fmt(windows[key]["covered_subtotal"]["energy_mj_per_token"]) for key in WINDOWS]
+        rows.append((model["name"], *energy, fmt(windows["decode"]["covered_subtotal"]["average_power_w"], 4)))
+    table(story, styles, ("模型", "短 Prefill\nmJ/token", "首 Decode\nmJ/token", "稳态 Decode\nmJ/token", "稳态 Decode\n平均 W"),
+          rows, (0.25, 0.185, 0.185, 0.185, 0.195))
+    add(story, styles, "如何使用这张表", "section")
+    add(story, styles, "驻留功耗按共用条件配置和模型自己的实际时间积分，因此更长的执行时间会产生更高的每 token 驻留能耗。动态项来自各模型重新观测的 DDR、SRAM、PM、FFN 和残差事件。")
+    add(story, styles, "特殊算术缺项随模型不同：GELU、GDN、Mamba2、router 等尚未全部门级标定。不能据此表排列完整芯片的能效优劣，也不能把标定样本端点当作整体误差范围。各模型的专项实现、缺项和读 DMA 敏感性见后页。")
+    add(story, styles, "旧版 M 的 300 MHz 时序未闭合；本报告沿用用户选择的固定 TLM 时间参考路线。综合后补齐活动标定时继续更新同名报告。", "note")
+
+
 def dma_proxy(story, styles, result):
     terms = [result["windows"][window] for window in WINDOWS]
     if not all(row.get("read_dma_dynamic_sensitivity") for row in terms):
         return
     add(story, styles, "读 DMA 动态敏感性", "section")
-    add(story, styles, "以同窗口写侧 64 B 实测单价中点作为读侧动态代理，并对该单价取 0.5 和 2 倍。DDR 芯片已单独计入，读 DMA 的常驻空闲及漏电仍待标定。倍数只描述所选情景。")
+    if all("write_dma_transferred_pj_per_64b" in row for row in terms):
+        add(story, styles, "复用 Qwen3 真实写载荷标定的 64 B 单价范围，以其中点作为读侧动态代理，并对该单价取 0.5 和 2 倍。本模型的读写事务已重测，逐位载荷尚未重新门级标定。DDR 芯片另计；读 DMA 常驻空闲和漏电待补。")
+    else:
+        add(story, styles, "以同窗口写侧 64 B 实测单价中点作为读侧动态代理，并对该单价取 0.5 和 2 倍。DDR 芯片已单独计入，读 DMA 的常驻空闲及漏电仍待标定。倍数只描述所选情景。")
     rows = []
     for name, row in zip(WINDOWS.values(), terms):
         scenarios = row["read_dma_dynamic_sensitivity"]
@@ -224,6 +245,9 @@ def main():
     styles = make_styles()
     story = []
     overview(story, styles, index)
+    if len(records) > 1:
+        story.append(PageBreak())
+        comparison_page(story, styles, records)
     for model, result in records:
         story.append(PageBreak())
         result_page(story, styles, model, result)
@@ -232,8 +256,13 @@ def main():
             add(story, styles, "估算边界与后续标定", "eyebrow")
             add(story, styles, model["name"], "title")
             dma_proxy(story, styles, result)
-    if not records or not all(row.get("read_dma_dynamic_sensitivity") for row in records[-1][1]["windows"].values()):
+            if model.get("coverage"):
+                add(story, styles, "本模型的迁移假设与缺项", "section")
+                for paragraph in model["coverage"]:
+                    add(story, styles, paragraph, "note")
+    if len(records) > 1 or not records or not all(row.get("read_dma_dynamic_sensitivity") for row in records[-1][1]["windows"].values()):
         story.append(PageBreak())
+        add(story, styles, "后续步骤与证据", "title")
     next_steps(story, styles, index, records)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     document = SimpleDocTemplate(str(args.output), pagesize=A4, leftMargin=44, rightMargin=44, topMargin=58,

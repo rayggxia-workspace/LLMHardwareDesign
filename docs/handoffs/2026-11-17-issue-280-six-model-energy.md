@@ -115,3 +115,17 @@ python work/Melodydt/280/six_model_tlm_power.py granite work/Melodydt/280/six-mo
 ```
 
 剩余五模型的回放和 afterok 积分继续运行；每个完成后重验小型输入清单、复算与单位，并更新同名 PDF。物理缺项、旧 M 时序、登记和看板状态与上文一致。
+
+## Llama 结果与 PDF 首次扩展
+
+Llama 回放 38820601 在 m3ca0704 运行 33:57，积分 38820946 在 m3ca0608 运行 00:04，均 COMPLETED 0:0。713 项输入校验、两阶段完整冻结输出与 DDR/SRAM 对账通过，17 个下载文件和服务器结果 SHA 核对、本地 Python 3.7.0 复算字节一致。
+
+| 窗口 | tok/s | 已覆盖片上＋DDR mJ/token | 平均 W | 加同写读 DMA 动态代理 mJ/token |
+| --- | ---: | ---: | ---: | ---: |
+| 短 Prefill | 15.534217 | 270.433706–270.804381 | 4.200976–4.206734 | 270.818890–271.189566 |
+| 首 Decode | 5.677407 | 659.473574–659.847803 | 3.744100–3.746224 | 660.017313–660.391541 |
+| 稳态 Decode | 5.674618 | 659.826720–660.200951 | 3.744265–3.746388 | 660.370555–660.744786 |
+
+结果 `work/Melodydt/280/llama_tlm_power_v1.json`，SHA-256 `ee3705e8423dd808bb3d60ad4611a061b8af9d06d1eb3f0aff4d3a3f1fd2d1c9`，可复算小型输入在 `six-model-results/llama/`。保留 64 维紧凑 KV、V 复用和稠密三 P 的 DDR Mid 路径，未改模型调度；256-bit 局部访问按串行 128-bit 参考、固定 TLM 时间估计。普通投影 M 额外情景仍在主表之外。
+
+PDF v1.1 已加入 Granite 并增加跨模型汇总页，七页 Poppler 目检通过；SHA-256 `5d4b3e8f77c4d05c212ae73f8343233e69555ea1b51b19a9045ae47104afde8d`。原 `output/pdf/seven-model-energy-evaluation.pdf` 写入及原子替换均返回拒绝访问，文件非只读且目录 ACL 允许修改，疑为本机打开程序占用；未强制关闭用户程序。仓库同名 `docs/experiments/seven-model-energy-evaluation.pdf` 正常更新，本机可用 `output/pdf/seven-model-energy-evaluation-current.pdf`。后续继续更新这两个可写路径并加入 Llama。Phi、Gemma、Qwen3.5、Falcon 回放及依赖积分继续。

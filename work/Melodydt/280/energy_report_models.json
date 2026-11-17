@@ -1,8 +1,8 @@
 {
-  "revision": "1.0",
+  "revision": "1.1",
   "updated": "2026-11-17",
   "owner": "Melodydt",
-  "source_commit": "5b9e87561c41d9c0625071054d62d645c239f7fb",
+  "source_commit": "4cd5c6c745373092d2075d8184809cf56f940042",
   "benchmark_commit": "fbff1bd0e455739f28d9b7dd00b97216fe7bb847",
   "models": [
     {
@@ -23,11 +23,51 @@
         }
       ]
     },
-    {"name": "Qwen3.5-4B", "status": "能耗待评估"},
-    {"name": "Gemma-3-4B", "status": "能耗待评估"},
-    {"name": "Phi-4-mini", "status": "能耗待评估"},
-    {"name": "Granite", "status": "能耗待评估"},
-    {"name": "Falcon-H1-3B", "status": "能耗待评估"},
-    {"name": "Llama-3.2-1B", "status": "能耗待评估"}
+    {
+      "name": "Qwen3.5-4B",
+      "status": "能耗待评估"
+    },
+    {
+      "name": "Gemma-3-4B",
+      "status": "能耗待评估"
+    },
+    {
+      "name": "Phi-4-mini",
+      "status": "能耗待评估"
+    },
+    {
+      "name": "Granite",
+      "status": "已验收 TLM 迁移估算 v1",
+      "result": "granite_tlm_power_v1.json",
+      "result_sha256": "83895abc6a9d4b7780f71083136a1b5de89a71dba829eef870ea31cbbbba9fd1",
+      "source_commit": "4cd5c6c745373092d2075d8184809cf56f940042",
+      "configuration": "W8A16，32 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
+      "implementation": "64 维紧凑 KV；实际 router 选择 8/40 专家，三 P 以 3/3/2 波次执行，专家 Mid 留在各自 SRAM，按原序加权汇总。",
+      "coverage": [
+        "嵌套专家激活已计数；router、softmax、加权汇总与缩放中无匹配标定的算术仍属缺项。",
+        "共用 C639 条件配置：三 M、四 S_P、四局控 PM/取指、一个 G32/交换机和一组母控四宏；全窗开钟驻留尚待实物部署验证。",
+        "主表与 Qwen3 v1 同口径，只计 PR272 FFN 的 M 活跃增量。普通投影 M 忙时间已单独观测，额外参考值留在 JSON，未并入主表。",
+        "写 DMA 单价复用 Qwen3 真实载荷样本；其他位宽的串行映射和母控页按字换算保留在 JSON。未标定控制、算术、读 DMA 空闲及全局时钟/互连不能视为零。旧 M 300 MHz 时序仍未闭合。",
+        "本轮完整 result、逐层数值与输出文件均与冻结验收一致，DDR/SRAM 计数对账通过；沿用原同输入 FP32 对照，不代表本轮重新运行 FP32。"
+      ],
+      "sources": [
+        {
+          "label": "Granite 三窗结果与 SHA-256",
+          "path": "work/Melodydt/280/granite_tlm_power_v1.json"
+        },
+        {
+          "label": "Granite 回放、作业与复现",
+          "path": "docs/handoffs/2026-11-17-issue-280-six-model-energy.md"
+        }
+      ]
+    },
+    {
+      "name": "Falcon-H1-3B",
+      "status": "能耗待评估"
+    },
+    {
+      "name": "Llama-3.2-1B",
+      "status": "能耗待评估"
+    }
   ]
 }
