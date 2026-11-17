@@ -1,5 +1,21 @@
 # 架构与运行
 
+## Issue #280 公共算术标定与计数对账（2026-11-18）
+
+真实输入 RMS N/E32/scan/apply、softmax/RoPE 的复跑使用 `work/Melodydt/280/run_public_operator_power.sbatch` 和配套测试，300 MHz、RTL 边界活动传播、无布线寄生。服务器输入映射/工具环境及全部实际命令见[标定接续](handoffs/2026-11-18-issue-280-public-arithmetic-calibration.md)。
+
+```bash
+# 在已具备原始服务器工件的 R 目录核验 27 份结果，不是整模型复算
+python3 work/Melodydt/280/collect_arithmetic_calibration.py "$R" arithmetic-calibration-index.json
+# 输入七模型已验收 arithmetic-observation.json，输出资源周期差，非 token 延迟
+python3 work/Melodydt/280/audit_rms_e32_timing.py rms-e32-timing-ledger.json <capture>...
+# 归档文件校验，原服务器 sample/build 文件不在 Git 小型归档中
+cd work/Melodydt/280/arithmetic-calibration-results
+sha256sum -c archive.sha256
+```
+
+apply 包含 E32，不能重复相加；30 个大向量因 bank 容量未覆盖。测试访存夹具不计物理 SRAM 功耗，系统仍为 512 bit。完整模型重算仍待共享实例/闲置驻留、时序重叠和特殊算子绑定；PDF v2.1 总值未因本次样本标定改变。
+
 ## Issue #280 无布线寄生分项复算（2026-11-17）
 
 从 `work/Melodydt/280/no-wire-results/` 的服务器校准回执和已验收模型计数生成七模型 v2，保留原始 v1。代码/配置/输入/输出 SHA 及原始远程位置见[本轮交接](handoffs/2026-11-17-issue-280-no-wire-energy-extension.md)。
