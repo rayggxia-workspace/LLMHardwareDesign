@@ -20,3 +20,5 @@
 在线与验收：本任务分支提交不等于合并主干。PR草稿/未合并，审查人待指定；登记沿用management-hub PR5 pending；config/board.json缺失且无Projects工具，条目unverified、同步pending，处理人待具权限维护者。本轮未配置自动监测，所有新增采样作业终态。规则rayggxia-project-collab 1.0.0。
 
 交付时读回基分支已前进到78812ea98ddc5714ea3e71d789b9800a4641bb7e；将其完整树合入本任务分支，保留主线PDF v2.1及新增进度。速度数据与采样源码不变。报告数据提交0441c9950eca5f3c21d240835e936a928ff18664；ZIP SHA-256为9b3dc6b784d8fc972a71b3e51bf912b1ab7d7749cf88de727fcc09c022b8884f。HTML/JSON/ZIP/清单远端Git blob SHA与本地一致。任务状态in_review，PR仍草稿未合并。
+
+用户追加PDF交付已完成：24页/39表，SHA-256 839d0d379507f680bd49fac300b0fbe5d34aef694c97692362af12ad2209fbf1。1939单元格、8警示框、7模型和2链接核验通过；全部页面渲染目检。生成脚本与依赖见work/Melodydt/291/PDF.md；源HTML/JSON及原ZIP均保持不变。此次只追加文档输出。

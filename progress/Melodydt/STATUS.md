@@ -287,3 +287,5 @@ Granite 回放 38820602 与积分 38820947 均 COMPLETED 0:0。Prefill／首 Dec
 - 实际母控 1,616 字节页有 101 次 128-bit 写确认。局控阵列和 U 的字级控制、调度、算术已分别完成 300 MHz 标定。38795515 通过 SRAM 串行宽写和普通读对账，宏 TT 库和布线工件待从旧归档补齐。
 - M 的 18 份波形及非 DMA 控制六窗活动已备齐。38792357 进入 CTS。两项原读综合和两项跳过 SHARE 的对照持续执行，五条功耗链按物理结果等待。Melodydt 后续核验映射、时序/DRC、门级功耗和重叠层级，再输出三窗整模型结果。
 - [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [结果与恢复](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-actual-payload-and-leaf-calibration.md)。任务进行中，项目登记待合并，看板待管理员核验。
+
+2026-11-17（Asia/Shanghai），#291追加24页[速度PDF](../../docs/experiments/seven-model-speed-evaluation.pdf)及生成脚本。1939单元格、8警示框、7模型关键值、2链接检查及24页目检通过。采样/估计输入不变，独立序列验证继续暂缓。PR #292进入待审查，仍草稿未合并；登记/看板限制不变。

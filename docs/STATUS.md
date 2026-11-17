@@ -78,3 +78,5 @@
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+2026-11-17，#291报告新增[24页PDF](experiments/seven-model-speed-evaluation.pdf)，保留七模型短Prefill/Decode及P512条件估计。39张表、1939个单元格、8个警示框和全部页面完成内容及视觉检查；未新增仿真，独立序列验证仍按用户指令暂缓。
