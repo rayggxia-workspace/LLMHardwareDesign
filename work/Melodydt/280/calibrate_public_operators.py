@@ -1,4 +1,4 @@
-"""Real sampled softmax/RoPE RTL replay and paired boundary-propagated power."""
+"""Real public arithmetic RTL replay and paired boundary-propagated power."""
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -18,6 +18,17 @@ def packed(values):
 
 
 def vectors(sample, kind):
+    if kind in ('scan','apply'):
+        words=sample['words'];count=words*4
+        if kind=='scan':
+            return ['{} {} {}'.format(count,-sample['shift'],sample['extra'])]+[
+                packed(sample['source'][i:i+4]) for i in range(0,count,4)],count
+        if words>512: raise ValueError('apply requires disjoint windows inside one S128 bank')
+        fs=(13+sample['extra'] if sample['shifted_format'] else 13)-sample['shift']
+        rows=['{} {} {} {}'.format(words,sample['factor'],fs,17+sample['output_shift'])]
+        for i in range(0,count,4):
+            rows.append(' '.join(packed(sample[k][i:i+4]) for k in ('source','gamma','expected')))
+        return rows,count
     a,o,shape=sample['inputs'],sample['outputs'],sample['shape']
     if kind=='softmax':
         count=len(a['scores']); rows=[str(count)]
@@ -87,7 +98,7 @@ def power(design, platform, lib, work, raw, tb, instance, start, end, idle):
 
 def main():
     root,bundle,out=map(Path,sys.argv[1:4]);kind=sys.argv[4];captures=list(map(Path,sys.argv[5:]));out.mkdir()
-    if kind not in ('softmax','rope'): raise ValueError('unknown kind')
+    if kind not in ('softmax','rope','scan','apply'): raise ValueError('unknown kind')
     platform=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45');lib=platform/'lib/NangateOpenCellLibrary_typical.lib'
     common=root/'common-arithmetic-01/rtl'; compact=root/'operator-capture-02/rtl'
     if kind=='softmax':
@@ -95,22 +106,29 @@ def main():
         designs={'dut':mapped_design(root/'common-arithmetic-01/run-38828028/n_s32_softmax_s128',
                                     'n_s32_softmax_s128',sources+[common/'exp_q16_lut.svh'],lib)}
     else:
-        sources=[compact/'rope_e32_ap64.sv',compact/'e_s32_ap64.sv',compact/'e_s32_native.sv']
+        top={'rope':'rope_e32_ap64','scan':'s32_rms_range_scan','apply':'s32_rms_apply_s128'}[kind]
+        sources=[compact/(top+'.sv')]
+        if kind!='scan':sources += [compact/'e_s32_ap64.sv',compact/'e_s32_native.sv']
         mapped=root/'operator-capture-02/map-38830194'
-        designs={'dut':mapped_design(mapped/'rope_e32_ap64','rope_e32_ap64',sources[:1],lib),
-                 'provider':mapped_design(mapped/'e_s32_ap64','e_s32_ap64',sources[1:],lib)}
+        designs={'dut':mapped_design(mapped/top,top,sources[:1],lib)}
+        if kind!='scan':designs['provider']=mapped_design(mapped/'e_s32_ap64','e_s32_ap64',sources[1:],lib)
     tb='tb_operator_'+kind; bench=bundle/(tb+'.sv');verilator=Path.home()/'LLMHardware/opt/verilator-5.042/bin/verilator'
     with (out/'build.log').open('w') as log:
         subprocess.run([str(verilator),'--binary','--timing','--trace','--trace-depth','2','-Wno-fatal','-j','12',
                         '--top-module',tb,'--Mdir',str(out/'obj'),'-I'+str(common)]+list(map(str,sources+[bench])),
                        stdout=log,stderr=subprocess.STDOUT,check=True)
-    results=[];counts={};inputs={}
+    results=[];counts={};inputs={};excluded=[]
     for capture in captures:
-        check=json.loads(capture.with_name('operator-capture-check.json').read_text())
-        if not check['passed'] or check['capture_sha256']!=digest(capture): raise ValueError('unaccepted capture')
-        data=json.loads(capture.read_text());inputs[str(capture)]=digest(capture);counts[str(capture)]=data['counts']
+        rms=kind in ('scan','apply')
+        check=json.loads(capture.with_name('arithmetic-capture-check.json' if rms else 'operator-capture-check.json').read_text())
+        if not check['passed'] or (not rms and check['capture_sha256']!=digest(capture)): raise ValueError('unaccepted capture')
+        data=json.loads(capture.read_text());inputs[str(capture)]=digest(capture);counts[str(capture)]=data['rms_service_counts' if rms else 'counts']
         for index,sample in enumerate(data['samples']):
-            if sample['kind'] not in ({'softmax'} if kind=='softmax' else {'rope','rope_native'}): continue
+            if not rms and sample['kind'] not in ({'softmax'} if kind=='softmax' else {'rope','rope_native'}): continue
+            if kind=='apply' and sample['words']>512:
+                excluded.append(dict(capture=str(capture),sample_index=index,signature=sample['signature'],
+                                     reason='activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required'))
+                continue
             work=out/('sample-%03d'%len(results));work.mkdir();rows,units=vectors(sample,kind)
             (work/'vectors.txt').write_text('\n'.join(rows)+'\n');raw=work/'rtl.vcd'
             run=subprocess.run([str(out/'obj'/('V'+tb)),'+vectors='+str(work/'vectors.txt'),'+wave='+str(raw)],capture_output=True,text=True)
@@ -121,22 +139,23 @@ def main():
             start,end,idle=map(int,activity.groups())
             if end-start!=idle-end or end-start!=int(accepted[2])*3334: raise ValueError('window/cycle mismatch')
             components={instance:power(d,platform,lib,work,raw,tb,instance,start,end,idle) for instance,d in designs.items()}
-            result=dict(signature=sample['signature'],shape=sample['shape'],capture=str(capture),sample_index=index,
+            shape={k:sample[k] for k in ('words','shift','extra','output_shift')} if rms else sample['shape']
+            result=dict(signature=sample['signature'],shape=shape,capture=str(capture),sample_index=index,
                         units=units,cycles=int(accepted[2]),window_ps=end-start,components=components,
                         incremental_nj=sum(x['incremental_nj'] for x in components.values()),
                         vectors_sha256=digest(work/'vectors.txt'),rtl_log_sha256=digest(work/'rtl.log'))
             (work/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');results.append(result)
             print('PUBLIC_OPERATOR_SAMPLE_PASS',kind,len(results),sample['signature'],flush=True)
     if not results: raise ValueError('no matching samples')
-    report=dict(kind=kind,scope='sampled real operands; softmax arithmetic or RoPE wrapper plus E32; SRAM and system residency excluded',
+    report=dict(kind=kind,scope='sampled real operands; named arithmetic wrapper plus E32 where present; SRAM and system residency excluded; do not add provider E32 twice',
                 activity='RTL boundary VCD propagated through mapped cells; no internal gate replay',
-                memory_fixture='softmax uses one-outstanding S128 request/response fixture, not physical SRAM',
+                memory_fixture='softmax/scan/apply use one-outstanding S128 fixture, not physical SRAM; apply uses disjoint X/Gamma windows in one bank',
                 nominal_clock_mhz=300,period_ps=3334,wire_parasitics_loaded=False,timing_signoff=False,
                 scheduler_latency_reconciled=False,source_commit=(bundle/'source-commit.txt').read_text().strip(),
                 sources_sha256={str(p):digest(p) for p in sources+[bench]},liberty_sha256=digest(lib),inputs_sha256=inputs,
                 verilator_version=subprocess.check_output([str(verilator),'--version'],text=True).strip(),
                 openroad_version=subprocess.check_output(['openroad','-version'],text=True).strip(),
-                captured_call_counts=counts,samples=results)
+                captured_call_counts=counts,samples=results,excluded_samples=excluded)
     (out/'calibration.json').write_text(json.dumps(report,indent=2)+'\n');print('PUBLIC_OPERATOR_PASS',kind,len(results),flush=True)
 
 
