@@ -60,7 +60,7 @@ sha256sum --quiet -c scripts.sha256
 cp source-commit.txt "$out/source-commit.txt"
 printf 'JOB=%s NODE=%s TASKS=%s CORE_PS=3334,5000 DDR_PS=630 START=%s\n' "$SLURM_JOB_ID" "$SLURMD_NODENAME" "$SLURM_NTASKS" "$(date -Is)"
 run_one() {
-    extra=()
+    extra=(--bind "$root/replay/sourcefs/Melodydt/runs/issue-274:/public/home/yuzelu/Melodydt/runs/issue-274:ro")
     if [[ $1 != qwen3 ]]; then
         extra=(--bind "$root/six-model-energy-01/sourcefs/Melodydt/runs/issue-274:/public/home/yuzelu/Melodydt/runs/issue-274:ro")
     fi
