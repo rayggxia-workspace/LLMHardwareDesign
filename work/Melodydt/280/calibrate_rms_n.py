@@ -18,8 +18,10 @@ def digest(path):
     return sha256(path.read_bytes()).hexdigest()
 
 
-def clip_ports(raw, target, ports, first, last):
-    """Clip initialized RTL boundary activity and retime 100 MHz to 300 MHz."""
+def clip_ports(raw, target, ports, first, last, testbench='tb_rms_n_activity', time_divisor=3):
+    """Clip initialized boundary activity; legacy N defaults retime 100 to 300 MHz."""
+    if time_divisor < 1:
+        raise ValueError('invalid waveform time divisor')
     names, stack, selected = {}, [], {}
     events = []
     with raw.open() as stream:
@@ -29,7 +31,7 @@ def clip_ports(raw, target, ports, first, last):
                 stack.append(fields[2])
             elif fields[:1] == ['$upscope']:
                 stack.pop()
-            elif fields[:1] == ['$var'] and stack[-2:] == ['tb_rms_n_activity', 'dut']:
+            elif fields[:1] == ['$var'] and stack[-2:] == [testbench, 'dut']:
                 if fields[4] in ports:
                     if int(fields[2]) != len(ports[fields[4]]['bits']):
                         raise ValueError('port width mismatch')
@@ -68,12 +70,12 @@ def clip_ports(raw, target, ports, first, last):
             if first < time <= last:
                 if set(value) - set('01'):
                     raise ValueError('unknown boundary activity')
-                tick = ((time - first) + 1) // 3
+                tick = ((time - first) + time_divisor//2) // time_divisor
                 if tick != previous_time:
                     stream.write('#{}\n'.format(tick))
                     previous_time = tick
                 stream.write('b{} {}\n'.format(value, ident))
-        stream.write('#{}\n'.format(((last - first) + 1) // 3))
+        stream.write('#{}\n'.format(((last - first) + time_divisor//2) // time_divisor))
 
 
 def main():
