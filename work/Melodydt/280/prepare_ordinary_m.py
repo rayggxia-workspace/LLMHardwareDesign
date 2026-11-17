@@ -32,11 +32,18 @@ if action == 'prepare':
     for name in ('ddr-dma-probe.so', 'projection_math.so'):
         (output / name).symlink_to(original / name)
 elif action == 'audit':
+    sys.path.insert(0, str(output / 'runner'))
+    from qwen3_dma_windows import check_plan_equivalence
     stages = {}
     for prefix in ('prefill', 'decode-live'):
         name = prefix + '-w4-tile128-pr272-combined'
         old, new = original / name, output / name
-        if json.loads((old / 'result.json').read_bytes()) != json.loads((new / 'result.json').read_bytes()):
+        reference = json.loads((old / 'result.json').read_bytes())
+        observed = json.loads((new / 'result.json').read_bytes())
+        check_plan_equivalence(old, new, reference, observed)
+        reference.pop('plan_sha256')
+        observed.pop('plan_sha256')
+        if reference != observed:
             raise ValueError('complete frozen result changed')
         checked = []
         for path in old.iterdir():
