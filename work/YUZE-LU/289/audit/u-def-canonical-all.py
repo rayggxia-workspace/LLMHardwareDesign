@@ -11,7 +11,20 @@ pat=re.compile(r'^\s*-\s+(\S+)\s+(.*?);\s*$',re.M|re.S);texts={x:(base/(x+'.def'
 def sec(text,n):
  m=re.search(r'\n'+n+r'\s+\d+\s*;(.*?)\nEND '+n,text,re.S);assert m,n;return m[1]
 for name in ('PINS','SPECIALNETS','COMPONENTS'):assert sec(texts['before'],name)==sec(texts['after'],name),name
-netsections={x:sec(v,'NETS') for x,v in texts.items()};netbodies={x:{m[1]:m[2] for m in pat.finditer(v)} for x,v in netsections.items()};assert netbodies['before'].keys()==netbodies['after'].keys()
+netsections={x:sec(v,'NETS') for x,v in texts.items()};netbodies={x:{m[1]:m[2] for m in pat.finditer(v)} for x,v in netsections.items()}
+rail_declarations=[]
+for side,other in (('before','after'),('after','before')):
+ for rail in list(netbodies[side].keys()-netbodies[other].keys()):
+  body=netbodies[side][rail];assert rail in ('VDD','VSS'),('Missing signalnet',rail)
+  expected='POWER' if rail=='VDD' else 'GROUND';assert re.search(r'\+\s+USE\s+'+expected+r'\s*$',body)
+  assert not re.search(r'\b(ROUTED|NEW|FIXED|COVER|RECT|NONDEFAULTRULE)\b',body)
+  terms=re.findall(r'\(\s*(\S+)\s+(\S+)\s*\)',body);assert terms and all(pin==rail for inst,pin in terms)
+  assert all(inst=='PIN' or inst.startswith('i289_foundry_ant_') for inst,pin in terms)
+  assert re.search(r'^\s*-\s+'+rail+r'\s+',sec(texts[side],'SPECIALNETS'),re.M)
+  residue=re.sub(r'\(\s*\S+\s+\S+\s*\)','',body);assert re.fullmatch(r'\s*\+\s+USE\s+'+expected+r'\s*',residue)
+  rail_declarations.append(dict(side=side,rail=rail,terminal_count=len(terms),unrouted=True,physical_specialnet_byte_exact=True))
+  del netbodies[side][rail]
+assert netbodies['before'].keys()==netbodies['after'].keys()
 fmt=lambda p,e:'( '+str(p[0])+' '+str(p[1])+(' '+str(e) if e is not None else '')+' )'
 def parse(body):
  regions={};routes=[];found=False;prefix=None
@@ -57,5 +70,5 @@ newsection=pat.sub(lambda m:'\n    - '+m[1]+' '+canonical[m[1]]+' ;',netsections
 text=texts['after'].replace(netsections['after'],newsection,1);p=out/'canonical.def';p.write_text(text)
 assert all(sec(text,n)==sec(texts['after'],n) for n in ('PINS','SPECIALNETS','COMPONENTS'))
 files=[base/'before.def',base/'after.def',meta/'layers.tsv',meta/'vias.tsv',out/'checker.py',p]
-v=dict(passed=not bad,nets_checked=len(canonical),geometry_differences=bad,canonical_readback_material_exact=True,components_bpins_specialnets_byte_exact=True,scope='All signal-net per-layer rectangle/via polygon union, explicit DEF extensions and actual via layer transitions; fail on unknown tokens. Canonical stream splits each segment and each via, preserves net headers and all non-NETS text.',source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files})
+v=dict(unrouted_duplicate_rail_declarations=rail_declarations,passed=not bad,nets_checked=len(canonical),geometry_differences=bad,canonical_readback_material_exact=True,components_bpins_specialnets_byte_exact=True,scope='All signal-net per-layer rectangle/via polygon union, explicit DEF extensions and actual via layer transitions; fail on unknown tokens. Canonical stream splits each segment and each via, preserves net headers and all non-NETS text.',source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files})
 (out/'receipt.json').write_text(json.dumps(v,indent=2));print(json.dumps(dict(passed=v['passed'],nets_checked=v['nets_checked'],differences=len(bad)),indent=2))

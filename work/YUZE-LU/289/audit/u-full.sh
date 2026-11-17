@@ -2,11 +2,14 @@
 set -euo pipefail
 root=/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117
 run=$(realpath "$1")
-case "$run" in "$root"/cu/runs/U-*|"$root"/audit/U-antenna/candidate-*|"$root"/u-physical/candidate-*|"$root"/audit/U-v15-pg-diagnostic) ;; *) exit 2;; esac
+case "$run" in "$root"/cu/runs/[CU]-*|"$root"/audit/U-antenna/candidate-*|"$root"/u-physical/candidate-*|"$root"/audit/U-v15-pg-diagnostic) ;; *) exit 2;; esac
 out=$root/audit/full-$(basename "$run")
-mkdir "$out"
 res=$(find "$run/flow/results/nangate45" -mindepth 2 -maxdepth 2 -type d | head -1)
 deck=/OpenROAD-flow-scripts/flow/platforms/nangate45/drc/FreePDK45.lydrc
+for extension in gds odb sdc spef v; do
+    test -s "$res/6_final.$extension"
+done
+mkdir "$out"
 printf '%s  %s\n' 4e35cad6786f21c6e233fb606bea59bb44e1a12713008cf7367d65a1a3de2147 "$deck" | sha256sum -c - > "$out/deck-identity.txt"
 printf '%s\n' "$run" > "$out/source-run.txt"
 sha256sum "$deck" "$res/6_final.gds" "$res/6_final.odb" "$res/6_final.sdc" "$res/6_final.spef" "$res/6_final.v" > "$out/inputs-before.sha256"

@@ -1,10 +1,14 @@
 # A/B interface X8 implementation — Issue 289
 
-## Confirmed F milestone
+## Accepted backend packages
 
 F with the accepted **S minimal-localv4** X8 leaf has completed backend acceptance. Evidence: [accepted-parent.json](audit/evidence/F/accepted-parent.json). Nangate45 TT, nominal300MHz, original0.1ns uncertainty; actual serialized period3.3333ns. Setup+0.221605405ns, hold+0.002453537ns. Timing/electrical violation counts, full foundry GDS DRC and antenna are zero; PG, formal equivalence, state/control preservation and signal/power BPin/macro geometry checks pass. Native-route checker markers are40 exact historical matches plus4 individually proven same-net physical macro contacts; two old markers disappear. Do not label this checker report empty. Hold margin is only2.454ps and this does not establish other PVT corners or A/B top RC timing.
 
-Frozen remote package: `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/gs/candidate-S-minimal-localv4/parent-F-eco-h20-v4/release/`. Accepted receipt SHA256 `60cbc5d7574e07d8fdfbd7646cfbbe25785c3821ead2da9a4967d40b34c0aa5e`. C and U remain in progress; the overall task is not complete.
+Frozen F package: `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/gs/candidate-S-minimal-localv4/parent-F-eco-h20-v4/release/`. Accepted receipt SHA256 `60cbc5d7574e07d8fdfbd7646cfbbe25785c3821ead2da9a4967d40b34c0aa5e`.
+
+U has completed block backend checks in `candidate-U-v19-preserved`. All 153 selected output drivers are `BUF_X8`. At Nangate45 TT, 250 MHz, 0.1 ns uncertainty and 50 fF on the selected outputs, setup slack is +0.078050904 ns and hold slack is +0.003471112 ns. The five timing/electrical violation counts and the complete unchanged FreePDK45 DRC are zero. Both PG rails, formal data/state/control, signal pin/die/macro geometry, and the Liberty and physical LEF views passed. The checked release preserves the qualified GDS and uses a SPEF extracted from an independently proven equal-material DEF. [Acceptance receipt](audit/evidence/U/accepted-parent.json).
+
+Frozen U manifest and acceptance: `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/release-candidate-U-v19-preserved/`. Accepted receipt SHA256 `cb34cbc8badd0d2d9e8d0d259ce22f512bc9aea15ed4aae365f1e1c322703771`. C backend verification is in progress.
 
 Task: https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/289
 

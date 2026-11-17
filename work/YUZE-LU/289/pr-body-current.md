@@ -1,16 +1,13 @@
 Refs #289
 
-将 A/B 两套布线所用的非 P 输出升级为 X8 或更强，并完成叶宏及父 block 后端验证。实际范围为 C153、U153、G33、S1，共340个输出；保持原名义频率、信号端口形状、宏位置及逐周期可见行为。A/B 实际 C/U 源是尚未完成后端的 overlay CTS，本任务同时补全其后端。
+将 A/B 两套布线所用的 340 个非 P 输出升级到 X8 驱动，覆盖 C153、U153、G33、S1。本轮验收使用实际叶宏和父 block，保持原名义频率、信号端口形状、宏位置和逐周期可见行为。
 
-已通过：G hold03、S minimal-localv4 叶宏，以及集成新 S 的 F 父 block。F 在 Nangate45 TT、名义300MHz、原0.1ns uncertainty下，setup +0.221605405ns、hold +0.002453537ns；完整原版 GDS DRC、setup/hold及电气违例均为0，PG、天线、功能等价及状态/控制保持通过。F native checker含40个历史原样标记及4个逐项验证为同网宏端口接触的标记，不能称native报告为空。证据：`work/YUZE-LU/289/audit/evidence/F/accepted-parent.json`。hold仅2.454ps，不代表其他PVT角裕量。
+G 和 S 两个叶宏已验收。集成新版 S 的 F 在 Nangate45 TT、名义 300 MHz 和 0.1 ns 时钟不确定度下，setup 裕量 +0.221605405 ns，hold 裕量 +0.002453537 ns。原版全量 FreePDK45 DRC、时序和电气检查零违例，PG、功能、状态和接口几何通过。F 的 native checker 中有 40 个原样历史标记和 4 个经过逐项验证的同网宏端口接触标记。回执位于 `work/YUZE-LU/289/audit/evidence/F/accepted-parent.json`。
 
-C、U尚未验收，最新进展：
+U 已通过 block 后端验收。153 个目标输出逐个核对为 `BUF_X8`。在 Nangate45 TT、250 MHz、0.1 ns 时钟不确定度和目标输出 50 fF 下，setup 裕量 +0.078050904 ns，hold 裕量 +0.003471112 ns。setup、hold、电容、slew、fanout 和原版全量 FreePDK45 DRC 均为零违例。两条电源轨连通，功能等价、状态和控制、信号端口和宏几何、Liberty/LEF 重载以及父级抽象的实际 cut 覆盖均已验证。SPEF 从等形 DEF 副本提取，117,231 条信号网通过提取前后的材料比较。签收 GDS 与全量规则验证输入逐字节一致。回执位于 `work/YUZE-LU/289/audit/evidence/U/accepted-parent.json`。
 
-- C 在原分配边沿缓存地址，未增加可见周期。已有绑定到确切源文件的两态归纳与逐周期等价论证；实际综合映射与最终网表证明仍在运行。定点接收D分支修复的独立4CTS重载检查已达hold违例0、setup剩1条约-49ps，使用布局估算RC，不能替代最终提取结果。119751为单节点6×8核实际布线候选。
-- U 的前一独立电气闭合版本通过原频率、153个X8、信号几何、PG和功能检查，但完整GDS检查仍发现天线及父层/宏邻近间距问题。已加入1897个真实宏cut障碍并修正10个冗余PG栈，实际天线诊断从1293项降至15项。119747的NDR遗漏非目标层spacing，实际读回为0并导致PG短路，该轮已拒绝。v2显式保留每层原线宽/间距并逐层断言；119754从前一PG检查通过的数据库重新以单节点6×8核合并布线，保留全部15个二极管及电气/hold修复。最终仍须完整原版规则、fresh STA和功能门全部通过。
+C 仍在收敛。缓存地址在原分配边沿生成，保持原逐周期接口行为。两态归纳、实际综合映射、综合到 CTS 的数据/状态及独立控制证明已通过。119845 两个详细布线候选运行中，119879 验证共享算术能否降低分配地址网的扇出和布线压力。最终物理网表、提取时序、电学和完整规则仍待验收。
 
-C/U 的4ns、0.1ns uncertainty及所选输出50fF使用明确的新独立接口测试契约，未用false/multicycle例外放宽验收。这不是 A/B 顶层实际提取RC，也不证明毫米长线的系统时序。
+大文件保存在 `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117`，源哈希、脚本、失败记录和验收回执在 `work/YUZE-LU/289/`。交付范围为 TT 单角的叶宏和 block 后端，A/B 顶层实际 RC/STA 另行验证。PR 保持草稿，Issue 保持 in_progress。
 
-大文件保存在 `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117`；源哈希、脚本、失败记录及验收回执在 `work/YUZE-LU/289/`。当前在线head以GitHub实际ref为准，后续本地检查点待传输核验后追加。任务未完成，PR保持草稿、Issue保持in_progress。
-
-规则版本：rayggxia-project-collab 1.0.0。负责人YUZE-LU，审查人待指定；登记management-hub PR5 pending；缺少board配置，Projects unverified/同步pending。`python scripts/check_project.py`通过，仅检查管理结构。下一步由YUZE-LU继续C/U完整后端验证、同源宏视图导出及冻结交付。
+项目协作规则版本为 rayggxia-project-collab 1.0.0。负责人 YUZE-LU，审查人待指定。管理登记 PR5 待处理，Projects 缺少 board 配置，状态待同步。项目结构检查 `python scripts/check_project.py` 已通过。
