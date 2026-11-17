@@ -1,0 +1,16 @@
+# U independent acceptance gates — Issue 289
+
+Owner: YUZE-LU. Exact reference is the original overlay U 4_cts.odb, not the segment release. This reference has no original complete IO acceptance: the engineering contract is 4 ns / uncertainty 0.1 ns, input and output delays 0.2–0.8 ns, BUF_X2 input drive with 50 ps transitions, 50 fF at the 153 selected output ports and 2 fF at remaining outputs. Record actual final SDC and do not call this top-level RC qualification.
+
+Required together for a final accepted candidate:
+
+- Five exact counts setup/hold/slew/cap/fanout zero on extracted final SPEF. Recovery/removal independently reported; no reset exception added. Nominal TT only.
+- All selected 153 output ports have a unique actual BUF/INV/CLKBUF driver of strength at least X8.
+- Exact original die, signal BPin and hard-macro pin/placement geometry matches. PG changes are explicitly inventoried separately; original PG was rebuilt using the qualified macro-specific network. The current candidate removed 172 original PG BPin rectangles and added 105. Both rails must be connected and final merged GDS must pass the complete unchanged foundry rule deck.
+- Routing completion, antenna zero, full merged GDS rule deck zero, and verified final artifact hashes. Native routing markers require individual material/baseline interpretation, never an automatic replacement for the full deck.
+- Original CTS to final netlist all-state-boundary and all-macro-input/output equivalence, with zero unmatched boundaries; separate state/control proof. State instances and parameters are identical, and any DFF strength resize has equal actual Liberty ff/latch semantics and output functions. CK/reset/enable cones are compared as Boolean functions from identical top-input/state-output/macro-output boundaries; physical clock/reset delay is checked in STA.
+- Exported LEF uses the original correct zero-bloat abstraction algorithm, Liberty binds to this exact final database and final SDC, GDS/ODB/DEF/V/SDC/SPEF and receipts have hashes. No signoff result from another candidate can be reused for physical acceptance.
+
+Prepared scripts: `u-formal.py`, `u-control-proof.py`, `u-independent.sbatch`, `u-diagnose.tcl`. The first strict state checker was retained as a failing diagnostic: it incorrectly required unchanged clock-net aliases across intentional CTS reconstruction. `u-control-proof.py` proves control logic and explicitly verifies the 17 DFF_X1 to DFF_X2 changes against real Liberty semantics. A proof is accepted only after its receipt actually exists and all assertions pass.
+
+Observed nonaccepted U-v8-postroute-h02-e10: setup +0.044360515 ns, hold -0.044673599 ns, 9 slew / 19 cap violations under independent fresh-read STA (the original in-process report printed only 1 cap violation). Worst holds are score_data[120] and [110] to held_score DFFs; reset removal minimum +0.032185033 ns. Electrical offenders are internal BUF drivers and macro inputs, not the external SDC driving-cell capacitance. CU is implementing six targeted U-v11 variants from this exact routed seed (119677); v10 stopped safely at exact instance-name matching before saving edits, resizing seven buffers and adding local hold delay only at those two data paths.

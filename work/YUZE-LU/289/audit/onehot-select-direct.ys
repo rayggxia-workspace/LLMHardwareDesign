@@ -1,0 +1,7 @@
+read_verilog -sv /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gate.sv
+proc
+opt
+miter -equiv -flatten gold gate miter
+hierarchy -top miter
+opt
+sat -verify -prove trigger 0 -show-inputs -show-outputs -dump_json /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-counterexample.json

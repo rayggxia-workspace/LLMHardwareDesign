@@ -1,0 +1,508 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)
+
+-- Executing script file `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-direct.ys' --
+
+1. Executing Verilog-2005 frontend: /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv
+Parsing SystemVerilog input from `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv' to AST representation.
+Generating RTLIL representation for module `\gold'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv
+Parsing SystemVerilog input from `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv' to AST representation.
+Generating RTLIL representation for module `\gate'.
+Warning: Replacing memory \lane_result with list of registers. See /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:20, /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:13
+Successfully finished Verilog frontend.
+
+3. Executing PROC pass (convert processes to netlists).
+
+3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 16 switch rules as full_case in process $proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5 in module gold.
+Removed a total of 0 dead cases.
+
+3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 62 assignments to connections.
+
+3.4. Executing PROC_INIT pass (extract init attributes).
+
+3.5. Executing PROC_ARST pass (detect async resets in processes).
+
+3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~16 debug messages>
+
+3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$221'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$220'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$219'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$218'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$217'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$216'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$215'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$214'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$213'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$212'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$211'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$210'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$209'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$208'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$207'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$206'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$205'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$204'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$203'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$202'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$201'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$200'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$199'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$198'.
+Creating decoders for process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+Creating decoders for process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+     1/104: $16\cc[2:0]
+     2/104: $16\cl[1:0]
+     3/104: $16\cp[0:0]
+     4/104: $16\candidate[0:0]
+     5/104: $15\cc[2:0]
+     6/104: $15\cl[1:0]
+     7/104: $15\cp[0:0]
+     8/104: $15\candidate[0:0]
+     9/104: $8\pad[0:0]
+    10/104: $8\hc[2:0]
+    11/104: $8\hit[0:0]
+    12/104: $8\waiting[0:0]
+    13/104: $8\address[63:0]
+    14/104: $14\cc[2:0]
+    15/104: $14\cl[1:0]
+    16/104: $14\cp[0:0]
+    17/104: $14\candidate[0:0]
+    18/104: $13\cc[2:0]
+    19/104: $13\cl[1:0]
+    20/104: $13\cp[0:0]
+    21/104: $13\candidate[0:0]
+    22/104: $7\pad[0:0]
+    23/104: $7\hc[2:0]
+    24/104: $7\hit[0:0]
+    25/104: $7\waiting[0:0]
+    26/104: $7\address[63:0]
+    27/104: $12\cc[2:0]
+    28/104: $12\cl[1:0]
+    29/104: $12\cp[0:0]
+    30/104: $12\candidate[0:0]
+    31/104: $11\cc[2:0]
+    32/104: $11\cl[1:0]
+    33/104: $11\cp[0:0]
+    34/104: $11\candidate[0:0]
+    35/104: $6\pad[0:0]
+    36/104: $6\hc[2:0]
+    37/104: $6\hit[0:0]
+    38/104: $6\waiting[0:0]
+    39/104: $6\address[63:0]
+    40/104: $10\cc[2:0]
+    41/104: $10\cl[1:0]
+    42/104: $10\cp[0:0]
+    43/104: $10\candidate[0:0]
+    44/104: $9\cc[2:0]
+    45/104: $9\cl[1:0]
+    46/104: $9\cp[0:0]
+    47/104: $9\candidate[0:0]
+    48/104: $5\pad[0:0]
+    49/104: $5\hc[2:0]
+    50/104: $5\hit[0:0]
+    51/104: $5\waiting[0:0]
+    52/104: $5\address[63:0]
+    53/104: $8\cc[2:0]
+    54/104: $8\cl[1:0]
+    55/104: $8\cp[0:0]
+    56/104: $8\candidate[0:0]
+    57/104: $7\cc[2:0]
+    58/104: $7\cl[1:0]
+    59/104: $7\cp[0:0]
+    60/104: $7\candidate[0:0]
+    61/104: $4\pad[0:0]
+    62/104: $4\hc[2:0]
+    63/104: $4\hit[0:0]
+    64/104: $4\waiting[0:0]
+    65/104: $4\address[63:0]
+    66/104: $6\cc[2:0]
+    67/104: $6\cl[1:0]
+    68/104: $6\cp[0:0]
+    69/104: $6\candidate[0:0]
+    70/104: $5\cc[2:0]
+    71/104: $5\cl[1:0]
+    72/104: $5\cp[0:0]
+    73/104: $5\candidate[0:0]
+    74/104: $3\pad[0:0]
+    75/104: $3\hc[2:0]
+    76/104: $3\hit[0:0]
+    77/104: $3\waiting[0:0]
+    78/104: $3\address[63:0]
+    79/104: $4\cc[2:0]
+    80/104: $4\cl[1:0]
+    81/104: $4\cp[0:0]
+    82/104: $4\candidate[0:0]
+    83/104: $3\cc[2:0]
+    84/104: $3\cl[1:0]
+    85/104: $3\cp[0:0]
+    86/104: $3\candidate[0:0]
+    87/104: $2\pad[0:0]
+    88/104: $2\hc[2:0]
+    89/104: $2\hit[0:0]
+    90/104: $2\waiting[0:0]
+    91/104: $2\address[63:0]
+    92/104: $2\cc[2:0]
+    93/104: $2\cl[1:0]
+    94/104: $2\cp[0:0]
+    95/104: $2\candidate[0:0]
+    96/104: $1\cc[2:0]
+    97/104: $1\cl[1:0]
+    98/104: $1\cp[0:0]
+    99/104: $1\candidate[0:0]
+   100/104: $1\pad[0:0]
+   101/104: $1\hc[2:0]
+   102/104: $1\hit[0:0]
+   103/104: $1\waiting[0:0]
+   104/104: $1\address[63:0]
+
+3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\gate.\lane_cc[7]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$221'.
+No latch inferred for signal `\gate.\lane_hc[7]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$220'.
+No latch inferred for signal `\gate.\lane_address[7]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$219'.
+No latch inferred for signal `\gate.\lane_cc[6]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$218'.
+No latch inferred for signal `\gate.\lane_hc[6]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$217'.
+No latch inferred for signal `\gate.\lane_address[6]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$216'.
+No latch inferred for signal `\gate.\lane_cc[5]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$215'.
+No latch inferred for signal `\gate.\lane_hc[5]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$214'.
+No latch inferred for signal `\gate.\lane_address[5]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$213'.
+No latch inferred for signal `\gate.\lane_cc[4]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$212'.
+No latch inferred for signal `\gate.\lane_hc[4]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$211'.
+No latch inferred for signal `\gate.\lane_address[4]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$210'.
+No latch inferred for signal `\gate.\lane_cc[3]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$209'.
+No latch inferred for signal `\gate.\lane_hc[3]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$208'.
+No latch inferred for signal `\gate.\lane_address[3]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$207'.
+No latch inferred for signal `\gate.\lane_cc[2]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$206'.
+No latch inferred for signal `\gate.\lane_hc[2]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$205'.
+No latch inferred for signal `\gate.\lane_address[2]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$204'.
+No latch inferred for signal `\gate.\lane_cc[1]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$203'.
+No latch inferred for signal `\gate.\lane_hc[1]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$202'.
+No latch inferred for signal `\gate.\lane_address[1]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$201'.
+No latch inferred for signal `\gate.\lane_cc[0]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$200'.
+No latch inferred for signal `\gate.\lane_hc[0]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$199'.
+No latch inferred for signal `\gate.\lane_address[0]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$198'.
+No latch inferred for signal `\gate.\candidate' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\hit' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\pad' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\waiting' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\cp' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\cl' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\cc' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\hc' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\address' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\lane_winner' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\lane_selected' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.$fordecl_block$26.j' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\lane_result[0]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\lane_result[1]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\lane_result[2]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\lane_result[3]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\lane_result[4]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\lane_result[5]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\lane_result[6]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gate.\lane_result[7]' from process `\gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+No latch inferred for signal `\gold.\candidate' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+No latch inferred for signal `\gold.\hit' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+No latch inferred for signal `\gold.\pad' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+No latch inferred for signal `\gold.\waiting' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+No latch inferred for signal `\gold.\cp' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+No latch inferred for signal `\gold.\cl' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+No latch inferred for signal `\gold.\cc' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+No latch inferred for signal `\gold.\hc' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+No latch inferred for signal `\gold.\address' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+No latch inferred for signal `\gold.$fordecl_block$1.p' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+No latch inferred for signal `\gold.$fordecl_block$1.$for_loop$2[0].$fordecl_block$3.l' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+No latch inferred for signal `\gold.$fordecl_block$1.$for_loop$2[1].$fordecl_block$3.l' from process `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+
+3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+
+3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$221'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$220'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$219'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$218'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$217'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$216'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$215'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$214'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$213'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$212'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$211'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$210'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$209'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$208'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$207'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$206'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$205'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$204'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$203'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$202'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$201'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$200'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$199'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:5$198'.
+Removing empty process `gate.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:9$29'.
+Found and cleaned up 16 empty switches in `\gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+Removing empty process `gold.$proc$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv:1$5'.
+Cleaned up 16 empty switches.
+
+3.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gate.
+<suppressed ~40 debug messages>
+Optimizing module gold.
+<suppressed ~2 debug messages>
+
+4. Executing OPT pass (performing simple optimizations).
+
+4.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gate.
+Optimizing module gold.
+
+4.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gate'.
+Computing hashes of 128 cells of `\gate'.
+Finding duplicate cells in `\gate'.
+Computing hashes of 121 cells of `\gate'.
+Finding duplicate cells in `\gate'.
+Computing hashes of 114 cells of `\gate'.
+Finding duplicate cells in `\gate'.
+<suppressed ~42 debug messages>
+Finding identical cells in module `\gold'.
+Computing hashes of 148 cells of `\gold'.
+Finding duplicate cells in `\gold'.
+Removed a total of 14 cells.
+
+4.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \gate..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \gold..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $procmux$599.
+    dead port 2/2 on $mux $procmux$593.
+    dead port 2/2 on $mux $procmux$588.
+    dead port 2/2 on $mux $procmux$583.
+    dead port 2/2 on $mux $procmux$550.
+    dead port 2/2 on $mux $procmux$544.
+    dead port 2/2 on $mux $procmux$538.
+    dead port 2/2 on $mux $procmux$532.
+    dead port 2/2 on $mux $procmux$499.
+    dead port 2/2 on $mux $procmux$493.
+    dead port 2/2 on $mux $procmux$487.
+    dead port 2/2 on $mux $procmux$481.
+    dead port 2/2 on $mux $procmux$448.
+    dead port 2/2 on $mux $procmux$442.
+    dead port 2/2 on $mux $procmux$436.
+    dead port 2/2 on $mux $procmux$430.
+    dead port 2/2 on $mux $procmux$397.
+    dead port 2/2 on $mux $procmux$391.
+    dead port 2/2 on $mux $procmux$385.
+    dead port 2/2 on $mux $procmux$379.
+    dead port 2/2 on $mux $procmux$346.
+    dead port 2/2 on $mux $procmux$340.
+    dead port 2/2 on $mux $procmux$334.
+    dead port 2/2 on $mux $procmux$328.
+    dead port 2/2 on $mux $procmux$295.
+    dead port 2/2 on $mux $procmux$289.
+    dead port 2/2 on $mux $procmux$283.
+    dead port 2/2 on $mux $procmux$277.
+    dead port 2/2 on $mux $procmux$244.
+    dead port 2/2 on $mux $procmux$238.
+    dead port 2/2 on $mux $procmux$232.
+    dead port 2/2 on $mux $procmux$226.
+Removed 32 multiplexer ports.
+<suppressed ~903 debug messages>
+
+4.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \gate.
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:12$39: \exam [7:1]
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:11$152: $and$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:2$28_Y [5:0]
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:12$59: \exam [7:2]
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:11$72: $and$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:2$28_Y [1:0]
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:12$79: \exam [7:3]
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:11$92: $and$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:2$28_Y [2:0]
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:12$99: \exam [7:4]
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:11$112: $and$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:2$28_Y [3:0]
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:12$119: \exam [7:5]
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:11$132: $and$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:2$28_Y [4:0]
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:11$172: $and$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:2$28_Y [6:0]
+    New input vector for $reduce_or cell $reduce_or$/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-v2-select-gate.sv:12$139: \exam [7:6]
+  Optimizing cells in module \gate.
+  Optimizing cells in module \gold.
+  Optimizing cells in module \gold.
+Performed a total of 20 changes.
+
+4.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gate'.
+Computing hashes of 114 cells of `\gate'.
+Finding duplicate cells in `\gate'.
+Finding identical cells in module `\gold'.
+Computing hashes of 108 cells of `\gold'.
+Finding duplicate cells in `\gold'.
+Removed a total of 0 cells.
+
+4.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gate..
+Finding unused cells or wires in module \gold..
+Removed 0 unused cells and 468 unused wires.
+<suppressed ~2 debug messages>
+
+4.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gate.
+Optimizing module gold.
+
+4.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \gate..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \gold..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~469 debug messages>
+
+4.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \gate.
+  Optimizing cells in module \gold.
+Performed a total of 0 changes.
+
+4.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gate'.
+Computing hashes of 114 cells of `\gate'.
+Finding duplicate cells in `\gate'.
+Finding identical cells in module `\gold'.
+Computing hashes of 108 cells of `\gold'.
+Finding duplicate cells in `\gold'.
+Removed a total of 0 cells.
+
+4.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+4.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gate..
+Finding unused cells or wires in module \gold..
+
+4.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gate.
+Optimizing module gold.
+
+4.16. Finished fast OPT passes. (There is nothing left to do.)
+
+5. Executing MITER pass (creating miter circuit).
+Creating miter cell "miter" with gold cell "gold" and gate cell "gate".
+
+5.1. Executing FLATTEN pass (flatten design).
+<suppressed ~2 debug messages>
+
+5.2. Executing OPT_EXPR pass (perform const folding).
+Optimizing module miter.
+
+6. Executing HIERARCHY pass (managing design hierarchy).
+
+6.1. Analyzing design hierarchy..
+Top module:  \miter
+
+6.2. Analyzing design hierarchy..
+Top module:  \miter
+Removing unused module `\gate'.
+Removing unused module `\gold'.
+Removed 2 unused modules.
+
+7. Executing OPT pass (performing simple optimizations).
+
+7.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module miter.
+
+7.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\miter'.
+Computing hashes of 235 cells of `\miter'.
+Finding duplicate cells in `\miter'.
+Removed a total of 0 cells.
+
+7.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \miter..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~320 debug messages>
+
+7.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \miter.
+Performed a total of 0 changes.
+
+7.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\miter'.
+Computing hashes of 235 cells of `\miter'.
+Finding duplicate cells in `\miter'.
+Removed a total of 0 cells.
+
+7.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \miter..
+
+7.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module miter.
+
+7.9. Finished fast OPT passes. (There is nothing left to do.)
+
+8. Executing SAT pass (solving SAT problems in the circuit).
+Using SAT solver `minisat`.
+
+Setting up SAT problem:
+Final constraint equation: { } = { }
+Imported 235 cells to SAT database.
+Import proof-constraint: \trigger = 1'0
+Final proof equation: \trigger = 1'0
+Import show expression: \in_exam
+Import show expression: \in_hit_i
+Import show expression: \in_pad_i
+Import show expression: \in_wait_i
+Import show expression: \in_eligible
+Import show expression: \in_addresses
+Import show expression: \in_hcs
+Import show expression: \in_ccs
+Import show expression: \trigger
+
+Solving problem with 11382 variables and 28703 clauses..
+SAT proof finished - no model found: SUCCESS!
+
+                  /$$$$$$      /$$$$$$$$     /$$$$$$$    
+                 /$$__  $$    | $$_____/    | $$__  $$   
+                | $$  \ $$    | $$          | $$  \ $$   
+                | $$  | $$    | $$$$$       | $$  | $$   
+                | $$  | $$    | $$__/       | $$  | $$   
+                | $$/$$ $$    | $$          | $$  | $$   
+                |  $$$$$$/ /$$| $$$$$$$$ /$$| $$$$$$$//$$
+                 \____ $$$|__/|________/|__/|_______/|__/
+                       \__/                              
+
+Warnings: 1 unique messages, 1 total
+End of script. Logfile hash: 4a764390de, time: 0.15s, user: 0.11s, system: 0.16s, MEM: 34.36 MB peak
+Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)
+Time spent: 55% 1x sat (0 sec), 13% 3x read_verilog (0 sec), ...
