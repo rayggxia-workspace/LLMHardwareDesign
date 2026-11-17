@@ -1,5 +1,14 @@
 # Melodydt 的进度
 
+## 2026-11-17 六模型 TLM 能耗扩测
+
+按用户授权连续扩测 Llama、Granite、Phi、Gemma、Qwen3.5、Falcon。复用已验收的完整模型执行计划和真实历史，先迁移文件，计算节点核验全部传输 SHA-256，然后重放短 Prefill 与两步 Decode。新入口要求完整 result、logits、残差与逐层文件一致，并分别核验 DDR 和 SRAM 计数。Granite 嵌套激活、Gemma GELU、PM 实际页长和普通投影 M 忙时独立计数；缺少匹配标定的算子不能作为零能耗处理。
+
+启动脚本 `run_six_model_energy.sbatch` 使用 v6_384、两个阶段各 12 核、`--time=0`。目录为 BSCC-T6 的 `~/LLMHardware/zenanyan/issue-280-bscc-t6-01/six-model-energy-01`。本次提交时 Llama 工件正在迁移，尚无新模型作业号或能耗结果。源版本与作业号以随后启动回执为准。每个模型三窗验收后更新同名 PDF。
+
+验证：本地四份 Python AST、`python scripts/check_project.py` 已通过。业务回放尚未执行。#280 进行中，PR #281 草稿待独立审查；登记 PR #5 pending，任务分支 `config/board.json` 404，Projects 条目未核验、同步 pending。
+
+
 ## 2026-11-17（Asia/Shanghai）七模型功耗 PDF v1.0
 
 - [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。已发布[三页报告](../../docs/experiments/seven-model-energy-evaluation.pdf)，收录评估方法、Qwen3-0.6B 三窗结果、DMA 敏感性与综合后标定路线。其余六模型能耗待评估。
