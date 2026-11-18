@@ -1,3 +1,10 @@
+## 2026-11-18 19:35 三项补齐 v5 进行中（Asia/Shanghai）
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。BSCC 登录已恢复；四份读 DMA 综合映射/链接/结构检查通过，当前直接做无寄生标定，不等待布局布线或 M 时序闭合。300 MHz、512-bit 数据 SRAM、三 P 保持。
+
+母控外围 38850581 已完成，去除 10 个已计入实例后参考功耗 10.553–11.762 mW。真实 TLM provider 路由及 E32/M 区间审计已展开；Qwen3 / Granite 的 E32 18 周期双阶段已通过，Llama 两阶段及其余模型持续收集验收。特殊函数 50,693 条定点指令与 Conv4 捕获通道数值通过；修正内部网名到引脚映射后，38855639/40 的配对功耗已通过。完整模型物理部署、RTL 状态驻留及特殊算子 FP32/provider 集成仍未验收。
+
+最新源码 30b6095c；[完整回执、作业命令、已通过速度与全部剩余工作](../../docs/handoffs/2026-11-18-issue-280-closure-v5.md)。DMA 引脚复标 38855808–11 和七模型 E32 后继 38852023–36 为当前主链，每项 12 核且 UNLIMITED。Slurm 和结果独立保存；未配置聊天自动监测。Issue in_progress、PR 草稿未合并；登记 PR #5 pending、看板 unverified/同步 pending；审查人及看板维护者待指定。
 ## 2026-11-18 七模型控制能耗补项 v4（Asia/Shanghai）
 
 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。完成母控核心启动/运行及 PM 取指、局控外壳/分发、交换机活跃增量三个方向的条件估算，覆盖七模型 21 窗。512-bit 数据 SRAM、300 MHz、三 P 与冻结 TLM 时间/DDR/算术不变。纠正母控 SERVICE_STALL_LIMIT 为真实实例 2000000；母控新项替换旧核心，PM 与交换机只增加尚未计入的动态项。
