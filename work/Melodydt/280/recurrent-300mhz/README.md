@@ -8,4 +8,8 @@ After calibration, remove only the corresponding GDN/Mamba state proxy and add o
 
 Workspaces: local `work/Melodydt/280/recurrent-300mhz` and `tmp/recurrent-300mhz`; remote run directories will be recorded in `jobs.json`. Existing branch `task/280-recurrent-first-round`, PR295 base `task/280-seven-model-energy`; local root is an exported copy without .git. No shared parent local files or jobs are modified. Actual launch source commit, job status and output hashes are recorded after submission. Use 12 CPUs per job, `--time=0`, `mdt-*` names, c64/c96 partitions.
 
-Validation and delivery are pending until receipts exist; broader Issue280 remains in_progress. Independent review unassigned, PR unmerged; registration PR5 pending and Projects configuration/tools unavailable. No automatic monitoring after chat exit.
+Completed: jobs 120432/120433, 20m36s/21m07s, COMPLETED 0:0. All 48 power windows and 1904 numeric relationships passed, with 41 input SHA checks. Including one read-DMA scenario envelope, Decode2 on-chip energy is 831.164-1009.028 mJ/token for Qwen3.5 and 622.070-767.853 for Falcon; range widths shrink 75.31% and 88.05%. See DELIVERY.md and the seven-page reviewed PDF.
+
+For offline reuse, extract the public evidence ZIP at a fresh root, then run integrate.py and verify_integration.py from this directory. The ZIP contains frozen ledger inputs and OpenROAD lightweight receipts. Legacy commercial simulator transcript fields are excluded; public-export.json preserves original hashes and proves identical numeric results. Public manifests are recalculated against the disclosed sanitized receipt. Local original inputs remain unchanged.
+
+Broader Issue280 remains in_progress. Independent review unassigned, PR unmerged; registration PR5 pending and Projects configuration/tools unavailable. No automatic monitoring after chat exit. Final publication commit/readback is recorded separately in publication.json and the PR receipt.

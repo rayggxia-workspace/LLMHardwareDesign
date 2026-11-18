@@ -325,3 +325,15 @@ python -B work/Melodydt/280/recurrent-step1/verify_candidate.py
 ```
 
 后两条复算固定 v3 基线上两个候选状态更新情景；不启动服务器仿真，也不替换七模型默认值。公开回执省略完整商业仿真器日志，输入来源及省略字段 SHA 见 `work/Melodydt/280/recurrent-step1/public-export.json`，原始本地包保留未修改回执。整模型数值精度、实际调度与物理签核未验收。复跑 RTL/门级还需获授权捕获及工具，入口与版本见[第一轮交接](handoffs/2026-11-18-issue-280-recurrent-first-round.md)。
+
+
+## Issue #280：最新300 MHz R候选积分
+
+从 `work/Melodydt/280/recurrent-300mhz/evidence-public.zip` 解压到全新目录，保留其目录结构，再运行：
+
+```bash
+python -B work/Melodydt/280/recurrent-300mhz/integrate.py
+python -B work/Melodydt/280/recurrent-300mhz/verify_integration.py
+```
+
+两条仅复算冻结v5窗口与已完成的300MHz活动标定，48窗/1904关系；不会提交仿真。PDF生成需ReportLab、pypdf及Deng字体。公开包仅删除旧商业仿真器日志字段，数值完全相同，原/公开SHA对应见public-export.json。服务器重标定依赖原始映射网表和完整活动，不含在包内；缺项及版本见[本轮交接](handoffs/2026-11-18-issue-280-recurrent-300mhz.md)。

@@ -362,3 +362,14 @@ Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280)
 200 MHz 第二步 Decode 片上已覆盖小计为 Qwen3.5 1.083–1.232 W、Falcon 1.111–1.291 W；片上＋DDR 为 3.648–3.796 / 3.662–3.842 W。相对固定 v3 基线，候选区间宽度缩小 84.88% / 92.76%。保留 512-bit 系统 SRAM；候选 R 的状态存储为触发器。短 Prefill 仅零初态外推，端点不是置信区间；精度、实际共享 R 调度、注入/格式转换与物理签核仍待验收。七模型默认值及主会话 300 MHz v5 不变。
 
 [9 页报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/docs/experiments/recurrent-state-first-round-200mhz.pdf)与[完整交接](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/docs/handoffs/2026-11-18-issue-280-recurrent-first-round.md)保存范围、源码/输入/工具 SHA、作业和剩余步骤。公开版排除商业仿真器整段原始日志，保留项目数值与来源 SHA，独立复算与完整本地包一致；原始捕获 ZIP 仅留本地/获授权存储。本轮任务不再等待仿真，进入独立审查；整体 #280 保持 in_progress。登记 PR #5 pending，看板缺配置/Projects 工具而 unverified、同步 pending，处理人待指定；未配置自动监测。
+
+
+## 2026-11-18 23:20 +08：最新300 MHz递推状态范围收窄
+
+Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280)，负责人Melodydt；[PR #295](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/295)。冻结主线v5 e29d72a5与P512 v3 01141df7，复用既有综合网表/零延迟事件并严格重定时至3334 ps，重新运行48个配对OpenROAD功耗窗。120432/120433已COMPLETED 0:0，分别20m36s/21m07s，node12、12核、UNLIMITED。
+
+含一个读DMA的Decode2片上能耗：Qwen3.5为831.164–1009.028 mJ/token，区间宽度缩小75.31%；Falcon为622.070–767.853，缩小88.05%。片上＋DDR分别2080.251–2258.114和1526.504–1672.287 mJ/token。先删除匹配状态代理再加候选R完整服务动态/整窗静默，保留Falcon注入；四DMA互斥、特殊组合单列。吞吐/DDR不变，200MHz原件保持历史。
+
+1904项数值关系、41输入SHA、152取回工件、7页282数值与全页视觉检查通过；公开包省略两项旧商业仿真器日志字段并重新验证数值逐项相同。见[交接](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/docs/handoffs/2026-11-18-issue-280-recurrent-300mhz.md)、[报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/docs/experiments/recurrent-state-latest-300mhz.pdf)。
+
+仍为条件候选：P512冷状态活动外推，尚需独立层/长序列、模型数值/转换与Falcon注入、R部署/加载/门控/调度接入及物理时序验证。当前子交付待审查，整体Issue280保持in_progress、PR未合并、审查人待指定；登记PR5 pending，看板缺配置及Projects工具，unverified/同步pending。无自动监测。后续负责人Melodydt，审查与看板维护者待指定。
