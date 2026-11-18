@@ -1,0 +1,26 @@
+{
+  "review_completed": true,
+  "blocking_findings": [],
+  "backend_accepted": false,
+  "scope": "Read-only review of exact uploaded scripts before submission; no EDA or live-file modification.",
+  "source_odb_sha256": "b59360079c0e79e335c93b8b014d7f0269d283deb6889c27c64d5ac7e0950ed0",
+  "reviewed_scripts": {
+    "cu/c-margin-prepare-v1.tcl": "418c602b5c4f61075dc5dfa248bd45b706b1aa8c39e8130f6fdb1715f57b57a4",
+    "cu/run-c-margin-actual-v1.sh": "2983ba049e34c095d3d31472473995068bac2619694e3e81f8dfe08f166a5adc",
+    "cu/c-margin-actual-v1.sbatch": "59768da7cc7b671efff24a9ae7ccbf7d5e2a0fb29e1ffeb47f8ab5468b85c8dc"
+  },
+  "verified_design_of_gates": [
+    "Only actually resized, non-DNT, non-macro cells become PLACED; non-resized longwire buffers and other standard cells retain temporary locks.",
+    "Original movement whitelist and die/BPin/macro geometry assertions remain active.",
+    "Master/location/orientation/pin signatures rip all connected changed signal nets, including input and output nets.",
+    "Each selected cumulative plan receives independent legalization, CUGR, strict pin access, detailed routing, actual extraction, GDS, and fresh timing/PG diagnostics.",
+    "The source ODB is hard-bound to b593; the same frozen source supplies SDC and configuration.",
+    "Original input and prepared hashes are rechecked before CANDIDATE-COMPLETE; that marker explicitly does not assert backend acceptance.",
+    "One-node exclusive steps allocate eight CPUs per selected case, with selected_count between one and six; preparations are not shared across distinct plans."
+  ],
+  "nonblocking_hardening": [
+    "Freeze and hash u-fresh-spef-pg.tcl alongside other executed TCL files.",
+    "Recheck selection.sha256 at case completion to cover all original selector/catalog/receipt/planning-manifest dependencies across the complete execution window."
+  ],
+  "remaining_actual_gates": "Every resulting candidate still requires actual native/full DRC, antenna, PG/material provenance, DEF/GDS/RCX correspondence, fresh all setup/hold/electrical checks, interface/X8 geometry, and strict actual netlist proof. A route/fresh process failure can produce diagnostics but cannot qualify a candidate."
+}

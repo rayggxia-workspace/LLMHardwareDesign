@@ -1,5 +1,7 @@
 # Actual C40 backend continuation
 
+C43 actual continuation: completed bounded C40-M9 sizing planning reaches global setup/hold/electrical zero, but no C backend acceptance follows from static RC reuse. Independent selector120290 verified four distinct positive-margin cumulative plans (+4.293455/+2.895462/+2.663647/+2.219114 ps setup; +1.400824 ps hold), exhaustive cell truth, original-master replay and source SHA. Actual job120292 runs these four independent implementations on one node, 4 x 8 CPU; only three resized standard cells move per case, at most3.4um, while macros/signal pins/die/SDC stay fixed. C43 begins from the actual frozen M9 source, so all final RC/timing evidence will come from its own physical routing. Root manifest: `cu/C-ACTUAL-CLOSURE-120292.json`. No known failing or duplicate plan fills the allocation.
+
 C is not accepted. U and G/S/F accepted packages remain frozen.
 
 The six C40 routes (120273, one node, 6 x 8 CPU) completed with zero native-route DRC. Their ODB/DEF/V/SDC are exact duplicates, so only seed0 is evaluated independently. ODB SHA256: `6cc21b934b59858cbbee2bfe9028529746dc663e5fd61ceb1bf8f0e8b6a5cdef`. Its fresh extracted setup count is 17, with hold/capacitance/slew/fanout zero.
