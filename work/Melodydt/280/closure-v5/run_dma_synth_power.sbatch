@@ -11,13 +11,10 @@ if [[ ${1:-} != inside ]]; then
     bundle=${SLURM_SUBMIT_DIR:?}
     cd "$bundle"
     sha256sum --quiet -c inputs.sha256
-    # The login shell exports a Calibre Tcl 8.6 path; site modules use Tcl 8.5.
+    # Invoke the site binary directly. The module frontend has no Tcl 8.5
+    # library on compute nodes and is not required by this static launcher.
     unset TCL_LIBRARY TK_LIBRARY TCLLIBPATH
-    set +u
-    source /public3/soft/modules/module.sh
-    module load singularity/3.7.0
-    set -u
-    exec srun --ntasks=1 --cpus-per-task=12 --cpu-bind=cores singularity exec --cleanenv \
+    exec srun --ntasks=1 --cpus-per-task=12 --cpu-bind=cores /public3/soft/singularity/3.7.0/bin/singularity exec --cleanenv \
         --bind "$(dirname "$bundle")" "$HOME/LLMHardware/opt/orfs-current-repacked.rootfs" \
         bash "$bundle/run_dma_synth_power.sbatch" inside "$bundle" "$SLURM_JOB_ID" "${1:?variant}"
 fi
