@@ -349,3 +349,12 @@ Granite 回放 38820602 与积分 38820947 均 COMPLETED 0:0。Prefill／首 Dec
 - 实际母控 1,616 字节页有 101 次 128-bit 写确认。局控阵列和 U 的字级控制、调度、算术已分别完成 300 MHz 标定。38795515 通过 SRAM 串行宽写和普通读对账，宏 TT 库和布线工件待从旧归档补齐。
 - M 的 18 份波形及非 DMA 控制六窗活动已备齐。38792357 进入 CTS。两项原读综合和两项跳过 SHARE 的对照持续执行，五条功耗链按物理结果等待。Melodydt 后续核验映射、时序/DRC、门级功耗和重叠层级，再输出三窗整模型结果。
 - [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) · [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) · [结果与恢复](../../docs/handoffs/2026-11-16-issue-280-bscc-t6-actual-payload-and-leaf-calibration.md)。任务进行中，项目登记待合并，看板待管理员核验。
+
+
+## 2026-11-18 200 MHz 递推状态第一轮候选标定（Asia/Shanghai）
+
+Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280)，负责人 Melodydt；独立分支 `task/280-recurrent-first-round`，PR 回执见本轮 publication.json。Qwen3.5/Falcon 最终作业 120399/120413 均 COMPLETED 0:0、12 核、UNLIMITED；48 个配对功耗窗口全部原生引脚标注通过，原网表/STA 兼容视图逐位连接一致。
+
+200 MHz 第二步 Decode 片上已覆盖小计为 Qwen3.5 1.083–1.232 W、Falcon 1.111–1.291 W；片上＋DDR 为 3.648–3.796 / 3.662–3.842 W。相对固定 v3 基线，候选区间宽度缩小 84.88% / 92.76%。保留 512-bit 系统 SRAM；候选 R 的状态存储为触发器。短 Prefill 仅零初态外推，端点不是置信区间；精度、实际共享 R 调度、注入/格式转换与物理签核仍待验收。七模型默认值及主会话 300 MHz v5 不变。
+
+[9 页报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/docs/experiments/recurrent-state-first-round-200mhz.pdf)与[完整交接](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/docs/handoffs/2026-11-18-issue-280-recurrent-first-round.md)保存范围、源码/输入/工具 SHA、作业和剩余步骤。公开版排除商业仿真器整段原始日志，保留项目数值与来源 SHA，独立复算与完整本地包一致；原始捕获 ZIP 仅留本地/获授权存储。本轮任务不再等待仿真，进入独立审查；整体 #280 保持 in_progress。登记 PR #5 pending，看板缺配置/Projects 工具而 unverified、同步 pending，处理人待指定；未配置自动监测。

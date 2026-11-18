@@ -312,3 +312,16 @@ Qwen3 的已验收启动器独立使用 `prepare_qwen3_arithmetic_capture.py`、
 `work/Melodydt/280/OPERATOR_BINDINGS.md` 记录实际 TLM/RTL 格式关系。新脚本 `run_operator_capture.sbatch` 在已验收六模型目录上生成独立观察副本；`verify_operator_capture.py` 复算实际操作数，`audit_operator_bindings.py` 仅做格式及候选定点审计。先 `run_operator_preflight.sbatch`，再按本轮交接提交六项采样；所有 `sbatch --time=0`，每项 prefill/decode 各 12 核。
 
 `run_rms_e32_check.sbatch <capture...>` 使用真实两阶段 RMS 乘法检查 compact E32；`run_e32_wrapper_map.sbatch` 单独映射 E32/scan/apply/RoPE，`run_rms_e32_power.sbatch <mapped-E32-dir> <capture...>` 做活动/空闲配对无寄生标定。运行前核验 bundle 的 `inputs.sha256` 和 capture 验收；脚本保留网表/库/活动 SHA。E32 18 周期实测尚未和 TLM 9 周期叶节点绑定，不能直接更新整模型速度或能耗总值。E32/包装逻辑边界、命令、真实路径、成功判据和剩余步骤见 [2026-11-17 交接](handoffs/2026-11-17-issue-280-operator-expansion.md)。
+
+
+## Issue #280：200 MHz GDN/Mamba 第一轮候选积分
+
+在本轮独立分支 checkout 的仓库根目录运行：
+
+```bash
+python -B scripts/check_project.py
+python -B work/Melodydt/280/recurrent-step1/rollup_candidate.py
+python -B work/Melodydt/280/recurrent-step1/verify_candidate.py
+```
+
+后两条复算固定 v3 基线上两个候选状态更新情景；不启动服务器仿真，也不替换七模型默认值。公开回执省略完整商业仿真器日志，输入来源及省略字段 SHA 见 `work/Melodydt/280/recurrent-step1/public-export.json`，原始本地包保留未修改回执。整模型数值精度、实际调度与物理签核未验收。复跑 RTL/门级还需获授权捕获及工具，入口与版本见[第一轮交接](handoffs/2026-11-18-issue-280-recurrent-first-round.md)。

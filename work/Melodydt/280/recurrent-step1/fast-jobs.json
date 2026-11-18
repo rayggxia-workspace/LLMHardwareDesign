@@ -1,0 +1,96 @@
+{
+  "qwen35": {
+    "job": "120331",
+    "directory": "/public/home/yuzelu/Melodydt/runs/issue-280/recurrent-round1-20261118/qwen35-fast",
+    "power_job": "120399",
+    "previous_power_jobs": [
+      {
+        "job": "120335",
+        "subdir": "power",
+        "reason": "Retained during ungrouped C++ build trial; same mapped netlist and vectors.",
+        "retired": true,
+        "retirement_reason": "Superseded compiler trial; full underscore-net trace required for power."
+      },
+      {
+        "job": "120358",
+        "subdir": "power-split",
+        "reason": "Retained during same-generated-C++ O0 build trial.",
+        "retired": true,
+        "retirement_reason": "Superseded compiler trial; full underscore-net trace required for power."
+      },
+      {
+        "job": "120369",
+        "subdir": "power-low",
+        "reason": "Retained during same-generated-C++ compiler trial.",
+        "retired": true,
+        "retirement_reason": "Superseded compiler trial; full underscore-net trace required for power."
+      },
+      {
+        "job": "120371",
+        "subdir": "power-clang",
+        "reason": "Missing underscore-net trace; functional replay only, power not accepted."
+      },
+      {
+        "job": "120378",
+        "gate_job": "120374",
+        "subdir": "power-full",
+        "reason": "Superseded only after same-generated-code trace-optimized full replay and all paired power windows passed."
+      }
+    ],
+    "power_subdir": "power-trace-opt",
+    "sta_job": "120376",
+    "gate_job": "120399",
+    "reader_probe_job": "120380",
+    "pin_graph_job": "120383",
+    "failed_pin_graph_jobs": [
+      "120381"
+    ],
+    "selected_stage": "trace_optimized"
+  },
+  "falcon-wide": {
+    "job": "120334",
+    "directory": "/public/home/yuzelu/Melodydt/runs/issue-280/recurrent-round1-20261118/falcon-wide-fast",
+    "power_job": "120413",
+    "previous_power_jobs": [
+      {
+        "job": "120336",
+        "subdir": "power",
+        "reason": "Retained during ungrouped C++ build trial; same mapped netlist and vectors.",
+        "retired": true,
+        "retirement_reason": "Superseded compiler trial; full underscore-net trace required for power."
+      },
+      {
+        "job": "120363",
+        "subdir": "power-split",
+        "reason": "Retained during same-generated-C++ compiler trial.",
+        "retired": true,
+        "retirement_reason": "Superseded compiler trial; full underscore-net trace required for power."
+      },
+      {
+        "job": "120372",
+        "subdir": "power-clang",
+        "reason": "Missing underscore-net trace; functional replay only, power not accepted."
+      },
+      {
+        "job": "120379",
+        "gate_job": "120375",
+        "subdir": "power-full",
+        "reason": "Retired after identical complete VCD and power driver; replacement now passed all paired power windows."
+      }
+    ],
+    "power_subdir": "power-logic-opt",
+    "sta_job": "120377",
+    "gate_job": "120413",
+    "pin_graph_job": "120384",
+    "failed_pin_graph_jobs": [
+      "120382"
+    ],
+    "redundant_jobs_retired_after_full_wave_equivalence": [
+      "120379",
+      "120375",
+      "120395"
+    ],
+    "selected_stage": "trace_optimized",
+    "opt_stage": "logic"
+  }
+}

@@ -120,3 +120,12 @@ Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280)
 ### 2026-11-17：七模型算术覆盖扩展
 
 Issue #280 的 Llama/Qwen3/Granite 真实 RMS E32 共 14,208 包数值一致，四项 E32/scan/apply/RoPE 映射完成，Llama/Qwen3/Granite 共 24 样本 E32 无寄生分项标定通过。发现 compact E32 连续无阻塞 18 周期与 TLM 9 周期叶节点存在待校准差异；整模型新速度/能耗未验收，PDF 小计不变。六模型特殊算子采样 38830188–93 已实际 RUNNING；[证据与后续步骤](handoffs/2026-11-17-issue-280-operator-expansion.md)。任务仍 in_progress，草稿 PR #281 未合并，不构成物理签核。
+
+
+## 2026-11-18 200 MHz 递推状态第一轮候选标定（Asia/Shanghai）
+
+Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280)，负责人 Melodydt；独立分支 `task/280-recurrent-first-round`，PR 回执见本轮 publication.json。Qwen3.5/Falcon 最终作业 120399/120413 均 COMPLETED 0:0、12 核、UNLIMITED；48 个配对功耗窗口全部原生引脚标注通过，原网表/STA 兼容视图逐位连接一致。
+
+200 MHz 第二步 Decode 片上已覆盖小计为 Qwen3.5 1.083–1.232 W、Falcon 1.111–1.291 W；片上＋DDR 为 3.648–3.796 / 3.662–3.842 W。相对固定 v3 基线，候选区间宽度缩小 84.88% / 92.76%。保留 512-bit 系统 SRAM；候选 R 的状态存储为触发器。短 Prefill 仅零初态外推，端点不是置信区间；精度、实际共享 R 调度、注入/格式转换与物理签核仍待验收。七模型默认值及主会话 300 MHz v5 不变。
+
+[9 页报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/docs/experiments/recurrent-state-first-round-200mhz.pdf)与[完整交接](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/docs/handoffs/2026-11-18-issue-280-recurrent-first-round.md)保存范围、源码/输入/工具 SHA、作业和剩余步骤。公开版排除商业仿真器整段原始日志，保留项目数值与来源 SHA，独立复算与完整本地包一致；原始捕获 ZIP 仅留本地/获授权存储。本轮任务不再等待仿真，进入独立审查；整体 #280 保持 in_progress。登记 PR #5 pending，看板缺配置/Projects 工具而 unverified、同步 pending，处理人待指定；未配置自动监测。

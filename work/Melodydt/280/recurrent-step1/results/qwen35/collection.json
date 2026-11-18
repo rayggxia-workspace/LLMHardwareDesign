@@ -1,0 +1,112 @@
+{
+  "remote": "/public/home/yuzelu/Melodydt/runs/issue-280/recurrent-round1-20261118/qwen35-fast",
+  "jobs": {
+    "job": "120331",
+    "directory": "/public/home/yuzelu/Melodydt/runs/issue-280/recurrent-round1-20261118/qwen35-fast",
+    "power_job": "120399",
+    "previous_power_jobs": [
+      {
+        "job": "120335",
+        "subdir": "power",
+        "reason": "Retained during ungrouped C++ build trial; same mapped netlist and vectors.",
+        "retired": true,
+        "retirement_reason": "Superseded compiler trial; full underscore-net trace required for power."
+      },
+      {
+        "job": "120358",
+        "subdir": "power-split",
+        "reason": "Retained during same-generated-C++ O0 build trial.",
+        "retired": true,
+        "retirement_reason": "Superseded compiler trial; full underscore-net trace required for power."
+      },
+      {
+        "job": "120369",
+        "subdir": "power-low",
+        "reason": "Retained during same-generated-C++ compiler trial.",
+        "retired": true,
+        "retirement_reason": "Superseded compiler trial; full underscore-net trace required for power."
+      },
+      {
+        "job": "120371",
+        "subdir": "power-clang",
+        "reason": "Missing underscore-net trace; functional replay only, power not accepted."
+      },
+      {
+        "job": "120378",
+        "gate_job": "120374",
+        "subdir": "power-full",
+        "reason": "Superseded only after same-generated-code trace-optimized full replay and all paired power windows passed."
+      }
+    ],
+    "power_subdir": "power-trace-opt",
+    "sta_job": "120376",
+    "gate_job": "120399",
+    "reader_probe_job": "120380",
+    "pin_graph_job": "120383",
+    "failed_pin_graph_jobs": [
+      "120381"
+    ],
+    "selected_stage": "trace_optimized"
+  },
+  "sha256": {
+    "synth-receipt.json": "0f4e9b1a5eb47ca203846726378f5ade13c3122ac78c10be6a91aac9991dcfd8",
+    "inputs.sha256": "28d8bb255e3f7275a07d22c7220a09f3147c38d352b9aa1df8e411e633bfd2ff",
+    "power/calibration.json": "dbe53a135378fd2265ba8fe119b6f576104f1455270d24cce603d0a78ece2ae3",
+    "power/gate-replay-receipt.json": "1cfb9222e150ebae654bb0c526d9e399f13eb54113afe6d43757e20d5bd6a112",
+    "power/replay.log": "0236db2d2dde9af742b4c02994d36d06f287687794abe73396e197a5395681d7",
+    "power/inputs.sha256": "aeec6ac9ae01f1ef7dc3388d96601640f408d8e84f987edf37ff9ef0cd806928",
+    "power/build.log": "be9a248ce8273c876b6f63ed4cf97db585f93da913dfda8b79f84621e659204e",
+    "power/calibrate_gate.py": "b8d817b82c61c262894e29c1798e456b06f391243e090bedcb40ab1d80054f4a",
+    "power/calibrate_tb.sv": "b20bda533c09b5da1b3d678d0390fcd02aafb36c8089a9afa36b436283877845",
+    "power/run_trace_optimized.sbatch": "6712fa6352afe624932be7daae27429f65fa451c91761a6dbb4dd347e379a38c",
+    "power/compile_trace_optimized.py": "2a49d919cc61df3c7f452b1369b60f54f8d940747a95111cbf82cfaef332119d",
+    "power/low-build-input.json": "0b34de083101340f028dd7f020775afc5e58c135daeaf02158cc3b7b51ac257c",
+    "power/prebuilt-receipt.json": "637eb8e4b986efc977682f131793ccfd0a74573e23a34ae85c19e79bf823c311",
+    "power/map_vcd_pins.py": "cb7d1cbbb1d07a431ca28b6f9eab508d0df95c9465b99a7d20dfe752acff7f29",
+    "power/pins.json": "e854de33e345363f3b0d9edcca2f4317ea7a7c209dd68b43872aab9be89201c8",
+    "power/slurm-120399.log": "c79e9a5cfe3c21a6bca37f228f8a00fdfa484b26775d6f2e54970a3d821f291c",
+    "power-full/generation-receipt.json": "67d3ff2bc4e5a09e0aa75f4e9d3aedddacc8d9e5bc895e3366d29e9b94760c55",
+    "power-full/low-build-input.json": "5606d63fd411a28a9c9c3afa9cdb84296f76bdab69220f2c6f5a948ec5f0d4f8",
+    "power-full/prebuilt-receipt.json": "bd096316dc845f27af5dd77b1b575fc3c587afef14ee12ac6f96111faf506bef",
+    "power-full/generate_gate.py": "60394baaf8ef9f16bc612f39a70133af4613ceb1188c41c1879787cf09a2abda",
+    "power-full/compile_low.py": "ae60669c459069b48c68a1b90c7c28670d33883bd41c5fba9e33428c13d64625",
+    "power-full/inputs.sha256": "270f2fc32805e9dc2453614c52d4b31a4417bfaf9b20cacf60ec0b0f7e76bf7b",
+    "power-full/run_full_gate_power.sbatch": "38f3bbb0e92a3ae275aa6ce9556d674d2c458fc08836946d7882455220ec8289",
+    "sta-view/sta-view.json": "c616bc23fb1226289d61e6606570fb8cb8360d9f3661982e1e463a0c513f8b18",
+    "sta-view/prepare_sta_view.py": "e79d79cc4dc305a8f2eed5cfc3d070b901397e77801546516e18e9baf373c0a3",
+    "sta-view/run_sta_view.sbatch": "e8737a1eef79007b73e515ffad4ed48fe0bf3356a9b23f4c951a34236f763203",
+    "sta-view/inputs.sha256": "2deed7b0871b6aab45d1a63729c729c2c5e4c76253b32373b6a87a904cd8d4f3",
+    "sta-view/check.log": "31d6cbee274bd7c5a14ff624b0f6b0aa970bb672f77b28e3b2c0cfd213902ec0",
+    "power/window-0-active.log": "8bda9488fcb5715d1cedf5fca79d2079ce9f1d754b36b2a69679bab9799972d5",
+    "power/window-0-idle.log": "ef5a0365e4319d073eb75b550ec5af778c702662dd27ffdb7da2d3567adfba32",
+    "power/window-1-active.log": "7d2788654272657abab5121e1e2ea91bf988a62efd5c9071ef83259da7f69c69",
+    "power/window-1-idle.log": "b6860191a9ee3baf4432a9fc9bae56b29052879a82cdb5843defbd0f51a57903",
+    "power/window-2-active.log": "ef53931c0c2ce7b6709c20f7a0925c261b7480c086869058b4960169f789aa1c",
+    "power/window-2-idle.log": "669274cdaaad5ae0543d9907811e71b2fa86cd3dd2fb4bd28e85499081f8b51c",
+    "power/window-3-active.log": "20a78833752c8fb6cba72c03cebbdd6f895e27c61cda1796d7e73c608099e305",
+    "power/window-3-idle.log": "ad4a8656fbb3f99bc29f5c061ecf528fc69a92c38b7ef102185e5314599cd56b",
+    "power/window-4-active.log": "01cf2359c91a5e303030da2201f05056ccef4d63fabfb62c8fba31683f11dae2",
+    "power/window-4-idle.log": "42095034b3a314ac6890438fd272c82a7ef13f75ff5592f1c55eb6d109580a7b",
+    "power/window-5-active.log": "555e0b014d34fef7d35658dfb1bebae83e84df7520957ed1303946c8591de8aa",
+    "power/window-5-idle.log": "6e4dc1c07f24950a245b0d2b54d224b9035ffc0f9ccd14c6e4f0cc095344529c",
+    "power/window-6-active.log": "1fb87275d194596031859f919fd051853c484d93ada8151236adc236e6bdbcfa",
+    "power/window-6-idle.log": "ff8c97ab34866c2b923618170b9e6eb76c84fb0b6146161809d168aa55c02388",
+    "power/window-7-active.log": "4d9b70399e1205c125b546ca3172aad196fe8bbdcc455f9e2a71208c9edbd808",
+    "power/window-7-idle.log": "1dfe62a40652f772cbbb9e804c5e498aa3dee6d452b82d505db884351d2b7250",
+    "power/window-8-active.log": "b3348231f0f3595955360e9e6062c8002c65c55836ae53b0a6e436ac2a63e7d2",
+    "power/window-8-idle.log": "e9352cfe2fef6616a734bfd10c9abb035dc471c204823887179204bd127cd271",
+    "power/window-9-active.log": "958fed21e7e0678b8b5d1021576f1502dfecbc846e1be3636505153d86589ed5",
+    "power/window-9-idle.log": "67504b59126b97f5c6a557dd8c19ee1b2c0f9d595449a580b802bc0354fed84b",
+    "power/window-10-active.log": "b479d0662406f15920af329f3146d53e7dc4c9f947f103a41ff3fc8d534a6894",
+    "power/window-10-idle.log": "e653d78cf2da83eb43df8a2c4f618627c4bfeb6b8fdf74b7d4bf74a5e75371c3",
+    "power/window-11-active.log": "ce95df85f154014745a4d7675e0614d58e970213adfeb8df822d4a92b457ec61",
+    "power/window-11-idle.log": "18b4cb51f0cbb4191b5cb668f80bcc8d2820a358accbe59e7af0f69d52c950db",
+    "pin-map/prepare_pin_graph.py": "c5419e74c46aee27e831ae868339eb57f74c81f81f18ab074cc0982cf55aedf6",
+    "pin-map/run_pin_graph.sbatch": "c2abaa90f17cc9fc5d16ebf8f175c9c7bc4c0dbd7322a6cdff245ecdf13f52bf",
+    "pin-map/inputs.sha256": "0d4771b3060af6f92cb6427c45319ef3d02e607e254c373428b2d947fac56240",
+    "pin-map/graph-receipt.json": "91ee1dedfdf449c5107061cfd63758ce845776abd1866278891238c425c43553",
+    "pin-map/probe.log": "410f26b708ecc17756cf5b6669dcadcaf39669a7fa7c1fcc9a43bea8b018c5df",
+    "pin-map/read.log": "9e3fec65e1abba7ddcaf5c9855967f96c0f59895623850ebe00fe4b7e0c900f5"
+  },
+  "remote_gate_binary_sha256": "b9b7b61b7dcc170eb666b2750ac0e35b9f77cede08628314fecd63eb3180aa24"
+}
