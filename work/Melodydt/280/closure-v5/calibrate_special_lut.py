@@ -103,6 +103,12 @@ endmodule
     run(['yosys','-l',out/'synth.log',out/'synth.ys'],out/'synth-stdout.log',out)
     design=json.loads((out/'mapped.json').read_text())['modules']['special_lut_q24']
     if any(c['type'].startswith('$') for c in design['cells'].values()):raise ValueError('unmapped cell')
+    # OpenSTA's structural Verilog reader rejects signed declarations. There
+    # are no expressions left in this mapped netlist: cell/pin connectivity
+    # is unchanged by removing this source-language type annotation.
+    mapped=(out/'mapped.v').read_text()
+    normalized=re.sub(r'(?m)^(  (?:input|output|wire)) signed ',r'\1 ',mapped)
+    (out/'mapped-sta.v').write_text(normalized)
     required=sum(len(p['bits']) for p in design['ports'].values())
     for kind,row in observations.items():
         powers={}
@@ -111,7 +117,7 @@ endmodule
             tcl='\n'.join(['read_liberty {'+str(LIB)+'}',
                 'read_lef {'+str(PLATFORM/'lef/NangateOpenCellLibrary.tech.lef')+'}',
                 'read_lef {'+str(PLATFORM/'lef/NangateOpenCellLibrary.macro.mod.lef')+'}',
-                'read_verilog {'+str(out/'mapped.v')+'}','link_design special_lut_q24',
+                'read_verilog {'+str(out/'mapped-sta.v')+'}','link_design special_lut_q24',
                 'create_clock -name core -period 3.334 [get_ports clk]','set_input_transition 0.05 [all_inputs]',
                 'read_vcd -scope dut {'+str(wave)+'}','report_activity_annotation','report_power -digits 9'])+'\n'
             powers[name]=power(tcl,target,required)
@@ -120,6 +126,7 @@ endmodule
     result=dict(scope='explicit Q24 transcendental candidate only; paired RTL boundary propagation through mapped cells',
         clock_period_ps=3334,wire_parasitics_loaded=False,timing_signoff=False,rtl_replay_all_commands_passed=True,
         primitives=observations,cell_count=len(design['cells']),netlist_sha256=digest(out/'mapped.v'),
+        sta_netlist_sha256=digest(out/'mapped-sta.v'),sta_normalization='remove signed from structural input/output/wire declarations only',
         inputs={str(p):digest(p) for p in [Path(__file__),bundle/'special_lut.py',out/'special_lut_q24.sv',out/'special-lut.hex',LIB]},
         numerical_diagnostics=json.loads((out/'numeric-diagnostics.json').read_text()),
         limitations=['No global LUT switching statistics or full model RTL acceptance',
