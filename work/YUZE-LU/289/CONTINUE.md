@@ -1,3 +1,13 @@
+### Latest actual C checkpoint — jobs 120023–120066
+
+C-v27-joint-e20-h30 has actual routed GDS/ODB/DEF/SPEF: native DRC report 0 bytes, VDD/VSS connectivity 1/1, 153 BUF_X8 and original macro/BPin geometry unchanged. Actual extracted STA remains failing: setup 182, WNS -0.329056352 ns; hold 229, WHS -0.126401782 ns; capacitance 304, slew 124, fanout 0. This candidate is diagnostic, not accepted.
+
+Cached primary generic proof 119960 now passes all 523 partitions. Actual synthesis to legalized v24/v25 data/state/control proof 120016 passes with 21095 states; final routed binding remains pending. Exact receipts are under audit/.
+
+Focused actual v27 GDS has 24 upper-layer and 17 antenna markers. Qualified trial hooks cover 17 new input diodes (566 cumulative), R M9/via9 guards, and two external via9 gap guards. Loader is validating two parent-only M10 patches. Root is checking S M9 markers 7/9 and running complete unchanged deck baseline 120063. Initial 120061 stopped before checking because the old U wrapper rejects C; corrected dedicated c-full.sbatch invokes the already generalized c-full.sh. No failed run is counted as signoff.
+
+CU owns the combined actual routed ECO; endpoint owns final RCX material/geometry/model qualification; loader owns final functional proof; root owns complete original deck and reviewable archive. U/F accepted releases remain frozen. Active scripts may be newer than this checkpoint: coordinate with existing agents and audit exact job paths before changing or cancelling anything.
+
 # Active continuation — latest 2026-11-18 CST
 
 User requires continuing until backend verification completes, not ending at submission or partial progress. Owner YUZE-LU; remote yuzelu@10.129.166.172; root `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117`. Issue289 in_progress, draft PR290, branch task/289-ab-x8. Scope340 non-P outputs: C153/U153/G33/S1. Original nominal clocks, signal BPin geometry, macro placement and cycle-visible behavior remain fixed.

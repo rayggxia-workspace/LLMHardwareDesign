@@ -1,0 +1,141 @@
+{
+  "issue": 289,
+  "accepted": false,
+  "job": 120012,
+  "resources": "one node, 6 workers x 8 CPU, independent batch waits all workers",
+  "source": "audit/C-m10-notch14-v2/patched.odb",
+  "source_sha256": "8fe478bae4f1410e921359f2dd1094a45556c33de1bd44e60dfe606de5ff7e9f",
+  "physical_patch_evidence": "loader 120011 actual GDS component, foreign spacing, width, delta and PG PASS; not full signoff",
+  "variants": {
+    "electric_margin_percent": [
+      0,
+      20
+    ],
+    "hold_margin_ps": [
+      15,
+      30,
+      50
+    ]
+  },
+  "integrated_hooks": [
+    "actual main 549 antenna diodes",
+    "1970 actual dot cut obstructions",
+    "v5 33 conservative upper spacing keepouts",
+    "13 exact upper nets ripup; preserve rsp14/52 if endpoint signatures unchanged",
+    "S req128 and dot286 access regeneration"
+  ],
+  "pilot": {
+    "job": 120009,
+    "result": "edit-only geometry, legality and all153BUF_X8 pass",
+    "hold_branches": 698,
+    "hold_cells": 2473,
+    "setup_clamped": 3,
+    "reset_cells": 4
+  },
+  "limitations": [
+    "source SPEF differs from original material at two M10 corners; used only for repair planning",
+    "repair_design emits EST-0027 no estimated parasitics warning despite imported SPEF; final fresh extracted counts determine success, not repair log",
+    "all variants require actual fresh STA/PG, final RCX material identity, full original GDS deck, functional proof and regenerated model"
+  ],
+  "wrapper": "run-c-joint-v2.sh saves diagnostic GDS when actual final DEF exists even if route/RCX exit fails; never uses exit code as acceptance",
+  "job120012_result": "Failed before routing: v5 hook global Tcl scratch b overwrote caller dbBlock handle. All physical edit gates completed before first findInst failed; no candidate claimed.",
+  "successor_job": 120013,
+  "successor_runs": "cu/runs/C-v24-joint-e{0,20}-h{15,30,50}",
+  "fix": "c-joint-edit-v2 restores ord::get_db_block immediately after hooks; no physical/constraint change",
+  "job120013_result": "All six pass edits/legalization/geometry/X8 and initial pin-access; all later fail DRT iteration0 on retained services.store.leaf/rsp_data[81] access. Actual guard site is ~500um away; do not remove guard.",
+  "resume_job": 120019,
+  "resume_run": "cu/runs/C-v25-joint-e20-h30",
+  "resume_change": "Only replay frozen v24 edited ODB into routing, explicitly rip all S non-PG nets except proved rsp14/52 wires. Existing dot/antenna/spacing and timing edits retained.",
+  "resume_function_binding": "v24 legalized.v and v25 legalized.v independently cmp byte-identical; actual-synth proof120016 targets that frozen netlist; final netlist binding pending",
+  "source_access_comparison": {
+    "original_main": "via_access_layer metal10",
+    "v24_inherited_diagnostic_setting": "metal1",
+    "v25_job": 120019,
+    "v25_change": "metal1 but rebuild all S signal accesses except two patches",
+    "v26_job": 120021,
+    "v26_change": "Restore original source metal10; otherwise same frozen v24 edited ODB and original ripup scope",
+    "not_claimed": "No single-factor attribution before actual outcomes",
+    "v26_result": "Same rsp_data81 DRT1231, so restoring source access layer alone is insufficient.",
+    "v25_result": "Passed whole iteration0 and into iteration1; chosen as runnable implementation, still no acceptance."
+  },
+  "functional_result": {
+    "job": 120016,
+    "actual_synth_to_legalized": "PASS data/state/control all UNSAT zero unmatched",
+    "gate_sha256": "1818db9cbc82f8ecea2df10930ccaef53e736f6161df7c6c90c6bc5031b14de4",
+    "states": 21095,
+    "v25_legalized": "byte identical",
+    "final_physical_and_netlist_binding": "pending"
+  },
+  "remaining_matrix_job": 120022,
+  "remaining_matrix_resources": "5x8 on node22, alongside v25 e20h30 job120019 x8 =6 pipelines48CPU on same node",
+  "final_acceptance": "pending",
+  "v25_later_failure": "After iteration0/1 succeeded, iteration2 failed R rsp_data379 retained access. Guard hundreds of um away; no guard removal.",
+  "job120022_result": "Canceled by owner after exact job command and five internal steps audited, common failure reproduced in pilot; immutable edits/logs retained.",
+  "latest_pilot": {
+    "job": 120023,
+    "run": "cu/runs/C-v27-joint-e20-h30",
+    "changes": "Original metal10 via access; explicit all five macros non-PG including clock route access refresh; S14/52 proved wires preserved",
+    "macro_nets": 1750,
+    "old_wires_ripped": 1631,
+    "selected_outputs": 153,
+    "selected_driver": "BUF_X8",
+    "geometry": "exact unchanged",
+    "functional": "legalized.v byte identical to independently proved gate1818db9c",
+    "acceptance": "pending actual DRT, extraction, STA, physical, final binding and views",
+    "result": {
+      "native_drc_report_bytes": 0,
+      "gds_generated": true,
+      "pg_vdd": 1,
+      "pg_vss": 1,
+      "fresh_max_count": 182,
+      "fresh_max_ns": -0.329056352,
+      "fresh_min_count": 229,
+      "fresh_min_ns": -0.126401782,
+      "cap_count": 304,
+      "slew_count": 124,
+      "fanout_count": 0,
+      "accepted": false
+    }
+  },
+  "actual_diagnostics": {
+    "job": 120030,
+    "drivers": 304,
+    "resize_buffers": 276,
+    "other_drivers_to_isolate": 28,
+    "all_net_types": "SIGNAL",
+    "external_driving_ports": 0,
+    "largest_bad_cap_fF": 288.829986572,
+    "async_violators": "none reported",
+    "rc_state_job": 120033,
+    "rc_state_result": "setRC/remove_fillers/SPEF reread each preserve exact182/229/304/124 counts; do not infer imported SPEF was discarded"
+  },
+  "static_sizing": {
+    "job": 120045,
+    "scope": "Same extracted wire network with changed cell models; NOT postroute qualification",
+    "BUF8": {
+      "max_count": 166,
+      "min_count": 433,
+      "cap_count": 28,
+      "slew_count": 0,
+      "WNS_ns": -0.32059288,
+      "WHS_ns": -0.209422544
+    },
+    "BUF16": {
+      "max_count": 166,
+      "min_count": 421,
+      "cap_count": 28,
+      "slew_count": 0,
+      "WNS_ns": -0.32059288,
+      "WHS_ns": -0.199228138
+    },
+    "BUF32": {
+      "max_count": 166,
+      "min_count": 370,
+      "cap_count": 29,
+      "slew_count": 0,
+      "WNS_ns": -0.32059288,
+      "WHS_ns": -0.162932172
+    },
+    "physical_cell_fix": "Unique _287569_ OAI221_X4 replaced with OAI221_X2; endpoint proved isolated source X4 M1.5 fails and X2 full-deck0"
+  }
+}

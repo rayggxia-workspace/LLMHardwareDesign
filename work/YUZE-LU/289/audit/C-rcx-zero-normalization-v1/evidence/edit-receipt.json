@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "accepted": false,
+  "scope": "Input DEF normalization only, exact net connectivity and material conserved; needs new extraction and all-net before/after fixed-point check before binding SPEF.",
+  "target_nets": [
+    "services.engine\\[1\\].b\\[15\\]",
+    "services.store.pending_data\\[73\\]"
+  ],
+  "zero_extension_edits": [
+    {
+      "net": "services.engine\\[1\\].b\\[15\\]",
+      "original_point": "( * 1436400 0 )",
+      "body_offset": 1423,
+      "reason": "Zero extension is union-redundant: removing it changes no actual per-layer metal/via material."
+    },
+    {
+      "net": "services.store.pending_data\\[73\\]",
+      "original_point": "( * 1145700 0 )",
+      "body_offset": 834,
+      "reason": "Zero extension is union-redundant: removing it changes no actual per-layer metal/via material."
+    }
+  ],
+  "all_other_net_bodies_exact": true,
+  "all_non_NETS_text_exact": true,
+  "net_count": 272347,
+  "source_sha256": {
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-main-clock4-physical-v1/rcx-material-119977/before.def": "c589e6cf725c077e3c5246becdc8e6f364dd4fb1c194ed4312d68da64a521f21",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-main-clock4-physical-v1/rcx-material-119977/after.def": "7f99a61cc42c1c2b298dc56c5810f873af9886d964ae62eb02cb01f577b5ddf6",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-main-clock4-physical-v1/rcx-material-119977/layers.tsv": "e988358b3f1cf3e26f0958d097a22c6235cff25e5ee7dfc095f8cff3c9a1a1ed",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-main-clock4-physical-v1/rcx-material-119977/vias.tsv": "adf1931049f04ce6f99349c21f673bd8e826131d512a2431358f86dbd853f23a",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-main-clock4-physical-v1/rcx-material-119977/material/receipt.json": "185391f658792ae1c9b9aeeb4cd84f97196990aa38acafae523b220bb684217b",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-rcx-zero-normalization-v1/parser-source.py": "9a734d3597dd6ea25e16370523d8164f65d452240216fe5441865d0d1a924447",
+    "normalize.py": "1e9bb4685bde0121933e7281b5cb592ab4b0af33887930d2398ad86bdaa3067e",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-rcx-zero-normalization-v1/normalized.def": "13ef32216a20553d8d775c7e72bb9d931e97bf21a72d6fa6fa9dd011aa19d22c"
+  }
+}
