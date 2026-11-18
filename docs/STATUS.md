@@ -1,8 +1,8 @@
-## 2026-11-18 20:05 三项补齐 v5 进展（Asia/Shanghai）
+## 2026-11-18 20:18 三项补齐 v5 进展（Asia/Shanghai）
 
 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。保持 300 MHz、512-bit 数据 SRAM、三 P；M 时序闭合不作前置条件。
 
-BSCC 可登录；四版读 DMA 综合后无寄生配对标定 38855808–11 全部 COMPLETED 0:0，不再等待布局布线。母控外围 38850581 与特殊函数/Conv4 引脚复标 38855639/40 已通过。Qwen3、Llama、Granite 的 E32 18 周期双阶段通过，已对 9 窗积分四种互斥 DMA 场景并核对单位/去重；其余四模型 E32 重测继续运行且均 UNLIMITED。特殊候选替换场景单列，保持复合运算/转换/新周期尚未集成的限制。
+BSCC 可登录；四版读 DMA 综合后无寄生配对标定 38855808–11 全部 COMPLETED 0:0，不再等待布局布线。母控外围 38850581 与特殊函数/Conv4 引脚复标 38855639/40 已通过。Qwen3、Llama、Granite 的 E32 18 周期双阶段通过，连同 Falcon prefill 已对 10 窗积分四种互斥 DMA 场景并核对单位/去重；Falcon prefill 4.234239 tok/s 已通过；另 7 个 E32 阶段仍运行且均 UNLIMITED。七模型基线观察全部通过。特殊候选替换场景单列，保持复合运算/转换/新周期尚未集成的限制。
 
 完整物理部署、原生 provider/路由参数、实际门控及整模型 RTL 状态驻留仍需实现验证；不能把上述 TLM 审计或局部候选测试写成三项全部完成。PDF 持续更新，原 v4 的 25 页保留为历史快照。源码积分 03cc4e99、引脚校准 30b6095c；[完整回执、结果、作业命令与全部剩余步骤](handoffs/2026-11-18-issue-280-closure-v5.md)。
 
