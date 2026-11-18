@@ -102,9 +102,9 @@ def counts(r,out,bundle):
                     if sha(candidate)!=spec[stage]['equivalent_original_plan_sha256']:continue
                     rp=candidate.parent.parent/'result.json'
                     if not rp.is_file():continue
-                    result=json.loads(rp.read_text())
-                    if result.pop('plan_sha256',None)!=sha(candidate):continue
-                    digest=sha256(json.dumps(result,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+                    frozen_result=json.loads(rp.read_text())
+                    if frozen_result.pop('plan_sha256',None)!=sha(candidate):continue
+                    digest=sha256(json.dumps(frozen_result,sort_keys=True,separators=(',',':')).encode()).hexdigest()
                     if digest==spec[stage]['full_result_without_plan_sha256']:matched.append(candidate)
                 if len(matched)!=1:raise ValueError('original Qwen3 frozen pilot is not uniquely bound')
                 path=matched[0];binding='original accepted pilot: full result identical except relocated plan SHA; current plan unavailable on old host'
@@ -115,7 +115,7 @@ def counts(r,out,bundle):
                 name='prefill' if stage=='prefill' else ('first_token' if phase['position']==512 else 'decode')
                 row=result.setdefault(name,{'instructions':0,'calls_by_site':[0]*4,'pages':[],'page_counts':Counter()})
                 items=phase['ingress']+[p for layer in phase['layers'] for p in layer]
-                if stage=='decode':items+=phase['head']
+                if stage=='decode':items+=phase['vocabulary']
                 for item in items:
                     if sha(path.parent/item['path'])!=sealed.get(item['path']):raise ValueError('plan image SHA differs '+item['path'])
                     counted=page_counts(path.parent/item['path'],item)
@@ -139,6 +139,13 @@ def counts(r,out,bundle):
 if __name__=='__main__':
     bundle,out=map(Path,sys.argv[1:3]);out.mkdir()
     r=Path('/public/home/yuzelu/Melodydt/runs/issue-280')
-    save(out/'mother-runtime.json',mother(r,out))
+    reference=r/'control-expansion-20261118-01/followup-120310/mother-runtime.json'
+    if reference.exists():
+        measured=json.loads(reference.read_text())
+        assert measured['parameters']['SERVICE_STALL_LIMIT'][1]==2000000 and len(measured['windows'])==6
+        assert measured['netlist_sha256']==sha(r/'control-expansion-20261118-01/mother-120304/mapped.v')
+        measured['reused_result_sha256']=sha(reference)
+        save(out/'mother-runtime.json',measured)
+    else:save(out/'mother-runtime.json',mother(r,out))
     save(out/'model-control-counts.json',counts(r,out,bundle))
     print('CONTROL_GAP_FOLLOWUP_PASS',flush=True)
