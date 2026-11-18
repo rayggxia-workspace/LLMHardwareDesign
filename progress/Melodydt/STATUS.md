@@ -1,14 +1,16 @@
-## 2026-11-18 21:30 v5 新增五窗积分（Asia/Shanghai）
+## 2026-11-18 21:59 v5 七模型21窗条件估算齐全（Asia/Shanghai）
 
-[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。300 MHz、512-bit 数据 SRAM、三 P、无布线寄生。
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。300 MHz、512-bit 数据 SRAM、三 P。
 
-新增 Phi、Gemma、Qwen3.5 短 prefill 及 Falcon 两步 decode 共 5 窗；已完成七模型全部 prefill、Qwen3/Llama/Granite/Falcon 的两步 decode，共 15/21 窗。Falcon 38852034 于 21:24:07 COMPLETED 0:0，第二步 2.988568 tok/s。新增窗的数值、DDR/SRAM、输入输出 SHA、资源区间及功耗单位/去重/守恒均通过。四版读 DMA 的条件场景和特殊候选替换场景均同步积分，片上与片上＋DDR分开。
+七模型短 prefill、首步 decode 和第二步 decode 共 21/21 窗已完成 E32 18 周期重测验收与功耗积分。最后三项 Qwen3.5/Phi/Gemma 分别于 21:46:59/21:50:46/21:53:14 COMPLETED 0:0，14 项 E32 正式重测均已结束；连同基线共 28 个成功阶段清单 SHA 验证通过。三类账本（基础、四版 DMA 替代场景、特殊候选去重替换）已齐全，片上与片上＋DDR、W 与 mJ/token 分开报告。
 
-管理结构检查、25 份已验收阶段工件 SHA、部署/资源审计、15 窗三类账本独立对账通过。PDF 为 36 页（11 页更新＋25 页保留历史），316 组数值检查和新增页目检通过；每模型页面列 W 与 mJ/token、四种互斥 DMA 场景及未覆盖项。
+实际通过管理结构、归档 SHA 和既有结果不变性、28 阶段部署/共享资源审计、21 窗能量/W/mJ单位及守恒/去重独立复算。36 页 PDF 的 436 组数值和11页更新内容目检通过，原25页历史文本完整保留。
 
-Phi/Gemma/Qwen3.5 decode 作业 38852028/38852030/38852032 仍 RUNNING，12 核、UNLIMITED；剩余 6 窗等待其验收。每模型真实物理部署、provider/原生 ABI、路由/门控、完整 RTL 控制驻留以及特殊算子转换/复合运算/递推状态/候选周期仍需实现验证。旧布局布线不作前提，M 时序闭合不作前提。
+这完成了当前综合后、无布线寄生的条件估算。完整物理部署/provider/原生 ABI/路由/真实门控、完整 RTL 控制状态、特殊算子转换/复合运算/递推状态/候选周期及300 MHz绑定仍需实现验证；DMA唯一实例选择和 phase owner 1 活动仍待绑定。不得据此声称用户指定三项的完整硬件验收或整模型 FP32 RTL 通过。
 
-[完整交接、作业追踪与剩余步骤](../../docs/handoffs/2026-11-18-issue-280-closure-v5.md)。源码 E32 9a2f2d23、引脚标定 30b6095c；本次报告/数据以 PR 最新提交为准。Issue in_progress，PR 草稿未合并、审查人待指定；登记 PR #5 pending；看板缺配置/工具，unverified/同步 pending。未配置自动监测。
+21:55 +08 核验：本轮模型重测已无运行/等待项。旧物理作业 38769386/38795299 仍 RUNNING，分别 2-05:12:21 / 1-22:24:32；保持原状，不阻塞本轮，M 时序闭合亦不作前提。所有已提交任务 UNLIMITED。
+
+[完整结果、作业与剩余步骤](../../docs/handoffs/2026-11-18-issue-280-closure-v5.md)。E32源码9a2f2d23、引脚标定30b6095c，本次数据/报告提交以PR读回为准。Issue保持in_progress，PR草稿未合并，审查人待指定；登记PR #5 pending；看板缺配置/工具，unverified/同步pending。未配置聊天自动监测。
 
 ## 2026-11-18 七模型控制能耗补项 v4（Asia/Shanghai）
 

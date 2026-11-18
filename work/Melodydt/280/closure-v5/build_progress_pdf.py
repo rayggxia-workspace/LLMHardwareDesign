@@ -46,8 +46,11 @@ def main():
             ('LINEBELOW',(0,1),(-1,-1),.25,colors.HexColor('#c6d0db'))]))
         return t
     now=datetime.now(timezone(timedelta(hours=8))).strftime('%Y-%m-%d %H:%M +08:00')
-    story=[p('七模型能耗评估\n v5 校准进度补充',title),p(now,small),
-        p('尚未完成用户指定前三项的全量验收',head),
+    qualified=sum(len(load(f)['windows']) for f in (HERE/'timing-ledger').glob('*.json') if f.stem!='index')
+    complete=qualified==21
+    story=[p('七模型能耗评估\n v5 校准结果',title),p(now,small),
+        p('七模型 21 窗估算齐全，完整硬件绑定仍未验收' if complete else '尚未完成用户指定前三项的全量验收',head),
+        p('已积分 '+str(qualified)+'/21 窗。完成是指当前综合后条件估算，包含短 prefill 和两步 decode；不代表完整硬件实现、整模型 RTL 数值或物理签核。'),
         p('本补充报告列出已通过的新增证据与当前缺项。后附 25 页是原 v4 历史快照，原数字和文字完整保留；历史作业状态及缺项说明不代表当前状态。未通过的模型重测不填入新结果。'),
         p('固定口径：300 MHz，TLM 核心周期 3334 ps，512-bit 数据 SRAM，三 P 并行 FFN，短 prefill、代表性历史起点的两步 decode。M 时序闭合不作前置条件；本次不加载布线寄生。'),
         table([['工作项','本轮证据','尚未验收'],
@@ -66,7 +69,7 @@ def main():
             values=['%.3f'%w['tokens_per_second'],bounds(w['estimated_on_chip']['energy_mj_per_token']),bounds(w['estimated_on_chip_plus_ddr']['energy_mj_per_token'])]
             rows.append([label,*values]);numeric+=values
     story+=[table(rows,[142,85,142,142]),Spacer(1,12),
-        p('七模型未出现的窗口仍等待成功验收。所有列出的重测保持输出数值文件一致；共享 E32/M 和同一 local target 未出现非法重叠。精确区间是 TLM 执行证据，不是完整 RTL 波形。'),
+        p(('七模型全部 21 窗已通过并积分。' if complete else '七模型未出现的窗口仍等待成功验收。')+'所有列出的重测保持输出数值文件一致；共享 E32/M 和同一 local target 未出现非法重叠。精确区间是 TLM 执行证据，不是完整 RTL 波形。'),
         p('此页基础小计未加读 DMA；后面的逐模型页面已加入四种互斥 DMA 场景。共同缺项仍是完整物理部署/门控/全局时钟互连、精确全模型控制 RTL 状态、特殊候选接口与 FP32 转换，以及 DDR PHY/封装/板级 I/O。布线寄生按本路线主动排除。',small),PageBreak(),
         p('特殊候选：数值与活动标注',head),
         p('现有工具按内部网名导入未覆盖所需引脚。修正流程重读确切结构网表，将观测位转换为实际单元引脚别名，保持事件时间不变；活跃与空闲窗使用同一引脚集合。匹配集合完全标注，仍有未观测内部网络需要传播估计。')]
@@ -92,7 +95,7 @@ def main():
     else:story.append(p('修正引脚后的四版系数尚在验收，不在此填入未通过的数字。'))
     story += [Spacer(1,10),p('已通过窗的 dma-ledger 提供每版单实例的片上与片上＋DDR场景。special-candidate-ledger 另行删除匹配的旧代理，加入候选动态、残余复合运算及每个已用站点一个开钟单元的假设驻留。0.5–2 倍迁移敏感性沿用旧假设，不是实测误差；候选执行周期尚未接入模型，不能据此发布新吞吐率。',small),
         p('后续顺序',head),
-        p('1. 选择各模型匹配的 DMA 实例/owner，复用四版已完成系数；当前保留替代场景。\n2. 收齐七模型重测与 21 窗双口径账本。\n3. 补齐特殊候选的复合运算、ABI/provider 和 300 MHz 绑定。\n4. 完成真实物理控制部署与完整 RTL 状态证据。\n5. 更新报告、核验去重和数值，再交付审查。'),
+        p('1. 选择各模型匹配的 DMA 实例/owner，复用四版已完成系数；当前保留替代场景。\n2. '+('21 窗双口径账本已齐全；后续新增硬件证据时重新积分。' if complete else '收齐七模型重测与 21 窗双口径账本。')+'\n3. 补齐特殊候选的复合运算、ABI/provider 和 300 MHz 绑定。\n4. 完成真实物理控制部署与完整 RTL 状态证据。\n5. 继续补充全局时钟/互连与 PHY 等范围，更新报告并交付审查。'),
         p('详细作业、源码 commit、SSH 目标、命令、输入输出 SHA 和当前缺项：docs/handoffs/2026-11-18-issue-280-closure-v5.md；实验目录 work/Melodydt/280/closure-v5。所有新 Slurm 任务 12 核、UNLIMITED，未配置聊天自动监测。'),
         p('Issue #280 in_progress；PR #281 草稿未合并，审查人待指定。登记 PR #5 pending；看板 unverified / 同步 pending。',small)]
     labels={'prefill':'短 prefill','first_token':'首步 decode','decode':'第二步 decode'}
