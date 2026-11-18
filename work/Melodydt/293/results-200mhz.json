@@ -1972,6 +1972,662 @@
       ]
     },
     {
+      "model": "gemma",
+      "name": "Gemma3-4B",
+      "speed": {
+        "short_prefill_input_tok_s": 3.6628574372461005,
+        "decode_tok_s": 1.52423915638225,
+        "estimated_input_tok_s_to_logits": 3.0142397205570575,
+        "short_prefill_ms": 546.0217969890986,
+        "decode_interval_ms": 656.0650248439224,
+        "estimated_prefill_to_logits_s": 169.86041173439847,
+        "first_prefill_including_boot_ms": 272.7416710535946,
+        "second_prefill_increment_ms": 273.2801259355039,
+        "decode_second_body_ms": 389.881755418093,
+        "decode_tail_ms": 266.18326942582934,
+        "representative_300_vs_original_max_percent": 0.49700799584357913,
+        "whole_model_200_error_percent": null,
+        "full_prefill512_error_percent": null,
+        "inherited_attention_nonlinearity_percent": 1.321025012846395
+      },
+      "windows": {
+        "prefill": {
+          "tokens": 2,
+          "duration_s": 0.5460217969890985,
+          "tokens_per_second": 3.662857437246101,
+          "scopes": {
+            "on_chip": {
+              "energy_j_per_token": [
+                0.22548494987103285,
+                0.22643841628573422
+              ],
+              "average_power_w": [
+                0.8259192256221769,
+                0.8294116371704302
+              ],
+              "tokens_per_joule": [
+                4.41621177361591,
+                4.434885789814152
+              ],
+              "energy_j_per_window": [
+                0.4509698997420657,
+                0.45287683257146844
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "energy_j_per_token": [
+                0.9984441653667021,
+                0.9993976317814035
+              ],
+              "average_power_w": [
+                3.6571586367884006,
+                3.660651048336654
+              ],
+              "tokens_per_joule": [
+                1.0006027312847667,
+                1.0015582590266592
+              ],
+              "energy_j_per_window": [
+                1.9968883307334042,
+                1.998795263562807
+              ]
+            }
+          },
+          "components_j": {
+            "ddr_devices": [
+              1.5459184309913385,
+              1.5459184309913385
+            ],
+            "m_clocked_idle_3x": [
+              0.2609479034757695,
+              0.2609479034757695
+            ],
+            "m_busy_increment": [
+              0.002855522700492796,
+              0.004387917466828801
+            ],
+            "m_ordinary_projection_increment": [
+              0.0005698504336204223,
+              0.0008756563800846331
+            ],
+            "s_p_clocked_idle_4x": [
+              0.10117423999952989,
+              0.10117423999952989
+            ],
+            "s_p_access_increment": [
+              0.0002150635090430469,
+              0.0002150635090430469
+            ],
+            "mother_pm_clocked_idle_4_macros": [
+              0.021628477851496544,
+              0.021628477851496544
+            ],
+            "mother_pm_page_install_and_readback_increment": [
+              1.0193141544387881e-07,
+              1.019314228604662e-07
+            ],
+            "lc_pm_loaded_quiet_4x": [
+              0.04282859174501359,
+              0.04284589692885416
+            ],
+            "lc_pm_boot_crc_increment": [
+              2.242231203949995e-10,
+              2.242231203949995e-10
+            ],
+            "lc_pm_runtime_read_increment": [
+              9.586461997119e-06,
+              1.462568716364923e-05
+            ],
+            "lc_descriptor_fetch_quiet_4x": [
+              0.00782383548024355,
+              0.007823842303131715
+            ],
+            "lc_descriptor_fetch_active_increment": [
+              1.7521083222822392e-05,
+              1.9414762630760718e-05
+            ],
+            "g32_down_idle_1x": [
+              0.001032340083259231,
+              0.001032340083259231
+            ],
+            "g32_active_increment": [
+              0.0,
+              0.0
+            ],
+            "cohort_switch_idle_1x": [
+              3.4399008096457993e-05,
+              3.443734128734486e-05
+            ],
+            "u_add2_logic_active_increment": [
+              0.0002980822546601705,
+              0.0002980822546601705
+            ],
+            "u_add_chain_clocked_idle_1x": [
+              0.0029948965192125097,
+              0.0029948965192125097
+            ],
+            "write_dma_clocked_idle_1x": [
+              0.0016507231162526284,
+              0.001652077698229042
+            ],
+            "write_dma_active_increment": [
+              5.532629198945693e-07,
+              5.894235654070208e-07
+            ],
+            "pm_transport_clocked_idle_1x": [
+              0.0008447717374425259,
+              0.0008455285776547088
+            ],
+            "pm_transport_install_increment": [
+              4.654584017691214e-08,
+              3.720206959881133e-07
+            ],
+            "native_mother_core_reference_1x": [
+              0.0060433923183142585,
+              0.006085368132725315
+            ]
+          },
+          "resident_reintegration": {
+            "m_clocked_idle_3x": {
+              "leakage_fraction_300": [
+                0.07826643288560493,
+                0.07826643288560493
+              ],
+              "time_ratio": 1.381143109902664,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "s_p_clocked_idle_4x": {
+              "leakage_fraction_300": [
+                0.49362234256789694,
+                0.49362234256789694
+              ],
+              "time_ratio": 1.381143109902664,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "mother_pm_clocked_idle_4_macros": {
+              "leakage_fraction_300": [
+                0.5844166954158889,
+                0.5844166954158889
+              ],
+              "time_ratio": 1.381143109902664,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_pm_loaded_quiet_4x": {
+              "leakage_fraction_300": [
+                0.054560193285852564,
+                0.05482171491624477
+              ],
+              "time_ratio": 1.381143109902664,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_descriptor_fetch_quiet_4x": {
+              "leakage_fraction_300": [
+                0.08310985685992976,
+                0.08310965210353585
+              ],
+              "time_ratio": 1.381143109902664,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "g32_down_idle_1x": {
+              "leakage_fraction_300": [
+                0.2660279521409563,
+                0.2660279521409563
+              ],
+              "time_ratio": 1.381143109902664,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "cohort_switch_idle_1x": {
+              "leakage_fraction_300": [
+                0.47048774839554447,
+                0.4709731856775403
+              ],
+              "time_ratio": 1.381143109902664,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "u_add_chain_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.11746634735443505,
+                0.11746634735443505
+              ],
+              "time_ratio": 1.381143109902664,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "write_dma_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.08036570411421404,
+                0.08038537010286334
+              ],
+              "time_ratio": 1.381143109902664,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "pm_transport_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.07297218969931515,
+                0.07293569098450302
+              ],
+              "time_ratio": 1.381143109902664,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "native_mother_core_reference_1x": {
+              "leakage_fraction_300": [
+                0.09321722717430331,
+                0.092778563757305
+              ],
+              "time_ratio": 1.381143109902664,
+              "dynamic_power_ratio": 0.6666666666666666
+            }
+          },
+          "ddr_reintegration": {
+            "source": "six-model-results\\gemma\\prefill\\ddr-window-energy.json",
+            "command_ratio": 1.0060369726042542,
+            "background_refresh_ratio": 1.373086741781009,
+            "original_command_j": 0.331262150881536,
+            "original_background_refresh_j": 0.88316085406752,
+            "estimated_j": 1.5459184309913385
+          },
+          "m_increment_energy_ratios": [
+            0.9998000399920013,
+            0.9997592348792655
+          ],
+          "event_energy_assumption": "same accepted event counts; unchanged event coefficients at fixed V and temperature"
+        },
+        "decode": {
+          "tokens": 1,
+          "duration_s": 0.6560650248439224,
+          "tokens_per_second": 1.5242391563822497,
+          "scopes": {
+            "on_chip": {
+              "energy_j_per_token": [
+                0.5408836464628578,
+                0.542745828243087
+              ],
+              "average_power_w": [
+                0.8244360329855014,
+                0.8272744433712285
+              ],
+              "tokens_per_joule": [
+                1.842483070274501,
+                1.8488264648775428
+              ],
+              "energy_j_per_window": [
+                0.5408836464628578,
+                0.542745828243087
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "energy_j_per_token": [
+                2.180679968868089,
+                2.1825421506483185
+              ],
+              "average_power_w": [
+                3.323877796087167,
+                3.326716206472894
+              ],
+              "tokens_per_joule": [
+                0.45818130005093033,
+                0.4585725618963994
+              ],
+              "energy_j_per_window": [
+                2.180679968868089,
+                2.1825421506483185
+              ]
+            }
+          },
+          "components_j": {
+            "ddr_devices": [
+              1.6397963224052312,
+              1.6397963224052312
+            ],
+            "m_clocked_idle_3x": [
+              0.31353838568502823,
+              0.31353838568502823
+            ],
+            "m_busy_increment": [
+              0.001427761350246398,
+              0.0021939587334144
+            ],
+            "m_ordinary_projection_increment": [
+              0.001897147785308858,
+              0.002915237866214721
+            ],
+            "s_p_clocked_idle_4x": [
+              0.12156452479530187,
+              0.12156452479530187
+            ],
+            "s_p_access_increment": [
+              0.0003030934274412891,
+              0.0003030934274412891
+            ],
+            "mother_pm_clocked_idle_4_macros": [
+              0.02598740185322969,
+              0.02598740185322969
+            ],
+            "mother_pm_page_install_and_readback_increment": [
+              5.121660178540057e-08,
+              5.121660551201093e-08
+            ],
+            "lc_pm_loaded_quiet_4x": [
+              0.051460108849433986,
+              0.051480901656477396
+            ],
+            "lc_pm_boot_crc_increment": [
+              0.0,
+              0.0
+            ],
+            "lc_pm_runtime_read_increment": [
+              5.3835388853104364e-06,
+              8.213453054271146e-06
+            ],
+            "lc_descriptor_fetch_quiet_4x": [
+              0.009400622552112558,
+              0.009400630750060554
+            ],
+            "lc_descriptor_fetch_active_increment": [
+              9.839441586601195e-06,
+              1.090288884503829e-05
+            ],
+            "g32_down_idle_1x": [
+              0.0012403941126628072,
+              0.0012403941126628072
+            ],
+            "g32_active_increment": [
+              0.0,
+              0.0
+            ],
+            "cohort_switch_idle_1x": [
+              4.133165786760629e-05,
+              4.137771658901672e-05
+            ],
+            "u_add2_logic_active_increment": [
+              0.00014904112733008526,
+              0.00014904112733008526
+            ],
+            "u_add_chain_clocked_idle_1x": [
+              0.0035984769657855997,
+              0.0035984769657855997
+            ],
+            "write_dma_clocked_idle_1x": [
+              0.001983403791289196,
+              0.0019850313707428175
+            ],
+            "write_dma_active_increment": [
+              2.7663145994728465e-07,
+              2.947117827035104e-07
+            ],
+            "pm_transport_clocked_idle_1x": [
+              0.0010150239312218146,
+              0.0010159333022310793
+            ],
+            "pm_transport_install_increment": [
+              2.233656286409926e-08,
+              1.8573088559568033e-07
+            ],
+            "native_mother_core_reference_1x": [
+              0.007261355413501145,
+              0.00731179087940432
+            ]
+          },
+          "resident_reintegration": {
+            "m_clocked_idle_3x": {
+              "leakage_fraction_300": [
+                0.07826643288560493,
+                0.07826643288560493
+              ],
+              "time_ratio": 1.4420577348005699,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "s_p_clocked_idle_4x": {
+              "leakage_fraction_300": [
+                0.49362234256789694,
+                0.49362234256789694
+              ],
+              "time_ratio": 1.4420577348005699,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "mother_pm_clocked_idle_4_macros": {
+              "leakage_fraction_300": [
+                0.5844166954158889,
+                0.5844166954158889
+              ],
+              "time_ratio": 1.4420577348005699,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_pm_loaded_quiet_4x": {
+              "leakage_fraction_300": [
+                0.054560193285852564,
+                0.05482171491624477
+              ],
+              "time_ratio": 1.4420577348005699,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_descriptor_fetch_quiet_4x": {
+              "leakage_fraction_300": [
+                0.08310985685992976,
+                0.08310965210353585
+              ],
+              "time_ratio": 1.4420577348005699,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "g32_down_idle_1x": {
+              "leakage_fraction_300": [
+                0.2660279521409563,
+                0.2660279521409563
+              ],
+              "time_ratio": 1.4420577348005699,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "cohort_switch_idle_1x": {
+              "leakage_fraction_300": [
+                0.47048774839554447,
+                0.4709731856775403
+              ],
+              "time_ratio": 1.4420577348005699,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "u_add_chain_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.11746634735443505,
+                0.11746634735443505
+              ],
+              "time_ratio": 1.4420577348005699,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "write_dma_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.08036570411421404,
+                0.08038537010286334
+              ],
+              "time_ratio": 1.4420577348005699,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "pm_transport_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.07297218969931515,
+                0.07293569098450302
+              ],
+              "time_ratio": 1.4420577348005699,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "native_mother_core_reference_1x": {
+              "leakage_fraction_300": [
+                0.09321722717430331,
+                0.092778563757305
+              ],
+              "time_ratio": 1.4420577348005699,
+              "dynamic_power_ratio": 0.6666666666666666
+            }
+          },
+          "ddr_reintegration": {
+            "source": "six-model-results\\gemma\\decode\\ddr-window-energy.json",
+            "command_ratio": 1.006470947231047,
+            "background_refresh_ratio": 1.4278968657714268,
+            "original_command_j": 0.21412425054988798,
+            "original_background_refresh_j": 0.997471539626688,
+            "estimated_j": 1.6397963224052312
+          },
+          "m_increment_energy_ratios": [
+            0.9998000399920012,
+            0.9997948055299098
+          ],
+          "event_energy_assumption": "same accepted event counts; unchanged event coefficients at fixed V and temperature"
+        }
+      },
+      "baseline_300": {
+        "speed": {
+          "short_prefill_input_tok_s": 5.058930312008182,
+          "decode_tok_s": 2.1980408651469188,
+          "estimated_input_tok_s_to_logits": 4.220937968165124
+        },
+        "windows": {
+          "prefill": {
+            "tokens": 2,
+            "duration_s": 0.395340492288,
+            "tokens_per_second": 5.058930312008182,
+            "scopes": {
+              "on_chip": {
+                "average_power_w": [
+                  1.1367798535230103,
+                  1.1415998239701095
+                ],
+                "energy_j_per_token": [
+                  0.2247075534574337,
+                  0.22566031820211863
+                ],
+                "tokens_per_joule": [
+                  4.431439288782371,
+                  4.450228684410601
+                ],
+                "energy_j_per_window": [
+                  0.4494151069148674,
+                  0.45132063640423725
+                ]
+              },
+              "on_chip_plus_ddr": {
+                "average_power_w": [
+                  4.208620529191432,
+                  4.213440499638531
+                ],
+                "energy_j_per_token": [
+                  0.8319190559319618,
+                  0.8328718206766467
+                ],
+                "tokens_per_joule": [
+                  1.2006649464830903,
+                  1.2020400216457894
+                ],
+                "energy_j_per_window": [
+                  1.6638381118639236,
+                  1.6657436413532933
+                ]
+              }
+            },
+            "ddr_share_percent": [
+              72.9057566122496,
+              72.9892527578054
+            ],
+            "ddr_energy_j_per_window": [
+              1.214423004949056,
+              1.214423004949056
+            ]
+          },
+          "decode": {
+            "tokens": 1,
+            "duration_s": 0.454950595258,
+            "tokens_per_second": 2.1980408651469188,
+            "scopes": {
+              "on_chip": {
+                "average_power_w": [
+                  1.1350831826315213,
+                  1.1391657651534581
+                ],
+                "energy_j_per_token": [
+                  0.5164067696055558,
+                  0.5182641429541008
+                ],
+                "tokens_per_joule": [
+                  1.9295180143083202,
+                  1.93645796077349
+                ],
+                "energy_j_per_window": [
+                  0.5164067696055558,
+                  0.5182641429541008
+                ]
+              },
+              "on_chip_plus_ddr": {
+                "average_power_w": [
+                  3.7982202414796067,
+                  3.8023028240015435
+                ],
+                "energy_j_per_token": [
+                  1.7280025597821316,
+                  1.7298599331306768
+                ],
+                "tokens_per_joule": [
+                  0.5780814855860692,
+                  0.578702846439117
+                ],
+                "energy_j_per_window": [
+                  1.7280025597821316,
+                  1.7298599331306768
+                ]
+              }
+            },
+            "ddr_share_percent": [
+              70.04010943151025,
+              70.11539325088357
+            ],
+            "ddr_energy_j_per_window": [
+              1.211595790176576,
+              1.211595790176576
+            ]
+          }
+        }
+      },
+      "selected_layers": [
+        0,
+        5,
+        17,
+        33
+      ],
+      "numerical_layer_checks": 32,
+      "passed_frequency_transaction_checks": [
+        "prefill",
+        "decode"
+      ],
+      "not_included": [
+        "Read DMA mapped-cell idle/leakage and measured read activity; write-price proxy is sensitivity only.",
+        "Mother PM runtime instruction fetch and controller boot/deployment activity outside sampled C639 states.",
+        "Local controller shell, dispatch, switch active traffic and other unbound control; only named leaves are included.",
+        "RMS/normalization, softmax, rotary, extra scaling and unbound arithmetic; GELU, sigmoid, router, GDN/Mamba2 as applicable.",
+        "DDR PHY and board I/O; these are not contained in the DDR device model.",
+        "Unsynthesized global clock buffers/clock generation and unbound cross-block interconnect cells. Wire RC is excluded by choice."
+      ],
+      "speed_ratio_sensitivity": {
+        "('prefill', 0)": [
+          271958299339.72095,
+          273236842714.87823
+        ],
+        "('prefill', 1)": [
+          273051803685.6136,
+          273479175986.3377
+        ],
+        "('decode', 0)": [
+          389069490586.9884,
+          389983339082.636
+        ],
+        "('decode', 1)": [
+          389726332716.8256,
+          390182721367.4192
+        ]
+      },
+      "sample_paths": [
+        "results\\run-38837935\\gemma-decode-3334\\samples.json",
+        "results\\run-38837935\\gemma-decode-5000\\samples.json",
+        "results\\run-38837935\\gemma-prefill-3334\\samples.json",
+        "results\\run-38837935\\gemma-prefill-5000\\samples.json"
+      ]
+    },
+    {
       "model": "granite",
       "name": "Granite3.1-3B-A800M",
       "speed": {
@@ -2625,13 +3281,1321 @@
         "results\\run-38832271\\granite-prefill-3334\\samples.json",
         "results\\run-38832271\\granite-prefill-5000\\samples.json"
       ]
+    },
+    {
+      "model": "qwen35",
+      "name": "Qwen3.5-4B",
+      "speed": {
+        "short_prefill_input_tok_s": 2.9094379924144214,
+        "decode_tok_s": 1.5352215946461987,
+        "estimated_input_tok_s_to_logits": 2.690173129462717,
+        "short_prefill_ms": 687.4179842342278,
+        "decode_interval_ms": 651.3717651492885,
+        "estimated_prefill_to_logits_s": 190.32232327079146,
+        "first_prefill_including_boot_ms": 343.93377351754435,
+        "second_prefill_increment_ms": 343.4842107166833,
+        "decode_second_body_ms": 399.3025982761624,
+        "decode_tail_ms": 252.06916687312614,
+        "representative_300_vs_original_max_percent": 0.4013279533060743,
+        "whole_model_200_error_percent": null,
+        "full_prefill512_error_percent": null,
+        "inherited_attention_nonlinearity_percent": 0.9583374577357233
+      },
+      "windows": {
+        "prefill": {
+          "tokens": 2,
+          "duration_s": 0.6874179842342277,
+          "tokens_per_second": 2.9094379924144214,
+          "scopes": {
+            "on_chip": {
+              "energy_j_per_token": [
+                0.28356092010712447,
+                0.28462667790189783
+              ],
+              "average_power_w": [
+                0.8250029141236584,
+                0.8281036703424838
+              ],
+              "tokens_per_joule": [
+                3.5133741059391124,
+                3.5265790491236135
+              ],
+              "energy_j_per_window": [
+                0.5671218402142489,
+                0.5692533558037957
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "energy_j_per_token": [
+                1.2438697856373548,
+                1.2449355434321283
+              ],
+              "average_power_w": [
+                3.6189620119497024,
+                3.6220627681685285
+              ],
+              "tokens_per_joule": [
+                0.8032544377704308,
+                0.8039426727353163
+              ],
+              "energy_j_per_window": [
+                2.4877395712747097,
+                2.4898710868642566
+              ]
+            }
+          },
+          "components_j": {
+            "ddr_devices": [
+              1.9206177310604609,
+              1.9206177310604609
+            ],
+            "m_clocked_idle_3x": [
+              0.32852219963856627,
+              0.32852219963856627
+            ],
+            "m_busy_increment": [
+              0.0024187956992409573,
+              0.0037168242071961622
+            ],
+            "m_ordinary_projection_increment": [
+              0.0013898561365846271,
+              0.0021357119721185937
+            ],
+            "s_p_clocked_idle_4x": [
+              0.12737402151419128,
+              0.12737402151419128
+            ],
+            "s_p_access_increment": [
+              0.00021597202479543747,
+              0.00021597202479543747
+            ],
+            "mother_pm_clocked_idle_4_macros": [
+              0.027229324412899276,
+              0.027229324412899276
+            ],
+            "mother_pm_page_install_and_readback_increment": [
+              6.566581899812957e-08,
+              6.566582376712514e-08
+            ],
+            "lc_pm_loaded_quiet_4x": [
+              0.053919357006064234,
+              0.05394114348905463
+            ],
+            "lc_pm_boot_crc_increment": [
+              2.242231203949995e-10,
+              2.242231203949995e-10
+            ],
+            "lc_pm_runtime_read_increment": [
+              1.0177345232687435e-05,
+              1.5527174423105942e-05
+            ],
+            "lc_descriptor_fetch_quiet_4x": [
+              0.00984987274219866,
+              0.009849881331921736
+            ],
+            "lc_descriptor_fetch_active_increment": [
+              1.86010347574424e-05,
+              2.061143537243586e-05
+            ],
+            "g32_down_idle_1x": [
+              0.00129967181345404,
+              0.00129967181345404
+            ],
+            "g32_active_increment": [
+              1.0991660221553469e-05,
+              1.2496201292683594e-05
+            ],
+            "cohort_switch_idle_1x": [
+              4.3306873344098654e-05,
+              4.335513318455562e-05
+            ],
+            "u_add2_logic_active_increment": [
+              0.00028054800438604284,
+              0.00028054800438604284
+            ],
+            "u_add_chain_clocked_idle_1x": [
+              0.003770446051017762,
+              0.003770446051017762
+            ],
+            "write_dma_clocked_idle_1x": [
+              0.002078189485036034,
+              0.0020798948455488216
+            ],
+            "write_dma_active_increment": [
+              1.8509221139953248e-05,
+              1.9718963127507672e-05
+            ],
+            "pm_transport_clocked_idle_1x": [
+              0.0010635313243774803,
+              0.0010644841536892673
+            ],
+            "pm_transport_install_increment": [
+              3.104401390580017e-08,
+              2.4050784446411793e-07
+            ],
+            "native_mother_core_reference_1x": [
+              0.007608371292685129,
+              0.007661217039664741
+            ]
+          },
+          "resident_reintegration": {
+            "m_clocked_idle_3x": {
+              "leakage_fraction_300": [
+                0.07826643288560493,
+                0.07826643288560493
+              ],
+              "time_ratio": 1.3786968434743214,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "s_p_clocked_idle_4x": {
+              "leakage_fraction_300": [
+                0.49362234256789694,
+                0.49362234256789694
+              ],
+              "time_ratio": 1.3786968434743214,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "mother_pm_clocked_idle_4_macros": {
+              "leakage_fraction_300": [
+                0.5844166954158889,
+                0.5844166954158889
+              ],
+              "time_ratio": 1.3786968434743214,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_pm_loaded_quiet_4x": {
+              "leakage_fraction_300": [
+                0.054560193285852564,
+                0.05482171491624477
+              ],
+              "time_ratio": 1.3786968434743214,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_descriptor_fetch_quiet_4x": {
+              "leakage_fraction_300": [
+                0.08310985685992976,
+                0.08310965210353585
+              ],
+              "time_ratio": 1.3786968434743214,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "g32_down_idle_1x": {
+              "leakage_fraction_300": [
+                0.2660279521409563,
+                0.2660279521409563
+              ],
+              "time_ratio": 1.3786968434743214,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "cohort_switch_idle_1x": {
+              "leakage_fraction_300": [
+                0.47048774839554447,
+                0.4709731856775403
+              ],
+              "time_ratio": 1.3786968434743214,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "u_add_chain_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.11746634735443505,
+                0.11746634735443505
+              ],
+              "time_ratio": 1.3786968434743214,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "write_dma_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.08036570411421404,
+                0.08038537010286334
+              ],
+              "time_ratio": 1.3786968434743214,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "pm_transport_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.07297218969931515,
+                0.07293569098450302
+              ],
+              "time_ratio": 1.3786968434743214,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "native_mother_core_reference_1x": {
+              "leakage_fraction_300": [
+                0.09321722717430331,
+                0.092778563757305
+              ],
+              "time_ratio": 1.3786968434743214,
+              "dynamic_power_ratio": 0.6666666666666666
+            }
+          },
+          "ddr_reintegration": {
+            "source": "six-model-results\\qwen35\\prefill\\ddr-window-energy.json",
+            "command_ratio": 1.004190314320142,
+            "background_refresh_ratio": 1.3748305197558779,
+            "original_command_j": 0.37246259020723194,
+            "original_background_refresh_j": 1.124934588884736,
+            "estimated_j": 1.9206177310604609
+          },
+          "m_increment_energy_ratios": [
+            0.9998000399920017,
+            0.9999423862992466
+          ],
+          "event_energy_assumption": "same accepted event counts; unchanged event coefficients at fixed V and temperature"
+        },
+        "decode": {
+          "tokens": 1,
+          "duration_s": 0.6513717651492886,
+          "tokens_per_second": 1.5352215946461985,
+          "scopes": {
+            "on_chip": {
+              "energy_j_per_token": [
+                0.5370587440267385,
+                0.5389788953088448
+              ],
+              "average_power_w": [
+                0.824504181423414,
+                0.8274520391366912
+              ],
+              "tokens_per_joule": [
+                1.8553602167056684,
+                1.86199370389585
+              ],
+              "energy_j_per_window": [
+                0.5370587440267385,
+                0.5389788953088448
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "energy_j_per_token": [
+                2.2074764036636507,
+                2.209396554945757
+              ],
+              "average_power_w": [
+                3.3889654445763653,
+                3.391913302289642
+              ],
+              "tokens_per_joule": [
+                0.4526122744970747,
+                0.45300597475938786
+              ],
+              "energy_j_per_window": [
+                2.2074764036636507,
+                2.209396554945757
+              ]
+            }
+          },
+          "components_j": {
+            "ddr_devices": [
+              1.6704176596369122,
+              1.6704176596369122
+            ],
+            "m_clocked_idle_3x": [
+              0.3112954417503076,
+              0.3112954417503076
+            ],
+            "m_busy_increment": [
+              0.0012093978496204789,
+              0.0018584121035980818
+            ],
+            "m_ordinary_projection_increment": [
+              0.002221774845055883,
+              0.0034140735944067696
+            ],
+            "s_p_clocked_idle_4x": [
+              0.12069489470847498,
+              0.12069489470847498
+            ],
+            "s_p_access_increment": [
+              0.00020766123104003326,
+              0.00020766123104003326
+            ],
+            "mother_pm_clocked_idle_4_macros": [
+              0.025801497070826403,
+              0.025801497070826403
+            ],
+            "mother_pm_page_install_and_readback_increment": [
+              3.308380356252594e-08,
+              3.3083805965340396e-08
+            ],
+            "lc_pm_loaded_quiet_4x": [
+              0.0510919812315931,
+              0.05111262529416828
+            ],
+            "lc_pm_boot_crc_increment": [
+              0.0,
+              0.0
+            ],
+            "lc_pm_runtime_read_increment": [
+              5.647623992541118e-06,
+              8.616357291944595e-06
+            ],
+            "lc_descriptor_fetch_quiet_4x": [
+              0.00933337378673478,
+              0.009333381926037521
+            ],
+            "lc_descriptor_fetch_active_increment": [
+              1.0322107364975668e-05,
+              1.1437721160937894e-05
+            ],
+            "g32_down_idle_1x": [
+              0.0012315207670736158,
+              0.0012315207670736158
+            ],
+            "g32_active_increment": [
+              5.4958301107767344e-06,
+              6.248100646341797e-06
+            ],
+            "cohort_switch_idle_1x": [
+              4.1035985645133256e-05,
+              4.108171487856217e-05
+            ],
+            "u_add2_logic_active_increment": [
+              0.00014027400219302142,
+              0.00014027400219302142
+            ],
+            "u_add_chain_clocked_idle_1x": [
+              0.003572734720328135,
+              0.003572734720328135
+            ],
+            "write_dma_clocked_idle_1x": [
+              0.0019692152143656575,
+              0.0019708311506851984
+            ],
+            "write_dma_active_increment": [
+              9.254610569976624e-06,
+              9.859481563753836e-06
+            ],
+            "pm_transport_clocked_idle_1x": [
+              0.001007762805075629,
+              0.0010086656707627934
+            ],
+            "pm_transport_install_increment": [
+              1.4585649728543271e-08,
+              1.199744598336826e-07
+            ],
+            "native_mother_core_reference_1x": [
+              0.007209410216912281,
+              0.007259484885134828
+            ]
+          },
+          "resident_reintegration": {
+            "m_clocked_idle_3x": {
+              "leakage_fraction_300": [
+                0.07826643288560493,
+                0.07826643288560493
+              ],
+              "time_ratio": 1.4291346415307338,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "s_p_clocked_idle_4x": {
+              "leakage_fraction_300": [
+                0.49362234256789694,
+                0.49362234256789694
+              ],
+              "time_ratio": 1.4291346415307338,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "mother_pm_clocked_idle_4_macros": {
+              "leakage_fraction_300": [
+                0.5844166954158889,
+                0.5844166954158889
+              ],
+              "time_ratio": 1.4291346415307338,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_pm_loaded_quiet_4x": {
+              "leakage_fraction_300": [
+                0.054560193285852564,
+                0.05482171491624477
+              ],
+              "time_ratio": 1.4291346415307338,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_descriptor_fetch_quiet_4x": {
+              "leakage_fraction_300": [
+                0.08310985685992976,
+                0.08310965210353585
+              ],
+              "time_ratio": 1.4291346415307338,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "g32_down_idle_1x": {
+              "leakage_fraction_300": [
+                0.2660279521409563,
+                0.2660279521409563
+              ],
+              "time_ratio": 1.4291346415307338,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "cohort_switch_idle_1x": {
+              "leakage_fraction_300": [
+                0.47048774839554447,
+                0.4709731856775403
+              ],
+              "time_ratio": 1.4291346415307338,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "u_add_chain_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.11746634735443505,
+                0.11746634735443505
+              ],
+              "time_ratio": 1.4291346415307338,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "write_dma_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.08036570411421404,
+                0.08038537010286334
+              ],
+              "time_ratio": 1.4291346415307338,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "pm_transport_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.07297218969931515,
+                0.07293569098450302
+              ],
+              "time_ratio": 1.4291346415307338,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "native_mother_core_reference_1x": {
+              "leakage_fraction_300": [
+                0.09321722717430331,
+                0.092778563757305
+              ],
+              "time_ratio": 1.4291346415307338,
+              "dynamic_power_ratio": 0.6666666666666666
+            }
+          },
+          "ddr_reintegration": {
+            "source": "six-model-results\\qwen35\\decode\\ddr-window-energy.json",
+            "command_ratio": 1.0048831598532362,
+            "background_refresh_ratio": 1.4179280408908999,
+            "original_command_j": 0.22610837924236799,
+            "original_background_refresh_j": 1.017826797562848,
+            "estimated_j": 1.6704176596369122
+          },
+          "m_increment_energy_ratios": [
+            0.9998000399920021,
+            0.999850262128684
+          ],
+          "event_energy_assumption": "same accepted event counts; unchanged event coefficients at fixed V and temperature"
+        }
+      },
+      "baseline_300": {
+        "speed": {
+          "short_prefill_input_tok_s": 4.0112329764260295,
+          "decode_tok_s": 2.1940383633349363,
+          "estimated_input_tok_s_to_logits": 3.7316991191462443
+        },
+        "windows": {
+          "prefill": {
+            "tokens": 2,
+            "duration_s": 0.498599810022,
+            "tokens_per_second": 4.0112329764260295,
+            "scopes": {
+              "on_chip": {
+                "average_power_w": [
+                  1.1354981070845174,
+                  1.1397694807945935
+                ],
+                "energy_j_per_token": [
+                  0.2830795702363405,
+                  0.28414442329652895
+                ],
+                "tokens_per_joule": [
+                  3.519337062464234,
+                  3.5325756612005215
+                ],
+                "energy_j_per_window": [
+                  0.566159140472681,
+                  0.5682888465930579
+                ]
+              },
+              "on_chip_plus_ddr": {
+                "average_power_w": [
+                  4.138702578875026,
+                  4.142973952585102
+                ],
+                "energy_j_per_token": [
+                  1.0317781597823246,
+                  1.032843012842513
+                ],
+                "tokens_per_joule": [
+                  0.968201350607848,
+                  0.9692005888271285
+                ],
+                "energy_j_per_window": [
+                  2.063556319564649,
+                  2.065686025685026
+                ]
+              }
+            },
+            "ddr_share_percent": [
+              72.48909855966126,
+              72.56391138420082
+            ],
+            "ddr_energy_j_per_window": [
+              1.497397179091968,
+              1.497397179091968
+            ]
+          },
+          "decode": {
+            "tokens": 1,
+            "duration_s": 0.455780544548,
+            "tokens_per_second": 2.1940383633349363,
+            "scopes": {
+              "on_chip": {
+                "average_power_w": [
+                  1.1351056466247034,
+                  1.1393092976112889
+                ],
+                "energy_j_per_token": [
+                  0.517359069738117,
+                  0.5192750120738726
+                ],
+                "tokens_per_joule": [
+                  1.9257618347669287,
+                  1.932893532737702
+                ],
+                "energy_j_per_window": [
+                  0.517359069738117,
+                  0.5192750120738726
+                ]
+              },
+              "on_chip_plus_ddr": {
+                "average_power_w": [
+                  3.8643471460371743,
+                  3.86855079702376
+                ],
+                "energy_j_per_token": [
+                  1.761294246543333,
+                  1.7632101888790885
+                ],
+                "tokens_per_joule": [
+                  0.5671473578744017,
+                  0.5677643028486422
+                ],
+                "energy_j_per_window": [
+                  1.761294246543333,
+                  1.7632101888790885
+                ]
+              }
+            },
+            "ddr_share_percent": [
+              70.54945488921051,
+              70.6261988447716
+            ],
+            "ddr_energy_j_per_window": [
+              1.243935176805216,
+              1.243935176805216
+            ]
+          }
+        }
+      },
+      "selected_layers": [
+        0,
+        3,
+        16,
+        31
+      ],
+      "numerical_layer_checks": 32,
+      "passed_frequency_transaction_checks": [
+        "prefill",
+        "decode"
+      ],
+      "not_included": [
+        "Read DMA mapped-cell idle/leakage and measured read activity; write-price proxy is sensitivity only.",
+        "Mother PM runtime instruction fetch and controller boot/deployment activity outside sampled C639 states.",
+        "Local controller shell, dispatch, switch active traffic and other unbound control; only named leaves are included.",
+        "RMS/normalization, softmax, rotary, extra scaling and unbound arithmetic; GELU, sigmoid, router, GDN/Mamba2 as applicable.",
+        "DDR PHY and board I/O; these are not contained in the DDR device model.",
+        "Unsynthesized global clock buffers/clock generation and unbound cross-block interconnect cells. Wire RC is excluded by choice."
+      ],
+      "speed_ratio_sensitivity": {
+        "('prefill', 0)": [
+          343842451059.5601,
+          344032665858.7071
+        ],
+        "('prefill', 1)": [
+          343368643855.4868,
+          343626211081.5308
+        ],
+        "('decode', 0)": [
+          398362615397.1783,
+          398930386687.4799
+        ],
+        "('decode', 1)": [
+          399042176595.9384,
+          399427469321.38885
+        ]
+      },
+      "sample_paths": [
+        "results\\run-38837935\\qwen35-decode-3334\\samples.json",
+        "results\\run-38837935\\qwen35-decode-5000\\samples.json",
+        "results\\run-38837935\\qwen35-prefill-3334\\samples.json",
+        "results\\run-38837935\\qwen35-prefill-5000\\samples.json"
+      ]
+    },
+    {
+      "model": "falcon",
+      "name": "Falcon-H1-3B",
+      "speed": {
+        "short_prefill_input_tok_s": 3.1206011068935924,
+        "decode_tok_s": 2.1430617426977987,
+        "estimated_input_tok_s_to_logits": 2.7765892961296097,
+        "short_prefill_ms": 640.9021632344749,
+        "decode_interval_ms": 466.6221136219563,
+        "estimated_prefill_to_logits_s": 184.39889569325058,
+        "first_prefill_including_boot_ms": 320.3825249046633,
+        "second_prefill_increment_ms": 320.5196383298116,
+        "decode_second_body_ms": 399.9938800788911,
+        "decode_tail_ms": 66.62823354306519,
+        "representative_300_vs_original_max_percent": 0.20835040591933307,
+        "whole_model_200_error_percent": null,
+        "full_prefill512_error_percent": null,
+        "inherited_attention_nonlinearity_percent": 10.156185810732254
+      },
+      "windows": {
+        "prefill": {
+          "tokens": 2,
+          "duration_s": 0.6409021632344749,
+          "tokens_per_second": 3.120601106893592,
+          "scopes": {
+            "on_chip": {
+              "energy_j_per_token": [
+                0.2642162225679391,
+                0.26506275722358186
+              ],
+              "average_power_w": [
+                0.8245134366047544,
+                0.827155133588177
+              ],
+              "tokens_per_joule": [
+                3.772691457957236,
+                3.7847789597509123
+              ],
+              "energy_j_per_window": [
+                0.5284324451358782,
+                0.5301255144471637
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "energy_j_per_token": [
+                1.1301977659496907,
+                1.1310443006053337
+              ],
+              "average_power_w": [
+                3.5268963994312696,
+                3.5295380964146927
+              ],
+              "tokens_per_joule": [
+                0.8841386667744147,
+                0.8848008995662037
+              ],
+              "energy_j_per_window": [
+                2.2603955318993814,
+                2.2620886012106673
+              ]
+            }
+          },
+          "components_j": {
+            "ddr_devices": [
+              1.7319630867635034,
+              1.7319630867635034
+            ],
+            "m_clocked_idle_3x": [
+              0.30629194063558735,
+              0.30629194063558735
+            ],
+            "m_busy_increment": [
+              0.0016125304661606381,
+              0.0024778828047974416
+            ],
+            "m_ordinary_projection_increment": [
+              0.0013884417438678879,
+              0.002133538556195245
+            ],
+            "s_p_clocked_idle_4x": [
+              0.11875494648173773,
+              0.11875494648173773
+            ],
+            "s_p_access_increment": [
+              0.00017092295106457654,
+              0.00017092295106457654
+            ],
+            "mother_pm_clocked_idle_4_macros": [
+              0.025386785507337202,
+              0.025386785507337202
+            ],
+            "mother_pm_page_install_and_readback_increment": [
+              8.573734407502224e-08,
+              8.573735030935165e-08
+            ],
+            "lc_pm_loaded_quiet_4x": [
+              0.05027077169634203,
+              0.05029108394361814
+            ],
+            "lc_pm_boot_crc_increment": [
+              2.242231203949995e-10,
+              2.242231203949995e-10
+            ],
+            "lc_pm_runtime_read_increment": [
+              8.617574588455672e-06,
+              1.314749383850307e-05
+            ],
+            "lc_descriptor_fetch_quiet_4x": [
+              0.0091833569863491,
+              0.009183364994827534
+            ],
+            "lc_descriptor_fetch_active_increment": [
+              1.575025714268598e-05,
+              1.7452545593778298e-05
+            ],
+            "g32_down_idle_1x": [
+              0.0012117263380379462,
+              0.0012117263380379462
+            ],
+            "g32_active_increment": [
+              7.327773481035647e-06,
+              8.330800861789062e-06
+            ],
+            "cohort_switch_idle_1x": [
+              4.037640772531341e-05,
+              4.042140194550489e-05
+            ],
+            "u_add2_logic_active_increment": [
+              0.0005049864078948772,
+              0.0005049864078948772
+            ],
+            "u_add_chain_clocked_idle_1x": [
+              0.003515309587292939,
+              0.003515309587292939
+            ],
+            "write_dma_clocked_idle_1x": [
+              0.0019375637052243644,
+              0.0019391536683425932
+            ],
+            "write_dma_active_increment": [
+              4.586793692508286e-05,
+              4.88658139703247e-05
+            ],
+            "pm_transport_clocked_idle_1x": [
+              0.0009915648733288028,
+              0.0009924532271122699
+            ],
+            "pm_transport_install_increment": [
+              3.962364102440302e-08,
+              3.1329483147110905e-07
+            ],
+            "native_mother_core_reference_1x": [
+              0.007093532220581933,
+              0.007142802030702923
+            ]
+          },
+          "resident_reintegration": {
+            "m_clocked_idle_3x": {
+              "leakage_fraction_300": [
+                0.07826643288560493,
+                0.07826643288560493
+              ],
+              "time_ratio": 1.3772232180211474,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "s_p_clocked_idle_4x": {
+              "leakage_fraction_300": [
+                0.49362234256789694,
+                0.49362234256789694
+              ],
+              "time_ratio": 1.3772232180211474,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "mother_pm_clocked_idle_4_macros": {
+              "leakage_fraction_300": [
+                0.5844166954158889,
+                0.5844166954158889
+              ],
+              "time_ratio": 1.3772232180211474,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_pm_loaded_quiet_4x": {
+              "leakage_fraction_300": [
+                0.054560193285852564,
+                0.05482171491624477
+              ],
+              "time_ratio": 1.3772232180211474,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_descriptor_fetch_quiet_4x": {
+              "leakage_fraction_300": [
+                0.08310985685992976,
+                0.08310965210353585
+              ],
+              "time_ratio": 1.3772232180211474,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "g32_down_idle_1x": {
+              "leakage_fraction_300": [
+                0.2660279521409563,
+                0.2660279521409563
+              ],
+              "time_ratio": 1.3772232180211474,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "cohort_switch_idle_1x": {
+              "leakage_fraction_300": [
+                0.47048774839554447,
+                0.4709731856775403
+              ],
+              "time_ratio": 1.3772232180211474,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "u_add_chain_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.11746634735443505,
+                0.11746634735443505
+              ],
+              "time_ratio": 1.3772232180211474,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "write_dma_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.08036570411421404,
+                0.08038537010286334
+              ],
+              "time_ratio": 1.3772232180211474,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "pm_transport_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.07297218969931515,
+                0.07293569098450302
+              ],
+              "time_ratio": 1.3772232180211474,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "native_mother_core_reference_1x": {
+              "leakage_fraction_300": [
+                0.09321722717430331,
+                0.092778563757305
+              ],
+              "time_ratio": 1.3772232180211474,
+              "dynamic_power_ratio": 0.6666666666666666
+            }
+          },
+          "ddr_reintegration": {
+            "source": "six-model-results\\falcon\\prefill\\ddr-window-energy.json",
+            "command_ratio": 1.0058025658153324,
+            "background_refresh_ratio": 1.3747692129318456,
+            "original_command_j": 0.308364143463936,
+            "original_background_refresh_j": 1.0342169628819842,
+            "estimated_j": 1.7319630867635034
+          },
+          "m_increment_energy_ratios": [
+            0.9998000399920016,
+            0.9999401764754033
+          ],
+          "event_energy_assumption": "same accepted event counts; unchanged event coefficients at fixed V and temperature"
+        },
+        "decode": {
+          "tokens": 1,
+          "duration_s": 0.4666221136219563,
+          "tokens_per_second": 2.1430617426977987,
+          "scopes": {
+            "on_chip": {
+              "energy_j_per_token": [
+                0.3843925609716199,
+                0.3854719101857897
+              ],
+              "average_power_w": [
+                0.8237769915959096,
+                0.8260901036038079
+              ],
+              "tokens_per_joule": [
+                2.594222752879763,
+                2.6015071609927203
+              ],
+              "energy_j_per_window": [
+                0.3843925609716199,
+                0.3854719101857897
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "energy_j_per_token": [
+                1.5746904978233225,
+                1.5757698470374923
+              ],
+              "average_power_w": [
+                3.3746589624749137,
+                3.3769720744828122
+              ],
+              "tokens_per_joule": [
+                0.6346104425592597,
+                0.6350454272647794
+              ],
+              "energy_j_per_window": [
+                1.5746904978233225,
+                1.5757698470374923
+              ]
+            }
+          },
+          "components_j": {
+            "ddr_devices": [
+              1.1902979368517026,
+              1.1902979368517026
+            ],
+            "m_clocked_idle_3x": [
+              0.2230022005284761,
+              0.2230022005284761
+            ],
+            "m_busy_increment": [
+              0.0008062652330803188,
+              0.0012389414023987204
+            ],
+            "m_ordinary_projection_increment": [
+              0.0010972072349408933,
+              0.0016860152399058909
+            ],
+            "s_p_clocked_idle_4x": [
+              0.08646200201714342,
+              0.08646200201714342
+            ],
+            "s_p_access_increment": [
+              0.00019472236628942548,
+              0.00019472236628942548
+            ],
+            "mother_pm_clocked_idle_4_macros": [
+              0.018483375764745305,
+              0.018483375764745305
+            ],
+            "mother_pm_page_install_and_readback_increment": [
+              4.3119566100972275e-08,
+              4.311956923645365e-08
+            ],
+            "lc_pm_loaded_quiet_4x": [
+              0.03660067805664747,
+              0.03661546680959621
+            ],
+            "lc_pm_boot_crc_increment": [
+              0.0,
+              0.0
+            ],
+            "lc_pm_runtime_read_increment": [
+              4.457227289141814e-06,
+              6.80021596787844e-06
+            ],
+            "lc_descriptor_fetch_quiet_4x": [
+              0.006686133536340466,
+              0.006686139367079303
+            ],
+            "lc_descriptor_fetch_active_increment": [
+              8.146430904285504e-06,
+              9.026897497329449e-06
+            ],
+            "g32_down_idle_1x": [
+              0.000882222494199634,
+              0.000882222494199634
+            ],
+            "g32_active_increment": [
+              3.6638867405178234e-06,
+              4.165400430894531e-06
+            ],
+            "cohort_switch_idle_1x": [
+              2.9396881137308307e-05,
+              2.9429640112594904e-05
+            ],
+            "u_add2_logic_active_increment": [
+              0.0002524932039474386,
+              0.0002524932039474386
+            ],
+            "u_add_chain_clocked_idle_1x": [
+              0.002559394060054131,
+              0.002559394060054131
+            ],
+            "write_dma_clocked_idle_1x": [
+              0.0014106834447962567,
+              0.001411841050423713
+            ],
+            "write_dma_active_increment": [
+              2.293396846254143e-05,
+              2.443290698516235e-05
+            ],
+            "pm_transport_clocked_idle_1x": [
+              0.0007219293731993522,
+              0.0007225761575977593
+            ],
+            "pm_transport_install_increment": [
+              1.88754632878447e-08,
+              1.5636795333717817e-07
+            ],
+            "native_mother_core_reference_1x": [
+              0.005164593268196573,
+              0.005200465175416206
+            ]
+          },
+          "resident_reintegration": {
+            "m_clocked_idle_3x": {
+              "leakage_fraction_300": [
+                0.07826643288560493,
+                0.07826643288560493
+              ],
+              "time_ratio": 1.4092358560737293,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "s_p_clocked_idle_4x": {
+              "leakage_fraction_300": [
+                0.49362234256789694,
+                0.49362234256789694
+              ],
+              "time_ratio": 1.4092358560737293,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "mother_pm_clocked_idle_4_macros": {
+              "leakage_fraction_300": [
+                0.5844166954158889,
+                0.5844166954158889
+              ],
+              "time_ratio": 1.4092358560737293,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_pm_loaded_quiet_4x": {
+              "leakage_fraction_300": [
+                0.054560193285852564,
+                0.05482171491624477
+              ],
+              "time_ratio": 1.4092358560737293,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "lc_descriptor_fetch_quiet_4x": {
+              "leakage_fraction_300": [
+                0.08310985685992976,
+                0.08310965210353585
+              ],
+              "time_ratio": 1.4092358560737293,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "g32_down_idle_1x": {
+              "leakage_fraction_300": [
+                0.2660279521409563,
+                0.2660279521409563
+              ],
+              "time_ratio": 1.4092358560737293,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "cohort_switch_idle_1x": {
+              "leakage_fraction_300": [
+                0.47048774839554447,
+                0.4709731856775403
+              ],
+              "time_ratio": 1.4092358560737293,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "u_add_chain_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.11746634735443505,
+                0.11746634735443505
+              ],
+              "time_ratio": 1.4092358560737293,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "write_dma_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.08036570411421404,
+                0.08038537010286334
+              ],
+              "time_ratio": 1.4092358560737293,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "pm_transport_clocked_idle_1x": {
+              "leakage_fraction_300": [
+                0.07297218969931515,
+                0.07293569098450302
+              ],
+              "time_ratio": 1.4092358560737293,
+              "dynamic_power_ratio": 0.6666666666666666
+            },
+            "native_mother_core_reference_1x": {
+              "leakage_fraction_300": [
+                0.09321722717430331,
+                0.092778563757305
+              ],
+              "time_ratio": 1.4092358560737293,
+              "dynamic_power_ratio": 0.6666666666666666
+            }
+          },
+          "ddr_reintegration": {
+            "source": "six-model-results\\falcon\\decode\\ddr-window-energy.json",
+            "command_ratio": 1.00621290062177,
+            "background_refresh_ratio": 1.4021254937943923,
+            "original_command_j": 0.174667986251136,
+            "original_background_refresh_j": 0.72357628489776,
+            "estimated_j": 1.1902979368517026
+          },
+          "m_increment_energy_ratios": [
+            0.9998000399920014,
+            0.9998886452916089
+          ],
+          "event_energy_assumption": "same accepted event counts; unchanged event coefficients at fixed V and temperature"
+        }
+      },
+      "baseline_300": {
+        "speed": {
+          "short_prefill_input_tok_s": 4.297764298596348,
+          "decode_tok_s": 3.0200794495895904,
+          "estimated_input_tok_s_to_logits": 3.854001085966275
+        },
+        "windows": {
+          "prefill": {
+            "tokens": 2,
+            "duration_s": 0.465358233036,
+            "tokens_per_second": 4.297764298596348,
+            "scopes": {
+              "on_chip": {
+                "average_power_w": [
+                  1.1348143737788543,
+                  1.138448977748289
+                ],
+                "energy_j_per_token": [
+                  0.26404760590279125,
+                  0.2648933023432921
+                ],
+                "tokens_per_joule": [
+                  3.775104886208245,
+                  3.7871958603106917
+                ],
+                "energy_j_per_window": [
+                  0.5280952118055825,
+                  0.5297866046865842
+                ]
+              },
+              "on_chip_plus_ddr": {
+                "average_power_w": [
+                  4.019862947190595,
+                  4.0234975511600295
+                ],
+                "energy_j_per_token": [
+                  0.9353381590757514,
+                  0.9361838555162522
+                ],
+                "tokens_per_joule": [
+                  1.0681662518614539,
+                  1.0691320463052034
+                ],
+                "energy_j_per_window": [
+                  1.8706763181515027,
+                  1.8723677110325043
+                ]
+              }
+            },
+            "ddr_share_percent": [
+              71.70499140927627,
+              71.76982427791589
+            ],
+            "ddr_energy_j_per_window": [
+              1.34258110634592,
+              1.34258110634592
+            ]
+          },
+          "decode": {
+            "tokens": 1,
+            "duration_s": 0.331117116848,
+            "tokens_per_second": 3.020079449589591,
+            "scopes": {
+              "on_chip": {
+                "average_power_w": [
+                  1.1339640718842567,
+                  1.137216579481211
+                ],
+                "energy_j_per_token": [
+                  0.37547491409153333,
+                  0.37655187502956305
+                ],
+                "tokens_per_joule": [
+                  2.655676591496165,
+                  2.6632937713549083
+                ],
+                "energy_j_per_window": [
+                  0.37547491409153333,
+                  0.37655187502956305
+                ]
+              },
+              "on_chip_plus_ddr": {
+                "average_power_w": [
+                  3.846733135892618,
+                  3.8499856434895725
+                ],
+                "energy_j_per_token": [
+                  1.2737191852404295,
+                  1.2747961461784592
+                ],
+                "tokens_per_joule": [
+                  0.7844391458177578,
+                  0.78510240843333
+                ],
+                "energy_j_per_window": [
+                  1.2737191852404295,
+                  1.2747961461784592
+                ]
+              }
+            },
+            "ddr_share_percent": [
+              70.46179687957344,
+              70.52137406404394
+            ],
+            "ddr_energy_j_per_window": [
+              0.898244271148896,
+              0.898244271148896
+            ]
+          }
+        }
+      },
+      "selected_layers": [
+        0,
+        3,
+        16,
+        31
+      ],
+      "numerical_layer_checks": 32,
+      "passed_frequency_transaction_checks": [
+        "prefill",
+        "decode"
+      ],
+      "not_included": [
+        "Read DMA mapped-cell idle/leakage and measured read activity; write-price proxy is sensitivity only.",
+        "Mother PM runtime instruction fetch and controller boot/deployment activity outside sampled C639 states.",
+        "Local controller shell, dispatch, switch active traffic and other unbound control; only named leaves are included.",
+        "RMS/normalization, softmax, rotary, extra scaling and unbound arithmetic; GELU, sigmoid, router, GDN/Mamba2 as applicable.",
+        "DDR PHY and board I/O; these are not contained in the DDR device model.",
+        "Unsynthesized global clock buffers/clock generation and unbound cross-block interconnect cells. Wire RC is excluded by choice."
+      ],
+      "speed_ratio_sensitivity": {
+        "('prefill', 0)": [
+          319909646935.7332,
+          320701920197.7856
+        ],
+        "('prefill', 1)": [
+          320162609734.76105,
+          321225414442.06305
+        ],
+        "('decode', 0)": [
+          399640897540.96356,
+          401522010721.5595
+        ],
+        "('decode', 1)": [
+          399379014075.4656,
+          401388623610.975
+        ]
+      },
+      "sample_paths": [
+        "results\\run-38837935\\falcon-decode-3334\\samples.json",
+        "results\\run-38837935\\falcon-decode-5000\\samples.json",
+        "results\\run-38837935\\falcon-prefill-3334\\samples.json",
+        "results\\run-38837935\\falcon-prefill-5000\\samples.json"
+      ]
     }
   ],
-  "missing_models": [
-    "gemma",
-    "qwen35",
-    "falcon"
-  ],
+  "missing_models": [],
   "input_sha256": {
     "results\\run-38832271\\granite-decode-3334\\samples.json": "37436a916e81aa311bdc37ccf114029b923235dace02630df82d203f751fd38c",
     "results\\run-38832271\\granite-decode-5000\\samples.json": "2b095b7d56943f4be08ff88ee06f6f322cb3239bece680f894059d21352b65f7",
@@ -2648,6 +4612,18 @@
     "results\\run-38832316\\qwen3-decode-3334\\samples.json": "dd7b23e41f16c1904686778864068165524a96c3f17355ca20c6c0cde39028d0",
     "results\\run-38832316\\qwen3-decode-5000\\samples.json": "f06900afaa65a5960db097b09ccd6ab578545ef535b30082029154f67525cf12",
     "results\\run-38832316\\qwen3-prefill-3334\\samples.json": "2331caed983538606e8d857d8b108ccb221891771234d4df5a79326fae14e6f0",
-    "results\\run-38832316\\qwen3-prefill-5000\\samples.json": "780603f2c106551240306ad94d8e56699b20c9bb7f27d4117161d2347f13638e"
+    "results\\run-38832316\\qwen3-prefill-5000\\samples.json": "780603f2c106551240306ad94d8e56699b20c9bb7f27d4117161d2347f13638e",
+    "results\\run-38837935\\falcon-decode-3334\\samples.json": "ce135bd6ae398c647d0f83024f2212c84b6ff8a91be5906bf2328e82d4885619",
+    "results\\run-38837935\\falcon-decode-5000\\samples.json": "9b764329774fe952bae44c5d34209b5313198aa0da33a78a94c6e1d6f7dfd70e",
+    "results\\run-38837935\\falcon-prefill-3334\\samples.json": "de3276cf90de71930bed45697026d7a5f2205b35737bd38f7a70b39c39015ac3",
+    "results\\run-38837935\\falcon-prefill-5000\\samples.json": "bc6d9e34afa9eccef8de3122cb716c7b43fdb6350338f8abf9c7219157ff16da",
+    "results\\run-38837935\\gemma-decode-3334\\samples.json": "a1b36518c9a073f14868472f6e0e512c90d1c9dca75e27daf92db0f1eea4832e",
+    "results\\run-38837935\\gemma-decode-5000\\samples.json": "654a9fc53bce594a1f12412a789856f03c3ba25ebb815371b888f19326d44a99",
+    "results\\run-38837935\\gemma-prefill-3334\\samples.json": "b575a2d71e2d80700f4e15167fc46de0e600dcc218dd1704d6281de26dc63fee",
+    "results\\run-38837935\\gemma-prefill-5000\\samples.json": "91e290f90d7018d5e29dbe4a9c42eae3164f2c4a5eb0c42561cb12e8c20f84fb",
+    "results\\run-38837935\\qwen35-decode-3334\\samples.json": "c61e3d95f93aad330c8efc8c47c2c0c5f624d109e34622257bc1e53d0ad43dc9",
+    "results\\run-38837935\\qwen35-decode-5000\\samples.json": "826cadd69b4f1e362467084f4b0eff912c6f7c3517ae343f9e4ac04149f01e5d",
+    "results\\run-38837935\\qwen35-prefill-3334\\samples.json": "2dfb3ff3dc761208daee4d811df00afeee6abad0bd3a810a36cee159222ef58a",
+    "results\\run-38837935\\qwen35-prefill-5000\\samples.json": "90a66daea73b93831a93e5cfe2dadc3369d3e41a1a274b3f7728f9a907441fe8"
   }
 }
