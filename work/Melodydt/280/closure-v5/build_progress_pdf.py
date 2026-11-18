@@ -67,7 +67,7 @@ def main():
             rows.append([label,*values]);numeric+=values
     story+=[table(rows,[142,85,142,142]),Spacer(1,12),
         p('七模型未出现的窗口仍等待成功验收。所有列出的重测保持输出数值文件一致；共享 E32/M 和同一 local target 未出现非法重叠。精确区间是 TLM 执行证据，不是完整 RTL 波形。'),
-        p('共同未覆盖：读 DMA 的新积分、完整物理部署/门控/全局时钟互连、精确全模型控制 RTL 状态、特殊候选接口与 FP32 转换，以及 DDR PHY/封装/板级 I/O。布线寄生按本路线主动排除。',small),PageBreak(),
+        p('此页基础小计未加读 DMA；后面的逐模型页面已加入四种互斥 DMA 场景。共同缺项仍是完整物理部署/门控/全局时钟互连、精确全模型控制 RTL 状态、特殊候选接口与 FP32 转换，以及 DDR PHY/封装/板级 I/O。布线寄生按本路线主动排除。',small),PageBreak(),
         p('特殊候选：数值与活动标注',head),
         p('现有工具按内部网名导入未覆盖所需引脚。修正流程重读确切结构网表，将观测位转换为实际单元引脚别名，保持事件时间不变；活跃与空闲窗使用同一引脚集合。匹配集合完全标注，仍有未观测内部网络需要传播估计。')]
     special=load(HERE/'special-pin-calibration.json');conv=load(HERE/'conv4-pin-calibration.json')
@@ -94,21 +94,49 @@ def main():
         p('后续顺序',head),
         p('1. 选择各模型匹配的 DMA 实例/owner，复用四版已完成系数；当前保留替代场景。\n2. 收齐七模型重测与 21 窗双口径账本。\n3. 补齐特殊候选的复合运算、ABI/provider 和 300 MHz 绑定。\n4. 完成真实物理控制部署与完整 RTL 状态证据。\n5. 更新报告、核验去重和数值，再交付审查。'),
         p('详细作业、源码 commit、SSH 目标、命令、输入输出 SHA 和当前缺项：docs/handoffs/2026-11-18-issue-280-closure-v5.md；实验目录 work/Melodydt/280/closure-v5。所有新 Slurm 任务 12 核、UNLIMITED，未配置聊天自动监测。'),
-        p('Issue #280 in_progress；PR #281 草稿未合并，审查人待指定。登记 PR #5 pending；看板 unverified / 同步 pending。',small),
-        PageBreak(),p('含读 DMA 的第二步 Decode 场景',head),
-        p('下表以 E32 18 周期账本为基础，增加一个读 DMA fabric 的空闲与真实读量增量，保留此前的算术代理。各版互为替代，不相加；未选择唯一实际物理版本，因此不是已验收整芯片总功耗。')]
-    rows=[['模型','单实例 DMA 版本','片上 mJ/token','片上＋DDR mJ/token']]
-    for path in sorted((HERE/'dma-ledger').glob('*.json')):
-        if path.stem=='index':continue
-        d=load(path)
-        if d['phase']!='decode':continue
-        for variant,scenario in d['scenarios'].items():
-            w=scenario['windows']['decode']
-            values=[bounds(w['estimated_on_chip']['energy_mj_per_token']),bounds(w['estimated_on_chip_plus_ddr']['energy_mj_per_token'])]
-            rows.append([NAMES[d['model']],variant,*values]);numeric+=values
-    story+=[table(rows,[75,145,145,146]),Spacer(1,10),
-        p('覆盖缺项：各模型完整物理部署、真实门控、完整控制 RTL 状态及 FP32/provider 接口；全局时钟、跨块互连、DDR PHY/封装/板级。Granite 路由/专家加权和等仍含复合算术代理；Qwen3/Llama 公共算术使用样本标定与条件驻留。phase 活跃样本仅 owner 0，其他 owner 的动态迁移未直接测量。',small),
-        p('特殊候选替换结果单列在 special-candidate-ledger，未与本页混用。以下 25 页为 v4 历史报告，旧速度、作业状态和缺项不代表本轮最新状态。',small)]
+        p('Issue #280 in_progress；PR #281 草稿未合并，审查人待指定。登记 PR #5 pending；看板 unverified / 同步 pending。',small)]
+    labels={'prefill':'短 prefill','first_token':'首步 decode','decode':'第二步 decode'}
+    counts={};job_status=load(HERE/'job-status-current.json')
+    model_limits={
+        'qwen3':'公共算术已采用样本标定；实例驻留及 M 模式/位型迁移仍为条件估算。',
+        'llama':'RMS/softmax/RoPE 已采用样本标定，额外 SiLU 仍含运算级代理；实例驻留及 M 模式/位型迁移仍为条件估算。',
+        'granite':'路由比较/选择与专家加权和仍含运算级代理，完整匹配 RTL 尚未绑定。',
+        'phi':'RMS/softmax/RoPE 已采用样本标定，额外 SiLU 仍含运算级代理；实际 provider 接口、实例驻留与活动迁移仍待绑定。',
+        'gemma':'GELU 候选的格式转换、provider 接口、完整复合运算及候选周期仍未接入模型。',
+        'qwen35':'GDN 的完整递归状态、归一化/门控、转换和额外状态存储链路仍需匹配 RTL；已有运算级代理不等于零覆盖。',
+        'falcon':'Mamba 的完整递归状态、复合运算、格式转换及状态存储链路仍需匹配 RTL；Conv4/Softplus 候选已另行标定。'}
+    for model in NAMES:
+        story += [PageBreak(),p(NAMES[model]+'：含读 DMA 的覆盖小计',head),
+            p('每个场景只增加一个读 DMA fabric，四版互为替代，不能相加。采用已通过的 E32 18 周期调度；保留原算术代理，特殊候选替换值单列于 JSON。',small)]
+        timings={};scenarios={}
+        for phase in ('prefill','decode'):
+            file=HERE/'dma-ledger'/(model+'-'+phase+'.json')
+            if not file.exists():continue
+            timings.update(load(HERE/'timing-ledger'/file.name)['windows'])
+            for variant,s in load(file)['scenarios'].items():
+                for name,w in s['windows'].items():scenarios[(name,variant)]=w
+        counts[model]=len(timings)
+        speed_rows=[['窗口','速度 tok/s','积分状态']]
+        for name in labels:
+            if name in timings:
+                value='%.6f'%timings[name]['tokens_per_second'];numeric.append(value)
+                speed_rows.append([labels[name],value,'数值/流量/资源验收后积分'])
+            else:speed_rows.append([labels[name],'待验收','尚未写入新版功耗结果'])
+        story += [table(speed_rows,[120,120,271]),Spacer(1,9)]
+        rows=[['窗口','DMA 版本','片上 W','片上+DDR W','片上\nmJ/token','片上+DDR\nmJ/token']]
+        for name in labels:
+            for variant in ('shared-noshare','shared','phase','phase-noshare'):
+                w=scenarios.get((name,variant))
+                if w is None:continue
+                values=[bounds(w[scope][metric]) for metric in ('average_power_w','energy_mj_per_token')
+                    for scope in ('estimated_on_chip','estimated_on_chip_plus_ddr')]
+                rows.append([{'prefill':'短 prefill','first_token':'首步','decode':'第二步'}[name],variant,*values]);numeric+=values
+        if len(rows)>1:story += [table(rows,[59,94,79,84,96,99]),Spacer(1,9)]
+        story += [p('本模型覆盖 '+str(counts[model])+'/3 窗。上述小计包含已记录的 SRAM/PM、M、公共算术、控制参考、母控外围及所选读 DMA 场景；片上+DDR 仅额外加入 DDR 存储器件能耗。',small),
+            p('尚未覆盖/未精确绑定：真实顶层实例/路由/门控、整模型 RTL 控制状态、FP32/provider 适配、未绑定的额外缓冲与状态搬运、全局时钟/跨块互连、DDR PHY/封装/板级 I/O。已有暂存敏感性和 SRAM 访问不重复计入。',small),
+            p(model_limits[model]+' phase 活跃标定仅直接覆盖 owner 0；其他 owner 的动态迁移仍是假设。',small),
+            p('M 已计旧版参考，未完成实际门级活动校准；未观测内部活动使用传播估计，零延迟不含时延毛刺。范围为场景端点而非保证误差界；布线寄生主动排除，M 时序闭合不作前提。',small)]
+    story += [Spacer(1,6),p('后附 25 页为 v4 历史报告，旧速度、作业状态及缺项不代表本轮最新状态。',small)]
     front=HERE/'v5-progress-front.pdf'
     def footer(canvas,doc):
         canvas.setFont('Deng',8);canvas.setFillColor(colors.HexColor('#526274'))
@@ -118,13 +146,15 @@ def main():
     writer=PdfWriter();writer.append(front);writer.append(baseline)
     with current.open('wb') as f:writer.write(f)
     a,b=PdfReader(baseline),PdfReader(current);count=len(PdfReader(front).pages)
-    assert 5<=count<=10,(count,'unexpected front page overflow')
+    assert 11<=count<=15,(count,'unexpected front page overflow')
     for i,page in enumerate(a.pages):assert page.extract_text()==b.pages[count+i].extract_text()
     text='\n'.join(x.extract_text() for x in b.pages[:count])
     assert all(v in text for v in numeric)
     receipt=dict(front_pages=count,history_pages=len(a.pages),total_pages=len(b.pages),
         preserved_history_text=True,numeric_strings_checked=len(numeric),
-        baseline_sha256=digest(baseline),pdf_sha256=digest(current),visual_check='pending')
+        baseline_sha256=digest(baseline),pdf_sha256=digest(current),visual_check='pending',
+        windows_by_model=counts,total_qualified_windows=sum(counts.values()),
+        job_snapshot_at=job_status['checked_at'])
     (HERE/'pdf-progress-validation.json').write_text(json.dumps(receipt,indent=2)+'\n')
     print(json.dumps(receipt))
 

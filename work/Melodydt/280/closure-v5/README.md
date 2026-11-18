@@ -15,7 +15,11 @@
 
 源码以本目录脚本交付 commit 和 inputs.sha256 记录。BSCC 工作目录 ~/LLMHardware/zenanyan/issue-280-bscc-t6-01/closure-v5-20261118；开源工具 ~/LLMHardware/opt。项目根目录无 .git，使用 Melodydt GitHub 连接、期望 HEAD 租约发布。原始大工件保留服务器，仓库保留脚本/小回执/散列。PDF 以 v5 进度补充加原 v4 历史快照交付；三项全量验收及审查尚未完成。
 
-20:18 更新：四版 DMA 的 38855808–11 已全部通过（最后一项 27m54），综合后功耗可以直接使用，不等布局布线。已对 Qwen3、Llama、Granite 三阶段及 Falcon prefill 共 10 窗完成 E32 18 周期/母控外围/四版 DMA 条件积分；剩余四模型重测持续运行。`special-candidate-ledger` 单列候选替换场景，去掉旧代理再加入已标定函数和残余复合运算，不与默认场景混用。实际物理顶层/门控/整模型控制状态及候选 FP32/provider/周期仍待实现验证。
+2026-11-18 21:30 更新：新增 Phi、Gemma、Qwen3.5 短 prefill 及 Falcon 两步 decode 共 5 窗；已完成七模型全部 prefill、Qwen3/Llama/Granite/Falcon 的两步 decode，共 15/21 窗。Falcon 38852034 于 21:24:07 COMPLETED 0:0，第二步 2.988568 tok/s。新增窗的数值、DDR/SRAM、输入输出 SHA、资源区间及功耗单位/去重/守恒均通过。四版读 DMA 的条件场景和特殊候选替换场景均同步积分，片上与片上＋DDR分开。
+
+管理结构检查、25 份已验收阶段工件 SHA、部署/资源审计、15 窗三类账本独立对账通过。PDF 为 36 页（11 页更新＋25 页保留历史），316 组数值检查和新增页目检通过；每模型页面列 W 与 mJ/token、四种互斥 DMA 场景及未覆盖项。
+
+Phi/Gemma/Qwen3.5 decode 作业 38852028/38852030/38852032 仍 RUNNING，12 核、UNLIMITED；剩余 6 窗等待其验收。每模型真实物理部署、provider/原生 ABI、路由/门控、完整 RTL 控制驻留以及特殊算子转换/复合运算/递推状态/候选周期仍需实现验证。旧布局布线不作前提，M 时序闭合不作前提。
 
 当前有效链为 E32 `closure-v5-e32-9a2f2d23`、操作空闲与活动 `closure-v5-cal-278fbf5c`、实际单元引脚标注 `closure-v5-pins-30b6095c`。早期 idle 未完成 reset fence，边界/网名标定尚未标注所需引脚的结果仅保留诊断，不纳入新系数。特别不要采用旧 `dma-shared-state-calibration.json` 的正常空闲解释。DMA 观测仍主要来自边界 RTL 位，未观测内部网络使用传播估计，不是完整门级回放。
 

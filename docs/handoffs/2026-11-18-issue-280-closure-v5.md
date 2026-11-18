@@ -1,8 +1,18 @@
 # #280：控制部署、读 DMA 与特殊算子校准 v5
 
-更新时间：2026-11-18 20:18（Asia/Shanghai）。负责人 Melodydt；仓库 rayggxia-workspace/LLMHardwareDesign；[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。分支 `task/280-seven-model-energy`，PR 基分支 `task/274-seven-model-short-throughput`。引脚标定源码 `30b6095c6cf75b9c6dafe0108972b3eed46b8f01`；积分源码已上传至 `03cc4e99b907491333f5c734f026672109dbcbd3`，本文件后的数据/文档提交以 PR 最新回执为准。没有合并或物理验收。
+更新时间：2026-11-18 21:30（Asia/Shanghai）。负责人 Melodydt；仓库 rayggxia-workspace/LLMHardwareDesign；[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。分支 `task/280-seven-model-energy`，PR 基分支 `task/274-seven-model-short-throughput`。引脚标定源码 `30b6095c6cf75b9c6dafe0108972b3eed46b8f01`；积分源码已上传至 `03cc4e99b907491333f5c734f026672109dbcbd3`，本文件后的数据/文档提交以 PR 最新回执为准。没有合并或物理验收。
 
 本机目录 `D:/Study_material/Study_material/LLMHardwareDesign` 是无 `.git` 的导出工作区；本轮仅在 `work/Melodydt/280/closure-v5` 新增实验脚本和小回执，并更新相关进度/报告。使用 Melodydt 本人连接及 expected_sha 租约发布。`recurrent-step1` / #293 的 200 MHz 分支单独进行，本轮只读取并引用其引脚别名方法，不覆盖其文件或采用其频率。
+
+## 本次新增五窗积分
+
+新增 Phi、Gemma、Qwen3.5 短 prefill 及 Falcon 两步 decode 共 5 窗；已完成七模型全部 prefill、Qwen3/Llama/Granite/Falcon 的两步 decode，共 15/21 窗。Falcon 38852034 于 21:24:07 COMPLETED 0:0，第二步 2.988568 tok/s。新增窗的数值、DDR/SRAM、输入输出 SHA、资源区间及功耗单位/去重/守恒均通过。四版读 DMA 的条件场景和特殊候选替换场景均同步积分，片上与片上＋DDR分开。
+
+管理结构检查、25 份已验收阶段工件 SHA、部署/资源审计、15 窗三类账本独立对账通过。PDF 为 36 页（11 页更新＋25 页保留历史），316 组数值检查和新增页目检通过；每模型页面列 W 与 mJ/token、四种互斥 DMA 场景及未覆盖项。
+
+Phi/Gemma/Qwen3.5 decode 作业 38852028/38852030/38852032 仍 RUNNING，12 核、UNLIMITED；剩余 6 窗等待其验收。每模型真实物理部署、provider/原生 ABI、路由/门控、完整 RTL 控制驻留以及特殊算子转换/复合运算/递推状态/候选周期仍需实现验证。旧布局布线不作前提，M 时序闭合不作前提。
+
+本轮更新前远端任务分支为 bfe691ce626d6dac5d02a6a26a4c11047bb6cc18；当前本机仍为无 `.git` 的导出工作区，只修改本任务脚本、账本、报告与进度。本次提交完成与否以 PR 回执/分支读回为准，不把本地成果当作已上传。
 
 ## 口径与当前验收状态
 
@@ -25,13 +35,15 @@
 
 ## 已通过的 E32 重测
 
-| 模型 | 短 prefill tok/s | 第二步 decode tok/s |
-|---|---:|---:|
-| Qwen3 | 21.564769 | 6.964554 |
-| Granite | 15.689335 | 6.867212 |
-| Llama | 15.296032 | 5.643081 |
-| Falcon | 4.234239 | 重测运行中 |
-| Phi / Gemma / Qwen3.5 | 重测运行中 | 重测运行中 |
+| 模型 | 短 prefill tok/s | 第二步 decode tok/s | 已积分窗口 |
+|---|---:|---:|---:|
+| Qwen3 | 21.564769 | 6.964554 | 3/3 |
+| Llama | 15.296032 | 5.643081 | 3/3 |
+| Granite | 15.689335 | 6.867212 | 3/3 |
+| Phi | 4.892059 | 运行中，未验收 | 1/3 |
+| Gemma | 4.891126 | 运行中，未验收 | 1/3 |
+| Qwen3.5 | 3.961885 | 运行中，未验收 | 1/3 |
+| Falcon | 4.234239 | 2.988568 | 3/3 |
 
 `integrate_calibrated_timing.py` 已为通过的窗口重算分项：固定驻留项按新时间，M 按真实新区间并集，计数项仅在逐窗 SRAM/PM/服务/DDR 等量核验后复用，DDR 使用新运行的设备结果。不会按总延迟比例放大全部动态能耗。`timing-ledger` 仍未加入 DMA / 新特殊算子候选，不能当成最终 v5 全覆盖小计。
 
@@ -49,7 +61,7 @@
 | 引脚覆盖修正 DMA | 38855808 shared、38855809 shared-noshare、38855810 phase、38855811 phase-noshare | 同上 | pins-ID-dma |
 | E32 全量后继 | 38852023–38852036；逐模型映射见 e32-retry-jobs.json | closure-v5-e32-9a2f2d23 / 9a2f2d23 | deployment-ID-e32-18-PHASE |
 
-20:18 快照：引脚 Conv4/special 与四版 DMA 全完成。DMA 38855808/09/10/11 分别用时 11m52、11m51、27m54、23m51，节点 m3ca0206/m3ca0801/m3ca0405/m3ca1101。Qwen3/Llama/Granite 的 E32 双阶段通过；Falcon prefill 已通过（1h03m56）；Phi/Gemma/Qwen3.5 prefill 和四模型 decode 共 7 项仍在运行。七模型基线观察全部通过。具体状态和旧物理作业以同目录 job-status-current.json 为准，恢复时必须读回。
+20:18 历史快照（当前以首节和逐行时间戳为准）：引脚 Conv4/special 与四版 DMA 全完成。DMA 38855808/09/10/11 分别用时 11m52、11m51、27m54、23m51，节点 m3ca0206/m3ca0801/m3ca0405/m3ca1101。Qwen3/Llama/Granite 的 E32 双阶段通过；Falcon prefill 已通过（1h03m56）；Phi/Gemma/Qwen3.5 prefill 和四模型 decode 共 7 项仍在运行。七模型基线观察全部通过。具体状态和旧物理作业以同目录 job-status-current.json 为准，恢复时必须读回。
 
 ## 已完成的 DMA 积分与候选场景
 
@@ -62,7 +74,7 @@
 
 每个场景只加一个 fabric；phase 自带 shared，禁止叠加。动态窗口仅直接覆盖 owner 0；其余 owner 动态迁移为假设，四个空闲 owner/mode 状态已测。事务分母由真实请求/回包握手数量与最多一个初始沿的 12 客户端差异形成；范围不是置信区间。不得把未观测内部活动标为完整门级活动。
 
-已完成 Qwen3/Llama/Granite 三窗及 Falcon prefill 共 10 窗的分项积分和独立守恒核对，`dma-ledger` 给四版的片上/片上＋DDR。Qwen3 第二步四场景片上 199.053–223.493、片上＋DDR 538.644–563.085 mJ/token，范围跨越四种部署，尚未唯一绑定实际物理版本。
+已完成七模型 prefill 及 Qwen3/Llama/Granite/Falcon 两步 decode 共 15 窗的分项积分和独立守恒核对，`dma-ledger` 给四版的片上/片上＋DDR。Qwen3 第二步四场景片上 199.053–223.493、片上＋DDR 538.644–563.085 mJ/token，范围跨越四种部署，尚未唯一绑定实际物理版本。
 
 `special-candidate-ledger` 单独将匹配函数/卷积从旧代理中删去，再加候选标定成本和仍需代理的乘除/归一化。每个实际调用站点一个开钟单元是候选实例假设，0.5–2 倍迁移敏感性沿用原方案，不是测得误差界。完整 provider、FP32 转换、复合运算和新候选周期尚未安装到模型；该场景不改变已验收 E32 吞吐。已有 G32/RMS/E32/RoPE/softmax/SRAM 不重复增加。
 
@@ -96,7 +108,7 @@ python3 -B collect_deployments.py .. deployments-current.tar.gz closure-v5-e32-9
 
 ## 剩余工作顺序
 
-1. 收齐剩余 Phi/Gemma/Qwen3.5/Falcon observe / E32-18，逐模型公布结果并保存 SHA；复算全部 21 窗片上与片上＋DDR，复用已完成的四版 DMA 标定。
+1. 收齐 Phi/Gemma/Qwen3.5 的 E32-18 decode 作业 38852028/38852030/38852032，逐模型验收并保存 SHA；将当前 15 窗补至全部 21 窗，复用四版 DMA 标定。
 2. 用每模型真实物理实例/端口绑定选择 DMA 场景；如使用 phase owner 1，还需其活跃窗口直接标定。当前四种替代场景已可复算，不能自动决定实际部署。
 3. 将特殊候选与捕获输入格式、ABI、复合运算和实例数量逐一绑定；GDN/Mamba 的侧边 200 MHz 结果需要 300 MHz 对应标定及接口/转换，不能直接挪用。
 4. 完成每模型真实物理控制/router/provider 配置与全模型 RTL 状态记录。当前 TLM 部署审计明确列出了未验收项，不能把它替换为完整硬件证据。
