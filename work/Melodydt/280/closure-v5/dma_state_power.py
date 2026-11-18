@@ -26,7 +26,7 @@ def mapped_wave(raw,dest,known,scope,begin,end,*,prefix='',boundary=None):
     stack=[];selected={};states={};seen=set();started=False;now=None;clk=None
     with raw.open() as src,dest.open('w') as out:
         out.write('$timescale 1ps $end\n$scope module dut $end\n')
-        names=set()
+        names=set(); excluded_widths={}
         for line in src:
             p=line.split()
             if p[:1]==['$scope']:stack.append(p[2])
@@ -40,7 +40,12 @@ def mapped_wave(raw,dest,known,scope,begin,end,*,prefix='',boundary=None):
                     candidates += [n for n,actual in boundary.items() if actual==full]
                 for name in candidates:
                     if name not in known or name in names:continue
-                    if int(p[2])!=known[name]:raise ValueError('mapped activity width mismatch '+name)
+                    if int(p[2])!=known[name]:
+                        # Packed RTL array elements can collide with scalar
+                        # Yosys flattened bit names. Never bind these by name.
+                        if name in (boundary or {}):raise ValueError('boundary width mismatch '+name)
+                        excluded_widths[name]=[int(p[2]),known[name]]
+                        continue
                     names.add(name);selected.setdefault(p[3],[]).append(name)
                     if name=='clk':clk=p[3]
                     suffix=' [%d:0]'%(int(p[2])-1) if int(p[2])>1 else ''
@@ -71,7 +76,8 @@ def mapped_wave(raw,dest,known,scope,begin,end,*,prefix='',boundary=None):
         out.write('#%d\n'%((end-begin+1)//3))
     if not started or seen!=set(selected):raise ValueError('incomplete retained RTL activity')
     return {'nets':len(names),'bits':sum(known[n] for n in names),'window_ps':(end-begin+1)//3,
-            'retained_names':sorted(names),'wave_sha256':digest(dest),'source_sha256':digest(raw)}
+            'retained_names':sorted(names),'excluded_width_mismatches':excluded_widths,
+            'wave_sha256':digest(dest),'source_sha256':digest(raw)}
 
 def bench(top,boundary):
     s=['`timescale 1ps/1ps','module tb;']

@@ -101,7 +101,7 @@ def main():
     if len(cuts)!=10:raise ValueError('expected mother + switch + four LC + four routers: '+str(cuts))
     design['modules']={TOP:module};save(out/'cut.json',design);save(out/'cut-bindings.json',bindings)
     ys='\n'.join(['read_json '+str(out/'cut.json'),'synth -top '+TOP+' -flatten -noabc -noshare',
-       'dfflibmap -liberty '+str(LIB),'abc -liberty '+str(LIB),'clean','read_liberty -lib '+str(LIB),'check -assert',
+       'dfflibmap -liberty '+str(LIB),'abc -liberty '+str(LIB),'delete t:$scopeinfo','clean','read_liberty -lib '+str(LIB),'check -assert',
        'stat -liberty '+str(LIB),'write_verilog -noattr -noexpr '+str(out/'mapped.v'),'write_json '+str(out/'mapped.json')])+'\n'
     (out/'map.ys').write_text(ys);run(['yosys','-l',out/'map.log',out/'map.ys'],out/'map-stdout.log')
     mapped=json.loads((out/'mapped.json').read_text())['modules'][TOP]
