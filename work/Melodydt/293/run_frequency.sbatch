@@ -28,14 +28,14 @@ if [[ ${1:-} == inside ]]; then
     export PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
     export PYTHONPATH="$bundle:$runner:$runs/issue-270/ffn-weight-05/tlm:$p/issue260-native-sram512-SMbOWTw6:$joint/systemc_benchmark:$joint/block_local_native:$a/source/project/experiments/block_local_native:$a/source/project/experiments/mother_control_native:$a/source/project/experiments/shared_x_control:$a/algo1/project/experiments/block_synthesis"
     if [[ $model == prepare ]]; then
-        g++ -std=c++17 -O3 -Wall -Wextra -Werror -fPIC -shared "$old/runner/projection_math.cpp" -o "$out/projection_math.so"
+        g++ -std=c++17 -O3 -Wall -Wextra -Werror -fPIC -shared "$old/runner/projection_math.cpp" -o "$out/projection_math_native.so"
         python3 -VV > "$out/python-version.txt"
         lscpu > "$out/cpu.txt"
         free -b > "$out/memory.txt"
-        sha256sum "$shared/ddr-dma-probe.so" "$out/projection_math.so" > "$out/native-libraries.sha256"
+        sha256sum "$shared/ddr-dma-probe.so" "$out/projection_math_native.so" > "$out/native-libraries.sha256"
         exit
     fi
-    export SHORT_PROJECTION_MATH="$(dirname "$out")/projection_math.so"
+    export SHORT_PROJECTION_MATH="$(dirname "$out")/projection_math_native.so"
     if [[ $model == qwen3 ]]; then
         case "$phase" in prefill) baseline=$shared/prefill-w4-tile128-pr272-combined;; decode) baseline=$shared/decode-live-w4-tile128-pr272-combined;; esac
     else
