@@ -17,7 +17,10 @@ for model in MODELS:
     for w in d['windows'].values():
         for k in ('estimated_on_chip','estimated_on_chip_plus_ddr'):expected[fmt(w[k]['energy_mj_per_token'])]+=1
         expected[fmt(w['estimated_on_chip_plus_ddr']['average_power_w'])]+=1
+        expected[fmt(w['estimated_on_chip']['average_power_w'])]+=1
     w=d['windows']['decode']
+    if w.get('read_dma_sensitivity'):
+        for k in ('estimated_on_chip','estimated_on_chip_plus_ddr'):expected[fmt(w['read_dma_sensitivity']['same_write_cost'][k]['energy_mj_per_token'])]+=1
     for k in ('previous_on_chip','estimated_on_chip','estimated_on_chip_plus_ddr'):expected[fmt(w[k]['energy_mj_per_token'])]+=1
     for k,v in w['arithmetic_components'].items():
         if v['energy_mj_per_token'][1]>0:expected[fmt(v['energy_mj_per_token'])]+=1

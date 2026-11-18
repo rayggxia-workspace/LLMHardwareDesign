@@ -1,15 +1,13 @@
 # 算术真实输入标定归档
 
-用途：Issue #280 / PR #281 的公共算术缺项证据；负责人 Melodydt。2026-11-18，Asia/Shanghai。
+Issue #280 / PR #281；Melodydt；2026-11-18 Asia/Shanghai。
 
-`index.json` 汇总 27 份已核验服务器结果、262 组真实输入样本：N 66、E32 66、scan 66、apply 36、softmax 16、RoPE 12。它不是整模型功耗报告。`*-calibration.json` 是原始小型回执，`*-results.sha256` 保留服务器原始结果清单；清单中的 sample/receipt 和 build.log 留在原服务器目录，不能直接在本文件夹执行该原始清单。`archive.sha256` 用于核对本地归档全部文件。
+当前入口为 `v3-evidence-index.json`：七模型 N/E32/scan 各 66 个样本；66 个完整 RMS apply 向量由 96 个合法分块覆盖，零容量排除；softmax 56、RoPE 54。旧 36 个 apply 回执保留，但不重复加入 v3。`index.json` 是此前 27 份/262 样本的历史快照，不代表当前覆盖。
 
-每份回执记录输入、RTL/网表/Liberty、工具和日志的版本或 SHA。脚本 commit 见 index 和服务器 immutable bundle 的 source-commit.txt；冻结 RTL 原始 commit 仍待核实，不能用运行脚本 commit 代替。OpenROAD 回报版本 unknown，准确版本待核实；Verilator 5.042，Nangate45 typical。
+`*-calibration.json` 是服务器原始小型回执，`*-results.sha256` 是原始服务器清单（其 sample/receipt、build.log 留在服务器）；`archive.sha256` 校验本地归档。新结果 38837942、38838116、38838117 和其余模型后继 38832101/38832112 全部 COMPLETED 0:0，结果 SHA 已核验。
 
-能耗为等长 active-minus-idle 的动态增量，使用 RTL 边界活动传播到综合网表，不含布线寄生或内部门级回放。名义 300 MHz，系统 SRAM 512 bit；测试的 S128/64-bit 算术口不是系统 SRAM 位宽。scan/apply/softmax 使用理想单 outstanding 访存夹具，不计其存储功耗，不宣称实际 SRAM 等价。样本极值不是置信区间。
+名义 300 MHz，系统 SRAM 512 bit。S128/64-bit 算术接口不是系统 SRAM 位宽；理想 one-outstanding 访存夹具不含 SRAM 功耗。采用 RTL 边界 VCD 传播到 Nangate45 typical 综合网表、等长 active-minus-idle，不加载布线寄生，不是内部门级活动回放。Verilator 5.042；OpenROAD 精确版本 unknown，冻结 RTL 原始 commit 待核实，源文件与 Liberty SHA 已记录。
 
-apply 已包含其外接 E32；不得再次叠加独立 RMS E32 标定。36 个 apply 样本可在单 bank 放置 X 和 gamma；30 个大向量明确排除，等待跨 bank 或分块部署。七模型 E32/N/scan 全部有实测。softmax/RoPE 当前只验收 Llama/Granite；后继作业 38832101/38832112 等待其余采样成功。
+apply 与 RoPE 包含外接 E32，不能再次相加。大向量保留完整向量因子，仅拆分 apply；分块 staging/实际实例驻留单列敏感性。E32 18 周期/包与 TLM 9 周期的差异保留于 timing ledger，未据此修改冻结 token 时间。
 
-`rms-e32-timing-ledger.json` 对齐七模型 30 个窗口/site 组合的乘积计数：TLM 9 周期/包，当前 RTL 连续无阻塞 18 周期/包。只表示算术资源周期差，不是校正后的 token 延迟。
-
-恢复方法、全部作业、命令和剩余步骤见 [接续记录](../../../../docs/handoffs/2026-11-18-issue-280-public-arithmetic-calibration.md)。模型原 PDF v2.1 小计保持不变，后续完成调用加权、资源去重和驻留积分后更新片上及片上＋DDR 两套结果与 PDF。
+v3 已按真实调用计数积分，并以明确成本代理补特殊算术；PDF 分别报告片上和片上＋DDR。代理范围不是置信区间或保证误差界。方法见上级 ARITHMETIC_ESTIMATION_METHOD.md，完整接续见 docs/handoffs/2026-11-18-issue-280-arithmetic-estimate-v3.md。

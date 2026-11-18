@@ -67,9 +67,9 @@ def main(output=None):
     p('5. 数值与时序限制',heading);p('Falcon 卷积系数及 Mamba key/query 超出现有 R 的 S16 Q14 范围；GELU 与循环浮点服务也未完成匹配 RTL。这里仅估其能耗，不修改冻结模型数值。E32 连续无阻塞为 18 周期/包，TLM 叶节点为 9 周期；未将资源周期差直接加到整模型延迟。')
     for m,d in records.items():
         story.append(PageBreak());p(NAMES[m],title);p('三窗结果：包括代理项的条件估算',heading)
-        rows=[['窗口','片上 mJ/token','片上 + DDR mJ/token','片上 + DDR 平均 W']]
-        for name,w in d['windows'].items():rows.append([WINDOWS[name],fmt(w['estimated_on_chip']['energy_mj_per_token']),fmt(w['estimated_on_chip_plus_ddr']['energy_mj_per_token']),fmt(w['estimated_on_chip_plus_ddr']['average_power_w'])])
-        table(rows,[90,135,145,137])
+        rows=[['窗口','片上 mJ/token','片上 + DDR mJ/token','片上平均 W','片上 + DDR 平均 W']]
+        for name,w in d['windows'].items():rows.append([WINDOWS[name],fmt(w['estimated_on_chip']['energy_mj_per_token']),fmt(w['estimated_on_chip_plus_ddr']['energy_mj_per_token']),fmt(w['estimated_on_chip']['average_power_w']),fmt(w['estimated_on_chip_plus_ddr']['average_power_w'])])
+        table(rows,[70,132,135,85,85])
         p('第 2 步 Decode：新增算术分项',heading);w=d['windows']['decode'];rows=[['新增项','mJ / 输出 token','依据']]
         for k,v in w['arithmetic_components'].items():
             if v['energy_mj_per_token'][1]==0:continue

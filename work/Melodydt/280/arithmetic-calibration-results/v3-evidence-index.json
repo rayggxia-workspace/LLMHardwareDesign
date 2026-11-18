@@ -1,0 +1,228 @@
+{
+  "updated": "2026-11-18 Asia/Shanghai",
+  "source_commit": "0d84209e10e898f17998e959157a760a80c2afaf",
+  "host": "ssh.cn-zhongwei-1.paracloud.com",
+  "username": "t6s011227@BSCC-T6",
+  "root": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01",
+  "jobs": [
+    {
+      "job_id": 38837942,
+      "name": "mdt-rms-chunked",
+      "node": "m3ca0606",
+      "elapsed": "00:25:36",
+      "cores": "1x12",
+      "partition": "v6_384",
+      "time_limit": "UNLIMITED",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "source_commit": "1ebcc49a4afe198a82a0031d91aaf70b823bbe0f",
+      "workdir": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-03",
+      "command": "sbatch --parsable --time=0 --job-name=mdt-rms-chunked run_public_operator_power.sbatch apply_chunked /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828362/prefill/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828362/decode/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828902/prefill/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828902/decode/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/prefill-w4-tile128-pr272-combined/arithmetic-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+      "log": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-03/slurm-38837942.log",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-03/operator-38837942"
+    },
+    {
+      "job_id": 38838045,
+      "name": "mdt-280q3op",
+      "node": "m3ca0706",
+      "elapsed": "00:24:02",
+      "cores": "2x12",
+      "partition": "v6_384",
+      "time_limit": "UNLIMITED",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "source_commit": "0a4f3386d99e3005ad029378a52294057ce5d8b3",
+      "workdir": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01",
+      "command": "sbatch --parsable --time=0 run_qwen3_operator_capture.sbatch",
+      "log": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/slurm-38838045.log",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045"
+    },
+    {
+      "job_id": 38838116,
+      "name": "mdt-q3-softmax",
+      "node": "m3ca0305",
+      "elapsed": "00:01:03",
+      "cores": "1x12",
+      "partition": "v6_384",
+      "time_limit": "UNLIMITED",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "source_commit": "1ebcc49a4afe198a82a0031d91aaf70b823bbe0f",
+      "workdir": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-03",
+      "command": "sbatch --parsable --time=0 --dependency=afterok:38838045 --job-name=mdt-q3-softmax run_public_operator_power.sbatch softmax /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/prefill-w4-tile128-pr272-combined/operator-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json",
+      "log": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-03/slurm-38838116.log",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-03/operator-38838116"
+    },
+    {
+      "job_id": 38838117,
+      "name": "mdt-q3-rope",
+      "node": "m3ca1301",
+      "elapsed": "00:03:08",
+      "cores": "1x12",
+      "partition": "v6_384",
+      "time_limit": "UNLIMITED",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "source_commit": "1ebcc49a4afe198a82a0031d91aaf70b823bbe0f",
+      "workdir": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-03",
+      "command": "sbatch --parsable --time=0 --dependency=afterok:38838045 --job-name=mdt-q3-rope run_public_operator_power.sbatch rope /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/prefill-w4-tile128-pr272-combined/operator-observation.json /public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json",
+      "log": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-03/slurm-38838117.log",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-03/operator-38838117"
+    }
+  ],
+  "unique_public_samples": {
+    "N": 66,
+    "E32": 66,
+    "scan": 66,
+    "apply_full_vectors": 66,
+    "apply_chunks": 96,
+    "softmax": 56,
+    "RoPE": 54
+  },
+  "legacy_apply_samples": 36,
+  "legacy_apply_included_in_v3": false,
+  "calibration_files": {
+    "n-38828633-calibration.json": {
+      "sha256": "96ae358f2a7703056ea85d9200e4e48338c8fda821c7a0513f465844bcf5f59d",
+      "samples": 2
+    },
+    "n-38828634-calibration.json": {
+      "sha256": "6f26c3b9004305dfb3f77e40612c5f85946b82daa7bb672209f200fb27f6f684",
+      "samples": 4
+    },
+    "n-38828998-calibration.json": {
+      "sha256": "dc42ceadf51027cd9fb771ae9b9f26f52effdc4d3725e6a9ebacb8d7c195b79d",
+      "samples": 2
+    },
+    "n-38828999-calibration.json": {
+      "sha256": "916d2296d7865bd39f1f8c841120a25e89e993b5893f241e65adc24a42758f9e",
+      "samples": 4
+    },
+    "n-38829000-calibration.json": {
+      "sha256": "45f693011c54ef6cf21a857650417ae564a332e473b9dbb1680578ce3ac6a23f",
+      "samples": 2
+    },
+    "n-38829001-calibration.json": {
+      "sha256": "48e8a27cb74c10a9da202d6eaad40f5858f1c3a978c9b8d08ed42d2a213beddf",
+      "samples": 4
+    },
+    "n-38829002-calibration.json": {
+      "sha256": "ea8e33ca9d429f1c3dbae9cbf50bd60ad151b4661883f23527ace10908784865",
+      "samples": 6
+    },
+    "n-38829003-calibration.json": {
+      "sha256": "98471ca91a41ae738a5d520f1149facc225c8c1734724a35872145c3abc71439",
+      "samples": 12
+    },
+    "n-38829004-calibration.json": {
+      "sha256": "88a3a10a2b85633650406c7757aef221517e4aa5a5cd935a5d5ad5feb50816ed",
+      "samples": 4
+    },
+    "n-38829005-calibration.json": {
+      "sha256": "f703a0f1a074cf890e0fe4561fa2e6b49a433b615d873d0dcce0bafbf9f94307",
+      "samples": 8
+    },
+    "n-38829006-calibration.json": {
+      "sha256": "d99a6f9830aee7ce6933a867cb20b492b01691579dc3d825d0038eafc259e732",
+      "samples": 2
+    },
+    "n-38829007-calibration.json": {
+      "sha256": "2a326ff8ed33eed4feb7ca70c056f3f5a4acf94415facbe38d7fc475abf610bf",
+      "samples": 4
+    },
+    "n-38829008-calibration.json": {
+      "sha256": "4415272fcc10a3d05ca0858209dcbcc06a0575c528c9c572f9b9bd32e21fb433",
+      "samples": 4
+    },
+    "n-38829009-calibration.json": {
+      "sha256": "6311530329686a08505b2e0970bc44369e82d9161812d731c324196659f9d0e8",
+      "samples": 8
+    },
+    "operator-38831680-calibration.json": {
+      "sha256": "fc9a7f0f7b48276c429ebc6029399d9113747644b76b01b92496d5e7d4145b7d",
+      "samples": 16
+    },
+    "operator-38831681-calibration.json": {
+      "sha256": "63d809515763e4e8addbc3766186c6cd9c0cc1f8a94e3b0d1557f0e15eeec506",
+      "samples": 12
+    },
+    "operator-38831748-calibration.json": {
+      "sha256": "ad2390f77a5e06dfd81092171ed9fe8399ca0bc1c6fa2eff341cd5054b7ce029",
+      "samples": 24
+    },
+    "operator-38831749-calibration.json": {
+      "sha256": "b30fad9261ff8af3e8723c5f546e563394fd2759048e976f4fcd4879636889a8",
+      "samples": 24
+    },
+    "operator-38831838-calibration.json": {
+      "sha256": "67e18640c15820bbfecd488e7d197817e8f935476bd16b09176d2fe688c0e840",
+      "samples": 42
+    },
+    "operator-38831839-calibration.json": {
+      "sha256": "9a1534ddd07569fd3e6d2f73b813a5fdb5fdc0529b50cb9ff6b29ceef1ad4820",
+      "samples": 12
+    },
+    "operator-38832101-calibration.json": {
+      "sha256": "0bce63b0d8af7e584b67d47f4b632213ba6f9f41f3f9f73a08945ab971d62c84",
+      "samples": 32
+    },
+    "operator-38832112-calibration.json": {
+      "sha256": "2fd940d6d39bed1b7def665d1b539230a478adec0d1d7bad7207d6182b0e4536",
+      "samples": 30
+    },
+    "operator-38837942-calibration.json": {
+      "sha256": "a4fa40ea1ae821db25e9c58bb65e131b1bae8eb702ce43ac2607049a838057ba",
+      "samples": 96
+    },
+    "operator-38838116-calibration.json": {
+      "sha256": "1c6806e9237993a1a9a596fc9c7a02e5d69299eededdbb42f96342fc890b20b5",
+      "samples": 8
+    },
+    "operator-38838117-calibration.json": {
+      "sha256": "1b6caa489d1e58f2b1e2fd1050941133956f12f3c7b62ddafb179c92189e4d90",
+      "samples": 12
+    },
+    "power-38830436-calibration.json": {
+      "sha256": "1eafa435f238a01dbb3f1380f33eb32adfa4d23616408f611b148d11991d042c",
+      "samples": 6
+    },
+    "power-38830711-calibration.json": {
+      "sha256": "15748f05a2c95c11280d9ddd3c06cd18100628bc94562a5dea217bfd3da0ddc3",
+      "samples": 6
+    },
+    "power-38830712-calibration.json": {
+      "sha256": "8fa59c9963494e38a7ebafd5ea2625ed4e381b2b4dd65142df2908a275034132",
+      "samples": 12
+    },
+    "power-38831450-calibration.json": {
+      "sha256": "c02ba08da60047a62066df023189f59079a2418b11531f2b6cbdd65b59b167de",
+      "samples": 6
+    },
+    "power-38831451-calibration.json": {
+      "sha256": "12d48ef0610382c88a66f17465f3579dda402d85257400c5897e95cb955c4812",
+      "samples": 12
+    },
+    "power-38831452-calibration.json": {
+      "sha256": "003aad07f6e0ab5f3ae8986cf5166feaa5a8e39f4ccfe5acd4acced722b6c467",
+      "samples": 6
+    },
+    "power-38831453-calibration.json": {
+      "sha256": "1f3d05752f8f8de98e810456402ec71e5a90b141766d985b149c3a0c9af3b7e9",
+      "samples": 18
+    }
+  },
+  "model_count_sha256": {
+    "falcon.json": "aa4ac47f766ede8d6e64e5723e614d4cad22d5ef8bd7a8922ee11c355478f054",
+    "gemma.json": "edbc822f272f14b45155cd01f50c81bc16f6146c56209ed71e6209a3231ce9f6",
+    "granite.json": "085213037bcc793085ce0009e0fca9e617de1a940292341da6f3f29de691fbae",
+    "llama.json": "026876b91184e63649c4268f02650b41905e59d47aa37087cfc9c3ecafa6eebb",
+    "phi.json": "cd68cfe9305a96cc6001935054c3ca5562583ac8fc67b37cd8d93d32b26d3d9b",
+    "qwen3.json": "48b09132f00b3c5ac944e30ecb7a3a2e64aa21e77c53285e12661f2b462756dd",
+    "qwen35.json": "fcd3f2f2ff290572c875a6964eebdb3bf5a482e0ee556e3a2dbcc3caaf3e106b"
+  },
+  "estimator_sha256": "565f1c0ec17d02dc4baa07baf6efb2158299098e53d7925cfd87af71ffaffaa1",
+  "limitations": [
+    "Calibration sample ranges and proxy sensitivities are not confidence intervals or validated error bounds.",
+    "OpenROAD exact version and original frozen RTL commit remain unverified; source and library SHA are retained."
+  ]
+}

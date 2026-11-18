@@ -1,3 +1,25 @@
+## 2026-11-18 七模型算术能耗估算 v3 已交付（Asia/Shanghai）
+
+Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / 草稿 PR [#281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。已按用户允许特殊算子运算级近似的口径完成七模型三窗估算；512-bit SRAM、名义 300 MHz、三 P 与冻结时间保持不变。公共 RMS/softmax/RoPE 采用真实输入标定；GELU/GDN/Mamba/浮点服务等明确使用成本代理，范围不是统计置信区间或保证误差界，不宣称 RTL 数值验收。
+
+四项新作业 38837942/38838045/38838116/38838117 全部 COMPLETED 0:0、UNLIMITED。N/E32/scan 各 66 样本，96 分块覆盖 66 个完整 apply 向量，softmax 56、RoPE 54。七模型分项/单位/冻结时间/DDR 对账通过；18 页 PDF 的 462 组数值与全页视觉检查通过。数据/估算代码提交 `0d84209e10e898f17998e959157a760a80c2afaf`。
+
+最新 [完整交接与所有剩余步骤](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-seven-model-energy/docs/handoffs/2026-11-18-issue-280-arithmetic-estimate-v3.md)、[持续更新报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-seven-model-energy/docs/experiments/seven-model-energy-evaluation.pdf)。本轮估算已完成；更广的硬件实现/时序/读 DMA 与物理覆盖仍未验收，Issue in_progress、PR 草稿未合并，审查人待指定。项目登记 PR #5 pending；看板缺配置/Projects 能力，unverified、同步 pending。11:27 快照旧 DMA 38769386/38795299 仍 RUNNING，另两项在综合后的引脚放置失败，不阻塞本版估算。未配置聊天自动监测。
+
+### 当前 v3 复算命令
+
+从仓库根目录运行；PDF 命令使用含 reportlab/pypdf 的 Python 及 Windows Deng 字体。本轮实际通过，管理检查不替代业务/物理验收。
+
+```text
+python scripts/check_project.py
+python work/Melodydt/280/seven_model_arithmetic_estimate.py
+python work/Melodydt/280/verify_arithmetic_estimate.py
+python work/Melodydt/280/build_energy_report.py
+python work/Melodydt/280/verify_energy_report_pdf.py output/pdf/seven-model-energy-evaluation.pdf
+```
+
+输入/输出散列在结果 JSON、报告索引与 arithmetic-calibration-results/v3-evidence-index.json。每次更新数据后应更新索引 SHA、重建并核对 PDF、重新目检变更页，再复制到 docs/experiments 同名文件；旧 v2.1 索引单独保留。未完成项见交接，不沿用下方历史快照的等待状态。
+
 # 七模型短程能耗试点
 
 ## 报告 v2.1：逐模型小计旁列出缺项（2026-11-17）
