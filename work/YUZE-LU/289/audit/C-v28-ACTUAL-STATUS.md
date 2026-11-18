@@ -1,3 +1,11 @@
+## C35 实际合并阶段（2026-11-18 CST，覆盖下方旧结果）
+
+六个合并版本均完成实际布线（120194 与两路 AP 恢复120199），尚未通过 C 后端验收。当前独立核验的 `C-v35-unified-i8-h100-pnone`：153 个 BUF_X8，原信号端口、宏位置与 die 保持一致；原生路由报告0，实际提取 setup90项/−105.212286ps、hold19项/−20.839553ps、电容1项、slew0。另两种中继位置没有同时消除全部问题，因此不能计作通过。
+
+独立120216证明278621条网络提取前后的金属与过孔材料一致；120215实际天线检查为0，上层原规则仍有3项、对应两处几何位置。第一版VIA9位移因挤压相邻M9间距被拒绝，继续修复。PG边界230个旧形状移除/140个新形状增加已追溯至v16实际PDN，260354条完整电源材料记录和140个BPin跨版本完全相同，同名电源材料及实际GDS覆盖、反电源隔离和两轨无缓存连通均通过；root仅批准该PG工程基线，未批准整体后端。证据见同级 `C-v35-independent-v1/`、`C-v35-pg-boundary-v3/` 和 `C-v35-pg-origin-v1/`。
+
+实际 `i8h100-pmid200` 的早期 legalized 网表已通过独立数据/21095状态/控制等价证明120196；最终候选仍需逐字节绑定或重新证明。mem_wr_address[63]的37项组合单元尺寸方案在静态提取网络上改善至+142.720ps，限定为规划证据，正在合入实际小ECO。后续还需实际时序/电气归零、最终完整原版规则及模型验收。
+
 # Actual C-v28 closure checkpoint
 
 This is an intermediate checkpoint, not backend acceptance. The accepted U and F releases remain frozen; G33/S1 are qualified within the F chain. C153 remains under repair at its unchanged 250 MHz contract.

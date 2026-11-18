@@ -1,3 +1,5 @@
+2026-11-18 CST 最新补记（Issue289）：G/S/F与U已验收；C35六路实际布线已完成，独立候选153个BUF_X8及固定信号/宏几何通过，天线0，278621条网络提取材料一致，PG差异已追溯并单独批准工程基线。C仍有setup90/hold19/电容1项和两处上层几何问题，继续小ECO闭合；尚未完成后端验收。详见[实际记录](../work/YUZE-LU/289/audit/C-v28-ACTUAL-STATUS.md)。以下早期C28数字不代表当前源，Issue保持in_progress、PR290保持草稿。
+
 # 当前状态
 
 2026-11-18，[Issue #289](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/289) / [草稿 PR #290](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/290) 继续完成 A/B 非 P 接口的 340 个输出驱动 X8 升级。G/S 叶宏和 F 父 block 已验收，F TT 名义 300 MHz setup/hold 裕量为 +221.605/+2.454 ps。U 新增后端验收通过，153 个目标输出均为 BUF_X8，在 TT 250 MHz、目标输出 50 fF 契约下，setup/hold 裕量为 +78.051/+3.471 ps，完整原版 GDS DRC 和五类时序/电气违例均为零，PG、功能和视图检查通过。C 六路实际布线对照已完成五路，当前选择 i8/h50：153 个 BUF_X8 和固定接口几何通过；原生路由报告4项，独立原规则上层检查24项、天线1项，实际 setup/hold 最差为 −116.966/−48.911 ps，尚未验收。正在修复宏边界几何、定向 hold 和绕毫米级 R 宏的长线；静态尺寸优化不计作重布线通过。实际顶层 RC 和多 PVT 验证仍待后续进行。详见[执行记录及回执](../work/YUZE-LU/289/README.md)，Issue 保持 in_progress。

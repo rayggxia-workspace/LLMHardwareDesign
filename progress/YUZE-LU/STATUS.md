@@ -1,5 +1,7 @@
 # YUZE-LU 的进度
 
+2026-11-18 CST 最新补记：C35 六路合并实际布线已结束，当前独立核验 pnone 版本原生路由报告0、实际天线0、278621条网络提取材料一致；setup90/hold19/电容1项仍未通过，上层两处几何问题正修复。C35 PG差异已明确追溯并批准为工程基线，整体验收仍待时序、电气和最终完整规则通过。[最新实际记录](../../work/YUZE-LU/289/audit/C-v28-ACTUAL-STATUS.md)覆盖下方C28早期数字；U/F验收结果保持不变，Issue289仍in_progress、PR290仍草稿。
+
 ## 2026-11-18（CST）A/B 非 P 端口 X8 升级
 
 G/S 叶宏、F 父 block 和 U block 已完成后端验收。F TT 名义 300 MHz setup/hold 裕量为 +221.605/+2.454 ps。U 的 153 个目标输出均为 BUF_X8，在 TT 250 MHz、目标输出 50 fF 契约下，setup/hold 裕量为 +78.051/+3.471 ps，完整原版 GDS DRC 和五类时序/电气违例均为零，PG、功能、固定接口几何和视图检查通过。[U 回执](../../work/YUZE-LU/289/audit/evidence/U/accepted-parent.json)已冻结。C 当前实际 i8/h50 的原生路由报告4项、独立上层检查24项、天线1项，实提取 setup/hold 最差 −116.966/−48.911 ps，尚未验收。六路对照120096与后续分工继续：局部中段中继120144为单节点6×8CPU，另行修复定向 hold、R/S 边界及 M9/VIA9；详见[实际阶段回执](../../work/YUZE-LU/289/audit/C-v28-ACTUAL-STATUS.md)。缓存主版本 523/523 通用等价分区和实际综合到 legalized 的数据/状态/控制证明已通过。大文件保存在远端任务目录，[执行记录](../../work/YUZE-LU/289/README.md)提供入口。[PR #290](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/290)保持草稿，Issue 保持 in_progress。登记 PR5 和 Projects 配置缺项沿用原交接。以下为早期执行记录。
