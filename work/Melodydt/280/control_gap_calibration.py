@@ -41,7 +41,7 @@ def power(tcl, out, expected=None):
     s = (out/'power.log').read_text()
     rows = re.findall(r'(?m)^Total\s+([\d.eE+-]+)\s+([\d.eE+-]+)\s+([\d.eE+-]+)\s+([\d.eE+-]+)', s)
     ann = re.findall(r'Annotated (\d+) pin activities\.', s)
-    if len(rows) != 1 or len(ann) != 1 or re.search(r'(?m)^(Error:|\[ERROR)', s):
+    if len(rows) != 1 or len(ann) != 1 or re.search(r'(?m)^(Error:|\[ERROR)', s) or 'problem parsing bus' in s:
         raise ValueError('invalid power output: '+str(out))
     if expected is not None and int(ann[0]) < expected: raise ValueError('missing boundary annotation')
     return {'power_w': dict(zip(('internal','switching','leakage','total'), map(float, rows[0]))),
@@ -182,7 +182,7 @@ def cut_shell(rtl, out):
     return dest,bindings
 
 
-def boundary(raw, wave, design, scope, bindings):
+def boundary(raw, wave, design, scope, bindings, clock='clk'):
     with raw.open() as src,wave.open('w') as dst:
         h=header(src); selected={}
         dst.write('$timescale 1ps $end\n$scope module dut $end\n')
@@ -190,9 +190,10 @@ def boundary(raw, wave, design, scope, bindings):
             e=h[scope+'/'+bindings.get(name,name)];width=len(p['bits'])
             if e[1]!=width: raise ValueError('boundary width mismatch '+name)
             selected.setdefault(e[0],[]).append(name)
-            dst.write('$var wire %d %s %s $end\n'%(width,name,name))
+            suffix=' [%d:0]'%(width-1) if width>1 else ''
+            dst.write('$var wire %d %s %s%s $end\n'%(width,name,name,suffix))
         dst.write('$upscope $end\n$enddefinitions $end\n')
-        first=last=None; seen=set(); clockchanges=0; clock_id=h[scope+'/clk'][0]
+        first=last=None; seen=set(); clockchanges=0; clock_id=h[scope+'/'+clock][0]
         for line in src:
             if line.startswith('#'):
                 now=int(line[1:]);first=now if first is None else first;last=now
