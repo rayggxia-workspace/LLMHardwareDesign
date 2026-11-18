@@ -133,10 +133,16 @@ def main():
         if end-begin!=81920000:raise ValueError('wrong idle extent')
         specs.append((p,raw,'tb/dut',begin,end,'',None))
     for mode in (0,1):
-        p=out/('active-%d'%mode);p.mkdir();raw=p/'rtl.vcd';fst=bundle/'c639-inputs'/('mode-%d'%mode)/'gate-up.fst'
+        p=out/('active-%d'%mode);p.mkdir()
+        label='mode-%d-gate-up'%mode
+        # Use the accepted expanded trace. The older C639 FST omits the
+        # 6144-bit response bus and must not be patched with invented activity.
+        stage=root/'read-port-preflight'
+        accepted=json.loads((stage/'stage-38793408/result.json').read_text())['designs'][top][label]
+        raw=root/'wave-audit/audit-38782228'/label/'dma.vcd'
+        if digest(raw)!=accepted['raw_sha256']:raise ValueError('accepted expanded trace changed')
         scope='TOP/test_native_decode638_product_replay/typed_dma'
         if top=='mc_dma_fabric_typed_p':scope+='/dma'
-        run([bundle/'c639-inputs/fst_scope_vcd',fst,raw,scope],p/'extract.log')
         times=[]
         with raw.open() as f:
             for line in f:
@@ -145,8 +151,8 @@ def main():
         if times[1]-times[0]!=81920000:raise ValueError('active window changed')
         bindings={}
         if top!='mc_dma_fabric_typed_p':
-            for n in boundary:
-                bindings[n]=scope+'/'+(n if n in ('clk','reset','owner') else n.replace('_','/',1))
+            declared=json.loads((stage/'binding.json').read_text())[top]['windows'][label]['ports']
+            bindings={n:v['scope']+'/'+v['signal'] for n,v in declared.items()}
         specs.append((p,raw,scope,*times,'mux.' if top!='mc_dma_fabric_typed_p' else '',bindings))
     # Idle and activity must annotate exactly the same retained nets; otherwise
     # different fallback/default activity could masquerade as dynamic energy.
