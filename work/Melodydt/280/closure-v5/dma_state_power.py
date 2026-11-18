@@ -114,7 +114,8 @@ def main():
     verilator=root.parent.parent/'opt/verilator-5.042/bin/verilator'
     # root is .../LLMHardware/zenanyan/issue-280-bscc-t6-01.
     if not verilator.exists():raise ValueError('missing registered Verilator')
-    run([verilator,'--binary','--timing','--trace','--top-module','tb','-Wno-fatal','-j','12','--Mdir',out/'obj',*sources,tb],out/'build.log')
+    run([verilator,'--binary','--timing','--trace','--trace-max-width','16384','--trace-max-array','256',
+         '--top-module','tb','-Wno-fatal','-j','12','--Mdir',out/'obj',*sources,tb],out/'build.log')
     windows={}
     specs=[]
     for mode in range(4 if top!='mc_dma_fabric_typed_p' else 2):
@@ -124,7 +125,7 @@ def main():
         if 'DMA_IDLE_RTL_PASS' not in log:raise ValueError('idle failed')
         begin,end=[int(re.search('IDLE_'+name+r' (\d+)',log)[1]) for name in ('BEGIN','END')]
         if end-begin!=81920000:raise ValueError('wrong idle extent')
-        specs.append((p,raw,'TOP/tb/dut',begin,end,'',None))
+        specs.append((p,raw,'tb/dut',begin,end,'',None))
     for mode in (0,1):
         p=out/('active-%d'%mode);p.mkdir();raw=p/'rtl.vcd';fst=bundle/'c639-inputs'/('mode-%d'%mode)/'gate-up.fst'
         scope='TOP/test_native_decode638_product_replay/typed_dma'
@@ -141,8 +142,17 @@ def main():
             for n in boundary:
                 bindings[n]=scope+'/'+(n if n in ('clk','reset','owner') else n.replace('_','/',1))
         specs.append((p,raw,scope,*times,'mux.' if top!='mc_dma_fabric_typed_p' else '',bindings))
+    # Idle and activity must annotate exactly the same retained nets; otherwise
+    # different fallback/default activity could masquerade as dynamic energy.
+    available=[]
     for p,raw,scope,begin,end,prefix,bindings in specs:
-        wave=p/'mapped-state-300.vcd';activity=mapped_wave(raw,wave,known,scope,begin,end,prefix=prefix,boundary=bindings)
+        trial=mapped_wave(raw,p/'available-state-300.vcd',known,scope,begin,end,prefix=prefix,boundary=bindings)
+        available.append(set(trial['retained_names']))
+    common=set.intersection(*available)
+    if not set(boundary)<=common:raise ValueError('not all boundary ports are traced in every sample: '+str(set(boundary)-common))
+    selected={n:known[n] for n in common}
+    for p,raw,scope,begin,end,prefix,bindings in specs:
+        wave=p/'mapped-state-300.vcd';activity=mapped_wave(raw,wave,selected,scope,begin,end,prefix=prefix,boundary=bindings)
         if not set(boundary)<=set(activity['retained_names']):raise ValueError('missing boundary names')
         tcl='\n'.join(['read_liberty {'+str(LIB)+'}',
           'read_lef {'+str(PLATFORM/'lef/NangateOpenCellLibrary.tech.lef')+'}',
@@ -158,6 +168,7 @@ def main():
         result={'power_w':dict(zip(('internal','switching','leakage','total'),map(float,row[0]))),'annotated':int(ann[0]),'activity':activity,'log_sha256':digest(p/'power.log')}
         windows[p.name]=result;save(p/'receipt.json',result);print('DMA_STATE_WINDOW_PASS',variant,p.name,flush=True)
     save(out/'calibration.json',dict(variant=variant,windows=windows,clock_mhz=300,wire_parasitics_loaded=False,
+        equal_annotation_names=True,common_retained_nets=len(common),candidate_retained_nets=[len(x) for x in available],
         activity='retained RTL internal-state and boundary nets, mapped combinational propagation; not gate-level numerical replay',
         input_sha256={str(p):digest(p) for p in [net,sdc,LIB,Path(__file__),*sources]},
         integration_status='requires per-model read counts/active residency and phase/shared deduplication'))

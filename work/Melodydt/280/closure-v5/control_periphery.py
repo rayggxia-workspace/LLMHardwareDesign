@@ -89,7 +89,7 @@ def main():
         child=design['modules'].get(cell['type'],{})
         if int(child.get('attributes',{}).get('blackbox','0'),2)!=1:continue
         for port,info in child['ports'].items():
-            bits=cell['connections'][port]
+            bits=cell['connections'].get(port,[])
             if not bits:continue
             cut='cut_%04d'%len(bindings)
             direction='input' if info['direction']=='output' else 'output'
