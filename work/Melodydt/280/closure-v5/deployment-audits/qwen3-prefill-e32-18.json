@@ -1,0 +1,984 @@
+{
+  "model": "qwen3",
+  "phase": "prefill",
+  "variant": "e32-18",
+  "e32_product_cycles": 18,
+  "core_period_ps": 3334,
+  "data_sram_bits": 512,
+  "bindings": [
+    {
+      "key": [
+        0,
+        3,
+        8,
+        3
+      ],
+      "provider": "RMS.bind",
+      "module": "qwen3_rms"
+    },
+    {
+      "key": [
+        0,
+        9,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        9,
+        8,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        10,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.local_copy.<locals>.bind",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        11,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        38817793,
+        38817026,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.bind_project",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        826626130,
+        38797314,
+        1
+      ],
+      "provider": "UArithmetic.rope",
+      "module": "native_tlm_u"
+    },
+    {
+      "key": [
+        0,
+        827610177,
+        38797314,
+        1
+      ],
+      "provider": "TiledAttention.bind",
+      "module": "attention_compact"
+    },
+    {
+      "key": [
+        1,
+        9,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        1,
+        10,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.local_copy.<locals>.bind",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        1,
+        11,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        1,
+        38817793,
+        38817026,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.bind_project",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        2,
+        9,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        2,
+        10,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.local_copy.<locals>.bind",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        2,
+        11,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        2,
+        38817793,
+        38817026,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.bind_project",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        3,
+        3,
+        8,
+        3
+      ],
+      "provider": "RMS.bind",
+      "module": "qwen3_rms"
+    },
+    {
+      "key": [
+        3,
+        3,
+        8,
+        4
+      ],
+      "provider": "embedding.<locals>.bind",
+      "module": "qwen3_gather"
+    },
+    {
+      "key": [
+        3,
+        3,
+        38797314,
+        2
+      ],
+      "provider": "UArithmetic.add",
+      "module": "native_tlm_u"
+    },
+    {
+      "key": [
+        3,
+        9,
+        8,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        3,
+        10,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.local_copy.<locals>.bind",
+      "module": "qwen3_short"
+    }
+  ],
+  "registered_but_unused": [
+    {
+      "key": [
+        0,
+        11,
+        8,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        11,
+        8,
+        3
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        11,
+        8,
+        4
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        12,
+        38817026,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.vocab",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        13,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.rotary64",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        13,
+        8,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.pad64",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        13,
+        8,
+        3
+      ],
+      "provider": "Execution.bind_providers.<locals>.rotary_partial",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        13,
+        8,
+        4
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        0,
+        16,
+        8,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        1,
+        3,
+        8,
+        3
+      ],
+      "provider": "RMS.bind",
+      "module": "qwen3_rms"
+    },
+    {
+      "key": [
+        1,
+        9,
+        8,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        1,
+        11,
+        8,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        1,
+        11,
+        8,
+        4
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        2,
+        3,
+        8,
+        3
+      ],
+      "provider": "RMS.bind",
+      "module": "qwen3_rms"
+    },
+    {
+      "key": [
+        2,
+        3,
+        8,
+        5
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        2,
+        9,
+        8,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        2,
+        11,
+        8,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        2,
+        11,
+        8,
+        4
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        3,
+        9,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        3,
+        14,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.residual",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        3,
+        14,
+        8,
+        2
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        3,
+        14,
+        8,
+        3
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        3,
+        14,
+        8,
+        4
+      ],
+      "provider": "Execution.bind_providers.<locals>.<lambda>",
+      "module": "qwen3_short"
+    },
+    {
+      "key": [
+        3,
+        16,
+        8,
+        1
+      ],
+      "provider": "Execution.bind_providers.<locals>.scale",
+      "module": "qwen3_short"
+    }
+  ],
+  "windows": {
+    "prefill": {
+      "elapsed_ps": 92743861730,
+      "local_calls_by_site": {
+        "0": 10416,
+        "1": 2912,
+        "2": 1960,
+        "3": 450
+      },
+      "routes": [
+        {
+          "key": [
+            3,
+            3,
+            8,
+            4
+          ],
+          "calls": 2,
+          "provider": "embedding.<locals>.bind",
+          "module": "qwen3_gather"
+        },
+        {
+          "key": [
+            3,
+            9,
+            8,
+            2
+          ],
+          "calls": 112,
+          "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            3,
+            3,
+            8,
+            3
+          ],
+          "calls": 112,
+          "provider": "RMS.bind",
+          "module": "qwen3_rms"
+        },
+        {
+          "key": [
+            0,
+            9,
+            8,
+            2
+          ],
+          "calls": 1400,
+          "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            0,
+            38817793,
+            38817026,
+            2
+          ],
+          "calls": 3304,
+          "provider": "Execution.bind_providers.<locals>.bind_project",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            0,
+            3,
+            8,
+            3
+          ],
+          "calls": 1344,
+          "provider": "RMS.bind",
+          "module": "qwen3_rms"
+        },
+        {
+          "key": [
+            0,
+            826626130,
+            38797314,
+            1
+          ],
+          "calls": 1344,
+          "provider": "UArithmetic.rope",
+          "module": "native_tlm_u"
+        },
+        {
+          "key": [
+            0,
+            9,
+            8,
+            1
+          ],
+          "calls": 1344,
+          "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            0,
+            827610177,
+            38797314,
+            1
+          ],
+          "calls": 896,
+          "provider": "TiledAttention.bind",
+          "module": "attention_compact"
+        },
+        {
+          "key": [
+            1,
+            10,
+            8,
+            1
+          ],
+          "calls": 952,
+          "provider": "Execution.bind_providers.<locals>.local_copy.<locals>.bind",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            3,
+            10,
+            8,
+            1
+          ],
+          "calls": 112,
+          "provider": "Execution.bind_providers.<locals>.local_copy.<locals>.bind",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            3,
+            3,
+            38797314,
+            2
+          ],
+          "calls": 112,
+          "provider": "UArithmetic.add",
+          "module": "native_tlm_u"
+        },
+        {
+          "key": [
+            0,
+            10,
+            8,
+            1
+          ],
+          "calls": 336,
+          "provider": "Execution.bind_providers.<locals>.local_copy.<locals>.bind",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            2,
+            10,
+            8,
+            1
+          ],
+          "calls": 56,
+          "provider": "Execution.bind_providers.<locals>.local_copy.<locals>.bind",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            1,
+            38817793,
+            38817026,
+            2
+          ],
+          "calls": 1064,
+          "provider": "Execution.bind_providers.<locals>.bind_project",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            2,
+            38817793,
+            38817026,
+            2
+          ],
+          "calls": 1008,
+          "provider": "Execution.bind_providers.<locals>.bind_project",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            0,
+            11,
+            8,
+            1
+          ],
+          "calls": 448,
+          "provider": "Execution.bind_providers.<locals>.<lambda>",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            1,
+            11,
+            8,
+            1
+          ],
+          "calls": 448,
+          "provider": "Execution.bind_providers.<locals>.<lambda>",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            2,
+            11,
+            8,
+            1
+          ],
+          "calls": 448,
+          "provider": "Execution.bind_providers.<locals>.<lambda>",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            1,
+            9,
+            8,
+            1
+          ],
+          "calls": 448,
+          "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+          "module": "qwen3_short"
+        },
+        {
+          "key": [
+            2,
+            9,
+            8,
+            1
+          ],
+          "calls": 448,
+          "provider": "Execution.bind_providers.<locals>.dma.<locals>.bind",
+          "module": "qwen3_short"
+        }
+      ],
+      "occupancy": {
+        "local_installer": {
+          "busy_ps": 588788,
+          "idle_or_other_ps": 92743272942,
+          "duty": 6.348538749810801e-06,
+          "calls": 4,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "mother_installer": {
+          "busy_ps": 341158036,
+          "idle_or_other_ps": 92402703694,
+          "duty": 0.0036784972033318416,
+          "calls": 58,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "mother_instruction": {
+          "busy_ps": 1016383236,
+          "idle_or_other_ps": 91727478494,
+          "duty": 0.010959035099907092,
+          "calls": 48186,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "provider_site3": {
+          "busy_ps": 7610485126,
+          "idle_or_other_ps": 85133376604,
+          "duty": 0.08205917873202194,
+          "calls": 450,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "local_target_3": {
+          "busy_ps": 7903287190,
+          "idle_or_other_ps": 84840574540,
+          "duty": 0.08521628324048439,
+          "calls": 450,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site3_N": {
+          "busy_ps": 637780864,
+          "idle_or_other_ps": 92106080866,
+          "duty": 0.0068767986592658354,
+          "calls": 29008,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site3_E32": {
+          "busy_ps": 4301660160,
+          "idle_or_other_ps": 88442201570,
+          "duty": 0.046382154891535375,
+          "calls": 86016,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "provider_site0": {
+          "busy_ps": 75338351324,
+          "idle_or_other_ps": 17405510406,
+          "duty": 0.8123270901025053,
+          "calls": 10416,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "local_target_0": {
+          "busy_ps": 82063762804,
+          "idle_or_other_ps": 10680098926,
+          "duty": 0.8848430642548358,
+          "calls": 10416,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site0_Mordinary": {
+          "busy_ps": 18314840338,
+          "idle_or_other_ps": 74429021392,
+          "duty": 0.19747765508534643,
+          "calls": 344064,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site0_Mshared": {
+          "busy_ps": 27874085138,
+          "idle_or_other_ps": 64869776592,
+          "duty": 0.3005491103998695,
+          "calls": 523264,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site0_N": {
+          "busy_ps": 1631046144,
+          "idle_or_other_ps": 91112815586,
+          "duty": 0.017586567063040497,
+          "calls": 47040,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site0_E32": {
+          "busy_ps": 12904980480,
+          "idle_or_other_ps": 79838881250,
+          "duty": 0.13914646467460612,
+          "calls": 236544,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "provider_site1": {
+          "busy_ps": 24736189582,
+          "idle_or_other_ps": 68007672148,
+          "duty": 0.26671511322240476,
+          "calls": 2912,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "local_target_1": {
+          "busy_ps": 26587896516,
+          "idle_or_other_ps": 66155965214,
+          "duty": 0.28668092982157517,
+          "calls": 2912,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "provider_site2": {
+          "busy_ps": 22425850940,
+          "idle_or_other_ps": 70318010790,
+          "duty": 0.24180415309087647,
+          "calls": 1960,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "local_target_2": {
+          "busy_ps": 23673500420,
+          "idle_or_other_ps": 69070361310,
+          "duty": 0.2552567898123472,
+          "calls": 1960,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site0_M272": {
+          "busy_ps": 9559244800,
+          "idle_or_other_ps": 83184616930,
+          "duty": 0.10307145531452305,
+          "calls": 179200,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site1_M272": {
+          "busy_ps": 9559244800,
+          "idle_or_other_ps": 83184616930,
+          "duty": 0.10307145531452305,
+          "calls": 179200,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site1_Mshared": {
+          "busy_ps": 9559244800,
+          "idle_or_other_ps": 83184616930,
+          "duty": 0.10307145531452305,
+          "calls": 179200,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site2_M272": {
+          "busy_ps": 8412135424,
+          "idle_or_other_ps": 84331726306,
+          "duty": 0.09070288067678028,
+          "calls": 157696,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site2_Mshared": {
+          "busy_ps": 8412135424,
+          "idle_or_other_ps": 84331726306,
+          "duty": 0.09070288067678028,
+          "calls": 157696,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site0_G32": {
+          "busy_ps": 1051516928,
+          "idle_or_other_ps": 91692344802,
+          "duty": 0.011337860084597536,
+          "calls": 14336,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site1_G32": {
+          "busy_ps": 1051516928,
+          "idle_or_other_ps": 91692344802,
+          "duty": 0.011337860084597536,
+          "calls": 14336,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        },
+        "site2_G32": {
+          "busy_ps": 1051516928,
+          "idle_or_other_ps": 91692344802,
+          "duty": 0.011337860084597536,
+          "calls": 14336,
+          "overlap_ps": 0,
+          "source": "exact TLM interval union, not RTL state encoding"
+        }
+      },
+      "control_counters": {
+        "local_install_calls": 4,
+        "local_install_bytes": 1408,
+        "local_install_elapsed_ps": 588788,
+        "mother_install_calls": 58,
+        "mother_install_bytes": 90976,
+        "mother_install_elapsed_ps": 341158036,
+        "mother_opcode_13": 1192,
+        "mother_instruction_elapsed_ps": 1016383236,
+        "mother_opcode_10": 15738,
+        "local_calls_site3": 450,
+        "mother_opcode_16": 15738,
+        "mother_opcode_11": 12770,
+        "provider_busy_ps_site3": 7610485126,
+        "local_service_plus_transport_ps_site3": 7903287190,
+        "mother_opcode_17": 2690,
+        "mother_opcode_1f": 58,
+        "n_site3_n_begin_calls": 112,
+        "n_site3_n_begin_cycles": 224,
+        "n_site3_n_stats_calls": 28672,
+        "n_site3_n_stats_cycles": 172032,
+        "n_site3_n_finalize_calls": 112,
+        "n_site3_n_finalize_cycles": 18816,
+        "n_site3_n_read_factor_calls": 112,
+        "n_site3_n_read_factor_cycles": 224,
+        "n_site3_e_product_packets_calls": 57344,
+        "n_site3_e_product_packets_cycles": 1032192,
+        "local_calls_site0": 10416,
+        "provider_busy_ps_site0": 75338351324,
+        "local_service_plus_transport_ps_site0": 82063762804,
+        "n_site0_n_begin_calls": 1344,
+        "n_site0_n_begin_cycles": 2688,
+        "n_site0_n_stats_calls": 43008,
+        "n_site0_n_stats_cycles": 258048,
+        "n_site0_n_finalize_calls": 1344,
+        "n_site0_n_finalize_cycles": 225792,
+        "n_site0_n_read_factor_calls": 1344,
+        "n_site0_n_read_factor_cycles": 2688,
+        "n_site0_e_product_packets_calls": 86016,
+        "n_site0_e_product_packets_cycles": 1548288,
+        "e_site0_e_product_packets_calls": 107520,
+        "e_site0_e_product_packets_cycles": 1935360,
+        "e_site0_e_add_packets_calls": 43008,
+        "e_site0_e_add_packets_cycles": 387072,
+        "local_calls_site1": 2912,
+        "provider_busy_ps_site1": 24736189582,
+        "local_service_plus_transport_ps_site1": 26587896516,
+        "e_site3_e_add_packets_calls": 28672,
+        "e_site3_e_add_packets_cycles": 258048,
+        "local_calls_site2": 1960,
+        "provider_busy_ps_site2": 22425850940,
+        "local_service_plus_transport_ps_site2": 23673500420,
+        "e_site0_g_packet_calls": 14336,
+        "e_site0_g_packet_cycles": 315392,
+        "e_site1_g_packet_calls": 14336,
+        "e_site1_g_packet_cycles": 315392,
+        "e_site2_g_packet_calls": 14336,
+        "e_site2_g_packet_cycles": 315392
+      },
+      "gating_savings_nj": 0
+    }
+  },
+  "clock_policy": "all reference instances remain clocked; no physical clock/power gating evidence",
+  "evidence": {
+    "acceptance": "fe0513f79df6cbe480e13d0be68e038312ef97cd6b28bde8a485171fecf5091e",
+    "deployment": "d1355339b7df78bfb00af3d83b543430021d2b0c794211d56738475b8eaadb98",
+    "result": "9192c36c5ea108f305d495ff2d95da60faff83bad02433a3298611297dab28cd",
+    "provenance": "3b8b4da1ea9a7781b4f697d0ef3f94cedf0a71a918f8c1191e531227dcbc2118"
+  },
+  "proven": [
+    "actual executed provider keys, service counts, PM installs, instruction counts and callback intervals",
+    "no overlap at each local target/provider and at shared E32/M resources during these accepted windows"
+  ],
+  "still_unverified": [
+    "per-model complete RTL top, concrete provider-to-port wiring and matching router parameters",
+    "complete-model mother/LC state traces and physical clock gating; C639 state traces are a reference only",
+    "special candidate units are not automatically installed into the frozen model datapath"
+  ]
+}

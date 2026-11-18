@@ -1,0 +1,690 @@
+{
+  "activity": "real RTL boundary propagation; cut accepted core, LC, router and switch to avoid duplicate energy",
+  "cell_count": 25880,
+  "clock_mhz": 300,
+  "cut_instances": [
+    {
+      "instance": "cohort.local_target[0].dispatch",
+      "type": "lc_native_service_router"
+    },
+    {
+      "instance": "cohort.local_target[0].local_controller",
+      "type": "lc_native_scope_controller"
+    },
+    {
+      "instance": "cohort.local_target[1].dispatch",
+      "type": "lc_native_service_router"
+    },
+    {
+      "instance": "cohort.local_target[1].local_controller",
+      "type": "lc_native_scope_controller"
+    },
+    {
+      "instance": "cohort.local_target[2].dispatch",
+      "type": "lc_native_service_router"
+    },
+    {
+      "instance": "cohort.local_target[2].local_controller",
+      "type": "lc_native_scope_controller"
+    },
+    {
+      "instance": "cohort.local_target[3].dispatch",
+      "type": "lc_native_service_router"
+    },
+    {
+      "instance": "cohort.local_target[3].local_controller",
+      "type": "lc_native_scope_controller"
+    },
+    {
+      "instance": "cohort.mother.mother",
+      "type": "mother_control_native64"
+    },
+    {
+      "instance": "cohort.transport",
+      "type": "mc_lc_packet128_switch"
+    }
+  ],
+  "elaborated_source_sha256": {
+    "lc_native_scope_controller-blackbox.sv": "9896784dbee0804a90ad2671786f884e1f1a921b46dc37d2b39b81cc814b0226",
+    "lc_native_service_router-blackbox.sv": "5ea70cdf9a3584085c359c301e64ac3b2d642b70dc1b26d8804184197b994d7c",
+    "mc_lc_packet128_switch-blackbox.sv": "43f978bafe1e490756a9fa8f4685cfd36f614ce7a24b949dc0bff726cd65f4b4",
+    "mother_control_native64-blackbox.sv": "603c3d20d4c0c148acb0561664b02ae5df0d71e4bb14687c8eeae88bb4a68b3d",
+    "source/project/rtl/block_local_native/native_prompt_index.sv": "aaac8dbdb6fc0be9d4922ef6f7bf7cc8fe31aaf0b8bbb55b2ba46b2e7628822e",
+    "source/project/rtl/block_local_native/native_retired_token_index.sv": "6745d2faaade597c6b53dd68ba35e5e4a5b4bfaadb59020a394110f9a626fce9",
+    "source/project/rtl/mother_control_native/mc_packet128_bridge.sv": "434dc84e71050085418d06a914a46bae658efe60583f21cfb1b06767ba107b18",
+    "source/project/rtl/mother_control_native/mother_control_native64_transport128.sv": "14f0abc6a248de8f32a1a8afce4fb8fb639a191cf2579373300960bf09e2acfa",
+    "source/project/rtl/mother_control_native/native_lc_image_install.sv": "65254ef6594fb51330d5fbfcadda9fd5ddec1f5064aada3d8d1c8af85e2a8399",
+    "source/project/rtl/mother_control_native/native_mc_image_install.sv": "e2d8d7f84ace5458b225ac2c03481d324f81ea7cff0734a27c4662526e5a604e",
+    "source/project/rtl/mother_control_native/native_phase_page_sequence.sv": "ea800d823a8a3d6f9d7667942c06237ba90fdbd2fa40e62fc51d353b44884cd9",
+    "source/project/rtl/mother_control_native/native_pm_image_stream.sv": "9d8dd75ae918d34b7841fa1c15362e909dce219999c96dab0d36d4a29d6678a0",
+    "source/project/rtl/mother_control_native/native_product_controller.sv": "c7b6c3de0998cfcd104c39f55ebd293a7e04624dd6007986ca2ba48240b8e29d",
+    "source/project/rtl/mother_control_native/native_request_sequence.sv": "ba9f03bf43e5ab3a1b562c213bda364fcb57086f0cecfabda285f8ba17e5ca48",
+    "source/project/rtl/mother_control_native/native_three_lc_cohort.sv": "11371f61b619878e7188f680e6581c94d822d3b5924d26be2be3e5f6ee623594",
+    "source/project/rtl/mother_control_native/native_token_sequence.sv": "bfd417f00f7a8c8336251247b5fe81d2cec2806803bf2f6bdcf371a9a9b3a1b5"
+  },
+  "elaboration_fix": "move three saved_local declarations before their generate use; no changed logic",
+  "input_sha256": {
+    "/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/closure-v5-20261118/control_gap_calibration.py": "b821b11d2c795491ed548367292a222b99311d48a71c06292c889a1851a3ed90",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/closure-v5-20261118/control_periphery.py": "271ffd2f04a966c09442e186c14b8d08c230a39e5711f3a167afe7fba280178a"
+  },
+  "integration_status": "C639 peripheral calibration; per-model deployed control and exact whole-model RTL residency still require matching evidence",
+  "netlist_sha256": "f8c5cb40c82dd7e9205d1a1c4e255605e62853119347a34ceeddb2dc37da962c",
+  "parameters": {
+    "ABI": [
+      32,
+      38797314
+    ],
+    "LC_CAPACITY": [
+      32,
+      38862849
+    ],
+    "LC_IMAGE_IDS": [
+      128,
+      1980783291480309752870383279694249
+    ],
+    "LOCAL_COUNT": [
+      32,
+      4
+    ],
+    "LOCAL_TARGET": [
+      32,
+      0
+    ],
+    "MC_CAPACITY": [
+      32,
+      39387139
+    ],
+    "MC_IMAGE_ID": [
+      32,
+      900
+    ],
+    "PORT_BITS": [
+      32,
+      1
+    ],
+    "PROVIDERS": [
+      32,
+      1
+    ],
+    "REBIND_TARGET": [
+      4,
+      1
+    ],
+    "ROUTES": [
+      32,
+      9
+    ],
+    "ROUTE_ENABLE": [
+      36,
+      2013529087
+    ],
+    "ROUTE_OP": [
+      576,
+      3121796186599166022519149908445088104991248290635736728495107401216956775859024965573559064983949932651595577172436426368607683725171177610674178
+    ],
+    "ROUTE_PORT": [
+      36,
+      0
+    ],
+    "ROUTE_PROVIDER_ABI": [
+      1152,
+      378092007816916749440081636246842436981512854809675180659741480618099466898694505104853811904909359047052437901387134279425657842716359653330408005686586474640614482043174582387002686294059655906967572296097585480923572769794094140017237750733697148660125832373266661198245110732680128446383259655
+    ],
+    "ROUTE_SCHEMA": [
+      1152,
+      9209184567876111218347947837076588854698027756283629729352947028960107939553110927458440121903568681112492636211388223067422175679370132674962277720345105338733225239176213338880194955947482677290938503399473159870275519084882768847099185870300218309482821847361437815473323321109169263389972627459
+    ],
+    "SERVICE_STALL_LIMIT": [
+      32,
+      2000000
+    ],
+    "TOPOLOGY": [
+      32,
+      25001
+    ]
+  },
+  "source_tar_sha256": "8294abc3b8da18f22db091627353b68cdd1498ab2e32c1293a8b0abd56b4a5da",
+  "top": "native_product_controller",
+  "windows": {
+    "mode-0-gate-up": {
+      "annotated": 37765,
+      "clock_changes": 16385,
+      "port_bits": 37765,
+      "power_log_sha256": "e4cc501663c5b065401cf912843d8eecd8cda1cf1be20e46b445e086b1beeb34",
+      "power_w": {
+        "internal": 0.009649589658,
+        "leakage": 0.0008567614132,
+        "switching": 6.087758084e-05,
+        "total": 0.01056722924
+      },
+      "residency": {
+        "clock_scale": 3,
+        "scope": "exact within the captured C639 windows, not a full model state trace",
+        "source_window_ps": 81920000,
+        "state_ps_at_300mhz": {
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_install/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_install/transfer/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/dispatch/state": {
+            "1": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/local_controller/scope_fetch/state": {
+            "3": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/local_controller/state": {
+            "1": 3333.3333333333335,
+            "2": 3333.3333333333335,
+            "3": 3333.3333333333335,
+            "9": 27296666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/dispatch/state": {
+            "0": 53333.333333333336,
+            "1": 27253333.333333332
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/local_controller/scope_fetch/state": {
+            "2": 46666.666666666664,
+            "3": 27260000.0
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/local_controller/state": {
+            "1": 3333.3333333333335,
+            "2": 3333.3333333333335,
+            "3": 3333.3333333333335,
+            "7": 50000.0,
+            "8": 3333.3333333333335,
+            "9": 27243333.333333332
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/dispatch/state": {
+            "0": 100000.0,
+            "1": 27206666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/local_controller/scope_fetch/state": {
+            "2": 93333.33333333333,
+            "3": 27213333.333333332
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/local_controller/state": {
+            "1": 3333.3333333333335,
+            "2": 3333.3333333333335,
+            "3": 3333.3333333333335,
+            "7": 96666.66666666667,
+            "8": 3333.3333333333335,
+            "9": 27196666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/dispatch/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/local_controller/scope_fetch/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/local_controller/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/core/life": {
+            "6": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/core/seq": {
+            "3": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/program_store/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother_install/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother_install/transfer/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/state": {
+            "8": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/input_index/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/prompt_index/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/sequence_controller/pages/state": {
+            "2": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/sequence_controller/request/state": {
+            "2": 27306666.666666668
+          }
+        }
+      },
+      "source_fst_sha256": "023ae0b1ca1ff0afe0a925841332206782657801ad0e31322a5c1a15701cd9b7",
+      "wave_sha256": "ce261049969e46f580f2bd42b21e982b304bee5bd617006c1f581a4723396884",
+      "window_ps": 27306666.666666668
+    },
+    "mode-0-startup": {
+      "annotated": 37765,
+      "clock_changes": 100001,
+      "port_bits": 37765,
+      "power_log_sha256": "8f41be25993052f26f06fa827f4ad6f8bb8f8d8c31fa42732ec46813d22b70c9",
+      "power_w": {
+        "internal": 0.01037643012,
+        "leakage": 0.0008618218708,
+        "switching": 0.0005234233104,
+        "total": 0.01176167466
+      },
+      "residency": {
+        "clock_scale": 3,
+        "scope": "exact within the captured C639 windows, not a full model state trace",
+        "source_window_ps": 500000000,
+        "state_ps_at_300mhz": {
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_install/state": {
+            "0": 165163333.33333334,
+            "1": 3333.3333333333335,
+            "2": 3333.3333333333335,
+            "3": 3333.3333333333335,
+            "4": 310000.0,
+            "5": 3333.3333333333335,
+            "6": 1176666.6666666667,
+            "7": 3333.3333333333335
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_install/transfer/state": {
+            "0": 166356666.66666666,
+            "1": 20000.0,
+            "2": 140000.0,
+            "3": 73333.33333333333,
+            "4": 73333.33333333333,
+            "5": 3333.3333333333335
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/dispatch/state": {
+            "0": 119235000.0,
+            "1": 47411666.666666664,
+            "2": 20000.0
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/local_controller/scope_fetch/state": {
+            "0": 116018333.33333333,
+            "1": 196666.66666666666,
+            "2": 2893333.3333333335,
+            "3": 47558333.333333336
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/local_controller/state": {
+            "0": 114911666.66666667,
+            "1": 66666.66666666667,
+            "10": 20000.0,
+            "12": 80000.0,
+            "2": 66666.66666666667,
+            "3": 66666.66666666667,
+            "4": 466666.6666666667,
+            "5": 466666.6666666667,
+            "6": 23333.333333333332,
+            "7": 3113333.3333333335,
+            "8": 23333.333333333332,
+            "9": 47361666.666666664
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/dispatch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/local_controller/scope_fetch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/local_controller/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/dispatch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/local_controller/scope_fetch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/local_controller/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/dispatch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/local_controller/scope_fetch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/local_controller/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/core/life": {
+            "0": 111228333.33333333,
+            "1": 1526666.6666666667,
+            "2": 1560000.0,
+            "3": 6666.666666666667,
+            "4": 10000.0,
+            "5": 3333.3333333333335,
+            "6": 52331666.666666664
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/core/seq": {
+            "0": 114335000.0,
+            "1": 116666.66666666667,
+            "2": 466666.6666666667,
+            "3": 51655000.0,
+            "4": 93333.33333333333
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/program_store/state": {
+            "0": 165800000.0,
+            "1": 216666.66666666666,
+            "2": 433333.3333333333,
+            "3": 216666.66666666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother_install/state": {
+            "0": 165090000.0,
+            "1": 60000.0,
+            "2": 310000.0,
+            "3": 3333.3333333333335,
+            "4": 400000.0,
+            "5": 800000.0,
+            "6": 3333.3333333333335
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother_install/transfer/state": {
+            "0": 166266666.66666666,
+            "1": 13333.333333333334,
+            "2": 33333.333333333336,
+            "3": 50000.0,
+            "4": 300000.0,
+            "5": 3333.3333333333335
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/state": {
+            "0": 111225000.0,
+            "1": 3333.3333333333335,
+            "2": 13333.333333333334,
+            "3": 1503333.3333333333,
+            "4": 3333.3333333333335,
+            "5": 3333.3333333333335,
+            "6": 1576666.6666666667,
+            "7": 6666.666666666667,
+            "8": 52331666.666666664
+          },
+          "TOP/test_native_decode638_product_replay/controller/input_index/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/prompt_index/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/sequence_controller/pages/state": {
+            "0": 111221666.66666667,
+            "1": 3333.3333333333335,
+            "2": 55441666.666666664
+          },
+          "TOP/test_native_decode638_product_replay/controller/sequence_controller/request/state": {
+            "0": 111218333.33333333,
+            "1": 3333.3333333333335,
+            "2": 55445000.0
+          }
+        }
+      },
+      "source_fst_sha256": "a2f354434e1d42615de9fede23c7f2dcec1ba2409c39704099cb0114466ef1ca",
+      "wave_sha256": "abd62b6c9b64c7b53ba04d63b3f4b84a0e3087541bc3e3c9a36ebc4474323b91",
+      "window_ps": 166666666.66666666
+    },
+    "mode-1-gate-up": {
+      "annotated": 37765,
+      "clock_changes": 16385,
+      "port_bits": 37765,
+      "power_log_sha256": "0a8a7f9b2051bd18bb55b232771e1ffb41d4855bb758f7186d2c192a5cabe357",
+      "power_w": {
+        "internal": 0.009643959813,
+        "leakage": 0.0008564033196,
+        "switching": 5.247684021e-05,
+        "total": 0.01055284031
+      },
+      "residency": {
+        "clock_scale": 3,
+        "scope": "exact within the captured C639 windows, not a full model state trace",
+        "source_window_ps": 81920000,
+        "state_ps_at_300mhz": {
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_install/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_install/transfer/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/dispatch/state": {
+            "1": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/local_controller/scope_fetch/state": {
+            "3": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/local_controller/state": {
+            "1": 3333.3333333333335,
+            "2": 3333.3333333333335,
+            "3": 3333.3333333333335,
+            "9": 27296666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/dispatch/state": {
+            "0": 53333.333333333336,
+            "1": 27253333.333333332
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/local_controller/scope_fetch/state": {
+            "2": 46666.666666666664,
+            "3": 27260000.0
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/local_controller/state": {
+            "1": 3333.3333333333335,
+            "2": 3333.3333333333335,
+            "3": 3333.3333333333335,
+            "7": 50000.0,
+            "8": 3333.3333333333335,
+            "9": 27243333.333333332
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/dispatch/state": {
+            "0": 100000.0,
+            "1": 27206666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/local_controller/scope_fetch/state": {
+            "2": 93333.33333333333,
+            "3": 27213333.333333332
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/local_controller/state": {
+            "1": 3333.3333333333335,
+            "2": 3333.3333333333335,
+            "3": 3333.3333333333335,
+            "7": 96666.66666666667,
+            "8": 3333.3333333333335,
+            "9": 27196666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/dispatch/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/local_controller/scope_fetch/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/local_controller/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/core/life": {
+            "6": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/core/seq": {
+            "3": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/program_store/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother_install/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother_install/transfer/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/state": {
+            "8": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/input_index/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/prompt_index/state": {
+            "0": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/sequence_controller/pages/state": {
+            "2": 27306666.666666668
+          },
+          "TOP/test_native_decode638_product_replay/controller/sequence_controller/request/state": {
+            "2": 27306666.666666668
+          }
+        }
+      },
+      "source_fst_sha256": "a4d5b626e421bfa9e7e308c19e29acb691fbe3d5925bf5710e17708f8fc4f985",
+      "wave_sha256": "0e44a06ace2e6dff1fe5cf055df4926551ced54792999e49f30392956dae44e8",
+      "window_ps": 27306666.666666668
+    },
+    "mode-1-startup": {
+      "annotated": 37765,
+      "clock_changes": 100001,
+      "port_bits": 37765,
+      "power_log_sha256": "08371caa6314fe66889d651d9b7e24c5441d54b02ab55a79e5a498e1ce50cda8",
+      "power_w": {
+        "internal": 0.01037455723,
+        "leakage": 0.0008550230414,
+        "switching": 0.000521777547,
+        "total": 0.01175135747
+      },
+      "residency": {
+        "clock_scale": 3,
+        "scope": "exact within the captured C639 windows, not a full model state trace",
+        "source_window_ps": 500000000,
+        "state_ps_at_300mhz": {
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_install/state": {
+            "0": 165130000.0,
+            "1": 3333.3333333333335,
+            "2": 3333.3333333333335,
+            "3": 3333.3333333333335,
+            "4": 343333.3333333333,
+            "5": 3333.3333333333335,
+            "6": 1176666.6666666667,
+            "7": 3333.3333333333335
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_install/transfer/state": {
+            "0": 166323333.33333334,
+            "1": 23333.333333333332,
+            "2": 170000.0,
+            "3": 73333.33333333333,
+            "4": 73333.33333333333,
+            "5": 3333.3333333333335
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/dispatch/state": {
+            "0": 117911666.66666667,
+            "1": 48741666.666666664,
+            "2": 13333.333333333334
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/local_controller/scope_fetch/state": {
+            "0": 115608333.33333333,
+            "1": 150000.0,
+            "2": 2066666.6666666667,
+            "3": 48841666.666666664
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[0]/local_controller/state": {
+            "0": 114821666.66666667,
+            "1": 46666.666666666664,
+            "10": 13333.333333333334,
+            "12": 53333.333333333336,
+            "2": 46666.666666666664,
+            "3": 46666.666666666664,
+            "4": 333333.3333333333,
+            "5": 333333.3333333333,
+            "6": 16666.666666666668,
+            "7": 2233333.3333333335,
+            "8": 16666.666666666668,
+            "9": 48705000.0
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/dispatch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/local_controller/scope_fetch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[1]/local_controller/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/dispatch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/local_controller/scope_fetch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[2]/local_controller/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/dispatch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/local_controller/scope_fetch/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/local_target[3]/local_controller/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/core/life": {
+            "0": 111228333.33333333,
+            "1": 1560000.0,
+            "2": 1563333.3333333333,
+            "3": 6666.666666666667,
+            "4": 10000.0,
+            "5": 3333.3333333333335,
+            "6": 52295000.0
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/core/seq": {
+            "0": 114371666.66666667,
+            "1": 90000.0,
+            "2": 360000.0,
+            "3": 51778333.333333336,
+            "4": 66666.66666666667
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother/mother/program_store/state": {
+            "0": 165906666.66666666,
+            "1": 190000.0,
+            "2": 380000.0,
+            "3": 190000.0
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother_install/state": {
+            "0": 165086666.66666666,
+            "1": 60000.0,
+            "2": 310000.0,
+            "3": 3333.3333333333335,
+            "4": 403333.3333333333,
+            "5": 800000.0,
+            "6": 3333.3333333333335
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/mother_install/transfer/state": {
+            "0": 166263333.33333334,
+            "1": 16666.666666666668,
+            "2": 33333.333333333336,
+            "3": 50000.0,
+            "4": 300000.0,
+            "5": 3333.3333333333335
+          },
+          "TOP/test_native_decode638_product_replay/controller/cohort/state": {
+            "0": 111225000.0,
+            "1": 3333.3333333333335,
+            "2": 13333.333333333334,
+            "3": 1536666.6666666667,
+            "4": 3333.3333333333335,
+            "5": 3333.3333333333335,
+            "6": 1580000.0,
+            "7": 6666.666666666667,
+            "8": 52295000.0
+          },
+          "TOP/test_native_decode638_product_replay/controller/input_index/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/prompt_index/state": {
+            "0": 166666666.66666666
+          },
+          "TOP/test_native_decode638_product_replay/controller/sequence_controller/pages/state": {
+            "0": 111221666.66666667,
+            "1": 3333.3333333333335,
+            "2": 55441666.666666664
+          },
+          "TOP/test_native_decode638_product_replay/controller/sequence_controller/request/state": {
+            "0": 111218333.33333333,
+            "1": 3333.3333333333335,
+            "2": 55445000.0
+          }
+        }
+      },
+      "source_fst_sha256": "81ff549d85fb188dc4bb76a1c8abfaeace98430e102b5f50d9b955fadcf53b44",
+      "wave_sha256": "f5a19696385cff2cb92af09d556675d684b1d404206de227e86b0721f5f1e9ae",
+      "window_ps": 166666666.66666666
+    }
+  },
+  "wire_parasitics_loaded": false
+}

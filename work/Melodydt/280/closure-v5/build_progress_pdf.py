@@ -52,7 +52,7 @@ def main():
         p('固定口径：300 MHz，TLM 核心周期 3334 ps，512-bit 数据 SRAM，三 P 并行 FFN，短 prefill、代表性历史起点的两步 decode。M 时序闭合不作前置条件；本次不加载布线寄生。'),
         table([['工作项','本轮证据','尚未验收'],
             ['控制/母控外围','执行中 provider 路由、母控指令、PM 安装和资源区间；去重外围 25,880 单元、10.553–11.762 mW 参考。','每模型完整物理顶层、provider 适配、实际 router 参数、门控与完整 RTL 状态驻留。'],
-            ['读 DMA','BSCC 已恢复；四份原综合网表 SHA、链接和结构检查通过；直接进行无寄生配对标定。','四版修正引脚标定以成功清单为准；模型物理拓扑绑定仍是条件。'],
+            ['读 DMA','BSCC 已恢复；四份原综合网表 SHA、链接、结构检查及无寄生配对引脚标定通过。','模型物理拓扑绑定仍是条件；未观测内部活动为传播估计。'],
             ['特殊算子 / E32','四函数 50,693 条定点指令及 Conv4 捕获通道通过；E32 按 18 周期重跑实际调度。','特殊候选全模型接入、FP32 转换/复合运算及 GDN/Mamba 的本分支 300 MHz 校准。']], [80,220,211]),
         p('片上与片上＋DDR始终分开。未知分项不是零；候选定点样本通过不等于整模型 RTL 数值验收。范围是样本/场景端点，不是统计置信区间或保证误差界。',small),PageBreak(),
         p('已通过窗口：新时间与部分能耗账本',head),
@@ -92,9 +92,23 @@ def main():
     else:story.append(p('修正引脚后的四版系数尚在验收，不在此填入未通过的数字。'))
     story += [Spacer(1,10),p('已通过窗的 dma-ledger 提供每版单实例的片上与片上＋DDR场景。special-candidate-ledger 另行删除匹配的旧代理，加入候选动态、残余复合运算及每个已用站点一个开钟单元的假设驻留。0.5–2 倍迁移敏感性沿用旧假设，不是实测误差；候选执行周期尚未接入模型，不能据此发布新吞吐率。',small),
         p('后续顺序',head),
-        p('1. 验收四版 DMA，引入请求/返回窗口边界敏感性，按每模型读量和驻留积分。\n2. 收齐七模型重测与 21 窗双口径账本。\n3. 补齐特殊候选的复合运算、ABI/provider 和 300 MHz 绑定。\n4. 完成真实物理控制部署与完整 RTL 状态证据。\n5. 更新报告、核验去重和数值，再交付审查。'),
+        p('1. 选择各模型匹配的 DMA 实例/owner，复用四版已完成系数；当前保留替代场景。\n2. 收齐七模型重测与 21 窗双口径账本。\n3. 补齐特殊候选的复合运算、ABI/provider 和 300 MHz 绑定。\n4. 完成真实物理控制部署与完整 RTL 状态证据。\n5. 更新报告、核验去重和数值，再交付审查。'),
         p('详细作业、源码 commit、SSH 目标、命令、输入输出 SHA 和当前缺项：docs/handoffs/2026-11-18-issue-280-closure-v5.md；实验目录 work/Melodydt/280/closure-v5。所有新 Slurm 任务 12 核、UNLIMITED，未配置聊天自动监测。'),
-        p('Issue #280 in_progress；PR #281 草稿未合并，审查人待指定。登记 PR #5 pending；看板 unverified / 同步 pending。以下为 v4 历史报告全文。',small)]
+        p('Issue #280 in_progress；PR #281 草稿未合并，审查人待指定。登记 PR #5 pending；看板 unverified / 同步 pending。',small),
+        PageBreak(),p('含读 DMA 的第二步 Decode 场景',head),
+        p('下表以 E32 18 周期账本为基础，增加一个读 DMA fabric 的空闲与真实读量增量，保留此前的算术代理。各版互为替代，不相加；未选择唯一实际物理版本，因此不是已验收整芯片总功耗。')]
+    rows=[['模型','单实例 DMA 版本','片上 mJ/token','片上＋DDR mJ/token']]
+    for path in sorted((HERE/'dma-ledger').glob('*.json')):
+        if path.stem=='index':continue
+        d=load(path)
+        if d['phase']!='decode':continue
+        for variant,scenario in d['scenarios'].items():
+            w=scenario['windows']['decode']
+            values=[bounds(w['estimated_on_chip']['energy_mj_per_token']),bounds(w['estimated_on_chip_plus_ddr']['energy_mj_per_token'])]
+            rows.append([NAMES[d['model']],variant,*values]);numeric+=values
+    story+=[table(rows,[75,145,145,146]),Spacer(1,10),
+        p('覆盖缺项：各模型完整物理部署、真实门控、完整控制 RTL 状态及 FP32/provider 接口；全局时钟、跨块互连、DDR PHY/封装/板级。Granite 路由/专家加权和等仍含复合算术代理；Qwen3/Llama 公共算术使用样本标定与条件驻留。phase 活跃样本仅 owner 0，其他 owner 的动态迁移未直接测量。',small),
+        p('特殊候选替换结果单列在 special-candidate-ledger，未与本页混用。以下 25 页为 v4 历史报告，旧速度、作业状态和缺项不代表本轮最新状态。',small)]
     front=HERE/'v5-progress-front.pdf'
     def footer(canvas,doc):
         canvas.setFont('Deng',8);canvas.setFillColor(colors.HexColor('#526274'))
@@ -104,7 +118,7 @@ def main():
     writer=PdfWriter();writer.append(front);writer.append(baseline)
     with current.open('wb') as f:writer.write(f)
     a,b=PdfReader(baseline),PdfReader(current);count=len(PdfReader(front).pages)
-    assert 4<=count<=6,(count,'unexpected front page overflow')
+    assert 5<=count<=10,(count,'unexpected front page overflow')
     for i,page in enumerate(a.pages):assert page.extract_text()==b.pages[count+i].extract_text()
     text='\n'.join(x.extract_text() for x in b.pages[:count])
     assert all(v in text for v in numeric)

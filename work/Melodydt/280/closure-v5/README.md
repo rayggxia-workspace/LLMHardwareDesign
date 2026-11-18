@@ -13,9 +13,11 @@
 
 当前：BSCC 登录恢复；四版 DMA 综合结构检查 0 问题并链接成功，综合网表 SHA 见 dma_synth_power.py。共享版本的物理流程仍运行，phase 版本在 IO 引脚放置失败，不阻塞本轮综合后功耗。原四条物理功耗依赖不修改；本轮在独立目录运行无 SPEF 标定。
 
-源码以本目录脚本交付 commit 和 inputs.sha256 记录。BSCC 工作目录 ~/LLMHardware/zenanyan/issue-280-bscc-t6-01/closure-v5-20261118；开源工具 ~/LLMHardware/opt。项目根目录无 .git，使用 Melodydt GitHub 连接、期望 HEAD 租约发布。原始大工件保留服务器，仓库保留脚本/小回执/散列。尚未完成本轮验收、PDF 或审查。
+源码以本目录脚本交付 commit 和 inputs.sha256 记录。BSCC 工作目录 ~/LLMHardware/zenanyan/issue-280-bscc-t6-01/closure-v5-20261118；开源工具 ~/LLMHardware/opt。项目根目录无 .git，使用 Melodydt GitHub 连接、期望 HEAD 租约发布。原始大工件保留服务器，仓库保留脚本/小回执/散列。PDF 以 v5 进度补充加原 v4 历史快照交付；三项全量验收及审查尚未完成。
 
-19:35 更新：当前有效链为 E32 `closure-v5-e32-9a2f2d23`、操作空闲与活动 `closure-v5-cal-278fbf5c`、实际单元引脚标注 `closure-v5-pins-30b6095c`。早期 idle 未完成 reset fence，边界/网名标定尚未标注内部引脚的结果仅保留诊断，不纳入新系数。特别不要采用旧 `dma-shared-state-calibration.json` 的正常空闲解释。
+20:05 更新：四版 DMA 的 38855808–11 已全部通过（最后一项 27m54），综合后功耗可以直接使用，不等布局布线。已对 Qwen3、Llama、Granite 共 9 窗完成 E32 18 周期/母控外围/四版 DMA 条件积分；剩余四模型重测持续运行。`special-candidate-ledger` 单列候选替换场景，去掉旧代理再加入已标定函数和残余复合运算，不与默认场景混用。实际物理顶层/门控/整模型控制状态及候选 FP32/provider/周期仍待实现验证。
+
+当前有效链为 E32 `closure-v5-e32-9a2f2d23`、操作空闲与活动 `closure-v5-cal-278fbf5c`、实际单元引脚标注 `closure-v5-pins-30b6095c`。早期 idle 未完成 reset fence，边界/网名标定尚未标注所需引脚的结果仅保留诊断，不纳入新系数。特别不要采用旧 `dma-shared-state-calibration.json` 的正常空闲解释。DMA 观测仍主要来自边界 RTL 位，未观测内部网络使用传播估计，不是完整门级回放。
 
 复现与验收入口：
 
@@ -27,6 +29,10 @@ python -B work/Melodydt/280/closure-v5/check_retained_pins.py
 python -B work/Melodydt/280/closure-v5/deployment_report.py work/Melodydt/280/closure-v5/deployments work/Melodydt/280/closure-v5/deployment-audits
 python -B work/Melodydt/280/closure-v5/integrate_calibrated_timing.py
 python -B work/Melodydt/280/closure-v5/integrate_dma_scenarios.py
+python -B work/Melodydt/280/closure-v5/integrate_special_candidates.py
+python -B work/Melodydt/280/closure-v5/verify_integrated_ledgers.py
+python -B work/Melodydt/280/closure-v5/build_progress_pdf.py
+python -B work/Melodydt/280/closure-v5/make_review_pack.py
 ```
 
-实验脚本使用 Python 3.10+；本机系统 Python 3.7 不适用于资源区间 AST 测试，实际已用捆绑 Python 3.12 运行。管理检查不代替业务验收。小回执、输入输出 SHA、具体服务器命令和仍缺少的完整物理绑定见[本轮交接](../../../../docs/handoffs/2026-11-18-issue-280-closure-v5.md)。新文件未进入 PR 前，仅算本地完成；最终上传版本以 PR 回执为准。
+实验脚本使用 Python 3.10+；本机系统 Python 3.7 不适用于资源区间 AST 测试，实际已用捆绑 Python 3.12 运行。PDF 另需 ReportLab/pypdf 及 Windows Deng 字体，构建后用 pdftoppm 逐页渲染目检，再更新 pdf-progress-validation.json 并打包。管理检查不代替业务验收。小回执、输入输出 SHA、具体服务器命令和仍缺少的完整物理绑定见[本轮交接](../../../../docs/handoffs/2026-11-18-issue-280-closure-v5.md)。review-pack-manifest.json 是小工件包索引；服务器大网表、波形、模型载荷不包含在包内。新文件未进入 PR 前，仅算本地完成；最终上传版本以 PR 回执为准。

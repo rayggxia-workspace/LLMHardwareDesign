@@ -17,7 +17,7 @@ def main():
         'control-periphery-results.sha256','conv4-pin-calibration.json','conv4-pin-results.sha256',
         'special-pin-calibration.json','special-pin-results.sha256','dma-coefficients.json',
         'e32-retry-jobs.json','cal-jobs.txt','deployments-current.tar.gz','deployments-current.tar.json',
-        'pdf-progress-validation.json','integrated-ledger-validation.json']
+        'pdf-progress-validation.json','integrated-ledger-validation.json','job-status-current.json']
     files.update(HERE/n for n in selected)
     for pattern in ('dma-*-pin-calibration.json','dma-*-pin-results.sha256','dma-*-boundary.json'):
         files.update(HERE.glob(pattern))

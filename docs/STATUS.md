@@ -1,10 +1,13 @@
-## 2026-11-18 19:35 三项补齐 v5 进行中（Asia/Shanghai）
+## 2026-11-18 20:05 三项补齐 v5 进展（Asia/Shanghai）
 
-[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。BSCC 登录已恢复；四份读 DMA 综合映射/链接/结构检查通过，当前直接做无寄生标定，不等待布局布线或 M 时序闭合。300 MHz、512-bit 数据 SRAM、三 P 保持。
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。保持 300 MHz、512-bit 数据 SRAM、三 P；M 时序闭合不作前置条件。
 
-母控外围 38850581 已完成，去除 10 个已计入实例后参考功耗 10.553–11.762 mW。真实 TLM provider 路由及 E32/M 区间审计已展开；Qwen3 / Granite 的 E32 18 周期双阶段已通过，Llama 两阶段及其余模型持续收集验收。特殊函数 50,693 条定点指令与 Conv4 捕获通道数值通过；修正内部网名到引脚映射后，38855639/40 的配对功耗已通过。完整模型物理部署、RTL 状态驻留及特殊算子 FP32/provider 集成仍未验收。
+BSCC 可登录；四版读 DMA 综合后无寄生配对标定 38855808–11 全部 COMPLETED 0:0，不再等待布局布线。母控外围 38850581 与特殊函数/Conv4 引脚复标 38855639/40 已通过。Qwen3、Llama、Granite 的 E32 18 周期双阶段通过，已对 9 窗积分四种互斥 DMA 场景并核对单位/去重；其余四模型 E32 重测继续运行且均 UNLIMITED。特殊候选替换场景单列，保持复合运算/转换/新周期尚未集成的限制。
 
-最新源码 30b6095c；[完整回执、作业命令、已通过速度与全部剩余工作](handoffs/2026-11-18-issue-280-closure-v5.md)。DMA 引脚复标 38855808–11 和七模型 E32 后继 38852023–36 为当前主链，每项 12 核且 UNLIMITED。Slurm 和结果独立保存；未配置聊天自动监测。Issue in_progress、PR 草稿未合并；登记 PR #5 pending、看板 unverified/同步 pending；审查人及看板维护者待指定。
+完整物理部署、原生 provider/路由参数、实际门控及整模型 RTL 状态驻留仍需实现验证；不能把上述 TLM 审计或局部候选测试写成三项全部完成。PDF 持续更新，原 v4 的 25 页保留为历史快照。源码积分 03cc4e99、引脚校准 30b6095c；[完整回执、结果、作业命令与全部剩余步骤](handoffs/2026-11-18-issue-280-closure-v5.md)。
+
+任务 in_progress，PR 草稿未合并，审查人待指定；登记 PR #5 pending，看板 unverified/同步 pending，维护者待指定。长任务日志/结果独立保存；未配置聊天自动监测。
+
 ## 2026-11-18 七模型控制能耗补项 v4（Asia/Shanghai）
 
 [Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。完成母控核心启动/运行及 PM 取指、局控外壳/分发、交换机活跃增量三个方向的条件估算，覆盖七模型 21 窗。512-bit 数据 SRAM、300 MHz、三 P 与冻结 TLM 时间/DDR/算术不变。纠正母控 SERVICE_STALL_LIMIT 为真实实例 2000000；母控新项替换旧核心，PM 与交换机只增加尚未计入的动态项。

@@ -1,6 +1,6 @@
 # #280：控制部署、读 DMA 与特殊算子校准 v5
 
-更新时间：2026-11-18 19:30（Asia/Shanghai）。负责人 Melodydt；仓库 rayggxia-workspace/LLMHardwareDesign；[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。分支 `task/280-seven-model-energy`，PR 基分支 `task/274-seven-model-short-throughput`。源码当前已上传至 `30b6095c6cf75b9c6dafe0108972b3eed46b8f01`，本文件后的数据/文档提交以 PR 最新回执为准。没有合并或物理验收。
+更新时间：2026-11-18 20:05（Asia/Shanghai）。负责人 Melodydt；仓库 rayggxia-workspace/LLMHardwareDesign；[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)。分支 `task/280-seven-model-energy`，PR 基分支 `task/274-seven-model-short-throughput`。引脚标定源码 `30b6095c6cf75b9c6dafe0108972b3eed46b8f01`；积分源码已上传至 `03cc4e99b907491333f5c734f026672109dbcbd3`，本文件后的数据/文档提交以 PR 最新回执为准。没有合并或物理验收。
 
 本机目录 `D:/Study_material/Study_material/LLMHardwareDesign` 是无 `.git` 的导出工作区；本轮仅在 `work/Melodydt/280/closure-v5` 新增实验脚本和小回执，并更新相关进度/报告。使用 Melodydt 本人连接及 expected_sha 租约发布。`recurrent-step1` / #293 的 200 MHz 分支单独进行，本轮只读取并引用其引脚别名方法，不覆盖其文件或采用其频率。
 
@@ -10,7 +10,7 @@
 
 1. **控制与部署**：已记录真实执行的 provider 注册键、调用路由、PM 安装、母控指令数、四个 LC/服务回调驻留以及共享 E32/M 区间。已通过窗口无 E32/M/同一 local target 重叠，区间守恒。完整每模型物理顶层、provider-to-port 适配、实际路由 RTL 参数和真正时钟门控仍未验收；精确 TLM 区间不等于完整 RTL 状态驻留。未计入无证据的门控节能。
 2. **母控外围**：38850581 COMPLETED 0:0，1m11。25,880 单元，切除已计入的母控、4 LC、4 router 和 switch 共 10 实例；外围 C639 启动/运行参考为 10.553–11.762 mW。C639 内状态驻留有记录；转移到模型仍是条件估算。
-3. **BSCC / DMA**：登录已恢复，四份原综合网表 SHA、标准单元链接和综合结构检查均通过。布局布线状态不决定本轮功耗。旧 38769386/38795299 物理作业未取消；phase 旧物理流程在引脚放置失败，综合网表仍可用。
+3. **BSCC / DMA**：登录已恢复，四份原综合网表 SHA、标准单元链接和综合结构检查均通过。四版配对引脚标定 38855808–11 全部 COMPLETED 0:0；结果 SHA、空闲 fence/模式/owner 和活动标注通过。这一项已完成到综合后直接估算口径。仍为观测 RTL 位向连接引脚映射及未观测活动传播，不是完整门级回放。布局布线状态不决定本轮功耗。旧 38769386/38795299 物理作业未取消；phase 旧物理流程在引脚放置失败，综合网表仍可用。
 4. **特殊算子**：EXP/sigmoid/softplus/GELU 的 S40/Q24 插值候选共 50,693 条指令逐字通过定点参考；8 路 Conv4 的捕获通道全部通过定点参考。对冻结 Q16 输出，卷积 Qwen3.5 最大差 0，Falcon prefill/decode 最大 2/4 LSB。复合运算和完整 FP32/provider 接入仍待校准，不能替换为“整模型 RTL 数值通过”。
 5. **E32**：实际调度从 9 修正为 18 周期，重算共享资源、DDR 等待及其设备能耗；逐层输出和数值文件保持一致。已经受理七模型双阶段链。`deployments-current.tar.json` 区分 accepted 与尚无成功清单，不能按结果文件存在推断通过。
 
@@ -29,7 +29,7 @@
 |---|---:|---:|
 | Qwen3 | 21.564769 | 6.964554 |
 | Granite | 15.689335 | 6.867212 |
-| Llama | 15.296032 | 等待本轮验收 |
+| Llama | 15.296032 | 5.643081 |
 | Phi / Gemma / Qwen3.5 / Falcon | 部分基线与后继运行中 | 部分基线与后继运行中 |
 
 `integrate_calibrated_timing.py` 已为通过的窗口重算分项：固定驻留项按新时间，M 按真实新区间并集，计数项仅在逐窗 SRAM/PM/服务/DDR 等量核验后复用，DDR 使用新运行的设备结果。不会按总延迟比例放大全部动态能耗。`timing-ledger` 仍未加入 DMA / 新特殊算子候选，不能当成最终 v5 全覆盖小计。
@@ -48,7 +48,24 @@
 | 引脚覆盖修正 DMA | 38855808 shared、38855809 shared-noshare、38855810 phase、38855811 phase-noshare | 同上 | pins-ID-dma |
 | E32 全量后继 | 38852023–38852036；逐模型映射见 e32-retry-jobs.json | closure-v5-e32-9a2f2d23 / 9a2f2d23 | deployment-ID-e32-18-PHASE |
 
-19:28 快照：引脚 Conv4/special 已完成；DMA shared 两项在 m3ca0206/m3ca0801 RUNNING，phase 两项等 38854358/59 成功依赖（节点待分配）。状态会变化，恢复时必须读回。
+20:05 快照：引脚 Conv4/special 与四版 DMA 全完成。DMA 38855808/09/10/11 分别用时 11m52、11m51、27m54、23m51，节点 m3ca0206/m3ca0801/m3ca0405/m3ca1101。Qwen3/Llama/Granite 的 E32 双阶段通过；另外四模型 E32 prefill 在运行，decode 后继随基线验收依次启动。具体状态和旧物理作业以同目录 job-status-current.json 为准，恢复时必须读回。
+
+## 已完成的 DMA 积分与候选场景
+
+| 单实例版本 | 操作空闲 W | 动态增量 nJ/64 B | Qwen3 第二步 DMA mJ/token |
+|---|---:|---:|---:|
+| shared-noshare | 0.086118–0.086118 | 1.233155–1.354252 | 29.385148–31.056521 |
+| shared | 0.096348–0.096348 | 1.742491–1.942310 | 37.883859–40.641791 |
+| phase | 0.083165–0.083195 | 1.591845–1.758743 | 33.911824–36.219654 |
+| phase-noshare | 0.093769–0.093826 | 2.175221–2.279289 | 43.486075–44.930603 |
+
+每个场景只加一个 fabric；phase 自带 shared，禁止叠加。动态窗口仅直接覆盖 owner 0；其余 owner 动态迁移为假设，四个空闲 owner/mode 状态已测。事务分母由真实请求/回包握手数量与最多一个初始沿的 12 客户端差异形成；范围不是置信区间。不得把未观测内部活动标为完整门级活动。
+
+已完成 3 模型、9 窗的分项积分和独立守恒核对，`dma-ledger` 给四版的片上/片上＋DDR。Qwen3 第二步四场景片上 199.053–223.493、片上＋DDR 538.644–563.085 mJ/token，范围跨越四种部署，尚未唯一绑定实际物理版本。
+
+`special-candidate-ledger` 单独将匹配函数/卷积从旧代理中删去，再加候选标定成本和仍需代理的乘除/归一化。每个实际调用站点一个开钟单元是候选实例假设，0.5–2 倍迁移敏感性沿用原方案，不是测得误差界。完整 provider、FP32 转换、复合运算和新候选周期尚未安装到模型；该场景不改变已验收 E32 吞吐。已有 G32/RMS/E32/RoPE/softmax/SRAM 不重复增加。
+
+控制部署的具体差距：C639 控制参考使用 4 LC、每站点 1 个统一 provider 端口和 9 项路由，不能仅凭 Python provider 注册键就宣称各模型匹配此 RTL 参数。需要实际 128 B 原生 descriptor/ABI 适配、可综合 provider 接口、路由参数及整模型运行状态回放。当前不计无证据的门控节能；此项需要实现工作，不是等待队列即可解决。
 
 实际提交入口（在对应 bundle 目录执行；以下是已有作业的复现形式，**检查后再决定是否重交，避免重复任务**）：
 
@@ -78,10 +95,10 @@ python3 -B collect_deployments.py .. deployments-current.tar.gz closure-v5-e32-9
 
 ## 剩余工作顺序
 
-1. 验收四版 DMA 修正引脚标定，按 64B 请求/返回数量与边界在途差给系数范围；phase 已包含 shared，四版作独立场景，绝不相加。然后按每模型真实读量与驻留积分。
-2. 收齐七模型 observe / E32-18，逐模型公布结果并保存 SHA；复算 21 窗的片上与片上＋DDR。
+1. 收齐剩余 Phi/Gemma/Qwen3.5/Falcon observe / E32-18，逐模型公布结果并保存 SHA；复算全部 21 窗片上与片上＋DDR，复用已完成的四版 DMA 标定。
+2. 用每模型真实物理实例/端口绑定选择 DMA 场景；如使用 phase owner 1，还需其活跃窗口直接标定。当前四种替代场景已可复算，不能自动决定实际部署。
 3. 将特殊候选与捕获输入格式、ABI、复合运算和实例数量逐一绑定；GDN/Mamba 的侧边 200 MHz 结果需要 300 MHz 对应标定及接口/转换，不能直接挪用。
 4. 完成每模型真实物理控制/router/provider 配置与全模型 RTL 状态记录。当前 TLM 部署审计明确列出了未验收项，不能把它替换为完整硬件证据。
-5. 更新滚动 PDF、JSON 和复现包，验证数值、分项去重、未覆盖说明与视觉排版；同步 PR 回执及本人进度。审查人待指定，不自行合并。
+5. 持续更新滚动 PDF、JSON 和复现包，验证数值、分项去重、未覆盖说明与视觉排版；同步 PR 回执及本人进度。当前 v5 补充报告保留原 v4 的 25 页历史快照。审查人待指定，不自行合并。
 
 已执行管理检查、资源区间守恒、SV 活动解析及引脚别名/总线/常量/未观测网络的测试；这些不代表整模型 RTL 或物理验收。Issue 保持 in_progress，PR 草稿未合并；登记 management-hub PR #5 pending，config/board.json 缺失且无 Projects 能力，看板 unverified、同步 pending，交由有权限维护者。未配置聊天自动监测。
