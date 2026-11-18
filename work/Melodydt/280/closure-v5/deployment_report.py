@@ -33,7 +33,7 @@ def main():
                     overlap_ps=row['overlapping_request_ps'],source='exact TLM interval union, not RTL state encoding')
             windows[name]=dict(elapsed_ps=duration,local_calls_by_site=calls,routes=routes,occupancy=occupancy,
                 control_counters=w['counters'],gating_savings_nj=0)
-        manifest=dict(model=result['model'],phase=result['mode'],variant=folder.name.rsplit('-',1)[-1],
+        manifest=dict(model=result['model'],phase=result['mode'],variant=folder.name.split('-',2)[2],
             e32_product_cycles=d['calibrated_e32_product_cycles'],core_period_ps=3334,data_sram_bits=512,
             bindings=[registry[k] for k in sorted(used)],registered_but_unused=[registry[k] for k in sorted(set(registry)-used)],
             windows=windows,clock_policy='all reference instances remain clocked; no physical clock/power gating evidence',

@@ -85,10 +85,13 @@ def main():
         p('四版 shared、shared-noshare、phase、phase-noshare 分别标定；phase 包含 shared，不能叠加总功耗。配对空闲须完成 reset fence、模式切换和 generation 核验，无请求/响应/故障后测量。')]
     cf=HERE/'dma-coefficients.json';coefs=load(cf) if cf.exists() else {}
     rows=[['已验收版本','空闲 W','动态 nJ/64B']]
-    for name,c in coefs.items():rows.append([name,bounds(c['idle_w']),bounds(c['dynamic_nj_per_64b'])])
+    for name,c in coefs.items():
+        values=[bounds(c['idle_w']),bounds(c['dynamic_nj_per_64b'])]
+        rows.append([name,*values]);numeric+=values
     if len(rows)>1:story.append(table(rows,[171,170,170]))
     else:story.append(p('修正引脚后的四版系数尚在验收，不在此填入未通过的数字。'))
-    story += [Spacer(1,10),p('后续顺序',head),
+    story += [Spacer(1,10),p('已通过窗的 dma-ledger 提供每版单实例的片上与片上＋DDR场景。special-candidate-ledger 另行删除匹配的旧代理，加入候选动态、残余复合运算及每个已用站点一个开钟单元的假设驻留。0.5–2 倍迁移敏感性沿用旧假设，不是实测误差；候选执行周期尚未接入模型，不能据此发布新吞吐率。',small),
+        p('后续顺序',head),
         p('1. 验收四版 DMA，引入请求/返回窗口边界敏感性，按每模型读量和驻留积分。\n2. 收齐七模型重测与 21 窗双口径账本。\n3. 补齐特殊候选的复合运算、ABI/provider 和 300 MHz 绑定。\n4. 完成真实物理控制部署与完整 RTL 状态证据。\n5. 更新报告、核验去重和数值，再交付审查。'),
         p('详细作业、源码 commit、SSH 目标、命令、输入输出 SHA 和当前缺项：docs/handoffs/2026-11-18-issue-280-closure-v5.md；实验目录 work/Melodydt/280/closure-v5。所有新 Slurm 任务 12 核、UNLIMITED，未配置聊天自动监测。'),
         p('Issue #280 in_progress；PR #281 草稿未合并，审查人待指定。登记 PR #5 pending；看板 unverified / 同步 pending。以下为 v4 历史报告全文。',small)]

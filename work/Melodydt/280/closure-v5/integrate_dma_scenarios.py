@@ -53,6 +53,8 @@ def main():
                                 coefficient_denominator=denominator,incremental_nj_per_64b=pair))
         coefficients[variant]=dict(idle_w=[min(idle),max(idle)],dynamic_nj_per_64b=[min(energies),max(energies)],
             samples=samples,calibration_sha256=digest(path),topology_binding='conditional single fabric instance',
+            active_phase_owner='owner 0 only; owner 1 dynamic activity remains a transfer assumption' if variant.startswith('phase') else 'not applicable',
+            annotation_scope='observed RTL bits mapped to connected cell pins; remaining internal activity is propagated, not complete gate-level replay',
             uncertainty='sample and window-population sensitivity, not confidence interval or guaranteed error bound',
             phase_shared_relation='phase contains shared; do not add these scenarios')
     (HERE/'dma-coefficients.json').write_text(json.dumps(coefficients,indent=2)+'\n')
