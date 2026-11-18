@@ -1,0 +1,7 @@
+read_verilog -sv /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gold.sv /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/onehot-select-gate.sv
+proc
+opt
+miter -equiv -flatten gold gate miter
+hierarchy -top miter
+opt
+sat -set in_exam 31 -set in_eligible 224 -show gold.address -show gate.address -show gate.lane_selected -show gate.lane_eligible -show gold.pad -show gate.pad

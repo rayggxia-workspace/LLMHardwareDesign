@@ -1,0 +1,2 @@
+set kg_expected_count 43
+set kg_hashes {master-geometry.tsv bec1c6735b4252dbfdbf07ae0df3d86ab04dfa2bff4b7d164cf947c645455e5e keepout.tsv ae52825054549544a0df26df6090b4266409016f418d0233688664a50d7563e6}

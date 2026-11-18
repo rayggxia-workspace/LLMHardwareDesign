@@ -1,0 +1,114 @@
+{
+  "source": "C-v22-access-metal1/6_final.odb",
+  "source_native_violations": 5109,
+  "jobs": {
+    "119961": "read-only local placed-cell inventory",
+    "119962": "left2 edit-only legality pilot",
+    "119963": "six bounded local placement/routing trials on one node6x8",
+    "119964": "same-source dotguard+stockM10 zero-placement-change control"
+  },
+  "corner_macro_origin_um": [
+    2000,
+    672
+  ],
+  "actual_std_edges_um": {
+    "left": 1997.66,
+    "bottom": 669.2
+  },
+  "keepout_rectangles_um": {
+    "left": [
+      "1997.66-depth",
+      664,
+      1997.66,
+      692
+    ],
+    "bottom": [
+      1994,
+      "669.2-depth",
+      2005.8,
+      669.2
+    ]
+  },
+  "depths_um": [
+    2,
+    4,
+    6
+  ],
+  "fixed_geometry": [
+    "die",
+    "all BPin",
+    "macro placement/orientation",
+    "153selected BUF_X8"
+  ],
+  "local_roi_um": [
+    1960,
+    632,
+    2040,
+    712
+  ],
+  "outside_roi": "temporarily LOCKED during DPL, original statuses restored",
+  "ripup": "only actual inst/master/xy/orient/endpoint signature changes; unchanged routes retained",
+  "dot_cut_guard": {
+    "rectangle_count": 1970,
+    "source_tsv_sha256": "608f06d6a8b3956d590733be0a51b935435adce160f17754647c6207ffb2e872"
+  },
+  "edit_results": {
+    "left2": [
+      13,
+      26
+    ],
+    "left4": [
+      25,
+      57
+    ],
+    "left6": [
+      33,
+      75
+    ],
+    "bottom2": [
+      7,
+      14
+    ],
+    "bottom4": [
+      7,
+      14
+    ],
+    "bottom6": [
+      15,
+      35
+    ]
+  },
+  "edit_result_columns": [
+    "actually_moved_cells",
+    "ripped_nets"
+  ],
+  "route": "stock clock M4-M10,signalM2-M10,zero heuristic reserve,CUGR3,DRTenditer5,M10viaaccess/via-in-pin; final original rules unchanged",
+  "acceptance": "bounded diagnostic only until nativeDRC, extracted freshSTA5counts,PG,allgeometry,LEC/fullGDS all pass",
+  "AP_failure_chain": [
+    {
+      "job": 119963,
+      "result": "all6failed S req_data1 access; edited/global saved"
+    },
+    {
+      "job": 119964,
+      "result": "no-movecontrol same APfailure; keepout not cause"
+    },
+    {
+      "job": 119967,
+      "result": "same originalM1 access stillfailed Sreq1"
+    },
+    {
+      "job": 119969,
+      "result": "rip onlySreq1 resolves that pin; next failures Sreq3/15"
+    },
+    {
+      "job": 119970,
+      "result": "rip Sreq128 resolves S; subsequent dot in_data82 fails afternewdotcutOBS"
+    },
+    {
+      "job": 119971,
+      "result": "running: Sreq128 plus allsignalnets connected to changed dotmaster rerouted"
+    }
+  ],
+  "matrix_restart": "paused until AP recovery validated; mainclock4 actual native1 physicalcandidate takes priority"
+}

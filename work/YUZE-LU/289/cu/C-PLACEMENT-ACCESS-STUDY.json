@@ -1,0 +1,147 @@
+{
+  "status": "in_progress_not_accepted",
+  "jobs": {
+    "119894": "two bounded access-metal1/2 route probes; original six placement tasks failed EST0104",
+    "119896": "failed wrapper path typo before EDA; preserved",
+    "119897": "timed out at30min after Nesterov iteration260; no saved candidate; not accepted",
+    "119899": "five remaining GRT/RUDY placements, same corrected Tcl",
+    "119879": "A synthesis/place/CTS/setup-only completed diagnostic",
+    "119845": "original clock2/clock4 full DRT active",
+    "119933": "same GRT inflation2 weight3 exactscript retry4h on c96/c64"
+  },
+  "placement_contract": {
+    "source": "C-v16-genericadder-cached/3_place.odb",
+    "density": 0.4,
+    "inflation_max": 3,
+    "cases": [
+      [
+        "rudy",
+        2,
+        5
+      ],
+      [
+        "grt",
+        2,
+        5
+      ],
+      [
+        "grt",
+        1.5,
+        5
+      ],
+      [
+        "grt",
+        2.5,
+        5
+      ],
+      [
+        "grt",
+        2,
+        3
+      ],
+      [
+        "grt",
+        2,
+        7
+      ]
+    ],
+    "comparison": "same zero heuristic reservation, clock M4-M10, signal M2-M10, CUGR3 after legalization",
+    "geometry_caveat": "pre-global overwrites same-run before snapshot; require independent original-source to final candidate geometry gate before promotion",
+    "timing": "original 250MHz/50fF IO contract unchanged; postplacement CTS not yet run"
+  },
+  "access_contract": {
+    "source": "C-v20-native-clock4/global-candidate.odb + exact route.guide",
+    "iterations": 5,
+    "via_in_pin_range": "M10 only unchanged",
+    "via_access_layers": [
+      "metal1",
+      "metal2"
+    ],
+    "qualification": "nonzero native DRC diagnostic only; full deck and extracted STA required for acceptance"
+  },
+  "A_diagnostic": {
+    "synth_total_um2": 2078976,
+    "baseline_synth_total_um2": 2090135,
+    "fixed_macro_um2": 1805600,
+    "stdarea_saving_percent": 3.921837,
+    "worst_setup_ns": -0.426528,
+    "worst_setup_path": "control.cert_epoch2 to trace_retire_o",
+    "worst_cache_setup_ns": -0.193388,
+    "timing_model": "placement RC only; do not compare to routed baseline"
+  },
+  "references": [
+    "https://openroad.readthedocs.io/en/latest/main/src/gpl/README.html#routability-driven-arguments",
+    "https://openroad.readthedocs.io/en/latest/main/src/drt/README.html#pin-access-arguments"
+  ],
+  "dot_cut_guard": {
+    "script": "c-dot-actual-cut-guard-v1.tcl",
+    "actual_cut_rectangles": 1970,
+    "probe_job": 119918,
+    "idempotence": "added1970 then0",
+    "geometry": "all BPin/die/macro exact pass",
+    "applied_to_live_routes": false
+  },
+  "native_iter5": {
+    "clock2_count": 5051,
+    "clock4_count": 4719,
+    "clock4_lowM2M3": 3981,
+    "clock4_R_S_channel": 2050
+  },
+  "placement_results": [
+    {
+      "method": "rudy",
+      "inflation": 2,
+      "weight": 5,
+      "overflow": 2780.52,
+      "global_setup_ns": -0.532364368
+    },
+    {
+      "method": "grt",
+      "inflation": 2,
+      "weight": 5,
+      "overflow": 4934.53,
+      "global_setup_ns": -0.960502803
+    },
+    {
+      "method": "grt",
+      "inflation": 1.5,
+      "weight": 5,
+      "overflow": 7610.61,
+      "global_setup_ns": -1.876130819
+    },
+    {
+      "method": "grt",
+      "inflation": 2.5,
+      "weight": 5,
+      "overflow": 439217.77,
+      "global_setup_ns": -39.679515839
+    },
+    {
+      "method": "grt",
+      "inflation": 2,
+      "weight": 7,
+      "overflow": 5006.62,
+      "global_setup_ns": -1.593480945
+    },
+    {
+      "method": "grt",
+      "inflation": 2,
+      "weight": 3,
+      "overflow": 4512.48,
+      "global_setup_ns": -1.565718651
+    }
+  ],
+  "placement_geometry_independent": {
+    "job": 119950,
+    "result": "five completed candidates exact allBPin/die/macro geometry equal original3place"
+  },
+  "access_results": {
+    "M1": 5109,
+    "M2": 5255,
+    "original_M10": 4719,
+    "iteration": 5,
+    "decision": "no improvement; do not promote",
+    "GDS": "diagnostic merge in progress"
+  },
+  "placement_decision": "All five GRT-based placement variants worse than RUDY control; do not promote them to CTS."
+}

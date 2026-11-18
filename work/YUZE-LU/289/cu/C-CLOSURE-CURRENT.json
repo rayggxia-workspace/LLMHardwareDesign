@@ -1,0 +1,95 @@
+{
+  "updated": "2026-11-18",
+  "scope": "C closure; all entries below are implementation studies, C not accepted",
+  "active": {
+    "native_job": 119845,
+    "native_runs": [
+      "runs/C-v20-native-clock2",
+      "runs/C-v20-native-clock4"
+    ],
+    "preferred_native": "runs/C-v20-native-clock4",
+    "native_stage": "Detailed routing; large initial conflicts but improving; no native-clean GDS yet",
+    "shared_A_job": 119879,
+    "shared_A_run": "runs/C-v21-shared-A",
+    "shared_A_raw_sha256": "9ee9e7eacca4f34cc18c0cf94bfaa78dc4f93abf65facf835441fb7d39ac7aa9",
+    "shared_A_pipeline": "Actual synth/place/CTS then setup-only diagnostic, no generic hold or default global routing"
+  },
+  "constraints": {
+    "clock_ns": 4,
+    "uncertainty_ns": 0.1,
+    "input_output_delay_ns": [
+      0.2,
+      0.8
+    ],
+    "source": "BUF_X2 with 50ps transition",
+    "selected_outputs": 153,
+    "selected_load_fF": 50,
+    "ordinary_output_load_fF": 2,
+    "geometry": "Exact original overlay signal BPin/die/macro transforms; qualified PG reconstruction explicitly recorded",
+    "selected_driver": "X8 or stronger; physical actual inventory still required after final changes",
+    "P_excluded": true
+  },
+  "routing": {
+    "default_fastroute_v17_overflow": 84623,
+    "default_fastroute_v18_overflow": 84952,
+    "default_CUGR_overflow": 129383.97,
+    "default_CUGR_job": 119776,
+    "default_CUGR_stopped_before_DRT": true,
+    "capacity0_clock2_10iter_job": 119820,
+    "capacity0_clock2_overflow": 6245.16,
+    "capacity0_stock_clock4_overflow": 5996.49,
+    "important_caveat": "Early standalone capacity tests used clock layers M2-M10. Actual stock min clock layer is M4. V20 clock4 restores stock; clock2 retained only physical comparison. No tech spacing/geometry/acceptance rule relaxed.",
+    "OBS": "119783 showed precise upper M7-M10 rectangular OBS on all five macros; no blanket upper full-macro obstruction to remove",
+    "hotspot": "72um channel between R x72-1072um and S/E x1144um onward; root mapped via-demand dominance"
+  },
+  "timing": {
+    "placement_checkpoint": "runs/C-v18-donly-m0.04-d0.025/flow/results/nangate45/c-overlay-current/base/4_cts.odb",
+    "placement_fresh_min_count": 0,
+    "placement_fresh_max_count": 1,
+    "placement_only_worst": "trace_retire_o about -49ps",
+    "global_clock4_counts": {
+      "fanout": 0,
+      "min": 174,
+      "max": 301,
+      "capacitance": 466,
+      "slew": 225
+    },
+    "global_clock4_whs_ns": -0.149757594,
+    "global_clock4_wns_ns": -0.908320546,
+    "global_worst": "allocated_words3 -> cached_addr lanes high bits",
+    "launch_clock_ns": 0.653901,
+    "capture_clock_ns": 0.679075,
+    "critical_net": "place58125 BUF_X8 -> net58124 -> _280589_ XNOR2_X1",
+    "critical_load_fF": 721.310241699,
+    "driver_limit_fF": 484.009002686,
+    "early_data_step_ns": 1.324186,
+    "classification": "cap:313 ordinary buffers,52 hold buffers,40 logic,58 macro outputs,3 top inputs; slew:152 ordinary buffers,30 hold buffers,21 logic,21 macro outputs,1 top input; no clock-net electrical violations",
+    "actual_DRT_SPEF_pending": true
+  },
+  "negative_studies": {
+    "direct_hold_job": 119824,
+    "direct_hold": "No generic hold from pre-repair CTS; 10473 endpoints projected112542 local buffers,149 budget capped. Never applied.",
+    "CTS_job": 119854,
+    "no_balance": "10476 min / 21 max; WHS -778.6ps WNS -464.5ps,934 clockbuffers",
+    "no_insert_and_neither": "8101 min /14 max; WHS -683.8ps WNS -341.6ps,915 clockbuffers; placement RC only",
+    "low_density": "Requested .33/.35 both auto-adjusted to identical uniform .36 then dynamic~.3375; same167687 moved cells and12.02Mum HPWL. Do not claim independent successful lower density results.",
+    "higher_density": "Warm .40/.45/.50 actually moved~167.7k cells,HPWL8.36/7.94/7.71Mum; exact geometry passed; requires newCTS/fullbackend before use."
+  },
+  "formal": {
+    "owner": "loader_review",
+    "cached_extra_actual_FF": 496,
+    "actual_cached_FF": 21095,
+    "old_actual_FF": 20599,
+    "preABC_22119_note": "Includes1024 padding FF removed before actual final netlist",
+    "cached_actual_parent_mapping": "119786 CEC PASS plus byte-identical actual replay and FF binding",
+    "cached_synth_to_v18_CTS": "119792 data/state and all control cones UNSAT,zero unmatched",
+    "A": "Independent modulo2^64 source proof, actual parent mapping replay pending owner"
+  },
+  "owners": {
+    "root": "U canonical extraction, root physical diagnostics and final task aggregate",
+    "endpoint_audit": "U frozen; C independent final full deck, PG/STA/model/LEC aggregation",
+    "cu_upgrade": "C implementation and timing/routing closure",
+    "loader_review": "Source and actual mapping/functional proof"
+  },
+  "acceptance": "Never accept by job exit0; native DRC/full foundry DRC+antenna/PG/fresh setup-hold-electric/geometry/153driver/functional/model gates all required"
+}

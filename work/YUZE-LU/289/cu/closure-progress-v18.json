@@ -1,0 +1,43 @@
+{
+  "issue": 289,
+  "date": "2026-11-18",
+  "accepted": false,
+  "C": {
+    "source": "runs/C-v16-genericadder-cached",
+    "logic": "cached loader a0f71497ee0c873649c41d64122e2a906775caaed90dc615a686be053625d0f9",
+    "closure_job": 119742,
+    "closure_retained_steps": [
+      "119742.0:r24-x16",
+      "119742.3:r32-x32"
+    ],
+    "closure_canceled_steps": [
+      "119742.1:r40-x32",
+      "119742.2:r40-x16",
+      "119742.4:r24-x32",
+      "119742.5:r32-x16"
+    ],
+    "donly_job": 119751,
+    "donly_path": "runs/C-v18-donly-m0.04-d0.025",
+    "cts_fresh_min_violations": 0,
+    "cts_fresh_max_violations": 1,
+    "cts_remaining": "trace_retire_o setup approximately -49ps; actual routing pending",
+    "repair": "Remove 3 common input66 hold buffers, recompute min paths, 526 state-D branches delayed under per-endpoint setup budget cap; clock/IO contract unchanged",
+    "physical": "Original signal/macro/die exact; real S/E cut OBS verified; PG connected"
+  },
+  "U": {
+    "job": 119747,
+    "paths": "runs/U-v14-guardant-*",
+    "source": "../audit/U-antenna/candidate-guard-ant-v1",
+    "diodes": 1164,
+    "upper_hook": "../u-upper-ndr-hook.tcl",
+    "upper_margins": [
+      1.0,
+      1.2,
+      1.4
+    ],
+    "electrical": "Seven macro input branch repeaters, two BUF_X1 cap drivers to BUF_X4, 2/3 CLKBUF_X1 at task_packet89 state D",
+    "state": "DRT running; no new candidate accepted",
+    "independent_owner": "endpoint_audit",
+    "final_views": "New same-candidate Liberty/LEF required after acceptance; not yet generated"
+  }
+}

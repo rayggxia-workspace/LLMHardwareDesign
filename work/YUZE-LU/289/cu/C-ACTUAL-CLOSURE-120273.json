@@ -1,0 +1,29 @@
+{
+  "backend_accepted": false,
+  "job": 120273,
+  "common": "cu/runs/C-v40-final-sizes",
+  "candidates": "cu/runs/C-v40-final-size-seed{0..5}",
+  "source": "cu/runs/C-v38-close-y640-h50/flow/results/nangate45/c-overlay-current/base/6_final.odb",
+  "source_sha256": "8e64222ad9eeab2266455e4f8a3023ca0eb622f5028e37a48efab8e0db2a66a7",
+  "edits": "50 truth-equivalent combinational sizes; original critical splitter positions frozen; no additional topology, FF, clock, diode, PDN, interface or timing-constraint changes",
+  "source_plan": "cu/diagnostics/C-cache-margin-v1/plan.tsv",
+  "planning_only": {
+    "actual_frozen_clock_model": "audit/C38-clock-graft-frozen-inputs-v1/results",
+    "setup_count": 4,
+    "wns_ns": -0.003914203,
+    "hold_count": 0,
+    "whs_ns": 0.001401879,
+    "cap_slew_count": 0,
+    "not_an_acceptance": true
+  },
+  "pipeline": "8CPU common edit/legalize/global_route/strict PA, then six exclusive 8CPU same-node detailed_route -or_seed 0..5, immutable pre/postRCX plus GDS/fresh; wait-all main job",
+  "next": "Each actual datafinal needs its own exact single-clock-wire graft and full new RC/STA/PG/material/physical/formal/model qualification; do not inherit old diagnostic gate",
+  "scripts": {
+    "c-final-sizes-edit-v1.tcl": "ac68008417e8470da4af809ae2e72e68058b30605916f31bcf47450298b68496",
+    "c-final-sizes-prepare-v1.tcl": "23acb458309fade2598972bb4c3b52534a04c24aa65b8470cfb98096d655cd34",
+    "run-c-final-sizes-prepare-v1.sh": "f0b080b234aa913e6c8676f2660457e873efd707c3298bf4a1f03cf076c89d38",
+    "c-final-route-seed-v1.tcl": "460e28e12a566ef92d4b9d13f87b5c2ed2b95603c492d8ea86b78c2a3c2c6a7a",
+    "run-c-final-route-seed-v1.sh": "d2eeffa065173472414fe7eee7fedc292e5abe9c00b8a320d25d1ac9987e5305",
+    "c-final-route-seeds-v1.sbatch": "754259236301fb4e8091238a083b75fa116b9787114e27beff7ae947af0ff6de"
+  }
+}

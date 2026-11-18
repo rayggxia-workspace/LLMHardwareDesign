@@ -1,0 +1,35 @@
+{
+  "source_raw_sha256": "020538508ff7db6461afab28f73726867e5900fde2255a4a311789b105040567",
+  "candidate_raw_sha256": "a0f71497ee0c873649c41d64122e2a906775caaed90dc615a686be053625d0f9",
+  "added_address_register_bits": 512,
+  "observable_cycles_added": 0,
+  "required_invariant": "pv[p] implies cached_addr[4*p+l] == addr(pi[p],l), and pv[p] implies active",
+  "changes": [
+    {
+      "old": " reg [8:0] pi[0:1];",
+      "new": " reg [8:0] pi[0:1];\n reg [63:0] cached_addr[0:7];",
+      "count": 1
+    },
+    {
+      "old": "lane_address[j]=addr(pi[j/4],2'(j%4));",
+      "new": "lane_address[j]=cached_addr[j];",
+      "count": 1
+    },
+    {
+      "old": "addr(pi[p],2'(l))",
+      "new": "cached_addr[4*p+l]",
+      "count": 2
+    },
+    {
+      "old": "   for(integer p=0;p<2;p=p+1)begin pi[p]<=0;pd[p]<=0;pm[p]<=0;tags[p]<=0;lines[p]<=0;caches[p]<=0;end",
+      "new": "   for(integer p=0;p<2;p=p+1)begin pi[p]<=0;pd[p]<=0;pm[p]<=0;tags[p]<=0;lines[p]<=0;caches[p]<=0;end\n   for(integer k=0;k<8;k=k+1)cached_addr[k]<=64'd0;",
+      "count": 1
+    },
+    {
+      "old": "    pwriting[!pv[0]?0:1]<=0;allocated_words<=allocated_words+1;",
+      "new": "    pwriting[!pv[0]?0:1]<=0;allocated_words<=allocated_words+1;\n    for(integer l=0;l<4;l=l+1)cached_addr[4*(!pv[0]?0:1)+l]<=addr(allocated_words,2'(l));",
+      "count": 1
+    }
+  ],
+  "qualification": "Requires independent lifecycle induction and source binding; not accepted by construction"
+}

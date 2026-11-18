@@ -1,0 +1,7 @@
+from pathlib import Path
+import json,hashlib,re
+p=Path('/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-v27-r-fullguard');log=(p/'access-v2.log').read_text();assert 'R_FULL_SPACING_GUARD_STATIC_PIN_ACCESS_PASS_REQUIRES_ACTUAL_ROUTE' in log
+counts={k:int(re.search(r'#'+k+r'\s*=\s*(\d+)',log)[1]) for k in ['stdCellPinNoAp','macroNoAp','macroValidPlanarAp','macroValidViaAp']};assert counts['stdCellPinNoAp']==counts['macroNoAp']==0
+assert (p/'before.v').read_bytes()==(p/'after.v').read_bytes();assert (p/'before-geometry.tsv').read_bytes()==(p/'after-geometry.tsv').read_bytes();assert 'rows=7542 added=0' in (p/'probe.log').read_text()
+names=['hook.tcl','binding.tcl','master-geometry.tsv','keepout.tsv','receipt.json','probe.tcl','probe.log','access-v2.tcl','access-v2.log','r-access-v2-ripped.tsv','before-geometry.tsv','after-geometry.tsv']
+v=dict(passed=True,accepted=False,structural_job=120047,static_pin_access_job=120052,new_obstructions=7542,counts=counts,scope='R full actual M9/via9 +0.4um routing keepout; structural geometry/logic exact, idempotent, static pin access no missing AP after clearing R nonPG wires. Does not qualify subsequent detailed-route access, RC, timing, or full physical rules.',source_sha256={str(p/n):hashlib.sha256((p/n).read_bytes()).hexdigest() for n in names});(p/'frozen-manifest.json').write_text(json.dumps(v,indent=2));print(hashlib.sha256((p/'frozen-manifest.json').read_bytes()).hexdigest())

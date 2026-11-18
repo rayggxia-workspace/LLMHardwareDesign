@@ -1,0 +1,11 @@
+from pathlib import Path
+r=Path('/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117');out=r/'audit/C-main-clock4-physical-v1/net-localization';out.mkdir(exist_ok=False)
+s=(r/'u-pg-meta.tcl').read_text().replace('cu/runs/U-v7-macropdn-x8-seed0/flow/results/nangate45/u-overlay-current','cu/runs/C-v20-native-clock4/flow/results/nangate45/c-overlay-current').replace('$root/u-physical/pg.tsv','$root/audit/C-main-clock4-physical-v1/net-localization/pg.tsv');(out/'pg.tcl').write_text(s)
+s=(r/'u-map-markers-v2.py').read_text().replace("out=root/'u-physical'","out=root/'audit/C-main-clock4-physical-v1/net-localization'").replace("loc=root/'audit/U-v7-full-localization-v2.json'","loc=root/'audit/C-main-clock4-physical-v1/upper-localization.json'").replace('u_n32_controlled_dma_64','cfj_group_c_memory_legacy').replace('assert len(markers)==84,len(markers)','assert len(markers)==90,len(markers)').replace("if layer=='via6':layer='via7'","if layer in ('via6','via7_spacing'):layer='via7'").replace('cu/runs/U-v7-macropdn-x8-seed0/flow/results/nangate45/u-overlay-current','cu/runs/C-v20-native-clock4/flow/results/nangate45/c-overlay-current').replace("'DEF route/BPin and actual technology-via rectangle overlap; not proof of shorts or antenna repair'","'Conservative candidate-net bbox overlap; default halfwidth extensions may overinclude actual explicit-zero endpoints. Not proof of physical shorts; use exact actual GDS to validate repairs.'")
+(out/'map.py').write_text(s)
+for n in ('layers.tsv','vias.tsv','bpins.tsv'):(out/n).write_bytes((r/'audit/C-final-v1/antenna-C-v20-native-clock4-119976'/n).read_bytes())
+s=(r/'audit/c-main-material.sbatch').read_text();s=s[:s.index('set -euo pipefail')]+'''set -euo pipefail
+r=/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117
+out=$r/audit/C-main-clock4-physical-v1/net-localization
+/public/software/singularity-ce-4.3.4/bin/singularity exec --bind /public/home/yuzelu --pwd "$out" /public/home/yuzelu/opt/eda/containers/orfs-current-repacked.sif bash -c 'set -e; source /OpenROAD-flow-scripts/env.sh; openroad -no_init -exit pg.tcl > pg.log 2>&1; python3 map.py > mapping.log'
+''';(out/'run.sbatch').write_text(s.replace('yzl-C-material','yzl-C-netlocal').replace('C-material-%j.log','C-netlocal-%j.log'))

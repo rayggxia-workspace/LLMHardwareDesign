@@ -1,4 +1,12 @@
+2026-11-18 CST Issue289：340个目标输出全部BUF_X8，C/U/G/S/F宏/block后端工程验收完成。C/U TT250MHz、F名义300MHz，setup/hold分别C +6.340/+1.990ps、U +78.051/+3.471ps、F +221.605/+2.454ps；完整原版DRC和五类时序/电气违例均零。C原版检查120303、独立复核120326、聚合120366、58文件只读重验120368均通过。[最终报告](../work/YUZE-LU/289/audit/BACKEND-ACCEPTANCE.md)。PR290待独立审查、Issue in_review；实际顶层RC与多PVT另验。登记PR5 pending，Projects权限/配置缺项沿用交接。下方为历史记录。
+
+2026-11-18 CST 最新补记（Issue289）：U与G/S/F已验收；C40六路实际布线均完成、最终路由违例0。只变更一条真实时钟线并重新提取RC后，C还剩setup 7条、WNS −43.646ps，hold/电容/slew/fanout均0、PG双轨通过，尚未后端验收。实际网表重证明及两组六路重布、7条路径局部修复继续进行。详见[当前实际记录](../work/YUZE-LU/289/audit/C40-ACTUAL-STATUS.md)。Issue in_progress、PR290草稿；下方C35/C28为历史记录。
+
+2026-11-18 CST 最新补记（Issue289）：G/S/F与U已验收；C35六路实际布线已完成，独立候选153个BUF_X8及固定信号/宏几何通过，天线0，278621条网络提取材料一致，PG差异已追溯并单独批准工程基线。C仍有setup90/hold19/电容1项和两处上层几何问题，继续小ECO闭合；尚未完成后端验收。详见[实际记录](../work/YUZE-LU/289/audit/C-v28-ACTUAL-STATUS.md)。以下早期C28数字不代表当前源，Issue保持in_progress、PR290保持草稿。
+
 # 当前状态
+
+2026-11-18，[Issue #289](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/289) / [草稿 PR #290](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/290) 继续完成 A/B 非 P 接口的 340 个输出驱动 X8 升级。G/S 叶宏和 F 父 block 已验收，F TT 名义 300 MHz setup/hold 裕量为 +221.605/+2.454 ps。U 新增后端验收通过，153 个目标输出均为 BUF_X8，在 TT 250 MHz、目标输出 50 fF 契约下，setup/hold 裕量为 +78.051/+3.471 ps，完整原版 GDS DRC 和五类时序/电气违例均为零，PG、功能和视图检查通过。C 六路实际布线对照已完成五路，当前选择 i8/h50：153 个 BUF_X8 和固定接口几何通过；原生路由报告4项，独立原规则上层检查24项、天线1项，实际 setup/hold 最差为 −116.966/−48.911 ps，尚未验收。正在修复宏边界几何、定向 hold 和绕毫米级 R 宏的长线；静态尺寸优化不计作重布线通过。实际顶层 RC 和多 PVT 验证仍待后续进行。详见[执行记录及回执](../work/YUZE-LU/289/README.md)，Issue 保持 in_progress。
 
 2026-11-08，#214 合并后 U_128/U_64 的普通三源 FMA 入口拒绝和双向 SEND 死锁由 [PR #221](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/221) 修复。两版均通过完整原版 GDS DRC 0、原生 TT 300 MHz 时序、电气/PG及代表上层三档 RC；最终网表 48/48、78/78 次全部通过。交付包及全部 1,389/2,101 个清单文件已本地回收核验。U_64 原生 hold +0.212 ps，只证明当前条件通过；九实例顶层和其他 PVT 不在范围。详见[最终回执](../work/YUZE-LU/212/u-native-fix.md)和[机器索引](../work/YUZE-LU/212/u-native-fix.json)。P 和 C/F/J 未修改，历史 U 功能覆盖不足已更正。用户已授权将 PR #221 并入 main，实际合并状态以在线回执为准；登记 pending，看板 unverified/同步 pending。
 

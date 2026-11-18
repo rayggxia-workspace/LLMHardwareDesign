@@ -1,0 +1,46 @@
+# Preserve hash-bound HDL and evidence bytes on Windows checkouts.
+*.sv -text
+*.json -text
+*.rpt -text
+*.log -text
+*.tsv -text
+*.lef -text
+*.lyrdb -text
+*.sha256 -text
+audit/full-C-v27-joint-e20-h30/** -text
+audit/C-v28-focused-baseline/** -text
+audit/evidence/** -text
+gs/evidence/** -text
+
+# Executable experiment scripts must remain usable on the Linux server.
+*.sh text eol=lf
+*.sbatch text eol=lf
+*.tcl text eol=lf
+*.py text eol=lf
+*.ys text eol=lf
+*.eqy text eol=lf
+
+# Frozen parser input is hash-bound to the exact original CRLF bytes.
+audit/C-v27-rcx-normalization-v2/parser-source.py -text
+
+# Preserve original source bytes named by frozen verification receipts.
+audit/prepare-A-live-state-generic.py -text
+audit/synth-cec-isolated.tcl -text
+audit/run_A_parent_cec.py -text
+audit/verify_parent_dffmap.py -text
+audit/C-antenna-eco-v1/build.py -text
+audit/C-antenna-eco-v1/freeze-package.py -text
+audit/prepare-cached-live-state-generic.py -text
+audit/C-final-v1/dot-cut-export.py -text
+audit/synth-cec-byte-fixed.tcl -text
+audit/run_parent_cec.py -text
+audit/C-rcx-zero-normalization-v1/parser-source.py -text
+audit/u-parent-lef-audit.py -text
+gs/leaf_cut_obs.py -text
+audit/c-v38-pd-models.py -text
+audit/c-v38-pd-size.tcl -text
+audit/c-v38-pd-verify.py -text
+audit/c-final-v2.py -text
+
+# Original hash-bound actual C43 producer and proof bytes.
+cu/c-margin-run-manifest-v1.py -text

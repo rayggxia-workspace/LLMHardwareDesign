@@ -172,3 +172,16 @@ python -B project/experiments/mother_control_v1/verify64.py ARCHIVE SHA256 --rec
 ```
 
 两格式现已各通过54项RTL、54项母控最终网表与69项实际Block组合；完整原版GDS DRC0，TT300MHz及独立电气/RC/PG/时钟门通过。fresh报告的14项同网标记保留，以原网ODB/GDS整区填满证明及反向控制核对；不作规则waiver。报告与范围见[双格式验收](experiments/mother-control-dual-format.md)和[决策0006](decisions/0006-mother-control-dual-format.md)。仅两个驻留目标，不是九实例联合最终门级或物理验收；M11/M12实际接入、负载及全芯片CTS/PG另验。
+
+
+## Issue #289：A/B 非 P 输出 X8 后端
+
+[最终报告](../work/YUZE-LU/289/audit/BACKEND-ACCEPTANCE.md)与[冻结索引](../work/YUZE-LU/289/audit/evidence/AB-X8-final-joint-release-index.json)绑定340个输出、C/U/F及G/S实际版本。C实际方案120292、最终网表证明120296、完整原版GDS120303、root来源复核120326、聚合120366保留源SHA与回执；静态规划、预检或失败版本不充当最终验收。C原RTL证明链有明确人工组合桥，范围以回执为准。
+
+EDA在分配的计算节点和固定容器执行；冻结包不能原位写入重跑。只读复核命令：
+
+```bash
+sbatch /public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/verify-AB-X8-final-release-v1.sbatch
+```
+
+该命令为一节点8CPU的只读SHA/receipt核对，原120368通过58文件，并非重跑STA/DRC。脚本见`work/YUZE-LU/289/audit/evidence/verify-AB-X8-final-release-v1.*`，大件依赖授权服务器。新物理/EDA运行使用全新目录与源锁，不覆盖接受包或复用不同GDS的完整规则结果。实际A/B顶层RC、串扰与多PVT另验。

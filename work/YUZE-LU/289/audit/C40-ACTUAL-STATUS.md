@@ -1,0 +1,19 @@
+# Actual C40 backend continuation
+
+C43 actual continuation: completed bounded C40-M9 sizing planning reaches global setup/hold/electrical zero, but no C backend acceptance follows from static RC reuse. Independent selector120290 verified four distinct positive-margin cumulative plans (+4.293455/+2.895462/+2.663647/+2.219114 ps setup; +1.400824 ps hold), exhaustive cell truth, original-master replay and source SHA. Actual job120292 runs these four independent implementations on one node, 4 x 8 CPU; only three resized standard cells move per case, at most3.4um, while macros/signal pins/die/SDC stay fixed. C43 begins from the actual frozen M9 source, so all final RC/timing evidence will come from its own physical routing. Root manifest: `cu/C-ACTUAL-CLOSURE-120292.json`. No known failing or duplicate plan fills the allocation.
+
+C is not accepted. U and G/S/F accepted packages remain frozen.
+
+The six C40 routes (120273, one node, 6 x 8 CPU) completed with zero native-route DRC. Their ODB/DEF/V/SDC are exact duplicates, so only seed0 is evaluated independently. ODB SHA256: `6cc21b934b59858cbbee2bfe9028529746dc663e5fd61ceb1bf8f0e8b6a5cdef`. Its fresh extracted setup count is 17, with hold/capacitance/slew/fanout zero.
+
+120281 independently freezes the finished producer, clones only actual clock net73798 from the qualified physical reference, proves all other wire bodies and instance/pin/power sections exact, extracts actual RC and publishes the final SPEF atomically. On that actual combined result: setup **7**, hold/capacitance/slew/fanout **0**, worst setup **-0.043646421 ns**, worst hold **+0.001400824 ns**, uncached VDD/VSS connectivity both pass. This is a failed-setup diagnostic, not a release or an A/B top-level result.
+
+The seven failing endpoints are internal C loader registers: pd[0][94] (-43.646421 ps), pd[0][126] (-0.185185 ps), cached_addr[5][52] (-3.236522 ps), [2][56] (-1.663558 ps), [6][62] (-0.955680 ps), [7][57] (-0.515588 ps), [2][62] (-0.339284 ps). They are unrelated to the excluded P block.
+
+The C40 legalized common netlist has a complete actual-gold data/state and clock/reset/control equivalence proof (120275), 21095 preserved states and no unmatched outputs. Actual routed V differs, so 120280 freshly exports the actual ODB and binds it exactly to saved V `f8426b06...`; 120282 performs a separate strict proof on these actual bytes. An interface-only comparison is insufficient.
+
+120277 compares six explicit `-or_k 1` routing orders from the same common placement/guide/AP source. The original C40 experiment left `or_k` at its installed default zero; seeds alone yielded identical outputs. 120279 separately reroutes the 31 literal signal nets found in C40 iteration5 conflicts; its common netlist and placement are independently constrained equal to C40. These intermediate conflicts were ultimately resolved by C40 itself. The new neighbor group is an alternative topology experiment, not evidence that C40 final routing failed.
+
+120283 performs bounded same-function resizing planning on the finished actual C40 M9 SPEF, protecting all clock/reset/state/macros/output drivers and preserving instance positions/connectivity. Its output is only a plan; a prepared C43 six-way actual routing pipeline must legalize/reroute/reextract it before any acceptance claim. All final candidates still require complete RCX material equality, original SDC/geometry/driver gates, fresh native classification, original full unchanged GDS deck, exact functional binding, models/imports and frozen release hashes.
+
+Remote root: `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117`. Primary diagnostic: `audit/C40-clock-graft-fast-v1/seed0/`. Raw C40 runs: `cu/runs/C-v40-final-size-seed0..5/`. Original complete full-deck wrapper: `audit/c-full.sbatch`. No final full-deck run is started for a known failing-setup candidate.
