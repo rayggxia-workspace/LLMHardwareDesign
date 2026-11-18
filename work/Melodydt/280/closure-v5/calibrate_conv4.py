@@ -8,6 +8,7 @@ import subprocess
 import sys
 from control_gap_calibration import LIB,PLATFORM,power
 from special_lut import rounded
+from dma_state_power import net_names,mapped_wave
 
 def digest(p):return sha256(p.read_bytes()).hexdigest()
 def run(args,log,cwd):
@@ -116,10 +117,16 @@ endmodule
     (out/'synth.ys').write_text(ys);run(['yosys','-l',out/'synth.log',out/'synth.ys'],out/'synth-stdout.log',out)
     design=json.loads((out/'mapped.json').read_text())['modules']['conv4_q24'];assert all(not c['type'].startswith('$') for c in design['cells'].values())
     mapped=(out/'mapped.v').read_text();(out/'mapped-sta.v').write_text(re.sub(r'(?m)^(  (?:input|output|wire)) signed ',r'\1 ',mapped))
+    known=net_names(out/'mapped-sta.v');retained=None
     for name,row in cases.items():
         powers={};duration=row['last']-row['first']
         for kind,lo,hi in (('active',row['first'],row['last']),('idle',row['last'],row['end'])):
-            wave=out/(name+'-'+kind+'.vcd');clip(out/(name+'.vcd'),wave,design['ports'],lo,hi)
+            wave=out/(name+'-'+kind+'.vcd')
+            activity=mapped_wave(out/(name+'.vcd'),wave,known,'tb/dut',lo,hi,time_divisor=1,
+                boundary={n:'tb/dut/'+n for n in design['ports']})
+            names=set(activity['retained_names']);assert set(design['ports'])<=names
+            if retained is None:retained=names
+            assert retained==names,'unequal retained internal activity coverage'
             tcl='\n'.join(['read_liberty {'+str(LIB)+'}',
                 'read_lef {'+str(PLATFORM/'lef/NangateOpenCellLibrary.tech.lef')+'}',
                 'read_lef {'+str(PLATFORM/'lef/NangateOpenCellLibrary.macro.mod.lef')+'}',
@@ -127,11 +134,13 @@ endmodule
                 'create_clock -name core -period 3.334 [get_ports clk]','set_input_transition 0.05 [all_inputs]',
                 'read_vcd -scope dut {'+str(wave)+'}','report_activity_annotation','report_power -digits 9'])+'\n'
             powers[kind]=power(tcl,out/(name+'-'+kind),sum(len(p['bits']) for p in design['ports'].values()))
+            powers[kind]['activity']=activity
         row['power']=powers;row['incremental_nj_per_channel']=(powers['active']['power_w']['total']-powers['idle']['power_w']['total'])*duration/1000/row['channels']
     result=dict(scope='matched fixed-point convolution candidate; sampled FP32 error is not model acceptance',cases=cases,
         clock_period_ps=3334,wire_parasitics_loaded=False,timing_signoff=False,cell_count=len(design['cells']),
         inputs={str(p):digest(p) for p in (Path(__file__),bundle/'conv4_q24.sv',LIB)},netlist_sha256=digest(out/'mapped.v'),
-        activity='normal command RTL boundary activity propagated through mapped cells; no internal gate replay',
+        activity='normal command RTL boundary and matched internal RTL nets propagated through mapped cells; no gate replay',
+        retained_nets=len(retained),
         state='all captured channels replayed independently; full recurrent history/controller integration remains separate')
     (out/'calibration.json').write_text(json.dumps(result,indent=2)+'\n');print('CONV4_CALIBRATION_PASS',flush=True)
 if __name__=='__main__':main()

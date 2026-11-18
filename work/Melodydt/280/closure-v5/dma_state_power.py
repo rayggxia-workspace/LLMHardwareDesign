@@ -22,7 +22,8 @@ def net_names(net):
             if m:names[m[4].lstrip('\\')] = abs(int(m[2])-int(m[3]))+1 if m[2] else 1
     return names
 
-def mapped_wave(raw,dest,known,scope,begin,end,*,prefix='',boundary=None):
+def mapped_wave(raw,dest,known,scope,begin,end,*,prefix='',boundary=None,time_divisor=3):
+    if time_divisor<1:raise ValueError('invalid time divisor')
     stack=[];selected={};states={};seen=set();started=False;now=None;clk=None
     with raw.open() as src,dest.open('w') as out:
         out.write('$timescale 1ps $end\n$scope module dut $end\n')
@@ -31,7 +32,7 @@ def mapped_wave(raw,dest,known,scope,begin,end,*,prefix='',boundary=None):
             p=line.split()
             if p[:1]==['$scope']:stack.append(p[2])
             elif p[:1]==['$upscope']:stack.pop()
-            elif p[:1]==['$var'] and p[1] in ('wire','reg','integer'):
+            elif p[:1]==['$var'] and p[1] in ('wire','reg','integer','logic'):
                 full='/'.join(stack+[p[4]])
                 inside=full.startswith(scope+'/')
                 if not inside and full not in (boundary or {}).values():continue
@@ -63,7 +64,7 @@ def mapped_wave(raw,dest,known,scope,begin,end,*,prefix='',boundary=None):
                         out.write('#0\n')
                         for ident,value in states.items():out.write('b%s %s\n'%(value,ident))
                         seen.update(states);started=True
-                    out.write('#%d\n'%((now-begin+1)//3))
+                    out.write('#%d\n'%((now-begin+time_divisor//2)//time_divisor))
             else:
                 p=line.split()
                 if not p:continue
@@ -74,9 +75,9 @@ def mapped_wave(raw,dest,known,scope,begin,end,*,prefix='',boundary=None):
                 if set(value)-{'0','1'}:raise ValueError('unknown mapped state '+ident)
                 states[ident]=value
                 if started:out.write('b%s %s\n'%(value,ident));seen.add(ident)
-        out.write('#%d\n'%((end-begin+1)//3))
+        out.write('#%d\n'%((end-begin+time_divisor//2)//time_divisor))
     if not started or seen!=set(selected):raise ValueError('incomplete retained RTL activity')
-    return {'nets':len(names),'bits':sum(known[n] for n in names),'window_ps':(end-begin+1)//3,
+    return {'nets':len(names),'bits':sum(known[n] for n in names),'window_ps':(end-begin+time_divisor//2)//time_divisor,
             'retained_names':sorted(names),'excluded_width_mismatches':excluded_widths,
             'wave_sha256':digest(dest),'source_sha256':digest(raw)}
 

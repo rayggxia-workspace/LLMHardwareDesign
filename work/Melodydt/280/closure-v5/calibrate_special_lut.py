@@ -7,6 +7,7 @@ import subprocess
 import sys
 from special_lut import generate,samples,FUNCTIONS
 from control_gap_calibration import LIB,PLATFORM,power
+from dma_state_power import net_names,mapped_wave
 
 def run(args,log,cwd):
     with log.open('w') as f:subprocess.run(list(map(str,args)),cwd=cwd,stdout=f,stderr=subprocess.STDOUT,check=True)
@@ -97,7 +98,9 @@ endmodule
         lo,hi,cycles,count=map(int,re.search(r'WINDOW (\d+) (\d+) (\d+) (\d+)',log).groups())
         end=int(re.search(r'END (\d+)',log)[1]);assert end-hi==hi-lo==cycles*3334
         for name,a,b in (('active',lo,hi),('idle',hi,end)):clip(out/'raw.vcd',out/('%d-%s.vcd'%(op,name)),a,b)
+        (out/'raw.vcd').rename(out/('raw-%d.vcd'%op))
         observations[FUNCTIONS[op]]=dict(opcode=op,calls=count,cycles=cycles,window_ps=hi-lo,
+            first=lo,last=hi,end=end,
             replay_sha256=digest(out/('replay-%d.log'%op)))
     print('SPECIAL_ALL_RTL_REPLAYS_PASS',flush=True)
     run(['yosys','-l',out/'synth.log',out/'synth.ys'],out/'synth-stdout.log',out)
@@ -109,11 +112,18 @@ endmodule
     mapped=(out/'mapped.v').read_text()
     normalized=re.sub(r'(?m)^(  (?:input|output|wire)) signed ',r'\1 ',mapped)
     (out/'mapped-sta.v').write_text(normalized)
+    known=net_names(out/'mapped-sta.v');retained=None
     required=sum(len(p['bits']) for p in design['ports'].values())
     for kind,row in observations.items():
         powers={}
         for name in ('active','idle'):
             wave=out/('%d-%s.vcd'%(row['opcode'],name));target=out/(kind+'-'+name)
+            lo,hi=(row['first'],row['last']) if name=='active' else (row['last'],row['end'])
+            activity=mapped_wave(out/('raw-%d.vcd'%row['opcode']),wave,known,'tb/dut',lo,hi,time_divisor=1,
+                boundary={n:'tb/dut/'+n for n in design['ports']})
+            names=set(activity['retained_names']);assert set(design['ports'])<=names
+            if retained is None:retained=names
+            assert retained==names,'unequal retained internal activity coverage'
             tcl='\n'.join(['read_liberty {'+str(LIB)+'}',
                 'read_lef {'+str(PLATFORM/'lef/NangateOpenCellLibrary.tech.lef')+'}',
                 'read_lef {'+str(PLATFORM/'lef/NangateOpenCellLibrary.macro.mod.lef')+'}',
@@ -121,9 +131,11 @@ endmodule
                 'create_clock -name core -period 3.334 [get_ports clk]','set_input_transition 0.05 [all_inputs]',
                 'read_vcd -scope dut {'+str(wave)+'}','report_activity_annotation','report_power -digits 9'])+'\n'
             powers[name]=power(tcl,target,required)
+            powers[name]['activity']=activity
         row['power']=powers;row['incremental_nj_per_call']=(powers['active']['power_w']['total']-powers['idle']['power_w']['total'])*row['window_ps']/1000/row['calls']
         print('SPECIAL_POWER_PASS',kind,flush=True)
-    result=dict(scope='explicit Q24 transcendental candidate only; paired RTL boundary propagation through mapped cells',
+    result=dict(scope='explicit Q24 transcendental candidate; paired boundary and matched internal RTL nets propagated through mapped cells',
+        retained_nets=len(retained),
         clock_period_ps=3334,wire_parasitics_loaded=False,timing_signoff=False,rtl_replay_all_commands_passed=True,
         primitives=observations,cell_count=len(design['cells']),netlist_sha256=digest(out/'mapped.v'),
         sta_netlist_sha256=digest(out/'mapped-sta.v'),sta_normalization='remove signed from structural input/output/wire declarations only',
