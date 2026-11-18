@@ -15,7 +15,7 @@ def bounds(v):
 
 
 def main():
-    paths={k:HERE/'control-gap-results'/(k+'.json') for k in ('local','switch','mother-startup','mother-runtime','model-control-counts')}
+    paths={k:HERE/'control-gap-results'/(k+'.json') for k in ('local','switch','mother-startup','mother-runtime','model-control-counts','switch-flit-audit')}
     data={k:load(p) for k,p in paths.items()}
     macro=load(HERE/'no-wire-results/mother-pm.json')
     assert data['mother-runtime']['parameters']['SERVICE_STALL_LIMIT'][1]==2000000
@@ -28,7 +28,9 @@ def main():
     for inst in data['local']['instances'].values():
         b=bounds(w['power_w']['total'] for w in inst['windows'].values())
         local=[a+c for a,c in zip(local,b)]
-    switch=bounds(x['pj_per_handshake_cycle']/1000 for x in data['switch']['paired'])
+    for audit in data['switch-flit-audit']:
+        assert audit['interior_counts']['overlap']==0 and audit['coefficient_denominator_range']==[19,20]
+    switch=bounds(x['active_delta_nj']/n for x in data['switch']['paired'] for n in (19,20))
     # The measured macro's conditional clock arc already represents read
     # access energy. Do not add its OpenSTA internal estimate a second time.
     pm=bounds(p['increment']['read']['exact_clock_arc_pj']/p['increment']['read']['requests']/1000 for p in macro['pages'])
@@ -47,6 +49,7 @@ def main():
             'Four cut LC shells plus four actual C639 routers are assumed clocked for the full window. PM arrays and descriptor-fetch children are excluded. Per-model router registries and physical deployment remain unverified.',
             'Static control-page instruction counts reconcile to frozen calls/pages. One PM read per compact instruction, no fetch cache; four-flit CALL plus four-flit successful terminal. Cancellation/retry traffic is excluded.',
             'PM runtime reads use the accepted four-macro conditional clock energy (one addressed 128-bit control word). This is separate from the 512-bit data SRAM and does not change its width.',
+            'Switch sampling has 19 interior accepted flits and 20 inclusive driver events; the triggering initial edge has no pre-edge VCD snapshot. Denominators 19-20 are included in coefficient sensitivity.',
             'All intervals are sampled coefficient/scenario endpoints, not confidence intervals or guaranteed error bounds. No wire RC is loaded.']
         out['not_included']=[
             'Mother image-install/sequence/cohort grant wrappers and packet bridges outside the calibrated core; unsampled startup states and exact state residency.',

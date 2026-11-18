@@ -284,12 +284,15 @@ def main():
     parser.add_argument("--bold-font", type=Path, default=Path("C:/Windows/Fonts/Dengb.ttf"))
     args = parser.parse_args()
     index = json.loads(args.index.read_bytes())
-    if index.get('format')=='arithmetic-v3':
+    if index.get('format') in ('arithmetic-v3','control-v4'):
         for model in index['models']:
             path=args.index.parent/model['result']
             if sha256(path.read_bytes()).hexdigest()!=model['result_sha256']:
                 raise ValueError('arithmetic report input hash differs: '+model['name'])
-        from build_arithmetic_energy_report import main as arithmetic_report
+        if index.get('format')=='control-v4':
+            from build_control_energy_report import main as arithmetic_report
+        else:
+            from build_arithmetic_energy_report import main as arithmetic_report
         arithmetic_report(args.output)
         return
     records = [(model, load_result(model, args.index.parent)) for model in index["models"] if "result" in model]

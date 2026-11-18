@@ -18,10 +18,11 @@ def main():
     args = parser.parse_args()
     directory = Path(__file__).resolve().parent
     index = json.loads((directory / 'energy_report_models.json').read_bytes())
-    if index.get('format') == 'arithmetic-v3':
+    if index.get('format') in ('arithmetic-v3','control-v4'):
         import subprocess
         import sys
-        subprocess.run([sys.executable, str(directory / 'verify_arithmetic_report.py'), str(args.pdf)], check=True)
+        script='verify_control_report.py' if index.get('format')=='control-v4' else 'verify_arithmetic_report.py'
+        subprocess.run([sys.executable, str(directory / script), str(args.pdf)], check=True)
         return
     reader = PdfReader(args.pdf)
     if len(reader.pages) != 19 or len(index['models']) != 7:
