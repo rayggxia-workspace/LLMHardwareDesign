@@ -99,6 +99,7 @@ def counts(r,out,bundle):
                 # excluding only the location-dependent plan SHA field.
                 matched=[]
                 for candidate in candidates:
+                    if sha(candidate)!=spec[stage]['equivalent_original_plan_sha256']:continue
                     rp=candidate.parent.parent/'result.json'
                     if not rp.is_file():continue
                     result=json.loads(rp.read_text())
