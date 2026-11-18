@@ -17,6 +17,19 @@ def packed(values):
     return '{:032x}'.format(sum((int(v)&0xffffffff)<<(32*i) for i,v in enumerate(values)))
 
 
+def replay_samples(samples, chunked):
+    for index, original in enumerate(samples):
+        if not chunked:
+            yield index, original
+            continue
+        for offset in range(0, original['words'], 512):
+            words=min(512,original['words']-offset)
+            sample=dict(original,words=words,original_words=original['words'],chunk_offset_words=offset)
+            for key in ('source','gamma','expected'):
+                sample[key]=original[key][4*offset:4*(offset+words)]
+            yield index,sample
+
+
 def vectors(sample, kind):
     if kind in ('scan','apply'):
         words=sample['words'];count=words*4
@@ -98,6 +111,8 @@ def power(design, platform, lib, work, raw, tb, instance, start, end, idle):
 
 def main():
     root,bundle,out=map(Path,sys.argv[1:4]);kind=sys.argv[4];captures=list(map(Path,sys.argv[5:]));out.mkdir()
+    chunked=kind=='apply_chunked'
+    if chunked: kind='apply'
     if kind not in ('softmax','rope','scan','apply'): raise ValueError('unknown kind')
     platform=Path('/OpenROAD-flow-scripts/flow/platforms/nangate45');lib=platform/'lib/NangateOpenCellLibrary_typical.lib'
     common=root/'common-arithmetic-01/rtl'; compact=root/'operator-capture-02/rtl'
@@ -123,7 +138,7 @@ def main():
         check=json.loads(capture.with_name('arithmetic-capture-check.json' if rms else 'operator-capture-check.json').read_text())
         if not check['passed'] or (not rms and check['capture_sha256']!=digest(capture)): raise ValueError('unaccepted capture')
         data=json.loads(capture.read_text());inputs[str(capture)]=digest(capture);counts[str(capture)]=data['rms_service_counts' if rms else 'counts']
-        for index,sample in enumerate(data['samples']):
+        for index,sample in replay_samples(data['samples'],chunked):
             if not rms and sample['kind'] not in ({'softmax'} if kind=='softmax' else {'rope','rope_native'}): continue
             if kind=='apply' and sample['words']>512:
                 excluded.append(dict(capture=str(capture),sample_index=index,signature=sample['signature'],
@@ -140,6 +155,8 @@ def main():
             if end-start!=idle-end or end-start!=int(accepted[2])*3334: raise ValueError('window/cycle mismatch')
             components={instance:power(d,platform,lib,work,raw,tb,instance,start,end,idle) for instance,d in designs.items()}
             shape={k:sample[k] for k in ('words','shift','extra','output_shift')} if rms else sample['shape']
+            if chunked:
+                shape.update(original_words=sample['original_words'],chunk_offset_words=sample['chunk_offset_words'])
             result=dict(signature=sample['signature'],shape=shape,capture=str(capture),sample_index=index,
                         units=units,cycles=int(accepted[2]),window_ps=end-start,components=components,
                         incremental_nj=sum(x['incremental_nj'] for x in components.values()),
@@ -147,7 +164,9 @@ def main():
             (work/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');results.append(result)
             print('PUBLIC_OPERATOR_SAMPLE_PASS',kind,len(results),sample['signature'],flush=True)
     if not results: raise ValueError('no matching samples')
-    report=dict(kind=kind,scope='sampled real operands; named arithmetic wrapper plus E32 where present; SRAM and system residency excluded; do not add provider E32 twice',
+    report=dict(kind='apply_chunked' if chunked else kind,chunked=chunked,
+                chunk_contract='same full-vector factor; separate commands with disjoint X/Gamma windows; staging and inter-command residency excluded' if chunked else None,
+                scope='sampled real operands; named arithmetic wrapper plus E32 where present; SRAM and system residency excluded; do not add provider E32 twice',
                 activity='RTL boundary VCD propagated through mapped cells; no internal gate replay',
                 memory_fixture='softmax/scan/apply use one-outstanding S128 fixture, not physical SRAM; apply uses disjoint X/Gamma windows in one bank',
                 nominal_clock_mhz=300,period_ps=3334,wire_parasitics_loaded=False,timing_signoff=False,
