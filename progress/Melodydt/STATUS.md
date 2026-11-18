@@ -1,12 +1,16 @@
-## 2026-11-18 20:18 三项补齐 v5 进展（Asia/Shanghai）
+## 2026-11-18 21:59 v5 七模型21窗条件估算齐全（Asia/Shanghai）
 
-[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。保持 300 MHz、512-bit 数据 SRAM、三 P；M 时序闭合不作前置条件。
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。300 MHz、512-bit 数据 SRAM、三 P。
 
-BSCC 可登录；四版读 DMA 综合后无寄生配对标定 38855808–11 全部 COMPLETED 0:0，不再等待布局布线。母控外围 38850581 与特殊函数/Conv4 引脚复标 38855639/40 已通过。Qwen3、Llama、Granite 的 E32 18 周期双阶段通过，连同 Falcon prefill 已对 10 窗积分四种互斥 DMA 场景并核对单位/去重；Falcon prefill 4.234239 tok/s 已通过；另 7 个 E32 阶段仍运行且均 UNLIMITED。七模型基线观察全部通过。特殊候选替换场景单列，保持复合运算/转换/新周期尚未集成的限制。
+七模型短 prefill、首步 decode 和第二步 decode 共 21/21 窗已完成 E32 18 周期重测验收与功耗积分。最后三项 Qwen3.5/Phi/Gemma 分别于 21:46:59/21:50:46/21:53:14 COMPLETED 0:0，14 项 E32 正式重测均已结束；连同基线共 28 个成功阶段清单 SHA 验证通过。三类账本（基础、四版 DMA 替代场景、特殊候选去重替换）已齐全，片上与片上＋DDR、W 与 mJ/token 分开报告。
 
-完整物理部署、原生 provider/路由参数、实际门控及整模型 RTL 状态驻留仍需实现验证；不能把上述 TLM 审计或局部候选测试写成三项全部完成。PDF 持续更新，原 v4 的 25 页保留为历史快照。源码积分 03cc4e99、引脚校准 30b6095c；[完整回执、结果、作业命令与全部剩余步骤](../../docs/handoffs/2026-11-18-issue-280-closure-v5.md)。
+实际通过管理结构、归档 SHA 和既有结果不变性、28 阶段部署/共享资源审计、21 窗能量/W/mJ单位及守恒/去重独立复算。36 页 PDF 的 436 组数值和11页更新内容目检通过，原25页历史文本完整保留。
 
-任务 in_progress，PR 草稿未合并，审查人待指定；登记 PR #5 pending，看板 unverified/同步 pending，维护者待指定。长任务日志/结果独立保存；未配置聊天自动监测。
+这完成了当前综合后、无布线寄生的条件估算。完整物理部署/provider/原生 ABI/路由/真实门控、完整 RTL 控制状态、特殊算子转换/复合运算/递推状态/候选周期及300 MHz绑定仍需实现验证；DMA唯一实例选择和 phase owner 1 活动仍待绑定。不得据此声称用户指定三项的完整硬件验收或整模型 FP32 RTL 通过。
+
+21:55 +08 核验：本轮模型重测已无运行/等待项。旧物理作业 38769386/38795299 仍 RUNNING，分别 2-05:12:21 / 1-22:24:32；保持原状，不阻塞本轮，M 时序闭合亦不作前提。所有已提交任务 UNLIMITED。
+
+[完整结果、作业与剩余步骤](../../docs/handoffs/2026-11-18-issue-280-closure-v5.md)。E32源码9a2f2d23、引脚标定30b6095c，本次数据/报告提交以PR读回为准。Issue保持in_progress，PR草稿未合并，审查人待指定；登记PR #5 pending；看板缺配置/工具，unverified/同步pending。未配置聊天自动监测。
 
 ## 2026-11-18 七模型控制能耗补项 v4（Asia/Shanghai）
 
