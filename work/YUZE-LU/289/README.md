@@ -1,5 +1,7 @@
 # A/B interface X8 implementation — Issue 289
 
+Latest C continuation: [actual C-v28 checkpoint](audit/C-v28-ACTUAL-STATUS.md) and [continuation record](CONTINUE.md). C remains unaccepted. The completed original full-deck v27 baseline has42 violations; [exact comparison](audit/full-C-v27-joint-e20-h30/focused-comparison.json) matches all41 earlier focused markers and identifies the remaining isolated OAI221_X4 marker. A final C needs its own complete original-deck pass and extracted timing closure.
+
 ## Accepted backend packages
 
 F with the accepted **S minimal-localv4** X8 leaf has completed backend acceptance. Evidence: [accepted-parent.json](audit/evidence/F/accepted-parent.json). Nangate45 TT, nominal300MHz, original0.1ns uncertainty; actual serialized period3.3333ns. Setup+0.221605405ns, hold+0.002453537ns. Timing/electrical violation counts, full foundry GDS DRC and antenna are zero; PG, formal equivalence, state/control preservation and signal/power BPin/macro geometry checks pass. Native-route checker markers are40 exact historical matches plus4 individually proven same-net physical macro contacts; two old markers disappear. Do not label this checker report empty. Hold margin is only2.454ps and this does not establish other PVT corners or A/B top RC timing.
