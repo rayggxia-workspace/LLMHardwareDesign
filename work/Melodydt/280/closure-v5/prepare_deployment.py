@@ -11,6 +11,26 @@ out.mkdir();shutil.copytree(source/'runner',out/'runner')
 for name in ('projection_math.so','qualified-windows.json','transfer-verified.json'):
     if (source/name).exists():shutil.copy2(source/name,out/name)
 runner=out/'runner'
+if not (runner/'run_frozen_model_energy.py').exists():
+    # Qwen3's accepted capture was launched through its compiler CLI. Replay
+    # its already sealed assets with the same strict numerical checker.
+    root=source.parent.parent
+    common=root/'operator-capture-02/run-38830188/runner'
+    for name in ('run_frozen_model_energy.py','ddr_window_energy.py'):
+        shutil.copy2(common/name,runner/name)
+    baseline={'prefill':str(source/'prefill-w4-tile128-pr272-combined'),
+              'decode':str(source/'decode-live-w4-tile128-pr272-combined')}
+    windows={}
+    for phase,path in baseline.items():
+        result=json.loads((Path(path)/'result.json').read_text())
+        if phase=='prefill':
+            windows['prefill']={'start_ps':0,'end_ps':result['boundary'][1]['complete_ps']}
+        else:
+            first,last=[x['time_ps'] for x in result['retirements']]
+            windows['first_token']={'start_ps':0,'end_ps':first}
+            windows['decode']={'start_ps':first,'end_ps':last}
+    (out/'qualified-windows.json').write_text(json.dumps(windows,indent=2)+'\n')
+    (out/'transfer-verified.json').write_text(json.dumps({'model':'qwen3','baseline':baseline},indent=2)+'\n')
 shutil.copy2(bundle/'deployment_observation.py',runner/'deployment_observation.py')
 path=runner/'run_frozen_model_energy.py'
 text=path.read_text()
