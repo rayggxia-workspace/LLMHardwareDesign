@@ -337,3 +337,16 @@ python -B work/Melodydt/280/recurrent-300mhz/verify_integration.py
 ```
 
 两条仅复算冻结v5窗口与已完成的300MHz活动标定，48窗/1904关系；不会提交仿真。PDF生成需ReportLab、pypdf及Deng字体。公开包仅删除旧商业仿真器日志字段，数值完全相同，原/公开SHA对应见public-export.json。服务器重标定依赖原始映射网表和完整活动，不含在包内；缺项及版本见[本轮交接](handoffs/2026-11-18-issue-280-recurrent-300mhz.md)。
+
+
+## Issue280：SYNC-08双频率报告复算
+
+将`work/Melodydt/280/dual-frequency-v5/evidence.zip`解压到新目录，保留目录结构：
+
+```text
+python -B work/Melodydt/280/dual-frequency-v5/integrate.py
+python -B work/Melodydt/280/dual-frequency-v5/verify.py
+python -B work/Melodydt/280/dual-frequency-v5/build_reports.py
+```
+
+前两条仅标准库；PDF需ReportLab/pypdf、Deng/Dengb字体。冻结52输入、无服务器作业；200MHz为旧配对响应迁移到v5的估算，尚无新E32-18频率回放。方法/范围/验证/下一步见[交接](handoffs/2026-11-19-issue-280-dual-frequency-v5.md)。

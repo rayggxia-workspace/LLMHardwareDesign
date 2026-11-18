@@ -144,3 +144,14 @@ Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280)
 1904项数值关系、41输入SHA、152取回工件、7页282数值与全页视觉检查通过；公开包省略两项旧商业仿真器日志字段并重新验证数值逐项相同。见[交接](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/docs/handoffs/2026-11-18-issue-280-recurrent-300mhz.md)、[报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/docs/experiments/recurrent-state-latest-300mhz.pdf)。
 
 仍为条件候选：P512冷状态活动外推，尚需独立层/长序列、模型数值/转换与Falcon注入、R部署/加载/门控/调度接入及物理时序验证。当前子交付待审查，整体Issue280保持in_progress、PR未合并、审查人待指定；登记PR5 pending，看板缺配置及Projects工具，unverified/同步pending。无自动监测。后续负责人Melodydt，审查与看板维护者待指定。
+
+
+## 2026-11-19 SYNC-08：300/200MHz同源双报告（Asia/Shanghai）
+
+负责人Melodydt；Issue280 / PR295。最新300MHz v5（e29d72a5）、P512 v3（01141df7）和R收窄结果已用于两频率报告。300MHz数值保持不变；200MHz迁移此前配对采样及直接200MHz上下文曲线的频率响应，再按事件/驻留/DDR分项积分，两模型使用已有同频R标定。无新E32-18 200MHz回放，因此200MHz明确为条件估算。
+
+七模型200MHz P512速度2.600–9.341 token/s，Decode1.384–4.752 token/s。Qwen3.5/Falcon 200MHz Decode片上分别856.511–1037.103、632.596–780.034 mJ/token；片上+DDR分别2534.239–2714.831、1831.575–1979.013。两频率均含一个读DMA、512-bit数据SRAM、三P、DDR630ps；四DMA方案互斥。
+
+52冻结输入、6161项关系、28窗口、两份各7页/420显示值及全部14页目检通过；独立解压包复算28窗数值相同。37输入远端Git blob对齐，14服务器回执绑定已发布ledger SHA，R候选模型数值与远端一致。另一迁移方法时长差0.019%–0.203%，不是真实误差上限。
+
+[两频率交接](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/docs/handoffs/2026-11-19-issue-280-dual-frequency-v5.md)与[复算包](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-recurrent-first-round/work/Melodydt/280/dual-frequency-v5/evidence.zip)。下一步为200MHz E32-18新配对采样、完整序列/模型数值、R实际部署及按需物理验证；负责人Melodydt。本子交付待独立审查，整体Issue280 in_progress、PR未合并，审查人待指定。登记PR5 pending，缺board.json/Projects工具，看板unverified/同步pending。无新作业/自动监测。
