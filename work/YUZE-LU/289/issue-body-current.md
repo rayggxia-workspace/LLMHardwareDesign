@@ -4,9 +4,10 @@
 
 G/S 叶宏、F 父 block 和 U block 已通过。U 153 个目标输出均为 BUF_X8，TT 250 MHz、50 fF 契约下 setup +78.051 ps、hold +3.471 ps，完整原版工艺 DRC 与五类时序/电气违例均为零。源绑定、PG、功能和宏视图检查通过。验收回执见 work/YUZE-LU/289/audit/evidence/U/accepted-parent.json，PR #290。C 详细布线和共享算术优化继续，Issue 保持 in_progress。
 <!-- c-actual-baseline -->
-C40六路实际详细布线120273全部完成，最终原生路由报告0，ODB/DEF/V/SDC逐字节相同，因此只对seed0作独立后续评估。只移植一条已有实际M9时钟线net73798并重新提取RC的120281结果：setup7、WNS−43.646421ps；hold/电容/slew/fanout均0、WHS+1.400824ps，两条PG无缓存连通通过。其余网络、实例、信号/电源引脚及逻辑保持精确一致。C尚未后端验收，不能据此签收250MHz或A/B实际顶层长线。
+C43实际四个不同方案120292已全部完成详细布线，各自setup/hold/电容/slew/fanout均零违例。选用实际setup裕量最大的plan0：TT250MHz、0.1ns uncertainty、153个目标输出50fF条件下setup +6.340040ps、hold +1.990130ps，原约束未放松。最终GDS SHA256为11ed17a55e077a71217667ae6f7e2bb7dbb07d5af22e52450d159d1de4b0bbe9。
 
-余下7条均为C内部loader路径：两条pd、五条cached_addr，与排除的P block无关。实际C40 common的21095状态、数据及控制完整等价证明120275通过；实际最终ODB新导出的V与保存V逐字节相同120280，因不同于common V，120282正在单独重证明。120277已完成显式or_k=1的六路实际布线对照；120279继续31条实际冲突信号网的邻域重布。120283/120286仅在完成提取的实际C40 RC上作限定组合尺寸规划，其结果必须实际合法化、重布、重新提取并复验。完整原版最终GDS检查、最终视图和冻结release仍待，不放松原频率、负载、IO/uncertainty或加入时序例外。
+该最终源的278701条网络提取前后全层材料一致、153个C驱动BUF_X8、固定信号引脚/宏/外形、无缓存PG双轨、聚焦上层金属与天线、Liberty/LEF及父级cut覆盖均通过。实际ODB导出的最终网表2b74fbc9…与保存文件逐字节一致，120296完成该实际网表的数据/21095状态及clock/reset/control证明；原RTL至综合边界采用机器核验的有限/通用证明和明确列出的人工组合证明，不声称全模块RTL SAT。两方案340/340目标输出已独立逐端口确认唯一BUF_X8（C153/U153/G33/S1；A306/B340）。
 
-PG边界的230旧形状移除/140新增形状已由v16实际PDN谱系、260354条电源材料、实际GDS全覆盖和双轨检查独立核实；这一工程基线批准不替代最终候选PG/GDS检查。当前证据与脚本见 `work/YUZE-LU/289/audit/C40-ACTUAL-STATUS.md`，已推送commit `0f814e89b1a6a105b0f7dd201070548d2bad25ac`。U/F已签收源保持冻结，PR草稿、Issue in_progress。
+C尚未最终后端验收。120303正在对同一个最终GDS执行完整未修改原版FreePDK45规则；原生checker有222个逐项证明为同网连续材料的M2/M3 spacing标记，并非空报告。还须完整原版报告实际零项、root精确native/PG裁定及最终冻结release。PG相对原CTS的230旧记录移除/140新增已追溯至合格v16/C35基线，当前最终边界复核通过。U/G/S/F已验收源保持冻结。
 
+当前证据见work/YUZE-LU/289/audit/C43-ACTUAL-STATUS.md及C43-pending-evidence/，已推送commit80da921f8。PR保持草稿，Issue in_progress；A/B实际顶层RC/STA和多PVT仍在后续范围。
