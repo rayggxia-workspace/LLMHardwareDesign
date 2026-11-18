@@ -11,6 +11,8 @@ if [[ ${1:-} != inside ]]; then
     bundle=${SLURM_SUBMIT_DIR:?}
     cd "$bundle"
     sha256sum --quiet -c inputs.sha256
+    # The login shell exports a Calibre Tcl 8.6 path; site modules use Tcl 8.5.
+    unset TCL_LIBRARY TK_LIBRARY TCLLIBPATH
     set +u
     source /public3/soft/modules/module.sh
     module load singularity/3.7.0
