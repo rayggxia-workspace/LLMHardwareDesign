@@ -1,3 +1,9 @@
+### Current checkpoint: C43 all short gates pass; final full deck pending
+
+Read [C43 actual status](audit/C43-ACTUAL-STATUS.md) first. Actual120292 completed all4 distinct cases; plan0 selected. Same-source complete original GDS deck120303 is RUNNING; do not change its source files. Complete final v5 preflight120312 passed, explicitly accepted=false. All340 actual drivers checked. Actual final2b74 netlist proof120296, raw278701-net RCX equality, native222 individually explained M2/M3 spacing, focused upper/antenna0, freshPG and exact signal/macro/die geometry, G33 binding and model imports/coverage all pass. Final checker: audit/C43-pending-evidence/aggregate_c43_v5.py. Root must verify actual full0 and write exact native/PG disposition before final aggregation/release. Remote/full paths and source hashes are in C43-ACTUAL-STATUS.md. U/G/S/F unchanged. c1296732b is now pushed successfully; no GitDB ref update was used. Issue in_progress/PR290 draft, registration PR5 pending and board configuration missing. No goal/automation.
+
+The earlier continuation notes below are historical, not current status.
+
 ### Actual C43 now running (supersedes earlier pending-launch notes below)
 
 120289 v4 COMPLETED7m52, finalstaticglobalWNS+4.293455ps, hold+1.400824ps/countsall0,22cumulativeextra masterchanges vsactualM9b593. Exactly4accepted distinctpositive snapshots (not6): +4.293455/+2.895462/+2.663647/+2.219114ps. Independentselector120290 COMPLETED12s, real97catalog/actualLibtruth/allsourceSHA/replay gates passed, selectionSHA42bd20fae70ba457cca2a01f428047a759a66dffee6c696a10de6b160fdd1f3d.

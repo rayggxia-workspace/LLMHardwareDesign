@@ -1,6 +1,6 @@
 # A/B interface X8 implementation — Issue 289
 
-Latest C continuation: [actual C40 checkpoint](audit/C40-ACTUAL-STATUS.md) and [continuation record](CONTINUE.md). C remains unaccepted. The completed original full-deck v27 baseline has42 violations; [exact comparison](audit/full-C-v27-joint-e20-h30/focused-comparison.json) matches all41 earlier focused markers and identifies the remaining isolated OAI221_X4 marker. A final C needs its own complete original-deck pass and extracted timing closure.
+Latest C continuation: [actual C43 verification](audit/C43-ACTUAL-STATUS.md). Four actual routed variants have zero timing/electrical violations; selected plan0 has setup/hold +6.340040/+1.990130ps at TT250MHz. All short independent gates and 340-port BUF_X8 coverage pass. **C remains unaccepted pending the same final GDS complete original deck (job120303), exact root disposition and frozen release.** Earlier C40 and other records below are historical.
 
 ## Accepted backend packages
 
