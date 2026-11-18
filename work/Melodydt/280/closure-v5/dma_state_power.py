@@ -33,9 +33,10 @@ def mapped_wave(raw,dest,known,scope,begin,end,*,prefix='',boundary=None):
             elif p[:1]==['$upscope']:stack.pop()
             elif p[:1]==['$var'] and p[1] in ('wire','reg','integer'):
                 full='/'.join(stack+[p[4]])
-                if not full.startswith(scope+'/'):continue
-                relative=full[len(scope)+1:];name=prefix+relative.replace('/','.')
-                candidates=[name]
+                inside=full.startswith(scope+'/')
+                if not inside and full not in (boundary or {}).values():continue
+                relative=full[len(scope)+1:]
+                candidates=[prefix+relative.replace('/','.')] if inside else []
                 if boundary:
                     candidates += [n for n,actual in boundary.items() if actual==full]
                 for name in candidates:

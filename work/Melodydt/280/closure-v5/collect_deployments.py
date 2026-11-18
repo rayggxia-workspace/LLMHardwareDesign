@@ -11,7 +11,7 @@ def digest(p):
         for x in iter(lambda:f.read(4<<20),b''):h.update(x)
     return h.hexdigest()
 
-root,out=map(Path,sys.argv[1:]);records=[]
+root,out=map(Path,sys.argv[1:3]);records=[]
 for name in ('closure-v5-deploy-6fbd77f9','closure-v5-qwen-de9fd4be',*sys.argv[3:]):
     b=root/name
     jobs=json.loads((b/'jobs.json').read_text())
