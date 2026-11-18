@@ -1,4 +1,85 @@
+## 2026-11-18 21:59 v5 七模型21窗条件估算齐全（Asia/Shanghai）
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。300 MHz、512-bit 数据 SRAM、三 P。
+
+七模型短 prefill、首步 decode 和第二步 decode 共 21/21 窗已完成 E32 18 周期重测验收与功耗积分。最后三项 Qwen3.5/Phi/Gemma 分别于 21:46:59/21:50:46/21:53:14 COMPLETED 0:0，14 项 E32 正式重测均已结束；连同基线共 28 个成功阶段清单 SHA 验证通过。三类账本（基础、四版 DMA 替代场景、特殊候选去重替换）已齐全，片上与片上＋DDR、W 与 mJ/token 分开报告。
+
+实际通过管理结构、归档 SHA 和既有结果不变性、28 阶段部署/共享资源审计、21 窗能量/W/mJ单位及守恒/去重独立复算。36 页 PDF 的 436 组数值和11页更新内容目检通过，原25页历史文本完整保留。
+
+这完成了当前综合后、无布线寄生的条件估算。完整物理部署/provider/原生 ABI/路由/真实门控、完整 RTL 控制状态、特殊算子转换/复合运算/递推状态/候选周期及300 MHz绑定仍需实现验证；DMA唯一实例选择和 phase owner 1 活动仍待绑定。不得据此声称用户指定三项的完整硬件验收或整模型 FP32 RTL 通过。
+
+21:55 +08 核验：本轮模型重测已无运行/等待项。旧物理作业 38769386/38795299 仍 RUNNING，分别 2-05:12:21 / 1-22:24:32；保持原状，不阻塞本轮，M 时序闭合亦不作前提。所有已提交任务 UNLIMITED。
+
+[完整结果、作业与剩余步骤](handoffs/2026-11-18-issue-280-closure-v5.md)。E32源码9a2f2d23、引脚标定30b6095c，本次数据/报告提交以PR读回为准。Issue保持in_progress，PR草稿未合并，审查人待指定；登记PR #5 pending；看板缺配置/工具，unverified/同步pending。未配置聊天自动监测。
+
+## 2026-11-18 七模型控制能耗补项 v4（Asia/Shanghai）
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。完成母控核心启动/运行及 PM 取指、局控外壳/分发、交换机活跃增量三个方向的条件估算，覆盖七模型 21 窗。512-bit 数据 SRAM、300 MHz、三 P 与冻结 TLM 时间/DDR/算术不变。纠正母控 SERVICE_STALL_LIMIT 为真实实例 2000000；母控新项替换旧核心，PM 与交换机只增加尚未计入的动态项。
+
+旧服务器最终作业 120297/120300/120304/120313 全部 COMPLETED 0:0、12 核、UNLIMITED。21 窗单位/分项/哈希/去重校验通过；25 页 PDF 的 651 组数值与最终全页目检通过。第 2 步 Decode 相对 v3 控制净增量约 1.706–6.692 mJ/token；完整双口径数值、模型优化及逐模型未覆盖项见[报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-seven-model-energy/docs/experiments/seven-model-energy-evaluation.pdf)。
+
+[本轮交接与全部剩余步骤](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-seven-model-energy/docs/handoffs/2026-11-18-issue-280-control-energy-v4.md)。本轮四项最终作业已结束；16:29 +08 旧服务器个人队列无活动作业。BSCC 仍拒绝 loginCluster，旧 DMA 当前状态未核验，不能沿用历史 RUNNING 快照。下一步是各模型真实控制部署绑定及母控外围/精确驻留；读 DMA 待恢复 BSCC 授权。仍为条件估算，非完整芯片实测或 RTL 数值/物理验收。Issue in_progress、PR 草稿未合并、审查人待指定；登记 PR #5 pending；看板 unverified、同步 pending（缺配置/Projects 能力），有权限维护者接续。未配置自动监测。
+
+## 2026-11-18 七模型算术能耗估算 v3 已交付（Asia/Shanghai）
+
+Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / 草稿 PR [#281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。已按用户允许特殊算子运算级近似的口径完成七模型三窗估算；512-bit SRAM、名义 300 MHz、三 P 与冻结时间保持不变。公共 RMS/softmax/RoPE 采用真实输入标定；GELU/GDN/Mamba/浮点服务等明确使用成本代理，范围不是统计置信区间或保证误差界，不宣称 RTL 数值验收。
+
+四项新作业 38837942/38838045/38838116/38838117 全部 COMPLETED 0:0、UNLIMITED。N/E32/scan 各 66 样本，96 分块覆盖 66 个完整 apply 向量，softmax 56、RoPE 54。七模型分项/单位/冻结时间/DDR 对账通过；18 页 PDF 的 462 组数值与全页视觉检查通过。数据/估算代码提交 `0d84209e10e898f17998e959157a760a80c2afaf`。
+
+最新 [完整交接与所有剩余步骤](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-seven-model-energy/docs/handoffs/2026-11-18-issue-280-arithmetic-estimate-v3.md)、[持续更新报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-seven-model-energy/docs/experiments/seven-model-energy-evaluation.pdf)。本轮估算已完成；更广的硬件实现/时序/读 DMA 与物理覆盖仍未验收，Issue in_progress、PR 草稿未合并，审查人待指定。项目登记 PR #5 pending；看板缺配置/Projects 能力，unverified、同步 pending。11:27 快照旧 DMA 38769386/38795299 仍 RUNNING，另两项在综合后的引脚放置失败，不阻塞本版估算。未配置聊天自动监测。
+
 # 当前状态
+
+2026-11-18 00:56（Asia/Shanghai），[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成七模型 N/E32/scan 各 66 组真实输入标定；apply 36 组通过、30 个大向量显式排除；Llama/Granite softmax 16、RoPE 12 组通过。27 份结果/262 样本的 RTL 数值、配对活动与 SHA 已归档。E32 的 TLM 9 周期与 RTL 18 周期差已按 30 个窗口/site 对账，尚未校正系统调度或回填模型小计。Falcon 扩展采样已完成，74 个算子样本和冻结对账通过；系数超出现有 S16 Q14 范围，R 绑定需修改格式并验证。其余三模型采样继续运行，后继 38832101/38832112 等成功依赖，均 UNLIMITED。[实测表、作业追踪和全部剩余步骤](handoffs/2026-11-18-issue-280-public-arithmetic-calibration.md)。Issue in_progress、PR #281 草稿未合并；PDF v2.1 小计暂不变。
+
+2026-11-17 23:02，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 的 Llama 三窗 N 核心真实输入标定已通过：130 次 RMS、6 组样本的定点/RTL 因子、433 位活动标注和 SHA 完整。其余六模型采样/成功依赖标定继续运行。此为 N 算术子项，尚不等于完整 RMS 或模型能耗；完整步骤与证据见[接续记录](handoffs/2026-11-17-issue-280-common-arithmetic.md)。
+
+
+## 2026-11-17 七模型 RMS 缺项链启动
+
+公共 RMS 的七模型采样及成功依赖 N 标定已提交，全部不限时。Llama prefill 的 64 次 RMS 重放/计数和两组真实输入 N RTL 因子已通过，得到约 299.43–301.14 nJ/次的 N 动态增量；不含 E、wrapper 与驻留，尚未回填模型小计。其余阶段继续运行，完整作业表与方法边界见[公共算术交接](handoffs/2026-11-17-issue-280-common-arithmetic.md)。Issue #280 in_progress，PR #281 草稿未合并。
+
+
+## 2026-11-17 公共算术缺项标定启动
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成 N/E/S32 softmax 候选映射和 N 的 RTL 因子、433 位边界活动、300 MHz 无布线寄生配对功耗短流程验证；合成样例不计入模型小计。Llama 冻结重放采样 38828362 正在运行，真实输入 N 标定 38828633/34 已建立成功依赖，均不限时。七模型新增算术能耗尚未验收，PDF v2.1 数值保持原状。[作业与后续顺序](handoffs/2026-11-17-issue-280-common-arithmetic.md)。PR #281 草稿未合并，任务 in_progress。
+
+
+## 2026-11-17 七模型无布线寄生分项扩展 v2
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已将普通投影 M、写侧/U/PM 桥驻留、局控 PM 启动及读取、描述符活动和九目标母控核心加入七模型的 21 个窗口，并重新计算全部既有无布线寄生分项。片上与片上＋DDR 继续分别报告；新覆盖使第2步 Decode 的同口径片上小计增加约 4.65-17.91 mJ/token。PDF v2 为十九页，输入 SHA、分项守恒、单位及所有页目检通过。[结果、回执与剩余覆盖](handoffs/2026-11-17-issue-280-no-wire-energy-extension.md)。四项读 DMA 综合仍运行，特殊算术、控制外壳、真实拓扑/门控及 PHY 尚缺；旧 M 的 300 MHz 时序未闭合。任务继续进行中，[PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281) 草稿未合并。
+
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成六模型能耗扩测的最终十二项回放/积分，加 Qwen3 参考形成七模型双口径报告 v1.6（十八页）。冻结数值、DDR/SRAM、输入/输出散列和跨 Python 积分通过；报告区分片上已覆盖与片上＋DDR，读 DMA 代理及特殊算术缺项另列。旧 M 的 300 MHz 时序和完整物理覆盖尚未验收，后续采用综合后直接标定路线。[报告与复现](handoffs/2026-11-17-issue-280-six-model-energy.md)。PR #281 草稿，#280 继续进行中。
+
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 的六模型能耗扩测已全部完成工件迁移。Granite 三窗通过冻结输出及 DDR/SRAM 对账，迁移分项估算与本地复算一致；其余五模型在 BSCC 不限时回放。结果、缺项和逐模型 PDF 更新见[扩测交接](handoffs/2026-11-17-issue-280-six-model-energy.md)。
+
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成 Qwen3 三窗的 TLM 分项能耗 v1，补入四个局控描述符静默基线并单列读 DMA 动态敏感性。读 DMA 下一步以 300 MHz 综合映射网表直接估功耗，九目标母控和整机物理归属仍待补。[结果和接续](handoffs/2026-11-17-issue-280-qwen3-tlm-power-v1.md)
+
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成局控 PM 驻留静默、局控描述符取指 300 MHz 标定及 C639 共同时钟核验。Qwen3 参考小计补三类开钟空闲。读 DMA 待物理输出，九目标母控外围需匹配工件。[控制进展与接续](handoffs/2026-11-17-issue-280-qwen3-control-power-progress.md)
+
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已按真实 PM 页类与四站点 TLM 次数生成 Qwen3 SRAM／母控 PM 三窗参考小计，两种 SRAM 配置保留固定时长情景。实际部署与开钟驻留待核对，读 DMA 仍待物理输出。[三窗数据与复现](handoffs/2026-11-17-issue-280-qwen3-macro-window-reference.md)
+
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已完成 S_P／S_base 后布线 SRAM 等长配对功耗，以及母控三档真实页的四宏标定。三套 300 MHz 物理预检通过，下一步按实际实例和驻留积分到 Qwen3 三窗，读 DMA 仍待物理结果。[标定回执](handoffs/2026-11-17-issue-280-sram-mother-pm-calibration.md)
+
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已恢复旧归档访问。S128 bank、S_P／S_base 后布线和母控 PM 归档原件在 BSCC 解包并通过散列与网表实例核对，待结合实际活动执行功耗标定。[恢复回执](handoffs/2026-11-17-issue-280-macro-views-recovered.md)
+
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 将真实载荷写 DMA 与 U ADD2 增量并入 Qwen3 三窗小计，完成旧版 M 保留作用域数据的等待对照及 C639 局控 PM 运行时的活动核验与后布线分项标定。已定位 SRAM 与母控 PM 的原工件归档，旧服务器身份认证待恢复，读 DMA 仍在映射。[结果与恢复](handoffs/2026-11-17-issue-280-bscc-t6-covered-power-and-bindings.md)
+
+2026-11-17，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成 Qwen3 旧版 M 的 18 窗 300 MHz 功耗及三窗参考估算。旧版留有 setup 和 hold 违例。新版 M 的 CTS 中止，读侧 DMA 仍在 ABC 映射，SRAM 与母控 PM 等待宏工件。[结果与恢复](handoffs/2026-11-17-issue-280-bscc-t6-m-baseline-power.md)
+
+2026-11-16，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成 Qwen3 真实载荷写侧重测、局控阵列和 U 算术／控制 300 MHz 标定。M 进入 CTS，读侧原综合及跳过 SHARE 对照持续运行，剩余 SRAM 和母控 PM 等待物理工件。[本轮结果](handoffs/2026-11-16-issue-280-bscc-t6-actual-payload-and-leaf-calibration.md)
+
+2026-11-16，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成 Qwen3 共享写侧 DMA 和 PM 拆拍桥的 300 MHz 配对功耗，以及 M 候选两工况产品回归。两项读 DMA 综合及 M 物理重跑仍在执行，整模型功耗待归属。[本轮物理标定与恢复](handoffs/2026-11-16-issue-280-bscc-t6-physical-calibration.md)
+
+2026-11-16，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 已验收 Qwen3 三窗 TLM 事务与逐拍分项，确认 U/SRAM 残差的片内归属。读侧 DMA 两版仍在综合，M 的 300 MHz 路径修复候选已通过组合等价检查，整模型功耗待物理标定。 [结果与作业追踪](handoffs/2026-11-16-issue-280-bscc-t6-independent-calibration.md)
+
+2026-11-15，Issue #280 已确认 C639 与实际布线 M60 的权重分配握手差异，六个原生活动窗未触发同拍冲突。当前 C639 的 M 叶块 18 项独立回归通过，同源映射通过，修订布线 116976 已开始。 [握手测试及同源实现](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/8a58ca82721a50939f2e4e4e988d4a556b7a6e5a/work/Melodydt/280/C639_M_PHYSICAL.md)
+
+2026-11-15，Issue #280 的 C639 G32 两种工况门级回放完成。首次有效握手触发的两个 81.92 µs 窗口均有 64 笔 G32 输入和输出，普通／背压 G32 平均总功耗为 1.381／1.377 mW。M 同源布线、512-bit 写和控制链路校准待做。 [结果与追溯](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/524d0f1ae7e03a38114ae356bc4f4c8f81b0e253/work/Melodydt/280/C639_G32_POWER.md)
+
+2026-11-15，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 完成 C380 普通 128-bit SRAM 的同初态空闲对照，正常／背压窗口增量 37.945／8.170 nJ。P SRAM 的 512-bit feeder 读四 bank 同址选通通过门级验证，实测 PM 接口仍为 128-bit。C639 G32 正常工况门级回放已读回，背压及四窗功耗作业持续执行。 [结果与作业追踪](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/bc7ac38b5aaa8fa8d908ca6da999ed45ddbcbe76/work/Melodydt/280/PAIRED_SRAM_AND_C639.md)
+
+2026-11-15，[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) 通过 C380 布线 SRAM 的完整门级回放。普通 128-bit SRAM 端口在 100 MHz 的两个 20.48 µs 活动窗口分别估算 35.664 与 34.210 mW，标注覆盖率 99.18%。空闲差分、C639 物理绑定和真实 512-bit SRAM／PM 校准待完成。 [门级回放与功耗回执](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/cdc1acdc83594a8240ace568a002af9fc41411fc/work/Melodydt/280/C380_ROUTED_POWER.md)
 
 2026-11-15，Issue #274 完成七模型 512-bit TLM 三 P 并行 FFN 和代表性历史复测。七模型两步 top-1 均与同历史 FP32 一致，Gemma 使用 Q12 残差和后归一化写回。短 Prefill、Decode、独立验收和复跑见[结果记录](../work/Melodydt/274/THREE_P_LIVE.md)。PR #275 为草稿，整机 RTL／物理时序验证仍待完成。
 
@@ -38,3 +119,8 @@
 - Projects 入口：候选[组织看板 #1](https://github.com/orgs/rayggxia-workspace/projects/1)；本轮查询因缺少 `read:project` 失败，且无 `config/board.json`，实际看板与条目 `unverified`、同步 `pending`。恢复动作见 [Issue #7 看板交接](handoffs/2026-10-21-issue-7-projects.md)
 
 本页只记录全项目阶段和关键限制；具体任务进度以 Issue 和 PR 为准。
+
+
+### 2026-11-17：七模型算术覆盖扩展
+
+Issue #280 的 Llama/Qwen3/Granite 真实 RMS E32 共 14,208 包数值一致，四项 E32/scan/apply/RoPE 映射完成，Llama/Qwen3/Granite 共 24 样本 E32 无寄生分项标定通过。发现 compact E32 连续无阻塞 18 周期与 TLM 9 周期叶节点存在待校准差异；整模型新速度/能耗未验收，PDF 小计不变。六模型特殊算子采样 38830188–93 已实际 RUNNING；[证据与后续步骤](handoffs/2026-11-17-issue-280-operator-expansion.md)。任务仍 in_progress，草稿 PR #281 未合并，不构成物理签核。

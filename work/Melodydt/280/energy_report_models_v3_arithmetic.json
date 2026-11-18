@@ -1,0 +1,201 @@
+{
+  "revision": "3.0",
+  "updated": "2026-11-18",
+  "owner": "Melodydt",
+  "report_scopes": {
+    "on_chip": "包含公共算术标定及特殊算子代理的片上条件估算；非完整芯片实测",
+    "on_chip_plus_ddr": "上述片上估算加 DDR 器件；不含 DDR PHY/封装/板级 I/O",
+    "read_dma_proxy": "0.5/1/2 倍写侧每拍成本，分别加到两类结果，独立场景不混入默认小计"
+  },
+  "source_commit": "0d84209e10e898f17998e959157a760a80c2afaf",
+  "benchmark_commit": "fbff1bd0e455739f28d9b7dd00b97216fe7bb847",
+  "models": [
+    {
+      "name": "Qwen3-0.6B",
+      "status": "算术补项条件估算 v3（非物理签核）",
+      "result": "qwen3_tlm_power_v3_arithmetic.json",
+      "result_sha256": "0b8a7b9d761148d3ac7e1d20127b60a7e3e3eefe0b3cfc30c7a604994788ecc1",
+      "configuration": "W8A16，28 层，三路 P 并行 FFN，512-bit SRAM，双通道 DDR。Decode 从 512 个真实 KV 历史位置开始。",
+      "implementation": "四个数据 SRAM 站点各用一组 S_P，按整窗开钟估算。旧 M 三路单元网络去除线网 RC 后积分 FFN 和普通投影忙时，仍保留原缓冲器。原 300 MHz setup/hold WNS 为 -1.121800/-0.053419 ns。",
+      "sources": [
+        {
+          "label": "三窗算术分项及输入 SHA",
+          "path": "work/Melodydt/280/qwen3_tlm_power_v3_arithmetic.json"
+        }
+      ],
+      "source_commit": "0d84209e10e898f17998e959157a760a80c2afaf",
+      "coverage": [
+        "原 v2 分项、冻结时间/token/DDR 保留；RMS、softmax、RoPE 采用真实输入标定；特殊函数采用明确运算级代理。",
+        "apply/RoPE 已含 E32，原 G32 SiLU 与 SRAM 事务不重复相加；分块只拆缩放，不重新计算完整 RMS 因子。",
+        "实例驻留、分块 staging、浮点成本迁移均显式列为假设场景；原 300 MHz M 时序和 E32 9/18 周期调度差未解决。"
+      ],
+      "subtotal_exclusions": [
+        "母控运行取指/未采样启动、局控外壳/分发、交换机活跃流量、真实部署门控、全局时钟/跨块互连尚未覆盖。",
+        "读 DMA 动态仅有独立代理场景，静默/漏电未覆盖；DDR PHY/封装/板级 I/O 未覆盖。布线寄生主动排除，缺项不等于零。",
+        "特殊算子已作成本估计，未完成匹配 RTL 数值或功耗验收；范围是样本与敏感性场景，不是统计置信区间或保证误差界。"
+      ]
+    },
+    {
+      "name": "Qwen3.5-4B",
+      "status": "算术补项条件估算 v3（非物理签核）",
+      "result": "qwen35_tlm_power_v3_arithmetic.json",
+      "result_sha256": "6c698ddb0a63ecd97e1a6aaf9da82569cc2651241000cdc7c4bb550e4701fb74",
+      "source_commit": "0d84209e10e898f17998e959157a760a80c2afaf",
+      "configuration": "W8A16，32 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
+      "implementation": "8 层宽注意力与 24 层 GDN；真实键主历史转值主布局，卷积和递推状态按显式 DDR 事务恢复、读写。稠密 FFN 三 P 并行。",
+      "coverage": [
+        "原 v2 分项、冻结时间/token/DDR 保留；RMS、softmax、RoPE 采用真实输入标定；特殊函数采用明确运算级代理。",
+        "apply/RoPE 已含 E32，原 G32 SiLU 与 SRAM 事务不重复相加；分块只拆缩放，不重新计算完整 RMS 因子。",
+        "实例驻留、分块 staging、浮点成本迁移均显式列为假设场景；原 300 MHz M 时序和 E32 9/18 周期调度差未解决。"
+      ],
+      "sources": [
+        {
+          "label": "三窗算术分项及输入 SHA",
+          "path": "work/Melodydt/280/qwen35_tlm_power_v3_arithmetic.json"
+        }
+      ],
+      "subtotal_exclusions": [
+        "母控运行取指/未采样启动、局控外壳/分发、交换机活跃流量、真实部署门控、全局时钟/跨块互连尚未覆盖。",
+        "读 DMA 动态仅有独立代理场景，静默/漏电未覆盖；DDR PHY/封装/板级 I/O 未覆盖。布线寄生主动排除，缺项不等于零。",
+        "特殊算子已作成本估计，未完成匹配 RTL 数值或功耗验收；范围是样本与敏感性场景，不是统计置信区间或保证误差界。"
+      ]
+    },
+    {
+      "name": "Gemma-3-4B",
+      "status": "算术补项条件估算 v3（非物理签核）",
+      "result": "gemma_tlm_power_v3_arithmetic.json",
+      "result_sha256": "76c60a0209d79afeb714baff4f61d7b7ea03c972fb79814c32187a548aacfb13",
+      "source_commit": "0d84209e10e898f17998e959157a760a80c2afaf",
+      "configuration": "W8A16，34 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
+      "implementation": "256 维宽注意力，整行 K/V 与双窗口；局部/全局注意力及 GELU 保留。残差及后分支 RMS 使用已验收的 Q12，投影输入仍为 Q16。",
+      "coverage": [
+        "原 v2 分项、冻结时间/token/DDR 保留；RMS、softmax、RoPE 采用真实输入标定；特殊函数采用明确运算级代理。",
+        "apply/RoPE 已含 E32，原 G32 SiLU 与 SRAM 事务不重复相加；分块只拆缩放，不重新计算完整 RMS 因子。",
+        "实例驻留、分块 staging、浮点成本迁移均显式列为假设场景；原 300 MHz M 时序和 E32 9/18 周期调度差未解决。"
+      ],
+      "sources": [
+        {
+          "label": "三窗算术分项及输入 SHA",
+          "path": "work/Melodydt/280/gemma_tlm_power_v3_arithmetic.json"
+        }
+      ],
+      "subtotal_exclusions": [
+        "母控运行取指/未采样启动、局控外壳/分发、交换机活跃流量、真实部署门控、全局时钟/跨块互连尚未覆盖。",
+        "读 DMA 动态仅有独立代理场景，静默/漏电未覆盖；DDR PHY/封装/板级 I/O 未覆盖。布线寄生主动排除，缺项不等于零。",
+        "特殊算子已作成本估计，未完成匹配 RTL 数值或功耗验收；范围是样本与敏感性场景，不是统计置信区间或保证误差界。"
+      ]
+    },
+    {
+      "name": "Phi-4-mini",
+      "status": "算术补项条件估算 v3（非物理签核）",
+      "result": "phi_tlm_power_v3_arithmetic.json",
+      "result_sha256": "b3cb0358cdc98fb9d0c1ac6ec03e98957cee249d7a3b2c7b43efc2d7a0e5c0c7",
+      "source_commit": "0d84209e10e898f17998e959157a760a80c2afaf",
+      "configuration": "W8A16，32 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
+      "implementation": "融合 QKV 与 Gate/Up 按矩阵区间供数，128 维 ATT1、V 读取流水、partial LongRoPE；三 P 的 FFN Mid 使用 DDR。",
+      "coverage": [
+        "原 v2 分项、冻结时间/token/DDR 保留；RMS、softmax、RoPE 采用真实输入标定；特殊函数采用明确运算级代理。",
+        "apply/RoPE 已含 E32，原 G32 SiLU 与 SRAM 事务不重复相加；分块只拆缩放，不重新计算完整 RMS 因子。",
+        "实例驻留、分块 staging、浮点成本迁移均显式列为假设场景；原 300 MHz M 时序和 E32 9/18 周期调度差未解决。"
+      ],
+      "sources": [
+        {
+          "label": "三窗算术分项及输入 SHA",
+          "path": "work/Melodydt/280/phi_tlm_power_v3_arithmetic.json"
+        }
+      ],
+      "subtotal_exclusions": [
+        "母控运行取指/未采样启动、局控外壳/分发、交换机活跃流量、真实部署门控、全局时钟/跨块互连尚未覆盖。",
+        "读 DMA 动态仅有独立代理场景，静默/漏电未覆盖；DDR PHY/封装/板级 I/O 未覆盖。布线寄生主动排除，缺项不等于零。",
+        "特殊算子已作成本估计，未完成匹配 RTL 数值或功耗验收；范围是样本与敏感性场景，不是统计置信区间或保证误差界。"
+      ]
+    },
+    {
+      "name": "Granite",
+      "status": "算术补项条件估算 v3（非物理签核）",
+      "result": "granite_tlm_power_v3_arithmetic.json",
+      "result_sha256": "b774f9bddc7e2fae8893e5f2d574cf4ff3cf743810cccd0db41541a343a6b0c2",
+      "source_commit": "0d84209e10e898f17998e959157a760a80c2afaf",
+      "configuration": "W8A16，32 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
+      "implementation": "64 维紧凑 KV；实际 router 选择 8/40 专家，三 P 以 3/3/2 波次执行，专家 Mid 留在各自 SRAM，按原序加权汇总。",
+      "coverage": [
+        "原 v2 分项、冻结时间/token/DDR 保留；RMS、softmax、RoPE 采用真实输入标定；特殊函数采用明确运算级代理。",
+        "apply/RoPE 已含 E32，原 G32 SiLU 与 SRAM 事务不重复相加；分块只拆缩放，不重新计算完整 RMS 因子。",
+        "实例驻留、分块 staging、浮点成本迁移均显式列为假设场景；原 300 MHz M 时序和 E32 9/18 周期调度差未解决。"
+      ],
+      "sources": [
+        {
+          "label": "三窗算术分项及输入 SHA",
+          "path": "work/Melodydt/280/granite_tlm_power_v3_arithmetic.json"
+        }
+      ],
+      "subtotal_exclusions": [
+        "母控运行取指/未采样启动、局控外壳/分发、交换机活跃流量、真实部署门控、全局时钟/跨块互连尚未覆盖。",
+        "读 DMA 动态仅有独立代理场景，静默/漏电未覆盖；DDR PHY/封装/板级 I/O 未覆盖。布线寄生主动排除，缺项不等于零。",
+        "特殊算子已作成本估计，未完成匹配 RTL 数值或功耗验收；范围是样本与敏感性场景，不是统计置信区间或保证误差界。"
+      ]
+    },
+    {
+      "name": "Falcon-H1-3B",
+      "status": "算术补项条件估算 v3（非物理签核）",
+      "result": "falcon_tlm_power_v3_arithmetic.json",
+      "result_sha256": "67bc983d9bf9d35bca34b17d0a00d946f9f8df3931ba8c189b5aab6e39ee2937",
+      "source_commit": "0d84209e10e898f17998e959157a760a80c2afaf",
+      "configuration": "W8A16，32 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
+      "implementation": "各层保留 Mamba2 与注意力分支，先递推服务后 128 维 ATT1；V 读取流水及真实递推/卷积状态跨步。稠密 FFN 三 P 并行。",
+      "coverage": [
+        "原 v2 分项、冻结时间/token/DDR 保留；RMS、softmax、RoPE 采用真实输入标定；特殊函数采用明确运算级代理。",
+        "apply/RoPE 已含 E32，原 G32 SiLU 与 SRAM 事务不重复相加；分块只拆缩放，不重新计算完整 RMS 因子。",
+        "实例驻留、分块 staging、浮点成本迁移均显式列为假设场景；原 300 MHz M 时序和 E32 9/18 周期调度差未解决。"
+      ],
+      "sources": [
+        {
+          "label": "三窗算术分项及输入 SHA",
+          "path": "work/Melodydt/280/falcon_tlm_power_v3_arithmetic.json"
+        }
+      ],
+      "subtotal_exclusions": [
+        "母控运行取指/未采样启动、局控外壳/分发、交换机活跃流量、真实部署门控、全局时钟/跨块互连尚未覆盖。",
+        "读 DMA 动态仅有独立代理场景，静默/漏电未覆盖；DDR PHY/封装/板级 I/O 未覆盖。布线寄生主动排除，缺项不等于零。",
+        "特殊算子已作成本估计，未完成匹配 RTL 数值或功耗验收；范围是样本与敏感性场景，不是统计置信区间或保证误差界。"
+      ]
+    },
+    {
+      "name": "Llama-3.2-1B",
+      "status": "算术补项条件估算 v3（非物理签核）",
+      "result": "llama_tlm_power_v3_arithmetic.json",
+      "result_sha256": "be48671fa908392990e5f10e14f10bd5bbb9a76e9ccf5fa4c4917977d3b874ac",
+      "source_commit": "0d84209e10e898f17998e959157a760a80c2afaf",
+      "configuration": "W8A16，16 层，三 P FFN、512-bit 逻辑 SRAM、3334 ps 核周期和双通道 DDR。短 Prefill 两输入 token；Decode 从真实 512 位置历史开始。",
+      "implementation": "真实 64 维紧凑 KV，256 B 行和 V 读取复用；稠密 FFN 按 128 元素 tile 分给三 P，Mid 经 DDR。",
+      "coverage": [
+        "原 v2 分项、冻结时间/token/DDR 保留；RMS、softmax、RoPE 采用真实输入标定；特殊函数采用明确运算级代理。",
+        "apply/RoPE 已含 E32，原 G32 SiLU 与 SRAM 事务不重复相加；分块只拆缩放，不重新计算完整 RMS 因子。",
+        "实例驻留、分块 staging、浮点成本迁移均显式列为假设场景；原 300 MHz M 时序和 E32 9/18 周期调度差未解决。"
+      ],
+      "sources": [
+        {
+          "label": "三窗算术分项及输入 SHA",
+          "path": "work/Melodydt/280/llama_tlm_power_v3_arithmetic.json"
+        }
+      ],
+      "subtotal_exclusions": [
+        "母控运行取指/未采样启动、局控外壳/分发、交换机活跃流量、真实部署门控、全局时钟/跨块互连尚未覆盖。",
+        "读 DMA 动态仅有独立代理场景，静默/漏电未覆盖；DDR PHY/封装/板级 I/O 未覆盖。布线寄生主动排除，缺项不等于零。",
+        "特殊算子已作成本估计，未完成匹配 RTL 数值或功耗验收；范围是样本与敏感性场景，不是统计置信区间或保证误差界。"
+      ]
+    }
+  ],
+  "wire_parasitics_loaded": false,
+  "sources": [
+    {
+      "label": "完整结果、作业、验收边界及复现",
+      "path": "docs/handoffs/2026-11-18-issue-280-arithmetic-estimate-v3.md"
+    },
+    {
+      "label": "代理公式与敏感性场景",
+      "path": "work/Melodydt/280/ARITHMETIC_ESTIMATION_METHOD.md"
+    }
+  ],
+  "format": "arithmetic-v3"
+}

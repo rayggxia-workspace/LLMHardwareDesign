@@ -1,0 +1,128 @@
+{
+  "scope": "Qwen3-0.6B: dual-channel DDR device plus transferred G32 FFN active increment",
+  "component_clock_hz": 300000000,
+  "calibration": [
+    {
+      "mode": 0,
+      "active_energy_nj": 75.94776245456337,
+      "quiet_energy_nj": 72.86096026477603,
+      "accepted_inputs": 64,
+      "increment_nj_per_64_inputs": 3.086802189787349,
+      "sample_window_ps": 27306667
+    },
+    {
+      "mode": 1,
+      "active_energy_nj": 75.63620340564016,
+      "quiet_energy_nj": 72.86096026477603,
+      "accepted_inputs": 64,
+      "increment_nj_per_64_inputs": 2.7752431408641343,
+      "sample_window_ps": 27306667
+    }
+  ],
+  "limitations": [
+    "The two endpoints span the two C639 calibration modes, not a statistical interval.",
+    "The G32 activity increment uses different active and quiet windows and transfers to the TLM calls.",
+    "G32 idle baseline and other chip blocks need full-window instance/activity mapping.",
+    "DMA traffic and waiting remain in replay time. DMA power, external PHY and board I/O are excluded."
+  ],
+  "windows": {
+    "prefill": {
+      "elapsed_ps": 85289804550,
+      "tokens": 2,
+      "ffn_activation_calls_by_p": {
+        "0": 448,
+        "1": 448,
+        "2": 448
+      },
+      "modeled_g32_input_packets": 86016,
+      "ddr_device_j": 0.229879757255904,
+      "ddr_device_mean_w": 2.6952782746868658,
+      "ddr_device_mj_per_token": 114.939878627952,
+      "g32_increment_mean_w_reference_range": [
+        4.3732387487589765e-05,
+        4.864194688876441e-05
+      ],
+      "g32_increment_mj_per_token_reference_range": [
+        0.0018649633906606983,
+        0.0020743310715370983
+      ],
+      "covered_mean_w_reference_range": [
+        2.6953220070743535,
+        2.695326916633755
+      ],
+      "covered_mj_per_token_reference_range": [
+        114.94174359134267,
+        114.94195295902354
+      ]
+    },
+    "first_token": {
+      "elapsed_ps": 139703051690,
+      "tokens": 1,
+      "ffn_activation_calls_by_p": {
+        "0": 224,
+        "1": 224,
+        "2": 224
+      },
+      "modeled_g32_input_packets": 43008,
+      "ddr_device_j": 0.33279136321132796,
+      "ddr_device_mean_w": 2.3821338130092493,
+      "ddr_device_mj_per_token": 332.79136321132796,
+      "g32_increment_mean_w_reference_range": [
+        1.334948212011172e-05,
+        1.4848144306396565e-05
+      ],
+      "g32_increment_mj_per_token_reference_range": [
+        0.0018649633906606983,
+        0.0020743310715370983
+      ],
+      "covered_mean_w_reference_range": [
+        2.3821471624913695,
+        2.382148661153556
+      ],
+      "covered_mj_per_token_reference_range": [
+        332.79322817471865,
+        332.7934375423995
+      ]
+    },
+    "decode": {
+      "elapsed_ps": 139833834508,
+      "tokens": 1,
+      "ffn_activation_calls_by_p": {
+        "0": 224,
+        "1": 224,
+        "2": 224
+      },
+      "modeled_g32_input_packets": 43008,
+      "ddr_device_j": 0.332854675459488,
+      "ddr_device_mean_w": 2.3803586351659773,
+      "ddr_device_mj_per_token": 332.85467545948796,
+      "g32_increment_mean_w_reference_range": [
+        1.3336996709147688e-05,
+        1.4834257237066787e-05
+      ],
+      "g32_increment_mj_per_token_reference_range": [
+        0.0018649633906606983,
+        0.0020743310715370983
+      ],
+      "covered_mean_w_reference_range": [
+        2.3803719721626866,
+        2.380373469423214
+      ],
+      "covered_mj_per_token_reference_range": [
+        332.85654042287865,
+        332.8567497905595
+      ]
+    }
+  },
+  "sha256": {
+    "prefill": "82a8de21c67b2703e105602f24126a946366f9f5f6a79ae825dfc7699d20cccb",
+    "decode": "bbc2f116a360a8d88fc7f7a1c641d7de9bd4ce05f3dea943d54fb01bc456dc69",
+    "ddr_prefill": "0ae8486ad2747d06866de1dd2e111a4772d7a7e82f241fe0b4c7130af7905fa3",
+    "ddr_decode": "16ed053bb0a946dc7884483599bc2d91b9bf6fa8e70434886cc98d56bd259ac9",
+    "g32_power": "fc82cece6d09bf324dcf127d4a3a09aa23e30e43a3c9ff000cdac1b40500b2b2",
+    "g32_active_counts": "da497c44f7764e4a693ae0f2acff4244b5248714fc0bdb53b649fa9d0806010b",
+    "g32_mode0_idle": "9b979a52f95a0c790a3434b072c89269bf74307ff17ca06c05dc90286a96501d",
+    "g32_mode1_idle": "9e9e9403a814567ee60be4c5b0487a54c2494ac7a33a0e8179d9fb4d9836920b"
+  },
+  "script_sha256": "5683956cd8b43d0d8cce8afa6f7edac75297b1f445c8f7b238243f34186687b2"
+}

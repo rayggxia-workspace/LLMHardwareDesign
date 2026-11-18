@@ -1,0 +1,1226 @@
+{
+  "kind": "apply",
+  "scope": "sampled real operands; named arithmetic wrapper plus E32 where present; SRAM and system residency excluded; do not add provider E32 twice",
+  "activity": "RTL boundary VCD propagated through mapped cells; no internal gate replay",
+  "memory_fixture": "softmax/scan/apply use one-outstanding S128 fixture, not physical SRAM; apply uses disjoint X/Gamma windows in one bank",
+  "nominal_clock_mhz": 300,
+  "period_ps": 3334,
+  "wire_parasitics_loaded": false,
+  "timing_signoff": false,
+  "scheduler_latency_reconciled": false,
+  "source_commit": "b94d221baaee5e1218aca795846fc891b756255f",
+  "sources_sha256": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/rtl/s32_rms_apply_s128.sv": "b805541c6e338ca69595de69ecead5053fbb38659df5862bcb362a0a3a4a23b5",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/rtl/e_s32_ap64.sv": "c9ba4cf469bcd8feb199d49f845348180c1935d28edd2f48acb517f84fe0675b",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/rtl/e_s32_native.sv": "50ce3230a6a7738a7bec4816250eb68647da477b9bbd64de69c1dc71fae81751",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-02/tb_operator_apply.sv": "f5d0176ea1c89828070e83764c25db37ecb5a1eeca96c5bf534e99a79fc2b466"
+  },
+  "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+  "inputs_sha256": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json": "4aa04a1a2dc58a6d29f08e7acb997b698154370427c8b4a31d3ca63ad8553dfe",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json": "d1ad16d975b5ca1e3c6f2148affa480889dbd67dd6338cf61e1d6c46f89d77bd",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json": "6072aad86ba60e308c47c98ca7c541c03412e4d872385bde5b9d6e473f8c3bec",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json": "ff53e6ef3fd72095d2ffa10ee37f41138c692ae99bc497c92eeb2c8ead8736f2",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json": "9d413e9f6c13e82e609abbe23f5bd8fa78ab94545013e6b83b1bab1b17b9134e",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json": "25a4dbfdf0ea427dcc1d494d337350ab1f51e7f0ea60114a3b604c7761de83bf",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json": "2f27ca8257745f3c0749da48be896c7d88b12813a98922fe1ba0ef6227e354f9",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json": "1419743959dbbfa9e66cc22806fba4cea3fe9653dd45f5188b1b797ce65a98ee"
+  },
+  "verilator_version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "openroad_version": "unknown",
+  "captured_call_counts": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json": {
+      "prefill:site2:words768:eps42950:shift0:out0": 128
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json": {
+      "first_token:site2:words768:eps42950:shift0:out0": 65,
+      "decode:site2:words768:eps42950:shift0:out0": 65
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json": {
+      "prefill:site2:words640:eps4295:shift4:out0": 136,
+      "prefill:site0:words64:eps4295:shift0:out0": 816,
+      "prefill:site2:words640:eps4295:shift0:out4": 136
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json": {
+      "first_token:site2:words640:eps4295:shift4:out0": 69,
+      "first_token:site0:words64:eps4295:shift0:out0": 408,
+      "first_token:site2:words640:eps4295:shift0:out4": 68,
+      "decode:site2:words640:eps4295:shift4:out0": 69,
+      "decode:site0:words64:eps4295:shift0:out0": 408,
+      "decode:site2:words640:eps4295:shift0:out4": 68
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json": {
+      "prefill:site2:words640:eps4295:shift0:out0": 128,
+      "prefill:site0:words64:eps4295:shift0:out0": 320
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json": {
+      "first_token:site2:words640:eps4295:shift0:out0": 65,
+      "first_token:site0:words64:eps4295:shift0:out0": 160,
+      "decode:site2:words640:eps4295:shift0:out0": 65,
+      "decode:site0:words64:eps4295:shift0:out0": 160
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json": {
+      "prefill:site2:words640:eps42950:shift0:out0": 128
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json": {
+      "first_token:site2:words640:eps42950:shift0:out0": 65,
+      "decode:site2:words640:eps42950:shift0:out0": 65
+    }
+  },
+  "samples": [
+    {
+      "signature": "prefill:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 8,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 1,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003942650743,
+                "switching": 0.001016779104,
+                "leakage": 9.573985881e-05,
+                "total": 0.005055169575
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "1c27737f78199b66234ce9a6b9122fb144128cee856a0558652c22fc56f66a05",
+              "log_sha256": "e934896815d48fcb18391692035b59cf99a80d7d11231b1eb96d0edbb68f02c7"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.547905938e-05,
+                "total": 0.001086149947
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "6cf1c30719da8c4af1dddc528fc3d1884bdd387e7324884d5e710c74b4aea73c",
+              "log_sha256": "3e660ea21a90918af36e9935f348b4c70a58213e2cc40ac199e1cbfa63db7d82"
+            }
+          },
+          "incremental_nj": 35.59599377293288
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2196696252,
+                "switching": 0.1594384015,
+                "leakage": 0.0007243379368,
+                "total": 0.3798323572
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "255d79c443bc8b47a44cbd567432be50b0f62a7f3f3667ab0457ec70bea79cfc",
+              "log_sha256": "47977210acb3fd4e3be8f3dff9a52747f40f60977d9b7849fe15a2782f1f5ccf"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007396943984,
+                "total": 0.003533251584
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "e39622e2ea9cc2a01a425c0c340980b7df68f91cd3bc10ad34f26252365caf25",
+              "log_sha256": "651658390e22dda4c419a06da9e93cad23b4c64cb052eee7e244981cb16a4599"
+            }
+          },
+          "incremental_nj": 3374.8234767528716
+        }
+      },
+      "incremental_nj": 3410.4194705258046,
+      "vectors_sha256": "c0c63ffa4c62c13b41d44c39842f1668087ef6b920969460683b331b1bb0ff69",
+      "rtl_log_sha256": "ef89bf5d704059b3704e76a542c1056df48ca3cb6eae032329dc6817ab899b57"
+    },
+    {
+      "signature": "prefill:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 7,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 2,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003920447547,
+                "switching": 0.001010720502,
+                "leakage": 9.573607531e-05,
+                "total": 0.0050269044
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "5a5def1127d36fb3332ca61aed3eca16752a9626cc32898c9dc5a6baa8a2c370",
+              "log_sha256": "2b6ad442db9bbc8a698e5ee97de352bc211531e71f6828396ca861cb74fec372"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.543546912e-05,
+                "total": 0.001086106291
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "71e589b1daa89446a4caa79bb44b247d968d5a11a71f42a068ef188081f973e3",
+              "log_sha256": "9405df2959ae9d67a09e16db5f4325cd09f5dcfe549e758bba6872dfd4b05098"
+            }
+          },
+          "incremental_nj": 35.34289020864214
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.219053641,
+                "switching": 0.158943668,
+                "leakage": 0.0007240637206,
+                "total": 0.3787213862
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "7273955afabc822a4597ab29bec51577933cec027902852e45bbb0d11316050c",
+              "log_sha256": "2b7f982dbd3616ca27f72f508d18a314bac7bc82ef3929d7378dc56da190aa14"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007399069145,
+                "total": 0.003533464158
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "925ac7ba1b0fdda33ac86e32d0c14e4a4060c86481ce03af8b569d12bf293443",
+              "log_sha256": "e9dabff111c95ed5ae789a547463e6c753942bc93aeb7fe6cad5dbaec9d1bf4a"
+            }
+          },
+          "incremental_nj": 3364.857871316796
+        }
+      },
+      "incremental_nj": 3400.200761525438,
+      "vectors_sha256": "9467923b2235a867721794045adebe1118b4b245aa5867ecf563358730c69c1e",
+      "rtl_log_sha256": "e122495a3c3e0797411ae9528e6bc236d1ec9f3c5aca3d389cd0582863e17dd5"
+    },
+    {
+      "signature": "first_token:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 8,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 1,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003958473913,
+                "switching": 0.001021215459,
+                "leakage": 9.567388042e-05,
+                "total": 0.005075363442
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "b809d6a07daa582d209a2b2e6cfb2be791037f8a066eb153d6993d4e65873e65",
+              "log_sha256": "3598f8d0492ed2569358fc7f2a54e66df220b08ad95b6b3ca075eed0c088a81a"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.545724606e-05,
+                "total": 0.001086128177
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "95ba66e4e633e981915a78dd5cb0c559b4d54a68b1145ba2079a546c87b4a691",
+              "log_sha256": "f93c953ddb695f188e6fc16792c4d3bb71d3e29a6dbca05c5e96658647885491"
+            }
+          },
+          "incremental_nj": 35.7772969047419
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2173521966,
+                "switching": 0.1576104015,
+                "leakage": 0.0007236934616,
+                "total": 0.3756862879
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "7512e9b9ac02550e24e4fb957e967bb9acd1cf80f2e054c412fcf1fbafa8209d",
+              "log_sha256": "c140a65a7991be0633fb6f1aac07adf8eda3adb66b3454b3f1bfa6dba2c58217"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007396943984,
+                "total": 0.003533251584
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "d611ac1929d65e91ae9229e57143d063626b04489069e491e640b1a3bdbdc302",
+              "log_sha256": "651658390e22dda4c419a06da9e93cad23b4c64cb052eee7e244981cb16a4599"
+            }
+          },
+          "incremental_nj": 3337.639620078594
+        }
+      },
+      "incremental_nj": 3373.416916983336,
+      "vectors_sha256": "ce7a8d054fbf253151d71607ea0c0dfecbdccbfe8bef1e65a5f2e685a6f4c3e8",
+      "rtl_log_sha256": "68dcbe7cbc2fe019e63c67995f9d4fde2e4b6c8bd3792f33a8c00cd919379005"
+    },
+    {
+      "signature": "first_token:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 8,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 2,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003934104927,
+                "switching": 0.001014418434,
+                "leakage": 9.567420057e-05,
+                "total": 0.005044197664
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "af8c11ac3f170de669a4c0a952dde17b5fc7c5e5ab07dfc0e8d5ef61121668bb",
+              "log_sha256": "1b30c708508e7c315cafb0ab1abf75b53e232551e0f6fff84084d32d519a5a1a"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.533739649e-05,
+                "total": 0.001086008269
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "01a8882368ab5522303caba70d54433706e4d3eed309078b342c02a5b0184f97",
+              "log_sha256": "6ac61231b27256f8de3112d69150c474b8a0e38063a33b4c9faa22f35a4a7391"
+            }
+          },
+          "incremental_nj": 35.4988632614817
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.21809192,
+                "switching": 0.1581839472,
+                "leakage": 0.000723834557,
+                "total": 0.376999706
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "59323bfdbbf43f2b8ef8c68ff949d3c3b1a744a591bf75057df40567bba2a821",
+              "log_sha256": "7fa93241b2e8247ca4d42bc18140bbc5508b893e4e50e5474b5889403d76b712"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007399069145,
+                "total": 0.003533464158
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "3d50109cabe50caed3b02d59d424f3a3b3b4af9e534918ffe89b4b3cf6813d00",
+              "log_sha256": "e9dabff111c95ed5ae789a547463e6c753942bc93aeb7fe6cad5dbaec9d1bf4a"
+            }
+          },
+          "incremental_nj": 3349.417051310303
+        }
+      },
+      "incremental_nj": 3384.915914571785,
+      "vectors_sha256": "d82a0f5603368238a1715236679879f9d03925715d32347cb19eb70ca3cf4654",
+      "rtl_log_sha256": "59c85615fa5461c109cb71a7c5d0a357a7cbe3b11774307c827b69c5e9ddcf57"
+    },
+    {
+      "signature": "decode:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 8,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 7,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003956164699,
+                "switching": 0.001020777156,
+                "leakage": 9.56801814e-05,
+                "total": 0.005072622094
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "057dbf3ae5bfd75fc5515de22148658ca167199259b7076d9b2441abbdf29a7c",
+              "log_sha256": "3a03b01db72e17a56682ddd43b94f77b7539b9143ef4d1541b9e6fc81c9055a9"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.540277097e-05,
+                "total": 0.001086073695
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "cf9622a3c64f185eb85c650f4362265aa7b2b811e4a957689127d4d3b3959602",
+              "log_sha256": "79da97642d116864280a3635ac81875e91ee3d216c50523a3355e04d967ab230"
+            }
+          },
+          "incremental_nj": 35.75319985449554
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2170933634,
+                "switching": 0.1573948562,
+                "leakage": 0.0007237339159,
+                "total": 0.3752119541
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "8dfd6e07d6c7a6f5726ceb3b30eef5a621ad1655889f669317a78971be07d2a4",
+              "log_sha256": "8921c79865e11ed71e4b0e38fcbd323c7467eb43a71871fa78ea58e7d8c51d66"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007396943984,
+                "total": 0.003533251584
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "c30c53742471091417430bff811d72c8ffdbee5723602144f658ab7b7ed1d731",
+              "log_sha256": "651658390e22dda4c419a06da9e93cad23b4c64cb052eee7e244981cb16a4599"
+            }
+          },
+          "incremental_nj": 3333.3855763666456
+        }
+      },
+      "incremental_nj": 3369.138776221141,
+      "vectors_sha256": "61666ce6eed365a0501fa9bd57d94b276df01f68ed225dd01750bbef4c898f1a",
+      "rtl_log_sha256": "b35172e3662d0bf0949f691e91a06f95c83d69cf1c662b19c6ca1e090a23db02"
+    },
+    {
+      "signature": "decode:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 9,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 8,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003921739291,
+                "switching": 0.001010407927,
+                "leakage": 9.574009164e-05,
+                "total": 0.005027887411
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "082ff08346a9ee93dc2d65ca26e0aae534506bb8053daa29312d6a3b90452844",
+              "log_sha256": "0c763e9869f23efd62290795972916b5e463988e9a7c77b782ec5241e1e6aca4"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.547905211e-05,
+                "total": 0.001086149947
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "a4fe5dc817d6714071217107440c6912e6429f4ccafb120350ec111d0826b247",
+              "log_sha256": "3dbd6b2e0a584b0e882a742d822db07f986dcac86a67d6f79912032f02fc76ee"
+            }
+          },
+          "incremental_nj": 35.351314776385436
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2188618183,
+                "switching": 0.1588257998,
+                "leakage": 0.0007241290878,
+                "total": 0.3784117699
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "14f5ae0afdf3985f083d633e3e38d4c098bef6681c31e51fb52793b037c92d50",
+              "log_sha256": "a933f79ed5bf7ff0fa318a2902d6df4f70be82c115c8a5dc864712ac1d9eb16d"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007399069145,
+                "total": 0.003533464158
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "7d3d97803bf4cd2268efc5efc0511055e8da6d61a9ad2f9969bef66fff88d2cc",
+              "log_sha256": "e9dabff111c95ed5ae789a547463e6c753942bc93aeb7fe6cad5dbaec9d1bf4a"
+            }
+          },
+          "incremental_nj": 3362.081089914897
+        }
+      },
+      "incremental_nj": 3397.4324046912825,
+      "vectors_sha256": "235f3e393a17c3419792bb699a8939719d40ab889bf7e778fccda7ec429cf49e",
+      "rtl_log_sha256": "a8143b8acead6414bdde8a937d880245a04ee7721931c6ed973dff9bd2e1076f"
+    },
+    {
+      "signature": "prefill:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 4,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+      "sample_index": 2,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003945077304,
+                "switching": 0.001017823815,
+                "leakage": 9.576196317e-05,
+                "total": 0.005058662966
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "dce5d86d10d4d7a70bc38185373b9ca59138666eade383565371f6cdbf35d054",
+              "log_sha256": "ade62981e800ff3350d81b18c8f3d942538e3c5f0529530e8573e0f2baa0a69f"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.588219837e-05,
+                "total": 0.001086553093
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "311832aa1ae6f899ffd2081887bfe56ca38f23db04c3c6291cc70d21f639e8e9",
+              "log_sha256": "4f5db8c5d558d13bf857086c8b996032b505dc08ccca69c104e309b10221f557"
+            }
+          },
+          "incremental_nj": 35.623708511605585
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2193617225,
+                "switching": 0.15921323,
+                "leakage": 0.0007243445143,
+                "total": 0.3792993128
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "4336d3785ed664bd38b7313b6d1b9ed68adb73c6bccc4fd5534ae342931bdabe",
+              "log_sha256": "bbc931fc75ceaf83249128759e1de1bb13dd15e67e2fdfe17c6eedce1f682b84"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007398537709,
+                "total": 0.003533411073
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "89f592e76bfd784af88787a01c6309118c380033152dd155b15d5a5381c639bb",
+              "log_sha256": "948f6c2e400b4b0f52acb71385d92bfeb3891d46b0622593ff65e3e81b8db38f"
+            }
+          },
+          "incremental_nj": 3370.0414590025307
+        }
+      },
+      "incremental_nj": 3405.665167514136,
+      "vectors_sha256": "9a70243d542c037953a7560501235a8f2be977b6b8274d9dd987d6587d09d1c3",
+      "rtl_log_sha256": "361be215ee5db8c5296c1fa4a9a93e286858be2fdb606fd96e81da24b4012b8d"
+    },
+    {
+      "signature": "prefill:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 4,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+      "sample_index": 3,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.0039434582,
+                "switching": 0.001016235212,
+                "leakage": 9.574677097e-05,
+                "total": 0.005055440124
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "595dbab39e6818394e9d800ad1ff205ce7dafe95c4764bc487a15dbeb1cde2dc",
+              "log_sha256": "1bbea5119bb7267050788fcfa63ccea72fc2844ab89194aafab0118e8b7123ee"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.53810013e-05,
+                "total": 0.001086051925
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "7ab922966578913e899af95a7033491ef5a0a29623a62f78447b230f484b29c8",
+              "log_sha256": "44594558acdc37f4e1b5b25f7418c85de87bc1aea43611a894d0b4ad244f2411"
+            }
+          },
+          "incremental_nj": 35.599299287203536
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2216243148,
+                "switching": 0.1609127074,
+                "leakage": 0.000724632293,
+                "total": 0.3832616508
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "5b4be051428e73c153cad00a02b13b9bd25d91396492af418d7cc4729f064cbf",
+              "log_sha256": "15e1f5c233a79317a1efa7e3705aa189436d97bf066e28c77406973e99de1c81"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007398537709,
+                "total": 0.003533411073
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "f5856332bc86156648c8cf9e0fc1be691cfe5117482577d3ce98b306824dc3db",
+              "log_sha256": "948f6c2e400b4b0f52acb71385d92bfeb3891d46b0622593ff65e3e81b8db38f"
+            }
+          },
+          "incremental_nj": 3405.5775288620107
+        }
+      },
+      "incremental_nj": 3441.176828149214,
+      "vectors_sha256": "4a015960e0e2fe79cf84d2b08ff4c871789f7304e9301213c65e66c6544c5619",
+      "rtl_log_sha256": "10cff7da0d047ecba8ca17187dc94da1aaf47fe1af2a3272c8a8176affdcc032"
+    },
+    {
+      "signature": "first_token:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 3,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 2,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003943462856,
+                "switching": 0.001017238013,
+                "leakage": 9.57246375e-05,
+                "total": 0.005056425463
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "7c0e0fa7a6028e8a5586128216aea018b34abb71ca9b84a04490f2b44497ed26",
+              "log_sha256": "f4a2e3cadd10455bc7937c4e0dc7653c62f24bfdfe98b528494fd7d4ca74810c"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.563159256e-05,
+                "total": 0.001086302451
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "837fb6a1b270df7c58a2387a6ef3d1fc73cc21345cc33c07926db44cfe29f89c",
+              "log_sha256": "ba64624240482ae39042f4246fe71a99958d2e42342221b7331af9540a7d9fc9"
+            }
+          },
+          "incremental_nj": 35.605889428201515
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2198835164,
+                "switching": 0.1595578939,
+                "leakage": 0.000724354235,
+                "total": 0.3801657557
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "fa64f022d5ee64d9c96f0eb1fd5d4485e3074bb184f16b29b6c11480548db6b8",
+              "log_sha256": "6aec9f3311ed76acc4b2a50e84efb12379157bb601ea457089b2260266aa051c"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007398537709,
+                "total": 0.003533411073
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "064ca0546c4c77ba9fda10426881da9b5cc3ce639b88d8ba59712718f1c568b6",
+              "log_sha256": "948f6c2e400b4b0f52acb71385d92bfeb3891d46b0622593ff65e3e81b8db38f"
+            }
+          },
+          "incremental_nj": 3377.8121174934645
+        }
+      },
+      "incremental_nj": 3413.418006921666,
+      "vectors_sha256": "aaf049db222ebaf006dced887546c3b94973670a633eb86c43bfe7d7bc9e54fe",
+      "rtl_log_sha256": "07555bf90c5b0af57de0d5ed663bea5f91a1008d949ab7cd0cdd7bfd843dfd63"
+    },
+    {
+      "signature": "first_token:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 4,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 3,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003950165585,
+                "switching": 0.00101915712,
+                "leakage": 9.577676246e-05,
+                "total": 0.005065099336
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "fcc26c877c4ce74f053bfd475ab16f81d71481f3d526444c3d6495f454ec2342",
+              "log_sha256": "5473a075cda55af054946248493116a30cf10c02e4bfad2cef8eb0ba07448626"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.53810013e-05,
+                "total": 0.001086051925
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "98773169507df633258e92d60d577af7d038db7cf973ec27abd179429fadc045",
+              "log_sha256": "44594558acdc37f4e1b5b25f7418c85de87bc1aea43611a894d0b4ad244f2411"
+            }
+          },
+          "incremental_nj": 35.685927543657066
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2192319334,
+                "switching": 0.1591810137,
+                "leakage": 0.0007247636677,
+                "total": 0.3791377246
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "b9ba156775e1156662d0b1f2206a91b6bcd3234bf48ee96f1f842b6100fc36ee",
+              "log_sha256": "1304a16875688c89055bc6a9c4f990a15338ed20a5002bda1895260495213a61"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007398537709,
+                "total": 0.003533411073
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "7faf7086f334487daa8816f383c6c4dc3f982855415fde513707f5d19b469a86",
+              "log_sha256": "948f6c2e400b4b0f52acb71385d92bfeb3891d46b0622593ff65e3e81b8db38f"
+            }
+          },
+          "incremental_nj": 3368.5922616943585
+        }
+      },
+      "incremental_nj": 3404.278189238016,
+      "vectors_sha256": "76d590408da840b00e77dbe87a72184ab94ef6e92296a34006629a8ea13b1a57",
+      "rtl_log_sha256": "b74f074c1c05d3109fa544bdd470dcc6c6fa8724f3ac754e28553cb487309039"
+    },
+    {
+      "signature": "decode:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 3,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 6,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003951499239,
+                "switching": 0.001019427786,
+                "leakage": 9.57116863e-05,
+                "total": 0.005066638347
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "a0afdd4b38c79975f96d26bd0c210853b7fc0d7e0eb9ede36f0e35ee75b479ea",
+              "log_sha256": "61479d62460a89fab1ec715bd4776f2e79f2182aeb485f19699cab71ff210549"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.542456974e-05,
+                "total": 0.001086095464
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "57d0b5e6a39179e5b9d41a493f610a8f5f97d2fd621da5fe3d7e0be8c80d8a49",
+              "log_sha256": "596ce633ebe387eb0f8401a2532426f735c90e439e7be52694c4aa73a991d93e"
+            }
+          },
+          "incremental_nj": 35.69933962447018
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2201923579,
+                "switching": 0.1598038524,
+                "leakage": 0.0007241803687,
+                "total": 0.380720377
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "e540991ccda1a0947f9cad5e5ce949ed0f4e35c970b0f8687bff5b9cff002cfc",
+              "log_sha256": "ba00a88a48cd4b3500b6b63360f776c74cadf91abc517f54c6cd75dc5b3bdabd"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007398537709,
+                "total": 0.003533411073
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "d491995ca773cce768432bd9d82b0f9aee7468445a7cb6989d3048eb59066793",
+              "log_sha256": "948f6c2e400b4b0f52acb71385d92bfeb3891d46b0622593ff65e3e81b8db38f"
+            }
+          },
+          "incremental_nj": 3382.7862164376625
+        }
+      },
+      "incremental_nj": 3418.4855560621327,
+      "vectors_sha256": "1f13708998ba80d9c13e53412a4500725e8d798d179d21bfae279d28d7fb35c3",
+      "rtl_log_sha256": "61d232e0783a0d71fbd03b204830f7b53cbbd7ee2c3e4f97bc2633a2e0263ed3"
+    },
+    {
+      "signature": "decode:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 4,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 7,
+      "units": 256,
+      "cycles": 2690,
+      "window_ps": 8968460,
+      "components": {
+        "dut": {
+          "top": "s32_rms_apply_s128",
+          "netlist_sha256": "1a859cb09006ceeb9c9479f2bf0a40c8e9ee98700d49e85d24e5fcbe88570ff0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003957684152,
+                "switching": 0.001021396019,
+                "leakage": 9.574343858e-05,
+                "total": 0.005074823275
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "23d1e7f9d2471c5d1297977e96178f08731383260d745262bf8bc2974de7cb6b",
+              "log_sha256": "e75a64b0b6a0a49f745c4ef08aa26f03713968125657290768b146bc2d762a8b"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0009906708729,
+                "switching": 0.0,
+                "leakage": 9.584951476e-05,
+                "total": 0.00108652038
+              },
+              "annotation_bits": 513,
+              "required_boundary_bits": 513,
+              "vcd_sha256": "97d33814ce57c0c1bfd954d82de162f8e04f74cc45034171af3321a59281abe2",
+              "log_sha256": "ee87fd5dd21597f6e8aa0ba653891390dfcc4625e82d091ec5062fccb7c3f6bd"
+            }
+          },
+          "incremental_nj": 35.7689349816917
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2205451578,
+                "switching": 0.1601175964,
+                "leakage": 0.0007246845635,
+                "total": 0.3813874125
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "f167e3f05c4b081a958e874f4dcea25aa8a252ec94bd48d237b9010e50a35d0b",
+              "log_sha256": "60e6cd7253045c6be3129c42a9cef33f89b892ef1e08658f30595fe5b78c8cb7"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007398537709,
+                "total": 0.003533411073
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "5b5ba0606240fd71d97877f6a11588a798e3d98de6930ee8ad305b89d05b27f6",
+              "log_sha256": "948f6c2e400b4b0f52acb71385d92bfeb3891d46b0622593ff65e3e81b8db38f"
+            }
+          },
+          "incremental_nj": 3388.768497637993
+        }
+      },
+      "incremental_nj": 3424.5374326196843,
+      "vectors_sha256": "b4219a68b207ed32d5cd6c9e84df5b879f139419e5fcc925224b964c151385a2",
+      "rtl_log_sha256": "a1fa871c2c5b2c170cf8bb2007faff3ecceba00896d47c738150eb2021c5a99c"
+    }
+  ],
+  "excluded_samples": [
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json",
+      "sample_index": 0,
+      "signature": "prefill:site2:words768:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json",
+      "sample_index": 1,
+      "signature": "prefill:site2:words768:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+      "sample_index": 0,
+      "signature": "first_token:site2:words768:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+      "sample_index": 1,
+      "signature": "first_token:site2:words768:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+      "sample_index": 2,
+      "signature": "decode:site2:words768:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+      "sample_index": 3,
+      "signature": "decode:site2:words768:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 0,
+      "signature": "prefill:site2:words640:eps4295:shift4:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 3,
+      "signature": "prefill:site2:words640:eps4295:shift0:out4",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 4,
+      "signature": "prefill:site2:words640:eps4295:shift4:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 5,
+      "signature": "prefill:site2:words640:eps4295:shift0:out4",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 0,
+      "signature": "first_token:site2:words640:eps4295:shift4:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 3,
+      "signature": "first_token:site2:words640:eps4295:shift0:out4",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 4,
+      "signature": "first_token:site2:words640:eps4295:shift4:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 5,
+      "signature": "first_token:site2:words640:eps4295:shift0:out4",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 6,
+      "signature": "decode:site2:words640:eps4295:shift4:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 9,
+      "signature": "decode:site2:words640:eps4295:shift0:out4",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 10,
+      "signature": "decode:site2:words640:eps4295:shift4:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 11,
+      "signature": "decode:site2:words640:eps4295:shift0:out4",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+      "sample_index": 0,
+      "signature": "prefill:site2:words640:eps4295:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+      "sample_index": 1,
+      "signature": "prefill:site2:words640:eps4295:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 0,
+      "signature": "first_token:site2:words640:eps4295:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 1,
+      "signature": "first_token:site2:words640:eps4295:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 4,
+      "signature": "decode:site2:words640:eps4295:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 5,
+      "signature": "decode:site2:words640:eps4295:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json",
+      "sample_index": 0,
+      "signature": "prefill:site2:words640:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json",
+      "sample_index": 1,
+      "signature": "prefill:site2:words640:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+      "sample_index": 0,
+      "signature": "first_token:site2:words640:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+      "sample_index": 1,
+      "signature": "first_token:site2:words640:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+      "sample_index": 2,
+      "signature": "decode:site2:words640:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    },
+    {
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+      "sample_index": 3,
+      "signature": "decode:site2:words640:eps42950:shift0:out0",
+      "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+    }
+  ]
+}

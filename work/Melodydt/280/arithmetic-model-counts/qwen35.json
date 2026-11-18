@@ -1,0 +1,604 @@
+{
+  "run": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830192",
+  "manifest_sha256": "c3507394147379f5623dc4aba75b54bd39773b03b82e41e879ade5b37ce629d4",
+  "phases": {
+    "prefill": {
+      "operator_counts": {
+        "prefill:recurrent_factors:site0:{\"gdn\": true}": 48,
+        "prefill:conv4:site0:{\"channels\": 128, \"gdn\": true}": 3072,
+        "prefill:gdn_state:site0:{\"count\": 16, \"depth\": 128}": 12288,
+        "prefill:recurrent_norm_gate:site0:{\"gdn\": true}": 48,
+        "prefill:scaled_silu:site0:{\"elements\": 4, \"gain\": 65536}": 49152,
+        "prefill:scaled_silu:site1:{\"elements\": 4, \"gain\": 65536}": 49152,
+        "prefill:scaled_silu:site2:{\"elements\": 4, \"gain\": 65536}": 49152,
+        "prefill:rope:site0:{\"dimension\": 256, \"width\": 64}": 320,
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_wide\"}": 128,
+        "prefill:sigmoid:site0:{\"elements\": 4, \"gain\": 65536}": 16384,
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_wide\"}": 128
+      },
+      "operator_shapes": {
+        "prefill:recurrent_factors:site0:{\"gdn\": true}": {
+          "kind": "recurrent_factors",
+          "shape": {
+            "gdn": true
+          },
+          "input_shapes": {
+            "a_log": [
+              32
+            ],
+            "delta": [
+              32
+            ],
+            "a": [
+              32
+            ],
+            "dt_bias": [
+              32
+            ],
+            "b": [
+              32
+            ],
+            "a_scale": []
+          }
+        },
+        "prefill:conv4:site0:{\"channels\": 128, \"gdn\": true}": {
+          "kind": "conv4",
+          "shape": {
+            "gdn": true,
+            "channels": 128
+          },
+          "input_shapes": {
+            "window": [
+              128,
+              4
+            ],
+            "taps": [
+              128,
+              4
+            ]
+          }
+        },
+        "prefill:gdn_state:site0:{\"count\": 16, \"depth\": 128}": {
+          "kind": "gdn_state",
+          "shape": {
+            "count": 16,
+            "depth": 128
+          },
+          "input_shapes": {
+            "state": [
+              16,
+              128
+            ],
+            "key": [
+              128
+            ],
+            "query": [
+              128
+            ],
+            "value": [
+              16
+            ],
+            "decay": [],
+            "beta": [],
+            "delta": [],
+            "skip": []
+          }
+        },
+        "prefill:recurrent_norm_gate:site0:{\"gdn\": true}": {
+          "kind": "recurrent_norm_gate",
+          "shape": {
+            "gdn": true
+          },
+          "input_shapes": {
+            "value": [
+              4096
+            ],
+            "gamma": [
+              128
+            ],
+            "gate": [
+              4096
+            ],
+            "epsilon": []
+          }
+        },
+        "prefill:scaled_silu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:scaled_silu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:scaled_silu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:rope:site0:{\"dimension\": 256, \"width\": 64}": {
+          "kind": "rope",
+          "shape": {
+            "width": 64,
+            "dimension": 256
+          },
+          "input_shapes": {
+            "value": [
+              256
+            ],
+            "cos": [
+              256
+            ],
+            "sin": [
+              256
+            ]
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_wide\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 1,
+            "implementation": "attention_wide"
+          },
+          "input_shapes": {
+            "scores": [
+              1
+            ]
+          }
+        },
+        "prefill:sigmoid:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "sigmoid",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_wide\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 2,
+            "implementation": "attention_wide"
+          },
+          "input_shapes": {
+            "scores": [
+              2
+            ]
+          }
+        }
+      },
+      "rms_counts": {
+        "prefill:site2:words640:eps4295:shift0:out0": 128,
+        "prefill:site0:words64:eps4295:shift0:out0": 320
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830192/prefill/operator-observation.json",
+      "operator_sha256": "100eb342b158d2fe616e1abdf7d137edaea61c06ad21b098bb2be0627075c7f3",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830192/prefill/arithmetic-observation.json",
+      "rms_sha256": "9d413e9f6c13e82e609abbe23f5bd8fa78ab94545013e6b83b1bab1b17b9134e"
+    },
+    "decode": {
+      "operator_counts": {
+        "first_token:recurrent_factors:site0:{\"gdn\": true}": 24,
+        "first_token:conv4:site0:{\"channels\": 128, \"gdn\": true}": 1536,
+        "first_token:gdn_state:site0:{\"count\": 16, \"depth\": 128}": 6144,
+        "first_token:recurrent_norm_gate:site0:{\"gdn\": true}": 24,
+        "first_token:scaled_silu:site0:{\"elements\": 4, \"gain\": 65536}": 24576,
+        "first_token:scaled_silu:site1:{\"elements\": 4, \"gain\": 65536}": 24576,
+        "first_token:scaled_silu:site2:{\"elements\": 4, \"gain\": 65536}": 24576,
+        "first_token:rope:site0:{\"dimension\": 256, \"width\": 64}": 160,
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_wide\"}": 128,
+        "first_token:sigmoid:site0:{\"elements\": 4, \"gain\": 65536}": 8192,
+        "decode:recurrent_factors:site0:{\"gdn\": true}": 24,
+        "decode:conv4:site0:{\"channels\": 128, \"gdn\": true}": 1536,
+        "decode:gdn_state:site0:{\"count\": 16, \"depth\": 128}": 6144,
+        "decode:recurrent_norm_gate:site0:{\"gdn\": true}": 24,
+        "decode:scaled_silu:site0:{\"elements\": 4, \"gain\": 65536}": 24576,
+        "decode:scaled_silu:site1:{\"elements\": 4, \"gain\": 65536}": 24576,
+        "decode:scaled_silu:site2:{\"elements\": 4, \"gain\": 65536}": 24576,
+        "decode:rope:site0:{\"dimension\": 256, \"width\": 64}": 160,
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_wide\"}": 128,
+        "decode:sigmoid:site0:{\"elements\": 4, \"gain\": 65536}": 8192
+      },
+      "operator_shapes": {
+        "first_token:recurrent_factors:site0:{\"gdn\": true}": {
+          "kind": "recurrent_factors",
+          "shape": {
+            "gdn": true
+          },
+          "input_shapes": {
+            "a_log": [
+              32
+            ],
+            "delta": [
+              32
+            ],
+            "a": [
+              32
+            ],
+            "dt_bias": [
+              32
+            ],
+            "b": [
+              32
+            ],
+            "a_scale": []
+          }
+        },
+        "first_token:conv4:site0:{\"channels\": 128, \"gdn\": true}": {
+          "kind": "conv4",
+          "shape": {
+            "gdn": true,
+            "channels": 128
+          },
+          "input_shapes": {
+            "window": [
+              128,
+              4
+            ],
+            "taps": [
+              128,
+              4
+            ]
+          }
+        },
+        "first_token:gdn_state:site0:{\"count\": 16, \"depth\": 128}": {
+          "kind": "gdn_state",
+          "shape": {
+            "count": 16,
+            "depth": 128
+          },
+          "input_shapes": {
+            "state": [
+              16,
+              128
+            ],
+            "key": [
+              128
+            ],
+            "query": [
+              128
+            ],
+            "value": [
+              16
+            ],
+            "decay": [],
+            "beta": [],
+            "delta": [],
+            "skip": []
+          }
+        },
+        "first_token:recurrent_norm_gate:site0:{\"gdn\": true}": {
+          "kind": "recurrent_norm_gate",
+          "shape": {
+            "gdn": true
+          },
+          "input_shapes": {
+            "value": [
+              4096
+            ],
+            "gamma": [
+              128
+            ],
+            "gate": [
+              4096
+            ],
+            "epsilon": []
+          }
+        },
+        "first_token:scaled_silu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:scaled_silu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:scaled_silu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:rope:site0:{\"dimension\": 256, \"width\": 64}": {
+          "kind": "rope",
+          "shape": {
+            "width": 64,
+            "dimension": 256
+          },
+          "input_shapes": {
+            "value": [
+              256
+            ],
+            "cos": [
+              256
+            ],
+            "sin": [
+              256
+            ]
+          }
+        },
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_wide\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 513,
+            "implementation": "attention_wide"
+          },
+          "input_shapes": {
+            "scores": [
+              513
+            ]
+          }
+        },
+        "first_token:sigmoid:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "sigmoid",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:recurrent_factors:site0:{\"gdn\": true}": {
+          "kind": "recurrent_factors",
+          "shape": {
+            "gdn": true
+          },
+          "input_shapes": {
+            "a_log": [
+              32
+            ],
+            "delta": [
+              32
+            ],
+            "a": [
+              32
+            ],
+            "dt_bias": [
+              32
+            ],
+            "b": [
+              32
+            ],
+            "a_scale": []
+          }
+        },
+        "decode:conv4:site0:{\"channels\": 128, \"gdn\": true}": {
+          "kind": "conv4",
+          "shape": {
+            "gdn": true,
+            "channels": 128
+          },
+          "input_shapes": {
+            "window": [
+              128,
+              4
+            ],
+            "taps": [
+              128,
+              4
+            ]
+          }
+        },
+        "decode:gdn_state:site0:{\"count\": 16, \"depth\": 128}": {
+          "kind": "gdn_state",
+          "shape": {
+            "count": 16,
+            "depth": 128
+          },
+          "input_shapes": {
+            "state": [
+              16,
+              128
+            ],
+            "key": [
+              128
+            ],
+            "query": [
+              128
+            ],
+            "value": [
+              16
+            ],
+            "decay": [],
+            "beta": [],
+            "delta": [],
+            "skip": []
+          }
+        },
+        "decode:recurrent_norm_gate:site0:{\"gdn\": true}": {
+          "kind": "recurrent_norm_gate",
+          "shape": {
+            "gdn": true
+          },
+          "input_shapes": {
+            "value": [
+              4096
+            ],
+            "gamma": [
+              128
+            ],
+            "gate": [
+              4096
+            ],
+            "epsilon": []
+          }
+        },
+        "decode:scaled_silu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:scaled_silu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:scaled_silu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:rope:site0:{\"dimension\": 256, \"width\": 64}": {
+          "kind": "rope",
+          "shape": {
+            "width": 64,
+            "dimension": 256
+          },
+          "input_shapes": {
+            "value": [
+              256
+            ],
+            "cos": [
+              256
+            ],
+            "sin": [
+              256
+            ]
+          }
+        },
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_wide\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 514,
+            "implementation": "attention_wide"
+          },
+          "input_shapes": {
+            "scores": [
+              514
+            ]
+          }
+        },
+        "decode:sigmoid:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "sigmoid",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        }
+      },
+      "rms_counts": {
+        "first_token:site2:words640:eps4295:shift0:out0": 65,
+        "first_token:site0:words64:eps4295:shift0:out0": 160,
+        "decode:site2:words640:eps4295:shift0:out0": 65,
+        "decode:site0:words64:eps4295:shift0:out0": 160
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830192/decode/operator-observation.json",
+      "operator_sha256": "9d30c1834f06f07b14301bfb35d5841a0673c2a18bf7dde299bda944c9b81733",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830192/decode/arithmetic-observation.json",
+      "rms_sha256": "25a4dbfdf0ea427dcc1d494d337350ab1f51e7f0ea60114a3b604c7761de83bf"
+    }
+  }
+}

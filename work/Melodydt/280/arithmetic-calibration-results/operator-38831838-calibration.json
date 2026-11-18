@@ -1,0 +1,2171 @@
+{
+  "kind": "scan",
+  "scope": "sampled real operands; named arithmetic wrapper plus E32 where present; SRAM and system residency excluded; do not add provider E32 twice",
+  "activity": "RTL boundary VCD propagated through mapped cells; no internal gate replay",
+  "memory_fixture": "softmax/scan/apply use one-outstanding S128 fixture, not physical SRAM; apply uses disjoint X/Gamma windows in one bank",
+  "nominal_clock_mhz": 300,
+  "period_ps": 3334,
+  "wire_parasitics_loaded": false,
+  "timing_signoff": false,
+  "scheduler_latency_reconciled": false,
+  "source_commit": "b94d221baaee5e1218aca795846fc891b756255f",
+  "sources_sha256": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/rtl/s32_rms_range_scan.sv": "b2e7830728378eae6e6472a091fc30cfee3114013824c063786df6fbca34f508",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-02/tb_operator_scan.sv": "d5a0cd9418c2adc2fc4622fa786743fb3ee6f0ab991c1d053cdad1c10dc6f535"
+  },
+  "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+  "inputs_sha256": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json": "4aa04a1a2dc58a6d29f08e7acb997b698154370427c8b4a31d3ca63ad8553dfe",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json": "d1ad16d975b5ca1e3c6f2148affa480889dbd67dd6338cf61e1d6c46f89d77bd",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json": "6072aad86ba60e308c47c98ca7c541c03412e4d872385bde5b9d6e473f8c3bec",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json": "ff53e6ef3fd72095d2ffa10ee37f41138c692ae99bc497c92eeb2c8ead8736f2",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json": "9d413e9f6c13e82e609abbe23f5bd8fa78ab94545013e6b83b1bab1b17b9134e",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json": "25a4dbfdf0ea427dcc1d494d337350ab1f51e7f0ea60114a3b604c7761de83bf",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json": "2f27ca8257745f3c0749da48be896c7d88b12813a98922fe1ba0ef6227e354f9",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json": "1419743959dbbfa9e66cc22806fba4cea3fe9653dd45f5188b1b797ce65a98ee"
+  },
+  "verilator_version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "openroad_version": "unknown",
+  "captured_call_counts": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json": {
+      "prefill:site2:words768:eps42950:shift0:out0": 128
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json": {
+      "first_token:site2:words768:eps42950:shift0:out0": 65,
+      "decode:site2:words768:eps42950:shift0:out0": 65
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json": {
+      "prefill:site2:words640:eps4295:shift4:out0": 136,
+      "prefill:site0:words64:eps4295:shift0:out0": 816,
+      "prefill:site2:words640:eps4295:shift0:out4": 136
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json": {
+      "first_token:site2:words640:eps4295:shift4:out0": 69,
+      "first_token:site0:words64:eps4295:shift0:out0": 408,
+      "first_token:site2:words640:eps4295:shift0:out4": 68,
+      "decode:site2:words640:eps4295:shift4:out0": 69,
+      "decode:site0:words64:eps4295:shift0:out0": 408,
+      "decode:site2:words640:eps4295:shift0:out4": 68
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json": {
+      "prefill:site2:words640:eps4295:shift0:out0": 128,
+      "prefill:site0:words64:eps4295:shift0:out0": 320
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json": {
+      "first_token:site2:words640:eps4295:shift0:out0": 65,
+      "first_token:site0:words64:eps4295:shift0:out0": 160,
+      "decode:site2:words640:eps4295:shift0:out0": 65,
+      "decode:site0:words64:eps4295:shift0:out0": 160
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json": {
+      "prefill:site2:words640:eps42950:shift0:out0": 128
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json": {
+      "first_token:site2:words640:eps42950:shift0:out0": 65,
+      "decode:site2:words640:eps42950:shift0:out0": 65
+    }
+  },
+  "samples": [
+    {
+      "signature": "prefill:site2:words768:eps42950:shift0:out0",
+      "shape": {
+        "words": 768,
+        "shift": 0,
+        "extra": 2,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json",
+      "sample_index": 0,
+      "units": 3072,
+      "cycles": 1541,
+      "window_ps": 5137694,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001894101966,
+                "switching": 0.001266393345,
+                "leakage": 9.386086458e-05,
+                "total": 0.003254356096
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "4d25215b015af8d43861c8ea76be297623074457d18a5f1b5478f1c100c9ae7b",
+              "log_sha256": "6e0882d3c65a0473172d055b199c5ae513b0d702814600e23871ec847fb71430"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.31006507e-05,
+                "total": 0.0003781454288
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "a673ab9b5ec467831db8f692d3fb160aa986b98e628be5efd8bc4456ab1a7f30",
+              "log_sha256": "4ac80a6cc5c6f821c365b1024d5e891c7c793d31f96aad824f381658a7e59934"
+            }
+          },
+          "incremental_nj": 14.777090287609434
+        }
+      },
+      "incremental_nj": 14.777090287609434,
+      "vectors_sha256": "90ccad95974403547d9099424dceb1ed2ee4bf41487412c2347095e70519bbf4",
+      "rtl_log_sha256": "6ce3781d938de025aa63299b27c2b4aa1ea087f321cd0e0cb6f989a02b94690f"
+    },
+    {
+      "signature": "prefill:site2:words768:eps42950:shift0:out0",
+      "shape": {
+        "words": 768,
+        "shift": 0,
+        "extra": 3,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json",
+      "sample_index": 1,
+      "units": 3072,
+      "cycles": 1542,
+      "window_ps": 5141028,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001933121355,
+                "switching": 0.001286908868,
+                "leakage": 9.396185487e-05,
+                "total": 0.00331399194
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "7b713dc5cd650e1804df5a8c717ba3dc9840309e4d5488d26a1fe521ae7dac5a",
+              "log_sha256": "35b6fb8caf50c606fe28a1f216d03df7f833c91b64e7fc9263e7cf102030d76d"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.35994176e-05,
+                "total": 0.0003786442103
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "b3c5121dd1c3cb70782d2996c05fa62d514c57d7fdc002953f64c54bd1afc583",
+              "log_sha256": "8606a976dd34ef090ffd8c87e6408ea6231cf11989ee21343b0ceb61bcd63998"
+            }
+          },
+          "incremental_nj": 15.09070486812413
+        }
+      },
+      "incremental_nj": 15.09070486812413,
+      "vectors_sha256": "70266d3874e79b28ed618ca5738b22cb4b919d9044922076d234df9c94569cb9",
+      "rtl_log_sha256": "b842f73636a79bc3468a55b327d8a24fdbc06a4275c712f4ce5983493648708f"
+    },
+    {
+      "signature": "first_token:site2:words768:eps42950:shift0:out0",
+      "shape": {
+        "words": 768,
+        "shift": 0,
+        "extra": 2,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+      "sample_index": 0,
+      "units": 3072,
+      "cycles": 1541,
+      "window_ps": 5137694,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001907233498,
+                "switching": 0.001276988187,
+                "leakage": 9.382892313e-05,
+                "total": 0.003278050572
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "2d7048348f424770f1177ef2f88af01f1326f6a6eb3148ec0b8a75a51e208dac",
+              "log_sha256": "fef20425f902f9947df79b03877924001937fde498f154a645e5ef19b09dfdff"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.30506867e-05,
+                "total": 0.0003780954576
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "12b13e0a69617a88ed1bb1d9b36795f701ef649f104547073abc12cfdc4c4d5f",
+              "log_sha256": "9a532393d9a81b9327d31f2e6f110243e2824636966be359eabafd5cffb2cd78"
+            }
+          },
+          "incremental_nj": 14.899081991522193
+        }
+      },
+      "incremental_nj": 14.899081991522193,
+      "vectors_sha256": "77c3a770b06fb1de997c32055f1955143737ea8539b2b5be01914da2ae95316f",
+      "rtl_log_sha256": "72c2cb7fc0bcf476239249a4903d23cfa006a66725221bd1726180a2a4b42f16"
+    },
+    {
+      "signature": "first_token:site2:words768:eps42950:shift0:out0",
+      "shape": {
+        "words": 768,
+        "shift": 0,
+        "extra": 4,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+      "sample_index": 1,
+      "units": 3072,
+      "cycles": 1543,
+      "window_ps": 5144362,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001932815299,
+                "switching": 0.001286612591,
+                "leakage": 9.39495294e-05,
+                "total": 0.0033133775
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "cc7f7a6eb3ef84a0444711547fd256dc207e41c7630fe31a2c374cfdc13ce486",
+              "log_sha256": "ae0b67ea105fe19a8f3074f0ec942be159cd326567fdc727398a901310fc7395"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.338308155e-05,
+                "total": 0.0003784278524
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "c5585a2a2510a41e01b00b49df3d6cc873e3b2a68bd39f5520a3c20dc453ae04",
+              "log_sha256": "1f5c25d404f9adf5b25af80dace4243588787b14023fca22f926b88d004e2241"
+            }
+          },
+          "incremental_nj": 15.09844343902683
+        }
+      },
+      "incremental_nj": 15.09844343902683,
+      "vectors_sha256": "81acac692924de70d38e3cb5c2943b3f6e7ab8eb15567d4d9978fc275b752572",
+      "rtl_log_sha256": "0d5a9529bfa2920c32f5a74653b6c49abb2a99a3749803fb4eec47a6376b9c31"
+    },
+    {
+      "signature": "decode:site2:words768:eps42950:shift0:out0",
+      "shape": {
+        "words": 768,
+        "shift": 0,
+        "extra": 2,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+      "sample_index": 2,
+      "units": 3072,
+      "cycles": 1541,
+      "window_ps": 5137694,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001889736508,
+                "switching": 0.001264326624,
+                "leakage": 9.383798897e-05,
+                "total": 0.003247901099
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "a7cf17a5ed516f98c2b3d91d94360bac1d8f8f1da55c7c44e2e1e4a9fa9a5d03",
+              "log_sha256": "8f78929bdccb7993465a938f14cc8db0bf52d3dacd8b89d225ea9c7d01a1910a"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.369513282e-05,
+                "total": 0.0003787399037
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "794e301ac6035f640972253c5acb027b30c8dc622a0997d6968c5398db7c102c",
+              "log_sha256": "22352309f89fbfe30bd0fc8e0faddb55f347feab89b1a4b215510482649a536d"
+            }
+          },
+          "incremental_nj": 14.74087225812564
+        }
+      },
+      "incremental_nj": 14.74087225812564,
+      "vectors_sha256": "668cf06c40353f48efdf822747306d3c0e465053db97c9c4aecfd11094f4d55e",
+      "rtl_log_sha256": "60f924613dee2429eb9e2a5439433da9b59c3591ef34edb779d41348212660cb"
+    },
+    {
+      "signature": "decode:site2:words768:eps42950:shift0:out0",
+      "shape": {
+        "words": 768,
+        "shift": 0,
+        "extra": 3,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+      "sample_index": 3,
+      "units": 3072,
+      "cycles": 1542,
+      "window_ps": 5141028,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001931444276,
+                "switching": 0.001286113053,
+                "leakage": 9.39472302e-05,
+                "total": 0.00331150461
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "155302da3bec51cb10ab65ff67728a2a2d8f88d3b4d6a3f228bd6dd7aa84f0f1",
+              "log_sha256": "03085a28d5e8ef58c657b04b82f51610ca4d1559915a334b057845de60b60aa1"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.402690193e-05,
+                "total": 0.0003790716873
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "513ac79d226d996cb1b4fde47e465697cbbf8b94d8b49e3044094a08779d033a",
+              "log_sha256": "e50daabf2ffbd382444c92b9cb3e5cb8586a609139f8a2f9878800f67ee49f9b"
+            }
+          },
+          "incremental_nj": 15.075719763722537
+        }
+      },
+      "incremental_nj": 15.075719763722537,
+      "vectors_sha256": "98b95a696a3823b567c174b1d2509e49259b00a84038a2b23a718e313db3028b",
+      "rtl_log_sha256": "2b7c056e3fbc166e8117911d4a904c8acc011988f81a970ca82e5821e9cf37e3"
+    },
+    {
+      "signature": "prefill:site2:words640:eps4295:shift4:out0",
+      "shape": {
+        "words": 640,
+        "shift": 4,
+        "extra": 6,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 0,
+      "units": 2560,
+      "cycles": 1289,
+      "window_ps": 4297526,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001677772612,
+                "switching": 0.001022814424,
+                "leakage": 9.481977031e-05,
+                "total": 0.00279540685
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "7105db018710c8b9efa3762a475def364da3763dfc8753db9e4f172adf1d5ea0",
+              "log_sha256": "c0eb9229ff89f82f9cee38c8578f974eed19d52baccfa773ee6a415592bf5865"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.357797535e-05,
+                "total": 0.0003786227608
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "eb726d0115fe1397a84636a09c502af6f32a69816d238ce6c279dc456cb5ffa3",
+              "log_sha256": "9cce88bb4c63e4626808cfb1e9e4065c1931d894a0f91f8360daef94e21e96c0"
+            }
+          },
+          "incremental_nj": 10.386192459723317
+        }
+      },
+      "incremental_nj": 10.386192459723317,
+      "vectors_sha256": "cea38659adb802b48d34fb9d0dd937a938d4771250a397994519b07303d01589",
+      "rtl_log_sha256": "a9d22e071df2a0180aa03e5c6d0268ee8ed77c74c785a83fe15575d36b4d37fe"
+    },
+    {
+      "signature": "prefill:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 8,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 1,
+      "units": 256,
+      "cycles": 139,
+      "window_ps": 463426,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003196723294,
+                "switching": 0.002277036663,
+                "leakage": 9.482904716e-05,
+                "total": 0.005568589084
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "a2006c24f087c6c26031e7a8e1a94acc070ec4c70036c5a4b0afd5092d24779e",
+              "log_sha256": "c078b0529214321987b1a10f95bc1387c69bdcafd9c2b0669b06ff99abb021dc"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.340635734e-05,
+                "total": 0.0003784511355
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "8a91bc7976fde2cbffcd676e8ae63e4c5f75c20a0e089911b35823fec85aafde",
+              "log_sha256": "5649dfc21188a796a94198b318a32a7dd21fb822c8c3392397f2ad6b702814be"
+            }
+          },
+          "incremental_nj": 2.405244868921561
+        }
+      },
+      "incremental_nj": 2.405244868921561,
+      "vectors_sha256": "237404f13f1b60bd85627b48e2646a3dbcfdbef5c4d918bf48c7e9c39db0fb28",
+      "rtl_log_sha256": "27b95be28de294b8118de431caeaf2feddc2b777d4d45e3bcba22e6442869be4"
+    },
+    {
+      "signature": "prefill:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 7,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 2,
+      "units": 256,
+      "cycles": 138,
+      "window_ps": 460092,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003254305338,
+                "switching": 0.002319409512,
+                "leakage": 9.480455628e-05,
+                "total": 0.00566851953
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "92e9953487bac8c76d97e3165ae0bdc54aa174234044ab167f483c8760c2d262",
+              "log_sha256": "5c278e368a33827b1f1b883345d590e22e1a9a63bcce374a1cc198495a6c637b"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.306993161e-05,
+                "total": 0.0003781146952
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "6aadb3f63ad1750a0197064e02e21347a547f5a975898c4f305aceedfcd0f4a5",
+              "log_sha256": "be9f3ffcd876ed58131970e6c8dbbcc7ac16ef33c804b30941952db12a8ad605"
+            }
+          },
+          "incremental_nj": 2.4340729412528015
+        }
+      },
+      "incremental_nj": 2.4340729412528015,
+      "vectors_sha256": "3ff9e9d9ddd25cc15947ef7d4fff217ceb62e6757ba0bf651846085fa35de4f1",
+      "rtl_log_sha256": "df222f525fa9859114e6f4efa7ab67397a5fac2aec1f4b39001580befa29cb8c"
+    },
+    {
+      "signature": "prefill:site2:words640:eps4295:shift0:out4",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 9,
+        "output_shift": 4
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 3,
+      "units": 2560,
+      "cycles": 1292,
+      "window_ps": 4307528,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002033214085,
+                "switching": 0.001371776569,
+                "leakage": 9.39759193e-05,
+                "total": 0.003498966806
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "3950e6182c0d89c81a605350b75db1f82794f0d2d63390e451895a81a0067598",
+              "log_sha256": "999c17a47680c9b16f552ec47bc18b9ac8615ca45b59575c151c97b9bc49bd60"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.375275113e-05,
+                "total": 0.0003787975293
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "453a107162833a3a4fced4985f8014f0d122e996771ac057222681080ac6e53a",
+              "log_sha256": "6d7794534d04c8f08535434024d58fa84f6ce00cba50db570512a8a5fe34c5f5"
+            }
+          },
+          "incremental_nj": 13.440216524124999
+        }
+      },
+      "incremental_nj": 13.440216524124999,
+      "vectors_sha256": "e3cf6d73db79e882b620f62c421e711f50f34f5a6963789cb24bd3c324330333",
+      "rtl_log_sha256": "13634ecdd5a8d72c758d2a4433be860b2ec097697b32291e9db9419ba5106b07"
+    },
+    {
+      "signature": "prefill:site2:words640:eps4295:shift4:out0",
+      "shape": {
+        "words": 640,
+        "shift": 4,
+        "extra": 11,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 4,
+      "units": 2560,
+      "cycles": 1294,
+      "window_ps": 4314196,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001704621478,
+                "switching": 0.001043953933,
+                "leakage": 9.475810657e-05,
+                "total": 0.002843333641
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "7f70e4b7f098f1650fbf34771433a46d794b27ea650a6944a3fad365f123b90b",
+              "log_sha256": "f721f9c4d8f7927795f2d234b1fbec7ccc8fe975969b0fbb7900048ed6d2c9fc"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.389962361e-05,
+                "total": 0.0003789443872
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "ddabf29a3c690997a5e4fea5e682d4e832b644afe9b4ac6b0ab3f8c9cd086035",
+              "log_sha256": "870320f4586c466d4625d2ad93fa49e50e55bdf6002ea1e08f7332281ceab084"
+            }
+          },
+          "incremental_nj": 10.631858261186945
+        }
+      },
+      "incremental_nj": 10.631858261186945,
+      "vectors_sha256": "f26ae54f5ee39da89e5c199050ddb319abdbda0428c292c261b198af2e9307ab",
+      "rtl_log_sha256": "9f5e4b9d992c15d7fd86d0b905ba479c1ed8155865a468d49bb0e3a40e8ee2f9"
+    },
+    {
+      "signature": "prefill:site2:words640:eps4295:shift0:out4",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 6,
+        "output_shift": 4
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+      "sample_index": 5,
+      "units": 2560,
+      "cycles": 1289,
+      "window_ps": 4297526,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002015907783,
+                "switching": 0.001358482754,
+                "leakage": 9.402172873e-05,
+                "total": 0.003468412207
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "8c7a51fe22796e0f45f611114866226a609753be53fafa2fd1114b006d195e54",
+              "log_sha256": "40645423029ad3a5732f1d0b078818e17bca2d7d9d263eac7217bebbdedf6d83"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.371021588e-05,
+                "total": 0.0003787549795
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "920a08738e3a524076e3c50542073e9a4dea812eba848c527644643a3163fc81",
+              "log_sha256": "cd34ed3697e374980360aa511ffb4ce89bf4df70343465448730dc73fa0a7243"
+            }
+          },
+          "incremental_nj": 13.277882266269165
+        }
+      },
+      "incremental_nj": 13.277882266269165,
+      "vectors_sha256": "e8b94a194d736b47e452c628617f6ddf510a6eb696a2ed91e2fdbf5c043f7111",
+      "rtl_log_sha256": "a21f3e0e9ff0361a735f4d9eb55fb84b667f5da44649bea3fcf35c60e6e35a0d"
+    },
+    {
+      "signature": "first_token:site2:words640:eps4295:shift4:out0",
+      "shape": {
+        "words": 640,
+        "shift": 4,
+        "extra": 3,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 0,
+      "units": 2560,
+      "cycles": 1286,
+      "window_ps": 4287524,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001700955559,
+                "switching": 0.001039815601,
+                "leakage": 9.478526772e-05,
+                "total": 0.002835556399
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "a427572e31331c12cdf618cb09e4eb77b350f51ee49af6d9d391844c01d44fd2",
+              "log_sha256": "02d0fcbd7d1c3cb2dee6ed9d1be514e4e0252f6979048548de4b3502e1c6a0c1"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.386443708e-05,
+                "total": 0.0003789092298
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "9d3872cb938bbd2d9628373a7f6d51fe0c5c8a2bb4250e99ff417375463ff1e5",
+              "log_sha256": "1f38baf4875b7e6922025ac1563ecbb53c5cb226c2416b6814794ba1f5d78191"
+            }
+          },
+          "incremental_nj": 10.53293369747706
+        }
+      },
+      "incremental_nj": 10.53293369747706,
+      "vectors_sha256": "239c7c444437d6a70ff5c2076671f4ef77a8e6a434b1e19783eca73d6c8ecdca",
+      "rtl_log_sha256": "7af2e3e7d90e206780809792b313d9f3b73d38d8be16cbfc915d507ac7cbd894"
+    },
+    {
+      "signature": "first_token:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 8,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 1,
+      "units": 256,
+      "cycles": 139,
+      "window_ps": 463426,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003233615542,
+                "switching": 0.002313166624,
+                "leakage": 9.47241424e-05,
+                "total": 0.005641506519
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "90f1fc9232ee7211074cc2fc256d0898ceea14282e07429c0ddfa0a02ddc69eb",
+              "log_sha256": "2bb824e020a78d8cb1175c666519dedbeda4417b1f650735eb1636987580cc62"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.338549717e-05,
+                "total": 0.000378430268
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "6b59ef906054314a4afde65a53b367730f5e20832ae89b1a7f0aa0ab83067568",
+              "log_sha256": "d6181c56eef74d6d3ce8b517759633aa83d9e7bf1a614b076fc41d640d2081cc"
+            }
+          },
+          "incremental_nj": 2.439046374695926
+        }
+      },
+      "incremental_nj": 2.439046374695926,
+      "vectors_sha256": "f327c1d1c6141a7cdd2880efa80457aa9ccaa33d2b5bf2b3e222f6f648643cb7",
+      "rtl_log_sha256": "04c897d9f31509d3420f706c45f292cf7537d0d35255fd10e5bb05020fdf170e"
+    },
+    {
+      "signature": "first_token:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 8,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 2,
+      "units": 256,
+      "cycles": 139,
+      "window_ps": 463426,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003182487795,
+                "switching": 0.00227819453,
+                "leakage": 9.481229063e-05,
+                "total": 0.005555494688
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "ef26183240b6ac59f565d8627a9a9f971cef1c3e72a592d2dc71cf0f90d7851c",
+              "log_sha256": "2eb961c50195323f011f8c455832cbda70fe65d6bc373bf0576580a4f6d54d3b"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.346121078e-05,
+                "total": 0.0003785059962
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "f7dc4d141d77b323cf81fa9e1bd8ef3abdc1fb972523db944159678ff0a9f150",
+              "log_sha256": "5c037c885eb484cfbb6056055cb498c2fd3043714165ef54233ea95f0aa6623a"
+            }
+          },
+          "incremental_nj": 2.3991511614861065
+        }
+      },
+      "incremental_nj": 2.3991511614861065,
+      "vectors_sha256": "27e39717935ca61e9efe587f88f558d3094103a739dceb0e9382e60b27aabb2b",
+      "rtl_log_sha256": "2ba01efbb0b7d51e9b8d129f2b0402b5d1d33d91cef8b33065e8571b03c8491b"
+    },
+    {
+      "signature": "first_token:site2:words640:eps4295:shift0:out4",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 9,
+        "output_shift": 4
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 3,
+      "units": 2560,
+      "cycles": 1292,
+      "window_ps": 4307528,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002023393521,
+                "switching": 0.001364277792,
+                "leakage": 9.394956578e-05,
+                "total": 0.003481620923
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "7f6cfb1cf3e2cca67e5f484e3b07f8fe1a8c89bd49780798ffb0384c1a709431",
+              "log_sha256": "1797dca5d53a7e0abbe87ca76afc0361d9762caa7dba469b0669c957444f3e3e"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.280956147e-05,
+                "total": 0.0003778543323
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "acee971c3a4f8f3ad2aef309fb4ed80f1cb6b3976a2a03fe7fc8dfe9cf4e3579",
+              "log_sha256": "08be969d457414a358487ea9f49963de4a7de4e16fde69b4eb3777f2664c441d"
+            }
+          },
+          "incremental_nj": 13.36956149490479
+        }
+      },
+      "incremental_nj": 13.36956149490479,
+      "vectors_sha256": "821a7c3a0f85bac93a22cbbda3d9b2722be9678aef4f2bc360b84ce15706e7c9",
+      "rtl_log_sha256": "3fd61b03315622a26beb8fd092353da20c39b2dfd70a90c82f0d4c016ba8bbc4"
+    },
+    {
+      "signature": "first_token:site2:words640:eps4295:shift4:out0",
+      "shape": {
+        "words": 640,
+        "shift": 4,
+        "extra": 11,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 4,
+      "units": 2560,
+      "cycles": 1294,
+      "window_ps": 4314196,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001696367399,
+                "switching": 0.001037461217,
+                "leakage": 9.477310232e-05,
+                "total": 0.002828601515
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "006c29542c35a4c944810bd0ecd9ab1463352ac2d985c6462a52a9b25a5ae0f3",
+              "log_sha256": "2e83cde88b07c4c86451bdcc30361f1df12f8be05ea7eb8210846ffaff4f1b39"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.356319788e-05,
+                "total": 0.000378607976
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "ffaee8de7815618be261554475993c22c55f8b108be5d62d54dd488ca90089a4",
+              "log_sha256": "1231a535dfe7b3a61f3224cd7b808a0acf0a16fb9b04510efe7c2c05e405c290"
+            }
+          },
+          "incremental_nj": 10.569752325979646
+        }
+      },
+      "incremental_nj": 10.569752325979646,
+      "vectors_sha256": "cb5f09d42e5cb0142a6abb43db0114dbf1faefe4b53413a0d4e8949a5231368d",
+      "rtl_log_sha256": "276ed7af5c0b3e89b486cf8330ac456776ca485e959d37d681411879e9cc3e1e"
+    },
+    {
+      "signature": "first_token:site2:words640:eps4295:shift0:out4",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 4,
+        "output_shift": 4
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 5,
+      "units": 2560,
+      "cycles": 1287,
+      "window_ps": 4290858,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002013971331,
+                "switching": 0.001359404763,
+                "leakage": 9.397583199e-05,
+                "total": 0.003467351897
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "951aedb2d490e14bfd8fd1d9714eba4f040f97091d756b522c86b917ae66f031",
+              "log_sha256": "0d0240b02b1ed19805b031b158ec5e8c44d3034db3b8201654b944c73aa7fb3e"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.370897169e-05,
+                "total": 0.0003787537571
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "084647f64c08387c2a53b97b8c3b0d7a476e5b2379fe5b74cf3c20ce164ba627",
+              "log_sha256": "4fc1702c6d634f29cabe04de3ee4756dad95ead8e2f97493933e91a9072da7d2"
+            }
+          },
+          "incremental_nj": 13.252736037375035
+        }
+      },
+      "incremental_nj": 13.252736037375035,
+      "vectors_sha256": "9ba4e142fb201760b1762fe7a5d71a4234fe2ed1b6fe4fb3b2c37353e2d8d8fd",
+      "rtl_log_sha256": "f71ab222587751fc180c79762dd209c41b0f6d1a46ebf097b6a536fb432484b5"
+    },
+    {
+      "signature": "decode:site2:words640:eps4295:shift4:out0",
+      "shape": {
+        "words": 640,
+        "shift": 4,
+        "extra": 6,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 6,
+      "units": 2560,
+      "cycles": 1289,
+      "window_ps": 4297526,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001672857092,
+                "switching": 0.001020511962,
+                "leakage": 9.476580453e-05,
+                "total": 0.002788134851
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "6900ab880a9aab5add2dc196543c83374ecea97f40e7462ebede64538c123792",
+              "log_sha256": "69c731d6726c47c153128aace50078aae1fef52cebaedccde627c00034291297"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.391644562e-05,
+                "total": 0.0003789612092
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "2a2de1d1c1711d6c2e30f09e767633423960e9ddb676c9a08b95f877349b5644",
+              "log_sha256": "47fb74ccece657bb1ef9c59d1b56a69224517627bfe87605112abf29a6e12854"
+            }
+          },
+          "incremental_nj": 10.353486364150188
+        }
+      },
+      "incremental_nj": 10.353486364150188,
+      "vectors_sha256": "76a8c41c533a13c257330125660eb9aa538f0d33c656062c11b11d8ae46b580e",
+      "rtl_log_sha256": "6e7a17298cf47bf06dc12d9fd699b28bc426bb618509da32b5f98966590b9b7f"
+    },
+    {
+      "signature": "decode:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 8,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 7,
+      "units": 256,
+      "cycles": 139,
+      "window_ps": 463426,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003221401945,
+                "switching": 0.002302871319,
+                "leakage": 9.475371917e-05,
+                "total": 0.005619026721
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "87276719fb287cfc05c4dc6f8e964c18cd1489564f2cc1ac91892f9fc4badcf1",
+              "log_sha256": "69d079dc96a559ce9f6c4818ef631400da1112ff6d9d23a70993cee3e7758fcb"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.36645738e-05,
+                "total": 0.0003787093447
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "cae1e293efc29ae9d361f6eb61a809a48049bb01f35d0e4b86453318ddb2545a",
+              "log_sha256": "34540384ee2cbf10575d7606b5e8ef2e244befc40b9a2f04e760c2f28aeda4f3"
+            }
+          },
+          "incremental_nj": 2.428499320429204
+        }
+      },
+      "incremental_nj": 2.428499320429204,
+      "vectors_sha256": "64210e52dfa046d45b5525bbddfd325f5c317b70a4b445b0cba48e48b0da454a",
+      "rtl_log_sha256": "c5ea823fbf40ca6d32220a2e344e40e06dd7544de31b78de631aeba65c5fcc2b"
+    },
+    {
+      "signature": "decode:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 9,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 8,
+      "units": 256,
+      "cycles": 140,
+      "window_ps": 466760,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003179990919,
+                "switching": 0.002268373268,
+                "leakage": 9.477324784e-05,
+                "total": 0.005543137435
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "4e40ccf955efb142532cf250f83383709230cb5051c4a05a6af0ca77fc61cea8",
+              "log_sha256": "b03bc3751d5ed18e77e417af6d554cdebe3c4a06d8737aee35f0d3047c0f75c0"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.328479064e-05,
+                "total": 0.0003783295688
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "414b1836b9781d412752c8a84f3435d6db192ec4803a737ba410786b349552f0",
+              "log_sha256": "c98ce1fa4e743f65f95cab2039bb0bb753b5c0eec6b8dbc0ebdf4076e8dfc03d"
+            }
+          },
+          "incremental_nj": 2.4107257196275116
+        }
+      },
+      "incremental_nj": 2.4107257196275116,
+      "vectors_sha256": "6f6cb81277ec32f40feb7988a9951b12f463520148be59de1b58238f49905538",
+      "rtl_log_sha256": "be617123647f776402451e0ce37f20e9a0a3802400255acad506b681c3c071f0"
+    },
+    {
+      "signature": "decode:site2:words640:eps4295:shift0:out4",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 9,
+        "output_shift": 4
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 9,
+      "units": 2560,
+      "cycles": 1292,
+      "window_ps": 4307528,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002041385276,
+                "switching": 0.001377323642,
+                "leakage": 9.400443378e-05,
+                "total": 0.00351271336
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "16b801573c956dd64866cc124a28905dc505b6ecf436331175d402d7b49ee1dd",
+              "log_sha256": "7112cf04f1a72ec152ecef33b49f7a35a4c6c62bff1145db9525902a3a959732"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.278268408e-05,
+                "total": 0.0003778274695
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "4c43f6b27b03bebbe1ac87316aebf3d1479e6100cf21a961bfb8ccd85f0b4cf1",
+              "log_sha256": "db7748505f52710b15f0b9b19e891108a3ddf737e0be5cc3fb4ea2cdb2d56e27"
+            }
+          },
+          "incremental_nj": 13.503608750133685
+        }
+      },
+      "incremental_nj": 13.503608750133685,
+      "vectors_sha256": "e59ef65092e4c1698d1f44b64fbedca016c3588f7eb41f3434f2ed93cf812d2a",
+      "rtl_log_sha256": "06a28a06861ee193e157a62ee2375a528d6f9d8a3d87896946a70615a7612162"
+    },
+    {
+      "signature": "decode:site2:words640:eps4295:shift4:out0",
+      "shape": {
+        "words": 640,
+        "shift": 4,
+        "extra": 11,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 10,
+      "units": 2560,
+      "cycles": 1294,
+      "window_ps": 4314196,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.001666505355,
+                "switching": 0.00101578515,
+                "leakage": 9.477621643e-05,
+                "total": 0.00277706678
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "8aff7aed3c743c118430a4df3dc3c9af7575a643c4a8c496fd5b7c5bb5ce98e7",
+              "log_sha256": "5d8289ef4849e88a984cb7f8ac08adbcfe7a4dd8ad6e34046d00bd975eae4b29"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.346691513e-05,
+                "total": 0.0003785117005
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "8af7fd86d81de9e63d5e97bf2825ac4f96d5fbe0b96934c60a7aac6f03d2b710",
+              "log_sha256": "da5773a1bff2e54099e9fa7bc802a0b9a2cfb0df7797a211c9bd5b1b278ebafa"
+            }
+          },
+          "incremental_nj": 10.347836729758582
+        }
+      },
+      "incremental_nj": 10.347836729758582,
+      "vectors_sha256": "08bedbbff6ba045a44f9a811c4a1bf2397baba6a5f948de2a8842081792c63d3",
+      "rtl_log_sha256": "e7e867d85b839eab1eb93bf8f8eb5fb9ffbe8f6d37bc459503b14b04b92d1269"
+    },
+    {
+      "signature": "decode:site2:words640:eps4295:shift0:out4",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 5,
+        "output_shift": 4
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+      "sample_index": 11,
+      "units": 2560,
+      "cycles": 1288,
+      "window_ps": 4294192,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002024850575,
+                "switching": 0.001366585027,
+                "leakage": 9.397709073e-05,
+                "total": 0.003485412803
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "b92cff186f48a7737d18ff5b297c545e011f4cb8618f913804bde9412ec6a2fa",
+              "log_sha256": "57c8a8e32b9808aa5b4badd4879e49fd2a6d221fc3619158842107b797f46ae1"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.378062532e-05,
+                "total": 0.0003788254107
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "43c1656edbbcfda1c59995824fbd17efba75f6de6565bd4b91cf94c16efd1ca2",
+              "log_sha256": "09f86947a306b572d99aad11021920da4167a3bf48a4f3427d85e3a5a45db27c"
+            }
+          },
+          "incremental_nj": 13.340282727315522
+        }
+      },
+      "incremental_nj": 13.340282727315522,
+      "vectors_sha256": "bbbcaa6a604f6fa81c0b46b0964d731e3e38ef650a3019c22eb448b01bc69d77",
+      "rtl_log_sha256": "bba8728dcf64d2613c9df5332378776e56760585db65dc71b3c3b515e6c49ce1"
+    },
+    {
+      "signature": "prefill:site2:words640:eps4295:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 0,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+      "sample_index": 0,
+      "units": 2560,
+      "cycles": 1283,
+      "window_ps": 4277522,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002029629191,
+                "switching": 0.001370693324,
+                "leakage": 9.39219899e-05,
+                "total": 0.003494244535
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "0291e964798d6e104a0bf301bab011b2e35598a6be391fa3940ec657eb27281c",
+              "log_sha256": "c89046219be0f5fb31b5f4f53150137085ed37b8367fb88f600eb194409be431"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.351564222e-05,
+                "total": 0.0003785604204
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "c2192f550e8d0c2ea1d451bf502fbd4f3b7d5ba18dc8722c9bffe0cd0d4f2c3c",
+              "log_sha256": "406c0226cb4491ffb0498a393341a792fa52343b379dce1538599be4ffb69f6f"
+            }
+          },
+          "incremental_nj": 13.327407345252022
+        }
+      },
+      "incremental_nj": 13.327407345252022,
+      "vectors_sha256": "f38ac5a40e4f301e184f3853d6a8c9182a11b2585d23d9c6f759d4621169035c",
+      "rtl_log_sha256": "068894563c9a936415d3e5f2053740846b96458bf9e1fc6927cd377956483ef8"
+    },
+    {
+      "signature": "prefill:site2:words640:eps4295:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 3,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+      "sample_index": 1,
+      "units": 2560,
+      "cycles": 1286,
+      "window_ps": 4287524,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002052362077,
+                "switching": 0.001384486211,
+                "leakage": 9.40202226e-05,
+                "total": 0.003530868562
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "3d36c07a8f123bbbd2317ec04e81b26946b8498a5e7cf437423277901fd7a09b",
+              "log_sha256": "a90b2d852dac42fbb901b882c1061f97fdeab007039ade2c99ba6f12b3fc5c48"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.336596122e-05,
+                "total": 0.0003784107394
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "893b01e22765f401093239d3ff10f438b9944c4f23d94ee0a8b4a5c6b29ee645",
+              "log_sha256": "0b5711b9d11020fcb0a403b9fc7d89749ed5ecbd8ac6386caa1fc0646c9f919f"
+            }
+          },
+          "incremental_nj": 13.516238573385243
+        }
+      },
+      "incremental_nj": 13.516238573385243,
+      "vectors_sha256": "f347e02f13a4783fb313b376457b4a7b39dd0641b8b02a65430d2f8b10871a7b",
+      "rtl_log_sha256": "b4d23ab75ddaee60c40cc321ff26b70cebf2a4afbfc2254e2e50593079543cdc"
+    },
+    {
+      "signature": "prefill:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 4,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+      "sample_index": 2,
+      "units": 256,
+      "cycles": 135,
+      "window_ps": 450090,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.00315824151,
+                "switching": 0.002259046538,
+                "leakage": 9.490958473e-05,
+                "total": 0.005512197968
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "95a0fd417426437be71efae20fb43859f16033c15a7de808f95f8c7a20b1fcbe",
+              "log_sha256": "29b1fc284a05dabbfac0cbfdaa852f2a62a73ff7c370593d3eb1e5bee2634108"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.362930723e-05,
+                "total": 0.0003786740708
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "ba2082361521608fa08b495bc6d28470a369fae6750d8bb7f6b627b426cbd488",
+              "log_sha256": "46c11bfd186ed102fb871fadf91251e20e819abe6aa487b29cd843bc1a75173e"
+            }
+          },
+          "incremental_nj": 2.310547770890748
+        }
+      },
+      "incremental_nj": 2.310547770890748,
+      "vectors_sha256": "e141cb7ea13d7b4ac1e32d2128a36e3b0b58991dd268ebbe1b2cd451c3d9950d",
+      "rtl_log_sha256": "68875a91ec12ef048307b7fbedbb204668c0513f0f146bbfdb1ffdde3f005ba5"
+    },
+    {
+      "signature": "prefill:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 4,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+      "sample_index": 3,
+      "units": 256,
+      "cycles": 135,
+      "window_ps": 450090,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003189334646,
+                "switching": 0.002290047705,
+                "leakage": 9.472352394e-05,
+                "total": 0.005574105773
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "0ef43f973b8134ea90d5194b6b135d79374737c45471bb8996db86196d713023",
+              "log_sha256": "5d03eab4edbc1c0a6eb9367c23a89d6cc5cfd052d59e0932d5831266759f37da"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.347218293e-05,
+                "total": 0.0003785169683
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "6596438af9fbfc8c74febc9c9541cf011968c4e7a5f3d58c5a16885b699ba099",
+              "log_sha256": "b9a2684dfb942d69dc911455abb8be77d2350b64fddb035b2797469a11d673cc"
+            }
+          },
+          "incremental_nj": 2.338482565107423
+        }
+      },
+      "incremental_nj": 2.338482565107423,
+      "vectors_sha256": "005722abb5ca00b4bc0268ca471728189543651aced67cb5f39f1ff2815c2fe0",
+      "rtl_log_sha256": "04d8fe94e38caac75c71b6e85653f78f2cb3abf2552242b2e4e594cae349aedd"
+    },
+    {
+      "signature": "first_token:site2:words640:eps4295:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 0,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 0,
+      "units": 2560,
+      "cycles": 1283,
+      "window_ps": 4277522,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002031567739,
+                "switching": 0.001371482969,
+                "leakage": 9.391529602e-05,
+                "total": 0.003496966092
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "9bffe4bb9f7aa4738de3a3b1ebde148dce92fe9821c44cb67a952da9460d221c",
+              "log_sha256": "9e6568c8b4d99c8c7f2013971640c11f697293fd65eb875b781b111bec79967f"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.358402895e-05,
+                "total": 0.0003786288144
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "047c9da936c28a338f388c33f9af0e410fa763df98cb9d08905f81370a3e2568",
+              "log_sha256": "9ceb0a774b52191eb3de6b192bac30cf15c74424dd2e2208b637f029dff07597"
+            }
+          },
+          "incremental_nj": 13.338756308354107
+        }
+      },
+      "incremental_nj": 13.338756308354107,
+      "vectors_sha256": "74fb5e5a70479e1e8e5721c9d7049d36f87cd0d11d3b348f3d971e0b597586a5",
+      "rtl_log_sha256": "96257dbdb05d0a8fce9500c9f7ca28c308df5f710ac3b7933f0ed01f07040198"
+    },
+    {
+      "signature": "first_token:site2:words640:eps4295:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 3,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 1,
+      "units": 2560,
+      "cycles": 1286,
+      "window_ps": 4287524,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002028210787,
+                "switching": 0.001368536963,
+                "leakage": 9.398964903e-05,
+                "total": 0.003490737174
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "ce0cea7332b87c9bbebae975f23f59f8f80b95d3f9a4492053f976655f0bb024",
+              "log_sha256": "f96eb0240a260e8111ad45cb48af9948e5b0ed690f69c7c1dcdb9d90f3142aa4"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.388663602e-05,
+                "total": 0.0003789314069
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "c31cbd400757810a3dd9a3dbe8c66a3e85c02953a202cfc2eab716b563dd2655",
+              "log_sha256": "90e5cfd91cf8d3a22f7a3d07ab072ddb1ec9bacb79e22a007185058222c723fa"
+            }
+          },
+          "incremental_nj": 13.34194190977966
+        }
+      },
+      "incremental_nj": 13.34194190977966,
+      "vectors_sha256": "931ae9b29f2c105dd5063c8e45dfd95b885fea3e1e5072959b423c0a60a757a4",
+      "rtl_log_sha256": "b7b309c491324824a025cb638a57c64ae398ee3989858b394b2cb4e396abc1c3"
+    },
+    {
+      "signature": "first_token:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 3,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 2,
+      "units": 256,
+      "cycles": 134,
+      "window_ps": 446756,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003112274688,
+                "switching": 0.002226787386,
+                "leakage": 9.486236377e-05,
+                "total": 0.005433924031
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "3ac229aa84af9447b58f89e8567492c8ebe1e831555767e447ed789102c7e13e",
+              "log_sha256": "4a2297e63f5f4d1b51e47c519e291fb4cd499096036b7ea8572b752366c8f24a"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.398008842e-05,
+                "total": 0.0003790248593
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "893618213143028d009b650e38d31f77fea682e5d9e014d16930cd08ea82856a",
+              "log_sha256": "5941f83a59cc458fb97650df4bcaf1fd9c35a5b2cdbf4f601c22d556c69a5050"
+            }
+          },
+          "incremental_nj": 2.258306534352005
+        }
+      },
+      "incremental_nj": 2.258306534352005,
+      "vectors_sha256": "9f1d9b5d8781512652d0e405bae025c4bad1704e6db4d6adc7f5d8686d378ebb",
+      "rtl_log_sha256": "0abe7d060f1427b37af6faee322b9f89b9e7885a0d8c92c0c06be6a4fc949c24"
+    },
+    {
+      "signature": "first_token:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 4,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 3,
+      "units": 256,
+      "cycles": 135,
+      "window_ps": 450090,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003148854012,
+                "switching": 0.002253213432,
+                "leakage": 9.492941899e-05,
+                "total": 0.005496996921
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "a2de73dc9bff15b2120082e1e08465e2edc36b0ef466e599819eed53b2a113cf",
+              "log_sha256": "6129f431964c3755bb72677872e13d45461f279136670dc5dc6cd6398b16f48f"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.400243289e-05,
+                "total": 0.000379047211
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "04cc2d5acf74448ca57d92c24207127239cc50a517084f580ceda1083f2bc35d",
+              "log_sha256": "7b6680cf2d2999398c77a64d853cace71485e8a73d9d1c24fb491b2b73757b1c"
+            }
+          },
+          "incremental_nj": 2.3035379849739
+        }
+      },
+      "incremental_nj": 2.3035379849739,
+      "vectors_sha256": "cafaf0573344d99d08df74ea56ecc4dfae3f8751fe89c7fb8af38e2ae48317e8",
+      "rtl_log_sha256": "dae1409d584276fd38232a1602a4c1c5309c2c1c380172c6f2492d78f76be581"
+    },
+    {
+      "signature": "decode:site2:words640:eps4295:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 0,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 4,
+      "units": 2560,
+      "cycles": 1283,
+      "window_ps": 4277522,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002023162553,
+                "switching": 0.001366646611,
+                "leakage": 9.390588093e-05,
+                "total": 0.003483715234
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "ce28cceb5c5a42b9d53b571a3fccebead12d050697c189b1e8d014669bba8802",
+              "log_sha256": "dcc80ebc1bb004b9ec39e4755d267f8e64fafe385388b3c1285a549c6e01c5d5"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.416838293e-05,
+                "total": 0.0003792131611
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "f02074889aa143c1749882c7b49851620102717e25d4cb3947ef4307b0080bd2",
+              "log_sha256": "3892f8a262e9213fbdddb3f6f3ab71b5bfb72037769caa1d93fe130641568d74"
+            }
+          },
+          "incremental_nj": 13.279575915875354
+        }
+      },
+      "incremental_nj": 13.279575915875354,
+      "vectors_sha256": "ad0cd257dd0204fc9c418ccfdc606773c776e537a4e8c5641c97748af9f18ece",
+      "rtl_log_sha256": "839e2b207d388cc03498e4b29352ab7e9c953345184fe09d27a512c7dd960134"
+    },
+    {
+      "signature": "decode:site2:words640:eps4295:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 3,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 5,
+      "units": 2560,
+      "cycles": 1286,
+      "window_ps": 4287524,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002025072463,
+                "switching": 0.001366346609,
+                "leakage": 9.398220573e-05,
+                "total": 0.003485401161
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "10df55d5eda0834b785f8b85247349f0d5fb1f632abf7886a62a8f93765805d6",
+              "log_sha256": "879731b9f13b7036a203fb16fe1b44ba4cb30461e488187238d0b5ac6c81b097"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.368855535e-05,
+                "total": 0.0003787333262
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "245c365859879dfbb8605c0562ace4231466e47738a7352ff2ad9a8947c247a3",
+              "log_sha256": "c8158704f05d87fc41e88cd98156db2c7f16daf81495ca06a8c5bb532463fbe9"
+            }
+          },
+          "incremental_nj": 13.319912901733037
+        }
+      },
+      "incremental_nj": 13.319912901733037,
+      "vectors_sha256": "8cf31e40184611dce1e8e4191d066ef1f6b0917f8d4eb43127402128a57758b5",
+      "rtl_log_sha256": "ba4b54ee880784958ac7513d738e186819b49b32f8f6fa1f982e4c0527f5fbf4"
+    },
+    {
+      "signature": "decode:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 3,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 6,
+      "units": 256,
+      "cycles": 134,
+      "window_ps": 446756,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003148560645,
+                "switching": 0.002254102146,
+                "leakage": 9.484665497e-05,
+                "total": 0.005497509614
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "8aff8d2e64ba0de2c6aeb6ec94150f37efa53ebf0bcbeb5c47b940f597cafbe4",
+              "log_sha256": "61534ef5e1dcb5ad6c2cfc34c24e509b4ca00c92ab77a8bd803ec1bd8905e9d7"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.373957437e-05,
+                "total": 0.0003787843452
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "84429d21a1b52e0b066e97767c33e20c15fbe77cb100f8b91d7db25c8f46a449",
+              "log_sha256": "0206a0d6d3cdb162c09cb687639bf4f326c80dc6636215bb610660ec0ee098d0"
+            }
+          },
+          "incremental_nj": 2.286821226188013
+        }
+      },
+      "incremental_nj": 2.286821226188013,
+      "vectors_sha256": "a406b06a2343363ea312197bd7b0e33852e6d71801aaa314c9d011d99f4c115b",
+      "rtl_log_sha256": "49139ee94448f847bb2c977041e701e6ee484289d4e91e27d7d51f56d77695c1"
+    },
+    {
+      "signature": "decode:site0:words64:eps4295:shift0:out0",
+      "shape": {
+        "words": 64,
+        "shift": 0,
+        "extra": 4,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+      "sample_index": 7,
+      "units": 256,
+      "cycles": 135,
+      "window_ps": 450090,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.003092748346,
+                "switching": 0.00221518334,
+                "leakage": 9.4827461e-05,
+                "total": 0.005402758718
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "fb5521b0e8f373fbfbe3c5a6c98b25c00307d4e695113c4ccf2cc7ee279b6138",
+              "log_sha256": "cc52a19841a3f5bf44bc5d26250101d2128e05de098a30b70ccb8294b60ec8c9"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.382343706e-05,
+                "total": 0.0003788682225
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "443e66e5feac280f2d4968432c3438f875c54451b166823d9901a647a3c3b213",
+              "log_sha256": "6b8affe7a7c6bf36c8e52c3a4bd3643422b7be6571baeae44e4689a798b44d8a"
+            }
+          },
+          "incremental_nj": 2.2612028731195952
+        }
+      },
+      "incremental_nj": 2.2612028731195952,
+      "vectors_sha256": "c6086c51eea3f81657b00aaf14aa78106fcaf777651f8f9c4bcf468416ccba2d",
+      "rtl_log_sha256": "853c71c3f917a7ff98e754805ceab480dfd6169dc3c29890c695a5d7007b4476"
+    },
+    {
+      "signature": "prefill:site2:words640:eps42950:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 5,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json",
+      "sample_index": 0,
+      "units": 2560,
+      "cycles": 1288,
+      "window_ps": 4294192,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002022983273,
+                "switching": 0.001365527278,
+                "leakage": 9.398706607e-05,
+                "total": 0.00348249753
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "f404e3ae513b98d8c802087a3298ec7b83063d1acab40dff165e44325b20f1f1",
+              "log_sha256": "a62a8733ae4aa33123fa07526178050ccd04dfa7338845cddce4d87bc090ffca"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.30405804e-05,
+                "total": 0.0003780853585
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "a12e1f3133f480eac2c29379ea24691901e54a6d40d8d4fc96366ad88a289734",
+              "log_sha256": "0ad76548f6b8f50ea2c33be0ff914615c4697e9506979304aeb9c8f48e23bbcd"
+            }
+          },
+          "incremental_nj": 13.330941911557927
+        }
+      },
+      "incremental_nj": 13.330941911557927,
+      "vectors_sha256": "e2ce715d369ca243084a98b85e8c56c84c61918dc095ab194eb6836bbbc5bf61",
+      "rtl_log_sha256": "173ae73560add64569efc1aeec9948013042e6d3af2d02fc6a85ae7749d23075"
+    },
+    {
+      "signature": "prefill:site2:words640:eps42950:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 6,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json",
+      "sample_index": 1,
+      "units": 2560,
+      "cycles": 1289,
+      "window_ps": 4297526,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002019754611,
+                "switching": 0.001363044721,
+                "leakage": 9.399045666e-05,
+                "total": 0.003476789687
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "24cb63a38113911b1a0ca1f703157a8847a10f6ac1ffeb1bff3770ed3e2a34e1",
+              "log_sha256": "b3a16a1cfeb43ec6a4630e4b405d7590bf7b7993afaae72c82850068d03fbfb7"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.308032895e-05,
+                "total": 0.0003781251144
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "c158ec2590d9648b11279b87164e26ae87a79eb744e3efef38e1651fe41edf72",
+              "log_sha256": "dad410e4ef67201063015a0dcebccd50daca495439faadc55610305f6278763b"
+            }
+          },
+          "incremental_nj": 13.316591566027387
+        }
+      },
+      "incremental_nj": 13.316591566027387,
+      "vectors_sha256": "41c07ec9995485a7fdfc936af55a902e4a30749ed9af9874498fa60bcc9e829f",
+      "rtl_log_sha256": "63c105a44891d3ccea98144d17114555031d93832885d863b71863deb8fff2f3"
+    },
+    {
+      "signature": "first_token:site2:words640:eps42950:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 5,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+      "sample_index": 0,
+      "units": 2560,
+      "cycles": 1288,
+      "window_ps": 4294192,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002024070593,
+                "switching": 0.001365295029,
+                "leakage": 9.400628915e-05,
+                "total": 0.003483371809
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "ca1ce859ff9f83c9227393f1673886c40991462f07b086b11d9c7612e014e7f1",
+              "log_sha256": "eecfe8b6da7e6f996f1dfd4b055b49bc21701fe51e5657ab1735dfd82f53f1ed"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.32288167e-05,
+                "total": 0.0003782736021
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "5e2c0cafd0e18298465eb663754a2c98a7c67a73c39762ed54f85461322f3cbd",
+              "log_sha256": "5bda49ec308918e415da472aac60de279d7d88bb2030b770b97f082c60881890"
+            }
+          },
+          "incremental_nj": 13.333887879284326
+        }
+      },
+      "incremental_nj": 13.333887879284326,
+      "vectors_sha256": "6326d895b988b0e7601f8806d7d693ffb8225d73dc7fdb50b8f53d627a8e4f76",
+      "rtl_log_sha256": "62786da6a15376a1495b71cbcc74383285e0afd930e76a1b8bae9f76fb1aaff1"
+    },
+    {
+      "signature": "first_token:site2:words640:eps42950:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 6,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+      "sample_index": 1,
+      "units": 2560,
+      "cycles": 1289,
+      "window_ps": 4297526,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002028917195,
+                "switching": 0.001367762219,
+                "leakage": 9.399747796e-05,
+                "total": 0.003490676871
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "9817b849215e1179a500cfd856d27551f02fd05fba1398ddf04b1f37541b8b34",
+              "log_sha256": "2e1b664ef692145b4b0286930c2a4644e7a68c531d29df83eb8d42a9105c451c"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.320759273e-05,
+                "total": 0.0003782523563
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "384fdcbf2bcf3df17b439db5ce32b663b1f587866ec325e3f535e2d8de71b62c",
+              "log_sha256": "14a7b77d2b4d99ec62de2e8837adf85eaef59a84d0f320fc899657b9db137ba1"
+            }
+          },
+          "incremental_nj": 13.375725274960633
+        }
+      },
+      "incremental_nj": 13.375725274960633,
+      "vectors_sha256": "0c8d98c26eaf25900a3939e0741c821a32f44fd1073e5252b3cab822fb2fa55b",
+      "rtl_log_sha256": "f2f4f90d0e6d482c9f3e0b787be907afd444238ff523ac885959dc63593d6800"
+    },
+    {
+      "signature": "decode:site2:words640:eps42950:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 5,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+      "sample_index": 2,
+      "units": 2560,
+      "cycles": 1288,
+      "window_ps": 4294192,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002017602557,
+                "switching": 0.001360820956,
+                "leakage": 9.400548151e-05,
+                "total": 0.003472428769
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "7976ae129e3dd3823b16104287b72a1282fbab2e65b9f968ce2ce83b893f13c4",
+              "log_sha256": "ac664e8412e3192cf838eef54ec6bce5bbcfdab3ca35c8ac16b754a63dd31a5a"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.326781583e-05,
+                "total": 0.0003783126012
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "4d08987c68652d50d91050c38ebb4872414b7dda21821f5a4aee705598df4de8",
+              "log_sha256": "5854a105b8af84c7d34f83a98199bceed2bbb55d538ee550299b9ae19b173398"
+            }
+          },
+          "incremental_nj": 13.286728894837417
+        }
+      },
+      "incremental_nj": 13.286728894837417,
+      "vectors_sha256": "0af52de9b49001f6eba61687600a30e70139e456c95f0c2db6cd707998ab65ec",
+      "rtl_log_sha256": "36459c657b12cc71fa6cafdc18b3f7a8b5c9672da1e4fff3f865622e2bde8cff"
+    },
+    {
+      "signature": "decode:site2:words640:eps42950:shift0:out0",
+      "shape": {
+        "words": 640,
+        "shift": 0,
+        "extra": 6,
+        "output_shift": 0
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+      "sample_index": 3,
+      "units": 2560,
+      "cycles": 1289,
+      "window_ps": 4297526,
+      "components": {
+        "dut": {
+          "top": "s32_rms_range_scan",
+          "netlist_sha256": "12e5c826d7a2aa5a4354ba29da780cb0d31c9b8755ebdca2df7145d76a67f609",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.002020565793,
+                "switching": 0.001363471849,
+                "leakage": 9.398532711e-05,
+                "total": 0.003478022991
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "c20588daa6c6f56641907d0190d1fd632d7a1a56856a8b0f31a04c88506fab0e",
+              "log_sha256": "56ffa88c1b5459b00903eee8388155a6072ebbaebfdacb72348cf28882dc5cb3"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.0002850447781,
+                "switching": 0.0,
+                "leakage": 9.27203364e-05,
+                "total": 0.0003777651
+              },
+              "annotation_bits": 255,
+              "required_boundary_bits": 255,
+              "vcd_sha256": "5dda0992b4706343602e9fa8cdcbc717400a79cbaa3a15c324b024fbdefa5629",
+              "log_sha256": "e96c45f0092270f671e942bb567a26965adf7eb5721cee2ff4a4e4c33fea42ed"
+            }
+          },
+          "incremental_nj": 13.323438893277666
+        }
+      },
+      "incremental_nj": 13.323438893277666,
+      "vectors_sha256": "37e204fe6539cac5205a2c886ccb60b76ee30b9e9a011f2c9bd6caeab82cf54b",
+      "rtl_log_sha256": "46180dbb4ed15b3de75dc84d2ebd2e8c9aa916ff1d2615d54208f98d71fe49b8"
+    }
+  ],
+  "excluded_samples": []
+}

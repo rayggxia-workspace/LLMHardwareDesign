@@ -1,0 +1,741 @@
+{
+  "model": "qwen35",
+  "phase": "decode",
+  "windows": {
+    "first_token": {
+      "elapsed_ps": 458760850490,
+      "tokens": 1,
+      "removed_proxies": {
+        "proxy_recurrent_factors": {
+          "energy_nj_per_window": [
+            70552.58131009035,
+            875945.7505915018
+          ],
+          "average_power_w": [
+            0.0001537894553005853,
+            0.0019093733688389253
+          ],
+          "energy_mj_per_token": [
+            0.07055258131009035,
+            0.8759457505915018
+          ]
+        },
+        "proxy_conv4": {
+          "energy_nj_per_window": [
+            2694521.8779738992,
+            11162937.889681594
+          ],
+          "average_power_w": [
+            0.00587347825145911,
+            0.024332804069393716
+          ],
+          "energy_mj_per_token": [
+            2.6945218779738993,
+            11.162937889681594
+          ]
+        },
+        "proxy_recurrent_norm_gate": {
+          "energy_nj_per_window": [
+            4399972.845150539,
+            47110526.18836112
+          ],
+          "average_power_w": [
+            0.009590994611791637,
+            0.10269081622383999
+          ],
+          "energy_mj_per_token": [
+            4.399972845150539,
+            47.11052618836112
+          ]
+        },
+        "proxy_sigmoid": {
+          "energy_nj_per_window": [
+            1042007.3547336421,
+            13895344.55639169
+          ],
+          "average_power_w": [
+            0.0022713519552086444,
+            0.03028886301337646
+          ],
+          "energy_mj_per_token": [
+            1.0420073547336421,
+            13.89534455639169
+          ]
+        }
+      },
+      "replacement_components": {
+        "proxy_recurrent_factors": {
+          "energy_nj_per_window": [
+            6653.322032341963,
+            27364.949023481124
+          ],
+          "average_power_w": [
+            1.4502811269173438e-05,
+            5.964970418520405e-05
+          ],
+          "energy_mj_per_token": [
+            0.006653322032341963,
+            0.027364949023481123
+          ]
+        },
+        "proxy_conv4": {
+          "energy_nj_per_window": [
+            77576.98247418323,
+            310307.9298967329
+          ],
+          "average_power_w": [
+            0.00016910113927839237,
+            0.0006764045571135695
+          ],
+          "energy_mj_per_token": [
+            0.07757698247418322,
+            0.3103079298967329
+          ]
+        },
+        "proxy_recurrent_norm_gate": {
+          "energy_nj_per_window": [
+            1666132.15027346,
+            7041324.2937047
+          ],
+          "average_power_w": [
+            0.0036318097947849585,
+            0.015348572761132296
+          ],
+          "energy_mj_per_token": [
+            1.66613215027346,
+            7.0413242937047
+          ]
+        },
+        "proxy_sigmoid": {
+          "energy_nj_per_window": [
+            116699.72288864711,
+            482834.32396233827
+          ],
+          "average_power_w": [
+            0.00025438030024576154,
+            0.0010524749952979325
+          ],
+          "energy_mj_per_token": [
+            0.1166997228886471,
+            0.4828343239623383
+          ]
+        }
+      },
+      "candidate_idle": {
+        "energy_nj_per_window": [
+          5407760.005907097,
+          5420212.440691282
+        ],
+        "average_power_w": [
+          0.011787753903,
+          0.011814897533
+        ],
+        "energy_mj_per_token": [
+          5.407760005907097,
+          5.420212440691282
+        ]
+      },
+      "proposed_special_sites": [
+        0
+      ],
+      "proposed_conv4_sites": [
+        0
+      ],
+      "arithmetic_mapping": [
+        {
+          "signature": "first_token:recurrent_factors:site0:{\"gdn\": true}",
+          "service_calls": 24,
+          "rtl_primitive_calls_per_service": {
+            "exp": 64,
+            "softplus": 32,
+            "sigmoid": 32
+          },
+          "measured_candidate_dynamic_nj": 2452.4007862084864,
+          "residual_arithmetic_per_service": [
+            64,
+            64,
+            0,
+            0
+          ],
+          "residual_is_operation_proxy": true
+        },
+        {
+          "signature": "first_token:conv4:site0:{\"channels\": 128, \"gdn\": true}",
+          "service_calls": 1536,
+          "rtl_primitive_calls_per_service": {
+            "conv4": 128
+          },
+          "measured_candidate_dynamic_nj": 155153.96494836645,
+          "residual_arithmetic_per_service": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "residual_is_operation_proxy": true
+        },
+        {
+          "signature": "first_token:recurrent_norm_gate:site0:{\"gdn\": true}",
+          "service_calls": 24,
+          "rtl_primitive_calls_per_service": {
+            "sigmoid": 4096
+          },
+          "measured_candidate_dynamic_nj": 89691.16882526742,
+          "residual_arithmetic_per_service": [
+            20480,
+            8192,
+            0,
+            32
+          ],
+          "residual_is_operation_proxy": true
+        },
+        {
+          "signature": "first_token:sigmoid:site0:{\"elements\": 4, \"gain\": 65536}",
+          "service_calls": 8192,
+          "rtl_primitive_calls_per_service": {
+            "sigmoid": 4
+          },
+          "measured_candidate_dynamic_nj": 29897.05627508914,
+          "residual_arithmetic_per_service": [
+            4,
+            0,
+            0,
+            0
+          ],
+          "residual_is_operation_proxy": true
+        }
+      ],
+      "estimated_on_chip": {
+        "energy_nj_per_window": [
+          715090785.0308486,
+          1295846871.4388292
+        ],
+        "average_power_w": [
+          1.5587441349170577,
+          2.8246675147950007
+        ],
+        "energy_mj_per_token": [
+          715.0907850308487,
+          1295.846871438829
+        ]
+      },
+      "estimated_on_chip_plus_ddr": {
+        "energy_nj_per_window": [
+          1964134708.3976965,
+          2544890794.8056774
+        ],
+        "average_power_w": [
+          4.281391287638897,
+          5.54731466751684
+        ],
+        "energy_mj_per_token": [
+          1964.1347083976964,
+          2544.8907948056776
+        ]
+      },
+      "dma_scenarios": {
+        "phase-noshare": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              918767172.1930048,
+              1507235707.615903
+            ],
+            "average_power_w": [
+              2.002714859412425,
+              3.285449719621961
+            ],
+            "energy_mj_per_token": [
+              918.7671721930049,
+              1507.2357076159028
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2167811095.5598526,
+              2756279630.9827514
+            ],
+            "average_power_w": [
+              4.725362012134264,
+              6.008096872343802
+            ],
+            "energy_mj_per_token": [
+              2167.8110955598527,
+              2756.2796309827513
+            ]
+          }
+        },
+        "phase": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              870815273.4770391,
+              1463911992.754481
+            ],
+            "average_power_w": [
+              1.8981900320110705,
+              3.1910133377573184
+            ],
+            "energy_mj_per_token": [
+              870.8152734770391,
+              1463.9119927544812
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2119859196.8438869,
+              2712955916.1213293
+            ],
+            "average_power_w": [
+              4.62083718473291,
+              5.913660490479158
+            ],
+            "energy_mj_per_token": [
+              2119.859196843887,
+              2712.955916121329
+            ]
+          }
+        },
+        "shared-noshare": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              845677491.1081347,
+              1435377604.6037323
+            ],
+            "average_power_w": [
+              1.8433950721925623,
+              3.1288145077563034
+            ],
+            "energy_mj_per_token": [
+              845.6774911081347,
+              1435.3776046037324
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2094721414.4749827,
+              2684421527.9705806
+            ],
+            "average_power_w": [
+              4.566042224914401,
+              5.851461660478143
+            ],
+            "energy_mj_per_token": [
+              2094.721414474983,
+              2684.4215279705804
+            ]
+          }
+        },
+        "shared": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              887989494.5443972,
+              1483504035.1389563
+            ],
+            "average_power_w": [
+              1.9356261407134903,
+              3.2337197769915056
+            ],
+            "energy_mj_per_token": [
+              887.9894945443972,
+              1483.5040351389564
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2137033417.911245,
+              2732547958.5058045
+            ],
+            "average_power_w": [
+              4.65827329343533,
+              5.956366929713346
+            ],
+            "energy_mj_per_token": [
+              2137.033417911245,
+              2732.5479585058047
+            ]
+          }
+        }
+      }
+    },
+    "decode": {
+      "elapsed_ps": 458784338520,
+      "tokens": 1,
+      "removed_proxies": {
+        "proxy_recurrent_factors": {
+          "energy_nj_per_window": [
+            70552.58131009035,
+            875945.7505915018
+          ],
+          "average_power_w": [
+            0.00015378158185976246,
+            0.0019092756161145992
+          ],
+          "energy_mj_per_token": [
+            0.07055258131009035,
+            0.8759457505915018
+          ]
+        },
+        "proxy_conv4": {
+          "energy_nj_per_window": [
+            2694521.8779738992,
+            11162937.889681594
+          ],
+          "average_power_w": [
+            0.00587317755149664,
+            0.02433155832148129
+          ],
+          "energy_mj_per_token": [
+            2.6945218779738993,
+            11.162937889681594
+          ]
+        },
+        "proxy_recurrent_norm_gate": {
+          "energy_nj_per_window": [
+            4399972.845150539,
+            47110526.18836112
+          ],
+          "average_power_w": [
+            0.009590503588994524,
+            0.10268555884086138
+          ],
+          "energy_mj_per_token": [
+            4.399972845150539,
+            47.11052618836112
+          ]
+        },
+        "proxy_sigmoid": {
+          "energy_nj_per_window": [
+            1042007.3547336421,
+            13895344.55639169
+          ],
+          "average_power_w": [
+            0.002271235670544184,
+            0.030287312337681168
+          ],
+          "energy_mj_per_token": [
+            1.0420073547336421,
+            13.89534455639169
+          ]
+        }
+      },
+      "replacement_components": {
+        "proxy_recurrent_factors": {
+          "energy_nj_per_window": [
+            6653.322032341963,
+            27364.949023481124
+          ],
+          "average_power_w": [
+            1.450206877986512e-05,
+            5.9646650345036116e-05
+          ],
+          "energy_mj_per_token": [
+            0.006653322032341963,
+            0.027364949023481123
+          ]
+        },
+        "proxy_conv4": {
+          "energy_nj_per_window": [
+            77576.98247418323,
+            310307.9298967329
+          ],
+          "average_power_w": [
+            0.00016909248193702536,
+            0.0006763699277481014
+          ],
+          "energy_mj_per_token": [
+            0.07757698247418322,
+            0.3103079298967329
+          ]
+        },
+        "proxy_recurrent_norm_gate": {
+          "energy_nj_per_window": [
+            1666132.15027346,
+            7041324.2937047
+          ],
+          "average_power_w": [
+            0.003631623859803635,
+            0.015347786972021374
+          ],
+          "energy_mj_per_token": [
+            1.66613215027346,
+            7.0413242937047
+          ]
+        },
+        "proxy_sigmoid": {
+          "energy_nj_per_window": [
+            116699.72288864711,
+            482834.32396233827
+          ],
+          "average_power_w": [
+            0.00025436727693257943,
+            0.0010524211125425979
+          ],
+          "energy_mj_per_token": [
+            0.1166997228886471,
+            0.4828343239623383
+          ]
+        }
+      },
+      "candidate_idle": {
+        "energy_nj_per_window": [
+          5408036.877024403,
+          5420489.949358985
+        ],
+        "average_power_w": [
+          0.011787753903,
+          0.011814897533
+        ],
+        "energy_mj_per_token": [
+          5.4080368770244025,
+          5.420489949358985
+        ]
+      },
+      "proposed_special_sites": [
+        0
+      ],
+      "proposed_conv4_sites": [
+        0
+      ],
+      "arithmetic_mapping": [
+        {
+          "signature": "decode:recurrent_factors:site0:{\"gdn\": true}",
+          "service_calls": 24,
+          "rtl_primitive_calls_per_service": {
+            "exp": 64,
+            "softplus": 32,
+            "sigmoid": 32
+          },
+          "measured_candidate_dynamic_nj": 2452.4007862084864,
+          "residual_arithmetic_per_service": [
+            64,
+            64,
+            0,
+            0
+          ],
+          "residual_is_operation_proxy": true
+        },
+        {
+          "signature": "decode:conv4:site0:{\"channels\": 128, \"gdn\": true}",
+          "service_calls": 1536,
+          "rtl_primitive_calls_per_service": {
+            "conv4": 128
+          },
+          "measured_candidate_dynamic_nj": 155153.96494836645,
+          "residual_arithmetic_per_service": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "residual_is_operation_proxy": true
+        },
+        {
+          "signature": "decode:recurrent_norm_gate:site0:{\"gdn\": true}",
+          "service_calls": 24,
+          "rtl_primitive_calls_per_service": {
+            "sigmoid": 4096
+          },
+          "measured_candidate_dynamic_nj": 89691.16882526742,
+          "residual_arithmetic_per_service": [
+            20480,
+            8192,
+            0,
+            32
+          ],
+          "residual_is_operation_proxy": true
+        },
+        {
+          "signature": "decode:sigmoid:site0:{\"elements\": 4, \"gain\": 65536}",
+          "service_calls": 8192,
+          "rtl_primitive_calls_per_service": {
+            "sigmoid": 4
+          },
+          "measured_candidate_dynamic_nj": 29897.05627508914,
+          "residual_arithmetic_per_service": [
+            4,
+            0,
+            0,
+            0
+          ],
+          "residual_is_operation_proxy": true
+        }
+      ],
+      "estimated_on_chip": {
+        "energy_nj_per_window": [
+          715125674.5212939,
+          1295887772.6269908
+        ],
+        "average_power_w": [
+          1.558740380781588,
+          2.8246120536882677
+        ],
+        "energy_mj_per_token": [
+          715.1256745212938,
+          1295.8877726269907
+        ]
+      },
+      "estimated_on_chip_plus_ddr": {
+        "energy_nj_per_window": [
+          1964212042.2501578,
+          2544974140.355855
+        ],
+        "average_power_w": [
+          4.281340659069884,
+          5.5472123319765645
+        ],
+        "energy_mj_per_token": [
+          1964.2120422501578,
+          2544.974140355855
+        ]
+      },
+      "dma_scenarios": {
+        "phase-noshare": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              918813121.6364256,
+              1507288093.8597143
+            ],
+            "average_power_w": [
+              2.0027124827330423,
+              3.2853957018718205
+            ],
+            "energy_mj_per_token": [
+              918.8131216364256,
+              1507.2880938597143
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2167899489.3652897,
+              2756374461.5885787
+            ],
+            "average_power_w": [
+              4.725312761021339,
+              6.007995980160118
+            ],
+            "energy_mj_per_token": [
+              2167.89948936529,
+              2756.374461588579
+            ]
+          }
+        },
+        "phase": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              870858598.3529654,
+              1463962009.6424434
+            ],
+            "average_power_w": [
+              1.8981872859092848,
+              3.1909589903723887
+            ],
+            "energy_mj_per_token": [
+              870.8585983529654,
+              1463.9620096424435
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2119944966.0818293,
+              2713048377.371308
+            ],
+            "average_power_w": [
+              4.620787564197581,
+              5.913559268660686
+            ],
+            "energy_mj_per_token": [
+              2119.9449660818295,
+              2713.0483773713077
+            ]
+          }
+        },
+        "shared-noshare": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              845719424.7502668,
+              1435426043.0490184
+            ],
+            "average_power_w": [
+              1.8433920989510826,
+              3.1287599042277314
+            ],
+            "energy_mj_per_token": [
+              845.7194247502667,
+              1435.4260430490183
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2094805792.4791307,
+              2684512410.7778826
+            ],
+            "average_power_w": [
+              4.565992377239379,
+              5.851360182516029
+            ],
+            "energy_mj_per_token": [
+              2094.8057924791306,
+              2684.5124107778825
+            ]
+          }
+        },
+        "shared": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              888033742.4873078,
+              1483555108.4476821
+            ],
+            "average_power_w": [
+              1.9356234900084657,
+              3.233665545849946
+            ],
+            "energy_mj_per_token": [
+              888.0337424873078,
+              1483.5551084476822
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2137120110.2161717,
+              2732641476.176546
+            ],
+            "average_power_w": [
+              4.658223768296762,
+              5.956265824138241
+            ],
+            "energy_mj_per_token": [
+              2137.1201102161717,
+              2732.641476176546
+            ]
+          }
+        }
+      }
+    }
+  },
+  "estimator_sha256": "4f15bd1ae42af3c3c7c65a92b05939a699bb1526b3f26dfdba092a214917250f",
+  "scope": "Conditional candidate replacement scenario, not default accepted model RTL",
+  "target_clock_mhz": 300,
+  "sram_bits": 512,
+  "wire_parasitics_loaded": false,
+  "rtl_full_model_numeric_accepted": false,
+  "physical_binding_accepted": false,
+  "timing_recomputed_for_candidate_service": false,
+  "assumptions": [
+    "Use accepted E32-18 model timing; new candidate service timing is not installed in the model",
+    "One always-clocked candidate per used TLM site is a proposed footprint, not actual physical deployment",
+    "Measured primitive dynamic energy replaces its old proxy exactly once; residual composite arithmetic retains proxies",
+    "0.5x..2x is an assumed transfer sensitivity, not a confidence interval or a measured error bound",
+    "Existing G32, RMS, softmax, RoPE and SRAM work are preserved without adding E32 twice"
+  ],
+  "still_missing": [
+    "FP32 conversions and provider-to-port adapters",
+    "Complete composite multiply/divide/normalization and recurrent state RTL integration",
+    "Actual instantiated topology/gating and full model RTL state residence",
+    "Candidate-cycle and shared-resource model rescheduling; no new throughput acceptance"
+  ],
+  "inputs": {
+    "closure-v5\\timing-ledger\\qwen35-decode.json": "3dd416328171a314b0498a9ca0c9b460d040513b911be41ed4837eaf7033e3d4",
+    "arithmetic-model-counts\\qwen35.json": "fcd3f2f2ff290572c875a6964eebdb3bf5a482e0ee556e3a2dbcc3caaf3e106b",
+    "closure-v5\\special-pin-calibration.json": "aefde778fa8fa4754bb741bf7007f3c31ea7b288c96c6741325465208c07e449",
+    "closure-v5\\conv4-pin-calibration.json": "10626a5f664fab3f5d542cf6260ee432d2fa16ac411554e1754bb4a1f6e8a804"
+  }
+}

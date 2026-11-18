@@ -1,0 +1,2019 @@
+{
+  "created_utc": "2026-11-17T16:50:25.514746+00:00",
+  "passed": true,
+  "scope": "Sampled incremental arithmetic energy only; not full model power or corrected latency",
+  "estimator": "RTL boundary VCD propagation in mapped Nangate45 typical cells, active minus equal-length idle",
+  "system_sram_bits": 512,
+  "nominal_clock_mhz": 300,
+  "wire_parasitics_loaded": false,
+  "timing_signoff": false,
+  "non_additive": [
+    "rms_e32 overlaps provider in apply",
+    "rope wrapper and provider are already summed"
+  ],
+  "remaining": [
+    "all-call workload weighting",
+    "SRAM/wait and idle residency",
+    "TLM/RTL schedule reconciliation",
+    "large RMS apply cross-bank or chunked staging",
+    "model-specific GELU/router/recurrent arithmetic"
+  ],
+  "records": [
+    {
+      "model": "llama",
+      "kind": "rms_e32",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/rms-e32-power-01/power-38830436/calibration.json",
+      "result_sha256": "1eafa435f238a01dbb3f1380f33eb32adfa4d23616408f611b148d11991d042c",
+      "manifest_sha256": "20998e6812ad321c5337ac4cf29542709609ef27382350fc6aea3c6c2110d9fa",
+      "samples": 6,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828362/decode/arithmetic-observation.json",
+          "signature": "decode:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 26153.78759218284,
+          "maximum_nj": 26188.46024052588,
+          "mean_nj": 26171.12391635436,
+          "windows_ps": [
+            61452288
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828362/decode/arithmetic-observation.json",
+          "signature": "first_token:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 26215.12572794896,
+          "maximum_nj": 26265.105019728544,
+          "mean_nj": 26240.11537383875,
+          "windows_ps": [
+            61452288
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828362/prefill/arithmetic-observation.json",
+          "signature": "prefill:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 26032.135648867283,
+          "maximum_nj": 26215.773863694187,
+          "mean_nj": 26123.954756280735,
+          "windows_ps": [
+            61452288
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "8c801bf3cf55815d72e00c7f75ee35bcf677a4fd",
+      "scope": "E32 factor and gamma products only; SRAM/N/scan/apply/wait residency excluded"
+    },
+    {
+      "model": "granite",
+      "kind": "rms_e32",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/rms-e32-power-01/power-38830711/calibration.json",
+      "result_sha256": "15748f05a2c95c11280d9ddd3c06cd18100628bc94562a5dea217bfd3da0ddc3",
+      "manifest_sha256": "f50fbce0ad7d388cf2e7a8c4926e32ad5e480c2734442c37b150e22e1fb7dff8",
+      "samples": 6,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828902/decode/arithmetic-observation.json",
+          "signature": "decode:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 19223.397248682322,
+          "maximum_nj": 19637.170432575003,
+          "mean_nj": 19430.28384062866,
+          "windows_ps": [
+            46089216
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828902/decode/arithmetic-observation.json",
+          "signature": "first_token:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 19527.780778175314,
+          "maximum_nj": 19713.489860320384,
+          "mean_nj": 19620.63531924785,
+          "windows_ps": [
+            46089216
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828902/prefill/arithmetic-observation.json",
+          "signature": "prefill:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 19429.666981547758,
+          "maximum_nj": 19584.07112978199,
+          "mean_nj": 19506.869055664873,
+          "windows_ps": [
+            46089216
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "8c801bf3cf55815d72e00c7f75ee35bcf677a4fd",
+      "scope": "E32 factor and gamma products only; SRAM/N/scan/apply/wait residency excluded"
+    },
+    {
+      "model": "qwen3",
+      "kind": "rms_e32",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/rms-e32-power-01/power-38830712/calibration.json",
+      "result_sha256": "8fa59c9963494e38a7ebafd5ea2625ed4e381b2b4dd65142df2908a275034132",
+      "manifest_sha256": "30bf3eb5b980aee645e0db321db62b57281f05a6bad8c28b8d1b7fcd5a2cb5a6",
+      "samples": 12,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "decode:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 1602.5080726489443,
+          "maximum_nj": 1623.5657133291832,
+          "mean_nj": 1613.0368929890637,
+          "windows_ps": [
+            3840768
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "decode:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 12930.76125327403,
+          "maximum_nj": 13040.342097663428,
+          "mean_nj": 12985.551675468729,
+          "windows_ps": [
+            30726144
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "first_token:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 1618.6215637369912,
+          "maximum_nj": 1624.3333443504484,
+          "mean_nj": 1621.4774540437197,
+          "windows_ps": [
+            3840768
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "first_token:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 12909.807574859205,
+          "maximum_nj": 13065.309338694267,
+          "mean_nj": 12987.558456776736,
+          "windows_ps": [
+            30726144
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/prefill-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "prefill:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 1624.9174529568102,
+          "maximum_nj": 1630.8718234750263,
+          "mean_nj": 1627.8946382159183,
+          "windows_ps": [
+            3840768
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/prefill-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "prefill:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 12853.254211024123,
+          "maximum_nj": 12875.443184896634,
+          "mean_nj": 12864.348697960379,
+          "windows_ps": [
+            30726144
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "8c801bf3cf55815d72e00c7f75ee35bcf677a4fd",
+      "scope": "E32 factor and gamma products only; SRAM/N/scan/apply/wait residency excluded"
+    },
+    {
+      "model": "falcon",
+      "kind": "rms_e32",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/rms-e32-power-01/power-38831450/calibration.json",
+      "result_sha256": "c02ba08da60047a62066df023189f59079a2418b11531f2b6cbdd65b59b167de",
+      "manifest_sha256": "cba36c09cd019fef79f2f6f1fafcd0e5afc1d349f61ee46d10931dc2772c02bc",
+      "samples": 6,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+          "signature": "decode:site2:words640:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 31937.545338637363,
+          "maximum_nj": 32312.793092233976,
+          "mean_nj": 32125.16921543567,
+          "windows_ps": [
+            76815360
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+          "signature": "first_token:site2:words640:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 31818.370202136113,
+          "maximum_nj": 32084.552258314998,
+          "mean_nj": 31951.461230225555,
+          "windows_ps": [
+            76815360
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json",
+          "signature": "prefill:site2:words640:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 32052.16023911378,
+          "maximum_nj": 32147.012870819577,
+          "mean_nj": 32099.586554966678,
+          "windows_ps": [
+            76815360
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "8c801bf3cf55815d72e00c7f75ee35bcf677a4fd",
+      "scope": "E32 factor and gamma products only; SRAM/N/scan/apply/wait residency excluded"
+    },
+    {
+      "model": "qwen35",
+      "kind": "rms_e32",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/rms-e32-power-01/power-38831451/calibration.json",
+      "result_sha256": "12d48ef0610382c88a66f17465f3579dda402d85257400c5897e95cb955c4812",
+      "manifest_sha256": "9a47ce7af2d34b419901bfbcd3b3ff6d9ec082f059e8625303f1676879f2f5fd",
+      "samples": 12,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "signature": "decode:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3227.2329334745505,
+          "maximum_nj": 3239.534358003498,
+          "mean_nj": 3233.3836457390244,
+          "windows_ps": [
+            7681536
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "signature": "decode:site2:words640:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 32069.02733735008,
+          "maximum_nj": 32679.783852554145,
+          "mean_nj": 32374.405594952113,
+          "windows_ps": [
+            76815360
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "signature": "first_token:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3243.294494456413,
+          "maximum_nj": 3243.8070633816988,
+          "mean_nj": 3243.550778919056,
+          "windows_ps": [
+            7681536
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "signature": "first_token:site2:words640:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 32170.522397103035,
+          "maximum_nj": 32220.637475240863,
+          "mean_nj": 32195.579936171947,
+          "windows_ps": [
+            76815360
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+          "signature": "prefill:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3241.961678058435,
+          "maximum_nj": 3259.8026937400737,
+          "mean_nj": 3250.882185899254,
+          "windows_ps": [
+            7681536
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+          "signature": "prefill:site2:words640:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 32144.788644661694,
+          "maximum_nj": 32393.624337055135,
+          "mean_nj": 32269.206490858414,
+          "windows_ps": [
+            76815360
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "8c801bf3cf55815d72e00c7f75ee35bcf677a4fd",
+      "scope": "E32 factor and gamma products only; SRAM/N/scan/apply/wait residency excluded"
+    },
+    {
+      "model": "phi",
+      "kind": "rms_e32",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/rms-e32-power-01/power-38831452/calibration.json",
+      "result_sha256": "003aad07f6e0ab5f3ae8986cf5166feaa5a8e39f4ccfe5acd4acced722b6c467",
+      "manifest_sha256": "b20258d031b0d5b3956832f44036ca210619a8f8d3a7cc3caa3b0a548c8dbbae",
+      "samples": 6,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+          "signature": "decode:site2:words768:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 38375.17524132227,
+          "maximum_nj": 38873.743269314895,
+          "mean_nj": 38624.45925531858,
+          "windows_ps": [
+            92178432
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+          "signature": "first_token:site2:words768:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 38156.69803166345,
+          "maximum_nj": 38318.881024858296,
+          "mean_nj": 38237.78952826087,
+          "windows_ps": [
+            92178432
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json",
+          "signature": "prefill:site2:words768:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 38413.415307134135,
+          "maximum_nj": 38435.416481646935,
+          "mean_nj": 38424.415894390535,
+          "windows_ps": [
+            92178432
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "8c801bf3cf55815d72e00c7f75ee35bcf677a4fd",
+      "scope": "E32 factor and gamma products only; SRAM/N/scan/apply/wait residency excluded"
+    },
+    {
+      "model": "gemma",
+      "kind": "rms_e32",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/rms-e32-power-01/power-38831453/calibration.json",
+      "result_sha256": "1f3d05752f8f8de98e810456402ec71e5a90b141766d985b149c3a0c9af3b7e9",
+      "manifest_sha256": "5342b51a63168490f6fadb0acd4d6da54edd08ce533182450b110b150786e51e",
+      "samples": 18,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "decode:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3201.1931846576886,
+          "maximum_nj": 3219.386031787226,
+          "mean_nj": 3210.289608222457,
+          "windows_ps": [
+            7681536
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "decode:site2:words640:eps4295:shift0:out4",
+          "samples": 2,
+          "minimum_nj": 32539.180826723976,
+          "maximum_nj": 32789.020722093854,
+          "mean_nj": 32664.100774408915,
+          "windows_ps": [
+            76815360
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "decode:site2:words640:eps4295:shift4:out0",
+          "samples": 2,
+          "minimum_nj": 32559.44910730712,
+          "maximum_nj": 32834.28455589842,
+          "mean_nj": 32696.86683160277,
+          "windows_ps": [
+            76815360
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "first_token:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3181.661996001049,
+          "maximum_nj": 3188.583363557441,
+          "mean_nj": 3185.122679779245,
+          "windows_ps": [
+            7681536
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "first_token:site2:words640:eps4295:shift0:out4",
+          "samples": 2,
+          "minimum_nj": 32783.13524113063,
+          "maximum_nj": 32872.62508506294,
+          "mean_nj": 32827.88016309678,
+          "windows_ps": [
+            76815360
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "first_token:site2:words640:eps4295:shift4:out0",
+          "samples": 2,
+          "minimum_nj": 32407.358758039663,
+          "maximum_nj": 32775.706560401966,
+          "mean_nj": 32591.532659220815,
+          "windows_ps": [
+            76815360
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+          "signature": "prefill:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3231.312015098945,
+          "maximum_nj": 3240.5087546153723,
+          "mean_nj": 3235.9103848571585,
+          "windows_ps": [
+            7681536
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+          "signature": "prefill:site2:words640:eps4295:shift0:out4",
+          "samples": 2,
+          "minimum_nj": 32593.64041278324,
+          "maximum_nj": 33050.016516575,
+          "mean_nj": 32821.82846467912,
+          "windows_ps": [
+            76815360
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+          "signature": "prefill:site2:words640:eps4295:shift4:out0",
+          "samples": 2,
+          "minimum_nj": 32450.58716263179,
+          "maximum_nj": 32557.712534474802,
+          "mean_nj": 32504.149848553294,
+          "windows_ps": [
+            76815360
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "8c801bf3cf55815d72e00c7f75ee35bcf677a4fd",
+      "scope": "E32 factor and gamma products only; SRAM/N/scan/apply/wait residency excluded"
+    },
+    {
+      "model": "llama",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38828633/calibration.json",
+      "result_sha256": "96ae358f2a7703056ea85d9200e4e48338c8fda821c7a0513f465844bcf5f59d",
+      "manifest_sha256": "6336161a4a2eb649466bc3d59429c2edbf153560dea5f514bc35289d4ab173ee",
+      "samples": 2,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "prefill:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 299.4290795410315,
+          "maximum_nj": 301.1448503044058,
+          "mean_nj": 300.28696492271865,
+          "windows_ps": [
+            10816667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "llama",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38828634/calibration.json",
+      "result_sha256": "6f26c3b9004305dfb3f77e40612c5f85946b82daa7bb672209f200fb27f6f684",
+      "manifest_sha256": "548d6e8fdd6ef49cda5fc25e8f8af24395aecb47cc92abf5305547a65c3b54ad",
+      "samples": 4,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "decode:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 292.83512868332804,
+          "maximum_nj": 300.20254640736715,
+          "mean_nj": 296.5188375453476,
+          "windows_ps": [
+            10816667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "first_token:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 292.0875313904563,
+          "maximum_nj": 301.024649551535,
+          "mean_nj": 296.5560904709956,
+          "windows_ps": [
+            10816667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "granite",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38828998/calibration.json",
+      "result_sha256": "dc42ceadf51027cd9fb771ae9b9f26f52effdc4d3725e6a9ebacb8d7c195b79d",
+      "manifest_sha256": "c709c40d838de39de8b69028eefe9e2bc6f2891c183c46b7b61736bdb4434cf3",
+      "samples": 2,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "prefill:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 227.50733816893992,
+          "maximum_nj": 239.90688179706038,
+          "mean_nj": 233.70710998300015,
+          "windows_ps": [
+            8256667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "granite",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38828999/calibration.json",
+      "result_sha256": "916d2296d7865bd39f1f8c841120a25e89e993b5893f241e65adc24a42758f9e",
+      "manifest_sha256": "ce177b8efaec0c356ff602ba14a3ad19e417d9d69f105a97adfe62ae54ab42c7",
+      "samples": 4,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "decode:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 231.8906063356987,
+          "maximum_nj": 240.78900428333958,
+          "mean_nj": 236.33980530951914,
+          "windows_ps": [
+            8256667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "first_token:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 233.08566566617822,
+          "maximum_nj": 241.46372234954558,
+          "mean_nj": 237.2746940078619,
+          "windows_ps": [
+            8256667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "qwen3",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38829008/calibration.json",
+      "result_sha256": "4415272fcc10a3d05ca0858209dcbcc06a0575c528c9c572f9b9bd32e21fb433",
+      "manifest_sha256": "dd9d8b662cfa5ae8cf9293adf62b3779a271181f66b66bf574a3d4f166d6f311",
+      "samples": 4,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "prefill:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 31.97207212056942,
+          "maximum_nj": 32.04858873403286,
+          "mean_nj": 32.01033042730114,
+          "windows_ps": [
+            1216667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "prefill:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 165.82062558734617,
+          "maximum_nj": 175.17325783500374,
+          "mean_nj": 170.49694171117494,
+          "windows_ps": [
+            5696667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "qwen3",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38829009/calibration.json",
+      "result_sha256": "6311530329686a08505b2e0970bc44369e82d9161812d731c324196659f9d0e8",
+      "manifest_sha256": "720447a3908a8d825ec7e6bf1eaf6dd1f0e58a4d2ef6a50df401b71aa475daed",
+      "samples": 8,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "decode:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 31.959739363357247,
+          "maximum_nj": 31.967585016173402,
+          "mean_nj": 31.963662189765323,
+          "windows_ps": [
+            1216667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "decode:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 165.398801067997,
+          "maximum_nj": 176.00969141831328,
+          "mean_nj": 170.70424624315513,
+          "windows_ps": [
+            5696667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "first_token:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 31.997159161442575,
+          "maximum_nj": 32.02037884963747,
+          "mean_nj": 32.00876900554002,
+          "windows_ps": [
+            1216667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "first_token:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 164.57605549312171,
+          "maximum_nj": 175.01494369927352,
+          "mean_nj": 169.7954995961976,
+          "windows_ps": [
+            5696667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "falcon",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38829006/calibration.json",
+      "result_sha256": "d99a6f9830aee7ce6933a867cb20b492b01691579dc3d825d0038eafc259e732",
+      "manifest_sha256": "a25eb355edc1a752092765249f39e87fd939602d023bc5a631d7d3ee7466a6bb",
+      "samples": 2,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "prefill:site2:words640:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 366.39973390247286,
+          "maximum_nj": 366.86925063363947,
+          "mean_nj": 366.6344922680562,
+          "windows_ps": [
+            13376667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "falcon",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38829007/calibration.json",
+      "result_sha256": "2a326ff8ed33eed4feb7ca70c056f3f5a4acf94415facbe38d7fc475abf610bf",
+      "manifest_sha256": "1ed371d486dce88b18a23e4f04dc520d4f20ef864ae6f61e0dd3cccf43138f23",
+      "samples": 4,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "decode:site2:words640:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 366.02185804158995,
+          "maximum_nj": 366.7934064031828,
+          "mean_nj": 366.4076322223864,
+          "windows_ps": [
+            13376667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "first_token:site2:words640:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 366.7878751513784,
+          "maximum_nj": 367.4879145265226,
+          "mean_nj": 367.1378948389505,
+          "windows_ps": [
+            13376667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "qwen35",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38829004/calibration.json",
+      "result_sha256": "88a3a10a2b85633650406c7757aef221517e4aa5a5cd935a5d5ad5feb50816ed",
+      "manifest_sha256": "63f706ed1c6167e0a93d9d21545afb07546e3350b73f772a9f3457664c00245a",
+      "samples": 4,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "prefill:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 57.86390901267168,
+          "maximum_nj": 58.584482867871934,
+          "mean_nj": 58.224195940271805,
+          "windows_ps": [
+            1856667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "prefill:site2:words640:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 362.4504507466273,
+          "maximum_nj": 367.62704537375635,
+          "mean_nj": 365.03874806019184,
+          "windows_ps": [
+            13376667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "qwen35",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38829005/calibration.json",
+      "result_sha256": "f703a0f1a074cf890e0fe4561fa2e6b49a433b615d873d0dcce0bafbf9f94307",
+      "manifest_sha256": "0bf3f2ea701f403bcdbb7186ea2821e1c7655895f044c963dec204e9e4d2a2da",
+      "samples": 8,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "decode:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 58.15346655439019,
+          "maximum_nj": 58.69567449556783,
+          "mean_nj": 58.42457052497901,
+          "windows_ps": [
+            1856667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "decode:site2:words640:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 362.3593579183908,
+          "maximum_nj": 366.5597941504281,
+          "mean_nj": 364.45957603440945,
+          "windows_ps": [
+            13376667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "first_token:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 58.51987468100593,
+          "maximum_nj": 58.616230165438296,
+          "mean_nj": 58.56805242322211,
+          "windows_ps": [
+            1856667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "first_token:site2:words640:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 362.0710800432071,
+          "maximum_nj": 366.91250488898396,
+          "mean_nj": 364.4917924660955,
+          "windows_ps": [
+            13376667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "phi",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38829000/calibration.json",
+      "result_sha256": "45f693011c54ef6cf21a857650417ae564a332e473b9dbb1680578ce3ac6a23f",
+      "manifest_sha256": "c350d89780014a6a24ef1798e0dcb0bedad263068bbaeec35a9dbaa4ab4f7518",
+      "samples": 2,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "prefill:site2:words768:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 402.89919665816365,
+          "maximum_nj": 417.98258948641654,
+          "mean_nj": 410.4408930722901,
+          "windows_ps": [
+            15936667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "phi",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38829001/calibration.json",
+      "result_sha256": "48e8a27cb74c10a9da202d6eaad40f5858f1c3a978c9b8d08ed42d2a213beddf",
+      "manifest_sha256": "4bf4482fefeb721b4b0b402387b5a80eb2ee370e30292481094f0419744eecdf",
+      "samples": 4,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "decode:site2:words768:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 400.4818809348028,
+          "maximum_nj": 417.8920523249894,
+          "mean_nj": 409.1869666298961,
+          "windows_ps": [
+            15936667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "first_token:site2:words768:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 401.1422390432815,
+          "maximum_nj": 417.3145728532441,
+          "mean_nj": 409.2284059482628,
+          "windows_ps": [
+            15936667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "gemma",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38829002/calibration.json",
+      "result_sha256": "ea8e33ca9d429f1c3dbae9cbf50bd60ad151b4661883f23527ace10908784865",
+      "manifest_sha256": "94a767b68f00295bb06519a6ad45f294dc5de11fdccead65e4bce20cf0d1ba7f",
+      "samples": 6,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "prefill:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 58.16242358016493,
+          "maximum_nj": 58.31993583747696,
+          "mean_nj": 58.24117970882095,
+          "windows_ps": [
+            1856667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "prefill:site2:words640:eps4295:shift0:out4",
+          "samples": 2,
+          "minimum_nj": 366.6696238098983,
+          "maximum_nj": 367.0811362363195,
+          "mean_nj": 366.8753800231089,
+          "windows_ps": [
+            13376667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "prefill:site2:words640:eps4295:shift4:out0",
+          "samples": 2,
+          "minimum_nj": 364.4805552632155,
+          "maximum_nj": 367.2327749360315,
+          "mean_nj": 365.85666509962346,
+          "windows_ps": [
+            13376667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "gemma",
+      "kind": "rms_n",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-n-01/n-38829003/calibration.json",
+      "result_sha256": "98471ca91a41ae738a5d520f1149facc225c8c1734724a35872145c3abc71439",
+      "manifest_sha256": "2d1263dd05dacd3615bc7d7b3b0cef8699d75b1c3c0e155cab068953e8650c0f",
+      "samples": 12,
+      "groups": [
+        {
+          "capture": "",
+          "signature": "decode:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 57.49959661749885,
+          "maximum_nj": 58.022258199767265,
+          "mean_nj": 57.76092740863306,
+          "windows_ps": [
+            1856667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "decode:site2:words640:eps4295:shift0:out4",
+          "samples": 2,
+          "minimum_nj": 366.5606911897172,
+          "maximum_nj": 366.7963963557907,
+          "mean_nj": 366.678543772754,
+          "windows_ps": [
+            13376667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "decode:site2:words640:eps4295:shift4:out0",
+          "samples": 2,
+          "minimum_nj": 365.6040169802444,
+          "maximum_nj": 366.39385378719305,
+          "mean_nj": 365.99893538371873,
+          "windows_ps": [
+            13376667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "first_token:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 58.22644385342539,
+          "maximum_nj": 58.4156065831197,
+          "mean_nj": 58.32102521827254,
+          "windows_ps": [
+            1856667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "first_token:site2:words640:eps4295:shift0:out4",
+          "samples": 2,
+          "minimum_nj": 366.695337108039,
+          "maximum_nj": 366.7254356789224,
+          "mean_nj": 366.7103863934807,
+          "windows_ps": [
+            13376667
+          ]
+        },
+        {
+          "capture": "",
+          "signature": "first_token:site2:words640:eps4295:shift4:out0",
+          "samples": 2,
+          "minimum_nj": 365.9346023102823,
+          "maximum_nj": 366.2775957028627,
+          "mean_nj": 366.1060990065725,
+          "windows_ps": [
+            13376667
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "f6aa5c96916ecc0712d531c2f3b20e81935c0a8b",
+      "scope": "N core RMS begin/stats/finalize/factor only; E, scan/apply wrappers and SRAM excluded"
+    },
+    {
+      "model": "mixed",
+      "kind": "softmax",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-01/operator-38831680/calibration.json",
+      "result_sha256": "fc9a7f0f7b48276c429ebc6029399d9113747644b76b01b92496d5e7d4145b7d",
+      "manifest_sha256": "c7e37ee37cd8271adbfaa5163bf4d8d9ad21c6eab178918ca830bd1a0721041a",
+      "samples": 16,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/decode/operator-observation.json",
+          "signature": "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_compact\"}",
+          "samples": 2,
+          "minimum_nj": 191.70334524118442,
+          "maximum_nj": 192.5570376544262,
+          "mean_nj": 192.13019144780532,
+          "windows_ps": [
+            8825098
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/decode/operator-observation.json",
+          "signature": "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_compact\"}",
+          "samples": 2,
+          "minimum_nj": 192.13404612706034,
+          "maximum_nj": 193.02058176026597,
+          "mean_nj": 192.57731394366317,
+          "windows_ps": [
+            8825098
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/prefill/operator-observation.json",
+          "signature": "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_compact\"}",
+          "samples": 2,
+          "minimum_nj": 5.070489897480456,
+          "maximum_nj": 5.084036215202256,
+          "mean_nj": 5.077263056341357,
+          "windows_ps": [
+            290058
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/prefill/operator-observation.json",
+          "signature": "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_compact\"}",
+          "samples": 2,
+          "minimum_nj": 4.831794928972643,
+          "maximum_nj": 5.058568390695864,
+          "mean_nj": 4.945181659834254,
+          "windows_ps": [
+            290058
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/operator-observation.json",
+          "signature": "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_compact\"}",
+          "samples": 2,
+          "minimum_nj": 198.61602826640413,
+          "maximum_nj": 206.36087002449065,
+          "mean_nj": 202.4884491454474,
+          "windows_ps": [
+            8825098
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/operator-observation.json",
+          "signature": "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_compact\"}",
+          "samples": 2,
+          "minimum_nj": 190.71986635652877,
+          "maximum_nj": 204.72902601593964,
+          "mean_nj": 197.72444618623422,
+          "windows_ps": [
+            8825098
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/prefill/operator-observation.json",
+          "signature": "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_compact\"}",
+          "samples": 2,
+          "minimum_nj": 5.055563176333176,
+          "maximum_nj": 5.222710253264015,
+          "mean_nj": 5.139136714798596,
+          "windows_ps": [
+            290058
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/prefill/operator-observation.json",
+          "signature": "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_compact\"}",
+          "samples": 2,
+          "minimum_nj": 5.3061597327626036,
+          "maximum_nj": 5.350833462321924,
+          "mean_nj": 5.328496597542264,
+          "windows_ps": [
+            290058
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "a632159d3bf5cf5bdc049a9338e6140c615d6105",
+      "scope": "sampled real operands; softmax arithmetic or RoPE wrapper plus E32; SRAM and system residency excluded"
+    },
+    {
+      "model": "mixed",
+      "kind": "rope",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-01/operator-38831681/calibration.json",
+      "result_sha256": "63d809515763e4e8addbc3766186c6cd9c0cc1f8a94e3b0d1557f0e15eeec506",
+      "manifest_sha256": "c037df07880245c581138baee23c9821d8b9631daa5631bcc26ccbd131f3d970",
+      "samples": 12,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/decode/operator-observation.json",
+          "signature": "decode:rope:site0:{\"dimension\": 64, \"width\": 64}",
+          "samples": 2,
+          "minimum_nj": 1310.7638341820739,
+          "maximum_nj": 1311.6573259587765,
+          "mean_nj": 1311.2105800704253,
+          "windows_ps": [
+            3253984
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/decode/operator-observation.json",
+          "signature": "first_token:rope:site0:{\"dimension\": 64, \"width\": 64}",
+          "samples": 2,
+          "minimum_nj": 1267.448393733615,
+          "maximum_nj": 1282.9568755944122,
+          "mean_nj": 1275.2026346640137,
+          "windows_ps": [
+            3253984
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/prefill/operator-observation.json",
+          "signature": "prefill:rope:site0:{\"dimension\": 64, \"width\": 64}",
+          "samples": 2,
+          "minimum_nj": 1271.5848194622436,
+          "maximum_nj": 1296.3563714180775,
+          "mean_nj": 1283.9705954401607,
+          "windows_ps": [
+            3253984
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/operator-observation.json",
+          "signature": "decode:rope:site0:{\"dimension\": 64, \"width\": 64}",
+          "samples": 2,
+          "minimum_nj": 1287.1500624695332,
+          "maximum_nj": 1293.0970577632397,
+          "mean_nj": 1290.1235601163864,
+          "windows_ps": [
+            3253984
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/operator-observation.json",
+          "signature": "first_token:rope:site0:{\"dimension\": 64, \"width\": 64}",
+          "samples": 2,
+          "minimum_nj": 1286.0178414180157,
+          "maximum_nj": 1289.9845789909996,
+          "mean_nj": 1288.0012102045075,
+          "windows_ps": [
+            3253984
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/prefill/operator-observation.json",
+          "signature": "prefill:rope:site0:{\"dimension\": 64, \"width\": 64}",
+          "samples": 2,
+          "minimum_nj": 1248.1915715014209,
+          "maximum_nj": 1270.285438727555,
+          "mean_nj": 1259.238505114488,
+          "windows_ps": [
+            3253984
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "a632159d3bf5cf5bdc049a9338e6140c615d6105",
+      "scope": "sampled real operands; softmax arithmetic or RoPE wrapper plus E32; SRAM and system residency excluded"
+    },
+    {
+      "model": "mixed",
+      "kind": "scan",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-02/operator-38831748/calibration.json",
+      "result_sha256": "ad2390f77a5e06dfd81092171ed9fe8399ca0bc1c6fa2eff341cd5054b7ce029",
+      "manifest_sha256": "60058ef2b02b16210adc36e0e9308561d3bfe6a005341d2416e13663252c426d",
+      "samples": 24,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828362/decode/arithmetic-observation.json",
+          "signature": "decode:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 11.649568344002912,
+          "maximum_nj": 11.826495058788216,
+          "mean_nj": 11.738031701395563,
+          "windows_ps": [
+            3424018
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828362/decode/arithmetic-observation.json",
+          "signature": "first_token:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 11.761279178778326,
+          "maximum_nj": 11.770693208107707,
+          "mean_nj": 11.765986193443016,
+          "windows_ps": [
+            3424018
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828362/prefill/arithmetic-observation.json",
+          "signature": "prefill:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 11.79130822443887,
+          "maximum_nj": 11.865250135226942,
+          "mean_nj": 11.828279179832906,
+          "windows_ps": [
+            3424018
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828902/decode/arithmetic-observation.json",
+          "signature": "decode:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 9.650418487854687,
+          "maximum_nj": 9.813408114444725,
+          "mean_nj": 9.731913301149707,
+          "windows_ps": [
+            2577182
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828902/decode/arithmetic-observation.json",
+          "signature": "first_token:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 9.662148354159847,
+          "maximum_nj": 9.801189808494167,
+          "mean_nj": 9.731669081327006,
+          "windows_ps": [
+            2577182
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828902/prefill/arithmetic-observation.json",
+          "signature": "prefill:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 9.659157589108775,
+          "maximum_nj": 9.780208544802845,
+          "mean_nj": 9.71968306695581,
+          "windows_ps": [
+            2573848
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "decode:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 1.2252772686164328,
+          "maximum_nj": 1.2560474944240314,
+          "mean_nj": 1.2406623815202322,
+          "windows_ps": [
+            230046
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "decode:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 6.97692337511556,
+          "maximum_nj": 7.185746787671804,
+          "mean_nj": 7.081335081393682,
+          "windows_ps": [
+            1717010,
+            1723678
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "first_token:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 1.2074749309601862,
+          "maximum_nj": 1.2314734366702464,
+          "mean_nj": 1.2194741838152163,
+          "windows_ps": [
+            226712,
+            233380
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "first_token:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 6.982809127602341,
+          "maximum_nj": 7.048202953893702,
+          "mean_nj": 7.015506040748021,
+          "windows_ps": [
+            1717010,
+            1727012
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/prefill-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "prefill:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 1.223243073334728,
+          "maximum_nj": 1.2326609377089637,
+          "mean_nj": 1.2279520055218458,
+          "windows_ps": [
+            230046
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/prefill-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "prefill:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 7.027759359505737,
+          "maximum_nj": 7.028089364130465,
+          "mean_nj": 7.027924361818101,
+          "windows_ps": [
+            1717010,
+            1723678
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "b94d221baaee5e1218aca795846fc891b756255f",
+      "scope": "sampled real operands; named arithmetic wrapper plus E32 where present; SRAM and system residency excluded; do not add provider E32 twice"
+    },
+    {
+      "model": "mixed",
+      "kind": "apply",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-02/operator-38831749/calibration.json",
+      "result_sha256": "b30fad9261ff8af3e8723c5f546e563394fd2759048e976f4fcd4879636889a8",
+      "manifest_sha256": "95019ff0d4f491738236eb96ca8eacd9754c015ec0d46c8592ea497f95b5f169",
+      "samples": 24,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828362/decode/arithmetic-observation.json",
+          "signature": "decode:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 27101.277821747124,
+          "maximum_nj": 27455.120834938432,
+          "mean_nj": 27278.19932834278,
+          "windows_ps": [
+            71701004
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828362/decode/arithmetic-observation.json",
+          "signature": "first_token:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 27265.08282158262,
+          "maximum_nj": 27373.234527294273,
+          "mean_nj": 27319.158674438448,
+          "windows_ps": [
+            71701004
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828362/prefill/arithmetic-observation.json",
+          "signature": "prefill:site3:words512:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 27222.72519907446,
+          "maximum_nj": 27317.27033388863,
+          "mean_nj": 27269.997766481545,
+          "windows_ps": [
+            71701004
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828902/decode/arithmetic-observation.json",
+          "signature": "decode:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 20311.2761559496,
+          "maximum_nj": 20352.451192073353,
+          "mean_nj": 20331.863674011474,
+          "windows_ps": [
+            53777420
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828902/decode/arithmetic-observation.json",
+          "signature": "first_token:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 20420.988268118293,
+          "maximum_nj": 20544.174626390344,
+          "mean_nj": 20482.58144725432,
+          "windows_ps": [
+            53777420
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828902/prefill/arithmetic-observation.json",
+          "signature": "prefill:site3:words384:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 20301.634611727077,
+          "maximum_nj": 20532.87162345296,
+          "mean_nj": 20417.25311759002,
+          "windows_ps": [
+            53777420
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "decode:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 1681.1335485014647,
+          "maximum_nj": 1712.385512919913,
+          "mean_nj": 1696.759530710689,
+          "windows_ps": [
+            4487564
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "decode:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 13512.005204377836,
+          "maximum_nj": 13566.944466953006,
+          "mean_nj": 13539.47483566542,
+          "windows_ps": [
+            35853836
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "first_token:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 1698.2608804630477,
+          "maximum_nj": 1707.8784480310485,
+          "mean_nj": 1703.069664247048,
+          "windows_ps": [
+            4487564
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "first_token:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 13511.250163608463,
+          "maximum_nj": 13773.744739495776,
+          "mean_nj": 13642.49745155212,
+          "windows_ps": [
+            35853836
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/prefill-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "prefill:site0:words32:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 1699.3972636336418,
+          "maximum_nj": 1715.3999744689884,
+          "mean_nj": 1707.398619051315,
+          "windows_ps": [
+            4487564
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-qwen3-01/qwen3-38828968/prefill-w4-tile128-pr272-combined/arithmetic-observation.json",
+          "signature": "prefill:site3:words256:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 13439.419796554825,
+          "maximum_nj": 13642.713383197608,
+          "mean_nj": 13541.066589876216,
+          "windows_ps": [
+            35853836
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "b94d221baaee5e1218aca795846fc891b756255f",
+      "scope": "sampled real operands; named arithmetic wrapper plus E32 where present; SRAM and system residency excluded; do not add provider E32 twice"
+    },
+    {
+      "model": "mixed",
+      "kind": "scan",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-02/operator-38831838/calibration.json",
+      "result_sha256": "67e18640c15820bbfecd488e7d197817e8f935476bd16b09176d2fe688c0e840",
+      "manifest_sha256": "3b6300c93210375d30310b806dfe6226a0f3ccfcfd9465143fea71b5d7fd7c97",
+      "samples": 42,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+          "signature": "decode:site2:words768:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 14.74087225812564,
+          "maximum_nj": 15.075719763722537,
+          "mean_nj": 14.908296010924088,
+          "windows_ps": [
+            5137694,
+            5141028
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+          "signature": "first_token:site2:words768:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 14.899081991522193,
+          "maximum_nj": 15.09844343902683,
+          "mean_nj": 14.998762715274513,
+          "windows_ps": [
+            5137694,
+            5144362
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json",
+          "signature": "prefill:site2:words768:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 14.777090287609434,
+          "maximum_nj": 15.09070486812413,
+          "mean_nj": 14.933897577866782,
+          "windows_ps": [
+            5137694,
+            5141028
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "decode:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 2.4107257196275116,
+          "maximum_nj": 2.428499320429204,
+          "mean_nj": 2.419612520028358,
+          "windows_ps": [
+            463426,
+            466760
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "decode:site2:words640:eps4295:shift0:out4",
+          "samples": 2,
+          "minimum_nj": 13.340282727315522,
+          "maximum_nj": 13.503608750133685,
+          "mean_nj": 13.421945738724602,
+          "windows_ps": [
+            4294192,
+            4307528
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "decode:site2:words640:eps4295:shift4:out0",
+          "samples": 2,
+          "minimum_nj": 10.347836729758582,
+          "maximum_nj": 10.353486364150188,
+          "mean_nj": 10.350661546954385,
+          "windows_ps": [
+            4297526,
+            4314196
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "first_token:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 2.3991511614861065,
+          "maximum_nj": 2.439046374695926,
+          "mean_nj": 2.4190987680910165,
+          "windows_ps": [
+            463426
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "first_token:site2:words640:eps4295:shift0:out4",
+          "samples": 2,
+          "minimum_nj": 13.252736037375035,
+          "maximum_nj": 13.36956149490479,
+          "mean_nj": 13.311148766139912,
+          "windows_ps": [
+            4290858,
+            4307528
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "first_token:site2:words640:eps4295:shift4:out0",
+          "samples": 2,
+          "minimum_nj": 10.53293369747706,
+          "maximum_nj": 10.569752325979646,
+          "mean_nj": 10.551343011728353,
+          "windows_ps": [
+            4287524,
+            4314196
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+          "signature": "prefill:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 2.405244868921561,
+          "maximum_nj": 2.4340729412528015,
+          "mean_nj": 2.4196589050871813,
+          "windows_ps": [
+            460092,
+            463426
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+          "signature": "prefill:site2:words640:eps4295:shift0:out4",
+          "samples": 2,
+          "minimum_nj": 13.277882266269165,
+          "maximum_nj": 13.440216524124999,
+          "mean_nj": 13.359049395197083,
+          "windows_ps": [
+            4297526,
+            4307528
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+          "signature": "prefill:site2:words640:eps4295:shift4:out0",
+          "samples": 2,
+          "minimum_nj": 10.386192459723317,
+          "maximum_nj": 10.631858261186945,
+          "mean_nj": 10.50902536045513,
+          "windows_ps": [
+            4297526,
+            4314196
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "signature": "decode:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 2.2612028731195952,
+          "maximum_nj": 2.286821226188013,
+          "mean_nj": 2.274012049653804,
+          "windows_ps": [
+            446756,
+            450090
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "signature": "decode:site2:words640:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 13.279575915875354,
+          "maximum_nj": 13.319912901733037,
+          "mean_nj": 13.299744408804195,
+          "windows_ps": [
+            4277522,
+            4287524
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "signature": "first_token:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 2.258306534352005,
+          "maximum_nj": 2.3035379849739,
+          "mean_nj": 2.280922259662953,
+          "windows_ps": [
+            446756,
+            450090
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "signature": "first_token:site2:words640:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 13.338756308354107,
+          "maximum_nj": 13.34194190977966,
+          "mean_nj": 13.340349109066883,
+          "windows_ps": [
+            4277522,
+            4287524
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+          "signature": "prefill:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 2.310547770890748,
+          "maximum_nj": 2.338482565107423,
+          "mean_nj": 2.3245151679990856,
+          "windows_ps": [
+            450090
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+          "signature": "prefill:site2:words640:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 13.327407345252022,
+          "maximum_nj": 13.516238573385243,
+          "mean_nj": 13.421822959318632,
+          "windows_ps": [
+            4277522,
+            4287524
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+          "signature": "decode:site2:words640:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 13.286728894837417,
+          "maximum_nj": 13.323438893277666,
+          "mean_nj": 13.305083894057542,
+          "windows_ps": [
+            4294192,
+            4297526
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+          "signature": "first_token:site2:words640:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 13.333887879284326,
+          "maximum_nj": 13.375725274960633,
+          "mean_nj": 13.35480657712248,
+          "windows_ps": [
+            4294192,
+            4297526
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json",
+          "signature": "prefill:site2:words640:eps42950:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 13.316591566027387,
+          "maximum_nj": 13.330941911557927,
+          "mean_nj": 13.323766738792656,
+          "windows_ps": [
+            4294192,
+            4297526
+          ]
+        }
+      ],
+      "excluded_samples": [],
+      "source_commit": "b94d221baaee5e1218aca795846fc891b756255f",
+      "scope": "sampled real operands; named arithmetic wrapper plus E32 where present; SRAM and system residency excluded; do not add provider E32 twice"
+    },
+    {
+      "model": "mixed",
+      "kind": "apply",
+      "result": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-02/operator-38831839/calibration.json",
+      "result_sha256": "9a1534ddd07569fd3e6d2f73b813a5fdb5fdc0529b50cb9ff6b29ceef1ad4820",
+      "manifest_sha256": "80c678c89bcdeaa237966f804e1c3b0dedaabfa3b039e1ba171103e728cf8959",
+      "samples": 12,
+      "groups": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "decode:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3369.138776221141,
+          "maximum_nj": 3397.4324046912825,
+          "mean_nj": 3383.285590456212,
+          "windows_ps": [
+            8968460
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "signature": "first_token:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3373.416916983336,
+          "maximum_nj": 3384.915914571785,
+          "mean_nj": 3379.1664157775604,
+          "windows_ps": [
+            8968460
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+          "signature": "prefill:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3400.200761525438,
+          "maximum_nj": 3410.4194705258046,
+          "mean_nj": 3405.310116025621,
+          "windows_ps": [
+            8968460
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "signature": "decode:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3418.4855560621327,
+          "maximum_nj": 3424.5374326196843,
+          "mean_nj": 3421.5114943409085,
+          "windows_ps": [
+            8968460
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "signature": "first_token:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3404.278189238016,
+          "maximum_nj": 3413.418006921666,
+          "mean_nj": 3408.848098079841,
+          "windows_ps": [
+            8968460
+          ]
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+          "signature": "prefill:site0:words64:eps4295:shift0:out0",
+          "samples": 2,
+          "minimum_nj": 3405.665167514136,
+          "maximum_nj": 3441.176828149214,
+          "mean_nj": 3423.420997831675,
+          "windows_ps": [
+            8968460
+          ]
+        }
+      ],
+      "excluded_samples": [
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json",
+          "sample_index": 0,
+          "signature": "prefill:site2:words768:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/prefill/arithmetic-observation.json",
+          "sample_index": 1,
+          "signature": "prefill:site2:words768:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+          "sample_index": 0,
+          "signature": "first_token:site2:words768:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+          "sample_index": 1,
+          "signature": "first_token:site2:words768:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+          "sample_index": 2,
+          "signature": "decode:site2:words768:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828903/decode/arithmetic-observation.json",
+          "sample_index": 3,
+          "signature": "decode:site2:words768:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+          "sample_index": 0,
+          "signature": "prefill:site2:words640:eps4295:shift4:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+          "sample_index": 3,
+          "signature": "prefill:site2:words640:eps4295:shift0:out4",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+          "sample_index": 4,
+          "signature": "prefill:site2:words640:eps4295:shift4:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/prefill/arithmetic-observation.json",
+          "sample_index": 5,
+          "signature": "prefill:site2:words640:eps4295:shift0:out4",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "sample_index": 0,
+          "signature": "first_token:site2:words640:eps4295:shift4:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "sample_index": 3,
+          "signature": "first_token:site2:words640:eps4295:shift0:out4",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "sample_index": 4,
+          "signature": "first_token:site2:words640:eps4295:shift4:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "sample_index": 5,
+          "signature": "first_token:site2:words640:eps4295:shift0:out4",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "sample_index": 6,
+          "signature": "decode:site2:words640:eps4295:shift4:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "sample_index": 9,
+          "signature": "decode:site2:words640:eps4295:shift0:out4",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "sample_index": 10,
+          "signature": "decode:site2:words640:eps4295:shift4:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828904/decode/arithmetic-observation.json",
+          "sample_index": 11,
+          "signature": "decode:site2:words640:eps4295:shift0:out4",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+          "sample_index": 0,
+          "signature": "prefill:site2:words640:eps4295:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/prefill/arithmetic-observation.json",
+          "sample_index": 1,
+          "signature": "prefill:site2:words640:eps4295:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "sample_index": 0,
+          "signature": "first_token:site2:words640:eps4295:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "sample_index": 1,
+          "signature": "first_token:site2:words640:eps4295:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "sample_index": 4,
+          "signature": "decode:site2:words640:eps4295:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828905/decode/arithmetic-observation.json",
+          "sample_index": 5,
+          "signature": "decode:site2:words640:eps4295:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json",
+          "sample_index": 0,
+          "signature": "prefill:site2:words640:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/prefill/arithmetic-observation.json",
+          "sample_index": 1,
+          "signature": "prefill:site2:words640:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+          "sample_index": 0,
+          "signature": "first_token:site2:words640:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+          "sample_index": 1,
+          "signature": "first_token:site2:words640:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+          "sample_index": 2,
+          "signature": "decode:site2:words640:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        },
+        {
+          "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/common-arithmetic-capture-01/run-38828906/decode/arithmetic-observation.json",
+          "sample_index": 3,
+          "signature": "decode:site2:words640:eps42950:shift0:out0",
+          "reason": "activation+gamma exceed one 1024-word S128 bank; cross-bank/staging binding required"
+        }
+      ],
+      "source_commit": "b94d221baaee5e1218aca795846fc891b756255f",
+      "scope": "sampled real operands; named arithmetic wrapper plus E32 where present; SRAM and system residency excluded; do not add provider E32 twice"
+    }
+  ]
+}

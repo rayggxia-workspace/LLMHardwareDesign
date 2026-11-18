@@ -1,0 +1,748 @@
+{
+  "run": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830193",
+  "manifest_sha256": "d59a211751bdc8a8af859e44e3b84c95a3a25200a687ffe1f6c30a8f5d452435",
+  "phases": {
+    "prefill": {
+      "operator_counts": {
+        "prefill:scale:site3:{\"elements\": 4, \"gain\": 370728}": 1280,
+        "prefill:recurrent_factors:site0:{\"gdn\": false}": 64,
+        "prefill:conv4:site0:{\"channels\": 128, \"gdn\": false}": 2304,
+        "prefill:mamba_state:site0:{\"count\": 16, \"depth\": 256}": 16384,
+        "prefill:recurrent_norm_gate:site0:{\"gdn\": false}": 64,
+        "prefill:scale:site0:{\"elements\": 4, \"gain\": 2896}": 4096,
+        "prefill:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": 12288,
+        "prefill:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": 12288,
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"pr272_native_attention\"}": 320,
+        "prefill:scaled_silu:site0:{\"elements\": 4, \"gain\": 23170}": 32768,
+        "prefill:scaled_silu:site1:{\"elements\": 4, \"gain\": 23170}": 32768,
+        "prefill:scaled_silu:site2:{\"elements\": 4, \"gain\": 23170}": 32768,
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"pr272_native_attention\"}": 320
+      },
+      "operator_shapes": {
+        "prefill:scale:site3:{\"elements\": 4, \"gain\": 370728}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 370728
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "prefill:recurrent_factors:site0:{\"gdn\": false}": {
+          "kind": "recurrent_factors",
+          "shape": {
+            "gdn": false
+          },
+          "input_shapes": {
+            "a_log": [
+              32
+            ],
+            "delta": [
+              32
+            ],
+            "a": [
+              32
+            ],
+            "dt_bias": [
+              32
+            ],
+            "b": [],
+            "a_scale": []
+          }
+        },
+        "prefill:conv4:site0:{\"channels\": 128, \"gdn\": false}": {
+          "kind": "conv4",
+          "shape": {
+            "gdn": false,
+            "channels": 128
+          },
+          "input_shapes": {
+            "window": [
+              128,
+              4
+            ],
+            "taps": [
+              128,
+              4
+            ]
+          }
+        },
+        "prefill:mamba_state:site0:{\"count\": 16, \"depth\": 256}": {
+          "kind": "mamba_state",
+          "shape": {
+            "count": 16,
+            "depth": 256
+          },
+          "input_shapes": {
+            "state": [
+              16,
+              256
+            ],
+            "key": [
+              256
+            ],
+            "query": [
+              256
+            ],
+            "value": [
+              16
+            ],
+            "decay": [],
+            "beta": [],
+            "delta": [],
+            "skip": []
+          }
+        },
+        "prefill:recurrent_norm_gate:site0:{\"gdn\": false}": {
+          "kind": "recurrent_norm_gate",
+          "shape": {
+            "gdn": false
+          },
+          "input_shapes": {
+            "value": [
+              4096
+            ],
+            "gamma": [
+              4096
+            ],
+            "gate": [
+              4096
+            ],
+            "epsilon": []
+          }
+        },
+        "prefill:scale:site0:{\"elements\": 4, \"gain\": 2896}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 2896
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "prefill:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": true,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "prefill:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": false,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"pr272_native_attention\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 1,
+            "implementation": "pr272_native_attention"
+          },
+          "input_shapes": {
+            "scores": [
+              1
+            ]
+          }
+        },
+        "prefill:scaled_silu:site0:{\"elements\": 4, \"gain\": 23170}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 23170
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:scaled_silu:site1:{\"elements\": 4, \"gain\": 23170}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 23170
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:scaled_silu:site2:{\"elements\": 4, \"gain\": 23170}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 23170
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"pr272_native_attention\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 2,
+            "implementation": "pr272_native_attention"
+          },
+          "input_shapes": {
+            "scores": [
+              2
+            ]
+          }
+        }
+      },
+      "rms_counts": {
+        "prefill:site2:words640:eps42950:shift0:out0": 128
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830193/prefill/operator-observation.json",
+      "operator_sha256": "7e98ddfc55dbf68a6ba851cb8547400f0797b88fd776f1cfe30f6381b01b0740",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830193/prefill/arithmetic-observation.json",
+      "rms_sha256": "2f27ca8257745f3c0749da48be896c7d88b12813a98922fe1ba0ef6227e354f9"
+    },
+    "decode": {
+      "operator_counts": {
+        "first_token:scale:site3:{\"elements\": 4, \"gain\": 370728}": 640,
+        "first_token:recurrent_factors:site0:{\"gdn\": false}": 32,
+        "first_token:conv4:site0:{\"channels\": 128, \"gdn\": false}": 1152,
+        "first_token:mamba_state:site0:{\"count\": 16, \"depth\": 256}": 8192,
+        "first_token:recurrent_norm_gate:site0:{\"gdn\": false}": 32,
+        "first_token:scale:site0:{\"elements\": 4, \"gain\": 2896}": 2048,
+        "first_token:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": 6144,
+        "first_token:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": 6144,
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"pr272_native_attention\"}": 320,
+        "first_token:scaled_silu:site0:{\"elements\": 4, \"gain\": 23170}": 16384,
+        "first_token:scaled_silu:site1:{\"elements\": 4, \"gain\": 23170}": 16384,
+        "first_token:scaled_silu:site2:{\"elements\": 4, \"gain\": 23170}": 16384,
+        "decode:scale:site3:{\"elements\": 4, \"gain\": 370728}": 640,
+        "decode:recurrent_factors:site0:{\"gdn\": false}": 32,
+        "decode:conv4:site0:{\"channels\": 128, \"gdn\": false}": 1152,
+        "decode:mamba_state:site0:{\"count\": 16, \"depth\": 256}": 8192,
+        "decode:recurrent_norm_gate:site0:{\"gdn\": false}": 32,
+        "decode:scale:site0:{\"elements\": 4, \"gain\": 2896}": 2048,
+        "decode:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": 6144,
+        "decode:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": 6144,
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"pr272_native_attention\"}": 320,
+        "decode:scaled_silu:site0:{\"elements\": 4, \"gain\": 23170}": 16384,
+        "decode:scaled_silu:site1:{\"elements\": 4, \"gain\": 23170}": 16384,
+        "decode:scaled_silu:site2:{\"elements\": 4, \"gain\": 23170}": 16384
+      },
+      "operator_shapes": {
+        "first_token:scale:site3:{\"elements\": 4, \"gain\": 370728}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 370728
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "first_token:recurrent_factors:site0:{\"gdn\": false}": {
+          "kind": "recurrent_factors",
+          "shape": {
+            "gdn": false
+          },
+          "input_shapes": {
+            "a_log": [
+              32
+            ],
+            "delta": [
+              32
+            ],
+            "a": [
+              32
+            ],
+            "dt_bias": [
+              32
+            ],
+            "b": [],
+            "a_scale": []
+          }
+        },
+        "first_token:conv4:site0:{\"channels\": 128, \"gdn\": false}": {
+          "kind": "conv4",
+          "shape": {
+            "gdn": false,
+            "channels": 128
+          },
+          "input_shapes": {
+            "window": [
+              128,
+              4
+            ],
+            "taps": [
+              128,
+              4
+            ]
+          }
+        },
+        "first_token:mamba_state:site0:{\"count\": 16, \"depth\": 256}": {
+          "kind": "mamba_state",
+          "shape": {
+            "count": 16,
+            "depth": 256
+          },
+          "input_shapes": {
+            "state": [
+              16,
+              256
+            ],
+            "key": [
+              256
+            ],
+            "query": [
+              256
+            ],
+            "value": [
+              16
+            ],
+            "decay": [],
+            "beta": [],
+            "delta": [],
+            "skip": []
+          }
+        },
+        "first_token:recurrent_norm_gate:site0:{\"gdn\": false}": {
+          "kind": "recurrent_norm_gate",
+          "shape": {
+            "gdn": false
+          },
+          "input_shapes": {
+            "value": [
+              4096
+            ],
+            "gamma": [
+              4096
+            ],
+            "gate": [
+              4096
+            ],
+            "epsilon": []
+          }
+        },
+        "first_token:scale:site0:{\"elements\": 4, \"gain\": 2896}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 2896
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "first_token:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": true,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "first_token:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": false,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"pr272_native_attention\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 513,
+            "implementation": "pr272_native_attention"
+          },
+          "input_shapes": {
+            "scores": [
+              513
+            ]
+          }
+        },
+        "first_token:scaled_silu:site0:{\"elements\": 4, \"gain\": 23170}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 23170
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:scaled_silu:site1:{\"elements\": 4, \"gain\": 23170}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 23170
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:scaled_silu:site2:{\"elements\": 4, \"gain\": 23170}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 23170
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:scale:site3:{\"elements\": 4, \"gain\": 370728}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 370728
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "decode:recurrent_factors:site0:{\"gdn\": false}": {
+          "kind": "recurrent_factors",
+          "shape": {
+            "gdn": false
+          },
+          "input_shapes": {
+            "a_log": [
+              32
+            ],
+            "delta": [
+              32
+            ],
+            "a": [
+              32
+            ],
+            "dt_bias": [
+              32
+            ],
+            "b": [],
+            "a_scale": []
+          }
+        },
+        "decode:conv4:site0:{\"channels\": 128, \"gdn\": false}": {
+          "kind": "conv4",
+          "shape": {
+            "gdn": false,
+            "channels": 128
+          },
+          "input_shapes": {
+            "window": [
+              128,
+              4
+            ],
+            "taps": [
+              128,
+              4
+            ]
+          }
+        },
+        "decode:mamba_state:site0:{\"count\": 16, \"depth\": 256}": {
+          "kind": "mamba_state",
+          "shape": {
+            "count": 16,
+            "depth": 256
+          },
+          "input_shapes": {
+            "state": [
+              16,
+              256
+            ],
+            "key": [
+              256
+            ],
+            "query": [
+              256
+            ],
+            "value": [
+              16
+            ],
+            "decay": [],
+            "beta": [],
+            "delta": [],
+            "skip": []
+          }
+        },
+        "decode:recurrent_norm_gate:site0:{\"gdn\": false}": {
+          "kind": "recurrent_norm_gate",
+          "shape": {
+            "gdn": false
+          },
+          "input_shapes": {
+            "value": [
+              4096
+            ],
+            "gamma": [
+              4096
+            ],
+            "gate": [
+              4096
+            ],
+            "epsilon": []
+          }
+        },
+        "decode:scale:site0:{\"elements\": 4, \"gain\": 2896}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 2896
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "decode:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": true,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "decode:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": false,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"pr272_native_attention\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 514,
+            "implementation": "pr272_native_attention"
+          },
+          "input_shapes": {
+            "scores": [
+              514
+            ]
+          }
+        },
+        "decode:scaled_silu:site0:{\"elements\": 4, \"gain\": 23170}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 23170
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:scaled_silu:site1:{\"elements\": 4, \"gain\": 23170}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 23170
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:scaled_silu:site2:{\"elements\": 4, \"gain\": 23170}": {
+          "kind": "scaled_silu",
+          "shape": {
+            "elements": 4,
+            "gain": 23170
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        }
+      },
+      "rms_counts": {
+        "first_token:site2:words640:eps42950:shift0:out0": 65,
+        "decode:site2:words640:eps42950:shift0:out0": 65
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830193/decode/operator-observation.json",
+      "operator_sha256": "32e68716c4671231458de0ac8d898f6751ed03db39fbe8ef37653e040937a898",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830193/decode/arithmetic-observation.json",
+      "rms_sha256": "1419743959dbbfa9e66cc22806fba4cea3fe9653dd45f5188b1b797ce65a98ee"
+    }
+  }
+}

@@ -1,0 +1,412 @@
+{
+  "run": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189",
+  "manifest_sha256": "24812816a044bf0e63c81b3bc081d0cb2adbfce1a9ce7a90846e3e17a1efdc65",
+  "phases": {
+    "prefill": {
+      "operator_counts": {
+        "prefill:scale:site3:{\"elements\": 4, \"gain\": 786432}": 768,
+        "prefill:rope:site0:{\"dimension\": 64, \"width\": 64}": 2048,
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_compact\"}": 768,
+        "prefill:router:site0:{\"experts\": 40, \"top\": 8}": 64,
+        "prefill:silu:site2:{\"elements\": 4, \"gain\": 65536}": 16384,
+        "prefill:silu:site1:{\"elements\": 4, \"gain\": 65536}": 24576,
+        "prefill:silu:site0:{\"elements\": 4, \"gain\": 65536}": 24576,
+        "prefill:expert_sum:site3:{\"elements\": 128}": 6144,
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_compact\"}": 768
+      },
+      "operator_shapes": {
+        "prefill:scale:site3:{\"elements\": 4, \"gain\": 786432}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 786432
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "prefill:rope:site0:{\"dimension\": 64, \"width\": 64}": {
+          "kind": "rope",
+          "shape": {
+            "width": 64,
+            "dimension": 64
+          },
+          "input_shapes": {
+            "value": [
+              64
+            ],
+            "cos": [
+              64
+            ],
+            "sin": [
+              64
+            ]
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_compact\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 1,
+            "implementation": "attention_compact"
+          },
+          "input_shapes": {
+            "scores": [
+              1
+            ]
+          }
+        },
+        "prefill:router:site0:{\"experts\": 40, \"top\": 8}": {
+          "kind": "router",
+          "shape": {
+            "experts": 40,
+            "top": 8
+          },
+          "input_shapes": {
+            "scores_q16": [
+              40
+            ]
+          }
+        },
+        "prefill:silu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:silu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:silu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:expert_sum:site3:{\"elements\": 128}": {
+          "kind": "expert_sum",
+          "shape": {
+            "elements": 128
+          },
+          "input_shapes": {
+            "old": [
+              128
+            ],
+            "expert": [
+              128
+            ],
+            "probability_q16": []
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_compact\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 2,
+            "implementation": "attention_compact"
+          },
+          "input_shapes": {
+            "scores": [
+              2
+            ]
+          }
+        }
+      },
+      "rms_counts": {
+        "prefill:site3:words384:eps4295:shift0:out0": 128
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/prefill/operator-observation.json",
+      "operator_sha256": "268a32b00fa6367a92dc55e9abc20510f6b1cd6d7ca5bc93f2eadeff12f1cbe1",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/prefill/arithmetic-observation.json",
+      "rms_sha256": "dd9d16dfca1d1f8bccf4abb7cc6820db73d61ed8bb694a5291f2fc6b52d7b61c"
+    },
+    "decode": {
+      "operator_counts": {
+        "first_token:scale:site3:{\"elements\": 4, \"gain\": 786432}": 384,
+        "first_token:rope:site0:{\"dimension\": 64, \"width\": 64}": 1024,
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_compact\"}": 768,
+        "first_token:router:site0:{\"experts\": 40, \"top\": 8}": 32,
+        "first_token:silu:site0:{\"elements\": 4, \"gain\": 65536}": 12288,
+        "first_token:silu:site2:{\"elements\": 4, \"gain\": 65536}": 8192,
+        "first_token:silu:site1:{\"elements\": 4, \"gain\": 65536}": 12288,
+        "first_token:expert_sum:site3:{\"elements\": 128}": 3072,
+        "decode:scale:site3:{\"elements\": 4, \"gain\": 786432}": 384,
+        "decode:rope:site0:{\"dimension\": 64, \"width\": 64}": 1024,
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_compact\"}": 768,
+        "decode:router:site0:{\"experts\": 40, \"top\": 8}": 32,
+        "decode:silu:site0:{\"elements\": 4, \"gain\": 65536}": 12288,
+        "decode:silu:site1:{\"elements\": 4, \"gain\": 65536}": 12288,
+        "decode:silu:site2:{\"elements\": 4, \"gain\": 65536}": 8192,
+        "decode:expert_sum:site3:{\"elements\": 128}": 3072
+      },
+      "operator_shapes": {
+        "first_token:scale:site3:{\"elements\": 4, \"gain\": 786432}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 786432
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "first_token:rope:site0:{\"dimension\": 64, \"width\": 64}": {
+          "kind": "rope",
+          "shape": {
+            "width": 64,
+            "dimension": 64
+          },
+          "input_shapes": {
+            "value": [
+              64
+            ],
+            "cos": [
+              64
+            ],
+            "sin": [
+              64
+            ]
+          }
+        },
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_compact\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 513,
+            "implementation": "attention_compact"
+          },
+          "input_shapes": {
+            "scores": [
+              513
+            ]
+          }
+        },
+        "first_token:router:site0:{\"experts\": 40, \"top\": 8}": {
+          "kind": "router",
+          "shape": {
+            "experts": 40,
+            "top": 8
+          },
+          "input_shapes": {
+            "scores_q16": [
+              40
+            ]
+          }
+        },
+        "first_token:silu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:silu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:silu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:expert_sum:site3:{\"elements\": 128}": {
+          "kind": "expert_sum",
+          "shape": {
+            "elements": 128
+          },
+          "input_shapes": {
+            "old": [
+              128
+            ],
+            "expert": [
+              128
+            ],
+            "probability_q16": []
+          }
+        },
+        "decode:scale:site3:{\"elements\": 4, \"gain\": 786432}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 786432
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "decode:rope:site0:{\"dimension\": 64, \"width\": 64}": {
+          "kind": "rope",
+          "shape": {
+            "width": 64,
+            "dimension": 64
+          },
+          "input_shapes": {
+            "value": [
+              64
+            ],
+            "cos": [
+              64
+            ],
+            "sin": [
+              64
+            ]
+          }
+        },
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_compact\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 514,
+            "implementation": "attention_compact"
+          },
+          "input_shapes": {
+            "scores": [
+              514
+            ]
+          }
+        },
+        "decode:router:site0:{\"experts\": 40, \"top\": 8}": {
+          "kind": "router",
+          "shape": {
+            "experts": 40,
+            "top": 8
+          },
+          "input_shapes": {
+            "scores_q16": [
+              40
+            ]
+          }
+        },
+        "decode:silu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:silu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:silu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:expert_sum:site3:{\"elements\": 128}": {
+          "kind": "expert_sum",
+          "shape": {
+            "elements": 128
+          },
+          "input_shapes": {
+            "old": [
+              128
+            ],
+            "expert": [
+              128
+            ],
+            "probability_q16": []
+          }
+        }
+      },
+      "rms_counts": {
+        "first_token:site3:words384:eps4295:shift0:out0": 65,
+        "decode:site3:words384:eps4295:shift0:out0": 65
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/operator-observation.json",
+      "operator_sha256": "e200d216507a52eabc355b19f28cb238b959f32b9f7fd631751cf8cb6e62a694",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/arithmetic-observation.json",
+      "rms_sha256": "7e766d72d12a2f5fb04c08f6fba8a18b6121dcb81dcd755728f0625c28b622a6"
+    }
+  }
+}

@@ -1,0 +1,343 @@
+{
+  "model": "falcon",
+  "phase": "prefill",
+  "windows": {
+    "prefill": {
+      "elapsed_ps": 472339859082,
+      "tokens": 2,
+      "removed_proxies": {
+        "proxy_recurrent_factors": {
+          "energy_nj_per_window": [
+            130250.91934170526,
+            1497343.1634042768
+          ],
+          "average_power_w": [
+            0.0002757567815573515,
+            0.0031700546431003875
+          ],
+          "energy_mj_per_token": [
+            0.06512545967085263,
+            0.7486715817021384
+          ]
+        },
+        "proxy_conv4": {
+          "energy_nj_per_window": [
+            4041782.816960849,
+            16744406.834522393
+          ],
+          "average_power_w": [
+            0.008556937847286734,
+            0.03544991283832242
+          ],
+          "energy_mj_per_token": [
+            2.0208914084804244,
+            8.372203417261197
+          ]
+        },
+        "proxy_recurrent_norm_gate": {
+          "energy_nj_per_window": [
+            9150068.395877957,
+            114547078.1424308
+          ],
+          "average_power_w": [
+            0.019371789655146316,
+            0.24250987067882618
+          ],
+          "energy_mj_per_token": [
+            4.575034197938979,
+            57.273539071215396
+          ]
+        }
+      },
+      "replacement_components": {
+        "proxy_recurrent_factors": {
+          "energy_nj_per_window": [
+            16807.9090776487,
+            69236.06536156352
+          ],
+          "average_power_w": [
+            3.5584354685448604e-05,
+            0.00014658103488476477
+          ],
+          "energy_mj_per_token": [
+            0.00840395453882435,
+            0.034618032680781764
+          ]
+        },
+        "proxy_conv4": {
+          "energy_nj_per_window": [
+            70014.51172201036,
+            280058.0468880414
+          ],
+          "average_power_w": [
+            0.00014822909897565002,
+            0.0005929163959026001
+          ],
+          "energy_mj_per_token": [
+            0.03500725586100518,
+            0.1400290234440207
+          ]
+        },
+        "proxy_recurrent_norm_gate": {
+          "energy_nj_per_window": [
+            1859826.5428724142,
+            7695873.090013655
+          ],
+          "average_power_w": [
+            0.003937475330765048,
+            0.0162930841893604
+          ],
+          "energy_mj_per_token": [
+            0.9299132714362072,
+            3.8479365450068275
+          ]
+        }
+      },
+      "candidate_idle": {
+        "energy_nj_per_window": [
+          5567826.017436315,
+          5580647.03580549
+        ],
+        "average_power_w": [
+          0.011787753903000001,
+          0.011814897533
+        ],
+        "energy_mj_per_token": [
+          2.783913008718158,
+          2.790323517902745
+        ]
+      },
+      "proposed_special_sites": [
+        0
+      ],
+      "proposed_conv4_sites": [
+        0
+      ],
+      "arithmetic_mapping": [
+        {
+          "signature": "prefill:recurrent_factors:site0:{\"gdn\": false}",
+          "service_calls": 64,
+          "rtl_primitive_calls_per_service": {
+            "exp": 64,
+            "softplus": 32
+          },
+          "measured_candidate_dynamic_nj": 4671.169412696227,
+          "residual_arithmetic_per_service": [
+            64,
+            64,
+            0,
+            0
+          ],
+          "residual_is_operation_proxy": true
+        },
+        {
+          "signature": "prefill:conv4:site0:{\"channels\": 128, \"gdn\": false}",
+          "service_calls": 2304,
+          "rtl_primitive_calls_per_service": {
+            "conv4": 128
+          },
+          "measured_candidate_dynamic_nj": 140029.0234440207,
+          "residual_arithmetic_per_service": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "residual_is_operation_proxy": true
+        },
+        {
+          "signature": "prefill:recurrent_norm_gate:site0:{\"gdn\": false}",
+          "service_calls": 64,
+          "rtl_primitive_calls_per_service": {
+            "sigmoid": 4096
+          },
+          "measured_candidate_dynamic_nj": 239176.45020071312,
+          "residual_arithmetic_per_service": [
+            8192,
+            4096,
+            0,
+            0
+          ],
+          "residual_is_operation_proxy": true
+        }
+      ],
+      "estimated_on_chip": {
+        "energy_nj_per_window": [
+          1246141491.6458251,
+          3437498052.266757
+        ],
+        "average_power_w": [
+          2.638230646187093,
+          7.277594694099263
+        ],
+        "energy_mj_per_token": [
+          623.0707458229126,
+          1718.7490261333785
+        ]
+      },
+      "estimated_on_chip_plus_ddr": {
+        "energy_nj_per_window": [
+          2601094876.3350096,
+          4792451436.955941
+        ],
+        "average_power_w": [
+          5.506829089948663,
+          10.146193137860834
+        ],
+        "energy_mj_per_token": [
+          1300.5474381675049,
+          2396.2257184779705
+        ]
+      },
+      "dma_scenarios": {
+        "phase-noshare": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              1504483020.3146322,
+              3706107187.5554476
+            ],
+            "average_power_w": [
+              3.185170574506709,
+              7.84627237421446
+            ],
+            "energy_mj_per_token": [
+              752.241510157316,
+              1853.0535937777238
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2859436405.0038166,
+              5061060572.244632
+            ],
+            "average_power_w": [
+              6.053769018268279,
+              10.71487081797603
+            ],
+            "energy_mj_per_token": [
+              1429.7182025019083,
+              2530.530286122316
+            ]
+          }
+        },
+        "phase": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              1442067879.3935544,
+              3649862078.4489784
+            ],
+            "average_power_w": [
+              3.0530302528273525,
+              7.727194748168285
+            ],
+            "energy_mj_per_token": [
+              721.0339396967772,
+              1824.9310392244893
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2797021264.082739,
+              5004815463.138163
+            ],
+            "average_power_w": [
+              5.921628696588922,
+              10.595793191929856
+            ],
+            "energy_mj_per_token": [
+              1398.5106320413695,
+              2502.407731569081
+            ]
+          }
+        },
+        "shared-noshare": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              1408165983.0522683,
+              3611438941.617521
+            ],
+            "average_power_w": [
+              2.98125588170573,
+              7.645848369935178
+            ],
+            "energy_mj_per_token": [
+              704.0829915261342,
+              1805.7194708087604
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2763119367.7414527,
+              4966392326.3067045
+            ],
+            "average_power_w": [
+              5.8498543254673,
+              10.514446813696745
+            ],
+            "energy_mj_per_token": [
+              1381.5596838707263,
+              2483.1961631533522
+            ]
+          }
+        },
+        "shared": {
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              1463118800.3999898,
+              3674138457.4394593
+            ],
+            "average_power_w": [
+              3.0975975714681043,
+              7.7785907473068345
+            ],
+            "energy_mj_per_token": [
+              731.5594001999949,
+              1837.0692287197296
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2818072185.0891743,
+              5029091842.128644
+            ],
+            "average_power_w": [
+              5.9661960152296745,
+              10.647189191068405
+            ],
+            "energy_mj_per_token": [
+              1409.036092544587,
+              2514.545921064322
+            ]
+          }
+        }
+      }
+    }
+  },
+  "estimator_sha256": "4f15bd1ae42af3c3c7c65a92b05939a699bb1526b3f26dfdba092a214917250f",
+  "scope": "Conditional candidate replacement scenario, not default accepted model RTL",
+  "target_clock_mhz": 300,
+  "sram_bits": 512,
+  "wire_parasitics_loaded": false,
+  "rtl_full_model_numeric_accepted": false,
+  "physical_binding_accepted": false,
+  "timing_recomputed_for_candidate_service": false,
+  "assumptions": [
+    "Use accepted E32-18 model timing; new candidate service timing is not installed in the model",
+    "One always-clocked candidate per used TLM site is a proposed footprint, not actual physical deployment",
+    "Measured primitive dynamic energy replaces its old proxy exactly once; residual composite arithmetic retains proxies",
+    "0.5x..2x is an assumed transfer sensitivity, not a confidence interval or a measured error bound",
+    "Existing G32, RMS, softmax, RoPE and SRAM work are preserved without adding E32 twice"
+  ],
+  "still_missing": [
+    "FP32 conversions and provider-to-port adapters",
+    "Complete composite multiply/divide/normalization and recurrent state RTL integration",
+    "Actual instantiated topology/gating and full model RTL state residence",
+    "Candidate-cycle and shared-resource model rescheduling; no new throughput acceptance"
+  ],
+  "inputs": {
+    "closure-v5\\timing-ledger\\falcon-prefill.json": "a4d05db2f92ad8abc3956906cf611651461124e72146264e21e00a8df8c7d65c",
+    "arithmetic-model-counts\\falcon.json": "aa4ac47f766ede8d6e64e5723e614d4cad22d5ef8bd7a8922ee11c355478f054",
+    "closure-v5\\special-pin-calibration.json": "aefde778fa8fa4754bb741bf7007f3c31ea7b288c96c6741325465208c07e449",
+    "closure-v5\\conv4-pin-calibration.json": "10626a5f664fab3f5d542cf6260ee432d2fa16ac411554e1754bb4a1f6e8a804"
+  }
+}

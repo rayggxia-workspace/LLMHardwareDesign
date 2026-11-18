@@ -1,0 +1,842 @@
+{
+  "model": "phi",
+  "phase": "decode",
+  "baseline_sha256": "1f3e97e3f5018aa2b46ebd1e398ff20473dee8de3cdcc7227b09ac1bca9ddc38",
+  "scope": "conditional synthesized-read-DMA alternatives added to E32-corrected partial subtotal",
+  "physical_binding_accepted": false,
+  "wire_parasitics_loaded": false,
+  "scenarios": {
+    "phase-noshare": {
+      "coefficient": {
+        "idle_w": [
+          0.09376912564,
+          0.09382619709
+        ],
+        "dynamic_nj_per_64b": [
+          2.1752212523006627,
+          2.2792885849116353
+        ],
+        "samples": [
+          {
+            "mode": 0,
+            "active_minus_idle_nj": 18147.870907944427,
+            "observed_handshakes": {
+              "c_req_valid": 8331,
+              "c_rsp_valid": 8286,
+              "d_req_valid": 8302,
+              "d_rsp_valid": 8291
+            },
+            "coefficient_denominator": [
+              8286,
+              8343
+            ],
+            "incremental_nj_per_64b": [
+              2.1752212523006627,
+              2.190184758380935
+            ]
+          },
+          {
+            "mode": 1,
+            "active_minus_idle_nj": 17204.070238913024,
+            "observed_handshakes": {
+              "c_req_valid": 7548,
+              "c_rsp_valid": 7548,
+              "d_req_valid": 7548,
+              "d_rsp_valid": 7548
+            },
+            "coefficient_denominator": [
+              7548,
+              7560
+            ],
+            "incremental_nj_per_64b": [
+              2.275670666522887,
+              2.2792885849116353
+            ]
+          }
+        ],
+        "calibration_sha256": "a8169b0d8ecb81c336d32acfe82d469f57101d32e8c8208354387396299218f9",
+        "topology_binding": "conditional single fabric instance",
+        "active_phase_owner": "owner 0 only; owner 1 dynamic activity remains a transfer assumption",
+        "annotation_scope": "observed RTL bits mapped to connected cell pins; remaining internal activity is propagated, not complete gate-level replay",
+        "uncertainty": "sample and window-population sensitivity, not confidence interval or guaranteed error bound",
+        "phase_shared_relation": "phase contains shared; do not add these scenarios"
+      },
+      "windows": {
+        "first_token": {
+          "elapsed_ps": 496178792582,
+          "tokens": 1,
+          "read_beats_64b": 74176672,
+          "read_dma_idle": {
+            "energy_nj_per_window": [
+              46526251.541525066,
+              46554569.18467695
+            ],
+            "average_power_w": [
+              0.09376912564,
+              0.09382619709
+            ],
+            "energy_mj_per_token": [
+              46.52625154152506,
+              46.55456918467695
+            ]
+          },
+          "read_dma_dynamic": {
+            "energy_nj_per_window": [
+              161350673.3593355,
+              169070041.7563345
+            ],
+            "average_power_w": [
+              0.3251865572885609,
+              0.34074419198074346
+            ],
+            "energy_mj_per_token": [
+              161.3506733593355,
+              169.07004175633452
+            ]
+          },
+          "read_dma_total": {
+            "energy_nj_per_window": [
+              207876924.90086058,
+              215624610.94101146
+            ],
+            "average_power_w": [
+              0.4189556829285609,
+              0.4345703890707434
+            ],
+            "energy_mj_per_token": [
+              207.8769249008606,
+              215.62461094101147
+            ]
+          },
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              786787511.3706348,
+              825704772.4057171
+            ],
+            "average_power_w": [
+              1.585693550658169,
+              1.6641274974872262
+            ],
+            "energy_mj_per_token": [
+              786.7875113706348,
+              825.7047724057171
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2094519475.8898668,
+              2133436736.9249492
+            ],
+            "average_power_w": [
+              4.221299876583743,
+              4.299733823412799
+            ],
+            "energy_mj_per_token": [
+              2094.519475889867,
+              2133.436736924949
+            ]
+          }
+        },
+        "decode": {
+          "elapsed_ps": 496260408902,
+          "tokens": 1,
+          "read_beats_64b": 74195080,
+          "read_dma_idle": {
+            "energy_nj_per_window": [
+              46533904.63248942,
+              46562226.93360304
+            ],
+            "average_power_w": [
+              0.09376912564,
+              0.09382619709
+            ],
+            "energy_mj_per_token": [
+              46.53390463248942,
+              46.56222693360304
+            ]
+          },
+          "read_dma_dynamic": {
+            "energy_nj_per_window": [
+              161390714.83214784,
+              169111998.9006056
+            ],
+            "average_power_w": [
+              0.3252137626477851,
+              0.34077269890373485
+            ],
+            "energy_mj_per_token": [
+              161.39071483214784,
+              169.11199890060558
+            ]
+          },
+          "read_dma_total": {
+            "energy_nj_per_window": [
+              207924619.46463725,
+              215674225.83420864
+            ],
+            "average_power_w": [
+              0.4189828882877851,
+              0.4345988959937349
+            ],
+            "energy_mj_per_token": [
+              207.92461946463726,
+              215.67422583420864
+            ]
+          },
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              786939200.2777852,
+              825881355.1055381
+            ],
+            "average_power_w": [
+              1.585738427167555,
+              1.6642096373007877
+            ],
+            "energy_mj_per_token": [
+              786.9392002777852,
+              825.8813551055381
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2094952595.262137,
+              2133894750.0898902
+            ],
+            "average_power_w": [
+              4.221478396588839,
+              4.299949606722073
+            ],
+            "energy_mj_per_token": [
+              2094.952595262137,
+              2133.8947500898903
+            ]
+          }
+        }
+      }
+    },
+    "phase": {
+      "coefficient": {
+        "idle_w": [
+          0.08316548914,
+          0.08319548517
+        ],
+        "dynamic_nj_per_64b": [
+          1.5918447881218423,
+          1.7587430622106672
+        ],
+        "samples": [
+          {
+            "mode": 0,
+            "active_minus_idle_nj": 13280.76106730053,
+            "observed_handshakes": {
+              "c_req_valid": 8331,
+              "c_rsp_valid": 8286,
+              "d_req_valid": 8302,
+              "d_rsp_valid": 8291
+            },
+            "coefficient_denominator": [
+              8286,
+              8343
+            ],
+            "incremental_nj_per_64b": [
+              1.5918447881218423,
+              1.6027952048395522
+            ]
+          },
+          {
+            "mode": 1,
+            "active_minus_idle_nj": 13274.992633566117,
+            "observed_handshakes": {
+              "c_req_valid": 7548,
+              "c_rsp_valid": 7548,
+              "d_req_valid": 7548,
+              "d_rsp_valid": 7548
+            },
+            "coefficient_denominator": [
+              7548,
+              7560
+            ],
+            "incremental_nj_per_64b": [
+              1.7559514065563646,
+              1.7587430622106672
+            ]
+          }
+        ],
+        "calibration_sha256": "fdc681c61ed6240ed323d2155d81eb9eed2a08747337665ea48f5429bd393419",
+        "topology_binding": "conditional single fabric instance",
+        "active_phase_owner": "owner 0 only; owner 1 dynamic activity remains a transfer assumption",
+        "annotation_scope": "observed RTL bits mapped to connected cell pins; remaining internal activity is propagated, not complete gate-level replay",
+        "uncertainty": "sample and window-population sensitivity, not confidence interval or guaranteed error bound",
+        "phase_shared_relation": "phase contains shared; do not add these scenarios"
+      },
+      "windows": {
+        "first_token": {
+          "elapsed_ps": 496178792582,
+          "tokens": 1,
+          "read_beats_64b": 74176672,
+          "read_dma_idle": {
+            "energy_nj_per_window": [
+              41264951.98597664,
+              41279835.37992428
+            ],
+            "average_power_w": [
+              0.08316548914,
+              0.08319548517
+            ],
+            "energy_mj_per_token": [
+              41.26495198597664,
+              41.27983537992428
+            ]
+          },
+          "read_dma_dynamic": {
+            "energy_nj_per_window": [
+              118077748.72342339,
+              130457707.25787626
+            ],
+            "average_power_w": [
+              0.2379741949650327,
+              0.2629247948688102
+            ],
+            "energy_mj_per_token": [
+              118.0777487234234,
+              130.45770725787625
+            ]
+          },
+          "read_dma_total": {
+            "energy_nj_per_window": [
+              159342700.70940003,
+              171737542.63780054
+            ],
+            "average_power_w": [
+              0.3211396841050327,
+              0.3461202800388101
+            ],
+            "energy_mj_per_token": [
+              159.34270070940002,
+              171.73754263780054
+            ]
+          },
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              738253287.1791743,
+              781817704.1025063
+            ],
+            "average_power_w": [
+              1.487877551834641,
+              1.5756773884552928
+            ],
+            "energy_mj_per_token": [
+              738.2532871791743,
+              781.8177041025062
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2045985251.6984062,
+              2089549668.6217382
+            ],
+            "average_power_w": [
+              4.123483877760214,
+              4.211283714380866
+            ],
+            "energy_mj_per_token": [
+              2045.9852516984063,
+              2089.5496686217384
+            ]
+          }
+        },
+        "decode": {
+          "elapsed_ps": 496260408902,
+          "tokens": 1,
+          "read_beats_64b": 74195080,
+          "read_dma_idle": {
+            "energy_nj_per_window": [
+              41271739.64715125,
+              41286625.48926448
+            ],
+            "average_power_w": [
+              0.08316548914,
+              0.08319548517000001
+            ],
+            "energy_mj_per_token": [
+              41.27173964715125,
+              41.28662548926448
+            ]
+          },
+          "read_dma_dynamic": {
+            "energy_nj_per_window": [
+              118107051.40228313,
+              130490082.20016544
+            ],
+            "average_power_w": [
+              0.2379941040704832,
+              0.2629467913607717
+            ],
+            "energy_mj_per_token": [
+              118.10705140228313,
+              130.49008220016543
+            ]
+          },
+          "read_dma_total": {
+            "energy_nj_per_window": [
+              159378791.04943436,
+              171776707.6894299
+            ],
+            "average_power_w": [
+              0.32115959321048315,
+              0.3461422765307717
+            ],
+            "energy_mj_per_token": [
+              159.37879104943437,
+              171.7767076894299
+            ]
+          },
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              738393371.8625822,
+              781983836.9607594
+            ],
+            "average_power_w": [
+              1.4879151320902526,
+              1.5757530178378247
+            ],
+            "energy_mj_per_token": [
+              738.3933718625822,
+              781.9838369607594
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2046406766.846934,
+              2089997231.9451115
+            ],
+            "average_power_w": [
+              4.123655101511538,
+              4.211492987259111
+            ],
+            "energy_mj_per_token": [
+              2046.406766846934,
+              2089.9972319451117
+            ]
+          }
+        }
+      }
+    },
+    "shared-noshare": {
+      "coefficient": {
+        "idle_w": [
+          0.08611805737,
+          0.08611808717
+        ],
+        "dynamic_nj_per_64b": [
+          1.2331552484695056,
+          1.3542516968603804
+        ],
+        "samples": [
+          {
+            "mode": 0,
+            "active_minus_idle_nj": 10288.214237981085,
+            "observed_handshakes": {
+              "c_req_valid": 8331,
+              "c_rsp_valid": 8286,
+              "d_req_valid": 8302,
+              "d_rsp_valid": 8291
+            },
+            "coefficient_denominator": [
+              8286,
+              8343
+            ],
+            "incremental_nj_per_64b": [
+              1.2331552484695056,
+              1.2416382136110409
+            ]
+          },
+          {
+            "mode": 1,
+            "active_minus_idle_nj": 10221.891807902151,
+            "observed_handshakes": {
+              "c_req_valid": 7548,
+              "c_rsp_valid": 7548,
+              "d_req_valid": 7548,
+              "d_rsp_valid": 7548
+            },
+            "coefficient_denominator": [
+              7548,
+              7560
+            ],
+            "incremental_nj_per_64b": [
+              1.352102090992348,
+              1.3542516968603804
+            ]
+          }
+        ],
+        "calibration_sha256": "cea7630986c63ee2faaa1df345fa8eb8d398e6136ff58172eef6a022af6ab9b8",
+        "topology_binding": "conditional single fabric instance",
+        "active_phase_owner": "not applicable",
+        "annotation_scope": "observed RTL bits mapped to connected cell pins; remaining internal activity is propagated, not complete gate-level replay",
+        "uncertainty": "sample and window-population sensitivity, not confidence interval or guaranteed error bound",
+        "phase_shared_relation": "phase contains shared; do not add these scenarios"
+      },
+      "windows": {
+        "first_token": {
+          "elapsed_ps": 496178792582,
+          "tokens": 1,
+          "read_beats_64b": 74176672,
+          "read_dma_idle": {
+            "energy_nj_per_window": [
+              42729953.725354,
+              42729968.51148202
+            ],
+            "average_power_w": [
+              0.08611805737,
+              0.08611808717
+            ],
+            "energy_mj_per_token": [
+              42.729953725354,
+              42.72996851148202
+            ]
+          },
+          "read_dma_dynamic": {
+            "energy_nj_per_window": [
+              91471352.39080103,
+              100453883.92345586
+            ],
+            "average_power_w": [
+              0.18435159615509805,
+              0.2024550130422081
+            ],
+            "energy_mj_per_token": [
+              91.47135239080103,
+              100.45388392345586
+            ]
+          },
+          "read_dma_total": {
+            "energy_nj_per_window": [
+              134201306.11615503,
+              143183852.4349379
+            ],
+            "average_power_w": [
+              0.27046965352509805,
+              0.2885731002122081
+            ],
+            "energy_mj_per_token": [
+              134.20130611615502,
+              143.1838524349379
+            ]
+          },
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              713111892.5859293,
+              753264013.8996437
+            ],
+            "average_power_w": [
+              1.4372075212547064,
+              1.518130208628691
+            ],
+            "energy_mj_per_token": [
+              713.1118925859292,
+              753.2640138996437
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2020843857.1051612,
+              2060995978.4188757
+            ],
+            "average_power_w": [
+              4.072813847180279,
+              4.153736534554264
+            ],
+            "energy_mj_per_token": [
+              2020.843857105161,
+              2060.995978418876
+            ]
+          }
+        },
+        "decode": {
+          "elapsed_ps": 496260408902,
+          "tokens": 1,
+          "read_beats_64b": 74195080,
+          "read_dma_idle": {
+            "energy_nj_per_window": [
+              42736982.364282094,
+              42736997.152842276
+            ],
+            "average_power_w": [
+              0.08611805737,
+              0.08611808717
+            ],
+            "energy_mj_per_token": [
+              42.73698236428209,
+              42.73699715284228
+            ]
+          },
+          "read_dma_dynamic": {
+            "energy_nj_per_window": [
+              91494052.31261484,
+              100478812.98869167
+            ],
+            "average_power_w": [
+              0.18436701915240392,
+              0.20247195058539097
+            ],
+            "energy_mj_per_token": [
+              91.49405231261484,
+              100.47881298869167
+            ]
+          },
+          "read_dma_total": {
+            "energy_nj_per_window": [
+              134231034.67689693,
+              143215810.14153394
+            ],
+            "average_power_w": [
+              0.2704850765224039,
+              0.28859003775539094
+            ],
+            "energy_mj_per_token": [
+              134.23103467689694,
+              143.21581014153395
+            ]
+          },
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              713245615.4900448,
+              753422939.4128635
+            ],
+            "average_power_w": [
+              1.4372406154021735,
+              1.518200779062444
+            ],
+            "energy_mj_per_token": [
+              713.2456154900449,
+              753.4229394128635
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2021259010.4743967,
+              2061436334.3972154
+            ],
+            "average_power_w": [
+              4.072980584823458,
+              4.153940748483729
+            ],
+            "energy_mj_per_token": [
+              2021.2590104743967,
+              2061.4363343972154
+            ]
+          }
+        }
+      }
+    },
+    "shared": {
+      "coefficient": {
+        "idle_w": [
+          0.09634812176,
+          0.09634844959
+        ],
+        "dynamic_nj_per_64b": [
+          1.7424913779406215,
+          1.9423097469581663
+        ],
+        "samples": [
+          {
+            "mode": 0,
+            "active_minus_idle_nj": 14537.605566158605,
+            "observed_handshakes": {
+              "c_req_valid": 8331,
+              "c_rsp_valid": 8286,
+              "d_req_valid": 8302,
+              "d_rsp_valid": 8291
+            },
+            "coefficient_denominator": [
+              8286,
+              8343
+            ],
+            "incremental_nj_per_64b": [
+              1.7424913779406215,
+              1.754478103567295
+            ]
+          },
+          {
+            "mode": 1,
+            "active_minus_idle_nj": 14660.553970040239,
+            "observed_handshakes": {
+              "c_req_valid": 7548,
+              "c_rsp_valid": 7548,
+              "d_req_valid": 7548,
+              "d_rsp_valid": 7548
+            },
+            "coefficient_denominator": [
+              7548,
+              7560
+            ],
+            "incremental_nj_per_64b": [
+              1.9392267156137881,
+              1.9423097469581663
+            ]
+          }
+        ],
+        "calibration_sha256": "c244e8a7f34d866d2f3987bac07a7f6645a7bc91ab7f7bfee1af6a8142c42930",
+        "topology_binding": "conditional single fabric instance",
+        "active_phase_owner": "not applicable",
+        "annotation_scope": "observed RTL bits mapped to connected cell pins; remaining internal activity is propagated, not complete gate-level replay",
+        "uncertainty": "sample and window-population sensitivity, not confidence interval or guaranteed error bound",
+        "phase_shared_relation": "phase contains shared; do not add these scenarios"
+      },
+      "windows": {
+        "first_token": {
+          "elapsed_ps": 496178792582,
+          "tokens": 1,
+          "read_beats_64b": 74176672,
+          "read_dma_idle": {
+            "energy_nj_per_window": [
+              47805894.72242032,
+              47806057.38471389
+            ],
+            "average_power_w": [
+              0.09634812176,
+              0.09634844959
+            ],
+            "energy_mj_per_token": [
+              47.80589472242032,
+              47.80605738471389
+            ]
+          },
+          "read_dma_dynamic": {
+            "energy_nj_per_window": [
+              129252211.40432951,
+              144074073.0225189
+            ],
+            "average_power_w": [
+              0.26049523546085235,
+              0.29036725304761746
+            ],
+            "energy_mj_per_token": [
+              129.2522114043295,
+              144.07407302251892
+            ]
+          },
+          "read_dma_total": {
+            "energy_nj_per_window": [
+              177058106.1267498,
+              191880130.4072328
+            ],
+            "average_power_w": [
+              0.3568433572208523,
+              0.38671570263761745
+            ],
+            "energy_mj_per_token": [
+              177.0581061267498,
+              191.8801304072328
+            ]
+          },
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              755968692.596524,
+              801960291.8719385
+            ],
+            "average_power_w": [
+              1.5235812249504606,
+              1.6162728110541003
+            ],
+            "energy_mj_per_token": [
+              755.968692596524,
+              801.9602918719385
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2063700657.115756,
+              2109692256.3911705
+            ],
+            "average_power_w": [
+              4.159187550876034,
+              4.251879136979674
+            ],
+            "energy_mj_per_token": [
+              2063.7006571157563,
+              2109.6922563911703
+            ]
+          }
+        },
+        "decode": {
+          "elapsed_ps": 496260408902,
+          "tokens": 1,
+          "read_beats_64b": 74195080,
+          "read_dma_idle": {
+            "energy_nj_per_window": [
+              47813758.30155728,
+              47813920.990607135
+            ],
+            "average_power_w": [
+              0.09634812175999999,
+              0.09634844959
+            ],
+            "energy_mj_per_token": [
+              47.81375830155728,
+              47.81392099060714
+            ]
+          },
+          "read_dma_dynamic": {
+            "energy_nj_per_window": [
+              129284287.18561465,
+              144109827.0603409
+            ],
+            "average_power_w": [
+              0.2605170286939922,
+              0.2903915453968831
+            ],
+            "energy_mj_per_token": [
+              129.28428718561466,
+              144.1098270603409
+            ]
+          },
+          "read_dma_total": {
+            "energy_nj_per_window": [
+              177098045.48717192,
+              191923748.05094805
+            ],
+            "average_power_w": [
+              0.3568651504539922,
+              0.38673999498688316
+            ],
+            "energy_mj_per_token": [
+              177.09804548717193,
+              191.92374805094806
+            ]
+          },
+          "estimated_on_chip": {
+            "energy_nj_per_window": [
+              756112626.3003198,
+              802130877.3222775
+            ],
+            "average_power_w": [
+              1.523620689333762,
+              1.6163507362939362
+            ],
+            "energy_mj_per_token": [
+              756.1126263003198,
+              802.1308773222776
+            ]
+          },
+          "estimated_on_chip_plus_ddr": {
+            "energy_nj_per_window": [
+              2064126021.2846715,
+              2110144272.3066297
+            ],
+            "average_power_w": [
+              4.1593606587550465,
+              4.252090705715221
+            ],
+            "energy_mj_per_token": [
+              2064.1260212846714,
+              2110.14427230663
+            ]
+          }
+        }
+      }
+    }
+  }
+}

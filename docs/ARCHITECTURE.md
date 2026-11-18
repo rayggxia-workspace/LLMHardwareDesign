@@ -1,4 +1,74 @@
+## 七模型控制能耗 v4 复算（2026-11-18）
+
+当前入口为 work/Melodydt/280/energy_report_models.json（control-v4）。[方法、作业、输入 SHA 与限制](handoffs/2026-11-18-issue-280-control-energy-v4.md)。保持 512-bit 数据 SRAM / 300 MHz / 冻结时间，综合后无 SPEF。模型匹配部署和精确驻留未验收。
+
+从仓库根目录运行；报告命令使用含 ReportLab/pypdf 的 Python 和 Windows Deng 字体：
+
+```text
+python scripts/check_project.py
+python work/Melodydt/280/seven_model_control_estimate.py
+python work/Melodydt/280/verify_control_estimate.py
+python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation.pdf
+python work/Melodydt/280/verify_energy_report_pdf.py output/pdf/seven-model-energy-evaluation.pdf
+pdftoppm -r 75 -png output/pdf/seven-model-energy-evaluation.pdf tmp/pdfs/control-v4/page
+```
+
+21 窗独立核验、25 页 651 组数值及全页渲染目检通过。管理结构检查不替代功能/时序/物理验收。历史 v3 的输入索引保留于 energy_report_models_v3_arithmetic.json。
+
+## 2026-11-18 七模型算术能耗估算 v3 已交付（Asia/Shanghai）
+
+Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / 草稿 PR [#281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。已按用户允许特殊算子运算级近似的口径完成七模型三窗估算；512-bit SRAM、名义 300 MHz、三 P 与冻结时间保持不变。公共 RMS/softmax/RoPE 采用真实输入标定；GELU/GDN/Mamba/浮点服务等明确使用成本代理，范围不是统计置信区间或保证误差界，不宣称 RTL 数值验收。
+
+四项新作业 38837942/38838045/38838116/38838117 全部 COMPLETED 0:0、UNLIMITED。N/E32/scan 各 66 样本，96 分块覆盖 66 个完整 apply 向量，softmax 56、RoPE 54。七模型分项/单位/冻结时间/DDR 对账通过；18 页 PDF 的 462 组数值与全页视觉检查通过。数据/估算代码提交 `0d84209e10e898f17998e959157a760a80c2afaf`。
+
+最新 [完整交接与所有剩余步骤](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-seven-model-energy/docs/handoffs/2026-11-18-issue-280-arithmetic-estimate-v3.md)、[持续更新报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-seven-model-energy/docs/experiments/seven-model-energy-evaluation.pdf)。本轮估算已完成；更广的硬件实现/时序/读 DMA 与物理覆盖仍未验收，Issue in_progress、PR 草稿未合并，审查人待指定。项目登记 PR #5 pending；看板缺配置/Projects 能力，unverified、同步 pending。11:27 快照旧 DMA 38769386/38795299 仍 RUNNING，另两项在综合后的引脚放置失败，不阻塞本版估算。未配置聊天自动监测。
+
+### 当前 v3 复算命令
+
+从仓库根目录运行；PDF 命令使用含 reportlab/pypdf 的 Python 及 Windows Deng 字体。本轮实际通过，管理检查不替代业务/物理验收。
+
+```text
+python scripts/check_project.py
+python work/Melodydt/280/seven_model_arithmetic_estimate.py
+python work/Melodydt/280/verify_arithmetic_estimate.py
+python work/Melodydt/280/build_energy_report.py
+python work/Melodydt/280/verify_energy_report_pdf.py output/pdf/seven-model-energy-evaluation.pdf
+```
+
+输入/输出散列在结果 JSON、报告索引与 arithmetic-calibration-results/v3-evidence-index.json。每次更新数据后应更新索引 SHA、重建并核对 PDF、重新目检变更页，再复制到 docs/experiments 同名文件；旧 v2.1 索引单独保留。未完成项见交接，不沿用下方历史快照的等待状态。
+
 # 架构与运行
+
+## Issue #280 公共算术标定与计数对账（2026-11-18）
+
+真实输入 RMS N/E32/scan/apply、softmax/RoPE 的复跑使用 `work/Melodydt/280/run_public_operator_power.sbatch` 和配套测试，300 MHz、RTL 边界活动传播、无布线寄生。服务器输入映射/工具环境及全部实际命令见[标定接续](handoffs/2026-11-18-issue-280-public-arithmetic-calibration.md)。
+
+```bash
+# 在已具备原始服务器工件的 R 目录核验 27 份结果，不是整模型复算
+python3 work/Melodydt/280/collect_arithmetic_calibration.py "$R" arithmetic-calibration-index.json
+# 输入七模型已验收 arithmetic-observation.json，输出资源周期差，非 token 延迟
+python3 work/Melodydt/280/audit_rms_e32_timing.py rms-e32-timing-ledger.json <capture>...
+# 归档文件校验，原服务器 sample/build 文件不在 Git 小型归档中
+cd work/Melodydt/280/arithmetic-calibration-results
+sha256sum -c archive.sha256
+```
+
+apply 包含 E32，不能重复相加；30 个大向量因 bank 容量未覆盖。测试访存夹具不计物理 SRAM 功耗，系统仍为 512 bit。完整模型重算仍待共享实例/闲置驻留、时序重叠和特殊算子绑定；PDF v2.1 总值未因本次样本标定改变。
+
+## Issue #280 无布线寄生分项复算（2026-11-17）
+
+从 `work/Melodydt/280/no-wire-results/` 的服务器校准回执和已验收模型计数生成七模型 v2，保留原始 v1。代码/配置/输入/输出 SHA 及原始远程位置见[本轮交接](handoffs/2026-11-17-issue-280-no-wire-energy-extension.md)。
+
+```bash
+python scripts/check_project.py
+python work/Melodydt/280/verify_six_model_energy.py
+python work/Melodydt/280/seven_model_no_wire_power.py
+python work/Melodydt/280/verify_no_wire_energy.py
+python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-v2.pdf
+python work/Melodydt/280/verify_energy_report_pdf.py output/pdf/seven-model-energy-evaluation-v2.pdf
+```
+
+后两条使用 ReportLab 4.4.9、pypdf、Deng.ttf/Dengb.ttf；Poppler 渲染全部十九页并单独目检。更新输入后先更新报告索引 SHA，不跳过校验。无 SPEF/无寄生估计，原网络保留已有单元与引脚电容。七模型验证只核对冻结时间/DDR、输入哈希、分项守恒、单位及归属；没有重跑七模型 FP32、整模型门级或 300 MHz 物理签核。
 
 [七模型短程 TLM 回放](../work/Melodydt/274/RESULTS.md)记录真实权重生成、两步 Decode、两位置 Prefill、Slurm 和状态审计的复跑入口。模型专用服务及定点数值边界随实测回执记录。[优化 A/B](../work/Melodydt/274/OPTIMIZATION.md) 给出权重窗口、KV 行与 V 读取、FFN 缓存和逐字节回放对照的命令。
 
@@ -192,3 +262,53 @@ python3 ../audits/compare-pr272-v2.py BASELINE_RUN CANDIDATE_RUN --same-program
 ### 三 P FFN 与代表性历史
 
 [三 P 全层复测](../work/Melodydt/274/THREE_P_LIVE.md)记录原冻结参考缓存、三目标 CALL/WAIT、动态 MoE 批次、Gemma Q12 与数值验收。准备 512 位置历史用 `fast_qwen3_short.sbatch MODEL prepare-live:4:MAPPING:combined`。在匹配的冻结运行目录用 `three_p_suite.sbatch prefill`、`three_p_suite.sbatch decode-live` 和 `three_p_suite.sbatch fp32` 分别提交全层实验。独立核对入口为 `audit_three_p.py REFERENCE FP32_TRACE PREFILL DECODE`。Gemma Q12 的命令及源码清单见结果记录。计时范围为 512-bit TLM。
+
+
+## Issue #280 六模型 TLM 分项能耗复算
+
+模型回放沿用 #274 已验收的三 P、512-bit、真实 512 位置历史与完整冻结输出。小型结果/验收/计数输入在 `work/Melodydt/280/six-model-results/<model>/`；完整权重和逐层数值文件留授权服务器。`model` 为 llama、granite、phi、gemma、qwen35、falcon；仅在该模型结果实际归档后复算。
+
+```bash
+python scripts/check_project.py
+python work/Melodydt/280/six_model_tlm_power.py granite work/Melodydt/280/six-model-results/granite work/Melodydt/280 tmp/granite_tlm_power_recomputed.json
+python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-current.pdf
+```
+
+积分输出要求文件尚不存在，并拒绝未通过冻结输出/数值/DDR/SRAM 验收的输入。复算使用 Python 3.6+；PDF 使用 ReportLab 4.4.9、Deng.ttf/Dengb.ttf 字体并以 Poppler 目检。脚本的 SHA 核对和单位检查不能替代 RTL/300 MHz 物理验收。BSCC-T6 的不限时提交、归档 SHA、原始工件、运行版本和已知失败见[扩测交接](handoffs/2026-11-17-issue-280-six-model-energy.md)。
+
+## 七模型能耗扩测复算（Issue #280，2026-11-17）
+
+```bash
+python scripts/check_project.py
+python work/Melodydt/280/verify_six_model_energy.py
+python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation-current.pdf
+```
+
+管理结构检查与业务验证分开。第二条只验证六模型已发布小型回执、原清单 SHA、冻结输出验收状态，并重新积分和核对片上＋DDR；不会重跑模型、FP32 或物理实现。Python 3.7.0 与 3.12 已验证逐字节复现服务器 3.6.6 结果；积分器保留冻结的逐项求和顺序。PDF 需 ReportLab 和可用中文字体，可用脚本参数指定字体路径。原始工件、全部作业和剩余标定见[交接](handoffs/2026-11-17-issue-280-six-model-energy.md)。
+
+
+## 公共算术缺项标定（Issue #280）
+
+在 BSCC 授权目录使用本任务独立 bundle；完整启动命令、数据输入、工具版本/SHA 和结果路径见[公共算术交接](handoffs/2026-11-17-issue-280-common-arithmetic.md)。不要直接在登录节点运行模型仿真。
+
+```bash
+# N/E/softmax 候选映射；bundle 中冻结 RTL 的 SHA 已登记。
+sbatch --time=0 run_common_arithmetic_map.sbatch
+# accepted_source 必须指向该模型已验收的冻结 runner/数值结果目录。
+sbatch --time=0 run_arithmetic_capture.sbatch "$accepted_source"
+# 合成数据仅测试流程；真实捕获需先通过冻结输出和定点校验。
+sbatch --time=0 run_rms_n_calibration.sbatch --smoke
+sbatch --time=0 run_rms_n_calibration.sbatch --capture "$capture/arithmetic-observation.json"
+```
+
+对应脚本在 `work/Melodydt/280/`。N 实测范围仅 BEGIN/STATS/FINALIZE/FACTOR 核心，不含 E、SRAM、scan/apply wrapper；边界活动传播估计不等同内部门级活动。真实输入按窗口/site/长度/epsilon/移位最多取两个完整样本，全部调用计数不抽样。冻结输出不一致、RTL 因子不一致、SHA 或活动覆盖不全即拒绝回填。报告保持 512-bit TLM 与 300 MHz 目标，不因微测试夹具的时钟而重定义模型速度。
+
+
+Qwen3 的已验收启动器独立使用 `prepare_qwen3_arithmetic_capture.py`、`qwen3_arithmetic_observation.py` 和 `run_qwen3_arithmetic_capture.sbatch`。在该 bundle 执行 `sbatch --time=0 run_qwen3_arithmetic_capture.sbatch`；不要用六模型 launcher 替代。复用 RMS 探针前严格比较冻结源码，保留原 M 不重叠、plan、逐层数值与 DDR 验收。定点校验器需要提供 `math.isqrt` 的 Python 环境，本机默认 3.7 不支持；已在服务器容器执行验证。
+
+
+### Issue #280 算术缺项 2–4 观察与 E32 标定
+
+`work/Melodydt/280/OPERATOR_BINDINGS.md` 记录实际 TLM/RTL 格式关系。新脚本 `run_operator_capture.sbatch` 在已验收六模型目录上生成独立观察副本；`verify_operator_capture.py` 复算实际操作数，`audit_operator_bindings.py` 仅做格式及候选定点审计。先 `run_operator_preflight.sbatch`，再按本轮交接提交六项采样；所有 `sbatch --time=0`，每项 prefill/decode 各 12 核。
+
+`run_rms_e32_check.sbatch <capture...>` 使用真实两阶段 RMS 乘法检查 compact E32；`run_e32_wrapper_map.sbatch` 单独映射 E32/scan/apply/RoPE，`run_rms_e32_power.sbatch <mapped-E32-dir> <capture...>` 做活动/空闲配对无寄生标定。运行前核验 bundle 的 `inputs.sha256` 和 capture 验收；脚本保留网表/库/活动 SHA。E32 18 周期实测尚未和 TLM 9 周期叶节点绑定，不能直接更新整模型速度或能耗总值。E32/包装逻辑边界、命令、真实路径、成功判据和剩余步骤见 [2026-11-17 交接](handoffs/2026-11-17-issue-280-operator-expansion.md)。

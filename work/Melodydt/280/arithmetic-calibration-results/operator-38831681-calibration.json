@@ -1,0 +1,1028 @@
+{
+  "kind": "rope",
+  "scope": "sampled real operands; softmax arithmetic or RoPE wrapper plus E32; SRAM and system residency excluded",
+  "activity": "RTL boundary VCD propagated through mapped cells; no internal gate replay",
+  "memory_fixture": "softmax uses one-outstanding S128 request/response fixture, not physical SRAM",
+  "nominal_clock_mhz": 300,
+  "period_ps": 3334,
+  "wire_parasitics_loaded": false,
+  "timing_signoff": false,
+  "scheduler_latency_reconciled": false,
+  "source_commit": "a632159d3bf5cf5bdc049a9338e6140c615d6105",
+  "sources_sha256": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/rtl/rope_e32_ap64.sv": "a64ed117324536643bc5470a18fc464dcaf08d660e71b4b34c07f1cf6f53c21b",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/rtl/e_s32_ap64.sv": "c9ba4cf469bcd8feb199d49f845348180c1935d28edd2f48acb517f84fe0675b",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/rtl/e_s32_native.sv": "50ce3230a6a7738a7bec4816250eb68647da477b9bbd64de69c1dc71fae81751",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-01/tb_operator_rope.sv": "eb2eb4c88391dc67e4f903a70c0dab40e4419cd63137e0730f583d64ba8e1039"
+  },
+  "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+  "inputs_sha256": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/prefill/operator-observation.json": "c00f78784c1cebc0a3c67556bf00c840829cc1100cb56dd92e030f3a242d2ee5",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/decode/operator-observation.json": "519ac54ecb0a6bde15932ed8c8759114209191c69f4809c5309dd44393de5de6",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/prefill/operator-observation.json": "268a32b00fa6367a92dc55e9abc20510f6b1cd6d7ca5bc93f2eadeff12f1cbe1",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/operator-observation.json": "e200d216507a52eabc355b19f28cb238b959f32b9f7fd631751cf8cb6e62a694"
+  },
+  "verilator_version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "openroad_version": "unknown",
+  "captured_call_counts": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/prefill/operator-observation.json": {
+      "prefill:rope:site0:{\"dimension\": 64, \"width\": 64}": 1280,
+      "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_compact\"}": 512,
+      "prefill:silu:site0:{\"elements\": 4, \"gain\": 65536}": 22528,
+      "prefill:silu:site1:{\"elements\": 4, \"gain\": 65536}": 21504,
+      "prefill:silu:site2:{\"elements\": 4, \"gain\": 65536}": 21504,
+      "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_compact\"}": 512
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/decode/operator-observation.json": {
+      "first_token:rope:site0:{\"dimension\": 64, \"width\": 64}": 640,
+      "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_compact\"}": 512,
+      "first_token:silu:site0:{\"elements\": 4, \"gain\": 65536}": 11264,
+      "first_token:silu:site1:{\"elements\": 4, \"gain\": 65536}": 10752,
+      "first_token:silu:site2:{\"elements\": 4, \"gain\": 65536}": 10752,
+      "decode:rope:site0:{\"dimension\": 64, \"width\": 64}": 640,
+      "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_compact\"}": 512,
+      "decode:silu:site0:{\"elements\": 4, \"gain\": 65536}": 11264,
+      "decode:silu:site1:{\"elements\": 4, \"gain\": 65536}": 10752,
+      "decode:silu:site2:{\"elements\": 4, \"gain\": 65536}": 10752
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/prefill/operator-observation.json": {
+      "prefill:scale:site3:{\"elements\": 4, \"gain\": 786432}": 768,
+      "prefill:rope:site0:{\"dimension\": 64, \"width\": 64}": 2048,
+      "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_compact\"}": 768,
+      "prefill:router:site0:{\"experts\": 40, \"top\": 8}": 64,
+      "prefill:silu:site2:{\"elements\": 4, \"gain\": 65536}": 16384,
+      "prefill:silu:site1:{\"elements\": 4, \"gain\": 65536}": 24576,
+      "prefill:silu:site0:{\"elements\": 4, \"gain\": 65536}": 24576,
+      "prefill:expert_sum:site3:{\"elements\": 128}": 6144,
+      "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_compact\"}": 768
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/operator-observation.json": {
+      "first_token:scale:site3:{\"elements\": 4, \"gain\": 786432}": 384,
+      "first_token:rope:site0:{\"dimension\": 64, \"width\": 64}": 1024,
+      "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_compact\"}": 768,
+      "first_token:router:site0:{\"experts\": 40, \"top\": 8}": 32,
+      "first_token:silu:site0:{\"elements\": 4, \"gain\": 65536}": 12288,
+      "first_token:silu:site2:{\"elements\": 4, \"gain\": 65536}": 8192,
+      "first_token:silu:site1:{\"elements\": 4, \"gain\": 65536}": 12288,
+      "first_token:expert_sum:site3:{\"elements\": 128}": 3072,
+      "decode:scale:site3:{\"elements\": 4, \"gain\": 786432}": 384,
+      "decode:rope:site0:{\"dimension\": 64, \"width\": 64}": 1024,
+      "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_compact\"}": 768,
+      "decode:router:site0:{\"experts\": 40, \"top\": 8}": 32,
+      "decode:silu:site0:{\"elements\": 4, \"gain\": 65536}": 12288,
+      "decode:silu:site1:{\"elements\": 4, \"gain\": 65536}": 12288,
+      "decode:silu:site2:{\"elements\": 4, \"gain\": 65536}": 8192,
+      "decode:expert_sum:site3:{\"elements\": 128}": 3072
+    }
+  },
+  "samples": [
+    {
+      "signature": "prefill:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/prefill/operator-observation.json",
+      "sample_index": 0,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.006673007738,
+                "switching": 0.001133726561,
+                "leakage": 0.0001490598661,
+                "total": 0.007955794223
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "cee20f80adf0747a841a3b4532e7bcfeee61ab9e96e921422d7087aa2bb2faf2",
+              "log_sha256": "aa539642fb0210675acb9096c8f90b56cdfeda164fcfddaea580364fc1d6b8d0"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001463697845,
+                "total": 0.002276673913
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "f7cfc33ad3f0a0a0114b08babab63395b3f818b4e812dec0c0036150cd4da894",
+              "log_sha256": "0c5fb3e83900c93528b4e19c39bde9f309188252f54d6ab4125ed476a5604b0f"
+            }
+          },
+          "incremental_nj": 18.479766622815042
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2289280742,
+                "switching": 0.1665899754,
+                "leakage": 0.0007264196174,
+                "total": 0.3962444961
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "f2a423138ac05875b64afc13c468907e0e329bbee6a4ad6bb0e81b60082225e2",
+              "log_sha256": "b713e7fe118b75d0b15d8992f8328f0e1693ac1b3f8424e57f19d2e5ca691bd9"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007395411958,
+                "total": 0.003533098381
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "b5566a604dd0975f43ef720bb9611cda429e8f3288ef5c27fa7cfa30d20671e3",
+              "log_sha256": "3fc5fafe8a9d2c3f392c85c11fd048cf87a11192304cf94c7250fd649a793d3b"
+            }
+          },
+          "incremental_nj": 1277.8766047952624
+        }
+      },
+      "incremental_nj": 1296.3563714180775,
+      "vectors_sha256": "5cfdeb52e997fe205f754bd452421a010e12dfa040791c32ce6a55b727de5b39",
+      "rtl_log_sha256": "a7929e5c3c7d6b656c69bffa23805a776a7052781d255fe82e0811c81685a180"
+    },
+    {
+      "signature": "prefill:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/prefill/operator-observation.json",
+      "sample_index": 1,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.006745557766,
+                "switching": 0.001139455242,
+                "leakage": 0.0001490923314,
+                "total": 0.008034105413
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "7bed7127a12df759da2b4630b0d21499b74bc77e2c96f663a2fe3b6a621d79e5",
+              "log_sha256": "68582cc0b0aa456256c7efc6913a244bbca73e609178ef8432dcb6af21e3afe7"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001463092776,
+                "total": 0.00227661361
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "6c3a87e4415eca75affb9ca1a25d1b3e3cbbcf97234f1aa0fa4f7c9d8fe69af9",
+              "log_sha256": "c233ee596bc9bd71cb57fa6be081ba9dc41b7efd5f51fc014063be8a48393e66"
+            }
+          },
+          "incremental_nj": 18.73478620709315
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2243958265,
+                "switching": 0.1634307355,
+                "leakage": 0.0007268806803,
+                "total": 0.3885534406
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "520eeba53dfceb1d6053eb0cac5fecee4734a265185c52bb7491698629607cca",
+              "log_sha256": "5317a786a0f34729d0d6e18876b3624e2954bfd04687ddb4237824236446e6ea"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007395411958,
+                "total": 0.003533098381
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "11aeea93b72fda62c32f53b8fcfdf1047ab8daa1844b37183a2d2586894f8138",
+              "log_sha256": "3fc5fafe8a9d2c3f392c85c11fd048cf87a11192304cf94c7250fd649a793d3b"
+            }
+          },
+          "incremental_nj": 1252.8500332551505
+        }
+      },
+      "incremental_nj": 1271.5848194622436,
+      "vectors_sha256": "73b20029bf34af90784d1c6e87e8bf9d525c683098806db066a51546c1928a9b",
+      "rtl_log_sha256": "ba189ee62dc9252c9c8fab8157c2ce65137c67f6241c2cbee618ad31547b9fe1"
+    },
+    {
+      "signature": "first_token:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/decode/operator-observation.json",
+      "sample_index": 0,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.007870104164,
+                "switching": 0.001227178262,
+                "leakage": 0.0001494787139,
+                "total": 0.009246761911
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "99aae8fcbc419081d5145c3bcd3ef3417208648952452695c2e93bcf3fc8eaa7",
+              "log_sha256": "61213f5e383e0723c1c0c7193c13f530638f171fde0cece34f082a0dda3401f8"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001467350085,
+                "total": 0.002277039224
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "05cbf73fffbaefa973a228acf54c7e84cfb47e69a3c358d848ae3acc4f26c172",
+              "log_sha256": "5bae47167be120f9f1a27a378f4996a6abd8fab9d30fddcb04b0a3d8cc8e356f"
+            }
+          },
+          "incremental_nj": 22.679366107935007
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.225733459,
+                "switching": 0.1643761098,
+                "leakage": 0.0007266164757,
+                "total": 0.3908361793
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "26a7c39fb310f79218631a93d2034be332ef5207726550ca9bbf999702cf422f",
+              "log_sha256": "a674ff405ceb308d50f06bfa5501f7382346b15bc39d8d3ee04a27a341abd37e"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007397005684,
+                "total": 0.00353325787
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "f1cca6c19fe8e00519e07a7b6aa9b74700250f3e83b4a786d72a4f2ab3c0f6a2",
+              "log_sha256": "ecb3fdbf945efb6cc1278012b0d88a7e5b868d51080f3424038e675f95bba714"
+            }
+          },
+          "incremental_nj": 1260.2775094864771
+        }
+      },
+      "incremental_nj": 1282.9568755944122,
+      "vectors_sha256": "b00d7fa56ea85d5fc56274e5280096ffcd7a1b1ef87a938c8a74be973a8d0f81",
+      "rtl_log_sha256": "4ecbdef30bd96775f325e7bc456f1288548a02c5591b37f1ace2ab3df5bae044"
+    },
+    {
+      "signature": "first_token:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/decode/operator-observation.json",
+      "sample_index": 1,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.007929832675,
+                "switching": 0.00123507611,
+                "leakage": 0.0001495406177,
+                "total": 0.009314449504
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "f9e2145d95011ef061f4a03c40762eac8ee35c987cb7ed71abba65da4243e2d8",
+              "log_sha256": "edca9259282fb7a4e3538f207dddaa66977f2f76b6a78035d0189b162c68473a"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001461355278,
+                "total": 0.002276439685
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "460300e0d61d76629312f4db4c3e725d567376d1826dbc4b8c0ae841254ad4d2",
+              "log_sha256": "0f08c96191d9adc9defc54edc3f21fd51b5ae57ba84eb6a53a068e7db167ac1a"
+            }
+          },
+          "incremental_nj": 22.9015713428689
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2229203135,
+                "switching": 0.1623558104,
+                "leakage": 0.000727091392,
+                "total": 0.386003226
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "bfa88e0d0219b0eb4f210b5c94a303343021cbcb06680d2953277cb544bd322a",
+              "log_sha256": "ab85e727166f69d56c22bafc8682e7ea7746f9d22404b26f1bb9b4ad73293bb3"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007410327671,
+                "total": 0.003534589894
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "094fdac572c9914d79dd6df76a8217ec31072d2abeaf7a1ed4273b1127fc5e5b",
+              "log_sha256": "183aab1d213681ef6d7c7010e8dcbabe872cc40545b91d19b81171461a86a446"
+            }
+          },
+          "incremental_nj": 1244.546822390746
+        }
+      },
+      "incremental_nj": 1267.448393733615,
+      "vectors_sha256": "11efb6cabd68f11f0f25eb6d0b560c1d059cc4b47720cd284b05a8f4364e19af",
+      "rtl_log_sha256": "0731514e5c8bd580b059ed524ccc61aecaf52615908d6fac40c87be358a28f13"
+    },
+    {
+      "signature": "decode:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/decode/operator-observation.json",
+      "sample_index": 10,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.008037670515,
+                "switching": 0.001240760321,
+                "leakage": 0.0001496072073,
+                "total": 0.009428038262
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "6df3ce6441485aa1a230c8cbce667d178a66b69968a18ac2987f2232a0680f79",
+              "log_sha256": "76ebdb74beb3c649aeb605767ac8d30532393116295ce9eab74c4ca9441ba6bf"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001466999674,
+                "total": 0.0022770043
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "8c213f59f315f85f43044961c55a05c32794f581d3356ca42c0a28c8dda9afca",
+              "log_sha256": "4f3462c517ddd1a55761a8a3fe366d77e6fca655b41b501b9e90936a54ad1785"
+            }
+          },
+          "incremental_nj": 23.269350095804604
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2305583805,
+                "switching": 0.167915374,
+                "leakage": 0.0007266253233,
+                "total": 0.3992003798
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "6643439109253ea39891d69382ded4b0a6c3f28d3cee3a737fe996e2bb1dc2fa",
+              "log_sha256": "12ac4c4ddf8559436e98679f3d119f6e1271194e4890d11c8398101a4ee324b5"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007397005684,
+                "total": 0.00353325787
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "4a62747c8500917676cb743454a3934c15f08c22c8b1d97b859d7237a522e8c2",
+              "log_sha256": "ecb3fdbf945efb6cc1278012b0d88a7e5b868d51080f3424038e675f95bba714"
+            }
+          },
+          "incremental_nj": 1287.4944840862693
+        }
+      },
+      "incremental_nj": 1310.7638341820739,
+      "vectors_sha256": "3ab64517381e8e38fd23dc77def3eef8cdec32df7fddb1afba8e487dc0d7974f",
+      "rtl_log_sha256": "c2d467026967b0f7d9143423a2f9c4042c6d57dae0a249b78883642ee945cc15"
+    },
+    {
+      "signature": "decode:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830188/decode/operator-observation.json",
+      "sample_index": 11,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.008072918281,
+                "switching": 0.001244760235,
+                "leakage": 0.000149618616,
+                "total": 0.009467297234
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "b7b8338f8232e6e8b7ed8d70c603da10f58dc12d44a0039e95a7dc1379648202",
+              "log_sha256": "02e01004131295d9ab241a582695bee0ae77a4322c1a1f9abcfad1008b7cd372"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001459558553,
+                "total": 0.002276260173
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "a022befaa89e1bcdd283afd801d5f36cbc634ce75b0b22de6b08c524f490d0d0",
+              "log_sha256": "746e86d9bf47df2ef0a29639322eb0491d27d5eaded92bcc69271c209e4d9263"
+            }
+          },
+          "incremental_nj": 23.39951953990102
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2305993736,
+                "switching": 0.1681097746,
+                "leakage": 0.0007271142676,
+                "total": 0.3994362652
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "d7e595f2c3239cfcf8ba6e7382b6230e5c15b778873d9d325928e8065b0f4134",
+              "log_sha256": "593ebb344f7262aaa85ce298d955bac03757046b69b81b3870b209fc85d836d3"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007410052349,
+                "total": 0.00353456242
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "13e7e904305c899890df3d201337ec75544908d12d8f2cbdd6d4fcc8c30b7399",
+              "log_sha256": "415d6c97b5164ad4f911a8ef47b77ee9a67ba6d5b5a480cf7f00cb70d3f5d907"
+            }
+          },
+          "incremental_nj": 1288.2578064188754
+        }
+      },
+      "incremental_nj": 1311.6573259587765,
+      "vectors_sha256": "61b3cb66d38672396f54efa2746feac4324326e3a7558d2a210332d0c19a0467",
+      "rtl_log_sha256": "5cd2aabd3fcbe9b15a972c137a92155b5fa2eaf3bef26aa03268fcae0a03d450"
+    },
+    {
+      "signature": "prefill:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/prefill/operator-observation.json",
+      "sample_index": 2,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.006478265859,
+                "switching": 0.00111388159,
+                "leakage": 0.0001489861024,
+                "total": 0.007741133217
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "ff92b796302f58ec8c1f610ed89a56dfab470087467ba3fd8731b3b7f2bc00c8",
+              "log_sha256": "f9919d303ad3faae617c778c3f2cea47b4a03299208238f7abde41d4d202aa06"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001464278757,
+                "total": 0.002276732121
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "6b3297bb7421e3712c1c80d99573a31d937b6320ba2a52581f80b0ef2ac6f0f7",
+              "log_sha256": "976331ac33de0b7bdf824935c326beea8863fc3c53cd23b75cde7e8da0e1ee16"
+            }
+          },
+          "incremental_nj": 17.781073735966462
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2205920517,
+                "switching": 0.1603396684,
+                "leakage": 0.0007256934769,
+                "total": 0.3816574216
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "2be5880c52ef2839451cb6645b936f3669dc8b0bc2206f484a949d332eaa34d5",
+              "log_sha256": "803e32ffbd12831aadc75ae9bde8a541485f02f9b4d58f84cc43dff0854a2bf6"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007395411958,
+                "total": 0.003533098381
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "bd4b0d21fa2e444791b8372649ce6290171cb31ca2acc20146a47484b2961af7",
+              "log_sha256": "3fc5fafe8a9d2c3f392c85c11fd048cf87a11192304cf94c7250fd649a793d3b"
+            }
+          },
+          "incremental_nj": 1230.4104977654545
+        }
+      },
+      "incremental_nj": 1248.1915715014209,
+      "vectors_sha256": "9b8a4e3949d0087b7257b8056ecb3bc0ae6dd7818bac442d5631f897e82769b1",
+      "rtl_log_sha256": "edd7efd8853a44be257305af787261ead77063da0aca24bf8e21316c4739c1db"
+    },
+    {
+      "signature": "prefill:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/prefill/operator-observation.json",
+      "sample_index": 3,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.006706795655,
+                "switching": 0.001133822254,
+                "leakage": 0.0001490937866,
+                "total": 0.007989711128
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "f8dac2eb1c77c637f7bf2a5c43515c7e0dcf714dcb5485963c1894919661339e",
+              "log_sha256": "3ddfd50f3bdd98b72ab93abc035c15e2969f1d8b1911900c6d3cd2dd6193c298"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001461702195,
+                "total": 0.002276474377
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "807258b8d20bb42f2e9aaa16ed5d6043892a06e24a3d07718d5aa03aec702f44",
+              "log_sha256": "556a0a58b037cf0c86a518bdaddf12bb948070cdbb2190d8ef423ce866238f8c"
+            }
+          },
+          "incremental_nj": 18.590780975965984
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2243524939,
+                "switching": 0.163119629,
+                "leakage": 0.0007262639119,
+                "total": 0.3881983757
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "884261ad7119b98d9c0fcb7126722a7c686e34e0b186a0103e5ca12792ddcd62",
+              "log_sha256": "0f4502d9bd213ab32c5765336920cbb869da50fa959b5aa39258216dccbaf6b6"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007395411958,
+                "total": 0.003533098381
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "d7274816df77530c1cd8e4c8abee51ca64aa6b8c88fd74311823ce91e90ff66d",
+              "log_sha256": "3fc5fafe8a9d2c3f392c85c11fd048cf87a11192304cf94c7250fd649a793d3b"
+            }
+          },
+          "incremental_nj": 1251.694657751589
+        }
+      },
+      "incremental_nj": 1270.285438727555,
+      "vectors_sha256": "ba87e5cb3ee4468d7ce8aecc5c8a58acce91dc85d2e0a9a5fece86c238f2ba0a",
+      "rtl_log_sha256": "f13a9b440bb701eaa576673a21ff3f6c9c1cbd66cbe6543d1e97e4ab2867b75d"
+    },
+    {
+      "signature": "first_token:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/operator-observation.json",
+      "sample_index": 2,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.00783330109,
+                "switching": 0.001222607912,
+                "leakage": 0.0001494779717,
+                "total": 0.009205386974
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "90df9543c2acc814da78c895622d28615fbaa7a77334e099b39dd67310658bef",
+              "log_sha256": "089f0890357b03f37a452e8646a622413d40fab77d8980ecadc343ffda3d4e14"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001462224463,
+                "total": 0.002276526764
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "c5d881b1e663a975d214f57b5d312d09ff97757ab4d87bb29fcb518e4fa5e6a4",
+              "log_sha256": "04a2ad15f0a973d0c65f89be179b07ee3182360756fb75105a547360e1b85565"
+            }
+          },
+          "incremental_nj": 22.54640026157664
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2263767868,
+                "switching": 0.1647146642,
+                "leakage": 0.0007263017469,
+                "total": 0.3918177783
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "14c5e243a517230ee95ab1123315c246bfe32099845abf9b50dbd3e981d2af4f",
+              "log_sha256": "7aff72d1428362f04c0c10172f5ad54fb53609c43ddbd5538d1dc1fcf540b20e"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007397546433,
+                "total": 0.003533311887
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "2babd508df0b6153fb771a6bc66aeb946618e08213f3792561a9128ded5dd89b",
+              "log_sha256": "bb0822175d96d1201c756144d6bf66a32d211644e77cde06f6aae6b7734edd5b"
+            }
+          },
+          "incremental_nj": 1263.4714411564391
+        }
+      },
+      "incremental_nj": 1286.0178414180157,
+      "vectors_sha256": "9dfe71c5895b363b540521d30c4dbcdba4001065afc47a2049091fa5bfa11f77",
+      "rtl_log_sha256": "c4e13dc4dac6ebce51a44970bcaaa2a6ded515bc5a4f467fcd2087eae78eebea"
+    },
+    {
+      "signature": "first_token:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/operator-observation.json",
+      "sample_index": 3,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.007813582197,
+                "switching": 0.001221318613,
+                "leakage": 0.0001494753378,
+                "total": 0.009184376337
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "2f1f7075474156a8976f637926022b003f5e79a0532df88685ea1a26aa24f1a8",
+              "log_sha256": "c88019c16432c46d2aa54090390e76ed42d6acb8218272c89603367ecf25d816"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.000146747494,
+                "total": 0.002277051797
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "89eca2191f3c13da28693c006986f1023b3dd5da26ba3a28513aad454fba7da7",
+              "log_sha256": "1b2049c5463243efe0cf0ff2c87d47eabfc0a0a3994f181f0165054dec0170ad"
+            }
+          },
+          "incremental_nj": 22.476323535967364
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2270523757,
+                "switching": 0.1652806252,
+                "leakage": 0.0007265559398,
+                "total": 0.3930595517
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "023ed15d5ba13b93d290accfad80b07b783e3270ad230d61b3d0a0e270025937",
+              "log_sha256": "b30582d0607dc3aeaf37032b5b2705da6f0bced5544ce2173b61653100d8867c"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007409521495,
+                "total": 0.003534509335
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "795a4bfcba34a4cf1b80481d9b776fd0da97f734d75c14db45cd21a538c16cb4",
+              "log_sha256": "b50e0a77cf3221bff8a6ab9812aeebb0526e902c65381338cfdbb2b4206fd156"
+            }
+          },
+          "incremental_nj": 1267.5082554550322
+        }
+      },
+      "incremental_nj": 1289.9845789909996,
+      "vectors_sha256": "5da654541bae12954a9804f53f059ad8225529607ee2af0eb7df27f0475d61cd",
+      "rtl_log_sha256": "6d22cf3ae1641a0e9e3c17e61c6e4a3cdd94dcf65f152fe1806b911470b7c7c9"
+    },
+    {
+      "signature": "decode:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/operator-observation.json",
+      "sample_index": 18,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.008010225371,
+                "switching": 0.001236423268,
+                "leakage": 0.0001495819306,
+                "total": 0.009396229871
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "ddf49cdec178ca1e49c784cc82301d0bd8deb8c3134667f40b09d39b86919531",
+              "log_sha256": "616812b74f08a23c00e01a466f994f1834ad82dee7df6712af64bf8e987df826"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001467164839,
+                "total": 0.002277020831
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "485300074dee46aeeb3e6273aa572f7d22f0d75b1e718e78a9afc9ba38a271d3",
+              "log_sha256": "9ccf5a2f7c5b518069f4cc46daf7ec269d22a4e6b865a5d3c708d1cc834a7687"
+            }
+          },
+          "incremental_nj": 23.165792308815362
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2264287919,
+                "switching": 0.164820537,
+                "leakage": 0.0007265764289,
+                "total": 0.3919759095
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "cdc6cd62923fce1f27b46ff142c58d28b36e422af222fba202c9b982fd8525c7",
+              "log_sha256": "4d4dddb742919b2a851ee16732f749eb3633e199ae0b9617cd1b9396b2866aed"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007402855554,
+                "total": 0.003533842741
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "17719d6575b1b9efa4f57ff4953e32b25aa0de281cddeb68d4ca9639a16d05ed",
+              "log_sha256": "5c6b73f14b155b8dfcc94406927f0ae8f7a8d5b3aa6ade2a0ac621ee2777c30c"
+            }
+          },
+          "incremental_nj": 1263.9842701607179
+        }
+      },
+      "incremental_nj": 1287.1500624695332,
+      "vectors_sha256": "6d6008e75375992449da5007724ef32873551957348be51546862f10bfc60d20",
+      "rtl_log_sha256": "fc3cb8a2c4fefc728b8fdae9e0841f9e83e3d44271ea5f71e866ecb81720f97e"
+    },
+    {
+      "signature": "decode:rope:site0:{\"dimension\": 64, \"width\": 64}",
+      "shape": {
+        "width": 64,
+        "dimension": 64
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830189/decode/operator-observation.json",
+      "sample_index": 19,
+      "units": 16,
+      "cycles": 976,
+      "window_ps": 3253984,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.00811075978,
+                "switching": 0.001248887856,
+                "leakage": 0.0001496500627,
+                "total": 0.009509298019
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "48bae0ece2fee8701e11a057cefbf95ab6f568adfe7c76645690c44d7d938add",
+              "log_sha256": "e16b9d1ec226191571b4f80e80c8f1757fe0d8c1b0d2c1ef7aa84f00ccca5645"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001461957436,
+                "total": 0.002276499989
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "e5c0a609027bb063728bf5fb5e6b7cbb719848320ddaa531321ca154904e83a8",
+              "log_sha256": "097ba3962ce7ea99931fe500b044864b17650ac98c1869396bf9147d7597a048"
+            }
+          },
+          "incremental_nj": 23.535409064851525
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2273616791,
+                "switching": 0.16560103,
+                "leakage": 0.0007267084438,
+                "total": 0.393689394
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "a7abc9bcd4c45f804b2c0b7365b1aca19cdb44a864992681fd40b8ddc3829827",
+              "log_sha256": "e12dd81f4dcfa7cbbb359096118157529301d797b0c90affe3b1d822ddfcb006"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007397546433,
+                "total": 0.003533311887
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "f155cf6b61d200faff948f94481c93fd6a4ea389895c99c0a5a21f60ad0a52a9",
+              "log_sha256": "bb0822175d96d1201c756144d6bf66a32d211644e77cde06f6aae6b7734edd5b"
+            }
+          },
+          "incremental_nj": 1269.5616486983881
+        }
+      },
+      "incremental_nj": 1293.0970577632397,
+      "vectors_sha256": "b791e79fa1d9d47c68eea35e0c8f663feca71a220bc12eee0bb5086c4cc8d8dc",
+      "rtl_log_sha256": "740f62efd9b9c216338d4acdc4865e2759aafcefd50e37511ad8c3514a9af5f0"
+    }
+  ]
+}

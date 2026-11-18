@@ -1,0 +1,268 @@
+{
+  "run": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045",
+  "manifest_sha256": "dda41c4ec25a3a2ab469583ce4930e18560c3d57abe41b6c69899b69ad8e2e46",
+  "phases": {
+    "prefill": {
+      "operator_counts": {
+        "prefill:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": 21504,
+        "prefill:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": 21504,
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_compact\"}": 448,
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_compact\"}": 448
+      },
+      "operator_shapes": {
+        "prefill:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": true,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "prefill:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": false,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_compact\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 1,
+            "implementation": "attention_compact"
+          },
+          "input_shapes": {
+            "scores": [
+              1
+            ]
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_compact\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 2,
+            "implementation": "attention_compact"
+          },
+          "input_shapes": {
+            "scores": [
+              2
+            ]
+          }
+        }
+      },
+      "rms_counts": {
+        "prefill:site3:words256:eps4295:shift0:out0": 112,
+        "prefill:site0:words32:eps4295:shift0:out0": 1344
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/prefill-w4-tile128-pr272-combined/operator-observation.json",
+      "operator_sha256": "90b034c32935e3527ae9a3c63e2c7a7495115aac9497db46aeb7d8f0a5728ec2",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/prefill-w4-tile128-pr272-combined/arithmetic-observation.json",
+      "rms_sha256": "c6e80f7ca41ee44d54ff1f790574e30bab6557637ac73df6c3030d62a12527bb"
+    },
+    "decode": {
+      "operator_counts": {
+        "first_token:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": 10752,
+        "first_token:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": 10752,
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_compact\"}": 448,
+        "decode:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": 10752,
+        "decode:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": 10752,
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_compact\"}": 448
+      },
+      "operator_shapes": {
+        "first_token:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": true,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "first_token:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": false,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_compact\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 513,
+            "implementation": "attention_compact"
+          },
+          "input_shapes": {
+            "scores": [
+              513
+            ]
+          }
+        },
+        "decode:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": true,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "decode:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": {
+          "kind": "rope_native",
+          "shape": {
+            "elements": 4,
+            "negative": false,
+            "shifts": [
+              14,
+              0,
+              0,
+              14,
+              0,
+              0
+            ]
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ],
+            "pair": [
+              4
+            ],
+            "cos": [
+              4
+            ],
+            "sin": [
+              4
+            ]
+          }
+        },
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_compact\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 514,
+            "implementation": "attention_compact"
+          },
+          "input_shapes": {
+            "scores": [
+              514
+            ]
+          }
+        }
+      },
+      "rms_counts": {
+        "first_token:site3:words256:eps4295:shift0:out0": 57,
+        "first_token:site0:words32:eps4295:shift0:out0": 672,
+        "decode:site3:words256:eps4295:shift0:out0": 57,
+        "decode:site0:words32:eps4295:shift0:out0": 672
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json",
+      "operator_sha256": "14e699930de8a02aed5bc9b2a5cacf5fde09ffc0f2ad4d97e1928a1fe6581265",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/arithmetic-observation.json",
+      "rms_sha256": "7362e7cfec87495d800bd09bbf73a357c0dcdf0884b9ca9fa937b44d20f4d85a"
+    }
+  }
+}

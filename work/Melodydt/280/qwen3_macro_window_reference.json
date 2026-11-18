@@ -1,0 +1,753 @@
+{
+  "scope": "Fixed-time Qwen3 covered subtotal with conditional SRAM and mother PM macro references.",
+  "assumptions": [
+    "Four separate SRAM placements, one per modeled P/CONTEXT/MID/U site, and one mother PM macro group; continuously clocked at 300 MHz.",
+    "S_P scenario uses one four-bank access for each modeled 512-bit read. S_base scenario uses four ordinary reads as a sensitivity calculation.",
+    "Both SRAM scenarios use measured sequences of two/four ordinary writes for 256/512-bit operations. The frozen TLM time is held fixed; port-cycle counts give only a minimum service demand, not throughput validation.",
+    "Mother PM adds the four SRAM macros only. It uses the initial ready-state quiet reference, matching quiet phases and Liberty clock-edge increments from paired page write/readback. The scope excludes runtime fetch, switching not captured by the macro reports, the controller and PM bridge.",
+    "Previous ledger already includes G32 active increments, old M, write DMA and U ADD2. Previously listed SRAM width-matched reference is superseded for these scenarios. Read DMA, PHY and remaining controls/clocks are outside the subtotal."
+  ],
+  "input_sha256": {
+    "covered-ledger-20261117/windows.json": "99cf1e3953895578149c623de1bc65ce65c14a87d3fe9e4a38f63091e4e0d949",
+    "independent-rollup/rollup-38782605.json": "2be7652e9bf665f42ed085841a683aab6d906f1a679d0ce594513516f19a758e",
+    "sram-macro-power/sram-38814341/s-p/calibration.json": "c51d83f2724a126b5576e25e35ece51e55a2f0e826c6218cd9e440e7e2ee278f",
+    "sram-macro-power/sram-38814342/s-base/calibration.json": "e1d2927d54029f4925cd6100e4ea29754b60aca0eb94bb45ef88c4f2ecde302d",
+    "mother-pm-macro-retry/result-38814399/mother-pm-macro-power.json": "4af23e453fda1c0523e23d6b76d881dce0e3df57a2a90060a81bf85e6ce4dec2",
+    "pm-real-length/pm-38795749/pm-pages.json": "6b449230bbf68c6e5a8e5a252a78926ca796beac9a80836e5813795cc0b7ee66",
+    "real-activity/replay-38794389/dma-windows.json": "280925a47538286fad54fb530a04ed483003e1d59144e06b7993e74172675123",
+    "real-activity/replay-38794389/prefill-w4-tile128-pr272-combined/real-activity.json": "f1a8e98d13260a5fd29e149f88919fff6c29b5848a8c006c759c638f5f384c16",
+    "real-activity/replay-38794389/decode-live-w4-tile128-pr272-combined/real-activity.json": "43e9be3f43e9b5abcbd523ec30f3c0fba9b0937b64421010c7eb545d0cdc7c10"
+  },
+  "windows": {
+    "prefill": {
+      "elapsed_ps": 85289804550,
+      "tokens": 2,
+      "page_counts": {
+        "local-352": 4,
+        "mother-240": 2,
+        "mother-1616": 56
+      },
+      "mother_pm": {
+        "pages": {
+          "240": {
+            "install_count": 2,
+            "write_128bit": 30,
+            "readback_reference_128bit": 30,
+            "paired_phase_seconds": 1.3333333333333334e-06,
+            "write_clock_arc_increment_nj": 0.42192235000007533,
+            "read_clock_arc_increment_nj": 0.1439121299999988,
+            "quiet_phase_correction_nj": -0.2237061866666677
+          },
+          "272": {
+            "install_count": 0,
+            "write_128bit": 0,
+            "readback_reference_128bit": 0,
+            "paired_phase_seconds": 0.0,
+            "write_clock_arc_increment_nj": 0.0,
+            "read_clock_arc_increment_nj": 0.0,
+            "quiet_phase_correction_nj": -0.0
+          },
+          "1616": {
+            "install_count": 56,
+            "write_128bit": 5656,
+            "readback_reference_128bit": 5656,
+            "paired_phase_seconds": 0.00026208,
+            "write_clock_arc_increment_nj": 81.34203733594285,
+            "read_clock_arc_increment_nj": 27.132233575998807,
+            "quiet_phase_correction_nj": -43.971688051200196
+          }
+        },
+        "read_ready_idle_w": 0.04598060624,
+        "write_ready_idle_w": 0.04564504696,
+        "clocked_idle_nj": 3921676.9193001105,
+        "total": {
+          "energy_nj_per_window": [
+            3921741.764011265,
+            3921741.764011265
+          ],
+          "average_power_w": [
+            0.045981366526783356,
+            0.045981366526783356
+          ],
+          "energy_mj_per_token": [
+            1.9608708820056324,
+            1.9608708820056324
+          ]
+        }
+      },
+      "previous_covered_subtotal": {
+        "energy_nj_per_window": [
+          293895248.11371034,
+          294137372.2307549
+        ],
+        "average_power_w": [
+          3.445842673275423,
+          3.4486815133726894
+        ],
+        "energy_mj_per_token": [
+          146.94762405685518,
+          147.06868611537746
+        ]
+      },
+      "calibration_scenarios": {
+        "s_p_parallel_read": {
+          "sram": {
+            "sites": {
+              "P": {
+                "modeled_operations": {
+                  "read128": 375424,
+                  "read512": 494592,
+                  "write128": 103040,
+                  "write256": 52864,
+                  "write512": 340032
+                },
+                "minimum_port_accept_cycles": 2438912,
+                "minimum_port_accept_fraction": 0.09531862366822201,
+                "clocked_idle_nj": 4834238.308101274,
+                "operation_increment_nj": 44943.92649390642
+              },
+              "CONTEXT": {
+                "modeled_operations": {
+                  "read128": 28672,
+                  "read512": 388416,
+                  "write128": 14336,
+                  "write256": 17024,
+                  "write512": 132608
+                },
+                "minimum_port_accept_cycles": 995904,
+                "minimum_port_accept_fraction": 0.038922354962244214,
+                "clocked_idle_nj": 4834238.308101274,
+                "operation_increment_nj": 16942.848478540414
+              },
+              "MID": {
+                "modeled_operations": {
+                  "read128": 28672,
+                  "read512": 241024,
+                  "write128": 14336,
+                  "write256": 16128,
+                  "write512": 103936
+                },
+                "minimum_port_accept_cycles": 732032,
+                "minimum_port_accept_fraction": 0.02860959424575216,
+                "clocked_idle_nj": 4834238.308101274,
+                "operation_increment_nj": 12568.231770384587
+              },
+              "U": {
+                "modeled_operations": {
+                  "read128": 172034,
+                  "read512": 240192,
+                  "write128": 57346,
+                  "write512": 14464
+                },
+                "minimum_port_accept_cycles": 527428,
+                "minimum_port_accept_fraction": 0.02061317138301136,
+                "clocked_idle_nj": 4834238.308101274,
+                "operation_increment_nj": 10348.657109282518
+              }
+            },
+            "total": {
+              "energy_nj_per_window": [
+                19421756.89625721,
+                19421756.89625721
+              ],
+              "average_power_w": [
+                0.22771487165117685,
+                0.22771487165117685
+              ],
+              "energy_mj_per_token": [
+                9.710878448128605,
+                9.710878448128605
+              ]
+            }
+          },
+          "covered_subtotal": {
+            "energy_nj_per_window": [
+              317238746.7739788,
+              317480870.8910234
+            ],
+            "average_power_w": [
+              3.7195389114533834,
+              3.7223777515506495
+            ],
+            "energy_mj_per_token": [
+              158.61937338698942,
+              158.7404354455117
+            ]
+          }
+        },
+        "s_base_serial_read": {
+          "sram": {
+            "sites": {
+              "P": {
+                "modeled_operations": {
+                  "read128": 375424,
+                  "read512": 494592,
+                  "write128": 103040,
+                  "write256": 52864,
+                  "write512": 340032
+                },
+                "minimum_port_accept_cycles": 3922688,
+                "minimum_port_accept_fraction": 0.153308205150432,
+                "clocked_idle_nj": 4030855.372068217,
+                "operation_increment_nj": 82117.15059285372
+              },
+              "CONTEXT": {
+                "modeled_operations": {
+                  "read128": 28672,
+                  "read512": 388416,
+                  "write128": 14336,
+                  "write256": 17024,
+                  "write512": 132608
+                },
+                "minimum_port_accept_cycles": 2161152,
+                "minimum_port_accept_fraction": 0.08446308607191458,
+                "clocked_idle_nj": 4030855.372068217,
+                "operation_increment_nj": 48238.66353629159
+              },
+              "MID": {
+                "modeled_operations": {
+                  "read128": 28672,
+                  "read512": 241024,
+                  "write128": 14336,
+                  "write256": 16128,
+                  "write512": 103936
+                },
+                "minimum_port_accept_cycles": 1455104,
+                "minimum_port_accept_fraction": 0.05686900985936537,
+                "clocked_idle_nj": 4030855.372068217,
+                "operation_increment_nj": 31733.69811004216
+              },
+              "U": {
+                "modeled_operations": {
+                  "read128": 172034,
+                  "read512": 240192,
+                  "write128": 57346,
+                  "write512": 14464
+                },
+                "minimum_port_accept_cycles": 1248004,
+                "minimum_port_accept_fraction": 0.04877503723481443,
+                "clocked_idle_nj": 4030855.372068217,
+                "operation_increment_nj": 29898.027155063166
+              }
+            },
+            "total": {
+              "energy_nj_per_window": [
+                16315409.02766712,
+                16315409.02766712
+              ],
+              "average_power_w": [
+                0.1912937790601036,
+                0.1912937790601036
+              ],
+              "energy_mj_per_token": [
+                8.15770451383356,
+                8.15770451383356
+              ]
+            }
+          },
+          "covered_subtotal": {
+            "energy_nj_per_window": [
+              314132398.9053887,
+              314374523.0224333
+            ],
+            "average_power_w": [
+              3.68311781886231,
+              3.6859566589595767
+            ],
+            "energy_mj_per_token": [
+              157.06619945269435,
+              157.18726151121663
+            ]
+          }
+        }
+      }
+    },
+    "first_token": {
+      "elapsed_ps": 139703051690,
+      "tokens": 1,
+      "page_counts": {
+        "local-352": 4,
+        "mother-240": 1,
+        "mother-1616": 28,
+        "mother-272": 1
+      },
+      "mother_pm": {
+        "pages": {
+          "240": {
+            "install_count": 1,
+            "write_128bit": 15,
+            "readback_reference_128bit": 15,
+            "paired_phase_seconds": 6.666666666666667e-07,
+            "write_clock_arc_increment_nj": 0.21096117500003767,
+            "read_clock_arc_increment_nj": 0.0719560649999994,
+            "quiet_phase_correction_nj": -0.11185309333333385
+          },
+          "272": {
+            "install_count": 1,
+            "write_128bit": 17,
+            "readback_reference_128bit": 17,
+            "paired_phase_seconds": 7.6e-07,
+            "write_clock_arc_increment_nj": 0.23983501700004853,
+            "read_clock_arc_increment_nj": 0.08155020699999932,
+            "quiet_phase_correction_nj": -0.12751252640000058
+          },
+          "1616": {
+            "install_count": 28,
+            "write_128bit": 2828,
+            "readback_reference_128bit": 2828,
+            "paired_phase_seconds": 0.00013104,
+            "write_clock_arc_increment_nj": 40.671018667971424,
+            "read_clock_arc_increment_nj": 13.566116787999404,
+            "quiet_phase_correction_nj": -21.985844025600098
+          }
+        },
+        "read_ready_idle_w": 0.04598060624,
+        "write_ready_idle_w": 0.04564504696,
+        "clocked_idle_nj": 6423631.010284256,
+        "total": {
+          "energy_nj_per_window": [
+            6423663.626512531,
+            6423663.626512531
+          ],
+          "average_power_w": [
+            0.04598083970825914,
+            0.04598083970825914
+          ],
+          "energy_mj_per_token": [
+            6.423663626512531,
+            6.423663626512531
+          ]
+        }
+      },
+      "previous_covered_subtotal": {
+        "energy_nj_per_window": [
+          437037285.50567645,
+          437158353.9012104
+        ],
+        "average_power_w": [
+          3.1283302706619383,
+          3.1291968830520718
+        ],
+        "energy_mj_per_token": [
+          437.03728550567644,
+          437.15835390121043
+        ]
+      },
+      "calibration_scenarios": {
+        "s_p_parallel_read": {
+          "sram": {
+            "sites": {
+              "P": {
+                "modeled_operations": {
+                  "read128": 245056,
+                  "read512": 4027864,
+                  "write128": 108864,
+                  "write256": 45424,
+                  "write512": 3941088
+                },
+                "minimum_port_accept_cycles": 20236984,
+                "minimum_port_accept_fraction": 0.48285712683676796,
+                "clocked_idle_nj": 7918388.930561225,
+                "operation_increment_nj": 347222.53060225403
+              },
+              "CONTEXT": {
+                "modeled_operations": {
+                  "read128": 14336,
+                  "read512": 194208,
+                  "write128": 7168,
+                  "write256": 8512,
+                  "write512": 66304
+                },
+                "minimum_port_accept_cycles": 497952,
+                "minimum_port_accept_fraction": 0.011881200875714596,
+                "clocked_idle_nj": 7918388.930561225,
+                "operation_increment_nj": 8471.424239270207
+              },
+              "MID": {
+                "modeled_operations": {
+                  "read128": 14336,
+                  "read512": 120512,
+                  "write128": 7168,
+                  "write256": 8064,
+                  "write512": 51968
+                },
+                "minimum_port_accept_cycles": 366016,
+                "minimum_port_accept_fraction": 0.008733190387277396,
+                "clocked_idle_nj": 7918388.930561225,
+                "operation_increment_nj": 6284.115885192294
+              },
+              "U": {
+                "modeled_operations": {
+                  "read128": 87041,
+                  "read512": 272064,
+                  "write128": 28929,
+                  "write512": 7296
+                },
+                "minimum_port_accept_cycles": 417218,
+                "minimum_port_accept_fraction": 0.00995487690975012,
+                "clocked_idle_nj": 7918388.930561225,
+                "operation_increment_nj": 7641.957936201085
+              }
+            },
+            "total": {
+              "energy_nj_per_window": [
+                32043175.75090782,
+                32043175.75090782
+              ],
+              "average_power_w": [
+                0.22936632638499108,
+                0.22936632638499108
+              ],
+              "energy_mj_per_token": [
+                32.04317575090782,
+                32.04317575090782
+              ]
+            }
+          },
+          "covered_subtotal": {
+            "energy_nj_per_window": [
+              475504124.8830968,
+              475625193.2786308
+            ],
+            "average_power_w": [
+              3.4036774367551885,
+              3.404544049145322
+            ],
+            "energy_mj_per_token": [
+              475.50412488309684,
+              475.6251932786308
+            ]
+          }
+        },
+        "s_base_serial_read": {
+          "sram": {
+            "sites": {
+              "P": {
+                "modeled_operations": {
+                  "read128": 245056,
+                  "read512": 4027864,
+                  "write128": 108864,
+                  "write256": 45424,
+                  "write512": 3941088
+                },
+                "minimum_port_accept_cycles": 32320576,
+                "minimum_port_accept_fraction": 0.7711732373297028,
+                "clocked_idle_nj": 6602463.206124914,
+                "operation_increment_nj": 649299.8606342354
+              },
+              "CONTEXT": {
+                "modeled_operations": {
+                  "read128": 14336,
+                  "read512": 194208,
+                  "write128": 7168,
+                  "write256": 8512,
+                  "write512": 66304
+                },
+                "minimum_port_accept_cycles": 1080576,
+                "minimum_port_accept_fraction": 0.025782686920579043,
+                "clocked_idle_nj": 6602463.206124914,
+                "operation_increment_nj": 24119.331768145796
+              },
+              "MID": {
+                "modeled_operations": {
+                  "read128": 14336,
+                  "read512": 120512,
+                  "write128": 7168,
+                  "write256": 8064,
+                  "write512": 51968
+                },
+                "minimum_port_accept_cycles": 727552,
+                "minimum_port_accept_fraction": 0.017359487379361677,
+                "clocked_idle_nj": 6602463.206124914,
+                "operation_increment_nj": 15866.84905502108
+              },
+              "U": {
+                "modeled_operations": {
+                  "read128": 87041,
+                  "read512": 272064,
+                  "write128": 28929,
+                  "write512": 7296
+                },
+                "minimum_port_accept_cycles": 1233410,
+                "minimum_port_accept_fraction": 0.02942932646543269,
+                "clocked_idle_nj": 6602463.206124914,
+                "operation_increment_nj": 30191.488938986582
+              }
+            },
+            "total": {
+              "energy_nj_per_window": [
+                27129330.354896042,
+                27129330.354896042
+              ],
+              "average_power_w": [
+                0.1941928256162637,
+                0.1941928256162637
+              ],
+              "energy_mj_per_token": [
+                27.12933035489604,
+                27.12933035489604
+              ]
+            }
+          },
+          "covered_subtotal": {
+            "energy_nj_per_window": [
+              470590279.48708504,
+              470711347.882619
+            ],
+            "average_power_w": [
+              3.3685039359864613,
+              3.3693705483765943
+            ],
+            "energy_mj_per_token": [
+              470.59027948708507,
+              470.711347882619
+            ]
+          }
+        }
+      }
+    },
+    "decode": {
+      "elapsed_ps": 139833834508,
+      "tokens": 1,
+      "page_counts": {
+        "mother-240": 1,
+        "mother-1616": 28,
+        "mother-272": 1
+      },
+      "mother_pm": {
+        "pages": {
+          "240": {
+            "install_count": 1,
+            "write_128bit": 15,
+            "readback_reference_128bit": 15,
+            "paired_phase_seconds": 6.666666666666667e-07,
+            "write_clock_arc_increment_nj": 0.21096117500003767,
+            "read_clock_arc_increment_nj": 0.0719560649999994,
+            "quiet_phase_correction_nj": -0.11185309333333385
+          },
+          "272": {
+            "install_count": 1,
+            "write_128bit": 17,
+            "readback_reference_128bit": 17,
+            "paired_phase_seconds": 7.6e-07,
+            "write_clock_arc_increment_nj": 0.23983501700004853,
+            "read_clock_arc_increment_nj": 0.08155020699999932,
+            "quiet_phase_correction_nj": -0.12751252640000058
+          },
+          "1616": {
+            "install_count": 28,
+            "write_128bit": 2828,
+            "readback_reference_128bit": 2828,
+            "paired_phase_seconds": 0.00013104,
+            "write_clock_arc_increment_nj": 40.671018667971424,
+            "read_clock_arc_increment_nj": 13.566116787999404,
+            "quiet_phase_correction_nj": -21.985844025600098
+          }
+        },
+        "read_ready_idle_w": 0.04598060624,
+        "write_ready_idle_w": 0.04564504696,
+        "clocked_idle_nj": 6429644.483541672,
+        "total": {
+          "energy_nj_per_window": [
+            6429677.099769947,
+            6429677.099769947
+          ],
+          "average_power_w": [
+            0.04598083948990257,
+            0.04598083948990257
+          ],
+          "energy_mj_per_token": [
+            6.429677099769947,
+            6.429677099769947
+          ]
+        }
+      },
+      "previous_covered_subtotal": {
+        "energy_nj_per_window": [
+          437197936.1074002,
+          437319004.22316086
+        ],
+        "average_power_w": [
+          3.1265532955286854,
+          3.127419095398843
+        ],
+        "energy_mj_per_token": [
+          437.19793610740015,
+          437.31900422316085
+        ]
+      },
+      "calibration_scenarios": {
+        "s_p_parallel_read": {
+          "sram": {
+            "sites": {
+              "P": {
+                "modeled_operations": {
+                  "read128": 245056,
+                  "read512": 4035032,
+                  "write128": 108864,
+                  "write256": 45424,
+                  "write512": 3948256
+                },
+                "minimum_port_accept_cycles": 20272824,
+                "minimum_port_accept_fraction": 0.4832598691542223,
+                "clocked_idle_nj": 7925801.719371715,
+                "operation_increment_nj": 347833.9170355982
+              },
+              "CONTEXT": {
+                "modeled_operations": {
+                  "read128": 14336,
+                  "read512": 194208,
+                  "write128": 7168,
+                  "write256": 8512,
+                  "write512": 66304
+                },
+                "minimum_port_accept_cycles": 497952,
+                "minimum_port_accept_fraction": 0.011870088664760435,
+                "clocked_idle_nj": 7925801.719371715,
+                "operation_increment_nj": 8471.424239270207
+              },
+              "MID": {
+                "modeled_operations": {
+                  "read128": 14336,
+                  "read512": 120512,
+                  "write128": 7168,
+                  "write256": 8064,
+                  "write512": 51968
+                },
+                "minimum_port_accept_cycles": 366016,
+                "minimum_port_accept_fraction": 0.008725022437345277,
+                "clocked_idle_nj": 7925801.719371715,
+                "operation_increment_nj": 6284.115885192294
+              },
+              "U": {
+                "modeled_operations": {
+                  "read128": 87041,
+                  "read512": 272064,
+                  "write128": 28929,
+                  "write512": 7296
+                },
+                "minimum_port_accept_cycles": 417218,
+                "minimum_port_accept_fraction": 0.009945566344816408,
+                "clocked_idle_nj": 7925801.719371715,
+                "operation_increment_nj": 7641.957936201085
+              }
+            },
+            "total": {
+              "energy_nj_per_window": [
+                32073438.29258312,
+                32073438.29258312
+              ],
+              "average_power_w": [
+                0.22936822411709074,
+                0.22936822411709074
+              ],
+              "energy_mj_per_token": [
+                32.07343829258312,
+                32.07343829258312
+              ]
+            }
+          },
+          "covered_subtotal": {
+            "energy_nj_per_window": [
+              475701051.49975324,
+              475822119.6155139
+            ],
+            "average_power_w": [
+              3.4019023591356783,
+              3.402768159005836
+            ],
+            "energy_mj_per_token": [
+              475.70105149975325,
+              475.82211961551394
+            ]
+          }
+        },
+        "s_base_serial_read": {
+          "sram": {
+            "sites": {
+              "P": {
+                "modeled_operations": {
+                  "read128": 245056,
+                  "read512": 4035032,
+                  "write128": 108864,
+                  "write256": 45424,
+                  "write512": 3948256
+                },
+                "minimum_port_accept_cycles": 32377920,
+                "minimum_port_accept_fraction": 0.7718189327094181,
+                "clocked_idle_nj": 6608644.092894333,
+                "operation_increment_nj": 650449.1357505815
+              },
+              "CONTEXT": {
+                "modeled_operations": {
+                  "read128": 14336,
+                  "read512": 194208,
+                  "write128": 7168,
+                  "write256": 8512,
+                  "write512": 66304
+                },
+                "minimum_port_accept_cycles": 1080576,
+                "minimum_port_accept_fraction": 0.02575857297292143,
+                "clocked_idle_nj": 6608644.092894333,
+                "operation_increment_nj": 24119.331768145796
+              },
+              "MID": {
+                "modeled_operations": {
+                  "read128": 14336,
+                  "read512": 120512,
+                  "write128": 7168,
+                  "write256": 8064,
+                  "write512": 51968
+                },
+                "minimum_port_accept_cycles": 727552,
+                "minimum_port_accept_fraction": 0.017343251454404813,
+                "clocked_idle_nj": 6608644.092894333,
+                "operation_increment_nj": 15866.84905502108
+              },
+              "U": {
+                "modeled_operations": {
+                  "read128": 87041,
+                  "read512": 272064,
+                  "write128": 28929,
+                  "write512": 7296
+                },
+                "minimum_port_accept_cycles": 1233410,
+                "minimum_port_accept_fraction": 0.02940180190058915,
+                "clocked_idle_nj": 6608644.092894333,
+                "operation_increment_nj": 30191.488938986582
+              }
+            },
+            "total": {
+              "energy_nj_per_window": [
+                27155203.177090064,
+                27155203.177090064
+              ],
+              "average_power_w": [
+                0.19419622777730874,
+                0.19419622777730874
+              ],
+              "energy_mj_per_token": [
+                27.155203177090062,
+                27.155203177090062
+              ]
+            }
+          },
+          "covered_subtotal": {
+            "energy_nj_per_window": [
+              470782816.3842602,
+              470903884.50002086
+            ],
+            "average_power_w": [
+              3.3667303627958964,
+              3.367596162666054
+            ],
+            "energy_mj_per_token": [
+              470.7828163842602,
+              470.90388450002087
+            ]
+          }
+        }
+      }
+    }
+  }
+}
