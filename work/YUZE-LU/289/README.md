@@ -1,6 +1,6 @@
 # A/B interface X8 implementation — Issue 289
 
-Latest C continuation: [actual C43 verification](audit/C43-ACTUAL-STATUS.md). Four actual routed variants have zero timing/electrical violations; selected plan0 has setup/hold +6.340040/+1.990130ps at TT250MHz. All short independent gates and 340-port BUF_X8 coverage pass. **C remains unaccepted pending the same final GDS complete original deck (job120303), exact root disposition and frozen release.** Earlier C40 and other records below are historical.
+**Macro/block backend engineering checks are complete.** All340 selected unique non-P outputs have BUF_X8. C/U pass TT250MHz; F with S passes nominal300MHz. Complete original DRC and all five timing/electrical violation counts are zero. See the [final acceptance report](audit/BACKEND-ACCEPTANCE.md) and [joint index](audit/evidence/AB-X8-final-joint-release-index.json). PR290 awaits independent review; actual A/B top RC and multi-PVT are separate. Entries below are historical.
 
 ## Accepted backend packages
 
@@ -10,7 +10,7 @@ Frozen F package: `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/g
 
 U has completed block backend checks in `candidate-U-v19-preserved`. All 153 selected output drivers are `BUF_X8`. At Nangate45 TT, 250 MHz, 0.1 ns uncertainty and 50 fF on the selected outputs, setup slack is +0.078050904 ns and hold slack is +0.003471112 ns. The five timing/electrical violation counts and the complete unchanged FreePDK45 DRC are zero. Both PG rails, formal data/state/control, signal pin/die/macro geometry, and the Liberty and physical LEF views passed. The checked release preserves the qualified GDS and uses a SPEF extracted from an independently proven equal-material DEF. [Acceptance receipt](audit/evidence/U/accepted-parent.json).
 
-Frozen U manifest and acceptance: `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/release-candidate-U-v19-preserved/`. Accepted receipt SHA256 `cb34cbc8badd0d2d9e8d0d259ce22f512bc9aea15ed4aae365f1e1c322703771`. C backend verification is in progress.
+Frozen U manifest and acceptance: `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/release-candidate-U-v19-preserved/`. Accepted receipt SHA256 `cb34cbc8badd0d2d9e8d0d259ce22f512bc9aea15ed4aae365f1e1c322703771`. C backend acceptance is also complete in C-v43-margin-plan0.
 
 Task: https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/289
 
@@ -21,7 +21,7 @@ Remote root: `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117`.
 
 Upgrade the actual output drivers used by archived A/B non-P connections to X8 or stronger, preserving function, clocks/SDC, block outlines, and endpoint geometry. Union: C153 + U153 + G33 + S1 = 340 outputs. Inputs remain receivers. See [audit](audit/README.md) for exact manifests and evidence.
 
-C/U use the exact overlay `4_cts.odb` sources, which were **not** backend accepted. This task must complete their backend as well as upgrade drivers. The old pre-global access-pins hook moves BTerms and is replaced by a geometry-preserving ECO hook. B's G macro inventory uses a separate segment-C source whose timing passed but full DRC reported 106 items; it must not be represented as an accepted parent. Whether one final C implementation covers both sources requires exact G pin-shape comparison.
+C/U use the exact overlay `4_cts.odb` sources, which were **not** backend accepted. This task completed their backend as well as selected driver upgrades. The old pre-global access-pins hook moves BTerms and is replaced by a geometry-preserving ECO hook. B's G macro inventory uses a separate segment-C source whose timing passed but full DRC reported 106 items; it must not be represented as an accepted parent. Whether one final C implementation covers both sources requires exact G pin-shape comparison.
 
 G/S leaf upgrades require regenerated physical/timing views and downstream parent revalidation. B's synthetic G/S pressure-test wiring is not a qualified product-level connection. Original parent connectivity is preserved during backend qualification.
 
@@ -44,7 +44,7 @@ G/S v3 clears obsolete ordinary signal dbWires after resizing and regenerates ro
 
 Candidate completion is not acceptance. Required evidence: exact source hashes, actual X8 coverage, preserved geometry/function, final ODB/DEF/netlist/GDS/SPEF, regenerated hard-macro views, original-frequency setup/hold/electrical checks, connectivity/PG/antenna and full unmodified DRC, and parent-block checks. Top-level A/B RC/STA is a subsequent scope and is not established by this backend task.
 
-Current state: in progress; leaf results below are accepted only at leaf scope. [Draft PR290](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/290) tracks implementation. Management registration remains pending (existing management PR5); Projects synchronization unverified/pending because project board configuration is absent. Review owner pending designation.
+Current state: macro/block engineering acceptance complete; PR review pending. Subsequent entries below are historical. [Draft PR290](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/290) tracks implementation. Management registration remains pending (existing management PR5); Projects synchronization unverified/pending because project board configuration is absent. Review owner pending designation.
 
 ## Subsequent execution
 

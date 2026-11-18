@@ -1,19 +1,23 @@
-Refs #289
+Closes #289
+Refs #287
 
-将 A/B 两套布线所用的 340 个非 P 输出升级到 X8 驱动，覆盖 C153、U153、G33、S1。本轮验收使用实际叶宏和父 block，保持原名义频率、信号端口形状、宏位置和逐周期可见行为。
+完成两套A/B归档方案340个非P目标输出的BUF_X8升级及宏/block后端验收：C153、U153、G33、F内S1；方案A306、B340。信号引脚、宏位置和外形保持不变，逐周期可见行为按记录的证明链核验。
 
-G 和 S 两个叶宏已验收。集成新版 S 的 F 在 Nangate45 TT、名义 300 MHz 和 0.1 ns 时钟不确定度下，setup 裕量 +0.221605405 ns，hold 裕量 +0.002453537 ns。原版全量 FreePDK45 DRC、时序和电气检查零违例，PG、功能、状态和接口几何通过。F 的 native checker 中有 40 个原样历史标记和 4 个经过逐项验证的同网宏端口接触标记。回执位于 `work/YUZE-LU/289/audit/evidence/F/accepted-parent.json`。
+| 父block | TT名义频率 | setup | hold | 完整原版DRC |
+| --- | ---: | ---: | ---: | ---: |
+| C43 plan0（G hold03-v3） | 250MHz | +6.340040ps | +1.990130ps | 0 |
+| U-v19-preserved | 250MHz | +78.050904ps | +3.471112ps | 0 |
+| F-h20-v4（S minimal-localv4） | 300MHz | +221.605405ps | +2.453537ps | 0 |
 
-U 已通过 block 后端验收。153 个目标输出逐个核对为 `BUF_X8`。在 Nangate45 TT、250 MHz、0.1 ns 时钟不确定度和目标输出 50 fF 下，setup 裕量 +0.078050904 ns，hold 裕量 +0.003471112 ns。setup、hold、电容、slew、fanout 和原版全量 FreePDK45 DRC 均为零违例。两条电源轨连通，功能等价、状态和控制、信号端口和宏几何、Liberty/LEF 重载以及父级抽象的实际 cut 覆盖均已验证。SPEF 从等形 DEF 副本提取，117,231 条信号网通过提取前后的材料比较。签收 GDS 与全量规则验证输入逐字节一致。回执位于 `work/YUZE-LU/289/audit/evidence/U/accepted-parent.json`。
+三者setup/hold/电容/slew/fanout均零违例，PG、异步控制、信号几何和宏视图检查通过。C/U冻结契约为目标输出50fF、4ns、0.1ns uncertainty；F沿用原SDC，实际序列化周期3.3333ns。裕量较小，尚未验证多PVT或两套实际顶层长线RC。
 
-C43实际四个不同方案120292已全部完成详细布线，各自setup/hold/电容/slew/fanout均零违例。选用实际setup裕量最大的plan0：TT250MHz、0.1ns uncertainty、153个目标输出50fF条件下setup +6.340040ps、hold +1.990130ps，原约束未放松。最终GDS SHA256为11ed17a55e077a71217667ae6f7e2bb7dbb07d5af22e52450d159d1de4b0bbe9。
+C最终原版全量检查120303完成2h20m59/0，零项；278701网络实际提取前后全层/过孔材料一致。实际最终ODB导出网表2b74fbc9…经21095状态/数据/控制证明120296通过。原RTL至综合边界包含有限/通用自动证明和明确人工组合桥，不声称全模块RTL SAT。Liberty/物理LEF/父级抽象重载、引脚/OBS/实际cut覆盖通过。root来源复核120326及严格聚合120366通过；最终发布只读重验120368通过58文件。
 
-该最终源的278701条网络提取前后全层材料一致、153个C驱动BUF_X8、固定信号引脚/宏/外形、无缓存PG双轨、聚焦上层金属与天线、Liberty/LEF及父级cut覆盖均通过。实际ODB导出的最终网表2b74fbc9…与保存文件逐字节一致，120296完成该实际网表的数据/21095状态及clock/reset/control证明；原RTL至综合边界采用机器核验的有限/通用证明和明确列出的人工组合证明，不声称全模块RTL SAT。两方案340/340目标输出已独立逐端口确认唯一BUF_X8（C153/U153/G33/S1；A306/B340）。
+C native报告222个同网M2/M3 spacing标记逐项按实际金属与局部space/notch证明，绑定同GDS原版完整0项后精确裁定；F为40历史标记+4逐项证明同网接触。报告未被清空，也没有通用规则例外。C PG相对原CTS230条移除/140新增已精确追溯v16/C35并在当前ODB/GDS复核，信号引脚几何保持不变。
 
-C尚未最终后端验收。120303正在对同一个最终GDS执行完整未修改原版FreePDK45规则；原生checker有222个逐项证明为同网连续材料的M2/M3 spacing标记，并非空报告。还须完整原版报告实际零项、root精确native/PG裁定及最终冻结release。PG相对原CTS的230旧记录移除/140新增已追溯至合格v16/C35基线，当前最终边界复核通过。U/G/S/F已验收源保持冻结。
+最终报告：`work/YUZE-LU/289/audit/BACKEND-ACCEPTANCE.md`。
+联合索引：`work/YUZE-LU/289/audit/evidence/AB-X8-final-joint-release-index.json`，SHA256 `406b800bda878d80bf5f082890b217a6db2222dc938adb2f94ab38a29dcfa053`。
+C接受回执SHA256 `e5ce4311b8cd929a92e53de805eb4846223147e7f231fc9d374c92774cd7c314`。U/F接受回执保持原SHA。
+大件冻结在授权服务器`/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117`，C位于`audit/C-final-release-v1/`，其余包路径及原样回执见联合索引。
 
-当前证据见work/YUZE-LU/289/audit/C43-ACTUAL-STATUS.md及C43-pending-evidence/，已推送commit80da921f8。PR保持草稿，Issue in_progress；A/B实际顶层RC/STA和多PVT仍在后续范围。
-
-大文件保存在 `/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117`，源哈希、脚本、失败记录和验收回执在 `work/YUZE-LU/289/`。交付范围为 TT 单角的叶宏和 block 后端，A/B 顶层实际 RC/STA 另行验证。PR 保持草稿，Issue 保持 in_progress。
-
-项目协作规则版本为 rayggxia-project-collab 1.0.0。负责人 YUZE-LU，审查人待指定。管理登记 PR5 待处理，Projects 缺少 board 配置，状态待同步。项目结构检查 `python scripts/check_project.py` 已通过。
+规则：rayggxia-project-collab 1.0.0。项目llm-hardware-design；负责人YUZE-LU；工程验收完成、PR待独立审查、Issue in_review；审查人待指定，不自动合并。`python scripts/check_project.py`通过，此为管理结构检查，物理/功能结论以上述EDA回执为准。登记management-hub PR5仍open/未合并、pending。缺config/board.json和read:project，Projects字段/条目unverified、同步pending；保留Issue7持久交接，由有权限管理员处理（待指定）。P、顶层RC/串扰、多PVT另验，B的G/S压力测试不自动建立产品级协议实现。

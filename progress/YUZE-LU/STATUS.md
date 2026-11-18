@@ -1,4 +1,4 @@
-2026-11-18 CST Issue289 最新：C43四个实际布线方案的setup/hold/电容/slew/fanout均零违例，选plan0，TT250MHz、目标输出50fF下setup/hold +6.340/+1.990ps。340个目标端口均已逐项确认BUF_X8；同源实际网表证明、RC提取材料、供电、固定接口几何和视图核验均通过。C尚待最终原版完整GDS检查120303、精确原生标记/PG裁定和冻结释放；U与G/S/F已验收。详见[当前C43记录](../../work/YUZE-LU/289/audit/C43-ACTUAL-STATUS.md)。Issue in_progress、PR290草稿；下方为历史记录。
+2026-11-18 CST Issue289：340个目标输出全部BUF_X8，C/U/G/S/F宏/block后端工程验收完成。C/U TT250MHz、F名义300MHz，setup/hold分别C +6.340/+1.990ps、U +78.051/+3.471ps、F +221.605/+2.454ps；完整原版DRC和五类时序/电气违例均零。C原版检查120303、独立复核120326、聚合120366、58文件只读重验120368均通过。[最终报告](../../work/YUZE-LU/289/audit/BACKEND-ACCEPTANCE.md)。PR290待独立审查、Issue in_review；实际顶层RC与多PVT另验。登记PR5 pending，Projects权限/配置缺项沿用交接。下方为历史记录。
 
 2026-11-18 CST Issue289 最新：U与G/S/F已验收；C40真实布线后DRC0，真实单线clock graft及RC提取后setup7/WNS−43.646ps，hold/电容/slew/fanout0、PG双轨通过，尚未验收。[当前证据](../../work/YUZE-LU/289/audit/C40-ACTUAL-STATUS.md)。继续实际网表重证明、两组6×8CPU重布和7条真实路径局部收敛；最终同源完整原版GDS检查/视图/释放仍待，PR290草稿、Issue289 in_progress。登记PR5 pending、Projects未配置/同步pending。
 
