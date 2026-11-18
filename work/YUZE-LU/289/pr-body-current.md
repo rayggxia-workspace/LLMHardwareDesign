@@ -21,3 +21,6 @@ C接受回执SHA256 `e5ce4311b8cd929a92e53de805eb4846223147e7f231fc9d374c92774cd
 大件冻结在授权服务器`/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117`，C位于`audit/C-final-release-v1/`，其余包路径及原样回执见联合索引。
 
 规则：rayggxia-project-collab 1.0.0。项目llm-hardware-design；负责人YUZE-LU；工程验收完成、PR待独立审查、Issue in_review；审查人待指定，不自动合并。`python scripts/check_project.py`通过，此为管理结构检查，物理/功能结论以上述EDA回执为准。登记management-hub PR5仍open/未合并、pending。缺config/board.json和read:project，Projects字段/条目unverified、同步pending；保留Issue7持久交接，由有权限管理员处理（待指定）。P、顶层RC/串扰、多PVT另验，B的G/S压力测试不自动建立产品级协议实现。
+
+
+本次最终工程证据 commit：`0492bc5be3fdb3a5e0858d9cd261a666b4ab51f2`。

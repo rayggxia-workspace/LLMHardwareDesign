@@ -3,7 +3,7 @@ import datetime, hashlib, json, os, pathlib, subprocess, tempfile
 
 T = pathlib.Path(__file__).resolve().parents[1]
 REPO = 'rayggxia-workspace/LLMHardwareDesign'
-os.environ['GODEBUG'] = 'http2client=0'
+os.environ.pop('GODEBUG', None)
 
 def api(path, method='GET', payload=None, missing=False):
     command = ['gh', 'api', '--method', method, path]
@@ -14,7 +14,16 @@ def api(path, method='GET', payload=None, missing=False):
                 json.dump(payload, stream, ensure_ascii=False)
                 temp = pathlib.Path(stream.name)
             command += ['--input', str(temp)]
-        result = subprocess.run(command, capture_output=True, encoding='utf-8', timeout=30)
+        for attempt in range(2):
+            environment = dict(os.environ)
+            if attempt:
+                environment['GODEBUG'] = 'http2client=0'
+            try:
+                result = subprocess.run(command, capture_output=True, encoding='utf-8', timeout=20, env=environment)
+                break
+            except subprocess.TimeoutExpired:
+                if attempt:
+                    raise
         if result.returncode:
             if missing and '(HTTP 404)' in result.stderr:
                 return None
@@ -41,15 +50,24 @@ commit_line = f'\n\n本次最终工程证据 commit：`{commit}`。\n'
 if commit_line not in pr_body:
     pr_body += commit_line
     (T / 'pr-body-current.md').write_bytes(pr_body.encode('utf-8'))
-api(f'repos/{REPO}/pulls/290', 'PATCH', {'title': '完成 A/B 非 P 接口 340 个 BUF_X8 驱动及宏/block 后端验证', 'body': pr_body})
+title = '完成 A/B 非 P 接口 340 个 BUF_X8 驱动及宏/block 后端验证'
+current_pr = api(f'repos/{REPO}/pulls/290')
+if current_pr['title'] != title or current_pr['body'] != pr_body:
+    api(f'repos/{REPO}/pulls/290', 'PATCH', {'title': title, 'body': pr_body})
 issue = api(f'repos/{REPO}/issues/289')
 assert [person['login'] for person in issue['assignees']] == ['YUZE-LU']
 api(f'repos/{REPO}/labels/status:in_review')
 labels = [label['name'] for label in issue['labels'] if not label['name'].startswith('status:')]
 labels.append('status:in_review')
-api(f'repos/{REPO}/issues/289', 'PATCH', {'body': issue_body, 'labels': labels})
-if api(f'repos/{REPO}/pulls/290')['draft']:
-    subprocess.run(['gh', 'pr', 'ready', '290', '--repo', REPO], check=True, capture_output=True, timeout=30)
+if issue['body'] != issue_body or {label['name'] for label in issue['labels']} != set(labels):
+    api(f'repos/{REPO}/issues/289', 'PATCH', {'body': issue_body, 'labels': labels})
+before_ready = api(f'repos/{REPO}/pulls/290')
+if before_ready['draft']:
+    ready = api('graphql', 'POST', {
+        'query': 'mutation($id:ID!){markPullRequestReadyForReview(input:{pullRequestId:$id}){pullRequest{id isDraft}}}',
+        'variables': {'id': before_ready['node_id']},
+    })
+    assert not ready.get('errors') and ready['data']['markPullRequestReadyForReview']['pullRequest']['isDraft'] is False
 pr = api(f'repos/{REPO}/pulls/290')
 issue = api(f'repos/{REPO}/issues/289')
 assert not pr['draft'] and pr['state'] == 'open' and pr['head']['sha'] == commit
@@ -57,7 +75,8 @@ assert pr['body'] == pr_body and issue['body'] == issue_body and issue['state'] 
 assert [label['name'] for label in issue['labels'] if label['name'].startswith('status:')] == ['status:in_review']
 registration = api('repos/rayggxia-workspace/management-hub/pulls/5')
 board = api(f'repos/{REPO}/contents/config/board.json?ref=main', missing=True)
-projects = subprocess.run(['gh', 'api', 'graphql', '-f', 'query={organization(login:"rayggxia-workspace"){projectV2(number:1){id title}}}'], capture_output=True, encoding='utf-8', timeout=30)
+project_env = dict(os.environ, GODEBUG='http2client=0')
+projects = subprocess.run(['gh', 'api', 'graphql', '-f', 'query={organization(login:"rayggxia-workspace"){projectV2(number:1){id title}}}'], capture_output=True, encoding='utf-8', timeout=20, env=project_env)
 assert projects.returncode != 0 and 'INSUFFICIENT_SCOPES' in projects.stdout and 'read:project' in projects.stderr
 result = {
     'published_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
