@@ -84,7 +84,7 @@ class DeploymentObservation(OperatorObservation):
             self.control[kind+'_install_bytes']+=image_bytes
             self.control[kind+'_install_elapsed_ps']+=hi-lo
             self.resources[kind+'_installer'].add(lo,hi)
-            self.event('install',kind=kind,address=address,bytes=image_bytes,start_ps=lo,end_ps=hi)
+            self.event('install',component=kind,address=address,bytes=image_bytes,start_ps=lo,end_ps=hi)
         scheduler.install_pm=install
         original_submit=scheduler.submit_local
         def submit(target,slot,addresses,dispatch):
