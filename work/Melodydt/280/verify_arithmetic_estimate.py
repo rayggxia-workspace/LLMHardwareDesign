@@ -8,6 +8,9 @@ HERE=Path(__file__).resolve().parent
 for model in sys.argv[1:] or ('qwen3','llama','granite','phi','gemma','qwen35','falcon'):
     p=HERE/(model+'_tlm_power_v3_arithmetic.json');d=json.loads(p.read_bytes())
     base=HERE/(model+'_tlm_power_v2_no_wire.json');b=json.loads(base.read_bytes())
+    assert sha256((HERE/'seven_model_arithmetic_estimate.py').read_bytes()).hexdigest()==d['estimator_sha256']
+    assert sha256((HERE/'six_model_tlm_power.py').read_bytes()).hexdigest()==d['metrics_module_sha256']
+    assert sha256((HERE/'no-wire-results/coefficients.json').read_bytes()).hexdigest()==d['reference_coefficients_sha256']
     assert sha256(base.read_bytes()).hexdigest()==d['baseline_sha256']
     cp=HERE/'arithmetic-model-counts'/(model+'.json');counts=json.loads(cp.read_bytes())
     assert sha256(cp.read_bytes()).hexdigest()==d['counts_sha256']
@@ -33,4 +36,10 @@ for model in sys.argv[1:] or ('qwen3','llama','granite','phi','gemma','qwen35','
             chip=w['estimated_on_chip']['energy_nj_per_window'][e];total=w['estimated_on_chip_plus_ddr']['energy_nj_per_window'][e]
             assert isclose(chip,old['covered_on_chip_subtotal']['energy_nj_per_window'][e]+extra,rel_tol=1e-12)
             assert isclose(total,chip+w['ddr']['energy_nj_per_window'][e],rel_tol=1e-12)
+        for label,s in w['read_dma_sensitivity'].items():
+            assert s['read_dma_active_proxy']==old['read_dma_dynamic_sensitivity'][label]['read_dma_active_proxy']
+            for e in (0,1):
+                proxy=s['read_dma_active_proxy']['energy_nj_per_window'][e]
+                assert isclose(s['estimated_on_chip']['energy_nj_per_window'][e],w['estimated_on_chip']['energy_nj_per_window'][e]+proxy,rel_tol=1e-12)
+                assert isclose(s['estimated_on_chip_plus_ddr']['energy_nj_per_window'][e],s['estimated_on_chip']['energy_nj_per_window'][e]+w['ddr']['energy_nj_per_window'][e],rel_tol=1e-12)
     print('ARITHMETIC_ACCOUNTING_PASS',model)

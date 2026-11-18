@@ -11,6 +11,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate,Paragraph,Table,TableStyle,PageBreak,Spacer
 from xml.sax.saxutils import escape
+from build_energy_report import COMPONENTS
 
 HERE=Path(__file__).resolve().parent
 MODELS=('qwen3','llama','granite','phi','gemma','qwen35','falcon')
@@ -25,8 +26,9 @@ LABELS=dict(rms_n='RMS N 核心',rms_scan='RMS 范围扫描',rms_apply_chunked='
  proxy_recurrent_factors='循环因子/EXP/Softplus 代理',proxy_recurrent_norm_gate='循环归一化/门控代理')
 def fmt(v):return '%.3f - %.3f'%(v[0],v[1])
 
-def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--output',type=Path,default=Path('output/pdf/seven-model-energy-arithmetic-v3.pdf'));args=ap.parse_args()
+def main(output=None):
+    ap=argparse.ArgumentParser();ap.add_argument('--output',type=Path,default=Path('output/pdf/seven-model-energy-arithmetic-v3.pdf'))
+    args=ap.parse_args() if output is None else argparse.Namespace(output=Path(output))
     pdfmetrics.registerFont(TTFont('CN','C:/Windows/Fonts/Deng.ttf'));pdfmetrics.registerFont(TTFont('CNB','C:/Windows/Fonts/Dengb.ttf'))
     rl_config.invariant=1
     style=ParagraphStyle('body',fontName='CN',fontSize=9.4,leading=13.5,spaceAfter=6,wordWrap='CJK')
@@ -34,6 +36,8 @@ def main():
     heading=ParagraphStyle('head',parent=style,fontName='CNB',fontSize=13,leading=18,spaceAfter=9)
     tiny=ParagraphStyle('small',parent=style,fontSize=8,leading=10.7)
     story=[];records={m:json.loads((HERE/(m+'_tlm_power_v3_arithmetic.json')).read_bytes()) for m in MODELS}
+    index=json.loads((HERE/'energy_report_models.json').read_bytes())
+    metadata={x['result'].split('_tlm_power')[0]:x for x in index['models']}
     def p(text,kind=style):story.append(Paragraph(escape(text),kind))
     def table(rows,widths):
         cells=[[Paragraph(escape(str(v)),tiny) for v in row] for row in rows]
@@ -75,9 +79,23 @@ def main():
         if w.get('read_dma_sensitivity'):
             s=w['read_dma_sensitivity']['same_write_cost']
             p('读 DMA 若取与写 DMA 相同的每拍动态成本：片上 '+fmt(s['estimated_on_chip']['energy_mj_per_token'])+'，片上 + DDR '+fmt(s['estimated_on_chip_plus_ddr']['energy_mj_per_token'])+' mJ/token。该项为独立代理场景，未混入上方默认小计；另保留 0.5/2 倍场景于 JSON。',tiny)
-        p('覆盖小计下仍未覆盖：未匹配的控制外壳/分发与实际部署门控，全局时钟/跨块互连，读 DMA 静默/漏电，DDR PHY、封装与板级 I/O。布线寄生按本轮选择主动排除，缺项不代表零能耗。',tiny)
+        p('覆盖小计下仍未覆盖：母控运行取指与未采样启动、局控外壳/分发、交换机活跃流量和实际部署门控，全局时钟/跨块互连，读 DMA 静默/漏电，DDR PHY、封装与板级 I/O。布线寄生按本轮选择主动排除，缺项不代表零能耗。',tiny)
         proxies=[LABELS[k] for k,v in w['arithmetic_components'].items() if k.startswith('proxy_') and v['energy_mj_per_token'][1]>0]
         p('本模型尚未完成匹配 RTL 数值/功耗验收的新增项：'+('、'.join(proxies) if proxies else '无特殊函数代理；公共算术仍限于采样及条件迁移')+'。',tiny)
+        story.append(PageBreak());p(NAMES[m]+'：底座分项与配置',heading)
+        p(metadata[m]['configuration'],tiny);p(metadata[m]['implementation'],tiny)
+        baseline=json.loads((HERE/(m+'_tlm_power_v2_no_wire.json')).read_bytes())
+        rows=[['沿用分项（mJ/token）','短 Prefill','首 Decode','第 2 步 Decode']]
+        for label,keys in COMPONENTS.items():
+            row=[label]
+            for name in WINDOWS:
+                c=baseline['windows'][name]['components']
+                row.append(fmt([sum(c[k]['energy_mj_per_token'][e] for k in keys if k in c) for e in (0,1)]))
+            rows.append(row)
+        rows.append(['原片上小计']+[fmt(d['windows'][name]['previous_on_chip']['energy_mj_per_token']) for name in WINDOWS])
+        table(rows,[170,112,112,113])
+        p('以上底座分项按原 v2 口径保留；新增算术见上一页，两页相加形成本模型新小计。DDR 单独列出，仅加入片上 + DDR。读 DMA 代理另列，不计入本表。',tiny)
+        p('覆盖小计下仍未覆盖：母控运行取指/未采样启动、局控外壳/分发、交换机活跃流量、实际实例门控、全局时钟/跨块互连、读 DMA 静默/漏电、DDR PHY/封装/板级 I/O；布线寄生主动排除。',tiny)
     story.append(PageBreak());p('复算、验证与后续',title)
     p('复算入口：work/Melodydt/280/seven_model_arithmetic_estimate.py；输入包括各模型冻结 v2 结果、已核验算子调用计数、真实输入标定回执。每个 v3 JSON 记录全部输入 SHA、每窗分项和运算计数。')
     p('验证必须检查：所有调用签名已处理；分块连续且覆盖完整原向量；没有重复 E32/G32/SRAM 项；分项之和等于新增小计；片上 + DDR 与两者之和一致；冻结时间、token 数和 DDR 完全不变；所有范围非负且有序。')

@@ -1,0 +1,1090 @@
+{
+  "kind": "rope",
+  "chunked": false,
+  "chunk_contract": null,
+  "scope": "sampled real operands; named arithmetic wrapper plus E32 where present; SRAM and system residency excluded; do not add provider E32 twice",
+  "activity": "RTL boundary VCD propagated through mapped cells; no internal gate replay",
+  "memory_fixture": "softmax/scan/apply use one-outstanding S128 fixture, not physical SRAM; apply uses disjoint X/Gamma windows in one bank",
+  "nominal_clock_mhz": 300,
+  "period_ps": 3334,
+  "wire_parasitics_loaded": false,
+  "timing_signoff": false,
+  "scheduler_latency_reconciled": false,
+  "source_commit": "1ebcc49a4afe198a82a0031d91aaf70b823bbe0f",
+  "sources_sha256": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/rtl/rope_e32_ap64.sv": "a64ed117324536643bc5470a18fc464dcaf08d660e71b4b34c07f1cf6f53c21b",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/rtl/e_s32_ap64.sv": "c9ba4cf469bcd8feb199d49f845348180c1935d28edd2f48acb517f84fe0675b",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/rtl/e_s32_native.sv": "50ce3230a6a7738a7bec4816250eb68647da477b9bbd64de69c1dc71fae81751",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/public-operator-power-03/tb_operator_rope.sv": "eb2eb4c88391dc67e4f903a70c0dab40e4419cd63137e0730f583d64ba8e1039"
+  },
+  "liberty_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+  "inputs_sha256": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/prefill-w4-tile128-pr272-combined/operator-observation.json": "90b034c32935e3527ae9a3c63e2c7a7495115aac9497db46aeb7d8f0a5728ec2",
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json": "14e699930de8a02aed5bc9b2a5cacf5fde09ffc0f2ad4d97e1928a1fe6581265"
+  },
+  "verilator_version": "Verilator 5.042 2025-11-02 rev UNKNOWN.REV",
+  "openroad_version": "unknown",
+  "captured_call_counts": {
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/prefill-w4-tile128-pr272-combined/operator-observation.json": {
+      "prefill:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": 21504,
+      "prefill:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": 21504,
+      "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_compact\"}": 448,
+      "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_compact\"}": 448
+    },
+    "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json": {
+      "first_token:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": 10752,
+      "first_token:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": 10752,
+      "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_compact\"}": 448,
+      "decode:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}": 10752,
+      "decode:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}": 10752,
+      "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_compact\"}": 448
+    }
+  },
+  "samples": [
+    {
+      "signature": "prefill:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": true,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/prefill-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 0,
+      "units": 1,
+      "cycles": 70,
+      "window_ps": 233380,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.005990552716,
+                "switching": 0.001066370285,
+                "leakage": 0.0001491974253,
+                "total": 0.007206120528
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "742a028403863fc4767c7a0b0ad558f516948265316811f55d458dfe8c93ac20",
+              "log_sha256": "92e3295fa3ab95ad1deaf8e4c6d131de4be79a087401440d27b8b60f9d0a67a4"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001468765113,
+                "total": 0.002277180785
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "2ebd80e911af8580b58f1108549784cf4904a0c32e2887f8ba3c17ade84b6d67",
+              "log_sha256": "d258db4bf2f852719ba82f9d8e135e241ceb3285dbbd042ab20ddb9f1b4a2aa3"
+            }
+          },
+          "incremental_nj": 1.1503159572213402
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2261710018,
+                "switching": 0.1644024849,
+                "leakage": 0.000725263264,
+                "total": 0.3912987709
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "4941806859d3b6cdd81c6b07adca58aa1dd31d981e86299b2f8de0e72679dda6",
+              "log_sha256": "6ec35749097055ffef5f415371602241e7040bdb552384351314ec052aa76a40"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007395411958,
+                "total": 0.003533098381
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "e8a19448b0fdb9b55ef5a9769ea1995cfa06cd477373f4af3d6ee0a221dbe648",
+              "log_sha256": "3fc5fafe8a9d2c3f392c85c11fd048cf87a11192304cf94c7250fd649a793d3b"
+            }
+          },
+          "incremental_nj": 90.4967526524842
+        }
+      },
+      "incremental_nj": 91.64706860970554,
+      "vectors_sha256": "3a8380151044aa475c6514ca710402fab2c8fe0a4ff60c167b0aa1f69639a9dc",
+      "rtl_log_sha256": "508bf89037245ddbd91480969c4a5aefc05adac8adf6a28f9f7fc552a1c1ab9a"
+    },
+    {
+      "signature": "prefill:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": true,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/prefill-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 1,
+      "units": 1,
+      "cycles": 70,
+      "window_ps": 233380,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.005613461137,
+                "switching": 0.00103459158,
+                "leakage": 0.0001489953429,
+                "total": 0.006797047798
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "7eb0b5d989aba38616a8889cfa385277921a5007158186fa9635b540a6328b7e",
+              "log_sha256": "90a9025940fbc87d9b370158e7d3f3835ed26112a8a24c3fcc82db62a33b693d"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001468332339,
+                "total": 0.002277137479
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "d0950c1821bb615f68456cc54e6446f21beaad9b0109520f194ed69f9a668315",
+              "log_sha256": "479b56a97c847d17e171a2ee48265e3809d59ecb340da1111527b5fb4d418981"
+            }
+          },
+          "incremental_nj": 1.05485667024822
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2269552052,
+                "switching": 0.1649311036,
+                "leakage": 0.0007251187926,
+                "total": 0.3926114142
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "42107f3d840fd6309ca24380e103bf5173cc3a57efa1f43de48c4bd8d82971ae",
+              "log_sha256": "5a4ce398e497b994af33b032e408e5c73c9a54d2247949558d5f15cf3ce46499"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007395411958,
+                "total": 0.003533098381
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "a83245c5f09dd1c38fa5ff6e3647b0339ac22108a6022aecce7490a0090a9439",
+              "log_sha256": "3fc5fafe8a9d2c3f392c85c11fd048cf87a11192304cf94c7250fd649a793d3b"
+            }
+          },
+          "incremental_nj": 90.80309734583822
+        }
+      },
+      "incremental_nj": 91.85795401608644,
+      "vectors_sha256": "9e6baa85e6799fe0339f819f3e66134b3a4a87838a28216f10e6942ed07cd397",
+      "rtl_log_sha256": "abe881b4e554ec88ac6b2c3caac3fdc849aff3eff712d976cd00afe22e6423db"
+    },
+    {
+      "signature": "prefill:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": false,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/prefill-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 2,
+      "units": 1,
+      "cycles": 52,
+      "window_ps": 173368,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.005667748861,
+                "switching": 0.001016236027,
+                "leakage": 0.0001493248565,
+                "total": 0.006833309773
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "5a75b5f9ec5e4151058f194f0b350ba29c0f82f09846b257a9700b42cb7ba456",
+              "log_sha256": "c047c1d7a2bf2cf45837adeabefff9c30ac18ce478426bb9140b89090b2cdd56"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001464643865,
+                "total": 0.002276768675
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "8d95c2879da9a544f0c3064bd89e61c368b30473f4a1017b914a9b76b2783ba1",
+              "log_sha256": "3290fec3e6d48058ec7b12fa041bd2409fe2f7fc71841f24b99507003f412443"
+            }
+          },
+          "incremental_nj": 0.7899584170780639
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2428960204,
+                "switching": 0.177173391,
+                "leakage": 0.0007255803794,
+                "total": 0.4207949638
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "853bce8529637ef1bb98cc354a71d713da9e793c0afe97ec86ae7da336961103",
+              "log_sha256": "cb800cb3f53910d2a39eb78c16db396887e766950cd091fa83aeff13d9a1d90b"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007395411958,
+                "total": 0.003533098381
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "6a051b456656275320e6a9fca9d677bb2639de5a8026d510533e04280c0ae14e",
+              "log_sha256": "3fc5fafe8a9d2c3f392c85c11fd048cf87a11192304cf94c7250fd649a793d3b"
+            }
+          },
+          "incremental_nj": 72.33985508396118
+        }
+      },
+      "incremental_nj": 73.12981350103925,
+      "vectors_sha256": "6fd81302090d46fac2582e1c308f2a971dcce82c9948fe1fdc7ea0907a556f4d",
+      "rtl_log_sha256": "de862df812514e4fe251a6d8bc362ff14cd87cb829690f5e7745fa70740c6c4a"
+    },
+    {
+      "signature": "prefill:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": false,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/prefill-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 3,
+      "units": 1,
+      "cycles": 52,
+      "window_ps": 173368,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.005371122155,
+                "switching": 0.0009945981437,
+                "leakage": 0.000148886189,
+                "total": 0.006514606532
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "271ba61a4ed6e448f6ae80a8dc319012e4d800687bea11f8c62ce9f7ac838b1d",
+              "log_sha256": "24326005aa25f1fc1a4d2a086b6609ead63f467bce3c1506a19329ad9bbf2f79"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001461721986,
+                "total": 0.002276476473
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "4bb07d2d2e224cbdfbbcb1b924ac90d31676e016353c81084a90825b70d12b2c",
+              "log_sha256": "7af886d2bd802b778f0da6ed75b7f8062c84ad4507b92b4d31b13484729d580c"
+            }
+          },
+          "incremental_nj": 0.7347561320687118
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2440522164,
+                "switching": 0.178062588,
+                "leakage": 0.0007263999432,
+                "total": 0.4228411913
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "881a2f008cb76a957a79389efbbca6851cc274920dbc6c52b8e4f1905ddbd99d",
+              "log_sha256": "1ed9f9d16ea3cdb83de5958db562edad94d9d99a2d77bfe5dd623d840cb4dccf"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007395411958,
+                "total": 0.003533098381
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "545fde03161874e00811e1e8630e0ff059d467d3a421673fbd15859dac11f1b6",
+              "log_sha256": "3fc5fafe8a9d2c3f392c85c11fd048cf87a11192304cf94c7250fd649a793d3b"
+            }
+          },
+          "incremental_nj": 72.69460545318118
+        }
+      },
+      "incremental_nj": 73.4293615852499,
+      "vectors_sha256": "99cb5df24f89bf186b3e03bd3d6edea3abc91cdcc51e68191a382804fac675d2",
+      "rtl_log_sha256": "aac5b23cf9576f4d4e9905c554e2846a85bc72289b98c8ca44643a2c560495d4"
+    },
+    {
+      "signature": "first_token:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": true,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 0,
+      "units": 1,
+      "cycles": 70,
+      "window_ps": 233380,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.008243831806,
+                "switching": 0.00125579536,
+                "leakage": 0.0001504726533,
+                "total": 0.009650100023
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "a1a2aeebc8b7d61c82cb7c04f620bc61c5a89a2836800673f1a935815c8dec2c",
+              "log_sha256": "e77e524cabbc6ae221e38b85d90f5e07ba90406f4808470af36ff5640765d253"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.000146155915,
+                "total": 0.002276460174
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "819baa71c8621c5153fcc59e13dbe79937c03c142de707b479b96181c8139016",
+              "log_sha256": "78487c9777ce34cf008a0451f977b75774a16155e7a0f661b7cf1a132d752226"
+            }
+          },
+          "incremental_nj": 1.72086006795962
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.229222104,
+                "switching": 0.1668771207,
+                "leakage": 0.0007271609502,
+                "total": 0.3968263566
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "fcd04c1263e280466719156b956cabff5f97625dacd6b81d4b8140d42cc144f5",
+              "log_sha256": "3c88dfe742b9e9e0811d6d4ed5fce93741f5e9defd150119ef3b6b5de30cfdaa"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007404212956,
+                "total": 0.003533978481
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "643f9d5e09a7e7de23c7437ce69fc8cb721f93c7b2d462606daec9b1397c4c5e",
+              "log_sha256": "dff63f11d22b3e1375b3a7ad04a8c4c294b0526e933ff3319e8f34bd85083d94"
+            }
+          },
+          "incremental_nj": 91.78657520541222
+        }
+      },
+      "incremental_nj": 93.50743527337184,
+      "vectors_sha256": "75f225c337c194836afb7f98e4d5d4c4b9be3d6060d70e90042fff66b963e857",
+      "rtl_log_sha256": "ce8821f2a3947c26ac31ee1f3aeddcdf309661e81d16c232fb44ba9f4d8a48d5"
+    },
+    {
+      "signature": "first_token:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": true,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 1,
+      "units": 1,
+      "cycles": 70,
+      "window_ps": 233380,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.007731198333,
+                "switching": 0.001213688985,
+                "leakage": 0.0001501207007,
+                "total": 0.009095008485
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "c00dc099ba858efb9248c92fc9aa9f729a0c6011128ebfa38a4b07f7c68fada8",
+              "log_sha256": "67d41e375740196eb0de156a69fba932dd32d975a6234317afd1a41b39598e7e"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001460895292,
+                "total": 0.002276393818
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "1069459e52b751790494ace480c8244ae6f39fbe66fb981d45e6558950bf2a70",
+              "log_sha256": "594d1f534f8ab4b1527c8b56ff88607b543ad7edb95f55e0cfd43427d18c2159"
+            }
+          },
+          "incremental_nj": 1.59132829098446
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2295253426,
+                "switching": 0.1671452969,
+                "leakage": 0.0007270702044,
+                "total": 0.397397697
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "ebe497c5eb591f33d653e459d4509d48ecb6ac8dc53b2e6aa42e62292da21ddf",
+              "log_sha256": "f55ed62543a0fdc9e7a0406b48d3ce70b023b11e72b23c7f2ae4fa21ae97bd8c"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007403151249,
+                "total": 0.00353387231
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "3fc3b06c9d5d60c8600a81ea8a38fa2c623c725f37b71c1a1e188b8feccc5921",
+              "log_sha256": "229d47936f8a061214de188ca065286dded86f965762deacdb910e3b1362b0a0"
+            }
+          },
+          "incremental_nj": 91.9199394061522
+        }
+      },
+      "incremental_nj": 93.51126769713666,
+      "vectors_sha256": "c0c638aac716619ec12d4458fd0cbff011733339e5382b9289221ac7641b0b98",
+      "rtl_log_sha256": "f1d20f80a1e5dbfa8fd2daa56e0ebc26d7c08c3402bb67dc64c9b5eb6e90c7c8"
+    },
+    {
+      "signature": "first_token:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": false,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 2,
+      "units": 1,
+      "cycles": 52,
+      "window_ps": 173368,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.007630438078,
+                "switching": 0.001182517735,
+                "leakage": 0.0001512067247,
+                "total": 0.00896416232
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "a6a53afb17283ced7424e02b100dd936ce5299f04cc006f0163c2a3ef9a29f21",
+              "log_sha256": "fd8b3077457499fd5830ca328c6dcc0c202bf82004371c112fc59da2b91e050d"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001465024543,
+                "total": 0.002276806626
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "cacec8e4e46600d033811828a8ae70d8bfa76b7b562de7138d99c7335d5ccb0c",
+              "log_sha256": "6c8f9ad26dafc88b1bbf5bb57a515540b875044d4c20a4edb63f8d3f4e0106f1"
+            }
+          },
+          "incremental_nj": 1.1593734819573922
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2403391004,
+                "switching": 0.1752518117,
+                "leakage": 0.0007265115273,
+                "total": 0.4163174331
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "9d9e6b62fecaa06afb9b1505be1db382683a7c0e2afc0afadae20dabeefaa860",
+              "log_sha256": "a0086428fad8ae878785fd84810beb629aabc58bc108c765ceee2e213b1ffbd1"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007401284529,
+                "total": 0.00353368558
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "d010b4d5809732dfadce78253304621471a335c0a1edea61496e15934b2d3678",
+              "log_sha256": "98ddb47ed28fcfab5001f9b034dbe9b6d6468dbdaa648634ea857e4f91dfbdbb"
+            }
+          },
+          "incremental_nj": 71.56349274004737
+        }
+      },
+      "incremental_nj": 72.72286622200475,
+      "vectors_sha256": "2906a0ba2a744f643350df4a9284e8a8b8bc55cb91c77e0e91b4d42d6e0326e6",
+      "rtl_log_sha256": "fa67749ebf673d9cbcdc73dfad2ec85d7120a546c446450a547a360ec33244cd"
+    },
+    {
+      "signature": "first_token:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": false,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 3,
+      "units": 1,
+      "cycles": 52,
+      "window_ps": 173368,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.007193865255,
+                "switching": 0.00114616286,
+                "leakage": 0.0001507439156,
+                "total": 0.008490771987
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "619b7675992ba9827f700e59004803e4f3d44715d00e2a183d8edd43571e3494",
+              "log_sha256": "284b13930beb2b6ae39ee3c69cf0e144e9bb2abad58f995d8db013abca097f7f"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001465528912,
+                "total": 0.002276857151
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "33c0d33adba7572714c8f321f4466077319750ac3295b7234d61a39a03ccda1a",
+              "log_sha256": "bc056e0002e926b5a02640bcb990f05e09ddaae0cd8007e993159adbadfcc862"
+            }
+          },
+          "incremental_nj": 1.077293987287648
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2403248698,
+                "switching": 0.1751683056,
+                "leakage": 0.0007267083856,
+                "total": 0.4162198901
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "35b7cd06b8edfa1e2ac730bd4c311e1c5a4a4fce20f542e0086eb806d14c987f",
+              "log_sha256": "4b5ffda03cd0fd68a3cdd24a0197d6f8f0d2e39830409b72630b94e56ae5d82b"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007402620977,
+                "total": 0.003533819225
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "15409c2500d901a79d1eac758135ed5ff5ddaa235c62004db2a71220f5d0530c",
+              "log_sha256": "673843e6ae8781b4449be855dab3dbb11f404653ee4fedfc5a0f95f6bfc0e93f"
+            }
+          },
+          "incremental_nj": 71.546558735457
+        }
+      },
+      "incremental_nj": 72.62385272274464,
+      "vectors_sha256": "b3002202b5a640dd9b98d7495b084e5e8fecc946890015bff0843933ceb4370d",
+      "rtl_log_sha256": "690d006107d7ddbcf57a4b5d47d72ab3cf2ebc4b7fdd1097b2a3371c051d1f38"
+    },
+    {
+      "signature": "decode:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": true,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 6,
+      "units": 1,
+      "cycles": 70,
+      "window_ps": 233380,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.00759052299,
+                "switching": 0.001203374821,
+                "leakage": 0.0001500424987,
+                "total": 0.008943940513
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "0c511edbadbafcc9654395e0f4307e96753013f0fc6622519a193fb299b1927e",
+              "log_sha256": "f86a72baa9085ed75b7949a5d7b51a68ac08d4611bf889aab17b8557e06243e2"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001465500682,
+                "total": 0.002276854357
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "05c9c9c4748c6cc9ee5b6f7618b10975ab9521d2922ef47dc7c450c56f583278",
+              "log_sha256": "34d7f5d7a04f8f0c0d9d65a1e3cfe95ed31163213aa7185d1ee67f718b1c5434"
+            }
+          },
+          "incremental_nj": 1.55596456708728
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2259511501,
+                "switching": 0.1645870358,
+                "leakage": 0.0007269930793,
+                "total": 0.3912651837
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "77171deff89ff8e53babde1dd1b304e2e1a305cf5237c4dbc02654272ed02b24",
+              "log_sha256": "18a751cdfd933609ec2bedd553f8d3d3e55e6da83acf759ac419953e990bc41a"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007404988864,
+                "total": 0.003534056246
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "503676fe7c414c2b2db861a92852a9c7cd9b3f0ae01db7c7c21480d1b6fe748e",
+              "log_sha256": "1cf2528bdaaca502db0e1a0d17010fe0197d34bb9ed325cb9b9dcf088debcaa0"
+            }
+          },
+          "incremental_nj": 90.48869052521452
+        }
+      },
+      "incremental_nj": 92.04465509230181,
+      "vectors_sha256": "74bf44b43cc3eeeadff24acc5239e3feafe93643bc999ef493f6dcd84170d2c6",
+      "rtl_log_sha256": "9b57f1b3d20811e4da1ad9ce02efcc37d56958e1bee2d10361babd8d13a197a2"
+    },
+    {
+      "signature": "decode:rope_native:site0:{\"elements\": 4, \"negative\": true, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": true,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 7,
+      "units": 1,
+      "cycles": 70,
+      "window_ps": 233380,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.007315529045,
+                "switching": 0.001181916334,
+                "leakage": 0.0001498138736,
+                "total": 0.008647258393
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "7179ff1bd3f60cc65d4c3c5ece949af85af1611c0dceea5101bc2cc2928a6c5d",
+              "log_sha256": "f01ae0de4b3d55a515a9159bca9766f0ed04baf74756c6b39e3cf565321f87fa"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001462238288,
+                "total": 0.002276528161
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "01135a3279e9725b0a30c103f0c98b107f7c402652abb00a69c78c5092863bc1",
+              "log_sha256": "864b72ac52bdd85b2f352af62eeb653cfacba830e7f1713ce3a4c67621026ecd"
+            }
+          },
+          "incremental_nj": 1.4868010215441603
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.229832679,
+                "switching": 0.1673291475,
+                "leakage": 0.0007269107737,
+                "total": 0.3978887498
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "6b46cc12804aff5eab645838e866d0260ced0090ba58eb5a1460f3d478f59ec4",
+              "log_sha256": "8225d54813cbe365d38d386edef55860c71158afe9a1e6603b33b9608446c4a7"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007402620977,
+                "total": 0.003533819225
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "f00c8984d234aa077390b0f8008d8610a01173376d615060c3766ee107cbe072",
+              "log_sha256": "673843e6ae8781b4449be855dab3dbb11f404653ee4fedfc5a0f95f6bfc0e93f"
+            }
+          },
+          "incremental_nj": 92.0345536975935
+        }
+      },
+      "incremental_nj": 93.52135471913766,
+      "vectors_sha256": "d9d124660327694690e4b3f089ee4acbc7f33d3cc9b9aff8eb64116b96e52d8e",
+      "rtl_log_sha256": "5f50e7a97e3163bcff39a87a7833ad529f7b877323c1b477e9323f919cf9be1c"
+    },
+    {
+      "signature": "decode:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": false,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 8,
+      "units": 1,
+      "cycles": 52,
+      "window_ps": 173368,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.007046840619,
+                "switching": 0.001134712831,
+                "leakage": 0.0001504993415,
+                "total": 0.008332052268
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "92989f849f95d1599ecf3b6cac9f6049f191d79daa4b3eeb3b0cdc6d216649b5",
+              "log_sha256": "a4bb153736380cef76ae2d7b9ee0a7fb0081f1ac27d58f1d9a0b8c108e5ab115"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001461379579,
+                "total": 0.002276442247
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "c12868101ed4a735a703cad957daa5895400fc2f85501225d7349436663832db",
+              "log_sha256": "038a3fcab27baf7d536f4f21756c1e9eaf640082629fdb04160ab3f65df95e5d"
+            }
+          },
+          "incremental_nj": 1.049848998120728
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.2422645092,
+                "switching": 0.1767826974,
+                "leakage": 0.0007265932509,
+                "total": 0.4197737873
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "ca105e0318aa255e92192dc78886853ffdfd310d89c77b3f4d40215cbce1a65a",
+              "log_sha256": "0da46c467ff3ee2bb0295b62a67cd3144d651d14df2a077e7ac85a52e9f74b0a"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007406602381,
+                "total": 0.003534217365
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "0f9f27d3efac2d079ceb9038e3f58f797600b345717d312561e633077e4b295a",
+              "log_sha256": "f754d8e88cb67f65d389ddae759c43600019375323473b0068339feafda44e1f"
+            }
+          },
+          "incremental_nj": 72.16262176049108
+        }
+      },
+      "incremental_nj": 73.2124707586118,
+      "vectors_sha256": "f772e4dcc7548633adc18b63c0a0ba4a22dbf8d737d252bc0fbee4dfc90f816e",
+      "rtl_log_sha256": "fc97a2ecc5bd077867efe0566cf2e6318b4836195a42baf2255198ebf01ef475"
+    },
+    {
+      "signature": "decode:rope_native:site0:{\"elements\": 4, \"negative\": false, \"shifts\": [14, 0, 0, 14, 0, 0]}",
+      "shape": {
+        "elements": 4,
+        "negative": false,
+        "shifts": [
+          14,
+          0,
+          0,
+          14,
+          0,
+          0
+        ]
+      },
+      "capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/qwen3-operator-capture-01/qwen3-38838045/decode-live-w4-tile128-pr272-combined/operator-observation.json",
+      "sample_index": 9,
+      "units": 1,
+      "cycles": 52,
+      "window_ps": 173368,
+      "components": {
+        "dut": {
+          "top": "rope_e32_ap64",
+          "netlist_sha256": "1c32cd768598561cf467960c16c6e9a82dd774c7f7caf615c6ced5ac14c7fa4f",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.006832398474,
+                "switching": 0.001117155189,
+                "leakage": 0.000150333799,
+                "total": 0.00809988752
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "0242e1eb7064ae1c54c756949cebd7888c3839ed4aa40799899638ba8a709a1d",
+              "log_sha256": "6e7a170e6b11657efa49d14f5b2849c47b2b6c05de99e112bccca9ca2e847c04"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.00213030423,
+                "switching": 0.0,
+                "leakage": 0.0001463891676,
+                "total": 0.002276693471
+              },
+              "annotation_bits": 856,
+              "required_boundary_bits": 856,
+              "vcd_sha256": "32f6fcaeabff5466560f45d4d9c103b14762c241b8e1b130d19c67be1599b581",
+              "log_sha256": "a9d66744a870dd866e0ee7fa2366f4c6ddf8bd44a9baf89794d4186702d40b99"
+            }
+          },
+          "incremental_nj": 1.009555505887032
+        },
+        "provider": {
+          "top": "e_s32_ap64",
+          "netlist_sha256": "8ecf4ef7d0888cb027914dfbd192bcda47122ecfe7f3827b8e742352d53757b0",
+          "power": {
+            "active": {
+              "power_w": {
+                "internal": 0.23722215,
+                "switching": 0.172862038,
+                "leakage": 0.0007261410938,
+                "total": 0.4108103216
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "86569bba9917d4ec0536075ab8ad8919c8ae31b891d40388b4b9afcad0d9274f",
+              "log_sha256": "b32f43a9cd2d1dbaa8b67dd9ee049486d5b037071c5a9468d21af9357581cf72"
+            },
+            "idle": {
+              "power_w": {
+                "internal": 0.002793557243,
+                "switching": 0.0,
+                "leakage": 0.0007403672207,
+                "total": 0.003533924464
+              },
+              "annotation_bits": 158,
+              "required_boundary_bits": 158,
+              "vcd_sha256": "3e20f691a7a50d4318cf09688de646cc4e08788f6c838e462356c88bcad84ea6",
+              "log_sha256": "bfb9ecd80f1bda93c0c385a31f433d171fd55b4052edd332be59a2074fbe2f20"
+            }
+          },
+          "incremental_nj": 70.60869441867405
+        }
+      },
+      "incremental_nj": 71.61824992456108,
+      "vectors_sha256": "204b83422e9ed96cb7560298421f1ce61a3f241b64df15a205dbe8dbb58cd1a3",
+      "rtl_log_sha256": "e66b83263d4cbc84b399e912c4f8c66305af79ffb5e497a94961ab9c1babb0ce"
+    }
+  ],
+  "excluded_samples": []
+}

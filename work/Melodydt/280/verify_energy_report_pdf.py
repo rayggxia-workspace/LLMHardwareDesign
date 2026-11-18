@@ -18,6 +18,11 @@ def main():
     args = parser.parse_args()
     directory = Path(__file__).resolve().parent
     index = json.loads((directory / 'energy_report_models.json').read_bytes())
+    if index.get('format') == 'arithmetic-v3':
+        import subprocess
+        import sys
+        subprocess.run([sys.executable, str(directory / 'verify_arithmetic_report.py'), str(args.pdf)], check=True)
+        return
     reader = PdfReader(args.pdf)
     if len(reader.pages) != 19 or len(index['models']) != 7:
         raise ValueError('Unexpected v2 report structure')

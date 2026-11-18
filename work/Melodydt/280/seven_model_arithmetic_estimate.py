@@ -93,6 +93,9 @@ def integrate(model,values,idle,mul,sources):
     coef=load(HERE/'no-wire-results/coefficients.json');plus=coef['u_add_nj_per_word']/4
     result=dict(model=b['model'],scope='Conditional arithmetic-completed estimate; not complete physical-chip power',
                 target_clock_mhz=300,sram_bits=512,wire_parasitics_loaded=False,rtl_special_numeric_accepted=False,
+                estimator_sha256=digest(Path(__file__)),
+                metrics_module_sha256=digest(HERE/'six_model_tlm_power.py'),
+                reference_coefficients_sha256=digest(HERE/'no-wire-results/coefficients.json'),
                 baseline_sha256=digest(baseline),counts_sha256=digest(countfile),calibration_sha256=sources,windows={},
                 assumptions=[
                  'Existing v2 terms, DDR and frozen token times are preserved. SiLU/G32 and original SRAM transactions are already counted.',
@@ -149,5 +152,5 @@ if __name__=='__main__':
     values,idle,mul,sources=calibrations()
     for model in sys.argv[1:] or MODELS:
         result=integrate(model,values,idle,mul,sources)
-        (HERE/(model+'_tlm_power_v3_arithmetic.json')).write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')
+        (HERE/(model+'_tlm_power_v3_arithmetic.json')).write_bytes((json.dumps(result,indent=2,allow_nan=False)+'\n').encode())
         print('ARITHMETIC_ESTIMATE_PASS',model,result['windows']['decode']['estimated_on_chip_plus_ddr']['energy_mj_per_token'])
