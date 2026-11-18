@@ -13,9 +13,12 @@ if [[ ${1:-} != inside ]]; then
     cd "$bundle"
     sha256sum --quiet -c deployment-inputs.sha256
     unset TCL_LIBRARY TK_LIBRARY TCLLIBPATH
+    binds=(--bind "$root" --bind "$root/replay/sourcefs:/public/home/yuzelu:ro")
+    if [[ ${1:?source} != "$root"/qwen3-operator-capture-*/* ]]; then
+        binds+=(--bind "$root/six-model-energy-01/sourcefs/Melodydt/runs/issue-274:/public/home/yuzelu/Melodydt/runs/issue-274:ro")
+    fi
     exec srun --ntasks=1 --cpus-per-task=12 --cpu-bind=cores /public3/soft/singularity/3.7.0/bin/singularity exec --cleanenv \
-      --bind "$root" --bind "$root/replay/sourcefs:/public/home/yuzelu:ro" \
-      --bind "$root/six-model-energy-01/sourcefs/Melodydt/runs/issue-274:/public/home/yuzelu/Melodydt/runs/issue-274:ro" \
+      "${binds[@]}" \
       "$HOME/LLMHardware/opt/orfs-current-repacked.rootfs" bash "$bundle/run_deployment.sbatch" inside "$bundle" "$SLURM_JOB_ID" "$@"
 fi
 bundle=$2 job=$3 source=$4 variant=$5 phase=$6
@@ -31,6 +34,9 @@ export PYTHONPATH="$out/runner:$legacy/Melodydt/runs/issue-270/ffn-weight-05/tlm
 python3 -B "$bundle/prepare_deployment.py" "$source" "$bundle" "$out" "$variant"
 export SHORT_PROJECTION_MATH="$out/projection_math.so"
 export QWEN3_COMPONENT_WINDOWS="$out/qualified-windows.json"
+if [[ $source == "$root"/qwen3-operator-capture-*/* ]]; then
+    export QWEN3_FROZEN_HISTORY="$source/decode-live-w4-tile128-pr272-combined/assets"
+fi
 baseline=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["baseline"][sys.argv[2]])' "$out/transfer-verified.json" "$phase")
 python3 -B "$out/runner/run_frozen_model_energy.py" "$baseline" "$root/component-observation/replay-38782605/ddr-dma-probe.so" \
   "$p/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini" "$out/result" > "$out/run.log" 2>&1

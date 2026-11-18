@@ -59,6 +59,13 @@ def main():
             if not path.resolve().is_relative_to(src.resolve()):raise ValueError('unsafe archive member')
             path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(tar.extractfile(m).read())
     mc=src/'project/rtl/mother_control_native';lc=src/'project/experiments/shared_x_control/rtl';bl=src/'project/rtl/block_local_native'
+    # Verilator accepted these declarations after their generate use. Slang
+    # requires the declarations first; move only the declarations, no logic.
+    cohort=mc/'native_three_lc_cohort.sv';text=cohort.read_text()
+    declarations=''.join('    logic [LOCAL_COUNT-1:0][%d:0] saved_local_%s;\n'%(n,k) for n,k in ((47,'base'),(15,'bytes'),(31,'crc')))
+    anchor='    wire [LOCAL_COUNT-1:0] local_changed;'
+    if text.count(declarations)!=1 or text.count(anchor)!=1:raise ValueError('cohort declarations changed')
+    cohort.write_text(text.replace(declarations,'').replace(anchor,declarations+anchor))
     sources=[mc/(s+'.sv') for s in ('native_product_controller','native_three_lc_cohort','mother_control_native64_transport128','mc_packet128_bridge',
               'native_pm_image_stream','native_mc_image_install','native_lc_image_install','native_request_sequence','native_token_sequence','native_phase_page_sequence')]
     sources.extend(bl/(s+'.sv') for s in ('native_prompt_index','native_retired_token_index'))
@@ -116,6 +123,8 @@ def main():
        activity='real RTL boundary propagation; cut accepted core, LC, router and switch to avoid duplicate energy',
        windows=windows,cut_instances=cuts,parameters=params,cell_count=len(mapped['cells']),netlist_sha256=digest(out/'mapped.v'),
        source_tar_sha256=digest(inputs/'source.tar'),input_sha256={str(p):digest(p) for p in [Path(__file__),LIB,bundle/'control_gap_calibration.py']},
+       elaboration_fix='move three saved_local declarations before their generate use; no changed logic',
+       elaborated_source_sha256={str(p.relative_to(out)):digest(p) for p in sources},
        integration_status='C639 peripheral calibration; per-model deployed control and exact whole-model RTL residency still require matching evidence'))
     print('CONTROL_PERIPHERY_CALIBRATION_PASS',flush=True)
 
