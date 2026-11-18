@@ -1,3 +1,5 @@
+2026-11-18 CST 最新补记（Issue289）：U与G/S/F已验收；C40六路实际布线均完成、最终路由违例0。只变更一条真实时钟线并重新提取RC后，C还剩setup 7条、WNS −43.646ps，hold/电容/slew/fanout均0、PG双轨通过，尚未后端验收。实际网表重证明及两组六路重布、7条路径局部修复继续进行。详见[当前实际记录](../work/YUZE-LU/289/audit/C40-ACTUAL-STATUS.md)。Issue in_progress、PR290草稿；下方C35/C28为历史记录。
+
 2026-11-18 CST 最新补记（Issue289）：G/S/F与U已验收；C35六路实际布线已完成，独立候选153个BUF_X8及固定信号/宏几何通过，天线0，278621条网络提取材料一致，PG差异已追溯并单独批准工程基线。C仍有setup90/hold19/电容1项和两处上层几何问题，继续小ECO闭合；尚未完成后端验收。详见[实际记录](../work/YUZE-LU/289/audit/C-v28-ACTUAL-STATUS.md)。以下早期C28数字不代表当前源，Issue保持in_progress、PR290保持草稿。
 
 # 当前状态

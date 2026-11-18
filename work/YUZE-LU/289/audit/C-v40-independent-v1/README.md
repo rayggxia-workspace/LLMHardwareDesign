@@ -1,0 +1,1 @@
+C40 six actual route seeds, frozen only after explicit CU completed producer confirmation. Inputs include common placement/GRT/AP prepared manifest and both common/individual source code manifests. Relative manifest paths resolve against producer manifest directory, not consumer working directory. Independent full physical/RCX gates remain per actual final candidate.

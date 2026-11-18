@@ -1,6 +1,6 @@
 # A/B interface X8 implementation — Issue 289
 
-Latest C continuation: [actual C-v28 checkpoint](audit/C-v28-ACTUAL-STATUS.md) and [continuation record](CONTINUE.md). C remains unaccepted. The completed original full-deck v27 baseline has42 violations; [exact comparison](audit/full-C-v27-joint-e20-h30/focused-comparison.json) matches all41 earlier focused markers and identifies the remaining isolated OAI221_X4 marker. A final C needs its own complete original-deck pass and extracted timing closure.
+Latest C continuation: [actual C40 checkpoint](audit/C40-ACTUAL-STATUS.md) and [continuation record](CONTINUE.md). C remains unaccepted. The completed original full-deck v27 baseline has42 violations; [exact comparison](audit/full-C-v27-joint-e20-h30/focused-comparison.json) matches all41 earlier focused markers and identifies the remaining isolated OAI221_X4 marker. A final C needs its own complete original-deck pass and extracted timing closure.
 
 ## Accepted backend packages
 

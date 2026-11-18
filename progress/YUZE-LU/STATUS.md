@@ -1,3 +1,5 @@
+2026-11-18 CST Issue289 最新：U与G/S/F已验收；C40真实布线后DRC0，真实单线clock graft及RC提取后setup7/WNS−43.646ps，hold/电容/slew/fanout0、PG双轨通过，尚未验收。[当前证据](../../work/YUZE-LU/289/audit/C40-ACTUAL-STATUS.md)。继续实际网表重证明、两组6×8CPU重布和7条真实路径局部收敛；最终同源完整原版GDS检查/视图/释放仍待，PR290草稿、Issue289 in_progress。登记PR5 pending、Projects未配置/同步pending。
+
 # YUZE-LU 的进度
 
 2026-11-18 CST 最新补记：C35 六路合并实际布线已结束，当前独立核验 pnone 版本原生路由报告0、实际天线0、278621条网络提取材料一致；setup90/hold19/电容1项仍未通过，上层两处几何问题正修复。C35 PG差异已明确追溯并批准为工程基线，整体验收仍待时序、电气和最终完整规则通过。[最新实际记录](../../work/YUZE-LU/289/audit/C-v28-ACTUAL-STATUS.md)覆盖下方C28早期数字；U/F验收结果保持不变，Issue289仍in_progress、PR290仍草稿。
