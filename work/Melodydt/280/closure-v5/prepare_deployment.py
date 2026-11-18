@@ -42,7 +42,7 @@ if variant=='e32-18':
     text=text.replace('energy = evaluate(a.output, a.baseline)','energy = evaluate(a.output)')
     text=text.replace('"complete_result_equal": True','"complete_result_equal": False, "timing_calibrated": "E32 MUL 18 cycles only", "numerical_and_traffic_invariants_equal": True')
 path.write_text(text)
-receipt=dict(source=str(source),variant=variant,source_commit=(bundle/'source-commit.txt').read_text().strip(),
+receipt=dict(source=str(source),variant=variant,source_commit=(bundle/'deployment-source-commit.txt').read_text().strip(),
              accepted_runner_sha256={p.name:sha256(p.read_bytes()).hexdigest() for p in (source/'runner').glob('*.py')},
              runner_sha256={p.name:sha256(p.read_bytes()).hexdigest() for p in runner.glob('*.py')})
 (out/'provenance.json').write_text(json.dumps(receipt,indent=2)+'\n')
