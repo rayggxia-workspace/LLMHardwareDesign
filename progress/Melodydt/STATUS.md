@@ -1,3 +1,11 @@
+## 2026-11-18 七模型控制能耗补项 v4（Asia/Shanghai）
+
+[Issue #280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / [草稿 PR #281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。完成母控核心启动/运行及 PM 取指、局控外壳/分发、交换机活跃增量三个方向的条件估算，覆盖七模型 21 窗。512-bit 数据 SRAM、300 MHz、三 P 与冻结 TLM 时间/DDR/算术不变。纠正母控 SERVICE_STALL_LIMIT 为真实实例 2000000；母控新项替换旧核心，PM 与交换机只增加尚未计入的动态项。
+
+旧服务器最终作业 120297/120300/120304/120313 全部 COMPLETED 0:0、12 核、UNLIMITED。21 窗单位/分项/哈希/去重校验通过；25 页 PDF 的 651 组数值与最终全页目检通过。第 2 步 Decode 相对 v3 控制净增量约 1.706–6.692 mJ/token；完整双口径数值、模型优化及逐模型未覆盖项见[报告](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-seven-model-energy/docs/experiments/seven-model-energy-evaluation.pdf)。
+
+[本轮交接与全部剩余步骤](https://github.com/rayggxia-workspace/LLMHardwareDesign/blob/task/280-seven-model-energy/docs/handoffs/2026-11-18-issue-280-control-energy-v4.md)。本轮四项最终作业已结束；16:29 +08 旧服务器个人队列无活动作业。BSCC 仍拒绝 loginCluster，旧 DMA 当前状态未核验，不能沿用历史 RUNNING 快照。下一步是各模型真实控制部署绑定及母控外围/精确驻留；读 DMA 待恢复 BSCC 授权。仍为条件估算，非完整芯片实测或 RTL 数值/物理验收。Issue in_progress、PR 草稿未合并、审查人待指定；登记 PR #5 pending；看板 unverified、同步 pending（缺配置/Projects 能力），有权限维护者接续。未配置自动监测。
+
 ## 2026-11-18 七模型算术能耗估算 v3 已交付（Asia/Shanghai）
 
 Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / 草稿 PR [#281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。已按用户允许特殊算子运算级近似的口径完成七模型三窗估算；512-bit SRAM、名义 300 MHz、三 P 与冻结时间保持不变。公共 RMS/softmax/RoPE 采用真实输入标定；GELU/GDN/Mamba/浮点服务等明确使用成本代理，范围不是统计置信区间或保证误差界，不宣称 RTL 数值验收。

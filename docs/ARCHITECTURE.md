@@ -1,3 +1,20 @@
+## 七模型控制能耗 v4 复算（2026-11-18）
+
+当前入口为 work/Melodydt/280/energy_report_models.json（control-v4）。[方法、作业、输入 SHA 与限制](handoffs/2026-11-18-issue-280-control-energy-v4.md)。保持 512-bit 数据 SRAM / 300 MHz / 冻结时间，综合后无 SPEF。模型匹配部署和精确驻留未验收。
+
+从仓库根目录运行；报告命令使用含 ReportLab/pypdf 的 Python 和 Windows Deng 字体：
+
+```text
+python scripts/check_project.py
+python work/Melodydt/280/seven_model_control_estimate.py
+python work/Melodydt/280/verify_control_estimate.py
+python work/Melodydt/280/build_energy_report.py --output output/pdf/seven-model-energy-evaluation.pdf
+python work/Melodydt/280/verify_energy_report_pdf.py output/pdf/seven-model-energy-evaluation.pdf
+pdftoppm -r 75 -png output/pdf/seven-model-energy-evaluation.pdf tmp/pdfs/control-v4/page
+```
+
+21 窗独立核验、25 页 651 组数值及全页渲染目检通过。管理结构检查不替代功能/时序/物理验收。历史 v3 的输入索引保留于 energy_report_models_v3_arithmetic.json。
+
 ## 2026-11-18 七模型算术能耗估算 v3 已交付（Asia/Shanghai）
 
 Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280) / 草稿 PR [#281](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/281)，负责人 Melodydt。已按用户允许特殊算子运算级近似的口径完成七模型三窗估算；512-bit SRAM、名义 300 MHz、三 P 与冻结时间保持不变。公共 RMS/softmax/RoPE 采用真实输入标定；GELU/GDN/Mamba/浮点服务等明确使用成本代理，范围不是统计置信区间或保证误差界，不宣称 RTL 数值验收。
