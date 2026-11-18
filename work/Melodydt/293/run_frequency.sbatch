@@ -41,7 +41,7 @@ if [[ ${1:-} == inside ]]; then
     else
         baseline=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["baseline"][sys.argv[2]])' "$old/$model-transfer.json" "$phase")
     fi
-    python3 -B "$bundle/sample_frequency.py" "$model" "$baseline" "$shared/ddr-dma-probe.so" \
+    python3 -B "$(dirname "$out")/sample_frequency.py" "$model" "$baseline" "$shared/ddr-dma-probe.so" \
         "$p/issue234-algo1-ffn-chain-20261112-01/DDR4-single-channel.ini" "$out" --core-ps "$period"
     exit
 fi
@@ -58,6 +58,7 @@ mkdir "$out"
 cd "$bundle"
 sha256sum --quiet -c scripts.sha256
 cp source-commit.txt "$out/source-commit.txt"
+cp sample_frequency.py run_frequency.sbatch scripts.sha256 "$out/"
 printf 'JOB=%s NODE=%s TASKS=%s CORE_PS=3334,5000 DDR_PS=630 START=%s\n' "$SLURM_JOB_ID" "$SLURMD_NODENAME" "$SLURM_NTASKS" "$(date -Is)"
 run_one() {
     extra=(--bind "$root/replay/sourcefs/Melodydt/runs/issue-274:/public/home/yuzelu/Melodydt/runs/issue-274:ro")

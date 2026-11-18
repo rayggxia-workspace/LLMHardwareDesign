@@ -104,6 +104,12 @@ def main():
     if a.model in ('qwen35','falcon'): selected=sorted(set(selected+[3]))
     input_hashes={'plan':digest(assets/'plan.json'),'frozen_result':digest(baseline/'result.json'),
                   'ini':digest(Path(a.ini)),'ddr_library':digest(Path(a.library))}
+    def layer_file(step,layer):
+        stem='{}-{}-layer-{}'.format(plan['mode'],step,layer)
+        candidates=[baseline/(stem+suffix) for suffix in ('.q16','.s32')]
+        found=[p for p in candidates if p.exists()]
+        if len(found)!=1:raise ValueError('missing or ambiguous frozen layer '+stem)
+        return found[0]
     numerical=[]
     for step,phase in enumerate(plan['phases']):
         execution.memory.step=step
@@ -124,7 +130,7 @@ def main():
         measure('ingress',step,None,ingress)
         for layer in selected:
             if layer:
-                source=baseline/('{}-{}-layer-{}.q16'.format(plan['mode'],step,layer-1))
+                source=layer_file(step,layer-1)
                 data=source.read_bytes()
                 assert len(data)==execution.hidden*4
                 input_hashes[source.name]=sha256(data).hexdigest()
@@ -133,7 +139,7 @@ def main():
                     execution.sram[replay.U].words[word]=data[word*16:word*16+16]
             row=measure('layer',step,layer,lambda:execution.pages(phase['layers'][layer]))
             got=b''.join(execution.sram[replay.U].words[word] for word in range(execution.hidden//4))
-            reference=baseline/('{}-{}-layer-{}.q16'.format(plan['mode'],step,layer))
+            reference=layer_file(step,layer)
             expected=reference.read_bytes()
             check={'step':step,'layer':layer,'equal':got==expected,'sha256':sha256(got).hexdigest(),'reference_sha256':sha256(expected).hexdigest()}
             numerical.append(check)
@@ -153,6 +159,16 @@ def main():
             row['output_sha256']=sha256(got).hexdigest()
         else:
             measure('residual_read',step,None,lambda:execution.read(replay.U,0,execution.hidden//4))
+        if execution.memory.recurrent_regions:
+            if step==0:
+                # The full replay checks all layers. Here retain the committed
+                # subset of sampled recurrent layers, and audit its second read.
+                declared={base+off for s,base,size in execution.memory.recurrent_regions
+                          if s==0 for off in range(0,size,64)}
+                execution.memory.recurrent_previous=declared.intersection(execution.memory.committed)
+                assert execution.memory.recurrent_previous
+            else:
+                assert execution.memory.recurrent_reads==execution.memory.recurrent_previous
     stats=dict(execution.dram.stats)
     assert stats.get('reads',0)+stats.get('writes',0)==stats.get('callbacks',0)
     execution.dram.close()
