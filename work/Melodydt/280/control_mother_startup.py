@@ -66,9 +66,21 @@ def main():
     run(['bash',str(runner),str(out),'/public/home/yuzelu/project-circuit/issue260-token-decode638-live-qkv-xWSJhdWQ/linked-103952',
          'history-final-product-ffn-repeat','636','2'],out/'replay.log')
     replay=out/('replay-'+job)
+    absent_before_window=[]
     for mode in range(2):
         for name in ('transactions.tsv','write-transactions.tsv','activation-transactions.tsv'):
-            with (ref/('replay-116937/DDR-%d'%mode)/name).open('rb') as original,(replay/('DDR-%d'%mode)/name).open('rb') as captured:
+            original_path=ref/('replay-116937/DDR-%d'%mode)/name
+            captured_path=replay/('DDR-%d'%mode)/name
+            if not captured_path.exists():
+                # Activation logs are created lazily, long after this boot
+                # window. Prove the original has no admission in this window.
+                if name!='activation-transactions.tsv':raise ValueError('missing transaction log '+name)
+                first=min(int(line.split()[1]) for line in original_path.read_text().splitlines() if line.startswith('admit\t'))
+                if first*10000<=500010000:raise ValueError('missing in-window activation traffic')
+                absent_before_window.append({'mode':mode,'file':name,'first_frozen_admit_core_cycle':first,
+                                             'capture_end_ps':500010000,'reference_sha256':sha(original_path)})
+                continue
+            with original_path.open('rb') as original,captured_path.open('rb') as captured:
                 for block in iter(lambda:captured.read(1024*1024),b''):
                     if block!=original.read(len(block)):raise ValueError('DDR prefix mismatch '+name)
     converter_source=r/'c639-g32-power-03/power-116943/fst_scope_vcd.c'
@@ -111,7 +123,8 @@ def main():
         'cell_count':len(design['cells']),'netlist_sha256':sha(out/'mapped.v'),
         'input_sha256':{str(p):sha(p) for p in [source,rtl/'mc_native_ports.svh',rtl/'native_instruction_fetch.svh',LIB,Path(__file__),bundle/'control_gap_calibration.py',out/'reused-model.sha256',runner]},
         'integration_status':'sampled boot core must replace existing core baseline; PM runtime reads need matching macro coefficient and model counts',
-        'ddr_prefix_validation':'both modes match frozen transaction prefixes'})
+        'ddr_prefix_validation':'both modes match frozen transaction prefixes',
+        'absent_activation_logs_before_first_admission':absent_before_window})
     print('CONTROL_MOTHER_STARTUP_PASS',flush=True)
 
 
