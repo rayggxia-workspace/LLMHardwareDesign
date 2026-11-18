@@ -124,7 +124,7 @@ Issue #280 的 Llama/Qwen3/Granite 真实 RMS E32 共 14,208 包数值一致，�
 
 ## 2026-11-18 200 MHz 递推状态第一轮候选标定（Asia/Shanghai）
 
-Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280)，负责人 Melodydt；独立分支 `task/280-recurrent-first-round`，PR 回执见本轮 publication.json。Qwen3.5/Falcon 最终作业 120399/120413 均 COMPLETED 0:0、12 核、UNLIMITED；48 个配对功耗窗口全部原生引脚标注通过，原网表/STA 兼容视图逐位连接一致。
+Issue [#280](https://github.com/rayggxia-workspace/LLMHardwareDesign/issues/280)，负责人 Melodydt；独立分支 `task/280-recurrent-first-round`，[PR #295](https://github.com/rayggxia-workspace/LLMHardwareDesign/pull/295) 已提交，待独立审查。Qwen3.5/Falcon 最终作业 120399/120413 均 COMPLETED 0:0、12 核、UNLIMITED；48 个配对功耗窗口全部原生引脚标注通过，原网表/STA 兼容视图逐位连接一致。
 
 200 MHz 第二步 Decode 片上已覆盖小计为 Qwen3.5 1.083–1.232 W、Falcon 1.111–1.291 W；片上＋DDR 为 3.648–3.796 / 3.662–3.842 W。相对固定 v3 基线，候选区间宽度缩小 84.88% / 92.76%。保留 512-bit 系统 SRAM；候选 R 的状态存储为触发器。短 Prefill 仅零初态外推，端点不是置信区间；精度、实际共享 R 调度、注入/格式转换与物理签核仍待验收。七模型默认值及主会话 300 MHz v5 不变。
 
