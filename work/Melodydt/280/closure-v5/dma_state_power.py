@@ -87,22 +87,38 @@ def bench(top,boundary):
         width='[%d:0]'%(p['width']-1) if p['width']>1 else ''
         s.append('%s %s %s;'%('logic' if p['direction']=='input' else 'wire',width,name))
         if p['direction']=='input':init.append("%s='0;"%name)
-    s+=['%s dut(.*);'%top,'always #5000 clk=~clk;','string wave; integer mode; bit checking=0;']
-    checks=[n for n,p in boundary.items() if p['direction']=='output' and any(n.endswith(k) for k in ('d_req_valid','c_rsp_valid','fault_valid','debug_beats','debug_descriptors'))]
+    s+=['%s dut(.*);'%top,'always #5000 clk=~clk;','string wave; integer mode, timeout; bit checking=0;']
+    prefixes=['phase0_','phase1_'] if 'owner' in boundary else ['']
+    for prefix in prefixes:
+        s+=['always @(posedge clk) begin',
+            'if(reset) begin %sd_fence_done_valid<=0;%sd_fence_done_generation<=0;end'%(prefix,prefix),
+            'else begin %sd_fence_done_valid<=%sd_fence_valid && %sd_fence_ready;'%(prefix,prefix,prefix),
+            'if(%sd_fence_valid && %sd_fence_ready) %sd_fence_done_generation<=%sd_fence_generation;end end'%(prefix,prefix,prefix,prefix)]
+    checks=[n for n,p in boundary.items() if p['direction']=='output' and any(n.endswith(k) for k in ('d_req_valid','d_fence_valid','c_rsp_valid','fault_valid','debug_beats','debug_descriptors'))]
     s+=['always @(posedge clk) if(checking) begin']
     for n in checks:s+=['if(%s!==0) $fatal(1,"idle output %s nonzero");'%(n,n)]
     s+=['end','initial begin',*init,'reset=1;',
         'if(!$value$plusargs("wave=%s",wave)||!$value$plusargs("mode=%d",mode)) $fatal(1,"arguments");',
-        '$dumpfile(wave); $dumpvars(0,tb);','repeat(4) @(negedge clk); reset=0;']
+        '$dumpfile(wave); $dumpvars(0,tb);']
+    for prefix in prefixes:s+=['%sd_fence_ready=1; %sc_fence_done_ready=\'1;'%(prefix,prefix)]
+    s+=['repeat(4) @(negedge clk); reset=0;','timeout=0;',
+        'while(%sdebug_generation<2) begin @(negedge clk);timeout++;if(timeout>100)$fatal(1,"reset fence not completed");end'%prefixes[0]]
     for n,p in boundary.items():
         if p['direction']!='input':continue
-        if n=='owner':s+=['owner=1\'(mode>>1);']
-        elif n.endswith('p_mode_native64'):s+=["%s=(mode&1)?'1:'0;"%n]
+        if n.endswith('p_mode_native64'):s+=["%s=(mode&1)?'1:'0;"%n]
         elif n.endswith(('p_mode_client_drained','p_mode_valid','c_rsp_ready','d_req_ready','fault_ready')):s+=["%s='1;"%n]
-    s+=['@(negedge clk);']
+    s+=['#1;timeout=0;','while(!(&%sp_mode_ready))begin @(negedge clk);timeout++;if(timeout>100)$fatal(1,"mode change not accepted");end'%prefixes[0],
+        '@(negedge clk);']
     for n,p in boundary.items():
         if p['direction']=='input' and n.endswith('p_mode_valid'):s+=["%s='0;"%n]
-    s+=['repeat(20) @(negedge clk); checking=1; $display("IDLE_BEGIN %0t",$time);',
+    s+=['repeat(20) @(negedge clk);']
+    if 'owner' in boundary:s+=['owner=1\'(mode>>1);repeat(4) @(negedge clk);']
+    selected='(owner?phase1_p_mode_active:phase0_p_mode_active)' if 'owner' in boundary else 'p_mode_active'
+    generation='(owner?phase1_debug_generation:phase0_debug_generation)' if 'owner' in boundary else 'debug_generation'
+    s+=['if(%s !== ((mode&1)?3\'b111:3\'b000)) $fatal(1,"wrong active native mode");'%selected,
+        'if(%s<2)$fatal(1,"transport generation not initialized");'%generation,
+        '$display("IDLE_TRANSPORT_READY generation=%%0d",%s);'%generation,
+        'checking=1; $display("IDLE_BEGIN %0t",$time);',
         'repeat(8192) @(negedge clk); $display("IDLE_END %0t",$time);',
         '$display("DMA_IDLE_RTL_PASS"); #1; $finish; end','endmodule']
     return '\n'.join(s)+'\n'
@@ -182,7 +198,8 @@ def main():
         windows[p.name]=result;save(p/'receipt.json',result);print('DMA_STATE_WINDOW_PASS',variant,p.name,flush=True)
     save(out/'calibration.json',dict(variant=variant,windows=windows,clock_mhz=300,wire_parasitics_loaded=False,
         equal_annotation_names=True,common_retained_nets=len(common),candidate_retained_nets=[len(x) for x in available],
-        activity='retained RTL internal-state and boundary nets, mapped combinational propagation; not gate-level numerical replay',
+        activity=('boundary-only' if len(common)==len(boundary) else 'boundary plus retained internal RTL nets')+' mapped combinational propagation; not gate-level numerical replay',
+        operational_idle='automatic reset fence completed, no pending requests/responses/fence; native mode verified',
         input_sha256={str(p):digest(p) for p in [net,sdc,LIB,Path(__file__),*sources]},
         integration_status='requires per-model read counts/active residency and phase/shared deduplication'))
     print('DMA_STATE_CALIBRATION_PASS',variant,flush=True)
