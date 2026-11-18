@@ -1,0 +1,5 @@
+# C S M9 spacing guard trial
+
+Actual v27 GDS confirms a 0.605 um M9 gap between parent net52834 and dma_s_rsp_data[43], below the original 0.8 um rule (focused IDs 7/9). The virtual routing obstruction occupies only the actual empty gap and rips one internal signal wire. It adds no physical metal. Jobs120073/120074 pass structural, exact Verilog/geometry, idempotence, static pin access and independent actual GDS material checks. The combined actual ECO must still reroute and pass all final checks.
+
+The earlier longer guard was rejected by job120070: it intersects the existing upper M9 branch. Exploratory job120072 printed the intersection but incorrectly retained a hard-coded empty-guard flag; its receipt was explicitly superseded as false before v2 qualification. The frozen v2 uses the asserting GDS check and a shorter y extent. Do not use the original hook.

@@ -1,3 +1,11 @@
+### Root verified additions after120085
+
+Fresh-native232 on actual v27:125 M2+96 M3+5 M9+3 M10+3 V9. Allocated120085 proves221 lower marker bboxes wholly covered by actual merged GDS metal and no actual local original-minimum spacing/notch pair;120090 additionally proves every one is fully covered by the corresponding same-net DEF route union with exact widths/extensions/vias, not borrowed foreign copper. Receipts audit/C-v27-native-{material,own-net}/receipt.json. Future final candidate must rerun; complete original deck120063 remains running and independently mandatory.
+
+S M9 virtual guardv2 is qualified structural/staticAP/actualGDS jobs120073/74, frozen audit/C-v27-s-m9-guard-v2/. Original longer guard was explicitly rejected for touching upper M9 material. CU has the v2 hook. Root conditional source isolation120084 and six receiver-buffer cases120089 all worsen TNS; none adopted. Six receiver cases ran6x8CPU on one node and explicitly rebound SPEF nodes with declared stubs. Planning-only receipts retain failures.
+
+Greedy v1/v2 source paths frozen audit/C-static-greedy-v{1,2}/best.odb; v2 WNS−106.298ps/TNS−4.148854ns (static actual old SPEF), cap28/slew0. Loader continues new cols→pd critical cone. CU pilot120078 legally places28 source isolations+426 hold branches/2460cells, max displacement14um under50um cap. Proposed six real routes use BUF8/16 source isolation×hold50/100/150ps, fixed movement cap; wait actual source freeze before launching. Endpoint275054 NETS declaration RC normalization120076 passed all signal/clock275052 materials and uncached PG, count clarification retained. No final C acceptance.
+
 ### Latest actual C checkpoint — jobs 120023–120066
 
 C-v27-joint-e20-h30 has actual routed GDS/ODB/DEF/SPEF: native DRC report 0 bytes, VDD/VSS connectivity 1/1, 153 BUF_X8 and original macro/BPin geometry unchanged. Actual extracted STA remains failing: setup 182, WNS -0.329056352 ns; hold 229, WHS -0.126401782 ns; capacitance 304, slew 124, fanout 0. This candidate is diagnostic, not accepted.

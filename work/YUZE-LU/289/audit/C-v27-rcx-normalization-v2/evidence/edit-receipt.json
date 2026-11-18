@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "accepted": false,
+  "scope": "Input DEF normalization only, exact net connectivity and material conserved; needs new extraction and all-net before/after fixed-point check before binding SPEF.",
+  "target_nets": [
+    "services.engine\\[2\\].genblk1.recurrent.leaf.cmd_data\\[232\\]",
+    "services.store.pending_data\\[69\\]"
+  ],
+  "geometry_preserving_edits": [
+    {
+      "net": "services.engine\\[2\\].genblk1.recurrent.leaf.cmd_data\\[232\\]",
+      "operation": "coalesce_exact_rectangular_collinear_paths",
+      "old_paths": [
+        "NEW metal10 ( 2089790 1208400 0 ) ( * 1212940 )\n      ",
+        "NEW metal10 ( 2089790 1208140 0 ) ( * 1208400 )\n      "
+      ],
+      "new_path": "metal10 ( 2089790 1208140 0 ) ( 2089790 1212940 )"
+    },
+    {
+      "net": "services.store.pending_data\\[69\\]",
+      "operation": "remove_union_redundant_zero",
+      "original_point": "( * 1157100 0 )",
+      "body_offset": 734
+    }
+  ],
+  "all_other_net_bodies_exact": true,
+  "all_non_NETS_text_exact": true,
+  "net_count": 275054,
+  "source_sha256": {
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-v27-physical/rcx-material-120031/before.def": "3e16063e1368c2661fb391a337644a73c2c1f03abbeda827803fcec4cc0e338e",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-v27-physical/rcx-material-120031/after.def": "d7fa342c22a1ca9b536cdc1c5fe8c4b3883f0d7bb9dab605ba1d6c29504c4c93",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-v27-physical/rcx-material-120031/layers.tsv": "e988358b3f1cf3e26f0958d097a22c6235cff25e5ee7dfc095f8cff3c9a1a1ed",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-v27-physical/rcx-material-120031/vias.tsv": "adf1931049f04ce6f99349c21f673bd8e826131d512a2431358f86dbd853f23a",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-v27-physical/rcx-material-120031/material/receipt.json": "f36823bc61340305facfe59c1495fabfd9b9d0ee45b4d88d9c2b7cac035d073e",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-v27-rcx-normalization-v2/parser-source.py": "9a734d3597dd6ea25e16370523d8164f65d452240216fe5441865d0d1a924447",
+    "normalize.py": "04dcdbfe5b70d7807078241f9a877e8e8be5b9e86b515bba5fc3c51c37aac6e2",
+    "/public/home/yuzelu/project-circuit/issue289-ab-x8-20261117/audit/C-v27-rcx-normalization-v2/normalized.def": "aef38a98d9ad790081036c2251d406287a910bfc273d9794b7a40eb8ddfe88c7"
+  }
+}
