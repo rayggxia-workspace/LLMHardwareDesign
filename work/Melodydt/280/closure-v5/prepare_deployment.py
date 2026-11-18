@@ -45,9 +45,13 @@ if variant=='e32-18':
     if text.count(old)!=1:raise ValueError('acceptance code changed')
     insert='''    invariant_keys = ('mode','layers','history','calls','pages','writes_committed',
         'cross_step_reads','recurrent_writes','recurrent_cross_step_reads','residual_saturations',
-        'expert_routes','history_payload','history_beats','history_source_sha256','ffn_by_target',
-        'expert_down_by_target','plan_sha256','model','weight_window','pr272_profile')
+        'expert_routes','history_payload','history_beats','history_source_sha256',
+        'plan_sha256','model','weight_window','pr272_profile')
     invalid = [key for key in invariant_keys if result.get(key) != frozen.get(key)]
+    for key in ('ffn_by_target','expert_down_by_target'):
+        strip_wait = lambda rows: {site:{k:v for k,v in stats.items() if k!='weight_wait_ps'}
+                                   for site,stats in (rows or {}).items()}
+        if strip_wait(result.get(key)) != strip_wait(frozen.get(key)): invalid.append(key)
     for key in ('reads','writes','callbacks'):
         if result['ddr'][key] != frozen['ddr'][key]: invalid.append('ddr.'+key)
     for key in ('boundary','retirements'):
@@ -61,6 +65,13 @@ if variant=='e32-18':
     text=text.replace(old,insert).replace('"frozen result changed: " + str(changed)','"frozen numerical/traffic invariant changed: " + str(invalid)')
     text=text.replace('energy = evaluate(a.output, a.baseline)','energy = evaluate(a.output)')
     text=text.replace('"complete_result_equal": True','"complete_result_equal": False, "timing_calibrated": "E32 MUL 18 cycles only", "numerical_and_traffic_invariants_equal": True')
+# Preserve diagnostic observations even if a downstream acceptance check fails.
+# Their presence does not imply acceptance; collectors require acceptance.json
+# and the successful, hash-verified results manifest.
+write='    observation.write(a.output / "component-observation.json")\n'
+if text.count(write)!=1:raise ValueError('observation write changed')
+text=text.replace(write,'').replace('    result = execution.run(trace_layers=True)\n',
+    '    result = execution.run(trace_layers=True)\n'+write)
 path.write_text(text)
 receipt=dict(source=str(source),variant=variant,source_commit=(bundle/'deployment-source-commit.txt').read_text().strip(),
              accepted_runner_sha256={p.name:sha256(p.read_bytes()).hexdigest() for p in (source/'runner').glob('*.py')},

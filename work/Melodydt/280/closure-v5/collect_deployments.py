@@ -12,15 +12,17 @@ def digest(p):
     return h.hexdigest()
 
 root,out=map(Path,sys.argv[1:]);records=[]
-for name in ('closure-v5-deploy-6fbd77f9','closure-v5-qwen-de9fd4be'):
+for name in ('closure-v5-deploy-6fbd77f9','closure-v5-qwen-de9fd4be',*sys.argv[3:]):
     b=root/name
     jobs=json.loads((b/'jobs.json').read_text())
     if isinstance(jobs,dict):jobs=jobs.get('jobs',jobs)
     if not isinstance(jobs,list):raise ValueError('unknown job receipt '+str(b))
     for job in jobs:
         if str(job['job']) in ('38850016','38850017','38850018','38850019'):continue
+        job.setdefault('directory',str(b))
+        if name=='closure-v5-qwen-de9fd4be':job.setdefault('model','qwen3')
         records.append(job)
-records.append(dict(job='38849467',model='llama',phase='prefill',variant='observe',directory=str(root/'closure-v5-20261118')))
+records=list({str(x['job']):x for x in records}.values())
 report=[]
 with tarfile.open(out,'w:gz') as tar:
     for row in records:
