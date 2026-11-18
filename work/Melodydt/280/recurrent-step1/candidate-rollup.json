@@ -1,0 +1,452 @@
+{
+  "scope": "Candidate hardware scenario; 1 time-multiplexed 8-lane R, complete load/execute/readback activity, observed two-group energy endpoints.",
+  "baseline_origin": "Byte-exact snapshot of output/pdf/seven-model-sync/2026-11-18-r3/200mhz-power-v3.json",
+  "sample_limits": "Both captured prefill groups start from all-zero state; prefill is a cold-state extrapolation, not a whole-prefill uncertainty bound. Decode samples carry actual history; independent-layer and longer real-sequence coverage are absent.",
+  "precision": "Original float TLM and candidate fixed-point differ; end-to-end model accuracy remains unvalidated.",
+  "exclusion": "External injection retains scalar energy proxy; standalone format conversion logic and integration fabric remain uncalibrated.",
+  "injection_calibration_sha256": {
+    "n-38828633-calibration.json": "96ae358f2a7703056ea85d9200e4e48338c8fda821c7a0513f465844bcf5f59d",
+    "n-38828634-calibration.json": "6f26c3b9004305dfb3f77e40612c5f85946b82daa7bb672209f200fb27f6f684",
+    "n-38828998-calibration.json": "dc42ceadf51027cd9fb771ae9b9f26f52effdc4d3725e6a9ebacb8d7c195b79d",
+    "n-38828999-calibration.json": "916d2296d7865bd39f1f8c841120a25e89e993b5893f241e65adc24a42758f9e",
+    "n-38829000-calibration.json": "45f693011c54ef6cf21a857650417ae564a332e473b9dbb1680578ce3ac6a23f",
+    "n-38829001-calibration.json": "48e8a27cb74c10a9da202d6eaad40f5858f1c3a978c9b8d08ed42d2a213beddf",
+    "n-38829002-calibration.json": "ea8e33ca9d429f1c3dbae9cbf50bd60ad151b4661883f23527ace10908784865",
+    "n-38829003-calibration.json": "98471ca91a41ae738a5d520f1149facc225c8c1734724a35872145c3abc71439",
+    "n-38829004-calibration.json": "88a3a10a2b85633650406c7757aef221517e4aa5a5cd935a5d5ad5feb50816ed",
+    "n-38829005-calibration.json": "f703a0f1a074cf890e0fe4561fa2e6b49a433b615d873d0dcce0bafbf9f94307",
+    "n-38829006-calibration.json": "d99a6f9830aee7ce6933a867cb20b492b01691579dc3d825d0038eafc259e732",
+    "n-38829007-calibration.json": "2a326ff8ed33eed4feb7ca70c056f3f5a4acf94415facbe38d7fc475abf610bf",
+    "n-38829008-calibration.json": "4415272fcc10a3d05ca0858209dcbcc06a0575c528c9c572f9b9bd32e21fb433",
+    "n-38829009-calibration.json": "6311530329686a08505b2e0970bc44369e82d9161812d731c324196659f9d0e8",
+    "operator-38831680-calibration.json": "fc9a7f0f7b48276c429ebc6029399d9113747644b76b01b92496d5e7d4145b7d",
+    "operator-38831681-calibration.json": "63d809515763e4e8addbc3766186c6cd9c0cc1f8a94e3b0d1557f0e15eeec506",
+    "operator-38831748-calibration.json": "ad2390f77a5e06dfd81092171ed9fe8399ca0bc1c6fa2eff341cd5054b7ce029",
+    "operator-38831749-calibration.json": "b30fad9261ff8af3e8723c5f546e563394fd2759048e976f4fcd4879636889a8",
+    "operator-38831838-calibration.json": "67e18640c15820bbfecd488e7d197817e8f935476bd16b09176d2fe688c0e840",
+    "operator-38831839-calibration.json": "9a1534ddd07569fd3e6d2f73b813a5fdb5fdc0529b50cb9ff6b29ceef1ad4820",
+    "operator-38832101-calibration.json": "0bce63b0d8af7e584b67d47f4b632213ba6f9f41f3f9f73a08945ab971d62c84",
+    "operator-38832112-calibration.json": "2fd940d6d39bed1b7def665d1b539230a478adec0d1d7bad7207d6182b0e4536",
+    "operator-38837942-calibration.json": "a4fa40ea1ae821db25e9c58bb65e131b1bae8eb702ce43ac2607049a838057ba",
+    "operator-38838116-calibration.json": "1c6806e9237993a1a9a596fc9c7a02e5d69299eededdbb42f96342fc890b20b5",
+    "operator-38838117-calibration.json": "1b6caa489d1e58f2b1e2fd1050941133956f12f3c7b62ddafb179c92189e4d90",
+    "power-38830436-calibration.json": "1eafa435f238a01dbb3f1380f33eb32adfa4d23616408f611b148d11991d042c",
+    "power-38830711-calibration.json": "15748f05a2c95c11280d9ddd3c06cd18100628bc94562a5dea217bfd3da0ddc3",
+    "power-38830712-calibration.json": "8fa59c9963494e38a7ebafd5ea2625ed4e381b2b4dd65142df2908a275034132",
+    "power-38831450-calibration.json": "c02ba08da60047a62066df023189f59079a2418b11531f2b6cbdd65b59b167de",
+    "power-38831451-calibration.json": "12d48ef0610382c88a66f17465f3579dda402d85257400c5897e95cb955c4812",
+    "power-38831452-calibration.json": "003aad07f6e0ab5f3ae8986cf5166feaa5a8e39f4ccfe5acd4acced722b6c467",
+    "power-38831453-calibration.json": "1f3d05752f8f8de98e810456402ec71e5a90b141766d985b149c3a0c9af3b7e9"
+  },
+  "input_sha256": {
+    "work/Melodydt/280/recurrent-step1/baseline-200mhz-v3.json": "25ecc38c734d806c2592fcbba5503ea7c0cff6884e3c43fd97bb2c31c56bac00",
+    "work/Melodydt/280/recurrent-step1/signed-graph-audit.json": "d5b3e5d8ed3423d8d09ec3eea6c8cb444e4b1789e93f77413d5a58c9c686e4ef",
+    "work/Melodydt/280/recurrent-step1/rollup_candidate.py": "c72983cb866c9ff23b632b92351dda77ae8350c5b17717fdf9b7986accdb19e6",
+    "work/Melodydt/280/seven_model_arithmetic_estimate.py": "565f1c0ec17d02dc4baa07baf6efb2158299098e53d7925cfd87af71ffaffaa1",
+    "work/Melodydt/280/six_model_tlm_power.py": "74f3846348118988cfd95a3800651b1944db4c2990a3d2007afe796f273e527e",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38828633-calibration.json": "96ae358f2a7703056ea85d9200e4e48338c8fda821c7a0513f465844bcf5f59d",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38828634-calibration.json": "6f26c3b9004305dfb3f77e40612c5f85946b82daa7bb672209f200fb27f6f684",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38828998-calibration.json": "dc42ceadf51027cd9fb771ae9b9f26f52effdc4d3725e6a9ebacb8d7c195b79d",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38828999-calibration.json": "916d2296d7865bd39f1f8c841120a25e89e993b5893f241e65adc24a42758f9e",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38829000-calibration.json": "45f693011c54ef6cf21a857650417ae564a332e473b9dbb1680578ce3ac6a23f",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38829001-calibration.json": "48e8a27cb74c10a9da202d6eaad40f5858f1c3a978c9b8d08ed42d2a213beddf",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38829002-calibration.json": "ea8e33ca9d429f1c3dbae9cbf50bd60ad151b4661883f23527ace10908784865",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38829003-calibration.json": "98471ca91a41ae738a5d520f1149facc225c8c1734724a35872145c3abc71439",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38829004-calibration.json": "88a3a10a2b85633650406c7757aef221517e4aa5a5cd935a5d5ad5feb50816ed",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38829005-calibration.json": "f703a0f1a074cf890e0fe4561fa2e6b49a433b615d873d0dcce0bafbf9f94307",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38829006-calibration.json": "d99a6f9830aee7ce6933a867cb20b492b01691579dc3d825d0038eafc259e732",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38829007-calibration.json": "2a326ff8ed33eed4feb7ca70c056f3f5a4acf94415facbe38d7fc475abf610bf",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38829008-calibration.json": "4415272fcc10a3d05ca0858209dcbcc06a0575c528c9c572f9b9bd32e21fb433",
+    "work/Melodydt/280/arithmetic-calibration-results/n-38829009-calibration.json": "6311530329686a08505b2e0970bc44369e82d9161812d731c324196659f9d0e8",
+    "work/Melodydt/280/arithmetic-calibration-results/operator-38831680-calibration.json": "fc9a7f0f7b48276c429ebc6029399d9113747644b76b01b92496d5e7d4145b7d",
+    "work/Melodydt/280/arithmetic-calibration-results/operator-38831681-calibration.json": "63d809515763e4e8addbc3766186c6cd9c0cc1f8a94e3b0d1557f0e15eeec506",
+    "work/Melodydt/280/arithmetic-calibration-results/operator-38831748-calibration.json": "ad2390f77a5e06dfd81092171ed9fe8399ca0bc1c6fa2eff341cd5054b7ce029",
+    "work/Melodydt/280/arithmetic-calibration-results/operator-38831749-calibration.json": "b30fad9261ff8af3e8723c5f546e563394fd2759048e976f4fcd4879636889a8",
+    "work/Melodydt/280/arithmetic-calibration-results/operator-38831838-calibration.json": "67e18640c15820bbfecd488e7d197817e8f935476bd16b09176d2fe688c0e840",
+    "work/Melodydt/280/arithmetic-calibration-results/operator-38831839-calibration.json": "9a1534ddd07569fd3e6d2f73b813a5fdb5fdc0529b50cb9ff6b29ceef1ad4820",
+    "work/Melodydt/280/arithmetic-calibration-results/operator-38832101-calibration.json": "0bce63b0d8af7e584b67d47f4b632213ba6f9f41f3f9f73a08945ab971d62c84",
+    "work/Melodydt/280/arithmetic-calibration-results/operator-38832112-calibration.json": "2fd940d6d39bed1b7def665d1b539230a478adec0d1d7bad7207d6182b0e4536",
+    "work/Melodydt/280/arithmetic-calibration-results/operator-38837942-calibration.json": "a4fa40ea1ae821db25e9c58bb65e131b1bae8eb702ce43ac2607049a838057ba",
+    "work/Melodydt/280/arithmetic-calibration-results/operator-38838116-calibration.json": "1c6806e9237993a1a9a596fc9c7a02e5d69299eededdbb42f96342fc890b20b5",
+    "work/Melodydt/280/arithmetic-calibration-results/operator-38838117-calibration.json": "1b6caa489d1e58f2b1e2fd1050941133956f12f3c7b62ddafb179c92189e4d90",
+    "work/Melodydt/280/arithmetic-calibration-results/power-38830436-calibration.json": "1eafa435f238a01dbb3f1380f33eb32adfa4d23616408f611b148d11991d042c",
+    "work/Melodydt/280/arithmetic-calibration-results/power-38830711-calibration.json": "15748f05a2c95c11280d9ddd3c06cd18100628bc94562a5dea217bfd3da0ddc3",
+    "work/Melodydt/280/arithmetic-calibration-results/power-38830712-calibration.json": "8fa59c9963494e38a7ebafd5ea2625ed4e381b2b4dd65142df2908a275034132",
+    "work/Melodydt/280/arithmetic-calibration-results/power-38831450-calibration.json": "c02ba08da60047a62066df023189f59079a2418b11531f2b6cbdd65b59b167de",
+    "work/Melodydt/280/arithmetic-calibration-results/power-38831451-calibration.json": "12d48ef0610382c88a66f17465f3579dda402d85257400c5897e95cb955c4812",
+    "work/Melodydt/280/arithmetic-calibration-results/power-38831452-calibration.json": "003aad07f6e0ab5f3ae8986cf5166feaa5a8e39f4ccfe5acd4acced722b6c467",
+    "work/Melodydt/280/arithmetic-calibration-results/power-38831453-calibration.json": "1f3d05752f8f8de98e810456402ec71e5a90b141766d985b149c3a0c9af3b7e9",
+    "work/Melodydt/280/recurrent-step1/calibration-tb-check.json": "0ca2e80dc05e2d07c04189adb8552302b7a18bbee3eb341ec0e96fca68bb37b8",
+    "work/Melodydt/280/recurrent-step1/input-bindings.json": "6149be589b2acaca56e8aacc279cb3d89e18847549e9cd6148e48e42f2a06a9b",
+    "work/Melodydt/280/recurrent-step1/qwen35-calibration.json": "dbe53a135378fd2265ba8fe119b6f576104f1455270d24cce603d0a78ece2ae3",
+    "work/Melodydt/280/recurrent-step1/results/qwen35/power/gate-replay-receipt.json": "1cfb9222e150ebae654bb0c526d9e399f13eb54113afe6d43757e20d5bd6a112",
+    "work/Melodydt/280/recurrent-step1/qwen35-cal-receipt.json": "1129409af5eedd57fdcb84f2b8ee2ca765ddc67a5d00b1507e4889c67d1777e6",
+    "work/Melodydt/280/recurrent-step1/rtl/block_v1_r_qwen35.sv": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d",
+    "work/Melodydt/280/qwen35_tlm_power_v3_arithmetic.json": "6c698ddb0a63ecd97e1a6aaf9da82569cc2651241000cdc7c4bb550e4701fb74",
+    "work/Melodydt/280/recurrent-step1/falcon-wide-calibration.json": "cebe3dc6703281c14f0e2520f9d0c7d086d950039f09ecc8656981b3551d4a48",
+    "work/Melodydt/280/recurrent-step1/results/falcon-wide/power/gate-replay-receipt.json": "b7527e7bf45fea7750a04b045cec0cf19911f22c03f571e300c415ecf0e060b6",
+    "work/Melodydt/280/recurrent-step1/falcon-wide-cal-receipt.json": "b854dd163eae869bb930474822c6eaafef9823589a515e4163791fd2414a9c70",
+    "work/Melodydt/280/recurrent-step1/rtl/block_v1_r_falcon_s32q24.sv": "b56f9c6359375eba37c85cf9266e33cabaecc724f5e2a791d11e78d9168cc3f7",
+    "work/Melodydt/280/falcon_tlm_power_v3_arithmetic.json": "67bc983d9bf9d35bca34b17d0a00d946f9f8df3931ba8c189b5aab6e39ee2937"
+  },
+  "models": [
+    {
+      "name": "Qwen3.5-4B",
+      "rtl_binding": {
+        "local_sha256": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d",
+        "server_lf_sha256": "4032c5edcbee9d38e1a51dd9f9c533e414d5263dd2440d7104a1688e73ca382d"
+      },
+      "windows": {
+        "prefill": {
+          "calls": 12288,
+          "increment_nj_per_16channel_block": [
+            167.7714497999999,
+            144.23900850000007
+          ],
+          "shared_r_idle_w": [
+            0.2376012504,
+            0.2379014939
+          ],
+          "one_r_active_time_s": 0.1327104,
+          "window_s": 0.6874179842342277,
+          "original_proxy_j": [
+            0.34542514314785,
+            1.4310576335424539
+          ],
+          "candidate_replacement_j": [
+            0.165103781537948,
+            0.16559934095819182
+          ],
+          "baseline": {
+            "on_chip": {
+              "window_j": [
+                0.9367063098205903,
+                2.1880401650080623
+              ],
+              "mean_w": [
+                1.3626444627631698,
+                3.1829835925015884
+              ],
+              "mj_per_token": [
+                468.3531549102952,
+                1094.020082504031
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "window_j": [
+                2.857324040881051,
+                4.108657896068523
+              ],
+              "mean_w": [
+                4.156603560589214,
+                5.976942690327633
+              ],
+              "mj_per_token": [
+                1428.6620204405256,
+                2054.328948034262
+              ]
+            }
+          },
+          "candidate": {
+            "on_chip": {
+              "window_j": [
+                0.7563849482106884,
+                0.9225818724238003
+              ],
+              "mean_w": [
+                1.1003275526072958,
+                1.3420973753713197
+              ],
+              "mj_per_token": [
+                378.19247410534416,
+                461.29093621190015
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "window_j": [
+                2.677002679271149,
+                2.843199603484261
+              ],
+              "mean_w": [
+                3.8942866504333398,
+                4.136056473197364
+              ],
+              "mj_per_token": [
+                1338.5013396355746,
+                1421.5998017421305
+              ]
+            }
+          },
+          "retained_injection_proxy_j": [
+            0.0,
+            0.0
+          ]
+        },
+        "decode": {
+          "calls": 6144,
+          "increment_nj_per_16channel_block": [
+            254.11183866000016,
+            270.40585589999984
+          ],
+          "shared_r_idle_w": [
+            0.2376862317,
+            0.2380710244
+          ],
+          "one_r_active_time_s": 0.0663552,
+          "window_s": 0.6513717651492886,
+          "original_proxy_j": [
+            0.172712571573925,
+            0.7155288167712269
+          ],
+          "candidate_replacement_j": [
+            0.15638336343083886,
+            0.15673411697297696
+          ],
+          "baseline": {
+            "on_chip": {
+              "window_j": [
+                0.7219336826880448,
+                1.361003685927644
+              ],
+              "mean_w": [
+                1.1083281795651427,
+                2.0894422490291915
+              ],
+              "mj_per_token": [
+                721.9336826880448,
+                1361.003685927644
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "window_j": [
+                2.392351342324957,
+                3.031421345564556
+              ],
+              "mean_w": [
+                3.672789442718094,
+                4.653903512182143
+              ],
+              "mj_per_token": [
+                2392.351342324957,
+                3031.421345564556
+              ]
+            }
+          },
+          "candidate": {
+            "on_chip": {
+              "window_j": [
+                0.7056044745449588,
+                0.802208986129394
+              ],
+              "mean_w": [
+                1.0832592266004046,
+                1.2315685589250782
+              ],
+              "mj_per_token": [
+                705.6044745449587,
+                802.2089861293939
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "window_j": [
+                2.376022134181871,
+                2.4726266457663058
+              ],
+              "mean_w": [
+                3.6477204897533557,
+                3.796029822078029
+              ],
+              "mj_per_token": [
+                2376.022134181871,
+                2472.626645766306
+              ]
+            }
+          },
+          "retained_injection_proxy_j": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    {
+      "name": "Falcon-H1-3B",
+      "rtl_binding": {
+        "local_sha256": "b56f9c6359375eba37c85cf9266e33cabaecc724f5e2a791d11e78d9168cc3f7",
+        "server_lf_sha256": "02070ae95dd1ec1dcac82f4a208c856f02430575f1c01fed291c21efd62330df"
+      },
+      "windows": {
+        "prefill": {
+          "calls": 16384,
+          "increment_nj_per_16channel_block": [
+            813.2165562480001,
+            717.75189028
+          ],
+          "shared_r_idle_w": [
+            0.2488495111,
+            0.2494500875
+          ],
+          "one_r_active_time_s": 0.40239104,
+          "window_s": 0.6409021632344749,
+          "original_proxy_j": [
+            0.6842435909650533,
+            2.835752627491952
+          ],
+          "candidate_replacement_j": [
+            0.1720618465121878,
+            0.17658116244664357
+          ],
+          "baseline": {
+            "on_chip": {
+              "window_j": [
+                1.2336721124940744,
+                3.5366299792162943
+              ],
+              "mean_w": [
+                1.9248992798963822,
+                5.518205713907714
+              ],
+              "mj_per_token": [
+                616.8360562470372,
+                1768.3149896081472
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "window_j": [
+                2.9656351992575773,
+                5.268593065979799
+              ],
+              "mean_w": [
+                4.627282242722897,
+                8.220588676734232
+              ],
+              "mj_per_token": [
+                1482.8175996287887,
+                2634.2965329898993
+              ]
+            }
+          },
+          "candidate": {
+            "on_chip": {
+              "window_j": [
+                0.7214903680412089,
+                0.8774585141709859
+              ],
+              "mean_w": [
+                1.1257418205612308,
+                1.3690990052875924
+              ],
+              "mj_per_token": [
+                360.7451840206045,
+                438.7292570854929
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "window_j": [
+                2.4534534548047118,
+                2.60942160093449
+              ],
+              "mean_w": [
+                3.8281247833877456,
+                4.071481968114109
+              ],
+              "mj_per_token": [
+                1226.726727402356,
+                1304.710800467245
+              ]
+            }
+          },
+          "retained_injection_proxy_j": [
+            0.0008140095580088203,
+            0.0033843216912972803
+          ]
+        },
+        "decode": {
+          "calls": 8192,
+          "increment_nj_per_16channel_block": [
+            905.2132630279998,
+            849.663026456
+          ],
+          "shared_r_idle_w": [
+            0.2487077713,
+            0.2491030693
+          ],
+          "one_r_active_time_s": 0.20119552,
+          "window_s": 0.4666221136219563,
+          "original_proxy_j": [
+            0.34212179548252664,
+            1.417876313745976
+          ],
+          "candidate_replacement_j": [
+            0.12341999020994408,
+            0.12534466860285667
+          ],
+          "baseline": {
+            "on_chip": {
+              "window_j": [
+                0.7371183564594743,
+                1.8948036650606548
+              ],
+              "mean_w": [
+                1.5796901495685782,
+                4.060681244515063
+              ],
+              "mj_per_token": [
+                737.1183564594743,
+                1894.8036650606548
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "window_j": [
+                1.927416293311177,
+                3.085101601912357
+              ],
+              "mean_w": [
+                4.1305721204475825,
+                6.611563215394066
+              ],
+              "mj_per_token": [
+                1927.416293311177,
+                3085.101601912357
+              ]
+            }
+          },
+          "candidate": {
+            "on_chip": {
+              "window_j": [
+                0.5184165511868918,
+                0.6022720199175354
+              ],
+              "mean_w": [
+                1.110998677629963,
+                1.2907061245825968
+              ],
+              "mj_per_token": [
+                518.4165511868918,
+                602.2720199175354
+              ]
+            },
+            "on_chip_plus_ddr": {
+              "window_j": [
+                1.7087144880385943,
+                1.792569956769238
+              ],
+              "mean_w": [
+                3.661880648508967,
+                3.841588095461601
+              ],
+              "mj_per_token": [
+                1708.7144880385943,
+                1792.569956769238
+              ]
+            }
+          },
+          "retained_injection_proxy_j": [
+            0.00040700477900441017,
+            0.0016921608456486402
+          ]
+        }
+      }
+    }
+  ]
+}
