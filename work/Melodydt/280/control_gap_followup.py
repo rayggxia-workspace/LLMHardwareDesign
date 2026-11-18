@@ -5,6 +5,7 @@ provider execution, numeric results, time, or fabricate completion evidence.
 """
 from collections import Counter
 import json
+from hashlib import sha256
 from pathlib import Path
 from struct import unpack_from, unpack
 import sys
@@ -84,24 +85,43 @@ def counts(r,out,bundle):
     candidates=list((older/'three-p-full-01').glob('run-*/*/assets/plan.json'))
     candidates+=list((older/'three-p-gemma-q12-02').glob('run-*/*/assets/plan.json'))
     candidates+=list((r/'p0-ab-01').glob('ab-*/run-*/*/assets/plan.json'))
+    candidates+=list(r.glob('ddr-pilot-*/pilot-*/staged/replay/run-*/*/assets/plan.json'))
     lookup={sha(p):p for p in candidates};rows={}
     for model,spec in expected.items():
         result={}
         for stage in ('prefill','decode'):
             key=spec[stage]['plan_sha256']
-            if key not in lookup:raise ValueError('frozen plan not found '+model+'/'+stage+' '+key)
-            path=lookup[key];plan=json.loads(path.read_text())
+            binding='exact plan SHA'
+            if key in lookup:path=lookup[key]
+            elif model=='qwen3':
+                # Qwen3 was recompiled into a relocated probe directory. Its
+                # accepted original pilot is bound by the complete result,
+                # excluding only the location-dependent plan SHA field.
+                matched=[]
+                for candidate in candidates:
+                    rp=candidate.parent.parent/'result.json'
+                    if not rp.is_file():continue
+                    result=json.loads(rp.read_text())
+                    if result.pop('plan_sha256',None)!=sha(candidate):continue
+                    digest=sha256(json.dumps(result,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+                    if digest==spec[stage]['full_result_without_plan_sha256']:matched.append(candidate)
+                if len(matched)!=1:raise ValueError('original Qwen3 frozen pilot is not uniquely bound')
+                path=matched[0];binding='original accepted pilot: full result identical except relocated plan SHA; current plan unavailable on old host'
+            else:raise ValueError('frozen plan not found '+model+'/'+stage+' '+key)
+            plan=json.loads(path.read_text())
+            sealed={Path(v['path']).name:v['sha256'] for v in plan['images']}
             for phase in plan['phases']:
                 name='prefill' if stage=='prefill' else ('first_token' if phase['position']==512 else 'decode')
                 row=result.setdefault(name,{'instructions':0,'calls_by_site':[0]*4,'pages':[],'page_counts':Counter()})
                 items=phase['ingress']+[p for layer in phase['layers'] for p in layer]
                 if stage=='decode':items+=phase['head']
                 for item in items:
+                    if sha(path.parent/item['path'])!=sealed.get(item['path']):raise ValueError('plan image SHA differs '+item['path'])
                     counted=page_counts(path.parent/item['path'],item)
                     row['instructions']+=counted['instructions'];row['page_counts'][str(counted['bytes'])]+=1
                     row['calls_by_site']=[a+b for a,b in zip(row['calls_by_site'],counted['calls_by_site'])]
                     row['pages'].append(counted)
-                row['plan_sha256']=key
+                row['plan_sha256']=sha(path);row['reported_plan_sha256']=key;row['plan_binding']=binding
         for name,row in result.items():
             ref=spec['windows'][name]
             if row['calls_by_site']!=ref['calls_by_site'] or dict(row['page_counts'])!=ref['page_counts']:
