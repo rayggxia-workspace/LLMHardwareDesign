@@ -1,0 +1,286 @@
+{
+  "run": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830190",
+  "manifest_sha256": "ea51d5fa9dddb6fe1d8ac7ceb28bd6e2c52eb2b3928fae073fc50552f349ba39",
+  "phases": {
+    "prefill": {
+      "operator_counts": {
+        "prefill:rope:site0:{\"dimension\": 128, \"width\": 96}": 2048,
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"pr272_native_attention\"}": 768,
+        "prefill:silu:site0:{\"elements\": 4, \"gain\": 65536}": 45056,
+        "prefill:silu:site1:{\"elements\": 4, \"gain\": 65536}": 43008,
+        "prefill:silu:site2:{\"elements\": 4, \"gain\": 65536}": 43008,
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"pr272_native_attention\"}": 768
+      },
+      "operator_shapes": {
+        "prefill:rope:site0:{\"dimension\": 128, \"width\": 96}": {
+          "kind": "rope",
+          "shape": {
+            "width": 96,
+            "dimension": 128
+          },
+          "input_shapes": {
+            "value": [
+              128
+            ],
+            "cos": [
+              128
+            ],
+            "sin": [
+              128
+            ]
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"pr272_native_attention\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 1,
+            "implementation": "pr272_native_attention"
+          },
+          "input_shapes": {
+            "scores": [
+              1
+            ]
+          }
+        },
+        "prefill:silu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:silu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:silu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"pr272_native_attention\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 2,
+            "implementation": "pr272_native_attention"
+          },
+          "input_shapes": {
+            "scores": [
+              2
+            ]
+          }
+        }
+      },
+      "rms_counts": {
+        "prefill:site2:words768:eps42950:shift0:out0": 128
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830190/prefill/operator-observation.json",
+      "operator_sha256": "6c71d6be0c7f16b75c3d2f0cc6b564b1b2a8210c2f89305b9a6deb19cf25eea1",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830190/prefill/arithmetic-observation.json",
+      "rms_sha256": "4aa04a1a2dc58a6d29f08e7acb997b698154370427c8b4a31d3ca63ad8553dfe"
+    },
+    "decode": {
+      "operator_counts": {
+        "first_token:rope:site0:{\"dimension\": 128, \"width\": 96}": 1024,
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"pr272_native_attention\"}": 768,
+        "first_token:silu:site0:{\"elements\": 4, \"gain\": 65536}": 22528,
+        "first_token:silu:site1:{\"elements\": 4, \"gain\": 65536}": 21504,
+        "first_token:silu:site2:{\"elements\": 4, \"gain\": 65536}": 21504,
+        "decode:rope:site0:{\"dimension\": 128, \"width\": 96}": 1024,
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"pr272_native_attention\"}": 768,
+        "decode:silu:site0:{\"elements\": 4, \"gain\": 65536}": 22528,
+        "decode:silu:site1:{\"elements\": 4, \"gain\": 65536}": 21504,
+        "decode:silu:site2:{\"elements\": 4, \"gain\": 65536}": 21504
+      },
+      "operator_shapes": {
+        "first_token:rope:site0:{\"dimension\": 128, \"width\": 96}": {
+          "kind": "rope",
+          "shape": {
+            "width": 96,
+            "dimension": 128
+          },
+          "input_shapes": {
+            "value": [
+              128
+            ],
+            "cos": [
+              128
+            ],
+            "sin": [
+              128
+            ]
+          }
+        },
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"pr272_native_attention\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 513,
+            "implementation": "pr272_native_attention"
+          },
+          "input_shapes": {
+            "scores": [
+              513
+            ]
+          }
+        },
+        "first_token:silu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:silu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:silu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:rope:site0:{\"dimension\": 128, \"width\": 96}": {
+          "kind": "rope",
+          "shape": {
+            "width": 96,
+            "dimension": 128
+          },
+          "input_shapes": {
+            "value": [
+              128
+            ],
+            "cos": [
+              128
+            ],
+            "sin": [
+              128
+            ]
+          }
+        },
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"pr272_native_attention\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 514,
+            "implementation": "pr272_native_attention"
+          },
+          "input_shapes": {
+            "scores": [
+              514
+            ]
+          }
+        },
+        "decode:silu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:silu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:silu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "silu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        }
+      },
+      "rms_counts": {
+        "first_token:site2:words768:eps42950:shift0:out0": 65,
+        "decode:site2:words768:eps42950:shift0:out0": 65
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830190/decode/operator-observation.json",
+      "operator_sha256": "1a593a20d2dc7d42bb6b5d4b572d0f1269500ea055ec224dbcb575851a821d31",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830190/decode/arithmetic-observation.json",
+      "rms_sha256": "d1ad16d975b5ca1e3c6f2148affa480889dbd67dd6338cf61e1d6c46f89d77bd"
+    }
+  }
+}

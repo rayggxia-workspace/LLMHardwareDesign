@@ -1,0 +1,331 @@
+{
+  "run": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830191",
+  "manifest_sha256": "e4ecdb0472ff2e447eb63aadaf993d75ee243483922ff609fcd260818a037e48",
+  "phases": {
+    "prefill": {
+      "operator_counts": {
+        "prefill:scale:site3:{\"elements\": 4, \"gain\": 207243}": 1280,
+        "prefill:rope:site0:{\"dimension\": 256, \"width\": 256}": 816,
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_wide\"}": 272,
+        "prefill:gelu:site0:{\"elements\": 4, \"gain\": 65536}": 58752,
+        "prefill:gelu:site1:{\"elements\": 4, \"gain\": 65536}": 58752,
+        "prefill:gelu:site2:{\"elements\": 4, \"gain\": 65536}": 56576,
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_wide\"}": 272
+      },
+      "operator_shapes": {
+        "prefill:scale:site3:{\"elements\": 4, \"gain\": 207243}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 207243
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "prefill:rope:site0:{\"dimension\": 256, \"width\": 256}": {
+          "kind": "rope",
+          "shape": {
+            "width": 256,
+            "dimension": 256
+          },
+          "input_shapes": {
+            "value": [
+              256
+            ],
+            "cos": [
+              256
+            ],
+            "sin": [
+              256
+            ]
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 1, \"implementation\": \"attention_wide\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 1,
+            "implementation": "attention_wide"
+          },
+          "input_shapes": {
+            "scores": [
+              1
+            ]
+          }
+        },
+        "prefill:gelu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "gelu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:gelu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "gelu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:gelu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "gelu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "prefill:softmax:site0:{\"elements\": 2, \"implementation\": \"attention_wide\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 2,
+            "implementation": "attention_wide"
+          },
+          "input_shapes": {
+            "scores": [
+              2
+            ]
+          }
+        }
+      },
+      "rms_counts": {
+        "prefill:site2:words640:eps4295:shift4:out0": 136,
+        "prefill:site0:words64:eps4295:shift0:out0": 816,
+        "prefill:site2:words640:eps4295:shift0:out4": 136
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830191/prefill/operator-observation.json",
+      "operator_sha256": "1c6950e8e1dda37fde5cfb6bd2d257892ebd00cf35672849b7da8b3fff9870ef",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830191/prefill/arithmetic-observation.json",
+      "rms_sha256": "6072aad86ba60e308c47c98ca7c541c03412e4d872385bde5b9d6e473f8c3bec"
+    },
+    "decode": {
+      "operator_counts": {
+        "first_token:scale:site3:{\"elements\": 4, \"gain\": 207243}": 640,
+        "first_token:rope:site0:{\"dimension\": 256, \"width\": 256}": 408,
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_wide\"}": 272,
+        "first_token:gelu:site0:{\"elements\": 4, \"gain\": 65536}": 29376,
+        "first_token:gelu:site1:{\"elements\": 4, \"gain\": 65536}": 29376,
+        "first_token:gelu:site2:{\"elements\": 4, \"gain\": 65536}": 28288,
+        "decode:scale:site3:{\"elements\": 4, \"gain\": 207243}": 640,
+        "decode:rope:site0:{\"dimension\": 256, \"width\": 256}": 408,
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_wide\"}": 272,
+        "decode:gelu:site0:{\"elements\": 4, \"gain\": 65536}": 29376,
+        "decode:gelu:site1:{\"elements\": 4, \"gain\": 65536}": 29376,
+        "decode:gelu:site2:{\"elements\": 4, \"gain\": 65536}": 28288
+      },
+      "operator_shapes": {
+        "first_token:scale:site3:{\"elements\": 4, \"gain\": 207243}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 207243
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "first_token:rope:site0:{\"dimension\": 256, \"width\": 256}": {
+          "kind": "rope",
+          "shape": {
+            "width": 256,
+            "dimension": 256
+          },
+          "input_shapes": {
+            "value": [
+              256
+            ],
+            "cos": [
+              256
+            ],
+            "sin": [
+              256
+            ]
+          }
+        },
+        "first_token:softmax:site0:{\"elements\": 513, \"implementation\": \"attention_wide\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 513,
+            "implementation": "attention_wide"
+          },
+          "input_shapes": {
+            "scores": [
+              513
+            ]
+          }
+        },
+        "first_token:gelu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "gelu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:gelu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "gelu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "first_token:gelu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "gelu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:scale:site3:{\"elements\": 4, \"gain\": 207243}": {
+          "kind": "scale",
+          "shape": {
+            "elements": 4,
+            "gain": 207243
+          },
+          "input_shapes": {
+            "value": [
+              4
+            ]
+          }
+        },
+        "decode:rope:site0:{\"dimension\": 256, \"width\": 256}": {
+          "kind": "rope",
+          "shape": {
+            "width": 256,
+            "dimension": 256
+          },
+          "input_shapes": {
+            "value": [
+              256
+            ],
+            "cos": [
+              256
+            ],
+            "sin": [
+              256
+            ]
+          }
+        },
+        "decode:softmax:site0:{\"elements\": 514, \"implementation\": \"attention_wide\"}": {
+          "kind": "softmax",
+          "shape": {
+            "elements": 514,
+            "implementation": "attention_wide"
+          },
+          "input_shapes": {
+            "scores": [
+              514
+            ]
+          }
+        },
+        "decode:gelu:site0:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "gelu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:gelu:site1:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "gelu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        },
+        "decode:gelu:site2:{\"elements\": 4, \"gain\": 65536}": {
+          "kind": "gelu",
+          "shape": {
+            "elements": 4,
+            "gain": 65536
+          },
+          "input_shapes": {
+            "gate": [
+              4
+            ],
+            "up": [
+              4
+            ]
+          }
+        }
+      },
+      "rms_counts": {
+        "first_token:site2:words640:eps4295:shift4:out0": 69,
+        "first_token:site0:words64:eps4295:shift0:out0": 408,
+        "first_token:site2:words640:eps4295:shift0:out4": 68,
+        "decode:site2:words640:eps4295:shift4:out0": 69,
+        "decode:site0:words64:eps4295:shift0:out0": 408,
+        "decode:site2:words640:eps4295:shift0:out4": 68
+      },
+      "operator_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830191/decode/operator-observation.json",
+      "operator_sha256": "ea489ab49f56c52bfbf65b7e6201f3abee3808a1c2b58332af9450ef484da258",
+      "rms_capture": "/public3/home/t6s011227/LLMHardware/zenanyan/issue-280-bscc-t6-01/operator-capture-02/run-38830191/decode/arithmetic-observation.json",
+      "rms_sha256": "ff53e6ef3fd72095d2ffa10ee37f41138c692ae99bc497c92eeb2c8ead8736f2"
+    }
+  }
+}
