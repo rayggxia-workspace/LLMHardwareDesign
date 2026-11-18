@@ -1,0 +1,11 @@
+# 300 MHz recurrent-state candidate refresh
+
+Owner Melodydt; Issue #280 / PR #295. This independent directory applies the prior R-candidate method to the latest 300 MHz v5 ledger, following the user's clarification on 2026-11-18. Parent ledger commit e29d72a585dd1fb0cde6c9a6976ef0fe78f98f96; P512 source PR294 commit 01141df70d358c4a4225e36f153b695ced1d05b1. Existing 200 MHz artifacts are immutable.
+
+The two fully mapped R netlists, vectors and accepted zero-delay gate events remain unchanged. Every VCD half-cycle timestamp is transformed exactly from 2500 to 1667 ps, preserving event values/order and all pin declarations. OpenROAD then reanalyses paired activity/idle windows with a 3.334 ns clock, identical Nangate45 typical Liberty and 0.05 ns input transition. Source and output hashes, complete pin coverage, event-only equality, window duration and unit conversion are checked. No SDF/parasitics, voltage changes, synthesis optimization or physical 300 MHz timing qualification are implied.
+
+After calibration, remove only the corresponding GDN/Mamba state proxy and add one time-multiplexed 8-lane R's complete load/execute/readback dynamic increment plus whole-window idle residence. Keep Falcon external injection proxy. Bind service counts to unchanged accepted numerical/traffic evidence and integrate against current v5 window durations. Preserve default, single read-DMA alternatives and combined special candidates separately. P512 remains cold-state activity extrapolation with unvalidated full-sequence error, not a newly executed long sequence.
+
+Workspaces: local `work/Melodydt/280/recurrent-300mhz` and `tmp/recurrent-300mhz`; remote run directories will be recorded in `jobs.json`. Existing branch `task/280-recurrent-first-round`, PR295 base `task/280-seven-model-energy`; local root is an exported copy without .git. No shared parent local files or jobs are modified. Actual launch source commit, job status and output hashes are recorded after submission. Use 12 CPUs per job, `--time=0`, `mdt-*` names, c64/c96 partitions.
+
+Validation and delivery are pending until receipts exist; broader Issue280 remains in_progress. Independent review unassigned, PR unmerged; registration PR5 pending and Projects configuration/tools unavailable. No automatic monitoring after chat exit.
