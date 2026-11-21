@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "scope": "real Qwen2.5-3B PR220 S32 B1/S2 integer first-attention witnesses",
+  "ids": [
+    [
+      1,
+      2
+    ]
+  ],
+  "vectors": 12,
+  "program_sha256": "5e5791f52458788ab0c143b003a3106fcded6eddcd577cf48343168d5739f2bc",
+  "instrumentation": "only np.matmul call redirected through observer returning np.matmul",
+  "observed_source_sha256": "f01e30b878a7e81a675d815120e56b2d145448e07fa1c1cd05d3af41274f2403",
+  "paths": {
+    "program": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-93-qualified/generated/program.json",
+    "model": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/full-qwen25-3b-v1/complete/full.onnx",
+    "weights": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-43-calibration/generated/calibration.json",
+    "activations": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-53-values/generated/activation-calibration.json",
+    "oracle": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-93-qualified/native-reference"
+  },
+  "source_sha256": {
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-93-qualified/wide_program.py": "fd13aa1eb07b3cd0535ebb74a78776be4793c6bc480b744e6d010c50543b9eeb",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-93-qualified/full_integer.py": "82454d44db5a1ea7e4b5f68960aee883008c282208c6f6f54c33eecea9fe6e6b",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-93-qualified/frontend.py": "f09a0606cf7dc70eeaf0c1d53973f7c92dff7d986215a7a3d932d4bdf571de42",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-93-qualified/canonicalize.py": "3df90484ba2cdae54a9fdceb89ef2701389eca05d3ca5c43f0f711bcf6ebd2e5",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-93-qualified/quantization.py": "9982bb3ac4550ea0242f67030c2f892cdedafcbdbbd2284224820938c49bb766",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-93-qualified/sigmoid_polynomial.py": "b8c86b1aff7bd50f7526cb614c12e81365ef792f0535ab82ac2b1382ad7fb6fd",
+    "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-93-qualified/native-reference": "6c6b1a0b99ed3ae2f194459d133c9aadc584aa7e080a3737cc8d4c0286fd853f"
+  },
+  "vector_sha256": "c8555a5fde29521de642f4f106cc1708a120f10c8324a021dd21e380aa42d9f4",
+  "whole_decode512_numeric_qualified": false,
+  "whole_W8_model_numeric_qualified": false,
+  "shapes": [
+    [
+      "AV",
+      2,
+      8
+    ],
+    [
+      "QK",
+      128,
+      2
+    ]
+  ]
+}
