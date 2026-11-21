@@ -1,0 +1,121 @@
+{
+  "dense_linear_parameters_including_tied_head": 3085697024,
+  "granted_permanent_weight_cache_bytes": 1048576,
+  "rows": [
+    {
+      "format": "old_scalar_128bit_records",
+      "dense_linear_weight_storage_bytes": 49371152384,
+      "optimistic_weight_stream_bytes_per_token": 49370103808,
+      "required_sustained_GBps": [
+        {
+          "target_tps": 8.74,
+          "GBps": 431.49470728192
+        },
+        {
+          "target_tps": 10.0,
+          "GBps": 493.70103808
+        },
+        {
+          "target_tps": 37.87,
+          "GBps": 1869.6458312089599
+        },
+        {
+          "target_tps": 92.7,
+          "GBps": 4576.608623001601
+        }
+      ],
+      "quality_or_implemented_packing_claimed": false
+    },
+    {
+      "format": "hypothetical_packed_S16",
+      "dense_linear_weight_storage_bytes": 6171394048,
+      "optimistic_weight_stream_bytes_per_token": 6170345472,
+      "required_sustained_GBps": [
+        {
+          "target_tps": 8.74,
+          "GBps": 53.92881942528
+        },
+        {
+          "target_tps": 10.0,
+          "GBps": 61.70345472
+        },
+        {
+          "target_tps": 37.87,
+          "GBps": 233.67098302463998
+        },
+        {
+          "target_tps": 92.7,
+          "GBps": 571.9910252544
+        }
+      ],
+      "quality_or_implemented_packing_claimed": false
+    },
+    {
+      "format": "hypothetical_quality_preserving_S8",
+      "dense_linear_weight_storage_bytes": 3085697024,
+      "optimistic_weight_stream_bytes_per_token": 3084648448,
+      "required_sustained_GBps": [
+        {
+          "target_tps": 8.74,
+          "GBps": 26.95982743552
+        },
+        {
+          "target_tps": 10.0,
+          "GBps": 30.84648448
+        },
+        {
+          "target_tps": 37.87,
+          "GBps": 116.81563672576
+        },
+        {
+          "target_tps": 92.7,
+          "GBps": 285.94691112960004
+        }
+      ],
+      "quality_or_implemented_packing_claimed": false
+    },
+    {
+      "format": "hypothetical_quality_preserving_4bit",
+      "dense_linear_weight_storage_bytes": 1542848512,
+      "optimistic_weight_stream_bytes_per_token": 1541799936,
+      "required_sustained_GBps": [
+        {
+          "target_tps": 8.74,
+          "GBps": 13.47533144064
+        },
+        {
+          "target_tps": 10.0,
+          "GBps": 15.41799936
+        },
+        {
+          "target_tps": 37.87,
+          "GBps": 58.38796357632
+        },
+        {
+          "target_tps": 92.7,
+          "GBps": 142.92485406720002
+        }
+      ],
+      "quality_or_implemented_packing_claimed": false
+    }
+  ],
+  "scope": "conditional best-case weight-traffic floor, not SystemC decode or full-chip energy",
+  "assumptions": [
+    "dense direct GEMV, B1, no weight compression or recomputation",
+    "total reusable on-chip weight storage <= the stated granted cache (conditional, not inventoried here)",
+    "all granted cache may permanently hold weights",
+    "all other traffic and protocol inefficiency free"
+  ],
+  "not_claimed": [
+    "quality of lower precision",
+    "packing/decompression implemented",
+    "external bandwidth or memory hardware qualified"
+  ],
+  "actual_tokens_per_second": null,
+  "actual_j_per_token": null,
+  "files_sha256": {
+    "work\\YUZE-LU\\234\\raw\\qwen25-3b-config\\config.json": "27467e2fc311a7656c09a43ae9c3d408211e1f212bbddbc93c8596a06423826f",
+    "D:\\Data\\\u7535\u8def\u5b9e\u9a8c\\LLMHardwareDesign-worktrees\\issue-234-systemc-benchmark\\project\\experiments\\systemc_benchmark\\memory_budget.py": "4b27a391e0381ca54d74c2aaf751db986d6ce6155a4c5cac76ae2724b7cf85be",
+    "D:\\Data\\\u7535\u8def\u5b9e\u9a8c\\LLMHardwareDesign-worktrees\\issue-234-systemc-benchmark\\project\\experiments\\systemc_benchmark\\linear_capacity.py": "f5b72642d9938553c42b5e284c82ce7872399ad0b8d8449302f175cd535ad726"
+  }
+}

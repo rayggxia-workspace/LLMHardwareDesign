@@ -1,0 +1,607 @@
+{
+  "scope": "sampled real S64 accumulation prefixes; not complete Qwen energy",
+  "begin_k": 1000,
+  "count_k": 16,
+  "independent_prefix_numeric_passed": true,
+  "compiled_model_manifest_sha256": "446bfd03d482654b031e2d0b6e09dbaf868a5a64bc0180961c36abeb185dd9cb",
+  "binary_sha256": "534e8e181d4dbe925053b556865792d41a8a7251c939258f45764fd443ff2571",
+  "driver_sha256": "4071f8e006dd3715aee6c82e6211da42325e1a3ff884dfde2ffb7bce09aca4e5",
+  "source_sha256": "29da95a5ce2c872db936fb447994f4dbc21cc59e49288f4d1d1d856645837ae7",
+  "build_command": [
+    "g++",
+    "-std=c++17",
+    "-O1",
+    "-DVM_TRACE=1",
+    "-DVM_TRACE_VCD=1",
+    "-DVM_TRACE_FST=0",
+    "-DVM_TRACE_SAIF=0",
+    "-DVM_TIMING=0",
+    "-DVM_COVERAGE=0",
+    "-I/home/lululu/llhd-issue234-225e4a762/raw/m-compiled-model-001",
+    "-I/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/verilator/share/verilator/include",
+    "-I/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/verilator/share/verilator/include/vltstd",
+    "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/m_activity.cpp",
+    "/home/lululu/llhd-issue234-225e4a762/raw/m-compiled-model-001/Vblock_v2_m__ALL.a",
+    "/home/lululu/llhd-issue234-225e4a762/raw/m-compiled-model-001/verilated.o",
+    "/home/lululu/llhd-issue234-225e4a762/raw/m-compiled-model-001/verilated_vcd_c.o",
+    "/home/lululu/llhd-issue234-225e4a762/raw/m-compiled-model-001/verilated_threads.o",
+    "-pthread",
+    "-latomic",
+    "-o",
+    "/home/lululu/llhd-issue234-225e4a762/m-streams-002/m-stream"
+  ],
+  "records": [
+    {
+      "stream": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 270016667,
+          "window_ps": 4320000,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-0-stream/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-0-stream/gate.vcd": "a23a081cbcdf8654d8779863145696587f2c8faab7551b5111be4b78df8636ee",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-0-stream/functional.json": "55554a62ca954ca4945f7296f7d19434b6e31d1204115b8c5984d0ea7dcfe4da",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "12afbd3092fa2402809113593e1f36803f4e5c612b5ff55d169b156657d51877",
+        "power_log_sha256": "c60dc7d7438bc0b9d39c75931a1626f261cde15d38af2ed5f670506fc1c764cb",
+        "power_w": {
+          "internal": 0.06783778965,
+          "switching": 0.01973290369,
+          "leakage": 0.006051249336,
+          "total": 0.09362194687
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "stream-idle": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 274336667,
+          "window_ps": 853333,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-0-stream-idle/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-0-stream-idle/gate.vcd": "cf81626faf770b75bc63d651ff80e073119a71349d005f2b5b0d13572e20be11",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-0-stream-idle/functional.json": "53b9c5211448132139924059e4f1eedcc4339ce11a6400275cd15bfbed8cff79",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "53c00047933ad77981a37e2a70c07ee14a27930304a199d8e2d1880cdd62843f",
+        "power_log_sha256": "1c43594f1050a585d136e01a5572979cd1e1b04aed7bdc5bed75eabc1e466aff",
+        "power_w": {
+          "internal": 0.06731273234,
+          "switching": 0.01838772558,
+          "leakage": 0.006041807123,
+          "total": 0.09174226969
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "observed_incremental_j_per_component": 1.6917094619999975e-10,
+      "cohort": 0,
+      "column": 0
+    },
+    {
+      "stream": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 270016667,
+          "window_ps": 4320000,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-7-stream/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-7-stream/gate.vcd": "386ad8a168a4ea923aaae29c15ce46f524538e1ace7ecb1422e44d4b88d29172",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-7-stream/functional.json": "493ba51b8eb51b1ce42ef13780a9259f8fa6142c8f863e3e1ee8c5ad37a5a6be",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "835e9c154843d322316939f1f246dedf127be56aebdc0b5cb33df51374ecff54",
+        "power_log_sha256": "86acab7d97b93135d4fa10c41fd0bada282ea97fa321d637a8b23fa85c6c3650",
+        "power_w": {
+          "internal": 0.06782227755,
+          "switching": 0.01971011981,
+          "leakage": 0.006051044911,
+          "total": 0.09358344972
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "stream-idle": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 274336667,
+          "window_ps": 853333,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-7-stream-idle/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-7-stream-idle/gate.vcd": "d2350c8af993849f351279cdbc3112e6a78254e7e876e3e023d099af30504e7f",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-0-col-7-stream-idle/functional.json": "5dbf665e1803f9ce589a6c9c9b0a811f7f18ba2904fa0fdb4b08e0695a995924",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "576d17f6915f0ae076514bdf44b2e0d274541591c4e36d9e09dfbd24ae4dfab5",
+        "power_log_sha256": "23656cabc9a98bac140384711ca3779ded6703a744aed489ad673d1ab4b66fc4",
+        "power_w": {
+          "internal": 0.06731275469,
+          "switching": 0.01838772558,
+          "leakage": 0.006041866727,
+          "total": 0.09174235165
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "observed_incremental_j_per_component": 1.6569882630000046e-10,
+      "cohort": 0,
+      "column": 7
+    },
+    {
+      "stream": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 270016667,
+          "window_ps": 4320000,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-0-stream/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-0-stream/gate.vcd": "da0b1464cee1d45d6f5a8b8038285bf361162c7e674ae325507bf21e1ecf2cb9",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-0-stream/functional.json": "323148d2dc2d43c6ca8e8345e998b3bf0f0f7bd9375698c00a96ee258af799e9",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "b4899b924a35dc3f8f8f7139366232f7056f61b689d5ee96eb8481fc8f03af9b",
+        "power_log_sha256": "af20138e66713581d263e66498386bffb8896c82a6d23e3e04d7311cc59989e3",
+        "power_w": {
+          "internal": 0.06782984734,
+          "switching": 0.01971882395,
+          "leakage": 0.006051348522,
+          "total": 0.09360001981
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "stream-idle": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 274336667,
+          "window_ps": 853333,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-0-stream-idle/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-0-stream-idle/gate.vcd": "956ca6790401e19ff32796d6262a948b09cd2651f335a720d49160fd683fc022",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-0-stream-idle/functional.json": "409897ce9ef2c26baa2b70382518498b2580bb90948bb16c25a938dc2c7c124e",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "754c25602ce229c408e0abf05d0d5d07fc0881319e0b1f0fb02dced10d23ebdc",
+        "power_log_sha256": "3c7389b6bbe92a5e33d07027b9f4abc2f16944b40b9265222f7de4f20781c7c8",
+        "power_w": {
+          "internal": 0.06731275469,
+          "switching": 0.01838772558,
+          "leakage": 0.006042207591,
+          "total": 0.09174268693
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "observed_incremental_j_per_component": 1.6715995920000057e-10,
+      "cohort": 1,
+      "column": 0
+    },
+    {
+      "stream": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 270016667,
+          "window_ps": 4320000,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-7-stream/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-7-stream/gate.vcd": "46f72a51e1e268d60503cceab7db74dc7eb9ac8e7af7c78a69ca3f1c3cb4c2a0",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-7-stream/functional.json": "617909892020f852c8b6599b9c68cccb08311c07c9c23253a7b7896e5f66771e",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "11eec597f38c4d1111ff475aec08ecabe7aafdb177654967ed53846324abd915",
+        "power_log_sha256": "622ab9a14991c494566894fa6f634d189213be160227930ed80c0e57f3ade06d",
+        "power_w": {
+          "internal": 0.0678210035,
+          "switching": 0.01971734129,
+          "leakage": 0.00605101604,
+          "total": 0.09358936548
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "stream-idle": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 274336667,
+          "window_ps": 853333,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-7-stream-idle/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-7-stream-idle/gate.vcd": "26faee2f10b89bd1513b7762f7acaa36d3c175963d90d8e9d64140ff76ec11d0",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-1-col-7-stream-idle/functional.json": "e1f44db7c04f3dedbd0bff67d0a380cc4d8a77e47a790d9ec477b085abcecbb5",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "248568cd2c1f64cfdd484e84763a0dfd12522a30f8595eeba6802cb44564facb",
+        "power_log_sha256": "234cf900811fa0ad49fd95c03b7f6a2bbb1aa8caf73760eacec301b9239188f4",
+        "power_w": {
+          "internal": 0.06731273234,
+          "switching": 0.01838772558,
+          "leakage": 0.006041797809,
+          "total": 0.09174225479
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "observed_incremental_j_per_component": 1.6623996210000006e-10,
+      "cohort": 1,
+      "column": 7
+    },
+    {
+      "stream": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 270016667,
+          "window_ps": 4320000,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-0-stream/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-0-stream/gate.vcd": "5c6ed5139a9d83a963c650edff7d5b072a4c06ea38c713adc74559cd3d85c466",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-0-stream/functional.json": "1d3dc34eda0429ba16bd598fa644af7c675362ae0e8150ccb14f61865fb5bc39",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "74c1ad20ff040280b544de4c2193ded159169d695f5ec47ee035eea951b9784a",
+        "power_log_sha256": "a0f6aaba76c997cb1f7600bc2c7e20ca936242f1253a5e334f1991bca3572a4f",
+        "power_w": {
+          "internal": 0.06785576791,
+          "switching": 0.01974938437,
+          "leakage": 0.006052000914,
+          "total": 0.09365715086
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "stream-idle": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 274336667,
+          "window_ps": 853333,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-0-stream-idle/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-0-stream-idle/gate.vcd": "1b05c974e2bd1f020fdb7ce9dbd42713b605fb8e071f499827959ec369cc854e",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-0-stream-idle/functional.json": "51d2940ba3a1b4665b69639df5a56c3ed606c61fdb6b9eebcffd0ebbb4f1d2bb",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "17cd4705997035abb9acce9cf4afc509c77f9d6e86448dbaa1ec07949509040b",
+        "power_log_sha256": "fc6c5c6d35aab79987f3bf5dd0e9a5fbc2f057508d6c1972fe2d266bc63e4cc4",
+        "power_w": {
+          "internal": 0.06731236726,
+          "switching": 0.01838772558,
+          "leakage": 0.006043551024,
+          "total": 0.09174364805
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "observed_incremental_j_per_component": 1.7221525289999957e-10,
+      "cohort": 2,
+      "column": 0
+    },
+    {
+      "stream": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 270016667,
+          "window_ps": 4320000,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-7-stream/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-7-stream/gate.vcd": "9627b22429f72f65b556e43edcb0b5a0875d8787fc52f2dff850cf914962dc80",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-7-stream/functional.json": "d26b02ada3bb19255d5fc2e7976d109b035b7d94b42def653848c52bd0da04e9",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "fc848571d10f3810e81bbc6d2add0e1edf0a9bf9b403aae74b72a9208da77a32",
+        "power_log_sha256": "70507917a0254aaea4bcd354c6909d0a2d09b4883192c4ccb5be799ec5bc99d6",
+        "power_w": {
+          "internal": 0.06785266101,
+          "switching": 0.01974963397,
+          "leakage": 0.006052439101,
+          "total": 0.09365473688
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "stream-idle": {
+        "tool_completed_with_real_annotation": true,
+        "scope": "dut/block_v2_m",
+        "window": {
+          "source_first_ps": 274336667,
+          "window_ps": 853333,
+          "transform": "subtract first timestamp only; every value/event/order retained"
+        },
+        "annotation_count": 631740,
+        "unannotated_count": 732,
+        "tool_command": [
+          "openroad",
+          "-no_init",
+          "-threads",
+          "2",
+          "-exit",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-7-stream-idle/power/power.tcl"
+        ],
+        "source_sha256": {
+          "/home/lululu/llhd-issue234-225e4a762/raw/linux-tools/portable/NangateOpenCellLibrary_typical.lib": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-7-stream-idle/gate.vcd": "84969818e547d3e59083aafa1804f229b71e6a7d9eda41ec347dfb3ce72caa80",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-002/cohort-2-col-7-stream-idle/functional.json": "364c4f828b5ad3b51ab30502b3e174ab5ed3189d4cffc4fa688efb3e6b8778a2",
+          "/home/lululu/llhd-issue234-225e4a762/m-streams-source-002/analyze_activity.py": "3dcb67ac329e5a21d05fda4a1039d2bc4a0e9a25c54dfe2b2000f64abf1ae4f1",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.odb": "ef6b0b466daea3a713c923d75040a21b491bbfdae94b3402be49297cdafb178c",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.spef": "9c654adfa88cab65943c8b1f6232bed5ec16463f6ba70d159e5bf29f73ae3737",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.sdc": "d817b123b91904f7dd2f6f5a53937dd7dbe058474dcd7acdba5115a9d6e0da65",
+          "/home/lululu/llhd-issue234-225e4a762/raw/m-physical/6_final.v": "caf9d68c646c4103892927cf4c9406744168bd83a79a11ba35a202c81231d855"
+        },
+        "normalized_vcd_sha256": "c9425020f03374900b5fc011d88a07cd31576d543fab69cd39315a5bef6fd036",
+        "power_log_sha256": "6f457579b5768c3ec79987dad69ab856e17e9bc58c08e439662b1bb27fcbeb82",
+        "power_w": {
+          "internal": 0.06731233746,
+          "switching": 0.01838772558,
+          "leakage": 0.006043696776,
+          "total": 0.09174375981
+        },
+        "energy_qualified": false,
+        "full_model_energy_qualified": false,
+        "limitations": [
+          "unannotated pins need classification",
+          "sampled scalar M only",
+          "zero-delay gate VCD omits delay-induced glitches",
+          "all other macros, clocks, controllers, wiring and DDR still need coverage"
+        ]
+      },
+      "observed_incremental_j_per_component": 1.719879363e-10,
+      "cohort": 2,
+      "column": 7
+    }
+  ],
+  "full_model_timing_qualified": false,
+  "full_model_energy_qualified": false
+}

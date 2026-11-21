@@ -1,0 +1,82 @@
+{
+  "created_at": "2026-11-09T05:41:55.329991+08:00",
+  "scope": "Three emitted integer decode steps with strict, live KV handoff.\n\nTwo-layer validation only. Optional empty-cache integer prefill avoids a HF\nwarm cache; otherwise only the initial cache comes from quantized HF.\nAll later caches must come from previous integer outputs. This does not\nqualify a 3B sequence, SystemC latency, or device energy.\n",
+  "passed": true,
+  "steps": [
+    {
+      "prefix": 0,
+      "top1_equal": true,
+      "passed": true,
+      "onnx_sha256": "5fd1734c070e0e4c970451e880f523169ba818e95be498411cd8ed8a84663696",
+      "program_sha256": "669e13233214f0866930b182e02c8b58ec9effbceda7708e1d2c4d9477d46791",
+      "max_relative_l2": 0.00013562953016448638,
+      "transfer_origin": "empty-cache emitted integer prefill"
+    },
+    {
+      "prefix": 2,
+      "top1_equal": true,
+      "passed": true,
+      "onnx_sha256": "44b63b811716beb6d5ff348aa5dce0ec7691a7fed4389e215fd500f61a809e41",
+      "program_sha256": "699e405086e3d1a1325b9280f670d9ac09f2862c41c0a282701e25b1066b2129",
+      "max_relative_l2": 0.00011804390984919937,
+      "transfer_origin": "previous emitted integer program outputs"
+    },
+    {
+      "prefix": 3,
+      "top1_equal": true,
+      "passed": true,
+      "onnx_sha256": "1d972158f0524567a772783d251baa4346ae3f65c757d995bbd2972b689f8cce",
+      "program_sha256": "b39876d731de436366677430e16183c90ef98f6391e4ecb0249cdf868ad93f10",
+      "max_relative_l2": 0.00015033550903324522,
+      "transfer_origin": "previous emitted integer program outputs"
+    },
+    {
+      "prefix": 4,
+      "top1_equal": true,
+      "passed": true,
+      "onnx_sha256": "54e90e0ae2a3fbeac1173d527ce954ed10e000c85703f32c0aaad9251430f3ab",
+      "program_sha256": "40920a7318548aa1816e3ea16aa2999ebfc13dc74fab4afb13f34aa730eba5ca",
+      "max_relative_l2": 0.00011067850646671275,
+      "transfer_origin": "previous emitted integer program outputs"
+    }
+  ],
+  "source_sha256": {
+    "cached_primitives.py": "52f640fedeffe9cfd381ef4b9741986a1a01d4c7a3a70c93d9f50ddc21473484",
+    "cached_template.py": "158ade486e649bf534f12c4a2a7c643533665e22a1fdc3e38b32de466cdd8139",
+    "exact_reference_dot.py": "171d9ff86c24e76eb5361d2446b11d2046cd7d02ef8f62a9f4cb0bf8c7da01d6",
+    "kv_handoff.py": "5d8f900318c66e780fcd05bbcf7971a162da69036c224e72c277c401ca312a22",
+    "tiny_chain_probe.py": "dd6bdb5bb63edd082820a045fd35afbd4f3bf7463a4ee559507f0666f6a21200"
+  },
+  "artifact_sha256": {
+    "raw\\tiny-chain-003\\receipt.json": "2ff8a2cbfb299049c740198acdfb3790710952c966a35e1d2d89357a84b3e0f5",
+    "raw\\tiny-chain-003.log": "923f8461bf9e44d6bfadff87dd4153a889649d1dedfddeb58dd87ecf7c48a8c5",
+    "raw\\tiny-chain-002.log": "d9e4e6dd1f10d7dbaa552a442c16fec3becc1ba072a16ccfc4c590cd97f730d5",
+    "raw\\tiny-chain-source-003\\cached_primitives.py": "52f640fedeffe9cfd381ef4b9741986a1a01d4c7a3a70c93d9f50ddc21473484",
+    "raw\\tiny-chain-source-003\\cached_template.py": "158ade486e649bf534f12c4a2a7c643533665e22a1fdc3e38b32de466cdd8139",
+    "raw\\tiny-chain-source-003\\exact_reference_dot.py": "171d9ff86c24e76eb5361d2446b11d2046cd7d02ef8f62a9f4cb0bf8c7da01d6",
+    "raw\\tiny-chain-source-003\\kv_handoff.py": "5d8f900318c66e780fcd05bbcf7971a162da69036c224e72c277c401ca312a22",
+    "raw\\tiny-chain-source-003\\tiny_chain_probe.py": "dd6bdb5bb63edd082820a045fd35afbd4f3bf7463a4ee559507f0666f6a21200",
+    "raw\\tiny-chain-003\\program-0.json": "669e13233214f0866930b182e02c8b58ec9effbceda7708e1d2c4d9477d46791",
+    "raw\\tiny-chain-003\\program-2.json": "699e405086e3d1a1325b9280f670d9ac09f2862c41c0a282701e25b1066b2129",
+    "raw\\tiny-chain-003\\program-3.json": "b39876d731de436366677430e16183c90ef98f6391e4ecb0249cdf868ad93f10",
+    "raw\\tiny-chain-003\\program-4.json": "40920a7318548aa1816e3ea16aa2999ebfc13dc74fab4afb13f34aa730eba5ca",
+    "raw\\tiny-prefill-input-001\\prefill-template.onnx": "0d61f84aaeffc5f728c6bd2a0bcd0a1905408b6287c156bb6fb638e41b5cbc22",
+    "raw\\tiny-prefill-input-001\\prefill.onnx": "5fd1734c070e0e4c970451e880f523169ba818e95be498411cd8ed8a84663696",
+    "raw\\tiny-chain-input-001\\prefix-2.onnx": "44b63b811716beb6d5ff348aa5dce0ec7691a7fed4389e215fd500f61a809e41",
+    "raw\\tiny-chain-input-001\\prefix-3.onnx": "1d972158f0524567a772783d251baa4346ae3f65c757d995bbd2972b689f8cce",
+    "raw\\tiny-chain-input-001\\prefix-4.onnx": "54e90e0ae2a3fbeac1173d527ce954ed10e000c85703f32c0aaad9251430f3ab"
+  },
+  "archive": "raw\\tiny-chain-result-003.tar.gz",
+  "archive_sha256": "8156d82fa9fe0fd7e8e067b9c0c3f5463d99b3bc0fd396e3034a20b5df170e30",
+  "oracle_binary_sha256": "6c6b1a0b99ed3ae2f194459d133c9aadc584aa7e080a3737cc8d4c0286fd853f",
+  "tiny_integer_prefill_included": true,
+  "full_3B_qualified": false,
+  "systemc_time_qualified": false,
+  "energy_qualified": false,
+  "previous_failure": {
+    "attempt": 2,
+    "log_sha256": "d9e4e6dd1f10d7dbaa552a442c16fec3becc1ba072a16ccfc4c590cd97f730d5",
+    "reason": "calibration helper attempted log2(infinity) on causal-mask -inf; retained log; helper now excludes -inf and rejects NaN/+inf, as full-model probe does",
+    "threshold_changed": false
+  }
+}

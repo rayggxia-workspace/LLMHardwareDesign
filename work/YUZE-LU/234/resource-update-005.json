@@ -1,0 +1,102 @@
+{
+  "recorded_at": "2026-11-09T11:08:00+08:00",
+  "job": 101535,
+  "scope": "Only own PENDING101486 held/redirected/released after owner/state checks. No running or other-user jobs modified.",
+  "chain": "101535->101486",
+  "allocation": "single node6x10, bounded small-shape experiment; c64/c96/debug30min",
+  "at_most_one_own_job_running": true,
+  "actions": [
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "101486",
+        "-o"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "hold",
+        "101486"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "101486",
+        "-o"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--hold",
+        "--dependency=afterany:101514",
+        "--output=/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-008/slurm-%j.log",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-008/cached_integer.sbatch",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-008",
+        "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/export-003",
+        "5",
+        "",
+        "1",
+        "6"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "101535",
+        "-o"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "update",
+        "JobId=101486",
+        "Dependency=afterany:101535"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "show",
+        "job",
+        "101486",
+        "-o"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "release",
+        "101535"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "scontrol",
+        "release",
+        "101486"
+      ],
+      "returncode": 0
+    }
+  ],
+  "full_journal_sha256": "b877855c19e428a48f2052f4d9ad3838df50011e0cf6ea5412645df910a24c48",
+  "remote_journal": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-008/submission.json"
+}

@@ -1,0 +1,345 @@
+{
+  "scope": "Three emitted integer decode steps with strict, live KV handoff.\n\nTwo-layer validation only. The initial warm cache comes from quantized HF;\nsubsequent caches must come from previous integer outputs. This does not\nqualify integer prefill, a 3B sequence, SystemC latency, or device energy.\n",
+  "checks": [
+    {
+      "prefix": 2,
+      "transfer": {
+        "origin": "quantized HF warm cache; not integer prefill"
+      },
+      "outputs": [
+        {
+          "name": "logits",
+          "shape": [
+            1,
+            1,
+            256
+          ],
+          "exponent": -23,
+          "relative_l2": 8.272178320217115e-05,
+          "passed": true
+        },
+        {
+          "name": "next_0_k",
+          "shape": [
+            1,
+            1,
+            3,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 3.62624372120866e-05,
+          "passed": true
+        },
+        {
+          "name": "next_0_v",
+          "shape": [
+            1,
+            1,
+            3,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 6.69285300700164e-05,
+          "passed": true
+        },
+        {
+          "name": "next_1_k",
+          "shape": [
+            1,
+            1,
+            3,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 4.976474459608219e-05,
+          "passed": true
+        },
+        {
+          "name": "next_1_v",
+          "shape": [
+            1,
+            1,
+            3,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 5.01265386231822e-05,
+          "passed": true
+        }
+      ],
+      "top1_equal": true,
+      "passed": true,
+      "onnx_sha256": "44b63b811716beb6d5ff348aa5dce0ec7691a7fed4389e215fd500f61a809e41",
+      "program_sha256": "09faa2eba58cdd7c8e274778f0ffc3191182530ef4bd7dc28c896985f9f9d224"
+    },
+    {
+      "prefix": 3,
+      "transfer": {
+        "origin": "previous emitted integer program outputs",
+        "prefix_tokens": 3,
+        "state_count": 4,
+        "state": [
+          {
+            "source": "next_0_k",
+            "input": "past_0_k",
+            "shape": [
+              1,
+              1,
+              3,
+              16
+            ],
+            "exponent": -20,
+            "logical_elements": 48,
+            "canonical_s32_sha256": "8352231c08b6a67deff418536ef530bf539c223abe2eed29b0de5b1e92a90251"
+          },
+          {
+            "source": "next_0_v",
+            "input": "past_0_v",
+            "shape": [
+              1,
+              1,
+              3,
+              16
+            ],
+            "exponent": -20,
+            "logical_elements": 48,
+            "canonical_s32_sha256": "6466490470af70c8576d2a136642889c045a05b6ad1c5c8bb896111af3791b00"
+          },
+          {
+            "source": "next_1_k",
+            "input": "past_1_k",
+            "shape": [
+              1,
+              1,
+              3,
+              16
+            ],
+            "exponent": -20,
+            "logical_elements": 48,
+            "canonical_s32_sha256": "7b4a808352a2cba408b47772c8be619269503123d53d4f1e843d86a4cb749d5b"
+          },
+          {
+            "source": "next_1_v",
+            "input": "past_1_v",
+            "shape": [
+              1,
+              1,
+              3,
+              16
+            ],
+            "exponent": -20,
+            "logical_elements": 48,
+            "canonical_s32_sha256": "d8252261a95516005b41619004fc8041258cfb3dfb677fe34c32e637aeca392f"
+          }
+        ],
+        "physical_movement_inferred": false
+      },
+      "outputs": [
+        {
+          "name": "logits",
+          "shape": [
+            1,
+            1,
+            256
+          ],
+          "exponent": -24,
+          "relative_l2": 0.0001041161078007205,
+          "passed": true
+        },
+        {
+          "name": "next_0_k",
+          "shape": [
+            1,
+            1,
+            4,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 4.993163057048867e-05,
+          "passed": true
+        },
+        {
+          "name": "next_0_v",
+          "shape": [
+            1,
+            1,
+            4,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 7.67253621393959e-05,
+          "passed": true
+        },
+        {
+          "name": "next_1_k",
+          "shape": [
+            1,
+            1,
+            4,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 7.162540987975e-05,
+          "passed": true
+        },
+        {
+          "name": "next_1_v",
+          "shape": [
+            1,
+            1,
+            4,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 5.179987500527893e-05,
+          "passed": true
+        }
+      ],
+      "top1_equal": true,
+      "passed": true,
+      "onnx_sha256": "1d972158f0524567a772783d251baa4346ae3f65c757d995bbd2972b689f8cce",
+      "program_sha256": "85ba660b8dad3f015fd16c3b87a22a459426ddde064826d5ae3b568cf94ade25"
+    },
+    {
+      "prefix": 4,
+      "transfer": {
+        "origin": "previous emitted integer program outputs",
+        "prefix_tokens": 4,
+        "state_count": 4,
+        "state": [
+          {
+            "source": "next_0_k",
+            "input": "past_0_k",
+            "shape": [
+              1,
+              1,
+              4,
+              16
+            ],
+            "exponent": -20,
+            "logical_elements": 64,
+            "canonical_s32_sha256": "2c5827432de847339d20e2821ec6b57b1d816f5ed045d79da5f91a2acca679e9"
+          },
+          {
+            "source": "next_0_v",
+            "input": "past_0_v",
+            "shape": [
+              1,
+              1,
+              4,
+              16
+            ],
+            "exponent": -20,
+            "logical_elements": 64,
+            "canonical_s32_sha256": "dd957871350ed8a08a5705bf5a4777c9f57df228c5dcb4c2335475a01e523e9c"
+          },
+          {
+            "source": "next_1_k",
+            "input": "past_1_k",
+            "shape": [
+              1,
+              1,
+              4,
+              16
+            ],
+            "exponent": -20,
+            "logical_elements": 64,
+            "canonical_s32_sha256": "8e52e21abc0494c34ee2e57cf3e481da4fe4688cce42c308dc8c8a4016466adc"
+          },
+          {
+            "source": "next_1_v",
+            "input": "past_1_v",
+            "shape": [
+              1,
+              1,
+              4,
+              16
+            ],
+            "exponent": -20,
+            "logical_elements": 64,
+            "canonical_s32_sha256": "74e3902472c31fc832735b81449367f23d4112a474cdbcf46a02c94821acf2b6"
+          }
+        ],
+        "physical_movement_inferred": false
+      },
+      "outputs": [
+        {
+          "name": "logits",
+          "shape": [
+            1,
+            1,
+            256
+          ],
+          "exponent": -23,
+          "relative_l2": 9.247445984928388e-05,
+          "passed": true
+        },
+        {
+          "name": "next_0_k",
+          "shape": [
+            1,
+            1,
+            5,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 6.017256156917799e-05,
+          "passed": true
+        },
+        {
+          "name": "next_0_v",
+          "shape": [
+            1,
+            1,
+            5,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 8.493235463908803e-05,
+          "passed": true
+        },
+        {
+          "name": "next_1_k",
+          "shape": [
+            1,
+            1,
+            5,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 7.390853459599432e-05,
+          "passed": true
+        },
+        {
+          "name": "next_1_v",
+          "shape": [
+            1,
+            1,
+            5,
+            16
+          ],
+          "exponent": -20,
+          "relative_l2": 5.441219639013303e-05,
+          "passed": true
+        }
+      ],
+      "top1_equal": true,
+      "passed": true,
+      "onnx_sha256": "54e90e0ae2a3fbeac1173d527ce954ed10e000c85703f32c0aaad9251430f3ab",
+      "program_sha256": "19f33288848855b5acc46a0a1f9cb5f3624b2819511f4cc66e1fbf30ad556ce8"
+    }
+  ],
+  "passed": true,
+  "source_sha256": "2c581fb2df832a74b53ea7c1477c1e30b2fe4953c8f3091742904db576e85e92",
+  "host_dot_calls": {
+    "binary64_proven": 57
+  },
+  "full_3B_qualified": false,
+  "integer_prefill_qualified": false,
+  "systemc_time_qualified": false,
+  "energy_qualified": false,
+  "receipt_sha256": "b4e1ba942efa87a7c74d30f5b793e04c9d0977700e171a493720f98a934e0545",
+  "oracle_binary_sha256": "6c6b1a0b99ed3ae2f194459d133c9aadc584aa7e080a3737cc8d4c0286fd853f",
+  "cached_primitives_sha256": "f78365c3565852014c420aa02547a420f43642356cc95b7a3edd8de2832eeae5",
+  "kv_handoff_sha256": "5d8f900318c66e780fcd05bbcf7971a162da69036c224e72c277c401ca312a22"
+}

@@ -1,0 +1,32 @@
+{
+  "job_id": "101486",
+  "status_at_submission": "PENDING; no result claim",
+  "dependency": "afterany:101492 (which waits101480); at most one issue234 job running",
+  "remote_root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/sequence-001",
+  "source_archive_sha256": "41cff3c973ca18846ced650d630bc146284fbd598b24adbc4615bd529deca4dc",
+  "source_sha256": {
+    "sequence_replay.py": "2d3b048217d132dcea85413671c4d7a1e366f1961d250f1527d40f1356faefb3",
+    "sequence_replay.sbatch": "1ff8aca9e418aff1e5d6905649132e1f7ce4a1f5cd8bf76032a3e8315d3232de",
+    "cached_primitives.py": "9fd8e047ce2604c20ea7ad5fd74137c3e145f0b4e3d6d530faefc28915d7232a",
+    "cached_template.py": "158ade486e649bf534f12c4a2a7c643533665e22a1fdc3e38b32de466cdd8139",
+    "exact_reference_dot.py": "cdb76d39b6ea452d1095c37fa73eaba00255f586d782fd38e5a54b9bd1e3c15c",
+    "contraction_bounds.py": "9540c9df806ff52719d1133b5d4ce8e2fbc94b97707f88099e7ba979e8ddd697",
+    "kv_handoff.py": "5d8f900318c66e780fcd05bbcf7971a162da69036c224e72c277c401ca312a22"
+  },
+  "allocation": "one node, six exclusive steps times ten cores; long-prefill host calibration workers serialized to bound peak memory",
+  "scope": "full3B natural prompts P128/P512/P2048 x2, first integer-selected token from prefill; targetD128, this batch requests1 only",
+  "quality_gate": "unchanged relative L2<=.02 for all logits/KV and same logits argmax vs independent originalHF",
+  "generated_sequence_qualified": false,
+  "systemc_time_qualified": false,
+  "energy_qualified": false,
+  "input_reference": "reference-002 frozen checkpoint and natural prompt tokens; reference continuation excluded",
+  "limits": [
+    "first-token probe only; successful receipt not full128tokens",
+    "all6GB raw S16 parameter payloads SHA-checked against frozen manifest per worker",
+    "ONNX and host simulation runtimes never device timing"
+  ],
+  "pending_scheduling_override": "c64,c96 and UNLIMITED; excludes debug30minute limit for long host prefill",
+  "override_receipt": "resource-update-002.json",
+  "latest_dependency": "afterany:101503",
+  "dependency_update_reason": "exact RMS capture on owned held/PENDING job; one ours at a time"
+}

@@ -1,0 +1,70 @@
+{
+  "scope": "Compare independent clocked SystemC mother events to accepted RTL/gate VCD.\n\nOnly deployed CALL/WAIT/MOVI/END compact runtime is modeled. PM bank latency,\nfinite terminal credits, serial result arbitration and host result hold are real\nstates; finite peers remain fixtures, not Qwen execution. No total energy claim.\n",
+  "rows": [
+    {
+      "case": "single",
+      "jobs": 16,
+      "cycles": 688,
+      "image_sha256": "559dede4549adecce9cf6d27b697704ce575de0d88e37b7b9b64c7fcfb441ccf",
+      "events_per_trace": 128,
+      "RTL_gate_three_initializations_all_events_equal": true
+    },
+    {
+      "case": "two_parallel",
+      "jobs": 16,
+      "cycles": 800,
+      "image_sha256": "9dc60b3661f231604fbe8083e18dc3cf3321984bb810b203f099c4e5136eecae",
+      "events_per_trace": 176,
+      "RTL_gate_three_initializations_all_events_equal": true
+    },
+    {
+      "case": "held_call",
+      "jobs": 4,
+      "cycles": 920,
+      "image_sha256": "9dc60b3661f231604fbe8083e18dc3cf3321984bb810b203f099c4e5136eecae",
+      "events_per_trace": 44,
+      "RTL_gate_three_initializations_all_events_equal": true
+    },
+    {
+      "case": "movi",
+      "jobs": 16,
+      "cycles": 784,
+      "image_sha256": "5b0a18e6e7dd65122d6d8a58cf17711739307e88ff82cdcc470c3fffa2345bd2",
+      "events_per_trace": 144,
+      "RTL_gate_three_initializations_all_events_equal": true
+    },
+    {
+      "case": "simultaneous_returns",
+      "jobs": 16,
+      "cycles": 704,
+      "image_sha256": "9dc60b3661f231604fbe8083e18dc3cf3321984bb810b203f099c4e5136eecae",
+      "events_per_trace": 176,
+      "RTL_gate_three_initializations_all_events_equal": true
+    }
+  ],
+  "compared_job_executions": 408,
+  "compared_events": 4008,
+  "call_arguments_all_eight_words_compared": true,
+  "clock_hz": 300000000,
+  "maximum_allowed_rational_clock_difference_ps": 1,
+  "sources_sha256": {
+    "systemc_mother.cpp": "f216276f6e9fa8b1347b5d0699e5626a00e840c6835e789346f6e1b4dd13fde8",
+    "mother_timing_probe.py": "e8992711011f401068611688a926cdea1c6239735c9b37ee53caad619c6f5ab7"
+  },
+  "executable_sha256": "99f0bba751283bed6bef81faa0fe99cf7cac88fd2851325a429c79cf95c84a7c",
+  "SystemC_version": "3.0.1",
+  "archive": {
+    "archive": "/home/lululu/llhd-issue234-225e4a762/raw/mother-timing-results-002.tar.gz",
+    "sha256": "f306e7a121bd59060f472266c96579a84e1f59177e0d6cf8865066ab2f5ef952",
+    "bytes": 15456373,
+    "files": 191,
+    "all_member_sha256_verified": true
+  },
+  "prerequisite_activity_archive": "local-results-006/mother-activity-results-001.tar.gz",
+  "remote_archive": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/local-results-007/mother-timing-results-002.tar.gz",
+  "remote_archive_sha256_verified": true,
+  "system_timing_qualified": false,
+  "total_energy_qualified": false,
+  "configuration_fault_event_and_nine_target_coverage": false,
+  "timing_001_failure": "incorrect caller g++ path; actual compiler /usr/bin/g++, subsequent builds successful"
+}

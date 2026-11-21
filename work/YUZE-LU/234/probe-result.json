@@ -1,0 +1,152 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "name": "serial",
+      "passed": true,
+      "actual": {
+        "makespan_ps": 12,
+        "known_dynamic_nJ": 5,
+        "energy_complete": true,
+        "tasks": [
+          {
+            "id": "a",
+            "start_ps": 0,
+            "end_ps": 5
+          },
+          {
+            "id": "b",
+            "start_ps": 5,
+            "end_ps": 12
+          }
+        ]
+      },
+      "boundary": "synthetic scheduler/unit test; not Qwen performance or calibrated energy"
+    },
+    {
+      "name": "parallel",
+      "passed": true,
+      "actual": {
+        "makespan_ps": 7,
+        "known_dynamic_nJ": 5,
+        "energy_complete": true,
+        "tasks": [
+          {
+            "id": "a",
+            "start_ps": 0,
+            "end_ps": 5
+          },
+          {
+            "id": "b",
+            "start_ps": 0,
+            "end_ps": 7
+          }
+        ]
+      },
+      "boundary": "synthetic scheduler/unit test; not Qwen performance or calibrated energy"
+    },
+    {
+      "name": "port_contention",
+      "passed": true,
+      "actual": {
+        "makespan_ps": 12,
+        "known_dynamic_nJ": 5,
+        "energy_complete": true,
+        "tasks": [
+          {
+            "id": "a",
+            "start_ps": 0,
+            "end_ps": 5
+          },
+          {
+            "id": "b",
+            "start_ps": 5,
+            "end_ps": 12
+          }
+        ]
+      },
+      "boundary": "synthetic scheduler/unit test; not Qwen performance or calibrated energy"
+    },
+    {
+      "name": "ack_dependency",
+      "passed": true,
+      "actual": {
+        "makespan_ps": 17,
+        "known_dynamic_nJ": 9,
+        "energy_complete": true,
+        "tasks": [
+          {
+            "id": "load",
+            "start_ps": 0,
+            "end_ps": 4
+          },
+          {
+            "id": "compute",
+            "start_ps": 4,
+            "end_ps": 11
+          },
+          {
+            "id": "store_ack",
+            "start_ps": 11,
+            "end_ps": 17
+          }
+        ]
+      },
+      "boundary": "synthetic scheduler/unit test; not Qwen performance or calibrated energy"
+    },
+    {
+      "name": "unknown_energy",
+      "passed": true,
+      "actual": {
+        "makespan_ps": 12,
+        "known_dynamic_nJ": 3,
+        "energy_complete": false,
+        "tasks": [
+          {
+            "id": "a",
+            "start_ps": 0,
+            "end_ps": 5
+          },
+          {
+            "id": "b",
+            "start_ps": 5,
+            "end_ps": 12
+          }
+        ]
+      },
+      "boundary": "synthetic scheduler/unit test; not Qwen performance or calibrated energy"
+    },
+    {
+      "name": "fork_join",
+      "passed": true,
+      "actual": {
+        "makespan_ps": 13,
+        "known_dynamic_nJ": 10,
+        "energy_complete": true,
+        "tasks": [
+          {
+            "id": "a",
+            "start_ps": 0,
+            "end_ps": 3
+          },
+          {
+            "id": "b",
+            "start_ps": 3,
+            "end_ps": 7
+          },
+          {
+            "id": "c",
+            "start_ps": 3,
+            "end_ps": 11
+          },
+          {
+            "id": "join",
+            "start_ps": 11,
+            "end_ps": 13
+          }
+        ]
+      },
+      "boundary": "synthetic scheduler/unit test; not Qwen performance or calibrated energy"
+    }
+  ]
+}

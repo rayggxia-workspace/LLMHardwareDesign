@@ -1,0 +1,156 @@
+{
+  "recorded_at": "2026-11-09T13:19:52.677221+08:00",
+  "scope": "Actual compact64 MC/LC E13->privateS->NStats2/Exp1->privateS->peer stored ACK; two U fixtures, not nine-target/full Qwen",
+  "passed": true,
+  "hardware_changed": false,
+  "clock_hz": 300000000,
+  "clock_resolution": "integer1ps; every positive edge checked3333/3334ps",
+  "native_executions": 132,
+  "actual_SystemC_executions": 132,
+  "SystemC_version": "3.0.1",
+  "native_SystemC_timing_exact": true,
+  "fixtures": 11,
+  "initializations": [
+    "1:143",
+    "2:143",
+    "2:144"
+  ],
+  "link_backpressure": [
+    false,
+    true
+  ],
+  "native_images": {
+    "mother": {
+      "sha256": "057dfc74775eb04abe568a73867ce6b7e950814353fef0715762660b4d113c6e",
+      "bytes": 160,
+      "instruction_count": 4,
+      "execution_count": 0,
+      "instructions_hex": [
+        "0x1000020000000000",
+        "0x1001030000000000",
+        "0x110000000000000c",
+        "0x1f00000000000000"
+      ]
+    },
+    "local0": {
+      "sha256": "c4d516d5ddaf461c6c1404f1f03d121addb451b5d451299faa82afe3bd47e107",
+      "bytes": 1216,
+      "instruction_count": 15,
+      "execution_count": 7,
+      "instructions_hex": [
+        "0x4100000000000000",
+        "0x4400000000000001",
+        "0x4100000100000000",
+        "0x4400000000000001",
+        "0x4100000200000000",
+        "0x4400000000000001",
+        "0x4100000300000000",
+        "0x4400000000000001",
+        "0x4100000400000000",
+        "0x4400000000000001",
+        "0x4100000500000000",
+        "0x4400000000000001",
+        "0x4100000600000000",
+        "0x4400000000000001",
+        "0x4f00000000000000"
+      ]
+    },
+    "local1": {
+      "sha256": "651e0d282bcc269e772acb8f44ec2ad89afe7c8658c4d8f116d40da15f6ca768",
+      "bytes": 784,
+      "instruction_count": 9,
+      "execution_count": 4,
+      "instructions_hex": [
+        "0x4100000000000000",
+        "0x4400000000000001",
+        "0x4100000100000000",
+        "0x4400000000000001",
+        "0x4100000200000000",
+        "0x4400000000000001",
+        "0x4100000300000000",
+        "0x4400000000000001",
+        "0x4f00000000000000"
+      ]
+    }
+  },
+  "rejected_images": [
+    {
+      "mutation": "header-bounds",
+      "byte_offset": 12,
+      "reason": "mother: header identities/bounds/reserved bytes"
+    },
+    {
+      "mutation": "opcode",
+      "byte_offset": 135,
+      "reason": "mother: decoded instruction sequence"
+    },
+    {
+      "mutation": "padding",
+      "byte_offset": 248,
+      "reason": "local0: compact padding"
+    },
+    {
+      "mutation": "native-source",
+      "byte_offset": 388,
+      "reason": "local0: service descriptor 0"
+    }
+  ],
+  "elapsed_ps_by_stall": {
+    "0": [
+      1300000
+    ],
+    "1": [
+      1370000
+    ]
+  },
+  "elapsed_boundary": "Testbench start-job to final result consumption, includes PM/LC/control; no universal Exp coefficient",
+  "confirmed_read_bytes": 80,
+  "confirmed_write_bytes": 64,
+  "stored_transfers": 2,
+  "unchanged_accepted_files": 306,
+  "changed_testbench_files": [
+    "gate/normal/design/images.py",
+    "gate/normal/design/tb_native_pair.sv"
+  ],
+  "accepted_source_archive_sha256": "dae3b8274296970865dfd13bb4d72014f6c8590ea3cd94bb15720fa6b36b22f7",
+  "functional_bank_sha256": "1871109017b197e12c03beb0a1f2a1bd9f0387898858a831535cf300744fe10e",
+  "SystemC_library_sha256": "930767c0ec7a203c38552201a22fa2a27a319c47d4d9019096457a674bca0848",
+  "native_reference_sha256": "96a85f2b1e23f5687480fc764f02475d719c3d709bcd346a285545ce3adaf6fc",
+  "SystemC_reference_sha256": "fbea3bc0de1c67cb42d9b4b38e9049fc25cae02f7ebd0aaa5c8dada821354af6",
+  "generator_source_identity": {
+    "base_commit": "e44ae10f208b986ceec173ffb803250a087058bb",
+    "candidate_uncommitted": true,
+    "files_sha256": {
+      "project/experiments/systemc_benchmark/n_exp_lc_fixture.py": "16ed887826523df7cc260b66df7b4810d15e410f751cd48b6323b7ff71245b36"
+    }
+  },
+  "SystemC_driver_identity": {
+    "source": "project/experiments/systemc_benchmark/systemc_lc_native_main.cpp",
+    "sha256": "793e82ae77372ac6098ce50368af501bdf41e7b7e25a02946912c76d3aad75e3"
+  },
+  "probe_identity": {
+    "sha256": "1670743b578c8d0010043735e31d9ce3f92e6bd2694d3c87c7875ba158c2c7a7"
+  },
+  "preserved_failures": [
+    "First SystemC sc_start() kept running the delayed watchdog after Verilog $finish. Fixed only the C++ driver to advance in bounded1ns slices and honor gotFinish; original failed log/binary/source preserved.",
+    "First Windows unit check under managed sandbox failed six tempfile permissions; rerun using task-owned TEMP passed all41, no test/DUT waiver."
+  ],
+  "excluded": [
+    "physical program memory",
+    "M-S coupled model",
+    "nine-target MC implementation",
+    "full3B integer KV D128",
+    "whole-model timing",
+    "total energy",
+    "FPGA acceptance",
+    "delay/glitch/new STA"
+  ],
+  "archive": {
+    "sha256": "063732407d734c9363075f39dda9d09045814cf8b8f484633444b1fce2514716",
+    "bytes": 7769391,
+    "files": 810,
+    "all_member_sha256_verified": true
+  },
+  "remote_archive": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/local-results-014/n-exp-lc-results-001.tar.gz",
+  "remote_archive_sha256_verified": true
+}

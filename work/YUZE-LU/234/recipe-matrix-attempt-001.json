@@ -1,0 +1,70 @@
+{
+  "job_id": 101543,
+  "root": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/recipe-matrix-001",
+  "source": {
+    "git_commit": "5de0ae1865948d1d4b40cf5f8a3cb7723e7f11a7",
+    "scope": "Numerical recipe matrix, not DP/device performance; fixed9groups/3M. P128/P512 prefill and P512 decode, RMS1/2, weighted-product fractional bits6.",
+    "files_sha256": {
+      "recipe_matrix.sbatch": "fce33e94963979bc4bdcb6f3e3220acb6b4bbf5338a2b3f77c4c7048a985dfe9",
+      "cached_integer_probe.py": "423d8f9dfa84e192554d6eb9ec28cfb0fffe1abd8998750b1506ba872e117a8e",
+      "cached_primitives.py": "d8e4e02b23679b6f430ca9353ab3c831620f932858a4fdcef6cfaba0c7f97387",
+      "contraction_bounds.py": "9540c9df806ff52719d1133b5d4ce8e2fbc94b97707f88099e7ba979e8ddd697",
+      "exact_reference_dot.py": "cdb76d39b6ea452d1095c37fa73eaba00255f586d782fd38e5a54b9bd1e3c15c",
+      "kv_handoff.py": "5d8f900318c66e780fcd05bbcf7971a162da69036c224e72c277c401ca312a22"
+    }
+  },
+  "source_archive_sha256": "228421f0e070ad574f936e5d8d09d3ef3775b9fc008ec5a43e44fce954ab4d48",
+  "scope": "Numerical-only bounded full-shape matrix; fixed9groups/3M and unchanged quality gate, not DP gains.",
+  "allocation": "single node6x10; c64/c96/debug30min",
+  "chain": "101543->101486",
+  "UTC": "2026-11-09T03:55:21.064597Z",
+  "journal_sha256": "a4ce2fac15a5bcb14fe41d9dec713dea47a239ae05268ca67bcfd54a79b42245",
+  "state_at_submission": "PENDING; not an execution result",
+  "matrix": [
+    {
+      "task": 0,
+      "prefix": 0,
+      "query": 128,
+      "rms_refinements": 1,
+      "weighted_product_fraction_bits": 6
+    },
+    {
+      "task": 1,
+      "prefix": 0,
+      "query": 512,
+      "rms_refinements": 1,
+      "weighted_product_fraction_bits": 6
+    },
+    {
+      "task": 2,
+      "prefix": 512,
+      "query": 1,
+      "rms_refinements": 1,
+      "weighted_product_fraction_bits": 6
+    },
+    {
+      "task": 3,
+      "prefix": 0,
+      "query": 128,
+      "rms_refinements": 2,
+      "weighted_product_fraction_bits": 6
+    },
+    {
+      "task": 4,
+      "prefix": 0,
+      "query": 512,
+      "rms_refinements": 2,
+      "weighted_product_fraction_bits": 6
+    },
+    {
+      "task": 5,
+      "prefix": 512,
+      "query": 1,
+      "rms_refinements": 2,
+      "weighted_product_fraction_bits": 6
+    }
+  ],
+  "quality_gate": "Original relativeL2<=0.02 and argmax/allKV checks; unchanged",
+  "hardware_expansion": false,
+  "DP_gain_claimed": false
+}

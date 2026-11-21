@@ -1,0 +1,130 @@
+{
+  "retrieved_utc": "2026-11-08T19:23:24.279381+00:00",
+  "sources": {
+    "opentpu-readme": {
+      "url": "https://raw.githubusercontent.com/FeSens/openTPU/91df41092f612361c5bc22f83b31d23382ffabb0/README.md",
+      "resolved_url": "https://raw.githubusercontent.com/FeSens/openTPU/91df41092f612361c5bc22f83b31d23382ffabb0/README.md",
+      "retrieved_utc": "2026-11-08T19:21:53.875253+00:00",
+      "sha256": "7b3cb8be6d894dff5f0720fcc0065827a08bc6972d6faf050e07f498ab8bd583",
+      "bytes": 23518
+    },
+    "raiderchip-genai": {
+      "url": "https://raiderchip.ai/technology/genai-npu",
+      "resolved_url": "https://raiderchip.ai/technology/genai-npu",
+      "retrieved_utc": "2026-11-08T19:21:55.670940+00:00",
+      "sha256": "01780cd9373fd2536a793f6b96ea5f007ebc21ec6a739e29ecbfe8e89bdefc81",
+      "bytes": 86331
+    },
+    "edge-deployment-paper": {
+      "url": "https://arxiv.org/pdf/2511.22334",
+      "resolved_url": "https://arxiv.org/pdf/2511.22334",
+      "retrieved_utc": "2026-11-08T19:21:56.877901+00:00",
+      "sha256": "8bfcc1a8eeddf6b04d9ee971acc247af0d35092157a8aca350390f307fe4cb3d",
+      "bytes": 341771
+    },
+    "u280-blog": {
+      "url": "https://zedongpeng.com/blog/2026/llama-cpp-on-an-fpga/",
+      "resolved_url": "https://zedongpeng.com/blog/2026/llama-cpp-on-an-fpga/",
+      "retrieved_utc": "2026-11-08T19:21:58.031004+00:00",
+      "sha256": "0ba4db6e3b2c276efba61efae6e47c5f595e1ca3083873ea13e05de94a81b4a1",
+      "bytes": 14453
+    },
+    "edgecim-paper": {
+      "url": "https://arxiv.org/html/2604.11512v1",
+      "resolved_url": "https://arxiv.org/html/2604.11512v1",
+      "retrieved_utc": "2026-11-08T19:21:59.190059+00:00",
+      "sha256": "4ec1bed6619151fc7d95540f6ec2968c015384be1e03c0a81c0d268440990d1b",
+      "bytes": 172197
+    }
+  },
+  "rows": [
+    {
+      "id": "opentpu-smollm3-3b-fp4",
+      "platform": "YPCB-00338 Kintex-7",
+      "kind": "FPGA_board_measured",
+      "model": "SmolLM3-3B",
+      "weights": "4-bit; int8 head",
+      "decode_device_tps": 8.74,
+      "decode_wall_tps": 8.72,
+      "energy_j_per_token": null,
+      "prompt_tokens": 512,
+      "generated_tokens": 64,
+      "source": "opentpu-readme",
+      "scope": "Published native production build B, 133.33MHz, DDR3-1066 17.1GB/s peak. No qualified same-build power found; do not combine with older/default-activity estimates."
+    },
+    {
+      "id": "opentpu-phi4mini-fp4",
+      "platform": "YPCB-00338 Kintex-7",
+      "kind": "FPGA_board_measured",
+      "model": "Phi-4-mini-3.8B",
+      "weights": "4-bit; int8 head",
+      "decode_device_tps": 6.56,
+      "decode_wall_tps": 6.55,
+      "energy_j_per_token": null,
+      "prompt_tokens": 512,
+      "generated_tokens": 64,
+      "source": "opentpu-readme",
+      "scope": "Same native production measurement boundary; incomplete energy."
+    },
+    {
+      "id": "raiderchip-independent-3b-q4",
+      "platform": "AMD Versal VH1582; 32GB HBM2e at 102GB/s; 8 matrix engines, 250MHz",
+      "kind": "FPGA_independent_paper_vendor_numeric_summary",
+      "model": "Llama-3.2-3B-Instruct",
+      "weights": "Q4",
+      "decode_device_tps": null,
+      "decode_reported_tps": 37.87,
+      "tokens_per_joule": 1.5,
+      "energy_j_per_token": 0.6666666666666666,
+      "prompt_tokens": null,
+      "generated_tokens": 1024,
+      "source": "raiderchip-genai",
+      "methodology_source": "edge-deployment-paper",
+      "scope": "Numbers from vendor chart explicitly attributed to the linked independent paper; no digitization. Paper uses 1024-token prediction, 10 runs and total system-input energy. Exact prompt/token IDs and numeric quality gate unreported here; not P512/D128 matched."
+    },
+    {
+      "id": "raiderchip-vendor-3b-q4",
+      "platform": "RaiderChip GenAI NPU on FPGA; exact row configuration unverified",
+      "kind": "FPGA_vendor_claim",
+      "model": "Llama-3.2-3B",
+      "weights": "Q4",
+      "decode_reported_tps": 41.47,
+      "tokens_per_joule": 1.64,
+      "energy_j_per_token": 0.6097560975609756,
+      "prompt_tokens": null,
+      "generated_tokens": null,
+      "source": "raiderchip-genai",
+      "scope": "Different Performance and Power table, not the 37.87/1.50 study. Preserve separately; exact workload/power boundary not inferred."
+    },
+    {
+      "id": "u280-author-3b-q4km",
+      "platform": "Alveo U280, 8GB HBM, 460GB/s peak",
+      "kind": "FPGA_author_blog_measurement_private_code",
+      "model": "Llama-3.2-3B-Instruct",
+      "weights": "Q4_K_M",
+      "decode_reported_tps": 92.7,
+      "energy_j_per_token": null,
+      "prompt_tokens": 0,
+      "generated_tokens": 128,
+      "source": "u280-blog",
+      "scope": "llama-bench tg128 empty cache, mean five runs. pp512 is separate. No published energy. Author reports outputs checked against CPU; private backend cannot be reproduced from this page."
+    },
+    {
+      "id": "edgecim-smollm3-3b-int4",
+      "platform": "65nm digital SRAM CIM; architecture simulator, not measured full chip",
+      "kind": "ASIC_architecture_estimate",
+      "model": "SmolLM3-3B",
+      "weights": "INT4",
+      "decode_reported_tps": 148.7,
+      "tokens_per_joule": 72.5,
+      "energy_j_per_token": 0.013793103448275862,
+      "energy_value_approximate": true,
+      "prompt_tokens": 128,
+      "generated_tokens": 128,
+      "source": "edgecim-paper",
+      "scope": "Paper reports around 72.5 tokens/J. Analytical C++ simulator with HSPICE compute and CACTI buffers, 16-channel LPDDR5X. No same-Qwen3B number digitized; reported multi-model average must not be assigned to Qwen3B."
+    }
+  ],
+  "acceptance_passed": false,
+  "boundary": "Literature/public benchmark context; no row is a matched Qwen2.5-3B P512/D128 comparison. Missing power stays unknown. Do not linearly scale by parameter count/bandwidth to claim pass. Native best validated published configurations, not a proven global optimum."
+}

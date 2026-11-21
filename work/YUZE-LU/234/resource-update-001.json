@@ -1,0 +1,43 @@
+{
+  "scope": "only three verified task-owned PENDING jobs; at most one campaign live across eligible partitions",
+  "actual": [
+    {
+      "JobId": "100950",
+      "JobName": "yzl-sc234-peer",
+      "WorkDir": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/opentpu-004",
+      "JobState": "PENDING",
+      "Partition": "c64,c96,debug",
+      "Dependency": "(null)",
+      "NumNodes": "1-1",
+      "NumCPUs": "60",
+      "NumTasks": "6",
+      "CPUs/Task": "10"
+    },
+    {
+      "JobId": "100968",
+      "JobName": "yzl-sc234-kv",
+      "WorkDir": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/cached-integer-001",
+      "JobState": "PENDING",
+      "Partition": "c64,c96,debug",
+      "Dependency": "afterany:100950(unfulfilled)",
+      "NumNodes": "1-1",
+      "NumCPUs": "60",
+      "NumTasks": "6",
+      "CPUs/Task": "10"
+    },
+    {
+      "JobId": "100991",
+      "JobName": "yzl-sc234-epwr",
+      "WorkDir": "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-234-systemc-benchmark/e-activity-001",
+      "JobState": "PENDING",
+      "Partition": "c64,c96,debug",
+      "Dependency": "afterany:100968(unfulfilled)",
+      "NumNodes": "1-1",
+      "NumCPUs": "60",
+      "NumTasks": "6",
+      "CPUs/Task": "10"
+    }
+  ],
+  "other_jobs_modified": false,
+  "earlier_guard_rejected_pending_NumNodes_1_1": "first attempt made no changes; widened guard to Slurm pending representation 1-1"
+}
