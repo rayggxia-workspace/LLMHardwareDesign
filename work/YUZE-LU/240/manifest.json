@@ -1,0 +1,110 @@
+{
+  "date": "2026-11-09",
+  "scope": "standalone architecture timing study; no parent worktree modifications",
+  "source_sha256": {
+    "project/experiments/systemc_block_study/audit_results.py": "00e86c7b63a10b4838ba09765c9c9d51123e4f93215b08e1ed3bed80011ca69f",
+    "project/experiments/systemc_block_study/block_v2_m.sv": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+    "project/experiments/systemc_block_study/check_kernels.py": "a1ef5dae9e5d04103dd788e5e6bd281b53ed2fd00769a40863de425fc6a0c5ac",
+    "project/experiments/systemc_block_study/extract.py": "467493b0934b5123c62e2c6d60a9ce03a5454f3d319054aaa47b7273be122bce",
+    "project/experiments/systemc_block_study/kernel_probe.cpp": "1d16deb9c0298e3eb729dc898e847dd5b09fef01cbb9c10da0826546b62a1737",
+    "project/experiments/systemc_block_study/model.cpp": "84aa752da4afaece43947f9ba86e2ab3665b5b8e72dc0a4bbca208b85cffd6e5",
+    "project/experiments/systemc_block_study/README.md": "9422db943946e93d1bf7c54c5e2ae91d0d3b23595d5d287850550b7ab56c9d36",
+    "project/experiments/systemc_block_study/run.sbatch": "db290307194bb42b72cc26bd9b52e4e2b09062acf6d0bed5a984cd443ca7a6b9",
+    "project/experiments/systemc_block_study/smoke.py": "61f4c14c40f906a06a22753d24dd35cfdec772c1bb716a0474727334c9b1647a",
+    "project/experiments/systemc_block_study/sweep.py": "9c99ed162800356389c212cfd6466afaf12b2ed8c1bd3300ac41982c9b13ca14",
+    "project/experiments/systemc_block_study/tb_m_timing.sv": "cdc660bee1ffe902f73a2c235be233af551cf6fe044b4007a05eeac74679f63c",
+    "project/experiments/systemc_block_study/validate.py": "179fdfabf59dd99982ad404889800b54ed8a76fddcc3338cecb383ac6408f522"
+  },
+  "trace_sha256": {
+    "decode128.trace": {
+      "raw_sha256": "7af1edc40638938c11be651dfb8805ce35918f6020d62c574ed9f4081e6baa4e",
+      "lf_sha256": "c7d410e14a8bec74fe3ed0fd8522292ad2906393c442c432a167dfd8e54b6a0e"
+    },
+    "decode2048.trace": {
+      "raw_sha256": "962f3d3944493b52aeba9525c28aa404c8091878e42d3fe0481f4ce420483890",
+      "lf_sha256": "ba4157469188fbc1602e3324fa747847d78d39e392c4674cf92d9aabbce9339f"
+    },
+    "decode512.trace": {
+      "raw_sha256": "ca6d3be0b4003236d1c7f91f57a8e68d5293902c87087c554b379cb09a00a1d3",
+      "lf_sha256": "6ed2129e2f13842dc53b4ba2135ea41886d1c126d842661dc7d5ac38ffb26f1d"
+    },
+    "prefill2.trace": {
+      "raw_sha256": "e7b4807eddbf4a31e5cb576920860b278a8e2f0021332b524c16ca63c60f99ff",
+      "lf_sha256": "be2f0c96b7042674680a3ee51d99389a89813318034c29098cdb344d131441b7"
+    }
+  },
+  "frozen_ir_sha256": "e8a30117ab627b23d642e0e8bd3051c1721c22e758cbfb8eefcbb0c7637324b5",
+  "toolchain": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.4",
+    "compiler": "g++ (Rev1, Built by MSYS2 project) 14.2.0",
+    "SystemC": "3.0.2 (20251031), official 3.0.2 source archive",
+    "SystemC_archive_sha256": "9b3693ed286aab958b9e5d79bb0ad3bc523bbc46931100553275352038f4a0c4",
+    "build": "C++17 -O2 -Wall -Wextra -Werror; static MinGW SystemC; full sweep 2 host workers"
+  },
+  "checks": {
+    "systemc_cases": 34,
+    "work_audit_cases": 34,
+    "resource_negative_cases": 4,
+    "smoke_cases": 5,
+    "numeric_cases": 225,
+    "native_M_RK_cases": 9
+  },
+  "remote_native_job": 101588,
+  "remote_final_checks_job": 101592,
+  "energy": {
+    "joules": null,
+    "reason": "no calibrated macro/SRAM/DRAM event energies; timing/traffic only"
+  },
+  "remote_native_status": "FAILED after native M stage PASS (9/9); early SystemC smoke channel construction error fixed in final local model",
+  "remote_final_checks_status": "CANCELLED while pending; not run; full 34-case sweep executed locally on Windows",
+  "binary_sha256": {
+    "model.exe": "78ccaf6ed8255b2997a28aff23cba74844ab8fddbdec0d1aa33ecdca9591f8b0",
+    "kernel_probe.exe": "5c1a1f7872dc783d46a0e389269b86dd33a04c426c39c30c368d012622e617eb",
+    "deps/install/lib/libsystemc.a": "6df980399f85112bf01e93bb750fe446523fbb555d434ea9801fc38efa28623c"
+  },
+  "output_sha256": {
+    "evidence/baseline/build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evidence/baseline/manifest.json": "abda7d501dacbe0e03fa4c5c6f91a81c01e6cbd5f78a009ec045036cd07dca7b",
+    "evidence/baseline/output.sha256": "f3859d707aa44cc3e1246bbb0412ff3ef329d7e767747d3324a0734af8d67d27",
+    "evidence/baseline/prepare.py": "3c311636e006b7f15bc7757477468403cc663e111d6ac40671a81bbfafb91622",
+    "evidence/baseline/replay.cpp": "1c33d43b77a35e8167eca2aaa0af182014fcffcfbfd6217cdcfa546db8ead585",
+    "evidence/baseline/replay.log": "cd31d026dfde461074eb57a662f4c8cbc79646c133d6323dcbc4772a3ca4cb88",
+    "evidence/baseline/report.json": "aa991e05997d31cab92e6eda6586169e6fb27d083797a5754bbba21d202503f2",
+    "evidence/baseline/report.py": "dc5a252876efce5af82d9593669f3947dbc88f08e2b3f77548e40a48dfa12c9a",
+    "evidence/baseline/run.sbatch": "67d1ff55e5ec4604dfe3b607b7dfa5a46a7bca3a20acbdde36c689df025a6e27",
+    "evidence/baseline/slurm.psv": "9b22150979c5e344bbc9728007306e9218ca15d666d6453762f268e9a43d96d8",
+    "evidence/baseline/source.sha256": "db7553bc93c68ada13bcaf1b47cdef777fbfb2db2cfb301c163c07a03e40202b",
+    "evidence/EXECUTION.md": "517adbd8d6413d9230cd729725fbfc6ebd4deedc2ce17066801bddc2aa6fb985",
+    "evidence/local/audit.json": "5a21d226bc317fefdc2b3f786948cd3119f730f1ae15759141f6861a9333fd1e",
+    "evidence/local/kernels.json": "c7fc6b827d485098b993bb88cc3f6e1bf3adeb0f4f60e71975aac83c165237df",
+    "evidence/local/local-audit.log": "308f181db20b9a4a983927ccacf2093f5c4c5cfd7807606696ce7f361b324af3",
+    "evidence/local/local-final-sweep.log": "a8cc93524bb020e5e826a1813fdfc78ff39194077f13b6d8751d493b6e56f9b3",
+    "evidence/local/local-model-build3.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evidence/local/local-smoke.log": "c28886c9467a41889b40f13e196e937b7f8adde477933d3d38fe4e916096ee2c",
+    "evidence/local/local-validation.log": "4fb5c7e4d4b3506a0e40201d857acd2068776b08d0aca5c646c01b071dcc6d3b",
+    "evidence/local/results.json": "4cc08fd0dbe71ef3ed0b8a58d4a466b19b1afc3e8e3c0f4ca377c408551da08b",
+    "evidence/local/smoke.json": "1289e1b7808af14fe4a54041f2153e4b6e9c2d006b057bc6b6bc4fab8b7b7de5",
+    "evidence/local/validation.json": "56eeb04953ed82b7146e58e774149a77acbde8e425cf719a1eeaf3cfefac1806",
+    "evidence/native/early-smoke-failure.log": "cdb9bac9dc16107737cf81390b5288e66de713f1a982c8b49ef2038a2dfd2219",
+    "evidence/native/early-smoke-failure.original.log.gz": "ae2620cbbba6e77dfa6d370f389756487dc0ba9512910577fc9d82db14911a08",
+    "evidence/native/m-profile.log": "00868657995ca77b7e87a07ef0ec69155893e566c72b665d8f4b071ba63f5b3c",
+    "evidence/native/native-build.log": "5afac48cb59ae7866d205e62ed232dae88b1b3235816cfcf068aba4633613d31",
+    "evidence/native/source.sha256": "f2b6990a443e18ba07ee92f085e7671db56682c90fadd710841f42fa2f3b740b"
+  },
+  "sha_convention": "Raw SHA refers to checked-out bytes with task .gitattributes EOL; Git blobs are LF-normalized. LF hashes also provided. No arithmetic/source content changes.",
+  "source_lf_sha256": {
+    "project/experiments/systemc_block_study/audit_results.py": "00e86c7b63a10b4838ba09765c9c9d51123e4f93215b08e1ed3bed80011ca69f",
+    "project/experiments/systemc_block_study/block_v2_m.sv": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+    "project/experiments/systemc_block_study/check_kernels.py": "a1ef5dae9e5d04103dd788e5e6bd281b53ed2fd00769a40863de425fc6a0c5ac",
+    "project/experiments/systemc_block_study/extract.py": "467493b0934b5123c62e2c6d60a9ce03a5454f3d319054aaa47b7273be122bce",
+    "project/experiments/systemc_block_study/kernel_probe.cpp": "1d16deb9c0298e3eb729dc898e847dd5b09fef01cbb9c10da0826546b62a1737",
+    "project/experiments/systemc_block_study/model.cpp": "84aa752da4afaece43947f9ba86e2ab3665b5b8e72dc0a4bbca208b85cffd6e5",
+    "project/experiments/systemc_block_study/README.md": "6816341e798fa93ac44aae5bcff763990a4090605e93849832b8cfaf8d73f21f",
+    "project/experiments/systemc_block_study/run.sbatch": "db290307194bb42b72cc26bd9b52e4e2b09062acf6d0bed5a984cd443ca7a6b9",
+    "project/experiments/systemc_block_study/smoke.py": "61f4c14c40f906a06a22753d24dd35cfdec772c1bb716a0474727334c9b1647a",
+    "project/experiments/systemc_block_study/sweep.py": "9c99ed162800356389c212cfd6466afaf12b2ed8c1bd3300ac41982c9b13ca14",
+    "project/experiments/systemc_block_study/tb_m_timing.sv": "cdc660bee1ffe902f73a2c235be233af551cf6fe044b4007a05eeac74679f63c",
+    "project/experiments/systemc_block_study/validate.py": "179fdfabf59dd99982ad404889800b54ed8a76fddcc3338cecb383ac6408f522"
+  }
+}

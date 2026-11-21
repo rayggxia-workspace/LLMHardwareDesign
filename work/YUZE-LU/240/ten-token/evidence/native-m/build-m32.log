@@ -1,0 +1,248 @@
+%Warning-WIDTHEXPAND: source/m_s32_stream_candidate.sv:88:24: Operator GT expects 32 bits on the LHS, but LHS's VARREF 'in_k' generates 6 bits.
+                                                            : ... note: In instance 'tb_m_stream.dut'
+   88 |     bad0<=in_k==0||in_k>K||in_n==0||in_n>N||in_row>=ROWS||
+      |                        ^
+                      ... For warning description see https://verilator.org/warn/WIDTHEXPAND?v=5.042
+                      ... Use "/* verilator lint_off WIDTHEXPAND */" and lint_on around source to disable this message.
+%Warning-WIDTHEXPAND: source/m_s32_stream_candidate.sv:88:41: Operator GT expects 32 bits on the LHS, but LHS's VARREF 'in_n' generates 4 bits.
+                                                            : ... note: In instance 'tb_m_stream.dut'
+   88 |     bad0<=in_k==0||in_k>K||in_n==0||in_n>N||in_row>=ROWS||
+      |                                         ^
+%Warning-WIDTHEXPAND: source/m_s32_stream_candidate.sv:88:51: Operator GTE expects 32 bits on the LHS, but LHS's VARREF 'in_row' generates 3 bits.
+                                                            : ... note: In instance 'tb_m_stream.dut'
+   88 |     bad0<=in_k==0||in_k>K||in_n==0||in_n>N||in_row>=ROWS||
+      |                                                   ^~
+%Warning-WIDTHTRUNC: source/tb_m_stream.sv:27:34: Logical operator LOGNOT expects 1 bit on the LHS, but LHS's VARREF 'f' generates 32 bits.
+                                                : ... note: In instance 'tb_m_stream'
+   27 |   f=$fopen("m-input.txt","r");if(!f)$fatal(1,"missing m-input.txt");
+      |                                  ^
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.042
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-BLKSEQ: source/tb_m_stream.sv:11:8: Blocking assignment '=' in sequential logic process
+                                           : ... note: In instance 'tb_m_stream'
+                                           : ... Suggest using delayed assignment '<='
+   11 |   ticks=ticks+1;
+      |        ^
+                 ... For warning description see https://verilator.org/warn/BLKSEQ?v=5.042
+                 ... Use "/* verilator lint_off BLKSEQ */" and lint_on around source to disable this message.
+%Warning-BLKSEQ: source/tb_m_stream.sv:13:34: Blocking assignment '=' in sequential logic process
+                                            : ... note: In instance 'tb_m_stream'
+                                            : ... Suggest using delayed assignment '<='
+   13 |    if(valid&&ready)begin accepted++;consecutive++;if(consecutive>longest)longest=consecutive;end
+      |                                  ^~
+%Warning-BLKSEQ: source/tb_m_stream.sv:13:48: Blocking assignment '=' in sequential logic process
+                                            : ... note: In instance 'tb_m_stream'
+                                            : ... Suggest using delayed assignment '<='
+   13 |    if(valid&&ready)begin accepted++;consecutive++;if(consecutive>longest)longest=consecutive;end
+      |                                                ^~
+%Warning-BLKSEQ: source/tb_m_stream.sv:13:81: Blocking assignment '=' in sequential logic process
+                                            : ... note: In instance 'tb_m_stream'
+                                            : ... Suggest using delayed assignment '<='
+   13 |    if(valid&&ready)begin accepted++;consecutive++;if(consecutive>longest)longest=consecutive;end
+      |                                                                                 ^
+%Warning-BLKSEQ: source/tb_m_stream.sv:14:20: Blocking assignment '=' in sequential logic process
+                                            : ... note: In instance 'tb_m_stream'
+                                            : ... Suggest using delayed assignment '<='
+   14 |    else consecutive=0;
+      |                    ^
+%Warning-BLKSEQ: source/tb_m_stream.sv:16:11: Blocking assignment '=' in sequential logic process
+                                            : ... note: In instance 'tb_m_stream'
+                                            : ... Suggest using delayed assignment '<='
+   16 |    stalled=ov&&!ready_out;held={orow,err,sat,out};
+      |           ^
+%Warning-BLKSEQ: source/tb_m_stream.sv:16:31: Blocking assignment '=' in sequential logic process
+                                            : ... note: In instance 'tb_m_stream'
+                                            : ... Suggest using delayed assignment '<='
+   16 |    stalled=ov&&!ready_out;held={orow,err,sat,out};
+      |                               ^
+%Warning-BLKSEQ: source/tb_m_stream.sv:17:107: Blocking assignment '=' in sequential logic process
+                                             : ... note: In instance 'tb_m_stream'
+                                             : ... Suggest using delayed assignment '<='
+   17 |    if(ov&&ready_out)begin $display("M_RESULT %0d %0d %0d %02h %064h",responses,orow,err,sat,out);responses++;end
+      |                                                                                                           ^~
+%Warning-BLKSEQ: source/tb_m_stream.sv:18:19: Blocking assignment '=' in sequential logic process
+                                            : ... note: In instance 'tb_m_stream'
+                                            : ... Suggest using delayed assignment '<='
+   18 |   end else stalled=0;
+      |                   ^
+%Warning-BLKSEQ: source/tb_m_stream.sv:21:6: Blocking assignment '=' in sequential logic process
+                                           : ... note: In instance 'tb_m_stream'
+                                           : ... Suggest using delayed assignment '<='
+   21 |   rng=(rng>>1)^(-(rng&1)&32'hd0000001);
+      |      ^
+%Warning-BLKSEQ: source/tb_m_stream.sv:22:12: Blocking assignment '=' in sequential logic process
+                                            : ... note: In instance 'tb_m_stream'
+                                            : ... Suggest using delayed assignment '<='
+   22 |   ready_out=!reset&&rng[0]&&ticks%64>=8;
+      |            ^
+%Warning-BLKSEQ: source/m_s32_stream_candidate.sv:65:15: Blocking assignment '=' in sequential logic process
+                                                       : ... note: In instance 'tb_m_stream.dut'
+                                                       : ... Suggest using delayed assignment '<='
+   65 |      converted=quantize(total2[n],round2);
+      |               ^
+%Warning-BLKSEQ: source/m_s32_stream_candidate.sv:72:10: Blocking assignment '=' in sequential logic process
+                                                       : ... note: In instance 'tb_m_stream.dut'
+                                                       : ... Suggest using delayed assignment '<='
+   72 |     fault=bad1||(!first1&&!context_valid[row1])||(!first1&&context_valid[row1]&&context_n[row1]!=n1);
+      |          ^
+%Warning-BLKSEQ: source/m_s32_stream_candidate.sv:77:11: Blocking assignment '=' in sequential logic process
+                                                       : ... note: In instance 'tb_m_stream.dut'
+                                                       : ... Suggest using delayed assignment '<='
+   77 |       term={{48{sums[n][47]}},sums[n]};term=term<<<bshift1;
+      |           ^
+%Warning-BLKSEQ: source/m_s32_stream_candidate.sv:77:44: Blocking assignment '=' in sequential logic process
+                                                       : ... note: In instance 'tb_m_stream.dut'
+                                                       : ... Suggest using delayed assignment '<='
+   77 |       term={{48{sums[n][47]}},sums[n]};term=term<<<bshift1;
+      |                                            ^
+%Warning-BLKSEQ: source/m_s32_stream_candidate.sv:78:12: Blocking assignment '=' in sequential logic process
+                                                       : ... note: In instance 'tb_m_stream.dut'
+                                                       : ... Suggest using delayed assignment '<='
+   78 |       total=(first1?96'sd0:accum[row1][n])+term;
+      |            ^
+%Warning-PROCASSINIT: source/tb_m_stream.sv:2:10: Procedural assignment to declaration with initial value: 'clk'
+                                                : ... note: In instance 'tb_m_stream'
+                                                : ... Location of variable initialization
+    2 |  reg clk=0,reset=1;always #5 clk=~clk;
+      |          ^
+                      source/tb_m_stream.sv:2:30: ... Location of variable process write
+                                                : ... Perhaps should initialize instead using a reset in this process
+    2 |  reg clk=0,reset=1;always #5 clk=~clk;
+      |                              ^~~
+                      ... For warning description see https://verilator.org/warn/PROCASSINIT?v=5.042
+                      ... Use "/* verilator lint_off PROCASSINIT */" and lint_on around source to disable this message.
+%Warning-PROCASSINIT: source/tb_m_stream.sv:3:24: Procedural assignment to declaration with initial value: 'ready_out'
+                                                : ... note: In instance 'tb_m_stream'
+                                                : ... Location of variable initialization
+    3 |  reg valid=0,ready_out=0,first=0,last=0,bu=0;reg [2:0] row=0;
+      |                        ^
+                      source/tb_m_stream.sv:22:3: ... Location of variable process write
+                                                : ... Perhaps should initialize instead using a reset in this process
+   22 |   ready_out=!reset&&rng[0]&&ticks%64>=8;
+      |   ^~~~~~~~~
+%Warning-PROCASSINIT: source/tb_m_stream.sv:8:16: Procedural assignment to declaration with initial value: 'ticks'
+                                                : ... note: In instance 'tb_m_stream'
+                                                : ... Location of variable initialization
+    8 |  integer ticks=0,responses=0,accepted=0,consecutive=0,longest=0;reg [31:0] rng=32'h2401024;
+      |                ^
+                      source/tb_m_stream.sv:11:3: ... Location of variable process write
+                                                : ... Perhaps should initialize instead using a reset in this process
+   11 |   ticks=ticks+1;
+      |   ^~~~~
+%Warning-PROCASSINIT: source/tb_m_stream.sv:8:28: Procedural assignment to declaration with initial value: 'responses'
+                                                : ... note: In instance 'tb_m_stream'
+                                                : ... Location of variable initialization
+    8 |  integer ticks=0,responses=0,accepted=0,consecutive=0,longest=0;reg [31:0] rng=32'h2401024;
+      |                            ^
+                      source/tb_m_stream.sv:17:98: ... Location of variable process write
+                                                 : ... Perhaps should initialize instead using a reset in this process
+   17 |    if(ov&&ready_out)begin $display("M_RESULT %0d %0d %0d %02h %064h",responses,orow,err,sat,out);responses++;end
+      |                                                                                                  ^~~~~~~~~
+%Warning-PROCASSINIT: source/tb_m_stream.sv:8:39: Procedural assignment to declaration with initial value: 'accepted'
+                                                : ... note: In instance 'tb_m_stream'
+                                                : ... Location of variable initialization
+    8 |  integer ticks=0,responses=0,accepted=0,consecutive=0,longest=0;reg [31:0] rng=32'h2401024;
+      |                                       ^
+                      source/tb_m_stream.sv:13:26: ... Location of variable process write
+                                                 : ... Perhaps should initialize instead using a reset in this process
+   13 |    if(valid&&ready)begin accepted++;consecutive++;if(consecutive>longest)longest=consecutive;end
+      |                          ^~~~~~~~
+%Warning-PROCASSINIT: source/tb_m_stream.sv:8:53: Procedural assignment to declaration with initial value: 'consecutive'
+                                                : ... note: In instance 'tb_m_stream'
+                                                : ... Location of variable initialization
+    8 |  integer ticks=0,responses=0,accepted=0,consecutive=0,longest=0;reg [31:0] rng=32'h2401024;
+      |                                                     ^
+                      source/tb_m_stream.sv:13:37: ... Location of variable process write
+                                                 : ... Perhaps should initialize instead using a reset in this process
+   13 |    if(valid&&ready)begin accepted++;consecutive++;if(consecutive>longest)longest=consecutive;end
+      |                                     ^~~~~~~~~~~
+%Warning-PROCASSINIT: source/tb_m_stream.sv:8:63: Procedural assignment to declaration with initial value: 'longest'
+                                                : ... note: In instance 'tb_m_stream'
+                                                : ... Location of variable initialization
+    8 |  integer ticks=0,responses=0,accepted=0,consecutive=0,longest=0;reg [31:0] rng=32'h2401024;
+      |                                                               ^
+                      source/tb_m_stream.sv:13:74: ... Location of variable process write
+                                                 : ... Perhaps should initialize instead using a reset in this process
+   13 |    if(valid&&ready)begin accepted++;consecutive++;if(consecutive>longest)longest=consecutive;end
+      |                                                                          ^~~~~~~
+%Warning-PROCASSINIT: source/tb_m_stream.sv:8:80: Procedural assignment to declaration with initial value: 'rng'
+                                                : ... note: In instance 'tb_m_stream'
+                                                : ... Location of variable initialization
+    8 |  integer ticks=0,responses=0,accepted=0,consecutive=0,longest=0;reg [31:0] rng=32'h2401024;
+      |                                                                                ^~~~~~~~~~~
+                      source/tb_m_stream.sv:21:3: ... Location of variable process write
+                                                : ... Perhaps should initialize instead using a reset in this process
+   21 |   rng=(rng>>1)^(-(rng&1)&32'hd0000001);
+      |   ^~~
+%Warning-PROCASSINIT: source/tb_m_stream.sv:9:14: Procedural assignment to declaration with initial value: 'stalled'
+                                                : ... note: In instance 'tb_m_stream'
+                                                : ... Location of variable initialization
+    9 |  reg stalled=0;reg [267:0] held;
+      |              ^
+                      source/tb_m_stream.sv:16:4: ... Location of variable process write
+                                                : ... Perhaps should initialize instead using a reset in this process
+   16 |    stalled=ov&&!ready_out;held={orow,err,sat,out};
+      |    ^~~~~~~
+%Warning-UNUSEDSIGNAL: source/tb_m_stream.sv:24:33: Bits of signal are not used: 'r'[31:3]
+                                                  : ... note: In instance 'tb_m_stream'
+   24 |  integer f,total_packets,fields,r,ff,ll,kk,nn,ss,bbs,uu;reg [K*32-1:0] aa;reg [K*8*8-1:0] bb;
+      |                                 ^
+                       ... For warning description see https://verilator.org/warn/UNUSEDSIGNAL?v=5.042
+                       ... Use "/* verilator lint_off UNUSEDSIGNAL */" and lint_on around source to disable this message.
+%Warning-UNUSEDSIGNAL: source/tb_m_stream.sv:24:35: Bits of signal are not used: 'ff'[31:1]
+                                                  : ... note: In instance 'tb_m_stream'
+   24 |  integer f,total_packets,fields,r,ff,ll,kk,nn,ss,bbs,uu;reg [K*32-1:0] aa;reg [K*8*8-1:0] bb;
+      |                                   ^~
+%Warning-UNUSEDSIGNAL: source/tb_m_stream.sv:24:38: Bits of signal are not used: 'll'[31:1]
+                                                  : ... note: In instance 'tb_m_stream'
+   24 |  integer f,total_packets,fields,r,ff,ll,kk,nn,ss,bbs,uu;reg [K*32-1:0] aa;reg [K*8*8-1:0] bb;
+      |                                      ^~
+%Warning-UNUSEDSIGNAL: source/tb_m_stream.sv:24:41: Bits of signal are not used: 'kk'[31:6]
+                                                  : ... note: In instance 'tb_m_stream'
+   24 |  integer f,total_packets,fields,r,ff,ll,kk,nn,ss,bbs,uu;reg [K*32-1:0] aa;reg [K*8*8-1:0] bb;
+      |                                         ^~
+%Warning-UNUSEDSIGNAL: source/tb_m_stream.sv:24:44: Bits of signal are not used: 'nn'[31:4]
+                                                  : ... note: In instance 'tb_m_stream'
+   24 |  integer f,total_packets,fields,r,ff,ll,kk,nn,ss,bbs,uu;reg [K*32-1:0] aa;reg [K*8*8-1:0] bb;
+      |                                            ^~
+%Warning-UNUSEDSIGNAL: source/tb_m_stream.sv:24:47: Bits of signal are not used: 'ss'[31:6]
+                                                  : ... note: In instance 'tb_m_stream'
+   24 |  integer f,total_packets,fields,r,ff,ll,kk,nn,ss,bbs,uu;reg [K*32-1:0] aa;reg [K*8*8-1:0] bb;
+      |                                               ^~
+%Warning-UNUSEDSIGNAL: source/tb_m_stream.sv:24:50: Bits of signal are not used: 'bbs'[31:5]
+                                                  : ... note: In instance 'tb_m_stream'
+   24 |  integer f,total_packets,fields,r,ff,ll,kk,nn,ss,bbs,uu;reg [K*32-1:0] aa;reg [K*8*8-1:0] bb;
+      |                                                  ^~~
+%Warning-UNUSEDSIGNAL: source/tb_m_stream.sv:24:54: Bits of signal are not used: 'uu'[31:1]
+                                                  : ... note: In instance 'tb_m_stream'
+   24 |  integer f,total_packets,fields,r,ff,ll,kk,nn,ss,bbs,uu;reg [K*32-1:0] aa;reg [K*8*8-1:0] bb;
+      |                                                      ^~
+%Warning-UNOPTFLAT: source/m_s32_stream_candidate.sv:29:21: Signal unoptimizable: Circular combinational logic: 'tb_m_stream.dut.reduction_tree'
+   29 |  wire signed [47:0] reduction_tree[0:N-1][1:2*K-1];
+      |                     ^~~~~~~~~~~~~~
+                    ... For warning description see https://verilator.org/warn/UNOPTFLAT?v=5.042
+                    ... Use "/* verilator lint_off UNOPTFLAT */" and lint_on around source to disable this message.
+                    source/m_s32_stream_candidate.sv:29:21:      Example path: tb_m_stream.dut.reduction_tree
+                    source/m_s32_stream_candidate.sv:35:35:      Example path: ASSIGNW
+                    source/m_s32_stream_candidate.sv:29:21:      Example path: tb_m_stream.dut.reduction_tree
+make: Entering directory '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue240-ten-token-20261109-06/obj_m32'
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -c -o verilated.o /public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/verilated.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -c -o verilated_timing.o /public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/verilated_timing.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -c -o verilated_threads.o /public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/verilated_threads.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -x c++-header Vtb_m_stream__pch.h -o Vtb_m_stream__pch.h.fast.gch
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -x c++-header Vtb_m_stream__pch.h -o Vtb_m_stream__pch.h.slow.gch
+echo "" > Vtb_m_stream__ALL.verilator_deplist.tmp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vtb_m_stream__pch.h.fast -c -o Vtb_m_stream.o Vtb_m_stream.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vtb_m_stream__pch.h.fast -c -o Vtb_m_stream___024root__0.o Vtb_m_stream___024root__0.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vtb_m_stream__pch.h.fast -c -o Vtb_m_stream___024root__1.o Vtb_m_stream___024root__1.cpp
+/usr/bin/g++ -Os  -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vtb_m_stream__pch.h.fast -c -o Vtb_m_stream__main.o Vtb_m_stream__main.cpp
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vtb_m_stream__pch.h.slow -c -o Vtb_m_stream__ConstPool_0.o Vtb_m_stream__ConstPool_0.cpp
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vtb_m_stream__pch.h.slow -c -o Vtb_m_stream___024root__Slow.o Vtb_m_stream___024root__Slow.cpp
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vtb_m_stream__pch.h.slow -c -o Vtb_m_stream___024root__0__Slow.o Vtb_m_stream___024root__0__Slow.cpp
+/usr/bin/g++   -I.  -MMD -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include -I/public/home/yuzelu/opt/eda/verilator-5.042/share/verilator/include/vltstd -DVERILATOR=1 -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=1 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-int-in-bool-context -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable    -DVL_TIME_CONTEXT   -fcoroutines -include Vtb_m_stream__pch.h.slow -c -o Vtb_m_stream__Syms.o Vtb_m_stream__Syms.cpp
+/usr/bin/g++    verilated.o verilated_timing.o verilated_threads.o Vtb_m_stream__ALL.a    -pthread -lpthread -latomic   -o Vtb_m_stream
+rm Vtb_m_stream__ALL.verilator_deplist.tmp
+make: Leaving directory '/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue240-ten-token-20261109-06/obj_m32'
+- V e r i l a t i o n   R e p o r t: Verilator 5.042 2025-11-02 rev UNKNOWN.REV
+- Verilator: Built from 0.052 MB sources in 3 modules, into 1.171 MB in 8 C++ files needing 0.006 MB
+- Verilator: Walltime 4.642 s (elab=0.016, cvt=0.125, bld=4.454); cpu 0.163 s on 4 threads; alloced 53.496 MB

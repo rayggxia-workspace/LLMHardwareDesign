@@ -1,0 +1,91 @@
+{
+  "status": "exploratory_uncalibrated",
+  "kind": "SystemC compiled-service resource-order timing replay",
+  "scope": "Qwen2.5-3B B1/S2 prefill, 36 layers including embedding and LM head; no KV/decode; host/tokenization/sampling excluded",
+  "systemc": {
+    "completed": 8404,
+    "model_ticks": 167410840866,
+    "systemc": "SystemC 3.0.2-Accellera --- Nov  9 2026 00:34:07"
+  },
+  "native_schedule_evidence": {
+    "input_sha256": {
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-277-phased-tile-full/generated/ir.json": "e8a30117ab627b23d642e0e8bd3051c1721c22e758cbfb8eefcbb0c7637324b5",
+      "/public/home/yuzelu/project-circuit/LLMHardwareDesign/issue-219-block-search/algorithm-fix-277-phased-tile-full/generated/conditional-dp.json": "b0311e8835f87b22bc89d1b234517f50d594529b7fa898722c82591473c5deb0"
+    },
+    "native_cost_check": {
+      "passed": true,
+      "kernels": 8404,
+      "bindings": 310598,
+      "primitive_instructions": 8850,
+      "scope": "executed primitive coverage, native profiles, memory traffic/timing and external regions; LC/physical timing excluded"
+    },
+    "schedule_check": {
+      "passed": true,
+      "peak_words": {
+        "P0.S": 969,
+        "P1.S": 528,
+        "U0.S": 8,
+        "U1.S": 2
+      },
+      "external_words": 8249973644,
+      "static_nets": 18,
+      "window_audit": null,
+      "checked_static_conflict_pairs": 0,
+      "scope": "independent streaming-loop schedule/resource check; kernel program proof is separate",
+      "cooperative_phase_audit": {
+        "cooperative_compounds": 253,
+        "scope": "independent phase reconstruction plus conservative full-union reservation proof; not RTL arbitration"
+      }
+    },
+    "execution_units": 8404,
+    "selected_plan_ticks": 167410840866,
+    "dependency_resource_order_ticks": 167410840866,
+    "logical_128bit_records": 8249973644,
+    "memory_model": {
+      "channels": 2,
+      "credits": 4,
+      "queue": 32,
+      "period": 6,
+      "phase": 1,
+      "latency": 20,
+      "seed": 181,
+      "kind": "pr182-bounded-v1",
+      "source_commit": "24e20d13a71cf65f721a182451308f1ad01ebaec",
+      "word_bytes": 16,
+      "core_period": 10,
+      "address_bits": 40,
+      "slots": 8,
+      "bank_count": 4,
+      "bank_interleave_bytes": 64,
+      "row_bytes": 1024,
+      "bank_issue_cycles": 2,
+      "row_miss_cycles": 6,
+      "turnaround_cycles": 4,
+      "scope": "deterministic compiler abstraction; not RTL/VIP or device calibration",
+      "randomness": "disabled explicitly; no reuse of PR182 measured throughput"
+    },
+    "scope": "compiled service/resource-order timing replay, not independent command/DRAM/MC/LC calibration; no KV decode"
+  },
+  "assumptions": {
+    "core_frequency_mhz": 300.0,
+    "one_model_tick_per_core_cycle": true,
+    "prefill_tokens": 2,
+    "memory": "same frozen PR182 bounded virtual model; not measured DRAM"
+  },
+  "conditional_prefill_seconds": 558.03613622,
+  "conditional_prefill_tokens_per_second": 0.0035839972901172846,
+  "decode_tokens_per_second": null,
+  "energy_joules": null,
+  "nominal_descriptor_bytes": 131999578304,
+  "nominal_descriptor_bytes_per_second": 236543065.46908018,
+  "qualification": "Independent SystemC event execution validates this service-order replay only. Durations inherited from compiler; does not calibrate macro/MC/LC/DRAM timing or predict optimal hardware throughput.",
+  "sha256": {
+    "replay.cpp": "1c33d43b77a35e8167eca2aaa0af182014fcffcfbfd6217cdcfa546db8ead585",
+    "prepare.py": "3c311636e006b7f15bc7757477468403cc663e111d6ac40671a81bbfafb91622",
+    "run.sbatch": "67d1ff55e5ec4604dfe3b607b7dfa5a46a7bca3a20acbdde36c689df025a6e27",
+    "report.py": "dc5a252876efce5af82d9593669f3947dbc88f08e2b3f77548e40a48dfa12c9a",
+    "generated/tasks.txt": "7801b21ff019d0690b43a2266a235c5b5181d0f249c82c210f6a7272972d005d",
+    "generated/input-report.json": "83c712e964803a165a5084797e7ffd9b2ba7ebfb239adad83be9eb0b0acb3c07",
+    "replay.log": "cd31d026dfde461074eb57a662f4c8cbc79646c133d6323dcbc4772a3ca4cb88"
+  }
+}
