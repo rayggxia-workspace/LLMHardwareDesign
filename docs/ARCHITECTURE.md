@@ -1,5 +1,11 @@
 # 架构与运行
 
+2026-11-09：[Issue236 decode容量必要条件](../project/experiments/decode_capacity/README.md)。
+Python标准库工具`project/experiments/decode_capacity/audit.py INVENTORY WORKLOADS NEW_RESULT --graph-evidence GRAPH_SHAPES`，
+测试`python -B -m unittest discover -s project/experiments/decode_capacity -p 'test_*.py' -v`。
+绑定现有M RTL、PR220已审计资源清单与官方配置，计算当前密集M服务的乐观上界和规模/权重带宽必要条件；
+不以此替代SystemC/RTL/器件能量或物理验收，不修改现有宏。候选硬件实施及阶段门见该目录说明。
+
 本仓库含研究资料、参考结果和实验性分层物理实现代码。`project/experiments/` 下保留 `block_hierarchy/`、`parallel_blocks/` 和 `opentpu_compare/` 的实验及证据；正式预制底座和制造工具链尚未冻结。[项目说明 v1.0](../预制计算底座项目说明_v1.0.md) 中标注的候选架构不能当作已实现硬件。
 
 ## 研究系统边界

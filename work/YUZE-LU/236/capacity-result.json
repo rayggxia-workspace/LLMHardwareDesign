@@ -1,0 +1,126 @@
+{
+  "kind": "necessary_dense_M_capacity_conditions_not_system_simulation",
+  "frequency_hz": 300000000,
+  "engine_count": 3,
+  "contracts": {
+    "P0.M": {
+      "rtl_sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+      "narrow_product_bits": 8,
+      "optimistic_products_per_cycle": 64,
+      "method": "pinned native M product array and ISSUE-loop contract; not a generic RTL formal proof",
+      "row_handling": "rows reuse the same product array sequentially",
+      "excluded": "scale lanes are part of the registered M reduction; no separate general GEMM service admitted"
+    },
+    "P1.M": {
+      "rtl_sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+      "narrow_product_bits": 8,
+      "optimistic_products_per_cycle": 64,
+      "method": "pinned native M product array and ISSUE-loop contract; not a generic RTL formal proof",
+      "row_handling": "rows reuse the same product array sequentially",
+      "excluded": "scale lanes are part of the registered M reduction; no separate general GEMM service admitted"
+    },
+    "P2.M": {
+      "rtl_sha256": "5825adcd3364d4315afd1aa4addae85379fb36df2802ca8ab60026e0b0f44d1e",
+      "narrow_product_bits": 8,
+      "optimistic_products_per_cycle": 64,
+      "method": "pinned native M product array and ISSUE-loop contract; not a generic RTL formal proof",
+      "row_handling": "rows reuse the same product array sequentially",
+      "excluded": "scale lanes are part of the registered M reduction; no separate general GEMM service admitted"
+    }
+  },
+  "optimistic_S8_products_per_second": 57600000000,
+  "workloads": [
+    {
+      "name": "Qwen2.5-3B",
+      "configuration": {
+        "name": "Qwen2.5-3B",
+        "config_path": "project/experiments/decode_capacity/configs/Qwen2.5-3B.json",
+        "config_sha256": "27467e2fc311a7656c09a43ae9c3d408211e1f212bbddbc93c8596a06423826f",
+        "official_config_url": "https://huggingface.co/Qwen/Qwen2.5-3B/resolve/3aab1f1954e9cc14eb9509a215f9e5ca08227a9b/config.json",
+        "official_repository_revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
+        "mapping_scope": "Qwen2.5 B1/S2 exported shape crosscheck only"
+      },
+      "work": {
+        "per_layer": {
+          "q_projection": 4194304,
+          "k_projection": 524288,
+          "v_projection": 524288,
+          "o_projection": 4194304,
+          "gate_projection": 22544384,
+          "up_projection": 22544384,
+          "down_projection": 22544384
+        },
+        "layers": 36,
+        "lm_head": 311164928,
+        "products_per_token": 3085697024,
+        "effective_query_dimension": 2048,
+        "effective_kv_dimension": 256,
+        "scope": "one B1 decode token, dense projections and full vocabulary head only; attention/vector work excluded"
+      },
+      "optimistic_dense_compute_token_s_upper_bound": 18.66677108996687,
+      "exact_bound_numerator": 3515625,
+      "exact_bound_denominator": 188336
+    },
+    {
+      "name": "Qwen3-4B",
+      "configuration": {
+        "name": "Qwen3-4B",
+        "config_path": "project/experiments/decode_capacity/configs/Qwen3-4B.json",
+        "config_sha256": "8ba006f74fecfaaeb392872a60f4a480e7ec9860153d2e1b769ec81f9a147f8a",
+        "official_config_url": "https://huggingface.co/Qwen/Qwen3-4B/resolve/1cfa9a7208912126459214e8b04321603b3df60c/config.json",
+        "official_repository_revision": "1cfa9a7208912126459214e8b04321603b3df60c",
+        "mapping_scope": "configuration-only; no Qwen3 mapping/simulation qualification",
+        "reference_token_s_decimal": "72.5",
+        "reference_url": "https://zedongpeng.com/blog/2026/llama-cpp-on-an-fpga/",
+        "reference_scope": "author report; U280 native Q4_K_M; tg128 empty cache; five-run mean; code private, not independently reproduced"
+      },
+      "work": {
+        "per_layer": {
+          "q_projection": 10485760,
+          "k_projection": 2621440,
+          "v_projection": 2621440,
+          "o_projection": 10485760,
+          "gate_projection": 24903680,
+          "up_projection": 24903680,
+          "down_projection": 24903680
+        },
+        "layers": 36,
+        "lm_head": 388956160,
+        "products_per_token": 4022272000,
+        "effective_query_dimension": 4096,
+        "effective_kv_dimension": 1024,
+        "scope": "one B1 decode token, dense projections and full vocabulary head only; attention/vector work excluded"
+      },
+      "optimistic_dense_compute_token_s_upper_bound": 14.320264765784113,
+      "exact_bound_numerator": 28125,
+      "exact_bound_denominator": 1964,
+      "reference_token_s": 72.5,
+      "dense_capacity_necessary_condition_met": false,
+      "minimum_equivalent_M_count": 16,
+      "ideal_4bit_weight_bandwidth_bytes_per_s": 145807360000.0
+    }
+  ],
+  "assumptions": [
+    "registered dense M/GEMM only; no unproven sparsity/low-rank/fast transforms",
+    "free legal S8 operands even though current Qwen integer execution uses wider formats",
+    "one product per physical lane every cycle, perfect sharding and no pipeline gaps",
+    "zero control/communication/attention/vector/quantization costs; no physical-frequency claim"
+  ],
+  "not_proven": [
+    "full-model decode values, SystemC token/s, memory bandwidth, energy or physical closure",
+    "quality-qualified low-bit execution; an equivalent-M lower bound is not a selected hardware design"
+  ],
+  "graph_crosscheck": {
+    "passed": true,
+    "static_weight_dot_count": 253,
+    "source_ir_sha256": "5cfe32f9237b195524fd6b7291340003c1ab88e712e89677ae40d8478438db40",
+    "products_per_token": 3085697024,
+    "scope": "frozen exported B1/S2 dense projection shapes; not decode execution qualification"
+  },
+  "graph_evidence_sha256": "49b0e6c882cee2192eb7504acba81b4ab459649b20289bdc511dee942cfc9113",
+  "input_sha256": {
+    "project\\experiments\\decode_capacity\\inventory.json": "c680e13076a7a349972d50bd51b4efe09c5c62fe73689b88f99b4ae900ed377d",
+    "project\\experiments\\decode_capacity\\workloads.json": "2cfcbd9caadc93d9d70f1b9051dee895a9946b306da9d9619ced17e0f17e7440"
+  },
+  "audit_source_sha256": "dceeb5c55c4b7333813c0df25d115f54bed13927ac8616f477681e1d755ad9e9"
+}
